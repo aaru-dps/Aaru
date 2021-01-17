@@ -47,8 +47,6 @@ namespace Aaru.Decryption.DVD
         const    byte   _keySize       = 5;
         const    byte   _challengeSize = 2 * _keySize;
         readonly Device _dev;
-        public   byte   Agid   { get; private set; }
-        public   byte[] BusKey { get; private set; }
 
         public Dump(Device dev)
         {
@@ -57,9 +55,10 @@ namespace Aaru.Decryption.DVD
             Agid   = 0;
         }
 
-        /// <summary>
-        /// Returns the Authentication Success Flag of the logical unit.
-        /// </summary>
+        public byte   Agid   { get; private set; }
+        public byte[] BusKey { get; private set; }
+
+        /// <summary>Returns the Authentication Success Flag of the logical unit.</summary>
         /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="buffer">Buffer where the Authentication Success Flag will be stored.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
@@ -89,9 +88,7 @@ namespace Aaru.Decryption.DVD
             return sense;
         }
 
-        /// <summary>
-        /// Returns the Regional Playback Control State of the logical unit.
-        /// </summary>
+        /// <summary>Returns the Regional Playback Control State of the logical unit.</summary>
         /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="buffer">Buffer where the Regional Playback Control State will be stored.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
@@ -121,9 +118,7 @@ namespace Aaru.Decryption.DVD
             return sense;
         }
 
-        /// <summary>
-        /// Invalidates an Authentication Grant ID.
-        /// </summary>
+        /// <summary>Invalidates an Authentication Grant ID.</summary>
         /// <param name="buffer">Buffer where the Regional Playback Control State will be stored.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="keyClass">Key class.</param>
@@ -153,9 +148,7 @@ namespace Aaru.Decryption.DVD
             return sense;
         }
 
-        /// <summary>
-        /// Returns a valid Authentication Grant ID for CSS/CPPM.
-        /// </summary>
+        /// <summary>Returns a valid Authentication Grant ID for CSS/CPPM.</summary>
         /// <param name="buffer">Buffer where the Regional Playback Control State will be stored.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="keyClass">Key class.</param>
@@ -185,9 +178,7 @@ namespace Aaru.Decryption.DVD
             return sense;
         }
 
-        /// <summary>
-        /// Returns KEY1 from the logical unit.
-        /// </summary>
+        /// <summary>Returns KEY1 from the logical unit.</summary>
         /// <param name="buffer">Buffer where the Regional Playback Control State will be stored.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="keyClass">Key class.</param>
@@ -217,9 +208,7 @@ namespace Aaru.Decryption.DVD
             return sense;
         }
 
-        /// <summary>
-        /// Returns the challenge from the logical unit.
-        /// </summary>
+        /// <summary>Returns the challenge from the logical unit.</summary>
         /// <param name="buffer">Buffer where the Regional Playback Control State will be stored.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="keyClass">Key class.</param>
@@ -249,9 +238,7 @@ namespace Aaru.Decryption.DVD
             return sense;
         }
 
-        /// <summary>
-        /// Send a challenge to the logical unit. 
-        /// </summary>
+        /// <summary>Send a challenge to the logical unit.</summary>
         /// <param name="buffer">Buffer where the Regional Playback Control State will be stored.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="keyClass">Key class.</param>
@@ -294,9 +281,7 @@ namespace Aaru.Decryption.DVD
             return sense;
         }
 
-        /// <summary>
-        /// Send KEY2 to the logical unit.
-        /// </summary>
+        /// <summary>Send KEY2 to the logical unit.</summary>
         /// <param name="buffer">Buffer where the Regional Playback Control State will be stored.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="keyClass">Key class.</param>
@@ -334,9 +319,7 @@ namespace Aaru.Decryption.DVD
             return sense;
         }
 
-        /// <summary>
-        /// Returns the encrypted disc key of the MMC logical unit
-        /// </summary>
+        /// <summary>Returns the encrypted disc key of the MMC logical unit</summary>
         /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="buffer">Buffer where the bus key will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
@@ -359,12 +342,10 @@ namespace Aaru.Decryption.DVD
             _dev.SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                  out bool sense);
 
-            return (sense);
+            return sense;
         }
 
-        /// <summary>
-        /// Returns the bus key of the MMC logical unit
-        /// </summary>
+        /// <summary>Returns the bus key of the MMC logical unit</summary>
         /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="buffer">Buffer where the bus key will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
@@ -485,9 +466,7 @@ namespace Aaru.Decryption.DVD
             return false;
         }
 
-        /// <summary>
-        /// Reads a title key for a sector on the disc.
-        /// </summary>
+        /// <summary>Reads a title key for a sector on the disc.</summary>
         /// <param name="buffer">Buffer where the bus key will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="keyClass">Key class.</param>

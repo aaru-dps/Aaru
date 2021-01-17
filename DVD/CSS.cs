@@ -371,9 +371,8 @@ namespace Aaru.Decryption.DVD
         };
 
         /// <summary>
-        /// The disc key returned by the logical unit is encoded with the bus key
-        /// to prevent man-in-the-middle attacks. This method returns a structure
-        /// with the decoded key included.
+        ///     The disc key returned by the logical unit is encoded with the bus key to prevent man-in-the-middle attacks.
+        ///     This method returns a structure with the decoded key included.
         /// </summary>
         /// <param name="response">The encoded key from the logical unit.</param>
         /// <param name="busKey">The bus key from the logical unit.</param>
@@ -399,9 +398,8 @@ namespace Aaru.Decryption.DVD
         }
 
         /// <summary>
-        /// The title key returned by the logical unit is encoded with the bus key
-        /// to prevent man-in-the-middle attacks. This method returns a structure
-        /// with the decoded key included.
+        ///     The title key returned by the logical unit is encoded with the bus key to prevent man-in-the-middle attacks.
+        ///     This method returns a structure with the decoded key included.
         /// </summary>
         /// <param name="response">The encoded key from the logical unit.</param>
         /// <param name="busKey">The bus key from the logical unit.</param>
@@ -429,9 +427,7 @@ namespace Aaru.Decryption.DVD
             };
         }
 
-        /// <summary>
-        /// Takes a challenge and a variant and encrypts it according to the key type.
-        /// </summary>
+        /// <summary>Takes a challenge and a variant and encrypts it according to the key type.</summary>
         /// <param name="keyType">The type of key to encrypt.</param>
         /// <param name="variant"></param>
         /// <param name="challenge">The challenge sent to the logical unit.</param>
@@ -547,9 +543,7 @@ namespace Aaru.Decryption.DVD
             }
         }
 
-        /// <summary>
-        /// Takes an encrypted key and its crypto and returns the key decrypted.
-        /// </summary>
+        /// <summary>Takes an encrypted key and its crypto and returns the key decrypted.</summary>
         /// <param name="invert"></param>
         /// <param name="cryptoKey">The key used to encrypt the data.</param>
         /// <param name="encryptedKey">The encrypted data.</param>
@@ -600,9 +594,7 @@ namespace Aaru.Decryption.DVD
             DecryptTitleKey(byte invert, byte[] cryptoKey, byte[] encryptedKey, out byte[] decryptedKey) =>
             DecryptKey(invert, cryptoKey, encryptedKey, out decryptedKey);
 
-        /// <summary>
-        /// Takes an bytearray of encrypted keys, decrypts them and returns the correctly decrypted key. 
-        /// </summary>
+        /// <summary>Takes an bytearray of encrypted keys, decrypts them and returns the correctly decrypted key.</summary>
         /// <param name="encryptedKeys">Encrypted keys to try to decrypt.</param>
         /// <param name="decryptedKey">The decrypted key if found.</param>
         public static void DecryptDiscKey(byte[] encryptedKeys, out byte[]? decryptedKey)
@@ -634,9 +626,7 @@ namespace Aaru.Decryption.DVD
             decryptedKey = null;
         }
 
-        /// <summary>
-        /// Takes a sector and a decrypted title key and returns the decrypted sector.
-        /// </summary>
+        /// <summary>Takes a sector and a decrypted title key and returns the decrypted sector.</summary>
         /// <param name="sectorData">Encrypted sector data.</param>
         /// <param name="cmiData">The Copyright Management Information.</param>
         /// <param name="keyData">The encryption keys.</param>
@@ -702,9 +692,7 @@ namespace Aaru.Decryption.DVD
             return decryptedBuffer;
         }
 
-        /// <summary>
-        /// Takes an RPC state from the drive and a CMI from a disc and checks if the regions are compatible.
-        /// </summary>
+        /// <summary>Takes an RPC state from the drive and a CMI from a disc and checks if the regions are compatible.</summary>
         /// <param name="rpc">The <c>RegionalPlaybackControlState</c> from drive.</param>
         /// <param name="cmi">The <c>LeadInCopyright</c> from disc.</param>
         /// <returns><c>true</c> if the regions are compatible, else <c>false</c></returns>
