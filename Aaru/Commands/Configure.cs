@@ -90,6 +90,24 @@ namespace Aaru.Commands
 
             var pressedKey = new ConsoleKeyInfo();
 
+            AaruConsole.WriteLine();
+
+            AaruConsole.
+                WriteLine("Do you want to enable the decryption of copy protected media (also known as DRM),\n"    +
+                          "like for example DVD Video CSS encryption.\n"                                           +
+                          "Consult your local laws before enabling it, as this is illegal in some countries, or\n" +
+                          "only legal under some circumstances.");
+
+            while(pressedKey.Key != ConsoleKey.Y &&
+                  pressedKey.Key != ConsoleKey.N)
+            {
+                AaruConsole.Write("Do you want to decryption of copy protected media? (Y/N): ");
+                pressedKey = System.Console.ReadKey();
+                AaruConsole.WriteLine();
+            }
+
+            Settings.Settings.Current.EnableDecryption = pressedKey.Key == ConsoleKey.Y;
+
             #region Device reports
             AaruConsole.WriteLine();
 
