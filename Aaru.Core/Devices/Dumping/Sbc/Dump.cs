@@ -668,7 +668,9 @@ namespace Aaru.Core.Devices.Dumping
 
             bool newTrim = false;
 
-            if(Settings.Settings.Current.EnableDecryption && _titleKeys)
+            if(Settings.Settings.Current.EnableDecryption &&
+               _titleKeys                                 &&
+               dskType == MediaType.DVDROM)
             {
                 UpdateStatus?.Invoke("Title keys dumping is enabled. This will be very slow.");
                 _resume.MissingTitleKeys ??= new List<ulong>(Enumerable.Range(0, (int)blocks).Select(n => (ulong)n));
