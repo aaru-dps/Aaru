@@ -70,7 +70,7 @@ namespace Aaru.Decoders.DVD
                 Reserved4         = response[7]
             };
         }
-        
+
         public static RegionalPlaybackControlState? DecodeRegionalPlaybackControlState(byte[] response)
         {
             if(response?.Length != 8)
@@ -87,6 +87,108 @@ namespace Aaru.Decoders.DVD
                 Reserved3 = response[7]
             };
         }
+
+        public static string PrettifyRegionalPlaybackControlState(RegionalPlaybackControlState? rpc)
+        {
+            if(rpc == null)
+            {
+                return null;
+            }
+
+            RegionalPlaybackControlState decoded = rpc.Value;
+            var                          sb      = new StringBuilder();
+
+            var typeCode =
+                (TypeCode)((decoded.TypeCode_VendorResetsAvailable_UserControlledChangesAvailable & 0xc0) >> 6);
+
+            int vendorResets = (decoded.TypeCode_VendorResetsAvailable_UserControlledChangesAvailable & 0x38) >> 3;
+
+            int userControlledChanges = decoded.TypeCode_VendorResetsAvailable_UserControlledChangesAvailable & 0x7;
+
+            switch(typeCode)
+            {
+                case TypeCode.None:
+                    sb.AppendLine("No drive region setting.");
+
+                    break;
+                case TypeCode.Set:
+                    sb.AppendLine("Drive region is set.");
+
+                    break;
+                case TypeCode.LastChance:
+                    sb.AppendLine("Drive region is set, with additional restrictions required to make a change.");
+
+                    break;
+                case TypeCode.Perm:
+                    sb.AppendLine("Drive region has been set permanently, but may be reset by the vendor if necessary.");
+
+                    break;
+            }
+
+            sb.AppendLine($"Drive has {vendorResets} vendor resets available.");
+            sb.AppendLine($"Drive has {userControlledChanges} user controlled changes available.");
+
+            switch(decoded.RegionMask)
+            {
+                case 0xFF:
+                    sb.AppendLine("Drive has no region set.");
+
+                    break;
+                case 0xFE:
+                    sb.AppendLine("Drive is set to region 1.");
+
+                    break;
+                case 0xFD:
+                    sb.AppendLine("Drive is set to region 2.");
+
+                    break;
+                case 0xFB:
+                    sb.AppendLine("Drive is set to region 3.");
+
+                    break;
+                case 0xF7:
+                    sb.AppendLine("Drive is set to region 4.");
+
+                    break;
+                case 0xEF:
+                    sb.AppendLine("Drive is set to region 5.");
+
+                    break;
+                case 0xDF:
+                    sb.AppendLine("Drive is set to region 6.");
+
+                    break;
+                case 0xBF:
+                    sb.AppendLine("Drive is set to region 7.");
+
+                    break;
+                case 0x7F:
+                    sb.AppendLine("Drive is set to region 8.");
+
+                    break;
+            }
+
+            switch(decoded.RPCScheme)
+            {
+                case 0x00:
+                    sb.AppendLine("The Logical Unit does not enforce Region Playback Controls (RPC).");
+
+                    break;
+                case 0x01:
+                    sb.AppendLine("The Logical Unit shall adhere to the specification and all requirements of the CSS license agreement concerning RPC.");
+
+                    break;
+                default:
+                    sb.AppendLine("The Logical Unit uses an unknown region enforcement scheme.");
+
+                    break;
+            }
+
+            return sb.ToString();
+        }
+
+        public static string PrettifyRegionalPlaybackControlState(byte[] response) =>
+            PrettifyRegionalPlaybackControlState(DecodeRegionalPlaybackControlState(response));
 
         public static string PrettifyLeadInCopyright(LeadInCopyright? cmi)
         {
@@ -244,6 +346,12 @@ namespace Aaru.Decoders.DVD
             public byte RPCScheme;
             /// <summary>Byte 7 Reserved</summary>
             public byte Reserved3;
+        }
+
+        enum TypeCode
+        {
+            None = 0, Set = 1, LastChance = 2,
+            Perm = 3
         }
     }
 }
