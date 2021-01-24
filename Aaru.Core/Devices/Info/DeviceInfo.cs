@@ -28,6 +28,7 @@
 //
 // ----------------------------------------------------------------------------
 // Copyright © 2011-2021 Natalia Portillo
+// Copyright © 2021 Rebecca Wallander
 // ****************************************************************************/
 
 using System;
@@ -36,7 +37,10 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs.Devices.SCSI;
 using Aaru.Console;
 using Aaru.Decoders.ATA;
+using Aaru.Decoders.DVD;
 using Aaru.Decoders.SCSI;
+using Aaru.Decryption;
+using DVDDecryption = Aaru.Decryption.DVD.Dump;
 using Aaru.Devices;
 using Aaru.Helpers;
 using Inquiry = Aaru.CommonTypes.Structs.Devices.SCSI.Inquiry;
@@ -254,6 +258,20 @@ namespace Aaru.Core.Devices.Info
 
                             if(!sense)
                                 MmcConfiguration = confBuf;
+
+                            var dvdDecrypt = new DVDDecryption(dev);
+
+                            sense = dvdDecrypt.ReadRpc(out byte[] cmdBuf, out _, DvdCssKeyClass.DvdCssCppmOrCprm,
+                                                       dev.Timeout, out _);
+
+                            if(!sense)
+                            {
+                                CSS_CPRM.RegionalPlaybackControlState? rpc =
+                                    CSS_CPRM.DecodeRegionalPlaybackControlState(cmdBuf);
+
+                                if(rpc.HasValue)
+                                    RPC = rpc;
+                            }
 
                             // TODO: DVD drives respond correctly to BD status.
                             // While specification says if no medium is present

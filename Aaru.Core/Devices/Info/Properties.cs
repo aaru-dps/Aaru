@@ -34,6 +34,7 @@ using System.Collections.Generic;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs.Devices.SCSI;
 using Aaru.Decoders.ATA;
+using Aaru.Decoders.DVD;
 using Aaru.Decoders.SCSI;
 using Aaru.Decoders.SCSI.SSC;
 using Aaru.Devices;
@@ -88,5 +89,6 @@ namespace Aaru.Core.Devices.Info
         public bool                                   IsCompactFlash         { get; }
         public bool                                   IsPcmcia               { get; }
         public byte[]                                 Cis                    { get; }
+        public CSS_CPRM.RegionalPlaybackControlState? RPC                    { get; }
     }
 }

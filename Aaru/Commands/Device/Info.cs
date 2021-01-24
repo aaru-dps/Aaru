@@ -28,6 +28,7 @@
 //
 // ----------------------------------------------------------------------------
 // Copyright © 2011-2021 Natalia Portillo
+// Copyright © 2021 Rebecca Wallander
 // ****************************************************************************/
 
 using System;
@@ -43,6 +44,7 @@ using Aaru.Console;
 using Aaru.Core;
 using Aaru.Database;
 using Aaru.Database.Models;
+using Aaru.Decoders.DVD;
 using Aaru.Decoders.PCMCIA;
 using Aaru.Decoders.SCSI;
 using Aaru.Decoders.SCSI.MMC;
@@ -827,6 +829,9 @@ namespace Aaru.Commands.Device
                                                    "GET CONFIGURATION returned no feature descriptors");
                     }
                 }
+
+                if(devInfo.RPC != null)
+                    AaruConsole.WriteLine(CSS_CPRM.PrettifyRegionalPlaybackControlState(devInfo.RPC));
 
                 if(devInfo.PlextorFeatures?.Eeprom != null)
                 {
