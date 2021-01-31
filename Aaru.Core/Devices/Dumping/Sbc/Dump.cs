@@ -740,7 +740,8 @@ namespace Aaru.Core.Devices.Dumping
                !_aborted                                  &&
                _retryPasses > 0                           &&
                Settings.Settings.Current.EnableDecryption &&
-               _titleKeys)
+               _titleKeys                                 &&
+               mediaTags.ContainsKey(MediaTagType.DVD_DiscKey_Decrypted))
                 RetryTitleKeys(dvdDecrypt, mediaTags[MediaTagType.DVD_DiscKey_Decrypted], ref totalDuration);
             #endregion Error handling
 
