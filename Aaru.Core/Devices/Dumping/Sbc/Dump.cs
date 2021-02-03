@@ -188,7 +188,7 @@ namespace Aaru.Core.Devices.Dumping
                                                           _dev.IsUsb, opticalDisc);
 
             if(_dev.ScsiType == PeripheralDeviceTypes.MultiMediaDevice)
-                MMC.DetectDiscType(ref dskType, 1, null, _dev, out _, out _, 0);
+                MMC.DetectDiscType(ref dskType, 1, null, _dev, out _, out _, 0, blocks+1);
 
             switch(dskType)
             {

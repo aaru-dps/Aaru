@@ -42,6 +42,7 @@ using Aaru.Decoders.Bluray;
 using Aaru.Decoders.CD;
 using Aaru.Decoders.SCSI.MMC;
 using Aaru.Decoders.Sega;
+using Aaru.Decoders.Xbox;
 using Aaru.Devices;
 using Aaru.Helpers;
 
@@ -281,7 +282,7 @@ namespace Aaru.Core.Media.Detection
 
         internal static void DetectDiscType(ref MediaType mediaType, int sessions, FullTOC.CDFullTOC? decodedToc,
                                             Device dev, out bool hiddenTrack, out bool hiddenData,
-                                            int firstTrackLastSession)
+                                            int firstTrackLastSession, ulong blocks)
         {
             uint                startOfFirstDataTrack = uint.MaxValue;
             DI.DiscInformation? blurayDi              = null;
@@ -1111,6 +1112,44 @@ namespace Aaru.Core.Media.Detection
                         }
                     }
 
+                    if(mediaType ==                 MediaType.DVDROM)
+                    {
+                        sense = dev.ReadDiscStructure(out cmdBuf, out _, MmcDiscStructureMediaType.Dvd, 0, 0,
+                                                      MmcDiscStructureFormat.DiscManufacturingInformation, 0, dev.Timeout,
+                                                      out _);
+
+                        if(!sense)
+                        {
+                            if(DMI.IsXbox(cmdBuf))
+                            {
+                                AaruConsole.DebugWriteLine("Media detection",
+                                                           "Found Xbox DMI, setting disc type to Xbox Game Disc (XGD).");
+
+                                mediaType = MediaType.XGD;
+
+                                return;
+                            }
+                            if(DMI.IsXbox360(cmdBuf))
+                            {
+
+                                // All XGD3 all have the same number of blocks
+                                if(blocks == 25063   || // Locked (or non compatible drive)
+                                   blocks == 4229664 || // Xtreme unlock
+                                   blocks == 4246304)   // Wxripper unlock
+                                {
+                                    AaruConsole.DebugWriteLine("Media detection",
+                                                               "Found Xbox 360 DMI with {0} blocks, setting disc type to Xbox 360 Game Disc 3 (XGD3).");
+
+                                    mediaType = MediaType.XGD3;
+                                    return;
+                                }
+                                AaruConsole.DebugWriteLine("Media detection",
+                                                           "Found Xbox 360 DMI with {0} blocks, setting disc type to Xbox 360 Game Disc 2 (XGD2).");
+                                mediaType = MediaType.XGD2;
+                                    return;
+                            }
+                        }
+                    }
                     break;
 
                 // Recordables will be checked for PhotoCD only

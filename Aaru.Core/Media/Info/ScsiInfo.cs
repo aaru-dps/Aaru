@@ -1461,7 +1461,7 @@ namespace Aaru.Core.Media.Info
             }
 
             MediaType tmpType = MediaType;
-            MMC.DetectDiscType(ref tmpType, sessions, FullToc, dev, out _, out _, firstTrackLastSession);
+            MMC.DetectDiscType(ref tmpType, sessions, FullToc, dev, out _, out _, firstTrackLastSession, Blocks);
 
             MediaType = tmpType;
         }

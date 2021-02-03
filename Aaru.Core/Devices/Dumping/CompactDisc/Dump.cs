@@ -557,7 +557,7 @@ namespace Aaru.Core.Devices.Dumping
             UpdateStatus?.Invoke("Detecting disc type...");
 
             MMC.DetectDiscType(ref dskType, sessions, toc, _dev, out hiddenTrack, out hiddenData,
-                               firstTrackLastSession);
+                               firstTrackLastSession, blocks);
 
             if(hiddenTrack || firstLba > 0)
             {
