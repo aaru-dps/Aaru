@@ -46,9 +46,9 @@ using Aaru.Devices;
 using Schemas;
 using DDS = Aaru.Decoders.DVD.DDS;
 using DMI = Aaru.Decoders.Xbox.DMI;
+using DVDDecryption = Aaru.Decryption.DVD.Dump;
 using Inquiry = Aaru.CommonTypes.Structs.Devices.SCSI.Inquiry;
 using Spare = Aaru.Decoders.DVD.Spare;
-using DVDDecryption = Aaru.Decryption.DVD.Dump;
 
 // ReSharper disable JoinDeclarationAndInitializer
 
@@ -768,6 +768,7 @@ namespace Aaru.Core.Devices.Dumping
                 case MediaType.BDROM:
                 case MediaType.BDRXL:
                 case MediaType.BDREXL:
+                case MediaType.UHDBD:
                     _dumpLog.WriteLine("Reading Disc Information.");
 
                     sense = _dev.ReadDiscStructure(out cmdBuf, out _, MmcDiscStructureMediaType.Bd, 0, 0,
@@ -800,6 +801,7 @@ namespace Aaru.Core.Devices.Dumping
             {
                 #region BD-ROM only
                 case MediaType.BDROM:
+                case MediaType.UHDBD:
                     _dumpLog.WriteLine("Reading Burst Cutting Area.");
 
                     sense = _dev.ReadDiscStructure(out cmdBuf, out _, MmcDiscStructureMediaType.Bd, 0, 0,

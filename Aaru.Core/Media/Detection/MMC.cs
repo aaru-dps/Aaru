@@ -1003,8 +1003,10 @@ namespace Aaru.Core.Media.Detection
                 case MediaType.DVDROM:
                 case MediaType.HDDVDROM:
                 case MediaType.BDROM:
+                case MediaType.UHDBD:
                 case MediaType.Unknown:
-                    if(mediaType == MediaType.BDROM)
+                    if(mediaType == MediaType.BDROM ||
+                       mediaType == MediaType.UHDBD)
                     {
                         sense = dev.ReadDiscStructure(out cmdBuf, out _, MmcDiscStructureMediaType.Bd, 0, 0,
                                                       MmcDiscStructureFormat.DiscInformation, 0, dev.Timeout, out _);
@@ -1112,11 +1114,11 @@ namespace Aaru.Core.Media.Detection
                         }
                     }
 
-                    if(mediaType ==                 MediaType.DVDROM)
+                    if(mediaType == MediaType.DVDROM)
                     {
                         sense = dev.ReadDiscStructure(out cmdBuf, out _, MmcDiscStructureMediaType.Dvd, 0, 0,
-                                                      MmcDiscStructureFormat.DiscManufacturingInformation, 0, dev.Timeout,
-                                                      out _);
+                                                      MmcDiscStructureFormat.DiscManufacturingInformation, 0,
+                                                      dev.Timeout, out _);
 
                         if(!sense)
                         {
@@ -1129,9 +1131,9 @@ namespace Aaru.Core.Media.Detection
 
                                 return;
                             }
+
                             if(DMI.IsXbox360(cmdBuf))
                             {
-
                                 // All XGD3 all have the same number of blocks
                                 if(blocks == 25063   || // Locked (or non compatible drive)
                                    blocks == 4229664 || // Xtreme unlock
@@ -1141,15 +1143,20 @@ namespace Aaru.Core.Media.Detection
                                                                "Found Xbox 360 DMI with {0} blocks, setting disc type to Xbox 360 Game Disc 3 (XGD3).");
 
                                     mediaType = MediaType.XGD3;
+
                                     return;
                                 }
+
                                 AaruConsole.DebugWriteLine("Media detection",
                                                            "Found Xbox 360 DMI with {0} blocks, setting disc type to Xbox 360 Game Disc 2 (XGD2).");
+
                                 mediaType = MediaType.XGD2;
-                                    return;
+
+                                return;
                             }
                         }
                     }
+
                     break;
 
                 // Recordables will be checked for PhotoCD only
@@ -2232,6 +2239,7 @@ namespace Aaru.Core.Media.Detection
                 case MediaType.DVDROM:
                 case MediaType.HDDVDROM:
                 case MediaType.BDROM:
+                case MediaType.UHDBD:
                 case MediaType.Unknown:
                     // TODO: Nuon requires reading the filesystem, searching for a file called "/NUON/NUON.RUN"
                     if(ps2BootSectors        != null &&
@@ -2302,12 +2310,24 @@ namespace Aaru.Core.Media.Detection
                     {
                         string blurayType = StringHandlers.CToString(blurayDi?.Units[0].DiscTypeIdentifier);
 
-                        if(blurayType == "XG4")
+                        switch(blurayType)
                         {
-                            AaruConsole.DebugWriteLine("Media detection",
-                                                       "Blu-ray type set to \"XG4\", setting disc type to Xbox One Disc (XGD4).");
+                            case "XG4":
+                                AaruConsole.DebugWriteLine("Media detection",
+                                                           "Blu-ray type set to \"XG4\", setting disc type to Xbox One Disc (XGD4).");
 
-                            mediaType = MediaType.XGD4;
+                                mediaType = MediaType.XGD4;
+
+                                break;
+
+                            // TODO: PS5
+                            case "BDU":
+                                AaruConsole.DebugWriteLine("Media detection",
+                                                           "Blu-ray type set to \"BDU\", setting disc type to Ultra HD Blu-ray.");
+
+                                mediaType = MediaType.UHDBD;
+
+                                break;
                         }
                     }
 

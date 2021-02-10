@@ -45,12 +45,11 @@ using Aaru.Decoders.SCSI;
 using Aaru.Decoders.SCSI.MMC;
 using Aaru.Decoders.SCSI.SSC;
 using Aaru.Decoders.Xbox;
-using Aaru.Decryption.DVD;
 using Aaru.Devices;
 using DeviceInfo = Aaru.Core.Devices.Info.DeviceInfo;
 using DMI = Aaru.Decoders.Xbox.DMI;
-using Inquiry = Aaru.CommonTypes.Structs.Devices.SCSI.Inquiry;
 using DVDDecryption = Aaru.Decryption.DVD.Dump;
+using Inquiry = Aaru.CommonTypes.Structs.Devices.SCSI.Inquiry;
 
 namespace Aaru.Core.Media.Info
 {
@@ -714,7 +713,7 @@ namespace Aaru.Core.Media.Info
                     #endregion DVD-R and HD DVD-R
                 }
 
-                var dvdDecrypt = new Dump(dev);
+                var dvdDecrypt = new DVDDecryption(dev);
                 sense = dvdDecrypt.ReadBusKey(out cmdBuf, out senseBuf, CopyrightType.CSS, dev.Timeout, out _);
 
                 if(!sense)
@@ -724,7 +723,7 @@ namespace Aaru.Core.Media.Info
 
                     if(sense)
                         AaruConsole.DebugWriteLine("Media-Info command", "READ DISC STRUCTURE: Disc Key\n{0}",
-                                                   Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                                                   Sense.PrettifySense(senseBuf));
                     else
                         DvdDiscKey = cmdBuf;
 
@@ -734,7 +733,7 @@ namespace Aaru.Core.Media.Info
 
                     if(sense)
                         AaruConsole.DebugWriteLine("Media-Info command", "READ DISC STRUCTURE: Sector CMI\n{0}",
-                                                   Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                                                   Sense.PrettifySense(senseBuf));
                     else
                         DvdSectorCmi = cmdBuf;
                 }
@@ -968,6 +967,7 @@ namespace Aaru.Core.Media.Info
                     case MediaType.BDR:
                     case MediaType.BDRE:
                     case MediaType.BDROM:
+                    case MediaType.UHDBD:
                     case MediaType.BDRXL:
                     case MediaType.BDREXL:
                         sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.Bd, 0, 0,
@@ -996,6 +996,7 @@ namespace Aaru.Core.Media.Info
                 {
                     #region BD-ROM only
                     case MediaType.BDROM:
+                    case MediaType.UHDBD:
                         sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.Bd, 0, 0,
                                                       MmcDiscStructureFormat.BdBurstCuttingArea, 0, dev.Timeout, out _);
 

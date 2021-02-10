@@ -183,6 +183,7 @@ namespace Aaru.DiscImages
                 case MediaType.HDDVDRDL:
                 case MediaType.HDDVDRWDL:
                 case MediaType.BDROM:
+                case MediaType.UHDBD:
                 case MediaType.BDR:
                 case MediaType.BDRE:
                 case MediaType.BDRXL:

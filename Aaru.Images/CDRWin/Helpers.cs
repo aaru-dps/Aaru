@@ -145,7 +145,7 @@ namespace Aaru.DiscImages
         }
 
         static (byte minute, byte second, byte frame) LbaToMsf(ulong sector) =>
-            ((byte)(sector / 75 / 60), (byte)((sector / 75) % 60), (byte)(sector % 75));
+            ((byte)(sector / 75 / 60), (byte)(sector / 75 % 60), (byte)(sector % 75));
 
         static string GetTrackMode(Track track)
         {
@@ -177,6 +177,7 @@ namespace Aaru.DiscImages
                 case MediaType.BDREXL:
                 case MediaType.BDRE: return CDRWIN_DISK_TYPE_BDRE;
                 case MediaType.BDROM:
+                case MediaType.UHDBD:
                 case MediaType.CBHD:
                 case MediaType.PS3BD:
                 case MediaType.PS4BD:
