@@ -1004,6 +1004,7 @@ namespace Aaru.CommonTypes.Metadata
                 case CommonTypes.MediaType.PS3DVD:
                 case CommonTypes.MediaType.PS3BD:
                 case CommonTypes.MediaType.PS4BD:
+                case CommonTypes.MediaType.PS5BD:
                 case CommonTypes.MediaType.XGD:
                 case CommonTypes.MediaType.XGD2:
                 case CommonTypes.MediaType.XGD3:

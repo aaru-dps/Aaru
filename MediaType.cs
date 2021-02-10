@@ -253,6 +253,8 @@ namespace Aaru.CommonTypes
         PS4BD = 117,
         /// <summary>Sony PlayStation Portable Universal Media Disc (ECMA-365)</summary>
         UMD = 118, PlayStationVitaGameCard = 119,
+        /// <summary>Sony PlayStation 5 game Ultra HD Blu-ray</summary>
+        PS5BD = 120,
         #endregion Sony game media, types 110 to 129
 
         #region Microsoft game media, types 130 to 149

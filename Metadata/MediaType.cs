@@ -408,6 +408,11 @@ namespace Aaru.CommonTypes.Metadata
                     discSubType = "PlayStation 4 Game Disc";
 
                     break;
+                case CommonTypes.MediaType.PS5BD:
+                    discType    = "Blu-ray";
+                    discSubType = "PlayStation 5 Game Disc";
+
+                    break;
                 case CommonTypes.MediaType.SACD:
                     discType    = "SACD";
                     discSubType = "Super Audio CD";
