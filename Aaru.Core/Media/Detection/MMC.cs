@@ -71,6 +71,11 @@ namespace Aaru.Core.Media.Detection
             0x50, 0x6C, 0x61, 0x79, 0x53, 0x74, 0x61, 0x74, 0x69, 0x6F, 0x6E, 0x34, 0x00, 0x00, 0x00, 0x00
         };
 
+        static readonly byte[] _ps5Id =
+        {
+            0x50, 0x6C, 0x61, 0x79, 0x53, 0x74, 0x61, 0x74, 0x69, 0x6F, 0x6E, 0x35, 0x00, 0x00, 0x00, 0x00
+        };
+
         static readonly byte[] _operaId =
         {
             0x01, 0x5A, 0x5A, 0x5A, 0x5A, 0x5A, 0x01
@@ -2322,6 +2327,22 @@ namespace Aaru.Core.Media.Detection
 
                             // TODO: PS5
                             case "BDU":
+                                if(sector1 != null)
+                                {
+                                    byte[] tmp = new byte[_ps5Id.Length];
+                                    Array.Copy(sector1, 1024, tmp, 0, tmp.Length);
+
+                                    if(tmp.SequenceEqual(_ps5Id))
+                                    {
+                                        mediaType = MediaType.PS5BD;
+
+                                        AaruConsole.DebugWriteLine("Media detection",
+                                                                   "Found Sony PlayStation 5 boot sectors, setting disc type to PS5 Ultra HD Blu-ray.");
+
+                                        break;
+                                    }
+                                }
+
                                 AaruConsole.DebugWriteLine("Media detection",
                                                            "Blu-ray type set to \"BDU\", setting disc type to Ultra HD Blu-ray.");
 

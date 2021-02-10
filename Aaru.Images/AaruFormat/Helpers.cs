@@ -207,6 +207,7 @@ namespace Aaru.DiscImages
                 case MediaType.PS3DVD:
                 case MediaType.PS3BD:
                 case MediaType.PS4BD:
+                case MediaType.PS5BD:
                 case MediaType.UMD:
                 case MediaType.XGD:
                 case MediaType.XGD2:

@@ -181,6 +181,7 @@ namespace Aaru.DiscImages
                 case MediaType.CBHD:
                 case MediaType.PS3BD:
                 case MediaType.PS4BD:
+                case MediaType.PS5BD:
                 case MediaType.UDO:
                 case MediaType.UDO2:
                 case MediaType.UDO2_WORM: return CDRWIN_DISK_TYPE_BD;

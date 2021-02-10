@@ -607,6 +607,7 @@ namespace Aaru.Commands.Device
                                                         mediaTypes.Add("Ultra HD Blu-ray movie");
                                                         mediaTypes.Add("PlayStation 3 game");
                                                         mediaTypes.Add("PlayStation 4 game");
+                                                        mediaTypes.Add("PlayStation 5 game");
                                                         mediaTypes.Add("Xbox One game");
                                                         mediaTypes.Add("Nintendo Wii U game");
 
@@ -682,6 +683,7 @@ namespace Aaru.Commands.Device
                                         mediaTypes.Add("Ultra HD Blu-ray movie");
                                         mediaTypes.Add("PlayStation 3 game");
                                         mediaTypes.Add("PlayStation 4 game");
+                                        mediaTypes.Add("PlayStation 5 game");
                                         mediaTypes.Add("Xbox One game");
                                         mediaTypes.Add("Nintendo Wii U game");
                                     }

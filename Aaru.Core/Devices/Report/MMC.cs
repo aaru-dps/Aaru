@@ -758,6 +758,7 @@ namespace Aaru.Core.Devices.Report
                 case "Ultra HD Blu-ray movie":
                 case "PlayStation 3 game":
                 case "PlayStation 4 game":
+                case "PlayStation 5 game":
                 case "Xbox One game":
                 case "Nintendo Wii U game":
                     AaruConsole.WriteLine("Querying BD BCA...");
@@ -916,6 +917,7 @@ namespace Aaru.Core.Devices.Report
                mediaType == "Ultra HD Blu-ray movie"                  ||
                mediaType == "PlayStation 3 game"                      ||
                mediaType == "PlayStation 4 game"                      ||
+               mediaType == "PlayStation 5 game"                      ||
                mediaType == "Xbox One game"                           ||
                mediaType == "Nintendo Wii game")
             {
