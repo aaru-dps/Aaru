@@ -73,6 +73,11 @@ namespace Aaru.CommonTypes.Metadata
                     discSubType = "BD-R XL";
 
                     break;
+                case CommonTypes.MediaType.UHDBD:
+                    discType    = "Blu-ray";
+                    discSubType = "Ultra HD Blu-ray";
+
+                    break;
                 case CommonTypes.MediaType.CBHD:
                     discType    = "Blu-ray";
                     discSubType = "CBHD";

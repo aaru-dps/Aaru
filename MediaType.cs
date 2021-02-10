@@ -179,6 +179,8 @@ namespace Aaru.CommonTypes
         BDRXL = 63,
         /// <summary>BD-RE XL</summary>
         BDREXL = 64,
+        /// <summary>Ultra HD Blu-ray</summary>
+        UHDBD = 65,
         #endregion Standard Blu-ray formats, types 60 to 69
 
         #region Rare or uncommon optical standards, types 70 to 79
