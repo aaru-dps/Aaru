@@ -1015,7 +1015,7 @@ namespace Aaru.Core.Media.Detection
                             blurayDi = DI.Decode(cmdBuf);
                     }
 
-                    sense = dev.Read16(out cmdBuf, out _, 0, false, true, false, 0, 2048, 0, 1, false, dev.Timeout,
+                    sense = dev.Read16(out cmdBuf, out _, 0, false, false, false, 0, 2048, 0, 1, false, dev.Timeout,
                                        out _);
 
                     if(!sense &&
@@ -1023,14 +1023,14 @@ namespace Aaru.Core.Media.Detection
                     {
                         sector0 = cmdBuf;
 
-                        sense = dev.Read16(out cmdBuf, out _, 0, false, true, false, 1, 2048, 0, 1, false, dev.Timeout,
+                        sense = dev.Read16(out cmdBuf, out _, 0, false, false, false, 1, 2048, 0, 1, false, dev.Timeout,
                                            out _);
 
                         if(!sense &&
                            !dev.Error)
                             sector1 = cmdBuf;
 
-                        sense = dev.Read16(out cmdBuf, out _, 0, false, true, false, 0, 2048, 0, 12, false, dev.Timeout,
+                        sense = dev.Read16(out cmdBuf, out _, 0, false, false, false, 0, 2048, 0, 12, false, dev.Timeout,
                                            out _);
 
                         if(!sense     &&
@@ -1040,7 +1040,7 @@ namespace Aaru.Core.Media.Detection
                     }
                     else
                     {
-                        sense = dev.Read12(out cmdBuf, out _, 0, false, true, false, false, 0, 2048, 0, 1, false,
+                        sense = dev.Read12(out cmdBuf, out _, 0, false, false, false, false, 0, 2048, 0, 1, false,
                                            dev.Timeout, out _);
 
                         if(!sense &&
@@ -1048,14 +1048,14 @@ namespace Aaru.Core.Media.Detection
                         {
                             sector0 = cmdBuf;
 
-                            sense = dev.Read12(out cmdBuf, out _, 0, false, true, false, false, 1, 2048, 0, 1, false,
+                            sense = dev.Read12(out cmdBuf, out _, 0, false, false, false, false, 1, 2048, 0, 1, false,
                                                dev.Timeout, out _);
 
                             if(!sense &&
                                !dev.Error)
                                 sector1 = cmdBuf;
 
-                            sense = dev.Read12(out cmdBuf, out _, 0, false, true, false, false, 0, 2048, 0, 12, false,
+                            sense = dev.Read12(out cmdBuf, out _, 0, false, false, false, false, 0, 2048, 0, 12, false,
                                                dev.Timeout, out _);
 
                             if(!sense     &&
@@ -1065,7 +1065,7 @@ namespace Aaru.Core.Media.Detection
                         }
                         else
                         {
-                            sense = dev.Read10(out cmdBuf, out _, 0, false, true, false, false, 0, 2048, 0, 1,
+                            sense = dev.Read10(out cmdBuf, out _, 0, false, false, false, false, 0, 2048, 0, 1,
                                                dev.Timeout, out _);
 
                             if(!sense &&
@@ -1073,14 +1073,14 @@ namespace Aaru.Core.Media.Detection
                             {
                                 sector0 = cmdBuf;
 
-                                sense = dev.Read10(out cmdBuf, out _, 0, false, true, false, false, 1, 2048, 0, 1,
+                                sense = dev.Read10(out cmdBuf, out _, 0, false, false, false, false, 1, 2048, 0, 1,
                                                    dev.Timeout, out _);
 
                                 if(!sense &&
                                    !dev.Error)
                                     sector1 = cmdBuf;
 
-                                sense = dev.Read10(out cmdBuf, out _, 0, false, true, false, false, 0, 2048, 0, 12,
+                                sense = dev.Read10(out cmdBuf, out _, 0, false, false, false, false, 0, 2048, 0, 12,
                                                    dev.Timeout, out _);
 
                                 if(!sense     &&
@@ -1162,7 +1162,7 @@ namespace Aaru.Core.Media.Detection
                 // Recordables will be checked for PhotoCD only
                 case MediaType.CDR:
                     // Check if ISO9660
-                    sense = dev.Read12(out byte[] isoSector, out _, 0, false, true, false, false, 16, 2048, 0, 1, false,
+                    sense = dev.Read12(out byte[] isoSector, out _, 0, false, false, false, false, 16, 2048, 0, 1, false,
                                        dev.Timeout, out _);
 
                     // Sector 16 reads, and contains "CD001" magic?
@@ -1179,7 +1179,7 @@ namespace Aaru.Core.Media.Detection
 
                     while(isoSectorPosition < 32)
                     {
-                        sense = dev.Read12(out isoSector, out _, 0, false, true, false, false, isoSectorPosition, 2048,
+                        sense = dev.Read12(out isoSector, out _, 0, false, false, false, false, isoSectorPosition, 2048,
                                            0, 1, false, dev.Timeout, out _);
 
                         // If sector cannot be read, break here
@@ -1226,7 +1226,7 @@ namespace Aaru.Core.Media.Detection
 
                         for(uint i = 0; i < rootLength; i++)
                         {
-                            sense = dev.Read12(out isoSector, out _, 0, false, true, false, false, rootStart + i, 2048,
+                            sense = dev.Read12(out isoSector, out _, 0, false, false, false, false, rootStart + i, 2048,
                                                0, 1, false, dev.Timeout, out _);
 
                             if(sense)
@@ -1279,7 +1279,7 @@ namespace Aaru.Core.Media.Detection
 
                             for(uint i = 0; i < pcdLength; i++)
                             {
-                                sense = dev.Read12(out isoSector, out _, 0, false, true, false, false, pcdStart + i,
+                                sense = dev.Read12(out isoSector, out _, 0, false, false, false, false, pcdStart + i,
                                                    2048, 0, 1, false, dev.Timeout, out _);
 
                                 if(sense)
@@ -1327,7 +1327,7 @@ namespace Aaru.Core.Media.Detection
 
                             if(infoPos > 0)
                             {
-                                sense = dev.Read12(out isoSector, out _, 0, false, true, false, false, infoPos, 2048, 0,
+                                sense = dev.Read12(out isoSector, out _, 0, false, false, false, false, infoPos, 2048, 0,
                                                    1, false, dev.Timeout, out _);
 
                                 if(sense)
@@ -1642,7 +1642,7 @@ namespace Aaru.Core.Media.Detection
                     hasPs2CdBoot:
 
                     // Check if ISO9660
-                    sense = dev.Read12(out byte[] isoSector, out _, 0, false, true, false, false, 16, 2048, 0, 1, false,
+                    sense = dev.Read12(out byte[] isoSector, out _, 0, false, false, false, false, 16, 2048, 0, 1, false,
                                        dev.Timeout, out _);
 
                     // Sector 16 reads, and contains "CD001" magic?
@@ -1659,7 +1659,7 @@ namespace Aaru.Core.Media.Detection
 
                     while(isoSectorPosition < 32)
                     {
-                        sense = dev.Read12(out isoSector, out _, 0, false, true, false, false, isoSectorPosition, 2048,
+                        sense = dev.Read12(out isoSector, out _, 0, false, false, false, false, isoSectorPosition, 2048,
                                            0, 1, false, dev.Timeout, out _);
 
                         // If sector cannot be read, break here
@@ -1706,7 +1706,7 @@ namespace Aaru.Core.Media.Detection
 
                         for(uint i = 0; i < rootLength; i++)
                         {
-                            sense = dev.Read12(out isoSector, out _, 0, false, true, false, false, rootStart + i, 2048,
+                            sense = dev.Read12(out isoSector, out _, 0, false, false, false, false, rootStart + i, 2048,
                                                0, 1, false, dev.Timeout, out _);
 
                             if(sense)
@@ -1824,7 +1824,7 @@ namespace Aaru.Core.Media.Detection
 
                             for(uint i = 0; i < ngcdSectors; i++)
                             {
-                                sense = dev.Read12(out isoSector, out _, 0, false, true, false, false, ngcdIplStart + i,
+                                sense = dev.Read12(out isoSector, out _, 0, false, false, false, false, ngcdIplStart + i,
                                                    2048, 0, 1, false, dev.Timeout, out _);
 
                                 if(sense)
@@ -1960,7 +1960,7 @@ namespace Aaru.Core.Media.Detection
 
                             for(uint i = 0; i < vcdLength; i++)
                             {
-                                sense = dev.Read12(out isoSector, out _, 0, false, true, false, false, vcdStart + i,
+                                sense = dev.Read12(out isoSector, out _, 0, false, false, false, false, vcdStart + i,
                                                    2048, 0, 1, false, dev.Timeout, out _);
 
                                 if(sense)
@@ -2011,7 +2011,7 @@ namespace Aaru.Core.Media.Detection
 
                         if(infoPos > 0)
                         {
-                            sense = dev.Read12(out isoSector, out _, 0, false, true, false, false, infoPos, 2048, 0, 1,
+                            sense = dev.Read12(out isoSector, out _, 0, false, false, false, false, infoPos, 2048, 0, 1,
                                                false, dev.Timeout, out _);
 
                             if(sense)
@@ -2057,7 +2057,7 @@ namespace Aaru.Core.Media.Detection
 
                             for(uint i = 0; i < pcdLength; i++)
                             {
-                                sense = dev.Read12(out isoSector, out _, 0, false, true, false, false, pcdStart + i,
+                                sense = dev.Read12(out isoSector, out _, 0, false, false, false, false, pcdStart + i,
                                                    2048, 0, 1, false, dev.Timeout, out _);
 
                                 if(sense)
@@ -2107,7 +2107,7 @@ namespace Aaru.Core.Media.Detection
 
                         if(infoPos > 0)
                         {
-                            sense = dev.Read12(out isoSector, out _, 0, false, true, false, false, infoPos, 2048, 0, 1,
+                            sense = dev.Read12(out isoSector, out _, 0, false, false, false, false, infoPos, 2048, 0, 1,
                                                false, dev.Timeout, out _);
 
                             if(sense)
@@ -2148,7 +2148,7 @@ namespace Aaru.Core.Media.Detection
 
                             for(uint i = 0; i < ps1Sectors; i++)
                             {
-                                sense = dev.Read12(out isoSector, out _, 0, false, true, false, false, ps1Start + i,
+                                sense = dev.Read12(out isoSector, out _, 0, false, false, false, false, ps1Start + i,
                                                    2048, 0, 1, false, dev.Timeout, out _);
 
                                 if(sense)
