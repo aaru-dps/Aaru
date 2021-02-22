@@ -33,10 +33,10 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Filters;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Images
+namespace Aaru.Tests.Images.CisCopy
 {
     [TestFixture]
-    public class CisCopy
+    public class Uncompressed
     {
         // TODO: Support compression
         readonly string[] _testFiles =
