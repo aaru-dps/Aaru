@@ -68,8 +68,8 @@ namespace Aaru.CommonTypes
         Zone_HDD = 4,
         /// <summary>USB flash drives</summary>
         FlashDrive = 5,
-        /// <summary>USB flash drives</summary>
-        UnknownTape = 4,
+        /// <summary>Unknown data tape</summary>
+        UnknownTape = 6,
         #endregion Generics, types 0 to 9
 
         #region Somewhat standard Compact Disc formats, types 10 to 39
