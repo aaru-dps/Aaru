@@ -444,43 +444,43 @@ namespace Aaru.Tests.Images.AaruFormat
             // test_videocd.aif
             "a5531d15eefe70ff21718b3b5da08255",
 
-            // Nonstop-UX System V Release 4 B32 (Boot Tape).cptp.lz
+            // Nonstop-UX System V Release 4 B32 (Boot Tape).aif
             "a6334d975523b3422fea522b0cc118a9",
 
-            // Nonstop-UX System V Release 4 B32 (Integrity SX25 VME V5.0+).cptp.lz
+            // Nonstop-UX System V Release 4 B32 (Integrity SX25 VME V5.0+).aif
             "17ef78d9e5c53b976f530d4ca44223fd",
 
-            // Nonstop-UX System V Release 4 B32 (Online Software Upgrade).cptp.lz
+            // Nonstop-UX System V Release 4 B32 (Online Software Upgrade).aif
             "6b6e80c4b3a48b2bc46571389eeaf78b",
 
-            // Nonstop-UX System V Release 4 B32 (Operating System).cptp.lz
+            // Nonstop-UX System V Release 4 B32 (Operating System).aif
             "91b6115a718b9854b69478fee8e8644e",
 
-            // Nonstop-UX System V Release 4 B32 (Optional Packages).cptp.lz
+            // Nonstop-UX System V Release 4 B32 (Optional Packages).aif
             "018c37c40f8df91ab9b098d643c9ae6c",
 
-            // Nonstop-UX System V Release 4 B32 (OSF-Motif 1.2.4).cptp.lz
+            // Nonstop-UX System V Release 4 B32 (OSF-Motif 1.2.4).aif
             "181c9b00c236d14c7dfa4fa009c4559d",
 
-            // Nonstop-UX System V Release 4 B32 (Reliable Ethernet).cptp.lz
+            // Nonstop-UX System V Release 4 B32 (Reliable Ethernet).aif
             "7dc46bb181077d215a5c93cc990da365",
 
-            // Nonstop-UX System V Release 4 B32 (Required Packages).cptp.lz
+            // Nonstop-UX System V Release 4 B32 (Required Packages).aif
             "80e1d90052bf8c2df641398d0a30e630",
 
-            // OpenWindows.3.0.exabyte.cptp.lz
+            // OpenWindows.3.0.exabyte.aif
             "8861f8c06a2e93ca5a81d729ad3e1de1",
 
-            // OpenWindows.3.0.Q150.cptp.lz
+            // OpenWindows.3.0.Q150.aif
             "2b944c7a353a63a48fdcf5517306fba6",
 
-            // OS.MP.4.1C.exabyte.cptp.lz
+            // OS.MP.4.1C.exabyte.aif
             "a923a4fffb3456386bafd00c1d939224",
 
-            // X.3.0.exabyte.cptp.lz
+            // X.3.0.exabyte.aif
             "e625c03d7493dc22fe49f91f731446e8",
 
-            // X.3.Q150.cptp.lz
+            // X.3.Q150.aif
             "198464b1daf8e674debf8eda0fcbf016"
         };
 
