@@ -588,6 +588,35 @@ namespace Aaru.Commands.Image
                 return (int)ErrorNumber.DataWillBeLost;
             }
 
+            var inputTape  = inputFormat as ITapeImage;
+            var outputTape = outputFormat as IWritableTapeImage;
+
+            if(inputTape?.IsTape == true &&
+               outputTape is null)
+            {
+                AaruConsole.
+                    ErrorWriteLine("Input format contains a tape image and is not supported by output format, not continuing...");
+
+                return (int)ErrorNumber.UnsupportedMedia;
+            }
+
+            bool ret = false;
+
+            if(inputTape?.IsTape == true &&
+               outputTape        != null)
+            {
+                ret = outputTape.SetTape();
+
+                // Cannot set image to tape mode
+                if(!ret)
+                {
+                    AaruConsole.ErrorWriteLine("Error setting output image in tape mode, not continuing...");
+                    AaruConsole.ErrorWriteLine(outputFormat.ErrorMessage);
+
+                    return (int)ErrorNumber.WriteError;
+                }
+            }
+
             if(!outputFormat.Create(outputPath, mediaType, parsedOptions, inputFormat.Info.Sectors,
                                     inputFormat.Info.SectorSize))
             {
@@ -671,7 +700,7 @@ namespace Aaru.Commands.Image
                 foreach(Track track in inputOptical.Tracks)
                 {
                     doneSectors = 0;
-                    ulong trackSectors = (track.TrackEndSector - track.TrackStartSector) + 1;
+                    ulong trackSectors = track.TrackEndSector - track.TrackStartSector + 1;
 
                     while(doneSectors < trackSectors)
                     {
@@ -849,7 +878,7 @@ namespace Aaru.Commands.Image
                     foreach(Track track in inputOptical.Tracks)
                     {
                         doneSectors = 0;
-                        ulong  trackSectors = (track.TrackEndSector - track.TrackStartSector) + 1;
+                        ulong  trackSectors = track.TrackEndSector - track.TrackStartSector + 1;
                         byte[] sector;
                         bool   result;
 
@@ -1020,17 +1049,22 @@ namespace Aaru.Commands.Image
             }
             else
             {
-                (uint cylinders, uint heads, uint sectors) chs =
-                    geometryValues != null
-                        ? (geometryValues.Value.cylinders, geometryValues.Value.heads, geometryValues.Value.sectors)
-                        : (inputFormat.Info.Cylinders, inputFormat.Info.Heads, inputFormat.Info.SectorsPerTrack);
+                if(inputTape  == null ||
+                   outputTape == null ||
+                   !inputTape.IsTape)
+                {
+                    (uint cylinders, uint heads, uint sectors) chs =
+                        geometryValues != null
+                            ? (geometryValues.Value.cylinders, geometryValues.Value.heads, geometryValues.Value.sectors)
+                            : (inputFormat.Info.Cylinders, inputFormat.Info.Heads, inputFormat.Info.SectorsPerTrack);
 
-                AaruConsole.WriteLine("Setting geometry to {0} cylinders, {1} heads and {2} sectors per track",
-                                      chs.cylinders, chs.heads, chs.sectors);
+                    AaruConsole.WriteLine("Setting geometry to {0} cylinders, {1} heads and {2} sectors per track",
+                                          chs.cylinders, chs.heads, chs.sectors);
 
-                if(!outputFormat.SetGeometry(chs.cylinders, chs.heads, chs.sectors))
-                    AaruConsole.ErrorWriteLine("Error {0} setting geometry, image may be incorrect, continuing...",
-                                               outputFormat.ErrorMessage);
+                    if(!outputFormat.SetGeometry(chs.cylinders, chs.heads, chs.sectors))
+                        AaruConsole.ErrorWriteLine("Error {0} setting geometry, image may be incorrect, continuing...",
+                                                   outputFormat.ErrorMessage);
+                }
 
                 while(doneSectors < inputFormat.Info.Sectors)
                 {
@@ -1162,9 +1196,31 @@ namespace Aaru.Commands.Image
 
                     AaruConsole.WriteLine();
                 }
-            }
 
-            bool ret = false;
+                if(inputTape  != null &&
+                   outputTape != null &&
+                   inputTape.IsTape)
+                {
+                    foreach(TapeFile tapeFile in inputTape.Files)
+                    {
+                        AaruConsole.Write("\rConverting file {0} of partition {1}...", tapeFile.File,
+                                          tapeFile.Partition);
+
+                        outputTape.AddFile(tapeFile);
+                    }
+
+                    AaruConsole.WriteLine();
+
+                    foreach(TapePartition tapePartition in inputTape.TapePartitions)
+                    {
+                        AaruConsole.Write("\rConverting tape partition {0}...", tapePartition.Number);
+
+                        outputTape.AddPartition(tapePartition);
+                    }
+
+                    AaruConsole.WriteLine();
+                }
+            }
 
             if(resume       != null ||
                dumpHardware != null)
