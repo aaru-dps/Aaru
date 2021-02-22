@@ -33,6 +33,7 @@ using System.Threading.Tasks;
 using Aaru.Checksums;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Filters;
 using FluentAssertions;
@@ -51,7 +52,16 @@ namespace Aaru.Tests.Images.AaruFormat
             "report_dvd-ram_v2.aif", "report_dvd+r_dl.aif", "report_dvd-rom.aif", "report_dvd+rw.aif",
             "report_dvd-rw.aif", "report_enhancedcd.aif", "test_audiocd_cdtext.aif",
             "test_audiocd_multiple_indexes.aif", "test_cdr_incd_finalized.aif", "test_enhancedcd.aif",
-            "test_multi_karaoke_sampler.aif", "test_multisession.aif", "test_videocd.aif"
+            "test_multi_karaoke_sampler.aif", "test_multisession.aif", "test_videocd.aif",
+            "Nonstop-UX System V Release 4 B32 (Boot Tape).aif",
+            "Nonstop-UX System V Release 4 B32 (Integrity SX25 VME V5.0+).aif",
+            "Nonstop-UX System V Release 4 B32 (Online Software Upgrade).aif",
+            "Nonstop-UX System V Release 4 B32 (Operating System).aif",
+            "Nonstop-UX System V Release 4 B32 (Optional Packages).aif",
+            "Nonstop-UX System V Release 4 B32 (OSF-Motif 1.2.4).aif",
+            "Nonstop-UX System V Release 4 B32 (Reliable Ethernet).aif",
+            "Nonstop-UX System V Release 4 B32 (Required Packages).aif", "OpenWindows.3.0.exabyte.aif",
+            "OpenWindows.3.0.Q150.aif", "OS.MP.4.1C.exabyte.aif", "X.3.0.exabyte.aif", "X.3.Q150.aif"
         };
 
         readonly ulong[] _sectors =
@@ -117,7 +127,151 @@ namespace Aaru.Tests.Images.AaruFormat
             51168,
 
             // test_videocd.aif
-            48794
+            48794,
+
+            // Nonstop-UX System V Release 4 B32 (Boot Tape).aif
+            1604,
+
+            // Nonstop-UX System V Release 4 B32 (Integrity SX25 VME V5.0+).aif
+            15485,
+
+            // Nonstop-UX System V Release 4 B32 (Online Software Upgrade).aif
+            15,
+
+            // Nonstop-UX System V Release 4 B32 (Operating System).aif
+            3298,
+
+            // Nonstop-UX System V Release 4 B32 (Optional Packages).aif
+            3152,
+
+            // Nonstop-UX System V Release 4 B32 (OSF-Motif 1.2.4).aif
+            818,
+
+            // Nonstop-UX System V Release 4 B32 (Reliable Ethernet).aif
+            7,
+
+            // Nonstop-UX System V Release 4 B32 (Required Packages).aif
+            684,
+
+            // OpenWindows.3.0.exabyte.aif
+            73525,
+
+            // OpenWindows.3.0.Q150.aif
+            290,
+
+            // OS.MP.4.1C.exabyte.aif
+            37587,
+
+            // X.3.0.exabyte.aif
+            25046,
+
+            // X.3.Q150.aif
+            102
+        };
+
+        readonly uint[] _sectorSize =
+        {
+            // cdiready_the_apprentice.aif
+            2352,
+
+            // report_audiocd.aif
+            2352,
+
+            // report_cdr.aif
+            2048,
+
+            // report_cdrom.aif
+            2048,
+
+            // report_cdrw_2x.aif
+            2048,
+
+            // report_dvd+r.aif
+            2048,
+
+            // report_dvd-r.aif
+            2048,
+
+            // report_dvd-ram_v1.aif
+            2048,
+
+            // report_dvd-ram_v2.aif
+            2048,
+
+            // report_dvd+r_dl.aif
+            2048,
+
+            // report_dvd-rom.aif
+            2048,
+
+            // report_dvd+rw.aif
+            2048,
+
+            // report_dvd-rw.aif
+            2048,
+
+            // report_enhancedcd.aif
+            2352,
+
+            // test_audiocd_cdtext.aif
+            2352,
+
+            // test_audiocd_multiple_indexes.aif
+            2352,
+
+            // test_cdr_incd_finalized.aif
+            2048,
+
+            // test_enhancedcd.aif
+            2352,
+
+            // test_multi_karaoke_sampler.aif
+            2352,
+
+            // test_multisession.aif
+            2048,
+
+            // test_videocd.aif
+            2328,
+
+            // Nonstop-UX System V Release 4 B32 (Boot Tape).aif
+            10240,
+
+            // Nonstop-UX System V Release 4 B32 (Integrity SX25 VME V5.0+).aif
+            512,
+
+            // Nonstop-UX System V Release 4 B32 (Online Software Upgrade).aif
+            28637,
+
+            // Nonstop-UX System V Release 4 B32 (Operating System).aif
+            32256,
+
+            // Nonstop-UX System V Release 4 B32 (Optional Packages).aif
+            32256,
+
+            // Nonstop-UX System V Release 4 B32 (OSF-Motif 1.2.4).aif
+            32256,
+
+            // Nonstop-UX System V Release 4 B32 (Reliable Ethernet).aif
+            26185,
+
+            // Nonstop-UX System V Release 4 B32 (Required Packages).aif
+            32256,
+
+            // OpenWindows.3.0.exabyte.aif
+            1024,
+
+            // OpenWindows.3.0.Q150.aif
+            262144,
+
+            // OS.MP.4.1C.exabyte.aif
+            8192,
+
+            // X.3.0.exabyte.aif
+            1024,
+
+            // X.3.Q150.aif
+            258048
         };
 
         readonly MediaType[] _mediaTypes =
@@ -183,7 +337,46 @@ namespace Aaru.Tests.Images.AaruFormat
             MediaType.CDR,
 
             // test_videocd.aif
-            MediaType.CDR
+            MediaType.CDR,
+
+            // Nonstop-UX System V Release 4 B32 (Boot Tape).aif
+            MediaType.UnknownTape,
+
+            // Nonstop-UX System V Release 4 B32 (Integrity SX25 VME V5.0+).aif
+            MediaType.UnknownTape,
+
+            // Nonstop-UX System V Release 4 B32 (Online Software Upgrade).aif
+            MediaType.UnknownTape,
+
+            // Nonstop-UX System V Release 4 B32 (Operating System).aif
+            MediaType.UnknownTape,
+
+            // Nonstop-UX System V Release 4 B32 (Optional Packages).aif
+            MediaType.UnknownTape,
+
+            // Nonstop-UX System V Release 4 B32 (OSF-Motif 1.2.4).aif
+            MediaType.UnknownTape,
+
+            // Nonstop-UX System V Release 4 B32 (Reliable Ethernet).aif
+            MediaType.UnknownTape,
+
+            // Nonstop-UX System V Release 4 B32 (Required Packages).aif
+            MediaType.UnknownTape,
+
+            // OpenWindows.3.0.exabyte.aif
+            MediaType.UnknownTape,
+
+            // OpenWindows.3.0.Q150.aif
+            MediaType.UnknownTape,
+
+            // OS.MP.4.1C.exabyte.aif
+            MediaType.UnknownTape,
+
+            // X.3.0.exabyte.aif
+            MediaType.UnknownTape,
+
+            // X.3.Q150.aif
+            MediaType.UnknownTape
         };
 
         readonly string[] _md5S =
@@ -249,7 +442,46 @@ namespace Aaru.Tests.Images.AaruFormat
             "099011fe470ce7ca0ecb52368cd2efe5",
 
             // test_videocd.aif
-            "a5531d15eefe70ff21718b3b5da08255"
+            "a5531d15eefe70ff21718b3b5da08255",
+
+            // Nonstop-UX System V Release 4 B32 (Boot Tape).cptp.lz
+            "a6334d975523b3422fea522b0cc118a9",
+
+            // Nonstop-UX System V Release 4 B32 (Integrity SX25 VME V5.0+).cptp.lz
+            "17ef78d9e5c53b976f530d4ca44223fd",
+
+            // Nonstop-UX System V Release 4 B32 (Online Software Upgrade).cptp.lz
+            "6b6e80c4b3a48b2bc46571389eeaf78b",
+
+            // Nonstop-UX System V Release 4 B32 (Operating System).cptp.lz
+            "91b6115a718b9854b69478fee8e8644e",
+
+            // Nonstop-UX System V Release 4 B32 (Optional Packages).cptp.lz
+            "018c37c40f8df91ab9b098d643c9ae6c",
+
+            // Nonstop-UX System V Release 4 B32 (OSF-Motif 1.2.4).cptp.lz
+            "181c9b00c236d14c7dfa4fa009c4559d",
+
+            // Nonstop-UX System V Release 4 B32 (Reliable Ethernet).cptp.lz
+            "7dc46bb181077d215a5c93cc990da365",
+
+            // Nonstop-UX System V Release 4 B32 (Required Packages).cptp.lz
+            "80e1d90052bf8c2df641398d0a30e630",
+
+            // OpenWindows.3.0.exabyte.cptp.lz
+            "8861f8c06a2e93ca5a81d729ad3e1de1",
+
+            // OpenWindows.3.0.Q150.cptp.lz
+            "2b944c7a353a63a48fdcf5517306fba6",
+
+            // OS.MP.4.1C.exabyte.cptp.lz
+            "a923a4fffb3456386bafd00c1d939224",
+
+            // X.3.0.exabyte.cptp.lz
+            "e625c03d7493dc22fe49f91f731446e8",
+
+            // X.3.Q150.cptp.lz
+            "198464b1daf8e674debf8eda0fcbf016"
         };
 
         readonly string[] _longMd5S =
@@ -315,7 +547,46 @@ namespace Aaru.Tests.Images.AaruFormat
             "997fa9a35a2c9a6efbbbd55fcc9008f5",
 
             // test_videocd.aif
-            "11a0d9994ee761655ef4d61c6cda99e9"
+            "11a0d9994ee761655ef4d61c6cda99e9",
+
+            // Nonstop-UX System V Release 4 B32 (Boot Tape).aif
+            null,
+
+            // Nonstop-UX System V Release 4 B32 (Integrity SX25 VME V5.0+).aif
+            null,
+
+            // Nonstop-UX System V Release 4 B32 (Online Software Upgrade).aif
+            null,
+
+            // Nonstop-UX System V Release 4 B32 (Operating System).aif
+            null,
+
+            // Nonstop-UX System V Release 4 B32 (Optional Packages).aif
+            null,
+
+            // Nonstop-UX System V Release 4 B32 (OSF-Motif 1.2.4).aif
+            null,
+
+            // Nonstop-UX System V Release 4 B32 (Reliable Ethernet).aif
+            null,
+
+            // Nonstop-UX System V Release 4 B32 (Required Packages).aif
+            null,
+
+            // OpenWindows.3.0.exabyte.aif
+            null,
+
+            // OpenWindows.3.0.Q150.aif
+            null,
+
+            // OS.MP.4.1C.exabyte.aif
+            null,
+
+            // X.3.0.exabyte.aif
+            null,
+
+            // X.3.Q150.aif
+            null
         };
 
         readonly string[] _subchannelMd5S =
@@ -381,7 +652,46 @@ namespace Aaru.Tests.Images.AaruFormat
             "0eecfd65daf8a2aa9fea47cf2072350e",
 
             // test_videocd.aif
-            "f49e383ccee2f3cb97aeb82fcb4fdb18"
+            "f49e383ccee2f3cb97aeb82fcb4fdb18",
+
+            // Nonstop-UX System V Release 4 B32 (Boot Tape).aif
+            null,
+
+            // Nonstop-UX System V Release 4 B32 (Integrity SX25 VME V5.0+).aif
+            null,
+
+            // Nonstop-UX System V Release 4 B32 (Online Software Upgrade).aif
+            null,
+
+            // Nonstop-UX System V Release 4 B32 (Operating System).aif
+            null,
+
+            // Nonstop-UX System V Release 4 B32 (Optional Packages).aif
+            null,
+
+            // Nonstop-UX System V Release 4 B32 (OSF-Motif 1.2.4).aif
+            null,
+
+            // Nonstop-UX System V Release 4 B32 (Reliable Ethernet).aif
+            null,
+
+            // Nonstop-UX System V Release 4 B32 (Required Packages).aif
+            null,
+
+            // OpenWindows.3.0.exabyte.aif
+            null,
+
+            // OpenWindows.3.0.Q150.aif
+            null,
+
+            // OS.MP.4.1C.exabyte.aif
+            null,
+
+            // X.3.0.exabyte.aif
+            null,
+
+            // X.3.Q150.aif
+            null
         };
 
         readonly int[] _tracks =
@@ -447,7 +757,46 @@ namespace Aaru.Tests.Images.AaruFormat
             4,
 
             // test_videocd.aif
-            2
+            2,
+
+            // Nonstop-UX System V Release 4 B32 (Boot Tape).aif
+            0,
+
+            // Nonstop-UX System V Release 4 B32 (Integrity SX25 VME V5.0+).aif
+            0,
+
+            // Nonstop-UX System V Release 4 B32 (Online Software Upgrade).aif
+            0,
+
+            // Nonstop-UX System V Release 4 B32 (Operating System).aif
+            0,
+
+            // Nonstop-UX System V Release 4 B32 (Optional Packages).aif
+            0,
+
+            // Nonstop-UX System V Release 4 B32 (OSF-Motif 1.2.4).aif
+            0,
+
+            // Nonstop-UX System V Release 4 B32 (Reliable Ethernet).aif
+            0,
+
+            // Nonstop-UX System V Release 4 B32 (Required Packages).aif
+            0,
+
+            // OpenWindows.3.0.exabyte.aif
+            0,
+
+            // OpenWindows.3.0.Q150.aif
+            0,
+
+            // OS.MP.4.1C.exabyte.aif
+            0,
+
+            // X.3.0.exabyte.aif
+            0,
+
+            // X.3.Q150.aif
+            0
         };
 
         readonly int[][] _trackSessions =
@@ -576,7 +925,46 @@ namespace Aaru.Tests.Images.AaruFormat
             new[]
             {
                 1, 1
-            }
+            },
+
+            // Nonstop-UX System V Release 4 B32 (Boot Tape).aif
+            null,
+
+            // Nonstop-UX System V Release 4 B32 (Integrity SX25 VME V5.0+).aif
+            null,
+
+            // Nonstop-UX System V Release 4 B32 (Online Software Upgrade).aif
+            null,
+
+            // Nonstop-UX System V Release 4 B32 (Operating System).aif
+            null,
+
+            // Nonstop-UX System V Release 4 B32 (Optional Packages).aif
+            null,
+
+            // Nonstop-UX System V Release 4 B32 (OSF-Motif 1.2.4).aif
+            null,
+
+            // Nonstop-UX System V Release 4 B32 (Reliable Ethernet).aif
+            null,
+
+            // Nonstop-UX System V Release 4 B32 (Required Packages).aif
+            null,
+
+            // OpenWindows.3.0.exabyte.aif
+            null,
+
+            // OpenWindows.3.0.Q150.aif
+            null,
+
+            // OS.MP.4.1C.exabyte.aif
+            null,
+
+            // X.3.0.exabyte.aif
+            null,
+
+            // X.3.Q150.aif
+            null
         };
 
         readonly ulong[][] _trackStarts =
@@ -707,7 +1095,46 @@ namespace Aaru.Tests.Images.AaruFormat
             new ulong[]
             {
                 0, 1108
-            }
+            },
+
+            // Nonstop-UX System V Release 4 B32 (Boot Tape).aif
+            null,
+
+            // Nonstop-UX System V Release 4 B32 (Integrity SX25 VME V5.0+).aif
+            null,
+
+            // Nonstop-UX System V Release 4 B32 (Online Software Upgrade).aif
+            null,
+
+            // Nonstop-UX System V Release 4 B32 (Operating System).aif
+            null,
+
+            // Nonstop-UX System V Release 4 B32 (Optional Packages).aif
+            null,
+
+            // Nonstop-UX System V Release 4 B32 (OSF-Motif 1.2.4).aif
+            null,
+
+            // Nonstop-UX System V Release 4 B32 (Reliable Ethernet).aif
+            null,
+
+            // Nonstop-UX System V Release 4 B32 (Required Packages).aif
+            null,
+
+            // OpenWindows.3.0.exabyte.aif
+            null,
+
+            // OpenWindows.3.0.Q150.aif
+            null,
+
+            // OS.MP.4.1C.exabyte.aif
+            null,
+
+            // X.3.0.exabyte.aif
+            null,
+
+            // X.3.Q150.aif
+            null
         };
 
         readonly ulong[][] _trackEnds =
@@ -839,7 +1266,46 @@ namespace Aaru.Tests.Images.AaruFormat
             new ulong[]
             {
                 1107, 48793
-            }
+            },
+
+            // Nonstop-UX System V Release 4 B32 (Boot Tape).aif
+            null,
+
+            // Nonstop-UX System V Release 4 B32 (Integrity SX25 VME V5.0+).aif
+            null,
+
+            // Nonstop-UX System V Release 4 B32 (Online Software Upgrade).aif
+            null,
+
+            // Nonstop-UX System V Release 4 B32 (Operating System).aif
+            null,
+
+            // Nonstop-UX System V Release 4 B32 (Optional Packages).aif
+            null,
+
+            // Nonstop-UX System V Release 4 B32 (OSF-Motif 1.2.4).aif
+            null,
+
+            // Nonstop-UX System V Release 4 B32 (Reliable Ethernet).aif
+            null,
+
+            // Nonstop-UX System V Release 4 B32 (Required Packages).aif
+            null,
+
+            // OpenWindows.3.0.exabyte.aif
+            null,
+
+            // OpenWindows.3.0.Q150.aif
+            null,
+
+            // OS.MP.4.1C.exabyte.aif
+            null,
+
+            // X.3.0.exabyte.aif
+            null,
+
+            // X.3.Q150.aif
+            null
         };
 
         readonly ulong[][] _trackPregaps =
@@ -969,7 +1435,46 @@ namespace Aaru.Tests.Images.AaruFormat
             new ulong[]
             {
                 150, 144
-            }
+            },
+
+            // Nonstop-UX System V Release 4 B32 (Boot Tape).aif
+            null,
+
+            // Nonstop-UX System V Release 4 B32 (Integrity SX25 VME V5.0+).aif
+            null,
+
+            // Nonstop-UX System V Release 4 B32 (Online Software Upgrade).aif
+            null,
+
+            // Nonstop-UX System V Release 4 B32 (Operating System).aif
+            null,
+
+            // Nonstop-UX System V Release 4 B32 (Optional Packages).aif
+            null,
+
+            // Nonstop-UX System V Release 4 B32 (OSF-Motif 1.2.4).aif
+            null,
+
+            // Nonstop-UX System V Release 4 B32 (Reliable Ethernet).aif
+            null,
+
+            // Nonstop-UX System V Release 4 B32 (Required Packages).aif
+            null,
+
+            // OpenWindows.3.0.exabyte.aif
+            null,
+
+            // OpenWindows.3.0.Q150.aif
+            null,
+
+            // OS.MP.4.1C.exabyte.aif
+            null,
+
+            // X.3.0.exabyte.aif
+            null,
+
+            // X.3.Q150.aif
+            null
         };
 
         readonly byte[][] _trackFlags =
@@ -1106,6 +1611,931 @@ namespace Aaru.Tests.Images.AaruFormat
             new byte[]
             {
                 4, 4
+            },
+
+            // Nonstop-UX System V Release 4 B32 (Boot Tape).aif
+            null,
+
+            // Nonstop-UX System V Release 4 B32 (Integrity SX25 VME V5.0+).aif
+            null,
+
+            // Nonstop-UX System V Release 4 B32 (Online Software Upgrade).aif
+            null,
+
+            // Nonstop-UX System V Release 4 B32 (Operating System).aif
+            null,
+
+            // Nonstop-UX System V Release 4 B32 (Optional Packages).aif
+            null,
+
+            // Nonstop-UX System V Release 4 B32 (OSF-Motif 1.2.4).aif
+            null,
+
+            // Nonstop-UX System V Release 4 B32 (Reliable Ethernet).aif
+            null,
+
+            // Nonstop-UX System V Release 4 B32 (Required Packages).aif
+            null,
+
+            // OpenWindows.3.0.exabyte.aif
+            null,
+
+            // OpenWindows.3.0.Q150.aif
+            null,
+
+            // OS.MP.4.1C.exabyte.aif
+            null,
+
+            // X.3.0.exabyte.aif
+            null,
+
+            // X.3.Q150.aif
+            null
+        };
+
+        readonly bool[] _isTape =
+        {
+            // cdiready_the_apprentice.aif
+            false,
+
+            // report_audiocd.aif
+            false,
+
+            // report_cdr.aif
+            false,
+
+            // report_cdrom.aif
+            false,
+
+            // report_cdrw_2x.aif
+            false,
+
+            // report_dvd+r.aif
+            false,
+
+            // report_dvd-r.aif
+            false,
+
+            // report_dvd-ram_v1.aif
+            false,
+
+            // report_dvd-ram_v2.aif
+            false,
+
+            // report_dvd+r_dl.aif
+            false,
+
+            // report_dvd-rom.aif
+            false,
+
+            // report_dvd+rw.aif
+            false,
+
+            // report_dvd-rw.aif
+            false,
+
+            // report_enhancedcd.aif
+            false,
+
+            // test_audiocd_cdtext.aif
+            false,
+
+            // test_audiocd_multiple_indexes.aif
+            false,
+
+            // test_cdr_incd_finalized.aif
+            false,
+
+            // test_enhancedcd.aif
+            false,
+
+            // test_multi_karaoke_sampler.aif
+            false,
+
+            // test_multisession.aif
+            false,
+
+            // test_videocd.aif
+            false,
+
+            // Nonstop-UX System V Release 4 B32 (Boot Tape).aif
+            true,
+
+            // Nonstop-UX System V Release 4 B32 (Integrity SX25 VME V5.0+).aif
+            true,
+
+            // Nonstop-UX System V Release 4 B32 (Online Software Upgrade).aif
+            true,
+
+            // Nonstop-UX System V Release 4 B32 (Operating System).aif
+            true,
+
+            // Nonstop-UX System V Release 4 B32 (Optional Packages).aif
+            true,
+
+            // Nonstop-UX System V Release 4 B32 (OSF-Motif 1.2.4).aif
+            true,
+
+            // Nonstop-UX System V Release 4 B32 (Reliable Ethernet).aif
+            true,
+
+            // Nonstop-UX System V Release 4 B32 (Required Packages).aif
+            true,
+
+            // OpenWindows.3.0.exabyte.aif
+            true,
+
+            // OpenWindows.3.0.Q150.aif
+            true,
+
+            // OS.MP.4.1C.exabyte.aif
+            true,
+
+            // X.3.0.exabyte.aif
+            true,
+
+            // X.3.Q150.aif
+            true
+        };
+
+        readonly TapeFile[][] _tapeFiles =
+        {
+            // cdiready_the_apprentice.aif
+            null,
+
+            // report_audiocd.aif
+            null,
+
+            // report_cdr.aif
+            null,
+
+            // report_cdrom.aif
+            null,
+
+            // report_cdrw_2x.aif
+            null,
+
+            // report_dvd+r.aif
+            null,
+
+            // report_dvd-r.aif
+            null,
+
+            // report_dvd-ram_v1.aif
+            null,
+
+            // report_dvd-ram_v2.aif
+            null,
+
+            // report_dvd+r_dl.aif
+            null,
+
+            // report_dvd-rom.aif
+            null,
+
+            // report_dvd+rw.aif
+            null,
+
+            // report_dvd-rw.aif
+            null,
+
+            // report_enhancedcd.aif
+            null,
+
+            // test_audiocd_cdtext.aif
+            null,
+
+            // test_audiocd_multiple_indexes.aif
+            null,
+
+            // test_cdr_incd_finalized.aif
+            null,
+
+            // test_enhancedcd.aif
+            null,
+
+            // test_multi_karaoke_sampler.aif
+            null,
+
+            // test_multisession.aif
+            null,
+
+            // test_videocd.aif
+            null,
+
+            // Nonstop-UX System V Release 4 B32 (Boot Tape).aif
+            new[]
+            {
+                new TapeFile
+                {
+                    File       = 0,
+                    FirstBlock = 0,
+                    LastBlock  = 1603,
+                    Partition  = 0
+                }
+            },
+
+            // Nonstop-UX System V Release 4 B32 (Integrity SX25 VME V5.0+).aif
+            new[]
+            {
+                new TapeFile
+                {
+                    File       = 0,
+                    FirstBlock = 0,
+                    LastBlock  = 15484,
+                    Partition  = 0
+                }
+            },
+
+            // Nonstop-UX System V Release 4 B32 (Online Software Upgrade).aif
+            new[]
+            {
+                new TapeFile
+                {
+                    File       = 0,
+                    FirstBlock = 0,
+                    LastBlock  = 14,
+                    Partition  = 0
+                }
+            },
+
+            // Nonstop-UX System V Release 4 B32 (Operating System).aif
+            new[]
+            {
+                new TapeFile
+                {
+                    File       = 0,
+                    FirstBlock = 0,
+                    LastBlock  = 3297,
+                    Partition  = 0
+                }
+            },
+
+            // Nonstop-UX System V Release 4 B32 (Optional Packages).aif
+            new[]
+            {
+                new TapeFile
+                {
+                    File       = 0,
+                    FirstBlock = 0,
+                    LastBlock  = 3151,
+                    Partition  = 0
+                }
+            },
+
+            // Nonstop-UX System V Release 4 B32 (OSF-Motif 1.2.4).aif
+            new[]
+            {
+                new TapeFile
+                {
+                    File       = 0,
+                    FirstBlock = 0,
+                    LastBlock  = 817,
+                    Partition  = 0
+                }
+            },
+
+            // Nonstop-UX System V Release 4 B32 (Reliable Ethernet).aif
+            new[]
+            {
+                new TapeFile
+                {
+                    File       = 0,
+                    FirstBlock = 0,
+                    LastBlock  = 6,
+                    Partition  = 0
+                }
+            },
+
+            // Nonstop-UX System V Release 4 B32 (Required Packages).aif
+            new[]
+            {
+                new TapeFile
+                {
+                    File       = 0,
+                    FirstBlock = 0,
+                    LastBlock  = 683,
+                    Partition  = 0
+                }
+            },
+
+            // OpenWindows.3.0.exabyte.aif
+            new[]
+            {
+                new TapeFile
+                {
+                    File       = 0,
+                    FirstBlock = 0,
+                    LastBlock  = 0,
+                    Partition  = 0
+                },
+                new TapeFile
+                {
+                    File       = 1,
+                    FirstBlock = 1,
+                    LastBlock  = 164,
+                    Partition  = 0
+                },
+                new TapeFile
+                {
+                    File       = 2,
+                    FirstBlock = 165,
+                    LastBlock  = 2412,
+                    Partition  = 0
+                },
+                new TapeFile
+                {
+                    File       = 3,
+                    FirstBlock = 2413,
+                    LastBlock  = 5612,
+                    Partition  = 0
+                },
+                new TapeFile
+                {
+                    File       = 4,
+                    FirstBlock = 5613,
+                    LastBlock  = 73524,
+                    Partition  = 0
+                }
+            },
+
+            // OpenWindows.3.0.Q150.aif
+            new[]
+            {
+                new TapeFile
+                {
+                    File       = 0,
+                    FirstBlock = 0,
+                    LastBlock  = 0,
+                    Partition  = 0
+                },
+                new TapeFile
+                {
+                    File       = 1,
+                    FirstBlock = 1,
+                    LastBlock  = 1,
+                    Partition  = 0
+                },
+                new TapeFile
+                {
+                    File       = 2,
+                    FirstBlock = 2,
+                    LastBlock  = 10,
+                    Partition  = 0
+                },
+                new TapeFile
+                {
+                    File       = 3,
+                    FirstBlock = 11,
+                    LastBlock  = 23,
+                    Partition  = 0
+                },
+                new TapeFile
+                {
+                    File       = 4,
+                    FirstBlock = 24,
+                    LastBlock  = 289,
+                    Partition  = 0
+                }
+            },
+
+            // OS.MP.4.1C.exabyte.aif
+            new[]
+            {
+                new TapeFile
+                {
+                    File       = 0,
+                    FirstBlock = 0,
+                    LastBlock  = 1,
+                    Partition  = 0
+                },
+                new TapeFile
+                {
+                    File       = 1,
+                    FirstBlock = 2,
+                    LastBlock  = 3,
+                    Partition  = 0
+                },
+                new TapeFile
+                {
+                    File       = 2,
+                    FirstBlock = 4,
+                    LastBlock  = 6860,
+                    Partition  = 0
+                },
+                new TapeFile
+                {
+                    File       = 3,
+                    FirstBlock = 6861,
+                    LastBlock  = 13773,
+                    Partition  = 0
+                },
+                new TapeFile
+                {
+                    File       = 4,
+                    FirstBlock = 13774,
+                    LastBlock  = 20263,
+                    Partition  = 0
+                },
+                new TapeFile
+                {
+                    File       = 5,
+                    FirstBlock = 20264,
+                    LastBlock  = 20299,
+                    Partition  = 0
+                },
+                new TapeFile
+                {
+                    File       = 6,
+                    FirstBlock = 20300,
+                    LastBlock  = 22603,
+                    Partition  = 0
+                },
+                new TapeFile
+                {
+                    File       = 7,
+                    FirstBlock = 22604,
+                    LastBlock  = 23472,
+                    Partition  = 0
+                },
+                new TapeFile
+                {
+                    File       = 8,
+                    FirstBlock = 23473,
+                    LastBlock  = 24946,
+                    Partition  = 0
+                },
+                new TapeFile
+                {
+                    File       = 9,
+                    FirstBlock = 24947,
+                    LastBlock  = 26436,
+                    Partition  = 0
+                },
+                new TapeFile
+                {
+                    File       = 10,
+                    FirstBlock = 26437,
+                    LastBlock  = 27720,
+                    Partition  = 0
+                },
+                new TapeFile
+                {
+                    File       = 11,
+                    FirstBlock = 27721,
+                    LastBlock  = 31922,
+                    Partition  = 0
+                },
+                new TapeFile
+                {
+                    File       = 12,
+                    FirstBlock = 31923,
+                    LastBlock  = 32283,
+                    Partition  = 0
+                },
+                new TapeFile
+                {
+                    File       = 13,
+                    FirstBlock = 32284,
+                    LastBlock  = 32675,
+                    Partition  = 0
+                },
+                new TapeFile
+                {
+                    File       = 14,
+                    FirstBlock = 32676,
+                    LastBlock  = 33549,
+                    Partition  = 0
+                },
+                new TapeFile
+                {
+                    File       = 15,
+                    FirstBlock = 33550,
+                    LastBlock  = 33686,
+                    Partition  = 0
+                },
+                new TapeFile
+                {
+                    File       = 16,
+                    FirstBlock = 33687,
+                    LastBlock  = 33909,
+                    Partition  = 0
+                },
+                new TapeFile
+                {
+                    File       = 17,
+                    FirstBlock = 33910,
+                    LastBlock  = 33949,
+                    Partition  = 0
+                },
+                new TapeFile
+                {
+                    File       = 18,
+                    FirstBlock = 33950,
+                    LastBlock  = 34180,
+                    Partition  = 0
+                },
+                new TapeFile
+                {
+                    File       = 19,
+                    FirstBlock = 34181,
+                    LastBlock  = 34573,
+                    Partition  = 0
+                },
+                new TapeFile
+                {
+                    File       = 20,
+                    FirstBlock = 34574,
+                    LastBlock  = 35072,
+                    Partition  = 0
+                },
+                new TapeFile
+                {
+                    File       = 21,
+                    FirstBlock = 35073,
+                    LastBlock  = 35163,
+                    Partition  = 0
+                },
+                new TapeFile
+                {
+                    File       = 22,
+                    FirstBlock = 35164,
+                    LastBlock  = 35908,
+                    Partition  = 0
+                },
+                new TapeFile
+                {
+                    File       = 23,
+                    FirstBlock = 35909,
+                    LastBlock  = 35984,
+                    Partition  = 0
+                },
+                new TapeFile
+                {
+                    File       = 24,
+                    FirstBlock = 35985,
+                    LastBlock  = 36098,
+                    Partition  = 0
+                },
+                new TapeFile
+                {
+                    File       = 25,
+                    FirstBlock = 36099,
+                    LastBlock  = 36270,
+                    Partition  = 0
+                },
+                new TapeFile
+                {
+                    File       = 26,
+                    FirstBlock = 36271,
+                    LastBlock  = 36276,
+                    Partition  = 0
+                },
+                new TapeFile
+                {
+                    File       = 27,
+                    FirstBlock = 36277,
+                    LastBlock  = 36647,
+                    Partition  = 0
+                },
+                new TapeFile
+                {
+                    File       = 28,
+                    FirstBlock = 36648,
+                    LastBlock  = 37111,
+                    Partition  = 0
+                },
+                new TapeFile
+                {
+                    File       = 29,
+                    FirstBlock = 37112,
+                    LastBlock  = 37583,
+                    Partition  = 0
+                },
+                new TapeFile
+                {
+                    File       = 30,
+                    FirstBlock = 37584,
+                    LastBlock  = 37584,
+                    Partition  = 0
+                },
+                new TapeFile
+                {
+                    File       = 31,
+                    FirstBlock = 37585,
+                    LastBlock  = 37585,
+                    Partition  = 0
+                },
+                new TapeFile
+                {
+                    File       = 32,
+                    FirstBlock = 37586,
+                    LastBlock  = 37586,
+                    Partition  = 0
+                }
+            },
+
+            // X.3.0.exabyte.aif
+            new[]
+            {
+                new TapeFile
+                {
+                    File       = 0,
+                    FirstBlock = 0,
+                    LastBlock  = 0,
+                    Partition  = 0
+                },
+                new TapeFile
+                {
+                    File       = 1,
+                    FirstBlock = 1,
+                    LastBlock  = 61,
+                    Partition  = 0
+                },
+                new TapeFile
+                {
+                    File       = 2,
+                    FirstBlock = 62,
+                    LastBlock  = 149,
+                    Partition  = 0
+                },
+                new TapeFile
+                {
+                    File       = 3,
+                    FirstBlock = 150,
+                    LastBlock  = 2781,
+                    Partition  = 0
+                },
+                new TapeFile
+                {
+                    File       = 4,
+                    FirstBlock = 2782,
+                    LastBlock  = 11885,
+                    Partition  = 0
+                },
+                new TapeFile
+                {
+                    File       = 5,
+                    FirstBlock = 11886,
+                    LastBlock  = 25045,
+                    Partition  = 0
+                }
+            },
+
+            // X.3.Q150.aif
+            new[]
+            {
+                new TapeFile
+                {
+                    File       = 0,
+                    FirstBlock = 0,
+                    LastBlock  = 0,
+                    Partition  = 0
+                },
+                new TapeFile
+                {
+                    File       = 1,
+                    FirstBlock = 1,
+                    LastBlock  = 1,
+                    Partition  = 0
+                },
+                new TapeFile
+                {
+                    File       = 2,
+                    FirstBlock = 2,
+                    LastBlock  = 2,
+                    Partition  = 0
+                },
+                new TapeFile
+                {
+                    File       = 3,
+                    FirstBlock = 3,
+                    LastBlock  = 13,
+                    Partition  = 0
+                },
+                new TapeFile
+                {
+                    File       = 4,
+                    FirstBlock = 14,
+                    LastBlock  = 49,
+                    Partition  = 0
+                },
+                new TapeFile
+                {
+                    File       = 5,
+                    FirstBlock = 50,
+                    LastBlock  = 101,
+                    Partition  = 0
+                }
+            }
+        };
+
+        readonly TapePartition[][] _tapePartitions =
+        {
+            // cdiready_the_apprentice.aif
+            null,
+
+            // report_audiocd.aif
+            null,
+
+            // report_cdr.aif
+            null,
+
+            // report_cdrom.aif
+            null,
+
+            // report_cdrw_2x.aif
+            null,
+
+            // report_dvd+r.aif
+            null,
+
+            // report_dvd-r.aif
+            null,
+
+            // report_dvd-ram_v1.aif
+            null,
+
+            // report_dvd-ram_v2.aif
+            null,
+
+            // report_dvd+r_dl.aif
+            null,
+
+            // report_dvd-rom.aif
+            null,
+
+            // report_dvd+rw.aif
+            null,
+
+            // report_dvd-rw.aif
+            null,
+
+            // report_enhancedcd.aif
+            null,
+
+            // test_audiocd_cdtext.aif
+            null,
+
+            // test_audiocd_multiple_indexes.aif
+            null,
+
+            // test_cdr_incd_finalized.aif
+            null,
+
+            // test_enhancedcd.aif
+            null,
+
+            // test_multi_karaoke_sampler.aif
+            null,
+
+            // test_multisession.aif
+            null,
+
+            // test_videocd.aif
+            null,
+
+            // Nonstop-UX System V Release 4 B32 (Boot Tape).aif
+            new[]
+            {
+                new TapePartition
+                {
+                    FirstBlock = 0,
+                    LastBlock  = 1603,
+                    Number     = 0
+                }
+            },
+
+            // Nonstop-UX System V Release 4 B32 (Integrity SX25 VME V5.0+).aif
+            new[]
+            {
+                new TapePartition
+                {
+                    FirstBlock = 0,
+                    LastBlock  = 15484,
+                    Number     = 0
+                }
+            },
+
+            // Nonstop-UX System V Release 4 B32 (Online Software Upgrade).aif
+            new[]
+            {
+                new TapePartition
+                {
+                    FirstBlock = 0,
+                    LastBlock  = 14,
+                    Number     = 0
+                }
+            },
+
+            // Nonstop-UX System V Release 4 B32 (Operating System).aif
+            new[]
+            {
+                new TapePartition
+                {
+                    FirstBlock = 0,
+                    LastBlock  = 3297,
+                    Number     = 0
+                }
+            },
+
+            // Nonstop-UX System V Release 4 B32 (Optional Packages).aif
+            new[]
+            {
+                new TapePartition
+                {
+                    FirstBlock = 0,
+                    LastBlock  = 3151,
+                    Number     = 0
+                }
+            },
+
+            // Nonstop-UX System V Release 4 B32 (OSF-Motif 1.2.4).aif
+            new[]
+            {
+                new TapePartition
+                {
+                    FirstBlock = 0,
+                    LastBlock  = 817,
+                    Number     = 0
+                }
+            },
+
+            // Nonstop-UX System V Release 4 B32 (Reliable Ethernet).aif
+            new[]
+            {
+                new TapePartition
+                {
+                    FirstBlock = 0,
+                    LastBlock  = 6,
+                    Number     = 0
+                }
+            },
+
+            // Nonstop-UX System V Release 4 B32 (Required Packages).aif
+            new[]
+            {
+                new TapePartition
+                {
+                    FirstBlock = 0,
+                    LastBlock  = 683,
+                    Number     = 0
+                }
+            },
+
+            // OpenWindows.3.0.exabyte.aif
+            new[]
+            {
+                new TapePartition
+                {
+                    FirstBlock = 0,
+                    LastBlock  = 73524,
+                    Number     = 0
+                }
+            },
+
+            // OpenWindows.3.0.Q150.aif
+            new[]
+            {
+                new TapePartition
+                {
+                    FirstBlock = 0,
+                    LastBlock  = 289,
+                    Number     = 0
+                }
+            },
+
+            // OS.MP.4.1C.exabyte.aif
+            new[]
+            {
+                new TapePartition
+                {
+                    FirstBlock = 0,
+                    LastBlock  = 37586,
+                    Number     = 0
+                }
+            },
+
+            // X.3.0.exabyte.aif
+            new[]
+            {
+                new TapePartition
+                {
+                    FirstBlock = 0,
+                    LastBlock  = 25045,
+                    Number     = 0
+                }
+            },
+
+            // X.3.Q150.aif
+            new[]
+            {
+                new TapePartition
+                {
+                    FirstBlock = 0,
+                    LastBlock  = 101,
+                    Number     = 0
+                }
             }
         };
 
@@ -1130,7 +2560,11 @@ namespace Aaru.Tests.Images.AaruFormat
                     Assert.Multiple(() =>
                     {
                         Assert.AreEqual(_sectors[i], image.Info.Sectors, $"Sectors: {_testFiles[i]}");
+                        Assert.AreEqual(_sectorSize[i], image.Info.SectorSize, $"Sector size: {_testFiles[i]}");
                         Assert.AreEqual(_mediaTypes[i], image.Info.MediaType, $"Media type: {_testFiles[i]}");
+
+                        if(image.Info.XmlMediaType != XmlMediaType.OpticalDisc)
+                            return;
 
                         Assert.AreEqual(_tracks[i], image.Tracks.Count, $"Tracks: {_testFiles[i]}");
 
@@ -1187,11 +2621,56 @@ namespace Aaru.Tests.Images.AaruFormat
                     Assert.AreEqual(true, opened, $"Open: {_testFiles[i]}");
                     Md5Context ctx;
 
-                    foreach(bool @long in new[]
+                    if(image.Info.XmlMediaType == XmlMediaType.OpticalDisc)
                     {
-                        false, true
-                    })
-                    {
+                        foreach(bool @long in new[]
+                        {
+                            false, true
+                        })
+                        {
+                            ctx = new Md5Context();
+
+                            foreach(Track currentTrack in image.Tracks)
+                            {
+                                ulong sectors     = currentTrack.TrackEndSector - currentTrack.TrackStartSector + 1;
+                                ulong doneSectors = 0;
+
+                                while(doneSectors < sectors)
+                                {
+                                    byte[] sector;
+
+                                    if(sectors - doneSectors >= sectorsToRead)
+                                    {
+                                        sector =
+                                            @long ? image.ReadSectorsLong(doneSectors, sectorsToRead,
+                                                                          currentTrack.TrackSequence)
+                                                : image.ReadSectors(doneSectors, sectorsToRead,
+                                                                    currentTrack.TrackSequence);
+
+                                        doneSectors += sectorsToRead;
+                                    }
+                                    else
+                                    {
+                                        sector =
+                                            @long ? image.ReadSectorsLong(doneSectors, (uint)(sectors - doneSectors),
+                                                                          currentTrack.TrackSequence)
+                                                : image.ReadSectors(doneSectors, (uint)(sectors - doneSectors),
+                                                                    currentTrack.TrackSequence);
+
+                                        doneSectors += sectors - doneSectors;
+                                    }
+
+                                    ctx.Update(sector);
+                                }
+                            }
+
+                            Assert.AreEqual(@long ? _longMd5S[i] : _md5S[i], ctx.End(),
+                                            $"{(@long ? "Long hash" : "Hash")}: {_testFiles[i]}");
+                        }
+
+                        if(!image.Info.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel))
+                            return;
+
                         ctx = new Md5Context();
 
                         foreach(Track currentTrack in image.Tracks)
@@ -1205,20 +2684,17 @@ namespace Aaru.Tests.Images.AaruFormat
 
                                 if(sectors - doneSectors >= sectorsToRead)
                                 {
-                                    sector =
-                                        @long ? image.ReadSectorsLong(doneSectors, sectorsToRead,
-                                                                      currentTrack.TrackSequence)
-                                            : image.ReadSectors(doneSectors, sectorsToRead, currentTrack.TrackSequence);
+                                    sector = image.ReadSectorsTag(doneSectors, sectorsToRead,
+                                                                  currentTrack.TrackSequence,
+                                                                  SectorTagType.CdSectorSubchannel);
 
                                     doneSectors += sectorsToRead;
                                 }
                                 else
                                 {
-                                    sector =
-                                        @long ? image.ReadSectorsLong(doneSectors, (uint)(sectors - doneSectors),
-                                                                      currentTrack.TrackSequence)
-                                            : image.ReadSectors(doneSectors, (uint)(sectors - doneSectors),
-                                                                currentTrack.TrackSequence);
+                                    sector = image.ReadSectorsTag(doneSectors, (uint)(sectors - doneSectors),
+                                                                  currentTrack.TrackSequence,
+                                                                  SectorTagType.CdSectorSubchannel);
 
                                     doneSectors += sectors - doneSectors;
                                 }
@@ -1227,46 +2703,72 @@ namespace Aaru.Tests.Images.AaruFormat
                             }
                         }
 
-                        Assert.AreEqual(@long ? _longMd5S[i] : _md5S[i], ctx.End(),
-                                        $"{(@long ? "Long hash" : "Hash")}: {_testFiles[i]}");
+                        Assert.AreEqual(_subchannelMd5S[i], ctx.End(), $"Subchannel hash: {_testFiles[i]}");
                     }
-
-                    if(!image.Info.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel))
-                        return;
-
-                    ctx = new Md5Context();
-
-                    foreach(Track currentTrack in image.Tracks)
+                    else
                     {
-                        ulong sectors     = currentTrack.TrackEndSector - currentTrack.TrackStartSector + 1;
+                        ctx = new Md5Context();
                         ulong doneSectors = 0;
 
-                        while(doneSectors < sectors)
+                        while(doneSectors < image.Info.Sectors)
                         {
                             byte[] sector;
 
-                            if(sectors - doneSectors >= sectorsToRead)
+                            if(image.Info.Sectors - doneSectors >= sectorsToRead)
                             {
-                                sector = image.ReadSectorsTag(doneSectors, sectorsToRead, currentTrack.TrackSequence,
-                                                              SectorTagType.CdSectorSubchannel);
-
+                                sector      =  image.ReadSectors(doneSectors, sectorsToRead);
                                 doneSectors += sectorsToRead;
                             }
                             else
                             {
-                                sector = image.ReadSectorsTag(doneSectors, (uint)(sectors - doneSectors),
-                                                              currentTrack.TrackSequence,
-                                                              SectorTagType.CdSectorSubchannel);
-
-                                doneSectors += sectors - doneSectors;
+                                sector      =  image.ReadSectors(doneSectors, (uint)(image.Info.Sectors - doneSectors));
+                                doneSectors += image.Info.Sectors - doneSectors;
                             }
 
                             ctx.Update(sector);
                         }
-                    }
 
-                    Assert.AreEqual(_subchannelMd5S[i], ctx.End(), $"Subchannel hash: {_testFiles[i]}");
+                        Assert.AreEqual(_md5S[i], ctx.End(), $"Hash: {_testFiles[i]}");
+                    }
                 });
+            });
+        }
+
+        [Test]
+        public void Tape()
+        {
+            Environment.CurrentDirectory =
+                Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "AaruFormat", "V1");
+
+            Assert.Multiple(() =>
+            {
+                for(int i = 0; i < _testFiles.Length; i++)
+                {
+                    var filter = new ZZZNoFilter();
+                    filter.Open(_testFiles[i]);
+
+                    ITapeImage image  = new DiscImages.AaruFormat();
+                    bool       opened = image.Open(filter);
+
+                    bool foo = image.IsTape;
+
+                    Assert.AreEqual(true, opened, $"Open: {_testFiles[i]}");
+                    Assert.AreEqual(_isTape[i], image.IsTape, $"Is tape?: {_testFiles[i]}");
+
+                    if(!image.IsTape)
+                        continue;
+
+                    using(new AssertionScope())
+                    {
+                        Assert.Multiple(() =>
+                        {
+                            image.Files.Should().BeEquivalentTo(_tapeFiles[i], $"Tape files: {_testFiles[i]}");
+
+                            image.TapePartitions.Should().
+                                  BeEquivalentTo(_tapePartitions[i], $"Tape files: {_testFiles[i]}");
+                        });
+                    }
+                }
             });
         }
     }
