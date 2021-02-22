@@ -4,9 +4,9 @@ using NUnit.Framework;
 namespace Aaru.Tests
 {
     [SetUpFixture]
-    public class Encoding
+    public class Tests
     {
         [OneTimeSetUp]
-        public void EnableEncodings() => System.Text.Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+        public void EnableEncodings() => Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
     }
 }
