@@ -40,51 +40,128 @@ namespace Aaru.Tests.Images
     {
         readonly string[] _testFiles =
         {
-            // Made with DiskCopy 4.2
-            "Made by DiskCopy 4.2/mf1dd_hfs.img.lz", "Made by DiskCopy 4.2/mf1dd_mfs.img.lz",
-            "Made by DiskCopy 4.2/mf2dd_hfs.img.lz", "Made by DiskCopy 4.2/mf2dd_mfs.img.lz",
-
-            // Made with ShrinkWrap 3
-            "Made by ShrinkWrap 3/DC6_RW_HFS_1440.image.lz", "Made by ShrinkWrap 3/DC6_RW_HFS_800.image.lz",
-            "Made by ShrinkWrap 3/DOS1440.image.lz", "Made by ShrinkWrap 3/DOS720.image.lz",
-            "Made by ShrinkWrap 3/PD1440.image.lz", "Made by ShrinkWrap 3/PD800.image.lz",
-
-            // Made with DiskImages.framework
-            "Made by Mac OS X/DOS_1440.img.lz", "Made by Mac OS X/DOS_720.img.lz", "Made by Mac OS X/HFS_1440.img.lz",
-            "Made by Mac OS X/HFS_800.img.lz", "Made by Mac OS X/ProDOS_1440.img.lz",
-            "Made by Mac OS X/ProDOS_800.img.lz", "Made by Mac OS X/UFS_1440.img.lz", "Made by Mac OS X/UFS_720.img.lz",
-            "Made by Mac OS X/UFS_800.img.lz"
+            "hfs.dsk.lz", "mf1dd_hfs.img.lz", "mf1dd_mfs.img.lz", "mf2dd_hfs.img.lz", "mf2dd_mfs.img.lz",
+            "modified.dsk.lz", "pascal800.dsk.lz", "prodos1440.dsk.lz", "prodos800.dsk.lz"
         };
 
         readonly ulong[] _sectors =
         {
-            800, 800, 1600, 1600, 2880, 1600, 2880, 1440, 2880, 1600, 2880, 1440, 2880, 1600, 2880, 1600, 2880, 1440,
+            // hfs.dsk.lz
+            1600,
+
+            // mf1dd_hfs.img.lz
+            800,
+
+            // mf1dd_mfs.img.lz
+            800,
+
+            // mf2dd_hfs.img.lz
+            1600,
+
+            // mf2dd_mfs.img.lz
+            1600,
+
+            // modified.dsk.lz
+            1600,
+
+            // pascal800.dsk.lz
+            1600,
+
+            // prodos1440.dsk.lz
+            1600,
+
+            // prodos800.dsk.lz
             1600
         };
 
         readonly uint[] _sectorSize =
         {
-            512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512
+            // hfs.dsk.lz
+            512,
+
+            // mf1dd_hfs.img.lz
+            512,
+
+            // mf1dd_mfs.img.lz
+            512,
+
+            // mf2dd_hfs.img.lz
+            512,
+
+            // mf2dd_mfs.img.lz
+            512,
+
+            // modified.dsk.lz
+            512,
+
+            // pascal800.dsk.lz
+            512,
+
+            // prodos1440.dsk.lz
+            512,
+
+            // prodos800.dsk.lz
+            512
         };
 
         readonly MediaType[] _mediaTypes =
         {
-            MediaType.AppleSonySS, MediaType.AppleSonySS, MediaType.AppleSonyDS, MediaType.AppleSonyDS,
-            MediaType.DOS_35_HD, MediaType.AppleSonyDS, MediaType.DOS_35_HD, MediaType.DOS_35_DS_DD_9,
-            MediaType.DOS_35_HD, MediaType.AppleSonyDS, MediaType.DOS_35_HD, MediaType.DOS_35_DS_DD_9,
-            MediaType.DOS_35_HD, MediaType.AppleSonyDS, MediaType.DOS_35_HD, MediaType.AppleSonyDS, MediaType.DOS_35_HD,
-            MediaType.DOS_35_DS_DD_9, MediaType.AppleSonyDS
+            // hfs.dsk.lz
+            MediaType.AppleSonyDS,
+
+            // mf1dd_hfs.img.lz
+            MediaType.AppleSonySS,
+
+            // mf1dd_mfs.img.lz
+            MediaType.AppleSonySS,
+
+            // mf2dd_hfs.img.lz
+            MediaType.AppleSonyDS,
+
+            // mf2dd_mfs.img.lz
+            MediaType.AppleSonyDS,
+
+            // modified.dsk.lz
+            MediaType.AppleSonyDS,
+
+            // pascal800.dsk.lz
+            MediaType.AppleSonyDS,
+
+            // prodos1440.dsk.lz
+            MediaType.AppleSonyDS,
+
+            // prodos800.dsk.lz
+            MediaType.AppleSonyDS
         };
 
         readonly string[] _md5S =
         {
-            "eae3a95671d077deb702b3549a769f56", "c5d92544c3e78b7f0a9b4baaa9a64eec", "a99744348a70b62b57bce2dec9132ced",
-            "93e71b9ecdb39d3ec9245b4f451856d4", "3160038ca028ccf52ad7863790072145", "5e255c4bc0f6a26ecd27845b37e65aaa",
-            "ff419213080574056ebd9adf7bab3d32", "c2be571406cf6353269faa59a4a8c0a4", "7975e8cf7579a6848d6fb4e546d1f682",
-            "a72da7aedadbe194c22a3d71c62e4766", "ff419213080574056ebd9adf7bab3d32", "c2be571406cf6353269faa59a4a8c0a4",
-            "3160038ca028ccf52ad7863790072145", "5e255c4bc0f6a26ecd27845b37e65aaa", "7975e8cf7579a6848d6fb4e546d1f682",
-            "a72da7aedadbe194c22a3d71c62e4766", "b37823c7a90d1917f719ba5927b23da8", "4942032f7bf1d115237ea1764424828b",
-            "85574aebeef03eb355bf8541955d06ea"
+            // hfs.dsk.lz
+            "2762f41d0379b476042fc62891baac84",
+
+            // mf1dd_hfs.img.lz
+            "eae3a95671d077deb702b3549a769f56",
+
+            // mf1dd_mfs.img.lz
+            "c5d92544c3e78b7f0a9b4baaa9a64eec",
+
+            // mf2dd_hfs.img.lz
+            "a99744348a70b62b57bce2dec9132ced",
+
+            // mf2dd_mfs.img.lz
+            "93e71b9ecdb39d3ec9245b4f451856d4",
+
+            // modified.dsk.lz
+            "b748f6df3e60e7169d42ec6fcc857ea4",
+
+            // pascal800.dsk.lz
+            "dbd0ec8a3126236910709faf923adcf2",
+
+            // prodos1440.dsk.lz
+            "fcf747bd356b48d442ff74adb8f3516b",
+
+            // prodos800.dsk.lz
+            "fcf747bd356b48d442ff74adb8f3516b"
         };
 
         [Test]
