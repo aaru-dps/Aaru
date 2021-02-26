@@ -350,10 +350,13 @@ namespace Aaru.DiscImages
                             case CHUNK_TYPE_LZFSE:
                                 throw new
                                     ImageNotSupportedException("Chunks compressed with lzfse are not yet supported.");
+                            case CHUNK_TYPE_LZMA:
+                                throw new
+                                    ImageNotSupportedException("Chunks compressed with lzma are not yet supported.");
                         }
 
                         if((bChnk.type > CHUNK_TYPE_NOCOPY && bChnk.type < CHUNK_TYPE_COMMNT) ||
-                           (bChnk.type > CHUNK_TYPE_LZFSE  && bChnk.type < CHUNK_TYPE_END))
+                           (bChnk.type > CHUNK_TYPE_LZMA   && bChnk.type < CHUNK_TYPE_END))
                             throw new ImageNotSupportedException($"Unsupported chunk type 0x{bChnk.type:X8} found");
 
                         if(bChnk.sectors > 0)

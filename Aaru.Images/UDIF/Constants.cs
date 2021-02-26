@@ -53,6 +53,7 @@ namespace Aaru.DiscImages
         const uint CHUNK_TYPE_ZLIB    = 0x80000005;
         const uint CHUNK_TYPE_BZIP    = 0x80000006;
         const uint CHUNK_TYPE_LZFSE   = 0x80000007;
+        const uint CHUNK_TYPE_LZMA    = 0x80000008;
         const uint CHUNK_TYPE_COMMNT  = 0x7FFFFFFE;
         const uint CHUNK_TYPE_END     = 0xFFFFFFFF;
 
