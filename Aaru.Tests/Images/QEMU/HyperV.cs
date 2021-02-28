@@ -48,25 +48,25 @@ namespace Aaru.Tests.Images.QEMU
         readonly ulong[] _sectors =
         {
             // vhdx.vhdx.lz
-            251904,
+            251904
         };
 
         readonly uint[] _sectorSize =
         {
             // vhdx.vhdx.lz
-            512,
+            512
         };
 
         readonly MediaType[] _mediaTypes =
         {
             // vhdx.vhdx.lz
-            MediaType.GENERIC_HDD,
+            MediaType.GENERIC_HDD
         };
 
         readonly string[] _md5S =
         {
             // vhdx.vhdx.lz
-            "4bfc9e9e2dd86aa52ef709e77d2617ed",
+            "4bfc9e9e2dd86aa52ef709e77d2617ed"
         };
 
         readonly string _dataFolder = Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "QEMU", "Hyper-V");
@@ -83,7 +83,7 @@ namespace Aaru.Tests.Images.QEMU
                     var filter = new LZip();
                     filter.Open(_testFiles[i]);
 
-                    var  image  = new DiscImages.Vhdx();
+                    var  image  = new Vhdx();
                     bool opened = image.Open(filter);
 
                     Assert.AreEqual(true, opened, $"Open: {_testFiles[i]}");
@@ -105,7 +105,7 @@ namespace Aaru.Tests.Images.QEMU
         }
 
         // How many sectors to read at once
-        const uint _sectorsToRead = 256;
+        const uint SECTORS_TO_READ = 256;
 
         [Test]
         public void Hashes()
@@ -119,7 +119,7 @@ namespace Aaru.Tests.Images.QEMU
                     var filter = new LZip();
                     filter.Open(_testFiles[i]);
 
-                    var   image       = new DiscImages.Vhdx();
+                    var   image       = new Vhdx();
                     bool  opened      = image.Open(filter);
                     ulong doneSectors = 0;
 
@@ -134,10 +134,10 @@ namespace Aaru.Tests.Images.QEMU
                     {
                         byte[] sector;
 
-                        if(image.Info.Sectors - doneSectors >= _sectorsToRead)
+                        if(image.Info.Sectors - doneSectors >= SECTORS_TO_READ)
                         {
-                            sector      =  image.ReadSectors(doneSectors, _sectorsToRead);
-                            doneSectors += _sectorsToRead;
+                            sector      =  image.ReadSectors(doneSectors, SECTORS_TO_READ);
+                            doneSectors += SECTORS_TO_READ;
                         }
                         else
                         {

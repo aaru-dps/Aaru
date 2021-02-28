@@ -30,6 +30,7 @@ using System;
 using System.IO;
 using Aaru.Checksums;
 using Aaru.CommonTypes;
+using Aaru.DiscImages;
 using Aaru.Filters;
 using FluentAssertions.Execution;
 using NUnit.Framework;
@@ -41,67 +42,79 @@ namespace Aaru.Tests.Images
     {
         readonly string[] _testFiles =
         {
-            "ext2.partclone.lz",
-            "fat16.partclone.lz",
-            "fat32.partclone.lz",
-            "hfsplus.partclone.lz",
-            "ntfs.partclone.lz",
+            "ext2.partclone.lz", "fat16.partclone.lz", "fat32.partclone.lz", "hfsplus.partclone.lz", "ntfs.partclone.lz"
         };
-        
+
         readonly ulong[] _sectors =
         {
             // ext2.partclone.lz
             127882,
+
             // fat16.partclone.lz
             1012032,
+
             // fat32.partclone.lz
             1023057,
+
             // hfsplus.partclone.lz
             127882,
+
             // ntfs.partclone.lz
-            1023056,
+            1023056
         };
-        
+
         readonly uint[] _sectorSize =
         {
             // ext2.partclone.lz
             4096,
+
             // fat16.partclone.lz
             512,
+
             // fat32.partclone.lz
             512,
+
             // hfsplus.partclone.lz
             4096,
+
             // ntfs.partclone.lz
-            512,
+            512
         };
-        
+
         readonly MediaType[] _mediaTypes =
         {
             // ext2.partclone.lz
             MediaType.GENERIC_HDD,
+
             // fat16.partclone.lz
             MediaType.GENERIC_HDD,
+
             // fat32.partclone.lz
             MediaType.GENERIC_HDD,
+
             // hfsplus.partclone.lz
             MediaType.GENERIC_HDD,
+
             // ntfs.partclone.lz
-            MediaType.GENERIC_HDD,
+            MediaType.GENERIC_HDD
         };
-        
+
         readonly string[] _md5S =
         {
             // ext2.partclone.lz
             "ff239c91166b6b13fa826dd258b40666",
+
             // fat16.partclone.lz
             "f98b1a51ca2e7bf047d84969a2392a3d",
+
             // fat32.partclone.lz
             "1b0b5eb965a401f16fa8a07e303cd1c0",
+
             // hfsplus.partclone.lz
             "880a6777d05c496901e930684abbecff",
+
             // ntfs.partclone.lz
-            "61cc3faa286364e7ad5bab18120c1151",
+            "61cc3faa286364e7ad5bab18120c1151"
         };
 
         readonly string _dataFolder = Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "partclone");
@@ -118,7 +131,7 @@ namespace Aaru.Tests.Images
                     var filter = new LZip();
                     filter.Open(_testFiles[i]);
 
-                    var  image  = new DiscImages.PartClone();
+                    var  image  = new PartClone();
                     bool opened = image.Open(filter);
 
                     Assert.AreEqual(true, opened, $"Open: {_testFiles[i]}");
@@ -140,7 +153,7 @@ namespace Aaru.Tests.Images
         }
 
         // How many sectors to read at once
-        const uint _sectorsToRead = 256;
+        const uint SECTORS_TO_READ = 256;
 
         [Test]
         public void Hashes()
@@ -154,7 +167,7 @@ namespace Aaru.Tests.Images
                     var filter = new LZip();
                     filter.Open(_testFiles[i]);
 
-                    var   image       = new DiscImages.PartClone();
+                    var   image       = new PartClone();
                     bool  opened      = image.Open(filter);
                     ulong doneSectors = 0;
 
@@ -169,10 +182,10 @@ namespace Aaru.Tests.Images
                     {
                         byte[] sector;
 
-                        if(image.Info.Sectors - doneSectors >= _sectorsToRead)
+                        if(image.Info.Sectors - doneSectors >= SECTORS_TO_READ)
                         {
-                            sector      =  image.ReadSectors(doneSectors, _sectorsToRead);
-                            doneSectors += _sectorsToRead;
+                            sector      =  image.ReadSectors(doneSectors, SECTORS_TO_READ);
+                            doneSectors += SECTORS_TO_READ;
                         }
                         else
                         {

@@ -32,10 +32,10 @@ using System.Linq;
 using Aaru.Checksums;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
-using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Filters;
 using FluentAssertions;
+using FluentAssertions.Execution;
 using NUnit.Framework;
 
 namespace Aaru.Tests.Images.Nero
@@ -45,31 +45,17 @@ namespace Aaru.Tests.Images.Nero
     {
         readonly string[] _testFiles =
         {
-             "cdiready_the_apprentice.nrg", "jaguarcd.nrg", "pcengine.nrg", "pcfx.nrg", "report_audiocd.nrg",
+            "cdiready_the_apprentice.nrg", "jaguarcd.nrg", "pcengine.nrg", "pcfx.nrg", "report_audiocd.nrg",
             "report_cdrom.nrg", "report_cdrw.nrg", "report_enhancedcd.nrg", "test_audiocd_cdtext.nrg",
             "test_data_track_as_audio.nrg", "test_incd_udf200_finalized.nrg", "test_multi_karaoke_sampler.nrg",
             "test_multiple_indexes.nrg", "test_multisession.nrg", "test_track2_inside_session2_leadin.nrg",
-            "test_track2_inside_track1.nrg", "test_videocd.nrg",
-                        
-            "make_audiocd_dao.nrg",
-            "make_audiocd_tao.nrg",
-            "make_data_mode1_joliet_dao.nrg",
-            "make_data_mode1_joliet_level2_dao.nrg",
-            "make_data_mode1_joliet_level2_tao.nrg",
-            "make_data_mode1_joliet_tao.nrg",
-            "make_data_mode1_udf_dao.nrg",
-            "make_data_mode1_udf_tao.nrg",
-            "make_data_mode2_joliet_dao.nrg",
-            "make_data_mode2_joliet_level2_dao.nrg",
-            "make_data_mode2_joliet_level2_tao.nrg",
-            "make_data_mode2_joliet_tao.nrg",
-            "make_data_mode2_udf_dao.nrg",
-            "make_data_mode2_udf_tao.nrg",
-            "make_mixed_mode_dao.nrg",
-            "make_mixed_mode_tao.nrg",
-            "make_udf_dao.nrg",
-            "make_udf_tao.nrg",
-            
+            "test_track2_inside_track1.nrg", "test_videocd.nrg", "make_audiocd_dao.nrg", "make_audiocd_tao.nrg",
+            "make_data_mode1_joliet_dao.nrg", "make_data_mode1_joliet_level2_dao.nrg",
+            "make_data_mode1_joliet_level2_tao.nrg", "make_data_mode1_joliet_tao.nrg", "make_data_mode1_udf_dao.nrg",
+            "make_data_mode1_udf_tao.nrg", "make_data_mode2_joliet_dao.nrg", "make_data_mode2_joliet_level2_dao.nrg",
+            "make_data_mode2_joliet_level2_tao.nrg", "make_data_mode2_joliet_tao.nrg", "make_data_mode2_udf_dao.nrg",
+            "make_data_mode2_udf_tao.nrg", "make_mixed_mode_dao.nrg", "make_mixed_mode_tao.nrg", "make_udf_dao.nrg",
+            "make_udf_tao.nrg"
         };
 
         readonly ulong[] _sectors =
@@ -124,42 +110,60 @@ namespace Aaru.Tests.Images.Nero
 
             // test_videocd.nrg
             48794,
+
             // make_audiocd_dao.nrg
             279196,
+
             // make_audiocd_tao.nrg
             277696,
+
             // make_data_mode1_joliet_dao.nrg
             83078,
+
             // make_data_mode1_joliet_level2_dao.nrg
             83084,
+
             // make_data_mode1_joliet_level2_tao.nrg
             83084,
+
             // make_data_mode1_joliet_tao.nrg
             83078,
+
             // make_data_mode1_udf_dao.nrg
             85733,
+
             // make_data_mode1_udf_tao.nrg
             85733,
+
             // make_data_mode2_joliet_dao.nrg
             83092,
+
             // make_data_mode2_joliet_level2_dao.nrg
             83092,
+
             // make_data_mode2_joliet_level2_tao.nrg
             83092,
+
             // make_data_mode2_joliet_tao.nrg
             83092,
+
             // make_data_mode2_udf_dao.nrg
             85747,
+
             // make_data_mode2_udf_tao.nrg
             85747,
+
             // make_mixed_mode_dao.nrg
             325928,
+
             // make_mixed_mode_tao.nrg
             324278,
+
             // make_udf_dao.nrg
             84985,
+
             // make_udf_tao.nrg
-            84985,
+            84985
         };
 
         readonly MediaType[] _mediaTypes =
@@ -214,42 +218,60 @@ namespace Aaru.Tests.Images.Nero
 
             // test_videocd.nrg
             MediaType.CDROMXA,
+
             // make_audiocd_dao.nrg
             MediaType.CDDA,
+
             // make_audiocd_tao.nrg
             MediaType.CDDA,
+
             // make_data_mode1_joliet_dao.nrg
             MediaType.CDROM,
+
             // make_data_mode1_joliet_level2_dao.nrg
             MediaType.CDROM,
+
             // make_data_mode1_joliet_level2_tao.nrg
             MediaType.CDROM,
+
             // make_data_mode1_joliet_tao.nrg
             MediaType.CDROM,
+
             // make_data_mode1_udf_dao.nrg
             MediaType.CDROM,
+
             // make_data_mode1_udf_tao.nrg
             MediaType.CDROM,
+
             // make_data_mode2_joliet_dao.nrg
             MediaType.CDROMXA,
+
             // make_data_mode2_joliet_level2_dao.nrg
             MediaType.CDROMXA,
+
             // make_data_mode2_joliet_level2_tao.nrg
             MediaType.CDROMXA,
+
             // make_data_mode2_joliet_tao.nrg
             MediaType.CDROMXA,
+
             // make_data_mode2_udf_dao.nrg
             MediaType.CDROMXA,
+
             // make_data_mode2_udf_tao.nrg
             MediaType.CDROMXA,
+
             // make_mixed_mode_dao.nrg
             MediaType.CDROMXA,
+
             // make_mixed_mode_tao.nrg
             MediaType.CDROMXA,
+
             // make_udf_dao.nrg
             MediaType.CDROM,
+
             // make_udf_tao.nrg
-            MediaType.CDROM,
+            MediaType.CDROM
         };
 
         readonly string[] _md5S =
@@ -271,7 +293,7 @@ namespace Aaru.Tests.Images.Nero
 
             // report_cdrom.nrg
             "bf4bbec517101d0d6f45d2e4d50cb875",
-            
+
             // report_cdrw.nrg
             "3af5f943ddb9427d9c63a4ce3b704db9",
 
@@ -304,42 +326,60 @@ namespace Aaru.Tests.Images.Nero
 
             // test_videocd.nrg
             "ec7c86e6cfe5f965faa2488ae940e15a",
+
             // make_audiocd_dao.nrg
             "UNKNOWN",
+
             // make_audiocd_tao.nrg
             "UNKNOWN",
+
             // make_data_mode1_joliet_dao.nrg
             "UNKNOWN",
+
             // make_data_mode1_joliet_level2_dao.nrg
             "UNKNOWN",
+
             // make_data_mode1_joliet_level2_tao.nrg
             "UNKNOWN",
+
             // make_data_mode1_joliet_tao.nrg
             "UNKNOWN",
+
             // make_data_mode1_udf_dao.nrg
             "UNKNOWN",
+
             // make_data_mode1_udf_tao.nrg
             "UNKNOWN",
+
             // make_data_mode2_joliet_dao.nrg
             "UNKNOWN",
+
             // make_data_mode2_joliet_level2_dao.nrg
             "UNKNOWN",
+
             // make_data_mode2_joliet_level2_tao.nrg
             "UNKNOWN",
+
             // make_data_mode2_joliet_tao.nrg
             "UNKNOWN",
+
             // make_data_mode2_udf_dao.nrg
             "UNKNOWN",
+
             // make_data_mode2_udf_tao.nrg
             "UNKNOWN",
+
             // make_mixed_mode_dao.nrg
             "UNKNOWN",
+
             // make_mixed_mode_tao.nrg
             "UNKNOWN",
+
             // make_udf_dao.nrg
             "UNKNOWN",
+
             // make_udf_tao.nrg
-            "UNKNOWN",
+            "UNKNOWN"
         };
 
         readonly string[] _longMd5S =
@@ -394,42 +434,60 @@ namespace Aaru.Tests.Images.Nero
 
             // test_videocd.nrg
             "4a045788e69965efe0c87950d013e720",
+
             // make_audiocd_dao.nrg
             "UNKNOWN",
+
             // make_audiocd_tao.nrg
             "UNKNOWN",
+
             // make_data_mode1_joliet_dao.nrg
             "UNKNOWN",
+
             // make_data_mode1_joliet_level2_dao.nrg
             "UNKNOWN",
+
             // make_data_mode1_joliet_level2_tao.nrg
             "UNKNOWN",
+
             // make_data_mode1_joliet_tao.nrg
             "UNKNOWN",
+
             // make_data_mode1_udf_dao.nrg
             "UNKNOWN",
+
             // make_data_mode1_udf_tao.nrg
             "UNKNOWN",
+
             // make_data_mode2_joliet_dao.nrg
             "UNKNOWN",
+
             // make_data_mode2_joliet_level2_dao.nrg
             "UNKNOWN",
+
             // make_data_mode2_joliet_level2_tao.nrg
             "UNKNOWN",
+
             // make_data_mode2_joliet_tao.nrg
             "UNKNOWN",
+
             // make_data_mode2_udf_dao.nrg
             "UNKNOWN",
+
             // make_data_mode2_udf_tao.nrg
             "UNKNOWN",
+
             // make_mixed_mode_dao.nrg
             "UNKNOWN",
+
             // make_mixed_mode_tao.nrg
             "UNKNOWN",
+
             // make_udf_dao.nrg
             "UNKNOWN",
+
             // make_udf_tao.nrg
-            "UNKNOWN",
+            "UNKNOWN"
         };
 
         readonly string[] _subchannelMd5S =
@@ -484,42 +542,60 @@ namespace Aaru.Tests.Images.Nero
 
             // test_videocd.nrg
             "935a91f5850352818d92b71f1c87c393",
+
             // make_audiocd_dao.nrg
             "UNKNOWN",
+
             // make_audiocd_tao.nrg
             "UNKNOWN",
+
             // make_data_mode1_joliet_dao.nrg
             "UNKNOWN",
+
             // make_data_mode1_joliet_level2_dao.nrg
             "UNKNOWN",
+
             // make_data_mode1_joliet_level2_tao.nrg
             "UNKNOWN",
+
             // make_data_mode1_joliet_tao.nrg
             "UNKNOWN",
+
             // make_data_mode1_udf_dao.nrg
             "UNKNOWN",
+
             // make_data_mode1_udf_tao.nrg
             "UNKNOWN",
+
             // make_data_mode2_joliet_dao.nrg
             "UNKNOWN",
+
             // make_data_mode2_joliet_level2_dao.nrg
             "UNKNOWN",
+
             // make_data_mode2_joliet_level2_tao.nrg
             "UNKNOWN",
+
             // make_data_mode2_joliet_tao.nrg
             "UNKNOWN",
+
             // make_data_mode2_udf_dao.nrg
             "UNKNOWN",
+
             // make_data_mode2_udf_tao.nrg
             "UNKNOWN",
+
             // make_mixed_mode_dao.nrg
             "UNKNOWN",
+
             // make_mixed_mode_tao.nrg
             "UNKNOWN",
+
             // make_udf_dao.nrg
             "UNKNOWN",
+
             // make_udf_tao.nrg
-            "UNKNOWN",
+            "UNKNOWN"
         };
 
         readonly int[] _tracks =
@@ -574,42 +650,60 @@ namespace Aaru.Tests.Images.Nero
 
             // test_videocd.nrg
             2,
+
             // make_audiocd_dao.nrg
             11,
+
             // make_audiocd_tao.nrg
             11,
+
             // make_data_mode1_joliet_dao.nrg
             1,
+
             // make_data_mode1_joliet_level2_dao.nrg
             1,
+
             // make_data_mode1_joliet_level2_tao.nrg
             1,
+
             // make_data_mode1_joliet_tao.nrg
             1,
+
             // make_data_mode1_udf_dao.nrg
             1,
+
             // make_data_mode1_udf_tao.nrg
             1,
+
             // make_data_mode2_joliet_dao.nrg
             1,
+
             // make_data_mode2_joliet_level2_dao.nrg
             1,
+
             // make_data_mode2_joliet_level2_tao.nrg
             1,
+
             // make_data_mode2_joliet_tao.nrg
             1,
+
             // make_data_mode2_udf_dao.nrg
             1,
+
             // make_data_mode2_udf_tao.nrg
             1,
+
             // make_mixed_mode_dao.nrg
             12,
+
             // make_mixed_mode_tao.nrg
             12,
+
             // make_udf_dao.nrg
             1,
+
             // make_udf_tao.nrg
-            1,
+            1
         };
 
         readonly int[][] _trackSessions =
@@ -716,96 +810,114 @@ namespace Aaru.Tests.Images.Nero
             {
                 1, 1
             },
+
             // make_audiocd_dao.nrg
             new[]
             {
                 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
             },
+
             // make_audiocd_tao.nrg
             new[]
             {
                 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
             },
+
             // make_data_mode1_joliet_dao.nrg
             new[]
             {
                 1
             },
+
             // make_data_mode1_joliet_level2_dao.nrg
             new[]
             {
                 1
             },
+
             // make_data_mode1_joliet_level2_tao.nrg
             new[]
             {
                 1
             },
+
             // make_data_mode1_joliet_tao.nrg
             new[]
             {
                 1
             },
+
             // make_data_mode1_udf_dao.nrg
             new[]
             {
                 1
             },
+
             // make_data_mode1_udf_tao.nrg
             new[]
             {
                 1
             },
+
             // make_data_mode2_joliet_dao.nrg
             new[]
             {
                 1
             },
+
             // make_data_mode2_joliet_level2_dao.nrg
             new[]
             {
                 1
             },
+
             // make_data_mode2_joliet_level2_tao.nrg
             new[]
             {
                 1
             },
+
             // make_data_mode2_joliet_tao.nrg
             new[]
             {
                 1
             },
+
             // make_data_mode2_udf_dao.nrg
             new[]
             {
                 1
             },
+
             // make_data_mode2_udf_tao.nrg
             new[]
             {
                 1
             },
+
             // make_mixed_mode_dao.nrg
             new[]
             {
                 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
             },
+
             // make_mixed_mode_tao.nrg
             new[]
             {
                 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
             },
+
             // make_udf_dao.nrg
             new[]
             {
                 1
             },
+
             // make_udf_tao.nrg
             new[]
             {
                 1
-            },
+            }
         };
 
         readonly ulong[][] _trackStarts =
@@ -820,14 +932,14 @@ namespace Aaru.Tests.Images.Nero
             // jaguarcd.nrg
             new ulong[]
             {
-                 0, 27640, 28237, 78892, 100054, 133203, 160908, 181466, 202024, 222582, 243140
+                0, 27640, 28237, 78892, 100054, 133203, 160908, 181466, 202024, 222582, 243140
             },
 
             // pcengine.nrg
             new ulong[]
             {
-                  0, 3590, 38614, 47217, 53501, 61819, 68563, 75397, 83130, 86481, 91267, 99274, 106693, 112238, 120270,
-                  126229
+                0, 3590, 38614, 47217, 53501, 61819, 68563, 75397, 83130, 86481, 91267, 99274, 106693, 112238, 120270,
+                126229
             },
 
             // pcfx.nrg
@@ -839,7 +951,7 @@ namespace Aaru.Tests.Images.Nero
             // report_audiocd.nrg
             new ulong[]
             {
-                 0, 16549, 30051, 47950, 63314, 78925, 94732, 117125, 136166, 154072, 170751, 186539, 201799, 224449
+                0, 16549, 30051, 47950, 63314, 78925, 94732, 117125, 136166, 154072, 170751, 186539, 201799, 224449
             },
 
             // report_cdrom.nrg
@@ -857,13 +969,13 @@ namespace Aaru.Tests.Images.Nero
             // report_enhancedcd.nrg
             new ulong[]
             {
-                   0, 15661, 33959, 51330, 71973, 87582, 103305, 117691, 136167, 153418, 166932, 187113, 201441, 234180
+                0, 15661, 33959, 51330, 71973, 87582, 103305, 117691, 136167, 153418, 166932, 187113, 201441, 234180
             },
 
             // test_audiocd_cdtext.nrg
             new ulong[]
             {
-                 0, 29902, 65184, 78576, 95230, 126297, 155109, 191835, 222926, 243588, 269750
+                0, 29902, 65184, 78576, 95230, 126297, 155109, 191835, 222926, 243588, 269750
             },
 
             // test_data_track_as_audio.nrg
@@ -881,7 +993,8 @@ namespace Aaru.Tests.Images.Nero
             // test_multi_karaoke_sampler.nrg
             new ulong[]
             {
-                0, 1887, 32749, 52672, 70304, 100098, 119761, 136999, 155790, 175826, 206461, 226450, 244355, 273965, 293752, 310711
+                0, 1887, 32749, 52672, 70304, 100098, 119761, 136999, 155790, 175826, 206461, 226450, 244355, 273965,
+                293752, 310711
             },
 
             // test_multiple_indexes.nrg
@@ -913,96 +1026,114 @@ namespace Aaru.Tests.Images.Nero
             {
                 0, 1252
             },
+
             // make_audiocd_dao.nrg
             new ulong[]
             {
                 0, 27454, 62934, 4428, 22432, 54833, 9459, 45087, 4360, 244938, 271250
             },
+
             // make_audiocd_tao.nrg
             new ulong[]
             {
                 0, 27454, 62934, 4428, 22432, 54833, 9459, 45087, 4360, 244938, 271250
             },
+
             // make_data_mode1_joliet_dao.nrg
             new ulong[]
             {
                 0
             },
+
             // make_data_mode1_joliet_level2_dao.nrg
             new ulong[]
             {
                 0
             },
+
             // make_data_mode1_joliet_level2_tao.nrg
             new ulong[]
             {
                 0
             },
+
             // make_data_mode1_joliet_tao.nrg
             new ulong[]
             {
                 0
             },
+
             // make_data_mode1_udf_dao.nrg
             new ulong[]
             {
                 0
             },
+
             // make_data_mode1_udf_tao.nrg
             new ulong[]
             {
                 0
             },
+
             // make_data_mode2_joliet_dao.nrg
             new ulong[]
             {
                 0
             },
+
             // make_data_mode2_joliet_level2_dao.nrg
             new ulong[]
             {
                 0
             },
+
             // make_data_mode2_joliet_level2_tao.nrg
             new ulong[]
             {
                 0
             },
+
             // make_data_mode2_joliet_tao.nrg
             new ulong[]
             {
                 0
             },
+
             // make_data_mode2_udf_dao.nrg
             new ulong[]
             {
                 0
             },
+
             // make_data_mode2_udf_tao.nrg
             new ulong[]
             {
                 0
             },
+
             // make_mixed_mode_dao.nrg
             new ulong[]
             {
                 0, 45382, 4586, 36450, 49960, 67964, 27229, 58575, 23403, 264817, 285629, 311941
             },
+
             // make_mixed_mode_tao.nrg
             new ulong[]
             {
                 0, 45382, 4586, 36450, 49960, 67964, 27229, 58575, 23403, 264817, 285629, 311941
             },
+
             // make_udf_dao.nrg
             new ulong[]
             {
                 0
             },
+
             // make_udf_tao.nrg
             new ulong[]
             {
                 0
-            },
+            }
         };
 
         readonly ulong[][] _trackEnds =
@@ -1023,7 +1154,8 @@ namespace Aaru.Tests.Images.Nero
             // pcengine.nrg
             new ulong[]
             {
-                3439, 38463, 47216, 53500, 61818, 68562, 75396, 83129, 86480, 91266, 99273, 106692, 112237, 120269, 126078, 160955
+                3439, 38463, 47216, 53500, 61818, 68562, 75396, 83129, 86480, 91266, 99273, 106692, 112237, 120269,
+                126078, 160955
             },
 
             // pcfx.nrg
@@ -1053,7 +1185,8 @@ namespace Aaru.Tests.Images.Nero
             // report_enhancedcd.nrg
             new ulong[]
             {
-                15660, 33958, 51329, 71972, 87581, 103304, 117690, 136166, 153417, 166931, 187112, 201440, 222779, 303315
+                15660, 33958, 51329, 71972, 87581, 103304, 117690, 136166, 153417, 166931, 187112, 201440, 222779,
+                303315
             },
 
             // test_audiocd_cdtext.nrg
@@ -1077,7 +1210,8 @@ namespace Aaru.Tests.Images.Nero
             // test_multi_karaoke_sampler.nrg
             new ulong[]
             {
-                1736, 32748, 52671, 70303, 100097, 119760, 136998, 155789, 175825, 206460, 226449, 244354, 273964, 293751, 310710, 329157
+                1736, 32748, 52671, 70303, 100097, 119760, 136998, 155789, 175825, 206460, 226449, 244354, 273964,
+                293751, 310710, 329157
             },
 
             // test_multiple_indexes.nrg
@@ -1109,96 +1243,114 @@ namespace Aaru.Tests.Images.Nero
             {
                 1101, 48793
             },
+
             // make_audiocd_dao.nrg
             new ulong[]
             {
                 29901, 63035, 76625, 21381, 53798, 83944, 46484, 76477, 25321, 271399, 279495
             },
+
             // make_audiocd_tao.nrg
             new ulong[]
             {
                 29901, 63035, 76625, 21381, 53798, 83944, 46484, 76477, 25321, 271399, 279495
             },
+
             // make_data_mode1_joliet_dao.nrg
             new ulong[]
             {
                 83077
             },
+
             // make_data_mode1_joliet_level2_dao.nrg
             new ulong[]
             {
                 83083
             },
+
             // make_data_mode1_joliet_level2_tao.nrg
             new ulong[]
             {
                 83083
             },
+
             // make_data_mode1_joliet_tao.nrg
             new ulong[]
             {
                 83077
             },
+
             // make_data_mode1_udf_dao.nrg
             new ulong[]
             {
                 85732
             },
+
             // make_data_mode1_udf_tao.nrg
             new ulong[]
             {
                 85732
             },
+
             // make_data_mode2_joliet_dao.nrg
             new ulong[]
             {
                 83091
             },
+
             // make_data_mode2_joliet_level2_dao.nrg
             new ulong[]
             {
                 83091
             },
+
             // make_data_mode2_joliet_level2_tao.nrg
             new ulong[]
             {
                 83091
             },
+
             // make_data_mode2_joliet_tao.nrg
             new ulong[]
             {
                 83091
             },
+
             // make_data_mode2_udf_dao.nrg
             new ulong[]
             {
                 85746
             },
+
             // make_data_mode2_udf_tao.nrg
             new ulong[]
             {
                 85746
             },
+
             // make_mixed_mode_dao.nrg
             new ulong[]
             {
                 46581, 75583, 40167, 50141, 66913, 99330, 56340, 95600, 53593, 285778, 312090, 320186
             },
+
             // make_mixed_mode_tao.nrg
             new ulong[]
             {
-                                46581, 75583, 40167, 50141, 66913, 99330, 56340, 95600, 53593, 285778, 312090, 320186
+                46581, 75583, 40167, 50141, 66913, 99330, 56340, 95600, 53593, 285778, 312090, 320186
             },
+
             // make_udf_dao.nrg
             new ulong[]
             {
                 84984
             },
+
             // make_udf_tao.nrg
             new ulong[]
             {
                 84984
-            },
+            }
         };
 
         readonly ulong[][] _trackPregaps =
@@ -1304,97 +1456,114 @@ namespace Aaru.Tests.Images.Nero
             {
                 150, 150
             },
+
             // make_audiocd_dao.nrg
             new ulong[]
             {
                 150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150
             },
+
             // make_audiocd_tao.nrg
             new ulong[]
             {
                 150, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
             },
+
             // make_data_mode1_joliet_dao.nrg
             new ulong[]
             {
                 150
             },
+
             // make_data_mode1_joliet_level2_dao.nrg
             new ulong[]
             {
                 150
             },
+
             // make_data_mode1_joliet_level2_tao.nrg
             new ulong[]
             {
                 150
             },
+
             // make_data_mode1_joliet_tao.nrg
             new ulong[]
             {
                 150
             },
+
             // make_data_mode1_udf_dao.nrg
             new ulong[]
             {
                 150
             },
+
             // make_data_mode1_udf_tao.nrg
             new ulong[]
             {
                 150
             },
+
             // make_data_mode2_joliet_dao.nrg
             new ulong[]
             {
                 150
             },
+
             // make_data_mode2_joliet_level2_dao.nrg
             new ulong[]
             {
                 150
             },
+
             // make_data_mode2_joliet_level2_tao.nrg
             new ulong[]
             {
                 150
             },
+
             // make_data_mode2_joliet_tao.nrg
             new ulong[]
             {
                 150
             },
+
             // make_data_mode2_udf_dao.nrg
             new ulong[]
             {
                 150
             },
+
             // make_data_mode2_udf_tao.nrg
             new ulong[]
             {
                 150
             },
+
             // make_mixed_mode_dao.nrg
             new ulong[]
             {
                 150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150
-
             },
+
             // make_mixed_mode_tao.nrg
             new ulong[]
             {
-                                150, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+                150, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
             },
+
             // make_udf_dao.nrg
             new ulong[]
             {
                 150
             },
+
             // make_udf_tao.nrg
             new ulong[]
             {
                 150
-            },
+            }
         };
 
         readonly byte[][] _trackFlags =
@@ -1500,213 +1669,246 @@ namespace Aaru.Tests.Images.Nero
             {
                 4, 4
             },
+
             // make_audiocd_dao.nrg
             new byte[]
             {
                 4
             },
+
             // make_audiocd_tao.nrg
             new byte[]
             {
                 4
             },
+
             // make_data_mode1_joliet_dao.nrg
             new byte[]
             {
                 4
             },
+
             // make_data_mode1_joliet_level2_dao.nrg
             new byte[]
             {
                 4
             },
+
             // make_data_mode1_joliet_level2_tao.nrg
             new byte[]
             {
                 4
             },
+
             // make_data_mode1_joliet_tao.nrg
             new byte[]
             {
                 4
             },
+
             // make_data_mode1_udf_dao.nrg
             new byte[]
             {
                 4
             },
+
             // make_data_mode1_udf_tao.nrg
             new byte[]
             {
                 4
             },
+
             // make_data_mode2_joliet_dao.nrg
             new byte[]
             {
                 4
             },
+
             // make_data_mode2_joliet_level2_dao.nrg
             new byte[]
             {
                 4
             },
+
             // make_data_mode2_joliet_level2_tao.nrg
             new byte[]
             {
                 4
             },
+
             // make_data_mode2_joliet_tao.nrg
             new byte[]
             {
                 4
             },
+
             // make_data_mode2_udf_dao.nrg
             new byte[]
             {
                 4
             },
+
             // make_data_mode2_udf_tao.nrg
             new byte[]
             {
                 4
             },
+
             // make_mixed_mode_dao.nrg
             new byte[]
             {
                 4
             },
+
             // make_mixed_mode_tao.nrg
             new byte[]
             {
                 4
             },
+
             // make_udf_dao.nrg
             new byte[]
             {
                 4
             },
+
             // make_udf_tao.nrg
             new byte[]
             {
                 4
-            },
+            }
         };
 
+        readonly string _dataFolder =
+            Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "Nero Burning ROM", "V1");
+
         [Test]
-        public void Test()
+        public void Info()
         {
-            // How many sectors to read at once
-            const uint sectorsToRead = 256;
-
-            Environment.CurrentDirectory =
-                Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "Nero Burning ROM", "V1");
-
-            IFilter[] filters = new IFilter[_testFiles.Length];
+            Environment.CurrentDirectory = _dataFolder;
 
             for(int i = 0; i < _testFiles.Length; i++)
             {
-                filters[i] = new ZZZNoFilter();
-                filters[i].Open(_testFiles[i]);
-            }
+                var filter = new ZZZNoFilter();
+                filter.Open(_testFiles[i]);
 
-            IOpticalMediaImage[] images = new IOpticalMediaImage[_testFiles.Length];
+                var  image  = new DiscImages.Nero();
+                bool opened = image.Open(filter);
 
-            for(int i = 0; i < _testFiles.Length; i++)
-            {
-                images[i] = new DiscImages.Nero();
-                Assert.AreEqual(true, images[i].Open(filters[i]), $"Open: {_testFiles[i]}");
-            }
+                Assert.AreEqual(true, opened, $"Open: {_testFiles[i]}");
 
-            for(int i = 0; i < _testFiles.Length; i++)
-                Assert.AreEqual(_sectors[i], images[i].Info.Sectors, $"Sectors: {_testFiles[i]}");
-
-            for(int i = 0; i < _testFiles.Length; i++)
-                Assert.AreEqual(_mediaTypes[i], images[i].Info.MediaType, $"Media type: {_testFiles[i]}");
-
-            for(int i = 0; i < _testFiles.Length; i++)
-                Assert.AreEqual(_tracks[i], images[i].Tracks.Count, $"Tracks: {_testFiles[i]}");
-
-            for(int i = 0; i < _testFiles.Length; i++)
-                images[i].Tracks.Select(t => t.TrackSession).Should().
-                          BeEquivalentTo(_trackSessions[i], $"Track session: {_testFiles[i]}");
-
-            for(int i = 0; i < _testFiles.Length; i++)
-                images[i].Tracks.Select(t => t.TrackStartSector).Should().
-                          BeEquivalentTo(_trackStarts[i], $"Track start: {_testFiles[i]}");
-
-            for(int i = 0; i < _testFiles.Length; i++)
-                images[i].Tracks.Select(t => t.TrackEndSector).Should().
-                          BeEquivalentTo(_trackEnds[i], $"Track end: {_testFiles[i]}");
-
-            for(int i = 0; i < _testFiles.Length; i++)
-                images[i].Tracks.Select(t => t.TrackPregap).Should().
-                          BeEquivalentTo(_trackPregaps[i], $"Track pregap: {_testFiles[i]}");
-
-            for(int i = 0; i < _testFiles.Length; i++)
-            {
-                int trackNo = 0;
-
-                foreach(Track currentTrack in images[i].Tracks)
+                using(new AssertionScope())
                 {
-                    if(images[i].Info.ReadableSectorTags.Contains(SectorTagType.CdTrackFlags))
-                        Assert.AreEqual(_trackFlags[i][trackNo],
-                                        images[i].ReadSectorTag(currentTrack.TrackSequence, SectorTagType.CdTrackFlags)
-                                            [0], $"Track flags: {_testFiles[i]}, track {currentTrack.TrackSequence}");
+                    Assert.Multiple(() =>
+                    {
+                        Assert.AreEqual(_sectors[i], image.Info.Sectors, $"Sectors: {_testFiles[i]}");
+                        Assert.AreEqual(_mediaTypes[i], image.Info.MediaType, $"Media type: {_testFiles[i]}");
 
-                    trackNo++;
+                        Assert.AreEqual(_tracks[i], image.Tracks.Count, $"Tracks: {_testFiles[i]}");
+
+                        image.Tracks.Select(t => t.TrackSession).Should().
+                              BeEquivalentTo(_trackSessions[i], $"Track session: {_testFiles[i]}");
+
+                        image.Tracks.Select(t => t.TrackStartSector).Should().
+                              BeEquivalentTo(_trackStarts[i], $"Track start: {_testFiles[i]}");
+
+                        image.Tracks.Select(t => t.TrackEndSector).Should().
+                              BeEquivalentTo(_trackEnds[i], $"Track end: {_testFiles[i]}");
+
+                        image.Tracks.Select(t => t.TrackPregap).Should().
+                              BeEquivalentTo(_trackPregaps[i], $"Track pregap: {_testFiles[i]}");
+
+                        int trackNo = 0;
+
+                        byte[] flags = new byte[image.Tracks.Count];
+
+                        foreach(Track currentTrack in image.Tracks)
+                        {
+                            if(image.Info.ReadableSectorTags.Contains(SectorTagType.CdTrackFlags))
+                                flags[trackNo] = image.ReadSectorTag(currentTrack.TrackSequence,
+                                                                     SectorTagType.CdTrackFlags)[0];
+
+                            trackNo++;
+                        }
+
+                        flags.Should().BeEquivalentTo(_trackFlags[i], $"Track flags: {_testFiles[i]}");
+                    });
                 }
             }
+        }
 
-            foreach(bool @long in new[]
+        // How many sectors to read at once
+        const uint SECTORS_TO_READ = 256;
+
+        [Test]
+        public void Hashes()
+        {
+            Environment.CurrentDirectory = _dataFolder;
+
+            Assert.Multiple(() =>
             {
-                false, true
-            })
                 for(int i = 0; i < _testFiles.Length; i++)
                 {
-                    var ctx = new Md5Context();
+                    var filter = new ZZZNoFilter();
+                    filter.Open(_testFiles[i]);
 
-                    foreach(Track currentTrack in images[i].Tracks)
+                    var  image  = new DiscImages.Nero();
+                    bool opened = image.Open(filter);
+
+                    Assert.AreEqual(true, opened, $"Open: {_testFiles[i]}");
+                    Md5Context ctx;
+
+                    foreach(bool @long in new[]
                     {
-                        ulong sectors     = currentTrack.TrackEndSector - currentTrack.TrackStartSector + 1;
-                        ulong doneSectors = 0;
+                        false, true
+                    })
+                    {
+                        ctx = new Md5Context();
 
-                        while(doneSectors < sectors)
+                        foreach(Track currentTrack in image.Tracks)
                         {
-                            byte[] sector;
+                            ulong sectors     = currentTrack.TrackEndSector - currentTrack.TrackStartSector + 1;
+                            ulong doneSectors = 0;
 
-                            if(sectors - doneSectors >= sectorsToRead)
+                            while(doneSectors < sectors)
                             {
-                                sector = @long ? images[i].
-                                                 ReadSectorsLong(doneSectors, sectorsToRead, currentTrack.TrackSequence)
-                                             : images[i].
-                                                 ReadSectors(doneSectors, sectorsToRead, currentTrack.TrackSequence);
+                                byte[] sector;
 
-                                doneSectors += sectorsToRead;
+                                if(sectors - doneSectors >= SECTORS_TO_READ)
+                                {
+                                    sector =
+                                        @long ? image.ReadSectorsLong(doneSectors, SECTORS_TO_READ,
+                                                                      currentTrack.TrackSequence)
+                                            : image.ReadSectors(doneSectors, SECTORS_TO_READ,
+                                                                currentTrack.TrackSequence);
+
+                                    doneSectors += SECTORS_TO_READ;
+                                }
+                                else
+                                {
+                                    sector =
+                                        @long ? image.ReadSectorsLong(doneSectors, (uint)(sectors - doneSectors),
+                                                                      currentTrack.TrackSequence)
+                                            : image.ReadSectors(doneSectors, (uint)(sectors - doneSectors),
+                                                                currentTrack.TrackSequence);
+
+                                    doneSectors += sectors - doneSectors;
+                                }
+
+                                ctx.Update(sector);
                             }
-                            else
-                            {
-                                sector = @long ? images[i].ReadSectorsLong(doneSectors, (uint)(sectors - doneSectors),
-                                                                           currentTrack.TrackSequence)
-                                             : images[i].ReadSectors(doneSectors, (uint)(sectors - doneSectors),
-                                                                     currentTrack.TrackSequence);
-
-                                doneSectors += sectors - doneSectors;
-                            }
-
-                            ctx.Update(sector);
                         }
+
+                        Assert.AreEqual(@long ? _longMd5S[i] : _md5S[i], ctx.End(),
+                                        $"{(@long ? "Long hash" : "Hash")}: {_testFiles[i]}");
                     }
 
-                    Assert.AreEqual(@long ? _longMd5S[i] : _md5S[i], ctx.End(),
-                                    $"{(@long ? "Long hash" : "Hash")}: {_testFiles[i]}");
-                }
+                    if(!image.Info.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel))
+                        continue;
 
-            for(int i = 0; i < _testFiles.Length; i++)
-                if(images[i].Info.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel))
-                {
-                    var ctx = new Md5Context();
+                    ctx = new Md5Context();
 
-                    foreach(Track currentTrack in images[i].Tracks)
+                    foreach(Track currentTrack in image.Tracks)
                     {
                         ulong sectors     = currentTrack.TrackEndSector - currentTrack.TrackStartSector + 1;
                         ulong doneSectors = 0;
@@ -1715,19 +1917,18 @@ namespace Aaru.Tests.Images.Nero
                         {
                             byte[] sector;
 
-                            if(sectors - doneSectors >= sectorsToRead)
+                            if(sectors - doneSectors >= SECTORS_TO_READ)
                             {
-                                sector = images[i].ReadSectorsTag(doneSectors, sectorsToRead,
-                                                                  currentTrack.TrackSequence,
-                                                                  SectorTagType.CdSectorSubchannel);
+                                sector = image.ReadSectorsTag(doneSectors, SECTORS_TO_READ, currentTrack.TrackSequence,
+                                                              SectorTagType.CdSectorSubchannel);
 
-                                doneSectors += sectorsToRead;
+                                doneSectors += SECTORS_TO_READ;
                             }
                             else
                             {
-                                sector = images[i].ReadSectorsTag(doneSectors, (uint)(sectors - doneSectors),
-                                                                  currentTrack.TrackSequence,
-                                                                  SectorTagType.CdSectorSubchannel);
+                                sector = image.ReadSectorsTag(doneSectors, (uint)(sectors - doneSectors),
+                                                              currentTrack.TrackSequence,
+                                                              SectorTagType.CdSectorSubchannel);
 
                                 doneSectors += sectors - doneSectors;
                             }
@@ -1738,6 +1939,7 @@ namespace Aaru.Tests.Images.Nero
 
                     Assert.AreEqual(_subchannelMd5S[i], ctx.End(), $"Subchannel hash: {_testFiles[i]}");
                 }
+            });
         }
     }
 }

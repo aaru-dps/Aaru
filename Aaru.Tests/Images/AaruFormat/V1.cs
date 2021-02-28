@@ -2539,74 +2539,77 @@ namespace Aaru.Tests.Images.AaruFormat
             }
         };
 
+        readonly string _dataFolder = Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "AaruFormat", "V1");
+
         [Test]
-        public void Test()
+        public void Info()
         {
-            Environment.CurrentDirectory =
-                Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "AaruFormat", "V1");
+            Environment.CurrentDirectory = _dataFolder;
 
-            for(int i = 0; i < _testFiles.Length; i++)
+            Assert.Multiple(() =>
             {
-                var filter = new ZZZNoFilter();
-                filter.Open(_testFiles[i]);
-
-                var  image  = new DiscImages.AaruFormat();
-                bool opened = image.Open(filter);
-
-                Assert.AreEqual(true, opened, $"Open: {_testFiles[i]}");
-
-                using(new AssertionScope())
+                for(int i = 0; i < _testFiles.Length; i++)
                 {
-                    Assert.Multiple(() =>
+                    var filter = new ZZZNoFilter();
+                    filter.Open(_testFiles[i]);
+
+                    var  image  = new DiscImages.AaruFormat();
+                    bool opened = image.Open(filter);
+
+                    Assert.AreEqual(true, opened, $"Open: {_testFiles[i]}");
+
+                    using(new AssertionScope())
                     {
-                        Assert.AreEqual(_sectors[i], image.Info.Sectors, $"Sectors: {_testFiles[i]}");
-                        Assert.AreEqual(_sectorSize[i], image.Info.SectorSize, $"Sector size: {_testFiles[i]}");
-                        Assert.AreEqual(_mediaTypes[i], image.Info.MediaType, $"Media type: {_testFiles[i]}");
-
-                        if(image.Info.XmlMediaType != XmlMediaType.OpticalDisc)
-                            return;
-
-                        Assert.AreEqual(_tracks[i], image.Tracks.Count, $"Tracks: {_testFiles[i]}");
-
-                        image.Tracks.Select(t => t.TrackSession).Should().
-                              BeEquivalentTo(_trackSessions[i], $"Track session: {_testFiles[i]}");
-
-                        image.Tracks.Select(t => t.TrackStartSector).Should().
-                              BeEquivalentTo(_trackStarts[i], $"Track start: {_testFiles[i]}");
-
-                        image.Tracks.Select(t => t.TrackEndSector).Should().
-                              BeEquivalentTo(_trackEnds[i], $"Track end: {_testFiles[i]}");
-
-                        image.Tracks.Select(t => t.TrackPregap).Should().
-                              BeEquivalentTo(_trackPregaps[i], $"Track pregap: {_testFiles[i]}");
-
-                        int trackNo = 0;
-
-                        byte[] flags = new byte[image.Tracks.Count];
-
-                        foreach(Track currentTrack in image.Tracks)
+                        Assert.Multiple(() =>
                         {
-                            if(image.Info.ReadableSectorTags.Contains(SectorTagType.CdTrackFlags))
-                                flags[trackNo] = image.ReadSectorTag(currentTrack.TrackSequence,
-                                                                     SectorTagType.CdTrackFlags)[0];
+                            Assert.AreEqual(_sectors[i], image.Info.Sectors, $"Sectors: {_testFiles[i]}");
+                            Assert.AreEqual(_sectorSize[i], image.Info.SectorSize, $"Sector size: {_testFiles[i]}");
+                            Assert.AreEqual(_mediaTypes[i], image.Info.MediaType, $"Media type: {_testFiles[i]}");
 
-                            trackNo++;
-                        }
+                            if(image.Info.XmlMediaType != XmlMediaType.OpticalDisc)
+                                return;
 
-                        flags.Should().BeEquivalentTo(_trackFlags[i], $"Track flags: {_testFiles[i]}");
-                    });
+                            Assert.AreEqual(_tracks[i], image.Tracks.Count, $"Tracks: {_testFiles[i]}");
+
+                            image.Tracks.Select(t => t.TrackSession).Should().
+                                  BeEquivalentTo(_trackSessions[i], $"Track session: {_testFiles[i]}");
+
+                            image.Tracks.Select(t => t.TrackStartSector).Should().
+                                  BeEquivalentTo(_trackStarts[i], $"Track start: {_testFiles[i]}");
+
+                            image.Tracks.Select(t => t.TrackEndSector).Should().
+                                  BeEquivalentTo(_trackEnds[i], $"Track end: {_testFiles[i]}");
+
+                            image.Tracks.Select(t => t.TrackPregap).Should().
+                                  BeEquivalentTo(_trackPregaps[i], $"Track pregap: {_testFiles[i]}");
+
+                            int trackNo = 0;
+
+                            byte[] flags = new byte[image.Tracks.Count];
+
+                            foreach(Track currentTrack in image.Tracks)
+                            {
+                                if(image.Info.ReadableSectorTags.Contains(SectorTagType.CdTrackFlags))
+                                    flags[trackNo] = image.ReadSectorTag(currentTrack.TrackSequence,
+                                                                         SectorTagType.CdTrackFlags)[0];
+
+                                trackNo++;
+                            }
+
+                            flags.Should().BeEquivalentTo(_trackFlags[i], $"Track flags: {_testFiles[i]}");
+                        });
+                    }
                 }
-            }
+            });
         }
+
+        // How many sectors to read at once
+        const uint SECTORS_TO_READ = 256;
 
         [Test]
         public void Hashes()
         {
-            // How many sectors to read at once
-            const uint sectorsToRead = 256;
-
-            Environment.CurrentDirectory =
-                Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "AaruFormat", "V1");
+            Environment.CurrentDirectory = Environment.CurrentDirectory = _dataFolder;
 
             Assert.Multiple(() =>
             {
@@ -2639,15 +2642,15 @@ namespace Aaru.Tests.Images.AaruFormat
                                 {
                                     byte[] sector;
 
-                                    if(sectors - doneSectors >= sectorsToRead)
+                                    if(sectors - doneSectors >= SECTORS_TO_READ)
                                     {
                                         sector =
-                                            @long ? image.ReadSectorsLong(doneSectors, sectorsToRead,
+                                            @long ? image.ReadSectorsLong(doneSectors, SECTORS_TO_READ,
                                                                           currentTrack.TrackSequence)
-                                                : image.ReadSectors(doneSectors, sectorsToRead,
+                                                : image.ReadSectors(doneSectors, SECTORS_TO_READ,
                                                                     currentTrack.TrackSequence);
 
-                                        doneSectors += sectorsToRead;
+                                        doneSectors += SECTORS_TO_READ;
                                     }
                                     else
                                     {
@@ -2682,13 +2685,13 @@ namespace Aaru.Tests.Images.AaruFormat
                             {
                                 byte[] sector;
 
-                                if(sectors - doneSectors >= sectorsToRead)
+                                if(sectors - doneSectors >= SECTORS_TO_READ)
                                 {
-                                    sector = image.ReadSectorsTag(doneSectors, sectorsToRead,
+                                    sector = image.ReadSectorsTag(doneSectors, SECTORS_TO_READ,
                                                                   currentTrack.TrackSequence,
                                                                   SectorTagType.CdSectorSubchannel);
 
-                                    doneSectors += sectorsToRead;
+                                    doneSectors += SECTORS_TO_READ;
                                 }
                                 else
                                 {
@@ -2714,10 +2717,10 @@ namespace Aaru.Tests.Images.AaruFormat
                         {
                             byte[] sector;
 
-                            if(image.Info.Sectors - doneSectors >= sectorsToRead)
+                            if(image.Info.Sectors - doneSectors >= SECTORS_TO_READ)
                             {
-                                sector      =  image.ReadSectors(doneSectors, sectorsToRead);
-                                doneSectors += sectorsToRead;
+                                sector      =  image.ReadSectors(doneSectors, SECTORS_TO_READ);
+                                doneSectors += SECTORS_TO_READ;
                             }
                             else
                             {
@@ -2737,8 +2740,7 @@ namespace Aaru.Tests.Images.AaruFormat
         [Test]
         public void Tape()
         {
-            Environment.CurrentDirectory =
-                Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "AaruFormat", "V1");
+            Environment.CurrentDirectory = _dataFolder;
 
             Assert.Multiple(() =>
             {

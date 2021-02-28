@@ -523,11 +523,12 @@ namespace Aaru.Tests.Images.UltraISO
             }
         };
 
+        readonly string _dataFolder = Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "UltraISO", "Nero");
+
         [Test]
-        public void Test()
+        public void Info()
         {
-            Environment.CurrentDirectory =
-                Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "UltraISO", "Nero");
+            Environment.CurrentDirectory = _dataFolder;
 
             for(int i = 0; i < _testFiles.Length; i++)
             {
@@ -579,14 +580,13 @@ namespace Aaru.Tests.Images.UltraISO
             }
         }
 
+        // How many sectors to read at once
+        const uint SECTORS_TO_READ = 256;
+
         [Test]
         public void Hashes()
         {
-            // How many sectors to read at once
-            const uint sectorsToRead = 256;
-
-            Environment.CurrentDirectory =
-                Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "UltraISO", "Nero");
+            Environment.CurrentDirectory = _dataFolder;
 
             Assert.Multiple(() =>
             {
@@ -617,14 +617,15 @@ namespace Aaru.Tests.Images.UltraISO
                             {
                                 byte[] sector;
 
-                                if(sectors - doneSectors >= sectorsToRead)
+                                if(sectors - doneSectors >= SECTORS_TO_READ)
                                 {
                                     sector =
-                                        @long ? image.ReadSectorsLong(doneSectors, sectorsToRead,
+                                        @long ? image.ReadSectorsLong(doneSectors, SECTORS_TO_READ,
                                                                       currentTrack.TrackSequence)
-                                            : image.ReadSectors(doneSectors, sectorsToRead, currentTrack.TrackSequence);
+                                            : image.ReadSectors(doneSectors, SECTORS_TO_READ,
+                                                                currentTrack.TrackSequence);
 
-                                    doneSectors += sectorsToRead;
+                                    doneSectors += SECTORS_TO_READ;
                                 }
                                 else
                                 {
@@ -659,12 +660,12 @@ namespace Aaru.Tests.Images.UltraISO
                         {
                             byte[] sector;
 
-                            if(sectors - doneSectors >= sectorsToRead)
+                            if(sectors - doneSectors >= SECTORS_TO_READ)
                             {
-                                sector = image.ReadSectorsTag(doneSectors, sectorsToRead, currentTrack.TrackSequence,
+                                sector = image.ReadSectorsTag(doneSectors, SECTORS_TO_READ, currentTrack.TrackSequence,
                                                               SectorTagType.CdSectorSubchannel);
 
-                                doneSectors += sectorsToRead;
+                                doneSectors += SECTORS_TO_READ;
                             }
                             else
                             {

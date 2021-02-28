@@ -45,6 +45,7 @@ namespace Aaru.Tests.Images.AppleDOS
             "dos33.po.lz", "hfs1440.po.lz", "hfs.po.lz", "pascal800.po.lz", "pascal.po.lz", "prodos1440.po.lz",
             "prodos5mb.po.lz", "prodos800.po.lz", "prodosmod.po.lz", "prodos.po.lz"
         };
+
         readonly ulong[] _sectors =
         {
             // dos33.po.lz
@@ -77,6 +78,7 @@ namespace Aaru.Tests.Images.AppleDOS
             // prodos.po.lz
             560
         };
+
         readonly uint[] _sectorSize =
         {
             // dos33.po.lz
@@ -109,6 +111,7 @@ namespace Aaru.Tests.Images.AppleDOS
             // prodos.po.lz
             256
         };
+
         readonly MediaType[] _mediaTypes =
         {
             // dos33.po.lz
@@ -141,6 +144,7 @@ namespace Aaru.Tests.Images.AppleDOS
             // prodos.po.lz
             MediaType.Apple33SS
         };
+
         readonly string[] _md5S =
         {
             // dos33.po.lz
@@ -207,7 +211,7 @@ namespace Aaru.Tests.Images.AppleDOS
         }
 
         // How many sectors to read at once
-        const uint _sectorsToRead = 256;
+        const uint SECTORS_TO_READ = 256;
 
         [Test]
         public void Hashes()
@@ -232,10 +236,10 @@ namespace Aaru.Tests.Images.AppleDOS
                     {
                         byte[] sector;
 
-                        if(image.Info.Sectors - doneSectors >= _sectorsToRead)
+                        if(image.Info.Sectors - doneSectors >= SECTORS_TO_READ)
                         {
-                            sector      =  image.ReadSectors(doneSectors, _sectorsToRead);
-                            doneSectors += _sectorsToRead;
+                            sector      =  image.ReadSectors(doneSectors, SECTORS_TO_READ);
+                            doneSectors += SECTORS_TO_READ;
                         }
                         else
                         {

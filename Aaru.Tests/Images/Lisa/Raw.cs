@@ -167,7 +167,7 @@ namespace Aaru.Tests.Images.Lisa
         }
 
         // How many sectors to read at once
-        const uint _sectorsToRead = 256;
+        const uint SECTORS_TO_READ = 256;
 
         [Test]
         public void Hashes()
@@ -196,10 +196,10 @@ namespace Aaru.Tests.Images.Lisa
                     {
                         byte[] sector;
 
-                        if(image.Info.Sectors - doneSectors >= _sectorsToRead)
+                        if(image.Info.Sectors - doneSectors >= SECTORS_TO_READ)
                         {
-                            sector      =  image.ReadSectors(doneSectors, _sectorsToRead);
-                            doneSectors += _sectorsToRead;
+                            sector      =  image.ReadSectors(doneSectors, SECTORS_TO_READ);
+                            doneSectors += SECTORS_TO_READ;
                         }
                         else
                         {

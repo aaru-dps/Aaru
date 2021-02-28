@@ -26,11 +26,12 @@
 // Copyright © 2011-2021 Natalia Portillo
 // ****************************************************************************/
 
+using System;
 using System.IO;
 using Aaru.Checksums;
 using Aaru.CommonTypes;
-using Aaru.CommonTypes.Interfaces;
 using Aaru.Filters;
+using FluentAssertions.Execution;
 using NUnit.Framework;
 
 namespace Aaru.Tests.Images
@@ -70,46 +71,81 @@ namespace Aaru.Tests.Images
             "243036c4617b666a6c886cc23d7274e0", "09bb2ff964a0c5c223a1900f085e3955"
         };
 
+        readonly string _dataFolder = Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "Anex86");
+
         [Test]
-        public void Test()
+        public void Info()
         {
-            for(int i = 0; i < _testFiles.Length; i++)
+            Environment.CurrentDirectory = _dataFolder;
+
+            Assert.Multiple(() =>
             {
-                string  location = Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "Anex86", _testFiles[i]);
-                IFilter filter   = new LZip();
-                filter.Open(location);
-                IMediaImage image = new DiscImages.Anex86();
-                Assert.AreEqual(true, image.Open(filter), _testFiles[i]);
-                Assert.AreEqual(_sectors[i], image.Info.Sectors, _testFiles[i]);
-                Assert.AreEqual(_sectorSize[i], image.Info.SectorSize, _testFiles[i]);
-                Assert.AreEqual(_mediaTypes[i], image.Info.MediaType, _testFiles[i]);
-
-                // How many sectors to read at once
-                const uint sectorsToRead = 256;
-                ulong      doneSectors   = 0;
-
-                var ctx = new Md5Context();
-
-                while(doneSectors < image.Info.Sectors)
+                for(int i = 0; i < _testFiles.Length; i++)
                 {
-                    byte[] sector;
+                    var filter = new LZip();
+                    filter.Open(_testFiles[i]);
 
-                    if(image.Info.Sectors - doneSectors >= sectorsToRead)
-                    {
-                        sector      =  image.ReadSectors(doneSectors, sectorsToRead);
-                        doneSectors += sectorsToRead;
-                    }
-                    else
-                    {
-                        sector      =  image.ReadSectors(doneSectors, (uint)(image.Info.Sectors - doneSectors));
-                        doneSectors += image.Info.Sectors - doneSectors;
-                    }
+                    var  image  = new DiscImages.Anex86();
+                    bool opened = image.Open(filter);
 
-                    ctx.Update(sector);
+                    Assert.AreEqual(true, opened, $"Open: {_testFiles[i]}");
+
+                    using(new AssertionScope())
+                    {
+                        Assert.Multiple(() =>
+                        {
+                            Assert.AreEqual(_sectors[i], image.Info.Sectors, _testFiles[i]);
+                            Assert.AreEqual(_sectorSize[i], image.Info.SectorSize, _testFiles[i]);
+                            Assert.AreEqual(_mediaTypes[i], image.Info.MediaType, _testFiles[i]);
+                        });
+                    }
                 }
+            });
+        }
 
-                Assert.AreEqual(_md5S[i], ctx.End(), _testFiles[i]);
-            }
+        // How many sectors to read at once
+        const uint SECTORS_TO_READ = 256;
+
+        [Test]
+        public void Hashes()
+        {
+            Environment.CurrentDirectory = _dataFolder;
+
+            Assert.Multiple(() =>
+            {
+                for(int i = 0; i < _testFiles.Length; i++)
+                {
+                    var filter = new LZip();
+                    filter.Open(_testFiles[i]);
+
+                    var   image       = new DiscImages.Anex86();
+                    bool  opened      = image.Open(filter);
+                    ulong doneSectors = 0;
+
+                    Assert.AreEqual(true, opened, $"Open: {_testFiles[i]}");
+                    var ctx = new Md5Context();
+
+                    while(doneSectors < image.Info.Sectors)
+                    {
+                        byte[] sector;
+
+                        if(image.Info.Sectors - doneSectors >= SECTORS_TO_READ)
+                        {
+                            sector      =  image.ReadSectors(doneSectors, SECTORS_TO_READ);
+                            doneSectors += SECTORS_TO_READ;
+                        }
+                        else
+                        {
+                            sector      =  image.ReadSectors(doneSectors, (uint)(image.Info.Sectors - doneSectors));
+                            doneSectors += image.Info.Sectors - doneSectors;
+                        }
+
+                        ctx.Update(sector);
+                    }
+
+                    Assert.AreEqual(_md5S[i], ctx.End(), _testFiles[i]);
+                }
+            });
         }
     }
 }

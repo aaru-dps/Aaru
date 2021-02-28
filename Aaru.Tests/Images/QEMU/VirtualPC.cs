@@ -42,17 +42,17 @@ namespace Aaru.Tests.Images.QEMU
     {
         readonly string[] _testFiles =
         {
-            "qemu_dynamic_250mb.vhd.lz",
-                "qemu_fixed_10mb.vhd.lz",
-                "virtualpc.vhd.lz"
+            "qemu_dynamic_250mb.vhd.lz", "qemu_fixed_10mb.vhd.lz", "virtualpc.vhd.lz"
         };
 
         readonly ulong[] _sectors =
         {
             // qemu_dynamic_250mb.vhd.lz"
             512064,
+
             // qemu_fixed_10mb.vhd.lz"
             20536,
+
             // virtualpc.vhd.lz
             251940
         };
@@ -61,8 +61,10 @@ namespace Aaru.Tests.Images.QEMU
         {
             // qemu_dynamic_250mb.vhd.lz"
             512,
+
             // qemu_fixed_10mb.vhd.lz"
             512,
+
             // virtualpc.vhd.lz
             512
         };
@@ -71,8 +73,10 @@ namespace Aaru.Tests.Images.QEMU
         {
             // qemu_dynamic_250mb.vhd.lz"
             MediaType.Unknown,
+
             // qemu_fixed_10mb.vhd.lz"
             MediaType.Unknown,
+
             // virtualpc.vhd.lz
             MediaType.Unknown
         };
@@ -81,8 +85,10 @@ namespace Aaru.Tests.Images.QEMU
         {
             // qemu_dynamic_250mb.vhd.lz"
             "0435d6781d14d34a32c6ac40f5e70d35",
+
             // qemu_fixed_10mb.vhd.lz"
             "adfad4fb019f157e868baa39e7753db7",
+
             // virtualpc.vhd.lz
             "6246bff640cb3a56d2611e7f8616384d"
         };
@@ -123,7 +129,7 @@ namespace Aaru.Tests.Images.QEMU
         }
 
         // How many sectors to read at once
-        const uint _sectorsToRead = 256;
+        const uint SECTORS_TO_READ = 256;
 
         [Test]
         public void Hashes()
@@ -152,10 +158,10 @@ namespace Aaru.Tests.Images.QEMU
                     {
                         byte[] sector;
 
-                        if(image.Info.Sectors - doneSectors >= _sectorsToRead)
+                        if(image.Info.Sectors - doneSectors >= SECTORS_TO_READ)
                         {
-                            sector      =  image.ReadSectors(doneSectors, _sectorsToRead);
-                            doneSectors += _sectorsToRead;
+                            sector      =  image.ReadSectors(doneSectors, SECTORS_TO_READ);
+                            doneSectors += SECTORS_TO_READ;
                         }
                         else
                         {
