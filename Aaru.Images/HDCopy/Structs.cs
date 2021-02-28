@@ -41,20 +41,20 @@ namespace Aaru.DiscImages
     {
         /// <summary>The global header of a HDCP image file</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        readonly struct FileHeader
+        struct FileHeader
         {
             /// <summary>Last cylinder (zero-based)</summary>
-            public readonly byte lastCylinder;
+            public byte lastCylinder;
 
             /// <summary>Sectors per track</summary>
-            public readonly byte sectorsPerTrack;
+            public byte sectorsPerTrack;
 
             /// <summary>
             ///     The track map. It contains one byte for each track. Up to 82 tracks (41 tracks * 2 sides) are supported. 0
             ///     means track is not present, 1 means it is present. The first 2 tracks are always present.
             /// </summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2 * 82)]
-            public readonly byte[] trackMap;
+            public byte[] trackMap;
         }
 
         /// <summary>The header for a RLE-compressed block</summary>

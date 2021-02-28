@@ -38,6 +38,60 @@ namespace Aaru.DiscImages
 {
     public sealed partial class HdCopy
     {
+        bool TryReadHeader(Stream stream, ref FileHeader fhdr, ref long dataStartOffset)
+        {
+            int numTracks = 82;
+
+            stream.Seek(0, SeekOrigin.Begin);
+
+            if(stream.Length < 16 + (2 * 82))
+                return false;
+
+            FileHeader fheader;
+
+            /* assume it's a regular HD-Copy file without the disk name */
+            dataStartOffset = 2 + 2 * numTracks;
+            fheader.lastCylinder = (byte)stream.ReadByte();
+            fheader.sectorsPerTrack = (byte)stream.ReadByte();
+            if (fheader.lastCylinder == 0xff && fheader.sectorsPerTrack == 0x18)
+            {
+                /* This is an "extended" HD-Copy file with filename information and 84 tracks */
+                stream.Seek(0x0e, SeekOrigin.Begin);
+                fheader.lastCylinder = (byte)stream.ReadByte();
+                fheader.sectorsPerTrack = (byte)stream.ReadByte();
+                numTracks = 84;
+                dataStartOffset = 16 + 2 * numTracks;
+            }
+            fheader.trackMap = new byte[2 * numTracks];
+            stream.Read(fheader.trackMap, 0, 2 * numTracks);
+
+            /* Some sanity checks on the values we just read.
+             * We know the image is from a DOS floppy disk, so assume
+             * some sane cylinder and sectors-per-track count.
+             */
+            if(fheader.sectorsPerTrack < 8 ||
+               fheader.sectorsPerTrack > 40)
+                return false;
+
+            if(fheader.lastCylinder < 37 ||
+               fheader.lastCylinder >= 84)
+                return false;
+
+            // Validate the trackmap. First two tracks need to be present
+            if(fheader.trackMap[0] != 1 ||
+               fheader.trackMap[1] != 1)
+                return false;
+
+            // all other tracks must be either present (=1) or absent (=0)
+            for(int i = 0; i < 2 * numTracks; i++)
+                if(fheader.trackMap[i] > 1)
+                    return false;
+
+            /* return success */
+            fhdr = fheader;
+            return true;
+        }
+
         void ReadTrackIntoCache(Stream stream, int trackNum)
         {
             byte[] trackData = new byte[_imageInfo.SectorSize * _imageInfo.SectorsPerTrack];
