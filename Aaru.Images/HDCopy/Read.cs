@@ -46,12 +46,16 @@ namespace Aaru.DiscImages
         public bool Open(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
-            stream.Seek(0, SeekOrigin.Begin);
 
-            byte[] header = new byte[2 + (2 * 82)];
-            stream.Read(header, 0, 2 + (2 * 82));
+            FileHeader fheader = new FileHeader();
 
-            FileHeader fheader = Marshal.ByteArrayToStructureLittleEndian<FileHeader>(header);
+            // the start offset of the track data
+            long currentOffset = 0;
+
+            if (!TryReadHeader(stream, ref fheader, ref currentOffset))
+            {
+                return false;
+            }
 
             AaruConsole.DebugWriteLine("HDCP plugin",
                                        "Detected HD-Copy image with {0} tracks and {1} sectors per track.",
@@ -73,9 +77,6 @@ namespace Aaru.DiscImages
             _imageInfo.MediaType = Geometry.GetMediaType(((ushort)_imageInfo.Cylinders, 2,
                                                           (ushort)_imageInfo.SectorsPerTrack, 512, MediaEncoding.MFM,
                                                           false));
-
-            // the start offset of the track data
-            long currentOffset = 2 + (2 * 82);
 
             // build table of track offsets
             for(int i = 0; i < _imageInfo.Cylinders * 2; i++)
