@@ -29,6 +29,7 @@
 using System.IO;
 using Aaru.Checksums;
 using Aaru.CommonTypes.Interfaces;
+using FluentAssertions;
 using NUnit.Framework;
 
 namespace Aaru.Tests.Checksums
@@ -48,7 +49,7 @@ namespace Aaru.Tests.Checksums
         };
 
         [Test]
-        public void Sha1EmptyData()
+        public void EmptyData()
         {
             byte[] data = new byte[1048576];
 
@@ -59,18 +60,18 @@ namespace Aaru.Tests.Checksums
             fs.Close();
             fs.Dispose();
             Sha1Context.Data(data, out byte[] result);
-            Assert.AreEqual(_expectedEmpty, result);
+            result.Should().BeEquivalentTo(_expectedEmpty);
         }
 
         [Test]
-        public void Sha1EmptyFile()
+        public void EmptyFile()
         {
             byte[] result = Sha1Context.File(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "empty"));
-            Assert.AreEqual(_expectedEmpty, result);
+            result.Should().BeEquivalentTo(_expectedEmpty);
         }
 
         [Test]
-        public void Sha1EmptyInstance()
+        public void EmptyInstance()
         {
             byte[] data = new byte[1048576];
 
@@ -83,11 +84,11 @@ namespace Aaru.Tests.Checksums
             IChecksum ctx = new Sha1Context();
             ctx.Update(data);
             byte[] result = ctx.Final();
-            Assert.AreEqual(_expectedEmpty, result);
+            result.Should().BeEquivalentTo(_expectedEmpty);
         }
 
         [Test]
-        public void Sha1RandomData()
+        public void RandomData()
         {
             byte[] data = new byte[1048576];
 
@@ -98,18 +99,18 @@ namespace Aaru.Tests.Checksums
             fs.Close();
             fs.Dispose();
             Sha1Context.Data(data, out byte[] result);
-            Assert.AreEqual(_expectedRandom, result);
+            result.Should().BeEquivalentTo(_expectedRandom);
         }
 
         [Test]
-        public void Sha1RandomFile()
+        public void RandomFile()
         {
             byte[] result = Sha1Context.File(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"));
-            Assert.AreEqual(_expectedRandom, result);
+            result.Should().BeEquivalentTo(_expectedRandom);
         }
 
         [Test]
-        public void Sha1RandomInstance()
+        public void RandomInstance()
         {
             byte[] data = new byte[1048576];
 
@@ -122,7 +123,7 @@ namespace Aaru.Tests.Checksums
             IChecksum ctx = new Sha1Context();
             ctx.Update(data);
             byte[] result = ctx.Final();
-            Assert.AreEqual(_expectedRandom, result);
+            result.Should().BeEquivalentTo(_expectedRandom);
         }
     }
 }

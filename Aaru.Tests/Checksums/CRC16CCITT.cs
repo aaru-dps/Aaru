@@ -28,6 +28,7 @@
 
 using System.IO;
 using Aaru.Checksums;
+using FluentAssertions;
 using NUnit.Framework;
 
 namespace Aaru.Tests.Checksums
@@ -45,7 +46,7 @@ namespace Aaru.Tests.Checksums
         };
 
         [Test]
-        public void Crc16CcittEmptyData()
+        public void EmptyData()
         {
             byte[] data = new byte[1048576];
 
@@ -56,20 +57,20 @@ namespace Aaru.Tests.Checksums
             fs.Close();
             fs.Dispose();
             CRC16CCITTContext.Data(data, out byte[] result);
-            Assert.AreEqual(_expectedEmpty, result);
+            result.Should().BeEquivalentTo(_expectedEmpty);
         }
 
         [Test]
-        public void Crc16CcittEmptyFile()
+        public void EmptyFile()
         {
             byte[] result =
                 CRC16CCITTContext.File(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "empty"));
 
-            Assert.AreEqual(_expectedEmpty, result);
+            result.Should().BeEquivalentTo(_expectedEmpty);
         }
 
         [Test]
-        public void Crc16CcittEmptyInstance()
+        public void EmptyInstance()
         {
             byte[] data = new byte[1048576];
 
@@ -82,11 +83,11 @@ namespace Aaru.Tests.Checksums
             var ctx = new CRC16CCITTContext();
             ctx.Update(data);
             byte[] result = ctx.Final();
-            Assert.AreEqual(_expectedEmpty, result);
+            result.Should().BeEquivalentTo(_expectedEmpty);
         }
 
         [Test]
-        public void Crc16CcittRandomData()
+        public void RandomData()
         {
             byte[] data = new byte[1048576];
 
@@ -97,20 +98,20 @@ namespace Aaru.Tests.Checksums
             fs.Close();
             fs.Dispose();
             CRC16CCITTContext.Data(data, out byte[] result);
-            Assert.AreEqual(_expectedRandom, result);
+            result.Should().BeEquivalentTo(_expectedRandom);
         }
 
         [Test]
-        public void Crc16CcittRandomFile()
+        public void RandomFile()
         {
             byte[] result =
                 CRC16CCITTContext.File(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"));
 
-            Assert.AreEqual(_expectedRandom, result);
+            result.Should().BeEquivalentTo(_expectedRandom);
         }
 
         [Test]
-        public void Crc16CcittRandomInstance()
+        public void RandomInstance()
         {
             byte[] data = new byte[1048576];
 
@@ -123,7 +124,7 @@ namespace Aaru.Tests.Checksums
             var ctx = new CRC16CCITTContext();
             ctx.Update(data);
             byte[] result = ctx.Final();
-            Assert.AreEqual(_expectedRandom, result);
+            result.Should().BeEquivalentTo(_expectedRandom);
         }
     }
 }

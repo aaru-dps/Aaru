@@ -29,6 +29,7 @@
 using System.IO;
 using Aaru.Checksums;
 using Aaru.CommonTypes.Interfaces;
+using FluentAssertions;
 using NUnit.Framework;
 
 namespace Aaru.Tests.Checksums
@@ -46,7 +47,7 @@ namespace Aaru.Tests.Checksums
         };
 
         [Test]
-        public void Crc32EmptyData()
+        public void EmptyData()
         {
             byte[] data = new byte[1048576];
 
@@ -57,18 +58,18 @@ namespace Aaru.Tests.Checksums
             fs.Close();
             fs.Dispose();
             Crc32Context.Data(data, out byte[] result);
-            Assert.AreEqual(_expectedEmpty, result);
+            result.Should().BeEquivalentTo(_expectedEmpty);
         }
 
         [Test]
-        public void Crc32EmptyFile()
+        public void EmptyFile()
         {
             byte[] result = Crc32Context.File(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "empty"));
-            Assert.AreEqual(_expectedEmpty, result);
+            result.Should().BeEquivalentTo(_expectedEmpty);
         }
 
         [Test]
-        public void Crc32EmptyInstance()
+        public void EmptyInstance()
         {
             byte[] data = new byte[1048576];
 
@@ -81,11 +82,11 @@ namespace Aaru.Tests.Checksums
             IChecksum ctx = new Crc32Context();
             ctx.Update(data);
             byte[] result = ctx.Final();
-            Assert.AreEqual(_expectedEmpty, result);
+            result.Should().BeEquivalentTo(_expectedEmpty);
         }
 
         [Test]
-        public void Crc32RandomData()
+        public void RandomData()
         {
             byte[] data = new byte[1048576];
 
@@ -96,18 +97,18 @@ namespace Aaru.Tests.Checksums
             fs.Close();
             fs.Dispose();
             Crc32Context.Data(data, out byte[] result);
-            Assert.AreEqual(_expectedRandom, result);
+            result.Should().BeEquivalentTo(_expectedRandom);
         }
 
         [Test]
-        public void Crc32RandomFile()
+        public void RandomFile()
         {
             byte[] result = Crc32Context.File(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"));
-            Assert.AreEqual(_expectedRandom, result);
+            result.Should().BeEquivalentTo(_expectedRandom);
         }
 
         [Test]
-        public void Crc32RandomInstance()
+        public void RandomInstance()
         {
             byte[] data = new byte[1048576];
 
@@ -120,7 +121,7 @@ namespace Aaru.Tests.Checksums
             IChecksum ctx = new Crc32Context();
             ctx.Update(data);
             byte[] result = ctx.Final();
-            Assert.AreEqual(_expectedRandom, result);
+            result.Should().BeEquivalentTo(_expectedRandom);
         }
     }
 }

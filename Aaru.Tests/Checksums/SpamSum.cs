@@ -40,7 +40,7 @@ namespace Aaru.Tests.Checksums
         const string EXPECTED_RANDOM = "24576:3dvzuAsHTQ16pc7O1Q/gS9qze+Swwn9s6IX:8/TQQpaVqze+JN6IX";
 
         [Test]
-        public void SpamSumEmptyData()
+        public void EmptyData()
         {
             byte[] data = new byte[1048576];
 
@@ -55,7 +55,7 @@ namespace Aaru.Tests.Checksums
         }
 
         [Test]
-        public void SpamSumEmptyInstance()
+        public void EmptyInstance()
         {
             byte[] data = new byte[1048576];
 
@@ -72,7 +72,7 @@ namespace Aaru.Tests.Checksums
         }
 
         [Test]
-        public void SpamSumRandomData()
+        public void RandomData()
         {
             byte[] data = new byte[1048576];
 
@@ -87,7 +87,7 @@ namespace Aaru.Tests.Checksums
         }
 
         [Test]
-        public void SpamSumRandomInstance()
+        public void RandomInstance()
         {
             byte[] data = new byte[1048576];
 

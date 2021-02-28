@@ -29,6 +29,7 @@
 using System.IO;
 using Aaru.Checksums;
 using Aaru.CommonTypes.Interfaces;
+using FluentAssertions;
 using NUnit.Framework;
 
 namespace Aaru.Tests.Checksums
@@ -46,7 +47,7 @@ namespace Aaru.Tests.Checksums
         };
 
         [Test]
-        public void Crc16IbmEmptyData()
+        public void EmptyData()
         {
             byte[] data = new byte[1048576];
 
@@ -57,19 +58,19 @@ namespace Aaru.Tests.Checksums
             fs.Close();
             fs.Dispose();
             CRC16IBMContext.Data(data, out byte[] result);
-            Assert.AreEqual(_expectedEmpty, result);
+            result.Should().BeEquivalentTo(_expectedEmpty);
         }
 
         [Test]
-        public void Crc16IbmEmptyFile()
+        public void EmptyFile()
         {
             byte[] result = CRC16IBMContext.File(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "empty"));
 
-            Assert.AreEqual(_expectedEmpty, result);
+            result.Should().BeEquivalentTo(_expectedEmpty);
         }
 
         [Test]
-        public void Crc16IbmEmptyInstance()
+        public void EmptyInstance()
         {
             byte[] data = new byte[1048576];
 
@@ -82,11 +83,11 @@ namespace Aaru.Tests.Checksums
             IChecksum ctx = new CRC16IBMContext();
             ctx.Update(data);
             byte[] result = ctx.Final();
-            Assert.AreEqual(_expectedEmpty, result);
+            result.Should().BeEquivalentTo(_expectedEmpty);
         }
 
         [Test]
-        public void Crc16IbmRandomData()
+        public void RandomData()
         {
             byte[] data = new byte[1048576];
 
@@ -97,19 +98,19 @@ namespace Aaru.Tests.Checksums
             fs.Close();
             fs.Dispose();
             CRC16IBMContext.Data(data, out byte[] result);
-            Assert.AreEqual(_expectedRandom, result);
+            result.Should().BeEquivalentTo(_expectedRandom);
         }
 
         [Test]
-        public void Crc16IbmRandomFile()
+        public void RandomFile()
         {
             byte[] result = CRC16IBMContext.File(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"));
 
-            Assert.AreEqual(_expectedRandom, result);
+            result.Should().BeEquivalentTo(_expectedRandom);
         }
 
         [Test]
-        public void Crc16IbmRandomInstance()
+        public void RandomInstance()
         {
             byte[] data = new byte[1048576];
 
@@ -122,7 +123,7 @@ namespace Aaru.Tests.Checksums
             IChecksum ctx = new CRC16IBMContext();
             ctx.Update(data);
             byte[] result = ctx.Final();
-            Assert.AreEqual(_expectedRandom, result);
+            result.Should().BeEquivalentTo(_expectedRandom);
         }
     }
 }
