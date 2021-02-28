@@ -26,11 +26,12 @@
 // Copyright © 2011-2021 Natalia Portillo
 // ****************************************************************************/
 
+using System;
 using System.IO;
 using Aaru.CommonTypes;
-using Aaru.CommonTypes.Interfaces;
 using Aaru.DiscImages;
 using Aaru.Filters;
+using FluentAssertions.Execution;
 using NUnit.Framework;
 
 namespace Aaru.Tests.Devices
@@ -58,20 +59,39 @@ namespace Aaru.Tests.Devices
             512, 512
         };
 
+        readonly string _dataFolder = Path.Combine(Consts.TEST_FILES_ROOT, "Device test dumps", "PocketZIP");
+
         [Test]
-        public void Test()
+        public void Info()
         {
-            for(int i = 0; i < _testFiles.Length; i++)
+            Environment.CurrentDirectory = _dataFolder;
+
+            Assert.Multiple(() =>
             {
-                string location = Path.Combine(Consts.TEST_FILES_ROOT, "Device test dumps", "PocketZIP", _testFiles[i]);
-                IFilter filter = new LZip();
-                filter.Open(location);
-                IMediaImage image = new ZZZRawImage();
-                Assert.AreEqual(true, image.Open(filter), _testFiles[i]);
-                Assert.AreEqual(_mediaTypes[i], image.Info.MediaType, _testFiles[i]);
-                Assert.AreEqual(_sectors[i], image.Info.Sectors, _testFiles[i]);
-                Assert.AreEqual(_sectorSize[i], image.Info.SectorSize, _testFiles[i]);
-            }
+                for(int i = 0; i < _testFiles.Length; i++)
+                {
+                    var filter = new LZip();
+                    filter.Open(_testFiles[i]);
+
+                    var  image  = new ZZZRawImage();
+                    bool opened = image.Open(filter);
+
+                    Assert.AreEqual(true, opened, $"Open: {_testFiles[i]}");
+
+                    if(!opened)
+                        continue;
+
+                    using(new AssertionScope())
+                    {
+                        Assert.Multiple(() =>
+                        {
+                            Assert.AreEqual(_sectors[i], image.Info.Sectors, $"Sectors: {_testFiles[i]}");
+                            Assert.AreEqual(_sectorSize[i], image.Info.SectorSize, $"Sector size: {_testFiles[i]}");
+                            Assert.AreEqual(_mediaTypes[i], image.Info.MediaType, $"Media type: {_testFiles[i]}");
+                        });
+                    }
+                }
+            });
         }
     }
 }

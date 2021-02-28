@@ -1,4 +1,5 @@
 using Aaru.Helpers;
+using FluentAssertions.Execution;
 using NUnit.Framework;
 
 // ReSharper disable InconsistentNaming
@@ -178,68 +179,80 @@ namespace Aaru.Tests.Devices.MultiMediaCard
         {
             for(int i = 0; i < cards.Length; i++)
             {
-                int count = Marshal.ConvertFromHexAscii(csds[i], out byte[] response);
-                Assert.AreEqual(16, count, $"Size - {cards[i]}");
-                Decoders.MMC.CSD csd = Decoders.MMC.Decoders.DecodeCSD(response);
-                Assert.IsNotNull(csd, $"Decoded - {cards[i]}");
-                Assert.AreEqual(structure_versions[i], csd.Structure, $"Structure version - {cards[i]}");
-                Assert.AreEqual(spec_versions[i], csd.Version, $"Specification version - {cards[i]}");
-                Assert.AreEqual(taacs[i], csd.TAAC, $"TAAC - {cards[i]}");
-                Assert.AreEqual(nsacs[i], csd.NSAC, $"NSAC - {cards[i]}");
-                Assert.AreEqual(speeds[i], csd.Speed, $"Transfer speed - {cards[i]}");
-                Assert.AreEqual(classes[i], csd.Classes, $"Classes - {cards[i]}");
-                Assert.AreEqual(read_block_lengths[i], csd.ReadBlockLength, $"Read block length - {cards[i]}");
-                Assert.AreEqual(read_partial_blocks[i], csd.ReadsPartialBlocks, $"Reads partial blocks - {cards[i]}");
+                using(new AssertionScope())
+                {
+                    Assert.Multiple(() =>
+                    {
+                        int count = Marshal.ConvertFromHexAscii(csds[i], out byte[] response);
+                        Assert.AreEqual(16, count, $"Size - {cards[i]}");
+                        Decoders.MMC.CSD csd = Decoders.MMC.Decoders.DecodeCSD(response);
+                        Assert.IsNotNull(csd, $"Decoded - {cards[i]}");
+                        Assert.AreEqual(structure_versions[i], csd.Structure, $"Structure version - {cards[i]}");
+                        Assert.AreEqual(spec_versions[i], csd.Version, $"Specification version - {cards[i]}");
+                        Assert.AreEqual(taacs[i], csd.TAAC, $"TAAC - {cards[i]}");
+                        Assert.AreEqual(nsacs[i], csd.NSAC, $"NSAC - {cards[i]}");
+                        Assert.AreEqual(speeds[i], csd.Speed, $"Transfer speed - {cards[i]}");
+                        Assert.AreEqual(classes[i], csd.Classes, $"Classes - {cards[i]}");
+                        Assert.AreEqual(read_block_lengths[i], csd.ReadBlockLength, $"Read block length - {cards[i]}");
 
-                Assert.AreEqual(write_misaligned_block[i], csd.WriteMisalignment,
-                                $"Writes misaligned blocks - {cards[i]}");
+                        Assert.AreEqual(read_partial_blocks[i], csd.ReadsPartialBlocks,
+                                        $"Reads partial blocks - {cards[i]}");
 
-                Assert.AreEqual(read_misaligned_block[i], csd.ReadMisalignment,
-                                $"Reads misaligned blocks - {cards[i]}");
+                        Assert.AreEqual(write_misaligned_block[i], csd.WriteMisalignment,
+                                        $"Writes misaligned blocks - {cards[i]}");
 
-                Assert.AreEqual(dsr_implemented[i], csd.DSRImplemented, $"DSR implemented - {cards[i]}");
-                Assert.AreEqual(card_sizes[i], csd.Size, $"Card size - {cards[i]}");
+                        Assert.AreEqual(read_misaligned_block[i], csd.ReadMisalignment,
+                                        $"Reads misaligned blocks - {cards[i]}");
 
-                Assert.AreEqual(min_read_current[i], csd.ReadCurrentAtVddMin,
-                                $"Reading current at minimum Vdd - {cards[i]}");
+                        Assert.AreEqual(dsr_implemented[i], csd.DSRImplemented, $"DSR implemented - {cards[i]}");
+                        Assert.AreEqual(card_sizes[i], csd.Size, $"Card size - {cards[i]}");
 
-                Assert.AreEqual(max_read_current[i], csd.ReadCurrentAtVddMax,
-                                $"Reading current at maximum Vdd - {cards[i]}");
+                        Assert.AreEqual(min_read_current[i], csd.ReadCurrentAtVddMin,
+                                        $"Reading current at minimum Vdd - {cards[i]}");
 
-                Assert.AreEqual(min_write_current[i], csd.WriteCurrentAtVddMin,
-                                $"Writing current at minimum Vdd - {cards[i]}");
+                        Assert.AreEqual(max_read_current[i], csd.ReadCurrentAtVddMax,
+                                        $"Reading current at maximum Vdd - {cards[i]}");
 
-                Assert.AreEqual(max_write_current[i], csd.WriteCurrentAtVddMax,
-                                $"Writing current at maximum Vdd - {cards[i]}");
+                        Assert.AreEqual(min_write_current[i], csd.WriteCurrentAtVddMin,
+                                        $"Writing current at minimum Vdd - {cards[i]}");
 
-                Assert.AreEqual(size_multiplier[i], csd.SizeMultiplier, $"Card size multiplier - {cards[i]}");
-                Assert.AreEqual(sector_sizes[i], csd.EraseGroupSize, $"Erase sector size - {cards[i]}");
-                Assert.AreEqual(erase_sector_sizes[i], csd.EraseGroupSizeMultiplier, $"Erase group size - {cards[i]}");
+                        Assert.AreEqual(max_write_current[i], csd.WriteCurrentAtVddMax,
+                                        $"Writing current at maximum Vdd - {cards[i]}");
 
-                Assert.AreEqual(write_protect_group_size[i], csd.WriteProtectGroupSize,
-                                $"Write protect group size - {cards[i]}");
+                        Assert.AreEqual(size_multiplier[i], csd.SizeMultiplier, $"Card size multiplier - {cards[i]}");
+                        Assert.AreEqual(sector_sizes[i], csd.EraseGroupSize, $"Erase sector size - {cards[i]}");
 
-                Assert.AreEqual(write_protect_group_enable[i], csd.WriteProtectGroupEnable,
-                                $"Write protect group enable - {cards[i]}");
+                        Assert.AreEqual(erase_sector_sizes[i], csd.EraseGroupSizeMultiplier,
+                                        $"Erase group size - {cards[i]}");
 
-                Assert.AreEqual(default_eccs[i], csd.DefaultECC, $"Default ECC - {cards[i]}");
-                Assert.AreEqual(r2w_factors[i], csd.WriteSpeedFactor, $"Read to write factor - {cards[i]}");
-                Assert.AreEqual(write_block_lengths[i], csd.WriteBlockLength, $"write block length - {cards[i]}");
+                        Assert.AreEqual(write_protect_group_size[i], csd.WriteProtectGroupSize,
+                                        $"Write protect group size - {cards[i]}");
 
-                Assert.AreEqual(write_partial_blocks[i], csd.WritesPartialBlocks,
-                                $"Writes partial blocks - {cards[i]}");
+                        Assert.AreEqual(write_protect_group_enable[i], csd.WriteProtectGroupEnable,
+                                        $"Write protect group enable - {cards[i]}");
 
-                Assert.AreEqual(file_format_group[i], csd.FileFormatGroup, $"File format group - {cards[i]}");
-                Assert.AreEqual(copy[i], csd.Copy, $"Copy - {cards[i]}");
+                        Assert.AreEqual(default_eccs[i], csd.DefaultECC, $"Default ECC - {cards[i]}");
+                        Assert.AreEqual(r2w_factors[i], csd.WriteSpeedFactor, $"Read to write factor - {cards[i]}");
 
-                Assert.AreEqual(permanent_write_protect[i], csd.PermanentWriteProtect,
-                                $"Permanent write protect - {cards[i]}");
+                        Assert.AreEqual(write_block_lengths[i], csd.WriteBlockLength,
+                                        $"write block length - {cards[i]}");
 
-                Assert.AreEqual(temporary_write_protect[i], csd.TemporaryWriteProtect,
-                                $"Temporary write protect - {cards[i]}");
+                        Assert.AreEqual(write_partial_blocks[i], csd.WritesPartialBlocks,
+                                        $"Writes partial blocks - {cards[i]}");
 
-                Assert.AreEqual(file_format[i], csd.FileFormat, $"File format - {cards[i]}");
-                Assert.AreEqual(ecc[i], csd.ECC, $"ECC - {cards[i]}");
+                        Assert.AreEqual(file_format_group[i], csd.FileFormatGroup, $"File format group - {cards[i]}");
+                        Assert.AreEqual(copy[i], csd.Copy, $"Copy - {cards[i]}");
+
+                        Assert.AreEqual(permanent_write_protect[i], csd.PermanentWriteProtect,
+                                        $"Permanent write protect - {cards[i]}");
+
+                        Assert.AreEqual(temporary_write_protect[i], csd.TemporaryWriteProtect,
+                                        $"Temporary write protect - {cards[i]}");
+
+                        Assert.AreEqual(file_format[i], csd.FileFormat, $"File format - {cards[i]}");
+                        Assert.AreEqual(ecc[i], csd.ECC, $"ECC - {cards[i]}");
+                    });
+                }
             }
         }
     }

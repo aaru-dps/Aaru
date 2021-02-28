@@ -1,4 +1,6 @@
+using Aaru.Decoders.SecureDigital;
 using Aaru.Helpers;
+using FluentAssertions.Execution;
 using NUnit.Framework;
 
 // ReSharper disable InconsistentNaming
@@ -137,24 +139,33 @@ namespace Aaru.Tests.Devices.SecureDigital
         {
             for(int i = 0; i < cards.Length; i++)
             {
-                int count = Marshal.ConvertFromHexAscii(scrs[i], out byte[] response);
-                Assert.AreEqual(8, count, $"Size - {cards[i]}");
-                Decoders.SecureDigital.SCR scr = Decoders.SecureDigital.Decoders.DecodeSCR(response);
-                Assert.IsNotNull(scr, $"Decoded - {cards[i]}");
-                Assert.AreEqual(structure_version[i], scr.Structure, $"Version - {cards[i]}");
-                Assert.AreEqual(specification_version[i], scr.Spec, $"Specification version - {cards[i]}");
+                using(new AssertionScope())
+                {
+                    Assert.Multiple(() =>
+                    {
+                        int count = Marshal.ConvertFromHexAscii(scrs[i], out byte[] response);
+                        Assert.AreEqual(8, count, $"Size - {cards[i]}");
+                        Decoders.SecureDigital.SCR scr = Decoders.SecureDigital.Decoders.DecodeSCR(response);
+                        Assert.IsNotNull(scr, $"Decoded - {cards[i]}");
+                        Assert.AreEqual(structure_version[i], scr.Structure, $"Version - {cards[i]}");
+                        Assert.AreEqual(specification_version[i], scr.Spec, $"Specification version - {cards[i]}");
 
-                Assert.AreEqual(data_stat_after_erase[i], scr.DataStatusAfterErase,
-                                $"Data stat after erase - {cards[i]}");
+                        Assert.AreEqual(data_stat_after_erase[i], scr.DataStatusAfterErase,
+                                        $"Data stat after erase - {cards[i]}");
 
-                Assert.AreEqual(sd_security[i], scr.Security, $"Security - {cards[i]}");
-                Assert.AreEqual(sd_bus_widths[i], scr.BusWidth, $"Bus widths - {cards[i]}");
-                Assert.AreEqual(sd_spec3[i], scr.Spec3, $"Spec 3 - {cards[i]}");
-                Assert.AreEqual(ex_security[i], scr.ExtendedSecurity, $"Extended security - {cards[i]}");
-                Assert.AreEqual(sd_spec4[i], scr.Spec4, $"Spec 4 - {cards[i]}");
-                Assert.AreEqual(sd_specx[i], scr.SpecX, $"Spec X - {cards[i]}");
-                Assert.AreEqual(cmd_support[i], scr.CommandSupport, $"Command support - {cards[i]}");
-                Assert.AreEqual(mfg[i], scr.ManufacturerReserved, $"Manufacturer reserved - {cards[i]}");
+                        Assert.AreEqual(sd_security[i], scr.Security, $"Security - {cards[i]}");
+                        Assert.AreEqual((BusWidth)sd_bus_widths[i], scr.BusWidth, $"Bus widths - {cards[i]}");
+                        Assert.AreEqual(sd_spec3[i], scr.Spec3, $"Spec 3 - {cards[i]}");
+                        Assert.AreEqual(ex_security[i], scr.ExtendedSecurity, $"Extended security - {cards[i]}");
+                        Assert.AreEqual(sd_spec4[i], scr.Spec4, $"Spec 4 - {cards[i]}");
+                        Assert.AreEqual(sd_specx[i], scr.SpecX, $"Spec X - {cards[i]}");
+
+                        Assert.AreEqual((CommandSupport)cmd_support[i], scr.CommandSupport,
+                                        $"Command support - {cards[i]}");
+
+                        Assert.AreEqual(mfg[i], scr.ManufacturerReserved, $"Manufacturer reserved - {cards[i]}");
+                    });
+                }
             }
         }
     }

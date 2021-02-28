@@ -219,7 +219,6 @@ namespace Aaru.Tests.Devices.MultiMediaCard
                 Decoders.MMC.ExtendedCSD csd = Decoders.MMC.Decoders.DecodeExtendedCSD(ecsd[i]);
                 Assert.IsNotNull(csd, $"Not decoded - {i}");
                 csd.Should().BeEquivalentTo(decoded[i]);
-                string foo = Decoders.MMC.Decoders.PrettifyExtendedCSD(csd);
             }
         }
     }
