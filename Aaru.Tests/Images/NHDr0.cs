@@ -49,49 +49,49 @@ namespace Aaru.Tests.Images
         readonly ulong[] _sectors =
         {
             // t98n_128.nhd.lz
-            0,
+            261120,
 
             // t98n_20.nhd.lz
-            0,
+            40800,
 
             // t98n_256.nhd.lz
-            0,
+            522240,
 
             // t98n_41.nhd.lz
-            0,
+            83640,
 
             // t98n_512.nhd.lz
-            0,
+            1044480,
 
             // t98n_65.nhd.lz
-            0,
+            132600,
 
             // t98n_80.nhd.lz
-            0
+            163200
         };
 
         readonly uint[] _sectorSize =
         {
             // t98n_128.nhd.lz
-            0,
+            512,
 
             // t98n_20.nhd.lz
-            0,
+            512,
 
             // t98n_256.nhd.lz
-            0,
+            512,
 
             // t98n_41.nhd.lz
-            0,
+            512,
 
             // t98n_512.nhd.lz
-            0,
+            512,
 
             // t98n_65.nhd.lz
-            0,
+            512,
 
             // t98n_80.nhd.lz
-            0
+            512
         };
 
         readonly MediaType[] _mediaTypes =
@@ -121,25 +121,25 @@ namespace Aaru.Tests.Images
         readonly string[] _md5S =
         {
             // t98n_128.nhd.lz
-            "UNKNOWN",
+            "af7c3cfa315b6661300017f865bf26d6",
 
             // t98n_20.nhd.lz
-            "UNKNOWN",
+            "bcb390d0b4d12feac29dbadc1a623c99",
 
             // t98n_256.nhd.lz
-            "UNKNOWN",
+            "e50e78b3742f5f89dd1a5573ba3141c4",
 
             // t98n_41.nhd.lz
-            "UNKNOWN",
+            "007acca6fb53f90728d78f7c40c2b094",
 
             // t98n_512.nhd.lz
-            "UNKNOWN",
+            "42d1cb6fc2a9df39ecd53002edd978d6",
 
             // t98n_65.nhd.lz
-            "UNKNOWN",
+            "b53f5b406234663de6c2bdffac88322d",
 
             // t98n_80.nhd.lz
-            "UNKNOWN"
+            "fe9ecc6f0b5beb9635a1595155941925"
         };
 
         readonly string _dataFolder = Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "T-98 Next");
@@ -153,7 +153,7 @@ namespace Aaru.Tests.Images
             {
                 for(int i = 0; i < _testFiles.Length; i++)
                 {
-                    var filter = new ZZZNoFilter();
+                    var filter = new LZip();
                     filter.Open(_testFiles[i]);
 
                     var  image  = new Nhdr0();
@@ -189,7 +189,7 @@ namespace Aaru.Tests.Images
             {
                 for(int i = 0; i < _testFiles.Length; i++)
                 {
-                    var filter = new ZZZNoFilter();
+                    var filter = new LZip();
                     filter.Open(_testFiles[i]);
 
                     var   image       = new Nhdr0();
