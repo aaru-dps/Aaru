@@ -44,79 +44,303 @@ namespace Aaru.Tests.Filesystems.UFS
         public override IFilesystem _plugin     => new FFSPlugin();
         public override bool        _partitions => true;
 
-        public override string[] _testFiles => new[]
+        public override FileSystemTest[] Tests => new[]
         {
-            "ufs1/linux.aif", "ufs2/linux.aif", "ffs43/darwin_1.3.1.aif", "ffs43/darwin_1.4.1.aif",
-            "ffs43/darwin_6.0.2.aif", "ffs43/darwin_8.0.1.aif", "ffs43/dflybsd_1.2.0.aif", "ffs43/dflybsd_3.6.1.aif",
-            "ffs43/dflybsd_4.0.5.aif", "ffs43/netbsd_1.6.aif", "ffs43/netbsd_7.1.aif", "ufs1/darwin_1.3.1.aif",
-            "ufs1/darwin_1.4.1.aif", "ufs1/darwin_6.0.2.aif", "ufs1/darwin_8.0.1.aif", "ufs1/dflybsd_1.2.0.aif",
-            "ufs1/dflybsd_3.6.1.aif", "ufs1/dflybsd_4.0.5.aif", "ufs1/freebsd_6.1.aif", "ufs1/freebsd_7.0.aif",
-            "ufs1/freebsd_8.2.aif", "ufs1/netbsd_1.6.aif", "ufs1/netbsd_7.1.aif", "ufs1/solaris_7.aif",
-            "ufs1/solaris_9.aif", "ufs2/freebsd_6.1.aif", "ufs2/freebsd_7.0.aif", "ufs2/freebsd_8.2.aif",
-            "ufs2/netbsd_7.1.aif"
-        };
-
-        public override MediaType[] _mediaTypes => new[]
-        {
-            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD,
-            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD,
-            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD,
-            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD,
-            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD,
-            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD,
-            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD,
-            MediaType.GENERIC_HDD
-        };
-        public override ulong[] _sectors => new ulong[]
-        {
-            262144, 262144, 1024000, 1024000, 1024000, 1024000, 1024000, 1024000, 1024000, 1024000, 409600, 204800,
-            204800, 204800, 204800, 2097152, 2097152, 2097152, 2097152, 8388608, 8388608, 2097152, 1024000, 2097152,
-            2097152, 16777216, 16777216, 16777216, 2097152
-        };
-
-        public override uint[] _sectorSize => new uint[]
-        {
-            512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512,
-            512, 512, 512, 512, 512, 512, 512, 512
-        };
-
-        public override string[] _appId => null;
-        public override bool[] _bootable => new[]
-        {
-            false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,
-            false, false, false, false, false, false, false, false, false, false, false, false, false, false
-        };
-
-        public override long[] _clusters => new long[]
-        {
-            65024, 65024, 511024, 511024, 511024, 511488, 511950, 255470, 255470, 511992, 204768, 102280, 102280,
-            102280, 102368, 1048500, 523758, 523758, 262138, 1048231, 2096462, 524284, 511968, 1038240, 1046808,
-            2096472, 2096472, 4192945, 524272
-        };
-
-        public override uint[] _clusterSize => new uint[]
-        {
-            2048, 2048, 1024, 1024, 1024, 1024, 1024, 2048, 2048, 1024, 1024, 1024, 1024, 1024, 1024, 1024, 2048, 2048,
-            4096, 4096, 2048, 2048, 1024, 1024, 1024, 4096, 4096, 2048, 2048
-        };
-        public override string[] _oemId => null;
-
-        public override string[] _type => new[]
-        {
-            "UFS", "UFS2", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS",
-            "UFS", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS2", "UFS2", "UFS2", "UFS2"
-        };
-
-        public override string[] _volumeName => new[]
-        {
-            null, "VolumeLabel", null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-            null, null, null, null, null, null, null, null, null, "VolumeLabel", "VolumeLabel", "VolumeLabel", ""
-        };
-
-        public override string[] _volumeSerial => new string[]
-        {
-            null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-            null, null, null, null, null, null, null, null, null, null, null
+            new FileSystemTest
+            {
+                TestFile    = "ufs1/linux.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 262144,
+                SectorSize  = 512,
+                Clusters    = 65024,
+                ClusterSize = 2048,
+                Type        = "UFS"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "ufs2/linux.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 262144,
+                SectorSize  = 512,
+                Clusters    = 65024,
+                ClusterSize = 2048,
+                Type        = "UFS2",
+                VolumeName  = "VolumeLabel"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "ffs43/darwin_1.3.1.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 1024000,
+                SectorSize  = 512,
+                Clusters    = 511024,
+                ClusterSize = 1024,
+                Type        = "UFS"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "ffs43/darwin_1.4.1.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 1024000,
+                SectorSize  = 512,
+                Clusters    = 511024,
+                ClusterSize = 1024,
+                Type        = "UFS"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "ffs43/darwin_6.0.2.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 1024000,
+                SectorSize  = 512,
+                Clusters    = 511024,
+                ClusterSize = 1024,
+                Type        = "UFS"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "ffs43/darwin_8.0.1.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 1024000,
+                SectorSize  = 512,
+                Clusters    = 511488,
+                ClusterSize = 1024,
+                Type        = "UFS"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "ffs43/dflybsd_1.2.0.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 1024000,
+                SectorSize  = 512,
+                Clusters    = 511950,
+                ClusterSize = 1024,
+                Type        = "UFS"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "ffs43/dflybsd_3.6.1.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 1024000,
+                SectorSize  = 512,
+                Clusters    = 255470,
+                ClusterSize = 2048,
+                Type        = "UFS"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "ffs43/dflybsd_4.0.5.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 1024000,
+                SectorSize  = 512,
+                Clusters    = 255470,
+                ClusterSize = 2048,
+                Type        = "UFS"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "ffs43/netbsd_1.6.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 1024000,
+                SectorSize  = 512,
+                Clusters    = 511992,
+                ClusterSize = 1024,
+                Type        = "UFS"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "ffs43/netbsd_7.1.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 409600,
+                SectorSize  = 512,
+                Clusters    = 204768,
+                ClusterSize = 1024,
+                Type        = "UFS"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "ufs1/darwin_1.3.1.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 204800,
+                SectorSize  = 512,
+                Clusters    = 102280,
+                ClusterSize = 1024,
+                Type        = "UFS"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "ufs1/darwin_1.4.1.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 204800,
+                SectorSize  = 512,
+                Clusters    = 102280,
+                ClusterSize = 1024,
+                Type        = "UFS"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "ufs1/darwin_6.0.2.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 204800,
+                SectorSize  = 512,
+                Clusters    = 102280,
+                ClusterSize = 1024,
+                Type        = "UFS"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "ufs1/darwin_8.0.1.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 204800,
+                SectorSize  = 512,
+                Clusters    = 102368,
+                ClusterSize = 1024,
+                Type        = "UFS"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "ufs1/dflybsd_1.2.0.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 2097152,
+                SectorSize  = 512,
+                Clusters    = 1048500,
+                ClusterSize = 1024,
+                Type        = "UFS"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "ufs1/dflybsd_3.6.1.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 2097152,
+                SectorSize  = 512,
+                Clusters    = 523758,
+                ClusterSize = 2048,
+                Type        = "UFS"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "ufs1/dflybsd_4.0.5.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 2097152,
+                SectorSize  = 512,
+                Clusters    = 523758,
+                ClusterSize = 2048,
+                Type        = "UFS"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "ufs1/freebsd_6.1.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 2097152,
+                SectorSize  = 512,
+                Clusters    = 262138,
+                ClusterSize = 4096,
+                Type        = "UFS"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "ufs1/freebsd_7.0.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 8388608,
+                SectorSize  = 512,
+                Clusters    = 1048231,
+                ClusterSize = 4096,
+                Type        = "UFS"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "ufs1/freebsd_8.2.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 8388608,
+                SectorSize  = 512,
+                Clusters    = 2096462,
+                ClusterSize = 2048,
+                Type        = "UFS"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "ufs1/netbsd_1.6.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 2097152,
+                SectorSize  = 512,
+                Clusters    = 524284,
+                ClusterSize = 2048,
+                Type        = "UFS"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "ufs1/netbsd_7.1.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 1024000,
+                SectorSize  = 512,
+                Clusters    = 511968,
+                ClusterSize = 1024,
+                Type        = "UFS"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "ufs1/solaris_7.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 2097152,
+                SectorSize  = 512,
+                Clusters    = 1038240,
+                ClusterSize = 1024,
+                Type        = "UFS"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "ufs1/solaris_9.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 2097152,
+                SectorSize  = 512,
+                Clusters    = 1046808,
+                ClusterSize = 1024,
+                Type        = "UFS"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "ufs2/freebsd_6.1.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 16777216,
+                SectorSize  = 512,
+                Clusters    = 2096472,
+                ClusterSize = 4096,
+                Type        = "UFS2",
+                VolumeName  = "VolumeLabel"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "ufs2/freebsd_7.0.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 16777216,
+                SectorSize  = 512,
+                Clusters    = 2096472,
+                ClusterSize = 4096,
+                Type        = "UFS2",
+                VolumeName  = "VolumeLabel"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "ufs2/freebsd_8.2.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 16777216,
+                SectorSize  = 512,
+                Clusters    = 4192945,
+                ClusterSize = 2048,
+                Type        = "UFS2",
+                VolumeName  = "VolumeLabel"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "ufs2/netbsd_7.1.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 2097152,
+                SectorSize  = 512,
+                Clusters    = 524272,
+                ClusterSize = 2048,
+                Type        = "UFS2",
+                VolumeName  = ""
+            }
         };
     }
 }

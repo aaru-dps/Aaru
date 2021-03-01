@@ -16,19 +16,8 @@ namespace Aaru.Tests.Filesystems
         public abstract string      _dataFolder { get; }
         public abstract IFilesystem _plugin     { get; }
         public abstract bool        _partitions { get; }
-        public abstract string[]    _testFiles  { get; }
-        public abstract MediaType[] _mediaTypes { get; }
-        public abstract ulong[]     _sectors    { get; }
-        public abstract uint[]      _sectorSize { get; }
 
-        public abstract string[] _appId        { get; }
-        public abstract bool[]   _bootable     { get; }
-        public abstract long[]   _clusters     { get; }
-        public abstract uint[]   _clusterSize  { get; }
-        public abstract string[] _oemId        { get; }
-        public abstract string[] _type         { get; }
-        public abstract string[] _volumeName   { get; }
-        public abstract string[] _volumeSerial { get; }
+        public abstract FileSystemTest[] Tests { get; }
 
         [Test]
         public void Detect()
@@ -37,8 +26,9 @@ namespace Aaru.Tests.Filesystems
 
             Assert.Multiple(() =>
             {
-                foreach(string testFile in _testFiles)
+                foreach(FileSystemTest test in Tests)
                 {
+                    string  testFile    = test.TestFile;
                     var     filtersList = new FiltersList();
                     IFilter inputFilter = filtersList.GetFilter(testFile);
 
@@ -103,9 +93,9 @@ namespace Aaru.Tests.Filesystems
 
             Assert.Multiple(() =>
             {
-                for(int i = 0; i < _testFiles.Length; i++)
+                foreach(FileSystemTest test in Tests)
                 {
-                    string  testFile    = _testFiles[i];
+                    string  testFile    = test.TestFile;
                     var     filtersList = new FiltersList();
                     IFilter inputFilter = filtersList.GetFilter(testFile);
 
@@ -117,9 +107,9 @@ namespace Aaru.Tests.Filesystems
 
                     Assert.AreEqual(true, image.Open(inputFilter), $"Cannot open image for {testFile}");
 
-                    Assert.AreEqual(_mediaTypes[i], image.Info.MediaType, _testFiles[i]);
-                    Assert.AreEqual(_sectors[i], image.Info.Sectors, _testFiles[i]);
-                    Assert.AreEqual(_sectorSize[i], image.Info.SectorSize, _testFiles[i]);
+                    Assert.AreEqual(test.MediaType, image.Info.MediaType, testFile);
+                    Assert.AreEqual(test.Sectors, image.Info.Sectors, testFile);
+                    Assert.AreEqual(test.SectorSize, image.Info.SectorSize, testFile);
                 }
             });
         }
@@ -131,21 +121,22 @@ namespace Aaru.Tests.Filesystems
 
             Assert.Multiple(() =>
             {
-                for(int i = 0; i < _testFiles.Length; i++)
+                foreach(FileSystemTest test in Tests)
                 {
-                    bool found     = false;
-                    var  partition = new Partition();
+                    string testFile  = test.TestFile;
+                    bool   found     = false;
+                    var    partition = new Partition();
 
                     var     filtersList = new FiltersList();
-                    IFilter inputFilter = filtersList.GetFilter(_testFiles[i]);
+                    IFilter inputFilter = filtersList.GetFilter(testFile);
 
-                    Assert.IsNotNull(inputFilter, $"Filter: {_testFiles[i]}");
+                    Assert.IsNotNull(inputFilter, $"Filter: {testFile}");
 
                     IMediaImage image = ImageFormat.Detect(inputFilter);
 
-                    Assert.IsNotNull(image, $"Image format: {_testFiles[i]}");
+                    Assert.IsNotNull(image, $"Image format: {testFile}");
 
-                    Assert.AreEqual(true, image.Open(inputFilter), $"Cannot open image for {_testFiles[i]}");
+                    Assert.AreEqual(true, image.Open(inputFilter), $"Cannot open image for {testFile}");
 
                     List<string> idPlugins;
 
@@ -153,7 +144,7 @@ namespace Aaru.Tests.Filesystems
                     {
                         List<Partition> partitionsList = Core.Partitions.GetAll(image);
 
-                        Assert.Greater(partitionsList.Count, 0, $"No partitions found for {_testFiles[i]}");
+                        Assert.Greater(partitionsList.Count, 0, $"No partitions found for {testFile}");
 
                         // In reverse to skip boot partitions we're not interested in
                         for(int index = partitionsList.Count - 1; index >= 0; index--)
@@ -183,12 +174,12 @@ namespace Aaru.Tests.Filesystems
 
                         Core.Filesystems.Identify(image, out idPlugins, partition, true);
 
-                        Assert.Greater(idPlugins.Count, 0, $"No filesystems found for {_testFiles[i]}");
+                        Assert.Greater(idPlugins.Count, 0, $"No filesystems found for {testFile}");
 
                         found = idPlugins.Contains(_plugin.Id.ToString());
                     }
 
-                    Assert.True(found, $"Filesystem not identified for {_testFiles[i]}");
+                    Assert.True(found, $"Filesystem not identified for {testFile}");
 
                     // ReSharper disable once ConditionIsAlwaysTrueOrFalse
                     // It is not the case, it changes
@@ -197,26 +188,25 @@ namespace Aaru.Tests.Filesystems
 
                     var fs = Activator.CreateInstance(_plugin.GetType()) as IFilesystem;
 
-                    Assert.NotNull(fs, $"Could not instantiate filesystem for {_testFiles[i]}");
+                    Assert.NotNull(fs, $"Could not instantiate filesystem for {testFile}");
 
                     fs.GetInformation(image, partition, out _, null);
 
-                    if(_appId != null)
-                        Assert.AreEqual(_appId[i], fs.XmlFsType.ApplicationIdentifier,
-                                        $"Application ID: {_testFiles[i]}");
+                    if(test.ApplicationId != null)
+                        Assert.AreEqual(test.ApplicationId, fs.XmlFsType.ApplicationIdentifier,
+                                        $"Application ID: {testFile}");
 
-                    Assert.AreEqual(_bootable[i], fs.XmlFsType.Bootable, $"Bootable: {_testFiles[i]}");
-                    Assert.AreEqual(_clusters[i], fs.XmlFsType.Clusters, $"Clusters: {_testFiles[i]}");
-                    Assert.AreEqual(_clusterSize[i], fs.XmlFsType.ClusterSize, $"Cluster size: {_testFiles[i]}");
+                    Assert.AreEqual(test.Bootable, fs.XmlFsType.Bootable, $"Bootable: {testFile}");
+                    Assert.AreEqual(test.Clusters, fs.XmlFsType.Clusters, $"Clusters: {testFile}");
+                    Assert.AreEqual(test.ClusterSize, fs.XmlFsType.ClusterSize, $"Cluster size: {testFile}");
 
-                    if(_oemId != null)
-                        Assert.AreEqual(_oemId[i], fs.XmlFsType.SystemIdentifier, $"System ID: {_testFiles[i]}");
+                    if(test.SystemId != null)
+                        Assert.AreEqual(test.SystemId, fs.XmlFsType.SystemIdentifier, $"System ID: {testFile}");
 
-                    Assert.AreEqual(_fileSystemType ?? _type[i], fs.XmlFsType.Type,
-                                    $"Filesystem type: {_testFiles[i]}");
+                    Assert.AreEqual(_fileSystemType ?? test.Type, fs.XmlFsType.Type, $"Filesystem type: {testFile}");
 
-                    Assert.AreEqual(_volumeName[i], fs.XmlFsType.VolumeName, $"Volume name: {_testFiles[i]}");
-                    Assert.AreEqual(_volumeSerial[i], fs.XmlFsType.VolumeSerial, $"Volume serial: {_testFiles[i]}");
+                    Assert.AreEqual(test.VolumeName, fs.XmlFsType.VolumeName, $"Volume name: {testFile}");
+                    Assert.AreEqual(test.VolumeSerial, fs.XmlFsType.VolumeSerial, $"Volume serial: {testFile}");
                 }
             });
         }

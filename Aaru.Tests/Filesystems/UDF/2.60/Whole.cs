@@ -43,60 +43,21 @@ namespace Aaru.Tests.Filesystems.UDF._260
         public override IFilesystem _plugin     => new Aaru.Filesystems.UDF();
         public override bool        _partitions => false;
 
-        public override string[] _testFiles => new[]
+        public override FileSystemTest[] Tests => new[]
         {
-            "macosx_10.11.aif"
-        };
-
-        public override MediaType[] _mediaTypes => new[]
-        {
-            MediaType.GENERIC_HDD
-        };
-        public override ulong[] _sectors => new ulong[]
-        {
-            1228800
-        };
-
-        public override uint[] _sectorSize => new uint[]
-        {
-            512
-        };
-
-        public override string[] _appId => null;
-        public override bool[] _bootable => new[]
-        {
-            false
-        };
-
-        public override long[] _clusters => new long[]
-        {
-            1228800
-        };
-
-        public override uint[] _clusterSize => new uint[]
-        {
-            512
-        };
-
-        public override string[] _oemId => new[]
-        {
-            "*Apple Mac OS X UDF FS"
-        };
-
-        public override string[] _type => new[]
-
-        {
-            "UDF v2.60"
-        };
-
-        public override string[] _volumeName => new[]
-        {
-            "Volume label"
-        };
-
-        public override string[] _volumeSerial => new[]
-        {
-            "78CE3237 (Mac OS X newfs_udf) UDF Volume Set"
+            new FileSystemTest
+            {
+                TestFile     = "macosx_10.11.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1228800,
+                SectorSize   = 512,
+                Clusters     = 1228800,
+                ClusterSize  = 512,
+                SystemId     = "*Apple Mac OS X UDF FS",
+                Type         = "UDF v2.60",
+                VolumeName   = "Volume label",
+                VolumeSerial = "78CE3237 (Mac OS X newfs_udf) UDF Volume Set"
+            }
         };
     }
 }

@@ -44,55 +44,48 @@ namespace Aaru.Tests.Filesystems.MINIX.V1
         public override IFilesystem _plugin     => new MinixFS();
         public override bool        _partitions => false;
 
-        public override string[] _testFiles => new[]
+        public override FileSystemTest[] Tests => new[]
         {
-            "minix_3.1.2a_dsdd.img.lz", "minix_3.1.2a_dshd.img.lz", "minix_3.1.2a_mf2dd.img.lz",
-            "minix_3.1.2a_mf2hd.img.lz"
-        };
-
-        public override MediaType[] _mediaTypes => new[]
-        {
-            MediaType.DOS_525_DS_DD_9, MediaType.DOS_525_HD, MediaType.DOS_35_DS_DD_9, MediaType.DOS_35_HD
-        };
-
-        public override ulong[] _sectors => new ulong[]
-        {
-            720, 2400, 1440, 2880
-        };
-
-        public override uint[] _sectorSize => new uint[]
-        {
-            512, 512, 512, 512
-        };
-
-        public override string[] _appId => null;
-        public override bool[] _bootable => new[]
-        {
-            false, false, false, false
-        };
-
-        public override long[] _clusters => new long[]
-        {
-            360, 1200, 720, 1440
-        };
-
-        public override uint[] _clusterSize => new uint[]
-        {
-            1024, 1024, 1024, 1024
-        };
-        public override string[] _oemId => null;
-
-        public override string[] _type => new[]
-        {
-            "Minix 3 v1", "Minix 3 v1", "Minix 3 v1", "Minix 3 v1"
-        };
-        public override string[] _volumeName => new string[]
-        {
-            null, null, null, null
-        };
-        public override string[] _volumeSerial => new string[]
-        {
-            null, null, null, null
+            new FileSystemTest
+            {
+                TestFile    = "minix_3.1.2a_dsdd.img.lz",
+                MediaType   = MediaType.DOS_525_DS_DD_9,
+                Sectors     = 720,
+                SectorSize  = 512,
+                Clusters    = 360,
+                ClusterSize = 1024,
+                Type        = "Minix 3 v1"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "minix_3.1.2a_dshd.img.lz",
+                MediaType   = MediaType.DOS_525_HD,
+                Sectors     = 2400,
+                SectorSize  = 512,
+                Clusters    = 1200,
+                ClusterSize = 1024,
+                Type        = "Minix 3 v1"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "minix_3.1.2a_mf2dd.img.lz",
+                MediaType   = MediaType.DOS_35_DS_DD_9,
+                Sectors     = 1440,
+                SectorSize  = 512,
+                Clusters    = 720,
+                ClusterSize = 1024,
+                Type        = "Minix 3 v1"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "minix_3.1.2a_mf2hd.img.lz",
+                MediaType   = MediaType.DOS_35_HD,
+                Sectors     = 2880,
+                SectorSize  = 512,
+                Clusters    = 1440,
+                ClusterSize = 1024,
+                Type        = "Minix 3 v1"
+            }
         };
     }
 }

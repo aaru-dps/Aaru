@@ -43,58 +43,34 @@ namespace Aaru.Tests.Filesystems.UDF._201
         public override IFilesystem _plugin     => new Aaru.Filesystems.UDF();
         public override bool        _partitions => false;
 
-        public override string[] _testFiles => new[]
+        public override FileSystemTest[] Tests => new[]
         {
-            "ecs20.aif", "ecs20_cdrw.aif"
-        };
-        public override MediaType[] _mediaTypes => new[]
-        {
-            MediaType.DVDPR, MediaType.CDRW
-        };
-
-        public override ulong[] _sectors => new ulong[]
-        {
-            2295104, 295264
-        };
-
-        public override uint[] _sectorSize => new uint[]
-        {
-            2048, 2048
-        };
-
-        public override string[] _appId => null;
-        public override bool[] _bootable => new[]
-        {
-            false, false
-        };
-
-        public override long[] _clusters => new long[]
-        {
-            2295104, 295264
-        };
-
-        public override uint[] _clusterSize => new uint[]
-        {
-            2048, 2048
-        };
-
-        public override string[] _oemId => new[]
-        {
-            "*ExpressUDF", "*ExpressUDF"
-        };
-        public override string[] _type => new[]
-        {
-            "UDF v2.01", "UDF v2.01"
-        };
-
-        public override string[] _volumeName => new[]
-        {
-            "VolLabel", "UDF5A5DFF10"
-        };
-
-        public override string[] _volumeSerial => new[]
-        {
-            "VolumeSetId", "Volume Set ID not specified"
+            new FileSystemTest
+            {
+                TestFile     = "ecs20.aif",
+                MediaType    = MediaType.DVDPR,
+                Sectors      = 2295104,
+                SectorSize   = 2048,
+                Clusters     = 2295104,
+                ClusterSize  = 2048,
+                SystemId     = "*ExpressUDF",
+                Type         = "UDF v2.01",
+                VolumeName   = "VolLabel",
+                VolumeSerial = "VolumeSetId"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "ecs20_cdrw.aif",
+                MediaType    = MediaType.CDRW,
+                Sectors      = 295264,
+                SectorSize   = 2048,
+                Clusters     = 295264,
+                ClusterSize  = 2048,
+                SystemId     = "*ExpressUDF",
+                Type         = "UDF v2.01",
+                VolumeName   = "UDF5A5DFF10",
+                VolumeSerial = "Volume Set ID not specified"
+            }
         };
     }
 }

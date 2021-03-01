@@ -44,54 +44,56 @@ namespace Aaru.Tests.Filesystems
         public override IFilesystem _plugin     => new HPOFS();
         public override bool        _partitions => false;
 
-        public override string[] _testFiles => new[]
+        public override FileSystemTest[] Tests => new[]
         {
-            "rid1.img.lz", "rid10.img.lz", "rid66percent.img.lz", "rid266.img.lz"
-        };
-
-        public override MediaType[] _mediaTypes => new[]
-        {
-            MediaType.DOS_35_HD, MediaType.DOS_35_HD, MediaType.DOS_35_HD, MediaType.DOS_35_HD
-        };
-
-        public override ulong[] _sectors => new ulong[]
-        {
-            2880, 2880, 2880, 2880
-        };
-
-        public override uint[] _sectorSize => new uint[]
-        {
-            512, 512, 512, 512
-        };
-        public override string[] _appId => null;
-        public override bool[] _bootable => new[]
-        {
-            false, false, false, false
-        };
-
-        public override long[] _clusters => new long[]
-        {
-            2880, 2880, 2880, 2880
-        };
-
-        public override uint[] _clusterSize => new uint[]
-        {
-            512, 512, 512, 512
-        };
-        public override string[] _oemId => new[]
-        {
-            "IBM 10.2", "IBM 10.2", "IBM 10.2", "IBM 10.2"
-        };
-        public override string[] _type => null;
-
-        public override string[] _volumeName => new[]
-        {
-            "VOLUME LABEL", "VOLUME LABEL", "VOLUME LABEL", "VOLUME LABEL"
-        };
-
-        public override string[] _volumeSerial => new[]
-        {
-            "AC226814", "AC160814", "AC306C14", "ABEF2C14"
+            new FileSystemTest
+            {
+                TestFile     = "rid1.img.lz",
+                MediaType    = MediaType.DOS_35_HD,
+                Sectors      = 2880,
+                SectorSize   = 512,
+                Clusters     = 2880,
+                ClusterSize  = 512,
+                SystemId     = "IBM 10.2",
+                VolumeName   = "VOLUME LABEL",
+                VolumeSerial = "AC226814"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "rid10.img.lz",
+                MediaType    = MediaType.DOS_35_HD,
+                Sectors      = 2880,
+                SectorSize   = 512,
+                Clusters     = 2880,
+                ClusterSize  = 512,
+                SystemId     = "IBM 10.2",
+                VolumeName   = "VOLUME LABEL",
+                VolumeSerial = "AC160814"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "rid66percent.img.lz",
+                MediaType    = MediaType.DOS_35_HD,
+                Sectors      = 2880,
+                SectorSize   = 512,
+                Clusters     = 2880,
+                ClusterSize  = 512,
+                SystemId     = "IBM 10.2",
+                VolumeName   = "VOLUME LABEL",
+                VolumeSerial = "AC306C14"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "rid266.img.lz",
+                MediaType    = MediaType.DOS_35_HD,
+                Sectors      = 2880,
+                SectorSize   = 512,
+                Clusters     = 2880,
+                ClusterSize  = 512,
+                SystemId     = "IBM 10.2",
+                VolumeName   = "VOLUME LABEL",
+                VolumeSerial = "ABEF2C14"
+            }
         };
     }
 }

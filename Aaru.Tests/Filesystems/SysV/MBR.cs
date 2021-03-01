@@ -44,51 +44,38 @@ namespace Aaru.Tests.Filesystems.SysV
         public override IFilesystem _plugin     => new SysVfs();
         public override bool        _partitions => true;
 
-        public override string[] _testFiles => new[]
+        public override FileSystemTest[] Tests => new[]
         {
-            "att_unix_svr4v2.1.aif", "att_unix_svr4v2.1_2k.aif", "scoopenserver_5.0.7hw.aif"
-        };
-        public override MediaType[] _mediaTypes => new[]
-        {
-            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD
-        };
-
-        public override ulong[] _sectors => new ulong[]
-        {
-            1024000, 1024000, 2097152
-        };
-
-        public override uint[] _sectorSize => new uint[]
-        {
-            512, 512, 512
-        };
-
-        public override string[] _appId => null;
-        public override bool[] _bootable => new[]
-        {
-            false, false, false
-        };
-
-        public override long[] _clusters => new long[]
-        {
-            511056, 255528, 1020096
-        };
-
-        public override uint[] _clusterSize => new uint[]
-        {
-            1024, 2048, 1024
-        };
-        public override string[] _oemId => null;
-        public override string[] _type  => null;
-
-        public override string[] _volumeName => new[]
-        {
-            "/usr3", "/usr3", "Volume label"
-        };
-
-        public override string[] _volumeSerial => new string[]
-        {
-            null, null, null
+            new FileSystemTest
+            {
+                TestFile    = "att_unix_svr4v2.1.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 1024000,
+                SectorSize  = 512,
+                Clusters    = 511056,
+                ClusterSize = 1024,
+                VolumeName  = "/usr3"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "att_unix_svr4v2.1_2k.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 1024000,
+                SectorSize  = 512,
+                Clusters    = 255528,
+                ClusterSize = 2048,
+                VolumeName  = "/usr3"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "scoopenserver_5.0.7hw.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 2097152,
+                SectorSize  = 512,
+                Clusters    = 1020096,
+                ClusterSize = 1024,
+                VolumeName  = "Volume label"
+            }
         };
     }
 }

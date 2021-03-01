@@ -44,56 +44,58 @@ namespace Aaru.Tests.Filesystems.UFS
         public override IFilesystem _plugin     => new FFSPlugin();
         public override bool        _partitions => true;
 
-        public override string[] _testFiles => new[]
+        public override FileSystemTest[] Tests => new[]
         {
-            "nextstep_3.3.aif", "openstep_4.0.aif", "openstep_4.2.aif", "rhapsody_dr1.aif", "rhapsody_dr2.aif"
-        };
-
-        public override MediaType[] _mediaTypes => new[]
-        {
-            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD,
-            MediaType.GENERIC_HDD
-        };
-        public override ulong[] _sectors => new ulong[]
-        {
-            409600, 409600, 409600, 409600, 409600
-        };
-
-        public override uint[] _sectorSize => new uint[]
-        {
-            512, 512, 512, 512, 512
-        };
-
-        public override string[] _appId => null;
-        public override bool[] _bootable => new[]
-        {
-            false, false, false, false, false
-        };
-
-        public override long[] _clusters => new long[]
-        {
-            204640, 204640, 204640, 204640, 204464
-        };
-
-        public override uint[] _clusterSize => new uint[]
-        {
-            1024, 1024, 1024, 1024, 1024
-        };
-        public override string[] _oemId => null;
-
-        public override string[] _type => new[]
-        {
-            "UFS", "UFS", "UFS", "UFS", "UFS"
-        };
-
-        public override string[] _volumeName => new string[]
-        {
-            null, null, null, null, null
-        };
-
-        public override string[] _volumeSerial => new string[]
-        {
-            null, null, null, null, null
+            new FileSystemTest
+            {
+                TestFile    = "nextstep_3.3.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 409600,
+                SectorSize  = 512,
+                Clusters    = 204640,
+                ClusterSize = 1024,
+                Type        = "UFS"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "openstep_4.0.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 409600,
+                SectorSize  = 512,
+                Clusters    = 204640,
+                ClusterSize = 1024,
+                Type        = "UFS"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "openstep_4.2.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 409600,
+                SectorSize  = 512,
+                Clusters    = 204640,
+                ClusterSize = 1024,
+                Type        = "UFS"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "rhapsody_dr1.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 409600,
+                SectorSize  = 512,
+                Clusters    = 204640,
+                ClusterSize = 1024,
+                Type        = "UFS"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "rhapsody_dr2.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 409600,
+                SectorSize  = 512,
+                Clusters    = 204464,
+                ClusterSize = 1024,
+                Type        = "UFS"
+            }
         };
     }
 }

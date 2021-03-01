@@ -44,52 +44,35 @@ namespace Aaru.Tests.Filesystems.XENIX
         public override IFilesystem _plugin     => new SysVfs();
         public override bool        _partitions => true;
 
-        public override string[] _testFiles => new[]
+        public override FileSystemTest[] Tests => new[]
         {
-            "xenix_2.3.2d.aif", "xenix_2.3.4h.aif", "scoopenserver_5.0.7hw.aif"
-        };
-
-        public override MediaType[] _mediaTypes => new[]
-        {
-            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD
-        };
-        public override ulong[] _sectors => new ulong[]
-        {
-            40960, 40960, 2097152
-        };
-
-        public override uint[] _sectorSize => new uint[]
-        {
-            512, 512, 512
-        };
-
-        public override string[] _appId => null;
-        public override bool[] _bootable => new[]
-        {
-            false, false, false
-        };
-
-        public override long[] _clusters => new long[]
-        {
-            0, 0, 0, 19624, 19624, 19624
-        };
-
-        public override uint[] _clusterSize => new uint[]
-        {
-            1024, 1024, 1024
-        };
-        public override string[] _oemId => null;
-
-        public override string[] _type => null;
-
-        public override string[] _volumeName => new[]
-        {
-            "", "", ""
-        };
-
-        public override string[] _volumeSerial => new string[]
-        {
-            null, null, null
+            new FileSystemTest
+            {
+                TestFile    = "xenix_2.3.2d.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 40960,
+                SectorSize  = 512,
+                ClusterSize = 1024,
+                VolumeName  = ""
+            },
+            new FileSystemTest
+            {
+                TestFile    = "xenix_2.3.4h.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 40960,
+                SectorSize  = 512,
+                ClusterSize = 1024,
+                VolumeName  = ""
+            },
+            new FileSystemTest
+            {
+                TestFile    = "scoopenserver_5.0.7hw.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 2097152,
+                SectorSize  = 512,
+                ClusterSize = 1024,
+                VolumeName  = ""
+            }
         };
     }
 }

@@ -43,50 +43,30 @@ namespace Aaru.Tests.Filesystems
         public override IFilesystem _plugin     => new HAMMER();
         public override bool        _partitions => true;
 
-        public override string[] _testFiles => new[]
+        public override FileSystemTest[] Tests => new[]
         {
-            "dflybsd_3.6.1.vdi.lz", "dflybsd_4.0.5.vdi.lz"
-        };
-
-        public override MediaType[] _mediaTypes => new[]
-        {
-            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD
-        };
-        public override ulong[] _sectors => new ulong[]
-        {
-            104857600, 104857600
-        };
-
-        public override uint[] _sectorSize => new uint[]
-        {
-            512, 512
-        };
-        public override string[] _appId => null;
-        public override bool[] _bootable => new[]
-        {
-            false, false
-        };
-
-        public override long[] _clusters => new long[]
-        {
-            6310, 6310
-        };
-
-        public override uint[] _clusterSize => new uint[]
-        {
-            8388608, 8388608
-        };
-        public override string[] _oemId => null;
-        public override string[] _type  => null;
-
-        public override string[] _volumeName => new[]
-        {
-            "Volume label", "Volume label"
-        };
-
-        public override string[] _volumeSerial => new[]
-        {
-            "f8e1a8bb-626d-11e7-94b5-0900274691e4", "ff4dc664-6276-11e7-983f-090027c41b46"
+            new FileSystemTest
+            {
+                TestFile     = "dflybsd_3.6.1.vdi.lz",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 104857600,
+                SectorSize   = 512,
+                Clusters     = 6310,
+                ClusterSize  = 8388608,
+                VolumeName   = "Volume label",
+                VolumeSerial = "f8e1a8bb-626d-11e7-94b5-0900274691e4"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "dflybsd_4.0.5.vdi.lz",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 104857600,
+                SectorSize   = 512,
+                Clusters     = 6310,
+                ClusterSize  = 8388608,
+                VolumeName   = "Volume label",
+                VolumeSerial = "ff4dc664-6276-11e7-983f-090027c41b46"
+            }
         };
     }
 }

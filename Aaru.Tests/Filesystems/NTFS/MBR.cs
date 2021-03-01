@@ -44,59 +44,118 @@ namespace Aaru.Tests.Filesystems.NTFS
         public override IFilesystem _plugin     => new Aaru.Filesystems.NTFS();
         public override bool        _partitions => true;
 
-        public override string[] _testFiles => new[]
+        public override FileSystemTest[] Tests => new[]
         {
-            "win10.aif", "win2000.aif", "winnt_3.10.aif", "winnt_3.50.aif", "winnt_3.51.aif", "winnt_4.00.aif",
-            "winvista.aif", "linux.aif", "haiku_hrev51259.aif", "linux_4.19_ntfs3g_flashdrive.aif"
-        };
-        public override MediaType[] _mediaTypes => new[]
-        {
-            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD,
-            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD,
-            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD
-        };
-
-        public override ulong[] _sectors => new ulong[]
-        {
-            524288, 2097152, 1024000, 524288, 524288, 524288, 524288, 262144, 2097152, 1024000
-        };
-
-        public override uint[] _sectorSize => new uint[]
-        {
-            512, 512, 512, 512, 512, 512, 512, 512, 512, 512
-        };
-
-        public override string[] _appId => null;
-        public override bool[] _bootable => new[]
-        {
-            true, true, true, true, true, true, true, true, true, true
-        };
-
-        public override long[] _clusters => new long[]
-        {
-            65263, 1046511, 1023057, 524256, 524256, 524096, 64767, 32511, 261887, 127743
-        };
-
-        public override uint[] _clusterSize => new uint[]
-        {
-            4096, 1024, 512, 512, 512, 512, 4096, 4096, 4096, 4096
-        };
-
-        public override string[] _oemId => new string[]
-        {
-            null, null, null, null, null, null, null, null, null, null
-        };
-        public override string[] _type => null;
-
-        public override string[] _volumeName => new string[]
-        {
-            null, null, null, null, null, null, null, null, null, null
-        };
-
-        public override string[] _volumeSerial => new[]
-        {
-            "C46C1B3C6C1B28A6", "8070C8EC70C8E9CC", "10CC6AC6CC6AA5A6", "7A14F50014F4BFE5", "24884447884419A6",
-            "822C288D2C287E73", "E20AF54B0AF51D6B", "065BB96B7C1BCFDA", "46EC796749C6FA66", "1FC3802B52F9611C"
+            new FileSystemTest
+            {
+                TestFile     = "win10.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 524288,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 65263,
+                ClusterSize  = 4096,
+                VolumeSerial = "C46C1B3C6C1B28A6"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "win2000.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 2097152,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 1046511,
+                ClusterSize  = 1024,
+                VolumeSerial = "8070C8EC70C8E9CC"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "winnt_3.10.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024000,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 1023057,
+                ClusterSize  = 512,
+                VolumeSerial = "10CC6AC6CC6AA5A6"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "winnt_3.50.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 524288,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 524256,
+                ClusterSize  = 512,
+                VolumeSerial = "7A14F50014F4BFE5"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "winnt_3.51.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 524288,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 524256,
+                ClusterSize  = 512,
+                VolumeSerial = "24884447884419A6"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "winnt_4.00.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 524288,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 524096,
+                ClusterSize  = 512,
+                VolumeSerial = "822C288D2C287E73"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "winvista.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 524288,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 64767,
+                ClusterSize  = 4096,
+                VolumeSerial = "E20AF54B0AF51D6B"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "linux.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 32511,
+                ClusterSize  = 4096,
+                VolumeSerial = "065BB96B7C1BCFDA"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "haiku_hrev51259.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 2097152,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 261887,
+                ClusterSize  = 4096,
+                VolumeSerial = "46EC796749C6FA66"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "linux_4.19_ntfs3g_flashdrive.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024000,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 127743,
+                ClusterSize  = 4096,
+                VolumeSerial = "1FC3802B52F9611C"
+            }
         };
     }
 }

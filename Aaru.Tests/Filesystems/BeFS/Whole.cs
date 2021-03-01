@@ -43,51 +43,28 @@ namespace Aaru.Tests.Filesystems.BeFS
         public override IFilesystem _plugin     => new Aaru.Filesystems.BeFS();
         public override bool        _partitions => false;
 
-        public override string[] _testFiles => new[]
+        public override FileSystemTest[] Tests => new[]
         {
-            "beos_r3.1.img.lz", "beos_r4.5.img.lz"
-        };
-
-        public override MediaType[] _mediaTypes => new[]
-        {
-            MediaType.DOS_35_HD, MediaType.DOS_35_HD
-        };
-
-        public override ulong[] _sectors => new ulong[]
-        {
-            2880, 2880
-        };
-
-        public override uint[] _sectorSize => new uint[]
-        {
-            512, 512
-        };
-        public override string[] _appId => null;
-        public override bool[] _bootable => new[]
-        {
-            false, false
-        };
-
-        public override long[] _clusters => new long[]
-        {
-            1440, 1440
-        };
-
-        public override uint[] _clusterSize => new uint[]
-        {
-            1024, 1024
-        };
-        public override string[] _oemId => null;
-        public override string[] _type  => null;
-
-        public override string[] _volumeName => new[]
-        {
-            "Volume label", "Volume label"
-        };
-
-        public override string[] _volumeSerial => new string[]
-        {
-            null, null
+            new FileSystemTest
+            {
+                TestFile    = "beos_r3.1.img.lz",
+                MediaType   = MediaType.DOS_35_HD,
+                Sectors     = 2880,
+                SectorSize  = 512,
+                Clusters    = 1440,
+                ClusterSize = 1024,
+                VolumeName  = "Volume label"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "beos_r4.5.img.lz",
+                MediaType   = MediaType.DOS_35_HD,
+                Sectors     = 2880,
+                SectorSize  = 512,
+                Clusters    = 1440,
+                ClusterSize = 1024,
+                VolumeName  = "Volume label"
+            }
         };
     }
 }

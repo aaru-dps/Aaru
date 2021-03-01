@@ -45,50 +45,19 @@ namespace Aaru.Tests.Filesystems.AFFS2
         public override IFilesystem _plugin     => new AmigaDOSPlugin();
         public override bool        _partitions => true;
 
-        public override string[] _testFiles => new[]
+        public override FileSystemTest[] Tests => new[]
         {
-            "amigaos_4.0.aif"
-        };
-        public override MediaType[] _mediaTypes => new[]
-        {
-            MediaType.GENERIC_HDD
-        };
-
-        public override ulong[] _sectors => new ulong[]
-        {
-            1024128
-        };
-
-        public override uint[] _sectorSize => new uint[]
-        {
-            512
-        };
-        public override string[] _appId => null;
-        public override bool[] _bootable => new[]
-        {
-            false
-        };
-
-        public override long[] _clusters => new long[]
-        {
-            511040
-        };
-
-        public override uint[] _clusterSize => new uint[]
-        {
-            1024
-        };
-        public override string[] _oemId => null;
-        public override string[] _type  => null;
-
-        public override string[] _volumeName => new[]
-        {
-            "Volume label"
-        };
-
-        public override string[] _volumeSerial => new[]
-        {
-            "611D85E5"
+            new FileSystemTest
+            {
+                TestFile     = "amigaos_4.0.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024128,
+                SectorSize   = 512,
+                Clusters     = 511040,
+                ClusterSize  = 1024,
+                VolumeName   = "Volume label",
+                VolumeSerial = "611D85E5"
+            }
         };
     }
 }

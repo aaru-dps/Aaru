@@ -42,50 +42,18 @@ namespace Aaru.Tests.Filesystems.exFAT
         public override IFilesystem _plugin     => new Aaru.Filesystems.exFAT();
         public override bool        _partitions => true;
 
-        public override string[] _testFiles => new[]
+        public override FileSystemTest[] Tests => new[]
         {
-            "macosx_10.11.aif"
-        };
-        public override MediaType[] _mediaTypes => new[]
-        {
-            MediaType.GENERIC_HDD
-        };
-
-        public override ulong[] _sectors => new ulong[]
-        {
-            262144
-        };
-
-        public override uint[] _sectorSize => new uint[]
-        {
-            512
-        };
-        public override string[] _appId => null;
-        public override bool[] _bootable => new[]
-        {
-            false
-        };
-
-        public override long[] _clusters => new long[]
-        {
-            32710
-        };
-
-        public override uint[] _clusterSize => new uint[]
-        {
-            4096
-        };
-        public override string[] _oemId => null;
-        public override string[] _type  => null;
-
-        public override string[] _volumeName => new string[]
-        {
-            null
-        };
-
-        public override string[] _volumeSerial => new[]
-        {
-            "595AC82C"
+            new FileSystemTest
+            {
+                TestFile     = "macosx_10.11.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Clusters     = 32710,
+                ClusterSize  = 4096,
+                VolumeSerial = "595AC82C"
+            }
         };
     }
 }

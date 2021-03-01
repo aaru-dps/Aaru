@@ -43,55 +43,30 @@ namespace Aaru.Tests.Filesystems.FAT16
         public override IFilesystem _plugin     => new FAT();
         public override bool        _partitions => true;
 
-        public override string[] _testFiles => new[]
+        public override FileSystemTest[] Tests => new[]
         {
-            "tos_1.04.aif", "tos_1.04_small.aif"
-        };
-        public override MediaType[] _mediaTypes => new[]
-        {
-            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD
-        };
-
-        public override ulong[] _sectors => new ulong[]
-        {
-            81920, 16384
-        };
-
-        public override uint[] _sectorSize => new uint[]
-        {
-            512, 512
-        };
-
-        public override string[] _appId => null;
-        public override bool[] _bootable => new[]
-        {
-            true, true
-        };
-
-        public override long[] _clusters => new long[]
-        {
-            10239, 8191
-        };
-
-        public override uint[] _clusterSize => new uint[]
-        {
-            4096, 1024
-        };
-
-        public override string[] _oemId => new string[]
-        {
-            null, null
-        };
-
-        public override string[] _type => null;
-        public override string[] _volumeName => new string[]
-        {
-            null, null
-        };
-
-        public override string[] _volumeSerial => new[]
-        {
-            "BA9831", "2019E1"
+            new FileSystemTest
+            {
+                TestFile     = "tos_1.04.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 81920,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 10239,
+                ClusterSize  = 4096,
+                VolumeSerial = "BA9831"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "tos_1.04_small.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 16384,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 8191,
+                ClusterSize  = 1024,
+                VolumeSerial = "2019E1"
+            }
         };
     }
 }

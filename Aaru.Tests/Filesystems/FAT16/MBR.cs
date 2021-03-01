@@ -43,123 +43,840 @@ namespace Aaru.Tests.Filesystems.FAT16
         public override IFilesystem _plugin     => new FAT();
         public override bool        _partitions => true;
 
-        public override string[] _testFiles => new[]
+        public override FileSystemTest[] Tests => new[]
         {
-            "drdos_3.40.aif", "drdos_3.41.aif", "drdos_5.00.aif", "drdos_6.00.aif", "drdos_7.02.aif", "drdos_7.03.aif",
-            "drdos_8.00.aif", "msdos331.aif", "msdos401.aif", "msdos500.aif", "msdos600.aif", "msdos620rc1.aif",
-            "msdos620.aif", "msdos621.aif", "msdos622.aif", "msdos710.aif", "novelldos_7.00.aif", "opendos_7.01.aif",
-            "pcdos2000.aif", "pcdos400.aif", "pcdos500.aif", "pcdos502.aif", "pcdos610.aif", "pcdos630.aif",
-            "msos2_1.21.aif", "msos2_1.30.1.aif", "multiuserdos_7.22r4.aif", "os2_1.20.aif", "os2_1.30.aif",
-            "os2_6.307.aif", "os2_6.514.aif", "os2_6.617.aif", "os2_8.162.aif", "os2_9.023.aif", "ecs.aif",
-            "macosx_10.11.aif", "win10.aif", "win2000.aif", "win95osr2.1.aif", "win95osr2.5.aif", "win95osr2.aif",
-            "win95.aif", "win98se.aif", "win98.aif", "winme.aif", "winnt_3.10.aif", "winnt_3.50.aif", "winnt_3.51.aif",
-            "winnt_4.00.aif", "winvista.aif", "beos_r4.5.aif", "linux.aif", "amigaos_3.9.aif", "aros.aif",
-            "freebsd_6.1.aif", "freebsd_7.0.aif", "freebsd_8.2.aif", "macos_7.5.3.aif", "macos_7.5.aif",
-            "macos_7.6.aif", "macos_8.0.aif", "ecs20_fstester.aif", "linux_2.2_umsdos16_flashdrive.aif",
-            "linux_4.19_fat16_msdos_flashdrive.aif", "linux_4.19_vfat16_flashdrive.aif"
-        };
-        public override MediaType[] _mediaTypes => new[]
-        {
-            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD,
-            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD,
-            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD,
-            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD,
-            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD,
-            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD,
-            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD,
-            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD,
-            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD,
-            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD,
-            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD,
-            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD,
-            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD,
-            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD,
-            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD,
-            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD,
-            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD,
-            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD,
-            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD
-        };
-
-        public override ulong[] _sectors => new ulong[]
-        {
-            1024000, 1024000, 1024000, 1024000, 1024000, 1024000, 1024000, 1024000, 1024000, 1024000, 1024000, 1024000,
-            1024000, 1024000, 1024000, 1024000, 1024000, 1024000, 1024000, 1024000, 1024000, 1024000, 1024000, 1024000,
-            1024000, 1024000, 1024000, 1024000, 1024000, 1024000, 1024000, 1024000, 1024000, 1024000, 1024000, 1024000,
-            1024000, 1024000, 1024000, 1024000, 1024000, 1024000, 1024000, 1024000, 1024000, 1024000, 1024000, 1024000,
-            1024000, 1024000, 1024000, 262144, 1024128, 1024000, 1024000, 1024000, 1024000, 1024000, 1024000, 1024000,
-            1024000, 1024000, 1024000, 1024000, 1024000
-        };
-
-        public override uint[] _sectorSize => new uint[]
-        {
-            512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512,
-            512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512,
-            512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512,
-            512, 512
-        };
-
-        public override string[] _appId => null;
-        public override bool[] _bootable => new[]
-        {
-            true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-            true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-            true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, false,
-            true, true, true, true, true, true, true, true, true, true, true
-        };
-
-        public override long[] _clusters => new long[]
-        {
-            63882, 63941, 63941, 63941, 63941, 63941, 63941, 63941, 63941, 63941, 63941, 63941, 63941, 63941, 63941,
-            63941, 63941, 63941, 63941, 63941, 63941, 63941, 63941, 63941, 63941, 63941, 63941, 63941, 63941, 63941,
-            63941, 63941, 63941, 63941, 63882, 63992, 63864, 63252, 63941, 63941, 63941, 63941, 63998, 63998, 63998,
-            63941, 63998, 63998, 63941, 63616, 63996, 65024, 63941, 63882, 63998, 63998, 31999, 63941, 63941, 63941,
-            63941, 63882, 63941, 63872, 63872
-        };
-
-        public override uint[] _clusterSize => new uint[]
-        {
-            8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192,
-            8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192,
-            8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 2048, 8192, 8192,
-            8192, 8192, 16384, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192
-        };
-        public override string[] _oemId => new[]
-        {
-            "IBM  3.2", "IBM  3.2", "IBM  3.3", "IBM  3.3", "IBM  3.3", "DRDOS  7", "IBM  5.0", "IBM  3.3", "MSDOS4.0",
-            "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", "MSWIN4.1", "IBM  3.3", "IBM  3.3",
-            "IBM  7.0", "IBM  4.0", "IBM  5.0", "IBM  5.0", "IBM  6.0", "IBM  6.0", "IBM 10.2", "IBM 10.2", "IBM  3.2",
-            "IBM 10.2", "IBM 10.2", "IBM 20.0", "IBM 20.0", "IBM 20.0", "IBM 20.0", "IBM 20.0", "IBM 4.50", "BSD  4.4",
-            "MSDOS5.0", "MSDOS5.0", "MSWIN4.1", "MSWIN4.1", "MSWIN4.1", "MSWIN4.0", "MSWIN4.1", "MSWIN4.1", "MSWIN4.1",
-            "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", "BeOS    ", "mkfs.fat", "CDP  5.0", "MSWIN4.1",
-            "BSD  4.4", "BSD  4.4", "BSD4.4  ", "PCX 2.0 ", "PCX 2.0 ", "PCX 2.0 ", "PCX 2.0 ", "IBM 4.50", null,
-            "mkfs.fat", "mkfs.fat"
-        };
-        public override string[] _type => null;
-
-        public override string[] _volumeName => new[]
-        {
-            "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL",
-            null, "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL",
-            "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "NO NAME", "VOLUMELABEL",
-            "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL",
-            "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL",
-            "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL",
-            "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL",
-            "VOLUMELABEL", "VOLUMELABEL", "VolumeLabel", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL",
-            "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUME LABE", "DICSETTER",
-            "DICSETTER", "DICSETTER"
-        };
-
-        public override string[] _volumeSerial => new[]
-        {
-            null, null, null, null, null, null, "1BFB0748", null, "217B1909", "0C6D18FC", "382B18F4", "3E2018E9",
-            "0D2418EF", "195A181B", "27761816", "356B1809", null, null, "2272100F", "07280FE1", "1F630FF9", "18340FFE",
-            "3F3F1003", "273D1009", "9C162C15", "9C1E2C15", null, "5BE66015", "5BE43015", "5BEAC015", "E6B18414",
-            "E6C63414", "1C069414", "1C059414", "1BE5B814", "3EF71EF4", "DAF97911", "305637BD", "275B0DE4", "09650DFC",
-            "38270D18", "2E620D0C", "0B4F0EED", "0E122464", "3B5F0F02", "C84CB6F2", "D0E9AD4E", "C039A2EC", "501F9FA6",
-            "9AAA4216", "00000000", "A132D985", "374D3BD1", "52BEA34A", "3CF10E0D", "C6C30E0D", "44770E0D", "27761816",
-            "27761816", "27761816", "27761816", "66AAF014", "5CC78D47", "A552A493", "FCC308A7"
+            new FileSystemTest
+            {
+                TestFile    = "drdos_3.40.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 1024000,
+                SectorSize  = 512,
+                Bootable    = true,
+                Clusters    = 63882,
+                ClusterSize = 8192,
+                SystemId    = "IBM  3.2",
+                VolumeName  = "VOLUMELABEL"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "drdos_3.41.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 1024000,
+                SectorSize  = 512,
+                Bootable    = true,
+                Clusters    = 63941,
+                ClusterSize = 8192,
+                SystemId    = "IBM  3.2",
+                VolumeName  = "VOLUMELABEL"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "drdos_5.00.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 1024000,
+                SectorSize  = 512,
+                Bootable    = true,
+                Clusters    = 63941,
+                ClusterSize = 8192,
+                SystemId    = "IBM  3.3",
+                VolumeName  = "VOLUMELABEL"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "drdos_6.00.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 1024000,
+                SectorSize  = 512,
+                Bootable    = true,
+                Clusters    = 63941,
+                ClusterSize = 8192,
+                SystemId    = "IBM  3.3",
+                VolumeName  = "VOLUMELABEL"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "drdos_7.02.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 1024000,
+                SectorSize  = 512,
+                Bootable    = true,
+                Clusters    = 63941,
+                ClusterSize = 8192,
+                SystemId    = "IBM  3.3",
+                VolumeName  = "VOLUMELABEL"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "drdos_7.03.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 1024000,
+                SectorSize  = 512,
+                Bootable    = true,
+                Clusters    = 63941,
+                ClusterSize = 8192,
+                SystemId    = "DRDOS  7",
+                VolumeName  = "VOLUMELABEL"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "drdos_8.00.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024000,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 63941,
+                ClusterSize  = 8192,
+                SystemId     = "IBM  5.0",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "1BFB0748"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "msdos331.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 1024000,
+                SectorSize  = 512,
+                Bootable    = true,
+                Clusters    = 63941,
+                ClusterSize = 8192,
+                SystemId    = "IBM  3.3"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "msdos401.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024000,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 63941,
+                ClusterSize  = 8192,
+                SystemId     = "MSDOS4.0",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "217B1909"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "msdos500.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024000,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 63941,
+                ClusterSize  = 8192,
+                SystemId     = "MSDOS5.0",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "0C6D18FC"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "msdos600.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024000,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 63941,
+                ClusterSize  = 8192,
+                SystemId     = "MSDOS5.0",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "382B18F4"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "msdos620rc1.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024000,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 63941,
+                ClusterSize  = 8192,
+                SystemId     = "MSDOS5.0",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "3E2018E9"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "msdos620.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024000,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 63941,
+                ClusterSize  = 8192,
+                SystemId     = "MSDOS5.0",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "0D2418EF"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "msdos621.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024000,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 63941,
+                ClusterSize  = 8192,
+                SystemId     = "MSDOS5.0",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "195A181B"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "msdos622.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024000,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 63941,
+                ClusterSize  = 8192,
+                SystemId     = "MSDOS5.0",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "27761816"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "msdos710.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024000,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 63941,
+                ClusterSize  = 8192,
+                SystemId     = "MSWIN4.1",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "356B1809"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "novelldos_7.00.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 1024000,
+                SectorSize  = 512,
+                Bootable    = true,
+                Clusters    = 63941,
+                ClusterSize = 8192,
+                SystemId    = "IBM  3.3",
+                VolumeName  = "VOLUMELABEL"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "opendos_7.01.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 1024000,
+                SectorSize  = 512,
+                Bootable    = true,
+                Clusters    = 63941,
+                ClusterSize = 8192,
+                SystemId    = "IBM  3.3",
+                VolumeName  = "VOLUMELABEL"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "pcdos2000.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024000,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 63941,
+                ClusterSize  = 8192,
+                SystemId     = "IBM  7.0",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "2272100F"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "pcdos400.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024000,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 63941,
+                ClusterSize  = 8192,
+                SystemId     = "IBM  4.0",
+                VolumeName   = "NO NAME",
+                VolumeSerial = "07280FE1"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "pcdos500.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024000,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 63941,
+                ClusterSize  = 8192,
+                SystemId     = "IBM  5.0",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "1F630FF9"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "pcdos502.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024000,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 63941,
+                ClusterSize  = 8192,
+                SystemId     = "IBM  5.0",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "18340FFE"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "pcdos610.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024000,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 63941,
+                ClusterSize  = 8192,
+                SystemId     = "IBM  6.0",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "3F3F1003"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "pcdos630.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024000,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 63941,
+                ClusterSize  = 8192,
+                SystemId     = "IBM  6.0",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "273D1009"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "msos2_1.21.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024000,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 63941,
+                ClusterSize  = 8192,
+                SystemId     = "IBM 10.2",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "9C162C15"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "msos2_1.30.1.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024000,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 63941,
+                ClusterSize  = 8192,
+                SystemId     = "IBM 10.2",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "9C1E2C15"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "multiuserdos_7.22r4.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 1024000,
+                SectorSize  = 512,
+                Bootable    = true,
+                Clusters    = 63941,
+                ClusterSize = 8192,
+                SystemId    = "IBM  3.2",
+                VolumeName  = "VOLUMELABEL"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "os2_1.20.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024000,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 63941,
+                ClusterSize  = 8192,
+                SystemId     = "IBM 10.2",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "5BE66015"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "os2_1.30.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024000,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 63941,
+                ClusterSize  = 8192,
+                SystemId     = "IBM 10.2",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "5BE43015"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "os2_6.307.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024000,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 63941,
+                ClusterSize  = 8192,
+                SystemId     = "IBM 20.0",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "5BEAC015"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "os2_6.514.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024000,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 63941,
+                ClusterSize  = 8192,
+                SystemId     = "IBM 20.0",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "E6B18414"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "os2_6.617.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024000,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 63941,
+                ClusterSize  = 8192,
+                SystemId     = "IBM 20.0",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "E6C63414"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "os2_8.162.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024000,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 63941,
+                ClusterSize  = 8192,
+                SystemId     = "IBM 20.0",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "1C069414"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "os2_9.023.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024000,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 63941,
+                ClusterSize  = 8192,
+                SystemId     = "IBM 20.0",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "1C059414"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "ecs.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024000,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 63882,
+                ClusterSize  = 8192,
+                SystemId     = "IBM 4.50",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "1BE5B814"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "macosx_10.11.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024000,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 63992,
+                ClusterSize  = 8192,
+                SystemId     = "BSD  4.4",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "3EF71EF4"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "win10.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024000,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 63864,
+                ClusterSize  = 8192,
+                SystemId     = "MSDOS5.0",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "DAF97911"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "win2000.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024000,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 63252,
+                ClusterSize  = 8192,
+                SystemId     = "MSDOS5.0",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "305637BD"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "win95osr2.1.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024000,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 63941,
+                ClusterSize  = 8192,
+                SystemId     = "MSWIN4.1",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "275B0DE4"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "win95osr2.5.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024000,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 63941,
+                ClusterSize  = 8192,
+                SystemId     = "MSWIN4.1",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "09650DFC"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "win95osr2.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024000,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 63941,
+                ClusterSize  = 8192,
+                SystemId     = "MSWIN4.1",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "38270D18"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "win95.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024000,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 63941,
+                ClusterSize  = 8192,
+                SystemId     = "MSWIN4.0",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "2E620D0C"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "win98se.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024000,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 63998,
+                ClusterSize  = 8192,
+                SystemId     = "MSWIN4.1",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "0B4F0EED"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "win98.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024000,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 63998,
+                ClusterSize  = 8192,
+                SystemId     = "MSWIN4.1",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "0E122464"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "winme.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024000,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 63998,
+                ClusterSize  = 8192,
+                SystemId     = "MSWIN4.1",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "3B5F0F02"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "winnt_3.10.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024000,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 63941,
+                ClusterSize  = 8192,
+                SystemId     = "MSDOS5.0",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "C84CB6F2"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "winnt_3.50.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024000,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 63998,
+                ClusterSize  = 8192,
+                SystemId     = "MSDOS5.0",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "D0E9AD4E"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "winnt_3.51.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024000,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 63998,
+                ClusterSize  = 8192,
+                SystemId     = "MSDOS5.0",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "C039A2EC"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "winnt_4.00.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024000,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 63941,
+                ClusterSize  = 8192,
+                SystemId     = "MSDOS5.0",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "501F9FA6"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "winvista.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024000,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 63616,
+                ClusterSize  = 8192,
+                SystemId     = "MSDOS5.0",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "9AAA4216"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "beos_r4.5.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024000,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 63996,
+                ClusterSize  = 8192,
+                SystemId     = "BeOS    ",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "00000000"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "linux.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 65024,
+                ClusterSize  = 2048,
+                SystemId     = "mkfs.fat",
+                VolumeName   = "VolumeLabel",
+                VolumeSerial = "A132D985"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "amigaos_3.9.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024128,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 63941,
+                ClusterSize  = 8192,
+                SystemId     = "CDP  5.0",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "374D3BD1"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "aros.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024000,
+                SectorSize   = 512,
+                Clusters     = 63882,
+                ClusterSize  = 8192,
+                SystemId     = "MSWIN4.1",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "52BEA34A"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "freebsd_6.1.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024000,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 63998,
+                ClusterSize  = 8192,
+                SystemId     = "BSD  4.4",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "3CF10E0D"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "freebsd_7.0.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024000,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 63998,
+                ClusterSize  = 8192,
+                SystemId     = "BSD  4.4",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "C6C30E0D"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "freebsd_8.2.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024000,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 31999,
+                ClusterSize  = 16384,
+                SystemId     = "BSD4.4  ",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "44770E0D"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "macos_7.5.3.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024000,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 63941,
+                ClusterSize  = 8192,
+                SystemId     = "PCX 2.0 ",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "27761816"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "macos_7.5.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024000,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 63941,
+                ClusterSize  = 8192,
+                SystemId     = "PCX 2.0 ",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "27761816"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "macos_7.6.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024000,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 63941,
+                ClusterSize  = 8192,
+                SystemId     = "PCX 2.0 ",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "27761816"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "macos_8.0.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024000,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 63941,
+                ClusterSize  = 8192,
+                SystemId     = "PCX 2.0 ",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "27761816"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "ecs20_fstester.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024000,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 63882,
+                ClusterSize  = 8192,
+                SystemId     = "IBM 4.50",
+                VolumeName   = "VOLUME LABE",
+                VolumeSerial = "66AAF014"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "linux_2.2_umsdos16_flashdrive.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024000,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 63941,
+                ClusterSize  = 8192,
+                VolumeName   = "DICSETTER",
+                VolumeSerial = "5CC78D47"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "linux_4.19_fat16_msdos_flashdrive.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024000,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 63872,
+                ClusterSize  = 8192,
+                SystemId     = "mkfs.fat",
+                VolumeName   = "DICSETTER",
+                VolumeSerial = "A552A493"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "linux_4.19_vfat16_flashdrive.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024000,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 63872,
+                ClusterSize  = 8192,
+                SystemId     = "mkfs.fat",
+                VolumeName   = "DICSETTER",
+                VolumeSerial = "FCC308A7"
+            }
         };
     }
 }

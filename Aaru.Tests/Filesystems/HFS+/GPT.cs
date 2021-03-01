@@ -45,54 +45,30 @@ namespace Aaru.Tests.Filesystems.HFSPlus
         public override IFilesystem _plugin => new AppleHFSPlus();
         public override bool _partitions => true;
 
-        public override string[] _testFiles => new[]
+        public override FileSystemTest[] Tests => new[]
         {
-            "macosx_10.11.aif", "macosx_10.11_journal.aif"
-        };
-        public override MediaType[] _mediaTypes => new[]
-        {
-            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD
-        };
-
-        public override ulong[] _sectors => new ulong[]
-        {
-            409600, 614400
-        };
-
-        public override uint[] _sectorSize => new uint[]
-        {
-            512, 512
-        };
-
-        public override string[] _appId => null;
-        public override bool[] _bootable => new[]
-        {
-            false, false
-        };
-
-        public override long[] _clusters => new long[]
-        {
-            51190, 76790
-        };
-
-        public override uint[] _clusterSize => new uint[]
-        {
-            4096, 4096
-        };
-        public override string[] _oemId => new[]
-        {
-            "10.0", "HFSJ"
-        };
-        public override string[] _type => null;
-
-        public override string[] _volumeName => new string[]
-        {
-            null, null
-        };
-
-        public override string[] _volumeSerial => new[]
-        {
-            "D8C68470046E67BE", "FD3CB598F3C6294A"
+            new FileSystemTest
+            {
+                TestFile     = "macosx_10.11.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 409600,
+                SectorSize   = 512,
+                Clusters     = 51190,
+                ClusterSize  = 4096,
+                SystemId     = "10.0",
+                VolumeSerial = "D8C68470046E67BE"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "macosx_10.11_journal.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 614400,
+                SectorSize   = 512,
+                Clusters     = 76790,
+                ClusterSize  = 4096,
+                SystemId     = "HFSJ",
+                VolumeSerial = "FD3CB598F3C6294A"
+            }
         };
     }
 }

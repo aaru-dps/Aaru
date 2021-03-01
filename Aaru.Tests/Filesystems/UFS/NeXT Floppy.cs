@@ -44,60 +44,108 @@ namespace Aaru.Tests.Filesystems.UFS
         public override IFilesystem _plugin     => new FFSPlugin();
         public override bool        _partitions => true;
 
-        public override string[] _testFiles => new[]
+        public override FileSystemTest[] Tests => new[]
         {
-            "nextstep_3.3_mf2dd.img.lz", "nextstep_3.3_mf2hd.img.lz", "openstep_4.0_mf2dd.img.lz",
-            "openstep_4.0_mf2hd.img.lz", "openstep_4.2_mf2dd.img.lz", "openstep_4.2_mf2hd.img.lz",
-            "rhapsody_dr1_mf2dd.img.lz", "rhapsody_dr1_mf2hd.img.lz", "rhapsody_dr2_mf2dd.img.lz",
-            "rhapsody_dr2_mf2hd.img.lz"
-        };
-
-        public override MediaType[] _mediaTypes => new[]
-        {
-            MediaType.DOS_35_DS_DD_9, MediaType.DOS_35_HD, MediaType.DOS_35_DS_DD_9, MediaType.DOS_35_HD,
-            MediaType.DOS_35_DS_DD_9, MediaType.DOS_35_HD, MediaType.DOS_35_DS_DD_9, MediaType.DOS_35_HD,
-            MediaType.DOS_35_DS_DD_9, MediaType.DOS_35_HD
-        };
-        public override ulong[] _sectors => new ulong[]
-        {
-            1440, 2880, 1440, 2880, 1440, 2880, 1440, 2880, 1440, 2880
-        };
-
-        public override uint[] _sectorSize => new uint[]
-        {
-            512, 512, 512, 512, 512, 512, 512, 512, 512, 512
-        };
-
-        public override string[] _appId => null;
-        public override bool[] _bootable => new[]
-        {
-            false, false, false, false, false, false, false, false, false, false
-        };
-
-        public override long[] _clusters => new long[]
-        {
-            624, 1344, 624, 1344, 624, 1344, 624, 1344, 624, 1344
-        };
-
-        public override uint[] _clusterSize => new uint[]
-        {
-            1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024
-        };
-        public override string[] _oemId => null;
-
-        public override string[] _type => new[]
-        {
-            "UFS", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS"
-        };
-
-        public override string[] _volumeName => new string[]
-        {
-            null, null, null, null, null, null, null, null, null, null
-        };
-
-        public override string[] _volumeSerial => new string[]
-        {
-            null, null, null, null, null, null, null, null, null, null
+            new FileSystemTest
+            {
+                TestFile    = "nextstep_3.3_mf2dd.img.lz",
+                MediaType   = MediaType.DOS_35_DS_DD_9,
+                Sectors     = 1440,
+                SectorSize  = 512,
+                Clusters    = 624,
+                ClusterSize = 1024,
+                Type        = "UFS"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "nextstep_3.3_mf2hd.img.lz",
+                MediaType   = MediaType.DOS_35_HD,
+                Sectors     = 2880,
+                SectorSize  = 512,
+                Clusters    = 1344,
+                ClusterSize = 1024,
+                Type        = "UFS"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "openstep_4.0_mf2dd.img.lz",
+                MediaType   = MediaType.DOS_35_DS_DD_9,
+                Sectors     = 1440,
+                SectorSize  = 512,
+                Clusters    = 624,
+                ClusterSize = 1024,
+                Type        = "UFS"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "openstep_4.0_mf2hd.img.lz",
+                MediaType   = MediaType.DOS_35_HD,
+                Sectors     = 2880,
+                SectorSize  = 512,
+                Clusters    = 1344,
+                ClusterSize = 1024,
+                Type        = "UFS"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "openstep_4.2_mf2dd.img.lz",
+                MediaType   = MediaType.DOS_35_DS_DD_9,
+                Sectors     = 1440,
+                SectorSize  = 512,
+                Clusters    = 624,
+                ClusterSize = 1024,
+                Type        = "UFS"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "openstep_4.2_mf2hd.img.lz",
+                MediaType   = MediaType.DOS_35_HD,
+                Sectors     = 2880,
+                SectorSize  = 512,
+                Clusters    = 1344,
+                ClusterSize = 1024,
+                Type        = "UFS"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "rhapsody_dr1_mf2dd.img.lz",
+                MediaType   = MediaType.DOS_35_DS_DD_9,
+                Sectors     = 1440,
+                SectorSize  = 512,
+                Clusters    = 624,
+                ClusterSize = 1024,
+                Type        = "UFS"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "rhapsody_dr1_mf2hd.img.lz",
+                MediaType   = MediaType.DOS_35_HD,
+                Sectors     = 2880,
+                SectorSize  = 512,
+                Clusters    = 1344,
+                ClusterSize = 1024,
+                Type        = "UFS"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "rhapsody_dr2_mf2dd.img.lz",
+                MediaType   = MediaType.DOS_35_DS_DD_9,
+                Sectors     = 1440,
+                SectorSize  = 512,
+                Clusters    = 624,
+                ClusterSize = 1024,
+                Type        = "UFS"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "rhapsody_dr2_mf2hd.img.lz",
+                MediaType   = MediaType.DOS_35_HD,
+                Sectors     = 2880,
+                SectorSize  = 512,
+                Clusters    = 1344,
+                ClusterSize = 1024,
+                Type        = "UFS"
+            }
         };
     }
 }

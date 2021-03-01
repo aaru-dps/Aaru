@@ -43,81 +43,382 @@ namespace Aaru.Tests.Filesystems.HFS
         public override IFilesystem _plugin => new AppleHFS();
         public override bool _partitions => true;
 
-        public override string[] _testFiles => new[]
+        public override FileSystemTest[] Tests => new[]
         {
-            "amigaos_3.9.aif", "darwin_1.3.1.aif", "darwin_1.4.1.aif", "darwin_6.0.2.aif", "darwin_8.0.1.aif",
-            "macos_1.1.aif", "macos_2.0.aif", "macos_6.0.7.aif", "macos_7.5.3.aif", "macos_7.5.aif", "macos_7.6.aif",
-            "macos_8.0.aif", "macos_8.1.aif", "macos_9.0.4.aif", "macos_9.1.aif", "macos_9.2.1.aif", "macos_9.2.2.aif",
-            "macosx_10.2.aif", "macosx_10.3.aif", "macosx_10.4.aif", "rhapsody_dr1.aif", "d2_driver.aif", "hdt_1.8.aif",
-            "macos_4.2.aif", "macos_4.3.aif", "macos_6.0.2.aif", "macos_6.0.3.aif", "macos_6.0.4.aif",
-            "macos_6.0.5.aif", "macos_6.0.8.aif", "macos_6.0.aif", "macos_7.0.aif", "macos_7.1.1.aif", "parted.aif",
-            "silverlining_2.2.1.aif", "speedtools_3.6.aif", "vcpformatter_2.1.1.aif"
-        };
-        public override MediaType[] _mediaTypes => new[]
-        {
-            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD,
-            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD,
-            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD,
-            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD,
-            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD,
-            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD,
-            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD,
-            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD,
-            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD,
-            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD
-        };
-
-        public override ulong[] _sectors => new ulong[]
-        {
-            1024128, 409600, 409600, 409600, 409600, 41820, 41820, 81648, 1024000, 1024000, 1024000, 1024000, 1024000,
-            1024000, 1024000, 1024000, 1024000, 1024000, 1024000, 1024000, 409600, 51200, 51200, 41820, 41820, 54840,
-            54840, 54840, 54840, 54840, 41820, 54840, 54840, 262144, 51200, 51200, 54840
-        };
-
-        public override uint[] _sectorSize => new uint[]
-        {
-            512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512,
-            512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512
-        };
-
-        public override string[] _appId => null;
-        public override bool[] _bootable => new[]
-        {
-            false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,
-            false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,
-            false, false, false, false, false, false, false
-        };
-
-        public override long[] _clusters => new long[]
-        {
-            64003, 51189, 51189, 58502, 58502, 41788, 38950, 39991, 63954, 63990, 63954, 63954, 63954, 63922, 63922,
-            63922, 63922, 63884, 63883, 63883, 58506, 50926, 50094, 38950, 38950, 38950, 38950, 7673, 38950, 38950,
-            38950, 38950, 38950, 46071, 50382, 49135, 54643
-        };
-
-        public override uint[] _clusterSize => new uint[]
-        {
-            8192, 4096, 4096, 3584, 3584, 512, 512, 1024, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192,
-            8192, 8192, 3584, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 1024, 512, 512, 512
-        };
-        public override string[] _oemId => null;
-        public override string[] _type  => null;
-
-        public override string[] _volumeName => new[]
-        {
-            "Volume label", "Volume label", "Volume label", "Volume label", "Volume label", "Volume label",
-            "Volume label", "Volume label", "Volume label", "Volume label", "Volume label", "Volume label",
-            "Volume label", "Volume label", "Volume label", "Volume label", "Volume label", "Volume label",
-            "Volume label", "Volume label", "Volume label", "Volume label", "Volume label", "Volume label",
-            "Volume label", "Volume label", "Volume label", "Test disk", "Volume label", "Volume label", "Volume label",
-            "Volume label", "Volume label", "Untitled", "Untitled  #1", "24 MB Disk", "Volume label"
-        };
-
-        public override string[] _volumeSerial => new[]
-        {
-            null, null, null, null, "AAFE1382AF5AA898", null, null, null, null, null, null, null, null, null, null,
-            null, null, "5A7C38B0CAF279C4", "FB49083EBD150509", "632C0B1DB46FD188", null, null, null, null, null, null,
-            null, null, null, null, null, null, null, null, null, null, null
+            new FileSystemTest
+            {
+                TestFile    = "amigaos_3.9.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 1024128,
+                SectorSize  = 512,
+                Clusters    = 64003,
+                ClusterSize = 8192,
+                VolumeName  = "Volume label"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "darwin_1.3.1.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 409600,
+                SectorSize  = 512,
+                Clusters    = 51189,
+                ClusterSize = 4096,
+                VolumeName  = "Volume label"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "darwin_1.4.1.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 409600,
+                SectorSize  = 512,
+                Clusters    = 51189,
+                ClusterSize = 4096,
+                VolumeName  = "Volume label"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "darwin_6.0.2.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 409600,
+                SectorSize  = 512,
+                Clusters    = 58502,
+                ClusterSize = 3584,
+                VolumeName  = "Volume label"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "darwin_8.0.1.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 409600,
+                SectorSize   = 512,
+                Clusters     = 58502,
+                ClusterSize  = 3584,
+                VolumeName   = "Volume label",
+                VolumeSerial = "AAFE1382AF5AA898"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "macos_1.1.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 41820,
+                SectorSize  = 512,
+                Clusters    = 41788,
+                ClusterSize = 512,
+                VolumeName  = "Volume label"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "macos_2.0.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 41820,
+                SectorSize  = 512,
+                Clusters    = 38950,
+                ClusterSize = 512,
+                VolumeName  = "Volume label"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "macos_6.0.7.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 81648,
+                SectorSize  = 512,
+                Clusters    = 39991,
+                ClusterSize = 1024,
+                VolumeName  = "Volume label"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "macos_7.5.3.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 1024000,
+                SectorSize  = 512,
+                Clusters    = 63954,
+                ClusterSize = 8192,
+                VolumeName  = "Volume label"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "macos_7.5.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 1024000,
+                SectorSize  = 512,
+                Clusters    = 63990,
+                ClusterSize = 8192,
+                VolumeName  = "Volume label"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "macos_7.6.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 1024000,
+                SectorSize  = 512,
+                Clusters    = 63954,
+                ClusterSize = 8192,
+                VolumeName  = "Volume label"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "macos_8.0.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 1024000,
+                SectorSize  = 512,
+                Clusters    = 63954,
+                ClusterSize = 8192,
+                VolumeName  = "Volume label"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "macos_8.1.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 1024000,
+                SectorSize  = 512,
+                Clusters    = 63954,
+                ClusterSize = 8192,
+                VolumeName  = "Volume label"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "macos_9.0.4.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 1024000,
+                SectorSize  = 512,
+                Clusters    = 63922,
+                ClusterSize = 8192,
+                VolumeName  = "Volume label"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "macos_9.1.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 1024000,
+                SectorSize  = 512,
+                Clusters    = 63922,
+                ClusterSize = 8192,
+                VolumeName  = "Volume label"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "macos_9.2.1.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 1024000,
+                SectorSize  = 512,
+                Clusters    = 63922,
+                ClusterSize = 8192,
+                VolumeName  = "Volume label"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "macos_9.2.2.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 1024000,
+                SectorSize  = 512,
+                Clusters    = 63922,
+                ClusterSize = 8192,
+                VolumeName  = "Volume label"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "macosx_10.2.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024000,
+                SectorSize   = 512,
+                Clusters     = 63884,
+                ClusterSize  = 8192,
+                VolumeName   = "Volume label",
+                VolumeSerial = "5A7C38B0CAF279C4"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "macosx_10.3.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024000,
+                SectorSize   = 512,
+                Clusters     = 63883,
+                ClusterSize  = 8192,
+                VolumeName   = "Volume label",
+                VolumeSerial = "FB49083EBD150509"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "macosx_10.4.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024000,
+                SectorSize   = 512,
+                Clusters     = 63883,
+                ClusterSize  = 8192,
+                VolumeName   = "Volume label",
+                VolumeSerial = "632C0B1DB46FD188"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "rhapsody_dr1.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 409600,
+                SectorSize  = 512,
+                Clusters    = 58506,
+                ClusterSize = 3584,
+                VolumeName  = "Volume label"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "d2_driver.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 51200,
+                SectorSize  = 512,
+                Clusters    = 50926,
+                ClusterSize = 512,
+                VolumeName  = "Volume label"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "hdt_1.8.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 51200,
+                SectorSize  = 512,
+                Clusters    = 50094,
+                ClusterSize = 512,
+                VolumeName  = "Volume label"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "macos_4.2.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 41820,
+                SectorSize  = 512,
+                Clusters    = 38950,
+                ClusterSize = 512,
+                VolumeName  = "Volume label"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "macos_4.3.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 41820,
+                SectorSize  = 512,
+                Clusters    = 38950,
+                ClusterSize = 512,
+                VolumeName  = "Volume label"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "macos_6.0.2.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 54840,
+                SectorSize  = 512,
+                Clusters    = 38950,
+                ClusterSize = 512,
+                VolumeName  = "Volume label"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "macos_6.0.3.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 54840,
+                SectorSize  = 512,
+                Clusters    = 38950,
+                ClusterSize = 512,
+                VolumeName  = "Volume label"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "macos_6.0.4.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 54840,
+                SectorSize  = 512,
+                Clusters    = 7673,
+                ClusterSize = 512,
+                VolumeName  = "Test disk"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "macos_6.0.5.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 54840,
+                SectorSize  = 512,
+                Clusters    = 38950,
+                ClusterSize = 512,
+                VolumeName  = "Volume label"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "macos_6.0.8.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 54840,
+                SectorSize  = 512,
+                Clusters    = 38950,
+                ClusterSize = 512,
+                VolumeName  = "Volume label"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "macos_6.0.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 41820,
+                SectorSize  = 512,
+                Clusters    = 38950,
+                ClusterSize = 512,
+                VolumeName  = "Volume label"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "macos_7.0.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 54840,
+                SectorSize  = 512,
+                Clusters    = 38950,
+                ClusterSize = 512,
+                VolumeName  = "Volume label"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "macos_7.1.1.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 54840,
+                SectorSize  = 512,
+                Clusters    = 38950,
+                ClusterSize = 512,
+                VolumeName  = "Volume label"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "parted.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 262144,
+                SectorSize  = 512,
+                Clusters    = 46071,
+                ClusterSize = 1024,
+                VolumeName  = "Untitled"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "silverlining_2.2.1.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 51200,
+                SectorSize  = 512,
+                Clusters    = 50382,
+                ClusterSize = 512,
+                VolumeName  = "Untitled  #1"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "speedtools_3.6.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 51200,
+                SectorSize  = 512,
+                Clusters    = 49135,
+                ClusterSize = 512,
+                VolumeName  = "24 MB Disk"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "vcpformatter_2.1.1.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 54840,
+                SectorSize  = 512,
+                Clusters    = 54643,
+                ClusterSize = 512,
+                VolumeName  = "Volume label"
+            }
         };
     }
 }

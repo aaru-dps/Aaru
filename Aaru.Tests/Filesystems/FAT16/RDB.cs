@@ -43,54 +43,21 @@ namespace Aaru.Tests.Filesystems.FAT16
         public override IFilesystem _plugin     => new FAT();
         public override bool        _partitions => true;
 
-        public override string[] _testFiles => new[]
+        public override FileSystemTest[] Tests => new[]
         {
-            "amigaos_3.9.aif"
-        };
-        public override MediaType[] _mediaTypes => new[]
-        {
-            MediaType.GENERIC_HDD
-        };
-
-        public override ulong[] _sectors => new ulong[]
-        {
-            1024128
-        };
-
-        public override uint[] _sectorSize => new uint[]
-        {
-            512
-        };
-
-        public override string[] _appId => null;
-        public override bool[] _bootable => new[]
-        {
-            true
-        };
-
-        public override long[] _clusters => new long[]
-        {
-            63689
-        };
-
-        public override uint[] _clusterSize => new uint[]
-        {
-            8192
-        };
-        public override string[] _oemId => new[]
-        {
-            "CDP  5.0"
-        };
-        public override string[] _type => null;
-
-        public override string[] _volumeName => new[]
-        {
-            "VOLUMELABEL"
-        };
-
-        public override string[] _volumeSerial => new[]
-        {
-            "374D40D1"
+            new FileSystemTest
+            {
+                TestFile     = "amigaos_3.9.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024128,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 63689,
+                ClusterSize  = 8192,
+                SystemId     = "CDP  5.0",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "374D40D1"
+            }
         };
     }
 }

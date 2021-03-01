@@ -44,54 +44,58 @@ namespace Aaru.Tests.Filesystems
         public override IFilesystem _plugin     => new AppleMFS();
         public override bool        _partitions => false;
 
-        public override string[] _testFiles => new[]
+        public override FileSystemTest[] Tests => new[]
         {
-            "macos_0.1_mf1dd.img.lz", "macos_0.5_mf1dd.img.lz", "macos_1.1_mf1dd.img.lz", "macos_2.0_mf1dd.img.lz",
-            "macos_6.0.7_mf1dd.img.lz"
-        };
-
-        public override MediaType[] _mediaTypes => new[]
-        {
-            MediaType.AppleSonySS, MediaType.AppleSonySS, MediaType.AppleSonySS, MediaType.AppleSonySS,
-            MediaType.AppleSonySS
-        };
-
-        public override ulong[] _sectors => new ulong[]
-        {
-            800, 800, 800, 800, 800
-        };
-
-        public override uint[] _sectorSize => new uint[]
-        {
-            512, 512, 512, 512, 512, 512, 512
-        };
-
-        public override string[] _appId => null;
-        public override bool[] _bootable => new[]
-        {
-            false, false, false, false, false, false, false
-        };
-
-        public override long[] _clusters => new long[]
-        {
-            391, 391, 391, 391, 391
-        };
-
-        public override uint[] _clusterSize => new uint[]
-        {
-            1024, 1024, 1024, 1024, 1024
-        };
-        public override string[] _oemId => null;
-        public override string[] _type  => null;
-
-        public override string[] _volumeName => new[]
-        {
-            "Volume label", "Volume label", "Volume label", "Volume label", "Volume label"
-        };
-
-        public override string[] _volumeSerial => new string[]
-        {
-            null, null, null, null, null, null, null
+            new FileSystemTest
+            {
+                TestFile    = "macos_0.1_mf1dd.img.lz",
+                MediaType   = MediaType.AppleSonySS,
+                Sectors     = 800,
+                SectorSize  = 512,
+                Clusters    = 391,
+                ClusterSize = 1024,
+                VolumeName  = "Volume label"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "macos_0.5_mf1dd.img.lz",
+                MediaType   = MediaType.AppleSonySS,
+                Sectors     = 800,
+                SectorSize  = 512,
+                Clusters    = 391,
+                ClusterSize = 1024,
+                VolumeName  = "Volume label"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "macos_1.1_mf1dd.img.lz",
+                MediaType   = MediaType.AppleSonySS,
+                Sectors     = 800,
+                SectorSize  = 512,
+                Clusters    = 391,
+                ClusterSize = 1024,
+                VolumeName  = "Volume label"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "macos_2.0_mf1dd.img.lz",
+                MediaType   = MediaType.AppleSonySS,
+                Sectors     = 800,
+                SectorSize  = 512,
+                Clusters    = 391,
+                ClusterSize = 1024,
+                VolumeName  = "Volume label"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "macos_6.0.7_mf1dd.img.lz",
+                MediaType   = MediaType.AppleSonySS,
+                Sectors     = 800,
+                SectorSize  = 512,
+                Clusters    = 391,
+                ClusterSize = 1024,
+                VolumeName  = "Volume label"
+            }
         };
     }
 }

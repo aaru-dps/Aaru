@@ -44,50 +44,52 @@ namespace Aaru.Tests.Filesystems.AOFS
         public override IFilesystem _plugin     => new AmigaDOSPlugin();
         public override bool        _partitions => true;
 
-        public override string[] _testFiles => new[]
+        public override FileSystemTest[] Tests => new[]
         {
-            "amigaos_3.9.aif", "amigaos_3.9_intl.aif", "aros.aif", "aros_intl.aif"
-        };
-        public override MediaType[] _mediaTypes => new[]
-        {
-            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD
-        };
-
-        public override ulong[] _sectors => new ulong[]
-        {
-            1024128, 1024128, 409600, 409600
-        };
-
-        public override uint[] _sectorSize => new uint[]
-        {
-            512, 512, 512, 512
-        };
-        public override string[] _appId => null;
-        public override bool[] _bootable => new[]
-        {
-            false, false, false, false
-        };
-
-        public override long[] _clusters => new long[]
-        {
-            510032, 510032, 407232, 407232
-        };
-
-        public override uint[] _clusterSize => new uint[]
-        {
-            1024, 1024, 512, 512
-        };
-        public override string[] _oemId => null;
-        public override string[] _type  => null;
-
-        public override string[] _volumeName => new[]
-        {
-            "Volume label", "Volume label", "Volume label", "Volume label"
-        };
-
-        public override string[] _volumeSerial => new[]
-        {
-            "A56D13BB", "A56D0415", "A582F3A0", "A5830B06"
+            new FileSystemTest
+            {
+                TestFile     = "amigaos_3.9.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024128,
+                SectorSize   = 512,
+                Clusters     = 510032,
+                ClusterSize  = 1024,
+                VolumeName   = "Volume label",
+                VolumeSerial = "A56D13BB"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "amigaos_3.9_intl.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024128,
+                SectorSize   = 512,
+                Clusters     = 510032,
+                ClusterSize  = 1024,
+                VolumeName   = "Volume label",
+                VolumeSerial = "A56D0415"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "aros.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 409600,
+                SectorSize   = 512,
+                Clusters     = 407232,
+                ClusterSize  = 512,
+                VolumeName   = "Volume label",
+                VolumeSerial = "A582F3A0"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "aros_intl.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 409600,
+                SectorSize   = 512,
+                Clusters     = 407232,
+                ClusterSize  = 512,
+                VolumeName   = "Volume label",
+                VolumeSerial = "A5830B06"
+            }
         };
     }
 }

@@ -43,49 +43,17 @@ namespace Aaru.Tests.Filesystems.QNX4
         public override IFilesystem _plugin     => new Aaru.Filesystems.QNX4();
         public override bool        _partitions => true;
 
-        public override string[] _testFiles => new[]
+        public override FileSystemTest[] Tests => new[]
         {
-            "qnx_4.24.aif"
-        };
-        public override MediaType[] _mediaTypes => new[]
-        {
-            MediaType.GENERIC_HDD
-        };
-
-        public override ulong[] _sectors => new ulong[]
-        {
-            1024000
-        };
-
-        public override uint[] _sectorSize => new uint[]
-        {
-            512
-        };
-
-        public override string[] _appId => null;
-        public override bool[] _bootable => new[]
-        {
-            false
-        };
-
-        public override long[] _clusters => new long[]
-        {
-            1023104
-        };
-
-        public override uint[] _clusterSize => new uint[]
-        {
-            512
-        };
-        public override string[] _oemId => null;
-        public override string[] _type  => null;
-        public override string[] _volumeName => new string[]
-        {
-            null
-        };
-        public override string[] _volumeSerial => new string[]
-        {
-            null
+            new FileSystemTest
+            {
+                TestFile    = "qnx_4.24.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 1024000,
+                SectorSize  = 512,
+                Clusters    = 1023104,
+                ClusterSize = 512
+            }
         };
     }
 }

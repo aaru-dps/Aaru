@@ -43,61 +43,178 @@ namespace Aaru.Tests.Filesystems
                                                            "High Performance File System");
         public override IFilesystem _plugin     => new HPFS();
         public override bool        _partitions => true;
-        public override string[] _testFiles => new[]
-        {
-            "ecs.aif", "msos2_1.21.aif", "msos2_1.30.1.aif", "os2_1.20.aif", "os2_1.30.aif", "os2_6.307.aif",
-            "os2_6.514.aif", "os2_6.617.aif", "os2_8.162.aif", "os2_9.023.aif", "winnt_3.10.aif", "winnt_3.50.aif",
-            "ecs20_fstester.aif"
-        };
 
-        public override MediaType[] _mediaTypes => new[]
+        public override FileSystemTest[] Tests => new[]
         {
-            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD,
-            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD,
-            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD,
-            MediaType.GENERIC_HDD
-        };
-        public override ulong[] _sectors => new ulong[]
-        {
-            262144, 1024000, 1024000, 1024000, 1024000, 1024000, 262144, 262144, 262144, 262144, 262144, 262144, 1024000
-        };
-
-        public override uint[] _sectorSize => new uint[]
-        {
-            512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512
-        };
-        public override string[] _appId => null;
-        public override bool[] _bootable => new[]
-        {
-            true, true, true, true, true, true, true, true, true, true, true, true, true
-        };
-
-        public override long[] _clusters => new long[]
-        {
-            261072, 1023056, 1023056, 1023056, 1023056, 1023056, 262016, 262016, 262016, 262016, 262016, 262112, 1022112
-        };
-
-        public override uint[] _clusterSize => new uint[]
-        {
-            512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512
-        };
-        public override string[] _oemId => new[]
-        {
-            "IBM 4.50", "OS2 10.1", "OS2 10.0", "OS2 10.0", "OS2 10.0", "OS2 20.0", "OS2 20.0", "OS2 20.1", "OS2 20.0",
-            "OS2 20.0", "MSDOS5.0", "MSDOS5.0", "IBM 4.50"
-        };
-        public override string[] _type => null;
-
-        public override string[] _volumeName => new[]
-        {
-            "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL",
-            "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUME LABE"
-        };
-
-        public override string[] _volumeSerial => new[]
-        {
-            "2BBBD814", "AC0DDC15", "ABEB2C15", "6C4EE015", "6C406015", "6C49B015", "2BCEB414", "2C157414", "2BF55414",
-            "2BE31414", "E851CB14", "A4EDC29C", "AC096014"
+            new FileSystemTest
+            {
+                TestFile     = "ecs.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 261072,
+                ClusterSize  = 512,
+                SystemId     = "IBM 4.50",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "2BBBD814"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "msos2_1.21.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024000,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 1023056,
+                ClusterSize  = 512,
+                SystemId     = "OS2 10.1",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "AC0DDC15"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "msos2_1.30.1.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024000,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 1023056,
+                ClusterSize  = 512,
+                SystemId     = "OS2 10.0",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "ABEB2C15"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "os2_1.20.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024000,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 1023056,
+                ClusterSize  = 512,
+                SystemId     = "OS2 10.0",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "6C4EE015"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "os2_1.30.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024000,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 1023056,
+                ClusterSize  = 512,
+                SystemId     = "OS2 10.0",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "6C406015"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "os2_6.307.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024000,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 1023056,
+                ClusterSize  = 512,
+                SystemId     = "OS2 20.0",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "6C49B015"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "os2_6.514.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 262016,
+                ClusterSize  = 512,
+                SystemId     = "OS2 20.0",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "2BCEB414"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "os2_6.617.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 262016,
+                ClusterSize  = 512,
+                SystemId     = "OS2 20.1",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "2C157414"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "os2_8.162.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 262016,
+                ClusterSize  = 512,
+                SystemId     = "OS2 20.0",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "2BF55414"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "os2_9.023.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 262016,
+                ClusterSize  = 512,
+                SystemId     = "OS2 20.0",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "2BE31414"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "winnt_3.10.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 262016,
+                ClusterSize  = 512,
+                SystemId     = "MSDOS5.0",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "E851CB14"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "winnt_3.50.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 262112,
+                ClusterSize  = 512,
+                SystemId     = "MSDOS5.0",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "A4EDC29C"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "ecs20_fstester.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024000,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 1022112,
+                ClusterSize  = 512,
+                SystemId     = "IBM 4.50",
+                VolumeName   = "VOLUME LABE",
+                VolumeSerial = "AC096014"
+            }
         };
     }
 }

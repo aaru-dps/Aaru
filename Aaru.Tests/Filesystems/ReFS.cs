@@ -44,51 +44,17 @@ namespace Aaru.Tests.Filesystems
         public override IFilesystem _plugin     => new ReFS();
         public override bool        _partitions => true;
 
-        public override string[] _testFiles => new[]
+        public override FileSystemTest[] Tests => new[]
         {
-            "win10.vdi.lz"
-        };
-        public override MediaType[] _mediaTypes => new[]
-        {
-            MediaType.GENERIC_HDD
-        };
-
-        public override ulong[] _sectors => new ulong[]
-        {
-            67108864
-        };
-
-        public override uint[] _sectorSize => new uint[]
-        {
-            512
-        };
-
-        public override string[] _appId => null;
-        public override bool[] _bootable => new[]
-        {
-            false
-        };
-
-        public override long[] _clusters => new long[]
-        {
-            8372224
-        };
-
-        public override uint[] _clusterSize => new uint[]
-        {
-            4096
-        };
-        public override string[] _oemId => null;
-        public override string[] _type  => null;
-
-        public override string[] _volumeName => new string[]
-        {
-            null
-        };
-
-        public override string[] _volumeSerial => new string[]
-        {
-            null
+            new FileSystemTest
+            {
+                TestFile    = "win10.vdi.lz",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 67108864,
+                SectorSize  = 512,
+                Clusters    = 8372224,
+                ClusterSize = 4096
+            }
         };
     }
 }

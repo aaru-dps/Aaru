@@ -43,55 +43,68 @@ namespace Aaru.Tests.Filesystems
         public override IFilesystem _plugin     => new JFS();
         public override bool        _partitions => true;
 
-        public override string[] _testFiles => new[]
+        public override FileSystemTest[] Tests => new[]
         {
-            "linux.aif", "linux_caseinsensitive.aif", "ecs20_fstester.aif", "linux_4.19_jfs_flashdrive.aif",
-            "linux_4.19_jfs_os2_flashdrive.aif"
-        };
-
-        public override MediaType[] _mediaTypes => new[]
-        {
-            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD,
-            MediaType.GENERIC_HDD
-        };
-        public override ulong[] _sectors => new ulong[]
-        {
-            262144, 262144, 1024000, 1024000, 1024000
-        };
-
-        public override uint[] _sectorSize => new uint[]
-        {
-            512, 512, 512, 512, 512
-        };
-
-        public override string[] _appId => null;
-        public override bool[] _bootable => new[]
-        {
-            true, true, true, true, true
-        };
-
-        public override long[] _clusters => new long[]
-        {
-            257632, 257632, 1017512, 1017416, 1017416
-        };
-
-        public override uint[] _clusterSize => new uint[]
-        {
-            4096, 4096, 4096, 4096, 4096
-        };
-        public override string[] _oemId => null;
-        public override string[] _type  => null;
-
-        public override string[] _volumeName => new[]
-        {
-            "Volume labe", "Volume labe", "Volume labe", "DicSetter", "DicSetter"
-        };
-
-        public override string[] _volumeSerial => new[]
-        {
-            "8033b783-0cd1-1645-8ecc-f8f113ad6a47", "d6cd91e9-3899-7e40-8468-baab688ee2e2",
-            "f4077ce9-0000-0000-0000-000000007c10", "91746c77-eb51-7441-85e2-902c925969f8",
-            "08fc8e22-0201-894e-89c9-31ec3f546203"
+            new FileSystemTest
+            {
+                TestFile     = "linux.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 257632,
+                ClusterSize  = 4096,
+                VolumeName   = "Volume labe",
+                VolumeSerial = "8033b783-0cd1-1645-8ecc-f8f113ad6a47"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "linux_caseinsensitive.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 257632,
+                ClusterSize  = 4096,
+                VolumeName   = "Volume labe",
+                VolumeSerial = "d6cd91e9-3899-7e40-8468-baab688ee2e2"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "ecs20_fstester.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024000,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 1017512,
+                ClusterSize  = 4096,
+                VolumeName   = "Volume labe",
+                VolumeSerial = "f4077ce9-0000-0000-0000-000000007c10"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "linux_4.19_jfs_flashdrive.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024000,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 1017416,
+                ClusterSize  = 4096,
+                VolumeName   = "DicSetter",
+                VolumeSerial = "91746c77-eb51-7441-85e2-902c925969f8"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "linux_4.19_jfs_os2_flashdrive.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024000,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 1017416,
+                ClusterSize  = 4096,
+                VolumeName   = "DicSetter",
+                VolumeSerial = "08fc8e22-0201-894e-89c9-31ec3f546203"
+            }
         };
     }
 }

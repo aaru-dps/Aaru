@@ -43,54 +43,30 @@ namespace Aaru.Tests.Filesystems.FAT12
         public override IFilesystem _plugin => new FAT();
         public override bool _partitions => false;
 
-        public override string[] _testFiles => new[]
+        public override FileSystemTest[] Tests => new[]
         {
-            "diska.aif", "diskb.aif"
-        };
-
-        public override MediaType[] _mediaTypes => new[]
-        {
-            MediaType.SHARP_525, MediaType.SHARP_525
-        };
-
-        public override ulong[] _sectors => new ulong[]
-        {
-            1232, 1232
-        };
-
-        public override uint[] _sectorSize => new uint[]
-        {
-            1024, 1024
-        };
-        public override string[] _appId => null;
-        public override bool[] _bootable => new[]
-        {
-            true, true
-        };
-
-        public override long[] _clusters => new long[]
-        {
-            1232, 1232
-        };
-
-        public override uint[] _clusterSize => new uint[]
-        {
-            1024, 1024
-        };
-        public override string[] _oemId => new[]
-        {
-            "Hudson soft 2.00", "Hudson soft 2.00"
-        };
-        public override string[] _type => null;
-
-        public override string[] _volumeName => new string[]
-        {
-            null, null
-        };
-
-        public override string[] _volumeSerial => new string[]
-        {
-            null, null
+            new FileSystemTest
+            {
+                TestFile    = "diska.aif",
+                MediaType   = MediaType.SHARP_525,
+                Sectors     = 1232,
+                SectorSize  = 1024,
+                Bootable    = true,
+                Clusters    = 1232,
+                ClusterSize = 1024,
+                SystemId    = "Hudson soft 2.00"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "diskb.aif",
+                MediaType   = MediaType.SHARP_525,
+                Sectors     = 1232,
+                SectorSize  = 1024,
+                Bootable    = true,
+                Clusters    = 1232,
+                ClusterSize = 1024,
+                SystemId    = "Hudson soft 2.00"
+            }
         };
     }
 }

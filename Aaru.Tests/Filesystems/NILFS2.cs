@@ -44,51 +44,19 @@ namespace Aaru.Tests.Filesystems
         public override IFilesystem _plugin     => new NILFS2();
         public override bool        _partitions => true;
 
-        public override string[] _testFiles => new[]
+        public override FileSystemTest[] Tests => new[]
         {
-            "linux.aif"
-        };
-        public override MediaType[] _mediaTypes => new[]
-        {
-            MediaType.GENERIC_HDD
-        };
-
-        public override ulong[] _sectors => new ulong[]
-        {
-            262144
-        };
-
-        public override uint[] _sectorSize => new uint[]
-        {
-            512
-        };
-
-        public override string[] _appId => null;
-        public override bool[] _bootable => new[]
-        {
-            false
-        };
-
-        public override long[] _clusters => new long[]
-        {
-            32512
-        };
-
-        public override uint[] _clusterSize => new uint[]
-        {
-            4096
-        };
-        public override string[] _oemId => null;
-        public override string[] _type  => null;
-
-        public override string[] _volumeName => new[]
-        {
-            "Volume label"
-        };
-
-        public override string[] _volumeSerial => new[]
-        {
-            "6b1ca79e-7048-a748-93a0-89c74b02cb5a"
+            new FileSystemTest
+            {
+                TestFile     = "linux.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Clusters     = 32512,
+                ClusterSize  = 4096,
+                VolumeName   = "Volume label",
+                VolumeSerial = "6b1ca79e-7048-a748-93a0-89c74b02cb5a"
+            }
         };
     }
 }

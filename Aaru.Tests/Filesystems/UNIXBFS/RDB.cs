@@ -44,51 +44,18 @@ namespace Aaru.Tests.Filesystems.UNIXBFS
         public override IFilesystem _plugin     => new BFS();
         public override bool        _partitions => true;
 
-        public override string[] _testFiles => new[]
+        public override FileSystemTest[] Tests => new[]
         {
-            "amix.aif"
-        };
-
-        public override MediaType[] _mediaTypes => new[]
-        {
-            MediaType.GENERIC_HDD
-        };
-        public override ulong[] _sectors => new ulong[]
-        {
-            1024128
-        };
-
-        public override uint[] _sectorSize => new uint[]
-        {
-            512
-        };
-
-        public override string[] _appId => null;
-        public override bool[] _bootable => new[]
-        {
-            false
-        };
-
-        public override long[] _clusters => new long[]
-        {
-            65024
-        };
-
-        public override uint[] _clusterSize => new uint[]
-        {
-            2048
-        };
-        public override string[] _oemId => null;
-        public override string[] _type  => null;
-
-        public override string[] _volumeName => new string[]
-        {
-            null
-        };
-
-        public override string[] _volumeSerial => new[]
-        {
-            "UNKNOWN"
+            new FileSystemTest
+            {
+                TestFile     = "amix.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024128,
+                SectorSize   = 512,
+                Clusters     = 65024,
+                ClusterSize  = 2048,
+                VolumeSerial = "UNKNOWN"
+            }
         };
     }
 }

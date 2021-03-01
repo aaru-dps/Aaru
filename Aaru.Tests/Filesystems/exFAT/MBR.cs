@@ -43,51 +43,58 @@ namespace Aaru.Tests.Filesystems.exFAT
         public override IFilesystem _plugin     => new Aaru.Filesystems.exFAT();
         public override bool        _partitions => true;
 
-        public override string[] _testFiles => new[]
+        public override FileSystemTest[] Tests => new[]
         {
-            "linux.aif", "macosx_10.11.aif", "win10.aif", "winvista.aif", "linux_4.19_exfat_flashdrive.aif"
-        };
-        public override MediaType[] _mediaTypes => new[]
-        {
-            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD,
-            MediaType.GENERIC_HDD
-        };
-
-        public override ulong[] _sectors => new ulong[]
-        {
-            262144, 262144, 262144, 262144, 1024000
-        };
-
-        public override uint[] _sectorSize => new uint[]
-        {
-            512, 512, 512, 512, 512
-        };
-        public override string[] _appId => null;
-        public override bool[] _bootable => new[]
-        {
-            false, false, false, false, false
-        };
-
-        public override long[] _clusters => new long[]
-        {
-            32464, 32712, 32448, 32208, 15964
-        };
-
-        public override uint[] _clusterSize => new uint[]
-        {
-            4096, 4096, 4096, 4096, 32768
-        };
-        public override string[] _oemId => null;
-        public override string[] _type  => null;
-
-        public override string[] _volumeName => new string[]
-        {
-            null, null, null, null, null
-        };
-
-        public override string[] _volumeSerial => new[]
-        {
-            "603565AC", "595AC21E", "20126663", "0AC5CA52", "636E083B"
+            new FileSystemTest
+            {
+                TestFile     = "linux.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Clusters     = 32464,
+                ClusterSize  = 4096,
+                VolumeSerial = "603565AC"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "macosx_10.11.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Clusters     = 32712,
+                ClusterSize  = 4096,
+                VolumeSerial = "595AC21E"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "win10.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Clusters     = 32448,
+                ClusterSize  = 4096,
+                VolumeSerial = "20126663"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "winvista.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Clusters     = 32208,
+                ClusterSize  = 4096,
+                VolumeSerial = "0AC5CA52"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "linux_4.19_exfat_flashdrive.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024000,
+                SectorSize   = 512,
+                Clusters     = 15964,
+                ClusterSize  = 32768,
+                VolumeSerial = "636E083B"
+            }
         };
     }
 }

@@ -46,70 +46,218 @@ namespace Aaru.Tests.Filesystems.HFSPlus
         public override bool _partitions => true;
 
         // Missing Darwin 1.4.1
-        public override string[] _testFiles => new[]
+        public override FileSystemTest[] Tests => new[]
         {
-            "macosx_10.11.aif", "macosx_10.11_journal.aif", "darwin_1.3.1.aif", "darwin_1.3.1_wrapped.aif",
-            "darwin_1.4.1_wrapped.aif", "darwin_6.0.2.aif", "darwin_6.0.2_wrapped.aif", "darwin_8.0.1_journal.aif",
-            "darwin_8.0.1.aif", "darwin_8.0.1_wrapped.aif", "macos_8.1.aif", "macos_9.0.4.aif", "macos_9.1.aif",
-            "macos_9.2.1.aif", "macos_9.2.2.aif", "macosx_10.2.aif", "macosx_10.3_journal.aif", "macosx_10.3.aif",
-            "macosx_10.4_journal.aif", "macosx_10.4.aif"
-        };
-        public override MediaType[] _mediaTypes => new[]
-        {
-            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD,
-            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD,
-            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD,
-            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD,
-            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD
-        };
-
-        public override ulong[] _sectors => new ulong[]
-        {
-            409600, 614400, 819200, 614400, 614400, 819200, 614400, 1228800, 819200, 614400, 4194304, 4194304, 4194304,
-            4194304, 4194304, 4194304, 2097152, 4194304, 2097152, 4194304
-        };
-
-        public override uint[] _sectorSize => new uint[]
-        {
-            512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512
-        };
-
-        public override string[] _appId => null;
-        public override bool[] _bootable => new[]
-        {
-            false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,
-            false, false, false, false, false
-        };
-
-        public override long[] _clusters => new long[]
-        {
-            51190, 76790, 102392, 76774, 76774, 102392, 76774, 153592, 102392, 76774, 524152, 524088, 524088, 524088,
-            524088, 524008, 261884, 491240, 261884, 491240
-        };
-
-        public override uint[] _clusterSize => new uint[]
-        {
-            4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096,
-            4096, 4096
-        };
-        public override string[] _oemId => new[]
-        {
-            "10.0", "HFSJ", "10.0", "10.0", "10.0", "10.0", "10.0", "10.0", "10.0", "10.0", "8.10", "8.10", "8.10",
-            "8.10", "8.10", "10.0", "HFSJ", "10.0", "HFSJ", "10.0"
-        };
-        public override string[] _type => null;
-
-        public override string[] _volumeName => new string[]
-        {
-            null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-            null, null
-        };
-
-        public override string[] _volumeSerial => new[]
-        {
-            "FA94762D086A18A9", "33D4A309C8E7BD10", null, null, null, null, null, "4D5140EB8F14A385",
-            "0D592249833E2DC4", "AA616146576BD9BC", null, null, null, null, null, "EFA132FFFAC1ADA6",
-            "009D570FFCF8F20B", "17F6F33AB313EE32", "AD5690C093F66FCF", "A7D63854DF76DDE6"
+            new FileSystemTest
+            {
+                TestFile     = "macosx_10.11.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 409600,
+                SectorSize   = 512,
+                Clusters     = 51190,
+                ClusterSize  = 4096,
+                SystemId     = "10.0",
+                VolumeSerial = "FA94762D086A18A9"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "macosx_10.11_journal.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 614400,
+                SectorSize   = 512,
+                Clusters     = 76790,
+                ClusterSize  = 4096,
+                SystemId     = "HFSJ",
+                VolumeSerial = "33D4A309C8E7BD10"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "darwin_1.3.1.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 819200,
+                SectorSize  = 512,
+                Clusters    = 102392,
+                ClusterSize = 4096,
+                SystemId    = "10.0"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "darwin_1.3.1_wrapped.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 614400,
+                SectorSize  = 512,
+                Clusters    = 76774,
+                ClusterSize = 4096,
+                SystemId    = "10.0"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "darwin_1.4.1_wrapped.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 614400,
+                SectorSize  = 512,
+                Clusters    = 76774,
+                ClusterSize = 4096,
+                SystemId    = "10.0"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "darwin_6.0.2.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 819200,
+                SectorSize  = 512,
+                Clusters    = 102392,
+                ClusterSize = 4096,
+                SystemId    = "10.0"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "darwin_6.0.2_wrapped.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 614400,
+                SectorSize  = 512,
+                Clusters    = 76774,
+                ClusterSize = 4096,
+                SystemId    = "10.0"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "darwin_8.0.1_journal.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1228800,
+                SectorSize   = 512,
+                Clusters     = 153592,
+                ClusterSize  = 4096,
+                SystemId     = "10.0",
+                VolumeSerial = "4D5140EB8F14A385"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "darwin_8.0.1.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 819200,
+                SectorSize   = 512,
+                Clusters     = 102392,
+                ClusterSize  = 4096,
+                SystemId     = "10.0",
+                VolumeSerial = "0D592249833E2DC4"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "darwin_8.0.1_wrapped.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 614400,
+                SectorSize   = 512,
+                Clusters     = 76774,
+                ClusterSize  = 4096,
+                SystemId     = "10.0",
+                VolumeSerial = "AA616146576BD9BC"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "macos_8.1.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 4194304,
+                SectorSize  = 512,
+                Clusters    = 524152,
+                ClusterSize = 4096,
+                SystemId    = "8.10"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "macos_9.0.4.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 4194304,
+                SectorSize  = 512,
+                Clusters    = 524088,
+                ClusterSize = 4096,
+                SystemId    = "8.10"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "macos_9.1.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 4194304,
+                SectorSize  = 512,
+                Clusters    = 524088,
+                ClusterSize = 4096,
+                SystemId    = "8.10"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "macos_9.2.1.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 4194304,
+                SectorSize  = 512,
+                Clusters    = 524088,
+                ClusterSize = 4096,
+                SystemId    = "8.10"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "macos_9.2.2.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 4194304,
+                SectorSize  = 512,
+                Clusters    = 524088,
+                ClusterSize = 4096,
+                SystemId    = "8.10"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "macosx_10.2.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 4194304,
+                SectorSize   = 512,
+                Clusters     = 524008,
+                ClusterSize  = 4096,
+                SystemId     = "10.0",
+                VolumeSerial = "EFA132FFFAC1ADA6"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "macosx_10.3_journal.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 2097152,
+                SectorSize   = 512,
+                Clusters     = 261884,
+                ClusterSize  = 4096,
+                SystemId     = "HFSJ",
+                VolumeSerial = "009D570FFCF8F20B"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "macosx_10.3.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 4194304,
+                SectorSize   = 512,
+                Clusters     = 491240,
+                ClusterSize  = 4096,
+                SystemId     = "10.0",
+                VolumeSerial = "17F6F33AB313EE32"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "macosx_10.4_journal.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 2097152,
+                SectorSize   = 512,
+                Clusters     = 261884,
+                ClusterSize  = 4096,
+                SystemId     = "HFSJ",
+                VolumeSerial = "AD5690C093F66FCF"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "macosx_10.4.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 4194304,
+                SectorSize   = 512,
+                Clusters     = 491240,
+                ClusterSize  = 4096,
+                SystemId     = "10.0",
+                VolumeSerial = "A7D63854DF76DDE6"
+            }
         };
     }
 }

@@ -51,46 +51,6 @@ namespace Aaru.Tests.Filesystems.FATX
         public override IFilesystem _plugin => new XboxFatPlugin();
         public override bool _partitions => false;
 
-        public override string[] _testFiles => new[]
-        {
-            "fatx.img.lz"
-        };
-        public override MediaType[] _mediaTypes => new[]
-        {
-            MediaType.GENERIC_HDD
-        };
-        public override ulong[] _sectors => new ulong[]
-        {
-            62720
-        };
-        public override uint[] _sectorSize => new uint[]
-        {
-            512
-        };
-        public override string[] _appId => null;
-        public override bool[] _bootable => new[]
-        {
-            false
-        };
-        public override long[] _clusters => new long[]
-        {
-            1960
-        };
-        public override uint[] _clusterSize => new uint[]
-        {
-            16384
-        };
-        public override string[] _oemId => null;
-        public override string[] _type  => null;
-        public override string[] _volumeName => new[]
-        {
-            "Volume láb€l"
-        };
-        public override string[] _volumeSerial => new[]
-        {
-            "4639B7D0"
-        };
-
         [SetUp]
         public void Init()
         {
@@ -285,5 +245,20 @@ namespace Aaru.Tests.Filesystems.FATX
             Assert.AreEqual(false, directory.Contains("SaveData.dat"));
             Assert.AreEqual(false, directory.Contains("SaveImage.xbx"));
         }
+
+        public override FileSystemTest[] Tests => new[]
+        {
+            new FileSystemTest
+            {
+                TestFile     = "fatx.img.lz",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 62720,
+                SectorSize   = 512,
+                Clusters     = 1960,
+                ClusterSize  = 16384,
+                VolumeName   = "Volume láb€l",
+                VolumeSerial = "4639B7D0"
+            }
+        };
     }
 }

@@ -43,51 +43,30 @@ namespace Aaru.Tests.Filesystems
         public override IFilesystem _plugin     => new BTRFS();
         public override bool        _partitions => true;
 
-        public override string[] _testFiles => new[]
+        public override FileSystemTest[] Tests => new[]
         {
-            "linux.aif", "linux_4.19_btrfs_flashdrive.aif"
-        };
-
-        public override MediaType[] _mediaTypes => new[]
-        {
-            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD
-        };
-        public override ulong[] _sectors => new ulong[]
-        {
-            262144, 1024000
-        };
-
-        public override uint[] _sectorSize => new uint[]
-        {
-            512, 512
-        };
-
-        public override string[] _appId => null;
-        public override bool[] _bootable => new[]
-        {
-            false, false
-        };
-
-        public override long[] _clusters => new long[]
-        {
-            32512, 127744
-        };
-
-        public override uint[] _clusterSize => new uint[]
-        {
-            4096, 4096
-        };
-        public override string[] _oemId => null;
-        public override string[] _type  => null;
-
-        public override string[] _volumeName => new[]
-        {
-            "VolumeLabel", "btrfs"
-        };
-
-        public override string[] _volumeSerial => new[]
-        {
-            "a4fc5201-85cc-6840-8a68-998cab9ae897", "5af44541-0605-f541-af6d-c229576707ab"
+            new FileSystemTest
+            {
+                TestFile     = "linux.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Clusters     = 32512,
+                ClusterSize  = 4096,
+                VolumeName   = "VolumeLabel",
+                VolumeSerial = "a4fc5201-85cc-6840-8a68-998cab9ae897"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "linux_4.19_btrfs_flashdrive.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024000,
+                SectorSize   = 512,
+                Clusters     = 127744,
+                ClusterSize  = 4096,
+                VolumeName   = "btrfs",
+                VolumeSerial = "5af44541-0605-f541-af6d-c229576707ab"
+            }
         };
     }
 }

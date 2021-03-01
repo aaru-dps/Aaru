@@ -43,53 +43,69 @@ namespace Aaru.Tests.Filesystems.HFS
         public override IFilesystem _plugin => new AppleHFS();
         public override bool _partitions => true;
 
-        public override string[] _testFiles => new[]
+        public override FileSystemTest[] Tests => new[]
         {
-            "linux.aif", "darwin_1.3.1.aif", "darwin_1.4.1.aif", "darwin_6.0.2.aif", "darwin_8.0.1.aif",
-            "linux_4.19_hfs_flashdrive.aif"
-        };
-        public override MediaType[] _mediaTypes => new[]
-        {
-            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD,
-            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD
-        };
-
-        public override ulong[] _sectors => new ulong[]
-        {
-            262144, 409600, 409600, 409600, 409600, 1024000
-        };
-
-        public override uint[] _sectorSize => new uint[]
-        {
-            512, 512, 512, 512, 512, 512
-        };
-
-        public override string[] _appId => null;
-        public override bool[] _bootable => new[]
-        {
-            false, false, false, false, false, false
-        };
-
-        public override long[] _clusters => new long[]
-        {
-            65018, 51145, 51145, 58452, 58502, 63870
-        };
-
-        public override uint[] _clusterSize => new uint[]
-        {
-            2048, 4096, 4096, 3584, 3584, 8192
-        };
-        public override string[] _oemId => null;
-        public override string[] _type  => null;
-
-        public override string[] _volumeName => new[]
-        {
-            "Volume label", "Volume label", "Volume label", "Volume label", "Volume label", "DicSetter"
-        };
-
-        public override string[] _volumeSerial => new[]
-        {
-            null, null, null, null, "81FE805D61458753", null
+            new FileSystemTest
+            {
+                TestFile    = "linux.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 262144,
+                SectorSize  = 512,
+                Clusters    = 65018,
+                ClusterSize = 2048,
+                VolumeName  = "Volume label"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "darwin_1.3.1.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 409600,
+                SectorSize  = 512,
+                Clusters    = 51145,
+                ClusterSize = 4096,
+                VolumeName  = "Volume label"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "darwin_1.4.1.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 409600,
+                SectorSize  = 512,
+                Clusters    = 51145,
+                ClusterSize = 4096,
+                VolumeName  = "Volume label"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "darwin_6.0.2.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 409600,
+                SectorSize  = 512,
+                Clusters    = 58452,
+                ClusterSize = 3584,
+                VolumeName  = "Volume label"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "darwin_8.0.1.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 409600,
+                SectorSize   = 512,
+                Clusters     = 58502,
+                ClusterSize  = 3584,
+                VolumeName   = "Volume label",
+                VolumeSerial = "81FE805D61458753"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "linux_4.19_hfs_flashdrive.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 1024000,
+                SectorSize  = 512,
+                Clusters    = 63870,
+                ClusterSize = 8192,
+                VolumeName  = "DicSetter"
+            }
         };
     }
 }

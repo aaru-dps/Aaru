@@ -43,51 +43,18 @@ namespace Aaru.Tests.Filesystems
         public override IFilesystem _plugin     => new AtheOS();
         public override bool        _partitions => true;
 
-        public override string[] _testFiles => new[]
+        public override FileSystemTest[] Tests => new[]
         {
-            "syllable_0.6.7.aif"
-        };
-
-        public override MediaType[] _mediaTypes => new[]
-        {
-            MediaType.GENERIC_HDD
-        };
-        public override ulong[] _sectors => new ulong[]
-        {
-            4194304
-        };
-
-        public override uint[] _sectorSize => new uint[]
-        {
-            512
-        };
-
-        public override string[] _appId => null;
-        public override bool[] _bootable => new[]
-        {
-            false
-        };
-
-        public override long[] _clusters => new long[]
-        {
-            2097120
-        };
-
-        public override uint[] _clusterSize => new uint[]
-        {
-            1024
-        };
-        public override string[] _oemId => null;
-        public override string[] _type  => null;
-
-        public override string[] _volumeName => new[]
-        {
-            "Volume label"
-        };
-
-        public override string[] _volumeSerial => new string[]
-        {
-            null
+            new FileSystemTest
+            {
+                TestFile    = "syllable_0.6.7.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 4194304,
+                SectorSize  = 512,
+                Clusters    = 2097120,
+                ClusterSize = 1024,
+                VolumeName  = "Volume label"
+            }
         };
     }
 }

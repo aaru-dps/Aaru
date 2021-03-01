@@ -43,54 +43,21 @@ namespace Aaru.Tests.Filesystems.FAT32
         public override IFilesystem _plugin     => new FAT();
         public override bool        _partitions => true;
 
-        public override string[] _testFiles => new[]
+        public override FileSystemTest[] Tests => new[]
         {
-            "macosx_10.11.aif"
-        };
-        public override MediaType[] _mediaTypes => new[]
-        {
-            MediaType.GENERIC_HDD
-        };
-
-        public override ulong[] _sectors => new ulong[]
-        {
-            4194304
-        };
-
-        public override uint[] _sectorSize => new uint[]
-        {
-            512
-        };
-
-        public override string[] _appId => null;
-        public override bool[] _bootable => new[]
-        {
-            true
-        };
-
-        public override long[] _clusters => new long[]
-        {
-            523775
-        };
-
-        public override uint[] _clusterSize => new uint[]
-        {
-            4096
-        };
-
-        public override string[] _oemId => new[]
-        {
-            "BSD  4.4"
-        };
-        public override string[] _type => null;
-        public override string[] _volumeName => new[]
-        {
-            "VOLUMELABEL"
-        };
-
-        public override string[] _volumeSerial => new[]
-        {
-            "7ABE1F1B"
+            new FileSystemTest
+            {
+                TestFile     = "macosx_10.11.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 4194304,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 523775,
+                ClusterSize  = 4096,
+                SystemId     = "BSD  4.4",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "7ABE1F1B"
+            }
         };
     }
 }

@@ -43,52 +43,68 @@ namespace Aaru.Tests.Filesystems.HFS
         public override IFilesystem _plugin => new AppleHFS();
         public override bool _partitions => true;
 
-        public override string[] _testFiles => new[]
+        public override FileSystemTest[] Tests => new[]
         {
-            "toast_3.5.7_hfs_from_volume.aif", "toast_3.5.7_iso9660_hfs.aif", "toast_4.1.3_hfs_from_volume.aif",
-            "toast_4.1.3_iso9660_hfs.aif", "toast_3.5.7_hfs_from_files.aif", "toast_4.1.3_hfs_from_files.aif"
-        };
-        public override MediaType[] _mediaTypes => new[]
-        {
-            MediaType.CD, MediaType.CD, MediaType.CD, MediaType.CD, MediaType.CD, MediaType.CD, MediaType.CD
-        };
-
-        public override ulong[] _sectors => new ulong[]
-        {
-            942, 1880, 943, 1882, 1509, 1529
-        };
-
-        public override uint[] _sectorSize => new uint[]
-        {
-            2048, 2048, 2048, 2048, 2048, 2048
-        };
-
-        public override string[] _appId => null;
-        public override bool[] _bootable => new[]
-        {
-            false, false, false, false, false, false
-        };
-
-        public override long[] _clusters => new long[]
-        {
-            3724, 931, 931, 931, 249, 249
-        };
-
-        public override uint[] _clusterSize => new uint[]
-        {
-            512, 2048, 2048, 2048, 12288, 12288
-        };
-        public override string[] _oemId => null;
-        public override string[] _type  => null;
-
-        public override string[] _volumeName => new[]
-        {
-            "Disk utils", "Disk utils", "Disk utils", "Disk utils", "Disk utils", "Disk utils"
-        };
-
-        public override string[] _volumeSerial => new string[]
-        {
-            null, null, null, null, null, null
+            new FileSystemTest
+            {
+                TestFile    = "toast_3.5.7_hfs_from_volume.aif",
+                MediaType   = MediaType.CD,
+                Sectors     = 942,
+                SectorSize  = 2048,
+                Clusters    = 3724,
+                ClusterSize = 512,
+                VolumeName  = "Disk utils"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "toast_3.5.7_iso9660_hfs.aif",
+                MediaType   = MediaType.CD,
+                Sectors     = 1880,
+                SectorSize  = 2048,
+                Clusters    = 931,
+                ClusterSize = 2048,
+                VolumeName  = "Disk utils"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "toast_4.1.3_hfs_from_volume.aif",
+                MediaType   = MediaType.CD,
+                Sectors     = 943,
+                SectorSize  = 2048,
+                Clusters    = 931,
+                ClusterSize = 2048,
+                VolumeName  = "Disk utils"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "toast_4.1.3_iso9660_hfs.aif",
+                MediaType   = MediaType.CD,
+                Sectors     = 1882,
+                SectorSize  = 2048,
+                Clusters    = 931,
+                ClusterSize = 2048,
+                VolumeName  = "Disk utils"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "toast_3.5.7_hfs_from_files.aif",
+                MediaType   = MediaType.CD,
+                Sectors     = 1509,
+                SectorSize  = 2048,
+                Clusters    = 249,
+                ClusterSize = 12288,
+                VolumeName  = "Disk utils"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "toast_4.1.3_hfs_from_files.aif",
+                MediaType   = MediaType.CD,
+                Sectors     = 1529,
+                SectorSize  = 2048,
+                Clusters    = 249,
+                ClusterSize = 12288,
+                VolumeName  = "Disk utils"
+            }
         };
     }
 }

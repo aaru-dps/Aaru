@@ -44,59 +44,118 @@ namespace Aaru.Tests.Filesystems.UFS
         public override IFilesystem _plugin     => new FFSPlugin();
         public override bool        _partitions => true;
 
-        public override string[] _testFiles => new[]
+        public override FileSystemTest[] Tests => new[]
         {
-            "ffs43/darwin_1.3.1.aif", "ffs43/darwin_1.4.1.aif", "ffs43/darwin_6.0.2.aif", "ffs43/darwin_8.0.1.aif",
-            "ufs1/darwin_1.3.1.aif", "ufs1/darwin_1.4.1.aif", "ufs1/darwin_6.0.2.aif", "ufs1/darwin_8.0.1.aif",
-            "ufs1/macosx_10.2.aif", "ufs1/macosx_10.3.aif", "ufs1/macosx_10.4.aif"
-        };
-
-        public override MediaType[] _mediaTypes => new[]
-        {
-            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD,
-            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD,
-            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD
-        };
-        public override ulong[] _sectors => new ulong[]
-        {
-            1024000, 1024000, 1024000, 1024000, 204800, 204800, 204800, 204800, 2097152, 2097152, 2097152
-        };
-
-        public override uint[] _sectorSize => new uint[]
-        {
-            512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512
-        };
-
-        public override string[] _appId => null;
-        public override bool[] _bootable => new[]
-        {
-            false, false, false, false, false, false, false, false, false, false, false
-        };
-
-        public override long[] _clusters => new long[]
-        {
-            511488, 511488, 511488, 511488, 102368, 102368, 102368, 102368, 1047660, 1038952, 1038952
-        };
-
-        public override uint[] _clusterSize => new uint[]
-        {
-            1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024
-        };
-        public override string[] _oemId => null;
-
-        public override string[] _type => new[]
-        {
-            "UFS", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS"
-        };
-
-        public override string[] _volumeName => new string[]
-        {
-            null, null, null, null, null, null, null, null, null, null, null
-        };
-
-        public override string[] _volumeSerial => new string[]
-        {
-            null, null, null, null, null, null, null, null, null, null, null
+            new FileSystemTest
+            {
+                TestFile    = "ffs43/darwin_1.3.1.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 1024000,
+                SectorSize  = 512,
+                Clusters    = 511488,
+                ClusterSize = 1024,
+                Type        = "UFS"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "ffs43/darwin_1.4.1.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 1024000,
+                SectorSize  = 512,
+                Clusters    = 511488,
+                ClusterSize = 1024,
+                Type        = "UFS"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "ffs43/darwin_6.0.2.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 1024000,
+                SectorSize  = 512,
+                Clusters    = 511488,
+                ClusterSize = 1024,
+                Type        = "UFS"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "ffs43/darwin_8.0.1.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 1024000,
+                SectorSize  = 512,
+                Clusters    = 511488,
+                ClusterSize = 1024,
+                Type        = "UFS"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "ufs1/darwin_1.3.1.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 204800,
+                SectorSize  = 512,
+                Clusters    = 102368,
+                ClusterSize = 1024,
+                Type        = "UFS"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "ufs1/darwin_1.4.1.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 204800,
+                SectorSize  = 512,
+                Clusters    = 102368,
+                ClusterSize = 1024,
+                Type        = "UFS"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "ufs1/darwin_6.0.2.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 204800,
+                SectorSize  = 512,
+                Clusters    = 102368,
+                ClusterSize = 1024,
+                Type        = "UFS"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "ufs1/darwin_8.0.1.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 204800,
+                SectorSize  = 512,
+                Clusters    = 102368,
+                ClusterSize = 1024,
+                Type        = "UFS"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "ufs1/macosx_10.2.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 2097152,
+                SectorSize  = 512,
+                Clusters    = 1047660,
+                ClusterSize = 1024,
+                Type        = "UFS"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "ufs1/macosx_10.3.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 2097152,
+                SectorSize  = 512,
+                Clusters    = 1038952,
+                ClusterSize = 1024,
+                Type        = "UFS"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "ufs1/macosx_10.4.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 2097152,
+                SectorSize  = 512,
+                Clusters    = 1038952,
+                ClusterSize = 1024,
+                Type        = "UFS"
+            }
         };
     }
 }

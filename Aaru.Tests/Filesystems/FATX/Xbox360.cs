@@ -52,48 +52,6 @@ namespace Aaru.Tests.Filesystems.FATX
         public override IFilesystem _plugin     => new XboxFatPlugin();
         public override bool        _partitions => true;
 
-        public override string[] _testFiles => new[]
-        {
-            "microsoft256mb.img.lz"
-        };
-        public override MediaType[] _mediaTypes => new[]
-        {
-            MediaType.GENERIC_HDD
-        };
-        public override ulong[] _sectors => new ulong[]
-        {
-            491520
-        };
-        public override uint[] _sectorSize => new uint[]
-        {
-            512
-        };
-
-        public override string[] _appId => null;
-        public override bool[] _bootable => new[]
-        {
-            false
-        };
-
-        public override long[] _clusters => new long[]
-        {
-            14848
-        };
-        public override uint[] _clusterSize => new uint[]
-        {
-            16384
-        };
-        public override string[] _oemId => null;
-        public override string[] _type  => null;
-        public override string[] _volumeName => new[]
-        {
-            string.Empty
-        };
-        public override string[] _volumeSerial => new[]
-        {
-            "66C2E9D0"
-        };
-
         [SetUp]
         public void Init()
         {
@@ -277,5 +235,20 @@ namespace Aaru.Tests.Filesystems.FATX
             Assert.AreEqual(false, directory.Contains("di1-ES-117218325276118302153627"));
             Assert.AreEqual(false, directory.Contains("DI1ES120060617014626142312477"));
         }
+
+        public override FileSystemTest[] Tests => new[]
+        {
+            new FileSystemTest
+            {
+                TestFile     = "microsoft256mb.img.lz",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 491520,
+                SectorSize   = 512,
+                Clusters     = 14848,
+                ClusterSize  = 16384,
+                VolumeName   = "",
+                VolumeSerial = "66C2E9D0"
+            }
+        };
     }
 }

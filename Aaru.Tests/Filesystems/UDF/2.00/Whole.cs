@@ -43,60 +43,47 @@ namespace Aaru.Tests.Filesystems.UDF._200
         public override IFilesystem _plugin     => new Aaru.Filesystems.UDF();
         public override bool        _partitions => false;
 
-        public override string[] _testFiles => new[]
+        public override FileSystemTest[] Tests => new[]
         {
-            "linux.aif", "macosx_10.11.aif", "linux_4.19_udf_2.00_flashdrive.aif"
-        };
-        public override MediaType[] _mediaTypes => new[]
-        {
-            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD
-        };
-
-        public override ulong[] _sectors => new ulong[]
-        {
-            1024000, 614400, 1024000
-        };
-
-        public override uint[] _sectorSize => new uint[]
-        {
-            512, 512, 512
-        };
-
-        public override string[] _appId => null;
-        public override bool[] _bootable => new[]
-        {
-            false, false, false
-        };
-
-        public override long[] _clusters => new long[]
-        {
-            1024000, 614400, 1024000
-        };
-
-        public override uint[] _clusterSize => new uint[]
-        {
-            512, 512, 512
-        };
-
-        public override string[] _oemId => new[]
-        {
-            "*Linux UDFFS", "*Apple Mac OS X UDF FS", "*Linux UDFFS"
-        };
-
-        public override string[] _type => new[]
-
-        {
-            "UDF v2.00", "UDF v2.00", "UDF v2.01"
-        };
-
-        public override string[] _volumeName => new[]
-        {
-            "Volume label", "Volume label", "DicSetter"
-        };
-
-        public override string[] _volumeSerial => new[]
-        {
-            "595c5d07f4fc8e8dLinuxUDF", "5D91CB4F (Mac OS X newfs_udf) UDF Volume Set", "5cc7f4183e0d5f7aLinuxUDF"
+            new FileSystemTest
+            {
+                TestFile     = "linux.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024000,
+                SectorSize   = 512,
+                Clusters     = 1024000,
+                ClusterSize  = 512,
+                SystemId     = "*Linux UDFFS",
+                Type         = "UDF v2.00",
+                VolumeName   = "Volume label",
+                VolumeSerial = "595c5d07f4fc8e8dLinuxUDF"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "macosx_10.11.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 614400,
+                SectorSize   = 512,
+                Clusters     = 614400,
+                ClusterSize  = 512,
+                SystemId     = "*Apple Mac OS X UDF FS",
+                Type         = "UDF v2.00",
+                VolumeName   = "Volume label",
+                VolumeSerial = "5D91CB4F (Mac OS X newfs_udf) UDF Volume Set"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "linux_4.19_udf_2.00_flashdrive.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024000,
+                SectorSize   = 512,
+                Clusters     = 1024000,
+                ClusterSize  = 512,
+                SystemId     = "*Linux UDFFS",
+                Type         = "UDF v2.01",
+                VolumeName   = "DicSetter",
+                VolumeSerial = "5cc7f4183e0d5f7aLinuxUDF"
+            }
         };
     }
 }

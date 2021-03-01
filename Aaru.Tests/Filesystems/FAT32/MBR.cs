@@ -43,75 +43,319 @@ namespace Aaru.Tests.Filesystems.FAT32
         public override IFilesystem _plugin     => new FAT();
         public override bool        _partitions => true;
 
-        public override string[] _testFiles => new[]
+        public override FileSystemTest[] Tests => new[]
         {
-            "drdos_7.03.aif", "drdos_8.00.aif", "msdos_7.10.aif", "macosx_10.11.aif", "win10.aif", "win2000.aif",
-            "win95osr2.1.aif", "win95osr2.5.aif", "win95osr2.aif", "win98se.aif", "win98.aif", "winme.aif",
-            "winvista.aif", "beos_r4.5.aif", "linux.aif", "aros.aif", "freebsd_6.1.aif", "freebsd_7.0.aif",
-            "freebsd_8.2.aif", "freedos_1.2.aif", "ecs20_fstester.aif", "linux_2.2_umsdos32_flashdrive.aif",
-            "linux_4.19_fat32_msdos_flashdrive.aif", "linux_4.19_vfat32_flashdrive.aif"
-        };
-        public override MediaType[] _mediaTypes => new[]
-        {
-            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD,
-            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD,
-            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD,
-            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD,
-            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD,
-            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD
-        };
-
-        public override ulong[] _sectors => new ulong[]
-        {
-            8388608, 8388608, 8388608, 4194304, 4194304, 8388608, 4194304, 4194304, 4194304, 4194304, 4194304, 4194304,
-            4194304, 4194304, 262144, 4194304, 4194304, 4194304, 4194304, 8388608, 1024000, 1024000, 1024000, 1024000
-        };
-
-        public override uint[] _sectorSize => new uint[]
-        {
-            512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512,
-            512, 512, 512
-        };
-
-        public override string[] _appId => null;
-        public override bool[] _bootable => new[]
-        {
-            true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, false, true, true,
-            true, true, true, true, true, true
-        };
-
-        public override long[] _clusters => new long[]
-        {
-            1048233, 1048233, 1048233, 524287, 524016, 1048233, 524152, 524152, 524152, 524112, 524112, 524112, 523520,
-            1048560, 260096, 524160, 524112, 524112, 65514, 1048233, 127744, 127882, 127744, 127744
-        };
-
-        public override uint[] _clusterSize => new uint[]
-        {
-            4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 2048, 512, 4096, 4096, 4096,
-            32768, 4096, 4096, 4096, 4096, 4096
-        };
-        public override string[] _oemId => new[]
-        {
-            "DRDOS7.X", "IBM  7.1", "MSWIN4.1", "BSD  4.4", "MSDOS5.0", "MSDOS5.0", "MSWIN4.1", "MSWIN4.1", "MSWIN4.1",
-            "MSWIN4.1", "MSWIN4.1", "MSWIN4.1", "MSDOS5.0", "BeOS    ", "mkfs.fat", "MSWIN4.1", "BSD  4.4", "BSD  4.4",
-            "BSD4.4  ", "FRDOS4.1", "mkfs.fat", "mkdosfs", "mkfs.fat", "mkfs.fat"
-        };
-        public override string[] _type => null;
-
-        public override string[] _volumeName => new[]
-        {
-            "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL",
-            "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL",
-            "VolumeLabel", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "Volume labe",
-            "DICSETTER", "DICSETTER", "DICSETTER"
-        };
-
-        public override string[] _volumeSerial => new[]
-        {
-            "5955996C", "1BFB1A43", "3B331809", "42D51EF1", "48073346", "EC62E6DE", "2A310DE4", "0C140DFC", "3E310D18",
-            "0D3D0EED", "0E131162", "3F500F02", "82EB4C04", "00000000", "B488C502", "5CAC9B4E", "41540E0E", "4E600E0F",
-            "26E20E0F", "3E0C1BE8", "63084BBA", "5CC7908D", "D1290612", "79BCA86E"
+            new FileSystemTest
+            {
+                TestFile     = "drdos_7.03.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 8388608,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 1048233,
+                ClusterSize  = 4096,
+                SystemId     = "DRDOS7.X",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "5955996C"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "drdos_8.00.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 8388608,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 1048233,
+                ClusterSize  = 4096,
+                SystemId     = "IBM  7.1",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "1BFB1A43"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "msdos_7.10.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 8388608,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 1048233,
+                ClusterSize  = 4096,
+                SystemId     = "MSWIN4.1",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "3B331809"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "macosx_10.11.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 4194304,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 524287,
+                ClusterSize  = 4096,
+                SystemId     = "BSD  4.4",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "42D51EF1"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "win10.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 4194304,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 524016,
+                ClusterSize  = 4096,
+                SystemId     = "MSDOS5.0",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "48073346"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "win2000.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 8388608,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 1048233,
+                ClusterSize  = 4096,
+                SystemId     = "MSDOS5.0",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "EC62E6DE"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "win95osr2.1.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 4194304,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 524152,
+                ClusterSize  = 4096,
+                SystemId     = "MSWIN4.1",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "2A310DE4"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "win95osr2.5.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 4194304,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 524152,
+                ClusterSize  = 4096,
+                SystemId     = "MSWIN4.1",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "0C140DFC"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "win95osr2.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 4194304,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 524152,
+                ClusterSize  = 4096,
+                SystemId     = "MSWIN4.1",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "3E310D18"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "win98se.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 4194304,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 524112,
+                ClusterSize  = 4096,
+                SystemId     = "MSWIN4.1",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "0D3D0EED"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "win98.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 4194304,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 524112,
+                ClusterSize  = 4096,
+                SystemId     = "MSWIN4.1",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "0E131162"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "winme.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 4194304,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 524112,
+                ClusterSize  = 4096,
+                SystemId     = "MSWIN4.1",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "3F500F02"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "winvista.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 4194304,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 523520,
+                ClusterSize  = 4096,
+                SystemId     = "MSDOS5.0",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "82EB4C04"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "beos_r4.5.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 4194304,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 1048560,
+                ClusterSize  = 2048,
+                SystemId     = "BeOS    ",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "00000000"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "linux.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 260096,
+                ClusterSize  = 512,
+                SystemId     = "mkfs.fat",
+                VolumeName   = "VolumeLabel",
+                VolumeSerial = "B488C502"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "aros.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 4194304,
+                SectorSize   = 512,
+                Clusters     = 524160,
+                ClusterSize  = 4096,
+                SystemId     = "MSWIN4.1",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "5CAC9B4E"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "freebsd_6.1.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 4194304,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 524112,
+                ClusterSize  = 4096,
+                SystemId     = "BSD  4.4",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "41540E0E"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "freebsd_7.0.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 4194304,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 524112,
+                ClusterSize  = 4096,
+                SystemId     = "BSD  4.4",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "4E600E0F"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "freebsd_8.2.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 4194304,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 65514,
+                ClusterSize  = 32768,
+                SystemId     = "BSD4.4  ",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "26E20E0F"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "freedos_1.2.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 8388608,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 1048233,
+                ClusterSize  = 4096,
+                SystemId     = "FRDOS4.1",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "3E0C1BE8"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "ecs20_fstester.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024000,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 127744,
+                ClusterSize  = 4096,
+                SystemId     = "mkfs.fat",
+                VolumeName   = "Volume labe",
+                VolumeSerial = "63084BBA"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "linux_2.2_umsdos32_flashdrive.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024000,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 127882,
+                ClusterSize  = 4096,
+                SystemId     = "mkdosfs",
+                VolumeName   = "DICSETTER",
+                VolumeSerial = "5CC7908D"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "linux_4.19_fat32_msdos_flashdrive.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024000,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 127744,
+                ClusterSize  = 4096,
+                SystemId     = "mkfs.fat",
+                VolumeName   = "DICSETTER",
+                VolumeSerial = "D1290612"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "linux_4.19_vfat32_flashdrive.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024000,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 127744,
+                ClusterSize  = 4096,
+                SystemId     = "mkfs.fat",
+                VolumeName   = "DICSETTER",
+                VolumeSerial = "79BCA86E"
+            }
         };
     }
 }

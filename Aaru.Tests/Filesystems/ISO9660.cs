@@ -43,411 +43,928 @@ namespace Aaru.Tests.Filesystems
         public override IFilesystem _plugin     => new ISO9660();
         public override bool        _partitions => false;
 
-        public override string[] _testFiles => new[]
+        public override FileSystemTest[] Tests => new[]
         {
-            // Toast 3.5.7
-            "toast_3.5.7_iso9660_apple.aif", "toast_3.5.7_iso9660_dos_apple.aif", "toast_3.5.7_iso9660_dos.aif",
-            "toast_3.5.7_iso9660_hfs.aif", "toast_3.5.7_iso9660.aif", "toast_3.5.7_iso9660_joliet_apple.aif",
-            "toast_3.5.7_iso9660_joliet.aif", "toast_3.5.7_iso9660_mac_apple.aif", "toast_3.5.7_iso9660_mac.aif",
-            "toast_3.5.7_iso9660_ver_apple.aif", "toast_3.5.7_iso9660_ver_dos_apple.aif",
-            "toast_3.5.7_iso9660_ver_dos.aif", "toast_3.5.7_iso9660_ver.aif",
-            "toast_3.5.7_iso9660_ver_joliet_apple.aif", "toast_3.5.7_iso9660_ver_joliet.aif", "toast_3.5.7_iso9660.aif",
-
-            // Toast 4.1.3
-            "toast_4.1.3_iso9660_hfs.aif",
-
-            // Toast 4.0.3
-            "toast_4.0.3_iso9660_apple.aif", "toast_4.0.3_iso9660_dos_apple.aif", "toast_4.0.3_iso9660_dos.aif",
-            "toast_4.0.3_iso9660_hfs.aif", "toast_4.0.3_iso9660.aif", "toast_4.0.3_iso9660_joliet_apple.aif",
-            "toast_4.0.3_iso9660_joliet.aif", "toast_4.0.3_iso9660_mac_apple.aif", "toast_4.0.3_iso9660_mac.aif",
-
-            // Toast 4.0.3 (CD-ROM XA)
-            // "toast_4.0.3_iso9660_apple_xa.iso.lz","toast_4.0.3_iso9660_dos_apple_xa.iso.lz",
-            // "toast_4.0.3_iso9660_dos_xa.iso.lz","toast_4.0.3_iso9660_joliet_apple_xa.iso.lz",
-            // "toast_4.0.3_iso9660_joliet_xa.iso.lz","toast_4.0.3_iso9660_mac_apple_xa.iso.lz",
-            // "toast_4.0.3_iso9660_mac_xa.iso.lz","toast_4.0.3_iso9660_xa.iso.lz",
-            // "toast_4.0.3_iso9660_hfs_xa.iso.lz",
-            // mkisofs
-            "mkisofs_apple_rockrige.aif", "mkisofs_apple_xa.aif", "mkisofs_hybrid.aif", "mkisofs_hybrid_nopart.aif",
-            "mkisofs_iso9660_level1_dirnest.aif", "mkisofs_iso9660_level1.aif", "mkisofs_iso9660_level2_dirnest.aif",
-            "mkisofs_iso9660_level2.aif", "mkisofs_iso9660_level3_dirnest.aif", "mkisofs_iso9660_level3.aif",
-            "mkisofs_iso9660_level4_dirnest.aif", "mkisofs_iso9660_level4.aif",
-            "mkisofs_iso9660_udf_hybrid_dirnest.aif", "mkisofs_iso9660_udf_hybrid.aif", "mkisofs_joliet.aif",
-            "mkisofs_joliet_level1.aif", "mkisofs_joliet_level2.aif", "mkisofs_joliet_level3.aif",
-            "mkisofs_joliet_violating.aif", "mkisofs_level1.aif", "mkisofs_level2.aif", "mkisofs_level3.aif",
-            "mkisofs_level4.aif", "mkisofs_rockridge_dirnest.aif", "mkisofs_rockridge.aif", "mkisofs_rockridge_old.aif",
-            "mkisofs_rockridge_rational.aif", "mkisofs_udf.aif", "mkisofs_violating.aif", "mkisofs_xa.aif",
-            "mkisofs_zisofs.aif", "mkisofs_zisofs_rockridge.aif",
-
-            // Nero MAX
-            "neromax_iso_mode1_apple.aif", "neromax_iso_mode1_joliet.aif", "neromax_iso_mode1_level1.aif",
-            "neromax_iso_mode1_level2.aif",
-
-            // Nero MAX (CD-ROM XA)
-            // "neromax_iso_mode2_apple.iso.lz", "neromax_iso_mode2_joliet.iso.lz",
-            // "neromax_iso_mode2_level1.iso.lz", "neromax_iso_mode2_level2.iso.lz",
-
-            // XorrISO
-            "xorriso_hybrid.aif", "xorriso_joliet.aif", "xorriso_joliet_utf.aif", "xorriso_joliet_violating.aif",
-            "xorriso_level1.aif", "xorriso_level2.aif", "xorriso_level3.aif", "xorriso_level4.aif",
-            "xorriso_rockridge.aif", "xorriso_violating.aif", "xorriso_zisofs.aif", "xorriso_zisofs_rockridge.aif"
-        };
-
-        public override MediaType[] _mediaTypes => new[]
-        {
-            // Toast 3.5.7
-            MediaType.CD, MediaType.CD, MediaType.CD, MediaType.CD, MediaType.CD, MediaType.CD, MediaType.CD,
-            MediaType.CD, MediaType.CD, MediaType.CD, MediaType.CD, MediaType.CD, MediaType.CD, MediaType.CD,
-            MediaType.CD, MediaType.CD,
-
-            // Toast 4.1.3
-            MediaType.CD,
-
-            // Toast 4.0.3
-            MediaType.CD, MediaType.CD, MediaType.CD, MediaType.CD, MediaType.CD, MediaType.CD, MediaType.CD,
-            MediaType.CD, MediaType.CD,
-
-            // Toast 4.0.3 (CD-ROM XA)
-            // MediaType.CD, MediaType.CD, MediaType.CD, MediaType.CD, MediaType.CD, MediaType.CD, MediaType.CD,
-            // MediaType.CD, MediaType.CD,
-            // mkisofs
-            MediaType.CD, MediaType.CD, MediaType.CD, MediaType.CD, MediaType.CD, MediaType.CD, MediaType.CD,
-            MediaType.CD, MediaType.CD, MediaType.CD, MediaType.CD, MediaType.CD, MediaType.CD, MediaType.CD,
-            MediaType.CD, MediaType.CD, MediaType.CD, MediaType.CD, MediaType.CD, MediaType.CD, MediaType.CD,
-            MediaType.CD, MediaType.CD, MediaType.CD, MediaType.CD, MediaType.CD, MediaType.CD, MediaType.CD,
-            MediaType.CD, MediaType.CD, MediaType.CD, MediaType.CD,
-
-            // Nero MAX
-            MediaType.CD, MediaType.CD, MediaType.CD, MediaType.CD,
-
-            // Nero MAX (CD-ROM XA)
-            // MediaType.CD, MediaType.CD, MediaType.CD, MediaType.CD,
-
-            // XorrISO
-            MediaType.CD, MediaType.CD, MediaType.CD, MediaType.CD, MediaType.CD, MediaType.CD, MediaType.CD,
-            MediaType.CD, MediaType.CD, MediaType.CD, MediaType.CD, MediaType.CD
-        };
-
-        public override ulong[] _sectors => new ulong[]
-        {
-            // Toast 3.5.7
-            946, 946, 300, 1880, 300, 951, 300, 946, 300, 946, 946, 300, 300, 951, 300, 300,
-
-            // Toast 4.1.3
-            1882,
-
-            // Toast 4.0.3
-            305, 305, 300, 954, 300, 323, 300, 305, 300,
-
-            // Toast 4.0.3 (CD-ROM XA)
-            // 10, 11, 12, 13, 14, 15, 16, 17, 18,
-            // mkisofs
-            3662, 3606, 3800, 3800, 2983, 2531, 2983, 2531, 2983, 2531, 2894, 2894, 106589, 105241, 5055, 3651, 3651,
-            3651, 3651, 3637, 3637, 3637, 3689, 7481, 7487, 3693, 7487, 3925, 3637, 3637, 3637, 3693,
-
-            // Nero MAX
-            389, 417, 257, 266,
-
-            // Nero MAX (CD-ROM XA)
-            // 55, 56, 57, 58,
-
-            // XorrISO
-            3688, 3686, 3686, 3686, 3673, 3673, 3673, 3686, 3675, 3673, 3673, 3675
-        };
-
-        public override uint[] _sectorSize => new uint[]
-        {
-            // Toast 3.5.7
-            2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048,
-
-            // Toast 4.1.3
-            2048,
-
-            // Toast 4.0.3
-            2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048,
-
-            // Toast 4.0.3 (CD-ROM XA)
-            // 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048,
-            // mkisofs
-            2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048,
-            2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048,
-
-            // Nero MAX
-            2048, 2048, 2048, 2048,
-
-            // Nero MAX (CD-ROM XA)
-            // 2048, 2048, 2048, 2048,
-
-            // XorrISO
-            2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048
-        };
-
-        public override string[] _appId => new[]
-        {
-            // Toast 3.5.7
-            "TOAST ISO 9660 BUILDER COPYRIGHT (C) 1997 ADAPTEC, INC. - HAVE A NICE DAY",
-            "TOAST ISO 9660 BUILDER COPYRIGHT (C) 1997 ADAPTEC, INC. - HAVE A NICE DAY",
-            "TOAST ISO 9660 BUILDER COPYRIGHT (C) 1997 ADAPTEC, INC. - HAVE A NICE DAY",
-            "TOAST ISO 9660 BUILDER COPYRIGHT (C) 1997 ADAPTEC, INC. - HAVE A NICE DAY",
-            "TOAST ISO 9660 BUILDER COPYRIGHT (C) 1997 ADAPTEC, INC. - HAVE A NICE DAY",
-            "TOAST ISO 9660 BUILDER COPYRIGHT (C) 1997 ADAPTEC, INC. - HAVE A NICE DAY",
-            "TOAST ISO 9660 BUILDER COPYRIGHT (C) 1997 ADAPTEC, INC. - HAVE A NICE DAY",
-            "TOAST ISO 9660 BUILDER COPYRIGHT (C) 1997 ADAPTEC, INC. - HAVE A NICE DAY",
-            "TOAST ISO 9660 BUILDER COPYRIGHT (C) 1997 ADAPTEC, INC. - HAVE A NICE DAY",
-            "TOAST ISO 9660 BUILDER COPYRIGHT (C) 1997 ADAPTEC, INC. - HAVE A NICE DAY",
-            "TOAST ISO 9660 BUILDER COPYRIGHT (C) 1997 ADAPTEC, INC. - HAVE A NICE DAY",
-            "TOAST ISO 9660 BUILDER COPYRIGHT (C) 1997 ADAPTEC, INC. - HAVE A NICE DAY",
-            "TOAST ISO 9660 BUILDER COPYRIGHT (C) 1997 ADAPTEC, INC. - HAVE A NICE DAY",
-            "TOAST ISO 9660 BUILDER COPYRIGHT (C) 1997 ADAPTEC, INC. - HAVE A NICE DAY",
-            "TOAST ISO 9660 BUILDER COPYRIGHT (C) 1997 ADAPTEC, INC. - HAVE A NICE DAY",
-            "TOAST ISO 9660 BUILDER COPYRIGHT (C) 1997 ADAPTEC, INC. - HAVE A NICE DAY",
-
-            // Toast 4.1.3
-            "TOAST ISO 9660 BUILDER COPYRIGHT (C) 1997 ADAPTEC, INC. - HAVE A NICE DAY",
-
-            // Toast 4.0.3
-            "TOAST ISO 9660 BUILDER COPYRIGHT (C) 1997 ADAPTEC, INC. - HAVE A NICE DAY",
-            "TOAST ISO 9660 BUILDER COPYRIGHT (C) 1997 ADAPTEC, INC. - HAVE A NICE DAY",
-            "TOAST ISO 9660 BUILDER COPYRIGHT (C) 1997 ADAPTEC, INC. - HAVE A NICE DAY",
-            "TOAST ISO 9660 BUILDER COPYRIGHT (C) 1997 ADAPTEC, INC. - HAVE A NICE DAY",
-            "TOAST ISO 9660 BUILDER COPYRIGHT (C) 1997 ADAPTEC, INC. - HAVE A NICE DAY",
-            "TOAST ISO 9660 BUILDER COPYRIGHT (C) 1997 ADAPTEC, INC. - HAVE A NICE DAY",
-            "TOAST ISO 9660 BUILDER COPYRIGHT (C) 1997 ADAPTEC, INC. - HAVE A NICE DAY",
-            "TOAST ISO 9660 BUILDER COPYRIGHT (C) 1997 ADAPTEC, INC. - HAVE A NICE DAY",
-            "TOAST ISO 9660 BUILDER COPYRIGHT (C) 1997 ADAPTEC, INC. - HAVE A NICE DAY",
-
-            // Toast 4.0.3 (CD-ROM XA)
-            // "TOAST ISO 9660 BUILDER COPYRIGHT (C) 1997 ADAPTEC, INC. - HAVE A NICE DAY",
-            // "TOAST ISO 9660 BUILDER COPYRIGHT (C) 1997 ADAPTEC, INC. - HAVE A NICE DAY",
-            // "TOAST ISO 9660 BUILDER COPYRIGHT (C) 1997 ADAPTEC, INC. - HAVE A NICE DAY",
-            // "TOAST ISO 9660 BUILDER COPYRIGHT (C) 1997 ADAPTEC, INC. - HAVE A NICE DAY",
-            // "TOAST ISO 9660 BUILDER COPYRIGHT (C) 1997 ADAPTEC, INC. - HAVE A NICE DAY",
-            // "TOAST ISO 9660 BUILDER COPYRIGHT (C) 1997 ADAPTEC, INC. - HAVE A NICE DAY",
-            // "TOAST ISO 9660 BUILDER COPYRIGHT (C) 1997 ADAPTEC, INC. - HAVE A NICE DAY",
-            // "TOAST ISO 9660 BUILDER COPYRIGHT (C) 1997 ADAPTEC, INC. - HAVE A NICE DAY",
-            // "TOAST ISO 9660 BUILDER COPYRIGHT (C) 1997 ADAPTEC, INC. - HAVE A NICE DAY",
-            // mkisofs
-            "MKISOFS ISO9660/HFS/UDF FILESYSTEM BUILDER & CDRECORD CD/DVD/BluRay CREATOR (C) 1993 E.YOUNGDALE (C) 1997 J.PEARSON/J.SCHILLING",
-            "MKISOFS ISO9660/HFS/UDF FILESYSTEM BUILDER & CDRECORD CD/DVD/BluRay CREATOR (C) 1993 E.YOUNGDALE (C) 1997 J.PEARSON/J.SCHILLING",
-            "MKISOFS ISO9660/HFS/UDF FILESYSTEM BUILDER & CDRECORD CD/DVD/BluRay CREATOR (C) 1993 E.YOUNGDALE (C) 1997 J.PEARSON/J.SCHILLING",
-            "MKISOFS ISO9660/HFS/UDF FILESYSTEM BUILDER & CDRECORD CD/DVD/BluRay CREATOR (C) 1993 E.YOUNGDALE (C) 1997 J.PEARSON/J.SCHILLING",
-            "MKISOFS ISO9660/HFS/UDF FILESYSTEM BUILDER & CDRECORD CD/DVD/BluRay CREATOR (C) 1993 E.YOUNGDALE (C) 1997 J.PEARSON/J.SCHILLING",
-            "MKISOFS ISO9660/HFS/UDF FILESYSTEM BUILDER & CDRECORD CD/DVD/BluRay CREATOR (C) 1993 E.YOUNGDALE (C) 1997 J.PEARSON/J.SCHILLING",
-            "MKISOFS ISO9660/HFS/UDF FILESYSTEM BUILDER & CDRECORD CD/DVD/BluRay CREATOR (C) 1993 E.YOUNGDALE (C) 1997 J.PEARSON/J.SCHILLING",
-            "MKISOFS ISO9660/HFS/UDF FILESYSTEM BUILDER & CDRECORD CD/DVD/BluRay CREATOR (C) 1993 E.YOUNGDALE (C) 1997 J.PEARSON/J.SCHILLING",
-            "MKISOFS ISO9660/HFS/UDF FILESYSTEM BUILDER & CDRECORD CD/DVD/BluRay CREATOR (C) 1993 E.YOUNGDALE (C) 1997 J.PEARSON/J.SCHILLING",
-            "MKISOFS ISO9660/HFS/UDF FILESYSTEM BUILDER & CDRECORD CD/DVD/BluRay CREATOR (C) 1993 E.YOUNGDALE (C) 1997 J.PEARSON/J.SCHILLING",
-            "MKISOFS ISO9660/HFS/UDF FILESYSTEM BUILDER & CDRECORD CD/DVD/BluRay CREATOR (C) 1993 E.YOUNGDALE (C) 1997 J.PEARSON/J.SCHILLING",
-            "MKISOFS ISO9660/HFS/UDF FILESYSTEM BUILDER & CDRECORD CD/DVD/BluRay CREATOR (C) 1993 E.YOUNGDALE (C) 1997 J.PEARSON/J.SCHILLING",
-            "MKISOFS ISO9660/HFS/UDF FILESYSTEM BUILDER & CDRECORD CD/DVD/BluRay CREATOR (C) 1993 E.YOUNGDALE (C) 1997 J.PEARSON/J.SCHILLING",
-            "MKISOFS ISO9660/HFS/UDF FILESYSTEM BUILDER & CDRECORD CD/DVD/BluRay CREATOR (C) 1993 E.YOUNGDALE (C) 1997 J.PEARSON/J.SCHILLING",
-            "MKISOFS ISO9660/HFS/UDF FILESYSTEM BUILDER & CDRECORD CD/DVD/BluRay CREATOR (C) 1993 E.YOUNGDALE (C) 1997 J.PEARSON/J.SCHILLING",
-            "MKISOFS ISO9660/HFS/UDF FILESYSTEM BUILDER & CDRECORD CD/DVD/BluRay CREATOR (C) 1993 E.YOUNGDALE (C) 1997 J.PEARSON/J.SCHILLING",
-            "MKISOFS ISO9660/HFS/UDF FILESYSTEM BUILDER & CDRECORD CD/DVD/BluRay CREATOR (C) 1993 E.YOUNGDALE (C) 1997 J.PEARSON/J.SCHILLING",
-            "MKISOFS ISO9660/HFS/UDF FILESYSTEM BUILDER & CDRECORD CD/DVD/BluRay CREATOR (C) 1993 E.YOUNGDALE (C) 1997 J.PEARSON/J.SCHILLING",
-            "MKISOFS ISO9660/HFS/UDF FILESYSTEM BUILDER & CDRECORD CD/DVD/BluRay CREATOR (C) 1993 E.YOUNGDALE (C) 1997 J.PEARSON/J.SCHILLING",
-            "MKISOFS ISO9660/HFS/UDF FILESYSTEM BUILDER & CDRECORD CD/DVD/BluRay CREATOR (C) 1993 E.YOUNGDALE (C) 1997 J.PEARSON/J.SCHILLING",
-            "MKISOFS ISO9660/HFS/UDF FILESYSTEM BUILDER & CDRECORD CD/DVD/BluRay CREATOR (C) 1993 E.YOUNGDALE (C) 1997 J.PEARSON/J.SCHILLING",
-            "MKISOFS ISO9660/HFS/UDF FILESYSTEM BUILDER & CDRECORD CD/DVD/BluRay CREATOR (C) 1993 E.YOUNGDALE (C) 1997 J.PEARSON/J.SCHILLING",
-            "MKISOFS ISO9660/HFS/UDF FILESYSTEM BUILDER & CDRECORD CD/DVD/BluRay CREATOR (C) 1993 E.YOUNGDALE (C) 1997 J.PEARSON/J.SCHILLING",
-            "MKISOFS ISO9660/HFS/UDF FILESYSTEM BUILDER & CDRECORD CD/DVD/BluRay CREATOR (C) 1993 E.YOUNGDALE (C) 1997 J.PEARSON/J.SCHILLING",
-            "MKISOFS ISO9660/HFS/UDF FILESYSTEM BUILDER & CDRECORD CD/DVD/BluRay CREATOR (C) 1993 E.YOUNGDALE (C) 1997 J.PEARSON/J.SCHILLING",
-            "MKISOFS ISO9660/HFS/UDF FILESYSTEM BUILDER & CDRECORD CD/DVD/BluRay CREATOR (C) 1993 E.YOUNGDALE (C) 1997 J.PEARSON/J.SCHILLING",
-            "MKISOFS ISO9660/HFS/UDF FILESYSTEM BUILDER & CDRECORD CD/DVD/BluRay CREATOR (C) 1993 E.YOUNGDALE (C) 1997 J.PEARSON/J.SCHILLING",
-            "MKISOFS ISO9660/HFS/UDF FILESYSTEM BUILDER & CDRECORD CD/DVD/BluRay CREATOR (C) 1993 E.YOUNGDALE (C) 1997 J.PEARSON/J.SCHILLING",
-            "MKISOFS ISO9660/HFS/UDF FILESYSTEM BUILDER & CDRECORD CD/DVD/BluRay CREATOR (C) 1993 E.YOUNGDALE (C) 1997 J.PEARSON/J.SCHILLING",
-            "MKISOFS ISO9660/HFS/UDF FILESYSTEM BUILDER & CDRECORD CD/DVD/BluRay CREATOR (C) 1993 E.YOUNGDALE (C) 1997 J.PEARSON/J.SCHILLING",
-            "MKISOFS ISO9660/HFS/UDF FILESYSTEM BUILDER & CDRECORD CD/DVD/BluRay CREATOR (C) 1993 E.YOUNGDALE (C) 1997 J.PEARSON/J.SCHILLING",
-            "MKISOFS ISO9660/HFS/UDF FILESYSTEM BUILDER & CDRECORD CD/DVD/BluRay CREATOR (C) 1993 E.YOUNGDALE (C) 1997 J.PEARSON/J.SCHILLING",
-
-            // Nero MAX
-            "", "", "", "",
-
-            // Nero MAX (CD-ROM XA)
-            // "", "", "", "",
-
-            // XorrISO
-            "", "", "", "", "", "", "", "", "", "", "", ""
-        };
-
-        public override bool[] _bootable => new[]
-        {
-            // Toast 3.5.7
-            false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,
-            false,
-
-            // Toast 4.1.3
-            false,
-
-            // Toast 4.0.3
-            false, false, false, false, false, false, false, false, false,
-
-            // Toast 4.0.3 (CD-ROM XA)
-            // false, false, false, false, false, false, false, false, false,
-            // mkisofs
-            false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,
-            false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,
-            false, false,
-
-            // Nero MAX
-            false, false, false, false,
-
-            // Nero MAX (CD-ROM XA)
-            // false, false, false, false,
-
-            // XorrISO
-            false, false, false, false, false, false, false, false, false, false, false, false
-        };
-
-        public override long[] _clusters => new long[]
-        {
-            // Toast 3.5.7
-            946, 946, 244, 946, 244, 951, 249, 946, 244, 946, 946, 244, 244, 951, 249, 244,
-
-            // Toast 4.1.3
-            948,
-
-            // Toast 4.0.3
-            305, 305, 220, 954, 220, 323, 234, 305, 220,
-
-            // Toast 4.0.3 (CD-ROM XA)
-            // 10, 11, 12, 13, 14, 15, 16, 17, 18,
-            // mkisofs
-            3662, 3606, 3800, 3800, 2983, 2531, 2983, 2531, 2983, 2531, 2894, 2894, 106589, 105241, 5055, 3651, 3651,
-            3651, 3651, 3637, 3637, 3637, 3689, 7481, 7487, 3693, 7487, 3925, 3637, 3637, 3637, 3693,
-
-            // Nero MAX
-            389, 417, 257, 266,
-
-            // Nero MAX (CD-ROM XA)
-            // 55, 56, 57, 58,
-
-            // XorrISO
-            3688, 3686, 3686, 3686, 3673, 3673, 3673, 3686, 3675, 3673, 3673, 3675
-        };
-
-        public override uint[] _clusterSize => new uint[]
-        {
-            // Toast 3.5.7
-            2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048,
-
-            // Toast 4.1.3
-            2048,
-
-            // Toast 4.0.3
-            2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048,
-
-            // Toast 4.0.3 (CD-ROM XA)
-            // 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048,
-            // mkisofs
-            2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048,
-            2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048,
-
-            // Nero MAX
-            2048, 2048, 2048, 2048,
-
-            // Nero MAX (CD-ROM XA)
-            // 2048, 2048, 2048, 2048,
-
-            // XorrISO
-            2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048
-        };
-        public override string[] _oemId => new[]
-        {
-            // Toast 3.5.7
-            "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002",
-            "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002",
-            "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002",
-            "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002",
-            "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002",
-            "APPLE COMPUTER, INC., TYPE: 0002",
-
-            // Toast 4.1.3
-            "APPLE COMPUTER, INC., TYPE: 0002",
-
-            // Toast 4.0.3
-            "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002",
-            "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002",
-            "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002",
-
-            // Toast 4.0.3 (CD-ROM XA)
-            // "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002",
-            // "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002",
-            // "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002",
-            // mkisofs
-            "LINUX", "LINUX", "LINUX", "LINUX", "LINUX", "LINUX", "LINUX", "LINUX", "LINUX", "LINUX", "LINUX", "LINUX",
-            "LINUX", "LINUX", "LINUX", "LINUX", "LINUX", "LINUX", "LINUX", "LINUX", "LINUX", "LINUX", "LINUX", "LINUX",
-            "LINUX", "LINUX", "LINUX", "LINUX", "LINUX", "LINUX", "LINUX", "LINUX",
-
-            // Nero MAX
-            "", "", "", "",
-
-            // Nero MAX (CD-ROM XA)
-            // "", "", "", "",
-
-            // XorrISO
-            "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""
-        };
-
-        public override string[] _type => null;
-
-        public override string[] _volumeName => new[]
-        {
-            // Toast 3.5.7
-            "DISK_UTILS", "DISK_UTILS", "DISK_UTILS", "DISK_UTILS", "DISK_UTILS", "Disk utils", "Disk utils",
-            "Disk utils", "Disk utils", "DISK_UTILS", "DISK_UTILS", "DISK_UTILS", "DISK_UTILS", "Disk utils",
-            "Disk utils", "DISK_UTILS",
-
-            // Toast 4.1.3
-            "DISK_UTILS",
-
-            // Toast 4.0.3
-            "UNTITLED_CD", "UNTITLED_CD", "UNTITLED_CD", "Untitled CD", "UNTITLED_CD", "Untitled CD", "Untitled CD",
-            "Untitled CD", "Untitled CD",
-
-            // Toast 4.0.3 (CD-ROM XA)
-            // "UNTITLED_CD", "UNTITLED_CD", "UNTITLED_CD", "UNTITLED_CD", "UNTITLED_CD", "UNTITLED_CD", "UNTITLED_CD",
-            // "UNTITLED_CD", "UNTITLED_CD",
-            // mkisofs
-            "test", "test", "test", "test", "CDROM", "CDROM", "CDROM", "CDROM", "CDROM", "CDROM", "CDROM", "CDROM",
-            "CDROM", "CDROM", "CDROM", "test", "test", "test", "test", "test", "test", "test", "test", "CDROM", "CDROM",
-            "test", "CDROM", "test", "test", "test", "test", "test",
-
-            // Nero MAX
-            "Root", "Root", "Root", "Root",
-
-            // Nero MAX (CD-ROM XA)
-            // "Root", "Root", "Root", "Root",
-
-            // XorrISO
-            "test", "test", "test", "test", "test", "test", "test", "test", "test", "test", "test", "test"
-        };
-
-        public override string[] _volumeSerial => new string[]
-        {
-            // Toast 3.5.7
-            null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-
-            // Toast 4.1.3
-            null,
-
-            // Toast 4.0.3
-            null, null, null, null, null, null, null, null, null, null,
-
-            // Toast 4.0.3 (CD-ROM XA)
-            // null, null, null, null, null, null, null, null,
-            // mkisofs
-            null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-            null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-
-            // Nero MAX
-            null, null, null, null,
-
-            // Nero MAX (CD-ROM XA)
-            // null, null, null, null,
-
-            // XorrISO
-            null, null, null, null, null, null, null, null, null, null, null, null
+            new FileSystemTest
+            {
+                TestFile      = "toast_3.5.7_iso9660_apple.aif",
+                MediaType     = MediaType.CD,
+                Sectors       = 946,
+                SectorSize    = 2048,
+                ApplicationId = "TOAST ISO 9660 BUILDER COPYRIGHT (C) 1997 ADAPTEC, INC. - HAVE A NICE DAY",
+                Clusters      = 946,
+                ClusterSize   = 2048,
+                SystemId      = "APPLE COMPUTER, INC., TYPE: 0002",
+                VolumeName    = "DISK_UTILS"
+            },
+            new FileSystemTest
+            {
+                TestFile      = "toast_3.5.7_iso9660_dos_apple.aif",
+                MediaType     = MediaType.CD,
+                Sectors       = 946,
+                SectorSize    = 2048,
+                ApplicationId = "TOAST ISO 9660 BUILDER COPYRIGHT (C) 1997 ADAPTEC, INC. - HAVE A NICE DAY",
+                Clusters      = 946,
+                ClusterSize   = 2048,
+                SystemId      = "APPLE COMPUTER, INC., TYPE: 0002",
+                VolumeName    = "DISK_UTILS"
+            },
+            new FileSystemTest
+            {
+                TestFile      = "toast_3.5.7_iso9660_dos.aif",
+                MediaType     = MediaType.CD,
+                Sectors       = 300,
+                SectorSize    = 2048,
+                ApplicationId = "TOAST ISO 9660 BUILDER COPYRIGHT (C) 1997 ADAPTEC, INC. - HAVE A NICE DAY",
+                Clusters      = 244,
+                ClusterSize   = 2048,
+                SystemId      = "APPLE COMPUTER, INC., TYPE: 0002",
+                VolumeName    = "DISK_UTILS"
+            },
+            new FileSystemTest
+            {
+                TestFile      = "toast_3.5.7_iso9660_hfs.aif",
+                MediaType     = MediaType.CD,
+                Sectors       = 1880,
+                SectorSize    = 2048,
+                ApplicationId = "TOAST ISO 9660 BUILDER COPYRIGHT (C) 1997 ADAPTEC, INC. - HAVE A NICE DAY",
+                Clusters      = 946,
+                ClusterSize   = 2048,
+                SystemId      = "APPLE COMPUTER, INC., TYPE: 0002",
+                VolumeName    = "DISK_UTILS"
+            },
+            new FileSystemTest
+            {
+                TestFile      = "toast_3.5.7_iso9660.aif",
+                MediaType     = MediaType.CD,
+                Sectors       = 300,
+                SectorSize    = 2048,
+                ApplicationId = "TOAST ISO 9660 BUILDER COPYRIGHT (C) 1997 ADAPTEC, INC. - HAVE A NICE DAY",
+                Clusters      = 244,
+                ClusterSize   = 2048,
+                SystemId      = "APPLE COMPUTER, INC., TYPE: 0002",
+                VolumeName    = "DISK_UTILS"
+            },
+            new FileSystemTest
+            {
+                TestFile      = "toast_3.5.7_iso9660_joliet_apple.aif",
+                MediaType     = MediaType.CD,
+                Sectors       = 951,
+                SectorSize    = 2048,
+                ApplicationId = "TOAST ISO 9660 BUILDER COPYRIGHT (C) 1997 ADAPTEC, INC. - HAVE A NICE DAY",
+                Clusters      = 951,
+                ClusterSize   = 2048,
+                SystemId      = "APPLE COMPUTER, INC., TYPE: 0002",
+                VolumeName    = "Disk utils"
+            },
+            new FileSystemTest
+            {
+                TestFile      = "toast_3.5.7_iso9660_joliet.aif",
+                MediaType     = MediaType.CD,
+                Sectors       = 300,
+                SectorSize    = 2048,
+                ApplicationId = "TOAST ISO 9660 BUILDER COPYRIGHT (C) 1997 ADAPTEC, INC. - HAVE A NICE DAY",
+                Clusters      = 249,
+                ClusterSize   = 2048,
+                SystemId      = "APPLE COMPUTER, INC., TYPE: 0002",
+                VolumeName    = "Disk utils"
+            },
+            new FileSystemTest
+            {
+                TestFile      = "toast_3.5.7_iso9660_mac_apple.aif",
+                MediaType     = MediaType.CD,
+                Sectors       = 946,
+                SectorSize    = 2048,
+                ApplicationId = "TOAST ISO 9660 BUILDER COPYRIGHT (C) 1997 ADAPTEC, INC. - HAVE A NICE DAY",
+                Clusters      = 946,
+                ClusterSize   = 2048,
+                SystemId      = "APPLE COMPUTER, INC., TYPE: 0002",
+                VolumeName    = "Disk utils"
+            },
+            new FileSystemTest
+            {
+                TestFile      = "toast_3.5.7_iso9660_mac.aif",
+                MediaType     = MediaType.CD,
+                Sectors       = 300,
+                SectorSize    = 2048,
+                ApplicationId = "TOAST ISO 9660 BUILDER COPYRIGHT (C) 1997 ADAPTEC, INC. - HAVE A NICE DAY",
+                Clusters      = 244,
+                ClusterSize   = 2048,
+                SystemId      = "APPLE COMPUTER, INC., TYPE: 0002",
+                VolumeName    = "Disk utils"
+            },
+            new FileSystemTest
+            {
+                TestFile      = "toast_3.5.7_iso9660_ver_apple.aif",
+                MediaType     = MediaType.CD,
+                Sectors       = 946,
+                SectorSize    = 2048,
+                ApplicationId = "TOAST ISO 9660 BUILDER COPYRIGHT (C) 1997 ADAPTEC, INC. - HAVE A NICE DAY",
+                Clusters      = 946,
+                ClusterSize   = 2048,
+                SystemId      = "APPLE COMPUTER, INC., TYPE: 0002",
+                VolumeName    = "DISK_UTILS"
+            },
+            new FileSystemTest
+            {
+                TestFile      = "toast_3.5.7_iso9660_ver_dos_apple.aif",
+                MediaType     = MediaType.CD,
+                Sectors       = 946,
+                SectorSize    = 2048,
+                ApplicationId = "TOAST ISO 9660 BUILDER COPYRIGHT (C) 1997 ADAPTEC, INC. - HAVE A NICE DAY",
+                Clusters      = 946,
+                ClusterSize   = 2048,
+                SystemId      = "APPLE COMPUTER, INC., TYPE: 0002",
+                VolumeName    = "DISK_UTILS"
+            },
+            new FileSystemTest
+            {
+                TestFile      = "toast_3.5.7_iso9660_ver_dos.aif",
+                MediaType     = MediaType.CD,
+                Sectors       = 300,
+                SectorSize    = 2048,
+                ApplicationId = "TOAST ISO 9660 BUILDER COPYRIGHT (C) 1997 ADAPTEC, INC. - HAVE A NICE DAY",
+                Clusters      = 244,
+                ClusterSize   = 2048,
+                SystemId      = "APPLE COMPUTER, INC., TYPE: 0002",
+                VolumeName    = "DISK_UTILS"
+            },
+            new FileSystemTest
+            {
+                TestFile      = "toast_3.5.7_iso9660_ver.aif",
+                MediaType     = MediaType.CD,
+                Sectors       = 300,
+                SectorSize    = 2048,
+                ApplicationId = "TOAST ISO 9660 BUILDER COPYRIGHT (C) 1997 ADAPTEC, INC. - HAVE A NICE DAY",
+                Clusters      = 244,
+                ClusterSize   = 2048,
+                SystemId      = "APPLE COMPUTER, INC., TYPE: 0002",
+                VolumeName    = "DISK_UTILS"
+            },
+            new FileSystemTest
+            {
+                TestFile      = "toast_3.5.7_iso9660_ver_joliet_apple.aif",
+                MediaType     = MediaType.CD,
+                Sectors       = 951,
+                SectorSize    = 2048,
+                ApplicationId = "TOAST ISO 9660 BUILDER COPYRIGHT (C) 1997 ADAPTEC, INC. - HAVE A NICE DAY",
+                Clusters      = 951,
+                ClusterSize   = 2048,
+                SystemId      = "APPLE COMPUTER, INC., TYPE: 0002",
+                VolumeName    = "Disk utils"
+            },
+            new FileSystemTest
+            {
+                TestFile      = "toast_3.5.7_iso9660_ver_joliet.aif",
+                MediaType     = MediaType.CD,
+                Sectors       = 300,
+                SectorSize    = 2048,
+                ApplicationId = "TOAST ISO 9660 BUILDER COPYRIGHT (C) 1997 ADAPTEC, INC. - HAVE A NICE DAY",
+                Clusters      = 249,
+                ClusterSize   = 2048,
+                SystemId      = "APPLE COMPUTER, INC., TYPE: 0002",
+                VolumeName    = "Disk utils"
+            },
+            new FileSystemTest
+            {
+                TestFile      = "toast_3.5.7_iso9660.aif",
+                MediaType     = MediaType.CD,
+                Sectors       = 300,
+                SectorSize    = 2048,
+                ApplicationId = "TOAST ISO 9660 BUILDER COPYRIGHT (C) 1997 ADAPTEC, INC. - HAVE A NICE DAY",
+                Clusters      = 244,
+                ClusterSize   = 2048,
+                SystemId      = "APPLE COMPUTER, INC., TYPE: 0002",
+                VolumeName    = "DISK_UTILS"
+            },
+            new FileSystemTest
+            {
+                TestFile      = "toast_4.1.3_iso9660_hfs.aif",
+                MediaType     = MediaType.CD,
+                Sectors       = 1882,
+                SectorSize    = 2048,
+                ApplicationId = "TOAST ISO 9660 BUILDER COPYRIGHT (C) 1997 ADAPTEC, INC. - HAVE A NICE DAY",
+                Clusters      = 948,
+                ClusterSize   = 2048,
+                SystemId      = "APPLE COMPUTER, INC., TYPE: 0002",
+                VolumeName    = "DISK_UTILS"
+            },
+            new FileSystemTest
+            {
+                TestFile      = "toast_4.0.3_iso9660_apple.aif",
+                MediaType     = MediaType.CD,
+                Sectors       = 305,
+                SectorSize    = 2048,
+                ApplicationId = "TOAST ISO 9660 BUILDER COPYRIGHT (C) 1997 ADAPTEC, INC. - HAVE A NICE DAY",
+                Clusters      = 305,
+                ClusterSize   = 2048,
+                SystemId      = "APPLE COMPUTER, INC., TYPE: 0002",
+                VolumeName    = "UNTITLED_CD"
+            },
+            new FileSystemTest
+            {
+                TestFile      = "toast_4.0.3_iso9660_dos_apple.aif",
+                MediaType     = MediaType.CD,
+                Sectors       = 305,
+                SectorSize    = 2048,
+                ApplicationId = "TOAST ISO 9660 BUILDER COPYRIGHT (C) 1997 ADAPTEC, INC. - HAVE A NICE DAY",
+                Clusters      = 305,
+                ClusterSize   = 2048,
+                SystemId      = "APPLE COMPUTER, INC., TYPE: 0002",
+                VolumeName    = "UNTITLED_CD"
+            },
+            new FileSystemTest
+            {
+                TestFile      = "toast_4.0.3_iso9660_dos.aif",
+                MediaType     = MediaType.CD,
+                Sectors       = 300,
+                SectorSize    = 2048,
+                ApplicationId = "TOAST ISO 9660 BUILDER COPYRIGHT (C) 1997 ADAPTEC, INC. - HAVE A NICE DAY",
+                Clusters      = 220,
+                ClusterSize   = 2048,
+                SystemId      = "APPLE COMPUTER, INC., TYPE: 0002",
+                VolumeName    = "UNTITLED_CD"
+            },
+            new FileSystemTest
+            {
+                TestFile      = "toast_4.0.3_iso9660_hfs.aif",
+                MediaType     = MediaType.CD,
+                Sectors       = 954,
+                SectorSize    = 2048,
+                ApplicationId = "TOAST ISO 9660 BUILDER COPYRIGHT (C) 1997 ADAPTEC, INC. - HAVE A NICE DAY",
+                Clusters      = 954,
+                ClusterSize   = 2048,
+                SystemId      = "APPLE COMPUTER, INC., TYPE: 0002",
+                VolumeName    = "Untitled CD"
+            },
+            new FileSystemTest
+            {
+                TestFile      = "toast_4.0.3_iso9660.aif",
+                MediaType     = MediaType.CD,
+                Sectors       = 300,
+                SectorSize    = 2048,
+                ApplicationId = "TOAST ISO 9660 BUILDER COPYRIGHT (C) 1997 ADAPTEC, INC. - HAVE A NICE DAY",
+                Clusters      = 220,
+                ClusterSize   = 2048,
+                SystemId      = "APPLE COMPUTER, INC., TYPE: 0002",
+                VolumeName    = "UNTITLED_CD"
+            },
+            new FileSystemTest
+            {
+                TestFile      = "toast_4.0.3_iso9660_joliet_apple.aif",
+                MediaType     = MediaType.CD,
+                Sectors       = 323,
+                SectorSize    = 2048,
+                ApplicationId = "TOAST ISO 9660 BUILDER COPYRIGHT (C) 1997 ADAPTEC, INC. - HAVE A NICE DAY",
+                Clusters      = 323,
+                ClusterSize   = 2048,
+                SystemId      = "APPLE COMPUTER, INC., TYPE: 0002",
+                VolumeName    = "Untitled CD"
+            },
+            new FileSystemTest
+            {
+                TestFile      = "toast_4.0.3_iso9660_joliet.aif",
+                MediaType     = MediaType.CD,
+                Sectors       = 300,
+                SectorSize    = 2048,
+                ApplicationId = "TOAST ISO 9660 BUILDER COPYRIGHT (C) 1997 ADAPTEC, INC. - HAVE A NICE DAY",
+                Clusters      = 234,
+                ClusterSize   = 2048,
+                SystemId      = "APPLE COMPUTER, INC., TYPE: 0002",
+                VolumeName    = "Untitled CD"
+            },
+            new FileSystemTest
+            {
+                TestFile      = "toast_4.0.3_iso9660_mac_apple.aif",
+                MediaType     = MediaType.CD,
+                Sectors       = 305,
+                SectorSize    = 2048,
+                ApplicationId = "TOAST ISO 9660 BUILDER COPYRIGHT (C) 1997 ADAPTEC, INC. - HAVE A NICE DAY",
+                Clusters      = 305,
+                ClusterSize   = 2048,
+                SystemId      = "APPLE COMPUTER, INC., TYPE: 0002",
+                VolumeName    = "Untitled CD"
+            },
+            new FileSystemTest
+            {
+                TestFile      = "toast_4.0.3_iso9660_mac.aif",
+                MediaType     = MediaType.CD,
+                Sectors       = 300,
+                SectorSize    = 2048,
+                ApplicationId = "TOAST ISO 9660 BUILDER COPYRIGHT (C) 1997 ADAPTEC, INC. - HAVE A NICE DAY",
+                Clusters      = 220,
+                ClusterSize   = 2048,
+                SystemId      = "APPLE COMPUTER, INC., TYPE: 0002",
+                VolumeName    = "Untitled CD"
+            },
+            new FileSystemTest
+            {
+                TestFile   = "mkisofs_apple_rockrige.aif",
+                MediaType  = MediaType.CD,
+                Sectors    = 3662,
+                SectorSize = 2048,
+                ApplicationId =
+                    "MKISOFS ISO9660/HFS/UDF FILESYSTEM BUILDER & CDRECORD CD/DVD/BluRay CREATOR (C) 1993 E.YOUNGDALE (C) 1997 J.PEARSON/J.SCHILLING",
+                Clusters    = 3662,
+                ClusterSize = 2048,
+                SystemId    = "LINUX",
+                VolumeName  = "test"
+            },
+            new FileSystemTest
+            {
+                TestFile   = "mkisofs_apple_xa.aif",
+                MediaType  = MediaType.CD,
+                Sectors    = 3606,
+                SectorSize = 2048,
+                ApplicationId =
+                    "MKISOFS ISO9660/HFS/UDF FILESYSTEM BUILDER & CDRECORD CD/DVD/BluRay CREATOR (C) 1993 E.YOUNGDALE (C) 1997 J.PEARSON/J.SCHILLING",
+                Clusters    = 3606,
+                ClusterSize = 2048,
+                SystemId    = "LINUX",
+                VolumeName  = "test"
+            },
+            new FileSystemTest
+            {
+                TestFile   = "mkisofs_hybrid.aif",
+                MediaType  = MediaType.CD,
+                Sectors    = 3800,
+                SectorSize = 2048,
+                ApplicationId =
+                    "MKISOFS ISO9660/HFS/UDF FILESYSTEM BUILDER & CDRECORD CD/DVD/BluRay CREATOR (C) 1993 E.YOUNGDALE (C) 1997 J.PEARSON/J.SCHILLING",
+                Clusters    = 3800,
+                ClusterSize = 2048,
+                SystemId    = "LINUX",
+                VolumeName  = "test"
+            },
+            new FileSystemTest
+            {
+                TestFile   = "mkisofs_hybrid_nopart.aif",
+                MediaType  = MediaType.CD,
+                Sectors    = 3800,
+                SectorSize = 2048,
+                ApplicationId =
+                    "MKISOFS ISO9660/HFS/UDF FILESYSTEM BUILDER & CDRECORD CD/DVD/BluRay CREATOR (C) 1993 E.YOUNGDALE (C) 1997 J.PEARSON/J.SCHILLING",
+                Clusters    = 3800,
+                ClusterSize = 2048,
+                SystemId    = "LINUX",
+                VolumeName  = "test"
+            },
+            new FileSystemTest
+            {
+                TestFile   = "mkisofs_iso9660_level1_dirnest.aif",
+                MediaType  = MediaType.CD,
+                Sectors    = 2983,
+                SectorSize = 2048,
+                ApplicationId =
+                    "MKISOFS ISO9660/HFS/UDF FILESYSTEM BUILDER & CDRECORD CD/DVD/BluRay CREATOR (C) 1993 E.YOUNGDALE (C) 1997 J.PEARSON/J.SCHILLING",
+                Clusters    = 2983,
+                ClusterSize = 2048,
+                SystemId    = "LINUX",
+                VolumeName  = "CDROM"
+            },
+            new FileSystemTest
+            {
+                TestFile   = "mkisofs_iso9660_level1.aif",
+                MediaType  = MediaType.CD,
+                Sectors    = 2531,
+                SectorSize = 2048,
+                ApplicationId =
+                    "MKISOFS ISO9660/HFS/UDF FILESYSTEM BUILDER & CDRECORD CD/DVD/BluRay CREATOR (C) 1993 E.YOUNGDALE (C) 1997 J.PEARSON/J.SCHILLING",
+                Clusters    = 2531,
+                ClusterSize = 2048,
+                SystemId    = "LINUX",
+                VolumeName  = "CDROM"
+            },
+            new FileSystemTest
+            {
+                TestFile   = "mkisofs_iso9660_level2_dirnest.aif",
+                MediaType  = MediaType.CD,
+                Sectors    = 2983,
+                SectorSize = 2048,
+                ApplicationId =
+                    "MKISOFS ISO9660/HFS/UDF FILESYSTEM BUILDER & CDRECORD CD/DVD/BluRay CREATOR (C) 1993 E.YOUNGDALE (C) 1997 J.PEARSON/J.SCHILLING",
+                Clusters    = 2983,
+                ClusterSize = 2048,
+                SystemId    = "LINUX",
+                VolumeName  = "CDROM"
+            },
+            new FileSystemTest
+            {
+                TestFile   = "mkisofs_iso9660_level2.aif",
+                MediaType  = MediaType.CD,
+                Sectors    = 2531,
+                SectorSize = 2048,
+                ApplicationId =
+                    "MKISOFS ISO9660/HFS/UDF FILESYSTEM BUILDER & CDRECORD CD/DVD/BluRay CREATOR (C) 1993 E.YOUNGDALE (C) 1997 J.PEARSON/J.SCHILLING",
+                Clusters    = 2531,
+                ClusterSize = 2048,
+                SystemId    = "LINUX",
+                VolumeName  = "CDROM"
+            },
+            new FileSystemTest
+            {
+                TestFile   = "mkisofs_iso9660_level3_dirnest.aif",
+                MediaType  = MediaType.CD,
+                Sectors    = 2983,
+                SectorSize = 2048,
+                ApplicationId =
+                    "MKISOFS ISO9660/HFS/UDF FILESYSTEM BUILDER & CDRECORD CD/DVD/BluRay CREATOR (C) 1993 E.YOUNGDALE (C) 1997 J.PEARSON/J.SCHILLING",
+                Clusters    = 2983,
+                ClusterSize = 2048,
+                SystemId    = "LINUX",
+                VolumeName  = "CDROM"
+            },
+            new FileSystemTest
+            {
+                TestFile   = "mkisofs_iso9660_level3.aif",
+                MediaType  = MediaType.CD,
+                Sectors    = 2531,
+                SectorSize = 2048,
+                ApplicationId =
+                    "MKISOFS ISO9660/HFS/UDF FILESYSTEM BUILDER & CDRECORD CD/DVD/BluRay CREATOR (C) 1993 E.YOUNGDALE (C) 1997 J.PEARSON/J.SCHILLING",
+                Clusters    = 2531,
+                ClusterSize = 2048,
+                SystemId    = "LINUX",
+                VolumeName  = "CDROM"
+            },
+            new FileSystemTest
+            {
+                TestFile   = "mkisofs_iso9660_level4_dirnest.aif",
+                MediaType  = MediaType.CD,
+                Sectors    = 2894,
+                SectorSize = 2048,
+                ApplicationId =
+                    "MKISOFS ISO9660/HFS/UDF FILESYSTEM BUILDER & CDRECORD CD/DVD/BluRay CREATOR (C) 1993 E.YOUNGDALE (C) 1997 J.PEARSON/J.SCHILLING",
+                Clusters    = 2894,
+                ClusterSize = 2048,
+                SystemId    = "LINUX",
+                VolumeName  = "CDROM"
+            },
+            new FileSystemTest
+            {
+                TestFile   = "mkisofs_iso9660_level4.aif",
+                MediaType  = MediaType.CD,
+                Sectors    = 2894,
+                SectorSize = 2048,
+                ApplicationId =
+                    "MKISOFS ISO9660/HFS/UDF FILESYSTEM BUILDER & CDRECORD CD/DVD/BluRay CREATOR (C) 1993 E.YOUNGDALE (C) 1997 J.PEARSON/J.SCHILLING",
+                Clusters    = 2894,
+                ClusterSize = 2048,
+                SystemId    = "LINUX",
+                VolumeName  = "CDROM"
+            },
+            new FileSystemTest
+            {
+                TestFile   = "mkisofs_iso9660_udf_hybrid_dirnest.aif",
+                MediaType  = MediaType.CD,
+                Sectors    = 106589,
+                SectorSize = 2048,
+                ApplicationId =
+                    "MKISOFS ISO9660/HFS/UDF FILESYSTEM BUILDER & CDRECORD CD/DVD/BluRay CREATOR (C) 1993 E.YOUNGDALE (C) 1997 J.PEARSON/J.SCHILLING",
+                Clusters    = 106589,
+                ClusterSize = 2048,
+                SystemId    = "LINUX",
+                VolumeName  = "CDROM"
+            },
+            new FileSystemTest
+            {
+                TestFile   = "mkisofs_iso9660_udf_hybrid.aif",
+                MediaType  = MediaType.CD,
+                Sectors    = 105241,
+                SectorSize = 2048,
+                ApplicationId =
+                    "MKISOFS ISO9660/HFS/UDF FILESYSTEM BUILDER & CDRECORD CD/DVD/BluRay CREATOR (C) 1993 E.YOUNGDALE (C) 1997 J.PEARSON/J.SCHILLING",
+                Clusters    = 105241,
+                ClusterSize = 2048,
+                SystemId    = "LINUX",
+                VolumeName  = "CDROM"
+            },
+            new FileSystemTest
+            {
+                TestFile   = "mkisofs_joliet.aif",
+                MediaType  = MediaType.CD,
+                Sectors    = 5055,
+                SectorSize = 2048,
+                ApplicationId =
+                    "MKISOFS ISO9660/HFS/UDF FILESYSTEM BUILDER & CDRECORD CD/DVD/BluRay CREATOR (C) 1993 E.YOUNGDALE (C) 1997 J.PEARSON/J.SCHILLING",
+                Clusters    = 5055,
+                ClusterSize = 2048,
+                SystemId    = "LINUX",
+                VolumeName  = "CDROM"
+            },
+            new FileSystemTest
+            {
+                TestFile   = "mkisofs_joliet_level1.aif",
+                MediaType  = MediaType.CD,
+                Sectors    = 3651,
+                SectorSize = 2048,
+                ApplicationId =
+                    "MKISOFS ISO9660/HFS/UDF FILESYSTEM BUILDER & CDRECORD CD/DVD/BluRay CREATOR (C) 1993 E.YOUNGDALE (C) 1997 J.PEARSON/J.SCHILLING",
+                Clusters    = 3651,
+                ClusterSize = 2048,
+                SystemId    = "LINUX",
+                VolumeName  = "test"
+            },
+            new FileSystemTest
+            {
+                TestFile   = "mkisofs_joliet_level2.aif",
+                MediaType  = MediaType.CD,
+                Sectors    = 3651,
+                SectorSize = 2048,
+                ApplicationId =
+                    "MKISOFS ISO9660/HFS/UDF FILESYSTEM BUILDER & CDRECORD CD/DVD/BluRay CREATOR (C) 1993 E.YOUNGDALE (C) 1997 J.PEARSON/J.SCHILLING",
+                Clusters    = 3651,
+                ClusterSize = 2048,
+                SystemId    = "LINUX",
+                VolumeName  = "test"
+            },
+            new FileSystemTest
+            {
+                TestFile   = "mkisofs_joliet_level3.aif",
+                MediaType  = MediaType.CD,
+                Sectors    = 3651,
+                SectorSize = 2048,
+                ApplicationId =
+                    "MKISOFS ISO9660/HFS/UDF FILESYSTEM BUILDER & CDRECORD CD/DVD/BluRay CREATOR (C) 1993 E.YOUNGDALE (C) 1997 J.PEARSON/J.SCHILLING",
+                Clusters    = 3651,
+                ClusterSize = 2048,
+                SystemId    = "LINUX",
+                VolumeName  = "test"
+            },
+            new FileSystemTest
+            {
+                TestFile   = "mkisofs_joliet_violating.aif",
+                MediaType  = MediaType.CD,
+                Sectors    = 3651,
+                SectorSize = 2048,
+                ApplicationId =
+                    "MKISOFS ISO9660/HFS/UDF FILESYSTEM BUILDER & CDRECORD CD/DVD/BluRay CREATOR (C) 1993 E.YOUNGDALE (C) 1997 J.PEARSON/J.SCHILLING",
+                Clusters    = 3651,
+                ClusterSize = 2048,
+                SystemId    = "LINUX",
+                VolumeName  = "test"
+            },
+            new FileSystemTest
+            {
+                TestFile   = "mkisofs_level1.aif",
+                MediaType  = MediaType.CD,
+                Sectors    = 3637,
+                SectorSize = 2048,
+                ApplicationId =
+                    "MKISOFS ISO9660/HFS/UDF FILESYSTEM BUILDER & CDRECORD CD/DVD/BluRay CREATOR (C) 1993 E.YOUNGDALE (C) 1997 J.PEARSON/J.SCHILLING",
+                Clusters    = 3637,
+                ClusterSize = 2048,
+                SystemId    = "LINUX",
+                VolumeName  = "test"
+            },
+            new FileSystemTest
+            {
+                TestFile   = "mkisofs_level2.aif",
+                MediaType  = MediaType.CD,
+                Sectors    = 3637,
+                SectorSize = 2048,
+                ApplicationId =
+                    "MKISOFS ISO9660/HFS/UDF FILESYSTEM BUILDER & CDRECORD CD/DVD/BluRay CREATOR (C) 1993 E.YOUNGDALE (C) 1997 J.PEARSON/J.SCHILLING",
+                Clusters    = 3637,
+                ClusterSize = 2048,
+                SystemId    = "LINUX",
+                VolumeName  = "test"
+            },
+            new FileSystemTest
+            {
+                TestFile   = "mkisofs_level3.aif",
+                MediaType  = MediaType.CD,
+                Sectors    = 3637,
+                SectorSize = 2048,
+                ApplicationId =
+                    "MKISOFS ISO9660/HFS/UDF FILESYSTEM BUILDER & CDRECORD CD/DVD/BluRay CREATOR (C) 1993 E.YOUNGDALE (C) 1997 J.PEARSON/J.SCHILLING",
+                Clusters    = 3637,
+                ClusterSize = 2048,
+                SystemId    = "LINUX",
+                VolumeName  = "test"
+            },
+            new FileSystemTest
+            {
+                TestFile   = "mkisofs_level4.aif",
+                MediaType  = MediaType.CD,
+                Sectors    = 3689,
+                SectorSize = 2048,
+                ApplicationId =
+                    "MKISOFS ISO9660/HFS/UDF FILESYSTEM BUILDER & CDRECORD CD/DVD/BluRay CREATOR (C) 1993 E.YOUNGDALE (C) 1997 J.PEARSON/J.SCHILLING",
+                Clusters    = 3689,
+                ClusterSize = 2048,
+                SystemId    = "LINUX",
+                VolumeName  = "test"
+            },
+            new FileSystemTest
+            {
+                TestFile   = "mkisofs_rockridge_dirnest.aif",
+                MediaType  = MediaType.CD,
+                Sectors    = 7481,
+                SectorSize = 2048,
+                ApplicationId =
+                    "MKISOFS ISO9660/HFS/UDF FILESYSTEM BUILDER & CDRECORD CD/DVD/BluRay CREATOR (C) 1993 E.YOUNGDALE (C) 1997 J.PEARSON/J.SCHILLING",
+                Clusters    = 7481,
+                ClusterSize = 2048,
+                SystemId    = "LINUX",
+                VolumeName  = "CDROM"
+            },
+            new FileSystemTest
+            {
+                TestFile   = "mkisofs_rockridge.aif",
+                MediaType  = MediaType.CD,
+                Sectors    = 7487,
+                SectorSize = 2048,
+                ApplicationId =
+                    "MKISOFS ISO9660/HFS/UDF FILESYSTEM BUILDER & CDRECORD CD/DVD/BluRay CREATOR (C) 1993 E.YOUNGDALE (C) 1997 J.PEARSON/J.SCHILLING",
+                Clusters    = 7487,
+                ClusterSize = 2048,
+                SystemId    = "LINUX",
+                VolumeName  = "CDROM"
+            },
+            new FileSystemTest
+            {
+                TestFile   = "mkisofs_rockridge_old.aif",
+                MediaType  = MediaType.CD,
+                Sectors    = 3693,
+                SectorSize = 2048,
+                ApplicationId =
+                    "MKISOFS ISO9660/HFS/UDF FILESYSTEM BUILDER & CDRECORD CD/DVD/BluRay CREATOR (C) 1993 E.YOUNGDALE (C) 1997 J.PEARSON/J.SCHILLING",
+                Clusters    = 3693,
+                ClusterSize = 2048,
+                SystemId    = "LINUX",
+                VolumeName  = "test"
+            },
+            new FileSystemTest
+            {
+                TestFile   = "mkisofs_rockridge_rational.aif",
+                MediaType  = MediaType.CD,
+                Sectors    = 7487,
+                SectorSize = 2048,
+                ApplicationId =
+                    "MKISOFS ISO9660/HFS/UDF FILESYSTEM BUILDER & CDRECORD CD/DVD/BluRay CREATOR (C) 1993 E.YOUNGDALE (C) 1997 J.PEARSON/J.SCHILLING",
+                Clusters    = 7487,
+                ClusterSize = 2048,
+                SystemId    = "LINUX",
+                VolumeName  = "CDROM"
+            },
+            new FileSystemTest
+            {
+                TestFile   = "mkisofs_udf.aif",
+                MediaType  = MediaType.CD,
+                Sectors    = 3925,
+                SectorSize = 2048,
+                ApplicationId =
+                    "MKISOFS ISO9660/HFS/UDF FILESYSTEM BUILDER & CDRECORD CD/DVD/BluRay CREATOR (C) 1993 E.YOUNGDALE (C) 1997 J.PEARSON/J.SCHILLING",
+                Clusters    = 3925,
+                ClusterSize = 2048,
+                SystemId    = "LINUX",
+                VolumeName  = "test"
+            },
+            new FileSystemTest
+            {
+                TestFile   = "mkisofs_violating.aif",
+                MediaType  = MediaType.CD,
+                Sectors    = 3637,
+                SectorSize = 2048,
+                ApplicationId =
+                    "MKISOFS ISO9660/HFS/UDF FILESYSTEM BUILDER & CDRECORD CD/DVD/BluRay CREATOR (C) 1993 E.YOUNGDALE (C) 1997 J.PEARSON/J.SCHILLING",
+                Clusters    = 3637,
+                ClusterSize = 2048,
+                SystemId    = "LINUX",
+                VolumeName  = "test"
+            },
+            new FileSystemTest
+            {
+                TestFile   = "mkisofs_xa.aif",
+                MediaType  = MediaType.CD,
+                Sectors    = 3637,
+                SectorSize = 2048,
+                ApplicationId =
+                    "MKISOFS ISO9660/HFS/UDF FILESYSTEM BUILDER & CDRECORD CD/DVD/BluRay CREATOR (C) 1993 E.YOUNGDALE (C) 1997 J.PEARSON/J.SCHILLING",
+                Clusters    = 3637,
+                ClusterSize = 2048,
+                SystemId    = "LINUX",
+                VolumeName  = "test"
+            },
+            new FileSystemTest
+            {
+                TestFile   = "mkisofs_zisofs.aif",
+                MediaType  = MediaType.CD,
+                Sectors    = 3637,
+                SectorSize = 2048,
+                ApplicationId =
+                    "MKISOFS ISO9660/HFS/UDF FILESYSTEM BUILDER & CDRECORD CD/DVD/BluRay CREATOR (C) 1993 E.YOUNGDALE (C) 1997 J.PEARSON/J.SCHILLING",
+                Clusters    = 3637,
+                ClusterSize = 2048,
+                SystemId    = "LINUX",
+                VolumeName  = "test"
+            },
+            new FileSystemTest
+            {
+                TestFile   = "mkisofs_zisofs_rockridge.aif",
+                MediaType  = MediaType.CD,
+                Sectors    = 3693,
+                SectorSize = 2048,
+                ApplicationId =
+                    "MKISOFS ISO9660/HFS/UDF FILESYSTEM BUILDER & CDRECORD CD/DVD/BluRay CREATOR (C) 1993 E.YOUNGDALE (C) 1997 J.PEARSON/J.SCHILLING",
+                Clusters    = 3693,
+                ClusterSize = 2048,
+                SystemId    = "LINUX",
+                VolumeName  = "test"
+            },
+            new FileSystemTest
+            {
+                TestFile      = "neromax_iso_mode1_apple.aif",
+                MediaType     = MediaType.CD,
+                Sectors       = 389,
+                SectorSize    = 2048,
+                ApplicationId = "",
+                Clusters      = 389,
+                ClusterSize   = 2048,
+                SystemId      = "",
+                VolumeName    = "Root"
+            },
+            new FileSystemTest
+            {
+                TestFile      = "neromax_iso_mode1_joliet.aif",
+                MediaType     = MediaType.CD,
+                Sectors       = 417,
+                SectorSize    = 2048,
+                ApplicationId = "",
+                Clusters      = 417,
+                ClusterSize   = 2048,
+                SystemId      = "",
+                VolumeName    = "Root"
+            },
+            new FileSystemTest
+            {
+                TestFile      = "neromax_iso_mode1_level1.aif",
+                MediaType     = MediaType.CD,
+                Sectors       = 257,
+                SectorSize    = 2048,
+                ApplicationId = "",
+                Clusters      = 257,
+                ClusterSize   = 2048,
+                SystemId      = "",
+                VolumeName    = "Root"
+            },
+            new FileSystemTest
+            {
+                TestFile      = "neromax_iso_mode1_level2.aif",
+                MediaType     = MediaType.CD,
+                Sectors       = 266,
+                SectorSize    = 2048,
+                ApplicationId = "",
+                Clusters      = 266,
+                ClusterSize   = 2048,
+                SystemId      = "",
+                VolumeName    = "Root"
+            },
+            new FileSystemTest
+            {
+                TestFile      = "xorriso_hybrid.aif",
+                MediaType     = MediaType.CD,
+                Sectors       = 3688,
+                SectorSize    = 2048,
+                ApplicationId = "",
+                Clusters      = 3688,
+                ClusterSize   = 2048,
+                SystemId      = "",
+                VolumeName    = "test"
+            },
+            new FileSystemTest
+            {
+                TestFile      = "xorriso_joliet.aif",
+                MediaType     = MediaType.CD,
+                Sectors       = 3686,
+                SectorSize    = 2048,
+                ApplicationId = "",
+                Clusters      = 3686,
+                ClusterSize   = 2048,
+                SystemId      = "",
+                VolumeName    = "test"
+            },
+            new FileSystemTest
+            {
+                TestFile      = "xorriso_joliet_utf.aif",
+                MediaType     = MediaType.CD,
+                Sectors       = 3686,
+                SectorSize    = 2048,
+                ApplicationId = "",
+                Clusters      = 3686,
+                ClusterSize   = 2048,
+                SystemId      = "",
+                VolumeName    = "test"
+            },
+            new FileSystemTest
+            {
+                TestFile      = "xorriso_joliet_violating.aif",
+                MediaType     = MediaType.CD,
+                Sectors       = 3686,
+                SectorSize    = 2048,
+                ApplicationId = "",
+                Clusters      = 3686,
+                ClusterSize   = 2048,
+                SystemId      = "",
+                VolumeName    = "test"
+            },
+            new FileSystemTest
+            {
+                TestFile      = "xorriso_level1.aif",
+                MediaType     = MediaType.CD,
+                Sectors       = 3673,
+                SectorSize    = 2048,
+                ApplicationId = "",
+                Clusters      = 3673,
+                ClusterSize   = 2048,
+                SystemId      = "",
+                VolumeName    = "test"
+            },
+            new FileSystemTest
+            {
+                TestFile      = "xorriso_level2.aif",
+                MediaType     = MediaType.CD,
+                Sectors       = 3673,
+                SectorSize    = 2048,
+                ApplicationId = "",
+                Clusters      = 3673,
+                ClusterSize   = 2048,
+                SystemId      = "",
+                VolumeName    = "test"
+            },
+            new FileSystemTest
+            {
+                TestFile      = "xorriso_level3.aif",
+                MediaType     = MediaType.CD,
+                Sectors       = 3673,
+                SectorSize    = 2048,
+                ApplicationId = "",
+                Clusters      = 3673,
+                ClusterSize   = 2048,
+                SystemId      = "",
+                VolumeName    = "test"
+            },
+            new FileSystemTest
+            {
+                TestFile      = "xorriso_level4.aif",
+                MediaType     = MediaType.CD,
+                Sectors       = 3686,
+                SectorSize    = 2048,
+                ApplicationId = "",
+                Clusters      = 3686,
+                ClusterSize   = 2048,
+                SystemId      = "",
+                VolumeName    = "test"
+            },
+            new FileSystemTest
+            {
+                TestFile      = "xorriso_rockridge.aif",
+                MediaType     = MediaType.CD,
+                Sectors       = 3675,
+                SectorSize    = 2048,
+                ApplicationId = "",
+                Clusters      = 3675,
+                ClusterSize   = 2048,
+                SystemId      = "",
+                VolumeName    = "test"
+            },
+            new FileSystemTest
+            {
+                TestFile      = "xorriso_violating.aif",
+                MediaType     = MediaType.CD,
+                Sectors       = 3673,
+                SectorSize    = 2048,
+                ApplicationId = "",
+                Clusters      = 3673,
+                ClusterSize   = 2048,
+                SystemId      = "",
+                VolumeName    = "test"
+            },
+            new FileSystemTest
+            {
+                TestFile      = "xorriso_zisofs.aif",
+                MediaType     = MediaType.CD,
+                Sectors       = 3673,
+                SectorSize    = 2048,
+                ApplicationId = "",
+                Clusters      = 3673,
+                ClusterSize   = 2048,
+                SystemId      = "",
+                VolumeName    = "test"
+            },
+            new FileSystemTest
+            {
+                TestFile      = "xorriso_zisofs_rockridge.aif",
+                MediaType     = MediaType.CD,
+                Sectors       = 3675,
+                SectorSize    = 2048,
+                ApplicationId = "",
+                Clusters      = 3675,
+                ClusterSize   = 2048,
+                SystemId      = "",
+                VolumeName    = "test"
+            }
         };
     }
 }

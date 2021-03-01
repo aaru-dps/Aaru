@@ -44,54 +44,52 @@ namespace Aaru.Tests.Filesystems
         public override IFilesystem _plugin     => new Reiser();
         public override bool        _partitions => true;
 
-        public override string[] _testFiles => new[]
+        public override FileSystemTest[] Tests => new[]
         {
-            "linux_r3.5.aif", "linux_r3.6.aif", "linux_4.19_reiser_3.5_flashdrive.aif",
-            "linux_4.19_reiser_3.6_flashdrive.aif"
-        };
-
-        public override MediaType[] _mediaTypes => new[]
-        {
-            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD
-        };
-
-        public override ulong[] _sectors => new ulong[]
-        {
-            262144, 262144, 1024000, 1024000
-        };
-
-        public override uint[] _sectorSize => new uint[]
-        {
-            512, 512, 512, 512
-        };
-
-        public override string[] _appId => null;
-        public override bool[] _bootable => new[]
-        {
-            false, false, false, false
-        };
-
-        public override long[] _clusters => new long[]
-        {
-            32512, 32512, 127744, 127744
-        };
-
-        public override uint[] _clusterSize => new uint[]
-        {
-            4096, 4096, 4096, 4096
-        };
-        public override string[] _oemId => null;
-        public override string[] _type => new[]
-        {
-            "Reiser 3.5 filesystem", "Reiser 3.6 filesystem", "Reiser 3.5 filesystem", "Reiser 3.6 filesystem"
-        };
-        public override string[] _volumeName => new[]
-        {
-            null, "Volume label", null, "DicSetter"
-        };
-        public override string[] _volumeSerial => new[]
-        {
-            null, "844155c0-c854-d34e-8133-26ffac2e7b5d", null, "8902ac3c-3e0c-4c4c-84ec-03405c1710f1"
+            new FileSystemTest
+            {
+                TestFile    = "linux_r3.5.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 262144,
+                SectorSize  = 512,
+                Clusters    = 32512,
+                ClusterSize = 4096,
+                Type        = "Reiser 3.5 filesystem"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "linux_r3.6.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Clusters     = 32512,
+                ClusterSize  = 4096,
+                Type         = "Reiser 3.6 filesystem",
+                VolumeName   = "Volume label",
+                VolumeSerial = "844155c0-c854-d34e-8133-26ffac2e7b5d"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "linux_4.19_reiser_3.5_flashdrive.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 1024000,
+                SectorSize  = 512,
+                Clusters    = 127744,
+                ClusterSize = 4096,
+                Type        = "Reiser 3.5 filesystem"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "linux_4.19_reiser_3.6_flashdrive.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024000,
+                SectorSize   = 512,
+                Clusters     = 127744,
+                ClusterSize  = 4096,
+                Type         = "Reiser 3.6 filesystem",
+                VolumeName   = "DicSetter",
+                VolumeSerial = "8902ac3c-3e0c-4c4c-84ec-03405c1710f1"
+            }
         };
     }
 }

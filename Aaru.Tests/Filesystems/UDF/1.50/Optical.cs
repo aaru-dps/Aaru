@@ -43,59 +43,21 @@ namespace Aaru.Tests.Filesystems.UDF._150
         public override IFilesystem _plugin     => new Aaru.Filesystems.UDF();
         public override bool        _partitions => false;
 
-        public override string[] _testFiles => new[]
+        public override FileSystemTest[] Tests => new[]
         {
-            "ecs20.aif"
-        };
-        public override MediaType[] _mediaTypes => new[]
-        {
-            MediaType.DVDPR
-        };
-
-        public override ulong[] _sectors => new ulong[]
-        {
-            2295104
-        };
-
-        public override uint[] _sectorSize => new uint[]
-        {
-            2048
-        };
-
-        public override string[] _appId => null;
-        public override bool[] _bootable => new[]
-        {
-            false
-        };
-
-        public override long[] _clusters => new long[]
-        {
-            2295104
-        };
-
-        public override uint[] _clusterSize => new uint[]
-        {
-            2048
-        };
-
-        public override string[] _oemId => new[]
-        {
-            "*ExpressUDF"
-        };
-
-        public override string[] _type => new[]
-        {
-            "UDF v2.01"
-        };
-
-        public override string[] _volumeName => new[]
-        {
-            "Volume label"
-        };
-
-        public override string[] _volumeSerial => new[]
-        {
-            "Volume Set ID not specified"
+            new FileSystemTest
+            {
+                TestFile     = "ecs20.aif",
+                MediaType    = MediaType.DVDPR,
+                Sectors      = 2295104,
+                SectorSize   = 2048,
+                Clusters     = 2295104,
+                ClusterSize  = 2048,
+                SystemId     = "*ExpressUDF",
+                Type         = "UDF v2.01",
+                VolumeName   = "Volume label",
+                VolumeSerial = "Volume Set ID not specified"
+            }
         };
     }
 }

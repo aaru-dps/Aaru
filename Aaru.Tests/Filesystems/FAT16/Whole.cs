@@ -44,91 +44,30 @@ namespace Aaru.Tests.Filesystems.FAT16
         public override IFilesystem _plugin     => new FAT();
         public override bool        _partitions => false;
 
-        public override string[] _testFiles => new[]
+        public override FileSystemTest[] Tests => new[]
         {
-            // MS-DOS 3.30A
-            "msdos_3.30A_mf2ed.img.lz",
-
-            // MS-DOS 3.31
-            "msdos_3.31_mf2ed.img.lz"
-        };
-
-        public override MediaType[] _mediaTypes => new[]
-        {
-            // MS-DOS 3.30A
-            MediaType.DOS_35_ED,
-
-            // MS-DOS 3.31
-            MediaType.DOS_35_ED
-        };
-
-        public override ulong[] _sectors => new ulong[]
-        {
-            // MS-DOS 3.30A
-            5760,
-
-            // MS-DOS 3.31
-            5760
-        };
-
-        public override uint[] _sectorSize => new uint[]
-        {
-            // MS-DOS 3.30A
-            512,
-
-            // MS-DOS 3.31
-            512
-        };
-
-        public override string[] _appId => null;
-        public override bool[] _bootable => new[]
-        {
-            true, true
-        };
-
-        public override long[] _clusters => new long[]
-        {
-            // MS-DOS 3.30A
-            5760,
-
-            // MS-DOS 3.31
-            5760
-        };
-
-        public override uint[] _clusterSize => new uint[]
-        {
-            // MS-DOS 3.30A
-            512,
-
-            // MS-DOS 3.31
-            512
-        };
-        public override string[] _oemId => new[]
-        {
-            // MS-DOS 3.30A
-            "MSDOS3.3",
-
-            // MS-DOS 3.31
-            "IBM  3.3"
-        };
-        public override string[] _type => null;
-
-        public override string[] _volumeName => new string[]
-        {
-            // MS-DOS 3.30A
-            null,
-
-            // MS-DOS 3.31
-            null
-        };
-
-        public override string[] _volumeSerial => new string[]
-        {
-            // MS-DOS 3.30A
-            null,
-
-            // MS-DOS 3.31
-            null
+            new FileSystemTest
+            {
+                TestFile    = "msdos_3.30A_mf2ed.img.lz",
+                MediaType   = MediaType.ECMA_147,
+                Sectors     = 5760,
+                SectorSize  = 512,
+                Bootable    = true,
+                Clusters    = 5760,
+                ClusterSize = 512,
+                SystemId    = "MSDOS3.3"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "msdos_3.31_mf2ed.img.lz",
+                MediaType   = MediaType.ECMA_147,
+                Sectors     = 5760,
+                SectorSize  = 512,
+                Bootable    = true,
+                Clusters    = 5760,
+                ClusterSize = 512,
+                SystemId    = "IBM  3.3"
+            }
         };
     }
 }

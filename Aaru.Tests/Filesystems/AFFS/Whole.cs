@@ -45,51 +45,30 @@ namespace Aaru.Tests.Filesystems.AFFS
         public override IFilesystem _plugin     => new AmigaDOSPlugin();
         public override bool        _partitions => false;
 
-        public override string[] _testFiles => new[]
+        public override FileSystemTest[] Tests => new[]
         {
-            "amigaos_3.9.adf.lz", "amigaos_3.9_intl.adf.lz"
-        };
-
-        public override MediaType[] _mediaTypes => new[]
-        {
-            MediaType.CBM_AMIGA_35_DD, MediaType.CBM_AMIGA_35_DD
-        };
-
-        public override ulong[] _sectors => new ulong[]
-        {
-            1760, 1760
-        };
-
-        public override uint[] _sectorSize => new uint[]
-        {
-            512, 512
-        };
-        public override string[] _appId => null;
-        public override bool[] _bootable => new[]
-        {
-            false, false
-        };
-
-        public override long[] _clusters => new long[]
-        {
-            1760, 1760
-        };
-
-        public override uint[] _clusterSize => new uint[]
-        {
-            512, 512
-        };
-        public override string[] _oemId => null;
-        public override string[] _type  => null;
-
-        public override string[] _volumeName => new[]
-        {
-            "Volume label", "Volume label"
-        };
-
-        public override string[] _volumeSerial => new[]
-        {
-            "A5D9FAE2", "A5DA0CC9"
+            new FileSystemTest
+            {
+                TestFile     = "amigaos_3.9.adf.lz",
+                MediaType    = MediaType.CBM_AMIGA_35_DD,
+                Sectors      = 1760,
+                SectorSize   = 512,
+                Clusters     = 1760,
+                ClusterSize  = 512,
+                VolumeName   = "Volume label",
+                VolumeSerial = "A5D9FAE2"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "amigaos_3.9_intl.adf.lz",
+                MediaType    = MediaType.CBM_AMIGA_35_DD,
+                Sectors      = 1760,
+                SectorSize   = 512,
+                Clusters     = 1760,
+                ClusterSize  = 512,
+                VolumeName   = "Volume label",
+                VolumeSerial = "A5DA0CC9"
+            }
         };
     }
 }

@@ -44,53 +44,28 @@ namespace Aaru.Tests.Filesystems.MINIX.V2
         public override IFilesystem _plugin     => new MinixFS();
         public override bool        _partitions => true;
 
-        public override string[] _testFiles => new[]
+        public override FileSystemTest[] Tests => new[]
         {
-            "minix_3.1.2a.aif", "linux_4.19_minix2_flashdrive.aif"
-        };
-        public override MediaType[] _mediaTypes => new[]
-        {
-            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD
-        };
-
-        public override ulong[] _sectors => new ulong[]
-        {
-            1024000, 1024000
-        };
-
-        public override uint[] _sectorSize => new uint[]
-        {
-            512, 512
-        };
-
-        public override string[] _appId => null;
-        public override bool[] _bootable => new[]
-        {
-            false, false
-        };
-
-        public override long[] _clusters => new long[]
-        {
-            511055, 510976
-        };
-
-        public override uint[] _clusterSize => new uint[]
-        {
-            1024, 1024
-        };
-        public override string[] _oemId => null;
-
-        public override string[] _type => new[]
-        {
-            "Minix 3 v2", "Minix v2"
-        };
-        public override string[] _volumeName => new string[]
-        {
-            null, null
-        };
-        public override string[] _volumeSerial => new string[]
-        {
-            null, null
+            new FileSystemTest
+            {
+                TestFile    = "minix_3.1.2a.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 1024000,
+                SectorSize  = 512,
+                Clusters    = 511055,
+                ClusterSize = 1024,
+                Type        = "Minix 3 v2"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "linux_4.19_minix2_flashdrive.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 1024000,
+                SectorSize  = 512,
+                Clusters    = 510976,
+                ClusterSize = 1024,
+                Type        = "Minix v2"
+            }
         };
     }
 }

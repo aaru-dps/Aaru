@@ -43,61 +43,60 @@ namespace Aaru.Tests.Filesystems.UDF._201
         public override IFilesystem _plugin     => new Aaru.Filesystems.UDF();
         public override bool        _partitions => false;
 
-        public override string[] _testFiles => new[]
+        public override FileSystemTest[] Tests => new[]
         {
-            "linux.aif", "macosx_10.11.aif", "netbsd_7.1.aif", "linux_4.19_udf_2.01_flashdrive.aif"
-        };
-        public override MediaType[] _mediaTypes => new[]
-        {
-            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD
-        };
-
-        public override ulong[] _sectors => new ulong[]
-        {
-            1024000, 819200, 8388608, 1024000
-        };
-
-        public override string[] _appId => null;
-        public override uint[] _sectorSize => new uint[]
-        {
-            512, 512, 512, 512
-        };
-
-        public override bool[] _bootable => new[]
-        {
-            false, false, false, false
-        };
-
-        public override long[] _clusters => new long[]
-        {
-            1024000, 819200, 8388608, 1024000
-        };
-
-        public override uint[] _clusterSize => new uint[]
-        {
-            512, 512, 512, 512
-        };
-
-        public override string[] _oemId => new[]
-        {
-            "*Linux UDFFS", "*Apple Mac OS X UDF FS", "*NetBSD userland UDF", "*Linux UDFFS"
-        };
-
-        public override string[] _type => new[]
-
-        {
-            "UDF v2.01", "UDF v2.01", "UDF v2.01", "UDF v2.01"
-        };
-
-        public override string[] _volumeName => new[]
-        {
-            "Volume label", "Volume label", "anonymous", "DicSetter"
-        };
-
-        public override string[] _volumeSerial => new[]
-        {
-            "595c5d0bee60c3bbLinuxUDF", "48847EB3 (Mac OS X newfs_udf) UDF Volume Set", "7cc94d726669d773",
-            "5cc8816fcb3a3b38LinuxUDF"
+            new FileSystemTest
+            {
+                TestFile     = "linux.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024000,
+                SectorSize   = 512,
+                Clusters     = 1024000,
+                ClusterSize  = 512,
+                SystemId     = "*Linux UDFFS",
+                Type         = "UDF v2.01",
+                VolumeName   = "Volume label",
+                VolumeSerial = "595c5d0bee60c3bbLinuxUDF"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "macosx_10.11.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 819200,
+                SectorSize   = 512,
+                Clusters     = 819200,
+                ClusterSize  = 512,
+                SystemId     = "*Apple Mac OS X UDF FS",
+                Type         = "UDF v2.01",
+                VolumeName   = "Volume label",
+                VolumeSerial = "48847EB3 (Mac OS X newfs_udf) UDF Volume Set"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "netbsd_7.1.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 8388608,
+                SectorSize   = 512,
+                Clusters     = 8388608,
+                ClusterSize  = 512,
+                SystemId     = "*NetBSD userland UDF",
+                Type         = "UDF v2.01",
+                VolumeName   = "anonymous",
+                VolumeSerial = "7cc94d726669d773"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "linux_4.19_udf_2.01_flashdrive.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024000,
+                SectorSize   = 512,
+                Clusters     = 1024000,
+                ClusterSize  = 512,
+                SystemId     = "*Linux UDFFS",
+                Type         = "UDF v2.01",
+                VolumeName   = "DicSetter",
+                VolumeSerial = "5cc8816fcb3a3b38LinuxUDF"
+            }
         };
     }
 }

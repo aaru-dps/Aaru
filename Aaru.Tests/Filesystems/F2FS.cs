@@ -43,50 +43,30 @@ namespace Aaru.Tests.Filesystems
         public override IFilesystem _plugin     => new F2FS();
         public override bool        _partitions => true;
 
-        public override string[] _testFiles => new[]
+        public override FileSystemTest[] Tests => new[]
         {
-            "linux.aif", "linux_4.19_f2fs_flashdrive.aif"
-        };
-
-        public override MediaType[] _mediaTypes => new[]
-        {
-            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD
-        };
-        public override ulong[] _sectors => new ulong[]
-        {
-            262144, 2097152
-        };
-
-        public override uint[] _sectorSize => new uint[]
-        {
-            512, 512
-        };
-        public override string[] _appId => null;
-        public override bool[] _bootable => new[]
-        {
-            false, false
-        };
-
-        public override long[] _clusters => new long[]
-        {
-            32512, 261888
-        };
-
-        public override uint[] _clusterSize => new uint[]
-        {
-            4096, 4096
-        };
-        public override string[] _oemId => null;
-        public override string[] _type  => null;
-
-        public override string[] _volumeName => new[]
-        {
-            "VolumeLabel", "DicSetter"
-        };
-
-        public override string[] _volumeSerial => new[]
-        {
-            "81bd3a4e-de0c-484c-becc-aaa479b2070a", "422bd2a8-68ab-6f45-9a04-9c264d07dd6e"
+            new FileSystemTest
+            {
+                TestFile     = "linux.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Clusters     = 32512,
+                ClusterSize  = 4096,
+                VolumeName   = "VolumeLabel",
+                VolumeSerial = "81bd3a4e-de0c-484c-becc-aaa479b2070a"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "linux_4.19_f2fs_flashdrive.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 2097152,
+                SectorSize   = 512,
+                Clusters     = 261888,
+                ClusterSize  = 4096,
+                VolumeName   = "DicSetter",
+                VolumeSerial = "422bd2a8-68ab-6f45-9a04-9c264d07dd6e"
+            }
         };
     }
 }

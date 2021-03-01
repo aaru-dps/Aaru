@@ -44,57 +44,83 @@ namespace Aaru.Tests.Filesystems.HFSX
         public override IFilesystem _plugin     => new AppleHFSPlus();
         public override bool        _partitions => true;
 
-        public override string[] _testFiles => new[]
+        public override FileSystemTest[] Tests => new[]
         {
-            "macosx_10.11.aif", "macosx_10.11_journal.aif", "linux.aif", "linux_journal.aif",
-            "darwin_8.0.1_journal.aif", "darwin_8.0.1.aif", "linux_4.19_hfsx_flashdrive.aif"
-        };
-        public override MediaType[] _mediaTypes => new[]
-        {
-            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD,
-            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD
-        };
-
-        public override ulong[] _sectors => new ulong[]
-        {
-            393216, 409600, 262144, 262144, 1638400, 1433600, 1024000
-        };
-
-        public override uint[] _sectorSize => new uint[]
-        {
-            512, 512, 512, 512, 512, 512, 512
-        };
-
-        public override string[] _appId => null;
-        public override bool[] _bootable => new[]
-        {
-            false, false, false, false, false, false, false
-        };
-
-        public override long[] _clusters => new long[]
-        {
-            49140, 51187, 32512, 32512, 204792, 179192, 127744
-        };
-
-        public override uint[] _clusterSize => new uint[]
-        {
-            4096, 4096, 4096, 4096, 4096, 4096, 4096
-        };
-        public override string[] _oemId => new[]
-        {
-            "10.0", "HFSJ", "10.0", "10.0", "10.0", "10.0", "H+Lx"
-        };
-        public override string[] _type => null;
-
-        public override string[] _volumeName => new string[]
-        {
-            null, null, null, null, null, null, null
-        };
-
-        public override string[] _volumeSerial => new[]
-        {
-            "C2BCCCE6DE5BC98D", "AC54CD78C75CC30F", null, null, "7559DD01BCFADD9A", "AEA39CFBBF14C0FF",
-            "5E4A8781D3C9286C"
+            new FileSystemTest
+            {
+                TestFile     = "macosx_10.11.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 393216,
+                SectorSize   = 512,
+                Clusters     = 49140,
+                ClusterSize  = 4096,
+                SystemId     = "10.0",
+                VolumeSerial = "C2BCCCE6DE5BC98D"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "macosx_10.11_journal.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 409600,
+                SectorSize   = 512,
+                Clusters     = 51187,
+                ClusterSize  = 4096,
+                SystemId     = "HFSJ",
+                VolumeSerial = "AC54CD78C75CC30F"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "linux.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 262144,
+                SectorSize  = 512,
+                Clusters    = 32512,
+                ClusterSize = 4096,
+                SystemId    = "10.0"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "linux_journal.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 262144,
+                SectorSize  = 512,
+                Clusters    = 32512,
+                ClusterSize = 4096,
+                SystemId    = "10.0"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "darwin_8.0.1_journal.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1638400,
+                SectorSize   = 512,
+                Clusters     = 204792,
+                ClusterSize  = 4096,
+                SystemId     = "10.0",
+                VolumeSerial = "7559DD01BCFADD9A"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "darwin_8.0.1.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1433600,
+                SectorSize   = 512,
+                Clusters     = 179192,
+                ClusterSize  = 4096,
+                SystemId     = "10.0",
+                VolumeSerial = "AEA39CFBBF14C0FF"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "linux_4.19_hfsx_flashdrive.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 1024000,
+                SectorSize   = 512,
+                Clusters     = 127744,
+                ClusterSize  = 4096,
+                SystemId     = "H+Lx",
+                VolumeSerial = "5E4A8781D3C9286C"
+            }
         };
     }
 }
