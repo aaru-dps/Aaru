@@ -26,7 +26,6 @@
 // Copyright © 2011-2021 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
@@ -133,8 +132,5 @@ namespace Aaru.Tests.Filesystems
                 Assert.AreEqual(_oemId[i], fs.XmlFsType.SystemIdentifier, _testFiles[i]);
             }
         }
-
-        [Test]
-        public void TestContents() => throw new NotImplementedException();
     }
 }
