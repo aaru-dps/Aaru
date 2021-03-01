@@ -295,10 +295,11 @@ namespace Aaru.Filesystems
                 FilesSpecified = true,
                 VolumeName = StringHandlers.DecompressUnicode(lvd.logicalVolumeIdentifier),
                 VolumeSetIdentifier = StringHandlers.DecompressUnicode(pvd.volumeSetIdentifier),
+                VolumeSerial = StringHandlers.DecompressUnicode(pvd.volumeSetIdentifier),
                 SystemIdentifier = Encoding.GetString(pvd.implementationIdentifier.identifier).TrimEnd('\u0000')
             };
 
-            XmlFsType.Clusters = (((partition.End - partition.Start) + 1) * imagePlugin.Info.SectorSize) /
+            XmlFsType.Clusters = (partition.End - partition.Start + 1) * imagePlugin.Info.SectorSize /
                                  XmlFsType.ClusterSize;
 
             information = sbInformation.ToString();
