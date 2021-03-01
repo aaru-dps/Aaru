@@ -38,7 +38,7 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems
 {
     [TestFixture]
-    public class HammerMbr
+    public class Hammer
     {
         readonly string[] _testFiles =
         {

@@ -2,7 +2,7 @@
 // Aaru Data Preservation Suite
 // ----------------------------------------------------------------------------
 //
-// Filename       : Xia.cs
+// Filename       : UFS.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // Component      : Aaru unit testing.
@@ -31,47 +31,53 @@ using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.DiscImages;
+using Aaru.Filesystems;
 using Aaru.Filters;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Filesystems
+namespace Aaru.Tests.Filesystems.UFS
 {
     [TestFixture]
-    public class Xia
+    public class Sun_i86
     {
         readonly string[] _testFiles =
         {
-            "linux.aif", "linux-files.aif"
+            "solaris_7.aif"
         };
 
         readonly ulong[] _sectors =
         {
-            1024000, 2048000
+            4194304
         };
 
         readonly uint[] _sectorSize =
         {
-            512, 512
+            512
         };
 
         readonly long[] _clusters =
         {
-            511528, 1023088
+            2063376
         };
 
         readonly int[] _clusterSize =
         {
-            1024, 1024
+            1024
         };
 
         readonly string[] _volumeName =
         {
-            null, null
+            null
         };
 
         readonly string[] _volumeSerial =
         {
-            null, null
+            null
+        };
+
+        readonly string[] _type =
+        {
+            "UFS"
         };
 
         [Test]
@@ -79,19 +85,21 @@ namespace Aaru.Tests.Filesystems
         {
             for(int i = 0; i < _testFiles.Length; i++)
             {
-                string  location = Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Xia filesystem", _testFiles[i]);
-                IFilter filter   = new ZZZNoFilter();
+                string location = Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "UNIX filesystem (SunOS x86)",
+                                               _testFiles[i]);
+
+                IFilter filter = new ZZZNoFilter();
                 filter.Open(location);
                 IMediaImage image = new AaruFormat();
                 Assert.AreEqual(true, image.Open(filter), _testFiles[i]);
                 Assert.AreEqual(_sectors[i], image.Info.Sectors, _testFiles[i]);
                 Assert.AreEqual(_sectorSize[i], image.Info.SectorSize, _testFiles[i]);
                 List<Partition> partitions = Core.Partitions.GetAll(image);
-                IFilesystem     fs         = new Aaru.Filesystems.Xia();
+                IFilesystem     fs         = new FFSPlugin();
                 int             part       = -1;
 
                 for(int j = 0; j < partitions.Count; j++)
-                    if(partitions[j].Type == "0x83")
+                    if(partitions[j].Type == "Replacement sectors")
                     {
                         part = j;
 
@@ -103,7 +111,7 @@ namespace Aaru.Tests.Filesystems
                 fs.GetInformation(image, partitions[part], out _, null);
                 Assert.AreEqual(_clusters[i], fs.XmlFsType.Clusters, _testFiles[i]);
                 Assert.AreEqual(_clusterSize[i], fs.XmlFsType.ClusterSize, _testFiles[i]);
-                Assert.AreEqual("Xia filesystem", fs.XmlFsType.Type, _testFiles[i]);
+                Assert.AreEqual(_type[i], fs.XmlFsType.Type, _testFiles[i]);
                 Assert.AreEqual(_volumeName[i], fs.XmlFsType.VolumeName, _testFiles[i]);
                 Assert.AreEqual(_volumeSerial[i], fs.XmlFsType.VolumeSerial, _testFiles[i]);
             }

@@ -38,7 +38,7 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems
 {
     [TestFixture]
-    public class AtheosMbr
+    public class Atheos
     {
         readonly string[] _testFiles =
         {

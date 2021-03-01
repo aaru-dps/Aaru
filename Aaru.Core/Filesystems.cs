@@ -46,12 +46,13 @@ namespace Aaru.Core
         /// <param name="imagePlugin">Media image</param>
         /// <param name="idPlugins">List of plugins recognizing the filesystem</param>
         /// <param name="partition">Partition</param>
-        public static void Identify(IMediaImage imagePlugin, out List<string> idPlugins, Partition partition)
+        public static void Identify(IMediaImage imagePlugin, out List<string> idPlugins, Partition partition,
+                                    bool getGuid = false)
         {
             PluginBase plugins = GetPluginBase.Instance;
 
             idPlugins = (from plugin in plugins.PluginsList.Values where plugin.Identify(imagePlugin, partition)
-                         select plugin.Name.ToLower()).ToList();
+                         select getGuid ? plugin.Id.ToString() : plugin.Name.ToLower()).ToList();
         }
     }
 }

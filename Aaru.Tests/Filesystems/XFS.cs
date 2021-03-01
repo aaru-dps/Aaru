@@ -31,14 +31,13 @@ using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.DiscImages;
-using Aaru.Filesystems;
 using Aaru.Filters;
 using NUnit.Framework;
 
 namespace Aaru.Tests.Filesystems
 {
     [TestFixture]
-    public class XfsMbr
+    public class XFS
     {
         readonly string[] _testFiles =
         {
@@ -88,7 +87,7 @@ namespace Aaru.Tests.Filesystems
                 Assert.AreEqual(_sectors[i], image.Info.Sectors, _testFiles[i]);
                 Assert.AreEqual(_sectorSize[i], image.Info.SectorSize, _testFiles[i]);
                 List<Partition> partitions = Core.Partitions.GetAll(image);
-                IFilesystem     fs         = new XFS();
+                IFilesystem     fs         = new Aaru.Filesystems.XFS();
                 int             part       = -1;
 
                 for(int j = 0; j < partitions.Count; j++)

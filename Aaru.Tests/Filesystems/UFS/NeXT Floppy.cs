@@ -2,7 +2,7 @@
 // Aaru Data Preservation Suite
 // ----------------------------------------------------------------------------
 //
-// Filename       : Xia.cs
+// Filename       : UFS.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // Component      : Aaru unit testing.
@@ -31,47 +31,56 @@ using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.DiscImages;
+using Aaru.Filesystems;
 using Aaru.Filters;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Filesystems
+namespace Aaru.Tests.Filesystems.UFS
 {
     [TestFixture]
-    public class Xia
+    public class NeXT_Floppy
     {
         readonly string[] _testFiles =
         {
-            "linux.aif", "linux-files.aif"
+            "nextstep_3.3_mf2dd.img.lz", "nextstep_3.3_mf2hd.img.lz", "openstep_4.0_mf2dd.img.lz",
+            "openstep_4.0_mf2hd.img.lz", "openstep_4.2_mf2dd.img.lz", "openstep_4.2_mf2hd.img.lz",
+            "rhapsody_dr1_mf2dd.img.lz", "rhapsody_dr1_mf2hd.img.lz", "rhapsody_dr2_mf2dd.img.lz",
+            "rhapsody_dr2_mf2hd.img.lz"
         };
 
         readonly ulong[] _sectors =
         {
-            1024000, 2048000
+            1440, 2880, 1440, 2880, 1440, 2880, 1440, 2880, 1440, 2880
         };
 
         readonly uint[] _sectorSize =
         {
-            512, 512
+            512, 512, 512, 512, 512, 512, 512, 512, 512, 512
         };
 
         readonly long[] _clusters =
         {
-            511528, 1023088
+            624, 1344, 624, 1344, 624, 1344, 624, 1344, 624, 1344
         };
 
         readonly int[] _clusterSize =
         {
-            1024, 1024
+            1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024
         };
 
         readonly string[] _volumeName =
         {
-            null, null
+            null, null, null, null, null, null, null, null, null, null
         };
 
         readonly string[] _volumeSerial =
         {
-            null, null
+            null, null, null, null, null, null, null, null, null, null
+        };
+
+        readonly string[] _type =
+        {
+            "UFS", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS"
         };
 
         [Test]
@@ -79,19 +88,22 @@ namespace Aaru.Tests.Filesystems
         {
             for(int i = 0; i < _testFiles.Length; i++)
             {
-                string  location = Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Xia filesystem", _testFiles[i]);
-                IFilter filter   = new ZZZNoFilter();
+                string location = Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "UNIX filesystem (NeXT)",
+                                               _testFiles[i]);
+
+                IFilter filter = new LZip();
                 filter.Open(location);
-                IMediaImage image = new AaruFormat();
+                IMediaImage image = new ZZZRawImage();
                 Assert.AreEqual(true, image.Open(filter), _testFiles[i]);
                 Assert.AreEqual(_sectors[i], image.Info.Sectors, _testFiles[i]);
                 Assert.AreEqual(_sectorSize[i], image.Info.SectorSize, _testFiles[i]);
                 List<Partition> partitions = Core.Partitions.GetAll(image);
-                IFilesystem     fs         = new Aaru.Filesystems.Xia();
+                IFilesystem     fs         = new FFSPlugin();
                 int             part       = -1;
 
                 for(int j = 0; j < partitions.Count; j++)
-                    if(partitions[j].Type == "0x83")
+                    if(partitions[j].Type == "4.3BSD" ||
+                       partitions[j].Type == "4.4BSD")
                     {
                         part = j;
 
@@ -103,7 +115,7 @@ namespace Aaru.Tests.Filesystems
                 fs.GetInformation(image, partitions[part], out _, null);
                 Assert.AreEqual(_clusters[i], fs.XmlFsType.Clusters, _testFiles[i]);
                 Assert.AreEqual(_clusterSize[i], fs.XmlFsType.ClusterSize, _testFiles[i]);
-                Assert.AreEqual("Xia filesystem", fs.XmlFsType.Type, _testFiles[i]);
+                Assert.AreEqual(_type[i], fs.XmlFsType.Type, _testFiles[i]);
                 Assert.AreEqual(_volumeName[i], fs.XmlFsType.VolumeName, _testFiles[i]);
                 Assert.AreEqual(_volumeSerial[i], fs.XmlFsType.VolumeSerial, _testFiles[i]);
             }

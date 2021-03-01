@@ -38,7 +38,7 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems
 {
     [TestFixture]
-    public class Pfs3Rdb
+    public class Pfs3
     {
         readonly string[] _testFiles =
         {

@@ -37,7 +37,7 @@ using NUnit.Framework;
 
 // ReSharper disable CheckNamespace
 
-namespace Aaru.Tests.Filesystems.HfsPlus
+namespace Aaru.Tests.Filesystems.HFSPlus
 {
     // Mising Darwin 6.0.2 wrapped
     [TestFixture]
