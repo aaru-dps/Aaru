@@ -172,7 +172,7 @@ namespace Aaru.Filesystems
             if(reiserSb.version < 2)
                 return;
 
-            XmlFsType.VolumeName   = Encoding.GetString(reiserSb.label);
+            XmlFsType.VolumeName   = StringHandlers.CToString(reiserSb.label, Encoding);
             XmlFsType.VolumeSerial = reiserSb.uuid.ToString();
         }
 
