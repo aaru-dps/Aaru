@@ -39,10 +39,10 @@ namespace Aaru.Tests.Filesystems
     {
         public Pfs3() : base("PFS v3") {}
 
-        public override string _dataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems",
-                                                           "Professional File System 3");
-        public override IFilesystem _plugin     => new PFS();
-        public override bool        _partitions => true;
+        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems",
+                                                          "Professional File System 3");
+        public override IFilesystem Plugin     => new PFS();
+        public override bool        Partitions => true;
 
         public override FileSystemTest[] Tests => new[]
         {

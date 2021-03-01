@@ -39,10 +39,10 @@ namespace Aaru.Tests.Filesystems
     {
         public Hpfs() : base("HPFS") {}
 
-        public override string _dataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems",
-                                                           "High Performance File System");
-        public override IFilesystem _plugin     => new HPFS();
-        public override bool        _partitions => true;
+        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems",
+                                                          "High Performance File System");
+        public override IFilesystem Plugin     => new HPFS();
+        public override bool        Partitions => true;
 
         public override FileSystemTest[] Tests => new[]
         {

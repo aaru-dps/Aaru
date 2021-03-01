@@ -39,10 +39,10 @@ namespace Aaru.Tests.Filesystems
     {
         public Mfs() : base("MFS") {}
 
-        public override string _dataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems",
-                                                           "Macintosh File System");
-        public override IFilesystem _plugin     => new AppleMFS();
-        public override bool        _partitions => false;
+        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems",
+                                                          "Macintosh File System");
+        public override IFilesystem Plugin     => new AppleMFS();
+        public override bool        Partitions => false;
 
         public override FileSystemTest[] Tests => new[]
         {

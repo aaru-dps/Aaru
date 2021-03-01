@@ -39,10 +39,10 @@ namespace Aaru.Tests.Filesystems.XENIX
     {
         public Whole() : base("XENIX fs") {}
 
-        public override string _dataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "XENIX filesystem");
+        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "XENIX filesystem");
 
-        public override IFilesystem _plugin     => new SysVfs();
-        public override bool        _partitions => false;
+        public override IFilesystem Plugin     => new SysVfs();
+        public override bool        Partitions => false;
 
         public override FileSystemTest[] Tests => new[]
         {

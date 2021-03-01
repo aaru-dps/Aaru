@@ -36,12 +36,10 @@ namespace Aaru.Tests.Filesystems.UDF._250
     [TestFixture]
     public class Whole : FilesystemTest
     {
-        public Whole() : base(null) {}
-
-        public override string _dataFolder =>
+        public override string DataFolder =>
             Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Universal Disc Format", "2.50");
-        public override IFilesystem _plugin     => new Aaru.Filesystems.UDF();
-        public override bool        _partitions => false;
+        public override IFilesystem Plugin     => new Aaru.Filesystems.UDF();
+        public override bool        Partitions => false;
 
         public override FileSystemTest[] Tests => new[]
         {

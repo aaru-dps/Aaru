@@ -39,9 +39,9 @@ namespace Aaru.Tests.Filesystems
     {
         public Btrfs() : base("B-tree file system") {}
 
-        public override string      _dataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "btrfs");
-        public override IFilesystem _plugin     => new BTRFS();
-        public override bool        _partitions => true;
+        public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "btrfs");
+        public override IFilesystem Plugin     => new BTRFS();
+        public override bool        Partitions => true;
 
         public override FileSystemTest[] Tests => new[]
         {

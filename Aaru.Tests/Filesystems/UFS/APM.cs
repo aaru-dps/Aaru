@@ -37,12 +37,10 @@ namespace Aaru.Tests.Filesystems.UFS
     [TestFixture]
     public class APM : FilesystemTest
     {
-        public APM() : base(null) {}
-
-        public override string _dataFolder =>
+        public override string DataFolder =>
             Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "UNIX filesystem (APM)");
-        public override IFilesystem _plugin     => new FFSPlugin();
-        public override bool        _partitions => true;
+        public override IFilesystem Plugin     => new FFSPlugin();
+        public override bool        Partitions => true;
 
         public override FileSystemTest[] Tests => new[]
         {

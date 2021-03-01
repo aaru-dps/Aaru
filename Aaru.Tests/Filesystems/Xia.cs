@@ -38,9 +38,9 @@ namespace Aaru.Tests.Filesystems
     {
         public Xia() : base("Xia filesystem") {}
 
-        public override string _dataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Xia filesystem");
-        public override IFilesystem _plugin => new Aaru.Filesystems.Xia();
-        public override bool _partitions => true;
+        public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Xia filesystem");
+        public override IFilesystem Plugin     => new Aaru.Filesystems.Xia();
+        public override bool        Partitions => true;
 
         public override FileSystemTest[] Tests => new[]
         {

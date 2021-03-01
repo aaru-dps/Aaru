@@ -39,9 +39,9 @@ namespace Aaru.Tests.Filesystems.EAFS
     {
         public MBR() : base("Extended Acer Fast Filesystem") {}
 
-        public override string      _dataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "EAFS (MBR)");
-        public override IFilesystem _plugin     => new SysVfs();
-        public override bool        _partitions => true;
+        public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "EAFS (MBR)");
+        public override IFilesystem Plugin     => new SysVfs();
+        public override bool        Partitions => true;
 
         public override FileSystemTest[] Tests => new[]
         {

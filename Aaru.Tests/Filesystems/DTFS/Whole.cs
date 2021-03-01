@@ -39,10 +39,10 @@ namespace Aaru.Tests.Filesystems.DTFS
     {
         public Whole() : base("DTFS") {}
 
-        public override string _dataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "DTFS");
+        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "DTFS");
 
-        public override IFilesystem _plugin     => new SysVfs();
-        public override bool        _partitions => false;
+        public override IFilesystem Plugin     => new SysVfs();
+        public override bool        Partitions => false;
 
         public override FileSystemTest[] Tests => new[]
         {

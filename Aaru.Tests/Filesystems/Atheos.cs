@@ -39,9 +39,9 @@ namespace Aaru.Tests.Filesystems
     {
         public Atheos() : base("AtheOS filesystem") {}
 
-        public override string      _dataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "AtheOS (MBR)");
-        public override IFilesystem _plugin     => new AtheOS();
-        public override bool        _partitions => true;
+        public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "AtheOS (MBR)");
+        public override IFilesystem Plugin     => new AtheOS();
+        public override bool        Partitions => true;
 
         public override FileSystemTest[] Tests => new[]
         {

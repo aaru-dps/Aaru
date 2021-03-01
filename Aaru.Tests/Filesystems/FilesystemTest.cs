@@ -11,18 +11,20 @@ namespace Aaru.Tests.Filesystems
     {
         readonly string _fileSystemType;
 
+        public FilesystemTest() => _fileSystemType = null;
+
         public FilesystemTest(string fileSystemType) => _fileSystemType = fileSystemType;
 
-        public abstract string      _dataFolder { get; }
-        public abstract IFilesystem _plugin     { get; }
-        public abstract bool        _partitions { get; }
+        public abstract string      DataFolder { get; }
+        public abstract IFilesystem Plugin     { get; }
+        public abstract bool        Partitions { get; }
 
         public abstract FileSystemTest[] Tests { get; }
 
         [Test]
         public void Detect()
         {
-            Environment.CurrentDirectory = _dataFolder;
+            Environment.CurrentDirectory = DataFolder;
 
             Assert.Multiple(() =>
             {
@@ -42,7 +44,7 @@ namespace Aaru.Tests.Filesystems
 
                     List<string> idPlugins;
 
-                    if(_partitions)
+                    if(Partitions)
                     {
                         List<Partition> partitionsList = Core.Partitions.GetAll(image);
 
@@ -57,7 +59,7 @@ namespace Aaru.Tests.Filesystems
                             if(idPlugins.Count == 0)
                                 continue;
 
-                            if(!idPlugins.Contains(_plugin.Id.ToString()))
+                            if(!idPlugins.Contains(Plugin.Id.ToString()))
                                 continue;
 
                             found = true;
@@ -80,7 +82,7 @@ namespace Aaru.Tests.Filesystems
 
                         Assert.Greater(idPlugins.Count, 0, $"No filesystems found for {testFile}");
 
-                        Assert.True(idPlugins.Contains(_plugin.Id.ToString()), $"Not identified for {testFile}");
+                        Assert.True(idPlugins.Contains(Plugin.Id.ToString()), $"Not identified for {testFile}");
                     }
                 }
             });
@@ -89,7 +91,7 @@ namespace Aaru.Tests.Filesystems
         [Test]
         public void ImageInfo()
         {
-            Environment.CurrentDirectory = _dataFolder;
+            Environment.CurrentDirectory = DataFolder;
 
             Assert.Multiple(() =>
             {
@@ -117,7 +119,7 @@ namespace Aaru.Tests.Filesystems
         [Test]
         public void Info()
         {
-            Environment.CurrentDirectory = _dataFolder;
+            Environment.CurrentDirectory = DataFolder;
 
             Assert.Multiple(() =>
             {
@@ -140,7 +142,7 @@ namespace Aaru.Tests.Filesystems
 
                     List<string> idPlugins;
 
-                    if(_partitions)
+                    if(Partitions)
                     {
                         List<Partition> partitionsList = Core.Partitions.GetAll(image);
 
@@ -154,7 +156,7 @@ namespace Aaru.Tests.Filesystems
                             if(idPlugins.Count == 0)
                                 continue;
 
-                            if(!idPlugins.Contains(_plugin.Id.ToString()))
+                            if(!idPlugins.Contains(Plugin.Id.ToString()))
                                 continue;
 
                             found     = true;
@@ -176,7 +178,7 @@ namespace Aaru.Tests.Filesystems
 
                         Assert.Greater(idPlugins.Count, 0, $"No filesystems found for {testFile}");
 
-                        found = idPlugins.Contains(_plugin.Id.ToString());
+                        found = idPlugins.Contains(Plugin.Id.ToString());
                     }
 
                     Assert.True(found, $"Filesystem not identified for {testFile}");
@@ -186,7 +188,7 @@ namespace Aaru.Tests.Filesystems
                     if(!found)
                         continue;
 
-                    var fs = Activator.CreateInstance(_plugin.GetType()) as IFilesystem;
+                    var fs = Activator.CreateInstance(Plugin.GetType()) as IFilesystem;
 
                     Assert.NotNull(fs, $"Could not instantiate filesystem for {testFile}");
 

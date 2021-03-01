@@ -38,10 +38,10 @@ namespace Aaru.Tests.Filesystems.exFAT
     {
         public MBR() : base("exFAT") {}
 
-        public override string _dataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "exFAT (MBR)");
+        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "exFAT (MBR)");
 
-        public override IFilesystem _plugin     => new Aaru.Filesystems.exFAT();
-        public override bool        _partitions => true;
+        public override IFilesystem Plugin     => new Aaru.Filesystems.exFAT();
+        public override bool        Partitions => true;
 
         public override FileSystemTest[] Tests => new[]
         {

@@ -39,10 +39,10 @@ namespace Aaru.Tests.Filesystems
     {
         public LisaFs() : base("LisaFS") {}
 
-        public override string _dataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems",
-                                                           "Apple Lisa filesystem");
-        public override IFilesystem _plugin     => new LisaFS();
-        public override bool        _partitions => false;
+        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems",
+                                                          "Apple Lisa filesystem");
+        public override IFilesystem Plugin     => new LisaFS();
+        public override bool        Partitions => false;
 
         public override FileSystemTest[] Tests => new[]
         {

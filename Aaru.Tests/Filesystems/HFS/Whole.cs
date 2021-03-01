@@ -39,10 +39,10 @@ namespace Aaru.Tests.Filesystems.HFS
     {
         public Whole() : base("HFS") {}
 
-        public override string _dataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Apple HFS");
+        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Apple HFS");
 
-        public override IFilesystem _plugin     => new AppleHFS();
-        public override bool        _partitions => false;
+        public override IFilesystem Plugin     => new AppleHFS();
+        public override bool        Partitions => false;
 
         public override FileSystemTest[] Tests => new[]
         {

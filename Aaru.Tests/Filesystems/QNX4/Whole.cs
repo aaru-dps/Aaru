@@ -38,10 +38,10 @@ namespace Aaru.Tests.Filesystems.QNX4
     {
         public Whole() : base("QNX4 filesystem") {}
 
-        public override string _dataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "QNX 4 filesystem");
+        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "QNX 4 filesystem");
 
-        public override IFilesystem _plugin     => new Aaru.Filesystems.QNX4();
-        public override bool        _partitions => false;
+        public override IFilesystem Plugin     => new Aaru.Filesystems.QNX4();
+        public override bool        Partitions => false;
 
         public override FileSystemTest[] Tests => new[]
         {

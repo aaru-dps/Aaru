@@ -39,11 +39,11 @@ namespace Aaru.Tests.Filesystems
     {
         public Zfs() : base("ZFS filesystem") {}
 
-        public override string _dataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems",
-                                                           "Zettabyte File System");
+        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems",
+                                                          "Zettabyte File System");
 
-        public override IFilesystem _plugin     => new ZFS();
-        public override bool        _partitions => false;
+        public override IFilesystem Plugin     => new ZFS();
+        public override bool        Partitions => false;
 
         public override FileSystemTest[] Tests => new[]
         {

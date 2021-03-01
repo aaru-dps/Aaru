@@ -39,9 +39,9 @@ namespace Aaru.Tests.Filesystems.FAT16
     {
         public Atari() : base("FAT16") {}
 
-        public override string      _dataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "FAT16 (Atari)");
-        public override IFilesystem _plugin     => new FAT();
-        public override bool        _partitions => true;
+        public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "FAT16 (Atari)");
+        public override IFilesystem Plugin     => new FAT();
+        public override bool        Partitions => true;
 
         public override FileSystemTest[] Tests => new[]
         {

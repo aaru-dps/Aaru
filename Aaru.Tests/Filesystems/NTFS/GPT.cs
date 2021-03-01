@@ -38,10 +38,10 @@ namespace Aaru.Tests.Filesystems.NTFS
     {
         public GPT() : base("NTFS") {}
 
-        public override string _dataFolder =>
+        public override string DataFolder =>
             Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "New Technology File System (GPT)");
-        public override IFilesystem _plugin     => new Aaru.Filesystems.NTFS();
-        public override bool        _partitions => true;
+        public override IFilesystem Plugin     => new Aaru.Filesystems.NTFS();
+        public override bool        Partitions => true;
 
         public override FileSystemTest[] Tests => new[]
         {

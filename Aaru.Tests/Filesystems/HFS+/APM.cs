@@ -41,9 +41,9 @@ namespace Aaru.Tests.Filesystems.HFSPlus
     {
         public APM() : base("HFS+") {}
 
-        public override string _dataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Apple HFS+ (APM)");
-        public override IFilesystem _plugin => new AppleHFSPlus();
-        public override bool _partitions => true;
+        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Apple HFS+ (APM)");
+        public override IFilesystem Plugin => new AppleHFSPlus();
+        public override bool Partitions => true;
 
         // Missing Darwin 1.4.1
         public override FileSystemTest[] Tests => new[]

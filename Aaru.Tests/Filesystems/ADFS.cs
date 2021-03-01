@@ -39,11 +39,11 @@ namespace Aaru.Tests.Filesystems
     {
         public Adfs() : base("Acorn Advanced Disc Filing System") {}
 
-        public override string _dataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems",
-                                                           "Acorn Advanced Disc Filing System");
+        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems",
+                                                          "Acorn Advanced Disc Filing System");
 
-        public override IFilesystem _plugin     => new AcornADFS();
-        public override bool        _partitions => false;
+        public override IFilesystem Plugin     => new AcornADFS();
+        public override bool        Partitions => false;
 
         public override FileSystemTest[] Tests => new[]
         {

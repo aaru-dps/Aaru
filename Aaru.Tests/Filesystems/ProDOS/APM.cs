@@ -39,11 +39,11 @@ namespace Aaru.Tests.Filesystems.ProDOS
     {
         public APM() : base("ProDOS") {}
 
-        public override string _dataFolder =>
+        public override string DataFolder =>
             Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "ProDOS filesystem (APM)");
 
-        public override IFilesystem _plugin     => new ProDOSPlugin();
-        public override bool        _partitions => true;
+        public override IFilesystem Plugin     => new ProDOSPlugin();
+        public override bool        Partitions => true;
 
         public override FileSystemTest[] Tests => new[]
         {

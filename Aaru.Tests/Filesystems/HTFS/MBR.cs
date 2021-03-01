@@ -39,10 +39,10 @@ namespace Aaru.Tests.Filesystems.HTFS
     {
         public MBR() : base("HTFS") {}
 
-        public override string _dataFolder =>
+        public override string DataFolder =>
             Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "High Throughtput File System (MBR)");
-        public override IFilesystem _plugin     => new SysVfs();
-        public override bool        _partitions => true;
+        public override IFilesystem Plugin     => new SysVfs();
+        public override bool        Partitions => true;
 
         public override FileSystemTest[] Tests => new[]
         {

@@ -39,11 +39,11 @@ namespace Aaru.Tests.Filesystems.HTFS
     {
         public Whole() : base("HTFS") {}
 
-        public override string _dataFolder =>
+        public override string DataFolder =>
             Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "High Throughtput File System");
 
-        public override IFilesystem _plugin     => new SysVfs();
-        public override bool        _partitions => false;
+        public override IFilesystem Plugin     => new SysVfs();
+        public override bool        Partitions => false;
 
         public override FileSystemTest[] Tests => new[]
         {

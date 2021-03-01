@@ -38,10 +38,10 @@ namespace Aaru.Tests.Filesystems.BeFS
     {
         public Whole() : base("BeFS") {}
 
-        public override string _dataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Be File System");
+        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Be File System");
 
-        public override IFilesystem _plugin     => new Aaru.Filesystems.BeFS();
-        public override bool        _partitions => false;
+        public override IFilesystem Plugin     => new Aaru.Filesystems.BeFS();
+        public override bool        Partitions => false;
 
         public override FileSystemTest[] Tests => new[]
         {

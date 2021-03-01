@@ -39,10 +39,10 @@ namespace Aaru.Tests.Filesystems.FAT12
     {
         public Whole() : base("FAT12") {}
 
-        public override string _dataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "FAT12");
+        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "FAT12");
 
-        public override IFilesystem _plugin     => new FAT();
-        public override bool        _partitions => false;
+        public override IFilesystem Plugin     => new FAT();
+        public override bool        Partitions => false;
 
         public override FileSystemTest[] Tests => new[]
         {

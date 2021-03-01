@@ -39,10 +39,10 @@ namespace Aaru.Tests.Filesystems.XENIX
     {
         public MBR() : base("XENIX fs") {}
 
-        public override string _dataFolder =>
+        public override string DataFolder =>
             Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "XENIX filesystem (MBR)");
-        public override IFilesystem _plugin     => new SysVfs();
-        public override bool        _partitions => true;
+        public override IFilesystem Plugin     => new SysVfs();
+        public override bool        Partitions => true;
 
         public override FileSystemTest[] Tests => new[]
         {

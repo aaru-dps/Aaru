@@ -47,10 +47,10 @@ namespace Aaru.Tests.Filesystems.FATX
     {
         public Xbox360() : base("FATX filesystem") {}
 
-        public override string _dataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Xbox FAT16", "be");
+        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Xbox FAT16", "be");
 
-        public override IFilesystem _plugin     => new XboxFatPlugin();
-        public override bool        _partitions => true;
+        public override IFilesystem Plugin     => new XboxFatPlugin();
+        public override bool        Partitions => true;
 
         [SetUp]
         public void Init()

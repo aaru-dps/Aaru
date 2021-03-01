@@ -39,11 +39,10 @@ namespace Aaru.Tests.Filesystems.SysV
     {
         public Whole() : base("SVR4 fs") {}
 
-        public override string _dataFolder =>
-            Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "System V filesystem");
+        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "System V filesystem");
 
-        public override IFilesystem _plugin     => new SysVfs();
-        public override bool        _partitions => false;
+        public override IFilesystem Plugin     => new SysVfs();
+        public override bool        Partitions => false;
 
         public override FileSystemTest[] Tests => new[]
         {

@@ -39,10 +39,10 @@ namespace Aaru.Tests.Filesystems.AFS
     {
         public MBR() : base("Acer Fast Filesystem") {}
 
-        public override string _dataFolder =>
+        public override string DataFolder =>
             Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Acer File System (MBR)");
-        public override IFilesystem _plugin     => new SysVfs();
-        public override bool        _partitions => true;
+        public override IFilesystem Plugin     => new SysVfs();
+        public override bool        Partitions => true;
 
         public override FileSystemTest[] Tests => new[]
         {

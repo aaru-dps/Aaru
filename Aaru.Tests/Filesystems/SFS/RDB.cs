@@ -38,11 +38,11 @@ namespace Aaru.Tests.Filesystems.SFS
     {
         public RDB() : base("SmartFileSystem") {}
 
-        public override string _dataFolder =>
+        public override string DataFolder =>
             Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Smart File System (RDB)");
 
-        public override IFilesystem _plugin     => new Aaru.Filesystems.SFS();
-        public override bool        _partitions => true;
+        public override IFilesystem Plugin     => new Aaru.Filesystems.SFS();
+        public override bool        Partitions => true;
 
         public override FileSystemTest[] Tests => new[]
         {

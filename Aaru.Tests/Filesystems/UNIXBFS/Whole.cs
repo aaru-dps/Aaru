@@ -39,10 +39,10 @@ namespace Aaru.Tests.Filesystems.UNIXBFS
     {
         public Whole() : base("BFS") {}
 
-        public override string _dataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Boot File System");
+        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Boot File System");
 
-        public override IFilesystem _plugin     => new BFS();
-        public override bool        _partitions => false;
+        public override IFilesystem Plugin     => new BFS();
+        public override bool        Partitions => false;
 
         public override FileSystemTest[] Tests => new[]
         {

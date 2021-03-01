@@ -39,10 +39,10 @@ namespace Aaru.Tests.Filesystems
     {
         public ReFsMbr() : base("Resilient File System") {}
 
-        public override string _dataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems",
-                                                           "Resilient File System (MBR)");
-        public override IFilesystem _plugin     => new ReFS();
-        public override bool        _partitions => true;
+        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems",
+                                                          "Resilient File System (MBR)");
+        public override IFilesystem Plugin     => new ReFS();
+        public override bool        Partitions => true;
 
         public override FileSystemTest[] Tests => new[]
         {

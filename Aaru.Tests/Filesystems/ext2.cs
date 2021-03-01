@@ -37,11 +37,9 @@ namespace Aaru.Tests.Filesystems
     [TestFixture]
     public class Ext2 : FilesystemTest
     {
-        public Ext2() : base(null) {}
-
-        public override string      _dataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "ext2");
-        public override IFilesystem _plugin     => new ext2FS();
-        public override bool        _partitions => true;
+        public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "ext2");
+        public override IFilesystem Plugin     => new ext2FS();
+        public override bool        Partitions => true;
 
         public override FileSystemTest[] Tests => new[]
         {

@@ -37,12 +37,10 @@ namespace Aaru.Tests.Filesystems.MINIX.V2
     [TestFixture]
     public class MBR : FilesystemTest
     {
-        public MBR() : base(null) {}
-
-        public override string _dataFolder =>
+        public override string DataFolder =>
             Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "MINIX v2 filesystem (MBR)");
-        public override IFilesystem _plugin     => new MinixFS();
-        public override bool        _partitions => true;
+        public override IFilesystem Plugin     => new MinixFS();
+        public override bool        Partitions => true;
 
         public override FileSystemTest[] Tests => new[]
         {

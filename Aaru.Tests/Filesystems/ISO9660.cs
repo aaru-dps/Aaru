@@ -39,9 +39,9 @@ namespace Aaru.Tests.Filesystems
     {
         public Iso9660() : base("ISO9660") {}
 
-        public override string      _dataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "ISO9660");
-        public override IFilesystem _plugin     => new ISO9660();
-        public override bool        _partitions => false;
+        public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "ISO9660");
+        public override IFilesystem Plugin     => new ISO9660();
+        public override bool        Partitions => false;
 
         public override FileSystemTest[] Tests => new[]
         {

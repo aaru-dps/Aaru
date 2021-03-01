@@ -39,11 +39,11 @@ namespace Aaru.Tests.Filesystems.AFFS2
     {
         public RDB() : base("Amiga FFS2") {}
 
-        public override string _dataFolder =>
+        public override string DataFolder =>
             Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Amiga Fast File System 2 (RDB)");
 
-        public override IFilesystem _plugin     => new AmigaDOSPlugin();
-        public override bool        _partitions => true;
+        public override IFilesystem Plugin     => new AmigaDOSPlugin();
+        public override bool        Partitions => true;
 
         public override FileSystemTest[] Tests => new[]
         {

@@ -39,9 +39,9 @@ namespace Aaru.Tests.Filesystems
     {
         public Hammer() : base("HAMMER") {}
 
-        public override string      _dataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "HAMMER (MBR)");
-        public override IFilesystem _plugin     => new HAMMER();
-        public override bool        _partitions => true;
+        public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "HAMMER (MBR)");
+        public override IFilesystem Plugin     => new HAMMER();
+        public override bool        Partitions => true;
 
         public override FileSystemTest[] Tests => new[]
         {
