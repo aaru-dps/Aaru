@@ -26,87 +26,68 @@
 // Copyright © 2011-2021 Natalia Portillo
 // ****************************************************************************/
 
-using System.Collections.Generic;
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.DiscImages;
-using Aaru.Filters;
 using NUnit.Framework;
 
 namespace Aaru.Tests.Filesystems
 {
     [TestFixture]
-    public class XFS
+    public class XFS : FilesystemTest
     {
-        readonly string[] _testFiles =
+        public XFS() : base("XFS filesystem") {}
+
+        public override string      _dataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "XFS");
+        public override IFilesystem _plugin     => new Aaru.Filesystems.XFS();
+        public override bool        _partitions => true;
+
+        public override string[] _testFiles => new[]
         {
             "linux.aif", "linux_4.19_xfs_flashdrive.aif"
         };
 
-        readonly ulong[] _sectors =
+        public override MediaType[] _mediaTypes => new[]
+        {
+            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD
+        };
+
+        public override ulong[] _sectors => new ulong[]
         {
             1048576, 1024000
         };
 
-        readonly uint[] _sectorSize =
+        public override uint[] _sectorSize => new uint[]
         {
             512, 512
         };
 
-        readonly long[] _clusters =
+        public override string[] _appId => null;
+        public override bool[] _bootable => new[]
+        {
+            false, false
+        };
+
+        public override long[] _clusters => new long[]
         {
             130816, 127744
         };
 
-        readonly int[] _clusterSize =
+        public override uint[] _clusterSize => new uint[]
         {
             4096, 4096
         };
+        public override string[] _oemId => null;
+        public override string[] _type  => null;
 
-        readonly string[] _volumeName =
+        public override string[] _volumeName => new[]
         {
             "Volume label", "DicSetter"
         };
 
-        readonly string[] _volumeSerial =
+        public override string[] _volumeSerial => new[]
         {
             "230075b7-9834-b44e-a257-982a058311d8", "ed6b4d35-aa66-ce4a-9d8f-c56dbc6d7c8c"
         };
-
-        [Test]
-        public void Test()
-        {
-            for(int i = 0; i < _testFiles.Length; i++)
-            {
-                string  location = Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "XFS", _testFiles[i]);
-                IFilter filter   = new ZZZNoFilter();
-                filter.Open(location);
-                IMediaImage image = new AaruFormat();
-                Assert.AreEqual(true, image.Open(filter), _testFiles[i]);
-                Assert.AreEqual(_sectors[i], image.Info.Sectors, _testFiles[i]);
-                Assert.AreEqual(_sectorSize[i], image.Info.SectorSize, _testFiles[i]);
-                List<Partition> partitions = Core.Partitions.GetAll(image);
-                IFilesystem     fs         = new Aaru.Filesystems.XFS();
-                int             part       = -1;
-
-                for(int j = 0; j < partitions.Count; j++)
-                    if(partitions[j].Type == "0x83")
-                    {
-                        part = j;
-
-                        break;
-                    }
-
-                Assert.AreNotEqual(-1, part, $"Partition not found on {_testFiles[i]}");
-                Assert.AreEqual(true, fs.Identify(image, partitions[part]), _testFiles[i]);
-                fs.GetInformation(image, partitions[part], out _, null);
-                Assert.AreEqual(_clusters[i], fs.XmlFsType.Clusters, _testFiles[i]);
-                Assert.AreEqual(_clusterSize[i], fs.XmlFsType.ClusterSize, _testFiles[i]);
-                Assert.AreEqual("XFS filesystem", fs.XmlFsType.Type, _testFiles[i]);
-                Assert.AreEqual(_volumeName[i], fs.XmlFsType.VolumeName, _testFiles[i]);
-                Assert.AreEqual(_volumeSerial[i], fs.XmlFsType.VolumeSerial, _testFiles[i]);
-            }
-        }
     }
 }

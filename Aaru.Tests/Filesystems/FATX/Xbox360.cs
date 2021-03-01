@@ -43,8 +43,57 @@ using FileSystemInfo = Aaru.CommonTypes.Structs.FileSystemInfo;
 namespace Aaru.Tests.Filesystems.FATX
 {
     [TestFixture]
-    public class Xbox360
+    public class Xbox360 : FilesystemTest
     {
+        public Xbox360() : base("FATX filesystem") {}
+
+        public override string _dataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Xbox FAT16", "be");
+
+        public override IFilesystem _plugin     => new XboxFatPlugin();
+        public override bool        _partitions => true;
+
+        public override string[] _testFiles => new[]
+        {
+            "microsoft256mb.img.lz"
+        };
+        public override MediaType[] _mediaTypes => new[]
+        {
+            MediaType.GENERIC_HDD
+        };
+        public override ulong[] _sectors => new ulong[]
+        {
+            491520
+        };
+        public override uint[] _sectorSize => new uint[]
+        {
+            512
+        };
+
+        public override string[] _appId => null;
+        public override bool[] _bootable => new[]
+        {
+            false
+        };
+
+        public override long[] _clusters => new long[]
+        {
+            14848
+        };
+        public override uint[] _clusterSize => new uint[]
+        {
+            16384
+        };
+        public override string[] _oemId => null;
+        public override string[] _type  => null;
+        public override string[] _volumeName => new[]
+        {
+            string.Empty
+        };
+        public override string[] _volumeSerial => new[]
+        {
+            "66C2E9D0"
+        };
+
         [SetUp]
         public void Init()
         {
@@ -75,17 +124,6 @@ namespace Aaru.Tests.Filesystems.FATX
         IMediaImage         _image;
         IReadOnlyFilesystem _fs;
         Partition           _dataPartition;
-
-        [Test]
-        public void Information()
-        {
-            Assert.AreEqual(491520, _image.Info.Sectors);
-            Assert.AreEqual(14848, _fs.XmlFsType.Clusters);
-            Assert.AreEqual(16384, _fs.XmlFsType.ClusterSize);
-            Assert.AreEqual("FATX filesystem", _fs.XmlFsType.Type);
-            Assert.AreEqual(string.Empty, _fs.XmlFsType.VolumeName);
-            Assert.AreEqual("66C2E9D0", _fs.XmlFsType.VolumeSerial);
-        }
 
         [Test]
         public void MapBlock()

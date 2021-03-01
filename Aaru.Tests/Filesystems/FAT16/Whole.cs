@@ -29,17 +29,22 @@
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.DiscImages;
 using Aaru.Filesystems;
-using Aaru.Filters;
 using NUnit.Framework;
 
 namespace Aaru.Tests.Filesystems.FAT16
 {
     [TestFixture]
-    public class Whole
+    public class Whole : FilesystemTest
     {
-        readonly string[] _testFiles =
+        public Whole() : base("FAT16") {}
+
+        public override string _dataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "FAT16");
+
+        public override IFilesystem _plugin     => new FAT();
+        public override bool        _partitions => false;
+
+        public override string[] _testFiles => new[]
         {
             // MS-DOS 3.30A
             "msdos_3.30A_mf2ed.img.lz",
@@ -48,7 +53,7 @@ namespace Aaru.Tests.Filesystems.FAT16
             "msdos_3.31_mf2ed.img.lz"
         };
 
-        readonly MediaType[] _mediaTypes =
+        public override MediaType[] _mediaTypes => new[]
         {
             // MS-DOS 3.30A
             MediaType.DOS_35_ED,
@@ -57,7 +62,7 @@ namespace Aaru.Tests.Filesystems.FAT16
             MediaType.DOS_35_ED
         };
 
-        readonly ulong[] _sectors =
+        public override ulong[] _sectors => new ulong[]
         {
             // MS-DOS 3.30A
             5760,
@@ -66,7 +71,7 @@ namespace Aaru.Tests.Filesystems.FAT16
             5760
         };
 
-        readonly uint[] _sectorSize =
+        public override uint[] _sectorSize => new uint[]
         {
             // MS-DOS 3.30A
             512,
@@ -75,7 +80,13 @@ namespace Aaru.Tests.Filesystems.FAT16
             512
         };
 
-        readonly long[] _clusters =
+        public override string[] _appId => null;
+        public override bool[] _bootable => new[]
+        {
+            true, true
+        };
+
+        public override long[] _clusters => new long[]
         {
             // MS-DOS 3.30A
             5760,
@@ -84,7 +95,7 @@ namespace Aaru.Tests.Filesystems.FAT16
             5760
         };
 
-        readonly int[] _clusterSize =
+        public override uint[] _clusterSize => new uint[]
         {
             // MS-DOS 3.30A
             512,
@@ -92,26 +103,7 @@ namespace Aaru.Tests.Filesystems.FAT16
             // MS-DOS 3.31
             512
         };
-
-        readonly string[] _volumeName =
-        {
-            // MS-DOS 3.30A
-            null,
-
-            // MS-DOS 3.31
-            null
-        };
-
-        readonly string[] _volumeSerial =
-        {
-            // MS-DOS 3.30A
-            null,
-
-            // MS-DOS 3.31
-            null
-        };
-
-        readonly string[] _oemId =
+        public override string[] _oemId => new[]
         {
             // MS-DOS 3.30A
             "MSDOS3.3",
@@ -119,38 +111,24 @@ namespace Aaru.Tests.Filesystems.FAT16
             // MS-DOS 3.31
             "IBM  3.3"
         };
+        public override string[] _type => null;
 
-        [Test]
-        public void Test()
+        public override string[] _volumeName => new string[]
         {
-            for(int i = 0; i < _testFiles.Length; i++)
-            {
-                string  location = Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "FAT16", _testFiles[i]);
-                IFilter filter   = new LZip();
-                filter.Open(location);
-                IMediaImage image = new ZZZRawImage();
-                Assert.AreEqual(true, image.Open(filter), _testFiles[i]);
-                Assert.AreEqual(_mediaTypes[i], image.Info.MediaType, _testFiles[i]);
-                Assert.AreEqual(_sectors[i], image.Info.Sectors, _testFiles[i]);
-                Assert.AreEqual(_sectorSize[i], image.Info.SectorSize, _testFiles[i]);
-                IFilesystem fs = new FAT();
+            // MS-DOS 3.30A
+            null,
 
-                var wholePart = new Partition
-                {
-                    Name   = "Whole device",
-                    Length = image.Info.Sectors,
-                    Size   = image.Info.Sectors * image.Info.SectorSize
-                };
+            // MS-DOS 3.31
+            null
+        };
 
-                Assert.AreEqual(true, fs.Identify(image, wholePart), _testFiles[i]);
-                fs.GetInformation(image, wholePart, out _, null);
-                Assert.AreEqual(_clusters[i], fs.XmlFsType.Clusters, _testFiles[i]);
-                Assert.AreEqual(_clusterSize[i], fs.XmlFsType.ClusterSize, _testFiles[i]);
-                Assert.AreEqual("FAT16", fs.XmlFsType.Type, _testFiles[i]);
-                Assert.AreEqual(_volumeName[i], fs.XmlFsType.VolumeName, _testFiles[i]);
-                Assert.AreEqual(_volumeSerial[i], fs.XmlFsType.VolumeSerial, _testFiles[i]);
-                Assert.AreEqual(_oemId[i], fs.XmlFsType.SystemIdentifier, _testFiles[i]);
-            }
-        }
+        public override string[] _volumeSerial => new string[]
+        {
+            // MS-DOS 3.30A
+            null,
+
+            // MS-DOS 3.31
+            null
+        };
     }
 }

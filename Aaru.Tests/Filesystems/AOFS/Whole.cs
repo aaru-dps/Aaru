@@ -29,88 +29,67 @@
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.DiscImages;
 using Aaru.Filesystems;
-using Aaru.Filters;
 using NUnit.Framework;
 
 namespace Aaru.Tests.Filesystems.AOFS
 {
     [TestFixture]
-    public class Whole
+    public class Whole : FilesystemTest
     {
-        readonly string[] _testFiles =
+        public Whole() : base("Amiga OFS") {}
+
+        public override string _dataFolder =>
+            Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Amiga Old File System");
+
+        public override IFilesystem _plugin     => new AmigaDOSPlugin();
+        public override bool        _partitions => false;
+
+        public override string[] _testFiles => new[]
         {
             "amigaos_3.9.adf.lz", "amigaos_3.9_intl.adf.lz"
         };
 
-        readonly MediaType[] _mediaTypes =
+        public override MediaType[] _mediaTypes => new[]
         {
             MediaType.CBM_AMIGA_35_DD, MediaType.CBM_AMIGA_35_DD
         };
 
-        readonly ulong[] _sectors =
+        public override ulong[] _sectors => new ulong[]
         {
             1760, 1760
         };
 
-        readonly uint[] _sectorSize =
+        public override uint[] _sectorSize => new uint[]
         {
             512, 512
         };
+        public override string[] _appId => null;
+        public override bool[] _bootable => new[]
+        {
+            false, false
+        };
 
-        readonly long[] _clusters =
+        public override long[] _clusters => new long[]
         {
             1760, 1760
         };
 
-        readonly int[] _clusterSize =
+        public override uint[] _clusterSize => new uint[]
         {
             512, 512
         };
+        public override string[] _oemId => null;
+        public override string[] _type  => null;
 
-        readonly string[] _volumeName =
+        public override string[] _volumeName => new[]
         {
             "Volume label", "Volume label"
         };
 
-        readonly string[] _volumeSerial =
+        public override string[] _volumeSerial => new[]
         {
             "A5D9FE71", "A5D9F14F"
         };
-
-        [Test]
-        public void Test()
-        {
-            for(int i = 0; i < _testFiles.Length; i++)
-            {
-                string location = Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Amiga Old File System",
-                                               _testFiles[i]);
-
-                IFilter filter = new LZip();
-                filter.Open(location);
-                IMediaImage image = new ZZZRawImage();
-                Assert.AreEqual(true, image.Open(filter), _testFiles[i]);
-                Assert.AreEqual(_mediaTypes[i], image.Info.MediaType, _testFiles[i]);
-                Assert.AreEqual(_sectors[i], image.Info.Sectors, _testFiles[i]);
-                Assert.AreEqual(_sectorSize[i], image.Info.SectorSize, _testFiles[i]);
-                IFilesystem fs = new AmigaDOSPlugin();
-
-                var wholePart = new Partition
-                {
-                    Name   = "Whole device",
-                    Length = image.Info.Sectors,
-                    Size   = image.Info.Sectors * image.Info.SectorSize
-                };
-
-                Assert.AreEqual(true, fs.Identify(image, wholePart), _testFiles[i]);
-                fs.GetInformation(image, wholePart, out _, null);
-                Assert.AreEqual(_clusters[i], fs.XmlFsType.Clusters, _testFiles[i]);
-                Assert.AreEqual(_clusterSize[i], fs.XmlFsType.ClusterSize, _testFiles[i]);
-                Assert.AreEqual("Amiga OFS", fs.XmlFsType.Type, _testFiles[i]);
-                Assert.AreEqual(_volumeName[i], fs.XmlFsType.VolumeName, _testFiles[i]);
-                Assert.AreEqual(_volumeSerial[i], fs.XmlFsType.VolumeSerial, _testFiles[i]);
-            }
-        }
     }
 }

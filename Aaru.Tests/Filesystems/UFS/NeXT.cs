@@ -26,96 +26,74 @@
 // Copyright © 2011-2021 Natalia Portillo
 // ****************************************************************************/
 
-using System.Collections.Generic;
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.DiscImages;
 using Aaru.Filesystems;
-using Aaru.Filters;
 using NUnit.Framework;
 
 namespace Aaru.Tests.Filesystems.UFS
 {
     [TestFixture]
-    public class NeXT
+    public class NeXT : FilesystemTest
     {
-        readonly string[] _testFiles =
+        public NeXT() : base(null) {}
+
+        public override string _dataFolder =>
+            Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "UNIX filesystem (NeXT)");
+        public override IFilesystem _plugin     => new FFSPlugin();
+        public override bool        _partitions => true;
+
+        public override string[] _testFiles => new[]
         {
             "nextstep_3.3.aif", "openstep_4.0.aif", "openstep_4.2.aif", "rhapsody_dr1.aif", "rhapsody_dr2.aif"
         };
 
-        readonly ulong[] _sectors =
+        public override MediaType[] _mediaTypes => new[]
+        {
+            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD,
+            MediaType.GENERIC_HDD
+        };
+        public override ulong[] _sectors => new ulong[]
         {
             409600, 409600, 409600, 409600, 409600
         };
 
-        readonly uint[] _sectorSize =
+        public override uint[] _sectorSize => new uint[]
         {
             512, 512, 512, 512, 512
         };
 
-        readonly long[] _clusters =
+        public override string[] _appId => null;
+        public override bool[] _bootable => new[]
+        {
+            false, false, false, false, false
+        };
+
+        public override long[] _clusters => new long[]
         {
             204640, 204640, 204640, 204640, 204464
         };
 
-        readonly int[] _clusterSize =
+        public override uint[] _clusterSize => new uint[]
         {
             1024, 1024, 1024, 1024, 1024
         };
+        public override string[] _oemId => null;
 
-        readonly string[] _volumeName =
-        {
-            null, null, null, null, null
-        };
-
-        readonly string[] _volumeSerial =
-        {
-            null, null, null, null, null
-        };
-
-        readonly string[] _type =
+        public override string[] _type => new[]
         {
             "UFS", "UFS", "UFS", "UFS", "UFS"
         };
 
-        [Test]
-        public void Test()
+        public override string[] _volumeName => new string[]
         {
-            for(int i = 0; i < _testFiles.Length; i++)
-            {
-                string location = Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "UNIX filesystem (NeXT)",
-                                               _testFiles[i]);
+            null, null, null, null, null
+        };
 
-                IFilter filter = new ZZZNoFilter();
-                filter.Open(location);
-                IMediaImage image = new AaruFormat();
-                Assert.AreEqual(true, image.Open(filter), _testFiles[i]);
-                Assert.AreEqual(_sectors[i], image.Info.Sectors, _testFiles[i]);
-                Assert.AreEqual(_sectorSize[i], image.Info.SectorSize, _testFiles[i]);
-                List<Partition> partitions = Core.Partitions.GetAll(image);
-                IFilesystem     fs         = new FFSPlugin();
-                int             part       = -1;
-
-                for(int j = 0; j < partitions.Count; j++)
-                    if(partitions[j].Type == "4.3BSD" ||
-                       partitions[j].Type == "4.4BSD")
-                    {
-                        part = j;
-
-                        break;
-                    }
-
-                Assert.AreNotEqual(-1, part, $"Partition not found on {_testFiles[i]}");
-                Assert.AreEqual(true, fs.Identify(image, partitions[part]), _testFiles[i]);
-                fs.GetInformation(image, partitions[part], out _, null);
-                Assert.AreEqual(_clusters[i], fs.XmlFsType.Clusters, _testFiles[i]);
-                Assert.AreEqual(_clusterSize[i], fs.XmlFsType.ClusterSize, _testFiles[i]);
-                Assert.AreEqual(_type[i], fs.XmlFsType.Type, _testFiles[i]);
-                Assert.AreEqual(_volumeName[i], fs.XmlFsType.VolumeName, _testFiles[i]);
-                Assert.AreEqual(_volumeSerial[i], fs.XmlFsType.VolumeSerial, _testFiles[i]);
-            }
-        }
+        public override string[] _volumeSerial => new string[]
+        {
+            null, null, null, null, null
+        };
     }
 }

@@ -26,84 +26,72 @@
 // Copyright © 2011-2021 Natalia Portillo
 // ****************************************************************************/
 
-using System.Collections.Generic;
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.DiscImages;
 using Aaru.Filesystems;
-using Aaru.Filters;
 using NUnit.Framework;
 
 namespace Aaru.Tests.Filesystems
 {
     [TestFixture]
-    public class Reiser3
+    public class Reiser3 : FilesystemTest
     {
-        readonly string[] _testFiles =
+        public Reiser3() : base(null) {}
+
+        public override string _dataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems",
+                                                           "Reiser filesystem v3");
+        public override IFilesystem _plugin     => new Reiser();
+        public override bool        _partitions => true;
+
+        public override string[] _testFiles => new[]
         {
             "linux_r3.5.aif", "linux_r3.6.aif", "linux_4.19_reiser_3.5_flashdrive.aif",
             "linux_4.19_reiser_3.6_flashdrive.aif"
         };
 
-        readonly ulong[] _sectors =
+        public override MediaType[] _mediaTypes => new[]
+        {
+            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD
+        };
+
+        public override ulong[] _sectors => new ulong[]
         {
             262144, 262144, 1024000, 1024000
         };
 
-        readonly uint[] _sectorSize =
+        public override uint[] _sectorSize => new uint[]
         {
             512, 512, 512, 512
         };
 
-        readonly long[] _clusters =
+        public override string[] _appId => null;
+        public override bool[] _bootable => new[]
+        {
+            false, false, false, false
+        };
+
+        public override long[] _clusters => new long[]
         {
             32512, 32512, 127744, 127744
         };
 
-        readonly int[] _clusterSize =
+        public override uint[] _clusterSize => new uint[]
         {
             4096, 4096, 4096, 4096
         };
-
-        readonly string[] _reiserversion =
+        public override string[] _oemId => null;
+        public override string[] _type => new[]
         {
             "Reiser 3.5 filesystem", "Reiser 3.6 filesystem", "Reiser 3.5 filesystem", "Reiser 3.6 filesystem"
         };
-
-        [Test]
-        public void Test()
+        public override string[] _volumeName => new[]
         {
-            for(int i = 0; i < _testFiles.Length; i++)
-            {
-                string location = Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Reiser filesystem v3",
-                                               _testFiles[i]);
-
-                IFilter filter = new ZZZNoFilter();
-                filter.Open(location);
-                IMediaImage image = new AaruFormat();
-                Assert.AreEqual(true, image.Open(filter), _testFiles[i]);
-                Assert.AreEqual(_sectors[i], image.Info.Sectors, _testFiles[i]);
-                Assert.AreEqual(_sectorSize[i], image.Info.SectorSize, _testFiles[i]);
-                List<Partition> partitions = Core.Partitions.GetAll(image);
-                IFilesystem     fs         = new Reiser();
-                int             part       = -1;
-
-                for(int j = 0; j < partitions.Count; j++)
-                    if(partitions[j].Type == "0x83")
-                    {
-                        part = j;
-
-                        break;
-                    }
-
-                Assert.AreNotEqual(-1, part, $"Partition not found on {_testFiles[i]}");
-                Assert.AreEqual(true, fs.Identify(image, partitions[part]), _testFiles[i]);
-                fs.GetInformation(image, partitions[part], out _, null);
-                Assert.AreEqual(_clusters[i], fs.XmlFsType.Clusters, _testFiles[i]);
-                Assert.AreEqual(_clusterSize[i], fs.XmlFsType.ClusterSize, _testFiles[i]);
-                Assert.AreEqual(_reiserversion[i], fs.XmlFsType.Type, _testFiles[i]);
-            }
-        }
+            null, "Volume label", null, "DicSetter"
+        };
+        public override string[] _volumeSerial => new[]
+        {
+            null, "844155c0-c854-d34e-8133-26ffac2e7b5d", null, "8902ac3c-3e0c-4c4c-84ec-03405c1710f1"
+        };
     }
 }

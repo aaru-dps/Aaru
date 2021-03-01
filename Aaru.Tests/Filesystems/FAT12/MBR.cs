@@ -26,21 +26,24 @@
 // Copyright © 2011-2021 Natalia Portillo
 // ****************************************************************************/
 
-using System.Collections.Generic;
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.DiscImages;
 using Aaru.Filesystems;
-using Aaru.Filters;
 using NUnit.Framework;
 
 namespace Aaru.Tests.Filesystems.FAT12
 {
     [TestFixture]
-    public class MBR
+    public class MBR : FilesystemTest
     {
-        readonly string[] _testFiles =
+        public MBR() : base("FAT12") {}
+
+        public override string      _dataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "FAT12 (MBR)");
+        public override IFilesystem _plugin     => new FAT();
+        public override bool        _partitions => true;
+
+        public override string[] _testFiles => new[]
         {
             "compaqmsdos331.aif", "drdos_3.40.aif", "drdos_3.41.aif", "drdos_5.00.aif", "drdos_6.00.aif",
             "drdos_7.02.aif", "drdos_7.03.aif", "drdos_8.00.aif", "msdos331.aif", "msdos401.aif", "msdos500.aif",
@@ -54,8 +57,27 @@ namespace Aaru.Tests.Filesystems.FAT12
             "win98se.aif", "winme.aif", "winnt_3.10.aif", "winnt_3.50.aif", "winnt_3.51.aif", "winnt_4.00.aif",
             "winvista.aif", "beos_r4.5.aif", "linux.aif", "freebsd_6.1.aif", "freebsd_7.0.aif", "freebsd_8.2.aif"
         };
+        public override MediaType[] _mediaTypes => new[]
+        {
+            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD,
+            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD,
+            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD,
+            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD,
+            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD,
+            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD,
+            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD,
+            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD,
+            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD,
+            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD,
+            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD,
+            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD,
+            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD,
+            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD,
+            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD,
+            MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD
+        };
 
-        readonly ulong[] _sectors =
+        public override ulong[] _sectors => new ulong[]
         {
             8192, 30720, 28672, 28672, 28672, 28672, 28672, 28672, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192,
             16384, 28672, 28672, 32768, 32768, 32768, 32768, 32768, 32768, 32768, 32768, 32768, 32768, 32768, 8192,
@@ -64,14 +86,22 @@ namespace Aaru.Tests.Filesystems.FAT12
             16384, 16384
         };
 
-        readonly uint[] _sectorSize =
+        public override uint[] _sectorSize => new uint[]
         {
             512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512,
             512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512,
             512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512
         };
+        public override string[] _appId => null;
+        public override bool[] _bootable => new[]
+        {
+            true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true,
+            true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true,
+            true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true,
+            true, true, true, true, true, true, true, true, true
+        };
 
-        readonly long[] _clusters =
+        public override long[] _clusters => new long[]
         {
             1000, 3654, 3520, 3520, 3520, 3520, 3520, 3520, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 2008, 3520,
             3520, 4024, 4031, 4031, 4024, 4024, 4024, 4024, 4024, 4024, 4024, 4024, 1000, 1000, 2008, 2008, 2008, 2008,
@@ -79,7 +109,7 @@ namespace Aaru.Tests.Filesystems.FAT12
             2044, 2044, 4016, 3072, 2040, 3584, 2044, 2044, 2044
         };
 
-        readonly int[] _clusterSize =
+        public override uint[] _clusterSize => new uint[]
         {
             4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096,
             4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096,
@@ -87,7 +117,20 @@ namespace Aaru.Tests.Filesystems.FAT12
             4096, 4096, 2048, 2048, 4096, 2048, 4096, 4096, 4096
         };
 
-        readonly string[] _volumeName =
+        public override string[] _oemId => new[]
+        {
+            "IBM  3.3", "IBM  3.2", "IBM  3.2", "IBM  3.3", "IBM  3.3", "IBM  3.3", "DRDOS  7", "IBM  5.0", "IBM  3.3",
+            "MSDOS4.0", "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", "MSWIN4.1", "IBM  3.3",
+            "IBM  3.3", "IBM  7.0", "IBM  2.0", "IBM  2.0", "IBM  3.0", "IBM  3.1", "IBM  3.3", "IBM  4.0", "IBM  5.0",
+            "IBM  5.0", "IBM  6.0", "IBM  6.0", "T V3.30 ", "T V4.00 ", "IBM 10.2", "IBM 10.2", "IBM  3.2", "IBM 10.2",
+            "IBM 10.2", "IBM 20.0", "IBM 20.0", "IBM 20.0", "IBM 20.0", "IBM 20.0", "IBM 4.50", "BSD  4.4", "MSDOS5.0",
+            "MSDOS5.0", "MSWIN4.0", "MSWIN4.1", "MSWIN4.1", "MSWIN4.1", "MSWIN4.1", "MSWIN4.1", "MSWIN4.1", "MSDOS5.0",
+            "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", "BeOS    ", "mkfs.fat", "BSD  4.4", "BSD  4.4", "BSD4.4  "
+        };
+
+        public override string[] _type => null;
+
+        public override string[] _volumeName => new[]
         {
             null, "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL",
             "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL",
@@ -100,7 +143,7 @@ namespace Aaru.Tests.Filesystems.FAT12
             "VolumeLabel", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL"
         };
 
-        readonly string[] _volumeSerial =
+        public override string[] _volumeSerial => new[]
         {
             null, null, null, null, null, null, null, "1BFB1273", null, "407D1907", "345D18FB", "332518F4", "395718E9",
             "076718EF", "1371181B", "23281816", "2F781809", null, null, "294F100F", null, null, null, null, null,
@@ -110,41 +153,5 @@ namespace Aaru.Tests.Filesystems.FAT12
             "50489A1B", "2CE52101", "94313E7E", "BC184FE6", "BAD08A1E", "00000000", "8D418102", "8FC80E0A", "34FA0E0B",
             "02140E0B"
         };
-
-        readonly string[] _oemId =
-        {
-            "IBM  3.3", "IBM  3.2", "IBM  3.2", "IBM  3.3", "IBM  3.3", "IBM  3.3", "DRDOS  7", "IBM  5.0", "IBM  3.3",
-            "MSDOS4.0", "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", "MSWIN4.1", "IBM  3.3",
-            "IBM  3.3", "IBM  7.0", "IBM  2.0", "IBM  2.0", "IBM  3.0", "IBM  3.1", "IBM  3.3", "IBM  4.0", "IBM  5.0",
-            "IBM  5.0", "IBM  6.0", "IBM  6.0", "T V3.30 ", "T V4.00 ", "IBM 10.2", "IBM 10.2", "IBM  3.2", "IBM 10.2",
-            "IBM 10.2", "IBM 20.0", "IBM 20.0", "IBM 20.0", "IBM 20.0", "IBM 20.0", "IBM 4.50", "BSD  4.4", "MSDOS5.0",
-            "MSDOS5.0", "MSWIN4.0", "MSWIN4.1", "MSWIN4.1", "MSWIN4.1", "MSWIN4.1", "MSWIN4.1", "MSWIN4.1", "MSDOS5.0",
-            "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", "BeOS    ", "mkfs.fat", "BSD  4.4", "BSD  4.4", "BSD4.4  "
-        };
-
-        [Test]
-        public void Test()
-        {
-            for(int i = 0; i < _testFiles.Length; i++)
-            {
-                string  location = Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "FAT12 (MBR)", _testFiles[i]);
-                IFilter filter   = new ZZZNoFilter();
-                filter.Open(location);
-                IMediaImage image = new AaruFormat();
-                Assert.AreEqual(true, image.Open(filter), _testFiles[i]);
-                Assert.AreEqual(_sectors[i], image.Info.Sectors, _testFiles[i]);
-                Assert.AreEqual(_sectorSize[i], image.Info.SectorSize, _testFiles[i]);
-                List<Partition> partitions = Core.Partitions.GetAll(image);
-                IFilesystem     fs         = new FAT();
-                Assert.AreEqual(true, fs.Identify(image, partitions[0]), _testFiles[i]);
-                fs.GetInformation(image, partitions[0], out _, null);
-                Assert.AreEqual(_clusters[i], fs.XmlFsType.Clusters, _testFiles[i]);
-                Assert.AreEqual(_clusterSize[i], fs.XmlFsType.ClusterSize, _testFiles[i]);
-                Assert.AreEqual("FAT12", fs.XmlFsType.Type, _testFiles[i]);
-                Assert.AreEqual(_volumeName[i], fs.XmlFsType.VolumeName, _testFiles[i]);
-                Assert.AreEqual(_volumeSerial[i], fs.XmlFsType.VolumeSerial, _testFiles[i]);
-                Assert.AreEqual(_oemId[i], fs.XmlFsType.SystemIdentifier, _testFiles[i]);
-            }
-        }
     }
 }

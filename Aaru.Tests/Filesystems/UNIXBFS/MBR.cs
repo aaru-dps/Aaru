@@ -26,84 +26,69 @@
 // Copyright © 2011-2021 Natalia Portillo
 // ****************************************************************************/
 
-using System.Collections.Generic;
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.DiscImages;
 using Aaru.Filesystems;
-using Aaru.Filters;
 using NUnit.Framework;
 
 namespace Aaru.Tests.Filesystems.UNIXBFS
 {
     [TestFixture]
-    public class MBR
+    public class MBR : FilesystemTest
     {
-        readonly string[] _testFiles =
+        public MBR() : base("BFS") {}
+
+        public override string _dataFolder =>
+            Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Boot File System (MBR)");
+        public override IFilesystem _plugin     => new BFS();
+        public override bool        _partitions => true;
+
+        public override string[] _testFiles => new[]
         {
             "linux.aif"
         };
 
-        readonly ulong[] _sectors =
+        public override MediaType[] _mediaTypes => new[]
+        {
+            MediaType.GENERIC_HDD
+        };
+        public override ulong[] _sectors => new ulong[]
         {
             262144
         };
 
-        readonly uint[] _sectorSize =
+        public override uint[] _sectorSize => new uint[]
         {
             512
         };
 
-        readonly long[] _clusters =
+        public override string[] _appId => null;
+        public override bool[] _bootable => new[]
+        {
+            false
+        };
+
+        public override long[] _clusters => new long[]
         {
             260096
         };
 
-        readonly int[] _clusterSize =
+        public override uint[] _clusterSize => new uint[]
         {
             512
         };
+        public override string[] _oemId => null;
+        public override string[] _type  => null;
 
-        readonly string[] _volumeName =
+        public override string[] _volumeName => new[]
         {
             "Label"
         };
 
-        [Test]
-        public void Test()
+        public override string[] _volumeSerial => new string[]
         {
-            for(int i = 0; i < _testFiles.Length; i++)
-            {
-                string location = Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Boot File System (MBR)",
-                                               _testFiles[i]);
-
-                IFilter filter = new ZZZNoFilter();
-                filter.Open(location);
-                IMediaImage image = new AaruFormat();
-                Assert.AreEqual(true, image.Open(filter), _testFiles[i]);
-                Assert.AreEqual(_sectors[i], image.Info.Sectors, _testFiles[i]);
-                Assert.AreEqual(_sectorSize[i], image.Info.SectorSize, _testFiles[i]);
-                List<Partition> partitions = Core.Partitions.GetAll(image);
-                IFilesystem     fs         = new BFS();
-                int             part       = -1;
-
-                for(int j = 0; j < partitions.Count; j++)
-                    if(partitions[j].Type == "0x83")
-                    {
-                        part = j;
-
-                        break;
-                    }
-
-                Assert.AreNotEqual(-1, part, $"Partition not found on {_testFiles[i]}");
-                Assert.AreEqual(true, fs.Identify(image, partitions[part]), _testFiles[i]);
-                fs.GetInformation(image, partitions[part], out _, null);
-                Assert.AreEqual(_clusters[i], fs.XmlFsType.Clusters, _testFiles[i]);
-                Assert.AreEqual(_clusterSize[i], fs.XmlFsType.ClusterSize, _testFiles[i]);
-                Assert.AreEqual("BFS", fs.XmlFsType.Type, _testFiles[i]);
-                Assert.AreEqual(_volumeName[i], fs.XmlFsType.VolumeName, _testFiles[i]);
-            }
-        }
+            null
+        };
     }
 }

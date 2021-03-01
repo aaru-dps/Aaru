@@ -29,17 +29,21 @@
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.DiscImages;
 using Aaru.Filesystems;
-using Aaru.Filters;
 using NUnit.Framework;
 
 namespace Aaru.Tests.Filesystems
 {
     [TestFixture]
-    public class Iso9660
+    public class Iso9660 : FilesystemTest
     {
-        readonly string[] _testFiles =
+        public Iso9660() : base("ISO9660") {}
+
+        public override string      _dataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "ISO9660");
+        public override IFilesystem _plugin     => new ISO9660();
+        public override bool        _partitions => false;
+
+        public override string[] _testFiles => new[]
         {
             // Toast 3.5.7
             "toast_3.5.7_iso9660_apple.aif", "toast_3.5.7_iso9660_dos_apple.aif", "toast_3.5.7_iso9660_dos.aif",
@@ -89,7 +93,7 @@ namespace Aaru.Tests.Filesystems
             "xorriso_rockridge.aif", "xorriso_violating.aif", "xorriso_zisofs.aif", "xorriso_zisofs_rockridge.aif"
         };
 
-        readonly MediaType[] _mediaTypes =
+        public override MediaType[] _mediaTypes => new[]
         {
             // Toast 3.5.7
             MediaType.CD, MediaType.CD, MediaType.CD, MediaType.CD, MediaType.CD, MediaType.CD, MediaType.CD,
@@ -124,7 +128,7 @@ namespace Aaru.Tests.Filesystems
             MediaType.CD, MediaType.CD, MediaType.CD, MediaType.CD, MediaType.CD
         };
 
-        readonly ulong[] _sectors =
+        public override ulong[] _sectors => new ulong[]
         {
             // Toast 3.5.7
             946, 946, 300, 1880, 300, 951, 300, 946, 300, 946, 946, 300, 300, 951, 300, 300,
@@ -151,7 +155,7 @@ namespace Aaru.Tests.Filesystems
             3688, 3686, 3686, 3686, 3673, 3673, 3673, 3686, 3675, 3673, 3673, 3675
         };
 
-        readonly uint[] _sectorSize =
+        public override uint[] _sectorSize => new uint[]
         {
             // Toast 3.5.7
             2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048,
@@ -178,157 +182,7 @@ namespace Aaru.Tests.Filesystems
             2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048
         };
 
-        readonly long[] _clusters =
-        {
-            // Toast 3.5.7
-            946, 946, 244, 946, 244, 951, 249, 946, 244, 946, 946, 244, 244, 951, 249, 244,
-
-            // Toast 4.1.3
-            948,
-
-            // Toast 4.0.3
-            305, 305, 220, 954, 220, 323, 234, 305, 220,
-
-            // Toast 4.0.3 (CD-ROM XA)
-            // 10, 11, 12, 13, 14, 15, 16, 17, 18,
-            // mkisofs
-            3662, 3606, 3800, 3800, 2983, 2531, 2983, 2531, 2983, 2531, 2894, 2894, 106589, 105241, 5055, 3651, 3651,
-            3651, 3651, 3637, 3637, 3637, 3689, 7481, 7487, 3693, 7487, 3925, 3637, 3637, 3637, 3693,
-
-            // Nero MAX
-            389, 417, 257, 266,
-
-            // Nero MAX (CD-ROM XA)
-            // 55, 56, 57, 58,
-
-            // XorrISO
-            3688, 3686, 3686, 3686, 3673, 3673, 3673, 3686, 3675, 3673, 3673, 3675
-        };
-
-        readonly int[] _clusterSize =
-        {
-            // Toast 3.5.7
-            2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048,
-
-            // Toast 4.1.3
-            2048,
-
-            // Toast 4.0.3
-            2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048,
-
-            // Toast 4.0.3 (CD-ROM XA)
-            // 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048,
-            // mkisofs
-            2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048,
-            2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048,
-
-            // Nero MAX
-            2048, 2048, 2048, 2048,
-
-            // Nero MAX (CD-ROM XA)
-            // 2048, 2048, 2048, 2048,
-
-            // XorrISO
-            2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048
-        };
-
-        readonly string[] _volumeName =
-        {
-            // Toast 3.5.7
-            "DISK_UTILS", "DISK_UTILS", "DISK_UTILS", "DISK_UTILS", "DISK_UTILS", "Disk utils", "Disk utils",
-            "Disk utils", "Disk utils", "DISK_UTILS", "DISK_UTILS", "DISK_UTILS", "DISK_UTILS", "Disk utils",
-            "Disk utils", "DISK_UTILS",
-
-            // Toast 4.1.3
-            "DISK_UTILS",
-
-            // Toast 4.0.3
-            "UNTITLED_CD", "UNTITLED_CD", "UNTITLED_CD", "Untitled CD", "UNTITLED_CD", "Untitled CD", "Untitled CD",
-            "Untitled CD", "Untitled CD",
-
-            // Toast 4.0.3 (CD-ROM XA)
-            // "UNTITLED_CD", "UNTITLED_CD", "UNTITLED_CD", "UNTITLED_CD", "UNTITLED_CD", "UNTITLED_CD", "UNTITLED_CD",
-            // "UNTITLED_CD", "UNTITLED_CD",
-            // mkisofs
-            "test", "test", "test", "test", "CDROM", "CDROM", "CDROM", "CDROM", "CDROM", "CDROM", "CDROM", "CDROM",
-            "CDROM", "CDROM", "CDROM", "test", "test", "test", "test", "test", "test", "test", "test", "CDROM", "CDROM",
-            "test", "CDROM", "test", "test", "test", "test", "test",
-
-            // Nero MAX
-            "Root", "Root", "Root", "Root",
-
-            // Nero MAX (CD-ROM XA)
-            // "Root", "Root", "Root", "Root",
-
-            // XorrISO
-            "test", "test", "test", "test", "test", "test", "test", "test", "test", "test", "test", "test"
-        };
-
-        readonly string[] _volumeSerial =
-        {
-            // Toast 3.5.7
-            null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-
-            // Toast 4.1.3
-            null,
-
-            // Toast 4.0.3
-            null, null, null, null, null, null, null, null, null, null,
-
-            // Toast 4.0.3 (CD-ROM XA)
-            // null, null, null, null, null, null, null, null,
-            // mkisofs
-            null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-            null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-
-            // Nero MAX
-            null, null, null, null,
-
-            // Nero MAX (CD-ROM XA)
-            // null, null, null, null,
-
-            // XorrISO
-            null, null, null, null, null, null, null, null, null, null, null, null
-        };
-
-        readonly string[] _sysid =
-        {
-            // Toast 3.5.7
-            "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002",
-            "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002",
-            "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002",
-            "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002",
-            "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002",
-            "APPLE COMPUTER, INC., TYPE: 0002",
-
-            // Toast 4.1.3
-            "APPLE COMPUTER, INC., TYPE: 0002",
-
-            // Toast 4.0.3
-            "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002",
-            "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002",
-            "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002",
-
-            // Toast 4.0.3 (CD-ROM XA)
-            // "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002",
-            // "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002",
-            // "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002",
-            // mkisofs
-            "LINUX", "LINUX", "LINUX", "LINUX", "LINUX", "LINUX", "LINUX", "LINUX", "LINUX", "LINUX", "LINUX", "LINUX",
-            "LINUX", "LINUX", "LINUX", "LINUX", "LINUX", "LINUX", "LINUX", "LINUX", "LINUX", "LINUX", "LINUX", "LINUX",
-            "LINUX", "LINUX", "LINUX", "LINUX", "LINUX", "LINUX", "LINUX", "LINUX",
-
-            // Nero MAX
-            "", "", "", "",
-
-            // Nero MAX (CD-ROM XA)
-            // "", "", "", "",
-
-            // XorrISO
-            "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""
-        };
-
-        readonly string[] _appid =
+        public override string[] _appId => new[]
         {
             // Toast 3.5.7
             "TOAST ISO 9660 BUILDER COPYRIGHT (C) 1997 ADAPTEC, INC. - HAVE A NICE DAY",
@@ -416,40 +270,184 @@ namespace Aaru.Tests.Filesystems
             "", "", "", "", "", "", "", "", "", "", "", ""
         };
 
-        [Test]
-        public void Test()
+        public override bool[] _bootable => new[]
         {
-            for(int i = 0; i < _testFiles.Length; i++)
-            {
-                string  location = Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "ISO9660", _testFiles[i]);
-                IFilter filter   = new ZZZNoFilter();
-                filter.Open(location);
-                IMediaImage image = new AaruFormat();
-                Assert.AreEqual(true, image.Open(filter), $"{_testFiles[i]}: Open()");
-                Assert.AreEqual(_mediaTypes[i], image.Info.MediaType, $"{_testFiles[i]}: MediaType");
-                Assert.AreEqual(_sectors[i], image.Info.Sectors, $"{_testFiles[i]}: Sectors");
-                Assert.AreEqual(_sectorSize[i], image.Info.SectorSize, $"{_testFiles[i]}: SectorSize");
-                IFilesystem fs = new ISO9660();
+            // Toast 3.5.7
+            false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,
+            false,
 
-                var wholePart = new Partition
-                {
-                    Name   = "Whole device",
-                    Length = image.Info.Sectors,
-                    Size   = image.Info.Sectors * image.Info.SectorSize
-                };
+            // Toast 4.1.3
+            false,
 
-                Assert.AreEqual(true, fs.Identify(image, wholePart), $"{_testFiles[i]}: Identify()");
-                fs.GetInformation(image, wholePart, out _, null);
-                Assert.AreEqual(_clusters[i], fs.XmlFsType.Clusters, $"{_testFiles[i]}: Clusters");
-                Assert.AreEqual(_clusterSize[i], fs.XmlFsType.ClusterSize, $"{_testFiles[i]}: ClusterSize");
-                Assert.AreEqual("ISO9660", fs.XmlFsType.Type, $"{_testFiles[i]}: Type");
-                Assert.AreEqual(_volumeName[i], fs.XmlFsType.VolumeName, $"{_testFiles[i]}: VolumeName");
-                Assert.AreEqual(_volumeSerial[i], fs.XmlFsType.VolumeSerial, $"{_testFiles[i]}: VolumeSerial");
-                Assert.AreEqual(_sysid[i], fs.XmlFsType.SystemIdentifier, $"{_testFiles[i]}: SystemIdentifier");
+            // Toast 4.0.3
+            false, false, false, false, false, false, false, false, false,
 
-                Assert.AreEqual(_appid[i], fs.XmlFsType.ApplicationIdentifier,
-                                $"{_testFiles[i]}: ApplicationIdentifier");
-            }
-        }
+            // Toast 4.0.3 (CD-ROM XA)
+            // false, false, false, false, false, false, false, false, false,
+            // mkisofs
+            false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,
+            false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,
+            false, false,
+
+            // Nero MAX
+            false, false, false, false,
+
+            // Nero MAX (CD-ROM XA)
+            // false, false, false, false,
+
+            // XorrISO
+            false, false, false, false, false, false, false, false, false, false, false, false
+        };
+
+        public override long[] _clusters => new long[]
+        {
+            // Toast 3.5.7
+            946, 946, 244, 946, 244, 951, 249, 946, 244, 946, 946, 244, 244, 951, 249, 244,
+
+            // Toast 4.1.3
+            948,
+
+            // Toast 4.0.3
+            305, 305, 220, 954, 220, 323, 234, 305, 220,
+
+            // Toast 4.0.3 (CD-ROM XA)
+            // 10, 11, 12, 13, 14, 15, 16, 17, 18,
+            // mkisofs
+            3662, 3606, 3800, 3800, 2983, 2531, 2983, 2531, 2983, 2531, 2894, 2894, 106589, 105241, 5055, 3651, 3651,
+            3651, 3651, 3637, 3637, 3637, 3689, 7481, 7487, 3693, 7487, 3925, 3637, 3637, 3637, 3693,
+
+            // Nero MAX
+            389, 417, 257, 266,
+
+            // Nero MAX (CD-ROM XA)
+            // 55, 56, 57, 58,
+
+            // XorrISO
+            3688, 3686, 3686, 3686, 3673, 3673, 3673, 3686, 3675, 3673, 3673, 3675
+        };
+
+        public override uint[] _clusterSize => new uint[]
+        {
+            // Toast 3.5.7
+            2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048,
+
+            // Toast 4.1.3
+            2048,
+
+            // Toast 4.0.3
+            2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048,
+
+            // Toast 4.0.3 (CD-ROM XA)
+            // 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048,
+            // mkisofs
+            2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048,
+            2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048,
+
+            // Nero MAX
+            2048, 2048, 2048, 2048,
+
+            // Nero MAX (CD-ROM XA)
+            // 2048, 2048, 2048, 2048,
+
+            // XorrISO
+            2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048
+        };
+        public override string[] _oemId => new[]
+        {
+            // Toast 3.5.7
+            "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002",
+            "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002",
+            "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002",
+            "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002",
+            "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002",
+            "APPLE COMPUTER, INC., TYPE: 0002",
+
+            // Toast 4.1.3
+            "APPLE COMPUTER, INC., TYPE: 0002",
+
+            // Toast 4.0.3
+            "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002",
+            "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002",
+            "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002",
+
+            // Toast 4.0.3 (CD-ROM XA)
+            // "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002",
+            // "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002",
+            // "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002",
+            // mkisofs
+            "LINUX", "LINUX", "LINUX", "LINUX", "LINUX", "LINUX", "LINUX", "LINUX", "LINUX", "LINUX", "LINUX", "LINUX",
+            "LINUX", "LINUX", "LINUX", "LINUX", "LINUX", "LINUX", "LINUX", "LINUX", "LINUX", "LINUX", "LINUX", "LINUX",
+            "LINUX", "LINUX", "LINUX", "LINUX", "LINUX", "LINUX", "LINUX", "LINUX",
+
+            // Nero MAX
+            "", "", "", "",
+
+            // Nero MAX (CD-ROM XA)
+            // "", "", "", "",
+
+            // XorrISO
+            "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""
+        };
+
+        public override string[] _type => null;
+
+        public override string[] _volumeName => new[]
+        {
+            // Toast 3.5.7
+            "DISK_UTILS", "DISK_UTILS", "DISK_UTILS", "DISK_UTILS", "DISK_UTILS", "Disk utils", "Disk utils",
+            "Disk utils", "Disk utils", "DISK_UTILS", "DISK_UTILS", "DISK_UTILS", "DISK_UTILS", "Disk utils",
+            "Disk utils", "DISK_UTILS",
+
+            // Toast 4.1.3
+            "DISK_UTILS",
+
+            // Toast 4.0.3
+            "UNTITLED_CD", "UNTITLED_CD", "UNTITLED_CD", "Untitled CD", "UNTITLED_CD", "Untitled CD", "Untitled CD",
+            "Untitled CD", "Untitled CD",
+
+            // Toast 4.0.3 (CD-ROM XA)
+            // "UNTITLED_CD", "UNTITLED_CD", "UNTITLED_CD", "UNTITLED_CD", "UNTITLED_CD", "UNTITLED_CD", "UNTITLED_CD",
+            // "UNTITLED_CD", "UNTITLED_CD",
+            // mkisofs
+            "test", "test", "test", "test", "CDROM", "CDROM", "CDROM", "CDROM", "CDROM", "CDROM", "CDROM", "CDROM",
+            "CDROM", "CDROM", "CDROM", "test", "test", "test", "test", "test", "test", "test", "test", "CDROM", "CDROM",
+            "test", "CDROM", "test", "test", "test", "test", "test",
+
+            // Nero MAX
+            "Root", "Root", "Root", "Root",
+
+            // Nero MAX (CD-ROM XA)
+            // "Root", "Root", "Root", "Root",
+
+            // XorrISO
+            "test", "test", "test", "test", "test", "test", "test", "test", "test", "test", "test", "test"
+        };
+
+        public override string[] _volumeSerial => new string[]
+        {
+            // Toast 3.5.7
+            null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+
+            // Toast 4.1.3
+            null,
+
+            // Toast 4.0.3
+            null, null, null, null, null, null, null, null, null, null,
+
+            // Toast 4.0.3 (CD-ROM XA)
+            // null, null, null, null, null, null, null, null,
+            // mkisofs
+            null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+            null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+
+            // Nero MAX
+            null, null, null, null,
+
+            // Nero MAX (CD-ROM XA)
+            // null, null, null, null,
+
+            // XorrISO
+            null, null, null, null, null, null, null, null, null, null, null, null
+        };
     }
 }

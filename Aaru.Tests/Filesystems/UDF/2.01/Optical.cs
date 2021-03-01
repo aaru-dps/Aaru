@@ -29,92 +29,72 @@
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.DiscImages;
-using Aaru.Filters;
 using NUnit.Framework;
 
 namespace Aaru.Tests.Filesystems.UDF._201
 {
     [TestFixture]
-    public class Optical
+    public class Optical : FilesystemTest
     {
-        readonly string[] _testFiles =
+        public Optical() : base(null) {}
+
+        public override string _dataFolder =>
+            Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Universal Disc Format", "2.01");
+        public override IFilesystem _plugin     => new Aaru.Filesystems.UDF();
+        public override bool        _partitions => false;
+
+        public override string[] _testFiles => new[]
         {
-            "1.50/ecs20.aif", "2.00/ecs20.aif", "2.01/ecs20.aif", "2.01/ecs20_cdrw.aif"
+            "ecs20.aif", "ecs20_cdrw.aif"
+        };
+        public override MediaType[] _mediaTypes => new[]
+        {
+            MediaType.DVDPR, MediaType.CDRW
         };
 
-        readonly ulong[] _sectors =
+        public override ulong[] _sectors => new ulong[]
         {
-            2295104, 2295104, 2295104, 295264
+            2295104, 295264
         };
 
-        readonly uint[] _sectorSize =
+        public override uint[] _sectorSize => new uint[]
         {
-            2048, 2048, 2048, 2048
+            2048, 2048
         };
 
-        readonly long[] _clusters =
+        public override string[] _appId => null;
+        public override bool[] _bootable => new[]
         {
-            2295104, 2295104, 2295104, 295264
+            false, false
         };
 
-        readonly int[] _clusterSize =
+        public override long[] _clusters => new long[]
         {
-            2048, 2048, 2048, 2048
+            2295104, 295264
         };
 
-        readonly string[] _udfversion =
+        public override uint[] _clusterSize => new uint[]
         {
-            "UDF v2.01", "UDF v2.01", "UDF v2.01", "UDF v2.01"
+            2048, 2048
         };
 
-        readonly string[] _volumeName =
+        public override string[] _oemId => new[]
         {
-            "Volume label", "UDF5A5DEF48", "VolLabel", "UDF5A5DFF10"
+            "*ExpressUDF", "*ExpressUDF"
+        };
+        public override string[] _type => new[]
+        {
+            "UDF v2.01", "UDF v2.01"
         };
 
-        readonly string[] _volumeSerial =
+        public override string[] _volumeName => new[]
         {
-            "Volume Set ID not specified", "Volume Set ID not specified", "VolumeSetId", "Volume Set ID not specified"
+            "VolLabel", "UDF5A5DFF10"
         };
 
-        readonly string[] _oemId =
+        public override string[] _volumeSerial => new[]
         {
-            "*ExpressUDF", "*ExpressUDF", "*ExpressUDF", "*ExpressUDF"
+            "VolumeSetId", "Volume Set ID not specified"
         };
-
-        [Test]
-        public void Test()
-        {
-            for(int i = 0; i < _testFiles.Length; i++)
-            {
-                string location = Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Universal Disc Format",
-                                               _testFiles[i]);
-
-                IFilter filter = new ZZZNoFilter();
-                filter.Open(location);
-                IMediaImage image = new AaruFormat();
-                Assert.AreEqual(true, image.Open(filter), _testFiles[i]);
-                Assert.AreEqual(_sectors[i], image.Info.Sectors, _testFiles[i]);
-                Assert.AreEqual(_sectorSize[i], image.Info.SectorSize, _testFiles[i]);
-                IFilesystem fs = new Aaru.Filesystems.UDF();
-
-                var wholePart = new Partition
-                {
-                    Name   = "Whole device",
-                    Length = image.Info.Sectors,
-                    Size   = image.Info.Sectors * image.Info.SectorSize
-                };
-
-                Assert.AreEqual(true, fs.Identify(image, wholePart), _testFiles[i]);
-                fs.GetInformation(image, wholePart, out _, null);
-                Assert.AreEqual(_clusters[i], fs.XmlFsType.Clusters, _testFiles[i]);
-                Assert.AreEqual(_clusterSize[i], fs.XmlFsType.ClusterSize, _testFiles[i]);
-                Assert.AreEqual(_udfversion[i], fs.XmlFsType.Type, _testFiles[i]);
-                Assert.AreEqual(_volumeName[i], fs.XmlFsType.VolumeName, _testFiles[i]);
-                Assert.AreEqual(_volumeSerial[i], fs.XmlFsType.VolumeSetIdentifier, _testFiles[i]);
-                Assert.AreEqual(_oemId[i], fs.XmlFsType.SystemIdentifier, _testFiles[i]);
-            }
-        }
     }
 }

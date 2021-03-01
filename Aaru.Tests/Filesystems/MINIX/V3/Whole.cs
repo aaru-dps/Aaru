@@ -29,82 +29,71 @@
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.DiscImages;
 using Aaru.Filesystems;
-using Aaru.Filters;
 using NUnit.Framework;
 
 namespace Aaru.Tests.Filesystems.MINIX.V3
 {
     [TestFixture]
-    public class Whole
+    public class Whole : FilesystemTest
     {
-        readonly string[] _testFiles =
+        public Whole() : base(null) {}
+
+        public override string _dataFolder =>
+            Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "MINIX v3 filesystem");
+
+        public override IFilesystem _plugin     => new MinixFS();
+        public override bool        _partitions => false;
+
+        public override string[] _testFiles => new[]
         {
             "minix_3.1.2a_dsdd.img.lz", "minix_3.1.2a_dshd.img.lz", "minix_3.1.2a_mf2dd.img.lz",
             "minix_3.1.2a_mf2hd.img.lz"
         };
 
-        readonly MediaType[] _mediaTypes =
+        public override MediaType[] _mediaTypes => new[]
         {
             MediaType.DOS_525_DS_DD_9, MediaType.DOS_525_HD, MediaType.DOS_35_DS_DD_9, MediaType.DOS_35_HD
         };
 
-        readonly ulong[] _sectors =
+        public override ulong[] _sectors => new ulong[]
         {
             720, 2400, 1440, 2880
         };
 
-        readonly uint[] _sectorSize =
+        public override uint[] _sectorSize => new uint[]
         {
             512, 512, 512, 512
         };
 
-        readonly long[] _clusters =
+        public override string[] _appId => null;
+        public override bool[] _bootable => new[]
+        {
+            false, false, false, false
+        };
+
+        public override long[] _clusters => new long[]
         {
             90, 300, 180, 360
         };
 
-        readonly int[] _clusterSize =
+        public override uint[] _clusterSize => new uint[]
         {
             4096, 4096, 4096, 4096
         };
+        public override string[] _oemId => null;
 
-        readonly string[] _types =
+        public override string[] _type => new[]
         {
             "Minix v3", "Minix v3", "Minix v3", "Minix v3"
         };
-
-        [Test]
-        public void Test()
+        public override string[] _volumeName => new string[]
         {
-            for(int i = 0; i < _testFiles.Length; i++)
-            {
-                string location = Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "MINIX v3 filesystem",
-                                               _testFiles[i]);
-
-                IFilter filter = new LZip();
-                filter.Open(location);
-                IMediaImage image = new ZZZRawImage();
-                Assert.AreEqual(true, image.Open(filter), _testFiles[i]);
-                Assert.AreEqual(_mediaTypes[i], image.Info.MediaType, _testFiles[i]);
-                Assert.AreEqual(_sectors[i], image.Info.Sectors, _testFiles[i]);
-                Assert.AreEqual(_sectorSize[i], image.Info.SectorSize, _testFiles[i]);
-                IFilesystem fs = new MinixFS();
-
-                var wholePart = new Partition
-                {
-                    Name   = "Whole device",
-                    Length = image.Info.Sectors,
-                    Size   = image.Info.Sectors * image.Info.SectorSize
-                };
-
-                Assert.AreEqual(true, fs.Identify(image, wholePart), _testFiles[i]);
-                fs.GetInformation(image, wholePart, out _, null);
-                Assert.AreEqual(_clusters[i], fs.XmlFsType.Clusters, _testFiles[i]);
-                Assert.AreEqual(_clusterSize[i], fs.XmlFsType.ClusterSize, _testFiles[i]);
-                Assert.AreEqual(_types[i], fs.XmlFsType.Type, _testFiles[i]);
-            }
-        }
+            null, null, null, null
+        };
+        public override string[] _volumeSerial => new string[]
+        {
+            null, null, null, null
+        };
     }
 }

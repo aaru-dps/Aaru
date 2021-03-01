@@ -29,93 +29,65 @@
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.DiscImages;
-using Aaru.Filters;
 using NUnit.Framework;
 
 namespace Aaru.Tests.Filesystems
 {
     [TestFixture]
-    public class Locus
+    public class Locus : FilesystemTest
     {
-        readonly string[] _testFiles =
+        public Locus() : base("Locus filesystem") {}
+
+        public override string _dataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Locus filesystem");
+        public override IFilesystem _plugin => new Aaru.Filesystems.Locus();
+        public override bool _partitions => false;
+
+        public override string[] _testFiles => new[]
         {
             "mf2dd.img.lz", "mf2hd.img.lz"
         };
 
-        readonly MediaType[] _mediaTypes =
+        public override MediaType[] _mediaTypes => new[]
         {
             MediaType.DOS_35_DS_DD_9, MediaType.DOS_35_HD
         };
 
-        readonly ulong[] _sectors =
+        public override ulong[] _sectors => new ulong[]
         {
             1440, 2880
         };
 
-        readonly uint[] _sectorSize =
+        public override uint[] _sectorSize => new uint[]
         {
             512, 512
         };
 
-        readonly long[] _clusters =
+        public override string[] _appId => null;
+        public override bool[] _bootable => new[]
+        {
+            false, false
+        };
+
+        public override long[] _clusters => new long[]
         {
             180, 360
         };
 
-        readonly int[] _clusterSize =
+        public override uint[] _clusterSize => new uint[]
         {
             4096, 4096
         };
+        public override string[] _oemId => null;
+        public override string[] _type  => null;
 
-        readonly string[] _volumeName =
+        public override string[] _volumeName => new[]
         {
             "Label", "Label"
         };
 
-        readonly string[] _volumeSerial =
+        public override string[] _volumeSerial => new string[]
         {
             null, null
         };
-
-        readonly string[] _oemId =
-        {
-            null, null
-        };
-
-        [Test]
-        public void Test()
-        {
-            for(int i = 0; i < _testFiles.Length; i++)
-            {
-                string location = Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Locus filesystem",
-                                               _testFiles[i]);
-
-                IFilter filter = new LZip();
-                filter.Open(location);
-                IMediaImage image = new ZZZRawImage();
-                Assert.AreEqual(true, image.Open(filter), _testFiles[i]);
-                Assert.AreEqual(_mediaTypes[i], image.Info.MediaType, _testFiles[i]);
-                Assert.AreEqual(_sectors[i], image.Info.Sectors, _testFiles[i]);
-                Assert.AreEqual(_sectorSize[i], image.Info.SectorSize, _testFiles[i]);
-                IFilesystem fs = new Aaru.Filesystems.Locus();
-
-                var wholePart = new Partition
-                {
-                    Name   = "Whole device",
-                    Length = image.Info.Sectors,
-                    Size   = image.Info.Sectors * image.Info.SectorSize
-                };
-
-                Assert.AreEqual(true, fs.Identify(image, wholePart), _testFiles[i]);
-                fs.GetInformation(image, wholePart, out _, null);
-                Assert.AreEqual(_clusters[i], fs.XmlFsType.Clusters, _testFiles[i]);
-                Assert.AreEqual(_clusterSize[i], fs.XmlFsType.ClusterSize, _testFiles[i]);
-                Assert.AreEqual("Locus filesystem", fs.XmlFsType.Type, _testFiles[i]);
-                Assert.AreEqual(_volumeName[i], fs.XmlFsType.VolumeName, _testFiles[i]);
-                Assert.AreEqual(_volumeSerial[i], fs.XmlFsType.VolumeSerial, _testFiles[i]);
-                Assert.AreEqual(_oemId[i], fs.XmlFsType.SystemIdentifier, _testFiles[i]);
-            }
-        }
     }
 }

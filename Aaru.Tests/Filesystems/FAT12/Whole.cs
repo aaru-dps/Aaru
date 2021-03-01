@@ -29,17 +29,22 @@
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.DiscImages;
 using Aaru.Filesystems;
-using Aaru.Filters;
 using NUnit.Framework;
 
 namespace Aaru.Tests.Filesystems.FAT12
 {
     [TestFixture]
-    public class Whole
+    public class Whole : FilesystemTest
     {
-        readonly string[] _testFiles =
+        public Whole() : base("FAT12") {}
+
+        public override string _dataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "FAT12");
+
+        public override IFilesystem _plugin     => new FAT();
+        public override bool        _partitions => false;
+
+        public override string[] _testFiles => new[]
         {
             // Concurrent DOS 6.00
             "concurrentdos_6.00_dshd.img.lz", "concurrentdos_6.00_mf2dd.img.lz", "concurrentdos_6.00_mf2hd.img.lz",
@@ -374,7 +379,7 @@ namespace Aaru.Tests.Filesystems.FAT12
             "geos41_mf2hd.img.lz"
         };
 
-        readonly MediaType[] _mediaTypes =
+        public override MediaType[] _mediaTypes => new[]
         {
             // Concurrent DOS 6.00
             MediaType.DOS_525_HD, MediaType.DOS_35_DS_DD_9, MediaType.DOS_35_HD,
@@ -692,7 +697,7 @@ namespace Aaru.Tests.Filesystems.FAT12
             MediaType.DOS_35_HD
         };
 
-        readonly ulong[] _sectors =
+        public override ulong[] _sectors => new ulong[]
         {
             // Concurrent DOS 6.00
             2400, 1440, 2880,
@@ -962,7 +967,7 @@ namespace Aaru.Tests.Filesystems.FAT12
             2880
         };
 
-        readonly uint[] _sectorSize =
+        public override uint[] _sectorSize => new uint[]
         {
             // Concurrent DOS 6.00
             512, 512, 512,
@@ -1231,8 +1236,278 @@ namespace Aaru.Tests.Filesystems.FAT12
             // GEOS 4.1
             512
         };
+        public override string[] _appId => null;
+        public override bool[] _bootable => new[]
+        {
+            // Concurrent DOS 6.00
+            true, true, true,
 
-        readonly long[] _clusters =
+            // DR-DOS 3.40
+            true, true, true, true, true, true, true,
+
+            // DR-DOS 3.41
+            true, true, true, true, true, true, true,
+
+            // DR-DOS 5.00
+            true, true, true, true, true, true, true,
+
+            // DR-DOS 6.00
+            true, true, true, true, true, true, true, true,
+
+            // DR-DOS 7.02
+            true, true, true, true, true, true, true, true,
+
+            // DR-DOS 7.03
+            true, true, true, true, true, true,
+
+            // DR-DOS 8.00
+            true, true, true, true, true, true, true, true,
+
+            // MS-DOS 3.30A
+            true, true, true, true, true, true, true,
+
+            // MS-DOS 3.31
+            true, true, true, true, true, true, true,
+
+            // MS-DOS 4.01
+            true, true, true, true, true, true, true,
+
+            // MS-DOS 5.00
+            true, true, true, true, true, true, true, true,
+
+            // MS-DOS 6.00
+            true, true, true, true, true, true, true, true,
+
+            // MS-DOS 6.20
+            true, true, true, true, true, true, true, true,
+
+            // MS-DOS 6.20 RC1
+            true, true, true, true, true, true, true, true,
+
+            // MS-DOS 6.21
+            true, true, true, true, true, true, true, true,
+
+            // MS-DOS 6.22
+            true, true, true, true, true, true, true, true,
+
+            // MS-DOS 7.10
+            true, true, true, true, true, true, true, true,
+
+            // MS-DOS 3.20 for Amstrad
+            true, true, true, true, true, true,
+
+            // MS-DOS 2.11 for AT&T
+            true,
+
+            // MS-DOS 3.30 for DeLL
+            true, true, true, true, true, true, true,
+
+            // MS-DOS 3.10 for Epson
+            true, true, true,
+
+            // MS-DOS 3.20 for Epson
+            true, true, true, true, true, true,
+
+            // MS-DOS 3.20 for HP
+            true, false, true, true, true, true, false,
+
+            // MS-DOS 3.21 for Hyosung
+            true, false, true, true, true, true, false,
+
+            // MS-DOS 3.21 for Kaypro
+            true, false, true, true, true, true, false,
+
+            // MS-DOS 3.10 for Olivetti
+            true, true, true,
+
+            // MS-DOS 3.30 for Toshiba
+            true, true, true, true, true, true, true,
+
+            // MS-DOS 4.01 for Toshiba
+            true, true, true, true, true, true, true,
+
+            // Novell DOS 7.00
+            true, true, true, true, true, true, true, true,
+
+            // OpenDOS 7.01
+            true, true, true, true, true, true, true, true,
+
+            // PC-DOS 2.00
+            true,
+
+            // PC-DOS 2.10
+            true,
+
+            // PC-DOS 2000
+            true, true, true, true, true, true, true, true,
+
+            // PC-DOS 3.00
+            true,
+
+            // PC-DOS 3.10
+            true,
+
+            // PC-DOS 3.30
+            true, true,
+
+            // PC-DOS 4.00
+            true, true,
+
+            // PC-DOS 5.00
+            true, true, true, true, true, true, true, true,
+
+            // PC-DOS 5.02
+            true, true, true, true, true, true, true, true,
+
+            // PC-DOS 6.10
+            true, true, true, true, true, true, true, true,
+
+            // PC-DOS 6.30
+            true, true, true, true, true, true, true, true,
+
+            // mkfs.vfat
+            true, true, true, true,
+
+            // mkfs.vfat for Atari
+            false, false, false, false,
+
+            // Microsoft OS/2 1.00 for Tandy
+            true, true, true, true,
+
+            // Microsoft OS/2 1.10 for AST
+            true, true, true, true,
+
+            // Microsoft OS/2 1.10 for Nokia
+            true, true, true, true,
+
+            // Microsoft OS/2 1.21
+            true, true, true, true,
+
+            // Microsoft OS/2 1.30.1
+            true, true, true, true, true,
+
+            // OS/2 1.20
+            true, true, true, true,
+
+            // OS/2 1.30
+            true, true, true, true,
+
+            // OS/2 2.00
+            true, true, true, true, true,
+
+            // OS/2 2.10
+            true, true, true, true, true,
+
+            // OS/2 2.11
+            true, true, true, true, true,
+
+            // OS/2 Warp 3
+            true, true, true, true,
+
+            // OS/2 Warp 4
+            true, true, true, true,
+
+            // eComStation
+            true, true, true, true, true,
+
+            // Windows 95
+            true, true, true, true, true, true, true, true,
+
+            // Windows 95 OSR 2
+            true, true, true, true, true, true, true, true,
+
+            // Windows 95 OSR 2.1
+            true, true, true, true, true, true, true, true,
+
+            // Windows 95 OSR 2.5
+            true, true, true, true, true, true, true, true,
+
+            // Windows 98
+            true, true, true, true, true, true, true, true,
+
+            // Windows 98 Second Edition
+            true, true, true, true, true, true, true, true,
+
+            // Windows Me
+            true, true, true, true, true,
+
+            // Windows NT 3.10
+            true, true, true, true,
+
+            // Windows NT 3.50
+            true, true, true, true,
+
+            // Windows NT 3.51
+            true, true, true, true,
+
+            // Windows NT 4.00
+            true, true, true, true, true, true,
+
+            // Windows 2000
+            true, true, true, true, true,
+
+            // Windows Vista
+            true, true, true, true, true,
+
+            // BeOS R4.5
+            true,
+
+            // Hatari
+            false, false, false, false, false, false, false, false,
+
+            // Atari TOS 1.04
+            false, false,
+
+            // NetBSD 1.6
+            true, true,
+
+            // NeXTStep 3.3
+            false, false,
+
+            // OpenStep for Mach 4.0
+            false, false,
+
+            // OpenStep for Mach 4.2
+            false, false,
+
+            // Solaris 2.4
+            true, true,
+
+            // COHERENT UNIX 4.2.10
+            false, false, false, false,
+
+            // SCO OpenServer 5.0.7Hw
+            true, true, true,
+
+            // Epson MS-DOS 5.00 for PC-98
+            true, true,
+
+            // NEC MS-DOS 3.30 for PC-98
+            true, true,
+
+            // NEC MS-DOS 5.00 for PC-98
+            true, true,
+
+            // NEC MS-DOS 6.20 for PC-98
+            true, true,
+
+            // GEOS 1.2
+            true,
+
+            // GEOS 2.0
+            true,
+
+            // GEOS 3.1
+            true,
+
+            // GEOS 3.2
+            true,
+
+            // GEOS 4.1
+            true
+        };
+
+        public override long[] _clusters => new long[]
         {
             // Concurrent DOS 6.00
             2400, 720, 2880,
@@ -1502,7 +1777,7 @@ namespace Aaru.Tests.Filesystems.FAT12
             2880
         };
 
-        readonly int[] _clusterSize =
+        public override uint[] _clusterSize => new uint[]
         {
             // Concurrent DOS 6.00
             512, 1024, 512,
@@ -1772,7 +2047,279 @@ namespace Aaru.Tests.Filesystems.FAT12
             512
         };
 
-        readonly string[] _volumeName =
+        public override string[] _oemId => new[]
+        {
+            // Concurrent DOS 6.00
+            "DIGITAL ", "DIGITAL ", "DIGITAL ",
+
+            // DR-DOS 3.40
+            "DIGITAL ", "DIGITAL ", "DIGITAL ", "DIGITAL ", "DIGITAL ", "DIGITAL ", "DIGITAL ",
+
+            // DR-DOS 3.41
+            "DIGITAL ", "DIGITAL ", "DIGITAL ", "DIGITAL ", "DIGITAL ", "DIGITAL ", "DIGITAL ",
+
+            // DR-DOS 5.00
+            "IBM  3.3", "IBM  3.3", "IBM  3.3", "IBM  3.3", "IBM  3.3", "IBM  3.3", "IBM  3.3",
+
+            // DR-DOS 6.00
+            "IBM  3.3", "IBM  3.3", "IBM  3.3", "IBM  3.3", "IBM  3.3", "IBM  3.3", "IBM  3.3", "IBM  3.3",
+
+            // DR-DOS 7.02
+            "DRDOS  7", "DRDOS  7", "DRDOS  7", "DRDOS  7", "DRDOS  7", "DRDOS  7", "DRDOS  7", "DRDOS  7",
+
+            // DR-DOS 7.03
+            "DRDOS  7", "DRDOS  7", "DRDOS  7", "DRDOS  7", "DRDOS  7", "DRDOS  7",
+
+            // DR-DOS 8.00
+            "DRDOS  7", "DRDOS  7", "DRDOS  7", "DRDOS  7", "DRDOS  7", "DRDOS  7", "DRDOS  7", "DRDOS  7",
+
+            // MS-DOS 3.30A
+            "MSDOS3.3", null, "MSDOS3.3", "MSDOS3.3", "MSDOS3.3", "MSDOS3.3", null,
+
+            // MS-DOS 3.31
+            "IBM  3.3", null, "IBM  3.3", "IBM  3.3", "IBM  3.3", "IBM  3.3", null,
+
+            // MS-DOS 4.01
+            "MSDOS4.0", null, "MSDOS4.0", "MSDOS4.0", "MSDOS4.0", "MSDOS4.0", null,
+
+            // MS-DOS 5.00
+            "MSDOS5.0", null, "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", null,
+
+            // MS-DOS 6.00
+            "MSDOS5.0", null, "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", null,
+
+            // MS-DOS 6.20
+            "MSDOS5.0", null, "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", null,
+
+            // MS-DOS 6.20 RC1
+            "MSDOS5.0", null, "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", null,
+
+            // MS-DOS 6.21
+            "MSDOS5.0", null, "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", null,
+
+            // MS-DOS 6.22
+            "MSDOS5.0", null, "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", null,
+
+            // MS-DOS 7.10
+            "MSWIN4.1", null, "MSWIN4.1", "MSWIN4.1", "MSWIN4.1", "MSWIN4.1", "MSWIN4.1", null,
+
+            // MS-DOS 3.20 for Amstrad
+            "MSDOS3.2", null, "MSDOS3.2", "MSDOS3.2", "MSDOS3.2", null,
+
+            // MS-DOS 2.11 for AT&T
+            "PSA 1.04",
+
+            // MS-DOS 3.30 for DeLL
+            "IBM  3.3", null, "IBM  3.3", "IBM  3.3", "IBM  3.3", "IBM  3.3", null,
+
+            // MS-DOS 3.10 for Epson
+            "EPS 3.10", "EPS 3.10", "EPS 3.10",
+
+            // MS-DOS 3.20 for Epson
+            "IBM  3.2", "IBM  3.2", "IBM  3.2", "IBM  3.2", "IBM  3.2", "IBM  3.2",
+
+            // MS-DOS 3.20 for HP
+            "MSDOS3.2", null, "MSDOS3.2", "MSDOS3.2", "MSDOS3.2", "MSDOS3.2", null,
+
+            // MS-DOS 3.21 for Hyosung
+            "MSDOS3.2", null, "MSDOS3.2", "MSDOS3.2", "MSDOS3.2", "MSDOS3.2", null,
+
+            // MS-DOS 3.21 for Kaypro
+            "MSDOS3.2", null, "MSDOS3.2", "MSDOS3.2", "MSDOS3.2", "MSDOS3.2", null,
+
+            // MS-DOS 3.10 for Olivetti
+            "IBM  3.1", "IBM  3.1", "IBM  3.1",
+
+            // MS-DOS 3.30 for Toshiba
+            "IBM  3.3", null, "IBM  3.3", "IBM  3.3", "IBM  3.3", "IBM  3.3", null,
+
+            // MS-DOS 4.01 for Toshiba
+            "T V4.00 ", "T V4.00 ", "T V4.00 ", "T V4.00 ", "T V4.00 ", "T V4.00 ", "T V4.00 ",
+
+            // Novell DOS 7.00
+            "NWDOS7.0", "NWDOS7.0", "NWDOS7.0", "NWDOS7.0", "NWDOS7.0", "NWDOS7.0", "NWDOS7.0", "NWDOS7.0",
+
+            // OpenDOS 7.01
+            "OPENDOS7", "OPENDOS7", "OPENDOS7", "OPENDOS7", "OPENDOS7", "OPENDOS7", "OPENDOS7", "OPENDOS7",
+
+            // PC-DOS 2.00
+            "IBM  2.0",
+
+            // PC-DOS 2.10
+            "IBM  2.0",
+
+            // PC-DOS 2000
+            "IBM  7.0", null, "IBM  7.0", "IBM  7.0", "IBM  7.0", "IBM  7.0", "IBM  7.0", null,
+
+            // PC-DOS 3.00
+            "IBM  3.0",
+
+            // PC-DOS 3.10
+            "IBM  3.1",
+
+            // PC-DOS 3.30
+            "IBM  3.3", "IBM  3.3",
+
+            // PC-DOS 4.00
+            "IBM  4.0", "IBM  4.0",
+
+            // PC-DOS 5.00
+            "IBM  5.0", null, "IBM  5.0", "IBM  5.0", "IBM  5.0", "IBM  5.0", "IBM  5.0", null,
+
+            // PC-DOS 5.02
+            "IBM  5.0", null, "IBM  5.0", "IBM  5.0", "IBM  5.0", "IBM  5.0", "IBM  5.0", null,
+
+            // PC-DOS 6.10
+            "IBM  6.0", null, "IBM  6.0", "IBM  6.0", "IBM  6.0", "IBM  6.0", "IBM  6.0", null,
+
+            // PC-DOS 6.30
+            "IBM  6.0", null, "IBM  6.0", "IBM  6.0", "IBM  6.0", "IBM  6.0", "IBM  6.0", null,
+
+            // mkfs.vfat
+            "mkfs.fat", "mkfs.fat", "mkfs.fat", "mkfs.fat",
+
+            // mkfs.vfat for Atari
+            "mkdosf", "mkdosf", "mkdosf", "mkdosf",
+
+            // Microsoft OS/2 1.00 for Tandy
+            "TAN 10.0", "TAN 10.0", "TAN 10.0", "TAN 10.0",
+
+            // Microsoft OS/2 1.10 for AST
+            "IBM 10.1", "IBM 10.1", "IBM 10.1", "IBM 10.1",
+
+            // Microsoft OS/2 1.10 for Nokia
+            "IBM 10.1", "IBM 10.1", "IBM 10.1", "IBM 10.1",
+
+            // Microsoft OS/2 1.21
+            "IBM 10.2", "IBM 10.2", "IBM 10.2", "IBM 10.2",
+
+            // Microsoft OS/2 1.30.1
+            "IBM 10.2", "IBM 10.2", "IBM 10.2", "IBM 10.2", "IBM 10.2",
+
+            // OS/2 1.20
+            "IBM 10.2", "IBM 10.2", "IBM 10.2", "IBM 10.2",
+
+            // OS/2 1.30
+            "IBM 10.2", "IBM 10.2", "IBM 10.2", "IBM 10.2",
+
+            // OS/2 2.00
+            "IBM 20.0", "IBM 20.0", "IBM 20.0", "IBM 20.0", "IBM 20.0",
+
+            // OS/2 2.10
+            "IBM 20.0", "IBM 20.0", "IBM 20.0", "IBM 20.0", "IBM 20.0",
+
+            // OS/2 2.11
+            "IBM 20.0", "IBM 20.0", "IBM 20.0", "IBM 20.0", "IBM 20.0",
+
+            // OS/2 Warp 3
+            "IBM 20.0", "IBM 20.0", "IBM 20.0", "IBM 20.0",
+
+            // OS/2 Warp 4
+            "IBM 20.0", "IBM 20.0", "IBM 20.0", "IBM 20.0",
+
+            // eComStation
+            "IBM 4.50", "IBM 4.50", "IBM 4.50", "IBM 4.50", "IBM 4.50",
+
+            // Windows 95
+            null, "MSWIN4.0", "MSWIN4.0", "MSWIN4.0", "MSWIN4.0", "MSWIN4.0", null, "MSWIN4.0",
+
+            // Windows 95 OSR 2
+            null, "MSWIN4.1", "MSWIN4.1", "MSWIN4.1", "MSWIN4.1", "MSWIN4.1", null, "MSWIN4.1",
+
+            // Windows 95 OSR 2.1
+            null, "MSWIN4.1", "MSWIN4.1", "MSWIN4.1", "MSWIN4.1", "MSWIN4.1", null, "MSWIN4.1",
+
+            // Windows 95 OSR 2.5
+            null, "MSWIN4.1", "MSWIN4.1", "MSWIN4.1", "MSWIN4.1", "MSWIN4.1", null, "MSWIN4.1",
+
+            // Windows 98
+            null, "MSWIN4.1", "MSWIN4.1", "MSWIN4.1", "MSWIN4.1", "MSWIN4.1", null, "MSWIN4.1",
+
+            // Windows 98 Second Edition
+            null, "MSWIN4.1", "MSWIN4.1", "MSWIN4.1", "MSWIN4.1", "MSWIN4.1", null, "MSWIN4.1",
+
+            // Windows Me
+            "MSWIN4.1", "MSWIN4.1", "MSWIN4.1", "MSWIN4.1", "MSWIN4.1",
+
+            // Windows NT 3.10
+            "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", "MSDOS5.0",
+
+            // Windows NT 3.50
+            "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", "MSDOS5.0",
+
+            // Windows NT 3.51
+            "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", "MSDOS5.0",
+
+            // Windows NT 4.00
+            "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", "MSDOS5.0",
+
+            // Windows 2000
+            "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", "MSDOS5.0",
+
+            // Windows Vista
+            "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", "MSDOS5.0",
+
+            // BeOS R4.5
+            "BeOS    ",
+
+            // Hatari
+            "NNNNNN", "NNNNNN", "NNNNNN", "NNNNNN", "NNNNNN", "NNNNNN", "NNNNNN", "NNNNNN",
+
+            // Atari TOS 1.04
+            "NNNNNN", "NNNNNN",
+
+            // NetBSD 1.6
+            "BSD  4.4", "BSD  4.4",
+
+            // NeXTStep 3.3
+            "NEXT    ", "NEXT    ",
+
+            // OpenStep for Mach 4.0
+            "NEXT    ", "NEXT    ",
+
+            // OpenStep for Mach 4.2
+            "NEXT    ", "NEXT    ",
+
+            // Solaris 2.4
+            "MSDOS3.3", "MSDOS3.3",
+
+            // COHERENT UNIX 4.2.10
+            "COHERENT", "COHERENT", "COHERENT", "COHERENT",
+
+            // SCO OpenServer 5.0.7Hw
+            "SCO BOOT", "SCO BOOT", "SCO BOOT",
+
+            // Epson MS-DOS 5.00 for PC-98
+            "EPSON5.0", "EPSON5.0",
+
+            // NEC MS-DOS 3.30 for PC-98
+            "NEC 2.00", "NEC 2.00",
+
+            // NEC MS-DOS 5.00 for PC-98
+            "NEC  5.0", "NEC  5.0",
+
+            // NEC MS-DOS 6.20 for PC-98
+            "NEC  5.0", "NEC  5.0",
+
+            // GEOS 1.2
+            "GEOWORKS",
+
+            // GEOS 2.0
+            "GEOWORKS",
+
+            // GEOS 3.1
+            "GEOWORKS",
+
+            // GEOS 3.2
+            "GEOWORKS",
+
+            // GEOS 4.1
+            "GEOWORKS"
+        };
+
+        public override string[] _type => null;
+
+        public override string[] _volumeName => new[]
         {
             // Concurrent DOS 6.00
             null, null, null,
@@ -2048,7 +2595,7 @@ namespace Aaru.Tests.Filesystems.FAT12
             "GEOS41"
         };
 
-        readonly string[] _volumeSerial =
+        public override string[] _volumeSerial => new[]
         {
             // Concurrent DOS 6.00
             null, null, null,
@@ -2317,308 +2864,5 @@ namespace Aaru.Tests.Filesystems.FAT12
             // GEOS 4.1
             "8D684C67"
         };
-
-        readonly string[] _oemId =
-        {
-            // Concurrent DOS 6.00
-            "DIGITAL ", "DIGITAL ", "DIGITAL ",
-
-            // DR-DOS 3.40
-            "DIGITAL ", "DIGITAL ", "DIGITAL ", "DIGITAL ", "DIGITAL ", "DIGITAL ", "DIGITAL ",
-
-            // DR-DOS 3.41
-            "DIGITAL ", "DIGITAL ", "DIGITAL ", "DIGITAL ", "DIGITAL ", "DIGITAL ", "DIGITAL ",
-
-            // DR-DOS 5.00
-            "IBM  3.3", "IBM  3.3", "IBM  3.3", "IBM  3.3", "IBM  3.3", "IBM  3.3", "IBM  3.3",
-
-            // DR-DOS 6.00
-            "IBM  3.3", "IBM  3.3", "IBM  3.3", "IBM  3.3", "IBM  3.3", "IBM  3.3", "IBM  3.3", "IBM  3.3",
-
-            // DR-DOS 7.02
-            "DRDOS  7", "DRDOS  7", "DRDOS  7", "DRDOS  7", "DRDOS  7", "DRDOS  7", "DRDOS  7", "DRDOS  7",
-
-            // DR-DOS 7.03
-            "DRDOS  7", "DRDOS  7", "DRDOS  7", "DRDOS  7", "DRDOS  7", "DRDOS  7",
-
-            // DR-DOS 8.00
-            "DRDOS  7", "DRDOS  7", "DRDOS  7", "DRDOS  7", "DRDOS  7", "DRDOS  7", "DRDOS  7", "DRDOS  7",
-
-            // MS-DOS 3.30A
-            "MSDOS3.3", null, "MSDOS3.3", "MSDOS3.3", "MSDOS3.3", "MSDOS3.3", null,
-
-            // MS-DOS 3.31
-            "IBM  3.3", null, "IBM  3.3", "IBM  3.3", "IBM  3.3", "IBM  3.3", null,
-
-            // MS-DOS 4.01
-            "MSDOS4.0", null, "MSDOS4.0", "MSDOS4.0", "MSDOS4.0", "MSDOS4.0", null,
-
-            // MS-DOS 5.00
-            "MSDOS5.0", null, "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", null,
-
-            // MS-DOS 6.00
-            "MSDOS5.0", null, "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", null,
-
-            // MS-DOS 6.20
-            "MSDOS5.0", null, "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", null,
-
-            // MS-DOS 6.20 RC1
-            "MSDOS5.0", null, "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", null,
-
-            // MS-DOS 6.21
-            "MSDOS5.0", null, "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", null,
-
-            // MS-DOS 6.22
-            "MSDOS5.0", null, "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", null,
-
-            // MS-DOS 7.10
-            "MSWIN4.1", null, "MSWIN4.1", "MSWIN4.1", "MSWIN4.1", "MSWIN4.1", "MSWIN4.1", null,
-
-            // MS-DOS 3.20 for Amstrad
-            "MSDOS3.2", null, "MSDOS3.2", "MSDOS3.2", "MSDOS3.2", null,
-
-            // MS-DOS 2.11 for AT&T
-            "PSA 1.04",
-
-            // MS-DOS 3.30 for DeLL
-            "IBM  3.3", null, "IBM  3.3", "IBM  3.3", "IBM  3.3", "IBM  3.3", null,
-
-            // MS-DOS 3.10 for Epson
-            "EPS 3.10", "EPS 3.10", "EPS 3.10",
-
-            // MS-DOS 3.20 for Epson
-            "IBM  3.2", "IBM  3.2", "IBM  3.2", "IBM  3.2", "IBM  3.2", "IBM  3.2",
-
-            // MS-DOS 3.20 for HP
-            "MSDOS3.2", null, "MSDOS3.2", "MSDOS3.2", "MSDOS3.2", "MSDOS3.2", null,
-
-            // MS-DOS 3.21 for Hyosung
-            "MSDOS3.2", null, "MSDOS3.2", "MSDOS3.2", "MSDOS3.2", "MSDOS3.2", null,
-
-            // MS-DOS 3.21 for Kaypro
-            "MSDOS3.2", null, "MSDOS3.2", "MSDOS3.2", "MSDOS3.2", "MSDOS3.2", null,
-
-            // MS-DOS 3.10 for Olivetti
-            "IBM  3.1", "IBM  3.1", "IBM  3.1",
-
-            // MS-DOS 3.30 for Toshiba
-            "IBM  3.3", null, "IBM  3.3", "IBM  3.3", "IBM  3.3", "IBM  3.3", null,
-
-            // MS-DOS 4.01 for Toshiba
-            "T V4.00 ", "T V4.00 ", "T V4.00 ", "T V4.00 ", "T V4.00 ", "T V4.00 ", "T V4.00 ",
-
-            // Novell DOS 7.00
-            "NWDOS7.0", "NWDOS7.0", "NWDOS7.0", "NWDOS7.0", "NWDOS7.0", "NWDOS7.0", "NWDOS7.0", "NWDOS7.0",
-
-            // OpenDOS 7.01
-            "OPENDOS7", "OPENDOS7", "OPENDOS7", "OPENDOS7", "OPENDOS7", "OPENDOS7", "OPENDOS7", "OPENDOS7",
-
-            // PC-DOS 2.00
-            "IBM  2.0",
-
-            // PC-DOS 2.10
-            "IBM  2.0",
-
-            // PC-DOS 2000
-            "IBM  7.0", null, "IBM  7.0", "IBM  7.0", "IBM  7.0", "IBM  7.0", "IBM  7.0", null,
-
-            // PC-DOS 3.00
-            "IBM  3.0",
-
-            // PC-DOS 3.10
-            "IBM  3.1",
-
-            // PC-DOS 3.30
-            "IBM  3.3", "IBM  3.3",
-
-            // PC-DOS 4.00
-            "IBM  4.0", "IBM  4.0",
-
-            // PC-DOS 5.00
-            "IBM  5.0", null, "IBM  5.0", "IBM  5.0", "IBM  5.0", "IBM  5.0", "IBM  5.0", null,
-
-            // PC-DOS 5.02
-            "IBM  5.0", null, "IBM  5.0", "IBM  5.0", "IBM  5.0", "IBM  5.0", "IBM  5.0", null,
-
-            // PC-DOS 6.10
-            "IBM  6.0", null, "IBM  6.0", "IBM  6.0", "IBM  6.0", "IBM  6.0", "IBM  6.0", null,
-
-            // PC-DOS 6.30
-            "IBM  6.0", null, "IBM  6.0", "IBM  6.0", "IBM  6.0", "IBM  6.0", "IBM  6.0", null,
-
-            // mkfs.vfat
-            "mkfs.fat", "mkfs.fat", "mkfs.fat", "mkfs.fat",
-
-            // mkfs.vfat for Atari
-            "mkdosf", "mkdosf", "mkdosf", "mkdosf",
-
-            // Microsoft OS/2 1.00 for Tandy
-            "TAN 10.0", "TAN 10.0", "TAN 10.0", "TAN 10.0",
-
-            // Microsoft OS/2 1.10 for AST
-            "IBM 10.1", "IBM 10.1", "IBM 10.1", "IBM 10.1",
-
-            // Microsoft OS/2 1.10 for Nokia
-            "IBM 10.1", "IBM 10.1", "IBM 10.1", "IBM 10.1",
-
-            // Microsoft OS/2 1.21
-            "IBM 10.2", "IBM 10.2", "IBM 10.2", "IBM 10.2",
-
-            // Microsoft OS/2 1.30.1
-            "IBM 10.2", "IBM 10.2", "IBM 10.2", "IBM 10.2", "IBM 10.2",
-
-            // OS/2 1.20
-            "IBM 10.2", "IBM 10.2", "IBM 10.2", "IBM 10.2",
-
-            // OS/2 1.30
-            "IBM 10.2", "IBM 10.2", "IBM 10.2", "IBM 10.2",
-
-            // OS/2 2.00
-            "IBM 20.0", "IBM 20.0", "IBM 20.0", "IBM 20.0", "IBM 20.0",
-
-            // OS/2 2.10
-            "IBM 20.0", "IBM 20.0", "IBM 20.0", "IBM 20.0", "IBM 20.0",
-
-            // OS/2 2.11
-            "IBM 20.0", "IBM 20.0", "IBM 20.0", "IBM 20.0", "IBM 20.0",
-
-            // OS/2 Warp 3
-            "IBM 20.0", "IBM 20.0", "IBM 20.0", "IBM 20.0",
-
-            // OS/2 Warp 4
-            "IBM 20.0", "IBM 20.0", "IBM 20.0", "IBM 20.0",
-
-            // eComStation
-            "IBM 4.50", "IBM 4.50", "IBM 4.50", "IBM 4.50", "IBM 4.50",
-
-            // Windows 95
-            null, "MSWIN4.0", "MSWIN4.0", "MSWIN4.0", "MSWIN4.0", "MSWIN4.0", null, "MSWIN4.0",
-
-            // Windows 95 OSR 2
-            null, "MSWIN4.1", "MSWIN4.1", "MSWIN4.1", "MSWIN4.1", "MSWIN4.1", null, "MSWIN4.1",
-
-            // Windows 95 OSR 2.1
-            null, "MSWIN4.1", "MSWIN4.1", "MSWIN4.1", "MSWIN4.1", "MSWIN4.1", null, "MSWIN4.1",
-
-            // Windows 95 OSR 2.5
-            null, "MSWIN4.1", "MSWIN4.1", "MSWIN4.1", "MSWIN4.1", "MSWIN4.1", null, "MSWIN4.1",
-
-            // Windows 98
-            null, "MSWIN4.1", "MSWIN4.1", "MSWIN4.1", "MSWIN4.1", "MSWIN4.1", null, "MSWIN4.1",
-
-            // Windows 98 Second Edition
-            null, "MSWIN4.1", "MSWIN4.1", "MSWIN4.1", "MSWIN4.1", "MSWIN4.1", null, "MSWIN4.1",
-
-            // Windows Me
-            "MSWIN4.1", "MSWIN4.1", "MSWIN4.1", "MSWIN4.1", "MSWIN4.1",
-
-            // Windows NT 3.10
-            "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", "MSDOS5.0",
-
-            // Windows NT 3.50
-            "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", "MSDOS5.0",
-
-            // Windows NT 3.51
-            "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", "MSDOS5.0",
-
-            // Windows NT 4.00
-            "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", "MSDOS5.0",
-
-            // Windows 2000
-            "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", "MSDOS5.0",
-
-            // Windows Vista
-            "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", "MSDOS5.0",
-
-            // BeOS R4.5
-            "BeOS    ",
-
-            // Hatari
-            "NNNNNN", "NNNNNN", "NNNNNN", "NNNNNN", "NNNNNN", "NNNNNN", "NNNNNN", "NNNNNN",
-
-            // Atari TOS 1.04
-            "NNNNNN", "NNNNNN",
-
-            // NetBSD 1.6
-            "BSD  4.4", "BSD  4.4",
-
-            // NeXTStep 3.3
-            "NEXT    ", "NEXT    ",
-
-            // OpenStep for Mach 4.0
-            "NEXT    ", "NEXT    ",
-
-            // OpenStep for Mach 4.2
-            "NEXT    ", "NEXT    ",
-
-            // Solaris 2.4
-            "MSDOS3.3", "MSDOS3.3",
-
-            // COHERENT UNIX 4.2.10
-            "COHERENT", "COHERENT", "COHERENT", "COHERENT",
-
-            // SCO OpenServer 5.0.7Hw
-            "SCO BOOT", "SCO BOOT", "SCO BOOT",
-
-            // Epson MS-DOS 5.00 for PC-98
-            "EPSON5.0", "EPSON5.0",
-
-            // NEC MS-DOS 3.30 for PC-98
-            "NEC 2.00", "NEC 2.00",
-
-            // NEC MS-DOS 5.00 for PC-98
-            "NEC  5.0", "NEC  5.0",
-
-            // NEC MS-DOS 6.20 for PC-98
-            "NEC  5.0", "NEC  5.0",
-
-            // GEOS 1.2
-            "GEOWORKS",
-
-            // GEOS 2.0
-            "GEOWORKS",
-
-            // GEOS 3.1
-            "GEOWORKS",
-
-            // GEOS 3.2
-            "GEOWORKS",
-
-            // GEOS 4.1
-            "GEOWORKS"
-        };
-
-        [Test]
-        public void Test()
-        {
-            for(int i = 0; i < _testFiles.Length; i++)
-            {
-                string  location = Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "FAT12", _testFiles[i]);
-                IFilter filter   = new LZip();
-                filter.Open(location);
-                IMediaImage image = new ZZZRawImage();
-                Assert.AreEqual(true, image.Open(filter), _testFiles[i]);
-                Assert.AreEqual(_mediaTypes[i], image.Info.MediaType, _testFiles[i]);
-                Assert.AreEqual(_sectors[i], image.Info.Sectors, _testFiles[i]);
-                Assert.AreEqual(_sectorSize[i], image.Info.SectorSize, _testFiles[i]);
-                IFilesystem fs = new FAT();
-
-                var wholePart = new Partition
-                {
-                    Name   = "Whole device",
-                    Length = image.Info.Sectors,
-                    Size   = image.Info.Sectors * image.Info.SectorSize
-                };
-
-                Assert.AreEqual(true, fs.Identify(image, wholePart), _testFiles[i]);
-                fs.GetInformation(image, wholePart, out _, null);
-                Assert.AreEqual(_clusters[i], fs.XmlFsType.Clusters, _testFiles[i]);
-                Assert.AreEqual(_clusterSize[i], fs.XmlFsType.ClusterSize, _testFiles[i]);
-                Assert.AreEqual("FAT12", fs.XmlFsType.Type, _testFiles[i]);
-                Assert.AreEqual(_volumeName[i], fs.XmlFsType.VolumeName, _testFiles[i]);
-                Assert.AreEqual(_volumeSerial[i], fs.XmlFsType.VolumeSerial, _testFiles[i]);
-                Assert.AreEqual(_oemId[i], fs.XmlFsType.SystemIdentifier, _testFiles[i]);
-            }
-        }
     }
 }
