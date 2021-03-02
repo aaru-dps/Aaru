@@ -37,135 +37,84 @@ namespace Aaru.Tests.Images.DiskCopy65
     [TestFixture]
     public class UDCo_obsolete : BlockMediaImageTest
     {
-        public override string[] _testFiles => new[]
-        {
-            "DC6_UDCo_DOS_1440.img.lz", "DC6_UDCo_DOS_720.img.lz", "DC6_UDCo_DOS_DMF.img.lz",
-            "DC6_UDCo_HFS_1440.img.lz", "DC6_UDCo_HFS_800.img.lz", "DC6_UDCo_HFS_DMF.img.lz", "DC6_UDCo_PD_1440.img.lz",
-            "DC6_UDCo_PD_800.img.lz", "DC6_UDCo_PD_DMF.img.lz"
-        };
-
-        public override ulong[] _sectors => new ulong[]
-        {
-            // DC6_UDCo_DOS_1440.img.lz
-            2880,
-
-            // DC6_UDCo_DOS_720.img.lz
-            1440,
-
-            // DC6_UDCo_DOS_DMF.img.lz
-            3360,
-
-            // DC6_UDCo_HFS_1440.img.lz
-            2880,
-
-            // DC6_UDCo_HFS_800.img.lz
-            1600,
-
-            // DC6_UDCo_HFS_DMF.img.lz
-            3360,
-
-            // DC6_UDCo_PD_1440.img.lz
-            2880,
-
-            // DC6_UDCo_PD_800.img.lz
-            1600,
-
-            // DC6_UDCo_PD_DMF.img.lz
-            3360
-        };
-
-        public override uint[] _sectorSize => new uint[]
-        {
-            // DC6_UDCo_DOS_1440.img.lz
-            512,
-
-            // DC6_UDCo_DOS_720.img.lz
-            512,
-
-            // DC6_UDCo_DOS_DMF.img.lz
-            512,
-
-            // DC6_UDCo_HFS_1440.img.lz
-            512,
-
-            // DC6_UDCo_HFS_800.img.lz
-            512,
-
-            // DC6_UDCo_HFS_DMF.img.lz
-            512,
-
-            // DC6_UDCo_PD_1440.img.lz
-            512,
-
-            // DC6_UDCo_PD_800.img.lz
-            512,
-
-            // DC6_UDCo_PD_DMF.img.lz
-            512
-        };
-
-        public override MediaType[] _mediaTypes => new[]
-        {
-            // DC6_UDCo_DOS_1440.img.lz
-            MediaType.DOS_35_HD,
-
-            // DC6_UDCo_DOS_720.img.lz
-            MediaType.DOS_35_DS_DD_9,
-
-            // DC6_UDCo_DOS_DMF.img.lz
-            MediaType.DMF,
-
-            // DC6_UDCo_HFS_1440.img.lz
-            MediaType.DOS_35_HD,
-
-            // DC6_UDCo_HFS_800.img.lz
-            MediaType.AppleSonyDS,
-
-            // DC6_UDCo_HFS_DMF.img.lz
-            MediaType.DMF,
-
-            // DC6_UDCo_PD_1440.img.lz
-            MediaType.DOS_35_HD,
-
-            // DC6_UDCo_PD_800.img.lz
-            MediaType.AppleSonyDS,
-
-            // DC6_UDCo_PD_DMF.img.lz
-            MediaType.DMF
-        };
-
-        public override string[] _md5S => new[]
-        {
-            // DC6_UDCo_DOS_1440.img.lz
-            "ff419213080574056ebd9adf7bab3d32",
-
-            // DC6_UDCo_DOS_720.img.lz
-            "c2be571406cf6353269faa59a4a8c0a4",
-
-            // DC6_UDCo_DOS_DMF.img.lz
-            "92ea7a359957012a682ba126cfdef0ce",
-
-            // DC6_UDCo_HFS_1440.img.lz
-            "3160038ca028ccf52ad7863790072145",
-
-            // DC6_UDCo_HFS_800.img.lz
-            "5e255c4bc0f6a26ecd27845b37e65aaa",
-
-            // DC6_UDCo_HFS_DMF.img.lz
-            "652dc979c177f2d8e846587158b38478",
-
-            // DC6_UDCo_PD_1440.img.lz
-            "7975e8cf7579a6848d6fb4e546d1f682",
-
-            // DC6_UDCo_PD_800.img.lz
-            "a72da7aedadbe194c22a3d71c62e4766",
-
-            // DC6_UDCo_PD_DMF.img.lz
-            "7fbf0251a93cb36d98e68b7d19624de5"
-        };
-
         public override string _dataFolder =>
             Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "DiskCopy 6.5", "UDIF", "UDCo_OBS");
         public override IMediaImage _plugin => new Udif();
+
+        public override BlockImageTestExpected[] Tests => new[]
+        {
+            new BlockImageTestExpected
+            {
+                TestFile   = "DC6_UDCo_DOS_1440.img.lz",
+                MediaType  = MediaType.DOS_35_HD,
+                Sectors    = 2880,
+                SectorSize = 512,
+                MD5        = "ff419213080574056ebd9adf7bab3d32"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "DC6_UDCo_DOS_720.img.lz",
+                MediaType  = MediaType.DOS_35_DS_DD_9,
+                Sectors    = 1440,
+                SectorSize = 512,
+                MD5        = "c2be571406cf6353269faa59a4a8c0a4"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "DC6_UDCo_DOS_DMF.img.lz",
+                MediaType  = MediaType.DMF,
+                Sectors    = 3360,
+                SectorSize = 512,
+                MD5        = "92ea7a359957012a682ba126cfdef0ce"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "DC6_UDCo_HFS_1440.img.lz",
+                MediaType  = MediaType.DOS_35_HD,
+                Sectors    = 2880,
+                SectorSize = 512,
+                MD5        = "3160038ca028ccf52ad7863790072145"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "DC6_UDCo_HFS_800.img.lz",
+                MediaType  = MediaType.AppleSonyDS,
+                Sectors    = 1600,
+                SectorSize = 512,
+                MD5        = "5e255c4bc0f6a26ecd27845b37e65aaa"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "DC6_UDCo_HFS_DMF.img.lz",
+                MediaType  = MediaType.DMF,
+                Sectors    = 3360,
+                SectorSize = 512,
+                MD5        = "652dc979c177f2d8e846587158b38478"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "DC6_UDCo_PD_1440.img.lz",
+                MediaType  = MediaType.DOS_35_HD,
+                Sectors    = 2880,
+                SectorSize = 512,
+                MD5        = "7975e8cf7579a6848d6fb4e546d1f682"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "DC6_UDCo_PD_800.img.lz",
+                MediaType  = MediaType.AppleSonyDS,
+                Sectors    = 1600,
+                SectorSize = 512,
+                MD5        = "a72da7aedadbe194c22a3d71c62e4766"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "DC6_UDCo_PD_DMF.img.lz",
+                MediaType  = MediaType.DMF,
+                Sectors    = 3360,
+                SectorSize = 512,
+                MD5        = "7fbf0251a93cb36d98e68b7d19624de5"
+            }
+        };
     }
 }

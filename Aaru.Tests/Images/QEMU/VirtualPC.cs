@@ -37,61 +37,36 @@ namespace Aaru.Tests.Images.QEMU
     [TestFixture]
     public class VirtualPC : BlockMediaImageTest
     {
-        public override string[] _testFiles => new[]
-        {
-            "qemu_dynamic_250mb.vhd.lz", "qemu_fixed_10mb.vhd.lz", "virtualpc.vhd.lz"
-        };
-
-        public override ulong[] _sectors => new ulong[]
-        {
-            // qemu_dynamic_250mb.vhd.lz"
-            512064,
-
-            // qemu_fixed_10mb.vhd.lz"
-            20536,
-
-            // virtualpc.vhd.lz
-            251940
-        };
-
-        public override uint[] _sectorSize => new uint[]
-        {
-            // qemu_dynamic_250mb.vhd.lz"
-            512,
-
-            // qemu_fixed_10mb.vhd.lz"
-            512,
-
-            // virtualpc.vhd.lz
-            512
-        };
-
-        public override MediaType[] _mediaTypes => new[]
-        {
-            // qemu_dynamic_250mb.vhd.lz"
-            MediaType.Unknown,
-
-            // qemu_fixed_10mb.vhd.lz"
-            MediaType.Unknown,
-
-            // virtualpc.vhd.lz
-            MediaType.Unknown
-        };
-
-        public override string[] _md5S => new[]
-        {
-            // qemu_dynamic_250mb.vhd.lz"
-            "0435d6781d14d34a32c6ac40f5e70d35",
-
-            // qemu_fixed_10mb.vhd.lz"
-            "adfad4fb019f157e868baa39e7753db7",
-
-            // virtualpc.vhd.lz
-            "6246bff640cb3a56d2611e7f8616384d"
-        };
-
         public override string _dataFolder =>
             Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "QEMU", "VirtualPC");
         public override IMediaImage _plugin => new Vhd();
+
+        public override BlockImageTestExpected[] Tests => new[]
+        {
+            new BlockImageTestExpected
+            {
+                TestFile   = "qemu_dynamic_250mb.vhd.lz",
+                MediaType  = MediaType.Unknown,
+                Sectors    = 512064,
+                SectorSize = 512,
+                MD5        = "0435d6781d14d34a32c6ac40f5e70d35"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "qemu_fixed_10mb.vhd.lz",
+                MediaType  = MediaType.Unknown,
+                Sectors    = 20536,
+                SectorSize = 512,
+                MD5        = "adfad4fb019f157e868baa39e7753db7"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "virtualpc.vhd.lz",
+                MediaType  = MediaType.Unknown,
+                Sectors    = 251940,
+                SectorSize = 512,
+                MD5        = "6246bff640cb3a56d2611e7f8616384d"
+            }
+        };
     }
 }

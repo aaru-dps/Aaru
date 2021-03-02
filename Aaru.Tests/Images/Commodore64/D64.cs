@@ -37,33 +37,20 @@ namespace Aaru.Tests.Images.Commodore64
     [TestFixture]
     public class D64 : BlockMediaImageTest
     {
-        public override string[] _testFiles => new[]
-        {
-            "0 Grad Nord (1985)(Ariolasoft)(de)(Side A).d64.lz"
-        };
-        public override ulong[] _sectors => new ulong[]
-        {
-            // 0 Grad Nord (1985)(Ariolasoft)(de)(Side A).d64.lz
-            683
-        };
-        public override uint[] _sectorSize => new uint[]
-        {
-            // 0 Grad Nord (1985)(Ariolasoft)(de)(Side A).d64.lz
-            256
-        };
-        public override MediaType[] _mediaTypes => new[]
-        {
-            // 0 Grad Nord (1985)(Ariolasoft)(de)(Side A).d64.lz
-            MediaType.CBM_1540
-        };
-        public override string[] _md5S => new[]
-        {
-            // 0 Grad Nord (1985)(Ariolasoft)(de)(Side A).d64.lz
-            "9205f7ccdb19cfbdb0b46d10e40b2a90"
-        };
-
         public override string _dataFolder =>
             Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "Commodore D64");
         public override IMediaImage _plugin => new ZZZRawImage();
+
+        public override BlockImageTestExpected[] Tests => new[]
+        {
+            new BlockImageTestExpected
+            {
+                TestFile   = "0 Grad Nord (1985)(Ariolasoft)(de)(Side A).d64.lz",
+                MediaType  = MediaType.CBM_1540,
+                Sectors    = 683,
+                SectorSize = 256,
+                MD5        = "9205f7ccdb19cfbdb0b46d10e40b2a90"
+            }
+        };
     }
 }

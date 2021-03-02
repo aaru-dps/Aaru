@@ -37,32 +37,19 @@ namespace Aaru.Tests.Images.MAME
     [TestFixture]
     public class V1 : BlockMediaImageTest
     {
-        public override string[] _testFiles => new[]
-        {
-            "hdd.chd"
-        };
-        public override ulong[] _sectors => new ulong[]
-        {
-            // hdd.chd
-            251904
-        };
-        public override uint[] _sectorSize => new uint[]
-        {
-            // hdd.chd
-            512
-        };
-        public override MediaType[] _mediaTypes => new[]
-        {
-            // hdd.chd
-            MediaType.GENERIC_HDD
-        };
-        public override string[] _md5S => new[]
-        {
-            // hdd.chd
-            "43476343f53a177dd57b68dd769917aa"
-        };
-
         public override string _dataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "MAME", "v1");
         public override IMediaImage _plugin => new Chd();
+
+        public override BlockImageTestExpected[] Tests => new[]
+        {
+            new BlockImageTestExpected
+            {
+                TestFile   = "hdd.chd",
+                MediaType  = MediaType.GENERIC_HDD,
+                Sectors    = 251904,
+                SectorSize = 512,
+                MD5        = "43476343f53a177dd57b68dd769917aa"
+            }
+        };
     }
 }

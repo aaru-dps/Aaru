@@ -36,134 +36,84 @@ namespace Aaru.Tests.Images.DiskImagesFramework
     [TestFixture]
     public class DiskCopy42 : BlockMediaImageTest
     {
-        public override string[] _testFiles => new[]
-        {
-            "DOS_1440.img.lz", "DOS_720.img.lz", "HFS_1440.img.lz", "HFS_800.img.lz", "ProDOS_1440.img.lz",
-            "ProDOS_800.img.lz", "UFS_1440.img.lz", "UFS_720.img.lz", "UFS_800.img.lz"
-        };
-
-        public override ulong[] _sectors => new ulong[]
-        {
-            // DOS_1440.img.lz
-            2880,
-
-            // DOS_720.img.lz
-            1440,
-
-            // HFS_1440.img.lz
-            2880,
-
-            // HFS_800.img.lz
-            1600,
-
-            // ProDOS_1440.img.lz
-            2880,
-
-            // ProDOS_800.img.lz
-            1600,
-
-            // UFS_1440.img.lz
-            2880,
-
-            // UFS_720.img.lz
-            1440,
-
-            // UFS_800.img.lz
-            1600
-        };
-
-        public override uint[] _sectorSize => new uint[]
-        {
-            // DOS_1440.img.lz
-            512,
-
-            // DOS_720.img.lz
-            512,
-
-            // HFS_1440.img.lz
-            512,
-
-            // HFS_800.img.lz
-            512,
-
-            // ProDOS_1440.img.lz
-            512,
-
-            // ProDOS_800.img.lz
-            512,
-
-            // UFS_1440.img.lz
-            512,
-
-            // UFS_720.img.lz
-            512,
-
-            // UFS_800.img.lz
-            512
-        };
-
-        public override MediaType[] _mediaTypes => new[]
-        {
-            // DOS_1440.img.lz
-            MediaType.DOS_35_HD,
-
-            // DOS_720.img.lz
-            MediaType.DOS_35_DS_DD_9,
-
-            // HFS_1440.img.lz
-            MediaType.DOS_35_HD,
-
-            // HFS_800.img.lz
-            MediaType.AppleSonyDS,
-
-            // ProDOS_1440.img.lz
-            MediaType.DOS_35_HD,
-
-            // ProDOS_800.img.lz
-            MediaType.AppleSonyDS,
-
-            // UFS_1440.img.lz
-            MediaType.DOS_35_HD,
-
-            // UFS_720.img.lz
-            MediaType.DOS_35_DS_DD_9,
-
-            // UFS_800.img.lz
-            MediaType.AppleSonyDS
-        };
-
-        public override string[] _md5S => new[]
-        {
-            // DOS_1440.img.lz
-            "ff419213080574056ebd9adf7bab3d32",
-
-            // DOS_720.img.lz
-            "c2be571406cf6353269faa59a4a8c0a4",
-
-            // HFS_1440.img.lz
-            "3160038ca028ccf52ad7863790072145",
-
-            // HFS_800.img.lz
-            "5e255c4bc0f6a26ecd27845b37e65aaa",
-
-            // ProDOS_1440.img.lz
-            "7975e8cf7579a6848d6fb4e546d1f682",
-
-            // ProDOS_800.img.lz
-            "a72da7aedadbe194c22a3d71c62e4766",
-
-            // UFS_1440.img.lz
-            "b37823c7a90d1917f719ba5927b23da8",
-
-            // UFS_720.img.lz
-            "4942032f7bf1d115237ea1764424828b",
-
-            // UFS_800.img.lz
-            "85574aebeef03eb355bf8541955d06ea"
-        };
-
         public override string _dataFolder =>
             Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "DiskImagesFramework", "DiskCopy 4.2");
         public override IMediaImage _plugin => new DiscImages.DiskCopy42();
+
+        public override BlockImageTestExpected[] Tests => new[]
+        {
+            new BlockImageTestExpected
+            {
+                TestFile   = "DOS_1440.img.lz",
+                MediaType  = MediaType.DOS_35_HD,
+                Sectors    = 2880,
+                SectorSize = 512,
+                MD5        = "ff419213080574056ebd9adf7bab3d32"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "DOS_720.img.lz",
+                MediaType  = MediaType.DOS_35_DS_DD_9,
+                Sectors    = 1440,
+                SectorSize = 512,
+                MD5        = "c2be571406cf6353269faa59a4a8c0a4"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "HFS_1440.img.lz",
+                MediaType  = MediaType.DOS_35_HD,
+                Sectors    = 2880,
+                SectorSize = 512,
+                MD5        = "3160038ca028ccf52ad7863790072145"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "HFS_800.img.lz",
+                MediaType  = MediaType.AppleSonyDS,
+                Sectors    = 1600,
+                SectorSize = 512,
+                MD5        = "5e255c4bc0f6a26ecd27845b37e65aaa"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "ProDOS_1440.img.lz",
+                MediaType  = MediaType.DOS_35_HD,
+                Sectors    = 2880,
+                SectorSize = 512,
+                MD5        = "7975e8cf7579a6848d6fb4e546d1f682"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "ProDOS_800.img.lz",
+                MediaType  = MediaType.AppleSonyDS,
+                Sectors    = 1600,
+                SectorSize = 512,
+                MD5        = "a72da7aedadbe194c22a3d71c62e4766"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "UFS_1440.img.lz",
+                MediaType  = MediaType.DOS_35_HD,
+                Sectors    = 2880,
+                SectorSize = 512,
+                MD5        = "b37823c7a90d1917f719ba5927b23da8"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "UFS_720.img.lz",
+                MediaType  = MediaType.DOS_35_DS_DD_9,
+                Sectors    = 1440,
+                SectorSize = 512,
+                MD5        = "4942032f7bf1d115237ea1764424828b"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "UFS_800.img.lz",
+                MediaType  = MediaType.AppleSonyDS,
+                Sectors    = 1600,
+                SectorSize = 512,
+                MD5        = "85574aebeef03eb355bf8541955d06ea"
+            }
+        };
     }
 }

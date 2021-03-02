@@ -37,37 +37,20 @@ namespace Aaru.Tests.Images.AppleDOS
     [TestFixture]
     public class DOS32 : BlockMediaImageTest
     {
-        public override string[] _testFiles => new[]
-        {
-            "alice.d13.lz"
-        };
-
-        public override ulong[] _sectors => new ulong[]
-        {
-            // alice.d13.lz
-            560
-        };
-
-        public override uint[] _sectorSize => new uint[]
-        {
-            // alice.d13.lz
-            256
-        };
-
-        public override MediaType[] _mediaTypes => new[]
-        {
-            // alice.d13.lz
-            MediaType.Apple32SS
-        };
-
-        public override string[] _md5S => new[]
-        {
-            // alice.d13.lz
-            "UNKNOWN"
-        };
-
         public override string _dataFolder =>
             Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "Apple DOS 13 sectors");
         public override IMediaImage _plugin => new AppleDos();
+
+        public override BlockImageTestExpected[] Tests => new[]
+        {
+            new BlockImageTestExpected
+            {
+                TestFile   = "alice.d13.lz",
+                MediaType  = MediaType.Apple32SS,
+                Sectors    = 560,
+                SectorSize = 256,
+                MD5        = "UNKNOWN"
+            }
+        };
     }
 }

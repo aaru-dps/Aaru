@@ -2,20 +2,18 @@ using System;
 using Aaru.Checksums;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.CommonTypes.Structs;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using NUnit.Framework;
 
 namespace Aaru.Tests.Images
 {
-    public abstract class TapeMediaImageTest : BlockMediaImageTest
+    public abstract class TapeMediaImageTest : BaseMediaImageTest
     {
         // How many sectors to read at once
         const uint SECTORS_TO_READ = 256;
 
-        public abstract TapeFile[][]      _tapeFiles      { get; }
-        public abstract TapePartition[][] _tapePartitions { get; }
+        public abstract TapeImageTestExpected[] Tests { get; }
 
         [Test]
         public void Tape()
@@ -24,31 +22,32 @@ namespace Aaru.Tests.Images
 
             Assert.Multiple(() =>
             {
-                for(int i = 0; i < _testFiles.Length; i++)
+                foreach(TapeImageTestExpected test in Tests)
                 {
+                    string  testFile    = test.TestFile;
                     var     filtersList = new FiltersList();
-                    IFilter filter      = filtersList.GetFilter(_testFiles[i]);
-                    filter.Open(_testFiles[i]);
+                    IFilter filter      = filtersList.GetFilter(testFile);
+                    filter.Open(testFile);
 
                     var image = Activator.CreateInstance(_plugin.GetType()) as ITapeImage;
-                    Assert.NotNull(image, $"Could not instantiate filesystem for {_testFiles[i]}");
+                    Assert.NotNull(image, $"Could not instantiate filesystem for {testFile}");
 
                     bool opened = image.Open(filter);
-                    Assert.AreEqual(true, opened, $"Open: {_testFiles[i]}");
+                    Assert.AreEqual(true, opened, $"Open: {testFile}");
 
                     if(!opened)
                         continue;
 
-                    Assert.AreEqual(true, image.IsTape, $"Is tape?: {_testFiles[i]}");
+                    Assert.AreEqual(true, image.IsTape, $"Is tape?: {testFile}");
 
                     using(new AssertionScope())
                     {
                         Assert.Multiple(() =>
                         {
-                            image.Files.Should().BeEquivalentTo(_tapeFiles[i], $"Tape files: {_testFiles[i]}");
+                            image.Files.Should().BeEquivalentTo(test.Files, $"Tape files: {testFile}");
 
                             image.TapePartitions.Should().
-                                  BeEquivalentTo(_tapePartitions[i], $"Tape files: {_testFiles[i]}");
+                                  BeEquivalentTo(test.Partitions, $"Tape partitions: {testFile}");
                         });
                     }
                 }
@@ -62,17 +61,18 @@ namespace Aaru.Tests.Images
 
             Assert.Multiple(() =>
             {
-                for(int i = 0; i < _testFiles.Length; i++)
+                foreach(TapeImageTestExpected test in Tests)
                 {
+                    string  testFile    = test.TestFile;
                     var     filtersList = new FiltersList();
-                    IFilter filter      = filtersList.GetFilter(_testFiles[i]);
-                    filter.Open(_testFiles[i]);
+                    IFilter filter      = filtersList.GetFilter(testFile);
+                    filter.Open(testFile);
 
                     var image = Activator.CreateInstance(_plugin.GetType()) as IMediaImage;
-                    Assert.NotNull(image, $"Could not instantiate filesystem for {_testFiles[i]}");
+                    Assert.NotNull(image, $"Could not instantiate filesystem for {testFile}");
 
                     bool opened = image.Open(filter);
-                    Assert.AreEqual(true, opened, $"Open: {_testFiles[i]}");
+                    Assert.AreEqual(true, opened, $"Open: {testFile}");
 
                     if(!opened)
                         continue;
@@ -81,9 +81,9 @@ namespace Aaru.Tests.Images
                     {
                         Assert.Multiple(() =>
                         {
-                            Assert.AreEqual(_sectors[i], image.Info.Sectors, $"Sectors: {_testFiles[i]}");
-                            Assert.AreEqual(_sectorSize[i], image.Info.SectorSize, $"Sector size: {_testFiles[i]}");
-                            Assert.AreEqual(_mediaTypes[i], image.Info.MediaType, $"Media type: {_testFiles[i]}");
+                            Assert.AreEqual(test.Sectors, image.Info.Sectors, $"Sectors: {testFile}");
+                            Assert.AreEqual(test.SectorSize, image.Info.SectorSize, $"Sector size: {testFile}");
+                            Assert.AreEqual(test.MediaType, image.Info.MediaType, $"Media type: {testFile}");
                         });
                     }
                 }
@@ -97,17 +97,18 @@ namespace Aaru.Tests.Images
 
             Assert.Multiple(() =>
             {
-                for(int i = 0; i < _testFiles.Length; i++)
+                foreach(TapeImageTestExpected test in Tests)
                 {
+                    string  testFile    = test.TestFile;
                     var     filtersList = new FiltersList();
-                    IFilter filter      = filtersList.GetFilter(_testFiles[i]);
-                    filter.Open(_testFiles[i]);
+                    IFilter filter      = filtersList.GetFilter(testFile);
+                    filter.Open(testFile);
 
                     var image = Activator.CreateInstance(_plugin.GetType()) as IMediaImage;
-                    Assert.NotNull(image, $"Could not instantiate filesystem for {_testFiles[i]}");
+                    Assert.NotNull(image, $"Could not instantiate filesystem for {testFile}");
 
                     bool opened = image.Open(filter);
-                    Assert.AreEqual(true, opened, $"Open: {_testFiles[i]}");
+                    Assert.AreEqual(true, opened, $"Open: {testFile}");
 
                     if(!opened)
                         continue;
@@ -133,7 +134,7 @@ namespace Aaru.Tests.Images
                         ctx.Update(sector);
                     }
 
-                    Assert.AreEqual(_md5S[i], ctx.End(), $"Hash: {_testFiles[i]}");
+                    Assert.AreEqual(test.MD5, ctx.End(), $"Hash: {testFile}");
                 }
             });
         }

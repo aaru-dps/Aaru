@@ -37,98 +37,60 @@ namespace Aaru.Tests.Images.KryoFlux
     [TestFixture]
     public class Raw : BlockMediaImageTest
     {
-        public override string[] _testFiles => new[]
-        {
-            "mf1dd_gcr_s0.img.lz", "mf2dd_acorn.img.lz", "mf2dd_amiga.adf.lz", "mf2dd_fdformat_820.img.lz",
-            "mf2dd_gcr.img.lz", "mf2hd_fdformat_172.img.lz"
-        };
-
-        public override ulong[] _sectors => new ulong[]
-        {
-            // mf1dd_gcr_s0.img.lz
-            800,
-
-            // mf2dd_acorn.img.lz
-            1600,
-
-            // mf2dd_amiga.adf.lz
-            1760,
-
-            // mf2dd_fdformat_820.img.lz
-            1640,
-
-            // mf2dd_gcr.img.lz
-            1600,
-
-            // mf2hd_fdformat_172.img.lz
-            3444
-        };
-
-        public override uint[] _sectorSize => new uint[]
-        {
-            // mf1dd_gcr_s0.img.lz
-            512,
-
-            // mf2dd_acorn.img.lz
-            512,
-
-            // mf2dd_amiga.adf.lz
-            512,
-
-            // mf2dd_fdformat_820.img.lz
-            512,
-
-            // mf2dd_gcr.img.lz
-            512,
-
-            // mf2hd_fdformat_172.img.lz
-            512
-        };
-
-        public override MediaType[] _mediaTypes => new[]
-        {
-            // mf1dd_gcr_s0.img.lz
-            MediaType.AppleSonySS,
-
-            // mf2dd_acorn.img.lz
-            MediaType.AppleSonyDS,
-
-            // mf2dd_amiga.adf.lz
-            MediaType.CBM_AMIGA_35_DD,
-
-            // mf2dd_fdformat_820.img.lz
-            MediaType.FDFORMAT_35_DD,
-
-            // mf2dd_gcr.img.lz
-            MediaType.AppleSonyDS,
-
-            // mf2hd_fdformat_172.img.lz
-            MediaType.FDFORMAT_35_HD
-        };
-
-        public override string[] _md5S => new[]
-        {
-            // mf1dd_gcr_s0.img.lz
-            "c1b868482a064686d2a592f3246c2958",
-
-            // mf2dd_acorn.img.lz
-            "2626f65b49ec085253c41fa2e2a9e788",
-
-            // mf2dd_amiga.adf.lz
-            "7db6730656efb22695cdf0a49e2674c9",
-
-            // mf2dd_fdformat_820.img.lz
-            "9d978dff1196b456b8372d78e6b17970",
-
-            // mf2dd_gcr.img.lz
-            "ee038347920d088c14f79e6c5fc241c9",
-
-            // mf2hd_fdformat_172.img.lz
-            "9dea1e119a73a21a38d134f36b2e5564"
-        };
-
         public override string _dataFolder =>
             Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "KryoFlux", "raw");
         public override IMediaImage _plugin => new ZZZRawImage();
+
+        public override BlockImageTestExpected[] Tests => new[]
+        {
+            new BlockImageTestExpected
+            {
+                TestFile   = "mf1dd_gcr_s0.img.lz",
+                MediaType  = MediaType.AppleSonySS,
+                Sectors    = 800,
+                SectorSize = 512,
+                MD5        = "c1b868482a064686d2a592f3246c2958"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "mf2dd_acorn.img.lz",
+                MediaType  = MediaType.AppleSonyDS,
+                Sectors    = 1600,
+                SectorSize = 512,
+                MD5        = "2626f65b49ec085253c41fa2e2a9e788"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "mf2dd_amiga.adf.lz",
+                MediaType  = MediaType.CBM_AMIGA_35_DD,
+                Sectors    = 1760,
+                SectorSize = 512,
+                MD5        = "7db6730656efb22695cdf0a49e2674c9"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "mf2dd_fdformat_820.img.lz",
+                MediaType  = MediaType.FDFORMAT_35_DD,
+                Sectors    = 1640,
+                SectorSize = 512,
+                MD5        = "9d978dff1196b456b8372d78e6b17970"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "mf2dd_gcr.img.lz",
+                MediaType  = MediaType.AppleSonyDS,
+                Sectors    = 1600,
+                SectorSize = 512,
+                MD5        = "ee038347920d088c14f79e6c5fc241c9"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "mf2hd_fdformat_172.img.lz",
+                MediaType  = MediaType.FDFORMAT_35_HD,
+                Sectors    = 3444,
+                SectorSize = 512,
+                MD5        = "9dea1e119a73a21a38d134f36b2e5564"
+            }
+        };
     }
 }

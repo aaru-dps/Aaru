@@ -37,121 +37,75 @@ namespace Aaru.Tests.Images
     [TestFixture]
     public class HyperV : BlockMediaImageTest
     {
-        public override string[] _testFiles => new[]
-        {
-            "dynamic_exfat.vhdx.lz", "dynamic_fat32.vhdx.lz", "dynamic_ntfs.vhdx.lz", "dynamic_udf.vhdx.lz",
-            "fixed_exfat.vhdx.lz", "fixed_fat32.vhdx.lz", "fixed_ntfs.vhdx.lz", "fixed_udf.vhdx.lz"
-        };
-
-        public override ulong[] _sectors => new ulong[]
-        {
-            // dynamic_exfat.vhdx.lz
-            409600,
-
-            // dynamic_fat32.vhdx.lz
-            409600,
-
-            // dynamic_ntfs.vhdx.lz
-            409600,
-
-            // dynamic_udf.vhdx.lz
-            409600,
-
-            // fixed_exfat.vhdx.lz
-            409600,
-
-            // fixed_fat32.vhdx.lz
-            409600,
-
-            // fixed_ntfs.vhdx.lz
-            409600,
-
-            // fixed_udf.vhdx.lz
-            409600
-        };
-
-        public override uint[] _sectorSize => new uint[]
-        {
-            // dynamic_exfat.vhdx.lz
-            512,
-
-            // dynamic_fat32.vhdx.lz
-            512,
-
-            // dynamic_ntfs.vhdx.lz
-            512,
-
-            // dynamic_udf.vhdx.lz
-            512,
-
-            // fixed_exfat.vhdx.lz
-            512,
-
-            // fixed_fat32.vhdx.lz
-            512,
-
-            // fixed_ntfs.vhdx.lz
-            512,
-
-            // fixed_udf.vhdx.lz
-            512
-        };
-
-        public override MediaType[] _mediaTypes => new[]
-        {
-            // dynamic_exfat.vhdx.lz
-            MediaType.GENERIC_HDD,
-
-            // dynamic_fat32.vhdx.lz
-            MediaType.GENERIC_HDD,
-
-            // dynamic_ntfs.vhdx.lz
-            MediaType.GENERIC_HDD,
-
-            // dynamic_udf.vhdx.lz
-            MediaType.GENERIC_HDD,
-
-            // fixed_exfat.vhdx.lz
-            MediaType.GENERIC_HDD,
-
-            // fixed_fat32.vhdx.lz
-            MediaType.GENERIC_HDD,
-
-            // fixed_ntfs.vhdx.lz
-            MediaType.GENERIC_HDD,
-
-            // fixed_udf.vhdx.lz
-            MediaType.GENERIC_HDD
-        };
-
-        public override string[] _md5S => new[]
-        {
-            // dynamic_exfat.vhdx.lz
-            "b3b3e6b89763ef45f6863d7fd1195778",
-
-            // dynamic_fat32.vhdx.lz
-            "f2a720176adb4cf70c04c56b58339024",
-
-            // dynamic_ntfs.vhdx.lz
-            "bc6be23bbb139bd6fcd928f212205ce1",
-
-            // dynamic_udf.vhdx.lz
-            "cfc501f3bcc12a00aa08db30e80c25ae",
-
-            // fixed_exfat.vhdx.lz
-            "06e97867ff89301fef7e9451ad7aa4ed",
-
-            // fixed_fat32.vhdx.lz
-            "d544a96ac1bd4431b884e244717d3dca",
-
-            // fixed_ntfs.vhdx.lz
-            "b10ed3ac22d882f7080b6f9859d1e646",
-
-            // fixed_udf.vhdx.lz
-            "338ba2043d7f9cb2693c35e3194e6c9c"
-        };
-
         public override string _dataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "Hyper-V");
         public override IMediaImage _plugin => new Vhdx();
+
+        public override BlockImageTestExpected[] Tests => new[]
+        {
+            new BlockImageTestExpected
+            {
+                TestFile   = "dynamic_exfat.vhdx.lz",
+                MediaType  = MediaType.GENERIC_HDD,
+                Sectors    = 409600,
+                SectorSize = 512,
+                MD5        = "b3b3e6b89763ef45f6863d7fd1195778"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "dynamic_fat32.vhdx.lz",
+                MediaType  = MediaType.GENERIC_HDD,
+                Sectors    = 409600,
+                SectorSize = 512,
+                MD5        = "f2a720176adb4cf70c04c56b58339024"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "dynamic_ntfs.vhdx.lz",
+                MediaType  = MediaType.GENERIC_HDD,
+                Sectors    = 409600,
+                SectorSize = 512,
+                MD5        = "bc6be23bbb139bd6fcd928f212205ce1"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "dynamic_udf.vhdx.lz",
+                MediaType  = MediaType.GENERIC_HDD,
+                Sectors    = 409600,
+                SectorSize = 512,
+                MD5        = "cfc501f3bcc12a00aa08db30e80c25ae"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "fixed_exfat.vhdx.lz",
+                MediaType  = MediaType.GENERIC_HDD,
+                Sectors    = 409600,
+                SectorSize = 512,
+                MD5        = "06e97867ff89301fef7e9451ad7aa4ed"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "fixed_fat32.vhdx.lz",
+                MediaType  = MediaType.GENERIC_HDD,
+                Sectors    = 409600,
+                SectorSize = 512,
+                MD5        = "d544a96ac1bd4431b884e244717d3dca"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "fixed_ntfs.vhdx.lz",
+                MediaType  = MediaType.GENERIC_HDD,
+                Sectors    = 409600,
+                SectorSize = 512,
+                MD5        = "b10ed3ac22d882f7080b6f9859d1e646"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "fixed_udf.vhdx.lz",
+                MediaType  = MediaType.GENERIC_HDD,
+                Sectors    = 409600,
+                SectorSize = 512,
+                MD5        = "338ba2043d7f9cb2693c35e3194e6c9c"
+            }
+        };
     }
 }

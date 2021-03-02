@@ -36,36 +36,19 @@ namespace Aaru.Tests.Images
     [TestFixture]
     public class RsIde : BlockMediaImageTest
     {
-        public override string[] _testFiles => new[]
-        {
-            "divide.hdf.lz"
-        };
-
-        public override ulong[] _sectors => new ulong[]
-        {
-            // divide.hdf.lz
-            20480
-        };
-
-        public override uint[] _sectorSize => new uint[]
-        {
-            // divide.hdf.lz
-            512
-        };
-
-        public override MediaType[] _mediaTypes => new[]
-        {
-            // divide.hdf.lz
-            MediaType.GENERIC_HDD
-        };
-
-        public override string[] _md5S => new[]
-        {
-            // divide.hdf.lz
-            "ee7b8fe07784f2ebacc18da1fc248f5a"
-        };
-
         public override string _dataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "RS-IDE");
         public override IMediaImage _plugin => new DiscImages.RsIde();
+
+        public override BlockImageTestExpected[] Tests => new[]
+        {
+            new BlockImageTestExpected
+            {
+                TestFile   = "divide.hdf.lz",
+                MediaType  = MediaType.GENERIC_HDD,
+                Sectors    = 20480,
+                SectorSize = 512,
+                MD5        = "ee7b8fe07784f2ebacc18da1fc248f5a"
+            }
+        };
     }
 }

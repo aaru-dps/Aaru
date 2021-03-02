@@ -12,43 +12,30 @@ using NUnit.Framework;
 
 namespace Aaru.Tests.Images
 {
-    public abstract class OpticalMediaImageTest : BlockMediaImageTest
+    public abstract class OpticalMediaImageTest : BaseMediaImageTest
     {
-        const           uint     SECTORS_TO_READ = 256;
-        public abstract string[] _longMd5S { get; }
-
-        public abstract string[] _subchannelMd5S { get; }
-
-        public abstract int[] _tracks { get; }
-
-        public abstract int[][] _trackSessions { get; }
-
-        public abstract ulong[][] _trackStarts { get; }
-
-        public abstract ulong[][] _trackEnds { get; }
-
-        public abstract ulong[][] _trackPregaps { get; }
-
-        public abstract byte[][] _trackFlags { get; }
+        const           uint                       SECTORS_TO_READ = 256;
+        public abstract OpticalImageTestExpected[] Tests { get; }
 
         [Test]
-        public new void Info()
+        public void Info()
         {
             Environment.CurrentDirectory = _dataFolder;
 
             Assert.Multiple(() =>
             {
-                for(int i = 0; i < _testFiles.Length; i++)
+                foreach(OpticalImageTestExpected test in Tests)
                 {
+                    string  testFile    = test.TestFile;
                     var     filtersList = new FiltersList();
-                    IFilter filter      = filtersList.GetFilter(_testFiles[i]);
-                    filter.Open(_testFiles[i]);
+                    IFilter filter      = filtersList.GetFilter(testFile);
+                    filter.Open(testFile);
 
                     var image = Activator.CreateInstance(_plugin.GetType()) as IOpticalMediaImage;
-                    Assert.NotNull(image, $"Could not instantiate filesystem for {_testFiles[i]}");
+                    Assert.NotNull(image, $"Could not instantiate filesystem for {testFile}");
 
                     bool opened = image.Open(filter);
-                    Assert.AreEqual(true, opened, $"Open: {_testFiles[i]}");
+                    Assert.AreEqual(true, opened, $"Open: {testFile}");
 
                     if(!opened)
                         continue;
@@ -57,29 +44,29 @@ namespace Aaru.Tests.Images
                     {
                         Assert.Multiple(() =>
                         {
-                            Assert.AreEqual(_sectors[i], image.Info.Sectors, $"Sectors: {_testFiles[i]}");
+                            Assert.AreEqual(test.Sectors, image.Info.Sectors, $"Sectors: {testFile}");
 
-                            if(_sectorSize != null)
-                                Assert.AreEqual(_sectorSize[i], image.Info.SectorSize, $"Sector size: {_testFiles[i]}");
+                            if((test.SectorSize > 0) != null)
+                                Assert.AreEqual(test.SectorSize, image.Info.SectorSize, $"Sector size: {testFile}");
 
-                            Assert.AreEqual(_mediaTypes[i], image.Info.MediaType, $"Media type: {_testFiles[i]}");
+                            Assert.AreEqual(test.MediaType, image.Info.MediaType, $"Media type: {testFile}");
 
                             if(image.Info.XmlMediaType != XmlMediaType.OpticalDisc)
                                 return;
 
-                            Assert.AreEqual(_tracks[i], image.Tracks.Count, $"Tracks: {_testFiles[i]}");
+                            Assert.AreEqual(test.Tracks, image.Tracks.Count, $"Tracks: {testFile}");
 
                             image.Tracks.Select(t => t.TrackSession).Should().
-                                  BeEquivalentTo(_trackSessions[i], $"Track session: {_testFiles[i]}");
+                                  BeEquivalentTo(test.Tracks.Select(s => s.Session), $"Track session: {testFile}");
 
                             image.Tracks.Select(t => t.TrackStartSector).Should().
-                                  BeEquivalentTo(_trackStarts[i], $"Track start: {_testFiles[i]}");
+                                  BeEquivalentTo(test.Tracks.Select(s => s.Start), $"Track start: {testFile}");
 
                             image.Tracks.Select(t => t.TrackEndSector).Should().
-                                  BeEquivalentTo(_trackEnds[i], $"Track end: {_testFiles[i]}");
+                                  BeEquivalentTo(test.Tracks.Select(s => s.End), $"Track end: {testFile}");
 
                             image.Tracks.Select(t => t.TrackPregap).Should().
-                                  BeEquivalentTo(_trackPregaps[i], $"Track pregap: {_testFiles[i]}");
+                                  BeEquivalentTo(test.Tracks.Select(s => s.Pregap), $"Track pregap: {testFile}");
 
                             int trackNo = 0;
 
@@ -94,7 +81,7 @@ namespace Aaru.Tests.Images
                                 trackNo++;
                             }
 
-                            flags.Should().BeEquivalentTo(_trackFlags[i], $"Track flags: {_testFiles[i]}");
+                            flags.Should().BeEquivalentTo(test.Tracks.Select(s => s.Flags), $"Track flags: {testFile}");
                         });
                     }
                 }
@@ -102,23 +89,24 @@ namespace Aaru.Tests.Images
         }
 
         [Test]
-        public new void Hashes()
+        public void Hashes()
         {
             Environment.CurrentDirectory = Environment.CurrentDirectory = _dataFolder;
 
             Assert.Multiple(() =>
             {
-                Parallel.For(0L, _testFiles.Length, (i, state) =>
+                Parallel.For(0L, Tests.Length, (i, state) =>
                 {
+                    string  testFile    = Tests[i].TestFile;
                     var     filtersList = new FiltersList();
-                    IFilter filter      = filtersList.GetFilter(_testFiles[i]);
-                    filter.Open(_testFiles[i]);
+                    IFilter filter      = filtersList.GetFilter(testFile);
+                    filter.Open(testFile);
 
                     var image = Activator.CreateInstance(_plugin.GetType()) as IOpticalMediaImage;
-                    Assert.NotNull(image, $"Could not instantiate filesystem for {_testFiles[i]}");
+                    Assert.NotNull(image, $"Could not instantiate filesystem for {testFile}");
 
                     bool opened = image.Open(filter);
-                    Assert.AreEqual(true, opened, $"Open: {_testFiles[i]}");
+                    Assert.AreEqual(true, opened, $"Open: {testFile}");
 
                     if(!opened)
                         return;
@@ -168,8 +156,8 @@ namespace Aaru.Tests.Images
                                 }
                             }
 
-                            Assert.AreEqual(@long ? _longMd5S[i] : _md5S[i], ctx.End(),
-                                            $"{(@long ? "Long hash" : "Hash")}: {_testFiles[i]}");
+                            Assert.AreEqual(@long ? Tests[i].LongMD5 : Tests[i].MD5, ctx.End(),
+                                            $"{(@long ? "Long hash" : "Hash")}: {testFile}");
                         }
 
                         if(!image.Info.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel))
@@ -207,7 +195,7 @@ namespace Aaru.Tests.Images
                             }
                         }
 
-                        Assert.AreEqual(_subchannelMd5S[i], ctx.End(), $"Subchannel hash: {_testFiles[i]}");
+                        Assert.AreEqual(Tests[i].SubchannelMD5, ctx.End(), $"Subchannel hash: {testFile}");
                     }
                     else
                     {
@@ -232,7 +220,7 @@ namespace Aaru.Tests.Images
                             ctx.Update(sector);
                         }
 
-                        Assert.AreEqual(_md5S[i], ctx.End(), $"Hash: {_testFiles[i]}");
+                        Assert.AreEqual(Tests[i].MD5, ctx.End(), $"Hash: {testFile}");
                     }
                 });
             });

@@ -37,37 +37,20 @@ namespace Aaru.Tests.Images.QEMU
     [TestFixture]
     public class VMware6 : BlockMediaImageTest
     {
-        public override string[] _testFiles => new[]
-        {
-            "vmdk6.vmdk.lz"
-        };
-
-        public override ulong[] _sectors => new ulong[]
-        {
-            // vmdk6.vmdk.lz
-            251904
-        };
-
-        public override uint[] _sectorSize => new uint[]
-        {
-            // vmdk6.vmdk.lz
-            512
-        };
-
-        public override MediaType[] _mediaTypes => new[]
-        {
-            // vmdk6.vmdk.lz
-            MediaType.GENERIC_HDD
-        };
-
-        public override string[] _md5S => new[]
-        {
-            // vmdk6.vmdk.lz
-            "1ad282643cc7f97c57dc874b3d4ece9b"
-        };
-
         public override string _dataFolder =>
             Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "QEMU", "VMware 6");
         public override IMediaImage _plugin => new VMware();
+
+        public override BlockImageTestExpected[] Tests => new[]
+        {
+            new BlockImageTestExpected
+            {
+                TestFile   = "vmdk6.vmdk.lz",
+                MediaType  = MediaType.GENERIC_HDD,
+                Sectors    = 251904,
+                SectorSize = 512,
+                MD5        = "1ad282643cc7f97c57dc874b3d4ece9b"
+            }
+        };
     }
 }

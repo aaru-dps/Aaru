@@ -37,146 +37,92 @@ namespace Aaru.Tests.Images.ShrinkWrap.NDIF
     [TestFixture]
     public class RdWr : BlockMediaImageTest
     {
-        public override string[] _testFiles => new[]
-        {
-            "CDROM.img", "DC6_RW_HFS_1440.img", "DC6_RW_HFS_800.img", "DC6_RW_HFS_DMF.img", "DOS1440.img", "DOS720.img",
-            "DOSDMF.img", "PD1440.img", "PD800.img", "PDDMF.img"
-        };
-
-        public override ulong[] _sectors => new ulong[]
-        {
-            // CDROM.img
-            91108,
-
-            // DC6_RW_HFS_1440.img
-            2880,
-
-            // DC6_RW_HFS_800.img
-            1600,
-
-            // DC6_RW_HFS_DMF.img
-            3360,
-
-            // DOS1440.img
-            2880,
-
-            // DOS720.img
-            1440,
-
-            // DOSDMF.img
-            3360,
-
-            // PD1440.img
-            2880,
-
-            // PD800.img
-            1600,
-
-            // PDDMF.img
-            3360
-        };
-
-        public override uint[] _sectorSize => new uint[]
-        {
-            // CDROM.img
-            512,
-
-            // DC6_RW_HFS_1440.img
-            512,
-
-            // DC6_RW_HFS_800.img
-            512,
-
-            // DC6_RW_HFS_DMF.img
-            512,
-
-            // DOS1440.img
-            512,
-
-            // DOS720.img
-            512,
-
-            // DOSDMF.img
-            512,
-
-            // PD1440.img
-            512,
-
-            // PD800.img
-            512,
-
-            // PDDMF.img
-            512
-        };
-
-        public override MediaType[] _mediaTypes => new[]
-        {
-            // CDROM.img
-            MediaType.GENERIC_HDD,
-
-            // DC6_RW_HFS_1440.img
-            MediaType.DOS_35_HD,
-
-            // DC6_RW_HFS_800.img
-            MediaType.AppleSonyDS,
-
-            // DC6_RW_HFS_DMF.img
-            MediaType.DMF,
-
-            // DOS1440.img
-            MediaType.DOS_35_HD,
-
-            // DOS720.img
-            MediaType.DOS_35_DS_DD_9,
-
-            // DOSDMF.img
-            MediaType.DMF,
-
-            // PD1440.img
-            MediaType.DOS_35_HD,
-
-            // PD800.img
-            MediaType.AppleSonyDS,
-
-            // PDDMF.img
-            MediaType.DMF
-        };
-
-        public override string[] _md5S => new[]
-        {
-            // CDROM.img
-            "69e3234920e472b24365060241934ca6",
-
-            // DC6_RW_HFS_1440.img
-            "3160038ca028ccf52ad7863790072145",
-
-            // DC6_RW_HFS_800.img
-            "5e255c4bc0f6a26ecd27845b37e65aaa",
-
-            // DC6_RW_HFS_DMF.img
-            "652dc979c177f2d8e846587158b38478",
-
-            // DOS1440.img
-            "ff419213080574056ebd9adf7bab3d32",
-
-            // DOS720.img
-            "c2be571406cf6353269faa59a4a8c0a4",
-
-            // DOSDMF.img
-            "92ea7a359957012a682ba126cfdef0ce",
-
-            // PD1440.img
-            "7975e8cf7579a6848d6fb4e546d1f682",
-
-            // PD800.img
-            "a72da7aedadbe194c22a3d71c62e4766",
-
-            // PDDMF.img
-            "7fbf0251a93cb36d98e68b7d19624de5"
-        };
-
         public override string _dataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats",
                                                            "ShrinkWrap 3", "NDIF", "No compression", "No encryption");
         public override IMediaImage _plugin => new Ndif();
+
+        public override BlockImageTestExpected[] Tests => new[]
+        {
+            new BlockImageTestExpected
+            {
+                TestFile   = "CDROM.img",
+                MediaType  = MediaType.GENERIC_HDD,
+                Sectors    = 91108,
+                SectorSize = 512,
+                MD5        = "69e3234920e472b24365060241934ca6"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "DC6_RW_HFS_1440.img",
+                MediaType  = MediaType.DOS_35_HD,
+                Sectors    = 2880,
+                SectorSize = 512,
+                MD5        = "3160038ca028ccf52ad7863790072145"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "DC6_RW_HFS_800.img",
+                MediaType  = MediaType.AppleSonyDS,
+                Sectors    = 1600,
+                SectorSize = 512,
+                MD5        = "5e255c4bc0f6a26ecd27845b37e65aaa"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "DC6_RW_HFS_DMF.img",
+                MediaType  = MediaType.DMF,
+                Sectors    = 3360,
+                SectorSize = 512,
+                MD5        = "652dc979c177f2d8e846587158b38478"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "DOS1440.img",
+                MediaType  = MediaType.DOS_35_HD,
+                Sectors    = 2880,
+                SectorSize = 512,
+                MD5        = "ff419213080574056ebd9adf7bab3d32"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "DOS720.img",
+                MediaType  = MediaType.DOS_35_DS_DD_9,
+                Sectors    = 1440,
+                SectorSize = 512,
+                MD5        = "c2be571406cf6353269faa59a4a8c0a4"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "DOSDMF.img",
+                MediaType  = MediaType.DMF,
+                Sectors    = 3360,
+                SectorSize = 512,
+                MD5        = "92ea7a359957012a682ba126cfdef0ce"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "PD1440.img",
+                MediaType  = MediaType.DOS_35_HD,
+                Sectors    = 2880,
+                SectorSize = 512,
+                MD5        = "7975e8cf7579a6848d6fb4e546d1f682"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "PD800.img",
+                MediaType  = MediaType.AppleSonyDS,
+                Sectors    = 1600,
+                SectorSize = 512,
+                MD5        = "a72da7aedadbe194c22a3d71c62e4766"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "PDDMF.img",
+                MediaType  = MediaType.DMF,
+                Sectors    = 3360,
+                SectorSize = 512,
+                MD5        = "7fbf0251a93cb36d98e68b7d19624de5"
+            }
+        };
     }
 }

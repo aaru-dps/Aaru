@@ -37,48 +37,179 @@ namespace Aaru.Tests.Images.CisCopy
     public class Uncompressed : BlockMediaImageTest
     {
         // TODO: Support compression
-        public override string[] _testFiles => new[]
-        {
-            "md1dd8_all.dcf.lz", "md1dd8_belelung.dcf.lz", "md1dd8_fat.dcf.lz", "md1dd_all.dcf.lz",
-            "md1dd_belelung.dcf.lz", "md1dd_fat.dcf.lz", "md2dd8_all.dcf.lz", "md2dd8_belelung.dcf.lz",
-            "md2dd8_fat.dcf.lz", "md2dd_all.dcf.lz", "md2dd_belelung.dcf.lz", "md2dd_fat.dcf.lz", "md2hd_all.dcf.lz",
-            "md2hd_belelung.dcf.lz", "md2hd_fat.dcf.lz", "mf2dd_all.dcf.lz", "mf2dd_belelung.dcf.lz",
-            "mf2dd_fat.dcf.lz", "mf2hd_all.dcf.lz", "mf2hd_belelung.dcf.lz", "mf2hd_fat.dcf.lz"
-        };
-
-        public override ulong[] _sectors => new ulong[]
-        {
-            320, 320, 320, 360, 360, 360, 640, 640, 640, 720, 720, 720, 2400, 2400, 2400, 1440, 1440, 1440, 2880, 2880,
-            2880
-        };
-
-        public override uint[] _sectorSize => new uint[]
-        {
-            512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512
-        };
-
-        public override MediaType[] _mediaTypes => new[]
-        {
-            MediaType.DOS_525_SS_DD_8, MediaType.DOS_525_SS_DD_8, MediaType.DOS_525_SS_DD_8, MediaType.DOS_525_SS_DD_9,
-            MediaType.DOS_525_SS_DD_9, MediaType.DOS_525_SS_DD_9, MediaType.DOS_525_DS_DD_8, MediaType.DOS_525_DS_DD_8,
-            MediaType.DOS_525_DS_DD_8, MediaType.DOS_525_DS_DD_9, MediaType.DOS_525_DS_DD_9, MediaType.DOS_525_DS_DD_9,
-            MediaType.DOS_525_HD, MediaType.DOS_525_HD, MediaType.DOS_525_HD, MediaType.DOS_35_DS_DD_9,
-            MediaType.DOS_35_DS_DD_9, MediaType.DOS_35_DS_DD_9, MediaType.DOS_35_HD, MediaType.DOS_35_HD,
-            MediaType.DOS_35_HD
-        };
-
-        public override string[] _md5S => new[]
-        {
-            "95c0b76419c1c74db6dbe1d790f97dde", "95c0b76419c1c74db6dbe1d790f97dde", "6f6507e416b7320d583dc347b8e57844",
-            "48b93e8619c4c13f4a3724b550e4b371", "48b93e8619c4c13f4a3724b550e4b371", "1d060d2e2543e1c2e8569f5451660060",
-            "0c93155bbc5e412f5014e037d08c2745", "0c93155bbc5e412f5014e037d08c2745", "0c93155bbc5e412f5014e037d08c2745",
-            "d2a33090ec03bfb536e7356deacf4bbc", "d2a33090ec03bfb536e7356deacf4bbc", "d2a33090ec03bfb536e7356deacf4bbc",
-            "181f3bc62f0b90f74af9d8027ebf7512", "181f3bc62f0b90f74af9d8027ebf7512", "181f3bc62f0b90f74af9d8027ebf7512",
-            "783559ee5e774515d5e7d2feab9c333e", "783559ee5e774515d5e7d2feab9c333e", "783559ee5e774515d5e7d2feab9c333e",
-            "91f3fde8d56a536cdda4c6758e5dbc93", "91f3fde8d56a536cdda4c6758e5dbc93", "91f3fde8d56a536cdda4c6758e5dbc93"
-        };
-
         public override string _dataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "CisCopy");
         public override IMediaImage _plugin => new DiscImages.CisCopy();
+
+        public override BlockImageTestExpected[] Tests => new[]
+        {
+            new BlockImageTestExpected
+            {
+                TestFile   = "md1dd8_all.dcf.lz",
+                MediaType  = MediaType.DOS_525_SS_DD_8,
+                Sectors    = 320,
+                SectorSize = 512,
+                MD5        = "95c0b76419c1c74db6dbe1d790f97dde"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "md1dd8_belelung.dcf.lz",
+                MediaType  = MediaType.DOS_525_SS_DD_8,
+                Sectors    = 320,
+                SectorSize = 512,
+                MD5        = "95c0b76419c1c74db6dbe1d790f97dde"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "md1dd8_fat.dcf.lz",
+                MediaType  = MediaType.DOS_525_SS_DD_8,
+                Sectors    = 320,
+                SectorSize = 512,
+                MD5        = "6f6507e416b7320d583dc347b8e57844"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "md1dd_all.dcf.lz",
+                MediaType  = MediaType.DOS_525_SS_DD_9,
+                Sectors    = 360,
+                SectorSize = 512,
+                MD5        = "48b93e8619c4c13f4a3724b550e4b371"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "md1dd_belelung.dcf.lz",
+                MediaType  = MediaType.DOS_525_SS_DD_9,
+                Sectors    = 360,
+                SectorSize = 512,
+                MD5        = "48b93e8619c4c13f4a3724b550e4b371"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "md1dd_fat.dcf.lz",
+                MediaType  = MediaType.DOS_525_SS_DD_9,
+                Sectors    = 360,
+                SectorSize = 512,
+                MD5        = "1d060d2e2543e1c2e8569f5451660060"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "md2dd8_all.dcf.lz",
+                MediaType  = MediaType.DOS_525_DS_DD_8,
+                Sectors    = 640,
+                SectorSize = 512,
+                MD5        = "0c93155bbc5e412f5014e037d08c2745"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "md2dd8_belelung.dcf.lz",
+                MediaType  = MediaType.DOS_525_DS_DD_8,
+                Sectors    = 640,
+                SectorSize = 512,
+                MD5        = "0c93155bbc5e412f5014e037d08c2745"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "md2dd8_fat.dcf.lz",
+                MediaType  = MediaType.DOS_525_DS_DD_8,
+                Sectors    = 640,
+                SectorSize = 512,
+                MD5        = "0c93155bbc5e412f5014e037d08c2745"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "md2dd_all.dcf.lz",
+                MediaType  = MediaType.DOS_525_DS_DD_9,
+                Sectors    = 720,
+                SectorSize = 512,
+                MD5        = "d2a33090ec03bfb536e7356deacf4bbc"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "md2dd_belelung.dcf.lz",
+                MediaType  = MediaType.DOS_525_DS_DD_9,
+                Sectors    = 720,
+                SectorSize = 512,
+                MD5        = "d2a33090ec03bfb536e7356deacf4bbc"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "md2dd_fat.dcf.lz",
+                MediaType  = MediaType.DOS_525_DS_DD_9,
+                Sectors    = 720,
+                SectorSize = 512,
+                MD5        = "d2a33090ec03bfb536e7356deacf4bbc"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "md2hd_all.dcf.lz",
+                MediaType  = MediaType.DOS_525_HD,
+                Sectors    = 2400,
+                SectorSize = 512,
+                MD5        = "181f3bc62f0b90f74af9d8027ebf7512"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "md2hd_belelung.dcf.lz",
+                MediaType  = MediaType.DOS_525_HD,
+                Sectors    = 2400,
+                SectorSize = 512,
+                MD5        = "181f3bc62f0b90f74af9d8027ebf7512"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "md2hd_fat.dcf.lz",
+                MediaType  = MediaType.DOS_525_HD,
+                Sectors    = 2400,
+                SectorSize = 512,
+                MD5        = "181f3bc62f0b90f74af9d8027ebf7512"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "mf2dd_all.dcf.lz",
+                MediaType  = MediaType.DOS_35_DS_DD_9,
+                Sectors    = 1440,
+                SectorSize = 512,
+                MD5        = "783559ee5e774515d5e7d2feab9c333e"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "mf2dd_belelung.dcf.lz",
+                MediaType  = MediaType.DOS_35_DS_DD_9,
+                Sectors    = 1440,
+                SectorSize = 512,
+                MD5        = "783559ee5e774515d5e7d2feab9c333e"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "mf2dd_fat.dcf.lz",
+                MediaType  = MediaType.DOS_35_DS_DD_9,
+                Sectors    = 1440,
+                SectorSize = 512,
+                MD5        = "783559ee5e774515d5e7d2feab9c333e"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "mf2hd_all.dcf.lz",
+                MediaType  = MediaType.DOS_35_HD,
+                Sectors    = 2880,
+                SectorSize = 512,
+                MD5        = "91f3fde8d56a536cdda4c6758e5dbc93"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "mf2hd_belelung.dcf.lz",
+                MediaType  = MediaType.DOS_35_HD,
+                Sectors    = 2880,
+                SectorSize = 512,
+                MD5        = "91f3fde8d56a536cdda4c6758e5dbc93"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "mf2hd_fat.dcf.lz",
+                MediaType  = MediaType.DOS_35_HD,
+                Sectors    = 2880,
+                SectorSize = 512,
+                MD5        = "91f3fde8d56a536cdda4c6758e5dbc93"
+            }
+        };
     }
 }

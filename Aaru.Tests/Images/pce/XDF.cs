@@ -37,48 +37,27 @@ namespace Aaru.Tests.Images.pce
     [TestFixture]
     public class XDF : BlockMediaImageTest
     {
-        public override string[] _testFiles => new[]
-        {
-            "mf2hd_xdf_teledisk.xdf.lz", "mf2hd_xdf.xdf.lz"
-        };
-
-        public override ulong[] _sectors => new ulong[]
-        {
-            // mf2hd_xdf_teledisk.xdf.lz
-            3680,
-
-            // mf2hd_xdf.xdf.lz
-            3680
-        };
-
-        public override uint[] _sectorSize => new uint[]
-        {
-            // mf2hd_xdf_teledisk.xdf.lz
-            512,
-
-            // mf2hd_xdf.xdf.lz
-            512
-        };
-
-        public override MediaType[] _mediaTypes => new[]
-        {
-            // mf2hd_xdf_teledisk.xdf.lz
-            MediaType.XDF_35,
-
-            // mf2hd_xdf.xdf.lz
-            MediaType.XDF_35
-        };
-
-        public override string[] _md5S => new[]
-        {
-            // mf2hd_xdf_teledisk.xdf.lz
-            "90e8f5022bff8fa90c5148ec35f5d64c",
-
-            // mf2hd_xdf.xdf.lz
-            "825ca9cdcb2f35ff8bbbda9cb0a27c4d"
-        };
-
         public override string _dataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "pce", "XDF");
         public override IMediaImage _plugin => new ZZZRawImage();
+
+        public override BlockImageTestExpected[] Tests => new[]
+        {
+            new BlockImageTestExpected
+            {
+                TestFile   = "mf2hd_xdf_teledisk.xdf.lz",
+                MediaType  = MediaType.XDF_35,
+                Sectors    = 3680,
+                SectorSize = 512,
+                MD5        = "90e8f5022bff8fa90c5148ec35f5d64c"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "mf2hd_xdf.xdf.lz",
+                MediaType  = MediaType.XDF_35,
+                Sectors    = 3680,
+                SectorSize = 512,
+                MD5        = "825ca9cdcb2f35ff8bbbda9cb0a27c4d"
+            }
+        };
     }
 }

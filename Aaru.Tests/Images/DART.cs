@@ -36,36 +36,75 @@ namespace Aaru.Tests.Images
     [TestFixture]
     public class Dart : BlockMediaImageTest
     {
-        public override string[] _testFiles => new[]
-        {
-            "mf1dd_hfs_best.dart.lz", "mf1dd_hfs_fast.dart.lz", "mf1dd_mfs_best.dart.lz", "mf1dd_mfs_fast.dart.lz",
-            "mf2dd_hfs_best.dart.lz", "mf2dd_hfs_fast.dart.lz", "mf2dd_mfs_best.dart.lz", "mf2dd_mfs_fast.dart.lz"
-        };
-
-        public override ulong[] _sectors => new ulong[]
-        {
-            800, 800, 800, 800, 1600, 1600, 1600, 1600
-        };
-
-        public override uint[] _sectorSize => new uint[]
-        {
-            512, 512, 512, 512, 512, 512, 512, 512
-        };
-
-        public override MediaType[] _mediaTypes => new[]
-        {
-            MediaType.AppleSonySS, MediaType.AppleSonySS, MediaType.AppleSonySS, MediaType.AppleSonySS,
-            MediaType.AppleSonyDS, MediaType.AppleSonyDS, MediaType.AppleSonyDS, MediaType.AppleSonyDS
-        };
-
-        public override string[] _md5S => new[]
-        {
-            "eae3a95671d077deb702b3549a769f56", "eae3a95671d077deb702b3549a769f56", "c5d92544c3e78b7f0a9b4baaa9a64eec",
-            "c5d92544c3e78b7f0a9b4baaa9a64eec", "a99744348a70b62b57bce2dec9132ced", "a99744348a70b62b57bce2dec9132ced",
-            "93e71b9ecdb39d3ec9245b4f451856d4", "93e71b9ecdb39d3ec9245b4f451856d4"
-        };
-
         public override string      _dataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "DART");
         public override IMediaImage _plugin     => new DiscImages.Dart();
+
+        public override BlockImageTestExpected[] Tests => new[]
+        {
+            new BlockImageTestExpected
+            {
+                TestFile   = "mf1dd_hfs_best.dart.lz",
+                MediaType  = MediaType.AppleSonySS,
+                Sectors    = 800,
+                SectorSize = 512,
+                MD5        = "eae3a95671d077deb702b3549a769f56"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "mf1dd_hfs_fast.dart.lz",
+                MediaType  = MediaType.AppleSonySS,
+                Sectors    = 800,
+                SectorSize = 512,
+                MD5        = "eae3a95671d077deb702b3549a769f56"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "mf1dd_mfs_best.dart.lz",
+                MediaType  = MediaType.AppleSonySS,
+                Sectors    = 800,
+                SectorSize = 512,
+                MD5        = "c5d92544c3e78b7f0a9b4baaa9a64eec"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "mf1dd_mfs_fast.dart.lz",
+                MediaType  = MediaType.AppleSonySS,
+                Sectors    = 800,
+                SectorSize = 512,
+                MD5        = "c5d92544c3e78b7f0a9b4baaa9a64eec"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "mf2dd_hfs_best.dart.lz",
+                MediaType  = MediaType.AppleSonyDS,
+                Sectors    = 1600,
+                SectorSize = 512,
+                MD5        = "a99744348a70b62b57bce2dec9132ced"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "mf2dd_hfs_fast.dart.lz",
+                MediaType  = MediaType.AppleSonyDS,
+                Sectors    = 1600,
+                SectorSize = 512,
+                MD5        = "a99744348a70b62b57bce2dec9132ced"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "mf2dd_mfs_best.dart.lz",
+                MediaType  = MediaType.AppleSonyDS,
+                Sectors    = 1600,
+                SectorSize = 512,
+                MD5        = "93e71b9ecdb39d3ec9245b4f451856d4"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "mf2dd_mfs_fast.dart.lz",
+                MediaType  = MediaType.AppleSonyDS,
+                Sectors    = 1600,
+                SectorSize = 512,
+                MD5        = "93e71b9ecdb39d3ec9245b4f451856d4"
+            }
+        };
     }
 }

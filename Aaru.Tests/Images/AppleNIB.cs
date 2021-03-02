@@ -36,72 +36,43 @@ namespace Aaru.Tests.Images
     [TestFixture]
     public class AppleNib : BlockMediaImageTest
     {
-        public override string[] _testFiles => new[]
-        {
-            "dos32.nib.lz", "dos33.nib.lz", "pascal.nib.lz", "prodos.nib.lz"
-        };
-
-        public override ulong[] _sectors => new ulong[]
-        {
-            // dos32.nib.lz
-            455,
-
-            // dos33.nib.lz
-            560,
-
-            // pascal.nib.lz
-            560,
-
-            // prodos.nib.lz
-            560
-        };
-
-        public override uint[] _sectorSize => new uint[]
-        {
-            // dos32.nib.lz
-            256,
-
-            // dos33.nib.lz
-            256,
-
-            // pascal.nib.lz
-            256,
-
-            // prodos.nib.lz
-            256
-        };
-
-        public override MediaType[] _mediaTypes => new[]
-        {
-            // dos32.nib.lz
-            MediaType.Apple32SS,
-
-            // dos33.nib.lz
-            MediaType.Apple33SS,
-
-            // pascal.nib.lz
-            MediaType.Apple33SS,
-
-            // prodos.nib.lz
-            MediaType.Apple33SS
-        };
-
-        public override string[] _md5S => new[]
-        {
-            // dos32.nib.lz
-            "76f8fe4c5bc1976f99641ad7cdf53109",
-
-            // dos33.nib.lz
-            "0ffcbd4180306192726926b43755db2f",
-
-            // pascal.nib.lz
-            "4c4926103a32ac15f7e430ec3ced4be5",
-
-            // prodos.nib.lz
-            "11ef56c80c94347d2e3f921d5c36c8de"
-        };
-
         public override string _dataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "Nibbles");
         public override IMediaImage _plugin => new DiscImages.AppleNib();
+
+        public override BlockImageTestExpected[] Tests => new[]
+        {
+            new BlockImageTestExpected
+            {
+                TestFile   = "dos32.nib.lz",
+                MediaType  = MediaType.Apple32SS,
+                Sectors    = 455,
+                SectorSize = 256,
+                MD5        = "76f8fe4c5bc1976f99641ad7cdf53109"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "dos33.nib.lz",
+                MediaType  = MediaType.Apple33SS,
+                Sectors    = 560,
+                SectorSize = 256,
+                MD5        = "0ffcbd4180306192726926b43755db2f"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "pascal.nib.lz",
+                MediaType  = MediaType.Apple33SS,
+                Sectors    = 560,
+                SectorSize = 256,
+                MD5        = "4c4926103a32ac15f7e430ec3ced4be5"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "prodos.nib.lz",
+                MediaType  = MediaType.Apple33SS,
+                Sectors    = 560,
+                SectorSize = 256,
+                MD5        = "11ef56c80c94347d2e3f921d5c36c8de"
+            }
+        };
     }
 }

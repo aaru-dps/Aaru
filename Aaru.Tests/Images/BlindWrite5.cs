@@ -36,1156 +36,1112 @@ namespace Aaru.Tests.Images
     [TestFixture]
     public class BlindWrite5 : OpticalMediaImageTest
     {
-        public override string[] _testFiles => new[]
-        {
-            "dvdrom.B5T", "gigarec.B5T", "jaguarcd.B5T", "pcengine.B5T", "pcfx.B5T", "report_audiocd.B5T",
-            "report_cdr.B5T", "report_cdrom.B5T", "report_cdrw_2x.B5T", "test_all_tracks_are_track1.B5T",
-            "test_audiocd_cdtext.B5T", "test_castrated_leadout.B5T", "test_data_track_as_audio.B5T",
-            "test_data_track_as_audio_fixed_sub.B5T", "test_disc_starts_at_track2.B5T", "test_enhancedcd.B5T",
-            "test_incd_udf200_finalized.B5T", "test_multiple_indexes.B5T", "test_multisession.B5T",
-            "test_track1_overlaps_session2.B5T", "test_track2_inside_session2_leadin.B5T",
-            "test_track2_inside_track1.B5T", "test_videocd.B5T"
-        };
-
-        public override ulong[] _sectors => new ulong[]
-        {
-            // dvdrom.B5T
-            0,
-
-            // gigarec.B5T
-            469652,
-
-            // jaguarcd.B5T
-            243587,
-
-            // pcengine.B5T
-            160956,
-
-            // pcfx.B5T
-            246680,
-
-            // report_audiocd.B5T
-            247073,
-
-            // report_cdr.B5T
-            254265,
-
-            // report_cdrom.B5T
-            254265,
-
-            // report_cdrw_2x.B5T
-            308224,
-
-            // test_all_tracks_are_track1.B5T
-            0,
-
-            // test_audiocd_cdtext.B5T
-            277696,
-
-            // test_castrated_leadout.B5T
-            0,
-
-            // test_data_track_as_audio.B5T
-            62385,
-
-            // test_data_track_as_audio_fixed_sub.B5T
-            62385,
-
-            // test_disc_starts_at_track2.B5T
-            62385,
-
-            // test_enhancedcd.B5T
-            59206,
-
-            // test_incd_udf200_finalized.B5T
-            350134,
-
-            // test_multiple_indexes.B5T
-            65536,
-
-            // test_multisession.B5T
-            51168,
-
-            // test_track1_overlaps_session2.B5T
-            0,
-
-            // test_track2_inside_session2_leadin.B5T
-            62385,
-
-            // test_track2_inside_track1.B5T
-            0,
-
-            // test_videocd.B5T
-            48794
-        };
-        public override uint[] _sectorSize => null;
-
-        public override MediaType[] _mediaTypes => new[]
-        {
-            // dvdrom.B5T
-            MediaType.DVDROM,
-
-            // gigarec.B5T
-            MediaType.CDR,
-
-            // jaguarcd.B5T
-            MediaType.CDDA,
-
-            // pcengine.B5T
-            MediaType.CD,
-
-            // pcfx.B5T
-            MediaType.CD,
-
-            // report_audiocd.B5T
-            MediaType.CDDA,
-
-            // report_cdr.B5T
-            MediaType.CDR,
-
-            // report_cdrom.B5T
-            MediaType.CDROM,
-
-            // report_cdrw_2x.B5T
-            MediaType.CDRW,
-
-            // test_all_tracks_are_track1.B5T
-            MediaType.CDR,
-
-            // test_audiocd_cdtext.B5T
-            MediaType.CDR,
-
-            // test_castrated_leadout.B5T
-            MediaType.CDR,
-
-            // test_data_track_as_audio.B5T
-            MediaType.CDR,
-
-            // test_data_track_as_audio_fixed_sub.B5T
-            MediaType.CDR,
-
-            // test_disc_starts_at_track2.B5T
-            MediaType.CDR,
-
-            // test_enhancedcd.B5T
-            MediaType.CDR,
-
-            // test_incd_udf200_finalized.B5T
-            MediaType.CDR,
-
-            // test_multiple_indexes.B5T
-            MediaType.CDR,
-
-            // test_multisession.B5T
-            MediaType.CDR,
-
-            // test_track1_overlaps_session2.B5T
-            MediaType.CDR,
-
-            // test_track2_inside_session2_leadin.B5T
-            MediaType.CDR,
-
-            // test_track2_inside_track1.B5T
-            MediaType.CDR,
-
-            // test_videocd.B5T
-            MediaType.CDR
-        };
-
-        public override string[] _md5S => new[]
-        {
-            // dvdrom.B5T
-            "UNKNOWN",
-
-            // gigarec.B5T
-            "e2e967adc0e5c530964ac4eebe8cac47",
-
-            // jaguarcd.B5T
-            "3dd5bd0f7d95a40d411761d69255567a",
-
-            // pcengine.B5T
-            "4f5165069b3c5f11afe5f59711bd945d",
-
-            // pcfx.B5T
-            "c1bc8de499756453d1387542bb32bb4d",
-
-            // report_audiocd.B5T
-            "c09f408a4416634d8ac1c1ffd0ed75a5",
-
-            // report_cdr.B5T
-            "65e79ef740833188a0f5be19da14c09d",
-
-            // report_cdrom.B5T
-            "bf4bbec517101d0d6f45d2e4d50cb875",
-
-            // report_cdrw_2x.B5T
-            "1e55aa420ca8f8ea77d5b597c9cfc19b",
-
-            // test_all_tracks_are_track1.B5T
-            "UNKNOWN",
-
-            // test_audiocd_cdtext.B5T
-            "7c8fc7bb768cff15d702ac8cd10108d7",
-
-            // test_castrated_leadout.B5T
-            "UNKNOWN",
-
-            // test_data_track_as_audio.B5T
-            "ce3d63e831b4e6191b05ec9ce452ad91",
-
-            // test_data_track_as_audio_fixed_sub.B5T
-            "ce3d63e831b4e6191b05ec9ce452ad91",
-
-            // test_disc_starts_at_track2.B5T
-            "25fb1b49726aaac09196ea56490beeb1",
-
-            // test_enhancedcd.B5T
-            "3736dbfcb7bf5648e3ac067379087001",
-
-            // test_incd_udf200_finalized.B5T
-            "901e4fe17ea6591b1fd53ba822428ef4",
-
-            // test_multiple_indexes.B5T
-            "1b13a8f8aeb23f0b8bbc68518217e771",
-
-            // test_multisession.B5T
-            "e2e19cf38891e67a0829d01842b4052e",
-
-            // test_track1_overlaps_session2.B5T
-            "UNKNOWN",
-
-            // test_track2_inside_session2_leadin.B5T
-            "4e797aa5dedaac71a0e67ebd9ac9d555",
-
-            // test_track2_inside_track1.B5T
-            "UNKNOWN",
-
-            // test_videocd.B5T
-            "203a40d27b9bee018705c2df8d15e96d"
-        };
-
-        public override string[] _longMd5S => new[]
-        {
-            // dvdrom.B5T
-            "UNKNOWN",
-
-            // gigarec.B5T
-            "1dc7801008110af6b8015aad64d91739",
-
-            // jaguarcd.B5T
-            "3dd5bd0f7d95a40d411761d69255567a",
-
-            // pcengine.B5T
-            "fd30db9486f67654179c90c8a5052edb",
-
-            // pcfx.B5T
-            "455ec326506d2c5b974c4617c1010796",
-
-            // report_audiocd.B5T
-            "c09f408a4416634d8ac1c1ffd0ed75a5",
-
-            // report_cdr.B5T
-            "47b32c32a6427ad1e6b4b1bd047df716",
-
-            // report_cdrom.B5T
-            "3d3f9cf7d1ba2249b1e7960071e5af46",
-
-            // report_cdrw_2x.B5T
-            "3af5f943ddb9427d9c63a4ce3b704db9",
-
-            // test_all_tracks_are_track1.B5T
-            "UNKNOWN",
-
-            // test_audiocd_cdtext.B5T
-            "7c8fc7bb768cff15d702ac8cd10108d7",
-
-            // test_castrated_leadout.B5T
-            "UNKNOWN",
-
-            // test_data_track_as_audio.B5T
-            "4bd5511229857ca167b45e607dea12dc",
-
-            // test_data_track_as_audio_fixed_sub.B5T
-            "4bd5511229857ca167b45e607dea12dc",
-
-            // test_disc_starts_at_track2.B5T
-            "8fd0dbe9085363cc20709f0ca76a373d",
-
-            // test_enhancedcd.B5T
-            "c2dfd5a32678c3ff049c143c98ad36a5",
-
-            // test_incd_udf200_finalized.B5T
-            "7b489457540c40037aabcf3f21e0201e",
-
-            // test_multiple_indexes.B5T
-            "1b13a8f8aeb23f0b8bbc68518217e771",
-
-            // test_multisession.B5T
-            "3e646a04eb29a8e0ad892b6ac00ba962",
-
-            // test_track1_overlaps_session2.B5T
-            "UNKNOWN",
-
-            // test_track2_inside_session2_leadin.B5T
-            "311d641c93a3fe1dfae7deb3a2be28c7",
-
-            // test_track2_inside_track1.B5T
-            "UNKNOWN",
-
-            // test_videocd.B5T
-            "a686cade367db0a12fef1d9862f39e1d"
-        };
-
-        public override string[] _subchannelMd5S => new string[]
-        {
-            // dvdrom.B5T
-            null,
-
-            // gigarec.B5T
-            null,
-
-            // jaguarcd.B5T
-            null,
-
-            // pcengine.B5T
-            null,
-
-            // pcfx.B5T
-            null,
-
-            // report_audiocd.B5T
-            null,
-
-            // report_cdr.B5T
-            null,
-
-            // report_cdrom.B5T
-            null,
-
-            // report_cdrw_2x.B5T
-            null,
-
-            // test_all_tracks_are_track1.B5T
-            null,
-
-            // test_audiocd_cdtext.B5T
-            null,
-
-            // test_castrated_leadout.B5T
-            null,
-
-            // test_data_track_as_audio.B5T
-            null,
-
-            // test_data_track_as_audio_fixed_sub.B5T
-            null,
-
-            // test_disc_starts_at_track2.B5T
-            null,
-
-            // test_enhancedcd.B5T
-            null,
-
-            // test_incd_udf200_finalized.B5T
-            null,
-
-            // test_multiple_indexes.B5T
-            null,
-
-            // test_multisession.B5T
-            null,
-
-            // test_track1_overlaps_session2.B5T
-            null,
-
-            // test_track2_inside_session2_leadin.B5T
-            null,
-
-            // test_track2_inside_track1.B5T
-            null,
-
-            // test_videocd.B5T
-            null
-        };
-
-        public override int[] _tracks => new[]
-        {
-            // dvdrom.B5T
-            1,
-
-            // gigarec.B5T
-            1,
-
-            // jaguarcd.B5T
-            11,
-
-            // pcengine.B5T
-            16,
-
-            // pcfx.B5T
-            8,
-
-            // report_audiocd.B5T
-            14,
-
-            // report_cdr.B5T
-            1,
-
-            // report_cdrom.B5T
-            1,
-
-            // report_cdrw_2x.B5T
-            1,
-
-            // test_all_tracks_are_track1.B5T
-            2,
-
-            // test_audiocd_cdtext.B5T
-            11,
-
-            // test_castrated_leadout.B5T
-            11,
-
-            // test_data_track_as_audio.B5T
-            2,
-
-            // test_data_track_as_audio_fixed_sub.B5T
-            2,
-
-            // test_disc_starts_at_track2.B5T
-            2,
-
-            // test_enhancedcd.B5T
-            3,
-
-            // test_incd_udf200_finalized.B5T
-            1,
-
-            // test_multiple_indexes.B5T
-            5,
-
-            // test_multisession.B5T
-            4,
-
-            // test_track1_overlaps_session2.B5T
-            2,
-
-            // test_track2_inside_session2_leadin.B5T
-            3,
-
-            // test_track2_inside_track1.B5T
-            3,
-
-            // test_videocd.B5T
-            2
-        };
-
-        public override int[][] _trackSessions => new[]
-        {
-            // dvdrom.B5T
-            new[]
-            {
-                1
-            },
-
-            // gigarec.B5T
-            new[]
-            {
-                1
-            },
-
-            // jaguarcd.B5T
-            new[]
-            {
-                1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2
-            },
-
-            // pcengine.B5T
-            new[]
-            {
-                1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
-            },
-
-            // pcfx.B5T
-            new[]
-            {
-                1, 1, 1, 1, 1, 1, 1, 1
-            },
-
-            // report_audiocd.B5T
-            new[]
-            {
-                1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
-            },
-
-            // report_cdr.B5T
-            new[]
-            {
-                1
-            },
-
-            // report_cdrom.B5T
-            new[]
-            {
-                1
-            },
-
-            // report_cdrw_2x.B5T
-            new[]
-            {
-                1
-            },
-
-            // test_all_tracks_are_track1.B5T
-            new[]
-            {
-                1, 2
-            },
-
-            // test_audiocd_cdtext.B5T
-            new[]
-            {
-                1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
-            },
-
-            // test_castrated_leadout.B5T
-            new[]
-            {
-                1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
-            },
-
-            // test_data_track_as_audio.B5T
-            new[]
-            {
-                1, 2
-            },
-
-            // test_data_track_as_audio_fixed_sub.B5T
-            new[]
-            {
-                1, 2
-            },
-
-            // test_disc_starts_at_track2.B5T
-            new[]
-            {
-                1, 2
-            },
-
-            // test_enhancedcd.B5T
-            new[]
-            {
-                1, 1, 2
-            },
-
-            // test_incd_udf200_finalized.B5T
-            new[]
-            {
-                1
-            },
-
-            // test_multiple_indexes.B5T
-            new[]
-            {
-                1, 1, 1, 1, 1
-            },
-
-            // test_multisession.B5T
-            new[]
-            {
-                1, 2, 3, 4
-            },
-
-            // test_track1_overlaps_session2.B5T
-            new[]
-            {
-                1
-            },
-
-            // test_track2_inside_session2_leadin.B5T
-            new[]
-            {
-                1, 1, 2
-            },
-
-            // test_track2_inside_track1.B5T
-            new[]
-            {
-                1, 1, 1
-            },
-
-            // test_videocd.B5T
-            new[]
-            {
-                1, 1
-            }
-        };
-
-        public override ulong[][] _trackStarts => new[]
-        {
-            // dvdrom.B5T
-            new ulong[]
-            {
-                0
-            },
-
-            // gigarec.B5T
-            new ulong[]
-            {
-                0
-            },
-
-            // jaguarcd.B5T
-            new ulong[]
-            {
-                0, 27490, 28237, 78892, 100054, 133203, 160908, 181466, 202024, 222582, 243140
-            },
-
-            // pcengine.B5T
-            new ulong[]
-            {
-                0, 3590, 38464, 47217, 53501, 61819, 68563, 75397, 83130, 86481, 91267, 99274, 106693, 112238, 120270,
-                126229
-            },
-
-            // pcfx.B5T
-            new ulong[]
-            {
-                0, 4395, 4909, 5941, 42059, 220645, 225646, 235498
-            },
-
-            // report_audiocd.B5T
-            new ulong[]
-            {
-                0, 16549, 30051, 47950, 63314, 78925, 94732, 117125, 136166, 154072, 170751, 186539, 201799, 224449
-            },
-
-            // report_cdr.B5T
-            new ulong[]
-            {
-                0
-            },
-
-            // report_cdrom.B5T
-            new ulong[]
-            {
-                0
-            },
-
-            // report_cdrw_2x.B5T
-            new ulong[]
-            {
-                0
-            },
-
-            // test_all_tracks_are_track1.B5T
-            new ulong[]
-            {
-                0, 25539
-            },
-
-            // test_audiocd_cdtext.B5T
-            new ulong[]
-            {
-                0, 29902, 65184, 78576, 95230, 126297, 155109, 191835, 222926, 243588, 269750
-            },
-
-            // test_castrated_leadout.B5T
-            new ulong[]
-            {
-                0, 29902, 65184, 78576, 95230, 126297, 155109, 191835, 222926, 243588, 269750
-            },
-
-            // test_data_track_as_audio.B5T
-            new ulong[]
-            {
-                0, 36789
-            },
-
-            // test_data_track_as_audio_fixed_sub.B5T
-            new ulong[]
-            {
-                0, 36789
-            },
-
-            // test_disc_starts_at_track2.B5T
-            new ulong[]
-            {
-                0, 36789
-            },
-
-            // test_enhancedcd.B5T
-            new ulong[]
-            {
-                0, 14405, 40203
-            },
-
-            // test_incd_udf200_finalized.B5T
-            new ulong[]
-            {
-                0
-            },
-
-            // test_multiple_indexes.B5T
-            new ulong[]
-            {
-                0, 4804, 13875, 41185, 54989
-            },
-
-            // test_multisession.B5T
-            new ulong[]
-            {
-                0, 19383, 32710, 45228
-            },
-
-            // test_track1_overlaps_session2.B5T
-            new ulong[]
-            {
-                0
-            },
-
-            // test_track2_inside_session2_leadin.B5T
-            new ulong[]
-            {
-                0, 25500, 36789
-            },
-
-            // test_track2_inside_track1.B5T
-            new ulong[]
-            {
-                0, 13350, 36939
-            },
-
-            // test_videocd.B5T
-            new ulong[]
-            {
-                0, 1252
-            }
-        };
-
-        public override ulong[][] _trackEnds => new[]
-        {
-            // dvdrom.B5T
-            new ulong[]
-            {
-                0
-            },
-
-            // gigarec.B5T
-            new ulong[]
-            {
-                469651
-            },
-
-            // jaguarcd.B5T
-            new ulong[]
-            {
-                16239, 28236, 78891, 100053, 133202, 160907, 181465, 202023, 222581, 243139, 243586
-            },
-
-            // pcengine.B5T
-            new ulong[]
-            {
-                3589, 38463, 47216, 53500, 61818, 68562, 75396, 83129, 86480, 91266, 99273, 106692, 112237, 120269,
-                126228, 160955
-            },
-
-            // pcfx.B5T
-            new ulong[]
-            {
-                4394, 4908, 5940, 42058, 220644, 225645, 235497, 246679
-            },
-
-            // report_audiocd.B5T
-            new ulong[]
-            {
-                16548, 30050, 47949, 63313, 78924, 94731, 117124, 136165, 154071, 170750, 186538, 201798, 224448, 247072
-            },
-
-            // report_cdr.B5T
-            new ulong[]
-            {
-                254264
-            },
-
-            // report_cdrom.B5T
-            new ulong[]
-            {
-                254264
-            },
-
-            // report_cdrw_2x.B5T
-            new ulong[]
-            {
-                308223
-            },
-
-            // test_all_tracks_are_track1.B5T
-            new ulong[]
-            {
-                25538, 51077
-            },
-
-            // test_audiocd_cdtext.B5T
-            new ulong[]
-            {
-                29901, 65183, 78575, 95229, 126296, 155108, 191834, 222925, 243587, 269749, 277695
-            },
-
-            // test_castrated_leadout.B5T
-            new ulong[]
-            {
-                29901, 65183, 78575, 95229, 126296, 155108, 191834, 222925, 243587, 269749, 1049
-            },
-
-            // test_data_track_as_audio.B5T
-            new ulong[]
-            {
-                25538, 62384
-            },
-
-            // test_data_track_as_audio_fixed_sub.B5T
-            new ulong[]
-            {
-                25538, 62384
-            },
-
-            // test_disc_starts_at_track2.B5T
-            new ulong[]
-            {
-                25538, 62384
-            },
-
-            // test_enhancedcd.B5T
-            new ulong[]
-            {
-                14404, 28952, 59205
-            },
-
-            // test_incd_udf200_finalized.B5T
-            new ulong[]
-            {
-                350133
-            },
-
-            // test_multiple_indexes.B5T
-            new ulong[]
-            {
-                4803, 13874, 41184, 54988, 65535
-            },
-
-            // test_multisession.B5T
-            new ulong[]
-            {
-                8132, 25959, 38477, 51167
-            },
-
-            // test_track1_overlaps_session2.B5T
-            new ulong[]
-            {
-                0
-            },
-
-            // test_track2_inside_session2_leadin.B5T
-            new ulong[]
-            {
-                25499, 25538, 62384
-            },
-
-            // test_track2_inside_track1.B5T
-            new ulong[]
-            {
-                13349, 25538, 62384
-            },
-
-            // test_videocd.B5T
-            new ulong[]
-            {
-                1251, 48793
-            }
-        };
-
-        public override ulong[][] _trackPregaps => new[]
-        {
-            // dvdrom.B5T
-            new ulong[]
-            {
-                0
-            },
-
-            // gigarec.B5T
-            new ulong[]
-            {
-                150
-            },
-
-            // jaguarcd.B5T
-            new ulong[]
-            {
-                150, 150, 0, 0, 0, 0, 0, 0, 0, 0, 0
-            },
-
-            // pcengine.B5T
-            new ulong[]
-            {
-                150, 0, 150, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-            },
-
-            // pcfx.B5T
-            new ulong[]
-            {
-                150, 0, 0, 0, 0, 150, 0, 0
-            },
-
-            // report_audiocd.B5T
-            new ulong[]
-            {
-                150, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-            },
-
-            // report_cdr.B5T
-            new ulong[]
-            {
-                150
-            },
-
-            // report_cdrom.B5T
-            new ulong[]
-            {
-                150
-            },
-
-            // report_cdrw_2x.B5T
-            new ulong[]
-            {
-                150
-            },
-
-            // test_all_tracks_are_track1.B5T
-            new ulong[]
-            {
-                150, 150
-            },
-
-            // test_audiocd_cdtext.B5T
-            new ulong[]
-            {
-                150, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-            },
-
-            // test_castrated_leadout.B5T
-            new ulong[]
-            {
-                150, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-            },
-
-            // test_data_track_as_audio.B5T
-            new ulong[]
-            {
-                150, 150
-            },
-
-            // test_data_track_as_audio_fixed_sub.B5T
-            new ulong[]
-            {
-                150, 150
-            },
-
-            // test_disc_starts_at_track2.B5T
-            new ulong[]
-            {
-                150, 150
-            },
-
-            // test_enhancedcd.B5T
-            new ulong[]
-            {
-                150, 0, 150
-            },
-
-            // test_incd_udf200_finalized.B5T
-            new ulong[]
-            {
-                150
-            },
-
-            // test_multiple_indexes.B5T
-            new ulong[]
-            {
-                150, 0, 0, 0, 0
-            },
-
-            // test_multisession.B5T
-            new ulong[]
-            {
-                150, 150, 150, 150
-            },
-
-            // test_track1_overlaps_session2.B5T
-            new ulong[]
-            {
-                150
-            },
-
-            // test_track2_inside_session2_leadin.B5T
-            new ulong[]
-            {
-                150, 0, 150
-            },
-
-            // test_track2_inside_track1.B5T
-            new ulong[]
-            {
-                150, 0, 150
-            },
-
-            // test_videocd.B5T
-            new ulong[]
-            {
-                150, 0
-            }
-        };
-
-        public override byte[][] _trackFlags => new[]
-        {
-            // dvdrom.B5T
-            null,
-
-            // gigarec.B5T
-            new byte[]
-            {
-                4
-            },
-
-            // jaguarcd.B5T
-            new byte[]
-            {
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-            },
-
-            // pcengine.B5T
-            new byte[]
-            {
-                0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4
-            },
-
-            // pcfx.B5T
-            new byte[]
-            {
-                0, 4, 4, 4, 4, 0, 0, 0
-            },
-
-            // report_audiocd.B5T
-            new byte[]
-            {
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-            },
-
-            // report_cdr.B5T
-            new byte[]
-            {
-                4
-            },
-
-            // report_cdrom.B5T
-            new byte[]
-            {
-                4
-            },
-
-            // report_cdrw_2x.B5T
-            new byte[]
-            {
-                4
-            },
-
-            // test_all_tracks_are_track1.B5T
-            new byte[]
-            {
-                4, 4
-            },
-
-            // test_audiocd_cdtext.B5T
-            new byte[]
-            {
-                2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2
-            },
-
-            // test_castrated_leadout.B5T
-            new byte[]
-            {
-                2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2
-            },
-
-            // test_data_track_as_audio.B5T
-            new byte[]
-            {
-                4, 2
-            },
-
-            // test_data_track_as_audio_fixed_sub.B5T
-            new byte[]
-            {
-                4, 2
-            },
-
-            // test_disc_starts_at_track2.B5T
-            new byte[]
-            {
-                4, 4
-            },
-
-            // test_enhancedcd.B5T
-            new byte[]
-            {
-                0, 0, 4
-            },
-
-            // test_incd_udf200_finalized.B5T
-            new byte[]
-            {
-                7
-            },
-
-            // test_multiple_indexes.B5T
-            new byte[]
-            {
-                2, 0, 0, 8, 1
-            },
-
-            // test_multisession.B5T
-            new byte[]
-            {
-                4, 4, 4, 4
-            },
-
-            // test_track1_overlaps_session2.B5T
-            new byte[]
-            {
-                4, 4
-            },
-
-            // test_track2_inside_session2_leadin.B5T
-            new byte[]
-            {
-                4, 4, 4
-            },
-
-            // test_track2_inside_track1.B5T
-            new byte[]
-            {
-                4, 4, 4
-            },
-
-            // test_videocd.B5T
-            new byte[]
-            {
-                4, 4
-            }
-        };
-
         public override string _dataFolder =>
             Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "BlindWrite 5");
         public override IMediaImage _plugin => new DiscImages.BlindWrite5();
+
+        public override OpticalImageTestExpected[] Tests => new[]
+        {
+            new OpticalImageTestExpected
+            {
+                TestFile  = "dvdrom.B5T",
+                MediaType = MediaType.DVDROM,
+                Sectors   = 0,
+                MD5       = "UNKNOWN",
+                LongMD5   = "UNKNOWN",
+                Tracks = new[]
+                {
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 0,
+                        End     = 0,
+                        Pregap  = 0
+                    }
+                }
+            },
+            new OpticalImageTestExpected
+            {
+                TestFile  = "gigarec.B5T",
+                MediaType = MediaType.CDR,
+                Sectors   = 469652,
+                MD5       = "e2e967adc0e5c530964ac4eebe8cac47",
+                LongMD5   = "1dc7801008110af6b8015aad64d91739",
+                Tracks = new[]
+                {
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 0,
+                        End     = 469651,
+                        Pregap  = 150,
+                        Flags   = 4
+                    }
+                }
+            },
+            new OpticalImageTestExpected
+            {
+                TestFile  = "jaguarcd.B5T",
+                MediaType = MediaType.CDDA,
+                Sectors   = 243587,
+                MD5       = "3dd5bd0f7d95a40d411761d69255567a",
+                LongMD5   = "3dd5bd0f7d95a40d411761d69255567a",
+                Tracks = new[]
+                {
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 0,
+                        End     = 16239,
+                        Pregap  = 150,
+                        Flags   = 0
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 2,
+                        Start   = 27490,
+                        End     = 28236,
+                        Pregap  = 150,
+                        Flags   = 0
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 2,
+                        Start   = 28237,
+                        End     = 78891,
+                        Pregap  = 0,
+                        Flags   = 0
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 2,
+                        Start   = 78892,
+                        End     = 100053,
+                        Pregap  = 0,
+                        Flags   = 0
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 2,
+                        Start   = 100054,
+                        End     = 133202,
+                        Pregap  = 0,
+                        Flags   = 0
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 2,
+                        Start   = 133203,
+                        End     = 160907,
+                        Pregap  = 0,
+                        Flags   = 0
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 2,
+                        Start   = 160908,
+                        End     = 181465,
+                        Pregap  = 0,
+                        Flags   = 0
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 2,
+                        Start   = 181466,
+                        End     = 202023,
+                        Pregap  = 0,
+                        Flags   = 0
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 2,
+                        Start   = 202024,
+                        End     = 222581,
+                        Pregap  = 0,
+                        Flags   = 0
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 2,
+                        Start   = 222582,
+                        End     = 243139,
+                        Pregap  = 0,
+                        Flags   = 0
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 2,
+                        Start   = 243140,
+                        End     = 243586,
+                        Pregap  = 0,
+                        Flags   = 0
+                    }
+                }
+            },
+            new OpticalImageTestExpected
+            {
+                TestFile  = "pcengine.B5T",
+                MediaType = MediaType.CD,
+                Sectors   = 160956,
+                MD5       = "4f5165069b3c5f11afe5f59711bd945d",
+                LongMD5   = "fd30db9486f67654179c90c8a5052edb",
+                Tracks = new[]
+                {
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 0,
+                        End     = 3589,
+                        Pregap  = 150,
+                        Flags   = 0
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 3590,
+                        End     = 38463,
+                        Pregap  = 0,
+                        Flags   = 4
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 38464,
+                        End     = 47216,
+                        Pregap  = 150,
+                        Flags   = 0
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 47217,
+                        End     = 53500,
+                        Pregap  = 0,
+                        Flags   = 0
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 53501,
+                        End     = 61818,
+                        Pregap  = 0,
+                        Flags   = 0
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 61819,
+                        End     = 68562,
+                        Pregap  = 0,
+                        Flags   = 0
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 68563,
+                        End     = 75396,
+                        Pregap  = 0,
+                        Flags   = 0
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 75397,
+                        End     = 83129,
+                        Pregap  = 0,
+                        Flags   = 0
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 83130,
+                        End     = 86480,
+                        Pregap  = 0,
+                        Flags   = 0
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 86481,
+                        End     = 91266,
+                        Pregap  = 0,
+                        Flags   = 0
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 91267,
+                        End     = 99273,
+                        Pregap  = 0,
+                        Flags   = 0
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 99274,
+                        End     = 106692,
+                        Pregap  = 0,
+                        Flags   = 0
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 106693,
+                        End     = 112237,
+                        Pregap  = 0,
+                        Flags   = 0
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 112238,
+                        End     = 120269,
+                        Pregap  = 0,
+                        Flags   = 0
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 120270,
+                        End     = 126228,
+                        Pregap  = 0,
+                        Flags   = 0
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 126229,
+                        End     = 160955,
+                        Pregap  = 0,
+                        Flags   = 4
+                    }
+                }
+            },
+            new OpticalImageTestExpected
+            {
+                TestFile  = "pcfx.B5T",
+                MediaType = MediaType.CD,
+                Sectors   = 246680,
+                MD5       = "c1bc8de499756453d1387542bb32bb4d",
+                LongMD5   = "455ec326506d2c5b974c4617c1010796",
+                Tracks = new[]
+                {
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 0,
+                        End     = 4394,
+                        Pregap  = 150,
+                        Flags   = 0
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 4395,
+                        End     = 4908,
+                        Pregap  = 0,
+                        Flags   = 4
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 4909,
+                        End     = 5940,
+                        Pregap  = 0,
+                        Flags   = 4
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 5941,
+                        End     = 42058,
+                        Pregap  = 0,
+                        Flags   = 4
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 42059,
+                        End     = 220644,
+                        Pregap  = 0,
+                        Flags   = 4
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 220645,
+                        End     = 225645,
+                        Pregap  = 150,
+                        Flags   = 0
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 225646,
+                        End     = 235497,
+                        Pregap  = 0,
+                        Flags   = 0
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 235498,
+                        End     = 246679,
+                        Pregap  = 0,
+                        Flags   = 0
+                    }
+                }
+            },
+            new OpticalImageTestExpected
+            {
+                TestFile  = "report_audiocd.B5T",
+                MediaType = MediaType.CDDA,
+                Sectors   = 247073,
+                MD5       = "c09f408a4416634d8ac1c1ffd0ed75a5",
+                LongMD5   = "c09f408a4416634d8ac1c1ffd0ed75a5",
+                Tracks = new[]
+                {
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 0,
+                        End     = 16548,
+                        Pregap  = 150,
+                        Flags   = 0
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 16549,
+                        End     = 30050,
+                        Pregap  = 0,
+                        Flags   = 0
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 30051,
+                        End     = 47949,
+                        Pregap  = 0,
+                        Flags   = 0
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 47950,
+                        End     = 63313,
+                        Pregap  = 0,
+                        Flags   = 0
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 63314,
+                        End     = 78924,
+                        Pregap  = 0,
+                        Flags   = 0
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 78925,
+                        End     = 94731,
+                        Pregap  = 0,
+                        Flags   = 0
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 94732,
+                        End     = 117124,
+                        Pregap  = 0,
+                        Flags   = 0
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 117125,
+                        End     = 136165,
+                        Pregap  = 0,
+                        Flags   = 0
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 136166,
+                        End     = 154071,
+                        Pregap  = 0,
+                        Flags   = 0
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 154072,
+                        End     = 170750,
+                        Pregap  = 0,
+                        Flags   = 0
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 170751,
+                        End     = 186538,
+                        Pregap  = 0,
+                        Flags   = 0
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 186539,
+                        End     = 201798,
+                        Pregap  = 0,
+                        Flags   = 0
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 201799,
+                        End     = 224448,
+                        Pregap  = 0,
+                        Flags   = 0
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 224449,
+                        End     = 247072,
+                        Pregap  = 0,
+                        Flags   = 0
+                    }
+                }
+            },
+            new OpticalImageTestExpected
+            {
+                TestFile  = "report_cdr.B5T",
+                MediaType = MediaType.CDR,
+                Sectors   = 254265,
+                MD5       = "65e79ef740833188a0f5be19da14c09d",
+                LongMD5   = "47b32c32a6427ad1e6b4b1bd047df716",
+                Tracks = new[]
+                {
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 0,
+                        End     = 254264,
+                        Pregap  = 150,
+                        Flags   = 4
+                    }
+                }
+            },
+            new OpticalImageTestExpected
+            {
+                TestFile  = "report_cdrom.B5T",
+                MediaType = MediaType.CDROM,
+                Sectors   = 254265,
+                MD5       = "bf4bbec517101d0d6f45d2e4d50cb875",
+                LongMD5   = "3d3f9cf7d1ba2249b1e7960071e5af46",
+                Tracks = new[]
+                {
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 0,
+                        End     = 254264,
+                        Pregap  = 150,
+                        Flags   = 4
+                    }
+                }
+            },
+            new OpticalImageTestExpected
+            {
+                TestFile  = "report_cdrw_2x.B5T",
+                MediaType = MediaType.CDRW,
+                Sectors   = 308224,
+                MD5       = "1e55aa420ca8f8ea77d5b597c9cfc19b",
+                LongMD5   = "3af5f943ddb9427d9c63a4ce3b704db9",
+                Tracks = new[]
+                {
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 0,
+                        End     = 308223,
+                        Pregap  = 150,
+                        Flags   = 4
+                    }
+                }
+            },
+            new OpticalImageTestExpected
+            {
+                TestFile  = "test_all_tracks_are_track1.B5T",
+                MediaType = MediaType.CDR,
+                Sectors   = 0,
+                MD5       = "UNKNOWN",
+                LongMD5   = "UNKNOWN",
+                Tracks = new[]
+                {
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 0,
+                        End     = 25538,
+                        Pregap  = 150,
+                        Flags   = 4
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 2,
+                        Start   = 25539,
+                        End     = 51077,
+                        Pregap  = 150,
+                        Flags   = 4
+                    }
+                }
+            },
+            new OpticalImageTestExpected
+            {
+                TestFile  = "test_audiocd_cdtext.B5T",
+                MediaType = MediaType.CDR,
+                Sectors   = 277696,
+                MD5       = "7c8fc7bb768cff15d702ac8cd10108d7",
+                LongMD5   = "7c8fc7bb768cff15d702ac8cd10108d7",
+                Tracks = new[]
+                {
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 0,
+                        End     = 29901,
+                        Pregap  = 150,
+                        Flags   = 2
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 29902,
+                        End     = 65183,
+                        Pregap  = 0,
+                        Flags   = 2
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 65184,
+                        End     = 78575,
+                        Pregap  = 0,
+                        Flags   = 2
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 78576,
+                        End     = 95229,
+                        Pregap  = 0,
+                        Flags   = 2
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 95230,
+                        End     = 126296,
+                        Pregap  = 0,
+                        Flags   = 2
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 126297,
+                        End     = 155108,
+                        Pregap  = 0,
+                        Flags   = 2
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 155109,
+                        End     = 191834,
+                        Pregap  = 0,
+                        Flags   = 2
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 191835,
+                        End     = 222925,
+                        Pregap  = 0,
+                        Flags   = 2
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 222926,
+                        End     = 243587,
+                        Pregap  = 0,
+                        Flags   = 2
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 243588,
+                        End     = 269749,
+                        Pregap  = 0,
+                        Flags   = 2
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 269750,
+                        End     = 277695,
+                        Pregap  = 0,
+                        Flags   = 2
+                    }
+                }
+            },
+            new OpticalImageTestExpected
+            {
+                TestFile  = "test_castrated_leadout.B5T",
+                MediaType = MediaType.CDR,
+                Sectors   = 0,
+                MD5       = "UNKNOWN",
+                LongMD5   = "UNKNOWN",
+                Tracks = new[]
+                {
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 0,
+                        End     = 29901,
+                        Pregap  = 150,
+                        Flags   = 2
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 29902,
+                        End     = 65183,
+                        Pregap  = 0,
+                        Flags   = 2
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 65184,
+                        End     = 78575,
+                        Pregap  = 0,
+                        Flags   = 2
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 78576,
+                        End     = 95229,
+                        Pregap  = 0,
+                        Flags   = 2
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 95230,
+                        End     = 126296,
+                        Pregap  = 0,
+                        Flags   = 2
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 126297,
+                        End     = 155108,
+                        Pregap  = 0,
+                        Flags   = 2
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 155109,
+                        End     = 191834,
+                        Pregap  = 0,
+                        Flags   = 2
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 191835,
+                        End     = 222925,
+                        Pregap  = 0,
+                        Flags   = 2
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 222926,
+                        End     = 243587,
+                        Pregap  = 0,
+                        Flags   = 2
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 243588,
+                        End     = 269749,
+                        Pregap  = 0,
+                        Flags   = 2
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 269750,
+                        End     = 1049,
+                        Pregap  = 0,
+                        Flags   = 2
+                    }
+                }
+            },
+            new OpticalImageTestExpected
+            {
+                TestFile  = "test_data_track_as_audio.B5T",
+                MediaType = MediaType.CDR,
+                Sectors   = 62385,
+                MD5       = "ce3d63e831b4e6191b05ec9ce452ad91",
+                LongMD5   = "4bd5511229857ca167b45e607dea12dc",
+                Tracks = new[]
+                {
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 0,
+                        End     = 25538,
+                        Pregap  = 150,
+                        Flags   = 4
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 2,
+                        Start   = 36789,
+                        End     = 62384,
+                        Pregap  = 150,
+                        Flags   = 2
+                    }
+                }
+            },
+            new OpticalImageTestExpected
+            {
+                TestFile  = "test_data_track_as_audio_fixed_sub.B5T",
+                MediaType = MediaType.CDR,
+                Sectors   = 62385,
+                MD5       = "ce3d63e831b4e6191b05ec9ce452ad91",
+                LongMD5   = "4bd5511229857ca167b45e607dea12dc",
+                Tracks = new[]
+                {
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 0,
+                        End     = 25538,
+                        Pregap  = 150,
+                        Flags   = 4
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 2,
+                        Start   = 36789,
+                        End     = 62384,
+                        Pregap  = 150,
+                        Flags   = 2
+                    }
+                }
+            },
+            new OpticalImageTestExpected
+            {
+                TestFile  = "test_disc_starts_at_track2.B5T",
+                MediaType = MediaType.CDR,
+                Sectors   = 62385,
+                MD5       = "25fb1b49726aaac09196ea56490beeb1",
+                LongMD5   = "8fd0dbe9085363cc20709f0ca76a373d",
+                Tracks = new[]
+                {
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 0,
+                        End     = 25538,
+                        Pregap  = 150,
+                        Flags   = 4
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 2,
+                        Start   = 36789,
+                        End     = 62384,
+                        Pregap  = 150,
+                        Flags   = 4
+                    }
+                }
+            },
+            new OpticalImageTestExpected
+            {
+                TestFile  = "test_enhancedcd.B5T",
+                MediaType = MediaType.CDR,
+                Sectors   = 59206,
+                MD5       = "3736dbfcb7bf5648e3ac067379087001",
+                LongMD5   = "c2dfd5a32678c3ff049c143c98ad36a5",
+                Tracks = new[]
+                {
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 0,
+                        End     = 14404,
+                        Pregap  = 150,
+                        Flags   = 0
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 14405,
+                        End     = 28952,
+                        Pregap  = 0,
+                        Flags   = 0
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 2,
+                        Start   = 40203,
+                        End     = 59205,
+                        Pregap  = 150,
+                        Flags   = 4
+                    }
+                }
+            },
+            new OpticalImageTestExpected
+            {
+                TestFile  = "test_incd_udf200_finalized.B5T",
+                MediaType = MediaType.CDR,
+                Sectors   = 350134,
+                MD5       = "901e4fe17ea6591b1fd53ba822428ef4",
+                LongMD5   = "7b489457540c40037aabcf3f21e0201e",
+                Tracks = new[]
+                {
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 0,
+                        End     = 350133,
+                        Pregap  = 150,
+                        Flags   = 7
+                    }
+                }
+            },
+            new OpticalImageTestExpected
+            {
+                TestFile  = "test_multiple_indexes.B5T",
+                MediaType = MediaType.CDR,
+                Sectors   = 65536,
+                MD5       = "1b13a8f8aeb23f0b8bbc68518217e771",
+                LongMD5   = "1b13a8f8aeb23f0b8bbc68518217e771",
+                Tracks = new[]
+                {
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 0,
+                        End     = 4803,
+                        Pregap  = 150,
+                        Flags   = 2
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 4804,
+                        End     = 13874,
+                        Pregap  = 0,
+                        Flags   = 0
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 13875,
+                        End     = 41184,
+                        Pregap  = 0,
+                        Flags   = 0
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 41185,
+                        End     = 54988,
+                        Pregap  = 0,
+                        Flags   = 8
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 54989,
+                        End     = 65535,
+                        Pregap  = 0,
+                        Flags   = 1
+                    }
+                }
+            },
+            new OpticalImageTestExpected
+            {
+                TestFile  = "test_multisession.B5T",
+                MediaType = MediaType.CDR,
+                Sectors   = 51168,
+                MD5       = "e2e19cf38891e67a0829d01842b4052e",
+                LongMD5   = "3e646a04eb29a8e0ad892b6ac00ba962",
+                Tracks = new[]
+                {
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 0,
+                        End     = 8132,
+                        Pregap  = 150,
+                        Flags   = 4
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 2,
+                        Start   = 19383,
+                        End     = 25959,
+                        Pregap  = 150,
+                        Flags   = 4
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 3,
+                        Start   = 32710,
+                        End     = 38477,
+                        Pregap  = 150,
+                        Flags   = 4
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 4,
+                        Start   = 45228,
+                        End     = 51167,
+                        Pregap  = 150,
+                        Flags   = 4
+                    }
+                }
+            },
+            new OpticalImageTestExpected
+            {
+                TestFile  = "test_track1_overlaps_session2.B5T",
+                MediaType = MediaType.CDR,
+                Sectors   = 0,
+                MD5       = "UNKNOWN",
+                LongMD5   = "UNKNOWN",
+                Tracks = new[]
+                {
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 0,
+                        End     = 0,
+                        Pregap  = 150,
+                        Flags   = 4
+                    }
+                }
+            },
+            new OpticalImageTestExpected
+            {
+                TestFile  = "test_track2_inside_session2_leadin.B5T",
+                MediaType = MediaType.CDR,
+                Sectors   = 62385,
+                MD5       = "4e797aa5dedaac71a0e67ebd9ac9d555",
+                LongMD5   = "311d641c93a3fe1dfae7deb3a2be28c7",
+                Tracks = new[]
+                {
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 0,
+                        End     = 25499,
+                        Pregap  = 150,
+                        Flags   = 4
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 25500,
+                        End     = 25538,
+                        Pregap  = 0,
+                        Flags   = 4
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 2,
+                        Start   = 36789,
+                        End     = 62384,
+                        Pregap  = 150,
+                        Flags   = 4
+                    }
+                }
+            },
+            new OpticalImageTestExpected
+            {
+                TestFile  = "test_track2_inside_track1.B5T",
+                MediaType = MediaType.CDR,
+                Sectors   = 0,
+                MD5       = "UNKNOWN",
+                LongMD5   = "UNKNOWN",
+                Tracks = new[]
+                {
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 0,
+                        End     = 13349,
+                        Pregap  = 150,
+                        Flags   = 4
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 13350,
+                        End     = 25538,
+                        Pregap  = 0,
+                        Flags   = 4
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 36939,
+                        End     = 62384,
+                        Pregap  = 150,
+                        Flags   = 4
+                    }
+                }
+            },
+            new OpticalImageTestExpected
+            {
+                TestFile  = "test_videocd.B5T",
+                MediaType = MediaType.CDR,
+                Sectors   = 48794,
+                MD5       = "203a40d27b9bee018705c2df8d15e96d",
+                LongMD5   = "a686cade367db0a12fef1d9862f39e1d",
+                Tracks = new[]
+                {
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 0,
+                        End     = 1251,
+                        Pregap  = 150,
+                        Flags   = 4
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 1252,
+                        End     = 48793,
+                        Pregap  = 0,
+                        Flags   = 4
+                    }
+                }
+            }
+        };
     }
 }

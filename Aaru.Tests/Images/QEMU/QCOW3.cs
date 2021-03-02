@@ -37,49 +37,28 @@ namespace Aaru.Tests.Images.QEMU
     [TestFixture]
     public class QCOW3 : BlockMediaImageTest
     {
-        public override string[] _testFiles => new[]
-        {
-            "qcow3.qc2.lz", "qcow3_compressed.qc2.lz"
-        };
-
-        public override ulong[] _sectors => new ulong[]
-        {
-            // qcow3.qc2.lz
-            251904,
-
-            // qcow3_compressed.qc2.lz
-            251904
-        };
-
-        public override uint[] _sectorSize => new uint[]
-        {
-            // qcow3.qc2.lz
-            512,
-
-            // qcow3_compressed.qc2.lz
-            512
-        };
-
-        public override MediaType[] _mediaTypes => new[]
-        {
-            // qcow3.qc2.lz
-            MediaType.GENERIC_HDD,
-
-            // qcow3_compressed.qc2.lz
-            MediaType.GENERIC_HDD
-        };
-
-        public override string[] _md5S => new[]
-        {
-            // qcow3.qc2.lz
-            "4bfc9e9e2dd86aa52ef709e77d2617ed",
-
-            // qcow3_compressed.qc2.lz
-            "4bfc9e9e2dd86aa52ef709e77d2617ed"
-        };
-
         public override string _dataFolder =>
             Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "QEMU", "QEMU Copy On Write 3");
         public override IMediaImage _plugin => new Qcow2();
+
+        public override BlockImageTestExpected[] Tests => new[]
+        {
+            new BlockImageTestExpected
+            {
+                TestFile   = "qcow3.qc2.lz",
+                MediaType  = MediaType.GENERIC_HDD,
+                Sectors    = 251904,
+                SectorSize = 512,
+                MD5        = "4bfc9e9e2dd86aa52ef709e77d2617ed"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "qcow3_compressed.qc2.lz",
+                MediaType  = MediaType.GENERIC_HDD,
+                Sectors    = 251904,
+                SectorSize = 512,
+                MD5        = "4bfc9e9e2dd86aa52ef709e77d2617ed"
+            }
+        };
     }
 }

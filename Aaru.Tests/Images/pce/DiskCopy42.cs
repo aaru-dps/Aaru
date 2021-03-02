@@ -36,61 +36,36 @@ namespace Aaru.Tests.Images.pce
     [TestFixture]
     public class DiskCopy42 : BlockMediaImageTest
     {
-        public override string[] _testFiles => new[]
-        {
-            "mf1dd_gcr.dc42.lz", "mf2dd.dc42.lz", "mf2dd_gcr.dc42.lz"
-        };
-
-        public override ulong[] _sectors => new ulong[]
-        {
-            // mf1dd_gcr.dc42.lz
-            800,
-
-            // mf2dd.dc42.lz
-            1440,
-
-            // mf2dd_gcr.dc42.lz
-            1600
-        };
-
-        public override uint[] _sectorSize => new uint[]
-        {
-            // mf1dd_gcr.dc42.lz
-            512,
-
-            // mf2dd.dc42.lz
-            512,
-
-            // mf2dd_gcr.dc42.lz
-            512
-        };
-
-        public override MediaType[] _mediaTypes => new[]
-        {
-            // mf1dd_gcr.dc42.lz
-            MediaType.AppleSonySS,
-
-            // mf2dd.dc42.lz
-            MediaType.DOS_35_DS_DD_9,
-
-            // mf2dd_gcr.dc42.lz
-            MediaType.AppleSonyDS
-        };
-
-        public override string[] _md5S => new[]
-        {
-            // mf1dd_gcr.dc42.lz
-            "c5d92544c3e78b7f0a9b4baaa9a64eec",
-
-            // mf2dd.dc42.lz
-            "de3f85896f771b7e5bc4c9e3926d64e4",
-
-            // mf2dd_gcr.dc42.lz
-            "93e71b9ecdb39d3ec9245b4f451856d4"
-        };
-
         public override string _dataFolder =>
             Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "pce", "DiskCopy 4.2");
         public override IMediaImage _plugin => new DiscImages.DiskCopy42();
+
+        public override BlockImageTestExpected[] Tests => new[]
+        {
+            new BlockImageTestExpected
+            {
+                TestFile   = "mf1dd_gcr.dc42.lz",
+                MediaType  = MediaType.AppleSonySS,
+                Sectors    = 800,
+                SectorSize = 512,
+                MD5        = "c5d92544c3e78b7f0a9b4baaa9a64eec"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "mf2dd.dc42.lz",
+                MediaType  = MediaType.DOS_35_DS_DD_9,
+                Sectors    = 1440,
+                SectorSize = 512,
+                MD5        = "de3f85896f771b7e5bc4c9e3926d64e4"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "mf2dd_gcr.dc42.lz",
+                MediaType  = MediaType.AppleSonyDS,
+                Sectors    = 1600,
+                SectorSize = 512,
+                MD5        = "93e71b9ecdb39d3ec9245b4f451856d4"
+            }
+        };
     }
 }

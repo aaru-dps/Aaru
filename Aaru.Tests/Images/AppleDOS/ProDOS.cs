@@ -37,146 +37,92 @@ namespace Aaru.Tests.Images.AppleDOS
     [TestFixture]
     public class ProDOS : BlockMediaImageTest
     {
-        public override string[] _testFiles => new[]
-        {
-            "dos33.po.lz", "hfs1440.po.lz", "hfs.po.lz", "pascal800.po.lz", "pascal.po.lz", "prodos1440.po.lz",
-            "prodos5mb.po.lz", "prodos800.po.lz", "prodosmod.po.lz", "prodos.po.lz"
-        };
-
-        public override ulong[] _sectors => new ulong[]
-        {
-            // dos33.po.lz
-            560,
-
-            // hfs1440.po.lz
-            560,
-
-            // hfs.po.lz
-            560,
-
-            // pascal800.po.lz
-            560,
-
-            // pascal.po.lz
-            560,
-
-            // prodos1440.po.lz
-            560,
-
-            // prodos5mb.po.lz
-            560,
-
-            // prodos800.po.lz
-            560,
-
-            // prodosmod.po.lz
-            560,
-
-            // prodos.po.lz
-            560
-        };
-
-        public override uint[] _sectorSize => new uint[]
-        {
-            // dos33.po.lz
-            256,
-
-            // hfs1440.po.lz
-            256,
-
-            // hfs.po.lz
-            256,
-
-            // pascal800.po.lz
-            256,
-
-            // pascal.po.lz
-            256,
-
-            // prodos1440.po.lz
-            256,
-
-            // prodos5mb.po.lz
-            256,
-
-            // prodos800.po.lz
-            256,
-
-            // prodosmod.po.lz
-            256,
-
-            // prodos.po.lz
-            256
-        };
-
-        public override MediaType[] _mediaTypes => new[]
-        {
-            // dos33.po.lz
-            MediaType.Apple33SS,
-
-            // hfs1440.po.lz
-            MediaType.Apple33SS,
-
-            // hfs.po.lz
-            MediaType.Apple33SS,
-
-            // pascal800.po.lz
-            MediaType.Apple33SS,
-
-            // pascal.po.lz
-            MediaType.Apple33SS,
-
-            // prodos1440.po.lz
-            MediaType.Apple33SS,
-
-            // prodos5mb.po.lz
-            MediaType.Apple33SS,
-
-            // prodos800.po.lz
-            MediaType.Apple33SS,
-
-            // prodosmod.po.lz
-            MediaType.Apple33SS,
-
-            // prodos.po.lz
-            MediaType.Apple33SS
-        };
-
-        public override string[] _md5S => new[]
-        {
-            // dos33.po.lz
-            "0ffcbd4180306192726926b43755db2f",
-
-            // hfs1440.po.lz
-            "2c0b397aa3fe23a52cf7908340739f78",
-
-            // hfs.po.lz
-            "ddd04ef378552c789f85382b4f49da06",
-
-            // pascal800.po.lz
-            "5158e2fe9d8e7ae1f7db73156478e4f4",
-
-            // pascal.po.lz
-            "4c4926103a32ac15f7e430ec3ced4be5",
-
-            // prodos1440.po.lz
-            "55ff5838139c0e8fa3f904397dc22fa5",
-
-            // prodos5mb.po.lz
-            "137463bc1f758fb8f2c354b02603817b",
-
-            // prodos800.po.lz
-            "193c5cc22f07e5aeb96eb187cb59c2d9",
-
-            // prodosmod.po.lz
-            "26d9c57e262f61c4eb6c150eefafe4c0",
-
-            // prodos.po.lz
-            "11ef56c80c94347d2e3f921d5c36c8de"
-        };
-
         public override string _dataFolder =>
             Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "Apple ProDOS Order");
         public override IMediaImage _plugin => new AppleDos();
+
+        public override BlockImageTestExpected[] Tests => new[]
+        {
+            new BlockImageTestExpected
+            {
+                TestFile   = "dos33.po.lz",
+                MediaType  = MediaType.Apple33SS,
+                Sectors    = 560,
+                SectorSize = 256,
+                MD5        = "0ffcbd4180306192726926b43755db2f"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "hfs1440.po.lz",
+                MediaType  = MediaType.Apple33SS,
+                Sectors    = 560,
+                SectorSize = 256,
+                MD5        = "2c0b397aa3fe23a52cf7908340739f78"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "hfs.po.lz",
+                MediaType  = MediaType.Apple33SS,
+                Sectors    = 560,
+                SectorSize = 256,
+                MD5        = "ddd04ef378552c789f85382b4f49da06"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "pascal800.po.lz",
+                MediaType  = MediaType.Apple33SS,
+                Sectors    = 560,
+                SectorSize = 256,
+                MD5        = "5158e2fe9d8e7ae1f7db73156478e4f4"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "pascal.po.lz",
+                MediaType  = MediaType.Apple33SS,
+                Sectors    = 560,
+                SectorSize = 256,
+                MD5        = "4c4926103a32ac15f7e430ec3ced4be5"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "prodos1440.po.lz",
+                MediaType  = MediaType.Apple33SS,
+                Sectors    = 560,
+                SectorSize = 256,
+                MD5        = "55ff5838139c0e8fa3f904397dc22fa5"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "prodos5mb.po.lz",
+                MediaType  = MediaType.Apple33SS,
+                Sectors    = 560,
+                SectorSize = 256,
+                MD5        = "137463bc1f758fb8f2c354b02603817b"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "prodos800.po.lz",
+                MediaType  = MediaType.Apple33SS,
+                Sectors    = 560,
+                SectorSize = 256,
+                MD5        = "193c5cc22f07e5aeb96eb187cb59c2d9"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "prodosmod.po.lz",
+                MediaType  = MediaType.Apple33SS,
+                Sectors    = 560,
+                SectorSize = 256,
+                MD5        = "26d9c57e262f61c4eb6c150eefafe4c0"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "prodos.po.lz",
+                MediaType  = MediaType.Apple33SS,
+                Sectors    = 560,
+                SectorSize = 256,
+                MD5        = "11ef56c80c94347d2e3f921d5c36c8de"
+            }
+        };
     }
 }

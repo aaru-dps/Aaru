@@ -37,33 +37,20 @@ namespace Aaru.Tests.Images.Commodore64
     [TestFixture]
     public class D81 : BlockMediaImageTest
     {
-        public override string[] _testFiles => new[]
-        {
-            "Strategiegames #01 (19xx)(-).d81.lz"
-        };
-        public override ulong[] _sectors => new ulong[]
-        {
-            // Strategiegames #01 (19xx)(-).d81.lz
-            3200
-        };
-        public override uint[] _sectorSize => new uint[]
-        {
-            // Strategiegames #01 (19xx)(-).d81.lz
-            256
-        };
-        public override MediaType[] _mediaTypes => new[]
-        {
-            // Strategiegames #01 (19xx)(-).d81.lz
-            MediaType.CBM_35_DD
-        };
-        public override string[] _md5S => new[]
-        {
-            // Strategiegames #01 (19xx)(-).d81.lz
-            "e84d86b63e798747c42b27b58ab88665"
-        };
-
         public override string _dataFolder =>
             Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "Commodore D81");
         public override IMediaImage _plugin => new ZZZRawImage();
+
+        public override BlockImageTestExpected[] Tests => new[]
+        {
+            new BlockImageTestExpected
+            {
+                TestFile   = "Strategiegames #01 (19xx)(-).d81.lz",
+                MediaType  = MediaType.CBM_35_DD,
+                Sectors    = 3200,
+                SectorSize = 256,
+                MD5        = "e84d86b63e798747c42b27b58ab88665"
+            }
+        };
     }
 }

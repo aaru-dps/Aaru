@@ -37,37 +37,20 @@ namespace Aaru.Tests.Images.QEMU
     [TestFixture]
     public class QCOW : BlockMediaImageTest
     {
-        public override string[] _testFiles => new[]
-        {
-            "qcow.qc.lz"
-        };
-
-        public override ulong[] _sectors => new ulong[]
-        {
-            // qcow.qc.lz
-            251904
-        };
-
-        public override uint[] _sectorSize => new uint[]
-        {
-            // qcow.qc.lz
-            512
-        };
-
-        public override MediaType[] _mediaTypes => new[]
-        {
-            // qcow.qc.lz
-            MediaType.GENERIC_HDD
-        };
-
-        public override string[] _md5S => new[]
-        {
-            // qcow.qc.lz
-            "4bfc9e9e2dd86aa52ef709e77d2617ed"
-        };
-
         public override string _dataFolder =>
             Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "QEMU", "QEMU Copy On Write");
         public override IMediaImage _plugin => new Qcow();
+
+        public override BlockImageTestExpected[] Tests => new[]
+        {
+            new BlockImageTestExpected
+            {
+                TestFile   = "qcow.qc.lz",
+                MediaType  = MediaType.GENERIC_HDD,
+                Sectors    = 251904,
+                SectorSize = 512,
+                MD5        = "4bfc9e9e2dd86aa52ef709e77d2617ed"
+            }
+        };
     }
 }

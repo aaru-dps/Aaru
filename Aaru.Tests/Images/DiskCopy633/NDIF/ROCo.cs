@@ -37,250 +37,156 @@ namespace Aaru.Tests.Images.DiskCopy633.NDIF
     [TestFixture]
     public class ROCo : BlockMediaImageTest
     {
-        public override string[] _testFiles => new[]
-        {
-            "DC6_RC_DOS_1440.img", "DC6_RC_DOS_1440.smi", "DC6_RC_DOS_720.img", "DC6_RC_DOS_720.smi",
-            "DC6_RC_DOS_DMF.img", "DC6_RC_DOS_DMF.smi", "DC6_RC_HFS_1440.img", "DC6_RC_HFS_1440.smi",
-            "DC6_RC_HFS_800.img", "DC6_RC_HFS_800.smi", "DC6_RC_HFS_DMF.img", "DC6_RC_HFS_DMF.smi",
-            "DC6_RC_PD_1440.img", "DC6_RC_PD_1440.smi", "DC6_RC_PD_800.img", "DC6_RC_PD_800.smi", "DC6_RC_PD_DMF.img",
-            "DC6_RC_PD_DMF.smi"
-            /* TODO: Segmented images
-            "DC6_RC_DOS_DMF 1of2",
-            "DC6_RC_HFS_DMF 1of2",
-            "DC6_RC_PD_DMF 1of2",
-            */
-        };
-
-        public override ulong[] _sectors => new ulong[]
-        {
-            // DC6_RC_DOS_1440.img
-            2880,
-
-            // DC6_RC_DOS_1440.smi
-            2880,
-
-            // DC6_RC_DOS_720.img
-            1440,
-
-            // DC6_RC_DOS_720.smi
-            1440,
-
-            // DC6_RC_DOS_DMF.img
-            3360,
-
-            // DC6_RC_DOS_DMF.smi
-            3360,
-
-            // DC6_RC_HFS_1440.img
-            2880,
-
-            // DC6_RC_HFS_1440.smi
-            2880,
-
-            // DC6_RC_HFS_800.img
-            1600,
-
-            // DC6_RC_HFS_800.smi
-            1600,
-
-            // DC6_RC_HFS_DMF.img
-            3360,
-
-            // DC6_RC_HFS_DMF.smi
-            3360,
-
-            // DC6_RC_PD_1440.img
-            2880,
-
-            // DC6_RC_PD_1440.smi
-            2880,
-
-            // DC6_RC_PD_800.img
-            1600,
-
-            // DC6_RC_PD_800.smi
-            1600,
-
-            // DC6_RC_PD_DMF.img
-            3360,
-
-            // DC6_RC_PD_DMF.smi
-            3360
-        };
-
-        public override uint[] _sectorSize => new uint[]
-        {
-            // DC6_RC_DOS_1440.img
-            512,
-
-            // DC6_RC_DOS_1440.smi
-            512,
-
-            // DC6_RC_DOS_720.img
-            512,
-
-            // DC6_RC_DOS_720.smi
-            512,
-
-            // DC6_RC_DOS_DMF.img
-            512,
-
-            // DC6_RC_DOS_DMF.smi
-            512,
-
-            // DC6_RC_HFS_1440.img
-            512,
-
-            // DC6_RC_HFS_1440.smi
-            512,
-
-            // DC6_RC_HFS_800.img
-            512,
-
-            // DC6_RC_HFS_800.smi
-            512,
-
-            // DC6_RC_HFS_DMF.img
-            512,
-
-            // DC6_RC_HFS_DMF.smi
-            512,
-
-            // DC6_RC_PD_1440.img
-            512,
-
-            // DC6_RC_PD_1440.smi
-            512,
-
-            // DC6_RC_PD_800.img
-            512,
-
-            // DC6_RC_PD_800.smi
-            512,
-
-            // DC6_RC_PD_DMF.img
-            512,
-
-            // DC6_RC_PD_DMF.smi
-            512
-        };
-
-        public override MediaType[] _mediaTypes => new[]
-        {
-            // DC6_RC_DOS_1440.img
-            MediaType.DOS_35_HD,
-
-            // DC6_RC_DOS_1440.smi
-            MediaType.DOS_35_HD,
-
-            // DC6_RC_DOS_720.img
-            MediaType.DOS_35_DS_DD_9,
-
-            // DC6_RC_DOS_720.smi
-            MediaType.DOS_35_DS_DD_9,
-
-            // DC6_RC_DOS_DMF.img
-            MediaType.DMF,
-
-            // DC6_RC_DOS_DMF.smi
-            MediaType.DMF,
-
-            // DC6_RC_HFS_1440.img
-            MediaType.DOS_35_HD,
-
-            // DC6_RC_HFS_1440.smi
-            MediaType.DOS_35_HD,
-
-            // DC6_RC_HFS_800.img
-            MediaType.AppleSonyDS,
-
-            // DC6_RC_HFS_800.smi
-            MediaType.AppleSonyDS,
-
-            // DC6_RC_HFS_DMF.img
-            MediaType.DMF,
-
-            // DC6_RC_HFS_DMF.smi
-            MediaType.DMF,
-
-            // DC6_RC_PD_1440.img
-            MediaType.DOS_35_HD,
-
-            // DC6_RC_PD_1440.smi
-            MediaType.DOS_35_HD,
-
-            // DC6_RC_PD_800.img
-            MediaType.AppleSonyDS,
-
-            // DC6_RC_PD_800.smi
-            MediaType.AppleSonyDS,
-
-            // DC6_RC_PD_DMF.img
-            MediaType.DMF,
-
-            // DC6_RC_PD_DMF.smi
-            MediaType.DMF
-        };
-
-        public override string[] _md5S => new[]
-        {
-            // DC6_RC_DOS_1440.img
-            "ff419213080574056ebd9adf7bab3d32",
-
-            // DC6_RC_DOS_1440.smi
-            "ff419213080574056ebd9adf7bab3d32",
-
-            // DC6_RC_DOS_720.img
-            "c2be571406cf6353269faa59a4a8c0a4",
-
-            // DC6_RC_DOS_720.smi
-            "c2be571406cf6353269faa59a4a8c0a4",
-
-            // DC6_RC_DOS_DMF.img
-            "92ea7a359957012a682ba126cfdef0ce",
-
-            // DC6_RC_DOS_DMF.smi
-            "92ea7a359957012a682ba126cfdef0ce",
-
-            // DC6_RC_HFS_1440.img
-            "3160038ca028ccf52ad7863790072145",
-
-            // DC6_RC_HFS_1440.smi
-            "3160038ca028ccf52ad7863790072145",
-
-            // DC6_RC_HFS_800.img
-            "5e255c4bc0f6a26ecd27845b37e65aaa",
-
-            // DC6_RC_HFS_800.smi
-            "5e255c4bc0f6a26ecd27845b37e65aaa",
-
-            // DC6_RC_HFS_DMF.img
-            "652dc979c177f2d8e846587158b38478",
-
-            // DC6_RC_HFS_DMF.smi
-            "652dc979c177f2d8e846587158b38478",
-
-            // DC6_RC_PD_1440.img
-            "7975e8cf7579a6848d6fb4e546d1f682",
-
-            // DC6_RC_PD_1440.smi
-            "7975e8cf7579a6848d6fb4e546d1f682",
-
-            // DC6_RC_PD_800.img
-            "a72da7aedadbe194c22a3d71c62e4766",
-
-            // DC6_RC_PD_800.smi
-            "a72da7aedadbe194c22a3d71c62e4766",
-
-            // DC6_RC_PD_DMF.img
-            "7fbf0251a93cb36d98e68b7d19624de5",
-
-            // DC6_RC_PD_DMF.smi
-            "7fbf0251a93cb36d98e68b7d19624de5"
-        };
-
         public override string _dataFolder =>
             Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "DiskCopy 6.3.3", "NDIF", "ROCo");
         public override IMediaImage _plugin => new Ndif();
+
+        public override BlockImageTestExpected[] Tests => new[]
+        {
+            new BlockImageTestExpected
+            {
+                TestFile   = "DC6_RC_DOS_1440.img",
+                MediaType  = MediaType.DOS_35_HD,
+                Sectors    = 2880,
+                SectorSize = 512,
+                MD5        = "ff419213080574056ebd9adf7bab3d32"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "DC6_RC_DOS_1440.smi",
+                MediaType  = MediaType.DOS_35_HD,
+                Sectors    = 2880,
+                SectorSize = 512,
+                MD5        = "ff419213080574056ebd9adf7bab3d32"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "DC6_RC_DOS_720.img",
+                MediaType  = MediaType.DOS_35_DS_DD_9,
+                Sectors    = 1440,
+                SectorSize = 512,
+                MD5        = "c2be571406cf6353269faa59a4a8c0a4"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "DC6_RC_DOS_720.smi",
+                MediaType  = MediaType.DOS_35_DS_DD_9,
+                Sectors    = 1440,
+                SectorSize = 512,
+                MD5        = "c2be571406cf6353269faa59a4a8c0a4"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "DC6_RC_DOS_DMF.img",
+                MediaType  = MediaType.DMF,
+                Sectors    = 3360,
+                SectorSize = 512,
+                MD5        = "92ea7a359957012a682ba126cfdef0ce"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "DC6_RC_DOS_DMF.smi",
+                MediaType  = MediaType.DMF,
+                Sectors    = 3360,
+                SectorSize = 512,
+                MD5        = "92ea7a359957012a682ba126cfdef0ce"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "DC6_RC_HFS_1440.img",
+                MediaType  = MediaType.DOS_35_HD,
+                Sectors    = 2880,
+                SectorSize = 512,
+                MD5        = "3160038ca028ccf52ad7863790072145"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "DC6_RC_HFS_1440.smi",
+                MediaType  = MediaType.DOS_35_HD,
+                Sectors    = 2880,
+                SectorSize = 512,
+                MD5        = "3160038ca028ccf52ad7863790072145"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "DC6_RC_HFS_800.img",
+                MediaType  = MediaType.AppleSonyDS,
+                Sectors    = 1600,
+                SectorSize = 512,
+                MD5        = "5e255c4bc0f6a26ecd27845b37e65aaa"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "DC6_RC_HFS_800.smi",
+                MediaType  = MediaType.AppleSonyDS,
+                Sectors    = 1600,
+                SectorSize = 512,
+                MD5        = "5e255c4bc0f6a26ecd27845b37e65aaa"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "DC6_RC_HFS_DMF.img",
+                MediaType  = MediaType.DMF,
+                Sectors    = 3360,
+                SectorSize = 512,
+                MD5        = "652dc979c177f2d8e846587158b38478"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "DC6_RC_HFS_DMF.smi",
+                MediaType  = MediaType.DMF,
+                Sectors    = 3360,
+                SectorSize = 512,
+                MD5        = "652dc979c177f2d8e846587158b38478"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "DC6_RC_PD_1440.img",
+                MediaType  = MediaType.DOS_35_HD,
+                Sectors    = 2880,
+                SectorSize = 512,
+                MD5        = "7975e8cf7579a6848d6fb4e546d1f682"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "DC6_RC_PD_1440.smi",
+                MediaType  = MediaType.DOS_35_HD,
+                Sectors    = 2880,
+                SectorSize = 512,
+                MD5        = "7975e8cf7579a6848d6fb4e546d1f682"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "DC6_RC_PD_800.img",
+                MediaType  = MediaType.AppleSonyDS,
+                Sectors    = 1600,
+                SectorSize = 512,
+                MD5        = "a72da7aedadbe194c22a3d71c62e4766"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "DC6_RC_PD_800.smi",
+                MediaType  = MediaType.AppleSonyDS,
+                Sectors    = 1600,
+                SectorSize = 512,
+                MD5        = "a72da7aedadbe194c22a3d71c62e4766"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "DC6_RC_PD_DMF.img",
+                MediaType  = MediaType.DMF,
+                Sectors    = 3360,
+                SectorSize = 512,
+                MD5        = "7fbf0251a93cb36d98e68b7d19624de5"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "DC6_RC_PD_DMF.smi",
+                MediaType  = MediaType.DMF,
+                Sectors    = 3360,
+                SectorSize = 512,
+                MD5        = "7fbf0251a93cb36d98e68b7d19624de5"
+            }
+        };
     }
 }

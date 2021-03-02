@@ -7,22 +7,11 @@ using NUnit.Framework;
 
 namespace Aaru.Tests.Images
 {
-    public abstract class BlockMediaImageTest
+    public abstract class BlockMediaImageTest : BaseMediaImageTest
     {
         // How many sectors to read at once
-        const           uint     SECTORS_TO_READ = 256;
-        public abstract string[] _testFiles { get; }
-        public abstract ulong[]  _sectors   { get; }
-
-        public abstract uint[] _sectorSize { get; }
-
-        public abstract MediaType[] _mediaTypes { get; }
-
-        public abstract string[] _md5S { get; }
-
-        public abstract string _dataFolder { get; }
-
-        public abstract IMediaImage _plugin { get; }
+        const           uint                     SECTORS_TO_READ = 256;
+        public abstract BlockImageTestExpected[] Tests { get; }
 
         [Test]
         public void Info()
@@ -31,17 +20,18 @@ namespace Aaru.Tests.Images
 
             Assert.Multiple(() =>
             {
-                for(int i = 0; i < _testFiles.Length; i++)
+                foreach(BlockImageTestExpected test in Tests)
                 {
+                    string  testFile    = test.TestFile;
                     var     filtersList = new FiltersList();
-                    IFilter filter      = filtersList.GetFilter(_testFiles[i]);
-                    filter.Open(_testFiles[i]);
+                    IFilter filter      = filtersList.GetFilter(testFile);
+                    filter.Open(testFile);
 
                     var image = Activator.CreateInstance(_plugin.GetType()) as IMediaImage;
-                    Assert.NotNull(image, $"Could not instantiate filesystem for {_testFiles[i]}");
+                    Assert.NotNull(image, $"Could not instantiate filesystem for {testFile}");
 
                     bool opened = image.Open(filter);
-                    Assert.AreEqual(true, opened, $"Open: {_testFiles[i]}");
+                    Assert.AreEqual(true, opened, $"Open: {testFile}");
 
                     if(!opened)
                         continue;
@@ -50,9 +40,9 @@ namespace Aaru.Tests.Images
                     {
                         Assert.Multiple(() =>
                         {
-                            Assert.AreEqual(_sectors[i], image.Info.Sectors, $"Sectors: {_testFiles[i]}");
-                            Assert.AreEqual(_sectorSize[i], image.Info.SectorSize, $"Sector size: {_testFiles[i]}");
-                            Assert.AreEqual(_mediaTypes[i], image.Info.MediaType, $"Media type: {_testFiles[i]}");
+                            Assert.AreEqual(test.Sectors, image.Info.Sectors, $"Sectors: {testFile}");
+                            Assert.AreEqual(test.SectorSize, image.Info.SectorSize, $"Sector size: {testFile}");
+                            Assert.AreEqual(test.MediaType, image.Info.MediaType, $"Media type: {testFile}");
                         });
                     }
                 }
@@ -66,17 +56,18 @@ namespace Aaru.Tests.Images
 
             Assert.Multiple(() =>
             {
-                for(int i = 0; i < _testFiles.Length; i++)
+                foreach(BlockImageTestExpected test in Tests)
                 {
+                    string  testFile    = test.TestFile;
                     var     filtersList = new FiltersList();
-                    IFilter filter      = filtersList.GetFilter(_testFiles[i]);
-                    filter.Open(_testFiles[i]);
+                    IFilter filter      = filtersList.GetFilter(testFile);
+                    filter.Open(testFile);
 
                     var image = Activator.CreateInstance(_plugin.GetType()) as IMediaImage;
-                    Assert.NotNull(image, $"Could not instantiate filesystem for {_testFiles[i]}");
+                    Assert.NotNull(image, $"Could not instantiate filesystem for {testFile}");
 
                     bool opened = image.Open(filter);
-                    Assert.AreEqual(true, opened, $"Open: {_testFiles[i]}");
+                    Assert.AreEqual(true, opened, $"Open: {testFile}");
 
                     if(!opened)
                         continue;
@@ -102,7 +93,7 @@ namespace Aaru.Tests.Images
                         ctx.Update(sector);
                     }
 
-                    Assert.AreEqual(_md5S[i], ctx.End(), $"Hash: {_testFiles[i]}");
+                    Assert.AreEqual(test.MD5, ctx.End(), $"Hash: {testFile}");
                 }
             });
         }

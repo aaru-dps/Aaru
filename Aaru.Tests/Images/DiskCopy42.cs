@@ -36,134 +36,83 @@ namespace Aaru.Tests.Images
     [TestFixture]
     public class DiskCopy42 : BlockMediaImageTest
     {
-        public override string[] _testFiles => new[]
-        {
-            "hfs.dsk.lz", "mf1dd_hfs.img.lz", "mf1dd_mfs.img.lz", "mf2dd_hfs.img.lz", "mf2dd_mfs.img.lz",
-            "modified.dsk.lz", "pascal800.dsk.lz", "prodos1440.dsk.lz", "prodos800.dsk.lz"
-        };
-
-        public override ulong[] _sectors => new ulong[]
-        {
-            // hfs.dsk.lz
-            1600,
-
-            // mf1dd_hfs.img.lz
-            800,
-
-            // mf1dd_mfs.img.lz
-            800,
-
-            // mf2dd_hfs.img.lz
-            1600,
-
-            // mf2dd_mfs.img.lz
-            1600,
-
-            // modified.dsk.lz
-            1600,
-
-            // pascal800.dsk.lz
-            1600,
-
-            // prodos1440.dsk.lz
-            1600,
-
-            // prodos800.dsk.lz
-            1600
-        };
-
-        public override uint[] _sectorSize => new uint[]
-        {
-            // hfs.dsk.lz
-            512,
-
-            // mf1dd_hfs.img.lz
-            512,
-
-            // mf1dd_mfs.img.lz
-            512,
-
-            // mf2dd_hfs.img.lz
-            512,
-
-            // mf2dd_mfs.img.lz
-            512,
-
-            // modified.dsk.lz
-            512,
-
-            // pascal800.dsk.lz
-            512,
-
-            // prodos1440.dsk.lz
-            512,
-
-            // prodos800.dsk.lz
-            512
-        };
-
-        public override MediaType[] _mediaTypes => new[]
-        {
-            // hfs.dsk.lz
-            MediaType.AppleSonyDS,
-
-            // mf1dd_hfs.img.lz
-            MediaType.AppleSonySS,
-
-            // mf1dd_mfs.img.lz
-            MediaType.AppleSonySS,
-
-            // mf2dd_hfs.img.lz
-            MediaType.AppleSonyDS,
-
-            // mf2dd_mfs.img.lz
-            MediaType.AppleSonyDS,
-
-            // modified.dsk.lz
-            MediaType.AppleSonyDS,
-
-            // pascal800.dsk.lz
-            MediaType.AppleSonyDS,
-
-            // prodos1440.dsk.lz
-            MediaType.AppleSonyDS,
-
-            // prodos800.dsk.lz
-            MediaType.AppleSonyDS
-        };
-
-        public override string[] _md5S => new[]
-        {
-            // hfs.dsk.lz
-            "2762f41d0379b476042fc62891baac84",
-
-            // mf1dd_hfs.img.lz
-            "eae3a95671d077deb702b3549a769f56",
-
-            // mf1dd_mfs.img.lz
-            "c5d92544c3e78b7f0a9b4baaa9a64eec",
-
-            // mf2dd_hfs.img.lz
-            "a99744348a70b62b57bce2dec9132ced",
-
-            // mf2dd_mfs.img.lz
-            "93e71b9ecdb39d3ec9245b4f451856d4",
-
-            // modified.dsk.lz
-            "b748f6df3e60e7169d42ec6fcc857ea4",
-
-            // pascal800.dsk.lz
-            "dbd0ec8a3126236910709faf923adcf2",
-
-            // prodos1440.dsk.lz
-            "fcf747bd356b48d442ff74adb8f3516b",
-
-            // prodos800.dsk.lz
-            "fcf747bd356b48d442ff74adb8f3516b"
-        };
-
         public override string _dataFolder =>
             Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "DiskCopy 4.2");
         public override IMediaImage _plugin => new DiscImages.DiskCopy42();
+        public override BlockImageTestExpected[] Tests => new[]
+        {
+            new BlockImageTestExpected
+            {
+                TestFile   = "hfs.dsk.lz",
+                MediaType  = MediaType.AppleSonyDS,
+                Sectors    = 1600,
+                SectorSize = 512,
+                MD5        = "2762f41d0379b476042fc62891baac84"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "mf1dd_hfs.img.lz",
+                MediaType  = MediaType.AppleSonySS,
+                Sectors    = 800,
+                SectorSize = 512,
+                MD5        = "eae3a95671d077deb702b3549a769f56"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "mf1dd_mfs.img.lz",
+                MediaType  = MediaType.AppleSonySS,
+                Sectors    = 800,
+                SectorSize = 512,
+                MD5        = "c5d92544c3e78b7f0a9b4baaa9a64eec"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "mf2dd_hfs.img.lz",
+                MediaType  = MediaType.AppleSonyDS,
+                Sectors    = 1600,
+                SectorSize = 512,
+                MD5        = "a99744348a70b62b57bce2dec9132ced"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "mf2dd_mfs.img.lz",
+                MediaType  = MediaType.AppleSonyDS,
+                Sectors    = 1600,
+                SectorSize = 512,
+                MD5        = "93e71b9ecdb39d3ec9245b4f451856d4"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "modified.dsk.lz",
+                MediaType  = MediaType.AppleSonyDS,
+                Sectors    = 1600,
+                SectorSize = 512,
+                MD5        = "b748f6df3e60e7169d42ec6fcc857ea4"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "pascal800.dsk.lz",
+                MediaType  = MediaType.AppleSonyDS,
+                Sectors    = 1600,
+                SectorSize = 512,
+                MD5        = "dbd0ec8a3126236910709faf923adcf2"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "prodos1440.dsk.lz",
+                MediaType  = MediaType.AppleSonyDS,
+                Sectors    = 1600,
+                SectorSize = 512,
+                MD5        = "fcf747bd356b48d442ff74adb8f3516b"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "prodos800.dsk.lz",
+                MediaType  = MediaType.AppleSonyDS,
+                Sectors    = 1600,
+                SectorSize = 512,
+                MD5        = "fcf747bd356b48d442ff74adb8f3516b"
+            }
+        };
     }
 }

@@ -1,4 +1,5 @@
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Structs;
 
 namespace Aaru.Tests
 {
@@ -36,5 +37,32 @@ namespace Aaru.Tests
         public string VolumeName;
         /// <summary>Volume serial number or set identifier</summary>
         public string VolumeSerial;
+    }
+
+    public class BlockImageTestExpected : MediaInfoTest
+    {
+        public string MD5;
+    }
+
+    public class TrackInfoTestExpected
+    {
+        public ulong  End;
+        public byte?  Flags;
+        public ulong? Pregap;
+        public int    Session;
+        public ulong  Start;
+    }
+
+    public class OpticalImageTestExpected : BlockImageTestExpected
+    {
+        public string                  LongMD5;
+        public string                  SubchannelMD5;
+        public TrackInfoTestExpected[] Tracks;
+    }
+
+    public class TapeImageTestExpected : BlockImageTestExpected
+    {
+        public TapeFile[]      Files;
+        public TapePartition[] Partitions;
     }
 }

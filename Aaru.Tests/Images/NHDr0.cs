@@ -37,109 +37,67 @@ namespace Aaru.Tests.Images
     [TestFixture]
     public class NHDr0 : BlockMediaImageTest
     {
-        public override string[] _testFiles => new[]
-        {
-            "t98n_128.nhd.lz", "t98n_20.nhd.lz", "t98n_256.nhd.lz", "t98n_41.nhd.lz", "t98n_512.nhd.lz",
-            "t98n_65.nhd.lz", "t98n_80.nhd.lz"
-        };
-
-        public override ulong[] _sectors => new ulong[]
-        {
-            // t98n_128.nhd.lz
-            261120,
-
-            // t98n_20.nhd.lz
-            40800,
-
-            // t98n_256.nhd.lz
-            522240,
-
-            // t98n_41.nhd.lz
-            83640,
-
-            // t98n_512.nhd.lz
-            1044480,
-
-            // t98n_65.nhd.lz
-            132600,
-
-            // t98n_80.nhd.lz
-            163200
-        };
-
-        public override uint[] _sectorSize => new uint[]
-        {
-            // t98n_128.nhd.lz
-            512,
-
-            // t98n_20.nhd.lz
-            512,
-
-            // t98n_256.nhd.lz
-            512,
-
-            // t98n_41.nhd.lz
-            512,
-
-            // t98n_512.nhd.lz
-            512,
-
-            // t98n_65.nhd.lz
-            512,
-
-            // t98n_80.nhd.lz
-            512
-        };
-
-        public override MediaType[] _mediaTypes => new[]
-        {
-            // t98n_128.nhd.lz
-            MediaType.GENERIC_HDD,
-
-            // t98n_20.nhd.lz
-            MediaType.GENERIC_HDD,
-
-            // t98n_256.nhd.lz
-            MediaType.GENERIC_HDD,
-
-            // t98n_41.nhd.lz
-            MediaType.GENERIC_HDD,
-
-            // t98n_512.nhd.lz
-            MediaType.GENERIC_HDD,
-
-            // t98n_65.nhd.lz
-            MediaType.GENERIC_HDD,
-
-            // t98n_80.nhd.lz
-            MediaType.GENERIC_HDD
-        };
-
-        public override string[] _md5S => new[]
-        {
-            // t98n_128.nhd.lz
-            "af7c3cfa315b6661300017f865bf26d6",
-
-            // t98n_20.nhd.lz
-            "bcb390d0b4d12feac29dbadc1a623c99",
-
-            // t98n_256.nhd.lz
-            "e50e78b3742f5f89dd1a5573ba3141c4",
-
-            // t98n_41.nhd.lz
-            "007acca6fb53f90728d78f7c40c2b094",
-
-            // t98n_512.nhd.lz
-            "42d1cb6fc2a9df39ecd53002edd978d6",
-
-            // t98n_65.nhd.lz
-            "b53f5b406234663de6c2bdffac88322d",
-
-            // t98n_80.nhd.lz
-            "fe9ecc6f0b5beb9635a1595155941925"
-        };
-
         public override string _dataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "T-98 Next");
         public override IMediaImage _plugin => new Nhdr0();
+
+        public override BlockImageTestExpected[] Tests => new[]
+        {
+            new BlockImageTestExpected
+            {
+                TestFile   = "t98n_128.nhd.lz",
+                MediaType  = MediaType.GENERIC_HDD,
+                Sectors    = 261120,
+                SectorSize = 512,
+                MD5        = "af7c3cfa315b6661300017f865bf26d6"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "t98n_20.nhd.lz",
+                MediaType  = MediaType.GENERIC_HDD,
+                Sectors    = 40800,
+                SectorSize = 512,
+                MD5        = "bcb390d0b4d12feac29dbadc1a623c99"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "t98n_256.nhd.lz",
+                MediaType  = MediaType.GENERIC_HDD,
+                Sectors    = 522240,
+                SectorSize = 512,
+                MD5        = "e50e78b3742f5f89dd1a5573ba3141c4"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "t98n_41.nhd.lz",
+                MediaType  = MediaType.GENERIC_HDD,
+                Sectors    = 83640,
+                SectorSize = 512,
+                MD5        = "007acca6fb53f90728d78f7c40c2b094"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "t98n_512.nhd.lz",
+                MediaType  = MediaType.GENERIC_HDD,
+                Sectors    = 1044480,
+                SectorSize = 512,
+                MD5        = "42d1cb6fc2a9df39ecd53002edd978d6"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "t98n_65.nhd.lz",
+                MediaType  = MediaType.GENERIC_HDD,
+                Sectors    = 132600,
+                SectorSize = 512,
+                MD5        = "b53f5b406234663de6c2bdffac88322d"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "t98n_80.nhd.lz",
+                MediaType  = MediaType.GENERIC_HDD,
+                Sectors    = 163200,
+                SectorSize = 512,
+                MD5        = "fe9ecc6f0b5beb9635a1595155941925"
+            }
+        };
     }
 }

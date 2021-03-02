@@ -37,872 +37,332 @@ namespace Aaru.Tests.Images
     [TestFixture]
     public class Toast : OpticalMediaImageTest
     {
-        public override string[] _testFiles => new[]
-        {
-            "toast_3.5.7_iso9660_xa_apple.toast.lz", "toast_3.5.7_iso9660_xa_dos_apple.toast.lz",
-            "toast_3.5.7_iso9660_xa_dos.toast.lz", "toast_3.5.7_iso9660_xa_ebook_eng.toast.lz",
-            "toast_3.5.7_iso9660_xa_ebook_fra.toast.lz", "toast_3.5.7_iso9660_xa_joliet_apple.toast.lz",
-            "toast_3.5.7_iso9660_xa_joliet.toast.lz", "toast_3.5.7_iso9660_xa_mac_apple.toast.lz",
-            "toast_3.5.7_iso9660_xa_mac.toast.lz", "toast_3.5.7_iso9660_xa.toast.lz",
-            "toast_3.5.7_iso9660_xa_ver_apple.toast.lz", "toast_3.5.7_iso9660_xa_ver_dos_apple.toast.lz",
-            "toast_3.5.7_iso9660_xa_ver_dos.toast.lz", "toast_3.5.7_iso9660_xa_ver_joliet_apple.toast.lz",
-            "toast_3.5.7_iso9660_xa_ver_joliet.toast.lz", "toast_3.5.7_iso9660_xa_ver.toast.lz"
-        };
-
-        public override ulong[] _sectors => new ulong[]
-        {
-            // toast_3.5.7_iso9660_xa_apple.toast.lz
-            0,
-
-            // toast_3.5.7_iso9660_xa_dos_apple.toast.lz
-            0,
-
-            // toast_3.5.7_iso9660_xa_dos.toast.lz
-            0,
-
-            // toast_3.5.7_iso9660_xa_ebook_eng.toast.lz
-            0,
-
-            // toast_3.5.7_iso9660_xa_ebook_fra.toast.lz
-            0,
-
-            // toast_3.5.7_iso9660_xa_joliet_apple.toast.lz
-            0,
-
-            // toast_3.5.7_iso9660_xa_joliet.toast.lz
-            0,
-
-            // toast_3.5.7_iso9660_xa_mac_apple.toast.lz
-            0,
-
-            // toast_3.5.7_iso9660_xa_mac.toast.lz
-            0,
-
-            // toast_3.5.7_iso9660_xa.toast.lz
-            0,
-
-            // toast_3.5.7_iso9660_xa_ver_apple.toast.lz
-            0,
-
-            // toast_3.5.7_iso9660_xa_ver_dos_apple.toast.lz
-            0,
-
-            // toast_3.5.7_iso9660_xa_ver_dos.toast.lz
-            0,
-
-            // toast_3.5.7_iso9660_xa_ver_joliet_apple.toast.lz
-            0,
-
-            // toast_3.5.7_iso9660_xa_ver_joliet.toast.lz
-            0,
-
-            // toast_3.5.7_iso9660_xa_ver.toast.lz
-            0
-        };
-
-        public override uint[] _sectorSize => new uint[]
-        {
-            // toast_3.5.7_iso9660_xa_apple.toast.lz
-            0,
-
-            // toast_3.5.7_iso9660_xa_dos_apple.toast.lz
-            0,
-
-            // toast_3.5.7_iso9660_xa_dos.toast.lz
-            0,
-
-            // toast_3.5.7_iso9660_xa_ebook_eng.toast.lz
-            0,
-
-            // toast_3.5.7_iso9660_xa_ebook_fra.toast.lz
-            0,
-
-            // toast_3.5.7_iso9660_xa_joliet_apple.toast.lz
-            0,
-
-            // toast_3.5.7_iso9660_xa_joliet.toast.lz
-            0,
-
-            // toast_3.5.7_iso9660_xa_mac_apple.toast.lz
-            0,
-
-            // toast_3.5.7_iso9660_xa_mac.toast.lz
-            0,
-
-            // toast_3.5.7_iso9660_xa.toast.lz
-            0,
-
-            // toast_3.5.7_iso9660_xa_ver_apple.toast.lz
-            0,
-
-            // toast_3.5.7_iso9660_xa_ver_dos_apple.toast.lz
-            0,
-
-            // toast_3.5.7_iso9660_xa_ver_dos.toast.lz
-            0,
-
-            // toast_3.5.7_iso9660_xa_ver_joliet_apple.toast.lz
-            0,
-
-            // toast_3.5.7_iso9660_xa_ver_joliet.toast.lz
-            0,
-
-            // toast_3.5.7_iso9660_xa_ver.toast.lz
-            0
-        };
-
-        public override MediaType[] _mediaTypes => new[]
-        {
-            // toast_3.5.7_iso9660_xa_apple.toast.lz
-            MediaType.CD,
-
-            // toast_3.5.7_iso9660_xa_dos_apple.toast.lz
-            MediaType.CD,
-
-            // toast_3.5.7_iso9660_xa_dos.toast.lz
-            MediaType.CD,
-
-            // toast_3.5.7_iso9660_xa_ebook_eng.toast.lz
-            MediaType.CD,
-
-            // toast_3.5.7_iso9660_xa_ebook_fra.toast.lz
-            MediaType.CD,
-
-            // toast_3.5.7_iso9660_xa_joliet_apple.toast.lz
-            MediaType.CD,
-
-            // toast_3.5.7_iso9660_xa_joliet.toast.lz
-            MediaType.CD,
-
-            // toast_3.5.7_iso9660_xa_mac_apple.toast.lz
-            MediaType.CD,
-
-            // toast_3.5.7_iso9660_xa_mac.toast.lz
-            MediaType.CD,
-
-            // toast_3.5.7_iso9660_xa.toast.lz
-            MediaType.CD,
-
-            // toast_3.5.7_iso9660_xa_ver_apple.toast.lz
-            MediaType.CD,
-
-            // toast_3.5.7_iso9660_xa_ver_dos_apple.toast.lz
-            MediaType.CD,
-
-            // toast_3.5.7_iso9660_xa_ver_dos.toast.lz
-            MediaType.CD,
-
-            // toast_3.5.7_iso9660_xa_ver_joliet_apple.toast.lz
-            MediaType.CD,
-
-            // toast_3.5.7_iso9660_xa_ver_joliet.toast.lz
-            MediaType.CD,
-
-            // toast_3.5.7_iso9660_xa_ver.toast.lz
-            MediaType.CD
-        };
-
-        public override string[] _md5S => new[]
-        {
-            // toast_3.5.7_iso9660_xa_apple.toast.lz
-            "UNKNOWN",
-
-            // toast_3.5.7_iso9660_xa_dos_apple.toast.lz
-            "UNKNOWN",
-
-            // toast_3.5.7_iso9660_xa_dos.toast.lz
-            "UNKNOWN",
-
-            // toast_3.5.7_iso9660_xa_ebook_eng.toast.lz
-            "UNKNOWN",
-
-            // toast_3.5.7_iso9660_xa_ebook_fra.toast.lz
-            "UNKNOWN",
-
-            // toast_3.5.7_iso9660_xa_joliet_apple.toast.lz
-            "UNKNOWN",
-
-            // toast_3.5.7_iso9660_xa_joliet.toast.lz
-            "UNKNOWN",
-
-            // toast_3.5.7_iso9660_xa_mac_apple.toast.lz
-            "UNKNOWN",
-
-            // toast_3.5.7_iso9660_xa_mac.toast.lz
-            "UNKNOWN",
-
-            // toast_3.5.7_iso9660_xa.toast.lz
-            "UNKNOWN",
-
-            // toast_3.5.7_iso9660_xa_ver_apple.toast.lz
-            "UNKNOWN",
-
-            // toast_3.5.7_iso9660_xa_ver_dos_apple.toast.lz
-            "UNKNOWN",
-
-            // toast_3.5.7_iso9660_xa_ver_dos.toast.lz
-            "UNKNOWN",
-
-            // toast_3.5.7_iso9660_xa_ver_joliet_apple.toast.lz
-            "UNKNOWN",
-
-            // toast_3.5.7_iso9660_xa_ver_joliet.toast.lz
-            "UNKNOWN",
-
-            // toast_3.5.7_iso9660_xa_ver.toast.lz
-            "UNKNOWN"
-        };
-
-        public override string[] _longMd5S => new[]
-        {
-            // toast_3.5.7_iso9660_xa_apple.toast.lz
-            "UNKNOWN",
-
-            // toast_3.5.7_iso9660_xa_dos_apple.toast.lz
-            "UNKNOWN",
-
-            // toast_3.5.7_iso9660_xa_dos.toast.lz
-            "UNKNOWN",
-
-            // toast_3.5.7_iso9660_xa_ebook_eng.toast.lz
-            "UNKNOWN",
-
-            // toast_3.5.7_iso9660_xa_ebook_fra.toast.lz
-            "UNKNOWN",
-
-            // toast_3.5.7_iso9660_xa_joliet_apple.toast.lz
-            "UNKNOWN",
-
-            // toast_3.5.7_iso9660_xa_joliet.toast.lz
-            "UNKNOWN",
-
-            // toast_3.5.7_iso9660_xa_mac_apple.toast.lz
-            "UNKNOWN",
-
-            // toast_3.5.7_iso9660_xa_mac.toast.lz
-            "UNKNOWN",
-
-            // toast_3.5.7_iso9660_xa.toast.lz
-            "UNKNOWN",
-
-            // toast_3.5.7_iso9660_xa_ver_apple.toast.lz
-            "UNKNOWN",
-
-            // toast_3.5.7_iso9660_xa_ver_dos_apple.toast.lz
-            "UNKNOWN",
-
-            // toast_3.5.7_iso9660_xa_ver_dos.toast.lz
-            "UNKNOWN",
-
-            // toast_3.5.7_iso9660_xa_ver_joliet_apple.toast.lz
-            "UNKNOWN",
-
-            // toast_3.5.7_iso9660_xa_ver_joliet.toast.lz
-            "UNKNOWN",
-
-            // toast_3.5.7_iso9660_xa_ver.toast.lz
-            "UNKNOWN"
-        };
-
-        public override string[] _subchannelMd5S => new[]
-        {
-            // toast_3.5.7_iso9660_xa_apple.toast.lz
-            "UNKNOWN",
-
-            // toast_3.5.7_iso9660_xa_dos_apple.toast.lz
-            "UNKNOWN",
-
-            // toast_3.5.7_iso9660_xa_dos.toast.lz
-            "UNKNOWN",
-
-            // toast_3.5.7_iso9660_xa_ebook_eng.toast.lz
-            "UNKNOWN",
-
-            // toast_3.5.7_iso9660_xa_ebook_fra.toast.lz
-            "UNKNOWN",
-
-            // toast_3.5.7_iso9660_xa_joliet_apple.toast.lz
-            "UNKNOWN",
-
-            // toast_3.5.7_iso9660_xa_joliet.toast.lz
-            "UNKNOWN",
-
-            // toast_3.5.7_iso9660_xa_mac_apple.toast.lz
-            "UNKNOWN",
-
-            // toast_3.5.7_iso9660_xa_mac.toast.lz
-            "UNKNOWN",
-
-            // toast_3.5.7_iso9660_xa.toast.lz
-            "UNKNOWN",
-
-            // toast_3.5.7_iso9660_xa_ver_apple.toast.lz
-            "UNKNOWN",
-
-            // toast_3.5.7_iso9660_xa_ver_dos_apple.toast.lz
-            "UNKNOWN",
-
-            // toast_3.5.7_iso9660_xa_ver_dos.toast.lz
-            "UNKNOWN",
-
-            // toast_3.5.7_iso9660_xa_ver_joliet_apple.toast.lz
-            "UNKNOWN",
-
-            // toast_3.5.7_iso9660_xa_ver_joliet.toast.lz
-            "UNKNOWN",
-
-            // toast_3.5.7_iso9660_xa_ver.toast.lz
-            "UNKNOWN"
-        };
-
-        public override int[] _tracks => new[]
-        {
-            // toast_3.5.7_iso9660_xa_apple.toast.lz
-            1,
-
-            // toast_3.5.7_iso9660_xa_dos_apple.toast.lz
-            1,
-
-            // toast_3.5.7_iso9660_xa_dos.toast.lz
-            1,
-
-            // toast_3.5.7_iso9660_xa_ebook_eng.toast.lz
-            1,
-
-            // toast_3.5.7_iso9660_xa_ebook_fra.toast.lz
-            1,
-
-            // toast_3.5.7_iso9660_xa_joliet_apple.toast.lz
-            1,
-
-            // toast_3.5.7_iso9660_xa_joliet.toast.lz
-            1,
-
-            // toast_3.5.7_iso9660_xa_mac_apple.toast.lz
-            1,
-
-            // toast_3.5.7_iso9660_xa_mac.toast.lz
-            1,
-
-            // toast_3.5.7_iso9660_xa.toast.lz
-            1,
-
-            // toast_3.5.7_iso9660_xa_ver_apple.toast.lz
-            1,
-
-            // toast_3.5.7_iso9660_xa_ver_dos_apple.toast.lz
-            1,
-
-            // toast_3.5.7_iso9660_xa_ver_dos.toast.lz
-            1,
-
-            // toast_3.5.7_iso9660_xa_ver_joliet_apple.toast.lz
-            1,
-
-            // toast_3.5.7_iso9660_xa_ver_joliet.toast.lz
-            1,
-
-            // toast_3.5.7_iso9660_xa_ver.toast.lz
-            1
-        };
-
-        public override int[][] _trackSessions => new[]
-        {
-            // toast_3.5.7_iso9660_xa_apple.toast.lz
-            new[]
-            {
-                1
-            },
-
-            // toast_3.5.7_iso9660_xa_dos_apple.toast.lz
-            new[]
-            {
-                1
-            },
-
-            // toast_3.5.7_iso9660_xa_dos.toast.lz
-            new[]
-            {
-                1
-            },
-
-            // toast_3.5.7_iso9660_xa_ebook_eng.toast.lz
-            new[]
-            {
-                1
-            },
-
-            // toast_3.5.7_iso9660_xa_ebook_fra.toast.lz
-            new[]
-            {
-                1
-            },
-
-            // toast_3.5.7_iso9660_xa_joliet_apple.toast.lz
-            new[]
-            {
-                1
-            },
-
-            // toast_3.5.7_iso9660_xa_joliet.toast.lz
-            new[]
-            {
-                1
-            },
-
-            // toast_3.5.7_iso9660_xa_mac_apple.toast.lz
-            new[]
-            {
-                1
-            },
-
-            // toast_3.5.7_iso9660_xa_mac.toast.lz
-            new[]
-            {
-                1
-            },
-
-            // toast_3.5.7_iso9660_xa.toast.lz
-            new[]
-            {
-                1
-            },
-
-            // toast_3.5.7_iso9660_xa_ver_apple.toast.lz
-            new[]
-            {
-                1
-            },
-
-            // toast_3.5.7_iso9660_xa_ver_dos_apple.toast.lz
-            new[]
-            {
-                1
-            },
-
-            // toast_3.5.7_iso9660_xa_ver_dos.toast.lz
-            new[]
-            {
-                1
-            },
-
-            // toast_3.5.7_iso9660_xa_ver_joliet_apple.toast.lz
-            new[]
-            {
-                1
-            },
-
-            // toast_3.5.7_iso9660_xa_ver_joliet.toast.lz
-            new[]
-            {
-                1
-            },
-
-            // toast_3.5.7_iso9660_xa_ver.toast.lz
-            new[]
-            {
-                1
-            }
-        };
-
-        public override ulong[][] _trackStarts => new[]
-        {
-            // toast_3.5.7_iso9660_xa_apple.toast.lz
-            new ulong[]
-            {
-                0
-            },
-
-            // toast_3.5.7_iso9660_xa_dos_apple.toast.lz
-            new ulong[]
-            {
-                0
-            },
-
-            // toast_3.5.7_iso9660_xa_dos.toast.lz
-            new ulong[]
-            {
-                0
-            },
-
-            // toast_3.5.7_iso9660_xa_ebook_eng.toast.lz
-            new ulong[]
-            {
-                0
-            },
-
-            // toast_3.5.7_iso9660_xa_ebook_fra.toast.lz
-            new ulong[]
-            {
-                0
-            },
-
-            // toast_3.5.7_iso9660_xa_joliet_apple.toast.lz
-            new ulong[]
-            {
-                0
-            },
-
-            // toast_3.5.7_iso9660_xa_joliet.toast.lz
-            new ulong[]
-            {
-                0
-            },
-
-            // toast_3.5.7_iso9660_xa_mac_apple.toast.lz
-            new ulong[]
-            {
-                0
-            },
-
-            // toast_3.5.7_iso9660_xa_mac.toast.lz
-            new ulong[]
-            {
-                0
-            },
-
-            // toast_3.5.7_iso9660_xa.toast.lz
-            new ulong[]
-            {
-                0
-            },
-
-            // toast_3.5.7_iso9660_xa_ver_apple.toast.lz
-            new ulong[]
-            {
-                0
-            },
-
-            // toast_3.5.7_iso9660_xa_ver_dos_apple.toast.lz
-            new ulong[]
-            {
-                0
-            },
-
-            // toast_3.5.7_iso9660_xa_ver_dos.toast.lz
-            new ulong[]
-            {
-                0
-            },
-
-            // toast_3.5.7_iso9660_xa_ver_joliet_apple.toast.lz
-            new ulong[]
-            {
-                0
-            },
-
-            // toast_3.5.7_iso9660_xa_ver_joliet.toast.lz
-            new ulong[]
-            {
-                0
-            },
-
-            // toast_3.5.7_iso9660_xa_ver.toast.lz
-            new ulong[]
-            {
-                0
-            }
-        };
-
-        public override ulong[][] _trackEnds => new[]
-        {
-            // toast_3.5.7_iso9660_xa_apple.toast.lz
-            new ulong[]
-            {
-                0
-            },
-
-            // toast_3.5.7_iso9660_xa_dos_apple.toast.lz
-            new ulong[]
-            {
-                0
-            },
-
-            // toast_3.5.7_iso9660_xa_dos.toast.lz
-            new ulong[]
-            {
-                0
-            },
-
-            // toast_3.5.7_iso9660_xa_ebook_eng.toast.lz
-            new ulong[]
-            {
-                0
-            },
-
-            // toast_3.5.7_iso9660_xa_ebook_fra.toast.lz
-            new ulong[]
-            {
-                0
-            },
-
-            // toast_3.5.7_iso9660_xa_joliet_apple.toast.lz
-            new ulong[]
-            {
-                0
-            },
-
-            // toast_3.5.7_iso9660_xa_joliet.toast.lz
-            new ulong[]
-            {
-                0
-            },
-
-            // toast_3.5.7_iso9660_xa_mac_apple.toast.lz
-            new ulong[]
-            {
-                0
-            },
-
-            // toast_3.5.7_iso9660_xa_mac.toast.lz
-            new ulong[]
-            {
-                0
-            },
-
-            // toast_3.5.7_iso9660_xa.toast.lz
-            new ulong[]
-            {
-                0
-            },
-
-            // toast_3.5.7_iso9660_xa_ver_apple.toast.lz
-            new ulong[]
-            {
-                0
-            },
-
-            // toast_3.5.7_iso9660_xa_ver_dos_apple.toast.lz
-            new ulong[]
-            {
-                0
-            },
-
-            // toast_3.5.7_iso9660_xa_ver_dos.toast.lz
-            new ulong[]
-            {
-                0
-            },
-
-            // toast_3.5.7_iso9660_xa_ver_joliet_apple.toast.lz
-            new ulong[]
-            {
-                0
-            },
-
-            // toast_3.5.7_iso9660_xa_ver_joliet.toast.lz
-            new ulong[]
-            {
-                0
-            },
-
-            // toast_3.5.7_iso9660_xa_ver.toast.lz
-            new ulong[]
-            {
-                0
-            }
-        };
-
-        public override ulong[][] _trackPregaps => new[]
-        {
-            // toast_3.5.7_iso9660_xa_apple.toast.lz
-            new ulong[]
-            {
-                0
-            },
-
-            // toast_3.5.7_iso9660_xa_dos_apple.toast.lz
-            new ulong[]
-            {
-                0
-            },
-
-            // toast_3.5.7_iso9660_xa_dos.toast.lz
-            new ulong[]
-            {
-                0
-            },
-
-            // toast_3.5.7_iso9660_xa_ebook_eng.toast.lz
-            new ulong[]
-            {
-                0
-            },
-
-            // toast_3.5.7_iso9660_xa_ebook_fra.toast.lz
-            new ulong[]
-            {
-                0
-            },
-
-            // toast_3.5.7_iso9660_xa_joliet_apple.toast.lz
-            new ulong[]
-            {
-                0
-            },
-
-            // toast_3.5.7_iso9660_xa_joliet.toast.lz
-            new ulong[]
-            {
-                0
-            },
-
-            // toast_3.5.7_iso9660_xa_mac_apple.toast.lz
-            new ulong[]
-            {
-                0
-            },
-
-            // toast_3.5.7_iso9660_xa_mac.toast.lz
-            new ulong[]
-            {
-                0
-            },
-
-            // toast_3.5.7_iso9660_xa.toast.lz
-            new ulong[]
-            {
-                0
-            },
-
-            // toast_3.5.7_iso9660_xa_ver_apple.toast.lz
-            new ulong[]
-            {
-                0
-            },
-
-            // toast_3.5.7_iso9660_xa_ver_dos_apple.toast.lz
-            new ulong[]
-            {
-                0
-            },
-
-            // toast_3.5.7_iso9660_xa_ver_dos.toast.lz
-            new ulong[]
-            {
-                0
-            },
-
-            // toast_3.5.7_iso9660_xa_ver_joliet_apple.toast.lz
-            new ulong[]
-            {
-                0
-            },
-
-            // toast_3.5.7_iso9660_xa_ver_joliet.toast.lz
-            new ulong[]
-            {
-                0
-            },
-
-            // toast_3.5.7_iso9660_xa_ver.toast.lz
-            new ulong[]
-            {
-                0
-            }
-        };
-
-        public override byte[][] _trackFlags => new[]
-        {
-            // toast_3.5.7_iso9660_xa_apple.toast.lz
-            new byte[]
-            {
-                0
-            },
-
-            // toast_3.5.7_iso9660_xa_dos_apple.toast.lz
-            new byte[]
-            {
-                0
-            },
-
-            // toast_3.5.7_iso9660_xa_dos.toast.lz
-            new byte[]
-            {
-                0
-            },
-
-            // toast_3.5.7_iso9660_xa_ebook_eng.toast.lz
-            new byte[]
-            {
-                0
-            },
-
-            // toast_3.5.7_iso9660_xa_ebook_fra.toast.lz
-            new byte[]
-            {
-                0
-            },
-
-            // toast_3.5.7_iso9660_xa_joliet_apple.toast.lz
-            new byte[]
-            {
-                0
-            },
-
-            // toast_3.5.7_iso9660_xa_joliet.toast.lz
-            new byte[]
-            {
-                0
-            },
-
-            // toast_3.5.7_iso9660_xa_mac_apple.toast.lz
-            new byte[]
-            {
-                0
-            },
-
-            // toast_3.5.7_iso9660_xa_mac.toast.lz
-            new byte[]
-            {
-                0
-            },
-
-            // toast_3.5.7_iso9660_xa.toast.lz
-            new byte[]
-            {
-                0
-            },
-
-            // toast_3.5.7_iso9660_xa_ver_apple.toast.lz
-            new byte[]
-            {
-                0
-            },
-
-            // toast_3.5.7_iso9660_xa_ver_dos_apple.toast.lz
-            new byte[]
-            {
-                0
-            },
-
-            // toast_3.5.7_iso9660_xa_ver_dos.toast.lz
-            new byte[]
-            {
-                0
-            },
-
-            // toast_3.5.7_iso9660_xa_ver_joliet_apple.toast.lz
-            new byte[]
-            {
-                0
-            },
-
-            // toast_3.5.7_iso9660_xa_ver_joliet.toast.lz
-            new byte[]
-            {
-                0
-            },
-
-            // toast_3.5.7_iso9660_xa_ver.toast.lz
-            new byte[]
-            {
-                0
-            }
-        };
-
         public override string _dataFolder =>
             Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "Roxio Toast");
         public override IMediaImage _plugin => new ZZZRawImage();
+
+        public override OpticalImageTestExpected[] Tests => new[]
+        {
+            new OpticalImageTestExpected
+            {
+                TestFile      = "toast_3.5.7_iso9660_xa_apple.toast.lz",
+                MediaType     = MediaType.CD,
+                Sectors       = 0,
+                MD5           = "UNKNOWN",
+                LongMD5       = "UNKNOWN",
+                SubchannelMD5 = "UNKNOWN",
+                Tracks = new[]
+                {
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 0,
+                        End     = 0,
+                        Pregap  = 0,
+                        Flags   = 0
+                    }
+                }
+            },
+            new OpticalImageTestExpected
+            {
+                TestFile      = "toast_3.5.7_iso9660_xa_dos_apple.toast.lz",
+                MediaType     = MediaType.CD,
+                Sectors       = 0,
+                MD5           = "UNKNOWN",
+                LongMD5       = "UNKNOWN",
+                SubchannelMD5 = "UNKNOWN",
+                Tracks = new[]
+                {
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 0,
+                        End     = 0,
+                        Pregap  = 0,
+                        Flags   = 0
+                    }
+                }
+            },
+            new OpticalImageTestExpected
+            {
+                TestFile      = "toast_3.5.7_iso9660_xa_dos.toast.lz",
+                MediaType     = MediaType.CD,
+                Sectors       = 0,
+                MD5           = "UNKNOWN",
+                LongMD5       = "UNKNOWN",
+                SubchannelMD5 = "UNKNOWN",
+                Tracks = new[]
+                {
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 0,
+                        End     = 0,
+                        Pregap  = 0,
+                        Flags   = 0
+                    }
+                }
+            },
+            new OpticalImageTestExpected
+            {
+                TestFile      = "toast_3.5.7_iso9660_xa_ebook_eng.toast.lz",
+                MediaType     = MediaType.CD,
+                Sectors       = 0,
+                MD5           = "UNKNOWN",
+                LongMD5       = "UNKNOWN",
+                SubchannelMD5 = "UNKNOWN",
+                Tracks = new[]
+                {
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 0,
+                        End     = 0,
+                        Pregap  = 0,
+                        Flags   = 0
+                    }
+                }
+            },
+            new OpticalImageTestExpected
+            {
+                TestFile      = "toast_3.5.7_iso9660_xa_ebook_fra.toast.lz",
+                MediaType     = MediaType.CD,
+                Sectors       = 0,
+                MD5           = "UNKNOWN",
+                LongMD5       = "UNKNOWN",
+                SubchannelMD5 = "UNKNOWN",
+                Tracks = new[]
+                {
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 0,
+                        End     = 0,
+                        Pregap  = 0,
+                        Flags   = 0
+                    }
+                }
+            },
+            new OpticalImageTestExpected
+            {
+                TestFile      = "toast_3.5.7_iso9660_xa_joliet_apple.toast.lz",
+                MediaType     = MediaType.CD,
+                Sectors       = 0,
+                MD5           = "UNKNOWN",
+                LongMD5       = "UNKNOWN",
+                SubchannelMD5 = "UNKNOWN",
+                Tracks = new[]
+                {
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 0,
+                        End     = 0,
+                        Pregap  = 0,
+                        Flags   = 0
+                    }
+                }
+            },
+            new OpticalImageTestExpected
+            {
+                TestFile      = "toast_3.5.7_iso9660_xa_joliet.toast.lz",
+                MediaType     = MediaType.CD,
+                Sectors       = 0,
+                MD5           = "UNKNOWN",
+                LongMD5       = "UNKNOWN",
+                SubchannelMD5 = "UNKNOWN",
+                Tracks = new[]
+                {
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 0,
+                        End     = 0,
+                        Pregap  = 0,
+                        Flags   = 0
+                    }
+                }
+            },
+            new OpticalImageTestExpected
+            {
+                TestFile      = "toast_3.5.7_iso9660_xa_mac_apple.toast.lz",
+                MediaType     = MediaType.CD,
+                Sectors       = 0,
+                MD5           = "UNKNOWN",
+                LongMD5       = "UNKNOWN",
+                SubchannelMD5 = "UNKNOWN",
+                Tracks = new[]
+                {
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 0,
+                        End     = 0,
+                        Pregap  = 0,
+                        Flags   = 0
+                    }
+                }
+            },
+            new OpticalImageTestExpected
+            {
+                TestFile      = "toast_3.5.7_iso9660_xa_mac.toast.lz",
+                MediaType     = MediaType.CD,
+                Sectors       = 0,
+                MD5           = "UNKNOWN",
+                LongMD5       = "UNKNOWN",
+                SubchannelMD5 = "UNKNOWN",
+                Tracks = new[]
+                {
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 0,
+                        End     = 0,
+                        Pregap  = 0,
+                        Flags   = 0
+                    }
+                }
+            },
+            new OpticalImageTestExpected
+            {
+                TestFile      = "toast_3.5.7_iso9660_xa.toast.lz",
+                MediaType     = MediaType.CD,
+                Sectors       = 0,
+                MD5           = "UNKNOWN",
+                LongMD5       = "UNKNOWN",
+                SubchannelMD5 = "UNKNOWN",
+                Tracks = new[]
+                {
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 0,
+                        End     = 0,
+                        Pregap  = 0,
+                        Flags   = 0
+                    }
+                }
+            },
+            new OpticalImageTestExpected
+            {
+                TestFile      = "toast_3.5.7_iso9660_xa_ver_apple.toast.lz",
+                MediaType     = MediaType.CD,
+                Sectors       = 0,
+                MD5           = "UNKNOWN",
+                LongMD5       = "UNKNOWN",
+                SubchannelMD5 = "UNKNOWN",
+                Tracks = new[]
+                {
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 0,
+                        End     = 0,
+                        Pregap  = 0,
+                        Flags   = 0
+                    }
+                }
+            },
+            new OpticalImageTestExpected
+            {
+                TestFile      = "toast_3.5.7_iso9660_xa_ver_dos_apple.toast.lz",
+                MediaType     = MediaType.CD,
+                Sectors       = 0,
+                MD5           = "UNKNOWN",
+                LongMD5       = "UNKNOWN",
+                SubchannelMD5 = "UNKNOWN",
+                Tracks = new[]
+                {
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 0,
+                        End     = 0,
+                        Pregap  = 0,
+                        Flags   = 0
+                    }
+                }
+            },
+            new OpticalImageTestExpected
+            {
+                TestFile      = "toast_3.5.7_iso9660_xa_ver_dos.toast.lz",
+                MediaType     = MediaType.CD,
+                Sectors       = 0,
+                MD5           = "UNKNOWN",
+                LongMD5       = "UNKNOWN",
+                SubchannelMD5 = "UNKNOWN",
+                Tracks = new[]
+                {
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 0,
+                        End     = 0,
+                        Pregap  = 0,
+                        Flags   = 0
+                    }
+                }
+            },
+            new OpticalImageTestExpected
+            {
+                TestFile      = "toast_3.5.7_iso9660_xa_ver_joliet_apple.toast.lz",
+                MediaType     = MediaType.CD,
+                Sectors       = 0,
+                MD5           = "UNKNOWN",
+                LongMD5       = "UNKNOWN",
+                SubchannelMD5 = "UNKNOWN",
+                Tracks = new[]
+                {
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 0,
+                        End     = 0,
+                        Pregap  = 0,
+                        Flags   = 0
+                    }
+                }
+            },
+            new OpticalImageTestExpected
+            {
+                TestFile      = "toast_3.5.7_iso9660_xa_ver_joliet.toast.lz",
+                MediaType     = MediaType.CD,
+                Sectors       = 0,
+                MD5           = "UNKNOWN",
+                LongMD5       = "UNKNOWN",
+                SubchannelMD5 = "UNKNOWN",
+                Tracks = new[]
+                {
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 0,
+                        End     = 0,
+                        Pregap  = 0,
+                        Flags   = 0
+                    }
+                }
+            },
+            new OpticalImageTestExpected
+            {
+                TestFile      = "toast_3.5.7_iso9660_xa_ver.toast.lz",
+                MediaType     = MediaType.CD,
+                Sectors       = 0,
+                MD5           = "UNKNOWN",
+                LongMD5       = "UNKNOWN",
+                SubchannelMD5 = "UNKNOWN",
+                Tracks = new[]
+                {
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 0,
+                        End     = 0,
+                        Pregap  = 0,
+                        Flags   = 0
+                    }
+                }
+            }
+        };
     }
 }
