@@ -26,27 +26,24 @@
 // Copyright © 2011-2021 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using System.IO;
-using Aaru.Checksums;
 using Aaru.CommonTypes;
-using Aaru.Filters;
-using FluentAssertions.Execution;
+using Aaru.CommonTypes.Interfaces;
 using NUnit.Framework;
 
 namespace Aaru.Tests.Images
 {
     [TestFixture]
-    public class MaxiDisk
+    public class MaxiDisk : BlockMediaImageTest
     {
-        readonly string[] _testFiles =
+        public override string[] _testFiles => new[]
         {
             "3DF800.HDK.lz", "3DS.HDK.lz", "3ES.HDK.lz", "3HD6.HDK.lz", "3HF168.HDK.lz", "3HF16.HDK.lz",
             "3HF172.HDK.lz", "3HS.HDK.lz", "5DS18.HDK.lz", "5DS1.HDK.lz", "5DS28.HDK.lz", "5DS2.HDK.lz",
             "5HF144.HDK.lz", "5HS.HDK.lz"
         };
 
-        readonly ulong[] _sectors =
+        public override ulong[] _sectors => new ulong[]
         {
             // 3DF800.HDK.lz
             1600,
@@ -91,7 +88,7 @@ namespace Aaru.Tests.Images
             2400
         };
 
-        readonly uint[] _sectorSize =
+        public override uint[] _sectorSize => new uint[]
         {
             // 3DF800.HDK.lz
             512,
@@ -136,7 +133,7 @@ namespace Aaru.Tests.Images
             512
         };
 
-        readonly MediaType[] _mediaTypes =
+        public override MediaType[] _mediaTypes => new[]
         {
             // 3DF800.HDK.lz
             MediaType.CBM_35_DD,
@@ -181,7 +178,7 @@ namespace Aaru.Tests.Images
             MediaType.DOS_525_HD
         };
 
-        readonly string[] _md5S =
+        public override string[] _md5S => new[]
         {
             // 3DF800.HDK.lz
             "26532a62985b51a2c3b877a57f6d257b",
@@ -226,88 +223,7 @@ namespace Aaru.Tests.Images
             "02259cd5fbcc20f8484aa6bece7a37c6"
         };
 
-        readonly string _dataFolder = Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "MaxiDisk");
-
-        [Test]
-        public void Info()
-        {
-            Environment.CurrentDirectory = _dataFolder;
-
-            Assert.Multiple(() =>
-            {
-                for(int i = 0; i < _testFiles.Length; i++)
-                {
-                    var filter = new LZip();
-                    filter.Open(_testFiles[i]);
-
-                    var  image  = new DiscImages.MaxiDisk();
-                    bool opened = image.Open(filter);
-
-                    Assert.AreEqual(true, opened, $"Open: {_testFiles[i]}");
-
-                    if(!opened)
-                        continue;
-
-                    using(new AssertionScope())
-                    {
-                        Assert.Multiple(() =>
-                        {
-                            Assert.AreEqual(_sectors[i], image.Info.Sectors, $"Sectors: {_testFiles[i]}");
-                            Assert.AreEqual(_sectorSize[i], image.Info.SectorSize, $"Sector size: {_testFiles[i]}");
-                            Assert.AreEqual(_mediaTypes[i], image.Info.MediaType, $"Media type: {_testFiles[i]}");
-                        });
-                    }
-                }
-            });
-        }
-
-        // How many sectors to read at once
-        const uint SECTORS_TO_READ = 256;
-
-        [Test]
-        public void Hashes()
-        {
-            Environment.CurrentDirectory = _dataFolder;
-
-            Assert.Multiple(() =>
-            {
-                for(int i = 0; i < _testFiles.Length; i++)
-                {
-                    var filter = new LZip();
-                    filter.Open(_testFiles[i]);
-
-                    var   image       = new DiscImages.MaxiDisk();
-                    bool  opened      = image.Open(filter);
-                    ulong doneSectors = 0;
-
-                    Assert.AreEqual(true, opened, $"Open: {_testFiles[i]}");
-
-                    if(!opened)
-                        continue;
-
-                    var ctx = new Md5Context();
-
-                    while(doneSectors < image.Info.Sectors)
-                    {
-                        byte[] sector;
-
-                        if(image.Info.Sectors - doneSectors >= SECTORS_TO_READ)
-                        {
-                            sector      =  image.ReadSectors(doneSectors, SECTORS_TO_READ);
-                            doneSectors += SECTORS_TO_READ;
-                        }
-                        else
-                        {
-                            sector      =  image.ReadSectors(doneSectors, (uint)(image.Info.Sectors - doneSectors));
-                            doneSectors += image.Info.Sectors - doneSectors;
-                        }
-
-                        ctx.Update(sector);
-                    }
-
-                    Assert.AreEqual(_md5S[i], ctx.End(), $"Hash: {_testFiles[i]}");
-                }
-            });
-        }
+        public override string _dataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "MaxiDisk");
+        public override IMediaImage _plugin => new DiscImages.MaxiDisk();
     }
 }

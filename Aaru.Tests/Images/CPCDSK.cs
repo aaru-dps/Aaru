@@ -26,21 +26,18 @@
 // Copyright © 2011-2021 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using System.IO;
-using Aaru.Checksums;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Interfaces;
 using Aaru.DiscImages;
-using Aaru.Filters;
-using FluentAssertions.Execution;
 using NUnit.Framework;
 
 namespace Aaru.Tests.Images
 {
     [TestFixture]
-    public class CPCDSK
+    public class CPCDSK : BlockMediaImageTest
     {
-        readonly string[] _testFiles =
+        public override string[] _testFiles => new[]
         {
             "3D Construction Kit (1991)(Domark)(Disk 1 of 2)[a].dsk.lz",
             "3D Construction Kit (1991)(Domark)(Disk 1 of 2).dsk.lz",
@@ -54,7 +51,7 @@ namespace Aaru.Tests.Images
             "CPM Plus v1.0 (1985)(Amstrad)(Disk 3 of 4)[CPM Version].dsk.lz",
             "CPM Plus v1.0 (1985)(Amstrad)(Disk 4 of 4)[CPM Version].dsk.lz"
         };
-        readonly ulong[] _sectors =
+        public override ulong[] _sectors => new ulong[]
         {
             // 3D Construction Kit (1991)(Domark)(Disk 1 of 2)[a].dsk.lz
             360,
@@ -95,7 +92,7 @@ namespace Aaru.Tests.Images
             // CPM Plus v1.0 (1985)(Amstrad)(Disk 4 of 4)[CPM Version].dsk.lz
             360
         };
-        readonly uint[] _sectorSize =
+        public override uint[] _sectorSize => new uint[]
         {
             // 3D Construction Kit (1991)(Domark)(Disk 1 of 2)[a].dsk.lz
             512,
@@ -136,7 +133,7 @@ namespace Aaru.Tests.Images
             // CPM Plus v1.0 (1985)(Amstrad)(Disk 4 of 4)[CPM Version].dsk.lz
             512
         };
-        readonly MediaType[] _mediaTypes =
+        public override MediaType[] _mediaTypes => new[]
         {
             // 3D Construction Kit (1991)(Domark)(Disk 1 of 2)[a].dsk.lz
             MediaType.CompactFloppy,
@@ -177,7 +174,7 @@ namespace Aaru.Tests.Images
             // CPM Plus v1.0 (1985)(Amstrad)(Disk 4 of 4)[CPM Version].dsk.lz
             MediaType.CompactFloppy
         };
-        readonly string[] _md5S =
+        public override string[] _md5S => new[]
         {
             // 3D Construction Kit (1991)(Domark)(Disk 1 of 2)[a].dsk.lz
             "ee601c0d2beade20bb5c04b3f5800ff6",
@@ -219,81 +216,7 @@ namespace Aaru.Tests.Images
             "ad43345ac469844465da6d73369cc6b1"
         };
 
-        readonly string _dataFolder = Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "CPCDSK");
-
-        [Test]
-        public void Info()
-        {
-            Environment.CurrentDirectory = _dataFolder;
-
-            Assert.Multiple(() =>
-            {
-                for(int i = 0; i < _testFiles.Length; i++)
-                {
-                    var filter = new LZip();
-                    filter.Open(_testFiles[i]);
-
-                    var  image  = new Cpcdsk();
-                    bool opened = image.Open(filter);
-
-                    Assert.AreEqual(true, opened, $"Open: {_testFiles[i]}");
-
-                    using(new AssertionScope())
-                    {
-                        Assert.Multiple(() =>
-                        {
-                            Assert.AreEqual(_sectors[i], image.Info.Sectors, $"Sectors: {_testFiles[i]}");
-                            Assert.AreEqual(_sectorSize[i], image.Info.SectorSize, $"Sector size: {_testFiles[i]}");
-                            Assert.AreEqual(_mediaTypes[i], image.Info.MediaType, $"Media type: {_testFiles[i]}");
-                        });
-                    }
-                }
-            });
-        }
-
-        // How many sectors to read at once
-        const uint SECTORS_TO_READ = 256;
-
-        [Test]
-        public void Hashes()
-        {
-            Environment.CurrentDirectory = _dataFolder;
-
-            Assert.Multiple(() =>
-            {
-                for(int i = 0; i < _testFiles.Length; i++)
-                {
-                    var filter = new LZip();
-                    filter.Open(_testFiles[i]);
-
-                    var   image       = new Cpcdsk();
-                    bool  opened      = image.Open(filter);
-                    ulong doneSectors = 0;
-
-                    Assert.AreEqual(true, opened, $"Open: {_testFiles[i]}");
-                    var ctx = new Md5Context();
-
-                    while(doneSectors < image.Info.Sectors)
-                    {
-                        byte[] sector;
-
-                        if(image.Info.Sectors - doneSectors >= SECTORS_TO_READ)
-                        {
-                            sector      =  image.ReadSectors(doneSectors, SECTORS_TO_READ);
-                            doneSectors += SECTORS_TO_READ;
-                        }
-                        else
-                        {
-                            sector      =  image.ReadSectors(doneSectors, (uint)(image.Info.Sectors - doneSectors));
-                            doneSectors += image.Info.Sectors - doneSectors;
-                        }
-
-                        ctx.Update(sector);
-                    }
-
-                    Assert.AreEqual(_md5S[i], ctx.End(), $"Hash: {_testFiles[i]}");
-                }
-            });
-        }
+        public override string _dataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "CPCDSK");
+        public override IMediaImage _plugin => new Cpcdsk();
     }
 }

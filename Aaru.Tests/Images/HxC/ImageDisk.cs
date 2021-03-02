@@ -26,21 +26,18 @@
 // Copyright © 2011-2021 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using System.IO;
-using Aaru.Checksums;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Interfaces;
 using Aaru.DiscImages;
-using Aaru.Filters;
-using FluentAssertions.Execution;
 using NUnit.Framework;
 
 namespace Aaru.Tests.Images.HxC
 {
     [TestFixture]
-    public class ImageDisk
+    public class ImageDisk : BlockMediaImageTest
     {
-        readonly string[] _testFiles =
+        public override string[] _testFiles => new[]
         {
             "md1dd_8.imd.lz", "md1dd.imd.lz", "md2dd_8.imd.lz", "md2dd.imd.lz", "md2hd.imd.lz", "md2hd_nec.imd.lz",
             "mf1dd_10.imd.lz", "mf1dd_11.imd.lz", "mf2dd_10.imd.lz", "mf2dd_11.imd.lz", "mf2dd_acorn.imd.lz",
@@ -50,7 +47,7 @@ namespace Aaru.Tests.Images.HxC
             "mf2hd_xdf.imd.lz", "mf2hd_xdf_teledisk.imd.lz"
         };
 
-        readonly ulong[] _sectors =
+        public override ulong[] _sectors => new ulong[]
         {
             // md1dd_8.imd.lz
             320,
@@ -131,7 +128,7 @@ namespace Aaru.Tests.Images.HxC
             0
         };
 
-        readonly uint[] _sectorSize =
+        public override uint[] _sectorSize => new uint[]
         {
             // md1dd_8.imd.lz
             512,
@@ -212,7 +209,7 @@ namespace Aaru.Tests.Images.HxC
             0
         };
 
-        readonly MediaType[] _mediaTypes =
+        public override MediaType[] _mediaTypes => new[]
         {
             // Media type: md1dd_8.imd.lz
             MediaType.DOS_525_SS_DD_8,
@@ -293,7 +290,7 @@ namespace Aaru.Tests.Images.HxC
             MediaType.XDF_35
         };
 
-        readonly string[] _md5S =
+        public override string[] _md5S => new[]
         {
             // md1dd_8.imd.lz
             "8308e749af855a3ded48d474eb7c305e",
@@ -374,88 +371,8 @@ namespace Aaru.Tests.Images.HxC
             "UNKNOWN"
         };
 
-        readonly string _dataFolder = Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "HxC", "ImageDisk");
-
-        [Test]
-        public void Info()
-        {
-            Environment.CurrentDirectory = _dataFolder;
-
-            Assert.Multiple(() =>
-            {
-                for(int i = 0; i < _testFiles.Length; i++)
-                {
-                    var filter = new LZip();
-                    filter.Open(_testFiles[i]);
-
-                    var  image  = new Imd();
-                    bool opened = image.Open(filter);
-
-                    Assert.AreEqual(true, opened, $"Open: {_testFiles[i]}");
-
-                    if(!opened)
-                        continue;
-
-                    using(new AssertionScope())
-                    {
-                        Assert.Multiple(() =>
-                        {
-                            Assert.AreEqual(_sectors[i], image.Info.Sectors, $"Sectors: {_testFiles[i]}");
-                            Assert.AreEqual(_sectorSize[i], image.Info.SectorSize, $"Sector size: {_testFiles[i]}");
-                            Assert.AreEqual(_mediaTypes[i], image.Info.MediaType, $"Media type: {_testFiles[i]}");
-                        });
-                    }
-                }
-            });
-        }
-
-        // How many sectors to read at once
-        const uint SECTORS_TO_READ = 256;
-
-        [Test]
-        public void Hashes()
-        {
-            Environment.CurrentDirectory = _dataFolder;
-
-            Assert.Multiple(() =>
-            {
-                for(int i = 0; i < _testFiles.Length; i++)
-                {
-                    var filter = new LZip();
-                    filter.Open(_testFiles[i]);
-
-                    var   image       = new Imd();
-                    bool  opened      = image.Open(filter);
-                    ulong doneSectors = 0;
-
-                    Assert.AreEqual(true, opened, $"Open: {_testFiles[i]}");
-
-                    if(!opened)
-                        continue;
-
-                    var ctx = new Md5Context();
-
-                    while(doneSectors < image.Info.Sectors)
-                    {
-                        byte[] sector;
-
-                        if(image.Info.Sectors - doneSectors >= SECTORS_TO_READ)
-                        {
-                            sector      =  image.ReadSectors(doneSectors, SECTORS_TO_READ);
-                            doneSectors += SECTORS_TO_READ;
-                        }
-                        else
-                        {
-                            sector      =  image.ReadSectors(doneSectors, (uint)(image.Info.Sectors - doneSectors));
-                            doneSectors += image.Info.Sectors - doneSectors;
-                        }
-
-                        ctx.Update(sector);
-                    }
-
-                    Assert.AreEqual(_md5S[i], ctx.End(), $"Hash: {_testFiles[i]}");
-                }
-            });
-        }
+        public override string _dataFolder =>
+            Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "HxC", "ImageDisk");
+        public override IMediaImage _plugin => new Imd();
     }
 }

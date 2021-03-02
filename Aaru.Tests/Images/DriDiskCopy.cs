@@ -26,20 +26,17 @@
 // Copyright © 2011-2021 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using System.IO;
-using Aaru.Checksums;
 using Aaru.CommonTypes;
-using Aaru.Filters;
-using FluentAssertions.Execution;
+using Aaru.CommonTypes.Interfaces;
 using NUnit.Framework;
 
 namespace Aaru.Tests.Images
 {
     [TestFixture]
-    public class DriDiskCopy
+    public class DriDiskCopy : BlockMediaImageTest
     {
-        readonly string[] _testFiles =
+        public override string[] _testFiles => new[]
         {
             "DSKA0000.IMG.lz", "DSKA0001.IMG.lz", "DSKA0009.IMG.lz", "DSKA0010.IMG.lz", "DSKA0024.IMG.lz",
             "DSKA0025.IMG.lz", "DSKA0030.IMG.lz", "DSKA0035.IMG.lz", "DSKA0036.IMG.lz", "DSKA0037.IMG.lz",
@@ -84,7 +81,7 @@ namespace Aaru.Tests.Images
             "mf2hd_qcopy_3486s.img.lz", "mf2hd_xdf.dsk.lz", "mf2hd_xdf.img.lz"
         };
 
-        readonly ulong[] _sectors =
+        public override ulong[] _sectors => new ulong[]
         {
             // DSKA0000.IMG.lz
             2880,
@@ -651,7 +648,7 @@ namespace Aaru.Tests.Images
             3680
         };
 
-        readonly uint[] _sectorSize =
+        public override uint[] _sectorSize => new uint[]
         {
             // DSKA0000.IMG.lz
             512,
@@ -1218,7 +1215,7 @@ namespace Aaru.Tests.Images
             512
         };
 
-        readonly MediaType[] _mediaTypes =
+        public override MediaType[] _mediaTypes => new[]
         {
             // DSKA0000.IMG.lz
             MediaType.DOS_35_HD,
@@ -1785,7 +1782,7 @@ namespace Aaru.Tests.Images
             MediaType.XDF_35
         };
 
-        readonly string[] _md5S =
+        public override string[] _md5S => new[]
         {
             // DSKA0000.IMG.lz
             "e8bbbd22db87181974e12ba0227ea011",
@@ -2352,81 +2349,8 @@ namespace Aaru.Tests.Images
             "4cb9398cf02ed9e08d0972c1ccba804b"
         };
 
-        readonly string _dataFolder = Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "DRI DISKCOPY");
-
-        [Test]
-        public void Info()
-        {
-            Environment.CurrentDirectory = _dataFolder;
-
-            Assert.Multiple(() =>
-            {
-                for(int i = 0; i < _testFiles.Length; i++)
-                {
-                    var filter = new LZip();
-                    filter.Open(_testFiles[i]);
-
-                    var  image  = new DiscImages.DriDiskCopy();
-                    bool opened = image.Open(filter);
-
-                    Assert.AreEqual(true, opened, $"Open: {_testFiles[i]}");
-
-                    using(new AssertionScope())
-                    {
-                        Assert.Multiple(() =>
-                        {
-                            Assert.AreEqual(_sectors[i], image.Info.Sectors, $"Sectors: {_testFiles[i]}");
-                            Assert.AreEqual(_sectorSize[i], image.Info.SectorSize, $"Sector size: {_testFiles[i]}");
-                            Assert.AreEqual(_mediaTypes[i], image.Info.MediaType, $"Media type: {_testFiles[i]}");
-                        });
-                    }
-                }
-            });
-        }
-
-        // How many sectors to read at once
-        const uint SECTORS_TO_READ = 256;
-
-        [Test]
-        public void Hashes()
-        {
-            Environment.CurrentDirectory = _dataFolder;
-
-            Assert.Multiple(() =>
-            {
-                for(int i = 0; i < _testFiles.Length; i++)
-                {
-                    var filter = new LZip();
-                    filter.Open(_testFiles[i]);
-
-                    var   image       = new DiscImages.DriDiskCopy();
-                    bool  opened      = image.Open(filter);
-                    ulong doneSectors = 0;
-
-                    Assert.AreEqual(true, opened, $"Open: {_testFiles[i]}");
-                    var ctx = new Md5Context();
-
-                    while(doneSectors < image.Info.Sectors)
-                    {
-                        byte[] sector;
-
-                        if(image.Info.Sectors - doneSectors >= SECTORS_TO_READ)
-                        {
-                            sector      =  image.ReadSectors(doneSectors, SECTORS_TO_READ);
-                            doneSectors += SECTORS_TO_READ;
-                        }
-                        else
-                        {
-                            sector      =  image.ReadSectors(doneSectors, (uint)(image.Info.Sectors - doneSectors));
-                            doneSectors += image.Info.Sectors - doneSectors;
-                        }
-
-                        ctx.Update(sector);
-                    }
-
-                    Assert.AreEqual(_md5S[i], ctx.End(), $"Hash: {_testFiles[i]}");
-                }
-            });
-        }
+        public override string _dataFolder =>
+            Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "DRI DISKCOPY");
+        public override IMediaImage _plugin => new DiscImages.DriDiskCopy();
     }
 }

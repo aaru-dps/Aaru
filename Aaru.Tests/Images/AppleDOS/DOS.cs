@@ -26,27 +26,24 @@
 // Copyright © 2011-2021 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using System.IO;
-using Aaru.Checksums;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Interfaces;
 using Aaru.DiscImages;
-using Aaru.Filters;
-using FluentAssertions.Execution;
 using NUnit.Framework;
 
 namespace Aaru.Tests.Images.AppleDOS
 {
     [TestFixture]
-    public class DOS
+    public class DOS : BlockMediaImageTest
     {
-        readonly string[] _testFiles =
+        public override string[] _testFiles => new[]
         {
             "dos33.do.lz", "hfs.do.lz", "pascal800.do.lz", "pascal.do.lz", "prodos800.do.lz", "prodos.do.lz",
             "prodosmod.do.lz"
         };
 
-        readonly ulong[] _sectors =
+        public override ulong[] _sectors => new ulong[]
         {
             // dos33.do.lz
             560,
@@ -70,7 +67,7 @@ namespace Aaru.Tests.Images.AppleDOS
             560
         };
 
-        readonly uint[] _sectorSize =
+        public override uint[] _sectorSize => new uint[]
         {
             // dos33.do.lz
             256,
@@ -94,7 +91,7 @@ namespace Aaru.Tests.Images.AppleDOS
             256
         };
 
-        readonly MediaType[] _mediaTypes =
+        public override MediaType[] _mediaTypes => new[]
         {
             // dos33.do.lz
             MediaType.Apple33SS,
@@ -118,7 +115,7 @@ namespace Aaru.Tests.Images.AppleDOS
             MediaType.Apple33SS
         };
 
-        readonly string[] _md5S =
+        public override string[] _md5S => new[]
         {
             // dos33.do.lz
             "0ffcbd4180306192726926b43755db2f",
@@ -142,81 +139,8 @@ namespace Aaru.Tests.Images.AppleDOS
             "a7ec980472c320da5ea6f2f0aec0f502"
         };
 
-        readonly string _dataFolder = Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "Apple DOS Order");
-
-        [Test]
-        public void Info()
-        {
-            Environment.CurrentDirectory = _dataFolder;
-
-            Assert.Multiple(() =>
-            {
-                for(int i = 0; i < _testFiles.Length; i++)
-                {
-                    var filter = new LZip();
-                    filter.Open(_testFiles[i]);
-
-                    var  image  = new AppleDos();
-                    bool opened = image.Open(filter);
-
-                    Assert.AreEqual(true, opened, $"Open: {_testFiles[i]}");
-
-                    using(new AssertionScope())
-                    {
-                        Assert.Multiple(() =>
-                        {
-                            Assert.AreEqual(_sectors[i], image.Info.Sectors, _testFiles[i]);
-                            Assert.AreEqual(_sectorSize[i], image.Info.SectorSize, _testFiles[i]);
-                            Assert.AreEqual(_mediaTypes[i], image.Info.MediaType, _testFiles[i]);
-                        });
-                    }
-                }
-            });
-        }
-
-        // How many sectors to read at once
-        const uint SECTORS_TO_READ = 256;
-
-        [Test]
-        public void Hashes()
-        {
-            Environment.CurrentDirectory = _dataFolder;
-
-            Assert.Multiple(() =>
-            {
-                for(int i = 0; i < _testFiles.Length; i++)
-                {
-                    var filter = new LZip();
-                    filter.Open(_testFiles[i]);
-
-                    var   image       = new AppleDos();
-                    bool  opened      = image.Open(filter);
-                    ulong doneSectors = 0;
-
-                    Assert.AreEqual(true, opened, $"Open: {_testFiles[i]}");
-                    var ctx = new Md5Context();
-
-                    while(doneSectors < image.Info.Sectors)
-                    {
-                        byte[] sector;
-
-                        if(image.Info.Sectors - doneSectors >= SECTORS_TO_READ)
-                        {
-                            sector      =  image.ReadSectors(doneSectors, SECTORS_TO_READ);
-                            doneSectors += SECTORS_TO_READ;
-                        }
-                        else
-                        {
-                            sector      =  image.ReadSectors(doneSectors, (uint)(image.Info.Sectors - doneSectors));
-                            doneSectors += image.Info.Sectors - doneSectors;
-                        }
-
-                        ctx.Update(sector);
-                    }
-
-                    Assert.AreEqual(_md5S[i], ctx.End(), _testFiles[i]);
-                }
-            });
-        }
+        public override string _dataFolder =>
+            Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "Apple DOS Order");
+        public override IMediaImage _plugin => new AppleDos();
     }
 }

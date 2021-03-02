@@ -26,20 +26,17 @@
 // Copyright © 2011-2021 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using System.IO;
-using Aaru.Checksums;
 using Aaru.CommonTypes;
-using Aaru.Filters;
-using FluentAssertions.Execution;
+using Aaru.CommonTypes.Interfaces;
 using NUnit.Framework;
 
 namespace Aaru.Tests.Images
 {
     [TestFixture]
-    public class CopyQm
+    public class CopyQm : BlockMediaImageTest
     {
-        readonly string[] _testFiles =
+        public override string[] _testFiles => new[]
         {
             "DSKA0000.CQM.lz", "DSKA0001.CQM.lz", "DSKA0002.CQM.lz", "DSKA0003.CQM.lz", "DSKA0004.CQM.lz",
             "DSKA0006.CQM.lz", "DSKA0009.CQM.lz", "DSKA0010.CQM.lz", "DSKA0011.CQM.lz", "DSKA0012.CQM.lz",
@@ -83,7 +80,7 @@ namespace Aaru.Tests.Images
             "mf2dd_freedos.cqm.lz", "mf2hd_blind.cqm.lz", "mf2hd.cqm.lz", "mf2hd_fdformat_168.cqm.lz",
             "mf2hd_freedos.cqm.lz"
         };
-        readonly ulong[] _sectors =
+        public override ulong[] _sectors => new ulong[]
         {
             // DSKA0000.CQM.lz
             2880,
@@ -685,7 +682,7 @@ namespace Aaru.Tests.Images
             // mf2hd_freedos.cqm.lz
             3360
         };
-        readonly uint[] _sectorSize =
+        public override uint[] _sectorSize => new uint[]
         {
             // DSKA0000.CQM.lz
             512,
@@ -1287,7 +1284,7 @@ namespace Aaru.Tests.Images
             // mf2hd_freedos.cqm.lz
             512
         };
-        readonly MediaType[] _mediaTypes =
+        public override MediaType[] _mediaTypes => new[]
         {
             // DSKA0000.CQM.lz
             MediaType.DOS_35_HD,
@@ -1889,7 +1886,7 @@ namespace Aaru.Tests.Images
             // mf2hd_freedos.cqm.lz
             MediaType.DMF
         };
-        readonly string[] _md5S =
+        public override string[] _md5S => new[]
         {
             // DSKA0000.CQM.lz
             "e8bbbd22db87181974e12ba0227ea011",
@@ -2492,81 +2489,7 @@ namespace Aaru.Tests.Images
             "1a9f2eeb3cbeeb057b9a9a5c6e9b0cc6"
         };
 
-        readonly string _dataFolder = Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "CopyQM");
-
-        [Test]
-        public void Info()
-        {
-            Environment.CurrentDirectory = _dataFolder;
-
-            Assert.Multiple(() =>
-            {
-                for(int i = 0; i < _testFiles.Length; i++)
-                {
-                    var filter = new LZip();
-                    filter.Open(_testFiles[i]);
-
-                    var  image  = new DiscImages.CopyQm();
-                    bool opened = image.Open(filter);
-
-                    Assert.AreEqual(true, opened, $"Open: {_testFiles[i]}");
-
-                    using(new AssertionScope())
-                    {
-                        Assert.Multiple(() =>
-                        {
-                            Assert.AreEqual(_sectors[i], image.Info.Sectors, $"Sectors: {_testFiles[i]}");
-                            Assert.AreEqual(_sectorSize[i], image.Info.SectorSize, $"Sector size: {_testFiles[i]}");
-                            Assert.AreEqual(_mediaTypes[i], image.Info.MediaType, $"Media type: {_testFiles[i]}");
-                        });
-                    }
-                }
-            });
-        }
-
-        // How many sectors to read at once
-        const uint SECTORS_TO_READ = 256;
-
-        [Test]
-        public void Hashes()
-        {
-            Environment.CurrentDirectory = _dataFolder;
-
-            Assert.Multiple(() =>
-            {
-                for(int i = 0; i < _testFiles.Length; i++)
-                {
-                    var filter = new LZip();
-                    filter.Open(_testFiles[i]);
-
-                    var   image       = new DiscImages.CopyQm();
-                    bool  opened      = image.Open(filter);
-                    ulong doneSectors = 0;
-
-                    Assert.AreEqual(true, opened, $"Open: {_testFiles[i]}");
-                    var ctx = new Md5Context();
-
-                    while(doneSectors < image.Info.Sectors)
-                    {
-                        byte[] sector;
-
-                        if(image.Info.Sectors - doneSectors >= SECTORS_TO_READ)
-                        {
-                            sector      =  image.ReadSectors(doneSectors, SECTORS_TO_READ);
-                            doneSectors += SECTORS_TO_READ;
-                        }
-                        else
-                        {
-                            sector      =  image.ReadSectors(doneSectors, (uint)(image.Info.Sectors - doneSectors));
-                            doneSectors += image.Info.Sectors - doneSectors;
-                        }
-
-                        ctx.Update(sector);
-                    }
-
-                    Assert.AreEqual(_md5S[i], ctx.End(), $"Hash: {_testFiles[i]}");
-                }
-            });
-        }
+        public override string _dataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "CopyQM");
+        public override IMediaImage _plugin => new DiscImages.CopyQm();
     }
 }

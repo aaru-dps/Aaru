@@ -1,8 +1,8 @@
-﻿// /***************************************************************************
+// /***************************************************************************
 // Aaru Data Preservation Suite
 // ----------------------------------------------------------------------------
 //
-// Filename       : CopyTape.cs
+// Filename       : V1.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // Component      : Aaru unit testing.
@@ -32,195 +32,237 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Images
+namespace Aaru.Tests.Images.AaruFormat.Tape
 {
     [TestFixture]
-    public class CopyTape : TapeMediaImageTest
+    public class V1 : TapeMediaImageTest
     {
         public override string[] _testFiles => new[]
         {
-            "Nonstop-UX System V Release 4 B32 (Boot Tape).cptp.lz",
-            "Nonstop-UX System V Release 4 B32 (Integrity SX25 VME V5.0+).cptp.lz",
-            "Nonstop-UX System V Release 4 B32 (Online Software Upgrade).cptp.lz",
-            "Nonstop-UX System V Release 4 B32 (Operating System).cptp.lz",
-            "Nonstop-UX System V Release 4 B32 (Optional Packages).cptp.lz",
-            "Nonstop-UX System V Release 4 B32 (OSF-Motif 1.2.4).cptp.lz",
-            "Nonstop-UX System V Release 4 B32 (Reliable Ethernet).cptp.lz",
-            "Nonstop-UX System V Release 4 B32 (Required Packages).cptp.lz", "OpenWindows.3.0.exabyte.cptp.lz",
-            "OpenWindows.3.0.Q150.cptp.lz", "OS.MP.4.1C.exabyte.cptp.lz", "X.3.0.exabyte.cptp.lz", "X.3.Q150.cptp.lz"
+            "Nonstop-UX System V Release 4 B32 (Boot Tape).aif",
+            "Nonstop-UX System V Release 4 B32 (Integrity SX25 VME V5.0+).aif",
+            "Nonstop-UX System V Release 4 B32 (Online Software Upgrade).aif",
+            "Nonstop-UX System V Release 4 B32 (Operating System).aif",
+            "Nonstop-UX System V Release 4 B32 (Optional Packages).aif",
+            "Nonstop-UX System V Release 4 B32 (OSF-Motif 1.2.4).aif",
+            "Nonstop-UX System V Release 4 B32 (Reliable Ethernet).aif",
+            "Nonstop-UX System V Release 4 B32 (Required Packages).aif", "OpenWindows.3.0.exabyte.aif",
+            "OpenWindows.3.0.Q150.aif", "OS.MP.4.1C.exabyte.aif", "X.3.0.exabyte.aif", "X.3.Q150.aif"
         };
 
         public override ulong[] _sectors => new ulong[]
         {
-            // Nonstop-UX System V Release 4 B32 (Boot Tape).cptp.lz
+            // Nonstop-UX System V Release 4 B32 (Boot Tape).aif
             1604,
 
-            // Nonstop-UX System V Release 4 B32 (Integrity SX25 VME V5.0+).cptp.lz
+            // Nonstop-UX System V Release 4 B32 (Integrity SX25 VME V5.0+).aif
             15485,
 
-            // Nonstop-UX System V Release 4 B32 (Online Software Upgrade).cptp.lz
+            // Nonstop-UX System V Release 4 B32 (Online Software Upgrade).aif
             15,
 
-            // Nonstop-UX System V Release 4 B32 (Operating System).cptp.lz
+            // Nonstop-UX System V Release 4 B32 (Operating System).aif
             3298,
 
-            // Nonstop-UX System V Release 4 B32 (Optional Packages).cptp.lz
+            // Nonstop-UX System V Release 4 B32 (Optional Packages).aif
             3152,
 
-            // Nonstop-UX System V Release 4 B32 (OSF-Motif 1.2.4).cptp.lz
+            // Nonstop-UX System V Release 4 B32 (OSF-Motif 1.2.4).aif
             818,
 
-            // Nonstop-UX System V Release 4 B32 (Reliable Ethernet).cptp.lz
+            // Nonstop-UX System V Release 4 B32 (Reliable Ethernet).aif
             7,
 
-            // Nonstop-UX System V Release 4 B32 (Required Packages).cptp.lz
+            // Nonstop-UX System V Release 4 B32 (Required Packages).aif
             684,
 
-            // OpenWindows.3.0.exabyte.cptp.lz
+            // OpenWindows.3.0.exabyte.aif
             73525,
 
-            // OpenWindows.3.0.Q150.cptp.lz
+            // OpenWindows.3.0.Q150.aif
             290,
 
-            // OS.MP.4.1C.exabyte.cptp.lz
+            // OS.MP.4.1C.exabyte.aif
             37587,
 
-            // X.3.0.exabyte.cptp.lz
+            // X.3.0.exabyte.aif
             25046,
 
-            // X.3.Q150.cptp.lz
+            // X.3.Q150.aif
             102
         };
 
         public override uint[] _sectorSize => new uint[]
         {
-            // Nonstop-UX System V Release 4 B32 (Boot Tape).cptp.lz
+            // Nonstop-UX System V Release 4 B32 (Boot Tape).aif
             10240,
 
-            // Nonstop-UX System V Release 4 B32 (Integrity SX25 VME V5.0+).cptp.lz
+            // Nonstop-UX System V Release 4 B32 (Integrity SX25 VME V5.0+).aif
             512,
 
-            // Nonstop-UX System V Release 4 B32 (Online Software Upgrade).cptp.lz
+            // Nonstop-UX System V Release 4 B32 (Online Software Upgrade).aif
+            28637,
+
+            // Nonstop-UX System V Release 4 B32 (Operating System).aif
             32256,
 
-            // Nonstop-UX System V Release 4 B32 (Operating System).cptp.lz
+            // Nonstop-UX System V Release 4 B32 (Optional Packages).aif
             32256,
 
-            // Nonstop-UX System V Release 4 B32 (Optional Packages).cptp.lz
+            // Nonstop-UX System V Release 4 B32 (OSF-Motif 1.2.4).aif
             32256,
 
-            // Nonstop-UX System V Release 4 B32 (OSF-Motif 1.2.4).cptp.lz
+            // Nonstop-UX System V Release 4 B32 (Reliable Ethernet).aif
+            26185,
+
+            // Nonstop-UX System V Release 4 B32 (Required Packages).aif
             32256,
 
-            // Nonstop-UX System V Release 4 B32 (Reliable Ethernet).cptp.lz
-            32256,
-
-            // Nonstop-UX System V Release 4 B32 (Required Packages).cptp.lz
-            32256,
-
-            // OpenWindows.3.0.exabyte.cptp.lz
+            // OpenWindows.3.0.exabyte.aif
             1024,
 
-            // OpenWindows.3.0.Q150.cptp.lz
+            // OpenWindows.3.0.Q150.aif
             262144,
 
-            // OS.MP.4.1C.exabyte.cptp.lz
+            // OS.MP.4.1C.exabyte.aif
             8192,
 
-            // X.3.0.exabyte.cptp.lz
+            // X.3.0.exabyte.aif
             1024,
 
-            // X.3.Q150.cptp.lz
-            262144
+            // X.3.Q150.aif
+            258048
         };
 
         public override MediaType[] _mediaTypes => new[]
         {
-            // Nonstop-UX System V Release 4 B32 (Boot Tape).cptp.lz
+            // Nonstop-UX System V Release 4 B32 (Boot Tape).aif
             MediaType.UnknownTape,
 
-            // Nonstop-UX System V Release 4 B32 (Integrity SX25 VME V5.0+).cptp.lz
+            // Nonstop-UX System V Release 4 B32 (Integrity SX25 VME V5.0+).aif
             MediaType.UnknownTape,
 
-            // Nonstop-UX System V Release 4 B32 (Online Software Upgrade).cptp.lz
+            // Nonstop-UX System V Release 4 B32 (Online Software Upgrade).aif
             MediaType.UnknownTape,
 
-            // Nonstop-UX System V Release 4 B32 (Operating System).cptp.lz
+            // Nonstop-UX System V Release 4 B32 (Operating System).aif
             MediaType.UnknownTape,
 
-            // Nonstop-UX System V Release 4 B32 (Optional Packages).cptp.lz
+            // Nonstop-UX System V Release 4 B32 (Optional Packages).aif
             MediaType.UnknownTape,
 
-            // Nonstop-UX System V Release 4 B32 (OSF-Motif 1.2.4).cptp.lz
+            // Nonstop-UX System V Release 4 B32 (OSF-Motif 1.2.4).aif
             MediaType.UnknownTape,
 
-            // Nonstop-UX System V Release 4 B32 (Reliable Ethernet).cptp.lz
+            // Nonstop-UX System V Release 4 B32 (Reliable Ethernet).aif
             MediaType.UnknownTape,
 
-            // Nonstop-UX System V Release 4 B32 (Required Packages).cptp.lz
+            // Nonstop-UX System V Release 4 B32 (Required Packages).aif
             MediaType.UnknownTape,
 
-            // OpenWindows.3.0.exabyte.cptp.lz
+            // OpenWindows.3.0.exabyte.aif
             MediaType.UnknownTape,
 
-            // OpenWindows.3.0.Q150.cptp.lz
+            // OpenWindows.3.0.Q150.aif
             MediaType.UnknownTape,
 
-            // OS.MP.4.1C.exabyte.cptp.lz
+            // OS.MP.4.1C.exabyte.aif
             MediaType.UnknownTape,
 
-            // X.3.0.exabyte.cptp.lz
+            // X.3.0.exabyte.aif
             MediaType.UnknownTape,
 
-            // X.3.Q150.cptp.lz
+            // X.3.Q150.aif
             MediaType.UnknownTape
         };
 
         public override string[] _md5S => new[]
         {
-            // Nonstop-UX System V Release 4 B32 (Boot Tape).cptp.lz
+            // Nonstop-UX System V Release 4 B32 (Boot Tape).aif
             "a6334d975523b3422fea522b0cc118a9",
 
-            // Nonstop-UX System V Release 4 B32 (Integrity SX25 VME V5.0+).cptp.lz
+            // Nonstop-UX System V Release 4 B32 (Integrity SX25 VME V5.0+).aif
             "17ef78d9e5c53b976f530d4ca44223fd",
 
-            // Nonstop-UX System V Release 4 B32 (Online Software Upgrade).cptp.lz
-            "76c0ae10f4ec70ef8681b212f02a71c8",
+            // Nonstop-UX System V Release 4 B32 (Online Software Upgrade).aif
+            "6b6e80c4b3a48b2bc46571389eeaf78b",
 
-            // Nonstop-UX System V Release 4 B32 (Operating System).cptp.lz
-            "e331c9d0ae7c25c81c6580bc9965e2d0",
+            // Nonstop-UX System V Release 4 B32 (Operating System).aif
+            "91b6115a718b9854b69478fee8e8644e",
 
-            // Nonstop-UX System V Release 4 B32 (Optional Packages).cptp.lz
+            // Nonstop-UX System V Release 4 B32 (Optional Packages).aif
             "018c37c40f8df91ab9b098d643c9ae6c",
 
-            // Nonstop-UX System V Release 4 B32 (OSF-Motif 1.2.4).cptp.lz
-            "eb3ce36b2c3afeeec59e5b8ed802a393",
+            // Nonstop-UX System V Release 4 B32 (OSF-Motif 1.2.4).aif
+            "181c9b00c236d14c7dfa4fa009c4559d",
 
-            // Nonstop-UX System V Release 4 B32 (Reliable Ethernet).cptp.lz
-            "b057656698a224187afb2bdbb8caf7f3",
+            // Nonstop-UX System V Release 4 B32 (Reliable Ethernet).aif
+            "7dc46bb181077d215a5c93cc990da365",
 
-            // Nonstop-UX System V Release 4 B32 (Required Packages).cptp.lz
-            "8e48e388e7094f3170065718ab618b53",
+            // Nonstop-UX System V Release 4 B32 (Required Packages).aif
+            "80e1d90052bf8c2df641398d0a30e630",
 
-            // OpenWindows.3.0.exabyte.cptp.lz
+            // OpenWindows.3.0.exabyte.aif
             "8861f8c06a2e93ca5a81d729ad3e1de1",
 
-            // OpenWindows.3.0.Q150.cptp.lz
-            "bfc402b23af0cf1ad22d9fb2ea29b58f",
+            // OpenWindows.3.0.Q150.aif
+            "2b944c7a353a63a48fdcf5517306fba6",
 
-            // OS.MP.4.1C.exabyte.cptp.lz
-            "e4a3e2fe26c72ca025ac0c017ec73ee9",
+            // OS.MP.4.1C.exabyte.aif
+            "a923a4fffb3456386bafd00c1d939224",
 
-            // X.3.0.exabyte.cptp.lz
+            // X.3.0.exabyte.aif
             "e625c03d7493dc22fe49f91f731446e8",
 
-            // X.3.Q150.cptp.lz
+            // X.3.Q150.aif
             "198464b1daf8e674debf8eda0fcbf016"
+        };
+
+        readonly bool[] _isTape =
+        {
+            // Nonstop-UX System V Release 4 B32 (Boot Tape).aif
+            true,
+
+            // Nonstop-UX System V Release 4 B32 (Integrity SX25 VME V5.0+).aif
+            true,
+
+            // Nonstop-UX System V Release 4 B32 (Online Software Upgrade).aif
+            true,
+
+            // Nonstop-UX System V Release 4 B32 (Operating System).aif
+            true,
+
+            // Nonstop-UX System V Release 4 B32 (Optional Packages).aif
+            true,
+
+            // Nonstop-UX System V Release 4 B32 (OSF-Motif 1.2.4).aif
+            true,
+
+            // Nonstop-UX System V Release 4 B32 (Reliable Ethernet).aif
+            true,
+
+            // Nonstop-UX System V Release 4 B32 (Required Packages).aif
+            true,
+
+            // OpenWindows.3.0.exabyte.aif
+            true,
+
+            // OpenWindows.3.0.Q150.aif
+            true,
+
+            // OS.MP.4.1C.exabyte.aif
+            true,
+
+            // X.3.0.exabyte.aif
+            true,
+
+            // X.3.Q150.aif
+            true
         };
 
         public override TapeFile[][] _tapeFiles => new[]
         {
-            // Nonstop-UX System V Release 4 B32 (Boot Tape).cptp.lz
+            // Nonstop-UX System V Release 4 B32 (Boot Tape).aif
             new[]
             {
                 new TapeFile
@@ -232,7 +274,7 @@ namespace Aaru.Tests.Images
                 }
             },
 
-            // Nonstop-UX System V Release 4 B32 (Integrity SX25 VME V5.0+).cptp.lz
+            // Nonstop-UX System V Release 4 B32 (Integrity SX25 VME V5.0+).aif
             new[]
             {
                 new TapeFile
@@ -244,7 +286,7 @@ namespace Aaru.Tests.Images
                 }
             },
 
-            // Nonstop-UX System V Release 4 B32 (Online Software Upgrade).cptp.lz
+            // Nonstop-UX System V Release 4 B32 (Online Software Upgrade).aif
             new[]
             {
                 new TapeFile
@@ -256,7 +298,7 @@ namespace Aaru.Tests.Images
                 }
             },
 
-            // Nonstop-UX System V Release 4 B32 (Operating System).cptp.lz
+            // Nonstop-UX System V Release 4 B32 (Operating System).aif
             new[]
             {
                 new TapeFile
@@ -268,7 +310,7 @@ namespace Aaru.Tests.Images
                 }
             },
 
-            // Nonstop-UX System V Release 4 B32 (Optional Packages).cptp.lz
+            // Nonstop-UX System V Release 4 B32 (Optional Packages).aif
             new[]
             {
                 new TapeFile
@@ -280,7 +322,7 @@ namespace Aaru.Tests.Images
                 }
             },
 
-            // Nonstop-UX System V Release 4 B32 (OSF-Motif 1.2.4).cptp.lz
+            // Nonstop-UX System V Release 4 B32 (OSF-Motif 1.2.4).aif
             new[]
             {
                 new TapeFile
@@ -292,7 +334,7 @@ namespace Aaru.Tests.Images
                 }
             },
 
-            // Nonstop-UX System V Release 4 B32 (Reliable Ethernet).cptp.lz
+            // Nonstop-UX System V Release 4 B32 (Reliable Ethernet).aif
             new[]
             {
                 new TapeFile
@@ -304,7 +346,7 @@ namespace Aaru.Tests.Images
                 }
             },
 
-            // Nonstop-UX System V Release 4 B32 (Required Packages).cptp.lz
+            // Nonstop-UX System V Release 4 B32 (Required Packages).aif
             new[]
             {
                 new TapeFile
@@ -316,7 +358,7 @@ namespace Aaru.Tests.Images
                 }
             },
 
-            // OpenWindows.3.0.exabyte.cptp.lz
+            // OpenWindows.3.0.exabyte.aif
             new[]
             {
                 new TapeFile
@@ -356,7 +398,7 @@ namespace Aaru.Tests.Images
                 }
             },
 
-            // OpenWindows.3.0.Q150.cptp.lz
+            // OpenWindows.3.0.Q150.aif
             new[]
             {
                 new TapeFile
@@ -396,7 +438,7 @@ namespace Aaru.Tests.Images
                 }
             },
 
-            // OS.MP.4.1C.exabyte.cptp.lz
+            // OS.MP.4.1C.exabyte.aif
             new[]
             {
                 new TapeFile
@@ -632,7 +674,7 @@ namespace Aaru.Tests.Images
                 }
             },
 
-            // X.3.0.exabyte.cptp.lz
+            // X.3.0.exabyte.aif
             new[]
             {
                 new TapeFile
@@ -679,7 +721,7 @@ namespace Aaru.Tests.Images
                 }
             },
 
-            // X.3.Q150.cptp.lz
+            // X.3.Q150.aif
             new[]
             {
                 new TapeFile
@@ -729,7 +771,7 @@ namespace Aaru.Tests.Images
 
         public override TapePartition[][] _tapePartitions => new[]
         {
-            // Nonstop-UX System V Release 4 B32 (Boot Tape).cptp.lz
+            // Nonstop-UX System V Release 4 B32 (Boot Tape).aif
             new[]
             {
                 new TapePartition
@@ -740,7 +782,7 @@ namespace Aaru.Tests.Images
                 }
             },
 
-            // Nonstop-UX System V Release 4 B32 (Integrity SX25 VME V5.0+).cptp.lz
+            // Nonstop-UX System V Release 4 B32 (Integrity SX25 VME V5.0+).aif
             new[]
             {
                 new TapePartition
@@ -751,7 +793,7 @@ namespace Aaru.Tests.Images
                 }
             },
 
-            // Nonstop-UX System V Release 4 B32 (Online Software Upgrade).cptp.lz
+            // Nonstop-UX System V Release 4 B32 (Online Software Upgrade).aif
             new[]
             {
                 new TapePartition
@@ -762,7 +804,7 @@ namespace Aaru.Tests.Images
                 }
             },
 
-            // Nonstop-UX System V Release 4 B32 (Operating System).cptp.lz
+            // Nonstop-UX System V Release 4 B32 (Operating System).aif
             new[]
             {
                 new TapePartition
@@ -773,7 +815,7 @@ namespace Aaru.Tests.Images
                 }
             },
 
-            // Nonstop-UX System V Release 4 B32 (Optional Packages).cptp.lz
+            // Nonstop-UX System V Release 4 B32 (Optional Packages).aif
             new[]
             {
                 new TapePartition
@@ -784,7 +826,7 @@ namespace Aaru.Tests.Images
                 }
             },
 
-            // Nonstop-UX System V Release 4 B32 (OSF-Motif 1.2.4).cptp.lz
+            // Nonstop-UX System V Release 4 B32 (OSF-Motif 1.2.4).aif
             new[]
             {
                 new TapePartition
@@ -795,7 +837,7 @@ namespace Aaru.Tests.Images
                 }
             },
 
-            // Nonstop-UX System V Release 4 B32 (Reliable Ethernet).cptp.lz
+            // Nonstop-UX System V Release 4 B32 (Reliable Ethernet).aif
             new[]
             {
                 new TapePartition
@@ -806,7 +848,7 @@ namespace Aaru.Tests.Images
                 }
             },
 
-            // Nonstop-UX System V Release 4 B32 (Required Packages).cptp.lz
+            // Nonstop-UX System V Release 4 B32 (Required Packages).aif
             new[]
             {
                 new TapePartition
@@ -817,7 +859,7 @@ namespace Aaru.Tests.Images
                 }
             },
 
-            // OpenWindows.3.0.exabyte.cptp.lz
+            // OpenWindows.3.0.exabyte.aif
             new[]
             {
                 new TapePartition
@@ -828,7 +870,7 @@ namespace Aaru.Tests.Images
                 }
             },
 
-            // OpenWindows.3.0.Q150.cptp.lz
+            // OpenWindows.3.0.Q150.aif
             new[]
             {
                 new TapePartition
@@ -839,7 +881,7 @@ namespace Aaru.Tests.Images
                 }
             },
 
-            // OS.MP.4.1C.exabyte.cptp.lz
+            // OS.MP.4.1C.exabyte.aif
             new[]
             {
                 new TapePartition
@@ -850,7 +892,7 @@ namespace Aaru.Tests.Images
                 }
             },
 
-            // X.3.0.exabyte.cptp.lz
+            // X.3.0.exabyte.aif
             new[]
             {
                 new TapePartition
@@ -861,7 +903,7 @@ namespace Aaru.Tests.Images
                 }
             },
 
-            // X.3.Q150.cptp.lz
+            // X.3.Q150.aif
             new[]
             {
                 new TapePartition
@@ -873,7 +915,8 @@ namespace Aaru.Tests.Images
             }
         };
 
-        public override string _dataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "copytape");
-        public override IMediaImage _plugin => new DiscImages.CopyTape();
+        public override string _dataFolder =>
+            Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "AaruFormat", "V1");
+        public override IMediaImage _plugin => new DiscImages.AaruFormat();
     }
 }

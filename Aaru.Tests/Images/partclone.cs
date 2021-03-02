@@ -26,26 +26,23 @@
 // Copyright © 2011-2021 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using System.IO;
-using Aaru.Checksums;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Interfaces;
 using Aaru.DiscImages;
-using Aaru.Filters;
-using FluentAssertions.Execution;
 using NUnit.Framework;
 
 namespace Aaru.Tests.Images
 {
     [TestFixture]
-    public class Partclone
+    public class Partclone : BlockMediaImageTest
     {
-        readonly string[] _testFiles =
+        public override string[] _testFiles => new[]
         {
             "ext2.partclone.lz", "fat16.partclone.lz", "fat32.partclone.lz", "hfsplus.partclone.lz", "ntfs.partclone.lz"
         };
 
-        readonly ulong[] _sectors =
+        public override ulong[] _sectors => new ulong[]
         {
             // ext2.partclone.lz
             127882,
@@ -63,7 +60,7 @@ namespace Aaru.Tests.Images
             1023056
         };
 
-        readonly uint[] _sectorSize =
+        public override uint[] _sectorSize => new uint[]
         {
             // ext2.partclone.lz
             4096,
@@ -81,7 +78,7 @@ namespace Aaru.Tests.Images
             512
         };
 
-        readonly MediaType[] _mediaTypes =
+        public override MediaType[] _mediaTypes => new[]
         {
             // ext2.partclone.lz
             MediaType.GENERIC_HDD,
@@ -99,7 +96,7 @@ namespace Aaru.Tests.Images
             MediaType.GENERIC_HDD
         };
 
-        readonly string[] _md5S =
+        public override string[] _md5S => new[]
         {
             // ext2.partclone.lz
             "ff239c91166b6b13fa826dd258b40666",
@@ -117,88 +114,7 @@ namespace Aaru.Tests.Images
             "61cc3faa286364e7ad5bab18120c1151"
         };
 
-        readonly string _dataFolder = Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "partclone");
-
-        [Test]
-        public void Info()
-        {
-            Environment.CurrentDirectory = _dataFolder;
-
-            Assert.Multiple(() =>
-            {
-                for(int i = 0; i < _testFiles.Length; i++)
-                {
-                    var filter = new LZip();
-                    filter.Open(_testFiles[i]);
-
-                    var  image  = new PartClone();
-                    bool opened = image.Open(filter);
-
-                    Assert.AreEqual(true, opened, $"Open: {_testFiles[i]}");
-
-                    if(!opened)
-                        continue;
-
-                    using(new AssertionScope())
-                    {
-                        Assert.Multiple(() =>
-                        {
-                            Assert.AreEqual(_sectors[i], image.Info.Sectors, $"Sectors: {_testFiles[i]}");
-                            Assert.AreEqual(_sectorSize[i], image.Info.SectorSize, $"Sector size: {_testFiles[i]}");
-                            Assert.AreEqual(_mediaTypes[i], image.Info.MediaType, $"Media type: {_testFiles[i]}");
-                        });
-                    }
-                }
-            });
-        }
-
-        // How many sectors to read at once
-        const uint SECTORS_TO_READ = 256;
-
-        [Test]
-        public void Hashes()
-        {
-            Environment.CurrentDirectory = _dataFolder;
-
-            Assert.Multiple(() =>
-            {
-                for(int i = 0; i < _testFiles.Length; i++)
-                {
-                    var filter = new LZip();
-                    filter.Open(_testFiles[i]);
-
-                    var   image       = new PartClone();
-                    bool  opened      = image.Open(filter);
-                    ulong doneSectors = 0;
-
-                    Assert.AreEqual(true, opened, $"Open: {_testFiles[i]}");
-
-                    if(!opened)
-                        continue;
-
-                    var ctx = new Md5Context();
-
-                    while(doneSectors < image.Info.Sectors)
-                    {
-                        byte[] sector;
-
-                        if(image.Info.Sectors - doneSectors >= SECTORS_TO_READ)
-                        {
-                            sector      =  image.ReadSectors(doneSectors, SECTORS_TO_READ);
-                            doneSectors += SECTORS_TO_READ;
-                        }
-                        else
-                        {
-                            sector      =  image.ReadSectors(doneSectors, (uint)(image.Info.Sectors - doneSectors));
-                            doneSectors += image.Info.Sectors - doneSectors;
-                        }
-
-                        ctx.Update(sector);
-                    }
-
-                    Assert.AreEqual(_md5S[i], ctx.End(), $"Hash: {_testFiles[i]}");
-                }
-            });
-        }
+        public override string _dataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "partclone");
+        public override IMediaImage _plugin => new PartClone();
     }
 }

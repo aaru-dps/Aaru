@@ -26,32 +26,25 @@
 // Copyright © 2011-2021 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using System.IO;
-using System.Linq;
-using Aaru.Checksums;
 using Aaru.CommonTypes;
-using Aaru.CommonTypes.Enums;
-using Aaru.CommonTypes.Structs;
+using Aaru.CommonTypes.Interfaces;
 using Aaru.DiscImages;
-using Aaru.Filters;
-using FluentAssertions;
-using FluentAssertions.Execution;
 using NUnit.Framework;
 
 namespace Aaru.Tests.Images.MagicISO
 {
     [TestFixture]
-    public class Cuesheet
+    public class Cuesheet : OpticalMediaImageTest
     {
-        readonly string[] _testFiles =
+        public override string[] _testFiles => new[]
         {
             "cdiready_the_apprentice.cue", "report_audiocd.cue", "report_cdrom.cue", "report_cdrw.cue",
             "report_dvdram_v1.cue", "report_dvdram_v2.cue", "report_dvd+r-dl.cue", "report_dvd-rom.cue",
             "report_dvd+rw.cue", "report_enhancedcd.cue", "test_multi_karaoke_sampler.cue"
         };
 
-        readonly ulong[] _sectors =
+        public override ulong[] _sectors => new ulong[]
         {
             // cdiready_the_apprentice.cue
             210299,
@@ -86,8 +79,9 @@ namespace Aaru.Tests.Images.MagicISO
             // test_multi_karaoke_sampler.cue
             329307
         };
+        public override uint[] _sectorSize => null;
 
-        readonly MediaType[] _mediaTypes =
+        public override MediaType[] _mediaTypes => new[]
         {
             // cdiready_the_apprentice.cue
             MediaType.CDDA,
@@ -123,7 +117,7 @@ namespace Aaru.Tests.Images.MagicISO
             MediaType.CDROMXA
         };
 
-        readonly string[] _md5S =
+        public override string[] _md5S => new[]
         {
             // cdiready_the_apprentice.cue
             "ab350df419f96d967f51d0161ebeba63",
@@ -159,7 +153,7 @@ namespace Aaru.Tests.Images.MagicISO
             "cc6354d06b009b0446012842c7f94be7"
         };
 
-        readonly string[] _longMd5S =
+        public override string[] _longMd5S => new[]
         {
             // cdiready_the_apprentice.cue
             "ab350df419f96d967f51d0161ebeba63",
@@ -195,7 +189,7 @@ namespace Aaru.Tests.Images.MagicISO
             "bb3ebf139ebb76fff1b229a379d289e4"
         };
 
-        readonly string[] _subchannelMd5S =
+        public override string[] _subchannelMd5S => new string[]
         {
             // cdiready_the_apprentice.cue
             null,
@@ -231,7 +225,7 @@ namespace Aaru.Tests.Images.MagicISO
             null
         };
 
-        readonly int[] _tracks =
+        public override int[] _tracks => new[]
         {
             // cdiready_the_apprentice.cue
             22,
@@ -267,7 +261,7 @@ namespace Aaru.Tests.Images.MagicISO
             16
         };
 
-        readonly int[][] _trackSessions =
+        public override int[][] _trackSessions => new[]
         {
             // cdiready_the_apprentice.cue
             new[]
@@ -336,7 +330,7 @@ namespace Aaru.Tests.Images.MagicISO
             }
         };
 
-        readonly ulong[][] _trackStarts =
+        public override ulong[][] _trackStarts => new[]
         {
             // cdiready_the_apprentice.cue
             new[]
@@ -410,7 +404,7 @@ namespace Aaru.Tests.Images.MagicISO
             }
         };
 
-        readonly ulong[][] _trackEnds =
+        public override ulong[][] _trackEnds => new[]
         {
             // cdiready_the_apprentice.cue
             new[]
@@ -484,7 +478,7 @@ namespace Aaru.Tests.Images.MagicISO
             }
         };
 
-        readonly ulong[][] _trackPregaps =
+        public override ulong[][] _trackPregaps => new[]
         {
             // cdiready_the_apprentice.cue
             new[]
@@ -554,7 +548,7 @@ namespace Aaru.Tests.Images.MagicISO
             }
         };
 
-        readonly byte[][] _trackFlags =
+        public override byte[][] _trackFlags => new[]
         {
             // cdiready_the_apprentice.cue
             new byte[]
@@ -623,167 +617,8 @@ namespace Aaru.Tests.Images.MagicISO
             }
         };
 
-        readonly string _dataFolder =
+        public override string _dataFolder =>
             Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "MagicISO", "Cuesheet");
-
-        [Test]
-        public void Info()
-        {
-            Environment.CurrentDirectory = _dataFolder;
-
-            for(int i = 0; i < _testFiles.Length; i++)
-            {
-                var filter = new ZZZNoFilter();
-                filter.Open(_testFiles[i]);
-
-                var  image  = new CdrWin();
-                bool opened = image.Open(filter);
-
-                Assert.AreEqual(true, opened, $"Open: {_testFiles[i]}");
-
-                using(new AssertionScope())
-                {
-                    Assert.Multiple(() =>
-                    {
-                        Assert.AreEqual(_sectors[i], image.Info.Sectors, $"Sectors: {_testFiles[i]}");
-                        Assert.AreEqual(_mediaTypes[i], image.Info.MediaType, $"Media type: {_testFiles[i]}");
-
-                        Assert.AreEqual(_tracks[i], image.Tracks.Count, $"Tracks: {_testFiles[i]}");
-
-                        image.Tracks.Select(t => t.TrackSession).Should().
-                              BeEquivalentTo(_trackSessions[i], $"Track session: {_testFiles[i]}");
-
-                        image.Tracks.Select(t => t.TrackStartSector).Should().
-                              BeEquivalentTo(_trackStarts[i], $"Track start: {_testFiles[i]}");
-
-                        image.Tracks.Select(t => t.TrackEndSector).Should().
-                              BeEquivalentTo(_trackEnds[i], $"Track end: {_testFiles[i]}");
-
-                        image.Tracks.Select(t => t.TrackPregap).Should().
-                              BeEquivalentTo(_trackPregaps[i], $"Track pregap: {_testFiles[i]}");
-
-                        int trackNo = 0;
-
-                        byte[] flags = new byte[image.Tracks.Count];
-
-                        foreach(Track currentTrack in image.Tracks)
-                        {
-                            if(image.Info.ReadableSectorTags.Contains(SectorTagType.CdTrackFlags))
-                                flags[trackNo] = image.ReadSectorTag(currentTrack.TrackSequence,
-                                                                     SectorTagType.CdTrackFlags)[0];
-
-                            trackNo++;
-                        }
-
-                        flags.Should().BeEquivalentTo(_trackFlags[i], $"Track flags: {_testFiles[i]}");
-                    });
-                }
-            }
-        }
-
-        // How many sectors to read at once
-        const uint SECTORS_TO_READ = 256;
-
-        [Test]
-        public void Hashes()
-        {
-            Environment.CurrentDirectory = _dataFolder;
-
-            Assert.Multiple(() =>
-            {
-                for(int i = 0; i < _testFiles.Length; i++)
-                {
-                    var filter = new ZZZNoFilter();
-                    filter.Open(_testFiles[i]);
-
-                    var  image  = new CdrWin();
-                    bool opened = image.Open(filter);
-
-                    Assert.AreEqual(true, opened, $"Open: {_testFiles[i]}");
-                    Md5Context ctx;
-
-                    foreach(bool @long in new[]
-                    {
-                        false, true
-                    })
-                    {
-                        ctx = new Md5Context();
-
-                        foreach(Track currentTrack in image.Tracks)
-                        {
-                            ulong sectors     = currentTrack.TrackEndSector - currentTrack.TrackStartSector + 1;
-                            ulong doneSectors = 0;
-
-                            while(doneSectors < sectors)
-                            {
-                                byte[] sector;
-
-                                if(sectors - doneSectors >= SECTORS_TO_READ)
-                                {
-                                    sector =
-                                        @long ? image.ReadSectorsLong(doneSectors, SECTORS_TO_READ,
-                                                                      currentTrack.TrackSequence)
-                                            : image.ReadSectors(doneSectors, SECTORS_TO_READ,
-                                                                currentTrack.TrackSequence);
-
-                                    doneSectors += SECTORS_TO_READ;
-                                }
-                                else
-                                {
-                                    sector =
-                                        @long ? image.ReadSectorsLong(doneSectors, (uint)(sectors - doneSectors),
-                                                                      currentTrack.TrackSequence)
-                                            : image.ReadSectors(doneSectors, (uint)(sectors - doneSectors),
-                                                                currentTrack.TrackSequence);
-
-                                    doneSectors += sectors - doneSectors;
-                                }
-
-                                ctx.Update(sector);
-                            }
-                        }
-
-                        Assert.AreEqual(@long ? _longMd5S[i] : _md5S[i], ctx.End(),
-                                        $"{(@long ? "Long hash" : "Hash")}: {_testFiles[i]}");
-                    }
-
-                    if(!image.Info.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel))
-                        continue;
-
-                    ctx = new Md5Context();
-
-                    foreach(Track currentTrack in image.Tracks)
-                    {
-                        ulong sectors     = currentTrack.TrackEndSector - currentTrack.TrackStartSector + 1;
-                        ulong doneSectors = 0;
-
-                        while(doneSectors < sectors)
-                        {
-                            byte[] sector;
-
-                            if(sectors - doneSectors >= SECTORS_TO_READ)
-                            {
-                                sector = image.ReadSectorsTag(doneSectors, SECTORS_TO_READ, currentTrack.TrackSequence,
-                                                              SectorTagType.CdSectorSubchannel);
-
-                                doneSectors += SECTORS_TO_READ;
-                            }
-                            else
-                            {
-                                sector = image.ReadSectorsTag(doneSectors, (uint)(sectors - doneSectors),
-                                                              currentTrack.TrackSequence,
-                                                              SectorTagType.CdSectorSubchannel);
-
-                                doneSectors += sectors - doneSectors;
-                            }
-
-                            ctx.Update(sector);
-                        }
-                    }
-
-                    Assert.AreEqual(_subchannelMd5S[i], ctx.End(), $"Subchannel hash: {_testFiles[i]}");
-                }
-            });
-        }
+        public override IMediaImage _plugin => new CdrWin();
     }
 }

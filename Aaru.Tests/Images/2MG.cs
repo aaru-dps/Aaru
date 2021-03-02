@@ -26,20 +26,17 @@
 // Copyright © 2011-2021 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using System.IO;
-using Aaru.Checksums;
 using Aaru.CommonTypes;
-using Aaru.Filters;
-using FluentAssertions.Execution;
+using Aaru.CommonTypes.Interfaces;
 using NUnit.Framework;
 
 namespace Aaru.Tests.Images
 {
     [TestFixture]
-    public class Apple2Mg
+    public class Apple2Mg : BlockMediaImageTest
     {
-        readonly string[] _testFiles =
+        public override string[] _testFiles => new[]
         {
             "blank140.2mg.lz", "dos32.2mg.lz", "dos32_alt.2mg.lz", "dos33_dic.2mg.lz", "dos33-do.2mg.lz",
             "dos33-nib.2mg.lz", "dos33_nib.2mg.lz", "dos33-po.2mg.lz", "dos33_po.2mg.lz", "hfs1440.2mg.lz",
@@ -50,19 +47,19 @@ namespace Aaru.Tests.Images
             "prodos_do.2mg.lz", "prodos_nib.2mg.lz", "prodos_po.2mg.lz", "prodos.2mg.lz"
         };
 
-        readonly ulong[] _sectors =
+        public override ulong[] _sectors => new ulong[]
         {
             560, 455, 455, 560, 560, 560, 560, 560, 560, 2880, 1600, 1600, 1600, 1600, 1600, 1600, 1600, 560, 560, 560,
             560, 2880, 2880, 10240, 10240, 1600, 1600, 1600, 560, 560, 560, 560, 560
         };
 
-        readonly uint[] _sectorSize =
+        public override uint[] _sectorSize => new uint[]
         {
             256, 256, 256, 256, 256, 256, 256, 256, 256, 512, 512, 512, 512, 512, 512, 512, 512, 256, 256, 256, 256,
             512, 512, 512, 512, 512, 512, 512, 256, 256, 256, 256, 256
         };
 
-        readonly MediaType[] _mediaTypes =
+        public override MediaType[] _mediaTypes => new[]
         {
             MediaType.Apple33SS, MediaType.Apple32SS, MediaType.Apple32SS, MediaType.Apple33SS, MediaType.Apple33SS,
             MediaType.Apple33SS, MediaType.Apple33SS, MediaType.Apple33SS, MediaType.Apple33SS, MediaType.DOS_35_HD,
@@ -73,7 +70,7 @@ namespace Aaru.Tests.Images
             MediaType.Apple33SS, MediaType.Apple33SS, MediaType.Apple33SS, MediaType.Apple33SS, MediaType.Apple33SS
         };
 
-        readonly string[] _md5S =
+        public override string[] _md5S => new[]
         {
             "7db5d585270ab858043d50e60068d45f", "906c1bdbf76bf089ea47aae98151df5d", "76f8fe4c5bc1976f99641ad7cdf53109",
             "0ffcbd4180306192726926b43755db2f", "91d020725d081500caa1fd8aad959397", "91d020725d081500caa1fd8aad959397",
@@ -88,81 +85,7 @@ namespace Aaru.Tests.Images
             "11ef56c80c94347d2e3f921d5c36c8de", "11ef56c80c94347d2e3f921d5c36c8de", "6f692a8fadfaa243d9f2d8d41f0e4cad"
         };
 
-        readonly string _dataFolder = Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "2mg");
-
-        [Test]
-        public void Info()
-        {
-            Environment.CurrentDirectory = _dataFolder;
-
-            Assert.Multiple(() =>
-            {
-                for(int i = 0; i < _testFiles.Length; i++)
-                {
-                    var filter = new LZip();
-                    filter.Open(_testFiles[i]);
-
-                    var  image  = new DiscImages.Apple2Mg();
-                    bool opened = image.Open(filter);
-
-                    Assert.AreEqual(true, opened, $"Open: {_testFiles[i]}");
-
-                    using(new AssertionScope())
-                    {
-                        Assert.Multiple(() =>
-                        {
-                            Assert.AreEqual(_sectors[i], image.Info.Sectors, _testFiles[i]);
-                            Assert.AreEqual(_sectorSize[i], image.Info.SectorSize, _testFiles[i]);
-                            Assert.AreEqual(_mediaTypes[i], image.Info.MediaType, _testFiles[i]);
-                        });
-                    }
-                }
-            });
-        }
-
-        // How many sectors to read at once
-        const uint SECTORS_TO_READ = 256;
-
-        [Test]
-        public void Hashes()
-        {
-            Environment.CurrentDirectory = _dataFolder;
-
-            Assert.Multiple(() =>
-            {
-                for(int i = 0; i < _testFiles.Length; i++)
-                {
-                    var filter = new LZip();
-                    filter.Open(_testFiles[i]);
-
-                    var   image       = new DiscImages.Apple2Mg();
-                    bool  opened      = image.Open(filter);
-                    ulong doneSectors = 0;
-
-                    Assert.AreEqual(true, opened, $"Open: {_testFiles[i]}");
-                    var ctx = new Md5Context();
-
-                    while(doneSectors < image.Info.Sectors)
-                    {
-                        byte[] sector;
-
-                        if(image.Info.Sectors - doneSectors >= SECTORS_TO_READ)
-                        {
-                            sector      =  image.ReadSectors(doneSectors, SECTORS_TO_READ);
-                            doneSectors += SECTORS_TO_READ;
-                        }
-                        else
-                        {
-                            sector      =  image.ReadSectors(doneSectors, (uint)(image.Info.Sectors - doneSectors));
-                            doneSectors += image.Info.Sectors - doneSectors;
-                        }
-
-                        ctx.Update(sector);
-                    }
-
-                    Assert.AreEqual(_md5S[i], ctx.End(), _testFiles[i]);
-                }
-            });
-        }
+        public override string      _dataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "2mg");
+        public override IMediaImage _plugin     => new DiscImages.Apple2Mg();
     }
 }

@@ -26,21 +26,18 @@
 // Copyright © 2011-2021 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using System.IO;
-using Aaru.Checksums;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Interfaces;
 using Aaru.DiscImages;
-using Aaru.Filters;
-using FluentAssertions.Execution;
 using NUnit.Framework;
 
 namespace Aaru.Tests.Images
 {
     [TestFixture]
-    public class RayDIM
+    public class RayDIM : BlockMediaImageTest
     {
-        readonly string[] _testFiles =
+        public override string[] _testFiles => new[]
         {
             "5f1dd8.dim.lz", "5f1dd8_pass.dim.lz", "5f1dd.dim.lz", "5f1dd_pass.dim.lz", "5f2dd8.dim.lz",
             "5f2dd8_pass.dim.lz", "5f2dd.dim.lz", "5f2dd_pass.dim.lz", "5f2hd.dim.lz", "5f2hd_pass.dim.lz",
@@ -90,7 +87,7 @@ namespace Aaru.Tests.Images
             "mf2hd_qcopy_2988s.dim.lz", "mf2hd_qcopy_3200s.dim.lz", "mf2hd_qcopy_3320s.dim.lz",
             "mf2hd_qcopy_3360s.dim.lz", "mf2hd_qcopy_3486s.dim.lz", "mf2hd_xdf_alt.dim.lz", "mf2hd_xdf_alt_pass.dim.lz"
         };
-        readonly ulong[] _sectors =
+        public override ulong[] _sectors => new ulong[]
         {
             // 5f1dd8.dim.lz
             336,
@@ -735,7 +732,7 @@ namespace Aaru.Tests.Images
             3772
         };
 
-        readonly uint[] _sectorSize =
+        public override uint[] _sectorSize => new uint[]
         {
             // 5f1dd8.dim.lz
             512,
@@ -1380,7 +1377,7 @@ namespace Aaru.Tests.Images
             512
         };
 
-        readonly MediaType[] _mediaTypes =
+        public override MediaType[] _mediaTypes => new[]
         {
             // 5f1dd8.dim.lz
             MediaType.Unknown,
@@ -2024,7 +2021,7 @@ namespace Aaru.Tests.Images
             // mf2hd_xdf_alt_pass.dim.lz
             MediaType.Unknown
         };
-        readonly string[] _md5S =
+        public override string[] _md5S => new[]
         {
             // 5f1dd8.dim.lz
             "c109e802e65365245dedd1737ec65c92",
@@ -2669,82 +2666,8 @@ namespace Aaru.Tests.Images
             "99f83e846c5106dd4992646726e91636"
         };
 
-        readonly string _dataFolder =
+        public override string _dataFolder =>
             Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "Disk IMage Archiver");
-
-        [Test]
-        public void Info()
-        {
-            Environment.CurrentDirectory = _dataFolder;
-
-            Assert.Multiple(() =>
-            {
-                for(int i = 0; i < _testFiles.Length; i++)
-                {
-                    var filter = new LZip();
-                    filter.Open(_testFiles[i]);
-
-                    var  image  = new RayDim();
-                    bool opened = image.Open(filter);
-
-                    Assert.AreEqual(true, opened, $"Open: {_testFiles[i]}");
-
-                    using(new AssertionScope())
-                    {
-                        Assert.Multiple(() =>
-                        {
-                            Assert.AreEqual(_sectors[i], image.Info.Sectors, $"Sectors: {_testFiles[i]}");
-                            Assert.AreEqual(_sectorSize[i], image.Info.SectorSize, $"Sector size: {_testFiles[i]}");
-                            Assert.AreEqual(_mediaTypes[i], image.Info.MediaType, $"Media type: {_testFiles[i]}");
-                        });
-                    }
-                }
-            });
-        }
-
-        // How many sectors to read at once
-        const uint SECTORS_TO_READ = 256;
-
-        [Test]
-        public void Hashes()
-        {
-            Environment.CurrentDirectory = _dataFolder;
-
-            Assert.Multiple(() =>
-            {
-                for(int i = 0; i < _testFiles.Length; i++)
-                {
-                    var filter = new LZip();
-                    filter.Open(_testFiles[i]);
-
-                    var   image       = new RayDim();
-                    bool  opened      = image.Open(filter);
-                    ulong doneSectors = 0;
-
-                    Assert.AreEqual(true, opened, $"Open: {_testFiles[i]}");
-                    var ctx = new Md5Context();
-
-                    while(doneSectors < image.Info.Sectors)
-                    {
-                        byte[] sector;
-
-                        if(image.Info.Sectors - doneSectors >= SECTORS_TO_READ)
-                        {
-                            sector      =  image.ReadSectors(doneSectors, SECTORS_TO_READ);
-                            doneSectors += SECTORS_TO_READ;
-                        }
-                        else
-                        {
-                            sector      =  image.ReadSectors(doneSectors, (uint)(image.Info.Sectors - doneSectors));
-                            doneSectors += image.Info.Sectors - doneSectors;
-                        }
-
-                        ctx.Update(sector);
-                    }
-
-                    Assert.AreEqual(_md5S[i], ctx.End(), $"Hash: {_testFiles[i]}");
-                }
-            });
-        }
+        public override IMediaImage _plugin => new RayDim();
     }
 }

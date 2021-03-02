@@ -26,32 +26,24 @@
 // Copyright © 2011-2021 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Aaru.Checksums;
 using Aaru.CommonTypes;
-using Aaru.CommonTypes.Enums;
-using Aaru.CommonTypes.Structs;
+using Aaru.CommonTypes.Interfaces;
 using Aaru.DiscImages;
-using Aaru.Filters;
-using FluentAssertions;
-using FluentAssertions.Execution;
 using NUnit.Framework;
 
 namespace Aaru.Tests.Images.MAME
 {
     [TestFixture]
-    public class V3
+    public class V3 : OpticalMediaImageTest
     {
-        readonly string[] _testFiles =
+        public override string[] _testFiles => new[]
         {
             "gigarec.chd", "hdd.chd", "pcengine.chd", "pcfx.chd", "report_audiocd.chd", "report_cdr.chd",
             "report_cdrom.chd", "report_cdrw.chd", "test_enhancedcd.chd", "test_multi_karaoke_sample.chd",
             "test_multisession.chd", "test_videocd.chd"
         };
-        readonly ulong[] _sectors =
+        public override ulong[] _sectors => new ulong[]
         {
             // gigarec.chd
             469652,
@@ -89,7 +81,7 @@ namespace Aaru.Tests.Images.MAME
             // test_videocd.chd
             48794
         };
-        readonly uint[] _sectorSize =
+        public override uint[] _sectorSize => new uint[]
         {
             // gigarec.chd
             2048,
@@ -127,7 +119,7 @@ namespace Aaru.Tests.Images.MAME
             // test_videocd.chd
             2336
         };
-        readonly MediaType[] _mediaTypes =
+        public override MediaType[] _mediaTypes => new[]
         {
             // gigarec.chd
             MediaType.CDROM,
@@ -166,7 +158,7 @@ namespace Aaru.Tests.Images.MAME
             MediaType.CDROM
         };
 
-        readonly string[] _md5S =
+        public override string[] _md5S => new[]
         {
             // gigarec.chd
             "UNKNOWN",
@@ -205,7 +197,7 @@ namespace Aaru.Tests.Images.MAME
             "UNKNOWN"
         };
 
-        readonly string[] _longMd5S =
+        public override string[] _longMd5S => new[]
         {
             // gigarec.chd
             "UNKNOWN",
@@ -244,7 +236,7 @@ namespace Aaru.Tests.Images.MAME
             "UNKNOWN"
         };
 
-        readonly string[] _subchannelMd5S =
+        public override string[] _subchannelMd5S => new[]
         {
             // gigarec.chd
             "UNKNOWN",
@@ -283,7 +275,7 @@ namespace Aaru.Tests.Images.MAME
             "UNKNOWN"
         };
 
-        readonly int[] _tracks =
+        public override int[] _tracks => new[]
         {
             // gigarec.chd
             1,
@@ -322,7 +314,7 @@ namespace Aaru.Tests.Images.MAME
             2
         };
 
-        readonly int[][] _trackSessions =
+        public override int[][] _trackSessions => new[]
         {
             // gigarec.chd
             new[]
@@ -394,7 +386,7 @@ namespace Aaru.Tests.Images.MAME
             }
         };
 
-        readonly ulong[][] _trackStarts =
+        public override ulong[][] _trackStarts => new[]
         {
             // gigarec.chd
             new ulong[]
@@ -468,7 +460,7 @@ namespace Aaru.Tests.Images.MAME
             }
         };
 
-        readonly ulong[][] _trackEnds =
+        public override ulong[][] _trackEnds => new[]
         {
             // gigarec.chd
             new ulong[]
@@ -542,7 +534,7 @@ namespace Aaru.Tests.Images.MAME
             }
         };
 
-        readonly ulong[][] _trackPregaps =
+        public override ulong[][] _trackPregaps => new[]
         {
             // gigarec.chd
             new ulong[]
@@ -614,7 +606,7 @@ namespace Aaru.Tests.Images.MAME
             }
         };
 
-        readonly byte[][] _trackFlags =
+        public override byte[][] _trackFlags => new[]
         {
             // gigarec.chd
             new byte[]
@@ -689,205 +681,7 @@ namespace Aaru.Tests.Images.MAME
             }
         };
 
-        readonly string _dataFolder = Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "MAME", "v3");
-
-        [Test]
-        public void Info()
-        {
-            Environment.CurrentDirectory = _dataFolder;
-
-            using(new AssertionScope())
-            {
-                Assert.Multiple(() =>
-                {
-                    for(int i = 0; i < _testFiles.Length; i++)
-                    {
-                        var filter = new ZZZNoFilter();
-                        filter.Open(_testFiles[i]);
-
-                        var  image  = new Chd();
-                        bool opened = image.Open(filter);
-
-                        Assert.AreEqual(true, opened, $"Open: {_testFiles[i]}");
-
-                        using(new AssertionScope())
-                        {
-                            Assert.Multiple(() =>
-                            {
-                                Assert.AreEqual(_sectors[i], image.Info.Sectors, $"Sectors: {_testFiles[i]}");
-                                Assert.AreEqual(_sectorSize[i], image.Info.SectorSize, $"Sector size: {_testFiles[i]}");
-                                Assert.AreEqual(_mediaTypes[i], image.Info.MediaType, $"Media type: {_testFiles[i]}");
-
-                                if(image.Info.XmlMediaType != XmlMediaType.OpticalDisc)
-                                    return;
-
-                                Assert.AreEqual(_tracks[i], image.Tracks.Count, $"Tracks: {_testFiles[i]}");
-
-                                image.Tracks.Select(t => t.TrackSession).Should().
-                                      BeEquivalentTo(_trackSessions[i], $"Track session: {_testFiles[i]}");
-
-                                image.Tracks.Select(t => t.TrackStartSector).Should().
-                                      BeEquivalentTo(_trackStarts[i], $"Track start: {_testFiles[i]}");
-
-                                image.Tracks.Select(t => t.TrackEndSector).Should().
-                                      BeEquivalentTo(_trackEnds[i], $"Track end: {_testFiles[i]}");
-
-                                image.Tracks.Select(t => t.TrackPregap).Should().
-                                      BeEquivalentTo(_trackPregaps[i], $"Track pregap: {_testFiles[i]}");
-
-                                int trackNo = 0;
-
-                                byte[] flags = new byte[image.Tracks.Count];
-
-                                foreach(Track currentTrack in image.Tracks)
-                                {
-                                    if(image.Info.ReadableSectorTags.Contains(SectorTagType.CdTrackFlags))
-                                        flags[trackNo] = image.ReadSectorTag(currentTrack.TrackSequence,
-                                                                             SectorTagType.CdTrackFlags)[0];
-
-                                    trackNo++;
-                                }
-
-                                flags.Should().BeEquivalentTo(_trackFlags[i], $"Track flags: {_testFiles[i]}");
-                            });
-                        }
-                    }
-                });
-            }
-        }
-
-        // How many sectors to read at once
-        const uint sectorsToRead = 256;
-
-        [Test]
-        public void Hashes()
-        {
-            Environment.CurrentDirectory = _dataFolder;
-
-            Assert.Multiple(() =>
-            {
-                Parallel.For(0, _testFiles.Length, (i, state) =>
-                {
-                    var filter = new ZZZNoFilter();
-                    filter.Open(_testFiles[i]);
-
-                    var  image  = new Chd();
-                    bool opened = image.Open(filter);
-
-                    Assert.AreEqual(true, opened, $"Open: {_testFiles[i]}");
-                    Md5Context ctx;
-
-                    if(image.Info.XmlMediaType == XmlMediaType.OpticalDisc)
-                    {
-                        foreach(bool @long in new[]
-                        {
-                            false, true
-                        })
-                        {
-                            ctx = new Md5Context();
-
-                            foreach(Track currentTrack in image.Tracks)
-                            {
-                                ulong sectors     = currentTrack.TrackEndSector - currentTrack.TrackStartSector + 1;
-                                ulong doneSectors = 0;
-
-                                while(doneSectors < sectors)
-                                {
-                                    byte[] sector;
-
-                                    if(sectors - doneSectors >= sectorsToRead)
-                                    {
-                                        sector =
-                                            @long ? image.ReadSectorsLong(doneSectors, sectorsToRead,
-                                                                          currentTrack.TrackSequence)
-                                                : image.ReadSectors(doneSectors, sectorsToRead,
-                                                                    currentTrack.TrackSequence);
-
-                                        doneSectors += sectorsToRead;
-                                    }
-                                    else
-                                    {
-                                        sector =
-                                            @long ? image.ReadSectorsLong(doneSectors, (uint)(sectors - doneSectors),
-                                                                          currentTrack.TrackSequence)
-                                                : image.ReadSectors(doneSectors, (uint)(sectors - doneSectors),
-                                                                    currentTrack.TrackSequence);
-
-                                        doneSectors += sectors - doneSectors;
-                                    }
-
-                                    ctx.Update(sector);
-                                }
-                            }
-
-                            Assert.AreEqual(@long ? _longMd5S[i] : _md5S[i], ctx.End(),
-                                            $"{(@long ? "Long hash" : "Hash")}: {_testFiles[i]}");
-                        }
-
-                        if(!image.Info.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel))
-                            return;
-
-                        ctx = new Md5Context();
-
-                        foreach(Track currentTrack in image.Tracks)
-                        {
-                            ulong sectors     = currentTrack.TrackEndSector - currentTrack.TrackStartSector + 1;
-                            ulong doneSectors = 0;
-
-                            while(doneSectors < sectors)
-                            {
-                                byte[] sector;
-
-                                if(sectors - doneSectors >= sectorsToRead)
-                                {
-                                    sector = image.ReadSectorsTag(doneSectors, sectorsToRead,
-                                                                  currentTrack.TrackSequence,
-                                                                  SectorTagType.CdSectorSubchannel);
-
-                                    doneSectors += sectorsToRead;
-                                }
-                                else
-                                {
-                                    sector = image.ReadSectorsTag(doneSectors, (uint)(sectors - doneSectors),
-                                                                  currentTrack.TrackSequence,
-                                                                  SectorTagType.CdSectorSubchannel);
-
-                                    doneSectors += sectors - doneSectors;
-                                }
-
-                                ctx.Update(sector);
-                            }
-                        }
-
-                        Assert.AreEqual(_subchannelMd5S[i], ctx.End(), $"Subchannel hash: {_testFiles[i]}");
-                    }
-                    else
-                    {
-                        ctx = new Md5Context();
-                        ulong doneSectors = 0;
-
-                        while(doneSectors < image.Info.Sectors)
-                        {
-                            byte[] sector;
-
-                            if(image.Info.Sectors - doneSectors >= sectorsToRead)
-                            {
-                                sector      =  image.ReadSectors(doneSectors, sectorsToRead);
-                                doneSectors += sectorsToRead;
-                            }
-                            else
-                            {
-                                sector      =  image.ReadSectors(doneSectors, (uint)(image.Info.Sectors - doneSectors));
-                                doneSectors += image.Info.Sectors - doneSectors;
-                            }
-
-                            ctx.Update(sector);
-                        }
-
-                        Assert.AreEqual(_md5S[i], ctx.End(), $"Hash: {_testFiles[i]}");
-                    }
-                });
-            });
-        }
+        public override string _dataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "MAME", "v3");
+        public override IMediaImage _plugin => new Chd();
     }
 }

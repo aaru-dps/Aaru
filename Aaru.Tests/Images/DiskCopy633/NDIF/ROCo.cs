@@ -26,21 +26,18 @@
 // Copyright © 2011-2021 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using System.IO;
-using Aaru.Checksums;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Interfaces;
 using Aaru.DiscImages;
-using Aaru.Filters;
-using FluentAssertions.Execution;
 using NUnit.Framework;
 
 namespace Aaru.Tests.Images.DiskCopy633.NDIF
 {
     [TestFixture]
-    public class ROCo
+    public class ROCo : BlockMediaImageTest
     {
-        readonly string[] _testFiles =
+        public override string[] _testFiles => new[]
         {
             "DC6_RC_DOS_1440.img", "DC6_RC_DOS_1440.smi", "DC6_RC_DOS_720.img", "DC6_RC_DOS_720.smi",
             "DC6_RC_DOS_DMF.img", "DC6_RC_DOS_DMF.smi", "DC6_RC_HFS_1440.img", "DC6_RC_HFS_1440.smi",
@@ -54,7 +51,7 @@ namespace Aaru.Tests.Images.DiskCopy633.NDIF
             */
         };
 
-        readonly ulong[] _sectors =
+        public override ulong[] _sectors => new ulong[]
         {
             // DC6_RC_DOS_1440.img
             2880,
@@ -111,7 +108,7 @@ namespace Aaru.Tests.Images.DiskCopy633.NDIF
             3360
         };
 
-        readonly uint[] _sectorSize =
+        public override uint[] _sectorSize => new uint[]
         {
             // DC6_RC_DOS_1440.img
             512,
@@ -168,7 +165,7 @@ namespace Aaru.Tests.Images.DiskCopy633.NDIF
             512
         };
 
-        readonly MediaType[] _mediaTypes =
+        public override MediaType[] _mediaTypes => new[]
         {
             // DC6_RC_DOS_1440.img
             MediaType.DOS_35_HD,
@@ -225,7 +222,7 @@ namespace Aaru.Tests.Images.DiskCopy633.NDIF
             MediaType.DMF
         };
 
-        readonly string[] _md5S =
+        public override string[] _md5S => new[]
         {
             // DC6_RC_DOS_1440.img
             "ff419213080574056ebd9adf7bab3d32",
@@ -282,82 +279,8 @@ namespace Aaru.Tests.Images.DiskCopy633.NDIF
             "7fbf0251a93cb36d98e68b7d19624de5"
         };
 
-        readonly string _dataFolder =
+        public override string _dataFolder =>
             Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "DiskCopy 6.3.3", "NDIF", "ROCo");
-
-        [Test]
-        public void Info()
-        {
-            Environment.CurrentDirectory = _dataFolder;
-
-            Assert.Multiple(() =>
-            {
-                for(int i = 0; i < _testFiles.Length; i++)
-                {
-                    var filter = new AppleDouble();
-                    filter.Open(_testFiles[i]);
-
-                    var  image  = new Ndif();
-                    bool opened = image.Open(filter);
-
-                    Assert.AreEqual(true, opened, $"Open: {_testFiles[i]}");
-
-                    using(new AssertionScope())
-                    {
-                        Assert.Multiple(() =>
-                        {
-                            Assert.AreEqual(_sectors[i], image.Info.Sectors, $"Sectors: {_testFiles[i]}");
-                            Assert.AreEqual(_sectorSize[i], image.Info.SectorSize, $"Sector size: {_testFiles[i]}");
-                            Assert.AreEqual(_mediaTypes[i], image.Info.MediaType, $"Media type: {_testFiles[i]}");
-                        });
-                    }
-                }
-            });
-        }
-
-        // How many sectors to read at once
-        const uint SECTORS_TO_READ = 256;
-
-        [Test]
-        public void Hashes()
-        {
-            Environment.CurrentDirectory = _dataFolder;
-
-            Assert.Multiple(() =>
-            {
-                for(int i = 0; i < _testFiles.Length; i++)
-                {
-                    var filter = new AppleDouble();
-                    filter.Open(_testFiles[i]);
-
-                    var   image       = new Ndif();
-                    bool  opened      = image.Open(filter);
-                    ulong doneSectors = 0;
-
-                    Assert.AreEqual(true, opened, $"Open: {_testFiles[i]}");
-                    var ctx = new Md5Context();
-
-                    while(doneSectors < image.Info.Sectors)
-                    {
-                        byte[] sector;
-
-                        if(image.Info.Sectors - doneSectors >= SECTORS_TO_READ)
-                        {
-                            sector      =  image.ReadSectors(doneSectors, SECTORS_TO_READ);
-                            doneSectors += SECTORS_TO_READ;
-                        }
-                        else
-                        {
-                            sector      =  image.ReadSectors(doneSectors, (uint)(image.Info.Sectors - doneSectors));
-                            doneSectors += image.Info.Sectors - doneSectors;
-                        }
-
-                        ctx.Update(sector);
-                    }
-
-                    Assert.AreEqual(_md5S[i], ctx.End(), $"Hash: {_testFiles[i]}");
-                }
-            });
-        }
+        public override IMediaImage _plugin => new Ndif();
     }
 }

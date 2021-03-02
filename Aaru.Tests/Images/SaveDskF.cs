@@ -26,20 +26,17 @@
 // Copyright © 2011-2021 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using System.IO;
-using Aaru.Checksums;
 using Aaru.CommonTypes;
-using Aaru.Filters;
-using FluentAssertions.Execution;
+using Aaru.CommonTypes.Interfaces;
 using NUnit.Framework;
 
 namespace Aaru.Tests.Images
 {
     [TestFixture]
-    public class SaveDskF
+    public class SaveDskF : BlockMediaImageTest
     {
-        readonly string[] _testFiles =
+        public override string[] _testFiles => new[]
         {
             "5dd8_c.dsk", "5dd8_ck.dsk", "5dd8_na.dsk", "5dd8_nak.dsk", "5dd8_n.dsk", "5dd8_nk.dsk", "5dd_c.dsk",
             "5dd_ck.dsk", "5dd_na.dsk", "5dd_nak.dsk", "5dd_n.dsk", "5dd_nk.dsk", "5hd_c.dsk", "5hd_ck.dsk",
@@ -67,7 +64,7 @@ namespace Aaru.Tests.Images
             "mf2hd_xdf_n.dsk", "mf2hd_xdf_nk.dsk"
         };
 
-        readonly ulong[] _sectors =
+        public override ulong[] _sectors => new ulong[]
         {
             // 5dd8_c.dsk
             640,
@@ -430,7 +427,7 @@ namespace Aaru.Tests.Images
             3680
         };
 
-        readonly uint[] _sectorSize =
+        public override uint[] _sectorSize => new uint[]
         {
             // 5dd8_c.dsk
             512,
@@ -793,7 +790,7 @@ namespace Aaru.Tests.Images
             512
         };
 
-        readonly MediaType[] _mediaTypes =
+        public override MediaType[] _mediaTypes => new[]
         {
             // 5dd8_c.dsk
             MediaType.DOS_525_DS_DD_8,
@@ -1156,7 +1153,7 @@ namespace Aaru.Tests.Images
             MediaType.XDF_35
         };
 
-        readonly string[] _md5S =
+        public override string[] _md5S => new[]
         {
             // 5dd8_c.dsk
             "5a1e0a75d31d88c1ce7429fd333c268f",
@@ -1519,88 +1516,7 @@ namespace Aaru.Tests.Images
             "2770e5b1b7935ca6e9695a32008b936a"
         };
 
-        readonly string _dataFolder = Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "SaveDskF");
-
-        [Test]
-        public void Info()
-        {
-            Environment.CurrentDirectory = _dataFolder;
-
-            Assert.Multiple(() =>
-            {
-                for(int i = 0; i < _testFiles.Length; i++)
-                {
-                    var filter = new ZZZNoFilter();
-                    filter.Open(_testFiles[i]);
-
-                    var  image  = new DiscImages.SaveDskF();
-                    bool opened = image.Open(filter);
-
-                    Assert.AreEqual(true, opened, $"Open: {_testFiles[i]}");
-
-                    if(!opened)
-                        continue;
-
-                    using(new AssertionScope())
-                    {
-                        Assert.Multiple(() =>
-                        {
-                            Assert.AreEqual(_sectors[i], image.Info.Sectors, $"Sectors: {_testFiles[i]}");
-                            Assert.AreEqual(_sectorSize[i], image.Info.SectorSize, $"Sector size: {_testFiles[i]}");
-                            Assert.AreEqual(_mediaTypes[i], image.Info.MediaType, $"Media type: {_testFiles[i]}");
-                        });
-                    }
-                }
-            });
-        }
-
-        // How many sectors to read at once
-        const uint SECTORS_TO_READ = 256;
-
-        [Test]
-        public void Hashes()
-        {
-            Environment.CurrentDirectory = _dataFolder;
-
-            Assert.Multiple(() =>
-            {
-                for(int i = 0; i < _testFiles.Length; i++)
-                {
-                    var filter = new ZZZNoFilter();
-                    filter.Open(_testFiles[i]);
-
-                    var   image       = new DiscImages.SaveDskF();
-                    bool  opened      = image.Open(filter);
-                    ulong doneSectors = 0;
-
-                    Assert.AreEqual(true, opened, $"Open: {_testFiles[i]}");
-
-                    if(!opened)
-                        continue;
-
-                    var ctx = new Md5Context();
-
-                    while(doneSectors < image.Info.Sectors)
-                    {
-                        byte[] sector;
-
-                        if(image.Info.Sectors - doneSectors >= SECTORS_TO_READ)
-                        {
-                            sector      =  image.ReadSectors(doneSectors, SECTORS_TO_READ);
-                            doneSectors += SECTORS_TO_READ;
-                        }
-                        else
-                        {
-                            sector      =  image.ReadSectors(doneSectors, (uint)(image.Info.Sectors - doneSectors));
-                            doneSectors += image.Info.Sectors - doneSectors;
-                        }
-
-                        ctx.Update(sector);
-                    }
-
-                    Assert.AreEqual(_md5S[i], ctx.End(), $"Hash: {_testFiles[i]}");
-                }
-            });
-        }
+        public override string _dataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "SaveDskF");
+        public override IMediaImage _plugin => new DiscImages.SaveDskF();
     }
 }

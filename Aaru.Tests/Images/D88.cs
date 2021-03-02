@@ -26,20 +26,17 @@
 // Copyright © 2011-2021 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using System.IO;
-using Aaru.Checksums;
 using Aaru.CommonTypes;
-using Aaru.Filters;
-using FluentAssertions.Execution;
+using Aaru.CommonTypes.Interfaces;
 using NUnit.Framework;
 
 namespace Aaru.Tests.Images
 {
     [TestFixture]
-    public class D88
+    public class D88 : BlockMediaImageTest
     {
-        readonly string[] _testFiles =
+        public override string[] _testFiles => new[]
         {
             "1942 (1987)(ASCII)(JP).d77.lz", "'Ashe (1988)(Quasar)(Disk 4 of 4)(User Disk).d88.lz",
             "Crimsin (1988)(Xtalsoft)(Disk 3 of 3).d88.lz", "Dragon Slayer (1986)(Falcom - Login)(JP).d88.lz",
@@ -52,19 +49,19 @@ namespace Aaru.Tests.Images
             "Visual Instrument Player (198x)(Kamiya)(JP)(Disk 1 of 2).d88.lz"
         };
 
-        readonly ulong[] _sectors =
+        public override ulong[] _sectors => new ulong[]
         {
             1280, 1280, 1280, 411, 1440, 1280, 1280, 4033, 1440, 1232, 1440, 1232, 1440, 1232, 1440, 1232, 1284, 1232,
             1280
         };
 
-        readonly uint[] _sectorSize =
+        public override uint[] _sectorSize => new uint[]
         {
             256, 256, 256, 256, 256, 256, 256, 128, 512, 1024, 512, 1024, 512, 1024, 512, 1024, 1024, 1024, 256
         };
 
         // TODO: Add "unknown" media types
-        readonly MediaType[] _mediaTypes =
+        public override MediaType[] _mediaTypes => new[]
         {
             MediaType.NEC_525_SS, MediaType.NEC_525_SS, MediaType.NEC_525_SS, MediaType.Unknown, MediaType.Unknown,
             MediaType.NEC_525_SS, MediaType.NEC_525_SS, MediaType.Unknown, MediaType.Unknown, MediaType.NEC_525_HD,
@@ -72,7 +69,7 @@ namespace Aaru.Tests.Images
             MediaType.NEC_525_HD, MediaType.Unknown, MediaType.NEC_525_HD, MediaType.NEC_525_SS
         };
 
-        readonly string[] _md5S =
+        public override string[] _md5S => new[]
         {
             "a4103c39cd7fd9fc3de8418dfcf22364", "b948048c03e0b3d34d77f5c9dced0b41", "f91152fab791d4dc0677a289d90478a5",
             "39b01df04a6312b09f1b83c9f3a46b22", "ef775ec1f41b8b725ea83ec8c5ca04e2", "5c2b22f824524cd6c539aaeb2ecb84cd",
@@ -83,88 +80,7 @@ namespace Aaru.Tests.Images
             "c7df67f4e66dad658fe856d3c8b36c7a"
         };
 
-        readonly string _dataFolder = Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "D88");
-
-        [Test]
-        public void Info()
-        {
-            Environment.CurrentDirectory = _dataFolder;
-
-            Assert.Multiple(() =>
-            {
-                for(int i = 0; i < _testFiles.Length; i++)
-                {
-                    var filter = new LZip();
-                    filter.Open(_testFiles[i]);
-
-                    var  image  = new DiscImages.D88();
-                    bool opened = image.Open(filter);
-
-                    Assert.AreEqual(true, opened, $"Open: {_testFiles[i]}");
-
-                    if(!opened)
-                        continue;
-
-                    using(new AssertionScope())
-                    {
-                        Assert.Multiple(() =>
-                        {
-                            Assert.AreEqual(_sectors[i], image.Info.Sectors, $"Sectors: {_testFiles[i]}");
-                            Assert.AreEqual(_sectorSize[i], image.Info.SectorSize, $"Sector size: {_testFiles[i]}");
-                            Assert.AreEqual(_mediaTypes[i], image.Info.MediaType, $"Media type: {_testFiles[i]}");
-                        });
-                    }
-                }
-            });
-        }
-
-        // How many sectors to read at once
-        const uint SECTORS_TO_READ = 256;
-
-        [Test]
-        public void Hashes()
-        {
-            Environment.CurrentDirectory = _dataFolder;
-
-            Assert.Multiple(() =>
-            {
-                for(int i = 0; i < _testFiles.Length; i++)
-                {
-                    var filter = new LZip();
-                    filter.Open(_testFiles[i]);
-
-                    var   image       = new DiscImages.D88();
-                    bool  opened      = image.Open(filter);
-                    ulong doneSectors = 0;
-
-                    Assert.AreEqual(true, opened, $"Open: {_testFiles[i]}");
-
-                    if(!opened)
-                        continue;
-
-                    var ctx = new Md5Context();
-
-                    while(doneSectors < image.Info.Sectors)
-                    {
-                        byte[] sector;
-
-                        if(image.Info.Sectors - doneSectors >= SECTORS_TO_READ)
-                        {
-                            sector      =  image.ReadSectors(doneSectors, SECTORS_TO_READ);
-                            doneSectors += SECTORS_TO_READ;
-                        }
-                        else
-                        {
-                            sector      =  image.ReadSectors(doneSectors, (uint)(image.Info.Sectors - doneSectors));
-                            doneSectors += image.Info.Sectors - doneSectors;
-                        }
-
-                        ctx.Update(sector);
-                    }
-
-                    Assert.AreEqual(_md5S[i], ctx.End(), $"Hash: {_testFiles[i]}");
-                }
-            });
-        }
+        public override string      _dataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "D88");
+        public override IMediaImage _plugin     => new DiscImages.D88();
     }
 }

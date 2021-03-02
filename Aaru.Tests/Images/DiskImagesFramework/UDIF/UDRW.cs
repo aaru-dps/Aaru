@@ -26,28 +26,25 @@
 // Copyright © 2011-2021 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using System.IO;
-using Aaru.Checksums;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Interfaces;
 using Aaru.DiscImages;
-using Aaru.Filters;
-using FluentAssertions.Execution;
 using NUnit.Framework;
 
 namespace Aaru.Tests.Images.DiskImagesFramework.UDIF
 {
     [TestFixture]
-    public class UDRW
+    public class UDRW : BlockMediaImageTest
     {
-        readonly string[] _testFiles =
+        public override string[] _testFiles => new[]
         {
             "DOS_1440.dmg", "DOS_720.dmg", "DOS_DMF.dmg", "DOS_SP_5Mb.dmg", "HFS_1440.dmg", "HFS_800.dmg",
             "HFS_DMF.dmg", "HFSP_SP_5Mb.dmg", "HFS_SP_5Mb.dmg", "ProDOS_1440.dmg", "ProDOS_800.dmg", "ProDOS_DMF.dmg",
             "UFS_1440.dmg", "UFS_720.dmg", "UFS_800.dmg", "UFS_DMF.dmg", "UFS_SP_5Mb.dmg"
         };
 
-        readonly ulong[] _sectors =
+        public override ulong[] _sectors => new ulong[]
         {
             // DOS_1440.dmg
             2880,
@@ -101,7 +98,7 @@ namespace Aaru.Tests.Images.DiskImagesFramework.UDIF
             10304
         };
 
-        readonly uint[] _sectorSize =
+        public override uint[] _sectorSize => new uint[]
         {
             // DOS_1440.dmg
             512,
@@ -155,7 +152,7 @@ namespace Aaru.Tests.Images.DiskImagesFramework.UDIF
             512
         };
 
-        readonly MediaType[] _mediaTypes =
+        public override MediaType[] _mediaTypes => new[]
         {
             // DOS_1440.dmg
             MediaType.GENERIC_HDD,
@@ -209,7 +206,7 @@ namespace Aaru.Tests.Images.DiskImagesFramework.UDIF
             MediaType.GENERIC_HDD
         };
 
-        readonly string[] _md5S =
+        public override string[] _md5S => new[]
         {
             // DOS_1440.dmg
             "ff419213080574056ebd9adf7bab3d32",
@@ -263,82 +260,8 @@ namespace Aaru.Tests.Images.DiskImagesFramework.UDIF
             "b7d4ad55c7702658081b6578b588a57f"
         };
 
-        readonly string _dataFolder = Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "DiskImagesFramework",
-                                                   "UDIF", "UDRW");
-
-        [Test]
-        public void Info()
-        {
-            Environment.CurrentDirectory = _dataFolder;
-
-            Assert.Multiple(() =>
-            {
-                for(int i = 0; i < _testFiles.Length; i++)
-                {
-                    var filter = new AppleDouble();
-                    filter.Open(_testFiles[i]);
-
-                    var  image  = new Udif();
-                    bool opened = image.Open(filter);
-
-                    Assert.AreEqual(true, opened, $"Open: {_testFiles[i]}");
-
-                    using(new AssertionScope())
-                    {
-                        Assert.Multiple(() =>
-                        {
-                            Assert.AreEqual(_sectors[i], image.Info.Sectors, $"Sectors: {_testFiles[i]}");
-                            Assert.AreEqual(_sectorSize[i], image.Info.SectorSize, $"Sector size: {_testFiles[i]}");
-                            Assert.AreEqual(_mediaTypes[i], image.Info.MediaType, $"Media type: {_testFiles[i]}");
-                        });
-                    }
-                }
-            });
-        }
-
-        // How many sectors to read at once
-        const uint SECTORS_TO_READ = 256;
-
-        [Test]
-        public void Hashes()
-        {
-            Environment.CurrentDirectory = _dataFolder;
-
-            Assert.Multiple(() =>
-            {
-                for(int i = 0; i < _testFiles.Length; i++)
-                {
-                    var filter = new AppleDouble();
-                    filter.Open(_testFiles[i]);
-
-                    var   image       = new Udif();
-                    bool  opened      = image.Open(filter);
-                    ulong doneSectors = 0;
-
-                    Assert.AreEqual(true, opened, $"Open: {_testFiles[i]}");
-                    var ctx = new Md5Context();
-
-                    while(doneSectors < image.Info.Sectors)
-                    {
-                        byte[] sector;
-
-                        if(image.Info.Sectors - doneSectors >= SECTORS_TO_READ)
-                        {
-                            sector      =  image.ReadSectors(doneSectors, SECTORS_TO_READ);
-                            doneSectors += SECTORS_TO_READ;
-                        }
-                        else
-                        {
-                            sector      =  image.ReadSectors(doneSectors, (uint)(image.Info.Sectors - doneSectors));
-                            doneSectors += image.Info.Sectors - doneSectors;
-                        }
-
-                        ctx.Update(sector);
-                    }
-
-                    Assert.AreEqual(_md5S[i], ctx.End(), $"Hash: {_testFiles[i]}");
-                }
-            });
-        }
+        public override string _dataFolder =>
+            Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "DiskImagesFramework", "UDIF", "UDRW");
+        public override IMediaImage _plugin => new Udif();
     }
 }
