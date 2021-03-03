@@ -37,7 +37,7 @@ namespace Aaru.Tests.Images.ShrinkWrap
     [TestFixture]
     public class DiskDup : BlockMediaImageTest
     {
-        public override string _dataFolder =>
+        public override string DataFolder =>
             Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "ShrinkWrap 3", "DiskDup+");
         public override IMediaImage _plugin => new ZZZRawImage();
 

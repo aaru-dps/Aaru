@@ -36,7 +36,7 @@ namespace Aaru.Tests.Images
     [TestFixture]
     public class BlindWrite4 : OpticalMediaImageTest
     {
-        public override string _dataFolder =>
+        public override string DataFolder =>
             Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "BlindWrite 4");
         public override IMediaImage _plugin => new DiscImages.BlindWrite4();
 

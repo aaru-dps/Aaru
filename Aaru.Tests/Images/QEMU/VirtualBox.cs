@@ -37,7 +37,7 @@ namespace Aaru.Tests.Images.QEMU
     [TestFixture]
     public class VirtualBox : BlockMediaImageTest
     {
-        public override string _dataFolder =>
+        public override string DataFolder =>
             Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "QEMU", "VirtualBox");
         public override IMediaImage _plugin => new Vdi();
 

@@ -37,8 +37,7 @@ namespace Aaru.Tests.Images.QEMU
     [TestFixture]
     public class Raw : BlockMediaImageTest
     {
-        public override string _dataFolder =>
-            Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "QEMU", "raw");
+        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "QEMU", "raw");
         public override IMediaImage _plugin => new ZZZRawImage();
 
         public override BlockImageTestExpected[] Tests => new[]

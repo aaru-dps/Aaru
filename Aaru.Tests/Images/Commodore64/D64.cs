@@ -37,7 +37,7 @@ namespace Aaru.Tests.Images.Commodore64
     [TestFixture]
     public class D64 : BlockMediaImageTest
     {
-        public override string _dataFolder =>
+        public override string DataFolder =>
             Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "Commodore D64");
         public override IMediaImage _plugin => new ZZZRawImage();
 

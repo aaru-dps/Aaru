@@ -37,7 +37,7 @@ namespace Aaru.Tests.Images.VirtualBox
     [TestFixture]
     public class VirtualPc : BlockMediaImageTest
     {
-        public override string _dataFolder =>
+        public override string DataFolder =>
             Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "VirtualBox", "VirtualPC");
         public override IMediaImage _plugin => new Vhd();
 

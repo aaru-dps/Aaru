@@ -37,8 +37,8 @@ namespace Aaru.Tests.Images
     [TestFixture]
     public class CPCDSK : BlockMediaImageTest
     {
-        public override string _dataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "CPCDSK");
-        public override IMediaImage _plugin => new Cpcdsk();
+        public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "CPCDSK");
+        public override IMediaImage _plugin    => new Cpcdsk();
 
         public override BlockImageTestExpected[] Tests => new[]
         {

@@ -37,7 +37,7 @@ namespace Aaru.Tests.Images.AppleDOS
     [TestFixture]
     public class ProDOS : BlockMediaImageTest
     {
-        public override string _dataFolder =>
+        public override string DataFolder =>
             Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "Apple ProDOS Order");
         public override IMediaImage _plugin => new AppleDos();
 

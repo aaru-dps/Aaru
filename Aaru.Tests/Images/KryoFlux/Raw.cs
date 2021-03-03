@@ -37,7 +37,7 @@ namespace Aaru.Tests.Images.KryoFlux
     [TestFixture]
     public class Raw : BlockMediaImageTest
     {
-        public override string _dataFolder =>
+        public override string DataFolder =>
             Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "KryoFlux", "raw");
         public override IMediaImage _plugin => new ZZZRawImage();
 

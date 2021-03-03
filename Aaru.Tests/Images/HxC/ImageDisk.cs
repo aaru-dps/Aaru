@@ -37,7 +37,7 @@ namespace Aaru.Tests.Images.HxC
     [TestFixture]
     public class ImageDisk : BlockMediaImageTest
     {
-        public override string _dataFolder =>
+        public override string DataFolder =>
             Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "HxC", "ImageDisk");
         public override IMediaImage _plugin => new Imd();
 

@@ -36,7 +36,7 @@ namespace Aaru.Tests.Images.PowerISO
     [TestFixture]
     public class Cuesheet : OpticalMediaImageTest
     {
-        public override string _dataFolder =>
+        public override string DataFolder =>
             Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "PowerISO", "Cuesheet");
         public override IMediaImage _plugin => new DiscImages.DiscJuggler();
 

@@ -20,7 +20,7 @@ namespace Aaru.Tests.Images
         [Test]
         public void Info()
         {
-            Environment.CurrentDirectory = _dataFolder;
+            Environment.CurrentDirectory = DataFolder;
 
             Assert.Multiple(() =>
             {
@@ -91,7 +91,7 @@ namespace Aaru.Tests.Images
         [Test]
         public void Hashes()
         {
-            Environment.CurrentDirectory = Environment.CurrentDirectory = _dataFolder;
+            Environment.CurrentDirectory = Environment.CurrentDirectory = DataFolder;
 
             Assert.Multiple(() =>
             {

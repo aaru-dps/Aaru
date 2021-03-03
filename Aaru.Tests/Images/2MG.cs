@@ -36,8 +36,8 @@ namespace Aaru.Tests.Images
     [TestFixture]
     public class Apple2Mg : BlockMediaImageTest
     {
-        public override string      _dataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "2mg");
-        public override IMediaImage _plugin     => new DiscImages.Apple2Mg();
+        public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "2mg");
+        public override IMediaImage _plugin    => new DiscImages.Apple2Mg();
 
         public override BlockImageTestExpected[] Tests => new[]
         {

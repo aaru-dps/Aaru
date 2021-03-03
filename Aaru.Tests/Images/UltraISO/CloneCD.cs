@@ -37,7 +37,7 @@ namespace Aaru.Tests.Images.UltraISO
     [TestFixture]
     public class CloneCD : OpticalMediaImageTest
     {
-        public override string _dataFolder =>
+        public override string DataFolder =>
             Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "UltraISO", "CloneCD");
         public override IMediaImage _plugin => new CloneCd();
 

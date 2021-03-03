@@ -36,7 +36,7 @@ namespace Aaru.Tests.Images.UltraISO
     [TestFixture]
     public class Nero : OpticalMediaImageTest
     {
-        public override string _dataFolder =>
+        public override string DataFolder =>
             Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "UltraISO", "Nero");
         public override IMediaImage _plugin => new DiscImages.Nero();
 

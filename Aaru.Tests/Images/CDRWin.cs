@@ -37,8 +37,8 @@ namespace Aaru.Tests.Images
     [TestFixture]
     public class CDRWin : OpticalMediaImageTest
     {
-        public override string _dataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "CDRWin");
-        public override IMediaImage _plugin => new CdrWin();
+        public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "CDRWin");
+        public override IMediaImage _plugin    => new CdrWin();
 
         public override OpticalImageTestExpected[] Tests => new[]
         {

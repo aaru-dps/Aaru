@@ -37,7 +37,7 @@ namespace Aaru.Tests.Images.DiskImagesFramework.NDIF
     [TestFixture]
     public class RdWr : BlockMediaImageTest
     {
-        public override string _dataFolder =>
+        public override string DataFolder =>
             Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "DiskImagesFramework", "NDIF", "RdWr");
         public override IMediaImage _plugin => new Ndif();
 

@@ -36,8 +36,8 @@ namespace Aaru.Tests.Images
     [TestFixture]
     public class Dart : BlockMediaImageTest
     {
-        public override string      _dataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "DART");
-        public override IMediaImage _plugin     => new DiscImages.Dart();
+        public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "DART");
+        public override IMediaImage _plugin    => new DiscImages.Dart();
 
         public override BlockImageTestExpected[] Tests => new[]
         {
