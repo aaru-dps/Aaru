@@ -14,7 +14,7 @@ namespace Aaru.Tests.Partitions
         public abstract PartitionTest[] Tests      { get; }
 
         [Test]
-        public void Test2()
+        public void Test()
         {
             foreach(PartitionTest test in Tests)
             {
