@@ -37,60 +37,49 @@ namespace Aaru.Tests.Partitions
     {
         public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Partitioning schemes", "Acorn");
 
-        public override string[] TestFiles => new[]
+        public override PartitionTest[] Tests => new[]
         {
-            "linux_ics.aif"
-        };
-
-        public override Partition[][] Wanted => new[]
-        {
-            // Linux (ICS)
-            // TODO: Values are incorrect
-            new[]
+            new PartitionTest
             {
-                new Partition
+                TestFile = "linux_ics.aif",
+                Partitions = new[]
                 {
-                    Description = null,
-                    Size        = 31457280,
-                    Name        = null,
-                    Type        = "GEM",
-                    Offset      = 512,
-                    Length      = 61440,
-                    Sequence    = 0,
-                    Start       = 1
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 41943040,
-                    Name        = null,
-                    Type        = "BGM",
-                    Offset      = 31457792,
-                    Length      = 81920,
-                    Sequence    = 1,
-                    Start       = 61441
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 56402432,
-                    Name        = null,
-                    Type        = "LNX",
-                    Offset      = 73400832,
-                    Length      = 110161,
-                    Sequence    = 2,
-                    Start       = 143361
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 43212800,
-                    Name        = null,
-                    Type        = "MAC",
-                    Offset      = 129803264,
-                    Length      = 84400,
-                    Sequence    = 3,
-                    Start       = 253522
+                    new Partition
+                    {
+                        Length   = 61440,
+                        Offset   = 512,
+                        Sequence = 0,
+                        Size     = 31457280,
+                        Start    = 1,
+                        Type     = "GEM"
+                    },
+                    new Partition
+                    {
+                        Length   = 81920,
+                        Offset   = 31457792,
+                        Sequence = 1,
+                        Size     = 41943040,
+                        Start    = 61441,
+                        Type     = "BGM"
+                    },
+                    new Partition
+                    {
+                        Length   = 110161,
+                        Offset   = 73400832,
+                        Sequence = 2,
+                        Size     = 56402432,
+                        Start    = 143361,
+                        Type     = "LNX"
+                    },
+                    new Partition
+                    {
+                        Length   = 84400,
+                        Offset   = 129803264,
+                        Sequence = 3,
+                        Size     = 43212800,
+                        Start    = 253522,
+                        Type     = "MAC"
+                    }
                 }
             }
         };

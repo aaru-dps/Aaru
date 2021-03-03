@@ -38,190 +38,177 @@ namespace Aaru.Tests.Partitions
         public override string DataFolder =>
             Path.Combine(Consts.TEST_FILES_ROOT, "Partitioning schemes", "Rigid Disk Block");
 
-        public override string[] TestFiles => new[]
+        public override PartitionTest[] Tests => new[]
         {
-            "amigaos_3.9.aif", "amigaos_4.0.aif", "parted.aif"
-        };
-
-        public override Partition[][] Wanted => new[]
-        {
-            // AmigaOS 3.9
-            new[]
+            new PartitionTest
             {
-                new Partition
+                TestFile = "amigaos_3.9.aif",
+                Partitions = new[]
                 {
-                    Description = null,
-                    Size        = 87392256,
-                    Name        = "UDH0",
-                    Type        = "\"DOS\\0\"",
-                    Offset      = 2080768,
-                    Length      = 170688,
-                    Sequence    = 0,
-                    Start       = 4064
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 87392256,
-                    Name        = "UDH1",
-                    Type        = "\"DOS\\2\"",
-                    Offset      = 89473024,
-                    Length      = 170688,
-                    Sequence    = 1,
-                    Start       = 174752
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 87392256,
-                    Name        = "UDH2",
-                    Type        = "\"DOS\\1\"",
-                    Offset      = 176865280,
-                    Length      = 170688,
-                    Sequence    = 2,
-                    Start       = 345440
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 87392256,
-                    Name        = "UDH3",
-                    Type        = "\"DOS\\3\"",
-                    Offset      = 264257536,
-                    Length      = 170688,
-                    Sequence    = 3,
-                    Start       = 516128
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 87300096,
-                    Name        = "FAT16",
-                    Type        = "0x06",
-                    Offset      = 351663104,
-                    Length      = 170508,
-                    Sequence    = 4,
-                    Start       = 686842
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 85311488,
-                    Name        = "UDH5",
-                    Type        = "\"RES\\86\"",
-                    Offset      = 439042048,
-                    Length      = 166624,
-                    Sequence    = 5,
-                    Start       = 857504
+                    new Partition
+                    {
+                        Length   = 170688,
+                        Name     = "UDH0",
+                        Offset   = 2080768,
+                        Sequence = 0,
+                        Size     = 87392256,
+                        Start    = 4064,
+                        Type     = "\"DOS\\0\""
+                    },
+                    new Partition
+                    {
+                        Length   = 170688,
+                        Name     = "UDH1",
+                        Offset   = 89473024,
+                        Sequence = 1,
+                        Size     = 87392256,
+                        Start    = 174752,
+                        Type     = "\"DOS\\2\""
+                    },
+                    new Partition
+                    {
+                        Length   = 170688,
+                        Name     = "UDH2",
+                        Offset   = 176865280,
+                        Sequence = 2,
+                        Size     = 87392256,
+                        Start    = 345440,
+                        Type     = "\"DOS\\1\""
+                    },
+                    new Partition
+                    {
+                        Length   = 170688,
+                        Name     = "UDH3",
+                        Offset   = 264257536,
+                        Sequence = 3,
+                        Size     = 87392256,
+                        Start    = 516128,
+                        Type     = "\"DOS\\3\""
+                    },
+                    new Partition
+                    {
+                        Length   = 170508,
+                        Name     = "FAT16",
+                        Offset   = 351663104,
+                        Sequence = 4,
+                        Size     = 87300096,
+                        Start    = 686842,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 166624,
+                        Name     = "UDH5",
+                        Offset   = 439042048,
+                        Sequence = 5,
+                        Size     = 85311488,
+                        Start    = 857504,
+                        Type     = "\"RES\\86\""
+                    }
                 }
             },
-
-            // AmigaOS 4.0
-            new[]
+            new PartitionTest
             {
-                new Partition
+                TestFile = "amigaos_4.0.aif",
+                Partitions = new[]
                 {
-                    Description = null,
-                    Size        = 91455488,
-                    Name        = "DH1",
-                    Type        = "\"DOS\\1\"",
-                    Offset      = 1048576,
-                    Length      = 178624,
-                    Sequence    = 0,
-                    Start       = 2048
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 76546048,
-                    Name        = "DH2",
-                    Type        = "\"DOS\\3\"",
-                    Offset      = 92504064,
-                    Length      = 149504,
-                    Sequence    = 1,
-                    Start       = 180672
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 78741504,
-                    Name        = "DH3",
-                    Type        = "\"DOS\\3\"",
-                    Offset      = 169050112,
-                    Length      = 153792,
-                    Sequence    = 2,
-                    Start       = 330176
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 78020608,
-                    Name        = "DH4",
-                    Type        = "\"DOS\\7\"",
-                    Offset      = 247791616,
-                    Length      = 152384,
-                    Sequence    = 3,
-                    Start       = 483968
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 85000192,
-                    Name        = "DH5",
-                    Type        = "\"SFS\\0\"",
-                    Offset      = 325812224,
-                    Length      = 166016,
-                    Sequence    = 4,
-                    Start       = 636352
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 113541120,
-                    Name        = "DH6",
-                    Type        = "\"SFS\\2\"",
-                    Offset      = 410812416,
-                    Length      = 221760,
-                    Sequence    = 5,
-                    Start       = 802368
+                    new Partition
+                    {
+                        Length   = 178624,
+                        Name     = "DH1",
+                        Offset   = 1048576,
+                        Sequence = 0,
+                        Size     = 91455488,
+                        Start    = 2048,
+                        Type     = "\"DOS\\1\""
+                    },
+                    new Partition
+                    {
+                        Length   = 149504,
+                        Name     = "DH2",
+                        Offset   = 92504064,
+                        Sequence = 1,
+                        Size     = 76546048,
+                        Start    = 180672,
+                        Type     = "\"DOS\\3\""
+                    },
+                    new Partition
+                    {
+                        Length   = 153792,
+                        Name     = "DH3",
+                        Offset   = 169050112,
+                        Sequence = 2,
+                        Size     = 78741504,
+                        Start    = 330176,
+                        Type     = "\"DOS\\3\""
+                    },
+                    new Partition
+                    {
+                        Length   = 152384,
+                        Name     = "DH4",
+                        Offset   = 247791616,
+                        Sequence = 3,
+                        Size     = 78020608,
+                        Start    = 483968,
+                        Type     = "\"DOS\\7\""
+                    },
+                    new Partition
+                    {
+                        Length   = 166016,
+                        Name     = "DH5",
+                        Offset   = 325812224,
+                        Sequence = 4,
+                        Size     = 85000192,
+                        Start    = 636352,
+                        Type     = "\"SFS\\0\""
+                    },
+                    new Partition
+                    {
+                        Length   = 221760,
+                        Name     = "DH6",
+                        Offset   = 410812416,
+                        Sequence = 5,
+                        Size     = 113541120,
+                        Start    = 802368,
+                        Type     = "\"SFS\\2\""
+                    }
                 }
             },
-
-            // Parted
-            new[]
+            new PartitionTest
             {
-                new Partition
+                TestFile = "parted.aif",
+                Partitions = new[]
                 {
-                    Description = null,
-                    Size        = 8225280,
-                    Name        = "primary",
-                    Type        = "\"\0\0\0\\0\"",
-                    Offset      = 8225280,
-                    Length      = 16065,
-                    Sequence    = 0,
-                    Start       = 16065
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 24675840,
-                    Name        = "name",
-                    Type        = "\"FAT\\1\"",
-                    Offset      = 16450560,
-                    Length      = 48195,
-                    Sequence    = 1,
-                    Start       = 32130
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 90478080,
-                    Name        = "partition",
-                    Type        = "\"\0\0\0\\0\"",
-                    Offset      = 41126400,
-                    Length      = 176715,
-                    Sequence    = 2,
-                    Start       = 80325
+                    new Partition
+                    {
+                        Length   = 16065,
+                        Name     = "primary",
+                        Offset   = 8225280,
+                        Sequence = 0,
+                        Size     = 8225280,
+                        Start    = 16065,
+                        Type     = "\"\0\0\0\\0\""
+                    },
+                    new Partition
+                    {
+                        Length   = 48195,
+                        Name     = "name",
+                        Offset   = 16450560,
+                        Sequence = 1,
+                        Size     = 24675840,
+                        Start    = 32130,
+                        Type     = "\"FAT\\1\""
+                    },
+                    new Partition
+                    {
+                        Length   = 176715,
+                        Name     = "partition",
+                        Offset   = 41126400,
+                        Sequence = 2,
+                        Size     = 90478080,
+                        Start    = 80325,
+                        Type     = "\"\0\0\0\\0\""
+                    }
                 }
             }
         };

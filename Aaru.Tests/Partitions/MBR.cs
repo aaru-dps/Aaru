@@ -38,1951 +38,2013 @@ namespace Aaru.Tests.Partitions
         public override string DataFolder =>
             Path.Combine(Consts.TEST_FILES_ROOT, "Partitioning schemes", "Master Boot Record");
 
-        public override string[] TestFiles => new[]
+        public override PartitionTest[] Tests => new[]
         {
-            "concurrentdos_6.0.aif", "darwin_1.4.1.aif", "darwin_6.0.2.aif", "darwin_8.0.1.aif", "drdos_3.40.aif",
-            "drdos_3.41.aif", "drdos_5.00.aif", "drdos_6.00.aif", "drdos_7.02.aif", "drdos_7.03.aif", "drdos_8.0.aif",
-            "linux.aif", "macosx_10.3.aif", "macosx_10.4.aif", "msdos_3.30a.aif", "msdos_5.00.aif", "msdos_6.00.aif",
-            "msdos_6.20.aif", "msdos_6.21.aif", "msdos_6.22.aif", "multiuserdos_7.22r04.aif", "novelldos_7.00.aif",
-            "opendos_7.01.aif", "parted.aif", "pcdos_2000.aif", "pcdos_2.00.aif", "pcdos_2.10.aif", "pcdos_3.00.aif",
-            "pcdos_3.10.aif", "pcdos_3.30.aif", "pcdos_4.00.aif", "pcdos_5.00.aif", "pcdos_6.10.aif", "win95.aif",
-            "win96osr25.aif", "winnt_3.10.aif"
-        };
-
-        public override Partition[][] Wanted => new[]
-        {
-            // Concurrent DOS 6.0
-            new[]
+            new PartitionTest
             {
-                new Partition
+                TestFile = "concurrentdos_6.0.aif",
+                Partitions = new[]
                 {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x04",
-                    Length      = 100800,
-                    Sequence    = 0,
-                    Start       = 1008
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x04",
-                    Length      = 99792,
-                    Sequence    = 1,
-                    Start       = 102816
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x04",
-                    Length      = 100800,
-                    Sequence    = 2,
-                    Start       = 202608
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x04",
-                    Length      = 303408,
-                    Sequence    = 3,
-                    Start       = 352800
+                    new Partition
+                    {
+                        Length   = 100800,
+                        Offset   = 0,
+                        Sequence = 0,
+                        Size     = 0,
+                        Start    = 1008,
+                        Type     = "0x04"
+                    },
+                    new Partition
+                    {
+                        Length   = 99792,
+                        Offset   = 0,
+                        Sequence = 1,
+                        Size     = 0,
+                        Start    = 102816,
+                        Type     = "0x04"
+                    },
+                    new Partition
+                    {
+                        Length   = 100800,
+                        Offset   = 0,
+                        Sequence = 2,
+                        Size     = 0,
+                        Start    = 202608,
+                        Type     = "0x04"
+                    },
+                    new Partition
+                    {
+                        Length   = 303408,
+                        Offset   = 0,
+                        Sequence = 3,
+                        Size     = 0,
+                        Start    = 352800,
+                        Type     = "0x04"
+                    }
                 }
             },
-
-            // Darwin 1.4.1
-            new[]
+            new PartitionTest
             {
-                new Partition
+                TestFile = "darwin_1.4.1.aif",
+                Partitions = new[]
                 {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x07",
-                    Length      = 409248,
-                    Sequence    = 0,
-                    Start       = 409248
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0xA8",
-                    Length      = 204624,
-                    Sequence    = 1,
-                    Start       = 818496
+                    new Partition
+                    {
+                        Length   = 409248,
+                        Offset   = 0,
+                        Sequence = 0,
+                        Size     = 0,
+                        Start    = 409248,
+                        Type     = "0x07"
+                    },
+                    new Partition
+                    {
+                        Length   = 204624,
+                        Offset   = 0,
+                        Sequence = 1,
+                        Size     = 0,
+                        Start    = 818496,
+                        Type     = "0xA8"
+                    }
                 }
             },
-
-            // Darwin 6.0.2
-            new[]
+            new PartitionTest
             {
-                new Partition
+                TestFile = "darwin_6.0.2.aif",
+                Partitions = new[]
                 {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0xA8",
-                    Length      = 204561,
-                    Sequence    = 0,
-                    Start       = 63
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0xAB",
-                    Length      = 81648,
-                    Sequence    = 1,
-                    Start       = 204624
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 245952,
-                    Sequence    = 2,
-                    Start       = 286272
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 488880,
-                    Sequence    = 3,
-                    Start       = 532224
+                    new Partition
+                    {
+                        Length   = 204561,
+                        Offset   = 0,
+                        Sequence = 0,
+                        Size     = 0,
+                        Start    = 63,
+                        Type     = "0xA8"
+                    },
+                    new Partition
+                    {
+                        Length   = 81648,
+                        Offset   = 0,
+                        Sequence = 1,
+                        Size     = 0,
+                        Start    = 204624,
+                        Type     = "0xAB"
+                    },
+                    new Partition
+                    {
+                        Length   = 245952,
+                        Offset   = 0,
+                        Sequence = 2,
+                        Size     = 0,
+                        Start    = 286272,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 488880,
+                        Offset   = 0,
+                        Sequence = 3,
+                        Size     = 0,
+                        Start    = 532224,
+                        Type     = "0x06"
+                    }
                 }
             },
-
-            // Darwin 8.0.1
-            new[]
+            new PartitionTest
             {
-                new Partition
+                TestFile = "darwin_8.0.1.aif",
+                Partitions = new[]
                 {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 150000,
-                    Sequence    = 0,
-                    Start       = 63
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0xAF",
-                    Length      = 176000,
-                    Sequence    = 1,
-                    Start       = 150063
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0xA8",
-                    Length      = 350000,
-                    Sequence    = 2,
-                    Start       = 326063
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x0C",
-                    Length      = 347937,
-                    Sequence    = 3,
-                    Start       = 676063
+                    new Partition
+                    {
+                        Length   = 150000,
+                        Offset   = 0,
+                        Sequence = 0,
+                        Size     = 0,
+                        Start    = 63,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 176000,
+                        Offset   = 0,
+                        Sequence = 1,
+                        Size     = 0,
+                        Start    = 150063,
+                        Type     = "0xAF"
+                    },
+                    new Partition
+                    {
+                        Length   = 350000,
+                        Offset   = 0,
+                        Sequence = 2,
+                        Size     = 0,
+                        Start    = 326063,
+                        Type     = "0xA8"
+                    },
+                    new Partition
+                    {
+                        Length   = 347937,
+                        Offset   = 0,
+                        Sequence = 3,
+                        Size     = 0,
+                        Start    = 676063,
+                        Type     = "0x0C"
+                    }
                 }
             },
-
-            // DR-DOS 3.40
-            new[]
+            new PartitionTest
             {
-                new Partition
+                TestFile = "drdos_3.40.aif",
+                Partitions = new[]
                 {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 100800,
-                    Sequence    = 0,
-                    Start       = 1008
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 402129,
-                    Sequence    = 1,
-                    Start       = 101871
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 152145,
-                    Sequence    = 2,
-                    Start       = 504063
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 365841,
-                    Sequence    = 3,
-                    Start       = 656271
+                    new Partition
+                    {
+                        Length   = 100800,
+                        Offset   = 0,
+                        Sequence = 0,
+                        Size     = 0,
+                        Start    = 1008,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 402129,
+                        Offset   = 0,
+                        Sequence = 1,
+                        Size     = 0,
+                        Start    = 101871,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 152145,
+                        Offset   = 0,
+                        Sequence = 2,
+                        Size     = 0,
+                        Start    = 504063,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 365841,
+                        Offset   = 0,
+                        Sequence = 3,
+                        Size     = 0,
+                        Start    = 656271,
+                        Type     = "0x06"
+                    }
                 }
             },
-
-            // DR-DOS 3.41
-            new[]
+            new PartitionTest
             {
-                new Partition
+                TestFile = "drdos_3.41.aif",
+                Partitions = new[]
                 {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 126945,
-                    Sequence    = 0,
-                    Start       = 63
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 124929,
-                    Sequence    = 1,
-                    Start       = 127071
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 101745,
-                    Sequence    = 2,
-                    Start       = 252063
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 668241,
-                    Sequence    = 3,
-                    Start       = 353871
+                    new Partition
+                    {
+                        Length   = 126945,
+                        Offset   = 0,
+                        Sequence = 0,
+                        Size     = 0,
+                        Start    = 63,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 124929,
+                        Offset   = 0,
+                        Sequence = 1,
+                        Size     = 0,
+                        Start    = 127071,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 101745,
+                        Offset   = 0,
+                        Sequence = 2,
+                        Size     = 0,
+                        Start    = 252063,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 668241,
+                        Offset   = 0,
+                        Sequence = 3,
+                        Size     = 0,
+                        Start    = 353871,
+                        Type     = "0x06"
+                    }
                 }
             },
-
-            // DR-DOS 5.00
-            new[]
+            new PartitionTest
             {
-                new Partition
+                TestFile = "drdos_5.00.aif",
+                Partitions = new[]
                 {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 128016,
-                    Sequence    = 0,
-                    Start       = 124992
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 99729,
-                    Sequence    = 1,
-                    Start       = 253071
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 100737,
-                    Sequence    = 2,
-                    Start       = 352863
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 313425,
-                    Sequence    = 3,
-                    Start       = 453663
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 254961,
-                    Sequence    = 4,
-                    Start       = 767151
+                    new Partition
+                    {
+                        Length   = 128016,
+                        Offset   = 0,
+                        Sequence = 0,
+                        Size     = 0,
+                        Start    = 124992,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 99729,
+                        Offset   = 0,
+                        Sequence = 1,
+                        Size     = 0,
+                        Start    = 253071,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 100737,
+                        Offset   = 0,
+                        Sequence = 2,
+                        Size     = 0,
+                        Start    = 352863,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 313425,
+                        Offset   = 0,
+                        Sequence = 3,
+                        Size     = 0,
+                        Start    = 453663,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 254961,
+                        Offset   = 0,
+                        Sequence = 4,
+                        Size     = 0,
+                        Start    = 767151,
+                        Type     = "0x06"
+                    }
                 }
             },
-
-            // DR-DOS 6.00
-            new[]
+            new PartitionTest
             {
-                new Partition
+                TestFile = "drdos_6.00.aif",
+                Partitions = new[]
                 {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 101745,
-                    Sequence    = 0,
-                    Start       = 63
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x01",
-                    Length      = 18081,
-                    Sequence    = 1,
-                    Start       = 102879
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 130977,
-                    Sequence    = 2,
-                    Start       = 121023
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 202545,
-                    Sequence    = 3,
-                    Start       = 252063
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 567441,
-                    Sequence    = 4,
-                    Start       = 454671
+                    new Partition
+                    {
+                        Length   = 101745,
+                        Offset   = 0,
+                        Sequence = 0,
+                        Size     = 0,
+                        Start    = 63,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 18081,
+                        Offset   = 0,
+                        Sequence = 1,
+                        Size     = 0,
+                        Start    = 102879,
+                        Type     = "0x01"
+                    },
+                    new Partition
+                    {
+                        Length   = 130977,
+                        Offset   = 0,
+                        Sequence = 2,
+                        Size     = 0,
+                        Start    = 121023,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 202545,
+                        Offset   = 0,
+                        Sequence = 3,
+                        Size     = 0,
+                        Start    = 252063,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 567441,
+                        Offset   = 0,
+                        Sequence = 4,
+                        Size     = 0,
+                        Start    = 454671,
+                        Type     = "0x06"
+                    }
                 }
             },
-
-            // DR-DOS 7.02
-            new[]
+            new PartitionTest
             {
-                new Partition
+                TestFile = "drdos_7.02.aif",
+                Partitions = new[]
                 {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 102753,
-                    Sequence    = 0,
-                    Start       = 63
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 307377,
-                    Sequence    = 1,
-                    Start       = 102879
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 384993,
-                    Sequence    = 2,
-                    Start       = 410319
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x01",
-                    Length      = 17073,
-                    Sequence    = 3,
-                    Start       = 795375
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 209601,
-                    Sequence    = 4,
-                    Start       = 812511
+                    new Partition
+                    {
+                        Length   = 102753,
+                        Offset   = 0,
+                        Sequence = 0,
+                        Size     = 0,
+                        Start    = 63,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 307377,
+                        Offset   = 0,
+                        Sequence = 1,
+                        Size     = 0,
+                        Start    = 102879,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 384993,
+                        Offset   = 0,
+                        Sequence = 2,
+                        Size     = 0,
+                        Start    = 410319,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 17073,
+                        Offset   = 0,
+                        Sequence = 3,
+                        Size     = 0,
+                        Start    = 795375,
+                        Type     = "0x01"
+                    },
+                    new Partition
+                    {
+                        Length   = 209601,
+                        Offset   = 0,
+                        Sequence = 4,
+                        Size     = 0,
+                        Start    = 812511,
+                        Type     = "0x06"
+                    }
                 }
             },
-
-            // DR-DOS 7.03
-            new[]
+            new PartitionTest
             {
-                new Partition
+                TestFile = "drdos_7.03.aif",
+                Partitions = new[]
                 {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 202545,
-                    Sequence    = 0,
-                    Start       = 63
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 141057,
-                    Sequence    = 1,
-                    Start       = 202671
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 152145,
-                    Sequence    = 2,
-                    Start       = 352863
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 364833,
-                    Sequence    = 3,
-                    Start       = 505071
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 152145,
-                    Sequence    = 4,
-                    Start       = 869967
+                    new Partition
+                    {
+                        Length   = 202545,
+                        Offset   = 0,
+                        Sequence = 0,
+                        Size     = 0,
+                        Start    = 63,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 141057,
+                        Offset   = 0,
+                        Sequence = 1,
+                        Size     = 0,
+                        Start    = 202671,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 152145,
+                        Offset   = 0,
+                        Sequence = 2,
+                        Size     = 0,
+                        Start    = 352863,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 364833,
+                        Offset   = 0,
+                        Sequence = 3,
+                        Size     = 0,
+                        Start    = 505071,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 152145,
+                        Offset   = 0,
+                        Sequence = 4,
+                        Size     = 0,
+                        Start    = 869967,
+                        Type     = "0x06"
+                    }
                 }
             },
-
-            // DR-DOS 8.0
-            new[]
+            new PartitionTest
             {
-                new Partition
+                TestFile = "drdos_8.0.aif",
+                Partitions = new[]
                 {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 205569,
-                    Sequence    = 0,
-                    Start       = 63
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 138033,
-                    Sequence    = 1,
-                    Start       = 205695
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 303345,
-                    Sequence    = 2,
-                    Start       = 352863
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 249921,
-                    Sequence    = 3,
-                    Start       = 656271
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 115857,
-                    Sequence    = 4,
-                    Start       = 906255
+                    new Partition
+                    {
+                        Length   = 205569,
+                        Offset   = 0,
+                        Sequence = 0,
+                        Size     = 0,
+                        Start    = 63,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 138033,
+                        Offset   = 0,
+                        Sequence = 1,
+                        Size     = 0,
+                        Start    = 205695,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 303345,
+                        Offset   = 0,
+                        Sequence = 2,
+                        Size     = 0,
+                        Start    = 352863,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 249921,
+                        Offset   = 0,
+                        Sequence = 3,
+                        Size     = 0,
+                        Start    = 656271,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 115857,
+                        Offset   = 0,
+                        Sequence = 4,
+                        Size     = 0,
+                        Start    = 906255,
+                        Type     = "0x06"
+                    }
                 }
             },
-
-            // Linux
-            new[]
+            new PartitionTest
             {
-                new Partition
+                TestFile = "linux.aif",
+                Partitions = new[]
                 {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x04",
-                    Length      = 20480,
-                    Sequence    = 0,
-                    Start       = 2048
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x24",
-                    Length      = 40960,
-                    Sequence    = 1,
-                    Start       = 22528
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0xA7",
-                    Length      = 61440,
-                    Sequence    = 2,
-                    Start       = 65536
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x42",
-                    Length      = 81920,
-                    Sequence    = 3,
-                    Start       = 129024
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x83",
-                    Length      = 49152,
-                    Sequence    = 4,
-                    Start       = 212992
+                    new Partition
+                    {
+                        Length   = 20480,
+                        Offset   = 0,
+                        Sequence = 0,
+                        Size     = 0,
+                        Start    = 2048,
+                        Type     = "0x04"
+                    },
+                    new Partition
+                    {
+                        Length   = 40960,
+                        Offset   = 0,
+                        Sequence = 1,
+                        Size     = 0,
+                        Start    = 22528,
+                        Type     = "0x24"
+                    },
+                    new Partition
+                    {
+                        Length   = 61440,
+                        Offset   = 0,
+                        Sequence = 2,
+                        Size     = 0,
+                        Start    = 65536,
+                        Type     = "0xA7"
+                    },
+                    new Partition
+                    {
+                        Length   = 81920,
+                        Offset   = 0,
+                        Sequence = 3,
+                        Size     = 0,
+                        Start    = 129024,
+                        Type     = "0x42"
+                    },
+                    new Partition
+                    {
+                        Length   = 49152,
+                        Offset   = 0,
+                        Sequence = 4,
+                        Size     = 0,
+                        Start    = 212992,
+                        Type     = "0x83"
+                    }
                 }
             },
-
-            // Mac OS X 10.3
-            new[]
+            new PartitionTest
             {
-                new Partition
+                TestFile = "macosx_10.3.aif",
+                Partitions = new[]
                 {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0xA8",
-                    Length      = 204800,
-                    Sequence    = 0,
-                    Start       = 8
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0xAF",
-                    Length      = 102400,
-                    Sequence    = 1,
-                    Start       = 204816
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x0B",
-                    Length      = 102400,
-                    Sequence    = 2,
-                    Start       = 307224
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0xAF",
-                    Length      = 204800,
-                    Sequence    = 3,
-                    Start       = 409632
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0xAF",
-                    Length      = 204800,
-                    Sequence    = 4,
-                    Start       = 614440
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0xAF",
-                    Length      = 204752,
-                    Sequence    = 5,
-                    Start       = 819248
+                    new Partition
+                    {
+                        Length   = 204800,
+                        Offset   = 0,
+                        Sequence = 0,
+                        Size     = 0,
+                        Start    = 8,
+                        Type     = "0xA8"
+                    },
+                    new Partition
+                    {
+                        Length   = 102400,
+                        Offset   = 0,
+                        Sequence = 1,
+                        Size     = 0,
+                        Start    = 204816,
+                        Type     = "0xAF"
+                    },
+                    new Partition
+                    {
+                        Length   = 102400,
+                        Offset   = 0,
+                        Sequence = 2,
+                        Size     = 0,
+                        Start    = 307224,
+                        Type     = "0x0B"
+                    },
+                    new Partition
+                    {
+                        Length   = 204800,
+                        Offset   = 0,
+                        Sequence = 3,
+                        Size     = 0,
+                        Start    = 409632,
+                        Type     = "0xAF"
+                    },
+                    new Partition
+                    {
+                        Length   = 204800,
+                        Offset   = 0,
+                        Sequence = 4,
+                        Size     = 0,
+                        Start    = 614440,
+                        Type     = "0xAF"
+                    },
+                    new Partition
+                    {
+                        Length   = 204752,
+                        Offset   = 0,
+                        Sequence = 5,
+                        Size     = 0,
+                        Start    = 819248,
+                        Type     = "0xAF"
+                    }
                 }
             },
-
-            // Mac OS X 10.4
-            new[]
+            new PartitionTest
             {
-                new Partition
+                TestFile = "macosx_10.4.aif",
+                Partitions = new[]
                 {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0xAF",
-                    Length      = 102400,
-                    Sequence    = 0,
-                    Start       = 63
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0xAF",
-                    Length      = 204800,
-                    Sequence    = 1,
-                    Start       = 102501
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x0B",
-                    Length      = 204800,
-                    Sequence    = 2,
-                    Start       = 307314
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0xA8",
-                    Length      = 204800,
-                    Sequence    = 3,
-                    Start       = 512127
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 102400,
-                    Sequence    = 4,
-                    Start       = 716940
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0xAF",
-                    Length      = 204622,
-                    Sequence    = 5,
-                    Start       = 819378
+                    new Partition
+                    {
+                        Length   = 102400,
+                        Offset   = 0,
+                        Sequence = 0,
+                        Size     = 0,
+                        Start    = 63,
+                        Type     = "0xAF"
+                    },
+                    new Partition
+                    {
+                        Length   = 204800,
+                        Offset   = 0,
+                        Sequence = 1,
+                        Size     = 0,
+                        Start    = 102501,
+                        Type     = "0xAF"
+                    },
+                    new Partition
+                    {
+                        Length   = 204800,
+                        Offset   = 0,
+                        Sequence = 2,
+                        Size     = 0,
+                        Start    = 307314,
+                        Type     = "0x0B"
+                    },
+                    new Partition
+                    {
+                        Length   = 204800,
+                        Offset   = 0,
+                        Sequence = 3,
+                        Size     = 0,
+                        Start    = 512127,
+                        Type     = "0xA8"
+                    },
+                    new Partition
+                    {
+                        Length   = 102400,
+                        Offset   = 0,
+                        Sequence = 4,
+                        Size     = 0,
+                        Start    = 716940,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 204622,
+                        Offset   = 0,
+                        Sequence = 5,
+                        Size     = 0,
+                        Start    = 819378,
+                        Type     = "0xAF"
+                    }
                 }
             },
-
-            // MS-DOS 3.30A
-            new[]
+            new PartitionTest
             {
-                new Partition
+                TestFile = "msdos_3.30a.aif",
+                Partitions = new[]
                 {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x04",
-                    Length      = 65457,
-                    Sequence    = 0,
-                    Start       = 63
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x04",
-                    Length      = 65457,
-                    Sequence    = 1,
-                    Start       = 65583
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x04",
-                    Length      = 65457,
-                    Sequence    = 2,
-                    Start       = 131103
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x04",
-                    Length      = 65457,
-                    Sequence    = 3,
-                    Start       = 196623
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x04",
-                    Length      = 65457,
-                    Sequence    = 4,
-                    Start       = 262143
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x04",
-                    Length      = 65457,
-                    Sequence    = 5,
-                    Start       = 327663
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x04",
-                    Length      = 65457,
-                    Sequence    = 6,
-                    Start       = 393183
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x04",
-                    Length      = 65457,
-                    Sequence    = 7,
-                    Start       = 458703
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x04",
-                    Length      = 65457,
-                    Sequence    = 8,
-                    Start       = 524223
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x04",
-                    Length      = 65457,
-                    Sequence    = 9,
-                    Start       = 589743
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x04",
-                    Length      = 65457,
-                    Sequence    = 10,
-                    Start       = 655263
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x04",
-                    Length      = 65457,
-                    Sequence    = 11,
-                    Start       = 720783
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x04",
-                    Length      = 65457,
-                    Sequence    = 12,
-                    Start       = 786303
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x04",
-                    Length      = 65457,
-                    Sequence    = 13,
-                    Start       = 851823
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x04",
-                    Length      = 65457,
-                    Sequence    = 14,
-                    Start       = 917343
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x04",
-                    Length      = 39249,
-                    Sequence    = 15,
-                    Start       = 982863
+                    new Partition
+                    {
+                        Length   = 65457,
+                        Offset   = 0,
+                        Sequence = 0,
+                        Size     = 0,
+                        Start    = 63,
+                        Type     = "0x04"
+                    },
+                    new Partition
+                    {
+                        Length   = 65457,
+                        Offset   = 0,
+                        Sequence = 1,
+                        Size     = 0,
+                        Start    = 65583,
+                        Type     = "0x04"
+                    },
+                    new Partition
+                    {
+                        Length   = 65457,
+                        Offset   = 0,
+                        Sequence = 2,
+                        Size     = 0,
+                        Start    = 131103,
+                        Type     = "0x04"
+                    },
+                    new Partition
+                    {
+                        Length   = 65457,
+                        Offset   = 0,
+                        Sequence = 3,
+                        Size     = 0,
+                        Start    = 196623,
+                        Type     = "0x04"
+                    },
+                    new Partition
+                    {
+                        Length   = 65457,
+                        Offset   = 0,
+                        Sequence = 4,
+                        Size     = 0,
+                        Start    = 262143,
+                        Type     = "0x04"
+                    },
+                    new Partition
+                    {
+                        Length   = 65457,
+                        Offset   = 0,
+                        Sequence = 5,
+                        Size     = 0,
+                        Start    = 327663,
+                        Type     = "0x04"
+                    },
+                    new Partition
+                    {
+                        Length   = 65457,
+                        Offset   = 0,
+                        Sequence = 6,
+                        Size     = 0,
+                        Start    = 393183,
+                        Type     = "0x04"
+                    },
+                    new Partition
+                    {
+                        Length   = 65457,
+                        Offset   = 0,
+                        Sequence = 7,
+                        Size     = 0,
+                        Start    = 458703,
+                        Type     = "0x04"
+                    },
+                    new Partition
+                    {
+                        Length   = 65457,
+                        Offset   = 0,
+                        Sequence = 8,
+                        Size     = 0,
+                        Start    = 524223,
+                        Type     = "0x04"
+                    },
+                    new Partition
+                    {
+                        Length   = 65457,
+                        Offset   = 0,
+                        Sequence = 9,
+                        Size     = 0,
+                        Start    = 589743,
+                        Type     = "0x04"
+                    },
+                    new Partition
+                    {
+                        Length   = 65457,
+                        Offset   = 0,
+                        Sequence = 10,
+                        Size     = 0,
+                        Start    = 655263,
+                        Type     = "0x04"
+                    },
+                    new Partition
+                    {
+                        Length   = 65457,
+                        Offset   = 0,
+                        Sequence = 11,
+                        Size     = 0,
+                        Start    = 720783,
+                        Type     = "0x04"
+                    },
+                    new Partition
+                    {
+                        Length   = 65457,
+                        Offset   = 0,
+                        Sequence = 12,
+                        Size     = 0,
+                        Start    = 786303,
+                        Type     = "0x04"
+                    },
+                    new Partition
+                    {
+                        Length   = 65457,
+                        Offset   = 0,
+                        Sequence = 13,
+                        Size     = 0,
+                        Start    = 851823,
+                        Type     = "0x04"
+                    },
+                    new Partition
+                    {
+                        Length   = 65457,
+                        Offset   = 0,
+                        Sequence = 14,
+                        Size     = 0,
+                        Start    = 917343,
+                        Type     = "0x04"
+                    },
+                    new Partition
+                    {
+                        Length   = 39249,
+                        Offset   = 0,
+                        Sequence = 15,
+                        Size     = 0,
+                        Start    = 982863,
+                        Type     = "0x04"
+                    }
                 }
             },
-
-            // MS-DOS 5.00
-            new[]
+            new PartitionTest
             {
-                new Partition
+                TestFile = "msdos_5.00.aif",
+                Partitions = new[]
                 {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 102753,
-                    Sequence    = 0,
-                    Start       = 63
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x01",
-                    Length      = 31185,
-                    Sequence    = 1,
-                    Start       = 102879
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x04",
-                    Length      = 41265,
-                    Sequence    = 2,
-                    Start       = 134127
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x04",
-                    Length      = 51345,
-                    Sequence    = 3,
-                    Start       = 175455
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x04",
-                    Length      = 61425,
-                    Sequence    = 4,
-                    Start       = 226863
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 72513,
-                    Sequence    = 5,
-                    Start       = 288351
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 82593,
-                    Sequence    = 6,
-                    Start       = 360927
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 92673,
-                    Sequence    = 7,
-                    Start       = 443583
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 102753,
-                    Sequence    = 8,
-                    Start       = 536319
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 112833,
-                    Sequence    = 9,
-                    Start       = 639135
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 122913,
-                    Sequence    = 10,
-                    Start       = 752031
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 134001,
-                    Sequence    = 11,
-                    Start       = 875007
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x01",
-                    Length      = 13041,
-                    Sequence    = 12,
-                    Start       = 1009071
+                    new Partition
+                    {
+                        Length   = 102753,
+                        Offset   = 0,
+                        Sequence = 0,
+                        Size     = 0,
+                        Start    = 63,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 31185,
+                        Offset   = 0,
+                        Sequence = 1,
+                        Size     = 0,
+                        Start    = 102879,
+                        Type     = "0x01"
+                    },
+                    new Partition
+                    {
+                        Length   = 41265,
+                        Offset   = 0,
+                        Sequence = 2,
+                        Size     = 0,
+                        Start    = 134127,
+                        Type     = "0x04"
+                    },
+                    new Partition
+                    {
+                        Length   = 51345,
+                        Offset   = 0,
+                        Sequence = 3,
+                        Size     = 0,
+                        Start    = 175455,
+                        Type     = "0x04"
+                    },
+                    new Partition
+                    {
+                        Length   = 61425,
+                        Offset   = 0,
+                        Sequence = 4,
+                        Size     = 0,
+                        Start    = 226863,
+                        Type     = "0x04"
+                    },
+                    new Partition
+                    {
+                        Length   = 72513,
+                        Offset   = 0,
+                        Sequence = 5,
+                        Size     = 0,
+                        Start    = 288351,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 82593,
+                        Offset   = 0,
+                        Sequence = 6,
+                        Size     = 0,
+                        Start    = 360927,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 92673,
+                        Offset   = 0,
+                        Sequence = 7,
+                        Size     = 0,
+                        Start    = 443583,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 102753,
+                        Offset   = 0,
+                        Sequence = 8,
+                        Size     = 0,
+                        Start    = 536319,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 112833,
+                        Offset   = 0,
+                        Sequence = 9,
+                        Size     = 0,
+                        Start    = 639135,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 122913,
+                        Offset   = 0,
+                        Sequence = 10,
+                        Size     = 0,
+                        Start    = 752031,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 134001,
+                        Offset   = 0,
+                        Sequence = 11,
+                        Size     = 0,
+                        Start    = 875007,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 13041,
+                        Offset   = 0,
+                        Sequence = 12,
+                        Size     = 0,
+                        Start    = 1009071,
+                        Type     = "0x01"
+                    }
                 }
             },
-
-            // MS-DOS 6.00
-            new[]
+            new PartitionTest
             {
-                new Partition
+                TestFile = "msdos_6.00.aif",
+                Partitions = new[]
                 {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x04",
-                    Length      = 51345,
-                    Sequence    = 0,
-                    Start       = 63
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 72513,
-                    Sequence    = 1,
-                    Start       = 51471
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 92673,
-                    Sequence    = 2,
-                    Start       = 124047
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 112833,
-                    Sequence    = 3,
-                    Start       = 216783
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 134001,
-                    Sequence    = 4,
-                    Start       = 329679
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 154161,
-                    Sequence    = 5,
-                    Start       = 463743
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 178353,
-                    Sequence    = 6,
-                    Start       = 617967
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 184401,
-                    Sequence    = 7,
-                    Start       = 796383
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x04",
-                    Length      = 41265,
-                    Sequence    = 8,
-                    Start       = 980847
+                    new Partition
+                    {
+                        Length   = 51345,
+                        Offset   = 0,
+                        Sequence = 0,
+                        Size     = 0,
+                        Start    = 63,
+                        Type     = "0x04"
+                    },
+                    new Partition
+                    {
+                        Length   = 72513,
+                        Offset   = 0,
+                        Sequence = 1,
+                        Size     = 0,
+                        Start    = 51471,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 92673,
+                        Offset   = 0,
+                        Sequence = 2,
+                        Size     = 0,
+                        Start    = 124047,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 112833,
+                        Offset   = 0,
+                        Sequence = 3,
+                        Size     = 0,
+                        Start    = 216783,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 134001,
+                        Offset   = 0,
+                        Sequence = 4,
+                        Size     = 0,
+                        Start    = 329679,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 154161,
+                        Offset   = 0,
+                        Sequence = 5,
+                        Size     = 0,
+                        Start    = 463743,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 178353,
+                        Offset   = 0,
+                        Sequence = 6,
+                        Size     = 0,
+                        Start    = 617967,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 184401,
+                        Offset   = 0,
+                        Sequence = 7,
+                        Size     = 0,
+                        Start    = 796383,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 41265,
+                        Offset   = 0,
+                        Sequence = 8,
+                        Size     = 0,
+                        Start    = 980847,
+                        Type     = "0x04"
+                    }
                 }
             },
-
-            // MS-DOS 6.20
-            new[]
+            new PartitionTest
             {
-                new Partition
+                TestFile = "msdos_6.20.aif",
+                Partitions = new[]
                 {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 205569,
-                    Sequence    = 0,
-                    Start       = 63
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 225729,
-                    Sequence    = 1,
-                    Start       = 205695
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 245889,
-                    Sequence    = 2,
-                    Start       = 431487
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 267057,
-                    Sequence    = 3,
-                    Start       = 677439
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x04",
-                    Length      = 61425,
-                    Sequence    = 4,
-                    Start       = 944559
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x01",
-                    Length      = 16065,
-                    Sequence    = 5,
-                    Start       = 1006047
+                    new Partition
+                    {
+                        Length   = 205569,
+                        Offset   = 0,
+                        Sequence = 0,
+                        Size     = 0,
+                        Start    = 63,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 225729,
+                        Offset   = 0,
+                        Sequence = 1,
+                        Size     = 0,
+                        Start    = 205695,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 245889,
+                        Offset   = 0,
+                        Sequence = 2,
+                        Size     = 0,
+                        Start    = 431487,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 267057,
+                        Offset   = 0,
+                        Sequence = 3,
+                        Size     = 0,
+                        Start    = 677439,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 61425,
+                        Offset   = 0,
+                        Sequence = 4,
+                        Size     = 0,
+                        Start    = 944559,
+                        Type     = "0x04"
+                    },
+                    new Partition
+                    {
+                        Length   = 16065,
+                        Offset   = 0,
+                        Sequence = 5,
+                        Size     = 0,
+                        Start    = 1006047,
+                        Type     = "0x01"
+                    }
                 }
             },
-
-            // MS-DOS 6.21
-            new[]
+            new PartitionTest
             {
-                new Partition
+                TestFile = "msdos_6.21.aif",
+                Partitions = new[]
                 {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 205569,
-                    Sequence    = 0,
-                    Start       = 63
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 225729,
-                    Sequence    = 1,
-                    Start       = 205695
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 245889,
-                    Sequence    = 2,
-                    Start       = 431487
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 267057,
-                    Sequence    = 3,
-                    Start       = 677439
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x04",
-                    Length      = 51345,
-                    Sequence    = 4,
-                    Start       = 944559
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x01",
-                    Length      = 6993,
-                    Sequence    = 5,
-                    Start       = 995967
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x01",
-                    Length      = 19089,
-                    Sequence    = 6,
-                    Start       = 1003023
+                    new Partition
+                    {
+                        Length   = 205569,
+                        Offset   = 0,
+                        Sequence = 0,
+                        Size     = 0,
+                        Start    = 63,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 225729,
+                        Offset   = 0,
+                        Sequence = 1,
+                        Size     = 0,
+                        Start    = 205695,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 245889,
+                        Offset   = 0,
+                        Sequence = 2,
+                        Size     = 0,
+                        Start    = 431487,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 267057,
+                        Offset   = 0,
+                        Sequence = 3,
+                        Size     = 0,
+                        Start    = 677439,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 51345,
+                        Offset   = 0,
+                        Sequence = 4,
+                        Size     = 0,
+                        Start    = 944559,
+                        Type     = "0x04"
+                    },
+                    new Partition
+                    {
+                        Length   = 6993,
+                        Offset   = 0,
+                        Sequence = 5,
+                        Size     = 0,
+                        Start    = 995967,
+                        Type     = "0x01"
+                    },
+                    new Partition
+                    {
+                        Length   = 19089,
+                        Offset   = 0,
+                        Sequence = 6,
+                        Size     = 0,
+                        Start    = 1003023,
+                        Type     = "0x01"
+                    }
                 }
             },
-
-            // MS-DOS 6.22
-            new[]
+            new PartitionTest
             {
-                new Partition
+                TestFile = "msdos_6.22.aif",
+                Partitions = new[]
                 {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 245889,
-                    Sequence    = 0,
-                    Start       = 63
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 205569,
-                    Sequence    = 1,
-                    Start       = 246015
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 307377,
-                    Sequence    = 2,
-                    Start       = 451647
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 225729,
-                    Sequence    = 3,
-                    Start       = 759087
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x04",
-                    Length      = 37233,
-                    Sequence    = 4,
-                    Start       = 984879
+                    new Partition
+                    {
+                        Length   = 245889,
+                        Offset   = 0,
+                        Sequence = 0,
+                        Size     = 0,
+                        Start    = 63,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 205569,
+                        Offset   = 0,
+                        Sequence = 1,
+                        Size     = 0,
+                        Start    = 246015,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 307377,
+                        Offset   = 0,
+                        Sequence = 2,
+                        Size     = 0,
+                        Start    = 451647,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 225729,
+                        Offset   = 0,
+                        Sequence = 3,
+                        Size     = 0,
+                        Start    = 759087,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 37233,
+                        Offset   = 0,
+                        Sequence = 4,
+                        Size     = 0,
+                        Start    = 984879,
+                        Type     = "0x04"
+                    }
                 }
             },
-
-            // Multiuser DOS 7.22 release 04
-            new[]
+            new PartitionTest
             {
-                new Partition
+                TestFile = "multiuserdos_7.22r04.aif",
+                Partitions = new[]
                 {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 152145,
-                    Sequence    = 0,
-                    Start       = 63
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 99729,
-                    Sequence    = 1,
-                    Start       = 152271
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 202545,
-                    Sequence    = 2,
-                    Start       = 252063
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x01",
-                    Length      = 1953,
-                    Sequence    = 3,
-                    Start       = 454671
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 565425,
-                    Sequence    = 4,
-                    Start       = 456687
+                    new Partition
+                    {
+                        Length   = 152145,
+                        Offset   = 0,
+                        Sequence = 0,
+                        Size     = 0,
+                        Start    = 63,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 99729,
+                        Offset   = 0,
+                        Sequence = 1,
+                        Size     = 0,
+                        Start    = 152271,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 202545,
+                        Offset   = 0,
+                        Sequence = 2,
+                        Size     = 0,
+                        Start    = 252063,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 1953,
+                        Offset   = 0,
+                        Sequence = 3,
+                        Size     = 0,
+                        Start    = 454671,
+                        Type     = "0x01"
+                    },
+                    new Partition
+                    {
+                        Length   = 565425,
+                        Offset   = 0,
+                        Sequence = 4,
+                        Size     = 0,
+                        Start    = 456687,
+                        Type     = "0x06"
+                    }
                 }
             },
-
-            // Novell DOS 7.0
-            new[]
+            new PartitionTest
             {
-                new Partition
+                TestFile = "novelldos_7.00.aif",
+                Partitions = new[]
                 {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 252945,
-                    Sequence    = 0,
-                    Start       = 63
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x01",
-                    Length      = 4977,
-                    Sequence    = 1,
-                    Start       = 253071
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 202545,
-                    Sequence    = 2,
-                    Start       = 352863
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 348705,
-                    Sequence    = 3,
-                    Start       = 555471
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 117873,
-                    Sequence    = 4,
-                    Start       = 904239
+                    new Partition
+                    {
+                        Length   = 252945,
+                        Offset   = 0,
+                        Sequence = 0,
+                        Size     = 0,
+                        Start    = 63,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 4977,
+                        Offset   = 0,
+                        Sequence = 1,
+                        Size     = 0,
+                        Start    = 253071,
+                        Type     = "0x01"
+                    },
+                    new Partition
+                    {
+                        Length   = 202545,
+                        Offset   = 0,
+                        Sequence = 2,
+                        Size     = 0,
+                        Start    = 352863,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 348705,
+                        Offset   = 0,
+                        Sequence = 3,
+                        Size     = 0,
+                        Start    = 555471,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 117873,
+                        Offset   = 0,
+                        Sequence = 4,
+                        Size     = 0,
+                        Start    = 904239,
+                        Type     = "0x06"
+                    }
                 }
             },
-
-            // OpenDOS 7.01
-            new[]
+            new PartitionTest
             {
-                new Partition
+                TestFile = "opendos_7.01.aif",
+                Partitions = new[]
                 {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 307377,
-                    Sequence    = 0,
-                    Start       = 63
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x01",
-                    Length      = 4977,
-                    Sequence    = 1,
-                    Start       = 307503
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x04",
-                    Length      = 40257,
-                    Sequence    = 2,
-                    Start       = 312543
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 202545,
-                    Sequence    = 3,
-                    Start       = 352863
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 466641,
-                    Sequence    = 4,
-                    Start       = 555471
+                    new Partition
+                    {
+                        Length   = 307377,
+                        Offset   = 0,
+                        Sequence = 0,
+                        Size     = 0,
+                        Start    = 63,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 4977,
+                        Offset   = 0,
+                        Sequence = 1,
+                        Size     = 0,
+                        Start    = 307503,
+                        Type     = "0x01"
+                    },
+                    new Partition
+                    {
+                        Length   = 40257,
+                        Offset   = 0,
+                        Sequence = 2,
+                        Size     = 0,
+                        Start    = 312543,
+                        Type     = "0x04"
+                    },
+                    new Partition
+                    {
+                        Length   = 202545,
+                        Offset   = 0,
+                        Sequence = 3,
+                        Size     = 0,
+                        Start    = 352863,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 466641,
+                        Offset   = 0,
+                        Sequence = 4,
+                        Size     = 0,
+                        Start    = 555471,
+                        Type     = "0x06"
+                    }
                 }
             },
-
-            // Parted
-            new[]
+            new PartitionTest
             {
-                new Partition
+                TestFile = "parted.aif",
+                Partitions = new[]
                 {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x83",
-                    Length      = 67584,
-                    Sequence    = 0,
-                    Start       = 4096
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x07",
-                    Length      = 59392,
-                    Sequence    = 1,
-                    Start       = 73728
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 129024,
-                    Sequence    = 2,
-                    Start       = 133120
+                    new Partition
+                    {
+                        Length   = 67584,
+                        Offset   = 0,
+                        Sequence = 0,
+                        Size     = 0,
+                        Start    = 4096,
+                        Type     = "0x83"
+                    },
+                    new Partition
+                    {
+                        Length   = 59392,
+                        Offset   = 0,
+                        Sequence = 1,
+                        Size     = 0,
+                        Start    = 73728,
+                        Type     = "0x07"
+                    },
+                    new Partition
+                    {
+                        Length   = 129024,
+                        Offset   = 0,
+                        Sequence = 2,
+                        Size     = 0,
+                        Start    = 133120,
+                        Type     = "0x06"
+                    }
                 }
             },
-
-            // PC-DOS 2000
-            new[]
+            new PartitionTest
             {
-                new Partition
+                TestFile = "pcdos_2000.aif",
+                Partitions = new[]
                 {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 205569,
-                    Sequence    = 0,
-                    Start       = 63
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 225729,
-                    Sequence    = 1,
-                    Start       = 205695
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 245889,
-                    Sequence    = 2,
-                    Start       = 431487
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 287217,
-                    Sequence    = 3,
-                    Start       = 677439
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x04",
-                    Length      = 57393,
-                    Sequence    = 4,
-                    Start       = 964719
+                    new Partition
+                    {
+                        Length   = 205569,
+                        Offset   = 0,
+                        Sequence = 0,
+                        Size     = 0,
+                        Start    = 63,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 225729,
+                        Offset   = 0,
+                        Sequence = 1,
+                        Size     = 0,
+                        Start    = 205695,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 245889,
+                        Offset   = 0,
+                        Sequence = 2,
+                        Size     = 0,
+                        Start    = 431487,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 287217,
+                        Offset   = 0,
+                        Sequence = 3,
+                        Size     = 0,
+                        Start    = 677439,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 57393,
+                        Offset   = 0,
+                        Sequence = 4,
+                        Size     = 0,
+                        Start    = 964719,
+                        Type     = "0x04"
+                    }
                 }
             },
-
-            // PC-DOS 2.00
-            new[]
+            new PartitionTest
             {
-                new Partition
+                TestFile = "pcdos_2.00.aif",
+                Partitions = new[]
                 {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x01",
-                    Length      = 1022111,
-                    Sequence    = 0,
-                    Start       = 1
+                    new Partition
+                    {
+                        Length   = 1022111,
+                        Offset   = 0,
+                        Sequence = 0,
+                        Size     = 0,
+                        Start    = 1,
+                        Type     = "0x01"
+                    }
                 }
             },
-
-            // PC-DOS 2.10
-            new[]
+            new PartitionTest
             {
-                new Partition
+                TestFile = "pcdos_2.10.aif",
+                Partitions = new[]
                 {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x01",
-                    Length      = 1022111,
-                    Sequence    = 0,
-                    Start       = 1
+                    new Partition
+                    {
+                        Length   = 1022111,
+                        Offset   = 0,
+                        Sequence = 0,
+                        Size     = 0,
+                        Start    = 1,
+                        Type     = "0x01"
+                    }
                 }
             },
-
-            // PC-DOS 3.00
-            new[]
+            new PartitionTest
             {
-                new Partition
+                TestFile = "pcdos_3.00.aif",
+                Partitions = new[]
                 {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x01",
-                    Length      = 66465,
-                    Sequence    = 0,
-                    Start       = 63
+                    new Partition
+                    {
+                        Length   = 66465,
+                        Offset   = 0,
+                        Sequence = 0,
+                        Size     = 0,
+                        Start    = 63,
+                        Type     = "0x01"
+                    }
                 }
             },
-
-            // PC-DOS 3.10
-            new[]
+            new PartitionTest
             {
-                new Partition
+                TestFile = "pcdos_3.10.aif",
+                Partitions = new[]
                 {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x01",
-                    Length      = 66465,
-                    Sequence    = 0,
-                    Start       = 63
+                    new Partition
+                    {
+                        Length   = 66465,
+                        Offset   = 0,
+                        Sequence = 0,
+                        Size     = 0,
+                        Start    = 63,
+                        Type     = "0x01"
+                    }
                 }
             },
-
-            // PC-DOS 3.30
-            new[]
+            new PartitionTest
             {
-                new Partition
+                TestFile = "pcdos_3.30.aif",
+                Partitions = new[]
                 {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x04",
-                    Length      = 65457,
-                    Sequence    = 0,
-                    Start       = 63
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x04",
-                    Length      = 65457,
-                    Sequence    = 1,
-                    Start       = 65583
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x04",
-                    Length      = 65457,
-                    Sequence    = 2,
-                    Start       = 131103
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x04",
-                    Length      = 65457,
-                    Sequence    = 3,
-                    Start       = 196623
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x04",
-                    Length      = 65457,
-                    Sequence    = 4,
-                    Start       = 262143
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x04",
-                    Length      = 65457,
-                    Sequence    = 5,
-                    Start       = 327663
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x04",
-                    Length      = 65457,
-                    Sequence    = 6,
-                    Start       = 393183
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x04",
-                    Length      = 65457,
-                    Sequence    = 7,
-                    Start       = 458703
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x04",
-                    Length      = 65457,
-                    Sequence    = 8,
-                    Start       = 524223
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x04",
-                    Length      = 65457,
-                    Sequence    = 9,
-                    Start       = 589743
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x04",
-                    Length      = 65457,
-                    Sequence    = 10,
-                    Start       = 655263
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x04",
-                    Length      = 65457,
-                    Sequence    = 11,
-                    Start       = 720783
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x04",
-                    Length      = 65457,
-                    Sequence    = 12,
-                    Start       = 786303
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x04",
-                    Length      = 65457,
-                    Sequence    = 13,
-                    Start       = 851823
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x04",
-                    Length      = 65457,
-                    Sequence    = 14,
-                    Start       = 917343
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x04",
-                    Length      = 39249,
-                    Sequence    = 15,
-                    Start       = 982863
+                    new Partition
+                    {
+                        Length   = 65457,
+                        Offset   = 0,
+                        Sequence = 0,
+                        Size     = 0,
+                        Start    = 63,
+                        Type     = "0x04"
+                    },
+                    new Partition
+                    {
+                        Length   = 65457,
+                        Offset   = 0,
+                        Sequence = 1,
+                        Size     = 0,
+                        Start    = 65583,
+                        Type     = "0x04"
+                    },
+                    new Partition
+                    {
+                        Length   = 65457,
+                        Offset   = 0,
+                        Sequence = 2,
+                        Size     = 0,
+                        Start    = 131103,
+                        Type     = "0x04"
+                    },
+                    new Partition
+                    {
+                        Length   = 65457,
+                        Offset   = 0,
+                        Sequence = 3,
+                        Size     = 0,
+                        Start    = 196623,
+                        Type     = "0x04"
+                    },
+                    new Partition
+                    {
+                        Length   = 65457,
+                        Offset   = 0,
+                        Sequence = 4,
+                        Size     = 0,
+                        Start    = 262143,
+                        Type     = "0x04"
+                    },
+                    new Partition
+                    {
+                        Length   = 65457,
+                        Offset   = 0,
+                        Sequence = 5,
+                        Size     = 0,
+                        Start    = 327663,
+                        Type     = "0x04"
+                    },
+                    new Partition
+                    {
+                        Length   = 65457,
+                        Offset   = 0,
+                        Sequence = 6,
+                        Size     = 0,
+                        Start    = 393183,
+                        Type     = "0x04"
+                    },
+                    new Partition
+                    {
+                        Length   = 65457,
+                        Offset   = 0,
+                        Sequence = 7,
+                        Size     = 0,
+                        Start    = 458703,
+                        Type     = "0x04"
+                    },
+                    new Partition
+                    {
+                        Length   = 65457,
+                        Offset   = 0,
+                        Sequence = 8,
+                        Size     = 0,
+                        Start    = 524223,
+                        Type     = "0x04"
+                    },
+                    new Partition
+                    {
+                        Length   = 65457,
+                        Offset   = 0,
+                        Sequence = 9,
+                        Size     = 0,
+                        Start    = 589743,
+                        Type     = "0x04"
+                    },
+                    new Partition
+                    {
+                        Length   = 65457,
+                        Offset   = 0,
+                        Sequence = 10,
+                        Size     = 0,
+                        Start    = 655263,
+                        Type     = "0x04"
+                    },
+                    new Partition
+                    {
+                        Length   = 65457,
+                        Offset   = 0,
+                        Sequence = 11,
+                        Size     = 0,
+                        Start    = 720783,
+                        Type     = "0x04"
+                    },
+                    new Partition
+                    {
+                        Length   = 65457,
+                        Offset   = 0,
+                        Sequence = 12,
+                        Size     = 0,
+                        Start    = 786303,
+                        Type     = "0x04"
+                    },
+                    new Partition
+                    {
+                        Length   = 65457,
+                        Offset   = 0,
+                        Sequence = 13,
+                        Size     = 0,
+                        Start    = 851823,
+                        Type     = "0x04"
+                    },
+                    new Partition
+                    {
+                        Length   = 65457,
+                        Offset   = 0,
+                        Sequence = 14,
+                        Size     = 0,
+                        Start    = 917343,
+                        Type     = "0x04"
+                    },
+                    new Partition
+                    {
+                        Length   = 39249,
+                        Offset   = 0,
+                        Sequence = 15,
+                        Size     = 0,
+                        Start    = 982863,
+                        Type     = "0x04"
+                    }
                 }
             },
-
-            // PC-DOS 4.00
-            new[]
+            new PartitionTest
             {
-                new Partition
+                TestFile = "pcdos_4.00.aif",
+                Partitions = new[]
                 {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 205569,
-                    Sequence    = 0,
-                    Start       = 63
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x01",
-                    Length      = 25137,
-                    Sequence    = 1,
-                    Start       = 205695
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 245889,
-                    Sequence    = 2,
-                    Start       = 230895
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 307377,
-                    Sequence    = 3,
-                    Start       = 476847
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 237825,
-                    Sequence    = 4,
-                    Start       = 784287
+                    new Partition
+                    {
+                        Length   = 205569,
+                        Offset   = 0,
+                        Sequence = 0,
+                        Size     = 0,
+                        Start    = 63,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 25137,
+                        Offset   = 0,
+                        Sequence = 1,
+                        Size     = 0,
+                        Start    = 205695,
+                        Type     = "0x01"
+                    },
+                    new Partition
+                    {
+                        Length   = 245889,
+                        Offset   = 0,
+                        Sequence = 2,
+                        Size     = 0,
+                        Start    = 230895,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 307377,
+                        Offset   = 0,
+                        Sequence = 3,
+                        Size     = 0,
+                        Start    = 476847,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 237825,
+                        Offset   = 0,
+                        Sequence = 4,
+                        Size     = 0,
+                        Start    = 784287,
+                        Type     = "0x06"
+                    }
                 }
             },
-
-            // PC-DOS 5.00
-            new[]
+            new PartitionTest
             {
-                new Partition
+                TestFile = "pcdos_5.00.aif",
+                Partitions = new[]
                 {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 205569,
-                    Sequence    = 0,
-                    Start       = 63
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x01",
-                    Length      = 25137,
-                    Sequence    = 1,
-                    Start       = 205695
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 245889,
-                    Sequence    = 2,
-                    Start       = 230895
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 287217,
-                    Sequence    = 3,
-                    Start       = 476847
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 257985,
-                    Sequence    = 4,
-                    Start       = 764127
+                    new Partition
+                    {
+                        Length   = 205569,
+                        Offset   = 0,
+                        Sequence = 0,
+                        Size     = 0,
+                        Start    = 63,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 25137,
+                        Offset   = 0,
+                        Sequence = 1,
+                        Size     = 0,
+                        Start    = 205695,
+                        Type     = "0x01"
+                    },
+                    new Partition
+                    {
+                        Length   = 245889,
+                        Offset   = 0,
+                        Sequence = 2,
+                        Size     = 0,
+                        Start    = 230895,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 287217,
+                        Offset   = 0,
+                        Sequence = 3,
+                        Size     = 0,
+                        Start    = 476847,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 257985,
+                        Offset   = 0,
+                        Sequence = 4,
+                        Size     = 0,
+                        Start    = 764127,
+                        Type     = "0x06"
+                    }
                 }
             },
-
-            // PC-DOS 6.10
-            new[]
+            new PartitionTest
             {
-                new Partition
+                TestFile = "pcdos_6.10.aif",
+                Partitions = new[]
                 {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 205569,
-                    Sequence    = 0,
-                    Start       = 63
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x01",
-                    Length      = 25137,
-                    Sequence    = 1,
-                    Start       = 205695
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 225729,
-                    Sequence    = 2,
-                    Start       = 230895
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 245889,
-                    Sequence    = 3,
-                    Start       = 456687
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 319473,
-                    Sequence    = 4,
-                    Start       = 702639
+                    new Partition
+                    {
+                        Length   = 205569,
+                        Offset   = 0,
+                        Sequence = 0,
+                        Size     = 0,
+                        Start    = 63,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 25137,
+                        Offset   = 0,
+                        Sequence = 1,
+                        Size     = 0,
+                        Start    = 205695,
+                        Type     = "0x01"
+                    },
+                    new Partition
+                    {
+                        Length   = 225729,
+                        Offset   = 0,
+                        Sequence = 2,
+                        Size     = 0,
+                        Start    = 230895,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 245889,
+                        Offset   = 0,
+                        Sequence = 3,
+                        Size     = 0,
+                        Start    = 456687,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 319473,
+                        Offset   = 0,
+                        Sequence = 4,
+                        Size     = 0,
+                        Start    = 702639,
+                        Type     = "0x06"
+                    }
                 }
             },
-
-            // Windows 95
-            new[]
+            new PartitionTest
             {
-                new Partition
+                TestFile = "win95.aif",
+                Partitions = new[]
                 {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 205569,
-                    Sequence    = 0,
-                    Start       = 63
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 245889,
-                    Sequence    = 1,
-                    Start       = 205695
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 267057,
-                    Sequence    = 2,
-                    Start       = 451647
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 287217,
-                    Sequence    = 3,
-                    Start       = 718767
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x01",
-                    Length      = 17073,
-                    Sequence    = 4,
-                    Start       = 1006047
+                    new Partition
+                    {
+                        Length   = 205569,
+                        Offset   = 0,
+                        Sequence = 0,
+                        Size     = 0,
+                        Start    = 63,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 245889,
+                        Offset   = 0,
+                        Sequence = 1,
+                        Size     = 0,
+                        Start    = 205695,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 267057,
+                        Offset   = 0,
+                        Sequence = 2,
+                        Size     = 0,
+                        Start    = 451647,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 287217,
+                        Offset   = 0,
+                        Sequence = 3,
+                        Size     = 0,
+                        Start    = 718767,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 17073,
+                        Offset   = 0,
+                        Sequence = 4,
+                        Size     = 0,
+                        Start    = 1006047,
+                        Type     = "0x01"
+                    }
                 }
             },
-
-            // Windows 95 OSR 2.5
-            new[]
+            new PartitionTest
             {
-                new Partition
+                TestFile = "win96osr25.aif",
+                Partitions = new[]
                 {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 307377,
-                    Sequence    = 0,
-                    Start       = 63
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 245889,
-                    Sequence    = 1,
-                    Start       = 307503
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 328545,
-                    Sequence    = 2,
-                    Start       = 553455
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 102753,
-                    Sequence    = 3,
-                    Start       = 882063
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x01",
-                    Length      = 21105,
-                    Sequence    = 4,
-                    Start       = 984879
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x01",
-                    Length      = 17073,
-                    Sequence    = 5,
-                    Start       = 1006047
+                    new Partition
+                    {
+                        Length   = 307377,
+                        Offset   = 0,
+                        Sequence = 0,
+                        Size     = 0,
+                        Start    = 63,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 245889,
+                        Offset   = 0,
+                        Sequence = 1,
+                        Size     = 0,
+                        Start    = 307503,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 328545,
+                        Offset   = 0,
+                        Sequence = 2,
+                        Size     = 0,
+                        Start    = 553455,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 102753,
+                        Offset   = 0,
+                        Sequence = 3,
+                        Size     = 0,
+                        Start    = 882063,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 21105,
+                        Offset   = 0,
+                        Sequence = 4,
+                        Size     = 0,
+                        Start    = 984879,
+                        Type     = "0x01"
+                    },
+                    new Partition
+                    {
+                        Length   = 17073,
+                        Offset   = 0,
+                        Sequence = 5,
+                        Size     = 0,
+                        Start    = 1006047,
+                        Type     = "0x01"
+                    }
                 }
             },
-
-            // Windows NT 3.10
-            new[]
+            new PartitionTest
             {
-                new Partition
+                TestFile = "winnt_3.10.aif",
+                Partitions = new[]
                 {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x07",
-                    Length      = 204561,
-                    Sequence    = 0,
-                    Start       = 63
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x07",
-                    Length      = 307377,
-                    Sequence    = 1,
-                    Start       = 204687
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 224721,
-                    Sequence    = 2,
-                    Start       = 512127
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x06",
-                    Length      = 214641,
-                    Sequence    = 3,
-                    Start       = 736911
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x01",
-                    Length      = 10017,
-                    Sequence    = 4,
-                    Start       = 951615
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "0x07",
-                    Length      = 60480,
-                    Sequence    = 5,
-                    Start       = 962640
+                    new Partition
+                    {
+                        Length   = 204561,
+                        Offset   = 0,
+                        Sequence = 0,
+                        Size     = 0,
+                        Start    = 63,
+                        Type     = "0x07"
+                    },
+                    new Partition
+                    {
+                        Length   = 307377,
+                        Offset   = 0,
+                        Sequence = 1,
+                        Size     = 0,
+                        Start    = 204687,
+                        Type     = "0x07"
+                    },
+                    new Partition
+                    {
+                        Length   = 224721,
+                        Offset   = 0,
+                        Sequence = 2,
+                        Size     = 0,
+                        Start    = 512127,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 214641,
+                        Offset   = 0,
+                        Sequence = 3,
+                        Size     = 0,
+                        Start    = 736911,
+                        Type     = "0x06"
+                    },
+                    new Partition
+                    {
+                        Length   = 10017,
+                        Offset   = 0,
+                        Sequence = 4,
+                        Size     = 0,
+                        Start    = 951615,
+                        Type     = "0x01"
+                    },
+                    new Partition
+                    {
+                        Length   = 60480,
+                        Offset   = 0,
+                        Sequence = 5,
+                        Size     = 0,
+                        Start    = 962640,
+                        Type     = "0x07"
+                    }
                 }
             }
         };

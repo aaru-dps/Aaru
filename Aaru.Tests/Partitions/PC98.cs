@@ -37,341 +37,381 @@ namespace Aaru.Tests.Partitions
     {
         public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Partitioning schemes", "PC-98");
 
-        public override string[] TestFiles => new[]
+        public override PartitionTest[] Tests => new[]
         {
-            "msdos330.aif", "msdos330_alt.aif", "msdos500_epson.aif", "msdos500.aif", "msdos620.aif"
-        };
-
-        public override Partition[][] Wanted => new[]
-        {
-            // NEC MS-DOS 3.30 (256Mb HDD)
-            new[]
+            new PartitionTest
             {
-                new Partition
+                TestFile = "msdos330.aif",
+                Partitions = new[]
                 {
-                    Description = null,
-                    Name        = "MS-DOS 3.30",
-                    Type        = "FAT12",
-                    Length      = 19536,
-                    Sequence    = 0,
-                    Start       = 264
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = "MS-DOS 3.30",
-                    Type        = "FAT12",
-                    Length      = 39336,
-                    Sequence    = 1,
-                    Start       = 20064
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = "MS-DOS 3.30",
-                    Type        = "FAT16",
-                    Length      = 59136,
-                    Sequence    = 2,
-                    Start       = 59664
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = "MS-DOS 3.30",
-                    Type        = "FAT16",
-                    Length      = 78936,
-                    Sequence    = 3,
-                    Start       = 119064
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = "MS-DOS 3.30",
-                    Type        = "FAT16",
-                    Length      = 118536,
-                    Sequence    = 4,
-                    Start       = 198264
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = "MS-DOS 3.30",
-                    Type        = "FAT16",
-                    Length      = 197736,
-                    Sequence    = 5,
-                    Start       = 317064
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = "MS-DOS 3.30",
-                    Type        = "FAT16",
-                    Length      = 237336,
-                    Sequence    = 6,
-                    Start       = 515064
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = "MS-DOS 3.30",
-                    Type        = "FAT16",
-                    Length      = 245256,
-                    Sequence    = 7,
-                    Start       = 752664
+                    new Partition
+                    {
+                        Length   = 19536,
+                        Name     = "MS-DOS 3.30",
+                        Offset   = 0,
+                        Sequence = 0,
+                        Size     = 0,
+                        Start    = 264,
+                        Type     = "FAT12"
+                    },
+                    new Partition
+                    {
+                        Length   = 39336,
+                        Name     = "MS-DOS 3.30",
+                        Offset   = 0,
+                        Sequence = 1,
+                        Size     = 0,
+                        Start    = 20064,
+                        Type     = "FAT12"
+                    },
+                    new Partition
+                    {
+                        Length   = 59136,
+                        Name     = "MS-DOS 3.30",
+                        Offset   = 0,
+                        Sequence = 2,
+                        Size     = 0,
+                        Start    = 59664,
+                        Type     = "FAT16"
+                    },
+                    new Partition
+                    {
+                        Length   = 78936,
+                        Name     = "MS-DOS 3.30",
+                        Offset   = 0,
+                        Sequence = 3,
+                        Size     = 0,
+                        Start    = 119064,
+                        Type     = "FAT16"
+                    },
+                    new Partition
+                    {
+                        Length   = 118536,
+                        Name     = "MS-DOS 3.30",
+                        Offset   = 0,
+                        Sequence = 4,
+                        Size     = 0,
+                        Start    = 198264,
+                        Type     = "FAT16"
+                    },
+                    new Partition
+                    {
+                        Length   = 197736,
+                        Name     = "MS-DOS 3.30",
+                        Offset   = 0,
+                        Sequence = 5,
+                        Size     = 0,
+                        Start    = 317064,
+                        Type     = "FAT16"
+                    },
+                    new Partition
+                    {
+                        Length   = 237336,
+                        Name     = "MS-DOS 3.30",
+                        Offset   = 0,
+                        Sequence = 6,
+                        Size     = 0,
+                        Start    = 515064,
+                        Type     = "FAT16"
+                    },
+                    new Partition
+                    {
+                        Length   = 245256,
+                        Name     = "MS-DOS 3.30",
+                        Offset   = 0,
+                        Sequence = 7,
+                        Size     = 0,
+                        Start    = 752664,
+                        Type     = "FAT16"
+                    }
                 }
             },
-
-            // NEC MS-DOS 3.30 (80Mb HDD)
-            new[]
+            new PartitionTest
             {
-                new Partition
+                TestFile = "msdos330_alt.aif",
+                Partitions = new[]
                 {
-                    Description = null,
-                    Name        = "MS-DOS 3.30",
-                    Type        = "FAT16",
-                    Length      = 59136,
-                    Sequence    = 0,
-                    Start       = 264
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = "MS-DOS 3.30",
-                    Type        = "FAT16",
-                    Length      = 158136,
-                    Sequence    = 1,
-                    Start       = 59664
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = "MS-DOS 3.30",
-                    Type        = "FAT16",
-                    Length      = 94776,
-                    Sequence    = 2,
-                    Start       = 218064
+                    new Partition
+                    {
+                        Length   = 59136,
+                        Name     = "MS-DOS 3.30",
+                        Offset   = 0,
+                        Sequence = 0,
+                        Size     = 0,
+                        Start    = 264,
+                        Type     = "FAT16"
+                    },
+                    new Partition
+                    {
+                        Length   = 158136,
+                        Name     = "MS-DOS 3.30",
+                        Offset   = 0,
+                        Sequence = 1,
+                        Size     = 0,
+                        Start    = 59664,
+                        Type     = "FAT16"
+                    },
+                    new Partition
+                    {
+                        Length   = 94776,
+                        Name     = "MS-DOS 3.30",
+                        Offset   = 0,
+                        Sequence = 2,
+                        Size     = 0,
+                        Start    = 218064,
+                        Type     = "FAT16"
+                    }
                 }
             },
-
-            // Epson MS-DOS 3.30
-            new[]
+            new PartitionTest
             {
-                new Partition
+                TestFile = "msdos500_epson.aif",
+                Partitions = new[]
                 {
-                    Description = null,
-                    Name        = "NamenameName",
-                    Type        = "FAT12",
-                    Length      = 35639,
-                    Sequence    = 0,
-                    Start       = 264
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = "12BitFAT",
-                    Type        = "FAT12",
-                    Length      = 59399,
-                    Sequence    = 1,
-                    Start       = 35904
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = "16BitFAT",
-                    Type        = "FAT16",
-                    Length      = 79199,
-                    Sequence    = 2,
-                    Start       = 95304
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = "PartLblMaxNameXX",
-                    Type        = "FAT16",
-                    Length      = 118799,
-                    Sequence    = 3,
-                    Start       = 174504
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = "BigFAT12",
-                    Type        = "FAT12",
-                    Length      = 158399,
-                    Sequence    = 4,
-                    Start       = 293304
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = "Lalalalalalalala",
-                    Type        = "FAT16",
-                    Length      = 197999,
-                    Sequence    = 5,
-                    Start       = 451704
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = "MS-DOS Ver 5.0",
-                    Type        = "FAT16",
-                    Length      = 237599,
-                    Sequence    = 6,
-                    Start       = 649704
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = "MS-DOS Ver 5.0",
-                    Type        = "FAT16",
-                    Length      = 118799,
-                    Sequence    = 7,
-                    Start       = 887304
+                    new Partition
+                    {
+                        Length   = 35639,
+                        Name     = "NamenameName",
+                        Offset   = 0,
+                        Sequence = 0,
+                        Size     = 0,
+                        Start    = 264,
+                        Type     = "FAT12"
+                    },
+                    new Partition
+                    {
+                        Length   = 59399,
+                        Name     = "12BitFAT",
+                        Offset   = 0,
+                        Sequence = 1,
+                        Size     = 0,
+                        Start    = 35904,
+                        Type     = "FAT12"
+                    },
+                    new Partition
+                    {
+                        Length   = 79199,
+                        Name     = "16BitFAT",
+                        Offset   = 0,
+                        Sequence = 2,
+                        Size     = 0,
+                        Start    = 95304,
+                        Type     = "FAT16"
+                    },
+                    new Partition
+                    {
+                        Length   = 118799,
+                        Name     = "PartLblMaxNameXX",
+                        Offset   = 0,
+                        Sequence = 3,
+                        Size     = 0,
+                        Start    = 174504,
+                        Type     = "FAT16"
+                    },
+                    new Partition
+                    {
+                        Length   = 158399,
+                        Name     = "BigFAT12",
+                        Offset   = 0,
+                        Sequence = 4,
+                        Size     = 0,
+                        Start    = 293304,
+                        Type     = "FAT12"
+                    },
+                    new Partition
+                    {
+                        Length   = 197999,
+                        Name     = "Lalalalalalalala",
+                        Offset   = 0,
+                        Sequence = 5,
+                        Size     = 0,
+                        Start    = 451704,
+                        Type     = "FAT16"
+                    },
+                    new Partition
+                    {
+                        Length   = 237599,
+                        Name     = "MS-DOS Ver 5.0",
+                        Offset   = 0,
+                        Sequence = 6,
+                        Size     = 0,
+                        Start    = 649704,
+                        Type     = "FAT16"
+                    },
+                    new Partition
+                    {
+                        Length   = 118799,
+                        Name     = "MS-DOS Ver 5.0",
+                        Offset   = 0,
+                        Sequence = 7,
+                        Size     = 0,
+                        Start    = 887304,
+                        Type     = "FAT16"
+                    }
                 }
             },
-
-            // NEC MS-DOS 5.00
-            new[]
+            new PartitionTest
             {
-                new Partition
+                TestFile = "msdos500.aif",
+                Partitions = new[]
                 {
-                    Description = null,
-                    Name        = "MS-DOS 5.00",
-                    Type        = "FAT12",
-                    Length      = 28512,
-                    Sequence    = 0,
-                    Start       = 264
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = "MS-DOS 5.00",
-                    Type        = "FAT16",
-                    Length      = 49104,
-                    Sequence    = 1,
-                    Start       = 29040
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = "MS-DOS 5.00",
-                    Type        = "FAT16",
-                    Length      = 93984,
-                    Sequence    = 2,
-                    Start       = 78408
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = "MS-DOS 5.00",
-                    Type        = "FAT16",
-                    Length      = 122760,
-                    Sequence    = 3,
-                    Start       = 172656
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = "MS-DOS 5.00",
-                    Type        = "FAT16",
-                    Length      = 163680,
-                    Sequence    = 4,
-                    Start       = 295680
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = "MS-DOS 5.00",
-                    Type        = "FAT16",
-                    Length      = 204600,
-                    Sequence    = 5,
-                    Start       = 459624
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = "MS-DOS 5.00",
-                    Type        = "FAT16",
-                    Length      = 204600,
-                    Sequence    = 6,
-                    Start       = 664488
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = "MS-DOS 5.00",
-                    Type        = "FAT16",
-                    Length      = 139128,
-                    Sequence    = 7,
-                    Start       = 869352
+                    new Partition
+                    {
+                        Length   = 28512,
+                        Name     = "MS-DOS 5.00",
+                        Offset   = 0,
+                        Sequence = 0,
+                        Size     = 0,
+                        Start    = 264,
+                        Type     = "FAT12"
+                    },
+                    new Partition
+                    {
+                        Length   = 49104,
+                        Name     = "MS-DOS 5.00",
+                        Offset   = 0,
+                        Sequence = 1,
+                        Size     = 0,
+                        Start    = 29040,
+                        Type     = "FAT16"
+                    },
+                    new Partition
+                    {
+                        Length   = 93984,
+                        Name     = "MS-DOS 5.00",
+                        Offset   = 0,
+                        Sequence = 2,
+                        Size     = 0,
+                        Start    = 78408,
+                        Type     = "FAT16"
+                    },
+                    new Partition
+                    {
+                        Length   = 122760,
+                        Name     = "MS-DOS 5.00",
+                        Offset   = 0,
+                        Sequence = 3,
+                        Size     = 0,
+                        Start    = 172656,
+                        Type     = "FAT16"
+                    },
+                    new Partition
+                    {
+                        Length   = 163680,
+                        Name     = "MS-DOS 5.00",
+                        Offset   = 0,
+                        Sequence = 4,
+                        Size     = 0,
+                        Start    = 295680,
+                        Type     = "FAT16"
+                    },
+                    new Partition
+                    {
+                        Length   = 204600,
+                        Name     = "MS-DOS 5.00",
+                        Offset   = 0,
+                        Sequence = 5,
+                        Size     = 0,
+                        Start    = 459624,
+                        Type     = "FAT16"
+                    },
+                    new Partition
+                    {
+                        Length   = 204600,
+                        Name     = "MS-DOS 5.00",
+                        Offset   = 0,
+                        Sequence = 6,
+                        Size     = 0,
+                        Start    = 664488,
+                        Type     = "FAT16"
+                    },
+                    new Partition
+                    {
+                        Length   = 139128,
+                        Name     = "MS-DOS 5.00",
+                        Offset   = 0,
+                        Sequence = 7,
+                        Size     = 0,
+                        Start    = 869352,
+                        Type     = "FAT16"
+                    }
                 }
             },
-
-            // NEC MS-DOS 6.20
-            new[]
+            new PartitionTest
             {
-                new Partition
+                TestFile = "msdos620.aif",
+                Partitions = new[]
                 {
-                    Description = null,
-                    Name        = "MS-DOS 6.20",
-                    Type        = "FAT16",
-                    Length      = 61248,
-                    Sequence    = 0,
-                    Start       = 264
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = "MS-DOS 6.20",
-                    Type        = "FAT16",
-                    Length      = 81840,
-                    Sequence    = 1,
-                    Start       = 61776
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = "MS-DOS 6.20",
-                    Type        = "FAT16",
-                    Length      = 122760,
-                    Sequence    = 2,
-                    Start       = 143880
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = "MS-DOS 6.20",
-                    Type        = "FAT16",
-                    Length      = 163680,
-                    Sequence    = 3,
-                    Start       = 266904
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = "MS-DOS 6.20",
-                    Type        = "FAT12",
-                    Length      = 20328,
-                    Sequence    = 4,
-                    Start       = 430848
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = "MS-DOS 6.20",
-                    Type        = "FAT16",
-                    Length      = 245520,
-                    Sequence    = 5,
-                    Start       = 451440
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = "MS-DOS 6.20",
-                    Type        = "FAT16",
-                    Length      = 315216,
-                    Sequence    = 6,
-                    Start       = 697224
+                    new Partition
+                    {
+                        Length   = 61248,
+                        Name     = "MS-DOS 6.20",
+                        Offset   = 0,
+                        Sequence = 0,
+                        Size     = 0,
+                        Start    = 264,
+                        Type     = "FAT16"
+                    },
+                    new Partition
+                    {
+                        Length   = 81840,
+                        Name     = "MS-DOS 6.20",
+                        Offset   = 0,
+                        Sequence = 1,
+                        Size     = 0,
+                        Start    = 61776,
+                        Type     = "FAT16"
+                    },
+                    new Partition
+                    {
+                        Length   = 122760,
+                        Name     = "MS-DOS 6.20",
+                        Offset   = 0,
+                        Sequence = 2,
+                        Size     = 0,
+                        Start    = 143880,
+                        Type     = "FAT16"
+                    },
+                    new Partition
+                    {
+                        Length   = 163680,
+                        Name     = "MS-DOS 6.20",
+                        Offset   = 0,
+                        Sequence = 3,
+                        Size     = 0,
+                        Start    = 266904,
+                        Type     = "FAT16"
+                    },
+                    new Partition
+                    {
+                        Length   = 20328,
+                        Name     = "MS-DOS 6.20",
+                        Offset   = 0,
+                        Sequence = 4,
+                        Size     = 0,
+                        Start    = 430848,
+                        Type     = "FAT12"
+                    },
+                    new Partition
+                    {
+                        Length   = 245520,
+                        Name     = "MS-DOS 6.20",
+                        Offset   = 0,
+                        Sequence = 5,
+                        Size     = 0,
+                        Start    = 451440,
+                        Type     = "FAT16"
+                    },
+                    new Partition
+                    {
+                        Length   = 315216,
+                        Name     = "MS-DOS 6.20",
+                        Offset   = 0,
+                        Sequence = 6,
+                        Size     = 0,
+                        Start    = 697224,
+                        Type     = "FAT16"
+                    }
                 }
             }
         };

@@ -37,1985 +37,1831 @@ namespace Aaru.Tests.Partitions
     {
         public override string DataFolder =>
             Path.Combine(Consts.TEST_FILES_ROOT, "Partitioning schemes", "Apple Partition Map");
-
-        public override string[] TestFiles => new[]
+        public override PartitionTest[] Tests => new[]
         {
-            "d2_driver.aif", "hdt_1.8_encrypted1.aif", "hdt_1.8_encrypted2.aif", "hdt_1.8_password.aif", "hdt_1.8.aif",
-            "linux.aif", "macos_1.1.aif", "macos_2.0.aif", "macos_4.2.aif", "macos_4.3.aif", "macos_6.0.2.aif",
-            "macos_6.0.3.aif", "macos_6.0.4.aif", "macos_6.0.5.aif", "macos_6.0.7.aif", "macos_6.0.8.aif",
-            "macos_6.0.aif", "macos_7.0.aif", "macos_7.1.1.aif", "macos_7.5.aif", "parted.aif",
-            "silverlining_2.2.1.aif", "speedtools_3.6.aif", "vcpformatter_2.1.1.aif"
-        };
-
-        public override Partition[][] Wanted => new[]
-        {
-            // D2
-            new[]
+            new PartitionTest
             {
-                new Partition
+                TestFile = "d2_driver.aif",
+                Partitions = new[]
                 {
-                    Description = null,
-                    Size        = 1024,
-                    Name        = null,
-                    Type        = "Apple_Driver",
-                    Offset      = 32768,
-                    Length      = 2,
-                    Sequence    = 0,
-                    Start       = 64
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 42496,
-                    Name        = "Macintosh",
-                    Type        = "Apple_Driver43",
-                    Offset      = 32768,
-                    Length      = 83,
-                    Sequence    = 1,
-                    Start       = 64
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 55808,
-                    Name        = "Empty",
-                    Type        = "Apple_Free",
-                    Offset      = 75264,
-                    Length      = 109,
-                    Sequence    = 2,
-                    Start       = 147
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 26083328,
-                    Name        = "Volume label",
-                    Type        = "Apple_HFS",
-                    Offset      = 131072,
-                    Length      = 50944,
-                    Sequence    = 3,
-                    Start       = 256
+                    new Partition
+                    {
+                        Length   = 2,
+                        Offset   = 32768,
+                        Sequence = 0,
+                        Size     = 1024,
+                        Start    = 64,
+                        Type     = "Apple_Driver"
+                    },
+                    new Partition
+                    {
+                        Length   = 83,
+                        Name     = "Macintosh",
+                        Offset   = 32768,
+                        Sequence = 1,
+                        Size     = 42496,
+                        Start    = 64,
+                        Type     = "Apple_Driver43"
+                    },
+                    new Partition
+                    {
+                        Length   = 109,
+                        Name     = "Empty",
+                        Offset   = 75264,
+                        Sequence = 2,
+                        Size     = 55808,
+                        Start    = 147,
+                        Type     = "Apple_Free"
+                    },
+                    new Partition
+                    {
+                        Length   = 50944,
+                        Name     = "Volume label",
+                        Offset   = 131072,
+                        Sequence = 3,
+                        Size     = 26083328,
+                        Start    = 256,
+                        Type     = "Apple_HFS"
+                    }
                 }
             },
-
-            // HDT 1.8 Encryption Level 1
-            new[]
+            new PartitionTest
             {
-                new Partition
+                TestFile = "hdt_1.8_encrypted1.aif",
+                Partitions = new[]
                 {
-                    Description = null,
-                    Size        = 7168,
-                    Name        = null,
-                    Type        = "Apple_Driver",
-                    Offset      = 32768,
-                    Length      = 14,
-                    Sequence    = 0,
-                    Start       = 64
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 524288,
-                    Name        = "FWB Disk Driver",
-                    Type        = "Apple_Driver43",
-                    Offset      = 32768,
-                    Length      = 1024,
-                    Sequence    = 1,
-                    Start       = 64
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 25657344,
-                    Name        = "MacOS",
-                    Type        = "Apple_HFS",
-                    Offset      = 557056,
-                    Length      = 50112,
-                    Sequence    = 2,
-                    Start       = 1088
+                    new Partition
+                    {
+                        Length   = 14,
+                        Offset   = 32768,
+                        Sequence = 0,
+                        Size     = 7168,
+                        Start    = 64,
+                        Type     = "Apple_Driver"
+                    },
+                    new Partition
+                    {
+                        Length   = 1024,
+                        Name     = "FWB Disk Driver",
+                        Offset   = 32768,
+                        Sequence = 1,
+                        Size     = 524288,
+                        Start    = 64,
+                        Type     = "Apple_Driver43"
+                    },
+                    new Partition
+                    {
+                        Length   = 50112,
+                        Name     = "MacOS",
+                        Offset   = 557056,
+                        Sequence = 2,
+                        Size     = 25657344,
+                        Start    = 1088,
+                        Type     = "Apple_HFS"
+                    }
                 }
             },
-
-            // HDT 1.8 Encryption Level 2
-            new[]
+            new PartitionTest
             {
-                new Partition
+                TestFile = "hdt_1.8_encrypted2.aif",
+                Partitions = new[]
                 {
-                    Description = null,
-                    Size        = 7168,
-                    Name        = null,
-                    Type        = "Apple_Driver",
-                    Offset      = 32768,
-                    Length      = 14,
-                    Sequence    = 0,
-                    Start       = 64
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 524288,
-                    Name        = "FWB Disk Driver",
-                    Type        = "Apple_Driver43",
-                    Offset      = 32768,
-                    Length      = 1024,
-                    Sequence    = 1,
-                    Start       = 64
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 25657344,
-                    Name        = "MacOS",
-                    Type        = "Apple_HFS",
-                    Offset      = 557056,
-                    Length      = 50112,
-                    Sequence    = 2,
-                    Start       = 1088
+                    new Partition
+                    {
+                        Length   = 14,
+                        Offset   = 32768,
+                        Sequence = 0,
+                        Size     = 7168,
+                        Start    = 64,
+                        Type     = "Apple_Driver"
+                    },
+                    new Partition
+                    {
+                        Length   = 1024,
+                        Name     = "FWB Disk Driver",
+                        Offset   = 32768,
+                        Sequence = 1,
+                        Size     = 524288,
+                        Start    = 64,
+                        Type     = "Apple_Driver43"
+                    },
+                    new Partition
+                    {
+                        Length   = 50112,
+                        Name     = "MacOS",
+                        Offset   = 557056,
+                        Sequence = 2,
+                        Size     = 25657344,
+                        Start    = 1088,
+                        Type     = "Apple_HFS"
+                    }
                 }
             },
-
-            // HDT 1.8 with password
-            new[]
+            new PartitionTest
             {
-                new Partition
+                TestFile = "hdt_1.8_password.aif",
+                Partitions = new[]
                 {
-                    Description = null,
-                    Size        = 7168,
-                    Name        = null,
-                    Type        = "Apple_Driver",
-                    Offset      = 32768,
-                    Length      = 14,
-                    Sequence    = 0,
-                    Start       = 64
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 524288,
-                    Name        = "FWB Disk Driver",
-                    Type        = "Apple_Driver43",
-                    Offset      = 32768,
-                    Length      = 1024,
-                    Sequence    = 1,
-                    Start       = 64
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 25657344,
-                    Name        = "MacOS",
-                    Type        = "Apple_HFS",
-                    Offset      = 557056,
-                    Length      = 50112,
-                    Sequence    = 2,
-                    Start       = 1088
+                    new Partition
+                    {
+                        Length   = 14,
+                        Offset   = 32768,
+                        Sequence = 0,
+                        Size     = 7168,
+                        Start    = 64,
+                        Type     = "Apple_Driver"
+                    },
+                    new Partition
+                    {
+                        Length   = 1024,
+                        Name     = "FWB Disk Driver",
+                        Offset   = 32768,
+                        Sequence = 1,
+                        Size     = 524288,
+                        Start    = 64,
+                        Type     = "Apple_Driver43"
+                    },
+                    new Partition
+                    {
+                        Length   = 50112,
+                        Name     = "MacOS",
+                        Offset   = 557056,
+                        Sequence = 2,
+                        Size     = 25657344,
+                        Start    = 1088,
+                        Type     = "Apple_HFS"
+                    }
                 }
             },
-
-            // HDT 1.8
-            new[]
+            new PartitionTest
             {
-                new Partition
+                TestFile = "hdt_1.8.aif",
+                Partitions = new[]
                 {
-                    Description = null,
-                    Size        = 7168,
-                    Name        = null,
-                    Type        = "Apple_Driver",
-                    Offset      = 32768,
-                    Length      = 14,
-                    Sequence    = 0,
-                    Start       = 64
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 524288,
-                    Name        = "FWB Disk Driver",
-                    Type        = "Apple_Driver43",
-                    Offset      = 32768,
-                    Length      = 1024,
-                    Sequence    = 1,
-                    Start       = 64
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 25657344,
-                    Name        = "MacOS",
-                    Type        = "Apple_HFS",
-                    Offset      = 557056,
-                    Length      = 50112,
-                    Sequence    = 2,
-                    Start       = 1088
+                    new Partition
+                    {
+                        Length   = 14,
+                        Offset   = 32768,
+                        Sequence = 0,
+                        Size     = 7168,
+                        Start    = 64,
+                        Type     = "Apple_Driver"
+                    },
+                    new Partition
+                    {
+                        Length   = 1024,
+                        Name     = "FWB Disk Driver",
+                        Offset   = 32768,
+                        Sequence = 1,
+                        Size     = 524288,
+                        Start    = 64,
+                        Type     = "Apple_Driver43"
+                    },
+                    new Partition
+                    {
+                        Length   = 50112,
+                        Name     = "MacOS",
+                        Offset   = 557056,
+                        Sequence = 2,
+                        Size     = 25657344,
+                        Start    = 1088,
+                        Type     = "Apple_HFS"
+                    }
                 }
             },
-
-            // Linux
-            new[]
+            new PartitionTest
             {
-                new Partition
+                TestFile = "linux.aif",
+                Partitions = new[]
                 {
-                    Description = null,
-                    Size        = 512,
-                    Name        = "Extra",
-                    Type        = "Apple_Free",
-                    Offset      = 32768,
-                    Length      = 1,
-                    Sequence    = 0,
-                    Start       = 64
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 819200,
-                    Name        = "bootstrap",
-                    Type        = "Apple_Bootstrap",
-                    Offset      = 33280,
-                    Length      = 1600,
-                    Sequence    = 1,
-                    Start       = 65
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 512,
-                    Name        = "Extra",
-                    Type        = "Apple_Free",
-                    Offset      = 852480,
-                    Length      = 1,
-                    Sequence    = 2,
-                    Start       = 1665
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 52428800,
-                    Name        = "Linux",
-                    Type        = "Apple_UNIX_SVR2",
-                    Offset      = 852992,
-                    Length      = 102400,
-                    Sequence    = 3,
-                    Start       = 1666
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 20971520,
-                    Name        = "ProDOS",
-                    Type        = "Apple_PRODOS",
-                    Offset      = 53281792,
-                    Length      = 40960,
-                    Sequence    = 4,
-                    Start       = 104066
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 52428800,
-                    Name        = "Macintosh",
-                    Type        = "Apple_HFS",
-                    Offset      = 74253312,
-                    Length      = 102400,
-                    Sequence    = 5,
-                    Start       = 145026
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 7535616,
-                    Name        = "Extra",
-                    Type        = "Apple_Free",
-                    Offset      = 126682112,
-                    Length      = 14718,
-                    Sequence    = 6,
-                    Start       = 247426
+                    new Partition
+                    {
+                        Length   = 1,
+                        Name     = "Extra",
+                        Offset   = 32768,
+                        Sequence = 0,
+                        Size     = 512,
+                        Start    = 64,
+                        Type     = "Apple_Free"
+                    },
+                    new Partition
+                    {
+                        Length   = 1600,
+                        Name     = "bootstrap",
+                        Offset   = 33280,
+                        Sequence = 1,
+                        Size     = 819200,
+                        Start    = 65,
+                        Type     = "Apple_Bootstrap"
+                    },
+                    new Partition
+                    {
+                        Length   = 1,
+                        Name     = "Extra",
+                        Offset   = 852480,
+                        Sequence = 2,
+                        Size     = 512,
+                        Start    = 1665,
+                        Type     = "Apple_Free"
+                    },
+                    new Partition
+                    {
+                        Length   = 102400,
+                        Name     = "Linux",
+                        Offset   = 852992,
+                        Sequence = 3,
+                        Size     = 52428800,
+                        Start    = 1666,
+                        Type     = "Apple_UNIX_SVR2"
+                    },
+                    new Partition
+                    {
+                        Length   = 40960,
+                        Name     = "ProDOS",
+                        Offset   = 53281792,
+                        Sequence = 4,
+                        Size     = 20971520,
+                        Start    = 104066,
+                        Type     = "Apple_PRODOS"
+                    },
+                    new Partition
+                    {
+                        Length   = 102400,
+                        Name     = "Macintosh",
+                        Offset   = 74253312,
+                        Sequence = 5,
+                        Size     = 52428800,
+                        Start    = 145026,
+                        Type     = "Apple_HFS"
+                    },
+                    new Partition
+                    {
+                        Length   = 14718,
+                        Name     = "Extra",
+                        Offset   = 126682112,
+                        Sequence = 6,
+                        Size     = 7535616,
+                        Start    = 247426,
+                        Type     = "Apple_Free"
+                    }
                 }
             },
-
-            // Mac OS 1.1
-            new[]
+            new PartitionTest
             {
-                new Partition
+                TestFile = "macos_1.1.aif",
+                Partitions = new[]
                 {
-                    Description = null,
-                    Size        = 5120,
-                    Name        = null,
-                    Type        = "Apple_Driver",
-                    Offset      = 2048,
-                    Length      = 10,
-                    Sequence    = 0,
-                    Start       = 4
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 21403648,
-                    Name        = "Macintosh",
-                    Type        = "Apple_HFS",
-                    Offset      = 8192,
-                    Length      = 41804,
-                    Sequence    = 1,
-                    Start       = 16
+                    new Partition
+                    {
+                        Length   = 10,
+                        Offset   = 2048,
+                        Sequence = 0,
+                        Size     = 5120,
+                        Start    = 4,
+                        Type     = "Apple_Driver"
+                    },
+                    new Partition
+                    {
+                        Length   = 41804,
+                        Name     = "Macintosh",
+                        Offset   = 8192,
+                        Sequence = 1,
+                        Size     = 21403648,
+                        Start    = 16,
+                        Type     = "Apple_HFS"
+                    }
                 }
             },
-
-            // Mac OS 2.0
-            new[]
+            new PartitionTest
             {
-                new Partition
+                TestFile = "macos_2.0.aif",
+                Partitions = new[]
                 {
-                    Description = null,
-                    Size        = 5120,
-                    Name        = null,
-                    Type        = "Apple_Driver",
-                    Offset      = 2048,
-                    Length      = 10,
-                    Sequence    = 0,
-                    Start       = 4
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 19950080,
-                    Name        = "Macintosh",
-                    Type        = "Apple_HFS",
-                    Offset      = 8192,
-                    Length      = 38965,
-                    Sequence    = 1,
-                    Start       = 16
+                    new Partition
+                    {
+                        Length   = 10,
+                        Offset   = 2048,
+                        Sequence = 0,
+                        Size     = 5120,
+                        Start    = 4,
+                        Type     = "Apple_Driver"
+                    },
+                    new Partition
+                    {
+                        Length   = 38965,
+                        Name     = "Macintosh",
+                        Offset   = 8192,
+                        Sequence = 1,
+                        Size     = 19950080,
+                        Start    = 16,
+                        Type     = "Apple_HFS"
+                    }
                 }
             },
-
-            // Mac OS 4.2
-            new[]
+            new PartitionTest
             {
-                new Partition
+                TestFile = "macos_4.2.aif",
+                Partitions = new[]
                 {
-                    Description = null,
-                    Size        = 5632,
-                    Name        = null,
-                    Type        = "Apple_Driver",
-                    Offset      = 2048,
-                    Length      = 11,
-                    Sequence    = 0,
-                    Start       = 4
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 19950080,
-                    Name        = "Macintosh",
-                    Type        = "Apple_HFS",
-                    Offset      = 8192,
-                    Length      = 38965,
-                    Sequence    = 1,
-                    Start       = 16
+                    new Partition
+                    {
+                        Length   = 11,
+                        Offset   = 2048,
+                        Sequence = 0,
+                        Size     = 5632,
+                        Start    = 4,
+                        Type     = "Apple_Driver"
+                    },
+                    new Partition
+                    {
+                        Length   = 38965,
+                        Name     = "Macintosh",
+                        Offset   = 8192,
+                        Sequence = 1,
+                        Size     = 19950080,
+                        Start    = 16,
+                        Type     = "Apple_HFS"
+                    }
                 }
             },
-
-            // Mac OS 4.3
-            new[]
+            new PartitionTest
             {
-                new Partition
+                TestFile = "macos_4.3.aif",
+                Partitions = new[]
                 {
-                    Description = null,
-                    Size        = 5632,
-                    Name        = null,
-                    Type        = "Apple_Driver",
-                    Offset      = 2048,
-                    Length      = 11,
-                    Sequence    = 0,
-                    Start       = 4
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 19950080,
-                    Name        = "Macintosh",
-                    Type        = "Apple_HFS",
-                    Offset      = 8192,
-                    Length      = 38965,
-                    Sequence    = 1,
-                    Start       = 16
+                    new Partition
+                    {
+                        Length   = 11,
+                        Offset   = 2048,
+                        Sequence = 0,
+                        Size     = 5632,
+                        Start    = 4,
+                        Type     = "Apple_Driver"
+                    },
+                    new Partition
+                    {
+                        Length   = 38965,
+                        Name     = "Macintosh",
+                        Offset   = 8192,
+                        Sequence = 1,
+                        Size     = 19950080,
+                        Start    = 16,
+                        Type     = "Apple_HFS"
+                    }
                 }
             },
-
-            // Mac OS 6.0.2
-            new[]
+            new PartitionTest
             {
-                new Partition
+                TestFile = "macos_6.0.2.aif",
+                Partitions = new[]
                 {
-                    Description = null,
-                    Size        = 5120,
-                    Name        = null,
-                    Type        = "Apple_Driver",
-                    Offset      = 32768,
-                    Length      = 10,
-                    Sequence    = 0,
-                    Start       = 64
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 16384,
-                    Name        = "Macintosh",
-                    Type        = "Apple_Driver",
-                    Offset      = 32768,
-                    Length      = 32,
-                    Sequence    = 1,
-                    Start       = 64
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 3203072,
-                    Name        = "MacOS",
-                    Type        = "Apple_HFS",
-                    Offset      = 49152,
-                    Length      = 6256,
-                    Sequence    = 2,
-                    Start       = 96
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 524288,
-                    Name        = "Scratch",
-                    Type        = "Apple_Scratch",
-                    Offset      = 3252224,
-                    Length      = 1024,
-                    Sequence    = 3,
-                    Start       = 6352
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 1048576,
-                    Name        = "Eschatology 1",
-                    Type        = "Apple_UNIX_SVR2",
-                    Offset      = 3776512,
-                    Length      = 2048,
-                    Sequence    = 4,
-                    Start       = 7376
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 2191360,
-                    Name        = "A/UX Root",
-                    Type        = "Apple_UNIX_SVR2",
-                    Offset      = 4825088,
-                    Length      = 4280,
-                    Sequence    = 5,
-                    Start       = 9424
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 1217024,
-                    Name        = "Swap",
-                    Type        = "Apple_UNIX_SVR2",
-                    Offset      = 7016448,
-                    Length      = 2377,
-                    Sequence    = 6,
-                    Start       = 13704
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 1572864,
-                    Name        = "Eschatology 2",
-                    Type        = "Apple_UNIX_SVR2",
-                    Offset      = 8233472,
-                    Length      = 3072,
-                    Sequence    = 7,
-                    Start       = 16081
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 1310720,
-                    Name        = "Root file system",
-                    Type        = "Apple_UNIX_SVR2",
-                    Offset      = 9806336,
-                    Length      = 2560,
-                    Sequence    = 8,
-                    Start       = 19153
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 2550272,
-                    Name        = "Usr file system",
-                    Type        = "Apple_UNIX_SVR2",
-                    Offset      = 11117056,
-                    Length      = 4981,
-                    Sequence    = 9,
-                    Start       = 21713
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 2048000,
-                    Name        = "Random A/UX fs",
-                    Type        = "Apple_UNIX_SVR2",
-                    Offset      = 13667328,
-                    Length      = 4000,
-                    Sequence    = 10,
-                    Start       = 26694
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 1296384,
-                    Name        = "Random A/UX fs",
-                    Type        = "Apple_UNIX_SVR2",
-                    Offset      = 15715328,
-                    Length      = 2532,
-                    Sequence    = 11,
-                    Start       = 30694
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 1364992,
-                    Name        = "Usr file system",
-                    Type        = "Apple_UNIX_SVR2",
-                    Offset      = 17011712,
-                    Length      = 2666,
-                    Sequence    = 12,
-                    Start       = 33226
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 3986432,
-                    Name        = "Usr file system",
-                    Type        = "Apple_UNIX_SVR2",
-                    Offset      = 18376704,
-                    Length      = 7786,
-                    Sequence    = 13,
-                    Start       = 35892
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 5714944,
-                    Name        = "Extra",
-                    Type        = "Apple_Free",
-                    Offset      = 22363136,
-                    Length      = 11162,
-                    Sequence    = 14,
-                    Start       = 43678
+                    new Partition
+                    {
+                        Length   = 10,
+                        Offset   = 32768,
+                        Sequence = 0,
+                        Size     = 5120,
+                        Start    = 64,
+                        Type     = "Apple_Driver"
+                    },
+                    new Partition
+                    {
+                        Length   = 32,
+                        Name     = "Macintosh",
+                        Offset   = 32768,
+                        Sequence = 1,
+                        Size     = 16384,
+                        Start    = 64,
+                        Type     = "Apple_Driver"
+                    },
+                    new Partition
+                    {
+                        Length   = 6256,
+                        Name     = "MacOS",
+                        Offset   = 49152,
+                        Sequence = 2,
+                        Size     = 3203072,
+                        Start    = 96,
+                        Type     = "Apple_HFS"
+                    },
+                    new Partition
+                    {
+                        Length   = 1024,
+                        Name     = "Scratch",
+                        Offset   = 3252224,
+                        Sequence = 3,
+                        Size     = 524288,
+                        Start    = 6352,
+                        Type     = "Apple_Scratch"
+                    },
+                    new Partition
+                    {
+                        Length   = 2048,
+                        Name     = "Eschatology 1",
+                        Offset   = 3776512,
+                        Sequence = 4,
+                        Size     = 1048576,
+                        Start    = 7376,
+                        Type     = "Apple_UNIX_SVR2"
+                    },
+                    new Partition
+                    {
+                        Length   = 4280,
+                        Name     = "A/UX Root",
+                        Offset   = 4825088,
+                        Sequence = 5,
+                        Size     = 2191360,
+                        Start    = 9424,
+                        Type     = "Apple_UNIX_SVR2"
+                    },
+                    new Partition
+                    {
+                        Length   = 2377,
+                        Name     = "Swap",
+                        Offset   = 7016448,
+                        Sequence = 6,
+                        Size     = 1217024,
+                        Start    = 13704,
+                        Type     = "Apple_UNIX_SVR2"
+                    },
+                    new Partition
+                    {
+                        Length   = 3072,
+                        Name     = "Eschatology 2",
+                        Offset   = 8233472,
+                        Sequence = 7,
+                        Size     = 1572864,
+                        Start    = 16081,
+                        Type     = "Apple_UNIX_SVR2"
+                    },
+                    new Partition
+                    {
+                        Length   = 2560,
+                        Name     = "Root file system",
+                        Offset   = 9806336,
+                        Sequence = 8,
+                        Size     = 1310720,
+                        Start    = 19153,
+                        Type     = "Apple_UNIX_SVR2"
+                    },
+                    new Partition
+                    {
+                        Length   = 4981,
+                        Name     = "Usr file system",
+                        Offset   = 11117056,
+                        Sequence = 9,
+                        Size     = 2550272,
+                        Start    = 21713,
+                        Type     = "Apple_UNIX_SVR2"
+                    },
+                    new Partition
+                    {
+                        Length   = 4000,
+                        Name     = "Random A/UX fs",
+                        Offset   = 13667328,
+                        Sequence = 10,
+                        Size     = 2048000,
+                        Start    = 26694,
+                        Type     = "Apple_UNIX_SVR2"
+                    },
+                    new Partition
+                    {
+                        Length   = 2532,
+                        Name     = "Random A/UX fs",
+                        Offset   = 15715328,
+                        Sequence = 11,
+                        Size     = 1296384,
+                        Start    = 30694,
+                        Type     = "Apple_UNIX_SVR2"
+                    },
+                    new Partition
+                    {
+                        Length   = 2666,
+                        Name     = "Usr file system",
+                        Offset   = 17011712,
+                        Sequence = 12,
+                        Size     = 1364992,
+                        Start    = 33226,
+                        Type     = "Apple_UNIX_SVR2"
+                    },
+                    new Partition
+                    {
+                        Length   = 7786,
+                        Name     = "Usr file system",
+                        Offset   = 18376704,
+                        Sequence = 13,
+                        Size     = 3986432,
+                        Start    = 35892,
+                        Type     = "Apple_UNIX_SVR2"
+                    },
+                    new Partition
+                    {
+                        Length   = 11162,
+                        Name     = "Extra",
+                        Offset   = 22363136,
+                        Sequence = 14,
+                        Size     = 5714944,
+                        Start    = 43678,
+                        Type     = "Apple_Free"
+                    }
                 }
             },
-
-            // Mac OS 6.0.3
-            new[]
+            new PartitionTest
             {
-                new Partition
+                TestFile = "macos_6.0.3.aif",
+                Partitions = new[]
                 {
-                    Description = null,
-                    Size        = 5120,
-                    Name        = null,
-                    Type        = "Apple_Driver",
-                    Offset      = 32768,
-                    Length      = 10,
-                    Sequence    = 0,
-                    Start       = 64
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 16384,
-                    Name        = "Macintosh",
-                    Type        = "Apple_Driver",
-                    Offset      = 32768,
-                    Length      = 32,
-                    Sequence    = 1,
-                    Start       = 64
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 5948928,
-                    Name        = "MacOS",
-                    Type        = "Apple_HFS",
-                    Offset      = 49152,
-                    Length      = 11619,
-                    Sequence    = 2,
-                    Start       = 96
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 1029632,
-                    Name        = "Scratch",
-                    Type        = "Apple_Scratch",
-                    Offset      = 5998080,
-                    Length      = 2011,
-                    Sequence    = 3,
-                    Start       = 11715
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 2455552,
-                    Name        = "Eschatology 1",
-                    Type        = "Apple_UNIX_SVR2",
-                    Offset      = 7027712,
-                    Length      = 4796,
-                    Sequence    = 4,
-                    Start       = 13726
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 3932160,
-                    Name        = "A/UX Root",
-                    Type        = "Apple_UNIX_SVR2",
-                    Offset      = 9483264,
-                    Length      = 7680,
-                    Sequence    = 5,
-                    Start       = 18522
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 4194304,
-                    Name        = "Swap",
-                    Type        = "Apple_UNIX_SVR2",
-                    Offset      = 13415424,
-                    Length      = 8192,
-                    Sequence    = 6,
-                    Start       = 26202
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 587776,
-                    Name        = "Eschatology 2",
-                    Type        = "Apple_UNIX_SVR2",
-                    Offset      = 17609728,
-                    Length      = 1148,
-                    Sequence    = 7,
-                    Start       = 34394
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 6537216,
-                    Name        = "Root file system",
-                    Type        = "Apple_UNIX_SVR2",
-                    Offset      = 18197504,
-                    Length      = 12768,
-                    Sequence    = 8,
-                    Start       = 35542
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 1766400,
-                    Name        = "Usr file system",
-                    Type        = "Apple_UNIX_SVR2",
-                    Offset      = 24734720,
-                    Length      = 3450,
-                    Sequence    = 9,
-                    Start       = 48310
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 18432,
-                    Name        = "Extra",
-                    Type        = "Apple_Free",
-                    Offset      = 26501120,
-                    Length      = 36,
-                    Sequence    = 10,
-                    Start       = 51760
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 1558528,
-                    Name        = "Random A/UX fs",
-                    Type        = "Apple_UNIX_SVR2",
-                    Offset      = 26519552,
-                    Length      = 3044,
-                    Sequence    = 11,
-                    Start       = 51796
+                    new Partition
+                    {
+                        Length   = 10,
+                        Offset   = 32768,
+                        Sequence = 0,
+                        Size     = 5120,
+                        Start    = 64,
+                        Type     = "Apple_Driver"
+                    },
+                    new Partition
+                    {
+                        Length   = 32,
+                        Name     = "Macintosh",
+                        Offset   = 32768,
+                        Sequence = 1,
+                        Size     = 16384,
+                        Start    = 64,
+                        Type     = "Apple_Driver"
+                    },
+                    new Partition
+                    {
+                        Length   = 11619,
+                        Name     = "MacOS",
+                        Offset   = 49152,
+                        Sequence = 2,
+                        Size     = 5948928,
+                        Start    = 96,
+                        Type     = "Apple_HFS"
+                    },
+                    new Partition
+                    {
+                        Length   = 2011,
+                        Name     = "Scratch",
+                        Offset   = 5998080,
+                        Sequence = 3,
+                        Size     = 1029632,
+                        Start    = 11715,
+                        Type     = "Apple_Scratch"
+                    },
+                    new Partition
+                    {
+                        Length   = 4796,
+                        Name     = "Eschatology 1",
+                        Offset   = 7027712,
+                        Sequence = 4,
+                        Size     = 2455552,
+                        Start    = 13726,
+                        Type     = "Apple_UNIX_SVR2"
+                    },
+                    new Partition
+                    {
+                        Length   = 7680,
+                        Name     = "A/UX Root",
+                        Offset   = 9483264,
+                        Sequence = 5,
+                        Size     = 3932160,
+                        Start    = 18522,
+                        Type     = "Apple_UNIX_SVR2"
+                    },
+                    new Partition
+                    {
+                        Length   = 8192,
+                        Name     = "Swap",
+                        Offset   = 13415424,
+                        Sequence = 6,
+                        Size     = 4194304,
+                        Start    = 26202,
+                        Type     = "Apple_UNIX_SVR2"
+                    },
+                    new Partition
+                    {
+                        Length   = 1148,
+                        Name     = "Eschatology 2",
+                        Offset   = 17609728,
+                        Sequence = 7,
+                        Size     = 587776,
+                        Start    = 34394,
+                        Type     = "Apple_UNIX_SVR2"
+                    },
+                    new Partition
+                    {
+                        Length   = 12768,
+                        Name     = "Root file system",
+                        Offset   = 18197504,
+                        Sequence = 8,
+                        Size     = 6537216,
+                        Start    = 35542,
+                        Type     = "Apple_UNIX_SVR2"
+                    },
+                    new Partition
+                    {
+                        Length   = 3450,
+                        Name     = "Usr file system",
+                        Offset   = 24734720,
+                        Sequence = 9,
+                        Size     = 1766400,
+                        Start    = 48310,
+                        Type     = "Apple_UNIX_SVR2"
+                    },
+                    new Partition
+                    {
+                        Length   = 36,
+                        Name     = "Extra",
+                        Offset   = 26501120,
+                        Sequence = 10,
+                        Size     = 18432,
+                        Start    = 51760,
+                        Type     = "Apple_Free"
+                    },
+                    new Partition
+                    {
+                        Length   = 3044,
+                        Name     = "Random A/UX fs",
+                        Offset   = 26519552,
+                        Sequence = 11,
+                        Size     = 1558528,
+                        Start    = 51796,
+                        Type     = "Apple_UNIX_SVR2"
+                    }
                 }
             },
-
-            // Mac OS 6.0.4
-            new[]
+            new PartitionTest
             {
-                new Partition
+                TestFile = "macos_6.0.4.aif",
+                Partitions = new[]
                 {
-                    Description = null,
-                    Size        = 5120,
-                    Name        = null,
-                    Type        = "Apple_Driver",
-                    Offset      = 32768,
-                    Length      = 10,
-                    Sequence    = 0,
-                    Start       = 64
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 16384,
-                    Name        = "Macintosh",
-                    Type        = "Apple_Driver",
-                    Offset      = 32768,
-                    Length      = 32,
-                    Sequence    = 1,
-                    Start       = 64
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 3932160,
-                    Name        = "MacOS",
-                    Type        = "Apple_HFS",
-                    Offset      = 49152,
-                    Length      = 7680,
-                    Sequence    = 2,
-                    Start       = 96
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 3197440,
-                    Name        = "Scratch",
-                    Type        = "Apple_Scratch",
-                    Offset      = 3981312,
-                    Length      = 6245,
-                    Sequence    = 3,
-                    Start       = 7776
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 3197440,
-                    Name        = "Eschatology 1",
-                    Type        = "Apple_UNIX_SVR2",
-                    Offset      = 7178752,
-                    Length      = 6245,
-                    Sequence    = 4,
-                    Start       = 14021
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 2626560,
-                    Name        = "A/UX Root",
-                    Type        = "Apple_UNIX_SVR2",
-                    Offset      = 10376192,
-                    Length      = 5130,
-                    Sequence    = 5,
-                    Start       = 20266
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 1370112,
-                    Name        = "Swap",
-                    Type        = "Apple_UNIX_SVR2",
-                    Offset      = 13002752,
-                    Length      = 2676,
-                    Sequence    = 6,
-                    Start       = 25396
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 2944512,
-                    Name        = "Eschatology 2",
-                    Type        = "Apple_UNIX_SVR2",
-                    Offset      = 14372864,
-                    Length      = 5751,
-                    Sequence    = 7,
-                    Start       = 28072
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 2776576,
-                    Name        = "Root file system",
-                    Type        = "Apple_UNIX_SVR2",
-                    Offset      = 17317376,
-                    Length      = 5423,
-                    Sequence    = 8,
-                    Start       = 33823
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 2892800,
-                    Name        = "Usr file system",
-                    Type        = "Apple_UNIX_SVR2",
-                    Offset      = 20093952,
-                    Length      = 5650,
-                    Sequence    = 9,
-                    Start       = 39246
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 3433472,
-                    Name        = "Random A/UX fs",
-                    Type        = "Apple_UNIX_SVR2",
-                    Offset      = 22986752,
-                    Length      = 6706,
-                    Sequence    = 10,
-                    Start       = 44896
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 1657856,
-                    Name        = "Extra",
-                    Type        = "Apple_Free",
-                    Offset      = 26420224,
-                    Length      = 3238,
-                    Sequence    = 11,
-                    Start       = 51602
+                    new Partition
+                    {
+                        Length   = 10,
+                        Offset   = 32768,
+                        Sequence = 0,
+                        Size     = 5120,
+                        Start    = 64,
+                        Type     = "Apple_Driver"
+                    },
+                    new Partition
+                    {
+                        Length   = 32,
+                        Name     = "Macintosh",
+                        Offset   = 32768,
+                        Sequence = 1,
+                        Size     = 16384,
+                        Start    = 64,
+                        Type     = "Apple_Driver"
+                    },
+                    new Partition
+                    {
+                        Length   = 7680,
+                        Name     = "MacOS",
+                        Offset   = 49152,
+                        Sequence = 2,
+                        Size     = 3932160,
+                        Start    = 96,
+                        Type     = "Apple_HFS"
+                    },
+                    new Partition
+                    {
+                        Length   = 6245,
+                        Name     = "Scratch",
+                        Offset   = 3981312,
+                        Sequence = 3,
+                        Size     = 3197440,
+                        Start    = 7776,
+                        Type     = "Apple_Scratch"
+                    },
+                    new Partition
+                    {
+                        Length   = 6245,
+                        Name     = "Eschatology 1",
+                        Offset   = 7178752,
+                        Sequence = 4,
+                        Size     = 3197440,
+                        Start    = 14021,
+                        Type     = "Apple_UNIX_SVR2"
+                    },
+                    new Partition
+                    {
+                        Length   = 5130,
+                        Name     = "A/UX Root",
+                        Offset   = 10376192,
+                        Sequence = 5,
+                        Size     = 2626560,
+                        Start    = 20266,
+                        Type     = "Apple_UNIX_SVR2"
+                    },
+                    new Partition
+                    {
+                        Length   = 2676,
+                        Name     = "Swap",
+                        Offset   = 13002752,
+                        Sequence = 6,
+                        Size     = 1370112,
+                        Start    = 25396,
+                        Type     = "Apple_UNIX_SVR2"
+                    },
+                    new Partition
+                    {
+                        Length   = 5751,
+                        Name     = "Eschatology 2",
+                        Offset   = 14372864,
+                        Sequence = 7,
+                        Size     = 2944512,
+                        Start    = 28072,
+                        Type     = "Apple_UNIX_SVR2"
+                    },
+                    new Partition
+                    {
+                        Length   = 5423,
+                        Name     = "Root file system",
+                        Offset   = 17317376,
+                        Sequence = 8,
+                        Size     = 2776576,
+                        Start    = 33823,
+                        Type     = "Apple_UNIX_SVR2"
+                    },
+                    new Partition
+                    {
+                        Length   = 5650,
+                        Name     = "Usr file system",
+                        Offset   = 20093952,
+                        Sequence = 9,
+                        Size     = 2892800,
+                        Start    = 39246,
+                        Type     = "Apple_UNIX_SVR2"
+                    },
+                    new Partition
+                    {
+                        Length   = 6706,
+                        Name     = "Random A/UX fs",
+                        Offset   = 22986752,
+                        Sequence = 10,
+                        Size     = 3433472,
+                        Start    = 44896,
+                        Type     = "Apple_UNIX_SVR2"
+                    },
+                    new Partition
+                    {
+                        Length   = 3238,
+                        Name     = "Extra",
+                        Offset   = 26420224,
+                        Sequence = 11,
+                        Size     = 1657856,
+                        Start    = 51602,
+                        Type     = "Apple_Free"
+                    }
                 }
             },
-
-            // Mac OS 6.0.5
-            new[]
+            new PartitionTest
             {
-                new Partition
+                TestFile = "macos_6.0.5.aif",
+                Partitions = new[]
                 {
-                    Description = null,
-                    Size        = 5120,
-                    Name        = null,
-                    Type        = "Apple_Driver",
-                    Offset      = 32768,
-                    Length      = 10,
-                    Sequence    = 0,
-                    Start       = 64
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 16384,
-                    Name        = "Macintosh",
-                    Type        = "Apple_Driver",
-                    Offset      = 32768,
-                    Length      = 32,
-                    Sequence    = 1,
-                    Start       = 64
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 2097152,
-                    Name        = "MacOS",
-                    Type        = "Apple_HFS",
-                    Offset      = 49152,
-                    Length      = 4096,
-                    Sequence    = 2,
-                    Start       = 96
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 342528,
-                    Name        = "Scratch",
-                    Type        = "Apple_Scratch",
-                    Offset      = 2146304,
-                    Length      = 669,
-                    Sequence    = 3,
-                    Start       = 4192
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 1417216,
-                    Name        = "Eschatology 1",
-                    Type        = "Apple_UNIX_SVR2",
-                    Offset      = 2488832,
-                    Length      = 2768,
-                    Sequence    = 4,
-                    Start       = 4861
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 1830912,
-                    Name        = "A/UX Root",
-                    Type        = "Apple_UNIX_SVR2",
-                    Offset      = 3906048,
-                    Length      = 3576,
-                    Sequence    = 5,
-                    Start       = 7629
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 1448960,
-                    Name        = "Swap",
-                    Type        = "Apple_UNIX_SVR2",
-                    Offset      = 5736960,
-                    Length      = 2830,
-                    Sequence    = 6,
-                    Start       = 11205
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 2687488,
-                    Name        = "Root file system",
-                    Type        = "Apple_UNIX_SVR2",
-                    Offset      = 7185920,
-                    Length      = 5249,
-                    Sequence    = 7,
-                    Start       = 14035
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 2565632,
-                    Name        = "Usr file system",
-                    Type        = "Apple_UNIX_SVR2",
-                    Offset      = 9873408,
-                    Length      = 5011,
-                    Sequence    = 8,
-                    Start       = 19284
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 1954816,
-                    Name        = "Unreserved 1",
-                    Type        = "Apple_UNIX_SVR2",
-                    Offset      = 12439040,
-                    Length      = 3818,
-                    Sequence    = 9,
-                    Start       = 24295
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 3543040,
-                    Name        = "Unreserved 2",
-                    Type        = "Apple_UNIX_SVR2",
-                    Offset      = 14393856,
-                    Length      = 6920,
-                    Sequence    = 10,
-                    Start       = 28113
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 2565632,
-                    Name        = "Unreserved 3",
-                    Type        = "Apple_UNIX_SVR2",
-                    Offset      = 17936896,
-                    Length      = 5011,
-                    Sequence    = 11,
-                    Start       = 35033
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 2932224,
-                    Name        = "Unreserved 4",
-                    Type        = "Apple_UNIX_SVR2",
-                    Offset      = 20502528,
-                    Length      = 5727,
-                    Sequence    = 12,
-                    Start       = 40044
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 1221632,
-                    Name        = "Random A/UX fs",
-                    Type        = "Apple_UNIX_SVR2",
-                    Offset      = 23434752,
-                    Length      = 2386,
-                    Sequence    = 13,
-                    Start       = 45771
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 3421696,
-                    Name        = "Extra",
-                    Type        = "Apple_Free",
-                    Offset      = 24656384,
-                    Length      = 6683,
-                    Sequence    = 14,
-                    Start       = 48157
+                    new Partition
+                    {
+                        Length   = 10,
+                        Offset   = 32768,
+                        Sequence = 0,
+                        Size     = 5120,
+                        Start    = 64,
+                        Type     = "Apple_Driver"
+                    },
+                    new Partition
+                    {
+                        Length   = 32,
+                        Name     = "Macintosh",
+                        Offset   = 32768,
+                        Sequence = 1,
+                        Size     = 16384,
+                        Start    = 64,
+                        Type     = "Apple_Driver"
+                    },
+                    new Partition
+                    {
+                        Length   = 4096,
+                        Name     = "MacOS",
+                        Offset   = 49152,
+                        Sequence = 2,
+                        Size     = 2097152,
+                        Start    = 96,
+                        Type     = "Apple_HFS"
+                    },
+                    new Partition
+                    {
+                        Length   = 669,
+                        Name     = "Scratch",
+                        Offset   = 2146304,
+                        Sequence = 3,
+                        Size     = 342528,
+                        Start    = 4192,
+                        Type     = "Apple_Scratch"
+                    },
+                    new Partition
+                    {
+                        Length   = 2768,
+                        Name     = "Eschatology 1",
+                        Offset   = 2488832,
+                        Sequence = 4,
+                        Size     = 1417216,
+                        Start    = 4861,
+                        Type     = "Apple_UNIX_SVR2"
+                    },
+                    new Partition
+                    {
+                        Length   = 3576,
+                        Name     = "A/UX Root",
+                        Offset   = 3906048,
+                        Sequence = 5,
+                        Size     = 1830912,
+                        Start    = 7629,
+                        Type     = "Apple_UNIX_SVR2"
+                    },
+                    new Partition
+                    {
+                        Length   = 2830,
+                        Name     = "Swap",
+                        Offset   = 5736960,
+                        Sequence = 6,
+                        Size     = 1448960,
+                        Start    = 11205,
+                        Type     = "Apple_UNIX_SVR2"
+                    },
+                    new Partition
+                    {
+                        Length   = 5249,
+                        Name     = "Root file system",
+                        Offset   = 7185920,
+                        Sequence = 7,
+                        Size     = 2687488,
+                        Start    = 14035,
+                        Type     = "Apple_UNIX_SVR2"
+                    },
+                    new Partition
+                    {
+                        Length   = 5011,
+                        Name     = "Usr file system",
+                        Offset   = 9873408,
+                        Sequence = 8,
+                        Size     = 2565632,
+                        Start    = 19284,
+                        Type     = "Apple_UNIX_SVR2"
+                    },
+                    new Partition
+                    {
+                        Length   = 3818,
+                        Name     = "Unreserved 1",
+                        Offset   = 12439040,
+                        Sequence = 9,
+                        Size     = 1954816,
+                        Start    = 24295,
+                        Type     = "Apple_UNIX_SVR2"
+                    },
+                    new Partition
+                    {
+                        Length   = 6920,
+                        Name     = "Unreserved 2",
+                        Offset   = 14393856,
+                        Sequence = 10,
+                        Size     = 3543040,
+                        Start    = 28113,
+                        Type     = "Apple_UNIX_SVR2"
+                    },
+                    new Partition
+                    {
+                        Length   = 5011,
+                        Name     = "Unreserved 3",
+                        Offset   = 17936896,
+                        Sequence = 11,
+                        Size     = 2565632,
+                        Start    = 35033,
+                        Type     = "Apple_UNIX_SVR2"
+                    },
+                    new Partition
+                    {
+                        Length   = 5727,
+                        Name     = "Unreserved 4",
+                        Offset   = 20502528,
+                        Sequence = 12,
+                        Size     = 2932224,
+                        Start    = 40044,
+                        Type     = "Apple_UNIX_SVR2"
+                    },
+                    new Partition
+                    {
+                        Length   = 2386,
+                        Name     = "Random A/UX fs",
+                        Offset   = 23434752,
+                        Sequence = 13,
+                        Size     = 1221632,
+                        Start    = 45771,
+                        Type     = "Apple_UNIX_SVR2"
+                    },
+                    new Partition
+                    {
+                        Length   = 6683,
+                        Name     = "Extra",
+                        Offset   = 24656384,
+                        Sequence = 14,
+                        Size     = 3421696,
+                        Start    = 48157,
+                        Type     = "Apple_Free"
+                    }
                 }
             },
-
-            // Mac OS 6.0.7
-            new[]
+            new PartitionTest
             {
-                new Partition
+                TestFile = "macos_6.0.7.aif",
+                Partitions = new[]
                 {
-                    Description = null,
-                    Size        = 5120,
-                    Name        = null,
-                    Type        = "Apple_Driver",
-                    Offset      = 32768,
-                    Length      = 10,
-                    Sequence    = 0,
-                    Start       = 64
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 16384,
-                    Name        = "Macintosh",
-                    Type        = "Apple_Driver",
-                    Offset      = 32768,
-                    Length      = 32,
-                    Sequence    = 1,
-                    Start       = 64
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 14013952,
-                    Name        = "MacOS",
-                    Type        = "Apple_HFS",
-                    Offset      = 49152,
-                    Length      = 27371,
-                    Sequence    = 2,
-                    Start       = 96
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 1492992,
-                    Name        = "Eschatology 1",
-                    Type        = "Apple_UNIX_SVR2",
-                    Offset      = 14063104,
-                    Length      = 2916,
-                    Sequence    = 3,
-                    Start       = 27467
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 919040,
-                    Name        = "A/UX Root",
-                    Type        = "Apple_UNIX_SVR2",
-                    Offset      = 15556096,
-                    Length      = 1795,
-                    Sequence    = 4,
-                    Start       = 30383
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 1302016,
-                    Name        = "Swap",
-                    Type        = "Apple_UNIX_SVR2",
-                    Offset      = 16475136,
-                    Length      = 2543,
-                    Sequence    = 5,
-                    Start       = 32178
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 1796608,
-                    Name        = "Root file system",
-                    Type        = "Apple_UNIX_SVR2",
-                    Offset      = 17777152,
-                    Length      = 3509,
-                    Sequence    = 6,
-                    Start       = 34721
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 1943552,
-                    Name        = "Usr file system",
-                    Type        = "Apple_UNIX_SVR2",
-                    Offset      = 19573760,
-                    Length      = 3796,
-                    Sequence    = 7,
-                    Start       = 38230
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 2186752,
-                    Name        = "Random A/UX fs",
-                    Type        = "Apple_UNIX_SVR2",
-                    Offset      = 21517312,
-                    Length      = 4271,
-                    Sequence    = 8,
-                    Start       = 42026
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 524288,
-                    Name        = "Unreserved 1",
-                    Type        = "Apple_UNIX_SVR2",
-                    Offset      = 23704064,
-                    Length      = 1024,
-                    Sequence    = 9,
-                    Start       = 46297
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 655360,
-                    Name        = "Unreserved 2",
-                    Type        = "Apple_UNIX_SVR2",
-                    Offset      = 24228352,
-                    Length      = 1280,
-                    Sequence    = 10,
-                    Start       = 47321
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 798208,
-                    Name        = "Unreserved 3",
-                    Type        = "Apple_UNIX_SVR2",
-                    Offset      = 24883712,
-                    Length      = 1559,
-                    Sequence    = 11,
-                    Start       = 48601
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 143360,
-                    Name        = "Extra",
-                    Type        = "Apple_Free",
-                    Offset      = 25681920,
-                    Length      = 280,
-                    Sequence    = 12,
-                    Start       = 50160
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 2252800,
-                    Name        = "Unreserved 4",
-                    Type        = "Apple_UNIX_SVR2",
-                    Offset      = 25825280,
-                    Length      = 4400,
-                    Sequence    = 13,
-                    Start       = 50440
+                    new Partition
+                    {
+                        Length   = 10,
+                        Offset   = 32768,
+                        Sequence = 0,
+                        Size     = 5120,
+                        Start    = 64,
+                        Type     = "Apple_Driver"
+                    },
+                    new Partition
+                    {
+                        Length   = 32,
+                        Name     = "Macintosh",
+                        Offset   = 32768,
+                        Sequence = 1,
+                        Size     = 16384,
+                        Start    = 64,
+                        Type     = "Apple_Driver"
+                    },
+                    new Partition
+                    {
+                        Length   = 27371,
+                        Name     = "MacOS",
+                        Offset   = 49152,
+                        Sequence = 2,
+                        Size     = 14013952,
+                        Start    = 96,
+                        Type     = "Apple_HFS"
+                    },
+                    new Partition
+                    {
+                        Length   = 2916,
+                        Name     = "Eschatology 1",
+                        Offset   = 14063104,
+                        Sequence = 3,
+                        Size     = 1492992,
+                        Start    = 27467,
+                        Type     = "Apple_UNIX_SVR2"
+                    },
+                    new Partition
+                    {
+                        Length   = 1795,
+                        Name     = "A/UX Root",
+                        Offset   = 15556096,
+                        Sequence = 4,
+                        Size     = 919040,
+                        Start    = 30383,
+                        Type     = "Apple_UNIX_SVR2"
+                    },
+                    new Partition
+                    {
+                        Length   = 2543,
+                        Name     = "Swap",
+                        Offset   = 16475136,
+                        Sequence = 5,
+                        Size     = 1302016,
+                        Start    = 32178,
+                        Type     = "Apple_UNIX_SVR2"
+                    },
+                    new Partition
+                    {
+                        Length   = 3509,
+                        Name     = "Root file system",
+                        Offset   = 17777152,
+                        Sequence = 6,
+                        Size     = 1796608,
+                        Start    = 34721,
+                        Type     = "Apple_UNIX_SVR2"
+                    },
+                    new Partition
+                    {
+                        Length   = 3796,
+                        Name     = "Usr file system",
+                        Offset   = 19573760,
+                        Sequence = 7,
+                        Size     = 1943552,
+                        Start    = 38230,
+                        Type     = "Apple_UNIX_SVR2"
+                    },
+                    new Partition
+                    {
+                        Length   = 4271,
+                        Name     = "Random A/UX fs",
+                        Offset   = 21517312,
+                        Sequence = 8,
+                        Size     = 2186752,
+                        Start    = 42026,
+                        Type     = "Apple_UNIX_SVR2"
+                    },
+                    new Partition
+                    {
+                        Length   = 1024,
+                        Name     = "Unreserved 1",
+                        Offset   = 23704064,
+                        Sequence = 9,
+                        Size     = 524288,
+                        Start    = 46297,
+                        Type     = "Apple_UNIX_SVR2"
+                    },
+                    new Partition
+                    {
+                        Length   = 1280,
+                        Name     = "Unreserved 2",
+                        Offset   = 24228352,
+                        Sequence = 10,
+                        Size     = 655360,
+                        Start    = 47321,
+                        Type     = "Apple_UNIX_SVR2"
+                    },
+                    new Partition
+                    {
+                        Length   = 1559,
+                        Name     = "Unreserved 3",
+                        Offset   = 24883712,
+                        Sequence = 11,
+                        Size     = 798208,
+                        Start    = 48601,
+                        Type     = "Apple_UNIX_SVR2"
+                    },
+                    new Partition
+                    {
+                        Length   = 280,
+                        Name     = "Extra",
+                        Offset   = 25681920,
+                        Sequence = 12,
+                        Size     = 143360,
+                        Start    = 50160,
+                        Type     = "Apple_Free"
+                    },
+                    new Partition
+                    {
+                        Length   = 4400,
+                        Name     = "Unreserved 4",
+                        Offset   = 25825280,
+                        Sequence = 13,
+                        Size     = 2252800,
+                        Start    = 50440,
+                        Type     = "Apple_UNIX_SVR2"
+                    }
                 }
             },
-
-            // Mac OS 6.0.8
-            new[]
+            new PartitionTest
             {
-                new Partition
+                TestFile = "macos_6.0.8.aif",
+                Partitions = new[]
                 {
-                    Description = null,
-                    Size        = 5120,
-                    Name        = null,
-                    Type        = "Apple_Driver",
-                    Offset      = 32768,
-                    Length      = 10,
-                    Sequence    = 0,
-                    Start       = 64
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 16384,
-                    Name        = "Macintosh",
-                    Type        = "Apple_Driver",
-                    Offset      = 32768,
-                    Length      = 32,
-                    Sequence    = 1,
-                    Start       = 64
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 4575744,
-                    Name        = "MacOS",
-                    Type        = "Apple_HFS",
-                    Offset      = 49152,
-                    Length      = 8937,
-                    Sequence    = 2,
-                    Start       = 96
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 1143808,
-                    Name        = "Scratch",
-                    Type        = "Apple_Scratch",
-                    Offset      = 4624896,
-                    Length      = 2234,
-                    Sequence    = 3,
-                    Start       = 9033
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 3020800,
-                    Name        = "Eschatology 1",
-                    Type        = "Apple_UNIX_SVR2",
-                    Offset      = 5768704,
-                    Length      = 5900,
-                    Sequence    = 4,
-                    Start       = 11267
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 1615872,
-                    Name        = "Unreserved 1",
-                    Type        = "Apple_UNIX_SVR2",
-                    Offset      = 8789504,
-                    Length      = 3156,
-                    Sequence    = 5,
-                    Start       = 17167
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 1384960,
-                    Name        = "Unreserved 3",
-                    Type        = "Apple_UNIX_SVR2",
-                    Offset      = 10405376,
-                    Length      = 2705,
-                    Sequence    = 6,
-                    Start       = 20323
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 952832,
-                    Name        = "Unreserved 4",
-                    Type        = "Apple_UNIX_SVR2",
-                    Offset      = 11790336,
-                    Length      = 1861,
-                    Sequence    = 7,
-                    Start       = 23028
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 1246208,
-                    Name        = "Extra",
-                    Type        = "Apple_Free",
-                    Offset      = 12743168,
-                    Length      = 2434,
-                    Sequence    = 8,
-                    Start       = 24889
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 1495040,
-                    Name        = "Random A/UX fs",
-                    Type        = "Apple_UNIX_SVR2",
-                    Offset      = 13989376,
-                    Length      = 2920,
-                    Sequence    = 9,
-                    Start       = 27323
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 1615872,
-                    Name        = "Unreserved 2",
-                    Type        = "Apple_UNIX_SVR2",
-                    Offset      = 15484416,
-                    Length      = 3156,
-                    Sequence    = 10,
-                    Start       = 30243
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 2885120,
-                    Name        = "Usr file system",
-                    Type        = "Apple_UNIX_SVR2",
-                    Offset      = 17100288,
-                    Length      = 5635,
-                    Sequence    = 11,
-                    Start       = 33399
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 2308096,
-                    Name        = "Root file system",
-                    Type        = "Apple_UNIX_SVR2",
-                    Offset      = 19985408,
-                    Length      = 4508,
-                    Sequence    = 12,
-                    Start       = 39034
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 3693056,
-                    Name        = "Swap",
-                    Type        = "Apple_UNIX_SVR2",
-                    Offset      = 22293504,
-                    Length      = 7213,
-                    Sequence    = 13,
-                    Start       = 43542
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 2091520,
-                    Name        = "A/UX Root",
-                    Type        = "Apple_UNIX_SVR2",
-                    Offset      = 25986560,
-                    Length      = 4085,
-                    Sequence    = 14,
-                    Start       = 50755
+                    new Partition
+                    {
+                        Length   = 10,
+                        Offset   = 32768,
+                        Sequence = 0,
+                        Size     = 5120,
+                        Start    = 64,
+                        Type     = "Apple_Driver"
+                    },
+                    new Partition
+                    {
+                        Length   = 32,
+                        Name     = "Macintosh",
+                        Offset   = 32768,
+                        Sequence = 1,
+                        Size     = 16384,
+                        Start    = 64,
+                        Type     = "Apple_Driver"
+                    },
+                    new Partition
+                    {
+                        Length   = 8937,
+                        Name     = "MacOS",
+                        Offset   = 49152,
+                        Sequence = 2,
+                        Size     = 4575744,
+                        Start    = 96,
+                        Type     = "Apple_HFS"
+                    },
+                    new Partition
+                    {
+                        Length   = 2234,
+                        Name     = "Scratch",
+                        Offset   = 4624896,
+                        Sequence = 3,
+                        Size     = 1143808,
+                        Start    = 9033,
+                        Type     = "Apple_Scratch"
+                    },
+                    new Partition
+                    {
+                        Length   = 5900,
+                        Name     = "Eschatology 1",
+                        Offset   = 5768704,
+                        Sequence = 4,
+                        Size     = 3020800,
+                        Start    = 11267,
+                        Type     = "Apple_UNIX_SVR2"
+                    },
+                    new Partition
+                    {
+                        Length   = 3156,
+                        Name     = "Unreserved 1",
+                        Offset   = 8789504,
+                        Sequence = 5,
+                        Size     = 1615872,
+                        Start    = 17167,
+                        Type     = "Apple_UNIX_SVR2"
+                    },
+                    new Partition
+                    {
+                        Length   = 2705,
+                        Name     = "Unreserved 3",
+                        Offset   = 10405376,
+                        Sequence = 6,
+                        Size     = 1384960,
+                        Start    = 20323,
+                        Type     = "Apple_UNIX_SVR2"
+                    },
+                    new Partition
+                    {
+                        Length   = 1861,
+                        Name     = "Unreserved 4",
+                        Offset   = 11790336,
+                        Sequence = 7,
+                        Size     = 952832,
+                        Start    = 23028,
+                        Type     = "Apple_UNIX_SVR2"
+                    },
+                    new Partition
+                    {
+                        Length   = 2434,
+                        Name     = "Extra",
+                        Offset   = 12743168,
+                        Sequence = 8,
+                        Size     = 1246208,
+                        Start    = 24889,
+                        Type     = "Apple_Free"
+                    },
+                    new Partition
+                    {
+                        Length   = 2920,
+                        Name     = "Random A/UX fs",
+                        Offset   = 13989376,
+                        Sequence = 9,
+                        Size     = 1495040,
+                        Start    = 27323,
+                        Type     = "Apple_UNIX_SVR2"
+                    },
+                    new Partition
+                    {
+                        Length   = 3156,
+                        Name     = "Unreserved 2",
+                        Offset   = 15484416,
+                        Sequence = 10,
+                        Size     = 1615872,
+                        Start    = 30243,
+                        Type     = "Apple_UNIX_SVR2"
+                    },
+                    new Partition
+                    {
+                        Length   = 5635,
+                        Name     = "Usr file system",
+                        Offset   = 17100288,
+                        Sequence = 11,
+                        Size     = 2885120,
+                        Start    = 33399,
+                        Type     = "Apple_UNIX_SVR2"
+                    },
+                    new Partition
+                    {
+                        Length   = 4508,
+                        Name     = "Root file system",
+                        Offset   = 19985408,
+                        Sequence = 12,
+                        Size     = 2308096,
+                        Start    = 39034,
+                        Type     = "Apple_UNIX_SVR2"
+                    },
+                    new Partition
+                    {
+                        Length   = 7213,
+                        Name     = "Swap",
+                        Offset   = 22293504,
+                        Sequence = 13,
+                        Size     = 3693056,
+                        Start    = 43542,
+                        Type     = "Apple_UNIX_SVR2"
+                    },
+                    new Partition
+                    {
+                        Length   = 4085,
+                        Name     = "A/UX Root",
+                        Offset   = 25986560,
+                        Sequence = 14,
+                        Size     = 2091520,
+                        Start    = 50755,
+                        Type     = "Apple_UNIX_SVR2"
+                    }
                 }
             },
-
-            // Mac OS 6.0
-            new[]
+            new PartitionTest
             {
-                new Partition
+                TestFile = "macos_6.0.aif",
+                Partitions = new[]
                 {
-                    Description = null,
-                    Size        = 5120,
-                    Name        = null,
-                    Type        = "Apple_Driver",
-                    Offset      = 32768,
-                    Length      = 10,
-                    Sequence    = 0,
-                    Start       = 64
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 16384,
-                    Name        = "Macintosh",
-                    Type        = "Apple_Driver",
-                    Offset      = 32768,
-                    Length      = 32,
-                    Sequence    = 1,
-                    Start       = 64
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 2097152,
-                    Name        = "MacOS",
-                    Type        = "Apple_HFS",
-                    Offset      = 49152,
-                    Length      = 4096,
-                    Sequence    = 2,
-                    Start       = 96
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 2097152,
-                    Name        = "Scratch",
-                    Type        = "Apple_Scratch",
-                    Offset      = 2146304,
-                    Length      = 4096,
-                    Sequence    = 3,
-                    Start       = 4192
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 2097152,
-                    Name        = "Eschatology 1",
-                    Type        = "Apple_UNIX_SVR2",
-                    Offset      = 4243456,
-                    Length      = 4096,
-                    Sequence    = 4,
-                    Start       = 8288
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 2097152,
-                    Name        = "A/UX Root",
-                    Type        = "Apple_UNIX_SVR2",
-                    Offset      = 6340608,
-                    Length      = 4096,
-                    Sequence    = 5,
-                    Start       = 12384
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 1048576,
-                    Name        = "Swap",
-                    Type        = "Apple_UNIX_SVR2",
-                    Offset      = 8437760,
-                    Length      = 2048,
-                    Sequence    = 6,
-                    Start       = 16480
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 2097152,
-                    Name        = "Eschatology 2",
-                    Type        = "Apple_UNIX_SVR2",
-                    Offset      = 9486336,
-                    Length      = 4096,
-                    Sequence    = 7,
-                    Start       = 18528
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 2097152,
-                    Name        = "Root file system",
-                    Type        = "Apple_UNIX_SVR2",
-                    Offset      = 11583488,
-                    Length      = 4096,
-                    Sequence    = 8,
-                    Start       = 22624
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 2310144,
-                    Name        = "Usr file system",
-                    Type        = "Apple_UNIX_SVR2",
-                    Offset      = 13680640,
-                    Length      = 4512,
-                    Sequence    = 9,
-                    Start       = 26720
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 5416960,
-                    Name        = "Random A/UX fs",
-                    Type        = "Apple_UNIX_SVR2",
-                    Offset      = 15990784,
-                    Length      = 10580,
-                    Sequence    = 10,
-                    Start       = 31232
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 4096,
-                    Name        = "Extra",
-                    Type        = "Apple_Free",
-                    Offset      = 21407744,
-                    Length      = 8,
-                    Sequence    = 11,
-                    Start       = 41812
+                    new Partition
+                    {
+                        Length   = 10,
+                        Offset   = 32768,
+                        Sequence = 0,
+                        Size     = 5120,
+                        Start    = 64,
+                        Type     = "Apple_Driver"
+                    },
+                    new Partition
+                    {
+                        Length   = 32,
+                        Name     = "Macintosh",
+                        Offset   = 32768,
+                        Sequence = 1,
+                        Size     = 16384,
+                        Start    = 64,
+                        Type     = "Apple_Driver"
+                    },
+                    new Partition
+                    {
+                        Length   = 4096,
+                        Name     = "MacOS",
+                        Offset   = 49152,
+                        Sequence = 2,
+                        Size     = 2097152,
+                        Start    = 96,
+                        Type     = "Apple_HFS"
+                    },
+                    new Partition
+                    {
+                        Length   = 4096,
+                        Name     = "Scratch",
+                        Offset   = 2146304,
+                        Sequence = 3,
+                        Size     = 2097152,
+                        Start    = 4192,
+                        Type     = "Apple_Scratch"
+                    },
+                    new Partition
+                    {
+                        Length   = 4096,
+                        Name     = "Eschatology 1",
+                        Offset   = 4243456,
+                        Sequence = 4,
+                        Size     = 2097152,
+                        Start    = 8288,
+                        Type     = "Apple_UNIX_SVR2"
+                    },
+                    new Partition
+                    {
+                        Length   = 4096,
+                        Name     = "A/UX Root",
+                        Offset   = 6340608,
+                        Sequence = 5,
+                        Size     = 2097152,
+                        Start    = 12384,
+                        Type     = "Apple_UNIX_SVR2"
+                    },
+                    new Partition
+                    {
+                        Length   = 2048,
+                        Name     = "Swap",
+                        Offset   = 8437760,
+                        Sequence = 6,
+                        Size     = 1048576,
+                        Start    = 16480,
+                        Type     = "Apple_UNIX_SVR2"
+                    },
+                    new Partition
+                    {
+                        Length   = 4096,
+                        Name     = "Eschatology 2",
+                        Offset   = 9486336,
+                        Sequence = 7,
+                        Size     = 2097152,
+                        Start    = 18528,
+                        Type     = "Apple_UNIX_SVR2"
+                    },
+                    new Partition
+                    {
+                        Length   = 4096,
+                        Name     = "Root file system",
+                        Offset   = 11583488,
+                        Sequence = 8,
+                        Size     = 2097152,
+                        Start    = 22624,
+                        Type     = "Apple_UNIX_SVR2"
+                    },
+                    new Partition
+                    {
+                        Length   = 4512,
+                        Name     = "Usr file system",
+                        Offset   = 13680640,
+                        Sequence = 9,
+                        Size     = 2310144,
+                        Start    = 26720,
+                        Type     = "Apple_UNIX_SVR2"
+                    },
+                    new Partition
+                    {
+                        Length   = 10580,
+                        Name     = "Random A/UX fs",
+                        Offset   = 15990784,
+                        Sequence = 10,
+                        Size     = 5416960,
+                        Start    = 31232,
+                        Type     = "Apple_UNIX_SVR2"
+                    },
+                    new Partition
+                    {
+                        Length   = 8,
+                        Name     = "Extra",
+                        Offset   = 21407744,
+                        Sequence = 11,
+                        Size     = 4096,
+                        Start    = 41812,
+                        Type     = "Apple_Free"
+                    }
                 }
             },
-
-            // Mac OS 7.0
-            new[]
+            new PartitionTest
             {
-                new Partition
+                TestFile = "macos_7.0.aif",
+                Partitions = new[]
                 {
-                    Description = null,
-                    Size        = 5120,
-                    Name        = null,
-                    Type        = "Apple_Driver",
-                    Offset      = 32768,
-                    Length      = 10,
-                    Sequence    = 0,
-                    Start       = 64
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 16384,
-                    Name        = "Macintosh",
-                    Type        = "Apple_Driver",
-                    Offset      = 32768,
-                    Length      = 32,
-                    Sequence    = 1,
-                    Start       = 64
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 3073024,
-                    Name        = "Scratch",
-                    Type        = "Apple_Scratch",
-                    Offset      = 49152,
-                    Length      = 6002,
-                    Sequence    = 2,
-                    Start       = 96
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 2726400,
-                    Name        = "Root file system",
-                    Type        = "Apple_UNIX_SVR2",
-                    Offset      = 3122176,
-                    Length      = 5325,
-                    Sequence    = 3,
-                    Start       = 6098
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 3180544,
-                    Name        = "Extra",
-                    Type        = "Apple_Free",
-                    Offset      = 5848576,
-                    Length      = 6212,
-                    Sequence    = 4,
-                    Start       = 11423
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 4203520,
-                    Name        = "Random A/UX fs",
-                    Type        = "Apple_UNIX_SVR2",
-                    Offset      = 9029120,
-                    Length      = 8210,
-                    Sequence    = 5,
-                    Start       = 17635
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 2613248,
-                    Name        = "Extra",
-                    Type        = "Apple_Free",
-                    Offset      = 13232640,
-                    Length      = 5104,
-                    Sequence    = 6,
-                    Start       = 25845
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 5262336,
-                    Name        = "MacOS",
-                    Type        = "Apple_HFS",
-                    Offset      = 15845888,
-                    Length      = 10278,
-                    Sequence    = 7,
-                    Start       = 30949
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 1707520,
-                    Name        = "Eschatology 1",
-                    Type        = "Apple_UNIX_SVR2",
-                    Offset      = 21108224,
-                    Length      = 3335,
-                    Sequence    = 8,
-                    Start       = 41227
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 5262336,
-                    Name        = "Extra",
-                    Type        = "Apple_Free",
-                    Offset      = 22815744,
-                    Length      = 10278,
-                    Sequence    = 9,
-                    Start       = 44562
+                    new Partition
+                    {
+                        Length   = 10,
+                        Offset   = 32768,
+                        Sequence = 0,
+                        Size     = 5120,
+                        Start    = 64,
+                        Type     = "Apple_Driver"
+                    },
+                    new Partition
+                    {
+                        Length   = 32,
+                        Name     = "Macintosh",
+                        Offset   = 32768,
+                        Sequence = 1,
+                        Size     = 16384,
+                        Start    = 64,
+                        Type     = "Apple_Driver"
+                    },
+                    new Partition
+                    {
+                        Length   = 6002,
+                        Name     = "Scratch",
+                        Offset   = 49152,
+                        Sequence = 2,
+                        Size     = 3073024,
+                        Start    = 96,
+                        Type     = "Apple_Scratch"
+                    },
+                    new Partition
+                    {
+                        Length   = 5325,
+                        Name     = "Root file system",
+                        Offset   = 3122176,
+                        Sequence = 3,
+                        Size     = 2726400,
+                        Start    = 6098,
+                        Type     = "Apple_UNIX_SVR2"
+                    },
+                    new Partition
+                    {
+                        Length   = 6212,
+                        Name     = "Extra",
+                        Offset   = 5848576,
+                        Sequence = 4,
+                        Size     = 3180544,
+                        Start    = 11423,
+                        Type     = "Apple_Free"
+                    },
+                    new Partition
+                    {
+                        Length   = 8210,
+                        Name     = "Random A/UX fs",
+                        Offset   = 9029120,
+                        Sequence = 5,
+                        Size     = 4203520,
+                        Start    = 17635,
+                        Type     = "Apple_UNIX_SVR2"
+                    },
+                    new Partition
+                    {
+                        Length   = 5104,
+                        Name     = "Extra",
+                        Offset   = 13232640,
+                        Sequence = 6,
+                        Size     = 2613248,
+                        Start    = 25845,
+                        Type     = "Apple_Free"
+                    },
+                    new Partition
+                    {
+                        Length   = 10278,
+                        Name     = "MacOS",
+                        Offset   = 15845888,
+                        Sequence = 7,
+                        Size     = 5262336,
+                        Start    = 30949,
+                        Type     = "Apple_HFS"
+                    },
+                    new Partition
+                    {
+                        Length   = 3335,
+                        Name     = "Eschatology 1",
+                        Offset   = 21108224,
+                        Sequence = 8,
+                        Size     = 1707520,
+                        Start    = 41227,
+                        Type     = "Apple_UNIX_SVR2"
+                    },
+                    new Partition
+                    {
+                        Length   = 10278,
+                        Name     = "Extra",
+                        Offset   = 22815744,
+                        Sequence = 9,
+                        Size     = 5262336,
+                        Start    = 44562,
+                        Type     = "Apple_Free"
+                    }
                 }
             },
-
-            // Mac OS 7.1.1
-            new[]
+            new PartitionTest
             {
-                new Partition
+                TestFile = "macos_7.1.1.aif",
+                Partitions = new[]
                 {
-                    Description = null,
-                    Size        = 8704,
-                    Name        = null,
-                    Type        = "Apple_Driver",
-                    Offset      = 32768,
-                    Length      = 17,
-                    Sequence    = 0,
-                    Start       = 64
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 16384,
-                    Name        = "Macintosh",
-                    Type        = "Apple_Driver43",
-                    Offset      = 32768,
-                    Length      = 32,
-                    Sequence    = 1,
-                    Start       = 64
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 1486848,
-                    Name        = "Random A/UX fs",
-                    Type        = "Apple_UNIX_SVR2",
-                    Offset      = 49152,
-                    Length      = 2904,
-                    Sequence    = 2,
-                    Start       = 96
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 2097152,
-                    Name        = "ProDOS",
-                    Type        = "Apple_PRODOS",
-                    Offset      = 1536000,
-                    Length      = 4096,
-                    Sequence    = 3,
-                    Start       = 3000
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 1564160,
-                    Name        = "Extra",
-                    Type        = "Apple_Free",
-                    Offset      = 3633152,
-                    Length      = 3055,
-                    Sequence    = 4,
-                    Start       = 7096
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 2097152,
-                    Name        = "ProDOS",
-                    Type        = "Apple_PRODOS",
-                    Offset      = 5197312,
-                    Length      = 4096,
-                    Sequence    = 5,
-                    Start       = 10151
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 5148160,
-                    Name        = "MacOS",
-                    Type        = "Apple_HFS",
-                    Offset      = 7294464,
-                    Length      = 10055,
-                    Sequence    = 6,
-                    Start       = 14247
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 4406784,
-                    Name        = "Extra",
-                    Type        = "Apple_Free",
-                    Offset      = 12442624,
-                    Length      = 8607,
-                    Sequence    = 7,
-                    Start       = 24302
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 2485760,
-                    Name        = "Random A/UX fs",
-                    Type        = "Apple_UNIX_SVR2",
-                    Offset      = 16849408,
-                    Length      = 4855,
-                    Sequence    = 8,
-                    Start       = 32909
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 4746240,
-                    Name        = "Extra",
-                    Type        = "Apple_Free",
-                    Offset      = 19335168,
-                    Length      = 9270,
-                    Sequence    = 9,
-                    Start       = 37764
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 3996672,
-                    Name        = "A/UX Root",
-                    Type        = "Apple_UNIX_SVR2",
-                    Offset      = 24081408,
-                    Length      = 7806,
-                    Sequence    = 10,
-                    Start       = 47034
+                    new Partition
+                    {
+                        Length   = 17,
+                        Offset   = 32768,
+                        Sequence = 0,
+                        Size     = 8704,
+                        Start    = 64,
+                        Type     = "Apple_Driver"
+                    },
+                    new Partition
+                    {
+                        Length   = 32,
+                        Name     = "Macintosh",
+                        Offset   = 32768,
+                        Sequence = 1,
+                        Size     = 16384,
+                        Start    = 64,
+                        Type     = "Apple_Driver43"
+                    },
+                    new Partition
+                    {
+                        Length   = 2904,
+                        Name     = "Random A/UX fs",
+                        Offset   = 49152,
+                        Sequence = 2,
+                        Size     = 1486848,
+                        Start    = 96,
+                        Type     = "Apple_UNIX_SVR2"
+                    },
+                    new Partition
+                    {
+                        Length   = 4096,
+                        Name     = "ProDOS",
+                        Offset   = 1536000,
+                        Sequence = 3,
+                        Size     = 2097152,
+                        Start    = 3000,
+                        Type     = "Apple_PRODOS"
+                    },
+                    new Partition
+                    {
+                        Length   = 3055,
+                        Name     = "Extra",
+                        Offset   = 3633152,
+                        Sequence = 4,
+                        Size     = 1564160,
+                        Start    = 7096,
+                        Type     = "Apple_Free"
+                    },
+                    new Partition
+                    {
+                        Length   = 4096,
+                        Name     = "ProDOS",
+                        Offset   = 5197312,
+                        Sequence = 5,
+                        Size     = 2097152,
+                        Start    = 10151,
+                        Type     = "Apple_PRODOS"
+                    },
+                    new Partition
+                    {
+                        Length   = 10055,
+                        Name     = "MacOS",
+                        Offset   = 7294464,
+                        Sequence = 6,
+                        Size     = 5148160,
+                        Start    = 14247,
+                        Type     = "Apple_HFS"
+                    },
+                    new Partition
+                    {
+                        Length   = 8607,
+                        Name     = "Extra",
+                        Offset   = 12442624,
+                        Sequence = 7,
+                        Size     = 4406784,
+                        Start    = 24302,
+                        Type     = "Apple_Free"
+                    },
+                    new Partition
+                    {
+                        Length   = 4855,
+                        Name     = "Random A/UX fs",
+                        Offset   = 16849408,
+                        Sequence = 8,
+                        Size     = 2485760,
+                        Start    = 32909,
+                        Type     = "Apple_UNIX_SVR2"
+                    },
+                    new Partition
+                    {
+                        Length   = 9270,
+                        Name     = "Extra",
+                        Offset   = 19335168,
+                        Sequence = 9,
+                        Size     = 4746240,
+                        Start    = 37764,
+                        Type     = "Apple_Free"
+                    },
+                    new Partition
+                    {
+                        Length   = 7806,
+                        Name     = "A/UX Root",
+                        Offset   = 24081408,
+                        Sequence = 10,
+                        Size     = 3996672,
+                        Start    = 47034,
+                        Type     = "Apple_UNIX_SVR2"
+                    }
                 }
             },
-
-            // Mac OS 7.5
-            new[]
+            new PartitionTest
             {
-                new Partition
+                TestFile = "macos_7.5.aif",
+                Partitions = new[]
                 {
-                    Description = null,
-                    Size        = 9216,
-                    Name        = null,
-                    Type        = "Apple_Driver",
-                    Offset      = 32768,
-                    Length      = 18,
-                    Sequence    = 0,
-                    Start       = 64
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 16384,
-                    Name        = "Macintosh",
-                    Type        = "Apple_Driver43",
-                    Offset      = 32768,
-                    Length      = 32,
-                    Sequence    = 1,
-                    Start       = 64
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 28028928,
-                    Name        = "MacOS",
-                    Type        = "Apple_HFS",
-                    Offset      = 49152,
-                    Length      = 54744,
-                    Sequence    = 2,
-                    Start       = 96
+                    new Partition
+                    {
+                        Length   = 18,
+                        Offset   = 32768,
+                        Sequence = 0,
+                        Size     = 9216,
+                        Start    = 64,
+                        Type     = "Apple_Driver"
+                    },
+                    new Partition
+                    {
+                        Length   = 32,
+                        Name     = "Macintosh",
+                        Offset   = 32768,
+                        Sequence = 1,
+                        Size     = 16384,
+                        Start    = 64,
+                        Type     = "Apple_Driver43"
+                    },
+                    new Partition
+                    {
+                        Length   = 54744,
+                        Name     = "MacOS",
+                        Offset   = 49152,
+                        Sequence = 2,
+                        Size     = 28028928,
+                        Start    = 96,
+                        Type     = "Apple_HFS"
+                    }
                 }
             },
-
-            // GNU Parted
-            new[]
+            new PartitionTest
             {
-                new Partition
+                TestFile = "parted.aif",
+                Partitions = new[]
                 {
-                    Description = null,
-                    Size        = 2064384,
-                    Name        = "Extra",
-                    Type        = "Apple_Free",
-                    Offset      = 32768,
-                    Length      = 4032,
-                    Sequence    = 0,
-                    Start       = 64
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 47185920,
-                    Name        = "untitled",
-                    Type        = "Apple_HFS",
-                    Offset      = 2097152,
-                    Length      = 92160,
-                    Sequence    = 1,
-                    Start       = 4096
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 84934656,
-                    Name        = "untitled",
-                    Type        = "Apple_UNIX_SVR2",
-                    Offset      = 49283072,
-                    Length      = 165888,
-                    Sequence    = 2,
-                    Start       = 96256
+                    new Partition
+                    {
+                        Length   = 4032,
+                        Name     = "Extra",
+                        Offset   = 32768,
+                        Sequence = 0,
+                        Size     = 2064384,
+                        Start    = 64,
+                        Type     = "Apple_Free"
+                    },
+                    new Partition
+                    {
+                        Length   = 92160,
+                        Name     = "untitled",
+                        Offset   = 2097152,
+                        Sequence = 1,
+                        Size     = 47185920,
+                        Start    = 4096,
+                        Type     = "Apple_HFS"
+                    },
+                    new Partition
+                    {
+                        Length   = 165888,
+                        Name     = "untitled",
+                        Offset   = 49283072,
+                        Sequence = 2,
+                        Size     = 84934656,
+                        Start    = 96256,
+                        Type     = "Apple_UNIX_SVR2"
+                    }
                 }
             },
-
-            // Silverlining 2.2.1
-            new[]
+            new PartitionTest
             {
-                new Partition
+                TestFile = "silverlining_2.2.1.aif",
+                Partitions = new[]
                 {
-                    Description = null,
-                    Size        = 3072,
-                    Name        = null,
-                    Type        = "Apple_Driver",
-                    Offset      = 32768,
-                    Length      = 6,
-                    Sequence    = 0,
-                    Start       = 64
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 65536,
-                    Name        = "Macintosh_SL",
-                    Type        = "Apple_Driver43",
-                    Offset      = 32768,
-                    Length      = 128,
-                    Sequence    = 1,
-                    Start       = 64
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 25088,
-                    Name        = null,
-                    Type        = "Apple_Driver",
-                    Offset      = 98304,
-                    Length      = 49,
-                    Sequence    = 2,
-                    Start       = 192
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 65536,
-                    Name        = "Macintosh_SL",
-                    Type        = "Apple_Driver_ATA",
-                    Offset      = 98304,
-                    Length      = 128,
-                    Sequence    = 3,
-                    Start       = 192
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 25804800,
-                    Name        = "Untitled  #1",
-                    Type        = "Apple_HFS",
-                    Offset      = 163840,
-                    Length      = 50400,
-                    Sequence    = 4,
-                    Start       = 320
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 237568,
-                    Name        = "Extra",
-                    Type        = "Apple_Free",
-                    Offset      = 25968640,
-                    Length      = 464,
-                    Sequence    = 5,
-                    Start       = 50720
+                    new Partition
+                    {
+                        Length   = 6,
+                        Offset   = 32768,
+                        Sequence = 0,
+                        Size     = 3072,
+                        Start    = 64,
+                        Type     = "Apple_Driver"
+                    },
+                    new Partition
+                    {
+                        Length   = 128,
+                        Name     = "Macintosh_SL",
+                        Offset   = 32768,
+                        Sequence = 1,
+                        Size     = 65536,
+                        Start    = 64,
+                        Type     = "Apple_Driver43"
+                    },
+                    new Partition
+                    {
+                        Length   = 49,
+                        Offset   = 98304,
+                        Sequence = 2,
+                        Size     = 25088,
+                        Start    = 192,
+                        Type     = "Apple_Driver"
+                    },
+                    new Partition
+                    {
+                        Length   = 128,
+                        Name     = "Macintosh_SL",
+                        Offset   = 98304,
+                        Sequence = 3,
+                        Size     = 65536,
+                        Start    = 192,
+                        Type     = "Apple_Driver_ATA"
+                    },
+                    new Partition
+                    {
+                        Length   = 50400,
+                        Name     = "Untitled  #1",
+                        Offset   = 163840,
+                        Sequence = 4,
+                        Size     = 25804800,
+                        Start    = 320,
+                        Type     = "Apple_HFS"
+                    },
+                    new Partition
+                    {
+                        Length   = 464,
+                        Name     = "Extra",
+                        Offset   = 25968640,
+                        Sequence = 5,
+                        Size     = 237568,
+                        Start    = 50720,
+                        Type     = "Apple_Free"
+                    }
                 }
             },
-
-            // Hard Disk Speed Tools 3.6
-            new[]
+            new PartitionTest
             {
-                new Partition
+                TestFile = "speedtools_3.6.aif",
+                Partitions = new[]
                 {
-                    Description = null,
-                    Size        = 13824,
-                    Name        = null,
-                    Type        = "Apple_Driver",
-                    Offset      = 32768,
-                    Length      = 27,
-                    Sequence    = 0,
-                    Start       = 64
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 51200,
-                    Name        = "Macintosh",
-                    Type        = "Apple_Driver43",
-                    Offset      = 32768,
-                    Length      = 100,
-                    Sequence    = 1,
-                    Start       = 64
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 25165824,
-                    Name        = "untitled",
-                    Type        = "Apple_HFS",
-                    Offset      = 83968,
-                    Length      = 49152,
-                    Sequence    = 2,
-                    Start       = 164
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 963584,
-                    Name        = "Extra",
-                    Type        = "Apple_Free",
-                    Offset      = 25249792,
-                    Length      = 1882,
-                    Sequence    = 3,
-                    Start       = 49316
+                    new Partition
+                    {
+                        Length   = 27,
+                        Offset   = 32768,
+                        Sequence = 0,
+                        Size     = 13824,
+                        Start    = 64,
+                        Type     = "Apple_Driver"
+                    },
+                    new Partition
+                    {
+                        Length   = 100,
+                        Name     = "Macintosh",
+                        Offset   = 32768,
+                        Sequence = 1,
+                        Size     = 51200,
+                        Start    = 64,
+                        Type     = "Apple_Driver43"
+                    },
+                    new Partition
+                    {
+                        Length   = 49152,
+                        Name     = "untitled",
+                        Offset   = 83968,
+                        Sequence = 2,
+                        Size     = 25165824,
+                        Start    = 164,
+                        Type     = "Apple_HFS"
+                    },
+                    new Partition
+                    {
+                        Length   = 1882,
+                        Name     = "Extra",
+                        Offset   = 25249792,
+                        Sequence = 3,
+                        Size     = 963584,
+                        Start    = 49316,
+                        Type     = "Apple_Free"
+                    }
                 }
             },
-
-            // VCP Formatter 2.1.1
-            new[]
+            new PartitionTest
             {
-                new Partition
+                TestFile = "vcpformatter_2.1.1.aif",
+                Partitions = new[]
                 {
-                    Description = null,
-                    Size        = 12288,
-                    Name        = null,
-                    Type        = "Apple_Driver",
-                    Offset      = 57344,
-                    Length      = 24,
-                    Sequence    = 0,
-                    Start       = 112
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 16384,
-                    Name        = "Macintosh",
-                    Type        = "Apple_Driver",
-                    Offset      = 57344,
-                    Length      = 32,
-                    Sequence    = 1,
-                    Start       = 112
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 16384,
-                    Name        = "Extra",
-                    Type        = "Apple_Free",
-                    Offset      = 73728,
-                    Length      = 32,
-                    Sequence    = 2,
-                    Start       = 144
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 27986944,
-                    Name        = "MacOS",
-                    Type        = "Apple_HFS",
-                    Offset      = 90112,
-                    Length      = 54662,
-                    Sequence    = 3,
-                    Start       = 176
-                },
-
-                // TODO: ADFS tries to read past this partition...
-                new Partition
-                {
-                    Description = null,
-                    Size        = 1024,
-                    Name        = "Extra",
-                    Type        = "Apple_Free",
-                    Offset      = 28077056,
-                    Length      = 2,
-                    Sequence    = 4,
-                    Start       = 54838
+                    new Partition
+                    {
+                        Length   = 24,
+                        Offset   = 57344,
+                        Sequence = 0,
+                        Size     = 12288,
+                        Start    = 112,
+                        Type     = "Apple_Driver"
+                    },
+                    new Partition
+                    {
+                        Length   = 32,
+                        Name     = "Macintosh",
+                        Offset   = 57344,
+                        Sequence = 1,
+                        Size     = 16384,
+                        Start    = 112,
+                        Type     = "Apple_Driver"
+                    },
+                    new Partition
+                    {
+                        Length   = 32,
+                        Name     = "Extra",
+                        Offset   = 73728,
+                        Sequence = 2,
+                        Size     = 16384,
+                        Start    = 144,
+                        Type     = "Apple_Free"
+                    },
+                    new Partition
+                    {
+                        Length   = 54662,
+                        Name     = "MacOS",
+                        Offset   = 90112,
+                        Sequence = 3,
+                        Size     = 27986944,
+                        Start    = 176,
+                        Type     = "Apple_HFS"
+                    },
+                    new Partition
+                    {
+                        Length   = 2,
+                        Name     = "Extra",
+                        Offset   = 28077056,
+                        Sequence = 4,
+                        Size     = 1024,
+                        Start    = 54838,
+                        Type     = "Apple_Free"
+                    }
                 }
             }
         };

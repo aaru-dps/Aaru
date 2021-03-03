@@ -38,110 +38,110 @@ namespace Aaru.Tests.Partitions
     {
         public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Partitioning schemes", "Sun");
 
-        public override string[] TestFiles => new[]
+        public override PartitionTest[] Tests => new[]
         {
-            "linux.aif", "parted.aif"
-        };
-
-        public override Partition[][] Wanted => new[]
-        {
-            // Linux's fdisk
-            new[]
+            new PartitionTest
             {
-                new Partition
+                TestFile = "linux.aif",
+                Partitions = new[]
                 {
-                    Description = null,
-                    Name        = null,
-                    Type        = "Linux",
-                    Length      = 204800,
-                    Sequence    = 0,
-                    Start       = 0
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "Sun boot",
-                    Length      = 102400,
-                    Sequence    = 1,
-                    Start       = 208845
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "Sun /",
-                    Length      = 102400,
-                    Sequence    = 2,
-                    Start       = 321300
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "Sun /home",
-                    Length      = 102400,
-                    Sequence    = 3,
-                    Start       = 433755
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "Sun swap",
-                    Length      = 153600,
-                    Sequence    = 4,
-                    Start       = 546210
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "Sun /usr",
-                    Length      = 208845,
-                    Sequence    = 5,
-                    Start       = 706860
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "Linux swap",
-                    Length      = 96390,
-                    Sequence    = 6,
-                    Start       = 915705
+                    new Partition
+                    {
+                        Length   = 204800,
+                        Offset   = 0,
+                        Sequence = 0,
+                        Size     = 0,
+                        Start    = 0,
+                        Type     = "Linux"
+                    },
+                    new Partition
+                    {
+                        Length   = 102400,
+                        Offset   = 0,
+                        Sequence = 1,
+                        Size     = 0,
+                        Start    = 208845,
+                        Type     = "Sun boot"
+                    },
+                    new Partition
+                    {
+                        Length   = 102400,
+                        Offset   = 0,
+                        Sequence = 2,
+                        Size     = 0,
+                        Start    = 321300,
+                        Type     = "Sun /"
+                    },
+                    new Partition
+                    {
+                        Length   = 102400,
+                        Offset   = 0,
+                        Sequence = 3,
+                        Size     = 0,
+                        Start    = 433755,
+                        Type     = "Sun /home"
+                    },
+                    new Partition
+                    {
+                        Length   = 153600,
+                        Offset   = 0,
+                        Sequence = 4,
+                        Size     = 0,
+                        Start    = 546210,
+                        Type     = "Sun swap"
+                    },
+                    new Partition
+                    {
+                        Length   = 208845,
+                        Offset   = 0,
+                        Sequence = 5,
+                        Size     = 0,
+                        Start    = 706860,
+                        Type     = "Sun /usr"
+                    },
+                    new Partition
+                    {
+                        Length   = 96390,
+                        Offset   = 0,
+                        Sequence = 6,
+                        Size     = 0,
+                        Start    = 915705,
+                        Type     = "Linux swap"
+                    }
                 }
             },
-
-            // GNU Parted
-            new[]
+            new PartitionTest
             {
-                new Partition
+                TestFile = "parted.aif",
+                Partitions = new[]
                 {
-                    Description = null,
-                    Name        = null,
-                    Type        = "Linux",
-                    Length      = 49152,
-                    Sequence    = 0,
-                    Start       = 0
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "Linux",
-                    Length      = 80325,
-                    Sequence    = 1,
-                    Start       = 64260
-                },
-                new Partition
-                {
-                    Description = null,
-                    Name        = null,
-                    Type        = "Linux",
-                    Length      = 96390,
-                    Sequence    = 2,
-                    Start       = 144585
+                    new Partition
+                    {
+                        Length   = 49152,
+                        Offset   = 0,
+                        Sequence = 0,
+                        Size     = 0,
+                        Start    = 0,
+                        Type     = "Linux"
+                    },
+                    new Partition
+                    {
+                        Length   = 80325,
+                        Offset   = 0,
+                        Sequence = 1,
+                        Size     = 0,
+                        Start    = 64260,
+                        Type     = "Linux"
+                    },
+                    new Partition
+                    {
+                        Length   = 96390,
+                        Offset   = 0,
+                        Sequence = 2,
+                        Size     = 0,
+                        Start    = 144585,
+                        Type     = "Linux"
+                    }
                 }
             }
         };

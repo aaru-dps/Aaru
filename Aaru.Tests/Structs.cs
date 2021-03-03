@@ -65,4 +65,11 @@ namespace Aaru.Tests
         public TapeFile[]      Files;
         public TapePartition[] Partitions;
     }
+
+    public class PartitionTest
+    {
+        public Partition[] Partitions;
+        /// <summary>File that contains the partition scheme to test</summary>
+        public string TestFile;
+    }
 }

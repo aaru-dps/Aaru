@@ -37,357 +37,295 @@ namespace Aaru.Tests.Partitions
     {
         public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Partitioning schemes", "BSD slices");
 
-        public override string[] TestFiles => new[]
+        public override PartitionTest[] Tests => new[]
         {
-            "parted.aif", "netbsd_1.6.aif", "netbsd_6.1.5.aif", "netbsd_7.1.aif"
-        };
-
-        public override Partition[][] Wanted => new[]
-        {
-            // Parted
-            new[]
+            new PartitionTest
             {
-                new Partition
+                TestFile = "parted.aif",
+                Partitions = new[]
                 {
-                    Description = null,
-                    Size        = 38797312,
-                    Name        = null,
-                    Type        = "FAT",
-                    Offset      = 1048576,
-                    Length      = 75776,
-                    Sequence    = 0,
-                    Start       = 2048
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 19922944,
-                    Name        = null,
-                    Type        = "FAT",
-                    Offset      = 40894464,
-                    Length      = 38912,
-                    Sequence    = 1,
-                    Start       = 79872
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 48234496,
-                    Name        = null,
-                    Type        = "FAT",
-                    Offset      = 61865984,
-                    Length      = 94208,
-                    Sequence    = 2,
-                    Start       = 120832
+                    new Partition
+                    {
+                        Length   = 75776,
+                        Offset   = 1048576,
+                        Sequence = 0,
+                        Size     = 38797312,
+                        Start    = 2048,
+                        Type     = "FAT"
+                    },
+                    new Partition
+                    {
+                        Length   = 38912,
+                        Offset   = 40894464,
+                        Sequence = 1,
+                        Size     = 19922944,
+                        Start    = 79872,
+                        Type     = "FAT"
+                    },
+                    new Partition
+                    {
+                        Length   = 94208,
+                        Offset   = 61865984,
+                        Sequence = 2,
+                        Size     = 48234496,
+                        Start    = 120832,
+                        Type     = "FAT"
+                    }
                 }
             },
-
-            // NetBSD 1.6
-            new[]
+            new PartitionTest
             {
-                new Partition
+                TestFile = "netbsd_1.6.aif",
+                Partitions = new[]
                 {
-                    Description = null,
-                    Size        = 10453504,
-                    Name        = null,
-                    Type        = "FAT",
-                    Offset      = 516096,
-                    Length      = 20417,
-                    Sequence    = 0,
-                    Start       = 1008
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 209715200,
-                    Name        = null,
-                    Type        = "FAT",
-                    Offset      = 11354112,
-                    Length      = 409600,
-                    Sequence    = 1,
-                    Start       = 22176
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 805306368,
-                    Name        = null,
-                    Type        = "FAT",
-                    Offset      = 221405184,
-                    Length      = 1572864,
-                    Sequence    = 2,
-                    Start       = 432432
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 747656192,
-                    Name        = null,
-                    Type        = "4.2BSD Fast File System",
-                    Offset      = 1027031040,
-                    Length      = 1460266,
-                    Sequence    = 3,
-                    Start       = 2005920
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 268435456,
-                    Name        = null,
-                    Type        = "4.4LFS",
-                    Offset      = 1774854144,
-                    Length      = 524288,
-                    Sequence    = 4,
-                    Start       = 3466512
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 103743488,
-                    Name        = null,
-                    Type        = "4.2BSD Fast File System",
-                    Offset      = 2043740160,
-                    Length      = 202624,
-                    Sequence    = 5,
-                    Start       = 3991680
+                    new Partition
+                    {
+                        Length   = 20417,
+                        Offset   = 516096,
+                        Sequence = 0,
+                        Size     = 10453504,
+                        Start    = 1008,
+                        Type     = "FAT"
+                    },
+                    new Partition
+                    {
+                        Length   = 409600,
+                        Offset   = 11354112,
+                        Sequence = 1,
+                        Size     = 209715200,
+                        Start    = 22176,
+                        Type     = "FAT"
+                    },
+                    new Partition
+                    {
+                        Length   = 1572864,
+                        Offset   = 221405184,
+                        Sequence = 2,
+                        Size     = 805306368,
+                        Start    = 432432,
+                        Type     = "FAT"
+                    },
+                    new Partition
+                    {
+                        Length   = 1460266,
+                        Offset   = 1027031040,
+                        Sequence = 3,
+                        Size     = 747656192,
+                        Start    = 2005920,
+                        Type     = "4.2BSD Fast File System"
+                    },
+                    new Partition
+                    {
+                        Length   = 524288,
+                        Offset   = 1774854144,
+                        Sequence = 4,
+                        Size     = 268435456,
+                        Start    = 3466512,
+                        Type     = "4.4LFS"
+                    },
+                    new Partition
+                    {
+                        Length   = 202624,
+                        Offset   = 2043740160,
+                        Sequence = 5,
+                        Size     = 103743488,
+                        Start    = 3991680,
+                        Type     = "4.2BSD Fast File System"
+                    }
                 }
             },
-
-            // NetBSD 6.1.5
-            new[]
+            new PartitionTest
             {
-                new Partition
+                TestFile = "netbsd_6.1.5.aif",
+                Partitions = new[]
                 {
-                    Description = null,
-                    Size        = 10485760,
-                    Name        = null,
-                    Type        = "FAT",
-                    Offset      = 516096,
-                    Length      = 20480,
-                    Sequence    = 0,
-                    Start       = 1008
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 104857600,
-                    Name        = null,
-                    Type        = "FAT",
-                    Offset      = 11354112,
-                    Length      = 204800,
-                    Sequence    = 1,
-                    Start       = 22176
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 209715200,
-                    Name        = null,
-                    Type        = "FAT",
-                    Offset      = 116637696,
-                    Length      = 409600,
-                    Sequence    = 2,
-                    Start       = 227808
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 40771584,
-                    Name        = null,
-                    Type        = "4.2BSD Fast File System",
-                    Offset      = 326688768,
-                    Length      = 79632,
-                    Sequence    = 3,
-                    Start       = 638064
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 419430400,
-                    Name        = null,
-                    Type        = "4.2BSD Fast File System",
-                    Offset      = 367460352,
-                    Length      = 819200,
-                    Sequence    = 4,
-                    Start       = 717696
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 471859200,
-                    Name        = null,
-                    Type        = "4.2BSD Fast File System",
-                    Offset      = 787562496,
-                    Length      = 921600,
-                    Sequence    = 5,
-                    Start       = 1538208
-                },
-
-                // Type conflicts between DragonFly and NetBSD, really is Apple UFS
-                new Partition
-                {
-                    Description = null,
-                    Size        = 78643200,
-                    Name        = null,
-                    Type        = "Hammer",
-                    Offset      = 1259790336,
-                    Length      = 153600,
-                    Sequence    = 6,
-                    Start       = 2460528
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 99614720,
-                    Name        = null,
-                    Type        = "UNIX 7th Edition",
-                    Offset      = 1338753024,
-                    Length      = 194560,
-                    Sequence    = 7,
-                    Start       = 2614752
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 244318208,
-                    Name        = null,
-                    Type        = "4.4LFS",
-                    Offset      = 1438875648,
-                    Length      = 477184,
-                    Sequence    = 8,
-                    Start       = 2810304
-                },
-
-                // Type conflicts, really is Linux ext2
-                new Partition
-                {
-                    Description = null,
-                    Size        = 463978496,
-                    Name        = null,
-                    Type        = "Digital LSM Public Region",
-                    Offset      = 1683505152,
-                    Length      = 906208,
-                    Sequence    = 9,
-                    Start       = 3288096
+                    new Partition
+                    {
+                        Length   = 20480,
+                        Offset   = 516096,
+                        Sequence = 0,
+                        Size     = 10485760,
+                        Start    = 1008,
+                        Type     = "FAT"
+                    },
+                    new Partition
+                    {
+                        Length   = 204800,
+                        Offset   = 11354112,
+                        Sequence = 1,
+                        Size     = 104857600,
+                        Start    = 22176,
+                        Type     = "FAT"
+                    },
+                    new Partition
+                    {
+                        Length   = 409600,
+                        Offset   = 116637696,
+                        Sequence = 2,
+                        Size     = 209715200,
+                        Start    = 227808,
+                        Type     = "FAT"
+                    },
+                    new Partition
+                    {
+                        Length   = 79632,
+                        Offset   = 326688768,
+                        Sequence = 3,
+                        Size     = 40771584,
+                        Start    = 638064,
+                        Type     = "4.2BSD Fast File System"
+                    },
+                    new Partition
+                    {
+                        Length   = 819200,
+                        Offset   = 367460352,
+                        Sequence = 4,
+                        Size     = 419430400,
+                        Start    = 717696,
+                        Type     = "4.2BSD Fast File System"
+                    },
+                    new Partition
+                    {
+                        Length   = 921600,
+                        Offset   = 787562496,
+                        Sequence = 5,
+                        Size     = 471859200,
+                        Start    = 1538208,
+                        Type     = "4.2BSD Fast File System"
+                    },
+                    new Partition
+                    {
+                        Length   = 153600,
+                        Offset   = 1259790336,
+                        Sequence = 6,
+                        Size     = 78643200,
+                        Start    = 2460528,
+                        Type     = "Hammer"
+                    },
+                    new Partition
+                    {
+                        Length   = 194560,
+                        Offset   = 1338753024,
+                        Sequence = 7,
+                        Size     = 99614720,
+                        Start    = 2614752,
+                        Type     = "UNIX 7th Edition"
+                    },
+                    new Partition
+                    {
+                        Length   = 477184,
+                        Offset   = 1438875648,
+                        Sequence = 8,
+                        Size     = 244318208,
+                        Start    = 2810304,
+                        Type     = "4.4LFS"
+                    },
+                    new Partition
+                    {
+                        Length   = 906208,
+                        Offset   = 1683505152,
+                        Sequence = 9,
+                        Size     = 463978496,
+                        Start    = 3288096,
+                        Type     = "Digital LSM Public Region"
+                    }
                 }
             },
-
-            // NetBSD 7.1
-            new[]
+            new PartitionTest
             {
-                new Partition
+                TestFile = "netbsd_7.1.aif",
+                Partitions = new[]
                 {
-                    Description = null,
-                    Size        = 10321920,
-                    Name        = null,
-                    Type        = "FAT",
-                    Offset      = 516096,
-                    Length      = 20160,
-                    Sequence    = 0,
-                    Start       = 1008
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 104767488,
-                    Name        = null,
-                    Type        = "FAT",
-                    Offset      = 11354112,
-                    Length      = 204624,
-                    Sequence    = 1,
-                    Start       = 22176
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 209534976,
-                    Name        = null,
-                    Type        = "FAT",
-                    Offset      = 116637696,
-                    Length      = 409248,
-                    Sequence    = 2,
-                    Start       = 227808
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 40255488,
-                    Name        = null,
-                    Type        = "4.2BSD Fast File System",
-                    Offset      = 326688768,
-                    Length      = 78624,
-                    Sequence    = 3,
-                    Start       = 638064
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 419069952,
-                    Name        = null,
-                    Type        = "4.2BSD Fast File System",
-                    Offset      = 367460352,
-                    Length      = 818496,
-                    Sequence    = 4,
-                    Start       = 717696
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 471711744,
-                    Name        = null,
-                    Type        = "4.2BSD Fast File System",
-                    Offset      = 787562496,
-                    Length      = 921312,
-                    Sequence    = 5,
-                    Start       = 1538208
-                },
-
-                // Type conflicts between DragonFly and NetBSD, really is Apple UFS
-                new Partition
-                {
-                    Description = null,
-                    Size        = 78446592,
-                    Name        = null,
-                    Type        = "Hammer",
-                    Offset      = 1259790336,
-                    Length      = 153216,
-                    Sequence    = 6,
-                    Start       = 2460528
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 99606528,
-                    Name        = null,
-                    Type        = "UNIX 7th Edition",
-                    Offset      = 1338753024,
-                    Length      = 194544,
-                    Sequence    = 7,
-                    Start       = 2614752
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 243597312,
-                    Name        = null,
-                    Type        = "4.4LFS",
-                    Offset      = 1438875648,
-                    Length      = 475776,
-                    Sequence    = 8,
-                    Start       = 2810304
-                },
-
-                // Type conflicts, really is Linux ext2
-                new Partition
-                {
-                    Description = null,
-                    Size        = 463970304,
-                    Name        = null,
-                    Type        = "Digital LSM Public Region",
-                    Offset      = 1683505152,
-                    Length      = 906192,
-                    Sequence    = 9,
-                    Start       = 3288096
+                    new Partition
+                    {
+                        Length   = 20160,
+                        Offset   = 516096,
+                        Sequence = 0,
+                        Size     = 10321920,
+                        Start    = 1008,
+                        Type     = "FAT"
+                    },
+                    new Partition
+                    {
+                        Length   = 204624,
+                        Offset   = 11354112,
+                        Sequence = 1,
+                        Size     = 104767488,
+                        Start    = 22176,
+                        Type     = "FAT"
+                    },
+                    new Partition
+                    {
+                        Length   = 409248,
+                        Offset   = 116637696,
+                        Sequence = 2,
+                        Size     = 209534976,
+                        Start    = 227808,
+                        Type     = "FAT"
+                    },
+                    new Partition
+                    {
+                        Length   = 78624,
+                        Offset   = 326688768,
+                        Sequence = 3,
+                        Size     = 40255488,
+                        Start    = 638064,
+                        Type     = "4.2BSD Fast File System"
+                    },
+                    new Partition
+                    {
+                        Length   = 818496,
+                        Offset   = 367460352,
+                        Sequence = 4,
+                        Size     = 419069952,
+                        Start    = 717696,
+                        Type     = "4.2BSD Fast File System"
+                    },
+                    new Partition
+                    {
+                        Length   = 921312,
+                        Offset   = 787562496,
+                        Sequence = 5,
+                        Size     = 471711744,
+                        Start    = 1538208,
+                        Type     = "4.2BSD Fast File System"
+                    },
+                    new Partition
+                    {
+                        Length   = 153216,
+                        Offset   = 1259790336,
+                        Sequence = 6,
+                        Size     = 78446592,
+                        Start    = 2460528,
+                        Type     = "Hammer"
+                    },
+                    new Partition
+                    {
+                        Length   = 194544,
+                        Offset   = 1338753024,
+                        Sequence = 7,
+                        Size     = 99606528,
+                        Start    = 2614752,
+                        Type     = "UNIX 7th Edition"
+                    },
+                    new Partition
+                    {
+                        Length   = 475776,
+                        Offset   = 1438875648,
+                        Sequence = 8,
+                        Size     = 243597312,
+                        Start    = 2810304,
+                        Type     = "4.4LFS"
+                    },
+                    new Partition
+                    {
+                        Length   = 906192,
+                        Offset   = 1683505152,
+                        Sequence = 9,
+                        Size     = 463970304,
+                        Start    = 3288096,
+                        Type     = "Digital LSM Public Region"
+                    }
                 }
             }
         };

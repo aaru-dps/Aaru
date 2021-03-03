@@ -38,119 +38,110 @@ namespace Aaru.Tests.Partitions
         public override string DataFolder =>
             Path.Combine(Consts.TEST_FILES_ROOT, "Partitioning schemes", "GUID Partition Table");
 
-        public override string[] TestFiles => new[]
+        public override PartitionTest[] Tests => new[]
         {
-            "linux.aif", "parted.aif"
-        };
-
-        public override Partition[][] Wanted => new[]
-        {
-            // Linux
-            new[]
+            new PartitionTest
             {
-                new Partition
+                TestFile = "linux.aif",
+                Partitions = new[]
                 {
-                    Description = null,
-                    Size        = 10485760,
-                    Name        = "EFI System",
-                    Type        = "EFI System",
-                    Offset      = 1048576,
-                    Length      = 20480,
-                    Sequence    = 0,
-                    Start       = 2048
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 15728640,
-                    Name        = "Microsoft basic data",
-                    Type        = "Microsoft Basic data",
-                    Offset      = 11534336,
-                    Length      = 30720,
-                    Sequence    = 1,
-                    Start       = 22528
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 20971520,
-                    Name        = "Apple label",
-                    Type        = "Apple Label",
-                    Offset      = 27262976,
-                    Length      = 40960,
-                    Sequence    = 2,
-                    Start       = 53248
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 26214400,
-                    Name        = "Solaris /usr & Mac ZFS",
-                    Type        = "Solaris /usr or Apple ZFS",
-                    Offset      = 48234496,
-                    Length      = 51200,
-                    Sequence    = 3,
-                    Start       = 94208
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 31457280,
-                    Name        = "FreeBSD ZFS",
-                    Type        = "FreeBSD ZFS",
-                    Offset      = 74448896,
-                    Length      = 61440,
-                    Sequence    = 4,
-                    Start       = 145408
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 28294656,
-                    Name        = "HP-UX data",
-                    Type        = "HP-UX Data",
-                    Offset      = 105906176,
-                    Length      = 55263,
-                    Sequence    = 5,
-                    Start       = 206848
+                    new Partition
+                    {
+                        Length   = 20480,
+                        Name     = "EFI System",
+                        Offset   = 1048576,
+                        Sequence = 0,
+                        Size     = 10485760,
+                        Start    = 2048,
+                        Type     = "EFI System"
+                    },
+                    new Partition
+                    {
+                        Length   = 30720,
+                        Name     = "Microsoft basic data",
+                        Offset   = 11534336,
+                        Sequence = 1,
+                        Size     = 15728640,
+                        Start    = 22528,
+                        Type     = "Microsoft Basic data"
+                    },
+                    new Partition
+                    {
+                        Length   = 40960,
+                        Name     = "Apple label",
+                        Offset   = 27262976,
+                        Sequence = 2,
+                        Size     = 20971520,
+                        Start    = 53248,
+                        Type     = "Apple Label"
+                    },
+                    new Partition
+                    {
+                        Length   = 51200,
+                        Name     = "Solaris /usr & Mac ZFS",
+                        Offset   = 48234496,
+                        Sequence = 3,
+                        Size     = 26214400,
+                        Start    = 94208,
+                        Type     = "Solaris /usr or Apple ZFS"
+                    },
+                    new Partition
+                    {
+                        Length   = 61440,
+                        Name     = "FreeBSD ZFS",
+                        Offset   = 74448896,
+                        Sequence = 4,
+                        Size     = 31457280,
+                        Start    = 145408,
+                        Type     = "FreeBSD ZFS"
+                    },
+                    new Partition
+                    {
+                        Length   = 55263,
+                        Name     = "HP-UX data",
+                        Offset   = 105906176,
+                        Sequence = 5,
+                        Size     = 28294656,
+                        Start    = 206848,
+                        Type     = "HP-UX Data"
+                    }
                 }
             },
-
-            // Parted
-            new[]
+            new PartitionTest
             {
-                new Partition
+                TestFile = "parted.aif",
+                Partitions = new[]
                 {
-                    Description = null,
-                    Size        = 42991616,
-                    Name        = "",
-                    Type        = "Apple HFS",
-                    Offset      = 1048576,
-                    Length      = 83968,
-                    Sequence    = 0,
-                    Start       = 2048
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 52428800,
-                    Name        = "",
-                    Type        = "Linux filesystem",
-                    Offset      = 44040192,
-                    Length      = 102400,
-                    Sequence    = 1,
-                    Start       = 86016
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 36700160,
-                    Name        = "",
-                    Type        = "Microsoft Basic data",
-                    Offset      = 96468992,
-                    Length      = 71680,
-                    Sequence    = 2,
-                    Start       = 188416
+                    new Partition
+                    {
+                        Length   = 83968,
+                        Name     = "",
+                        Offset   = 1048576,
+                        Sequence = 0,
+                        Size     = 42991616,
+                        Start    = 2048,
+                        Type     = "Apple HFS"
+                    },
+                    new Partition
+                    {
+                        Length   = 102400,
+                        Name     = "",
+                        Offset   = 44040192,
+                        Sequence = 1,
+                        Size     = 52428800,
+                        Start    = 86016,
+                        Type     = "Linux filesystem"
+                    },
+                    new Partition
+                    {
+                        Length   = 71680,
+                        Name     = "",
+                        Offset   = 96468992,
+                        Sequence = 2,
+                        Size     = 36700160,
+                        Start    = 188416,
+                        Type     = "Microsoft Basic data"
+                    }
                 }
             }
         };

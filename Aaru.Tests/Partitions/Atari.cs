@@ -36,279 +36,234 @@ namespace Aaru.Tests.Partitions
     public class Atari : PartitionSchemeTest
     {
         public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Partitioning schemes", "Atari ST");
-
-        public override string[] TestFiles => new[]
+        public override PartitionTest[] Tests => new[]
         {
-            "linux_ahdi.aif", "linux_icd.aif", "tos_1.04.aif"
-        };
-
-        public override Partition[][] Wanted => new[]
-        {
-            // Linux (AHDI)
-            new[]
+            new PartitionTest
             {
-                new Partition
+                TestFile = "linux_ahdi.aif",
+                Partitions = new[]
                 {
-                    Description = null,
-                    Size        = 31457280,
-                    Name        = null,
-                    Type        = "GEM",
-                    Offset      = 512,
-                    Length      = 61440,
-                    Sequence    = 0,
-                    Start       = 1
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 41943040,
-                    Name        = null,
-                    Type        = "BGM",
-                    Offset      = 31457792,
-                    Length      = 81920,
-                    Sequence    = 1,
-                    Start       = 61441
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 56402432,
-                    Name        = null,
-                    Type        = "LNX",
-                    Offset      = 73400832,
-                    Length      = 110161,
-                    Sequence    = 2,
-                    Start       = 143361
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 43212800,
-                    Name        = null,
-                    Type        = "MAC",
-                    Offset      = 129803264,
-                    Length      = 84400,
-                    Sequence    = 3,
-                    Start       = 253522
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 57671680,
-                    Name        = null,
-                    Type        = "MIX",
-                    Offset      = 173016064,
-                    Length      = 112640,
-                    Sequence    = 4,
-                    Start       = 337922
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 62914560,
-                    Name        = null,
-                    Type        = "MNX",
-                    Offset      = 230687744,
-                    Length      = 122880,
-                    Sequence    = 5,
-                    Start       = 450562
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 73400320,
-                    Name        = null,
-                    Type        = "RAW",
-                    Offset      = 293602304,
-                    Length      = 143360,
-                    Sequence    = 6,
-                    Start       = 573442
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 78643200,
-                    Name        = null,
-                    Type        = "SWP",
-                    Offset      = 367002624,
-                    Length      = 153600,
-                    Sequence    = 7,
-                    Start       = 716802
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 1048576,
-                    Name        = null,
-                    Type        = "UNX",
-                    Offset      = 445645824,
-                    Length      = 2048,
-                    Sequence    = 8,
-                    Start       = 870402
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 77593600,
-                    Name        = null,
-                    Type        = "LNX",
-                    Offset      = 446694400,
-                    Length      = 151550,
-                    Sequence    = 9,
-                    Start       = 872450
+                    new Partition
+                    {
+                        Length   = 61440,
+                        Offset   = 512,
+                        Sequence = 0,
+                        Size     = 31457280,
+                        Start    = 1,
+                        Type     = "GEM"
+                    },
+                    new Partition
+                    {
+                        Length   = 81920,
+                        Offset   = 31457792,
+                        Sequence = 1,
+                        Size     = 41943040,
+                        Start    = 61441,
+                        Type     = "BGM"
+                    },
+                    new Partition
+                    {
+                        Length   = 110161,
+                        Offset   = 73400832,
+                        Sequence = 2,
+                        Size     = 56402432,
+                        Start    = 143361,
+                        Type     = "LNX"
+                    },
+                    new Partition
+                    {
+                        Length   = 84400,
+                        Offset   = 129803264,
+                        Sequence = 3,
+                        Size     = 43212800,
+                        Start    = 253522,
+                        Type     = "MAC"
+                    },
+                    new Partition
+                    {
+                        Length   = 112640,
+                        Offset   = 173016064,
+                        Sequence = 4,
+                        Size     = 57671680,
+                        Start    = 337922,
+                        Type     = "MIX"
+                    },
+                    new Partition
+                    {
+                        Length   = 122880,
+                        Offset   = 230687744,
+                        Sequence = 5,
+                        Size     = 62914560,
+                        Start    = 450562,
+                        Type     = "MNX"
+                    },
+                    new Partition
+                    {
+                        Length   = 143360,
+                        Offset   = 293602304,
+                        Sequence = 6,
+                        Size     = 73400320,
+                        Start    = 573442,
+                        Type     = "RAW"
+                    },
+                    new Partition
+                    {
+                        Length   = 153600,
+                        Offset   = 367002624,
+                        Sequence = 7,
+                        Size     = 78643200,
+                        Start    = 716802,
+                        Type     = "SWP"
+                    },
+                    new Partition
+                    {
+                        Length   = 2048,
+                        Offset   = 445645824,
+                        Sequence = 8,
+                        Size     = 1048576,
+                        Start    = 870402,
+                        Type     = "UNX"
+                    },
+                    new Partition
+                    {
+                        Length   = 151550,
+                        Offset   = 446694400,
+                        Sequence = 9,
+                        Size     = 77593600,
+                        Start    = 872450,
+                        Type     = "LNX"
+                    }
                 }
             },
-
-            // Linux (ICD)
-            new[]
+            new PartitionTest
             {
-                new Partition
+                TestFile = "linux_icd.aif",
+                Partitions = new[]
                 {
-                    Description = null,
-                    Size        = 15728640,
-                    Name        = null,
-                    Type        = "GEM",
-                    Offset      = 512,
-                    Length      = 30720,
-                    Sequence    = 0,
-                    Start       = 1
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 20971520,
-                    Name        = null,
-                    Type        = "UNX",
-                    Offset      = 15729152,
-                    Length      = 40960,
-                    Sequence    = 1,
-                    Start       = 30721
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 31457280,
-                    Name        = null,
-                    Type        = "LNX",
-                    Offset      = 36700672,
-                    Length      = 61440,
-                    Sequence    = 2,
-                    Start       = 71681
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 41943040,
-                    Name        = null,
-                    Type        = "BGM",
-                    Offset      = 68157952,
-                    Length      = 81920,
-                    Sequence    = 3,
-                    Start       = 133121
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 52428800,
-                    Name        = null,
-                    Type        = "MAC",
-                    Offset      = 110100992,
-                    Length      = 102400,
-                    Sequence    = 4,
-                    Start       = 215041
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 62914560,
-                    Name        = null,
-                    Type        = "MIX",
-                    Offset      = 162529792,
-                    Length      = 122880,
-                    Sequence    = 5,
-                    Start       = 317441
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 83886080,
-                    Name        = null,
-                    Type        = "SWP",
-                    Offset      = 225444352,
-                    Length      = 163840,
-                    Sequence    = 6,
-                    Start       = 440321
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 103809024,
-                    Name        = null,
-                    Type        = "MNX",
-                    Offset      = 309330432,
-                    Length      = 202752,
-                    Sequence    = 7,
-                    Start       = 604161
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 104857600,
-                    Name        = null,
-                    Type        = "LNX",
-                    Offset      = 413139456,
-                    Length      = 204800,
-                    Sequence    = 8,
-                    Start       = 806913
+                    new Partition
+                    {
+                        Length   = 30720,
+                        Offset   = 512,
+                        Sequence = 0,
+                        Size     = 15728640,
+                        Start    = 1,
+                        Type     = "GEM"
+                    },
+                    new Partition
+                    {
+                        Length   = 40960,
+                        Offset   = 15729152,
+                        Sequence = 1,
+                        Size     = 20971520,
+                        Start    = 30721,
+                        Type     = "UNX"
+                    },
+                    new Partition
+                    {
+                        Length   = 61440,
+                        Offset   = 36700672,
+                        Sequence = 2,
+                        Size     = 31457280,
+                        Start    = 71681,
+                        Type     = "LNX"
+                    },
+                    new Partition
+                    {
+                        Length   = 81920,
+                        Offset   = 68157952,
+                        Sequence = 3,
+                        Size     = 41943040,
+                        Start    = 133121,
+                        Type     = "BGM"
+                    },
+                    new Partition
+                    {
+                        Length   = 102400,
+                        Offset   = 110100992,
+                        Sequence = 4,
+                        Size     = 52428800,
+                        Start    = 215041,
+                        Type     = "MAC"
+                    },
+                    new Partition
+                    {
+                        Length   = 122880,
+                        Offset   = 162529792,
+                        Sequence = 5,
+                        Size     = 62914560,
+                        Start    = 317441,
+                        Type     = "MIX"
+                    },
+                    new Partition
+                    {
+                        Length   = 163840,
+                        Offset   = 225444352,
+                        Sequence = 6,
+                        Size     = 83886080,
+                        Start    = 440321,
+                        Type     = "SWP"
+                    },
+                    new Partition
+                    {
+                        Length   = 202752,
+                        Offset   = 309330432,
+                        Sequence = 7,
+                        Size     = 103809024,
+                        Start    = 604161,
+                        Type     = "MNX"
+                    },
+                    new Partition
+                    {
+                        Length   = 204800,
+                        Offset   = 413139456,
+                        Sequence = 8,
+                        Size     = 104857600,
+                        Start    = 806913,
+                        Type     = "LNX"
+                    }
                 }
             },
-
-            // TOS 1.04
-            new[]
+            new PartitionTest
             {
-                new Partition
+                TestFile = "tos_1.04.aif",
+                Partitions = new[]
                 {
-                    Description = null,
-                    Size        = 7340032,
-                    Name        = null,
-                    Type        = "GEM",
-                    Offset      = 1024,
-                    Length      = 14336,
-                    Sequence    = 0,
-                    Start       = 2
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 7340032,
-                    Name        = null,
-                    Type        = "GEM",
-                    Offset      = 7341056,
-                    Length      = 14336,
-                    Sequence    = 1,
-                    Start       = 14338
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 7340032,
-                    Name        = null,
-                    Type        = "GEM",
-                    Offset      = 14681088,
-                    Length      = 14336,
-                    Sequence    = 2,
-                    Start       = 28674
-                },
-                new Partition
-                {
-                    Description = null,
-                    Size        = 7339008,
-                    Name        = null,
-                    Type        = "GEM",
-                    Offset      = 22021120,
-                    Length      = 14334,
-                    Sequence    = 3,
-                    Start       = 43010
+                    new Partition
+                    {
+                        Length   = 14336,
+                        Offset   = 1024,
+                        Sequence = 0,
+                        Size     = 7340032,
+                        Start    = 2,
+                        Type     = "GEM"
+                    },
+                    new Partition
+                    {
+                        Length   = 14336,
+                        Offset   = 7341056,
+                        Sequence = 1,
+                        Size     = 7340032,
+                        Start    = 14338,
+                        Type     = "GEM"
+                    },
+                    new Partition
+                    {
+                        Length   = 14336,
+                        Offset   = 14681088,
+                        Sequence = 2,
+                        Size     = 7340032,
+                        Start    = 28674,
+                        Type     = "GEM"
+                    },
+                    new Partition
+                    {
+                        Length   = 14334,
+                        Offset   = 22021120,
+                        Sequence = 3,
+                        Size     = 7339008,
+                        Start    = 43010,
+                        Type     = "GEM"
+                    }
                 }
             }
         };

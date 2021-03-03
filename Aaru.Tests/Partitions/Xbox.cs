@@ -37,32 +37,31 @@ namespace Aaru.Tests.Partitions
     {
         public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Partitioning schemes", "Xbox");
 
-        public override string[] TestFiles => new[]
+        public override PartitionTest[] Tests => new[]
         {
-            "microsoft256mb.aif"
-        };
-
-        public override Partition[][] Wanted => new[]
-        {
-            new[]
+            new PartitionTest
             {
-                new Partition
+                TestFile = "microsoft256mb.aif",
+                Partitions = new[]
                 {
-                    Description = "System cache",
-                    Name        = null,
-                    Type        = null,
-                    Length      = 16376,
-                    Sequence    = 0,
-                    Start       = 0
-                },
-                new Partition
-                {
-                    Description = "Data volume",
-                    Name        = null,
-                    Type        = null,
-                    Length      = 475144,
-                    Sequence    = 1,
-                    Start       = 16376
+                    new Partition
+                    {
+                        Description = "System cache",
+                        Length      = 16376,
+                        Offset      = 0,
+                        Sequence    = 0,
+                        Size        = 0,
+                        Start       = 0
+                    },
+                    new Partition
+                    {
+                        Description = "Data volume",
+                        Length      = 475144,
+                        Offset      = 0,
+                        Sequence    = 1,
+                        Size        = 0,
+                        Start       = 16376
+                    }
                 }
             }
         };

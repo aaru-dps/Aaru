@@ -10,32 +10,31 @@ namespace Aaru.Tests.Partitions
 {
     public abstract class PartitionSchemeTest
     {
-        public abstract string[]      TestFiles  { get; }
-        public abstract Partition[][] Wanted     { get; }
-        public abstract string        DataFolder { get; }
+        public abstract string          DataFolder { get; }
+        public abstract PartitionTest[] Tests      { get; }
 
         [Test]
-        public void Test()
+        public void Test2()
         {
-            for(int i = 0; i < TestFiles.Length; i++)
+            foreach(PartitionTest test in Tests)
             {
-                string test = TestFiles[i];
+                string testFile = test.TestFile;
                 Environment.CurrentDirectory = DataFolder;
 
                 var     filtersList = new FiltersList();
-                IFilter inputFilter = filtersList.GetFilter(test);
+                IFilter inputFilter = filtersList.GetFilter(testFile);
 
-                Assert.IsNotNull(inputFilter, $"Filter: {test}");
+                Assert.IsNotNull(inputFilter, $"Filter: {testFile}");
 
                 IMediaImage image = ImageFormat.Detect(inputFilter);
 
-                Assert.IsNotNull(image, $"Image format: {test}");
+                Assert.IsNotNull(image, $"Image format: {testFile}");
 
-                Assert.AreEqual(true, image.Open(inputFilter), $"Cannot open image for {test}");
+                Assert.AreEqual(true, image.Open(inputFilter), $"Cannot open image for {testFile}");
 
                 List<Partition> partitions = Core.Partitions.GetAll(image);
 
-                partitions.Should().BeEquivalentTo(Wanted[i], $"Partitions: {test}");
+                partitions.Should().BeEquivalentTo(test.Partitions, $"Partitions: {testFile}");
             }
         }
     }
