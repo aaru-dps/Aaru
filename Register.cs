@@ -66,5 +66,7 @@ namespace Aaru.Checksums
         public List<Type> GetAllWritableFloppyImagePlugins() => null;
 
         public List<Type> GetAllWritableImagePlugins() => null;
+
+        public List<Type> GetAllArchivePlugins() => null;
     }
 }
