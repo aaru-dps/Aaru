@@ -76,5 +76,7 @@ namespace Aaru.DiscImages
                                                                    Where(t => t.GetInterfaces().
                                                                              Contains(typeof(IWritableImage))).
                                                                    Where(t => t.IsClass).ToList();
+
+        public List<Type> GetAllArchivePlugins() => null;
     }
 }
