@@ -64,6 +64,8 @@ namespace Aaru.CommonTypes
         public readonly SortedDictionary<string, IWritableFloppyImage> WritableFloppyImages;
         /// <summary>List of writable media image plugins</summary>
         public readonly SortedDictionary<string, IWritableImage> WritableImages;
+        /// <summary>List of all archive formats</summary>
+        public readonly SortedDictionary<string, IArchive> Archives;
 
         /// <summary>Initializes the plugins lists</summary>
         public PluginBase()
@@ -77,6 +79,7 @@ namespace Aaru.CommonTypes
             Filters              = new SortedDictionary<string, IFilter>();
             FloppyImages         = new SortedDictionary<string, IFloppyImage>();
             WritableFloppyImages = new SortedDictionary<string, IWritableFloppyImage>();
+            Archives             = new SortedDictionary<string, IArchive>();
         }
 
         public void AddPlugins(IPluginRegister pluginRegister)
@@ -133,6 +136,12 @@ namespace Aaru.CommonTypes
                                                                     {}) is IWritableImage plugin &&
                    !WritableImages.ContainsKey(plugin.Name.ToLower()))
                     WritableImages.Add(plugin.Name.ToLower(), plugin);
+
+            foreach(Type type in pluginRegister.GetAllArchivePlugins() ?? Enumerable.Empty<Type>())
+                if(type.GetConstructor(Type.EmptyTypes)?.Invoke(new object[]
+                                                                    {}) is IArchive plugin &&
+                   !Archives.ContainsKey(plugin.Name.ToLower()))
+                    Archives.Add(plugin.Name.ToLower(), plugin);
         }
     }
 }
