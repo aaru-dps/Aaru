@@ -60,10 +60,6 @@ Features
 * Works on any operating system and architecture where .NET Core is supported (drive access requires Windows, Linux or FreeBSD).
 * Has a graphical interface (work in progress)
 
-Feature requests
-================
-[![Feature Requests](https://feathub.com/aaru-dps/Aaru?format=svg)](https://feathub.com/aaru-dps/Aaru)
-
 Supported disk image formats (read-only)
 ========================================
 * Apple Disk Archival/Retrieval Tool (DART)
