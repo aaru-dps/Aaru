@@ -78,5 +78,9 @@ namespace Aaru.CommonTypes.Interfaces
         /// <summary>Gets all writable media image plugins</summary>
         /// <returns>List of writable media image plugins</returns>
         List<Type> GetAllWritableImagePlugins();
+
+        /// <summary>Gets all archive plugins</summary>
+        /// <returns>List of archive plugins</returns>
+        List<Type> GetAllArchivePlugins();
     }
 }
