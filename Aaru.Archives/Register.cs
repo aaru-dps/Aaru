@@ -3,7 +3,8 @@
 // ----------------------------------------------------------------------------
 //
 // Filename       : Register.cs
-// Author(s)      : Natalia Portillo <claunia@claunia.com>
+// Author(s)      : Michael Drüing <michael@drueing.de>
+//                  Natalia Portillo <claunia@claunia.com>
 //
 // Component      : Core algorithms.
 //
@@ -33,6 +34,7 @@
 //     SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 // ----------------------------------------------------------------------------
+// Copyright © 2021 Michael Drüing
 // Copyright © 2011-2021 Natalia Portillo
 // ****************************************************************************/
 
@@ -42,7 +44,7 @@ using System.Linq;
 using System.Reflection;
 using Aaru.CommonTypes.Interfaces;
 
-namespace Aaru.Partitions
+namespace Aaru.Archives
 {
     public sealed class Register : IPluginRegister
     {
@@ -56,10 +58,7 @@ namespace Aaru.Partitions
 
         public List<Type> GetAllMediaImagePlugins() => null;
 
-        public List<Type> GetAllPartitionPlugins() => Assembly.GetExecutingAssembly().GetTypes().
-                                                               Where(t => t.GetInterfaces().
-                                                                            Contains(typeof(IPartition))).
-                                                               Where(t => t.IsClass).ToList();
+        public List<Type> GetAllPartitionPlugins() => null;
 
         public List<Type> GetAllReadOnlyFilesystemPlugins() => null;
 
@@ -67,6 +66,10 @@ namespace Aaru.Partitions
 
         public List<Type> GetAllWritableImagePlugins() => null;
 
-        public List<Type> GetAllArchivePlugins() => null;
+        public List<Type> GetAllArchivePlugins() => Assembly.GetExecutingAssembly().GetTypes().
+                                                             Where(t => t.GetInterfaces().
+                                                                        Contains(typeof(IArchive
+                                                                        ))).Where(t => t.IsClass).
+                                                             ToList();
     }
 }
