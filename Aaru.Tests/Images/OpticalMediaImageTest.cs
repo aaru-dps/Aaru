@@ -46,7 +46,7 @@ namespace Aaru.Tests.Images
                         {
                             Assert.AreEqual(test.Sectors, image.Info.Sectors, $"Sectors: {testFile}");
 
-                            if((test.SectorSize > 0) != null)
+                            if(test.SectorSize > 0)
                                 Assert.AreEqual(test.SectorSize, image.Info.SectorSize, $"Sector size: {testFile}");
 
                             Assert.AreEqual(test.MediaType, image.Info.MediaType, $"Media type: {testFile}");
