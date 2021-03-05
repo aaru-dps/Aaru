@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using Aaru.Checksums;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
@@ -24,7 +25,16 @@ namespace Aaru.Tests.Images
             {
                 foreach(TapeImageTestExpected test in Tests)
                 {
-                    string  testFile    = test.TestFile;
+                    string testFile = test.TestFile;
+
+                    bool exists = File.Exists(testFile);
+                    Assert.True(exists, $"{testFile} not found");
+
+                    // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+                    // It arrives here...
+                    if(!exists)
+                        continue;
+
                     var     filtersList = new FiltersList();
                     IFilter filter      = filtersList.GetFilter(testFile);
                     filter.Open(testFile);
@@ -63,7 +73,16 @@ namespace Aaru.Tests.Images
             {
                 foreach(TapeImageTestExpected test in Tests)
                 {
-                    string  testFile    = test.TestFile;
+                    string testFile = test.TestFile;
+
+                    bool exists = File.Exists(testFile);
+                    Assert.True(exists, $"{testFile} not found");
+
+                    // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+                    // It arrives here...
+                    if(!exists)
+                        continue;
+
                     var     filtersList = new FiltersList();
                     IFilter filter      = filtersList.GetFilter(testFile);
                     filter.Open(testFile);
@@ -99,7 +118,16 @@ namespace Aaru.Tests.Images
             {
                 foreach(TapeImageTestExpected test in Tests)
                 {
-                    string  testFile    = test.TestFile;
+                    string testFile = test.TestFile;
+
+                    bool exists = File.Exists(testFile);
+                    Assert.True(exists, $"{testFile} not found");
+
+                    // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+                    // It arrives here...
+                    if(!exists)
+                        continue;
+
                     var     filtersList = new FiltersList();
                     IFilter filter      = filtersList.GetFilter(testFile);
                     filter.Open(testFile);

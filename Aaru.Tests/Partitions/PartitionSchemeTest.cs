@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Core;
@@ -20,6 +21,14 @@ namespace Aaru.Tests.Partitions
             {
                 string testFile = test.TestFile;
                 Environment.CurrentDirectory = DataFolder;
+
+                bool exists = File.Exists(testFile);
+                Assert.True(exists, $"{testFile} not found");
+
+                // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+                // It arrives here...
+                if(!exists)
+                    continue;
 
                 var     filtersList = new FiltersList();
                 IFilter inputFilter = filtersList.GetFilter(testFile);

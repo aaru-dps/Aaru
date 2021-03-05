@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Aaru.Checksums;
@@ -26,7 +27,16 @@ namespace Aaru.Tests.Images
             {
                 foreach(OpticalImageTestExpected test in Tests)
                 {
-                    string  testFile    = test.TestFile;
+                    string testFile = test.TestFile;
+
+                    bool exists = File.Exists(testFile);
+                    Assert.True(exists, $"{testFile} not found");
+
+                    // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+                    // It arrives here...
+                    if(!exists)
+                        continue;
+
                     var     filtersList = new FiltersList();
                     IFilter filter      = filtersList.GetFilter(testFile);
                     filter.Open(testFile);
@@ -97,7 +107,16 @@ namespace Aaru.Tests.Images
             {
                 Parallel.For(0L, Tests.Length, (i, state) =>
                 {
-                    string  testFile    = Tests[i].TestFile;
+                    string testFile = Tests[i].TestFile;
+
+                    bool exists = File.Exists(testFile);
+                    Assert.True(exists, $"{testFile} not found");
+
+                    // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+                    // It arrives here...
+                    if(!exists)
+                        return;
+
                     var     filtersList = new FiltersList();
                     IFilter filter      = filtersList.GetFilter(testFile);
                     filter.Open(testFile);
