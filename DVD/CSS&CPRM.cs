@@ -128,45 +128,40 @@ namespace Aaru.Decoders.DVD
             sb.AppendLine($"Drive has {vendorResets} vendor resets available.");
             sb.AppendLine($"Drive has {userControlledChanges} user controlled changes available.");
 
-            switch(decoded.RegionMask)
+            if(decoded.RegionMask == 0xFF)
+                sb.AppendLine("Drive has no region set.");
+            else if(decoded.RegionMask == 0x00)
+                sb.AppendLine("Drive is region free.");
+            else
             {
-                case 0xFF:
-                    sb.AppendLine("Drive has no region set.");
+                sb.Append("Drive has the following regions set:");
 
-                    break;
-                case 0xFE:
-                    sb.AppendLine("Drive is set to region 1.");
+                if((decoded.RegionMask & 0x01) != 0x01)
+                    sb.Append(" 1");
 
-                    break;
-                case 0xFD:
-                    sb.AppendLine("Drive is set to region 2.");
+                if((decoded.RegionMask & 0x02) != 0x02)
+                    sb.Append(" 2");
 
-                    break;
-                case 0xFB:
-                    sb.AppendLine("Drive is set to region 3.");
+                if((decoded.RegionMask & 0x04) != 0x04)
+                    sb.Append(" 3");
 
-                    break;
-                case 0xF7:
-                    sb.AppendLine("Drive is set to region 4.");
+                if((decoded.RegionMask & 0x08) != 0x08)
+                    sb.Append(" 4");
 
-                    break;
-                case 0xEF:
-                    sb.AppendLine("Drive is set to region 5.");
+                if((decoded.RegionMask & 0x10) != 0x10)
+                    sb.Append(" 5");
 
-                    break;
-                case 0xDF:
-                    sb.AppendLine("Drive is set to region 6.");
+                if((decoded.RegionMask & 0x20) != 0x20)
+                    sb.Append(" 6");
 
-                    break;
-                case 0xBF:
-                    sb.AppendLine("Drive is set to region 7.");
+                if((decoded.RegionMask & 0x40) != 0x40)
+                    sb.Append(" 7");
 
-                    break;
-                case 0x7F:
-                    sb.AppendLine("Drive is set to region 8.");
-
-                    break;
+                if((decoded.RegionMask & 0x80) != 0x80)
+                    sb.Append(" 8");
             }
+
+            sb.AppendLine("");
 
             switch(decoded.RPCScheme)
             {
