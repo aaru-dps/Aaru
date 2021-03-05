@@ -54,7 +54,7 @@ namespace Aaru.Tests.Images
                             if(image.Info.XmlMediaType != XmlMediaType.OpticalDisc)
                                 return;
 
-                            Assert.AreEqual(test.Tracks, image.Tracks.Count, $"Tracks: {testFile}");
+                            Assert.AreEqual(test.Tracks.Length, image.Tracks.Count, $"Tracks: {testFile}");
 
                             image.Tracks.Select(t => t.TrackSession).Should().
                                   BeEquivalentTo(test.Tracks.Select(s => s.Session), $"Track session: {testFile}");
