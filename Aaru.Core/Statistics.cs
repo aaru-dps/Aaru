@@ -80,10 +80,10 @@ namespace Aaru.Core
 
                         if(allStats.Commands?.Analyze > 0)
                         {
-                            Command command = ctx.Commands.FirstOrDefault(c => c.Name == "analyze" && c.Synchronized) ??
+                            Command command = ctx.Commands.FirstOrDefault(c => c.Name == "fs-info" && c.Synchronized) ??
                                               new Command
                                               {
-                                                  Name         = "analyze",
+                                                  Name         = "fs-info",
                                                   Synchronized = true
                                               };
 

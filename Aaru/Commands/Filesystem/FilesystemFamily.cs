@@ -41,6 +41,7 @@ namespace Aaru.Commands.Filesystem
             AddAlias("fi");
             AddAlias("fs");
 
+            AddCommand(new FilesystemInfoCommand());
             AddCommand(new ListOptionsCommand());
             AddCommand(new ExtractFilesCommand());
             AddCommand(new LsCommand());

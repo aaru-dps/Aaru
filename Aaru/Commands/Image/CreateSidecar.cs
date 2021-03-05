@@ -173,7 +173,7 @@ namespace Aaru.Commands.Image
                             return (int)ErrorNumber.CannotOpenFormat;
                         }
 
-                        AaruConsole.DebugWriteLine("Analyze command", "Correctly opened image file.");
+                        AaruConsole.DebugWriteLine("Create sidecar command", "Correctly opened image file.");
                     }
                     catch(Exception ex)
                     {
@@ -217,7 +217,7 @@ namespace Aaru.Commands.Image
                 catch(Exception ex)
                 {
                     AaruConsole.ErrorWriteLine($"Error reading file: {ex.Message}");
-                    AaruConsole.DebugWriteLine("Analyze command", ex.StackTrace);
+                    AaruConsole.DebugWriteLine("Create sidecar command", ex.StackTrace);
 
                     return (int)ErrorNumber.UnexpectedException;
                 }

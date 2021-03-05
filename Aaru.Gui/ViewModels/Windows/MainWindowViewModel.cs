@@ -578,7 +578,7 @@ namespace Aaru.Gui.ViewModels.Windows
 
                     if(partitions.Count == 0)
                     {
-                        AaruConsole.DebugWriteLine("Analyze command", "No partitions found");
+                        AaruConsole.DebugWriteLine("Fs-info command", "No partitions found");
 
                         checkRaw = true;
                     }

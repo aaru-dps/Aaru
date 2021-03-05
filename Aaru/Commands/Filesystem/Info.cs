@@ -2,14 +2,14 @@
 // Aaru Data Preservation Suite
 // ----------------------------------------------------------------------------
 //
-// Filename       : Analyze.cs
+// Filename       : Info.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // Component      : Commands.
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Implements the 'analyze' command.
+//     Implements the 'fs-info' command.
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -41,12 +41,12 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Core;
 
-namespace Aaru.Commands.Image
+namespace Aaru.Commands.Filesystem
 {
-    internal sealed class AnalyzeCommand : Command
+    internal sealed class FilesystemInfoCommand : Command
     {
-        public AnalyzeCommand() : base("analyze",
-                                       "Analyzes a disc image and searches for partitions and/or filesystems.")
+        public FilesystemInfoCommand() : base("info",
+                                              "Opens a disc image and prints info on the found partitions and/or filesystems.")
         {
             Add(new Option(new[]
                 {
@@ -60,7 +60,7 @@ namespace Aaru.Commands.Image
             Add(new Option(new[]
                 {
                     "--filesystems", "-f"
-                }, "Searches and analyzes filesystems.")
+                }, "Searches and prints information about filesystems.")
                 {
                     Argument = new Argument<bool>(() => true),
                     Required = false
@@ -78,11 +78,11 @@ namespace Aaru.Commands.Image
             AddArgument(new Argument<string>
             {
                 Arity       = ArgumentArity.ExactlyOne,
-                Description = "Disc image path",
+                Description = "Media image path",
                 Name        = "image-path"
             });
 
-            Handler = CommandHandler.Create(typeof(AnalyzeCommand).GetMethod(nameof(Invoke)));
+            Handler = CommandHandler.Create(typeof(FilesystemInfoCommand).GetMethod(nameof(Invoke)));
         }
 
         public static int Invoke(bool verbose, bool debug, string encoding, bool filesystems, bool partitions,
@@ -96,14 +96,14 @@ namespace Aaru.Commands.Image
             if(verbose)
                 AaruConsole.VerboseWriteLineEvent += System.Console.WriteLine;
 
-            Statistics.AddCommand("analyze");
+            Statistics.AddCommand("fs-info");
 
-            AaruConsole.DebugWriteLine("Analyze command", "--debug={0}", debug);
-            AaruConsole.DebugWriteLine("Analyze command", "--encoding={0}", encoding);
-            AaruConsole.DebugWriteLine("Analyze command", "--filesystems={0}", filesystems);
-            AaruConsole.DebugWriteLine("Analyze command", "--input={0}", imagePath);
-            AaruConsole.DebugWriteLine("Analyze command", "--partitions={0}", partitions);
-            AaruConsole.DebugWriteLine("Analyze command", "--verbose={0}", verbose);
+            AaruConsole.DebugWriteLine("Fs-info command", "--debug={0}", debug);
+            AaruConsole.DebugWriteLine("Fs-info command", "--encoding={0}", encoding);
+            AaruConsole.DebugWriteLine("Fs-info command", "--filesystems={0}", filesystems);
+            AaruConsole.DebugWriteLine("Fs-info command", "--input={0}", imagePath);
+            AaruConsole.DebugWriteLine("Fs-info command", "--partitions={0}", partitions);
+            AaruConsole.DebugWriteLine("Fs-info command", "--verbose={0}", verbose);
 
             var     filtersList = new FiltersList();
             IFilter inputFilter = filtersList.GetFilter(imagePath);
@@ -179,7 +179,7 @@ namespace Aaru.Commands.Image
                 {
                     AaruConsole.ErrorWriteLine("Unable to open image format");
                     AaruConsole.ErrorWriteLine("Error: {0}", ex.Message);
-                    AaruConsole.DebugWriteLine("Analyze command", "Stack trace: {0}", ex.StackTrace);
+                    AaruConsole.DebugWriteLine("Fs-info command", "Stack trace: {0}", ex.StackTrace);
 
                     return (int)ErrorNumber.CannotOpenFormat;
                 }
@@ -195,7 +195,7 @@ namespace Aaru.Commands.Image
 
                     if(partitionsList.Count == 0)
                     {
-                        AaruConsole.DebugWriteLine("Analyze command", "No partitions found");
+                        AaruConsole.DebugWriteLine("Fs-info command", "No partitions found");
 
                         if(!filesystems)
                         {
@@ -311,7 +311,7 @@ namespace Aaru.Commands.Image
             catch(Exception ex)
             {
                 AaruConsole.ErrorWriteLine($"Error reading file: {ex.Message}");
-                AaruConsole.DebugWriteLine("Analyze command", ex.StackTrace);
+                AaruConsole.DebugWriteLine("Fs-info command", ex.StackTrace);
 
                 return (int)ErrorNumber.UnexpectedException;
             }

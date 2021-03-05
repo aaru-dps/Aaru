@@ -77,6 +77,34 @@ namespace Aaru.Commands.Database
                 AaruConsole.WriteLine("Commands statistics");
                 AaruConsole.WriteLine("===================");
 
+                if(ctx.Commands.Any(c => c.Name == "analyze"))
+                {
+                    foreach(Aaru.Database.Models.Command oldAnalyze in ctx.Commands.Where(c => c.Name == "analyze"))
+                    {
+                        oldAnalyze.Name = "fs-info";
+                        ctx.Commands.Update(oldAnalyze);
+                    }
+
+                    ulong count = 0;
+
+                    foreach(Aaru.Database.Models.Command fsInfo in ctx.Commands.Where(c => c.Name == "fs-info" &&
+                        c.Synchronized))
+                    {
+                        count += fsInfo.Count;
+                        ctx.Remove(fsInfo);
+                    }
+
+                    if(count > 0)
+                        ctx.Commands.Add(new Aaru.Database.Models.Command
+                        {
+                            Count        = count,
+                            Name         = "fs-info",
+                            Synchronized = true
+                        });
+
+                    ctx.SaveChanges();
+                }
+
                 foreach(string command in ctx.Commands.OrderBy(c => c.Name).Select(c => c.Name).Distinct())
                 {
                     ulong count = ctx.Commands.Where(c => c.Name == command && c.Synchronized).Select(c => c.Count).

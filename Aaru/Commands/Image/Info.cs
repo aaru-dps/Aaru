@@ -68,9 +68,9 @@ namespace Aaru.Commands.Image
 
             Statistics.AddCommand("image-info");
 
-            AaruConsole.DebugWriteLine("Analyze command", "--debug={0}", debug);
-            AaruConsole.DebugWriteLine("Analyze command", "--input={0}", imagePath);
-            AaruConsole.DebugWriteLine("Analyze command", "--verbose={0}", verbose);
+            AaruConsole.DebugWriteLine("Image-info command", "--debug={0}", debug);
+            AaruConsole.DebugWriteLine("Image-info command", "--input={0}", imagePath);
+            AaruConsole.DebugWriteLine("Image-info command", "--verbose={0}", verbose);
 
             var     filtersList = new FiltersList();
             IFilter inputFilter = filtersList.GetFilter(imagePath);

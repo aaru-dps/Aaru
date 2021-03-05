@@ -319,10 +319,10 @@ namespace Aaru.Commands.Image
             AaruConsole.DebugWriteLine("Image convert command", "--generate-subchannels={0}", generateSubchannels);
 
             Dictionary<string, string> parsedOptions = Core.Options.Parse(options);
-            AaruConsole.DebugWriteLine("Analyze command", "Parsed options:");
+            AaruConsole.DebugWriteLine("Image convert command", "Parsed options:");
 
             foreach(KeyValuePair<string, string> parsedOption in parsedOptions)
-                AaruConsole.DebugWriteLine("Analyze command", "{0} = {1}", parsedOption.Key, parsedOption.Value);
+                AaruConsole.DebugWriteLine("Image convert command", "{0} = {1}", parsedOption.Key, parsedOption.Value);
 
             if(count == 0)
             {

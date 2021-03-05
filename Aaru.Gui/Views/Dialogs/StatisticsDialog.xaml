@@ -51,7 +51,7 @@
                         <TextBlock Text="{Binding CommandsLabel}" />
                     </TabItem.Header>
                     <StackPanel VerticalAlignment="Top" HorizontalAlignment="Stretch">
-                        <TextBlock Text="{Binding AnalyzeText}" IsVisible="{Binding AnalyzeVisible}" />
+                        <TextBlock Text="{Binding FsInfoText}" IsVisible="{Binding FsInfoVisible}" />
                         <TextBlock Text="{Binding ChecksumText}" IsVisible="{Binding ChecksumVisible}" />
                         <TextBlock Text="{Binding CompareText}" IsVisible="{Binding CompareVisible}" />
                         <TextBlock Text="{Binding ConvertImageText}" IsVisible="{Binding ConvertImageVisible}" />

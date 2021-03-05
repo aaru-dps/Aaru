@@ -1433,7 +1433,7 @@ Aaru.Server (previously DiscImageChef.Server), aaruformat (previously dicformat)
 # [2.0] - 2014-07-03
 ## Added
 ### - Commands
-- analyze: Gives informatio about disk image contents as well as detecting partitions and filesystems.
+- analyze: Gives information about disk image contents as well as detecting partitions and filesystems.
 - checksum: Generates CRC32, CRC64, RIPEMD160, MD5, SHA1, SHA256, SHA384 and SHA512 checksums of disk image contents.
 - compare: Compares two media images.
 - printhex: Prints a hexadecimal output of a sector.

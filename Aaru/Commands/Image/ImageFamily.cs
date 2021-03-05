@@ -40,7 +40,6 @@ namespace Aaru.Commands.Image
         {
             AddAlias("i");
 
-            AddCommand(new AnalyzeCommand());
             AddCommand(new ChecksumCommand());
             AddCommand(new CompareCommand());
             AddCommand(new ConvertImageCommand());

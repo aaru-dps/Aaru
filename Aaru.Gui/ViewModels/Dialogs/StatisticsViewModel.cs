@@ -46,34 +46,34 @@ namespace Aaru.Gui.ViewModels.Dialogs
     public sealed class StatisticsViewModel : ViewModelBase
     {
         readonly StatisticsDialog _view;
+        string                    _checksumText;
+        bool                      _checksumVisible;
+        bool                      _commandsVisible;
+        string                    _compareText;
+        bool                      _compareVisible;
+        string                    _convertImageText;
+        bool                      _convertImageVisible;
+        string                    _createSidecarText;
+        bool                      _createSidecarVisible;
+        string                    _decodeText;
+        bool                      _decodeVisible;
+        string                    _deviceInfoText;
+        bool                      _deviceInfoVisible;
+        string                    _deviceReportText;
+        bool                      _deviceReportVisible;
+        bool                      _devicesVisible;
+        string                    _dumpMediaText;
+        bool                      _dumpMediaVisible;
+        string                    _entropyText;
+        bool                      _entropyVisible;
+        bool                      _filesystemsVisible;
+        bool                      _filtersVisible;
+        bool                      _formatsCommandVisible;
+        string                    _formatsText;
+        bool                      _formatsVisible;
 
-        string _analyzeText;
-        bool   _analyzeVisible;
-        string _checksumText;
-        bool   _checksumVisible;
-        bool   _commandsVisible;
-        string _compareText;
-        bool   _compareVisible;
-        string _convertImageText;
-        bool   _convertImageVisible;
-        string _createSidecarText;
-        bool   _createSidecarVisible;
-        string _decodeText;
-        bool   _decodeVisible;
-        string _deviceInfoText;
-        bool   _deviceInfoVisible;
-        string _deviceReportText;
-        bool   _deviceReportVisible;
-        bool   _devicesVisible;
-        string _dumpMediaText;
-        bool   _dumpMediaVisible;
-        string _entropyText;
-        bool   _entropyVisible;
-        bool   _filesystemsVisible;
-        bool   _filtersVisible;
-        bool   _formatsCommandVisible;
-        string _formatsText;
-        bool   _formatsVisible;
+        string _fsinfoText;
+        bool   _fsinfoVisible;
         string _imageInfoText;
         bool   _imageInfoVisible;
         string _mediaInfoText;
@@ -103,13 +103,40 @@ namespace Aaru.Gui.ViewModels.Dialogs
             {
                 if(ctx.Commands.Any(c => c.Name == "analyze"))
                 {
-                    ulong count = ctx.Commands.Where(c => c.Name == "analyze" && c.Synchronized).Select(c => c.Count).
+                    foreach(Command oldAnalyze in ctx.Commands.Where(c => c.Name == "analyze"))
+                    {
+                        oldAnalyze.Name = "fs-info";
+                        ctx.Commands.Update(oldAnalyze);
+                    }
+
+                    ulong count = 0;
+
+                    foreach(Command fsInfo in ctx.Commands.Where(c => c.Name == "fs-info" && c.Synchronized))
+                    {
+                        count += fsInfo.Count;
+                        ctx.Remove(fsInfo);
+                    }
+
+                    if(count > 0)
+                        ctx.Commands.Add(new Command
+                        {
+                            Count        = count,
+                            Name         = "fs-info",
+                            Synchronized = true
+                        });
+
+                    ctx.SaveChanges();
+                }
+
+                if(ctx.Commands.Any(c => c.Name == "fs-info"))
+                {
+                    ulong count = ctx.Commands.Where(c => c.Name == "fs-info" && c.Synchronized).Select(c => c.Count).
                                       FirstOrDefault();
 
-                    count += (ulong)ctx.Commands.LongCount(c => c.Name == "analyze" && !c.Synchronized);
+                    count += (ulong)ctx.Commands.LongCount(c => c.Name == "fs-info" && !c.Synchronized);
 
-                    AnalyzeVisible = true;
-                    AnalyzeText    = $"You have called the Analyze command {count} times";
+                    FsInfoVisible = true;
+                    FsInfoText    = $"You have called the Filesystem Info command {count} times";
                 }
 
                 if(ctx.Commands.Any(c => c.Name == "checksum"))
@@ -277,7 +304,7 @@ namespace Aaru.Gui.ViewModels.Dialogs
                     VerifyText    = $"You have called the Verify command {count} times";
                 }
 
-                CommandsVisible = AnalyzeVisible       || ChecksumVisible || CompareVisible || ConvertImageVisible ||
+                CommandsVisible = FsInfoVisible        || ChecksumVisible || CompareVisible || ConvertImageVisible ||
                                   CreateSidecarVisible || DecodeVisible || DeviceInfoVisible || DeviceReportVisible ||
                                   DumpMediaVisible     || EntropyVisible || FormatsCommandVisible || ImageInfoVisible ||
                                   MediaInfoVisible     || MediaScanVisible || PrintHexVisible || VerifyVisible;
@@ -411,16 +438,16 @@ namespace Aaru.Gui.ViewModels.Dialogs
             }
         }
 
-        public string AnalyzeText
+        public string FsInfoText
         {
-            get => _analyzeText;
-            set => this.RaiseAndSetIfChanged(ref _analyzeText, value);
+            get => _fsinfoText;
+            set => this.RaiseAndSetIfChanged(ref _fsinfoText, value);
         }
 
-        public bool AnalyzeVisible
+        public bool FsInfoVisible
         {
-            get => _analyzeVisible;
-            set => this.RaiseAndSetIfChanged(ref _analyzeVisible, value);
+            get => _fsinfoVisible;
+            set => this.RaiseAndSetIfChanged(ref _fsinfoVisible, value);
         }
 
         public string ChecksumText

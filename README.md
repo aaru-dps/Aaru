@@ -14,7 +14,7 @@ You can see statistics and device reports [here](https://www.aaru.app/Stats)
 Aaru is a fully featured media dump management solution. You usually know media dumps
 as disc images, disk images, tape images, etc.
 
-With Aaru you can analyze a media dump, extract files from it (for supported
+With Aaru you can identify a media dump, extract files from it (for supported
 filesystems), compare two of them, create them from real media using the appropriate drive,
 create a sidecar metadata with information about the media dump, and a lot of other features
 that commonly would require you to use separate applications.
@@ -43,7 +43,7 @@ Or read the [documentation](https://github.com/aaru-dps/Aaru.Documentation/blob/
 
 Features
 ========
-* Analyzes a disk image getting information about the disk itself and analyzes partitions and filesystems inside them
+* Identifies a disk image getting information about the disk itself and shows information about partitions and filesystems inside them
 * Can checksum the disks (and if optical disc, separate tracks) user-data (tags and metadata coming soon)
 * Can compare two disk images, even different formats, for different sectors and/or metadata
 * Can list and extract contents from supported filesystems
