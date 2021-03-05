@@ -49,12 +49,14 @@ namespace Aaru.Core
                 IPluginRegister filesystemsRegister = new Aaru.Filesystems.Register();
                 IPluginRegister filtersRegister     = new Filters.Register();
                 IPluginRegister partitionsRegister  = new Aaru.Partitions.Register();
+                IPluginRegister archiveRegister     = new Aaru.Archives.Register();
 
                 instance.AddPlugins(checksumRegister);
                 instance.AddPlugins(imagesRegister);
                 instance.AddPlugins(filesystemsRegister);
                 instance.AddPlugins(filtersRegister);
                 instance.AddPlugins(partitionsRegister);
+                instance.AddPlugins(archiveRegister);
 
                 return instance;
             }
