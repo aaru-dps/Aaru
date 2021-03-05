@@ -45,7 +45,7 @@ namespace Aaru.Commands.Archive
     internal sealed class ArchiveInfoCommand : Command
     {
         public ArchiveInfoCommand() : base("info",
-                                         "Opens an archive file and shows information about it.")
+                                         "Identifies an archive file and shows information about it.")
         {
             AddArgument(new Argument<string>
             {
