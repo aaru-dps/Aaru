@@ -44,7 +44,7 @@ namespace Aaru.Commands.Image
     internal sealed class ImageInfoCommand : Command
     {
         public ImageInfoCommand() : base("info",
-                                         "Opens a media image and shows information about the media it represents and metadata.")
+                                         "Identifies a media image and shows information about the media it represents and metadata.")
         {
             AddArgument(new Argument<string>
             {
