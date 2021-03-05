@@ -27,6 +27,7 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
+// Copyright © 2021 Michael Drüing
 // Copyright © 2011-2021 Natalia Portillo
 // ****************************************************************************/
 
@@ -42,7 +43,6 @@ namespace Aaru.Commands.Archive
             AddAlias("arc");
 
             AddCommand(new ArchiveInfoCommand());
-//            AddCommand(new UpdateCommand(mainDbUpdate));
         }
     }
 }

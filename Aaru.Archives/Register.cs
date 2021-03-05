@@ -3,7 +3,8 @@
 // ----------------------------------------------------------------------------
 //
 // Filename       : Register.cs
-// Author(s)      : Natalia Portillo <claunia@claunia.com>
+// Author(s)      : Michael Drüing <michael@drueing.de>
+//                  Natalia Portillo <claunia@claunia.com>
 //
 // Component      : Core algorithms.
 //
@@ -33,6 +34,7 @@
 //     SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 // ----------------------------------------------------------------------------
+// Copyright © 2021 Michael Drüing
 // Copyright © 2011-2021 Natalia Portillo
 // ****************************************************************************/
 
