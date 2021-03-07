@@ -84,10 +84,16 @@ namespace Aaru.Tests
         public VolumeData[] Volumes;
     }
 
+    public class FileData
+    {
+        public string                     MD5;
+        public Dictionary<string, string> XattrsWithMd5;
+    }
+
     public class VolumeData
     {
-        public List<string>               Directories;
-        public Dictionary<string, string> FilesWithMd5;
-        public string                     VolumeName;
+        public List<string>                 Directories;
+        public Dictionary<string, FileData> Files;
+        public string                       VolumeName;
     }
 }

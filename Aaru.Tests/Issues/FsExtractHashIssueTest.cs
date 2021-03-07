@@ -118,7 +118,7 @@ namespace Aaru.Tests.Issues
                     ExtractFilesInDir("/", fs, Xattrs, volumeData);
 
                     volumeData.Directories.Should().BeEmpty("Expected directories not found:", volumeData.Directories);
-                    volumeData.FilesWithMd5.Should().BeEmpty("Expected files not found:", volumeData.FilesWithMd5.Keys);
+                    volumeData.Files.Should().BeEmpty("Expected files not found:", volumeData.Files.Keys);
                 }
             }
 
@@ -161,40 +161,54 @@ namespace Aaru.Tests.Issues
                     continue;
                 }
 
+                FileData fileData;
+
+                if(string.IsNullOrWhiteSpace(path))
+                {
+                    Assert.IsTrue(volumeData.Files.TryGetValue(entry, out fileData), $"Found unexpected file {entry}");
+
+                    volumeData.Files.Remove(entry);
+                }
+                else
+                {
+                    Assert.IsTrue(volumeData.Files.TryGetValue(path + "/" + entry, out fileData),
+                                  $"Found unexpected file {path + "/" + entry}");
+
+                    volumeData.Files.Remove(path + "/" + entry);
+                }
+
                 if(doXattrs)
                 {
-                    // TODO: Hash this
                     error = fs.ListXAttr(path + "/" + entry, out List<string> xattrs);
 
                     Assert.AreEqual(Errno.NoError, error,
                                     $"Error {error} getting extended attributes for entry {path + "/" + entry}");
 
+                    Dictionary<string, string> expectedXattrs = fileData.XattrsWithMd5;
+
                     if(error == Errno.NoError)
                         foreach(string xattr in xattrs)
                         {
+                            Assert.IsTrue(expectedXattrs.TryGetValue(xattr, out string expectedXattrMd5),
+                                          $"Found unexpected extended attribute {xattr} in file {entry}");
+
+                            expectedXattrs.Remove(xattr);
+
                             byte[] xattrBuf = new byte[0];
                             error = fs.GetXattr(path + "/" + entry, xattr, ref xattrBuf);
 
                             Assert.AreEqual(Errno.NoError, error,
                                             $"Error {error} reading extended attributes for entry {path + "/" + entry}");
+
+                            string xattrMd5 = Md5Context.Data(xattrBuf, out _);
+
+                            Assert.AreEqual(expectedXattrMd5, xattrMd5,
+                                            $"Invalid checksum for xattr {xattr} for file {path + "/" + entry}");
                         }
-                }
 
-                string md5;
-
-                if(string.IsNullOrWhiteSpace(path))
-                {
-                    Assert.IsTrue(volumeData.FilesWithMd5.TryGetValue(entry, out md5),
-                                  $"Found unexpected file {entry}");
-
-                    volumeData.FilesWithMd5.Remove(entry);
-                }
-                else
-                {
-                    Assert.IsTrue(volumeData.FilesWithMd5.TryGetValue(path + "/" + entry, out md5),
-                                  $"Found unexpected file {path + "/" + entry}");
-
-                    volumeData.FilesWithMd5.Remove(path + "/" + entry);
+                    expectedXattrs.Should().
+                                   BeEmpty($"Expected extended attributes not found for file {path + "/" + entry}:",
+                                           expectedXattrs);
                 }
 
                 byte[] outBuf = new byte[0];
@@ -205,7 +219,7 @@ namespace Aaru.Tests.Issues
 
                 string calculatedMd5 = Md5Context.Data(outBuf, out _);
 
-                Assert.AreEqual(md5, calculatedMd5, $"Invalid checksum for file {path + "/" + entry}");
+                Assert.AreEqual(fileData.MD5, calculatedMd5, $"Invalid checksum for file {path + "/" + entry}");
             }
         }
     }
