@@ -250,6 +250,14 @@
     <Compile Include="DiskCopy42\Unsupported.cs" />
     <Compile Include="DiskCopy42\Verify.cs" />
     <Compile Include="DiskCopy42\Write.cs" />
+    <Compile Include="DiskDupe\Constants.cs" />
+    <Compile Include="DiskDupe\DiskDupe.cs" />
+    <Compile Include="DiskDupe\Helpers.cs" />
+    <Compile Include="DiskDupe\Identify.cs" />
+    <Compile Include="DiskDupe\Properties.cs" />
+    <Compile Include="DiskDupe\Read.cs" />
+    <Compile Include="DiskDupe\Structs.cs" />
+    <Compile Include="DiskDupe\Unsupported.cs" />
     <Compile Include="DriDiskCopy\Constants.cs" />
     <Compile Include="DriDiskCopy\Enums.cs" />
     <Compile Include="DriDiskCopy\Identify.cs" />
