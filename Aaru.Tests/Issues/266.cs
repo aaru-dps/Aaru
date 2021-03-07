@@ -20,7 +20,7 @@ namespace Aaru.Tests.Issues
         protected override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Issues", "Fixed", "issue266");
         protected override string TestFile => "Namco (USA) (2005 Assets).cue";
         protected override Dictionary<string, string> ParsedOptions => new Dictionary<string, string>();
-        protected override bool Debug => true;
+        protected override bool Debug => false;
         protected override bool Xattrs => false;
         protected override string Encoding => null;
         protected override bool ExpectPartitions => true;

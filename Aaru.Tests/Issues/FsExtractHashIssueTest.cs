@@ -32,7 +32,8 @@ namespace Aaru.Tests.Issues
             var     filtersList = new FiltersList();
             IFilter inputFilter = filtersList.GetFilter(TestFile);
 
-            ParsedOptions.Add("debug", Debug.ToString());
+            Dictionary<string, string> options = ParsedOptions;
+            options["debug"] = Debug.ToString();
 
             Assert.IsNotNull(inputFilter, "Cannot open specified file.");
 
@@ -83,6 +84,9 @@ namespace Aaru.Tests.Issues
                     continue;
                 }
 
+                if(ExpectedData.Partitions[i].Volumes is null)
+                    continue;
+
                 Assert.AreEqual(ExpectedData.Partitions[i].Volumes.Length, idPlugins.Count,
                                 $"Expected {ExpectedData.Partitions[i].Volumes.Length} filesystems identified in partition {i} but found {idPlugins.Count}");
 
@@ -102,7 +106,7 @@ namespace Aaru.Tests.Issues
 
                     filesystemFound = true;
 
-                    Errno error = fs.Mount(imageFormat, partitions[i], encodingClass, ParsedOptions, Namespace);
+                    Errno error = fs.Mount(imageFormat, partitions[i], encodingClass, options, Namespace);
 
                     Assert.AreEqual(Errno.NoError, error, $"Could not mount {pluginName} in partition {i}.");
 
