@@ -20,7 +20,7 @@ namespace Aaru.Tests.Issues
         public override string InputPath => "2d_house_of_terror.nrg";
         public override string SuggestedOutputFilename => "AaruTestIssue286.aif";
         public override IWritableImage OutputFormat => new AaruFormat();
-        public override string Md5 => "";
+        public override string Md5 => null;
         public override bool UseLong => true;
     }
 }

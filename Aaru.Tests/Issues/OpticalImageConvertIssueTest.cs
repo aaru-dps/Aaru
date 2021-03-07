@@ -377,9 +377,13 @@ namespace Aaru.Tests.Issues
             Assert.True(outputOptical.Close(),
                         $"Error {outputOptical.ErrorMessage} closing output image... Contents are not correct.");
 
-            string md5 = Md5Context.File(outputPath, out _);
+            // Some images will never generate the same
+            if(Md5 != null)
+            {
+                string md5 = Md5Context.File(outputPath, out _);
 
-            Assert.AreEqual(Md5, md5, "Hashes are different");
+                Assert.AreEqual(Md5, md5, "Hashes are different");
+            }
 
             File.Delete(outputPath);
         }
