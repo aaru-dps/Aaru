@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Structs;
 
@@ -71,5 +72,22 @@ namespace Aaru.Tests
         public Partition[] Partitions;
         /// <summary>File that contains the partition scheme to test</summary>
         public string TestFile;
+    }
+
+    public class FsExtractHashData
+    {
+        public PartitionVolumes[] Partitions;
+    }
+
+    public class PartitionVolumes
+    {
+        public VolumeData[] Volumes;
+    }
+
+    public class VolumeData
+    {
+        public List<string>               Directories;
+        public Dictionary<string, string> FilesWithMd5;
+        public string                     VolumeName;
     }
 }
