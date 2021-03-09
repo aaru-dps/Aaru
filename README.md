@@ -100,6 +100,7 @@ Supported disk image formats (read and write)
 * CopyTape
 * DataPackRat's d2f/f2d disk image format ("WC DISK IMAGE")
 * Digital Research DiskCopy
+* DiskDupe (DDI)
 * Aaru Format
 * IBM SaveDskF
 * MAXI Disk disk images (HDK)
