@@ -39,7 +39,7 @@ namespace Aaru.Tests.Images
     public class DiskDupe : BlockMediaImageTest
     {
         public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "DiskDupe");
-        public override IMediaImage _plugin => new HdCopy();
+        public override IMediaImage _plugin => new DiscImages.DiskDupe();
 
         public override BlockImageTestExpected[] Tests => new[]
         {
@@ -65,8 +65,8 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.DOS_35_HD,
                 Sectors    = 2880,
                 SectorSize = 512,
-                MD5        = "4d70ec678212269bd9572fdedbd8b811"
-            }
+                MD5        = "f63e676310b2f1a9e44e9a471c7cf1f2"
+            },
         };
     }
 }
