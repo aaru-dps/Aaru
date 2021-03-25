@@ -60,7 +60,7 @@ namespace Aaru.Devices
         {
             buffer = new byte[8];
             byte[] cdb = new byte[6];
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
 
             cdb[0] = (byte)ScsiCommands.AdaptecTranslate;
             cdb[1] = (byte)((lba & 0x1F0000) >> 16);
@@ -103,7 +103,7 @@ namespace Aaru.Devices
             byte[] buffer = new byte[1];
             buffer[0] = threshold;
             byte[] cdb = new byte[6];
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
 
             cdb[0] = (byte)ScsiCommands.AdaptecSetErrorThreshold;
 
@@ -142,7 +142,7 @@ namespace Aaru.Devices
         {
             buffer = new byte[9];
             byte[] cdb = new byte[6];
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
 
             cdb[0] = (byte)ScsiCommands.AdaptecTranslate;
 
@@ -172,7 +172,7 @@ namespace Aaru.Devices
             Array.Copy(buffer, 0, oneKBuffer, 0, buffer.Length < 1024 ? buffer.Length : 1024);
 
             byte[] cdb = new byte[6];
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
 
             cdb[0] = (byte)ScsiCommands.AdaptecWriteBuffer;
 
@@ -195,7 +195,7 @@ namespace Aaru.Devices
         {
             buffer = new byte[1024];
             byte[] cdb = new byte[6];
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
 
             cdb[0] = (byte)ScsiCommands.AdaptecReadBuffer;
 

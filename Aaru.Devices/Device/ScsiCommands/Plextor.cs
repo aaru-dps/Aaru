@@ -51,7 +51,7 @@ namespace Aaru.Devices
                                     uint transferLength, PlextorSubchannel subchannel, uint timeout,
                                     out double duration)
         {
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
             byte[] cdb = new byte[12];
 
             cdb[0]  = (byte)ScsiCommands.ReadCdDa;
@@ -90,7 +90,7 @@ namespace Aaru.Devices
         public bool PlextorReadRawDvd(out byte[] buffer, out byte[] senseBuffer, uint lba, uint transferLength,
                                       uint timeout, out double duration)
         {
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
             byte[] cdb = new byte[10];
             buffer = new byte[2064 * transferLength];
 
@@ -122,7 +122,7 @@ namespace Aaru.Devices
         public bool PlextorReadEepromCdr(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
         {
             buffer      = new byte[256];
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
             byte[] cdb = new byte[12];
 
             cdb[0] = (byte)ScsiCommands.PlextorReadEeprom;
@@ -147,7 +147,7 @@ namespace Aaru.Devices
         public bool PlextorReadEeprom(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
         {
             buffer      = new byte[512];
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
             byte[] cdb = new byte[12];
 
             cdb[0] = (byte)ScsiCommands.PlextorReadEeprom;
@@ -175,7 +175,7 @@ namespace Aaru.Devices
                                            uint timeout, out double duration)
         {
             buffer      = new byte[blockSize];
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
             byte[] cdb = new byte[12];
 
             cdb[0] = (byte)ScsiCommands.PlextorReadEeprom;
@@ -206,7 +206,7 @@ namespace Aaru.Devices
                                      uint timeout, out double duration)
         {
             byte[] buf = new byte[10];
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
             byte[] cdb = new byte[12];
 
             selected = 0;
@@ -244,7 +244,7 @@ namespace Aaru.Devices
                                       out double duration)
         {
             byte[] buf = new byte[8];
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
             byte[] cdb = new byte[12];
 
             enabled = false;
@@ -279,7 +279,7 @@ namespace Aaru.Devices
         public bool PlextorGetSilentMode(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
         {
             buffer      = new byte[8];
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
             byte[] cdb = new byte[12];
 
             cdb[0]  = (byte)ScsiCommands.PlextorExtend;
@@ -307,7 +307,7 @@ namespace Aaru.Devices
         public bool PlextorGetGigaRec(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
         {
             buffer      = new byte[8];
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
             byte[] cdb = new byte[12];
 
             cdb[0]  = (byte)ScsiCommands.PlextorExtend;
@@ -336,7 +336,7 @@ namespace Aaru.Devices
                                       out double duration)
         {
             buffer      = new byte[8];
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
             byte[] cdb = new byte[12];
 
             cdb[0]  = (byte)ScsiCommands.PlextorExtend;
@@ -368,7 +368,7 @@ namespace Aaru.Devices
         public bool PlextorGetSecuRec(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
         {
             buffer      = new byte[8];
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
             byte[] cdb = new byte[12];
 
             cdb[0]  = (byte)ScsiCommands.PlextorExtend;
@@ -394,7 +394,7 @@ namespace Aaru.Devices
         public bool PlextorGetSpeedRead(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
         {
             buffer      = new byte[8];
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
             byte[] cdb = new byte[12];
 
             cdb[0]  = (byte)ScsiCommands.PlextorExtend;
@@ -421,7 +421,7 @@ namespace Aaru.Devices
         public bool PlextorGetHiding(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
         {
             buffer      = new byte[8];
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
             byte[] cdb = new byte[12];
 
             cdb[0] = (byte)ScsiCommands.PlextorExtend;
@@ -450,7 +450,7 @@ namespace Aaru.Devices
                                          out double duration)
         {
             buffer      = new byte[8];
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
             byte[] cdb = new byte[12];
 
             cdb[0] = (byte)ScsiCommands.PlextorExtend;
@@ -483,7 +483,7 @@ namespace Aaru.Devices
                                                out double duration)
         {
             buffer      = new byte[8];
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
             byte[] cdb = new byte[12];
 
             cdb[0]  = (byte)ScsiCommands.PlextorExtend;

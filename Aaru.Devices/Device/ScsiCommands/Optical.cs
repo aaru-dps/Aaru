@@ -61,7 +61,7 @@ namespace Aaru.Devices
                                bool relAddr, uint lba, uint requested, uint scanLength, out uint foundLba,
                                out uint foundBlocks, uint timeout, out double duration)
         {
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
             byte[] cdb    = new byte[10];
             byte[] buffer = new byte[0];
             foundLba    = 0;

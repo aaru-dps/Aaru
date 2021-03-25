@@ -47,7 +47,7 @@ namespace Aaru.Devices
         public bool NecReadCdDa(out byte[] buffer, out byte[] senseBuffer, uint lba, uint transferLength, uint timeout,
                                 out double duration)
         {
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
             byte[] cdb = new byte[10];
 
             cdb[0] = (byte)ScsiCommands.NecReadCdDa;

@@ -69,7 +69,7 @@ namespace Aaru.Devices
         public bool LoadUnload(out byte[] senseBuffer, bool immediate, bool load, bool retense, bool endOfTape,
                                bool hold, uint timeout, out double duration)
         {
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
             byte[] cdb    = new byte[6];
             byte[] buffer = new byte[0];
 
@@ -149,7 +149,7 @@ namespace Aaru.Devices
         public bool Locate(out byte[] senseBuffer, bool immediate, bool blockType, bool changePartition, byte partition,
                            uint objectId, uint timeout, out double duration)
         {
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
             byte[] cdb    = new byte[10];
             byte[] buffer = new byte[0];
 
@@ -233,7 +233,7 @@ namespace Aaru.Devices
         public bool Locate16(out byte[] senseBuffer, bool immediate, bool changePartition, SscLogicalIdTypes destType,
                              bool bam, byte partition, ulong identifier, uint timeout, out double duration)
         {
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
             byte[] cdb     = new byte[16];
             byte[] buffer  = new byte[0];
             byte[] idBytes = BitConverter.GetBytes(identifier);
@@ -317,7 +317,7 @@ namespace Aaru.Devices
         {
             buffer = fixedLen ? new byte[blockSize * transferLen] : new byte[transferLen];
             byte[] cdb = new byte[6];
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
 
             cdb[0] = (byte)ScsiCommands.Read6;
 
@@ -417,7 +417,7 @@ namespace Aaru.Devices
         {
             buffer = fixedLen ? new byte[objectSize * transferLen] : new byte[transferLen];
             byte[] cdb = new byte[6];
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
             byte[] idBytes = BitConverter.GetBytes(objectId);
 
             cdb[0] = (byte)ScsiCommands.Read16;
@@ -460,7 +460,7 @@ namespace Aaru.Devices
         {
             buffer = new byte[6];
             byte[] cdb = new byte[6];
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
 
             cdb[0] = (byte)ScsiCommands.ReadBlockLimits;
 
@@ -548,7 +548,7 @@ namespace Aaru.Devices
             }
 
             byte[] cdb = new byte[10];
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
 
             cdb[0] = (byte)ScsiCommands.ReadPosition;
             cdb[1] = (byte)((byte)responseForm & 0x1F);
@@ -614,7 +614,7 @@ namespace Aaru.Devices
         {
             buffer = fixedLen ? new byte[blockSize * transferLen] : new byte[transferLen];
             byte[] cdb = new byte[6];
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
 
             cdb[0] = (byte)ScsiCommands.ReadReverse;
 
@@ -721,7 +721,7 @@ namespace Aaru.Devices
         {
             buffer = fixedLen ? new byte[objectSize * transferLen] : new byte[transferLen];
             byte[] cdb = new byte[6];
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
             byte[] idBytes = BitConverter.GetBytes(objectId);
 
             cdb[0] = (byte)ScsiCommands.Read16;
@@ -802,7 +802,7 @@ namespace Aaru.Devices
         {
             buffer = fixedLen ? new byte[blockSize * transferLen] : new byte[transferLen];
             byte[] cdb = new byte[6];
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
 
             cdb[0] = (byte)ScsiCommands.RecoverBufferedData;
 
@@ -857,7 +857,7 @@ namespace Aaru.Devices
         {
             buffer = new byte[256];
             byte[] cdb = new byte[10];
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
 
             cdb[0] = (byte)ScsiCommands.ReportDensitySupport;
 
@@ -882,7 +882,7 @@ namespace Aaru.Devices
             buffer      = new byte[availableLength];
             cdb[7]      = (byte)((buffer.Length & 0xFF00) >> 8);
             cdb[8]      = (byte)(buffer.Length & 0xFF);
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                         out sense);
@@ -908,7 +908,7 @@ namespace Aaru.Devices
         /// <param name="duration">Duration.</param>
         public bool Rewind(out byte[] senseBuffer, bool immediate, uint timeout, out double duration)
         {
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
             byte[] cdb    = new byte[6];
             byte[] buffer = new byte[0];
 
@@ -935,7 +935,7 @@ namespace Aaru.Devices
         /// <param name="duration">Duration.</param>
         public bool TrackSelect(out byte[] senseBuffer, byte track, uint timeout, out double duration)
         {
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
             byte[] cdb    = new byte[6];
             byte[] buffer = new byte[0];
 
@@ -954,7 +954,7 @@ namespace Aaru.Devices
 
         public bool Space(out byte[] senseBuffer, SscSpaceCodes code, int count, uint timeout, out double duration)
         {
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
             byte[] cdb    = new byte[6];
             byte[] buffer = new byte[0];
             byte[] countB = BitConverter.GetBytes(count);

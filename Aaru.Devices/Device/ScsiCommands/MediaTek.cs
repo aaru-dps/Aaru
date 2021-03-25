@@ -47,7 +47,7 @@ namespace Aaru.Devices
         public bool MediaTekReadDram(out byte[] buffer, out byte[] senseBuffer, uint offset, uint length, uint timeout,
                                      out double duration)
         {
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
             byte[] cdb = new byte[10];
             buffer = new byte[length];
 

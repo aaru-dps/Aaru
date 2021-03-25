@@ -61,7 +61,7 @@ namespace Aaru.Devices
         public bool Read6(out byte[] buffer, out byte[] senseBuffer, uint lba, uint blockSize, byte transferLength,
                           uint timeout, out double duration)
         {
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
             byte[] cdb = new byte[6];
 
             cdb[0] = (byte)ScsiCommands.Read6;
@@ -110,7 +110,7 @@ namespace Aaru.Devices
                            bool relAddr, uint lba, uint blockSize, byte groupNumber, ushort transferLength,
                            uint timeout, out double duration)
         {
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
             byte[] cdb = new byte[10];
 
             cdb[0] = (byte)ScsiCommands.Read10;
@@ -174,7 +174,7 @@ namespace Aaru.Devices
                            bool relAddr, uint lba, uint blockSize, byte groupNumber, uint transferLength,
                            bool streaming, uint timeout, out double duration)
         {
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
             byte[] cdb = new byte[12];
 
             cdb[0] = (byte)ScsiCommands.Read12;
@@ -242,7 +242,7 @@ namespace Aaru.Devices
                            ulong lba, uint blockSize, byte groupNumber, uint transferLength, bool streaming,
                            uint timeout, out double duration)
         {
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
             byte[] cdb      = new byte[16];
             byte[] lbaBytes = BitConverter.GetBytes(lba);
 
@@ -303,7 +303,7 @@ namespace Aaru.Devices
         public bool ReadLong10(out byte[] buffer, out byte[] senseBuffer, bool correct, bool relAddr, uint lba,
                                ushort transferBytes, uint timeout, out double duration)
         {
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
             byte[] cdb = new byte[10];
 
             cdb[0] = (byte)ScsiCommands.ReadLong;
@@ -348,7 +348,7 @@ namespace Aaru.Devices
         public bool ReadLong16(out byte[] buffer, out byte[] senseBuffer, bool correct, ulong lba, uint transferBytes,
                                uint timeout, out double duration)
         {
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
             byte[] cdb      = new byte[16];
             byte[] lbaBytes = BitConverter.GetBytes(lba);
 
@@ -387,7 +387,7 @@ namespace Aaru.Devices
         /// <param name="duration">Duration.</param>
         public bool Seek6(out byte[] senseBuffer, uint lba, uint timeout, out double duration)
         {
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
             byte[] cdb    = new byte[6];
             byte[] buffer = new byte[0];
 
@@ -413,7 +413,7 @@ namespace Aaru.Devices
         /// <param name="duration">Duration.</param>
         public bool Seek10(out byte[] senseBuffer, uint lba, uint timeout, out double duration)
         {
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
             byte[] cdb    = new byte[10];
             byte[] buffer = new byte[0];
 

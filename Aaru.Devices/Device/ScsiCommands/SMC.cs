@@ -54,7 +54,7 @@ namespace Aaru.Devices
         {
             buffer = new byte[256];
             byte[] cdb = new byte[16];
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
 
             cdb[0]  = (byte)ScsiCommands.ReadAttribute;
             cdb[1]  = (byte)((byte)action & 0x1F);
@@ -87,7 +87,7 @@ namespace Aaru.Devices
             cdb[11]     = (byte)((buffer.Length & 0xFF0000)   >> 16);
             cdb[12]     = (byte)((buffer.Length & 0xFF00)     >> 8);
             cdb[13]     = (byte)(buffer.Length & 0xFF);
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                         out sense);

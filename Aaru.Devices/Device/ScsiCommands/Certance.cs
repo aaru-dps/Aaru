@@ -61,7 +61,7 @@ namespace Aaru.Devices
         {
             byte[] buffer = new byte[0];
             byte[] cdb    = new byte[6];
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
 
             cdb[0] = (byte)ScsiCommands.CertanceParkUnpark;
 

@@ -47,7 +47,7 @@ namespace Aaru.Devices
         public bool HlDtStReadRawDvd(out byte[] buffer, out byte[] senseBuffer, uint lba, uint transferLength,
                                      uint timeout, out double duration)
         {
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
             byte[] cdb = new byte[12];
             buffer = new byte[2064 * transferLength];
 

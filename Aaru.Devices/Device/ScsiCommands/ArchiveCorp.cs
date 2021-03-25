@@ -47,7 +47,7 @@ namespace Aaru.Devices
         {
             buffer = new byte[3];
             byte[] cdb = new byte[6];
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
 
             cdb[0] = (byte)ScsiCommands.ArchiveRequestBlockAddress;
             cdb[1] = (byte)((lba & 0x1F0000) >> 16);
@@ -84,7 +84,7 @@ namespace Aaru.Devices
         {
             byte[] buffer = new byte[0];
             byte[] cdb    = new byte[6];
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
 
             cdb[0] = (byte)ScsiCommands.ArchiveSeekBlock;
             cdb[1] = (byte)((lba & 0x1F0000) >> 16);

@@ -50,7 +50,7 @@ namespace Aaru.Devices
                                     uint transferLength, PioneerSubchannel subchannel, uint timeout,
                                     out double duration)
         {
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
             byte[] cdb = new byte[12];
 
             cdb[0]  = (byte)ScsiCommands.ReadCdDa;
@@ -88,7 +88,7 @@ namespace Aaru.Devices
         public bool PioneerReadCdDaMsf(out byte[] buffer, out byte[] senseBuffer, uint startMsf, uint endMsf,
                                        uint blockSize, PioneerSubchannel subchannel, uint timeout, out double duration)
         {
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
             byte[] cdb = new byte[12];
 
             cdb[0]  = (byte)ScsiCommands.ReadCdDaMsf;
@@ -129,7 +129,7 @@ namespace Aaru.Devices
         public bool PioneerReadCdXa(out byte[] buffer, out byte[] senseBuffer, uint lba, uint transferLength,
                                     bool errorFlags, bool wholeSector, uint timeout, out double duration)
         {
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
             byte[] cdb = new byte[12];
 
             cdb[0] = (byte)ScsiCommands.ReadCdXa;

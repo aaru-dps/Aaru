@@ -39,7 +39,7 @@ namespace Aaru.Devices
         public bool MiniDiscReadDataTOC(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
         {
             ushort transferLength = 2336;
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
             byte[] cdb = new byte[10];
 
             cdb[0] = (byte)ScsiCommands.MiniDiscReadDTOC;
@@ -63,7 +63,7 @@ namespace Aaru.Devices
                                         out double duration)
         {
             ushort transferLength = 2336;
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
             byte[] cdb = new byte[10];
 
             cdb[0] = (byte)ScsiCommands.MiniDiscReadUTOC;
@@ -90,7 +90,7 @@ namespace Aaru.Devices
         public bool MiniDiscD5(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
         {
             ushort transferLength = 4;
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
             byte[] cdb = new byte[10];
 
             cdb[0] = (byte)ScsiCommands.MiniDiscD5;
@@ -113,7 +113,7 @@ namespace Aaru.Devices
         public bool MiniDiscStopPlaying(out byte[] buffer, out byte[] senseBuffer, uint sector, uint timeout,
                                         out double duration)
         {
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
             byte[] cdb = new byte[10];
 
             cdb[0] = (byte)ScsiCommands.MiniDiscStopPlay;
@@ -133,7 +133,7 @@ namespace Aaru.Devices
         public bool MiniDiscReadPosition(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
         {
             ushort transferLength = 4;
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
             byte[] cdb = new byte[10];
 
             cdb[0] = (byte)ScsiCommands.MiniDiscReadPosition;
@@ -156,7 +156,7 @@ namespace Aaru.Devices
         public bool MiniDiscGetType(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
         {
             ushort transferLength = 8;
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
             byte[] cdb = new byte[10];
 
             cdb[0] = (byte)ScsiCommands.MiniDiscGetType;

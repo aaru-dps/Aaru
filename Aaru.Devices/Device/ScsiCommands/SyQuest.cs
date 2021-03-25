@@ -74,7 +74,7 @@ namespace Aaru.Devices
         public bool SyQuestRead6(out byte[] buffer, out byte[] senseBuffer, uint lba, uint blockSize,
                                  byte transferLength, bool inhibitDma, bool readLong, uint timeout, out double duration)
         {
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
             byte[] cdb = new byte[6];
             bool   sense;
 
@@ -151,7 +151,7 @@ namespace Aaru.Devices
                                   ushort transferLength, bool inhibitDma, bool readLong, uint timeout,
                                   out double duration)
         {
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
             byte[] cdb = new byte[10];
             bool   sense;
 

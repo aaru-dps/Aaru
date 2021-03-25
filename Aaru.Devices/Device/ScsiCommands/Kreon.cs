@@ -44,7 +44,7 @@ namespace Aaru.Devices
         /// <param name="duration">Duration.</param>
         public bool KreonDeprecatedUnlock(out byte[] senseBuffer, uint timeout, out double duration)
         {
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
             byte[] cdb    = new byte[6];
             byte[] buffer = new byte[0];
 
@@ -95,7 +95,7 @@ namespace Aaru.Devices
         /// <param name="state">Lock state</param>
         public bool KreonSetLockState(out byte[] senseBuffer, KreonLockStates state, uint timeout, out double duration)
         {
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
             byte[] cdb    = new byte[6];
             byte[] buffer = new byte[0];
 
@@ -124,7 +124,7 @@ namespace Aaru.Devices
         public bool KreonGetFeatureList(out byte[] senseBuffer, out KreonFeatures features, uint timeout,
                                         out double duration)
         {
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
             byte[] cdb    = new byte[6];
             byte[] buffer = new byte[26];
             features = 0;
@@ -217,7 +217,7 @@ namespace Aaru.Devices
         {
             buffer = new byte[2048];
             byte[] cdb = new byte[12];
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
 
             cdb[0]  = (byte)ScsiCommands.KreonSsCommand;
             cdb[1]  = 0x00;

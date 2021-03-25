@@ -72,7 +72,7 @@ namespace Aaru.Devices
         public bool ScsiInquiry(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
         {
             buffer      = new byte[36];
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
 
             byte[] cdb =
             {
@@ -95,7 +95,7 @@ namespace Aaru.Devices
             };
 
             buffer      = new byte[pagesLength];
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                         out sense);
@@ -149,7 +149,7 @@ namespace Aaru.Devices
         public bool ScsiInquiry(out byte[] buffer, out byte[] senseBuffer, byte page, uint timeout, out double duration)
         {
             buffer      = new byte[36];
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
 
             byte[] cdb =
             {
@@ -176,7 +176,7 @@ namespace Aaru.Devices
             };
 
             buffer      = new byte[pagesLength];
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                         out sense);
@@ -195,7 +195,7 @@ namespace Aaru.Devices
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
         public bool ScsiTestUnitReady(out byte[] senseBuffer, uint timeout, out double duration)
         {
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
 
             byte[] cdb =
             {
@@ -252,7 +252,7 @@ namespace Aaru.Devices
                                ScsiModeSensePageControl pageControl, byte pageCode, byte subPageCode, uint timeout,
                                out double duration)
         {
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
             byte[] cdb = new byte[6];
             buffer = new byte[255];
 
@@ -278,7 +278,7 @@ namespace Aaru.Devices
             byte modeLength = (byte)(buffer[0] + 1);
             buffer      = new byte[modeLength];
             cdb[4]      = (byte)buffer.Length;
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                         out sense);
@@ -334,7 +334,7 @@ namespace Aaru.Devices
                                 ScsiModeSensePageControl pageControl, byte pageCode, byte subPageCode, uint timeout,
                                 out double duration)
         {
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
             byte[] cdb = new byte[10];
             buffer = new byte[4096];
 
@@ -365,7 +365,7 @@ namespace Aaru.Devices
             buffer      = new byte[modeLength];
             cdb[7]      = (byte)((buffer.Length & 0xFF00) >> 8);
             cdb[8]      = (byte)(buffer.Length & 0xFF);
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                         out sense);
@@ -418,7 +418,7 @@ namespace Aaru.Devices
         public bool SpcPreventAllowMediumRemoval(out byte[] senseBuffer, ScsiPreventAllowMode preventMode, uint timeout,
                                                  out double duration)
         {
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
             byte[] cdb    = new byte[6];
             byte[] buffer = new byte[0];
 
@@ -456,7 +456,7 @@ namespace Aaru.Devices
         public bool ReadCapacity(out byte[] buffer, out byte[] senseBuffer, bool relAddr, uint address, bool pmi,
                                  uint timeout, out double duration)
         {
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
             byte[] cdb = new byte[10];
             buffer = new byte[8];
 
@@ -505,7 +505,7 @@ namespace Aaru.Devices
         public bool ReadCapacity16(out byte[] buffer, out byte[] senseBuffer, ulong address, bool pmi, uint timeout,
                                    out double duration)
         {
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
             byte[] cdb = new byte[16];
             buffer = new byte[32];
 
@@ -549,7 +549,7 @@ namespace Aaru.Devices
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
         public bool ReadMediaSerialNumber(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
         {
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
             byte[] cdb = new byte[12];
             buffer = new byte[4];
 
@@ -574,7 +574,7 @@ namespace Aaru.Devices
             cdb[7]      = (byte)((buffer.Length & 0xFF0000)   >> 16);
             cdb[8]      = (byte)((buffer.Length & 0xFF00)     >> 8);
             cdb[9]      = (byte)(buffer.Length & 0xFF);
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                         out sense);
@@ -679,7 +679,7 @@ namespace Aaru.Devices
         public bool ModeSelect(byte[] buffer, out byte[] senseBuffer, bool pageFormat, bool savePages, uint timeout,
                                out double duration)
         {
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
 
             // Prevent overflows
             if(buffer.Length > 255)
@@ -733,7 +733,7 @@ namespace Aaru.Devices
         public bool ModeSelect10(byte[] buffer, out byte[] senseBuffer, bool pageFormat, bool savePages, uint timeout,
                                  out double duration)
         {
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
 
             // Prevent overflows
             if(buffer.Length > 65535)

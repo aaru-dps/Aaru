@@ -82,7 +82,7 @@ namespace Aaru.Devices
         public bool PlasmonReadSectorLocation(out byte[] buffer, out byte[] senseBuffer, uint address, bool pba,
                                               uint timeout, out double duration)
         {
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
             byte[] cdb = new byte[10];
 
             cdb[0] = (byte)ScsiCommands.PlasmonReadSectorLocation;

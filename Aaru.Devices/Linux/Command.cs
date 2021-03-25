@@ -66,7 +66,7 @@ namespace Aaru.Devices.Linux
 
             var ioHdr = new SgIoHdrT();
 
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
 
             ioHdr.interface_id    = 'S';
             ioHdr.cmd_len         = (byte)cdb.Length;

@@ -69,7 +69,7 @@ namespace Aaru.Devices
                                ushort transferLen, ushort blockBytes, bool pba, bool sectorCount, uint timeout,
                                out double duration)
         {
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
             byte[] cdb = new byte[10];
 
             cdb[0] = (byte)ScsiCommands.ReadLong;

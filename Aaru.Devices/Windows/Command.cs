@@ -105,7 +105,7 @@ namespace Aaru.Devices.Windows
 
             sense |= sptdSb.sptd.ScsiStatus != 0;
 
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
             Array.Copy(sptdSb.SenseBuf, senseBuffer, 32);
 
             duration = (end - start).TotalMilliseconds;

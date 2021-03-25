@@ -70,7 +70,7 @@ namespace Aaru.Devices
         public bool GetConfiguration(out byte[] buffer, out byte[] senseBuffer, ushort startingFeatureNumber,
                                      MmcGetConfigurationRt rt, uint timeout, out double duration)
         {
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
             byte[] cdb = new byte[10];
             buffer = new byte[8];
 
@@ -94,7 +94,7 @@ namespace Aaru.Devices
             buffer      = new byte[confLength];
             cdb[7]      = (byte)((buffer.Length & 0xFF00) >> 8);
             cdb[8]      = (byte)(buffer.Length & 0xFF);
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                         out sense);
@@ -123,7 +123,7 @@ namespace Aaru.Devices
                                       uint address, byte layerNumber, MmcDiscStructureFormat format, byte agid,
                                       uint timeout, out double duration)
         {
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
             byte[] cdb = new byte[12];
             buffer = new byte[8];
 
@@ -183,7 +183,7 @@ namespace Aaru.Devices
 
             cdb[8]      = (byte)((buffer.Length & 0xFF00) >> 8);
             cdb[9]      = (byte)(buffer.Length & 0xFF);
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                         out sense);
@@ -289,7 +289,7 @@ namespace Aaru.Devices
         public bool ReadTocPmaAtip(out byte[] buffer, out byte[] senseBuffer, bool msf, byte format,
                                    byte trackSessionNumber, uint timeout, out double duration)
         {
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
             byte[] cdb = new byte[10];
 
             byte[] tmpBuffer = (format & 0x0F) == 5 ? new byte[32768] : new byte[1024];
@@ -359,7 +359,7 @@ namespace Aaru.Devices
         public bool ReadDiscInformation(out byte[] buffer, out byte[] senseBuffer, MmcDiscInformationDataTypes dataType,
                                         uint timeout, out double duration)
         {
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
             byte[] cdb       = new byte[10];
             byte[] tmpBuffer = new byte[804];
 
@@ -411,7 +411,7 @@ namespace Aaru.Devices
                            MmcHeaderCodes headerCodes, bool userData, bool edcEcc, MmcErrorField c2Error,
                            MmcSubchannel subchannel, uint timeout, out double duration)
         {
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
             byte[] cdb = new byte[12];
 
             cdb[0] = (byte)ScsiCommands.ReadCd;
@@ -481,7 +481,7 @@ namespace Aaru.Devices
                               bool userData, bool edcEcc, MmcErrorField c2Error, MmcSubchannel subchannel, uint timeout,
                               out double duration)
         {
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
             byte[] cdb = new byte[12];
 
             cdb[0] = (byte)ScsiCommands.ReadCdMsf;
@@ -536,7 +536,7 @@ namespace Aaru.Devices
         public bool PreventAllowMediumRemoval(out byte[] senseBuffer, bool persistent, bool prevent, uint timeout,
                                               out double duration)
         {
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
             byte[] cdb    = new byte[6];
             byte[] buffer = new byte[0];
 
@@ -575,7 +575,7 @@ namespace Aaru.Devices
         public bool StartStopUnit(out byte[] senseBuffer, bool immediate, byte formatLayer, byte powerConditions,
                                   bool changeFormatLayer, bool loadEject, bool start, uint timeout, out double duration)
         {
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
             byte[] cdb    = new byte[6];
             byte[] buffer = new byte[0];
 
@@ -616,7 +616,7 @@ namespace Aaru.Devices
         public bool ReadMcn(out string mcn, out byte[] buffer, out byte[] senseBuffer, uint timeout,
                             out double duration)
         {
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
             byte[] cdb = new byte[10];
             mcn = null;
 
@@ -648,7 +648,7 @@ namespace Aaru.Devices
         public bool ReadIsrc(byte trackNumber, out string isrc, out byte[] buffer, out byte[] senseBuffer, uint timeout,
                              out double duration)
         {
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
             byte[] cdb = new byte[10];
             isrc = null;
 
@@ -681,7 +681,7 @@ namespace Aaru.Devices
         public bool SetCdSpeed(out byte[] senseBuffer, RotationalControl rotationalControl, ushort readSpeed,
                                ushort writeSpeed, uint timeout, out double duration)
         {
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
             byte[] cdb    = new byte[12];
             byte[] buffer = new byte[0];
 
@@ -716,7 +716,7 @@ namespace Aaru.Devices
         public bool ReadTrackInformation(out byte[] buffer, out byte[] senseBuffer, bool open,
                                          TrackInformationType type, uint address, uint timeout, out double duration)
         {
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
             byte[] cdb = new byte[10];
             buffer = new byte[48];
 
