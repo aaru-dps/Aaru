@@ -286,9 +286,13 @@ namespace Aaru.Decoders.SCSI
                 if(offset + 2 < sense.Length)
                 {
                     byte descType = sense[offset];
-                    int  descLen  = sense[offset + 1] + 1;
+                    int  descLen  = sense[offset + 1] + 2;
 
                     byte[] desc = new byte[descLen];
+
+                    if(offset + descLen >= sense.Length)
+                        descLen = sense.Length - offset;
+
                     Array.Copy(sense, offset, desc, 0, descLen);
 
                     if(!decoded.Descriptors.ContainsKey(descType))
