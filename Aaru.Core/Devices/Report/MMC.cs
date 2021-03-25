@@ -1191,22 +1191,28 @@ namespace Aaru.Core.Devices.Report
                 {
                     AaruConsole.WriteLine("Trying to read C2 Pointers...");
 
-                    mediaTest.CanReadC2Pointers = !_dev.ReadCd(out buffer, out senseBuffer, 11, 2646, 1,
-                                                               MmcSectorTypes.Cdda, false, false, false,
-                                                               MmcHeaderCodes.None, true, false,
-                                                               MmcErrorField.C2Pointers, MmcSubchannel.None,
-                                                               _dev.Timeout, out _);
-
-                    if(!mediaTest.CanReadC2Pointers == true)
-                        mediaTest.CanReadC2Pointers = !_dev.ReadCd(out buffer, out senseBuffer, 11, 2648, 1,
+                    // They return OK, but then all following commands make the drive fail miserably.
+                    if(_dev.Model.StartsWith("iHOS104"))
+                        mediaTest.CanReadC2Pointers = false;
+                    else
+                    {
+                        mediaTest.CanReadC2Pointers = !_dev.ReadCd(out buffer, out senseBuffer, 11, 2646, 1,
                                                                    MmcSectorTypes.Cdda, false, false, false,
                                                                    MmcHeaderCodes.None, true, false,
-                                                                   MmcErrorField.C2PointersAndBlock, MmcSubchannel.None,
+                                                                   MmcErrorField.C2Pointers, MmcSubchannel.None,
                                                                    _dev.Timeout, out _);
 
-                    AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadC2Pointers);
+                        if(!mediaTest.CanReadC2Pointers == true)
+                            mediaTest.CanReadC2Pointers = !_dev.ReadCd(out buffer, out senseBuffer, 11, 2648, 1,
+                                                                       MmcSectorTypes.Cdda, false, false, false,
+                                                                       MmcHeaderCodes.None, true, false,
+                                                                       MmcErrorField.C2PointersAndBlock,
+                                                                       MmcSubchannel.None, _dev.Timeout, out _);
 
-                    mediaTest.C2PointersData = buffer;
+                        AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadC2Pointers);
+
+                        mediaTest.C2PointersData = buffer;
+                    }
 
                     AaruConsole.WriteLine("Trying to read subchannels...");
 
@@ -1240,78 +1246,96 @@ namespace Aaru.Core.Devices.Report
 
                     AaruConsole.WriteLine("Trying to read subchannels with C2 Pointers...");
 
-                    mediaTest.CanReadPQSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 11, 2662, 1,
-                                                                       MmcSectorTypes.Cdda, false, false, false,
-                                                                       MmcHeaderCodes.None, true, false,
-                                                                       MmcErrorField.C2Pointers, MmcSubchannel.Q16,
-                                                                       _dev.Timeout, out _);
-
-                    if(mediaTest.CanReadPQSubchannelWithC2 == false)
-                        mediaTest.CanReadPQSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 11, 2664, 1,
+                    // They return OK, but then all following commands make the drive fail miserably.
+                    if(_dev.Model.StartsWith("iHOS104"))
+                    {
+                        mediaTest.CanReadPQSubchannelWithC2        = false;
+                        mediaTest.CanReadRWSubchannelWithC2        = false;
+                        mediaTest.CanReadCorrectedSubchannelWithC2 = false;
+                    }
+                    else
+                    {
+                        mediaTest.CanReadPQSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 11, 2662, 1,
                                                                            MmcSectorTypes.Cdda, false, false, false,
                                                                            MmcHeaderCodes.None, true, false,
-                                                                           MmcErrorField.C2PointersAndBlock,
-                                                                           MmcSubchannel.Q16, _dev.Timeout, out _);
+                                                                           MmcErrorField.C2Pointers, MmcSubchannel.Q16,
+                                                                           _dev.Timeout, out _);
 
-                    AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadPQSubchannelWithC2);
+                        if(mediaTest.CanReadPQSubchannelWithC2 == false)
+                            mediaTest.CanReadPQSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 11, 2664, 1,
+                                                                               MmcSectorTypes.Cdda, false, false, false,
+                                                                               MmcHeaderCodes.None, true, false,
+                                                                               MmcErrorField.C2PointersAndBlock,
+                                                                               MmcSubchannel.Q16, _dev.Timeout, out _);
 
-                    mediaTest.PQSubchannelWithC2Data = buffer;
+                        AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadPQSubchannelWithC2);
 
-                    mediaTest.CanReadRWSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 11, 2712, 1,
-                                                                       MmcSectorTypes.Cdda, false, false, false,
-                                                                       MmcHeaderCodes.None, true, false,
-                                                                       MmcErrorField.C2Pointers, MmcSubchannel.Raw,
-                                                                       _dev.Timeout, out _);
+                        mediaTest.PQSubchannelWithC2Data = buffer;
 
-                    if(mediaTest.CanReadRWSubchannelWithC2 == false)
-                        mediaTest.CanReadRWSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 11, 2714, 1,
+                        mediaTest.CanReadRWSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 11, 2712, 1,
                                                                            MmcSectorTypes.Cdda, false, false, false,
                                                                            MmcHeaderCodes.None, true, false,
-                                                                           MmcErrorField.C2PointersAndBlock,
-                                                                           MmcSubchannel.Raw, _dev.Timeout, out _);
+                                                                           MmcErrorField.C2Pointers, MmcSubchannel.Raw,
+                                                                           _dev.Timeout, out _);
 
-                    AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadRWSubchannelWithC2);
+                        if(mediaTest.CanReadRWSubchannelWithC2 == false)
+                            mediaTest.CanReadRWSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 11, 2714, 1,
+                                                                               MmcSectorTypes.Cdda, false, false, false,
+                                                                               MmcHeaderCodes.None, true, false,
+                                                                               MmcErrorField.C2PointersAndBlock,
+                                                                               MmcSubchannel.Raw, _dev.Timeout, out _);
 
-                    mediaTest.RWSubchannelWithC2Data = buffer;
+                        AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadRWSubchannelWithC2);
 
-                    mediaTest.CanReadCorrectedSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 11, 2712, 1,
-                                                                              MmcSectorTypes.Cdda, false, false, false,
-                                                                              MmcHeaderCodes.None, true, false,
-                                                                              MmcErrorField.C2Pointers,
-                                                                              MmcSubchannel.Rw, _dev.Timeout, out _);
+                        mediaTest.RWSubchannelWithC2Data = buffer;
 
-                    if(mediaTest.CanReadCorrectedSubchannelWithC2 == false)
-                        mediaTest.CanReadCorrectedSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 11, 2714,
+                        mediaTest.CanReadCorrectedSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 11, 2712,
                                                                          1, MmcSectorTypes.Cdda, false, false,
                                                                          false, MmcHeaderCodes.None, true, false,
-                                                                         MmcErrorField.C2PointersAndBlock,
+                                                                         MmcErrorField.C2Pointers,
                                                                          MmcSubchannel.Rw, _dev.Timeout, out _);
 
-                    AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}",
-                                               !mediaTest.CanReadCorrectedSubchannelWithC2);
+                        if(mediaTest.CanReadCorrectedSubchannelWithC2 == false)
+                            mediaTest.CanReadCorrectedSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 11,
+                                                                             2714, 1, MmcSectorTypes.Cdda, false,
+                                                                             false, false, MmcHeaderCodes.None,
+                                                                             true, false,
+                                                                             MmcErrorField.C2PointersAndBlock,
+                                                                             MmcSubchannel.Rw, _dev.Timeout,
+                                                                             out _);
 
-                    mediaTest.CorrectedSubchannelWithC2Data = buffer;
+                        AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}",
+                                                   !mediaTest.CanReadCorrectedSubchannelWithC2);
+
+                        mediaTest.CorrectedSubchannelWithC2Data = buffer;
+                    }
                 }
                 else if(mediaTest.SupportsReadCdRaw == true)
                 {
                     AaruConsole.WriteLine("Trying to read C2 Pointers...");
 
-                    mediaTest.CanReadC2Pointers = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2646, 1,
-                                                               MmcSectorTypes.AllTypes, false, false, true,
-                                                               MmcHeaderCodes.AllHeaders, true, true,
-                                                               MmcErrorField.C2Pointers, MmcSubchannel.None,
-                                                               _dev.Timeout, out _);
-
-                    if(mediaTest.CanReadC2Pointers == false)
-                        mediaTest.CanReadC2Pointers = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2648, 1,
+                    // They return OK, but then all following commands make the drive fail miserably.
+                    if(_dev.Model.StartsWith("iHOS104"))
+                        mediaTest.CanReadC2Pointers = false;
+                    else
+                    {
+                        mediaTest.CanReadC2Pointers = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2646, 1,
                                                                    MmcSectorTypes.AllTypes, false, false, true,
                                                                    MmcHeaderCodes.AllHeaders, true, true,
-                                                                   MmcErrorField.C2PointersAndBlock, MmcSubchannel.None,
+                                                                   MmcErrorField.C2Pointers, MmcSubchannel.None,
                                                                    _dev.Timeout, out _);
 
-                    AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadC2Pointers);
+                        if(mediaTest.CanReadC2Pointers == false)
+                            mediaTest.CanReadC2Pointers = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2648, 1,
+                                                                       MmcSectorTypes.AllTypes, false, false, true,
+                                                                       MmcHeaderCodes.AllHeaders, true, true,
+                                                                       MmcErrorField.C2PointersAndBlock,
+                                                                       MmcSubchannel.None, _dev.Timeout, out _);
 
-                    mediaTest.C2PointersData = buffer;
+                        AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadC2Pointers);
+
+                        mediaTest.C2PointersData = buffer;
+                    }
 
                     AaruConsole.WriteLine("Trying to read subchannels...");
 
@@ -1347,78 +1371,94 @@ namespace Aaru.Core.Devices.Report
 
                     AaruConsole.WriteLine("Trying to read subchannels with C2 Pointers...");
 
-                    mediaTest.CanReadPQSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2662, 1,
-                                                                       MmcSectorTypes.AllTypes, false, false, true,
-                                                                       MmcHeaderCodes.AllHeaders, true, true,
-                                                                       MmcErrorField.C2Pointers, MmcSubchannel.Q16,
-                                                                       _dev.Timeout, out _);
-
-                    if(mediaTest.CanReadPQSubchannelWithC2 == false)
-                        mediaTest.CanReadPQSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2664, 1,
+                    if(_dev.Model.StartsWith("iHOS104"))
+                    {
+                        mediaTest.CanReadPQSubchannelWithC2        = false;
+                        mediaTest.CanReadRWSubchannelWithC2        = false;
+                        mediaTest.CanReadCorrectedSubchannelWithC2 = false;
+                    }
+                    else
+                    {
+                        mediaTest.CanReadPQSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2662, 1,
                                                                            MmcSectorTypes.AllTypes, false, false, true,
                                                                            MmcHeaderCodes.AllHeaders, true, true,
-                                                                           MmcErrorField.C2PointersAndBlock,
-                                                                           MmcSubchannel.Q16, _dev.Timeout, out _);
+                                                                           MmcErrorField.C2Pointers, MmcSubchannel.Q16,
+                                                                           _dev.Timeout, out _);
 
-                    AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadPQSubchannelWithC2);
+                        if(mediaTest.CanReadPQSubchannelWithC2 == false)
+                            mediaTest.CanReadPQSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2664, 1,
+                                                                               MmcSectorTypes.AllTypes, false, false,
+                                                                               true, MmcHeaderCodes.AllHeaders, true,
+                                                                               true, MmcErrorField.C2PointersAndBlock,
+                                                                               MmcSubchannel.Q16, _dev.Timeout, out _);
 
-                    mediaTest.PQSubchannelWithC2Data = buffer;
+                        AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadPQSubchannelWithC2);
 
-                    mediaTest.CanReadRWSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2712, 1,
-                                                                       MmcSectorTypes.AllTypes, false, false, true,
-                                                                       MmcHeaderCodes.AllHeaders, true, true,
-                                                                       MmcErrorField.C2Pointers, MmcSubchannel.Raw,
-                                                                       _dev.Timeout, out _);
+                        mediaTest.PQSubchannelWithC2Data = buffer;
 
-                    if(mediaTest.CanReadRWSubchannelWithC2 == false)
-                        mediaTest.CanReadRWSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2714, 1,
+                        mediaTest.CanReadRWSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2712, 1,
                                                                            MmcSectorTypes.AllTypes, false, false, true,
                                                                            MmcHeaderCodes.AllHeaders, true, true,
-                                                                           MmcErrorField.C2PointersAndBlock,
-                                                                           MmcSubchannel.Raw, _dev.Timeout, out _);
+                                                                           MmcErrorField.C2Pointers, MmcSubchannel.Raw,
+                                                                           _dev.Timeout, out _);
 
-                    AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadRWSubchannelWithC2);
+                        if(mediaTest.CanReadRWSubchannelWithC2 == false)
+                            mediaTest.CanReadRWSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2714, 1,
+                                                                               MmcSectorTypes.AllTypes, false, false,
+                                                                               true, MmcHeaderCodes.AllHeaders, true,
+                                                                               true, MmcErrorField.C2PointersAndBlock,
+                                                                               MmcSubchannel.Raw, _dev.Timeout, out _);
 
-                    mediaTest.RWSubchannelWithC2Data = buffer;
+                        AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadRWSubchannelWithC2);
 
-                    mediaTest.CanReadCorrectedSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2712, 1,
-                                                                              MmcSectorTypes.AllTypes, false, false,
-                                                                              true, MmcHeaderCodes.AllHeaders, true,
-                                                                              true, MmcErrorField.C2Pointers,
-                                                                              MmcSubchannel.Rw, _dev.Timeout, out _);
+                        mediaTest.RWSubchannelWithC2Data = buffer;
 
-                    if(mediaTest.CanReadCorrectedSubchannelWithC2 == false)
-                        mediaTest.CanReadCorrectedSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2714,
+                        mediaTest.CanReadCorrectedSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2712,
                                                                          1, MmcSectorTypes.AllTypes, false, false,
                                                                          true, MmcHeaderCodes.AllHeaders, true,
-                                                                         true, MmcErrorField.C2PointersAndBlock,
+                                                                         true, MmcErrorField.C2Pointers,
                                                                          MmcSubchannel.Rw, _dev.Timeout, out _);
 
-                    AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}",
-                                               !mediaTest.CanReadCorrectedSubchannelWithC2);
+                        if(mediaTest.CanReadCorrectedSubchannelWithC2 == false)
+                            mediaTest.CanReadCorrectedSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 16,
+                                                                             2714, 1, MmcSectorTypes.AllTypes,
+                                                                             false, false, true,
+                                                                             MmcHeaderCodes.AllHeaders, true, true,
+                                                                             MmcErrorField.C2PointersAndBlock,
+                                                                             MmcSubchannel.Rw, _dev.Timeout,
+                                                                             out _);
 
-                    mediaTest.CorrectedSubchannelWithC2Data = buffer;
+                        AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}",
+                                                   !mediaTest.CanReadCorrectedSubchannelWithC2);
+
+                        mediaTest.CorrectedSubchannelWithC2Data = buffer;
+                    }
                 }
                 else
                 {
-                    AaruConsole.WriteLine("Trying to read C2 Pointers...");
+                    if(_dev.Model.StartsWith("iHOS104"))
+                        mediaTest.CanReadC2Pointers = false;
+                    else
+                    {
+                        AaruConsole.WriteLine("Trying to read C2 Pointers...");
 
-                    mediaTest.CanReadC2Pointers = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2342, 1,
-                                                               MmcSectorTypes.AllTypes, false, false, false,
-                                                               MmcHeaderCodes.None, true, false,
-                                                               MmcErrorField.C2Pointers, MmcSubchannel.None,
-                                                               _dev.Timeout, out _);
-
-                    if(mediaTest.CanReadC2Pointers == false)
-                        mediaTest.CanReadC2Pointers = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2344, 1,
+                        mediaTest.CanReadC2Pointers = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2342, 1,
                                                                    MmcSectorTypes.AllTypes, false, false, false,
                                                                    MmcHeaderCodes.None, true, false,
-                                                                   MmcErrorField.C2PointersAndBlock, MmcSubchannel.None,
+                                                                   MmcErrorField.C2Pointers, MmcSubchannel.None,
                                                                    _dev.Timeout, out _);
 
-                    AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadC2Pointers);
+                        if(mediaTest.CanReadC2Pointers == false)
+                            mediaTest.CanReadC2Pointers = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2344, 1,
+                                                                       MmcSectorTypes.AllTypes, false, false, false,
+                                                                       MmcHeaderCodes.None, true, false,
+                                                                       MmcErrorField.C2PointersAndBlock,
+                                                                       MmcSubchannel.None, _dev.Timeout, out _);
 
-                    mediaTest.C2PointersData = buffer;
+                        AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadC2Pointers);
+
+                        mediaTest.C2PointersData = buffer;
+                    }
 
                     AaruConsole.WriteLine("Trying to read subchannels...");
 
@@ -1452,57 +1492,68 @@ namespace Aaru.Core.Devices.Report
 
                     AaruConsole.WriteLine("Trying to read subchannels with C2 Pointers...");
 
-                    mediaTest.CanReadPQSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2358, 1,
-                                                                       MmcSectorTypes.AllTypes, false, false, false,
-                                                                       MmcHeaderCodes.None, true, false,
-                                                                       MmcErrorField.C2Pointers, MmcSubchannel.Q16,
-                                                                       _dev.Timeout, out _);
-
-                    if(mediaTest.CanReadPQSubchannelWithC2 == false)
-                        mediaTest.CanReadPQSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2360, 1,
+                    if(_dev.Model.StartsWith("iHOS104"))
+                    {
+                        mediaTest.CanReadPQSubchannelWithC2        = false;
+                        mediaTest.CanReadRWSubchannelWithC2        = false;
+                        mediaTest.CanReadCorrectedSubchannelWithC2 = false;
+                    }
+                    else
+                    {
+                        mediaTest.CanReadPQSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2358, 1,
                                                                            MmcSectorTypes.AllTypes, false, false, false,
                                                                            MmcHeaderCodes.None, true, false,
-                                                                           MmcErrorField.C2PointersAndBlock,
-                                                                           MmcSubchannel.Q16, _dev.Timeout, out _);
+                                                                           MmcErrorField.C2Pointers, MmcSubchannel.Q16,
+                                                                           _dev.Timeout, out _);
 
-                    AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadPQSubchannelWithC2);
+                        if(mediaTest.CanReadPQSubchannelWithC2 == false)
+                            mediaTest.CanReadPQSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2360, 1,
+                                                                               MmcSectorTypes.AllTypes, false, false,
+                                                                               false, MmcHeaderCodes.None, true, false,
+                                                                               MmcErrorField.C2PointersAndBlock,
+                                                                               MmcSubchannel.Q16, _dev.Timeout, out _);
 
-                    mediaTest.PQSubchannelWithC2Data = buffer;
+                        AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadPQSubchannelWithC2);
 
-                    mediaTest.CanReadRWSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2438, 1,
-                                                                       MmcSectorTypes.AllTypes, false, false, false,
-                                                                       MmcHeaderCodes.None, true, false,
-                                                                       MmcErrorField.C2Pointers, MmcSubchannel.Raw,
-                                                                       _dev.Timeout, out _);
+                        mediaTest.PQSubchannelWithC2Data = buffer;
 
-                    if(mediaTest.CanReadRWSubchannelWithC2 == false)
-                        mediaTest.CanReadRWSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2440, 1,
+                        mediaTest.CanReadRWSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2438, 1,
                                                                            MmcSectorTypes.AllTypes, false, false, false,
                                                                            MmcHeaderCodes.None, true, false,
-                                                                           MmcErrorField.C2PointersAndBlock,
-                                                                           MmcSubchannel.Raw, _dev.Timeout, out _);
+                                                                           MmcErrorField.C2Pointers, MmcSubchannel.Raw,
+                                                                           _dev.Timeout, out _);
 
-                    AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadRWSubchannelWithC2);
+                        if(mediaTest.CanReadRWSubchannelWithC2 == false)
+                            mediaTest.CanReadRWSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2440, 1,
+                                                                               MmcSectorTypes.AllTypes, false, false,
+                                                                               false, MmcHeaderCodes.None, true, false,
+                                                                               MmcErrorField.C2PointersAndBlock,
+                                                                               MmcSubchannel.Raw, _dev.Timeout, out _);
 
-                    mediaTest.RWSubchannelWithC2Data = buffer;
+                        AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadRWSubchannelWithC2);
 
-                    mediaTest.CanReadCorrectedSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2438, 1,
-                                                                              MmcSectorTypes.AllTypes, false, false,
-                                                                              false, MmcHeaderCodes.None, true, false,
-                                                                              MmcErrorField.C2Pointers,
-                                                                              MmcSubchannel.Rw, _dev.Timeout, out _);
+                        mediaTest.RWSubchannelWithC2Data = buffer;
 
-                    if(mediaTest.CanReadCorrectedSubchannelWithC2 == false)
-                        mediaTest.CanReadCorrectedSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2440,
+                        mediaTest.CanReadCorrectedSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2438,
                                                                          1, MmcSectorTypes.AllTypes, false, false,
                                                                          false, MmcHeaderCodes.None, true, false,
-                                                                         MmcErrorField.C2PointersAndBlock,
+                                                                         MmcErrorField.C2Pointers,
                                                                          MmcSubchannel.Rw, _dev.Timeout, out _);
 
-                    AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}",
-                                               !mediaTest.CanReadCorrectedSubchannelWithC2);
+                        if(mediaTest.CanReadCorrectedSubchannelWithC2 == false)
+                            mediaTest.CanReadCorrectedSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 16,
+                                                                             2440, 1, MmcSectorTypes.AllTypes,
+                                                                             false, false, false,
+                                                                             MmcHeaderCodes.None, true, false,
+                                                                             MmcErrorField.C2PointersAndBlock,
+                                                                             MmcSubchannel.Rw, _dev.Timeout,
+                                                                             out _);
 
-                    mediaTest.CorrectedSubchannelWithC2Data = buffer;
+                        AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}",
+                                                   !mediaTest.CanReadCorrectedSubchannelWithC2);
+
+                        mediaTest.CorrectedSubchannelWithC2Data = buffer;
+                    }
                 }
 
                 if(tryPlextor)
