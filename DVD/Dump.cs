@@ -68,7 +68,7 @@ namespace Aaru.Decryption.DVD
         public bool ReadAsf(out byte[] buffer, out byte[] senseBuffer, DvdCssKeyClass keyClass, uint timeout,
                             out double duration)
         {
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
             byte[] cdb = new byte[12];
             buffer = new byte[8];
 
@@ -98,7 +98,7 @@ namespace Aaru.Decryption.DVD
         public bool ReadRpc(out byte[] buffer, out byte[] senseBuffer, DvdCssKeyClass keyClass, uint timeout,
                             out double duration)
         {
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
             byte[] cdb = new byte[12];
             buffer = new byte[8];
 
@@ -128,7 +128,7 @@ namespace Aaru.Decryption.DVD
         public bool InvalidateAgid(out byte[] buffer, out byte[] senseBuffer, DvdCssKeyClass keyClass, uint timeout,
                                    out double duration)
         {
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
             byte[] cdb = new byte[12];
             buffer = new byte[0];
 
@@ -158,7 +158,7 @@ namespace Aaru.Decryption.DVD
         public bool ReportAgidCssCppm(out byte[] buffer, out byte[] senseBuffer, DvdCssKeyClass keyClass, uint timeout,
                                       out double duration)
         {
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
             byte[] cdb = new byte[12];
             buffer = new byte[8];
 
@@ -188,7 +188,7 @@ namespace Aaru.Decryption.DVD
         public bool ReportKey1(out byte[] buffer, out byte[] senseBuffer, DvdCssKeyClass keyClass, uint timeout,
                                out double duration)
         {
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
             byte[] cdb = new byte[12];
             buffer = new byte[12];
 
@@ -218,7 +218,7 @@ namespace Aaru.Decryption.DVD
         public bool ReportChallenge(out byte[] buffer, out byte[] senseBuffer, DvdCssKeyClass keyClass, uint timeout,
                                     out double duration)
         {
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
             byte[] cdb = new byte[12];
             buffer = new byte[16];
 
@@ -249,7 +249,7 @@ namespace Aaru.Decryption.DVD
         public bool SendChallenge(out byte[] buffer, out byte[] senseBuffer, DvdCssKeyClass keyClass,
                                   byte[] challengeKey, uint timeout, out double duration)
         {
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
             byte[] cdb = new byte[12];
             buffer = new byte[16];
 
@@ -292,7 +292,7 @@ namespace Aaru.Decryption.DVD
         public bool SendKey2(out byte[] buffer, out byte[] senseBuffer, DvdCssKeyClass keyClass, byte[] key2,
                              uint timeout, out double duration)
         {
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
             byte[] cdb = new byte[12];
             buffer = new byte[12];
 
@@ -327,7 +327,7 @@ namespace Aaru.Decryption.DVD
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
         public bool ReadDiscKey(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
         {
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
             byte[] cdb = new byte[12];
             buffer = new byte[2052];
 
@@ -357,7 +357,7 @@ namespace Aaru.Decryption.DVD
         {
             duration    = 0;
             buffer      = new byte[0];
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
 
             bool   sense     = false;
             byte[] challenge = new byte[_challengeSize];
@@ -482,7 +482,7 @@ namespace Aaru.Decryption.DVD
 
             BusKey = buffer;
 
-            senseBuffer = new byte[32];
+            senseBuffer = new byte[64];
             byte[] cdb = new byte[12];
             buffer = new byte[12];
 
