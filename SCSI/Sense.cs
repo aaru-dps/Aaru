@@ -45,6 +45,16 @@ namespace Aaru.Decoders.SCSI
         Unknown
     }
 
+    public struct DecodedSense
+    {
+        public FixedSense?      Fixed;
+        public DescriptorSense? Descriptor;
+        public byte             ASC         => Descriptor?.ASC      ?? (Fixed?.ASC      ?? 0);
+        public byte             ASCQ        => Descriptor?.ASCQ     ?? (Fixed?.ASCQ     ?? 0);
+        public SenseKeys        SenseKey    => Descriptor?.SenseKey ?? (Fixed?.SenseKey ?? SenseKeys.NoSense);
+        public string           Description => Sense.GetSenseDescription(ASC, ASCQ);
+    }
+
     [SuppressMessage("ReSharper", "MemberCanBeInternal"), SuppressMessage("ReSharper", "NotAccessedField.Global"),
      SuppressMessage("ReSharper", "InconsistentNaming")]
     public struct StandardSense
@@ -196,6 +206,27 @@ namespace Aaru.Decoders.SCSI
             decoded.LBA          =  (uint)(((sense[1] & 0x0F) << 16) + (sense[2] << 8) + sense[3]);
 
             return decoded;
+        }
+
+        public static DecodedSense? Decode(byte[] sense)
+        {
+            var decoded = new DecodedSense();
+
+            switch(sense[0])
+            {
+                case 0x70:
+                case 0x71:
+                    decoded.Fixed = DecodeFixed(sense);
+
+                    break;
+                case 0x72:
+                case 0x73:
+                    decoded.Descriptor = DecodeDescriptor(sense);
+
+                    break;
+            }
+
+            return decoded.Fixed is null && decoded.Descriptor is null ? (DecodedSense?)null : decoded;
         }
 
         public static FixedSense? DecodeFixed(byte[] sense) => DecodeFixed(sense, out _);
