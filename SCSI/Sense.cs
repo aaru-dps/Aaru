@@ -520,7 +520,12 @@ namespace Aaru.Decoders.SCSI
             };
         }
 
-        public static void DecodeDescriptor04(byte[] descriptor) => throw new NotImplementedException("Check SSC-4");
+        public static void DecodeDescriptor04(byte[] descriptor, out bool filemark, out bool eom, out bool ili)
+        {
+            filemark = (descriptor[3] & 0x80) > 0;
+            eom      = (descriptor[3] & 0x40) > 0;
+            ili      = (descriptor[3] & 0x20) > 0;
+        }
 
         public static void DecodeDescriptor05(byte[] descriptor) => throw new NotImplementedException("Check SBC-3");
 
