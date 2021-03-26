@@ -369,12 +369,11 @@ namespace Aaru.Core.Logging
                 return;
             }
 
-            FixedSense?      decodedFixedSense      = Sense.DecodeFixed(senseBuffer);
-            DescriptorSense? decodedDescriptorSense = Sense.DecodeDescriptor(senseBuffer);
-            string           prettySense            = Sense.PrettifySense(senseBuffer);
-            string           hexSense               = string.Join(' ', senseBuffer.Select(b => $"{b:X2}"));
+            DecodedSense? decodedSense = Sense.Decode(senseBuffer);
+            string        prettySense  = Sense.PrettifySense(senseBuffer);
+            string        hexSense     = string.Join(' ', senseBuffer.Select(b => $"{b:X2}"));
 
-            if(decodedFixedSense.HasValue)
+            if(decodedSense.HasValue)
             {
                 if(prettySense != null)
                 {
@@ -387,37 +386,13 @@ namespace Aaru.Core.Logging
                     prettySense = prettySense.Replace("\n", " - ");
 
                     _logSw.WriteLine("SCSI command {0} error: SENSE {1} ASC {2:X2}h ASCQ {3:X2}h, {4}, {5}.", command,
-                                     decodedFixedSense?.SenseKey, decodedFixedSense?.ASC, decodedFixedSense?.ASCQ,
-                                     hexSense, prettySense);
+                                     decodedSense?.SenseKey, decodedSense?.ASC, decodedSense?.ASCQ, hexSense,
+                                     prettySense);
                 }
                 else
                 {
                     _logSw.WriteLine("SCSI command {0} error: SENSE {1} ASC {2:X2}h ASCQ {3:X2}h, {4}.", command,
-                                     decodedFixedSense?.SenseKey, decodedFixedSense?.ASC, decodedFixedSense?.ASCQ,
-                                     hexSense);
-                }
-            }
-            else if(decodedDescriptorSense.HasValue)
-            {
-                if(prettySense != null)
-                {
-                    if(prettySense.StartsWith("SCSI SENSE: ", StringComparison.Ordinal))
-                        prettySense = prettySense.Substring(12);
-
-                    if(prettySense.EndsWith('\n'))
-                        prettySense = prettySense.Substring(0, prettySense.Length - 1);
-
-                    prettySense = prettySense.Replace("\n", " - ");
-
-                    _logSw.WriteLine("SCSI command {0} error: SENSE {1} ASC {2:X2}h ASCQ {3:X2}h, {4}, {5}.", command,
-                                     decodedDescriptorSense?.SenseKey, decodedDescriptorSense?.ASC,
-                                     decodedDescriptorSense?.ASCQ, hexSense, prettySense);
-                }
-                else
-                {
-                    _logSw.WriteLine("SCSI command {0} error: SENSE {1} ASC {2:X2}h ASCQ {3:X2}h, {4}.", command,
-                                     decodedDescriptorSense?.SenseKey, decodedDescriptorSense?.ASC,
-                                     decodedDescriptorSense?.ASCQ, hexSense);
+                                     decodedSense?.SenseKey, decodedSense?.ASC, decodedSense?.ASCQ, hexSense);
                 }
             }
             else
@@ -461,12 +436,11 @@ namespace Aaru.Core.Logging
                     return;
             }
 
-            FixedSense?      decodedFixedSense      = Sense.DecodeFixed(senseBuffer);
-            DescriptorSense? decodedDescriptorSense = Sense.DecodeDescriptor(senseBuffer);
-            string           prettySense            = Sense.PrettifySense(senseBuffer);
-            string           hexSense               = string.Join(' ', senseBuffer.Select(b => $"{b:X2}"));
+            DecodedSense? decodedSense = Sense.Decode(senseBuffer);
+            string        prettySense  = Sense.PrettifySense(senseBuffer);
+            string        hexSense     = string.Join(' ', senseBuffer.Select(b => $"{b:X2}"));
 
-            if(decodedFixedSense.HasValue)
+            if(decodedSense.HasValue)
             {
                 if(prettySense != null)
                 {
@@ -479,37 +453,13 @@ namespace Aaru.Core.Logging
                     prettySense = prettySense.Replace("\n", " - ");
 
                     _logSw.WriteLine("SCSI reading LBA {0} error: SENSE {1} ASC {2:X2}h ASCQ {3:X2}h, {4}, {5}.", block,
-                                     decodedFixedSense?.SenseKey, decodedFixedSense?.ASC, decodedFixedSense?.ASCQ,
-                                     hexSense, prettySense);
+                                     decodedSense?.SenseKey, decodedSense?.ASC, decodedSense?.ASCQ, hexSense,
+                                     prettySense);
                 }
                 else
                 {
                     _logSw.WriteLine("SCSI reading LBA {0} error: SENSE {1} ASC {2:X2}h ASCQ {3:X2}h, {4}.", block,
-                                     decodedFixedSense?.SenseKey, decodedFixedSense?.ASC, decodedFixedSense?.ASCQ,
-                                     hexSense);
-                }
-            }
-            else if(decodedDescriptorSense.HasValue)
-            {
-                if(prettySense != null)
-                {
-                    if(prettySense.StartsWith("SCSI SENSE: ", StringComparison.Ordinal))
-                        prettySense = prettySense.Substring(12);
-
-                    if(prettySense.EndsWith('\n'))
-                        prettySense = prettySense.Substring(0, prettySense.Length - 1);
-
-                    prettySense = prettySense.Replace("\n", " - ");
-
-                    _logSw.WriteLine("SCSI reading LBA {0} error: SENSE {1} ASC {2:X2}h ASCQ {3:X2}h, {4}, {5}.", block,
-                                     decodedDescriptorSense?.SenseKey, decodedDescriptorSense?.ASC,
-                                     decodedDescriptorSense?.ASCQ, hexSense, prettySense);
-                }
-                else
-                {
-                    _logSw.WriteLine("SCSI reading LBA {0} error: SENSE {1} ASC {2:X2}h ASCQ {3:X2}h, {4}.", block,
-                                     decodedDescriptorSense?.SenseKey, decodedDescriptorSense?.ASC,
-                                     decodedDescriptorSense?.ASCQ, hexSense);
+                                     decodedSense?.SenseKey, decodedSense?.ASC, decodedSense?.ASCQ, hexSense);
                 }
             }
             else

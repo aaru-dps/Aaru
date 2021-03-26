@@ -115,14 +115,14 @@ namespace Aaru.Devices
             if(Error)
                 return sense;
 
-            FixedSense? decodedSense = Sense.DecodeFixed(senseBuffer);
+            DecodedSense? decodedSense = Sense.Decode(senseBuffer);
 
             switch(decodedSense?.SenseKey)
             {
                 case SenseKeys.NoSense: return false;
-                case SenseKeys.Equal when decodedSense.Value.InformationValid:
-                    foundBlocks = decodedSense.Value.CommandSpecific;
-                    foundLba    = decodedSense.Value.Information;
+                case SenseKeys.Equal when decodedSense.Value.Fixed?.InformationValid == true:
+                    foundBlocks = decodedSense.Value.Fixed.Value.CommandSpecific;
+                    foundLba    = decodedSense.Value.Fixed.Value.Information;
 
                     return false;
                 default: return sense;

@@ -65,7 +65,7 @@ namespace Aaru.Core.Devices.Scanning
                 if(sense)
                 {
                     InitProgress?.Invoke();
-                    FixedSense? decSense = Sense.DecodeFixed(senseBuf);
+                    DecodedSense? decSense = Sense.Decode(senseBuf);
 
                     if(decSense.HasValue)
                         if(decSense.Value.ASC == 0x3A)
@@ -391,7 +391,7 @@ namespace Aaru.Core.Devices.Scanning
                     {
                         AaruConsole.DebugWriteLine("Media-Scan", "READ CD error:\n{0}", Sense.PrettifySense(senseBuf));
 
-                        FixedSense? senseDecoded = Sense.DecodeFixed(senseBuf);
+                        DecodedSense? senseDecoded = Sense.Decode(senseBuf);
 
                         if(senseDecoded.HasValue)
                         {
@@ -435,8 +435,8 @@ namespace Aaru.Core.Devices.Scanning
                     if(elapsed < 1)
                         continue;
 
-                    currentSpeed = (sectorSpeedStart  * blockSize) / (1048576 * elapsed);
-                    ScanSpeed?.Invoke(i, currentSpeed * 1024);
+                    currentSpeed = sectorSpeedStart * blockSize / (1048576 * elapsed);
+                    ScanSpeed?.Invoke(i, currentSpeed                      * 1024);
                     sectorSpeedStart = 0;
                     timeSpeedStart   = DateTime.UtcNow;
                 }
@@ -446,7 +446,7 @@ namespace Aaru.Core.Devices.Scanning
                 mhddLog.Close();
 
                 ibgLog.Close(_dev, results.Blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
-                             (blockSize * (double)(results.Blocks + 1)) / 1024 / (results.ProcessingTime / 1000),
+                             blockSize * (double)(results.Blocks + 1) / 1024 / (results.ProcessingTime / 1000),
                              _devicePath);
             }
             else
@@ -526,8 +526,8 @@ namespace Aaru.Core.Devices.Scanning
                     if(elapsed < 1)
                         continue;
 
-                    currentSpeed = (sectorSpeedStart  * blockSize) / (1048576 * elapsed);
-                    ScanSpeed?.Invoke(i, currentSpeed * 1024);
+                    currentSpeed = sectorSpeedStart * blockSize / (1048576 * elapsed);
+                    ScanSpeed?.Invoke(i, currentSpeed                      * 1024);
                     sectorSpeedStart = 0;
                     timeSpeedStart   = DateTime.UtcNow;
                 }
@@ -537,7 +537,7 @@ namespace Aaru.Core.Devices.Scanning
                 mhddLog.Close();
 
                 ibgLog.Close(_dev, results.Blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
-                             (blockSize * (double)(results.Blocks + 1)) / 1024 / (results.ProcessingTime / 1000),
+                             blockSize * (double)(results.Blocks + 1) / 1024 / (results.ProcessingTime / 1000),
                              _devicePath);
             }
 
@@ -582,7 +582,7 @@ namespace Aaru.Core.Devices.Scanning
 
             results.ProcessingTime /= 1000;
             results.TotalTime      =  (end - start).TotalSeconds;
-            results.AvgSpeed       =  (blockSize * (double)(results.Blocks + 1)) / 1048576 / results.ProcessingTime;
+            results.AvgSpeed       =  blockSize * (double)(results.Blocks + 1) / 1048576 / results.ProcessingTime;
             results.SeekTimes      =  seekTimes;
 
             return results;

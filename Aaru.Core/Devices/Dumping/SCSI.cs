@@ -56,7 +56,7 @@ namespace Aaru.Core.Devices.Dumping
 
                 if(sense)
                 {
-                    FixedSense? decSense = Sense.DecodeFixed(senseBuf);
+                    var decSense = Sense.Decode(senseBuf);
 
                     if(decSense.HasValue)
                     {
@@ -88,7 +88,7 @@ namespace Aaru.Core.Devices.Dumping
                                 if(!sense)
                                     break;
 
-                                decSense = Sense.DecodeFixed(senseBuf);
+                                decSense = Sense.Decode(senseBuf);
 
                                 if(decSense.HasValue)
                                 {
@@ -124,7 +124,7 @@ namespace Aaru.Core.Devices.Dumping
                                 if(!sense)
                                     break;
 
-                                decSense = Sense.DecodeFixed(senseBuf);
+                                decSense = Sense.Decode(senseBuf);
 
                                 if(decSense.HasValue)
                                 {
@@ -174,7 +174,7 @@ namespace Aaru.Core.Devices.Dumping
                                 if(!sense)
                                     break;
 
-                                decSense = Sense.DecodeFixed(senseBuf);
+                                decSense = Sense.Decode(senseBuf);
 
                                 if(decSense.HasValue)
                                 {

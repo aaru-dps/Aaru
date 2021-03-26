@@ -92,7 +92,7 @@ namespace Aaru.Core.Devices.Report
                 if(!sense)
                     break;
 
-                FixedSense? decodedSense = Sense.DecodeFixed(senseBuffer);
+                DecodedSense? decodedSense = Sense.Decode(senseBuffer);
 
                 if(decodedSense?.ASC != 0x04)
                     break;
@@ -172,7 +172,7 @@ namespace Aaru.Core.Devices.Report
                 frame =  ((leadOutTrack.PFRAME >> 4) * 10) + (leadOutTrack.PFRAME & 0x0F);
             }
 
-            int sectors = ((min * 60 * 75) + (sec * 75) + frame) - 150;
+            int sectors = (min * 60 * 75) + (sec * 75) + frame - 150;
 
             AaruConsole.WriteLine("Trap disc shows {0} sectors...", sectors);
 
@@ -211,7 +211,7 @@ namespace Aaru.Core.Devices.Report
                 if(!sense)
                     break;
 
-                FixedSense? decodedSense = Sense.DecodeFixed(senseBuffer);
+                DecodedSense? decodedSense = Sense.Decode(senseBuffer);
 
                 if(decodedSense?.ASC != 0x04)
                     break;
@@ -1568,7 +1568,7 @@ namespace Aaru.Core.Devices.Report
                     if(trackModeChange)
                         break;
 
-                    FixedSense? decoded = Sense.DecodeFixed(senseBuffer);
+                    DecodedSense? decoded = Sense.Decode(senseBuffer);
 
                     if(decoded?.ASC != 0x64)
                         break;
@@ -1596,7 +1596,7 @@ namespace Aaru.Core.Devices.Report
                         break;
                 }
 
-                report.GdRomSwapDiscCapabilities.MaximumReadableSectorInHdArea = (lba + cluster) - 1;
+                report.GdRomSwapDiscCapabilities.MaximumReadableSectorInHdArea = lba + cluster - 1;
             }
 
             AaruConsole.WriteLine();

@@ -520,7 +520,7 @@ namespace Aaru.Core.Devices.Report
 
             if(sense && !_dev.Error)
             {
-                FixedSense? decSense = Sense.DecodeFixed(senseBuffer);
+                DecodedSense? decSense = Sense.Decode(senseBuffer);
 
                 if(decSense?.SenseKey  == SenseKeys.IllegalRequest &&
                    decSense.Value.ASC  == 0x24                     &&
@@ -528,9 +528,20 @@ namespace Aaru.Core.Devices.Report
                 {
                     mediaTest.SupportsReadLong = true;
 
-                    if(decSense.Value.InformationValid &&
-                       decSense.Value.ILI)
-                        mediaTest.LongBlockSize = 0xFFFF - (decSense.Value.Information & 0xFFFF);
+                    bool valid       = decSense?.Fixed?.InformationValid == true;
+                    bool ili         = decSense?.Fixed?.ILI              == true;
+                    uint information = decSense?.Fixed?.Information ?? 0;
+
+                    if(decSense?.Descriptor.HasValue == true &&
+                       decSense.Value.Descriptor.Value.Descriptors.TryGetValue(0, out byte[] desc00))
+                    {
+                        valid       = true;
+                        ili         = true;
+                        information = (uint)Sense.DecodeDescriptor00(desc00);
+                    }
+
+                    if(valid && ili)
+                        mediaTest.LongBlockSize = 0xFFFF - (information & 0xFFFF);
                 }
             }
 
@@ -728,7 +739,7 @@ namespace Aaru.Core.Devices.Report
 
             if(sense && !_dev.Error)
             {
-                FixedSense? decSense = Sense.DecodeFixed(senseBuffer);
+                DecodedSense? decSense = Sense.Decode(senseBuffer);
 
                 if(decSense?.SenseKey  == SenseKeys.IllegalRequest &&
                    decSense.Value.ASC  == 0x24                     &&
@@ -736,9 +747,20 @@ namespace Aaru.Core.Devices.Report
                 {
                     capabilities.SupportsReadLong = true;
 
-                    if(decSense.Value.InformationValid &&
-                       decSense.Value.ILI)
-                        capabilities.LongBlockSize = 0xFFFF - (decSense.Value.Information & 0xFFFF);
+                    bool valid       = decSense?.Fixed?.InformationValid == true;
+                    bool ili         = decSense?.Fixed?.ILI              == true;
+                    uint information = decSense?.Fixed?.Information ?? 0;
+
+                    if(decSense?.Descriptor.HasValue == true &&
+                       decSense.Value.Descriptor.Value.Descriptors.TryGetValue(0, out byte[] desc00))
+                    {
+                        valid       = true;
+                        ili         = true;
+                        information = (uint)Sense.DecodeDescriptor00(desc00);
+                    }
+
+                    if(valid && ili)
+                        capabilities.LongBlockSize = 0xFFFF - (information & 0xFFFF);
                 }
             }
 

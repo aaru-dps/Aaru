@@ -44,7 +44,7 @@ namespace Aaru.Tests.Devices
                 if(!sense)
                     break;
 
-                FixedSense? decodedSense = Sense.DecodeFixed(senseBuffer);
+                DecodedSense? decodedSense = Sense.Decode(senseBuffer);
 
                 if(decodedSense.Value.ASC != 0x04)
                     break;
@@ -95,7 +95,7 @@ namespace Aaru.Tests.Devices
             int sec   = ((leadOutTrack.PSEC   >> 4) * 10) + (leadOutTrack.PSEC   & 0x0F);
             int frame = ((leadOutTrack.PFRAME >> 4) * 10) + (leadOutTrack.PFRAME & 0x0F);
 
-            int sectors = ((min * 60 * 75) + (sec * 75) + frame) - 150;
+            int sectors = (min * 60 * 75) + (sec * 75) + frame - 150;
 
             AaruConsole.WriteLine("Data disc shows {0} sectors...", sectors);
 
@@ -120,7 +120,7 @@ namespace Aaru.Tests.Devices
                 if(!sense)
                     break;
 
-                FixedSense? decodedSense = Sense.DecodeFixed(senseBuffer);
+                DecodedSense? decodedSense = Sense.Decode(senseBuffer);
 
                 if(decodedSense.Value.ASC != 0x04)
                     break;
@@ -192,7 +192,7 @@ namespace Aaru.Tests.Devices
                 frame =  ((leadOutTrack.PFRAME >> 4) * 10) + (leadOutTrack.PFRAME & 0x0F);
             }
 
-            int trapSectors = ((min * 60 * 75) + (sec * 75) + frame) - 150;
+            int trapSectors = (min * 60 * 75) + (sec * 75) + frame - 150;
 
             AaruConsole.WriteLine("Trap disc shows {0} sectors...", trapSectors);
 
@@ -228,7 +228,7 @@ namespace Aaru.Tests.Devices
                 if(!sense)
                     break;
 
-                FixedSense? decodedSense = Sense.DecodeFixed(senseBuffer);
+                DecodedSense? decodedSense = Sense.Decode(senseBuffer);
 
                 if(decodedSense.Value.ASC != 0x04)
                     break;

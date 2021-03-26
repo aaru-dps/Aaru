@@ -60,41 +60,40 @@ namespace Aaru.Core.Devices.Dumping
         /// <summary>Dumps the tape from a SCSI Streaming device</summary>
         void Ssc()
         {
-            FixedSense? fxSense;
-            bool        sense;
-            uint        blockSize;
-            ulong       blocks  = 0;
-            MediaType   dskType = MediaType.Unknown;
-            DateTime    start;
-            DateTime    end;
-            double      totalDuration = 0;
-            double      currentSpeed  = 0;
-            double      maxSpeed      = double.MinValue;
-            double      minSpeed      = double.MaxValue;
+            DecodedSense? decSense;
+            bool          sense;
+            uint          blockSize;
+            ulong         blocks  = 0;
+            MediaType     dskType = MediaType.Unknown;
+            DateTime      start;
+            DateTime      end;
+            double        totalDuration = 0;
+            double        currentSpeed  = 0;
+            double        maxSpeed      = double.MinValue;
+            double        minSpeed      = double.MaxValue;
 
             _dev.RequestSense(out byte[] senseBuf, _dev.Timeout, out double duration);
-            fxSense = Sense.DecodeFixed(senseBuf, out string strSense);
+            decSense = Sense.Decode(senseBuf);
 
             InitProgress?.Invoke();
 
-            if(fxSense.HasValue &&
-               fxSense.Value.SenseKey != SenseKeys.NoSense)
+            if(decSense.HasValue &&
+               decSense.Value.SenseKey != SenseKeys.NoSense)
             {
-                _dumpLog.WriteLine("Device not ready. Sense {0}h ASC {1:X2}h ASCQ {2:X2}h", fxSense.Value.SenseKey,
-                                   fxSense.Value.ASC, fxSense.Value.ASCQ);
+                _dumpLog.WriteLine("Device not ready. Sense {0}h ASC {1:X2}h ASCQ {2:X2}h", decSense.Value.SenseKey,
+                                   decSense.Value.ASC, decSense.Value.ASCQ);
 
                 StoppingErrorMessage?.Invoke("Drive has status error, please correct. Sense follows..." +
-                                             Environment.NewLine                                        + strSense);
+                                             Environment.NewLine + decSense.Value.Description);
 
                 return;
             }
 
             // Not in BOM/P
-            if(fxSense.HasValue               &&
-               fxSense.Value.ASC      == 0x00 &&
-               fxSense.Value.ASCQ     != 0x00 &&
-               fxSense.Value.ASCQ     != 0x04 &&
-               fxSense.Value.SenseKey != SenseKeys.IllegalRequest)
+            if(decSense is { ASC: 0x00 }       &&
+               decSense.Value.ASCQ     != 0x00 &&
+               decSense.Value.ASCQ     != 0x04 &&
+               decSense.Value.SenseKey != SenseKeys.IllegalRequest)
             {
                 _dumpLog.WriteLine("Rewinding, please wait...");
                 PulseProgress?.Invoke("Rewinding, please wait...");
@@ -108,26 +107,25 @@ namespace Aaru.Core.Devices.Dumping
                 {
                     PulseProgress?.Invoke("Rewinding, please wait...");
                     _dev.RequestSense(out senseBuf, _dev.Timeout, out duration);
-                    fxSense = Sense.DecodeFixed(senseBuf, out strSense);
-                } while(fxSense.HasValue          &&
-                        fxSense.Value.ASC == 0x00 &&
-                        (fxSense.Value.ASCQ == 0x1A || fxSense.Value.ASCQ != 0x04 || fxSense.Value.ASCQ != 0x00));
+                    decSense = Sense.Decode(senseBuf);
+                } while(decSense is { ASC: 0x00 } &&
+                        (decSense.Value.ASCQ == 0x1A || decSense.Value.ASCQ != 0x04 || decSense.Value.ASCQ != 0x00));
 
                 _dev.RequestSense(out senseBuf, _dev.Timeout, out duration);
-                fxSense = Sense.DecodeFixed(senseBuf, out strSense);
+                decSense = Sense.Decode(senseBuf);
 
                 // And yet, did not rewind!
-                if(fxSense.HasValue &&
-                   ((fxSense.Value.ASC == 0x00 && fxSense.Value.ASCQ != 0x04 && fxSense.Value.ASCQ != 0x00) ||
-                    fxSense.Value.ASC != 0x00))
+                if(decSense.HasValue &&
+                   ((decSense.Value.ASC == 0x00 && decSense.Value.ASCQ != 0x04 && decSense.Value.ASCQ != 0x00) ||
+                    decSense.Value.ASC != 0x00))
                 {
                     StoppingErrorMessage?.Invoke("Drive could not rewind, please correct. Sense follows..." +
-                                                 Environment.NewLine                                        + strSense);
+                                                 Environment.NewLine + decSense.Value.Description);
 
                     _dumpLog.WriteLine("Drive could not rewind, please correct. Sense follows...");
 
-                    _dumpLog.WriteLine("Device not ready. Sense {0}h ASC {1:X2}h ASCQ {2:X2}h", fxSense.Value.SenseKey,
-                                       fxSense.Value.ASC, fxSense.Value.ASCQ);
+                    _dumpLog.WriteLine("Device not ready. Sense {0}h ASC {1:X2}h ASCQ {2:X2}h", decSense.Value.SenseKey,
+                                       decSense.Value.ASC, decSense.Value.ASCQ);
 
                     return;
                 }
@@ -141,19 +139,19 @@ namespace Aaru.Core.Devices.Dumping
             {
                 // READ POSITION is mandatory starting SCSI-2, so do not cry if the drive does not recognize the command (SCSI-1 or earlier)
                 // Anyway, <=SCSI-1 tapes do not support partitions
-                fxSense = Sense.DecodeFixed(senseBuf, out strSense);
+                decSense = Sense.Decode(senseBuf);
 
-                if(fxSense.HasValue &&
-                   ((fxSense.Value.ASC == 0x20 && fxSense.Value.ASCQ     != 0x00) ||
-                    (fxSense.Value.ASC != 0x20 && fxSense.Value.SenseKey != SenseKeys.IllegalRequest)))
+                if(decSense.HasValue &&
+                   ((decSense.Value.ASC == 0x20 && decSense.Value.ASCQ     != 0x00) ||
+                    (decSense.Value.ASC != 0x20 && decSense.Value.SenseKey != SenseKeys.IllegalRequest)))
                 {
                     StoppingErrorMessage?.Invoke("Could not get position. Sense follows..." + Environment.NewLine +
-                                                 strSense);
+                                                 decSense.Value.Description);
 
                     _dumpLog.WriteLine("Could not get position. Sense follows...");
 
-                    _dumpLog.WriteLine("Device not ready. Sense {0}h ASC {1:X2}h ASCQ {2:X2}h", fxSense.Value.SenseKey,
-                                       fxSense.Value.ASC, fxSense.Value.ASCQ);
+                    _dumpLog.WriteLine("Device not ready. Sense {0}h ASC {1:X2}h ASCQ {2:X2}h", decSense.Value.SenseKey,
+                                       decSense.Value.ASC, decSense.Value.ASCQ);
 
                     return;
                 }
@@ -172,12 +170,12 @@ namespace Aaru.Core.Devices.Dumping
                     if(sense)
                     {
                         StoppingErrorMessage?.Invoke("Drive could not rewind, please correct. Sense follows..." +
-                                                     Environment.NewLine + strSense);
+                                                     Environment.NewLine + decSense?.Description);
 
                         _dumpLog.WriteLine("Drive could not rewind, please correct. Sense follows...");
 
-                        _dumpLog.WriteLine("Device not ready. Sense {0}h ASC {1:X2}h ASCQ {2:X2}h", fxSense?.SenseKey,
-                                           fxSense?.ASC, fxSense?.ASCQ);
+                        _dumpLog.WriteLine("Device not ready. Sense {0}h ASC {1:X2}h ASCQ {2:X2}h", decSense?.SenseKey,
+                                           decSense?.ASC, decSense?.ASCQ);
 
                         return;
                     }
@@ -189,23 +187,22 @@ namespace Aaru.Core.Devices.Dumping
                         Thread.Sleep(1000);
                         PulseProgress?.Invoke("Rewinding, please wait...");
                         _dev.RequestSense(out senseBuf, _dev.Timeout, out duration);
-                        fxSense = Sense.DecodeFixed(senseBuf, out strSense);
-                    } while(fxSense.HasValue          &&
-                            fxSense.Value.ASC == 0x00 &&
-                            (fxSense.Value.ASCQ == 0x1A || fxSense.Value.ASCQ == 0x19));
+                        decSense = Sense.Decode(senseBuf);
+                    } while(decSense is { ASC: 0x00 } &&
+                            (decSense.Value.ASCQ == 0x1A || decSense.Value.ASCQ == 0x19));
 
                     // And yet, did not rewind!
-                    if(fxSense.HasValue &&
-                       ((fxSense.Value.ASC == 0x00 && fxSense.Value.ASCQ != 0x04 && fxSense.Value.ASCQ != 0x00) ||
-                        fxSense.Value.ASC != 0x00))
+                    if(decSense.HasValue &&
+                       ((decSense.Value.ASC == 0x00 && decSense.Value.ASCQ != 0x04 && decSense.Value.ASCQ != 0x00) ||
+                        decSense.Value.ASC != 0x00))
                     {
                         StoppingErrorMessage?.Invoke("Drive could not rewind, please correct. Sense follows..." +
-                                                     Environment.NewLine + strSense);
+                                                     Environment.NewLine + decSense.Value.Description);
 
                         _dumpLog.WriteLine("Drive could not rewind, please correct. Sense follows...");
 
                         _dumpLog.WriteLine("Device not ready. Sense {0}h ASC {1:X2}h ASCQ {2:X2}h",
-                                           fxSense.Value.SenseKey, fxSense.Value.ASC, fxSense.Value.ASCQ);
+                                           decSense.Value.SenseKey, decSense.Value.ASC, decSense.Value.ASCQ);
 
                         return;
                     }
@@ -215,15 +212,15 @@ namespace Aaru.Core.Devices.Dumping
 
                     if(sense)
                     {
-                        fxSense = Sense.DecodeFixed(senseBuf, out strSense);
+                        decSense = Sense.Decode(senseBuf);
 
                         StoppingErrorMessage?.Invoke("Drive could not rewind, please correct. Sense follows..." +
-                                                     Environment.NewLine + strSense);
+                                                     Environment.NewLine + decSense?.Description);
 
                         _dumpLog.WriteLine("Drive could not rewind, please correct. Sense follows...");
 
-                        _dumpLog.WriteLine("Device not ready. Sense {0}h ASC {1:X2}h ASCQ {2:X2}h", fxSense?.SenseKey,
-                                           fxSense?.ASC, fxSense?.ASCQ);
+                        _dumpLog.WriteLine("Device not ready. Sense {0}h ASC {1:X2}h ASCQ {2:X2}h", decSense?.SenseKey,
+                                           decSense?.ASC, decSense?.ASCQ);
 
                         return;
                     }
@@ -339,26 +336,32 @@ namespace Aaru.Core.Devices.Dumping
 
             if(sense)
             {
-                fxSense = Sense.DecodeFixed(senseBuf, out strSense);
+                decSense = Sense.Decode(senseBuf);
 
-                if(fxSense.HasValue)
-                    if(fxSense.Value.SenseKey == SenseKeys.IllegalRequest)
+                if(decSense.HasValue)
+                    if(decSense.Value.SenseKey == SenseKeys.IllegalRequest)
                     {
                         sense = _dev.Space(out senseBuf, SscSpaceCodes.LogicalBlock, -1, _dev.Timeout, out duration);
 
                         if(sense)
                         {
-                            fxSense = Sense.DecodeFixed(senseBuf, out strSense);
+                            decSense = Sense.Decode(senseBuf);
 
-                            if(fxSense?.EOM != true)
+                            bool eom = decSense?.Fixed?.EOM == true;
+
+                            if(decSense?.Descriptor != null &&
+                               decSense.Value.Descriptor.Value.Descriptors.TryGetValue(4, out byte[] sscDescriptor))
+                                Sense.DecodeDescriptor04(sscDescriptor, out _, out eom, out _);
+
+                            if(!eom)
                             {
                                 StoppingErrorMessage?.Invoke("Drive could not return back. Sense follows..." +
-                                                             Environment.NewLine + strSense);
+                                                             Environment.NewLine + decSense.Value.Description);
 
                                 _dumpLog.WriteLine("Drive could not return back. Sense follows...");
 
                                 _dumpLog.WriteLine("Device not ready. Sense {0} ASC {1:X2}h ASCQ {2:X2}h",
-                                                   fxSense.Value.SenseKey, fxSense.Value.ASC, fxSense.Value.ASCQ);
+                                                   decSense.Value.SenseKey, decSense.Value.ASC, decSense.Value.ASCQ);
 
                                 return;
                             }
@@ -372,62 +375,89 @@ namespace Aaru.Core.Devices.Dumping
 
                         if(sense)
                         {
-                            fxSense = Sense.DecodeFixed(senseBuf, out strSense);
+                            decSense = Sense.Decode(senseBuf);
 
                             StoppingErrorMessage?.Invoke("Drive could not read. Sense follows..." +
-                                                         Environment.NewLine                      + strSense);
+                                                         Environment.NewLine + decSense.Value.Description);
 
                             _dumpLog.WriteLine("Drive could not read. Sense follows...");
 
                             _dumpLog.WriteLine("Device not ready. Sense {0} ASC {1:X2}h ASCQ {2:X2}h",
-                                               fxSense.Value.SenseKey, fxSense.Value.ASC, fxSense.Value.ASCQ);
+                                               decSense.Value.SenseKey, decSense.Value.ASC, decSense.Value.ASCQ);
 
                             return;
                         }
                     }
-                    else if(fxSense.Value.ASC  == 0x00 &&
-                            fxSense.Value.ASCQ == 0x00 &&
-                            fxSense.Value.ILI          &&
-                            fxSense.Value.InformationValid)
+                    else if(decSense.Value.ASC  == 0x00 &&
+                            decSense.Value.ASCQ == 0x00)
                     {
-                        blockSize = (uint)((int)blockSize -
-                                           BitConverter.ToInt32(BitConverter.GetBytes(fxSense.Value.Information), 0));
+                        bool ili         = decSense.Value.Fixed?.ILI              == true;
+                        bool valid       = decSense.Value.Fixed?.InformationValid == true;
+                        uint information = decSense.Value.Fixed?.Information ?? 0;
 
-                        transferLen = blockSize;
-
-                        UpdateStatus?.Invoke($"Blocksize changed to {blockSize} bytes at block {currentBlock}");
-                        _dumpLog.WriteLine("Blocksize changed to {0} bytes at block {1}", blockSize, currentBlock);
-
-                        sense = _dev.Space(out senseBuf, SscSpaceCodes.LogicalBlock, -1, _dev.Timeout, out duration);
-
-                        totalDuration += duration;
-
-                        if(sense)
+                        if(decSense.Value.Descriptor.HasValue)
                         {
-                            fxSense = Sense.DecodeFixed(senseBuf, out strSense);
+                            valid = decSense.Value.Descriptor.Value.Descriptors.TryGetValue(0, out byte[] desc00);
 
-                            StoppingErrorMessage?.Invoke("Drive could not go back one block. Sense follows..." +
-                                                         Environment.NewLine + strSense);
+                            if(valid)
+                                information = (uint)Sense.DecodeDescriptor00(desc00);
 
-                            _dumpLog.WriteLine("Drive could not go back one block. Sense follows...");
-
-                            _dumpLog.WriteLine("Device not ready. Sense {0}h ASC {1:X2}h ASCQ {2:X2}h",
-                                               fxSense.Value.SenseKey, fxSense.Value.ASC, fxSense.Value.ASCQ);
-
-                            return;
+                            if(decSense.Value.Descriptor.Value.Descriptors.TryGetValue(4, out byte[] desc04))
+                                Sense.DecodeDescriptor04(desc04, out _, out _, out ili);
                         }
 
-                        goto firstRead;
-                    }
-                    else
-                    {
+                        if(ili && valid)
+                        {
+                            blockSize = (uint)((int)blockSize -
+                                               BitConverter.ToInt32(BitConverter.GetBytes(information), 0));
+
+                            transferLen = blockSize;
+
+                            UpdateStatus?.Invoke($"Blocksize changed to {blockSize} bytes at block {currentBlock}");
+                            _dumpLog.WriteLine("Blocksize changed to {0} bytes at block {1}", blockSize, currentBlock);
+
+                            sense = _dev.Space(out senseBuf, SscSpaceCodes.LogicalBlock, -1, _dev.Timeout,
+                                               out duration);
+
+                            totalDuration += duration;
+
+                            if(sense)
+                            {
+                                decSense = Sense.Decode(senseBuf);
+
+                                StoppingErrorMessage?.Invoke("Drive could not go back one block. Sense follows..." +
+                                                             Environment.NewLine + decSense.Value.Description);
+
+                                _dumpLog.WriteLine("Drive could not go back one block. Sense follows...");
+
+                                _dumpLog.WriteLine("Device not ready. Sense {0}h ASC {1:X2}h ASCQ {2:X2}h",
+                                                   decSense.Value.SenseKey, decSense.Value.ASC, decSense.Value.ASCQ);
+
+                                return;
+                            }
+
+                            goto firstRead;
+                        }
+
                         StoppingErrorMessage?.Invoke("Drive could not read. Sense follows..." + Environment.NewLine +
-                                                     strSense);
+                                                     decSense.Value.Description);
 
                         _dumpLog.WriteLine("Drive could not read. Sense follows...");
 
                         _dumpLog.WriteLine("Device not ready. Sense {0} ASC {1:X2}h ASCQ {2:X2}h",
-                                           fxSense.Value.SenseKey, fxSense.Value.ASC, fxSense.Value.ASCQ);
+                                           decSense.Value.SenseKey, decSense.Value.ASC, decSense.Value.ASCQ);
+
+                        return;
+                    }
+                    else
+                    {
+                        StoppingErrorMessage?.Invoke("Drive could not read. Sense follows..." + Environment.NewLine +
+                                                     decSense.Value.Description);
+
+                        _dumpLog.WriteLine("Drive could not read. Sense follows...");
+
+                        _dumpLog.WriteLine("Device not ready. Sense {0} ASC {1:X2}h ASCQ {2:X2}h",
+                                           decSense.Value.SenseKey, decSense.Value.ASC, decSense.Value.ASCQ);
 
                         return;
                     }
@@ -444,17 +474,23 @@ namespace Aaru.Core.Devices.Dumping
 
             if(sense)
             {
-                fxSense = Sense.DecodeFixed(senseBuf, out strSense);
+                decSense = Sense.Decode(senseBuf);
 
-                if(fxSense?.EOM != true)
+                bool eom = decSense?.Fixed?.EOM == true;
+
+                if(decSense.Value.Descriptor.HasValue &&
+                   decSense.Value.Descriptor.Value.Descriptors.TryGetValue(4, out byte[] desc04))
+                    Sense.DecodeDescriptor04(desc04, out _, out eom, out _);
+
+                if(!eom)
                 {
                     StoppingErrorMessage?.Invoke("Drive could not return back. Sense follows..." + Environment.NewLine +
-                                                 strSense);
+                                                 decSense.Value.Description);
 
                     _dumpLog.WriteLine("Drive could not return back. Sense follows...");
 
-                    _dumpLog.WriteLine("Device not ready. Sense {0} ASC {1:X2}h ASCQ {2:X2}h", fxSense.Value.SenseKey,
-                                       fxSense.Value.ASC, fxSense.Value.ASCQ);
+                    _dumpLog.WriteLine("Device not ready. Sense {0} ASC {1:X2}h ASCQ {2:X2}h", decSense.Value.SenseKey,
+                                       decSense.Value.ASC, decSense.Value.ASCQ);
 
                     return;
                 }
@@ -700,23 +736,22 @@ namespace Aaru.Core.Devices.Dumping
                     Thread.Sleep(1000);
                     PulseProgress?.Invoke("Rewinding, please wait...");
                     _dev.RequestSense(out senseBuf, _dev.Timeout, out duration);
-                    fxSense = Sense.DecodeFixed(senseBuf, out strSense);
-                } while(fxSense.HasValue          &&
-                        fxSense.Value.ASC == 0x00 &&
-                        (fxSense.Value.ASCQ == 0x1A || fxSense.Value.ASCQ == 0x19));
+                    decSense = Sense.Decode(senseBuf);
+                } while(decSense is { ASC: 0x00 } &&
+                        (decSense.Value.ASCQ == 0x1A || decSense.Value.ASCQ == 0x19));
 
                 // And yet, did not rewind!
-                if(fxSense.HasValue &&
-                   ((fxSense.Value.ASC == 0x00 && fxSense.Value.ASCQ != 0x00 && fxSense.Value.ASCQ != 0x04) ||
-                    fxSense.Value.ASC != 0x00))
+                if(decSense.HasValue &&
+                   ((decSense.Value.ASC == 0x00 && decSense.Value.ASCQ != 0x00 && decSense.Value.ASCQ != 0x04) ||
+                    decSense.Value.ASC != 0x00))
                 {
                     StoppingErrorMessage?.Invoke("Drive could not rewind, please correct. Sense follows..." +
-                                                 Environment.NewLine                                        + strSense);
+                                                 Environment.NewLine + decSense.Value.Description);
 
                     _dumpLog.WriteLine("Drive could not rewind, please correct. Sense follows...");
 
-                    _dumpLog.WriteLine("Device not ready. Sense {0}h ASC {1:X2}h ASCQ {2:X2}h", fxSense.Value.SenseKey,
-                                       fxSense.Value.ASC, fxSense.Value.ASCQ);
+                    _dumpLog.WriteLine("Device not ready. Sense {0}h ASC {1:X2}h ASCQ {2:X2}h", decSense.Value.SenseKey,
+                                       decSense.Value.ASC, decSense.Value.ASCQ);
 
                     return;
                 }
@@ -774,8 +809,9 @@ namespace Aaru.Core.Devices.Dumping
 
                 currentTapeFile =
                     (_outputPlugin as IWritableTapeImage).Files.FirstOrDefault(f => f.LastBlock ==
-                                                                                   (_outputPlugin as IWritableTapeImage
-                                                                                   )?.Files.Max(g => g.LastBlock));
+                                                                                   (_outputPlugin as
+                                                                                           IWritableTapeImage)?.
+                                                                                   Files.Max(g => g.LastBlock));
 
                 currentTapePartition =
                     (_outputPlugin as IWritableTapeImage).TapePartitions.FirstOrDefault(p => p.LastBlock ==
@@ -864,15 +900,33 @@ namespace Aaru.Core.Devices.Dumping
                    senseBuf?.Length != 0 &&
                    !ArrayHelpers.ArrayIsNullOrEmpty(senseBuf))
                 {
-                    fxSense = Sense.DecodeFixed(senseBuf, out strSense);
+                    decSense = Sense.Decode(senseBuf);
 
-                    if(fxSense.Value.ASC  == 0x00 &&
-                       fxSense.Value.ASCQ == 0x00 &&
-                       fxSense.Value.ILI          &&
-                       fxSense.Value.InformationValid)
+                    bool ili         = decSense?.Fixed?.ILI              == true;
+                    bool valid       = decSense?.Fixed?.InformationValid == true;
+                    uint information = decSense?.Fixed?.Information ?? 0;
+                    bool eom         = decSense?.Fixed?.EOM      == true;
+                    bool filemark    = decSense?.Fixed?.Filemark == true;
+
+                    if(decSense?.Descriptor.HasValue == true)
+                    {
+                        if(decSense.Value.Descriptor.Value.Descriptors.TryGetValue(0, out byte[] desc00))
+                        {
+                            valid       = true;
+                            information = (uint)Sense.DecodeDescriptor00(desc00);
+                        }
+
+                        if(decSense.Value.Descriptor.Value.Descriptors.TryGetValue(4, out byte[] desc04))
+                            Sense.DecodeDescriptor04(desc04, out filemark, out eom, out ili);
+                    }
+
+                    if(decSense.Value.ASC  == 0x00 &&
+                       decSense.Value.ASCQ == 0x00 &&
+                       ili                         &&
+                       valid)
                     {
                         blockSize = (uint)((int)blockSize -
-                                           BitConverter.ToInt32(BitConverter.GetBytes(fxSense.Value.Information), 0));
+                                           BitConverter.ToInt32(BitConverter.GetBytes(information), 0));
 
                         if(!fixedLen)
                             transferLen = blockSize;
@@ -886,16 +940,16 @@ namespace Aaru.Core.Devices.Dumping
 
                         if(sense)
                         {
-                            fxSense = Sense.DecodeFixed(senseBuf, out strSense);
+                            decSense = Sense.Decode(senseBuf);
 
                             StoppingErrorMessage?.Invoke("Drive could not go back one block. Sense follows..." +
-                                                         Environment.NewLine + strSense);
+                                                         Environment.NewLine + decSense.Value.Description);
 
                             _outputPlugin.Close();
                             _dumpLog.WriteLine("Drive could not go back one block. Sense follows...");
 
                             _dumpLog.WriteLine("Device not ready. Sense {0}h ASC {1:X2}h ASCQ {2:X2}h",
-                                               fxSense.Value.SenseKey, fxSense.Value.ASC, fxSense.Value.ASCQ);
+                                               decSense.Value.SenseKey, decSense.Value.ASC, decSense.Value.ASCQ);
 
                             return;
                         }
@@ -903,7 +957,7 @@ namespace Aaru.Core.Devices.Dumping
                         continue;
                     }
 
-                    switch(fxSense.Value.SenseKey)
+                    switch(decSense.Value.SenseKey)
                     {
                         case SenseKeys.BlankCheck when currentBlock == 0:
                             StoppingErrorMessage?.Invoke("Cannot dump a blank tape...");
@@ -913,9 +967,9 @@ namespace Aaru.Core.Devices.Dumping
                             return;
 
                         // For sure this is an end-of-tape/partition
-                        case SenseKeys.BlankCheck when fxSense.Value.ASC == 0x00 &&
-                                                       (fxSense.Value.ASCQ == 0x02 || fxSense.Value.ASCQ == 0x05 ||
-                                                        fxSense.Value.EOM):
+                        case SenseKeys.BlankCheck when decSense.Value.ASC == 0x00 &&
+                                                       (decSense.Value.ASCQ == 0x02 || decSense.Value.ASCQ == 0x05 ||
+                                                        eom):
                             // TODO: Detect end of partition
                             endOfMedia = true;
                             UpdateStatus?.Invoke("Found end-of-tape/partition...");
@@ -930,9 +984,9 @@ namespace Aaru.Core.Devices.Dumping
                             continue;
                     }
 
-                    if((fxSense.Value.SenseKey == SenseKeys.NoSense ||
-                        fxSense.Value.SenseKey == SenseKeys.RecoveredError) &&
-                       (fxSense.Value.ASCQ == 0x02 || fxSense.Value.ASCQ == 0x05 || fxSense.Value.EOM))
+                    if((decSense.Value.SenseKey == SenseKeys.NoSense ||
+                        decSense.Value.SenseKey == SenseKeys.RecoveredError) &&
+                       (decSense.Value.ASCQ == 0x02 || decSense.Value.ASCQ == 0x05 || eom))
                     {
                         // TODO: Detect end of partition
                         endOfMedia = true;
@@ -942,9 +996,9 @@ namespace Aaru.Core.Devices.Dumping
                         continue;
                     }
 
-                    if((fxSense.Value.SenseKey == SenseKeys.NoSense ||
-                        fxSense.Value.SenseKey == SenseKeys.RecoveredError) &&
-                       (fxSense.Value.ASCQ == 0x01 || fxSense.Value.Filemark))
+                    if((decSense.Value.SenseKey == SenseKeys.NoSense ||
+                        decSense.Value.SenseKey == SenseKeys.RecoveredError) &&
+                       (decSense.Value.ASCQ == 0x01 || filemark))
                     {
                         currentTapeFile.LastBlock = currentBlock - 1;
                         (_outputPlugin as IWritableTapeImage).AddFile(currentTapeFile);
@@ -964,7 +1018,7 @@ namespace Aaru.Core.Devices.Dumping
                         continue;
                     }
 
-                    if(fxSense is null)
+                    if(decSense is null)
                     {
                         StoppingErrorMessage?.
                             Invoke($"Drive could not read block ${currentBlock}. Sense cannot be decoded, look at log for dump...");
@@ -975,12 +1029,12 @@ namespace Aaru.Core.Devices.Dumping
                     else
                     {
                         StoppingErrorMessage?.
-                            Invoke($"Drive could not read block ${currentBlock}. Sense follows...\n{fxSense.Value.SenseKey} {strSense}");
+                            Invoke($"Drive could not read block ${currentBlock}. Sense follows...\n{decSense.Value.SenseKey} {decSense.Value.Description}");
 
                         _dumpLog.WriteLine($"Drive could not read block ${currentBlock}. Sense follows...");
 
                         _dumpLog.WriteLine("Device not ready. Sense {0}h ASC {1:X2}h ASCQ {2:X2}h",
-                                           fxSense.Value.SenseKey, fxSense.Value.ASC, fxSense.Value.ASCQ);
+                                           decSense.Value.SenseKey, decSense.Value.ASC, decSense.Value.ASCQ);
                     }
 
                     // TODO: Reset device after X errors
@@ -1043,18 +1097,18 @@ namespace Aaru.Core.Devices.Dumping
             UpdateStatus?.Invoke($"Dump finished in {(end - start).TotalSeconds} seconds.");
 
             UpdateStatus?.
-                Invoke($"Average dump speed {(double)blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000):F3} KiB/sec.");
+                Invoke($"Average dump speed {blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000):F3} KiB/sec.");
 
             UpdateStatus?.
-                Invoke($"Average write speed {(double)blockSize * (double)(blocks + 1) / 1024 / imageWriteDuration:F3} KiB/sec.");
+                Invoke($"Average write speed {blockSize * (double)(blocks + 1) / 1024 / imageWriteDuration:F3} KiB/sec.");
 
             _dumpLog.WriteLine("Dump finished in {0} seconds.", (end - start).TotalSeconds);
 
             _dumpLog.WriteLine("Average dump speed {0:F3} KiB/sec.",
-                               (double)blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000));
+                               blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000));
 
             _dumpLog.WriteLine("Average write speed {0:F3} KiB/sec.",
-                               (double)blockSize * (double)(blocks + 1) / 1024 / imageWriteDuration);
+                               blockSize * (double)(blocks + 1) / 1024 / imageWriteDuration);
 
             #region Error handling
             if(_resume.BadBlocks.Count > 0 &&
@@ -1285,12 +1339,12 @@ namespace Aaru.Core.Devices.Dumping
                 UpdateStatus?.Invoke($"Sidecar created in {(end - chkStart).TotalSeconds} seconds.");
 
                 UpdateStatus?.
-                    Invoke($"Average checksum speed {(double)blockSize * (double)(blocks + 1) / 1024 / (totalChkDuration / 1000):F3} KiB/sec.");
+                    Invoke($"Average checksum speed {blockSize * (double)(blocks + 1) / 1024 / (totalChkDuration / 1000):F3} KiB/sec.");
 
                 _dumpLog.WriteLine("Sidecar created in {0} seconds.", (end - chkStart).TotalSeconds);
 
                 _dumpLog.WriteLine("Average checksum speed {0:F3} KiB/sec.",
-                                   (double)blockSize * (double)(blocks + 1) / 1024 / (totalChkDuration / 1000));
+                                   blockSize * (double)(blocks + 1) / 1024 / (totalChkDuration / 1000));
 
                 if(_preSidecar != null)
                 {
@@ -1362,7 +1416,7 @@ namespace Aaru.Core.Devices.Dumping
                 Invoke($"Took a total of {(end - start).TotalSeconds:F3} seconds ({totalDuration / 1000:F3} processing commands, {totalChkDuration / 1000:F3} checksumming, {imageWriteDuration:F3} writing, {(closeEnd - closeStart).TotalSeconds:F3} closing).");
 
             UpdateStatus?.
-                Invoke($"Average speed: {(double)blockSize * (double)(blocks + 1) / 1048576 / (totalDuration / 1000):F3} MiB/sec.");
+                Invoke($"Average speed: {blockSize * (double)(blocks + 1) / 1048576 / (totalDuration / 1000):F3} MiB/sec.");
 
             if(maxSpeed > 0)
                 UpdateStatus?.Invoke($"Fastest speed burst: {maxSpeed:F3} MiB/sec.");

@@ -896,81 +896,95 @@ namespace Aaru.Commands.Device
 
                                     if(sense)
                                     {
-                                        FixedSense? decSense = Sense.DecodeFixed(senseBuffer);
+                                        DecodedSense? decSense = Sense.Decode(senseBuffer);
 
                                         if(decSense.HasValue)
                                         {
-                                            if(decSense.Value.ASC == 0x3A)
+                                            switch(decSense.Value.ASC)
                                             {
-                                                int leftRetries = 50;
-
-                                                while(leftRetries > 0)
+                                                case 0x3A:
                                                 {
-                                                    AaruConsole.Write("\rWaiting for drive to become ready");
-                                                    Thread.Sleep(2000);
-                                                    sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
+                                                    int leftRetries = 50;
 
-                                                    if(!sense)
-                                                        break;
+                                                    while(leftRetries > 0)
+                                                    {
+                                                        AaruConsole.Write("\rWaiting for drive to become ready");
+                                                        Thread.Sleep(2000);
 
-                                                    leftRetries--;
+                                                        sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout,
+                                                            out _);
+
+                                                        if(!sense)
+                                                            break;
+
+                                                        leftRetries--;
+                                                    }
+
+                                                    AaruConsole.WriteLine();
+
+                                                    mediaIsRecognized &= !sense;
+
+                                                    break;
                                                 }
 
-                                                AaruConsole.WriteLine();
-
-                                                mediaIsRecognized &= !sense;
-                                            }
-                                            else if(decSense.Value.ASC  == 0x04 &&
-                                                    decSense.Value.ASCQ == 0x01)
-                                            {
-                                                int leftRetries = 50;
-
-                                                while(leftRetries > 0)
+                                                // These should be trapped by the OS but seems in some cases they're not
+                                                case 0x04 when decSense.Value.ASCQ == 0x01:
                                                 {
-                                                    AaruConsole.Write("\rWaiting for drive to become ready");
-                                                    Thread.Sleep(2000);
-                                                    sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
+                                                    int leftRetries = 50;
 
-                                                    if(!sense)
-                                                        break;
+                                                    while(leftRetries > 0)
+                                                    {
+                                                        AaruConsole.Write("\rWaiting for drive to become ready");
+                                                        Thread.Sleep(2000);
 
-                                                    leftRetries--;
+                                                        sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout,
+                                                            out _);
+
+                                                        if(!sense)
+                                                            break;
+
+                                                        leftRetries--;
+                                                    }
+
+                                                    AaruConsole.WriteLine();
+
+                                                    mediaIsRecognized &= !sense;
+
+                                                    break;
                                                 }
-
-                                                AaruConsole.WriteLine();
-
-                                                mediaIsRecognized &= !sense;
-                                            }
-
-                                            // These should be trapped by the OS but seems in some cases they're not
-                                            else if(decSense.Value.ASC == 0x28)
-                                            {
-                                                int leftRetries = 50;
-
-                                                while(leftRetries > 0)
+                                                case 0x28:
                                                 {
-                                                    AaruConsole.Write("\rWaiting for drive to become ready");
-                                                    Thread.Sleep(2000);
-                                                    sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
+                                                    int leftRetries = 50;
 
-                                                    if(!sense)
-                                                        break;
+                                                    while(leftRetries > 0)
+                                                    {
+                                                        AaruConsole.Write("\rWaiting for drive to become ready");
+                                                        Thread.Sleep(2000);
 
-                                                    leftRetries--;
+                                                        sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout,
+                                                            out _);
+
+                                                        if(!sense)
+                                                            break;
+
+                                                        leftRetries--;
+                                                    }
+
+                                                    AaruConsole.WriteLine();
+
+                                                    mediaIsRecognized &= !sense;
+
+                                                    break;
                                                 }
+                                                default:
+                                                    AaruConsole.DebugWriteLine("Device-Report command",
+                                                                               "Device not ready. Sense {0}h ASC {1:X2}h ASCQ {2:X2}h",
+                                                                               decSense.Value.SenseKey,
+                                                                               decSense.Value.ASC, decSense.Value.ASCQ);
 
-                                                AaruConsole.WriteLine();
+                                                    mediaIsRecognized = false;
 
-                                                mediaIsRecognized &= !sense;
-                                            }
-                                            else
-                                            {
-                                                AaruConsole.DebugWriteLine("Device-Report command",
-                                                                           "Device not ready. Sense {0}h ASC {1:X2}h ASCQ {2:X2}h",
-                                                                           decSense.Value.SenseKey, decSense.Value.ASC,
-                                                                           decSense.Value.ASCQ);
-
-                                                mediaIsRecognized = false;
+                                                    break;
                                             }
                                         }
                                         else
@@ -1101,81 +1115,89 @@ namespace Aaru.Commands.Device
 
                                 if(sense)
                                 {
-                                    FixedSense? decSense = Sense.DecodeFixed(senseBuffer);
+                                    DecodedSense? decSense = Sense.Decode(senseBuffer);
 
                                     if(decSense.HasValue)
                                     {
-                                        if(decSense.Value.ASC == 0x3A)
+                                        switch(decSense.Value.ASC)
                                         {
-                                            int leftRetries = 50;
-
-                                            while(leftRetries > 0)
+                                            case 0x3A:
                                             {
-                                                AaruConsole.Write("\rWaiting for drive to become ready");
-                                                Thread.Sleep(2000);
-                                                sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
+                                                int leftRetries = 50;
 
-                                                if(!sense)
-                                                    break;
+                                                while(leftRetries > 0)
+                                                {
+                                                    AaruConsole.Write("\rWaiting for drive to become ready");
+                                                    Thread.Sleep(2000);
+                                                    sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
 
-                                                leftRetries--;
+                                                    if(!sense)
+                                                        break;
+
+                                                    leftRetries--;
+                                                }
+
+                                                AaruConsole.WriteLine();
+
+                                                mediaIsRecognized &= !sense;
+
+                                                break;
                                             }
 
-                                            AaruConsole.WriteLine();
-
-                                            mediaIsRecognized &= !sense;
-                                        }
-                                        else if(decSense.Value.ASC  == 0x04 &&
-                                                decSense.Value.ASCQ == 0x01)
-                                        {
-                                            int leftRetries = 50;
-
-                                            while(leftRetries > 0)
+                                            // These should be trapped by the OS but seems in some cases they're not
+                                            case 0x04 when decSense.Value.ASCQ == 0x01:
                                             {
-                                                AaruConsole.Write("\rWaiting for drive to become ready");
-                                                Thread.Sleep(2000);
-                                                sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
+                                                int leftRetries = 50;
 
-                                                if(!sense)
-                                                    break;
+                                                while(leftRetries > 0)
+                                                {
+                                                    AaruConsole.Write("\rWaiting for drive to become ready");
+                                                    Thread.Sleep(2000);
+                                                    sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
 
-                                                leftRetries--;
+                                                    if(!sense)
+                                                        break;
+
+                                                    leftRetries--;
+                                                }
+
+                                                AaruConsole.WriteLine();
+
+                                                mediaIsRecognized &= !sense;
+
+                                                break;
                                             }
-
-                                            AaruConsole.WriteLine();
-
-                                            mediaIsRecognized &= !sense;
-                                        }
-
-                                        // These should be trapped by the OS but seems in some cases they're not
-                                        else if(decSense.Value.ASC == 0x28)
-                                        {
-                                            int leftRetries = 50;
-
-                                            while(leftRetries > 0)
+                                            case 0x28:
                                             {
-                                                AaruConsole.Write("\rWaiting for drive to become ready");
-                                                Thread.Sleep(2000);
-                                                sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
+                                                int leftRetries = 50;
 
-                                                if(!sense)
-                                                    break;
+                                                while(leftRetries > 0)
+                                                {
+                                                    AaruConsole.Write("\rWaiting for drive to become ready");
+                                                    Thread.Sleep(2000);
+                                                    sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
 
-                                                leftRetries--;
+                                                    if(!sense)
+                                                        break;
+
+                                                    leftRetries--;
+                                                }
+
+                                                AaruConsole.WriteLine();
+
+                                                mediaIsRecognized &= !sense;
+
+                                                break;
                                             }
+                                            default:
+                                                AaruConsole.DebugWriteLine("Device-Report command",
+                                                                           "Device not ready. Sense {0} ASC {1:X2}h ASCQ {2:X2}h",
+                                                                           decSense.Value.SenseKey, decSense.Value.ASC,
+                                                                           decSense.Value.ASCQ);
 
-                                            AaruConsole.WriteLine();
+                                                mediaIsRecognized = false;
 
-                                            mediaIsRecognized &= !sense;
-                                        }
-                                        else
-                                        {
-                                            AaruConsole.DebugWriteLine("Device-Report command",
-                                                                       "Device not ready. Sense {0} ASC {1:X2}h ASCQ {2:X2}h",
-                                                                       decSense.Value.SenseKey, decSense.Value.ASC,
-                                                                       decSense.Value.ASCQ);
-
-                                            mediaIsRecognized = false;
+                                                break;
                                         }
                                     }
                                     else
@@ -1254,81 +1276,89 @@ namespace Aaru.Commands.Device
 
                                 if(sense)
                                 {
-                                    FixedSense? decSense = Sense.DecodeFixed(senseBuffer);
+                                    DecodedSense? decSense = Sense.Decode(senseBuffer);
 
                                     if(decSense.HasValue)
                                     {
-                                        if(decSense.Value.ASC == 0x3A)
+                                        switch(decSense.Value.ASC)
                                         {
-                                            int leftRetries = 50;
-
-                                            while(leftRetries > 0)
+                                            case 0x3A:
                                             {
-                                                AaruConsole.Write("\rWaiting for drive to become ready");
-                                                Thread.Sleep(2000);
-                                                sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
+                                                int leftRetries = 50;
 
-                                                if(!sense)
-                                                    break;
+                                                while(leftRetries > 0)
+                                                {
+                                                    AaruConsole.Write("\rWaiting for drive to become ready");
+                                                    Thread.Sleep(2000);
+                                                    sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
 
-                                                leftRetries--;
+                                                    if(!sense)
+                                                        break;
+
+                                                    leftRetries--;
+                                                }
+
+                                                AaruConsole.WriteLine();
+
+                                                mediaIsRecognized &= !sense;
+
+                                                break;
                                             }
 
-                                            AaruConsole.WriteLine();
-
-                                            mediaIsRecognized &= !sense;
-                                        }
-                                        else if(decSense.Value.ASC  == 0x04 &&
-                                                decSense.Value.ASCQ == 0x01)
-                                        {
-                                            int leftRetries = 50;
-
-                                            while(leftRetries > 0)
+                                            // These should be trapped by the OS but seems in some cases they're not
+                                            case 0x04 when decSense.Value.ASCQ == 0x01:
                                             {
-                                                AaruConsole.Write("\rWaiting for drive to become ready");
-                                                Thread.Sleep(2000);
-                                                sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
+                                                int leftRetries = 50;
 
-                                                if(!sense)
-                                                    break;
+                                                while(leftRetries > 0)
+                                                {
+                                                    AaruConsole.Write("\rWaiting for drive to become ready");
+                                                    Thread.Sleep(2000);
+                                                    sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
 
-                                                leftRetries--;
+                                                    if(!sense)
+                                                        break;
+
+                                                    leftRetries--;
+                                                }
+
+                                                AaruConsole.WriteLine();
+
+                                                mediaIsRecognized &= !sense;
+
+                                                break;
                                             }
-
-                                            AaruConsole.WriteLine();
-
-                                            mediaIsRecognized &= !sense;
-                                        }
-
-                                        // These should be trapped by the OS but seems in some cases they're not
-                                        else if(decSense.Value.ASC == 0x28)
-                                        {
-                                            int leftRetries = 50;
-
-                                            while(leftRetries > 0)
+                                            case 0x28:
                                             {
-                                                AaruConsole.Write("\rWaiting for drive to become ready");
-                                                Thread.Sleep(2000);
-                                                sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
+                                                int leftRetries = 50;
 
-                                                if(!sense)
-                                                    break;
+                                                while(leftRetries > 0)
+                                                {
+                                                    AaruConsole.Write("\rWaiting for drive to become ready");
+                                                    Thread.Sleep(2000);
+                                                    sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
 
-                                                leftRetries--;
+                                                    if(!sense)
+                                                        break;
+
+                                                    leftRetries--;
+                                                }
+
+                                                AaruConsole.WriteLine();
+
+                                                mediaIsRecognized &= !sense;
+
+                                                break;
                                             }
+                                            default:
+                                                AaruConsole.DebugWriteLine("Device-Report command",
+                                                                           "Device not ready. Sense {0}h ASC {1:X2}h ASCQ {2:X2}h",
+                                                                           decSense.Value.SenseKey, decSense.Value.ASC,
+                                                                           decSense.Value.ASCQ);
 
-                                            AaruConsole.WriteLine();
+                                                mediaIsRecognized = false;
 
-                                            mediaIsRecognized &= !sense;
-                                        }
-                                        else
-                                        {
-                                            AaruConsole.DebugWriteLine("Device-Report command",
-                                                                       "Device not ready. Sense {0}h ASC {1:X2}h ASCQ {2:X2}h",
-                                                                       decSense.Value.SenseKey, decSense.Value.ASC,
-                                                                       decSense.Value.ASCQ);
-
-                                            mediaIsRecognized = false;
+                                                break;
                                         }
                                     }
                                     else
@@ -1480,53 +1510,63 @@ namespace Aaru.Commands.Device
 
                                     if(sense)
                                     {
-                                        FixedSense? decSense = Sense.DecodeFixed(senseBuffer);
+                                        DecodedSense? decSense = Sense.Decode(senseBuffer);
 
                                         if(decSense.HasValue)
-                                            if(decSense.Value.ASC == 0x3A)
+                                            switch(decSense.Value.ASC)
                                             {
-                                                int leftRetries = 20;
-
-                                                while(leftRetries > 0)
+                                                case 0x3A:
                                                 {
-                                                    AaruConsole.Write("\rWaiting for drive to become ready");
-                                                    Thread.Sleep(2000);
-                                                    sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
+                                                    int leftRetries = 20;
 
-                                                    if(!sense)
-                                                        break;
+                                                    while(leftRetries > 0)
+                                                    {
+                                                        AaruConsole.Write("\rWaiting for drive to become ready");
+                                                        Thread.Sleep(2000);
 
-                                                    leftRetries--;
+                                                        sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout,
+                                                            out _);
+
+                                                        if(!sense)
+                                                            break;
+
+                                                        leftRetries--;
+                                                    }
+
+                                                    AaruConsole.WriteLine();
+
+                                                    mediaIsRecognized &= !sense;
+
+                                                    break;
                                                 }
-
-                                                AaruConsole.WriteLine();
-
-                                                mediaIsRecognized &= !sense;
-                                            }
-                                            else if(decSense.Value.ASC  == 0x04 &&
-                                                    decSense.Value.ASCQ == 0x01)
-                                            {
-                                                int leftRetries = 20;
-
-                                                while(leftRetries > 0)
+                                                case 0x04 when decSense.Value.ASCQ == 0x01:
                                                 {
-                                                    AaruConsole.Write("\rWaiting for drive to become ready");
-                                                    Thread.Sleep(2000);
-                                                    sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
+                                                    int leftRetries = 20;
 
-                                                    if(!sense)
-                                                        break;
+                                                    while(leftRetries > 0)
+                                                    {
+                                                        AaruConsole.Write("\rWaiting for drive to become ready");
+                                                        Thread.Sleep(2000);
 
-                                                    leftRetries--;
+                                                        sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout,
+                                                            out _);
+
+                                                        if(!sense)
+                                                            break;
+
+                                                        leftRetries--;
+                                                    }
+
+                                                    AaruConsole.WriteLine();
+
+                                                    mediaIsRecognized &= !sense;
+
+                                                    break;
                                                 }
+                                                default:
+                                                    mediaIsRecognized = false;
 
-                                                AaruConsole.WriteLine();
-
-                                                mediaIsRecognized &= !sense;
-                                            }
-                                            else
-                                            {
-                                                mediaIsRecognized = false;
+                                                    break;
                                             }
                                         else
                                             mediaIsRecognized = false;

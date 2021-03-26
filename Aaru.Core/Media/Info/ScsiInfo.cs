@@ -78,7 +78,7 @@ namespace Aaru.Core.Media.Info
 
                 if(sense)
                 {
-                    FixedSense? decSense = Sense.DecodeFixed(senseBuf);
+                    DecodedSense? decSense = Sense.Decode(senseBuf);
 
                     if(decSense.HasValue)
                     {
@@ -1300,7 +1300,7 @@ namespace Aaru.Core.Media.Info
                             {
                                 AaruConsole.ErrorWriteLine("Cannot lock drive, not continuing.");
 
-                                return;
+                                break;
                             }
 
                             sense = dev.ReadCapacity(out cmdBuf, out senseBuf, dev.Timeout, out _);
@@ -1309,7 +1309,7 @@ namespace Aaru.Core.Media.Info
                             {
                                 AaruConsole.ErrorWriteLine("Cannot get disc capacity.");
 
-                                return;
+                                break;
                             }
 
                             ulong totalSize =
@@ -1322,7 +1322,7 @@ namespace Aaru.Core.Media.Info
                             {
                                 AaruConsole.ErrorWriteLine("Cannot get PFI.");
 
-                                return;
+                                break;
                             }
 
                             AaruConsole.DebugWriteLine("Dump-media command", "Video partition total size: {0} sectors",
@@ -1341,7 +1341,7 @@ namespace Aaru.Core.Media.Info
                             {
                                 AaruConsole.ErrorWriteLine("Cannot unlock drive, not continuing.");
 
-                                return;
+                                break;
                             }
 
                             sense = dev.ReadCapacity(out cmdBuf, out senseBuf, dev.Timeout, out _);
@@ -1367,7 +1367,7 @@ namespace Aaru.Core.Media.Info
                             {
                                 AaruConsole.ErrorWriteLine("Cannot unlock drive, not continuing.");
 
-                                return;
+                                break;
                             }
 
                             sense = dev.ReadCapacity(out cmdBuf, out senseBuf, dev.Timeout, out _);
@@ -1376,7 +1376,7 @@ namespace Aaru.Core.Media.Info
                             {
                                 AaruConsole.ErrorWriteLine("Cannot get disc capacity.");
 
-                                return;
+                                break;
                             }
 
                             totalSize = (ulong)((cmdBuf[0] << 24) + (cmdBuf[1] << 16) + (cmdBuf[2] << 8) + cmdBuf[3]);
@@ -1388,7 +1388,7 @@ namespace Aaru.Core.Media.Info
                             {
                                 AaruConsole.ErrorWriteLine("Cannot get PFI.");
 
-                                return;
+                                break;
                             }
 
                             AaruConsole.DebugWriteLine("Dump-media command", "Unlocked total size: {0} sectors",

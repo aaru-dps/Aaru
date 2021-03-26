@@ -276,7 +276,7 @@ namespace Aaru.Core.Devices.Dumping
                     if(!runningPersistent)
                         continue;
 
-                    FixedSense? decSense = Sense.DecodeFixed(senseBuf);
+                    DecodedSense? decSense = Sense.Decode(senseBuf);
 
                     // MEDIUM ERROR, retry with ignore error below
                     if(decSense.HasValue &&

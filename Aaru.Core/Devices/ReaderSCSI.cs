@@ -195,11 +195,11 @@ namespace Aaru.Core.Devices
                     }*/
 
                     testSense = _dev.ReadLong10(out _, out senseBuf, false, false, 0, 0xFFFF, _timeout, out _);
-                    FixedSense? decSense;
+                    DecodedSense? decSense;
 
                     if(testSense && !_dev.Error)
                     {
-                        decSense = Sense.DecodeFixed(senseBuf);
+                        decSense = Sense.Decode(senseBuf);
 
                         if(decSense?.SenseKey  == SenseKeys.IllegalRequest &&
                            decSense.Value.ASC  == 0x24                     &&
@@ -207,10 +207,24 @@ namespace Aaru.Core.Devices
                         {
                             CanReadRaw = true;
 
-                            if(decSense.Value.InformationValid &&
-                               decSense.Value.ILI)
+                            bool valid       = decSense?.Fixed?.InformationValid == true;
+                            bool ili         = decSense?.Fixed?.ILI              == true;
+                            uint information = decSense?.Fixed?.Information ?? 0;
+
+                            if(decSense.Value.Descriptor.HasValue &&
+                               decSense.Value.Descriptor.Value.Descriptors.TryGetValue(0, out byte[] desc00))
                             {
-                                LongBlockSize = 0xFFFF - (decSense.Value.Information & 0xFFFF);
+                                valid       = true;
+                                ili         = true;
+                                information = (uint)Sense.DecodeDescriptor00(desc00);
+
+                                if(decSense.Value.Descriptor.Value.Descriptors.TryGetValue(4, out byte[] desc04))
+                                    Sense.DecodeDescriptor04(desc04, out _, out _, out ili);
+                            }
+
+                            if(valid && ili)
+                            {
+                                LongBlockSize = 0xFFFF - (information & 0xFFFF);
 
                                 _readLong10 = !_dev.ReadLong10(out _, out senseBuf, false, false, 0,
                                                                (ushort)LongBlockSize, _timeout, out _);
@@ -392,7 +406,7 @@ namespace Aaru.Core.Devices
 
                         if(testSense)
                         {
-                            decSense = Sense.DecodeFixed(senseBuf);
+                            decSense = Sense.Decode(senseBuf);
 
                             if(decSense.HasValue)
                                 if(decSense.Value.SenseKey == SenseKeys.IllegalRequest &&
@@ -401,10 +415,25 @@ namespace Aaru.Core.Devices
                                 {
                                     CanReadRaw = true;
 
-                                    if(decSense.Value.InformationValid &&
-                                       decSense.Value.ILI)
+                                    bool valid       = decSense?.Fixed?.InformationValid == true;
+                                    bool ili         = decSense?.Fixed?.ILI              == true;
+                                    uint information = decSense?.Fixed?.Information ?? 0;
+
+                                    if(decSense.Value.Descriptor.HasValue &&
+                                       decSense.Value.Descriptor.Value.Descriptors.TryGetValue(0, out byte[] desc00))
                                     {
-                                        LongBlockSize = 0xFFFF - (decSense.Value.Information & 0xFFFF);
+                                        valid       = true;
+                                        ili         = true;
+                                        information = (uint)Sense.DecodeDescriptor00(desc00);
+
+                                        if(decSense.Value.Descriptor.Value.Descriptors.
+                                                    TryGetValue(4, out byte[] desc04))
+                                            Sense.DecodeDescriptor04(desc04, out _, out _, out ili);
+                                    }
+
+                                    if(valid && ili)
+                                    {
+                                        LongBlockSize = 0xFFFF - (information & 0xFFFF);
 
                                         _syqReadLong10 =
                                             !_dev.SyQuestReadLong10(out _, out senseBuf, 0, LongBlockSize, _timeout,
@@ -417,7 +446,7 @@ namespace Aaru.Core.Devices
 
                                     if(testSense)
                                     {
-                                        decSense = Sense.DecodeFixed(senseBuf);
+                                        decSense = Sense.Decode(senseBuf);
 
                                         if(decSense?.SenseKey  == SenseKeys.IllegalRequest &&
                                            decSense.Value.ASC  == 0x24                     &&
@@ -425,10 +454,26 @@ namespace Aaru.Core.Devices
                                         {
                                             CanReadRaw = true;
 
-                                            if(decSense.Value.InformationValid &&
-                                               decSense.Value.ILI)
+                                            bool valid       = decSense?.Fixed?.InformationValid == true;
+                                            bool ili         = decSense?.Fixed?.ILI              == true;
+                                            uint information = decSense?.Fixed?.Information ?? 0;
+
+                                            if(decSense.Value.Descriptor.HasValue &&
+                                               decSense.Value.Descriptor.Value.Descriptors.
+                                                        TryGetValue(0, out byte[] desc00))
                                             {
-                                                LongBlockSize = 0xFFFF - (decSense.Value.Information & 0xFFFF);
+                                                valid       = true;
+                                                ili         = true;
+                                                information = (uint)Sense.DecodeDescriptor00(desc00);
+
+                                                if(decSense.Value.Descriptor.Value.Descriptors.
+                                                            TryGetValue(4, out byte[] desc04))
+                                                    Sense.DecodeDescriptor04(desc04, out _, out _, out ili);
+                                            }
+
+                                            if(valid && ili)
+                                            {
+                                                LongBlockSize = 0xFFFF - (information & 0xFFFF);
 
                                                 _syqReadLong6 =
                                                     !_dev.SyQuestReadLong6(out _, out senseBuf, 0, LongBlockSize,
@@ -675,11 +720,9 @@ namespace Aaru.Core.Devices
                !_dev.Error)
                 return false;
 
-            recoveredError = Sense.DecodeFixed(senseBuf)?.SenseKey      == SenseKeys.RecoveredError ||
-                             Sense.DecodeDescriptor(senseBuf)?.SenseKey == SenseKeys.RecoveredError;
+            recoveredError = Sense.Decode(senseBuf)?.SenseKey == SenseKeys.RecoveredError;
 
-            blankCheck = Sense.DecodeFixed(senseBuf)?.SenseKey      == SenseKeys.BlankCheck ||
-                         Sense.DecodeDescriptor(senseBuf)?.SenseKey == SenseKeys.BlankCheck;
+            blankCheck = Sense.Decode(senseBuf)?.SenseKey == SenseKeys.BlankCheck;
 
             AaruConsole.DebugWriteLine("SCSI Reader", "READ error:\n{0}", Sense.PrettifySense(senseBuf));
 

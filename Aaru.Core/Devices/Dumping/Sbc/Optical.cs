@@ -62,7 +62,7 @@ namespace Aaru.Core.Devices.Dumping
                 written = _dev.MediumScan(out buffer, true, false, false, false, false, 0, 1, 1, out _, out _,
                                           uint.MaxValue, out _);
 
-                FixedSense? decodedSense = Sense.DecodeFixed(buffer);
+                DecodedSense? decodedSense = Sense.Decode(buffer);
 
                 if(_dev.LastError         != 0 ||
                    decodedSense?.SenseKey == SenseKeys.IllegalRequest)
@@ -194,8 +194,8 @@ namespace Aaru.Core.Devices.Dumping
                         break;
                     }
 
-                    if((extent.Item2 + 1) - i < blocksToRead)
-                        blocksToRead = (uint)((extent.Item2 + 1) - i);
+                    if(extent.Item2 + 1 - i < blocksToRead)
+                        blocksToRead = (uint)(extent.Item2 + 1 - i);
 
                     if(currentSpeed > maxSpeed &&
                        currentSpeed > 0)
@@ -228,7 +228,7 @@ namespace Aaru.Core.Devices.Dumping
                             return; // TODO: Return more cleanly
 
                         if(i + _skip > extent.Item2 + 1)
-                            _skip = (uint)((extent.Item2 + 1) - i);
+                            _skip = (uint)(extent.Item2 + 1 - i);
 
                         // Write empty data
                         DateTime writeStart = DateTime.Now;
@@ -254,7 +254,7 @@ namespace Aaru.Core.Devices.Dumping
                     if(elapsed < 1)
                         continue;
 
-                    currentSpeed     = (sectorSpeedStart * blockSize) / (1048576 * elapsed);
+                    currentSpeed     = sectorSpeedStart * blockSize / (1048576 * elapsed);
                     sectorSpeedStart = 0;
                     timeSpeedStart   = DateTime.UtcNow;
                 }

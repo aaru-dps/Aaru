@@ -197,9 +197,9 @@ namespace Aaru.Core.Devices.Dumping
                     }
                 }
 
-                if(track.TrackSequence                          != 0 &&
-                   (i + blocksToRead) - (ulong)sectorsForOffset > track.TrackEndSector + 1)
-                    blocksToRead = (uint)(((track.TrackEndSector + 1) - i) + (ulong)sectorsForOffset);
+                if(track.TrackSequence                        != 0 &&
+                   i + blocksToRead - (ulong)sectorsForOffset > track.TrackEndSector + 1)
+                    blocksToRead = (uint)(track.TrackEndSector + 1 - i + (ulong)sectorsForOffset);
 
                 if(blocksToRead == 1 &&
                    !inData)
@@ -495,7 +495,7 @@ namespace Aaru.Core.Devices.Dumping
                         if(elapsed < 1)
                             continue;
 
-                        currentSpeed     = (sectorSpeedStart * blockSize) / (1048576 * elapsed);
+                        currentSpeed     = sectorSpeedStart * blockSize / (1048576 * elapsed);
                         sectorSpeedStart = 0;
                         timeSpeedStart   = DateTime.UtcNow;
                     }
@@ -592,7 +592,7 @@ namespace Aaru.Core.Devices.Dumping
                 }
                 else
                 {
-                    if(crossingLeadOut && Sense.DecodeFixed(senseBuf)?.ASC == 0x21)
+                    if(crossingLeadOut && Sense.Decode(senseBuf)?.ASC == 0x21)
                     {
                         if(failedCrossingLeadOut)
                             break;
@@ -661,7 +661,7 @@ namespace Aaru.Core.Devices.Dumping
                 if(elapsed < 1)
                     continue;
 
-                currentSpeed     = (sectorSpeedStart * blockSize) / (1048576 * elapsed);
+                currentSpeed     = sectorSpeedStart * blockSize / (1048576 * elapsed);
                 sectorSpeedStart = 0;
                 timeSpeedStart   = DateTime.UtcNow;
             }
