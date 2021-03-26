@@ -545,84 +545,133 @@ namespace Aaru.Core.Devices.Report
                 }
             }
 
-            if(mediaTest.SupportsReadLong == true &&
-               mediaTest.LongBlockSize    == mediaTest.BlockSize)
-                if(mediaTest.BlockSize == 512)
-                    foreach(ushort testSize in new ushort[]
+            AaruConsole.WriteLine("Trying SCSI READ LONG (16)...");
+            sense = _dev.ReadLong16(out buffer, out senseBuffer, false, 0, 0xFFFF, _dev.Timeout, out _);
+
+            if(sense && !_dev.Error)
+            {
+                DecodedSense? decSense = Sense.Decode(senseBuffer);
+
+                if(decSense?.SenseKey  == SenseKeys.IllegalRequest &&
+                   decSense.Value.ASC  == 0x24                     &&
+                   decSense.Value.ASCQ == 0x00)
+                {
+                    mediaTest.SupportsReadLong16 = true;
+
+                    bool valid       = decSense?.Fixed?.InformationValid == true;
+                    bool ili         = decSense?.Fixed?.ILI              == true;
+                    uint information = decSense?.Fixed?.Information ?? 0;
+
+                    if(decSense?.Descriptor.HasValue == true &&
+                       decSense.Value.Descriptor.Value.Descriptors.TryGetValue(0, out byte[] desc00))
                     {
-                        // Long sector sizes for floppies
-                        514,
+                        valid       = true;
+                        ili         = true;
+                        information = (uint)Sense.DecodeDescriptor00(desc00);
+                    }
 
-                        // Long sector sizes for SuperDisk
-                        536, 558,
+                    if(valid && ili)
+                        mediaTest.LongBlockSize = 0xFFFF - (information & 0xFFFF);
+                }
+            }
 
-                        // Long sector sizes for 512-byte magneto-opticals
-                        600, 610, 630
-                    })
+            if((mediaTest.SupportsReadLong == true || mediaTest.SupportsReadLong16 == true) &&
+               mediaTest.LongBlockSize == mediaTest.BlockSize)
+                switch(mediaTest.BlockSize)
+                {
+                    case 512:
                     {
-                        sense = _dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, testSize, _dev.Timeout,
-                                                out _);
+                        foreach(ushort testSize in new ushort[]
+                        {
+                            // Long sector sizes for floppies
+                            514,
 
-                        if(sense || _dev.Error)
-                            continue;
+                            // Long sector sizes for SuperDisk
+                            536, 558,
 
-                        mediaTest.SupportsReadLong = true;
-                        mediaTest.LongBlockSize    = testSize;
+                            // Long sector sizes for 512-byte magneto-opticals
+                            600, 610, 630
+                        })
+                        {
+                            sense = mediaTest.SupportsReadLong16 == true
+                                        ? _dev.ReadLong16(out buffer, out senseBuffer, false, 0, testSize, _dev.Timeout,
+                                                          out _) : _dev.ReadLong10(out buffer, out senseBuffer, false,
+                                            false, 0, testSize, _dev.Timeout, out _);
+
+                            if(sense || _dev.Error)
+                                continue;
+
+                            mediaTest.LongBlockSize = testSize;
+
+                            break;
+                        }
 
                         break;
                     }
-                else if(mediaTest.BlockSize == 1024)
-                    foreach(ushort testSize in new ushort[]
+                    case 1024:
                     {
-                        // Long sector sizes for floppies
-                        1026,
+                        foreach(ushort testSize in new ushort[]
+                        {
+                            // Long sector sizes for floppies
+                            1026,
 
-                        // Long sector sizes for 1024-byte magneto-opticals
-                        1200
-                    })
-                    {
-                        sense = _dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, testSize, _dev.Timeout,
-                                                out _);
+                            // Long sector sizes for 1024-byte magneto-opticals
+                            1200
+                        })
+                        {
+                            sense = mediaTest.SupportsReadLong16 == true
+                                        ? _dev.ReadLong16(out buffer, out senseBuffer, false, 0, testSize, _dev.Timeout,
+                                                          out _) : _dev.ReadLong10(out buffer, out senseBuffer, false,
+                                            false, 0, testSize, _dev.Timeout, out _);
 
-                        if(sense || _dev.Error)
-                            continue;
+                            if(sense || _dev.Error)
+                                continue;
 
-                        mediaTest.SupportsReadLong = true;
-                        mediaTest.LongBlockSize    = testSize;
+                            mediaTest.LongBlockSize = testSize;
+
+                            break;
+                        }
 
                         break;
                     }
-                else if(mediaTest.BlockSize == 2048)
-                {
-                    sense = _dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 2380, _dev.Timeout, out _);
-
-                    if(!sense &&
-                       !_dev.Error)
+                    case 2048:
                     {
-                        mediaTest.SupportsReadLong = true;
-                        mediaTest.LongBlockSize    = 2380;
+                        sense = mediaTest.SupportsReadLong16 == true
+                                    ? _dev.ReadLong16(out buffer, out senseBuffer, false, 0, 2380, _dev.Timeout, out _)
+                                    : _dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 2380, _dev.Timeout,
+                                                      out _);
+
+                        if(!sense &&
+                           !_dev.Error)
+                            mediaTest.LongBlockSize = 2380;
+
+                        break;
                     }
-                }
-                else if(mediaTest.BlockSize == 4096)
-                {
-                    sense = _dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 4760, _dev.Timeout, out _);
-
-                    if(!sense &&
-                       !_dev.Error)
+                    case 4096:
                     {
-                        mediaTest.SupportsReadLong = true;
-                        mediaTest.LongBlockSize    = 4760;
+                        sense = mediaTest.SupportsReadLong16 == true
+                                    ? _dev.ReadLong16(out buffer, out senseBuffer, false, 0, 4760, _dev.Timeout, out _)
+                                    : _dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 4760, _dev.Timeout,
+                                                      out _);
+
+                        if(!sense &&
+                           !_dev.Error)
+                            mediaTest.LongBlockSize = 4760;
+
+                        break;
                     }
-                }
-                else if(mediaTest.BlockSize == 8192)
-                {
-                    sense = _dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 9424, _dev.Timeout, out _);
-
-                    if(!sense &&
-                       !_dev.Error)
+                    case 8192:
                     {
-                        mediaTest.SupportsReadLong = true;
-                        mediaTest.LongBlockSize    = 9424;
+                        sense = mediaTest.SupportsReadLong16 == true
+                                    ? _dev.ReadLong16(out buffer, out senseBuffer, false, 0, 9424, _dev.Timeout, out _)
+                                    : _dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 9424, _dev.Timeout,
+                                                      out _);
+
+                        if(!sense &&
+                           !_dev.Error)
+                            mediaTest.LongBlockSize = 9424;
+
+                        break;
                     }
                 }
 
@@ -764,84 +813,145 @@ namespace Aaru.Core.Devices.Report
                 }
             }
 
-            if(capabilities.SupportsReadLong != true ||
-               capabilities.LongBlockSize    != capabilities.BlockSize)
+            AaruConsole.WriteLine("Trying SCSI READ LONG (16)...");
+            sense = _dev.ReadLong16(out buffer, out senseBuffer, false, 0, 0xFFFF, _dev.Timeout, out _);
+
+            if(sense && !_dev.Error)
+            {
+                capabilities.SupportsReadLong16 = true;
+                DecodedSense? decSense = Sense.Decode(senseBuffer);
+
+                if(decSense?.SenseKey  == SenseKeys.IllegalRequest &&
+                   decSense.Value.ASC  == 0x24                     &&
+                   decSense.Value.ASCQ == 0x00)
+                {
+                    capabilities.SupportsReadLong16 = true;
+
+                    bool valid       = decSense?.Fixed?.InformationValid == true;
+                    bool ili         = decSense?.Fixed?.ILI              == true;
+                    uint information = decSense?.Fixed?.Information ?? 0;
+
+                    if(decSense?.Descriptor.HasValue == true &&
+                       decSense.Value.Descriptor.Value.Descriptors.TryGetValue(0, out byte[] desc00))
+                    {
+                        valid       = true;
+                        ili         = true;
+                        information = (uint)Sense.DecodeDescriptor00(desc00);
+                    }
+
+                    if(valid && ili)
+                        capabilities.LongBlockSize = 0xFFFF - (information & 0xFFFF);
+                }
+            }
+
+            if((capabilities.SupportsReadLong != true && capabilities.SupportsReadLong16 != true) ||
+               capabilities.LongBlockSize != capabilities.BlockSize)
                 return capabilities;
 
-            if(capabilities.BlockSize == 512)
-                foreach(ushort testSize in new ushort[]
+            switch(capabilities.BlockSize)
+            {
+                case 512:
                 {
-                    // Long sector sizes for floppies
-                    514,
+                    foreach(ushort testSize in new ushort[]
+                    {
+                        // Long sector sizes for floppies
+                        514,
 
-                    // Long sector sizes for SuperDisk
-                    536, 558,
+                        // Long sector sizes for SuperDisk
+                        536, 558,
 
-                    // Long sector sizes for 512-byte magneto-opticals
-                    600, 610, 630
-                })
-                {
-                    sense = _dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, testSize, _dev.Timeout,
-                                            out _);
+                        // Long sector sizes for 512-byte magneto-opticals
+                        600, 610, 630
+                    })
+                    {
+                        sense = capabilities.SupportsReadLong16 == true
+                                    ? _dev.ReadLong16(out buffer, out senseBuffer, false, 0, testSize, _dev.Timeout,
+                                                      out _) : _dev.ReadLong10(out buffer, out senseBuffer, false,
+                                                                               false, 0, testSize, _dev.Timeout, out _);
 
-                    if(sense || _dev.Error)
-                        continue;
+                        if(sense || _dev.Error)
+                            continue;
 
-                    capabilities.SupportsReadLong = true;
-                    capabilities.LongBlockSize    = testSize;
+                        capabilities.SupportsReadLong = true;
+                        capabilities.LongBlockSize    = testSize;
+
+                        break;
+                    }
 
                     break;
                 }
-            else if(capabilities.BlockSize == 1024)
-                foreach(ushort testSize in new ushort[]
+                case 1024:
                 {
-                    // Long sector sizes for floppies
-                    1026,
+                    foreach(ushort testSize in new ushort[]
+                    {
+                        // Long sector sizes for floppies
+                        1026,
 
-                    // Long sector sizes for 1024-byte magneto-opticals
-                    1200
-                })
-                {
-                    sense = _dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, testSize, _dev.Timeout,
-                                            out _);
+                        // Long sector sizes for 1024-byte magneto-opticals
+                        1200
+                    })
+                    {
+                        sense = capabilities.SupportsReadLong16 == true
+                                    ? _dev.ReadLong16(out buffer, out senseBuffer, false, 0, testSize, _dev.Timeout,
+                                                      out _) : _dev.ReadLong10(out buffer, out senseBuffer, false,
+                                                                               false, 0, testSize, _dev.Timeout, out _);
 
-                    if(sense || _dev.Error)
-                        continue;
+                        if(sense || _dev.Error)
+                            continue;
 
-                    capabilities.SupportsReadLong = true;
-                    capabilities.LongBlockSize    = testSize;
+                        capabilities.SupportsReadLong = true;
+                        capabilities.LongBlockSize    = testSize;
+
+                        break;
+                    }
 
                     break;
                 }
-            else if(capabilities.BlockSize == 2048)
-            {
-                sense = _dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 2380, _dev.Timeout, out _);
+                case 2048:
+                {
+                    sense = capabilities.SupportsReadLong16 == true
+                                ? _dev.ReadLong16(out buffer, out senseBuffer, false, 0, 2380, _dev.Timeout, out _)
+                                : _dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 2380, _dev.Timeout,
+                                                  out _);
 
-                if(sense || _dev.Error)
-                    return capabilities;
+                    if(sense || _dev.Error)
+                        return capabilities;
 
-                capabilities.SupportsReadLong = true;
-                capabilities.LongBlockSize    = 2380;
-            }
-            else if(capabilities.BlockSize == 4096)
-            {
-                sense = _dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 4760, _dev.Timeout, out _);
+                    capabilities.SupportsReadLong = true;
+                    capabilities.LongBlockSize    = 2380;
 
-                if(sense || _dev.Error)
-                    return capabilities;
+                    break;
+                }
+                case 4096:
+                {
+                    sense = capabilities.SupportsReadLong16 == true
+                                ? _dev.ReadLong16(out buffer, out senseBuffer, false, 0, 4760, _dev.Timeout, out _)
+                                : _dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 4760, _dev.Timeout,
+                                                  out _);
 
-                capabilities.SupportsReadLong = true;
-                capabilities.LongBlockSize    = 4760;
-            }
-            else if(capabilities.BlockSize == 8192)
-            {
-                sense = _dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 9424, _dev.Timeout, out _);
+                    if(sense || _dev.Error)
+                        return capabilities;
 
-                if(sense || _dev.Error)
-                    return capabilities;
+                    capabilities.SupportsReadLong = true;
+                    capabilities.LongBlockSize    = 4760;
 
-                capabilities.SupportsReadLong = true;
-                capabilities.LongBlockSize    = 9424;
+                    break;
+                }
+                case 8192:
+                {
+                    sense = capabilities.SupportsReadLong16 == true
+                                ? _dev.ReadLong16(out buffer, out senseBuffer, false, 0, 9424, _dev.Timeout, out _)
+                                : _dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 9424, _dev.Timeout,
+                                                  out _);
+
+                    if(sense || _dev.Error)
+                        return capabilities;
+
+                    capabilities.SupportsReadLong = true;
+                    capabilities.LongBlockSize    = 9424;
+
+                    break;
+                }
             }
 
             return capabilities;

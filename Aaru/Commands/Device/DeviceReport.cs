@@ -1006,8 +1006,9 @@ namespace Aaru.Commands.Device
                                         if(mediaTest is null)
                                             continue;
 
-                                        if(mediaTest.SupportsReadLong == true &&
-                                           mediaTest.LongBlockSize    == mediaTest.BlockSize)
+                                        if((mediaTest.SupportsReadLong   == true ||
+                                            mediaTest.SupportsReadLong16 == true) &&
+                                           mediaTest.LongBlockSize == mediaTest.BlockSize)
                                         {
                                             pressedKey = new ConsoleKeyInfo();
 
@@ -1028,13 +1029,15 @@ namespace Aaru.Commands.Device
                                                     AaruConsole.
                                                         Write("\rTrying to READ LONG with a size of {0} bytes...", i);
 
-                                                    sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0,
-                                                                           i, dev.Timeout, out _);
+                                                    sense = mediaTest.SupportsReadLong16 == true
+                                                                ? dev.ReadLong16(out buffer, out senseBuffer, false, 0,
+                                                                    i, dev.Timeout, out _)
+                                                                : dev.ReadLong10(out buffer, out senseBuffer, false,
+                                                                    false, 0, i, dev.Timeout, out _);
 
                                                     if(!sense)
                                                     {
-                                                        mediaTest.ReadLong10Data = buffer;
-                                                        mediaTest.LongBlockSize  = i;
+                                                        mediaTest.LongBlockSize = i;
 
                                                         break;
                                                     }
@@ -1057,7 +1060,15 @@ namespace Aaru.Commands.Device
                                                 mediaTest.ReadLong10Data = buffer;
                                         }
 
-                                        // TODO: READ LONG (16)
+                                        if(mediaTest.SupportsReadLong16 == true &&
+                                           mediaTest.LongBlockSize      != mediaTest.BlockSize)
+                                        {
+                                            sense = dev.ReadLong16(out buffer, out senseBuffer, false, 0,
+                                                                   mediaTest.LongBlockSize.Value, dev.Timeout, out _);
+
+                                            if(!sense)
+                                                mediaTest.ReadLong16Data = buffer;
+                                        }
                                     }
 
                                     mediaTest.MediumTypeName    = mediaType;
@@ -1379,8 +1390,8 @@ namespace Aaru.Commands.Device
                                     if(mediaTest is null)
                                         continue;
 
-                                    if(mediaTest.SupportsReadLong == true &&
-                                       mediaTest.LongBlockSize    == mediaTest.BlockSize)
+                                    if((mediaTest.SupportsReadLong == true || mediaTest.SupportsReadLong16 == true) &&
+                                       mediaTest.LongBlockSize == mediaTest.BlockSize)
                                     {
                                         pressedKey = new ConsoleKeyInfo();
 
@@ -1401,13 +1412,15 @@ namespace Aaru.Commands.Device
                                                 AaruConsole.Write("\rTrying to READ LONG with a size of {0} bytes...",
                                                                   i);
 
-                                                sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, i,
-                                                                       dev.Timeout, out _);
+                                                sense = mediaTest.SupportsReadLong16 == true
+                                                            ? dev.ReadLong16(out buffer, out senseBuffer, false, 0, i,
+                                                                             dev.Timeout, out _)
+                                                            : dev.ReadLong10(out buffer, out senseBuffer, false, false,
+                                                                             0, i, dev.Timeout, out _);
 
                                                 if(!sense)
                                                 {
-                                                    mediaTest.ReadLong10Data = buffer;
-                                                    mediaTest.LongBlockSize  = i;
+                                                    mediaTest.LongBlockSize = i;
 
                                                     break;
                                                 }
@@ -1428,6 +1441,16 @@ namespace Aaru.Commands.Device
 
                                         if(!sense)
                                             mediaTest.ReadLong10Data = buffer;
+                                    }
+
+                                    if(mediaTest.SupportsReadLong16 == true &&
+                                       mediaTest.LongBlockSize      != mediaTest.BlockSize)
+                                    {
+                                        sense = dev.ReadLong16(out buffer, out senseBuffer, false, 0,
+                                                               (ushort)mediaTest.LongBlockSize, dev.Timeout, out _);
+
+                                        if(!sense)
+                                            mediaTest.ReadLong16Data = buffer;
                                     }
                                 }
 
@@ -1578,8 +1601,9 @@ namespace Aaru.Commands.Device
                                     {
                                         mediaTest = reporter.ReportScsiMedia();
 
-                                        if(mediaTest.SupportsReadLong == true &&
-                                           mediaTest.LongBlockSize    == mediaTest.BlockSize)
+                                        if((mediaTest.SupportsReadLong   == true ||
+                                            mediaTest.SupportsReadLong16 == true) &&
+                                           mediaTest.LongBlockSize == mediaTest.BlockSize)
                                         {
                                             pressedKey = new ConsoleKeyInfo();
 
@@ -1600,8 +1624,11 @@ namespace Aaru.Commands.Device
                                                     AaruConsole.
                                                         Write("\rTrying to READ LONG with a size of {0} bytes...", i);
 
-                                                    sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0,
-                                                                           i, dev.Timeout, out _);
+                                                    sense = mediaTest.SupportsReadLong16 == true
+                                                                ? dev.ReadLong16(out buffer, out senseBuffer, false, 0,
+                                                                    i, dev.Timeout, out _)
+                                                                : dev.ReadLong10(out buffer, out senseBuffer, false,
+                                                                    false, 0, i, dev.Timeout, out _);
 
                                                     if(!sense)
                                                     {
@@ -1627,6 +1654,16 @@ namespace Aaru.Commands.Device
                                             if(!sense)
                                                 mediaTest.ReadLong10Data = buffer;
                                         }
+
+                                        if(mediaTest.SupportsReadLong16 == true &&
+                                           mediaTest.LongBlockSize      != mediaTest.BlockSize)
+                                        {
+                                            sense = dev.ReadLong16(out buffer, out senseBuffer, false, 0,
+                                                                   (ushort)mediaTest.LongBlockSize, dev.Timeout, out _);
+
+                                            if(!sense)
+                                                mediaTest.ReadLong16Data = buffer;
+                                        }
                                     }
 
                                     mediaTest.MediumTypeName    = mediumTypeName;
@@ -1646,7 +1683,8 @@ namespace Aaru.Commands.Device
                             {
                                 report.SCSI.ReadCapabilities = reporter.ReportScsi();
 
-                                if(report.SCSI.ReadCapabilities.SupportsReadLong == true &&
+                                if((report.SCSI.ReadCapabilities.SupportsReadLong   == true ||
+                                    report.SCSI.ReadCapabilities.SupportsReadLong16 == true) &&
                                    report.SCSI.ReadCapabilities.LongBlockSize == report.SCSI.ReadCapabilities.BlockSize)
                                 {
                                     pressedKey = new ConsoleKeyInfo();
@@ -1667,13 +1705,15 @@ namespace Aaru.Commands.Device
                                         {
                                             AaruConsole.Write("\rTrying to READ LONG with a size of {0} bytes...", i);
 
-                                            sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, i,
-                                                                   dev.Timeout, out _);
+                                            sense = report.SCSI.ReadCapabilities.SupportsReadLong16 == true
+                                                        ? dev.ReadLong16(out buffer, out senseBuffer, false, 0, i,
+                                                                         dev.Timeout, out _)
+                                                        : dev.ReadLong10(out buffer, out senseBuffer, false, false, 0,
+                                                                         i, dev.Timeout, out _);
 
                                             if(!sense)
                                             {
-                                                report.SCSI.ReadCapabilities.ReadLong10Data = buffer;
-                                                report.SCSI.ReadCapabilities.LongBlockSize  = i;
+                                                report.SCSI.ReadCapabilities.LongBlockSize = i;
 
                                                 break;
                                             }
@@ -1695,6 +1735,17 @@ namespace Aaru.Commands.Device
 
                                     if(!sense)
                                         report.SCSI.ReadCapabilities.ReadLong10Data = buffer;
+                                }
+
+                                if(report.SCSI.ReadCapabilities.SupportsReadLong16 == true &&
+                                   report.SCSI.ReadCapabilities.LongBlockSize != report.SCSI.ReadCapabilities.BlockSize)
+                                {
+                                    sense = dev.ReadLong16(out buffer, out senseBuffer, false, 0,
+                                                           report.SCSI.ReadCapabilities.LongBlockSize.Value,
+                                                           dev.Timeout, out _);
+
+                                    if(!sense)
+                                        report.SCSI.ReadCapabilities.ReadLong16Data = buffer;
                                 }
                             }
 
