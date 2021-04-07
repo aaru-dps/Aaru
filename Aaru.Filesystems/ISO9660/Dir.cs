@@ -171,7 +171,17 @@ namespace Aaru.Filesystems
                     Marshal.ByteArrayToStructureBigEndian<CdiDirectoryRecord>(data, entryOff, _cdiDirectoryRecordSize);
 
                 if(record.length == 0)
+                {
+                    // Skip to next sector
+                    if(data.Length - entryOff >= 2048)
+                    {
+                        entryOff = ((data.Length % 2048) + 1) * 2048;
+
+                        continue;
+                    }
+
                     break;
+                }
 
                 // Special entries for current and parent directories, skip them
                 if(record.name_len == 1)
@@ -240,7 +250,17 @@ namespace Aaru.Filesystems
                         _highSierraDirectoryRecordSize);
 
                 if(record.length == 0)
+                {
+                    // Skip to next sector
+                    if(data.Length - entryOff >= 2048)
+                    {
+                        entryOff = ((data.Length % 2048) + 1) * 2048;
+
+                        continue;
+                    }
+
                     break;
+                }
 
                 // Special entries for current and parent directories, skip them
                 if(record.name_len == 1)
@@ -301,7 +321,17 @@ namespace Aaru.Filesystems
                     Marshal.ByteArrayToStructureLittleEndian<DirectoryRecord>(data, entryOff, _directoryRecordSize);
 
                 if(record.length == 0)
+                {
+                    // Skip to next sector
+                    if(data.Length - entryOff >= 2048)
+                    {
+                        entryOff = ((data.Length % 2048) + 1) * 2048;
+
+                        continue;
+                    }
+
                     break;
+                }
 
                 // Special entries for current and parent directories, skip them
                 if(record.name_len == 1)
@@ -660,10 +690,10 @@ namespace Aaru.Filesystems
                             if(entry.AmigaComment is null)
                                 entry.AmigaComment = new byte[0];
 
-                            byte[] newComment = new byte[(entry.AmigaComment.Length +
-                                                          data
-                                                              [systemAreaOff + Marshal.SizeOf<AmigaEntry>() + protectionLength]
-                                                         ) - 1];
+                            byte[] newComment = new byte[entry.AmigaComment.Length +
+                                                         data
+                                                             [systemAreaOff + Marshal.SizeOf<AmigaEntry>() + protectionLength] -
+                                                         1];
 
                             Array.Copy(entry.AmigaComment, 0, newComment, 0, entry.AmigaComment.Length);
 
