@@ -52,7 +52,14 @@ namespace Aaru.CommonTypes.Extents
 
         /// <summary>Initializes extents with an specific list</summary>
         /// <param name="list">List of extents as tuples "start, end"</param>
-        public ExtentsUShort(IEnumerable<Tuple<ushort, ushort>> list) => _backend = list.OrderBy(t => t.Item1).ToList();
+        public ExtentsUShort(IEnumerable<Tuple<ushort, ushort>> list)
+        {
+            _backend = new List<Tuple<ushort, ushort>>();
+
+            // This ensure no overlapping extents are added on creation
+            foreach(Tuple<ushort, ushort> t in list)
+                Add(t.Item1, t.Item2);
+        }
 
         /// <summary>Gets a count of how many extents are stored</summary>
         public int Count => _backend.Count;
