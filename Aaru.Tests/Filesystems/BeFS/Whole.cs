@@ -53,7 +53,7 @@ namespace Aaru.Tests.Filesystems.BeFS
                 SectorSize  = 512,
                 Clusters    = 1440,
                 ClusterSize = 1024,
-                VolumeName  = "Volume label"
+                VolumeName  = "volume label goes brrrr"
             },
             new FileSystemTest
             {

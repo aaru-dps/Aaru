@@ -49,11 +49,11 @@ namespace Aaru.Tests.Filesystems.BeFS
             {
                 TestFile    = "beos_r3.1.aif",
                 MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 1572864,
+                Sectors     = 262144,
                 SectorSize  = 512,
-                Clusters    = 786400,
+                Clusters    = 131040,
                 ClusterSize = 1024,
-                VolumeName  = "Volume label"
+                VolumeName  = "Big Volume Label Goes Big Brrrr"
             },
             new FileSystemTest
             {
