@@ -876,6 +876,19 @@ namespace Aaru.Tests.Filesystems.FAT16
                 SystemId     = "mkfs.fat",
                 VolumeName   = "DICSETTER",
                 VolumeSerial = "FCC308A7"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "beos_r5.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 65268,
+                ClusterSize  = 2048,
+                SystemId     = "BeOS    ",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "00000000"
             }
         };
     }

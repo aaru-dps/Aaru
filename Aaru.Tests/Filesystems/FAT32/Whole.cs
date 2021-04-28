@@ -58,7 +58,20 @@ namespace Aaru.Tests.Filesystems.FAT32
                 SystemId     = "BeOS    ",
                 VolumeName   = "VOLUME LABE",
                 VolumeSerial = "00000000"
-            }
+            },
+            new FileSystemTest
+            {
+                TestFile     = "beos_r5_mf2hd.img.lz",
+                MediaType    = MediaType.DOS_35_HD,
+                Sectors      = 2880,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 2880,
+                ClusterSize  = 512,
+                SystemId     = "BeOS    ",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "00000000"
+            },
         };
     }
 }

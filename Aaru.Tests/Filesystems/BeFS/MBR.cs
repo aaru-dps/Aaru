@@ -84,7 +84,37 @@ namespace Aaru.Tests.Filesystems.BeFS
                 Clusters    = 524272,
                 ClusterSize = 2048,
                 VolumeName  = "Volume label"
-            }
+            },
+            new FileSystemTest
+            {
+                TestFile    = "beos_r5.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 262144,
+                SectorSize  = 512,
+                Clusters    = 130536,
+                ClusterSize = 1024,
+                VolumeName  = "Volume label"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "beos_r5_2k.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 262144,
+                SectorSize  = 512,
+                Clusters    = 65268,
+                ClusterSize = 2048,
+                VolumeName  = "Volume label 2K"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "beos_r5_4k.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 262144,
+                SectorSize  = 512,
+                Clusters    = 32634,
+                ClusterSize = 4096,
+                VolumeName  = "Volume label 4K"
+            },
         };
     }
 }
