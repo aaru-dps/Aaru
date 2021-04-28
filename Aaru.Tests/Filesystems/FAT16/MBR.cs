@@ -688,13 +688,13 @@ namespace Aaru.Tests.Filesystems.FAT16
             {
                 TestFile     = "beos_r4.5.aif",
                 MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 1024000,
+                Sectors      = 262144,
                 SectorSize   = 512,
                 Bootable     = true,
-                Clusters     = 63996,
-                ClusterSize  = 8192,
+                Clusters     = 65268,
+                ClusterSize  = 2048,
                 SystemId     = "BeOS    ",
-                VolumeName   = "VOLUMELABEL",
+                VolumeName   = "VOLUME LABE",
                 VolumeSerial = "00000000"
             },
             new FileSystemTest

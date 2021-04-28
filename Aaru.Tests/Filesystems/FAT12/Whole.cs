@@ -4938,7 +4938,7 @@ namespace Aaru.Tests.Filesystems.FAT12
                 Clusters     = 2880,
                 ClusterSize  = 512,
                 SystemId     = "BeOS    ",
-                VolumeName   = "VOLUMELABEL",
+                VolumeName   = "VOLUME LABE",
                 VolumeSerial = "00000000"
             },
             new FileSystemTest

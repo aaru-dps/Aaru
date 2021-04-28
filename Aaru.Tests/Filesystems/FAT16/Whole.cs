@@ -67,6 +67,19 @@ namespace Aaru.Tests.Filesystems.FAT16
                 Clusters    = 5760,
                 ClusterSize = 512,
                 SystemId    = "IBM  3.3"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "beos_r4.5_mf2hd.img.lz",
+                MediaType    = MediaType.DOS_35_HD,
+                Sectors      = 2880,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 2880,
+                ClusterSize  = 512,
+                SystemId     = "BeOS    ",
+                VolumeName   = "VOLUME LABE",
+                VolumeSerial = "00000000"
             }
         };
     }

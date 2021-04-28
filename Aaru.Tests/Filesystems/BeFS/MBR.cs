@@ -59,9 +59,9 @@ namespace Aaru.Tests.Filesystems.BeFS
             {
                 TestFile    = "beos_r4.5.aif",
                 MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 1572864,
+                Sectors     = 262144,
                 SectorSize  = 512,
-                Clusters    = 785232,
+                Clusters    = 130536,
                 ClusterSize = 1024,
                 VolumeName  = "Volume label"
             },

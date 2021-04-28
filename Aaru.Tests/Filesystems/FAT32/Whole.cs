@@ -2,7 +2,7 @@
 // Aaru Data Preservation Suite
 // ----------------------------------------------------------------------------
 //
-// Filename       : BeFS.cs
+// Filename       : FAT16.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // Component      : Aaru unit testing.
@@ -29,41 +29,35 @@
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
+using Aaru.Filesystems;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Filesystems.BeFS
+namespace Aaru.Tests.Filesystems.FAT32
 {
     [TestFixture]
-    public class APM : FilesystemTest
+    public class Whole : FilesystemTest
     {
-        public APM() : base("BeFS") {}
+        public Whole() : base("FAT32") {}
 
-        public override string DataFolder =>
-            Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Be File System (APM)");
-        public override IFilesystem Plugin     => new Aaru.Filesystems.BeFS();
-        public override bool        Partitions => true;
+        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "FAT32");
+
+        public override IFilesystem Plugin     => new FAT();
+        public override bool        Partitions => false;
 
         public override FileSystemTest[] Tests => new[]
         {
             new FileSystemTest
             {
-                TestFile    = "beos_r3.1.aif",
-                MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 1572864,
-                SectorSize  = 512,
-                Clusters    = 786336,
-                ClusterSize = 1024,
-                VolumeName  = "Volume label"
-            },
-            new FileSystemTest
-            {
-                TestFile    = "beos_r4.5.aif",
-                MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 262144,
-                SectorSize  = 512,
-                Clusters    = 130976,
-                ClusterSize = 1024,
-                VolumeName  = "Volume label"
+                TestFile     = "beos_r4.5_mf2hd.img.lz",
+                MediaType    = MediaType.DOS_35_HD,
+                Sectors      = 2880,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 2880,
+                ClusterSize  = 512,
+                SystemId     = "BeOS    ",
+                VolumeName   = "VOLUME LABE",
+                VolumeSerial = "00000000"
             }
         };
     }

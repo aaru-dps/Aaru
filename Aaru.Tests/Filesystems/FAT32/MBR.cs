@@ -218,13 +218,13 @@ namespace Aaru.Tests.Filesystems.FAT32
             {
                 TestFile     = "beos_r4.5.aif",
                 MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 4194304,
+                Sectors      = 262144,
                 SectorSize   = 512,
                 Bootable     = true,
-                Clusters     = 1048560,
-                ClusterSize  = 2048,
+                Clusters     = 261072,
+                ClusterSize  = 512,
                 SystemId     = "BeOS    ",
-                VolumeName   = "VOLUMELABEL",
+                VolumeName   = "VOLUME LABE",
                 VolumeSerial = "00000000"
             },
             new FileSystemTest
