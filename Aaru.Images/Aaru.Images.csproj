@@ -63,7 +63,7 @@
     <PackageReference Include="Claunia.Encoding" Version="1.9.0" />
     <PackageReference Include="Claunia.RsrcFork" Version="1.1.0" />
     <PackageReference Include="DotNetZip" Version="1.13.8" />
-    <PackageReference Include="plist-cil" Version="2.1.0" />
+    <PackageReference Include="plist-cil" Version="2.2.0" />
     <PackageReference Include="SharpCompress" Version="0.25.1" />
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
     <PackageReference Include="Unclassified.NetRevisionTask" Version="0.3.0" PrivateAssets="all" />
