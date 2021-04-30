@@ -46,6 +46,7 @@ using Aaru.CommonTypes.Structs.Devices.SCSI;
 using Aaru.Console;
 using Aaru.Core.Logging;
 using Aaru.Core.Media.Detection;
+using Aaru.Decoders.DVD;
 using Aaru.Decoders.SCSI;
 using Aaru.Decoders.SCSI.MMC;
 using Aaru.Devices;
@@ -188,7 +189,7 @@ namespace Aaru.Core.Devices.Dumping
                                                           _dev.IsUsb, opticalDisc);
 
             if(_dev.ScsiType == PeripheralDeviceTypes.MultiMediaDevice)
-                MMC.DetectDiscType(ref dskType, 1, null, _dev, out _, out _, 0, blocks+1);
+                MMC.DetectDiscType(ref dskType, 1, null, _dev, out _, out _, 0, blocks + 1);
 
             switch(dskType)
             {
@@ -668,9 +669,12 @@ namespace Aaru.Core.Devices.Dumping
 
             bool newTrim = false;
 
+            mediaTags.TryGetValue(MediaTagType.DVD_CMI, out byte[] cmi);
+
             if(Settings.Settings.Current.EnableDecryption &&
                _titleKeys                                 &&
-               dskType == MediaType.DVDROM)
+               dskType               == MediaType.DVDROM  &&
+               (CopyrightType)cmi[0] == CopyrightType.CSS)
             {
                 UpdateStatus?.Invoke("Title keys dumping is enabled. This will be very slow.");
                 _resume.MissingTitleKeys ??= new List<ulong>(Enumerable.Range(0, (int)blocks).Select(n => (ulong)n));
