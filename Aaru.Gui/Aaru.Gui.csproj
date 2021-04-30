@@ -22,7 +22,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Avalonia.Controls.DataGrid" Version="0.9.10" />
-    <PackageReference Include="Claunia.Encoding" Version="1.7.0" />
+    <PackageReference Include="Claunia.Encoding" Version="1.9.0" />
     <PackageReference Include="MessageBox.Avalonia" Version="0.9.6.1" />
     <PackageReference Include="OxyPlot.Avalonia-alpha-2020-04-15" Version="1.0.0" />
     <PackageReference Include="System.Text.Encoding.CodePages" Version="4.7.1" />
