@@ -105,12 +105,12 @@ namespace Aaru.Tests.Filesystems.NTFS
             {
                 TestFile     = "winnt_4.00.aif",
                 MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 524288,
+                Sectors      = 262144,
                 SectorSize   = 512,
                 Bootable     = true,
-                Clusters     = 524096,
+                Clusters     = 262016,
                 ClusterSize  = 512,
-                VolumeSerial = "822C288D2C287E73"
+                VolumeSerial = "DE047EC1047E9C69"
             },
             new FileSystemTest
             {

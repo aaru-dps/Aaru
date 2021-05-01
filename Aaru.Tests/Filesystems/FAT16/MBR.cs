@@ -662,14 +662,14 @@ namespace Aaru.Tests.Filesystems.FAT16
             {
                 TestFile     = "winnt_4.00.aif",
                 MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 1024000,
+                Sectors      = 262144,
                 SectorSize   = 512,
                 Bootable     = true,
-                Clusters     = 63941,
-                ClusterSize  = 8192,
+                Clusters     = 65504,
+                ClusterSize  = 2048,
                 SystemId     = "MSDOS5.0",
                 VolumeName   = "VOLUMELABEL",
-                VolumeSerial = "501F9FA6"
+                VolumeSerial = "D840DD84"
             },
             new FileSystemTest
             {

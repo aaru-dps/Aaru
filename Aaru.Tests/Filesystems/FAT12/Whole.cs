@@ -4782,8 +4782,8 @@ namespace Aaru.Tests.Filesystems.FAT12
                 Clusters     = 2880,
                 ClusterSize  = 512,
                 SystemId     = "MSDOS5.0",
-                VolumeName   = "VOLUMELABEL",
-                VolumeSerial = "4C7DD099"
+                VolumeName   = "NO NAME",
+                VolumeSerial = "D4F453A2"
             },
             new FileSystemTest
             {
