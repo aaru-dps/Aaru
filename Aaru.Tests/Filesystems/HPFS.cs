@@ -89,40 +89,40 @@ namespace Aaru.Tests.Filesystems
             {
                 TestFile     = "os2_1.20.aif",
                 MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 1024000,
+                Sectors      = 262144,
                 SectorSize   = 512,
                 Bootable     = true,
-                Clusters     = 1023056,
+                Clusters     = 262016,
                 ClusterSize  = 512,
                 SystemId     = "OS2 10.0",
                 VolumeName   = "VOLUMELABEL",
-                VolumeSerial = "6C4EE015"
+                VolumeSerial = "6D3D2815"
             },
             new FileSystemTest
             {
                 TestFile     = "os2_1.30.aif",
                 MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 1024000,
+                Sectors      = 262144,
                 SectorSize   = 512,
                 Bootable     = true,
-                Clusters     = 1023056,
+                Clusters     = 262016,
                 ClusterSize  = 512,
                 SystemId     = "OS2 10.0",
                 VolumeName   = "VOLUMELABEL",
-                VolumeSerial = "6C406015"
+                VolumeSerial = "6D195815"
             },
             new FileSystemTest
             {
                 TestFile     = "os2_6.307.aif",
                 MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 1024000,
+                Sectors      = 262144,
                 SectorSize   = 512,
                 Bootable     = true,
-                Clusters     = 1023056,
+                Clusters     = 262016,
                 ClusterSize  = 512,
                 SystemId     = "OS2 20.0",
                 VolumeName   = "VOLUMELABEL",
-                VolumeSerial = "6C49B015"
+                VolumeSerial = "6D24F815"
             },
             new FileSystemTest
             {
@@ -135,7 +135,7 @@ namespace Aaru.Tests.Filesystems
                 ClusterSize  = 512,
                 SystemId     = "OS2 20.0",
                 VolumeName   = "VOLUMELABEL",
-                VolumeSerial = "2BCEB414"
+                VolumeSerial = "6D27F415"
             },
             new FileSystemTest
             {
@@ -148,7 +148,7 @@ namespace Aaru.Tests.Filesystems
                 ClusterSize  = 512,
                 SystemId     = "OS2 20.1",
                 VolumeName   = "VOLUMELABEL",
-                VolumeSerial = "2C157414"
+                VolumeSerial = "6D396415"
             },
             new FileSystemTest
             {
@@ -161,7 +161,7 @@ namespace Aaru.Tests.Filesystems
                 ClusterSize  = 512,
                 SystemId     = "OS2 20.0",
                 VolumeName   = "VOLUMELABEL",
-                VolumeSerial = "2BF55414"
+                VolumeSerial = "6D118415"
             },
             new FileSystemTest
             {
@@ -173,8 +173,8 @@ namespace Aaru.Tests.Filesystems
                 Clusters     = 262016,
                 ClusterSize  = 512,
                 SystemId     = "OS2 20.0",
-                VolumeName   = "VOLUMELABEL",
-                VolumeSerial = "2BE31414"
+                VolumeName   = "VOLUME LABE",
+                VolumeSerial = "ACA08415"
             },
             new FileSystemTest
             {

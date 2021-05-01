@@ -3493,7 +3493,7 @@ namespace Aaru.Tests.Filesystems.FAT12
                 ClusterSize  = 512,
                 SystemId     = "IBM 10.2",
                 VolumeName   = "VOLUMELABEL",
-                VolumeSerial = "5C376015"
+                VolumeSerial = "5D0CC815"
             },
             new FileSystemTest
             {
@@ -3545,7 +3545,7 @@ namespace Aaru.Tests.Filesystems.FAT12
                 ClusterSize  = 512,
                 SystemId     = "IBM 10.2",
                 VolumeName   = "VOLUMELABEL",
-                VolumeSerial = "5B83C015"
+                VolumeSerial = "5D0DE815"
             },
             new FileSystemTest
             {
@@ -3610,7 +3610,7 @@ namespace Aaru.Tests.Filesystems.FAT12
                 ClusterSize  = 512,
                 SystemId     = "IBM 20.0",
                 VolumeName   = "VOLUMELABEL",
-                VolumeSerial = "5C390015"
+                VolumeSerial = "5D14F815"
             },
             new FileSystemTest
             {
@@ -3675,7 +3675,7 @@ namespace Aaru.Tests.Filesystems.FAT12
                 ClusterSize  = 512,
                 SystemId     = "IBM 20.0",
                 VolumeName   = "VOLUMELABEL",
-                VolumeSerial = "1C005414"
+                VolumeSerial = "5D490415"
             },
             new FileSystemTest
             {
@@ -3740,7 +3740,7 @@ namespace Aaru.Tests.Filesystems.FAT12
                 ClusterSize  = 512,
                 SystemId     = "IBM 20.0",
                 VolumeName   = "VOLUMELABEL",
-                VolumeSerial = "E6B6E414"
+                VolumeSerial = "5D23B415"
             },
             new FileSystemTest
             {
@@ -3792,7 +3792,7 @@ namespace Aaru.Tests.Filesystems.FAT12
                 ClusterSize  = 512,
                 SystemId     = "IBM 20.0",
                 VolumeName   = "VOLUMELABEL",
-                VolumeSerial = "E6AE6414"
+                VolumeSerial = "5CFCB415"
             },
             new FileSystemTest
             {
@@ -3844,7 +3844,7 @@ namespace Aaru.Tests.Filesystems.FAT12
                 ClusterSize  = 512,
                 SystemId     = "IBM 20.0",
                 VolumeName   = "VOLUMELABEL",
-                VolumeSerial = "E6D4C414"
+                VolumeSerial = "5CFB8415"
             },
             new FileSystemTest
             {

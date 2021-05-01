@@ -481,92 +481,92 @@ namespace Aaru.Tests.Filesystems.FAT12
             {
                 TestFile     = "os2_1.20.aif",
                 MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 16384,
+                Sectors      = 24576,
                 SectorSize   = 512,
                 Bootable     = true,
-                Clusters     = 2008,
+                Clusters     = 3016,
                 ClusterSize  = 4096,
                 SystemId     = "IBM 10.2",
                 VolumeName   = "VOLUMELABEL",
-                VolumeSerial = "5C578015"
+                VolumeSerial = "5D13D815"
             },
             new FileSystemTest
             {
                 TestFile     = "os2_1.30.aif",
                 MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 16384,
+                Sectors      = 24576,
                 SectorSize   = 512,
                 Bootable     = true,
-                Clusters     = 2008,
+                Clusters     = 3016,
                 ClusterSize  = 4096,
                 SystemId     = "IBM 10.2",
                 VolumeName   = "VOLUMELABEL",
-                VolumeSerial = "5B845015"
+                VolumeSerial = "5D48C815"
             },
             new FileSystemTest
             {
                 TestFile     = "os2_6.307.aif",
                 MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 16384,
+                Sectors      = 24576,
                 SectorSize   = 512,
                 Bootable     = true,
-                Clusters     = 2008,
+                Clusters     = 3016,
                 ClusterSize  = 4096,
                 SystemId     = "IBM 20.0",
                 VolumeName   = "VOLUMELABEL",
-                VolumeSerial = "5C4BF015"
+                VolumeSerial = "5D165815"
             },
             new FileSystemTest
             {
                 TestFile     = "os2_6.514.aif",
                 MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 16384,
+                Sectors      = 24576,
                 SectorSize   = 512,
                 Bootable     = true,
-                Clusters     = 2008,
+                Clusters     = 3016,
                 ClusterSize  = 4096,
                 SystemId     = "IBM 20.0",
                 VolumeName   = "VOLUMELABEL",
-                VolumeSerial = "E6B5F414"
+                VolumeSerial = "5D036415"
             },
             new FileSystemTest
             {
                 TestFile     = "os2_6.617.aif",
                 MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 16384,
+                Sectors      = 24576,
                 SectorSize   = 512,
                 Bootable     = true,
-                Clusters     = 2008,
+                Clusters     = 3016,
                 ClusterSize  = 4096,
                 SystemId     = "IBM 20.0",
                 VolumeName   = "VOLUMELABEL",
-                VolumeSerial = "E6B15414"
+                VolumeSerial = "5CED2415"
             },
             new FileSystemTest
             {
                 TestFile     = "os2_8.162.aif",
                 MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 16384,
+                Sectors      = 24576,
                 SectorSize   = 512,
                 Bootable     = true,
-                Clusters     = 2008,
+                Clusters     = 3016,
                 ClusterSize  = 4096,
                 SystemId     = "IBM 20.0",
                 VolumeName   = "VOLUMELABEL",
-                VolumeSerial = "E6A41414"
+                VolumeSerial = "5D470415"
             },
             new FileSystemTest
             {
                 TestFile     = "os2_9.023.aif",
                 MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 16384,
+                Sectors      = 24576,
                 SectorSize   = 512,
                 Bootable     = true,
-                Clusters     = 2008,
+                Clusters     = 3016,
                 ClusterSize  = 4096,
                 SystemId     = "IBM 20.0",
                 VolumeName   = "VOLUMELABEL",
-                VolumeSerial = "E6A39414"
+                VolumeSerial = "9BA14415"
             },
             new FileSystemTest
             {
