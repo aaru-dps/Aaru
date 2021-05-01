@@ -49,12 +49,12 @@ namespace Aaru.Tests.Filesystems.NTFS
             {
                 TestFile     = "haiku_hrev51259.aif",
                 MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 2097152,
+                Sectors      = 262144,
                 SectorSize   = 512,
                 Bootable     = true,
-                Clusters     = 261887,
+                Clusters     = 32511,
                 ClusterSize  = 4096,
-                VolumeSerial = "106DA7693F7F6B3F"
+                VolumeSerial = "2A1DF87732D3285C"
             }
         };
     }

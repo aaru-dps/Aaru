@@ -138,12 +138,12 @@ namespace Aaru.Tests.Filesystems.NTFS
             {
                 TestFile     = "haiku_hrev51259.aif",
                 MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 2097152,
+                Sectors      = 262144,
                 SectorSize   = 512,
                 Bootable     = true,
-                Clusters     = 261887,
+                Clusters     = 32511,
                 ClusterSize  = 4096,
-                VolumeSerial = "46EC796749C6FA66"
+                VolumeSerial = "323BED1E2A2FF4D5"
             },
             new FileSystemTest
             {
