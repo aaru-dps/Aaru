@@ -368,6 +368,19 @@ namespace Aaru.Tests.Filesystems.FAT32
                 SystemId     = "BeOS    ",
                 VolumeName   = "VOLUMELABEL",
                 VolumeSerial = "00000000"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "dflybsd_1.0.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 32634,
+                ClusterSize  = 4096,
+                SystemId     = "BSD  4.4",
+                VolumeName   = "NO NAME",
+                VolumeSerial = "837A1B05"
             }
         };
     }

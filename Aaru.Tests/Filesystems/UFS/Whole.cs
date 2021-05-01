@@ -116,12 +116,22 @@ namespace Aaru.Tests.Filesystems.UFS
             },
             new FileSystemTest
             {
-                TestFile    = "solaris_2.4_mf2hd.img.lz",
+                TestFile    = "dflybsd_1.0_mf2hd.img.lz",
                 MediaType   = MediaType.DOS_35_HD,
                 Sectors     = 2880,
                 SectorSize  = 512,
-                Clusters    = 1422,
-                ClusterSize = 1024,
+                Clusters    = 2880,
+                ClusterSize = 512,
+                Type        = "UFS"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "dflybsd_1.0_mf2hd_ffs43.img.lz",
+                MediaType   = MediaType.DOS_35_HD,
+                Sectors     = 2880,
+                SectorSize  = 512,
+                Clusters    = 2880,
+                ClusterSize = 512,
                 Type        = "UFS"
             }
         };

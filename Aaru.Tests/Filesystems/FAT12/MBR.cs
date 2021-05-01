@@ -840,6 +840,19 @@ namespace Aaru.Tests.Filesystems.FAT12
                 SystemId     = "BSD4.4  ",
                 VolumeName   = "VOLUMELABEL",
                 VolumeSerial = "02140E0B"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "dflybsd_1.0.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 24576,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 2898,
+                ClusterSize  = 4096,
+                SystemId     = "BSD  4.4",
+                VolumeName   = "NO NAME",
+                VolumeSerial = "63C81AFB"
             }
         };
     }

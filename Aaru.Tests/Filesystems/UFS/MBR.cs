@@ -338,6 +338,28 @@ namespace Aaru.Tests.Filesystems.UFS
                 ClusterSize = 2048,
                 Type        = "UFS2",
                 VolumeName  = ""
+            },
+            new FileSystemTest
+            {
+                TestFile    = "ffs43/dflybsd_1.0.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 262144,
+                SectorSize  = 512,
+                Clusters    = 130504,
+                ClusterSize = 1024,
+                Type        = "UFS",
+                VolumeName  = null
+            },
+            new FileSystemTest
+            {
+                TestFile    = "ufs1/dflybsd_1.0.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 262144,
+                SectorSize  = 512,
+                Clusters    = 131008,
+                ClusterSize = 1024,
+                Type        = "UFS",
+                VolumeName  = null
             }
         };
     }
