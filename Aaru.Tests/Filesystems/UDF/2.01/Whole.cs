@@ -73,14 +73,14 @@ namespace Aaru.Tests.Filesystems.UDF._201
             {
                 TestFile     = "netbsd_7.1.aif",
                 MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 8388608,
+                Sectors      = 262144,
                 SectorSize   = 512,
-                Clusters     = 8388608,
+                Clusters     = 262144,
                 ClusterSize  = 512,
                 SystemId     = "*NetBSD userland UDF",
                 Type         = "UDF v2.01",
                 VolumeName   = "anonymous",
-                VolumeSerial = "7cc94d726669d773"
+                VolumeSerial = "5bc935e11b089104"
             },
             new FileSystemTest
             {
@@ -94,6 +94,19 @@ namespace Aaru.Tests.Filesystems.UDF._201
                 Type         = "UDF v2.01",
                 VolumeName   = "DicSetter",
                 VolumeSerial = "5cc8816fcb3a3b38LinuxUDF"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "netbsd_6.1.5.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Clusters     = 262144,
+                ClusterSize  = 512,
+                SystemId     = "*NetBSD userland UDF",
+                Type         = "UDF v2.01",
+                VolumeName   = "anonymous",
+                VolumeSerial = "60a80c385dda0f96"
             }
         };
     }

@@ -739,40 +739,40 @@ namespace Aaru.Tests.Filesystems.FAT16
             {
                 TestFile     = "freebsd_6.1.aif",
                 MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 1024000,
+                Sectors      = 262144,
                 SectorSize   = 512,
                 Bootable     = true,
-                Clusters     = 63998,
-                ClusterSize  = 8192,
+                Clusters     = 65504,
+                ClusterSize  = 2048,
                 SystemId     = "BSD  4.4",
                 VolumeName   = "VOLUMELABEL",
-                VolumeSerial = "3CF10E0D"
+                VolumeSerial = "437B1EF6"
             },
             new FileSystemTest
             {
                 TestFile     = "freebsd_7.0.aif",
                 MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 1024000,
+                Sectors      = 262144,
                 SectorSize   = 512,
                 Bootable     = true,
-                Clusters     = 63998,
-                ClusterSize  = 8192,
+                Clusters     = 65504,
+                ClusterSize  = 2048,
                 SystemId     = "BSD  4.4",
                 VolumeName   = "VOLUMELABEL",
-                VolumeSerial = "C6C30E0D"
+                VolumeSerial = "BE841EF5"
             },
             new FileSystemTest
             {
                 TestFile     = "freebsd_8.2.aif",
                 MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 1024000,
+                Sectors      = 262144,
                 SectorSize   = 512,
                 Bootable     = true,
-                Clusters     = 31999,
-                ClusterSize  = 16384,
+                Clusters     = 16376,
+                ClusterSize  = 8192,
                 SystemId     = "BSD4.4  ",
                 VolumeName   = "VOLUMELABEL",
-                VolumeSerial = "44770E0D"
+                VolumeSerial = "E40B1EF6"
             },
             new FileSystemTest
             {
@@ -902,6 +902,58 @@ namespace Aaru.Tests.Filesystems.FAT16
                 SystemId     = "BSD  4.4",
                 VolumeName   = "NO NAME",
                 VolumeSerial = "1B3F1B00"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "netbsd_1.6.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 65520,
+                ClusterSize  = 2048,
+                SystemId     = "BSD  4.4",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "80A91CF3"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "netbsd_6.1.5.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 16380,
+                ClusterSize  = 8192,
+                SystemId     = "NetBSD  ",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "40C91B1F"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "netbsd_7.1.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 16380,
+                ClusterSize  = 8192,
+                SystemId     = "NetBSD  ",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "8413181B"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "openbsd_4.7.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 65520,
+                ClusterSize  = 2048,
+                SystemId     = "BSD  4.4",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "84E407F6"
             }
         };
     }

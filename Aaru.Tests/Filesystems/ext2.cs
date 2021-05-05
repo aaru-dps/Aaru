@@ -81,27 +81,75 @@ namespace Aaru.Tests.Filesystems
             },
             new FileSystemTest
             {
-                TestFile     = "netbsd_7.1.aif",
+                TestFile     = "netbsd_6.1.5.aif",
                 MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 8388608,
+                Sectors      = 262144,
                 SectorSize   = 512,
-                Clusters     = 1046567,
-                ClusterSize  = 4096,
+                Clusters     = 131040,
+                ClusterSize  = 1024,
                 Type         = "ext2",
                 VolumeName   = "Volume label",
-                VolumeSerial = "e72aee05-627b-11e7-a573-0800272a08ec"
+                VolumeSerial = "a4a95973-ab77-11eb-811f-08002792bfed"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "netbsd_6.1.5_r0.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Clusters     = 131040,
+                ClusterSize  = 1024,
+                Type         = "ext2",
+                VolumeName   = "Volume label",
+                VolumeSerial = "19b1dda1-ab75-11eb-a6ba-08002792bfed"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "netbsd_7.1.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Clusters     = 130540,
+                ClusterSize  = 1024,
+                Type         = "ext2",
+                VolumeName   = "Volume label",
+                VolumeSerial = "7f49b17e-ab5d-11eb-bc21-0800272a08ec"
             },
             new FileSystemTest
             {
                 TestFile     = "netbsd_7.1_r0.aif",
                 MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 2097152,
+                Sectors      = 262144,
                 SectorSize   = 512,
-                Clusters     = 260135,
-                ClusterSize  = 4096,
+                Clusters     = 131040,
+                ClusterSize  = 1024,
                 Type         = "ext2",
                 VolumeName   = "Volume label",
-                VolumeSerial = "072756f2-627c-11e7-a573-0800272a08ec"
+                VolumeSerial = "e2601450-ab5c-11eb-a154-0800272a08ec"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "openbsd_4.7.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Clusters     = 131040,
+                ClusterSize  = 1024,
+                Type         = "ext2",
+                VolumeName   = "Volume label",
+                VolumeSerial = "0b2bb462-17ac-c444-8ff0-ab10537ae902"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "openbsd_4.7_r0.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Clusters     = 131040,
+                ClusterSize  = 1024,
+                Type         = "ext2",
+                VolumeName   = "Volume label",
+                VolumeSerial = "32e4de93-37f9-6747-9650-ae7b1f1bb901"
             },
             new FileSystemTest
             {

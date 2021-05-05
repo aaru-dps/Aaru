@@ -5442,6 +5442,45 @@ namespace Aaru.Tests.Filesystems.FAT12
                 SystemId     = "BSD  4.4",
                 VolumeName   = "NO NAME",
                 VolumeSerial = "3E8C1A1F"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "netbsd_6.1.5_mf2hd.img.lz",
+                MediaType    = MediaType.DOS_35_HD,
+                Sectors      = 2880,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 2880,
+                ClusterSize  = 512,
+                SystemId     = "NetBSD  ",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "2EE71B0B"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "netbsd_7.1_mf2hd.img.lz",
+                MediaType    = MediaType.DOS_35_HD,
+                Sectors      = 2880,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 2880,
+                ClusterSize  = 512,
+                SystemId     = "NetBSD  ",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "80C21715"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "openbsd_4.7_mf2hd.img.lz",
+                MediaType    = MediaType.DOS_35_HD,
+                Sectors      = 2880,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 2880,
+                ClusterSize  = 512,
+                SystemId     = "BSD  4.4",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "4E6B1F17"
             }
         };
     }

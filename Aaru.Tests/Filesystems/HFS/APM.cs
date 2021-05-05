@@ -411,9 +411,29 @@ namespace Aaru.Tests.Filesystems.HFS
             },
             new FileSystemTest
             {
-                TestFile    = "vcpformatter_2.1.1.aif",
+                TestFile    = "nextstep_3.3.aif",
                 MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 54840,
+                Sectors     = 262144,
+                SectorSize  = 512,
+                Clusters    = 54643,
+                ClusterSize = 512,
+                VolumeName  = "Volume label"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "openstep_4.0.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 262144,
+                SectorSize  = 512,
+                Clusters    = 54643,
+                ClusterSize = 512,
+                VolumeName  = "Volume label"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "openstep_4.2.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 262144,
                 SectorSize  = 512,
                 Clusters    = 54643,
                 ClusterSize = 512,

@@ -68,6 +68,32 @@ namespace Aaru.Tests.Filesystems.UDF._250
                 Type         = "UDF v2.50",
                 VolumeName   = "Volume label",
                 VolumeSerial = "709E84A1 (Mac OS X newfs_udf) UDF Volume Set"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "netbsd_6.1.5.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Clusters     = 262144,
+                ClusterSize  = 512,
+                SystemId     = "*NetBSD userland UDF",
+                Type         = "UDF v2.50",
+                VolumeName   = "anonymous",
+                VolumeSerial = "672fe9a0114cdddb"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "netbsd_7.1.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Clusters     = 262144,
+                ClusterSize  = 512,
+                SystemId     = "*NetBSD userland UDF",
+                Type         = "UDF v2.50",
+                VolumeName   = "anonymous",
+                VolumeSerial = "723d15a55a5d8156"
             }
         };
     }

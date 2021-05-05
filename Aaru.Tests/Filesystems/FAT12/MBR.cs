@@ -806,40 +806,40 @@ namespace Aaru.Tests.Filesystems.FAT12
             {
                 TestFile     = "freebsd_6.1.aif",
                 MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 16384,
+                Sectors      = 24576,
                 SectorSize   = 512,
                 Bootable     = true,
-                Clusters     = 2044,
+                Clusters     = 3016,
                 ClusterSize  = 4096,
                 SystemId     = "BSD  4.4",
                 VolumeName   = "VOLUMELABEL",
-                VolumeSerial = "8FC80E0A"
+                VolumeSerial = "76D11EF0"
             },
             new FileSystemTest
             {
                 TestFile     = "freebsd_7.0.aif",
                 MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 16384,
+                Sectors      = 24576,
                 SectorSize   = 512,
                 Bootable     = true,
-                Clusters     = 2044,
+                Clusters     = 3016,
                 ClusterSize  = 4096,
                 SystemId     = "BSD  4.4",
                 VolumeName   = "VOLUMELABEL",
-                VolumeSerial = "34FA0E0B"
+                VolumeSerial = "52491EF0"
             },
             new FileSystemTest
             {
                 TestFile     = "freebsd_8.2.aif",
                 MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 16384,
+                Sectors      = 24576,
                 SectorSize   = 512,
                 Bootable     = true,
-                Clusters     = 2044,
+                Clusters     = 3016,
                 ClusterSize  = 4096,
                 SystemId     = "BSD4.4  ",
                 VolumeName   = "VOLUMELABEL",
-                VolumeSerial = "02140E0B"
+                VolumeSerial = "DF9D1EEF"
             },
             new FileSystemTest
             {
@@ -853,6 +853,58 @@ namespace Aaru.Tests.Filesystems.FAT12
                 SystemId     = "BSD  4.4",
                 VolumeName   = "NO NAME",
                 VolumeSerial = "63C81AFB"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "netbsd_1.6.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 24576,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 3064,
+                ClusterSize  = 4096,
+                SystemId     = "BSD  4.4",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "84431CEB"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "netbsd_6.1.5.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 24576,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 3063,
+                ClusterSize  = 4096,
+                SystemId     = "NetBSD  ",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "7F161B1D"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "netbsd_7.1.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 24576,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 3064,
+                ClusterSize  = 4096,
+                SystemId     = "NetBSD  ",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "40961817"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "openbsd_4.7.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 24576,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 3064,
+                ClusterSize  = 4096,
+                SystemId     = "BSD  4.4",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "F01F07F2"
             }
         };
     }

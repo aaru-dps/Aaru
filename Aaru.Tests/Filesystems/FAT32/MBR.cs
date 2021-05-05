@@ -256,27 +256,27 @@ namespace Aaru.Tests.Filesystems.FAT32
             {
                 TestFile     = "freebsd_6.1.aif",
                 MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 4194304,
+                Sectors      = 262144,
                 SectorSize   = 512,
                 Bootable     = true,
-                Clusters     = 524112,
+                Clusters     = 32752,
                 ClusterSize  = 4096,
                 SystemId     = "BSD  4.4",
                 VolumeName   = "VOLUMELABEL",
-                VolumeSerial = "41540E0E"
+                VolumeSerial = "40931EFC"
             },
             new FileSystemTest
             {
                 TestFile     = "freebsd_7.0.aif",
                 MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 4194304,
+                Sectors      = 262144,
                 SectorSize   = 512,
                 Bootable     = true,
-                Clusters     = 524112,
+                Clusters     = 32752,
                 ClusterSize  = 4096,
                 SystemId     = "BSD  4.4",
                 VolumeName   = "VOLUMELABEL",
-                VolumeSerial = "4E600E0F"
+                VolumeSerial = "F4181EFC"
             },
             new FileSystemTest
             {
@@ -381,6 +381,58 @@ namespace Aaru.Tests.Filesystems.FAT32
                 SystemId     = "BSD  4.4",
                 VolumeName   = "NO NAME",
                 VolumeSerial = "837A1B05"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "netbsd_1.6.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 32760,
+                ClusterSize  = 4096,
+                SystemId     = "BSD  4.4",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "CFAD1CF7"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "netbsd_6.1.5.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 16380,
+                ClusterSize  = 8192,
+                SystemId     = "NetBSD  ",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "A1CC1BED"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "netbsd_7.1.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 131040,
+                ClusterSize  = 1024,
+                SystemId     = "NetBSD  ",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "843A181F"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "openbsd_4.7.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 32634,
+                ClusterSize  = 4096,
+                SystemId     = "BSD  4.4",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "C27607FB"
             }
         };
     }

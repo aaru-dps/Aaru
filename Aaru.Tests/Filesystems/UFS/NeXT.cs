@@ -48,9 +48,9 @@ namespace Aaru.Tests.Filesystems.UFS
             {
                 TestFile    = "nextstep_3.3.aif",
                 MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 409600,
+                Sectors     = 262144,
                 SectorSize  = 512,
-                Clusters    = 204640,
+                Clusters    = 130912,
                 ClusterSize = 1024,
                 Type        = "UFS"
             },
@@ -58,9 +58,9 @@ namespace Aaru.Tests.Filesystems.UFS
             {
                 TestFile    = "openstep_4.0.aif",
                 MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 409600,
+                Sectors     = 262144,
                 SectorSize  = 512,
-                Clusters    = 204640,
+                Clusters    = 130912,
                 ClusterSize = 1024,
                 Type        = "UFS"
             },
@@ -68,9 +68,9 @@ namespace Aaru.Tests.Filesystems.UFS
             {
                 TestFile    = "openstep_4.2.aif",
                 MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 409600,
+                Sectors     = 262144,
                 SectorSize  = 512,
-                Clusters    = 204640,
+                Clusters    = 130912,
                 ClusterSize = 1024,
                 Type        = "UFS"
             },
@@ -78,9 +78,9 @@ namespace Aaru.Tests.Filesystems.UFS
             {
                 TestFile    = "rhapsody_dr1.aif",
                 MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 409600,
+                Sectors     = 262144,
                 SectorSize  = 512,
-                Clusters    = 204640,
+                Clusters    = 130912,
                 ClusterSize = 1024,
                 Type        = "UFS"
             },
@@ -88,9 +88,9 @@ namespace Aaru.Tests.Filesystems.UFS
             {
                 TestFile    = "rhapsody_dr2.aif",
                 MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 409600,
+                Sectors     = 262144,
                 SectorSize  = 512,
-                Clusters    = 204464,
+                Clusters    = 130880,
                 ClusterSize = 1024,
                 Type        = "UFS"
             }

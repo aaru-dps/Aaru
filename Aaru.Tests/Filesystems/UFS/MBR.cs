@@ -139,9 +139,19 @@ namespace Aaru.Tests.Filesystems.UFS
             {
                 TestFile    = "ffs43/netbsd_1.6.aif",
                 MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 1024000,
+                Sectors     = 262144,
                 SectorSize  = 512,
-                Clusters    = 511992,
+                Clusters    = 130032,
+                ClusterSize = 1024,
+                Type        = "UFS"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "ffs43/netbsd_6.1.5.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 262144,
+                SectorSize  = 512,
+                Clusters    = 131040,
                 ClusterSize = 1024,
                 Type        = "UFS"
             },
@@ -149,10 +159,30 @@ namespace Aaru.Tests.Filesystems.UFS
             {
                 TestFile    = "ffs43/netbsd_7.1.aif",
                 MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 409600,
+                Sectors     = 262144,
                 SectorSize  = 512,
-                Clusters    = 204768,
+                Clusters    = 131040,
                 ClusterSize = 1024,
+                Type        = "UFS"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "ffs43/netbsd_7.1_be.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 262144,
+                SectorSize  = 512,
+                Clusters    = 131040,
+                ClusterSize = 1024,
+                Type        = "UFS"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "ffs43/openbsd_4.7.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 262144,
+                SectorSize  = 512,
+                Clusters    = 65504,
+                ClusterSize = 2048,
                 Type        = "UFS"
             },
             new FileSystemTest
@@ -229,29 +259,29 @@ namespace Aaru.Tests.Filesystems.UFS
             {
                 TestFile    = "ufs1/freebsd_6.1.aif",
                 MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 2097152,
+                Sectors     = 262144,
                 SectorSize  = 512,
-                Clusters    = 262138,
-                ClusterSize = 4096,
+                Clusters    = 65500,
+                ClusterSize = 2048,
                 Type        = "UFS"
             },
             new FileSystemTest
             {
                 TestFile    = "ufs1/freebsd_7.0.aif",
                 MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 8388608,
+                Sectors     = 262144,
                 SectorSize  = 512,
-                Clusters    = 1048231,
-                ClusterSize = 4096,
+                Clusters    = 65500,
+                ClusterSize = 2048,
                 Type        = "UFS"
             },
             new FileSystemTest
             {
                 TestFile    = "ufs1/freebsd_8.2.aif",
                 MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 8388608,
+                Sectors     = 262144,
                 SectorSize  = 512,
-                Clusters    = 2096462,
+                Clusters    = 65500,
                 ClusterSize = 2048,
                 Type        = "UFS"
             },
@@ -259,19 +289,39 @@ namespace Aaru.Tests.Filesystems.UFS
             {
                 TestFile    = "ufs1/netbsd_1.6.aif",
                 MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 2097152,
+                Sectors     = 262144,
                 SectorSize  = 512,
-                Clusters    = 524284,
-                ClusterSize = 2048,
+                Clusters    = 130032,
+                ClusterSize = 1024,
+                Type        = "UFS"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "ufs1/netbsd_6.1.5.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 262144,
+                SectorSize  = 512,
+                Clusters    = 131040,
+                ClusterSize = 1024,
                 Type        = "UFS"
             },
             new FileSystemTest
             {
                 TestFile    = "ufs1/netbsd_7.1.aif",
                 MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 1024000,
+                Sectors     = 262144,
                 SectorSize  = 512,
-                Clusters    = 511968,
+                Clusters    = 131040,
+                ClusterSize = 1024,
+                Type        = "UFS"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "ufs1/netbsd_7.1_be.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 262144,
+                SectorSize  = 512,
+                Clusters    = 131040,
                 ClusterSize = 1024,
                 Type        = "UFS"
             },
@@ -299,42 +349,75 @@ namespace Aaru.Tests.Filesystems.UFS
             {
                 TestFile    = "ufs2/freebsd_6.1.aif",
                 MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 16777216,
+                Sectors     = 262144,
                 SectorSize  = 512,
-                Clusters    = 2096472,
-                ClusterSize = 4096,
+                Clusters    = 65500,
+                ClusterSize = 2048,
                 Type        = "UFS2",
-                VolumeName  = "VolumeLabel"
+                VolumeName  = ""
             },
             new FileSystemTest
             {
                 TestFile    = "ufs2/freebsd_7.0.aif",
                 MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 16777216,
+                Sectors     = 262144,
                 SectorSize  = 512,
-                Clusters    = 2096472,
-                ClusterSize = 4096,
+                Clusters    = 65500,
+                ClusterSize = 2048,
                 Type        = "UFS2",
-                VolumeName  = "VolumeLabel"
+                VolumeName  = ""
             },
             new FileSystemTest
             {
                 TestFile    = "ufs2/freebsd_8.2.aif",
                 MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 16777216,
+                Sectors     = 262144,
                 SectorSize  = 512,
-                Clusters    = 4192945,
+                Clusters    = 65500,
                 ClusterSize = 2048,
                 Type        = "UFS2",
-                VolumeName  = "VolumeLabel"
+                VolumeName  = ""
             },
             new FileSystemTest
             {
                 TestFile    = "ufs2/netbsd_7.1.aif",
                 MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 2097152,
+                Sectors     = 262144,
                 SectorSize  = 512,
-                Clusters    = 524272,
+                Clusters    = 131040,
+                ClusterSize = 1024,
+                Type        = "UFS2",
+                VolumeName  = ""
+            },
+            new FileSystemTest
+            {
+                TestFile    = "ufs2/netbsd_7.1_be.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 262144,
+                SectorSize  = 512,
+                Clusters    = 131040,
+                ClusterSize = 1024,
+                Type        = "UFS2",
+                VolumeName  = ""
+            },
+            new FileSystemTest
+            {
+                TestFile    = "ufs2/netbsd_6.1.5.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 262144,
+                SectorSize  = 512,
+                Clusters    = 131040,
+                ClusterSize = 1024,
+                Type        = "UFS2",
+                VolumeName  = ""
+            },
+            new FileSystemTest
+            {
+                TestFile    = "ufs2/openbsd_4.7.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 262144,
+                SectorSize  = 512,
+                Clusters    = 65254,
                 ClusterSize = 2048,
                 Type        = "UFS2",
                 VolumeName  = ""
@@ -360,6 +443,16 @@ namespace Aaru.Tests.Filesystems.UFS
                 ClusterSize = 1024,
                 Type        = "UFS",
                 VolumeName  = null
+            },
+            new FileSystemTest
+            {
+                TestFile    = "ufs1/openbsd_4.7.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 262144,
+                SectorSize  = 512,
+                Clusters    = 65504,
+                ClusterSize = 2048,
+                Type        = "UFS"
             }
         };
     }

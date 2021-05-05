@@ -66,6 +66,16 @@ namespace Aaru.Tests.Filesystems.UFS
             },
             new FileSystemTest
             {
+                TestFile    = "netbsd_1.6_mf2hd_ffs43.img.lz",
+                MediaType   = MediaType.DOS_35_HD,
+                Sectors     = 2880,
+                SectorSize  = 512,
+                Clusters    = 2880,
+                ClusterSize = 512,
+                Type        = "UFS"
+            },
+            new FileSystemTest
+            {
                 TestFile    = "att_unix_svr4v2.1_dsdd.img.lz",
                 MediaType   = MediaType.DOS_525_DS_DD_9,
                 Sectors     = 720,
@@ -133,6 +143,130 @@ namespace Aaru.Tests.Filesystems.UFS
                 Clusters    = 2880,
                 ClusterSize = 512,
                 Type        = "UFS"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "netbsd_6.1.5_mf2hd.img.lz",
+                MediaType   = MediaType.DOS_35_HD,
+                Sectors     = 2880,
+                SectorSize  = 512,
+                Clusters    = 2880,
+                ClusterSize = 512,
+                Type        = "UFS"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "netbsd_6.1.5_mf2hd_ffs43.img.lz",
+                MediaType   = MediaType.DOS_35_HD,
+                Sectors     = 2880,
+                SectorSize  = 512,
+                Clusters    = 2880,
+                ClusterSize = 512,
+                Type        = "UFS"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "netbsd_6.1.5_mf2hd_ufs2.img.lz",
+                MediaType   = MediaType.DOS_35_HD,
+                Sectors     = 2880,
+                SectorSize  = 512,
+                Clusters    = 2880,
+                ClusterSize = 512,
+                VolumeName = "",
+                Type        = "UFS2"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "netbsd_7.1_mf2hd.img.lz",
+                MediaType   = MediaType.DOS_35_HD,
+                Sectors     = 2880,
+                SectorSize  = 512,
+                Clusters    = 2880,
+                ClusterSize = 512,
+                Type        = "UFS"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "netbsd_7.1_mf2hd_ffs43.img.lz",
+                MediaType   = MediaType.DOS_35_HD,
+                Sectors     = 2880,
+                SectorSize  = 512,
+                Clusters    = 2880,
+                ClusterSize = 512,
+                Type        = "UFS"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "netbsd_7.1_mf2hd_ufs2.img.lz",
+                MediaType   = MediaType.DOS_35_HD,
+                Sectors     = 2880,
+                SectorSize  = 512,
+                Clusters    = 2880,
+                ClusterSize = 512,
+                VolumeName  = "",
+                Type        = "UFS2"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "netbsd_7.1_mf2hd_be.img.lz",
+                MediaType   = MediaType.DOS_35_HD,
+                Sectors     = 2880,
+                SectorSize  = 512,
+                Clusters    = 2880,
+                ClusterSize = 512,
+                Type        = "UFS"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "netbsd_7.1_mf2hd_ffs43_be.img.lz",
+                MediaType   = MediaType.DOS_35_HD,
+                Sectors     = 2880,
+                SectorSize  = 512,
+                Clusters    = 2880,
+                ClusterSize = 512,
+                Type        = "UFS"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "netbsd_7.1_mf2hd_ufs2_be.img.lz",
+                MediaType   = MediaType.DOS_35_HD,
+                Sectors     = 2880,
+                SectorSize  = 512,
+                Clusters    = 2880,
+                ClusterSize = 512,
+                VolumeName  = "",
+                Type        = "UFS2"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "openbsd_4.7_mf2hd.img.lz",
+                MediaType   = MediaType.DOS_35_HD,
+                Sectors     = 2880,
+                SectorSize  = 512,
+                Clusters    = 720,
+                ClusterSize = 2048,
+                Type        = "UFS"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "openbsd_4.7_mf2hd_ffs43.img.lz",
+                MediaType   = MediaType.DOS_35_HD,
+                Sectors     = 2880,
+                SectorSize  = 512,
+                Clusters    = 720,
+                ClusterSize = 2048,
+                Type        = "UFS"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "openbsd_4.7_mf2hd_ufs2.img.lz",
+                MediaType   = MediaType.DOS_35_HD,
+                Sectors     = 2880,
+                SectorSize  = 512,
+                Clusters    = 720,
+                ClusterSize = 2048,
+                VolumeName  = "",
+                Type        = "UFS2"
             }
         };
     }
