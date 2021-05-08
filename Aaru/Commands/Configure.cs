@@ -101,7 +101,7 @@ namespace Aaru.Commands
             while(pressedKey.Key != ConsoleKey.Y &&
                   pressedKey.Key != ConsoleKey.N)
             {
-                AaruConsole.Write("Do you want to decryption of copy protected media? (Y/N): ");
+                AaruConsole.Write("Do you want to enable decryption of copy protected media? (Y/N): ");
                 pressedKey = System.Console.ReadKey();
                 AaruConsole.WriteLine();
             }
