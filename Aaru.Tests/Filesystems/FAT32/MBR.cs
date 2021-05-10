@@ -62,14 +62,27 @@ namespace Aaru.Tests.Filesystems.FAT32
             {
                 TestFile     = "drdos_8.00.aif",
                 MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 8388608,
+                Sectors      = 262144,
                 SectorSize   = 512,
                 Bootable     = true,
-                Clusters     = 1048233,
-                ClusterSize  = 4096,
+                Clusters     = 261009,
+                ClusterSize  = 512,
                 SystemId     = "IBM  7.1",
                 VolumeName   = "VOLUMELABEL",
-                VolumeSerial = "1BFB1A43"
+                VolumeSerial = "09F93020"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "drdos_8.10.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 261009,
+                ClusterSize  = 512,
+                SystemId     = "IBM  7.1",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "09FF2765"
             },
             new FileSystemTest
             {

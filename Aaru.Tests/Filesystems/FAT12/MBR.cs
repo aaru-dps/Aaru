@@ -60,10 +60,10 @@ namespace Aaru.Tests.Filesystems.FAT12
             {
                 TestFile    = "drdos_3.40.aif",
                 MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 30720,
+                Sectors     = 24576,
                 SectorSize  = 512,
                 Bootable    = true,
-                Clusters    = 3654,
+                Clusters    = 2772,
                 ClusterSize = 4096,
                 SystemId    = "IBM  3.2",
                 VolumeName  = "VOLUMELABEL"
@@ -72,10 +72,10 @@ namespace Aaru.Tests.Filesystems.FAT12
             {
                 TestFile    = "drdos_3.41.aif",
                 MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 28672,
+                Sectors     = 24576,
                 SectorSize  = 512,
                 Bootable    = true,
-                Clusters    = 3520,
+                Clusters    = 2890,
                 ClusterSize = 4096,
                 SystemId    = "IBM  3.2",
                 VolumeName  = "VOLUMELABEL"
@@ -84,10 +84,10 @@ namespace Aaru.Tests.Filesystems.FAT12
             {
                 TestFile    = "drdos_5.00.aif",
                 MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 28672,
+                Sectors     = 24576,
                 SectorSize  = 512,
                 Bootable    = true,
-                Clusters    = 3520,
+                Clusters    = 2890,
                 ClusterSize = 4096,
                 SystemId    = "IBM  3.3",
                 VolumeName  = "VOLUMELABEL"
@@ -96,10 +96,10 @@ namespace Aaru.Tests.Filesystems.FAT12
             {
                 TestFile    = "drdos_6.00.aif",
                 MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 28672,
+                Sectors     = 24576,
                 SectorSize  = 512,
                 Bootable    = true,
-                Clusters    = 3520,
+                Clusters    = 2890,
                 ClusterSize = 4096,
                 SystemId    = "IBM  3.3",
                 VolumeName  = "VOLUMELABEL"
@@ -108,10 +108,10 @@ namespace Aaru.Tests.Filesystems.FAT12
             {
                 TestFile    = "drdos_7.02.aif",
                 MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 28672,
+                Sectors     = 24576,
                 SectorSize  = 512,
                 Bootable    = true,
-                Clusters    = 3520,
+                Clusters    = 2890,
                 ClusterSize = 4096,
                 SystemId    = "IBM  3.3",
                 VolumeName  = "VOLUMELABEL"
@@ -120,10 +120,10 @@ namespace Aaru.Tests.Filesystems.FAT12
             {
                 TestFile    = "drdos_7.03.aif",
                 MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 28672,
+                Sectors     = 24576,
                 SectorSize  = 512,
                 Bootable    = true,
-                Clusters    = 3520,
+                Clusters    = 2890,
                 ClusterSize = 4096,
                 SystemId    = "DRDOS  7",
                 VolumeName  = "VOLUMELABEL"
@@ -132,30 +132,56 @@ namespace Aaru.Tests.Filesystems.FAT12
             {
                 TestFile     = "drdos_8.00.aif",
                 MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 28672,
+                Sectors      = 24576,
                 SectorSize   = 512,
                 Bootable     = true,
-                Clusters     = 3520,
+                Clusters     = 2890,
                 ClusterSize  = 4096,
                 SystemId     = "IBM  5.0",
                 VolumeName   = "VOLUMELABEL",
-                VolumeSerial = "1BFB1273"
+                VolumeSerial = "09F92756"
             },
             new FileSystemTest
             {
-                TestFile    = "msdos331.aif",
+                TestFile     = "drdos_8.10.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 24576,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 2890,
+                ClusterSize  = 4096,
+                SystemId     = "IBM  5.0",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "08FF1164"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "msdos_3.31.aif",
                 MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 8192,
+                Sectors     = 24576,
                 SectorSize  = 512,
                 Bootable    = true,
-                Clusters    = 1000,
+                Clusters    = 2890,
                 ClusterSize = 4096,
                 SystemId    = "IBM  3.3",
                 VolumeName  = "VOLUMELABEL"
             },
             new FileSystemTest
             {
-                TestFile     = "msdos401.aif",
+                TestFile     = "msdos_4.00.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 24576,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 2890,
+                ClusterSize  = 4096,
+                SystemId     = "MSDOS4.0",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "3C2B0903"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "msdos_4.01.aif",
                 MediaType    = MediaType.GENERIC_HDD,
                 Sectors      = 8192,
                 SectorSize   = 512,
@@ -168,33 +194,46 @@ namespace Aaru.Tests.Filesystems.FAT12
             },
             new FileSystemTest
             {
-                TestFile     = "msdos500.aif",
+                TestFile     = "msdos_5.00.aif",
                 MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 8192,
+                Sectors      = 24576,
                 SectorSize   = 512,
                 Bootable     = true,
-                Clusters     = 1000,
+                Clusters     = 2890,
                 ClusterSize  = 4096,
                 SystemId     = "MSDOS5.0",
                 VolumeName   = "VOLUMELABEL",
-                VolumeSerial = "345D18FB"
+                VolumeSerial = "1B08090B"
             },
             new FileSystemTest
             {
-                TestFile     = "msdos600.aif",
+                TestFile     = "msdos_5.00a.aif",
                 MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 8192,
+                Sectors      = 24576,
                 SectorSize   = 512,
                 Bootable     = true,
-                Clusters     = 1000,
+                Clusters     = 2890,
                 ClusterSize  = 4096,
                 SystemId     = "MSDOS5.0",
                 VolumeName   = "VOLUMELABEL",
-                VolumeSerial = "332518F4"
+                VolumeSerial = "3348090C"
             },
             new FileSystemTest
             {
-                TestFile     = "msdos620rc1.aif",
+                TestFile     = "msdos_6.00.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 24576,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 2890,
+                ClusterSize  = 4096,
+                SystemId     = "MSDOS5.0",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "124008FB"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "msdos_6.20rc1.aif",
                 MediaType    = MediaType.GENERIC_HDD,
                 Sectors      = 8192,
                 SectorSize   = 512,
@@ -207,46 +246,46 @@ namespace Aaru.Tests.Filesystems.FAT12
             },
             new FileSystemTest
             {
-                TestFile     = "msdos620.aif",
+                TestFile     = "msdos_6.20.aif",
                 MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 8192,
+                Sectors      = 24576,
                 SectorSize   = 512,
                 Bootable     = true,
-                Clusters     = 1000,
+                Clusters     = 2890,
                 ClusterSize  = 4096,
                 SystemId     = "MSDOS5.0",
                 VolumeName   = "VOLUMELABEL",
-                VolumeSerial = "076718EF"
+                VolumeSerial = "31190907"
             },
             new FileSystemTest
             {
-                TestFile     = "msdos621.aif",
+                TestFile     = "msdos_6.21.aif",
                 MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 8192,
+                Sectors      = 24576,
                 SectorSize   = 512,
                 Bootable     = true,
-                Clusters     = 1000,
+                Clusters     = 2890,
                 ClusterSize  = 4096,
                 SystemId     = "MSDOS5.0",
                 VolumeName   = "VOLUMELABEL",
-                VolumeSerial = "1371181B"
+                VolumeSerial = "27230917"
             },
             new FileSystemTest
             {
-                TestFile     = "msdos622.aif",
+                TestFile     = "msdos_6.22.aif",
                 MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 8192,
+                Sectors      = 24576,
                 SectorSize   = 512,
                 Bootable     = true,
-                Clusters     = 1000,
+                Clusters     = 2890,
                 ClusterSize  = 4096,
                 SystemId     = "MSDOS5.0",
                 VolumeName   = "VOLUMELABEL",
-                VolumeSerial = "23281816"
+                VolumeSerial = "156308F3"
             },
             new FileSystemTest
             {
-                TestFile     = "msdos710.aif",
+                TestFile     = "msdos_7.10.aif",
                 MediaType    = MediaType.GENERIC_HDD,
                 Sectors      = 16384,
                 SectorSize   = 512,
@@ -261,10 +300,10 @@ namespace Aaru.Tests.Filesystems.FAT12
             {
                 TestFile    = "novelldos_7.00.aif",
                 MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 28672,
+                Sectors     = 24576,
                 SectorSize  = 512,
                 Bootable    = true,
-                Clusters    = 3520,
+                Clusters    = 2890,
                 ClusterSize = 4096,
                 SystemId    = "IBM  3.3",
                 VolumeName  = "VOLUMELABEL"
@@ -273,30 +312,30 @@ namespace Aaru.Tests.Filesystems.FAT12
             {
                 TestFile    = "opendos_7.01.aif",
                 MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 28672,
+                Sectors     = 24576,
                 SectorSize  = 512,
                 Bootable    = true,
-                Clusters    = 3520,
+                Clusters    = 2890,
                 ClusterSize = 4096,
                 SystemId    = "IBM  3.3",
                 VolumeName  = "VOLUMELABEL"
             },
             new FileSystemTest
             {
-                TestFile     = "pcdos2000.aif",
+                TestFile     = "pcdos_2000.aif",
                 MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 32768,
+                Sectors      = 24576,
                 SectorSize   = 512,
                 Bootable     = true,
-                Clusters     = 4024,
+                Clusters     = 2890,
                 ClusterSize  = 4096,
                 SystemId     = "IBM  7.0",
                 VolumeName   = "VOLUMELABEL",
-                VolumeSerial = "294F100F"
+                VolumeSerial = "390F090A"
             },
             new FileSystemTest
             {
-                TestFile    = "pcdos200.aif",
+                TestFile    = "pcdos_2.00.aif",
                 MediaType   = MediaType.GENERIC_HDD,
                 Sectors     = 32768,
                 SectorSize  = 512,
@@ -307,7 +346,7 @@ namespace Aaru.Tests.Filesystems.FAT12
             },
             new FileSystemTest
             {
-                TestFile    = "pcdos210.aif",
+                TestFile    = "pcdos_2.10.aif",
                 MediaType   = MediaType.GENERIC_HDD,
                 Sectors     = 32768,
                 SectorSize  = 512,
@@ -318,7 +357,7 @@ namespace Aaru.Tests.Filesystems.FAT12
             },
             new FileSystemTest
             {
-                TestFile    = "pcdos300.aif",
+                TestFile    = "pcdos_3.00.aif",
                 MediaType   = MediaType.GENERIC_HDD,
                 Sectors     = 32768,
                 SectorSize  = 512,
@@ -329,7 +368,7 @@ namespace Aaru.Tests.Filesystems.FAT12
             },
             new FileSystemTest
             {
-                TestFile    = "pcdos310.aif",
+                TestFile    = "pcdos_3.10.aif",
                 MediaType   = MediaType.GENERIC_HDD,
                 Sectors     = 32768,
                 SectorSize  = 512,
@@ -340,7 +379,19 @@ namespace Aaru.Tests.Filesystems.FAT12
             },
             new FileSystemTest
             {
-                TestFile    = "pcdos330.aif",
+                TestFile    = "pcdos_3.20.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 24576,
+                SectorSize  = 512,
+                Bootable    = true,
+                Clusters    = 2890,
+                ClusterSize = 4096,
+                SystemId    = "IBM  3.2",
+                VolumeName  = "VOLUMELABEL"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "pcdos_3.30.aif",
                 MediaType   = MediaType.GENERIC_HDD,
                 Sectors     = 32768,
                 SectorSize  = 512,
@@ -351,7 +402,7 @@ namespace Aaru.Tests.Filesystems.FAT12
             },
             new FileSystemTest
             {
-                TestFile     = "pcdos400.aif",
+                TestFile     = "pcdos_4.00.aif",
                 MediaType    = MediaType.GENERIC_HDD,
                 Sectors      = 32768,
                 SectorSize   = 512,
@@ -364,59 +415,72 @@ namespace Aaru.Tests.Filesystems.FAT12
             },
             new FileSystemTest
             {
-                TestFile     = "pcdos500.aif",
+                TestFile     = "pcdos_5.00.aif",
                 MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 32768,
+                Sectors      = 24576,
                 SectorSize   = 512,
                 Bootable     = true,
-                Clusters     = 4024,
+                Clusters     = 2890,
                 ClusterSize  = 4096,
                 SystemId     = "IBM  5.0",
                 VolumeName   = "VOLUMELABEL",
-                VolumeSerial = "1A5E0FF9"
+                VolumeSerial = "363B0904"
             },
             new FileSystemTest
             {
-                TestFile     = "pcdos502.aif",
+                TestFile     = "pcdos_5.02.aif",
                 MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 32768,
+                Sectors      = 24576,
                 SectorSize   = 512,
                 Bootable     = true,
-                Clusters     = 4024,
+                Clusters     = 2890,
                 ClusterSize  = 4096,
                 SystemId     = "IBM  5.0",
                 VolumeName   = "VOLUMELABEL",
-                VolumeSerial = "1D2F0FFE"
+                VolumeSerial = "10650902"
             },
             new FileSystemTest
             {
-                TestFile     = "pcdos610.aif",
+                TestFile     = "pcdos_6.10.aif",
                 MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 32768,
+                Sectors      = 24576,
                 SectorSize   = 512,
                 Bootable     = true,
-                Clusters     = 4024,
+                Clusters     = 2890,
                 ClusterSize  = 4096,
                 SystemId     = "IBM  6.0",
                 VolumeName   = "VOLUMELABEL",
-                VolumeSerial = "076C1004"
+                VolumeSerial = "313208FE"
             },
             new FileSystemTest
             {
-                TestFile     = "pcdos630.aif",
+                TestFile     = "pcdos_6.30.aif",
                 MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 32768,
+                Sectors      = 24576,
                 SectorSize   = 512,
                 Bootable     = true,
-                Clusters     = 4024,
+                Clusters     = 2890,
                 ClusterSize  = 4096,
                 SystemId     = "IBM  6.0",
                 VolumeName   = "VOLUMELABEL",
-                VolumeSerial = "2C481009"
+                VolumeSerial = "253E0901"
             },
             new FileSystemTest
             {
-                TestFile    = "toshibamsdos330.aif",
+                TestFile     = "pcdos_7.00.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 24576,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 2890,
+                ClusterSize  = 4096,
+                SystemId     = "IBM  7.0",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "0E1E090D"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "toshibamsdos_3.30.aif",
                 MediaType   = MediaType.GENERIC_HDD,
                 Sectors     = 8192,
                 SectorSize  = 512,
@@ -428,7 +492,7 @@ namespace Aaru.Tests.Filesystems.FAT12
             },
             new FileSystemTest
             {
-                TestFile     = "toshibamsdos401.aif",
+                TestFile     = "toshibamsdos_4.01.aif",
                 MediaType    = MediaType.GENERIC_HDD,
                 Sectors      = 8192,
                 SectorSize   = 512,
