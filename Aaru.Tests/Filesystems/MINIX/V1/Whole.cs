@@ -82,6 +82,86 @@ namespace Aaru.Tests.Filesystems.MINIX.V1
                 Clusters    = 1440,
                 ClusterSize = 1024,
                 Type        = "Minix 3 v1"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "linux_2.0.0_mf2hd.img.lz",
+                MediaType   = MediaType.DOS_35_HD,
+                Sectors     = 2880,
+                SectorSize  = 512,
+                Clusters    = 1440,
+                ClusterSize = 1024,
+                Type        = "Minix v1"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "linux_2.0.29_mf2hd.img.lz",
+                MediaType   = MediaType.DOS_35_HD,
+                Sectors     = 2880,
+                SectorSize  = 512,
+                Clusters    = 1440,
+                ClusterSize = 1024,
+                Type        = "Minix v1"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "linux_2.0.34_mf2hd.img.lz",
+                MediaType   = MediaType.DOS_35_HD,
+                Sectors     = 2880,
+                SectorSize  = 512,
+                Clusters    = 1440,
+                ClusterSize = 1024,
+                Type        = "Minix v1"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "linux_2.0.37_mf2hd.img.lz",
+                MediaType   = MediaType.DOS_35_HD,
+                Sectors     = 2880,
+                SectorSize  = 512,
+                Clusters    = 1440,
+                ClusterSize = 1024,
+                Type        = "Minix v1"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "linux_2.0.38_mf2hd.img.lz",
+                MediaType   = MediaType.DOS_35_HD,
+                Sectors     = 2880,
+                SectorSize  = 512,
+                Clusters    = 1440,
+                ClusterSize = 1024,
+                Type        = "Minix v1"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "linux_2.2.17_mf2hd.img.lz",
+                MediaType   = MediaType.DOS_35_HD,
+                Sectors     = 2880,
+                SectorSize  = 512,
+                Clusters    = 1440,
+                ClusterSize = 1024,
+                Type        = "Minix v1"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "linux_2.2.20_mf2hd.img.lz",
+                MediaType   = MediaType.DOS_35_HD,
+                Sectors     = 2880,
+                SectorSize  = 512,
+                Clusters    = 1440,
+                ClusterSize = 1024,
+                Type        = "Minix v1"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "linux_2.4.18_mf2hd.img.lz",
+                MediaType   = MediaType.DOS_35_HD,
+                Sectors     = 2880,
+                SectorSize  = 512,
+                Clusters    = 1440,
+                ClusterSize = 1024,
+                Type        = "Minix v1"
             }
         };
     }

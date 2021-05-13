@@ -5575,6 +5575,100 @@ namespace Aaru.Tests.Filesystems.FAT12
                 SystemId     = "BSD  4.4",
                 VolumeName   = "VOLUMELABEL",
                 VolumeSerial = "4E6B1F17"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "linux_2.0.0_mf2hd.img.lz",
+                MediaType    = MediaType.DOS_35_HD,
+                Sectors      = 2880,
+                SectorSize   = 512,
+                Clusters     = 2880,
+                ClusterSize  = 512,
+                VolumeSerial = "670000"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "linux_2.0.29_mf2hd.img.lz",
+                MediaType    = MediaType.DOS_35_HD,
+                Sectors      = 2880,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 2880,
+                ClusterSize  = 512,
+                VolumeName   = "VolumeLabel",
+                VolumeSerial = "609AC294"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "linux_2.0.34_mf2hd.img.lz",
+                MediaType    = MediaType.DOS_35_HD,
+                Sectors      = 2880,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 2880,
+                ClusterSize  = 512,
+                VolumeName   = "VolumeLabel",
+                VolumeSerial = "609B8CD9"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "linux_2.0.37_mf2hd.img.lz",
+                MediaType    = MediaType.DOS_35_HD,
+                Sectors      = 2880,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 2880,
+                ClusterSize  = 512,
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "609D1849"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "linux_2.0.38_mf2hd.img.lz",
+                MediaType    = MediaType.DOS_35_HD,
+                Sectors      = 2880,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 2880,
+                ClusterSize  = 512,
+                VolumeName   = "VolumeLabel",
+                VolumeSerial = "609BB0AA"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "linux_2.2.17_mf2hd.img.lz",
+                MediaType    = MediaType.DOS_35_HD,
+                Sectors      = 2880,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 2880,
+                ClusterSize  = 512,
+                VolumeName   = "VolumeLabel",
+                VolumeSerial = "609C4FE6"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "linux_2.2.20_mf2hd.img.lz",
+                MediaType    = MediaType.DOS_35_HD,
+                Sectors      = 2880,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 2880,
+                ClusterSize  = 512,
+                VolumeName   = "VolumeLabel",
+                VolumeSerial = "609C815D"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "linux_2.4.18_mf2hd.img.lz",
+                MediaType    = MediaType.DOS_35_HD,
+                Sectors      = 2880,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 2880,
+                ClusterSize  = 512,
+                VolumeName   = "VolumeLabel",
+                VolumeSerial = "609CA596"
             }
         };
     }

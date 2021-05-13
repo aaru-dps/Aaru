@@ -242,16 +242,105 @@ namespace Aaru.Tests.Filesystems.FAT32
             },
             new FileSystemTest
             {
-                TestFile     = "linux.aif",
+                TestFile     = "linux_2.0.37.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Clusters     = 262016,
+                ClusterSize  = 512,
+                SystemId     = "mkdosfs",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "609D1CBD"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "linux_2.2.17.aif",
                 MediaType    = MediaType.GENERIC_HDD,
                 Sectors      = 262144,
                 SectorSize   = 512,
                 Bootable     = true,
-                Clusters     = 260096,
+                Clusters     = 262016,
                 ClusterSize  = 512,
-                SystemId     = "mkfs.fat",
+                SystemId     = "mkdosfs",
                 VolumeName   = "VolumeLabel",
-                VolumeSerial = "B488C502"
+                VolumeSerial = "609C673B"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "linux_2.2.20.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 262016,
+                ClusterSize  = 512,
+                SystemId     = "mkdosfs",
+                VolumeName   = "VolumeLabel",
+                VolumeSerial = "609C9CCA"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "linux_2.4.18.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 262016,
+                ClusterSize  = 512,
+                SystemId     = "mkdosfs",
+                VolumeName   = "VolumeLabel",
+                VolumeSerial = "609CA8D7"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "linux_2.0.37_umsdos.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Clusters     = 262016,
+                ClusterSize  = 512,
+                SystemId     = "mkdosfs",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "609D1F50"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "linux_2.2.17_umsdos.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 262016,
+                ClusterSize  = 512,
+                SystemId     = "mkdosfs",
+                VolumeName   = "VolumeLabel",
+                VolumeSerial = "609C6F93"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "linux_2.2.20_umsdos.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 262016,
+                ClusterSize  = 512,
+                SystemId     = "mkdosfs",
+                VolumeName   = "VolumeLabel",
+                VolumeSerial = "609C9FFF"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "linux_2.4.18_umsdos.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 262016,
+                ClusterSize  = 512,
+                SystemId     = "mkdosfs",
+                VolumeName   = "VolumeLabel",
+                VolumeSerial = "609CAC4E"
             },
             new FileSystemTest
             {

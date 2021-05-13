@@ -125,6 +125,36 @@ namespace Aaru.Tests.Filesystems.HFS
                 Clusters    = 2874,
                 ClusterSize = 512,
                 VolumeName  = "VOLUME LABEL"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "linux_2.2.17_mf2hd.img.lz",
+                MediaType   = MediaType.DOS_35_HD,
+                Sectors     = 2880,
+                SectorSize  = 512,
+                Clusters    = 2874,
+                ClusterSize = 512,
+                VolumeName  = "VolumeLabel"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "linux_2.2.20_mf2hd.img.lz",
+                MediaType   = MediaType.DOS_35_HD,
+                Sectors     = 2880,
+                SectorSize  = 512,
+                Clusters    = 2874,
+                ClusterSize = 512,
+                VolumeName  = "VolumeLabel"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "linux_2.4.18_mf2hd.img.lz",
+                MediaType   = MediaType.DOS_35_HD,
+                Sectors     = 2880,
+                SectorSize  = 512,
+                Clusters    = 2874,
+                ClusterSize = 512,
+                VolumeName  = "VolumeLabel"
             }
         };
     }

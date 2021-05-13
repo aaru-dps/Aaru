@@ -2,7 +2,7 @@
 // Aaru Data Preservation Suite
 // ----------------------------------------------------------------------------
 //
-// Filename       : Xia.cs
+// Filename       : ext2.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // Component      : Aaru unit testing.
@@ -29,30 +29,23 @@
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
+using Aaru.Filesystems;
 using NUnit.Framework;
 
 namespace Aaru.Tests.Filesystems
 {
     [TestFixture]
-    public class Xia : FilesystemTest
+    public class Ext : FilesystemTest
     {
-        public Xia() : base("Xia filesystem") {}
-
-        public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Xia filesystem");
-        public override IFilesystem Plugin     => new Aaru.Filesystems.Xia();
+        public override string DataFolder =>
+            Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Linux extended File System");
+        public override IFilesystem Plugin     => new extFS();
         public override bool        Partitions => true;
+
+        public Ext() : base("ext") {}
 
         public override FileSystemTest[] Tests => new[]
         {
-            new FileSystemTest
-            {
-                TestFile    = "linux_2.0.0.aif",
-                MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 262144,
-                SectorSize  = 512,
-                Clusters    = 131008,
-                ClusterSize = 1024
-            },
             new FileSystemTest
             {
                 TestFile    = "linux_2.0.37.aif",

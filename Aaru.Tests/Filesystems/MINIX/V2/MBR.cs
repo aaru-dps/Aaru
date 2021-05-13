@@ -63,6 +63,76 @@ namespace Aaru.Tests.Filesystems.MINIX.V2
                 Clusters    = 510976,
                 ClusterSize = 1024,
                 Type        = "Minix v2"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "linux_2.0.29.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 262144,
+                SectorSize  = 512,
+                Clusters    = 131008,
+                ClusterSize = 1024,
+                Type        = "Minix v2"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "linux_2.0.34.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 262144,
+                SectorSize  = 512,
+                Clusters    = 131008,
+                ClusterSize = 1024,
+                Type        = "Minix v2"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "linux_2.0.37.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 262144,
+                SectorSize  = 512,
+                Clusters    = 131008,
+                ClusterSize = 1024,
+                Type        = "Minix v2"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "linux_2.0.38.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 262144,
+                SectorSize  = 512,
+                Clusters    = 131008,
+                ClusterSize = 1024,
+                Type        = "Minix v2"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "linux_2.2.17.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 262144,
+                SectorSize  = 512,
+                Clusters    = 131008,
+                ClusterSize = 1024,
+                Type        = "Minix v2"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "linux_2.2.20.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 262144,
+                SectorSize  = 512,
+                Clusters    = 131008,
+                ClusterSize = 1024,
+                Type        = "Minix v2"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "linux_2.4.18.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 262144,
+                SectorSize  = 512,
+                Clusters    = 131008,
+                ClusterSize = 1024,
+                Type        = "Minix v2"
             }
         };
     }

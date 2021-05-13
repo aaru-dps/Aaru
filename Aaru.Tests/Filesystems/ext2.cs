@@ -45,42 +45,6 @@ namespace Aaru.Tests.Filesystems
         {
             new FileSystemTest
             {
-                TestFile     = "linux_ext2.aif",
-                MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 262144,
-                SectorSize   = 512,
-                Clusters     = 130048,
-                ClusterSize  = 1024,
-                Type         = "ext2",
-                VolumeName   = "VolumeLabel",
-                VolumeSerial = "8e3992cf-7d98-e44a-b753-0591a35913eb"
-            },
-            new FileSystemTest
-            {
-                TestFile     = "linux_ext3.aif",
-                MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 262144,
-                SectorSize   = 512,
-                Clusters     = 130048,
-                ClusterSize  = 1024,
-                Type         = "ext3",
-                VolumeName   = "VolumeLabel",
-                VolumeSerial = "1b411516-5415-4b42-95e6-1a247056a960"
-            },
-            new FileSystemTest
-            {
-                TestFile     = "linux_ext4.aif",
-                MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 262144,
-                SectorSize   = 512,
-                Clusters     = 130048,
-                ClusterSize  = 1024,
-                Type         = "ext4",
-                VolumeName   = "VolumeLabel",
-                VolumeSerial = "b2f8f305-770f-ad47-abe4-f0484aa319e9"
-            },
-            new FileSystemTest
-            {
                 TestFile     = "netbsd_6.1.5.aif",
                 MediaType    = MediaType.GENERIC_HDD,
                 Sectors      = 262144,
@@ -162,6 +126,196 @@ namespace Aaru.Tests.Filesystems
                 Type         = "ext2",
                 VolumeName   = "DicSetter",
                 VolumeSerial = "f5b2500f-99fb-764b-a6c4-c4db0b98a653"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "linux_2.0.0.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 262144,
+                SectorSize  = 512,
+                Clusters    = 131008,
+                ClusterSize = 1024,
+                Type        = "ext2"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "linux_2.0.29.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Clusters     = 131008,
+                ClusterSize  = 1024,
+                Type         = "ext2",
+                VolumeName   = "VolumeLabel",
+                VolumeSerial = "a81d28a3-83b2-eb11-9ae7-525400123456"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "linux_2.0.29_r0.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Clusters     = 131008,
+                ClusterSize  = 1024,
+                Type         = "ext2",
+                VolumeName   = "VolumeLabel",
+                VolumeSerial = "1a4fbe63-84b2-eb11-9bda-525400123456"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "linux_2.0.34.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Clusters     = 131008,
+                ClusterSize  = 1024,
+                Type         = "ext2",
+                VolumeName   = "VolumeLabel",
+                VolumeSerial = "00d2a5e7-fab2-eb11-8eae-525400123456"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "linux_2.0.34_r0.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Clusters     = 131008,
+                ClusterSize  = 1024,
+                Type         = "ext2",
+                VolumeName   = "VolumeLabel",
+                VolumeSerial = "3e1dfd3a-f9b2-eb11-8384-525400123456"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "linux_2.0.37.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Clusters     = 131008,
+                ClusterSize  = 1024,
+                Type         = "ext2",
+                VolumeName   = "Volume label",
+                VolumeSerial = "ccac0734-e6b3-eb11-885b-525400123456"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "linux_2.0.37_r0.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Clusters     = 131008,
+                ClusterSize  = 1024,
+                Type         = "ext2",
+                VolumeName   = "Volume label",
+                VolumeSerial = "a85e3131-e6b3-eb11-886c-525400123456"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "linux_2.0.38.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Clusters     = 131008,
+                ClusterSize  = 1024,
+                Type         = "ext2",
+                VolumeName   = "VolumeLabel",
+                VolumeSerial = "e48311a9-0fb3-eb11-83ed-525400123456"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "linux_2.0.38_r0.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Clusters     = 131008,
+                ClusterSize  = 1024,
+                Type         = "ext2",
+                VolumeName   = "VolumeLabel",
+                VolumeSerial = "86e00f25-0fb3-eb11-8f77-525400123456"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "linux_2.2.17.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Clusters     = 131008,
+                ClusterSize  = 1024,
+                Type         = "ext2",
+                VolumeName   = "VolumeLabel",
+                VolumeSerial = "9bdfe82d-778f-c64a-816c-a5ab33eb4f52"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "linux_2.2.17_r0.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Clusters     = 131008,
+                ClusterSize  = 1024,
+                Type         = "ext2",
+                VolumeName   = "VolumeLabel",
+                VolumeSerial = "6248975a-8692-bc42-bf66-22790157be29"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "linux_2.2.20.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Clusters     = 131008,
+                ClusterSize  = 1024,
+                Type         = "ext2",
+                VolumeName   = "VolumeLabel",
+                VolumeSerial = "e7263487-cec2-3444-8e58-218181083a89"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "linux_2.2.20_r0.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Clusters     = 131008,
+                ClusterSize  = 1024,
+                Type         = "ext2",
+                VolumeName   = "VolumeLabel",
+                VolumeSerial = "d227254f-b684-2244-9ad1-23b95e331c95"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "linux_2.4.18.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Clusters     = 131008,
+                ClusterSize  = 1024,
+                Type         = "ext2",
+                VolumeName   = "VolumeLabel",
+                VolumeSerial = "7f1a86dd-18a7-7d4e-aef0-728b1f674001"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "linux_2.4.18_r0.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Clusters     = 131008,
+                ClusterSize  = 1024,
+                Type         = "ext2",
+                VolumeName   = "VolumeLabel",
+                VolumeSerial = "c9e61e78-98c3-844e-98d5-d54b880d07cb"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "linux_2.4.18_ext3.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Clusters     = 131008,
+                ClusterSize  = 1024,
+                Type         = "ext3",
+                VolumeName   = "VolumeLabel",
+                VolumeSerial = "40bb6664-4e0e-ca4b-a328-7c744ddd8bf4"
             },
             new FileSystemTest
             {

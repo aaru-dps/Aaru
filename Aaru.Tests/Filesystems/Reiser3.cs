@@ -46,25 +46,35 @@ namespace Aaru.Tests.Filesystems
         {
             new FileSystemTest
             {
-                TestFile    = "linux_r3.5.aif",
+                TestFile    = "linux_2.2.20_r3.5.aif",
                 MediaType   = MediaType.GENERIC_HDD,
                 Sectors     = 262144,
                 SectorSize  = 512,
-                Clusters    = 32512,
+                Clusters    = 32752,
                 ClusterSize = 4096,
                 Type        = "Reiser 3.5 filesystem"
             },
             new FileSystemTest
             {
-                TestFile     = "linux_r3.6.aif",
+                TestFile    = "linux_2.4.18_r3.5.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 262144,
+                SectorSize  = 512,
+                Clusters    = 32752,
+                ClusterSize = 4096,
+                Type        = "Reiser 3.5 filesystem"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "linux_2.4.18_r3.6.aif",
                 MediaType    = MediaType.GENERIC_HDD,
                 Sectors      = 262144,
                 SectorSize   = 512,
-                Clusters     = 32512,
+                Clusters     = 32752,
                 ClusterSize  = 4096,
                 Type         = "Reiser 3.6 filesystem",
-                VolumeName   = "Volume label",
-                VolumeSerial = "844155c0-c854-d34e-8133-26ffac2e7b5d"
+                VolumeName   = "VolumeLabel",
+                VolumeSerial = "43c72111-6512-e747-b626-63704e65352a"
             },
             new FileSystemTest
             {

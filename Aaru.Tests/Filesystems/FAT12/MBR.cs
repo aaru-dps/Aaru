@@ -855,16 +855,98 @@ namespace Aaru.Tests.Filesystems.FAT12
             },
             new FileSystemTest
             {
-                TestFile     = "linux.aif",
+                TestFile     = "linux_2.0.0.aif",
                 MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 16384,
+                Sectors      = 24576,
+                SectorSize   = 512,
+                Bootable     = false,
+                Clusters     = 3016,
+                ClusterSize  = 4096,
+                VolumeSerial = "670000"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "linux_2.0.29.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 24576,
                 SectorSize   = 512,
                 Bootable     = true,
-                Clusters     = 3584,
-                ClusterSize  = 2048,
-                SystemId     = "mkfs.fat",
+                Clusters     = 3016,
+                ClusterSize  = 4096,
                 VolumeName   = "VolumeLabel",
-                VolumeSerial = "8D418102"
+                VolumeSerial = "609AC96F"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "linux_2.0.34.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 24576,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 3016,
+                ClusterSize  = 4096,
+                VolumeName   = "VolumeLabel",
+                VolumeSerial = "609BAA17"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "linux_2.0.37.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 24576,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 3016,
+                ClusterSize  = 4096,
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "609D1C96"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "linux_2.0.38.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 24576,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 3016,
+                ClusterSize  = 4096,
+                VolumeName   = "VolumeLabel",
+                VolumeSerial = "609C3CCA"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "linux_2.2.17.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 24576,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 3016,
+                ClusterSize  = 4096,
+                VolumeName   = "VolumeLabel",
+                VolumeSerial = "609C651A"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "linux_2.2.20.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 24576,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 3016,
+                ClusterSize  = 4096,
+                VolumeName   = "VolumeLabel",
+                VolumeSerial = "609C9B1B"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "linux_2.4.18.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 24576,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 3016,
+                ClusterSize  = 4096,
+                VolumeName   = "VolumeLabel",
+                VolumeSerial = "609CA8CE"
             },
             new FileSystemTest
             {
