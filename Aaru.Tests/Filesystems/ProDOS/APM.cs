@@ -49,37 +49,7 @@ namespace Aaru.Tests.Filesystems.ProDOS
         {
             new FileSystemTest
             {
-                TestFile    = "macos_7.5.3.aif",
-                MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 49152,
-                SectorSize  = 512,
-                Clusters    = 48438,
-                ClusterSize = 512,
-                VolumeName  = "VOLUME.LABEL"
-            },
-            new FileSystemTest
-            {
                 TestFile    = "macos_7.6.aif",
-                MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 49152,
-                SectorSize  = 512,
-                Clusters    = 48438,
-                ClusterSize = 512,
-                VolumeName  = "VOLUME.LABEL"
-            },
-            new FileSystemTest
-            {
-                TestFile    = "macos_8.0.aif",
-                MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 49152,
-                SectorSize  = 512,
-                Clusters    = 48438,
-                ClusterSize = 512,
-                VolumeName  = "VOLUME.LABEL"
-            },
-            new FileSystemTest
-            {
-                TestFile    = "macos_8.1.aif",
                 MediaType   = MediaType.GENERIC_HDD,
                 Sectors     = 49152,
                 SectorSize  = 512,
@@ -124,6 +94,76 @@ namespace Aaru.Tests.Filesystems.ProDOS
                 Sectors     = 49152,
                 SectorSize  = 512,
                 Clusters    = 46326,
+                ClusterSize = 512,
+                VolumeName  = "VOLUME.LABEL"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "pcexchange_2.0.2.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 61440,
+                SectorSize  = 512,
+                Clusters    = 59126,
+                ClusterSize = 512,
+                VolumeName  = "VOLUME.LABEL"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "pcexchange_2.0.5.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 61440,
+                SectorSize  = 512,
+                Clusters    = 59126,
+                ClusterSize = 512,
+                VolumeName  = "VOLUME.LABEL"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "pcexchange_2.1.1.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 65536,
+                SectorSize  = 512,
+                Clusters    = 63222,
+                ClusterSize = 512,
+                VolumeName  = "VOLUME.LABEL"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "pcexchange_2.2.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 61440,
+                SectorSize  = 512,
+                Clusters    = 60726,
+                ClusterSize = 512,
+                VolumeName  = "VOLUME.LABEL"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "pcexchange_3.0.3.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 61440,
+                SectorSize  = 512,
+                Clusters    = 60207,
+                ClusterSize = 512,
+                VolumeName  = "VOLUME.LABEL"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "pcexchange_3.0.4.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 61440,
+                SectorSize  = 512,
+                Clusters    = 60207,
+                ClusterSize = 512,
+                VolumeName  = "VOLUME.LABEL"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "pcexchange_3.0.5.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 61440,
+                SectorSize  = 512,
+                Clusters    = 60207,
                 ClusterSize = 512,
                 VolumeName  = "VOLUME.LABEL"
             }

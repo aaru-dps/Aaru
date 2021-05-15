@@ -157,50 +157,50 @@ namespace Aaru.Tests.Filesystems.HFSPlus
             {
                 TestFile    = "macos_8.1.aif",
                 MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 4194304,
+                Sectors     = 262144,
                 SectorSize  = 512,
-                Clusters    = 524152,
-                ClusterSize = 4096,
+                Clusters    = 261340,
+                ClusterSize = 512,
                 SystemId    = "8.10"
             },
             new FileSystemTest
             {
                 TestFile    = "macos_9.0.4.aif",
                 MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 4194304,
+                Sectors     = 262144,
                 SectorSize  = 512,
-                Clusters    = 524088,
-                ClusterSize = 4096,
+                Clusters    = 260824,
+                ClusterSize = 512,
                 SystemId    = "8.10"
             },
             new FileSystemTest
             {
                 TestFile    = "macos_9.1.aif",
                 MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 4194304,
+                Sectors     = 262144,
                 SectorSize  = 512,
-                Clusters    = 524088,
-                ClusterSize = 4096,
+                Clusters    = 260828,
+                ClusterSize = 512,
                 SystemId    = "8.10"
             },
             new FileSystemTest
             {
                 TestFile    = "macos_9.2.1.aif",
                 MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 4194304,
+                Sectors     = 262144,
                 SectorSize  = 512,
-                Clusters    = 524088,
-                ClusterSize = 4096,
+                Clusters    = 260828,
+                ClusterSize = 512,
                 SystemId    = "8.10"
             },
             new FileSystemTest
             {
                 TestFile    = "macos_9.2.2.aif",
                 MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 4194304,
+                Sectors     = 262144,
                 SectorSize  = 512,
-                Clusters    = 524088,
-                ClusterSize = 4096,
+                Clusters    = 260824,
+                ClusterSize = 512,
                 SystemId    = "8.10"
             },
             new FileSystemTest

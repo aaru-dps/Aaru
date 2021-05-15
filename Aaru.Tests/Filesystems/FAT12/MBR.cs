@@ -1051,6 +1051,58 @@ namespace Aaru.Tests.Filesystems.FAT12
                 SystemId     = "BSD  4.4",
                 VolumeName   = "VOLUMELABEL",
                 VolumeSerial = "F01F07F2"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "pcexchange_2.0.2.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 24576,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 2890,
+                ClusterSize  = 4096,
+                SystemId     = "PCX 2.0 ",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "241408F2"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "pcexchange_2.0.5.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 24576,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 2890,
+                ClusterSize  = 4096,
+                SystemId     = "PCX 2.0 ",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "241408F2"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "pcexchange_2.1.1.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 24576,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 3064,
+                ClusterSize  = 4096,
+                SystemId     = "PCX 2.0 ",
+                VolumeName   = "volumelabel",
+                VolumeSerial = "CA6C188B"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "pcexchange_2.2.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 24576,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 2890,
+                ClusterSize  = 4096,
+                SystemId     = "PCX_2.2 ",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "241408F2"
             }
         };
     }

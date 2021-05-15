@@ -120,6 +120,19 @@ namespace Aaru.Tests.Filesystems.UDF._150
                 Type         = "UDF v1.50",
                 VolumeName   = "anonymous",
                 VolumeSerial = "5b2ab9f9605af1ae"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "appleudf_1.5.3.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Clusters     = 65536,
+                ClusterSize  = 2048,
+                SystemId     = "*Apple Computer, Inc.",
+                Type         = "UDF v1.50",
+                VolumeName   = "Volume label",
+                VolumeSerial = "DCC41202AppleUDF"
             }
         };
     }

@@ -1037,46 +1037,7 @@ namespace Aaru.Tests.Filesystems.FAT16
             },
             new FileSystemTest
             {
-                TestFile     = "macos_7.5.3.aif",
-                MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 1024000,
-                SectorSize   = 512,
-                Bootable     = true,
-                Clusters     = 63941,
-                ClusterSize  = 8192,
-                SystemId     = "PCX 2.0 ",
-                VolumeName   = "VOLUMELABEL",
-                VolumeSerial = "27761816"
-            },
-            new FileSystemTest
-            {
-                TestFile     = "macos_7.5.aif",
-                MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 1024000,
-                SectorSize   = 512,
-                Bootable     = true,
-                Clusters     = 63941,
-                ClusterSize  = 8192,
-                SystemId     = "PCX 2.0 ",
-                VolumeName   = "VOLUMELABEL",
-                VolumeSerial = "27761816"
-            },
-            new FileSystemTest
-            {
                 TestFile     = "macos_7.6.aif",
-                MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 1024000,
-                SectorSize   = 512,
-                Bootable     = true,
-                Clusters     = 63941,
-                ClusterSize  = 8192,
-                SystemId     = "PCX 2.0 ",
-                VolumeName   = "VOLUMELABEL",
-                VolumeSerial = "27761816"
-            },
-            new FileSystemTest
-            {
-                TestFile     = "macos_8.0.aif",
                 MediaType    = MediaType.GENERIC_HDD,
                 Sectors      = 1024000,
                 SectorSize   = 512,
@@ -1203,6 +1164,70 @@ namespace Aaru.Tests.Filesystems.FAT16
                 SystemId     = "BSD  4.4",
                 VolumeName   = "VOLUMELABEL",
                 VolumeSerial = "84E407F6"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "pcexchange_2.0.2.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 65252,
+                ClusterSize  = 2048,
+                SystemId     = "PCX 2.0 ",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "2A6508F2"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "pcexchange_2.0.5.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 65252,
+                ClusterSize  = 2048,
+                SystemId     = "PCX 2.0 ",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "2A6508F2"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "pcexchange_2.1.1.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 65520,
+                ClusterSize  = 2048,
+                SystemId     = "PCX 2.0 ",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "CB430C38"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "pcexchange_2.2.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 65252,
+                ClusterSize  = 2048,
+                SystemId     = "PCX_2.2 ",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "2A6508F2"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "accesspc_2.0f6.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 262174,
+                SectorSize  = 512,
+                Bootable    = true,
+                Clusters    = 65527,
+                ClusterSize = 2048,
+                SystemId    = "INSIGNIA",
+                VolumeName  = "VOLUMELABEL"
             }
         };
     }

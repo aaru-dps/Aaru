@@ -535,6 +535,19 @@ namespace Aaru.Tests.Filesystems.FAT32
                 SystemId     = "BSD  4.4",
                 VolumeName   = "VOLUMELABEL",
                 VolumeSerial = "C27607FB"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "pcexchange_2.2.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 262080,
+                ClusterSize  = 512,
+                SystemId     = "PCX_2.2 ",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "CBCE71E4"
             }
         };
     }

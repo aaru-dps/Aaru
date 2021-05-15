@@ -272,6 +272,66 @@ namespace Aaru.Tests.Filesystems.FAT16
                 ClusterSize  = 512,
                 VolumeName   = "VolumeLabel",
                 VolumeSerial = "609CA685"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "macos_8.5.img.lz",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 204800,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 51200,
+                ClusterSize  = 2048,
+                VolumeName   = "FAT",
+                VolumeSerial = "34050000"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "macos_8.6.img.lz",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 204800,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 51200,
+                ClusterSize  = 2048,
+                VolumeName   = "FAT",
+                VolumeSerial = "A6040000"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "pcexchange_3.0.3.img.lz",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 32768,
+                ClusterSize  = 4096,
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "A1360000"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "pcexchange_3.0.4.img.lz",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 32768,
+                ClusterSize  = 4096,
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "4B320000"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "pcexchange_3.0.5.img.lz",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 32768,
+                ClusterSize  = 4096,
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "E3230000"
             }
         };
     }
