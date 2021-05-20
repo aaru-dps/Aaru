@@ -51,6 +51,50 @@ namespace Aaru.Tests.Filesystems.HFSPlus
         {
             new FileSystemTest
             {
+                TestFile     = "macosx_10.3.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Clusters     = 32767,
+                ClusterSize  = 4096,
+                SystemId     = "10.0",
+                VolumeSerial = "97B4DC7AC201699A"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "macosx_10.3_journal.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Clusters     = 32767,
+                ClusterSize  = 4096,
+                SystemId     = "HFSJ",
+                VolumeSerial = "9BF2CE504121C20F"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "macosx_10.4.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Clusters     = 32760,
+                ClusterSize  = 4096,
+                SystemId     = "10.0",
+                VolumeSerial = "092FD8AF262EAE9C"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "macosx_10.4_journal.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Clusters     = 32760,
+                ClusterSize  = 4096,
+                SystemId     = "HFSJ",
+                VolumeSerial = "326CC53BB867CCDC"
+            },
+            new FileSystemTest
+            {
                 TestFile     = "macosx_10.11.aif",
                 MediaType    = MediaType.GENERIC_HDD,
                 Sectors      = 303104,

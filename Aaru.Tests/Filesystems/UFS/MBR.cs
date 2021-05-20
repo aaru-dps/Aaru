@@ -453,6 +453,46 @@ namespace Aaru.Tests.Filesystems.UFS
                 Clusters    = 65504,
                 ClusterSize = 2048,
                 Type        = "UFS"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "ffs43/macosx_10.3.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 262144,
+                SectorSize  = 512,
+                Clusters    = 131068,
+                ClusterSize = 1024,
+                Type        = "UFS"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "ufs1/macosx_10.3.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 262144,
+                SectorSize  = 512,
+                Clusters    = 131068,
+                ClusterSize = 1024,
+                Type        = "UFS"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "ffs43/macosx_10.4.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 262144,
+                SectorSize  = 512,
+                Clusters    = 131040,
+                ClusterSize = 1024,
+                Type        = "UFS"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "ufs1/macosx_10.4.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 262144,
+                SectorSize  = 512,
+                Clusters    = 131040,
+                ClusterSize = 1024,
+                Type        = "UFS"
             }
         };
     }

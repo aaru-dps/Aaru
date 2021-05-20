@@ -46,6 +46,56 @@ namespace Aaru.Tests.Filesystems.UFS
         {
             new FileSystemTest
             {
+                TestFile    = "ffs43/macosx_10.0.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 262144,
+                SectorSize  = 512,
+                Clusters    = 130156,
+                ClusterSize = 1024,
+                Type        = "UFS"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "ffs43/macosx_10.1.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 262144,
+                SectorSize  = 512,
+                Clusters    = 130156,
+                ClusterSize = 1024,
+                Type        = "UFS"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "ffs43/macosx_10.2.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 262144,
+                SectorSize  = 512,
+                Clusters    = 130156,
+                ClusterSize = 1024,
+                Type        = "UFS"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "ffs43/macosx_10.3.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 262144,
+                SectorSize  = 512,
+                Clusters    = 121448,
+                ClusterSize = 1024,
+                Type        = "UFS"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "ffs43/macosx_10.4.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 262144,
+                SectorSize  = 512,
+                Clusters    = 122328,
+                ClusterSize = 1024,
+                Type        = "UFS"
+            },
+            new FileSystemTest
+            {
                 TestFile    = "ffs43/darwin_1.3.1.aif",
                 MediaType   = MediaType.GENERIC_HDD,
                 Sectors     = 1024000,
@@ -126,11 +176,31 @@ namespace Aaru.Tests.Filesystems.UFS
             },
             new FileSystemTest
             {
+                TestFile    = "ufs1/macosx_10.0.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 262144,
+                SectorSize  = 512,
+                Clusters    = 130156,
+                ClusterSize = 1024,
+                Type        = "UFS"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "ufs1/macosx_10.1.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 262144,
+                SectorSize  = 512,
+                Clusters    = 130156,
+                ClusterSize = 1024,
+                Type        = "UFS"
+            },
+            new FileSystemTest
+            {
                 TestFile    = "ufs1/macosx_10.2.aif",
                 MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 2097152,
+                Sectors     = 262144,
                 SectorSize  = 512,
-                Clusters    = 1047660,
+                Clusters    = 130156,
                 ClusterSize = 1024,
                 Type        = "UFS"
             },
@@ -138,9 +208,9 @@ namespace Aaru.Tests.Filesystems.UFS
             {
                 TestFile    = "ufs1/macosx_10.3.aif",
                 MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 2097152,
+                Sectors     = 262144,
                 SectorSize  = 512,
-                Clusters    = 1038952,
+                Clusters    = 121448,
                 ClusterSize = 1024,
                 Type        = "UFS"
             },
@@ -148,9 +218,9 @@ namespace Aaru.Tests.Filesystems.UFS
             {
                 TestFile    = "ufs1/macosx_10.4.aif",
                 MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 2097152,
+                Sectors     = 262144,
                 SectorSize  = 512,
-                Clusters    = 1038952,
+                Clusters    = 122328,
                 ClusterSize = 1024,
                 Type        = "UFS"
             }

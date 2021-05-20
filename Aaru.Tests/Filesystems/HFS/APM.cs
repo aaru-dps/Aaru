@@ -321,36 +321,58 @@ namespace Aaru.Tests.Filesystems.HFS
             },
             new FileSystemTest
             {
+                TestFile     = "macosx_10.0.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Clusters     = 32537,
+                ClusterSize  = 4096,
+                VolumeName   = "Volume label",
+                VolumeSerial = "BD1F12F12468C949"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "macosx_10.1.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Clusters     = 32537,
+                ClusterSize  = 4096,
+                VolumeName   = "Volume label",
+                VolumeSerial = "6AC7046792447A85"
+            },
+            new FileSystemTest
+            {
                 TestFile     = "macosx_10.2.aif",
                 MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 1024000,
+                Sectors      = 262144,
                 SectorSize   = 512,
-                Clusters     = 63884,
-                ClusterSize  = 8192,
+                Clusters     = 65072,
+                ClusterSize  = 2048,
                 VolumeName   = "Volume label",
-                VolumeSerial = "5A7C38B0CAF279C4"
+                VolumeSerial = "8D00F9766E58A900"
             },
             new FileSystemTest
             {
                 TestFile     = "macosx_10.3.aif",
                 MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 1024000,
+                Sectors      = 262144,
                 SectorSize   = 512,
-                Clusters     = 63883,
-                ClusterSize  = 8192,
+                Clusters     = 65070,
+                ClusterSize  = 2048,
                 VolumeName   = "Volume label",
-                VolumeSerial = "FB49083EBD150509"
+                VolumeSerial = "4D9FC602A1273D8D"
             },
             new FileSystemTest
             {
                 TestFile     = "macosx_10.4.aif",
                 MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 1024000,
+                Sectors      = 262144,
                 SectorSize   = 512,
-                Clusters     = 63883,
-                ClusterSize  = 8192,
+                Clusters     = 65070,
+                ClusterSize  = 2048,
                 VolumeName   = "Volume label",
-                VolumeSerial = "632C0B1DB46FD188"
+                VolumeSerial = "B28973FD0129BD10"
             },
             new FileSystemTest
             {

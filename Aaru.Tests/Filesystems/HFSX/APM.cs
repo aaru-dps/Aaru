@@ -47,6 +47,28 @@ namespace Aaru.Tests.Filesystems.HFSX
         {
             new FileSystemTest
             {
+                TestFile     = "macosx_10.4_journal.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Clusters     = 32758,
+                ClusterSize  = 4096,
+                SystemId     = "HFSJ",
+                VolumeSerial = "62F6BD837D62D1DB"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "macosx_10.4.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Clusters     = 32758,
+                ClusterSize  = 4096,
+                SystemId     = "10.0",
+                VolumeSerial = "32517120509F8539"
+            },
+            new FileSystemTest
+            {
                 TestFile     = "macosx_10.11.aif",
                 MediaType    = MediaType.GENERIC_HDD,
                 Sectors      = 819200,
@@ -88,28 +110,6 @@ namespace Aaru.Tests.Filesystems.HFSX
                 ClusterSize  = 4096,
                 SystemId     = "10.0",
                 VolumeSerial = "E2F212D815EF77B5"
-            },
-            new FileSystemTest
-            {
-                TestFile     = "macosx_10.4_journal.aif",
-                MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 4194304,
-                SectorSize   = 512,
-                Clusters     = 491290,
-                ClusterSize  = 4096,
-                SystemId     = "HFSJ",
-                VolumeSerial = "5A8C646A5D77EB16"
-            },
-            new FileSystemTest
-            {
-                TestFile     = "macosx_10.4.aif",
-                MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 1024000,
-                SectorSize   = 512,
-                Clusters     = 127770,
-                ClusterSize  = 4096,
-                SystemId     = "10.0",
-                VolumeSerial = "258C51A750F6A485"
             }
         };
     }

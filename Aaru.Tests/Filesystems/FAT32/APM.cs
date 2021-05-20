@@ -47,6 +47,32 @@ namespace Aaru.Tests.Filesystems.FAT32
         {
             new FileSystemTest
             {
+                TestFile     = "macosx_10.3.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 260304,
+                ClusterSize  = 512,
+                SystemId     = "BSD  4.4",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "7CD11609"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "macosx_10.4.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Bootable     = true,
+                Clusters     = 262064,
+                ClusterSize  = 512,
+                SystemId     = "BSD  4.4",
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "4495131D"
+            },
+            new FileSystemTest
+            {
                 TestFile     = "macosx_10.11.aif",
                 MediaType    = MediaType.GENERIC_HDD,
                 Sectors      = 4194304,

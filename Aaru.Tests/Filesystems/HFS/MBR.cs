@@ -47,6 +47,28 @@ namespace Aaru.Tests.Filesystems.HFS
         {
             new FileSystemTest
             {
+                TestFile    = "macosx_10.3.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 262144,
+                SectorSize  = 512,
+                Clusters    = 65528,
+                ClusterSize = 2048,
+                VolumeName  = "Volume label",
+                VolumeSerial = "5426B36FBE19CF1E"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "macosx_10.4.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 262144,
+                SectorSize  = 512,
+                Clusters    = 65514,
+                ClusterSize = 2048,
+                VolumeName  = "Volume label",
+                VolumeSerial = "E7E1830009BA60A8"
+            },
+            new FileSystemTest
+            {
                 TestFile    = "linux.aif",
                 MediaType   = MediaType.GENERIC_HDD,
                 Sectors     = 262144,
