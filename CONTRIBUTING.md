@@ -40,7 +40,7 @@ to uphold this code. Please report unacceptable behavior to [claunia@claunia.com
 > **Note:** Please don't file an issue to ask a question. You'll get faster results by
 using the resources below.
 
-You can join our IRC channel on chat.freenode.net at channel #Aaru
+You can join our IRC channel on irc.libera.chat at channel #Aaru
 
 ## What should I know before I get started?
 

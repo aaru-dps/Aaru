@@ -8,7 +8,7 @@ script:
 notifications:
   irc:
     channels:
-      - "chat.freenode.net#Aaru"
+      - "irc.libera.chat#Aaru"
     skip_join: true
     template:
       - "Commit %{commit} by %{author} in %{branch} %{result} after %{duration}."
