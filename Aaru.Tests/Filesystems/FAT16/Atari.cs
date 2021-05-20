@@ -47,25 +47,123 @@ namespace Aaru.Tests.Filesystems.FAT16
         {
             new FileSystemTest
             {
-                TestFile     = "tos_1.04.aif",
-                MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 81920,
-                SectorSize   = 512,
-                Bootable     = true,
-                Clusters     = 10239,
-                ClusterSize  = 4096,
-                VolumeSerial = "BA9831"
+                TestFile    = "tos_1.00_gem.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 24576,
+                SectorSize  = 512,
+                Clusters    = 12287,
+                ClusterSize = 1024,
+                VolumeName  = "VolumeLabel"
             },
             new FileSystemTest
             {
-                TestFile     = "tos_1.04_small.aif",
-                MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 16384,
-                SectorSize   = 512,
-                Bootable     = true,
-                Clusters     = 8191,
-                ClusterSize  = 1024,
-                VolumeSerial = "2019E1"
+                TestFile    = "tos_1.00_bgm.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 262144,
+                SectorSize  = 512,
+                Clusters    = 8191,
+                ClusterSize = 16384,
+                VolumeName  = "VolumeLabel"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "tos_1.02_gem.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 24576,
+                SectorSize  = 512,
+                Clusters    = 12287,
+                ClusterSize = 1024,
+                VolumeName  = "VolumeLabel"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "tos_1.02_bgm.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 262144,
+                SectorSize  = 512,
+                Clusters    = 8191,
+                ClusterSize = 16384,
+                VolumeName  = "VolumeLabel"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "tos_1.04_gem.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 24576,
+                SectorSize  = 512,
+                Clusters    = 12287,
+                ClusterSize = 1024,
+                VolumeName  = "VolumeLabel"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "tos_1.04_bgm.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 262144,
+                SectorSize  = 512,
+                Clusters    = 16383,
+                ClusterSize = 8192,
+                VolumeName  = "VolumeLabel"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "tos_1.06_gem.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 24576,
+                SectorSize  = 512,
+                Clusters    = 12287,
+                ClusterSize = 1024,
+                VolumeName  = "VolumeLabel"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "tos_1.06_bgm.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 262144,
+                SectorSize  = 512,
+                Clusters    = 16383,
+                ClusterSize = 8192,
+                VolumeName  = "VolumeLabel"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "tos_1.62_gem.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 24576,
+                SectorSize  = 512,
+                Clusters    = 12287,
+                ClusterSize = 1024,
+                VolumeName  = "VolumeLabel"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "tos_1.62_bgm.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 262144,
+                SectorSize  = 512,
+                Clusters    = 16383,
+                ClusterSize = 8192,
+                VolumeName  = "VolumeLabel"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "tos_2.06_gem.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 24576,
+                SectorSize  = 512,
+                Clusters    = 12287,
+                ClusterSize = 1024,
+                VolumeName  = "VolumeLabel"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "tos_2.06_bgm.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 262144,
+                SectorSize  = 512,
+                Clusters    = 16383,
+                ClusterSize = 8192,
+                VolumeName  = "VolumeLabel"
             }
         };
     }
