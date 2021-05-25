@@ -122,6 +122,39 @@ namespace Aaru.Tests.Filesystems.AFFS
                 ClusterSize  = 1024,
                 VolumeName   = "Volume label",
                 VolumeSerial = "A56CC133"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "morphos_3.13.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Clusters     = 261936,
+                ClusterSize  = 512,
+                VolumeName   = "VolumeLabel",
+                VolumeSerial = "1D93009A"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "morphos_3.13_cache.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Clusters     = 261936,
+                ClusterSize  = 512,
+                VolumeName   = "VolumeLabel",
+                VolumeSerial = "1D9107DA"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "morphos_3.13_intl.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Clusters     = 261936,
+                ClusterSize  = 512,
+                VolumeName   = "VolumeLabel",
+                VolumeSerial = "1D92FD23"
             }
         };
     }

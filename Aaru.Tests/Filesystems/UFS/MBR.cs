@@ -69,9 +69,9 @@ namespace Aaru.Tests.Filesystems.UFS
             {
                 TestFile    = "ffs43/darwin_1.3.1.aif",
                 MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 1024000,
+                Sectors     = 262144,
                 SectorSize  = 512,
-                Clusters    = 511024,
+                Clusters    = 131008,
                 ClusterSize = 1024,
                 Type        = "UFS"
             },
@@ -79,9 +79,9 @@ namespace Aaru.Tests.Filesystems.UFS
             {
                 TestFile    = "ffs43/darwin_1.4.1.aif",
                 MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 1024000,
+                Sectors     = 262144,
                 SectorSize  = 512,
-                Clusters    = 511024,
+                Clusters    = 131008,
                 ClusterSize = 1024,
                 Type        = "UFS"
             },
@@ -89,9 +89,19 @@ namespace Aaru.Tests.Filesystems.UFS
             {
                 TestFile    = "ffs43/darwin_6.0.2.aif",
                 MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 1024000,
+                Sectors     = 262144,
                 SectorSize  = 512,
-                Clusters    = 511024,
+                Clusters    = 131008,
+                ClusterSize = 1024,
+                Type        = "UFS"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "ffs43/darwin_7.0.1.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 262144,
+                SectorSize  = 512,
+                Clusters    = 131040,
                 ClusterSize = 1024,
                 Type        = "UFS"
             },
@@ -99,9 +109,9 @@ namespace Aaru.Tests.Filesystems.UFS
             {
                 TestFile    = "ffs43/darwin_8.0.1.aif",
                 MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 1024000,
+                Sectors     = 262144,
                 SectorSize  = 512,
-                Clusters    = 511488,
+                Clusters    = 131040,
                 ClusterSize = 1024,
                 Type        = "UFS"
             },
@@ -189,9 +199,9 @@ namespace Aaru.Tests.Filesystems.UFS
             {
                 TestFile    = "ufs1/darwin_1.3.1.aif",
                 MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 204800,
+                Sectors     = 262144,
                 SectorSize  = 512,
-                Clusters    = 102280,
+                Clusters    = 131008,
                 ClusterSize = 1024,
                 Type        = "UFS"
             },
@@ -199,9 +209,9 @@ namespace Aaru.Tests.Filesystems.UFS
             {
                 TestFile    = "ufs1/darwin_1.4.1.aif",
                 MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 204800,
+                Sectors     = 262144,
                 SectorSize  = 512,
-                Clusters    = 102280,
+                Clusters    = 131008,
                 ClusterSize = 1024,
                 Type        = "UFS"
             },
@@ -209,9 +219,19 @@ namespace Aaru.Tests.Filesystems.UFS
             {
                 TestFile    = "ufs1/darwin_6.0.2.aif",
                 MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 204800,
+                Sectors     = 262144,
                 SectorSize  = 512,
-                Clusters    = 102280,
+                Clusters    = 131008,
+                ClusterSize = 1024,
+                Type        = "UFS"
+            },
+            new FileSystemTest
+            {
+                TestFile    = "ufs1/darwin_7.0.1.aif",
+                MediaType   = MediaType.GENERIC_HDD,
+                Sectors     = 262144,
+                SectorSize  = 512,
+                Clusters    = 131040,
                 ClusterSize = 1024,
                 Type        = "UFS"
             },
@@ -219,9 +239,9 @@ namespace Aaru.Tests.Filesystems.UFS
             {
                 TestFile    = "ufs1/darwin_8.0.1.aif",
                 MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 204800,
+                Sectors     = 262144,
                 SectorSize  = 512,
-                Clusters    = 102368,
+                Clusters    = 131040,
                 ClusterSize = 1024,
                 Type        = "UFS"
             },

@@ -1,8 +1,8 @@
-﻿// /***************************************************************************
+// /***************************************************************************
 // Aaru Data Preservation Suite
 // ----------------------------------------------------------------------------
 //
-// Filename       : FAT16.cs
+// Filename       : AFFS.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // Component      : Aaru unit testing.
@@ -32,43 +32,52 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Filesystems.FAT16
+namespace Aaru.Tests.Filesystems.AFFS
 {
     [TestFixture]
-    public class RDB : FilesystemTest
+    public class APM : FilesystemTest
     {
-        public RDB() : base("FAT16") {}
+        public APM() : base("Amiga FFS") {}
 
-        public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "FAT16 (RDB)");
-        public override IFilesystem Plugin     => new FAT();
+        public override string DataFolder =>
+            Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Amiga Fast File System (APM)");
+        public override IFilesystem Plugin     => new AmigaDOSPlugin();
         public override bool        Partitions => true;
 
         public override FileSystemTest[] Tests => new[]
         {
             new FileSystemTest
             {
-                TestFile     = "amigaos_3.9.aif",
-                MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 1024128,
-                SectorSize   = 512,
-                Bootable     = true,
-                Clusters     = 63689,
-                ClusterSize  = 8192,
-                SystemId     = "CDP  5.0",
-                VolumeName   = "VOLUMELABEL",
-                VolumeSerial = "374D40D1"
-            },
-            new FileSystemTest
-            {
                 TestFile     = "morphos_3.13.aif",
                 MediaType    = MediaType.GENERIC_HDD,
                 Sectors      = 262144,
                 SectorSize   = 512,
-                Clusters     = 65484,
-                ClusterSize  = 2048,
-                SystemId     = "MSWIN4.1",
-                VolumeName   = "VOLUMELABEL",
-                VolumeSerial = "519F5D8B"
+                Clusters     = 262018,
+                ClusterSize  = 512,
+                VolumeName   = "VolumeLabel",
+                VolumeSerial = "1D930192"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "morphos_3.13_cache.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Clusters     = 262018,
+                ClusterSize  = 512,
+                VolumeName   = "VolumeLabel",
+                VolumeSerial = "1D9105B0"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "morphos_3.13_intl.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Clusters     = 262018,
+                ClusterSize  = 512,
+                VolumeName   = "VolumeLabel",
+                VolumeSerial = "1D93031D"
             }
         };
     }

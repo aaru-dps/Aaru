@@ -149,19 +149,6 @@ namespace Aaru.Tests.Filesystems.FAT32
                 SystemId     = "mkdosfs",
                 VolumeName   = "VolumeLabel",
                 VolumeSerial = "00000000"
-            },
-            new FileSystemTest
-            {
-                TestFile     = "linux_2.2.20_mf2hd_umsdos.img.lz",
-                MediaType    = MediaType.DOS_35_HD,
-                Sectors      = 2880,
-                SectorSize   = 512,
-                Bootable     = true,
-                Clusters     = 2880,
-                ClusterSize  = 512,
-                SystemId     = "mkdosfs",
-                VolumeName   = "VolumeLabel",
-                VolumeSerial = "00000000"
             }
         };
     }

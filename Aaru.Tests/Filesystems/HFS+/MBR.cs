@@ -36,7 +36,6 @@ using NUnit.Framework;
 
 namespace Aaru.Tests.Filesystems.HFSPlus
 {
-    // Mising Darwin 6.0.2 wrapped
     [TestFixture]
     public class MBR : FilesystemTest
     {
@@ -139,19 +138,9 @@ namespace Aaru.Tests.Filesystems.HFSPlus
             {
                 TestFile    = "darwin_1.3.1.aif",
                 MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 819200,
+                Sectors     = 262144,
                 SectorSize  = 512,
-                Clusters    = 102178,
-                ClusterSize = 4096,
-                SystemId    = "10.0"
-            },
-            new FileSystemTest
-            {
-                TestFile    = "darwin_1.3.1_wrapped.aif",
-                MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 614400,
-                SectorSize  = 512,
-                Clusters    = 76708,
+                Clusters    = 32752,
                 ClusterSize = 4096,
                 SystemId    = "10.0"
             },
@@ -159,19 +148,9 @@ namespace Aaru.Tests.Filesystems.HFSPlus
             {
                 TestFile    = "darwin_1.4.1.aif",
                 MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 819200,
+                Sectors     = 262144,
                 SectorSize  = 512,
-                Clusters    = 102178,
-                ClusterSize = 4096,
-                SystemId    = "10.0"
-            },
-            new FileSystemTest
-            {
-                TestFile    = "darwin_1.4.1_wrapped.aif",
-                MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 614400,
-                SectorSize  = 512,
-                Clusters    = 76708,
+                Clusters    = 32752,
                 ClusterSize = 4096,
                 SystemId    = "10.0"
             },
@@ -179,44 +158,55 @@ namespace Aaru.Tests.Filesystems.HFSPlus
             {
                 TestFile    = "darwin_6.0.2.aif",
                 MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 819200,
+                Sectors     = 262144,
                 SectorSize  = 512,
-                Clusters    = 102178,
+                Clusters    = 32752,
                 ClusterSize = 4096,
                 SystemId    = "10.0"
             },
             new FileSystemTest
             {
-                TestFile     = "darwin_8.0.1_journal.aif",
+                TestFile     = "darwin_7.0.1_journal.aif",
                 MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 1228800,
+                Sectors      = 262144,
                 SectorSize   = 512,
-                Clusters     = 153592,
+                Clusters     = 32760,
+                ClusterSize  = 4096,
+                SystemId     = "HFSJ",
+                VolumeSerial = "B2B3DCFC3EBF92F9"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "darwin_7.0.1.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Clusters     = 32760,
                 ClusterSize  = 4096,
                 SystemId     = "10.0",
-                VolumeSerial = "F92964F9B3F64ABB"
+                VolumeSerial = "EF9142272A79F2C7"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "darwin_8.0.1_journal.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Clusters     = 32760,
+                ClusterSize  = 4096,
+                SystemId     = "HFSJ",
+                VolumeSerial = "191CACE470B64449"
             },
             new FileSystemTest
             {
                 TestFile     = "darwin_8.0.1.aif",
                 MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 819200,
+                Sectors      = 262144,
                 SectorSize   = 512,
-                Clusters     = 102392,
+                Clusters     = 32760,
                 ClusterSize  = 4096,
                 SystemId     = "10.0",
-                VolumeSerial = "A8FAC484A0A2B177"
-            },
-            new FileSystemTest
-            {
-                TestFile     = "darwin_8.0.1_wrapped.aif",
-                MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 614400,
-                SectorSize   = 512,
-                Clusters     = 76774,
-                ClusterSize  = 4096,
-                SystemId     = "10.0",
-                VolumeSerial = "D5D5BF1346AD2B8D"
+                VolumeSerial = "27E25570C58F3CDB"
             },
             new FileSystemTest
             {

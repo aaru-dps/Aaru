@@ -2,7 +2,7 @@
 // Aaru Data Preservation Suite
 // ----------------------------------------------------------------------------
 //
-// Filename       : SFS_MBR.cs
+// Filename       : PFS3.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // Component      : Aaru unit testing.
@@ -29,19 +29,19 @@
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
+using Aaru.Filesystems;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Filesystems.SFS
+namespace Aaru.Tests.Filesystems.PFS3
 {
     [TestFixture]
     public class RDB : FilesystemTest
     {
-        public RDB() : base("SmartFileSystem") {}
+        public RDB() : base("PFS v3") {}
 
-        public override string DataFolder =>
-            Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Smart File System (RDB)");
-
-        public override IFilesystem Plugin     => new Aaru.Filesystems.SFS();
+        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems",
+                                                          "Professional File System 3 (RDB)");
+        public override IFilesystem Plugin     => new PFS();
         public override bool        Partitions => true;
 
         public override FileSystemTest[] Tests => new[]
@@ -52,35 +52,9 @@ namespace Aaru.Tests.Filesystems.SFS
                 MediaType   = MediaType.GENERIC_HDD,
                 Sectors     = 1024128,
                 SectorSize  = 512,
-                Clusters    = 127000,
-                ClusterSize = 2048
-            },
-            new FileSystemTest
-            {
-                TestFile    = "aros.aif",
-                MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 409600,
-                SectorSize  = 512,
-                Clusters    = 407232,
-                ClusterSize = 512
-            },
-            new FileSystemTest
-            {
-                TestFile    = "amigaos_4.0.aif",
-                MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 1024128,
-                SectorSize  = 512,
-                Clusters    = 511040,
-                ClusterSize = 1024
-            },
-            new FileSystemTest
-            {
-                TestFile    = "amigaos_4.0_sfs2.aif",
-                MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 1024128,
-                SectorSize  = 512,
-                Clusters    = 511040,
-                ClusterSize = 1024
+                Clusters    = 1023552,
+                ClusterSize = 512,
+                VolumeName  = "PFS"
             },
             new FileSystemTest
             {
@@ -89,7 +63,8 @@ namespace Aaru.Tests.Filesystems.SFS
                 Sectors     = 262144,
                 SectorSize  = 512,
                 Clusters    = 261936,
-                ClusterSize = 512
+                ClusterSize = 512,
+                VolumeName  = "VolumeLabel"
             }
         };
     }

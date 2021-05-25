@@ -91,25 +91,47 @@ namespace Aaru.Tests.Filesystems.HFSX
             },
             new FileSystemTest
             {
-                TestFile     = "darwin_8.0.1_journal.aif",
+                TestFile     = "darwin_7.0.1_journal.aif",
                 MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 1638400,
+                Sectors      = 262144,
                 SectorSize   = 512,
-                Clusters     = 204792,
+                Clusters     = 32760,
+                ClusterSize  = 4096,
+                SystemId     = "HFSJ",
+                VolumeSerial = "675A390EBFDFC534"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "darwin_7.0.1.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Clusters     = 32760,
                 ClusterSize  = 4096,
                 SystemId     = "10.0",
-                VolumeSerial = "BB4ABD7E7E2FF5AF"
+                VolumeSerial = "EA0C27012D10135B"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "darwin_8.0.1_journal.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Clusters     = 32760,
+                ClusterSize  = 4096,
+                SystemId     = "HFSJ",
+                VolumeSerial = "50059A9AA0119AD3"
             },
             new FileSystemTest
             {
                 TestFile     = "darwin_8.0.1.aif",
                 MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 1433600,
+                Sectors      = 262144,
                 SectorSize   = 512,
-                Clusters     = 179192,
+                Clusters     = 32760,
                 ClusterSize  = 4096,
                 SystemId     = "10.0",
-                VolumeSerial = "E2F212D815EF77B5"
+                VolumeSerial = "BCA9EBC858957259"
             }
         };
     }

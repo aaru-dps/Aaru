@@ -90,25 +90,47 @@ namespace Aaru.Tests.Filesystems.HFSX
             },
             new FileSystemTest
             {
-                TestFile     = "darwin_8.0.1_journal.aif",
+                TestFile     = "darwin_7.0.1_journal.aif",
                 MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 1638400,
+                Sectors      = 262144,
                 SectorSize   = 512,
-                Clusters     = 204792,
+                Clusters     = 32760,
+                ClusterSize  = 4096,
+                SystemId     = "HFSJ",
+                VolumeSerial = "49296DD5D4998317"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "darwin_7.0.1.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Clusters     = 32760,
                 ClusterSize  = 4096,
                 SystemId     = "10.0",
-                VolumeSerial = "7559DD01BCFADD9A"
+                VolumeSerial = "6086D6721C36DB41"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "darwin_8.0.1_journal.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Clusters     = 32760,
+                ClusterSize  = 4096,
+                SystemId     = "HFSJ",
+                VolumeSerial = "E6ADDA7180241419"
             },
             new FileSystemTest
             {
                 TestFile     = "darwin_8.0.1.aif",
                 MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 1433600,
+                Sectors      = 262144,
                 SectorSize   = 512,
-                Clusters     = 179192,
+                Clusters     = 32760,
                 ClusterSize  = 4096,
                 SystemId     = "10.0",
-                VolumeSerial = "AEA39CFBBF14C0FF"
+                VolumeSerial = "EA6229EBC75E4F92"
             },
             new FileSystemTest
             {

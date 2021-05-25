@@ -2,7 +2,7 @@
 // Aaru Data Preservation Suite
 // ----------------------------------------------------------------------------
 //
-// Filename       : PFS3.cs
+// Filename       : SFS_MBR.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // Component      : Aaru unit testing.
@@ -29,32 +29,31 @@
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.Filesystems;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Filesystems
+namespace Aaru.Tests.Filesystems.SFS
 {
     [TestFixture]
-    public class Pfs3 : FilesystemTest
+    public class APM : FilesystemTest
     {
-        public Pfs3() : base("PFS v3") {}
+        public APM() : base("SmartFileSystem") {}
 
-        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems",
-                                                          "Professional File System 3");
-        public override IFilesystem Plugin     => new PFS();
+        public override string DataFolder =>
+            Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Smart File System (APM)");
+
+        public override IFilesystem Plugin     => new Aaru.Filesystems.SFS();
         public override bool        Partitions => true;
 
         public override FileSystemTest[] Tests => new[]
         {
             new FileSystemTest
             {
-                TestFile    = "uae.aif",
+                TestFile    = "morphos_3.13.aif",
                 MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 1024128,
+                Sectors     = 262144,
                 SectorSize  = 512,
-                Clusters    = 1023552,
-                ClusterSize = 512,
-                VolumeName  = "PFS"
+                Clusters    = 262018,
+                ClusterSize = 512
             }
         };
     }

@@ -47,24 +47,24 @@ namespace Aaru.Tests.Filesystems.HFS
         {
             new FileSystemTest
             {
-                TestFile    = "macosx_10.3.aif",
-                MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 262144,
-                SectorSize  = 512,
-                Clusters    = 65528,
-                ClusterSize = 2048,
-                VolumeName  = "Volume label",
+                TestFile     = "macosx_10.3.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Clusters     = 65528,
+                ClusterSize  = 2048,
+                VolumeName   = "Volume label",
                 VolumeSerial = "5426B36FBE19CF1E"
             },
             new FileSystemTest
             {
-                TestFile    = "macosx_10.4.aif",
-                MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 262144,
-                SectorSize  = 512,
-                Clusters    = 65514,
-                ClusterSize = 2048,
-                VolumeName  = "Volume label",
+                TestFile     = "macosx_10.4.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Clusters     = 65514,
+                ClusterSize  = 2048,
+                VolumeName   = "Volume label",
                 VolumeSerial = "E7E1830009BA60A8"
             },
             new FileSystemTest
@@ -81,9 +81,9 @@ namespace Aaru.Tests.Filesystems.HFS
             {
                 TestFile    = "darwin_1.3.1.aif",
                 MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 409600,
+                Sectors     = 262144,
                 SectorSize  = 512,
-                Clusters    = 51145,
+                Clusters    = 32750,
                 ClusterSize = 4096,
                 VolumeName  = "Volume label"
             },
@@ -91,9 +91,9 @@ namespace Aaru.Tests.Filesystems.HFS
             {
                 TestFile    = "darwin_1.4.1.aif",
                 MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 409600,
+                Sectors     = 262144,
                 SectorSize  = 512,
-                Clusters    = 51145,
+                Clusters    = 32750,
                 ClusterSize = 4096,
                 VolumeName  = "Volume label"
             },
@@ -101,22 +101,33 @@ namespace Aaru.Tests.Filesystems.HFS
             {
                 TestFile    = "darwin_6.0.2.aif",
                 MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 409600,
+                Sectors     = 262144,
                 SectorSize  = 512,
-                Clusters    = 58452,
-                ClusterSize = 3584,
+                Clusters    = 65499,
+                ClusterSize = 2048,
                 VolumeName  = "Volume label"
+            },
+            new FileSystemTest
+            {
+                TestFile     = "darwin_7.0.1.aif",
+                MediaType    = MediaType.GENERIC_HDD,
+                Sectors      = 262144,
+                SectorSize   = 512,
+                Clusters     = 65515,
+                ClusterSize  = 2048,
+                VolumeName   = "Volume label",
+                VolumeSerial = "8BF73DE208CD7E7B"
             },
             new FileSystemTest
             {
                 TestFile     = "darwin_8.0.1.aif",
                 MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 409600,
+                Sectors      = 262144,
                 SectorSize   = 512,
-                Clusters     = 58502,
-                ClusterSize  = 3584,
+                Clusters     = 65515,
+                ClusterSize  = 2048,
                 VolumeName   = "Volume label",
-                VolumeSerial = "81FE805D61458753"
+                VolumeSerial = "D149994212CC652E"
             },
             new FileSystemTest
             {
