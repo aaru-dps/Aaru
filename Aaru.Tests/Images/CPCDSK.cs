@@ -145,6 +145,30 @@ namespace Aaru.Tests.Images
                 Sectors    = 360,
                 SectorSize = 512,
                 MD5        = "ad43345ac469844465da6d73369cc6b1"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "z88dk_cpc.dsk.lz",
+                MediaType  = MediaType.CompactFloppy,
+                Sectors    = 360,
+                SectorSize = 512,
+                MD5        = "AAAAAA"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "z88dk_pcw40.dsk.lz",
+                MediaType  = MediaType.CompactFloppy,
+                Sectors    = 360,
+                SectorSize = 512,
+                MD5        = "AAAAAA"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "z88dk_pcw80.dsk.lz",
+                MediaType  = MediaType.CompactFloppy,
+                Sectors    = 360,
+                SectorSize = 512,
+                MD5        = "AAAAAA"
             }
         };
     }
