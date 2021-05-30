@@ -34,6 +34,7 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using Aaru.CommonTypes.Interfaces;
+using Aaru.Helpers;
 
 namespace Aaru.DiscImages
 {
@@ -44,16 +45,24 @@ namespace Aaru.DiscImages
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
 
-            if(stream.Length < 31)
+            if(stream.Length < 4)
                 return false;
 
-            byte[] hdr = new byte[31];
-            stream.Read(hdr, 0, 31);
+            byte[] hdr = new byte[stream.Length < 256 ? stream.Length : 256];
+            stream.Read(hdr, 0, hdr.Length);
 
-            var   hr = new Regex(REGEX_HEADER);
-            Match hm = hr.Match(Encoding.ASCII.GetString(hdr));
+            string hdr_str = StringHandlers.CToString(hdr, Encoding.ASCII);
 
-            return hm.Success;
+            // IMD for DOS
+            Match imd = new Regex(REGEX_HEADER).Match(hdr_str);
+
+            // SAMdisk
+            Match sam = new Regex(REGEX_SAMDISK).Match(hdr_str);
+
+            // z88dk
+            Match z88dk = new Regex(REGEX_Z88DK).Match(hdr_str);
+
+            return imd.Success || sam.Success || z88dk.Success;
         }
     }
 }
