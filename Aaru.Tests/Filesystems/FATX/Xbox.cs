@@ -29,222 +29,25 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Aaru.Checksums;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
-using Aaru.DiscImages;
 using Aaru.Filesystems;
-using Aaru.Filters;
 using NUnit.Framework;
 using FileAttributes = Aaru.CommonTypes.Structs.FileAttributes;
 using FileSystemInfo = Aaru.CommonTypes.Structs.FileSystemInfo;
+// ReSharper disable StringLiteralTypo
 
 namespace Aaru.Tests.Filesystems.FATX
 {
     [TestFixture]
-    public class Xbox : FilesystemTest
+    public class Xbox : ReadOnlyFilesystemTest
     {
         public Xbox() : base("FATX filesystem") {}
 
         public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Xbox FAT16", "le");
         public override IFilesystem Plugin => new XboxFatPlugin();
         public override bool Partitions => false;
-
-        [SetUp]
-        public void Init()
-        {
-            _location = Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Xbox FAT16", "le", "fatx.img.lz");
-            _filter   = new LZip();
-            _filter.Open(_location);
-            _image = new ZZZRawImage();
-            Assert.AreEqual(true, _image.Open(_filter));
-            _fs = new XboxFatPlugin();
-
-            _wholePart = new Partition
-            {
-                Name   = "Whole device",
-                Length = _image.Info.Sectors,
-                Size   = _image.Info.Sectors * _image.Info.SectorSize
-            };
-
-            Errno error = _fs.Mount(_image, _wholePart, null, null, null);
-            Assert.AreEqual(Errno.NoError, error);
-        }
-
-        [TearDown]
-        public void Destroy()
-        {
-            _fs?.Unmount();
-            _fs = null;
-        }
-
-        string              _location;
-        IFilter             _filter;
-        IMediaImage         _image;
-        IReadOnlyFilesystem _fs;
-        Partition           _wholePart;
-
-        [Test]
-        public void MapBlock()
-        {
-            Errno error = _fs.MapBlock("49470015", 0, out long block);
-            Assert.AreEqual(Errno.IsDirectory, error);
-
-            error = _fs.MapBlock("49470015/TitleImage", 0, out block);
-            Assert.AreEqual(Errno.NoSuchFile, error);
-
-            error = _fs.MapBlock("49470015/TitleImage.xbx", 0, out block);
-            Assert.AreEqual(Errno.NoError, error);
-            Assert.AreEqual(80, block);
-
-            error = _fs.MapBlock("49470015/7AC2FE88C908/savedata.dat", 2, out block);
-            Assert.AreEqual(Errno.NoError, error);
-            Assert.AreEqual(272, block);
-
-            error = _fs.MapBlock("49470015/7AC2FE88C908/savedata.dat", 200, out block);
-            Assert.AreEqual(Errno.InvalidArgument, error);
-        }
-
-        [Test]
-        public void Read()
-        {
-            byte[] buffer = new byte[0];
-            Errno  error  = _fs.Read("49470015", 0, 0, ref buffer);
-            Assert.AreEqual(Errno.IsDirectory, error);
-
-            error = _fs.Read("49470015/TitleImage", 0, 0, ref buffer);
-            Assert.AreEqual(Errno.NoSuchFile, error);
-
-            error = _fs.Read("49470015/7AC2FE88C908/savedata.dat", 0, 0, ref buffer);
-            Assert.AreEqual(Errno.NoError, error);
-            Assert.AreEqual(0, buffer.Length);
-
-            Assert.AreEqual("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-                            Sha256Context.Data(buffer, out _));
-
-            error = _fs.Read("49470015/7AC2FE88C908/savedata.dat", 1, 16, ref buffer);
-            Assert.AreEqual(Errno.NoError, error);
-            Assert.AreEqual(16, buffer.Length);
-
-            Assert.AreEqual("ff82559d2d0c610ac25b78dcb53a8312e32b56192044deb1f01540581bd54e80",
-                            Sha256Context.Data(buffer, out _));
-
-            error = _fs.Read("49470015/7AC2FE88C908/savedata.dat", 248, 131072, ref buffer);
-            Assert.AreEqual(Errno.NoError, error);
-            Assert.AreEqual(61996, buffer.Length);
-
-            Assert.AreEqual("2eb0d62a96ad28473ce0dd67052efdfae31f371992e1d8309beeeff6f2b46a59",
-                            Sha256Context.Data(buffer, out _));
-
-            error = _fs.Read("49470015/7AC2FE88C908/savedata.dat", 131072, 0, ref buffer);
-            Assert.AreEqual(Errno.InvalidArgument, error);
-        }
-
-        [Test]
-        public void RootDirectory()
-        {
-            Errno error = _fs.ReadDir("", out List<string> directory);
-            Assert.AreEqual(Errno.NoError, error);
-            Assert.AreEqual(6, directory.Count);
-
-            Assert.AreEqual(true, directory.Contains("49470015"));
-            Assert.AreEqual(true, directory.Contains("4d5300d1"));
-            Assert.AreEqual(true, directory.Contains("4d53006e"));
-            Assert.AreEqual(true, directory.Contains("4d530004"));
-            Assert.AreEqual(true, directory.Contains("4947007c"));
-            Assert.AreEqual(true, directory.Contains("4541003e"));
-
-            Assert.AreEqual(false, directory.Contains("d530004"));
-            Assert.AreEqual(false, directory.Contains("4947007"));
-        }
-
-        [Test]
-        public void Stat()
-        {
-            Errno error = _fs.Stat("49470015", out FileEntryInfo stat);
-            Assert.AreEqual(Errno.NoError, error);
-            Assert.AreEqual(new DateTime(2007, 3, 6, 15, 8, 44, DateTimeKind.Utc), stat.AccessTimeUtc);
-            Assert.AreEqual(FileAttributes.Directory, stat.Attributes);
-            Assert.AreEqual(null, stat.BackupTimeUtc);
-            Assert.AreEqual(1, stat.Blocks);
-            Assert.AreEqual(16384, stat.BlockSize);
-            Assert.AreEqual(new DateTime(2007, 3, 6, 15, 8, 44, DateTimeKind.Utc), stat.CreationTimeUtc);
-            Assert.AreEqual(null, stat.DeviceNo);
-            Assert.AreEqual(null, stat.GID);
-            Assert.AreEqual(2, stat.Inode);
-            Assert.AreEqual(new DateTime(2007, 3, 6, 15, 8, 44, DateTimeKind.Utc), stat.LastWriteTimeUtc);
-            Assert.AreEqual(16384, stat.Length);
-            Assert.AreEqual(1, stat.Links);
-            Assert.AreEqual(null, stat.Mode);
-            Assert.AreEqual(null, stat.StatusChangeTimeUtc);
-            Assert.AreEqual(null, stat.UID);
-
-            error = _fs.Stat("49470015/TitleImage", out stat);
-            Assert.AreEqual(Errno.NoSuchFile, error);
-
-            error = _fs.Stat("49470015/TitleImage.xbx", out stat);
-            Assert.AreEqual(Errno.NoError, error);
-            Assert.AreEqual(new DateTime(2013, 5, 14, 12, 50, 8, DateTimeKind.Utc), stat.AccessTimeUtc);
-            Assert.AreEqual(FileAttributes.None, stat.Attributes);
-            Assert.AreEqual(null, stat.BackupTimeUtc);
-            Assert.AreEqual(1, stat.Blocks);
-            Assert.AreEqual(16384, stat.BlockSize);
-            Assert.AreEqual(new DateTime(2013, 5, 14, 12, 50, 8, DateTimeKind.Utc), stat.CreationTimeUtc);
-            Assert.AreEqual(null, stat.DeviceNo);
-            Assert.AreEqual(null, stat.GID);
-            Assert.AreEqual(3, stat.Inode);
-            Assert.AreEqual(new DateTime(2013, 5, 14, 12, 50, 8, DateTimeKind.Utc), stat.LastWriteTimeUtc);
-            Assert.AreEqual(10240, stat.Length);
-            Assert.AreEqual(1, stat.Links);
-            Assert.AreEqual(null, stat.Mode);
-            Assert.AreEqual(null, stat.StatusChangeTimeUtc);
-            Assert.AreEqual(null, stat.UID);
-        }
-
-        [Test]
-        public void Statfs()
-        {
-            Errno error = _fs.StatFs(out FileSystemInfo stat);
-            Assert.AreEqual(Errno.NoError, error);
-            Assert.AreEqual(1960, stat.Blocks);
-            Assert.AreEqual(42, stat.FilenameLength);
-            Assert.AreEqual(0, stat.Files);
-            Assert.AreEqual(0, stat.FreeBlocks);
-            Assert.AreEqual(0, stat.FreeFiles);
-            Assert.AreEqual(0x58544146, stat.Id.Serial32);
-            Assert.AreEqual("Xbox FAT", stat.Type);
-        }
-
-        [Test]
-        public void SubDirectory()
-        {
-            Errno error = _fs.ReadDir("49470015", out List<string> directory);
-            Assert.AreEqual(Errno.NoError, error);
-            Assert.AreEqual(4, directory.Count);
-
-            Assert.AreEqual(true, directory.Contains("TitleImage.xbx"));
-            Assert.AreEqual(true, directory.Contains("SaveImage.xbx"));
-            Assert.AreEqual(true, directory.Contains("7AC2FE88C908"));
-            Assert.AreEqual(true, directory.Contains("TitleMeta.xbx"));
-
-            Assert.AreEqual(false, directory.Contains("TitleImage"));
-            Assert.AreEqual(false, directory.Contains(".xbx"));
-            Assert.AreEqual(false, directory.Contains("7ac2fe88c908"));
-            Assert.AreEqual(false, directory.Contains("xbx"));
-
-            error = _fs.ReadDir("49470015/7AC2FE88C908", out directory);
-            Assert.AreEqual(Errno.NoError, error);
-            Assert.AreEqual(3, directory.Count);
-
-            Assert.AreEqual(true, directory.Contains("SaveMeta.xbx"));
-            Assert.AreEqual(true, directory.Contains("savedata.dat"));
-            Assert.AreEqual(true, directory.Contains("saveimage.xbx"));
-
-            Assert.AreEqual(false, directory.Contains("savemeta.xbx"));
-            Assert.AreEqual(false, directory.Contains("SaveData.dat"));
-            Assert.AreEqual(false, directory.Contains("SaveImage.xbx"));
-        }
 
         public override FileSystemTest[] Tests => new[]
         {
@@ -257,7 +60,1367 @@ namespace Aaru.Tests.Filesystems.FATX
                 Clusters     = 1960,
                 ClusterSize  = 16384,
                 VolumeName   = "Volume láb€l",
-                VolumeSerial = "4639B7D0"
+                VolumeSerial = "4639B7D0",
+                Info = new FileSystemInfo
+                {
+                    Blocks         = 1960,
+                    FilenameLength = 42,
+                    Files          = 0,
+                    FreeBlocks     = 0,
+                    FreeFiles      = 0,
+                    Type           = "Xbox FAT",
+                    Id =
+                    {
+                        IsInt    = true,
+                        Serial32 = 0x58544146
+                    },
+                    PluginId = Plugin.Id
+                },
+                Contents = new Dictionary<string, FileData>
+                {
+                    {
+                        "49470015", new FileData
+                        {
+                            Info = new FileEntryInfo
+                            {
+                                AccessTimeUtc    = new DateTime(2007, 03, 06, 15, 08, 44, DateTimeKind.Utc),
+                                Attributes       = FileAttributes.Directory,
+                                Blocks           = 1,
+                                BlockSize        = 16384,
+                                CreationTimeUtc  = new DateTime(2007, 03, 06, 15, 08, 44, DateTimeKind.Utc),
+                                Inode            = 2,
+                                LastWriteTimeUtc = new DateTime(2007, 03, 06, 15, 08, 44, DateTimeKind.Utc),
+                                Length           = 16384,
+                                Links            = 1
+                            },
+                            Children = new Dictionary<string, FileData>
+                            {
+                                {
+                                    "TitleImage.xbx", new FileData
+                                    {
+                                        Info = new FileEntryInfo
+                                        {
+                                            AccessTimeUtc    = new DateTime(2013, 05, 14, 12, 50, 08, DateTimeKind.Utc),
+                                            Attributes       = FileAttributes.None,
+                                            Blocks           = 1,
+                                            BlockSize        = 16384,
+                                            CreationTimeUtc  = new DateTime(2013, 05, 14, 12, 50, 08, DateTimeKind.Utc),
+                                            Inode            = 3,
+                                            LastWriteTimeUtc = new DateTime(2013, 05, 14, 12, 50, 08, DateTimeKind.Utc),
+                                            Length           = 10240,
+                                            Links            = 1
+                                        },
+                                        MD5 = "ffcc6c6dfbf2c40aca17abdfa4d405e4"
+                                    }
+                                },
+                                {
+                                    "SaveImage.xbx", new FileData
+                                    {
+                                        Info = new FileEntryInfo
+                                        {
+                                            AccessTimeUtc    = new DateTime(2013, 05, 14, 12, 50, 20, DateTimeKind.Utc),
+                                            Attributes       = FileAttributes.None,
+                                            Blocks           = 1,
+                                            BlockSize        = 16384,
+                                            CreationTimeUtc  = new DateTime(2013, 05, 14, 12, 50, 20, DateTimeKind.Utc),
+                                            Inode            = 4,
+                                            LastWriteTimeUtc = new DateTime(2013, 05, 14, 12, 50, 20, DateTimeKind.Utc),
+                                            Length           = 4096,
+                                            Links            = 1
+                                        },
+                                        MD5 = "5aecd07bd3487167a43fc039ab5eb757"
+                                    }
+                                },
+                                {
+                                    "7AC2FE88C908", new FileData
+                                    {
+                                        Info = new FileEntryInfo
+                                        {
+                                            AccessTimeUtc    = new DateTime(2013, 05, 14, 12, 55, 42, DateTimeKind.Utc),
+                                            Attributes       = FileAttributes.Directory,
+                                            Blocks           = 1,
+                                            BlockSize        = 16384,
+                                            CreationTimeUtc  = new DateTime(2013, 05, 14, 12, 55, 42, DateTimeKind.Utc),
+                                            Inode            = 5,
+                                            LastWriteTimeUtc = new DateTime(2013, 05, 14, 12, 55, 42, DateTimeKind.Utc),
+                                            Length           = 16384,
+                                            Links            = 1
+                                        },
+                                        Children = new Dictionary<string, FileData>
+                                        {
+                                            {
+                                                "SaveMeta.xbx", new FileData
+                                                {
+                                                    Info = new FileEntryInfo
+                                                    {
+                                                        AccessTimeUtc =
+                                                            new DateTime(2013, 05, 14, 12, 51, 42, DateTimeKind.Utc),
+                                                        Attributes = FileAttributes.None,
+                                                        Blocks     = 1,
+                                                        BlockSize  = 16384,
+                                                        CreationTimeUtc =
+                                                            new DateTime(2013, 05, 14, 12, 51, 42, DateTimeKind.Utc),
+                                                        Inode = 6,
+                                                        LastWriteTimeUtc =
+                                                            new DateTime(2013, 05, 14, 12, 51, 42, DateTimeKind.Utc),
+                                                        Length = 42,
+                                                        Links  = 1
+                                                    },
+                                                    MD5 = "4a4a402fa9850b14ef4e7c86df816827"
+                                                }
+                                            },
+                                            {
+                                                "savedata.dat", new FileData
+                                                {
+                                                    Info = new FileEntryInfo
+                                                    {
+                                                        AccessTimeUtc =
+                                                            new DateTime(2013, 05, 14, 12, 51, 42, DateTimeKind.Utc),
+                                                        Attributes = FileAttributes.None,
+                                                        Blocks     = 4,
+                                                        BlockSize  = 16384,
+                                                        CreationTimeUtc =
+                                                            new DateTime(2013, 05, 14, 12, 55, 42, DateTimeKind.Utc),
+                                                        Inode = 7,
+                                                        LastWriteTimeUtc =
+                                                            new DateTime(2013, 05, 14, 12, 51, 42, DateTimeKind.Utc),
+                                                        Length = 62244,
+                                                        Links  = 1
+                                                    },
+                                                    MD5 = "8956992829f84afab844a9f923e06d38"
+                                                }
+                                            },
+                                            {
+                                                "saveimage.xbx", new FileData
+                                                {
+                                                    Info = new FileEntryInfo
+                                                    {
+                                                        AccessTimeUtc =
+                                                            new DateTime(2013, 05, 14, 12, 47, 56, DateTimeKind.Utc),
+                                                        Attributes = FileAttributes.None,
+                                                        Blocks     = 1,
+                                                        BlockSize  = 16384,
+                                                        CreationTimeUtc =
+                                                            new DateTime(2013, 05, 14, 12, 47, 56, DateTimeKind.Utc),
+                                                        Inode = 11,
+                                                        LastWriteTimeUtc =
+                                                            new DateTime(2013, 05, 14, 12, 47, 56, DateTimeKind.Utc),
+                                                        Length = 4096,
+                                                        Links  = 1
+                                                    },
+                                                    MD5 = "925cc01dd19ed499ef443ee5c1a322fd"
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                {
+                                    "TitleMeta.xbx", new FileData
+                                    {
+                                        Info = new FileEntryInfo
+                                        {
+                                            AccessTimeUtc    = new DateTime(2013, 05, 14, 12, 50, 08, DateTimeKind.Utc),
+                                            Attributes       = FileAttributes.None,
+                                            Blocks           = 1,
+                                            BlockSize        = 16384,
+                                            CreationTimeUtc  = new DateTime(2013, 05, 14, 12, 50, 08, DateTimeKind.Utc),
+                                            Inode            = 12,
+                                            LastWriteTimeUtc = new DateTime(2013, 05, 14, 12, 50, 08, DateTimeKind.Utc),
+                                            Length           = 34,
+                                            Links            = 1
+                                        },
+                                        MD5 = "7d11933fe277f23c648d97bc79a69080"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "4d5300d1", new FileData
+                        {
+                            Info = new FileEntryInfo
+                            {
+                                AccessTimeUtc    = new DateTime(2007, 03, 06, 15, 08, 56, DateTimeKind.Utc),
+                                Attributes       = FileAttributes.Directory,
+                                Blocks           = 1,
+                                BlockSize        = 16384,
+                                CreationTimeUtc  = new DateTime(2007, 03, 06, 15, 08, 56, DateTimeKind.Utc),
+                                Inode            = 13,
+                                LastWriteTimeUtc = new DateTime(2007, 03, 06, 15, 08, 56, DateTimeKind.Utc),
+                                Length           = 16384,
+                                Links            = 1
+                            },
+                            Children = new Dictionary<string, FileData>
+                            {
+                                {
+                                    "TitleImage.xbx", new FileData
+                                    {
+                                        Info = new FileEntryInfo
+                                        {
+                                            AccessTimeUtc    = new DateTime(2007, 03, 05, 22, 11, 16, DateTimeKind.Utc),
+                                            Attributes       = FileAttributes.None,
+                                            Blocks           = 1,
+                                            BlockSize        = 16384,
+                                            CreationTimeUtc  = new DateTime(2007, 03, 05, 22, 11, 16, DateTimeKind.Utc),
+                                            Inode            = 14,
+                                            LastWriteTimeUtc = new DateTime(2007, 03, 05, 22, 11, 16, DateTimeKind.Utc),
+                                            Length           = 10240,
+                                            Links            = 1
+                                        },
+                                        MD5 = "44ae700918695fc85511205c94027803"
+                                    }
+                                },
+                                {
+                                    "17BC17F1B373", new FileData
+                                    {
+                                        Info = new FileEntryInfo
+                                        {
+                                            AccessTimeUtc    = new DateTime(2007, 03, 05, 22, 47, 08, DateTimeKind.Utc),
+                                            Attributes       = FileAttributes.Directory,
+                                            Blocks           = 1,
+                                            BlockSize        = 16384,
+                                            CreationTimeUtc  = new DateTime(2007, 03, 05, 22, 47, 08, DateTimeKind.Utc),
+                                            Inode            = 15,
+                                            LastWriteTimeUtc = new DateTime(2007, 03, 05, 22, 47, 08, DateTimeKind.Utc),
+                                            Length           = 16384,
+                                            Links            = 1
+                                        },
+                                        Children = new Dictionary<string, FileData>
+                                        {
+                                            {
+                                                "SaveMeta.xbx", new FileData
+                                                {
+                                                    Info = new FileEntryInfo
+                                                    {
+                                                        AccessTimeUtc =
+                                                            new DateTime(2007, 03, 05, 22, 47, 06, DateTimeKind.Utc),
+                                                        Attributes = FileAttributes.None,
+                                                        Blocks     = 1,
+                                                        BlockSize  = 16384,
+                                                        CreationTimeUtc =
+                                                            new DateTime(2007, 03, 05, 22, 47, 06, DateTimeKind.Utc),
+                                                        Inode = 16,
+                                                        LastWriteTimeUtc =
+                                                            new DateTime(2007, 03, 05, 22, 47, 06, DateTimeKind.Utc),
+                                                        Length = 30,
+                                                        Links  = 1
+                                                    },
+                                                    MD5 = "1a258a8b22be42c222680fa8bbbb2b2e"
+                                                }
+                                            },
+                                            {
+                                                "Profile.bin", new FileData
+                                                {
+                                                    Info = new FileEntryInfo
+                                                    {
+                                                        AccessTimeUtc =
+                                                            new DateTime(2007, 03, 05, 22, 47, 06, DateTimeKind.Utc),
+                                                        Attributes = FileAttributes.None,
+                                                        Blocks     = 1,
+                                                        BlockSize  = 16384,
+                                                        CreationTimeUtc =
+                                                            new DateTime(2007, 03, 05, 22, 47, 06, DateTimeKind.Utc),
+                                                        Inode = 17,
+                                                        LastWriteTimeUtc =
+                                                            new DateTime(2007, 03, 05, 22, 47, 06, DateTimeKind.Utc),
+                                                        Length = 4096,
+                                                        Links  = 1
+                                                    },
+                                                    MD5 = "9bd68a94b5812944f8d28f11411eb9f9"
+                                                }
+                                            },
+                                            {
+                                                "saveimage.xbx", new FileData
+                                                {
+                                                    Info = new FileEntryInfo
+                                                    {
+                                                        AccessTimeUtc =
+                                                            new DateTime(2007, 03, 05, 22, 47, 06, DateTimeKind.Utc),
+                                                        Attributes = FileAttributes.None,
+                                                        Blocks     = 1,
+                                                        BlockSize  = 16384,
+                                                        CreationTimeUtc =
+                                                            new DateTime(2007, 03, 05, 22, 47, 06, DateTimeKind.Utc),
+                                                        Inode = 18,
+                                                        LastWriteTimeUtc =
+                                                            new DateTime(2007, 03, 05, 22, 47, 06, DateTimeKind.Utc),
+                                                        Length = 4096,
+                                                        Links  = 1
+                                                    },
+                                                    MD5 = "4cbdae0b459a9813c3dbbfe852482ad8"
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                {
+                                    "TitleMeta.xbx", new FileData
+                                    {
+                                        Info = new FileEntryInfo
+                                        {
+                                            AccessTimeUtc    = new DateTime(2007, 03, 05, 22, 11, 16, DateTimeKind.Utc),
+                                            Attributes       = FileAttributes.None,
+                                            Blocks           = 1,
+                                            BlockSize        = 16384,
+                                            CreationTimeUtc  = new DateTime(2007, 03, 05, 22, 11, 16, DateTimeKind.Utc),
+                                            Inode            = 19,
+                                            LastWriteTimeUtc = new DateTime(2007, 03, 05, 22, 11, 16, DateTimeKind.Utc),
+                                            Length           = 74,
+                                            Links            = 1
+                                        },
+                                        MD5 = "5eea3e004dcc043d17bfd5631f3093fc"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "4d53006e", new FileData
+                        {
+                            Info = new FileEntryInfo
+                            {
+                                AccessTimeUtc    = new DateTime(2007, 03, 06, 15, 09, 04, DateTimeKind.Utc),
+                                Attributes       = FileAttributes.Directory,
+                                Blocks           = 1,
+                                BlockSize        = 16384,
+                                CreationTimeUtc  = new DateTime(2007, 03, 06, 15, 09, 04, DateTimeKind.Utc),
+                                Inode            = 20,
+                                LastWriteTimeUtc = new DateTime(2007, 03, 06, 15, 09, 04, DateTimeKind.Utc),
+                                Length           = 16384,
+                                Links            = 1
+                            },
+                            Children = new Dictionary<string, FileData>
+                            {
+                                {
+                                    "TitleImage.xbx", new FileData
+                                    {
+                                        Info = new FileEntryInfo
+                                        {
+                                            AccessTimeUtc    = new DateTime(2013, 05, 14, 14, 29, 50, DateTimeKind.Utc),
+                                            Attributes       = FileAttributes.None,
+                                            Blocks           = 1,
+                                            BlockSize        = 16384,
+                                            CreationTimeUtc  = new DateTime(2013, 05, 14, 14, 29, 50, DateTimeKind.Utc),
+                                            Inode            = 21,
+                                            LastWriteTimeUtc = new DateTime(2013, 05, 14, 14, 29, 50, DateTimeKind.Utc),
+                                            Length           = 10240,
+                                            Links            = 1
+                                        },
+                                        MD5 = "e397fd25dd1008c940e05493c8ca81f2"
+                                    }
+                                },
+                                {
+                                    "18AAB83D24EF", new FileData
+                                    {
+                                        Info = new FileEntryInfo
+                                        {
+                                            AccessTimeUtc    = new DateTime(2013, 05, 21, 13, 23, 54, DateTimeKind.Utc),
+                                            Attributes       = FileAttributes.Directory,
+                                            Blocks           = 1,
+                                            BlockSize        = 16384,
+                                            CreationTimeUtc  = new DateTime(2013, 05, 21, 13, 23, 54, DateTimeKind.Utc),
+                                            Inode            = 22,
+                                            LastWriteTimeUtc = new DateTime(2013, 05, 21, 13, 23, 54, DateTimeKind.Utc),
+                                            Length           = 16384,
+                                            Links            = 1
+                                        },
+                                        Children = new Dictionary<string, FileData>
+                                        {
+                                            {
+                                                "SaveMeta.xbx", new FileData
+                                                {
+                                                    Info = new FileEntryInfo
+                                                    {
+                                                        AccessTimeUtc =
+                                                            new DateTime(2013, 05, 21, 13, 23, 54, DateTimeKind.Utc),
+                                                        Attributes = FileAttributes.None,
+                                                        Blocks     = 1,
+                                                        BlockSize  = 16384,
+                                                        CreationTimeUtc =
+                                                            new DateTime(2013, 05, 21, 13, 23, 54, DateTimeKind.Utc),
+                                                        Inode = 23,
+                                                        LastWriteTimeUtc =
+                                                            new DateTime(2013, 05, 21, 13, 23, 54, DateTimeKind.Utc),
+                                                        Length = 32,
+                                                        Links  = 1
+                                                    },
+                                                    MD5 = "81f95b7ad4f750f8ecadc4803345fde0"
+                                                }
+                                            },
+                                            {
+                                                "saveimage.xbx", new FileData
+                                                {
+                                                    Info = new FileEntryInfo
+                                                    {
+                                                        AccessTimeUtc =
+                                                            new DateTime(2013, 05, 14, 14, 20, 42, DateTimeKind.Utc),
+                                                        Attributes = FileAttributes.None,
+                                                        Blocks     = 1,
+                                                        BlockSize  = 16384,
+                                                        CreationTimeUtc =
+                                                            new DateTime(2013, 05, 14, 14, 20, 42, DateTimeKind.Utc),
+                                                        Inode = 24,
+                                                        LastWriteTimeUtc =
+                                                            new DateTime(2013, 05, 14, 14, 20, 42, DateTimeKind.Utc),
+                                                        Length = 4096,
+                                                        Links  = 1
+                                                    },
+                                                    MD5 = "2f567b3c40414cc9c3e1c6096ff8eca4"
+                                                }
+                                            },
+                                            {
+                                                "RTCIndex.bin", new FileData
+                                                {
+                                                    Info = new FileEntryInfo
+                                                    {
+                                                        AccessTimeUtc =
+                                                            new DateTime(2013, 05, 21, 13, 29, 34, DateTimeKind.Utc),
+                                                        Attributes = FileAttributes.None,
+                                                        Blocks     = 1,
+                                                        BlockSize  = 16384,
+                                                        CreationTimeUtc =
+                                                            new DateTime(2013, 05, 21, 13, 29, 34, DateTimeKind.Utc),
+                                                        Inode = 25,
+                                                        LastWriteTimeUtc =
+                                                            new DateTime(2013, 05, 21, 13, 29, 34, DateTimeKind.Utc),
+                                                        Length = 1452,
+                                                        Links  = 1
+                                                    },
+                                                    MD5 = "03f6a94bc7a6fb708539e44e3f5c26ab"
+                                                }
+                                            },
+                                            {
+                                                "Stats.bin", new FileData
+                                                {
+                                                    Info = new FileEntryInfo
+                                                    {
+                                                        AccessTimeUtc =
+                                                            new DateTime(2013, 05, 21, 13, 29, 34, DateTimeKind.Utc),
+                                                        Attributes = FileAttributes.None,
+                                                        Blocks     = 1,
+                                                        BlockSize  = 16384,
+                                                        CreationTimeUtc =
+                                                            new DateTime(2013, 05, 21, 13, 29, 34, DateTimeKind.Utc),
+                                                        Inode = 26,
+                                                        LastWriteTimeUtc =
+                                                            new DateTime(2013, 05, 21, 13, 29, 34, DateTimeKind.Utc),
+                                                        Length = 882,
+                                                        Links  = 1
+                                                    },
+                                                    MD5 = "ddac3531ce8d788472d84687838baa53"
+                                                }
+                                            },
+                                            {
+                                                "DrivatarProfile.xml", new FileData
+                                                {
+                                                    Info = new FileEntryInfo
+                                                    {
+                                                        AccessTimeUtc =
+                                                            new DateTime(2013, 05, 21, 13, 29, 36, DateTimeKind.Utc),
+                                                        Attributes = FileAttributes.None,
+                                                        Blocks     = 1,
+                                                        BlockSize  = 16384,
+                                                        CreationTimeUtc =
+                                                            new DateTime(2013, 05, 21, 13, 29, 36, DateTimeKind.Utc),
+                                                        Inode = 27,
+                                                        LastWriteTimeUtc =
+                                                            new DateTime(2013, 05, 21, 13, 29, 36, DateTimeKind.Utc),
+                                                        Length = 205,
+                                                        Links  = 1
+                                                    },
+                                                    MD5 = "73dd74fa7da47daec1c3eb0600f6e61e"
+                                                }
+                                            },
+                                            {
+                                                "Tsukuba.bin", new FileData
+                                                {
+                                                    Info = new FileEntryInfo
+                                                    {
+                                                        AccessTimeUtc =
+                                                            new DateTime(2013, 05, 21, 13, 29, 34, DateTimeKind.Utc),
+                                                        Attributes = FileAttributes.None,
+                                                        Blocks     = 1,
+                                                        BlockSize  = 16384,
+                                                        CreationTimeUtc =
+                                                            new DateTime(2013, 05, 21, 13, 29, 34, DateTimeKind.Utc),
+                                                        Inode = 28,
+                                                        LastWriteTimeUtc =
+                                                            new DateTime(2013, 05, 21, 13, 29, 34, DateTimeKind.Utc),
+                                                        Length = 7950,
+                                                        Links  = 1
+                                                    },
+                                                    MD5 = "e71b737c706197d3bad9054fdb10fb1e"
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                {
+                                    "TitleMeta.xbx", new FileData
+                                    {
+                                        Info = new FileEntryInfo
+                                        {
+                                            AccessTimeUtc    = new DateTime(2013, 05, 14, 14, 29, 50, DateTimeKind.Utc),
+                                            Attributes       = FileAttributes.None,
+                                            Blocks           = 1,
+                                            BlockSize        = 16384,
+                                            CreationTimeUtc  = new DateTime(2013, 05, 14, 14, 29, 50, DateTimeKind.Utc),
+                                            Inode            = 29,
+                                            LastWriteTimeUtc = new DateTime(2013, 05, 14, 14, 29, 50, DateTimeKind.Utc),
+                                            Length           = 58,
+                                            Links            = 1
+                                        },
+                                        MD5 = "2d91d0fe160393c819c5e4fb12181a33"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "4d530004", new FileData
+                        {
+                            Info = new FileEntryInfo
+                            {
+                                AccessTimeUtc    = new DateTime(2007, 03, 06, 15, 09, 20, DateTimeKind.Utc),
+                                Attributes       = FileAttributes.Directory,
+                                Blocks           = 1,
+                                BlockSize        = 16384,
+                                CreationTimeUtc  = new DateTime(2007, 03, 06, 15, 09, 20, DateTimeKind.Utc),
+                                Inode            = 30,
+                                LastWriteTimeUtc = new DateTime(2007, 03, 06, 15, 09, 20, DateTimeKind.Utc),
+                                Length           = 16384,
+                                Links            = 1
+                            },
+                            Children = new Dictionary<string, FileData>
+                            {
+                                {
+                                    "TitleImage.xbx", new FileData
+                                    {
+                                        Info = new FileEntryInfo
+                                        {
+                                            AccessTimeUtc    = new DateTime(2007, 05, 13, 17, 59, 54, DateTimeKind.Utc),
+                                            Attributes       = FileAttributes.None,
+                                            Blocks           = 1,
+                                            BlockSize        = 16384,
+                                            CreationTimeUtc  = new DateTime(2007, 05, 13, 17, 59, 54, DateTimeKind.Utc),
+                                            Inode            = 31,
+                                            LastWriteTimeUtc = new DateTime(2007, 05, 13, 17, 59, 54, DateTimeKind.Utc),
+                                            Length           = 10240,
+                                            Links            = 1
+                                        },
+                                        MD5 = "050e0693073b089b00fb14a7ee5a0019"
+                                    }
+                                },
+                                {
+                                    "SaveImage.xbx", new FileData
+                                    {
+                                        Info = new FileEntryInfo
+                                        {
+                                            AccessTimeUtc    = new DateTime(2007, 05, 13, 17, 59, 54, DateTimeKind.Utc),
+                                            Attributes       = FileAttributes.None,
+                                            Blocks           = 1,
+                                            BlockSize        = 16384,
+                                            CreationTimeUtc  = new DateTime(2007, 05, 13, 17, 59, 54, DateTimeKind.Utc),
+                                            Inode            = 32,
+                                            LastWriteTimeUtc = new DateTime(2007, 05, 13, 17, 59, 54, DateTimeKind.Utc),
+                                            Length           = 4096,
+                                            Links            = 1
+                                        },
+                                        MD5 = "742e10609eba1d19f546890feac808ca"
+                                    }
+                                },
+                                {
+                                    "122A17771B9F", new FileData
+                                    {
+                                        Info = new FileEntryInfo
+                                        {
+                                            AccessTimeUtc    = new DateTime(2008, 05, 31, 00, 46, 52, DateTimeKind.Utc),
+                                            Attributes       = FileAttributes.Directory,
+                                            Blocks           = 1,
+                                            BlockSize        = 16384,
+                                            CreationTimeUtc  = new DateTime(2008, 05, 31, 00, 46, 52, DateTimeKind.Utc),
+                                            Inode            = 33,
+                                            LastWriteTimeUtc = new DateTime(2008, 05, 31, 00, 46, 52, DateTimeKind.Utc),
+                                            Length           = 16384,
+                                            Links            = 1
+                                        },
+                                        Children = new Dictionary<string, FileData>
+                                        {
+                                            {
+                                                "SaveMeta.xbx", new FileData
+                                                {
+                                                    Info = new FileEntryInfo
+                                                    {
+                                                        AccessTimeUtc =
+                                                            new DateTime(2008, 05, 31, 00, 46, 52, DateTimeKind.Utc),
+                                                        Attributes = FileAttributes.None,
+                                                        Blocks     = 1,
+                                                        BlockSize  = 16384,
+                                                        CreationTimeUtc =
+                                                            new DateTime(2008, 05, 31, 00, 46, 52, DateTimeKind.Utc),
+                                                        Inode = 34,
+                                                        LastWriteTimeUtc =
+                                                            new DateTime(2008, 05, 31, 00, 46, 52, DateTimeKind.Utc),
+                                                        Length = 28,
+                                                        Links  = 1
+                                                    },
+                                                    MD5 = "dd8d7db493cbebb333b6f0054df24acf"
+                                                }
+                                            },
+                                            {
+                                                "savegame.bin", new FileData
+                                                {
+                                                    Info = new FileEntryInfo
+                                                    {
+                                                        AccessTimeUtc =
+                                                            new DateTime(2008, 05, 31, 00, 46, 52, DateTimeKind.Utc),
+                                                        Attributes = FileAttributes.None,
+                                                        Blocks     = 224,
+                                                        BlockSize  = 16384,
+                                                        CreationTimeUtc =
+                                                            new DateTime(2008, 05, 31, 00, 46, 52, DateTimeKind.Utc),
+                                                        Inode = 35,
+                                                        LastWriteTimeUtc =
+                                                            new DateTime(2008, 05, 31, 00, 46, 52, DateTimeKind.Utc),
+                                                        Length = 3670016,
+                                                        Links  = 1
+                                                    },
+                                                    MD5 = "047f55cc6793fa0ea3dd6552694a8754"
+                                                }
+                                            },
+                                            {
+                                                "blam.sav", new FileData
+                                                {
+                                                    Info = new FileEntryInfo
+                                                    {
+                                                        AccessTimeUtc =
+                                                            new DateTime(2008, 05, 31, 00, 46, 52, DateTimeKind.Utc),
+                                                        Attributes = FileAttributes.None,
+                                                        Blocks     = 1,
+                                                        BlockSize  = 16384,
+                                                        CreationTimeUtc =
+                                                            new DateTime(2008, 05, 31, 00, 46, 52, DateTimeKind.Utc),
+                                                        Inode = 259,
+                                                        LastWriteTimeUtc =
+                                                            new DateTime(2008, 05, 31, 00, 46, 52, DateTimeKind.Utc),
+                                                        Length = 512,
+                                                        Links  = 1
+                                                    },
+                                                    MD5 = "a365b6fa9247b017ff16bd6eb403ebd7"
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                {
+                                    "TitleMeta.xbx", new FileData
+                                    {
+                                        Info = new FileEntryInfo
+                                        {
+                                            AccessTimeUtc    = new DateTime(2007, 05, 13, 17, 59, 54, DateTimeKind.Utc),
+                                            Attributes       = FileAttributes.None,
+                                            Blocks           = 1,
+                                            BlockSize        = 16384,
+                                            CreationTimeUtc  = new DateTime(2007, 05, 13, 17, 59, 54, DateTimeKind.Utc),
+                                            Inode            = 260,
+                                            LastWriteTimeUtc = new DateTime(2007, 05, 13, 17, 59, 54, DateTimeKind.Utc),
+                                            Length           = 34,
+                                            Links            = 1
+                                        },
+                                        MD5 = "e58efb392e8ffeba52fd68ada9dc250f"
+                                    }
+                                },
+                                {
+                                    "16C31B26E558", new FileData
+                                    {
+                                        Info = new FileEntryInfo
+                                        {
+                                            AccessTimeUtc    = new DateTime(2008, 05, 29, 03, 49, 46, DateTimeKind.Utc),
+                                            Attributes       = FileAttributes.Directory,
+                                            Blocks           = 1,
+                                            BlockSize        = 16384,
+                                            CreationTimeUtc  = new DateTime(2008, 05, 29, 03, 49, 46, DateTimeKind.Utc),
+                                            Inode            = 276,
+                                            LastWriteTimeUtc = new DateTime(2008, 05, 29, 03, 49, 46, DateTimeKind.Utc),
+                                            Length           = 16384,
+                                            Links            = 1
+                                        },
+                                        Children = new Dictionary<string, FileData>
+                                        {
+                                            {
+                                                "SaveMeta.xbx", new FileData
+                                                {
+                                                    Info = new FileEntryInfo
+                                                    {
+                                                        AccessTimeUtc =
+                                                            new DateTime(2008, 05, 29, 03, 49, 46, DateTimeKind.Utc),
+                                                        Attributes = FileAttributes.None,
+                                                        Blocks     = 1,
+                                                        BlockSize  = 16384,
+                                                        CreationTimeUtc =
+                                                            new DateTime(2008, 05, 29, 03, 49, 46, DateTimeKind.Utc),
+                                                        Inode = 277,
+                                                        LastWriteTimeUtc =
+                                                            new DateTime(2008, 05, 29, 03, 49, 46, DateTimeKind.Utc),
+                                                        Length = 30,
+                                                        Links  = 1
+                                                    },
+                                                    MD5 = "2efc569cb129cf520ee610e7cf21bad0"
+                                                }
+                                            },
+                                            {
+                                                "savegame.bin", new FileData
+                                                {
+                                                    Info = new FileEntryInfo
+                                                    {
+                                                        AccessTimeUtc =
+                                                            new DateTime(2008, 05, 29, 03, 48, 32, DateTimeKind.Utc),
+                                                        Attributes = FileAttributes.None,
+                                                        Blocks     = 224,
+                                                        BlockSize  = 16384,
+                                                        CreationTimeUtc =
+                                                            new DateTime(2008, 05, 31, 00, 45, 28, DateTimeKind.Utc),
+                                                        Inode = 279,
+                                                        LastWriteTimeUtc =
+                                                            new DateTime(2008, 05, 29, 03, 48, 32, DateTimeKind.Utc),
+                                                        Length = 3670016,
+                                                        Links  = 1
+                                                    },
+                                                    MD5 = "6096fa89e6981accdafe6a3840ebe3f3"
+                                                }
+                                            },
+                                            {
+                                                "blam.sav", new FileData
+                                                {
+                                                    Info = new FileEntryInfo
+                                                    {
+                                                        AccessTimeUtc =
+                                                            new DateTime(2008, 05, 29, 03, 48, 32, DateTimeKind.Utc),
+                                                        Attributes = FileAttributes.None,
+                                                        Blocks     = 1,
+                                                        BlockSize  = 16384,
+                                                        CreationTimeUtc =
+                                                            new DateTime(2008, 05, 30, 00, 13, 22, DateTimeKind.Utc),
+                                                        Inode = 278,
+                                                        LastWriteTimeUtc =
+                                                            new DateTime(2008, 05, 29, 03, 48, 32, DateTimeKind.Utc),
+                                                        Length = 512,
+                                                        Links  = 1
+                                                    },
+                                                    MD5 = "c84c2066c91aca25c3f22f53fe9abe20"
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                {
+                                    "122A17771B9E", new FileData
+                                    {
+                                        Info = new FileEntryInfo
+                                        {
+                                            AccessTimeUtc    = new DateTime(2008, 05, 29, 03, 47, 40, DateTimeKind.Utc),
+                                            Attributes       = FileAttributes.Directory,
+                                            Blocks           = 1,
+                                            BlockSize        = 16384,
+                                            CreationTimeUtc  = new DateTime(2008, 05, 29, 03, 47, 40, DateTimeKind.Utc),
+                                            Inode            = 503,
+                                            LastWriteTimeUtc = new DateTime(2008, 05, 29, 03, 47, 40, DateTimeKind.Utc),
+                                            Length           = 16384,
+                                            Links            = 1
+                                        },
+                                        Children = new Dictionary<string, FileData>
+                                        {
+                                            {
+                                                "SaveMeta.xbx", new FileData
+                                                {
+                                                    Info = new FileEntryInfo
+                                                    {
+                                                        AccessTimeUtc =
+                                                            new DateTime(2008, 05, 29, 03, 47, 40, DateTimeKind.Utc),
+                                                        Attributes = FileAttributes.None,
+                                                        Blocks     = 1,
+                                                        BlockSize  = 16384,
+                                                        CreationTimeUtc =
+                                                            new DateTime(2008, 05, 29, 03, 47, 40, DateTimeKind.Utc),
+                                                        Inode = 504,
+                                                        LastWriteTimeUtc =
+                                                            new DateTime(2008, 05, 29, 03, 47, 40, DateTimeKind.Utc),
+                                                        Length = 28,
+                                                        Links  = 1
+                                                    },
+                                                    MD5 = "da18a1d021e4816e2eb6e6a84f3c0b5a"
+                                                }
+                                            },
+                                            {
+                                                "savegame.bin", new FileData
+                                                {
+                                                    Info = new FileEntryInfo
+                                                    {
+                                                        AccessTimeUtc =
+                                                            new DateTime(2008, 05, 29, 03, 47, 40, DateTimeKind.Utc),
+                                                        Attributes = FileAttributes.None,
+                                                        Blocks     = 224,
+                                                        BlockSize  = 16384,
+                                                        CreationTimeUtc =
+                                                            new DateTime(2008, 05, 29, 03, 47, 40, DateTimeKind.Utc),
+                                                        Inode = 505,
+                                                        LastWriteTimeUtc =
+                                                            new DateTime(2008, 05, 29, 03, 47, 40, DateTimeKind.Utc),
+                                                        Length = 3670016,
+                                                        Links  = 1
+                                                    },
+                                                    MD5 = "7ab424489b08ce63c84e005dce9dbd74"
+                                                }
+                                            },
+                                            {
+                                                "blam.sav", new FileData
+                                                {
+                                                    Info = new FileEntryInfo
+                                                    {
+                                                        AccessTimeUtc =
+                                                            new DateTime(2008, 05, 29, 03, 47, 40, DateTimeKind.Utc),
+                                                        Attributes = FileAttributes.None,
+                                                        Blocks     = 1,
+                                                        BlockSize  = 16384,
+                                                        CreationTimeUtc =
+                                                            new DateTime(2008, 05, 29, 03, 47, 40, DateTimeKind.Utc),
+                                                        Inode = 729,
+                                                        LastWriteTimeUtc =
+                                                            new DateTime(2008, 05, 29, 03, 47, 40, DateTimeKind.Utc),
+                                                        Length = 512,
+                                                        Links  = 1
+                                                    },
+                                                    MD5 = "af9ecd24da5e5015ce2bcdba61b8c4e6"
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                {
+                                    "00630061006C", new FileData
+                                    {
+                                        Info = new FileEntryInfo
+                                        {
+                                            AccessTimeUtc    = new DateTime(2007, 05, 13, 18, 19, 20, DateTimeKind.Utc),
+                                            Attributes       = FileAttributes.Directory,
+                                            Blocks           = 1,
+                                            BlockSize        = 16384,
+                                            CreationTimeUtc  = new DateTime(2007, 05, 13, 18, 19, 20, DateTimeKind.Utc),
+                                            Inode            = 730,
+                                            LastWriteTimeUtc = new DateTime(2007, 05, 13, 18, 19, 20, DateTimeKind.Utc),
+                                            Length           = 16384,
+                                            Links            = 1
+                                        },
+                                        Children = new Dictionary<string, FileData>
+                                        {
+                                            {
+                                                "SaveMeta.xbx", new FileData
+                                                {
+                                                    Info = new FileEntryInfo
+                                                    {
+                                                        AccessTimeUtc =
+                                                            new DateTime(2007, 05, 13, 18, 19, 20, DateTimeKind.Utc),
+                                                        Attributes = FileAttributes.None,
+                                                        Blocks     = 1,
+                                                        BlockSize  = 16384,
+                                                        CreationTimeUtc =
+                                                            new DateTime(2007, 05, 13, 18, 19, 20, DateTimeKind.Utc),
+                                                        Inode = 731,
+                                                        LastWriteTimeUtc =
+                                                            new DateTime(2007, 05, 13, 18, 19, 20, DateTimeKind.Utc),
+                                                        Length = 22,
+                                                        Links  = 1
+                                                    },
+                                                    MD5 = "44737eea03ad5b1a911b413c76b6543b"
+                                                }
+                                            },
+                                            {
+                                                "savegame.bin", new FileData
+                                                {
+                                                    Info = new FileEntryInfo
+                                                    {
+                                                        AccessTimeUtc =
+                                                            new DateTime(2007, 05, 13, 18, 19, 04, DateTimeKind.Utc),
+                                                        Attributes = FileAttributes.None,
+                                                        Blocks     = 224,
+                                                        BlockSize  = 16384,
+                                                        CreationTimeUtc =
+                                                            new DateTime(2008, 05, 29, 03, 46, 22, DateTimeKind.Utc),
+                                                        Inode = 733,
+                                                        LastWriteTimeUtc =
+                                                            new DateTime(2007, 05, 13, 18, 19, 04, DateTimeKind.Utc),
+                                                        Length = 3670016,
+                                                        Links  = 1
+                                                    },
+                                                    MD5 = "ebe90f15990f89814c9c655edcc459c9"
+                                                }
+                                            },
+                                            {
+                                                "blam.sav", new FileData
+                                                {
+                                                    Info = new FileEntryInfo
+                                                    {
+                                                        AccessTimeUtc =
+                                                            new DateTime(2007, 05, 13, 18, 19, 04, DateTimeKind.Utc),
+                                                        Attributes = FileAttributes.None,
+                                                        Blocks     = 1,
+                                                        BlockSize  = 16384,
+                                                        CreationTimeUtc =
+                                                            new DateTime(2007, 05, 13, 18, 37, 20, DateTimeKind.Utc),
+                                                        Inode = 732,
+                                                        LastWriteTimeUtc =
+                                                            new DateTime(2007, 05, 13, 18, 19, 04, DateTimeKind.Utc),
+                                                        Length = 512,
+                                                        Links  = 1
+                                                    },
+                                                    MD5 = "14bb70e9cf9e0c4f2a85b334ba9553c1"
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                {
+                                    "006513971B21", new FileData
+                                    {
+                                        Info = new FileEntryInfo
+                                        {
+                                            AccessTimeUtc    = new DateTime(2007, 05, 13, 18, 00, 46, DateTimeKind.Utc),
+                                            Attributes       = FileAttributes.Directory,
+                                            Blocks           = 1,
+                                            BlockSize        = 16384,
+                                            CreationTimeUtc  = new DateTime(2007, 05, 13, 18, 00, 46, DateTimeKind.Utc),
+                                            Inode            = 957,
+                                            LastWriteTimeUtc = new DateTime(2007, 05, 13, 18, 00, 46, DateTimeKind.Utc),
+                                            Length           = 16384,
+                                            Links            = 1
+                                        },
+                                        Children = new Dictionary<string, FileData>
+                                        {
+                                            {
+                                                "SaveMeta.xbx", new FileData
+                                                {
+                                                    Info = new FileEntryInfo
+                                                    {
+                                                        AccessTimeUtc =
+                                                            new DateTime(2007, 05, 13, 18, 00, 46, DateTimeKind.Utc),
+                                                        Attributes = FileAttributes.None,
+                                                        Blocks     = 1,
+                                                        BlockSize  = 16384,
+                                                        CreationTimeUtc =
+                                                            new DateTime(2007, 05, 13, 18, 00, 46, DateTimeKind.Utc),
+                                                        Inode = 958,
+                                                        LastWriteTimeUtc =
+                                                            new DateTime(2007, 05, 13, 18, 00, 46, DateTimeKind.Utc),
+                                                        Length = 26,
+                                                        Links  = 1
+                                                    },
+                                                    MD5 = "7bc579ebf77ae6e80dcca3d8dc5cc049"
+                                                }
+                                            },
+                                            {
+                                                "savegame.bin", new FileData
+                                                {
+                                                    Info = new FileEntryInfo
+                                                    {
+                                                        AccessTimeUtc =
+                                                            new DateTime(2007, 05, 13, 18, 00, 16, DateTimeKind.Utc),
+                                                        Attributes = FileAttributes.None,
+                                                        Blocks     = 224,
+                                                        BlockSize  = 16384,
+                                                        CreationTimeUtc =
+                                                            new DateTime(2007, 05, 14, 08, 23, 52, DateTimeKind.Utc),
+                                                        Inode = 960,
+                                                        LastWriteTimeUtc =
+                                                            new DateTime(2007, 05, 13, 18, 00, 16, DateTimeKind.Utc),
+                                                        Length = 3670016,
+                                                        Links  = 1
+                                                    },
+                                                    MD5 = "9a2b13138e63f397bc1a73b78d8cdd61"
+                                                }
+                                            },
+                                            {
+                                                "blam.sav", new FileData
+                                                {
+                                                    Info = new FileEntryInfo
+                                                    {
+                                                        AccessTimeUtc =
+                                                            new DateTime(2007, 05, 13, 18, 00, 16, DateTimeKind.Utc),
+                                                        Attributes = FileAttributes.None,
+                                                        Blocks     = 1,
+                                                        BlockSize  = 16384,
+                                                        CreationTimeUtc =
+                                                            new DateTime(2007, 05, 13, 19, 01, 04, DateTimeKind.Utc),
+                                                        Inode = 959,
+                                                        LastWriteTimeUtc =
+                                                            new DateTime(2007, 05, 13, 18, 00, 16, DateTimeKind.Utc),
+                                                        Length = 512,
+                                                        Links  = 1
+                                                    },
+                                                    MD5 = "4cffa85fff011a98247156308e04c49b"
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                {
+                                    "0061170917BB", new FileData
+                                    {
+                                        Info = new FileEntryInfo
+                                        {
+                                            AccessTimeUtc    = new DateTime(2007, 05, 02, 16, 29, 54, DateTimeKind.Utc),
+                                            Attributes       = FileAttributes.Directory,
+                                            Blocks           = 1,
+                                            BlockSize        = 16384,
+                                            CreationTimeUtc  = new DateTime(2007, 05, 02, 16, 29, 54, DateTimeKind.Utc),
+                                            Inode            = 1184,
+                                            LastWriteTimeUtc = new DateTime(2007, 05, 02, 16, 29, 54, DateTimeKind.Utc),
+                                            Length           = 16384,
+                                            Links            = 1
+                                        },
+                                        Children = new Dictionary<string, FileData>
+                                        {
+                                            {
+                                                "SaveMeta.xbx", new FileData
+                                                {
+                                                    Info = new FileEntryInfo
+                                                    {
+                                                        AccessTimeUtc =
+                                                            new DateTime(2007, 05, 02, 16, 29, 54, DateTimeKind.Utc),
+                                                        Attributes = FileAttributes.None,
+                                                        Blocks     = 1,
+                                                        BlockSize  = 16384,
+                                                        CreationTimeUtc =
+                                                            new DateTime(2007, 05, 02, 16, 29, 54, DateTimeKind.Utc),
+                                                        Inode = 1185,
+                                                        LastWriteTimeUtc =
+                                                            new DateTime(2007, 05, 02, 16, 29, 54, DateTimeKind.Utc),
+                                                        Length = 26,
+                                                        Links  = 1
+                                                    },
+                                                    MD5 = "daa39e5a21a8607eab381114baf9c52c"
+                                                }
+                                            },
+                                            {
+                                                "savegame.bin", new FileData
+                                                {
+                                                    Info = new FileEntryInfo
+                                                    {
+                                                        AccessTimeUtc =
+                                                            new DateTime(2007, 05, 02, 16, 29, 54, DateTimeKind.Utc),
+                                                        Attributes = FileAttributes.None,
+                                                        Blocks     = 224,
+                                                        BlockSize  = 16384,
+                                                        CreationTimeUtc =
+                                                            new DateTime(2008, 05, 29, 03, 35, 16, DateTimeKind.Utc),
+                                                        Inode = 1186,
+                                                        LastWriteTimeUtc =
+                                                            new DateTime(2007, 05, 02, 16, 29, 54, DateTimeKind.Utc),
+                                                        Length = 3670016,
+                                                        Links  = 1
+                                                    },
+                                                    MD5 = "577de82d90718679bf3947ee9db1faba"
+                                                }
+                                            },
+                                            {
+                                                "blam.sav", new FileData
+                                                {
+                                                    Info = new FileEntryInfo
+                                                    {
+                                                        AccessTimeUtc =
+                                                            new DateTime(2007, 05, 02, 16, 29, 54, DateTimeKind.Utc),
+                                                        Attributes = FileAttributes.None,
+                                                        Blocks     = 1,
+                                                        BlockSize  = 16384,
+                                                        CreationTimeUtc =
+                                                            new DateTime(2007, 05, 02, 21, 46, 16, DateTimeKind.Utc),
+                                                        Inode = 1410,
+                                                        LastWriteTimeUtc =
+                                                            new DateTime(2007, 05, 02, 16, 29, 54, DateTimeKind.Utc),
+                                                        Length = 512,
+                                                        Links  = 1
+                                                    },
+                                                    MD5 = "a25928297f366497f8bdd9020ad91323"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "4947007c", new FileData
+                        {
+                            Info = new FileEntryInfo
+                            {
+                                AccessTimeUtc    = new DateTime(2007, 03, 06, 15, 10, 12, DateTimeKind.Utc),
+                                Attributes       = FileAttributes.Directory,
+                                Blocks           = 1,
+                                BlockSize        = 16384,
+                                CreationTimeUtc  = new DateTime(2007, 03, 06, 15, 10, 12, DateTimeKind.Utc),
+                                Inode            = 261,
+                                LastWriteTimeUtc = new DateTime(2007, 03, 06, 15, 10, 12, DateTimeKind.Utc),
+                                Length           = 16384,
+                                Links            = 1
+                            },
+                            Children = new Dictionary<string, FileData>
+                            {
+                                {
+                                    "TitleImage.xbx", new FileData
+                                    {
+                                        Info = new FileEntryInfo
+                                        {
+                                            AccessTimeUtc    = new DateTime(2007, 03, 04, 00, 07, 06, DateTimeKind.Utc),
+                                            Attributes       = FileAttributes.None,
+                                            Blocks           = 1,
+                                            BlockSize        = 16384,
+                                            CreationTimeUtc  = new DateTime(2007, 03, 04, 00, 07, 06, DateTimeKind.Utc),
+                                            Inode            = 262,
+                                            LastWriteTimeUtc = new DateTime(2007, 03, 04, 00, 07, 06, DateTimeKind.Utc),
+                                            Length           = 10240,
+                                            Links            = 1
+                                        },
+                                        MD5 = "3d74ce17d7414a761c456986cb81c017"
+                                    }
+                                },
+                                {
+                                    "SaveImage.xbx", new FileData
+                                    {
+                                        Info = new FileEntryInfo
+                                        {
+                                            AccessTimeUtc    = new DateTime(2007, 03, 04, 00, 07, 06, DateTimeKind.Utc),
+                                            Attributes       = FileAttributes.None,
+                                            Blocks           = 1,
+                                            BlockSize        = 16384,
+                                            CreationTimeUtc  = new DateTime(2007, 03, 04, 00, 07, 06, DateTimeKind.Utc),
+                                            Inode            = 263,
+                                            LastWriteTimeUtc = new DateTime(2007, 03, 04, 00, 07, 06, DateTimeKind.Utc),
+                                            Length           = 4096,
+                                            Links            = 1
+                                        },
+                                        MD5 = "140ca4f78fb933a9533e45d480875646"
+                                    }
+                                },
+                                {
+                                    "6D93D2718B8F", new FileData
+                                    {
+                                        Info = new FileEntryInfo
+                                        {
+                                            AccessTimeUtc    = new DateTime(2007, 03, 04, 01, 52, 38, DateTimeKind.Utc),
+                                            Attributes       = FileAttributes.Directory,
+                                            Blocks           = 1,
+                                            BlockSize        = 16384,
+                                            CreationTimeUtc  = new DateTime(2007, 03, 04, 01, 52, 38, DateTimeKind.Utc),
+                                            Inode            = 264,
+                                            LastWriteTimeUtc = new DateTime(2007, 03, 04, 01, 52, 38, DateTimeKind.Utc),
+                                            Length           = 16384,
+                                            Links            = 1
+                                        },
+                                        Children = new Dictionary<string, FileData>
+                                        {
+                                            {
+                                                "SaveMeta.xbx", new FileData
+                                                {
+                                                    Info = new FileEntryInfo
+                                                    {
+                                                        AccessTimeUtc =
+                                                            new DateTime(2007, 03, 04, 01, 14, 04, DateTimeKind.Utc),
+                                                        Attributes = FileAttributes.None,
+                                                        Blocks     = 1,
+                                                        BlockSize  = 16384,
+                                                        CreationTimeUtc =
+                                                            new DateTime(2007, 03, 04, 01, 14, 04, DateTimeKind.Utc),
+                                                        Inode = 265,
+                                                        LastWriteTimeUtc =
+                                                            new DateTime(2007, 03, 04, 01, 14, 04, DateTimeKind.Utc),
+                                                        Length = 50,
+                                                        Links  = 1
+                                                    },
+                                                    MD5 = "bc5ba4c145dc5b2de4c86bc09004bf0f"
+                                                }
+                                            },
+                                            {
+                                                "Matrix PON Game 1", new FileData
+                                                {
+                                                    Info = new FileEntryInfo
+                                                    {
+                                                        AccessTimeUtc =
+                                                            new DateTime(2007, 03, 04, 01, 14, 04, DateTimeKind.Utc),
+                                                        Attributes = FileAttributes.None,
+                                                        Blocks     = 1,
+                                                        BlockSize  = 16384,
+                                                        CreationTimeUtc =
+                                                            new DateTime(2007, 03, 04, 01, 52, 38, DateTimeKind.Utc),
+                                                        Inode = 266,
+                                                        LastWriteTimeUtc =
+                                                            new DateTime(2007, 03, 04, 01, 14, 04, DateTimeKind.Utc),
+                                                        Length = 9604,
+                                                        Links  = 1
+                                                    },
+                                                    MD5 = "29bc0897607b055baaf77b1170811a2d"
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                {
+                                    "TitleMeta.xbx", new FileData
+                                    {
+                                        Info = new FileEntryInfo
+                                        {
+                                            AccessTimeUtc    = new DateTime(2007, 03, 04, 00, 07, 06, DateTimeKind.Utc),
+                                            Attributes       = FileAttributes.None,
+                                            Blocks           = 1,
+                                            BlockSize        = 16384,
+                                            CreationTimeUtc  = new DateTime(2007, 03, 04, 00, 07, 06, DateTimeKind.Utc),
+                                            Inode            = 267,
+                                            LastWriteTimeUtc = new DateTime(2007, 03, 04, 00, 07, 06, DateTimeKind.Utc),
+                                            Length           = 56,
+                                            Links            = 1
+                                        },
+                                        MD5 = "de72490bded233aac0864007c368f0e3"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "4541003e", new FileData
+                        {
+                            Info = new FileEntryInfo
+                            {
+                                AccessTimeUtc    = new DateTime(2007, 03, 06, 15, 10, 20, DateTimeKind.Utc),
+                                Attributes       = FileAttributes.Directory,
+                                Blocks           = 1,
+                                BlockSize        = 16384,
+                                CreationTimeUtc  = new DateTime(2007, 03, 06, 15, 10, 20, DateTimeKind.Utc),
+                                Inode            = 268,
+                                LastWriteTimeUtc = new DateTime(2007, 03, 06, 15, 10, 20, DateTimeKind.Utc),
+                                Length           = 16384,
+                                Links            = 1
+                            },
+                            Children = new Dictionary<string, FileData>
+                            {
+                                {
+                                    "TitleImage.xbx", new FileData
+                                    {
+                                        Info = new FileEntryInfo
+                                        {
+                                            AccessTimeUtc    = new DateTime(2007, 03, 05, 22, 56, 54, DateTimeKind.Utc),
+                                            Attributes       = FileAttributes.None,
+                                            Blocks           = 1,
+                                            BlockSize        = 16384,
+                                            CreationTimeUtc  = new DateTime(2007, 03, 05, 22, 56, 54, DateTimeKind.Utc),
+                                            Inode            = 269,
+                                            LastWriteTimeUtc = new DateTime(2007, 03, 05, 22, 56, 54, DateTimeKind.Utc),
+                                            Length           = 10240,
+                                            Links            = 1
+                                        },
+                                        MD5 = "8c58d74ac47302a4b554d5b15691e148"
+                                    }
+                                },
+                                {
+                                    "SaveImage.xbx", new FileData
+                                    {
+                                        Info = new FileEntryInfo
+                                        {
+                                            AccessTimeUtc    = new DateTime(2007, 03, 05, 22, 56, 54, DateTimeKind.Utc),
+                                            Attributes       = FileAttributes.None,
+                                            Blocks           = 1,
+                                            BlockSize        = 16384,
+                                            CreationTimeUtc  = new DateTime(2007, 03, 05, 22, 56, 54, DateTimeKind.Utc),
+                                            Inode            = 270,
+                                            LastWriteTimeUtc = new DateTime(2007, 03, 05, 22, 56, 54, DateTimeKind.Utc),
+                                            Length           = 4096,
+                                            Links            = 1
+                                        },
+                                        MD5 = "73f07585217f400faeba8752394452b8"
+                                    }
+                                },
+                                {
+                                    "2ECC5651910B", new FileData
+                                    {
+                                        Info = new FileEntryInfo
+                                        {
+                                            AccessTimeUtc    = new DateTime(2007, 03, 05, 23, 08, 04, DateTimeKind.Utc),
+                                            Attributes       = FileAttributes.Directory,
+                                            Blocks           = 1,
+                                            BlockSize        = 16384,
+                                            CreationTimeUtc  = new DateTime(2007, 03, 05, 23, 08, 04, DateTimeKind.Utc),
+                                            Inode            = 271,
+                                            LastWriteTimeUtc = new DateTime(2007, 03, 05, 23, 08, 04, DateTimeKind.Utc),
+                                            Length           = 16384,
+                                            Links            = 1
+                                        },
+                                        Children = new Dictionary<string, FileData>
+                                        {
+                                            {
+                                                "SaveMeta.xbx", new FileData
+                                                {
+                                                    Info = new FileEntryInfo
+                                                    {
+                                                        AccessTimeUtc =
+                                                            new DateTime(2007, 03, 05, 23, 08, 04, DateTimeKind.Utc),
+                                                        Attributes = FileAttributes.None,
+                                                        Blocks     = 1,
+                                                        BlockSize  = 16384,
+                                                        CreationTimeUtc =
+                                                            new DateTime(2007, 03, 05, 23, 08, 04, DateTimeKind.Utc),
+                                                        Inode = 272,
+                                                        LastWriteTimeUtc =
+                                                            new DateTime(2007, 03, 05, 23, 08, 04, DateTimeKind.Utc),
+                                                        Length = 36,
+                                                        Links  = 1
+                                                    },
+                                                    MD5 = "566bb332aae52bb93e48351a1fe680a3"
+                                                }
+                                            },
+                                            {
+                                                "rotk", new FileData
+                                                {
+                                                    Info = new FileEntryInfo
+                                                    {
+                                                        AccessTimeUtc =
+                                                            new DateTime(2007, 03, 05, 23, 08, 04, DateTimeKind.Utc),
+                                                        Attributes = FileAttributes.None,
+                                                        Blocks     = 2,
+                                                        BlockSize  = 16384,
+                                                        CreationTimeUtc =
+                                                            new DateTime(2007, 03, 05, 23, 08, 04, DateTimeKind.Utc),
+                                                        Inode = 273,
+                                                        LastWriteTimeUtc =
+                                                            new DateTime(2007, 03, 05, 23, 08, 04, DateTimeKind.Utc),
+                                                        Length = 24436,
+                                                        Links  = 1
+                                                    },
+                                                    MD5 = "cd3b513946f6aeef06b13dac68c47794"
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                {
+                                    "TitleMeta.xbx", new FileData
+                                    {
+                                        Info = new FileEntryInfo
+                                        {
+                                            AccessTimeUtc    = new DateTime(2007, 03, 05, 22, 56, 54, DateTimeKind.Utc),
+                                            Attributes       = FileAttributes.None,
+                                            Blocks           = 1,
+                                            BlockSize        = 16384,
+                                            CreationTimeUtc  = new DateTime(2007, 03, 05, 22, 56, 54, DateTimeKind.Utc),
+                                            Inode            = 275,
+                                            LastWriteTimeUtc = new DateTime(2007, 03, 05, 22, 56, 54, DateTimeKind.Utc),
+                                            Length           = 410,
+                                            Links            = 1
+                                        },
+                                        MD5 = "5fd0375de8c1657f40f44e8c161e674d"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
         };
     }
