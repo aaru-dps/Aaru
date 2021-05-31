@@ -121,6 +121,26 @@ namespace Aaru.Tests.Filesystems.CPM
                 Bootable    = true,
                 Clusters    = 356,
                 ClusterSize = 2048
+            },
+            new FileSystemTest
+            {
+                TestFile    = "spectrum_filename.dsk.lz",
+                MediaType   = MediaType.CompactFloppy,
+                Sectors     = 360,
+                SectorSize  = 512,
+                Bootable    = true,
+                Clusters    = 359,
+                ClusterSize = 512
+            },
+            new FileSystemTest
+            {
+                TestFile    = "spectrum_files.dsk.lz",
+                MediaType   = MediaType.CompactFloppy,
+                Sectors     = 360,
+                SectorSize  = 512,
+                Bootable    = true,
+                Clusters    = 359,
+                ClusterSize = 512
             }
         };
     }
