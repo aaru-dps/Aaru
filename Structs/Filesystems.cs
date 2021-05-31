@@ -40,6 +40,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
+using System.Text.Json.Serialization;
 
 namespace Aaru.CommonTypes.Structs
 {
@@ -155,25 +156,25 @@ namespace Aaru.CommonTypes.Structs
     public class FileEntryInfo
     {
         /// <summary>File attributes</summary>
-        public FileAttributes Attributes;
+        public FileAttributes Attributes { get; set; }
         /// <summary>File length in blocks</summary>
-        public long Blocks;
+        public long Blocks { get; set; }
         /// <summary>File block size in bytes</summary>
-        public long BlockSize;
+        public long BlockSize { get; set; }
         /// <summary>If file points to a device, device number. Null if the underlying filesystem does not support them.</summary>
-        public ulong? DeviceNo;
+        public ulong? DeviceNo { get; set; }
         /// <summary>POSIX group ID. Null if the underlying filesystem does not support them.</summary>
-        public ulong? GID;
+        public ulong? GID { get; set; }
         /// <summary>inode number for this file (or other unique identifier for the volume)</summary>
-        public ulong Inode;
+        public ulong Inode { get; set; }
         /// <summary>File length in bytes</summary>
-        public long Length;
+        public long Length { get; set; }
         /// <summary>Number of hard links pointing to this file (. and .. entries count as hard links)</summary>
-        public ulong Links;
+        public ulong Links { get; set; }
         /// <summary>POSIX permissions/mode for this file. Null if the underlying filesystem does not support them.</summary>
-        public uint? Mode;
+        public uint? Mode { get; set; }
         /// <summary>POSIX owner ID. Null if the underlying filesystem does not support them.</summary>
-        public ulong? UID;
+        public ulong? UID { get; set; }
         /// <summary>File creation date in UTC. Null if the underlying filesystem does not support them.</summary>
         public DateTime? CreationTimeUtc { get; set; }
         /// <summary>File last access date in UTC. Null if the underlying filesystem does not support them.</summary>
@@ -186,6 +187,7 @@ namespace Aaru.CommonTypes.Structs
         public DateTime? LastWriteTimeUtc { get; set; }
 
         /// <summary>File creation date. Null if the underlying filesystem does not support them.</summary>
+        [JsonIgnore]
         public DateTime? CreationTime
         {
             get => CreationTimeUtc?.ToLocalTime();
@@ -193,6 +195,7 @@ namespace Aaru.CommonTypes.Structs
         }
 
         /// <summary>File last access date. Null if the underlying filesystem does not support them.</summary>
+        [JsonIgnore]
         public DateTime? AccessTime
         {
             get => AccessTimeUtc?.ToLocalTime();
@@ -200,6 +203,7 @@ namespace Aaru.CommonTypes.Structs
         }
 
         /// <summary>File attributes change date. Null if the underlying filesystem does not support them.</summary>
+        [JsonIgnore]
         public DateTime? StatusChangeTime
         {
             get => StatusChangeTimeUtc?.ToLocalTime();
@@ -207,6 +211,7 @@ namespace Aaru.CommonTypes.Structs
         }
 
         /// <summary>File last backup date. Null if the underlying filesystem does not support them.</summary>
+        [JsonIgnore]
         public DateTime? BackupTime
         {
             get => BackupTimeUtc?.ToLocalTime();
@@ -214,6 +219,7 @@ namespace Aaru.CommonTypes.Structs
         }
 
         /// <summary>File last modification date. Null if the underlying filesystem does not support them.</summary>
+        [JsonIgnore]
         public DateTime? LastWriteTime
         {
             get => LastWriteTimeUtc?.ToLocalTime();
