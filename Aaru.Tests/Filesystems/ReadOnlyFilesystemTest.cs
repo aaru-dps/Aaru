@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Aaru.Checksums;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
@@ -99,7 +101,6 @@ namespace Aaru.Tests.Filesystems
                     if(!found)
                         continue;
 
-
                     var fs = Activator.CreateInstance(Plugin.GetType()) as IReadOnlyFilesystem;
 
                     Assert.NotNull(fs, $"Could not instantiate filesystem for {testFile}");
@@ -113,6 +114,30 @@ namespace Aaru.Tests.Filesystems
                     Assert.AreEqual(Errno.NoError, ret, $"Unexpected error retrieving filesystem stats for {testFile}");
 
                     stat.Should().BeEquivalentTo(test.Info, $"Incorrect filesystem stats for {testFile}");
+
+                    if(File.Exists($"{testFile}.contents.json"))
+                    {
+                        var sr = new StreamReader($"{testFile}.contents.json");
+                        test.ContentsJson = sr.ReadToEnd();
+                    }
+
+                    if(test.ContentsJson != null)
+                    {
+                        test.Contents = JsonSerializer.Deserialize<Dictionary<string, FileData>>(test.ContentsJson,
+                            new JsonSerializerOptions
+                            {
+                                IgnoreNullValues    = true,
+                                MaxDepth            = 2048,
+                                AllowTrailingCommas = true,
+                                ReadCommentHandling = JsonCommentHandling.Skip,
+                                Converters =
+                                {
+                                    new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)
+                                }
+                            });
+
+                        test.ContentsJson = null;
+                    }
 
                     if(test.Contents is null)
                         continue;
