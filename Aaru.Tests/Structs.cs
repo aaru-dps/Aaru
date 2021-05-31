@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Text;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Structs;
 
@@ -30,6 +31,10 @@ namespace Aaru.Tests
         public long Clusters;
         /// <summary>Bytes per cluster</summary>
         public uint ClusterSize;
+        public Dictionary<string, FileData> Contents;
+        public Encoding                     Encoding;
+        public FileSystemInfo               Info;
+        public string                       Namespace;
         /// <summary>System or OEM ID</summary>
         public string SystemId;
         /// <summary>Filesystem type. null if always the same, as defined in test class</summary>
@@ -86,8 +91,11 @@ namespace Aaru.Tests
 
     public class FileData
     {
-        public string                     MD5;
-        public Dictionary<string, string> XattrsWithMd5;
+        public Dictionary<string, FileData> Children;
+        public FileEntryInfo                Info;
+        public string                       LinkTarget;
+        public string                       MD5;
+        public Dictionary<string, string>   XattrsWithMd5;
     }
 
     public class VolumeData
