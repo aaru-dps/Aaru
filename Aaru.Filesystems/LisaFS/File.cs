@@ -277,12 +277,11 @@ namespace Aaru.Filesystems.LisaFS
                     return Errno.NoSuchFile;
                 else
                 {
-                    stat = new FileEntryInfo
-                    {
-                        Attributes = new FileAttributes()
-                    };
+                    stat = new FileEntryInfo();
 
-                    error = GetAttributes(fileId, out stat.Attributes);
+                    error = GetAttributes(fileId, out FileAttributes attrs);
+
+                    stat.Attributes = attrs;
 
                     if(error != Errno.NoError)
                         return error;
@@ -328,12 +327,10 @@ namespace Aaru.Filesystems.LisaFS
                     return Errno.NoError;
                 }
 
-            stat = new FileEntryInfo
-            {
-                Attributes = new FileAttributes()
-            };
+            stat = new FileEntryInfo();
 
-            error = GetAttributes(fileId, out stat.Attributes);
+            error           = GetAttributes(fileId, out FileAttributes fileAttributes);
+            stat.Attributes = fileAttributes;
 
             if(error != Errno.NoError)
                 return error;

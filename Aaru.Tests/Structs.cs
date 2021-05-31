@@ -32,6 +32,7 @@ namespace Aaru.Tests
         /// <summary>Bytes per cluster</summary>
         public uint ClusterSize;
         public Dictionary<string, FileData> Contents;
+        public string                       ContentsJson;
         public Encoding                     Encoding;
         public FileSystemInfo               Info;
         public string                       Namespace;
@@ -91,11 +92,11 @@ namespace Aaru.Tests
 
     public class FileData
     {
-        public Dictionary<string, FileData> Children;
-        public FileEntryInfo                Info;
-        public string                       LinkTarget;
-        public string                       MD5;
-        public Dictionary<string, string>   XattrsWithMd5;
+        public Dictionary<string, FileData> Children      { get; set; }
+        public FileEntryInfo                Info          { get; set; }
+        public string                       LinkTarget    { get; set; }
+        public string                       MD5           { get; set; }
+        public Dictionary<string, string>   XattrsWithMd5 { get; set; }
     }
 
     public class VolumeData
