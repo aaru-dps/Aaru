@@ -147,6 +147,128 @@ namespace Aaru.Tests.Filesystems
             });
         }
 
+        [Test, Ignore("Not a test, do not run")]
+        public void Build()
+        {
+            Environment.CurrentDirectory = DataFolder;
+
+            foreach(FileSystemTest test in Tests)
+            {
+                string testFile  = test.TestFile;
+                bool   found     = false;
+                var    partition = new Partition();
+
+                bool exists = File.Exists(testFile);
+
+                // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+                // It arrives here...
+                if(!exists)
+                    continue;
+
+                var         filtersList = new FiltersList();
+                IFilter     inputFilter = filtersList.GetFilter(testFile);
+                IMediaImage image       = ImageFormat.Detect(inputFilter);
+
+                List<string> idPlugins;
+
+                if(Partitions)
+                {
+                    List<Partition> partitionsList = Core.Partitions.GetAll(image);
+
+                    // In reverse to skip boot partitions we're not interested in
+                    for(int index = partitionsList.Count - 1; index >= 0; index--)
+                    {
+                        Core.Filesystems.Identify(image, out idPlugins, partitionsList[index], true);
+
+                        if(idPlugins.Count == 0)
+                            continue;
+
+                        if(!idPlugins.Contains(Plugin.Id.ToString()))
+                            continue;
+
+                        found     = true;
+                        partition = partitionsList[index];
+
+                        break;
+                    }
+                }
+                else
+                {
+                    partition = new Partition
+                    {
+                        Name   = "Whole device",
+                        Length = image.Info.Sectors,
+                        Size   = image.Info.Sectors * image.Info.SectorSize
+                    };
+
+                    Core.Filesystems.Identify(image, out idPlugins, partition, true);
+
+                    found = idPlugins.Contains(Plugin.Id.ToString());
+                }
+
+                // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+                // It is not the case, it changes
+                if(!found)
+                    continue;
+
+                var fs = Activator.CreateInstance(Plugin.GetType()) as IReadOnlyFilesystem;
+
+                fs?.Mount(image, partition, test.Encoding, null, test.Namespace);
+
+                Dictionary<string, FileData> contents = BuildDirectory(fs, "/");
+
+                string json = JsonSerializer.Serialize(contents, new JsonSerializerOptions
+                {
+                    IgnoreNullValues    = true,
+                    MaxDepth            = 2048,
+                    AllowTrailingCommas = true,
+                    ReadCommentHandling = JsonCommentHandling.Skip,
+                    Converters =
+                    {
+                        new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)
+                    }
+                });
+            }
+        }
+
+        Dictionary<string, FileData> BuildDirectory(IReadOnlyFilesystem fs, string path)
+        {
+            Dictionary<string, FileData> children = new Dictionary<string, FileData>();
+            fs.ReadDir(path, out List<string> contents);
+
+            foreach(string child in contents)
+            {
+                string childPath = $"{path}/{child}";
+                fs.Stat(childPath, out FileEntryInfo stat);
+
+                var data = new FileData
+                {
+                    Info = stat
+                };
+
+                if(stat.Attributes.HasFlag(FileAttributes.Directory))
+                {
+                    data.Children = BuildDirectory(fs, childPath);
+                }
+                else
+                {
+                    data.MD5 = BuildFile(fs, childPath, stat.Length);
+                }
+
+                children[child] = data;
+            }
+
+            return children;
+        }
+
+        string BuildFile(IReadOnlyFilesystem fs, string path, long length)
+        {
+            byte[] buffer = new byte[length];
+            fs.Read(path, 0, length, ref buffer);
+
+            return Md5Context.Data(buffer, out _);
+        }
+
         void TestDirectory(IReadOnlyFilesystem fs, string path, Dictionary<string, FileData> children, string testFile)
         {
             Errno ret = fs.ReadDir(path, out List<string> contents);
