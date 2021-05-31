@@ -99,8 +99,6 @@ namespace Aaru.Tests.Filesystems
                     if(!found)
                         continue;
 
-                    if(test.Contents is null)
-                        continue;
 
                     var fs = Activator.CreateInstance(Plugin.GetType()) as IReadOnlyFilesystem;
 
@@ -115,6 +113,9 @@ namespace Aaru.Tests.Filesystems
                     Assert.AreEqual(Errno.NoError, ret, $"Unexpected error retrieving filesystem stats for {testFile}");
 
                     stat.Should().BeEquivalentTo(test.Info, $"Incorrect filesystem stats for {testFile}");
+
+                    if(test.Contents is null)
+                        continue;
 
                     TestDirectory(fs, "/", test.Contents, testFile);
                 }
