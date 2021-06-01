@@ -35,7 +35,7 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems.FAT12
 {
     [TestFixture]
-    public class MBR : FilesystemTest
+    public class MBR : ReadOnlyFilesystemTest
     {
         public MBR() : base("FAT12") {}
 

@@ -35,7 +35,7 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems.FAT32
 {
     [TestFixture]
-    public class APM : FilesystemTest
+    public class APM : ReadOnlyFilesystemTest
     {
         public APM() : base("FAT32") {}
 

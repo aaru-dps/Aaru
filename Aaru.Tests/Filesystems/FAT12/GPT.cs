@@ -35,7 +35,7 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems.FAT12
 {
     [TestFixture]
-    public class GPT : FilesystemTest
+    public class GPT : ReadOnlyFilesystemTest
     {
         public GPT() : base("FAT12") {}
 

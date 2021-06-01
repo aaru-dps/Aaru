@@ -35,7 +35,7 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems.FAT16
 {
     [TestFixture]
-    public class Human : FilesystemTest
+    public class Human : ReadOnlyFilesystemTest
     {
         public Human() : base("FAT16") {}
 
