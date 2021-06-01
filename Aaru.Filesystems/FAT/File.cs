@@ -99,6 +99,13 @@ namespace Aaru.Filesystems
                !_debug)
                 return Errno.IsDirectory;
 
+            if(size == 0)
+            {
+                buf = new byte[0];
+
+                return Errno.NoError;
+            }
+
             if(offset >= stat.Length)
                 return Errno.InvalidArgument;
 
