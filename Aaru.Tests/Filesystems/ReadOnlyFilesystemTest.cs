@@ -1,14 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using Aaru.Checksums;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Core;
 using FluentAssertions;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using NUnit.Framework;
 using FileAttributes = Aaru.CommonTypes.Structs.FileAttributes;
 using FileSystemInfo = Aaru.CommonTypes.Structs.FileSystemInfo;
@@ -123,18 +123,20 @@ namespace Aaru.Tests.Filesystems
 
                     if(test.ContentsJson != null)
                     {
-                        test.Contents = JsonSerializer.Deserialize<Dictionary<string, FileData>>(test.ContentsJson,
-                            new JsonSerializerOptions
-                            {
-                                IgnoreNullValues    = true,
-                                MaxDepth            = 2048,
-                                AllowTrailingCommas = true,
-                                ReadCommentHandling = JsonCommentHandling.Skip,
-                                Converters =
-                                {
-                                    new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)
-                                }
-                            });
+                        var serializer = new JsonSerializer
+                        {
+                            Formatting        = Formatting.Indented,
+                            MaxDepth          = 2048,
+                            NullValueHandling = NullValueHandling.Ignore
+                        };
+
+                        serializer.Converters.Add(new StringEnumConverter());
+
+                        test.Contents =
+                            serializer.
+                                Deserialize<
+                                    Dictionary<string,
+                                        FileData>>(new JsonTextReader(new StringReader(test.ContentsJson)));
 
                         test.ContentsJson = null;
                     }
@@ -147,7 +149,7 @@ namespace Aaru.Tests.Filesystems
             });
         }
 
-        [Test, Ignore("Not a test, do not run")]
+        [Test /*, Ignore("Not a test, do not run")*/]
         public void Build()
         {
             Environment.CurrentDirectory = DataFolder;
@@ -220,17 +222,19 @@ namespace Aaru.Tests.Filesystems
 
                 Dictionary<string, FileData> contents = BuildDirectory(fs, "/");
 
-                string json = JsonSerializer.Serialize(contents, new JsonSerializerOptions
+                var serializer = new JsonSerializer
                 {
-                    IgnoreNullValues    = true,
-                    MaxDepth            = 2048,
-                    AllowTrailingCommas = true,
-                    ReadCommentHandling = JsonCommentHandling.Skip,
-                    Converters =
-                    {
-                        new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)
-                    }
-                });
+                    Formatting        = Formatting.Indented,
+                    MaxDepth          = 2048,
+                    NullValueHandling = NullValueHandling.Ignore
+                };
+
+                serializer.Converters.Add(new StringEnumConverter());
+
+                var sw = new StringWriter();
+
+                serializer.Serialize(sw, contents);
+                string json = sw.ToString();
             }
         }
 
