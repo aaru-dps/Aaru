@@ -31,7 +31,6 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
-using FileSystemInfo = Aaru.CommonTypes.Structs.FileSystemInfo;
 
 // ReSharper disable StringLiteralTypo
 
@@ -57,22 +56,7 @@ namespace Aaru.Tests.Filesystems.FATX
                 Clusters     = 1960,
                 ClusterSize  = 16384,
                 VolumeName   = "Volume láb€l",
-                VolumeSerial = "4639B7D0",
-                Info = new FileSystemInfo
-                {
-                    Blocks         = 1960,
-                    FilenameLength = 42,
-                    Files          = 0,
-                    FreeBlocks     = 0,
-                    FreeFiles      = 0,
-                    Type           = "Xbox FAT",
-                    Id =
-                    {
-                        IsInt    = true,
-                        Serial32 = 0x58544146
-                    },
-                    PluginId = Plugin.Id
-                }
+                VolumeSerial = "4639B7D0"
             }
         };
     }

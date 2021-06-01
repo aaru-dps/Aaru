@@ -28,7 +28,6 @@
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.CommonTypes.Structs;
 using NUnit.Framework;
 
 namespace Aaru.Tests.Filesystems.CPM
@@ -53,16 +52,7 @@ namespace Aaru.Tests.Filesystems.CPM
                 Sectors     = 360,
                 SectorSize  = 512,
                 Clusters    = 171,
-                ClusterSize = 1024,
-                Info = new Aaru.CommonTypes.Structs.FileSystemInfo()
-                {
-                    Blocks = 172,
-                        FilenameLength = 11,
-                        Files = 38,
-                        FreeBlocks = 134,
-            PluginId = Plugin.Id,
-            Type = "CP/M filesystem"
-                }
+                ClusterSize = 1024
             },
             new FileSystemTest
             {
@@ -72,16 +62,7 @@ namespace Aaru.Tests.Filesystems.CPM
                 Sectors     = 360,
                 SectorSize  = 512,
                 Clusters    = 171,
-                ClusterSize = 1024,
-                Info = new Aaru.CommonTypes.Structs.FileSystemInfo()
-                {
-                    Blocks         = 172,
-                    FilenameLength = 11,
-                    Files          = 64,
-                    FreeBlocks     = 108,
-                    PluginId       = Plugin.Id,
-                    Type           = "CP/M filesystem"
-                }
+                ClusterSize = 1024
             },
             new FileSystemTest
             {
@@ -92,16 +73,7 @@ namespace Aaru.Tests.Filesystems.CPM
                 Bootable    = true,
                 Clusters    = 171,
                 ClusterSize = 1024
-                ,
-                Info = new Aaru.CommonTypes.Structs.FileSystemInfo()
-                {
-                    Blocks         = 172,
-                    FilenameLength = 11,
-                    Files          = 38,
-                    FreeBlocks     = 134,
-                    PluginId       = Plugin.Id,
-                    Type           = "CP/M filesystem"
-                }},
+            },
             new FileSystemTest
             {
                 TestFile    = "system_files.imd",
@@ -110,16 +82,7 @@ namespace Aaru.Tests.Filesystems.CPM
                 SectorSize  = 512,
                 Bootable    = true,
                 Clusters    = 171,
-                ClusterSize = 1024,
-                Info = new Aaru.CommonTypes.Structs.FileSystemInfo()
-                {
-                    Blocks         = 172,
-                    FilenameLength = 11,
-                    Files          = 64,
-                    FreeBlocks     = 108,
-                    PluginId       = Plugin.Id,
-                    Type           = "CP/M filesystem"
-                }
+                ClusterSize = 1024
             }
         };
     }

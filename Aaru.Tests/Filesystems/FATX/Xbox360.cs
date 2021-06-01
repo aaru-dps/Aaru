@@ -31,7 +31,6 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
-using FileSystemInfo = Aaru.CommonTypes.Structs.FileSystemInfo;
 
 namespace Aaru.Tests.Filesystems.FATX
 {
@@ -56,22 +55,7 @@ namespace Aaru.Tests.Filesystems.FATX
                 Clusters     = 14848,
                 ClusterSize  = 16384,
                 VolumeName   = "",
-                VolumeSerial = "66C2E9D0",
-                Info = new FileSystemInfo
-                {
-                    Blocks         = 14848,
-                    FilenameLength = 42,
-                    Files          = 0,
-                    FreeBlocks     = 0,
-                    FreeFiles      = 0,
-                    Id =
-                    {
-                        IsInt    = true,
-                        Serial32 = 1481916742
-                    },
-                    PluginId = Plugin.Id,
-                    Type     = "Xbox 360 FAT"
-                }
+                VolumeSerial = "66C2E9D0"
             }
         };
     }

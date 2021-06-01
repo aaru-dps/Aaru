@@ -34,7 +34,6 @@ namespace Aaru.Tests
         public Dictionary<string, FileData> Contents;
         public string                       ContentsJson;
         public Encoding                     Encoding;
-        public FileSystemInfo               Info;
         public string                       Namespace;
         /// <summary>System or OEM ID</summary>
         public string SystemId;

@@ -11,7 +11,6 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using NUnit.Framework;
 using FileAttributes = Aaru.CommonTypes.Structs.FileAttributes;
-using FileSystemInfo = Aaru.CommonTypes.Structs.FileSystemInfo;
 
 namespace Aaru.Tests.Filesystems
 {
@@ -108,12 +107,6 @@ namespace Aaru.Tests.Filesystems
                     Errno ret = fs.Mount(image, partition, test.Encoding, null, test.Namespace);
 
                     Assert.AreEqual(Errno.NoError, ret, $"Unmountable: {testFile}");
-
-                    ret = fs.StatFs(out FileSystemInfo stat);
-
-                    Assert.AreEqual(Errno.NoError, ret, $"Unexpected error retrieving filesystem stats for {testFile}");
-
-                    stat.Should().BeEquivalentTo(test.Info, $"Incorrect filesystem stats for {testFile}");
 
                     var serializer = new JsonSerializer
                     {
