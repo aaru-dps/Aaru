@@ -115,30 +115,27 @@ namespace Aaru.Tests.Filesystems
 
                     stat.Should().BeEquivalentTo(test.Info, $"Incorrect filesystem stats for {testFile}");
 
-                    if(File.Exists($"{testFile}.contents.json"))
+                    var serializer = new JsonSerializer
                     {
-                        var sr = new StreamReader($"{testFile}.contents.json");
-                        test.ContentsJson = sr.ReadToEnd();
-                    }
+                        Formatting        = Formatting.Indented,
+                        MaxDepth          = 2048,
+                        NullValueHandling = NullValueHandling.Ignore
+                    };
+
+                    serializer.Converters.Add(new StringEnumConverter());
 
                     if(test.ContentsJson != null)
                     {
-                        var serializer = new JsonSerializer
-                        {
-                            Formatting        = Formatting.Indented,
-                            MaxDepth          = 2048,
-                            NullValueHandling = NullValueHandling.Ignore
-                        };
-
-                        serializer.Converters.Add(new StringEnumConverter());
-
                         test.Contents =
                             serializer.
                                 Deserialize<
                                     Dictionary<string,
                                         FileData>>(new JsonTextReader(new StringReader(test.ContentsJson)));
-
-                        test.ContentsJson = null;
+                    }
+                    else if(File.Exists($"{testFile}.contents.json"))
+                    {
+                        var sr = new StreamReader($"{testFile}.contents.json");
+                        test.Contents = serializer.Deserialize<Dictionary<string, FileData>>(new JsonTextReader(sr));
                     }
 
                     if(test.Contents is null)
@@ -149,7 +146,7 @@ namespace Aaru.Tests.Filesystems
             });
         }
 
-        [Test /*, Ignore("Not a test, do not run")*/]
+        [Test, Ignore("Not a test, do not run")]
         public void Build()
         {
             Environment.CurrentDirectory = DataFolder;
@@ -231,10 +228,9 @@ namespace Aaru.Tests.Filesystems
 
                 serializer.Converters.Add(new StringEnumConverter());
 
-                var sw = new StringWriter();
-
+                var sw = new StreamWriter($"{testFile}.contents.json");
                 serializer.Serialize(sw, contents);
-                string json = sw.ToString();
+                sw.Close();
             }
         }
 
