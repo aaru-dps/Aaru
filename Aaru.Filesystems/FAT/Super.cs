@@ -130,6 +130,9 @@ namespace Aaru.Filesystems
             uint sectorsForRootDirectory = 0;
             uint rootDirectoryCluster    = 0;
 
+            Encoding = encoding ?? (bpbKind == BpbKind.Human ? Encoding.GetEncoding("shift_jis")
+                                        : Encoding.GetEncoding("IBM437"));
+
             switch(bpbKind)
             {
                 case BpbKind.DecRainbow:
@@ -253,18 +256,12 @@ namespace Aaru.Filesystems
                 case BpbKind.Human:
                     // If not debug set Human68k namespace and ShiftJIS codepage as defaults
                     if(!_debug)
-                    {
                         _namespace = Namespace.Human;
-                        encoding   = Encoding.GetEncoding("shift_jis");
-                    }
 
                     XmlFsType.Bootable = true;
 
                     break;
             }
-
-            Encoding = encoding ?? (bpbKind == BpbKind.Human ? Encoding.GetEncoding("shift_jis")
-                                        : Encoding.GetEncoding("IBM437"));
 
             ulong firstRootSector = 0;
 
