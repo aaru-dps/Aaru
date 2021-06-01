@@ -33,7 +33,7 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems.CPM
 {
     [TestFixture]
-    public class XtalDOS : FilesystemTest
+    public class XtalDOS : ReadOnlyFilesystemTest
     {
         public XtalDOS() : base("CP/M") {}
 
@@ -52,7 +52,15 @@ namespace Aaru.Tests.Filesystems.CPM
                 SectorSize  = 512,
                 Bootable    = true,
                 Clusters    = 189,
-                ClusterSize = 1024
+                ClusterSize = 1024, Info =new Aaru.CommonTypes.Structs.FileSystemInfo
+                {
+                    Blocks         = 190,
+                    FilenameLength = 11,
+                    Files          = 38,
+                    FreeBlocks     = 152,
+                    PluginId       = Plugin.Id,
+                    Type           = "CP/M filesystem"
+                }
             },
             new FileSystemTest
             {
@@ -62,7 +70,15 @@ namespace Aaru.Tests.Filesystems.CPM
                 SectorSize  = 512,
                 Bootable    = true,
                 Clusters    = 189,
-                ClusterSize = 1024
+                ClusterSize = 1024, Info =new Aaru.CommonTypes.Structs.FileSystemInfo
+                {
+                    Blocks         = 190,
+                    FilenameLength = 11,
+                    Files          = 64,
+                    FreeBlocks     = 126,
+                    PluginId       = Plugin.Id,
+                    Type           = "CP/M filesystem"
+                }
             }
         };
     }

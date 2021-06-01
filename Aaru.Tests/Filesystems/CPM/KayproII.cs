@@ -28,12 +28,13 @@
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Structs;
 using NUnit.Framework;
 
 namespace Aaru.Tests.Filesystems.CPM
 {
     [TestFixture]
-    public class KayproII : FilesystemTest
+    public class KayproII : ReadOnlyFilesystemTest
     {
         public KayproII() : base("CP/M") {}
 
@@ -52,7 +53,13 @@ namespace Aaru.Tests.Filesystems.CPM
                 SectorSize  = 512,
                 Bootable    = true,
                 Clusters    = 194,
-                ClusterSize = 1024
+                ClusterSize = 1024,
+                Info = new Aaru.CommonTypes.Structs.FileSystemInfo(){Blocks = 195,
+                    FilenameLength                                          = 11,
+                    Files                                                   = 38,
+                    FreeBlocks                                              = 157,
+            PluginId                                                        = Plugin.Id,
+            Type                                                            = "CP/M filesystem"}
             },
             new FileSystemTest
             {
@@ -62,7 +69,13 @@ namespace Aaru.Tests.Filesystems.CPM
                 SectorSize  = 512,
                 Bootable    = true,
                 Clusters    = 194,
-                ClusterSize = 1024
+                ClusterSize = 1024,
+                Info = new Aaru.CommonTypes.Structs.FileSystemInfo(){Blocks = 195,
+                    FilenameLength                                          = 11,
+                    Files                                                   = 38,
+                    FreeBlocks                                              = 157,
+                    PluginId                                                = Plugin.Id,
+                    Type                                                    = "CP/M filesystem"}
             }
         };
     }

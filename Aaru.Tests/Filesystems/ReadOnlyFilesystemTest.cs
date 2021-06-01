@@ -169,6 +169,9 @@ namespace Aaru.Tests.Filesystems
                 IFilter     inputFilter = filtersList.GetFilter(testFile);
                 IMediaImage image       = ImageFormat.Detect(inputFilter);
 
+                if(!image.Open(inputFilter))
+                    continue;
+
                 List<string> idPlugins;
 
                 if(Partitions)

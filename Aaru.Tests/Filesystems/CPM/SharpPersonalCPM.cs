@@ -33,7 +33,7 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems.CPM
 {
     [TestFixture]
-    public class SharpPersonalCPM : FilesystemTest
+    public class SharpPersonalCPM : ReadOnlyFilesystemTest
     {
         public SharpPersonalCPM() : base("CP/M") {}
 
@@ -53,7 +53,15 @@ namespace Aaru.Tests.Filesystems.CPM
                 SectorSize  = 256,
                 Bootable    = true,
                 Clusters    = 316,
-                ClusterSize = 2048
+                ClusterSize = 2048, Info =new Aaru.CommonTypes.Structs.FileSystemInfo
+                {
+                    Blocks = 317,
+                        FilenameLength = 11,
+                        Files = 38,
+                        FreeBlocks = 279,
+            PluginId = Plugin.Id,
+            Type = "CP/M filesystem"
+            }
             },
             new FileSystemTest
             {
@@ -63,7 +71,15 @@ namespace Aaru.Tests.Filesystems.CPM
                 SectorSize  = 256,
                 Bootable    = true,
                 Clusters    = 316,
-                ClusterSize = 2048
+                ClusterSize = 2048, Info =new Aaru.CommonTypes.Structs.FileSystemInfo
+                {
+                    Blocks         = 317,
+                    FilenameLength = 11,
+                    Files          = 128,
+                    FreeBlocks     = 189,
+                    PluginId       = Plugin.Id,
+                    Type           = "CP/M filesystem"
+                }
             }
         };
     }
