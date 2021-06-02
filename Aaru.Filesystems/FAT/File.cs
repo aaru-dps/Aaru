@@ -258,6 +258,9 @@ namespace Aaru.Filesystems
                 while(nextCluster > 0 &&
                       nextCluster <= FAT16_FORMATTED)
                 {
+                    if(nextCluster > _fatEntries.Length)
+                        return null;
+
                     clusters.Add(nextCluster);
                     nextCluster = _fatEntries[nextCluster];
                 }
@@ -265,6 +268,9 @@ namespace Aaru.Filesystems
                 while(nextCluster > 0 &&
                       nextCluster <= FAT12_FORMATTED)
                 {
+                    if(nextCluster > _fatEntries.Length)
+                        return null;
+
                     clusters.Add(nextCluster);
                     nextCluster = _fatEntries[nextCluster];
                 }
