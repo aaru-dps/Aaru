@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using Aaru.Checksums;
 using Aaru.CommonTypes;
@@ -7,7 +8,10 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Core;
 using FluentAssertions;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using NUnit.Framework;
+using FileAttributes = Aaru.CommonTypes.Structs.FileAttributes;
 
 namespace Aaru.Tests.Issues
 {
@@ -22,7 +26,6 @@ namespace Aaru.Tests.Issues
         protected abstract string                     Encoding         { get; }
         protected abstract bool                       ExpectPartitions { get; }
         protected abstract string                     Namespace        { get; }
-        protected abstract FsExtractHashData          ExpectedData     { get; }
 
         [Test]
         public void Test()
@@ -69,8 +72,24 @@ namespace Aaru.Tests.Issues
 
             bool filesystemFound = false;
 
-            Assert.AreEqual(ExpectedData.Partitions.Length, partitions.Count,
-                            $"Excepted {ExpectedData.Partitions.Length} partitions but found {partitions.Count}");
+            Assert.True(File.Exists($"{TestFile}.unittest.json"));
+
+            var serializer = new JsonSerializer
+            {
+                Formatting        = Formatting.Indented,
+                MaxDepth          = 16384,
+                NullValueHandling = NullValueHandling.Ignore
+            };
+
+            serializer.Converters.Add(new StringEnumConverter());
+
+            var               sr           = new StreamReader($"{TestFile}.unittest.json");
+            FsExtractHashData expectedData = serializer.Deserialize<FsExtractHashData>(new JsonTextReader(sr));
+
+            Assert.NotNull(expectedData);
+
+            Assert.AreEqual(expectedData.Partitions.Length, partitions.Count,
+                            $"Excepted {expectedData.Partitions.Length} partitions but found {partitions.Count}");
 
             for(int i = 0; i < partitions.Count; i++)
             {
@@ -78,17 +97,17 @@ namespace Aaru.Tests.Issues
 
                 if(idPlugins.Count == 0)
                 {
-                    Assert.IsNull(ExpectedData.Partitions[i],
+                    Assert.IsNull(expectedData.Partitions[i],
                                   $"Expected no filesystems identified in partition {i} but found {idPlugins.Count}");
 
                     continue;
                 }
 
-                if(ExpectedData.Partitions[i].Volumes is null)
+                if(expectedData.Partitions[i].Volumes is null)
                     continue;
 
-                Assert.AreEqual(ExpectedData.Partitions[i].Volumes.Length, idPlugins.Count,
-                                $"Expected {ExpectedData.Partitions[i].Volumes.Length} filesystems identified in partition {i} but found {idPlugins.Count}");
+                Assert.AreEqual(expectedData.Partitions[i].Volumes.Length, idPlugins.Count,
+                                $"Expected {expectedData.Partitions[i].Volumes.Length} filesystems identified in partition {i} but found {idPlugins.Count}");
 
                 for(int j = 0; j < idPlugins.Count; j++)
                 {
@@ -110,10 +129,10 @@ namespace Aaru.Tests.Issues
 
                     Assert.AreEqual(Errno.NoError, error, $"Could not mount {pluginName} in partition {i}.");
 
-                    Assert.AreEqual(ExpectedData.Partitions[i].Volumes[j].VolumeName, fs.XmlFsType.VolumeName,
-                                    $"Excepted volume name \"{ExpectedData.Partitions[i].Volumes[j].VolumeName}\" for filesystem {j} in partition {i} but found \"{fs.XmlFsType.VolumeName}\"");
+                    Assert.AreEqual(expectedData.Partitions[i].Volumes[j].VolumeName, fs.XmlFsType.VolumeName,
+                                    $"Excepted volume name \"{expectedData.Partitions[i].Volumes[j].VolumeName}\" for filesystem {j} in partition {i} but found \"{fs.XmlFsType.VolumeName}\"");
 
-                    VolumeData volumeData = ExpectedData.Partitions[i].Volumes[j];
+                    VolumeData volumeData = expectedData.Partitions[i].Volumes[j];
 
                     ExtractFilesInDir("/", fs, Xattrs, volumeData);
 

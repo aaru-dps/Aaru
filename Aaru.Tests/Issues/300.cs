@@ -6,9 +6,9 @@ using System.IO;
 namespace Aaru.Tests.Issues
 {
     /* https://github.com/aaru-dps/Aaru/issues/300
-     * 
+     *
      * SilasLaspada commented on Mar 9, 2020
-     * 
+     *
      * Trying to extract files from an image results in
      * "Partition 1:
      * Identifying filesystem on partition
@@ -29,123 +29,5 @@ namespace Aaru.Tests.Issues
         protected override string Encoding => null;
         protected override bool ExpectPartitions => true;
         protected override string Namespace => null;
-
-        protected override FsExtractHashData ExpectedData => new FsExtractHashData
-        {
-            Partitions = new[]
-            {
-                new PartitionVolumes
-                {
-                    Volumes = new[]
-                    {
-                        new VolumeData
-                        {
-                            VolumeName  = "Sony USB Driver",
-                            Directories = new List<string>(),
-                            Files = new Dictionary<string, FileData>
-                            {
-                                {
-                                    "DATA1.HDR", new FileData
-                                    {
-                                        MD5 = "3d1ffe01d012dcc0fc208ff0c0dd5cfe"
-                                    }
-                                },
-                                {
-                                    "$PATH_TABLE.MSB", new FileData
-                                    {
-                                        MD5 = "cc662c00c2ee224212141f82414f06c2"
-                                    }
-                                },
-                                {
-                                    "PRIV.DLL", new FileData
-                                    {
-                                        MD5 = "a2a17469db36053d5000781eb00e8da2"
-                                    }
-                                },
-                                {
-                                    "LAYOUT.BIN", new FileData
-                                    {
-                                        MD5 = "5a7c5bc8faad06c9b0e7b674bef678de"
-                                    }
-                                },
-                                {
-                                    "USBSETUP.DAT", new FileData
-                                    {
-                                        MD5 = "efeae3b28ce736eeab4347912ffa7293"
-                                    }
-                                },
-                                {
-                                    "$PATH_TABLE.LSB", new FileData
-                                    {
-                                        MD5 = "b396ff192a15bd3a0bc6075eef122ebd"
-                                    }
-                                },
-                                {
-                                    "SETUP.INX", new FileData
-                                    {
-                                        MD5 = "91311772c03c18d3e0bce5d1ca8c4375"
-                                    }
-                                },
-                                {
-                                    "IKERNEL.EX_", new FileData
-                                    {
-                                        MD5 = "63736e15d6061f12d0ea9cc9586ee931"
-                                    }
-                                },
-                                {
-                                    "SETUP.INI", new FileData
-                                    {
-                                        MD5 = "22a4471186e5bf51c94c75fc6edb052d"
-                                    }
-                                },
-                                {
-                                    "SONYSYS.DAT", new FileData
-                                    {
-                                        MD5 = "5abfed688c49490a63f57ed9dd2a2ead"
-                                    }
-                                },
-                                {
-                                    "$", new FileData
-                                    {
-                                        MD5 = "557e3a3615a72aba02dce151b36ebc7a"
-                                    }
-                                },
-                                {
-                                    "$PVD", new FileData
-                                    {
-                                        MD5 = "a96f2e6434b669f2b4582965b5661f4a"
-                                    }
-                                },
-                                {
-                                    "DATA2.CAB", new FileData
-                                    {
-                                        MD5 = "debccd001263b8863e9677984e05fcc5"
-                                    }
-                                },
-                                {
-                                    "DOSETUP.DAT", new FileData
-                                    {
-                                        MD5 = "48aa8c4215e554239d8f702beb1769da"
-                                    }
-                                },
-                                {
-                                    "SETUP.EXE", new FileData
-                                    {
-                                        MD5 = "d0f6e0fb47eafc597fc588bb18711211"
-                                    }
-                                },
-                                {
-                                    "DATA1.CAB", new FileData
-                                    {
-                                        MD5 = "4ce6639d1f34dee43b037787c35c1561"
-                                    }
-                                }
-                            }
-                        }
-                    }
-                },
-                new PartitionVolumes()
-            }
-        };
     }
 }
