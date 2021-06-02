@@ -158,19 +158,26 @@ namespace Aaru.Filesystems
 
             stat = new FileEntryInfo
             {
-                Attributes   = new FileAttributes(),
-                Blocks       = entry.size / _bytesPerCluster,
-                BlockSize    = _bytesPerCluster,
-                Length       = entry.size,
-                Inode        = (ulong)(_fat32 ? (entry.ea_handle << 16) + entry.start_cluster : entry.start_cluster),
-                Links        = 1,
-                CreationTime = DateHandlers.DosToDateTime(entry.cdate, entry.ctime)
+                Attributes = new FileAttributes(),
+                Blocks     = entry.size / _bytesPerCluster,
+                BlockSize  = _bytesPerCluster,
+                Length     = entry.size,
+                Inode      = (ulong)(_fat32 ? (entry.ea_handle << 16) + entry.start_cluster : entry.start_cluster),
+                Links      = 1
             };
+
+            if(entry.cdate > 0 &&
+               entry.ctime > 0)
+                stat.CreationTime = DateHandlers.DosToDateTime(entry.cdate, entry.ctime);
 
             if(_namespace != Namespace.Human)
             {
-                stat.LastWriteTime = DateHandlers.DosToDateTime(entry.mdate, entry.mtime);
-                stat.CreationTime  = stat.CreationTime?.AddMilliseconds(entry.ctime_ms * 10);
+                if(entry.mdate > 0 &&
+                   entry.mtime > 0)
+                    stat.LastWriteTime = DateHandlers.DosToDateTime(entry.mdate, entry.mtime);
+
+                if(entry.ctime_ms > 0)
+                    stat.CreationTime = stat.CreationTime?.AddMilliseconds(entry.ctime_ms * 10);
             }
 
             if(entry.size % _bytesPerCluster > 0)
