@@ -153,8 +153,8 @@ namespace Aaru.Filesystems
 
                 if(Encoding.GetString(vdMagic) != ISO_MAGIC         &&
                    Encoding.GetString(hsMagic) != HIGH_SIERRA_MAGIC &&
-                   Encoding.GetString(vdMagic) != CDI_MAGIC
-                ) // Recognized, it is an ISO9660, now check for rest of data.
+                   Encoding.GetString(vdMagic) !=
+                   CDI_MAGIC) // Recognized, it is an ISO9660, now check for rest of data.
                 {
                     if(counter == 0)
                         return Errno.InvalidArgument;
@@ -315,6 +315,13 @@ namespace Aaru.Filesystems
 
             _pathTable = _highSierra ? DecodeHighSierraPathTable(pathTableData) : DecodePathTable(pathTableData);
 
+            if(_pathTable is null)
+            {
+                pathTableData = ReadSingleExtent(pathTableData.Length, pathTableLsbLocation);
+
+                _pathTable = _highSierra ? DecodeHighSierraPathTable(pathTableData) : DecodePathTable(pathTableData);
+            }
+
             // High Sierra and CD-i do not support Joliet or RRIP
             if((_highSierra || _cdi)          &&
                _namespace != Namespace.Normal &&
@@ -339,8 +346,8 @@ namespace Aaru.Filesystems
 
                 rootSize = _highSierra ? hsvd.Value.root_directory_record.size : pvd.Value.root_directory_record.size;
 
-                if(pathTableData.Length > 1 &&
-                   rootLocation         != _pathTable[0].Extent)
+                if(_pathTable?.Length > 1 &&
+                   rootLocation       != _pathTable[0].Extent)
                 {
                     AaruConsole.DebugWriteLine("ISO9660 plugin",
                                                "Path table and PVD do not point to the same location for the root directory!");
@@ -421,7 +428,7 @@ namespace Aaru.Filesystems
             }
 
             // In case the path table is incomplete
-            if(_usePathTable && pathTableData.Length == 1)
+            if(_usePathTable && (_pathTable is null || _pathTable?.Length <= 1))
                 _usePathTable = false;
 
             if(_usePathTable && !_cdi)
