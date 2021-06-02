@@ -432,7 +432,7 @@ namespace Aaru.Filesystems
                     ((ulong)((fakeBpb.spfat * fakeBpb.fats_no) + fakeBpb.rsectors) * sectorsPerRealSector) +
                     partition.Start;
 
-                sectorsForRootDirectory = (uint)((fakeBpb.root_ent * 32) / imagePlugin.Info.SectorSize);
+                sectorsForRootDirectory = (uint)(fakeBpb.root_ent * 32 / imagePlugin.Info.SectorSize);
 
                 sectorsPerRealSector =  fakeBpb.bps / imagePlugin.Info.SectorSize;
                 _sectorsPerCluster   *= sectorsPerRealSector;
@@ -447,7 +447,7 @@ namespace Aaru.Filesystems
             else if(_fat16)
                 _fatEntriesPerSector = imagePlugin.Info.SectorSize / 2;
             else
-                _fatEntriesPerSector = (imagePlugin.Info.SectorSize * 2) / 3;
+                _fatEntriesPerSector = imagePlugin.Info.SectorSize * 2 / 3;
 
             _fatFirstSector = partition.Start + (_reservedSectors * sectorsPerRealSector);
 
@@ -456,7 +456,7 @@ namespace Aaru.Filesystems
 
             if(!_fat32)
             {
-                _firstClusterSector = (firstRootSector + sectorsForRootDirectory) - (_sectorsPerCluster * 2);
+                _firstClusterSector = firstRootSector + sectorsForRootDirectory - (_sectorsPerCluster * 2);
                 rootDirectory       = imagePlugin.ReadSectors(firstRootSector, sectorsForRootDirectory);
 
                 if(bpbKind == BpbKind.DecRainbow)
@@ -492,7 +492,7 @@ namespace Aaru.Filesystems
 
                 // OS/2 FAT32.IFS uses LFN instead of .LONGNAME
                 if(_namespace == Namespace.Os2)
-                    _namespace = Namespace.Os2;
+                    _namespace = Namespace.Lfn;
             }
 
             if(rootDirectory is null)
@@ -639,6 +639,32 @@ namespace Aaru.Filesystems
                     filename = name + "." + extension;
                 else
                     filename = name;
+
+                if(name      == "" &&
+                   extension == "")
+                {
+                    AaruConsole.DebugWriteLine("FAT filesystem", "Found empty filename in root directory");
+
+                    if(!_debug ||
+                       (entry.size > 0 && entry.start_cluster == 0))
+                        continue; // Skip invalid name
+
+                    // If debug, add it
+                    name = ":{EMPTYNAME}:";
+
+                    // Try to create a unique filename with an extension from 000 to 999
+                    for(int uniq = 0; uniq < 1000; uniq++)
+                    {
+                        extension = $"{uniq:D03}";
+
+                        if(!_rootDirectoryCache.ContainsKey($"{name}.{extension}"))
+                            break;
+                    }
+
+                    // If we couldn't find it, just skip over
+                    if(_rootDirectoryCache.ContainsKey($"{name}.{extension}"))
+                        continue;
+                }
 
                 completeEntry.Shortname = filename;
 

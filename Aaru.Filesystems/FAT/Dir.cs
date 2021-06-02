@@ -36,6 +36,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using Aaru.CommonTypes.Structs;
+using Aaru.Console;
 using Aaru.Helpers;
 
 namespace Aaru.Filesystems
@@ -230,6 +231,32 @@ namespace Aaru.Filesystems
 
                     string name      = Encoding.GetString(dirent.filename).TrimEnd();
                     string extension = Encoding.GetString(dirent.extension).TrimEnd();
+
+                    if(name      == "" &&
+                       extension == "")
+                    {
+                        AaruConsole.DebugWriteLine("FAT filesystem", "Found empty filename in {0}", path);
+
+                        if(!_debug ||
+                           (dirent.size > 0 && dirent.start_cluster == 0))
+                            continue; // Skip invalid name
+
+                        // If debug, add it
+                        name = ":{EMPTYNAME}:";
+
+                        // Try to create a unique filename with an extension from 000 to 999
+                        for(int uniq = 0; uniq < 1000; uniq++)
+                        {
+                            extension = $"{uniq:D03}";
+
+                            if(!currentDirectory.ContainsKey($"{name}.{extension}"))
+                                break;
+                        }
+
+                        // If we couldn't find it, just skip over
+                        if(currentDirectory.ContainsKey($"{name}.{extension}"))
+                            continue;
+                    }
 
                     if(_namespace == Namespace.Nt)
                     {
