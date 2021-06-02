@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using Aaru.Checksums;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
@@ -104,6 +105,8 @@ namespace Aaru.Tests.Filesystems
 
                     Assert.NotNull(fs, $"Could not instantiate filesystem for {testFile}");
 
+                    test.Encoding ??= Encoding.ASCII;
+
                     Errno ret = fs.Mount(image, partition, test.Encoding, null, test.Namespace);
 
                     Assert.AreEqual(Errno.NoError, ret, $"Unmountable: {testFile}");
@@ -111,7 +114,7 @@ namespace Aaru.Tests.Filesystems
                     var serializer = new JsonSerializer
                     {
                         Formatting        = Formatting.Indented,
-                        MaxDepth          = 2048,
+                        MaxDepth          = 16384,
                         NullValueHandling = NullValueHandling.Ignore
                     };
 
@@ -208,6 +211,8 @@ namespace Aaru.Tests.Filesystems
 
                 var fs = Activator.CreateInstance(Plugin.GetType()) as IReadOnlyFilesystem;
 
+                test.Encoding ??= Encoding.ASCII;
+
                 fs?.Mount(image, partition, test.Encoding, null, test.Namespace);
 
                 Dictionary<string, FileData> contents = BuildDirectory(fs, "/");
@@ -215,7 +220,7 @@ namespace Aaru.Tests.Filesystems
                 var serializer = new JsonSerializer
                 {
                     Formatting        = Formatting.Indented,
-                    MaxDepth          = 2048,
+                    MaxDepth          = 16384,
                     NullValueHandling = NullValueHandling.Ignore
                 };
 
