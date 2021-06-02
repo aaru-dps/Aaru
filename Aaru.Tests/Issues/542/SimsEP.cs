@@ -6,17 +6,16 @@ using System.IO;
 namespace Aaru.Tests.Issues._542
 {
     /* https://github.com/aaru-dps/Aaru/issues/542
-     * 
-     * SilasLaspada commented on Feb 10, 2021 
-     * 
+     *
+     * SilasLaspada commented on Feb 10, 2021
+     *
      * When extracting an image of a SafeDisc protected CD, most files aren't properly extracted.
      */
 
-    // 20200309 CLAUNIA: Fixed in 3b2bb0ebf0c6c615c5622aebff494ed34b51055d
     public class SimsEP : FsExtractHashIssueTest
     {
         protected override string DataFolder =>
-            Path.Combine(Consts.TEST_FILES_ROOT, "Issues", "Pending", "issue542", "exp");
+            Path.Combine(Consts.TEST_FILES_ROOT, "Issues", "Fixed", "issue542", "exp");
         protected override string                     TestFile         => "THE_SIMS_EP.aaruf";
         protected override Dictionary<string, string> ParsedOptions    => new Dictionary<string, string>();
         protected override bool                       Debug            => false;
@@ -38,7 +37,6 @@ namespace Aaru.Tests.Issues._542
                             VolumeName = "THE_SIMS_EP",
                             Directories = new List<string>
                             {
-                                "THE_SIMS_EP",
                                 "AOL",
                                 "Demos",
                                 "EReg",
