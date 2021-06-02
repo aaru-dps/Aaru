@@ -234,6 +234,9 @@ namespace Aaru.Tests.Filesystems
 
         Dictionary<string, FileData> BuildDirectory(IReadOnlyFilesystem fs, string path)
         {
+            if(path == "/")
+                path = "";
+
             Dictionary<string, FileData> children = new Dictionary<string, FileData>();
             fs.ReadDir(path, out List<string> contents);
 
