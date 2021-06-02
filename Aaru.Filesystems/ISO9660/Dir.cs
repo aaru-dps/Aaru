@@ -175,7 +175,7 @@ namespace Aaru.Filesystems
                     // Skip to next sector
                     if(data.Length - entryOff >= 2048)
                     {
-                        entryOff = ((data.Length % 2048) + 1) * 2048;
+                        entryOff = ((entryOff / 2048) + 1) * 2048;
 
                         continue;
                     }
@@ -253,7 +253,7 @@ namespace Aaru.Filesystems
                     // Skip to next sector
                     if(data.Length - entryOff >= 2048)
                     {
-                        entryOff = ((data.Length % 2048) + 1) * 2048;
+                        entryOff = ((entryOff / 2048) + 1) * 2048;
 
                         continue;
                     }
@@ -323,7 +323,7 @@ namespace Aaru.Filesystems
                     // Skip to next sector
                     if(data.Length - entryOff >= 2048)
                     {
-                        entryOff = ((data.Length % 2048) + 1) * 2048;
+                        entryOff = ((entryOff / 2048) + 1) * 2048;
 
                         continue;
                     }
