@@ -4,16 +4,16 @@ using System.IO;
 namespace Aaru.Tests.Issues
 {
     /* https://github.com/aaru-dps/Aaru/issues/531
-     * 
+     *
      * SilasLaspada commented on Jan 19, 2021
-     * 
+     *
      * When extracting files from a FAT32 partition found on a DVD-RAM Gen. 1 image, Aaru reports
      * "Error reading file: Object reference not set to an instance of an object.".
      */
 
     public class _531 : FsExtractIssueTest
     {
-        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Issues", "Pending", "issue531");
+        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Issues", "Fixed", "issue531");
         public override string TestFile => "DVD-RAM-GEN1_aaru_5.3.aaruf";
         public override Dictionary<string, string> ParsedOptions => new Dictionary<string, string>();
         public override bool Debug => true;
