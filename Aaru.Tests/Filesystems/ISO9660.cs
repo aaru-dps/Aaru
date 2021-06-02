@@ -35,7 +35,7 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems
 {
     [TestFixture]
-    public class Iso9660 : FilesystemTest
+    public class Iso9660 : ReadOnlyFilesystemTest
     {
         public Iso9660() : base("ISO9660") {}
 
