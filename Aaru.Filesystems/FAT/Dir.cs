@@ -120,6 +120,15 @@ namespace Aaru.Filesystems
                 if(_directoryCache.TryGetValue(currentPath, out currentDirectory))
                     continue;
 
+                // Reserved unallocated directory, seen in Atari ST
+                if(currentCluster == 0)
+                {
+                    _directoryCache[currentPath] = new Dictionary<string, CompleteDirectoryEntry>();
+                    contents                     = new List<string>();
+
+                    return Errno.NoError;
+                }
+
                 uint[] clusters = GetClusters(currentCluster);
 
                 if(clusters is null)
