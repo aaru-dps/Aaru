@@ -225,23 +225,23 @@ namespace Aaru.Filesystems
                     return BpbKind.ShortFat32;
                 }
 
-                if(bitsInBpsMsx == 1                                                                &&
-                   correctSpcMsx                                                                    &&
-                   msxBpb.fats_no                          <= 2                                     &&
-                   msxBpb.root_ent                         > 0                                      &&
-                   msxBpb.sectors                          <= (partition.End - partition.Start) + 1 &&
-                   msxBpb.spfat                            > 0                                      &&
+                if(bitsInBpsMsx == 1                                                              &&
+                   correctSpcMsx                                                                  &&
+                   msxBpb.fats_no                          <= 2                                   &&
+                   msxBpb.root_ent                         > 0                                    &&
+                   msxBpb.sectors                          <= partition.End - partition.Start + 1 &&
+                   msxBpb.spfat                            > 0                                    &&
                    Encoding.ASCII.GetString(msxBpb.vol_id) == "VOL_ID")
                 {
                     AaruConsole.DebugWriteLine("FAT plugin", "Using MSX BPB");
                     useMsxBpb = true;
                 }
-                else if(bitsInBpsApricot == 1                                                &&
-                        correctSpcApricot                                                    &&
-                        apricotBpb.mainBPB.fats_no  <= 2                                     &&
-                        apricotBpb.mainBPB.root_ent > 0                                      &&
-                        apricotBpb.mainBPB.sectors  <= (partition.End - partition.Start) + 1 &&
-                        apricotBpb.mainBPB.spfat    > 0                                      &&
+                else if(bitsInBpsApricot == 1                                              &&
+                        correctSpcApricot                                                  &&
+                        apricotBpb.mainBPB.fats_no  <= 2                                   &&
+                        apricotBpb.mainBPB.root_ent > 0                                    &&
+                        apricotBpb.mainBPB.sectors  <= partition.End - partition.Start + 1 &&
+                        apricotBpb.mainBPB.spfat    > 0                                    &&
                         apricotBpb.partitionCount   == 0)
                 {
                     AaruConsole.DebugWriteLine("FAT plugin", "Using Apricot BPB");
@@ -256,7 +256,7 @@ namespace Aaru.Filesystems
                 {
                     if(ebpb.sectors == 0)
                     {
-                        if(ebpb.big_sectors <= (partition.End - partition.Start) + 1)
+                        if(ebpb.big_sectors <= partition.End - partition.Start + 1)
                             if(ebpb.signature == 0x29 || andosOemCorrect)
                             {
                                 AaruConsole.DebugWriteLine("FAT plugin", "Using DOS 4.0 BPB");
@@ -270,7 +270,7 @@ namespace Aaru.Filesystems
                                 minBootNearJump      = 0x29;
                             }
                     }
-                    else if(ebpb.sectors <= (partition.End - partition.Start) + 1)
+                    else if(ebpb.sectors <= partition.End - partition.Start + 1)
                         if(ebpb.signature == 0x29 || andosOemCorrect)
                         {
                             AaruConsole.DebugWriteLine("FAT plugin", "Using DOS 4.0 BPB");
@@ -293,7 +293,7 @@ namespace Aaru.Filesystems
                     if(dos33Bpb.sectors     == 0               &&
                        dos33Bpb.hsectors    <= partition.Start &&
                        dos33Bpb.big_sectors > 0                &&
-                       dos33Bpb.big_sectors <= (partition.End - partition.Start) + 1)
+                       dos33Bpb.big_sectors <= partition.End - partition.Start + 1)
                     {
                         AaruConsole.DebugWriteLine("FAT plugin", "Using DOS 3.3 BPB");
                         useDos33Bpb     = true;
@@ -302,10 +302,12 @@ namespace Aaru.Filesystems
                     else if(dos33Bpb.big_sectors == 0               &&
                             dos33Bpb.hsectors    <= partition.Start &&
                             dos33Bpb.sectors     > 0                &&
-                            dos33Bpb.sectors     <= (partition.End - partition.Start) + 1)
+                            dos33Bpb.sectors     <= partition.End - partition.Start + 1)
                         if(atariBpb.jump[0] == 0x60 ||
                            (atariBpb.jump[0]                            == 0xE9 && atariBpb.jump[1] == 0x00 &&
-                            Encoding.ASCII.GetString(dos33Bpb.oem_name) != "NEXT    "))
+                            Encoding.ASCII.GetString(dos33Bpb.oem_name) != "NEXT    ") ||
+                           partition.Type == "GEM"                                     ||
+                           partition.Type == "BGM")
                         {
                             AaruConsole.DebugWriteLine("FAT plugin", "Using Atari BPB");
                             useAtariBpb = true;
