@@ -292,6 +292,9 @@ namespace Aaru.Filesystems
                         completeEntry.HumanName = filename;
                     }
 
+                    // Atari ST allows slash AND colon so cannot simply substitute one for the other like in Mac filesystems
+                    filename = filename.Replace('/', '\u2215');
+
                     // Using array accessor ensures that repeated entries just get substituted.
                     // Repeated entries are not allowed but some bad implementations (e.g. FAT32.IFS)allow to create them
                     // when using spaces
