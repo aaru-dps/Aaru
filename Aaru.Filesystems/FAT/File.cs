@@ -114,6 +114,9 @@ namespace Aaru.Filesystems
 
             uint[] clusters = GetClusters((uint)stat.Inode);
 
+            if(clusters is null)
+                return Errno.InvalidArgument;
+
             long firstCluster    = offset                   / _bytesPerCluster;
             long offsetInCluster = offset                   % _bytesPerCluster;
             long sizeInClusters  = (size + offsetInCluster) / _bytesPerCluster;
@@ -237,7 +240,7 @@ namespace Aaru.Filesystems
 
             if(_fat32)
                 while((nextCluster & FAT32_MASK) > 0 &&
-                      (nextCluster & FAT32_MASK) <= FAT32_FORMATTED)
+                      (nextCluster & FAT32_MASK) <= FAT32_RESERVED)
                 {
                     clusters.Add(nextCluster);
 
@@ -256,7 +259,7 @@ namespace Aaru.Filesystems
                 }
             else if(_fat16)
                 while(nextCluster > 0 &&
-                      nextCluster <= FAT16_FORMATTED)
+                      nextCluster <= FAT16_RESERVED)
                 {
                     if(nextCluster > _fatEntries.Length)
                         return null;
@@ -266,7 +269,7 @@ namespace Aaru.Filesystems
                 }
             else
                 while(nextCluster > 0 &&
-                      nextCluster <= FAT12_FORMATTED)
+                      nextCluster <= FAT12_RESERVED)
                 {
                     if(nextCluster > _fatEntries.Length)
                         return null;

@@ -227,14 +227,14 @@ namespace Aaru.Filesystems
 
             if(_fat16 is null)
                 while((nextCluster & FAT32_MASK) > 0 &&
-                      (nextCluster & FAT32_MASK) <= FAT32_FORMATTED)
+                      (nextCluster & FAT32_MASK) <= FAT32_RESERVED)
                 {
                     clusters.Add(nextCluster);
                     nextCluster = _fat32[nextCluster];
                 }
             else
                 while(nextCluster > 0 &&
-                      nextCluster <= FAT16_FORMATTED)
+                      nextCluster <= FAT16_RESERVED)
                 {
                     clusters.Add(nextCluster);
                     nextCluster = _fat16[nextCluster];

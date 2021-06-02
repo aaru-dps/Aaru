@@ -52,9 +52,11 @@ namespace Aaru.Filesystems
         const uint   FAT32_END_MASK      = 0xFFFFFF8;
         const uint   FAT32_FORMATTED     = 0xFFFFFF6;
         const uint   FAT32_BAD           = 0xFFFFFF7;
+        const uint   FAT32_RESERVED      = 0xFFFFFF0;
         const ushort FAT16_END_MASK      = 0xFFF8;
         const ushort FAT16_FORMATTED     = 0xFFF6;
         const ushort FAT16_BAD           = 0xFFF7;
+        const ushort FAT16_RESERVED      = 0xFFF0;
         const ushort FAT_RESERVED        = 1;
 
         [Flags]
