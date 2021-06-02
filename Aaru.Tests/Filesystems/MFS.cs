@@ -35,7 +35,7 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems
 {
     [TestFixture]
-    public class Mfs : FilesystemTest
+    public class Mfs : ReadOnlyFilesystemTest
     {
         public Mfs() : base("MFS") {}
 
