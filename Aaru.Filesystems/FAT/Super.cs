@@ -250,6 +250,16 @@ namespace Aaru.Filesystems
                     if(sum == 0x1234)
                         XmlFsType.Bootable = true;
 
+                    // BGM changes the bytes per sector instead of changing the sectors per cluster. Why?! WHY!?
+                    uint ratio = fakeBpb.bps / imagePlugin.Info.SectorSize;
+                    fakeBpb.bps         = (ushort)imagePlugin.Info.SectorSize;
+                    fakeBpb.spc         = (byte)(fakeBpb.spc        * ratio);
+                    fakeBpb.rsectors    = (ushort)(fakeBpb.rsectors * ratio);
+                    fakeBpb.big_sectors = fakeBpb.sectors * ratio;
+                    fakeBpb.sectors     = 0;
+                    fakeBpb.spfat       = (ushort)(fakeBpb.spfat * ratio);
+                    fakeBpb.sptrk       = (ushort)(fakeBpb.sptrk * ratio);
+
                     break;
                 }
 
