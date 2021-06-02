@@ -35,7 +35,7 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems
 {
     [TestFixture]
-    public class LisaFs : FilesystemTest
+    public class LisaFs : ReadOnlyFilesystemTest
     {
         public LisaFs() : base("LisaFS") {}
 
