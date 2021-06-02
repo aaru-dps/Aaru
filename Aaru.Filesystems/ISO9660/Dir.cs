@@ -202,11 +202,10 @@ namespace Aaru.Filesystems
                     XattrLength          = record.xattr_len
                 };
 
+                entry.Extents = new List<(uint extent, uint size)>();
+
                 if(record.size != 0)
-                    entry.Extents = new List<(uint extent, uint size)>
-                    {
-                        (record.start_lbn, record.size)
-                    };
+                    entry.Extents.Add((record.start_lbn, record.size));
 
                 if(record.flags.HasFlag(CdiFileFlags.Hidden))
                 {
@@ -283,11 +282,10 @@ namespace Aaru.Filesystems
                     XattrLength          = record.xattr_len
                 };
 
+                entry.Extents = new List<(uint extent, uint size)>();
+
                 if(record.size != 0)
-                    entry.Extents = new List<(uint extent, uint size)>
-                    {
-                        (record.extent, record.size)
-                    };
+                    entry.Extents.Add((record.extent, record.size));
 
                 if(entry.Flags.HasFlag(FileFlags.Directory) && _usePathTable)
                 {
@@ -358,11 +356,10 @@ namespace Aaru.Filesystems
                     XattrLength          = record.xattr_len
                 };
 
+                entry.Extents = new List<(uint extent, uint size)>();
+
                 if(record.size != 0)
-                    entry.Extents = new List<(uint extent, uint size)>
-                    {
-                        (record.extent, record.size)
-                    };
+                    entry.Extents.Add((record.extent, record.size));
 
                 if(entry.Flags.HasFlag(FileFlags.Directory) && _usePathTable)
                 {
@@ -1074,11 +1071,10 @@ namespace Aaru.Filesystems
                     XattrLength          = tEntry.XattrLength
                 };
 
+                entry.Extents = new List<(uint extent, uint size)>();
+
                 if(record.size != 0)
-                    entry.Extents = new List<(uint extent, uint size)>
-                    {
-                        (record.start_lbn, record.size)
-                    };
+                    entry.Extents.Add((record.start_lbn, record.size));
 
                 if(record.flags.HasFlag(CdiFileFlags.Hidden))
                     entry.Flags |= FileFlags.Hidden;
@@ -1128,11 +1124,10 @@ namespace Aaru.Filesystems
                     XattrLength          = tEntry.XattrLength
                 };
 
+                entry.Extents = new List<(uint extent, uint size)>();
+
                 if(record.size != 0)
-                    entry.Extents = new List<(uint extent, uint size)>
-                    {
-                        (record.extent, record.size)
-                    };
+                    entry.Extents.Add((record.extent, record.size));
 
                 int systemAreaStart  = record.name_len + _directoryRecordSize;
                 int systemAreaLength = record.length   - record.name_len - _directoryRecordSize;
@@ -1175,11 +1170,10 @@ namespace Aaru.Filesystems
                     XattrLength          = tEntry.XattrLength
                 };
 
+                entry.Extents = new List<(uint extent, uint size)>();
+
                 if(record.size != 0)
-                    entry.Extents = new List<(uint extent, uint size)>
-                    {
-                        (record.extent, record.size)
-                    };
+                    entry.Extents.Add((record.extent, record.size));
 
                 entries.Add(entry);
             }
