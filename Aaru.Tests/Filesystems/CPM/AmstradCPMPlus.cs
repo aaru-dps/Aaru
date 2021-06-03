@@ -90,7 +90,7 @@ namespace Aaru.Tests.Filesystems.CPM
                 SectorSize  = 512,
                 Bootable    = true,
                 Clusters    = 359,
-                ClusterSize = 512
+                ClusterSize = 1024
             },
             new FileSystemTest
             {
@@ -100,7 +100,7 @@ namespace Aaru.Tests.Filesystems.CPM
                 SectorSize  = 512,
                 Bootable    = true,
                 Clusters    = 359,
-                ClusterSize = 512
+                ClusterSize = 1024
             },
             new FileSystemTest
             {
@@ -130,7 +130,7 @@ namespace Aaru.Tests.Filesystems.CPM
                 SectorSize  = 512,
                 Bootable    = true,
                 Clusters    = 359,
-                ClusterSize = 512
+                ClusterSize = 1024
             },
             new FileSystemTest
             {
@@ -140,7 +140,7 @@ namespace Aaru.Tests.Filesystems.CPM
                 SectorSize  = 512,
                 Bootable    = true,
                 Clusters    = 359,
-                ClusterSize = 512
+                ClusterSize = 1024
             }
         };
     }
