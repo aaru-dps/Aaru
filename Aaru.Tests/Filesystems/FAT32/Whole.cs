@@ -46,44 +46,42 @@ namespace Aaru.Tests.Filesystems.FAT32
 
         public override FileSystemTest[] Tests => new[]
         {
-            new FileSystemTest
-            {
-                TestFile     = "beos_r4.5_mf2hd.img.lz",
-                MediaType    = MediaType.DOS_35_HD,
-                Sectors      = 2880,
-                SectorSize   = 512,
-                Bootable     = true,
-                Clusters     = 2880,
-                ClusterSize  = 512,
-                SystemId     = "BeOS    ",
-                VolumeName   = "VOLUME LABE",
-                VolumeSerial = "00000000"
-            },
-            new FileSystemTest
-            {
-                TestFile     = "beos_r5_mf2hd.img.lz",
-                MediaType    = MediaType.DOS_35_HD,
-                Sectors      = 2880,
-                SectorSize   = 512,
-                Bootable     = true,
-                Clusters     = 2880,
-                ClusterSize  = 512,
-                SystemId     = "BeOS    ",
-                VolumeName   = "VOLUMELABEL",
-                VolumeSerial = "00000000"
-            },
-            new FileSystemTest
+            /*   new FileSystemTest
+               {
+                   TestFile     = "beos_r4.5_mf2hd.img.lz",
+                   MediaType    = MediaType.DOS_35_HD,
+                   Sectors      = 2880,
+                   SectorSize   = 512,
+                   Bootable     = true,
+                   Clusters     = 2880,
+                   ClusterSize  = 512,
+                   SystemId     = "BeOS    ",
+                   VolumeName   = "VOLUME LABE",
+                   VolumeSerial = "00000000"
+               },
+               new FileSystemTest
+               {
+                   TestFile     = "beos_r5_mf2hd.img.lz",
+                   MediaType    = MediaType.DOS_35_HD,
+                   Sectors      = 2880,
+                   SectorSize   = 512,
+                   Bootable     = true,
+                   Clusters     = 2880,
+                   ClusterSize  = 512,
+                   SystemId     = "BeOS    ",
+                   VolumeName   = "VOLUMELABEL",
+                   VolumeSerial = "00000000"
+               },*/ new FileSystemTest
             {
                 TestFile     = "linux_2.0.37_mf2hd.img.lz",
                 MediaType    = MediaType.DOS_35_HD,
                 Sectors      = 2880,
                 SectorSize   = 512,
-                Bootable     = true,
                 Clusters     = 2880,
                 ClusterSize  = 512,
                 SystemId     = "mkdosfs",
-                VolumeName   = "VolumeLabel",
-                VolumeSerial = "00000000"
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "609D1892"
             },
             new FileSystemTest
             {
@@ -96,7 +94,7 @@ namespace Aaru.Tests.Filesystems.FAT32
                 ClusterSize  = 512,
                 SystemId     = "mkdosfs",
                 VolumeName   = "VolumeLabel",
-                VolumeSerial = "00000000"
+                VolumeSerial = "609C5215"
             },
             new FileSystemTest
             {
@@ -109,7 +107,7 @@ namespace Aaru.Tests.Filesystems.FAT32
                 ClusterSize  = 512,
                 SystemId     = "mkdosfs",
                 VolumeName   = "VolumeLabel",
-                VolumeSerial = "00000000"
+                VolumeSerial = "609C81A9"
             },
             new FileSystemTest
             {
@@ -122,7 +120,7 @@ namespace Aaru.Tests.Filesystems.FAT32
                 ClusterSize  = 512,
                 SystemId     = "mkdosfs",
                 VolumeName   = "VolumeLabel",
-                VolumeSerial = "00000000"
+                VolumeSerial = "609CA5D8"
             },
             new FileSystemTest
             {
@@ -130,12 +128,11 @@ namespace Aaru.Tests.Filesystems.FAT32
                 MediaType    = MediaType.DOS_35_HD,
                 Sectors      = 2880,
                 SectorSize   = 512,
-                Bootable     = true,
                 Clusters     = 2880,
                 ClusterSize  = 512,
                 SystemId     = "mkdosfs",
-                VolumeName   = "VolumeLabel",
-                VolumeSerial = "00000000"
+                VolumeName   = "VOLUMELABEL",
+                VolumeSerial = "609D1912"
             },
             new FileSystemTest
             {
@@ -148,7 +145,7 @@ namespace Aaru.Tests.Filesystems.FAT32
                 ClusterSize  = 512,
                 SystemId     = "mkdosfs",
                 VolumeName   = "VolumeLabel",
-                VolumeSerial = "00000000"
+                VolumeSerial = "609C5425"
             }
         };
     }

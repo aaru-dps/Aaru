@@ -230,14 +230,15 @@ namespace Aaru.Filesystems
             switch(bitsInBps)
             {
                 // FAT32 for sure
-                case 1 when correctSpc && numberOfFats <= 2    && sectors     == 0 && fatSectors == 0 &&
-                            fat32Signature             == 0x29 && fat32String == "FAT32   ": return true;
+                case 1 when correctSpc && numberOfFats <= 2 && fatSectors == 0 && fat32Signature == 0x29 &&
+                            fat32String                == "FAT32   ": return true;
 
                 // short FAT32
-                case 1
-                    when correctSpc && numberOfFats <= 2 && sectors == 0 && fatSectors == 0 && fat32Signature == 0x28:
-                    return bigSectors       == 0 ? hugeSectors <= partition.End - partition.Start + 1
-                               : bigSectors <= partition.End                    - partition.Start + 1;
+                case 1 when correctSpc && numberOfFats <= 2 && fatSectors == 0 && fat32Signature == 0x28:
+                    return sectors == 0 ? bigSectors        == 0
+                                              ? hugeSectors <= partition.End - partition.Start + 1
+                                              : bigSectors  <= partition.End - partition.Start + 1
+                               : sectors <= partition.End - partition.Start + 1;
 
                 // MSX-DOS FAT12
                 case 1 when correctSpc && numberOfFats <= 2                                   && rootEntries > 0 &&
@@ -501,12 +502,19 @@ namespace Aaru.Filesystems
 
                         XmlFsType.Clusters = shortFat32Bpb.huge_sectors / shortFat32Bpb.spc;
                     }
-                    else
+                    else if(fat32Bpb.sectors == 0)
                     {
                         sb.AppendFormat("{0} sectors on volume ({1} bytes).", fat32Bpb.big_sectors,
                                         fat32Bpb.big_sectors * fat32Bpb.bps).AppendLine();
 
                         XmlFsType.Clusters = fat32Bpb.big_sectors / fat32Bpb.spc;
+                    }
+                    else
+                    {
+                        sb.AppendFormat("{0} sectors on volume ({1} bytes).", fat32Bpb.sectors,
+                                        fat32Bpb.sectors * fat32Bpb.bps).AppendLine();
+
+                        XmlFsType.Clusters = (ulong)(fat32Bpb.sectors / fat32Bpb.spc);
                     }
 
                     sb.AppendFormat("{0} clusters on volume.", XmlFsType.Clusters).AppendLine();

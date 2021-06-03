@@ -200,7 +200,6 @@ namespace Aaru.Filesystems
                 if(bitsInBpsFat32 == 1                                &&
                    correctSpcFat32                                    &&
                    fat32Bpb.fats_no                           <= 2    &&
-                   fat32Bpb.sectors                           == 0    &&
                    fat32Bpb.spfat                             == 0    &&
                    fat32Bpb.signature                         == 0x29 &&
                    Encoding.ASCII.GetString(fat32Bpb.fs_type) == "FAT32   ")

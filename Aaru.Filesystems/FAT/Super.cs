@@ -177,8 +177,10 @@ namespace Aaru.Filesystems
                     if(fat32Bpb.big_sectors == 0 &&
                        fat32Bpb.signature   == 0x28)
                         XmlFsType.Clusters = shortFat32Bpb.huge_sectors / shortFat32Bpb.spc;
-                    else
+                    else if(fat32Bpb.sectors == 0)
                         XmlFsType.Clusters = fat32Bpb.big_sectors / fat32Bpb.spc;
+                    else
+                        XmlFsType.Clusters = (ulong)(fat32Bpb.sectors / fat32Bpb.spc);
 
                     _sectorsPerFat         = fat32Bpb.big_spfat;
                     XmlFsType.VolumeSerial = $"{fat32Bpb.serial_no:X8}";
