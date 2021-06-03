@@ -786,7 +786,11 @@ namespace Aaru.Filesystems
 
                 for(int i = 0; i + 3 < fatBytes.Length && pos < _firstFatEntries.Length; i += 3)
                 {
-                    _firstFatEntries[pos++] = (ushort)(((fatBytes[i + 1] & 0xF)  << 8) + fatBytes[i + 0]);
+                    _firstFatEntries[pos++] = (ushort)(((fatBytes[i + 1] & 0xF) << 8) + fatBytes[i + 0]);
+
+                    if(pos >= _firstFatEntries.Length)
+                        break;
+
                     _firstFatEntries[pos++] = (ushort)(((fatBytes[i + 1] & 0xF0) >> 4) + (fatBytes[i + 2] << 4));
                 }
 
@@ -798,7 +802,11 @@ namespace Aaru.Filesystems
 
                 for(int i = 0; i + 3 < fatBytes.Length && pos < _secondFatEntries.Length; i += 3)
                 {
-                    _secondFatEntries[pos++] = (ushort)(((fatBytes[i + 1] & 0xF)  << 8) + fatBytes[i + 0]);
+                    _secondFatEntries[pos++] = (ushort)(((fatBytes[i + 1] & 0xF) << 8) + fatBytes[i + 0]);
+
+                    if(pos >= _secondFatEntries.Length)
+                        break;
+
                     _secondFatEntries[pos++] = (ushort)(((fatBytes[i + 1] & 0xF0) >> 4) + (fatBytes[i + 2] << 4));
                 }
 
