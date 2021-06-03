@@ -90,7 +90,7 @@ namespace Aaru.Filesystems
                     // Skip first track (first side)
                     for(int m = 0; m < _workingDefinition.side2.sectorIds.Length; m++)
                         _sectorMask[m + _workingDefinition.side1.sectorIds.Length] =
-                            (_workingDefinition.side2.sectorIds[m] - _workingDefinition.side2.sectorIds[0]) +
+                            _workingDefinition.side2.sectorIds[m] - _workingDefinition.side2.sectorIds[0] +
                             _workingDefinition.side1.sectorIds.Length;
                 }
 
@@ -104,7 +104,7 @@ namespace Aaru.Filesystems
                     // Skip first track (first side) and first track (second side)
                     for(int m = 0; m < _workingDefinition.side1.sectorIds.Length; m++)
                         _sectorMask[m + _workingDefinition.side1.sectorIds.Length] =
-                            (_workingDefinition.side1.sectorIds[m] - _workingDefinition.side1.sectorIds[0]) +
+                            _workingDefinition.side1.sectorIds[m] - _workingDefinition.side1.sectorIds[0] +
                             _workingDefinition.side1.sectorIds.Length + _workingDefinition.side2.sectorIds.Length;
 
                     // TODO: Implement CYLINDERS ordering
@@ -153,8 +153,8 @@ namespace Aaru.Filesystems
                 for(int p = 0; p <= (int)(partition.End - partition.Start); p++)
                 {
                     byte[] readSector =
-                        _device.ReadSector((ulong)((int)partition.Start                                      +
-                                                   ((p           / _sectorMask.Length) * _sectorMask.Length) +
+                        _device.ReadSector((ulong)((int)partition.Start                          +
+                                                   (p / _sectorMask.Length * _sectorMask.Length) +
                                                    _sectorMask[p % _sectorMask.Length]));
 
                     if(_workingDefinition.complement)
@@ -209,7 +209,7 @@ namespace Aaru.Filesystems
             AaruConsole.DebugWriteLine("CP/M Plugin", "Reading directory.");
 
             int dirOff;
-            int dirSectors = ((_dpb.drm + 1) * 32) / _workingDefinition.bytesPerSector;
+            int dirSectors = (_dpb.drm + 1) * 32 / _workingDefinition.bytesPerSector;
 
             if(_workingDefinition.sofs > 0)
                 dirOff = _workingDefinition.sofs;
@@ -291,6 +291,8 @@ namespace Aaru.Filesystems
 
                         if(!string.IsNullOrEmpty(extension))
                             filename = filename + "." + extension;
+
+                        filename = filename.Replace('/', '\u2215');
 
                         int entryNo = ((32 * entry.extentCounter) + entry.extentCounterHigh) / (_dpb.exm + 1);
 
@@ -401,6 +403,8 @@ namespace Aaru.Filesystems
                         if(!string.IsNullOrEmpty(extension))
                             filename = filename + "." + extension;
 
+                        filename = filename.Replace('/', '\u2215');
+
                         int entryNo = ((32 * entry.extentCounterHigh) + entry.extentCounter) / (_dpb.exm + 1);
 
                         // Do we have a stat for the file already?
@@ -495,6 +499,8 @@ namespace Aaru.Filesystems
 
                     if(!string.IsNullOrEmpty(extension))
                         filename = filename + "." + extension;
+
+                    filename = filename.Replace('/', '\u2215');
 
                     // Do not repeat passwords
                     if(_passwordCache.ContainsKey(filename))
