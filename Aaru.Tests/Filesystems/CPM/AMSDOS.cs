@@ -66,10 +66,10 @@ namespace Aaru.Tests.Filesystems.CPM
             {
                 TestFile    = "ibm_filename.dsk.lz",
                 MediaType   = MediaType.CompactFloppy,
-                Sectors     = 360,
+                Sectors     = 320,
                 SectorSize  = 512,
                 Bootable    = true,
-                Clusters    = 170,
+                Clusters    = 155,
                 ClusterSize = 1024
             },
             new FileSystemTest
@@ -79,7 +79,7 @@ namespace Aaru.Tests.Filesystems.CPM
                 Sectors     = 360,
                 SectorSize  = 512,
                 Bootable    = true,
-                Clusters    = 170,
+                Clusters    = 155,
                 ClusterSize = 1024
             },
             new FileSystemTest
