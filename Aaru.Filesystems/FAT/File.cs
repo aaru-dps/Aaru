@@ -169,13 +169,13 @@ namespace Aaru.Filesystems
                 Links      = 1
             };
 
-            if(entry.cdate > 0 &&
+            if(entry.cdate > 0 ||
                entry.ctime > 0)
                 stat.CreationTime = DateHandlers.DosToDateTime(entry.cdate, entry.ctime);
 
             if(_namespace != Namespace.Human)
             {
-                if(entry.mdate > 0 &&
+                if(entry.mdate > 0 ||
                    entry.mtime > 0)
                     stat.LastWriteTime = DateHandlers.DosToDateTime(entry.mdate, entry.mtime);
 
