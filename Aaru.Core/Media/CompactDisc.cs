@@ -180,7 +180,7 @@ namespace Aaru.Core.Media
                     pOk    = true;
                     @fixed = true;
 
-                    subLog.WritePFix(lba);
+                    subLog?.WritePFix(lba);
                 }
 
                 // RW is not a known pattern or packet, fix it
@@ -220,34 +220,34 @@ namespace Aaru.Core.Media
                         @fixed = true;
 
                         if(fixedAdr)
-                            subLog.WriteQAdrFix(lba);
+                            subLog?.WriteQAdrFix(lba);
 
                         if(controlFix)
-                            subLog.WriteQCtrlFix(lba);
+                            subLog?.WriteQCtrlFix(lba);
 
                         if(fixedZero)
-                            subLog.WriteQZeroFix(lba);
+                            subLog?.WriteQZeroFix(lba);
 
                         if(fixedTno)
-                            subLog.WriteQTnoFix(lba);
+                            subLog?.WriteQTnoFix(lba);
 
                         if(fixedIndex)
-                            subLog.WriteQIndexFix(lba);
+                            subLog?.WriteQIndexFix(lba);
 
                         if(fixedRelPos)
-                            subLog.WriteQRelPosFix(lba);
+                            subLog?.WriteQRelPosFix(lba);
 
                         if(fixedAbsPos)
-                            subLog.WriteQAbsPosFix(lba);
+                            subLog?.WriteQAbsPosFix(lba);
 
                         if(fixedCrc)
-                            subLog.WriteQCrcFix(lba);
+                            subLog?.WriteQCrcFix(lba);
 
                         if(fixedMcn)
-                            subLog.WriteQMcnFix(lba);
+                            subLog?.WriteQMcnFix(lba);
 
                         if(fixedIsrc)
-                            subLog.WriteQIsrcFix(lba);
+                            subLog?.WriteQIsrcFix(lba);
                     }
                 }
 
@@ -1621,7 +1621,7 @@ namespace Aaru.Core.Media
 
                 outputPlugin.WriteSectorsTag(sub, (ulong)sector, 1, SectorTagType.CdSectorSubchannel);
 
-                subLog.WriteEntry(sub, true, sector, 1, true, false);
+                subLog?.WriteEntry(sub, true, sector, 1, true, false);
             }
 
             endProgress?.Invoke();
