@@ -234,35 +234,35 @@ namespace Aaru.Filesystems
                 // short FAT32
                 case 1
                     when correctSpc && numberOfFats <= 2 && sectors == 0 && fatSectors == 0 && fat32Signature == 0x28:
-                    return bigSectors       == 0 ? hugeSectors <= (partition.End - partition.Start) + 1
-                               : bigSectors <= (partition.End                    - partition.Start) + 1;
+                    return bigSectors       == 0 ? hugeSectors <= partition.End - partition.Start + 1
+                               : bigSectors <= partition.End                    - partition.Start + 1;
 
                 // MSX-DOS FAT12
-                case 1 when correctSpc && numberOfFats <= 2                                     && rootEntries > 0 &&
-                            sectors                    <= (partition.End - partition.Start) + 1 && fatSectors  > 0 &&
+                case 1 when correctSpc && numberOfFats <= 2                                   && rootEntries > 0 &&
+                            sectors                    <= partition.End - partition.Start + 1 && fatSectors  > 0 &&
                             msxString                  == "VOL_ID": return true;
 
                 // EBPB
                 case 1 when correctSpc && numberOfFats <= 2 && rootEntries > 0 && fatSectors > 0 &&
                             (bpbSignature == 0x28 || bpbSignature == 0x29):
-                    return sectors       == 0 ? bigSectors <= (partition.End - partition.Start) + 1
-                               : sectors <= (partition.End                   - partition.Start) + 1;
+                    return sectors       == 0 ? bigSectors <= partition.End - partition.Start + 1
+                               : sectors <= partition.End                   - partition.Start + 1;
 
                 // BPB
                 case 1 when correctSpc && reservedSecs < partition.End - partition.Start && numberOfFats <= 2 &&
                             rootEntries                > 0                               && fatSectors   > 0:
-                    return sectors       == 0 ? bigSectors <= (partition.End - partition.Start) + 1
-                               : sectors <= (partition.End                   - partition.Start) + 1;
+                    return sectors       == 0 ? bigSectors <= partition.End - partition.Start + 1
+                               : sectors <= partition.End                   - partition.Start + 1;
             }
 
             // Apricot BPB
-            if(bitsInApricotBps == 1                                        &&
-               apricotCorrectSpc                                            &&
-               apricotReservedSecs < partition.End - partition.Start        &&
-               apricotFatsNo       <= 2                                     &&
-               apricotRootEntries  > 0                                      &&
-               apricotFatSectors   > 0                                      &&
-               apricotSectors      <= (partition.End - partition.Start) + 1 &&
+            if(bitsInApricotBps == 1                                      &&
+               apricotCorrectSpc                                          &&
+               apricotReservedSecs < partition.End - partition.Start      &&
+               apricotFatsNo       <= 2                                   &&
+               apricotRootEntries  > 0                                    &&
+               apricotFatSectors   > 0                                    &&
+               apricotSectors      <= partition.End - partition.Start + 1 &&
                apricotPartitions   == 0)
                 return true;
 
@@ -673,19 +673,22 @@ namespace Aaru.Filesystems
                         fakeBpb.spc = 1;
                 }
 
-                // This assumes no sane implementation will violate cluster size rules
-                // However nothing prevents this to happen
-                // If first file on disk uses only one cluster there is absolutely no way to differentiate between FAT12 and FAT16,
-                // so let's hope implementations use common sense?
-                if(!isFat12 &&
-                   !isFat16)
+                ulong clusters;
+
+                if(bpbKind != BpbKind.Human)
                 {
-                    ulong clusters;
+                    int reservedSectors = fakeBpb.rsectors + (fakeBpb.fats_no * fakeBpb.spfat) +
+                                          (fakeBpb.root_ent * 32              / fakeBpb.bps);
 
                     if(fakeBpb.sectors == 0)
-                        clusters = fakeBpb.spc == 0 ? fakeBpb.big_sectors : fakeBpb.big_sectors / fakeBpb.spc;
+                        clusters = (ulong)(fakeBpb.spc == 0 ? fakeBpb.big_sectors - reservedSectors
+                                               : (fakeBpb.big_sectors - reservedSectors) / fakeBpb.spc);
                     else
-                        clusters = fakeBpb.spc == 0 ? fakeBpb.sectors : (ulong)fakeBpb.sectors / fakeBpb.spc;
+                        clusters = (ulong)(fakeBpb.spc == 0 ? fakeBpb.sectors - reservedSectors
+                                               : (fakeBpb.sectors - reservedSectors) / fakeBpb.spc);
+                }
+                else
+                    clusters = humanBpb.clusters == 0 ? humanBpb.big_clusters : humanBpb.clusters;
 
                     if(clusters < 4089)
                         isFat12 = true;
@@ -800,29 +803,17 @@ namespace Aaru.Filesystems
 
                 if(bpbKind != BpbKind.Human)
                     if(fakeBpb.sectors == 0)
-                    {
                         sb.AppendFormat("{0} sectors on volume ({1} bytes).", fakeBpb.big_sectors,
                                         fakeBpb.big_sectors * fakeBpb.bps).AppendLine();
-
-                        XmlFsType.Clusters = fakeBpb.spc == 0 ? fakeBpb.big_sectors : fakeBpb.big_sectors / fakeBpb.spc;
-                    }
                     else
-                    {
                         sb.AppendFormat("{0} sectors on volume ({1} bytes).", fakeBpb.sectors,
                                         fakeBpb.sectors * fakeBpb.bps).AppendLine();
-
-                        XmlFsType.Clusters =
-                            (ulong)(fakeBpb.spc == 0 ? fakeBpb.sectors : fakeBpb.sectors / fakeBpb.spc);
-                    }
                 else
-                {
-                    XmlFsType.Clusters = humanBpb.clusters == 0 ? humanBpb.big_clusters : humanBpb.clusters;
-
                     sb.AppendFormat("{0} sectors on volume ({1} bytes).",
-                                    (XmlFsType.Clusters * humanBpb.bpc) / imagePlugin.Info.SectorSize,
-                                    XmlFsType.Clusters                  * humanBpb.bpc).AppendLine();
-                }
+                                    clusters * humanBpb.bpc / imagePlugin.Info.SectorSize, clusters * humanBpb.bpc).
+                       AppendLine();
 
+                XmlFsType.Clusters = clusters;
                 sb.AppendFormat("{0} sectors per cluster.", fakeBpb.spc).AppendLine();
                 sb.AppendFormat("{0} clusters on volume.", XmlFsType.Clusters).AppendLine();
                 XmlFsType.ClusterSize = (uint)(fakeBpb.bps * fakeBpb.spc);
@@ -901,7 +892,7 @@ namespace Aaru.Filesystems
                 rootDirectorySector =
                     (ulong)((fakeBpb.spfat * fakeBpb.fats_no) + fakeBpb.rsectors) * sectorsPerRealSector;
 
-                sectorsForRootDirectory = (uint)((fakeBpb.root_ent * 32) / imagePlugin.Info.SectorSize);
+                sectorsForRootDirectory = (uint)(fakeBpb.root_ent * 32 / imagePlugin.Info.SectorSize);
             }
 
             if(extraInfo != null)

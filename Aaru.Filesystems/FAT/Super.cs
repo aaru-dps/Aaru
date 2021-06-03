@@ -115,7 +115,6 @@ namespace Aaru.Filesystems
 
             _statfs = new FileSystemInfo
             {
-                Blocks         = XmlFsType.Clusters,
                 FilenameLength = 11,
                 Files          = 0, // Requires traversing all directories
                 FreeFiles      = 0,
@@ -291,10 +290,26 @@ namespace Aaru.Filesystems
                         fakeBpb.spc = 1;
                 }
 
-                // This assumes no sane implementation will violate cluster size rules
-                // However nothing prevents this to happen
-                // If first file on disk uses only one cluster there is absolutely no way to differentiate between FAT12 and FAT16,
-                // so let's hope implementations use common sense?
+                ulong clusters;
+
+                if(bpbKind != BpbKind.Human)
+                {
+                    int reservedSectors = fakeBpb.rsectors + (fakeBpb.fats_no * fakeBpb.spfat) +
+                                          (fakeBpb.root_ent * 32              / fakeBpb.bps);
+
+                    if(fakeBpb.sectors == 0)
+                        clusters = (ulong)(fakeBpb.spc == 0 ? fakeBpb.big_sectors - reservedSectors
+                                               : (fakeBpb.big_sectors - reservedSectors) / fakeBpb.spc);
+                    else
+                        clusters = (ulong)(fakeBpb.spc == 0 ? fakeBpb.sectors - reservedSectors
+                                               : (fakeBpb.sectors - reservedSectors) / fakeBpb.spc);
+                }
+                else
+                    clusters = humanBpb.clusters == 0 ? humanBpb.big_clusters : humanBpb.clusters;
+
+                // This will walk all the FAT entries and check if they're valid FAT12 or FAT16 entries.
+                // If the whole table is valid in both senses, it considers the type entry in the BPB.
+                // BeOS is known to set the type as FAT16 but treat it as FAT12.
                 if(!_fat12 &&
                    !_fat16)
                 {
@@ -394,15 +409,7 @@ namespace Aaru.Filesystems
                     }
                 }
 
-                if(bpbKind != BpbKind.Human)
-                    if(fakeBpb.sectors == 0)
-                        XmlFsType.Clusters = fakeBpb.spc == 0 ? fakeBpb.big_sectors : fakeBpb.big_sectors / fakeBpb.spc;
-                    else
-                        XmlFsType.Clusters =
-                            (ulong)(fakeBpb.spc == 0 ? fakeBpb.sectors : fakeBpb.sectors / fakeBpb.spc);
-                else
-                    XmlFsType.Clusters = humanBpb.clusters == 0 ? humanBpb.big_clusters : humanBpb.clusters;
-
+                XmlFsType.Clusters    = clusters;
                 _sectorsPerCluster    = fakeBpb.spc;
                 XmlFsType.ClusterSize = (uint)(fakeBpb.bps * fakeBpb.spc);
                 _reservedSectors      = fakeBpb.rsectors;

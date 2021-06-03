@@ -52,7 +52,7 @@ namespace Aaru.Tests.Filesystems.FAT12
                 Sectors      = 16384,
                 SectorSize   = 512,
                 Bootable     = true,
-                Clusters     = 4076,
+                Clusters     = 4061,
                 ClusterSize  = 2048,
                 SystemId     = "BSD  4.4",
                 VolumeName   = "VOLUMELABEL",

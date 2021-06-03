@@ -51,7 +51,7 @@ namespace Aaru.Tests.Filesystems.FAT16
                 MediaType    = MediaType.GENERIC_HDD,
                 Sectors      = 24576,
                 SectorSize   = 512,
-                Clusters     = 12287,
+                Clusters     = 12230,
                 ClusterSize  = 1024,
                 VolumeName   = "VolumeLabel",
                 VolumeSerial = "DA6664"
@@ -62,7 +62,7 @@ namespace Aaru.Tests.Filesystems.FAT16
                 MediaType    = MediaType.GENERIC_HDD,
                 Sectors      = 262144,
                 SectorSize   = 512,
-                Clusters     = 8191,
+                Clusters     = 8188,
                 ClusterSize  = 16384,
                 VolumeName   = "VolumeLabel",
                 VolumeSerial = "D0EFA1"
@@ -73,7 +73,7 @@ namespace Aaru.Tests.Filesystems.FAT16
                 MediaType    = MediaType.GENERIC_HDD,
                 Sectors      = 24576,
                 SectorSize   = 512,
-                Clusters     = 12287,
+                Clusters     = 12230,
                 ClusterSize  = 1024,
                 VolumeName   = "VolumeLabel",
                 VolumeSerial = "1079CC"
@@ -84,7 +84,7 @@ namespace Aaru.Tests.Filesystems.FAT16
                 MediaType    = MediaType.GENERIC_HDD,
                 Sectors      = 262144,
                 SectorSize   = 512,
-                Clusters     = 8191,
+                Clusters     = 8188,
                 ClusterSize  = 16384,
                 VolumeName   = "VolumeLabel",
                 VolumeSerial = "9C65B3"
@@ -95,7 +95,7 @@ namespace Aaru.Tests.Filesystems.FAT16
                 MediaType    = MediaType.GENERIC_HDD,
                 Sectors      = 24576,
                 SectorSize   = 512,
-                Clusters     = 12287,
+                Clusters     = 12230,
                 ClusterSize  = 1024,
                 VolumeName   = "VolumeLabel",
                 VolumeSerial = "DD5AA6"
@@ -106,7 +106,7 @@ namespace Aaru.Tests.Filesystems.FAT16
                 MediaType    = MediaType.GENERIC_HDD,
                 Sectors      = 262144,
                 SectorSize   = 512,
-                Clusters     = 16383,
+                Clusters     = 16374,
                 ClusterSize  = 8192,
                 VolumeName   = "VolumeLabel",
                 VolumeSerial = "D430E2"
@@ -117,7 +117,7 @@ namespace Aaru.Tests.Filesystems.FAT16
                 MediaType    = MediaType.GENERIC_HDD,
                 Sectors      = 24576,
                 SectorSize   = 512,
-                Clusters     = 12287,
+                Clusters     = 12230,
                 ClusterSize  = 1024,
                 VolumeName   = "VolumeLabel",
                 VolumeSerial = "D0599C"
@@ -128,7 +128,7 @@ namespace Aaru.Tests.Filesystems.FAT16
                 MediaType    = MediaType.GENERIC_HDD,
                 Sectors      = 262144,
                 SectorSize   = 512,
-                Clusters     = 16383,
+                Clusters     = 16374,
                 ClusterSize  = 8192,
                 VolumeName   = "VolumeLabel",
                 VolumeSerial = "895043"
@@ -139,7 +139,7 @@ namespace Aaru.Tests.Filesystems.FAT16
                 MediaType    = MediaType.GENERIC_HDD,
                 Sectors      = 24576,
                 SectorSize   = 512,
-                Clusters     = 12287,
+                Clusters     = 12230,
                 ClusterSize  = 1024,
                 VolumeName   = "VolumeLabel",
                 VolumeSerial = "D22E19"
@@ -150,7 +150,7 @@ namespace Aaru.Tests.Filesystems.FAT16
                 MediaType    = MediaType.GENERIC_HDD,
                 Sectors      = 262144,
                 SectorSize   = 512,
-                Clusters     = 16383,
+                Clusters     = 16374,
                 ClusterSize  = 8192,
                 VolumeName   = "VolumeLabel",
                 VolumeSerial = "6566D8"
@@ -161,7 +161,7 @@ namespace Aaru.Tests.Filesystems.FAT16
                 MediaType    = MediaType.GENERIC_HDD,
                 Sectors      = 24576,
                 SectorSize   = 512,
-                Clusters     = 12287,
+                Clusters     = 12230,
                 ClusterSize  = 1024,
                 VolumeName   = "VolumeLabel",
                 VolumeSerial = "700332"
@@ -172,7 +172,7 @@ namespace Aaru.Tests.Filesystems.FAT16
                 MediaType    = MediaType.GENERIC_HDD,
                 Sectors      = 262144,
                 SectorSize   = 512,
-                Clusters     = 16383,
+                Clusters     = 16374,
                 ClusterSize  = 8192,
                 VolumeName   = "VolumeLabel",
                 VolumeSerial = "086A33"
