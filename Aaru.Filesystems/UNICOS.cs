@@ -75,6 +75,9 @@ namespace Aaru.Filesystems
             if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0)
                 sbSize++;
 
+            if(partition.Start + sbSize >= partition.End)
+                return false;
+
             byte[] sector = imagePlugin.ReadSectors(partition.Start, sbSize);
 
             if(sector.Length < Marshal.SizeOf<Superblock>())
