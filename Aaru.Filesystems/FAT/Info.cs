@@ -34,6 +34,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.Checksums;
 using Aaru.CommonTypes;
@@ -42,6 +43,7 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
 using Schemas;
+using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Filesystems
 {
@@ -690,8 +692,79 @@ namespace Aaru.Filesystems
                 else
                     clusters = humanBpb.clusters == 0 ? humanBpb.big_clusters : humanBpb.clusters;
 
+                // This will walk all the FAT entries and check if they're valid FAT12 or FAT16 entries.
+                // If the whole table is valid in both senses, it considers the type entry in the BPB.
+                // BeOS is known to set the type as FAT16 but treat it as FAT12.
+                if(!isFat12 &&
+                   !isFat16)
+                {
                     if(clusters < 4089)
-                        isFat12 = true;
+                    {
+                        ushort[] fat12 = new ushort[clusters];
+
+                        _reservedSectors     = fakeBpb.rsectors;
+                        sectorsPerRealSector = fakeBpb.bps / imagePlugin.Info.SectorSize;
+                        _fatFirstSector      = partition.Start + (_reservedSectors * sectorsPerRealSector);
+
+                        byte[] fatBytes = imagePlugin.ReadSectors(_fatFirstSector, fakeBpb.spfat);
+
+                        int pos = 0;
+
+                        for(int i = 0; i + 3 < fatBytes.Length && pos < fat12.Length; i += 3)
+                        {
+                            fat12[pos++] = (ushort)(((fatBytes[i + 1] & 0xF) << 8) + fatBytes[i + 0]);
+
+                            if(pos >= fat12.Length)
+                                break;
+
+                            fat12[pos++] = (ushort)(((fatBytes[i + 1] & 0xF0) >> 4) + (fatBytes[i + 2] << 4));
+                        }
+
+                        bool fat12Valid = fat12[0] >= FAT12_RESERVED && fat12[1] >= FAT12_RESERVED;
+
+                        foreach(ushort entry in fat12)
+                        {
+                            if(entry >= FAT12_RESERVED ||
+                               entry <= clusters)
+                                continue;
+
+                            fat12Valid = false;
+
+                            break;
+                        }
+
+                        ushort[] fat16 = MemoryMarshal.Cast<byte, ushort>(fatBytes).ToArray();
+
+                        bool fat16Valid = fat16[0] >= FAT16_RESERVED && fat16[1] >= 0x3FF0;
+
+                        foreach(ushort entry in fat16)
+                        {
+                            if(entry >= FAT16_RESERVED ||
+                               entry <= clusters)
+                                continue;
+
+                            fat16Valid = false;
+
+                            break;
+                        }
+
+                        isFat12 = fat12Valid;
+                        isFat16 = fat16Valid;
+
+                        // Check BPB type
+                        if(isFat12 == isFat16)
+                        {
+                            isFat12 = fakeBpb.fs_type                           != null &&
+                                      Encoding.ASCII.GetString(fakeBpb.fs_type) == "FAT12   ";
+
+                            isFat16 = fakeBpb.fs_type                           != null &&
+                                      Encoding.ASCII.GetString(fakeBpb.fs_type) == "FAT16   ";
+                        }
+
+                        if(!isFat12 &&
+                           !isFat16)
+                            isFat12 = true;
+                    }
                     else
                         isFat16 = true;
                 }
