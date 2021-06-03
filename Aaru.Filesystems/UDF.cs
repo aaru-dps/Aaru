@@ -114,7 +114,7 @@ namespace Aaru.Filesystems
             uint ratio       = 1;
 
             foreach(ulong[] position in positions.Where(position => position[0] + partition.Start + position[1] <=
-                                                                    partition.End))
+                                                                    partition.End && position[0] < partition.End))
             {
                 sector = imagePlugin.ReadSectors(position[0], (uint)position[1]);
                 anchor = Marshal.ByteArrayToStructureLittleEndian<AnchorVolumeDescriptorPointer>(sector);
