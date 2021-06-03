@@ -40,12 +40,9 @@ namespace Aaru.DiscImages
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         readonly struct DiskInfo
         {
-            /// <summary>Magic number, "MV - CPC" in old files, "EXTENDED CPC DSK File" in extended ones</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 21)]
+            /// <summary>Second part of magic, should be "Disk-Info\r\n" in all, but some emulators write spaces instead.</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 11)]
             public readonly byte[] magic;
-            /// <summary>Second part of magic, should be "\r\nDisk-Info\r\n" in all, but some emulators write spaces instead.</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 13)]
-            public readonly byte[] magic2;
             /// <summary>Creator application (can be null)</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 14)]
             public readonly byte[] creator;

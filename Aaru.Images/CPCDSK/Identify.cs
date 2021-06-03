@@ -30,11 +30,11 @@
 // Copyright © 2011-2021 Natalia Portillo
 // ****************************************************************************/
 
+using System;
 using System.IO;
-using System.Linq;
+using System.Text;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
-using Aaru.Helpers;
 
 namespace Aaru.DiscImages
 {
@@ -50,13 +50,26 @@ namespace Aaru.DiscImages
 
             byte[] headerB = new byte[256];
             stream.Read(headerB, 0, 256);
-            DiskInfo header = Marshal.ByteArrayToStructureLittleEndian<DiskInfo>(headerB);
 
-            AaruConsole.DebugWriteLine("CPCDSK plugin", "header.magic = \"{0}\"",
-                                       StringHandlers.CToString(header.magic));
+            int pos;
 
-            return _cpcdskId.SequenceEqual(header.magic.Take(_cpcdskId.Length)) ||
-                   _edskId.SequenceEqual(header.magic)                          || _du54Id.SequenceEqual(header.magic);
+            for(pos = 0; pos < 254; pos++)
+            {
+                if(headerB[pos]     == 0x0D &&
+                   headerB[pos + 1] == 0x0A)
+                    break;
+            }
+
+            if(pos >= 254)
+                return false;
+
+            string magic = Encoding.ASCII.GetString(headerB, 0, pos);
+
+            AaruConsole.DebugWriteLine("CPCDSK plugin", "magic = \"{0}\"", magic);
+
+            return string.Compare(_cpcdskId, magic, StringComparison.InvariantCultureIgnoreCase) == 0 ||
+                   string.Compare(_edskId, magic, StringComparison.InvariantCultureIgnoreCase)   == 0 ||
+                   string.Compare(_du54Id, magic, StringComparison.InvariantCultureIgnoreCase)   == 0;
         }
     }
 }

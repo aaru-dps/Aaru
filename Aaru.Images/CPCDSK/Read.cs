@@ -34,6 +34,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using Aaru.Checksums;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
@@ -57,21 +58,38 @@ namespace Aaru.DiscImages
 
             byte[] headerB = new byte[256];
             stream.Read(headerB, 0, 256);
-            DiskInfo header = Marshal.ByteArrayToStructureLittleEndian<DiskInfo>(headerB);
 
-            if(!_cpcdskId.SequenceEqual(header.magic.Take(_cpcdskId.Length)) &&
-               !_edskId.SequenceEqual(header.magic)                          &&
-               !_du54Id.SequenceEqual(header.magic))
+            int pos;
+
+            for(pos = 0; pos < 254; pos++)
+            {
+                if(headerB[pos]     == 0x0D &&
+                   headerB[pos + 1] == 0x0A)
+                    break;
+            }
+
+            if(pos >= 254)
                 return false;
 
-            _extended = _edskId.SequenceEqual(header.magic);
+            string magic = Encoding.ASCII.GetString(headerB, 0, pos);
+
+            stream.Position = pos + 2;
+            stream.Read(headerB, 0, 256);
+
+            DiskInfo header = Marshal.ByteArrayToStructureLittleEndian<DiskInfo>(headerB);
+
+            if(string.Compare(_cpcdskId, magic, StringComparison.InvariantCultureIgnoreCase) != 0 &&
+               string.Compare(_edskId, magic, StringComparison.InvariantCultureIgnoreCase)   != 0 &&
+               string.Compare(_du54Id, magic, StringComparison.InvariantCultureIgnoreCase)   != 0)
+                return false;
+
+            _extended = string.Compare(_edskId, magic, StringComparison.InvariantCultureIgnoreCase) == 0;
             AaruConsole.DebugWriteLine("CPCDSK plugin", "Extended = {0}", _extended);
+
+            AaruConsole.DebugWriteLine("CPCDSK plugin", "magic = \"{0}\"", magic);
 
             AaruConsole.DebugWriteLine("CPCDSK plugin", "header.magic = \"{0}\"",
                                        StringHandlers.CToString(header.magic));
-
-            AaruConsole.DebugWriteLine("CPCDSK plugin", "header.magic2 = \"{0}\"",
-                                       StringHandlers.CToString(header.magic2));
 
             AaruConsole.DebugWriteLine("CPCDSK plugin", "header.creator = \"{0}\"",
                                        StringHandlers.CToString(header.creator));
@@ -113,7 +131,8 @@ namespace Aaru.DiscImages
                     stream.Read(trackB, 0, 256);
                     TrackInfo trackInfo = Marshal.ByteArrayToStructureLittleEndian<TrackInfo>(trackB);
 
-                    if(!_trackId.SequenceEqual(trackInfo.magic))
+                    if(string.Compare(_trackId, Encoding.ASCII.GetString(trackInfo.magic),
+                                      StringComparison.InvariantCultureIgnoreCase) != 0)
                     {
                         AaruConsole.ErrorWriteLine("Not the expected track info.");
 
