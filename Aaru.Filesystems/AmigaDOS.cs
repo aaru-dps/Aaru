@@ -60,7 +60,7 @@ namespace Aaru.Filesystems
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
-            if(partition.Start >= partition.End)
+            if(partition.Start + 4 >= partition.End)
                 return false;
 
             // Boot block is unless defined otherwise, 2 blocks
