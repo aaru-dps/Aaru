@@ -155,8 +155,8 @@ namespace Aaru.DiscImages
                         else
                             allTracksSameSize = false;
 
-                    byte[][] thisTrackSectors      = new byte[trackInfo.sectors][];
-                    byte[][] thisTrackAddressMarks = new byte[trackInfo.sectors][];
+                    Dictionary<int, byte[]> thisTrackSectors      = new Dictionary<int, byte[]>();
+                    Dictionary<int, byte[]> thisTrackAddressMarks = new Dictionary<int, byte[]>();
 
                     for(int k = 1; k <= trackInfo.sectors; k++)
                     {
@@ -221,14 +221,14 @@ namespace Aaru.DiscImages
                         thisTrackAddressMarks[(trackInfo.sectorsInfo[k - 1].id & 0x3F) - 1] = addressMark;
                     }
 
-                    for(int s = 0; s < thisTrackSectors.Length; s++)
+                    foreach(KeyValuePair<int, byte[]> s in thisTrackSectors.OrderBy(k => k.Key))
                     {
-                        _sectors.Add(currentSector, thisTrackSectors[s]);
-                        _addressMarks.Add(currentSector, thisTrackAddressMarks[s]);
+                        _sectors.Add(currentSector, s.Value);
+                        _addressMarks.Add(currentSector, s.Value);
                         currentSector++;
 
-                        if(thisTrackSectors[s].Length > _imageInfo.SectorSize)
-                            _imageInfo.SectorSize = (uint)thisTrackSectors[s].Length;
+                        if(s.Value.Length > _imageInfo.SectorSize)
+                            _imageInfo.SectorSize = (uint)s.Value.Length;
                     }
 
                     stream.Seek(trackPos, SeekOrigin.Begin);
