@@ -51,7 +51,7 @@ namespace Aaru.Tests.Filesystems.CPM
                 Sectors     = 360,
                 SectorSize  = 512,
                 Bootable    = true,
-                Clusters    = 180,
+                Clusters    = 359,
                 ClusterSize = 1024
             },
             new FileSystemTest
@@ -61,7 +61,7 @@ namespace Aaru.Tests.Filesystems.CPM
                 Sectors     = 360,
                 SectorSize  = 512,
                 Bootable    = true,
-                Clusters    = 180,
+                Clusters    = 359,
                 ClusterSize = 1024
             }
         };
