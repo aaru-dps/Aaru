@@ -73,17 +73,50 @@ namespace Aaru.Filesystems
             byte[] sector;
             var    anchor = new AnchorVolumeDescriptorPointer();
 
-            // All positions where anchor may reside
-            ulong[] positions =
+            // All positions where anchor may reside, with the ratio between 512 and 2048bps
+            ulong[][] positions =
             {
-                256, 512, partition.End - 256, partition.End
+                new ulong[]
+                {
+                    256, 1
+                },
+                new ulong[]
+                {
+                    512, 1
+                },
+                new ulong[]
+                {
+                    partition.End - 256, 1
+                },
+                new ulong[]
+                {
+                    partition.End, 1
+                },
+                new ulong[]
+                {
+                    1024, 4
+                },
+                new ulong[]
+                {
+                    2048, 4
+                },
+                new ulong[]
+                {
+                    partition.End - 1024, 4
+                },
+                new ulong[]
+                {
+                    partition.End - 4, 4
+                }
             };
 
             bool anchorFound = false;
+            uint ratio       = 1;
 
-            foreach(ulong position in positions.Where(position => position + partition.Start < partition.End))
+            foreach(ulong[] position in positions.Where(position => position[0] + partition.Start + position[1] <=
+                                                                    partition.End))
             {
-                sector = imagePlugin.ReadSector(position);
+                sector = imagePlugin.ReadSectors(position[0], (uint)position[1]);
                 anchor = Marshal.ByteArrayToStructureLittleEndian<AnchorVolumeDescriptorPointer>(sector);
 
                 AaruConsole.DebugWriteLine("UDF Plugin", "anchor.tag.tagIdentifier = {0}", anchor.tag.tagIdentifier);
@@ -118,11 +151,13 @@ namespace Aaru.Filesystems
                                            anchor.reserveVolumeDescriptorSequenceExtent.location);
 
                 if(anchor.tag.tagIdentifier != TagIdentifier.AnchorVolumeDescriptorPointer ||
-                   anchor.tag.tagLocation != position ||
-                   anchor.mainVolumeDescriptorSequenceExtent.location + partition.Start >= partition.End)
+                   anchor.tag.tagLocation   != position[0] / position[1]                   ||
+                   (anchor.mainVolumeDescriptorSequenceExtent.location * position[1]) + partition.Start >=
+                   partition.End)
                     continue;
 
                 anchorFound = true;
+                ratio       = (uint)position[1];
 
                 break;
             }
@@ -134,13 +169,15 @@ namespace Aaru.Filesystems
 
             while(count < 256)
             {
-                sector = imagePlugin.ReadSector(partition.Start + anchor.mainVolumeDescriptorSequenceExtent.location +
-                                                count);
+                sector =
+                    imagePlugin.
+                        ReadSectors(partition.Start + (anchor.mainVolumeDescriptorSequenceExtent.location * ratio) + (count * ratio),
+                                    ratio);
 
                 var  tagId    = (TagIdentifier)BitConverter.ToUInt16(sector, 0);
                 uint location = BitConverter.ToUInt32(sector, 0x0C);
 
-                if(location == partition.Start + anchor.mainVolumeDescriptorSequenceExtent.location + count)
+                if(location == (partition.Start / ratio) + anchor.mainVolumeDescriptorSequenceExtent.location + count)
                 {
                     if(tagId == TagIdentifier.TerminatingDescriptor)
                         break;
@@ -175,21 +212,58 @@ namespace Aaru.Filesystems
 
             var anchor = new AnchorVolumeDescriptorPointer();
 
-            // All positions where anchor may reside
-            ulong[] positions =
+            // All positions where anchor may reside, with the ratio between 512 and 2048bps
+            ulong[][] positions =
             {
-                256, 512, partition.End - 256, partition.End
+                new ulong[]
+                {
+                    256, 1
+                },
+                new ulong[]
+                {
+                    512, 1
+                },
+                new ulong[]
+                {
+                    partition.End - 256, 1
+                },
+                new ulong[]
+                {
+                    partition.End, 1
+                },
+                new ulong[]
+                {
+                    1024, 4
+                },
+                new ulong[]
+                {
+                    2048, 4
+                },
+                new ulong[]
+                {
+                    partition.End - 1024, 4
+                },
+                new ulong[]
+                {
+                    partition.End - 4, 4
+                }
             };
 
-            foreach(ulong position in positions)
+            uint ratio = 1;
+
+            foreach(ulong[] position in positions)
             {
-                sector = imagePlugin.ReadSector(position);
+                sector = imagePlugin.ReadSectors(position[0], (uint)position[1]);
                 anchor = Marshal.ByteArrayToStructureLittleEndian<AnchorVolumeDescriptorPointer>(sector);
 
-                if(anchor.tag.tagIdentifier == TagIdentifier.AnchorVolumeDescriptorPointer &&
-                   anchor.tag.tagLocation == position &&
-                   anchor.mainVolumeDescriptorSequenceExtent.location + partition.Start < partition.End)
-                    break;
+                if(anchor.tag.tagIdentifier != TagIdentifier.AnchorVolumeDescriptorPointer ||
+                   anchor.tag.tagLocation != position[0] / position[1] ||
+                   anchor.mainVolumeDescriptorSequenceExtent.location + partition.Start >= partition.End)
+                    continue;
+
+                ratio = (uint)position[1];
+
+                break;
             }
 
             ulong count = 0;
@@ -201,13 +275,15 @@ namespace Aaru.Filesystems
 
             while(count < 256)
             {
-                sector = imagePlugin.ReadSector(partition.Start + anchor.mainVolumeDescriptorSequenceExtent.location +
-                                                count);
+                sector =
+                    imagePlugin.
+                        ReadSectors(partition.Start + (anchor.mainVolumeDescriptorSequenceExtent.location * ratio) + (count * ratio),
+                                    ratio);
 
                 var  tagId    = (TagIdentifier)BitConverter.ToUInt16(sector, 0);
                 uint location = BitConverter.ToUInt32(sector, 0x0C);
 
-                if(location == partition.Start + anchor.mainVolumeDescriptorSequenceExtent.location + count)
+                if(location == (partition.Start / ratio) + anchor.mainVolumeDescriptorSequenceExtent.location + count)
                 {
                     if(tagId == TagIdentifier.TerminatingDescriptor)
                         break;
@@ -230,7 +306,7 @@ namespace Aaru.Filesystems
                 count++;
             }
 
-            sector = imagePlugin.ReadSector(lvd.integritySequenceExtent.location);
+            sector = imagePlugin.ReadSectors(lvd.integritySequenceExtent.location * ratio, ratio);
             lvid   = Marshal.ByteArrayToStructureLittleEndian<LogicalVolumeIntegrityDescriptor>(sector);
 
             if(lvid.tag.tagIdentifier == TagIdentifier.LogicalVolumeIntegrityDescriptor &&
