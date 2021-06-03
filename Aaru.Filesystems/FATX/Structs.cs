@@ -60,10 +60,10 @@ namespace Aaru.Filesystems
             public readonly uint   length;
             public readonly ushort lastWrittenTime;
             public readonly ushort lastWrittenDate;
-            public readonly ushort creationTime;
-            public readonly ushort creationDate;
             public readonly ushort lastAccessTime;
             public readonly ushort lastAccessDate;
+            public readonly ushort creationTime;
+            public readonly ushort creationDate;
         }
     }
 }
