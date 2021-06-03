@@ -48,119 +48,119 @@ namespace Aaru.Tests.Filesystems.CPM
             {
                 TestFile    = "d1_filename.dsk.lz",
                 MediaType   = MediaType.CompactFloppy,
-                Sectors     = 360,
+                Sectors     = 1440,
                 SectorSize  = 512,
-                Clusters    = 180,
-                ClusterSize = 1024
+                Clusters    = 360,
+                ClusterSize = 2048
             },
             new FileSystemTest
             {
                 TestFile    = "d1_files.dsk.lz",
                 MediaType   = MediaType.CompactFloppy,
-                Sectors     = 360,
+                Sectors     = 1440,
                 SectorSize  = 512,
-                Clusters    = 180,
-                ClusterSize = 1024
+                Clusters    = 360,
+                ClusterSize = 2048
             },
             new FileSystemTest
             {
                 TestFile    = "d2_filename.dsk.lz",
                 MediaType   = MediaType.CompactFloppy,
-                Sectors     = 360,
+                Sectors     = 1440,
                 SectorSize  = 512,
                 Bootable    = true,
-                Clusters    = 170,
-                ClusterSize = 1024
+                Clusters    = 360,
+                ClusterSize = 2048
             },
             new FileSystemTest
             {
                 TestFile    = "d2_files.dsk.lz",
                 MediaType   = MediaType.CompactFloppy,
-                Sectors     = 360,
+                Sectors     = 1440,
                 SectorSize  = 512,
                 Bootable    = true,
-                Clusters    = 170,
-                ClusterSize = 1024
+                Clusters    = 360,
+                ClusterSize = 2048
             },
             new FileSystemTest
             {
                 TestFile    = "d10_filename.dsk.lz",
                 MediaType   = MediaType.CompactFloppy,
-                Sectors     = 360,
+                Sectors     = 1600,
                 SectorSize  = 512,
                 Bootable    = true,
-                Clusters    = 170,
-                ClusterSize = 1024
+                Clusters    = 400,
+                ClusterSize = 2048
             },
             new FileSystemTest
             {
                 TestFile    = "d10_files.dsk.lz",
                 MediaType   = MediaType.CompactFloppy,
-                Sectors     = 360,
+                Sectors     = 1600,
                 SectorSize  = 512,
                 Bootable    = true,
-                Clusters    = 170,
-                ClusterSize = 1024
+                Clusters    = 400,
+                ClusterSize = 2048
             },
             new FileSystemTest
             {
                 TestFile    = "d20_filename.dsk.lz",
                 MediaType   = MediaType.CompactFloppy,
-                Sectors     = 360,
+                Sectors     = 1600,
                 SectorSize  = 512,
                 Bootable    = true,
-                Clusters    = 170,
-                ClusterSize = 1024
+                Clusters    = 400,
+                ClusterSize = 2048
             },
             new FileSystemTest
             {
                 TestFile    = "d20_files.dsk.lz",
                 MediaType   = MediaType.CompactFloppy,
-                Sectors     = 360,
+                Sectors     = 1600,
                 SectorSize  = 512,
                 Bootable    = true,
-                Clusters    = 170,
-                ClusterSize = 1024
+                Clusters    = 400,
+                ClusterSize = 2048
             },
             new FileSystemTest
             {
                 TestFile    = "d40_filename.dsk.lz",
                 MediaType   = MediaType.CompactFloppy,
-                Sectors     = 360,
+                Sectors     = 1600,
                 SectorSize  = 512,
                 Bootable    = true,
-                Clusters    = 170,
-                ClusterSize = 1024
+                Clusters    = 400,
+                ClusterSize = 2048
             },
             new FileSystemTest
             {
                 TestFile    = "d40_files.dsk.lz",
                 MediaType   = MediaType.CompactFloppy,
-                Sectors     = 360,
+                Sectors     = 1600,
                 SectorSize  = 512,
                 Bootable    = true,
-                Clusters    = 170,
-                ClusterSize = 1024
+                Clusters    = 400,
+                ClusterSize = 2048
             },
             new FileSystemTest
             {
                 TestFile    = "d80_filename.dsk.lz",
                 MediaType   = MediaType.CompactFloppy,
-                Sectors     = 360,
+                Sectors     = 1600,
                 SectorSize  = 512,
                 Bootable    = true,
-                Clusters    = 170,
-                ClusterSize = 1024
+                Clusters    = 400,
+                ClusterSize = 2048
             },
             new FileSystemTest
             {
                 TestFile    = "d80_files.dsk.lz",
                 MediaType   = MediaType.CompactFloppy,
-                Sectors     = 360,
+                Sectors     = 1600,
                 SectorSize  = 512,
                 Bootable    = true,
-                Clusters    = 170,
-                ClusterSize = 1024
+                Clusters    = 400,
+                ClusterSize = 2048
             }
         };
     }
