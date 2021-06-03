@@ -48,7 +48,7 @@ namespace Aaru.Tests.Filesystems.CPM
             {
                 TestFile    = "40d_filename.dsk.lz",
                 MediaType   = MediaType.CompactFloppy,
-                Sectors     = 360,
+                Sectors     = 800,
                 SectorSize  = 512,
                 Clusters    = 180,
                 ClusterSize = 1024
@@ -57,7 +57,7 @@ namespace Aaru.Tests.Filesystems.CPM
             {
                 TestFile    = "40d_files.dsk.lz",
                 MediaType   = MediaType.CompactFloppy,
-                Sectors     = 360,
+                Sectors     = 800,
                 SectorSize  = 512,
                 Clusters    = 180,
                 ClusterSize = 1024
@@ -66,7 +66,7 @@ namespace Aaru.Tests.Filesystems.CPM
             {
                 TestFile    = "41_filename.dsk.lz",
                 MediaType   = MediaType.CompactFloppy,
-                Sectors     = 360,
+                Sectors     = 410,
                 SectorSize  = 512,
                 Bootable    = true,
                 Clusters    = 170,
@@ -76,7 +76,7 @@ namespace Aaru.Tests.Filesystems.CPM
             {
                 TestFile    = "41_files.dsk.lz",
                 MediaType   = MediaType.CompactFloppy,
-                Sectors     = 360,
+                Sectors     = 410,
                 SectorSize  = 512,
                 Bootable    = true,
                 Clusters    = 170,
@@ -86,7 +86,7 @@ namespace Aaru.Tests.Filesystems.CPM
             {
                 TestFile    = "80_filename.dsk.lz",
                 MediaType   = MediaType.CompactFloppy,
-                Sectors     = 360,
+                Sectors     = 800,
                 SectorSize  = 512,
                 Bootable    = true,
                 Clusters    = 170,
@@ -96,7 +96,7 @@ namespace Aaru.Tests.Filesystems.CPM
             {
                 TestFile    = "80_files.dsk.lz",
                 MediaType   = MediaType.CompactFloppy,
-                Sectors     = 360,
+                Sectors     = 800,
                 SectorSize  = 512,
                 Bootable    = true,
                 Clusters    = 170,
