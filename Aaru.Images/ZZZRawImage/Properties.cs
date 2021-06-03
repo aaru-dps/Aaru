@@ -195,7 +195,8 @@ namespace Aaru.DiscImages
                 {};
         public IEnumerable<string> KnownExtensions => new[]
         {
-            ".adf", ".adl", ".d81", ".dsk", ".hdf", ".ima", ".img", ".iso", ".ssd", ".st"
+            ".adf", ".adl", ".d81", ".dsk", ".hdf", ".ima", ".img", ".iso", ".ssd", ".st", ".1kn", ".2kn", ".4kn",
+            ".8kn", ".16kn", ".32kn", ".64kn", ".512e", ".512", ".128", ".256"
         };
         public bool   IsWriting    { get; private set; }
         public string ErrorMessage { get; private set; }

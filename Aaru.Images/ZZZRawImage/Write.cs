@@ -52,6 +52,27 @@ namespace Aaru.DiscImages
                 return false;
             }
 
+            _extension = Path.GetExtension(path)?.ToLower();
+
+            switch(_extension)
+            {
+                case ".1kn" when sectorSize  != 1024:
+                case ".2kn" when sectorSize  != 2048:
+                case ".4kn" when sectorSize  != 4096:
+                case ".8kn" when sectorSize  != 8192:
+                case ".16kn" when sectorSize != 16384:
+                case ".32kn" when sectorSize != 32768:
+                case ".64kn" when sectorSize != 65536:
+                case ".512" when sectorSize  != 515:
+                case ".512e" when sectorSize != 512:
+                case ".128" when sectorSize  != 128:
+                case ".256" when sectorSize  != 256:
+                case ".iso" when sectorSize  != 2048:
+                    ErrorMessage = "The specified sector size does not correspond with the requested image extension.";
+
+                    return false;
+            }
+
             if(!SupportedMediaTypes.Contains(mediaType))
             {
                 ErrorMessage = $"Unsupported media format {mediaType}";

@@ -40,11 +40,36 @@ namespace Aaru.DiscImages
     {
         public bool Identify(IFilter imageFilter)
         {
+            _extension = Path.GetExtension(imageFilter.GetFilename())?.ToLower();
+
+            switch(_extension)
+            {
+                case ".1kn":  return imageFilter.GetDataForkLength() % 1024  == 0;
+                case ".2kn":  return imageFilter.GetDataForkLength() % 2048  == 0;
+                case ".4kn":  return imageFilter.GetDataForkLength() % 4096  == 0;
+                case ".8kn":  return imageFilter.GetDataForkLength() % 8192  == 0;
+                case ".16kn": return imageFilter.GetDataForkLength() % 16384 == 0;
+                case ".32kn": return imageFilter.GetDataForkLength() % 32768 == 0;
+                case ".64kn": return imageFilter.GetDataForkLength() % 65536 == 0;
+                case ".512":
+                case ".512e": return imageFilter.GetDataForkLength() % 512 == 0;
+                case ".128": return imageFilter.GetDataForkLength() % 128 == 0;
+                case ".256": return imageFilter.GetDataForkLength() % 256 == 0;
+                case ".2352" when imageFilter.GetDataForkLength() % 2352 == 0 &&
+                                  imageFilter.GetDataForkLength()        <= 846720000:
+                case ".2448" when imageFilter.GetDataForkLength() % 2448 == 0 &&
+                                  imageFilter.GetDataForkLength()        <= 881280000:
+                    byte[] sync   = new byte[12];
+                    Stream stream = imageFilter.GetDataForkStream();
+                    stream.Position = 0;
+                    stream.Read(sync, 0, 12);
+
+                    return _cdSync.SequenceEqual(sync);
+            }
+
             // Check if file is not multiple of 512
             if(imageFilter.GetDataForkLength() % 512 == 0)
                 return true;
-
-            _extension = Path.GetExtension(imageFilter.GetFilename())?.ToLower();
 
             if(_extension                            == ".hdf" &&
                imageFilter.GetDataForkLength() % 256 == 0)

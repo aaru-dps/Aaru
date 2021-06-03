@@ -66,6 +66,56 @@ namespace Aaru.DiscImages
 
             switch(_extension)
             {
+                case ".1kn":
+                    _imageInfo.SectorSize = 1024;
+
+                    break;
+                case ".2kn":
+                    _imageInfo.SectorSize = 2048;
+
+                    break;
+                case ".4kn":
+                    _imageInfo.SectorSize = 4096;
+
+                    break;
+                case ".8kn":
+                    _imageInfo.SectorSize = 8192;
+
+                    break;
+                case ".16kn":
+                    _imageInfo.SectorSize = 16384;
+
+                    break;
+                case ".32kn":
+                    _imageInfo.SectorSize = 32768;
+
+                    break;
+                case ".64kn":
+                    _imageInfo.SectorSize = 65536;
+
+                    break;
+                case ".512":
+                case ".512e":
+                    _imageInfo.SectorSize = 512;
+
+                    break;
+                case ".128":
+                    _imageInfo.SectorSize = 128;
+
+                    break;
+                case ".256":
+                    _imageInfo.SectorSize = 256;
+
+                    break;
+                case ".2352":
+                    _imageInfo.SectorSize = 2352;
+
+                    break;
+                case ".2448":
+                    _imageInfo.SectorSize = 2448;
+
+                    break;
+
                 case ".iso" when imageFilter.GetDataForkLength() % 2048 == 0:
                     _imageInfo.SectorSize = 2048;
 
