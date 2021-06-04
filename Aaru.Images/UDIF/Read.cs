@@ -120,8 +120,6 @@ namespace Aaru.DiscImages
             List<byte[]> blkxList = new List<byte[]>();
             _chunks = new Dictionary<ulong, BlockChunk>();
 
-            bool fakeBlockChunks = false;
-
             byte[] vers = null;
 
             if(_footer.plistLen    == 0 &&
@@ -199,21 +197,38 @@ namespace Aaru.DiscImages
             }
             else
             {
-                // Obsolete read-only UDIF only prepended the header and then put the image without any kind of block references.
-                // So let's falsify a block chunk
-                var bChnk = new BlockChunk
-                {
-                    length  = _footer.dataForkLen,
-                    offset  = _footer.dataForkOff,
-                    sector  = 0,
-                    sectors = _footer.sectorCount,
-                    type    = CHUNK_TYPE_COPY
-                };
+                if(imageFilter.GetResourceForkLength() == 0)
+                    throw new Exception("This image needs the resource fork to work.");
 
-                _imageInfo.Sectors = _footer.sectorCount;
-                _chunks.Add(bChnk.sector, bChnk);
-                _buffersize     = 2048 * SECTOR_SIZE;
-                fakeBlockChunks = true;
+                AaruConsole.DebugWriteLine("UDIF plugin", "Reading resource fork.");
+                Stream rsrcStream = imageFilter.GetResourceForkStream();
+
+                byte[] rsrcB = new byte[rsrcStream.Length];
+                rsrcStream.Position = 0;
+                rsrcStream.Read(rsrcB, 0, rsrcB.Length);
+
+                var rsrc = new ResourceFork(rsrcB);
+
+                if(!rsrc.ContainsKey(BLOCK_OS_TYPE))
+                    throw new
+                        ImageNotSupportedException("Image resource fork doesn't contain UDIF block chunks. Please fill an issue and send it to us.");
+
+                Resource blkxRez = rsrc.GetResource(BLOCK_OS_TYPE);
+
+                if(blkxRez == null)
+                    throw new
+                        ImageNotSupportedException("Image resource fork doesn't contain UDIF block chunks. Please fill an issue and send it to us.");
+
+                if(blkxRez.GetIds().Length == 0)
+                    throw new
+                        ImageNotSupportedException("Image resource fork doesn't contain UDIF block chunks. Please fill an issue and send it to us.");
+
+                blkxList.AddRange(blkxRez.GetIds().Select(blkxId => blkxRez.GetResource(blkxId)));
+
+                Resource versRez = rsrc.GetResource(0x76657273);
+
+                if(versRez != null)
+                    vers = versRez.GetResource(versRez.GetIds()[0]);
             }
 
             if(vers != null)
@@ -268,100 +283,94 @@ namespace Aaru.DiscImages
             AaruConsole.DebugWriteLine("UDIF plugin", "Image application = {0} version {1}", _imageInfo.Application,
                                        _imageInfo.ApplicationVersion);
 
-            if(!fakeBlockChunks)
+            _imageInfo.Sectors = 0;
+
+            if(blkxList.Count == 0)
+                throw new
+                    ImageNotSupportedException("Could not retrieve block chunks. Please fill an issue and send it to us.");
+
+            _buffersize = 0;
+
+            foreach(byte[] blkxBytes in blkxList)
             {
-                _imageInfo.Sectors = 0;
+                var    bHdr  = new BlockHeader();
+                byte[] bHdrB = new byte[Marshal.SizeOf<BlockHeader>()];
+                Array.Copy(blkxBytes, 0, bHdrB, 0, Marshal.SizeOf<BlockHeader>());
+                bHdr = Marshal.ByteArrayToStructureBigEndian<BlockHeader>(bHdrB);
 
-                if(blkxList.Count == 0)
-                    throw new
-                        ImageNotSupportedException("Could not retrieve block chunks. Please fill an issue and send it to us.");
+                AaruConsole.DebugWriteLine("UDIF plugin", "bHdr.signature = 0x{0:X8}", bHdr.signature);
+                AaruConsole.DebugWriteLine("UDIF plugin", "bHdr.version = {0}", bHdr.version);
+                AaruConsole.DebugWriteLine("UDIF plugin", "bHdr.sectorStart = {0}", bHdr.sectorStart);
+                AaruConsole.DebugWriteLine("UDIF plugin", "bHdr.sectorCount = {0}", bHdr.sectorCount);
+                AaruConsole.DebugWriteLine("UDIF plugin", "bHdr.dataOffset = {0}", bHdr.dataOffset);
+                AaruConsole.DebugWriteLine("UDIF plugin", "bHdr.buffers = {0}", bHdr.buffers);
+                AaruConsole.DebugWriteLine("UDIF plugin", "bHdr.descriptor = 0x{0:X8}", bHdr.descriptor);
+                AaruConsole.DebugWriteLine("UDIF plugin", "bHdr.reserved1 = {0}", bHdr.reserved1);
+                AaruConsole.DebugWriteLine("UDIF plugin", "bHdr.reserved2 = {0}", bHdr.reserved2);
+                AaruConsole.DebugWriteLine("UDIF plugin", "bHdr.reserved3 = {0}", bHdr.reserved3);
+                AaruConsole.DebugWriteLine("UDIF plugin", "bHdr.reserved4 = {0}", bHdr.reserved4);
+                AaruConsole.DebugWriteLine("UDIF plugin", "bHdr.reserved5 = {0}", bHdr.reserved5);
+                AaruConsole.DebugWriteLine("UDIF plugin", "bHdr.reserved6 = {0}", bHdr.reserved6);
+                AaruConsole.DebugWriteLine("UDIF plugin", "bHdr.checksumType = {0}", bHdr.checksumType);
+                AaruConsole.DebugWriteLine("UDIF plugin", "bHdr.checksumLen = {0}", bHdr.checksumLen);
+                AaruConsole.DebugWriteLine("UDIF plugin", "bHdr.checksum = 0x{0:X8}", bHdr.checksum);
+                AaruConsole.DebugWriteLine("UDIF plugin", "bHdr.chunks = {0}", bHdr.chunks);
 
-                _buffersize = 0;
+                AaruConsole.DebugWriteLine("UDIF plugin", "bHdr.reservedChk is empty? = {0}",
+                                           ArrayHelpers.ArrayIsNullOrEmpty(bHdr.reservedChk));
 
-                foreach(byte[] blkxBytes in blkxList)
+                if(bHdr.buffers > _buffersize)
+                    _buffersize = bHdr.buffers * SECTOR_SIZE;
+
+                for(int i = 0; i < bHdr.chunks; i++)
                 {
-                    var    bHdr  = new BlockHeader();
-                    byte[] bHdrB = new byte[Marshal.SizeOf<BlockHeader>()];
-                    Array.Copy(blkxBytes, 0, bHdrB, 0, Marshal.SizeOf<BlockHeader>());
-                    bHdr = Marshal.ByteArrayToStructureBigEndian<BlockHeader>(bHdrB);
+                    var    bChnk  = new BlockChunk();
+                    byte[] bChnkB = new byte[Marshal.SizeOf<BlockChunk>()];
 
-                    AaruConsole.DebugWriteLine("UDIF plugin", "bHdr.signature = 0x{0:X8}", bHdr.signature);
-                    AaruConsole.DebugWriteLine("UDIF plugin", "bHdr.version = {0}", bHdr.version);
-                    AaruConsole.DebugWriteLine("UDIF plugin", "bHdr.sectorStart = {0}", bHdr.sectorStart);
-                    AaruConsole.DebugWriteLine("UDIF plugin", "bHdr.sectorCount = {0}", bHdr.sectorCount);
-                    AaruConsole.DebugWriteLine("UDIF plugin", "bHdr.dataOffset = {0}", bHdr.dataOffset);
-                    AaruConsole.DebugWriteLine("UDIF plugin", "bHdr.buffers = {0}", bHdr.buffers);
-                    AaruConsole.DebugWriteLine("UDIF plugin", "bHdr.descriptor = 0x{0:X8}", bHdr.descriptor);
-                    AaruConsole.DebugWriteLine("UDIF plugin", "bHdr.reserved1 = {0}", bHdr.reserved1);
-                    AaruConsole.DebugWriteLine("UDIF plugin", "bHdr.reserved2 = {0}", bHdr.reserved2);
-                    AaruConsole.DebugWriteLine("UDIF plugin", "bHdr.reserved3 = {0}", bHdr.reserved3);
-                    AaruConsole.DebugWriteLine("UDIF plugin", "bHdr.reserved4 = {0}", bHdr.reserved4);
-                    AaruConsole.DebugWriteLine("UDIF plugin", "bHdr.reserved5 = {0}", bHdr.reserved5);
-                    AaruConsole.DebugWriteLine("UDIF plugin", "bHdr.reserved6 = {0}", bHdr.reserved6);
-                    AaruConsole.DebugWriteLine("UDIF plugin", "bHdr.checksumType = {0}", bHdr.checksumType);
-                    AaruConsole.DebugWriteLine("UDIF plugin", "bHdr.checksumLen = {0}", bHdr.checksumLen);
-                    AaruConsole.DebugWriteLine("UDIF plugin", "bHdr.checksum = 0x{0:X8}", bHdr.checksum);
-                    AaruConsole.DebugWriteLine("UDIF plugin", "bHdr.chunks = {0}", bHdr.chunks);
+                    Array.Copy(blkxBytes, Marshal.SizeOf<BlockHeader>() + (Marshal.SizeOf<BlockChunk>() * i), bChnkB, 0,
+                               Marshal.SizeOf<BlockChunk>());
 
-                    AaruConsole.DebugWriteLine("UDIF plugin", "bHdr.reservedChk is empty? = {0}",
-                                               ArrayHelpers.ArrayIsNullOrEmpty(bHdr.reservedChk));
+                    bChnk = Marshal.ByteArrayToStructureBigEndian<BlockChunk>(bChnkB);
 
-                    if(bHdr.buffers > _buffersize)
-                        _buffersize = bHdr.buffers * SECTOR_SIZE;
+                    AaruConsole.DebugWriteLine("UDIF plugin", "bHdr.chunk[{0}].type = 0x{1:X8}", i, bChnk.type);
+                    AaruConsole.DebugWriteLine("UDIF plugin", "bHdr.chunk[{0}].comment = {1}", i, bChnk.comment);
+                    AaruConsole.DebugWriteLine("UDIF plugin", "bHdr.chunk[{0}].sector = {1}", i, bChnk.sector);
+                    AaruConsole.DebugWriteLine("UDIF plugin", "bHdr.chunk[{0}].sectors = {1}", i, bChnk.sectors);
+                    AaruConsole.DebugWriteLine("UDIF plugin", "bHdr.chunk[{0}].offset = {1}", i, bChnk.offset);
+                    AaruConsole.DebugWriteLine("UDIF plugin", "bHdr.chunk[{0}].length = {1}", i, bChnk.length);
 
-                    for(int i = 0; i < bHdr.chunks; i++)
+                    if(bChnk.type == CHUNK_TYPE_END)
+                        break;
+
+                    _imageInfo.Sectors += bChnk.sectors;
+
+                    // Chunk offset is relative
+                    bChnk.sector += bHdr.sectorStart;
+                    bChnk.offset += bHdr.dataOffset;
+
+                    switch(bChnk.type)
                     {
-                        var    bChnk  = new BlockChunk();
-                        byte[] bChnkB = new byte[Marshal.SizeOf<BlockChunk>()];
+                        // TODO: Handle comments
+                        case CHUNK_TYPE_COMMNT: continue;
 
-                        Array.Copy(blkxBytes, Marshal.SizeOf<BlockHeader>() + (Marshal.SizeOf<BlockChunk>() * i),
-                                   bChnkB, 0, Marshal.SizeOf<BlockChunk>());
-
-                        bChnk = Marshal.ByteArrayToStructureBigEndian<BlockChunk>(bChnkB);
-
-                        AaruConsole.DebugWriteLine("UDIF plugin", "bHdr.chunk[{0}].type = 0x{1:X8}", i, bChnk.type);
-                        AaruConsole.DebugWriteLine("UDIF plugin", "bHdr.chunk[{0}].comment = {1}", i, bChnk.comment);
-                        AaruConsole.DebugWriteLine("UDIF plugin", "bHdr.chunk[{0}].sector = {1}", i, bChnk.sector);
-                        AaruConsole.DebugWriteLine("UDIF plugin", "bHdr.chunk[{0}].sectors = {1}", i, bChnk.sectors);
-                        AaruConsole.DebugWriteLine("UDIF plugin", "bHdr.chunk[{0}].offset = {1}", i, bChnk.offset);
-                        AaruConsole.DebugWriteLine("UDIF plugin", "bHdr.chunk[{0}].length = {1}", i, bChnk.length);
-
-                        if(bChnk.type == CHUNK_TYPE_END)
-                            break;
-
-                        _imageInfo.Sectors += bChnk.sectors;
-
-                        // Chunk offset is relative
-                        bChnk.sector += bHdr.sectorStart;
-                        bChnk.offset += bHdr.dataOffset;
-
-                        switch(bChnk.type)
-                        {
-                            // TODO: Handle comments
-                            case CHUNK_TYPE_COMMNT: continue;
-
-                            // TODO: Handle compressed chunks
-                            case CHUNK_TYPE_KENCODE:
-                                throw new
-                                    ImageNotSupportedException("Chunks compressed with KenCode are not yet supported.");
-                            case CHUNK_TYPE_LZH:
-                                throw new
-                                    ImageNotSupportedException("Chunks compressed with LZH are not yet supported.");
-                            case CHUNK_TYPE_LZFSE:
-                                throw new
-                                    ImageNotSupportedException("Chunks compressed with lzfse are not yet supported.");
-                            case CHUNK_TYPE_LZMA:
-                                throw new
-                                    ImageNotSupportedException("Chunks compressed with lzma are not yet supported.");
-                        }
-
-                        if((bChnk.type > CHUNK_TYPE_NOCOPY && bChnk.type < CHUNK_TYPE_COMMNT) ||
-                           (bChnk.type > CHUNK_TYPE_LZMA   && bChnk.type < CHUNK_TYPE_END))
-                            throw new ImageNotSupportedException($"Unsupported chunk type 0x{bChnk.type:X8} found");
-
-                        if(bChnk.sectors > 0)
-                            _chunks.Add(bChnk.sector, bChnk);
+                        // TODO: Handle compressed chunks
+                        case CHUNK_TYPE_KENCODE:
+                            throw new
+                                ImageNotSupportedException("Chunks compressed with KenCode are not yet supported.");
+                        case CHUNK_TYPE_LZH:
+                            throw new ImageNotSupportedException("Chunks compressed with LZH are not yet supported.");
+                        case CHUNK_TYPE_LZFSE:
+                            throw new ImageNotSupportedException("Chunks compressed with lzfse are not yet supported.");
+                        case CHUNK_TYPE_LZMA:
+                            throw new ImageNotSupportedException("Chunks compressed with lzma are not yet supported.");
                     }
+
+                    if((bChnk.type > CHUNK_TYPE_NOCOPY && bChnk.type < CHUNK_TYPE_COMMNT) ||
+                       (bChnk.type > CHUNK_TYPE_LZMA   && bChnk.type < CHUNK_TYPE_END))
+                        throw new ImageNotSupportedException($"Unsupported chunk type 0x{bChnk.type:X8} found");
+
+                    if(bChnk.sectors > 0)
+                        _chunks.Add(bChnk.sector, bChnk);
                 }
             }
 
