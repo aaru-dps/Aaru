@@ -38,12 +38,12 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using Aaru.Commands;
+using Aaru.Commands.Archive;
 using Aaru.Commands.Database;
 using Aaru.Commands.Device;
 using Aaru.Commands.Filesystem;
 using Aaru.Commands.Image;
 using Aaru.Commands.Media;
-using Aaru.Commands.Archive;
 using Aaru.Console;
 using Aaru.Core;
 using Aaru.Database;
@@ -116,8 +116,8 @@ namespace Aaru
                 a.Bus
             }).Where(a => a.Count() > 1).Distinct().Select(a => a.Key))
                 ctx.RemoveRange(ctx.SeenDevices!.
-                                Where(d => d.Manufacturer == duplicate.Manufacturer && d.Model == duplicate.Model &&
-                                           d.Revision     == duplicate.Revision     && d.Bus == duplicate.Bus).Skip(1));
+                                    Where(d => d.Manufacturer == duplicate.Manufacturer && d.Model == duplicate.Model &&
+                                               d.Revision     == duplicate.Revision && d.Bus == duplicate.Bus).Skip(1));
 
             // Remove nulls
             ctx.RemoveRange(ctx.SeenDevices!.Where(d => d.Manufacturer == null && d.Model == null &&
@@ -152,9 +152,10 @@ namespace Aaru
                 UpdateCommand.DoUpdate(true);
             }
 
-            if((args.Length < 1 || args[0].ToLowerInvariant() != "gui") &&
-               Settings.Settings.Current.GdprCompliance < DicSettings.GDPR_LEVEL)
-                new ConfigureCommand(true, true).Invoke(args);
+            if((args.Length < 1 || args[0].ToLowerInvariant() != "gui")          &&
+               Settings.Settings.Current.GdprCompliance < DicSettings.GDPR_LEVEL &&
+               args[0].ToLowerInvariant()               != "configure")
+                new ConfigureCommand().DoConfigure(true);
 
             Statistics.LoadStats();
 
@@ -175,7 +176,7 @@ namespace Aaru
                 }, "Shows debug output from plugins.")
                 {
                     Argument = new Argument<bool>(() => false)
-                },
+                }
             };
 
             rootCommand.Description =
@@ -188,7 +189,7 @@ namespace Aaru
             rootCommand.AddCommand(new MediaFamily());
             rootCommand.AddCommand(new ArchiveFamily());
 
-            rootCommand.AddCommand(new ConfigureCommand(false, false));
+            rootCommand.AddCommand(new ConfigureCommand());
             rootCommand.AddCommand(new FormatsCommand());
             rootCommand.AddCommand(new ListEncodingsCommand());
             rootCommand.AddCommand(new ListNamespacesCommand());

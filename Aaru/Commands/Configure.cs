@@ -41,31 +41,24 @@ namespace Aaru.Commands
 {
     internal sealed class ConfigureCommand : Command
     {
-        readonly bool _autoCall;
-        readonly bool _gdprChange;
-
-        public ConfigureCommand(bool gdprChange, bool autoCall) : base("configure",
-                                                                       "Configures user settings and statistics.")
-        {
-            _gdprChange = gdprChange;
-            _autoCall   = autoCall;
-
+        public ConfigureCommand() : base("configure", "Configures user settings and statistics.") =>
             Handler = CommandHandler.Create((Func<bool, bool, int>)Invoke);
-        }
 
         int Invoke(bool debug, bool verbose)
         {
-            if(!_autoCall)
-            {
-                MainClass.PrintCopyright();
+            MainClass.PrintCopyright();
 
-                if(debug)
-                    AaruConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
+            if(debug)
+                AaruConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
 
-                if(verbose)
-                    AaruConsole.VerboseWriteLineEvent += System.Console.WriteLine;
-            }
+            if(verbose)
+                AaruConsole.VerboseWriteLineEvent += System.Console.WriteLine;
 
+            return DoConfigure(false);
+        }
+
+        internal int DoConfigure(bool _gdprChange)
+        {
             if(_gdprChange)
             {
                 AaruConsole.
