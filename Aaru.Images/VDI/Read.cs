@@ -82,6 +82,10 @@ namespace Aaru.DiscImages
             AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.snapshotUuid = {0}", _vHdr.snapshotUuid);
             AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.linkUuid = {0}", _vHdr.linkUuid);
             AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.parentUuid = {0}", _vHdr.parentUuid);
+            AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.logicalCylinders = {0}", _vHdr.logicalCylinders);
+            AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.logicalHeads = {0}", _vHdr.logicalHeads);
+            AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.logicalSpt = {0}", _vHdr.logicalSpt);
+            AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.logicalSectorSize = {0}", _vHdr.logicalSectorSize);
 
             if(_vHdr.imageType != VdiImageType.Normal)
                 throw new
@@ -146,9 +150,44 @@ namespace Aaru.DiscImages
 
             _imageStream = stream;
 
-            _imageInfo.Cylinders       = _vHdr.cylinders;
-            _imageInfo.Heads           = _vHdr.heads;
-            _imageInfo.SectorsPerTrack = _vHdr.spt;
+            if(_vHdr.headerSize >= 400)
+            {
+                _imageInfo.Cylinders       = _vHdr.logicalCylinders;
+                _imageInfo.Heads           = _vHdr.logicalHeads;
+                _imageInfo.SectorsPerTrack = _vHdr.logicalSpt;
+            }
+            else
+            {
+                _imageInfo.Cylinders       = _vHdr.cylinders;
+                _imageInfo.Heads           = _vHdr.heads;
+                _imageInfo.SectorsPerTrack = _vHdr.spt;
+            }
+
+            if(_imageInfo.Cylinders != 0)
+                return true;
+
+            // Same calculation as done by VirtualBox
+            _imageInfo.Cylinders       = (uint)(_imageInfo.Sectors / 16 / 63);
+            _imageInfo.Heads           = 16;
+            _imageInfo.SectorsPerTrack = 63;
+
+            while(_imageInfo.Cylinders == 0)
+            {
+                _imageInfo.Heads--;
+
+                if(_imageInfo.Heads == 0)
+                {
+                    _imageInfo.SectorsPerTrack--;
+                    _imageInfo.Heads = 16;
+                }
+
+                _vHdr.logicalCylinders = (uint)(_imageInfo.Sectors / _imageInfo.Heads / _imageInfo.SectorsPerTrack);
+
+                if(_imageInfo.Cylinders       == 0 &&
+                   _imageInfo.Heads           == 0 &&
+                   _imageInfo.SectorsPerTrack == 0)
+                    break;
+            }
 
             return true;
         }
@@ -162,8 +201,8 @@ namespace Aaru.DiscImages
             if(_sectorCache.TryGetValue(sectorAddress, out byte[] sector))
                 return sector;
 
-            ulong index  = (sectorAddress * _vHdr.sectorSize) / _vHdr.blockSize;
-            ulong secOff = (sectorAddress * _vHdr.sectorSize) % _vHdr.blockSize;
+            ulong index  = sectorAddress * _vHdr.sectorSize / _vHdr.blockSize;
+            ulong secOff = sectorAddress * _vHdr.sectorSize % _vHdr.blockSize;
 
             uint ibmOff = _ibm[(int)index];
 

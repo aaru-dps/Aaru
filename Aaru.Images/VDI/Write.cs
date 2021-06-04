@@ -63,7 +63,7 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            if((sectors * sectorSize) / DEFAULT_BLOCK_SIZE > uint.MaxValue)
+            if(sectors * sectorSize / DEFAULT_BLOCK_SIZE > uint.MaxValue)
             {
                 ErrorMessage = "Too many sectors for selected cluster size";
 
@@ -88,14 +88,14 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            uint ibmEntries = (uint)((sectors * sectorSize) / DEFAULT_BLOCK_SIZE);
+            uint ibmEntries = (uint)(sectors * sectorSize / DEFAULT_BLOCK_SIZE);
 
-            if((sectors * sectorSize) % DEFAULT_BLOCK_SIZE > 0)
+            if(sectors * sectorSize % DEFAULT_BLOCK_SIZE > 0)
                 ibmEntries++;
 
-            uint headerSectors = 1 + ((ibmEntries * 4) / sectorSize);
+            uint headerSectors = 1 + (ibmEntries * 4 / sectorSize);
 
-            if((ibmEntries * 4) % sectorSize != 0)
+            if(ibmEntries * 4 % sectorSize != 0)
                 headerSectors++;
 
             _ibm                    = new uint[ibmEntries];
@@ -162,8 +162,8 @@ namespace Aaru.DiscImages
             if(ArrayHelpers.ArrayIsNullOrEmpty(data))
                 return true;
 
-            ulong index  = (sectorAddress * _vHdr.sectorSize) / _vHdr.blockSize;
-            ulong secOff = (sectorAddress * _vHdr.sectorSize) % _vHdr.blockSize;
+            ulong index  = sectorAddress * _vHdr.sectorSize / _vHdr.blockSize;
+            ulong secOff = sectorAddress * _vHdr.sectorSize % _vHdr.blockSize;
 
             uint ibmOff = _ibm[index];
 
@@ -255,27 +255,27 @@ namespace Aaru.DiscImages
                 _vHdr.comments = _imageInfo.Comments.Length > 255 ? _imageInfo.Comments.Substring(0, 255)
                                      : _imageInfo.Comments;
 
-            if(_vHdr.cylinders == 0)
+            if(_vHdr.logicalCylinders == 0)
             {
-                _vHdr.cylinders = (uint)(_imageInfo.Sectors / 16 / 63);
-                _vHdr.heads     = 16;
-                _vHdr.spt       = 63;
+                _vHdr.logicalCylinders = (uint)(_imageInfo.Sectors / 16 / 63);
+                _vHdr.logicalHeads     = 16;
+                _vHdr.logicalSpt       = 63;
 
-                while(_vHdr.cylinders == 0)
+                while(_vHdr.logicalCylinders == 0)
                 {
-                    _vHdr.heads--;
+                    _vHdr.logicalHeads--;
 
-                    if(_vHdr.heads == 0)
+                    if(_vHdr.logicalHeads == 0)
                     {
-                        _vHdr.spt--;
-                        _vHdr.heads = 16;
+                        _vHdr.logicalSpt--;
+                        _vHdr.logicalHeads = 16;
                     }
 
-                    _vHdr.cylinders = (uint)(_imageInfo.Sectors / _vHdr.heads / _vHdr.spt);
+                    _vHdr.logicalCylinders = (uint)(_imageInfo.Sectors / _vHdr.logicalHeads / _vHdr.logicalSpt);
 
-                    if(_vHdr.cylinders == 0 &&
-                       _vHdr.heads     == 0 &&
-                       _vHdr.spt       == 0)
+                    if(_vHdr.logicalCylinders == 0 &&
+                       _vHdr.logicalHeads     == 0 &&
+                       _vHdr.logicalSpt       == 0)
                         break;
                 }
             }

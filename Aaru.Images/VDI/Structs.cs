@@ -69,6 +69,10 @@ namespace Aaru.DiscImages
             public          Guid  snapshotUuid;
             public readonly Guid  linkUuid;
             public readonly Guid  parentUuid;
+            public          uint  logicalCylinders;
+            public          uint  logicalHeads;
+            public          uint  logicalSpt;
+            public readonly uint  logicalSectorSize;
         }
     }
 }
