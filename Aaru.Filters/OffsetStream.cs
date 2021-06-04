@@ -62,6 +62,8 @@ namespace Aaru.Filters
 
             if(end > _baseStream.Length)
                 throw new ArgumentOutOfRangeException(nameof(end), "End is after stream end.");
+
+            _baseStream.Position = start;
         }
 
         public OffsetStream(string path, FileMode mode, FileAccess access, FileShare share, int bufferSize,
@@ -80,6 +82,8 @@ namespace Aaru.Filters
 
             if(end > _baseStream.Length)
                 throw new ArgumentOutOfRangeException(nameof(end), "End is after stream end.");
+
+            _baseStream.Position = start;
         }
 
         public OffsetStream(SafeFileHandle handle, FileAccess access, long start, long end)
@@ -97,6 +101,8 @@ namespace Aaru.Filters
 
             if(end > _baseStream.Length)
                 throw new ArgumentOutOfRangeException(nameof(end), "End is after stream end.");
+
+            _baseStream.Position = start;
         }
 
         public OffsetStream(SafeFileHandle handle, FileAccess access, int bufferSize, long start, long end)
@@ -114,6 +120,8 @@ namespace Aaru.Filters
 
             if(end > _baseStream.Length)
                 throw new ArgumentOutOfRangeException(nameof(end), "End is after stream end.");
+
+            _baseStream.Position = start;
         }
 
         public OffsetStream(SafeFileHandle handle, FileAccess access, int bufferSize, bool isAsync, long start,
@@ -132,6 +140,8 @@ namespace Aaru.Filters
 
             if(end > _baseStream.Length)
                 throw new ArgumentOutOfRangeException(nameof(end), "End is after stream end.");
+
+            _baseStream.Position = start;
         }
 
         public OffsetStream(string path, FileMode mode, FileAccess access, FileShare share, int bufferSize,
@@ -150,6 +160,8 @@ namespace Aaru.Filters
 
             if(end > _baseStream.Length)
                 throw new ArgumentOutOfRangeException(nameof(end), "End is after stream end.");
+
+            _baseStream.Position = start;
         }
 
         public OffsetStream(string path, FileMode mode, FileAccess access, FileShare share, int bufferSize, long start,
@@ -168,6 +180,8 @@ namespace Aaru.Filters
 
             if(end > _baseStream.Length)
                 throw new ArgumentOutOfRangeException(nameof(end), "End is after stream end.");
+
+            _baseStream.Position = start;
         }
 
         public OffsetStream(string path, FileMode mode, FileAccess access, FileShare share, long start, long end)
@@ -185,6 +199,8 @@ namespace Aaru.Filters
 
             if(end > _baseStream.Length)
                 throw new ArgumentOutOfRangeException(nameof(end), "End is after stream end.");
+
+            _baseStream.Position = start;
         }
 
         public OffsetStream(string path, FileMode mode, FileAccess access, long start, long end)
@@ -202,6 +218,8 @@ namespace Aaru.Filters
 
             if(end > _baseStream.Length)
                 throw new ArgumentOutOfRangeException(nameof(end), "End is after stream end.");
+
+            _baseStream.Position = start;
         }
 
         public OffsetStream(string path, FileMode mode, long start, long end)
@@ -219,6 +237,8 @@ namespace Aaru.Filters
 
             if(end > _baseStream.Length)
                 throw new ArgumentOutOfRangeException(nameof(end), "End is after stream end.");
+
+            _baseStream.Position = start;
         }
 
         public OffsetStream(byte[] buffer, int index, int count, bool writable, bool publiclyVisible, long start,
@@ -237,6 +257,8 @@ namespace Aaru.Filters
 
             if(end > _baseStream.Length)
                 throw new ArgumentOutOfRangeException(nameof(end), "End is after stream end.");
+
+            _baseStream.Position = start;
         }
 
         public OffsetStream(byte[] buffer, int index, int count, bool writable, long start, long end)
@@ -254,6 +276,8 @@ namespace Aaru.Filters
 
             if(end > _baseStream.Length)
                 throw new ArgumentOutOfRangeException(nameof(end), "End is after stream end.");
+
+            _baseStream.Position = start;
         }
 
         public OffsetStream(byte[] buffer, int index, int count, long start, long end)
@@ -271,6 +295,8 @@ namespace Aaru.Filters
 
             if(end > _baseStream.Length)
                 throw new ArgumentOutOfRangeException(nameof(end), "End is after stream end.");
+
+            _baseStream.Position = start;
         }
 
         public OffsetStream(byte[] buffer, bool writable, long start, long end)
@@ -288,6 +314,8 @@ namespace Aaru.Filters
 
             if(end > _baseStream.Length)
                 throw new ArgumentOutOfRangeException(nameof(end), "End is after stream end.");
+
+            _baseStream.Position = start;
         }
 
         public OffsetStream(byte[] buffer, long start, long end)
@@ -305,6 +333,8 @@ namespace Aaru.Filters
 
             if(end > _baseStream.Length)
                 throw new ArgumentOutOfRangeException(nameof(end), "End is after stream end.");
+
+            _baseStream.Position = start;
         }
 
         public override bool CanRead => _baseStream.CanRead;
@@ -313,7 +343,7 @@ namespace Aaru.Filters
 
         public override bool CanWrite => _baseStream.CanWrite;
 
-        public override long Length => (_streamEnd - _streamStart) + 1;
+        public override long Length => _streamEnd - _streamStart + 1;
 
         public override long Position
         {
@@ -324,7 +354,7 @@ namespace Aaru.Filters
                 if(value + _streamStart > _streamEnd)
                     throw new IOException("Cannot set position past stream end.");
 
-                _baseStream.Position = value;
+                _baseStream.Position = value + _streamStart;
             }
         }
 
