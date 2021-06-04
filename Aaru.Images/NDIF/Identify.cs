@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using System.IO;
 using Aaru.CommonTypes.Interfaces;
 using Claunia.RsrcFork;
 
@@ -52,6 +53,13 @@ namespace Aaru.DiscImages
                     return false;
 
                 Resource rsrc = rsrcFork.GetResource(NDIF_RESOURCE);
+
+                Stream dataFork  = imageFilter.GetDataForkStream();
+                byte[] udifMagic = new byte[4];
+                dataFork.Read(udifMagic, 0, 4);
+
+                if(BitConverter.ToUInt32(udifMagic, 0) == 0x796C6F6B)
+                    return false;
 
                 if(rsrc.ContainsId(NDIF_RESOURCEID))
                     return true;
