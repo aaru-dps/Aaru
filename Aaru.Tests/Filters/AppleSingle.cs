@@ -38,7 +38,7 @@ namespace Aaru.Tests.Filters
     {
         const    string EXPECTED_FILE     = "7497a3b156dcd0c1046a1ab12e188ab7";
         const    string EXPECTED_CONTENTS = "c2be571406cf6353269faa59a4a8c0a4";
-        const    string EXPECTED_RESOURCE = "a972d27c44193a7587b21416c0953cc3";
+        const    string EXPECTED_RESOURCE = "c689c58945169065483d94e39583d416";
         readonly string _location;
 
         public AppleSingle() =>
