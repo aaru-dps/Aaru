@@ -430,7 +430,7 @@ namespace Aaru.DiscImages
                 if(!_chunkCache.TryGetValue(chunkStartSector, out byte[] buffer))
                 {
                     byte[] cmpBuffer = new byte[readChunk.length];
-                    _imageStream.Seek((long)readChunk.offset, SeekOrigin.Begin);
+                    _imageStream.Seek((long)(readChunk.offset + _footer.dataForkOff), SeekOrigin.Begin);
                     _imageStream.Read(cmpBuffer, 0, cmpBuffer.Length);
                     var    cmpMs     = new MemoryStream(cmpBuffer);
                     Stream decStream = null;
@@ -538,7 +538,7 @@ namespace Aaru.DiscImages
 
                     return sector;
                 case CHUNK_TYPE_COPY:
-                    _imageStream.Seek((long)readChunk.offset + relOff, SeekOrigin.Begin);
+                    _imageStream.Seek((long)(readChunk.offset + (ulong)relOff + _footer.dataForkOff), SeekOrigin.Begin);
                     sector = new byte[SECTOR_SIZE];
                     _imageStream.Read(sector, 0, sector.Length);
 
