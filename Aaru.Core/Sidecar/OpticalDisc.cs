@@ -40,6 +40,7 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Metadata;
 using Aaru.CommonTypes.Structs;
+using Aaru.Core.Devices.Dumping;
 using Aaru.Decoders.CD;
 using Aaru.Decoders.DVD;
 using Schemas;
@@ -107,17 +108,14 @@ namespace Aaru.Core
                 if(_aborted)
                     return;
 
+                byte[] tag = image.ReadDiskTag(tagType);
+
+                Dump.AddMediaTagToSidecar(imagePath, tagType, tag, ref sidecar);
+
                 switch(tagType)
                 {
                     case MediaTagType.CD_ATIP:
-                        sidecar.OpticalDisc[0].ATIP = new DumpType
-                        {
-                            Image     = Path.GetFileName(imagePath),
-                            Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.CD_ATIP)).ToArray(),
-                            Size      = (ulong)image.ReadDiskTag(MediaTagType.CD_ATIP).Length
-                        };
-
-                        ATIP.CDATIP atip = ATIP.Decode(image.ReadDiskTag(MediaTagType.CD_ATIP));
+                        ATIP.CDATIP atip = ATIP.Decode(tag);
 
                         if(atip != null)
                             if(atip.DDCD)
@@ -126,62 +124,8 @@ namespace Aaru.Core
                                 dskType = atip.DiscType ? MediaType.CDRW : MediaType.CDR;
 
                         break;
-                    case MediaTagType.DVD_BCA:
-                        sidecar.OpticalDisc[0].BCA = new DumpType
-                        {
-                            Image     = Path.GetFileName(imagePath),
-                            Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.DVD_BCA)).ToArray(),
-                            Size      = (ulong)image.ReadDiskTag(MediaTagType.DVD_BCA).Length
-                        };
-
-                        break;
-                    case MediaTagType.BD_BCA:
-                        sidecar.OpticalDisc[0].BCA = new DumpType
-                        {
-                            Image     = Path.GetFileName(imagePath),
-                            Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.BD_BCA)).ToArray(),
-                            Size      = (ulong)image.ReadDiskTag(MediaTagType.BD_BCA).Length
-                        };
-
-                        break;
-                    case MediaTagType.DVD_CMI:
-                        sidecar.OpticalDisc[0].CMI = new DumpType
-                        {
-                            Image     = Path.GetFileName(imagePath),
-                            Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.DVD_CMI)).ToArray(),
-                            Size      = (ulong)image.ReadDiskTag(MediaTagType.DVD_CMI).Length
-                        };
-
-                        CSS_CPRM.LeadInCopyright? cmi =
-                            CSS_CPRM.DecodeLeadInCopyright(image.ReadDiskTag(MediaTagType.DVD_CMI));
-
-                        if(cmi.HasValue)
-                            switch(cmi.Value.CopyrightType)
-                            {
-                                case CopyrightType.AACS:
-                                    sidecar.OpticalDisc[0].CopyProtection = "AACS";
-
-                                    break;
-                                case CopyrightType.CSS:
-                                    sidecar.OpticalDisc[0].CopyProtection = "CSS";
-
-                                    break;
-                                case CopyrightType.CPRM:
-                                    sidecar.OpticalDisc[0].CopyProtection = "CPRM";
-
-                                    break;
-                            }
-
-                        break;
                     case MediaTagType.DVD_DMI:
-                        sidecar.OpticalDisc[0].DMI = new DumpType
-                        {
-                            Image     = Path.GetFileName(imagePath),
-                            Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.DVD_DMI)).ToArray(),
-                            Size      = (ulong)image.ReadDiskTag(MediaTagType.DVD_DMI).Length
-                        };
-
-                        if(DMI.IsXbox(image.ReadDiskTag(MediaTagType.DVD_DMI)))
+                        if(DMI.IsXbox(tag))
                         {
                             dskType = MediaType.XGD;
 
@@ -191,7 +135,7 @@ namespace Aaru.Core
                                 Thickness = 1.2
                             };
                         }
-                        else if(DMI.IsXbox360(image.ReadDiskTag(MediaTagType.DVD_DMI)))
+                        else if(DMI.IsXbox360(tag))
                         {
                             dskType = MediaType.XGD2;
 
@@ -204,14 +148,7 @@ namespace Aaru.Core
 
                         break;
                     case MediaTagType.DVD_PFI:
-                        sidecar.OpticalDisc[0].PFI = new DumpType
-                        {
-                            Image     = Path.GetFileName(imagePath),
-                            Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.DVD_PFI)).ToArray(),
-                            Size      = (ulong)image.ReadDiskTag(MediaTagType.DVD_PFI).Length
-                        };
-
-                        PFI.PhysicalFormatInformation? pfi = PFI.Decode(image.ReadDiskTag(MediaTagType.DVD_PFI));
+                        PFI.PhysicalFormatInformation? pfi = PFI.Decode(tag);
 
                         if(pfi.HasValue)
                             if(dskType != MediaType.XGD    &&
@@ -320,97 +257,6 @@ namespace Aaru.Core
                                             break;
                                     }
                             }
-
-                        break;
-                    case MediaTagType.CD_PMA:
-                        sidecar.OpticalDisc[0].PMA = new DumpType
-                        {
-                            Image     = Path.GetFileName(imagePath),
-                            Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.CD_PMA)).ToArray(),
-                            Size      = (ulong)image.ReadDiskTag(MediaTagType.CD_PMA).Length
-                        };
-
-                        break;
-                    case MediaTagType.CD_FullTOC:
-                        sidecar.OpticalDisc[0].TOC = new DumpType
-                        {
-                            Image     = Path.GetFileName(imagePath),
-                            Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.CD_FullTOC)).ToArray(),
-                            Size      = (ulong)image.ReadDiskTag(MediaTagType.CD_FullTOC).Length
-                        };
-
-                        break;
-                    case MediaTagType.CD_FirstTrackPregap:
-                        sidecar.OpticalDisc[0].FirstTrackPregrap = new[]
-                        {
-                            new BorderType
-                            {
-                                Image = Path.GetFileName(imagePath),
-                                Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.CD_FirstTrackPregap)).
-                                                     ToArray(),
-                                Size = (ulong)image.ReadDiskTag(MediaTagType.CD_FirstTrackPregap).Length
-                            }
-                        };
-
-                        break;
-                    case MediaTagType.CD_LeadIn:
-                        sidecar.OpticalDisc[0].LeadIn = new[]
-                        {
-                            new BorderType
-                            {
-                                Image     = Path.GetFileName(imagePath),
-                                Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.CD_LeadIn)).ToArray(),
-                                Size      = (ulong)image.ReadDiskTag(MediaTagType.CD_LeadIn).Length
-                            }
-                        };
-
-                        break;
-                    case MediaTagType.Xbox_SecuritySector:
-                        sidecar.OpticalDisc[0].Xbox ??= new XboxType();
-
-                        sidecar.OpticalDisc[0].Xbox.SecuritySectors = new[]
-                        {
-                            new XboxSecuritySectorsType
-                            {
-                                RequestNumber  = 0,
-                                RequestVersion = 1,
-                                SecuritySectors = new DumpType
-                                {
-                                    Image = Path.GetFileName(imagePath),
-                                    Checksums = Checksum.
-                                                GetChecksums(image.ReadDiskTag(MediaTagType.Xbox_SecuritySector)).
-                                                ToArray(),
-                                    Size = (ulong)image.ReadDiskTag(MediaTagType.Xbox_SecuritySector).Length
-                                }
-                            }
-                        };
-
-                        break;
-                    case MediaTagType.Xbox_PFI:
-                        sidecar.OpticalDisc[0].Xbox ??= new XboxType();
-
-                        sidecar.OpticalDisc[0].Xbox.PFI = new DumpType
-                        {
-                            Image     = Path.GetFileName(imagePath),
-                            Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.Xbox_PFI)).ToArray(),
-                            Size      = (ulong)image.ReadDiskTag(MediaTagType.Xbox_PFI).Length
-                        };
-
-                        break;
-                    case MediaTagType.Xbox_DMI:
-                        sidecar.OpticalDisc[0].Xbox ??= new XboxType();
-
-                        sidecar.OpticalDisc[0].Xbox.DMI = new DumpType
-                        {
-                            Image     = Path.GetFileName(imagePath),
-                            Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.Xbox_DMI)).ToArray(),
-                            Size      = (ulong)image.ReadDiskTag(MediaTagType.Xbox_DMI).Length
-                        };
-
-                        break;
-                    case MediaTagType.CD_MCN:
-                        sidecar.OpticalDisc[0].MediaCatalogueNumber =
-                            Encoding.ASCII.GetString(image.ReadDiskTag(MediaTagType.CD_MCN));
 
                         break;
                 }

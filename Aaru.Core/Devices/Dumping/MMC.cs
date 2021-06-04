@@ -530,7 +530,7 @@ namespace Aaru.Core.Devices.Dumping
 
                                     sense = dvdDecrypt.ReadBusKey(out cmdBuf, out _,
                                                                   CSS_CPRM.DecodeLeadInCopyright(cmdBuf)!.Value.
-                                                                      CopyrightType, _dev.Timeout, out _);
+                                                                           CopyrightType, _dev.Timeout, out _);
 
                                     if(!sense)
                                     {
@@ -861,17 +861,18 @@ namespace Aaru.Core.Devices.Dumping
             Sbc(mediaTags, dskType, true, dvdDecrypt);
         }
 
-        static void AddMediaTagToSidecar(string outputPath, KeyValuePair<MediaTagType, byte[]> tag,
-                                         ref CICMMetadataType sidecar)
+        // TODO: Move somewhere else
+        internal static void AddMediaTagToSidecar(string outputPath, MediaTagType tagType, byte[] tag,
+                                                  ref CICMMetadataType sidecar)
         {
-            switch(tag.Key)
+            switch(tagType)
             {
                 case MediaTagType.DVD_PFI:
                     sidecar.OpticalDisc[0].PFI = new DumpType
                     {
                         Image     = outputPath,
-                        Size      = (ulong)tag.Value.Length,
-                        Checksums = Checksum.GetChecksums(tag.Value).ToArray()
+                        Size      = (ulong)tag.Length,
+                        Checksums = Checksum.GetChecksums(tag).ToArray()
                     };
 
                     break;
@@ -879,8 +880,8 @@ namespace Aaru.Core.Devices.Dumping
                     sidecar.OpticalDisc[0].DMI = new DumpType
                     {
                         Image     = outputPath,
-                        Size      = (ulong)tag.Value.Length,
-                        Checksums = Checksum.GetChecksums(tag.Value).ToArray()
+                        Size      = (ulong)tag.Length,
+                        Checksums = Checksum.GetChecksums(tag).ToArray()
                     };
 
                     break;
@@ -889,14 +890,14 @@ namespace Aaru.Core.Devices.Dumping
                     sidecar.OpticalDisc[0].CMI = new DumpType
                     {
                         Image     = outputPath,
-                        Size      = (ulong)tag.Value.Length,
-                        Checksums = Checksum.GetChecksums(tag.Value).ToArray()
+                        Size      = (ulong)tag.Length,
+                        Checksums = Checksum.GetChecksums(tag).ToArray()
                     };
 
-                    byte[] tmp = new byte[tag.Value.Length + 4];
-                    Array.Copy(tag.Value, 0, tmp, 4, tag.Value.Length);
-                    tmp[0] = (byte)((tag.Value.Length & 0xFF00) >> 8);
-                    tmp[1] = (byte)(tag.Value.Length & 0xFF);
+                    byte[] tmp = new byte[tag.Length + 4];
+                    Array.Copy(tag, 0, tmp, 4, tag.Length);
+                    tmp[0] = (byte)((tag.Length & 0xFF00) >> 8);
+                    tmp[1] = (byte)(tag.Length & 0xFF);
 
                     CSS_CPRM.LeadInCopyright? cpy = CSS_CPRM.DecodeLeadInCopyright(tmp);
 
@@ -910,8 +911,8 @@ namespace Aaru.Core.Devices.Dumping
                     sidecar.OpticalDisc[0].BCA = new DumpType
                     {
                         Image     = outputPath,
-                        Size      = (ulong)tag.Value.Length,
-                        Checksums = Checksum.GetChecksums(tag.Value).ToArray()
+                        Size      = (ulong)tag.Length,
+                        Checksums = Checksum.GetChecksums(tag).ToArray()
                     };
 
                     break;
@@ -920,8 +921,8 @@ namespace Aaru.Core.Devices.Dumping
                     sidecar.OpticalDisc[0].DDS = new DumpType
                     {
                         Image     = outputPath,
-                        Size      = (ulong)tag.Value.Length,
-                        Checksums = Checksum.GetChecksums(tag.Value).ToArray()
+                        Size      = (ulong)tag.Length,
+                        Checksums = Checksum.GetChecksums(tag).ToArray()
                     };
 
                     break;
@@ -930,8 +931,8 @@ namespace Aaru.Core.Devices.Dumping
                     sidecar.OpticalDisc[0].SAI = new DumpType
                     {
                         Image     = outputPath,
-                        Size      = (ulong)tag.Value.Length,
-                        Checksums = Checksum.GetChecksums(tag.Value).ToArray()
+                        Size      = (ulong)tag.Length,
+                        Checksums = Checksum.GetChecksums(tag).ToArray()
                     };
 
                     break;
@@ -939,8 +940,8 @@ namespace Aaru.Core.Devices.Dumping
                     sidecar.OpticalDisc[0].PRI = new DumpType
                     {
                         Image     = outputPath,
-                        Size      = (ulong)tag.Value.Length,
-                        Checksums = Checksum.GetChecksums(tag.Value).ToArray()
+                        Size      = (ulong)tag.Length,
+                        Checksums = Checksum.GetChecksums(tag).ToArray()
                     };
 
                     break;
@@ -948,8 +949,8 @@ namespace Aaru.Core.Devices.Dumping
                     sidecar.OpticalDisc[0].MediaID = new DumpType
                     {
                         Image     = outputPath,
-                        Size      = (ulong)tag.Value.Length,
-                        Checksums = Checksum.GetChecksums(tag.Value).ToArray()
+                        Size      = (ulong)tag.Length,
+                        Checksums = Checksum.GetChecksums(tag).ToArray()
                     };
 
                     break;
@@ -957,8 +958,8 @@ namespace Aaru.Core.Devices.Dumping
                     sidecar.OpticalDisc[0].PFIR = new DumpType
                     {
                         Image     = outputPath,
-                        Size      = (ulong)tag.Value.Length,
-                        Checksums = Checksum.GetChecksums(tag.Value).ToArray()
+                        Size      = (ulong)tag.Length,
+                        Checksums = Checksum.GetChecksums(tag).ToArray()
                     };
 
                     break;
@@ -966,8 +967,8 @@ namespace Aaru.Core.Devices.Dumping
                     sidecar.OpticalDisc[0].ADIP = new DumpType
                     {
                         Image     = outputPath,
-                        Size      = (ulong)tag.Value.Length,
-                        Checksums = Checksum.GetChecksums(tag.Value).ToArray()
+                        Size      = (ulong)tag.Length,
+                        Checksums = Checksum.GetChecksums(tag).ToArray()
                     };
 
                     break;
@@ -975,8 +976,8 @@ namespace Aaru.Core.Devices.Dumping
                     sidecar.OpticalDisc[0].DCB = new DumpType
                     {
                         Image     = outputPath,
-                        Size      = (ulong)tag.Value.Length,
-                        Checksums = Checksum.GetChecksums(tag.Value).ToArray()
+                        Size      = (ulong)tag.Length,
+                        Checksums = Checksum.GetChecksums(tag).ToArray()
                     };
 
                     break;
@@ -984,8 +985,8 @@ namespace Aaru.Core.Devices.Dumping
                     sidecar.OpticalDisc[0].DI = new DumpType
                     {
                         Image     = outputPath,
-                        Size      = (ulong)tag.Value.Length,
-                        Checksums = Checksum.GetChecksums(tag.Value).ToArray()
+                        Size      = (ulong)tag.Length,
+                        Checksums = Checksum.GetChecksums(tag).ToArray()
                     };
 
                     break;
@@ -1001,8 +1002,8 @@ namespace Aaru.Core.Devices.Dumping
                             SecuritySectors = new DumpType
                             {
                                 Image     = outputPath,
-                                Size      = (ulong)tag.Value.Length,
-                                Checksums = Checksum.GetChecksums(tag.Value).ToArray()
+                                Size      = (ulong)tag.Length,
+                                Checksums = Checksum.GetChecksums(tag).ToArray()
                             }
                         }
                     };
@@ -1014,8 +1015,8 @@ namespace Aaru.Core.Devices.Dumping
                     sidecar.OpticalDisc[0].Xbox.PFI = new DumpType
                     {
                         Image     = outputPath,
-                        Size      = (ulong)tag.Value.Length,
-                        Checksums = Checksum.GetChecksums(tag.Value).ToArray()
+                        Size      = (ulong)tag.Length,
+                        Checksums = Checksum.GetChecksums(tag).ToArray()
                     };
 
                     break;
@@ -1025,8 +1026,8 @@ namespace Aaru.Core.Devices.Dumping
                     sidecar.OpticalDisc[0].Xbox.DMI = new DumpType
                     {
                         Image     = outputPath,
-                        Size      = (ulong)tag.Value.Length,
-                        Checksums = Checksum.GetChecksums(tag.Value).ToArray()
+                        Size      = (ulong)tag.Length,
+                        Checksums = Checksum.GetChecksums(tag).ToArray()
                     };
 
                     break;
@@ -1034,8 +1035,8 @@ namespace Aaru.Core.Devices.Dumping
                     sidecar.OpticalDisc[0].TOC = new DumpType
                     {
                         Image     = outputPath,
-                        Size      = (ulong)tag.Value.Length,
-                        Checksums = Checksum.GetChecksums(tag.Value).ToArray()
+                        Size      = (ulong)tag.Length,
+                        Checksums = Checksum.GetChecksums(tag).ToArray()
                     };
 
                     break;
@@ -1043,8 +1044,8 @@ namespace Aaru.Core.Devices.Dumping
                     sidecar.OpticalDisc[0].ATIP = new DumpType
                     {
                         Image     = outputPath,
-                        Size      = (ulong)tag.Value.Length,
-                        Checksums = Checksum.GetChecksums(tag.Value).ToArray()
+                        Size      = (ulong)tag.Length,
+                        Checksums = Checksum.GetChecksums(tag).ToArray()
                     };
 
                     break;
@@ -1052,8 +1053,8 @@ namespace Aaru.Core.Devices.Dumping
                     sidecar.OpticalDisc[0].PMA = new DumpType
                     {
                         Image     = outputPath,
-                        Size      = (ulong)tag.Value.Length,
-                        Checksums = Checksum.GetChecksums(tag.Value).ToArray()
+                        Size      = (ulong)tag.Length,
+                        Checksums = Checksum.GetChecksums(tag).ToArray()
                     };
 
                     break;
@@ -1061,8 +1062,8 @@ namespace Aaru.Core.Devices.Dumping
                     sidecar.OpticalDisc[0].LeadInCdText = new DumpType
                     {
                         Image     = outputPath,
-                        Size      = (ulong)tag.Value.Length,
-                        Checksums = Checksum.GetChecksums(tag.Value).ToArray()
+                        Size      = (ulong)tag.Length,
+                        Checksums = Checksum.GetChecksums(tag).ToArray()
                     };
 
                     break;
@@ -1072,8 +1073,8 @@ namespace Aaru.Core.Devices.Dumping
                         new BorderType
                         {
                             Image     = outputPath,
-                            Size      = (ulong)tag.Value.Length,
-                            Checksums = Checksum.GetChecksums(tag.Value).ToArray()
+                            Size      = (ulong)tag.Length,
+                            Checksums = Checksum.GetChecksums(tag).ToArray()
                         }
                     };
 
@@ -1084,8 +1085,8 @@ namespace Aaru.Core.Devices.Dumping
                         new BorderType
                         {
                             Image     = outputPath,
-                            Size      = (ulong)tag.Value.Length,
-                            Checksums = Checksum.GetChecksums(tag.Value).ToArray()
+                            Size      = (ulong)tag.Length,
+                            Checksums = Checksum.GetChecksums(tag).ToArray()
                         }
                     };
 

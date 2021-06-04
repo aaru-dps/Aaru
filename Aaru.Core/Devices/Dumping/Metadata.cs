@@ -93,7 +93,7 @@ namespace Aaru.Core.Devices.Dumping
             _dumpLog.WriteLine("Sidecar created in {0} seconds.", (end - chkStart).TotalSeconds);
 
             _dumpLog.WriteLine("Average checksum speed {0:F3} KiB/sec.",
-                               ((double)blockSize * (double)(blocks + 1)) / 1024 / (totalChkDuration / 1000));
+                               blockSize * (double)(blocks + 1) / 1024 / (totalChkDuration / 1000));
 
             if(_preSidecar != null)
             {
@@ -135,7 +135,7 @@ namespace Aaru.Core.Devices.Dumping
             if(mediaTags != null)
                 foreach(KeyValuePair<MediaTagType, byte[]> tag in mediaTags.Where(tag => _outputPlugin.
                     SupportedMediaTags.Contains(tag.Key)))
-                    AddMediaTagToSidecar(_outputPath, tag, ref sidecar);
+                    AddMediaTagToSidecar(_outputPath, tag.Key, tag.Value, ref sidecar);
 
             UpdateStatus?.Invoke("Writing metadata sidecar");
 
