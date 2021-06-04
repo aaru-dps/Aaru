@@ -2,7 +2,7 @@
 // Aaru Data Preservation Suite
 // ----------------------------------------------------------------------------
 //
-// Filename       : UDRO.cs
+// Filename       : UDRAW.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // Component      : Aaru unit testing.
@@ -35,17 +35,17 @@ using NUnit.Framework;
 namespace Aaru.Tests.Images.DiskCopy65
 {
     [TestFixture]
-    public class UDRO : BlockMediaImageTest
+    public class UDRAW : BlockMediaImageTest
     {
         public override string DataFolder =>
-            Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "DiskCopy 6.5", "UDIF", "UDRO");
+            Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "DiskCopy 6.5", "UDIF", "UDRAW");
         public override IMediaImage _plugin => new Udif();
 
         public override BlockImageTestExpected[] Tests => new[]
         {
             new BlockImageTestExpected
             {
-                TestFile   = "DC6_UDRO_DOS_1440.dmg",
+                TestFile   = "DC6_UDRAW_DOS_1440.dmg",
                 MediaType  = MediaType.GENERIC_HDD,
                 Sectors    = 2884,
                 SectorSize = 512,
@@ -53,7 +53,7 @@ namespace Aaru.Tests.Images.DiskCopy65
             },
             new BlockImageTestExpected
             {
-                TestFile   = "DC6_UDRO_DOS_720.dmg",
+                TestFile   = "DC6_UDRAW_DOS_720.dmg",
                 MediaType  = MediaType.GENERIC_HDD,
                 Sectors    = 1444,
                 SectorSize = 512,
@@ -61,7 +61,7 @@ namespace Aaru.Tests.Images.DiskCopy65
             },
             new BlockImageTestExpected
             {
-                TestFile   = "DC6_UDRO_DOS_DMF.dmg",
+                TestFile   = "DC6_UDRAW_DOS_DMF.dmg",
                 MediaType  = MediaType.GENERIC_HDD,
                 Sectors    = 3364,
                 SectorSize = 512,
@@ -69,7 +69,7 @@ namespace Aaru.Tests.Images.DiskCopy65
             },
             new BlockImageTestExpected
             {
-                TestFile   = "DC6_UDRO_HFS_1440.dmg",
+                TestFile   = "DC6_UDRAW_HFS_1440.dmg",
                 MediaType  = MediaType.GENERIC_HDD,
                 Sectors    = 2884,
                 SectorSize = 512,
@@ -77,7 +77,7 @@ namespace Aaru.Tests.Images.DiskCopy65
             },
             new BlockImageTestExpected
             {
-                TestFile   = "DC6_UDRO_HFS_800.dmg",
+                TestFile   = "DC6_UDRAW_HFS_800.dmg",
                 MediaType  = MediaType.GENERIC_HDD,
                 Sectors    = 1604,
                 SectorSize = 512,
@@ -85,7 +85,7 @@ namespace Aaru.Tests.Images.DiskCopy65
             },
             new BlockImageTestExpected
             {
-                TestFile   = "DC6_UDRO_HFS_DMF.dmg",
+                TestFile   = "DC6_UDRAW_HFS_DMF.dmg",
                 MediaType  = MediaType.GENERIC_HDD,
                 Sectors    = 3364,
                 SectorSize = 512,
@@ -93,7 +93,7 @@ namespace Aaru.Tests.Images.DiskCopy65
             },
             new BlockImageTestExpected
             {
-                TestFile   = "DC6_UDRO_PD_1440.dmg",
+                TestFile   = "DC6_UDRAW_PD_1440.dmg",
                 MediaType  = MediaType.GENERIC_HDD,
                 Sectors    = 2884,
                 SectorSize = 512,
@@ -101,7 +101,7 @@ namespace Aaru.Tests.Images.DiskCopy65
             },
             new BlockImageTestExpected
             {
-                TestFile   = "DC6_UDRO_PD_800.dmg",
+                TestFile   = "DC6_UDRAW_PD_800.dmg",
                 MediaType  = MediaType.GENERIC_HDD,
                 Sectors    = 1604,
                 SectorSize = 512,
@@ -109,7 +109,7 @@ namespace Aaru.Tests.Images.DiskCopy65
             },
             new BlockImageTestExpected
             {
-                TestFile   = "DC6_UDRO_PD_DMF.dmg",
+                TestFile   = "DC6_UDRAW_PD_DMF.dmg",
                 MediaType  = MediaType.GENERIC_HDD,
                 Sectors    = 3364,
                 SectorSize = 512,

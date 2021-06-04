@@ -45,75 +45,75 @@ namespace Aaru.Tests.Images.DiskCopy65
         {
             new BlockImageTestExpected
             {
-                TestFile   = "DC6_UDCO_DOS_1440.img.lz",
-                MediaType  = MediaType.DOS_35_HD,
-                Sectors    = 2880,
+                TestFile   = "DC6_UDCO_DOS_1440.dmg",
+                MediaType  = MediaType.GENERIC_HDD,
+                Sectors    = 2884,
                 SectorSize = 512,
-                MD5        = "ff419213080574056ebd9adf7bab3d32"
+                MD5        = "4306922864c6cf40a419fd5876b5879d"
             },
             new BlockImageTestExpected
             {
-                TestFile   = "DC6_UDCO_DOS_720.img.lz",
-                MediaType  = MediaType.DOS_35_DS_DD_9,
-                Sectors    = 1440,
+                TestFile   = "DC6_UDCO_DOS_720.dmg",
+                MediaType  = MediaType.GENERIC_HDD,
+                Sectors    = 1444,
                 SectorSize = 512,
-                MD5        = "c2be571406cf6353269faa59a4a8c0a4"
+                MD5        = "a885825f28929a5626e71201b37ed96e"
             },
             new BlockImageTestExpected
             {
-                TestFile   = "DC6_UDCO_DOS_DMF.img.lz",
-                MediaType  = MediaType.DMF,
-                Sectors    = 3360,
+                TestFile   = "DC6_UDCO_DOS_DMF.dmg",
+                MediaType  = MediaType.GENERIC_HDD,
+                Sectors    = 3364,
                 SectorSize = 512,
-                MD5        = "92ea7a359957012a682ba126cfdef0ce"
+                MD5        = "180a0db19ecfe9d55d068c6460f028be"
             },
             new BlockImageTestExpected
             {
-                TestFile   = "DC6_UDCO_HFS_1440.img.lz",
-                MediaType  = MediaType.DOS_35_HD,
-                Sectors    = 2880,
+                TestFile   = "DC6_UDCO_HFS_1440.dmg",
+                MediaType  = MediaType.GENERIC_HDD,
+                Sectors    = 2884,
                 SectorSize = 512,
-                MD5        = "3160038ca028ccf52ad7863790072145"
+                MD5        = "e307949819edeecd5e855b661a3bfba3"
             },
             new BlockImageTestExpected
             {
-                TestFile   = "DC6_UDCO_HFS_800.img.lz",
-                MediaType  = MediaType.AppleSonyDS,
-                Sectors    = 1600,
+                TestFile   = "DC6_UDCO_HFS_800.dmg",
+                MediaType  = MediaType.GENERIC_HDD,
+                Sectors    = 1604,
                 SectorSize = 512,
-                MD5        = "5e255c4bc0f6a26ecd27845b37e65aaa"
+                MD5        = "c5a5ad78997ddc30f1dc768112f52609"
             },
             new BlockImageTestExpected
             {
-                TestFile   = "DC6_UDCO_HFS_DMF.img.lz",
-                MediaType  = MediaType.DMF,
-                Sectors    = 3360,
+                TestFile   = "DC6_UDCO_HFS_DMF.dmg",
+                MediaType  = MediaType.GENERIC_HDD,
+                Sectors    = 3364,
                 SectorSize = 512,
-                MD5        = "652dc979c177f2d8e846587158b38478"
+                MD5        = "5fd35f80791be6eaa44195875aa0465a"
             },
             new BlockImageTestExpected
             {
-                TestFile   = "DC6_UDCO_PD_1440.img.lz",
-                MediaType  = MediaType.DOS_35_HD,
-                Sectors    = 2880,
+                TestFile   = "DC6_UDCO_PD_1440.dmg",
+                MediaType  = MediaType.GENERIC_HDD,
+                Sectors    = 2884,
                 SectorSize = 512,
-                MD5        = "7975e8cf7579a6848d6fb4e546d1f682"
+                MD5        = "1c336199896d1f9bff9b2d5c49b48b63"
             },
             new BlockImageTestExpected
             {
-                TestFile   = "DC6_UDCO_PD_800.img.lz",
-                MediaType  = MediaType.AppleSonyDS,
-                Sectors    = 1600,
+                TestFile   = "DC6_UDCO_PD_800.dmg",
+                MediaType  = MediaType.GENERIC_HDD,
+                Sectors    = 1604,
                 SectorSize = 512,
-                MD5        = "a72da7aedadbe194c22a3d71c62e4766"
+                MD5        = "d654f84668c671e801f4aa107e0aee92"
             },
             new BlockImageTestExpected
             {
-                TestFile   = "DC6_UDCO_PD_DMF.img.lz",
-                MediaType  = MediaType.DMF,
-                Sectors    = 3360,
+                TestFile   = "DC6_UDCO_PD_DMF.dmg",
+                MediaType  = MediaType.GENERIC_HDD,
+                Sectors    = 3364,
                 SectorSize = 512,
-                MD5        = "7fbf0251a93cb36d98e68b7d19624de5"
+                MD5        = "e7b1de07a1f402e4663c3dee4fd3d6fe"
             }
         };
     }
