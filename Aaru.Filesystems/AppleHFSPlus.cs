@@ -64,6 +64,9 @@ namespace Aaru.Filesystems
 
             byte[] vhSector = imagePlugin.ReadSectors(partition.Start, sectorsToRead);
 
+            if(vhSector.Length < 0x800)
+                return false;
+
             ushort drSigWord = BigEndianBitConverter.ToUInt16(vhSector, 0x400);
 
             if(drSigWord == AppleCommon.HFS_MAGIC) // "BD"

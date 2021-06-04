@@ -62,6 +62,9 @@ namespace Aaru.Filesystems
                     0, 0x200, 0x400, 0x600, 0x800, 0xA00
                 })
                 {
+                    if(mdbSector.Length < offset + 0x7C + 2)
+                        continue;
+
                     drSigWord = BigEndianBitConverter.ToUInt16(mdbSector, offset);
 
                     if(drSigWord != AppleCommon.HFS_MAGIC)
@@ -76,6 +79,10 @@ namespace Aaru.Filesystems
             else
             {
                 mdbSector = imagePlugin.ReadSector(2 + partition.Start);
+
+                if(mdbSector.Length < 0x7C + 2)
+                    return false;
+
                 drSigWord = BigEndianBitConverter.ToUInt16(mdbSector, 0);
 
                 if(drSigWord != AppleCommon.HFS_MAGIC)

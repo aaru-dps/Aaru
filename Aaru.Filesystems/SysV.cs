@@ -82,14 +82,15 @@ namespace Aaru.Filesystems
 
             byte sb_size_in_sectors;
 
-            if(imagePlugin.Info.SectorSize <= 0x400
-            ) // Check if underlying device sector size is smaller than SuperBlock size
+            if(imagePlugin.Info.SectorSize <=
+               0x400) // Check if underlying device sector size is smaller than SuperBlock size
                 sb_size_in_sectors = (byte)(0x400 / imagePlugin.Info.SectorSize);
             else
                 sb_size_in_sectors = 1; // If not a single sector can store it
 
-            if(partition.End <= partition.Start + (4 * (ulong)sb_size_in_sectors) + sb_size_in_sectors
-            ) // Device must be bigger than SB location + SB size + offset
+            if(partition.End <=
+               partition.Start + (4 * (ulong)sb_size_in_sectors) +
+               sb_size_in_sectors) // Device must be bigger than SB location + SB size + offset
                 return false;
 
             // Sectors in a cylinder
@@ -110,6 +111,9 @@ namespace Aaru.Filesystems
                                         Select(i => imagePlugin.ReadSectors((ulong)i + partition.Start,
                                                                             sb_size_in_sectors)))
             {
+                if(sb_sector.Length < 0x400)
+                    continue;
+
                 uint magic = BitConverter.ToUInt32(sb_sector, 0x3F8);
 
                 if(magic == XENIX_MAGIC ||
@@ -202,8 +206,8 @@ namespace Aaru.Filesystems
             byte   sb_size_in_sectors;
             int    offset = 0;
 
-            if(imagePlugin.Info.SectorSize <= 0x400
-            ) // Check if underlying device sector size is smaller than SuperBlock size
+            if(imagePlugin.Info.SectorSize <=
+               0x400) // Check if underlying device sector size is smaller than SuperBlock size
                 sb_size_in_sectors = (byte)(0x400 / imagePlugin.Info.SectorSize);
             else
                 sb_size_in_sectors = 1; // If not a single sector can store it

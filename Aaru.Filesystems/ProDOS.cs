@@ -107,7 +107,7 @@ namespace Aaru.Filesystems
                 foreach(int offset in new[]
                 {
                     0, 0x200, 0x400, 0x600, 0x800, 0xA00
-                }.Where(offset => BitConverter.ToUInt16(tmp, offset) == 0 &&
+                }.Where(offset => tmp.Length > offset + 0x200 && BitConverter.ToUInt16(tmp, offset) == 0 &&
                                   (byte)((tmp[offset + 0x04] & STORAGE_TYPE_MASK) >> 4) == ROOT_DIRECTORY_TYPE &&
                                   tmp[offset + 0x23] == ENTRY_LENGTH && tmp[offset + 0x24] == ENTRIES_PER_BLOCK))
                 {
@@ -154,9 +154,9 @@ namespace Aaru.Filesystems
                 totalBlocks /= 4;
 
             AaruConsole.DebugWriteLine("ProDOS plugin", "{0} <= ({1} - {2} + 1)? {3}", totalBlocks, partition.End,
-                                       partition.Start, totalBlocks <= (partition.End - partition.Start) + 1);
+                                       partition.Start, totalBlocks <= partition.End - partition.Start + 1);
 
-            return totalBlocks <= (partition.End - partition.Start) + 1;
+            return totalBlocks <= partition.End - partition.Start + 1;
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
@@ -326,7 +326,7 @@ namespace Aaru.Filesystems
                 Type           = "ProDOS"
             };
 
-            XmlFsType.ClusterSize = (uint)((((partition.End - partition.Start) + 1) * imagePlugin.Info.SectorSize) /
+            XmlFsType.ClusterSize = (uint)((partition.End - partition.Start + 1) * imagePlugin.Info.SectorSize /
                                            XmlFsType.Clusters);
 
             if(!dateCorrect)
