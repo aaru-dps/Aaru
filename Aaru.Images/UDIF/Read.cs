@@ -268,10 +268,10 @@ namespace Aaru.DiscImages
             AaruConsole.DebugWriteLine("UDIF plugin", "Image application = {0} version {1}", _imageInfo.Application,
                                        _imageInfo.ApplicationVersion);
 
-            _imageInfo.Sectors = 0;
-
             if(!fakeBlockChunks)
             {
+                _imageInfo.Sectors = 0;
+
                 if(blkxList.Count == 0)
                     throw new
                         ImageNotSupportedException("Could not retrieve block chunks. Please fill an issue and send it to us.");
