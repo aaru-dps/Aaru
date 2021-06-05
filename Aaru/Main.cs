@@ -161,23 +161,23 @@ namespace Aaru
 
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
-            var rootCommand = new RootCommand
-            {
-                new Option(new[]
-                {
-                    "--verbose", "-v"
-                }, "Shows verbose output.")
-                {
-                    Argument = new Argument<bool>(() => false)
-                },
-                new Option(new[]
-                {
-                    "--debug", "-d"
-                }, "Shows debug output from plugins.")
-                {
-                    Argument = new Argument<bool>(() => false)
-                }
-            };
+            var rootCommand = new RootCommand();
+
+            rootCommand.AddGlobalOption(new Option(new[]
+                                        {
+                                            "--verbose", "-v"
+                                        }, "Shows verbose output.")
+                                        {
+                                            Argument = new Argument<bool>(() => false)
+                                        });
+
+            rootCommand.AddGlobalOption(new Option(new[]
+                                        {
+                                            "--debug", "-d"
+                                        }, "Shows debug output from plugins.")
+                                        {
+                                            Argument = new Argument<bool>(() => false)
+                                        });
 
             rootCommand.Description =
                 $"{_assemblyTitle} {_assemblyVersion?.InformationalVersion}\n{_assemblyCopyright}";
