@@ -179,6 +179,14 @@ namespace Aaru
                                             Argument = new Argument<bool>(() => false)
                                         });
 
+            rootCommand.AddGlobalOption(new Option(new[]
+                                        {
+                                            "--pause"
+                                        }, "Pauses before exiting.")
+                                        {
+                                            Argument = new Argument<bool>(() => false)
+                                        });
+
             rootCommand.Description =
                 $"{_assemblyTitle} {_assemblyVersion?.InformationalVersion}\n{_assemblyCopyright}";
 
@@ -198,6 +206,12 @@ namespace Aaru
             int ret = rootCommand.Invoke(args);
 
             Statistics.SaveStats();
+
+            if(rootCommand.Parse(args).RootCommandResult.ValueForOption("--pause")?.Equals(true) != true)
+                return ret;
+
+            AaruConsole.WriteLine("Press any key to exit.");
+            System.Console.ReadKey();
 
             return ret;
         }
