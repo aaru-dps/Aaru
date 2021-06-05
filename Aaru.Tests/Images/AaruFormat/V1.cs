@@ -442,8 +442,7 @@ namespace Aaru.Tests.Images.AaruFormat
                         Session = 1,
                         Start   = 0,
                         End     = 2146367,
-                        Pregap  = 0,
-                        Flags   = 0
+                        Pregap  = 0
                     }
                 }
             },
@@ -462,8 +461,7 @@ namespace Aaru.Tests.Images.AaruFormat
                         Session = 1,
                         Start   = 0,
                         End     = 2146367,
-                        Pregap  = 0,
-                        Flags   = 0
+                        Pregap  = 0
                     }
                 }
             },
@@ -482,8 +480,7 @@ namespace Aaru.Tests.Images.AaruFormat
                         Session = 1,
                         Start   = 0,
                         End     = 1218959,
-                        Pregap  = 0,
-                        Flags   = 0
+                        Pregap  = 0
                     }
                 }
             },
@@ -502,8 +499,7 @@ namespace Aaru.Tests.Images.AaruFormat
                         Session = 1,
                         Start   = 0,
                         End     = 2236703,
-                        Pregap  = 0,
-                        Flags   = 0
+                        Pregap  = 0
                     }
                 }
             },
@@ -522,8 +518,7 @@ namespace Aaru.Tests.Images.AaruFormat
                         Session = 1,
                         Start   = 0,
                         End     = 16383999,
-                        Pregap  = 0,
-                        Flags   = 0
+                        Pregap  = 0
                     }
                 }
             },
@@ -542,8 +537,7 @@ namespace Aaru.Tests.Images.AaruFormat
                         Session = 1,
                         Start   = 0,
                         End     = 2146367,
-                        Pregap  = 0,
-                        Flags   = 0
+                        Pregap  = 0
                     }
                 }
             },
@@ -562,8 +556,7 @@ namespace Aaru.Tests.Images.AaruFormat
                         Session = 1,
                         Start   = 0,
                         End     = 2295103,
-                        Pregap  = 0,
-                        Flags   = 0
+                        Pregap  = 0
                     }
                 }
             },
@@ -582,8 +575,7 @@ namespace Aaru.Tests.Images.AaruFormat
                         Session = 1,
                         Start   = 0,
                         End     = 2146367,
-                        Pregap  = 0,
-                        Flags   = 0
+                        Pregap  = 0
                     }
                 }
             },

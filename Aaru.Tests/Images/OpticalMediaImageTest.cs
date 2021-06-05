@@ -80,7 +80,7 @@ namespace Aaru.Tests.Images
 
                             int trackNo = 0;
 
-                            byte[] flags = new byte[image.Tracks.Count];
+                            byte?[] flags = new byte?[image.Tracks.Count];
 
                             foreach(Track currentTrack in image.Tracks)
                             {
