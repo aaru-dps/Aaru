@@ -394,95 +394,85 @@ namespace Aaru.Tests.Images.MagicISO
             new OpticalImageTestExpected
             {
                 TestFile  = "report_dvdram_v1.cue",
-                MediaType = MediaType.CDROM,
+                MediaType = MediaType.DVDROM,
                 Sectors   = 1218959,
-                MD5       = "192aea84e64cb396cc0f637a611788bf",
-                LongMD5   = "192aea84e64cb396cc0f637a611788bf",
+                MD5       = "fa58d5645e091cc3f0c87998c819955e",
+                LongMD5   = "fa58d5645e091cc3f0c87998c819955e",
                 Tracks = new[]
                 {
                     new TrackInfoTestExpected
                     {
                         Session = 1,
                         Start   = 0,
-                        End     = 1218958,
-                        Pregap  = 150,
-                        Flags   = 4
+                        End     = 1218958
                     }
                 }
             },
             new OpticalImageTestExpected
             {
                 TestFile  = "report_dvdram_v2.cue",
-                MediaType = MediaType.CDROM,
+                MediaType = MediaType.DVDROM,
                 Sectors   = 2236703,
-                MD5       = "fa5cb9657d9ed429a41913027d7b27eb",
-                LongMD5   = "fa5cb9657d9ed429a41913027d7b27eb",
+                MD5       = "c02a2cf88af17ed8333af2e7d4560e40",
+                LongMD5   = "c02a2cf88af17ed8333af2e7d4560e40",
                 Tracks = new[]
                 {
                     new TrackInfoTestExpected
                     {
                         Session = 1,
                         Start   = 0,
-                        End     = 2236702,
-                        Pregap  = 150,
-                        Flags   = 4
+                        End     = 2236702
                     }
                 }
             },
             new OpticalImageTestExpected
             {
                 TestFile  = "report_dvd+r-dl.cue",
-                MediaType = MediaType.CDROM,
+                MediaType = MediaType.DVDROM,
                 Sectors   = 3455935,
-                MD5       = "cf5ba4a055c6bdb4c9287c52b01c4ffb",
-                LongMD5   = "cf5ba4a055c6bdb4c9287c52b01c4ffb",
+                MD5       = "e71164a331f656e30025c39956e35372",
+                LongMD5   = "e71164a331f656e30025c39956e35372",
                 Tracks = new[]
                 {
                     new TrackInfoTestExpected
                     {
                         Session = 1,
                         Start   = 0,
-                        End     = 3455934,
-                        Pregap  = 150,
-                        Flags   = 4
+                        End     = 3455934
                     }
                 }
             },
             new OpticalImageTestExpected
             {
                 TestFile  = "report_dvd-rom.cue",
-                MediaType = MediaType.CDROM,
+                MediaType = MediaType.DVDROM,
                 Sectors   = 2146367,
-                MD5       = "8ed49c810da17e7957962df4b07ca9a6",
-                LongMD5   = "8ed49c810da17e7957962df4b07ca9a6",
+                MD5       = "fa1beeef4c4f1493f306a13f4fd113b2",
+                LongMD5   = "fa1beeef4c4f1493f306a13f4fd113b2",
                 Tracks = new[]
                 {
                     new TrackInfoTestExpected
                     {
                         Session = 1,
                         Start   = 0,
-                        End     = 2146366,
-                        Pregap  = 150,
-                        Flags   = 4
+                        End     = 2146366
                     }
                 }
             },
             new OpticalImageTestExpected
             {
                 TestFile  = "report_dvd+rw.cue",
-                MediaType = MediaType.CDROM,
+                MediaType = MediaType.DVDROM,
                 Sectors   = 2295103,
-                MD5       = "d7a519529ca4a4ad04a6e14858f92a33",
-                LongMD5   = "d7a519529ca4a4ad04a6e14858f92a33",
+                MD5       = "767692b526a7ea7020e7144d6d7cadab",
+                LongMD5   = "767692b526a7ea7020e7144d6d7cadab",
                 Tracks = new[]
                 {
                     new TrackInfoTestExpected
                     {
                         Session = 1,
                         Start   = 0,
-                        End     = 2295102,
-                        Pregap  = 150,
-                        Flags   = 4
+                        End     = 2295102
                     }
                 }
             },
