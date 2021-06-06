@@ -244,7 +244,7 @@ namespace Aaru.Tests.Images.UltraISO
                         Start   = 0,
                         End     = 16548,
                         Pregap  = 150,
-                        Flags   = 4
+                        Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
