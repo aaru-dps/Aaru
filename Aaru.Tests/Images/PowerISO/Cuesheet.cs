@@ -29,6 +29,7 @@
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
+using Aaru.DiscImages;
 using NUnit.Framework;
 
 namespace Aaru.Tests.Images.PowerISO
@@ -38,7 +39,7 @@ namespace Aaru.Tests.Images.PowerISO
     {
         public override string DataFolder =>
             Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "PowerISO", "Cuesheet");
-        public override IMediaImage _plugin => new DiscImages.DiscJuggler();
+        public override IMediaImage _plugin => new CdrWin();
 
         public override OpticalImageTestExpected[] Tests => new[]
         {
