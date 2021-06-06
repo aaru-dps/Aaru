@@ -36,6 +36,7 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 using Schemas;
+using TrackType = Aaru.CommonTypes.Enums.TrackType;
 
 namespace Aaru.DiscImages
 {
@@ -75,20 +76,20 @@ namespace Aaru.DiscImages
                 {
                     var aaruTrack = new Track
                     {
-                        TrackDescription       = cdrTrack.Title,
-                        TrackPregap            = (ulong)cdrTrack.Pregap,
-                        TrackSession           = cdrTrack.Session,
-                        TrackSequence          = cdrTrack.Sequence,
-                        TrackType              = CdrWinTrackTypeToTrackType(cdrTrack.TrackType),
-                        TrackFile              = cdrTrack.TrackFile.DataFilter.GetFilename(),
-                        TrackFilter            = cdrTrack.TrackFile.DataFilter,
-                        TrackFileOffset        = cdrTrack.TrackFile.Offset,
-                        TrackFileType          = cdrTrack.TrackFile.FileType,
+                        TrackDescription = cdrTrack.Title,
+                        TrackPregap = (ulong)cdrTrack.Pregap,
+                        TrackSession = cdrTrack.Session,
+                        TrackSequence = cdrTrack.Sequence,
+                        TrackType = _isCd ? CdrWinTrackTypeToTrackType(cdrTrack.TrackType) : TrackType.Data,
+                        TrackFile = cdrTrack.TrackFile.DataFilter.GetFilename(),
+                        TrackFilter = cdrTrack.TrackFile.DataFilter,
+                        TrackFileOffset = cdrTrack.TrackFile.Offset,
+                        TrackFileType = cdrTrack.TrackFile.FileType,
                         TrackRawBytesPerSector = cdrTrack.Bps,
-                        TrackBytesPerSector    = CdrWinTrackTypeToCookedBytesPerSector(cdrTrack.TrackType)
+                        TrackBytesPerSector = CdrWinTrackTypeToCookedBytesPerSector(cdrTrack.TrackType)
                     };
 
-                    if(aaruTrack.TrackSequence == 1)
+                    if(aaruTrack.TrackSequence == 1 && _isCd)
                     {
                         aaruTrack.TrackPregap = 150;
                         aaruTrack.Indexes[0]  = -150;
