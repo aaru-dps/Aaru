@@ -264,6 +264,9 @@ namespace Aaru.DiscImages
                             if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdTrackIsrc))
                                 _imageInfo.ReadableSectorTags.Add(SectorTagType.CdTrackIsrc);
 
+                            if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdTrackFlags))
+                                _imageInfo.ReadableSectorTags.Add(SectorTagType.CdTrackFlags);
+
                             AaruConsole.DebugWriteLine("Nero plugin", "neroDAOV1.ChunkSizeLe = {0} bytes",
                                                        _neroDaov1.ChunkSizeLe);
 
@@ -381,6 +384,9 @@ namespace Aaru.DiscImages
 
                             if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdTrackIsrc))
                                 _imageInfo.ReadableSectorTags.Add(SectorTagType.CdTrackIsrc);
+
+                            if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdTrackFlags))
+                                _imageInfo.ReadableSectorTags.Add(SectorTagType.CdTrackFlags);
 
                             _upc = _neroDaov2.Upc;
 
@@ -869,7 +875,7 @@ namespace Aaru.DiscImages
                             int second = ((((entry.Second & 0xF0) >> 4) * 10) + entry.Second) & 0xF;
                             int frame  = ((((entry.Frame  & 0xF0) >> 4) * 10) + entry.Frame)  & 0xF;
 
-                            int indexSector = ((minute * 60 * 75) + (second * 75) + frame) - 150;
+                            int indexSector = (minute * 60 * 75) + (second * 75) + frame - 150;
 
                             track.Indexes[entry.IndexNumber] = indexSector;
                         }
@@ -899,7 +905,7 @@ namespace Aaru.DiscImages
                     }
 
                     track.TrackDescription = StringHandlers.CToString(neroTrack.Isrc);
-                    track.TrackEndSector   = ((neroTrack.Length / neroTrack.SectorSize) + (ulong)track.Indexes[1]) - 1;
+                    track.TrackEndSector   = (neroTrack.Length / neroTrack.SectorSize) + (ulong)track.Indexes[1] - 1;
 
                     if(track.Indexes.ContainsKey(0))
                         track.TrackPregap = (ulong)(track.Indexes[1] - track.Indexes[0]);
@@ -1170,11 +1176,17 @@ namespace Aaru.DiscImages
                    _imageInfo.MediaType != CommonTypes.MediaType.VideoNowColor &&
                    _imageInfo.MediaType != CommonTypes.MediaType.VideoNowXp    &&
                    _imageInfo.MediaType != CommonTypes.MediaType.CVD)
+                {
                     foreach(Track track in Tracks)
                     {
                         track.TrackPregap = 0;
                         track.Indexes?.Clear();
                     }
+
+                    _imageInfo.ReadableMediaTags.Remove(MediaTagType.CD_MCN);
+                    _imageInfo.ReadableSectorTags.Remove(SectorTagType.CdTrackIsrc);
+                    _imageInfo.ReadableSectorTags.Remove(SectorTagType.CdTrackFlags);
+                }
 
                 return true;
             }
