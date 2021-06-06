@@ -1805,6 +1805,9 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
         {
+            if(!_isCd)
+                return ReadSectors(sectorAddress, length, track);
+
             var aaruTrack = new CdrWinTrack
             {
                 Sequence = 0
