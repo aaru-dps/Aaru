@@ -346,7 +346,7 @@ namespace Aaru.Tests.Images.Nero
                         Start   = 0,
                         End     = 169535,
                         Pregap  = 150,
-                        Flags   = 0
+                        Flags   = 4
                     }
                 }
             },
@@ -529,8 +529,7 @@ namespace Aaru.Tests.Images.Nero
                         Session = 1,
                         Start   = 0,
                         End     = 3455935,
-                        Pregap  = 0,
-                        Flags   = 0
+                        Pregap  = 0
                     }
                 }
             },
@@ -549,8 +548,7 @@ namespace Aaru.Tests.Images.Nero
                         Session = 1,
                         Start   = 0,
                         End     = 2295103,
-                        Pregap  = 0,
-                        Flags   = 0
+                        Pregap  = 0
                     }
                 }
             },
@@ -569,8 +567,7 @@ namespace Aaru.Tests.Images.Nero
                         Session = 1,
                         Start   = 0,
                         End     = 1218959,
-                        Pregap  = 0,
-                        Flags   = 0
+                        Pregap  = 0
                     }
                 }
             },
@@ -589,8 +586,7 @@ namespace Aaru.Tests.Images.Nero
                         Session = 1,
                         Start   = 0,
                         End     = 2236703,
-                        Pregap  = 0,
-                        Flags   = 0
+                        Pregap  = 0
                     }
                 }
             },
@@ -609,8 +605,7 @@ namespace Aaru.Tests.Images.Nero
                         Session = 1,
                         Start   = 0,
                         End     = 2146367,
-                        Pregap  = 0,
-                        Flags   = 0
+                        Pregap  = 0
                     }
                 }
             },
@@ -754,7 +749,7 @@ namespace Aaru.Tests.Images.Nero
                         Start   = 0,
                         End     = 29901,
                         Pregap  = 150,
-                        Flags   = 2
+                        Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
@@ -762,7 +757,7 @@ namespace Aaru.Tests.Images.Nero
                         Start   = 29902,
                         End     = 65183,
                         Pregap  = 0,
-                        Flags   = 2
+                        Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
@@ -770,7 +765,7 @@ namespace Aaru.Tests.Images.Nero
                         Start   = 65184,
                         End     = 78575,
                         Pregap  = 0,
-                        Flags   = 2
+                        Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
@@ -778,7 +773,7 @@ namespace Aaru.Tests.Images.Nero
                         Start   = 78576,
                         End     = 95229,
                         Pregap  = 0,
-                        Flags   = 2
+                        Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
@@ -786,7 +781,7 @@ namespace Aaru.Tests.Images.Nero
                         Start   = 95230,
                         End     = 126296,
                         Pregap  = 0,
-                        Flags   = 2
+                        Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
@@ -794,7 +789,7 @@ namespace Aaru.Tests.Images.Nero
                         Start   = 126297,
                         End     = 155108,
                         Pregap  = 0,
-                        Flags   = 2
+                        Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
@@ -802,7 +797,7 @@ namespace Aaru.Tests.Images.Nero
                         Start   = 155109,
                         End     = 191834,
                         Pregap  = 0,
-                        Flags   = 2
+                        Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
@@ -810,7 +805,7 @@ namespace Aaru.Tests.Images.Nero
                         Start   = 191835,
                         End     = 222925,
                         Pregap  = 0,
-                        Flags   = 2
+                        Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
@@ -818,7 +813,7 @@ namespace Aaru.Tests.Images.Nero
                         Start   = 222926,
                         End     = 243587,
                         Pregap  = 0,
-                        Flags   = 2
+                        Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
@@ -826,7 +821,7 @@ namespace Aaru.Tests.Images.Nero
                         Start   = 243738,
                         End     = 269899,
                         Pregap  = 0,
-                        Flags   = 2
+                        Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
@@ -834,7 +829,7 @@ namespace Aaru.Tests.Images.Nero
                         Start   = 269900,
                         End     = 277845,
                         Pregap  = 0,
-                        Flags   = 2
+                        Flags   = 0
                     }
                 }
             },
@@ -854,7 +849,7 @@ namespace Aaru.Tests.Images.Nero
                         Start   = 0,
                         End     = 25538,
                         Pregap  = 150,
-                        Flags   = 0
+                        Flags   = 4
                     },
                     new TrackInfoTestExpected
                     {
@@ -862,7 +857,7 @@ namespace Aaru.Tests.Images.Nero
                         Start   = 36789,
                         End     = 37088,
                         Pregap  = 150,
-                        Flags   = 0
+                        Flags   = 4
                     }
                 }
             },
@@ -990,7 +985,7 @@ namespace Aaru.Tests.Images.Nero
                         Start   = 36789,
                         End     = 62534,
                         Pregap  = 150,
-                        Flags   = 2
+                        Flags   = 0
                     }
                 }
             },
@@ -1010,7 +1005,7 @@ namespace Aaru.Tests.Images.Nero
                         Start   = 0,
                         End     = 25538,
                         Pregap  = 150,
-                        Flags   = 0
+                        Flags   = 4
                     },
                     new TrackInfoTestExpected
                     {
@@ -1038,7 +1033,7 @@ namespace Aaru.Tests.Images.Nero
                         Start   = 0,
                         End     = 350133,
                         Pregap  = 150,
-                        Flags   = 7
+                        Flags   = 4
                     }
                 }
             },
@@ -1198,7 +1193,7 @@ namespace Aaru.Tests.Images.Nero
                         Start   = 0,
                         End     = 4803,
                         Pregap  = 150,
-                        Flags   = 2
+                        Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
@@ -1222,7 +1217,7 @@ namespace Aaru.Tests.Images.Nero
                         Start   = 41185,
                         End     = 54988,
                         Pregap  = 0,
-                        Flags   = 8
+                        Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
@@ -1230,7 +1225,7 @@ namespace Aaru.Tests.Images.Nero
                         Start   = 54989,
                         End     = 65535,
                         Pregap  = 0,
-                        Flags   = 1
+                        Flags   = 0
                     }
                 }
             },

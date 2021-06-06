@@ -404,8 +404,7 @@ namespace Aaru.Tests.Images.MagicISO
                         Session = 1,
                         Start   = 0,
                         End     = 1218958,
-                        Pregap  = 150,
-                        Flags   = 4
+                        Pregap  = 150
                     }
                 }
             },
@@ -423,8 +422,7 @@ namespace Aaru.Tests.Images.MagicISO
                         Session = 1,
                         Start   = 0,
                         End     = 2236702,
-                        Pregap  = 150,
-                        Flags   = 4
+                        Pregap  = 150
                     }
                 }
             },
@@ -442,8 +440,7 @@ namespace Aaru.Tests.Images.MagicISO
                         Session = 1,
                         Start   = 0,
                         End     = 3455934,
-                        Pregap  = 150,
-                        Flags   = 4
+                        Pregap  = 150
                     }
                 }
             },
@@ -461,8 +458,7 @@ namespace Aaru.Tests.Images.MagicISO
                         Session = 1,
                         Start   = 0,
                         End     = 2146366,
-                        Pregap  = 150,
-                        Flags   = 4
+                        Pregap  = 150
                     }
                 }
             },
@@ -480,8 +476,7 @@ namespace Aaru.Tests.Images.MagicISO
                         Session = 1,
                         Start   = 0,
                         End     = 2295102,
-                        Pregap  = 150,
-                        Flags   = 4
+                        Pregap  = 150
                     }
                 }
             },

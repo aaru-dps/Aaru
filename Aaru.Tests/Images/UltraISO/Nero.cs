@@ -370,7 +370,7 @@ namespace Aaru.Tests.Images.UltraISO
                         Start   = 0,
                         End     = 254264,
                         Pregap  = 150,
-                        Flags   = 0
+                        Flags   = 4
                     }
                 }
             },
@@ -390,7 +390,7 @@ namespace Aaru.Tests.Images.UltraISO
                         Start   = 0,
                         End     = 308223,
                         Pregap  = 150,
-                        Flags   = 0
+                        Flags   = 4
                     }
                 }
             },
@@ -408,8 +408,7 @@ namespace Aaru.Tests.Images.UltraISO
                         Session = 1,
                         Start   = 18446744073709551466,
                         End     = 471089,
-                        Pregap  = 0,
-                        Flags   = 0
+                        Pregap  = 0
                     }
                 }
             },
@@ -427,8 +426,7 @@ namespace Aaru.Tests.Images.UltraISO
                         Session = 1,
                         Start   = 18446744073709551466,
                         End     = 3455919,
-                        Pregap  = 0,
-                        Flags   = 0
+                        Pregap  = 0
                     }
                 }
             },
@@ -446,8 +444,7 @@ namespace Aaru.Tests.Images.UltraISO
                         Session = 1,
                         Start   = 18446744073709551466,
                         End     = 2146356,
-                        Pregap  = 0,
-                        Flags   = 0
+                        Pregap  = 0
                     }
                 }
             },
@@ -571,7 +568,7 @@ namespace Aaru.Tests.Images.UltraISO
                         Start   = 256021,
                         End     = 325456,
                         Pregap  = 150,
-                        Flags   = 0
+                        Flags   = 4
                     }
                 }
             },
@@ -711,7 +708,7 @@ namespace Aaru.Tests.Images.UltraISO
                         Start   = 175826,
                         End     = 194272,
                         Pregap  = 0,
-                        Flags   = 0
+                        Flags   = 4
                     }
                 }
             }
