@@ -1658,7 +1658,7 @@ namespace Aaru.Tests.Images
                         Start   = 0,
                         End     = 1251,
                         Pregap  = 150,
-                        Flags   = 0
+                        Flags   = 4
                     },
                     new TrackInfoTestExpected
                     {
@@ -1666,7 +1666,7 @@ namespace Aaru.Tests.Images
                         Start   = 1252,
                         End     = 48793,
                         Pregap  = 0,
-                        Flags   = 0
+                        Flags   = 4
                     }
                 }
             }
