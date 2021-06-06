@@ -534,13 +534,13 @@ namespace Aaru.DiscImages
                 {
                     tmpTrack.TrackFileOffset = currentDataOffset;
 
-                    currentDataOffset += 2352 * ((tmpTrack.TrackEndSector - tmpTrack.TrackStartSector) + 1);
+                    currentDataOffset += 2352 * (tmpTrack.TrackEndSector - tmpTrack.TrackStartSector + 1);
 
                     if(_subFilter != null)
                     {
                         tmpTrack.TrackSubchannelOffset = currentSubchannelOffset;
 
-                        currentSubchannelOffset += 96 * ((tmpTrack.TrackEndSector - tmpTrack.TrackStartSector) + 1);
+                        currentSubchannelOffset += 96 * (tmpTrack.TrackEndSector - tmpTrack.TrackStartSector + 1);
                     }
 
                     if(tmpTrack.TrackType == TrackType.Data)
@@ -734,9 +734,9 @@ namespace Aaru.DiscImages
                     var partition = new Partition
                     {
                         Description = track.TrackDescription,
-                        Size = ((track.TrackEndSector - track.TrackStartSector) + 1) *
+                        Size = (track.TrackEndSector - track.TrackStartSector + 1) *
                                (ulong)track.TrackRawBytesPerSector,
-                        Length   = (track.TrackEndSector - track.TrackStartSector) + 1,
+                        Length   = track.TrackEndSector - track.TrackStartSector + 1,
                         Sequence = track.TrackSequence,
                         Offset   = track.TrackFileOffset,
                         Start    = track.TrackStartSector,
@@ -846,9 +846,8 @@ namespace Aaru.DiscImages
         {
             foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetMap where sectorAddress     >= kvp.Value
                                                      from track in Tracks where track.TrackSequence == kvp.Key
-                                                     where sectorAddress                                   - kvp.Value <
-                                                           (track.TrackEndSector - track.TrackStartSector) + 1
-                                                     select kvp)
+                                                     where sectorAddress                                 - kvp.Value <
+                                                           track.TrackEndSector - track.TrackStartSector + 1 select kvp)
                 return ReadSectors(sectorAddress - kvp.Value, length, kvp.Key);
 
             throw new ArgumentOutOfRangeException(nameof(sectorAddress), $"Sector address {sectorAddress} not found");
@@ -863,8 +862,8 @@ namespace Aaru.DiscImages
                                                                     track
                                                                 }).Where(t => t.track.TrackSequence == t.kvp.Key).
                                                                 Where(t => sectorAddress - t.kvp.Value <
-                                                                           (t.track.TrackEndSector -
-                                                                            t.track.TrackStartSector) + 1).
+                                                                           t.track.TrackEndSector -
+                                                                           t.track.TrackStartSector + 1).
                                                                 Select(t => t.kvp))
                 return ReadSectorsTag(sectorAddress - kvp.Value, length, kvp.Key, tag);
 
@@ -888,7 +887,7 @@ namespace Aaru.DiscImages
             if(aaruTrack is null)
                 throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
 
-            if((length + sectorAddress) - 1 > aaruTrack.TrackEndSector)
+            if(length + sectorAddress - 1 > aaruTrack.TrackEndSector)
                 throw new ArgumentOutOfRangeException(nameof(length),
                                                       string.
                                                           Format("Requested more sectors ({0} {2}) than present in track ({1}), won't cross tracks",
@@ -988,7 +987,7 @@ namespace Aaru.DiscImages
             if(aaruTrack is null)
                 throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
 
-            if((length + sectorAddress) - 1 > aaruTrack.TrackEndSector)
+            if(length + sectorAddress - 1 > aaruTrack.TrackEndSector)
                 throw new ArgumentOutOfRangeException(nameof(length),
                                                       $"Requested more sectors ({length + sectorAddress}) than present in track ({aaruTrack.TrackEndSector}), won't cross tracks");
 
@@ -1007,7 +1006,7 @@ namespace Aaru.DiscImages
                 case SectorTagType.CdSectorSubHeader:
                 case SectorTagType.CdSectorSync: break;
                 case SectorTagType.CdTrackFlags:
-                    return !_trackFlags.TryGetValue((byte)aaruTrack.TrackSequence, out byte flags) ? new[]
+                    return _trackFlags.TryGetValue((byte)aaruTrack.TrackSequence, out byte flags) ? new[]
                     {
                         flags
                     } : new byte[1];
@@ -1251,9 +1250,8 @@ namespace Aaru.DiscImages
         {
             foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetMap where sectorAddress     >= kvp.Value
                                                      from track in Tracks where track.TrackSequence == kvp.Key
-                                                     where sectorAddress                                   - kvp.Value <
-                                                           (track.TrackEndSector - track.TrackStartSector) + 1
-                                                     select kvp)
+                                                     where sectorAddress                                 - kvp.Value <
+                                                           track.TrackEndSector - track.TrackStartSector + 1 select kvp)
                 return ReadSectorsLong(sectorAddress - kvp.Value, length, kvp.Key);
 
             throw new ArgumentOutOfRangeException(nameof(sectorAddress), $"Sector address {sectorAddress} not found");
@@ -1276,7 +1274,7 @@ namespace Aaru.DiscImages
             if(aaruTrack is null)
                 throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
 
-            if((length + sectorAddress) - 1 > aaruTrack.TrackEndSector)
+            if(length + sectorAddress - 1 > aaruTrack.TrackEndSector)
                 throw new ArgumentOutOfRangeException(nameof(length),
                                                       $"Requested more sectors ({length + sectorAddress}) than present in track ({aaruTrack.TrackEndSector}), won't cross tracks");
 
