@@ -1352,6 +1352,27 @@ namespace Aaru.DiscImages
 
                 _sectorBuilder = new SectorBuilder();
 
+                int mediaTypeAsInt = (int)_discImage.MediaType;
+
+                _isCd = (mediaTypeAsInt >= 10 && mediaTypeAsInt <= 39) || mediaTypeAsInt == 112 ||
+                        mediaTypeAsInt == 113 || (mediaTypeAsInt >= 150 && mediaTypeAsInt <= 152) ||
+                        mediaTypeAsInt == 154 || mediaTypeAsInt == 155 ||
+                        (mediaTypeAsInt >= 171 && mediaTypeAsInt <= 179) ||
+                        (mediaTypeAsInt >= 740 && mediaTypeAsInt <= 749);
+
+                if(!_isCd)
+                {
+                    _imageInfo.ReadableSectorTags.Remove(SectorTagType.CdSectorSync);
+                    _imageInfo.ReadableSectorTags.Remove(SectorTagType.CdSectorHeader);
+                    _imageInfo.ReadableSectorTags.Remove(SectorTagType.CdSectorSubHeader);
+                    _imageInfo.ReadableSectorTags.Remove(SectorTagType.CdSectorEcc);
+                    _imageInfo.ReadableSectorTags.Remove(SectorTagType.CdSectorEccP);
+                    _imageInfo.ReadableSectorTags.Remove(SectorTagType.CdSectorEccQ);
+                    _imageInfo.ReadableSectorTags.Remove(SectorTagType.CdSectorEdc);
+                    _imageInfo.ReadableSectorTags.Remove(SectorTagType.CdTrackFlags);
+                    _imageInfo.ReadableSectorTags.Remove(SectorTagType.CdTrackIsrc);
+                }
+
                 return true;
             }
             catch(Exception ex)

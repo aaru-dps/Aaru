@@ -49,6 +49,7 @@ namespace Aaru.DiscImages
         CdrWinDisc   _discImage;
         ImageInfo    _imageInfo;
         Stream       _imageStream;
+        bool         _isCd;
         /// <summary>Dictionary, index is track #, value is TrackFile</summary>
         Dictionary<uint, ulong> _offsetMap;
         SectorBuilder                _sectorBuilder;

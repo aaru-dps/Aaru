@@ -105,8 +105,18 @@ namespace Aaru.DiscImages
                 Tracks    = new List<CdrWinTrack>()
             };
 
-            _trackFlags = new Dictionary<byte, byte>();
-            _trackIsrcs = new Dictionary<byte, string>();
+            int mediaTypeAsInt = (int)_discImage.MediaType;
+
+            _isCd = (mediaTypeAsInt >= 10  && mediaTypeAsInt <= 39) || mediaTypeAsInt == 112 || mediaTypeAsInt == 113 ||
+                    (mediaTypeAsInt >= 150 && mediaTypeAsInt <= 152) || mediaTypeAsInt == 154 ||
+                    mediaTypeAsInt == 155 || (mediaTypeAsInt >= 171 && mediaTypeAsInt <= 179) ||
+                    (mediaTypeAsInt >= 740 && mediaTypeAsInt <= 749);
+
+            if(_isCd)
+            {
+                _trackFlags = new Dictionary<byte, byte>();
+                _trackIsrcs = new Dictionary<byte, string>();
+            }
 
             IsWriting    = true;
             ErrorMessage = null;
@@ -125,11 +135,11 @@ namespace Aaru.DiscImages
 
             switch(tag)
             {
-                case MediaTagType.CD_MCN:
+                case MediaTagType.CD_MCN when _isCd:
                     _discImage.Mcn = Encoding.ASCII.GetString(data);
 
                     return true;
-                case MediaTagType.CD_TEXT:
+                case MediaTagType.CD_TEXT when _isCd:
                     var cdTextStream = new FileStream(_writingBaseName + "_cdtext.bin", FileMode.Create,
                                                       FileAccess.ReadWrite, FileShare.None);
 
@@ -501,23 +511,26 @@ namespace Aaru.DiscImages
                 (byte minute, byte second, byte frame) msf = LbaToMsf(track.TrackStartSector);
                 _descriptorStream.WriteLine("  TRACK {0:D2} {1}", track.TrackSequence, GetTrackMode(track));
 
-                if(_trackFlags.TryGetValue((byte)track.TrackSequence, out byte flagsByte))
-                    if(flagsByte != 0 &&
-                       flagsByte != (byte)CdFlags.DataTrack)
-                    {
-                        var flags = (CdFlags)flagsByte;
+                if(_isCd)
+                {
+                    if(_trackFlags.TryGetValue((byte)track.TrackSequence, out byte flagsByte))
+                        if(flagsByte != 0 &&
+                           flagsByte != (byte)CdFlags.DataTrack)
+                        {
+                            var flags = (CdFlags)flagsByte;
 
-                        _descriptorStream.WriteLine("    FLAGS{0}{1}{2}",
-                                                    flags.HasFlag(CdFlags.CopyPermitted) ? " DCP" : "",
-                                                    flags.HasFlag(CdFlags.FourChannel) ? " 4CH" : "",
-                                                    flags.HasFlag(CdFlags.PreEmphasis) ? " PRE" : "");
-                    }
+                            _descriptorStream.WriteLine("    FLAGS{0}{1}{2}",
+                                                        flags.HasFlag(CdFlags.CopyPermitted) ? " DCP" : "",
+                                                        flags.HasFlag(CdFlags.FourChannel) ? " 4CH" : "",
+                                                        flags.HasFlag(CdFlags.PreEmphasis) ? " PRE" : "");
+                        }
 
-                if(_trackIsrcs.TryGetValue((byte)track.TrackSequence, out string isrc) &&
-                   !string.IsNullOrWhiteSpace(isrc))
-                    _descriptorStream.WriteLine("    ISRC {0}", isrc);
+                    if(_trackIsrcs.TryGetValue((byte)track.TrackSequence, out string isrc) &&
+                       !string.IsNullOrWhiteSpace(isrc))
+                        _descriptorStream.WriteLine("    ISRC {0}", isrc);
+                }
 
-                if(track.TrackPregap > 0)
+                if(track.TrackPregap > 0 && _isCd)
                 {
                     _descriptorStream.WriteLine("    INDEX {0:D2} {1:D2}:{2:D2}:{3:D2}", 0, msf.minute, msf.second,
                                                 msf.frame);
@@ -531,13 +544,14 @@ namespace Aaru.DiscImages
                     _descriptorStream.WriteLine("    INDEX {0:D2} {1:D2}:{2:D2}:{3:D2}", 1, msf.minute, msf.second,
                                                 msf.frame);
 
-                foreach(KeyValuePair<ushort, int> index in track.Indexes.Where(i => i.Key > 1))
-                {
-                    msf = LbaToMsf((ulong)index.Value);
+                if(_isCd)
+                    foreach(KeyValuePair<ushort, int> index in track.Indexes.Where(i => i.Key > 1))
+                    {
+                        msf = LbaToMsf((ulong)index.Value);
 
-                    _descriptorStream.WriteLine("    INDEX {0:D2} {1:D2}:{2:D2}:{3:D2}", index.Key, msf.minute,
-                                                msf.second, msf.frame);
-                }
+                        _descriptorStream.WriteLine("    INDEX {0:D2} {1:D2}:{2:D2}:{3:D2}", index.Key, msf.minute,
+                                                    msf.second, msf.frame);
+                    }
 
                 ushort lastSession = _writingTracks.Max(t => t.TrackSession);
 
@@ -592,7 +606,7 @@ namespace Aaru.DiscImages
 
             switch(tag)
             {
-                case SectorTagType.CdTrackFlags:
+                case SectorTagType.CdTrackFlags when _isCd:
                 {
                     if(data.Length != 1)
                     {
@@ -605,7 +619,7 @@ namespace Aaru.DiscImages
 
                     return true;
                 }
-                case SectorTagType.CdTrackIsrc:
+                case SectorTagType.CdTrackIsrc when _isCd:
                 {
                     if(data != null)
                         _trackIsrcs[(byte)sectorAddress] = Encoding.UTF8.GetString(data);
