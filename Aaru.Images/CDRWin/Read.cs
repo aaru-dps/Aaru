@@ -899,6 +899,55 @@ namespace Aaru.DiscImages
                     _discImage.Tracks.Add(cueTracks[t - 1]);
                 }
 
+                // MagicISO writes 2048 bytes per data, sets Cuesheet as 2352, and fill the images with empty data.
+                if(_discImage.Tracks.Count        == 1 &&
+                   _discImage.Tracks[0].TrackType == "MODE1/2352")
+                {
+                    Stream track1Stream = _discImage.Tracks[0].TrackFile.DataFilter.GetDataForkStream();
+
+                    bool foundSync = true;
+
+                    var rnd = new Random();
+
+                    // We check 32 random positions, to prevent coincidence of data
+                    for(int i = 0; i < 32; i++)
+                    {
+                        int next = rnd.Next((int)_imageInfo.Sectors);
+
+                        track1Stream.Position = next * 2352;
+                        byte[] data = new byte[16];
+                        track1Stream.Read(data, 0, 16);
+
+                        // If the position is not MODEx/2352, it can't be a correct Cuesheet.
+                        if(data[0x000] == 0x00 &&
+                           data[0x001] == 0xFF &&
+                           data[0x002] == 0xFF &&
+                           data[0x003] == 0xFF &&
+                           data[0x004] == 0xFF &&
+                           data[0x005] == 0xFF &&
+                           data[0x006] == 0xFF &&
+                           data[0x007] == 0xFF &&
+                           data[0x008] == 0xFF &&
+                           data[0x009] == 0xFF &&
+                           data[0x00A] == 0xFF &&
+                           data[0x00B] == 0x00)
+                            continue;
+
+                        foundSync = false;
+
+                        break;
+                    }
+
+                    if(!foundSync)
+                    {
+                        _discImage.Tracks[0].Pregap    = 0;
+                        _discImage.Tracks[0].Bps       = 2048;
+                        _discImage.Tracks[0].TrackType = CDRWIN_TRACK_TYPE_MODE1;
+                        _imageInfo.Application         = "ISOBuster";
+                        _discImage.MediaType           = MediaType.DVDROM;
+                    }
+                }
+
                 if(!string.IsNullOrWhiteSpace(_discImage.AaruMediaType) &&
                    Enum.TryParse(_discImage.AaruMediaType, true, out MediaType mediaType))
                 {
@@ -906,7 +955,7 @@ namespace Aaru.DiscImages
                 }
                 else if(_discImage.IsRedumpGigadisc)
                     _discImage.MediaType = MediaType.GDROM;
-                else
+                else if(_discImage.MediaType == MediaType.Unknown)
                     _discImage.MediaType = CdrWinIsoBusterDiscTypeToMediaType(_discImage.OriginalMediaType);
 
                 if(_discImage.MediaType == MediaType.Unknown ||
