@@ -755,11 +755,11 @@ namespace Aaru.Tests.Images
             new OpticalImageTestExpected
             {
                 TestFile      = "cdg_report_audiocd.cue",
-                MediaType     = MediaType.CDDA,
+                MediaType     = MediaType.CDG,
                 Sectors       = 247073,
                 MD5           = "c09f408a4416634d8ac1c1ffd0ed75a5",
                 LongMD5       = "c09f408a4416634d8ac1c1ffd0ed75a5",
-                SubchannelMD5 = "UNKNOWN",
+                SubchannelMD5 = "1d0e4118993a75311fe774e46326306a",
                 Tracks = new[]
                 {
                     new TrackInfoTestExpected
@@ -879,7 +879,7 @@ namespace Aaru.Tests.Images
             new OpticalImageTestExpected
             {
                 TestFile      = "cdg_test_multi_karaoke_sampler.cue",
-                MediaType     = MediaType.CDROMXA,
+                MediaType     = MediaType.CDG,
                 Sectors       = 329008,
                 MD5           = "f09312ba25a479fb81912a2965babd22",
                 LongMD5       = "f48603d11883593f45ec4a3824681e4e",
@@ -1019,7 +1019,7 @@ namespace Aaru.Tests.Images
             new OpticalImageTestExpected
             {
                 TestFile      = "cooked_cdg_test_multi_karaoke_sampler.cue",
-                MediaType     = MediaType.CDROMXA,
+                MediaType     = MediaType.CDG,
                 Sectors       = 329008,
                 MD5           = "f09312ba25a479fb81912a2965babd22",
                 LongMD5       = "UNKNOWN",
