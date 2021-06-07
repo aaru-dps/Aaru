@@ -1,4 +1,4 @@
-﻿// /***************************************************************************
+﻿// **************************************************************************
 // Aaru Data Preservation Suite
 // ----------------------------------------------------------------------------
 //
@@ -47,15 +47,15 @@ namespace Aaru.Tests.Images.PowerISO
             {
                 TestFile  = "cdiready_the_apprentice.cue",
                 MediaType = MediaType.CDDA,
-                Sectors   = 7843003432840639,
-                MD5       = "UNKNOWN",
-                LongMD5   = "UNKNOWN",
+                Sectors   = 279300,
+                MD5       = "7557c72d4cf6df8bc1896388b863727a",
+                LongMD5   = "7557c72d4cf6df8bc1896388b863727a",
                 Tracks = new[]
                 {
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 69150,
+                        Start   = 0,
                         End     = 88799,
                         Pregap  = 150,
                         Flags   = 0
@@ -224,7 +224,7 @@ namespace Aaru.Tests.Images.PowerISO
                     {
                         Session = 1,
                         Start   = 274275,
-                        End     = 7843003432909788,
+                        End     = 279299,
                         Pregap  = 0,
                         Flags   = 0
                     }
@@ -428,8 +428,7 @@ namespace Aaru.Tests.Images.PowerISO
                         Flags   = 4
                     }
                 }
-            },
-            new OpticalImageTestExpected
+            }, new OpticalImageTestExpected
             {
                 TestFile  = "report_enhancedcd.cue",
                 MediaType = MediaType.CDROMXA,
