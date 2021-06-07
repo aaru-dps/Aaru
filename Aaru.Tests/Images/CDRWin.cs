@@ -754,7 +754,7 @@ namespace Aaru.Tests.Images
             },
             new OpticalImageTestExpected
             {
-                TestFile      = "cdg/report_audiocd.cue",
+                TestFile      = "cdg_report_audiocd.cue",
                 MediaType     = MediaType.CDDA,
                 Sectors       = 247073,
                 MD5           = "c09f408a4416634d8ac1c1ffd0ed75a5",
@@ -878,7 +878,7 @@ namespace Aaru.Tests.Images
             },
             new OpticalImageTestExpected
             {
-                TestFile      = "cdg/test_multi_karaoke_sampler.cue",
+                TestFile      = "cdg_test_multi_karaoke_sampler.cue",
                 MediaType     = MediaType.CDROMXA,
                 Sectors       = 329008,
                 MD5           = "f09312ba25a479fb81912a2965babd22",
@@ -1018,7 +1018,7 @@ namespace Aaru.Tests.Images
             },
             new OpticalImageTestExpected
             {
-                TestFile      = "cooked_cdg/test_multi_karaoke_sampler.cue",
+                TestFile      = "cooked_cdg_test_multi_karaoke_sampler.cue",
                 MediaType     = MediaType.CDROMXA,
                 Sectors       = 329008,
                 MD5           = "f09312ba25a479fb81912a2965babd22",
@@ -1158,7 +1158,7 @@ namespace Aaru.Tests.Images
             },
             new OpticalImageTestExpected
             {
-                TestFile  = "cooked/report_cdrom.cue",
+                TestFile  = "cooked_report_cdrom.cue",
                 MediaType = MediaType.CDROM,
                 Sectors   = 254265,
                 MD5       = "bf4bbec517101d0d6f45d2e4d50cb875",
@@ -1177,7 +1177,7 @@ namespace Aaru.Tests.Images
             },
             new OpticalImageTestExpected
             {
-                TestFile  = "cooked/report_cdrw.cue",
+                TestFile  = "cooked_report_cdrw.cue",
                 MediaType = MediaType.CDROM,
                 Sectors   = 308224,
                 MD5       = "1e55aa420ca8f8ea77d5b597c9cfc19b",
@@ -1196,7 +1196,7 @@ namespace Aaru.Tests.Images
             },
             new OpticalImageTestExpected
             {
-                TestFile  = "cooked/test_multi_karaoke_sampler.cue",
+                TestFile  = "cooked_test_multi_karaoke_sampler.cue",
                 MediaType = MediaType.CDROMXA,
                 Sectors   = 329008,
                 MD5       = "f09312ba25a479fb81912a2965babd22",
