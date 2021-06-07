@@ -131,46 +131,7 @@ namespace Aaru.DiscImages
                     else
                         aaruTrack.TrackSubchannelType = TrackSubchannelType.None;
 
-                    if(_imageInfo.MediaType != MediaType.CD            &&
-                       _imageInfo.MediaType != MediaType.CDDA          &&
-                       _imageInfo.MediaType != MediaType.CDG           &&
-                       _imageInfo.MediaType != MediaType.CDEG          &&
-                       _imageInfo.MediaType != MediaType.CDI           &&
-                       _imageInfo.MediaType != MediaType.CDROM         &&
-                       _imageInfo.MediaType != MediaType.CDROMXA       &&
-                       _imageInfo.MediaType != MediaType.CDPLUS        &&
-                       _imageInfo.MediaType != MediaType.CDMO          &&
-                       _imageInfo.MediaType != MediaType.CDR           &&
-                       _imageInfo.MediaType != MediaType.CDRW          &&
-                       _imageInfo.MediaType != MediaType.CDMRW         &&
-                       _imageInfo.MediaType != MediaType.VCD           &&
-                       _imageInfo.MediaType != MediaType.SVCD          &&
-                       _imageInfo.MediaType != MediaType.PCD           &&
-                       _imageInfo.MediaType != MediaType.DTSCD         &&
-                       _imageInfo.MediaType != MediaType.CDMIDI        &&
-                       _imageInfo.MediaType != MediaType.CDV           &&
-                       _imageInfo.MediaType != MediaType.CDIREADY      &&
-                       _imageInfo.MediaType != MediaType.FMTOWNS       &&
-                       _imageInfo.MediaType != MediaType.PS1CD         &&
-                       _imageInfo.MediaType != MediaType.PS2CD         &&
-                       _imageInfo.MediaType != MediaType.MEGACD        &&
-                       _imageInfo.MediaType != MediaType.SATURNCD      &&
-                       _imageInfo.MediaType != MediaType.GDROM         &&
-                       _imageInfo.MediaType != MediaType.GDR           &&
-                       _imageInfo.MediaType != MediaType.MilCD         &&
-                       _imageInfo.MediaType != MediaType.SuperCDROM2   &&
-                       _imageInfo.MediaType != MediaType.JaguarCD      &&
-                       _imageInfo.MediaType != MediaType.ThreeDO       &&
-                       _imageInfo.MediaType != MediaType.PCFX          &&
-                       _imageInfo.MediaType != MediaType.NeoGeoCD      &&
-                       _imageInfo.MediaType != MediaType.CDTV          &&
-                       _imageInfo.MediaType != MediaType.CD32          &&
-                       _imageInfo.MediaType != MediaType.Playdia       &&
-                       _imageInfo.MediaType != MediaType.Pippin        &&
-                       _imageInfo.MediaType != MediaType.VideoNow      &&
-                       _imageInfo.MediaType != MediaType.VideoNowColor &&
-                       _imageInfo.MediaType != MediaType.VideoNowXp    &&
-                       _imageInfo.MediaType != MediaType.CVD)
+                    if(!_isCd)
                     {
                         aaruTrack.TrackPregap = 0;
                         aaruTrack.Indexes?.Clear();

@@ -164,7 +164,6 @@ namespace Aaru.DiscImages
                 bool firstTrackInSession = false;
 
                 ulong gdRomSession2Offset = 45000;
-                _densitySeparationSectors = 0;
 
                 while(_cueStream.Peek() >= 0)
                 {
@@ -898,9 +897,10 @@ namespace Aaru.DiscImages
 
                     if(leadouts.TryGetValue((byte)s, out int leadout))
                     {
+                        int startSector;
                         sessions[s - 1].EndSector = (ulong)(leadout - 1);
 
-                        if(!cueTracks[lastSessionTrack].Indexes.TryGetValue(0, out int startSector))
+                        if(!cueTracks[lastSessionTrack].Indexes.TryGetValue(0, out startSector))
                             cueTracks[lastSessionTrack].Indexes.TryGetValue(1, out startSector);
 
                         cueTracks[lastSessionTrack].Sectors = (ulong)(leadout - startSector);
@@ -915,25 +915,22 @@ namespace Aaru.DiscImages
                     if(firstSessionTrack.Pregap < 150)
                         firstSessionTrack.Pregap = 150;
 
-                    if(cueTracks.All(i => i.TrackFile.DataFilter.GetFilename() ==
+                    if(cueTracks.Any(i => i.TrackFile.DataFilter.GetFilename() !=
                                           cueTracks.First().TrackFile.DataFilter.GetFilename()))
+                        continue;
+
+                    if(firstSessionTrack.Indexes.TryGetValue(0, out int sessionStart))
                     {
-                        if(firstSessionTrack.Indexes.TryGetValue(0, out int sessionStart))
-                        {
-                            sessions[s - 1].StartSector = (ulong)sessionStart;
+                        sessions[s - 1].StartSector = (ulong)sessionStart;
 
-                            continue;
-                        }
+                        continue;
+                    }
 
-                        if(firstSessionTrack.Indexes.TryGetValue(1, out sessionStart))
-                        {
-                            sessions[s - 1].StartSector = (ulong)sessionStart;
-                        }
+                    if(firstSessionTrack.Indexes.TryGetValue(1, out sessionStart))
+                    {
+                        sessions[s - 1].StartSector = (ulong)sessionStart;
                     }
                 }
-
-                for(int s = 1; s <= sessions.Length; s++)
-                    _discImage.Sessions.Add(sessions[s - 1]);
 
                 for(int t = 1; t <= cueTracks.Length; t++)
                 {
@@ -957,7 +954,7 @@ namespace Aaru.DiscImages
                     // We check 32 random positions, to prevent coincidence of data
                     for(int i = 0; i < 32; i++)
                     {
-                        int next = rnd.Next((int)_imageInfo.Sectors);
+                        int next = rnd.Next(cueTracks[^1].Indexes[1]);
 
                         track1Stream.Position = next * 2352;
                         byte[] data = new byte[16];
@@ -1056,9 +1053,9 @@ namespace Aaru.DiscImages
                         _discImage.MediaType = MediaType.CDG;
                     else if(cdi)
                         _discImage.MediaType = MediaType.CDI;
-                    else if(firstAudio                    &&
-                            data                          &&
-                            _discImage.Sessions.Count > 1 &&
+                    else if(firstAudio          &&
+                            data                &&
+                            sessions.Length > 1 &&
                             mode2)
                         _discImage.MediaType = MediaType.CDPLUS;
                     else if((firstData && audio) || mode2)
@@ -1138,26 +1135,6 @@ namespace Aaru.DiscImages
                 else
                     AaruConsole.DebugWriteLine("CDRWin plugin", "\tComment: \"{0}\"", _discImage.Comment);
 
-                AaruConsole.DebugWriteLine("CDRWin plugin", "Session information:");
-                AaruConsole.DebugWriteLine("CDRWin plugin", "\tDisc contains {0} sessions", _discImage.Sessions.Count);
-
-                for(int i = 0; i < _discImage.Sessions.Count; i++)
-                {
-                    AaruConsole.DebugWriteLine("CDRWin plugin", "\tSession {0} information:", i + 1);
-
-                    AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tStarting track: {0}",
-                                               _discImage.Sessions[i].StartTrack);
-
-                    AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tStarting sector: {0}",
-                                               _discImage.Sessions[i].StartSector);
-
-                    AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tEnding track: {0}",
-                                               _discImage.Sessions[i].EndTrack);
-
-                    AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tEnding sector: {0}",
-                                               _discImage.Sessions[i].EndSector);
-                }
-
                 AaruConsole.DebugWriteLine("CDRWin plugin", "Track information:");
                 AaruConsole.DebugWriteLine("CDRWin plugin", "\tDisc contains {0} tracks", _discImage.Tracks.Count);
 
@@ -1235,6 +1212,50 @@ namespace Aaru.DiscImages
                         AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tTitle: {0}", _discImage.Tracks[i].Title);
                 }
 
+                foreach(CdrWinTrack track in _discImage.Tracks)
+                    _imageInfo.ImageSize += track.Bps * track.Sectors;
+
+                for(int s = 0; s < sessions.Length; s++)
+                {
+                    if(!_discImage.Tracks[(int)sessions[s].StartTrack - 1].Indexes.
+                                   TryGetValue(0, out int sessionTrackStart))
+                        _discImage.Tracks[(int)sessions[s].StartTrack - 1].Indexes.
+                                   TryGetValue(1, out sessionTrackStart);
+
+                    sessions[s].StartSector = (ulong)(sessionTrackStart > 0 ? sessionTrackStart : 0);
+
+                    if(!_discImage.Tracks[(int)sessions[s].EndTrack - 1].Indexes.TryGetValue(0, out sessionTrackStart))
+                        _discImage.Tracks[(int)sessions[s].EndTrack - 1].Indexes.TryGetValue(1, out sessionTrackStart);
+
+                    sessions[s].EndSector =  (ulong)(sessionTrackStart > 0 ? sessionTrackStart : 0);
+                    sessions[s].EndSector += _discImage.Tracks[(int)sessions[s].EndTrack - 1].Sectors - 1;
+                }
+
+                for(int s = 1; s <= sessions.Length; s++)
+                    _discImage.Sessions.Add(sessions[s - 1]);
+
+                _imageInfo.Sectors = _discImage.Sessions.OrderByDescending(s => s.EndSector).First().EndSector + 1;
+
+                AaruConsole.DebugWriteLine("CDRWin plugin", "Session information:");
+                AaruConsole.DebugWriteLine("CDRWin plugin", "\tDisc contains {0} sessions", _discImage.Sessions.Count);
+
+                for(int i = 0; i < _discImage.Sessions.Count; i++)
+                {
+                    AaruConsole.DebugWriteLine("CDRWin plugin", "\tSession {0} information:", i + 1);
+
+                    AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tStarting track: {0}",
+                                               _discImage.Sessions[i].StartTrack);
+
+                    AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tStarting sector: {0}",
+                                               _discImage.Sessions[i].StartSector);
+
+                    AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tEnding track: {0}",
+                                               _discImage.Sessions[i].EndTrack);
+
+                    AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tEnding sector: {0}",
+                                               _discImage.Sessions[i].EndSector);
+                }
+
                 AaruConsole.DebugWriteLine("CDRWin plugin", "Building offset map");
 
                 Partitions = new List<Partition>();
@@ -1280,8 +1301,7 @@ namespace Aaru.DiscImages
                             _discImage.Tracks[i].Sequence == 3)
                     {
                         _offsetMap.Add(_discImage.Tracks[i].Sequence, gdRomSession2Offset);
-                        _densitySeparationSectors += gdRomSession2Offset - previousPartitionsSize;
-                        previousPartitionsSize    =  gdRomSession2Offset;
+                        previousPartitionsSize = gdRomSession2Offset;
                     }
                     else if(_discImage.Tracks[i].Sequence > 1)
                         _offsetMap.Add(_discImage.Tracks[i].Sequence,
@@ -1308,14 +1328,6 @@ namespace Aaru.DiscImages
                     AaruConsole.DebugWriteLine("CDRWin plugin", "\tPartition starting offset: {0}", partition.Offset);
                     AaruConsole.DebugWriteLine("CDRWin plugin", "\tPartition size in bytes: {0}", partition.Size);
                 }
-
-                foreach(CdrWinTrack track in _discImage.Tracks)
-                    _imageInfo.ImageSize += track.Bps * track.Sectors;
-
-                foreach(CdrWinTrack track in _discImage.Tracks)
-                    _imageInfo.Sectors += track.Sectors;
-
-                _imageInfo.Sectors += _densitySeparationSectors;
 
                 if(_discImage.MediaType != MediaType.CDROMXA &&
                    _discImage.MediaType != MediaType.CDDA    &&
@@ -1346,7 +1358,7 @@ namespace Aaru.DiscImages
                     // Detect ISOBuster extensions
                     else if(_discImage.OriginalMediaType != null               ||
                             _discImage.Comment.ToLower().Contains("isobuster") ||
-                            _discImage.Sessions.Count > 1)
+                            sessions.Length > 1)
                         _imageInfo.Application = "ISOBuster";
                     else
                         _imageInfo.Application = "CDRWin";
@@ -1465,6 +1477,27 @@ namespace Aaru.DiscImages
                     _imageInfo.ReadableSectorTags.Remove(SectorTagType.CdSectorEdc);
                     _imageInfo.ReadableSectorTags.Remove(SectorTagType.CdTrackFlags);
                     _imageInfo.ReadableSectorTags.Remove(SectorTagType.CdTrackIsrc);
+
+                    sessions = _discImage.Sessions.ToArray();
+
+                    foreach(CdrWinTrack track in _discImage.Tracks)
+                    {
+                        track.Indexes.Remove(0);
+                        track.Pregap = 0;
+
+                        for(int s = 0; s < sessions.Length; s++)
+                        {
+                            if(sessions[s].SessionSequence > 1 &&
+                               track.Sequence              == sessions[s].StartTrack)
+                            {
+                                track.TrackFile.Offset  += 307200;
+                                track.Sectors           -= 150;
+                                sessions[s].StartSector =  (ulong)track.Indexes[1];
+                            }
+                        }
+                    }
+
+                    _discImage.Sessions = sessions.ToList();
                 }
 
                 return true;

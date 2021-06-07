@@ -44,7 +44,6 @@ namespace Aaru.DiscImages
     {
         IFilter      _cdrwinFilter;
         StreamReader _cueStream;
-        ulong        _densitySeparationSectors;
         StreamWriter _descriptorStream;
         CdrWinDisc   _discImage;
         ImageInfo    _imageInfo;
