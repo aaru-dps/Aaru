@@ -497,6 +497,8 @@ namespace Aaru.DiscImages
                                 currentFile.Sequence   = currentTrack.Sequence;
                                 currentTrack.TrackFile = currentFile;
 
+                                _negativeEnd = currentFile.DataFilter.GetLength() - (long)currentFile.Offset < 0;
+
                                 currentTrack.Sectors =
                                     ((ulong)currentFile.DataFilter.GetLength() - currentFile.Offset) /
                                     CdrWinTrackTypeToBytesPerSector(currentTrack.TrackType);
@@ -808,10 +810,53 @@ namespace Aaru.DiscImages
                     currentFile.Sequence   = currentTrack.Sequence;
                     currentTrack.TrackFile = currentFile;
 
+                    _negativeEnd = currentFile.DataFilter.GetLength() - (long)currentFile.Offset < 0;
+
                     currentTrack.Sectors = ((ulong)currentFile.DataFilter.GetLength() - currentFile.Offset) /
                                            CdrWinTrackTypeToBytesPerSector(currentTrack.TrackType);
 
                     cueTracks[currentTrack.Sequence - 1] = currentTrack;
+                }
+
+                if(_negativeEnd)
+                {
+                    string firstFile = cueTracks[0].TrackFile.DataFilter.GetPath();
+
+                    if(cueTracks.Any(t => t.Session > 1 || t.TrackFile.DataFilter.GetPath() != firstFile) ||
+                       cueTracks[0].Indexes.ContainsKey(0))
+                    {
+                        AaruConsole.
+                            ErrorWriteLine("The data files are not correct according to the cuesheet file, cannot continue with this file.");
+
+                        return false;
+                    }
+
+                    cueTracks[0].Pregap = cueTracks[0].Indexes[1];
+                    int reduceOffset = cueTracks[0].Pregap * cueTracks[0].Bps;
+
+                    foreach(CdrWinTrack track in cueTracks)
+                        track.TrackFile.Offset -= (ulong)reduceOffset;
+
+                    if(currentFile.DataFilter.GetLength() -
+                       (long)cueTracks[currentTrack.Sequence - 1].TrackFile.Offset < 0)
+                    {
+                        AaruConsole.
+                            ErrorWriteLine("The data files are not correct according to the cuesheet file, cannot continue with this file.");
+
+                        return false;
+                    }
+
+                    cueTracks[currentTrack.Sequence - 1].Sectors =
+                        ((ulong)currentFile.DataFilter.GetLength() -
+                         cueTracks[currentTrack.Sequence - 1].TrackFile.Offset) /
+                        cueTracks[currentTrack.Sequence - 1].Bps;
+
+                    cueTracks[0].Indexes[0] =  0;
+                    _lostPregap             =  (uint)cueTracks[0].Pregap;
+                    cueTracks[0].Sectors    += _lostPregap;
+
+                    AaruConsole.
+                        ErrorWriteLine("The data files are missing a pregap or hidden track contents, will do best effort to make the rest of the image readable.");
                 }
 
                 Session[] sessions = new Session[currentSession];
@@ -1588,6 +1633,27 @@ namespace Aaru.DiscImages
 
             byte[] buffer = new byte[sectorSize * length];
 
+            // If it's the lost pregap
+            if(track       == 1 &&
+               _lostPregap > 0)
+            {
+                if(sectorAddress < _lostPregap)
+                {
+                    // If we need to mix lost with present data
+                    if(sectorAddress + length <= _lostPregap)
+                        return buffer;
+
+                    ulong pregapPos = _lostPregap - sectorAddress;
+
+                    byte[] presentData = ReadSectors(_lostPregap, (uint)(length - pregapPos), track);
+                    Array.Copy(presentData, 0, buffer, (long)(pregapPos * sectorSize), presentData.Length);
+
+                    return buffer;
+                }
+
+                sectorAddress -= _lostPregap;
+            }
+
             _imageStream = aaruTrack.TrackFile.DataFilter.GetDataForkStream();
             var br = new BinaryReader(_imageStream);
 
@@ -1815,6 +1881,27 @@ namespace Aaru.DiscImages
 
             byte[] buffer = new byte[sectorSize * length];
 
+            // If it's the lost pregap
+            if(track       == 1 &&
+               _lostPregap > 0)
+            {
+                if(sectorAddress < _lostPregap)
+                {
+                    // If we need to mix lost with present data
+                    if(sectorAddress + length <= _lostPregap)
+                        return buffer;
+
+                    ulong pregapPos = _lostPregap - sectorAddress;
+
+                    byte[] presentData = ReadSectors(_lostPregap, (uint)(length - pregapPos), track);
+                    Array.Copy(presentData, 0, buffer, (long)(pregapPos * sectorSize), presentData.Length);
+
+                    return buffer;
+                }
+
+                sectorAddress -= _lostPregap;
+            }
+
             _imageStream = aaruTrack.TrackFile.DataFilter.GetDataForkStream();
             var br = new BinaryReader(_imageStream);
 
@@ -1931,6 +2018,27 @@ namespace Aaru.DiscImages
             }
 
             byte[] buffer = new byte[sectorSize * length];
+
+            // If it's the lost pregap
+            if(track       == 1 &&
+               _lostPregap > 0)
+            {
+                if(sectorAddress < _lostPregap)
+                {
+                    // If we need to mix lost with present data
+                    if(sectorAddress + length <= _lostPregap)
+                        return buffer;
+
+                    ulong pregapPos = _lostPregap - sectorAddress;
+
+                    byte[] presentData = ReadSectors(_lostPregap, (uint)(length - pregapPos), track);
+                    Array.Copy(presentData, 0, buffer, (long)(pregapPos * sectorSize), presentData.Length);
+
+                    return buffer;
+                }
+
+                sectorAddress -= _lostPregap;
+            }
 
             _imageStream = aaruTrack.TrackFile.DataFilter.GetDataForkStream();
             var br = new BinaryReader(_imageStream);

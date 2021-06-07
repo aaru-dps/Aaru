@@ -50,6 +50,8 @@ namespace Aaru.DiscImages
         ImageInfo    _imageInfo;
         Stream       _imageStream;
         bool         _isCd;
+        uint         _lostPregap;
+        bool         _negativeEnd;
         /// <summary>Dictionary, index is track #, value is TrackFile</summary>
         Dictionary<uint, ulong> _offsetMap;
         SectorBuilder                _sectorBuilder;
