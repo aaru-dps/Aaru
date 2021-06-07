@@ -738,11 +738,45 @@ namespace Aaru.DiscImages
                         {
                             AaruConsole.DebugWriteLine("CDRWin plugin", "Found PREGAP at line {0}", lineNumber);
 
-                            if(inTrack)
-                                currentTrack.Pregap = CdrWinMsfToLba(matchPregap.Groups[1].Value);
-                            else
+                            if(!inTrack)
                                 throw new
                                     FeatureUnsupportedImageException($"Found PREGAP field before a track at line {lineNumber}");
+
+                            int offset = CdrWinMsfToLba(matchPregap.Groups[1].Value);
+
+                            if((int)(currentTrack.Sequence - 2) >= 0 &&
+                               offset                           > 1)
+                            {
+                                cueTracks[currentTrack.Sequence - 2].Sectors =
+                                    (ulong)(offset - (int)currentFileOffsetSector);
+
+                                currentFile.Offset += cueTracks[currentTrack.Sequence - 2].Sectors *
+                                                      cueTracks[currentTrack.Sequence - 2].Bps;
+
+                                AaruConsole.DebugWriteLine("CDRWin plugin", "Sets currentFile.offset to {0}",
+                                                           currentFile.Offset);
+
+                                AaruConsole.DebugWriteLine("CDRWin plugin",
+                                                           "cueTracks[currentTrack.sequence-2].sectors = {0}",
+                                                           cueTracks[currentTrack.Sequence - 2].Sectors);
+
+                                AaruConsole.DebugWriteLine("CDRWin plugin",
+                                                           "cueTracks[currentTrack.sequence-2].bps = {0}",
+                                                           cueTracks[currentTrack.Sequence - 2].Bps);
+                            }
+
+                            if(currentTrack.Sequence == 1)
+                            {
+                                AaruConsole.DebugWriteLine("CDRWin plugin", "Sets currentFile.offset to {0}",
+                                                           offset * currentTrack.Bps);
+
+                                currentFile.Offset = (ulong)(offset * currentTrack.Bps);
+                            }
+
+                            if(currentTrack.Indexes.Count == 0)
+                                currentFileOffsetSector = offset;
+
+                            currentTrack.Indexes.Add(0, offset);
                         }
                         else if(matchSongWriter.Success)
                         {
