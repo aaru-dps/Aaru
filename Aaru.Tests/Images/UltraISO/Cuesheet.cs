@@ -47,7 +47,7 @@ namespace Aaru.Tests.Images.UltraISO
             {
                 TestFile  = "cdiready_the_apprentice.cue",
                 MediaType = MediaType.CDDA,
-                Sectors   = 210150,
+                Sectors   = 279300,
                 MD5       = "d3b069721052a1093151c6f7504ca593",
                 LongMD5   = "d3b069721052a1093151c6f7504ca593",
                 Tracks = new[]
@@ -452,7 +452,7 @@ namespace Aaru.Tests.Images.UltraISO
             {
                 TestFile  = "report_enhancedcd.cue",
                 MediaType = MediaType.CDPLUS,
-                Sectors   = 303616,
+                Sectors   = 303316,
                 MD5       = "026acd68cecc7b2d49a3f9a42312a18f",
                 LongMD5   = "31a4c8805b6e8fa7edf93d41b1785661",
                 Tracks = new[]

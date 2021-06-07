@@ -837,7 +837,7 @@ namespace Aaru.Tests.Images.IsoBuster
                     new TrackInfoTestExpected
                     {
                         Session = 2,
-                        Start   = 23914,
+                        Start   = 24064,
                         End     = 230623,
                         Pregap  = 0
                     }
@@ -862,7 +862,7 @@ namespace Aaru.Tests.Images.IsoBuster
                     new TrackInfoTestExpected
                     {
                         Session = 2,
-                        Start   = 235098,
+                        Start   = 235248,
                         End     = 257263,
                         Pregap  = 0
                     }

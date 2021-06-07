@@ -428,11 +428,12 @@ namespace Aaru.Tests.Images.PowerISO
                         Flags   = 4
                     }
                 }
-            }, new OpticalImageTestExpected
+            },
+            new OpticalImageTestExpected
             {
                 TestFile  = "report_enhancedcd.cue",
                 MediaType = MediaType.CDROMXA,
-                Sectors   = 303616,
+                Sectors   = 303316,
                 MD5       = "945f0230f2bb461b036282b6fae0e303",
                 LongMD5   = "8626728920d2caad7832c74518aece35",
                 Tracks = new[]

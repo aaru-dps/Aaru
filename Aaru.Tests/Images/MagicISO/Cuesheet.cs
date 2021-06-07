@@ -47,7 +47,7 @@ namespace Aaru.Tests.Images.MagicISO
             {
                 TestFile  = "cdiready_the_apprentice.cue",
                 MediaType = MediaType.CDDA,
-                Sectors   = 210299,
+                Sectors   = 279299,
                 MD5       = "ab350df419f96d967f51d0161ebeba63",
                 LongMD5   = "ab350df419f96d967f51d0161ebeba63",
                 Tracks = new[]
@@ -234,7 +234,7 @@ namespace Aaru.Tests.Images.MagicISO
             {
                 TestFile  = "report_audiocd.cue",
                 MediaType = MediaType.CDDA,
-                Sectors   = 247222,
+                Sectors   = 247072,
                 MD5       = "277e98295297f618cc63687e98288d7e",
                 LongMD5   = "277e98295297f618cc63687e98288d7e",
                 Tracks = new[]
@@ -480,7 +480,7 @@ namespace Aaru.Tests.Images.MagicISO
             {
                 TestFile  = "report_enhancedcd.cue",
                 MediaType = MediaType.CDPLUS,
-                Sectors   = 303615,
+                Sectors   = 303315,
                 MD5       = "0ac3eaefdd2c138e86229d195d63cba2",
                 LongMD5   = "2524762a816af8e8c188b971dfd27374",
                 Tracks = new[]
@@ -603,7 +603,7 @@ namespace Aaru.Tests.Images.MagicISO
             {
                 TestFile  = "test_multi_karaoke_sampler.cue",
                 MediaType = MediaType.CDROMXA,
-                Sectors   = 329307,
+                Sectors   = 329157,
                 MD5       = "cc6354d06b009b0446012842c7f94be7",
                 LongMD5   = "bb3ebf139ebb76fff1b229a379d289e4",
                 Tracks = new[]
