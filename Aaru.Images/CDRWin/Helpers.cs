@@ -62,9 +62,9 @@ namespace Aaru.DiscImages
                 case CDRWIN_TRACK_TYPE_AUDIO:
                 case CDRWIN_TRACK_TYPE_MODE1_RAW:
                 case CDRWIN_TRACK_TYPE_MODE2_RAW:
-                case CDRWIN_TRACK_TYPE_CDG:
                 case CDRWIN_TRACK_TYPE_CDI_RAW: return 2352;
-                default: return 0;
+                case CDRWIN_TRACK_TYPE_CDG: return 2448;
+                default:                    return 0;
             }
         }
 
