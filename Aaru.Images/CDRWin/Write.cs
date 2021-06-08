@@ -500,8 +500,24 @@ namespace Aaru.DiscImages
                 _descriptorStream.WriteLine("FILE \"{0}\" BINARY",
                                             Path.GetFileName(_writingStreams.First().Value.Name));
 
+            Track trackZero = null;
+
             foreach(Track track in _writingTracks)
             {
+                switch(track.TrackSequence)
+                {
+                    // You should not be able to write CD-i Ready as this format, but just in case
+                    case 0 when _imageInfo.MediaType != MediaType.CDIREADY:
+                        trackZero = track;
+
+                        continue;
+                    case 1 when trackZero != null && !track.Indexes.ContainsKey(0):
+                        track.TrackStartSector = trackZero.TrackStartSector;
+                        track.TrackPregap      = (ulong)track.Indexes[1] - track.TrackStartSector;
+
+                        break;
+                }
+
                 if(track.TrackSession > currentSession)
                     _descriptorStream.WriteLine("REM SESSION {0}", ++currentSession);
 
