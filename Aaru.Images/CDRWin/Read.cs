@@ -163,7 +163,7 @@ namespace Aaru.DiscImages
                 bool inTruripTrackHash   = false;
                 bool firstTrackInSession = false;
 
-                ulong gdRomSession2Offset = 45000;
+                const ulong gdRomSession2Offset = 45000;
 
                 while(_cueStream.Peek() >= 0)
                 {
@@ -1269,6 +1269,9 @@ namespace Aaru.DiscImages
                     _discImage.Sessions.Add(sessions[s - 1]);
 
                 _imageInfo.Sectors = _discImage.Sessions.OrderByDescending(s => s.EndSector).First().EndSector + 1;
+
+                if(_discImage.IsRedumpGigadisc)
+                    _imageInfo.Sectors = 549150;
 
                 AaruConsole.DebugWriteLine("CDRWin plugin", "Session information:");
                 AaruConsole.DebugWriteLine("CDRWin plugin", "\tDisc contains {0} sessions", _discImage.Sessions.Count);
