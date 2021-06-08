@@ -867,7 +867,7 @@ namespace Aaru.DiscImages
                     sectorSkip += 16;
 
                     break;
-                case TrackSubchannelType.PackedInterleaved:
+                case TrackSubchannelType.RawInterleaved:
                     sectorSkip += 96;
 
                     break;
@@ -1143,7 +1143,7 @@ namespace Aaru.DiscImages
                     sectorSkip += 16;
 
                     break;
-                case TrackSubchannelType.PackedInterleaved:
+                case TrackSubchannelType.RawInterleaved:
                     sectorSkip += 96;
 
                     break;
@@ -1228,7 +1228,7 @@ namespace Aaru.DiscImages
                     sectorSkip += 16;
 
                     break;
-                case TrackSubchannelType.PackedInterleaved:
+                case TrackSubchannelType.RawInterleaved:
                     sectorSkip += 96;
 
                     break;
