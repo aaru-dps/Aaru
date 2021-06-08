@@ -88,6 +88,9 @@ namespace Aaru.Devices
                 if(devicePath.StartsWith('/'))
                     devicePath = devicePath.Substring(1);
 
+                if(devicePath.StartsWith("dev"))
+                    devicePath = $"/{devicePath}";
+
                 Error     = !_remote.Open(devicePath, out int errno);
                 LastError = errno;
             }
