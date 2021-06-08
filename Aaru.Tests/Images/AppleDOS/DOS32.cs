@@ -47,9 +47,9 @@ namespace Aaru.Tests.Images.AppleDOS
             {
                 TestFile   = "alice.d13.lz",
                 MediaType  = MediaType.Apple32SS,
-                Sectors    = 560,
+                Sectors    = 455,
                 SectorSize = 256,
-                MD5        = "UNKNOWN"
+                MD5        = "76f8fe4c5bc1976f99641ad7cdf53109"
             }
         };
     }

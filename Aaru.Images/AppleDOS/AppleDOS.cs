@@ -41,6 +41,7 @@ namespace Aaru.DiscImages
     public sealed partial class AppleDos : IWritableImage
     {
         byte[]     _deinterleaved;
+        bool       _dos32;
         string     _extension;
         ImageInfo  _imageInfo;
         FileStream _writingStream;

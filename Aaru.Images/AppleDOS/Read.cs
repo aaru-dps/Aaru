@@ -48,26 +48,35 @@ namespace Aaru.DiscImages
             byte[] tmp = new byte[imageFilter.GetDataForkLength()];
             stream.Read(tmp, 0, tmp.Length);
 
-            bool isDos = tmp[0x11001] == 17 && tmp[0x11002] < 16 && tmp[0x11027] <= 122 && tmp[0x11034] == 35 &&
-                         tmp[0x11035] == 16 && tmp[0x11036] == 0 && tmp[0x11037] == 1;
-
-            _deinterleaved = new byte[tmp.Length];
-
             _extension = Path.GetExtension(imageFilter.GetFilename())?.ToLower();
 
-            int[] offsets = _extension == ".do"
-                                ? isDos
-                                      ? _deinterleave
-                                      : _interleave
-                                : isDos
-                                    ? _interleave
-                                    : _deinterleave;
-
-            for(int t = 0; t < 35; t++)
+            if((_extension == ".d13" || _extension == ".do") &&
+               tmp.Length == 116480)
             {
-                for(int s = 0; s < 16; s++)
-                    Array.Copy(tmp, (t * 16 * 256) + (s * 256), _deinterleaved, (t * 16 * 256) + (offsets[s] * 256),
-                               256);
+                _dos32         = true;
+                _deinterleaved = tmp;
+            }
+            else
+            {
+                bool isDos = tmp[0x11001] == 17 && tmp[0x11002] < 16 && tmp[0x11027] <= 122 && tmp[0x11034] == 35 &&
+                             tmp[0x11035] == 16 && tmp[0x11036] == 0 && tmp[0x11037] == 1;
+
+                _deinterleaved = new byte[tmp.Length];
+
+                int[] offsets = _extension == ".do"
+                                    ? isDos
+                                          ? _deinterleave
+                                          : _interleave
+                                    : isDos
+                                        ? _interleave
+                                        : _deinterleave;
+
+                for(int t = 0; t < 35; t++)
+                {
+                    for(int s = 0; s < 16; s++)
+                        Array.Copy(tmp, (t * 16 * 256) + (s * 256), _deinterleaved, (t * 16 * 256) + (offsets[s] * 256),
+                                   256);
+                }
             }
 
             _imageInfo.SectorSize           = 256;
@@ -75,12 +84,12 @@ namespace Aaru.DiscImages
             _imageInfo.CreationTime         = imageFilter.GetCreationTime();
             _imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
             _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
-            _imageInfo.Sectors              = 560;
-            _imageInfo.MediaType            = MediaType.Apple33SS;
+            _imageInfo.Sectors              = _dos32 ? 455u : 560u;
+            _imageInfo.MediaType            = _dos32 ? MediaType.Apple32SS : MediaType.Apple33SS;
             _imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
             _imageInfo.Cylinders            = 35;
-            _imageInfo.Heads                = 2;
-            _imageInfo.SectorsPerTrack      = 16;
+            _imageInfo.Heads                = 1;
+            _imageInfo.SectorsPerTrack      = _dos32 ? 13u : 16u;
 
             return true;
         }

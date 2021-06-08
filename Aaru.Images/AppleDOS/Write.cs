@@ -52,16 +52,18 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            if(mediaType != MediaType.Apple33SS)
+            if(mediaType != MediaType.Apple32SS &&
+               mediaType != MediaType.Apple33SS)
             {
                 ErrorMessage = $"Unsupported media format {mediaType}";
 
                 return false;
             }
 
-            if(sectors > uint.MaxValue)
+            if((mediaType == MediaType.Apple32SS && sectors != 455) ||
+               (mediaType == MediaType.Apple33SS && sectors != 560))
             {
-                ErrorMessage = "Too many sectors";
+                ErrorMessage = "Incorrect number of sectors for media";
 
                 return false;
             }
@@ -84,8 +86,15 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            _deinterleaved = new byte[35 * 16 * 256];
-            _extension     = Path.GetExtension(path);
+            _extension = Path.GetExtension(path);
+
+            if(mediaType == MediaType.Apple32SS)
+            {
+                _dos32     = true;
+                _extension = ".d13";
+            }
+
+            _deinterleaved = new byte[35 * (_dos32 ? 13 : 16) * 256];
 
             IsWriting    = true;
             ErrorMessage = null;
@@ -155,25 +164,31 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            bool isDos = _deinterleaved[0x11001] == 17  && _deinterleaved[0x11002] < 16 &&
-                         _deinterleaved[0x11027] <= 122 && _deinterleaved[0x11034] == 35 &&
-                         _deinterleaved[0x11035] == 16  && _deinterleaved[0x11036] == 0 && _deinterleaved[0x11037] == 1;
+            byte[] tmp;
 
-            byte[] tmp = new byte[_deinterleaved.Length];
-
-            int[] offsets = _extension == ".do"
-                                ? isDos
-                                      ? _deinterleave
-                                      : _interleave
-                                : isDos
-                                    ? _interleave
-                                    : _deinterleave;
-
-            for(int t = 0; t < 35; t++)
+            if(_dos32)
+                tmp = _deinterleaved;
+            else
             {
-                for(int s = 0; s < 16; s++)
-                    Array.Copy(_deinterleaved, (t * 16 * 256) + (offsets[s] * 256), tmp, (t * 16 * 256) + (s * 256),
-                               256);
+                bool isDos = _deinterleaved[0x11001] == 17  && _deinterleaved[0x11002] < 16  &&
+                             _deinterleaved[0x11027] <= 122 && _deinterleaved[0x11034] == 35 &&
+                             _deinterleaved[0x11035] == 16  && _deinterleaved[0x11036] == 0  &&
+                             _deinterleaved[0x11037] == 1;
+
+                tmp = new byte[_deinterleaved.Length];
+
+                int[] offsets = _extension == ".do"
+                                    ? isDos
+                                          ? _deinterleave
+                                          : _interleave
+                                    : isDos
+                                        ? _interleave
+                                        : _deinterleave;
+
+                for(int t = 0; t < 35; t++)
+                    for(int s = 0; s < 16; s++)
+                        Array.Copy(_deinterleaved, (t * 16 * 256) + (offsets[s] * 256), tmp, (t * 16 * 256) + (s * 256),
+                                   256);
             }
 
             _writingStream.Seek(0, SeekOrigin.Begin);
