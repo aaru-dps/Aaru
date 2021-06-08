@@ -838,6 +838,12 @@ namespace Aaru.DiscImages
                     }
                 }
 
+                if(currentSession > 1  &&
+                   leadouts.Count == 0 &&
+                   !_discImage.IsRedumpGigadisc)
+                    throw new
+                        FeatureUnsupportedImageException($"This image is missing vital multi-session data and cannot be read correctly.");
+
                 if(currentTrack.Sequence != 0)
                 {
                     currentFile.Sequence   = currentTrack.Sequence;
