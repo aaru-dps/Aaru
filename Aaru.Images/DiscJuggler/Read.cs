@@ -714,6 +714,10 @@ namespace Aaru.DiscImages
                     _imageInfo.MediaType = MediaType.CD;
             }
 
+            if(_trackFlags.Count > 0 &&
+               !_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdTrackFlags))
+                _imageInfo.ReadableSectorTags.Add(SectorTagType.CdTrackFlags);
+
             _imageInfo.Application          = "DiscJuggler";
             _imageInfo.ImageSize            = (ulong)imageFilter.GetDataForkLength();
             _imageInfo.CreationTime         = imageFilter.GetCreationTime();
