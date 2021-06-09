@@ -853,7 +853,7 @@ namespace Aaru.DiscImages
                 {
                     mode2        = true;
                     sectorOffset = 0;
-                    sectorSize   = (uint)aaruTrack.TrackRawBytesPerSector;
+                    sectorSize   = 2336;
                     sectorSkip   = 0;
                 }
 
@@ -886,14 +886,18 @@ namespace Aaru.DiscImages
 
             if(mode2)
             {
-                var mode2Ms = new MemoryStream((int)((sectorSize + sectorSkip) * length));
+                var mode2Ms = new MemoryStream((int)(sectorSize * length));
 
+                buffer = new byte[(aaruTrack.TrackRawBytesPerSector + sectorSkip) * length];
                 _imageStream.Read(buffer, 0, buffer.Length);
 
                 for(int i = 0; i < length; i++)
                 {
-                    byte[] sector = new byte[sectorSize];
-                    Array.Copy(buffer, (sectorSize + sectorSkip) * i, sector, 0, sectorSize);
+                    byte[] sector = new byte[aaruTrack.TrackRawBytesPerSector];
+
+                    Array.Copy(buffer, (aaruTrack.TrackRawBytesPerSector + sectorSkip) * i, sector, 0,
+                               aaruTrack.TrackRawBytesPerSector);
+
                     sector = Sector.GetUserDataFromMode2(sector);
                     mode2Ms.Write(sector, 0, sector.Length);
                 }
