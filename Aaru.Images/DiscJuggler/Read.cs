@@ -53,6 +53,7 @@ namespace Aaru.DiscImages
         {
             _imageStream = imageFilter.GetDataForkStream();
 
+            // Read size of image descriptor
             _imageStream.Seek(-4, SeekOrigin.End);
             byte[] dscLenB = new byte[4];
             _imageStream.Read(dscLenB, 0, 4);
@@ -105,7 +106,45 @@ namespace Aaru.DiscImages
                    descriptor[position + 12] != 0x00 ||
                    descriptor[position + 13] != 0xFF ||
                    descriptor[position + 14] != 0xFF)
-                    return false;
+                {
+                    bool nextFound = false;
+
+                    // But on generated (not dumped) image, it can have some data between last written session and
+                    // next open one, so depend on if we already got a track
+                    while(position + 16 < descriptor.Length)
+                    {
+                        if(descriptor[position + 0]  != 0x00 ||
+                           descriptor[position + 2]  != 0x00 ||
+                           descriptor[position + 3]  != 0x00 ||
+                           descriptor[position + 4]  != 0x00 ||
+                           descriptor[position + 5]  != 0x00 ||
+                           descriptor[position + 6]  != 0x00 ||
+                           descriptor[position + 7]  != 0x00 ||
+                           descriptor[position + 8]  != 0x00 ||
+                           descriptor[position + 9]  != 0x01 ||
+                           descriptor[position + 10] != 0x00 ||
+                           descriptor[position + 11] != 0x00 ||
+                           descriptor[position + 12] != 0x00 ||
+                           descriptor[position + 13] != 0xFF ||
+                           descriptor[position + 14] != 0xFF)
+                        {
+                            position++;
+
+                            continue;
+                        }
+
+                        nextFound = true;
+
+                        break;
+                    }
+
+                    if(!nextFound)
+                        return Tracks.Count > 0;
+
+                    position += 15;
+
+                    break;
+                }
 
                 // Too many tracks
                 if(descriptor[position + 1] > 99)
