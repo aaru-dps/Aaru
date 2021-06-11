@@ -111,7 +111,8 @@ namespace Aaru.DiscImages
                 _imageInfo.MediaType  = CommonTypes.MediaType.CD;
                 _imageInfo.Sectors    = 0;
                 _imageInfo.SectorSize = 0;
-                ulong currentSector = 0;
+                bool oldFormat  = false;
+                int  currentLba = -150;
 
                 // Parse chunks
                 while(parsing)
@@ -504,6 +505,71 @@ namespace Aaru.DiscImages
                             break;
                         }
 
+                        case NERO_TAO_V0:
+                        {
+                            AaruConsole.DebugWriteLine("Nero plugin", "Found \"TINF\" chunk, parsing {0} bytes",
+                                                       chunkLength);
+
+                            oldFormat = true;
+
+                            _taoV0 = new TaoV0
+                            {
+                                ChunkId   = chunkId,
+                                ChunkSize = chunkLength,
+                                Tracks    = new List<TaoEntryV0>()
+                            };
+
+                            byte[] tmpBuffer = new byte[12];
+
+                            for(int i = 0; i < _taoV0.ChunkSize; i += 12)
+                            {
+                                var entry = new TaoEntryV0();
+                                _imageStream.Read(tmpBuffer, 0, 12);
+
+                                entry.Offset = BigEndianBitConverter.ToUInt32(tmpBuffer, 0);
+                                entry.Length = BigEndianBitConverter.ToUInt32(tmpBuffer, 4);
+                                entry.Mode   = BigEndianBitConverter.ToUInt32(tmpBuffer, 8);
+
+                                AaruConsole.DebugWriteLine("Nero plugin", "Track-at-Once entry {0}", (i / 20) + 1);
+
+                                AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Offset = {1}", (i / 20) + 1,
+                                                           entry.Offset);
+
+                                AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Length = {1} bytes",
+                                                           (i / 20) + 1, entry.Length);
+
+                                AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Mode = {1} (0x{2:X4})",
+                                                           (i / 20) + 1, (DaoMode)entry.Mode, entry.Mode);
+
+                                _taoV0.Tracks.Add(entry);
+
+                                if(NeroTrackModeToBytesPerSector((DaoMode)entry.Mode) > _imageInfo.SectorSize)
+                                    _imageInfo.SectorSize = NeroTrackModeToBytesPerSector((DaoMode)entry.Mode);
+
+                                // StartLba points to INDEX 0 and Nero always introduces a pregap of 150 sectors,
+
+                                var neroTrack = new NeroTrack
+                                {
+                                    EndOfTrack     = entry.Offset + entry.Length,
+                                    Isrc           = new byte[12],
+                                    Length         = entry.Length,
+                                    Mode           = entry.Mode,
+                                    Offset         = entry.Offset,
+                                    SectorSize     = NeroTrackModeToBytesPerSector((DaoMode)entry.Mode),
+                                    UseLbaForIndex = true,
+                                    Sequence       = currentTrack,
+                                    StartLba       = currentLba > 0 ? (ulong)currentLba : 0
+                                };
+
+                                _neroTracks.Add(currentTrack, neroTrack);
+
+                                currentTrack++;
+                                currentLba += (int)(neroTrack.Length / neroTrack.SectorSize);
+                            }
+
+                            break;
+                        }
+
                         case NERO_TAO_V1:
                         {
                             AaruConsole.DebugWriteLine("Nero plugin", "Found \"ETNF\" chunk, parsing {0} bytes",
@@ -755,6 +821,22 @@ namespace Aaru.DiscImages
                             _imageStream.Read(tmpBuffer, 0, 2);
                             _toc.Unknown = BigEndianBitConverter.ToUInt16(tmpBuffer, 0);
 
+                            switch(tmpBuffer[0])
+                            {
+                                case 0:
+                                    _imageInfo.MediaType = CommonTypes.MediaType.CDROM;
+
+                                    break;
+                                case 0x10:
+                                    _imageInfo.MediaType = CommonTypes.MediaType.CDI;
+
+                                    break;
+                                case 0x20:
+                                    _imageInfo.MediaType = CommonTypes.MediaType.CDROMXA;
+
+                                    break;
+                            }
+
                             AaruConsole.DebugWriteLine("Nero plugin", "\tneroTOC.Unknown = 0x{0:X4} ({0})",
                                                        _toc.Unknown);
 
@@ -801,18 +883,24 @@ namespace Aaru.DiscImages
                 _imageInfo.MediaSequence         = 0;
                 _imageInfo.LastMediaSequence     = 0;
 
+                _imageInfo.Application = "Nero Burning ROM";
+
                 if(_imageNewFormat)
                 {
                     _imageInfo.ImageSize          = footerV2.FirstChunkOffset;
                     _imageInfo.Version            = "Nero Burning ROM >= 5.5";
-                    _imageInfo.Application        = "Nero Burning ROM";
                     _imageInfo.ApplicationVersion = ">= 5.5";
+                }
+                else if(oldFormat)
+                {
+                    _imageInfo.ImageSize          = footerV1.FirstChunkOffset;
+                    _imageInfo.Version            = "Nero Burning ROM 4";
+                    _imageInfo.ApplicationVersion = "4";
                 }
                 else
                 {
                     _imageInfo.ImageSize          = footerV1.FirstChunkOffset;
                     _imageInfo.Version            = "Nero Burning ROM <= 5.0";
-                    _imageInfo.Application        = "Nero Burning ROM";
                     _imageInfo.ApplicationVersion = "<= 5.0";
                 }
 

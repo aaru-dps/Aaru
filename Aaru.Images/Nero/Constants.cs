@@ -38,6 +38,7 @@ namespace Aaru.DiscImages
         const uint NERO_FOOTER_V2  = 0x4E455235; // "NER5"
         const uint NERO_CUE_V1     = 0x43554553; // "CUES"
         const uint NERO_CUE_V2     = 0x43554558; // "CUEX"
+        const uint NERO_TAO_V0     = 0x54494E46; // "TINF"
         const uint NERO_TAO_V1     = 0x45544E46; // "ETNF"
         const uint NERO_TAO_V2     = 0x45544E32; // "ETN2"
         const uint NERO_DAO_V1     = 0x44414F49; // "DAOI"

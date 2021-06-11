@@ -61,6 +61,7 @@ namespace Aaru.DiscImages
         MediaType                            _mediaType;
         ReloChunk                            _relo;
         readonly Dictionary<ushort, uint>    _neroSessions;
+        TaoV0                                _taoV0;
         TaoV1                                _taoV1;
         TaoV2                                _taoV2;
         TocChunk                             _toc;

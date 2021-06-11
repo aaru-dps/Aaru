@@ -259,6 +259,30 @@ namespace Aaru.DiscImages
             public List<CdTextPack> Packs;
         }
 
+        struct TaoEntryV0
+        {
+            /// <summary>Offset of track on image</summary>
+            public uint Offset;
+
+            /// <summary>Length of track in bytes</summary>
+            public uint Length;
+
+            /// <summary>Track mode</summary>
+            public uint Mode;
+        }
+
+        struct TaoV0
+        {
+            /// <summary>"TINF"</summary>
+            public uint ChunkId;
+
+            /// <summary>Chunk size</summary>
+            public uint ChunkSize;
+
+            /// <summary>CD-TEXT packs</summary>
+            public List<TaoEntryV0> Tracks;
+        }
+
         struct TaoEntryV1
         {
             /// <summary>Offset of track on image</summary>
