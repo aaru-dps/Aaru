@@ -392,19 +392,19 @@ namespace Aaru.DiscImages
         }
 
         // Internal use only
-        struct NeroTrack
+        class NeroTrack
         {
-            public byte[] Isrc;
-            public ushort SectorSize;
-            public ulong  Offset;
-            public ulong  Length;
             public ulong  EndOfTrack;
-            public uint   Mode;
-            public ulong  StartLba;
-            public ulong  Sectors;
             public ulong  Index0;
             public ulong  Index1;
+            public byte[] Isrc;
+            public ulong  Length;
+            public uint   Mode;
+            public ulong  Offset;
+            public ulong  Sectors;
+            public ushort SectorSize;
             public uint   Sequence;
+            public ulong  StartLba;
             public bool   UseLbaForIndex;
         }
     }
