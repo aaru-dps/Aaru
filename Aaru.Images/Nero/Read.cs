@@ -1349,7 +1349,6 @@ namespace Aaru.DiscImages
                     break;
                 }
 
-                // TODO: Supposing Nero suffixes the subchannel to the channel
                 case DaoMode.DataRawSub:
                 {
                     sectorOffset = 16;
@@ -1570,9 +1569,58 @@ namespace Aaru.DiscImages
                     break;
                 }
 
-                // TODO
                 case DaoMode.DataM2RawSub:
-                    throw new FeatureSupportedButNotImplementedImageException("Feature not yet implemented");
+                    switch(tag)
+                    {
+                        case SectorTagType.CdSectorSync:
+                        {
+                            sectorOffset = 0;
+                            sectorSize   = 12;
+                            sectorSkip   = 2340 + 96;
+
+                            break;
+                        }
+
+                        case SectorTagType.CdSectorHeader:
+                        {
+                            sectorOffset = 12;
+                            sectorSize   = 4;
+                            sectorSkip   = 2336 + 96;
+
+                            break;
+                        }
+
+                        case SectorTagType.CdSectorSubHeader:
+                        {
+                            sectorOffset = 16;
+                            sectorSize   = 8;
+                            sectorSkip   = 2328 + 96;
+
+                            break;
+                        }
+
+                        case SectorTagType.CdSectorEdc:
+                        {
+                            sectorOffset = 2348;
+                            sectorSize   = 4;
+                            sectorSkip   = 0 + 96;
+
+                            break;
+                        }
+
+                        case SectorTagType.CdSectorSubchannel:
+                        {
+                            sectorOffset = 2352;
+                            sectorSize   = 96;
+                            sectorSkip   = 0;
+
+                            break;
+                        }
+
+                        default: throw new ArgumentException("Unsupported tag requested", nameof(tag));
+                    }
+
+                    break;
                 case DaoMode.DataRawSub:
                 {
                     switch(tag)
