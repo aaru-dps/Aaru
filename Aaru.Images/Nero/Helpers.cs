@@ -85,6 +85,7 @@ namespace Aaru.DiscImages
                 case DaoMode.DataM2RawSub:
                 case DaoMode.DataM2Raw: return TrackType.CdMode2Formless;
                 case DaoMode.Audio:
+                case DaoMode.AudioAlt:
                 case DaoMode.AudioSub: return TrackType.Audio;
                 default: return TrackType.Data;
             }
@@ -99,6 +100,7 @@ namespace Aaru.DiscImages
                 case DaoMode.DataM2F2: return 2336;
                 case DaoMode.DataRaw:
                 case DaoMode.DataM2Raw:
+                case DaoMode.AudioAlt:
                 case DaoMode.Audio: return 2352;
                 case DaoMode.DataM2RawSub:
                 case DaoMode.DataRawSub:

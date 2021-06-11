@@ -960,6 +960,7 @@ namespace Aaru.DiscImages
 
                     switch((DaoMode)neroTrack.Mode)
                     {
+                        case DaoMode.AudioAlt:
                         case DaoMode.Audio:
                             track.TrackBytesPerSector    = 2352;
                             track.TrackRawBytesPerSector = 2352;
@@ -1127,19 +1128,23 @@ namespace Aaru.DiscImages
                     for(int i = 0; i < _neroTracks.Count; i++)
                     {
                         // First track is audio
-                        firstAudio |= i == 0 && ((DaoMode)_neroTracks.ElementAt(i).Value.Mode == DaoMode.Audio ||
+                        firstAudio |= i == 0 && ((DaoMode)_neroTracks.ElementAt(i).Value.Mode == DaoMode.Audio    ||
+                                                 (DaoMode)_neroTracks.ElementAt(i).Value.Mode == DaoMode.AudioAlt ||
                                                  (DaoMode)_neroTracks.ElementAt(i).Value.Mode == DaoMode.AudioSub);
 
                         // First track is data
                         firstData |= i == 0 && (DaoMode)_neroTracks.ElementAt(i).Value.Mode != DaoMode.Audio &&
+                                     (DaoMode)_neroTracks.ElementAt(i).Value.Mode != DaoMode.AudioAlt &&
                                      (DaoMode)_neroTracks.ElementAt(i).Value.Mode != DaoMode.AudioSub;
 
                         // Any non first track is data
                         data |= i != 0 && (DaoMode)_neroTracks.ElementAt(i).Value.Mode != DaoMode.Audio &&
+                                (DaoMode)_neroTracks.ElementAt(i).Value.Mode != DaoMode.AudioAlt &&
                                 (DaoMode)_neroTracks.ElementAt(i).Value.Mode != DaoMode.AudioSub;
 
                         // Any non first track is audio
-                        audio |= i != 0 && ((DaoMode)_neroTracks.ElementAt(i).Value.Mode == DaoMode.Audio ||
+                        audio |= i != 0 && ((DaoMode)_neroTracks.ElementAt(i).Value.Mode == DaoMode.Audio    ||
+                                            (DaoMode)_neroTracks.ElementAt(i).Value.Mode == DaoMode.AudioAlt ||
                                             (DaoMode)_neroTracks.ElementAt(i).Value.Mode == DaoMode.AudioSub);
 
                         switch((DaoMode)_neroTracks.ElementAt(i).Value.Mode)
@@ -1316,6 +1321,7 @@ namespace Aaru.DiscImages
                 }
 
                 case DaoMode.Audio:
+                case DaoMode.AudioAlt:
                 {
                     sectorOffset = 0;
                     sectorSize   = 2352;
@@ -1495,7 +1501,8 @@ namespace Aaru.DiscImages
                     break;
                 }
 
-                case DaoMode.Audio: throw new ArgumentException("There are no tags on audio tracks", nameof(tag));
+                case DaoMode.Audio:
+                case DaoMode.AudioAlt: throw new ArgumentException("There are no tags on audio tracks", nameof(tag));
                 case DaoMode.DataRaw:
                 {
                     switch(tag)
@@ -1732,6 +1739,7 @@ namespace Aaru.DiscImages
                 case DaoMode.DataRaw:
                 case DaoMode.DataM2Raw:
                 case DaoMode.Audio:
+                case DaoMode.AudioAlt:
                 {
                     sectorOffset = 0;
                     sectorSize   = 2352;
