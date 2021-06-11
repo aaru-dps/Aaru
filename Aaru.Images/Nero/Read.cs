@@ -1180,57 +1180,59 @@ namespace Aaru.DiscImages
 
                 _sectorBuilder = new SectorBuilder();
 
-                if(_imageInfo.MediaType != CommonTypes.MediaType.CD            &&
-                   _imageInfo.MediaType != CommonTypes.MediaType.CDDA          &&
-                   _imageInfo.MediaType != CommonTypes.MediaType.CDG           &&
-                   _imageInfo.MediaType != CommonTypes.MediaType.CDEG          &&
-                   _imageInfo.MediaType != CommonTypes.MediaType.CDI           &&
-                   _imageInfo.MediaType != CommonTypes.MediaType.CDROM         &&
-                   _imageInfo.MediaType != CommonTypes.MediaType.CDROMXA       &&
-                   _imageInfo.MediaType != CommonTypes.MediaType.CDPLUS        &&
-                   _imageInfo.MediaType != CommonTypes.MediaType.CDMO          &&
-                   _imageInfo.MediaType != CommonTypes.MediaType.CDR           &&
-                   _imageInfo.MediaType != CommonTypes.MediaType.CDRW          &&
-                   _imageInfo.MediaType != CommonTypes.MediaType.CDMRW         &&
-                   _imageInfo.MediaType != CommonTypes.MediaType.VCD           &&
-                   _imageInfo.MediaType != CommonTypes.MediaType.SVCD          &&
-                   _imageInfo.MediaType != CommonTypes.MediaType.PCD           &&
-                   _imageInfo.MediaType != CommonTypes.MediaType.DTSCD         &&
-                   _imageInfo.MediaType != CommonTypes.MediaType.CDMIDI        &&
-                   _imageInfo.MediaType != CommonTypes.MediaType.CDV           &&
-                   _imageInfo.MediaType != CommonTypes.MediaType.CDIREADY      &&
-                   _imageInfo.MediaType != CommonTypes.MediaType.FMTOWNS       &&
-                   _imageInfo.MediaType != CommonTypes.MediaType.PS1CD         &&
-                   _imageInfo.MediaType != CommonTypes.MediaType.PS2CD         &&
-                   _imageInfo.MediaType != CommonTypes.MediaType.MEGACD        &&
-                   _imageInfo.MediaType != CommonTypes.MediaType.SATURNCD      &&
-                   _imageInfo.MediaType != CommonTypes.MediaType.GDROM         &&
-                   _imageInfo.MediaType != CommonTypes.MediaType.GDR           &&
-                   _imageInfo.MediaType != CommonTypes.MediaType.MilCD         &&
-                   _imageInfo.MediaType != CommonTypes.MediaType.SuperCDROM2   &&
-                   _imageInfo.MediaType != CommonTypes.MediaType.JaguarCD      &&
-                   _imageInfo.MediaType != CommonTypes.MediaType.ThreeDO       &&
-                   _imageInfo.MediaType != CommonTypes.MediaType.PCFX          &&
-                   _imageInfo.MediaType != CommonTypes.MediaType.NeoGeoCD      &&
-                   _imageInfo.MediaType != CommonTypes.MediaType.CDTV          &&
-                   _imageInfo.MediaType != CommonTypes.MediaType.CD32          &&
-                   _imageInfo.MediaType != CommonTypes.MediaType.Playdia       &&
-                   _imageInfo.MediaType != CommonTypes.MediaType.Pippin        &&
-                   _imageInfo.MediaType != CommonTypes.MediaType.VideoNow      &&
-                   _imageInfo.MediaType != CommonTypes.MediaType.VideoNowColor &&
-                   _imageInfo.MediaType != CommonTypes.MediaType.VideoNowXp    &&
-                   _imageInfo.MediaType != CommonTypes.MediaType.CVD)
-                {
-                    foreach(Track track in Tracks)
-                    {
-                        track.TrackPregap = 0;
-                        track.Indexes?.Clear();
-                    }
+                _isCd = _imageInfo.MediaType == CommonTypes.MediaType.CD            ||
+                        _imageInfo.MediaType == CommonTypes.MediaType.CDDA          ||
+                        _imageInfo.MediaType == CommonTypes.MediaType.CDG           ||
+                        _imageInfo.MediaType == CommonTypes.MediaType.CDEG          ||
+                        _imageInfo.MediaType == CommonTypes.MediaType.CDI           ||
+                        _imageInfo.MediaType == CommonTypes.MediaType.CDROM         ||
+                        _imageInfo.MediaType == CommonTypes.MediaType.CDROMXA       ||
+                        _imageInfo.MediaType == CommonTypes.MediaType.CDPLUS        ||
+                        _imageInfo.MediaType == CommonTypes.MediaType.CDMO          ||
+                        _imageInfo.MediaType == CommonTypes.MediaType.CDR           ||
+                        _imageInfo.MediaType == CommonTypes.MediaType.CDRW          ||
+                        _imageInfo.MediaType == CommonTypes.MediaType.CDMRW         ||
+                        _imageInfo.MediaType == CommonTypes.MediaType.VCD           ||
+                        _imageInfo.MediaType == CommonTypes.MediaType.SVCD          ||
+                        _imageInfo.MediaType == CommonTypes.MediaType.PCD           ||
+                        _imageInfo.MediaType == CommonTypes.MediaType.DTSCD         ||
+                        _imageInfo.MediaType == CommonTypes.MediaType.CDMIDI        ||
+                        _imageInfo.MediaType == CommonTypes.MediaType.CDV           ||
+                        _imageInfo.MediaType == CommonTypes.MediaType.CDIREADY      ||
+                        _imageInfo.MediaType == CommonTypes.MediaType.FMTOWNS       ||
+                        _imageInfo.MediaType == CommonTypes.MediaType.PS1CD         ||
+                        _imageInfo.MediaType == CommonTypes.MediaType.PS2CD         ||
+                        _imageInfo.MediaType == CommonTypes.MediaType.MEGACD        ||
+                        _imageInfo.MediaType == CommonTypes.MediaType.SATURNCD      ||
+                        _imageInfo.MediaType == CommonTypes.MediaType.GDROM         ||
+                        _imageInfo.MediaType == CommonTypes.MediaType.GDR           ||
+                        _imageInfo.MediaType == CommonTypes.MediaType.MilCD         ||
+                        _imageInfo.MediaType == CommonTypes.MediaType.SuperCDROM2   ||
+                        _imageInfo.MediaType == CommonTypes.MediaType.JaguarCD      ||
+                        _imageInfo.MediaType == CommonTypes.MediaType.ThreeDO       ||
+                        _imageInfo.MediaType == CommonTypes.MediaType.PCFX          ||
+                        _imageInfo.MediaType == CommonTypes.MediaType.NeoGeoCD      ||
+                        _imageInfo.MediaType == CommonTypes.MediaType.CDTV          ||
+                        _imageInfo.MediaType == CommonTypes.MediaType.CD32          ||
+                        _imageInfo.MediaType == CommonTypes.MediaType.Playdia       ||
+                        _imageInfo.MediaType == CommonTypes.MediaType.Pippin        ||
+                        _imageInfo.MediaType == CommonTypes.MediaType.VideoNow      ||
+                        _imageInfo.MediaType == CommonTypes.MediaType.VideoNowColor ||
+                        _imageInfo.MediaType == CommonTypes.MediaType.VideoNowXp    ||
+                        _imageInfo.MediaType == CommonTypes.MediaType.CVD;
 
-                    _imageInfo.ReadableMediaTags.Remove(MediaTagType.CD_MCN);
-                    _imageInfo.ReadableSectorTags.Remove(SectorTagType.CdTrackIsrc);
-                    _imageInfo.ReadableSectorTags.Remove(SectorTagType.CdTrackFlags);
+                if(_isCd)
+                    return true;
+
+                foreach(Track track in Tracks)
+                {
+                    track.TrackPregap = 0;
+                    track.Indexes?.Clear();
                 }
+
+                _imageInfo.ReadableMediaTags.Remove(MediaTagType.CD_MCN);
+                _imageInfo.ReadableSectorTags.Remove(SectorTagType.CdTrackIsrc);
+                _imageInfo.ReadableSectorTags.Remove(SectorTagType.CdTrackFlags);
 
                 return true;
             }
@@ -1752,6 +1754,9 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
         {
+            if(!_isCd)
+                return ReadSectors(sectorAddress, length, track);
+
             if(!_neroTracks.TryGetValue(track, out NeroTrack aaruTrack))
                 throw new ArgumentOutOfRangeException(nameof(track), "Track not found");
 

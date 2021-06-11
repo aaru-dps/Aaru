@@ -70,6 +70,7 @@ namespace Aaru.DiscImages
         byte[]                               _upc;
         SectorBuilder                        _sectorBuilder;
         Dictionary<uint, byte>               _trackFlags;
+        bool                                 _isCd;
 
         public Nero()
         {
