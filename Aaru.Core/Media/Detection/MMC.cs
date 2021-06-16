@@ -40,11 +40,12 @@ using Aaru.CommonTypes;
 using Aaru.Console;
 using Aaru.Decoders.Bluray;
 using Aaru.Decoders.CD;
+using Aaru.Decoders.DVD;
 using Aaru.Decoders.SCSI.MMC;
 using Aaru.Decoders.Sega;
-using Aaru.Decoders.Xbox;
 using Aaru.Devices;
 using Aaru.Helpers;
+using DMI = Aaru.Decoders.Xbox.DMI;
 
 // ReSharper disable JoinDeclarationAndInitializer
 
@@ -1035,8 +1036,8 @@ namespace Aaru.Core.Media.Detection
                            !dev.Error)
                             sector1 = cmdBuf;
 
-                        sense = dev.Read16(out cmdBuf, out _, 0, false, false, false, 0, 2048, 0, 12, false, dev.Timeout,
-                                           out _);
+                        sense = dev.Read16(out cmdBuf, out _, 0, false, false, false, 0, 2048, 0, 12, false,
+                                           dev.Timeout, out _);
 
                         if(!sense     &&
                            !dev.Error &&
@@ -1122,6 +1123,75 @@ namespace Aaru.Core.Media.Detection
                     if(mediaType == MediaType.DVDROM)
                     {
                         sense = dev.ReadDiscStructure(out cmdBuf, out _, MmcDiscStructureMediaType.Dvd, 0, 0,
+                                                      MmcDiscStructureFormat.PhysicalInformation, 0, dev.Timeout,
+                                                      out _);
+
+                        if(!sense)
+                        {
+                            PFI.PhysicalFormatInformation? pfi = PFI.Decode(cmdBuf);
+
+                            if(pfi != null)
+                            {
+                                switch(pfi.Value.DiskCategory)
+                                {
+                                    case DiskCategory.DVDPR:
+                                        mediaType = MediaType.DVDPR;
+
+                                        break;
+                                    case DiskCategory.DVDPRDL:
+                                        mediaType = MediaType.DVDPRDL;
+
+                                        break;
+                                    case DiskCategory.DVDPRW:
+                                        mediaType = MediaType.DVDPRW;
+
+                                        break;
+                                    case DiskCategory.DVDPRWDL:
+                                        mediaType = MediaType.DVDPRWDL;
+
+                                        break;
+                                    case DiskCategory.DVDR:
+                                        mediaType = pfi.Value.PartVersion >= 6 ? MediaType.DVDRDL : MediaType.DVDR;
+
+                                        break;
+                                    case DiskCategory.DVDRAM:
+                                        mediaType = MediaType.DVDRAM;
+
+                                        break;
+                                    case DiskCategory.DVDRW:
+                                        mediaType = pfi.Value.PartVersion >= 15 ? MediaType.DVDRWDL : MediaType.DVDRW;
+
+                                        break;
+                                    case DiskCategory.HDDVDR:
+                                        mediaType = MediaType.HDDVDR;
+
+                                        break;
+                                    case DiskCategory.HDDVDRAM:
+                                        mediaType = MediaType.HDDVDRAM;
+
+                                        break;
+                                    case DiskCategory.HDDVDROM:
+                                        mediaType = MediaType.HDDVDROM;
+
+                                        break;
+                                    case DiskCategory.HDDVDRW:
+                                        mediaType = MediaType.HDDVDRW;
+
+                                        break;
+                                    case DiskCategory.Nintendo:
+                                        mediaType = pfi.Value.DiscSize == DVDSize.Eighty ? MediaType.GOD
+                                                        : MediaType.WOD;
+
+                                        break;
+                                    case DiskCategory.UMD:
+                                        mediaType = MediaType.UMD;
+
+                                        break;
+                                }
+                            }
+                        }
+
+                        sense = dev.ReadDiscStructure(out cmdBuf, out _, MmcDiscStructureMediaType.Dvd, 0, 0,
                                                       MmcDiscStructureFormat.DiscManufacturingInformation, 0,
                                                       dev.Timeout, out _);
 
@@ -1167,8 +1237,8 @@ namespace Aaru.Core.Media.Detection
                 // Recordables will be checked for PhotoCD only
                 case MediaType.CDR:
                     // Check if ISO9660
-                    sense = dev.Read12(out byte[] isoSector, out _, 0, false, false, false, false, 16, 2048, 0, 1, false,
-                                       dev.Timeout, out _);
+                    sense = dev.Read12(out byte[] isoSector, out _, 0, false, false, false, false, 16, 2048, 0, 1,
+                                       false, dev.Timeout, out _);
 
                     // Sector 16 reads, and contains "CD001" magic?
                     if(sense                ||
@@ -1332,8 +1402,8 @@ namespace Aaru.Core.Media.Detection
 
                             if(infoPos > 0)
                             {
-                                sense = dev.Read12(out isoSector, out _, 0, false, false, false, false, infoPos, 2048, 0,
-                                                   1, false, dev.Timeout, out _);
+                                sense = dev.Read12(out isoSector, out _, 0, false, false, false, false, infoPos, 2048,
+                                                   0, 1, false, dev.Timeout, out _);
 
                                 if(sense)
                                     break;
@@ -1647,8 +1717,8 @@ namespace Aaru.Core.Media.Detection
                     hasPs2CdBoot:
 
                     // Check if ISO9660
-                    sense = dev.Read12(out byte[] isoSector, out _, 0, false, false, false, false, 16, 2048, 0, 1, false,
-                                       dev.Timeout, out _);
+                    sense = dev.Read12(out byte[] isoSector, out _, 0, false, false, false, false, 16, 2048, 0, 1,
+                                       false, dev.Timeout, out _);
 
                     // Sector 16 reads, and contains "CD001" magic?
                     if(sense                ||
@@ -1829,8 +1899,8 @@ namespace Aaru.Core.Media.Detection
 
                             for(uint i = 0; i < ngcdSectors; i++)
                             {
-                                sense = dev.Read12(out isoSector, out _, 0, false, false, false, false, ngcdIplStart + i,
-                                                   2048, 0, 1, false, dev.Timeout, out _);
+                                sense = dev.Read12(out isoSector, out _, 0, false, false, false, false,
+                                                   ngcdIplStart + i, 2048, 0, 1, false, dev.Timeout, out _);
 
                                 if(sense)
                                     break;
