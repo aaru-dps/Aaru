@@ -441,6 +441,23 @@ namespace Aaru.Core.Media.Detection
                 secondSessionFirstTrack = decodedToc.Value.TrackDescriptors.Where(t => t.SessionNumber == 2).
                                                      Min(t => t.POINT);
 
+            if(mediaType == MediaType.CD      ||
+               mediaType == MediaType.CDROMXA ||
+               mediaType == MediaType.CDI)
+            {
+                sense = dev.ReadAtip(out cmdBuf, out _, dev.Timeout, out _);
+
+                if(!sense)
+                {
+                    ATIP.CDATIP atip = ATIP.Decode(cmdBuf);
+
+                    if(atip != null)
+
+                        // Only CD-R and CD-RW have ATIP
+                        mediaType = atip.DiscType ? MediaType.CDRW : MediaType.CDR;
+                }
+            }
+
             if(mediaType == MediaType.CD ||
                mediaType == MediaType.CDROMXA)
             {
