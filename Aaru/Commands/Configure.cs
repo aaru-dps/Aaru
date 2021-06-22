@@ -172,7 +172,7 @@ namespace Aaru.Commands
                 while(pressedKey.Key != ConsoleKey.Y &&
                       pressedKey.Key != ConsoleKey.N)
                 {
-                    AaruConsole.Write("Do you want to share your stats anonymously? (Y/N): ");
+                    AaruConsole.Write("Do you want to share your stats (anonymously)? (Y/N): ");
                     pressedKey = System.Console.ReadKey();
                     AaruConsole.WriteLine();
                 }

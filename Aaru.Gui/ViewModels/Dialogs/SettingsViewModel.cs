@@ -151,7 +151,7 @@ pool with no way of using them to identify you.";
         [NotNull]
         public string SaveStatsText => "Save stats about your Aaru usage?";
         [NotNull]
-        public string ShareStatsText => "Share your stats anonymously?";
+        public string ShareStatsText => "Share your stats (anonymously)?";
         [NotNull]
         public string CommandStatsText => "Gather statistics about command usage?";
         [NotNull]
