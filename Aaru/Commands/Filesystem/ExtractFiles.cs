@@ -360,8 +360,6 @@ namespace Aaru.Commands.Filesystem
 
                     if(stat.Attributes.HasFlag(FileAttributes.Directory))
                     {
-                        Directory.CreateDirectory(Path.Combine(outputDir, fs.XmlFsType.Type, volumeName));
-
                         outputPath = Path.Combine(outputDir, fs.XmlFsType.Type, volumeName, path, entry);
 
                         Directory.CreateDirectory(outputPath);
@@ -422,11 +420,11 @@ namespace Aaru.Commands.Filesystem
                                 if(error != Errno.NoError)
                                     continue;
 
-                                Directory.CreateDirectory(Path.Combine(outputDir, fs.XmlFsType.Type, volumeName,
-                                                                       ".xattrs", xattr));
+                                outputPath = Path.Combine(outputDir, fs.XmlFsType.Type, volumeName, path);
 
-                                outputPath = Path.Combine(outputDir, fs.XmlFsType.Type, volumeName, ".xattrs", xattr,
-                                                          path, entry);
+                                Directory.CreateDirectory(outputPath);
+
+                                outputPath = Path.Combine(outputPath, entry);
 
                                 if(!File.Exists(outputPath))
                                 {
@@ -476,9 +474,11 @@ namespace Aaru.Commands.Filesystem
                             }
                     }
 
-                    Directory.CreateDirectory(Path.Combine(outputDir, fs.XmlFsType.Type, volumeName));
+                    outputPath = Path.Combine(outputDir, fs.XmlFsType.Type, volumeName, path);
 
-                    outputPath = Path.Combine(outputDir, fs.XmlFsType.Type, volumeName, path, entry);
+                    Directory.CreateDirectory(outputPath);
+
+                    outputPath = Path.Combine(outputPath, entry);
 
                     if(!File.Exists(outputPath))
                     {
