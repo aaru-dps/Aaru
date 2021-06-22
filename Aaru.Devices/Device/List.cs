@@ -92,10 +92,17 @@ namespace Aaru.Devices
 
             try
             {
-                if(aaruRemote.ToLowerInvariant().StartsWith("aaru://", StringComparison.OrdinalIgnoreCase))
-                    aaruRemote = aaruRemote.Substring(7);
+                var aaruUri = new Uri(aaruRemote);
 
-                using var remote = new Remote.Remote(aaruRemote);
+                if(aaruUri.Scheme != "aaru" &&
+                   aaruUri.Scheme != "dic")
+                {
+                    AaruConsole.ErrorWriteLine("Invalid remote URI.");
+
+                    return new DeviceInfo[0];
+                }
+
+                using var remote = new Remote.Remote(aaruUri);
 
                 isRemote                     = true;
                 serverApplication            = remote.ServerApplication;

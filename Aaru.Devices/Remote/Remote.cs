@@ -51,13 +51,17 @@ namespace Aaru.Devices.Remote
         readonly string _host;
         readonly Socket _socket;
 
-        public Remote(string host)
+        public Remote(Uri uri)
         {
-            _host = host;
+            if(uri.Scheme != "aaru" &&
+               uri.Scheme != "dic")
+                throw new ArgumentException("Invalid remote protocol.", nameof(uri.Scheme));
 
-            if(!IPAddress.TryParse(host, out IPAddress ipAddress))
+            _host = uri.DnsSafeHost;
+
+            if(!IPAddress.TryParse(_host, out IPAddress ipAddress))
             {
-                IPHostEntry ipHostEntry = Dns.GetHostEntry(host);
+                IPHostEntry ipHostEntry = Dns.GetHostEntry(_host);
 
                 ipAddress = ipHostEntry.AddressList.FirstOrDefault(a => a.AddressFamily == AddressFamily.InterNetwork);
             }
@@ -69,12 +73,12 @@ namespace Aaru.Devices.Remote
                 throw new SocketException(11001);
             }
 
-            var ipEndPoint = new IPEndPoint(ipAddress, 6666);
+            var ipEndPoint = new IPEndPoint(ipAddress, uri.Port > 0 ? uri.Port : 6666);
             _socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
             _socket.Connect(ipEndPoint);
 
-            AaruConsole.WriteLine("Connected to {0}", host);
+            AaruConsole.WriteLine("Connected to {0}", uri.Host);
 
             byte[] hdrBuf = new byte[Marshal.SizeOf<AaruPacketHeader>()];
 

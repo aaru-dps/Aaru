@@ -73,23 +73,30 @@ namespace Aaru.Devices
             IsRemovable = false;
             _devicePath = devicePath;
 
-            if(devicePath.StartsWith("dic://", StringComparison.OrdinalIgnoreCase) ||
-               devicePath.StartsWith("aaru://", StringComparison.OrdinalIgnoreCase))
+            Uri aaruUri;
+
+            try
             {
-                devicePath =
-                    devicePath.Substring(devicePath.StartsWith("dic://", StringComparison.OrdinalIgnoreCase) ? 6 : 7);
+                aaruUri = new Uri(devicePath);
+            }
+            catch(Exception)
+            {
+                // Ignore, treat as local path below
+                aaruUri = new Uri("/");
+            }
 
-                string[] pieces = devicePath.Split('/');
-                string   host   = pieces[0];
-                devicePath = devicePath.Substring(host.Length);
-
-                _remote = new Remote.Remote(host);
+            if(aaruUri.Scheme == "dic" ||
+               aaruUri.Scheme == "aaru")
+            {
+                devicePath = aaruUri.AbsolutePath;
 
                 if(devicePath.StartsWith('/'))
                     devicePath = devicePath.Substring(1);
 
                 if(devicePath.StartsWith("dev"))
                     devicePath = $"/{devicePath}";
+
+                _remote = new Remote.Remote(aaruUri);
 
                 Error     = !_remote.Open(devicePath, out int errno);
                 LastError = errno;
