@@ -316,7 +316,7 @@ namespace Aaru.Core.Devices.Dumping
 
                     if(!sense)
                     {
-                        PFI.PhysicalFormatInformation? nintendoPfi = PFI.Decode(cmdBuf);
+                        PFI.PhysicalFormatInformation? nintendoPfi = PFI.Decode(cmdBuf, dskType);
 
                         if(nintendoPfi?.DiskCategory     == DiskCategory.Nintendo &&
                            nintendoPfi.Value.PartVersion == 15)
@@ -354,13 +354,13 @@ namespace Aaru.Core.Devices.Dumping
                                                    MmcDiscStructureFormat.PhysicalInformation, 0, _dev.Timeout, out _);
 
                     if(!sense)
-                        if(PFI.Decode(cmdBuf).HasValue)
+                        if(PFI.Decode(cmdBuf, dskType).HasValue)
                         {
                             tmpBuf = new byte[cmdBuf.Length - 4];
                             Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
                             mediaTags.Add(MediaTagType.DVD_PFI, tmpBuf);
 
-                            PFI.PhysicalFormatInformation decPfi = PFI.Decode(cmdBuf).Value;
+                            PFI.PhysicalFormatInformation decPfi = PFI.Decode(cmdBuf, dskType).Value;
                             UpdateStatus?.Invoke($"PFI:\n{PFI.Prettify(decPfi)}");
 
                             // False book types

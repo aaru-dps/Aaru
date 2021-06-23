@@ -204,7 +204,7 @@ namespace Aaru.DiscImages
                 _dmi[0] = 0x08;
                 _dmi[1] = 0x02;
 
-                PFI.PhysicalFormatInformation? decodedPfi = PFI.Decode(_pfi);
+                PFI.PhysicalFormatInformation? decodedPfi = PFI.Decode(_pfi, MediaType.DVDROM);
 
                 if(decodedPfi.HasValue)
                     AaruConsole.DebugWriteLine("BlindWrite5 plugin", "PFI: {0}", PFI.Prettify(decodedPfi));
@@ -904,7 +904,7 @@ namespace Aaru.DiscImages
             if(_dmi != null &&
                _pfi != null)
             {
-                PFI.PhysicalFormatInformation? pfi0 = PFI.Decode(_pfi);
+                PFI.PhysicalFormatInformation? pfi0 = PFI.Decode(_pfi, _imageInfo.MediaType);
 
                 // All discs I tested the disk category and part version (as well as the start PSN for DVD-RAM) where modified by Alcohol
                 // So much for archival value

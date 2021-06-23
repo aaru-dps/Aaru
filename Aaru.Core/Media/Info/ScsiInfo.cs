@@ -521,7 +521,7 @@ namespace Aaru.Core.Media.Info
                     else
                     {
                         DvdPfi     = cmdBuf;
-                        DecodedPfi = PFI.Decode(cmdBuf);
+                        DecodedPfi = PFI.Decode(cmdBuf, MediaType);
 
                         if(DecodedPfi.HasValue)
                             if(MediaType == MediaType.DVDROM)
@@ -1219,11 +1219,11 @@ namespace Aaru.Core.Media.Info
                     else
                     {
                         DvdPfi = cmdBuf;
-                        PFI.PhysicalFormatInformation? nintendoPfi = PFI.Decode(cmdBuf);
+                        PFI.PhysicalFormatInformation? nintendoPfi = PFI.Decode(cmdBuf, MediaType);
 
                         if(nintendoPfi != null)
                         {
-                            AaruConsole.WriteLine("PFI:\n{0}", PFI.Prettify(cmdBuf));
+                            AaruConsole.WriteLine("PFI:\n{0}", PFI.Prettify(cmdBuf, MediaType));
 
                             if(nintendoPfi.Value.DiskCategory == DiskCategory.Nintendo &&
                                nintendoPfi.Value.PartVersion  == 15)
@@ -1328,8 +1328,8 @@ namespace Aaru.Core.Media.Info
                             AaruConsole.DebugWriteLine("Dump-media command", "Video partition total size: {0} sectors",
                                                        totalSize);
 
-                            ulong l0Video = PFI.Decode(cmdBuf).Value.Layer0EndPSN -
-                                            PFI.Decode(cmdBuf).Value.DataAreaStartPSN + 1;
+                            ulong l0Video = PFI.Decode(cmdBuf, MediaType).Value.Layer0EndPSN -
+                                            PFI.Decode(cmdBuf, MediaType).Value.DataAreaStartPSN + 1;
 
                             ulong l1Video = totalSize - l0Video + 1;
 
@@ -1395,8 +1395,8 @@ namespace Aaru.Core.Media.Info
                                                        totalSize);
 
                             ulong middleZone =
-                                totalSize - (PFI.Decode(cmdBuf).Value.Layer0EndPSN -
-                                             PFI.Decode(cmdBuf).Value.DataAreaStartPSN + 1) - gameSize + 1;
+                                totalSize - (PFI.Decode(cmdBuf, MediaType).Value.Layer0EndPSN -
+                                             PFI.Decode(cmdBuf, MediaType).Value.DataAreaStartPSN + 1) - gameSize + 1;
 
                             totalSize = l0Video + l1Video + (middleZone * 2) + gameSize;
                             ulong layerBreak = l0Video + middleZone + (gameSize / 2);

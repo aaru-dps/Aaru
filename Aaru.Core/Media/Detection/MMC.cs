@@ -1145,7 +1145,7 @@ namespace Aaru.Core.Media.Detection
 
                         if(!sense)
                         {
-                            PFI.PhysicalFormatInformation? pfi = PFI.Decode(cmdBuf);
+                            PFI.PhysicalFormatInformation? pfi = PFI.Decode(cmdBuf, mediaType);
 
                             if(pfi != null)
                             {

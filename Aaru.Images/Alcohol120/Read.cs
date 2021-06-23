@@ -378,7 +378,7 @@ namespace Aaru.DiscImages
                     _dmi[0] = 0x08;
                     _dmi[1] = 0x02;
 
-                    PFI.PhysicalFormatInformation? pfi0 = PFI.Decode(_pfi);
+                    PFI.PhysicalFormatInformation? pfi0 = PFI.Decode(_pfi, _imageInfo.MediaType);
 
                     // All discs I tested the disk category and part version (as well as the start PSN for DVD-RAM) where modified by Alcohol
                     // So much for archival value

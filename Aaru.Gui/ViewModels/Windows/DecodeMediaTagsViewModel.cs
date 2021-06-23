@@ -32,6 +32,7 @@
 
 using System.Collections.ObjectModel;
 using System.Text;
+using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs.Devices.SCSI;
@@ -57,16 +58,18 @@ namespace Aaru.Gui.ViewModels.Windows
 {
     public sealed class DecodeMediaTagsViewModel : ViewModelBase
     {
-        const int HEX_COLUMNS = 32;
-        string    _decodedText;
-        bool      _decodedVisible;
-        string    _hexViewText;
-
-        MediaTagModel _selectedTag;
+        const int          HEX_COLUMNS = 32;
+        string             _decodedText;
+        bool               _decodedVisible;
+        string             _hexViewText;
+        readonly MediaType _mediaType;
+        MediaTagModel      _selectedTag;
 
         public DecodeMediaTagsViewModel([NotNull] IMediaImage inputFormat)
         {
             TagsList = new ObservableCollection<MediaTagModel>();
+
+            _mediaType = inputFormat.Info.MediaType;
 
             foreach(MediaTagType tag in inputFormat.Info.ReadableMediaTags)
                 try
@@ -140,7 +143,7 @@ namespace Aaru.Gui.ViewModels.Windows
 
                         break;
                     case MediaTagType.DVD_PFI:
-                        DecodedText = PFI.Prettify(value.Data);
+                        DecodedText = PFI.Prettify(value.Data, _mediaType);
 
                         break;
                     case MediaTagType.DVD_CMI:
@@ -156,11 +159,11 @@ namespace Aaru.Gui.ViewModels.Windows
 
                         break;
                     case MediaTagType.DVDR_PFI:
-                        DecodedText = PFI.Prettify(value.Data);
+                        DecodedText = PFI.Prettify(value.Data, _mediaType);
 
                         break;
                     case MediaTagType.HDDVD_MediumStatus:
-                        DecodedText = PFI.Prettify(value.Data);
+                        DecodedText = PFI.Prettify(value.Data, _mediaType);
 
                         break;
                     case MediaTagType.BD_DI:

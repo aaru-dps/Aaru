@@ -382,7 +382,7 @@ namespace Aaru.Gui.ViewModels.Panels
             if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.DVD_PFI) == true)
             {
                 dvdPfi     = imageFormat.ReadDiskTag(MediaTagType.DVD_PFI);
-                decodedPfi = PFI.Decode(dvdPfi);
+                decodedPfi = PFI.Decode(dvdPfi, imageFormat.Info.MediaType);
             }
 
             if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.DVD_DMI) == true)

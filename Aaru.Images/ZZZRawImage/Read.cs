@@ -415,7 +415,7 @@ namespace Aaru.DiscImages
             // It is a DVD
             if(_mediaTags.TryGetValue(MediaTagType.DVD_PFI, out byte[] pfi))
             {
-                PFI.PhysicalFormatInformation decPfi = PFI.Decode(pfi).Value;
+                PFI.PhysicalFormatInformation decPfi = PFI.Decode(pfi, _imageInfo.MediaType).Value;
 
                 switch(decPfi.DiskCategory)
                 {

@@ -195,10 +195,10 @@ namespace Aaru.Core.Devices.Dumping
             mediaTags.Add(MediaTagType.DVD_PFI, tmpBuf);
             AaruConsole.DebugWriteLine("Dump-media command", "Video partition total size: {0} sectors", totalSize);
 
-            ulong l0Video =
-                (PFI.Decode(readBuffer)?.Layer0EndPSN ?? 0 - PFI.Decode(readBuffer)?.DataAreaStartPSN ?? 0) + 1;
+            ulong l0Video = (PFI.Decode(readBuffer, MediaType.DVDROM)?.Layer0EndPSN ??
+                             0 - PFI.Decode(readBuffer, MediaType.DVDROM)?.DataAreaStartPSN ?? 0) + 1;
 
-            ulong l1Video = (totalSize - l0Video) + 1;
+            ulong l1Video = totalSize - l0Video + 1;
             UpdateStatus?.Invoke("Reading Disc Manufacturing Information.");
             _dumpLog.WriteLine("Reading Disc Manufacturing Information.");
 
@@ -232,9 +232,10 @@ namespace Aaru.Core.Devices.Dumping
                 mediaTags.Add(MediaTagType.DVD_PFI, tmpBuf);
                 AaruConsole.DebugWriteLine("Dump-media command", "Video partition total size: {0} sectors", totalSize);
 
-                l0Video = (PFI.Decode(coldPfi)?.Layer0EndPSN ?? 0 - PFI.Decode(coldPfi)?.DataAreaStartPSN ?? 0) + 1;
+                l0Video = (PFI.Decode(coldPfi, MediaType.DVDROM)?.Layer0EndPSN ??
+                           0 - PFI.Decode(coldPfi, MediaType.DVDROM)?.DataAreaStartPSN ?? 0) + 1;
 
-                l1Video = (totalSize - l0Video) + 1;
+                l1Video = totalSize - l0Video + 1;
 
                 if(totalSize > 300000)
                 {
@@ -323,15 +324,14 @@ namespace Aaru.Core.Devices.Dumping
 
             AaruConsole.DebugWriteLine("Dump-media command", "Unlocked total size: {0} sectors", totalSize);
             ulong                         blocks      = totalSize + 1;
-            PFI.PhysicalFormatInformation wxRipperPfi = PFI.Decode(readBuffer).Value;
+            PFI.PhysicalFormatInformation wxRipperPfi = PFI.Decode(readBuffer, MediaType.DVDROM).Value;
 
             UpdateStatus?.Invoke($"WxRipper PFI's Data Area Start PSN: {wxRipperPfi.DataAreaStartPSN} sectors");
             UpdateStatus?.Invoke($"WxRipper PFI's Layer 0 End PSN: {wxRipperPfi.Layer0EndPSN} sectors");
             _dumpLog.WriteLine($"WxRipper PFI's Data Area Start PSN: {wxRipperPfi.DataAreaStartPSN} sectors");
             _dumpLog.WriteLine($"WxRipper PFI's Layer 0 End PSN: {wxRipperPfi.Layer0EndPSN} sectors");
 
-            ulong middleZone =
-                (totalSize - ((wxRipperPfi.Layer0EndPSN - wxRipperPfi.DataAreaStartPSN) + 1) - gameSize) + 1;
+            ulong middleZone = totalSize - (wxRipperPfi.Layer0EndPSN - wxRipperPfi.DataAreaStartPSN + 1) - gameSize + 1;
 
             tmpBuf = new byte[readBuffer.Length - 4];
             Array.Copy(readBuffer, 4, tmpBuf, 0, readBuffer.Length - 4);
@@ -648,7 +648,7 @@ namespace Aaru.Core.Devices.Dumping
                     if(elapsed < 1)
                         continue;
 
-                    currentSpeed     = (sectorSpeedStart * blockSize) / (1048576 * elapsed);
+                    currentSpeed     = sectorSpeedStart * blockSize / (1048576 * elapsed);
                     sectorSpeedStart = 0;
                     timeSpeedStart   = DateTime.UtcNow;
                 }
@@ -756,7 +756,7 @@ namespace Aaru.Core.Devices.Dumping
             UpdateStatus?.Invoke("Reading Video Layer 1.");
             InitProgress?.Invoke();
 
-            for(ulong l1 = (currentSector - blocks - middleZone) + l0Video; l1 < l0Video + l1Video; l1 += blocksToRead)
+            for(ulong l1 = currentSector - blocks - middleZone + l0Video; l1 < l0Video + l1Video; l1 += blocksToRead)
             {
                 if(_aborted)
                 {
@@ -767,8 +767,8 @@ namespace Aaru.Core.Devices.Dumping
                     break;
                 }
 
-                if((l0Video + l1Video) - l1 < blocksToRead)
-                    blocksToRead = (uint)((l0Video + l1Video) - l1);
+                if(l0Video + l1Video - l1 < blocksToRead)
+                    blocksToRead = (uint)(l0Video + l1Video - l1);
 
                 if(currentSpeed > maxSpeed &&
                    currentSpeed > 0)
@@ -837,7 +837,7 @@ namespace Aaru.Core.Devices.Dumping
                 if(elapsed < 1)
                     continue;
 
-                currentSpeed     = (sectorSpeedStart * blockSize) / (1048576 * elapsed);
+                currentSpeed     = sectorSpeedStart * blockSize / (1048576 * elapsed);
                 sectorSpeedStart = 0;
                 timeSpeedStart   = DateTime.UtcNow;
             }
@@ -871,23 +871,23 @@ namespace Aaru.Core.Devices.Dumping
             mhddLog.Close();
 
             ibgLog.Close(_dev, blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
-                         (blockSize * (double)(blocks + 1)) / 1024 / (totalDuration / 1000), _devicePath);
+                         blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000), _devicePath);
 
             UpdateStatus?.Invoke($"Dump finished in {(end - start).TotalSeconds} seconds.");
 
             UpdateStatus?.
-                Invoke($"Average dump speed {((double)blockSize * (double)(blocks + 1)) / 1024 / (totalDuration / 1000):F3} KiB/sec.");
+                Invoke($"Average dump speed {blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000):F3} KiB/sec.");
 
             UpdateStatus?.
-                Invoke($"Average write speed {((double)blockSize * (double)(blocks + 1)) / 1024 / imageWriteDuration:F3} KiB/sec.");
+                Invoke($"Average write speed {blockSize * (double)(blocks + 1) / 1024 / imageWriteDuration:F3} KiB/sec.");
 
             _dumpLog.WriteLine("Dump finished in {0} seconds.", (end - start).TotalSeconds);
 
             _dumpLog.WriteLine("Average dump speed {0:F3} KiB/sec.",
-                               ((double)blockSize * (double)(blocks + 1)) / 1024 / (totalDuration / 1000));
+                               blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000));
 
             _dumpLog.WriteLine("Average write speed {0:F3} KiB/sec.",
-                               ((double)blockSize * (double)(blocks + 1)) / 1024 / imageWriteDuration);
+                               blockSize * (double)(blocks + 1) / 1024 / imageWriteDuration);
 
             #region Trimming
             if(_resume.BadBlocks.Count > 0 &&
@@ -1225,7 +1225,7 @@ namespace Aaru.Core.Devices.Dumping
                 Invoke($"Took a total of {(end - start).TotalSeconds:F3} seconds ({totalDuration / 1000:F3} processing commands, {totalChkDuration / 1000:F3} checksumming, {imageWriteDuration:F3} writing, {(closeEnd - closeStart).TotalSeconds:F3} closing).");
 
             UpdateStatus?.
-                Invoke($"Average speed: {((double)blockSize * (double)(blocks + 1)) / 1048576 / (totalDuration / 1000):F3} MiB/sec.");
+                Invoke($"Average speed: {blockSize * (double)(blocks + 1) / 1048576 / (totalDuration / 1000):F3} MiB/sec.");
 
             if(maxSpeed > 0)
                 UpdateStatus?.Invoke($"Fastest speed burst: {maxSpeed:F3} MiB/sec.");

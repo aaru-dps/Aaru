@@ -350,7 +350,7 @@ namespace Aaru.Core
                 byte[] pfi = imageFormat.ReadDiskTag(MediaTagType.DVD_PFI);
 
                 AaruConsole.WriteLine("DVD Physical Format Information contained in image:");
-                AaruConsole.Write("{0}", PFI.Prettify(pfi));
+                AaruConsole.Write("{0}", PFI.Prettify(pfi, imageFormat.Info.MediaType));
                 AaruConsole.WriteLine();
             }
 
@@ -368,7 +368,7 @@ namespace Aaru.Core
                 byte[] pfi = imageFormat.ReadDiskTag(MediaTagType.DVDR_PFI);
 
                 AaruConsole.WriteLine("DVD-R Physical Format Information contained in image:");
-                AaruConsole.Write("{0}", PFI.Prettify(pfi));
+                AaruConsole.Write("{0}", PFI.Prettify(pfi, imageFormat.Info.MediaType));
                 AaruConsole.WriteLine();
             }
 
@@ -541,7 +541,7 @@ namespace Aaru.Core
                 byte[] xpfi = imageFormat.ReadDiskTag(MediaTagType.Xbox_PFI);
 
                 AaruConsole.WriteLine("Xbox Physical Format Information contained in image:");
-                AaruConsole.Write("{0}", PFI.Prettify(xpfi));
+                AaruConsole.Write("{0}", PFI.Prettify(xpfi, imageFormat.Info.MediaType));
                 AaruConsole.WriteLine();
             }
 

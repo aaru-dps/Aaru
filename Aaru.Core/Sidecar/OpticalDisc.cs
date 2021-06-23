@@ -148,7 +148,7 @@ namespace Aaru.Core
 
                         break;
                     case MediaTagType.DVD_PFI:
-                        PFI.PhysicalFormatInformation? pfi = PFI.Decode(tag);
+                        PFI.PhysicalFormatInformation? pfi = PFI.Decode(tag, dskType);
 
                         if(pfi.HasValue)
                             if(dskType != MediaType.XGD    &&
