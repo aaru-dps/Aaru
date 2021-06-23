@@ -82,11 +82,11 @@ namespace Aaru.Devices
             catch(Exception)
             {
                 // Ignore, treat as local path below
-                aaruUri = new Uri("/");
+                aaruUri = null;
             }
 
-            if(aaruUri.Scheme == "dic" ||
-               aaruUri.Scheme == "aaru")
+            if(aaruUri?.Scheme == "dic" ||
+               aaruUri?.Scheme == "aaru")
             {
                 devicePath = aaruUri.AbsolutePath;
 
