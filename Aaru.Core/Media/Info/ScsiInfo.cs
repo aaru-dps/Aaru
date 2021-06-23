@@ -789,8 +789,10 @@ namespace Aaru.Core.Media.Info
                 #endregion Require drive authentication, won't work
 
                 #region DVD-R and DVD-RW
-                if(MediaType == MediaType.DVDR ||
-                   MediaType == MediaType.DVDRW)
+                if(MediaType == MediaType.DVDR   ||
+                   MediaType == MediaType.DVDRW  ||
+                   MediaType == MediaType.DVDRDL ||
+                   MediaType == MediaType.DVDRWDL)
                 {
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.Dvd, 0, 0,
                                                   MmcDiscStructureFormat.PreRecordedInfo, 0, dev.Timeout, out _);
@@ -799,7 +801,11 @@ namespace Aaru.Core.Media.Info
                         AaruConsole.DebugWriteLine("Media-Info command", "READ DISC STRUCTURE: Pre-Recorded Info\n{0}",
                                                    Sense.PrettifySense(senseBuf));
                     else
+                    {
                         DvdPreRecordedInfo = cmdBuf;
+
+                        DecodedDvdPrePitInformation = PRI.Decode(cmdBuf);
+                    }
                 }
                 #endregion DVD-R and DVD-RW
 
@@ -808,6 +814,8 @@ namespace Aaru.Core.Media.Info
                     #region DVD-R, DVD-RW and HD DVD-R
                     case MediaType.DVDR:
                     case MediaType.DVDRW:
+                    case MediaType.DVDRDL:
+                    case MediaType.DVDRWDL:
                     case MediaType.HDDVDR:
                         sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.Dvd, 0, 0,
                                                       MmcDiscStructureFormat.DvdrMediaIdentifier, 0, dev.Timeout,
@@ -1471,7 +1479,8 @@ namespace Aaru.Core.Media.Info
             MediaType = tmpType;
         }
 
-        public PFI.PhysicalFormatInformation?           DecodedDvdrPfi                { get; set; }
+        public PRI.PreRecordedInformation?              DecodedDvdPrePitInformation   { get; }
+        public PFI.PhysicalFormatInformation?           DecodedDvdrPfi                { get; }
         public byte[]                                   MediaSerialNumber             { get; }
         public byte[]                                   XboxSecuritySector            { get; }
         public SS.SecuritySector?                       DecodedXboxSecuritySector     { get; }

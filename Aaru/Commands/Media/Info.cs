@@ -341,8 +341,14 @@ namespace Aaru.Commands.Media
                                      "SCSI READ DISC STRUCTURE", scsiInfo.LastBorderOutRmd);
 
                 if(scsiInfo.DvdPreRecordedInfo != null)
+                {
                     DataFile.WriteTo("Media-Info command", outputPrefix, "_readdiscstructure_dvd_pri.bin",
                                      "SCSI READ DISC STRUCTURE", scsiInfo.DvdPreRecordedInfo);
+
+                    if(scsiInfo.DecodedDvdPrePitInformation.HasValue)
+                        AaruConsole.WriteLine("DVD-R(W) Pre-Recorded Information:\n{0}",
+                                              PRI.Prettify(scsiInfo.DecodedDvdPrePitInformation));
+                }
 
                 if(scsiInfo.DvdrMediaIdentifier != null)
                     DataFile.WriteTo("Media-Info command", outputPrefix, "_readdiscstructure_dvdr_mediaid.bin",
