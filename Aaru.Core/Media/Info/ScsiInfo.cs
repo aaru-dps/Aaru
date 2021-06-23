@@ -827,7 +827,11 @@ namespace Aaru.Core.Media.Info
                             AaruConsole.DebugWriteLine("Media-Info command", "READ DISC STRUCTURE: DVD-R PFI\n{0}",
                                                        Sense.PrettifySense(senseBuf));
                         else
+                        {
                             DvdrPhysicalInformation = cmdBuf;
+
+                            DecodedDvdrPfi = PFI.Decode(cmdBuf, MediaType);
+                        }
 
                         break;
                     #endregion DVD-R, DVD-RW and HD DVD-R
@@ -1467,6 +1471,7 @@ namespace Aaru.Core.Media.Info
             MediaType = tmpType;
         }
 
+        public PFI.PhysicalFormatInformation?           DecodedDvdrPfi                { get; set; }
         public byte[]                                   MediaSerialNumber             { get; }
         public byte[]                                   XboxSecuritySector            { get; }
         public SS.SecuritySector?                       DecodedXboxSecuritySector     { get; }

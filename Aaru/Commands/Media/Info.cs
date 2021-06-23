@@ -349,8 +349,13 @@ namespace Aaru.Commands.Media
                                      "SCSI READ DISC STRUCTURE", scsiInfo.DvdrMediaIdentifier);
 
                 if(scsiInfo.DvdrPhysicalInformation != null)
+                {
                     DataFile.WriteTo("Media-Info command", outputPrefix, "_readdiscstructure_dvdr_pfi.bin",
                                      "SCSI READ DISC STRUCTURE", scsiInfo.DvdrPhysicalInformation);
+
+                    if(scsiInfo.DecodedDvdrPfi.HasValue)
+                        AaruConsole.WriteLine("DVD-R(W) PFI:\n{0}", PFI.Prettify(scsiInfo.DecodedDvdrPfi));
+                }
 
                 if(scsiInfo.DvdPlusAdip != null)
                     DataFile.WriteTo("Media-Info command", outputPrefix, "_readdiscstructure_dvd+_adip.bin",
