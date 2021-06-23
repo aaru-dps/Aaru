@@ -33,6 +33,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
+using Aaru.CommonTypes;
 using Aaru.Helpers;
 
 namespace Aaru.Decoders.DVD
@@ -70,7 +71,7 @@ namespace Aaru.Decoders.DVD
      SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public static class PFI
     {
-        public static PhysicalFormatInformation? Decode(byte[] response)
+        public static PhysicalFormatInformation? Decode(byte[] response, MediaType mediaType)
         {
             if(response == null)
                 return null;
@@ -113,6 +114,94 @@ namespace Aaru.Decoders.DVD
             pfi.Layer0EndPSN = (uint)((response[16] << 24) + (response[17] << 16) + (response[18] << 8) + response[19]);
 
             pfi.BCA |= (response[20] & 0x80) == 0x80;
+
+            pfi.RecordedBookType = pfi.DiskCategory;
+
+            if(mediaType != MediaType.DVDROM)
+            {
+                switch(mediaType)
+                {
+                    case MediaType.DVDPR:
+                        pfi.DiskCategory = DiskCategory.DVDPR;
+
+                        break;
+                    case MediaType.DVDPRDL:
+                        pfi.DiskCategory = DiskCategory.DVDPRDL;
+
+                        break;
+                    case MediaType.DVDPRW:
+                        pfi.DiskCategory = DiskCategory.DVDPRW;
+
+                        break;
+                    case MediaType.DVDPRWDL:
+                        pfi.DiskCategory = DiskCategory.DVDPRWDL;
+
+                        break;
+                    case MediaType.DVDRDL:
+                        pfi.DiskCategory = DiskCategory.DVDR;
+
+                        if(pfi.PartVersion < 6)
+                            pfi.PartVersion = 6;
+
+                        break;
+                    case MediaType.DVDR:
+                        pfi.DiskCategory = DiskCategory.DVDR;
+
+                        if(pfi.PartVersion > 5)
+                            pfi.PartVersion = 5;
+
+                        break;
+                    case MediaType.DVDRAM:
+                        pfi.DiskCategory = DiskCategory.DVDRAM;
+
+                        break;
+                    case MediaType.DVDRWDL:
+                        pfi.DiskCategory = DiskCategory.DVDRW;
+
+                        if(pfi.PartVersion < 15)
+                            pfi.PartVersion = 15;
+
+                        break;
+                    case MediaType.DVDRW:
+                        pfi.DiskCategory = DiskCategory.DVDRW;
+
+                        if(pfi.PartVersion > 14)
+                            pfi.PartVersion = 14;
+
+                        break;
+
+                    case MediaType.HDDVDR:
+                        pfi.DiskCategory = DiskCategory.HDDVDR;
+
+                        break;
+                    case MediaType.HDDVDRAM:
+                        pfi.DiskCategory = DiskCategory.HDDVDRAM;
+
+                        break;
+                    case MediaType.HDDVDROM:
+                        pfi.DiskCategory = DiskCategory.HDDVDROM;
+
+                        break;
+                    case MediaType.HDDVDRW:
+                        pfi.DiskCategory = DiskCategory.HDDVDRW;
+
+                        break;
+                    case MediaType.GOD:
+                        pfi.DiscSize     = DVDSize.Eighty;
+                        pfi.DiskCategory = DiskCategory.Nintendo;
+
+                        break;
+                    case MediaType.WOD:
+                        pfi.DiscSize     = DVDSize.OneTwenty;
+                        pfi.DiskCategory = DiskCategory.Nintendo;
+
+                        break;
+                    case MediaType.UMD:
+                        pfi.DiskCategory = DiskCategory.UMD;
+
+                        break;
+                }
+            }
 
             switch(pfi.DiskCategory)
             {
@@ -592,6 +681,77 @@ namespace Aaru.Decoders.DVD
                        AppendLine();
 
                     break;
+            }
+
+            if(decoded.RecordedBookType != decoded.DiskCategory)
+            {
+                string bookTypeSentence = "Disc book type is {0}";
+
+                switch(decoded.RecordedBookType)
+                {
+                    case DiskCategory.DVDROM:
+                        sb.AppendFormat(bookTypeSentence, "DVD-ROM").AppendLine();
+
+                        break;
+                    case DiskCategory.DVDRAM:
+                        sb.AppendFormat(bookTypeSentence, "DVD-RAM").AppendLine();
+
+                        break;
+                    case DiskCategory.DVDR:
+                        if(decoded.PartVersion >= 6)
+                            sb.AppendFormat(bookTypeSentence, "DVD-R DL").AppendLine();
+                        else
+                            sb.AppendFormat(bookTypeSentence, "DVD-R").AppendLine();
+
+                        break;
+                    case DiskCategory.DVDRW:
+                        if(decoded.PartVersion >= 15)
+                            sb.AppendFormat(bookTypeSentence, "DVD-RW DL").AppendLine();
+                        else
+                            sb.AppendFormat(bookTypeSentence, "DVD-RW").AppendLine();
+
+                        break;
+                    case DiskCategory.UMD:
+                        sb.AppendFormat(bookTypeSentence, "UMD").AppendLine();
+
+                        break;
+                    case DiskCategory.DVDPRW:
+                        sb.AppendFormat(bookTypeSentence, "DVD+RW").AppendLine();
+
+                        break;
+                    case DiskCategory.DVDPR:
+                        sb.AppendFormat(bookTypeSentence, "DVD+R").AppendLine();
+
+                        break;
+                    case DiskCategory.DVDPRWDL:
+                        sb.AppendFormat(bookTypeSentence, "DVD+RW DL").AppendLine();
+
+                        break;
+                    case DiskCategory.DVDPRDL:
+                        sb.AppendFormat(bookTypeSentence, "DVD+R DL").AppendLine();
+
+                        break;
+                    case DiskCategory.HDDVDROM:
+                        sb.AppendFormat(bookTypeSentence, "HD DVD-ROM").AppendLine();
+
+                        break;
+                    case DiskCategory.HDDVDRAM:
+                        sb.AppendFormat(bookTypeSentence, "HD DVD-RAM").AppendLine();
+
+                        break;
+                    case DiskCategory.HDDVDR:
+                        sb.AppendFormat(bookTypeSentence, "HD DVD-R").AppendLine();
+
+                        break;
+                    case DiskCategory.HDDVDRW:
+                        sb.AppendFormat(bookTypeSentence, "HD DVD-RW").AppendLine();
+
+                        break;
+                    default:
+                        sb.AppendFormat(bookTypeSentence, "unknown").AppendLine();
+
+                        break;
+                }
             }
 
             switch(decoded.MaximumRate)
@@ -1211,6 +1371,8 @@ namespace Aaru.Decoders.DVD
             /// <summary>Byte 45 bits 4 to 7 Tracking polarity on Layer 1</summary>
             public byte TrackPolarityLayer1;
             #endregion DVD-R DL PFI and DVD-RW DL PFI
+
+            public DiskCategory RecordedBookType;
         }
     }
 }
