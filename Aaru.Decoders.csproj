@@ -212,7 +212,7 @@
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="4.7.0" />
-    <PackageReference Include="Unclassified.NetRevisionTask" Version="0.3.0" PrivateAssets="all"/>
+    <PackageReference Include="Unclassified.NetRevisionTask" Version="0.3.0" PrivateAssets="all" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
