@@ -327,6 +327,13 @@ namespace Aaru.Decoders.CD
         {
             switch(sec)
             {
+                case 10:
+                    switch(frm)
+                    {
+                        case 00: return "Ritek Co.";
+                    }
+
+                    break;
                 case 15:
                     switch(frm)
                     {
@@ -347,7 +354,7 @@ namespace Aaru.Decoders.CD
                     break;
                 case 17:
                     if(frm == 00)
-                        return "Moser Baer India Limited";
+                        return "Moser Baer India Ltd.";
 
                     break;
                 case 18:
@@ -367,6 +374,7 @@ namespace Aaru.Decoders.CD
                     switch(frm)
                     {
                         case 10: return "Grupo Condor S.L.";
+                        case 20: return "E-TOP Mediatek Inc.";
                         case 30: return "Bestdisc Technology Corporation";
                         case 40: return "Optical Disc Manufacturing Equipment";
                         case 50: return "Sound Sound Multi-Media Development Ltd.";
@@ -501,6 +509,13 @@ namespace Aaru.Decoders.CD
                     {
                         case 20:
                         case 22: return "Mitsubishi Chemical Corporation";
+                    }
+
+                    break;
+                case 36:
+                    switch(frm)
+                    {
+                        case 00: return "Gish International Co., Ltd.";
                     }
 
                     break;

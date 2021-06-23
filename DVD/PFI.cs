@@ -903,7 +903,8 @@ namespace Aaru.Decoders.DVD
 
                     if(decoded.PartVersion == 6)
                     {
-                        sb.AppendFormat("Disc manufacturer is {0}", decoded.DiskManufacturer).AppendLine();
+                        sb.AppendFormat("Disc manufacturer is {0}", ManufacturerFromDVDRAM(decoded.DiskManufacturer)).
+                           AppendLine();
 
                         sb.AppendFormat("Disc manufacturer supplementary information is {0}",
                                         decoded.DiskManufacturerSupplementary).AppendLine();
@@ -927,7 +928,10 @@ namespace Aaru.Decoders.DVD
                         sb.AppendLine("Disc contains extended information for VCPS");
 
                     sb.AppendFormat("Disc application code is {0}", decoded.ApplicationCode).AppendLine();
-                    sb.AppendFormat("Disc manufacturer is {0}", decoded.DiskManufacturerID).AppendLine();
+
+                    sb.AppendFormat("Disc manufacturer is {0}", ManufacturerFromDVDPlusID(decoded.DiskManufacturerID)).
+                       AppendLine();
+
                     sb.AppendFormat("Disc media type is {0}", decoded.MediaTypeID).AppendLine();
                     sb.AppendFormat("Disc product revision is {0}", decoded.ProductRevision).AppendLine();
 
@@ -955,7 +959,188 @@ namespace Aaru.Decoders.DVD
             return sb.ToString();
         }
 
-        public static string Prettify(byte[] response) => Prettify(Decode(response));
+        public static string Prettify(byte[] response, MediaType mediaType) => Prettify(Decode(response, mediaType));
+
+        public static string ManufacturerFromDVDRAM(string manufacturerId)
+        {
+            switch(manufacturerId)
+            {
+                default: return ManufacturerFromDVDPlusID(manufacturerId);
+            }
+        }
+
+        public static string ManufacturerFromDVDPlusID(string manufacturerId)
+        {
+            string manufacturer = "";
+
+            switch(manufacturerId)
+            {
+                case "CMC MAG":
+                    manufacturer = "CMC Magnetics Corporation";
+
+                    break;
+                case "INFOME":
+                    manufacturer = "InfoMedia Inc.";
+
+                    break;
+                case "RITEK":
+                    manufacturer = "Ritek Co.";
+
+                    break;
+                case "RICOHJPN":
+                    manufacturer = "Ricoh Company, Ltd.";
+
+                    break;
+                case "ISSM":
+                    manufacturer = "Info Source Digital Media (Zhongshan) Co., Ltd.";
+
+                    break;
+                case "LD":
+                    manufacturer = "Lead Data Inc.";
+
+                    break;
+                case "MAXELL":
+                    manufacturer = "Hitachi Maxell, Ltd.";
+
+                    break;
+                case "MCC":
+                    manufacturer = "Mitsubishi Kagaku Media Co., LTD.";
+
+                    break;
+                case "PRODISC":
+                    manufacturer = "Prodisc Technology Inc.";
+
+                    break;
+                case "Philips":
+                case "PHILIPS":
+
+                    manufacturer = "Philips Components";
+
+                    break;
+                case "YUDEN000":
+                    manufacturer = "Taiyo Yuden Company Ltd.";
+
+                    break;
+                case "AML":
+                    manufacturer = "Avic Umedisc HK Ltd.";
+
+                    break;
+                case "DAXON":
+                    manufacturer = "Daxon Technology Inc.";
+
+                    break;
+                case "FTI":
+                    manufacturer = "Falcon Technologies International L.L.C.";
+
+                    break;
+                case "GSC503":
+                    manufacturer = "Gigastore Corporation";
+
+                    break;
+                case "MBIPG101":
+                    manufacturer = "Moser Baer India Ltd.";
+
+                    break;
+                case "OPTODISC":
+                    manufacturer = "OptoDisc Ltd.";
+
+                    break;
+                case "SONY":
+                    manufacturer = "Sony Corporation";
+
+                    break;
+                case "TDK":
+                    manufacturer = "TDK Corporation";
+
+                    break;
+                case "SENTINEL":
+                    manufacturer = "Sentinel B.V.";
+
+                    break;
+                case "BeAll000":
+                    manufacturer = "BeALL Developers, Inc.";
+
+                    break;
+                case "MPOMEDIA":
+                    manufacturer = "MPO Disque Compact";
+
+                    break;
+                case "IMC JPN":
+                    manufacturer = "Intermedia Co., Ltd.";
+
+                    break;
+                case "INFODISC":
+                    manufacturer = "InfoDisc Technology Co., Ltd.";
+
+                    break;
+                case "WFKA11":
+                    manufacturer = "Wealth Fair Investment Inc.";
+
+                    break;
+                case "MAM":
+                    manufacturer = "Manufacturing Advanced Media Europe";
+
+                    break;
+                case "VDSPMSAB":
+                    manufacturer = "Interaxia Digital Storage Materials AG";
+
+                    break;
+                case "KIC00000":
+                    manufacturer = "Advanced Media Corporation";
+
+                    break;
+                case "MJC":
+                    manufacturer = "Megan Media Holdings Berhad";
+
+                    break;
+                case "MUST":
+                    manufacturer = "Must Technology Co., Ltd.";
+
+                    break;
+                case "IS02":
+                    manufacturer = "Infosmart Technology Ltd.";
+
+                    break;
+                case "DDDessau":
+                    manufacturer = "Digital Disc Dessau GmbH";
+
+                    break;
+                case "SKYMEDIA":
+                    manufacturer = "Sky Media Manufacturing S.A.";
+
+                    break;
+                case "MICRON":
+                    manufacturer = "Eastgate Technology Ltd.";
+
+                    break;
+                case "VIVA":
+                    manufacturer = "Viva Optical Disc Manufacturing Ltd.";
+
+                    break;
+                case "EMDPZ3":
+                    manufacturer = "E-TOP Mediatek Inc.";
+
+                    break;
+                case "LGEP16":
+                    manufacturer = "LG Electronics Inc.";
+
+                    break;
+                case "POS":
+                    manufacturer = "POSTECH Corporation";
+
+                    break;
+                case "Dvsn+160":
+                    manufacturer = "Digital Storage Technology Co., Ltd.";
+
+                    break;
+                case "ODMS":
+                    manufacturer = "VDL Optical Disc Manufacturing Systems";
+
+                    break;
+            }
+
+            return manufacturer != "" ? $"{manufacturer} (\"{manufacturerId}\")" : $"\"{manufacturerId}\"";
+        }
 
         public struct PhysicalFormatInformation
         {

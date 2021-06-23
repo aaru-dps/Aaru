@@ -401,6 +401,95 @@ namespace Aaru.Decoders.Bluray
         }
 
         public static string Prettify(byte[] DIResponse) => Prettify(Decode(DIResponse));
+
+        public static string ManufacturerFromDI(string manufacturerId)
+        {
+            string manufacturer = "";
+
+            switch(manufacturerId)
+            {
+                case "AMESOB":
+                case "OTCBDR":
+                    manufacturer = "Amethystum Storage Technology Co., Ltd.";
+
+                    break;
+                case "UMEBDR":
+                case "ANWELL":
+                    manufacturer = "Avic Umedisc HK Ltd.";
+
+                    break;
+                case "MAXELL":
+                    manufacturer = "Hitachi Maxell, Ltd.";
+
+                    break;
+                case "CMCMAG":
+                    manufacturer = "CMC Magnetics Corporation";
+
+                    break;
+                case "ISMMBD":
+                    manufacturer = "Info Source Digital Media (Zhong Shan) Co., Ltd.";
+
+                    break;
+                case "LGEBRA":
+                    manufacturer = "LG Electronics Inc.";
+
+                    break;
+                case "MILLEN":
+                    manufacturer = "Millenniata, Inc.";
+
+                    break;
+                case "VERBAT":
+                case "VAMKM":
+                    manufacturer = "Mitsubishi Chemical Media Co., Ltd.";
+
+                    break;
+                case "PHILIP":
+                case "MBI":
+                    manufacturer = "Moser Baer India Ltd.";
+
+                    break;
+                case "MEI":
+                case "PAN":
+                    manufacturer = "Matsushita Electric Industrial Co., Ltd.";
+
+                    break;
+                case "PRODIS":
+                    manufacturer = "Prodisc Technology Inc.";
+
+                    break;
+                case "RITEK":
+                    manufacturer = "Ritek Co.";
+
+                    break;
+                case "SONY":
+                    manufacturer = "Sony Corporation";
+
+                    break;
+                case "TYG-BD":
+                    manufacturer = "Taiyo Yuden Company Ltd.";
+
+                    break;
+                case "TDKBLD":
+                    manufacturer = "TDK Corporation";
+
+                    break;
+                case "JVC-AM":
+                case "JVCVAM":
+                    manufacturer = "Victor Advanced media Co., Ltd.";
+
+                    break;
+                case "JVCRE1":
+                    manufacturer = "JVC KENWOOD Corporation";
+
+                    break;
+                case "INFOME":
+                    manufacturer = "InfoMedia Inc.";
+
+                    break;
+            }
+
+            return manufacturer != "" ? $"{manufacturer} (\"{manufacturerId}\")" : $"\"{manufacturerId}\"";
+        }
         #endregion Public methods
 
         #region Public structures

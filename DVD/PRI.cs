@@ -475,12 +475,95 @@ namespace Aaru.Decoders.DVD
                 }
             }
 
-            sb.AppendFormat("Disc manufacturer is {0}", decoded.ManufacturerId).AppendLine();
+            sb.AppendFormat("Disc manufacturer is {0}", ManufacturerFromPrePit(decoded.ManufacturerId)).AppendLine();
 
             return sb.ToString();
         }
 
         public static string Prettify(byte[] response) => Prettify(Decode(response));
+
+        public static string ManufacturerFromPrePit(string manufacturerId)
+        {
+            string manufacturer = "";
+
+            // Bad thing is that it also includes a media code...
+            if(manufacturerId.StartsWith("RITEK"))
+                manufacturer = "Ritek Co.";
+            else if(manufacturerId.StartsWith("CMC"))
+                manufacturer = "CMC Magnetics Corporation";
+            else if(manufacturerId.StartsWith("Dvsn-"))
+                manufacturer = "Digital Storage Technology Co., Ltd.";
+            else if(manufacturerId.StartsWith("GSC"))
+                manufacturer = "Gigastore Corporation";
+            else if(manufacturerId.StartsWith("INFOMEDIA"))
+                manufacturer = "InfoMedia Inc.";
+            else if(manufacturerId.StartsWith("ISSM"))
+                manufacturer = "Info Source Digital Media (Zhongshan) Co., Ltd.";
+            else if(manufacturerId.StartsWith("LEADDATA"))
+                manufacturer = "Lead Data Inc.";
+            else if(manufacturerId.StartsWith("MCC") ||
+                    manufacturerId.StartsWith("MKM"))
+                manufacturer = "Mitsubishi Kagaku Media Co., LTD.";
+            else if(manufacturerId.StartsWith("MUST"))
+                manufacturer = "Must Technology Co., Ltd.";
+            else if(manufacturerId.StartsWith("MXL"))
+                manufacturer = "Hitachi Maxell, Ltd.";
+            else if(manufacturerId.StartsWith("PRINCO"))
+                manufacturer = "Princo Corporation";
+            else if(manufacturerId.StartsWith("Prodisc"))
+                manufacturer = "Prodisc Technology Inc.";
+            else if(manufacturerId.StartsWith("SONY") ||
+                    manufacturerId.StartsWith("80SONY"))
+                manufacturer = "Sony Corporation";
+            else if(manufacturerId.StartsWith("TCLDS"))
+                manufacturer = "TCL Technology";
+            else if(manufacturerId.StartsWith("TMI"))
+                manufacturer = "ThaiMedia Co., Ltd. ";
+            else if(manufacturerId.StartsWith("TY"))
+                manufacturer = "Taiyo Yuden Company Ltd.";
+            else if(manufacturerId.StartsWith("UME"))
+                manufacturer = "Avic Umedisc HK Ltd.";
+            else if(manufacturerId.StartsWith("DAXON"))
+                manufacturer = "Daxon Technology Inc.";
+            else if(manufacturerId.StartsWith("FTI"))
+                manufacturer = "Falcon Technologies International L.L.C.";
+            else if(manufacturerId.StartsWith("FUJIFILM"))
+                manufacturer = "Fuji Photo Film, Co., Ltd.";
+            else if(manufacturerId.StartsWith("MBI"))
+                manufacturer = "Moser Baer India Ltd.";
+            else if(manufacturerId.StartsWith("TT") ||
+                    manufacturerId.StartsWith("TDK"))
+                manufacturer = "TDK Corporation";
+            else if(manufacturerId.StartsWith("JVC"))
+                manufacturer = "Victor Advanced media Co., Ltd.";
+            else if(manufacturerId.StartsWith("MEI"))
+                manufacturer = "Matsushita Electric Industrial Co., Ltd.";
+            else if(manufacturerId.StartsWith("OPTODISC"))
+                manufacturer = "OptoDisc Ltd.";
+            else if(manufacturerId.StartsWith("KIC"))
+                manufacturer = "Advance Media Corporation";
+            else if(manufacturerId.StartsWith("IMC"))
+                manufacturer = "Intermedia Co., Ltd.";
+            else if(manufacturerId.StartsWith("LGE"))
+                manufacturer = "LG Electronics Inc.";
+            else if(manufacturerId.StartsWith("KDT"))
+                manufacturer = "King Disc Technology Corporation";
+            else if(manufacturerId.StartsWith("POS"))
+                manufacturer = "POSTECH Corporation";
+            else if(manufacturerId.StartsWith("VDSPMSAB"))
+                manufacturer = "Interaxia Digital Storage Materials AG";
+            else if(manufacturerId.StartsWith("VANGUARD"))
+                manufacturer = "Vanguard Disc Inc.";
+            else if(manufacturerId.StartsWith("MJC"))
+                manufacturer = "Megan Media Holdings Berhad";
+            else if(manufacturerId.StartsWith("DKM") ||
+                    manufacturerId.StartsWith("EDMA"))
+                manufacturer = "E-TOP Mediatek Inc.";
+            else if(manufacturerId.StartsWith("BeAll"))
+                manufacturer = "BeALL Developers, Inc.";
+
+            return manufacturer != "" ? $"{manufacturer} (\"{manufacturerId}\")" : $"\"{manufacturerId}\"";
+        }
 
         public struct PreRecordedInformation
         {
