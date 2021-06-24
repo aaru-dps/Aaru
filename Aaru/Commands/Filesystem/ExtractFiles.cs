@@ -420,7 +420,7 @@ namespace Aaru.Commands.Filesystem
                                 if(error != Errno.NoError)
                                     continue;
 
-                                outputPath = Path.Combine(outputDir, fs.XmlFsType.Type, volumeName, path);
+                                outputPath = Path.Combine(outputDir, fs.XmlFsType.Type, volumeName, path, ".xattrs", xattr);
 
                                 Directory.CreateDirectory(outputPath);
 
