@@ -47,6 +47,7 @@ using Aaru.Decoders.CD;
 using Aaru.Decoders.DVD;
 using Aaru.Decoders.SCSI;
 using Aaru.Decoders.SCSI.MMC;
+using Aaru.Filters;
 using Aaru.Helpers;
 using DMI = Aaru.Decoders.Xbox.DMI;
 using Session = Aaru.CommonTypes.Structs.Session;
@@ -768,35 +769,272 @@ namespace Aaru.DiscImages
                     track.TrackStartSector = (ulong)(trk.startLba + trk.pregap);
                     track.TrackEndSector   = (ulong)(trk.sectors + trk.startLba) - 1;
 
-                    foreach(DataFileCharacteristics chars in _filePaths.Where(chars => trk.startLba >= chars.StartLba &&
-                                                                                  trk.startLba   + trk.sectors <=
-                                                                                  chars.StartLba + chars.Sectors))
+                    List<DataFileCharacteristics> fileCharsForThisTrack = _filePaths.
+                                                                          Where(chars =>
+                                                                                    trk.startLba >=
+                                                                                    chars.StartLba &&
+                                                                                    trk.startLba   + trk.sectors <=
+                                                                                    chars.StartLba + chars.Sectors).
+                                                                          ToList();
+
+                    if(fileCharsForThisTrack.Count == 0 &&
+                       _filePaths.Any(f => Path.GetExtension(f.FilePath).ToLowerInvariant() == ".b00"))
                     {
-                        track.TrackFilter = chars.FileFilter;
-                        track.TrackFile   = chars.FileFilter.GetFilename();
+                        DataFileCharacteristics splitStartChars =
+                            _filePaths.FirstOrDefault(f => Path.GetExtension(f.FilePath).ToLowerInvariant() == ".b00");
+
+                        string? filename           = Path.GetFileNameWithoutExtension(splitStartChars.FilePath);
+                        bool    lowerCaseExtension = false;
+                        bool    lowerCaseFileName  = false;
+                        string  basePath           = "";
+
+                        bool version5 = string.Compare(Path.GetExtension(imageFilter.GetFilename()), ".B5T",
+                                                       StringComparison.OrdinalIgnoreCase) == 0;
+
+                        string firstExtension      = version5 ? "B5I" : "B6I";
+                        string firstExtensionLower = version5 ? "b5i" : "b6i";
+
+                        if(File.Exists(Path.Combine(imageFilter.GetParentFolder(), $"{filename}.{firstExtension}")))
+                        {
+                            basePath = imageFilter.GetParentFolder();
+                        }
+                        else if(File.Exists(Path.Combine(imageFilter.GetParentFolder(),
+                                                         $"{filename}.{firstExtensionLower}")))
+                        {
+                            basePath           = imageFilter.GetParentFolder();
+                            lowerCaseExtension = true;
+                        }
+                        else if(File.Exists(Path.Combine(imageFilter.GetParentFolder(),
+                                                         $"{filename.ToLower(CultureInfo.CurrentCulture)}.{firstExtension}")))
+                        {
+                            basePath          = imageFilter.GetParentFolder();
+                            lowerCaseFileName = true;
+                        }
+                        else if(File.Exists(Path.Combine(imageFilter.GetParentFolder(),
+                                                         $"{filename.ToLower(CultureInfo.CurrentCulture)}.{firstExtensionLower}")))
+                        {
+                            basePath           = imageFilter.GetParentFolder();
+                            lowerCaseFileName  = true;
+                            lowerCaseExtension = true;
+                        }
+
+                        else if(File.Exists(Path.Combine(_dataPath, $"{filename}.{firstExtension}")))
+                        {
+                            basePath = _dataPath;
+                        }
+                        else if(File.Exists(Path.Combine(_dataPath, $"{filename}.{firstExtensionLower}")))
+                        {
+                            basePath           = _dataPath;
+                            lowerCaseExtension = true;
+                        }
+                        else if(File.Exists(Path.Combine(_dataPath,
+                                                         $"{filename.ToLower(CultureInfo.CurrentCulture)}.{firstExtension}")))
+                        {
+                            basePath          = _dataPath;
+                            lowerCaseFileName = true;
+                        }
+                        else if(File.Exists(Path.Combine(_dataPath,
+                                                         $"{filename.ToLower(CultureInfo.CurrentCulture)}.{firstExtensionLower}")))
+                        {
+                            basePath           = _dataPath;
+                            lowerCaseFileName  = true;
+                            lowerCaseExtension = true;
+                        }
+
+                        else if(File.Exists(Path.Combine(_dataPath.ToLower(CultureInfo.CurrentCulture),
+                                                         $"{filename}.{firstExtension}")))
+                        {
+                            basePath = _dataPath.ToLower(CultureInfo.CurrentCulture);
+                        }
+                        else if(File.Exists(Path.Combine(_dataPath.ToLower(CultureInfo.CurrentCulture),
+                                                         $"{filename}.{firstExtensionLower}")))
+                        {
+                            basePath           = _dataPath.ToLower(CultureInfo.CurrentCulture);
+                            lowerCaseExtension = true;
+                        }
+                        else if(File.Exists(Path.Combine(_dataPath.ToLower(CultureInfo.CurrentCulture),
+                                                         $"{filename.ToLower(CultureInfo.CurrentCulture)}.{firstExtension}")))
+                        {
+                            basePath          = _dataPath.ToLower(CultureInfo.CurrentCulture);
+                            lowerCaseFileName = true;
+                        }
+                        else if(File.Exists(Path.Combine(_dataPath.ToLower(CultureInfo.CurrentCulture),
+                                                         $"{filename.ToLower(CultureInfo.CurrentCulture)}.{firstExtensionLower}")))
+                        {
+                            basePath           = _dataPath.ToLower(CultureInfo.CurrentCulture);
+                            lowerCaseFileName  = true;
+                            lowerCaseExtension = true;
+                        }
+
+                        else if(File.Exists(Path.Combine(imageFilter.GetParentFolder(), _dataPath,
+                                                         $"{filename}.{firstExtension}")))
+                        {
+                            basePath = Path.Combine(imageFilter.GetParentFolder(), _dataPath);
+                        }
+                        else if(File.Exists(Path.Combine(imageFilter.GetParentFolder(), _dataPath,
+                                                         $"{filename}.{firstExtensionLower}")))
+                        {
+                            basePath           = Path.Combine(imageFilter.GetParentFolder(), _dataPath);
+                            lowerCaseExtension = true;
+                        }
+                        else if(File.Exists(Path.Combine(imageFilter.GetParentFolder(), _dataPath,
+                                                         $"{filename.ToLower(CultureInfo.CurrentCulture)}.{firstExtension}")))
+                        {
+                            basePath          = Path.Combine(imageFilter.GetParentFolder(), _dataPath);
+                            lowerCaseFileName = true;
+                        }
+                        else if(File.Exists(Path.Combine(imageFilter.GetParentFolder(), _dataPath,
+                                                         $"{filename.ToLower(CultureInfo.CurrentCulture)}.{firstExtensionLower}")))
+                        {
+                            basePath           = Path.Combine(imageFilter.GetParentFolder(), _dataPath);
+                            lowerCaseFileName  = true;
+                            lowerCaseExtension = true;
+                        }
+
+                        else if(File.Exists(Path.Combine(imageFilter.GetParentFolder(),
+                                                         _dataPath.ToLower(CultureInfo.CurrentCulture),
+                                                         $"{filename}.{firstExtension}")))
+                        {
+                            basePath = Path.Combine(imageFilter.GetParentFolder(),
+                                                    _dataPath.ToLower(CultureInfo.CurrentCulture));
+                        }
+                        else if(File.Exists(Path.Combine(imageFilter.GetParentFolder(),
+                                                         _dataPath.ToLower(CultureInfo.CurrentCulture),
+                                                         $"{filename}.b00")))
+                        {
+                            basePath = Path.Combine(imageFilter.GetParentFolder(),
+                                                    _dataPath.ToLower(CultureInfo.CurrentCulture));
+
+                            lowerCaseExtension = true;
+                        }
+                        else if(File.Exists(Path.Combine(imageFilter.GetParentFolder(),
+                                                         _dataPath.ToLower(CultureInfo.CurrentCulture),
+                                                         $"{filename.ToLower(CultureInfo.CurrentCulture)}.{firstExtension}")))
+                        {
+                            basePath = Path.Combine(imageFilter.GetParentFolder(),
+                                                    _dataPath.ToLower(CultureInfo.CurrentCulture));
+
+                            lowerCaseFileName = true;
+                        }
+                        else if(File.Exists(Path.Combine(imageFilter.GetParentFolder(),
+                                                         _dataPath.ToLower(CultureInfo.CurrentCulture),
+                                                         $"{filename.ToLower(CultureInfo.CurrentCulture)}.{firstExtensionLower}")))
+                        {
+                            basePath = Path.Combine(imageFilter.GetParentFolder(),
+                                                    _dataPath.ToLower(CultureInfo.CurrentCulture));
+
+                            lowerCaseFileName  = true;
+                            lowerCaseExtension = true;
+                        }
+                        else if(File.Exists(Path.Combine("", $"{filename}.{firstExtension}")))
+                        {
+                            basePath = "";
+                        }
+                        else if(File.Exists(Path.Combine("", $"{filename}.{firstExtensionLower}")))
+                        {
+                            basePath           = "";
+                            lowerCaseExtension = true;
+                        }
+                        else if(
+                            File.Exists(Path.Combine("",
+                                                     $"{filename.ToLower(CultureInfo.CurrentCulture)}.{firstExtension}")))
+                        {
+                            basePath          = "";
+                            lowerCaseFileName = true;
+                        }
+                        else if(File.Exists(Path.Combine("",
+                                                         $"{filename.ToLower(CultureInfo.CurrentCulture)}.{firstExtensionLower}")))
+                        {
+                            basePath           = "";
+                            lowerCaseFileName  = true;
+                            lowerCaseExtension = true;
+                        }
+                        else
+                        {
+                            AaruConsole.ErrorWriteLine("Could not find image for track {0}", trk.point);
+
+                            return false;
+                        }
+
+                        var splitStream = new SplitJoinStream();
+
+                        if(lowerCaseFileName)
+                            filename = filename.ToLower(CultureInfo.CurrentCulture);
+
+                        string extension = lowerCaseExtension ? "b{0:D2}" : "B{0:D2}";
+
+                        try
+                        {
+                            splitStream.
+                                Add(Path.Combine(basePath, $"{filename}.{(lowerCaseExtension ? firstExtensionLower : firstExtension)}"),
+                                    FileMode.Open);
+
+                            splitStream.AddRange(basePath, $"{filename}.{extension}");
+                        }
+                        catch(Exception)
+                        {
+                            AaruConsole.ErrorWriteLine("Could not find image for track {0}", trk.point);
+
+                            return false;
+                        }
+
+                        track.TrackFilter = splitStream.Filter;
+                        track.TrackFile   = $"{filename}.{extension}";
 
                         if(trk.startLba >= 0)
                             track.TrackFileOffset =
-                                (ulong)((trk.startLba - chars.StartLba) * chars.SectorSize) + chars.Offset;
+                                (ulong)((trk.startLba * splitStartChars.SectorSize) + splitStartChars.Offset);
                         else
-                            track.TrackFileOffset = (ulong)(trk.startLba * -1 * chars.SectorSize);
+                            track.TrackFileOffset = (ulong)(trk.startLba * -1 * splitStartChars.SectorSize);
 
                         track.TrackFileType = "BINARY";
 
-                        if(chars.Subchannel != TrackSubchannelType.None)
+                        if(splitStartChars.Subchannel != TrackSubchannelType.None)
                         {
                             track.TrackSubchannelFilter = track.TrackFilter;
                             track.TrackSubchannelFile   = track.TrackFile;
-                            track.TrackSubchannelType   = chars.Subchannel;
+                            track.TrackSubchannelType   = splitStartChars.Subchannel;
                             track.TrackSubchannelOffset = track.TrackFileOffset;
 
-                            if(chars.Subchannel == TrackSubchannelType.PackedInterleaved)
+                            if(splitStartChars.Subchannel == TrackSubchannelType.PackedInterleaved)
                                 if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel))
                                     _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubchannel);
                         }
 
-                        break;
+                        splitStartChars.FileFilter = splitStream.Filter;
+                        splitStartChars.Sectors    = trk.sectors;
+                        splitStartChars.StartLba   = trk.startLba;
+                        _filePaths.Clear();
+                        _filePaths.Add(splitStartChars);
                     }
+                    else
+                        foreach(DataFileCharacteristics chars in fileCharsForThisTrack)
+                        {
+                            track.TrackFilter = chars.FileFilter;
+                            track.TrackFile   = chars.FileFilter.GetFilename();
+
+                            if(trk.startLba >= 0)
+                                track.TrackFileOffset =
+                                    (ulong)((trk.startLba - chars.StartLba) * chars.SectorSize) + chars.Offset;
+                            else
+                                track.TrackFileOffset = (ulong)(trk.startLba * -1 * chars.SectorSize);
+
+                            track.TrackFileType = "BINARY";
+
+                            if(chars.Subchannel != TrackSubchannelType.None)
+                            {
+                                track.TrackSubchannelFilter = track.TrackFilter;
+                                track.TrackSubchannelFile   = track.TrackFile;
+                                track.TrackSubchannelType   = chars.Subchannel;
+                                track.TrackSubchannelOffset = track.TrackFileOffset;
+
+                                if(chars.Subchannel == TrackSubchannelType.PackedInterleaved)
+                                    if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel))
+                                        _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubchannel);
+                            }
+
+                            break;
+                        }
 
                     if(track.TrackFilter is null)
                     {

@@ -46,16 +46,16 @@ namespace Aaru.Tests.Images
             {
                 TestFile  = "dvdrom.B6T",
                 MediaType = MediaType.DVDROM,
-                Sectors   = 0,
-                MD5       = "UNKNOWN",
-                LongMD5   = "UNKNOWN",
+                Sectors   = 2287072,
+                MD5       = "7272cae103a922910a09fdb6a6841dff",
+                LongMD5   = "7272cae103a922910a09fdb6a6841dff",
                 Tracks = new[]
                 {
                     new TrackInfoTestExpected
                     {
                         Session = 1,
                         Start   = 0,
-                        End     = 0,
+                        End     = 2287071,
                         Pregap  = 0
                     }
                 }
