@@ -58,6 +58,7 @@
   <ItemGroup>
     <Compile Include="OffsetStream.cs" />
     <Compile Include="Register.cs" />
+    <Compile Include="SplitJoinStream.cs" />
     <Compile Include="ZZZNoFilter.cs" />
     <Compile Include="ForcedSeekStream.cs" />
     <Compile Include="GZip.cs" />
@@ -87,7 +88,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="SharpCompress" Version="0.25.1" />
-    <PackageReference Include="Unclassified.NetRevisionTask" Version="0.3.0" PrivateAssets="all"/>
+    <PackageReference Include="Unclassified.NetRevisionTask" Version="0.3.0" PrivateAssets="all" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
