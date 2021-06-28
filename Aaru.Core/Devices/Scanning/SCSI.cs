@@ -52,9 +52,11 @@ namespace Aaru.Core.Devices.Scanning
             MhddLog mhddLog;
             IbgLog  ibgLog;
             byte[]  senseBuf;
-            bool    sense          = false;
-            uint    blockSize      = 0;
-            ushort  currentProfile = 0x0001;
+            bool    sense            = false;
+            uint    blockSize        = 0;
+            ushort  currentProfile   = 0x0001;
+            bool    foundReadCommand = false;
+            bool    readcd           = false;
 
             results.Blocks = 0;
 
@@ -68,86 +70,92 @@ namespace Aaru.Core.Devices.Scanning
                     DecodedSense? decSense = Sense.Decode(senseBuf);
 
                     if(decSense.HasValue)
-                        if(decSense.Value.ASC == 0x3A)
+                        switch(decSense.Value.ASC)
                         {
-                            int leftRetries = 5;
-
-                            while(leftRetries > 0)
+                            case 0x3A:
                             {
-                                PulseProgress?.Invoke("Waiting for drive to become ready");
-                                Thread.Sleep(2000);
-                                sense = _dev.ScsiTestUnitReady(out senseBuf, _dev.Timeout, out _);
+                                int leftRetries = 5;
 
-                                if(!sense)
-                                    break;
+                                while(leftRetries > 0)
+                                {
+                                    PulseProgress?.Invoke("Waiting for drive to become ready");
+                                    Thread.Sleep(2000);
+                                    sense = _dev.ScsiTestUnitReady(out senseBuf, _dev.Timeout, out _);
 
-                                leftRetries--;
+                                    if(!sense)
+                                        break;
+
+                                    leftRetries--;
+                                }
+
+                                if(sense)
+                                {
+                                    StoppingErrorMessage?.Invoke("Please insert media in drive");
+
+                                    return results;
+                                }
+
+                                break;
+                            }
+                            case 0x04 when decSense.Value.ASCQ == 0x01:
+                            {
+                                int leftRetries = 10;
+
+                                while(leftRetries > 0)
+                                {
+                                    PulseProgress?.Invoke("Waiting for drive to become ready");
+                                    Thread.Sleep(2000);
+                                    sense = _dev.ScsiTestUnitReady(out senseBuf, _dev.Timeout, out _);
+
+                                    if(!sense)
+                                        break;
+
+                                    leftRetries--;
+                                }
+
+                                if(sense)
+                                {
+                                    StoppingErrorMessage?.
+                                        Invoke($"Error testing unit was ready:\n{Sense.PrettifySense(senseBuf)}");
+
+                                    return results;
+                                }
+
+                                break;
                             }
 
-                            if(sense)
+                            // These should be trapped by the OS but seems in some cases they're not
+                            case 0x28:
                             {
-                                StoppingErrorMessage?.Invoke("Please insert media in drive");
+                                int leftRetries = 10;
 
-                                return results;
+                                while(leftRetries > 0)
+                                {
+                                    PulseProgress?.Invoke("Waiting for drive to become ready");
+                                    Thread.Sleep(2000);
+                                    sense = _dev.ScsiTestUnitReady(out senseBuf, _dev.Timeout, out _);
+
+                                    if(!sense)
+                                        break;
+
+                                    leftRetries--;
+                                }
+
+                                if(sense)
+                                {
+                                    StoppingErrorMessage?.
+                                        Invoke($"Error testing unit was ready:\n{Sense.PrettifySense(senseBuf)}");
+
+                                    return results;
+                                }
+
+                                break;
                             }
-                        }
-                        else if(decSense.Value.ASC  == 0x04 &&
-                                decSense.Value.ASCQ == 0x01)
-                        {
-                            int leftRetries = 10;
-
-                            while(leftRetries > 0)
-                            {
-                                PulseProgress?.Invoke("Waiting for drive to become ready");
-                                Thread.Sleep(2000);
-                                sense = _dev.ScsiTestUnitReady(out senseBuf, _dev.Timeout, out _);
-
-                                if(!sense)
-                                    break;
-
-                                leftRetries--;
-                            }
-
-                            if(sense)
-                            {
+                            default:
                                 StoppingErrorMessage?.
                                     Invoke($"Error testing unit was ready:\n{Sense.PrettifySense(senseBuf)}");
 
                                 return results;
-                            }
-                        }
-
-                        // These should be trapped by the OS but seems in some cases they're not
-                        else if(decSense.Value.ASC == 0x28)
-                        {
-                            int leftRetries = 10;
-
-                            while(leftRetries > 0)
-                            {
-                                PulseProgress?.Invoke("Waiting for drive to become ready");
-                                Thread.Sleep(2000);
-                                sense = _dev.ScsiTestUnitReady(out senseBuf, _dev.Timeout, out _);
-
-                                if(!sense)
-                                    break;
-
-                                leftRetries--;
-                            }
-
-                            if(sense)
-                            {
-                                StoppingErrorMessage?.
-                                    Invoke($"Error testing unit was ready:\n{Sense.PrettifySense(senseBuf)}");
-
-                                return results;
-                            }
-                        }
-                        else
-                        {
-                            StoppingErrorMessage?.
-                                Invoke($"Error testing unit was ready:\n{Sense.PrettifySense(senseBuf)}");
-
-                            return results;
                         }
                     else
                     {
@@ -170,10 +178,12 @@ namespace Aaru.Core.Devices.Scanning
                 case PeripheralDeviceTypes.OpticalDevice:
                 case PeripheralDeviceTypes.SimplifiedDevice:
                 case PeripheralDeviceTypes.WriteOnceDevice:
-                    scsiReader     = new Reader(_dev, _dev.Timeout, null, null);
-                    results.Blocks = scsiReader.GetDeviceBlocks();
+                    scsiReader       = new Reader(_dev, _dev.Timeout, null, null);
+                    results.Blocks   = scsiReader.GetDeviceBlocks();
+                    foundReadCommand = !scsiReader.FindReadCommand();
 
-                    if(scsiReader.FindReadCommand())
+                    if(!foundReadCommand &&
+                       _dev.ScsiType != PeripheralDeviceTypes.MultiMediaDevice)
                     {
                         StoppingErrorMessage?.Invoke("Unable to read medium.");
 
@@ -294,31 +304,35 @@ namespace Aaru.Core.Devices.Scanning
                     return results;
                 }
 
-                bool readcd = !_dev.ReadCd(out _, out senseBuf, 0, 2352, 1, MmcSectorTypes.AllTypes, false, false, true,
-                                           MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
-                                           MmcSubchannel.None, _dev.Timeout, out _);
+                readcd = !_dev.ReadCd(out _, out senseBuf, 0, 2352, 1, MmcSectorTypes.AllTypes, false, false, true,
+                                      MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, MmcSubchannel.None,
+                                      _dev.Timeout, out _);
 
                 if(readcd)
                     UpdateStatus?.Invoke("Using MMC READ CD command.");
+                else if(!foundReadCommand)
+                {
+                    StoppingErrorMessage?.Invoke("Unable to read medium.");
+
+                    return results;
+                }
 
                 start = DateTime.UtcNow;
 
-                while(true)
-                {
-                    if(readcd)
+                if(readcd)
+                    while(true)
                     {
                         sense = _dev.ReadCd(out _, out senseBuf, 0, 2352, blocksToRead, MmcSectorTypes.AllTypes, false,
                                             false, true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
                                             MmcSubchannel.None, _dev.Timeout, out _);
 
-                        if(_dev.Error)
+                        if(_dev.Error || sense)
                             blocksToRead /= 2;
-                    }
 
-                    if(!_dev.Error ||
-                       blocksToRead == 1)
-                        break;
-                }
+                        if(!_dev.Error ||
+                           blocksToRead == 1)
+                            break;
+                    }
 
                 if(_dev.Error)
                 {
@@ -343,7 +357,7 @@ namespace Aaru.Core.Devices.Scanning
                     if(_aborted)
                         break;
 
-                    double cmdDuration = 0;
+                    double cmdDuration;
 
                     if(results.Blocks - i < blocksToRead)
                         blocksToRead = (uint)(results.Blocks - i);
@@ -364,9 +378,13 @@ namespace Aaru.Core.Devices.Scanning
                         sense = _dev.ReadCd(out _, out senseBuf, (uint)i, 2352, blocksToRead, MmcSectorTypes.AllTypes,
                                             false, false, true, MmcHeaderCodes.AllHeaders, true, true,
                                             MmcErrorField.None, MmcSubchannel.None, _dev.Timeout, out cmdDuration);
-
-                        results.ProcessingTime += cmdDuration;
                     }
+                    else
+                    {
+                        sense = scsiReader.ReadBlocks(out _, i, blocksToRead, out cmdDuration, out _, out _);
+                    }
+
+                    results.ProcessingTime += cmdDuration;
 
                     if(!sense)
                     {
@@ -389,32 +407,39 @@ namespace Aaru.Core.Devices.Scanning
                     }
                     else
                     {
-                        AaruConsole.DebugWriteLine("Media-Scan", "READ CD error:\n{0}", Sense.PrettifySense(senseBuf));
+                        DecodedSense? senseDecoded = null;
 
-                        DecodedSense? senseDecoded = Sense.Decode(senseBuf);
-
-                        if(senseDecoded.HasValue)
+                        if(readcd)
                         {
-                            // TODO: This error happens when changing from track type afaik. Need to solve that more cleanly
-                            // LOGICAL BLOCK ADDRESS OUT OF RANGE
-                            if((senseDecoded.Value.ASC != 0x21 || senseDecoded.Value.ASCQ != 0x00) &&
+                            AaruConsole.DebugWriteLine("Media-Scan", "READ CD error:\n{0}",
+                                                       Sense.PrettifySense(senseBuf));
 
-                               // ILLEGAL MODE FOR THIS TRACK (requesting sectors as-is, this is a firmware misconception when audio sectors
-                               // are in a track where subchannel indicates data)
-                               (senseDecoded.Value.ASC != 0x64 || senseDecoded.Value.ASCQ != 0x00))
+                            senseDecoded = Sense.Decode(senseBuf);
+
+                            if(senseDecoded.HasValue)
                             {
-                                results.Errored += blocksToRead;
+                                // TODO: This error happens when changing from track type afaik. Need to solve that more cleanly
+                                // LOGICAL BLOCK ADDRESS OUT OF RANGE
+                                if((senseDecoded.Value.ASC != 0x21 || senseDecoded.Value.ASCQ != 0x00) &&
 
-                                for(ulong b = i; b < i + blocksToRead; b++)
-                                    results.UnreadableSectors.Add(b);
+                                   // ILLEGAL MODE FOR THIS TRACK (requesting sectors as-is, this is a firmware misconception when audio sectors
+                                   // are in a track where subchannel indicates data)
+                                   (senseDecoded.Value.ASC != 0x64 || senseDecoded.Value.ASCQ != 0x00))
+                                {
+                                    results.Errored += blocksToRead;
 
-                                ScanUnreadable?.Invoke(i);
-                                mhddLog.Write(i, cmdDuration < 500 ? 65535 : cmdDuration);
+                                    for(ulong b = i; b < i + blocksToRead; b++)
+                                        results.UnreadableSectors.Add(b);
 
-                                ibgLog.Write(i, 0);
+                                    ScanUnreadable?.Invoke(i);
+                                    mhddLog.Write(i, cmdDuration < 500 ? 65535 : cmdDuration);
+
+                                    ibgLog.Write(i, 0);
+                                }
                             }
                         }
-                        else
+
+                        if(!senseDecoded.HasValue)
                         {
                             ScanUnreadable?.Invoke(i);
                             results.Errored += blocksToRead;
@@ -563,6 +588,10 @@ namespace Aaru.Core.Devices.Scanning
 
                 if(scsiReader.CanSeek)
                     scsiReader.Seek(seekPos, out seekCur);
+                else if(readcd)
+                    _dev.ReadCd(out _, out _, seekPos, 2352, 1, MmcSectorTypes.AllTypes, false, false, true,
+                                MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, MmcSubchannel.None,
+                                _dev.Timeout, out seekCur);
                 else
                     scsiReader.ReadBlock(out _, seekPos, out seekCur, out _, out _);
 
