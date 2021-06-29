@@ -272,9 +272,9 @@ namespace Aaru.DiscImages
                 newTrack.TrackSubchannelOffset = currentSubchannelOffset;
 
                 currentDataOffset += (ulong)newTrack.TrackRawBytesPerSector *
-                                     ((newTrack.TrackEndSector - newTrack.TrackStartSector) + 1);
+                                     (newTrack.TrackEndSector - newTrack.TrackStartSector + 1);
 
-                currentSubchannelOffset += subchannelSize * ((newTrack.TrackEndSector - newTrack.TrackStartSector) + 1);
+                currentSubchannelOffset += subchannelSize * (newTrack.TrackEndSector - newTrack.TrackStartSector + 1);
 
                 Tracks.Add(newTrack);
             }
@@ -310,148 +310,7 @@ namespace Aaru.DiscImages
             }
 
             // Not easy, create a toc from scratch
-            if(nullableToc == null)
-            {
-                toc = new FullTOC.CDFullTOC();
-                Dictionary<byte, byte> sessionEndingTrack = new Dictionary<byte, byte>();
-                toc.FirstCompleteSession = byte.MaxValue;
-                toc.LastCompleteSession  = byte.MinValue;
-                List<FullTOC.TrackDataDescriptor> trackDescriptors = new List<FullTOC.TrackDataDescriptor>();
-                byte                              currentTrack     = 0;
-
-                foreach(Track track in Tracks.OrderBy(t => t.TrackSession).ThenBy(t => t.TrackSequence))
-                {
-                    if(track.TrackSession < toc.FirstCompleteSession)
-                        toc.FirstCompleteSession = (byte)track.TrackSession;
-
-                    if(track.TrackSession <= toc.LastCompleteSession)
-                    {
-                        currentTrack = (byte)track.TrackSequence;
-
-                        continue;
-                    }
-
-                    if(toc.LastCompleteSession > 0)
-                        sessionEndingTrack.Add(toc.LastCompleteSession, currentTrack);
-
-                    toc.LastCompleteSession = (byte)track.TrackSession;
-                }
-
-                byte currentSession = 0;
-
-                foreach(Track track in Tracks.OrderBy(t => t.TrackSession).ThenBy(t => t.TrackSequence))
-                {
-                    _trackFlags.TryGetValue((byte)track.TrackSequence, out byte trackControl);
-
-                    if(trackControl    == 0 &&
-                       track.TrackType != TrackType.Audio)
-                        trackControl = (byte)CdFlags.DataTrack;
-
-                    // Lead-Out
-                    if(track.TrackSession > currentSession &&
-                       currentSession     != 0)
-                    {
-                        (byte minute, byte second, byte frame) leadoutAmsf = LbaToMsf(track.TrackStartSector - 150);
-
-                        (byte minute, byte second, byte frame) leadoutPmsf =
-                            LbaToMsf(Tracks.OrderBy(t => t.TrackSession).ThenBy(t => t.TrackSequence).Last().
-                                            TrackStartSector);
-
-                        // Lead-out
-                        trackDescriptors.Add(new FullTOC.TrackDataDescriptor
-                        {
-                            SessionNumber = currentSession,
-                            POINT         = 0xB0,
-                            ADR           = 5,
-                            CONTROL       = 0,
-                            HOUR          = 0,
-                            Min           = leadoutAmsf.minute,
-                            Sec           = leadoutAmsf.second,
-                            Frame         = leadoutAmsf.frame,
-                            PHOUR         = 2,
-                            PMIN          = leadoutPmsf.minute,
-                            PSEC          = leadoutPmsf.second,
-                            PFRAME        = leadoutPmsf.frame
-                        });
-
-                        // This seems to be constant? It should not exist on CD-ROM but CloneCD creates them anyway
-                        // Format seems like ATIP, but ATIP should not be as 0xC0 in TOC...
-                        trackDescriptors.Add(new FullTOC.TrackDataDescriptor
-                        {
-                            SessionNumber = currentSession,
-                            POINT         = 0xC0,
-                            ADR           = 5,
-                            CONTROL       = 0,
-                            Min           = 128,
-                            PMIN          = 97,
-                            PSEC          = 25
-                        });
-                    }
-
-                    // Lead-in
-                    if(track.TrackSession > currentSession)
-                    {
-                        currentSession = (byte)track.TrackSession;
-                        sessionEndingTrack.TryGetValue(currentSession, out byte endingTrackNumber);
-
-                        (byte minute, byte second, byte frame) leadinPmsf =
-                            LbaToMsf(Tracks.FirstOrDefault(t => t.TrackSequence == endingTrackNumber)?.TrackEndSector ??
-                                     0 + 1);
-
-                        // Starting track
-                        trackDescriptors.Add(new FullTOC.TrackDataDescriptor
-                        {
-                            SessionNumber = currentSession,
-                            POINT         = 0xA0,
-                            ADR           = 1,
-                            CONTROL       = trackControl,
-                            PMIN          = (byte)track.TrackSequence
-                        });
-
-                        // Ending track
-                        trackDescriptors.Add(new FullTOC.TrackDataDescriptor
-                        {
-                            SessionNumber = currentSession,
-                            POINT         = 0xA1,
-                            ADR           = 1,
-                            CONTROL       = trackControl,
-                            PMIN          = endingTrackNumber
-                        });
-
-                        // Lead-out start
-                        trackDescriptors.Add(new FullTOC.TrackDataDescriptor
-                        {
-                            SessionNumber = currentSession,
-                            POINT         = 0xA2,
-                            ADR           = 1,
-                            CONTROL       = trackControl,
-                            PHOUR         = 0,
-                            PMIN          = leadinPmsf.minute,
-                            PSEC          = leadinPmsf.second,
-                            PFRAME        = leadinPmsf.frame
-                        });
-                    }
-
-                    (byte minute, byte second, byte frame) pmsf = LbaToMsf(track.TrackStartSector);
-
-                    // Track
-                    trackDescriptors.Add(new FullTOC.TrackDataDescriptor
-                    {
-                        SessionNumber = (byte)track.TrackSession,
-                        POINT         = (byte)track.TrackSequence,
-                        ADR           = 1,
-                        CONTROL       = trackControl,
-                        PHOUR         = 0,
-                        PMIN          = pmsf.minute,
-                        PSEC          = pmsf.second,
-                        PFRAME        = pmsf.frame
-                    });
-                }
-
-                toc.TrackDescriptors = trackDescriptors.ToArray();
-            }
-            else
-                toc = nullableToc.Value;
+            toc = nullableToc ?? FullTOC.Create(Tracks, _trackFlags, true);
 
             _descriptorStream.WriteLine("[CloneCD]");
             _descriptorStream.WriteLine("Version=2");
@@ -505,10 +364,10 @@ namespace Aaru.DiscImages
                                       toc.TrackDescriptors[i].PFRAME));
 
                 if(alba > 405000)
-                    alba = ((alba - 405000) + 300) * -1;
+                    alba = (alba - 405000 + 300) * -1;
 
                 if(plba > 405000)
-                    plba = ((plba - 405000) + 300) * -1;
+                    plba = (plba - 405000 + 300) * -1;
 
                 _descriptorStream.WriteLine("[Entry {0}]", i);
                 _descriptorStream.WriteLine("Session={0}", toc.TrackDescriptors[i].SessionNumber);
