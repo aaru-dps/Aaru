@@ -30,8 +30,12 @@
 // Copyright © 2011-2021 Natalia Portillo
 // ****************************************************************************/
 
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Text;
+using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Structs;
 using Aaru.Console;
 using Aaru.Helpers;
 
@@ -627,5 +631,153 @@ namespace Aaru.Decoders.CD
             /// <summary>Byte 10</summary>
             public byte PFRAME;
         }
+
+        public static CDFullTOC Create(List<Track> tracks, Dictionary<byte, byte> trackFlags,
+                                       bool createC0Entry = false)
+        {
+            var                    toc                = new CDFullTOC();
+            Dictionary<byte, byte> sessionEndingTrack = new Dictionary<byte, byte>();
+            toc.FirstCompleteSession = byte.MaxValue;
+            toc.LastCompleteSession  = byte.MinValue;
+            List<TrackDataDescriptor> trackDescriptors = new List<TrackDataDescriptor>();
+            byte                      currentTrack     = 0;
+
+            foreach(Track track in tracks.OrderBy(t => t.TrackSession).ThenBy(t => t.TrackSequence))
+            {
+                if(track.TrackSession < toc.FirstCompleteSession)
+                    toc.FirstCompleteSession = (byte)track.TrackSession;
+
+                if(track.TrackSession <= toc.LastCompleteSession)
+                {
+                    currentTrack = (byte)track.TrackSequence;
+
+                    continue;
+                }
+
+                if(toc.LastCompleteSession > 0)
+                    sessionEndingTrack.Add(toc.LastCompleteSession, currentTrack);
+
+                toc.LastCompleteSession = (byte)track.TrackSession;
+            }
+
+            byte currentSession = 0;
+
+            foreach(Track track in tracks.OrderBy(t => t.TrackSession).ThenBy(t => t.TrackSequence))
+            {
+                trackFlags.TryGetValue((byte)track.TrackSequence, out byte trackControl);
+
+                if(trackControl    == 0 &&
+                   track.TrackType != TrackType.Audio)
+                    trackControl = (byte)CdFlags.DataTrack;
+
+                // Lead-Out
+                if(track.TrackSession > currentSession &&
+                   currentSession     != 0)
+                {
+                    (byte minute, byte second, byte frame) leadoutAmsf = LbaToMsf(track.TrackStartSector - 150);
+
+                    (byte minute, byte second, byte frame) leadoutPmsf =
+                        LbaToMsf(tracks.OrderBy(t => t.TrackSession).ThenBy(t => t.TrackSequence).Last().
+                                        TrackStartSector);
+
+                    // Lead-out
+                    trackDescriptors.Add(new TrackDataDescriptor
+                    {
+                        SessionNumber = currentSession,
+                        POINT         = 0xB0,
+                        ADR           = 5,
+                        CONTROL       = 0,
+                        HOUR          = 0,
+                        Min           = leadoutAmsf.minute,
+                        Sec           = leadoutAmsf.second,
+                        Frame         = leadoutAmsf.frame,
+                        PHOUR         = 2,
+                        PMIN          = leadoutPmsf.minute,
+                        PSEC          = leadoutPmsf.second,
+                        PFRAME        = leadoutPmsf.frame
+                    });
+
+                    // This seems to be constant? It should not exist on CD-ROM but CloneCD creates them anyway
+                    // Format seems like ATIP, but ATIP should not be as 0xC0 in TOC...
+                    if(createC0Entry)
+                        trackDescriptors.Add(new TrackDataDescriptor
+                        {
+                            SessionNumber = currentSession,
+                            POINT         = 0xC0,
+                            ADR           = 5,
+                            CONTROL       = 0,
+                            Min           = 128,
+                            PMIN          = 97,
+                            PSEC          = 25
+                        });
+                }
+
+                // Lead-in
+                if(track.TrackSession > currentSession)
+                {
+                    currentSession = (byte)track.TrackSession;
+                    sessionEndingTrack.TryGetValue(currentSession, out byte endingTrackNumber);
+
+                    (byte minute, byte second, byte frame) leadinPmsf =
+                        LbaToMsf(tracks.FirstOrDefault(t => t.TrackSequence == endingTrackNumber)?.TrackEndSector ??
+                                 0 + 1);
+
+                    // Starting track
+                    trackDescriptors.Add(new TrackDataDescriptor
+                    {
+                        SessionNumber = currentSession,
+                        POINT         = 0xA0,
+                        ADR           = 1,
+                        CONTROL       = trackControl,
+                        PMIN          = (byte)track.TrackSequence
+                    });
+
+                    // Ending track
+                    trackDescriptors.Add(new TrackDataDescriptor
+                    {
+                        SessionNumber = currentSession,
+                        POINT         = 0xA1,
+                        ADR           = 1,
+                        CONTROL       = trackControl,
+                        PMIN          = endingTrackNumber
+                    });
+
+                    // Lead-out start
+                    trackDescriptors.Add(new TrackDataDescriptor
+                    {
+                        SessionNumber = currentSession,
+                        POINT         = 0xA2,
+                        ADR           = 1,
+                        CONTROL       = trackControl,
+                        PHOUR         = 0,
+                        PMIN          = leadinPmsf.minute,
+                        PSEC          = leadinPmsf.second,
+                        PFRAME        = leadinPmsf.frame
+                    });
+                }
+
+                (byte minute, byte second, byte frame) pmsf = LbaToMsf(track.TrackStartSector);
+
+                // Track
+                trackDescriptors.Add(new TrackDataDescriptor
+                {
+                    SessionNumber = (byte)track.TrackSession,
+                    POINT         = (byte)track.TrackSequence,
+                    ADR           = 1,
+                    CONTROL       = trackControl,
+                    PHOUR         = 0,
+                    PMIN          = pmsf.minute,
+                    PSEC          = pmsf.second,
+                    PFRAME        = pmsf.frame
+                });
+            }
+
+            toc.TrackDescriptors = trackDescriptors.ToArray();
+
+            return toc;
+        }
+
+        static (byte minute, byte second, byte frame) LbaToMsf(ulong sector) =>
+            ((byte)((sector + 150) / 75 / 60), (byte)((sector + 150) / 75 % 60), (byte)((sector + 150) % 75));
     }
 }
