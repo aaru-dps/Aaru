@@ -47,15 +47,15 @@ namespace Aaru.Tests.Images
                 TestFile      = "cdiready_theapprentice.ccd",
                 MediaType     = MediaType.CDDA,
                 Sectors       = 279300,
-                MD5           = "UNKNOWN",
-                LongMD5       = "UNKNOWN",
-                SubchannelMD5 = "UNKNOWN",
+                MD5           = "2ea39a3ec9b5769dd31560da8d348c99",
+                LongMD5       = "2ea39a3ec9b5769dd31560da8d348c99",
+                SubchannelMD5 = "77badd2e3afd0779c0d202bc47fd9198",
                 Tracks = new[]
                 {
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 69150,
+                        Start   = 0,
                         End     = 88799,
                         Pregap  = 69300,
                         Flags   = 0
@@ -234,10 +234,10 @@ namespace Aaru.Tests.Images
             {
                 TestFile      = "jaguarcd.ccd",
                 MediaType     = MediaType.CDDA,
-                Sectors       = 243587,
-                MD5           = "3147ff203341692813de8e5775f45d84",
-                LongMD5       = "3147ff203341692813de8e5775f45d84",
-                SubchannelMD5 = "0534d96336d9fb46f2c48c9c27f07999",
+                Sectors       = 232337,
+                MD5           = "5af7b9308c3a46f641c08076d3cbcb29",
+                LongMD5       = "5af7b9308c3a46f641c08076d3cbcb29",
+                SubchannelMD5 = "0bf82207181d631b420c4606ac42a4f7",
                 Tracks = new[]
                 {
                     new TrackInfoTestExpected
@@ -251,7 +251,7 @@ namespace Aaru.Tests.Images
                     new TrackInfoTestExpected
                     {
                         Session = 2,
-                        Start   = 27640,
+                        Start   = 27490,
                         End     = 28236,
                         Pregap  = 150,
                         Flags   = 0
@@ -714,10 +714,10 @@ namespace Aaru.Tests.Images
             {
                 TestFile      = "report_enhancedcd.ccd",
                 MediaType     = MediaType.CDROMXA,
-                Sectors       = 303316,
-                MD5           = "588d8ff1fef693bbe5719ac6c2f96bc1",
-                LongMD5       = "d72e737f49482d1330e8fe03b9f40b79",
-                SubchannelMD5 = "3d4bab2b1bf8f9a373e35f4e743aa883",
+                Sectors       = 292066,
+                MD5           = "d9cac5c4bca6b7602dba1c24d2422dc8",
+                LongMD5       = "7803befa8bcbfec1f1436007e655bc64",
+                SubchannelMD5 = "261ae674c9c0245398e4ce898d23fe22",
                 Tracks = new[]
                 {
                     new TrackInfoTestExpected
@@ -827,7 +827,7 @@ namespace Aaru.Tests.Images
                     new TrackInfoTestExpected
                     {
                         Session = 2,
-                        Start   = 234180,
+                        Start   = 234030,
                         End     = 303315,
                         Pregap  = 150,
                         Flags   = 4
@@ -938,10 +938,10 @@ namespace Aaru.Tests.Images
             {
                 TestFile      = "test_enhancedcd.ccd",
                 MediaType     = MediaType.CDROMXA,
-                Sectors       = 59206,
-                MD5           = "5984f395dccd4d1e10df0f92d54d872d",
-                LongMD5       = "df8f4b8b58b9cada80ee442ddbd690f4",
-                SubchannelMD5 = "a80b7b6b704cf7fe94942df281d4588a",
+                Sectors       = 47956,
+                MD5           = "8ce5cb0f03277527120aaab5f0e69505",
+                LongMD5       = "21f8bea9a65305d5b8499f054322a991",
+                SubchannelMD5 = "cfbf8eda25a5182b96515d751ebed718",
                 Tracks = new[]
                 {
                     new TrackInfoTestExpected
@@ -963,7 +963,7 @@ namespace Aaru.Tests.Images
                     new TrackInfoTestExpected
                     {
                         Session = 2,
-                        Start   = 40353,
+                        Start   = 40203,
                         End     = 59205,
                         Pregap  = 150,
                         Flags   = 4
@@ -1186,10 +1186,10 @@ namespace Aaru.Tests.Images
             {
                 TestFile      = "test_multisession.ccd",
                 MediaType     = MediaType.CDROMXA,
-                Sectors       = 51168,
-                MD5           = "f793fecc486a83cbe05b51c2d98059b9",
-                LongMD5       = "199b85a01c27f55f463fc7d606adfafa",
-                SubchannelMD5 = "7e9326e1de734f00ba71d5a8100d0cda",
+                Sectors       = 26418,
+                MD5           = "ee564077f3d9265b9b00cb762f5f9f09",
+                LongMD5       = "ea85f5c6255b3c18022e8fbfaed8780f",
+                SubchannelMD5 = "9e2b7980bdcce93e60e1f2d09b1413e5",
                 Tracks = new[]
                 {
                     new TrackInfoTestExpected
@@ -1203,7 +1203,7 @@ namespace Aaru.Tests.Images
                     new TrackInfoTestExpected
                     {
                         Session = 2,
-                        Start   = 19533,
+                        Start   = 19383,
                         End     = 25959,
                         Pregap  = 150,
                         Flags   = 4
@@ -1211,7 +1211,7 @@ namespace Aaru.Tests.Images
                     new TrackInfoTestExpected
                     {
                         Session = 3,
-                        Start   = 32860,
+                        Start   = 32710,
                         End     = 38477,
                         Pregap  = 150,
                         Flags   = 4
@@ -1219,7 +1219,7 @@ namespace Aaru.Tests.Images
                     new TrackInfoTestExpected
                     {
                         Session = 4,
-                        Start   = 45378,
+                        Start   = 45228,
                         End     = 51167,
                         Pregap  = 150,
                         Flags   = 4

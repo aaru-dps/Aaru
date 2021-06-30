@@ -447,20 +447,33 @@ namespace Aaru.DiscImages
                                             TrackSession = descriptor.SessionNumber
                                         };
 
-                                        if(firstTrackInSession)
+                                        if(descriptor.POINT == 1)
                                         {
-                                            currentTrack.TrackPregap = 150;
-
-                                            if(currentTrack.TrackStartSector > 0)
-                                            {
-                                                currentTrack.Indexes[0] = (int)currentTrack.TrackStartSector - 150;
-
-                                                if(currentTrack.Indexes[0] < 0)
-                                                    currentTrack.Indexes[0] = 0;
-                                            }
+                                            currentTrack.TrackPregap      = currentTrack.TrackStartSector + 150;
+                                            currentTrack.Indexes[0]       = -150;
+                                            currentTrack.Indexes[1]       = (int)currentTrack.TrackStartSector;
+                                            currentTrack.TrackStartSector = 0;
                                         }
+                                        else
+                                        {
+                                            if(firstTrackInSession)
+                                            {
+                                                currentTrack.TrackPregap = 150;
 
-                                        currentTrack.Indexes[1] = (int)currentTrack.TrackStartSector;
+                                                if(currentTrack.TrackStartSector > 0)
+                                                {
+                                                    currentTrack.Indexes[0] = (int)currentTrack.TrackStartSector - 150;
+
+                                                    if(currentTrack.Indexes[0] < 0)
+                                                        currentTrack.Indexes[0] = 0;
+                                                }
+
+                                                currentTrack.Indexes[1]       =  (int)currentTrack.TrackStartSector;
+                                                currentTrack.TrackStartSector -= 150;
+                                            }
+                                            else
+                                                currentTrack.Indexes[1] = (int)currentTrack.TrackStartSector;
+                                        }
 
                                         firstTrackInSession = false;
 
