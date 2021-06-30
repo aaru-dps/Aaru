@@ -1002,7 +1002,7 @@ namespace Aaru.DiscImages
                         _discImage.Tracks[0].Pregap    = 0;
                         _discImage.Tracks[0].Bps       = 2048;
                         _discImage.Tracks[0].TrackType = CDRWIN_TRACK_TYPE_MODE1;
-                        _imageInfo.Application         = "ISOBuster";
+                        _imageInfo.Application         = "MagicISO";
                         _discImage.MediaType           = MediaType.DVDROM;
                     }
                 }
