@@ -235,9 +235,9 @@ namespace Aaru.Tests.Images
                 TestFile      = "report_audiocd.BWT",
                 MediaType     = MediaType.CDDA,
                 Sectors       = 247073,
-                MD5           = "0e4c52acfb90e8954b70b7c50ba01ffb",
-                LongMD5       = "0e4c52acfb90e8954b70b7c50ba01ffb",
-                SubchannelMD5 = "5fe9338986050d5631a519a3242dda2d",
+                MD5           = "c09f408a4416634d8ac1c1ffd0ed75a5",
+                LongMD5       = "c09f408a4416634d8ac1c1ffd0ed75a5",
+                SubchannelMD5 = "2cf7f3f06c28032f7609aaab970c001f",
                 Tracks = new[]
                 {
                     new TrackInfoTestExpected
@@ -399,8 +399,8 @@ namespace Aaru.Tests.Images
                 TestFile      = "report_cdrw.BWT",
                 MediaType     = MediaType.CDROM,
                 Sectors       = 308224,
-                MD5           = "UNKNOWN",
-                LongMD5       = "UNKNOWN",
+                MD5           = "1e55aa420ca8f8ea77d5b597c9cfc19b",
+                LongMD5       = "3af5f943ddb9427d9c63a4ce3b704db9",
                 SubchannelMD5 = "UNKNOWN",
                 Tracks = new[]
                 {
@@ -419,9 +419,9 @@ namespace Aaru.Tests.Images
                 TestFile      = "report_enhancedcd.BWT",
                 MediaType     = MediaType.CDPLUS,
                 Sectors       = 303316,
-                MD5           = "UNKNOWN",
-                LongMD5       = "UNKNOWN",
-                SubchannelMD5 = "UNKNOWN",
+                MD5           = "c15f0beeed08f943cfc50c3246334dd2",
+                LongMD5       = "1aab899e2965a74763b1bb232ff8bf21",
+                SubchannelMD5 = "d5a424eedad28620468f215d5b24d453",
                 Tracks = new[]
                 {
                     new TrackInfoTestExpected
@@ -571,9 +571,9 @@ namespace Aaru.Tests.Images
                 TestFile      = "test_audiocd_cdtext.BWT",
                 MediaType     = MediaType.CDDA,
                 Sectors       = 277696,
-                MD5           = "3463a12134de20f22340d4d36f75ecf1",
-                LongMD5       = "3463a12134de20f22340d4d36f75ecf1",
-                SubchannelMD5 = "73c889ef800df274824d4212c4a060a1",
+                MD5           = "7c8fc7bb768cff15d702ac8cd10108d7",
+                LongMD5       = "7c8fc7bb768cff15d702ac8cd10108d7",
+                SubchannelMD5 = "4637654a333c5917232b343ba465fba0",
                 Tracks = new[]
                 {
                     new TrackInfoTestExpected
@@ -671,9 +671,9 @@ namespace Aaru.Tests.Images
                 TestFile      = "test_castrated_leadout.BWT",
                 MediaType     = MediaType.CDDA,
                 Sectors       = 269750,
-                MD5           = "0639197a3c2292f62745e05b7e701e4d",
-                LongMD5       = "0639197a3c2292f62745e05b7e701e4d",
-                SubchannelMD5 = "28267d1e5dbc9589cc2cccc1b7a47095",
+                MD5           = "b91cad51e94fa20b3108bde2fa846b2d",
+                LongMD5       = "b91cad51e94fa20b3108bde2fa846b2d",
+                SubchannelMD5 = "03f4de8844777f08a7114e4c28eb3d09",
                 Tracks = new[]
                 {
                     new TrackInfoTestExpected
@@ -771,8 +771,8 @@ namespace Aaru.Tests.Images
                 TestFile      = "test_data_track_as_audio.BWT",
                 MediaType     = MediaType.CDROMXA,
                 Sectors       = 62385,
-                MD5           = "e1664576ae56b98faaf60652fd050e15",
-                LongMD5       = "1e1a4024e652668b09868b238aadc0f7",
+                MD5           = "9d4baa88af74fea2a372f65e9d03f719",
+                LongMD5       = "44bcce47a30f7ee6aa20c7a612d63b34",
                 SubchannelMD5 = "UNKNOWN",
                 Tracks = new[]
                 {
@@ -799,8 +799,8 @@ namespace Aaru.Tests.Images
                 TestFile      = "test_data_track_as_audio_fixed_sub.BWT",
                 MediaType     = MediaType.CDROMXA,
                 Sectors       = 62385,
-                MD5           = "e1664576ae56b98faaf60652fd050e15",
-                LongMD5       = "1e1a4024e652668b09868b238aadc0f7",
+                MD5           = "9d4baa88af74fea2a372f65e9d03f719",
+                LongMD5       = "44bcce47a30f7ee6aa20c7a612d63b34",
                 SubchannelMD5 = "UNKNOWN",
                 Tracks = new[]
                 {
@@ -827,8 +827,8 @@ namespace Aaru.Tests.Images
                 TestFile      = "test_disc_starts_at_track2.BWT",
                 MediaType     = MediaType.CDROMXA,
                 Sectors       = 62385,
-                MD5           = "UNKNOWN",
-                LongMD5       = "UNKNOWN",
+                MD5           = "807b4b5fb725a4bd2c3820e5d51b39ac",
+                LongMD5       = "292c210e3f7ee29f0c75097477a2f29c",
                 SubchannelMD5 = "UNKNOWN",
                 Tracks = new[]
                 {
@@ -855,9 +855,9 @@ namespace Aaru.Tests.Images
                 TestFile      = "test_enhancedcd.BWT",
                 MediaType     = MediaType.CDPLUS,
                 Sectors       = 59206,
-                MD5           = "UNKNOWN",
-                LongMD5       = "UNKNOWN",
-                SubchannelMD5 = "UNKNOWN",
+                MD5           = "c0cdd94f1488226d37f0398eef75eb4c",
+                LongMD5       = "843302a664a074dc4c02b27e53eb228a",
+                SubchannelMD5 = "fd13f0194b8e141d4384abf1ad00fbf2",
                 Tracks = new[]
                 {
                     new TrackInfoTestExpected
@@ -911,9 +911,9 @@ namespace Aaru.Tests.Images
                 TestFile      = "test_multi_karaoke_sampler.BWT",
                 MediaType     = MediaType.CDROMXA,
                 Sectors       = 329158,
-                MD5           = "0f8f94e00fed4a163f2590632a1c163e",
-                LongMD5       = "7f8cca32ee186cf1d70d21882cbe8274",
-                SubchannelMD5 = "b840fe64cd1784f166fd0ac378487ae0",
+                MD5           = "a34e29e42b60023a6ae59f37d2bd4bea",
+                LongMD5       = "e981f7dfdb522ba937fe75474e23a446",
+                SubchannelMD5 = "00045e5e72d806f84fb363e4ae73cf46",
                 Tracks = new[]
                 {
                     new TrackInfoTestExpected
@@ -1051,9 +1051,9 @@ namespace Aaru.Tests.Images
                 TestFile      = "test_multiple_indexes.BWT",
                 MediaType     = MediaType.CDDA,
                 Sectors       = 65536,
-                MD5           = "9a5ab4e16c0410d4b2040ce836e78d45",
-                LongMD5       = "9a5ab4e16c0410d4b2040ce836e78d45",
-                SubchannelMD5 = "bd86329c11da806cda20b57872aa0a49",
+                MD5           = "1b13a8f8aeb23f0b8bbc68518217e771",
+                LongMD5       = "1b13a8f8aeb23f0b8bbc68518217e771",
+                SubchannelMD5 = "2ff4170eafb73c4be3a81c35f37e9c3d",
                 Tracks = new[]
                 {
                     new TrackInfoTestExpected
@@ -1103,8 +1103,8 @@ namespace Aaru.Tests.Images
                 TestFile      = "test_multisession.BWT",
                 MediaType     = MediaType.CDROMXA,
                 Sectors       = 51168,
-                MD5           = "UNKNOWN",
-                LongMD5       = "UNKNOWN",
+                MD5           = "e2e19cf38891e67a0829d01842b4052e",
+                LongMD5       = "3e646a04eb29a8e0ad892b6ac00ba962",
                 SubchannelMD5 = "UNKNOWN",
                 Tracks = new[]
                 {
@@ -1147,9 +1147,9 @@ namespace Aaru.Tests.Images
                 TestFile      = "test_track2_inside_track1.BWT",
                 MediaType     = MediaType.CDROMXA,
                 Sectors       = 62385,
-                MD5           = "UNKNOWN",
-                LongMD5       = "UNKNOWN",
-                SubchannelMD5 = "UNKNOWN",
+                MD5           = "1474ba6a5dba04e711fe4008503877ff",
+                LongMD5       = "539aea27a6c9b8b507ffc9d942c9df92",
+                SubchannelMD5 = "f9576f95faf9d6874642ad0a3033e0f5",
                 Tracks = new[]
                 {
                     new TrackInfoTestExpected
@@ -1183,9 +1183,9 @@ namespace Aaru.Tests.Images
                 TestFile      = "test_videocd.BWT",
                 MediaType     = MediaType.CDROMXA,
                 Sectors       = 48794,
-                MD5           = "UNKNOWN",
-                LongMD5       = "UNKNOWN",
-                SubchannelMD5 = "UNKNOWN",
+                MD5           = "67ed7ec2aac06b56b4d693146d64adb7",
+                LongMD5       = "84c5329e55e3cc8c125c636c71ba2c17",
+                SubchannelMD5 = "5027417c4cbb4975482b902c57232dfb",
                 Tracks = new[]
                 {
                     new TrackInfoTestExpected

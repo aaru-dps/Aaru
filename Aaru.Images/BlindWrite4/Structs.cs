@@ -89,13 +89,15 @@ namespace Aaru.DiscImages
             public byte      point;
             public uint      unknown7;
             public uint      unknown8;
-            public uint      unknown9;
-            public uint      unknown10;
-            public ushort    unknown11;
-            public uint      lastSector;
-            public byte      unknown12;
-            public int       pregap;
-            public int       startSector;
+
+            // Seems to be used to adjust the offset according to the pregap
+            public uint   pregapOffsetAdjustment;
+            public uint   unknown10;
+            public ushort unknown11;
+            public uint   lastSector;
+            public byte   unknown12;
+            public int    pregap;
+            public int    startSector;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
             public uint[] unknown13;
             public uint   titleLen;

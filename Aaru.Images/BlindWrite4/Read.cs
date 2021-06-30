@@ -191,7 +191,7 @@ namespace Aaru.DiscImages
                 stream.Read(tmpUInt, 0, 4);
                 track.unknown8 = BitConverter.ToUInt32(tmpUInt, 0);
                 stream.Read(tmpUInt, 0, 4);
-                track.unknown9 = BitConverter.ToUInt32(tmpUInt, 0);
+                track.pregapOffsetAdjustment = BitConverter.ToUInt32(tmpUInt, 0);
                 stream.Read(tmpUInt, 0, 4);
                 track.unknown10 = BitConverter.ToUInt32(tmpUInt, 0);
                 stream.Read(tmpUShort, 0, 2);
@@ -341,7 +341,7 @@ namespace Aaru.DiscImages
                 AaruConsole.DebugWriteLine("BlindWrite4 plugin", "track.point = {0}", track.point);
                 AaruConsole.DebugWriteLine("BlindWrite4 plugin", "track.unknown7 = {0}", track.unknown7);
                 AaruConsole.DebugWriteLine("BlindWrite4 plugin", "track.unknown8 = {0}", track.unknown8);
-                AaruConsole.DebugWriteLine("BlindWrite4 plugin", "track.unknown9 = {0}", track.unknown9);
+                AaruConsole.DebugWriteLine("BlindWrite4 plugin", "track.unknown9 = {0}", track.pregapOffsetAdjustment);
                 AaruConsole.DebugWriteLine("BlindWrite4 plugin", "track.unknown10 = {0}", track.unknown10);
                 AaruConsole.DebugWriteLine("BlindWrite4 plugin", "track.unknown11 = {0}", track.unknown11);
                 AaruConsole.DebugWriteLine("BlindWrite4 plugin", "track.lastSector = {0}", track.lastSector);
@@ -453,10 +453,11 @@ namespace Aaru.DiscImages
                 _subFilter =
                     ((((filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), _header.SubchannelFile)) ??
                         filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
-                                                           _header.SubchannelFile.ToLower(CultureInfo.CurrentCulture)))
-                       ) ?? filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
-                                                               _header.SubchannelFile.
-                                                                       ToUpper(CultureInfo.CurrentCulture)))) ??
+                                                           _header.SubchannelFile.
+                                                                   ToLower(CultureInfo.CurrentCulture)))) ??
+                       filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
+                                                          _header.SubchannelFile.
+                                                                  ToUpper(CultureInfo.CurrentCulture)))) ??
                       filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), _header.SubchannelFile.
                                                              Split(new[]
                                                              {
@@ -556,13 +557,18 @@ namespace Aaru.DiscImages
 
                     track.TrackFile = _dataFilter.GetFilename();
 
-                    track.TrackFileOffset       = bwTrack.offset + (150 * 2352);
-                    track.TrackSubchannelOffset = ((bwTrack.offset / 2352) + 150) * 96;
+                    track.TrackFileOffset = bwTrack.offset + ((150 - bwTrack.pregapOffsetAdjustment) * 2352);
+
+                    track.TrackSubchannelOffset =
+                        ((bwTrack.offset / 2352) + (150 - bwTrack.pregapOffsetAdjustment)) * 96;
 
                     if(bwTrack.pregap > 0)
                     {
                         track.TrackPregap      = (ulong)(bwTrack.startSector - bwTrack.pregap);
                         track.TrackStartSector = (ulong)bwTrack.pregap;
+
+                        track.TrackFileOffset       -= track.TrackPregap * 2352;
+                        track.TrackSubchannelOffset -= track.TrackPregap * 96;
                     }
                     else
                     {
@@ -938,7 +944,17 @@ namespace Aaru.DiscImages
                     br.BaseStream.Seek(sectorOffset, SeekOrigin.Current);
                     byte[] sector = br.ReadBytes((int)sectorSize);
                     br.BaseStream.Seek(sectorSkip, SeekOrigin.Current);
-                    Array.Copy(sector, 0, buffer, i * sectorSize, sectorSize);
+
+                    try
+                    {
+                        Array.Copy(sector, 0, buffer, i * sectorSize, sectorSize);
+                    }
+                    catch(Exception e)
+                    {
+                        System.Console.WriteLine(e);
+
+                        throw;
+                    }
                 }
 
             return buffer;
