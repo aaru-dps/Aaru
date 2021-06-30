@@ -807,6 +807,13 @@ namespace Aaru.DiscImages
                             currentTrack.Session   = currentSession;
                             inTrack                = true;
                         }
+                        else if(line.Contains("INDEX 01 00:-2:00"))
+                        {
+                            AaruConsole.
+                                ErrorWriteLine("This image from PowerISO is damaged beyond possible recovery. Will not open.");
+
+                            return false;
+                        }
                         else if(line == "") // Empty line, ignore it
                         {}
                         else // Non-empty unknown field
