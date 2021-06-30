@@ -718,6 +718,9 @@ namespace Aaru.DiscImages
 
                 foreach(Track track in Tracks)
                 {
+                    if(track.TrackEndSector + 1 > _imageInfo.Sectors)
+                        _imageInfo.Sectors = track.TrackEndSector + 1;
+
                     if(track.TrackSession == currentSession.SessionSequence)
                     {
                         if(track.TrackSequence > currentSession.EndTrack)
@@ -756,7 +759,6 @@ namespace Aaru.DiscImages
                         Type     = track.TrackType.ToString()
                     };
 
-                    _imageInfo.Sectors += partition.Length;
                     Partitions.Add(partition);
                     _offsetMap.Add(track.TrackSequence, track.TrackStartSector);
                 }
