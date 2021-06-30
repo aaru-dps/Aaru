@@ -481,6 +481,8 @@ namespace Aaru.DiscImages
             _trackFlags = new Dictionary<uint, byte>();
             ushort maxSession = 0;
 
+            _imageInfo.ReadableSectorTags.Add(SectorTagType.CdTrackFlags);
+
             foreach(TrackDescriptor bwTrack in _bwTracks)
                 if(bwTrack.point < 0xA0)
                 {
