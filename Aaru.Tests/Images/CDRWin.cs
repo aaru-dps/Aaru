@@ -46,7 +46,7 @@ namespace Aaru.Tests.Images
             {
                 TestFile  = "pcengine.cue",
                 MediaType = MediaType.CD,
-                Sectors   = 160356,
+                Sectors   = 160956,
                 MD5       = "8eb436b476c9df343acb89ac1ba7e1b4",
                 LongMD5   = "bdcd5cabf4f48333f9dbb08967dce7a8",
                 Tracks = new[]
@@ -175,7 +175,7 @@ namespace Aaru.Tests.Images
                     {
                         Session = 1,
                         Start   = 125629,
-                        End     = 160355,
+                        End     = 160955,
                         Pregap  = 225,
                         Flags   = 4
                     }
@@ -185,7 +185,7 @@ namespace Aaru.Tests.Images
             {
                 TestFile  = "pcfx.cue",
                 MediaType = MediaType.CD,
-                Sectors   = 246305,
+                Sectors   = 246680,
                 MD5       = "73e2855fff156f95fb8f0ae7c58d1b9d",
                 LongMD5   = "f421fc4af3ac528911b6d824825ff9b5",
                 Tracks = new[]
@@ -250,7 +250,7 @@ namespace Aaru.Tests.Images
                     {
                         Session = 1,
                         Start   = 234973,
-                        End     = 246304,
+                        End     = 246679,
                         Pregap  = 150,
                         Flags   = 0
                     }
@@ -539,7 +539,7 @@ namespace Aaru.Tests.Images
             {
                 TestFile  = "test_multi_karaoke_sampler.cue",
                 MediaType = MediaType.CDROMXA,
-                Sectors   = 329008,
+                Sectors   = 329158,
                 MD5       = "f09312ba25a479fb81912a2965babd22",
                 LongMD5   = "f48603d11883593f45ec4a3824681e4e",
                 Tracks = new[]
@@ -668,7 +668,7 @@ namespace Aaru.Tests.Images
                     {
                         Session = 1,
                         Start   = 310411,
-                        End     = 329007,
+                        End     = 329157,
                         Pregap  = 150,
                         Flags   = 0
                     }
@@ -880,7 +880,7 @@ namespace Aaru.Tests.Images
             {
                 TestFile      = "cdg_test_multi_karaoke_sampler.cue",
                 MediaType     = MediaType.CDG,
-                Sectors       = 329008,
+                Sectors       = 329158,
                 MD5           = "f09312ba25a479fb81912a2965babd22",
                 LongMD5       = "f48603d11883593f45ec4a3824681e4e",
                 SubchannelMD5 = "UNKNOWN",
@@ -1010,7 +1010,7 @@ namespace Aaru.Tests.Images
                     {
                         Session = 1,
                         Start   = 310411,
-                        End     = 329007,
+                        End     = 329157,
                         Pregap  = 150,
                         Flags   = 0
                     }
@@ -1020,7 +1020,7 @@ namespace Aaru.Tests.Images
             {
                 TestFile      = "cooked_cdg_test_multi_karaoke_sampler.cue",
                 MediaType     = MediaType.CDG,
-                Sectors       = 329008,
+                Sectors       = 329158,
                 MD5           = "f09312ba25a479fb81912a2965babd22",
                 LongMD5       = "UNKNOWN",
                 SubchannelMD5 = "UNKNOWN",
@@ -1150,7 +1150,7 @@ namespace Aaru.Tests.Images
                     {
                         Session = 1,
                         Start   = 310411,
-                        End     = 329007,
+                        End     = 329157,
                         Pregap  = 150,
                         Flags   = 0
                     }
@@ -1198,7 +1198,7 @@ namespace Aaru.Tests.Images
             {
                 TestFile  = "cooked_test_multi_karaoke_sampler.cue",
                 MediaType = MediaType.CDROMXA,
-                Sectors   = 329008,
+                Sectors   = 329158,
                 MD5       = "f09312ba25a479fb81912a2965babd22",
                 LongMD5   = "f48603d11883593f45ec4a3824681e4e",
                 Tracks = new[]
@@ -1327,7 +1327,7 @@ namespace Aaru.Tests.Images
                     {
                         Session = 1,
                         Start   = 310411,
-                        End     = 329007,
+                        End     = 329157,
                         Pregap  = 150,
                         Flags   = 0
                     }
