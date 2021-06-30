@@ -996,9 +996,8 @@ namespace Aaru.DiscImages
                             track.TrackSubchannelType   = splitStartChars.Subchannel;
                             track.TrackSubchannelOffset = track.TrackFileOffset;
 
-                            if(splitStartChars.Subchannel == TrackSubchannelType.PackedInterleaved)
-                                if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel))
-                                    _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubchannel);
+                            if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel))
+                                _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubchannel);
                         }
 
                         splitStartChars.FileFilter = splitStream.Filter;
@@ -1028,9 +1027,8 @@ namespace Aaru.DiscImages
                                 track.TrackSubchannelType   = chars.Subchannel;
                                 track.TrackSubchannelOffset = track.TrackFileOffset;
 
-                                if(chars.Subchannel == TrackSubchannelType.PackedInterleaved)
-                                    if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel))
-                                        _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubchannel);
+                                if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel))
+                                    _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubchannel);
                             }
 
                             break;
@@ -1745,7 +1743,40 @@ namespace Aaru.DiscImages
                             break;
                         }
                         case SectorTagType.CdSectorSubchannel:
-                            throw new NotImplementedException("Packed subchannel not yet supported");
+                        {
+                            switch(chars.Subchannel)
+                            {
+                                case TrackSubchannelType.PackedInterleaved:
+                                {
+                                    sectorOffset = 2352;
+                                    sectorSize   = 96;
+                                    sectorSkip   = 0;
+
+                                    break;
+                                }
+
+                                case TrackSubchannelType.Q16Interleaved:
+                                {
+                                    sectorOffset = 2352;
+                                    sectorSize   = 16;
+                                    sectorSkip   = 0;
+
+                                    break;
+                                }
+                                case TrackSubchannelType.None:
+                                {
+                                    if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel))
+                                        throw new
+                                            FeatureSupportedButNotImplementedImageException("Unsupported track type");
+
+                                    return new byte[length * 96];
+                                }
+
+                                default: throw new ArgumentOutOfRangeException();
+                            }
+
+                            break;
+                        }
                         default: throw new ArgumentException("Unsupported tag requested", nameof(tag));
                     }
 
@@ -1796,6 +1827,14 @@ namespace Aaru.DiscImages
                                     sectorSkip   = 0;
 
                                     break;
+                                }
+                                case TrackSubchannelType.None:
+                                {
+                                    if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel))
+                                        throw new
+                                            FeatureSupportedButNotImplementedImageException("Unsupported track type");
+
+                                    return new byte[length * 96];
                                 }
 
                                 default: throw new ArgumentOutOfRangeException();
@@ -1888,6 +1927,14 @@ namespace Aaru.DiscImages
 
                                     break;
                                 }
+                                case TrackSubchannelType.None:
+                                {
+                                    if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel))
+                                        throw new
+                                            FeatureSupportedButNotImplementedImageException("Unsupported track type");
+
+                                    return new byte[length * 96];
+                                }
 
                                 default: throw new ArgumentOutOfRangeException();
                             }
@@ -1954,6 +2001,14 @@ namespace Aaru.DiscImages
 
                                     break;
                                 }
+                                case TrackSubchannelType.None:
+                                {
+                                    if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel))
+                                        throw new
+                                            FeatureSupportedButNotImplementedImageException("Unsupported track type");
+
+                                    return new byte[length * 96];
+                                }
 
                                 default: throw new ArgumentOutOfRangeException();
                             }
@@ -1989,7 +2044,14 @@ namespace Aaru.DiscImages
 
                                     break;
                                 }
+                                case TrackSubchannelType.None:
+                                {
+                                    if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel))
+                                        throw new
+                                            FeatureSupportedButNotImplementedImageException("Unsupported track type");
 
+                                    return new byte[length * 96];
+                                }
                                 default: throw new ArgumentOutOfRangeException();
                             }
 

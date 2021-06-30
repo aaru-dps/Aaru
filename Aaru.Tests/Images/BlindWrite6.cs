@@ -375,11 +375,12 @@ namespace Aaru.Tests.Images
             },
             new OpticalImageTestExpected
             {
-                TestFile  = "report_cdr.B6T",
-                MediaType = MediaType.CDR,
-                Sectors   = 254265,
-                MD5       = "63c99a087570b8936bb55156f5502f38",
-                LongMD5   = "368c06d4b42ed581f3ad7f6ad57f70f6",
+                TestFile      = "report_cdr.B6T",
+                MediaType     = MediaType.CDR,
+                Sectors       = 254265,
+                MD5           = "63c99a087570b8936bb55156f5502f38",
+                LongMD5       = "368c06d4b42ed581f3ad7f6ad57f70f6",
+                SubchannelMD5 = "9c231e680e601cd10bb61fb519f00c84",
                 Tracks = new[]
                 {
                     new TrackInfoTestExpected
@@ -394,11 +395,12 @@ namespace Aaru.Tests.Images
             },
             new OpticalImageTestExpected
             {
-                TestFile  = "report_cdrom.B6T",
-                MediaType = MediaType.CDROM,
-                Sectors   = 254265,
-                MD5       = "bf4bbec517101d0d6f45d2e4d50cb875",
-                LongMD5   = "3d3f9cf7d1ba2249b1e7960071e5af46",
+                TestFile      = "report_cdrom.B6T",
+                MediaType     = MediaType.CDROM,
+                Sectors       = 254265,
+                MD5           = "bf4bbec517101d0d6f45d2e4d50cb875",
+                LongMD5       = "3d3f9cf7d1ba2249b1e7960071e5af46",
+                SubchannelMD5 = "46b6244ed63434cb0f91e0610c63fec8",
                 Tracks = new[]
                 {
                     new TrackInfoTestExpected
@@ -413,11 +415,12 @@ namespace Aaru.Tests.Images
             },
             new OpticalImageTestExpected
             {
-                TestFile  = "report_cdrw_2x.B6T",
-                MediaType = MediaType.CDRW,
-                Sectors   = 308224,
-                MD5       = "1e55aa420ca8f8ea77d5b597c9cfc19b",
-                LongMD5   = "3af5f943ddb9427d9c63a4ce3b704db9",
+                TestFile      = "report_cdrw_2x.B6T",
+                MediaType     = MediaType.CDRW,
+                Sectors       = 308224,
+                MD5           = "1e55aa420ca8f8ea77d5b597c9cfc19b",
+                LongMD5       = "3af5f943ddb9427d9c63a4ce3b704db9",
+                SubchannelMD5 = "19f74cd5f05894203465374111be2aa7",
                 Tracks = new[]
                 {
                     new TrackInfoTestExpected
@@ -432,11 +435,12 @@ namespace Aaru.Tests.Images
             },
             new OpticalImageTestExpected
             {
-                TestFile  = "test_karaoke_multi_sampler.B6T",
-                MediaType = MediaType.CDROMXA,
-                Sectors   = 329158,
-                MD5       = "a34e29e42b60023a6ae59f37d2bd4bea",
-                LongMD5   = "e981f7dfdb522ba937fe75474e23a446",
+                TestFile      = "test_karaoke_multi_sampler.B6T",
+                MediaType     = MediaType.CDROMXA,
+                Sectors       = 329158,
+                MD5           = "a34e29e42b60023a6ae59f37d2bd4bea",
+                LongMD5       = "e981f7dfdb522ba937fe75474e23a446",
+                SubchannelMD5 = "485a233924c003a1ab2ea9228f582344",
                 Tracks = new[]
                 {
                     new TrackInfoTestExpected
