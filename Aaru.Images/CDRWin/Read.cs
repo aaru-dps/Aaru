@@ -822,12 +822,6 @@ namespace Aaru.DiscImages
                     }
                 }
 
-                if(currentSession > 1  &&
-                   leadouts.Count == 0 &&
-                   !_discImage.IsRedumpGigadisc)
-                    throw new
-                        FeatureUnsupportedImageException("This image is missing vital multi-session data and cannot be read correctly.");
-
                 if(currentTrack.Sequence != 0)
                 {
                     currentFile.Sequence   = currentTrack.Sequence;
@@ -1492,6 +1486,13 @@ namespace Aaru.DiscImages
                         mediaTypeAsInt == 154 || mediaTypeAsInt == 155 ||
                         (mediaTypeAsInt >= 171 && mediaTypeAsInt <= 179) ||
                         (mediaTypeAsInt >= 740 && mediaTypeAsInt <= 749);
+
+                if(currentSession > 1           &&
+                   leadouts.Count == 0          &&
+                   !_discImage.IsRedumpGigadisc &&
+                   _isCd)
+                    throw new
+                        FeatureUnsupportedImageException("This image is missing vital multi-session data and cannot be read correctly.");
 
                 if(!_isCd)
                 {
