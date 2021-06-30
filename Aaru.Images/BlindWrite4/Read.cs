@@ -587,8 +587,7 @@ namespace Aaru.DiscImages
                     track.TrackSubchannelFilter = _subFilter;
                     track.TrackSubchannelFile   = _subFilter?.GetFilename();
 
-                    if(_subFilter         != null &&
-                       bwTrack.subchannel > 0)
+                    if(_subFilter != null)
                     {
                         track.TrackSubchannelType = TrackSubchannelType.Packed;
 

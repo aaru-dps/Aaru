@@ -361,7 +361,7 @@ namespace Aaru.Tests.Images
                 Sectors       = 254265,
                 MD5           = "bf4bbec517101d0d6f45d2e4d50cb875",
                 LongMD5       = "3d3f9cf7d1ba2249b1e7960071e5af46",
-                SubchannelMD5 = "UNKNOWN",
+                SubchannelMD5 = "00c0dd9095dcc8ac17246dd56d2a368c",
                 Tracks = new[]
                 {
                     new TrackInfoTestExpected
@@ -381,7 +381,7 @@ namespace Aaru.Tests.Images
                 Sectors       = 254265,
                 MD5           = "bf4bbec517101d0d6f45d2e4d50cb875",
                 LongMD5       = "3d3f9cf7d1ba2249b1e7960071e5af46",
-                SubchannelMD5 = "UNKNOWN",
+                SubchannelMD5 = "00c0dd9095dcc8ac17246dd56d2a368c",
                 Tracks = new[]
                 {
                     new TrackInfoTestExpected
@@ -401,7 +401,7 @@ namespace Aaru.Tests.Images
                 Sectors       = 308224,
                 MD5           = "1e55aa420ca8f8ea77d5b597c9cfc19b",
                 LongMD5       = "3af5f943ddb9427d9c63a4ce3b704db9",
-                SubchannelMD5 = "UNKNOWN",
+                SubchannelMD5 = "3aa50e929756b926e7471255fd1aa894",
                 Tracks = new[]
                 {
                     new TrackInfoTestExpected
@@ -773,7 +773,7 @@ namespace Aaru.Tests.Images
                 Sectors       = 62385,
                 MD5           = "9d4baa88af74fea2a372f65e9d03f719",
                 LongMD5       = "44bcce47a30f7ee6aa20c7a612d63b34",
-                SubchannelMD5 = "UNKNOWN",
+                SubchannelMD5 = "f9576f95faf9d6874642ad0a3033e0f5",
                 Tracks = new[]
                 {
                     new TrackInfoTestExpected
@@ -801,7 +801,7 @@ namespace Aaru.Tests.Images
                 Sectors       = 62385,
                 MD5           = "9d4baa88af74fea2a372f65e9d03f719",
                 LongMD5       = "44bcce47a30f7ee6aa20c7a612d63b34",
-                SubchannelMD5 = "UNKNOWN",
+                SubchannelMD5 = "f9576f95faf9d6874642ad0a3033e0f5",
                 Tracks = new[]
                 {
                     new TrackInfoTestExpected
@@ -829,7 +829,7 @@ namespace Aaru.Tests.Images
                 Sectors       = 62385,
                 MD5           = "807b4b5fb725a4bd2c3820e5d51b39ac",
                 LongMD5       = "292c210e3f7ee29f0c75097477a2f29c",
-                SubchannelMD5 = "UNKNOWN",
+                SubchannelMD5 = "f9576f95faf9d6874642ad0a3033e0f5",
                 Tracks = new[]
                 {
                     new TrackInfoTestExpected
@@ -893,7 +893,7 @@ namespace Aaru.Tests.Images
                 Sectors       = 350134,
                 MD5           = "f95d6f978ddb4f98bbffda403f627fe1",
                 LongMD5       = "6751e0ae7821f92221672b1cd5a1ff36",
-                SubchannelMD5 = "UNKNOWN",
+                SubchannelMD5 = "d651d48c8839ad94f0a285660999db00",
                 Tracks = new[]
                 {
                     new TrackInfoTestExpected
@@ -1105,7 +1105,7 @@ namespace Aaru.Tests.Images
                 Sectors       = 51168,
                 MD5           = "e2e19cf38891e67a0829d01842b4052e",
                 LongMD5       = "3e646a04eb29a8e0ad892b6ac00ba962",
-                SubchannelMD5 = "UNKNOWN",
+                SubchannelMD5 = "b0b18100d5d38211f057bd3781407fc6",
                 Tracks = new[]
                 {
                     new TrackInfoTestExpected
