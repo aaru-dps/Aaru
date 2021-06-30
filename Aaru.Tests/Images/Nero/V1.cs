@@ -932,35 +932,8 @@ namespace Aaru.Tests.Images.Nero
                         Flags   = 2
                     }
                 }
-            }, /*
+            },
             new OpticalImageTestExpected
-            {
-                TestFile      = "test_data_track_as_audio.nrg",
-                MediaType     = MediaType.CDROMXA,
-                Sectors       = 62385,
-                MD5           = "d9d46cae2a3a46316c8e1411e84d40ef",
-                LongMD5       = "b3550e61649ba5276fed8d74f8e512ee",
-                SubchannelMD5 = "5479a1115bb6481db69fd6262e8c6076",
-                Tracks = new[]
-                {
-                    new TrackInfoTestExpected
-                    {
-                        Session = 1,
-                        Start   = 0,
-                        End     = 25538,
-                        Pregap  = 150,
-                        Flags   = 4
-                    },
-                    new TrackInfoTestExpected
-                    {
-                        Session = 2,
-                        Start   = 36789,
-                        End     = 62384,
-                        Pregap  = 150,
-                        Flags   = 0
-                    }
-                }
-            },*/ new OpticalImageTestExpected
             {
                 TestFile      = "test_incd_udf200_finalized.nrg",
                 MediaType     = MediaType.CDROMXA,
@@ -1215,79 +1188,8 @@ namespace Aaru.Tests.Images.Nero
                         Flags   = 4
                     }
                 }
-            }, /*
-            new OpticalImageTestExpected
-            {
-                TestFile      = "test_track2_inside_session2_leadin.nrg",
-                MediaType     = MediaType.CDROMXA,
-                Sectors       = 62385,
-                MD5           = "6fa06c10561343438736a8d3d9a965ea",
-                LongMD5       = "608a73cd10bccdadde68523aead1ee72",
-                SubchannelMD5 = "933f1699ba88a70aff5062f9626ef529",
-                Tracks = new[]
-                {
-                    new TrackInfoTestExpected
-                    {
-                        Session = 1,
-                        Start   = 0,
-                        End     = 25349,
-                        Pregap  = 150,
-                        Flags   = 4
-                    },
-                    new TrackInfoTestExpected
-                    {
-                        Session = 1,
-                        Start   = 25350,
-                        End     = 36788,
-                        Pregap  = 150,
-                        Flags   = 4
-                    },
-                    new TrackInfoTestExpected
-                    {
-                        Session = 1,
-                        Start   = 36789,
-                        End     = 62384,
-                        Pregap  = 150,
-                        Flags   = 4
-                    }
-                }
             },
             new OpticalImageTestExpected
-            {
-                TestFile      = "test_track2_inside_track1.nrg",
-                MediaType     = MediaType.CDROMXA,
-                Sectors       = 62385,
-                MD5           = "6fa06c10561343438736a8d3d9a965ea",
-                LongMD5       = "c82d20702d31bc15bdc91f7e107862ae",
-                SubchannelMD5 = "d8eed571f137c92f22bb858d78fc1e41",
-                Tracks = new[]
-                {
-                    new TrackInfoTestExpected
-                    {
-                        Session = 1,
-                        Start   = 0,
-                        End     = 13199,
-                        Pregap  = 150,
-                        Flags   = 4
-                    },
-                    new TrackInfoTestExpected
-                    {
-                        Session = 1,
-                        Start   = 13200,
-                        End     = 25538,
-                        Pregap  = 150,
-                        Flags   = 4
-                    },
-                    new TrackInfoTestExpected
-                    {
-                        Session = 2,
-                        Start   = 36789,
-                        End     = 62384,
-                        Pregap  = 150,
-                        Flags   = 4
-                    }
-                }
-            },*/ new OpticalImageTestExpected
             {
                 TestFile      = "test_videocd.nrg",
                 MediaType     = MediaType.CDROMXA,
@@ -1993,6 +1895,110 @@ namespace Aaru.Tests.Images.Nero
                     }
                 }
             }
+            #region These test images violate the specifications and are not expected to work yet
+            /*
+            new OpticalImageTestExpected
+            {
+                TestFile      = "test_data_track_as_audio.nrg",
+                MediaType     = MediaType.CDROMXA,
+                Sectors       = 62385,
+                MD5           = "d9d46cae2a3a46316c8e1411e84d40ef",
+                LongMD5       = "b3550e61649ba5276fed8d74f8e512ee",
+                SubchannelMD5 = "5479a1115bb6481db69fd6262e8c6076",
+                Tracks = new[]
+                {
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 0,
+                        End     = 25538,
+                        Pregap  = 150,
+                        Flags   = 4
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 2,
+                        Start   = 36789,
+                        End     = 62384,
+                        Pregap  = 150,
+                        Flags   = 0
+                    }
+                }
+            },
+            new OpticalImageTestExpected
+            {
+                TestFile      = "test_track2_inside_session2_leadin.nrg",
+                MediaType     = MediaType.CDROMXA,
+                Sectors       = 62385,
+                MD5           = "6fa06c10561343438736a8d3d9a965ea",
+                LongMD5       = "608a73cd10bccdadde68523aead1ee72",
+                SubchannelMD5 = "933f1699ba88a70aff5062f9626ef529",
+                Tracks = new[]
+                {
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 0,
+                        End     = 25349,
+                        Pregap  = 150,
+                        Flags   = 4
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 25350,
+                        End     = 36788,
+                        Pregap  = 150,
+                        Flags   = 4
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 36789,
+                        End     = 62384,
+                        Pregap  = 150,
+                        Flags   = 4
+                    }
+                }
+            },
+            new OpticalImageTestExpected
+            {
+                TestFile      = "test_track2_inside_track1.nrg",
+                MediaType     = MediaType.CDROMXA,
+                Sectors       = 62385,
+                MD5           = "6fa06c10561343438736a8d3d9a965ea",
+                LongMD5       = "c82d20702d31bc15bdc91f7e107862ae",
+                SubchannelMD5 = "d8eed571f137c92f22bb858d78fc1e41",
+                Tracks = new[]
+                {
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 0,
+                        End     = 13199,
+                        Pregap  = 150,
+                        Flags   = 4
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 13200,
+                        End     = 25538,
+                        Pregap  = 150,
+                        Flags   = 4
+                    },
+                    new TrackInfoTestExpected
+                    {
+                        Session = 2,
+                        Start   = 36789,
+                        End     = 62384,
+                        Pregap  = 150,
+                        Flags   = 4
+                    }
+                }
+            },
+            */
+            #endregion
         };
     }
 }
