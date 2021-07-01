@@ -211,11 +211,9 @@ namespace Aaru.DiscImages
                                 _imageStream.Read(tmpBuffer, 0, 8);
                                 entry.Mode        = tmpBuffer[0];
                                 entry.TrackNumber = (byte)((((tmpBuffer[1] & 0xF0) >> 4) * 10) + (tmpBuffer[1] & 0xF));
-                                ;
                                 entry.IndexNumber = (byte)((((tmpBuffer[2] & 0xF0) >> 4) * 10) + (tmpBuffer[2] & 0xF));
-                                ;
-                                entry.Dummy    = tmpBuffer[3];
-                                entry.LbaStart = BigEndianBitConverter.ToInt32(tmpBuffer, 4);
+                                entry.Dummy       = tmpBuffer[3];
+                                entry.LbaStart    = BigEndianBitConverter.ToInt32(tmpBuffer, 4);
 
                                 AaruConsole.DebugWriteLine("Nero plugin", "Cuesheet entry {0}", (i / 8) + 1);
 
@@ -909,6 +907,7 @@ namespace Aaru.DiscImages
 
                 AaruConsole.DebugWriteLine("Nero plugin", "Building offset, track and session maps");
 
+                bool onlyOneSession = currentSession == 1 || currentSession == 2;
                 currentSession = 1;
                 _neroSessions.TryGetValue(1, out uint currentSessionMaxTrack);
                 uint  currentSessionCurrentTrack = 1;
@@ -917,6 +916,11 @@ namespace Aaru.DiscImages
                 ulong partitionStartByte         = 0;
                 int   trackCounter               = 1;
                 _trackFlags = new Dictionary<uint, byte>();
+
+                if(currentSessionMaxTrack == 0)
+                    currentSessionMaxTrack = 1;
+
+                bool firstSessionMaxTrackIsF = currentSessionMaxTrack == 0xF;
 
                 // Process tracks
                 foreach(NeroTrack neroTrack in _neroTracks.Values)
@@ -1196,6 +1200,31 @@ namespace Aaru.DiscImages
                         _imageInfo.Sectors = track.TrackEndSector + 1;
 
                     trackCounter++;
+                }
+
+                // MagicISO meets these conditions when disc contains more than 15 tracks and a single session
+                if(_imageNewFormat         &&
+                   Tracks.Count > 0xF      &&
+                   firstSessionMaxTrackIsF &&
+                   onlyOneSession          &&
+                   Tracks.Any(t => t.TrackSession > 0))
+                {
+                    foreach(Track track in Tracks)
+                        track.TrackSession = 1;
+
+                    Sessions.Clear();
+
+                    Track firstTrack = Tracks.First();
+                    Track lastTrack  = Tracks.Last();
+
+                    Sessions.Add(new CommonTypes.Structs.Session
+                    {
+                        EndSector       = lastTrack.TrackEndSector,
+                        StartSector     = firstTrack.TrackStartSector,
+                        SessionSequence = 1,
+                        EndTrack        = lastTrack.TrackSequence,
+                        StartTrack      = firstTrack.TrackSequence
+                    });
                 }
 
                 if(_trackFlags.Count > 0 &&
