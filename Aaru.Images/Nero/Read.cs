@@ -925,6 +925,16 @@ namespace Aaru.DiscImages
                 // Process tracks
                 foreach(NeroTrack neroTrack in _neroTracks.Values)
                 {
+                    if(neroTrack.Offset >= (_imageNewFormat ? footerV2.FirstChunkOffset : footerV1.FirstChunkOffset))
+                    {
+                        AaruConsole.
+                            ErrorWriteLine("This image contains a track that is set to start outside the file.");
+
+                        AaruConsole.ErrorWriteLine("Breaking track processing and trying recovery of information.");
+
+                        break;
+                    }
+
                     AaruConsole.DebugWriteLine("Nero plugin", "\tcurrentSession = {0}", currentSession);
                     AaruConsole.DebugWriteLine("Nero plugin", "\tcurrentSessionMaxTrack = {0}", currentSessionMaxTrack);
 
@@ -1200,6 +1210,162 @@ namespace Aaru.DiscImages
                         _imageInfo.Sectors = track.TrackEndSector + 1;
 
                     trackCounter++;
+                }
+
+                if(Tracks.Count == 0)
+                {
+                    if(_neroTracks.Count != 1      ||
+                       !_neroTracks.ContainsKey(1) ||
+                       (_imageNewFormat ? footerV2.FirstChunkOffset : footerV1.FirstChunkOffset) %
+                       _neroTracks[1].SectorSize != 0)
+                    {
+                        AaruConsole.ErrorWriteLine("Image corrupted beyond recovery, cannot open.");
+
+                        return false;
+                    }
+
+                    var track = new Track();
+
+                    // Common track data
+                    track.TrackDescription = StringHandlers.CToString(_neroTracks[1].Isrc);
+
+                    track.TrackEndSector = ((_imageNewFormat ? footerV2.FirstChunkOffset : footerV1.FirstChunkOffset) /
+                                            _neroTracks[1].SectorSize) - 150;
+
+                    track.TrackSequence       = _neroTracks[1].Sequence;
+                    track.TrackSession        = currentSession;
+                    track.TrackType           = NeroTrackModeToTrackType((DaoMode)_neroTracks[1].Mode);
+                    track.TrackFile           = imageFilter.GetFilename();
+                    track.TrackFilter         = imageFilter;
+                    track.TrackFileType       = "BINARY";
+                    track.TrackSubchannelType = TrackSubchannelType.None;
+                    track.Indexes[1]          = 0;
+
+                    bool rawMode1 = false;
+                    bool rawMode2 = false;
+
+                    switch((DaoMode)_neroTracks[1].Mode)
+                    {
+                        case DaoMode.AudioAlt:
+                        case DaoMode.Audio:
+                            track.TrackBytesPerSector    = 2352;
+                            track.TrackRawBytesPerSector = 2352;
+
+                            break;
+                        case DaoMode.AudioSub:
+                            track.TrackBytesPerSector    = 2352;
+                            track.TrackRawBytesPerSector = 2448;
+                            track.TrackSubchannelType    = TrackSubchannelType.RawInterleaved;
+
+                            break;
+                        case DaoMode.Data:
+                        case DaoMode.DataM2F1:
+                            track.TrackBytesPerSector    = 2048;
+                            track.TrackRawBytesPerSector = 2048;
+
+                            break;
+                        case DaoMode.DataM2F2:
+                            track.TrackBytesPerSector    = 2336;
+                            track.TrackRawBytesPerSector = 2336;
+
+                            break;
+                        case DaoMode.DataM2Raw:
+                            track.TrackBytesPerSector    = 2352;
+                            track.TrackRawBytesPerSector = 2352;
+                            rawMode2                     = true;
+
+                            break;
+                        case DaoMode.DataM2RawSub:
+                            track.TrackBytesPerSector    = 2352;
+                            track.TrackRawBytesPerSector = 2448;
+                            track.TrackSubchannelType    = TrackSubchannelType.RawInterleaved;
+                            rawMode2                     = true;
+
+                            break;
+                        case DaoMode.DataRaw:
+                            track.TrackBytesPerSector    = 2048;
+                            track.TrackRawBytesPerSector = 2352;
+                            rawMode1                     = true;
+
+                            break;
+                        case DaoMode.DataRawSub:
+                            track.TrackBytesPerSector    = 2048;
+                            track.TrackRawBytesPerSector = 2448;
+                            track.TrackSubchannelType    = TrackSubchannelType.RawInterleaved;
+                            rawMode1                     = true;
+
+                            break;
+                    }
+
+                    // Check readability of sector tags
+                    if(rawMode1 || rawMode2)
+                    {
+                        if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
+                            _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
+
+                        if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
+                            _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
+
+                        if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubHeader) && rawMode2)
+                            _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubHeader);
+
+                        if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEdc))
+                            _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEdc);
+                    }
+
+                    if(track.TrackSubchannelType == TrackSubchannelType.RawInterleaved)
+                    {
+                        track.TrackSubchannelFilter = imageFilter;
+                        track.TrackSubchannelFile   = imageFilter.GetFilename();
+                        track.TrackSubchannelOffset = (ulong)(150 * track.TrackRawBytesPerSector);
+
+                        if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel))
+                            _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubchannel);
+                    }
+
+                    track.TrackFileOffset  = (ulong)(150 * track.TrackRawBytesPerSector);
+                    _neroTracks[1].Offset  = track.TrackFileOffset;
+                    _neroTracks[1].Sectors = track.TrackEndSector - track.TrackStartSector + 1;
+
+                    // Add to offset map
+                    _offsetmap.Add(track.TrackSequence, track.TrackStartSector);
+
+                    // This is basically what MagicISO does with DVD images
+                    if(track.TrackRawBytesPerSector == 2048)
+                    {
+                        _imageInfo.MediaType = CommonTypes.MediaType.DVDROM;
+                        track.TrackType      = TrackType.Data;
+                    }
+
+                    _imageInfo.Sectors = track.TrackEndSector + 1;
+
+                    Tracks.Add(track);
+
+                    // Create partition
+                    var partition = new Partition
+                    {
+                        Description = $"Track {track.TrackSequence}",
+                        Length      = track.TrackEndSector - track.TrackStartSector + 1,
+                        Name        = StringHandlers.CToString(_neroTracks[1].Isrc),
+                        Sequence    = 1,
+                        Offset      = 0,
+                        Start       = (ulong)track.Indexes[1],
+                        Type        = track.TrackType.ToString()
+                    };
+
+                    partition.Size = partition.Length * _neroTracks[1].SectorSize;
+                    Partitions.Add(partition);
+
+                    Sessions.Add(new CommonTypes.Structs.Session
+                    {
+                        SessionSequence = 1,
+                        StartSector     = 0,
+                        StartTrack      = 1,
+                        EndTrack        = 1,
+                        EndSector       = track.TrackEndSector
+                    });
+
+                    AaruConsole.ErrorWriteLine("Warning! This image is missing the last 150 sectors.");
                 }
 
                 // MagicISO meets these conditions when disc contains more than 15 tracks and a single session
