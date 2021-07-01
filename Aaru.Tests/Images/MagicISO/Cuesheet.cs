@@ -476,6 +476,7 @@ namespace Aaru.Tests.Images.MagicISO
                     }
                 }
             },
+            /* This image is invalid an impossible to process properly due to a bug in MagicISO
             new OpticalImageTestExpected
             {
                 TestFile  = "report_enhancedcd.cue",
@@ -599,7 +600,7 @@ namespace Aaru.Tests.Images.MagicISO
                     }
                 }
             },
-            new OpticalImageTestExpected
+            */ new OpticalImageTestExpected
             {
                 TestFile  = "test_multi_karaoke_sampler.cue",
                 MediaType = MediaType.CDROMXA,

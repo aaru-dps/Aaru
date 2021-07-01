@@ -51,7 +51,7 @@ namespace Aaru.Tests.Images.cdrdao.cooked
                 SectorSize    = 2352,
                 MD5           = "c09f408a4416634d8ac1c1ffd0ed75a5",
                 LongMD5       = "c09f408a4416634d8ac1c1ffd0ed75a5",
-                SubchannelMD5 = "2dc7b6159f8ba4fc8c1c58407d7741ba",
+                SubchannelMD5 = "e68088c7f1236c2304778e976057bd6e",
                 Tracks = new[]
                 {
                     new TrackInfoTestExpected
@@ -176,7 +176,7 @@ namespace Aaru.Tests.Images.cdrdao.cooked
                 SectorSize    = 2048,
                 MD5           = "bf4bbec517101d0d6f45d2e4d50cb875",
                 LongMD5       = "3d3f9cf7d1ba2249b1e7960071e5af46",
-                SubchannelMD5 = "5bdb9b11d8bc01867f629134ee635f90",
+                SubchannelMD5 = "8ed5c39d7435aeac23e77478625f14f1",
                 Tracks = new[]
                 {
                     new TrackInfoTestExpected
@@ -197,7 +197,7 @@ namespace Aaru.Tests.Images.cdrdao.cooked
                 SectorSize    = 2048,
                 MD5           = "bf4bbec517101d0d6f45d2e4d50cb875",
                 LongMD5       = "3d3f9cf7d1ba2249b1e7960071e5af46",
-                SubchannelMD5 = "2cee3bd721e3ecee6f426cbe7c7026c2",
+                SubchannelMD5 = "0ba3fa223e887fb955458fc7b40b0396",
                 Tracks = new[]
                 {
                     new TrackInfoTestExpected
@@ -218,7 +218,7 @@ namespace Aaru.Tests.Images.cdrdao.cooked
                 SectorSize    = 2048,
                 MD5           = "1e55aa420ca8f8ea77d5b597c9cfc19b",
                 LongMD5       = "3af5f943ddb9427d9c63a4ce3b704db9",
-                SubchannelMD5 = "7e39b9ba733af2efefcc4297ec01e66e",
+                SubchannelMD5 = "eaf6dcfb86e9aca9856d736f3b04c765",
                 Tracks = new[]
                 {
                     new TrackInfoTestExpected
@@ -237,9 +237,9 @@ namespace Aaru.Tests.Images.cdrdao.cooked
                 MediaType     = MediaType.CDROM,
                 Sectors       = 329008,
                 SectorSize    = 2048,
-                MD5           = "d38c92fe94f3c3ac3c7799ff9866e46b",
-                LongMD5       = "40b4ea8170056ea27190fd0bdaec3a6c",
-                SubchannelMD5 = "24d557ef2fafe96991d9a15474e27eae",
+                MD5           = "f09312ba25a479fb81912a2965babd22",
+                LongMD5       = "f48603d11883593f45ec4a3824681e4e",
+                SubchannelMD5 = "7ac088d8a737d8d39b1cced86d11c7b5",
                 Tracks = new[]
                 {
                     new TrackInfoTestExpected

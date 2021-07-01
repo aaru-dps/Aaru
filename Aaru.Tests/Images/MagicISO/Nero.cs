@@ -46,15 +46,15 @@ namespace Aaru.Tests.Images.MagicISO
             {
                 TestFile  = "cdiready_the_apprentice.nrg",
                 MediaType = MediaType.CDDA,
-                Sectors   = 261150,
-                MD5       = "ab350df419f96d967f51d0161ebeba63",
-                LongMD5   = "ab350df419f96d967f51d0161ebeba63",
+                Sectors   = 279300,
+                MD5       = "7557c72d4cf6df8bc1896388b863727a",
+                LongMD5   = "7557c72d4cf6df8bc1896388b863727a",
                 Tracks = new[]
                 {
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 69000,
+                        Start   = 0,
                         End     = 88799,
                         Pregap  = 150,
                         Flags   = 0
@@ -223,7 +223,7 @@ namespace Aaru.Tests.Images.MagicISO
                     {
                         Session = 1,
                         Start   = 274275,
-                        End     = 279298,
+                        End     = 279299,
                         Pregap  = 0,
                         Flags   = 0
                     }
@@ -233,9 +233,9 @@ namespace Aaru.Tests.Images.MagicISO
             {
                 TestFile  = "report_audiocd.nrg",
                 MediaType = MediaType.CDDA,
-                Sectors   = 247223,
-                MD5       = "277e98295297f618cc63687e98288d7e",
-                LongMD5   = "277e98295297f618cc63687e98288d7e",
+                Sectors   = 247073,
+                MD5       = "c09f408a4416634d8ac1c1ffd0ed75a5",
+                LongMD5   = "c09f408a4416634d8ac1c1ffd0ed75a5",
                 Tracks = new[]
                 {
                     new TrackInfoTestExpected
@@ -249,9 +249,9 @@ namespace Aaru.Tests.Images.MagicISO
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 16399,
+                        Start   = 16549,
                         End     = 30050,
-                        Pregap  = 150,
+                        Pregap  = 0,
                         Flags   = 0
                     },
                     new TrackInfoTestExpected
@@ -346,7 +346,7 @@ namespace Aaru.Tests.Images.MagicISO
                     {
                         Session = 1,
                         Start   = 224449,
-                        End     = 247071,
+                        End     = 247072,
                         Pregap  = 0,
                         Flags   = 0
                     }
@@ -357,15 +357,15 @@ namespace Aaru.Tests.Images.MagicISO
                 TestFile  = "report_cdrom.nrg",
                 MediaType = MediaType.CDROM,
                 Sectors   = 254265,
-                MD5       = "2de6dd5eaa71c1a97625bab68382da60",
-                LongMD5   = "222edd2c920b63aefe2087ed6278abe6",
+                MD5       = "3e4bb9e72f919b1ca57619ee184abf34",
+                LongMD5   = "cb86fa221af9af8a45bd85770ae7f95b",
                 Tracks = new[]
                 {
                     new TrackInfoTestExpected
                     {
                         Session = 1,
                         Start   = 0,
-                        End     = 254263,
+                        End     = 254264,
                         Pregap  = 150,
                         Flags   = 4
                     }
@@ -376,15 +376,15 @@ namespace Aaru.Tests.Images.MagicISO
                 TestFile  = "report_cdrw.nrg",
                 MediaType = MediaType.CDROM,
                 Sectors   = 308224,
-                MD5       = "f1510c82ea4ff535415833242adddac6",
-                LongMD5   = "22bd168e59e075229821448b60d1820b",
+                MD5       = "5ffabc269fd21d497f5aa6df02375948",
+                LongMD5   = "b46ca9e3c934ad64f86eccef9a829517",
                 Tracks = new[]
                 {
                     new TrackInfoTestExpected
                     {
                         Session = 1,
                         Start   = 0,
-                        End     = 308222,
+                        End     = 308223,
                         Pregap  = 150,
                         Flags   = 4
                     }
@@ -393,90 +393,90 @@ namespace Aaru.Tests.Images.MagicISO
             new OpticalImageTestExpected
             {
                 TestFile  = "report_dvdram_v1.nrg",
-                MediaType = MediaType.CDROM,
-                Sectors   = 1218960,
-                MD5       = "192aea84e64cb396cc0f637a611788bf",
-                LongMD5   = "192aea84e64cb396cc0f637a611788bf",
+                MediaType = MediaType.DVDROM,
+                Sectors   = 1218811,
+                MD5       = "e2d40f64b4ae274c3ef55252fbda99cf",
+                LongMD5   = "e2d40f64b4ae274c3ef55252fbda99cf",
                 Tracks = new[]
                 {
                     new TrackInfoTestExpected
                     {
                         Session = 1,
                         Start   = 0,
-                        End     = 1218958,
-                        Pregap  = 150
+                        End     = 1218810,
+                        Pregap  = 0
                     }
                 }
             },
             new OpticalImageTestExpected
             {
                 TestFile  = "report_dvdram_v2.nrg",
-                MediaType = MediaType.CDROM,
-                Sectors   = 2236704,
-                MD5       = "fa5cb9657d9ed429a41913027d7b27eb",
-                LongMD5   = "fa5cb9657d9ed429a41913027d7b27eb",
+                MediaType = MediaType.DVDROM,
+                Sectors   = 2236555,
+                MD5       = "d46730ef92b0115505d9035f78d90ca3",
+                LongMD5   = "d46730ef92b0115505d9035f78d90ca3",
                 Tracks = new[]
                 {
                     new TrackInfoTestExpected
                     {
                         Session = 1,
                         Start   = 0,
-                        End     = 2236702,
-                        Pregap  = 150
+                        End     = 2236554,
+                        Pregap  = 0
                     }
                 }
             },
             new OpticalImageTestExpected
             {
                 TestFile  = "report_dvd+r-dl.nrg",
-                MediaType = MediaType.CDROM,
-                Sectors   = 3455936,
-                MD5       = "cf5ba4a055c6bdb4c9287c52b01c4ffb",
-                LongMD5   = "cf5ba4a055c6bdb4c9287c52b01c4ffb",
+                MediaType = MediaType.DVDROM,
+                Sectors   = 13099755,
+                MD5       = "3b36362c20c5a75cb4726d64a7e2729c",
+                LongMD5   = "3b36362c20c5a75cb4726d64a7e2729c",
                 Tracks = new[]
                 {
                     new TrackInfoTestExpected
                     {
                         Session = 1,
                         Start   = 0,
-                        End     = 3455934,
-                        Pregap  = 150
+                        End     = 13099754,
+                        Pregap  = 0
                     }
                 }
             },
             new OpticalImageTestExpected
             {
                 TestFile  = "report_dvd-rom.nrg",
-                MediaType = MediaType.CDROM,
-                Sectors   = 2146368,
-                MD5       = "8ed49c810da17e7957962df4b07ca9a6",
-                LongMD5   = "8ed49c810da17e7957962df4b07ca9a6",
+                MediaType = MediaType.DVDROM,
+                Sectors   = 2146219,
+                MD5       = "117c7207751e4d94d6b396f77d3ef367",
+                LongMD5   = "117c7207751e4d94d6b396f77d3ef367",
                 Tracks = new[]
                 {
                     new TrackInfoTestExpected
                     {
                         Session = 1,
                         Start   = 0,
-                        End     = 2146366,
-                        Pregap  = 150
+                        End     = 2146218,
+                        Pregap  = 0
                     }
                 }
             },
             new OpticalImageTestExpected
             {
                 TestFile  = "report_dvd+rw.nrg",
-                MediaType = MediaType.CDROM,
-                Sectors   = 2295104,
-                MD5       = "d7a519529ca4a4ad04a6e14858f92a33",
-                LongMD5   = "d7a519529ca4a4ad04a6e14858f92a33",
+                MediaType = MediaType.DVDROM,
+                Sectors   = 2294955,
+                MD5       = "3313752e2493fce618ced27aecffc79b",
+                LongMD5   = "3313752e2493fce618ced27aecffc79b",
                 Tracks = new[]
                 {
                     new TrackInfoTestExpected
                     {
                         Session = 1,
                         Start   = 0,
-                        End     = 2295102,
-                        Pregap  = 150
+                        End     = 2294954,
+                        Pregap  = 0
                     }
                 }
             },
@@ -484,9 +484,9 @@ namespace Aaru.Tests.Images.MagicISO
             {
                 TestFile  = "report_enhancedcd.nrg",
                 MediaType = MediaType.CDROMXA,
-                Sectors   = 314864,
-                MD5       = "0ac3eaefdd2c138e86229d195d63cba2",
-                LongMD5   = "2524762a816af8e8c188b971dfd27374",
+                Sectors   = 303316,
+                MD5       = "a5114fe68a09e7fec8703c2f791c6a6f",
+                LongMD5   = "7867495f914aca289ab579be862affc0",
                 Tracks = new[]
                 {
                     new TrackInfoTestExpected
@@ -500,9 +500,9 @@ namespace Aaru.Tests.Images.MagicISO
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 15511,
+                        Start   = 15661,
                         End     = 33958,
-                        Pregap  = 150,
+                        Pregap  = 0,
                         Flags   = 0
                     },
                     new TrackInfoTestExpected
@@ -589,16 +589,16 @@ namespace Aaru.Tests.Images.MagicISO
                     {
                         Session = 1,
                         Start   = 201441,
-                        End     = 234179,
+                        End     = 222779,
                         Pregap  = 0,
                         Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
-                        Session = 2,
-                        Start   = 234030,
-                        End     = 303314,
-                        Pregap  = 150,
+                        Session = 1,
+                        Start   = 222782,
+                        End     = 303315,
+                        Pregap  = 11398,
                         Flags   = 4
                     }
                 }
@@ -607,9 +607,9 @@ namespace Aaru.Tests.Images.MagicISO
             {
                 TestFile  = "test_multi_karaoke_sampler.nrg",
                 MediaType = MediaType.CDROMXA,
-                Sectors   = 329307,
-                MD5       = "cc6354d06b009b0446012842c7f94be7",
-                LongMD5   = "bb3ebf139ebb76fff1b229a379d289e4",
+                Sectors   = 329158,
+                MD5       = "67910cdb1df3f7a9546f3680dd50536d",
+                LongMD5   = "4af3996c98b668218d405062afcc2637",
                 Tracks = new[]
                 {
                     new TrackInfoTestExpected
@@ -623,9 +623,9 @@ namespace Aaru.Tests.Images.MagicISO
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 1737,
+                        Start   = 1887,
                         End     = 32748,
-                        Pregap  = 150,
+                        Pregap  = 0,
                         Flags   = 0
                     },
                     new TrackInfoTestExpected
@@ -736,7 +736,7 @@ namespace Aaru.Tests.Images.MagicISO
                     {
                         Session = 1,
                         Start   = 310711,
-                        End     = 329156,
+                        End     = 329157,
                         Pregap  = 0,
                         Flags   = 0
                     }
@@ -745,17 +745,17 @@ namespace Aaru.Tests.Images.MagicISO
             new OpticalImageTestExpected
             {
                 TestFile  = "report_dvd-r.nrg",
-                MediaType = MediaType.CDROM,
-                Sectors   = 2146368,
-                MD5       = "UNKNOWN",
-                LongMD5   = "UNKNOWN",
+                MediaType = MediaType.DVDROM,
+                Sectors   = 2146219,
+                MD5       = "117c7207751e4d94d6b396f77d3ef367",
+                LongMD5   = "117c7207751e4d94d6b396f77d3ef367",
                 Tracks = new[]
                 {
                     new TrackInfoTestExpected
                     {
                         Session = 1,
                         Start   = 0,
-                        End     = 2146367,
+                        End     = 2146218,
                         Pregap  = 0
                     }
                 }
@@ -763,17 +763,17 @@ namespace Aaru.Tests.Images.MagicISO
             new OpticalImageTestExpected
             {
                 TestFile  = "report_dvd-rw.nrg",
-                MediaType = MediaType.CDROM,
-                Sectors   = 2146368,
-                MD5       = "UNKNOWN",
-                LongMD5   = "UNKNOWN",
+                MediaType = MediaType.DVDROM,
+                Sectors   = 2146219,
+                MD5       = "117c7207751e4d94d6b396f77d3ef367",
+                LongMD5   = "117c7207751e4d94d6b396f77d3ef367",
                 Tracks = new[]
                 {
                     new TrackInfoTestExpected
                     {
                         Session = 1,
                         Start   = 0,
-                        End     = 2146367,
+                        End     = 2146218,
                         Pregap  = 0
                     }
                 }

@@ -47,19 +47,19 @@ namespace Aaru.Tests.Images.UltraISO
             {
                 TestFile      = "cdiready_the_apprentice.ccd",
                 MediaType     = MediaType.CDDA,
-                Sectors       = 210150,
-                MD5           = "f6bd226d3f249fa821460aeb1393cf3b",
-                LongMD5       = "f6bd226d3f249fa821460aeb1393cf3b",
-                SubchannelMD5 = "864c1fc074773d109fe556f93b70be24",
+                Sectors       = 279300,
+                MD5           = "71fc4b536d1c9f2091191a73bee61224",
+                LongMD5       = "71fc4b536d1c9f2091191a73bee61224",
+                SubchannelMD5 = "1e861faaed927d1d87481af9be144e82",
                 Tracks = new[]
                 {
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 69150,
+                        Start   = 0,
                         End     = 88799,
-                        Pregap  = 150,
-                        Flags   = 4
+                        Pregap  = 69300,
+                        Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
@@ -399,10 +399,10 @@ namespace Aaru.Tests.Images.UltraISO
             {
                 TestFile      = "report_enhancedcd.ccd",
                 MediaType     = MediaType.CDROMXA,
-                Sectors       = 291916,
-                MD5           = "588d8ff1fef693bbe5719ac6c2f96bc1",
-                LongMD5       = "d72e737f49482d1330e8fe03b9f40b79",
-                SubchannelMD5 = "266d259c5ac40b253f28ccfc452d0046",
+                Sectors       = 303316,
+                MD5           = "d9cac5c4bca6b7602dba1c24d2422dc8",
+                LongMD5       = "7803befa8bcbfec1f1436007e655bc64",
+                SubchannelMD5 = "1a33cf859da5c39486a8cbd15ed1fce9",
                 Tracks = new[]
                 {
                     new TrackInfoTestExpected
@@ -512,7 +512,7 @@ namespace Aaru.Tests.Images.UltraISO
                     new TrackInfoTestExpected
                     {
                         Session = 2,
-                        Start   = 234180,
+                        Start   = 234030,
                         End     = 303315,
                         Pregap  = 150,
                         Flags   = 0

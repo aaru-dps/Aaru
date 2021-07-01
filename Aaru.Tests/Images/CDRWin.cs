@@ -47,8 +47,8 @@ namespace Aaru.Tests.Images
                 TestFile  = "pcengine.cue",
                 MediaType = MediaType.CD,
                 Sectors   = 160956,
-                MD5       = "8eb436b476c9df343acb89ac1ba7e1b4",
-                LongMD5   = "bdcd5cabf4f48333f9dbb08967dce7a8",
+                MD5       = "875ea735f0d10d6fa321fb222714117b",
+                LongMD5   = "0188cf74fdc367a8e370bbe236a5100c",
                 Tracks = new[]
                 {
                     new TrackInfoTestExpected
@@ -63,118 +63,118 @@ namespace Aaru.Tests.Images
                     {
                         Session = 1,
                         Start   = 3365,
-                        End     = 38238,
+                        End     = 38463,
                         Pregap  = 225,
                         Flags   = 4
                     },
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 38239,
-                        End     = 46691,
+                        Start   = 38464,
+                        End     = 47066,
                         Pregap  = 150,
                         Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 46692,
-                        End     = 52975,
+                        Start   = 47067,
+                        End     = 53350,
                         Pregap  = 150,
                         Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 52976,
-                        End     = 61293,
+                        Start   = 53351,
+                        End     = 61668,
                         Pregap  = 150,
                         Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 61294,
-                        End     = 68037,
+                        Start   = 61669,
+                        End     = 68412,
                         Pregap  = 150,
                         Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 68038,
-                        End     = 74871,
+                        Start   = 68413,
+                        End     = 75246,
                         Pregap  = 150,
                         Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 74872,
-                        End     = 82604,
+                        Start   = 75247,
+                        End     = 82979,
                         Pregap  = 150,
                         Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 82605,
-                        End     = 85955,
+                        Start   = 82980,
+                        End     = 86330,
                         Pregap  = 150,
                         Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 85956,
-                        End     = 90741,
+                        Start   = 86331,
+                        End     = 91116,
                         Pregap  = 150,
                         Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 90742,
-                        End     = 98748,
+                        Start   = 91117,
+                        End     = 99123,
                         Pregap  = 150,
                         Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 98749,
-                        End     = 106167,
+                        Start   = 99124,
+                        End     = 106542,
                         Pregap  = 150,
                         Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 106168,
-                        End     = 111712,
+                        Start   = 106543,
+                        End     = 112087,
                         Pregap  = 150,
                         Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 111713,
-                        End     = 119744,
+                        Start   = 112088,
+                        End     = 120119,
                         Pregap  = 150,
                         Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 119745,
-                        End     = 125628,
+                        Start   = 120120,
+                        End     = 126003,
                         Pregap  = 150,
                         Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 125629,
+                        Start   = 126004,
                         End     = 160955,
                         Pregap  = 225,
                         Flags   = 4
@@ -186,8 +186,8 @@ namespace Aaru.Tests.Images
                 TestFile  = "pcfx.cue",
                 MediaType = MediaType.CD,
                 Sectors   = 246680,
-                MD5       = "73e2855fff156f95fb8f0ae7c58d1b9d",
-                LongMD5   = "f421fc4af3ac528911b6d824825ff9b5",
+                MD5       = "d2fbcb46735a5ac90c10f81ca564c9dd",
+                LongMD5   = "f10ae52c1a530ba3ed49447417d9451e",
                 Tracks = new[]
                 {
                     new TrackInfoTestExpected
@@ -202,54 +202,54 @@ namespace Aaru.Tests.Images
                     {
                         Session = 1,
                         Start   = 4170,
-                        End     = 4683,
+                        End     = 4908,
                         Pregap  = 225,
                         Flags   = 4
                     },
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 4684,
-                        End     = 5715,
+                        Start   = 4909,
+                        End     = 5940,
                         Pregap  = 0,
                         Flags   = 4
                     },
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 5716,
-                        End     = 41833,
+                        Start   = 5941,
+                        End     = 42058,
                         Pregap  = 0,
                         Flags   = 4
                     },
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 41834,
-                        End     = 220419,
+                        Start   = 42059,
+                        End     = 220644,
                         Pregap  = 0,
                         Flags   = 4
                     },
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 220420,
-                        End     = 225120,
+                        Start   = 220645,
+                        End     = 225495,
                         Pregap  = 150,
                         Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 225121,
-                        End     = 234972,
+                        Start   = 225496,
+                        End     = 235347,
                         Pregap  = 150,
                         Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 234973,
+                        Start   = 235348,
                         End     = 246679,
                         Pregap  = 150,
                         Flags   = 0
@@ -540,8 +540,8 @@ namespace Aaru.Tests.Images
                 TestFile  = "test_multi_karaoke_sampler.cue",
                 MediaType = MediaType.CDROMXA,
                 Sectors   = 329158,
-                MD5       = "f09312ba25a479fb81912a2965babd22",
-                LongMD5   = "f48603d11883593f45ec4a3824681e4e",
+                MD5       = "397d93a649a2a502cf831b49771a2c35",
+                LongMD5   = "c92ec0c7671b1b992d94a726ea10a238",
                 Tracks = new[]
                 {
                     new TrackInfoTestExpected
@@ -556,118 +556,118 @@ namespace Aaru.Tests.Images
                     {
                         Session = 1,
                         Start   = 1737,
-                        End     = 32448,
+                        End     = 32598,
                         Pregap  = 150,
                         Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 32449,
-                        End     = 52371,
+                        Start   = 32599,
+                        End     = 52521,
                         Pregap  = 150,
                         Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 52372,
-                        End     = 70003,
+                        Start   = 52522,
+                        End     = 70153,
                         Pregap  = 150,
                         Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 70004,
-                        End     = 99797,
+                        Start   = 70154,
+                        End     = 99947,
                         Pregap  = 150,
                         Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 99798,
-                        End     = 119460,
+                        Start   = 99948,
+                        End     = 119610,
                         Pregap  = 150,
                         Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 119461,
-                        End     = 136698,
+                        Start   = 119611,
+                        End     = 136848,
                         Pregap  = 150,
                         Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 136699,
-                        End     = 155489,
+                        Start   = 136849,
+                        End     = 155639,
                         Pregap  = 150,
                         Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 155490,
-                        End     = 175525,
+                        Start   = 155640,
+                        End     = 175675,
                         Pregap  = 150,
                         Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 175526,
-                        End     = 206160,
+                        Start   = 175676,
+                        End     = 206310,
                         Pregap  = 150,
                         Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 206161,
-                        End     = 226149,
+                        Start   = 206311,
+                        End     = 226299,
                         Pregap  = 150,
                         Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 226150,
-                        End     = 244054,
+                        Start   = 226300,
+                        End     = 244204,
                         Pregap  = 150,
                         Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 244055,
-                        End     = 273664,
+                        Start   = 244205,
+                        End     = 273814,
                         Pregap  = 150,
                         Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 273665,
-                        End     = 293451,
+                        Start   = 273815,
+                        End     = 293601,
                         Pregap  = 150,
                         Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 293452,
-                        End     = 310410,
+                        Start   = 293602,
+                        End     = 310560,
                         Pregap  = 150,
                         Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 310411,
+                        Start   = 310561,
                         End     = 329157,
                         Pregap  = 150,
                         Flags   = 0
@@ -881,9 +881,9 @@ namespace Aaru.Tests.Images
                 TestFile      = "cdg_test_multi_karaoke_sampler.cue",
                 MediaType     = MediaType.CDG,
                 Sectors       = 329158,
-                MD5           = "f09312ba25a479fb81912a2965babd22",
-                LongMD5       = "f48603d11883593f45ec4a3824681e4e",
-                SubchannelMD5 = "UNKNOWN",
+                MD5           = "be1bdbd55883dd53397ea21715107706",
+                LongMD5       = "3d3a8e2243f40201c6bdc5c10a65bb76",
+                SubchannelMD5 = "f9794c8d8ab2c7bf7815e740a77b12f4",
                 Tracks = new[]
                 {
                     new TrackInfoTestExpected
@@ -898,118 +898,118 @@ namespace Aaru.Tests.Images
                     {
                         Session = 1,
                         Start   = 1737,
-                        End     = 32448,
+                        End     = 32598,
                         Pregap  = 150,
                         Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 32449,
-                        End     = 52371,
+                        Start   = 32599,
+                        End     = 52521,
                         Pregap  = 150,
                         Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 52372,
-                        End     = 70003,
+                        Start   = 52522,
+                        End     = 70153,
                         Pregap  = 150,
                         Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 70004,
-                        End     = 99797,
+                        Start   = 70154,
+                        End     = 99947,
                         Pregap  = 150,
                         Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 99798,
-                        End     = 119460,
+                        Start   = 99948,
+                        End     = 119610,
                         Pregap  = 150,
                         Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 119461,
-                        End     = 136698,
+                        Start   = 119611,
+                        End     = 136848,
                         Pregap  = 150,
                         Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 136699,
-                        End     = 155489,
+                        Start   = 136849,
+                        End     = 155639,
                         Pregap  = 150,
                         Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 155490,
-                        End     = 175525,
+                        Start   = 155640,
+                        End     = 175675,
                         Pregap  = 150,
                         Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 175526,
-                        End     = 206160,
+                        Start   = 175676,
+                        End     = 206310,
                         Pregap  = 150,
                         Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 206161,
-                        End     = 226149,
+                        Start   = 206311,
+                        End     = 226299,
                         Pregap  = 150,
                         Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 226150,
-                        End     = 244054,
+                        Start   = 226300,
+                        End     = 244204,
                         Pregap  = 150,
                         Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 244055,
-                        End     = 273664,
+                        Start   = 244205,
+                        End     = 273814,
                         Pregap  = 150,
                         Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 273665,
-                        End     = 293451,
+                        Start   = 273815,
+                        End     = 293601,
                         Pregap  = 150,
                         Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 293452,
-                        End     = 310410,
+                        Start   = 293602,
+                        End     = 310560,
                         Pregap  = 150,
                         Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 310411,
+                        Start   = 310561,
                         End     = 329157,
                         Pregap  = 150,
                         Flags   = 0
@@ -1021,9 +1021,9 @@ namespace Aaru.Tests.Images
                 TestFile      = "cooked_cdg_test_multi_karaoke_sampler.cue",
                 MediaType     = MediaType.CDG,
                 Sectors       = 329158,
-                MD5           = "f09312ba25a479fb81912a2965babd22",
-                LongMD5       = "UNKNOWN",
-                SubchannelMD5 = "UNKNOWN",
+                MD5           = "215c0b3efab1b04e4f2d35b323cdbc96",
+                LongMD5       = "296cfef5de90e1cfadaf2ecf41f2e184",
+                SubchannelMD5 = "536ebf5b21280a721dc0604739ca7db3",
                 Tracks = new[]
                 {
                     new TrackInfoTestExpected
@@ -1038,118 +1038,118 @@ namespace Aaru.Tests.Images
                     {
                         Session = 1,
                         Start   = 1737,
-                        End     = 32448,
+                        End     = 32598,
                         Pregap  = 150,
                         Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 32449,
-                        End     = 52371,
+                        Start   = 32599,
+                        End     = 52521,
                         Pregap  = 150,
                         Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 52372,
-                        End     = 70003,
+                        Start   = 52522,
+                        End     = 70153,
                         Pregap  = 150,
                         Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 70004,
-                        End     = 99797,
+                        Start   = 70154,
+                        End     = 99947,
                         Pregap  = 150,
                         Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 99798,
-                        End     = 119460,
+                        Start   = 99948,
+                        End     = 119610,
                         Pregap  = 150,
                         Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 119461,
-                        End     = 136698,
+                        Start   = 119611,
+                        End     = 136848,
                         Pregap  = 150,
                         Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 136699,
-                        End     = 155489,
+                        Start   = 136849,
+                        End     = 155639,
                         Pregap  = 150,
                         Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 155490,
-                        End     = 175525,
+                        Start   = 155640,
+                        End     = 175675,
                         Pregap  = 150,
                         Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 175526,
-                        End     = 206160,
+                        Start   = 175676,
+                        End     = 206310,
                         Pregap  = 150,
                         Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 206161,
-                        End     = 226149,
+                        Start   = 206311,
+                        End     = 226299,
                         Pregap  = 150,
                         Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 226150,
-                        End     = 244054,
+                        Start   = 226300,
+                        End     = 244204,
                         Pregap  = 150,
                         Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 244055,
-                        End     = 273664,
+                        Start   = 244205,
+                        End     = 273814,
                         Pregap  = 150,
                         Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 273665,
-                        End     = 293451,
+                        Start   = 273815,
+                        End     = 293601,
                         Pregap  = 150,
                         Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 293452,
-                        End     = 310410,
+                        Start   = 293602,
+                        End     = 310560,
                         Pregap  = 150,
                         Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 310411,
+                        Start   = 310561,
                         End     = 329157,
                         Pregap  = 150,
                         Flags   = 0
@@ -1199,8 +1199,8 @@ namespace Aaru.Tests.Images
                 TestFile  = "cooked_test_multi_karaoke_sampler.cue",
                 MediaType = MediaType.CDROMXA,
                 Sectors   = 329158,
-                MD5       = "f09312ba25a479fb81912a2965babd22",
-                LongMD5   = "f48603d11883593f45ec4a3824681e4e",
+                MD5       = "bb1ace550c0a22f18c32bd053739d6ce",
+                LongMD5   = "857b80195d1e29bd0bace2ef20b733ed",
                 Tracks = new[]
                 {
                     new TrackInfoTestExpected
@@ -1215,118 +1215,118 @@ namespace Aaru.Tests.Images
                     {
                         Session = 1,
                         Start   = 1737,
-                        End     = 32448,
+                        End     = 32598,
                         Pregap  = 150,
                         Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 32449,
-                        End     = 52371,
+                        Start   = 32599,
+                        End     = 52521,
                         Pregap  = 150,
                         Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 52372,
-                        End     = 70003,
+                        Start   = 52522,
+                        End     = 70153,
                         Pregap  = 150,
                         Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 70004,
-                        End     = 99797,
+                        Start   = 70154,
+                        End     = 99947,
                         Pregap  = 150,
                         Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 99798,
-                        End     = 119460,
+                        Start   = 99948,
+                        End     = 119610,
                         Pregap  = 150,
                         Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 119461,
-                        End     = 136698,
+                        Start   = 119611,
+                        End     = 136848,
                         Pregap  = 150,
                         Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 136699,
-                        End     = 155489,
+                        Start   = 136849,
+                        End     = 155639,
                         Pregap  = 150,
                         Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 155490,
-                        End     = 175525,
+                        Start   = 155640,
+                        End     = 175675,
                         Pregap  = 150,
                         Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 175526,
-                        End     = 206160,
+                        Start   = 175676,
+                        End     = 206310,
                         Pregap  = 150,
                         Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 206161,
-                        End     = 226149,
+                        Start   = 206311,
+                        End     = 226299,
                         Pregap  = 150,
                         Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 226150,
-                        End     = 244054,
+                        Start   = 226300,
+                        End     = 244204,
                         Pregap  = 150,
                         Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 244055,
-                        End     = 273664,
+                        Start   = 244205,
+                        End     = 273814,
                         Pregap  = 150,
                         Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 273665,
-                        End     = 293451,
+                        Start   = 273815,
+                        End     = 293601,
                         Pregap  = 150,
                         Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 293452,
-                        End     = 310410,
+                        Start   = 293602,
+                        End     = 310560,
                         Pregap  = 150,
                         Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 310411,
+                        Start   = 310561,
                         End     = 329157,
                         Pregap  = 150,
                         Flags   = 0

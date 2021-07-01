@@ -448,6 +448,7 @@ namespace Aaru.Tests.Images.UltraISO
                     }
                 }
             },
+            /* This image is invalid an impossible to process properly due to a bug in UltraISO
             new OpticalImageTestExpected
             {
                 TestFile  = "report_enhancedcd.cue",
@@ -571,7 +572,7 @@ namespace Aaru.Tests.Images.UltraISO
                     }
                 }
             },
-            new OpticalImageTestExpected
+            */ new OpticalImageTestExpected
             {
                 TestFile  = "test_multi_karaoke_sampler.cue",
                 MediaType = MediaType.CDROMXA,

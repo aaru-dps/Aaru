@@ -391,6 +391,7 @@ namespace Aaru.Tests.Images.PowerISO
                     }
                 }
             },
+            /* These images are corrupted by PowerISO beyond repair
             new OpticalImageTestExpected
             {
                 TestFile  = "report_dvdram_v1.cue",
@@ -429,6 +430,8 @@ namespace Aaru.Tests.Images.PowerISO
                     }
                 }
             },
+            */
+            /* This image is invalid an impossible to process properly due to a bug in PowerISO
             new OpticalImageTestExpected
             {
                 TestFile  = "report_enhancedcd.cue",
@@ -552,7 +555,7 @@ namespace Aaru.Tests.Images.PowerISO
                     }
                 }
             },
-            new OpticalImageTestExpected
+            */ new OpticalImageTestExpected
             {
                 TestFile  = "test_multi_karaoke_sampler.cue",
                 MediaType = MediaType.CDROMXA,
