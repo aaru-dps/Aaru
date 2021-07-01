@@ -158,11 +158,12 @@ namespace Aaru.DiscImages
                 imageFilter.GetDataForkStream().Seek(0, SeekOrigin.Begin);
                 _cueStream = new StreamReader(imageFilter.GetDataForkStream());
 
-                var  filtersList         = new FiltersList();
-                bool inTruripDiscHash    = false;
-                bool inTruripTrackHash   = false;
-                bool firstTrackInSession = false;
-                int  currentEmptyPregap  = 0;
+                var  filtersList           = new FiltersList();
+                bool inTruripDiscHash      = false;
+                bool inTruripTrackHash     = false;
+                bool firstTrackInSession   = false;
+                int  currentEmptyPregap    = 0;
+                int  cumulativeEmptyPregap = 0;
 
                 const ulong gdRomSession2Offset = 45000;
 
@@ -639,7 +640,7 @@ namespace Aaru.DiscImages
                                 throw new FeatureUnsupportedImageException($"Found INDEX before a track {lineNumber}");
 
                             ushort index  = ushort.Parse(matchIndex.Groups[1].Value);
-                            int    offset = CdrWinMsfToLba(matchIndex.Groups[2].Value);
+                            int    offset = CdrWinMsfToLba(matchIndex.Groups[2].Value) + cumulativeEmptyPregap;
 
                             if(index                      != 0 &&
                                index                      != 1 &&
@@ -702,6 +703,7 @@ namespace Aaru.DiscImages
                                 currentTrack.Indexes[0] =  offset;
                                 currentFile.Offset      -= (ulong)(currentEmptyPregap * currentTrack.Bps);
                                 offset                  += currentEmptyPregap;
+                                cumulativeEmptyPregap   += currentEmptyPregap;
                                 currentEmptyPregap      =  0;
                             }
 
@@ -1827,6 +1829,11 @@ namespace Aaru.DiscImages
                 case CDRWIN_TRACK_TYPE_MODE1:
                 case CDRWIN_TRACK_TYPE_MODE2_FORM1:
                 case CDRWIN_TRACK_TYPE_MODE2_FORM2:
+                    if(tag == SectorTagType.CdSectorSubchannel                                  &&
+                       _imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel) &&
+                       _discImage.Tracks.Any(t => t.TrackType == CDRWIN_TRACK_TYPE_CDG))
+                        return new byte[length * 96];
+
                     throw new ArgumentException("No tags in image for requested track", nameof(tag));
                 case CDRWIN_TRACK_TYPE_MODE2_FORMLESS:
                 case CDRWIN_TRACK_TYPE_CDI:
@@ -1839,6 +1846,11 @@ namespace Aaru.DiscImages
                         case SectorTagType.CdSectorEcc:
                         case SectorTagType.CdSectorEccP:
                         case SectorTagType.CdSectorEccQ:
+                            if(tag == SectorTagType.CdSectorSubchannel                                  &&
+                               _imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel) &&
+                               _discImage.Tracks.Any(t => t.TrackType == CDRWIN_TRACK_TYPE_CDG))
+                                return new byte[length * 96];
+
                             throw new ArgumentException("Unsupported tag requested for this track", nameof(tag));
                         case SectorTagType.CdSectorSubHeader:
                         {
@@ -1885,6 +1897,11 @@ namespace Aaru.DiscImages
                         }
                         case SectorTagType.CdSectorSubchannel:
                         case SectorTagType.CdSectorSubHeader:
+                            if(tag == SectorTagType.CdSectorSubchannel                                  &&
+                               _imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel) &&
+                               _discImage.Tracks.Any(t => t.TrackType == CDRWIN_TRACK_TYPE_CDG))
+                                return new byte[length * 96];
+
                             throw new ArgumentException("Unsupported tag requested for this track", nameof(tag));
                         case SectorTagType.CdSectorEcc:
                         {
