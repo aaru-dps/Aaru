@@ -920,7 +920,7 @@ namespace Aaru.DiscImages
                 if(currentSessionMaxTrack == 0)
                     currentSessionMaxTrack = 1;
 
-                bool firstSessionMaxTrackIsF = currentSessionMaxTrack == 0xF;
+                bool moreTracksThanSessionTracks = currentSessionMaxTrack < _neroTracks.Count;
 
                 // Process tracks
                 foreach(NeroTrack neroTrack in _neroTracks.Values)
@@ -1369,10 +1369,10 @@ namespace Aaru.DiscImages
                 }
 
                 // MagicISO meets these conditions when disc contains more than 15 tracks and a single session
-                if(_imageNewFormat         &&
-                   Tracks.Count > 0xF      &&
-                   firstSessionMaxTrackIsF &&
-                   onlyOneSession          &&
+                if(_imageNewFormat             &&
+                   Tracks.Count > 0xF          &&
+                   moreTracksThanSessionTracks &&
+                   onlyOneSession              &&
                    Tracks.Any(t => t.TrackSession > 0))
                 {
                     foreach(Track track in Tracks)
