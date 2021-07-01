@@ -80,10 +80,14 @@ namespace Aaru.Tests.Images
 
                             int trackNo = 0;
 
-                            byte?[] flags = new byte?[image.Tracks.Count];
+                            byte?[] flags           = new byte?[image.Tracks.Count];
+                            ulong   latestEndSector = 0;
 
                             foreach(Track currentTrack in image.Tracks)
                             {
+                                if(currentTrack.TrackEndSector > latestEndSector)
+                                    latestEndSector = currentTrack.TrackEndSector;
+
                                 if(image.Info.ReadableSectorTags.Contains(SectorTagType.CdTrackFlags))
                                     flags[trackNo] = image.ReadSectorTag(currentTrack.TrackSequence,
                                                                          SectorTagType.CdTrackFlags)[0];
@@ -92,6 +96,9 @@ namespace Aaru.Tests.Images
                             }
 
                             flags.Should().BeEquivalentTo(test.Tracks.Select(s => s.Flags), $"Track flags: {testFile}");
+
+                            Assert.AreEqual(latestEndSector, image.Info.Sectors - 1,
+                                            $"Last sector for tracks is {latestEndSector}, but it is {image.Info.Sectors} for image");
                         });
                     }
                 }
