@@ -623,7 +623,9 @@ namespace Aaru.DiscImages
 
                     partition.Size = partition.Length * (ulong)track.TrackBytesPerSector;
 
-                    _imageInfo.Sectors += partition.Length;
+                    if(track.TrackEndSector + 1 > _imageInfo.Sectors)
+                        _imageInfo.Sectors = track.TrackEndSector + 1;
+
                     Partitions.Add(partition);
                     _offsetMap.Add(track.TrackSequence, track.TrackStartSector);
                     Tracks.Add(track);

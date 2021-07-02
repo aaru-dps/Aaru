@@ -44,7 +44,7 @@ namespace Aaru.Tests.Images
             {
                 TestFile      = "jaguarcd.cdi",
                 MediaType     = MediaType.CDDA,
-                Sectors       = 230845,
+                Sectors       = 243587,
                 MD5           = "e234467539490be2db99d643b1d4e905",
                 LongMD5       = "e234467539490be2db99d643b1d4e905",
                 SubchannelMD5 = "d02a5fb43012a1f178a540d0e054d183",
@@ -569,7 +569,7 @@ namespace Aaru.Tests.Images
             {
                 TestFile      = "pcengine.cdi",
                 MediaType     = MediaType.CD,
-                Sectors       = 160356,
+                Sectors       = 160956,
                 MD5           = "b7947d8d77c2ede5199293ee2ac387ed",
                 LongMD5       = "9fdbcb9827f0bbafcd886447b386bc58",
                 SubchannelMD5 = "19566671874ef21e4c4ba4de5fd5a7ad",
@@ -709,7 +709,7 @@ namespace Aaru.Tests.Images
             {
                 TestFile  = "pcfx.cdi",
                 MediaType = MediaType.CD,
-                Sectors   = 245930,
+                Sectors   = 246680,
                 MD5       = "2e872a5cfa43959183677398ede15c08",
                 LongMD5   = "a8939e0fd28ee0bd876101b218af3572",
                 Tracks = new[]
@@ -784,7 +784,7 @@ namespace Aaru.Tests.Images
             {
                 TestFile      = "report_audiocd.cdi",
                 MediaType     = MediaType.CDDA,
-                Sectors       = 245273,
+                Sectors       = 247073,
                 MD5           = "e1902c198525f387586ab32fa463efe0",
                 LongMD5       = "e1902c198525f387586ab32fa463efe0",
                 SubchannelMD5 = "60d2dc1a888b725e99c266f719eb7f86",
@@ -1094,7 +1094,7 @@ namespace Aaru.Tests.Images
             {
                 TestFile      = "report_enhancedcd.cdi",
                 MediaType     = MediaType.CDPLUS,
-                Sectors       = 291916,
+                Sectors       = 303316,
                 MD5           = "1c36703fc9ec010a379a3d4d67f50282",
                 LongMD5       = "307c8371b37c7697488e20fc6851357b",
                 SubchannelMD5 = "3a25924bc1b51602e76edf931954ea37",
@@ -1317,7 +1317,7 @@ namespace Aaru.Tests.Images
             {
                 TestFile  = "test_enhancedcd.cdi",
                 MediaType = MediaType.CDPLUS,
-                Sectors   = 47806,
+                Sectors   = 59206,
                 MD5       = "31054e6b8f4d51fe502ac340490bcd46",
                 LongMD5   = "2fc4b8966350322ed3fd553b9e628164",
                 Tracks = new[]
@@ -1371,7 +1371,7 @@ namespace Aaru.Tests.Images
             {
                 TestFile      = "test_karaoke_multi_sampler.cdi",
                 MediaType     = MediaType.CDROMXA,
-                Sectors       = 329008,
+                Sectors       = 329158,
                 MD5           = "263c2c008e004547ba2881b9762b446d",
                 LongMD5       = "a9c13dc60e24180f6e4f521112e83592",
                 SubchannelMD5 = "c7741b1dee59d7005548872c53424cc4",
@@ -1562,7 +1562,7 @@ namespace Aaru.Tests.Images
             {
                 TestFile  = "test_multisession.cdi",
                 MediaType = MediaType.CDROMXA,
-                Sectors   = 25968,
+                Sectors   = 51168,
                 MD5       = "46e43ed4712e5ae61b653b4d19f27080",
                 LongMD5   = "cac33e71b4693b2902f086a0a433129d",
                 Tracks = new[]
@@ -1641,7 +1641,7 @@ namespace Aaru.Tests.Images
             {
                 TestFile  = "test_videocd.cdi",
                 MediaType = MediaType.CDROMXA,
-                Sectors   = 48644,
+                Sectors   = 48794,
                 MD5       = "e5b596e73f46f646a51e1315b59e7cb9",
                 LongMD5   = "acd1a8de676ebe6feeb9d6964ccd63ea",
                 Tracks = new[]
