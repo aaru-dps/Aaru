@@ -292,7 +292,7 @@ namespace Aaru.Devices
             senseBuffer = new byte[64];
             byte[] cdb = new byte[10];
 
-            byte[] tmpBuffer = (format & 0x0F) == 5 ? new byte[32768] : new byte[1024];
+            byte[] tmpBuffer = (format & 0x0F) == 5 ? new byte[32768] : new byte[1536];
 
             cdb[0] = (byte)ScsiCommands.ReadTocPmaAtip;
 
