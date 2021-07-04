@@ -47,12 +47,14 @@ using Aaru.CommonTypes.Exceptions;
 using Aaru.CommonTypes.Structs;
 using Aaru.Console;
 using Aaru.Decoders;
+using Aaru.Decoders.CD;
 using Aaru.Helpers;
 using CUETools.Codecs;
 using CUETools.Codecs.Flake;
 using Schemas;
 using SharpCompress.Compressors.LZMA;
 using Marshal = Aaru.Helpers.Marshal;
+using Session = Aaru.CommonTypes.Structs.Session;
 using TrackType = Aaru.CommonTypes.Enums.TrackType;
 
 namespace Aaru.DiscImages
@@ -1288,8 +1290,8 @@ namespace Aaru.DiscImages
                                 _imageStream.Read(_structureBytes, 0, _structureBytes.Length);
 
                                 compactDiscIndexes.Add(Marshal.
-                                                           ByteArrayToStructureLittleEndian<CompactDiscIndexEntry
-                                                           >(_structureBytes));
+                                                           ByteArrayToStructureLittleEndian<
+                                                               CompactDiscIndexEntry>(_structureBytes));
                             }
 
                             AaruConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
@@ -1323,6 +1325,83 @@ namespace Aaru.DiscImages
                 // Initialize tracks, sessions and partitions
                 if(_imageInfo.XmlMediaType == XmlMediaType.OpticalDisc)
                 {
+                    if(Tracks != null &&
+                       _mediaTags.TryGetValue(MediaTagType.CD_FullTOC, out byte[] fullToc))
+                    {
+                        byte[] tmp = new byte[fullToc.Length + 2];
+                        Array.Copy(fullToc, 0, tmp, 2, fullToc.Length);
+                        tmp[0] = (byte)(fullToc.Length >> 8);
+                        tmp[1] = (byte)(fullToc.Length & 0xFF);
+
+                        FullTOC.CDFullTOC? decodedFullToc = FullTOC.Decode(tmp);
+
+                        if(decodedFullToc.HasValue)
+                        {
+                            Dictionary<int, long> leadOutStarts = new Dictionary<int, long>(); // Lead-out starts
+
+                            foreach(FullTOC.TrackDataDescriptor trk in
+                                decodedFullToc.Value.TrackDescriptors.Where(trk => (trk.ADR == 1 || trk.ADR == 4) &&
+                                                                                trk.POINT == 0xA2))
+                            {
+                                int phour, pmin, psec, pframe;
+
+                                if(trk.PFRAME == 0)
+                                {
+                                    pframe = 74;
+
+                                    if(trk.PSEC == 0)
+                                    {
+                                        psec = 59;
+
+                                        if(trk.PMIN == 0)
+                                        {
+                                            pmin  = 59;
+                                            phour = trk.PHOUR - 1;
+                                        }
+                                        else
+                                        {
+                                            pmin  = trk.PMIN - 1;
+                                            phour = trk.PHOUR;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        psec  = trk.PSEC - 1;
+                                        pmin  = trk.PMIN;
+                                        phour = trk.PHOUR;
+                                    }
+                                }
+                                else
+                                {
+                                    pframe = trk.PFRAME - 1;
+                                    psec   = trk.PSEC;
+                                    pmin   = trk.PMIN;
+                                    phour  = trk.PHOUR;
+                                }
+
+                                int lastSector = (phour * 3600 * 75) + (pmin * 60 * 75) + (psec * 75) + pframe - 150;
+                                leadOutStarts?.Add(trk.SessionNumber, lastSector                               + 1);
+                            }
+
+                            foreach(KeyValuePair<int, long> leadOuts in leadOutStarts)
+                            {
+                                var lastTrackInSession = new Track();
+
+                                foreach(Track trk in Tracks.Where(trk => trk.TrackSession == leadOuts.Key))
+                                {
+                                    if(trk.TrackSequence > lastTrackInSession.TrackSequence)
+                                        lastTrackInSession = trk;
+                                }
+
+                                if(lastTrackInSession.TrackSequence  == 0 ||
+                                   lastTrackInSession.TrackEndSector == (ulong)leadOuts.Value - 1)
+                                    continue;
+
+                                lastTrackInSession.TrackEndSector = (ulong)leadOuts.Value - 1;
+                            }
+                        }
+                    }
+
                     AaruConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
                                                GC.GetTotalMemory(false));
 
@@ -1403,13 +1482,13 @@ namespace Aaru.DiscImages
                             Name     = $"Track {track.TrackSequence}",
                             Offset   = currentTrackOffset,
                             Start    = (ulong)track.Indexes[1],
-                            Size = ((track.TrackEndSector - (ulong)track.Indexes[1]) + 1) *
+                            Size = (track.TrackEndSector - (ulong)track.Indexes[1] + 1) *
                                    (ulong)track.TrackBytesPerSector,
-                            Length = (track.TrackEndSector - (ulong)track.Indexes[1]) + 1,
+                            Length = track.TrackEndSector - (ulong)track.Indexes[1] + 1,
                             Scheme = "Optical disc track"
                         });
 
-                        currentTrackOffset += ((track.TrackEndSector - track.TrackStartSector) + 1) *
+                        currentTrackOffset += (track.TrackEndSector - track.TrackStartSector + 1) *
                                               (ulong)track.TrackBytesPerSector;
                     }
 
@@ -1469,7 +1548,7 @@ namespace Aaru.DiscImages
             else
             {
                 // Checking that DDT is smaller than requested size
-                _inMemoryDdt = sectors <= (maxDdtSize * 1024 * 1024) / sizeof(ulong);
+                _inMemoryDdt = sectors <= maxDdtSize * 1024 * 1024 / sizeof(ulong);
 
                 // If in memory, easy
                 if(_inMemoryDdt)
@@ -1695,7 +1774,7 @@ namespace Aaru.DiscImages
                 {
                     case CompressionType.Flac:
                     {
-                        long remaining = (_currentBlockOffset * SAMPLES_PER_SECTOR) % _flakeWriter.Settings.BlockSize;
+                        long remaining = _currentBlockOffset * SAMPLES_PER_SECTOR % _flakeWriter.Settings.BlockSize;
 
                         // Fill FLAC block
                         if(remaining != 0)
@@ -1993,10 +2072,10 @@ namespace Aaru.DiscImages
 
                             if(prefixCorrect)
                             {
-                                minute        = ((data[0x0C] >> 4) * 10)                     + (data[0x0C] & 0x0F);
-                                second        = ((data[0x0D] >> 4) * 10)                     + (data[0x0D] & 0x0F);
-                                frame         = ((data[0x0E] >> 4) * 10)                     + (data[0x0E] & 0x0F);
-                                storedLba     = ((minute * 60 * 75) + (second * 75) + frame) - 150;
+                                minute        = ((data[0x0C] >> 4) * 10)                   + (data[0x0C] & 0x0F);
+                                second        = ((data[0x0D] >> 4) * 10)                   + (data[0x0D] & 0x0F);
+                                frame         = ((data[0x0E] >> 4) * 10)                   + (data[0x0E] & 0x0F);
+                                storedLba     = (minute * 60 * 75) + (second * 75) + frame - 150;
                                 prefixCorrect = storedLba == (int)sectorAddress;
                             }
 
@@ -2087,10 +2166,10 @@ namespace Aaru.DiscImages
 
                             if(prefixCorrect)
                             {
-                                minute        = ((data[0x0C] >> 4) * 10)                     + (data[0x0C] & 0x0F);
-                                second        = ((data[0x0D] >> 4) * 10)                     + (data[0x0D] & 0x0F);
-                                frame         = ((data[0x0E] >> 4) * 10)                     + (data[0x0E] & 0x0F);
-                                storedLba     = ((minute * 60 * 75) + (second * 75) + frame) - 150;
+                                minute        = ((data[0x0C] >> 4) * 10)                   + (data[0x0C] & 0x0F);
+                                second        = ((data[0x0D] >> 4) * 10)                   + (data[0x0D] & 0x0F);
+                                frame         = ((data[0x0E] >> 4) * 10)                   + (data[0x0E] & 0x0F);
+                                storedLba     = (minute * 60 * 75) + (second * 75) + frame - 150;
                                 prefixCorrect = storedLba == (int)sectorAddress;
                             }
 
@@ -2421,7 +2500,7 @@ namespace Aaru.DiscImages
 
                 if(_currentBlockHeader.compression == CompressionType.Flac)
                 {
-                    long remaining = (_currentBlockOffset * SAMPLES_PER_SECTOR) % _flakeWriter.Settings.BlockSize;
+                    long remaining = _currentBlockOffset * SAMPLES_PER_SECTOR % _flakeWriter.Settings.BlockSize;
 
                     // Fill FLAC block
                     if(remaining != 0)

@@ -46,11 +46,13 @@ using Aaru.CommonTypes.Exceptions;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Console;
+using Aaru.Decoders.CD;
 using CUETools.Codecs;
 using CUETools.Codecs.Flake;
 using Schemas;
 using SharpCompress.Compressors.LZMA;
 using Marshal = Aaru.Helpers.Marshal;
+using Session = Aaru.CommonTypes.Structs.Session;
 using TrackType = Aaru.CommonTypes.Enums.TrackType;
 
 namespace Aaru.DiscImages
@@ -354,28 +356,28 @@ namespace Aaru.DiscImages
                                                            GC.GetTotalMemory(false));
 
                                 break;
-                            case DataType.DvdSectorCpiMai: 
+                            case DataType.DvdSectorCpiMai:
                                 _sectorCpiMai = data;
-                                
+
                                 if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.DvdCmi))
                                     _imageInfo.ReadableSectorTags.Add(SectorTagType.DvdCmi);
-                                
+
                                 if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.DvdTitleKey))
                                     _imageInfo.ReadableSectorTags.Add(SectorTagType.DvdTitleKey);
-                                
+
                                 AaruConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
                                                            GC.GetTotalMemory(false));
-                            
+
                                 break;
-                            case DataType.DvdSectorTitleKeyDecrypted: 
+                            case DataType.DvdSectorTitleKeyDecrypted:
                                 _sectorDecryptedTitleKey = data;
-                                
+
                                 if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.DvdTitleKeyDecrypted))
                                     _imageInfo.ReadableSectorTags.Add(SectorTagType.DvdTitleKeyDecrypted);
 
                                 AaruConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
                                                            GC.GetTotalMemory(false));
-                            
+
                                 break;
                             default:
                                 MediaTagType mediaTagType = GetMediaTagTypeForDataType(blockHeader.type);
@@ -1102,8 +1104,8 @@ namespace Aaru.DiscImages
                             _imageStream.Read(_structureBytes, 0, _structureBytes.Length);
 
                             compactDiscIndexes.Add(Marshal.
-                                                       ByteArrayToStructureLittleEndian<CompactDiscIndexEntry
-                                                       >(_structureBytes));
+                                                       ByteArrayToStructureLittleEndian<
+                                                           CompactDiscIndexEntry>(_structureBytes));
                         }
 
                         AaruConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
@@ -1150,6 +1152,89 @@ namespace Aaru.DiscImages
             // Initialize tracks, sessions and partitions
             if(_imageInfo.XmlMediaType == XmlMediaType.OpticalDisc)
             {
+                if(Tracks != null &&
+                   _mediaTags.TryGetValue(MediaTagType.CD_FullTOC, out byte[] fullToc))
+                {
+                    byte[] tmp = new byte[fullToc.Length + 2];
+                    Array.Copy(fullToc, 0, tmp, 2, fullToc.Length);
+                    tmp[0] = (byte)(fullToc.Length >> 8);
+                    tmp[1] = (byte)(fullToc.Length & 0xFF);
+
+                    FullTOC.CDFullTOC? decodedFullToc = FullTOC.Decode(tmp);
+
+                    if(decodedFullToc.HasValue)
+                    {
+                        Dictionary<int, long> leadOutStarts = new Dictionary<int, long>(); // Lead-out starts
+
+                        foreach(FullTOC.TrackDataDescriptor trk in
+                            decodedFullToc.Value.TrackDescriptors.Where(trk => (trk.ADR == 1 || trk.ADR == 4) &&
+                                                                               trk.POINT == 0xA2))
+                        {
+                            int phour, pmin, psec, pframe;
+
+                            if(trk.PFRAME == 0)
+                            {
+                                pframe = 74;
+
+                                if(trk.PSEC == 0)
+                                {
+                                    psec = 59;
+
+                                    if(trk.PMIN == 0)
+                                    {
+                                        pmin  = 59;
+                                        phour = trk.PHOUR - 1;
+                                    }
+                                    else
+                                    {
+                                        pmin  = trk.PMIN - 1;
+                                        phour = trk.PHOUR;
+                                    }
+                                }
+                                else
+                                {
+                                    psec  = trk.PSEC - 1;
+                                    pmin  = trk.PMIN;
+                                    phour = trk.PHOUR;
+                                }
+                            }
+                            else
+                            {
+                                pframe = trk.PFRAME - 1;
+                                psec   = trk.PSEC;
+                                pmin   = trk.PMIN;
+                                phour  = trk.PHOUR;
+                            }
+
+                            int lastSector = (phour * 3600 * 75) + (pmin * 60 * 75) + (psec * 75) + pframe - 150;
+                            leadOutStarts?.Add(trk.SessionNumber, lastSector                               + 1);
+                        }
+
+                        bool leadOutFixed = false;
+
+                        foreach(KeyValuePair<int, long> leadOuts in leadOutStarts)
+                        {
+                            var lastTrackInSession = new Track();
+
+                            foreach(Track trk in Tracks.Where(trk => trk.TrackSession == leadOuts.Key))
+                            {
+                                if(trk.TrackSequence > lastTrackInSession.TrackSequence)
+                                    lastTrackInSession = trk;
+                            }
+
+                            if(lastTrackInSession.TrackSequence  == 0 ||
+                               lastTrackInSession.TrackEndSector == (ulong)leadOuts.Value - 1)
+                                continue;
+
+                            lastTrackInSession.TrackEndSector = (ulong)leadOuts.Value - 1;
+                            leadOutFixed                      = true;
+                        }
+
+                        if(leadOutFixed)
+                            AaruConsole.ErrorWriteLine("This image has a corrupted track list, convert will fix it.");
+                    }
+                }
+
                 AaruConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
                                            GC.GetTotalMemory(false));
 
@@ -1228,17 +1313,16 @@ namespace Aaru.DiscImages
                     Partitions.Add(new Partition
                     {
                         Sequence = track.TrackSequence,
-                        Type     = track.TrackType.ToString(),
-                        Name     = $"Track {track.TrackSequence}",
-                        Offset   = currentTrackOffset,
-                        Start    = (ulong)track.Indexes[1],
-                        Size = ((track.TrackEndSector - (ulong)track.Indexes[1]) + 1) *
-                               (ulong)track.TrackBytesPerSector,
-                        Length = (track.TrackEndSector - (ulong)track.Indexes[1]) + 1,
+                        Type = track.TrackType.ToString(),
+                        Name = $"Track {track.TrackSequence}",
+                        Offset = currentTrackOffset,
+                        Start = (ulong)track.Indexes[1],
+                        Size = (track.TrackEndSector - (ulong)track.Indexes[1] + 1) * (ulong)track.TrackBytesPerSector,
+                        Length = track.TrackEndSector - (ulong)track.Indexes[1] + 1,
                         Scheme = "Optical disc track"
                     });
 
-                    currentTrackOffset += ((track.TrackEndSector - track.TrackStartSector) + 1) *
+                    currentTrackOffset += (track.TrackEndSector - track.TrackStartSector + 1) *
                                           (ulong)track.TrackBytesPerSector;
                 }
 
@@ -1432,7 +1516,7 @@ namespace Aaru.DiscImages
                     var flacMs      = new MemoryStream(flacBlock);
                     var flakeReader = new AudioDecoder(new DecoderSettings(), "", flacMs);
                     block = new byte[blockHeader.length];
-                    int samples     = (int)((block.Length / blockHeader.sectorSize) * 588);
+                    int samples     = (int)(block.Length / blockHeader.sectorSize * 588);
                     var audioBuffer = new AudioBuffer(AudioPCMConfig.RedBook, block, samples);
                     flakeReader.Read(audioBuffer, samples);
                     flakeReader.Close();
@@ -1554,7 +1638,7 @@ namespace Aaru.DiscImages
                     case SectorTagType.CdTrackFlags:
                     case SectorTagType.DvdCmi:
                     case SectorTagType.DvdTitleKey:
-                    case SectorTagType.DvdTitleKeyDecrypted: 
+                    case SectorTagType.DvdTitleKeyDecrypted:
                         return _trackFlags.TryGetValue((byte)sectorAddress, out byte flags) ? new[]
                         {
                             flags
@@ -1723,7 +1807,7 @@ namespace Aaru.DiscImages
 
                         break;
                     }
-                    
+
                     case TrackType.Data:
                     {
                         if(_imageInfo.MediaType == MediaType.DVDROM)
@@ -1768,7 +1852,6 @@ namespace Aaru.DiscImages
                         break;
                     }
 
-
                     default: throw new FeatureSupportedButNotImplementedImageException("Unsupported track type");
                 }
             }
@@ -1807,7 +1890,7 @@ namespace Aaru.DiscImages
 
             if(trk.TrackStartSector + sectorAddress + length > trk.TrackEndSector + 1)
                 throw new ArgumentOutOfRangeException(nameof(length),
-                                                      $"Requested more sectors ({length + sectorAddress}) than present in track ({(trk.TrackEndSector - trk.TrackStartSector) + 1}), won't cross tracks");
+                                                      $"Requested more sectors ({length + sectorAddress}) than present in track ({trk.TrackEndSector - trk.TrackStartSector + 1}), won't cross tracks");
 
             return ReadSectors(trk.TrackStartSector + sectorAddress, length);
         }
@@ -1824,7 +1907,7 @@ namespace Aaru.DiscImages
 
             if(trk.TrackStartSector + sectorAddress + length > trk.TrackEndSector + 1)
                 throw new ArgumentOutOfRangeException(nameof(length),
-                                                      $"Requested more sectors ({length + sectorAddress}) than present in track ({(trk.TrackEndSector - trk.TrackStartSector) + 1}), won't cross tracks");
+                                                      $"Requested more sectors ({length + sectorAddress}) than present in track ({trk.TrackEndSector - trk.TrackStartSector + 1}), won't cross tracks");
 
             return ReadSectorsTag(trk.TrackStartSector + sectorAddress, length, tag);
         }
@@ -2066,7 +2149,7 @@ namespace Aaru.DiscImages
 
                     if(sectorAddress + length > trk.TrackEndSector + 1)
                         throw new ArgumentOutOfRangeException(nameof(length),
-                                                              $"Requested more sectors ({length + sectorAddress}) than present in track ({(trk.TrackEndSector - trk.TrackStartSector) + 1}), won't cross tracks");
+                                                              $"Requested more sectors ({length + sectorAddress}) than present in track ({trk.TrackEndSector - trk.TrackStartSector + 1}), won't cross tracks");
 
                     switch(trk.TrackType)
                     {
@@ -2216,7 +2299,7 @@ namespace Aaru.DiscImages
 
             if(trk.TrackStartSector + sectorAddress + length > trk.TrackEndSector + 1)
                 throw new ArgumentOutOfRangeException(nameof(length),
-                                                      $"Requested more sectors ({length + sectorAddress}) than present in track ({(trk.TrackEndSector - trk.TrackStartSector) + 1}), won't cross tracks");
+                                                      $"Requested more sectors ({length + sectorAddress}) than present in track ({trk.TrackEndSector - trk.TrackStartSector + 1}), won't cross tracks");
 
             return ReadSectorsLong(trk.TrackStartSector + sectorAddress, length);
         }
