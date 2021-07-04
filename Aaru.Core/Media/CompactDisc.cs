@@ -418,7 +418,8 @@ namespace Aaru.Core.Media
                                     tracks[i].TrackStartSector         -= (ulong)dif;
                                     smallestPregapLbaPerTrack[trackNo] =  qPos;
 
-                                    if(i > 0)
+                                    if(i                            > 0 &&
+                                       tracks[i - 1].TrackEndSector >= tracks[i].TrackStartSector)
                                         tracks[i - 1].TrackEndSector = tracks[i].TrackStartSector - 1;
 
                                     dumpLog?.
@@ -438,7 +439,8 @@ namespace Aaru.Core.Media
                                 tracks[i].TrackPregap      =  (ulong)qPos;
                                 tracks[i].TrackStartSector -= tracks[i].TrackPregap - oldPregap;
 
-                                if(i > 0)
+                                if(i                            > 0 &&
+                                   tracks[i - 1].TrackEndSector >= tracks[i].TrackStartSector)
                                     tracks[i - 1].TrackEndSector = tracks[i].TrackStartSector - 1;
 
                                 dumpLog?.
