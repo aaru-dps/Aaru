@@ -277,8 +277,9 @@ namespace Aaru.Core.Devices.Scanning
             else
                 compactDisc = false;
 
-            uint blocksToRead = 64;
+            scsiReader.GetBlocksToRead();
 
+            uint blocksToRead;
             results.A       = 0; // <3ms
             results.B       = 0; // >=3ms, <10ms
             results.C       = 0; // >=10ms, <50ms
@@ -297,6 +298,8 @@ namespace Aaru.Core.Devices.Scanning
 
             if(compactDisc)
             {
+                blocksToRead = 64;
+
                 if(toc == null)
                 {
                     StoppingErrorMessage?.Invoke("Error trying to decode TOC...");
@@ -478,20 +481,22 @@ namespace Aaru.Core.Devices.Scanning
             {
                 start = DateTime.UtcNow;
 
-                UpdateStatus?.Invoke($"Reading {blocksToRead} sectors at a time.");
+                UpdateStatus?.Invoke($"Reading {scsiReader.BlocksToRead} sectors at a time.");
 
-                InitBlockMap?.Invoke(results.Blocks, blockSize, blocksToRead, currentProfile);
-                mhddLog = new MhddLog(_mhddLogPath, _dev, results.Blocks, blockSize, blocksToRead, false);
+                InitBlockMap?.Invoke(results.Blocks, blockSize, scsiReader.BlocksToRead, currentProfile);
+                mhddLog = new MhddLog(_mhddLogPath, _dev, results.Blocks, blockSize, scsiReader.BlocksToRead, false);
                 ibgLog  = new IbgLog(_ibgLogPath, currentProfile);
                 DateTime timeSpeedStart   = DateTime.UtcNow;
                 ulong    sectorSpeedStart = 0;
 
                 InitProgress?.Invoke();
 
-                for(ulong i = 0; i < results.Blocks; i += blocksToRead)
+                for(ulong i = 0; i < results.Blocks; i += scsiReader.BlocksToRead)
                 {
                     if(_aborted)
                         break;
+
+                    blocksToRead = scsiReader.BlocksToRead;
 
                     if(results.Blocks - i < blocksToRead)
                         blocksToRead = (uint)(results.Blocks - i);
