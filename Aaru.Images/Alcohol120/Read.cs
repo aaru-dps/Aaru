@@ -230,6 +230,15 @@ namespace Aaru.DiscImages
                     if(track.subMode == SubchannelMode.Interleaved)
                         track.sectorSize -= 96;
 
+                    if(track.point    == 1 &&
+                       track.startLba > 0)
+                    {
+                        AaruConsole.
+                            ErrorWriteLine("The disc this image represents contained a hidden track in the first pregap, that this image format cannot store. This dump is therefore, incorrect.");
+
+                        track.startLba = 0;
+                    }
+
                     if(!sesToc.ContainsKey(track.point))
                         sesToc.Add(track.point, track);
 
@@ -261,6 +270,9 @@ namespace Aaru.DiscImages
 
                     AaruConsole.DebugWriteLine("Alcohol 120% plugin", "track[{1}].extra.sectors = {0}", extra.sectors,
                                                track.point);
+
+                    if(track.point == 1)
+                        extra.sectors += extra.pregap - 150;
 
                     _alcTrackExtras.Add(track.point, extra);
                 }
@@ -871,6 +883,15 @@ namespace Aaru.DiscImages
 
             byte[] buffer = new byte[sectorSize * length];
 
+            if(alcTrack.point  == 1 &&
+               alcExtra.pregap > 150)
+            {
+                if(sectorAddress + 150 < alcExtra.pregap)
+                    return buffer;
+
+                sectorAddress -= alcExtra.pregap - 150;
+            }
+
             _imageStream = _alcImage.GetDataForkStream();
             var br = new BinaryReader(_imageStream);
 
@@ -1275,6 +1296,15 @@ namespace Aaru.DiscImages
 
             byte[] buffer = new byte[sectorSize * length];
 
+            if(alcTrack.point  == 1 &&
+               alcExtra.pregap > 150)
+            {
+                if(sectorAddress + 150 < alcExtra.pregap)
+                    return buffer;
+
+                sectorAddress -= alcExtra.pregap - 150;
+            }
+
             _imageStream = _alcImage.GetDataForkStream();
             var br = new BinaryReader(_imageStream);
 
@@ -1357,6 +1387,15 @@ namespace Aaru.DiscImages
                 sectorSkip = 96;
 
             byte[] buffer = new byte[sectorSize * length];
+
+            if(alcTrack.point  == 1 &&
+               alcExtra.pregap > 150)
+            {
+                if(sectorAddress + 150 < alcExtra.pregap)
+                    return buffer;
+
+                sectorAddress -= alcExtra.pregap - 150;
+            }
 
             _imageStream = _alcImage.GetDataForkStream();
             var br = new BinaryReader(_imageStream);
