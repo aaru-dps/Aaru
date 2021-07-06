@@ -178,7 +178,7 @@ namespace Aaru.Commands.Image
 
                     foreach(Track currentTrack in inputTracks)
                     {
-                        ulong remainingSectors = currentTrack.TrackEndSector - currentTrack.TrackStartSector;
+                        ulong remainingSectors = currentTrack.TrackEndSector - currentTrack.TrackStartSector + 1;
                         ulong currentSector    = 0;
 
                         while(remainingSectors > 0)
