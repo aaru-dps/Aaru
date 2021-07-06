@@ -71,7 +71,7 @@ namespace Aaru.DiscImages
                 {
                     ushort sessionNo =
                         (from session in Sessions
-                         where alcTrack.point >= session.StartTrack || alcTrack.point <= session.EndTrack
+                         where alcTrack.point >= session.StartTrack && alcTrack.point <= session.EndTrack
                          select session.SessionSequence).FirstOrDefault();
 
                     if(!_alcTrackExtras.TryGetValue(alcTrack.point, out TrackExtra alcExtra))
