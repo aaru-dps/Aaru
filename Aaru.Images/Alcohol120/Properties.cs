@@ -65,6 +65,10 @@ namespace Aaru.DiscImages
         {
             get
             {
+                if(_writingTracks != null &&
+                   _alcTracks     == null)
+                    return _writingTracks;
+
                 List<CommonTypes.Structs.Track> tracks = new List<CommonTypes.Structs.Track>();
 
                 foreach(Track alcTrack in _alcTracks.Values)
