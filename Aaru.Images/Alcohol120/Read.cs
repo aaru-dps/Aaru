@@ -142,6 +142,7 @@ namespace Aaru.DiscImages
 
             _alcTracks = new Dictionary<int, Track>();
             _alcToc    = new Dictionary<int, Dictionary<int, Track>>();
+            uint track1Index1 = 0;
 
             foreach(Session session in _alcSessions.Values)
             {
@@ -236,6 +237,7 @@ namespace Aaru.DiscImages
                         AaruConsole.
                             ErrorWriteLine("The disc this image represents contained a hidden track in the first pregap, that this image format cannot store. This dump is therefore, incorrect.");
 
+                        track1Index1   = track.startLba;
                         track.startLba = 0;
                     }
 
@@ -272,7 +274,10 @@ namespace Aaru.DiscImages
                                                track.point);
 
                     if(track.point == 1)
+                    {
+                        extra.pregap  =  track1Index1 + 150; // Needed because faulty UltraISO implementation
                         extra.sectors += extra.pregap - 150;
+                    }
 
                     _alcTrackExtras.Add(track.point, extra);
                 }
