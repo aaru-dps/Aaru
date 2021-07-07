@@ -47,17 +47,17 @@ namespace Aaru.Tests.Images.UltraISO
                 TestFile  = "cdiready_the_apprentice.mds",
                 MediaType = MediaType.CDDA,
                 Sectors   = 279300,
-                MD5       = "f6bd226d3f249fa821460aeb1393cf3b",
-                LongMD5   = "f6bd226d3f249fa821460aeb1393cf3b",
+                MD5       = "556d7d32e3c01c2087cc56b25fe5f66d",
+                LongMD5   = "556d7d32e3c01c2087cc56b25fe5f66d",
                 Tracks = new[]
                 {
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 69150,
+                        Start   = 0,
                         End     = 88799,
-                        Pregap  = 150,
-                        Flags   = 4
+                        Pregap  = 69300,
+                        Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
@@ -559,7 +559,7 @@ namespace Aaru.Tests.Images.UltraISO
                     },
                     new TrackInfoTestExpected
                     {
-                        Session = 1,
+                        Session = 2,
                         Start   = 234180,
                         End     = 303315,
                         Pregap  = 150,

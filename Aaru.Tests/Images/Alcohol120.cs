@@ -47,15 +47,15 @@ namespace Aaru.Tests.Images
                 TestFile      = "cdiready_the_apprentice.mds",
                 MediaType     = MediaType.CDDA,
                 Sectors       = 279300,
-                MD5           = "UNKNOWN",
-                LongMD5       = "UNKNOWN",
-                SubchannelMD5 = "UNKNOWN",
+                MD5           = "556d7d32e3c01c2087cc56b25fe5f66d",
+                LongMD5       = "556d7d32e3c01c2087cc56b25fe5f66d",
+                SubchannelMD5 = "6ffdfdeacee7cd3caf6316f6b5f3a635",
                 Tracks = new[]
                 {
                     new TrackInfoTestExpected
                     {
                         Session = 1,
-                        Start   = 69150,
+                        Start   = 0,
                         End     = 88799,
                         Pregap  = 69300,
                         Flags   = 0
@@ -867,8 +867,8 @@ namespace Aaru.Tests.Images
                 TestFile  = "report_dvd+rw.mds",
                 MediaType = MediaType.DVDROM,
                 Sectors   = 2295104,
-                MD5       = "2022eaeb9ccda7532d981c5e22cc9bec",
-                LongMD5   = "2022eaeb9ccda7532d981c5e22cc9bec",
+                MD5       = "4d0cac3a6f56c581870de38682408f95",
+                LongMD5   = "4d0cac3a6f56c581870de38682408f95",
                 Tracks = new[]
                 {
                     new TrackInfoTestExpected
