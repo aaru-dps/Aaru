@@ -52,11 +52,13 @@ namespace Aaru.Tests
 
     public class TrackInfoTestExpected
     {
-        public ulong End;
-        public byte? Flags;
-        public ulong Pregap;
-        public int   Session;
-        public ulong Start;
+        public ulong            End;
+        public FileSystemTest[] FileSystems;
+        public byte?            Flags;
+        public byte             Number;
+        public ulong            Pregap;
+        public int              Session;
+        public ulong            Start;
     }
 
     public class OpticalImageTestExpected : BlockImageTestExpected

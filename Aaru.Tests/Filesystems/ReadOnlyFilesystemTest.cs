@@ -137,7 +137,7 @@ namespace Aaru.Tests.Filesystems
                     if(test.Contents is null)
                         continue;
 
-                    TestDirectory(fs, "/", test.Contents, testFile);
+                    TestDirectory(fs, "/", test.Contents, testFile, true);
                 }
             });
         }
@@ -232,7 +232,7 @@ namespace Aaru.Tests.Filesystems
             }
         }
 
-        Dictionary<string, FileData> BuildDirectory(IReadOnlyFilesystem fs, string path)
+        internal static Dictionary<string, FileData> BuildDirectory(IReadOnlyFilesystem fs, string path)
         {
             if(path == "/")
                 path = "";
@@ -265,7 +265,7 @@ namespace Aaru.Tests.Filesystems
             return children;
         }
 
-        string BuildFile(IReadOnlyFilesystem fs, string path, long length)
+        static string BuildFile(IReadOnlyFilesystem fs, string path, long length)
         {
             byte[] buffer = new byte[length];
             fs.Read(path, 0, length, ref buffer);
@@ -273,7 +273,8 @@ namespace Aaru.Tests.Filesystems
             return Md5Context.Data(buffer, out _);
         }
 
-        void TestDirectory(IReadOnlyFilesystem fs, string path, Dictionary<string, FileData> children, string testFile)
+        internal static void TestDirectory(IReadOnlyFilesystem fs, string path, Dictionary<string, FileData> children,
+                                           string testFile, bool testXattr)
         {
             Errno ret = fs.ReadDir(path, out List<string> contents);
 
@@ -322,7 +323,7 @@ namespace Aaru.Tests.Filesystems
                                      $"Contents for \"{childPath}\" in {testFile} must be defined in unit test declaration!");
 
                     if(child.Value.Children != null)
-                        TestDirectory(fs, childPath, child.Value.Children, testFile);
+                        TestDirectory(fs, childPath, child.Value.Children, testFile, testXattr);
                 }
                 else if(child.Value.Info.Attributes.HasFlag(FileAttributes.Symlink))
                 {
@@ -338,6 +339,9 @@ namespace Aaru.Tests.Filesystems
 
                     // This ensure the buffer does not hang for collection
                     TestFile(fs, childPath, child.Value.MD5, child.Value.Info.Length, testFile);
+
+                if(!testXattr)
+                    continue;
 
                 ret = fs.ListXAttr(childPath, out List<string> xattrs);
 
@@ -368,7 +372,7 @@ namespace Aaru.Tests.Filesystems
                            $"Found the following unexpected children of \"{path}\" in {testFile}: {string.Join(" ", contents)}");
         }
 
-        void TestFile(IReadOnlyFilesystem fs, string path, string md5, long length, string testFile)
+        static void TestFile(IReadOnlyFilesystem fs, string path, string md5, long length, string testFile)
         {
             byte[] buffer = new byte[length];
             Errno  ret    = fs.Read(path, 0, length, ref buffer);
@@ -380,7 +384,8 @@ namespace Aaru.Tests.Filesystems
             Assert.AreEqual(md5, data, $"Got MD5 {data} for \"{path}\" in {testFile} but expected {md5}");
         }
 
-        void TestFileXattrs(IReadOnlyFilesystem fs, string path, Dictionary<string, string> xattrs, string testFile)
+        static void TestFileXattrs(IReadOnlyFilesystem fs, string path, Dictionary<string, string> xattrs,
+                                   string testFile)
         {
             fs.ListXAttr(path, out List<string> contents);
 

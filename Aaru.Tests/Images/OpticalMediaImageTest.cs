@@ -1,14 +1,20 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Aaru.Checksums;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
+using Aaru.Core;
+using Aaru.Tests.Filesystems;
 using FluentAssertions;
 using FluentAssertions.Execution;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using NUnit.Framework;
 
 namespace Aaru.Tests.Images
@@ -99,6 +105,142 @@ namespace Aaru.Tests.Images
 
                             Assert.AreEqual(latestEndSector, image.Info.Sectors - 1,
                                             $"Last sector for tracks is {latestEndSector}, but it is {image.Info.Sectors} for image");
+                        });
+                    }
+
+                    using(new AssertionScope())
+                    {
+                        Assert.Multiple(() =>
+                        {
+                            foreach(TrackInfoTestExpected track in test.Tracks)
+                            {
+                                if(track.FileSystems is null)
+                                    continue;
+
+                                ulong trackStart = track.Start + track.Pregap;
+
+                                if(track.Number == 1 &&
+                                   track.Pregap >= 150)
+                                    trackStart -= 150;
+
+                                var partition = new Partition
+                                {
+                                    Length = track.End - trackStart + 1,
+                                    Start  = trackStart
+                                };
+
+                                Core.Filesystems.Identify(image, out List<string> idPlugins, partition);
+
+                                Assert.AreEqual(track.FileSystems.Length, idPlugins.Count,
+                                                $"Expected {track.FileSystems.Length} filesystems in {testFile} but found {idPlugins.Count}");
+
+                                for(int i = 0; i < track.FileSystems.Length; i++)
+                                {
+                                    PluginBase plugins = GetPluginBase.Instance;
+                                    bool found = plugins.PluginsList.TryGetValue(idPlugins[i], out IFilesystem plugin);
+
+                                    // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+                                    // It is not the case, it changes
+                                    if(!found)
+                                        continue;
+
+                                    var fs = Activator.CreateInstance(plugin.GetType()) as IFilesystem;
+
+                                    Assert.NotNull(fs, $"Could not instantiate filesystem for {testFile}");
+
+                                    fs.GetInformation(image, partition, out _, null);
+
+                                    if(track.FileSystems[i].ApplicationId != null)
+                                        Assert.AreEqual(track.FileSystems[i].ApplicationId,
+                                                        fs.XmlFsType.ApplicationIdentifier,
+                                                        $"Application ID: {testFile}");
+
+                                    Assert.AreEqual(track.FileSystems[i].Bootable, fs.XmlFsType.Bootable,
+                                                    $"Bootable: {testFile}");
+
+                                    Assert.AreEqual(track.FileSystems[i].Clusters, fs.XmlFsType.Clusters,
+                                                    $"Clusters: {testFile}");
+
+                                    Assert.AreEqual(track.FileSystems[i].ClusterSize, fs.XmlFsType.ClusterSize,
+                                                    $"Cluster size: {testFile}");
+
+                                    if(track.FileSystems[i].SystemId != null)
+                                        Assert.AreEqual(track.FileSystems[i].SystemId, fs.XmlFsType.SystemIdentifier,
+                                                        $"System ID: {testFile}");
+
+                                    Assert.AreEqual(track.FileSystems[i].Type, fs.XmlFsType.Type,
+                                                    $"Filesystem type: {testFile}");
+
+                                    Assert.AreEqual(track.FileSystems[i].VolumeName, fs.XmlFsType.VolumeName,
+                                                    $"Volume name: {testFile}");
+
+                                    Assert.AreEqual(track.FileSystems[i].VolumeSerial, fs.XmlFsType.VolumeSerial,
+                                                    $"Volume serial: {testFile}");
+
+                                    var rofs = Activator.CreateInstance(plugin.GetType()) as IReadOnlyFilesystem;
+
+                                    if(rofs == null)
+                                    {
+                                        if(track.FileSystems[i].Contents     != null ||
+                                           track.FileSystems[i].ContentsJson != null ||
+                                           File.Exists($"{testFile}.track{track.Number}.filesystem{i}.contents.json"))
+                                            Assert.NotNull(rofs,
+                                                           $"Could not instantiate filesystem for {testFile}, track {track.Number}, filesystem {i}");
+
+                                        continue;
+                                    }
+
+                                    track.FileSystems[i].Encoding ??= Encoding.ASCII;
+
+                                    Errno ret = rofs.Mount(image, partition, track.FileSystems[i].Encoding, null,
+                                                           track.FileSystems[i].Namespace);
+
+                                    Assert.AreEqual(Errno.NoError, ret, $"Unmountable: {testFile}");
+
+                                    var serializer = new JsonSerializer
+                                    {
+                                        Formatting        = Formatting.Indented,
+                                        MaxDepth          = 16384,
+                                        NullValueHandling = NullValueHandling.Ignore
+                                    };
+
+                                    serializer.Converters.Add(new StringEnumConverter());
+
+                                    if(track.FileSystems[i].ContentsJson != null)
+                                    {
+                                        track.FileSystems[i].Contents =
+                                            serializer.
+                                                Deserialize<
+                                                    Dictionary<string,
+                                                        FileData>>(new JsonTextReader(new StringReader(track.
+                                                                       FileSystems[i].ContentsJson)));
+                                    }
+                                    else if(File.Exists($"{testFile}.track{track.Number}.filesystem{i}.contents.json"))
+                                    {
+                                        var sr =
+                                            new
+                                                StreamReader($"{testFile}.track{track.Number}.filesystem{i}.contents.json");
+
+                                        track.FileSystems[i].Contents =
+                                            serializer.
+                                                Deserialize<Dictionary<string, FileData>>(new JsonTextReader(sr));
+                                    }
+
+                                    if(track.FileSystems[i].Contents is null)
+                                        continue;
+
+                                    ReadOnlyFilesystemTest.TestDirectory(rofs, "/", track.FileSystems[i].Contents,
+                                                                         testFile, false);
+
+                                    /* Uncomment to generate JSON file
+                                    var contents = ReadOnlyFilesystemTest.BuildDirectory(rofs, "/");
+
+                                    var sw = new StreamWriter($"{testFile}.track{track.Number}.filesystem{i}.contents.json");
+                                    serializer.Serialize(sw, contents);
+                                    sw.Close();
+*/
+                                }
+                            }
                         });
                     }
                 }
