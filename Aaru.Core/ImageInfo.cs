@@ -638,18 +638,21 @@ namespace Aaru.Core
                                                   track.TrackRawBytesPerSector, track.TrackSubchannelType,
                                                   track.TrackPregap, track.TrackStartSector, track.TrackEndSector);
 
-                        AaruConsole.WriteLine();
+                        if(opticalImage.Tracks.Any(t => t.Indexes.Any()))
+                        {
+                            AaruConsole.WriteLine();
 
-                        AaruConsole.WriteLine("Track indexes:");
+                            AaruConsole.WriteLine("Track indexes:");
 
-                        AaruConsole.WriteLine("{0,-7}{1,-7}{2,-12}", "Track", "Index", "Start");
+                            AaruConsole.WriteLine("{0,-7}{1,-7}{2,-12}", "Track", "Index", "Start");
 
-                        AaruConsole.WriteLine("=======================");
+                            AaruConsole.WriteLine("=======================");
 
-                        foreach(Track track in opticalImage.Tracks)
-                            foreach(KeyValuePair<ushort, int> index in track.Indexes)
-                                AaruConsole.WriteLine("{0,-7}{1,-7}{2,-12}", track.TrackSequence, index.Key,
-                                                      index.Value);
+                            foreach(Track track in opticalImage.Tracks)
+                                foreach(KeyValuePair<ushort, int> index in track.Indexes)
+                                    AaruConsole.WriteLine("{0,-7}{1,-7}{2,-12}", track.TrackSequence, index.Key,
+                                                          index.Value);
+                        }
                     }
                 }
                 catch
