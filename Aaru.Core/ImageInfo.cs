@@ -345,6 +345,15 @@ namespace Aaru.Core
                 AaruConsole.WriteLine();
             }
 
+            if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.DVDR_PreRecordedInfo) == true)
+            {
+                byte[] pri = imageFormat.ReadDiskTag(MediaTagType.DVDR_PreRecordedInfo);
+
+                AaruConsole.WriteLine("DVD-R(W) Pre-Recorded Information:");
+                AaruConsole.Write("{0}", PRI.Prettify(pri));
+                AaruConsole.WriteLine();
+            }
+
             if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.DVD_PFI) == true)
             {
                 byte[] pfi = imageFormat.ReadDiskTag(MediaTagType.DVD_PFI);
