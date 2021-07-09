@@ -360,6 +360,9 @@ namespace Aaru.DiscImages
                 if(!_alcTracks.TryGetValue(alcSes.lastTrack, out Track endingTrack))
                     break;
 
+                if(!_alcTrackExtras.TryGetValue(alcSes.firstTrack, out TrackExtra startingTrackExtra))
+                    break;
+
                 if(!_alcTrackExtras.TryGetValue(alcSes.lastTrack, out TrackExtra endingTrackExtra))
                     break;
 
@@ -535,7 +538,6 @@ namespace Aaru.DiscImages
 
             Partitions = new List<Partition>();
             _offsetMap = new Dictionary<uint, ulong>();
-            ulong byteOffset = 0;
 
             foreach(Track trk in _alcTracks.Values)
             {
@@ -548,16 +550,17 @@ namespace Aaru.DiscImages
                         Size        = extra.sectors * trk.sectorSize,
                         Length      = extra.sectors,
                         Sequence    = trk.point,
-                        Offset      = byteOffset,
+                        Offset      = trk.startOffset,
                         Type        = trk.mode.ToString()
                     };
 
                     Partitions.Add(partition);
-                    byteOffset += partition.Size;
                 }
 
-                if(!_offsetMap.ContainsKey(trk.point))
-                    _offsetMap.Add(trk.point, trk.startLba);
+                if(trk.startLba >= extra.pregap)
+                    _offsetMap[trk.point] = trk.startLba - extra.pregap;
+                else
+                    _offsetMap[trk.point] = trk.startLba;
 
                 switch(trk.mode)
                 {
@@ -788,7 +791,7 @@ namespace Aaru.DiscImages
                            !_alcTrackExtras.TryGetValue(track.point, out TrackExtra extra))
                             continue;
 
-                        if(sectorAddress - kvp.Value < extra.sectors)
+                        if(sectorAddress - kvp.Value < extra.sectors + extra.pregap)
                             return ReadSectors(sectorAddress - kvp.Value, length, kvp.Key);
                     }
 
@@ -805,7 +808,7 @@ namespace Aaru.DiscImages
                            !_alcTrackExtras.TryGetValue(track.point, out TrackExtra extra))
                             continue;
 
-                        if(sectorAddress - kvp.Value < extra.sectors)
+                        if(sectorAddress - kvp.Value < extra.sectors + extra.pregap)
                             return ReadSectorsTag(sectorAddress - kvp.Value, length, kvp.Key, tag);
                     }
 
@@ -818,9 +821,9 @@ namespace Aaru.DiscImages
                !_alcTrackExtras.TryGetValue((int)track, out TrackExtra alcExtra))
                 throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
 
-            if(length + sectorAddress > alcExtra.sectors)
+            if(length + sectorAddress > alcExtra.sectors + alcExtra.pregap)
                 throw new ArgumentOutOfRangeException(nameof(length),
-                                                      $"Requested more sectors ({length + sectorAddress}) than present in track ({alcExtra.sectors}), won't cross tracks");
+                                                      $"Requested more sectors ({length + sectorAddress}) than present in track ({alcExtra.sectors + alcExtra.pregap}), won't cross tracks");
 
             uint sectorOffset;
             uint sectorSize;
@@ -897,12 +900,17 @@ namespace Aaru.DiscImages
                 sectorAddress -= alcExtra.pregap - 150;
             }
 
+            uint pregapBytes = alcExtra.pregap * (sectorOffset + sectorSize + sectorSkip);
+            long fileOffset  = (long)alcTrack.startOffset;
+
+            if(alcTrack.startOffset >= pregapBytes)
+                fileOffset = (long)(alcTrack.startOffset - pregapBytes);
+
             _imageStream = _alcImage.GetDataForkStream();
             var br = new BinaryReader(_imageStream);
 
-            br.BaseStream.
-               Seek((long)alcTrack.startOffset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
-                    SeekOrigin.Begin);
+            br.BaseStream.Seek(fileOffset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
+                               SeekOrigin.Begin);
 
             if(mode2)
             {
@@ -944,9 +952,9 @@ namespace Aaru.DiscImages
                !_alcTrackExtras.TryGetValue((int)track, out TrackExtra alcExtra))
                 throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
 
-            if(length + sectorAddress > alcExtra.sectors)
+            if(length + sectorAddress > alcExtra.sectors + alcExtra.pregap)
                 throw new ArgumentOutOfRangeException(nameof(length),
-                                                      $"Requested more sectors ({length}) than present in track ({alcExtra.sectors}), won't cross tracks");
+                                                      $"Requested more sectors ({length}) than present in track ({alcExtra.sectors + alcExtra.pregap}), won't cross tracks");
 
             uint sectorOffset;
             uint sectorSize;
@@ -1310,12 +1318,17 @@ namespace Aaru.DiscImages
                 sectorAddress -= alcExtra.pregap - 150;
             }
 
+            uint pregapBytes = alcExtra.pregap * (sectorOffset + sectorSize + sectorSkip);
+            long fileOffset  = (long)alcTrack.startOffset;
+
+            if(alcTrack.startOffset >= pregapBytes)
+                fileOffset = (long)(alcTrack.startOffset - pregapBytes);
+
             _imageStream = _alcImage.GetDataForkStream();
             var br = new BinaryReader(_imageStream);
 
-            br.BaseStream.
-               Seek((long)alcTrack.startOffset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
-                    SeekOrigin.Begin);
+            br.BaseStream.Seek(fileOffset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
+                               SeekOrigin.Begin);
 
             if(sectorOffset == 0 &&
                sectorSkip   == 0)
@@ -1346,7 +1359,7 @@ namespace Aaru.DiscImages
                            !_alcTrackExtras.TryGetValue(alcTrack.point, out TrackExtra alcExtra))
                             continue;
 
-                        if(sectorAddress - kvp.Value < alcExtra.sectors)
+                        if(sectorAddress - kvp.Value < alcExtra.sectors + alcExtra.pregap)
                             return ReadSectorsLong(sectorAddress - kvp.Value, length, kvp.Key);
                     }
 
@@ -1359,9 +1372,9 @@ namespace Aaru.DiscImages
                !_alcTrackExtras.TryGetValue((int)track, out TrackExtra alcExtra))
                 throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
 
-            if(length + sectorAddress > alcExtra.sectors)
+            if(length + sectorAddress > alcExtra.sectors + alcExtra.pregap)
                 throw new ArgumentOutOfRangeException(nameof(length),
-                                                      $"Requested more sectors ({length}) than present in track ({alcExtra.sectors}), won't cross tracks");
+                                                      $"Requested more sectors ({length}) than present in track ({alcExtra.sectors + alcExtra.pregap}), won't cross tracks");
 
             uint sectorOffset;
             uint sectorSize;
@@ -1402,12 +1415,17 @@ namespace Aaru.DiscImages
                 sectorAddress -= alcExtra.pregap - 150;
             }
 
+            uint pregapBytes = alcExtra.pregap * (sectorOffset + sectorSize + sectorSkip);
+            long fileOffset  = (long)alcTrack.startOffset;
+
+            if(alcTrack.startOffset >= pregapBytes)
+                fileOffset = (long)(alcTrack.startOffset - pregapBytes);
+
             _imageStream = _alcImage.GetDataForkStream();
             var br = new BinaryReader(_imageStream);
 
-            br.BaseStream.
-               Seek((long)alcTrack.startOffset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
-                    SeekOrigin.Begin);
+            br.BaseStream.Seek(fileOffset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
+                               SeekOrigin.Begin);
 
             if(sectorOffset == 0 &&
                sectorSkip   == 0)

@@ -102,6 +102,10 @@ namespace Aaru.DiscImages
 
                     aaruTrack.Indexes.Add(1, (int)alcTrack.startLba);
 
+                    if(aaruTrack.Indexes.ContainsKey(0) &&
+                       aaruTrack.Indexes[0] >= 0)
+                        aaruTrack.TrackStartSector = (ulong)aaruTrack.Indexes[0];
+
                     switch(alcTrack.subMode)
                     {
                         case SubchannelMode.Interleaved:
