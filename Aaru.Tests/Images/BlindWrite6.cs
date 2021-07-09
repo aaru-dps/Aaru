@@ -56,7 +56,18 @@ namespace Aaru.Tests.Images
                         Session = 1,
                         Start   = 0,
                         End     = 2287071,
-                        Pregap  = 0
+                        Pregap  = 0,
+                        Number  = 1,
+                        FileSystems = new[]
+                        {
+                            new FileSystemTest
+                            {
+                                Clusters    = 2287072,
+                                ClusterSize = 2048,
+                                Type        = "ISO9660",
+                                VolumeName  = "GuiaRaw"
+                            }
+                        }
                     }
                 }
             },
@@ -182,7 +193,17 @@ namespace Aaru.Tests.Images
                         Start   = 3590,
                         End     = 38463,
                         Pregap  = 0,
-                        Flags   = 4
+                        Flags   = 4,
+                        Number  = 2,
+                        FileSystems = new[]
+                        {
+                            new FileSystemTest
+                            {
+                                Clusters    = 28672,
+                                ClusterSize = 2048,
+                                Type        = "PC Engine filesystem"
+                            }
+                        }
                     },
                     new TrackInfoTestExpected
                     {
@@ -321,7 +342,19 @@ namespace Aaru.Tests.Images
                         Start   = 4395,
                         End     = 4908,
                         Pregap  = 0,
-                        Flags   = 4
+                        Flags   = 4,
+                        Number  = 2,
+                        FileSystems = new[]
+                        {
+                            new FileSystemTest
+                            {
+                                Bootable    = true,
+                                Clusters    = 514,
+                                ClusterSize = 2048,
+                                Type        = "PC-FX",
+                                VolumeName  = "同級生２"
+                            }
+                        }
                     },
                     new TrackInfoTestExpected
                     {
@@ -389,7 +422,25 @@ namespace Aaru.Tests.Images
                         Start   = 0,
                         End     = 254264,
                         Pregap  = 150,
-                        Flags   = 4
+                        Flags   = 4,
+                        Number  = 1,
+                        FileSystems = new[]
+                        {
+                            new FileSystemTest
+                            {
+                                Clusters    = 63562,
+                                ClusterSize = 8192,
+                                Type        = "HFS",
+                                VolumeName  = "Winpower"
+                            },
+                            new FileSystemTest
+                            {
+                                Clusters    = 254265,
+                                ClusterSize = 2048,
+                                Type        = "ISO9660",
+                                VolumeName  = "Winpower"
+                            }
+                        }
                     }
                 }
             },
@@ -409,7 +460,25 @@ namespace Aaru.Tests.Images
                         Start   = 0,
                         End     = 254264,
                         Pregap  = 150,
-                        Flags   = 4
+                        Flags   = 4,
+                        Number  = 1,
+                        FileSystems = new[]
+                        {
+                            new FileSystemTest
+                            {
+                                Clusters    = 63562,
+                                ClusterSize = 8192,
+                                Type        = "HFS",
+                                VolumeName  = "Winpower"
+                            },
+                            new FileSystemTest
+                            {
+                                Clusters    = 254265,
+                                ClusterSize = 2048,
+                                Type        = "ISO9660",
+                                VolumeName  = "Winpower"
+                            }
+                        }
                     }
                 }
             },
@@ -429,7 +498,19 @@ namespace Aaru.Tests.Images
                         Start   = 0,
                         End     = 308223,
                         Pregap  = 150,
-                        Flags   = 4
+                        Flags   = 4,
+                        Number  = 1,
+                        FileSystems = new[]
+                        {
+                            new FileSystemTest
+                            {
+                                Bootable    = true,
+                                Clusters    = 308224,
+                                ClusterSize = 2048,
+                                Type        = "ISO9660",
+                                VolumeName  = "ARCH_201901"
+                            }
+                        }
                     }
                 }
             },
@@ -449,7 +530,18 @@ namespace Aaru.Tests.Images
                         Start   = 0,
                         End     = 1736,
                         Pregap  = 150,
-                        Flags   = 4
+                        Flags   = 4,
+                        Number  = 1,
+                        FileSystems = new[]
+                        {
+                            new FileSystemTest
+                            {
+                                Clusters    = 1587,
+                                ClusterSize = 2048,
+                                Type        = "ISO9660",
+                                VolumeName  = ""
+                            }
+                        }
                     },
                     new TrackInfoTestExpected
                     {
