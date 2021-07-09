@@ -107,6 +107,41 @@ namespace Aaru.Tests.Images
                                             $"Last sector for tracks is {latestEndSector}, but it is {image.Info.Sectors} for image");
                         });
                     }
+                }
+            });
+        }
+
+        [Test]
+        public void Contents()
+        {
+            Environment.CurrentDirectory = DataFolder;
+
+            Assert.Multiple(() =>
+            {
+                foreach(OpticalImageTestExpected test in Tests)
+                {
+                    string testFile = test.TestFile;
+
+                    bool exists = File.Exists(testFile);
+                    Assert.True(exists, $"{testFile} not found");
+
+                    // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+                    // It arrives here...
+                    if(!exists)
+                        continue;
+
+                    var     filtersList = new FiltersList();
+                    IFilter filter      = filtersList.GetFilter(testFile);
+                    filter.Open(testFile);
+
+                    var image = Activator.CreateInstance(_plugin.GetType()) as IOpticalMediaImage;
+                    Assert.NotNull(image, $"Could not instantiate filesystem for {testFile}");
+
+                    bool opened = image.Open(filter);
+                    Assert.AreEqual(true, opened, $"Open: {testFile}");
+
+                    if(!opened)
+                        continue;
 
                     using(new AssertionScope())
                     {
@@ -232,13 +267,12 @@ namespace Aaru.Tests.Images
                                     ReadOnlyFilesystemTest.TestDirectory(rofs, "/", track.FileSystems[i].Contents,
                                                                          testFile, false);
 
-                                    /* Uncomment to generate JSON file
-                                    var contents = ReadOnlyFilesystemTest.BuildDirectory(rofs, "/");
-
-                                    var sw = new StreamWriter($"{testFile}.track{track.Number}.filesystem{i}.contents.json");
-                                    serializer.Serialize(sw, contents);
-                                    sw.Close();
-*/
+                                    // Uncomment to generate JSON file
+                                    /*    var contents = ReadOnlyFilesystemTest.BuildDirectory(rofs, "/");
+    
+                                        var sw = new StreamWriter($"{testFile}.track{track.Number}.filesystem{i}.contents.json");
+                                        serializer.Serialize(sw, contents);
+                                        sw.Close();*/
                                 }
                             }
                         });
