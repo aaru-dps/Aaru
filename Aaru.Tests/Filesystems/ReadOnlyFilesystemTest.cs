@@ -254,6 +254,11 @@ namespace Aaru.Tests.Filesystems
                 {
                     data.Children = BuildDirectory(fs, childPath);
                 }
+                else if(stat.Attributes.HasFlag(FileAttributes.Symlink))
+                {
+                    if(fs.ReadLink(childPath, out string link) == Errno.NoError)
+                        data.LinkTarget = link;
+                }
                 else
                 {
                     data.MD5 = BuildFile(fs, childPath, stat.Length);
