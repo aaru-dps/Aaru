@@ -45,6 +45,36 @@ namespace Aaru.Tests.Images.cdrdao.raw
         {
             new OpticalImageTestExpected
             {
+                TestFile  = "gigarec.toc",
+                MediaType = MediaType.CDROM,
+                Sectors   = 469652,
+                MD5       = "b7659466b925296a36390c58c480e4bb",
+                LongMD5   = "51bf2c54fee363520906709cc42a710a",
+                Tracks = new[]
+                {
+                    new TrackInfoTestExpected
+                    {
+                        Session = 1,
+                        Start   = 0,
+                        End     = 469651,
+                        Pregap  = 0,
+                        Flags   = 4,
+                        Number  = 1,
+                        FileSystems = new[]
+                        {
+                            new FileSystemTest
+                            {
+                                Clusters    = 469652,
+                                ClusterSize = 2048,
+                                Type        = "ISO9660",
+                                VolumeName  = "New Volume"
+                            }
+                        }
+                    }
+                }
+            },
+            new OpticalImageTestExpected
+            {
                 TestFile      = "report_audiocd.toc",
                 MediaType     = MediaType.CDDA,
                 Sectors       = 247073,
@@ -185,7 +215,25 @@ namespace Aaru.Tests.Images.cdrdao.raw
                         Start   = 0,
                         End     = 254264,
                         Pregap  = 0,
-                        Flags   = 4
+                        Flags   = 4,
+                        Number  = 1,
+                        FileSystems = new[]
+                        {
+                            new FileSystemTest
+                            {
+                                Clusters    = 63562,
+                                ClusterSize = 8192,
+                                Type        = "HFS",
+                                VolumeName  = "Winpower"
+                            },
+                            new FileSystemTest
+                            {
+                                Clusters    = 254265,
+                                ClusterSize = 2048,
+                                Type        = "ISO9660",
+                                VolumeName  = "Winpower"
+                            }
+                        }
                     }
                 }
             },
@@ -206,7 +254,25 @@ namespace Aaru.Tests.Images.cdrdao.raw
                         Start   = 0,
                         End     = 254264,
                         Pregap  = 0,
-                        Flags   = 4
+                        Flags   = 4,
+                        Number  = 1,
+                        FileSystems = new[]
+                        {
+                            new FileSystemTest
+                            {
+                                Clusters    = 63562,
+                                ClusterSize = 8192,
+                                Type        = "HFS",
+                                VolumeName  = "Winpower"
+                            },
+                            new FileSystemTest
+                            {
+                                Clusters    = 254265,
+                                ClusterSize = 2048,
+                                Type        = "ISO9660",
+                                VolumeName  = "Winpower"
+                            }
+                        }
                     }
                 }
             },
@@ -227,7 +293,19 @@ namespace Aaru.Tests.Images.cdrdao.raw
                         Start   = 0,
                         End     = 308223,
                         Pregap  = 0,
-                        Flags   = 4
+                        Flags   = 4,
+                        Number  = 1,
+                        FileSystems = new[]
+                        {
+                            new FileSystemTest
+                            {
+                                Bootable    = true,
+                                Clusters    = 308224,
+                                ClusterSize = 2048,
+                                Type        = "ISO9660",
+                                VolumeName  = "ARCH_201901"
+                            }
+                        }
                     }
                 }
             },
@@ -276,7 +354,18 @@ namespace Aaru.Tests.Images.cdrdao.raw
                         Start   = 0,
                         End     = 1736,
                         Pregap  = 150,
-                        Flags   = 4
+                        Flags   = 4,
+                        Number  = 1,
+                        FileSystems = new[]
+                        {
+                            new FileSystemTest
+                            {
+                                Clusters    = 1587,
+                                ClusterSize = 2048,
+                                Type        = "ISO9660",
+                                VolumeName  = ""
+                            }
+                        }
                     },
                     new TrackInfoTestExpected
                     {
@@ -416,7 +505,26 @@ namespace Aaru.Tests.Images.cdrdao.raw
                         Start   = 0,
                         End     = 8132,
                         Pregap  = 0,
-                        Flags   = 4
+                        Flags   = 4,
+                        Number  = 1,
+                        FileSystems = new[]
+                        {
+                            new FileSystemTest
+                            {
+                                Clusters    = 7876,
+                                ClusterSize = 2048,
+                                Type        = "ISO9660",
+                                VolumeName  = "Session 1"
+                            },
+                            new FileSystemTest
+                            {
+                                Clusters     = 8133,
+                                ClusterSize  = 2048,
+                                Type         = "UDF v1.02",
+                                VolumeName   = "Session 1",
+                                VolumeSerial = "50958B61AF6A749E"
+                            }
+                        }
                     }
                 }
             },
@@ -436,7 +544,18 @@ namespace Aaru.Tests.Images.cdrdao.raw
                         Start   = 0,
                         End     = 1251,
                         Pregap  = 0,
-                        Flags   = 4
+                        Flags   = 4,
+                        Number  = 1,
+                        FileSystems = new[]
+                        {
+                            new FileSystemTest
+                            {
+                                Clusters    = 1102,
+                                ClusterSize = 2048,
+                                Type        = "ISO9660",
+                                VolumeName  = "VIDEOCD"
+                            }
+                        }
                     },
                     new TrackInfoTestExpected
                     {
