@@ -574,8 +574,12 @@ namespace Aaru.DiscImages
                     }
                     else
                     {
-                        track.TrackPregap      = 0;
-                        track.TrackStartSector = (ulong)bwTrack.startSector;
+                        track.TrackPregap = (ulong)(bwTrack.startSector - bwTrack.pregap);
+
+                        if(bwTrack.pregap < 0)
+                            track.TrackStartSector = 0;
+                        else
+                            track.TrackStartSector = (ulong)bwTrack.pregap;
                     }
 
                     track.TrackFileType          = "BINARY";
@@ -661,7 +665,7 @@ namespace Aaru.DiscImages
                             break;
                     }
 
-                    if(bwTrack.pregap > 0)
+                    if(bwTrack.pregap != 0)
                         track.Indexes.Add(0, bwTrack.pregap);
 
                     track.Indexes.Add(1, bwTrack.startSector);
@@ -680,6 +684,11 @@ namespace Aaru.DiscImages
 
                     Partitions.Add(partition);
                     Tracks.Add(track);
+
+                    if(bwTrack.pregap > 0)
+                        _offsetMap[track.TrackSequence] = (ulong)bwTrack.pregap;
+                    else
+                        _offsetMap[track.TrackSequence] = 0;
 
                     if(!_offsetMap.ContainsKey(track.TrackSequence))
                         _offsetMap.Add(track.TrackSequence, track.TrackStartSector);
