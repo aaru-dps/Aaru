@@ -1107,7 +1107,7 @@ namespace Aaru.DiscImages
                             break;
                         case DaoMode.AudioSub:
                             track.TrackBytesPerSector    = 2352;
-                            track.TrackRawBytesPerSector = 2448;
+                            track.TrackRawBytesPerSector = 2352;
                             track.TrackSubchannelType    = TrackSubchannelType.RawInterleaved;
 
                             break;
@@ -1130,7 +1130,7 @@ namespace Aaru.DiscImages
                             break;
                         case DaoMode.DataM2RawSub:
                             track.TrackBytesPerSector    = 2352;
-                            track.TrackRawBytesPerSector = 2448;
+                            track.TrackRawBytesPerSector = 2352;
                             track.TrackSubchannelType    = TrackSubchannelType.RawInterleaved;
                             rawMode2                     = true;
 
@@ -1143,7 +1143,7 @@ namespace Aaru.DiscImages
                             break;
                         case DaoMode.DataRawSub:
                             track.TrackBytesPerSector    = 2048;
-                            track.TrackRawBytesPerSector = 2448;
+                            track.TrackRawBytesPerSector = 2352;
                             track.TrackSubchannelType    = TrackSubchannelType.RawInterleaved;
                             rawMode1                     = true;
 
@@ -1291,7 +1291,7 @@ namespace Aaru.DiscImages
                             break;
                         case DaoMode.AudioSub:
                             track.TrackBytesPerSector    = 2352;
-                            track.TrackRawBytesPerSector = 2448;
+                            track.TrackRawBytesPerSector = 2352;
                             track.TrackSubchannelType    = TrackSubchannelType.RawInterleaved;
 
                             break;
@@ -1314,7 +1314,7 @@ namespace Aaru.DiscImages
                             break;
                         case DaoMode.DataM2RawSub:
                             track.TrackBytesPerSector    = 2352;
-                            track.TrackRawBytesPerSector = 2448;
+                            track.TrackRawBytesPerSector = 2352;
                             track.TrackSubchannelType    = TrackSubchannelType.RawInterleaved;
                             rawMode2                     = true;
 
@@ -1327,7 +1327,7 @@ namespace Aaru.DiscImages
                             break;
                         case DaoMode.DataRawSub:
                             track.TrackBytesPerSector    = 2048;
-                            track.TrackRawBytesPerSector = 2448;
+                            track.TrackRawBytesPerSector = 2352;
                             track.TrackSubchannelType    = TrackSubchannelType.RawInterleaved;
                             rawMode1                     = true;
 
@@ -2126,8 +2126,8 @@ namespace Aaru.DiscImages
                 case DaoMode.AudioSub:
                 {
                     sectorOffset = 0;
-                    sectorSize   = 2448;
-                    sectorSkip   = 0;
+                    sectorSize   = 2352;
+                    sectorSkip   = 96;
 
                     break;
                 }
