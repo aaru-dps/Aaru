@@ -368,7 +368,25 @@ namespace Aaru.Tests.Images.MagicISO
                         Start   = 0,
                         End     = 254263,
                         Pregap  = 150,
-                        Flags   = 4
+                        Flags   = 4,
+                        Number  = 1,
+                        FileSystems = new[]
+                        {
+                            new FileSystemTest
+                            {
+                                Clusters    = 63562,
+                                ClusterSize = 8192,
+                                Type        = "HFS",
+                                VolumeName  = "Winpower"
+                            },
+                            new FileSystemTest
+                            {
+                                Clusters    = 254265,
+                                ClusterSize = 2048,
+                                Type        = "ISO9660",
+                                VolumeName  = "Winpower"
+                            }
+                        }
                     }
                 }
             },
@@ -387,7 +405,19 @@ namespace Aaru.Tests.Images.MagicISO
                         Start   = 0,
                         End     = 308222,
                         Pregap  = 150,
-                        Flags   = 4
+                        Flags   = 4,
+                        Number  = 1,
+                        FileSystems = new[]
+                        {
+                            new FileSystemTest
+                            {
+                                Bootable    = true,
+                                Clusters    = 308224,
+                                ClusterSize = 2048,
+                                Type        = "ISO9660",
+                                VolumeName  = "ARCH_201901"
+                            }
+                        }
                     }
                 }
             },
@@ -404,7 +434,19 @@ namespace Aaru.Tests.Images.MagicISO
                     {
                         Session = 1,
                         Start   = 0,
-                        End     = 1218958
+                        End     = 1218958,
+                        Number  = 1,
+                        FileSystems = new[]
+                        {
+                            new FileSystemTest
+                            {
+                                Bootable    = true,
+                                Clusters    = 471090,
+                                ClusterSize = 2048,
+                                Type        = "ISO9660",
+                                VolumeName  = "12_2_RELEASE_AMD64_CD"
+                            }
+                        }
                     }
                 }
             },
@@ -421,7 +463,19 @@ namespace Aaru.Tests.Images.MagicISO
                     {
                         Session = 1,
                         Start   = 0,
-                        End     = 2236702
+                        End     = 2236702,
+                        Number  = 1,
+                        FileSystems = new[]
+                        {
+                            new FileSystemTest
+                            {
+                                Bootable    = true,
+                                Clusters    = 471090,
+                                ClusterSize = 2048,
+                                Type        = "ISO9660",
+                                VolumeName  = "12_2_RELEASE_AMD64_CD"
+                            }
+                        }
                     }
                 }
             },
@@ -455,7 +509,19 @@ namespace Aaru.Tests.Images.MagicISO
                     {
                         Session = 1,
                         Start   = 0,
-                        End     = 2146366
+                        End     = 2146366,
+                        Number  = 1,
+                        FileSystems = new[]
+                        {
+                            new FileSystemTest
+                            {
+                                Bootable    = true,
+                                Clusters    = 2146357,
+                                ClusterSize = 2048,
+                                Type        = "ISO9660",
+                                VolumeName  = "SU1100.001"
+                            }
+                        }
                     }
                 }
             },
@@ -472,7 +538,19 @@ namespace Aaru.Tests.Images.MagicISO
                     {
                         Session = 1,
                         Start   = 0,
-                        End     = 2295102
+                        End     = 2295102,
+                        Number  = 1,
+                        FileSystems = new[]
+                        {
+                            new FileSystemTest
+                            {
+                                Bootable    = true,
+                                Clusters    = 2146357,
+                                ClusterSize = 2048,
+                                Type        = "ISO9660",
+                                VolumeName  = "SU1100.001"
+                            }
+                        }
                     }
                 }
             },
