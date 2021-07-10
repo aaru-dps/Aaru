@@ -1007,6 +1007,9 @@ namespace Aaru.DiscImages
                         _discImage.Tracks[0].TrackType = CDRWIN_TRACK_TYPE_MODE1;
                         _imageInfo.Application         = "MagicISO";
                         _discImage.MediaType           = MediaType.DVDROM;
+
+                        AaruConsole.
+                            ErrorWriteLine("This image is most probably corrupted beyond repair. It is highly recommended to dump it with another software.");
                     }
                 }
 
