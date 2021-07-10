@@ -111,8 +111,9 @@ namespace Aaru.DiscImages
                 _imageInfo.MediaType  = CommonTypes.MediaType.CD;
                 _imageInfo.Sectors    = 0;
                 _imageInfo.SectorSize = 0;
-                bool oldFormat  = false;
-                int  currentLba = -150;
+                bool oldFormat          = false;
+                int  currentLba         = -150;
+                bool corruptedTrackMode = false;
 
                 // Parse chunks
                 while(parsing)
@@ -296,6 +297,22 @@ namespace Aaru.DiscImages
                                 entry.Index1     = BigEndianBitConverter.ToUInt32(tmpBuffer, 22);
                                 entry.EndOfTrack = BigEndianBitConverter.ToUInt32(tmpBuffer, 26);
 
+                                // MagicISO
+                                if(entry.SectorSize == 2352)
+                                {
+                                    if(entry.Mode == 0x0000)
+                                    {
+                                        corruptedTrackMode = true;
+                                        entry.Mode         = 0x0005;
+                                    }
+                                    else if(entry.Mode == 0x0002 ||
+                                            entry.Mode == 0x0003)
+                                    {
+                                        corruptedTrackMode = true;
+                                        entry.Mode         = 0x0006;
+                                    }
+                                }
+
                                 AaruConsole.DebugWriteLine("Nero plugin", "Disc-At-Once entry {0}", (i / 32) + 1);
 
                                 AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].ISRC = \"{1}\"", (i / 32) + 1,
@@ -398,6 +415,22 @@ namespace Aaru.DiscImages
                                 entry.Index0     = BigEndianBitConverter.ToUInt64(tmpBuffer, 18);
                                 entry.Index1     = BigEndianBitConverter.ToUInt64(tmpBuffer, 26);
                                 entry.EndOfTrack = BigEndianBitConverter.ToUInt64(tmpBuffer, 34);
+
+                                // MagicISO
+                                if(entry.SectorSize == 2352)
+                                {
+                                    if(entry.Mode == 0x0000)
+                                    {
+                                        corruptedTrackMode = true;
+                                        entry.Mode         = 0x0005;
+                                    }
+                                    else if(entry.Mode == 0x0002 ||
+                                            entry.Mode == 0x0003)
+                                    {
+                                        corruptedTrackMode = true;
+                                        entry.Mode         = 0x0006;
+                                    }
+                                }
 
                                 AaruConsole.DebugWriteLine("Nero plugin", "Disc-At-Once entry {0}", (i / 32) + 1);
 
@@ -861,6 +894,10 @@ namespace Aaru.DiscImages
                         }
                     }
                 }
+
+                if(corruptedTrackMode)
+                    AaruConsole.
+                        ErrorWriteLine("Inconsistent track mode and track sector size found. A best try to fix has been done. It is recommended this disc is dumped with another software.");
 
                 _imageInfo.HasPartitions         = true;
                 _imageInfo.HasSessions           = true;
