@@ -1280,6 +1280,7 @@ namespace Aaru.DiscImages
 
                     bool rawMode1 = false;
                     bool rawMode2 = false;
+                    int  subSize  = 0;
 
                     switch((DaoMode)_neroTracks[1].Mode)
                     {
@@ -1293,6 +1294,7 @@ namespace Aaru.DiscImages
                             track.TrackBytesPerSector    = 2352;
                             track.TrackRawBytesPerSector = 2352;
                             track.TrackSubchannelType    = TrackSubchannelType.RawInterleaved;
+                            subSize                      = 96;
 
                             break;
                         case DaoMode.Data:
@@ -1317,6 +1319,7 @@ namespace Aaru.DiscImages
                             track.TrackRawBytesPerSector = 2352;
                             track.TrackSubchannelType    = TrackSubchannelType.RawInterleaved;
                             rawMode2                     = true;
+                            subSize                      = 96;
 
                             break;
                         case DaoMode.DataRaw:
@@ -1330,6 +1333,7 @@ namespace Aaru.DiscImages
                             track.TrackRawBytesPerSector = 2352;
                             track.TrackSubchannelType    = TrackSubchannelType.RawInterleaved;
                             rawMode1                     = true;
+                            subSize                      = 96;
 
                             break;
                     }
@@ -1354,13 +1358,13 @@ namespace Aaru.DiscImages
                     {
                         track.TrackSubchannelFilter = imageFilter;
                         track.TrackSubchannelFile   = imageFilter.GetFilename();
-                        track.TrackSubchannelOffset = (ulong)(150 * track.TrackRawBytesPerSector);
+                        track.TrackSubchannelOffset = (ulong)(150 * (track.TrackRawBytesPerSector + subSize));
 
                         if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel))
                             _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubchannel);
                     }
 
-                    track.TrackFileOffset  = (ulong)(150 * track.TrackRawBytesPerSector);
+                    track.TrackFileOffset  = (ulong)(150 * (track.TrackRawBytesPerSector + subSize));
                     _neroTracks[1].Offset  = track.TrackFileOffset;
                     _neroTracks[1].Sectors = track.TrackEndSector - track.TrackStartSector + 1;
 
