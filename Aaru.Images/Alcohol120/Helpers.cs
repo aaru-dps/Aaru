@@ -42,14 +42,16 @@ namespace Aaru.DiscImages
             switch(trackMode)
             {
                 case TrackMode.Mode1:
+                case TrackMode.Mode1Alt:
                 case TrackMode.Mode2F1:
                 case TrackMode.Mode2F1Alt: return 2048;
                 case TrackMode.Mode2F2:
                 case TrackMode.Mode2F2Alt: return 2324;
                 case TrackMode.Mode2: return 2336;
-                case TrackMode.Audio: return 2352;
-                case TrackMode.DVD:   return 2048;
-                default:              return 0;
+                case TrackMode.Audio:
+                case TrackMode.AudioAlt: return 2352;
+                case TrackMode.DVD: return 2048;
+                default:            return 0;
             }
         }
 
@@ -57,14 +59,16 @@ namespace Aaru.DiscImages
         {
             switch(trackType)
             {
-                case TrackMode.Mode1: return TrackType.CdMode1;
+                case TrackMode.Mode1:
+                case TrackMode.Mode1Alt: return TrackType.CdMode1;
                 case TrackMode.Mode2F1:
                 case TrackMode.Mode2F1Alt: return TrackType.CdMode2Form1;
                 case TrackMode.Mode2F2:
                 case TrackMode.Mode2F2Alt: return TrackType.CdMode2Form2;
                 case TrackMode.Mode2: return TrackType.CdMode2Formless;
-                case TrackMode.Audio: return TrackType.Audio;
-                default:              return TrackType.Data;
+                case TrackMode.Audio:
+                case TrackMode.AudioAlt: return TrackType.Audio;
+                default: return TrackType.Data;
             }
         }
 
@@ -147,6 +151,6 @@ namespace Aaru.DiscImages
         }
 
         static (byte minute, byte second, byte frame) LbaToMsf(ulong sector) =>
-            ((byte)((sector + 150) / 75 / 60), (byte)(((sector + 150) / 75) % 60), (byte)((sector + 150) % 75));
+            ((byte)((sector + 150) / 75 / 60), (byte)((sector + 150) / 75 % 60), (byte)((sector + 150) % 75));
     }
 }

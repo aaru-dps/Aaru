@@ -317,15 +317,23 @@ namespace Aaru.DiscImages
 
                 stream.Read(filename, 0, filename.Length);
 
-                alcFile = _alcFooter.widechar == 1 ? Encoding.Unicode.GetString(filename)
-                              : Encoding.Default.GetString(filename);
+                alcFile = _alcFooter.widechar == 1 ? StringHandlers.CToString(filename, Encoding.Unicode, true)
+                              : StringHandlers.CToString(filename, Encoding.Default);
 
                 AaruConsole.DebugWriteLine("Alcohol 120% plugin", "footer.filename = {0}", alcFile);
             }
 
-            if(_alcFooter.filenameOffset                                                     == 0 ||
-               string.Compare(alcFile, "*.mdf", StringComparison.InvariantCultureIgnoreCase) == 0)
+            if(_alcFooter.filenameOffset == 0)
+            {
+                if(Path.GetExtension(imageFilter.GetBasePath()).ToLowerInvariant() == ".mds")
+                    alcFile = Path.GetFileNameWithoutExtension(imageFilter.GetBasePath()) + ".mdf";
+                else if(Path.GetExtension(imageFilter.GetBasePath()).ToLowerInvariant() == ".xmd")
+                    alcFile = Path.GetFileNameWithoutExtension(imageFilter.GetBasePath()) + ".xmf";
+            }
+            else if(string.Compare(alcFile, "*.mdf", StringComparison.InvariantCultureIgnoreCase) == 0)
                 alcFile = Path.GetFileNameWithoutExtension(imageFilter.GetBasePath()) + ".mdf";
+            else if(string.Compare(alcFile, "*.xmf", StringComparison.InvariantCultureIgnoreCase) == 0)
+                alcFile = Path.GetFileNameWithoutExtension(imageFilter.GetBasePath()) + ".xmf";
 
             if(_header.bcaLength > 0 &&
                _header.bcaOffset > 0 &&
@@ -494,16 +502,20 @@ namespace Aaru.DiscImages
                 foreach(Track alcoholTrack in _alcTracks.Values)
                 {
                     // First track is audio
-                    firstAudio |= alcoholTrack.point == 1 && alcoholTrack.mode == TrackMode.Audio;
+                    firstAudio |= alcoholTrack.point == 1 &&
+                                  (alcoholTrack.mode == TrackMode.Audio || alcoholTrack.mode == TrackMode.AudioAlt);
 
                     // First track is data
-                    firstData |= alcoholTrack.point == 1 && alcoholTrack.mode != TrackMode.Audio;
+                    firstData |= alcoholTrack.point == 1 &&
+                                 (alcoholTrack.mode != TrackMode.Audio || alcoholTrack.mode != TrackMode.AudioAlt);
 
                     // Any non first track is data
-                    data |= alcoholTrack.point != 1 && alcoholTrack.mode != TrackMode.Audio;
+                    data |= alcoholTrack.point != 1 &&
+                            (alcoholTrack.mode != TrackMode.Audio || alcoholTrack.mode != TrackMode.AudioAlt);
 
                     // Any non first track is audio
-                    audio |= alcoholTrack.point != 1 && alcoholTrack.mode == TrackMode.Audio;
+                    audio |= alcoholTrack.point != 1 &&
+                             (alcoholTrack.mode == TrackMode.Audio || alcoholTrack.mode == TrackMode.AudioAlt);
 
                     switch(alcoholTrack.mode)
                     {
@@ -565,6 +577,7 @@ namespace Aaru.DiscImages
                 switch(trk.mode)
                 {
                     case TrackMode.Mode1:
+                    case TrackMode.Mode1Alt:
                     case TrackMode.Mode2F1:
                     case TrackMode.Mode2F1Alt:
                         if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
@@ -833,6 +846,7 @@ namespace Aaru.DiscImages
             switch(alcTrack.mode)
             {
                 case TrackMode.Mode1:
+                case TrackMode.Mode1Alt:
                 {
                     sectorOffset = 16;
                     sectorSize   = 2048;
@@ -856,6 +870,7 @@ namespace Aaru.DiscImages
                 }
 
                 case TrackMode.Audio:
+                case TrackMode.AudioAlt:
                 {
                     sectorOffset = 0;
                     sectorSize   = 2352;
@@ -984,6 +999,7 @@ namespace Aaru.DiscImages
             switch(alcTrack.mode)
             {
                 case TrackMode.Mode1:
+                case TrackMode.Mode1Alt:
                     switch(tag)
                     {
                         case SectorTagType.CdSectorSync:
@@ -1264,6 +1280,7 @@ namespace Aaru.DiscImages
 
                     break;
                 case TrackMode.Audio:
+                case TrackMode.AudioAlt:
                 {
                     switch(tag)
                     {
@@ -1383,12 +1400,14 @@ namespace Aaru.DiscImages
             switch(alcTrack.mode)
             {
                 case TrackMode.Mode1:
+                case TrackMode.Mode1Alt:
                 case TrackMode.Mode2:
                 case TrackMode.Mode2F1:
                 case TrackMode.Mode2F1Alt:
                 case TrackMode.Mode2F2:
                 case TrackMode.Mode2F2Alt:
                 case TrackMode.Audio:
+                case TrackMode.AudioAlt:
                 case TrackMode.DVD:
                 {
                     sectorOffset = 0;
