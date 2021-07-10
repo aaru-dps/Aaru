@@ -1725,7 +1725,7 @@ namespace Aaru.DiscImages
                 {
                     byte[] sector = new byte[sectorSize];
                     Array.Copy(buffer, (sectorSize + sectorSkip) * i, sector, 0, sectorSize);
-                    sector = Sector.GetUserDataFromMode2(sector);
+                    sector = Sector.GetUserData(sector);
                     mode2Ms.Write(sector, 0, sector.Length);
                 }
 
