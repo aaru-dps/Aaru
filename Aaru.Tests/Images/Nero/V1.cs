@@ -352,15 +352,25 @@ namespace Aaru.Tests.Images.Nero
                         Session = 1,
                         Start   = 3365,
                         End     = 38463,
-                        Pregap  = 150,
-                        Flags   = 4
+                        Pregap  = 225,
+                        Flags   = 4,
+                        Number  = 2,
+                        FileSystems = new[]
+                        {
+                            new FileSystemTest
+                            {
+                                Clusters    = 28672,
+                                ClusterSize = 2048,
+                                Type        = "PC Engine filesystem"
+                            }
+                        }
                     },
                     new TrackInfoTestExpected
                     {
                         Session = 1,
                         Start   = 38464,
                         End     = 47216,
-                        Pregap  = 225,
+                        Pregap  = 150,
                         Flags   = 0
                     },
                     new TrackInfoTestExpected
@@ -492,15 +502,27 @@ namespace Aaru.Tests.Images.Nero
                         Session = 1,
                         Start   = 4170,
                         End     = 4758,
-                        Pregap  = 150,
-                        Flags   = 4
+                        Pregap  = 225,
+                        Flags   = 4,
+                        Number  = 2,
+                        FileSystems = new[]
+                        {
+                            new FileSystemTest
+                            {
+                                Bootable    = true,
+                                Clusters    = 364,
+                                ClusterSize = 2048,
+                                Type        = "PC-FX",
+                                VolumeName  = "同級生２"
+                            }
+                        }
                     },
                     new TrackInfoTestExpected
                     {
                         Session = 1,
                         Start   = 4759,
                         End     = 5790,
-                        Pregap  = 0,
+                        Pregap  = 150,
                         Flags   = 4
                     },
                     new TrackInfoTestExpected
@@ -508,7 +530,7 @@ namespace Aaru.Tests.Images.Nero
                         Session = 1,
                         Start   = 5791,
                         End     = 41908,
-                        Pregap  = 0,
+                        Pregap  = 150,
                         Flags   = 4
                     },
                     new TrackInfoTestExpected
@@ -532,7 +554,7 @@ namespace Aaru.Tests.Images.Nero
                         Session = 1,
                         Start   = 225646,
                         End     = 235497,
-                        Pregap  = 225,
+                        Pregap  = 0,
                         Flags   = 0
                     },
                     new TrackInfoTestExpected
@@ -540,7 +562,7 @@ namespace Aaru.Tests.Images.Nero
                         Session = 1,
                         Start   = 235498,
                         End     = 246679,
-                        Pregap  = 150,
+                        Pregap  = 0,
                         Flags   = 0
                     }
                 }
@@ -685,7 +707,25 @@ namespace Aaru.Tests.Images.Nero
                         Start   = 0,
                         End     = 254264,
                         Pregap  = 150,
-                        Flags   = 4
+                        Flags   = 4,
+                        Number  = 1,
+                        FileSystems = new[]
+                        {
+                            new FileSystemTest
+                            {
+                                Clusters    = 63562,
+                                ClusterSize = 8192,
+                                Type        = "HFS",
+                                VolumeName  = "Winpower"
+                            },
+                            new FileSystemTest
+                            {
+                                Clusters    = 254265,
+                                ClusterSize = 2048,
+                                Type        = "ISO9660",
+                                VolumeName  = "Winpower"
+                            }
+                        }
                     }
                 }
             },
@@ -705,7 +745,19 @@ namespace Aaru.Tests.Images.Nero
                         Start   = 0,
                         End     = 308223,
                         Pregap  = 150,
-                        Flags   = 4
+                        Flags   = 4,
+                        Number  = 1,
+                        FileSystems = new[]
+                        {
+                            new FileSystemTest
+                            {
+                                Bootable    = true,
+                                Clusters    = 308224,
+                                ClusterSize = 2048,
+                                Type        = "ISO9660",
+                                VolumeName  = "ARCH_201901"
+                            }
+                        }
                     }
                 }
             },
@@ -829,7 +881,18 @@ namespace Aaru.Tests.Images.Nero
                         Start   = 234030,
                         End     = 303315,
                         Pregap  = 150,
-                        Flags   = 4
+                        Flags   = 4,
+                        Number  = 14,
+                        FileSystems = new[]
+                        {
+                            new FileSystemTest
+                            {
+                                Clusters    = 69136,
+                                ClusterSize = 2048,
+                                Type        = "ISO9660",
+                                VolumeName  = "Melanie C"
+                            }
+                        }
                     }
                 }
             },
@@ -949,7 +1012,26 @@ namespace Aaru.Tests.Images.Nero
                         Start   = 0,
                         End     = 350133,
                         Pregap  = 150,
-                        Flags   = 6
+                        Flags   = 6,
+                        Number  = 1,
+                        FileSystems = new[]
+                        {
+                            new FileSystemTest
+                            {
+                                Clusters    = 600,
+                                ClusterSize = 2048,
+                                Type        = "ISO9660",
+                                VolumeName  = "INCD"
+                            },
+                            new FileSystemTest
+                            {
+                                Clusters     = 402107,
+                                ClusterSize  = 2048,
+                                Type         = "UDF v2.00",
+                                VolumeName   = "InCD",
+                                VolumeSerial = "40888C15CA13D401InCD"
+                            }
+                        }
                     }
                 }
             },
@@ -969,7 +1051,18 @@ namespace Aaru.Tests.Images.Nero
                         Start   = 0,
                         End     = 1736,
                         Pregap  = 150,
-                        Flags   = 4
+                        Flags   = 4,
+                        Number  = 1,
+                        FileSystems = new[]
+                        {
+                            new FileSystemTest
+                            {
+                                Clusters    = 1587,
+                                ClusterSize = 2048,
+                                Type        = "ISO9660",
+                                VolumeName  = ""
+                            }
+                        }
                     },
                     new TrackInfoTestExpected
                     {
@@ -1161,7 +1254,26 @@ namespace Aaru.Tests.Images.Nero
                         Start   = 0,
                         End     = 8132,
                         Pregap  = 150,
-                        Flags   = 4
+                        Flags   = 4,
+                        Number  = 1,
+                        FileSystems = new[]
+                        {
+                            new FileSystemTest
+                            {
+                                Clusters    = 7876,
+                                ClusterSize = 2048,
+                                Type        = "ISO9660",
+                                VolumeName  = "Session 1"
+                            },
+                            new FileSystemTest
+                            {
+                                Clusters     = 9340,
+                                ClusterSize  = 2048,
+                                Type         = "UDF v1.02",
+                                VolumeName   = "Session 1",
+                                VolumeSerial = "50958B61AF6A749E"
+                            }
+                        }
                     },
                     new TrackInfoTestExpected
                     {
@@ -1169,7 +1281,26 @@ namespace Aaru.Tests.Images.Nero
                         Start   = 19383,
                         End     = 25959,
                         Pregap  = 150,
-                        Flags   = 4
+                        Flags   = 4,
+                        Number  = 2,
+                        FileSystems = new[]
+                        {
+                            new FileSystemTest
+                            {
+                                Clusters    = 6170,
+                                ClusterSize = 2048,
+                                Type        = "ISO9660",
+                                VolumeName  = "Session 2"
+                            },
+                            new FileSystemTest
+                            {
+                                Clusters     = 7381,
+                                ClusterSize  = 2048,
+                                Type         = "UDF v1.02",
+                                VolumeName   = "Session 2",
+                                VolumeSerial = "50958BBBAF6A7444"
+                            }
+                        }
                     },
                     new TrackInfoTestExpected
                     {
@@ -1177,7 +1308,26 @@ namespace Aaru.Tests.Images.Nero
                         Start   = 32710,
                         End     = 38477,
                         Pregap  = 150,
-                        Flags   = 4
+                        Flags   = 4,
+                        Number  = 3,
+                        FileSystems = new[]
+                        {
+                            new FileSystemTest
+                            {
+                                Clusters    = 5360,
+                                ClusterSize = 2048,
+                                Type        = "ISO9660",
+                                VolumeName  = "Session 3"
+                            },
+                            new FileSystemTest
+                            {
+                                Clusters     = 6451,
+                                ClusterSize  = 2048,
+                                Type         = "UDF v2.00",
+                                VolumeName   = "Session 3",
+                                VolumeSerial = "50958C19AF6A73E6"
+                            }
+                        }
                     },
                     new TrackInfoTestExpected
                     {
@@ -1185,7 +1335,26 @@ namespace Aaru.Tests.Images.Nero
                         Start   = 45228,
                         End     = 51167,
                         Pregap  = 150,
-                        Flags   = 4
+                        Flags   = 4,
+                        Number  = 4,
+                        FileSystems = new[]
+                        {
+                            new FileSystemTest
+                            {
+                                Clusters    = 45796,
+                                ClusterSize = 2048,
+                                Type        = "ISO9660",
+                                VolumeName  = "Session 4"
+                            },
+                            new FileSystemTest
+                            {
+                                Clusters     = 6649,
+                                ClusterSize  = 2048,
+                                Type         = "UDF v2.60",
+                                VolumeName   = "Session 4",
+                                VolumeSerial = "50958C82AF6A737D"
+                            }
+                        }
                     }
                 }
             },
@@ -1205,7 +1374,18 @@ namespace Aaru.Tests.Images.Nero
                         Start   = 0,
                         End     = 1101,
                         Pregap  = 150,
-                        Flags   = 4
+                        Flags   = 4,
+                        Number  = 1,
+                        FileSystems = new[]
+                        {
+                            new FileSystemTest
+                            {
+                                Clusters    = 1102,
+                                ClusterSize = 2048,
+                                Type        = "ISO9660",
+                                VolumeName  = "VIDEOCD"
+                            }
+                        }
                     },
                     new TrackInfoTestExpected
                     {
