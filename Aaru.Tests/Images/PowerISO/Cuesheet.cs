@@ -368,7 +368,25 @@ namespace Aaru.Tests.Images.PowerISO
                         Start   = 0,
                         End     = 254264,
                         Pregap  = 150,
-                        Flags   = 4
+                        Flags   = 4,
+                        Number  = 1,
+                        FileSystems = new[]
+                        {
+                            new FileSystemTest
+                            {
+                                Clusters    = 63562,
+                                ClusterSize = 8192,
+                                Type        = "HFS",
+                                VolumeName  = "Winpower"
+                            },
+                            new FileSystemTest
+                            {
+                                Clusters    = 254265,
+                                ClusterSize = 2048,
+                                Type        = "ISO9660",
+                                VolumeName  = "Winpower"
+                            }
+                        }
                     }
                 }
             },
@@ -387,7 +405,19 @@ namespace Aaru.Tests.Images.PowerISO
                         Start   = 0,
                         End     = 308223,
                         Pregap  = 150,
-                        Flags   = 4
+                        Flags   = 4,
+                        Number  = 1,
+                        FileSystems = new[]
+                        {
+                            new FileSystemTest
+                            {
+                                Bootable    = true,
+                                Clusters    = 308224,
+                                ClusterSize = 2048,
+                                Type        = "ISO9660",
+                                VolumeName  = "ARCH_201901"
+                            }
+                        }
                     }
                 }
             },
@@ -431,7 +461,7 @@ namespace Aaru.Tests.Images.PowerISO
                 }
             },
             */
-            /* This image is invalid an impossible to process properly due to a bug in PowerISO
+            /* This image is invalid and impossible to process properly due to a bug in PowerISO
             new OpticalImageTestExpected
             {
                 TestFile  = "report_enhancedcd.cue",
@@ -555,7 +585,9 @@ namespace Aaru.Tests.Images.PowerISO
                     }
                 }
             },
-            */ new OpticalImageTestExpected
+            */
+            /* This image is marked all as MODE2 tracks when they are MODE1 and Audio. PowerISO does not end to amaze me */
+            new OpticalImageTestExpected
             {
                 TestFile  = "test_multi_karaoke_sampler.cue",
                 MediaType = MediaType.CDROMXA,
