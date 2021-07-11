@@ -922,7 +922,7 @@ namespace Aaru.DiscImages
             byte[] buffer = new byte[sectorSize * length];
 
             _imageStream.
-                Seek((long)(aaruTrack.TrackFileOffset + (sectorAddress * (ulong)aaruTrack.TrackRawBytesPerSector)),
+                Seek((long)(aaruTrack.TrackFileOffset + (sectorAddress * (sectorOffset + sectorSize + sectorSkip))),
                      SeekOrigin.Begin);
 
             if(mode2)
@@ -1202,7 +1202,7 @@ namespace Aaru.DiscImages
             byte[] buffer = new byte[sectorSize * length];
 
             _imageStream.
-                Seek((long)(aaruTrack.TrackFileOffset + (sectorAddress * (ulong)aaruTrack.TrackRawBytesPerSector)),
+                Seek((long)(aaruTrack.TrackFileOffset + (sectorAddress * (sectorOffset + sectorSize + sectorSkip))),
                      SeekOrigin.Begin);
 
             if(sectorOffset == 0 &&
@@ -1286,9 +1286,8 @@ namespace Aaru.DiscImages
 
             byte[] buffer = new byte[sectorSize * length];
 
-            _imageStream.
-                Seek((long)(aaruTrack.TrackFileOffset + (sectorAddress * (ulong)aaruTrack.TrackRawBytesPerSector)),
-                     SeekOrigin.Begin);
+            _imageStream.Seek((long)(aaruTrack.TrackFileOffset + (sectorAddress * (sectorSize + sectorSkip))),
+                              SeekOrigin.Begin);
 
             if(sectorSkip == 0)
                 _imageStream.Read(buffer, 0, buffer.Length);
