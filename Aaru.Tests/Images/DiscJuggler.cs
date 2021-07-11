@@ -45,9 +45,9 @@ namespace Aaru.Tests.Images
                 TestFile      = "jaguarcd.cdi",
                 MediaType     = MediaType.CDDA,
                 Sectors       = 243587,
-                MD5           = "e234467539490be2db99d643b1d4e905",
-                LongMD5       = "e234467539490be2db99d643b1d4e905",
-                SubchannelMD5 = "d02a5fb43012a1f178a540d0e054d183",
+                MD5           = "01de32dcb21ac62be269ddd3bc99ab3e",
+                LongMD5       = "01de32dcb21ac62be269ddd3bc99ab3e",
+                SubchannelMD5 = "214794f37c41d1e2727eba68efdd369d",
                 Tracks = new[]
                 {
                     new TrackInfoTestExpected
@@ -145,9 +145,9 @@ namespace Aaru.Tests.Images
                 TestFile      = "make_audiocd.cdi",
                 MediaType     = MediaType.CDDA,
                 Sectors       = 277696,
-                MD5           = "d508a3d12a835098fd98096f2fb26d28",
-                LongMD5       = "d508a3d12a835098fd98096f2fb26d28",
-                SubchannelMD5 = "1d1974cf8c385b0e49c1d05f1aaafd2f",
+                MD5           = "0c355a31a7a488ec387c4508c498d6c0",
+                LongMD5       = "0c355a31a7a488ec387c4508c498d6c0",
+                SubchannelMD5 = "ac79fa4b07a042bcdd033a3e0319a0ae",
                 Tracks = new[]
                 {
                     new TrackInfoTestExpected
@@ -570,9 +570,9 @@ namespace Aaru.Tests.Images
                 TestFile      = "pcengine.cdi",
                 MediaType     = MediaType.CD,
                 Sectors       = 160956,
-                MD5           = "b7947d8d77c2ede5199293ee2ac387ed",
-                LongMD5       = "9fdbcb9827f0bbafcd886447b386bc58",
-                SubchannelMD5 = "19566671874ef21e4c4ba4de5fd5a7ad",
+                MD5           = "4fc2665cec77b289a68d35edbdd50730",
+                LongMD5       = "afabe77571db99e29cf4e6854b6f523e",
+                SubchannelMD5 = "c2026374c196855ee95f19de967f3ba1",
                 Tracks = new[]
                 {
                     new TrackInfoTestExpected
@@ -589,7 +589,17 @@ namespace Aaru.Tests.Images
                         Start   = 3365,
                         End     = 38463,
                         Pregap  = 225,
-                        Flags   = 0
+                        Flags   = 0,
+                        Number  = 2,
+                        FileSystems = new[]
+                        {
+                            new FileSystemTest
+                            {
+                                Clusters    = 28672,
+                                ClusterSize = 2048,
+                                Type        = "PC Engine filesystem"
+                            }
+                        }
                     },
                     new TrackInfoTestExpected
                     {
@@ -728,7 +738,19 @@ namespace Aaru.Tests.Images
                         Start   = 4245,
                         End     = 4758,
                         Pregap  = 150,
-                        Flags   = 0
+                        Flags   = 0,
+                        Number  = 2,
+                        FileSystems = new[]
+                        {
+                            new FileSystemTest
+                            {
+                                Bootable    = true,
+                                Clusters    = 364,
+                                ClusterSize = 2048,
+                                Type        = "PC-FX",
+                                VolumeName  = "同級生２"
+                            }
+                        }
                     },
                     new TrackInfoTestExpected
                     {
@@ -785,9 +807,9 @@ namespace Aaru.Tests.Images
                 TestFile      = "report_audiocd.cdi",
                 MediaType     = MediaType.CDDA,
                 Sectors       = 247073,
-                MD5           = "e1902c198525f387586ab32fa463efe0",
-                LongMD5       = "e1902c198525f387586ab32fa463efe0",
-                SubchannelMD5 = "60d2dc1a888b725e99c266f719eb7f86",
+                MD5           = "9f8abbb08746f86d7c3d0b1b22f1fcc2",
+                LongMD5       = "9f8abbb08746f86d7c3d0b1b22f1fcc2",
+                SubchannelMD5 = "1045e621183bf4c8a9d641f8a5767fec",
                 Tracks = new[]
                 {
                     new TrackInfoTestExpected
@@ -909,9 +931,9 @@ namespace Aaru.Tests.Images
                 TestFile      = "report_cdr.cdi",
                 MediaType     = MediaType.CDROM,
                 Sectors       = 254265,
-                MD5           = "4abf08d898571d66178fe5a318dbcbdc",
-                LongMD5       = "69216d103bd3f33700ca6cdf0aa4f8a9",
-                SubchannelMD5 = "52b2de0ac48037577a3b366847c4a978",
+                MD5           = "bf4bbec517101d0d6f45d2e4d50cb875",
+                LongMD5       = "3d3f9cf7d1ba2249b1e7960071e5af46",
+                SubchannelMD5 = "dc02efe9c59c0d0e72bb7d26d7f01bce",
                 Tracks = new[]
                 {
                     new TrackInfoTestExpected
@@ -920,7 +942,25 @@ namespace Aaru.Tests.Images
                         Start   = 0,
                         End     = 254264,
                         Pregap  = 150,
-                        Flags   = 4
+                        Flags   = 4,
+                        Number  = 1,
+                        FileSystems = new[]
+                        {
+                            new FileSystemTest
+                            {
+                                Clusters    = 63562,
+                                ClusterSize = 8192,
+                                Type        = "HFS",
+                                VolumeName  = "Winpower"
+                            },
+                            new FileSystemTest
+                            {
+                                Clusters    = 254265,
+                                ClusterSize = 2048,
+                                Type        = "ISO9660",
+                                VolumeName  = "Winpower"
+                            }
+                        }
                     }
                 }
             },
@@ -929,9 +969,9 @@ namespace Aaru.Tests.Images
                 TestFile      = "report_cdrom.cdi",
                 MediaType     = MediaType.CDROM,
                 Sectors       = 254265,
-                MD5           = "e82339f9cfadb5a2d3e940f18856c7b9",
-                LongMD5       = "0ce3bf582f21ea4455ebc7fe814d954a",
-                SubchannelMD5 = "9f71efc655fe0f04b09c78a403aa7fd0",
+                MD5           = "bf4bbec517101d0d6f45d2e4d50cb875",
+                LongMD5       = "3d3f9cf7d1ba2249b1e7960071e5af46",
+                SubchannelMD5 = "e0d121ac5c0e4e30a823ac445942feae",
                 Tracks = new[]
                 {
                     new TrackInfoTestExpected
@@ -940,7 +980,25 @@ namespace Aaru.Tests.Images
                         Start   = 0,
                         End     = 254264,
                         Pregap  = 150,
-                        Flags   = 4
+                        Flags   = 4,
+                        Number  = 1,
+                        FileSystems = new[]
+                        {
+                            new FileSystemTest
+                            {
+                                Clusters    = 63562,
+                                ClusterSize = 8192,
+                                Type        = "HFS",
+                                VolumeName  = "Winpower"
+                            },
+                            new FileSystemTest
+                            {
+                                Clusters    = 254265,
+                                ClusterSize = 2048,
+                                Type        = "ISO9660",
+                                VolumeName  = "Winpower"
+                            }
+                        }
                     }
                 }
             },
@@ -949,9 +1007,9 @@ namespace Aaru.Tests.Images
                 TestFile      = "report_cdrw_2x.cdi",
                 MediaType     = MediaType.CDROM,
                 Sectors       = 308224,
-                MD5           = "4f45a7c577f7f2c6c903a92b33fcfcb3",
-                LongMD5       = "0ec2ae2928913c159cab268dc09010e8",
-                SubchannelMD5 = "83e41e2d1f701f4f762cca6b61a57332",
+                MD5           = "1e55aa420ca8f8ea77d5b597c9cfc19b",
+                LongMD5       = "3af5f943ddb9427d9c63a4ce3b704db9",
+                SubchannelMD5 = "82e9a16a532717d7b733258d674073c3",
                 Tracks = new[]
                 {
                     new TrackInfoTestExpected
@@ -960,7 +1018,19 @@ namespace Aaru.Tests.Images
                         Start   = 0,
                         End     = 308223,
                         Pregap  = 150,
-                        Flags   = 4
+                        Flags   = 4,
+                        Number  = 1,
+                        FileSystems = new[]
+                        {
+                            new FileSystemTest
+                            {
+                                Bootable    = true,
+                                Clusters    = 308224,
+                                ClusterSize = 2048,
+                                Type        = "ISO9660",
+                                VolumeName  = "ARCH_201901"
+                            }
+                        }
                     }
                 }
             },
@@ -978,7 +1048,19 @@ namespace Aaru.Tests.Images
                         Session = 1,
                         Start   = 0,
                         End     = 1218960,
-                        Pregap  = 0
+                        Pregap  = 0,
+                        Number  = 1,
+                        FileSystems = new[]
+                        {
+                            new FileSystemTest
+                            {
+                                Bootable    = true,
+                                Clusters    = 471090,
+                                ClusterSize = 2048,
+                                Type        = "ISO9660",
+                                VolumeName  = "12_2_RELEASE_AMD64_CD"
+                            }
+                        }
                     }
                 }
             },
@@ -996,7 +1078,18 @@ namespace Aaru.Tests.Images
                         Session = 1,
                         Start   = 0,
                         End     = 2236704,
-                        Pregap  = 0
+                        Pregap  = 0,
+                        FileSystems = new[]
+                        {
+                            new FileSystemTest
+                            {
+                                Bootable    = true,
+                                Clusters    = 471090,
+                                ClusterSize = 2048,
+                                Type        = "ISO9660",
+                                VolumeName  = "12_2_RELEASE_AMD64_CD"
+                            }
+                        }
                     }
                 }
             },
@@ -1014,7 +1107,19 @@ namespace Aaru.Tests.Images
                         Session = 1,
                         Start   = 0,
                         End     = 2146367,
-                        Pregap  = 0
+                        Pregap  = 0,
+                        Number  = 1,
+                        FileSystems = new[]
+                        {
+                            new FileSystemTest
+                            {
+                                Bootable    = true,
+                                Clusters    = 2146357,
+                                ClusterSize = 2048,
+                                Type        = "ISO9660",
+                                VolumeName  = "SU1100.001"
+                            }
+                        }
                     }
                 }
             },
@@ -1032,7 +1137,19 @@ namespace Aaru.Tests.Images
                         Session = 1,
                         Start   = 0,
                         End     = 3455935,
-                        Pregap  = 0
+                        Pregap  = 0,
+                        Number  = 1,
+                        FileSystems = new[]
+                        {
+                            new FileSystemTest
+                            {
+                                Clusters     = 3455936,
+                                ClusterSize  = 2048,
+                                Type         = "UDF v1.02",
+                                VolumeName   = "Test DVD",
+                                VolumeSerial = "483E25D50034BBB0"
+                            }
+                        }
                     }
                 }
             },
@@ -1050,7 +1167,19 @@ namespace Aaru.Tests.Images
                         Session = 1,
                         Start   = 0,
                         End     = 2146367,
-                        Pregap  = 0
+                        Pregap  = 0,
+                        Number  = 1,
+                        FileSystems = new[]
+                        {
+                            new FileSystemTest
+                            {
+                                Bootable    = true,
+                                Clusters    = 2146357,
+                                ClusterSize = 2048,
+                                Type        = "ISO9660",
+                                VolumeName  = "SU1100.001"
+                            }
+                        }
                     }
                 }
             },
@@ -1068,7 +1197,19 @@ namespace Aaru.Tests.Images
                         Session = 1,
                         Start   = 0,
                         End     = 2295103,
-                        Pregap  = 0
+                        Pregap  = 0,
+                        Number  = 1,
+                        FileSystems = new[]
+                        {
+                            new FileSystemTest
+                            {
+                                Bootable    = true,
+                                Clusters    = 2146357,
+                                ClusterSize = 2048,
+                                Type        = "ISO9660",
+                                VolumeName  = "SU1100.001"
+                            }
+                        }
                     }
                 }
             },
@@ -1086,7 +1227,19 @@ namespace Aaru.Tests.Images
                         Session = 1,
                         Start   = 0,
                         End     = 2146367,
-                        Pregap  = 0
+                        Pregap  = 0,
+                        Number  = 1,
+                        FileSystems = new[]
+                        {
+                            new FileSystemTest
+                            {
+                                Bootable    = true,
+                                Clusters    = 2146357,
+                                ClusterSize = 2048,
+                                Type        = "ISO9660",
+                                VolumeName  = "SU1100.001"
+                            }
+                        }
                     }
                 }
             },
@@ -1095,9 +1248,9 @@ namespace Aaru.Tests.Images
                 TestFile      = "report_enhancedcd.cdi",
                 MediaType     = MediaType.CDPLUS,
                 Sectors       = 303316,
-                MD5           = "1c36703fc9ec010a379a3d4d67f50282",
-                LongMD5       = "307c8371b37c7697488e20fc6851357b",
-                SubchannelMD5 = "3a25924bc1b51602e76edf931954ea37",
+                MD5           = "7a76c22590401d57b84396c9fc2925e4",
+                LongMD5       = "63a318522c436ccd6b3ac3959bdb417f",
+                SubchannelMD5 = "2581844f8192c719da44ba57e8e5512b",
                 Tracks = new[]
                 {
                     new TrackInfoTestExpected
@@ -1210,7 +1363,18 @@ namespace Aaru.Tests.Images
                         Start   = 234030,
                         End     = 303315,
                         Pregap  = 150,
-                        Flags   = 4
+                        Flags   = 4,
+                        Number  = 14,
+                        FileSystems = new[]
+                        {
+                            new FileSystemTest
+                            {
+                                Clusters    = 69136,
+                                ClusterSize = 2048,
+                                Type        = "ISO9660",
+                                VolumeName  = "Melanie C"
+                            }
+                        }
                     }
                 }
             },
@@ -1344,7 +1508,18 @@ namespace Aaru.Tests.Images
                         Start   = 40203,
                         End     = 59205,
                         Pregap  = 150,
-                        Flags   = 4
+                        Flags   = 4,
+                        Number  = 3,
+                        FileSystems = new[]
+                        {
+                            new FileSystemTest
+                            {
+                                Clusters    = 18853,
+                                ClusterSize = 2048,
+                                Type        = "ISO9660",
+                                VolumeName  = "New"
+                            }
+                        }
                     }
                 }
             },
@@ -1363,7 +1538,26 @@ namespace Aaru.Tests.Images
                         Start   = 0,
                         End     = 350133,
                         Pregap  = 150,
-                        Flags   = 7
+                        Flags   = 7,
+                        Number  = 1,
+                        FileSystems = new[]
+                        {
+                            new FileSystemTest
+                            {
+                                Clusters    = 600,
+                                ClusterSize = 2048,
+                                Type        = "ISO9660",
+                                VolumeName  = "INCD"
+                            },
+                            new FileSystemTest
+                            {
+                                Clusters     = 399371,
+                                ClusterSize  = 2048,
+                                Type         = "UDF v2.00",
+                                VolumeName   = "InCD",
+                                VolumeSerial = "40888C15CA13D401InCD"
+                            }
+                        }
                     }
                 }
             },
@@ -1372,9 +1566,9 @@ namespace Aaru.Tests.Images
                 TestFile      = "test_karaoke_multi_sampler.cdi",
                 MediaType     = MediaType.CDROMXA,
                 Sectors       = 329158,
-                MD5           = "263c2c008e004547ba2881b9762b446d",
-                LongMD5       = "a9c13dc60e24180f6e4f521112e83592",
-                SubchannelMD5 = "c7741b1dee59d7005548872c53424cc4",
+                MD5           = "a34e29e42b60023a6ae59f37d2bd4bea",
+                LongMD5       = "e981f7dfdb522ba937fe75474e23a446",
+                SubchannelMD5 = "62164333675c194acbe14eed5213e4f4",
                 Tracks = new[]
                 {
                     new TrackInfoTestExpected
@@ -1383,7 +1577,18 @@ namespace Aaru.Tests.Images
                         Start   = 0,
                         End     = 1736,
                         Pregap  = 150,
-                        Flags   = 4
+                        Flags   = 4,
+                        Number  = 1,
+                        FileSystems = new[]
+                        {
+                            new FileSystemTest
+                            {
+                                Clusters    = 1587,
+                                ClusterSize = 2048,
+                                Type        = "ISO9660",
+                                VolumeName  = ""
+                            }
+                        }
                     },
                     new TrackInfoTestExpected
                     {
@@ -1573,7 +1778,26 @@ namespace Aaru.Tests.Images
                         Start   = 0,
                         End     = 8132,
                         Pregap  = 150,
-                        Flags   = 4
+                        Flags   = 4,
+                        Number  = 1,
+                        FileSystems = new[]
+                        {
+                            new FileSystemTest
+                            {
+                                Clusters    = 7876,
+                                ClusterSize = 2048,
+                                Type        = "ISO9660",
+                                VolumeName  = "Session 1"
+                            },
+                            new FileSystemTest
+                            {
+                                Clusters     = 9276,
+                                ClusterSize  = 2048,
+                                Type         = "UDF v1.02",
+                                VolumeName   = "Session 1",
+                                VolumeSerial = "50958B61AF6A749E"
+                            }
+                        }
                     },
                     new TrackInfoTestExpected
                     {
@@ -1581,7 +1805,26 @@ namespace Aaru.Tests.Images
                         Start   = 19383,
                         End     = 25959,
                         Pregap  = 150,
-                        Flags   = 4
+                        Flags   = 4,
+                        Number  = 2,
+                        FileSystems = new[]
+                        {
+                            new FileSystemTest
+                            {
+                                Clusters    = 6170,
+                                ClusterSize = 2048,
+                                Type        = "ISO9660",
+                                VolumeName  = "Session 2"
+                            },
+                            new FileSystemTest
+                            {
+                                Clusters     = 7330,
+                                ClusterSize  = 2048,
+                                Type         = "UDF v1.02",
+                                VolumeName   = "Session 2",
+                                VolumeSerial = "50958BBBAF6A7444"
+                            }
+                        }
                     },
                     new TrackInfoTestExpected
                     {
@@ -1589,7 +1832,26 @@ namespace Aaru.Tests.Images
                         Start   = 32710,
                         End     = 38477,
                         Pregap  = 150,
-                        Flags   = 4
+                        Flags   = 4,
+                        Number  = 3,
+                        FileSystems = new[]
+                        {
+                            new FileSystemTest
+                            {
+                                Clusters    = 5360,
+                                ClusterSize = 2048,
+                                Type        = "ISO9660",
+                                VolumeName  = "Session 3"
+                            },
+                            new FileSystemTest
+                            {
+                                Clusters     = 6408,
+                                ClusterSize  = 2048,
+                                Type         = "UDF v2.00",
+                                VolumeName   = "Session 3",
+                                VolumeSerial = "50958C19AF6A73E6"
+                            }
+                        }
                     },
                     new TrackInfoTestExpected
                     {
@@ -1615,7 +1877,18 @@ namespace Aaru.Tests.Images
                         Session = 1,
                         Start   = 0,
                         End     = 230623,
-                        Pregap  = 0
+                        Pregap  = 0,
+                        Number  = 1,
+                        FileSystems = new[]
+                        {
+                            new FileSystemTest
+                            {
+                                Clusters    = 22016,
+                                ClusterSize = 2048,
+                                Type        = "ISO9660",
+                                VolumeName  = "Session 1"
+                            }
+                        }
                     }
                 }
             },
@@ -1633,7 +1906,18 @@ namespace Aaru.Tests.Images
                         Session = 1,
                         Start   = 0,
                         End     = 257263,
-                        Pregap  = 0
+                        Pregap  = 0,
+                        Number  = 1,
+                        FileSystems = new[]
+                        {
+                            new FileSystemTest
+                            {
+                                Clusters    = 206560,
+                                ClusterSize = 2048,
+                                Type        = "ISO9660",
+                                VolumeName  = "Session 1"
+                            }
+                        }
                     }
                 }
             },
@@ -1652,7 +1936,18 @@ namespace Aaru.Tests.Images
                         Start   = 0,
                         End     = 1101,
                         Pregap  = 150,
-                        Flags   = 4
+                        Flags   = 4,
+                        Number  = 1,
+                        FileSystems = new[]
+                        {
+                            new FileSystemTest
+                            {
+                                Clusters    = 1102,
+                                ClusterSize = 2048,
+                                Type        = "ISO9660",
+                                VolumeName  = "VIDEOCD"
+                            }
+                        }
                     },
                     new TrackInfoTestExpected
                     {
