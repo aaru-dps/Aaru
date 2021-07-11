@@ -741,8 +741,10 @@ namespace Aaru.DiscImages
 
                         currentSession = new Session
                         {
-                            EndTrack        = uint.MinValue,
-                            StartTrack      = uint.MaxValue,
+                            EndTrack        = track.TrackSequence,
+                            StartTrack      = track.TrackSequence,
+                            StartSector     = track.TrackStartSector,
+                            EndSector       = track.TrackEndSector,
                             SessionSequence = track.TrackSession
                         };
                     }
@@ -762,6 +764,8 @@ namespace Aaru.DiscImages
                     Partitions.Add(partition);
                     _offsetMap.Add(track.TrackSequence, track.TrackStartSector);
                 }
+
+                Sessions.Add(currentSession);
 
                 bool data       = false;
                 bool mode2      = false;
