@@ -894,7 +894,7 @@ namespace Aaru.DiscImages
                 {
                     mode2        = true;
                     sectorOffset = 0;
-                    sectorSize   = 2336;
+                    sectorSize   = (uint)aaruTrack.TrackRawBytesPerSector;
                     sectorSkip   = 0;
                 }
 
