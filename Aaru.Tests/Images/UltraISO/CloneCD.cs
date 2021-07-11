@@ -48,9 +48,9 @@ namespace Aaru.Tests.Images.UltraISO
                 TestFile      = "cdiready_the_apprentice.ccd",
                 MediaType     = MediaType.CDDA,
                 Sectors       = 279300,
-                MD5           = "71fc4b536d1c9f2091191a73bee61224",
-                LongMD5       = "71fc4b536d1c9f2091191a73bee61224",
-                SubchannelMD5 = "1e861faaed927d1d87481af9be144e82",
+                MD5           = "e159c422cba79ce772437458c11c00d8",
+                LongMD5       = "e159c422cba79ce772437458c11c00d8",
+                SubchannelMD5 = "f43afdef9df3fc5b3d74494f0908223f",
                 Tracks = new[]
                 {
                     new TrackInfoTestExpected
@@ -371,7 +371,25 @@ namespace Aaru.Tests.Images.UltraISO
                         Start   = 0,
                         End     = 254264,
                         Pregap  = 150,
-                        Flags   = 4
+                        Flags   = 4,
+                        Number  = 1,
+                        FileSystems = new[]
+                        {
+                            new FileSystemTest
+                            {
+                                Clusters    = 63562,
+                                ClusterSize = 8192,
+                                Type        = "HFS",
+                                VolumeName  = "Winpower"
+                            },
+                            new FileSystemTest
+                            {
+                                Clusters    = 254265,
+                                ClusterSize = 2048,
+                                Type        = "ISO9660",
+                                VolumeName  = "Winpower"
+                            }
+                        }
                     }
                 }
             },
@@ -391,18 +409,30 @@ namespace Aaru.Tests.Images.UltraISO
                         Start   = 0,
                         End     = 308223,
                         Pregap  = 150,
-                        Flags   = 4
+                        Flags   = 4,
+                        Number  = 1,
+                        FileSystems = new[]
+                        {
+                            new FileSystemTest
+                            {
+                                Bootable    = true,
+                                Clusters    = 308224,
+                                ClusterSize = 2048,
+                                Type        = "ISO9660",
+                                VolumeName  = "ARCH_201901"
+                            }
+                        }
                     }
                 }
             },
             new OpticalImageTestExpected
             {
                 TestFile      = "report_enhancedcd.ccd",
-                MediaType     = MediaType.CDROMXA,
+                MediaType     = MediaType.CDPLUS,
                 Sectors       = 303316,
-                MD5           = "d9cac5c4bca6b7602dba1c24d2422dc8",
-                LongMD5       = "7803befa8bcbfec1f1436007e655bc64",
-                SubchannelMD5 = "1a33cf859da5c39486a8cbd15ed1fce9",
+                MD5           = "97e5bf1caf3998e818d40cd845c6ecc9",
+                LongMD5       = "07b4d88c8f38cc0168a2f5725b31c52e",
+                SubchannelMD5 = "74910fc131a456fa3d39a666dcee3dcc",
                 Tracks = new[]
                 {
                     new TrackInfoTestExpected
@@ -515,7 +545,18 @@ namespace Aaru.Tests.Images.UltraISO
                         Start   = 234030,
                         End     = 303315,
                         Pregap  = 150,
-                        Flags   = 0
+                        Flags   = 0,
+                        Number  = 14,
+                        FileSystems = new[]
+                        {
+                            new FileSystemTest
+                            {
+                                Clusters    = 69136,
+                                ClusterSize = 2048,
+                                Type        = "ISO9660",
+                                VolumeName  = "Melanie C"
+                            }
+                        }
                     }
                 }
             },
@@ -535,7 +576,18 @@ namespace Aaru.Tests.Images.UltraISO
                         Start   = 0,
                         End     = 1886,
                         Pregap  = 150,
-                        Flags   = 4
+                        Flags   = 4,
+                        Number  = 1,
+                        FileSystems = new[]
+                        {
+                            new FileSystemTest
+                            {
+                                Clusters    = 1587,
+                                ClusterSize = 2048,
+                                Type        = "ISO9660",
+                                VolumeName  = ""
+                            }
+                        }
                     },
                     new TrackInfoTestExpected
                     {
