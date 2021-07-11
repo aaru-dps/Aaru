@@ -64,5 +64,7 @@ namespace Aaru.DiscImages
         const string ENTRY_PLBA         = @"^\s*PLBA\s*=\s*(?<value>\d+)";
         const string CDTEXT_ENTRIES     = @"^\s*Entries\s*=\s*(?<value>\d+)";
         const string CDTEXT_ENTRY       = @"^\s*Entry\s*(?<number>\d+)\s*=\s*(?<value>([0-9a-fA-F]+\s*)+)";
+        const string TRACK_MODE         = @"^\s*MODE\s*=\s*(?<value>\d+)";
+        const string TRACK_INDEX        = @"^\s*INDEX\s*(?<index>\d+)\s*=\s*(?<lba>\d+)";
     }
 }

@@ -91,18 +91,23 @@ namespace Aaru.DiscImages
                 var entPlbaRegex   = new Regex(ENTRY_PLBA);
                 var cdtEntsRegex   = new Regex(CDTEXT_ENTRIES);
                 var cdtEntRegex    = new Regex(CDTEXT_ENTRY);
+                var trkModeRegex   = new Regex(TRACK_MODE);
+                var trkIndexRegex  = new Regex(TRACK_INDEX);
 
-                bool                              inCcd        = false;
-                bool                              inDisk       = false;
-                bool                              inSession    = false;
-                bool                              inEntry      = false;
-                bool                              inTrack      = false;
-                bool                              inCdText     = false;
-                var                               cdtMs        = new MemoryStream();
-                int                               minSession   = int.MaxValue;
-                int                               maxSession   = int.MinValue;
-                var                               currentEntry = new FullTOC.TrackDataDescriptor();
-                List<FullTOC.TrackDataDescriptor> entries      = new List<FullTOC.TrackDataDescriptor>();
+                bool                                    inCcd = false;
+                bool                                    inDisk = false;
+                bool                                    inSession = false;
+                bool                                    inEntry = false;
+                bool                                    inTrack = false;
+                bool                                    inCdText = false;
+                var                                     cdtMs = new MemoryStream();
+                int                                     minSession = int.MaxValue;
+                int                                     maxSession = int.MinValue;
+                var                                     currentEntry = new FullTOC.TrackDataDescriptor();
+                byte                                    currentTrackEntry = 0;
+                Dictionary<byte, int>                   trackModes = new Dictionary<byte, int>();
+                Dictionary<byte, Dictionary<byte, int>> trackIndexes = new Dictionary<byte, Dictionary<byte, int>>();
+                List<FullTOC.TrackDataDescriptor>       entries = new List<FullTOC.TrackDataDescriptor>();
                 _scrambled = false;
                 _catalog   = null;
 
@@ -154,6 +159,9 @@ namespace Aaru.DiscImages
                         inEntry   = entryIdMatch.Success;
                         inTrack   = trackIdMatch.Success;
                         inCdText  = cdtIdMatch.Success;
+
+                        if(inTrack)
+                            currentTrackEntry = Convert.ToByte(trackIdMatch.Groups["number"].Value, 10);
                     }
                     else
                     {
@@ -330,6 +338,26 @@ namespace Aaru.DiscImages
                             }
                             else if(entPlbaMatch.Success)
                                 AaruConsole.DebugWriteLine("CloneCD plugin", "Found PLBA at line {0}", lineNumber);
+                        }
+                        else if(inTrack)
+                        {
+                            Match trkModeMatch  = trkModeRegex.Match(line);
+                            Match trkIndexMatch = trkIndexRegex.Match(line);
+
+                            if(trkModeMatch.Success &&
+                               currentTrackEntry > 0)
+                                trackModes[currentTrackEntry] = Convert.ToByte(trkModeMatch.Groups["value"].Value, 10);
+                            else if(trkIndexMatch.Success &&
+                                    currentTrackEntry > 0)
+                            {
+                                byte indexNo  = Convert.ToByte(trkIndexMatch.Groups["index"].Value, 10);
+                                int  indexLba = Convert.ToInt32(trkIndexMatch.Groups["lba"].Value, 10);
+
+                                if(!trackIndexes.TryGetValue(currentTrackEntry, out _))
+                                    trackIndexes[currentTrackEntry] = new Dictionary<byte, int>();
+
+                                trackIndexes[currentTrackEntry][indexNo] = indexLba;
+                            }
                         }
                     }
                 }
@@ -570,6 +598,25 @@ namespace Aaru.DiscImages
 
                             if(_subFilter != null)
                                 tmpTrack.TrackSubchannelOffset -= (ulong)(96 * indexDifference);
+                        }
+                    }
+
+                    if(trackModes.TryGetValue((byte)tmpTrack.TrackSequence, out int trackMode))
+                        tmpTrack.TrackType = trackMode switch
+                        {
+                            1 => TrackType.CdMode1,
+                            2 => TrackType.CdMode2Formless
+                        };
+
+                    if(trackIndexes.TryGetValue((byte)tmpTrack.TrackSequence, out Dictionary<byte, int> indexes))
+                    {
+                        foreach(KeyValuePair<byte, int> trackIndex in indexes.OrderBy(i => i.Key))
+                        {
+                            if(trackIndex.Key <= 1)
+                                continue;
+
+                            // Untested as of 20210711
+                            tmpTrack.Indexes[trackIndex.Key] = tmpTrack.Indexes[1] + trackIndex.Value;
                         }
                     }
 
