@@ -752,12 +752,12 @@ namespace Aaru.DiscImages
                     var partition = new Partition
                     {
                         Description = track.TrackDescription,
-                        Size = (track.TrackEndSector - track.TrackStartSector + 1) *
+                        Size = (track.TrackEndSector - (ulong)track.Indexes[1] + 1) *
                                (ulong)track.TrackRawBytesPerSector,
-                        Length   = track.TrackEndSector - track.TrackStartSector + 1,
+                        Length   = track.TrackEndSector - (ulong)track.Indexes[1] + 1,
                         Sequence = track.TrackSequence,
                         Offset   = track.TrackFileOffset,
-                        Start    = track.TrackStartSector,
+                        Start    = (ulong)track.Indexes[1],
                         Type     = track.TrackType.ToString()
                     };
 
