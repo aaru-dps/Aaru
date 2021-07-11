@@ -547,13 +547,30 @@ namespace Aaru.DiscImages
                 {
                     tmpTrack.TrackFileOffset = currentDataOffset;
 
-                    currentDataOffset += 2352 * (tmpTrack.TrackEndSector - tmpTrack.TrackStartSector + 1);
+                    currentDataOffset += 2352 * (tmpTrack.TrackEndSector - (ulong)tmpTrack.Indexes[1] + 1);
 
                     if(_subFilter != null)
                     {
                         tmpTrack.TrackSubchannelOffset = currentSubchannelOffset;
 
-                        currentSubchannelOffset += 96 * (tmpTrack.TrackEndSector - tmpTrack.TrackStartSector + 1);
+                        currentSubchannelOffset += 96 * (tmpTrack.TrackEndSector - (ulong)tmpTrack.Indexes[1] + 1);
+                    }
+
+                    if(tmpTrack.Indexes.TryGetValue(0, out int idx0))
+                    {
+                        if(idx0 < 0)
+                        {
+                            tmpTrack.TrackFileOffset       = 0;
+                            tmpTrack.TrackSubchannelOffset = 0;
+                        }
+                        else
+                        {
+                            int indexDifference = tmpTrack.Indexes[1] - idx0;
+                            tmpTrack.TrackFileOffset -= (ulong)(2352 * indexDifference);
+
+                            if(_subFilter != null)
+                                tmpTrack.TrackSubchannelOffset -= (ulong)(96 * indexDifference);
+                        }
                     }
 
                     if(tmpTrack.TrackType == TrackType.Data)
