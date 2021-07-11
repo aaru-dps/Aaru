@@ -575,7 +575,7 @@ namespace Aaru.DiscImages
 
                     if(tmpTrack.TrackType == TrackType.Data)
                     {
-                        for(int s = 0; s < 750; s++)
+                        for(int s = 225; s < 750; s++)
                         {
                             byte[] syncTest = new byte[12];
                             byte[] sectTest = new byte[2352];
