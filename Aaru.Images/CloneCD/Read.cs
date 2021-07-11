@@ -604,8 +604,10 @@ namespace Aaru.DiscImages
                     if(trackModes.TryGetValue((byte)tmpTrack.TrackSequence, out int trackMode))
                         tmpTrack.TrackType = trackMode switch
                         {
+                            0 => TrackType.Audio,
                             1 => TrackType.CdMode1,
-                            2 => TrackType.CdMode2Formless
+                            2 => TrackType.CdMode2Formless,
+                            _ => TrackType.Data
                         };
 
                     if(trackIndexes.TryGetValue((byte)tmpTrack.TrackSequence, out Dictionary<byte, int> indexes))
@@ -616,7 +618,7 @@ namespace Aaru.DiscImages
                                 continue;
 
                             // Untested as of 20210711
-                            tmpTrack.Indexes[trackIndex.Key] = tmpTrack.Indexes[1] + trackIndex.Value;
+                            tmpTrack.Indexes[trackIndex.Key] = trackIndex.Value;
                         }
                     }
 
