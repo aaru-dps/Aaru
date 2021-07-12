@@ -45,7 +45,7 @@ namespace Aaru.Tests.Images.UltraISO
             new OpticalImageTestExpected
             {
                 TestFile  = "cdiready_the_apprentice.mds",
-                MediaType = MediaType.CDDA,
+                MediaType = MediaType.CDROMXA,
                 Sectors   = 279300,
                 MD5       = "556d7d32e3c01c2087cc56b25fe5f66d",
                 LongMD5   = "556d7d32e3c01c2087cc56b25fe5f66d",
@@ -232,7 +232,7 @@ namespace Aaru.Tests.Images.UltraISO
             new OpticalImageTestExpected
             {
                 TestFile  = "report_audiocd.mds",
-                MediaType = MediaType.CDDA,
+                MediaType = MediaType.CDROMXA,
                 Sectors   = 247073,
                 MD5       = "c96a7bf12427078bab252d941716cc32",
                 LongMD5   = "c96a7bf12427078bab252d941716cc32",
