@@ -45,11 +45,12 @@ namespace Aaru.Tests.Images.cdrdao.raw
         {
             new OpticalImageTestExpected
             {
-                TestFile  = "gigarec.toc",
-                MediaType = MediaType.CDROM,
-                Sectors   = 469652,
-                MD5       = "b7659466b925296a36390c58c480e4bb",
-                LongMD5   = "51bf2c54fee363520906709cc42a710a",
+                TestFile      = "gigarec.toc",
+                MediaType     = MediaType.CDROM,
+                Sectors       = 469652,
+                MD5           = "cafcd998298d8d1d447ab2e567638c9e",
+                LongMD5       = "092b4207604685c6b274068b6eca52c0",
+                SubchannelMD5 = "607c53d8ea5589bbc8a3e4ff5857cb5d",
                 Tracks = new[]
                 {
                     new TrackInfoTestExpected
