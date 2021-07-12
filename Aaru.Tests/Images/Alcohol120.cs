@@ -45,7 +45,7 @@ namespace Aaru.Tests.Images
             new OpticalImageTestExpected
             {
                 TestFile      = "cdiready_the_apprentice.mds",
-                MediaType     = MediaType.CDDA,
+                MediaType     = MediaType.CDROMXA,
                 Sectors       = 279300,
                 MD5           = "556d7d32e3c01c2087cc56b25fe5f66d",
                 LongMD5       = "556d7d32e3c01c2087cc56b25fe5f66d",
@@ -264,7 +264,7 @@ namespace Aaru.Tests.Images
             new OpticalImageTestExpected
             {
                 TestFile      = "jaguarcd.mds",
-                MediaType     = MediaType.CDDA,
+                MediaType     = MediaType.CDROMXA,
                 Sectors       = 243587,
                 MD5           = "1dee46e2fa0de388d1f225ab8fa6d0b4",
                 LongMD5       = "1dee46e2fa0de388d1f225ab8fa6d0b4",
@@ -364,7 +364,7 @@ namespace Aaru.Tests.Images
             new OpticalImageTestExpected
             {
                 TestFile      = "pcengine.mds",
-                MediaType     = MediaType.CD,
+                MediaType     = MediaType.CDROMXA,
                 Sectors       = 160956,
                 MD5           = "248ff28ea147ecdf0724fdfb0e59174a",
                 LongMD5       = "eb48e46f5bd085dd6f9936d89afe6e9b",
@@ -514,7 +514,7 @@ namespace Aaru.Tests.Images
             new OpticalImageTestExpected
             {
                 TestFile      = "pcfx.mds",
-                MediaType     = MediaType.CD,
+                MediaType     = MediaType.CDROMXA,
                 Sectors       = 246680,
                 MD5           = "64d6baf711d2e0f24499d284ac2bc580",
                 LongMD5       = "f0af56f9d093b214e1b7c9148a869eb3",
@@ -602,7 +602,7 @@ namespace Aaru.Tests.Images
             new OpticalImageTestExpected
             {
                 TestFile      = "report_audiocd.mds",
-                MediaType     = MediaType.CDDA,
+                MediaType     = MediaType.CDROMXA,
                 Sectors       = 247073,
                 MD5           = "ff35cfa013871b322ef54612e719c185",
                 LongMD5       = "ff35cfa013871b322ef54612e719c185",
@@ -723,6 +723,7 @@ namespace Aaru.Tests.Images
                     }
                 }
             },
+
             // TODO: Needs redump, corrupted image
             new OpticalImageTestExpected
             {
@@ -762,6 +763,7 @@ namespace Aaru.Tests.Images
                     }
                 }
             },
+
             // TODO: Needs redump, corrupted image
             new OpticalImageTestExpected
             {
@@ -933,6 +935,7 @@ namespace Aaru.Tests.Images
                     }
                 }
             },
+
             // TODO: Needs redump, corrupted image
             new OpticalImageTestExpected
             {
@@ -964,6 +967,7 @@ namespace Aaru.Tests.Images
                     }
                 }
             },
+
             // TODO: Needs redump, corrupted image
             new OpticalImageTestExpected
             {
@@ -995,6 +999,7 @@ namespace Aaru.Tests.Images
                     }
                 }
             },
+
             // TODO: Needs redump, corrupted image
             new OpticalImageTestExpected
             {
@@ -1026,6 +1031,7 @@ namespace Aaru.Tests.Images
                     }
                 }
             },
+
             // TODO: Needs redump, corrupted image
             new OpticalImageTestExpected
             {
@@ -1057,6 +1063,7 @@ namespace Aaru.Tests.Images
                     }
                 }
             },
+
             // TODO: Needs redump, corrupted image
             new OpticalImageTestExpected
             {
@@ -1409,6 +1416,7 @@ namespace Aaru.Tests.Images
                     }
                 }
             },
+
             // TODO: Needs redump, corrupted image
             new OpticalImageTestExpected
             {
