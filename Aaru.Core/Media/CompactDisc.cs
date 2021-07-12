@@ -417,7 +417,7 @@ namespace Aaru.Core.Media
                                                                      Min(t => t.TrackSequence);
 
                                 if(tracks[i].TrackSequence == firstTrackNumberInSameSession)
-                                    break;
+                                    continue;
 
                                 if(qPos < smallestPregapLbaPerTrack[trackNo])
                                 {
