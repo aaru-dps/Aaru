@@ -1,9 +1,15 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using Aaru.Checksums;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Structs;
+using Aaru.Core;
+using Aaru.Tests.Filesystems;
 using FluentAssertions.Execution;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using NUnit.Framework;
 
 namespace Aaru.Tests.Images
@@ -113,6 +119,185 @@ namespace Aaru.Tests.Images
                     }
 
                     Assert.AreEqual(test.MD5, ctx.End(), $"Hash: {testFile}");
+                }
+            });
+        }
+
+        [Test]
+        public void Contents()
+        {
+            Environment.CurrentDirectory = DataFolder;
+            PluginBase plugins = GetPluginBase.Instance;
+
+            Assert.Multiple(() =>
+            {
+                foreach(BlockImageTestExpected test in Tests)
+                {
+                    if(test.Partitions is null)
+                        continue;
+
+                    string testFile = test.TestFile;
+
+                    bool exists = File.Exists(testFile);
+                    Assert.True(exists, $"{testFile} not found");
+
+                    // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+                    // It arrives here...
+                    if(!exists)
+                        continue;
+
+                    var     filtersList = new FiltersList();
+                    IFilter filter      = filtersList.GetFilter(testFile);
+                    filter.Open(testFile);
+
+                    var image = Activator.CreateInstance(_plugin.GetType()) as IMediaImage;
+                    Assert.NotNull(image, $"Could not instantiate filesystem for {testFile}");
+
+                    bool opened = image.Open(filter);
+                    Assert.AreEqual(true, opened, $"Open: {testFile}");
+
+                    if(!opened)
+                        continue;
+
+                    List<Partition> partitions = Core.Partitions.GetAll(image);
+
+                    if(partitions.Count == 0)
+                    {
+                        partitions.Add(new Partition
+                        {
+                            Description = "Whole device",
+                            Length      = image.Info.Sectors,
+                            Offset      = 0,
+                            Size        = image.Info.SectorSize * image.Info.Sectors,
+                            Sequence    = 1,
+                            Start       = 0
+                        });
+                    }
+
+                    Assert.AreEqual(test.Partitions.Length, partitions.Count,
+                                    $"Expected {test.Partitions.Length} partitions in {testFile} but found {partitions.Count}");
+
+                    using(new AssertionScope())
+                    {
+                        Assert.Multiple(() =>
+                        {
+                            for(int i = 0; i < test.Partitions.Length; i++)
+                            {
+                                BlockPartitionVolumes expectedPartition = test.Partitions[i];
+                                Partition             foundPartition    = partitions[i];
+
+                                Assert.AreEqual(expectedPartition.Start, foundPartition.Start,
+                                                $"Expected partition {i} to start at sector {expectedPartition.Start} but found it starts at {foundPartition.Start}");
+
+                                Assert.AreEqual(expectedPartition.Length, foundPartition.Length,
+                                                $"Expected partition {i} to have {expectedPartition.Length} sectors but found it has {foundPartition.Length} sectors");
+
+                                string expectedDataFilename = $"{testFile}.contents.partition{i}.json";
+
+                                if(!File.Exists(expectedDataFilename))
+                                    continue;
+
+                                var serializer = new JsonSerializer
+                                {
+                                    Formatting        = Formatting.Indented,
+                                    MaxDepth          = 16384,
+                                    NullValueHandling = NullValueHandling.Ignore
+                                };
+
+                                serializer.Converters.Add(new StringEnumConverter());
+
+                                var sr = new StreamReader(expectedDataFilename);
+
+                                VolumeData[] expectedData =
+                                    serializer.Deserialize<VolumeData[]>(new JsonTextReader(sr));
+
+                                Assert.NotNull(expectedData);
+
+                                Core.Filesystems.Identify(image, out List<string> idPlugins, partitions[i]);
+
+                                if(idPlugins.Count == 0)
+                                {
+                                    Assert.IsNull(expectedData,
+                                                  $"Expected no filesystems identified in partition {i} but found {idPlugins.Count}");
+
+                                    continue;
+                                }
+
+                                Assert.AreEqual(expectedData.Length, idPlugins.Count,
+                                                $"Expected {expectedData.Length} filesystems identified in partition {i} but found {idPlugins.Count}");
+
+                                if(expectedData.Length != idPlugins.Count)
+                                {
+                                    continue;
+
+                                    // Uncomment to generate JSON file
+                                    /*
+                                    expectedData = new VolumeData[idPlugins.Count];
+
+                                    for(int j = 0; j < idPlugins.Count; j++)
+                                    {
+                                        string pluginName = idPlugins[j];
+
+                                        if(!plugins.ReadOnlyFilesystems.TryGetValue(pluginName,
+                                               out IReadOnlyFilesystem plugin))
+                                            continue;
+
+                                        Assert.IsNotNull(plugin, "Could not instantiate filesystem plugin");
+
+                                        var fs = (IReadOnlyFilesystem)plugin.GetType().GetConstructor(Type.EmptyTypes)?.
+                                                                             Invoke(new object[]
+                                                                                 {});
+
+                                        Assert.IsNotNull(fs, $"Could not instantiate filesystem {pluginName}");
+
+                                        Errno error = fs.Mount(image, partitions[i], null, null, null);
+
+                                        Assert.AreEqual(Errno.NoError, error,
+                                                        $"Could not mount {pluginName} in partition {i}.");
+
+                                        expectedData[j]       = new VolumeData
+                                        {
+                                            Files = ReadOnlyFilesystemTest.BuildDirectory(fs, "/")
+                                        };
+                                    }
+
+                                    var sw = new StreamWriter(expectedDataFilename);
+                                    serializer.Serialize(sw, expectedData);
+                                    sw.Close();
+                                    */
+                                }
+
+                                for(int j = 0; j < idPlugins.Count; j++)
+                                {
+                                    string pluginName = idPlugins[j];
+
+                                    if(!plugins.ReadOnlyFilesystems.TryGetValue(pluginName,
+                                                                                    out IReadOnlyFilesystem plugin))
+                                        continue;
+
+                                    Assert.IsNotNull(plugin, "Could not instantiate filesystem plugin");
+
+                                    var fs = (IReadOnlyFilesystem)plugin.GetType().GetConstructor(Type.EmptyTypes)?.
+                                                                         Invoke(new object[]
+                                                                                    {});
+
+                                    Assert.IsNotNull(fs, $"Could not instantiate filesystem {pluginName}");
+
+                                    Errno error = fs.Mount(image, partitions[i], null, null, null);
+
+                                    Assert.AreEqual(Errno.NoError, error,
+                                                    $"Could not mount {pluginName} in partition {i}.");
+
+                                    Assert.AreEqual(expectedData[j].VolumeName, fs.XmlFsType.VolumeName,
+                                                    $"Excepted volume name \"{expectedData[j].VolumeName}\" for filesystem {j} in partition {i} but found \"{fs.XmlFsType.VolumeName}\"");
+
+                                    VolumeData volumeData = expectedData[j];
+
+                                    ReadOnlyFilesystemTest.TestDirectory(fs, "/", volumeData.Files, testFile, false);
+                                }
+                            }
+                        });
+                    }
                 }
             });
         }

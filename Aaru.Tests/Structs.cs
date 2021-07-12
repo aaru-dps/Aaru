@@ -47,7 +47,8 @@ namespace Aaru.Tests
 
     public class BlockImageTestExpected : MediaInfoTest
     {
-        public string MD5;
+        public string                  MD5;
+        public BlockPartitionVolumes[] Partitions;
     }
 
     public class TrackInfoTestExpected
@@ -105,5 +106,12 @@ namespace Aaru.Tests
         public List<string>                 Directories;
         public Dictionary<string, FileData> Files;
         public string                       VolumeName;
+    }
+
+    public class BlockPartitionVolumes
+    {
+        public ulong        Length;
+        public ulong        Start;
+        public VolumeData[] Volumes;
     }
 }
