@@ -215,17 +215,6 @@ namespace Aaru.Tests.Images
 
                                 Core.Filesystems.Identify(image, out List<string> idPlugins, partitions[i]);
 
-                                if(idPlugins.Count == 0)
-                                {
-                                    Assert.IsNull(expectedData,
-                                                  $"Expected no filesystems identified in partition {i} but found {idPlugins.Count}");
-
-                                    continue;
-                                }
-
-                                Assert.AreEqual(expectedData.Length, idPlugins.Count,
-                                                $"Expected {expectedData.Length} filesystems identified in partition {i} but found {idPlugins.Count}");
-
                                 if(expectedData.Length != idPlugins.Count)
                                 {
                                     continue;
@@ -255,6 +244,9 @@ namespace Aaru.Tests.Images
                                         Assert.AreEqual(Errno.NoError, error,
                                                         $"Could not mount {pluginName} in partition {i}.");
 
+                                        if(error != Errno.NoError)
+                                            continue;
+
                                         expectedData[j]       = new VolumeData
                                         {
                                             Files = ReadOnlyFilesystemTest.BuildDirectory(fs, "/")
@@ -266,6 +258,17 @@ namespace Aaru.Tests.Images
                                     sw.Close();
                                     */
                                 }
+
+                                if(idPlugins.Count == 0)
+                                {
+                                    Assert.IsNull(expectedData,
+                                                  $"Expected no filesystems identified in partition {i} but found {idPlugins.Count}");
+
+                                    continue;
+                                }
+
+                                Assert.AreEqual(expectedData.Length, idPlugins.Count,
+                                                $"Expected {expectedData.Length} filesystems identified in partition {i} but found {idPlugins.Count}");
 
                                 for(int j = 0; j < idPlugins.Count; j++)
                                 {
@@ -288,8 +291,8 @@ namespace Aaru.Tests.Images
                                     Assert.AreEqual(Errno.NoError, error,
                                                     $"Could not mount {pluginName} in partition {i}.");
 
-                                    Assert.AreEqual(expectedData[j].VolumeName, fs.XmlFsType.VolumeName,
-                                                    $"Excepted volume name \"{expectedData[j].VolumeName}\" for filesystem {j} in partition {i} but found \"{fs.XmlFsType.VolumeName}\"");
+                                    if(error != Errno.NoError)
+                                        continue;
 
                                     VolumeData volumeData = expectedData[j];
 
