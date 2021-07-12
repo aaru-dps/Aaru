@@ -49,7 +49,15 @@ namespace Aaru.Tests.Images.AppleDOS
                 MediaType  = MediaType.Apple32SS,
                 Sectors    = 455,
                 SectorSize = 256,
-                MD5        = "76f8fe4c5bc1976f99641ad7cdf53109"
+                MD5        = "76f8fe4c5bc1976f99641ad7cdf53109",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 455
+                    }
+                }
             }
         };
     }
