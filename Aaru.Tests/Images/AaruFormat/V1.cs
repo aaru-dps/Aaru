@@ -740,9 +740,9 @@ namespace Aaru.Tests.Images.AaruFormat
                 MediaType     = MediaType.CD,
                 Sectors       = 303316,
                 SectorSize    = 2352,
-                MD5           = "d10b427d18546a3c8f548edb6d911798",
-                LongMD5       = "1c2ff79133d4db028ce415a8b03e70c2",
-                SubchannelMD5 = "f80d8f55069a8815bd03cb2b6d9284b8",
+                MD5           = "b6cb0d4b3a7763dc2ba6b5256a23bcbe",
+                LongMD5       = "74cf2db1d7a0c1d790728e6250f866b7",
+                SubchannelMD5 = "27d433659fd0142310b81175fbd610a7",
                 Tracks = new[]
                 {
                     new TrackInfoTestExpected
@@ -852,9 +852,9 @@ namespace Aaru.Tests.Images.AaruFormat
                     new TrackInfoTestExpected
                     {
                         Session = 2,
-                        Start   = 234034,
+                        Start   = 234030,
                         End     = 303315,
-                        Pregap  = 146,
+                        Pregap  = 150,
                         Flags   = 4,
                         Number  = 14,
                         FileSystems = new[]
@@ -1070,9 +1070,9 @@ namespace Aaru.Tests.Images.AaruFormat
                 MediaType     = MediaType.CDR,
                 Sectors       = 59206,
                 SectorSize    = 2352,
-                MD5           = "2fd88f1e8c21601017c937963d8fe5eb",
-                LongMD5       = "151e45bd1e949e0416d64eb89f48a55b",
-                SubchannelMD5 = "9b33f13d1dab986e981ba924797f464a",
+                MD5           = "3e9862ad534415cb3b1ef216f9446d4e",
+                LongMD5       = "502cdc0391687bc2e2a89ea7a5906ebb",
+                SubchannelMD5 = "1aa52cf9468044489d791ab69a023a31",
                 Tracks = new[]
                 {
                     new TrackInfoTestExpected
@@ -1087,16 +1087,16 @@ namespace Aaru.Tests.Images.AaruFormat
                     {
                         Session = 1,
                         Start   = 14256,
-                        End     = 40206,
+                        End     = 28952,
                         Pregap  = 149,
                         Flags   = 0
                     },
                     new TrackInfoTestExpected
                     {
                         Session = 2,
-                        Start   = 40207,
+                        Start   = 40203,
                         End     = 59205,
-                        Pregap  = 146,
+                        Pregap  = 150,
                         Flags   = 4,
                         Number  = 3,
                         FileSystems = new[]
@@ -1270,16 +1270,16 @@ namespace Aaru.Tests.Images.AaruFormat
                 MediaType     = MediaType.CDR,
                 Sectors       = 51168,
                 SectorSize    = 2048,
-                MD5           = "099011fe470ce7ca0ecb52368cd2efe5",
-                LongMD5       = "997fa9a35a2c9a6efbbbd55fcc9008f5",
-                SubchannelMD5 = "0eecfd65daf8a2aa9fea47cf2072350e",
+                MD5           = "e2e19cf38891e67a0829d01842b4052e",
+                LongMD5       = "b31f2d228dd564c88ad851b12b43c01d",
+                SubchannelMD5 = "989c696ee5bb336b4ad30474da573925",
                 Tracks = new[]
                 {
                     new TrackInfoTestExpected
                     {
                         Session = 1,
                         Start   = 0,
-                        End     = 19386,
+                        End     = 8132,
                         Pregap  = 150,
                         Flags   = 4,
                         Number  = 1,
@@ -1294,7 +1294,7 @@ namespace Aaru.Tests.Images.AaruFormat
                             },
                             new FileSystemTest
                             {
-                                Clusters     = 19387,
+                                Clusters     = 8133,
                                 ClusterSize  = 2048,
                                 Type         = "UDF v1.02",
                                 VolumeName   = "Session 1",
@@ -1305,9 +1305,9 @@ namespace Aaru.Tests.Images.AaruFormat
                     new TrackInfoTestExpected
                     {
                         Session = 2,
-                        Start   = 19387,
-                        End     = 32713,
-                        Pregap  = 146,
+                        Start   = 19383,
+                        End     = 25959,
+                        Pregap  = 150,
                         Flags   = 4,
                         Number  = 2,
                         FileSystems = new[]
@@ -1321,7 +1321,7 @@ namespace Aaru.Tests.Images.AaruFormat
                             },
                             new FileSystemTest
                             {
-                                Clusters     = 13181,
+                                Clusters     = 6427,
                                 ClusterSize  = 2048,
                                 Type         = "UDF v1.02",
                                 VolumeName   = "Session 2",
@@ -1332,9 +1332,9 @@ namespace Aaru.Tests.Images.AaruFormat
                     new TrackInfoTestExpected
                     {
                         Session = 3,
-                        Start   = 32714,
-                        End     = 45231,
-                        Pregap  = 146,
+                        Start   = 32710,
+                        End     = 38477,
+                        Pregap  = 150,
                         Flags   = 4,
                         Number  = 3,
                         FileSystems = new[]
@@ -1348,7 +1348,7 @@ namespace Aaru.Tests.Images.AaruFormat
                             },
                             new FileSystemTest
                             {
-                                Clusters     = 12372,
+                                Clusters     = 5618,
                                 ClusterSize  = 2048,
                                 Type         = "UDF v2.00",
                                 VolumeName   = "Session 3",
@@ -1359,9 +1359,9 @@ namespace Aaru.Tests.Images.AaruFormat
                     new TrackInfoTestExpected
                     {
                         Session = 4,
-                        Start   = 45232,
+                        Start   = 45228,
                         End     = 51167,
-                        Pregap  = 146,
+                        Pregap  = 150,
                         Flags   = 4,
                         Number  = 4,
                         FileSystems = new[]
