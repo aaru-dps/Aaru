@@ -1238,7 +1238,7 @@ namespace Aaru.DiscImages
                     {
                         foreach(Track track in Tracks)
                         {
-                            if(track.TrackSequence == 1)
+                            if(track.TrackSequence <= 1)
                                 continue;
 
                             uint firstTrackNumberInSameSession = Tracks.
@@ -1251,9 +1251,9 @@ namespace Aaru.DiscImages
                             if(track.TrackPregap == 150)
                                 continue;
 
-                            ulong dif = track.TrackPregap - 150;
-                            track.TrackPregap      -= dif;
-                            track.TrackStartSector += dif + 1;
+                            long dif = (long)track.TrackPregap                            - 150;
+                            track.TrackPregap      = (ulong)((long)track.TrackPregap      - dif);
+                            track.TrackStartSector = (ulong)((long)track.TrackStartSector + dif);
 
                             sessionPregapFixed = true;
                         }
@@ -1261,7 +1261,8 @@ namespace Aaru.DiscImages
 
                     if(leadOutFixed)
                         AaruConsole.ErrorWriteLine("This image has a corrupted track list, convert will fix it.");
-                    else if(sessionPregapFixed)
+
+                    if(sessionPregapFixed)
                         AaruConsole.
                             ErrorWriteLine("This image has a corrupted track list, a best effort has been tried but may require manual editing or redump.");
                 }
