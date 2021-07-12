@@ -1152,87 +1152,118 @@ namespace Aaru.DiscImages
             // Initialize tracks, sessions and partitions
             if(_imageInfo.XmlMediaType == XmlMediaType.OpticalDisc)
             {
-                if(Tracks != null &&
-                   _mediaTags.TryGetValue(MediaTagType.CD_FullTOC, out byte[] fullToc))
+                if(Tracks != null)
                 {
-                    byte[] tmp = new byte[fullToc.Length + 2];
-                    Array.Copy(fullToc, 0, tmp, 2, fullToc.Length);
-                    tmp[0] = (byte)(fullToc.Length >> 8);
-                    tmp[1] = (byte)(fullToc.Length & 0xFF);
+                    bool leadOutFixed       = false;
+                    bool sessionPregapFixed = false;
 
-                    FullTOC.CDFullTOC? decodedFullToc = FullTOC.Decode(tmp);
-
-                    if(decodedFullToc.HasValue)
+                    if(_mediaTags.TryGetValue(MediaTagType.CD_FullTOC, out byte[] fullToc))
                     {
-                        Dictionary<int, long> leadOutStarts = new Dictionary<int, long>(); // Lead-out starts
+                        byte[] tmp = new byte[fullToc.Length + 2];
+                        Array.Copy(fullToc, 0, tmp, 2, fullToc.Length);
+                        tmp[0] = (byte)(fullToc.Length >> 8);
+                        tmp[1] = (byte)(fullToc.Length & 0xFF);
 
-                        foreach(FullTOC.TrackDataDescriptor trk in
-                            decodedFullToc.Value.TrackDescriptors.Where(trk => (trk.ADR == 1 || trk.ADR == 4) &&
-                                                                               trk.POINT == 0xA2))
+                        FullTOC.CDFullTOC? decodedFullToc = FullTOC.Decode(tmp);
+
+                        if(decodedFullToc.HasValue)
                         {
-                            int phour, pmin, psec, pframe;
+                            Dictionary<int, long> leadOutStarts = new Dictionary<int, long>(); // Lead-out starts
 
-                            if(trk.PFRAME == 0)
+                            foreach(FullTOC.TrackDataDescriptor trk in
+                                decodedFullToc.Value.TrackDescriptors.Where(trk => (trk.ADR == 1 || trk.ADR == 4) &&
+                                                                                trk.POINT == 0xA2))
                             {
-                                pframe = 74;
+                                int phour, pmin, psec, pframe;
 
-                                if(trk.PSEC == 0)
+                                if(trk.PFRAME == 0)
                                 {
-                                    psec = 59;
+                                    pframe = 74;
 
-                                    if(trk.PMIN == 0)
+                                    if(trk.PSEC == 0)
                                     {
-                                        pmin  = 59;
-                                        phour = trk.PHOUR - 1;
+                                        psec = 59;
+
+                                        if(trk.PMIN == 0)
+                                        {
+                                            pmin  = 59;
+                                            phour = trk.PHOUR - 1;
+                                        }
+                                        else
+                                        {
+                                            pmin  = trk.PMIN - 1;
+                                            phour = trk.PHOUR;
+                                        }
                                     }
                                     else
                                     {
-                                        pmin  = trk.PMIN - 1;
+                                        psec  = trk.PSEC - 1;
+                                        pmin  = trk.PMIN;
                                         phour = trk.PHOUR;
                                     }
                                 }
                                 else
                                 {
-                                    psec  = trk.PSEC - 1;
-                                    pmin  = trk.PMIN;
-                                    phour = trk.PHOUR;
+                                    pframe = trk.PFRAME - 1;
+                                    psec   = trk.PSEC;
+                                    pmin   = trk.PMIN;
+                                    phour  = trk.PHOUR;
                                 }
-                            }
-                            else
-                            {
-                                pframe = trk.PFRAME - 1;
-                                psec   = trk.PSEC;
-                                pmin   = trk.PMIN;
-                                phour  = trk.PHOUR;
+
+                                int lastSector = (phour * 3600 * 75) + (pmin * 60 * 75) + (psec * 75) + pframe - 150;
+                                leadOutStarts?.Add(trk.SessionNumber, lastSector                               + 1);
                             }
 
-                            int lastSector = (phour * 3600 * 75) + (pmin * 60 * 75) + (psec * 75) + pframe - 150;
-                            leadOutStarts?.Add(trk.SessionNumber, lastSector                               + 1);
+                            foreach(KeyValuePair<int, long> leadOuts in leadOutStarts)
+                            {
+                                var lastTrackInSession = new Track();
+
+                                foreach(Track trk in Tracks.Where(trk => trk.TrackSession == leadOuts.Key))
+                                {
+                                    if(trk.TrackSequence > lastTrackInSession.TrackSequence)
+                                        lastTrackInSession = trk;
+                                }
+
+                                if(lastTrackInSession.TrackSequence  == 0 ||
+                                   lastTrackInSession.TrackEndSector == (ulong)leadOuts.Value - 1)
+                                    continue;
+
+                                lastTrackInSession.TrackEndSector = (ulong)leadOuts.Value - 1;
+                                leadOutFixed                      = true;
+                            }
                         }
+                    }
 
-                        bool leadOutFixed = false;
-
-                        foreach(KeyValuePair<int, long> leadOuts in leadOutStarts)
+                    if(_header.imageMajorVersion <= 1)
+                    {
+                        foreach(Track track in Tracks)
                         {
-                            var lastTrackInSession = new Track();
-
-                            foreach(Track trk in Tracks.Where(trk => trk.TrackSession == leadOuts.Key))
-                            {
-                                if(trk.TrackSequence > lastTrackInSession.TrackSequence)
-                                    lastTrackInSession = trk;
-                            }
-
-                            if(lastTrackInSession.TrackSequence  == 0 ||
-                               lastTrackInSession.TrackEndSector == (ulong)leadOuts.Value - 1)
+                            if(track.TrackSequence == 1)
                                 continue;
 
-                            lastTrackInSession.TrackEndSector = (ulong)leadOuts.Value - 1;
-                            leadOutFixed                      = true;
-                        }
+                            uint firstTrackNumberInSameSession = Tracks.
+                                                                 Where(t => t.TrackSession == track.TrackSession).
+                                                                 Min(t => t.TrackSequence);
 
-                        if(leadOutFixed)
-                            AaruConsole.ErrorWriteLine("This image has a corrupted track list, convert will fix it.");
+                            if(firstTrackNumberInSameSession != track.TrackSequence)
+                                continue;
+
+                            if(track.TrackPregap == 150)
+                                continue;
+
+                            ulong dif = track.TrackPregap - 150;
+                            track.TrackPregap      -= dif;
+                            track.TrackStartSector += dif + 1;
+
+                            sessionPregapFixed = true;
+                        }
                     }
+
+                    if(leadOutFixed)
+                        AaruConsole.ErrorWriteLine("This image has a corrupted track list, convert will fix it.");
+                    else if(sessionPregapFixed)
+                        AaruConsole.
+                            ErrorWriteLine("This image has a corrupted track list, a best effort has been tried but may require manual editing or redump.");
                 }
 
                 AaruConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
