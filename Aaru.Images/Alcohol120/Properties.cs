@@ -45,12 +45,14 @@ namespace Aaru.DiscImages
         public OpticalImageCapabilities OpticalCapabilities => OpticalImageCapabilities.CanStoreAudioTracks  |
                                                                OpticalImageCapabilities.CanStoreDataTracks   |
                                                                OpticalImageCapabilities.CanStoreSubchannelRw |
-                                                               OpticalImageCapabilities.CanStoreSessions     |
-                                                               OpticalImageCapabilities.CanStoreIsrc         |
-                                                               OpticalImageCapabilities.CanStoreCdText       |
-                                                               OpticalImageCapabilities.CanStoreMcn          |
-                                                               OpticalImageCapabilities.CanStoreRawData      |
-                                                               OpticalImageCapabilities.CanStoreCookedData   |
+
+                                                               // TODO: Disabled until 6.0
+                                                               //OpticalImageCapabilities.CanStoreSessions     |
+                                                               OpticalImageCapabilities.CanStoreIsrc       |
+                                                               OpticalImageCapabilities.CanStoreCdText     |
+                                                               OpticalImageCapabilities.CanStoreMcn        |
+                                                               OpticalImageCapabilities.CanStoreRawData    |
+                                                               OpticalImageCapabilities.CanStoreCookedData |
                                                                OpticalImageCapabilities.CanStoreMultipleTracks;
         public ImageInfo Info   => _imageInfo;
         public string    Name   => "Alcohol 120% Media Descriptor Structure";
