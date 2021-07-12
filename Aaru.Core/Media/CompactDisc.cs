@@ -418,6 +418,23 @@ namespace Aaru.Core.Media
                                     tracks[i].TrackStartSector         -= (ulong)dif;
                                     smallestPregapLbaPerTrack[trackNo] =  qPos;
 
+                                    uint firstTrackNumberInSameSession = tracks.
+                                                                         Where(t => t.TrackSession ==
+                                                                                   tracks[i].TrackSession).
+                                                                         Min(t => t.TrackSequence);
+
+                                    if(tracks[i].TrackSequence == firstTrackNumberInSameSession)
+                                    {
+                                        if(tracks[i].TrackPregap != 151)
+                                            status = true;
+
+                                        dif                        =  (int)(tracks[i].TrackPregap - 150);
+                                        tracks[i].TrackPregap      -= (ulong)dif;
+                                        tracks[i].TrackStartSector += (ulong)dif;
+
+                                        continue;
+                                    }
+
                                     if(i                            > 0 &&
                                        tracks[i - 1].TrackEndSector >= tracks[i].TrackStartSector)
                                         tracks[i - 1].TrackEndSector = tracks[i].TrackStartSector - 1;
