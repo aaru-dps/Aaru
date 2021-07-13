@@ -95,7 +95,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.DOS_35_HD,
                 Sectors    = 2880,
                 SectorSize = 512,
-                MD5        = "95ea232f59e44db374b994cfe7f1c07f"
+                MD5        = "95ea232f59e44db374b994cfe7f1c07f",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 2880
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -183,7 +191,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.DOS_35_HD,
                 Sectors    = 2880,
                 SectorSize = 512,
-                MD5        = "2302991363cb3681cffdc4388915b51e"
+                MD5        = "2302991363cb3681cffdc4388915b51e",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 2880
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -231,7 +247,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.DOS_35_DS_DD_9,
                 Sectors    = 1440,
                 SectorSize = 512,
-                MD5        = "af83d011608042d35021e39aa5e10b2f"
+                MD5        = "af83d011608042d35021e39aa5e10b2f",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 1440
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -271,7 +295,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.DOS_525_SS_DD_8,
                 Sectors    = 320,
                 SectorSize = 512,
-                MD5        = "6642c1a32d2c58e93481d664974fc202"
+                MD5        = "6642c1a32d2c58e93481d664974fc202",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 320
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -279,7 +311,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.DOS_525_SS_DD_8,
                 Sectors    = 320,
                 SectorSize = 512,
-                MD5        = "846f01b8b60cb3c775bd66419e977926"
+                MD5        = "846f01b8b60cb3c775bd66419e977926",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 320
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -287,7 +327,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.DOS_525_SS_DD_9,
                 Sectors    = 360,
                 SectorSize = 512,
-                MD5        = "5101f89850dc28efbcfb7622086a9ddf"
+                MD5        = "5101f89850dc28efbcfb7622086a9ddf",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 360
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -295,7 +343,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.DOS_525_SS_DD_9,
                 Sectors    = 360,
                 SectorSize = 512,
-                MD5        = "8e570be2ed1f00ddea82e50a2d9c446a"
+                MD5        = "8e570be2ed1f00ddea82e50a2d9c446a",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 360
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -303,7 +359,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.DOS_35_SS_DD_8,
                 Sectors    = 640,
                 SectorSize = 512,
-                MD5        = "abba2a1ddd60a649047a9c44d94bbeae"
+                MD5        = "abba2a1ddd60a649047a9c44d94bbeae",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 640
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -311,7 +375,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.DOS_35_SS_DD_8,
                 Sectors    = 640,
                 SectorSize = 512,
-                MD5        = "e3bc48bec81be5b35be73d41fdffd2ab"
+                MD5        = "e3bc48bec81be5b35be73d41fdffd2ab",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 640
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -319,7 +391,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.DOS_525_DS_DD_8,
                 Sectors    = 640,
                 SectorSize = 512,
-                MD5        = "43b5068af9d016d1432eb2e12d2b802a"
+                MD5        = "43b5068af9d016d1432eb2e12d2b802a",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 640
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -327,7 +407,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.DOS_525_DS_DD_8,
                 Sectors    = 640,
                 SectorSize = 512,
-                MD5        = "5bf2ad4dc300592604b6e32f8b8e2656"
+                MD5        = "5bf2ad4dc300592604b6e32f8b8e2656",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 640
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -335,7 +423,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.DOS_525_DS_DD_9,
                 Sectors    = 720,
                 SectorSize = 512,
-                MD5        = "cb9a832ca6a4097b8ccc30d2108e1f7d"
+                MD5        = "cb9a832ca6a4097b8ccc30d2108e1f7d",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 720
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -343,7 +439,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.DOS_525_DS_DD_9,
                 Sectors    = 720,
                 SectorSize = 512,
-                MD5        = "56d181a6bb8713e6b2854fe8887faab6"
+                MD5        = "56d181a6bb8713e6b2854fe8887faab6",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 720
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -351,7 +455,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.NEC_35_HD_15,
                 Sectors    = 2400,
                 SectorSize = 512,
-                MD5        = "41aef7cff26aefda1add8d49c5b962c2"
+                MD5        = "41aef7cff26aefda1add8d49c5b962c2",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 2400
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -359,7 +471,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.Unknown,
                 Sectors    = 2460,
                 SectorSize = 512,
-                MD5        = "2437c5f089f1cba3866b36360b016f16"
+                MD5        = "2437c5f089f1cba3866b36360b016f16",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 2460
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -367,7 +487,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.DOS_35_DS_DD_8,
                 Sectors    = 1280,
                 SectorSize = 512,
-                MD5        = "bdaa8f17373b265830fdf3a06b794367"
+                MD5        = "bdaa8f17373b265830fdf3a06b794367",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 1280
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -375,7 +503,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.DOS_35_DS_DD_9,
                 Sectors    = 1440,
                 SectorSize = 512,
-                MD5        = "629932c285478d0540ff7936aa008351"
+                MD5        = "629932c285478d0540ff7936aa008351",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 1440
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -383,7 +519,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.Unknown,
                 Sectors    = 1476,
                 SectorSize = 512,
-                MD5        = "7a2abef5d4701e2e49abb05af8d4da50"
+                MD5        = "7a2abef5d4701e2e49abb05af8d4da50",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 1476
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -391,7 +535,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.CBM_35_DD,
                 Sectors    = 1600,
                 SectorSize = 512,
-                MD5        = "e3507522c914264f44fb2c92c3170c09"
+                MD5        = "e3507522c914264f44fb2c92c3170c09",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 1600
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -399,7 +551,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.FDFORMAT_35_DD,
                 Sectors    = 1640,
                 SectorSize = 512,
-                MD5        = "824fe65dbb1a42b6b94f05405ef984f2"
+                MD5        = "824fe65dbb1a42b6b94f05405ef984f2",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 1640
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -407,7 +567,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.DOS_35_HD,
                 Sectors    = 2880,
                 SectorSize = 512,
-                MD5        = "1a8c2e78e7132cf9ba5d6c2b75876be0"
+                MD5        = "1a8c2e78e7132cf9ba5d6c2b75876be0",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 2880
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -415,7 +583,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.Unknown,
                 Sectors    = 2952,
                 SectorSize = 512,
-                MD5        = "936b20bb0966fe693b4d5e2353e24846"
+                MD5        = "936b20bb0966fe693b4d5e2353e24846",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 2952
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -423,7 +599,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.Unknown,
                 Sectors    = 3200,
                 SectorSize = 512,
-                MD5        = "803b01a0b440c2837d37c21308f30cd5"
+                MD5        = "803b01a0b440c2837d37c21308f30cd5",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 3200
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -431,7 +615,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.Unknown,
                 Sectors    = 3280,
                 SectorSize = 512,
-                MD5        = "aa0d31f914760cc4cde75479779ebed6"
+                MD5        = "aa0d31f914760cc4cde75479779ebed6",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 3280
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -439,7 +631,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.DMF,
                 Sectors    = 3360,
                 SectorSize = 512,
-                MD5        = "31269ed6464302ae26d22b7c87bceb23"
+                MD5        = "31269ed6464302ae26d22b7c87bceb23",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 3360
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -447,7 +647,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.FDFORMAT_35_HD,
                 Sectors    = 3444,
                 SectorSize = 512,
-                MD5        = "5e413433c54f48978d281c6e66d1106e"
+                MD5        = "5e413433c54f48978d281c6e66d1106e",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 3444
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -455,7 +663,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.Unknown,
                 Sectors    = 3486,
                 SectorSize = 512,
-                MD5        = "4fc28b0128543b2eb70f6432c4c8a980"
+                MD5        = "4fc28b0128543b2eb70f6432c4c8a980",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 3486
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -463,7 +679,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.Unknown,
                 Sectors    = 3528,
                 SectorSize = 512,
-                MD5        = "24a7459d080cea3a60d131b8fd7dc5d1"
+                MD5        = "24a7459d080cea3a60d131b8fd7dc5d1",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 3528
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -471,7 +695,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.Unknown,
                 Sectors    = 3570,
                 SectorSize = 512,
-                MD5        = "2031b1e16ee2defc0d15f732f633df33"
+                MD5        = "2031b1e16ee2defc0d15f732f633df33",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 3570
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -479,7 +711,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.DOS_35_DS_DD_9,
                 Sectors    = 1440,
                 SectorSize = 512,
-                MD5        = "5fc19ca552b6db957061e9a1750394d2"
+                MD5        = "5fc19ca552b6db957061e9a1750394d2",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 1440
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -495,7 +735,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.DOS_525_SS_DD_8,
                 Sectors    = 320,
                 SectorSize = 512,
-                MD5        = "a33b46f042b78fe3d0b3c5dbb3908a93"
+                MD5        = "a33b46f042b78fe3d0b3c5dbb3908a93",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 320
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -503,7 +751,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.DOS_525_SS_DD_9,
                 Sectors    = 360,
                 SectorSize = 512,
-                MD5        = "565d3c001cbb532154aa5d3c65b2439c"
+                MD5        = "565d3c001cbb532154aa5d3c65b2439c",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 360
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -511,7 +767,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.DOS_525_DS_DD_8,
                 Sectors    = 640,
                 SectorSize = 512,
-                MD5        = "e60442c3ebd72c99bdd7545fdba59613"
+                MD5        = "e60442c3ebd72c99bdd7545fdba59613",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 640
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -519,7 +783,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.DOS_525_DS_DD_9,
                 Sectors    = 720,
                 SectorSize = 512,
-                MD5        = "058a33a129539285c9b64010496af52f"
+                MD5        = "058a33a129539285c9b64010496af52f",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 720
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -527,7 +799,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.Unknown,
                 Sectors    = 800,
                 SectorSize = 512,
-                MD5        = "0726ecbc38965d30a6222c3e74cd1aa3"
+                MD5        = "0726ecbc38965d30a6222c3e74cd1aa3",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 800
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -543,7 +823,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.DOS_35_DS_DD_9,
                 Sectors    = 1440,
                 SectorSize = 512,
-                MD5        = "c38d69ac88520f14fcc6d6ced22b065d"
+                MD5        = "c38d69ac88520f14fcc6d6ced22b065d",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 1440
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -551,7 +839,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.CBM_35_DD,
                 Sectors    = 1600,
                 SectorSize = 512,
-                MD5        = "91d51964e1e64ef3f6f622fa19aa833c"
+                MD5        = "91d51964e1e64ef3f6f622fa19aa833c",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 1600
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -559,7 +855,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.DOS_35_HD,
                 Sectors    = 2880,
                 SectorSize = 512,
-                MD5        = "db36d9651c952ff679ec33223c8db2d3"
+                MD5        = "db36d9651c952ff679ec33223c8db2d3",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 2880
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -567,7 +871,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.Unknown,
                 Sectors    = 2988,
                 SectorSize = 512,
-                MD5        = "5f1d98806309aee7f81de72e51e6d386"
+                MD5        = "5f1d98806309aee7f81de72e51e6d386",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 2988
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -575,7 +887,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.DMF,
                 Sectors    = 3360,
                 SectorSize = 512,
-                MD5        = "1207a1cc7ff73d4f74c8984b4e7db33f"
+                MD5        = "1207a1cc7ff73d4f74c8984b4e7db33f",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 3360
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -583,7 +903,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.Unknown,
                 Sectors    = 3486,
                 SectorSize = 512,
-                MD5        = "c97a3081fd25474b6b7945b8572d5ab8"
+                MD5        = "c97a3081fd25474b6b7945b8572d5ab8",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 3486
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -591,7 +919,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.Unknown,
                 Sectors    = 400,
                 SectorSize = 512,
-                MD5        = "d40a99cb549fcfb26fcf9ef01b5dfca7"
+                MD5        = "d40a99cb549fcfb26fcf9ef01b5dfca7",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 400
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -599,7 +935,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.Unknown,
                 Sectors    = 410,
                 SectorSize = 512,
-                MD5        = "7b41dd9ca7eb32828960eb1417a6092a"
+                MD5        = "7b41dd9ca7eb32828960eb1417a6092a",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 410
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -607,7 +951,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.Unknown,
                 Sectors    = 800,
                 SectorSize = 512,
-                MD5        = "126dfd25363c076727dfaab03955c931"
+                MD5        = "126dfd25363c076727dfaab03955c931",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 800
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -615,7 +967,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.Unknown,
                 Sectors    = 820,
                 SectorSize = 512,
-                MD5        = "e6492aac144f5f6f593b84c64680cf64"
+                MD5        = "e6492aac144f5f6f593b84c64680cf64",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 820
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -623,7 +983,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.CBM_35_DD,
                 Sectors    = 1600,
                 SectorSize = 512,
-                MD5        = "7973e569ed93beb1ece2e84a5ef3a8d1"
+                MD5        = "7973e569ed93beb1ece2e84a5ef3a8d1",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 1600
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -631,7 +999,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.FDFORMAT_35_DD,
                 Sectors    = 1640,
                 SectorSize = 512,
-                MD5        = "a793047503af08e83361427b3e2806e0"
+                MD5        = "a793047503af08e83361427b3e2806e0",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 1640
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -639,7 +1015,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.DOS_35_HD,
                 Sectors    = 2880,
                 SectorSize = 512,
-                MD5        = "f01541de322c8d6d7321084d7a245e7b"
+                MD5        = "f01541de322c8d6d7321084d7a245e7b",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 2880
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -647,7 +1031,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.Unknown,
                 Sectors    = 2952,
                 SectorSize = 512,
-                MD5        = "ba6ec1652ff41bcc687aaf9c4e32dc18"
+                MD5        = "ba6ec1652ff41bcc687aaf9c4e32dc18",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 2952
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -655,7 +1047,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.CBM_35_DD,
                 Sectors    = 1600,
                 SectorSize = 512,
-                MD5        = "7973e569ed93beb1ece2e84a5ef3a8d1"
+                MD5        = "7973e569ed93beb1ece2e84a5ef3a8d1",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 1600
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -663,7 +1063,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.FDFORMAT_35_DD,
                 Sectors    = 1640,
                 SectorSize = 512,
-                MD5        = "a793047503af08e83361427b3e2806e0"
+                MD5        = "a793047503af08e83361427b3e2806e0",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 1640
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -671,7 +1079,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.Unknown,
                 Sectors    = 2952,
                 SectorSize = 512,
-                MD5        = "ba6ec1652ff41bcc687aaf9c4e32dc18"
+                MD5        = "ba6ec1652ff41bcc687aaf9c4e32dc18",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 2952
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -679,7 +1095,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.Unknown,
                 Sectors    = 3200,
                 SectorSize = 512,
-                MD5        = "6631b66fdfd89319323771c41334c7ba"
+                MD5        = "6631b66fdfd89319323771c41334c7ba",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 3200
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -687,7 +1111,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.Unknown,
                 Sectors    = 3280,
                 SectorSize = 512,
-                MD5        = "56471a253f4d6803b634e2bbff6c0931"
+                MD5        = "56471a253f4d6803b634e2bbff6c0931",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 3280
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -695,7 +1127,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.DOS_525_SS_DD_8,
                 Sectors    = 320,
                 SectorSize = 512,
-                MD5        = "7d36aee5a3071ff75b979f3acb649c40"
+                MD5        = "7d36aee5a3071ff75b979f3acb649c40",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 320
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -703,7 +1143,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.DOS_525_SS_DD_9,
                 Sectors    = 360,
                 SectorSize = 512,
-                MD5        = "0ccb62039363ab544c69eca229a17fae"
+                MD5        = "0ccb62039363ab544c69eca229a17fae",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 360
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -711,7 +1159,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.DOS_525_DS_DD_8,
                 Sectors    = 640,
                 SectorSize = 512,
-                MD5        = "7851d31fad9302ff45d3ded4fba25387"
+                MD5        = "7851d31fad9302ff45d3ded4fba25387",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 640
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -719,7 +1175,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.DOS_525_DS_DD_9,
                 Sectors    = 720,
                 SectorSize = 512,
-                MD5        = "915b08c82591e8488320e001b7303b6d"
+                MD5        = "915b08c82591e8488320e001b7303b6d",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 720
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -727,7 +1191,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.DOS_525_HD,
                 Sectors    = 2400,
                 SectorSize = 512,
-                MD5        = "5e5ea6fe9adf842221fdc60e56630405"
+                MD5        = "5e5ea6fe9adf842221fdc60e56630405",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 2400
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -735,7 +1207,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.DOS_35_DS_DD_9,
                 Sectors    = 1440,
                 SectorSize = 512,
-                MD5        = "a22e254f7e3526ec30dc4915a19fcb52"
+                MD5        = "a22e254f7e3526ec30dc4915a19fcb52",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 1440
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -743,7 +1223,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.DOS_35_HD,
                 Sectors    = 2880,
                 SectorSize = 512,
-                MD5        = "ddc6c1200c60e9f7796280f50c2e5283"
+                MD5        = "ddc6c1200c60e9f7796280f50c2e5283",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 2880
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -823,7 +1311,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.DOS_525_DS_DD_9,
                 Sectors    = 720,
                 SectorSize = 512,
-                MD5        = "be05d1ff10ef8b2220546c4db962ac9e"
+                MD5        = "be05d1ff10ef8b2220546c4db962ac9e",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 720
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -831,7 +1327,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.Unknown,
                 Sectors    = 820,
                 SectorSize = 512,
-                MD5        = "32823b9009c99b6711e89336ad03ec7f"
+                MD5        = "32823b9009c99b6711e89336ad03ec7f",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 820
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -839,7 +1343,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.DOS_35_DS_DD_9,
                 Sectors    = 1440,
                 SectorSize = 512,
-                MD5        = "1c8b03a8550ed3e70e1c78316aa445aa"
+                MD5        = "1c8b03a8550ed3e70e1c78316aa445aa",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 1440
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -855,7 +1367,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.DOS_525_HD,
                 Sectors    = 2400,
                 SectorSize = 512,
-                MD5        = "0bdf9130c07bb5d558a4705249f949d0"
+                MD5        = "0bdf9130c07bb5d558a4705249f949d0",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 2400
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -863,7 +1383,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.DOS_35_HD,
                 Sectors    = 2880,
                 SectorSize = 512,
-                MD5        = "2dafeddaa99e7dc0db5ef69e128f9c8e"
+                MD5        = "2dafeddaa99e7dc0db5ef69e128f9c8e",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 2880
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -871,7 +1399,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.DOS_35_SS_DD_9,
                 Sectors    = 720,
                 SectorSize = 512,
-                MD5        = "028769dc0abefab1740cc309432588b6"
+                MD5        = "028769dc0abefab1740cc309432588b6",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 720
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -879,7 +1415,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.DOS_35_DS_DD_9,
                 Sectors    = 1440,
                 SectorSize = 512,
-                MD5        = "152023525154b45ab26687190bac94db"
+                MD5        = "152023525154b45ab26687190bac94db",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 1440
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -887,7 +1431,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.CBM_35_DD,
                 Sectors    = 1600,
                 SectorSize = 512,
-                MD5        = "db38ecd93f28dd065927fed21917eed5"
+                MD5        = "db38ecd93f28dd065927fed21917eed5",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 1600
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -895,7 +1447,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.Unknown,
                 Sectors    = 3200,
                 SectorSize = 512,
-                MD5        = "f206c0caa4e0eda37233ab6e89ab5493"
+                MD5        = "f206c0caa4e0eda37233ab6e89ab5493",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 3200
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -903,7 +1463,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.DMF,
                 Sectors    = 3360,
                 SectorSize = 512,
-                MD5        = "554492a7b41f4cd9068a3a2b70eb0e5f"
+                MD5        = "554492a7b41f4cd9068a3a2b70eb0e5f",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 3360
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -1167,7 +1735,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.NEC_35_HD_8,
                 Sectors    = 1232,
                 SectorSize = 1024,
-                MD5        = "87a432496cb23b5c2299545500df3553"
+                MD5        = "87a432496cb23b5c2299545500df3553",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 1232
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -1255,7 +1831,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.DOS_525_SS_DD_9,
                 Sectors    = 360,
                 SectorSize = 512,
-                MD5        = "5dc0d482a773043d8683a84c8220df95"
+                MD5        = "5dc0d482a773043d8683a84c8220df95",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 360
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -1263,7 +1847,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.SHARP_525,
                 Sectors    = 1232,
                 SectorSize = 1024,
-                MD5        = "855943f9caecdcce9b06f0098d773c6b"
+                MD5        = "855943f9caecdcce9b06f0098d773c6b",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 1232
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -1271,7 +1863,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.DOS_35_DS_DD_9,
                 Sectors    = 1440,
                 SectorSize = 512,
-                MD5        = "5ac0a9fc7337f761098f816359b0f6f7"
+                MD5        = "5ac0a9fc7337f761098f816359b0f6f7",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 1440
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -1279,7 +1879,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.CBM_35_DD,
                 Sectors    = 1600,
                 SectorSize = 512,
-                MD5        = "1ea6ec8e663218b1372048f6e25795b5"
+                MD5        = "1ea6ec8e663218b1372048f6e25795b5",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 1600
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -1287,7 +1895,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.FDFORMAT_35_DD,
                 Sectors    = 1640,
                 SectorSize = 512,
-                MD5        = "77a1167b1b9043496e32b8578cde0ff0"
+                MD5        = "77a1167b1b9043496e32b8578cde0ff0",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 1640
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -1295,7 +1911,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.Unknown,
                 Sectors    = 1660,
                 SectorSize = 512,
-                MD5        = "4b07d760d65f3f0f8ffa5f2b81cee907"
+                MD5        = "4b07d760d65f3f0f8ffa5f2b81cee907",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 1660
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -1303,7 +1927,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.DOS_35_HD,
                 Sectors    = 2880,
                 SectorSize = 512,
-                MD5        = "32c044c5c2b0bd13806149a759c14935"
+                MD5        = "32c044c5c2b0bd13806149a759c14935",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 2880
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -1311,7 +1943,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.XDF_525,
                 Sectors    = 3040,
                 SectorSize = 512,
-                MD5        = "8752095abc13dba3f3467669da333891"
+                MD5        = "8752095abc13dba3f3467669da333891",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 3040
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -1319,7 +1959,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.Unknown,
                 Sectors    = 3200,
                 SectorSize = 512,
-                MD5        = "aece7cd34bbba3e75307fa70404d9d30"
+                MD5        = "aece7cd34bbba3e75307fa70404d9d30",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 3200
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -1327,7 +1975,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.Unknown,
                 Sectors    = 3280,
                 SectorSize = 512,
-                MD5        = "5289afb16a6e4a33213e3bcca56c6230"
+                MD5        = "5289afb16a6e4a33213e3bcca56c6230",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 3280
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -1335,7 +1991,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.Unknown,
                 Sectors    = 3320,
                 SectorSize = 512,
-                MD5        = "1aef0a0ba233476db6567878c3c2b266"
+                MD5        = "1aef0a0ba233476db6567878c3c2b266",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 3320
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -1343,7 +2007,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.DMF,
                 Sectors    = 3360,
                 SectorSize = 512,
-                MD5        = "b96596711f4d2ee85dfda0fe3b9f26c3"
+                MD5        = "b96596711f4d2ee85dfda0fe3b9f26c3",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 3360
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -1351,7 +2023,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.FDFORMAT_35_HD,
                 Sectors    = 3444,
                 SectorSize = 512,
-                MD5        = "a4f461af7fda5e93a7ab63fcbb7e7683"
+                MD5        = "a4f461af7fda5e93a7ab63fcbb7e7683",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 3444
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -1359,7 +2039,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.Unknown,
                 Sectors    = 3486,
                 SectorSize = 512,
-                MD5        = "8f7f7099d4475f6631fcf0a79b031d61"
+                MD5        = "8f7f7099d4475f6631fcf0a79b031d61",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 3486
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -1367,7 +2055,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.DOS_525_SS_DD_9,
                 Sectors    = 360,
                 SectorSize = 512,
-                MD5        = "4feeaf4b4ee5dad85db727fbbda4b6d1"
+                MD5        = "4feeaf4b4ee5dad85db727fbbda4b6d1",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 360
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -1375,7 +2071,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.Unknown,
                 Sectors    = 400,
                 SectorSize = 512,
-                MD5        = "3c77ca681df78e4cd7baa162aa9b0859"
+                MD5        = "3c77ca681df78e4cd7baa162aa9b0859",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 400
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -1383,7 +2087,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.DOS_525_DS_DD_8,
                 Sectors    = 640,
                 SectorSize = 512,
-                MD5        = "51da1f86c49657ffdb367bb2ddeb7990"
+                MD5        = "51da1f86c49657ffdb367bb2ddeb7990",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 640
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -1392,6 +2104,16 @@ namespace Aaru.Tests.Images
                 Sectors    = 720,
                 SectorSize = 512,
                 MD5        = "b81a4987f89936630b8ebc62e4bbce6e"
+                /* TODO: IndexOutOfRangeException
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 720
+                    }
+                }
+                */
             },
             new BlockImageTestExpected
             {
@@ -1399,7 +2121,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.Unknown,
                 Sectors    = 800,
                 SectorSize = 512,
-                MD5        = "f76f92dd326c99c5efad5ee58daf72e1"
+                MD5        = "f76f92dd326c99c5efad5ee58daf72e1",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 800
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -1407,7 +2137,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.Unknown,
                 Sectors    = 840,
                 SectorSize = 512,
-                MD5        = "b6f2c10e42908e334025bc4ffd81e771"
+                MD5        = "b6f2c10e42908e334025bc4ffd81e771",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 840
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -1415,7 +2153,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.DOS_35_DS_DD_9,
                 Sectors    = 1440,
                 SectorSize = 512,
-                MD5        = "f2f409ea2a62a7866fd2777cc4fc9739"
+                MD5        = "f2f409ea2a62a7866fd2777cc4fc9739",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 1440
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -1423,7 +2169,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.Unknown,
                 Sectors    = 1494,
                 SectorSize = 512,
-                MD5        = "3e441d69cec5c3169274e1379de4af4b"
+                MD5        = "3e441d69cec5c3169274e1379de4af4b",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 1494
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -1431,7 +2185,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.CBM_35_DD,
                 Sectors    = 1600,
                 SectorSize = 512,
-                MD5        = "30a93f30dd4485c6fc037fe0775d3fc7"
+                MD5        = "30a93f30dd4485c6fc037fe0775d3fc7",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 1600
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -1439,7 +2201,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.FDFORMAT_35_DD,
                 Sectors    = 1640,
                 SectorSize = 512,
-                MD5        = "e0caf02cce5597c98313bcc480366ec7"
+                MD5        = "e0caf02cce5597c98313bcc480366ec7",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 1640
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -1447,7 +2217,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.Unknown,
                 Sectors    = 1660,
                 SectorSize = 512,
-                MD5        = "4af4904d2b3c815da7bef7049209f5eb"
+                MD5        = "4af4904d2b3c815da7bef7049209f5eb",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 1660
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -1455,7 +2233,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.DOS_525_SS_DD_8,
                 Sectors    = 320,
                 SectorSize = 512,
-                MD5        = "39bf5a98bcb2185d855ac06378febcfa"
+                MD5        = "39bf5a98bcb2185d855ac06378febcfa",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 320
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -1463,7 +2249,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.DOS_525_SS_DD_9,
                 Sectors    = 360,
                 SectorSize = 512,
-                MD5        = "dc20055b6e6fd6f8e1114d4be2effeed"
+                MD5        = "dc20055b6e6fd6f8e1114d4be2effeed",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 360
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -1471,7 +2265,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.DOS_525_DS_DD_8,
                 Sectors    = 640,
                 SectorSize = 512,
-                MD5        = "56af9256cf71d5aac5fd5d363674bc49"
+                MD5        = "56af9256cf71d5aac5fd5d363674bc49",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 640
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -1479,7 +2281,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.DOS_525_DS_DD_9,
                 Sectors    = 720,
                 SectorSize = 512,
-                MD5        = "bbba1e2d1418e05c3a4e7b4d585d160b"
+                MD5        = "bbba1e2d1418e05c3a4e7b4d585d160b",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 720
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -1487,7 +2297,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.DOS_525_HD,
                 Sectors    = 2400,
                 SectorSize = 512,
-                MD5        = "bca3a045e81617f7f5ebb5a8818eac47"
+                MD5        = "bca3a045e81617f7f5ebb5a8818eac47",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 2400
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -1495,7 +2313,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.DOS_35_DS_DD_9,
                 Sectors    = 1440,
                 SectorSize = 512,
-                MD5        = "a296663cb8e75e94603221352f29cfff"
+                MD5        = "a296663cb8e75e94603221352f29cfff",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 1440
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -1503,7 +2329,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.DOS_35_HD,
                 Sectors    = 2880,
                 SectorSize = 512,
-                MD5        = "ecda36ebf0e1100233cb0ec722c18583"
+                MD5        = "ecda36ebf0e1100233cb0ec722c18583",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 2880
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -1511,7 +2345,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.Unknown,
                 Sectors    = 840,
                 SectorSize = 512,
-                MD5        = "cef2f4fe9b1a32d5c0544f814e634264"
+                MD5        = "cef2f4fe9b1a32d5c0544f814e634264",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 840
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -1519,7 +2361,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.CBM_35_DD,
                 Sectors    = 1600,
                 SectorSize = 512,
-                MD5        = "bbe58e26b8f8f822cd3edfd37a4e4924"
+                MD5        = "bbe58e26b8f8f822cd3edfd37a4e4924",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 1600
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -1527,7 +2377,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.FDFORMAT_35_HD,
                 Sectors    = 3444,
                 SectorSize = 512,
-                MD5        = "b9b6ebdf711364c979de7cf70c3a438a"
+                MD5        = "b9b6ebdf711364c979de7cf70c3a438a",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 3444
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -1535,7 +2393,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.DOS_35_DS_DD_9,
                 Sectors    = 1440,
                 SectorSize = 512,
-                MD5        = "d37424f367f545acbb397f2bed766843"
+                MD5        = "d37424f367f545acbb397f2bed766843",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 1440
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -1543,7 +2409,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.DOS_35_HD,
                 Sectors    = 2880,
                 SectorSize = 512,
-                MD5        = "9963dd6f19ce6bd56eabeccdfbbd821a"
+                MD5        = "9963dd6f19ce6bd56eabeccdfbbd821a",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 2880
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -1551,7 +2425,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.DMF,
                 Sectors    = 3360,
                 SectorSize = 512,
-                MD5        = "acf6604559ae8217f7869823e2429024"
+                MD5        = "acf6604559ae8217f7869823e2429024",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 3360
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -1559,7 +2441,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.FDFORMAT_35_HD,
                 Sectors    = 3444,
                 SectorSize = 512,
-                MD5        = "23bf2139cdfdc4c16db058fd31ea6481"
+                MD5        = "23bf2139cdfdc4c16db058fd31ea6481",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 3444
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -1567,7 +2457,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.DMF,
                 Sectors    = 3360,
                 SectorSize = 512,
-                MD5        = "fa26adda0415f02057b113ad29c80c8d"
+                MD5        = "fa26adda0415f02057b113ad29c80c8d",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 3360
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -1575,7 +2473,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.DMF,
                 Sectors    = 3360,
                 SectorSize = 512,
-                MD5        = "4f2a8d036fefd6c6c88d99eda3aa12b7"
+                MD5        = "4f2a8d036fefd6c6c88d99eda3aa12b7",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 3360
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -1583,7 +2489,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.Unknown,
                 Sectors    = 1386,
                 SectorSize = 512,
-                MD5        = "e794a3ffa4069ea999fdf7146710fa9e"
+                MD5        = "e794a3ffa4069ea999fdf7146710fa9e",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 1386
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -1591,7 +2505,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.DOS_35_DS_DD_9,
                 Sectors    = 1440,
                 SectorSize = 512,
-                MD5        = "de3f85896f771b7e5bc4c9e3926d64e4"
+                MD5        = "de3f85896f771b7e5bc4c9e3926d64e4",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 1440
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -1599,7 +2521,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.CBM_35_DD,
                 Sectors    = 1600,
                 SectorSize = 512,
-                MD5        = "c533488a21098a62c85f1649abda2803"
+                MD5        = "c533488a21098a62c85f1649abda2803",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 1600
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -1607,7 +2537,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.CBM_35_DD,
                 Sectors    = 1600,
                 SectorSize = 512,
-                MD5        = "1ff7649b679ba22ff20d39ff717dbec8"
+                MD5        = "1ff7649b679ba22ff20d39ff717dbec8",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 1600
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -1615,7 +2553,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.DOS_35_HD,
                 Sectors    = 2880,
                 SectorSize = 512,
-                MD5        = "b4a602f67903c46eef62addb0780aa56"
+                MD5        = "b4a602f67903c46eef62addb0780aa56",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 2880
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -1623,7 +2569,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.DOS_35_HD,
                 Sectors    = 2880,
                 SectorSize = 512,
-                MD5        = "b4a602f67903c46eef62addb0780aa56"
+                MD5        = "b4a602f67903c46eef62addb0780aa56",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 2880
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -1631,7 +2585,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.DMF,
                 Sectors    = 3360,
                 SectorSize = 512,
-                MD5        = "03c2af6a8ebf4bd6f530335de34ae5dd"
+                MD5        = "03c2af6a8ebf4bd6f530335de34ae5dd",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 3360
+                    }
+                }
             },
             new BlockImageTestExpected
             {
