@@ -49,7 +49,15 @@ namespace Aaru.Tests.Images.DiskImagesFramework.UDIF
                 MediaType  = MediaType.GENERIC_HDD,
                 Sectors    = 2880,
                 SectorSize = 512,
-                MD5        = "ff419213080574056ebd9adf7bab3d32"
+                MD5        = "ff419213080574056ebd9adf7bab3d32",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 2880
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -57,7 +65,15 @@ namespace Aaru.Tests.Images.DiskImagesFramework.UDIF
                 MediaType  = MediaType.GENERIC_HDD,
                 Sectors    = 1440,
                 SectorSize = 512,
-                MD5        = "c2be571406cf6353269faa59a4a8c0a4"
+                MD5        = "c2be571406cf6353269faa59a4a8c0a4",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 1440
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -65,7 +81,15 @@ namespace Aaru.Tests.Images.DiskImagesFramework.UDIF
                 MediaType  = MediaType.GENERIC_HDD,
                 Sectors    = 3360,
                 SectorSize = 512,
-                MD5        = "92ea7a359957012a682ba126cfdef0ce"
+                MD5        = "92ea7a359957012a682ba126cfdef0ce",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 3360
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -73,7 +97,15 @@ namespace Aaru.Tests.Images.DiskImagesFramework.UDIF
                 MediaType  = MediaType.GENERIC_HDD,
                 Sectors    = 10240,
                 SectorSize = 512,
-                MD5        = "df3b4331a4a5652393ff55f001998439"
+                MD5        = "df3b4331a4a5652393ff55f001998439",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 10240
+                    }
+                }
             },
             new BlockImageTestExpected
             {
