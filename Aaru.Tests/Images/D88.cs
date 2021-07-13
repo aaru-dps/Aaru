@@ -126,7 +126,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.Unknown,
                 Sectors    = 1440,
                 SectorSize = 512,
-                MD5        = "be916f25847b9cfc9776d88cc150ae7e"
+                MD5        = "be916f25847b9cfc9776d88cc150ae7e",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 1440
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -134,7 +142,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.SHARP_525,
                 Sectors    = 1232,
                 SectorSize = 1024,
-                MD5        = "ccc7f98e216db35c2b7a08634a9f3e20"
+                MD5        = "ccc7f98e216db35c2b7a08634a9f3e20",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 1232
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -150,7 +166,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.SHARP_525,
                 Sectors    = 1232,
                 SectorSize = 1024,
-                MD5        = "62f5be96a8b8ccab9ee4aebf557cfcf7"
+                MD5        = "62f5be96a8b8ccab9ee4aebf557cfcf7",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 1232
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -166,7 +190,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.SHARP_525,
                 Sectors    = 1232,
                 SectorSize = 1024,
-                MD5        = "1f73980e45a384bed331eaa33c9ef65b"
+                MD5        = "1f73980e45a384bed331eaa33c9ef65b",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 1232
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -182,7 +214,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.SHARP_525,
                 Sectors    = 1232,
                 SectorSize = 1024,
-                MD5        = "bb48546ced9c61462e1c89dca4987143"
+                MD5        = "bb48546ced9c61462e1c89dca4987143",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 1232
+                    }
+                }
             },
             new BlockImageTestExpected
             {
