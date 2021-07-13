@@ -90,7 +90,8 @@ namespace Aaru.Tests.Images.DiskUtilities
                 Sectors    = 3444,
                 SectorSize = 512,
                 MD5        = "9dea1e119a73a21a38d134f36b2e5564"
-            },
+            }
+            /* TODO: XDF reading is not implemented
             new BlockImageTestExpected
             {
                 TestFile   = "mf2hd_xdf.img.lz",
@@ -99,6 +100,7 @@ namespace Aaru.Tests.Images.DiskUtilities
                 SectorSize = 8192,
                 MD5        = "UNKNOWN"
             }
+            */
         };
     }
 }
