@@ -49,7 +49,15 @@ namespace Aaru.Tests.Images.QEMU
                 MediaType  = MediaType.GENERIC_HDD,
                 Sectors    = 251904,
                 SectorSize = 512,
-                MD5        = "4bfc9e9e2dd86aa52ef709e77d2617ed"
+                MD5        = "4bfc9e9e2dd86aa52ef709e77d2617ed",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 63,
+                        Length = 251841
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -57,7 +65,15 @@ namespace Aaru.Tests.Images.QEMU
                 MediaType  = MediaType.GENERIC_HDD,
                 Sectors    = 251904,
                 SectorSize = 512,
-                MD5        = "4bfc9e9e2dd86aa52ef709e77d2617ed"
+                MD5        = "4bfc9e9e2dd86aa52ef709e77d2617ed",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 63,
+                        Length = 251841
+                    }
+                }
             }
         };
     }
