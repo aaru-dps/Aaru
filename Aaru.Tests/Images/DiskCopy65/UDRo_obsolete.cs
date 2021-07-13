@@ -49,7 +49,15 @@ namespace Aaru.Tests.Images.DiskCopy65
                 MediaType  = MediaType.GENERIC_HDD,
                 Sectors    = 2884,
                 SectorSize = 512,
-                MD5        = "4306922864c6cf40a419fd5876b5879d"
+                MD5        = "4306922864c6cf40a419fd5876b5879d",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 4,
+                        Length = 2880
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -58,6 +66,16 @@ namespace Aaru.Tests.Images.DiskCopy65
                 Sectors    = 1444,
                 SectorSize = 512,
                 MD5        = "a885825f28929a5626e71201b37ed96e"
+                /* TODO: NullReferenceException when getting cluster of last depth folder
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 4,
+                        Length = 1440
+                    }
+                }
+                */
             },
             new BlockImageTestExpected
             {
@@ -66,6 +84,16 @@ namespace Aaru.Tests.Images.DiskCopy65
                 Sectors    = 3364,
                 SectorSize = 512,
                 MD5        = "180a0db19ecfe9d55d068c6460f028be"
+                /* TODO: NullReferenceException when getting cluster of last depth folder
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 4,
+                        Length = 3360
+                    }
+                }
+                */
             },
             new BlockImageTestExpected
             {
