@@ -47,7 +47,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.DOS_35_DS_DD_9,
                 Sectors    = 1440,
                 SectorSize = 512,
-                MD5        = "6c264287a3260a6d89e36dfcb1c98dce"
+                MD5        = "6c264287a3260a6d89e36dfcb1c98dce",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 1440
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -55,7 +63,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.DOS_35_DS_DD_9,
                 Sectors    = 1440,
                 SectorSize = 512,
-                MD5        = "dd8e04939baeb0fcdb11ddade60c9a93"
+                MD5        = "dd8e04939baeb0fcdb11ddade60c9a93",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 1440
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -63,7 +79,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.DOS_35_DS_DD_9,
                 Sectors    = 1440,
                 SectorSize = 512,
-                MD5        = "89132d303ef6b0ff69f4cfd38e2a22a6"
+                MD5        = "89132d303ef6b0ff69f4cfd38e2a22a6",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 1440
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -71,7 +95,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.DOS_35_DS_DD_9,
                 Sectors    = 1440,
                 SectorSize = 512,
-                MD5        = "cd34832ca3aa7f55e0dd8ba126372f97"
+                MD5        = "cd34832ca3aa7f55e0dd8ba126372f97",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 1440
+                    }
+                }
             }
         };
     }
