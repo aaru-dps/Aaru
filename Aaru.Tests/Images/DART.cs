@@ -43,27 +43,11 @@ namespace Aaru.Tests.Images
         {
             new BlockImageTestExpected
             {
-                TestFile   = "mf1dd_hfs_best.dart.lz",
-                MediaType  = MediaType.AppleSonySS,
-                Sectors    = 800,
-                SectorSize = 512,
-                MD5        = "eae3a95671d077deb702b3549a769f56"
-            },
-            new BlockImageTestExpected
-            {
                 TestFile   = "mf1dd_hfs_fast.dart.lz",
                 MediaType  = MediaType.AppleSonySS,
                 Sectors    = 800,
                 SectorSize = 512,
                 MD5        = "eae3a95671d077deb702b3549a769f56"
-            },
-            new BlockImageTestExpected
-            {
-                TestFile   = "mf1dd_mfs_best.dart.lz",
-                MediaType  = MediaType.AppleSonySS,
-                Sectors    = 800,
-                SectorSize = 512,
-                MD5        = "c5d92544c3e78b7f0a9b4baaa9a64eec"
             },
             new BlockImageTestExpected
             {
@@ -75,7 +59,7 @@ namespace Aaru.Tests.Images
             },
             new BlockImageTestExpected
             {
-                TestFile   = "mf2dd_hfs_best.dart.lz",
+                TestFile   = "mf2dd_hfs_fast.dart.lz",
                 MediaType  = MediaType.AppleSonyDS,
                 Sectors    = 1600,
                 SectorSize = 512,
@@ -83,7 +67,33 @@ namespace Aaru.Tests.Images
             },
             new BlockImageTestExpected
             {
-                TestFile   = "mf2dd_hfs_fast.dart.lz",
+                TestFile   = "mf2dd_mfs_fast.dart.lz",
+                MediaType  = MediaType.AppleSonyDS,
+                Sectors    = 1600,
+                SectorSize = 512,
+                MD5        = "93e71b9ecdb39d3ec9245b4f451856d4"
+            }
+            #region Unsupported LZH compression
+            /*
+            new BlockImageTestExpected
+            {
+                TestFile   = "mf1dd_hfs_best.dart.lz",
+                MediaType  = MediaType.AppleSonySS,
+                Sectors    = 800,
+                SectorSize = 512,
+                MD5        = "eae3a95671d077deb702b3549a769f56"
+            },
+           new BlockImageTestExpected
+           {
+               TestFile   = "mf1dd_mfs_best.dart.lz",
+               MediaType  = MediaType.AppleSonySS,
+               Sectors    = 800,
+               SectorSize = 512,
+               MD5        = "c5d92544c3e78b7f0a9b4baaa9a64eec"
+           },
+            new BlockImageTestExpected
+            {
+                TestFile   = "mf2dd_hfs_best.dart.lz",
                 MediaType  = MediaType.AppleSonyDS,
                 Sectors    = 1600,
                 SectorSize = 512,
@@ -97,14 +107,8 @@ namespace Aaru.Tests.Images
                 SectorSize = 512,
                 MD5        = "93e71b9ecdb39d3ec9245b4f451856d4"
             },
-            new BlockImageTestExpected
-            {
-                TestFile   = "mf2dd_mfs_fast.dart.lz",
-                MediaType  = MediaType.AppleSonyDS,
-                Sectors    = 1600,
-                SectorSize = 512,
-                MD5        = "93e71b9ecdb39d3ec9245b4f451856d4"
-            }
+            */
+            #endregion Unsupported LZH compression
         };
     }
 }
