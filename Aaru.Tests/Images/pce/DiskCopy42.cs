@@ -48,7 +48,15 @@ namespace Aaru.Tests.Images.pce
                 MediaType  = MediaType.AppleSonySS,
                 Sectors    = 800,
                 SectorSize = 512,
-                MD5        = "c5d92544c3e78b7f0a9b4baaa9a64eec"
+                MD5        = "c5d92544c3e78b7f0a9b4baaa9a64eec",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 800
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -56,7 +64,15 @@ namespace Aaru.Tests.Images.pce
                 MediaType  = MediaType.DOS_35_DS_DD_9,
                 Sectors    = 1440,
                 SectorSize = 512,
-                MD5        = "de3f85896f771b7e5bc4c9e3926d64e4"
+                MD5        = "de3f85896f771b7e5bc4c9e3926d64e4",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 1440
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -64,7 +80,15 @@ namespace Aaru.Tests.Images.pce
                 MediaType  = MediaType.AppleSonyDS,
                 Sectors    = 1600,
                 SectorSize = 512,
-                MD5        = "93e71b9ecdb39d3ec9245b4f451856d4"
+                MD5        = "93e71b9ecdb39d3ec9245b4f451856d4",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 1600
+                    }
+                }
             }
         };
     }
