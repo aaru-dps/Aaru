@@ -56,7 +56,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.GENERIC_HDD,
                 Sectors    = 1012032,
                 SectorSize = 512,
-                MD5        = "f98b1a51ca2e7bf047d84969a2392a3d"
+                MD5        = "f98b1a51ca2e7bf047d84969a2392a3d",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 1012032
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -65,6 +73,16 @@ namespace Aaru.Tests.Images
                 Sectors    = 1023057,
                 SectorSize = 512,
                 MD5        = "1b0b5eb965a401f16fa8a07e303cd1c0"
+                /* TODO: NullReferenceException
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 0,
+                        Length = 1023057
+                    }
+                }
+                */
             },
             new BlockImageTestExpected
             {
