@@ -49,7 +49,7 @@ namespace Aaru.Tests.Images.VirtualBox
                 MediaType  = MediaType.Unknown,
                 Sectors    = 512000,
                 SectorSize = 512,
-                MD5        = "f968f0e74dd1b254de9eac589a5d687d"
+                MD5        = "ab3248888d6f10ef30a084fac6a1e2fd"
             },
             new BlockImageTestExpected
             {
@@ -65,7 +65,7 @@ namespace Aaru.Tests.Images.VirtualBox
                 MediaType  = MediaType.Unknown,
                 Sectors    = 512000,
                 SectorSize = 512,
-                MD5        = "09d3dce9e60e9d1a997ad3f04d33c8c5"
+                MD5        = "ab3248888d6f10ef30a084fac6a1e2fd"
             },
             new BlockImageTestExpected
             {
@@ -81,7 +81,7 @@ namespace Aaru.Tests.Images.VirtualBox
                 MediaType  = MediaType.Unknown,
                 Sectors    = 512000,
                 SectorSize = 512,
-                MD5        = "284af271786e7def9bf8af7c2da1c4f2"
+                MD5        = "ab3248888d6f10ef30a084fac6a1e2fd"
             },
             new BlockImageTestExpected
             {

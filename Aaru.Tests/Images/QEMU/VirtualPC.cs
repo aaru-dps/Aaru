@@ -49,7 +49,7 @@ namespace Aaru.Tests.Images.QEMU
                 MediaType  = MediaType.Unknown,
                 Sectors    = 512064,
                 SectorSize = 512,
-                MD5        = "0435d6781d14d34a32c6ac40f5e70d35",
+                MD5        = "26d2745c1d614207b4bce4ee003c326d",
                 Partitions = new[]
                 {
                     new BlockPartitionVolumes
@@ -81,7 +81,7 @@ namespace Aaru.Tests.Images.QEMU
                 MediaType  = MediaType.Unknown,
                 Sectors    = 251940,
                 SectorSize = 512,
-                MD5        = "6246bff640cb3a56d2611e7f8616384d",
+                MD5        = "7126d647c1cefc5a81b4140e10f50269",
                 Partitions = new[]
                 {
                     new BlockPartitionVolumes

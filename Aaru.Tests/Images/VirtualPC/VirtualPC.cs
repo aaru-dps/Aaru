@@ -64,7 +64,7 @@ namespace Aaru.Tests.Images.VirtualPC
                 MediaType  = MediaType.Unknown,
                 Sectors    = 511056,
                 SectorSize = 512,
-                MD5        = "c0955193d302f5eae2138a3669c89669"
+                MD5        = "a6041066df8f52f5d14b8200766d6bb5"
             },
             new BlockImageTestExpected
             {
@@ -76,19 +76,19 @@ namespace Aaru.Tests.Images.VirtualPC
             },
             new BlockImageTestExpected
             {
-                TestFile   = "vpc601_dynamic_250mb.vhd.lz",
+                TestFile   = "vpc504_dynamic_250mb.lz",
                 MediaType  = MediaType.Unknown,
                 Sectors    = 511056,
                 SectorSize = 512,
-                MD5        = "3e3675037a8ec4b78ebafdc2b25e5ceb"
+                MD5        = "e924cd1bbb16f6a6056f81df410922ae"
             },
             new BlockImageTestExpected
             {
-                TestFile   = "vpc601_fixed_10mb.vhd.lz",
+                TestFile   = "vpc504_fixed_10mb.lz",
                 MediaType  = MediaType.Unknown,
                 Sectors    = 20468,
                 SectorSize = 512,
-                MD5        = "4b4e98a5bba2469382132f9289ae1c57"
+                MD5        = "b790693b1c94bed209ee1bb9d0b6a075"
             },
             new BlockImageTestExpected
             {
@@ -96,7 +96,7 @@ namespace Aaru.Tests.Images.VirtualPC
                 MediaType  = MediaType.Unknown,
                 Sectors    = 511056,
                 SectorSize = 512,
-                MD5        = "3e3675037a8ec4b78ebafdc2b25e5ceb"
+                MD5        = "1f9e3dc39db37a9e01fede6a12844222"
             },
             new BlockImageTestExpected
             {
@@ -104,7 +104,7 @@ namespace Aaru.Tests.Images.VirtualPC
                 MediaType  = MediaType.Unknown,
                 Sectors    = 511056,
                 SectorSize = 512,
-                MD5        = "723b2ed575e0e87f253f672f39b3a49f"
+                MD5        = "943a9da318111f50a92c3f2314fad1e0"
             },
             new BlockImageTestExpected
             {
@@ -116,11 +116,27 @@ namespace Aaru.Tests.Images.VirtualPC
             },
             new BlockImageTestExpected
             {
+                TestFile   = "vpc601_dynamic_250mb.vhd.lz",
+                MediaType  = MediaType.Unknown,
+                Sectors    = 511056,
+                SectorSize = 512,
+                MD5        = "1f9e3dc39db37a9e01fede6a12844222"
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "vpc601_fixed_10mb.vhd.lz",
+                MediaType  = MediaType.Unknown,
+                Sectors    = 20468,
+                SectorSize = 512,
+                MD5        = "4b4e98a5bba2469382132f9289ae1c57"
+            },
+            new BlockImageTestExpected
+            {
                 TestFile   = "vpc702_differencing_parent_250mb.vhd.lz",
                 MediaType  = MediaType.Unknown,
                 Sectors    = 511056,
                 SectorSize = 512,
-                MD5        = "0f6b4f4bb22f02e88e442638f803e4f4"
+                MD5        = "df41b76f8532fc8ef775f89212191244"
             },
             new BlockImageTestExpected
             {
@@ -128,7 +144,7 @@ namespace Aaru.Tests.Images.VirtualPC
                 MediaType  = MediaType.Unknown,
                 Sectors    = 511056,
                 SectorSize = 512,
-                MD5        = "3e3675037a8ec4b78ebafdc2b25e5ceb"
+                MD5        = "1f9e3dc39db37a9e01fede6a12844222"
             },
             new BlockImageTestExpected
             {
