@@ -47,7 +47,15 @@ namespace Aaru.Tests.Images
                 MediaType  = MediaType.GENERIC_HDD,
                 Sectors    = 20480,
                 SectorSize = 512,
-                MD5        = "ee7b8fe07784f2ebacc18da1fc248f5a"
+                MD5        = "ee7b8fe07784f2ebacc18da1fc248f5a",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 63,
+                        Length = 20417
+                    }
+                }
             }
         };
     }
