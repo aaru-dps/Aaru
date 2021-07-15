@@ -80,7 +80,15 @@ namespace Aaru.Tests.Images.VirtualPC
                 MediaType  = MediaType.GENERIC_HDD,
                 Sectors    = 266016,
                 SectorSize = 512,
-                MD5        = "5f4d4c4f268ea19c91bf4fb49f4894b6"
+                MD5        = "5f4d4c4f268ea19c91bf4fb49f4894b6",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 17,
+                        Length = 265727
+                    }
+                }
             }
         };
     }

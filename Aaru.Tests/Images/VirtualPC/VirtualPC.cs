@@ -44,19 +44,67 @@ namespace Aaru.Tests.Images.VirtualPC
         {
             new BlockImageTestExpected
             {
-                TestFile   = "vpc504_dynamic_250mb.lz",
+                TestFile   = "vpc40_dynamic_128mb.vhd.lz",
                 MediaType  = MediaType.Unknown,
-                Sectors    = 511056,
+                Sectors    = 261936,
                 SectorSize = 512,
-                MD5        = "cbcee980986d980f6add1f9622a5f917"
+                MD5        = "cc634bb9bbf2dcdd88cfe251390e2049",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 17,
+                        Length = 261647
+                    }
+                }
             },
             new BlockImageTestExpected
             {
-                TestFile   = "vpc504_fixed_10mb.lz",
+                TestFile   = "vpc40_fixed_128mb.vhd.lz",
                 MediaType  = MediaType.Unknown,
-                Sectors    = 20468,
+                Sectors    = 261936,
                 SectorSize = 512,
-                MD5        = "b790693b1c94bed209ee1bb9d0b6a075"
+                MD5        = "0b6f655387e101c0249e922b1714a484",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 17,
+                        Length = 261647
+                    }
+                }
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "vpc50_dynamic_512mb.vhd.lz",
+                MediaType  = MediaType.Unknown,
+                Sectors    = 1052352,
+                SectorSize = 512,
+                MD5        = "12ebc62199ecaae97efe406ee891d68f",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 63,
+                        Length = 1052289
+                    }
+                }
+            },
+            new BlockImageTestExpected
+            {
+                TestFile   = "vpc50_fixed_512mb.vhd.lz",
+                MediaType  = MediaType.Unknown,
+                Sectors    = 1052352,
+                SectorSize = 512,
+                MD5        = "4943fc799eddd6f386b2923847824ffc",
+                Partitions = new[]
+                {
+                    new BlockPartitionVolumes
+                    {
+                        Start  = 63,
+                        Length = 1052289
+                    }
+                }
             },
             new BlockImageTestExpected
             {
@@ -134,7 +182,7 @@ namespace Aaru.Tests.Images.VirtualPC
             {
                 TestFile   = "vpc702_differencing_parent_250mb.vhd.lz",
                 MediaType  = MediaType.Unknown,
-                Sectors    = 511056,
+                Sectors    = 31456656,
                 SectorSize = 512,
                 MD5        = "df41b76f8532fc8ef775f89212191244"
             },
