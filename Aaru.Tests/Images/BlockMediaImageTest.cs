@@ -187,10 +187,10 @@ namespace Aaru.Tests.Images
                                 Partition             foundPartition    = partitions[i];
 
                                 Assert.AreEqual(expectedPartition.Start, foundPartition.Start,
-                                                $"Expected partition {i} to start at sector {expectedPartition.Start} but found it starts at {foundPartition.Start}");
+                                                $"Expected partition {i} to start at sector {expectedPartition.Start} but found it starts at {foundPartition.Start} in {testFile}");
 
                                 Assert.AreEqual(expectedPartition.Length, foundPartition.Length,
-                                                $"Expected partition {i} to have {expectedPartition.Length} sectors but found it has {foundPartition.Length} sectors");
+                                                $"Expected partition {i} to have {expectedPartition.Length} sectors but found it has {foundPartition.Length} sectors in {testFile}");
 
                                 string expectedDataFilename = $"{testFile}.contents.partition{i}.json";
 
@@ -247,7 +247,7 @@ namespace Aaru.Tests.Images
                                         if(error != Errno.NoError)
                                             continue;
 
-                                        expectedData[j]       = new VolumeData
+                                        expectedData[j] = new VolumeData
                                         {
                                             Files = ReadOnlyFilesystemTest.BuildDirectory(fs, "/")
                                         };
@@ -260,15 +260,10 @@ namespace Aaru.Tests.Images
                                 }
 
                                 if(idPlugins.Count == 0)
-                                {
-                                    Assert.IsNull(expectedData,
-                                                  $"Expected no filesystems identified in partition {i} but found {idPlugins.Count}");
-
                                     continue;
-                                }
 
                                 Assert.AreEqual(expectedData.Length, idPlugins.Count,
-                                                $"Expected {expectedData.Length} filesystems identified in partition {i} but found {idPlugins.Count}");
+                                                $"Expected {expectedData.Length} filesystems identified in partition {i} but found {idPlugins.Count} in {testFile}");
 
                                 for(int j = 0; j < idPlugins.Count; j++)
                                 {
@@ -284,12 +279,13 @@ namespace Aaru.Tests.Images
                                                                          Invoke(new object[]
                                                                                     {});
 
-                                    Assert.IsNotNull(fs, $"Could not instantiate filesystem {pluginName}");
+                                    Assert.IsNotNull(fs,
+                                                     $"Could not instantiate filesystem {pluginName} in {testFile}");
 
                                     Errno error = fs.Mount(image, partitions[i], null, null, null);
 
                                     Assert.AreEqual(Errno.NoError, error,
-                                                    $"Could not mount {pluginName} in partition {i}.");
+                                                    $"Could not mount {pluginName} in partition {i} in {testFile}.");
 
                                     if(error != Errno.NoError)
                                         continue;
