@@ -464,11 +464,11 @@ namespace Aaru.DiscImages
                 _blockAllocationTable = new uint[_thisDynamic.MaxTableEntries];
 
                 // How many sectors uses the BAT
-                int batSectorCount = (int)Math.Ceiling(((double)_thisDynamic.MaxTableEntries * 4) / 512);
+                int batSectorCount = (int)Math.Ceiling((double)_thisDynamic.MaxTableEntries * 4 / 512);
 
                 byte[] bat = new byte[_thisDynamic.MaxTableEntries * 4];
                 imageStream.Seek((long)_thisDynamic.TableOffset, SeekOrigin.Begin);
-                imageStream.Read(bat, 0, batSectorCount);
+                imageStream.Read(bat, 0, bat.Length);
 
                 ReadOnlySpan<byte> span = bat;
 
