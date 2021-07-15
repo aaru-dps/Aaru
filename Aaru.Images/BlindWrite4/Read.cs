@@ -955,16 +955,7 @@ namespace Aaru.DiscImages
                     byte[] sector = br.ReadBytes((int)sectorSize);
                     br.BaseStream.Seek(sectorSkip, SeekOrigin.Current);
 
-                    try
-                    {
-                        Array.Copy(sector, 0, buffer, i * sectorSize, sectorSize);
-                    }
-                    catch(Exception e)
-                    {
-                        System.Console.WriteLine(e);
-
-                        throw;
-                    }
+                    Array.Copy(sector, 0, buffer, i * sectorSize, sectorSize);
                 }
 
             return buffer;
