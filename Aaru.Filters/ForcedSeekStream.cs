@@ -118,6 +118,9 @@ namespace Aaru.Filters
                 return;
             }
 
+            if(position > _streamLength)
+                position = _streamLength;
+
             _backStream.Position = _backStream.Length;
             long   toPosition      = position - _backStream.Position;
             int    fullBufferReads = (int)(toPosition / BUFFER_LEN);
@@ -144,6 +147,9 @@ namespace Aaru.Filters
 
         public override int Read(byte[] buffer, int offset, int count)
         {
+            if(_backStream.Position + count > _streamLength)
+                count = (int)(_streamLength - _backStream.Position);
+
             if(_backStream.Position + count <= _backStream.Length)
                 return _backStream.Read(buffer, offset, count);
 
@@ -155,6 +161,9 @@ namespace Aaru.Filters
 
         public override int ReadByte()
         {
+            if(_backStream.Position + 1 > _streamLength)
+                return -1;
+
             if(_backStream.Position + 1 <= _backStream.Length)
                 return _backStream.ReadByte();
 
