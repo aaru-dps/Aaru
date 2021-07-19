@@ -369,10 +369,18 @@ namespace Aaru.Filesystems
                         _fat16 = fat16Valid;
 
                         // Check BPB type
-                        if(_fat12 == _fat16)
+                        if(_fat12          == _fat16 &&
+                           fakeBpb.fs_type != null)
                         {
                             _fat12 = Encoding.ASCII.GetString(fakeBpb.fs_type) == "FAT12   ";
                             _fat16 = Encoding.ASCII.GetString(fakeBpb.fs_type) == "FAT16   ";
+                        }
+
+                        // Still undecided (fs_type is null or is not FAT1[2|6])
+                        if(_fat12 == _fat16)
+                        {
+                            _fat12 = true;
+                            _fat16 = false;
                         }
                     }
                     else
