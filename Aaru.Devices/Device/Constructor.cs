@@ -902,7 +902,7 @@ namespace Aaru.Devices
                     Serial = UsbSerialString;
                 else
                     foreach(char c in Serial.Where(c => !char.IsControl(c)))
-                        Serial = $"{(uint)c:X2}";
+                        Serial = $"{Serial}{(uint)c:X2}";
             }
 
             if(IsFireWire)
@@ -917,7 +917,7 @@ namespace Aaru.Devices
                     Serial = $"{_firewireGuid:X16}";
                 else
                     foreach(char c in Serial.Where(c => !char.IsControl(c)))
-                        Serial = $"{(uint)c:X2}";
+                        Serial = $"{Serial}{(uint)c:X2}";
             }
 
             // Some optical drives are not getting the correct serial, and IDENTIFY PACKET DEVICE is blocked without
