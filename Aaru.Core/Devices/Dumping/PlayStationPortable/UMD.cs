@@ -77,10 +77,10 @@ namespace Aaru.Core.Devices.Dumping
                 return;
             }
 
-            ushort fatStart      = (ushort)((readBuffer[0x0F] << 8)                            + readBuffer[0x0E]);
-            ushort sectorsPerFat = (ushort)((readBuffer[0x17] << 8)                            + readBuffer[0x16]);
-            ushort rootStart     = (ushort)((sectorsPerFat                                * 2) + fatStart);
-            ushort rootSize      = (ushort)((((readBuffer[0x12] << 8) + readBuffer[0x11]) * 32) / 512);
+            ushort fatStart      = (ushort)((readBuffer[0x0F] << 8) + readBuffer[0x0E]);
+            ushort sectorsPerFat = (ushort)((readBuffer[0x17] << 8) + readBuffer[0x16]);
+            ushort rootStart     = (ushort)((sectorsPerFat * 2)     + fatStart);
+            ushort rootSize      = (ushort)(((readBuffer[0x12] << 8) + readBuffer[0x11]) * 32 / 512);
             ushort umdStart      = (ushort)(rootStart + rootSize);
 
             UpdateStatus?.Invoke($"Reading root directory in sector {rootStart}...");
@@ -174,7 +174,7 @@ namespace Aaru.Core.Devices.Dumping
 
             ResumeSupport.Process(true, _dev.IsRemovable, blocks, _dev.Manufacturer, _dev.Model, _dev.Serial,
                                   _dev.PlatformId, ref _resume, ref currentTry, ref extents, _dev.FirmwareRevision,
-                                  _private);
+                                  _private, _force);
 
             if(currentTry == null ||
                extents    == null)
@@ -269,7 +269,7 @@ namespace Aaru.Core.Devices.Dumping
                 if(elapsed < 1)
                     continue;
 
-                currentSpeed     = (sectorSpeedStart * blockSize) / (1048576 * elapsed);
+                currentSpeed     = sectorSpeedStart * blockSize / (1048576 * elapsed);
                 sectorSpeedStart = 0;
                 timeSpeedStart   = DateTime.UtcNow;
             }
@@ -281,23 +281,23 @@ namespace Aaru.Core.Devices.Dumping
             mhddLog.Close();
 
             ibgLog.Close(_dev, blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
-                         (blockSize * (double)(blocks + 1)) / 1024 / (totalDuration / 1000), _devicePath);
+                         blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000), _devicePath);
 
             UpdateStatus?.Invoke($"Dump finished in {(end - start).TotalSeconds} seconds.");
 
             UpdateStatus?.
-                Invoke($"Average dump speed {((double)blockSize * (double)(blocks + 1)) / 1024 / (totalDuration / 1000):F3} KiB/sec.");
+                Invoke($"Average dump speed {blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000):F3} KiB/sec.");
 
             UpdateStatus?.
-                Invoke($"Average write speed {((double)blockSize * (double)(blocks + 1)) / 1024 / imageWriteDuration:F3} KiB/sec.");
+                Invoke($"Average write speed {blockSize * (double)(blocks + 1) / 1024 / imageWriteDuration:F3} KiB/sec.");
 
             _dumpLog.WriteLine("Dump finished in {0} seconds.", (end - start).TotalSeconds);
 
             _dumpLog.WriteLine("Average dump speed {0:F3} KiB/sec.",
-                               ((double)blockSize * (double)(blocks + 1)) / 1024 / (totalDuration / 1000));
+                               blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000));
 
             _dumpLog.WriteLine("Average write speed {0:F3} KiB/sec.",
-                               ((double)blockSize * (double)(blocks + 1)) / 1024 / imageWriteDuration);
+                               blockSize * (double)(blocks + 1) / 1024 / imageWriteDuration);
 
             #region Trimming
             if(_resume.BadBlocks.Count > 0 &&
@@ -571,7 +571,7 @@ namespace Aaru.Core.Devices.Dumping
                 Invoke($"Took a total of {(end - start).TotalSeconds:F3} seconds ({totalDuration / 1000:F3} processing commands, {totalChkDuration / 1000:F3} checksumming, {imageWriteDuration:F3} writing, {(closeEnd - closeStart).TotalSeconds:F3} closing).");
 
             UpdateStatus?.
-                Invoke($"Average speed: {((double)blockSize * (double)(blocks + 1)) / 1048576 / (totalDuration / 1000):F3} MiB/sec.");
+                Invoke($"Average speed: {blockSize * (double)(blocks + 1) / 1048576 / (totalDuration / 1000):F3} MiB/sec.");
 
             if(maxSpeed > 0)
                 UpdateStatus?.Invoke($"Fastest speed burst: {maxSpeed:F3} MiB/sec.");

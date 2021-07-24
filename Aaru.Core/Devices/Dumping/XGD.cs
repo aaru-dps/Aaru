@@ -479,7 +479,7 @@ namespace Aaru.Core.Devices.Dumping
             ExtentsULong     extents          = null;
 
             ResumeSupport.Process(true, true, totalSize, _dev.Manufacturer, _dev.Model, _dev.Serial, _dev.PlatformId,
-                                  ref _resume, ref currentTry, ref extents, _dev.FirmwareRevision, _private);
+                                  ref _resume, ref currentTry, ref extents, _dev.FirmwareRevision, _private, _force);
 
             if(currentTry == null ||
                extents    == null)

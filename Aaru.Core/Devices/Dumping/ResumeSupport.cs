@@ -65,7 +65,7 @@ namespace Aaru.Core.Devices.Dumping
         internal static void Process(bool isLba, bool removable, ulong blocks, string manufacturer, string model,
                                      string serial, PlatformID platform, ref Resume resume,
                                      ref DumpHardwareType currentTry, ref ExtentsULong extents, string firmware,
-                                     bool @private, bool isTape = false)
+                                     bool @private, bool force, bool isTape = false)
         {
             if(@private)
                 serial = null;
@@ -79,18 +79,21 @@ namespace Aaru.Core.Devices.Dumping
                     throw new
                         InvalidOperationException($"Resume file specifies a {(resume.Tape ? "tape" : "not tape")} device but you're requesting to dump a {(isTape ? "tape" : "not tape")} device, not continuing...");
 
-                if(resume.Removable != removable)
+                if(resume.Removable != removable &&
+                   !force)
                     throw new
                         InvalidOperationException($"Resume file specifies a {(resume.Removable ? "removable" : "non removable")} device but you're requesting to dump a {(removable ? "removable" : "non removable")} device, not continuing...");
 
-                if(!isTape &&
-                   resume.LastBlock != blocks - 1)
+                if(!isTape                        &&
+                   resume.LastBlock != blocks - 1 &&
+                   !force)
                     throw new
                         InvalidOperationException($"Resume file specifies a device with {resume.LastBlock + 1} blocks but you're requesting to dump one with {blocks} blocks, not continuing...");
 
                 foreach(DumpHardwareType oldTry in resume.Tries)
                 {
-                    if(!removable)
+                    if(!removable &&
+                       !force)
                     {
                         if(oldTry.Manufacturer != manufacturer)
                             throw new

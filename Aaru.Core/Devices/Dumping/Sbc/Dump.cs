@@ -633,7 +633,7 @@ namespace Aaru.Core.Devices.Dumping
 
             ResumeSupport.Process(true, _dev.IsRemovable, blocks, _dev.Manufacturer, _dev.Model, _dev.Serial,
                                   _dev.PlatformId, ref _resume, ref currentTry, ref extents, _dev.FirmwareRevision,
-                                  _private);
+                                  _private, _force);
 
             if(currentTry == null ||
                extents    == null)
