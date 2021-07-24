@@ -102,6 +102,10 @@ namespace Aaru.Decoders.SCSI
 
             Array.Copy(page, 4, ascii, 0, page.Length - 4);
 
+            for(int i = 0; i < ascii.Length - 1; i++)
+                if(ascii[i] < 0x20)
+                    return null;
+
             return StringHandlers.CToString(ascii);
         }
 
