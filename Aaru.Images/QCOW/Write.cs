@@ -64,7 +64,7 @@ namespace Aaru.DiscImages
             }
 
             // TODO: Correct this calculation
-            if((sectors * sectorSize) / 65536 > uint.MaxValue)
+            if(sectors * sectorSize / 65536 > uint.MaxValue)
             {
                 ErrorMessage = "Too many sectors for selected cluster size";
 
@@ -96,13 +96,13 @@ namespace Aaru.DiscImages
                 size            = sectors * sectorSize,
                 cluster_bits    = 12,
                 l2_bits         = 9,
-                l1_table_offset = (ulong)Marshal.SizeOf<Header>()
+                l1_table_offset = (ulong)((Marshal.SizeOf<Header>() + 7) & ~7)
             };
 
             int shift = _qHdr.cluster_bits + _qHdr.l2_bits;
             _clusterSize    = 1 << _qHdr.cluster_bits;
             _clusterSectors = 1 << (_qHdr.cluster_bits - 9);
-            _l1Size         = (uint)(((_qHdr.size + (ulong)(1 << shift)) - 1) >> shift);
+            _l1Size         = (uint)((_qHdr.size + (ulong)(1 << shift) - 1) >> shift);
             _l2Size         = 1 << _qHdr.l2_bits;
 
             _l1Table = new ulong[_l1Size];
@@ -188,9 +188,9 @@ namespace Aaru.DiscImages
             if(_l1Table[l1Off] == 0)
             {
                 _writingStream.Seek(0, SeekOrigin.End);
-                _l1Table[l1Off] = (ulong)_writingStream.Position;
-                byte[] l2TableB = new byte[_l2Size * 8];
-                _writingStream.Seek(0, SeekOrigin.End);
+                _l1Table[l1Off] = (ulong)((_writingStream.Length + _clusterSize - 1) / _clusterSize * _clusterSize);
+                byte[] l2TableB = new byte[_l2Size                                   * 8];
+                _writingStream.Position = (long)_l1Table[l1Off];
                 _writingStream.Write(l2TableB, 0, l2TableB.Length);
             }
 
