@@ -110,7 +110,7 @@ namespace Aaru.DiscImages
                 headerSize   = Marshal.SizeOf<Header>() - 72,
                 imageType    = VdiImageType.Normal,
                 offsetBlocks = sectorSize,
-                offsetData   = _currentWritingPosition,
+                offsetData   = (uint)_currentWritingPosition,
                 sectorSize   = sectorSize,
                 size         = sectors * sectorSize,
                 blockSize    = DEFAULT_BLOCK_SIZE,
@@ -169,13 +169,13 @@ namespace Aaru.DiscImages
 
             if(ibmOff == VDI_EMPTY)
             {
-                ibmOff                  =  (_currentWritingPosition - _vHdr.offsetData) / _vHdr.blockSize;
+                ibmOff                  =  (uint)((_currentWritingPosition - _vHdr.offsetData) / _vHdr.blockSize);
                 _ibm[index]             =  ibmOff;
                 _currentWritingPosition += _vHdr.blockSize;
                 _vHdr.allocatedBlocks++;
             }
 
-            ulong imageOff = _vHdr.offsetData + (ibmOff * _vHdr.blockSize);
+            ulong imageOff = _vHdr.offsetData + ((ulong)ibmOff * _vHdr.blockSize);
 
             _writingStream.Seek((long)imageOff, SeekOrigin.Begin);
             _writingStream.Seek((long)secOff, SeekOrigin.Current);

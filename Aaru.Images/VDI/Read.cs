@@ -209,7 +209,7 @@ namespace Aaru.DiscImages
             if(ibmOff == VDI_EMPTY)
                 return new byte[_vHdr.sectorSize];
 
-            ulong imageOff = _vHdr.offsetData + (ibmOff * _vHdr.blockSize);
+            ulong imageOff = _vHdr.offsetData + ((ulong)ibmOff * _vHdr.blockSize);
 
             byte[] cluster = new byte[_vHdr.blockSize];
             _imageStream.Seek((long)imageOff, SeekOrigin.Begin);

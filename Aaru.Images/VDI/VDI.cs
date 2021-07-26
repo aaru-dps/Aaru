@@ -42,7 +42,7 @@ namespace Aaru.DiscImages
     // TODO: Support fixed images
     public sealed partial class Vdi : IWritableImage
     {
-        uint                      _currentWritingPosition;
+        ulong                     _currentWritingPosition;
         uint[]                    _ibm;
         ImageInfo                 _imageInfo;
         Stream                    _imageStream;
