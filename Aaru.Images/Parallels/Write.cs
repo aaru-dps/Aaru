@@ -62,7 +62,7 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            if((sectors * sectorSize) / DEFAULT_CLUSTER_SIZE > uint.MaxValue)
+            if(sectors * sectorSize / DEFAULT_CLUSTER_SIZE > uint.MaxValue)
             {
                 ErrorMessage = "Too many sectors for selected cluster size";
 
@@ -87,9 +87,9 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            uint batEntries = (uint)((sectors * sectorSize) / DEFAULT_CLUSTER_SIZE);
+            uint batEntries = (uint)(sectors * sectorSize / DEFAULT_CLUSTER_SIZE);
 
-            if((sectors * sectorSize) % DEFAULT_CLUSTER_SIZE > 0)
+            if(sectors * sectorSize % DEFAULT_CLUSTER_SIZE > 0)
                 batEntries++;
 
             uint headerSectors = (uint)Marshal.SizeOf<Header>() + (batEntries * 4);
@@ -160,10 +160,10 @@ namespace Aaru.DiscImages
             {
                 batOff                  =  (uint)(_currentWritingPosition / 512);
                 _bat[index]             =  batOff;
-                _currentWritingPosition += _pHdr.cluster_size * 512;
+                _currentWritingPosition += _pHdr.cluster_size * 512L;
             }
 
-            ulong imageOff = batOff * 512;
+            ulong imageOff = batOff * 512UL;
 
             _writingStream.Seek((long)imageOff, SeekOrigin.Begin);
             _writingStream.Seek((long)secOff * 512, SeekOrigin.Current);

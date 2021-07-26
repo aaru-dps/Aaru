@@ -128,9 +128,9 @@ namespace Aaru.DiscImages
                 return new byte[512];
 
             if(_extended)
-                imageOff = batOff * _clusterBytes;
+                imageOff = (ulong)batOff * _clusterBytes;
             else
-                imageOff = batOff * 512;
+                imageOff = batOff * 512UL;
 
             byte[] cluster = new byte[_clusterBytes];
             _imageStream.Seek((long)imageOff, SeekOrigin.Begin);
