@@ -64,7 +64,7 @@ namespace Aaru.DiscImages
             }
 
             // TODO: Correct this calculation
-            if((sectors * sectorSize) / 65536 > uint.MaxValue)
+            if(sectors * sectorSize / 65536 > uint.MaxValue)
             {
                 ErrorMessage = "Too many sectors for selected cluster size";
 
@@ -133,28 +133,31 @@ namespace Aaru.DiscImages
             for(int i = 0; i < _qHdr.cluster_bits; i++)
                 _sectorMask = (_sectorMask << 1) + 1;
 
-            _qHdr.l1_size = (uint)(_qHdr.size >> _l1Shift);
+            _qHdr.l1_size = (uint)(((long)_qHdr.size + (1 << _l1Shift) - 1) >> _l1Shift);
 
             if(_qHdr.l1_size == 0)
                 _qHdr.l1_size = 1;
 
             _l1Table = new ulong[_qHdr.l1_size];
 
-            ulong clusters       = _qHdr.size     / (ulong)_clusterSize;
-            ulong refCountBlocks = (clusters * 2) / (ulong)_clusterSize;
+            ulong clusters       = _qHdr.size   / (ulong)_clusterSize;
+            ulong refCountBlocks = clusters * 2 / (ulong)_clusterSize;
+
+            if(clusters * 2 % (ulong)_clusterSize > 0)
+                refCountBlocks++;
 
             if(refCountBlocks == 0)
                 refCountBlocks = 1;
 
             _qHdr.refcount_table_offset   = (ulong)_clusterSize;
-            _qHdr.refcount_table_clusters = (uint)((refCountBlocks * 8) / (ulong)_clusterSize);
+            _qHdr.refcount_table_clusters = (uint)(refCountBlocks * 8 / (ulong)_clusterSize);
 
             if(_qHdr.refcount_table_clusters == 0)
                 _qHdr.refcount_table_clusters = 1;
 
             _refCountTable        = new ulong[refCountBlocks];
             _qHdr.l1_table_offset = _qHdr.refcount_table_offset + (ulong)(_qHdr.refcount_table_clusters * _clusterSize);
-            ulong l1TableClusters = (_qHdr.l1_size * 8) / (ulong)_clusterSize;
+            ulong l1TableClusters = _qHdr.l1_size * 8 / (ulong)_clusterSize;
 
             if(l1TableClusters == 0)
                 l1TableClusters = 1;
@@ -243,8 +246,8 @@ namespace Aaru.DiscImages
             _writingStream.Seek((long)(offset + (byteAddress & _sectorMask)), SeekOrigin.Begin);
             _writingStream.Write(data, 0, data.Length);
 
-            int   refCountBlockEntries = (_clusterSize * 8) / 16;
-            ulong refCountBlockIndex   = (offset       / (ulong)_clusterSize) % (ulong)refCountBlockEntries;
+            int   refCountBlockEntries = _clusterSize * 8 / 16;
+            ulong refCountBlockIndex   = offset       / (ulong)_clusterSize % (ulong)refCountBlockEntries;
             ulong refCountTableIndex   = offset / (ulong)_clusterSize / (ulong)refCountBlockEntries;
 
             ulong refBlockOffset = _refCountTable[refCountTableIndex];
