@@ -675,7 +675,7 @@ namespace Aaru.DiscImages
                     byte[] bitmap = new byte[_bitmapSize * 512];
 
                     // Offset of block in file
-                    uint blockOffset = _blockAllocationTable[blockNumber] * 512;
+                    long blockOffset = _blockAllocationTable[blockNumber] * 512L;
 
                     int bitmapByte = (int)Math.Floor((double)sectorInBlock / 8);
                     int bitmapBit  = (int)(sectorInBlock % 8);
