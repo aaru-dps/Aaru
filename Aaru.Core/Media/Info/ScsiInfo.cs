@@ -1450,6 +1450,10 @@ namespace Aaru.Core.Media.Info
                containsFloppyPage)
                 MediaType = MediaType.FlashDrive;
 
+            if(MediaType == MediaType.Unknown &&
+               !dev.IsRemovable)
+                MediaType = MediaType.GENERIC_HDD;
+
             if(DeviceInfo.ScsiType != PeripheralDeviceTypes.MultiMediaDevice ||
                (dev.IsUsb && (scsiMediumType == 0x40 || scsiMediumType == 0x41 || scsiMediumType == 0x42)))
                 return;
