@@ -221,7 +221,7 @@ namespace Aaru.Core.Media.Info
                             Array.Copy(cmdBuf, 0, temp, 0, 8);
                             Array.Reverse(temp);
                             Blocks    = BitConverter.ToUInt64(temp, 0);
-                            BlockSize = (uint)((cmdBuf[5] << 24) + (cmdBuf[5] << 16) + (cmdBuf[6] << 8) + cmdBuf[7]);
+                            BlockSize = (uint)((cmdBuf[8] << 24) + (cmdBuf[9] << 16) + (cmdBuf[10] << 8) + cmdBuf[11]);
                         }
                     }
 
