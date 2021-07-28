@@ -1,4 +1,4 @@
-﻿// /***************************************************************************
+// /***************************************************************************
 // Aaru Data Preservation Suite
 // ----------------------------------------------------------------------------
 //
@@ -572,7 +572,7 @@ namespace Aaru.Core.Devices
             if(!sense)
             {
                 Blocks = (ulong)((cmdBuf[0] << 24) + (cmdBuf[1] << 16) + (cmdBuf[2] << 8) + cmdBuf[3]) & 0xFFFFFFFF;
-                LogicalBlockSize = (uint)((cmdBuf[5] << 24) + (cmdBuf[5] << 16) + (cmdBuf[6] << 8) + cmdBuf[7]);
+                LogicalBlockSize = (uint)((cmdBuf[4] << 24) + (cmdBuf[5] << 16) + (cmdBuf[6] << 8) + cmdBuf[7]);
             }
 
             if(sense || Blocks == 0xFFFFFFFF)
@@ -594,7 +594,7 @@ namespace Aaru.Core.Devices
                     Array.Copy(cmdBuf, 0, temp, 0, 8);
                     Array.Reverse(temp);
                     Blocks           = BitConverter.ToUInt64(temp, 0);
-                    LogicalBlockSize = (uint)((cmdBuf[5] << 24) + (cmdBuf[5] << 16) + (cmdBuf[6] << 8) + cmdBuf[7]);
+                    LogicalBlockSize = (uint)((cmdBuf[8] << 24) + (cmdBuf[9] << 16) + (cmdBuf[10] << 8) + cmdBuf[11]);
                 }
             }
 
