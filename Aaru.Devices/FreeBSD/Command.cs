@@ -567,16 +567,16 @@ namespace Aaru.Devices.FreeBSD
                     break;
             }
 
-            ataio.cmd.lba_high_exp     = (byte)((registers.LbaHigh     & 0xFF00) >> 8);
-            ataio.cmd.lba_mid_exp      = (byte)((registers.LbaMid      & 0xFF00) >> 8);
+            ataio.cmd.lba_high_exp     = registers.LbaHighCurrent;
+            ataio.cmd.lba_mid_exp      = registers.LbaMidCurrent;
             ataio.cmd.features_exp     = (byte)((registers.Feature     & 0xFF00) >> 8);
             ataio.cmd.sector_count_exp = (byte)((registers.SectorCount & 0xFF00) >> 8);
-            ataio.cmd.lba_low_exp      = (byte)((registers.LbaLow      & 0xFF00) >> 8);
-            ataio.cmd.lba_high         = (byte)(registers.LbaHigh     & 0xFF);
-            ataio.cmd.lba_mid          = (byte)(registers.LbaMid      & 0xFF);
+            ataio.cmd.lba_low_exp      = registers.LbaLowCurrent;
+            ataio.cmd.lba_high         = registers.LbaHighPrevious;
+            ataio.cmd.lba_mid          = registers.LbaMidPrevious;
             ataio.cmd.features         = (byte)(registers.Feature     & 0xFF);
             ataio.cmd.sector_count     = (byte)(registers.SectorCount & 0xFF);
-            ataio.cmd.lba_low          = (byte)(registers.LbaLow      & 0xFF);
+            ataio.cmd.lba_low          = registers.LbaLowPrevious;
             ataio.cmd.command          = registers.Command;
             ataio.cmd.device           = (byte)(0x40 | registers.DeviceHead);
 
@@ -603,13 +603,16 @@ namespace Aaru.Devices.FreeBSD
             if((ataio.ccb_h.status & CamStatus.CamStatusMask) == CamStatus.CamAtaStatusError)
                 sense = true;
 
-            errorRegisters.SectorCount = (ushort)((ataio.res.sector_count_exp << 8) + ataio.res.sector_count);
-            errorRegisters.LbaLow      = (ushort)((ataio.res.lba_low_exp      << 8) + ataio.res.lba_low);
-            errorRegisters.LbaMid      = (ushort)((ataio.res.lba_mid_exp      << 8) + ataio.res.lba_mid);
-            errorRegisters.LbaHigh     = (ushort)((ataio.res.lba_high_exp     << 8) + ataio.res.lba_high);
-            errorRegisters.DeviceHead  = ataio.res.device;
-            errorRegisters.Error       = ataio.res.error;
-            errorRegisters.Status      = ataio.res.status;
+            errorRegisters.SectorCount     = (ushort)((ataio.res.sector_count_exp << 8) + ataio.res.sector_count);
+            errorRegisters.LbaLowCurrent   = ataio.res.lba_low_exp;
+            errorRegisters.LbaMidCurrent   = ataio.res.lba_mid_exp;
+            errorRegisters.LbaHighCurrent  = ataio.res.lba_high_exp;
+            errorRegisters.LbaLowPrevious  = ataio.res.lba_low;
+            errorRegisters.LbaMidPrevious  = ataio.res.lba_mid;
+            errorRegisters.LbaHighPrevious = ataio.res.lba_high;
+            errorRegisters.DeviceHead      = ataio.res.device;
+            errorRegisters.Error           = ataio.res.error;
+            errorRegisters.Status          = ataio.res.status;
 
             buffer = new byte[ataio.dxfer_len];
 

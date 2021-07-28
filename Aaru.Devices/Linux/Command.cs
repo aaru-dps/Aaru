@@ -345,12 +345,12 @@ namespace Aaru.Devices.Linux
             cdb[4]  = (byte)(registers.Feature & 0xFF);
             cdb[5]  = (byte)((registers.SectorCount & 0xFF00) >> 8);
             cdb[6]  = (byte)(registers.SectorCount & 0xFF);
-            cdb[7]  = (byte)((registers.LbaLow & 0xFF00) >> 8);
-            cdb[8]  = (byte)(registers.LbaLow & 0xFF);
-            cdb[9]  = (byte)((registers.LbaMid & 0xFF00) >> 8);
-            cdb[10] = (byte)(registers.LbaMid & 0xFF);
-            cdb[11] = (byte)((registers.LbaHigh & 0xFF00) >> 8);
-            cdb[12] = (byte)(registers.LbaHigh & 0xFF);
+            cdb[7]  = registers.LbaLowPrevious;
+            cdb[8]  = registers.LbaLowCurrent;
+            cdb[9]  = registers.LbaMidPrevious;
+            cdb[10] = registers.LbaMidCurrent;
+            cdb[11] = registers.LbaHighPrevious;
+            cdb[12] = registers.LbaHighCurrent;
             cdb[13] = registers.DeviceHead;
             cdb[14] = registers.Command;
 
@@ -363,12 +363,15 @@ namespace Aaru.Devices.Linux
 
             errorRegisters.Error = senseBuffer[11];
 
-            errorRegisters.SectorCount = (ushort)((senseBuffer[12] << 8) + senseBuffer[13]);
-            errorRegisters.LbaLow      = (ushort)((senseBuffer[14] << 8) + senseBuffer[15]);
-            errorRegisters.LbaMid      = (ushort)((senseBuffer[16] << 8) + senseBuffer[17]);
-            errorRegisters.LbaHigh     = (ushort)((senseBuffer[18] << 8) + senseBuffer[19]);
-            errorRegisters.DeviceHead  = senseBuffer[20];
-            errorRegisters.Status      = senseBuffer[21];
+            errorRegisters.SectorCount     = (ushort)((senseBuffer[12] << 8) + senseBuffer[13]);
+            errorRegisters.LbaLowPrevious  = senseBuffer[14];
+            errorRegisters.LbaLowCurrent   = senseBuffer[15];
+            errorRegisters.LbaMidPrevious  = senseBuffer[16];
+            errorRegisters.LbaMidCurrent   = senseBuffer[17];
+            errorRegisters.LbaHighPrevious = senseBuffer[18];
+            errorRegisters.LbaHighCurrent  = senseBuffer[19];
+            errorRegisters.DeviceHead      = senseBuffer[20];
+            errorRegisters.Status          = senseBuffer[21];
 
             sense = errorRegisters.Error != 0 || (errorRegisters.Status & 0xA5) != 0;
 

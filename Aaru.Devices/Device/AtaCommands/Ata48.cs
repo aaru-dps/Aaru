@@ -57,10 +57,13 @@ namespace Aaru.Devices
 
             if((statusRegisters.Status & 0x23) == 0)
             {
-                lba =  statusRegisters.LbaHigh;
-                lba *= 0x100000000;
-                lba += (ulong)(statusRegisters.LbaMid << 16);
-                lba += statusRegisters.LbaLow;
+                lba = (ulong)((statusRegisters.LbaHighCurrent << 16) + (statusRegisters.LbaMidCurrent << 8) +
+                              statusRegisters.LbaLowCurrent);
+
+                lba <<= 24;
+
+                lba += (ulong)((statusRegisters.LbaHighPrevious << 16) + (statusRegisters.LbaMidPrevious << 8) +
+                               statusRegisters.LbaLowPrevious);
             }
 
             AaruConsole.DebugWriteLine("ATA Device", "GET NATIVE MAX ADDRESS EXT took {0} ms.", duration);
@@ -75,11 +78,14 @@ namespace Aaru.Devices
 
             var registers = new AtaRegistersLba48
             {
-                Command     = (byte)AtaCommands.ReadDmaExt,
-                SectorCount = count,
-                LbaHigh     = (ushort)((lba & 0xFFFF00000000) / 0x100000000),
-                LbaMid      = (ushort)((lba & 0xFFFF0000)     / 0x10000),
-                LbaLow      = (ushort)((lba & 0xFFFF)         / 0x1)
+                Command         = (byte)AtaCommands.ReadDmaExt,
+                SectorCount     = count,
+                LbaHighPrevious = (byte)((lba & 0xFF0000000000) / 0x10000000000),
+                LbaMidPrevious  = (byte)((lba & 0xFF00000000)   / 0x100000000),
+                LbaLowPrevious  = (byte)((lba & 0xFF000000)     / 0x1000000),
+                LbaHighCurrent  = (byte)((lba & 0xFF0000)       / 0x10000),
+                LbaMidCurrent   = (byte)((lba & 0xFF00)         / 0x100),
+                LbaLowCurrent   = (byte)(lba & 0xFF)
             };
 
             registers.DeviceHead += 0x40;
@@ -101,13 +107,13 @@ namespace Aaru.Devices
 
             var registers = new AtaRegistersLba48
             {
-                Command     = (byte)AtaCommands.ReadLogExt,
-                SectorCount = count,
-                LbaLow      = (ushort)((pageNumber & 0xFF)   * 0x100),
-                LbaHigh     = (ushort)((pageNumber & 0xFF00) / 0x100)
+                Command        = (byte)AtaCommands.ReadLogExt,
+                SectorCount    = count,
+                LbaMidCurrent  = (byte)(pageNumber & 0xFF),
+                LbaMidPrevious = (byte)((pageNumber & 0xFF00) / 0x100)
             };
 
-            registers.LbaLow += logAddress;
+            registers.LbaLowCurrent = logAddress;
 
             LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn,
                                        AtaTransferRegister.SectorCount, ref buffer, timeout, true, out duration,
@@ -127,13 +133,13 @@ namespace Aaru.Devices
 
             var registers = new AtaRegistersLba48
             {
-                Command     = (byte)AtaCommands.ReadLogDmaExt,
-                SectorCount = count,
-                LbaLow      = (ushort)((pageNumber & 0xFF)   * 0x100),
-                LbaHigh     = (ushort)((pageNumber & 0xFF00) / 0x100)
+                Command        = (byte)AtaCommands.ReadLogDmaExt,
+                SectorCount    = count,
+                LbaMidCurrent  = (byte)(pageNumber & 0xFF),
+                LbaMidPrevious = (byte)((pageNumber & 0xFF00) / 0x100)
             };
 
-            registers.LbaLow += logAddress;
+            registers.LbaLowCurrent = logAddress;
 
             LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.Dma, AtaTransferRegister.SectorCount,
                                        ref buffer, timeout, true, out duration, out bool sense);
@@ -152,11 +158,14 @@ namespace Aaru.Devices
 
             var registers = new AtaRegistersLba48
             {
-                Command     = (byte)AtaCommands.ReadMultipleExt,
-                SectorCount = count,
-                LbaHigh     = (ushort)((lba & 0xFFFF00000000) / 0x100000000),
-                LbaMid      = (ushort)((lba & 0xFFFF0000)     / 0x10000),
-                LbaLow      = (ushort)((lba & 0xFFFF)         / 0x1)
+                Command         = (byte)AtaCommands.ReadMultipleExt,
+                SectorCount     = count,
+                LbaHighPrevious = (byte)((lba & 0xFF0000000000) / 0x10000000000),
+                LbaMidPrevious  = (byte)((lba & 0xFF00000000)   / 0x100000000),
+                LbaLowPrevious  = (byte)((lba & 0xFF000000)     / 0x1000000),
+                LbaHighCurrent  = (byte)((lba & 0xFF0000)       / 0x10000),
+                LbaMidCurrent   = (byte)((lba & 0xFF00)         / 0x100),
+                LbaLowCurrent   = (byte)(lba & 0xFF)
             };
 
             registers.DeviceHead += 0x40;
@@ -193,10 +202,13 @@ namespace Aaru.Devices
 
             if((statusRegisters.Status & 0x23) == 0)
             {
-                lba =  statusRegisters.LbaHigh;
-                lba *= 0x100000000;
-                lba += (ulong)(statusRegisters.LbaMid << 16);
-                lba += statusRegisters.LbaLow;
+                lba = (ulong)((statusRegisters.LbaHighCurrent << 16) + (statusRegisters.LbaMidCurrent << 8) +
+                              statusRegisters.LbaLowCurrent);
+
+                lba <<= 24;
+
+                lba += (ulong)((statusRegisters.LbaHighPrevious << 16) + (statusRegisters.LbaMidPrevious << 8) +
+                               statusRegisters.LbaLowPrevious);
             }
 
             AaruConsole.DebugWriteLine("ATA Device", "READ NATIVE MAX ADDRESS EXT took {0} ms.", duration);
@@ -211,11 +223,14 @@ namespace Aaru.Devices
 
             var registers = new AtaRegistersLba48
             {
-                Command     = (byte)AtaCommands.ReadExt,
-                SectorCount = count,
-                LbaHigh     = (ushort)((lba & 0xFFFF00000000) / 0x100000000),
-                LbaMid      = (ushort)((lba & 0xFFFF0000)     / 0x10000),
-                LbaLow      = (ushort)((lba & 0xFFFF)         / 0x1)
+                Command         = (byte)AtaCommands.ReadExt,
+                SectorCount     = count,
+                LbaHighPrevious = (byte)((lba & 0xFF0000000000) / 0x10000000000),
+                LbaMidPrevious  = (byte)((lba & 0xFF00000000)   / 0x100000000),
+                LbaLowPrevious  = (byte)((lba & 0xFF000000)     / 0x1000000),
+                LbaHighCurrent  = (byte)((lba & 0xFF0000)       / 0x10000),
+                LbaMidCurrent   = (byte)((lba & 0xFF00)         / 0x100),
+                LbaLowCurrent   = (byte)(lba & 0xFF)
             };
 
             registers.DeviceHead += 0x40;

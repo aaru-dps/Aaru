@@ -139,10 +139,14 @@ namespace Aaru.Tests.Devices
             sb.AppendFormat("Error: {0}", DecodeAtaStatus(registers.Error)).AppendLine();
             sb.AppendFormat("Device: {0}", (registers.DeviceHead >> 4) & 0x01).AppendLine();
 
-            sb.AppendFormat("LBA: {0}",
-                            ((ulong)(registers.DeviceHead & 0xF) * 0x100000000000) +
-                            (registers.LbaHigh * (ulong)0x100000000L) + (ulong)(registers.LbaMid << 16) +
-                            registers.LbaLow);
+            ulong lba = registers.LbaHighPrevious * 0x10000000000UL;
+            lba += registers.LbaMidPrevious * 0x100000000UL;
+            lba += registers.LbaLowPrevious * 0x1000000UL;
+            lba += registers.LbaHighCurrent * 0x10000UL;
+            lba += registers.LbaMidCurrent  * 0x100UL;
+            lba += registers.LbaLowCurrent;
+
+            sb.AppendFormat("LBA: {0}", lba);
 
             sb.AppendFormat("Count: {0}", registers.SectorCount).AppendLine();
             sb.AppendFormat("LBA?: {0}", Convert.ToBoolean(registers.DeviceHead       & 0x40)).AppendLine();

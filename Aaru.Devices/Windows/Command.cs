@@ -366,21 +366,21 @@ namespace Aaru.Devices.Windows
                     DataTransferLength = (uint)buffer.Length,
                     PreviousTaskFile = new AtaTaskFile
                     {
-                        CylinderHigh = (byte)((registers.LbaHigh     & 0xFF00) >> 8),
-                        CylinderLow  = (byte)((registers.LbaMid      & 0xFF00) >> 8),
+                        CylinderHigh = registers.LbaHighPrevious,
+                        CylinderLow  = registers.LbaMidPrevious,
                         Features     = (byte)((registers.Feature     & 0xFF00) >> 8),
                         SectorCount  = (byte)((registers.SectorCount & 0xFF00) >> 8),
-                        SectorNumber = (byte)((registers.LbaLow      & 0xFF00) >> 8)
+                        SectorNumber = registers.LbaLowPrevious
                     },
                     CurrentTaskFile = new AtaTaskFile
                     {
                         Command      = registers.Command,
-                        CylinderHigh = (byte)(registers.LbaHigh & 0xFF),
-                        CylinderLow  = (byte)(registers.LbaMid  & 0xFF),
+                        CylinderHigh = registers.LbaHighCurrent,
+                        CylinderLow  = registers.LbaMidCurrent,
                         DeviceHead   = registers.DeviceHead,
                         Features     = (byte)(registers.Feature     & 0xFF),
                         SectorCount  = (byte)(registers.SectorCount & 0xFF),
-                        SectorNumber = (byte)(registers.LbaLow      & 0xFF)
+                        SectorNumber = registers.LbaLowCurrent
                     }
                 },
                 dataBuffer = new byte[64 * 512]
@@ -441,18 +441,15 @@ namespace Aaru.Devices.Windows
             errorRegisters.SectorCount = (ushort)((aptdBuf.aptd.PreviousTaskFile.SectorCount << 8) +
                                                   aptdBuf.aptd.CurrentTaskFile.SectorCount);
 
-            errorRegisters.LbaLow = (ushort)((aptdBuf.aptd.PreviousTaskFile.SectorNumber << 8) +
-                                             aptdBuf.aptd.CurrentTaskFile.SectorNumber);
-
-            errorRegisters.LbaMid = (ushort)((aptdBuf.aptd.PreviousTaskFile.CylinderLow << 8) +
-                                             aptdBuf.aptd.CurrentTaskFile.CylinderLow);
-
-            errorRegisters.LbaHigh = (ushort)((aptdBuf.aptd.PreviousTaskFile.CylinderHigh << 8) +
-                                              aptdBuf.aptd.CurrentTaskFile.CylinderHigh);
-
-            errorRegisters.DeviceHead = aptdBuf.aptd.CurrentTaskFile.DeviceHead;
-            errorRegisters.Error      = aptdBuf.aptd.CurrentTaskFile.Error;
-            errorRegisters.Status     = aptdBuf.aptd.CurrentTaskFile.Status;
+            errorRegisters.LbaLowPrevious  = aptdBuf.aptd.PreviousTaskFile.SectorNumber;
+            errorRegisters.LbaMidPrevious  = aptdBuf.aptd.PreviousTaskFile.CylinderLow;
+            errorRegisters.LbaHighPrevious = aptdBuf.aptd.PreviousTaskFile.CylinderHigh;
+            errorRegisters.LbaLowCurrent   = aptdBuf.aptd.CurrentTaskFile.SectorNumber;
+            errorRegisters.LbaMidCurrent   = aptdBuf.aptd.CurrentTaskFile.CylinderLow;
+            errorRegisters.LbaHighCurrent  = aptdBuf.aptd.CurrentTaskFile.CylinderHigh;
+            errorRegisters.DeviceHead      = aptdBuf.aptd.CurrentTaskFile.DeviceHead;
+            errorRegisters.Error           = aptdBuf.aptd.CurrentTaskFile.Error;
+            errorRegisters.Status          = aptdBuf.aptd.CurrentTaskFile.Status;
 
             sense = errorRegisters.Error != 0 || (errorRegisters.Status & 0xA5) != 0;
 
