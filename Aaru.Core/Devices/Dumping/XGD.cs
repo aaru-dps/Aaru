@@ -174,7 +174,8 @@ namespace Aaru.Core.Devices.Dumping
             }
 
             ulong totalSize =
-                (ulong)((readBuffer[0] << 24) + (readBuffer[1] << 16) + (readBuffer[2] << 8) + readBuffer[3]);
+                (ulong)((readBuffer[0] << 24) + (readBuffer[1] << 16) + (readBuffer[2] << 8) + readBuffer[3]) &
+                0xFFFFFFFF;
 
             UpdateStatus?.Invoke("Reading Physical Format Information.");
             _dumpLog.WriteLine("Reading Physical Format Information.");
@@ -224,7 +225,7 @@ namespace Aaru.Core.Devices.Dumping
                 _dumpLog.WriteLine("Video partition is too big, did lock work? Trying cold values.");
 
                 totalSize = (ulong)((coldReadCapacity[0] << 24) + (coldReadCapacity[1] << 16) +
-                                    (coldReadCapacity[2] << 8)  + coldReadCapacity[3]);
+                                    (coldReadCapacity[2] << 8)  + coldReadCapacity[3]) & 0xFFFFFFFF;
 
                 tmpBuf = new byte[coldPfi.Length - 4];
                 Array.Copy(coldPfi, 4, tmpBuf, 0, coldPfi.Length - 4);
@@ -276,7 +277,8 @@ namespace Aaru.Core.Devices.Dumping
             }
 
             ulong gameSize =
-                (ulong)((readBuffer[0] << 24) + (readBuffer[1] << 16) + (readBuffer[2] << 8) + readBuffer[3]) + 1;
+                ((ulong)((readBuffer[0] << 24) + (readBuffer[1] << 16) + (readBuffer[2] << 8) + readBuffer[3]) &
+                 0xFFFFFFFF) + 1;
 
             AaruConsole.DebugWriteLine("Dump-media command", "Game partition total size: {0} sectors", gameSize);
 
@@ -307,7 +309,9 @@ namespace Aaru.Core.Devices.Dumping
                 return;
             }
 
-            totalSize = (ulong)((readBuffer[0] << 24) + (readBuffer[1] << 16) + (readBuffer[2] << 8) + readBuffer[3]);
+            totalSize = (ulong)((readBuffer[0] << 24) + (readBuffer[1] << 16) + (readBuffer[2] << 8) + readBuffer[3]) &
+                        0xFFFFFFFF;
+
             UpdateStatus?.Invoke("Reading Physical Format Information.");
             _dumpLog.WriteLine("Reading Physical Format Information.");
 

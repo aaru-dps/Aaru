@@ -258,7 +258,7 @@ namespace Aaru.Core.Devices.Dumping
                 sense = dev.ReadCapacity(out cmdBuf, out _, dev.Timeout, out _);
 
                 if(!sense)
-                    lastSector = (cmdBuf[0] << 24) + (cmdBuf[1] << 16) + (cmdBuf[2] << 8) + cmdBuf[3];
+                    lastSector = ((cmdBuf[0] << 24) + (cmdBuf[1] << 16) + (cmdBuf[2] << 8) + cmdBuf[3]) & 0xFFFFFFFF;
             }
 
             if(lastSector > 0)

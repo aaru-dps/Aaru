@@ -571,8 +571,8 @@ namespace Aaru.Core.Devices
 
             if(!sense)
             {
-                Blocks           = (ulong)((cmdBuf[0] << 24) + (cmdBuf[1] << 16) + (cmdBuf[2] << 8) + cmdBuf[3]);
-                LogicalBlockSize = (uint)((cmdBuf[5]  << 24) + (cmdBuf[5] << 16) + (cmdBuf[6] << 8) + cmdBuf[7]);
+                Blocks = (ulong)((cmdBuf[0] << 24) + (cmdBuf[1] << 16) + (cmdBuf[2] << 8) + cmdBuf[3]) & 0xFFFFFFFF;
+                LogicalBlockSize = (uint)((cmdBuf[5] << 24) + (cmdBuf[5] << 16) + (cmdBuf[6] << 8) + cmdBuf[7]);
             }
 
             if(sense || Blocks == 0xFFFFFFFF)

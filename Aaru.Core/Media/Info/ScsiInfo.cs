@@ -190,8 +190,11 @@ namespace Aaru.Core.Media.Info
                     if(!sense)
                     {
                         ReadCapacity = cmdBuf;
-                        Blocks       = (ulong)((cmdBuf[0] << 24) + (cmdBuf[1] << 16) + (cmdBuf[2] << 8) + cmdBuf[3]);
-                        BlockSize    = (uint)((cmdBuf[5]  << 24) + (cmdBuf[5] << 16) + (cmdBuf[6] << 8) + cmdBuf[7]);
+
+                        Blocks = (ulong)((cmdBuf[0] << 24) + (cmdBuf[1] << 16) + (cmdBuf[2] << 8) + cmdBuf[3]) &
+                                 0xFFFFFFFF;
+
+                        BlockSize = (uint)((cmdBuf[5] << 24) + (cmdBuf[5] << 16) + (cmdBuf[6] << 8) + cmdBuf[7]);
                     }
 
                     sense = dev.ReadCapacity16(out cmdBuf, out senseBuf, dev.Timeout, out _);
@@ -277,8 +280,11 @@ namespace Aaru.Core.Media.Info
                     if(!sense)
                     {
                         ReadCapacity = cmdBuf;
-                        Blocks       = (ulong)((cmdBuf[0] << 24) + (cmdBuf[1] << 16) + (cmdBuf[2] << 8) + cmdBuf[3]);
-                        BlockSize    = (uint)((cmdBuf[5]  << 24) + (cmdBuf[5] << 16) + (cmdBuf[6] << 8) + cmdBuf[7]);
+
+                        Blocks = (ulong)((cmdBuf[0] << 24) + (cmdBuf[1] << 16) + (cmdBuf[2] << 8) + cmdBuf[3]) &
+                                 0xFFFFFFFF;
+
+                        BlockSize = (uint)((cmdBuf[5] << 24) + (cmdBuf[5] << 16) + (cmdBuf[6] << 8) + cmdBuf[7]);
                     }
 
                     break;
@@ -1325,7 +1331,8 @@ namespace Aaru.Core.Media.Info
                             }
 
                             ulong totalSize =
-                                (ulong)((cmdBuf[0] << 24) + (cmdBuf[1] << 16) + (cmdBuf[2] << 8) + cmdBuf[3]);
+                                (ulong)((cmdBuf[0] << 24) + (cmdBuf[1] << 16) + (cmdBuf[2] << 8) + cmdBuf[3]) &
+                                0xFFFFFFFF;
 
                             sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.Dvd, 0, 0,
                                                           MmcDiscStructureFormat.PhysicalInformation, 0, 0, out _);
@@ -1366,7 +1373,8 @@ namespace Aaru.Core.Media.Info
                             }
 
                             ulong gameSize =
-                                (ulong)((cmdBuf[0] << 24) + (cmdBuf[1] << 16) + (cmdBuf[2] << 8) + cmdBuf[3]) + 1;
+                                ((ulong)((cmdBuf[0] << 24) + (cmdBuf[1] << 16) + (cmdBuf[2] << 8) + cmdBuf[3]) &
+                                 0xFFFFFFFF) + 1;
 
                             AaruConsole.DebugWriteLine("Dump-media command", "Game partition total size: {0} sectors",
                                                        gameSize);
@@ -1391,7 +1399,8 @@ namespace Aaru.Core.Media.Info
                                 break;
                             }
 
-                            totalSize = (ulong)((cmdBuf[0] << 24) + (cmdBuf[1] << 16) + (cmdBuf[2] << 8) + cmdBuf[3]);
+                            totalSize = (ulong)((cmdBuf[0] << 24) + (cmdBuf[1] << 16) + (cmdBuf[2] << 8) + cmdBuf[3]) &
+                                        0xFFFFFFFF;
 
                             sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.Dvd, 0, 0,
                                                           MmcDiscStructureFormat.PhysicalInformation, 0, 0, out _);
