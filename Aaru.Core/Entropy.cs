@@ -92,14 +92,14 @@ namespace Aaru.Core
                     ulong        trackSize             = 0;
                     List<string> uniqueSectorsPerTrack = new List<string>();
 
-                    trackEntropy.Sectors = (currentTrack.TrackEndSector - currentTrack.TrackStartSector) + 1;
+                    trackEntropy.Sectors = currentTrack.TrackEndSector - currentTrack.TrackStartSector + 1;
 
                     AaruConsole.VerboseWriteLine("Track {0} has {1} sectors", currentTrack.TrackSequence,
                                                  trackEntropy.Sectors);
 
                     InitProgress2Event?.Invoke();
 
-                    for(ulong i = currentTrack.TrackStartSector; i <= currentTrack.TrackEndSector; i++)
+                    for(ulong i = 0; i < trackEntropy.Sectors; i++)
                     {
                         UpdateProgress2Event?.Invoke($"Entropying sector {i + 1} of track {currentTrack.TrackSequence}",
                                                      (long)(i               + 1), (long)currentTrack.TrackEndSector);
@@ -122,7 +122,7 @@ namespace Aaru.Core
 
                     EndProgress2Event?.Invoke();
 
-                    trackEntropy.Entropy += entTable.Select(l => (double)l / (double)trackSize).
+                    trackEntropy.Entropy += entTable.Select(l => l / (double)trackSize).
                                                      Select(frequency => -(frequency * Math.Log(frequency, 2))).Sum();
 
                     if(duplicatedSectors)
@@ -180,7 +180,7 @@ namespace Aaru.Core
 
             EndProgressEvent?.Invoke();
 
-            entropy.Entropy += entTable.Select(l => (double)l / (double)diskSize).
+            entropy.Entropy += entTable.Select(l => l / (double)diskSize).
                                         Select(frequency => -(frequency * Math.Log(frequency, 2))).Sum();
 
             if(duplicatedSectors)
