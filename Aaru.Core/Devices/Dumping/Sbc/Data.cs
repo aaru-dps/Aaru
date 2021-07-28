@@ -246,10 +246,10 @@ namespace Aaru.Core.Devices.Dumping
 
                 double elapsed = (DateTime.UtcNow - timeSpeedStart).TotalSeconds;
 
-                if(elapsed < 1)
+                if(elapsed <= 0)
                     continue;
 
-                currentSpeed     = (sectorSpeedStart * blockSize) / (1048576 * elapsed);
+                currentSpeed     = sectorSpeedStart * blockSize / (1048576 * elapsed);
                 sectorSpeedStart = 0;
                 timeSpeedStart   = DateTime.UtcNow;
             }

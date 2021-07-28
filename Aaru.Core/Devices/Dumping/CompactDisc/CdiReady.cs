@@ -101,12 +101,12 @@ namespace Aaru.Core.Devices.Dumping
                 int frame  = sector[i + 14];
 
                 // Convert to binary
-                minute = ((minute / 16) * 10) + (minute & 0x0F);
-                second = ((second / 16) * 10) + (second & 0x0F);
-                frame  = ((frame  / 16) * 10) + (frame  & 0x0F);
+                minute = (minute / 16 * 10) + (minute & 0x0F);
+                second = (second / 16 * 10) + (second & 0x0F);
+                frame  = (frame  / 16 * 10) + (frame  & 0x0F);
 
                 // Calculate the first found LBA
-                int lba = ((minute * 60 * 75) + (second * 75) + frame) - 150;
+                int lba = (minute * 60 * 75) + (second * 75) + frame - 150;
 
                 // Calculate the difference between the found LBA and the requested one
                 int diff = wantedLba - lba;
@@ -309,10 +309,10 @@ namespace Aaru.Core.Devices.Dumping
 
                         elapsed = (DateTime.UtcNow - timeSpeedStart).TotalSeconds;
 
-                        if(elapsed < 1)
+                        if(elapsed <= 0)
                             continue;
 
-                        currentSpeed     = (sectorSpeedStart * blockSize) / (1048576 * elapsed);
+                        currentSpeed     = sectorSpeedStart * blockSize / (1048576 * elapsed);
                         sectorSpeedStart = 0;
                         timeSpeedStart   = DateTime.UtcNow;
                     }
@@ -403,10 +403,10 @@ namespace Aaru.Core.Devices.Dumping
 
                 elapsed = (DateTime.UtcNow - timeSpeedStart).TotalSeconds;
 
-                if(elapsed < 1)
+                if(elapsed <= 0)
                     continue;
 
-                currentSpeed     = (sectorSpeedStart * blockSize) / (1048576 * elapsed);
+                currentSpeed     = sectorSpeedStart * blockSize / (1048576 * elapsed);
                 sectorSpeedStart = 0;
                 timeSpeedStart   = DateTime.UtcNow;
             }

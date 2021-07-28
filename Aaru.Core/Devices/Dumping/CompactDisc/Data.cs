@@ -492,7 +492,7 @@ namespace Aaru.Core.Devices.Dumping
 
                         elapsed = (DateTime.UtcNow - timeSpeedStart).TotalSeconds;
 
-                        if(elapsed < 1)
+                        if(elapsed <= 0)
                             continue;
 
                         currentSpeed     = sectorSpeedStart * blockSize / (1048576 * elapsed);
@@ -658,7 +658,7 @@ namespace Aaru.Core.Devices.Dumping
 
                 elapsed = (DateTime.UtcNow - timeSpeedStart).TotalSeconds;
 
-                if(elapsed < 1)
+                if(elapsed <= 0)
                     continue;
 
                 currentSpeed     = sectorSpeedStart * blockSize / (1048576 * elapsed);

@@ -460,7 +460,7 @@ namespace Aaru.Core.Devices.Scanning
 
                     double elapsed = (DateTime.UtcNow - timeSpeedStart).TotalSeconds;
 
-                    if(elapsed < 1)
+                    if(elapsed <= 0)
                         continue;
 
                     currentSpeed = sectorSpeedStart * blockSize / (1048576 * elapsed);
@@ -472,6 +472,16 @@ namespace Aaru.Core.Devices.Scanning
                 end = DateTime.UtcNow;
                 EndProgress?.Invoke();
                 mhddLog.Close();
+
+                currentSpeed = sectorSpeedStart * blockSize / (1048576 * (end - timeSpeedStart).TotalSeconds);
+
+                // ReSharper disable once CompareOfFloatsByEqualityOperator
+                if(results.MaxSpeed == double.MinValue)
+                    results.MaxSpeed = currentSpeed;
+
+                // ReSharper disable once CompareOfFloatsByEqualityOperator
+                if(results.MinSpeed == double.MaxValue)
+                    results.MinSpeed = currentSpeed;
 
                 ibgLog.Close(_dev, results.Blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
                              blockSize * (double)(results.Blocks + 1) / 1024 / (results.ProcessingTime / 1000),
@@ -553,7 +563,7 @@ namespace Aaru.Core.Devices.Scanning
 
                     double elapsed = (DateTime.UtcNow - timeSpeedStart).TotalSeconds;
 
-                    if(elapsed < 1)
+                    if(elapsed <= 0)
                         continue;
 
                     currentSpeed = sectorSpeedStart * blockSize / (1048576 * elapsed);

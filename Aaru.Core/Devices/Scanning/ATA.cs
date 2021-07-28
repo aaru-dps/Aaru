@@ -190,11 +190,11 @@ namespace Aaru.Core.Devices.Scanning
 
                         double elapsed = (DateTime.UtcNow - timeSpeedStart).TotalSeconds;
 
-                        if(elapsed < 1)
+                        if(elapsed <= 0)
                             continue;
 
-                        currentSpeed = (sectorSpeedStart  * blockSize) / (1048576 * elapsed);
-                        ScanSpeed?.Invoke(i, currentSpeed * 1024);
+                        currentSpeed = sectorSpeedStart * blockSize / (1048576 * elapsed);
+                        ScanSpeed?.Invoke(i, currentSpeed                      * 1024);
                         sectorSpeedStart = 0;
                         timeSpeedStart   = DateTime.UtcNow;
                     }
@@ -204,7 +204,7 @@ namespace Aaru.Core.Devices.Scanning
                     mhddLog.Close();
 
                     ibgLog.Close(_dev, results.Blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
-                                 (blockSize * (double)(results.Blocks + 1)) / 1024 / (results.ProcessingTime / 1000),
+                                 blockSize * (double)(results.Blocks + 1) / 1024 / (results.ProcessingTime / 1000),
                                  _devicePath);
 
                     InitProgress?.Invoke();
@@ -304,11 +304,11 @@ namespace Aaru.Core.Devices.Scanning
 
                                 double elapsed = (DateTime.UtcNow - timeSpeedStart).TotalSeconds;
 
-                                if(elapsed < 1)
+                                if(elapsed <= 0)
                                     continue;
 
-                                currentSpeed = (sectorSpeedStart             * blockSize) / (1048576 * elapsed);
-                                ScanSpeed?.Invoke(currentBlock, currentSpeed * 1024);
+                                currentSpeed = sectorSpeedStart * blockSize / (1048576 * elapsed);
+                                ScanSpeed?.Invoke(currentBlock, currentSpeed           * 1024);
                                 sectorSpeedStart = 0;
                                 timeSpeedStart   = DateTime.UtcNow;
                             }
@@ -320,7 +320,7 @@ namespace Aaru.Core.Devices.Scanning
                     mhddLog.Close();
 
                     ibgLog.Close(_dev, results.Blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
-                                 (blockSize * (double)(results.Blocks + 1)) / 1024 / (results.ProcessingTime / 1000),
+                                 blockSize * (double)(results.Blocks + 1) / 1024 / (results.ProcessingTime / 1000),
                                  _devicePath);
 
                     InitProgress?.Invoke();
@@ -357,7 +357,7 @@ namespace Aaru.Core.Devices.Scanning
 
                 results.ProcessingTime /= 1000;
                 results.TotalTime      =  (end - start).TotalSeconds;
-                results.AvgSpeed       =  (blockSize * (double)(results.Blocks + 1)) / 1048576 / results.ProcessingTime;
+                results.AvgSpeed       =  blockSize * (double)(results.Blocks + 1) / 1048576 / results.ProcessingTime;
                 results.SeekTimes      =  seekTimes;
 
                 return results;

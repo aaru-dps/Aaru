@@ -1066,7 +1066,7 @@ namespace Aaru.Core.Devices.Dumping
 
                 double elapsed = (DateTime.UtcNow - timeSpeedStart).TotalSeconds;
 
-                if(elapsed < 1)
+                if(elapsed <= 0)
                     continue;
 
                 currentSpeed     = currentSpeedSize / (1048576 * elapsed);
