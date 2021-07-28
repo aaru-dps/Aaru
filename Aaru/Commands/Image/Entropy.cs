@@ -133,6 +133,14 @@ namespace Aaru.Commands.Image
             entropyCalculator.EndProgressEvent     += Progress.EndProgress;
             entropyCalculator.EndProgress2Event    += Progress.EndProgress2;
 
+            if(wholeDisc                                       &&
+               inputFormat is IOpticalMediaImage opticalFormat &&
+               opticalFormat.Sessions?.Count > 1)
+            {
+                AaruConsole.ErrorWriteLine("Calculating disc entropy of multisession images is not yet implemented.");
+                wholeDisc = false;
+            }
+
             if(separatedTracks)
             {
                 EntropyResults[] tracksEntropy = entropyCalculator.CalculateTracksEntropy(duplicatedSectors);
@@ -144,7 +152,7 @@ namespace Aaru.Commands.Image
                     if(trackEntropy.UniqueSectors != null)
                         AaruConsole.WriteLine("Track {0} has {1} unique sectors ({2:P3})", trackEntropy.Track,
                                               trackEntropy.UniqueSectors,
-                                              (double)trackEntropy.UniqueSectors / (double)trackEntropy.Sectors);
+                                              (double)trackEntropy.UniqueSectors / trackEntropy.Sectors);
                 }
             }
 
@@ -157,7 +165,7 @@ namespace Aaru.Commands.Image
 
             if(entropy.UniqueSectors != null)
                 AaruConsole.WriteLine("Disk has {0} unique sectors ({1:P3})", entropy.UniqueSectors,
-                                      (double)entropy.UniqueSectors / (double)entropy.Sectors);
+                                      (double)entropy.UniqueSectors / entropy.Sectors);
 
             return (int)ErrorNumber.NoError;
         }

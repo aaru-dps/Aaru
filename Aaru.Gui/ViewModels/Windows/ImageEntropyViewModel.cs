@@ -301,6 +301,14 @@ namespace Aaru.Gui.ViewModels.Windows
             StopVisible                            =  false;
             ProgressVisible                        =  true;
 
+            if(WholeDiscChecked                                 &&
+               _inputFormat is IOpticalMediaImage opticalFormat &&
+               opticalFormat.Sessions?.Count > 1)
+            {
+                AaruConsole.ErrorWriteLine("Calculating disc entropy of multisession images is not yet implemented.");
+                WholeDiscChecked = false;
+            }
+
             var thread = new Thread(async () =>
             {
                 if(SeparatedTracksChecked)
@@ -315,7 +323,7 @@ namespace Aaru.Gui.ViewModels.Windows
                         if(trackEntropy.UniqueSectors != null)
                             AaruConsole.WriteLine("Track {0} has {1} unique sectors ({2:P3})", trackEntropy.Track,
                                                   trackEntropy.UniqueSectors,
-                                                  (double)trackEntropy.UniqueSectors / (double)trackEntropy.Sectors);
+                                                  (double)trackEntropy.UniqueSectors / trackEntropy.Sectors);
                     }
                 }
 
@@ -347,7 +355,7 @@ namespace Aaru.Gui.ViewModels.Windows
                         Track = trackEntropy.Track.ToString(),
                         Entropy = trackEntropy.Entropy.ToString(CultureInfo.CurrentUICulture),
                         UniqueSectors =
-                            $"{trackEntropy.UniqueSectors} ({(double)(trackEntropy.UniqueSectors ?? 0) / (double)trackEntropy.Sectors:P3})"
+                            $"{trackEntropy.UniqueSectors} ({(trackEntropy.UniqueSectors ?? 0) / (double)trackEntropy.Sectors:P3})"
                     });
             }
 
@@ -361,7 +369,7 @@ namespace Aaru.Gui.ViewModels.Windows
                 return;
 
             MediaUniqueSectorsText =
-                $"Disk has {_entropy.UniqueSectors} unique sectors ({(double)_entropy.UniqueSectors / (double)_entropy.Sectors:P3})";
+                $"Disk has {_entropy.UniqueSectors} unique sectors ({(double)_entropy.UniqueSectors / _entropy.Sectors:P3})";
 
             MediaUniqueSectorsVisible = true;
         }
