@@ -568,13 +568,16 @@ namespace Aaru.Decoders.SCSI
 
         public static AtaErrorRegistersLba48 DecodeDescriptor09(byte[] descriptor) => new AtaErrorRegistersLba48
         {
-            Error       = descriptor[3],
-            SectorCount = (ushort)((descriptor[4]  << 8) + descriptor[5]),
-            LbaLow      = (ushort)((descriptor[6]  << 8) + descriptor[7]),
-            LbaMid      = (ushort)((descriptor[8]  << 8) + descriptor[9]),
-            LbaHigh     = (ushort)((descriptor[10] << 8) + descriptor[11]),
-            DeviceHead  = descriptor[12],
-            Status      = descriptor[13]
+            Error           = descriptor[3],
+            SectorCount     = (ushort)((descriptor[4] << 8) + descriptor[5]),
+            LbaLowCurrent   = descriptor[6],
+            LbaLowPrevious  = descriptor[7],
+            LbaMidCurrent   = descriptor[8],
+            LbaMidPrevious  = descriptor[9],
+            LbaHighCurrent  = descriptor[10],
+            LbaHighPrevious = descriptor[11],
+            DeviceHead      = descriptor[12],
+            Status          = descriptor[13]
         };
 
         public static void DecodeDescriptor0B(byte[] descriptor) => throw new NotImplementedException("Check SBC-3");

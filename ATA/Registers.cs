@@ -63,9 +63,12 @@ namespace Aaru.Decoders.ATA
     {
         public ushort Feature;
         public ushort SectorCount;
-        public ushort LbaLow;
-        public ushort LbaMid;
-        public ushort LbaHigh;
+        public byte   LbaLowPrevious;
+        public byte   LbaLowCurrent;
+        public byte   LbaMidPrevious;
+        public byte   LbaMidCurrent;
+        public byte   LbaHighPrevious;
+        public byte   LbaHighCurrent;
         public byte   DeviceHead;
         public byte   Command;
     }
@@ -100,9 +103,12 @@ namespace Aaru.Decoders.ATA
         public byte   Status;
         public byte   Error;
         public ushort SectorCount;
-        public ushort LbaLow;
-        public ushort LbaMid;
-        public ushort LbaHigh;
+        public byte   LbaLowPrevious;
+        public byte   LbaLowCurrent;
+        public byte   LbaMidPrevious;
+        public byte   LbaMidCurrent;
+        public byte   LbaHighPrevious;
+        public byte   LbaHighCurrent;
         public byte   DeviceHead;
     }
 }
