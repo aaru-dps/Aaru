@@ -798,64 +798,69 @@ namespace Aaru.Core.Devices.Dumping
                 _sidecarClass.UpdateStatusEvent    += UpdateStatus;
                 CICMMetadataType sidecar = _sidecarClass.Create();
 
-                if(_preSidecar != null)
+                if(!_aborted)
                 {
-                    _preSidecar.BlockMedia = sidecar.BlockMedia;
-                    sidecar                = _preSidecar;
+                    if(_preSidecar != null)
+                    {
+                        _preSidecar.BlockMedia = sidecar.BlockMedia;
+                        sidecar                = _preSidecar;
+                    }
+
+                    end = DateTime.UtcNow;
+
+                    totalChkDuration = (end - chkStart).TotalMilliseconds;
+                    UpdateStatus?.Invoke($"Sidecar created in {(end - chkStart).TotalSeconds} seconds.");
+
+                    UpdateStatus?.
+                        Invoke($"Average checksum speed {blockSize * (double)(blocks + 1) / 1024 / (totalChkDuration / 1000):F3} KiB/sec.");
+
+                    _dumpLog.WriteLine("Sidecar created in {0} seconds.", (end - chkStart).TotalSeconds);
+
+                    _dumpLog.WriteLine("Average checksum speed {0:F3} KiB/sec.",
+                                       blockSize * (double)(blocks + 1) / 1024 / (totalChkDuration / 1000));
+
+                    (string type, string subType) xmlType = (null, null);
+
+                    switch(_dev.Type)
+                    {
+                        case DeviceType.MMC:
+                            xmlType = CommonTypes.Metadata.MediaType.MediaTypeToString(MediaType.MMC);
+
+                            sidecar.BlockMedia[0].Dimensions = Dimensions.DimensionsFromMediaType(MediaType.MMC);
+
+                            break;
+                        case DeviceType.SecureDigital:
+                            CommonTypes.Metadata.MediaType.MediaTypeToString(MediaType.SecureDigital);
+
+                            sidecar.BlockMedia[0].Dimensions =
+                                Dimensions.DimensionsFromMediaType(MediaType.SecureDigital);
+
+                            break;
+                    }
+
+                    sidecar.BlockMedia[0].DiskType    = xmlType.type;
+                    sidecar.BlockMedia[0].DiskSubType = xmlType.subType;
+
+                    // TODO: Implement device firmware revision
+                    sidecar.BlockMedia[0].LogicalBlocks     = blocks;
+                    sidecar.BlockMedia[0].PhysicalBlockSize = physicalBlockSize > 0 ? physicalBlockSize : blockSize;
+                    sidecar.BlockMedia[0].LogicalBlockSize  = blockSize;
+                    sidecar.BlockMedia[0].Manufacturer      = _dev.Manufacturer;
+                    sidecar.BlockMedia[0].Model             = _dev.Model;
+
+                    if(!_private)
+                        sidecar.BlockMedia[0].Serial = _dev.Serial;
+
+                    sidecar.BlockMedia[0].Size = blocks * blockSize;
+
+                    UpdateStatus?.Invoke("Writing metadata sidecar");
+
+                    var xmlFs = new FileStream(_outputPrefix + ".cicm.xml", FileMode.Create);
+
+                    var xmlSer = new XmlSerializer(typeof(CICMMetadataType));
+                    xmlSer.Serialize(xmlFs, sidecar);
+                    xmlFs.Close();
                 }
-
-                end = DateTime.UtcNow;
-
-                totalChkDuration = (end - chkStart).TotalMilliseconds;
-                UpdateStatus?.Invoke($"Sidecar created in {(end - chkStart).TotalSeconds} seconds.");
-
-                UpdateStatus?.
-                    Invoke($"Average checksum speed {blockSize * (double)(blocks + 1) / 1024 / (totalChkDuration / 1000):F3} KiB/sec.");
-
-                _dumpLog.WriteLine("Sidecar created in {0} seconds.", (end - chkStart).TotalSeconds);
-
-                _dumpLog.WriteLine("Average checksum speed {0:F3} KiB/sec.",
-                                   blockSize * (double)(blocks + 1) / 1024 / (totalChkDuration / 1000));
-
-                (string type, string subType) xmlType = (null, null);
-
-                switch(_dev.Type)
-                {
-                    case DeviceType.MMC:
-                        xmlType = CommonTypes.Metadata.MediaType.MediaTypeToString(MediaType.MMC);
-
-                        sidecar.BlockMedia[0].Dimensions = Dimensions.DimensionsFromMediaType(MediaType.MMC);
-
-                        break;
-                    case DeviceType.SecureDigital:
-                        CommonTypes.Metadata.MediaType.MediaTypeToString(MediaType.SecureDigital);
-                        sidecar.BlockMedia[0].Dimensions = Dimensions.DimensionsFromMediaType(MediaType.SecureDigital);
-
-                        break;
-                }
-
-                sidecar.BlockMedia[0].DiskType    = xmlType.type;
-                sidecar.BlockMedia[0].DiskSubType = xmlType.subType;
-
-                // TODO: Implement device firmware revision
-                sidecar.BlockMedia[0].LogicalBlocks     = blocks;
-                sidecar.BlockMedia[0].PhysicalBlockSize = physicalBlockSize > 0 ? physicalBlockSize : blockSize;
-                sidecar.BlockMedia[0].LogicalBlockSize  = blockSize;
-                sidecar.BlockMedia[0].Manufacturer      = _dev.Manufacturer;
-                sidecar.BlockMedia[0].Model             = _dev.Model;
-
-                if(!_private)
-                    sidecar.BlockMedia[0].Serial = _dev.Serial;
-
-                sidecar.BlockMedia[0].Size = blocks * blockSize;
-
-                UpdateStatus?.Invoke("Writing metadata sidecar");
-
-                var xmlFs = new FileStream(_outputPrefix + ".cicm.xml", FileMode.Create);
-
-                var xmlSer = new XmlSerializer(typeof(CICMMetadataType));
-                xmlSer.Serialize(xmlFs, sidecar);
-                xmlFs.Close();
             }
 
             UpdateStatus?.Invoke("");

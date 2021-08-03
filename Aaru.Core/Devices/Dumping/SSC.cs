@@ -1335,79 +1335,83 @@ namespace Aaru.Core.Devices.Dumping
                 CICMMetadataType sidecar = _sidecarClass.Create();
                 end = DateTime.UtcNow;
 
-                totalChkDuration = (end - chkStart).TotalMilliseconds;
-                UpdateStatus?.Invoke($"Sidecar created in {(end - chkStart).TotalSeconds} seconds.");
-
-                UpdateStatus?.
-                    Invoke($"Average checksum speed {blockSize * (double)(blocks + 1) / 1024 / (totalChkDuration / 1000):F3} KiB/sec.");
-
-                _dumpLog.WriteLine("Sidecar created in {0} seconds.", (end - chkStart).TotalSeconds);
-
-                _dumpLog.WriteLine("Average checksum speed {0:F3} KiB/sec.",
-                                   blockSize * (double)(blocks + 1) / 1024 / (totalChkDuration / 1000));
-
-                if(_preSidecar != null)
+                if(!_aborted)
                 {
-                    _preSidecar.BlockMedia = sidecar.BlockMedia;
-                    sidecar                = _preSidecar;
-                }
+                    totalChkDuration = (end - chkStart).TotalMilliseconds;
+                    UpdateStatus?.Invoke($"Sidecar created in {(end - chkStart).TotalSeconds} seconds.");
 
-                List<(ulong start, string type)> filesystems = new List<(ulong start, string type)>();
+                    UpdateStatus?.
+                        Invoke($"Average checksum speed {blockSize * (double)(blocks + 1) / 1024 / (totalChkDuration / 1000):F3} KiB/sec.");
 
-                if(sidecar.BlockMedia[0].FileSystemInformation != null)
-                    filesystems.AddRange(from partition in sidecar.BlockMedia[0].FileSystemInformation
-                                         where partition.FileSystems != null from fileSystem in partition.FileSystems
-                                         select (partition.StartSector, fileSystem.Type));
+                    _dumpLog.WriteLine("Sidecar created in {0} seconds.", (end - chkStart).TotalSeconds);
 
-                if(filesystems.Count > 0)
-                    foreach(var filesystem in filesystems.Select(o => new
+                    _dumpLog.WriteLine("Average checksum speed {0:F3} KiB/sec.",
+                                       blockSize * (double)(blocks + 1) / 1024 / (totalChkDuration / 1000));
+
+                    if(_preSidecar != null)
                     {
-                        o.start,
-                        o.type
-                    }).Distinct())
-                    {
-                        UpdateStatus?.Invoke($"Found filesystem {filesystem.type} at sector {filesystem.start}");
-                        _dumpLog.WriteLine("Found filesystem {0} at sector {1}", filesystem.type, filesystem.start);
+                        _preSidecar.BlockMedia = sidecar.BlockMedia;
+                        sidecar                = _preSidecar;
                     }
 
-                sidecar.BlockMedia[0].Dimensions = Dimensions.DimensionsFromMediaType(dskType);
+                    List<(ulong start, string type)> filesystems = new List<(ulong start, string type)>();
 
-                (string type, string subType) xmlType = CommonTypes.Metadata.MediaType.MediaTypeToString(dskType);
+                    if(sidecar.BlockMedia[0].FileSystemInformation != null)
+                        filesystems.AddRange(from partition in sidecar.BlockMedia[0].FileSystemInformation
+                                             where partition.FileSystems != null
+                                             from fileSystem in partition.FileSystems
+                                             select (partition.StartSector, fileSystem.Type));
 
-                sidecar.BlockMedia[0].DiskType    = xmlType.type;
-                sidecar.BlockMedia[0].DiskSubType = xmlType.subType;
+                    if(filesystems.Count > 0)
+                        foreach(var filesystem in filesystems.Select(o => new
+                        {
+                            o.start,
+                            o.type
+                        }).Distinct())
+                        {
+                            UpdateStatus?.Invoke($"Found filesystem {filesystem.type} at sector {filesystem.start}");
+                            _dumpLog.WriteLine("Found filesystem {0} at sector {1}", filesystem.type, filesystem.start);
+                        }
 
-                // TODO: Implement device firmware revision
-                if(!_dev.IsRemovable ||
-                   _dev.IsUsb)
-                    if(_dev.Type == DeviceType.ATAPI)
-                        sidecar.BlockMedia[0].Interface = "ATAPI";
-                    else if(_dev.IsUsb)
-                        sidecar.BlockMedia[0].Interface = "USB";
-                    else if(_dev.IsFireWire)
-                        sidecar.BlockMedia[0].Interface = "FireWire";
-                    else
-                        sidecar.BlockMedia[0].Interface = "SCSI";
+                    sidecar.BlockMedia[0].Dimensions = Dimensions.DimensionsFromMediaType(dskType);
 
-                sidecar.BlockMedia[0].LogicalBlocks = blocks;
-                sidecar.BlockMedia[0].Manufacturer  = _dev.Manufacturer;
-                sidecar.BlockMedia[0].Model         = _dev.Model;
+                    (string type, string subType) xmlType = CommonTypes.Metadata.MediaType.MediaTypeToString(dskType);
 
-                if(!_private)
-                    sidecar.BlockMedia[0].Serial = _dev.Serial;
+                    sidecar.BlockMedia[0].DiskType    = xmlType.type;
+                    sidecar.BlockMedia[0].DiskSubType = xmlType.subType;
 
-                sidecar.BlockMedia[0].Size = blocks * blockSize;
+                    // TODO: Implement device firmware revision
+                    if(!_dev.IsRemovable ||
+                       _dev.IsUsb)
+                        if(_dev.Type == DeviceType.ATAPI)
+                            sidecar.BlockMedia[0].Interface = "ATAPI";
+                        else if(_dev.IsUsb)
+                            sidecar.BlockMedia[0].Interface = "USB";
+                        else if(_dev.IsFireWire)
+                            sidecar.BlockMedia[0].Interface = "FireWire";
+                        else
+                            sidecar.BlockMedia[0].Interface = "SCSI";
 
-                if(_dev.IsRemovable)
-                    sidecar.BlockMedia[0].DumpHardwareArray = _resume.Tries.ToArray();
+                    sidecar.BlockMedia[0].LogicalBlocks = blocks;
+                    sidecar.BlockMedia[0].Manufacturer  = _dev.Manufacturer;
+                    sidecar.BlockMedia[0].Model         = _dev.Model;
 
-                UpdateStatus?.Invoke("Writing metadata sidecar");
+                    if(!_private)
+                        sidecar.BlockMedia[0].Serial = _dev.Serial;
 
-                var xmlFs = new FileStream(_outputPrefix + ".cicm.xml", FileMode.Create);
+                    sidecar.BlockMedia[0].Size = blocks * blockSize;
 
-                var xmlSer = new XmlSerializer(typeof(CICMMetadataType));
-                xmlSer.Serialize(xmlFs, sidecar);
-                xmlFs.Close();
+                    if(_dev.IsRemovable)
+                        sidecar.BlockMedia[0].DumpHardwareArray = _resume.Tries.ToArray();
+
+                    UpdateStatus?.Invoke("Writing metadata sidecar");
+
+                    var xmlFs = new FileStream(_outputPrefix + ".cicm.xml", FileMode.Create);
+
+                    var xmlSer = new XmlSerializer(typeof(CICMMetadataType));
+                    xmlSer.Serialize(xmlFs, sidecar);
+                    xmlFs.Close();
+                }
             }
 
             UpdateStatus?.Invoke("");
