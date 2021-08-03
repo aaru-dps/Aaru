@@ -38,6 +38,7 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Core.Logging;
 using Aaru.Decoders.CD;
+using Aaru.Decoders.SCSI;
 using Aaru.Devices;
 using Schemas;
 
@@ -159,14 +160,58 @@ namespace Aaru.Core.Devices.Dumping
                 if(_supportsPlextorD8 && audioExtents.Contains(badSector))
                     sense = ReadPlextorWithSubchannel(out cmdBuf, out senseBuf, badSectorToRead, blockSize,
                                                       sectorsToTrim, supportedPlextorSubchannel, out cmdDuration);
-                else if(readcd && audioExtents.Contains(badSector))
-                    sense = _dev.ReadCd(out cmdBuf, out senseBuf, badSectorToRead, blockSize, sectorsToTrim,
-                                        MmcSectorTypes.Cdda, false, false, false, MmcHeaderCodes.None, true, false,
-                                        MmcErrorField.None, supportedSubchannel, _dev.Timeout, out cmdDuration);
                 else if(readcd)
-                    sense = _dev.ReadCd(out cmdBuf, out senseBuf, badSectorToRead, blockSize, sectorsToTrim,
-                                        MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true,
-                                        true, MmcErrorField.None, supportedSubchannel, _dev.Timeout, out cmdDuration);
+                {
+                    if(audioExtents.Contains(badSector))
+                    {
+                        sense = _dev.ReadCd(out cmdBuf, out senseBuf, badSectorToRead, blockSize, sectorsToTrim,
+                                            MmcSectorTypes.Cdda, false, false, false, MmcHeaderCodes.None, true, false,
+                                            MmcErrorField.None, supportedSubchannel, _dev.Timeout, out cmdDuration);
+
+                        if(sense)
+                        {
+                            DecodedSense? decSense = Sense.Decode(senseBuf);
+
+                            // Try to workaround firmware
+                            if((decSense?.ASC == 0x11 && decSense?.ASCQ == 0x05) ||
+                               decSense?.ASC == 0x64)
+                            {
+                                sense = _dev.ReadCd(out cmdBuf, out _, badSectorToRead, blockSize, sectorsToTrim,
+                                                    MmcSectorTypes.AllTypes, false, false, true,
+                                                    MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
+                                                    supportedSubchannel, _dev.Timeout, out double cmdDuration2);
+
+                                cmdDuration += cmdDuration2;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        sense = _dev.ReadCd(out cmdBuf, out senseBuf, badSectorToRead, blockSize, sectorsToTrim,
+                                            MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders,
+                                            true, true, MmcErrorField.None, supportedSubchannel, _dev.Timeout,
+                                            out cmdDuration);
+
+                        if(sense)
+                        {
+                            DecodedSense? decSense = Sense.Decode(senseBuf);
+
+                            // Try to workaround firmware
+                            if((decSense?.ASC == 0x11 && decSense?.ASCQ == 0x05) ||
+                               decSense?.ASC == 0x64)
+                            {
+                                sense = _dev.ReadCd(out cmdBuf, out _, badSectorToRead, blockSize, sectorsToTrim,
+                                                    MmcSectorTypes.Cdda, false, false, false, MmcHeaderCodes.None, true,
+                                                    false, MmcErrorField.None, supportedSubchannel, _dev.Timeout,
+                                                    out double cmdDuration2);
+
+                                cmdDuration += cmdDuration2;
+                            }
+                        }
+                    }
+
+                    totalDuration += cmdDuration;
+                }
                 else if(read16)
                     sense = _dev.Read16(out cmdBuf, out senseBuf, 0, false, true, false, badSectorToRead, blockSize, 0,
                                         sectorsToTrim, false, _dev.Timeout, out cmdDuration);

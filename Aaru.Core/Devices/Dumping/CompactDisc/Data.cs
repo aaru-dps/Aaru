@@ -281,9 +281,52 @@ namespace Aaru.Core.Devices.Dumping
                 }
                 else if(readcd)
                 {
-                    sense = _dev.ReadCd(out cmdBuf, out senseBuf, firstSectorToRead, blockSize, blocksToRead,
-                                        MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true,
-                                        true, MmcErrorField.None, supportedSubchannel, _dev.Timeout, out cmdDuration);
+                    if(inData)
+                    {
+                        sense = _dev.ReadCd(out cmdBuf, out senseBuf, firstSectorToRead, blockSize, blocksToRead,
+                                            MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders,
+                                            true, true, MmcErrorField.None, supportedSubchannel, _dev.Timeout,
+                                            out cmdDuration);
+
+                        if(sense)
+                        {
+                            DecodedSense? decSense = Sense.Decode(senseBuf);
+
+                            // Try to workaround firmware
+                            if(decSense?.ASC == 0x64)
+                            {
+                                sense = _dev.ReadCd(out cmdBuf, out _, firstSectorToRead, blockSize, blocksToRead,
+                                                    MmcSectorTypes.Cdda, false, false, false, MmcHeaderCodes.None, true,
+                                                    false, MmcErrorField.None, supportedSubchannel, _dev.Timeout,
+                                                    out double cmdDuration2);
+
+                                cmdDuration += cmdDuration2;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        sense = _dev.ReadCd(out cmdBuf, out senseBuf, firstSectorToRead, blockSize, blocksToRead,
+                                            MmcSectorTypes.Cdda, false, false, false, MmcHeaderCodes.None, true, false,
+                                            MmcErrorField.None, supportedSubchannel, _dev.Timeout, out cmdDuration);
+
+                        if(sense)
+                        {
+                            DecodedSense? decSense = Sense.Decode(senseBuf);
+
+                            // Try to workaround firmware
+                            if((decSense?.ASC == 0x11 && decSense?.ASCQ == 0x05) ||
+                               decSense?.ASC == 0x64)
+                            {
+                                sense = _dev.ReadCd(out cmdBuf, out _, firstSectorToRead, blockSize, blocksToRead,
+                                                    MmcSectorTypes.AllTypes, false, false, true,
+                                                    MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
+                                                    supportedSubchannel, _dev.Timeout, out double cmdDuration2);
+
+                                cmdDuration += cmdDuration2;
+                            }
+                        }
+                    }
 
                     totalDuration += cmdDuration;
                 }

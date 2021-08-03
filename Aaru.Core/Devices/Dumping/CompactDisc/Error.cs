@@ -43,6 +43,7 @@ using Aaru.Decoders.CD;
 using Aaru.Decoders.SCSI;
 using Aaru.Devices;
 using Schemas;
+using TrackType = Aaru.CommonTypes.Enums.TrackType;
 
 // ReSharper disable JoinDeclarationAndInitializer
 // ReSharper disable InlineOutVariableDeclaration
@@ -262,9 +263,53 @@ namespace Aaru.Core.Devices.Dumping
                 }
                 else if(readcd)
                 {
-                    sense = _dev.ReadCd(out cmdBuf, out senseBuf, badSectorToReRead, blockSize, sectorsToReRead,
-                                        MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true,
-                                        true, MmcErrorField.None, supportedSubchannel, _dev.Timeout, out cmdDuration);
+                    if(audioExtents.Contains(badSector))
+                    {
+                        sense = _dev.ReadCd(out cmdBuf, out senseBuf, badSectorToReRead, blockSize, sectorsToReRead,
+                                            MmcSectorTypes.Cdda, false, false, false, MmcHeaderCodes.None, true, false,
+                                            MmcErrorField.None, supportedSubchannel, _dev.Timeout, out cmdDuration);
+
+                        if(sense)
+                        {
+                            DecodedSense? decSense = Sense.Decode(senseBuf);
+
+                            // Try to workaround firmware
+                            if((decSense?.ASC == 0x11 && decSense?.ASCQ == 0x05) ||
+                               decSense?.ASC == 0x64)
+                            {
+                                sense = _dev.ReadCd(out cmdBuf, out _, badSectorToReRead, blockSize, sectorsToReRead,
+                                                    MmcSectorTypes.AllTypes, false, false, true,
+                                                    MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
+                                                    supportedSubchannel, _dev.Timeout, out double cmdDuration2);
+
+                                cmdDuration += cmdDuration2;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        sense = _dev.ReadCd(out cmdBuf, out senseBuf, badSectorToReRead, blockSize, sectorsToReRead,
+                                            MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders,
+                                            true, true, MmcErrorField.None, supportedSubchannel, _dev.Timeout,
+                                            out cmdDuration);
+
+                        if(sense)
+                        {
+                            DecodedSense? decSense = Sense.Decode(senseBuf);
+
+                            // Try to workaround firmware
+                            if((decSense?.ASC == 0x11 && decSense?.ASCQ == 0x05) ||
+                               decSense?.ASC == 0x64)
+                            {
+                                sense = _dev.ReadCd(out cmdBuf, out _, badSectorToReRead, blockSize, sectorsToReRead,
+                                                    MmcSectorTypes.Cdda, false, false, false, MmcHeaderCodes.None, true,
+                                                    false, MmcErrorField.None, supportedSubchannel, _dev.Timeout,
+                                                    out double cmdDuration2);
+
+                                cmdDuration += cmdDuration2;
+                            }
+                        }
+                    }
 
                     totalDuration += cmdDuration;
                 }
@@ -599,9 +644,10 @@ namespace Aaru.Core.Devices.Dumping
                 }
                 else if(readcd)
                 {
-                    sense = _dev.ReadCd(out cmdBuf, out senseBuf, startSector, subSize, 5, MmcSectorTypes.AllTypes,
-                                        false, false, false, MmcHeaderCodes.None, false, false, MmcErrorField.None,
-                                        supportedSubchannel, _dev.Timeout, out cmdDuration);
+                    sense = _dev.ReadCd(out cmdBuf, out senseBuf, startSector, subSize, 5,
+                                        track.TrackType == TrackType.Audio ? MmcSectorTypes.Cdda
+                                            : MmcSectorTypes.AllTypes, false, false, false, MmcHeaderCodes.None, false,
+                                        false, MmcErrorField.None, supportedSubchannel, _dev.Timeout, out cmdDuration);
 
                     totalDuration += cmdDuration;
                 }
