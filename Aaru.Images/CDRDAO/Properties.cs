@@ -123,6 +123,27 @@ namespace Aaru.DiscImages
                     else
                         aaruTrack.TrackSubchannelType = TrackSubchannelType.None;
 
+                    if(aaruTrack.TrackSequence == 1)
+                    {
+                        aaruTrack.TrackPregap = 150;
+
+                        if(cdrTrack.Indexes.Count == 0)
+                        {
+                            aaruTrack.Indexes[0] = -150;
+                            aaruTrack.Indexes[1] = 0;
+                        }
+                        else if(!cdrTrack.Indexes.ContainsKey(0))
+                        {
+                            aaruTrack.Indexes[0] = -150;
+
+                            foreach(KeyValuePair<int, ulong> idx in cdrTrack.Indexes.OrderBy(i => i.Key))
+                                aaruTrack.Indexes[(ushort)idx.Key] = (int)idx.Value;
+                        }
+                    }
+                    else
+                        foreach(KeyValuePair<int, ulong> idx in cdrTrack.Indexes.OrderBy(i => i.Key))
+                            aaruTrack.Indexes[(ushort)idx.Key] = (int)idx.Value;
+
                     tracks.Add(aaruTrack);
                 }
 

@@ -58,7 +58,7 @@ namespace Aaru.Tests.Images.cdrdao.raw
                         Session = 1,
                         Start   = 0,
                         End     = 16539,
-                        Pregap  = 0,
+                        Pregap  = 150,
                         Flags   = 0
                     },
                     new TrackInfoTestExpected
@@ -182,7 +182,7 @@ namespace Aaru.Tests.Images.cdrdao.raw
                         Session = 1,
                         Start   = 0,
                         End     = 254264,
-                        Pregap  = 0,
+                        Pregap  = 150,
                         Flags   = 4,
                         Number  = 1,
                         FileSystems = new[]
@@ -220,7 +220,7 @@ namespace Aaru.Tests.Images.cdrdao.raw
                         Session = 1,
                         Start   = 0,
                         End     = 254264,
-                        Pregap  = 0,
+                        Pregap  = 150,
                         Flags   = 4,
                         Number  = 1,
                         FileSystems = new[]
@@ -258,7 +258,7 @@ namespace Aaru.Tests.Images.cdrdao.raw
                         Session = 1,
                         Start   = 0,
                         End     = 308223,
-                        Pregap  = 0,
+                        Pregap  = 150,
                         Flags   = 4,
                         Number  = 1,
                         FileSystems = new[]
@@ -421,7 +421,7 @@ namespace Aaru.Tests.Images.cdrdao.raw
                         Session = 1,
                         Start   = 310561,
                         End     = 329007,
-                        Pregap  = 0,
+                        Pregap  = 150,
                         Flags   = 0
                     }
                 }
