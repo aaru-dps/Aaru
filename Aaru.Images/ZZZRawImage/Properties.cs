@@ -81,6 +81,18 @@ namespace Aaru.DiscImages
                     TrackSession = 1
                 };
 
+                if(_imageInfo.MediaType == MediaType.CD   ||
+                   _imageInfo.MediaType == MediaType.CDRW ||
+                   _imageInfo.MediaType == MediaType.CDR)
+                {
+                    trk.TrackPregap = 150;
+                    trk.Indexes[0]  = -150;
+                    trk.Indexes[1]  = 0;
+
+                    if(trk.TrackType == TrackType.Data)
+                        trk.TrackType = TrackType.CdMode1;
+                }
+
                 List<Track> lst = new List<Track>
                 {
                     trk

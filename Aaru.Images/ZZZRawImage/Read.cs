@@ -1083,6 +1083,9 @@ namespace Aaru.DiscImages
                 case MediaType.CD:
                 case MediaType.CDRW:
                 case MediaType.CDR:
+                    if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdTrackFlags))
+                        _imageInfo.ReadableSectorTags.Add(SectorTagType.CdTrackFlags);
+                    goto case MediaType.BDRE;
                 case MediaType.BDRE:
                 case MediaType.BDROM:
                 case MediaType.BDR:
@@ -1366,7 +1369,7 @@ namespace Aaru.DiscImages
         public byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
         {
             if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc ||
-               !_rawCompactDisc)
+               (!_rawCompactDisc && tag != SectorTagType.CdTrackFlags))
                 throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
             return ReadSectorsTag(sectorAddress, 1, tag);
@@ -1375,8 +1378,14 @@ namespace Aaru.DiscImages
         public byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
         {
             if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc ||
-               !_rawCompactDisc)
+               (!_rawCompactDisc && tag != SectorTagType.CdTrackFlags))
                 throw new FeatureUnsupportedImageException("Feature not supported by image format");
+
+            if(tag == SectorTagType.CdTrackFlags)
+                return new byte[]
+                {
+                    4
+                };
 
             if(sectorAddress > _imageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
