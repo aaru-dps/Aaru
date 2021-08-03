@@ -8,7 +8,7 @@ namespace Aaru.Tests.Issues
 {
     public class _625 : WritableOpticalMediaImageTest
     {
-        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Issues", "Pending", "issue625");
+        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Issues", "Fixed", "issue625");
         public override IMediaImage InputPlugin => new Cdrdao();
         public override IWritableImage OutputPlugin => new CloneCd();
         public override string OutputExtension => "mds";
