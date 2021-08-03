@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
@@ -58,7 +59,27 @@ namespace Aaru.DiscImages
         public string          Format     => "CDRDAO tocfile";
         public string          Author     => "Natalia Portillo";
         public List<Partition> Partitions { get; private set; }
-        public List<Session>   Sessions   => throw new NotImplementedException();
+
+        public List<Session> Sessions
+        {
+            get
+            {
+                Track firstTrack = Tracks.First(t => t.TrackSequence == Tracks.Min(m => m.TrackSequence));
+                Track lastTrack  = Tracks.First(t => t.TrackSequence == Tracks.Max(m => m.TrackSequence));
+
+                return new List<Session>
+                {
+                    new Session
+                    {
+                        SessionSequence = 1,
+                        StartSector     = firstTrack.TrackStartSector,
+                        EndSector       = lastTrack.TrackEndSector,
+                        StartTrack      = firstTrack.TrackSequence,
+                        EndTrack        = lastTrack.TrackSequence
+                    }
+                };
+            }
+        }
 
         public List<Track> Tracks
         {
