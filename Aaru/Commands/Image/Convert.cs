@@ -617,6 +617,22 @@ namespace Aaru.Commands.Image
                 }
             }
 
+            if((outputFormat as IWritableOpticalImage)?.OpticalCapabilities.HasFlag(OpticalImageCapabilities.
+                   CanStoreSessions) != true &&
+               (inputFormat as IOpticalMediaImage)?.Sessions?.Count > 1)
+            {
+                // TODO: Disabled until 6.0
+                /*if(!_force)
+                {*/
+                AaruConsole.
+                    ErrorWriteLine("Output format does not support sessions, this will end in a loss of data, not continuing...");
+
+                return (int)ErrorNumber.UnsupportedMedia;
+                /*}
+
+                AaruConsole.ErrorWriteLine("Output format does not support sessions, this will end in a loss of data, continuing...");*/
+            }
+
             if(!outputFormat.Create(outputPath, mediaType, parsedOptions, inputFormat.Info.Sectors,
                                     inputFormat.Info.SectorSize))
             {
