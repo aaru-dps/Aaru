@@ -395,7 +395,7 @@ namespace Aaru.DiscImages
             for(uint i = 0; i < length; i++)
             {
                 _imageStream.
-                    Seek((long)(track.TrackFileOffset + (((i + sectorAddress) - track.TrackStartSector) * (ulong)(track.TrackRawBytesPerSector + subchannelSize))),
+                    Seek((long)(track.TrackFileOffset + ((i + sectorAddress - track.TrackStartSector) * (ulong)(track.TrackRawBytesPerSector + subchannelSize))),
                          SeekOrigin.Begin);
 
                 _imageStream.Write(data, (int)(i * track.TrackRawBytesPerSector), track.TrackRawBytesPerSector);
@@ -463,7 +463,7 @@ namespace Aaru.DiscImages
                 newTrack.TrackFileOffset = currentDataOffset;
 
                 currentDataOffset += (ulong)(newTrack.TrackRawBytesPerSector + subchannelSize) *
-                                     ((newTrack.TrackEndSector - newTrack.TrackStartSector) + 1);
+                                     (newTrack.TrackEndSector                - newTrack.TrackStartSector + 1);
 
                 _writingTracks.Add(newTrack);
             }
@@ -564,13 +564,13 @@ namespace Aaru.DiscImages
             {
                 _alcSessions.Add(1, new Session
                 {
-                    sessionEnd = (int)((_writingTracks[0].TrackEndSector - _writingTracks[0].TrackStartSector) + 1),
+                    sessionEnd      = (int)(_writingTracks[0].TrackEndSector - _writingTracks[0].TrackStartSector + 1),
                     sessionSequence = 1,
-                    allBlocks = 1,
-                    nonTrackBlocks = 3,
-                    firstTrack = 1,
-                    lastTrack = 1,
-                    trackOffset = 4220
+                    allBlocks       = 1,
+                    nonTrackBlocks  = 3,
+                    firstTrack      = 1,
+                    lastTrack       = 1,
+                    trackOffset     = 4220
                 });
 
                 footerOffset = 4300;
@@ -583,7 +583,7 @@ namespace Aaru.DiscImages
                     mode         = TrackMode.DVD,
                     adrCtl       = 20,
                     point        = 1,
-                    extraOffset  = (uint)((_writingTracks[0].TrackEndSector - _writingTracks[0].TrackStartSector) + 1),
+                    extraOffset  = (uint)(_writingTracks[0].TrackEndSector - _writingTracks[0].TrackStartSector + 1),
                     sectorSize   = 2048,
                     files        = 1,
                     footerOffset = (uint)footerOffset,
@@ -758,11 +758,10 @@ namespace Aaru.DiscImages
                         alcTrk.extraOffset  = (uint)currentExtraOffset;
                         alcTrk.footerOffset = (uint)footerOffset;
 
-                        if(track.TrackSequence == firstTrack.TrackSequence &&
-                           track.TrackSequence > 1)
+                        if(track.TrackSequence == firstTrack.TrackSequence)
                         {
-                            alcTrk.startLba    -= 150;
-                            alcTrk.startOffset -= (ulong)(alcTrk.sectorSize * 150);
+                            alcTrk.startLba    -= (uint)track.TrackPregap;
+                            alcTrk.startOffset -= alcTrk.sectorSize * track.TrackPregap;
                         }
 
                         // Alcohol seems to set that for all CD tracks
@@ -782,7 +781,7 @@ namespace Aaru.DiscImages
 
                         var trkExtra = new TrackExtra
                         {
-                            sectors = (uint)((track.TrackEndSector - track.TrackStartSector) + 1)
+                            sectors = (uint)(track.TrackEndSector - track.TrackStartSector + 1)
                         };
 
                         if(track.TrackSequence == firstTrack.TrackSequence)
@@ -1133,7 +1132,7 @@ namespace Aaru.DiscImages
                     for(uint i = 0; i < length; i++)
                     {
                         _imageStream.
-                            Seek((long)(track.TrackFileOffset + (((i + sectorAddress) - track.TrackStartSector) * (ulong)(track.TrackRawBytesPerSector + 96))) + track.TrackRawBytesPerSector,
+                            Seek((long)(track.TrackFileOffset + ((i + sectorAddress - track.TrackStartSector) * (ulong)(track.TrackRawBytesPerSector + 96))) + track.TrackRawBytesPerSector,
                                  SeekOrigin.Begin);
 
                         _imageStream.Write(data, (int)(i * 96), 96);
