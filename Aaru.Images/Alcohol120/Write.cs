@@ -213,6 +213,13 @@ namespace Aaru.DiscImages
                 _writingTracks.FirstOrDefault(trk => sectorAddress >= trk.TrackStartSector &&
                                                      sectorAddress <= trk.TrackEndSector);
 
+            if(!_isDvd)
+            {
+                ErrorMessage = "Cannot write non-long sectors to CD images.";
+
+                return false;
+            }
+
             if(track is null)
             {
                 ErrorMessage = $"Can't found track containing {sectorAddress}";
@@ -248,6 +255,13 @@ namespace Aaru.DiscImages
             if(!IsWriting)
             {
                 ErrorMessage = "Tried to write on a non-writable image";
+
+                return false;
+            }
+
+            if(!_isDvd)
+            {
+                ErrorMessage = "Cannot write non-long sectors to CD images.";
 
                 return false;
             }
@@ -729,7 +743,7 @@ namespace Aaru.DiscImages
                         }
                         else
                         {
-                            (byte minute, byte second, byte frame) msf = LbaToMsf(track.TrackStartSector);
+                            (byte minute, byte second, byte frame) msf = LbaToMsf((ulong)track.Indexes[1]);
                             _trackFlags.TryGetValue((byte)track.TrackSequence, out byte trackControl);
 
                             if(trackControl    == 0 &&
