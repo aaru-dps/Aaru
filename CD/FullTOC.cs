@@ -660,6 +660,12 @@ namespace Aaru.Decoders.CD
                 toc.LastCompleteSession = (byte)track.TrackSession;
             }
 
+            if(!sessionEndingTrack.ContainsKey(toc.LastCompleteSession))
+                sessionEndingTrack[toc.LastCompleteSession] = (byte)tracks.
+                                                                    Where(t => t.TrackSession ==
+                                                                               toc.LastCompleteSession).
+                                                                    Max(t => t.TrackSequence);
+
             byte currentSession = 0;
 
             foreach(Track track in tracks.OrderBy(t => t.TrackSession).ThenBy(t => t.TrackSequence))
@@ -719,8 +725,8 @@ namespace Aaru.Decoders.CD
                     sessionEndingTrack.TryGetValue(currentSession, out byte endingTrackNumber);
 
                     (byte minute, byte second, byte frame) leadinPmsf =
-                        LbaToMsf(tracks.FirstOrDefault(t => t.TrackSequence == endingTrackNumber)?.TrackEndSector ??
-                                 0 + 1);
+                        LbaToMsf((tracks.FirstOrDefault(t => t.TrackSequence == endingTrackNumber)?.TrackEndSector ??
+                                  0) + 1);
 
                     // Starting track
                     trackDescriptors.Add(new TrackDataDescriptor
@@ -756,7 +762,7 @@ namespace Aaru.Decoders.CD
                     });
                 }
 
-                (byte minute, byte second, byte frame) pmsf = LbaToMsf(track.TrackStartSector);
+                (byte minute, byte second, byte frame) pmsf = LbaToMsf((ulong)track.Indexes[1]);
 
                 // Track
                 trackDescriptors.Add(new TrackDataDescriptor
