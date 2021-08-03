@@ -72,6 +72,7 @@ namespace Aaru.DiscImages
                     return _writingTracks;
 
                 List<CommonTypes.Structs.Track> tracks = new List<CommonTypes.Structs.Track>();
+                _alcTracks ??= new Dictionary<int, Track>();
 
                 foreach(Track alcTrack in _alcTracks.Values)
                 {
