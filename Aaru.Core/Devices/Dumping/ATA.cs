@@ -620,6 +620,16 @@ namespace Aaru.Core.Devices.Dumping
 
                     double totalChkDuration = 0;
 
+                    _outputPlugin.WriteMediaTag(ataIdentify, MediaTagType.ATA_IDENTIFY);
+
+                    if(_dev.IsUsb &&
+                       _dev.UsbDescriptors != null)
+                        _outputPlugin.WriteMediaTag(_dev.UsbDescriptors, MediaTagType.USB_Descriptors);
+
+                    if(_dev.IsPcmcia &&
+                       _dev.Cis != null)
+                        _outputPlugin.WriteMediaTag(_dev.Cis, MediaTagType.PCMCIA_CIS);
+
                     if(_metadata)
                     {
                         _dumpLog.WriteLine("Creating sidecar.");
@@ -661,20 +671,18 @@ namespace Aaru.Core.Devices.Dumping
                             {
                                 _dumpLog.WriteLine("Reading USB descriptors.");
                                 UpdateStatus?.Invoke("Reading USB descriptors.");
-                                ret = _outputPlugin.WriteMediaTag(_dev.UsbDescriptors, MediaTagType.USB_Descriptors);
 
-                                if(ret)
-                                    sidecar.BlockMedia[0].USB = new USBType
+                                sidecar.BlockMedia[0].USB = new USBType
+                                {
+                                    ProductID = _dev.UsbProductId,
+                                    VendorID  = _dev.UsbVendorId,
+                                    Descriptors = new DumpType
                                     {
-                                        ProductID = _dev.UsbProductId,
-                                        VendorID  = _dev.UsbVendorId,
-                                        Descriptors = new DumpType
-                                        {
-                                            Image     = _outputPath,
-                                            Size      = (ulong)_dev.UsbDescriptors.Length,
-                                            Checksums = Checksum.GetChecksums(_dev.UsbDescriptors).ToArray()
-                                        }
-                                    };
+                                        Image     = _outputPath,
+                                        Size      = (ulong)_dev.UsbDescriptors.Length,
+                                        Checksums = Checksum.GetChecksums(_dev.UsbDescriptors).ToArray()
+                                    }
+                                };
                             }
 
                             if(_dev.IsPcmcia &&
@@ -682,18 +690,16 @@ namespace Aaru.Core.Devices.Dumping
                             {
                                 _dumpLog.WriteLine("Reading PCMCIA CIS.");
                                 UpdateStatus?.Invoke("Reading PCMCIA CIS.");
-                                ret = _outputPlugin.WriteMediaTag(_dev.Cis, MediaTagType.PCMCIA_CIS);
 
-                                if(ret)
-                                    sidecar.BlockMedia[0].PCMCIA = new PCMCIAType
+                                sidecar.BlockMedia[0].PCMCIA = new PCMCIAType
+                                {
+                                    CIS = new DumpType
                                     {
-                                        CIS = new DumpType
-                                        {
-                                            Image     = _outputPath,
-                                            Size      = (ulong)_dev.Cis.Length,
-                                            Checksums = Checksum.GetChecksums(_dev.Cis).ToArray()
-                                        }
-                                    };
+                                        Image     = _outputPath,
+                                        Size      = (ulong)_dev.Cis.Length,
+                                        Checksums = Checksum.GetChecksums(_dev.Cis).ToArray()
+                                    }
+                                };
 
                                 _dumpLog.WriteLine("Decoding PCMCIA CIS.");
                                 UpdateStatus?.Invoke("Decoding PCMCIA CIS.");
@@ -737,21 +743,18 @@ namespace Aaru.Core.Devices.Dumping
                                         }
                             }
 
-                            if(!_private)
+                            if(_private)
                                 DeviceReport.ClearIdentify(ataIdentify);
 
-                            ret = _outputPlugin.WriteMediaTag(ataIdentify, MediaTagType.ATA_IDENTIFY);
-
-                            if(ret)
-                                sidecar.BlockMedia[0].ATA = new ATAType
+                            sidecar.BlockMedia[0].ATA = new ATAType
+                            {
+                                Identify = new DumpType
                                 {
-                                    Identify = new DumpType
-                                    {
-                                        Image     = _outputPath,
-                                        Size      = (ulong)cmdBuf.Length,
-                                        Checksums = Checksum.GetChecksums(cmdBuf).ToArray()
-                                    }
-                                };
+                                    Image     = _outputPath,
+                                    Size      = (ulong)cmdBuf.Length,
+                                    Checksums = Checksum.GetChecksums(cmdBuf).ToArray()
+                                }
+                            };
 
                             DateTime chkEnd = DateTime.UtcNow;
 

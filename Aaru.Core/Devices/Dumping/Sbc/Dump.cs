@@ -748,165 +748,164 @@ namespace Aaru.Core.Devices.Dumping
                 RetryTitleKeys(dvdDecrypt, mediaTags[MediaTagType.DVD_DiscKey_Decrypted], ref totalDuration);
             #endregion Error handling
 
-            if(!_aborted)
-                if(opticalDisc)
+            if(opticalDisc)
+            {
+                foreach(KeyValuePair<MediaTagType, byte[]> tag in mediaTags)
                 {
-                    foreach(KeyValuePair<MediaTagType, byte[]> tag in mediaTags)
+                    if(tag.Value is null)
                     {
-                        if(tag.Value is null)
-                        {
-                            AaruConsole.ErrorWriteLine("Error: Tag type {0} is null, skipping...", tag.Key);
+                        AaruConsole.ErrorWriteLine("Error: Tag type {0} is null, skipping...", tag.Key);
 
-                            continue;
-                        }
-
-                        ret = _outputPlugin.WriteMediaTag(tag.Value, tag.Key);
-
-                        if(ret || _force)
-                            continue;
-
-                        // Cannot write tag to image
-                        StoppingErrorMessage?.Invoke($"Cannot write tag {tag.Key}.");
-
-                        _dumpLog.WriteLine($"Cannot write tag {tag.Key}." + Environment.NewLine +
-                                           _outputPlugin.ErrorMessage);
-
-                        return;
+                        continue;
                     }
+
+                    ret = _outputPlugin.WriteMediaTag(tag.Value, tag.Key);
+
+                    if(ret || _force)
+                        continue;
+
+                    // Cannot write tag to image
+                    StoppingErrorMessage?.Invoke($"Cannot write tag {tag.Key}.");
+
+                    _dumpLog.WriteLine($"Cannot write tag {tag.Key}." + Environment.NewLine +
+                                       _outputPlugin.ErrorMessage);
+
+                    return;
                 }
-                else
+            }
+            else
+            {
+                if(!_dev.IsRemovable ||
+                   _dev.IsUsb)
                 {
-                    if(!_dev.IsRemovable ||
-                       _dev.IsUsb)
+                    if(_dev.IsUsb &&
+                       _dev.UsbDescriptors != null)
                     {
-                        if(_dev.IsUsb &&
-                           _dev.UsbDescriptors != null)
+                        UpdateStatus?.Invoke("Reading USB descriptors.");
+                        _dumpLog.WriteLine("Reading USB descriptors.");
+                        ret = _outputPlugin.WriteMediaTag(_dev.UsbDescriptors, MediaTagType.USB_Descriptors);
+
+                        if(!ret &&
+                           !_force)
                         {
-                            UpdateStatus?.Invoke("Reading USB descriptors.");
-                            _dumpLog.WriteLine("Reading USB descriptors.");
-                            ret = _outputPlugin.WriteMediaTag(_dev.UsbDescriptors, MediaTagType.USB_Descriptors);
+                            _dumpLog.WriteLine("Cannot write USB descriptors.");
+
+                            StoppingErrorMessage?.Invoke("Cannot write USB descriptors." + Environment.NewLine +
+                                                         _outputPlugin.ErrorMessage);
+
+                            return;
+                        }
+                    }
+
+                    byte[] cmdBuf;
+
+                    if(_dev.Type == DeviceType.ATAPI)
+                    {
+                        UpdateStatus?.Invoke("Requesting ATAPI IDENTIFY PACKET DEVICE.");
+                        _dumpLog.WriteLine("Requesting ATAPI IDENTIFY PACKET DEVICE.");
+                        sense = _dev.AtapiIdentify(out cmdBuf, out _);
+
+                        if(!sense)
+                        {
+                            if(_private)
+                                cmdBuf = DeviceReport.ClearIdentify(cmdBuf);
+
+                            ret = _outputPlugin.WriteMediaTag(cmdBuf, MediaTagType.ATAPI_IDENTIFY);
 
                             if(!ret &&
                                !_force)
                             {
-                                _dumpLog.WriteLine("Cannot write USB descriptors.");
+                                _dumpLog.WriteLine("Cannot write ATAPI IDENTIFY PACKET DEVICE.");
 
-                                StoppingErrorMessage?.Invoke("Cannot write USB descriptors." + Environment.NewLine +
-                                                             _outputPlugin.ErrorMessage);
+                                StoppingErrorMessage?.Invoke("Cannot write ATAPI IDENTIFY PACKET DEVICE." +
+                                                             Environment.NewLine + _outputPlugin.ErrorMessage);
 
                                 return;
                             }
                         }
+                    }
 
-                        byte[] cmdBuf;
+                    sense = _dev.ScsiInquiry(out cmdBuf, out _);
 
-                        if(_dev.Type == DeviceType.ATAPI)
+                    if(!sense)
+                    {
+                        UpdateStatus?.Invoke("Requesting SCSI INQUIRY.");
+                        _dumpLog.WriteLine("Requesting SCSI INQUIRY.");
+                        ret = _outputPlugin.WriteMediaTag(cmdBuf, MediaTagType.SCSI_INQUIRY);
+
+                        if(!ret &&
+                           !_force)
                         {
-                            UpdateStatus?.Invoke("Requesting ATAPI IDENTIFY PACKET DEVICE.");
-                            _dumpLog.WriteLine("Requesting ATAPI IDENTIFY PACKET DEVICE.");
-                            sense = _dev.AtapiIdentify(out cmdBuf, out _);
+                            StoppingErrorMessage?.Invoke("Cannot write SCSI INQUIRY.");
 
-                            if(!sense)
+                            _dumpLog.WriteLine("Cannot write SCSI INQUIRY." + Environment.NewLine +
+                                               _outputPlugin.ErrorMessage);
+
+                            return;
+                        }
+
+                        UpdateStatus?.Invoke("Requesting MODE SENSE (10).");
+                        _dumpLog.WriteLine("Requesting MODE SENSE (10).");
+
+                        sense = _dev.ModeSense10(out cmdBuf, out _, false, true, ScsiModeSensePageControl.Current, 0x3F,
+                                                 0xFF, 5, out _);
+
+                        if(!sense ||
+                           _dev.Error)
+                            sense = _dev.ModeSense10(out cmdBuf, out _, false, true, ScsiModeSensePageControl.Current,
+                                                     0x3F, 0x00, 5, out _);
+
+                        if(!sense &&
+                           !_dev.Error)
+                            if(Modes.DecodeMode10(cmdBuf, _dev.ScsiType).HasValue)
                             {
-                                if(_private)
-                                    cmdBuf = DeviceReport.ClearIdentify(cmdBuf);
-
-                                ret = _outputPlugin.WriteMediaTag(cmdBuf, MediaTagType.ATAPI_IDENTIFY);
+                                ret = _outputPlugin.WriteMediaTag(cmdBuf, MediaTagType.SCSI_MODESENSE_10);
 
                                 if(!ret &&
                                    !_force)
                                 {
-                                    _dumpLog.WriteLine("Cannot write ATAPI IDENTIFY PACKET DEVICE.");
+                                    _dumpLog.WriteLine("Cannot write SCSI MODE SENSE (10).");
 
-                                    StoppingErrorMessage?.Invoke("Cannot write ATAPI IDENTIFY PACKET DEVICE." +
+                                    StoppingErrorMessage?.Invoke("Cannot write SCSI MODE SENSE (10)." +
                                                                  Environment.NewLine + _outputPlugin.ErrorMessage);
 
                                     return;
                                 }
                             }
-                        }
 
-                        sense = _dev.ScsiInquiry(out cmdBuf, out _);
+                        UpdateStatus?.Invoke("Requesting MODE SENSE (6).");
+                        _dumpLog.WriteLine("Requesting MODE SENSE (6).");
 
-                        if(!sense)
-                        {
-                            UpdateStatus?.Invoke("Requesting SCSI INQUIRY.");
-                            _dumpLog.WriteLine("Requesting SCSI INQUIRY.");
-                            ret = _outputPlugin.WriteMediaTag(cmdBuf, MediaTagType.SCSI_INQUIRY);
+                        sense = _dev.ModeSense6(out cmdBuf, out _, false, ScsiModeSensePageControl.Current, 0x3F, 0x00,
+                                                5, out _);
 
-                            if(!ret &&
-                               !_force)
-                            {
-                                StoppingErrorMessage?.Invoke("Cannot write SCSI INQUIRY.");
-
-                                _dumpLog.WriteLine("Cannot write SCSI INQUIRY." + Environment.NewLine +
-                                                   _outputPlugin.ErrorMessage);
-
-                                return;
-                            }
-
-                            UpdateStatus?.Invoke("Requesting MODE SENSE (10).");
-                            _dumpLog.WriteLine("Requesting MODE SENSE (10).");
-
-                            sense = _dev.ModeSense10(out cmdBuf, out _, false, true, ScsiModeSensePageControl.Current,
-                                                     0x3F, 0xFF, 5, out _);
-
-                            if(!sense ||
-                               _dev.Error)
-                                sense = _dev.ModeSense10(out cmdBuf, out _, false, true,
-                                                         ScsiModeSensePageControl.Current, 0x3F, 0x00, 5, out _);
-
-                            if(!sense &&
-                               !_dev.Error)
-                                if(Modes.DecodeMode10(cmdBuf, _dev.ScsiType).HasValue)
-                                {
-                                    ret = _outputPlugin.WriteMediaTag(cmdBuf, MediaTagType.SCSI_MODESENSE_10);
-
-                                    if(!ret &&
-                                       !_force)
-                                    {
-                                        _dumpLog.WriteLine("Cannot write SCSI MODE SENSE (10).");
-
-                                        StoppingErrorMessage?.Invoke("Cannot write SCSI MODE SENSE (10)." +
-                                                                     Environment.NewLine + _outputPlugin.ErrorMessage);
-
-                                        return;
-                                    }
-                                }
-
-                            UpdateStatus?.Invoke("Requesting MODE SENSE (6).");
-                            _dumpLog.WriteLine("Requesting MODE SENSE (6).");
-
+                        if(sense || _dev.Error)
                             sense = _dev.ModeSense6(out cmdBuf, out _, false, ScsiModeSensePageControl.Current, 0x3F,
                                                     0x00, 5, out _);
 
-                            if(sense || _dev.Error)
-                                sense = _dev.ModeSense6(out cmdBuf, out _, false, ScsiModeSensePageControl.Current,
-                                                        0x3F, 0x00, 5, out _);
+                        if(sense || _dev.Error)
+                            sense = _dev.ModeSense(out cmdBuf, out _, 5, out _);
 
-                            if(sense || _dev.Error)
-                                sense = _dev.ModeSense(out cmdBuf, out _, 5, out _);
+                        if(!sense &&
+                           !_dev.Error)
+                            if(Modes.DecodeMode6(cmdBuf, _dev.ScsiType).HasValue)
+                            {
+                                ret = _outputPlugin.WriteMediaTag(cmdBuf, MediaTagType.SCSI_MODESENSE_6);
 
-                            if(!sense &&
-                               !_dev.Error)
-                                if(Modes.DecodeMode6(cmdBuf, _dev.ScsiType).HasValue)
+                                if(!ret &&
+                                   !_force)
                                 {
-                                    ret = _outputPlugin.WriteMediaTag(cmdBuf, MediaTagType.SCSI_MODESENSE_6);
+                                    _dumpLog.WriteLine("Cannot write SCSI MODE SENSE (6).");
 
-                                    if(!ret &&
-                                       !_force)
-                                    {
-                                        _dumpLog.WriteLine("Cannot write SCSI MODE SENSE (6).");
+                                    StoppingErrorMessage?.Invoke("Cannot write SCSI MODE SENSE (6)." +
+                                                                 Environment.NewLine + _outputPlugin.ErrorMessage);
 
-                                        StoppingErrorMessage?.Invoke("Cannot write SCSI MODE SENSE (6)." +
-                                                                     Environment.NewLine + _outputPlugin.ErrorMessage);
-
-                                        return;
-                                    }
+                                    return;
                                 }
-                        }
+                            }
                     }
                 }
+            }
 
             _resume.BadBlocks.Sort();
 
