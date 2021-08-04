@@ -102,8 +102,8 @@ namespace Aaru.Tests.Images.AaruFormat.Tape
                 TestFile   = "Nonstop-UX System V Release 4 B32 (Online Software Upgrade).aif",
                 MediaType  = MediaType.UnknownTape,
                 Sectors    = 15,
-                SectorSize = 28637,
-                MD5        = "6b6e80c4b3a48b2bc46571389eeaf78b",
+                SectorSize = 32256,
+                MD5        = "76c0ae10f4ec70ef8681b212f02a71c8",
                 Partitions = new[]
                 {
                     new TapePartition
@@ -130,7 +130,7 @@ namespace Aaru.Tests.Images.AaruFormat.Tape
                 MediaType  = MediaType.UnknownTape,
                 Sectors    = 3298,
                 SectorSize = 32256,
-                MD5        = "91b6115a718b9854b69478fee8e8644e",
+                MD5        = "e331c9d0ae7c25c81c6580bc9965e2d0",
                 Partitions = new[]
                 {
                     new TapePartition
@@ -184,7 +184,7 @@ namespace Aaru.Tests.Images.AaruFormat.Tape
                 MediaType  = MediaType.UnknownTape,
                 Sectors    = 818,
                 SectorSize = 32256,
-                MD5        = "181c9b00c236d14c7dfa4fa009c4559d",
+                MD5        = "eb3ce36b2c3afeeec59e5b8ed802a393",
                 Partitions = new[]
                 {
                     new TapePartition
@@ -210,8 +210,8 @@ namespace Aaru.Tests.Images.AaruFormat.Tape
                 TestFile   = "Nonstop-UX System V Release 4 B32 (Reliable Ethernet).aif",
                 MediaType  = MediaType.UnknownTape,
                 Sectors    = 7,
-                SectorSize = 26185,
-                MD5        = "7dc46bb181077d215a5c93cc990da365",
+                SectorSize = 32256,
+                MD5        = "b057656698a224187afb2bdbb8caf7f3",
                 Partitions = new[]
                 {
                     new TapePartition
@@ -238,7 +238,7 @@ namespace Aaru.Tests.Images.AaruFormat.Tape
                 MediaType  = MediaType.UnknownTape,
                 Sectors    = 684,
                 SectorSize = 32256,
-                MD5        = "80e1d90052bf8c2df641398d0a30e630",
+                MD5        = "8e48e388e7094f3170065718ab618b53",
                 Partitions = new[]
                 {
                     new TapePartition
@@ -320,7 +320,7 @@ namespace Aaru.Tests.Images.AaruFormat.Tape
                 MediaType  = MediaType.UnknownTape,
                 Sectors    = 290,
                 SectorSize = 262144,
-                MD5        = "2b944c7a353a63a48fdcf5517306fba6",
+                MD5        = "bfc402b23af0cf1ad22d9fb2ea29b58f",
                 Partitions = new[]
                 {
                     new TapePartition
@@ -375,7 +375,7 @@ namespace Aaru.Tests.Images.AaruFormat.Tape
                 MediaType  = MediaType.UnknownTape,
                 Sectors    = 37587,
                 SectorSize = 8192,
-                MD5        = "a923a4fffb3456386bafd00c1d939224",
+                MD5        = "e4a3e2fe26c72ca025ac0c017ec73ee9",
                 Partitions = new[]
                 {
                     new TapePartition
@@ -687,7 +687,7 @@ namespace Aaru.Tests.Images.AaruFormat.Tape
                 TestFile   = "X.3.Q150.aif",
                 MediaType  = MediaType.UnknownTape,
                 Sectors    = 102,
-                SectorSize = 258048,
+                SectorSize = 262144,
                 MD5        = "198464b1daf8e674debf8eda0fcbf016",
                 Partitions = new[]
                 {
