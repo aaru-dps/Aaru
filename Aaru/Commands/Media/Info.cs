@@ -617,6 +617,9 @@ namespace Aaru.Commands.Media
                         AaruConsole.
                             WriteLine("WARNING: The drive has returned incorrect Q positioning when calculating pregaps. A best effort has been tried but they may be incorrect.");
 
+                    if(firstLba > 0)
+                        AaruConsole.WriteLine("Hidden track starts at LBA {0}, ends at LBA {1}", 0, firstLba - 1);
+
                     foreach(Track track in tracks)
                         AaruConsole.
                             WriteLine("Track {0} starts at LBA {1}, ends at LBA {2}, has a pregap of {3} sectors and is of type {4}",
