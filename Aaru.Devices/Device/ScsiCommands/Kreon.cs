@@ -112,7 +112,7 @@ namespace Aaru.Devices
 
             AaruConsole.DebugWriteLine("SCSI Device", "KREON SET LOCK STATE took {0} ms.", duration);
 
-            return sense;
+            return sense || Error;
         }
 
         /// <summary>Gets a list of supported features</summary>
@@ -239,7 +239,7 @@ namespace Aaru.Devices
 
             AaruConsole.DebugWriteLine("SCSI Device", "KREON EXTRACT SS took {0} ms.", duration);
 
-            return sense;
+            return sense || Error;
         }
     }
 }
