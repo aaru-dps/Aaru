@@ -196,8 +196,8 @@ namespace Aaru.Core.Devices.Dumping
             mediaTags.Add(MediaTagType.DVD_PFI, tmpBuf);
             AaruConsole.DebugWriteLine("Dump-media command", "Video partition total size: {0} sectors", totalSize);
 
-            ulong l0Video = (PFI.Decode(readBuffer, MediaType.DVDROM)?.Layer0EndPSN ??
-                             0 - PFI.Decode(readBuffer, MediaType.DVDROM)?.DataAreaStartPSN ?? 0) + 1;
+            ulong l0Video = (PFI.Decode(readBuffer, MediaType.DVDROM)?.Layer0EndPSN     ?? 0) -
+                            (PFI.Decode(readBuffer, MediaType.DVDROM)?.DataAreaStartPSN ?? 0) + 1;
 
             ulong l1Video = totalSize - l0Video + 1;
             UpdateStatus?.Invoke("Reading Disc Manufacturing Information.");
@@ -233,8 +233,8 @@ namespace Aaru.Core.Devices.Dumping
                 mediaTags.Add(MediaTagType.DVD_PFI, tmpBuf);
                 AaruConsole.DebugWriteLine("Dump-media command", "Video partition total size: {0} sectors", totalSize);
 
-                l0Video = (PFI.Decode(coldPfi, MediaType.DVDROM)?.Layer0EndPSN ??
-                           0 - PFI.Decode(coldPfi, MediaType.DVDROM)?.DataAreaStartPSN ?? 0) + 1;
+                l0Video = (PFI.Decode(coldPfi, MediaType.DVDROM)?.Layer0EndPSN     ?? 0) -
+                          (PFI.Decode(coldPfi, MediaType.DVDROM)?.DataAreaStartPSN ?? 0) + 1;
 
                 l1Video = totalSize - l0Video + 1;
 
