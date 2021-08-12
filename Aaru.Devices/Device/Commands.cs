@@ -54,6 +54,10 @@ namespace Aaru.Devices
         public int SendScsiCommand(byte[] cdb, ref byte[] buffer, out byte[] senseBuffer, uint timeout,
                                    ScsiDirection direction, out double duration, out bool sense)
         {
+            // We need a timeout
+            if(timeout == 0)
+                timeout = Timeout > 0 ? Timeout : 15;
+
             if(!(_remote is null))
                 return _remote.SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, direction, out duration,
                                                out sense);
@@ -80,6 +84,10 @@ namespace Aaru.Devices
                                   AtaProtocol protocol, AtaTransferRegister transferRegister, ref byte[] buffer,
                                   uint timeout, bool transferBlocks, out double duration, out bool sense)
         {
+            // We need a timeout
+            if(timeout == 0)
+                timeout = Timeout > 0 ? Timeout : 15;
+
             if(!(_remote is null))
                 return _remote.SendAtaCommand(registers, out errorRegisters, protocol, transferRegister, ref buffer,
                                               timeout, transferBlocks, out duration, out sense);
@@ -107,6 +115,10 @@ namespace Aaru.Devices
                                   AtaProtocol protocol, AtaTransferRegister transferRegister, ref byte[] buffer,
                                   uint timeout, bool transferBlocks, out double duration, out bool sense)
         {
+            // We need a timeout
+            if(timeout == 0)
+                timeout = Timeout > 0 ? Timeout : 15;
+
             if(!(_remote is null))
                 return _remote.SendAtaCommand(registers, out errorRegisters, protocol, transferRegister, ref buffer,
                                               timeout, transferBlocks, out duration, out sense);
@@ -134,6 +146,10 @@ namespace Aaru.Devices
                                   AtaProtocol protocol, AtaTransferRegister transferRegister, ref byte[] buffer,
                                   uint timeout, bool transferBlocks, out double duration, out bool sense)
         {
+            // We need a timeout
+            if(timeout == 0)
+                timeout = Timeout > 0 ? Timeout : 15;
+
             if(!(_remote is null))
                 return _remote.SendAtaCommand(registers, out errorRegisters, protocol, transferRegister, ref buffer,
                                               timeout, transferBlocks, out duration, out sense);
@@ -159,8 +175,12 @@ namespace Aaru.Devices
         /// <param name="blockSize">Size of block in bytes</param>
         public int SendMmcCommand(MmcCommands command, bool write, bool isApplication, MmcFlags flags, uint argument,
                                   uint blockSize, uint blocks, ref byte[] buffer, out uint[] response,
-                                  out double duration, out bool sense, uint timeout = 0)
+                                  out double duration, out bool sense, uint timeout = 15)
         {
+            // We need a timeout
+            if(timeout == 0)
+                timeout = Timeout > 0 ? Timeout : 15;
+
             switch(command)
             {
                 case MmcCommands.SendCid when _cachedCid != null:
@@ -236,8 +256,12 @@ namespace Aaru.Devices
         }
 
         public int SendMultipleMmcCommands(MmcSingleCommand[] commands, out double duration, out bool sense,
-                                           uint timeout = 0)
+                                           uint timeout = 15)
         {
+            // We need a timeout
+            if(timeout == 0)
+                timeout = Timeout > 0 ? Timeout : 15;
+
             if(_remote is null)
                 return Command.SendMultipleMmcCommands(PlatformId, FileHandle, commands, out duration, out sense,
                                                        timeout);
