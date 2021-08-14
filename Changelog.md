@@ -1,3 +1,341 @@
+# [5.2.99.xxxx] - 2021-xx-yy
+## Added
+### - Aaru Image Format
+- DVD CSS related structures.
+
+### - AaruRemote
+- Use system URI parser to parse AaruRemote endpoints. Allows to set different ports.
+
+### - Alcohol 120% disc image
+- Support for images created by CDRWin 10 and GameJack.
+- Support incorrect implementation of images with track 1 pregap made by UltraISO.
+
+### - Apple DOS interleaved disk images
+- Support for 13-sector Apple DOS images.
+
+### - Apple Universal Disk Image Format
+- Detect LZMA chunks.
+
+### - BlindWrite 4 disc image
+- Consider there is subchannel if we have a subchannel file, ignoring header.
+- Reverse engineer unknown field that adjusts the file offset per track.
+
+### - BlindWrite 5/6 disc image
+- Return empty data where only some tracks has subchannel.
+- Support split images.
+
+### - CDRWin cuesheet disc image
+- Check if media is a CD when generating track list.
+- Detect corrupt DVD images created by PowerISO and stop processing.
+- Detect incorrect images created by MagicISO.
+- Do not reconstruct long sectors when media is not a CD.
+- Set application to MagicISO when appropriate.
+- Show a message that DVD images created with MagicISO are most probably unrecoverable garbage.
+- Show error message when trying to convert multi-session Redump dumps.
+- Support Redump GD-ROM dumps.
+- Support writing with hidden tracks (NOT CD-i Ready).
+- Try to detect, and workaround, disc images that lack the first track data when there's a hidden track, as such created by PowerISO.
+
+### - CloneCD disc image
+- More possible values for track mode and index handling.
+- Process track entries.
+
+### - Device information
+- Check Extended CSD is empty on device info.
+
+### - Device report
+- Check support for SCSI READ LONG(16) in device report.
+- Try other ways of getting the SCSI MODE SENSE values that are more effective with certain devices.
+- Workaround firmware bug in Lite-On iHOS104.
+
+### - Devices
+- Better decoding of SecureDigital Card Register.
+- More fields to MultiMediaCard's Extended CSD.
+- Enlarge sense buffer to 64 bytes.
+
+### - Dumping
+- Do not cross into each session's first track pregap as this makes some drives fail.
+- Dumping of CSS disc key and title keys.
+- Enable storing decrypted CSS sectors.
+- Enable to continue dumping non-removable drives if serial number if different using the force option.
+- Implement reading SD/MMC using buffered OS calls.
+- Workaround some firmware bug in some audio CDs with hidden audio.
+- Write media tags to image even when aborted.
+- Write MMC/SD card registers to image before closing it.
+
+### - FAT filesystem
+- Check entire FAT validity to fix identifying between FAT12 and FAT16.
+- Check which FAT is valid (first or second) and use it for FAT12 and FAT16.
+- Do not return *invalid argument* when reading a 0-byte sized file.
+- Handle directory entries that contain a forward slash in the filename.
+- Handle empty directory entries.
+- Handle unallocated, but reserved, directories.
+- Set encoding before interpreting the BPB.
+- Support for FAT32 volumes that uses *sectors* field in BPB.
+
+### - HD-Copy disk image
+- Support for different or newer format.
+
+### - Image information
+- Show Pre-Recorded Information (PRI).
+
+### - ISO9660 filesystem
+- Do not stop processing a directory when there is 1 or more sectors of data left to process.
+- Mounting volumes with an invalid path table.
+
+### - Media detection
+- Detect when DVD book type is different from drive's firmware profile.
+- PlayStation 5 Ultra HD Blu-ray game discs.
+- Ultra HD Blu-ray.
+- Xbox Game Disc 4 (Xbox One).
+
+### - Media images
+- DiskDupe (DDI) image format.
+
+### - Media information
+- Decode Pre-Recorded Information.
+- More media manufacturers.
+- Print Disc Key and Sector CMI information.
+- Print recordable Physical Format Information (PFI).
+- Show hidden track.
+
+### - Media scan
+- Allow scanning Audio CD on drives that don't allow READ(12) on them.
+
+### - Nero Burning ROM disc image
+- Detect incorrect images where the track mode does not match with the track sector size and try to workaround it.
+- Implement support for Nero Burning ROM 4 disc images.
+- Support alternate audio track mode number in disc images.
+- Support reading sector tags in MODE2 disc images.
+- Workaround from invalid images created by MagicISO with invalid session descriptors.
+- Workaround images created by MagicISO from DVD discs that contain a completely invalid description and a single track.
+- Workaround MagicISO bug in images with more than 15 tracks.
+
+### - RAW (sector by sector) disk image
+- Support setting sector size in raw image when the extension describes it.
+
+### - SCSI response decoders
+- Decode fixed or descriptor SCSI sense in a single pass, use whichever was returned by drive.
+- Do not skip pages when decoding a page longer than the MODE SENSE buffer.
+
+### - Universal Disk Format filesystem
+- Recognize volumes that expected a 2048 bytes per sector device but are in a 512 bytes per sector image.
+- Set volume serial as volume set identifier.
+
+### - VirtualBox disk image
+- Support for version 1.1+ geometry.
+
+## Fixed
+### - Aaru Image Format
+- Images that got a wrong track end beyond a leadout on dumping.
+- Workaround for corrupt multisession AaruFormat images.
+
+### - AaruRemote
+- Ensure remotes pointing to a UNIX device node have the proper absolute path slash.
+
+### - Alcohol 120% disc image
+- Prevent writing non-long sectors.
+- Reading images with a hidden track.
+- Reading images with pregaps.
+- Setting session.
+- Taking account of session start pregaps when writing Alcohol 120% images.
+
+### - AmigaDOS filesystem
+- Guard identification against too small partitions.
+
+### - Apple New Disk Image Format
+- Prevent identifying obsolete UDIF images.
+
+### - Apple Universal Disk Image Format
+- Data offset.
+- Reading obsolete RO images, these require resource fork.
+- Sectors in obsolete RO images.
+
+### - BlindWrite 4 disc image
+- Reading images with pregaps.
+- Track flags.
+
+### - cdrdao disc image
+- Track properties.
+- Return session.
+
+### - CDRWin cuesheet disc image
+- Calculation of sizes when it has *CDG* tracks.
+- Completely wrong handling of *PREGAP* value.
+- Do not allow CD-only tags on non-CD media.
+- Reading track flag when track 1 has a pregap bigger than 150 sectors.
+- Sectors calculations.
+- Setting index sectors on multi-file images.
+- Skipping non-present pregap images when there is more than one.
+
+### - CloneCD disc image
+- Detection of track mode.
+- File offsets when reading multisession images.
+- Image size calculation.
+- Invert condition when retrieving flags.
+- Partitions on multi-session images.
+- Sessions.
+- Track 1 pregap.
+
+### - Commands
+- Do not crash without configuration when no argument is used.
+- Do not try to read arguments when there are none.
+
+### - CPCEMU Disk-File and Extended CPC Disk-File disk image
+- Interleaved sectors numbers.
+- Reading of images where the headers have different case.
+
+### - CP/M File System
+- Handling filenames that contain a forward slash.
+
+### - Devices
+- 48-bit ATA commands.
+- Block size for SD cards, that must always be read using 512b blocks even if their CSD says otherwise.
+- Block size from READ(16).
+- Correct transfer length type for MMC/SD cards.
+- Decoding MultiMediaCard Extended CSD.
+- Decoding of USB or FireWire serial numbers with control characters.
+- Decoding SecureDigital CID.
+- Detect SD/MMC READ_MULTIPLE_BLOCK in Windows.
+- Marshalling MultiMediaCard serial number from CID registers.
+- Overflow calculations of blocks when device has more than 0x7FFFFFFF blocks.
+- READ CAPACITY(16) block size calculation.
+- Stack corruption when sending multiple MMC/SD commands in Linux.
+
+### - DiscJuggler disc image
+- Be more lenient with unknown data images.
+- Correct image size.
+- Do not generate long sectors on non-CD media.
+- Offset problem preventing proper read of most images.
+- Processing images with MODE 2 tracks.
+- Subchannel types being set incorrectly.
+- Track flags not readable.
+
+### - Dumping
+- Creating sidecar from MMC trying to hash non-existing SD registers.
+- Pregap calculation on first tracks of each session when dumping CDs.
+- Re-setting track end when correctly reading a new subchannel that changes the next track start.
+- Speed calculations for very fast devices.
+- Stop processing sidecar when aborted.
+- Use a bigger buffer for READ TOC command that was preventing dumping > 90 track discs.
+
+### - FAT filesystem
+- Add a guard for FAT12 and FAT16 to prevent an exception on invalid FAT chains.
+- Clusters calculation in FAT12 and FAT16.
+- Fix reserved FAT entries.
+- Force identification of hard disk volumes made by Atari ST with FAT16 filesystems when they're not bootable.
+- In FAT filesystem, 0 means no time stored.
+- Interpretation of BPB value used by Atari ST in FAT16 partitions of type BIG GEMDOS.
+- Mounting a FAT filesystem that does not contain a valid FS_TYPE field and have invalid clusters.
+- Null reference exception in FAT filesystem when entry points to a cluster beyond volume.
+- Reading FAT when it has an odd number of clusters.
+- Regression in setting timestamps from FAT filesystems.
+
+### - Filesystems
+- Creation of destination folders when extracting files.
+- Extracting extended attributes
+
+### - Flash-Friendly File System (F2FS)
+- Guard against reading beyond partition end when identifying.
+
+### - Image conversion
+- Converting tape images using command line.
+
+### - Image verification
+- Off by one error when verifying disc images with tracks.
+
+### - ISO9660 filesystem
+- Extents not being created for 0 byte files in High Sierra, ISO9660 and CD-i volumes.
+- ISO9660, High Sierra and CD-i volumes where the directories span multiple sectors.
+
+### - Kreon firmware (XGD dumping and information)
+- Correct calculations on dumping and media information.
+- Ensure Kreon commands return proper error status.
+
+### - Media detection
+- Detecting CD-R and CD-RW when dumping if drive reports as CD-ROM.
+- DVD discs being detected always as -ROM when the drive returned this profile on dump.
+- Misdetecting optical discs as flash drives.
+- Number of blocks for 70Gb iomega REV.
+- XGD.
+
+### - Media images
+- Fix full TOC generation.
+
+### - Media scan
+- Calculating blocks to read when dumping or scanning MMC/SD.
+- Seeking test in SD/MMC media scan.
+
+### - Nero Burning ROM disc image
+- Incorrect size in multisession media.
+- Invalid pregaps detected.
+- Long sectors returning subchannel.
+- Reading MODE 1 sectors from track marked as MODE 2.
+- Returning long sectors in non-CD media.
+- Track starts and ends made no sense.
+- Unreadable track flags.
+- Wrong raw bytes per sector.
+- Wrong sessions in some media.
+
+### - Parallels disk image
+- Images bigger than 4GiB.
+
+### - QEMU Copy-On-Write disk image
+- Align structures when writing.
+
+### - QEMU Copy-On-Write v2 disk image
+- Tables calculations that crashed and made unreadable images.
+
+### - RAW (sector by sector) disk image
+- Getting tracks when writing raw image.
+- Returned track properties in raw ISO images.
+
+### - Reiser 3 filesystem
+- Volume label decoding.
+
+### - SCSI response decoders
+- Descriptor sense decoding.
+- Skip invalid EVPD page 80h if it contains non-ASCII characters.
+
+### - UNICOS filesystem
+- Guard against reading beyond partition end when identifying.
+
+### - Universal Disk Format filesystem
+- Regression in volume identification.
+
+### - VirtualBox disk image
+- Working with disk images bigger than 4GiB.
+
+### - VirtualPC disk image
+- Reading disk images bigger than 4GiB.
+- Reading dynamic images.
+
+### - Xbox FAT filesystem
+- Exchange access and creation timestamps.
+## Changes
+- Add command line to pause before exiting.
+- Clarify anonymouslity of stats sharing.
+- Consider 0 to be "current default timeout", otherwise some device commands / operating system combinations fail.
+- Create .xattrs folder only in root path of extracted volume.
+- Detect all unknown non-removable media as hard disk drives.
+- Detect USB flash drives that identify themselves as CD readers but are in reality just block devices.
+- Disable calculation of disc entropy on multisession discs.
+- Disable dumping with multisession except in AaruFormat and CDRWin formats until 6.0.
+- Disable force unit access in SCSI devices during media detection.
+- Do not allow converting multisession images to formats that don't support multisession.
+- Do not pre-calculate pregaps when dumping on a Plextor as some older models contains firmware bugs that crash the bus.
+- Do not write to subchannel log when there's none.
+- Ensure first-time setup is invoked even when another command is requested.
+- Fix calculating track entropy.
+- Fix extents creation from a list of extents to prevent overlapping extents to be added.
+- Guard several filesystems against crashes when identifying on a data buffer smaller than needed.
+- In image information, only show indexes if there's any index to show.
+- Move IRC to Libera.
+- Reduce seek times to 100 when scanning MMC/SD cards.
+- Rename *filesystem analyze* command to *filesystem info*.
+- Use same codepath for calculating optical media tag sidecar fields dumping or from image.
+- Use SCSI reader detection of maximum supporter blocks to read at once when scanning non-CD media.
+
 # [5.2.0.3330] - 2020-12-03
 ## Added
 ### - Aaru Image Format
