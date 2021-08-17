@@ -41,20 +41,24 @@ using System.Runtime.Serialization;
 
 namespace Aaru.CommonTypes.Exceptions
 {
+    /// <inheritdoc />
     /// <summary>Feature is supported by image but not implemented yet.</summary>
     [Serializable]
     public class FeatureSupportedButNotImplementedImageException : Exception
     {
+        /// <inheritdoc />
         /// <summary>Feature is supported by image but not implemented yet.</summary>
         /// <param name="message">Message.</param>
         /// <param name="inner">Inner.</param>
         public FeatureSupportedButNotImplementedImageException(string message, Exception inner) :
             base(message, inner) {}
 
+        /// <inheritdoc />
         /// <summary>Feature is supported by image but not implemented yet.</summary>
         /// <param name="message">Message.</param>
         public FeatureSupportedButNotImplementedImageException(string message) : base(message) {}
 
+        /// <inheritdoc />
         /// <summary>Feature is supported by image but not implemented yet.</summary>
         /// <param name="info">Info.</param>
         /// <param name="context">Context.</param>
@@ -65,19 +69,23 @@ namespace Aaru.CommonTypes.Exceptions
         }
     }
 
+    /// <inheritdoc />
     /// <summary>Feature is not supported by image.</summary>
     [Serializable]
     public class FeatureUnsupportedImageException : Exception
     {
+        /// <inheritdoc />
         /// <summary>Feature is not supported by image.</summary>
         /// <param name="message">Message.</param>
         /// <param name="inner">Inner.</param>
         public FeatureUnsupportedImageException(string message, Exception inner) : base(message, inner) {}
 
+        /// <inheritdoc />
         /// <summary>Feature is not supported by image.</summary>
         /// <param name="message">Message.</param>
         public FeatureUnsupportedImageException(string message) : base(message) {}
 
+        /// <inheritdoc />
         /// <summary>Feature is not supported by image.</summary>
         /// <param name="info">Info.</param>
         /// <param name="context">Context.</param>
@@ -88,19 +96,23 @@ namespace Aaru.CommonTypes.Exceptions
         }
     }
 
+    /// <inheritdoc />
     /// <summary>Feature is supported by image but not present on it.</summary>
     [Serializable]
     public class FeatureNotPresentImageException : Exception
     {
+        /// <inheritdoc />
         /// <summary>Feature is supported by image but not present on it.</summary>
         /// <param name="message">Message.</param>
         /// <param name="inner">Inner.</param>
         public FeatureNotPresentImageException(string message, Exception inner) : base(message, inner) {}
 
+        /// <inheritdoc />
         /// <summary>Feature is supported by image but not present on it.</summary>
         /// <param name="message">Message.</param>
         public FeatureNotPresentImageException(string message) : base(message) {}
 
+        /// <inheritdoc />
         /// <summary>Feature is supported by image but not present on it.</summary>
         /// <param name="info">Info.</param>
         /// <param name="context">Context.</param>
@@ -111,19 +123,23 @@ namespace Aaru.CommonTypes.Exceptions
         }
     }
 
+    /// <inheritdoc />
     /// <summary>Feature is supported by image but not by the disc it represents.</summary>
     [Serializable]
     public class FeaturedNotSupportedByDiscImageException : Exception
     {
+        /// <inheritdoc />
         /// <summary>Feature is supported by image but not by the disc it represents.</summary>
         /// <param name="message">Message.</param>
         /// <param name="inner">Inner.</param>
         public FeaturedNotSupportedByDiscImageException(string message, Exception inner) : base(message, inner) {}
 
+        /// <inheritdoc />
         /// <summary>Feature is supported by image but not by the disc it represents.</summary>
         /// <param name="message">Message.</param>
         public FeaturedNotSupportedByDiscImageException(string message) : base(message) {}
 
+        /// <inheritdoc />
         /// <summary>Feature is supported by image but not by the disc it represents.</summary>
         /// <param name="info">Info.</param>
         /// <param name="context">Context.</param>
@@ -134,19 +150,23 @@ namespace Aaru.CommonTypes.Exceptions
         }
     }
 
+    /// <inheritdoc />
     /// <summary>Corrupt, incorrect or unhandled feature found on image</summary>
     [Serializable]
     public class ImageNotSupportedException : Exception
     {
+        /// <inheritdoc />
         /// <summary>Corrupt, incorrect or unhandled feature found on image</summary>
         /// <param name="message">Message.</param>
         /// <param name="inner">Inner.</param>
         public ImageNotSupportedException(string message, Exception inner) : base(message, inner) {}
 
+        /// <inheritdoc />
         /// <summary>Corrupt, incorrect or unhandled feature found on image</summary>
         /// <param name="message">Message.</param>
         public ImageNotSupportedException(string message) : base(message) {}
 
+        /// <inheritdoc />
         /// <summary>Corrupt, incorrect or unhandled feature found on image</summary>
         /// <param name="info">Info.</param>
         /// <param name="context">Context.</param>
