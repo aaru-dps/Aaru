@@ -379,8 +379,8 @@ namespace Aaru.Decryption.DVD
         /// <returns>A DiscKey struct with the decoded key.</returns>
         public static CSS_CPRM.DiscKey? DecodeDiscKey(byte[] response, byte[] busKey)
         {
-            if(response?.Length != 2052 ||
-               busKey?.Length   != 5)
+            if(response.Length != 2052 ||
+               busKey.Length   != 5)
                 return null;
 
             byte[] key = response.Skip(4).Take(2048).ToArray();
@@ -406,8 +406,8 @@ namespace Aaru.Decryption.DVD
         /// <returns>A TitleKey struct with the decoded key.</returns>
         public static CSS_CPRM.TitleKey? DecodeTitleKey(byte[] response, byte[] busKey)
         {
-            if(response?.Length != 12 ||
-               busKey?.Length   != 5)
+            if(response.Length != 12 ||
+               busKey.Length   != 5)
                 return null;
 
             byte[] key = response.Skip(5).Take(5).ToArray();
