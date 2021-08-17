@@ -75,7 +75,7 @@ namespace Aaru.DiscImages
             ("adapter_type", typeof(string),
              "Type of adapter type. Possible values: ide, lsilogic, buslogic, legacyESX.", "ide"),
             ("hwversion", typeof(uint), "VDMK hardware version.", 4),
-            ("sparse", typeof(bool), "Use sparse extents.", (object)false),
+            ("sparse", typeof(bool), "Use sparse extents.", false),
             ("split", typeof(bool), "Split data file at 2GiB.", (object)false)
         };
         /// <inheritdoc />

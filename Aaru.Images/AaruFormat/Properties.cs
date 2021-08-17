@@ -93,13 +93,13 @@ namespace Aaru.DiscImages
             ("dictionary", typeof(uint), "Size, in bytes, of the LZMA dictionary", (uint)(1 << 25)),
             ("max_ddt_size", typeof(uint),
              "Maximum size, in mebibytes, for in-memory DDT. If image needs a bigger one, it will be on-disk", 256U),
-            ("md5", typeof(bool), "Calculate and store MD5 of image's user data", (object)false),
-            ("sha1", typeof(bool), "Calculate and store SHA1 of image's user data", (object)false),
-            ("sha256", typeof(bool), "Calculate and store SHA256 of image's user data", (object)false),
-            ("spamsum", typeof(bool), "Calculate and store SpamSum of image's user data", (object)false),
+            ("md5", typeof(bool), "Calculate and store MD5 of image's user data", false),
+            ("sha1", typeof(bool), "Calculate and store SHA1 of image's user data", false),
+            ("sha256", typeof(bool), "Calculate and store SHA256 of image's user data", false),
+            ("spamsum", typeof(bool), "Calculate and store SpamSum of image's user data", false),
             ("deduplicate", typeof(bool),
              "Store only unique sectors. This consumes more memory and is slower, but it's enabled by default",
-             (object)true),
+             true),
             ("compress", typeof(bool), "Compress user data blocks. Other blocks will always be compressed",
              (object)true)
         };

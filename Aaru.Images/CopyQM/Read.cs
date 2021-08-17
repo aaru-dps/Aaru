@@ -158,8 +158,8 @@ namespace Aaru.DiscImages
             _imageInfo.Sectors              = (ulong)sectors;
             _imageInfo.SectorSize           = _header.sectorSize;
 
-            _imageInfo.MediaType = Geometry.GetMediaType(((ushort)_header.totalCylinders, (byte)_header.heads,
-                                                          _header.sectorsPerTrack, (uint)_header.sectorSize,
+            _imageInfo.MediaType = Geometry.GetMediaType((_header.totalCylinders, (byte)_header.heads,
+                                                          _header.sectorsPerTrack, _header.sectorSize,
                                                           MediaEncoding.MFM, false));
 
             switch(_imageInfo.MediaType)
