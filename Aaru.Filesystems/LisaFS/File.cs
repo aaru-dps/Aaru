@@ -64,7 +64,7 @@ namespace Aaru.Filesystems.LisaFS
         {
             if(size == 0)
             {
-                buf = new byte[0];
+                buf = Array.Empty<byte>();
 
                 return Errno.NoError;
             }

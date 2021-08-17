@@ -30,6 +30,7 @@
 // Copyright © 2011-2021 Natalia Portillo
 // ****************************************************************************/
 
+using System;
 using Aaru.Console;
 using Aaru.Decoders.ATA;
 
@@ -49,7 +50,7 @@ namespace Aaru.Devices
                                            out double duration)
         {
             lba = 0;
-            byte[] buffer = new byte[0];
+            byte[] buffer = Array.Empty<byte>();
 
             var registers = new AtaRegistersLba48
             {
@@ -243,7 +244,7 @@ namespace Aaru.Devices
                                          out double duration)
         {
             lba = 0;
-            byte[] buffer = new byte[0];
+            byte[] buffer = Array.Empty<byte>();
 
             var registers = new AtaRegistersLba48
             {

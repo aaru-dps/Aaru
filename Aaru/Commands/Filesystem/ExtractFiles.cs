@@ -415,7 +415,7 @@ namespace Aaru.Commands.Filesystem
                         if(error == Errno.NoError)
                             foreach(string xattr in xattrs)
                             {
-                                byte[] xattrBuf = new byte[0];
+                                byte[] xattrBuf = Array.Empty<byte>();
                                 error = fs.GetXattr(path + "/" + entry, xattr, ref xattrBuf);
 
                                 if(error != Errno.NoError)
@@ -483,7 +483,7 @@ namespace Aaru.Commands.Filesystem
 
                     if(!File.Exists(outputPath))
                     {
-                        byte[] outBuf = new byte[0];
+                        byte[] outBuf = Array.Empty<byte>();
 
                         error = fs.Read(path + "/" + entry, 0, stat.Length, ref outBuf);
 

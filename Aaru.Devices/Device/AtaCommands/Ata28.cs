@@ -30,6 +30,7 @@
 // Copyright © 2011-2021 Natalia Portillo
 // ****************************************************************************/
 
+using System;
 using Aaru.Console;
 using Aaru.Decoders.ATA;
 
@@ -196,7 +197,7 @@ namespace Aaru.Devices
                                          out double duration)
         {
             lba = 0;
-            byte[] buffer = new byte[0];
+            byte[] buffer = Array.Empty<byte>();
 
             var registers = new AtaRegistersLba28
             {
@@ -341,7 +342,7 @@ namespace Aaru.Devices
         /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
         public bool Seek(out AtaErrorRegistersLba28 statusRegisters, uint lba, uint timeout, out double duration)
         {
-            byte[] buffer = new byte[0];
+            byte[] buffer = Array.Empty<byte>();
 
             var registers = new AtaRegistersLba28
             {

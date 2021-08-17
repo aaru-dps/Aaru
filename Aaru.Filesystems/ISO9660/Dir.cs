@@ -686,7 +686,7 @@ namespace Aaru.Filesystems
                         if(amiga.flags.HasFlag(AmigaFlags.Comment))
                         {
                             if(entry.AmigaComment is null)
-                                entry.AmigaComment = new byte[0];
+                                entry.AmigaComment = Array.Empty<byte>();
 
                             byte[] newComment = new byte[entry.AmigaComment.Length +
                                                          data
@@ -811,7 +811,7 @@ namespace Aaru.Filesystems
                         }
 
                         if(entry.RockRidgeAlternateName is null)
-                            entry.RockRidgeAlternateName = new byte[0];
+                            entry.RockRidgeAlternateName = Array.Empty<byte>();
 
                         byte[] newNm = new byte[entry.RockRidgeAlternateName.Length + nm.Length];
                         Array.Copy(entry.RockRidgeAlternateName, 0, newNm, 0, entry.RockRidgeAlternateName.Length);

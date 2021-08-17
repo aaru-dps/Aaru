@@ -66,7 +66,7 @@ namespace Aaru.Core
             _aborted      = false;
 
             var emptyChkWorker = new Checksum();
-            emptyChkWorker.Update(new byte[0]);
+            emptyChkWorker.Update(Array.Empty<byte>());
             _emptyChecksums = emptyChkWorker.End().ToArray();
         }
 

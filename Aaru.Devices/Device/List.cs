@@ -139,7 +139,7 @@ namespace Aaru.Devices
                 {
                     AaruConsole.ErrorWriteLine("Invalid remote URI.");
 
-                    return new DeviceInfo[0];
+                    return Array.Empty<DeviceInfo>();
                 }
 
                 using var remote = new Remote.Remote(aaruUri);
@@ -157,7 +157,7 @@ namespace Aaru.Devices
             {
                 AaruConsole.ErrorWriteLine("Error connecting to host.");
 
-                return new DeviceInfo[0];
+                return Array.Empty<DeviceInfo>();
             }
         }
     }

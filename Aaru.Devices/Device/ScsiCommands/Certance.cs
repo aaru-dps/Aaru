@@ -30,6 +30,7 @@
 // Copyright © 2011-2021 Natalia Portillo
 // ****************************************************************************/
 
+using System;
 using System.Diagnostics.CodeAnalysis;
 using Aaru.Console;
 
@@ -59,7 +60,7 @@ namespace Aaru.Devices
         /// <param name="duration">Duration.</param>
         public bool CertanceParkUnpark(out byte[] senseBuffer, bool park, uint timeout, out double duration)
         {
-            byte[] buffer = new byte[0];
+            byte[] buffer = Array.Empty<byte>();
             byte[] cdb    = new byte[6];
             senseBuffer = new byte[64];
 

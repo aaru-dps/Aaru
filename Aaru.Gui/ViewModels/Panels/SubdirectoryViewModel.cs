@@ -288,7 +288,7 @@ namespace Aaru.Gui.ViewModels.Panels
 
                 try
                 {
-                    byte[] outBuf = new byte[0];
+                    byte[] outBuf = Array.Empty<byte>();
 
                     Errno error = _model.Plugin.Read(_model.Path + "/" + file.Name, 0, file.Stat.Length, ref outBuf);
 

@@ -30,6 +30,7 @@
 // Copyright © 2011-2021 Natalia Portillo
 // ****************************************************************************/
 
+using System;
 using Aaru.Console;
 // ReSharper disable InconsistentNaming
 
@@ -144,7 +145,7 @@ namespace Aaru.Devices
 
             cdb[0] = (byte)ScsiCommands.MiniDiscStopPlay;
 
-            buffer = new byte[0];
+            buffer = Array.Empty<byte>();
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.None, out duration,
                                         out bool sense);

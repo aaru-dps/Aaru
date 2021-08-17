@@ -556,7 +556,7 @@ namespace Aaru.Devices
         {
             senseBuffer = new byte[64];
             byte[] cdb    = new byte[6];
-            byte[] buffer = new byte[0];
+            byte[] buffer = Array.Empty<byte>();
 
             cdb[0] = (byte)ScsiCommands.PreventAllowMediumRemoval;
 
@@ -626,7 +626,7 @@ namespace Aaru.Devices
         {
             senseBuffer = new byte[64];
             byte[] cdb    = new byte[6];
-            byte[] buffer = new byte[0];
+            byte[] buffer = Array.Empty<byte>();
 
             cdb[0] = (byte)ScsiCommands.StartStopUnit;
 
@@ -757,7 +757,7 @@ namespace Aaru.Devices
         {
             senseBuffer = new byte[64];
             byte[] cdb    = new byte[12];
-            byte[] buffer = new byte[0];
+            byte[] buffer = Array.Empty<byte>();
 
             cdb[0] = (byte)ScsiCommands.SetCdRomSpeed;
             cdb[1] = (byte)((byte)rotationalControl & 0x03);

@@ -355,7 +355,7 @@ namespace Aaru.Commands.Filesystem
 
                         foreach(string xattr in xattrs)
                         {
-                            byte[] xattrBuf = new byte[0];
+                            byte[] xattrBuf = Array.Empty<byte>();
                             error = fs.GetXattr(path + "/" + entry.Key, xattr, ref xattrBuf);
 
                             if(error == Errno.NoError)

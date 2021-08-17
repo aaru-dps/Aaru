@@ -114,7 +114,7 @@ namespace Aaru.Filesystems
 
             if(entry.Size == 0)
             {
-                buf = new byte[0];
+                buf = Array.Empty<byte>();
 
                 return Errno.NoError;
             }

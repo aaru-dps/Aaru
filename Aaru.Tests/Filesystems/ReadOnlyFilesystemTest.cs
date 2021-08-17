@@ -315,7 +315,7 @@ namespace Aaru.Tests.Filesystems
 
                 stat.Should().BeEquivalentTo(child.Value.Info, $"Wrong info for \"{childPath}\" in {testFile}");
 
-                byte[] buffer = new byte[0];
+                byte[] buffer = Array.Empty<byte>();
 
                 if(child.Value.Info.Attributes.HasFlag(FileAttributes.Directory))
                 {
@@ -402,7 +402,7 @@ namespace Aaru.Tests.Filesystems
 
             foreach(KeyValuePair<string, string> xattr in xattrs)
             {
-                byte[] buffer = new byte[0];
+                byte[] buffer = Array.Empty<byte>();
                 Errno  ret    = fs.GetXattr(path, xattr.Key, ref buffer);
 
                 if(ret == Errno.NoSuchExtendedAttribute ||

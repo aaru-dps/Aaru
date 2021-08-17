@@ -46,7 +46,7 @@ namespace Aaru.Devices
         {
             senseBuffer = new byte[64];
             byte[] cdb    = new byte[6];
-            byte[] buffer = new byte[0];
+            byte[] buffer = Array.Empty<byte>();
 
             cdb[0] = (byte)ScsiCommands.KreonCommand;
             cdb[1] = 0x08;
@@ -97,7 +97,7 @@ namespace Aaru.Devices
         {
             senseBuffer = new byte[64];
             byte[] cdb    = new byte[6];
-            byte[] buffer = new byte[0];
+            byte[] buffer = Array.Empty<byte>();
 
             cdb[0] = (byte)ScsiCommands.KreonCommand;
             cdb[1] = 0x08;

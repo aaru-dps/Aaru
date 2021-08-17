@@ -104,7 +104,7 @@ namespace Aaru.Filesystems
 
             if(size == 0)
             {
-                buf = new byte[0];
+                buf = Array.Empty<byte>();
 
                 return Errno.NoError;
             }
@@ -223,7 +223,7 @@ namespace Aaru.Filesystems
         uint[] GetClusters(uint startCluster)
         {
             if(startCluster == 0)
-                return new uint[0];
+                return Array.Empty<uint>();
 
             if(startCluster >= XmlFsType.Clusters)
                 return null;

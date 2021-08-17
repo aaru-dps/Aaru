@@ -30,6 +30,7 @@
 // Copyright © 2011-2021 Natalia Portillo
 // ****************************************************************************/
 
+using System;
 using Aaru.Console;
 using Aaru.Decoders.ATA;
 
@@ -46,7 +47,7 @@ namespace Aaru.Devices
         /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
         public bool SmartDisable(out AtaErrorRegistersLba28 statusRegisters, uint timeout, out double duration)
         {
-            byte[] buffer = new byte[0];
+            byte[] buffer = Array.Empty<byte>();
 
             var registers = new AtaRegistersLba28
             {
@@ -77,7 +78,7 @@ namespace Aaru.Devices
         public bool SmartEnableAttributeAutosave(out AtaErrorRegistersLba28 statusRegisters, uint timeout,
                                                  out double duration)
         {
-            byte[] buffer = new byte[0];
+            byte[] buffer = Array.Empty<byte>();
 
             var registers = new AtaRegistersLba28
             {
@@ -109,7 +110,7 @@ namespace Aaru.Devices
         public bool SmartDisableAttributeAutosave(out AtaErrorRegistersLba28 statusRegisters, uint timeout,
                                                   out double duration)
         {
-            byte[] buffer = new byte[0];
+            byte[] buffer = Array.Empty<byte>();
 
             var registers = new AtaRegistersLba28
             {
@@ -139,7 +140,7 @@ namespace Aaru.Devices
         /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
         public bool SmartEnable(out AtaErrorRegistersLba28 statusRegisters, uint timeout, out double duration)
         {
-            byte[] buffer = new byte[0];
+            byte[] buffer = Array.Empty<byte>();
 
             var registers = new AtaRegistersLba28
             {
@@ -171,7 +172,7 @@ namespace Aaru.Devices
         public bool SmartExecuteOffLineImmediate(out AtaErrorRegistersLba28 statusRegisters, byte subcommand,
                                                  uint timeout, out double duration)
         {
-            byte[] buffer = new byte[0];
+            byte[] buffer = Array.Empty<byte>();
 
             var registers = new AtaRegistersLba28
             {
@@ -268,7 +269,7 @@ namespace Aaru.Devices
         /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
         public bool SmartReturnStatus(out AtaErrorRegistersLba28 statusRegisters, uint timeout, out double duration)
         {
-            byte[] buffer = new byte[0];
+            byte[] buffer = Array.Empty<byte>();
 
             var registers = new AtaRegistersLba28
             {

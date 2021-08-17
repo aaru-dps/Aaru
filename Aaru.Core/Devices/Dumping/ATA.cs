@@ -89,7 +89,7 @@ namespace Aaru.Core.Devices.Dumping
                 {
                     Identify.IdentifyDevice ataId       = ataIdNullable.Value;
                     byte[]                  ataIdentify = cmdBuf;
-                    cmdBuf = new byte[0];
+                    cmdBuf = Array.Empty<byte>();
 
                     DateTime start;
                     DateTime end;

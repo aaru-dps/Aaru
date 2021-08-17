@@ -71,7 +71,7 @@ namespace Aaru.Devices
         {
             senseBuffer = new byte[64];
             byte[] cdb    = new byte[6];
-            byte[] buffer = new byte[0];
+            byte[] buffer = Array.Empty<byte>();
 
             cdb[0] = (byte)ScsiCommands.LoadUnload;
 
@@ -151,7 +151,7 @@ namespace Aaru.Devices
         {
             senseBuffer = new byte[64];
             byte[] cdb    = new byte[10];
-            byte[] buffer = new byte[0];
+            byte[] buffer = Array.Empty<byte>();
 
             cdb[0] = (byte)ScsiCommands.Locate;
 
@@ -235,7 +235,7 @@ namespace Aaru.Devices
         {
             senseBuffer = new byte[64];
             byte[] cdb     = new byte[16];
-            byte[] buffer  = new byte[0];
+            byte[] buffer  = Array.Empty<byte>();
             byte[] idBytes = BitConverter.GetBytes(identifier);
 
             cdb[0] = (byte)ScsiCommands.Locate16;
@@ -910,7 +910,7 @@ namespace Aaru.Devices
         {
             senseBuffer = new byte[64];
             byte[] cdb    = new byte[6];
-            byte[] buffer = new byte[0];
+            byte[] buffer = Array.Empty<byte>();
 
             cdb[0] = (byte)ScsiCommands.Rewind;
 
@@ -937,7 +937,7 @@ namespace Aaru.Devices
         {
             senseBuffer = new byte[64];
             byte[] cdb    = new byte[6];
-            byte[] buffer = new byte[0];
+            byte[] buffer = Array.Empty<byte>();
 
             cdb[0] = (byte)ScsiCommands.TrackSelect;
             cdb[5] = track;
@@ -965,7 +965,7 @@ namespace Aaru.Devices
         {
             senseBuffer = new byte[64];
             byte[] cdb    = new byte[6];
-            byte[] buffer = new byte[0];
+            byte[] buffer = Array.Empty<byte>();
             byte[] countB = BitConverter.GetBytes(count);
 
             cdb[0] = (byte)ScsiCommands.Space;

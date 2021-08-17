@@ -185,10 +185,10 @@ namespace Aaru.Filesystems
             }
             else
             {
-                fields.FirstPartitions  = new NintendoPartition[0];
-                fields.SecondPartitions = new NintendoPartition[0];
-                fields.ThirdPartitions  = new NintendoPartition[0];
-                fields.FourthPartitions = new NintendoPartition[0];
+                fields.FirstPartitions  = Array.Empty<NintendoPartition>();
+                fields.SecondPartitions = Array.Empty<NintendoPartition>();
+                fields.ThirdPartitions  = Array.Empty<NintendoPartition>();
+                fields.FourthPartitions = Array.Empty<NintendoPartition>();
             }
 
             AaruConsole.DebugWriteLine("Nintendo plugin", "discType = {0}", fields.DiscType);

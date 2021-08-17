@@ -31,6 +31,7 @@
 // Copyright © 2011-2021 Natalia Portillo
 // ****************************************************************************/
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Aaru.CommonTypes.Interfaces;
@@ -254,7 +255,7 @@ namespace Aaru.Core
                 file.statusChangeTimeSpecified = true;
             }
 
-            byte[] data = new byte[0];
+            byte[] data = Array.Empty<byte>();
 
             if(stat.Length > 0)
             {

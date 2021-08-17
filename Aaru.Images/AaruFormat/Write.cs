@@ -1765,7 +1765,7 @@ namespace Aaru.DiscImages
 
                 var cmpCrc64Context = new Crc64Context();
 
-                byte[] lzmaProperties = new byte[0];
+                byte[] lzmaProperties = Array.Empty<byte>();
 
                 switch(_currentBlockHeader.compression)
                 {
@@ -2498,7 +2498,7 @@ namespace Aaru.DiscImages
 
                 var cmpCrc64Context = new Crc64Context();
 
-                byte[] lzmaProperties = new byte[0];
+                byte[] lzmaProperties = Array.Empty<byte>();
 
                 if(_currentBlockHeader.compression == CompressionType.Flac)
                 {

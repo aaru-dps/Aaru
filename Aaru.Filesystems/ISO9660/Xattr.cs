@@ -137,7 +137,7 @@ namespace Aaru.Filesystems
 
                     if(entry.AssociatedFile.Size == 0)
                     {
-                        buf = new byte[0];
+                        buf = Array.Empty<byte>();
 
                         return Errno.NoError;
                     }
@@ -172,7 +172,7 @@ namespace Aaru.Filesystems
 
                     if(entry.ResourceFork.Size == 0)
                     {
-                        buf = new byte[0];
+                        buf = Array.Empty<byte>();
 
                         return Errno.NoError;
                     }

@@ -30,6 +30,7 @@
 // Copyright © 2011-2021 Natalia Portillo
 // ****************************************************************************/
 
+using System;
 using Aaru.Console;
 
 namespace Aaru.Devices
@@ -99,7 +100,7 @@ namespace Aaru.Devices
                 cdb[4] = 1;
             }
             else
-                buffer = new byte[0];
+                buffer = Array.Empty<byte>();
 
             if(!inhibitDma)
                 LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
@@ -178,7 +179,7 @@ namespace Aaru.Devices
                 cdb[4] = 1;
             }
             else
-                buffer = new byte[0];
+                buffer = Array.Empty<byte>();
 
             if(!inhibitDma)
                 LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,

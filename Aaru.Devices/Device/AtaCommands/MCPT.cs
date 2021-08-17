@@ -30,6 +30,7 @@
 // Copyright © 2011-2021 Natalia Portillo
 // ****************************************************************************/
 
+using System;
 using Aaru.Console;
 using Aaru.Decoders.ATA;
 
@@ -70,7 +71,7 @@ namespace Aaru.Devices
         public bool CheckMediaCardType(byte feature, out AtaErrorRegistersChs statusRegisters, uint timeout,
                                        out double duration)
         {
-            byte[] buffer = new byte[0];
+            byte[] buffer = Array.Empty<byte>();
 
             var registers = new AtaRegistersChs
             {

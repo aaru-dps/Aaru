@@ -342,7 +342,7 @@ namespace Aaru.Devices.Remote
             {
                 AaruConsole.ErrorWriteLine("Could not write to the network...");
 
-                return new DeviceInfo[0];
+                return Array.Empty<DeviceInfo>();
             }
 
             byte[] hdrBuf = new byte[Marshal.SizeOf<AaruPacketHeader>()];
@@ -353,7 +353,7 @@ namespace Aaru.Devices.Remote
             {
                 AaruConsole.ErrorWriteLine("Could not read from the network...");
 
-                return new DeviceInfo[0];
+                return Array.Empty<DeviceInfo>();
             }
 
             AaruPacketHeader hdr = Marshal.ByteArrayToStructureLittleEndian<AaruPacketHeader>(hdrBuf);
@@ -363,7 +363,7 @@ namespace Aaru.Devices.Remote
             {
                 AaruConsole.ErrorWriteLine("Received data is not an Aaru Remote Packet...");
 
-                return new DeviceInfo[0];
+                return Array.Empty<DeviceInfo>();
             }
 
             if(hdr.packetType != AaruPacketType.ResponseListDevices)
@@ -373,7 +373,7 @@ namespace Aaru.Devices.Remote
                     AaruConsole.ErrorWriteLine("Expected List Devices Response Packet, got packet type {0}...",
                                                hdr.packetType);
 
-                    return new DeviceInfo[0];
+                    return Array.Empty<DeviceInfo>();
                 }
 
                 buf = new byte[hdr.len];
@@ -383,21 +383,21 @@ namespace Aaru.Devices.Remote
                 {
                     AaruConsole.ErrorWriteLine("Could not read from the network...");
 
-                    return new DeviceInfo[0];
+                    return Array.Empty<DeviceInfo>();
                 }
 
                 AaruPacketNop nop = Marshal.ByteArrayToStructureLittleEndian<AaruPacketNop>(buf);
 
                 AaruConsole.ErrorWriteLine($"{nop.reason}");
 
-                return new DeviceInfo[0];
+                return Array.Empty<DeviceInfo>();
             }
 
             if(hdr.version != Consts.PACKET_VERSION)
             {
                 AaruConsole.ErrorWriteLine("Unrecognized packet version...");
 
-                return new DeviceInfo[0];
+                return Array.Empty<DeviceInfo>();
             }
 
             buf = new byte[hdr.len];
@@ -407,7 +407,7 @@ namespace Aaru.Devices.Remote
             {
                 AaruConsole.ErrorWriteLine("Could not read from the network...");
 
-                return new DeviceInfo[0];
+                return Array.Empty<DeviceInfo>();
             }
 
             AaruPacketResponseListDevices response =

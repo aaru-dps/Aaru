@@ -30,6 +30,7 @@
 // Copyright © 2011-2021 Natalia Portillo
 // ****************************************************************************/
 
+using System;
 using Aaru.Console;
 
 namespace Aaru.Devices
@@ -82,7 +83,7 @@ namespace Aaru.Devices
         public bool ArchiveCorpSeekBlock(out byte[] senseBuffer, bool immediate, uint lba, uint timeout,
                                          out double duration)
         {
-            byte[] buffer = new byte[0];
+            byte[] buffer = Array.Empty<byte>();
             byte[] cdb    = new byte[6];
             senseBuffer = new byte[64];
 

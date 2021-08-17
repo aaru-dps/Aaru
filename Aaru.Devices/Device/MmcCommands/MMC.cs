@@ -139,7 +139,7 @@ namespace Aaru.Devices
         /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
         public bool SetBlockLength(uint length, out uint[] response, uint timeout, out double duration)
         {
-            byte[] buffer = new byte[0];
+            byte[] buffer = Array.Empty<byte>();
 
             LastError = SendMmcCommand(MmcCommands.SetBlocklen, false, false,
                                        MmcFlags.ResponseSpiR1 | MmcFlags.ResponseR1 | MmcFlags.CommandAc, length, 0, 0,
@@ -367,7 +367,7 @@ namespace Aaru.Devices
                 argument      = transferLength,
                 blockSize     = 0,
                 blocks        = 0,
-                buffer        = new byte[0]
+                buffer        = Array.Empty<byte>()
             };
 
             // READ_MULTIPLE_BLOCK
@@ -394,7 +394,7 @@ namespace Aaru.Devices
                 argument      = 0,
                 blockSize     = 0,
                 blocks        = 0,
-                buffer        = new byte[0]
+                buffer        = Array.Empty<byte>()
             };
 
             LastError = SendMultipleMmcCommands(commands, out duration, out bool sense, timeout);

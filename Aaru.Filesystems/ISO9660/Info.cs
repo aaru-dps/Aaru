@@ -280,7 +280,7 @@ namespace Aaru.Filesystems
                 }
             }
 
-            byte[]                 rootDir         = new byte[0];
+            byte[]                 rootDir         = Array.Empty<byte>();
             int                    rootOff         = 0;
             bool                   xaExtensions    = false;
             bool                   apple           = false;

@@ -30,6 +30,7 @@
 // Copyright © 2011-2021 Natalia Portillo
 // ****************************************************************************/
 
+using System;
 using Aaru.Console;
 using Aaru.Decoders.ATA;
 
@@ -302,7 +303,7 @@ namespace Aaru.Devices
         public bool Seek(out AtaErrorRegistersChs statusRegisters, ushort cylinder, byte head, byte sector,
                          uint timeout, out double duration)
         {
-            byte[] buffer = new byte[0];
+            byte[] buffer = Array.Empty<byte>();
 
             var registers = new AtaRegistersChs
             {
@@ -351,7 +352,7 @@ namespace Aaru.Devices
         public bool SetFeatures(out AtaErrorRegistersChs statusRegisters, AtaFeatures feature, ushort cylinder,
                                 byte head, byte sector, byte sectorCount, uint timeout, out double duration)
         {
-            byte[] buffer = new byte[0];
+            byte[] buffer = Array.Empty<byte>();
 
             var registers = new AtaRegistersChs
             {
@@ -384,7 +385,7 @@ namespace Aaru.Devices
         /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
         public bool DoorLock(out AtaErrorRegistersChs statusRegisters, uint timeout, out double duration)
         {
-            byte[] buffer = new byte[0];
+            byte[] buffer = Array.Empty<byte>();
 
             var registers = new AtaRegistersChs
             {
@@ -411,7 +412,7 @@ namespace Aaru.Devices
         /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
         public bool DoorUnlock(out AtaErrorRegistersChs statusRegisters, uint timeout, out double duration)
         {
-            byte[] buffer = new byte[0];
+            byte[] buffer = Array.Empty<byte>();
 
             var registers = new AtaRegistersChs
             {
@@ -438,7 +439,7 @@ namespace Aaru.Devices
         /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
         public bool MediaEject(out AtaErrorRegistersChs statusRegisters, uint timeout, out double duration)
         {
-            byte[] buffer = new byte[0];
+            byte[] buffer = Array.Empty<byte>();
 
             var registers = new AtaRegistersChs
             {

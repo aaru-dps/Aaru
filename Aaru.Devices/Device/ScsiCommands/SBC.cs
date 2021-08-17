@@ -389,7 +389,7 @@ namespace Aaru.Devices
         {
             senseBuffer = new byte[64];
             byte[] cdb    = new byte[6];
-            byte[] buffer = new byte[0];
+            byte[] buffer = Array.Empty<byte>();
 
             cdb[0] = (byte)ScsiCommands.Seek6;
             cdb[1] = (byte)((lba & 0x1F0000) >> 16);
@@ -415,7 +415,7 @@ namespace Aaru.Devices
         {
             senseBuffer = new byte[64];
             byte[] cdb    = new byte[10];
-            byte[] buffer = new byte[0];
+            byte[] buffer = Array.Empty<byte>();
 
             cdb[0] = (byte)ScsiCommands.Seek10;
             cdb[2] = (byte)((lba & 0xFF000000) >> 24);

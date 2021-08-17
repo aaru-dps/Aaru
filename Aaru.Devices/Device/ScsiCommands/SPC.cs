@@ -202,7 +202,7 @@ namespace Aaru.Devices
                 (byte)ScsiCommands.TestUnitReady, 0, 0, 0, 0, 0
             };
 
-            byte[] buffer = new byte[0];
+            byte[] buffer = Array.Empty<byte>();
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.None, out duration,
                                         out bool sense);
@@ -420,7 +420,7 @@ namespace Aaru.Devices
         {
             senseBuffer = new byte[64];
             byte[] cdb    = new byte[6];
-            byte[] buffer = new byte[0];
+            byte[] buffer = Array.Empty<byte>();
 
             cdb[0] = (byte)ScsiCommands.PreventAllowMediumRemoval;
             cdb[4] = (byte)((byte)preventMode & 0x03);

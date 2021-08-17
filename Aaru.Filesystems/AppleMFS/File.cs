@@ -184,7 +184,7 @@ namespace Aaru.Filesystems
 
             if(size == 0)
             {
-                buf = new byte[0];
+                buf = Array.Empty<byte>();
 
                 return Errno.NoError;
             }
@@ -328,7 +328,7 @@ namespace Aaru.Filesystems
             {
                 if(entry.flRPyLen == 0)
                 {
-                    buf = new byte[0];
+                    buf = Array.Empty<byte>();
 
                     return Errno.NoError;
                 }
@@ -339,7 +339,7 @@ namespace Aaru.Filesystems
             {
                 if(entry.flPyLen == 0)
                 {
-                    buf = new byte[0];
+                    buf = Array.Empty<byte>();
 
                     return Errno.NoError;
                 }
