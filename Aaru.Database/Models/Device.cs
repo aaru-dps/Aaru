@@ -32,6 +32,7 @@
 
 using System;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using Aaru.CommonTypes.Metadata;
 
 namespace Aaru.Database.Models
@@ -50,6 +51,7 @@ namespace Aaru.Database.Models
         /// Builds a device from a device report
         /// </summary>
         /// <param name="report">Device report</param>
+        [SuppressMessage("ReSharper", "VirtualMemberCallInConstructor")]
         public Device(DeviceReportV2 report)
         {
             ATA                       = report.ATA;
