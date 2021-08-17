@@ -60,7 +60,7 @@ namespace Aaru.CommonTypes
         /// <summary>Information that does not find space in this struct</summary>
         public string Description;
         /// <summary>LBA of last partition sector</summary>
-        public ulong End => Start + Length - 1;
+        public readonly ulong End => Start + Length - 1;
         /// <summary>Name of partition scheme that contains this partition</summary>
         public string Scheme;
 
