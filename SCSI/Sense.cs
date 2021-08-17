@@ -47,12 +47,12 @@ namespace Aaru.Decoders.SCSI
 
     public struct DecodedSense
     {
-        public FixedSense?      Fixed;
-        public DescriptorSense? Descriptor;
-        public byte             ASC         => Descriptor?.ASC      ?? (Fixed?.ASC      ?? 0);
-        public byte             ASCQ        => Descriptor?.ASCQ     ?? (Fixed?.ASCQ     ?? 0);
-        public SenseKeys        SenseKey    => Descriptor?.SenseKey ?? (Fixed?.SenseKey ?? SenseKeys.NoSense);
-        public string           Description => Sense.GetSenseDescription(ASC, ASCQ);
+        public          FixedSense?      Fixed;
+        public          DescriptorSense? Descriptor;
+        public readonly byte             ASC         => Descriptor?.ASC      ?? (Fixed?.ASC      ?? 0);
+        public readonly byte             ASCQ        => Descriptor?.ASCQ     ?? (Fixed?.ASCQ     ?? 0);
+        public readonly SenseKeys        SenseKey    => Descriptor?.SenseKey ?? (Fixed?.SenseKey ?? SenseKeys.NoSense);
+        public readonly string           Description => Sense.GetSenseDescription(ASC, ASCQ);
     }
 
     [SuppressMessage("ReSharper", "MemberCanBeInternal"), SuppressMessage("ReSharper", "NotAccessedField.Global"),
