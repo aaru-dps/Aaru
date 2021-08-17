@@ -34,6 +34,7 @@ using System;
 
 namespace Aaru.Database.Models
 {
+    /// <inheritdoc />
     /// <summary>
     /// CD read offset
     /// </summary>

@@ -38,6 +38,7 @@ using SharpCompress.Compressors.BZip2;
 
 namespace Aaru.Filters
 {
+    /// <inheritdoc />
     /// <summary>Decompress bz2 files while reading</summary>
     public class BZip2 : IFilter
     {

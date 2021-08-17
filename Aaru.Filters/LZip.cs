@@ -38,6 +38,7 @@ using SharpCompress.Compressors.LZMA;
 
 namespace Aaru.Filters
 {
+    /// <inheritdoc />
     /// <summary>Decompress lzip files while reading</summary>
     public sealed class LZip : IFilter
     {

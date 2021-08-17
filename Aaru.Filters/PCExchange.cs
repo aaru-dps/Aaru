@@ -43,6 +43,7 @@ using Marshal = System.Runtime.InteropServices.Marshal;
 
 namespace Aaru.Filters
 {
+    /// <inheritdoc />
     /// <summary>Decodes PCExchange files</summary>
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
     public sealed class PcExchange : IFilter

@@ -38,6 +38,7 @@ namespace Aaru.DiscImages
 {
     public sealed partial class Vhd
     {
+        /// <inheritdoc />
         public bool Identify(IFilter imageFilter)
         {
             Stream imageStream = imageFilter.GetDataForkStream();

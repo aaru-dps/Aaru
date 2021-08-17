@@ -32,6 +32,7 @@
 
 namespace Aaru.Database.Models
 {
+    /// <inheritdoc />
     /// <summary>
     /// Aaru version
     /// </summary>

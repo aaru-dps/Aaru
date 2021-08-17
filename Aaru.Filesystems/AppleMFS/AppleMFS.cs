@@ -39,6 +39,7 @@ using Schemas;
 namespace Aaru.Filesystems
 {
     // Information from Inside Macintosh Volume II
+    /// <inheritdoc />
     /// <summary>
     /// Implements the Apple Macintosh File System
     /// </summary>

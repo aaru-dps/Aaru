@@ -39,7 +39,6 @@ using Aaru.CommonTypes.Structs;
 
 namespace Aaru.DiscImages
 {
-    /// <inheritdoc />
     /// <summary>
     /// Implements reading partclone disk images
     /// </summary>

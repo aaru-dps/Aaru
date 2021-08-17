@@ -53,6 +53,7 @@ namespace Aaru.DiscImages
      * 2) High compression, algorithm unknown
      * Then the data for whole tracks follow.
      */
+    /// <inheritdoc />
     /// <summary>
     /// Implements reading and writing CisCopy disk images
     /// </summary>

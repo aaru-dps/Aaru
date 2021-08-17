@@ -38,7 +38,6 @@ using Aaru.CommonTypes.Structs;
 
 namespace Aaru.DiscImages
 {
-    /// <inheritdoc />
     /// <summary>
     /// Implements reading CopyQM disk images
     /// </summary>

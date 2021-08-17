@@ -39,6 +39,7 @@ using Aaru.CommonTypes.Structs;
 namespace Aaru.DiscImages
 {
     // Info from Neko Project II emulator
+    /// <inheritdoc />
     /// <summary>
     /// Implements reading Virtual98 disk images
     /// </summary>

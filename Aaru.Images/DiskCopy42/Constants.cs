@@ -30,6 +30,7 @@
 // Copyright © 2011-2021 Natalia Portillo
 // ****************************************************************************/
 
+// ReSharper disable InconsistentNaming
 namespace Aaru.DiscImages
 {
     public sealed partial class DiskCopy42

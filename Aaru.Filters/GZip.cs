@@ -38,6 +38,7 @@ using Aaru.Helpers;
 
 namespace Aaru.Filters
 {
+    /// <inheritdoc />
     /// <summary>Decompress gzip files while reading</summary>
     public sealed class GZip : IFilter
     {

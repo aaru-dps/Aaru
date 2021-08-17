@@ -36,6 +36,7 @@ using Aaru.CommonTypes.Interfaces;
 
 namespace Aaru.Filters
 {
+    /// <inheritdoc />
     /// <summary>No filter for reading files not recognized by any filter</summary>
     public sealed class ZZZNoFilter : IFilter
     {

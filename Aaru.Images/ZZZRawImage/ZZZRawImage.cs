@@ -39,6 +39,7 @@ using Aaru.CommonTypes.Structs;
 
 namespace Aaru.DiscImages
 {
+    /// <inheritdoc />
     /// <summary>
     /// Implements reading and writing raw (sector by sector) images
     /// </summary>

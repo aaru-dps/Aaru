@@ -37,6 +37,7 @@ using SharpCompress.Compressors.Xz;
 
 namespace Aaru.Filters
 {
+    /// <inheritdoc />
     /// <summary>Decompress xz files while reading</summary>
     public sealed class XZ : IFilter
     {
