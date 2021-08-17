@@ -57,6 +57,11 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Bluray\BCA.cs" />
+    <Compile Include="Bluray\Cartridge.cs" />
+    <Compile Include="Bluray\DDS.cs" />
+    <Compile Include="Bluray\DI.cs" />
+    <Compile Include="Bluray\Spare.cs" />
     <Compile Include="CD\SectorBuilder.cs" />
     <Compile Include="CD\Subchannel.cs" />
     <Compile Include="SCSI\Inquiry.cs" />
@@ -147,11 +152,6 @@
     <Compile Include="SCSI\DiscStructureCapabilities.cs" />
     <Compile Include="SCSI\Sense.cs" />
     <Compile Include="ATA\Registers.cs" />
-    <Compile Include="Blu-ray\DI.cs" />
-    <Compile Include="Blu-ray\BCA.cs" />
-    <Compile Include="Blu-ray\DDS.cs" />
-    <Compile Include="Blu-ray\Spare.cs" />
-    <Compile Include="Blu-ray\Cartridge.cs" />
     <Compile Include="Xbox\DMI.cs" />
     <Compile Include="SCSI\SSC\BlockLimits.cs" />
     <Compile Include="SCSI\SSC\DensitySupport.cs" />
@@ -190,6 +190,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Blu-ray" />
     <Folder Include="SCSI\" />
     <Folder Include="ATA\" />
     <Folder Include="Blu-ray\" />
