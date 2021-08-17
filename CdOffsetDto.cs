@@ -34,6 +34,7 @@ using Aaru.CommonTypes.Metadata;
 
 namespace Aaru.Dto
 {
+    /// <inheritdoc />
     /// <summary>
     /// DTO from a CD drive read offset
     /// </summary>
