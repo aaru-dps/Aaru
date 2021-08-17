@@ -51,7 +51,7 @@ namespace Aaru.Decryption.DVD
         public Dump(Device dev)
         {
             _dev   = dev;
-            BusKey = new byte[0];
+            BusKey = Array.Empty<byte>();
             Agid   = 0;
         }
 
@@ -130,7 +130,7 @@ namespace Aaru.Decryption.DVD
         {
             senseBuffer = new byte[64];
             byte[] cdb = new byte[12];
-            buffer = new byte[0];
+            buffer = Array.Empty<byte>();
 
             cdb[0]  = (byte)ScsiCommands.ReportKey;
             cdb[7]  = (byte)keyClass;
@@ -356,7 +356,7 @@ namespace Aaru.Decryption.DVD
                                out double duration)
         {
             duration    = 0;
-            buffer      = new byte[0];
+            buffer      = Array.Empty<byte>();
             senseBuffer = new byte[64];
 
             bool   sense     = false;
@@ -431,7 +431,7 @@ namespace Aaru.Decryption.DVD
 
                 if(i >= 31)
                 {
-                    senseBuffer = new byte[0];
+                    senseBuffer = Array.Empty<byte>();
 
                     return true;
                 }
