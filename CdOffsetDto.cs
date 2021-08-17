@@ -34,10 +34,21 @@ using Aaru.CommonTypes.Metadata;
 
 namespace Aaru.Dto
 {
+    /// <summary>
+    /// DTO from a CD drive read offset
+    /// </summary>
     public class CdOffsetDto : CdOffset
     {
+        /// <summary>
+        /// Build an empty DTO
+        /// </summary>
         public CdOffsetDto() {}
 
+        /// <summary>
+        /// Build a DTO using the specified offset and database ID
+        /// </summary>
+        /// <param name="offset">CD reading offset</param>
+        /// <param name="id">Database ID</param>
         public CdOffsetDto(CdOffset offset, int id)
         {
             Manufacturer = offset.Manufacturer;
@@ -48,6 +59,9 @@ namespace Aaru.Dto
             Id           = id;
         }
 
+        /// <summary>
+        /// Database ID
+        /// </summary>
         public int Id { get; set; }
     }
 }

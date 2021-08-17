@@ -37,10 +37,20 @@ using Aaru.CommonTypes.Metadata;
 
 namespace Aaru.Dto
 {
+    /// <summary>
+    /// DTO for known device
+    /// </summary>
     public class DeviceDto : DeviceReportV2
     {
+        /// <summary>
+        /// Build an empty DTO
+        /// </summary>
         public DeviceDto() {}
 
+        /// <summary>
+        /// Build a DTO from a device report
+        /// </summary>
+        /// <param name="report">Device report</param>
         public DeviceDto(DeviceReportV2 report)
         {
             ATA                       = report.ATA;
@@ -59,6 +69,13 @@ namespace Aaru.Dto
             GdRomSwapDiscCapabilities = report.GdRomSwapDiscCapabilities;
         }
 
+        /// <summary>
+        /// Build a DTO from a device report with the specified parameters
+        /// </summary>
+        /// <param name="report">Device report</param>
+        /// <param name="id">Database ID</param>
+        /// <param name="optimalMultipleSectorsRead">Optimal number of blocks for read</param>
+        /// <param name="canReadGdRomUsingSwapDisc">Can read GD-ROM using swap trick?</param>
         public DeviceDto(DeviceReportV2 report, int id, int optimalMultipleSectorsRead, bool? canReadGdRomUsingSwapDisc)
         {
             ATA                       = report.ATA;
@@ -170,10 +187,19 @@ namespace Aaru.Dto
             CanReadGdRomUsingSwapDisc  = canReadGdRomUsingSwapDisc;
         }
 
+        /// <summary>
+        /// Optimal maximum number of transfer blocks to read
+        /// </summary>
         public int OptimalMultipleSectorsRead { get; set; }
 
+        /// <summary>
+        /// Can read GD-ROM using disc swap trick?
+        /// </summary>
         public bool? CanReadGdRomUsingSwapDisc { get; set; }
 
+        /// <summary>
+        /// Database ID
+        /// </summary>
         public new int Id { get; set; }
 
         static TestedMedia ClearBinaries(TestedMedia media)

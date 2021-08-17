@@ -34,11 +34,26 @@ using System.Collections.Generic;
 
 namespace Aaru.Dto
 {
+    /// <summary>
+    /// DTO for database synchronization.
+    /// </summary>
     public class SyncDto
     {
+        /// <summary>
+        /// List of USB vendors
+        /// </summary>
         public List<UsbVendorDto>  UsbVendors  { get; set; }
+        /// <summary>
+        /// List of USB products
+        /// </summary>
         public List<UsbProductDto> UsbProducts { get; set; }
+        /// <summary>
+        /// List of CD read offsets
+        /// </summary>
         public List<CdOffsetDto>   Offsets     { get; set; }
+        /// <summary>
+        /// List of known devices
+        /// </summary>
         public List<DeviceDto>     Devices     { get; set; }
     }
 }

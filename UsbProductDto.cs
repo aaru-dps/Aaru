@@ -32,11 +32,26 @@
 
 namespace Aaru.Dto
 {
+    /// <summary>
+    /// DTO for USB product field
+    /// </summary>
     public class UsbProductDto
     {
+        /// <summary>
+        /// Database ID
+        /// </summary>
         public int    Id        { get; set; }
+        /// <summary>
+        /// Product ID
+        /// </summary>
         public ushort ProductId { get; set; }
+        /// <summary>
+        /// Product name
+        /// </summary>
         public string Product   { get; set; }
+        /// <summary>
+        /// Vendor ID
+        /// </summary>
         public ushort VendorId  { get; set; }
     }
 }
