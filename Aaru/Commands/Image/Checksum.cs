@@ -273,8 +273,6 @@ namespace Aaru.Commands.Image
                         if(wholeDisc)
                             mediaChecksum = new Checksum(enabledChecksums);
 
-                        ulong previousTrackEnd = 0;
-
                         List<Track> inputTracks = opticalInput.Tracks;
 
                         foreach(Track currentTrack in inputTracks)

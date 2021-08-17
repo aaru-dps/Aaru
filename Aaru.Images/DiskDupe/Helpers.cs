@@ -72,7 +72,7 @@ namespace Aaru.DiscImages
             trackMap = new TrackInfo[numTracks];
             trackOffsets = new long[numTracks];
 
-            AaruConsole.DebugWriteLine("DiskDupe plugin", "Identified image with C/H/S = {0}/{1}/{2}", 
+            AaruConsole.DebugWriteLine("DiskDupe plugin", "Identified image with C/H/S = {0}/{1}/{2}",
                     _diskTypes[fHeader.diskType].cyl, _diskTypes[fHeader.diskType].hd, _diskTypes[fHeader.diskType].spt);
 
             // read the trackmap and store the track offsets
