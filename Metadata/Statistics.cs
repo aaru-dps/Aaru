@@ -251,6 +251,7 @@ namespace Aaru.CommonTypes.Metadata
     /// <summary>
     /// Checksum type statistics
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public class ChecksumStats
     {
         /// <summary>
@@ -300,6 +301,7 @@ namespace Aaru.CommonTypes.Metadata
     /// <summary>
     /// Media statistics
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public class MediaStats
     {
         /// <summary>
