@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -266,6 +267,7 @@ namespace Aaru.Helpers
         /// <param name="str"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
         public static object SwapStructureMembersEndian(object str)
         {
             Type        t         = str.GetType();
