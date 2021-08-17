@@ -1743,10 +1743,7 @@ namespace Aaru.DiscImages
             if(_imageInfo.XmlMediaType == XmlMediaType.OpticalDisc)
             {
                 trk = Tracks.FirstOrDefault(t => sectorAddress >= t.TrackStartSector &&
-                                                 sectorAddress <= t.TrackEndSector);
-
-                if(trk is null)
-                    trk.TrackType = TrackType.Data; // TODO: Check intersession data type
+                                                 sectorAddress <= t.TrackEndSector) ?? new Track();
 
                 if(trk.TrackSequence    == 0 &&
                    trk.TrackStartSector == 0 &&

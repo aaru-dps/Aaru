@@ -90,7 +90,7 @@ namespace Aaru.Core.Media.Info
                     if(decSense.HasValue)
                     {
                         // Just retry, for 5 times
-                        if(decSense.Value.ASC == 0x29)
+                        if(decSense?.ASC == 0x29)
                         {
                             resets++;
 
@@ -98,7 +98,7 @@ namespace Aaru.Core.Media.Info
                                 goto deviceGotReset;
                         }
 
-                        if(decSense.Value.ASC == 0x3A)
+                        if(decSense?.ASC == 0x3A)
                         {
                             int leftRetries = 5;
 
@@ -121,8 +121,8 @@ namespace Aaru.Core.Media.Info
                                 return;
                             }
                         }
-                        else if(decSense.Value.ASC  == 0x04 &&
-                                decSense.Value.ASCQ == 0x01)
+                        else if(decSense?.ASC  == 0x04 &&
+                                decSense?.ASCQ == 0x01)
                         {
                             int leftRetries = 10;
 

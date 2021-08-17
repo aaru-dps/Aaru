@@ -1605,7 +1605,7 @@ namespace Aaru.Core.Media
                 {
                     track      = tracks.FirstOrDefault(t => (int)t.TrackSequence == 1);
                     trackStart = 0;
-                    pregap     = track.TrackStartSector;
+                    pregap     = track?.TrackStartSector ?? 0;
                 }
                 else
                 {
@@ -1613,15 +1613,15 @@ namespace Aaru.Core.Media
                     pregap     = track.TrackPregap;
                 }
 
-                if(!trackFlags.TryGetValue((byte)track.TrackSequence, out trkFlags) &&
-                   track.TrackType != TrackType.Audio)
+                if(!trackFlags.TryGetValue((byte)(track?.TrackSequence ?? 0), out trkFlags) &&
+                   track?.TrackType != TrackType.Audio)
                     flags = (byte)CdFlags.DataTrack;
                 else
                     flags = trkFlags;
 
                 byte index;
 
-                if(track.Indexes?.Count > 0)
+                if(track?.Indexes?.Count > 0)
                     index = (byte)track.Indexes.LastOrDefault(i => i.Value >= sector).Key;
                 else
                     index = 0;
@@ -1629,7 +1629,7 @@ namespace Aaru.Core.Media
                 updateProgress?.Invoke($"Generating subchannel for sector {sector}...", sector, (long)blocks);
                 dumpLog?.WriteLine($"Generating subchannel for sector {sector}.");
 
-                byte[] sub = Subchannel.Generate(sector, track.TrackSequence, (int)pregap, (int)trackStart, flags,
+                byte[] sub = Subchannel.Generate(sector, track?.TrackSequence ?? 0, (int)pregap, (int)trackStart, flags,
                                                  index);
 
                 outputPlugin.WriteSectorsTag(sub, (ulong)sector, 1, SectorTagType.CdSectorSubchannel);

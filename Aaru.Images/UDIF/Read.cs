@@ -468,7 +468,7 @@ namespace Aaru.DiscImages
                             case CHUNK_TYPE_ZLIB:
                             case CHUNK_TYPE_BZIP:
                                 tmpBuffer = new byte[_buffersize];
-                                realSize  = decStream.Read(tmpBuffer, 0, (int)_buffersize);
+                                realSize  = decStream?.Read(tmpBuffer, 0, (int)_buffersize) ?? 0;
                                 buffer    = new byte[realSize];
                                 Array.Copy(tmpBuffer, 0, buffer, 0, realSize);
 

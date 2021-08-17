@@ -328,7 +328,18 @@ namespace Aaru.Core.Devices.Dumping
 
             AaruConsole.DebugWriteLine("Dump-media command", "Unlocked total size: {0} sectors", totalSize);
             ulong                         blocks      = totalSize + 1;
-            PFI.PhysicalFormatInformation wxRipperPfi = PFI.Decode(readBuffer, MediaType.DVDROM).Value;
+
+            var wxRipperPfiNullable = PFI.Decode(readBuffer, MediaType.DVDROM);
+
+            if(wxRipperPfiNullable == null)
+            {
+                _dumpLog.WriteLine("Cannot decode PFI.");
+                StoppingErrorMessage?.Invoke("Cannot decode PFI.");
+
+                return;
+            }
+
+            PFI.PhysicalFormatInformation wxRipperPfi = wxRipperPfiNullable.Value;
 
             UpdateStatus?.Invoke($"WxRipper PFI's Data Area Start PSN: {wxRipperPfi.DataAreaStartPSN} sectors");
             UpdateStatus?.Invoke($"WxRipper PFI's Layer 0 End PSN: {wxRipperPfi.Layer0EndPSN} sectors");

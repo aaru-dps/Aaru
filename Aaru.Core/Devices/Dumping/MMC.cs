@@ -354,13 +354,16 @@ namespace Aaru.Core.Devices.Dumping
                                                    MmcDiscStructureFormat.PhysicalInformation, 0, _dev.Timeout, out _);
 
                     if(!sense)
-                        if(PFI.Decode(cmdBuf, dskType).HasValue)
+                    {
+                        PFI.PhysicalFormatInformation? nullablePfi = PFI.Decode(cmdBuf, dskType);
+
+                        if(nullablePfi.HasValue)
                         {
                             tmpBuf = new byte[cmdBuf.Length - 4];
                             Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
                             mediaTags.Add(MediaTagType.DVD_PFI, tmpBuf);
 
-                            PFI.PhysicalFormatInformation decPfi = PFI.Decode(cmdBuf, dskType).Value;
+                            PFI.PhysicalFormatInformation decPfi = nullablePfi.Value;
                             UpdateStatus?.Invoke($"PFI:\n{PFI.Prettify(decPfi)}");
 
                             // False book types
@@ -424,7 +427,7 @@ namespace Aaru.Core.Devices.Dumping
                                     break;
                             }
                         }
-
+                    }
                     _dumpLog.WriteLine("Reading Disc Manufacturing Information");
 
                     sense = _dev.ReadDiscStructure(out cmdBuf, out _, MmcDiscStructureMediaType.Dvd, 0, 0,
@@ -456,8 +459,7 @@ namespace Aaru.Core.Devices.Dumping
                             sense = _dev.ScsiInquiry(out byte[] inqBuf, out _);
 
                             if(sense                            ||
-                               !Inquiry.Decode(inqBuf).HasValue ||
-                               (Inquiry.Decode(inqBuf).HasValue && !Inquiry.Decode(inqBuf).Value.KreonPresent))
+                               Inquiry.Decode(inqBuf)?.KreonPresent != true)
                             {
                                 _dumpLog.WriteLine("Dumping Xbox Game Discs requires a drive with Kreon firmware.");
 

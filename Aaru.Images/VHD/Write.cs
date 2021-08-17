@@ -188,7 +188,7 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            Version thisVersion = GetType().Assembly.GetName().Version;
+            Version thisVersion = GetType().Assembly.GetName().Version ?? new Version();
 
             if(_imageInfo.Cylinders == 0)
             {
