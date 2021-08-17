@@ -30,6 +30,7 @@
 // Copyright © 2011-2021 Natalia Portillo
 // ****************************************************************************/
 
+using System;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
@@ -60,7 +61,7 @@ namespace Aaru.Checksums
         /// <summary>Returns a byte array of the hash value.</summary>
         public byte[] Final()
         {
-            _provider.TransformFinalBlock(new byte[0], 0, 0);
+            _provider.TransformFinalBlock(Array.Empty<byte>(), 0, 0);
 
             return _provider.Hash;
         }
@@ -69,7 +70,7 @@ namespace Aaru.Checksums
         /// <summary>Returns a hexadecimal representation of the hash value.</summary>
         public string End()
         {
-            _provider.TransformFinalBlock(new byte[0], 0, 0);
+            _provider.TransformFinalBlock(Array.Empty<byte>(), 0, 0);
             var sha256Output = new StringBuilder();
 
             foreach(byte h in _provider.Hash)
