@@ -33,67 +33,76 @@
 namespace Aaru.Console
 {
     /// <summary>
-    /// Writes the text representation of the specified array of objects, followed by the current line terminator, to the standard output console using the specified format information.
+    ///     Writes the text representation of the specified array of objects, followed by the current line terminator, to
+    ///     the standard output console using the specified format information.
     /// </summary>
     /// <param name="format">A composite format string.</param>
-    /// <param name="arg">An array of objects to write using <paramref name="format"/>.</param>
+    /// <param name="arg">An array of objects to write using <paramref name="format" />.</param>
     public delegate void WriteLineHandler(string format, params object[] arg);
 
     /// <summary>
-    /// Writes the text representation of the specified array of objects, followed by the current line terminator, to the error output console using the specified format information.
+    ///     Writes the text representation of the specified array of objects, followed by the current line terminator, to
+    ///     the error output console using the specified format information.
     /// </summary>
     /// <param name="format">A composite format string.</param>
-    /// <param name="arg">An array of objects to write using <paramref name="format"/>.</param>
+    /// <param name="arg">An array of objects to write using <paramref name="format" />.</param>
     public delegate void ErrorWriteLineHandler(string format, params object[] arg);
 
     /// <summary>
-    /// Writes the text representation of the specified array of objects, followed by the current line terminator, to the verbose output console using the specified format information.
+    ///     Writes the text representation of the specified array of objects, followed by the current line terminator, to
+    ///     the verbose output console using the specified format information.
     /// </summary>
     /// <param name="format">A composite format string.</param>
-    /// <param name="arg">An array of objects to write using <paramref name="format"/>.</param>
+    /// <param name="arg">An array of objects to write using <paramref name="format" />.</param>
     public delegate void VerboseWriteLineHandler(string format, params object[] arg);
 
     /// <summary>
-    /// Writes the text representation of the specified array of objects, followed by the current line terminator, to the debug output console using the specified format information.
+    ///     Writes the text representation of the specified array of objects, followed by the current line terminator, to
+    ///     the debug output console using the specified format information.
     /// </summary>
     /// <param name="format">A composite format string.</param>
-    /// <param name="arg">An array of objects to write using <paramref name="format"/>.</param>
+    /// <param name="arg">An array of objects to write using <paramref name="format" />.</param>
     public delegate void DebugWriteLineHandler(string format, params object[] arg);
 
     /// <summary>
-    /// Writes the text representation of the specified array of objects, to the standard output console using the specified format information.
+    ///     Writes the text representation of the specified array of objects, to the standard output console using the
+    ///     specified format information.
     /// </summary>
     /// <param name="format">A composite format string.</param>
-    /// <param name="arg">An array of objects to write using <paramref name="format"/>.</param>
+    /// <param name="arg">An array of objects to write using <paramref name="format" />.</param>
     public delegate void WriteHandler(string format, params object[] arg);
 
     /// <summary>
-    /// Writes the text representation of the specified array of objects, to the error output console using the specified format information.
+    ///     Writes the text representation of the specified array of objects, to the error output console using the
+    ///     specified format information.
     /// </summary>
     /// <param name="format">A composite format string.</param>
-    /// <param name="arg">An array of objects to write using <paramref name="format"/>.</param>
+    /// <param name="arg">An array of objects to write using <paramref name="format" />.</param>
     public delegate void ErrorWriteHandler(string format, params object[] arg);
 
     /// <summary>
-    /// Writes the text representation of the specified array of objects, to the verbose output console using the specified format information.
+    ///     Writes the text representation of the specified array of objects, to the verbose output console using the
+    ///     specified format information.
     /// </summary>
     /// <param name="format">A composite format string.</param>
-    /// <param name="arg">An array of objects to write using <paramref name="format"/>.</param>
+    /// <param name="arg">An array of objects to write using <paramref name="format" />.</param>
     public delegate void VerboseWriteHandler(string format, params object[] arg);
 
     /// <summary>
-    /// Writes the text representation of the specified array of objects, to the debug output console using the specified format information.
+    ///     Writes the text representation of the specified array of objects, to the debug output console using the
+    ///     specified format information.
     /// </summary>
     /// <param name="format">A composite format string.</param>
-    /// <param name="arg">An array of objects to write using <paramref name="format"/>.</param>
+    /// <param name="arg">An array of objects to write using <paramref name="format" />.</param>
     public delegate void DebugWriteHandler(string format, params object[] arg);
 
     /// <summary>
-    /// Writes the text representation of the specified array of objects, followed by the current line terminator, to the debug output console using the specified format information.
+    ///     Writes the text representation of the specified array of objects, followed by the current line terminator, to
+    ///     the debug output console using the specified format information.
     /// </summary>
     /// <param name="module">Description of the module writing to the debug console</param>
     /// <param name="format">A composite format string.</param>
-    /// <param name="arg">An array of objects to write using <paramref name="format"/>.</param>
+    /// <param name="arg">An array of objects to write using <paramref name="format" />.</param>
     public delegate void DebugWithModuleWriteLineHandler(string module, string format, params object[] arg);
 
     /// <summary>
@@ -103,53 +112,57 @@ namespace Aaru.Console
     public static class AaruConsole
     {
         /// <summary>Event to receive writings to the standard output console that should be followed by a line termination.</summary>
-        public static event WriteLineHandler                WriteLineEvent;
+        public static event WriteLineHandler WriteLineEvent;
         /// <summary>Event to receive writings to the error output console that should be followed by a line termination.</summary>
-        public static event ErrorWriteLineHandler           ErrorWriteLineEvent;
+        public static event ErrorWriteLineHandler ErrorWriteLineEvent;
         /// <summary>Event to receive writings to the verbose output console that should be followed by a line termination.</summary>
-        public static event VerboseWriteLineHandler         VerboseWriteLineEvent;
+        public static event VerboseWriteLineHandler VerboseWriteLineEvent;
         /// <summary>Event to receive line terminations to the debug output console.</summary>
-        public static event DebugWriteLineHandler           DebugWriteLineEvent;
+        public static event DebugWriteLineHandler DebugWriteLineEvent;
         /// <summary>Event to receive writings to the debug output console that should be followed by a line termination.</summary>
         public static event DebugWithModuleWriteLineHandler DebugWithModuleWriteLineEvent;
         /// <summary>Event to receive writings to the standard output console.</summary>
-        public static event WriteHandler        WriteEvent;
+        public static event WriteHandler WriteEvent;
         /// <summary>Event to receive writings to the error output console.</summary>
-        public static event ErrorWriteHandler   ErrorWriteEvent;
+        public static event ErrorWriteHandler ErrorWriteEvent;
         /// <summary>Event to receive writings to the verbose output console.</summary>
         public static event VerboseWriteHandler VerboseWriteEvent;
         /// <summary>Event to receive writings to the debug output console.</summary>
-        public static event DebugWriteHandler   DebugWriteEvent;
+        public static event DebugWriteHandler DebugWriteEvent;
 
         /// <summary>
-        /// Writes the text representation of the specified array of objects, followed by the current line terminator, to the standard output console using the specified format information.
+        ///     Writes the text representation of the specified array of objects, followed by the current line terminator, to
+        ///     the standard output console using the specified format information.
         /// </summary>
         /// <param name="format">A composite format string.</param>
-        /// <param name="arg">An array of objects to write using <paramref name="format"/>.</param>
+        /// <param name="arg">An array of objects to write using <paramref name="format" />.</param>
         public static void WriteLine(string format, params object[] arg) => WriteLineEvent?.Invoke(format, arg);
 
         /// <summary>
-        /// Writes the text representation of the specified array of objects, followed by the current line terminator, to the error output console using the specified format information.
+        ///     Writes the text representation of the specified array of objects, followed by the current line terminator, to
+        ///     the error output console using the specified format information.
         /// </summary>
         /// <param name="format">A composite format string.</param>
-        /// <param name="arg">An array of objects to write using <paramref name="format"/>.</param>
+        /// <param name="arg">An array of objects to write using <paramref name="format" />.</param>
         public static void ErrorWriteLine(string format, params object[] arg) =>
             ErrorWriteLineEvent?.Invoke(format, arg);
 
         /// <summary>
-        /// Writes the text representation of the specified array of objects, followed by the current line terminator, to the verbose output console using the specified format information.
+        ///     Writes the text representation of the specified array of objects, followed by the current line terminator, to
+        ///     the verbose output console using the specified format information.
         /// </summary>
         /// <param name="format">A composite format string.</param>
-        /// <param name="arg">An array of objects to write using <paramref name="format"/>.</param>
+        /// <param name="arg">An array of objects to write using <paramref name="format" />.</param>
         public static void VerboseWriteLine(string format, params object[] arg) =>
             VerboseWriteLineEvent?.Invoke(format, arg);
 
         /// <summary>
-        /// Writes the text representation of the specified array of objects, followed by the current line terminator, to the debug output console using the specified format information.
+        ///     Writes the text representation of the specified array of objects, followed by the current line terminator, to
+        ///     the debug output console using the specified format information.
         /// </summary>
         /// <param name="module">Description of the module writing to the debug console</param>
         /// <param name="format">A composite format string.</param>
-        /// <param name="arg">An array of objects to write using <paramref name="format"/>.</param>
+        /// <param name="arg">An array of objects to write using <paramref name="format" />.</param>
         public static void DebugWriteLine(string module, string format, params object[] arg)
         {
             DebugWriteLineEvent?.Invoke("DEBUG (" + module + "): " + format, arg);
@@ -169,56 +182,52 @@ namespace Aaru.Console
         public static void DebugWriteLine() => DebugWriteLineEvent?.Invoke("", null);
 
         /// <summary>
-        /// Writes the text representation of the specified array of objects to the standard output console using the specified format information.
+        ///     Writes the text representation of the specified array of objects to the standard output console using the
+        ///     specified format information.
         /// </summary>
         /// <param name="format">A composite format string.</param>
-        /// <param name="arg">An array of objects to write using <paramref name="format"/>.</param>
+        /// <param name="arg">An array of objects to write using <paramref name="format" />.</param>
         public static void Write(string format, params object[] arg) => WriteEvent?.Invoke(format, arg);
 
         /// <summary>
-        /// Writes the text representation of the specified array of objects to the error output console using the specified format information.
+        ///     Writes the text representation of the specified array of objects to the error output console using the
+        ///     specified format information.
         /// </summary>
         /// <param name="format">A composite format string.</param>
-        /// <param name="arg">An array of objects to write using <paramref name="format"/>.</param>
+        /// <param name="arg">An array of objects to write using <paramref name="format" />.</param>
         public static void ErrorWrite(string format, params object[] arg) => ErrorWriteEvent?.Invoke(format, arg);
 
         /// <summary>
-        /// Writes the text representation of the specified array of objects to the verbose output console using the specified format information.
+        ///     Writes the text representation of the specified array of objects to the verbose output console using the
+        ///     specified format information.
         /// </summary>
         /// <param name="format">A composite format string.</param>
-        /// <param name="arg">An array of objects to write using <paramref name="format"/>.</param>
+        /// <param name="arg">An array of objects to write using <paramref name="format" />.</param>
         public static void VerboseWrite(string format, params object[] arg) => VerboseWriteEvent?.Invoke(format, arg);
 
         /// <summary>
-        /// Writes the text representation of the specified array of objects to the debug output console using the specified format information.
+        ///     Writes the text representation of the specified array of objects to the debug output console using the
+        ///     specified format information.
         /// </summary>
         /// <param name="module">Description of the module writing to the debug console</param>
         /// <param name="format">A composite format string.</param>
-        /// <param name="arg">An array of objects to write using <paramref name="format"/>.</param>
+        /// <param name="arg">An array of objects to write using <paramref name="format" />.</param>
         public static void DebugWrite(string module, string format, params object[] arg) =>
             DebugWriteEvent?.Invoke("DEBUG (" + module + "): " + format, arg);
 
-        /// <summary>
-        /// Writes the specified string value, followed by the current line terminator, to the standard output console.
-        /// </summary>
+        /// <summary>Writes the specified string value, followed by the current line terminator, to the standard output console.</summary>
         /// <param name="value">The value to write.</param>
         public static void WriteLine(string value) => WriteLineEvent?.Invoke("{0}", value);
 
-        /// <summary>
-        /// Writes the specified string value, followed by the current line terminator, to the error output console.
-        /// </summary>
+        /// <summary>Writes the specified string value, followed by the current line terminator, to the error output console.</summary>
         /// <param name="value">The value to write.</param>
         public static void ErrorWriteLine(string value) => ErrorWriteLineEvent?.Invoke("{0}", value);
 
-        /// <summary>
-        /// Writes the specified string value, followed by the current line terminator, to the verbose output console.
-        /// </summary>
+        /// <summary>Writes the specified string value, followed by the current line terminator, to the verbose output console.</summary>
         /// <param name="value">The value to write.</param>
         public static void VerboseWriteLine(string value) => VerboseWriteLineEvent?.Invoke("{0}", value);
 
-        /// <summary>
-        /// Writes the specified string value, followed by the current line terminator, to the debug output console.
-        /// </summary>
+        /// <summary>Writes the specified string value, followed by the current line terminator, to the debug output console.</summary>
         /// <param name="module">Description of the module writing to the debug console</param>
         /// <param name="value">The value to write.</param>
         public static void DebugWriteLine(string module, string value) =>
