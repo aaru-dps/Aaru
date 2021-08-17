@@ -278,7 +278,7 @@ namespace Aaru.Checksums
             if(!(bi == 0 || (ulong)SSDEEP_BS(bi) / 2 * SPAMSUM_LENGTH < _self.TotalSize))
                 throw new Exception("Assertion failed");
 
-            int resultOff = 0;
+            int resultOff;
 
             /* Initial blocksize guess. */
             while((ulong)SSDEEP_BS(bi) * SPAMSUM_LENGTH < _self.TotalSize)
