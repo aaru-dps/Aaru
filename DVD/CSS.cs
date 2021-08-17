@@ -571,7 +571,7 @@ namespace Aaru.Decryption.DVD
                 lfsr1Lo = ((lfsr1Lo & 1) << 8) ^ oLfsr1;
                 oLfsr1  = _cssTable4[oLfsr1];
                 byte oLfsr0 = (byte)(((((((lfsr0 >> 8) ^ lfsr0) >> 1) ^ lfsr0) >> 3) ^ lfsr0) >> 7);
-                lfsr0    =   (uint)((lfsr0                                                    >> 8) | (oLfsr0 << 24));
+                lfsr0    =   (lfsr0 >> 8) | ((uint)oLfsr0 << 24);
                 combined +=  (uint)((oLfsr0 ^ invert) + oLfsr1);
                 k[i]     =   (byte)(combined & 0xff);
                 combined >>= 8;
