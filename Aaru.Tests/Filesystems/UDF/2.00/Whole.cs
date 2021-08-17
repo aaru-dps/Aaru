@@ -25,6 +25,7 @@
 // ----------------------------------------------------------------------------
 // Copyright © 2011-2021 Natalia Portillo
 // ****************************************************************************/
+// ReSharper disable CheckNamespace
 
 using System.IO;
 using Aaru.CommonTypes;

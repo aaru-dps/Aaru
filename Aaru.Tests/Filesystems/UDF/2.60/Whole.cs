@@ -30,6 +30,7 @@ using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using NUnit.Framework;
+// ReSharper disable CheckNamespace
 
 namespace Aaru.Tests.Filesystems.UDF._260
 {
