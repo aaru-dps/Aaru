@@ -592,7 +592,7 @@ namespace Aaru.Decoders.SecureDigital
                     sb.AppendLine("\tDevice can write protect regions");
 
                     // TODO: Check specification
-                    unitFactor = Convert.ToDouble(csd.WriteProtectGroupSize);
+                    // unitFactor = Convert.ToDouble(csd.WriteProtectGroupSize);
 
                     sb.AppendFormat("\tDevice can write protect a minimum of {0} blocks at a time", (int)(result + 1)).
                        AppendLine();
