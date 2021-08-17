@@ -382,8 +382,7 @@ namespace Aaru.Core
             // TODO: Detect it
             sidecar.BlockMedia[0].PhysicalBlockSize = image.Info.SectorSize;
 
-            if(image is ITapeImage tapeImage &&
-               tapeImage.IsTape)
+            if(image is ITapeImage { IsTape: true } tapeImage)
             {
                 List<TapePartitionType> tapePartitions = new List<TapePartitionType>();
 

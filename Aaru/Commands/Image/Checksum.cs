@@ -369,7 +369,7 @@ namespace Aaru.Commands.Image
 
                     break;
 
-                case ITapeImage tapeImage when tapeImage.IsTape && tapeImage.Files?.Count > 0:
+                case ITapeImage { IsTape: true } tapeImage when tapeImage.Files?.Count > 0:
                 {
                     Checksum trackChecksum = null;
 

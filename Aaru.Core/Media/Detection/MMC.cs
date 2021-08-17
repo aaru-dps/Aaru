@@ -1518,8 +1518,7 @@ namespace Aaru.Core.Media.Detection
                         return;
                     }
 
-                    if(ps2BootSectors        != null &&
-                       ps2BootSectors.Length == 0x6000)
+                    if(ps2BootSectors is { Length: 0x6000 })
                     {
                         // The decryption key is applied as XOR. As first byte is originally always NULL, it gives us the key :)
                         byte decryptByte = ps2BootSectors[0];
@@ -2337,8 +2336,7 @@ namespace Aaru.Core.Media.Detection
                 case MediaType.UHDBD:
                 case MediaType.Unknown:
                     // TODO: Nuon requires reading the filesystem, searching for a file called "/NUON/NUON.RUN"
-                    if(ps2BootSectors        != null &&
-                       ps2BootSectors.Length == 0x6000)
+                    if(ps2BootSectors is { Length: 0x6000 })
                     {
                         // The decryption key is applied as XOR. As first byte is originally always NULL, it gives us the key :)
                         byte decryptByte = ps2BootSectors[0];

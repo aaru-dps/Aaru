@@ -324,8 +324,7 @@ namespace Aaru.Core.Devices.Dumping
                     DecodedSense? decSense = Sense.Decode(senseBuf);
 
                     // MEDIUM ERROR, retry with ignore error below
-                    if(decSense.HasValue &&
-                       decSense.Value.ASC == 0x11)
+                    if(decSense is { ASC: 0x11 })
                         if(!sectorsNotEvenPartial.Contains(badSector))
                             sectorsNotEvenPartial.Add(badSector);
                 }

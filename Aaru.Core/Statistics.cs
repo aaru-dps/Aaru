@@ -564,8 +564,7 @@ namespace Aaru.Core
                 AaruConsole.DebugWriteLine("Stats", "{0}", ex);
             }
 
-            if(Settings.Settings.Current.Stats != null &&
-               Settings.Settings.Current.Stats.ShareStats)
+            if(Settings.Settings.Current.Stats is { ShareStats: true })
                 SubmitStats();
         }
 

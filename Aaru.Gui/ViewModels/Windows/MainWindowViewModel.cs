@@ -320,11 +320,11 @@ namespace Aaru.Gui.ViewModels.Windows
 
                         break;
                     }
-                    case MediaModel mediaModel when mediaModel.NonRemovable:
+                    case MediaModel { NonRemovable: true }:
                         ContentPanel = "Non-removable device commands not yet implemented";
 
                         break;
-                    case MediaModel mediaModel when mediaModel.NoMediaInserted:
+                    case MediaModel { NoMediaInserted: true }:
                         ContentPanel = "No media inserted";
 
                         break;
