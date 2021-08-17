@@ -515,7 +515,7 @@ namespace Aaru.Core.Devices.Dumping
 
                         CSS_CPRM.LeadInCopyright? cmi = CSS_CPRM.DecodeLeadInCopyright(cmdBuf);
 
-                        if(cmi!.Value.CopyrightType == CopyrightType.NoProtection)
+                        if(cmi?.CopyrightType == CopyrightType.NoProtection)
                             UpdateStatus?.Invoke("Drive reports no copy protection on disc.");
                         else
                         {
@@ -524,15 +524,15 @@ namespace Aaru.Core.Devices.Dumping
                                                      "The dump will be incorrect unless decryption is enabled.");
                             else
                             {
-                                if(cmi!.Value.CopyrightType == CopyrightType.CSS)
+                                if(cmi?.CopyrightType == CopyrightType.CSS)
                                 {
                                     UpdateStatus?.Invoke("Drive reports disc uses CSS copy protection.");
 
                                     dvdDecrypt = new DVDDecryption(_dev);
 
                                     sense = dvdDecrypt.ReadBusKey(out cmdBuf, out _,
-                                                                  CSS_CPRM.DecodeLeadInCopyright(cmdBuf)!.Value.
-                                                                           CopyrightType, _dev.Timeout, out _);
+                                                                  CSS_CPRM.DecodeLeadInCopyright(cmdBuf)?.
+                                                                           CopyrightType ?? CopyrightType.NoProtection, _dev.Timeout, out _);
 
                                     if(!sense)
                                     {
@@ -598,7 +598,7 @@ namespace Aaru.Core.Devices.Dumping
                                 else
                                 {
                                     UpdateStatus?.
-                                        Invoke($"Drive reports disc uses {CSS_CPRM.DecodeLeadInCopyright(cmdBuf)!.Value.CopyrightType.ToString()} copy protection. " +
+                                        Invoke($"Drive reports disc uses {(CSS_CPRM.DecodeLeadInCopyright(cmdBuf)?.CopyrightType ?? CopyrightType.NoProtection).ToString()} copy protection. " +
                                                "This is not yet supported and the dump will be incorrect.");
                                 }
                             }

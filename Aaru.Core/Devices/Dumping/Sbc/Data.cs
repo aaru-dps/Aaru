@@ -177,7 +177,7 @@ namespace Aaru.Core.Devices.Dumping
                                 _outputPlugin.WriteSectorTag(titleKey.Value.Key, i + j, SectorTagType.DvdTitleKey);
                                 _resume.MissingTitleKeys.Remove(i                  + j);
 
-                                CSS.DecryptTitleKey(0, discKey!, titleKey.Value.Key, out tmpBuf);
+                                CSS.DecryptTitleKey(0, discKey, titleKey.Value.Key, out tmpBuf);
                                 _outputPlugin.WriteSectorTag(tmpBuf, i + j, SectorTagType.DvdTitleKeyDecrypted);
                             }
                         }

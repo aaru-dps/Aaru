@@ -58,7 +58,7 @@ namespace Aaru.DiscImages
         {
             _tracks.TryGetValue(track, out Track aaruTrack);
 
-            return aaruTrack!.TrackStartSector + relativeSector;
+            return (aaruTrack?.TrackStartSector ?? 0) + relativeSector;
         }
 
         byte[] GetHunk(ulong hunkNo)
