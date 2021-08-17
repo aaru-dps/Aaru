@@ -40,10 +40,12 @@ using System;
 
 namespace Aaru.Helpers
 {
+    /// <inheritdoc />
     /// <summary>Defines properties to help marshalling structs from binary data</summary>
     [AttributeUsage(AttributeTargets.Struct)]
     public sealed class MarshallingPropertiesAttribute : Attribute
     {
+        /// <inheritdoc />
         /// <summary>Defines properties to help marshalling structs from binary data</summary>
         /// <param name="endian">Defines properties to help marshalling structs from binary data</param>
         public MarshallingPropertiesAttribute(BitEndian endian)
