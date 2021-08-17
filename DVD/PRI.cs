@@ -487,79 +487,79 @@ namespace Aaru.Decoders.DVD
             string manufacturer = "";
 
             // Bad thing is that it also includes a media code...
-            if(manufacturerId.StartsWith("RITEK"))
+            if(manufacturerId.StartsWith("RITEK", StringComparison.Ordinal))
                 manufacturer = "Ritek Co.";
-            else if(manufacturerId.StartsWith("CMC"))
+            else if(manufacturerId.StartsWith("CMC", StringComparison.Ordinal))
                 manufacturer = "CMC Magnetics Corporation";
-            else if(manufacturerId.StartsWith("Dvsn-"))
+            else if(manufacturerId.StartsWith("Dvsn-", StringComparison.Ordinal))
                 manufacturer = "Digital Storage Technology Co., Ltd.";
-            else if(manufacturerId.StartsWith("GSC"))
+            else if(manufacturerId.StartsWith("GSC", StringComparison.Ordinal))
                 manufacturer = "Gigastore Corporation";
-            else if(manufacturerId.StartsWith("INFOMEDIA"))
+            else if(manufacturerId.StartsWith("INFOMEDIA", StringComparison.Ordinal))
                 manufacturer = "InfoMedia Inc.";
-            else if(manufacturerId.StartsWith("ISSM"))
+            else if(manufacturerId.StartsWith("ISSM", StringComparison.Ordinal))
                 manufacturer = "Info Source Digital Media (Zhongshan) Co., Ltd.";
-            else if(manufacturerId.StartsWith("LEADDATA"))
+            else if(manufacturerId.StartsWith("LEADDATA", StringComparison.Ordinal))
                 manufacturer = "Lead Data Inc.";
-            else if(manufacturerId.StartsWith("MCC") ||
-                    manufacturerId.StartsWith("MKM"))
+            else if(manufacturerId.StartsWith("MCC", StringComparison.Ordinal) ||
+                    manufacturerId.StartsWith("MKM", StringComparison.Ordinal))
                 manufacturer = "Mitsubishi Kagaku Media Co., LTD.";
-            else if(manufacturerId.StartsWith("MUST"))
+            else if(manufacturerId.StartsWith("MUST", StringComparison.Ordinal))
                 manufacturer = "Must Technology Co., Ltd.";
-            else if(manufacturerId.StartsWith("MXL"))
+            else if(manufacturerId.StartsWith("MXL", StringComparison.Ordinal))
                 manufacturer = "Hitachi Maxell, Ltd.";
-            else if(manufacturerId.StartsWith("PRINCO"))
+            else if(manufacturerId.StartsWith("PRINCO", StringComparison.Ordinal))
                 manufacturer = "Princo Corporation";
-            else if(manufacturerId.StartsWith("Prodisc"))
+            else if(manufacturerId.StartsWith("Prodisc", StringComparison.Ordinal))
                 manufacturer = "Prodisc Technology Inc.";
-            else if(manufacturerId.StartsWith("SONY") ||
-                    manufacturerId.StartsWith("80SONY"))
+            else if(manufacturerId.StartsWith("SONY", StringComparison.Ordinal) ||
+                    manufacturerId.StartsWith("80SONY", StringComparison.Ordinal))
                 manufacturer = "Sony Corporation";
-            else if(manufacturerId.StartsWith("TCLDS"))
+            else if(manufacturerId.StartsWith("TCLDS", StringComparison.Ordinal))
                 manufacturer = "TCL Technology";
-            else if(manufacturerId.StartsWith("TMI"))
+            else if(manufacturerId.StartsWith("TMI", StringComparison.Ordinal))
                 manufacturer = "ThaiMedia Co., Ltd. ";
-            else if(manufacturerId.StartsWith("TY"))
+            else if(manufacturerId.StartsWith("TY", StringComparison.Ordinal))
                 manufacturer = "Taiyo Yuden Company Ltd.";
-            else if(manufacturerId.StartsWith("UME"))
+            else if(manufacturerId.StartsWith("UME", StringComparison.Ordinal))
                 manufacturer = "Avic Umedisc HK Ltd.";
-            else if(manufacturerId.StartsWith("DAXON"))
+            else if(manufacturerId.StartsWith("DAXON", StringComparison.Ordinal))
                 manufacturer = "Daxon Technology Inc.";
-            else if(manufacturerId.StartsWith("FTI"))
+            else if(manufacturerId.StartsWith("FTI", StringComparison.Ordinal))
                 manufacturer = "Falcon Technologies International L.L.C.";
-            else if(manufacturerId.StartsWith("FUJIFILM"))
+            else if(manufacturerId.StartsWith("FUJIFILM", StringComparison.Ordinal))
                 manufacturer = "Fuji Photo Film, Co., Ltd.";
-            else if(manufacturerId.StartsWith("MBI"))
+            else if(manufacturerId.StartsWith("MBI", StringComparison.Ordinal))
                 manufacturer = "Moser Baer India Ltd.";
-            else if(manufacturerId.StartsWith("TT") ||
-                    manufacturerId.StartsWith("TDK"))
+            else if(manufacturerId.StartsWith("TT", StringComparison.Ordinal) ||
+                    manufacturerId.StartsWith("TDK", StringComparison.Ordinal))
                 manufacturer = "TDK Corporation";
-            else if(manufacturerId.StartsWith("JVC"))
+            else if(manufacturerId.StartsWith("JVC", StringComparison.Ordinal))
                 manufacturer = "Victor Advanced media Co., Ltd.";
-            else if(manufacturerId.StartsWith("MEI"))
+            else if(manufacturerId.StartsWith("MEI", StringComparison.Ordinal))
                 manufacturer = "Matsushita Electric Industrial Co., Ltd.";
-            else if(manufacturerId.StartsWith("OPTODISC"))
+            else if(manufacturerId.StartsWith("OPTODISC", StringComparison.Ordinal))
                 manufacturer = "OptoDisc Ltd.";
-            else if(manufacturerId.StartsWith("KIC"))
+            else if(manufacturerId.StartsWith("KIC", StringComparison.Ordinal))
                 manufacturer = "Advance Media Corporation";
-            else if(manufacturerId.StartsWith("IMC"))
+            else if(manufacturerId.StartsWith("IMC", StringComparison.Ordinal))
                 manufacturer = "Intermedia Co., Ltd.";
-            else if(manufacturerId.StartsWith("LGE"))
+            else if(manufacturerId.StartsWith("LGE", StringComparison.Ordinal))
                 manufacturer = "LG Electronics Inc.";
-            else if(manufacturerId.StartsWith("KDT"))
+            else if(manufacturerId.StartsWith("KDT", StringComparison.Ordinal))
                 manufacturer = "King Disc Technology Corporation";
-            else if(manufacturerId.StartsWith("POS"))
+            else if(manufacturerId.StartsWith("POS", StringComparison.Ordinal))
                 manufacturer = "POSTECH Corporation";
-            else if(manufacturerId.StartsWith("VDSPMSAB"))
+            else if(manufacturerId.StartsWith("VDSPMSAB", StringComparison.Ordinal))
                 manufacturer = "Interaxia Digital Storage Materials AG";
-            else if(manufacturerId.StartsWith("VANGUARD"))
+            else if(manufacturerId.StartsWith("VANGUARD", StringComparison.Ordinal))
                 manufacturer = "Vanguard Disc Inc.";
-            else if(manufacturerId.StartsWith("MJC"))
+            else if(manufacturerId.StartsWith("MJC", StringComparison.Ordinal))
                 manufacturer = "Megan Media Holdings Berhad";
-            else if(manufacturerId.StartsWith("DKM") ||
-                    manufacturerId.StartsWith("EDMA"))
+            else if(manufacturerId.StartsWith("DKM", StringComparison.Ordinal) ||
+                    manufacturerId.StartsWith("EDMA", StringComparison.Ordinal))
                 manufacturer = "E-TOP Mediatek Inc.";
-            else if(manufacturerId.StartsWith("BeAll"))
+            else if(manufacturerId.StartsWith("BeAll", StringComparison.Ordinal))
                 manufacturer = "BeALL Developers, Inc.";
 
             return manufacturer != "" ? $"{manufacturer} (\"{manufacturerId}\")" : $"\"{manufacturerId}\"";
