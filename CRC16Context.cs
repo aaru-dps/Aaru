@@ -214,6 +214,15 @@ namespace Aaru.Checksums
             return crc16Output.ToString();
         }
 
+        /// <summary>
+        /// Calculates the CRC16 of the specified buffer with the specified parameters
+        /// </summary>
+        /// <param name="buffer">Buffer</param>
+        /// <param name="polynomial">Polynomial</param>
+        /// <param name="seed">Seed</param>
+        /// <param name="table">Pre-generated lookup table</param>
+        /// <param name="inverse">Inverse CRC</param>
+        /// <returns>CRC16</returns>
         public static ushort Calculate(byte[] buffer, ushort polynomial, ushort seed, ushort[] table, bool inverse)
         {
             ushort[] localTable = table ?? GenerateTable(polynomial, inverse);

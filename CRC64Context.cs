@@ -40,7 +40,13 @@ namespace Aaru.Checksums
     /// <summary>Implements a CRC64 algorithm</summary>
     public sealed class Crc64Context : IChecksum
     {
+        /// <summary>
+        /// ECMA CRC64 polynomial
+        /// </summary>
         public const ulong CRC64_ECMA_POLY = 0xC96C5795D7870F42;
+        /// <summary>
+        /// ECMA CRC64 seed
+        /// </summary>
         public const ulong CRC64_ECMA_SEED = 0xFFFFFFFFFFFFFFFF;
 
         readonly ulong   _finalSeed;

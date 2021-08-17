@@ -44,29 +44,40 @@ using Aaru.CommonTypes.Interfaces;
 
 namespace Aaru.Checksums
 {
+    /// <inheritdoc />
     public sealed class Register : IPluginRegister
     {
+        /// <inheritdoc />
         public List<Type> GetAllChecksumPlugins() => Assembly.
                                                      GetExecutingAssembly().GetTypes().
                                                      Where(t => t.GetInterfaces().Contains(typeof(IChecksum))).
                                                      Where(t => t.IsClass).ToList();
 
+        /// <inheritdoc />
         public List<Type> GetAllFilesystemPlugins() => null;
 
+        /// <inheritdoc />
         public List<Type> GetAllFilterPlugins() => null;
 
+        /// <inheritdoc />
         public List<Type> GetAllFloppyImagePlugins() => null;
 
+        /// <inheritdoc />
         public List<Type> GetAllMediaImagePlugins() => null;
 
+        /// <inheritdoc />
         public List<Type> GetAllPartitionPlugins() => null;
 
+        /// <inheritdoc />
         public List<Type> GetAllReadOnlyFilesystemPlugins() => null;
 
+        /// <inheritdoc />
         public List<Type> GetAllWritableFloppyImagePlugins() => null;
 
+        /// <inheritdoc />
         public List<Type> GetAllWritableImagePlugins() => null;
 
+        /// <inheritdoc />
         public List<Type> GetAllArchivePlugins() => null;
     }
 }
