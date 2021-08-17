@@ -613,14 +613,9 @@ namespace Aaru.DiscImages
 
                     if(trackIndexes.TryGetValue((byte)tmpTrack.TrackSequence, out Dictionary<byte, int> indexes))
                     {
-                        foreach(KeyValuePair<byte, int> trackIndex in indexes.OrderBy(i => i.Key))
-                        {
-                            if(trackIndex.Key <= 1)
-                                continue;
-
+                        foreach((byte index, int value) in indexes.OrderBy(i => i.Key).Where(trackIndex => trackIndex.Key > 1))
                             // Untested as of 20210711
-                            tmpTrack.Indexes[trackIndex.Key] = trackIndex.Value;
-                        }
+                            tmpTrack.Indexes[index] = value;
                     }
 
                     if(tmpTrack.TrackType == TrackType.Data)

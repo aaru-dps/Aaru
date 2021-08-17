@@ -1647,32 +1647,27 @@ namespace Aaru.Devices.Remote
 
             int off = tmp.Length;
 
-            foreach(Device.MmcSingleCommand command in commands)
+            foreach(AaruCmdSdhci cmd in commands.Select(command => new AaruCmdSdhci
             {
-                var cmd = new AaruCmdSdhci
-                {
-                    application = command.isApplication,
-                    argument    = command.argument,
-                    block_size  = command.blockSize,
-                    blocks      = command.blocks,
-                    buf_len     = (uint)(command.buffer?.Length ?? 0),
-                    command     = command.command,
-                    flags       = command.flags,
-                    timeout     = timeout,
-                    write       = command.write
-                };
-
+                application = command.isApplication,
+                argument    = command.argument,
+                block_size  = command.blockSize,
+                blocks      = command.blocks,
+                buf_len     = (uint)(command.buffer?.Length ?? 0),
+                command     = command.command,
+                flags       = command.flags,
+                timeout     = timeout,
+                write       = command.write
+            }))
+            {
                 tmp = Marshal.StructureToByteArrayLittleEndian(cmd);
                 Array.Copy(tmp, 0, buf, off, tmp.Length);
 
                 off += tmp.Length;
             }
 
-            foreach(Device.MmcSingleCommand command in commands)
+            foreach(Device.MmcSingleCommand command in commands.Where(command => (command.buffer?.Length ?? 0) != 0))
             {
-                if((command.buffer?.Length ?? 0) == 0)
-                    continue;
-
                 Array.Copy(command.buffer, 0, buf, off, command.buffer.Length);
 
                 off += command.buffer.Length;

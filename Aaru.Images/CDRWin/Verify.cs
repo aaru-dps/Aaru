@@ -60,9 +60,8 @@ namespace Aaru.DiscImages
             {
                 var ctx = new Sha1Context();
 
-                foreach(IFilter filter in filters)
+                foreach(Stream stream in filters.Select(filter => filter.GetDataForkStream()))
                 {
-                    Stream stream = filter.GetDataForkStream();
                     readBytes   = 0;
                     verifyBytes = new byte[verifySize];
 
@@ -89,9 +88,8 @@ namespace Aaru.DiscImages
             {
                 var ctx = new Md5Context();
 
-                foreach(IFilter filter in filters)
+                foreach(Stream stream in filters.Select(filter => filter.GetDataForkStream()))
                 {
-                    Stream stream = filter.GetDataForkStream();
                     readBytes   = 0;
                     verifyBytes = new byte[verifySize];
 
@@ -118,9 +116,8 @@ namespace Aaru.DiscImages
             {
                 var ctx = new Crc32Context();
 
-                foreach(IFilter filter in filters)
+                foreach(Stream stream in filters.Select(filter => filter.GetDataForkStream()))
                 {
-                    Stream stream = filter.GetDataForkStream();
                     readBytes   = 0;
                     verifyBytes = new byte[verifySize];
 

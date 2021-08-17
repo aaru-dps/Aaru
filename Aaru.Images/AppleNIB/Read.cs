@@ -77,22 +77,12 @@ namespace Aaru.DiscImages
 
             // Detect ProDOS skewed disks
             if(skewed)
-                foreach(Apple2.RawSector sector in tracks[17].sectors)
+                foreach(bool isDos in from sector in tracks[17].sectors where sector.addressField.sector.SequenceEqual(new byte[]
                 {
-                    if(!sector.addressField.sector.SequenceEqual(new byte[]
-                    {
-                        170, 170
-                    }))
-                        continue;
-
-                    byte[] sector0 = Apple2.DecodeSector(sector);
-
-                    if(sector0 == null)
-                        continue;
-
-                    bool isDos = sector0[0x01] == 17 && sector0[0x02] < 16  && sector0[0x27] <= 122 &&
-                                 sector0[0x34] == 35 && sector0[0x35] == 16 && sector0[0x36] == 0 && sector0[0x37] == 1;
-
+                    170, 170
+                }) select Apple2.DecodeSector(sector) into sector0 where sector0 != null select sector0[0x01] == 17 && sector0[0x02] < 16  && sector0[0x27] <= 122 &&
+                    sector0[0x34] == 35 && sector0[0x35] == 16 && sector0[0x36] == 0 && sector0[0x37] == 1)
+                {
                     if(isDos)
                         skewing = _dosSkewing;
 

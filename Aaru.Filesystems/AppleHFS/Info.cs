@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Linq;
 using System.Text;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
@@ -61,11 +62,8 @@ namespace Aaru.Filesystems
                 foreach(int offset in new[]
                 {
                     0, 0x200, 0x400, 0x600, 0x800, 0xA00
-                })
+                }.Where(offset => mdbSector.Length >= offset + 0x7C + 2))
                 {
-                    if(mdbSector.Length < offset + 0x7C + 2)
-                        continue;
-
                     drSigWord = BigEndianBitConverter.ToUInt16(mdbSector, offset);
 
                     if(drSigWord != AppleCommon.HFS_MAGIC)
