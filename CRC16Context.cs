@@ -38,6 +38,7 @@ using Aaru.Helpers;
 
 namespace Aaru.Checksums
 {
+    /// <inheritdoc />
     /// <summary>Implements a CRC16 algorithm</summary>
     public class Crc16Context : IChecksum
     {

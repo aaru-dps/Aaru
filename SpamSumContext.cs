@@ -46,6 +46,7 @@ using Aaru.CommonTypes.Interfaces;
 
 namespace Aaru.Checksums
 {
+    /// <inheritdoc />
     /// <summary>Implements the SpamSum fuzzy hashing algorithm.</summary>
     public sealed class SpamSumContext : IChecksum
     {

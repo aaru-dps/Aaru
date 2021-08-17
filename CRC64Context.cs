@@ -37,6 +37,7 @@ using Aaru.Helpers;
 
 namespace Aaru.Checksums
 {
+    /// <inheritdoc />
     /// <summary>Implements a CRC64 algorithm</summary>
     public sealed class Crc64Context : IChecksum
     {
