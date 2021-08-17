@@ -219,7 +219,7 @@ namespace Aaru.Core.Devices.Dumping
                     continue;
                 }
 
-                if(dumping && dev.Manufacturer.ToLowerInvariant().StartsWith("plextor"))
+                if(dumping && dev.Manufacturer.ToLowerInvariant().StartsWith("plextor", StringComparison.Ordinal))
                 {
                     AaruConsole.DebugWriteLine("Pregap calculator", "Skipping track {0} due to Plextor firmware bug",
                                                track.TrackSequence);

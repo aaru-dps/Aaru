@@ -1207,7 +1207,7 @@ namespace Aaru.Core.Devices.Report
                     AaruConsole.WriteLine("Trying to read C2 Pointers...");
 
                     // They return OK, but then all following commands make the drive fail miserably.
-                    if(_dev.Model.StartsWith("iHOS104"))
+                    if(_dev.Model.StartsWith("iHOS104", StringComparison.Ordinal))
                         mediaTest.CanReadC2Pointers = false;
                     else
                     {
@@ -1262,7 +1262,7 @@ namespace Aaru.Core.Devices.Report
                     AaruConsole.WriteLine("Trying to read subchannels with C2 Pointers...");
 
                     // They return OK, but then all following commands make the drive fail miserably.
-                    if(_dev.Model.StartsWith("iHOS104"))
+                    if(_dev.Model.StartsWith("iHOS104", StringComparison.Ordinal))
                     {
                         mediaTest.CanReadPQSubchannelWithC2        = false;
                         mediaTest.CanReadRWSubchannelWithC2        = false;
@@ -1330,7 +1330,7 @@ namespace Aaru.Core.Devices.Report
                     AaruConsole.WriteLine("Trying to read C2 Pointers...");
 
                     // They return OK, but then all following commands make the drive fail miserably.
-                    if(_dev.Model.StartsWith("iHOS104"))
+                    if(_dev.Model.StartsWith("iHOS104", StringComparison.Ordinal))
                         mediaTest.CanReadC2Pointers = false;
                     else
                     {
@@ -1386,7 +1386,7 @@ namespace Aaru.Core.Devices.Report
 
                     AaruConsole.WriteLine("Trying to read subchannels with C2 Pointers...");
 
-                    if(_dev.Model.StartsWith("iHOS104"))
+                    if(_dev.Model.StartsWith("iHOS104", StringComparison.Ordinal))
                     {
                         mediaTest.CanReadPQSubchannelWithC2        = false;
                         mediaTest.CanReadRWSubchannelWithC2        = false;
@@ -1451,7 +1451,7 @@ namespace Aaru.Core.Devices.Report
                 }
                 else
                 {
-                    if(_dev.Model.StartsWith("iHOS104"))
+                    if(_dev.Model.StartsWith("iHOS104", StringComparison.Ordinal))
                         mediaTest.CanReadC2Pointers = false;
                     else
                     {
@@ -1507,7 +1507,7 @@ namespace Aaru.Core.Devices.Report
 
                     AaruConsole.WriteLine("Trying to read subchannels with C2 Pointers...");
 
-                    if(_dev.Model.StartsWith("iHOS104"))
+                    if(_dev.Model.StartsWith("iHOS104", StringComparison.Ordinal))
                     {
                         mediaTest.CanReadPQSubchannelWithC2        = false;
                         mediaTest.CanReadRWSubchannelWithC2        = false;

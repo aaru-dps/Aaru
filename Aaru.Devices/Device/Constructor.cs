@@ -96,7 +96,7 @@ namespace Aaru.Devices
                 if(devicePath.StartsWith('/'))
                     devicePath = devicePath.Substring(1);
 
-                if(devicePath.StartsWith("dev"))
+                if(devicePath.StartsWith("dev", StringComparison.Ordinal))
                     devicePath = $"/{devicePath}";
 
                 _remote = new Remote.Remote(aaruUri);
