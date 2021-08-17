@@ -71,17 +71,17 @@ namespace Aaru.Decoders.CD
             if((q[0] & 0xF) == 1 ||
                (q[0] & 0xF) == 5)
             {
-                q[1] = (byte)(((q[1] / 16) * 10) + (q[1] & 0x0F));
-                q[2] = (byte)(((q[2] / 16) * 10) + (q[2] & 0x0F));
-                q[3] = (byte)(((q[3] / 16) * 10) + (q[3] & 0x0F));
-                q[4] = (byte)(((q[4] / 16) * 10) + (q[4] & 0x0F));
-                q[5] = (byte)(((q[5] / 16) * 10) + (q[5] & 0x0F));
-                q[6] = (byte)(((q[6] / 16) * 10) + (q[6] & 0x0F));
-                q[7] = (byte)(((q[7] / 16) * 10) + (q[7] & 0x0F));
-                q[8] = (byte)(((q[8] / 16) * 10) + (q[8] & 0x0F));
+                q[1] = (byte)((q[1] / 16 * 10) + (q[1] & 0x0F));
+                q[2] = (byte)((q[2] / 16 * 10) + (q[2] & 0x0F));
+                q[3] = (byte)((q[3] / 16 * 10) + (q[3] & 0x0F));
+                q[4] = (byte)((q[4] / 16 * 10) + (q[4] & 0x0F));
+                q[5] = (byte)((q[5] / 16 * 10) + (q[5] & 0x0F));
+                q[6] = (byte)((q[6] / 16 * 10) + (q[6] & 0x0F));
+                q[7] = (byte)((q[7] / 16 * 10) + (q[7] & 0x0F));
+                q[8] = (byte)((q[8] / 16 * 10) + (q[8] & 0x0F));
             }
 
-            q[9] = (byte)(((q[9] / 16) * 10) + (q[9] & 0x0F));
+            q[9] = (byte)((q[9] / 16 * 10) + (q[9] & 0x0F));
         }
 
         public static byte[] ConvertQToRaw(byte[] subchannel)
@@ -330,9 +330,9 @@ namespace Aaru.Decoders.CD
             CRC16CCITTContext.Data(subBuf, 10, out byte[] crc);
 
             bool   crcOk  = crc[0] == subBuf[10] && crc[1] == subBuf[11];
-            long   minute = (lba + 150)          / 4500;
-            long   second = ((lba + 150) % 4500) / 75;
-            long   frame  = (lba + 150)          % 4500 % 75;
+            long   minute = (lba + 150)        / 4500;
+            long   second = (lba + 150) % 4500 / 75;
+            long   frame  = (lba + 150)        % 4500 % 75;
             string area;
             int    control = (subBuf[0] & 0xF0) / 16;
             int    adr     = subBuf[0] & 0x0F;
@@ -350,14 +350,14 @@ namespace Aaru.Decoders.CD
             if(bcd)
                 BcdToBinaryQ(subBuf);
 
-            int  qPos = ((subBuf[3] * 60 * 75) + (subBuf[4] * 75) + subBuf[5]) - 150;
+            int  qPos = (subBuf[3] * 60 * 75) + (subBuf[4] * 75) + subBuf[5] - 150;
             byte pmin = subBuf[7];
             byte psec = subBuf[8];
 
-            int  qStart  = ((subBuf[7] * 60 * 75) + (subBuf[8] * 75) + subBuf[9]) - 150;
-            int  nextPos = ((subBuf[3] * 60 * 75) + (subBuf[4] * 75) + subBuf[5]) - 150;
+            int  qStart  = (subBuf[7] * 60 * 75) + (subBuf[8] * 75) + subBuf[9] - 150;
+            int  nextPos = (subBuf[3] * 60 * 75) + (subBuf[4] * 75) + subBuf[5] - 150;
             byte zero    = subBuf[6];
-            int  maxOut  = ((subBuf[7] * 60 * 75) + (subBuf[8] * 75) + subBuf[9]) - 150;
+            int  maxOut  = (subBuf[7] * 60 * 75) + (subBuf[8] * 75) + subBuf[9] - 150;
             bool final   = subBuf[3] == 0xFF && subBuf[4] == 0xFF && subBuf[5] == 0xFF;
 
             BinaryToBcdQ(subBuf);
@@ -549,7 +549,7 @@ namespace Aaru.Decoders.CD
             int relative;
 
             if(isPregap)
-                relative = (pregap + trackStart) - sector;
+                relative = pregap + trackStart - sector;
             else
                 relative = sector - trackStart;
 
