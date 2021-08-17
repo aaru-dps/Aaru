@@ -34,20 +34,48 @@ using System.Runtime.CompilerServices;
 
 namespace Aaru.Helpers
 {
+    /// <summary>
+    /// Helper operations to work with swapping endians
+    /// </summary>
     public static class Swapping
     {
+        /// <summary>
+        /// Gets the PDP endian equivalent of the given little endian unsigned integer
+        /// </summary>
+        /// <param name="x">Little endian unsigned integer</param>
+        /// <returns>PDP unsigned integer</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static uint PDPFromLittleEndian(uint x) => ((x & 0xffff) << 16) | ((x & 0xffff0000) >> 16);
 
+        /// <summary>
+        /// Gets the PDP endian equivalent of the given big endian unsigned integer
+        /// </summary>
+        /// <param name="x">Big endian unsigned integer</param>
+        /// <returns>PDP unsigned integer</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static uint PDPFromBigEndian(uint x) => ((x & 0xff00ff) << 8) | ((x & 0xff00ff00) >> 8);
 
+        /// <summary>
+        /// Swaps the endian of the specified unsigned short integer
+        /// </summary>
+        /// <param name="x">Unsigned short integer</param>
+        /// <returns>Swapped unsigned short integer</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ushort Swap(ushort x) => (ushort)((x << 8) | (x >> 8));
 
+        /// <summary>
+        /// Swaps the endian of the specified signed short integer
+        /// </summary>
+        /// <param name="x">Signed short integer</param>
+        /// <returns>Swapped signed short integer</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static short Swap(short x) => (short)((x << 8) | ((x >> 8) & 0xFF));
 
+        /// <summary>
+        /// Swaps the endian of the specified unsigned integer
+        /// </summary>
+        /// <param name="x">Unsigned integer</param>
+        /// <returns>Swapped unsigned integer</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static uint Swap(uint x)
         {
@@ -56,6 +84,11 @@ namespace Aaru.Helpers
             return (x << 16) | (x >> 16);
         }
 
+        /// <summary>
+        /// Swaps the endian of the specified signed integer
+        /// </summary>
+        /// <param name="x">Signed integer</param>
+        /// <returns>Swapped signed integer</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int Swap(int x)
         {
@@ -64,6 +97,11 @@ namespace Aaru.Helpers
             return (int)(((uint)x << 16) | (((uint)x >> 16) & 0xFFFF));
         }
 
+        /// <summary>
+        /// Swaps the endian of the specified unsigned long integer
+        /// </summary>
+        /// <param name="x">Unsigned long integer</param>
+        /// <returns>Swapped unsigned long integer</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ulong Swap(ulong x)
         {
@@ -74,6 +112,11 @@ namespace Aaru.Helpers
             return x;
         }
 
+        /// <summary>
+        /// Swaps the endian of the specified signed long integer
+        /// </summary>
+        /// <param name="x">Signed long integer</param>
+        /// <returns>Swapped signed long integer</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static long Swap(long x)
         {

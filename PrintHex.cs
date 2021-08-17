@@ -35,6 +35,9 @@ using Aaru.Console;
 
 namespace Aaru.Helpers
 {
+    /// <summary>
+    /// Helper operations to get hexadecimal representations of byte arrays
+    /// </summary>
     public static class PrintHex
     {
         /// <summary>Prints a byte array as hexadecimal values to the console</summary>

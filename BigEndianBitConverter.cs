@@ -305,6 +305,12 @@ namespace Aaru.Helpers
         public static ulong ToUInt64(byte[] value, int startIndex) =>
             BitConverter.ToUInt64(value.Reverse().ToArray(), value.Length - sizeof(ulong) - startIndex);
 
+        /// <summary>
+        /// Converts a big endian byte array representation of a GUID into the .NET Guid structure
+        /// </summary>
+        /// <param name="value">Byte array containing a GUID in big endian</param>
+        /// <param name="startIndex">Start of the byte array to process</param>
+        /// <returns>Processed Guid</returns>
         public static Guid ToGuid(byte[] value, int startIndex) => new Guid(ToUInt32(value, 0 + startIndex),
                                                                             ToUInt16(value, 4 + startIndex),
                                                                             ToUInt16(value, 6 + startIndex),

@@ -360,6 +360,11 @@ namespace Aaru.Helpers
             return str;
         }
 
+        /// <summary>
+        /// Swaps all fields in an structure considering them to follow PDP endian conventions
+        /// </summary>
+        /// <param name="str">Source structure</param>
+        /// <returns>Resulting structure</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static object SwapStructureMembersEndianPdp(object str)
         {
@@ -428,6 +433,12 @@ namespace Aaru.Helpers
         public static byte[] StructureToByteArrayBigEndian<T>(T str) where T : struct =>
             StructureToByteArrayLittleEndian((T)SwapStructureMembersEndian(str));
 
+        /// <summary>
+        /// Converts a hexadecimal string into a byte array
+        /// </summary>
+        /// <param name="hex">Hexadecimal string</param>
+        /// <param name="outBuf">Resulting byte array</param>
+        /// <returns>Number of output bytes processed</returns>
         public static int ConvertFromHexAscii(string hex, out byte[] outBuf)
         {
             outBuf = null;

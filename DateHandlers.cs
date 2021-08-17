@@ -36,6 +36,9 @@ using Aaru.Console;
 
 namespace Aaru.Helpers
 {
+    /// <summary>
+    /// Helper operations for timestamp management (date and time)
+    /// </summary>
     public static class DateHandlers
     {
         static readonly DateTime _lisaEpoch = new DateTime(1901, 1, 1, 0, 0, 0);

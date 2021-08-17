@@ -34,6 +34,9 @@ using System.Linq;
 
 namespace Aaru.Helpers
 {
+    /// <summary>
+    /// Helper operations to work with arrays
+    /// </summary>
     public static partial class ArrayHelpers
     {
         /// <summary>Checks if an array is null, filled with the NULL byte (0x00) or ASCII whitespace (0x20)</summary>

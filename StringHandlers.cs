@@ -35,6 +35,9 @@ using System.Text;
 
 namespace Aaru.Helpers
 {
+    /// <summary>
+    /// Helper operations to work with strings
+    /// </summary>
     public static class StringHandlers
     {
         /// <summary>Converts a null-terminated (aka C string) ASCII byte array to a C# string</summary>
