@@ -243,8 +243,6 @@ namespace Aaru.Filesystems
                 if(magic == XENIX_MAGIC ||
                    magic == SYSV_MAGIC)
                 {
-                    bigEndian = false; // Little endian
-
                     if(magic == SYSV_MAGIC)
                     {
                         sysv   = true;
@@ -280,7 +278,6 @@ namespace Aaru.Filesystems
 
                 if(magic == XENIX_MAGIC)
                 {
-                    bigEndian = false; // Little endian
                     xenix3    = true;
                     start     = i;
 
@@ -300,7 +297,6 @@ namespace Aaru.Filesystems
 
                 if(magic == SYSV_MAGIC)
                 {
-                    bigEndian = false; // Little endian
                     sysv      = true;
                     start     = i;
 
@@ -326,7 +322,6 @@ namespace Aaru.Filesystems
                    (s_fname == COH_XXXXX && s_fpack == COH_XXXXX) ||
                    (s_fname == COH_XXXXS && s_fpack == COH_XXXXN))
                 {
-                    bigEndian = false; // Coherent is in PDP endianness, use helper for that
                     coherent  = true;
                     start     = i;
 
@@ -372,9 +367,8 @@ namespace Aaru.Filesystems
                    s_fsize * 512  != (partition.End - partition.Start) * imagePlugin.Info.SectorSize)
                     continue;
 
-                sys7th    = true;
-                bigEndian = false;
-                start     = i;
+                sys7th = true;
+                start  = i;
 
                 break;
             }
