@@ -48,10 +48,10 @@ namespace Aaru.DiscImages
         public bool Open(IFilter imageFilter)
         {
             List<long> blockPositions = new List<long>();
-            var        partialBlockRx = new Regex(_partialBlockRegex);
-            var        blockRx        = new Regex(_blockRegex);
-            var        filemarkRx     = new Regex(_filemarkRegex);
-            var        eotRx          = new Regex(_endOfTapeRegex);
+            var        partialBlockRx = new Regex(PARTIAL_BLOCK_REGEX);
+            var        blockRx        = new Regex(BLOCK_REGEX);
+            var        filemarkRx     = new Regex(FILEMARK_REGEX);
+            var        eotRx          = new Regex(END_OF_TAPE_REGEX);
 
             if(imageFilter.GetDataForkLength() <= 16)
                 return false;
@@ -174,7 +174,7 @@ namespace Aaru.DiscImages
             _imageStream.Position = _blockPositionCache[sectorAddress];
 
             byte[] blockHeader = new byte[16];
-            var    blockRx     = new Regex(_blockRegex);
+            var    blockRx     = new Regex(BLOCK_REGEX);
 
             _imageStream.Read(blockHeader, 0, 16);
             string mark    = Encoding.ASCII.GetString(blockHeader);

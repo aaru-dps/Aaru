@@ -839,10 +839,10 @@ namespace Aaru.Filesystems
 
             _bytesPerCluster = _sectorsPerCluster * imagePlugin.Info.SectorSize;
 
-            ushort[] _firstFatEntries  = new ushort[_statfs.Blocks];
-            ushort[] _secondFatEntries = new ushort[_statfs.Blocks];
-            bool     _firstFatValid    = true;
-            bool     _secondFatValid   = true;
+            ushort[] firstFatEntries  = new ushort[_statfs.Blocks];
+            ushort[] secondFatEntries = new ushort[_statfs.Blocks];
+            bool     firstFatValid    = true;
+            bool     secondFatValid   = true;
 
             if(_fat12)
             {
@@ -852,14 +852,14 @@ namespace Aaru.Filesystems
 
                 int pos = 0;
 
-                for(int i = 0; i + 3 < fatBytes.Length && pos < _firstFatEntries.Length; i += 3)
+                for(int i = 0; i + 3 < fatBytes.Length && pos < firstFatEntries.Length; i += 3)
                 {
-                    _firstFatEntries[pos++] = (ushort)(((fatBytes[i + 1] & 0xF) << 8) + fatBytes[i + 0]);
+                    firstFatEntries[pos++] = (ushort)(((fatBytes[i + 1] & 0xF) << 8) + fatBytes[i + 0]);
 
-                    if(pos >= _firstFatEntries.Length)
+                    if(pos >= firstFatEntries.Length)
                         break;
 
-                    _firstFatEntries[pos++] = (ushort)(((fatBytes[i + 1] & 0xF0) >> 4) + (fatBytes[i + 2] << 4));
+                    firstFatEntries[pos++] = (ushort)(((fatBytes[i + 1] & 0xF0) >> 4) + (fatBytes[i + 2] << 4));
                 }
 
                 fatBytes = imagePlugin.ReadSectors(_fatFirstSector + _sectorsPerFat, _sectorsPerFat);
@@ -868,44 +868,44 @@ namespace Aaru.Filesystems
 
                 pos = 0;
 
-                for(int i = 0; i + 3 < fatBytes.Length && pos < _secondFatEntries.Length; i += 3)
+                for(int i = 0; i + 3 < fatBytes.Length && pos < secondFatEntries.Length; i += 3)
                 {
-                    _secondFatEntries[pos++] = (ushort)(((fatBytes[i + 1] & 0xF) << 8) + fatBytes[i + 0]);
+                    secondFatEntries[pos++] = (ushort)(((fatBytes[i + 1] & 0xF) << 8) + fatBytes[i + 0]);
 
-                    if(pos >= _secondFatEntries.Length)
+                    if(pos >= secondFatEntries.Length)
                         break;
 
-                    _secondFatEntries[pos++] = (ushort)(((fatBytes[i + 1] & 0xF0) >> 4) + (fatBytes[i + 2] << 4));
+                    secondFatEntries[pos++] = (ushort)(((fatBytes[i + 1] & 0xF0) >> 4) + (fatBytes[i + 2] << 4));
                 }
 
-                foreach(ushort entry in _firstFatEntries)
+                foreach(ushort entry in firstFatEntries)
                 {
                     if(entry >= FAT12_RESERVED ||
                        entry <= _statfs.Blocks)
                         continue;
 
-                    _firstFatValid = false;
+                    firstFatValid = false;
 
                     break;
                 }
 
-                foreach(ushort entry in _secondFatEntries)
+                foreach(ushort entry in secondFatEntries)
                 {
                     if(entry >= FAT12_RESERVED ||
                        entry <= _statfs.Blocks)
                         continue;
 
-                    _secondFatValid = false;
+                    secondFatValid = false;
 
                     break;
                 }
 
-                if(_firstFatValid == _secondFatValid)
-                    _fatEntries = _useFirstFat ? _firstFatEntries : _secondFatEntries;
-                else if(_firstFatValid)
-                    _fatEntries = _firstFatEntries;
+                if(firstFatValid == secondFatValid)
+                    _fatEntries = _useFirstFat ? firstFatEntries : secondFatEntries;
+                else if(firstFatValid)
+                    _fatEntries = firstFatEntries;
                 else
-                    _fatEntries = _secondFatEntries;
+                    _fatEntries = secondFatEntries;
             }
             else if(_fat16)
             {
@@ -914,41 +914,41 @@ namespace Aaru.Filesystems
                 byte[] fatBytes = imagePlugin.ReadSectors(_fatFirstSector, _sectorsPerFat);
 
                 AaruConsole.DebugWriteLine("FAT plugin", "Casting FAT");
-                _firstFatEntries = MemoryMarshal.Cast<byte, ushort>(fatBytes).ToArray();
+                firstFatEntries = MemoryMarshal.Cast<byte, ushort>(fatBytes).ToArray();
 
                 fatBytes = imagePlugin.ReadSectors(_fatFirstSector + _sectorsPerFat, _sectorsPerFat);
 
                 AaruConsole.DebugWriteLine("FAT plugin", "Casting FAT");
-                _secondFatEntries = MemoryMarshal.Cast<byte, ushort>(fatBytes).ToArray();
+                secondFatEntries = MemoryMarshal.Cast<byte, ushort>(fatBytes).ToArray();
 
-                foreach(ushort entry in _firstFatEntries)
+                foreach(ushort entry in firstFatEntries)
                 {
                     if(entry >= FAT16_RESERVED ||
                        entry <= _statfs.Blocks)
                         continue;
 
-                    _firstFatValid = false;
+                    firstFatValid = false;
 
                     break;
                 }
 
-                foreach(ushort entry in _secondFatEntries)
+                foreach(ushort entry in secondFatEntries)
                 {
                     if(entry >= FAT16_RESERVED ||
                        entry <= _statfs.Blocks)
                         continue;
 
-                    _secondFatValid = false;
+                    secondFatValid = false;
 
                     break;
                 }
 
-                if(_firstFatValid == _secondFatValid)
-                    _fatEntries = _useFirstFat ? _firstFatEntries : _secondFatEntries;
-                else if(_firstFatValid)
-                    _fatEntries = _firstFatEntries;
+                if(firstFatValid == secondFatValid)
+                    _fatEntries = _useFirstFat ? firstFatEntries : secondFatEntries;
+                else if(firstFatValid)
+                    _fatEntries = firstFatEntries;
                 else
-                    _fatEntries = _secondFatEntries;
+                    _fatEntries = secondFatEntries;
             }
 
             // TODO: Check how this affects international filenames

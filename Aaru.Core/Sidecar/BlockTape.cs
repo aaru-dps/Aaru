@@ -115,7 +115,7 @@ namespace Aaru.Core
                     Sequence   = (ulong)i
                 };
 
-                const uint SECTORS_TO_READ = 512;
+                const uint sectorsToRead = 512;
                 ulong      sectors         = (ulong)_fs.Length / blockSize;
                 ulong      doneSectors     = 0;
 
@@ -132,15 +132,15 @@ namespace Aaru.Core
 
                     byte[] sector;
 
-                    if(sectors - doneSectors >= SECTORS_TO_READ)
+                    if(sectors - doneSectors >= sectorsToRead)
                     {
-                        sector = new byte[SECTORS_TO_READ * blockSize];
+                        sector = new byte[sectorsToRead * blockSize];
                         _fs.Read(sector, 0, sector.Length);
 
                         UpdateProgress2($"Hashing block {doneSectors} of {sectors} on file {i + 1} of {files.Count}",
                                         (long)doneSectors, (long)sectors);
 
-                        doneSectors += SECTORS_TO_READ;
+                        doneSectors += sectorsToRead;
                     }
                     else
                     {

@@ -56,7 +56,7 @@ namespace Aaru.Partitions
         const ushort NEC_MAGIC = 0xA55A;
         const ushort DM_MAGIC  = 0x55AA;
 
-        static readonly string[] MbrTypes =
+        static readonly string[] _mbrTypes =
         {
             // 0x00
             "Empty", "FAT12", "XENIX root", "XENIX /usr",
@@ -687,7 +687,7 @@ namespace Aaru.Partitions
             return anyMnx;
         }
 
-        static string DecodeMbrType(byte type) => MbrTypes[type];
+        static string DecodeMbrType(byte type) => _mbrTypes[type];
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         readonly struct MasterBootRecord

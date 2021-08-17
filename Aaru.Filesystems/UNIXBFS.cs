@@ -127,6 +127,7 @@ namespace Aaru.Filesystems
             information = sb.ToString();
         }
 
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
         struct SuperBlock
         {
             /// <summary>0x00, 0x1BADFACE</summary>

@@ -55,7 +55,7 @@ namespace Aaru.DiscImages
             FileHeader fheader = Marshal.ByteArrayToStructureLittleEndian<FileHeader>(header);
 
             /* check the signature */
-            if(Encoding.ASCII.GetString(fheader.signature).TrimEnd('\x00') != _fileSignature)
+            if(Encoding.ASCII.GetString(fheader.signature).TrimEnd('\x00') != FILE_SIGNATURE)
                 return false;
 
             /* Some sanity checks on the values we just read. */

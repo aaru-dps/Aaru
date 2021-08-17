@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
@@ -178,6 +179,7 @@ namespace Aaru.Filesystems
             information = sb.ToString();
         }
 
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
         struct BiosParameterBlock
         {
             /// <summary>0x00, x86 jump (3 bytes), jumps to 0x60</summary>

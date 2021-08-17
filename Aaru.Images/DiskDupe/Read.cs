@@ -58,11 +58,11 @@ namespace Aaru.DiscImages
 
             AaruConsole.DebugWriteLine("DiskDupe Plugin",
                                        "Detected DiskDupe DDI image with {0} tracks and {1} sectors per track.",
-                                       diskTypes[fHeader.diskType].cyl, diskTypes[fHeader.diskType].spt);
+                                       _diskTypes[fHeader.diskType].cyl, _diskTypes[fHeader.diskType].spt);
 
-            _imageInfo.Cylinders       = diskTypes[fHeader.diskType].cyl;
-            _imageInfo.Heads           = diskTypes[fHeader.diskType].hd;
-            _imageInfo.SectorsPerTrack = diskTypes[fHeader.diskType].spt;
+            _imageInfo.Cylinders       = _diskTypes[fHeader.diskType].cyl;
+            _imageInfo.Heads           = _diskTypes[fHeader.diskType].hd;
+            _imageInfo.SectorsPerTrack = _diskTypes[fHeader.diskType].spt;
             _imageInfo.SectorSize      = 512; // only 512 bytes per sector supported
             _imageInfo.Sectors         = _imageInfo.Heads * _imageInfo.Cylinders * _imageInfo.SectorsPerTrack;
             _imageInfo.ImageSize       = _imageInfo.Sectors * _imageInfo.SectorSize;

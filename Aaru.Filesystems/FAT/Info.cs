@@ -327,11 +327,11 @@ namespace Aaru.Filesystems
 
             byte   fat2          = fatSector[1];
             byte   fat3          = fatSector[2];
-            ushort fat2ndCluster = (ushort)(((fat2 << 8) + fat3) & 0xFFF);
+            ushort fatCluster2 = (ushort)(((fat2 << 8) + fat3) & 0xFFF);
 
-            AaruConsole.DebugWriteLine("FAT plugin", "1st fat cluster 1 = {0:X3}", fat2ndCluster);
+            AaruConsole.DebugWriteLine("FAT plugin", "1st fat cluster 1 = {0:X3}", fatCluster2);
 
-            if(fat2ndCluster < 0xFF0)
+            if(fatCluster2 < 0xFF0)
                 return false;
 
             ulong fat2SectorNo = 0;
@@ -399,9 +399,9 @@ namespace Aaru.Filesystems
 
             fat2          = fat2Sector[1];
             fat3          = fat2Sector[2];
-            fat2ndCluster = (ushort)(((fat2 << 8) + fat3) & 0xFFF);
+            fatCluster2 = (ushort)(((fat2 << 8) + fat3) & 0xFFF);
 
-            if(fat2ndCluster < 0xFF0)
+            if(fatCluster2 < 0xFF0)
                 return false;
 
             return fatId == fat2Sector[0];

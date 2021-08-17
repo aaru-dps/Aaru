@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
@@ -45,6 +46,7 @@ namespace Aaru.Partitions
     /// <summary>
     /// Implements decoding of historic UNIX static partitions
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public sealed class UNIX : IPartition
     {
         readonly Partition[] RA60 =

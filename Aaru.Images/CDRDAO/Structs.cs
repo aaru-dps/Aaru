@@ -87,7 +87,7 @@ namespace Aaru.DiscImages
             /// <summary>Digical Copy Permitted</summary>
             public bool FlagDcp;
             /// <summary>Track is quadraphonic</summary>
-            public bool Flag_4Ch;
+            public bool Flag4Ch;
             /// <summary>Track has preemphasis</summary>
             public bool FlagPre;
             /// <summary>Bytes per sector</summary>

@@ -104,9 +104,9 @@ namespace Aaru.DiscImages
             if(_header.Sequence != 0x00)
                 return false;
 
-            if(_header.DataRate != DATA_RATE_250KBPS &&
-               _header.DataRate != DATA_RATE_300KBPS &&
-               _header.DataRate != DATA_RATE_500KBPS)
+            if(_header.DataRate != DATA_RATE_250_KBPS &&
+               _header.DataRate != DATA_RATE_300_KBPS &&
+               _header.DataRate != DATA_RATE_500_KBPS)
                 return false;
 
             if(_header.DriveType != DRIVE_TYPE_35_DD          &&

@@ -132,8 +132,8 @@ namespace Aaru.DiscImages
                 if(!trackFilter.IsOpened())
                     throw new IOException("Could not open KryoFlux track file.");
 
-                imageInfo.CreationTime         = DateTime.MaxValue;
-                imageInfo.LastModificationTime = DateTime.MinValue;
+                _imageInfo.CreationTime         = DateTime.MaxValue;
+                _imageInfo.LastModificationTime = DateTime.MinValue;
 
                 Stream trackStream = trackFilter.GetDataForkStream();
 
@@ -187,23 +187,23 @@ namespace Aaru.DiscImages
 
                                 switch(kvp[0])
                                 {
-                                    case _hostDate:
+                                    case HOST_DATE:
                                         if(DateTime.TryParseExact(kvp[1], "yyyy.MM.dd", CultureInfo.InvariantCulture,
                                                                   DateTimeStyles.AssumeLocal, out blockDate))
                                             foundDate = true;
 
                                         break;
-                                    case _hostTime:
+                                    case HOST_TIME:
                                         DateTime.TryParseExact(kvp[1], "HH:mm:ss", CultureInfo.InvariantCulture,
                                                                DateTimeStyles.AssumeLocal, out blockTime);
 
                                         break;
-                                    case _kfName:
-                                        imageInfo.Application = kvp[1];
+                                    case KF_NAME:
+                                        _imageInfo.Application = kvp[1];
 
                                         break;
-                                    case _kfVersion:
-                                        imageInfo.ApplicationVersion = kvp[1];
+                                    case KF_VERSION:
+                                        _imageInfo.ApplicationVersion = kvp[1];
 
                                         break;
                                 }
@@ -217,10 +217,10 @@ namespace Aaru.DiscImages
                                 AaruConsole.DebugWriteLine("KryoFlux plugin", "Found timestamp: {0}", blockTimestamp);
 
                                 if(blockTimestamp < Info.CreationTime)
-                                    imageInfo.CreationTime = blockTimestamp;
+                                    _imageInfo.CreationTime = blockTimestamp;
 
                                 if(blockTimestamp > Info.LastModificationTime)
-                                    imageInfo.LastModificationTime = blockTimestamp;
+                                    _imageInfo.LastModificationTime = blockTimestamp;
                             }
 
                             break;
@@ -249,8 +249,8 @@ namespace Aaru.DiscImages
                 tracks.Add(t, trackFilter);
             }
 
-            imageInfo.Heads     = heads;
-            imageInfo.Cylinders = (uint)(tracks.Count / heads);
+            _imageInfo.Heads     = heads;
+            _imageInfo.Cylinders = (uint)(tracks.Count / heads);
 
             throw new NotImplementedException("Flux decoding is not yet implemented.");
         }

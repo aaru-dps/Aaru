@@ -184,7 +184,9 @@ namespace Aaru.Filesystems
 
             int blockSize = locusSb.s_version == Version.SB_SB4096 ? 4096 : 1024;
 
+            // ReSharper disable once InconsistentNaming
             string s_fsmnt = StringHandlers.CToString(locusSb.s_fsmnt, Encoding);
+            // ReSharper disable once InconsistentNaming
             string s_fpack = StringHandlers.CToString(locusSb.s_fpack, Encoding);
 
             AaruConsole.DebugWriteLine("Locus plugin", "LocusSb.s_magic = 0x{0:X8}", locusSb.s_magic);

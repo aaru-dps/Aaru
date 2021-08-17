@@ -68,13 +68,13 @@ namespace Aaru.DiscImages
 
             // seek to start of the trackmap
             stream.Seek(TRACKMAP_OFFSET, SeekOrigin.Begin);
-            numTracks = diskTypes[fHeader.diskType].cyl * diskTypes[fHeader.diskType].hd;
-            trackLen = 512 * diskTypes[fHeader.diskType].spt;
+            numTracks = _diskTypes[fHeader.diskType].cyl * _diskTypes[fHeader.diskType].hd;
+            trackLen = 512 * _diskTypes[fHeader.diskType].spt;
             trackMap = new TrackInfo[numTracks];
             trackOffsets = new long[numTracks];
 
             AaruConsole.DebugWriteLine("DiskDupe plugin", "Identified image with C/H/S = {0}/{1}/{2}", 
-                    diskTypes[fHeader.diskType].cyl, diskTypes[fHeader.diskType].hd, diskTypes[fHeader.diskType].spt);
+                    _diskTypes[fHeader.diskType].cyl, _diskTypes[fHeader.diskType].hd, _diskTypes[fHeader.diskType].spt);
 
             // read the trackmap and store the track offsets
             for (int i = 0; i < numTracks; i++)

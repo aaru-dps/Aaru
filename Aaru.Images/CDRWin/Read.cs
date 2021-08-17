@@ -620,7 +620,7 @@ namespace Aaru.DiscImages
                                     FeatureUnsupportedImageException($"Found FLAGS field in incorrect place at line {lineNumber}");
 
                             currentTrack.FlagDcp  |= matchFlags.Groups["dcp"].Value  == "DCP";
-                            currentTrack.Flag4ch  |= matchFlags.Groups["quad"].Value == "4CH";
+                            currentTrack.Flag4Ch  |= matchFlags.Groups["quad"].Value == "4CH";
                             currentTrack.FlagPre  |= matchFlags.Groups["pre"].Value  == "PRE";
                             currentTrack.FlagScms |= matchFlags.Groups["scms"].Value == "SCMS";
                         }
@@ -1174,7 +1174,7 @@ namespace Aaru.DiscImages
                     AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tPostgap: {0} sectors",
                                                _discImage.Tracks[i].Postgap);
 
-                    if(_discImage.Tracks[i].Flag4ch)
+                    if(_discImage.Tracks[i].Flag4Ch)
                         AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tTrack is flagged as quadraphonic");
 
                     if(_discImage.Tracks[i].FlagDcp)
@@ -1831,7 +1831,7 @@ namespace Aaru.DiscImages
                     if(aaruTrack.FlagPre)
                         flags |= CdFlags.PreEmphasis;
 
-                    if(aaruTrack.Flag4ch)
+                    if(aaruTrack.Flag4Ch)
                         flags |= CdFlags.FourChannel;
 
                     return new[]

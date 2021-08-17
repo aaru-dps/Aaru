@@ -37,7 +37,7 @@ namespace Aaru.Core.Logging
     /// </summary>
     public class SubchannelLog
     {
-        const    int          _subSize = 96;
+        const    int          SUB_SIZE = 96;
         readonly bool         _bcd;
         readonly StreamWriter _logSw;
 
@@ -77,7 +77,7 @@ namespace Aaru.Core.Logging
         /// <param name="fixed">Set to <c>true</c> if the subchannel has been fixed, <c>false</c> if as is</param>
         public void WriteEntry(byte[] subchannel, bool raw, long startingLba, uint blocks, bool generated, bool @fixed)
         {
-            if(subchannel.Length / _subSize != blocks)
+            if(subchannel.Length / SUB_SIZE != blocks)
             {
                 _logSw.WriteLine("Data length is invalid!");
                 _logSw.Flush();

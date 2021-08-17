@@ -62,7 +62,7 @@ namespace Aaru.DiscImages
             /// <summary>Track composer (from CD-Text)</summary>
             public string Composer;
             /// <summary>Track is quadraphonic</summary>
-            public bool Flag4ch;
+            public bool Flag4Ch;
             /// <summary>Digital Copy Permitted</summary>
             public bool FlagDcp;
             /// <summary>Track has pre-emphasis</summary>

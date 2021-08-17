@@ -38,7 +38,7 @@ namespace Aaru.DiscImages
     public sealed partial class WCDiskImage
     {
         /// <summary>The expected signature of a proper image file.</summary>
-        const string _fileSignature = "WC DISK IMAGE\x1a\x1a";
+        const string FILE_SIGNATURE = "WC DISK IMAGE\x1a\x1a";
 
         /// <summary>The global header of a WCDiskImage file</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]

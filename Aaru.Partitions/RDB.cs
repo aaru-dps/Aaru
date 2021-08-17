@@ -130,14 +130,18 @@ namespace Aaru.Partitions
         /// <summary>Type ID for NetBSD unused root partition, "NBR\0"</summary>
         const uint TYPEID_NETBSD_ROOT_UNUSED = 0x4E425200;
         /// <summary>Type ID for NetBSD 4.2 FFS root partition, "NBR\7"</summary>
+        // ReSharper disable once InconsistentNaming
         const uint TYPEID_NETBSD_ROOT_42FFS = 0x4E425207;
         /// <summary>Type ID for NetBSD 4.4 LFS root partition, "NBR\9"</summary>
+        // ReSharper disable once InconsistentNaming
         const uint TYPEID_NETBSD_ROOT_44LFS = 0x4E425209;
         /// <summary>Type ID for NetBSD unused user partition, "NBR\0"</summary>
         const uint TYPEID_NETBSD_USER_UNUSED = 0x4E425500;
         /// <summary>Type ID for NetBSD 4.2 FFS user partition, "NBR\7"</summary>
+        // ReSharper disable once InconsistentNaming
         const uint TYPEID_NETBSD_USER_42FFS = 0x4E425507;
         /// <summary>Type ID for NetBSD 4.4 LFS user partition, "NBR\9"</summary>
+        // ReSharper disable once InconsistentNaming
         const uint TYPEID_NETBSD_USER_44LFS = 0x4E425509;
         /// <summary>Type ID for NetBSD swap partition</summary>
         const uint TYPEID_NETBSD_SWAP = 0x4E425300;

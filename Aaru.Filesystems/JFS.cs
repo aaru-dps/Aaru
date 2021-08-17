@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.CommonTypes;
@@ -203,6 +204,7 @@ namespace Aaru.Filesystems
         }
 
         [Flags]
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
         enum Flags : uint
         {
             Unicode      = 0x00000001, RemountRO = 0x00000002, Continue    = 0x00000004,

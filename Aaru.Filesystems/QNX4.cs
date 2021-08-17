@@ -91,10 +91,10 @@ namespace Aaru.Filesystems
                 return false;
 
             // Check extents are not past device
-            if(qnxSb.rootDir.di_first_xtnt.block + partition.Start >= partition.End ||
-               qnxSb.inode.di_first_xtnt.block   + partition.Start >= partition.End ||
-               qnxSb.boot.di_first_xtnt.block    + partition.Start >= partition.End ||
-               qnxSb.altBoot.di_first_xtnt.block + partition.Start >= partition.End)
+            if(qnxSb.rootDir.di_first_xtnt.Block + partition.Start >= partition.End ||
+               qnxSb.inode.di_first_xtnt.Block   + partition.Start >= partition.End ||
+               qnxSb.boot.di_first_xtnt.Block    + partition.Start >= partition.End ||
+               qnxSb.altBoot.di_first_xtnt.Block + partition.Start >= partition.End)
                 return false;
 
             // Check inodes are in use
@@ -214,8 +214,8 @@ namespace Aaru.Filesystems
 
         struct Extent
         {
-            public uint block;
-            public uint length;
+            public uint Block;
+            public uint Length;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]

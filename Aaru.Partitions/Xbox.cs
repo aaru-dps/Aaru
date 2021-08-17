@@ -47,23 +47,22 @@ namespace Aaru.Partitions
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
     public sealed class Xbox : IPartition
     {
-        const uint XboxCigam                = 0x46415458;
-        const uint XboxMagic                = 0x58544146;
-        const long MemoryUnitDataOff        = 0x7FF000;
-        const long Xbox360SecuritySectorOff = 0x2000;
-        const long Xbox360SystemCacheOff    = 0x80000;
-        const long Xbox360GameCacheOff      = 0x8008000;
-        const long Xbox368SysExtOff         = 0x10C080000;
-        const long Xbox360SysExt2Off        = 0x118EB0000;
-        const long Xbox360CompatOff         = 0x120EB0000;
-        const long Xbox360DataOff           = 0x130EB0000;
-        const long Xbox360SecuritySectorLen = 0x80000;
-        const long Xbox360SystemCacheLen    = 0x80000000;
-        const long Xbox360GameCacheLen      = 0xA0E30000;
-        const long Xbox368SysExtLen         = 0xCE30000;
-        const long Xbox360SysExt2Len        = 0x8000000;
-        const long Xbox360CompatLen         = 0x10000000;
-
+        const uint XBOX_CIGAM                = 0x46415458;
+        const uint XBOX_MAGIC                = 0x58544146;
+        const long MEMORY_UNIT_DATA_OFF        = 0x7FF000;
+        const long XBOX360_SECURITY_SECTOR_OFF = 0x2000;
+        const long XBOX360_SYSTEM_CACHE_OFF    = 0x80000;
+        const long XBOX360_GAME_CACHE_OFF      = 0x8008000;
+        const long XBOX368_SYS_EXT_OFF         = 0x10C080000;
+        const long XBOX360_SYS_EXT2_OFF        = 0x118EB0000;
+        const long XBOX360_COMPAT_OFF         = 0x120EB0000;
+        const long XBOX_360DATA_OFF           = 0x130EB0000;
+        const long XBOX360_SECURITY_SECTOR_LEN = 0x80000;
+        const long XBOX360_SYSTEM_CACHE_LEN    = 0x80000000;
+        const long XBOX360_GAME_CACHE_LEN      = 0xA0E30000;
+        const long XBOX368_SYS_EXT_LEN         = 0xCE30000;
+        const long XBOX360_SYS_EXT2_LEN        = 0x8000000;
+        const long XBOX360_COMPAT_LEN         = 0x10000000;
         const uint XBOX360_DEVKIT_MAGIC = 0x00020000;
 
         /// <inheritdoc />
@@ -124,18 +123,18 @@ namespace Aaru.Partitions
 
             uint temp;
 
-            if(imagePlugin.Info.Sectors > (ulong)(MemoryUnitDataOff / imagePlugin.Info.SectorSize))
+            if(imagePlugin.Info.Sectors > (ulong)(MEMORY_UNIT_DATA_OFF / imagePlugin.Info.SectorSize))
             {
-                sector = imagePlugin.ReadSector((ulong)(MemoryUnitDataOff / imagePlugin.Info.SectorSize));
+                sector = imagePlugin.ReadSector((ulong)(MEMORY_UNIT_DATA_OFF / imagePlugin.Info.SectorSize));
                 temp   = BitConverter.ToUInt32(sector, 0);
 
-                if(temp == XboxCigam)
+                if(temp == XBOX_CIGAM)
                 {
                     var sysCachePart = new Partition
                     {
                         Description = "System cache",
-                        Size        = MemoryUnitDataOff,
-                        Length      = (ulong)(MemoryUnitDataOff / imagePlugin.Info.SectorSize),
+                        Size        = MEMORY_UNIT_DATA_OFF,
+                        Length      = (ulong)(MEMORY_UNIT_DATA_OFF / imagePlugin.Info.SectorSize),
                         Sequence    = 1,
                         Offset      = 0,
                         Start       = 0,
@@ -145,10 +144,10 @@ namespace Aaru.Partitions
                     var dataPart = new Partition
                     {
                         Description = "Data volume",
-                        Size        = (imagePlugin.Info.Sectors * imagePlugin.Info.SectorSize) - MemoryUnitDataOff,
+                        Size        = (imagePlugin.Info.Sectors * imagePlugin.Info.SectorSize) - MEMORY_UNIT_DATA_OFF,
                         Length      = imagePlugin.Info.Sectors                                 - sysCachePart.Length,
                         Sequence    = 2,
-                        Offset      = MemoryUnitDataOff,
+                        Offset      = MEMORY_UNIT_DATA_OFF,
                         Start       = sysCachePart.Length,
                         Scheme      = Name
                     };
@@ -160,79 +159,79 @@ namespace Aaru.Partitions
                 }
             }
 
-            if(imagePlugin.Info.Sectors <= (ulong)(Xbox360DataOff / imagePlugin.Info.SectorSize))
+            if(imagePlugin.Info.Sectors <= (ulong)(XBOX_360DATA_OFF / imagePlugin.Info.SectorSize))
                 return false;
 
             {
-                sector = imagePlugin.ReadSector((ulong)(Xbox360DataOff / imagePlugin.Info.SectorSize));
+                sector = imagePlugin.ReadSector((ulong)(XBOX_360DATA_OFF / imagePlugin.Info.SectorSize));
                 temp   = BitConverter.ToUInt32(sector, 0);
 
-                if(temp != XboxCigam)
+                if(temp != XBOX_CIGAM)
                     return false;
 
                 var securityPart = new Partition
                 {
                     Description = "Security sectors",
-                    Size        = Xbox360SecuritySectorLen,
-                    Length      = (ulong)(Xbox360SecuritySectorLen / imagePlugin.Info.SectorSize),
+                    Size        = XBOX360_SECURITY_SECTOR_LEN,
+                    Length      = (ulong)(XBOX360_SECURITY_SECTOR_LEN / imagePlugin.Info.SectorSize),
                     Sequence    = 1,
-                    Offset      = Xbox360SecuritySectorOff,
-                    Start       = (ulong)(Xbox360SecuritySectorOff / imagePlugin.Info.SectorSize),
+                    Offset      = XBOX360_SECURITY_SECTOR_OFF,
+                    Start       = (ulong)(XBOX360_SECURITY_SECTOR_OFF / imagePlugin.Info.SectorSize),
                     Scheme      = Name
                 };
 
                 var sysCachePart = new Partition
                 {
                     Description = "System cache",
-                    Size        = Xbox360SystemCacheLen,
-                    Length      = (ulong)(Xbox360SystemCacheLen / imagePlugin.Info.SectorSize),
+                    Size        = XBOX360_SYSTEM_CACHE_LEN,
+                    Length      = (ulong)(XBOX360_SYSTEM_CACHE_LEN / imagePlugin.Info.SectorSize),
                     Sequence    = 2,
-                    Offset      = Xbox360SystemCacheOff,
-                    Start       = (ulong)(Xbox360SystemCacheOff / imagePlugin.Info.SectorSize),
+                    Offset      = XBOX360_SYSTEM_CACHE_OFF,
+                    Start       = (ulong)(XBOX360_SYSTEM_CACHE_OFF / imagePlugin.Info.SectorSize),
                     Scheme      = Name
                 };
 
                 var gameCachePart = new Partition
                 {
                     Description = "Game cache",
-                    Size        = Xbox360GameCacheLen,
-                    Length      = (ulong)(Xbox360GameCacheLen / imagePlugin.Info.SectorSize),
+                    Size        = XBOX360_GAME_CACHE_LEN,
+                    Length      = (ulong)(XBOX360_GAME_CACHE_LEN / imagePlugin.Info.SectorSize),
                     Sequence    = 3,
-                    Offset      = Xbox360GameCacheOff,
-                    Start       = (ulong)(Xbox360GameCacheOff / imagePlugin.Info.SectorSize),
+                    Offset      = XBOX360_GAME_CACHE_OFF,
+                    Start       = (ulong)(XBOX360_GAME_CACHE_OFF / imagePlugin.Info.SectorSize),
                     Scheme      = Name
                 };
 
                 var sysExtPart = new Partition
                 {
                     Description = "System volume",
-                    Size        = Xbox368SysExtLen,
-                    Length      = (ulong)(Xbox368SysExtLen / imagePlugin.Info.SectorSize),
+                    Size        = XBOX368_SYS_EXT_LEN,
+                    Length      = (ulong)(XBOX368_SYS_EXT_LEN / imagePlugin.Info.SectorSize),
                     Sequence    = 4,
-                    Offset      = Xbox368SysExtOff,
-                    Start       = (ulong)(Xbox368SysExtOff / imagePlugin.Info.SectorSize),
+                    Offset      = XBOX368_SYS_EXT_OFF,
+                    Start       = (ulong)(XBOX368_SYS_EXT_OFF / imagePlugin.Info.SectorSize),
                     Scheme      = Name
                 };
 
                 var sysExt2Part = new Partition
                 {
                     Description = "System volume 2",
-                    Size        = Xbox360SysExt2Len,
-                    Length      = (ulong)(Xbox360SysExt2Len / imagePlugin.Info.SectorSize),
+                    Size        = XBOX360_SYS_EXT2_LEN,
+                    Length      = (ulong)(XBOX360_SYS_EXT2_LEN / imagePlugin.Info.SectorSize),
                     Sequence    = 5,
-                    Offset      = Xbox360SysExt2Off,
-                    Start       = (ulong)(Xbox360SysExt2Off / imagePlugin.Info.SectorSize),
+                    Offset      = XBOX360_SYS_EXT2_OFF,
+                    Start       = (ulong)(XBOX360_SYS_EXT2_OFF / imagePlugin.Info.SectorSize),
                     Scheme      = Name
                 };
 
                 var xbox1Part = new Partition
                 {
                     Description = "Xbox backwards compatibility",
-                    Size        = Xbox360CompatLen,
-                    Length      = (ulong)(Xbox360CompatLen / imagePlugin.Info.SectorSize),
+                    Size        = XBOX360_COMPAT_LEN,
+                    Length      = (ulong)(XBOX360_COMPAT_LEN / imagePlugin.Info.SectorSize),
                     Sequence    = 6,
-                    Offset      = Xbox360CompatOff,
-                    Start       = (ulong)(Xbox360CompatOff / imagePlugin.Info.SectorSize),
+                    Offset      = XBOX360_COMPAT_OFF,
+                    Start       = (ulong)(XBOX360_COMPAT_OFF / imagePlugin.Info.SectorSize),
                     Scheme      = Name
                 };
 
@@ -240,8 +239,8 @@ namespace Aaru.Partitions
                 {
                     Description = "Data volume",
                     Sequence    = 7,
-                    Offset      = Xbox360DataOff,
-                    Start       = (ulong)(Xbox360DataOff / imagePlugin.Info.SectorSize),
+                    Offset      = XBOX_360DATA_OFF,
+                    Start       = (ulong)(XBOX_360DATA_OFF / imagePlugin.Info.SectorSize),
                     Scheme      = Name
                 };
 

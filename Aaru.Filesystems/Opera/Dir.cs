@@ -80,7 +80,7 @@ namespace Aaru.Filesystems
             if(string.IsNullOrEmpty(entry.Key))
                 return Errno.NoSuchFile;
 
-            if((entry.Value.entry.flags & FLAGS_MASK) != (int)FileFlags.Directory)
+            if((entry.Value.Entry.flags & FLAGS_MASK) != (int)FileFlags.Directory)
                 return Errno.NotDirectory;
 
             string currentPath = pieces[0];
@@ -94,7 +94,7 @@ namespace Aaru.Filesystems
                 if(string.IsNullOrEmpty(entry.Key))
                     return Errno.NoSuchFile;
 
-                if((entry.Value.entry.flags & FLAGS_MASK) != (int)FileFlags.Directory)
+                if((entry.Value.Entry.flags & FLAGS_MASK) != (int)FileFlags.Directory)
                     return Errno.NotDirectory;
 
                 currentPath = p == 0 ? pieces[0] : $"{currentPath}/{pieces[p]}";
@@ -102,10 +102,10 @@ namespace Aaru.Filesystems
                 if(_directoryCache.TryGetValue(currentPath, out currentDirectory))
                     continue;
 
-                if(entry.Value.pointers.Length < 1)
+                if(entry.Value.Pointers.Length < 1)
                     return Errno.InvalidArgument;
 
-                currentDirectory = DecodeDirectory((int)entry.Value.pointers[0]);
+                currentDirectory = DecodeDirectory((int)entry.Value.Pointers[0]);
 
                 _directoryCache.Add(currentPath, currentDirectory);
             }
@@ -141,12 +141,12 @@ namespace Aaru.Filesystems
 
                     var entryWithPointers = new DirectoryEntryWithPointers
                     {
-                        entry    = entry,
-                        pointers = new uint[entry.last_copy + 1]
+                        Entry    = entry,
+                        Pointers = new uint[entry.last_copy + 1]
                     };
 
                     for(int i = 0; i <= entry.last_copy; i++)
-                        entryWithPointers.pointers[i] =
+                        entryWithPointers.Pointers[i] =
                             BigEndianBitConverter.ToUInt32(data, off + _directoryEntrySize + (i * 4));
 
                     entries.Add(name, entryWithPointers);

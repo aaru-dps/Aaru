@@ -92,7 +92,7 @@ namespace Aaru.Partitions
                     Sequence = counter,
                     Scheme   = Name,
                     Type = (BSD.fsType)entry.p_fstype == BSD.fsType.Other ? entry.p_type_uuid.ToString()
-                               : BSD.fsTypeToString((BSD.fsType)entry.p_fstype)
+                               : BSD.FSTypeToString((BSD.fsType)entry.p_fstype)
                 };
 
                 if(entry.p_bsize % imagePlugin.Info.SectorSize > 0)

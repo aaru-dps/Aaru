@@ -85,6 +85,7 @@ namespace Aaru.Filesystems
 
                 if(drSigWord == AppleCommon.HFSP_MAGIC) // "H+"
                 {
+                    // ReSharper disable once InconsistentNaming
                     ushort xdrStABNt = BigEndianBitConverter.ToUInt16(vhSector, 0x47E);
 
                     uint drAlBlkSiz = BigEndianBitConverter.ToUInt32(vhSector, 0x414);
@@ -133,6 +134,7 @@ namespace Aaru.Filesystems
 
                 if(drSigWord == AppleCommon.HFSP_MAGIC) // "H+"
                 {
+                    // ReSharper disable once InconsistentNaming
                     ushort xdrStABNt = BigEndianBitConverter.ToUInt16(vhSector, 0x47E);
 
                     uint drAlBlkSiz = BigEndianBitConverter.ToUInt32(vhSector, 0x414);

@@ -327,7 +327,7 @@ namespace Aaru.DiscImages
                         AaruConsole.DebugWriteLine("CDRDAO plugin", "Found {1}_CHANNEL_AUDIO at line {0}", lineNumber,
                                                    matchStereo.Groups["num"].Value);
 
-                        currentTrack.Flag_4Ch |= inTrack && matchStereo.Groups["num"].Value == "FOUR";
+                        currentTrack.Flag4Ch |= inTrack && matchStereo.Groups["num"].Value == "FOUR";
                     }
                     else if(matchIsrc.Success)
                     {
@@ -640,7 +640,7 @@ namespace Aaru.DiscImages
                     AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\tPostgap: {0} sectors",
                                                _discimage.Tracks[i].Postgap);
 
-                    if(_discimage.Tracks[i].Flag_4Ch)
+                    if(_discimage.Tracks[i].Flag4Ch)
                         AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\tTrack is flagged as quadraphonic");
 
                     if(_discimage.Tracks[i].FlagDcp)
@@ -1130,7 +1130,7 @@ namespace Aaru.DiscImages
                     if(aaruTrack.FlagPre)
                         flags |= CdFlags.PreEmphasis;
 
-                    if(aaruTrack.Flag_4Ch)
+                    if(aaruTrack.Flag4Ch)
                         flags |= CdFlags.FourChannel;
 
                     return new[]

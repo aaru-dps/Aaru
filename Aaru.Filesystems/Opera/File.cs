@@ -53,11 +53,11 @@ namespace Aaru.Filesystems
             if(err != Errno.NoError)
                 return err;
 
-            if((entry.entry.flags & FLAGS_MASK) == (uint)FileFlags.Directory &&
+            if((entry.Entry.flags & FLAGS_MASK) == (uint)FileFlags.Directory &&
                !_debug)
                 return Errno.IsDirectory;
 
-            deviceBlock = entry.pointers[0] + fileBlock;
+            deviceBlock = entry.Pointers[0] + fileBlock;
 
             return Errno.NoError;
         }
@@ -93,31 +93,31 @@ namespace Aaru.Filesystems
             if(err != Errno.NoError)
                 return err;
 
-            if((entry.entry.flags & FLAGS_MASK) == (uint)FileFlags.Directory &&
+            if((entry.Entry.flags & FLAGS_MASK) == (uint)FileFlags.Directory &&
                !_debug)
                 return Errno.IsDirectory;
 
-            if(entry.pointers.Length < 1)
+            if(entry.Pointers.Length < 1)
                 return Errno.InvalidArgument;
 
-            if(entry.entry.byte_count == 0)
+            if(entry.Entry.byte_count == 0)
             {
                 buf = new byte[0];
 
                 return Errno.NoError;
             }
 
-            if(offset >= entry.entry.byte_count)
+            if(offset >= entry.Entry.byte_count)
                 return Errno.InvalidArgument;
 
-            if(size + offset >= entry.entry.byte_count)
-                size = entry.entry.byte_count - offset;
+            if(size + offset >= entry.Entry.byte_count)
+                size = entry.Entry.byte_count - offset;
 
-            long firstBlock    = offset                 / entry.entry.block_size;
-            long offsetInBlock = offset                 % entry.entry.block_size;
-            long sizeInBlocks  = (size + offsetInBlock) / entry.entry.block_size;
+            long firstBlock    = offset                 / entry.Entry.block_size;
+            long offsetInBlock = offset                 % entry.Entry.block_size;
+            long sizeInBlocks  = (size + offsetInBlock) / entry.Entry.block_size;
 
-            if((size + offsetInBlock) % entry.entry.block_size > 0)
+            if((size + offsetInBlock) % entry.Entry.block_size > 0)
                 sizeInBlocks++;
 
             uint fileBlockSizeRatio;
@@ -125,11 +125,11 @@ namespace Aaru.Filesystems
             if(_image.Info.SectorSize == 2336 ||
                _image.Info.SectorSize == 2352 ||
                _image.Info.SectorSize == 2448)
-                fileBlockSizeRatio = entry.entry.block_size / 2048;
+                fileBlockSizeRatio = entry.Entry.block_size / 2048;
             else
-                fileBlockSizeRatio = entry.entry.block_size / _image.Info.SectorSize;
+                fileBlockSizeRatio = entry.Entry.block_size / _image.Info.SectorSize;
 
-            byte[] buffer = _image.ReadSectors((ulong)(entry.pointers[0] + (firstBlock * fileBlockSizeRatio)),
+            byte[] buffer = _image.ReadSectors((ulong)(entry.Pointers[0] + (firstBlock * fileBlockSizeRatio)),
                                                (uint)(sizeInBlocks * fileBlockSizeRatio));
 
             buf = new byte[size];
@@ -151,7 +151,7 @@ namespace Aaru.Filesystems
             if(err != Errno.NoError)
                 return err;
 
-            DirectoryEntry entry = entryWithPointers.entry;
+            DirectoryEntry entry = entryWithPointers.Entry;
 
             stat = new FileEntryInfo
             {
@@ -160,7 +160,7 @@ namespace Aaru.Filesystems
                 BlockSize  = entry.block_size,
                 Length     = entry.byte_count,
                 Inode      = entry.id,
-                Links      = (ulong)entryWithPointers.pointers.Length
+                Links      = (ulong)entryWithPointers.Pointers.Length
             };
 
             var flags = (FileFlags)(entry.flags & FLAGS_MASK);

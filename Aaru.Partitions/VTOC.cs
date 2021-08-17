@@ -376,7 +376,7 @@ namespace Aaru.Partitions
                         Offset   = (ulong)(parts[i].p_start * bps),
                         Size     = (ulong)(parts[i].p_size  * bps),
                         Sequence = (ulong)i,
-                        Type     = $"UNIX: {decodeUNIXTAG(parts[i].p_tag, !useOld)}",
+                        Type     = $"UNIX: {DecodeUnixtag(parts[i].p_tag, !useOld)}",
                         Scheme   = Name
                     };
 
@@ -417,7 +417,7 @@ namespace Aaru.Partitions
             return partitions.Count > 0;
         }
 
-        static string decodeUNIXTAG(pTag type, bool isNew)
+        static string DecodeUnixtag(pTag type, bool isNew)
         {
             switch(type)
             {
@@ -547,6 +547,7 @@ namespace Aaru.Partitions
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        // ReSharper disable once InconsistentNaming
         struct partition
         {
             public pTag  p_tag;   /*ID tag of partition*/
@@ -555,6 +556,7 @@ namespace Aaru.Partitions
             public int   p_size;  /*# of blocks in partition*/
         }
 
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
         enum pTag : ushort
         {
             /// <summary>empty</summary>
@@ -604,6 +606,7 @@ namespace Aaru.Partitions
         }
 
         [Flags]
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
         enum pFlag : ushort
         {
             /* Partition permission flags */ V_UNMNT = 0x01, /* Unmountable partition */ V_RONLY = 0x10, /* Read only */

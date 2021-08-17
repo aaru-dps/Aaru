@@ -1530,28 +1530,28 @@ namespace Aaru.DiscImages
             if(sectorAddress + length > _imageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
-            const uint SECTOR_SIZE = 2352;
+            const uint sectorSize = 2352;
             uint       sectorSkip  = 0;
 
             if(_hasSubchannel)
                 sectorSkip += 96;
 
-            byte[] buffer = new byte[SECTOR_SIZE * length];
+            byte[] buffer = new byte[sectorSize * length];
 
             Stream stream = _rawImageFilter.GetDataForkStream();
             var    br     = new BinaryReader(stream);
 
-            br.BaseStream.Seek((long)(sectorAddress * (SECTOR_SIZE + sectorSkip)), SeekOrigin.Begin);
+            br.BaseStream.Seek((long)(sectorAddress * (sectorSize + sectorSkip)), SeekOrigin.Begin);
 
             if(sectorSkip == 0)
-                buffer = br.ReadBytes((int)(SECTOR_SIZE * length));
+                buffer = br.ReadBytes((int)(sectorSize * length));
             else
                 for(int i = 0; i < length; i++)
                 {
-                    byte[] sector = br.ReadBytes((int)SECTOR_SIZE);
+                    byte[] sector = br.ReadBytes((int)sectorSize);
                     br.BaseStream.Seek(sectorSkip, SeekOrigin.Current);
 
-                    Array.Copy(sector, 0, buffer, i * SECTOR_SIZE, SECTOR_SIZE);
+                    Array.Copy(sector, 0, buffer, i * sectorSize, sectorSize);
                 }
 
             return buffer;

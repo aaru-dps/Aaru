@@ -348,6 +348,7 @@ namespace Aaru.Filesystems
         }
 
         /// <summary>ProDOS directory entry, decoded structure</summary>
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
         struct Entry
         {
             /// <summary>Type of file pointed by this entry Offset 0x00, mask 0xF0</summary>
@@ -383,6 +384,7 @@ namespace Aaru.Filesystems
             public ushort header_pointer;
         }
 
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
         struct RootDirectoryHeader
         {
             /// <summary>Constant 0x0F Offset 0x04, mask 0xF0</summary>
@@ -416,6 +418,7 @@ namespace Aaru.Filesystems
             public ushort total_blocks;
         }
 
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
         struct DirectoryHeader
         {
             /// <summary>Constant 0x0E Offset 0x04, mask 0xF0</summary>
@@ -448,6 +451,7 @@ namespace Aaru.Filesystems
             public byte parent_entry_length;
         }
 
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
         struct DirectoryKeyBlock
         {
             /// <summary>Always 0 Offset 0x00, 2 bytes</summary>
@@ -460,6 +464,7 @@ namespace Aaru.Filesystems
             public Entry[] entries;
         }
 
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
         struct RootDirectoryKeyBlock
         {
             /// <summary>Always 0 Offset 0x00, 2 bytes</summary>
@@ -472,6 +477,7 @@ namespace Aaru.Filesystems
             public Entry[] entries;
         }
 
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
         struct DirectoryBlock
         {
             /// <summary>Pointer to previous directory block Offset 0x00, 2 bytes</summary>
@@ -482,12 +488,14 @@ namespace Aaru.Filesystems
             public Entry[] entries;
         }
 
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
         struct IndexBlock
         {
             /// <summary>Up to 256 pointers to blocks, 0 to indicate the block is sparsed (non-allocated)</summary>
             public ushort[] block_pointer;
         }
 
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
         struct MasterIndexBlock
         {
             /// <summary>Up to 128 pointers to index blocks</summary>

@@ -35,15 +35,15 @@ namespace Aaru.DiscImages
     public sealed partial class Cpcdsk
     {
         /// <summary>Identifier for CPCEMU disk images, "MV - CPC" + usually : "EMU Disk-File\r\nDisk-Info\r\n" but not required</summary>
-        const string _cpcdskId = "MV - CPCEMU Disk-File";
+        const string CPCDSK_ID = "MV - CPCEMU Disk-File";
 
         /// <summary>Identifier for DU54 disk images, "MV - CPC format Disk Image (DU54)"</summary>
-        const string _du54Id = "MV - CPC format Disk Image (DU54)";
+        const string DU54_ID = "MV - CPC format Disk Image (DU54)";
 
         /// <summary>Identifier for Extended CPCEMU disk images</summary>
-        const string _edskId = "EXTENDED CPC DSK File";
+        const string EDSK_ID = "EXTENDED CPC DSK File";
 
         /// <summary>Identifier for track information, </summary>
-        const string _trackId = "Track-Info";
+        const string TRACK_ID = "Track-Info";
     }
 }

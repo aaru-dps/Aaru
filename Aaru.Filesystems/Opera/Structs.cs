@@ -113,8 +113,8 @@ namespace Aaru.Filesystems
 
         class DirectoryEntryWithPointers
         {
-            public DirectoryEntry entry;
-            public uint[]         pointers;
+            public DirectoryEntry Entry;
+            public uint[]         Pointers;
         }
     }
 }

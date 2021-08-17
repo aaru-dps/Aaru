@@ -37,15 +37,15 @@ namespace Aaru.DiscImages
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
     public sealed partial class KryoFlux
     {
-        const string _hostDate  = "host_date";
-        const string _hostTime  = "host_time";
-        const string _kfName    = "name";
-        const string _kfVersion = "version";
-        const string _kfDate    = "date";
-        const string _kfTime    = "time";
-        const string _kfHwId    = "hwid";
-        const string _kfHwRv    = "hwrv";
-        const string _kfSck     = "sck";
-        const string _kfIck     = "ick";
+        const string HOST_DATE  = "host_date";
+        const string HOST_TIME  = "host_time";
+        const string KF_NAME    = "name";
+        const string KF_VERSION = "version";
+        const string KF_DATE    = "date";
+        const string KF_TIME    = "time";
+        const string KF_HW_ID    = "hwid";
+        const string KF_HW_RV    = "hwrv";
+        const string KF_SCK     = "sck";
+        const string KF_ICK     = "ick";
     }
 }

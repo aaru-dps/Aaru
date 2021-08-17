@@ -39,13 +39,14 @@ namespace Aaru.DiscImages
     [SuppressMessage("ReSharper", "UnusedType.Local")]
     public sealed partial class DiskDupe
     {
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
         struct DiskType {
             public byte cyl;
             public byte hd;
             public byte spt;
         }
 
-        readonly DiskType[] diskTypes = {
+        readonly DiskType[] _diskTypes = {
             new DiskType { cyl = 0,  hd = 0, spt = 0  },  // Type 0 - invalid
             new DiskType { cyl = 40, hd = 2, spt = 9  },  // Type 1 - 360k
             new DiskType { cyl = 80, hd = 2, spt = 15 },  // Type 2 - 1.2m

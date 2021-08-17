@@ -49,11 +49,13 @@ namespace Aaru.Filesystems
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
     public sealed class F2FS : IFilesystem
     {
+        // ReSharper disable InconsistentNaming
         const uint F2FS_MAGIC        = 0xF2F52010;
         const uint F2FS_SUPER_OFFSET = 1024;
         const uint F2FS_MIN_SECTOR   = 512;
         const uint F2FS_MAX_SECTOR   = 4096;
         const uint F2FS_BLOCK_SIZE   = 4096;
+        // ReSharper restore InconsistentNaming
 
         /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
@@ -122,6 +124,7 @@ namespace Aaru.Filesystems
             if(sector.Length < Marshal.SizeOf<Superblock>())
                 return;
 
+            // ReSharper disable once InconsistentNaming
             Superblock f2fsSb = Marshal.ByteArrayToStructureLittleEndian<Superblock>(sector);
 
             if(f2fsSb.magic != F2FS_MAGIC)

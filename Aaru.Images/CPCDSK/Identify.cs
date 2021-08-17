@@ -68,9 +68,9 @@ namespace Aaru.DiscImages
 
             AaruConsole.DebugWriteLine("CPCDSK plugin", "magic = \"{0}\"", magic);
 
-            return string.Compare(_cpcdskId, magic, StringComparison.InvariantCultureIgnoreCase) == 0 ||
-                   string.Compare(_edskId, magic, StringComparison.InvariantCultureIgnoreCase)   == 0 ||
-                   string.Compare(_du54Id, magic, StringComparison.InvariantCultureIgnoreCase)   == 0;
+            return string.Compare(CPCDSK_ID, magic, StringComparison.InvariantCultureIgnoreCase) == 0 ||
+                   string.Compare(EDSK_ID, magic, StringComparison.InvariantCultureIgnoreCase)   == 0 ||
+                   string.Compare(DU54_ID, magic, StringComparison.InvariantCultureIgnoreCase)   == 0;
         }
     }
 }

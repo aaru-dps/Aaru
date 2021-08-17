@@ -172,7 +172,7 @@ namespace Aaru.Partitions
                 AaruConsole.DebugWriteLine("BSD plugin", "dl.d_partitions[i].p_size = {0}", dl.d_partitions[i].p_size);
 
                 AaruConsole.DebugWriteLine("BSD plugin", "dl.d_partitions[i].p_fstype = {0} ({1})",
-                                           dl.d_partitions[i].p_fstype, fsTypeToString(dl.d_partitions[i].p_fstype));
+                                           dl.d_partitions[i].p_fstype, FSTypeToString(dl.d_partitions[i].p_fstype));
 
                 var part = new Partition
                 {
@@ -180,7 +180,7 @@ namespace Aaru.Partitions
                     Offset   = dl.d_partitions[i].p_offset                * dl.d_secsize,
                     Length   = dl.d_partitions[i].p_size * dl.d_secsize   / imagePlugin.Info.SectorSize,
                     Size     = dl.d_partitions[i].p_size                  * dl.d_secsize,
-                    Type     = fsTypeToString(dl.d_partitions[i].p_fstype),
+                    Type     = FSTypeToString(dl.d_partitions[i].p_fstype),
                     Sequence = counter,
                     Scheme   = Name
                 };
@@ -208,7 +208,7 @@ namespace Aaru.Partitions
             return partitions.Count > 0;
         }
 
-        internal static string fsTypeToString(fsType typ)
+        internal static string FSTypeToString(fsType typ)
         {
             switch(typ)
             {
@@ -262,6 +262,7 @@ namespace Aaru.Partitions
         }
 
         /// <summary>Drive type</summary>
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
         enum dType : ushort
         {
             /// <summary>SMD, XSMD</summary>
@@ -311,6 +312,7 @@ namespace Aaru.Partitions
         }
 
         /// <summary>Filesystem type</summary>
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
         internal enum fsType : byte
         {
             /// <summary>Unused entry</summary>
@@ -390,6 +392,7 @@ namespace Aaru.Partitions
         }
 
         /// <summary>Drive flags</summary>
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
         [Flags]
         enum dFlags : uint
         {

@@ -343,8 +343,6 @@ namespace Aaru.Commands.Image
                                     foreach(ChecksumType chk in trackChecksum.End())
                                         AaruConsole.WriteLine("Track {0}'s {1}: {2}", currentTrack.TrackSequence,
                                                               chk.type, chk.Value);
-
-                            previousTrackEnd = currentTrack.TrackEndSector;
                         }
 
                         /*

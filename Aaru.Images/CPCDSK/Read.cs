@@ -79,12 +79,12 @@ namespace Aaru.DiscImages
 
             DiskInfo header = Marshal.ByteArrayToStructureLittleEndian<DiskInfo>(headerB);
 
-            if(string.Compare(_cpcdskId, magic, StringComparison.InvariantCultureIgnoreCase) != 0 &&
-               string.Compare(_edskId, magic, StringComparison.InvariantCultureIgnoreCase)   != 0 &&
-               string.Compare(_du54Id, magic, StringComparison.InvariantCultureIgnoreCase)   != 0)
+            if(string.Compare(CPCDSK_ID, magic, StringComparison.InvariantCultureIgnoreCase) != 0 &&
+               string.Compare(EDSK_ID, magic, StringComparison.InvariantCultureIgnoreCase)   != 0 &&
+               string.Compare(DU54_ID, magic, StringComparison.InvariantCultureIgnoreCase)   != 0)
                 return false;
 
-            _extended = string.Compare(_edskId, magic, StringComparison.InvariantCultureIgnoreCase) == 0;
+            _extended = string.Compare(EDSK_ID, magic, StringComparison.InvariantCultureIgnoreCase) == 0;
             AaruConsole.DebugWriteLine("CPCDSK plugin", "Extended = {0}", _extended);
 
             AaruConsole.DebugWriteLine("CPCDSK plugin", "magic = \"{0}\"", magic);
@@ -132,7 +132,7 @@ namespace Aaru.DiscImages
                     stream.Read(trackB, 0, 256);
                     TrackInfo trackInfo = Marshal.ByteArrayToStructureLittleEndian<TrackInfo>(trackB);
 
-                    if(string.Compare(_trackId, Encoding.ASCII.GetString(trackInfo.magic),
+                    if(string.Compare(TRACK_ID, Encoding.ASCII.GetString(trackInfo.magic),
                                       StringComparison.InvariantCultureIgnoreCase) != 0)
                     {
                         AaruConsole.ErrorWriteLine("Not the expected track info.");

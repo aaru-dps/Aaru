@@ -37,6 +37,7 @@ namespace Aaru.DiscImages
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
     public sealed partial class KryoFlux
     {
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
         enum BlockIds : byte
         {
             Flux2   = 0x00, Flux2_1 = 0x01, Flux2_2 = 0x02,

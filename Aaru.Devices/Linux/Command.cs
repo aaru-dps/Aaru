@@ -452,7 +452,7 @@ namespace Aaru.Devices.Linux
         {
             duration = 0;
             sense    = false;
-            int off = 0;
+            int off;
 
             // Create array for buffers
             IntPtr[] bufferPointers = new IntPtr[commands.Length];

@@ -48,6 +48,7 @@ namespace Aaru.Partitions
     /// </summary>
     public sealed class Human68K : IPartition
     {
+        // ReSharper disable once InconsistentNaming
         const uint X68K_MAGIC = 0x5836384B;
 
         /// <inheritdoc />

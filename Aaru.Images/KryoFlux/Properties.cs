@@ -39,9 +39,9 @@ namespace Aaru.DiscImages
 {
     public sealed partial class KryoFlux
     {
-        ImageInfo              imageInfo;
+        ImageInfo              _imageInfo;
         /// <inheritdoc />
-        public ImageInfo              Info         => imageInfo;
+        public ImageInfo              Info         => _imageInfo;
         /// <inheritdoc />
         public string                 Author       => "Natalia Portillo";
         /// <inheritdoc />

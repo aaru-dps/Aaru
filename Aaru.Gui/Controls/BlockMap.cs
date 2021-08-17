@@ -50,7 +50,7 @@ namespace Aaru.Gui.Controls
     // TODO: Writing one more than it should
     public sealed class BlockMap : ItemsControl
     {
-        const int _blockSize = 15;
+        const int BLOCK_SIZE = 15;
         public static readonly StyledProperty<ulong> BlocksProperty =
             AvaloniaProperty.Register<Border, ulong>(nameof(Blocks));
 
@@ -170,7 +170,7 @@ namespace Aaru.Gui.Controls
             {
                 case nameof(Blocks):
                     if(_maxBlocks == 0)
-                        _maxBlocks = (ulong)(Width / _blockSize * (Height / _blockSize));
+                        _maxBlocks = (ulong)(Width / BLOCK_SIZE * (Height / BLOCK_SIZE));
 
                     if(Blocks > _maxBlocks)
                     {
@@ -225,7 +225,7 @@ namespace Aaru.Gui.Controls
             if((int?)_bitmap?.Size.Height != (int)Height ||
                (int?)_bitmap?.Size.Width  != (int)Width)
             {
-                _maxBlocks = (ulong)(Width / _blockSize * (Height / _blockSize));
+                _maxBlocks = (ulong)(Width / BLOCK_SIZE * (Height / BLOCK_SIZE));
                 CreateBitmap();
             }
 
@@ -327,12 +327,12 @@ namespace Aaru.Gui.Controls
                 throw new ArgumentException("Duration cannot be negative or infinite", nameof(duration));
 
             bool  newContext     = ctx is null;
-            ulong clustersPerRow = (ulong)Width / _blockSize;
+            ulong clustersPerRow = (ulong)Width / BLOCK_SIZE;
             ulong cluster        = block        / _clusterSize;
             ulong row            = cluster      / clustersPerRow;
             ulong column         = cluster      % clustersPerRow;
-            ulong x              = column       * _blockSize;
-            ulong y              = row          * _blockSize;
+            ulong x              = column       * BLOCK_SIZE;
+            ulong y              = row          * BLOCK_SIZE;
             var   pen            = new Pen(Foreground);
 
             IBrush brush;
@@ -365,13 +365,13 @@ namespace Aaru.Gui.Controls
                 ctx = new DrawingContext(ctxi, false);
             }
 
-            ctx.FillRectangle(brush, new Rect(x, y, _blockSize, _blockSize));
-            ctx.DrawRectangle(pen, new Rect(x, y, _blockSize, _blockSize));
+            ctx.FillRectangle(brush, new Rect(x, y, BLOCK_SIZE, BLOCK_SIZE));
+            ctx.DrawRectangle(pen, new Rect(x, y, BLOCK_SIZE, BLOCK_SIZE));
 
             if(double.IsNaN(duration))
             {
-                ctx.DrawLine(pen, new Point(x, y), new Point(x + _blockSize, y            + _blockSize));
-                ctx.DrawLine(pen, new Point(x, y               + _blockSize), new Point(x + _blockSize, y));
+                ctx.DrawLine(pen, new Point(x, y), new Point(x + BLOCK_SIZE, y            + BLOCK_SIZE));
+                ctx.DrawLine(pen, new Point(x, y               + BLOCK_SIZE), new Point(x + BLOCK_SIZE, y));
             }
 
             if(newContext)
@@ -398,7 +398,7 @@ namespace Aaru.Gui.Controls
         void CreateBitmap()
         {
             if(_maxBlocks == 0)
-                _maxBlocks = (ulong)(Width / _blockSize * (Height / _blockSize));
+                _maxBlocks = (ulong)(Width / BLOCK_SIZE * (Height / BLOCK_SIZE));
 
             _bitmap?.Dispose();
 
@@ -415,15 +415,15 @@ namespace Aaru.Gui.Controls
             using IDrawingContextImpl ctxi = _bitmap.CreateDrawingContext(null);
             using var                 ctx  = new DrawingContext(ctxi, false);
 
-            ulong clustersPerRow = (ulong)Width / _blockSize;
+            ulong clustersPerRow = (ulong)Width / BLOCK_SIZE;
 
             bool allBlocksDrawn = false;
 
-            for(ulong y = 0; y < Height && !allBlocksDrawn; y += _blockSize)
+            for(ulong y = 0; y < Height && !allBlocksDrawn; y += BLOCK_SIZE)
             {
-                for(ulong x = 0; x < Width; x += _blockSize)
+                for(ulong x = 0; x < Width; x += BLOCK_SIZE)
                 {
-                    ulong currentBlockValue = (y * clustersPerRow / _blockSize) + (x / _blockSize);
+                    ulong currentBlockValue = (y * clustersPerRow / BLOCK_SIZE) + (x / BLOCK_SIZE);
 
                     if(currentBlockValue >= _maxBlocks ||
                        currentBlockValue >= Blocks)
@@ -433,7 +433,7 @@ namespace Aaru.Gui.Controls
                         break;
                     }
 
-                    ctx.DrawRectangle(new Pen(Foreground), new Rect(x, y, _blockSize, _blockSize));
+                    ctx.DrawRectangle(new Pen(Foreground), new Rect(x, y, BLOCK_SIZE, BLOCK_SIZE));
                 }
             }
         }

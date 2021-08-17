@@ -47,7 +47,7 @@ namespace Aaru.DiscImages
         // TODO: These variables have been made public so create-sidecar can access to this information until I define an API >4.0
         public SortedDictionary<byte, IFilter> tracks;
 
-        public KryoFlux() => imageInfo = new ImageInfo
+        public KryoFlux() => _imageInfo = new ImageInfo
         {
             ReadableSectorTags    = new List<SectorTagType>(),
             ReadableMediaTags     = new List<MediaTagType>(),

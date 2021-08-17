@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 // ReSharper disable NotAccessedField.Local
 
@@ -43,6 +44,7 @@ namespace Aaru.Filesystems.LisaFS
         ///     initialization the memory where it resides is not emptied so it tends to contain a lot of garbage. This has
         ///     difficulted its reverse engineering.
         /// </summary>
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
         struct MDDF
         {
             /// <summary>0x00, Filesystem version</summary>
@@ -215,6 +217,7 @@ namespace Aaru.Filesystems.LisaFS
         ///     block there are previous and next block pointers, effectively making the V3 catalog a double-linked list. Garbage
         ///     is not zeroed.
         /// </summary>
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
         struct CatalogEntry
         {
             /// <summary>0x00, seems to be 0x24 when the entry is valid</summary>
@@ -247,6 +250,7 @@ namespace Aaru.Filesystems.LisaFS
         }
 
         /// <summary>An extent indicating a start and a run of sectors.</summary>
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
         struct Extent
         {
             public int   start;
@@ -259,6 +263,7 @@ namespace Aaru.Filesystems.LisaFS
         ///     (0xFFFB) It spans a single sector on V2 and V3 but 2 sectors on V1. It contains all information about a file, and
         ///     is indexed in the S-Records file. It also contains the label. Garbage is zeroed.
         /// </summary>
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
         struct ExtentFile
         {
             /// <summary>0x00, filename length</summary>
@@ -355,6 +360,7 @@ namespace Aaru.Filesystems.LisaFS
         ///     value (less than 0x200) variable field of unknown meaning and another one that seems to be flags, with values like
         ///     0, 1, 3 and 5.
         /// </summary>
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
         struct SRecord
         {
             /// <summary>0x00, block where ExtentsFile for this entry resides</summary>
@@ -375,6 +381,7 @@ namespace Aaru.Filesystems.LisaFS
         ///     forcing LisaOS to read the whole catalog. That or I missed the pointers. Empty entries just contain a 0-len
         ///     filename. Garbage is not zeroed.
         /// </summary>
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
         struct CatalogEntryV2
         {
             /// <summary>0x00, filename, 32-bytes, null-padded</summary>

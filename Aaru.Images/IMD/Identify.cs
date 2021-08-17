@@ -52,16 +52,16 @@ namespace Aaru.DiscImages
             byte[] hdr = new byte[stream.Length < 256 ? stream.Length : 256];
             stream.Read(hdr, 0, hdr.Length);
 
-            string hdr_str = StringHandlers.CToString(hdr, Encoding.ASCII);
+            string hdrStr = StringHandlers.CToString(hdr, Encoding.ASCII);
 
             // IMD for DOS
-            Match imd = new Regex(REGEX_HEADER).Match(hdr_str);
+            Match imd = new Regex(REGEX_HEADER).Match(hdrStr);
 
             // SAMdisk
-            Match sam = new Regex(REGEX_SAMDISK).Match(hdr_str);
+            Match sam = new Regex(REGEX_SAMDISK).Match(hdrStr);
 
             // z88dk
-            Match z88dk = new Regex(REGEX_Z88DK).Match(hdr_str);
+            Match z88dk = new Regex(REGEX_Z88DK).Match(hdrStr);
 
             return imd.Success || sam.Success || z88dk.Success;
         }

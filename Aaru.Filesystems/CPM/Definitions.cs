@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Xml;
 using System.Xml.Serialization;
@@ -95,6 +96,7 @@ namespace Aaru.Filesystems
     }
 
     /// <summary>CP/M disk definitions</summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public sealed class CpmDefinitions
     {
         /// <summary>Timestamp of creation of the CP/M disk definitions list</summary>
@@ -104,6 +106,7 @@ namespace Aaru.Filesystems
     }
 
     /// <summary>CP/M disk definition</summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public sealed class CpmDefinition
     {
         /// <summary>Maps the first 16 allocation blocks for reservation, high byte</summary>
@@ -158,6 +161,7 @@ namespace Aaru.Filesystems
     }
 
     /// <summary>Side descriptions</summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public sealed class Side
     {
         /// <summary>Software interleaving mask, [1,3,0,2] means CP/M LBA 0 is physical sector 1, LBA 1 = 3, so on</summary>

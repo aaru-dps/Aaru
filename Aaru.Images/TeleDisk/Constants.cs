@@ -44,9 +44,9 @@ namespace Aaru.DiscImages
         const ushort TD_ADV_COMP_MAGIC = 0x6474;
 
         // DataRates
-        const byte DATA_RATE_250KBPS = 0x00;
-        const byte DATA_RATE_300KBPS = 0x01;
-        const byte DATA_RATE_500KBPS = 0x02;
+        const byte DATA_RATE_250_KBPS = 0x00;
+        const byte DATA_RATE_300_KBPS = 0x01;
+        const byte DATA_RATE_500_KBPS = 0x02;
 
         // TeleDisk drive types
         const byte DRIVE_TYPE_525_HD_DD_DISK = 0x00;
@@ -72,10 +72,12 @@ namespace Aaru.DiscImages
         const byte SECTOR_SIZE_128 = 0x00;
         const byte SECTOR_SIZE_256 = 0x01;
         const byte SECTOR_SIZE_512 = 0x02;
+        // ReSharper disable InconsistentNaming
         const byte SECTOR_SIZE_1K  = 0x03;
         const byte SECTOR_SIZE_2K  = 0x04;
         const byte SECTOR_SIZE_4K  = 0x05;
         const byte SECTOR_SIZE_8K  = 0x06;
+        // ReSharper restore InconsistentNaming
 
         // Flags
         // Address mark repeats inside same track
