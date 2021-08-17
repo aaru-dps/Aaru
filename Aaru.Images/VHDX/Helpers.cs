@@ -30,9 +30,6 @@
 // Copyright © 2011-2021 Natalia Portillo
 // ****************************************************************************/
 
-using System.Collections.Generic;
-using System.Linq;
-
 namespace Aaru.DiscImages
 {
     public sealed partial class Vhdx

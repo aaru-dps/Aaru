@@ -31,12 +31,9 @@
 // Copyright © 2011-2021 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
-using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
-using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Core;
 

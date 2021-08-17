@@ -33,8 +33,6 @@
 
 using System;
 using System.Collections.Generic;
-using Aaru.CommonTypes;
-using Aaru.CommonTypes.Exceptions;
 using Aaru.CommonTypes.Structs;
 using Schemas;
 
