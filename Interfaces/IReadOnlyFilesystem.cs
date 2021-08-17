@@ -45,12 +45,17 @@ using Aaru.CommonTypes.Structs;
 namespace Aaru.CommonTypes.Interfaces
 {
     /// <inheritdoc />
-    /// <summary>Interface to implement filesystem plugins.</summary>
+    /// <summary>
+    /// Defines the interface to implement reading the contents of a filesystem
+    /// </summary>
     public interface IReadOnlyFilesystem : IFilesystem
     {
         /// <summary>Retrieves a list of options supported by the filesystem, with name, type and description</summary>
         IEnumerable<(string name, Type type, string description)> SupportedOptions { get; }
 
+        /// <summary>
+        /// Supported namespaces
+        /// </summary>
         Dictionary<string, string> Namespaces { get; }
 
         /// <summary>
@@ -90,7 +95,7 @@ namespace Aaru.CommonTypes.Interfaces
         /// <summary>Reads an extended attribute, alternate data stream or fork from the given file.</summary>
         /// <returns>Error number.</returns>
         /// <param name="path">File path.</param>
-        /// <param name="xattr">Extendad attribute, alternate data stream or fork name.</param>
+        /// <param name="xattr">Extended attribute, alternate data stream or fork name.</param>
         /// <param name="buf">Buffer.</param>
         Errno GetXattr(string path, string xattr, ref byte[] buf);
 

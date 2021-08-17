@@ -38,10 +38,38 @@
 
 namespace Aaru.CommonTypes.Enums
 {
+    /// <summary>
+    /// Device types
+    /// </summary>
     public enum DeviceType
     {
-        Unknown = -1, ATA          = 1, ATAPI = 2,
-        SCSI    = 3, SecureDigital = 4, MMC   = 5,
+        /// <summary>
+        /// Unknown device type
+        /// </summary>
+        Unknown = -1,
+        /// <summary>
+        /// ATA device
+        /// </summary>
+        ATA          = 1,
+        /// <summary>
+        /// ATA Packet device (aka SCSI over ATA)
+        /// </summary>
+        ATAPI = 2,
+        /// <summary>
+        /// SCSI device (or USB-MSC, SBP2, FC, UAS, etc)
+        /// </summary>
+        SCSI    = 3,
+        /// <summary>
+        /// SecureDigital memory card
+        /// </summary>
+        SecureDigital = 4,
+        /// <summary>
+        /// MultiMediaCard memory card
+        /// </summary>
+        MMC   = 5,
+        /// <summary>
+        /// NVMe device
+        /// </summary>
         NVMe    = 6
     }
 }

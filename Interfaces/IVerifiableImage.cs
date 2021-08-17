@@ -39,6 +39,9 @@
 
 namespace Aaru.CommonTypes.Interfaces
 {
+    /// <summary>
+    /// Defines an image that can verify the integrity of the image itself, but not its contents
+    /// </summary>
     public interface IVerifiableImage
     {
         /// <summary>Verifies media image internal checksum.</summary>

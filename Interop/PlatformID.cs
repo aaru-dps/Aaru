@@ -115,6 +115,8 @@ namespace Aaru.CommonTypes.Interop
         /// <summary>SCO UnixWare</summary>
         UnixWare = 34,
         /// <summary>IBM z/OS</summary>
-        zOS = 35, Unknown = -1
+        zOS = 35,
+        /// <summary>Unknown</summary>
+        Unknown = -1
     }
 }

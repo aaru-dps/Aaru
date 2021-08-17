@@ -39,6 +39,9 @@ using System.IO;
 
 namespace Aaru.CommonTypes.Interfaces
 {
+    /// <summary>
+    /// Supported archive features
+    /// </summary>
     [Flags]
     public enum ArchiveSupportedFeature : uint
     {
@@ -68,6 +71,9 @@ namespace Aaru.CommonTypes.Interfaces
         SupportsXAttrs = 1 << 6
     }
 
+    /// <summary>
+    /// Defines the interface to handle an archive (e.g. ZIP, WAD, etc)
+    /// </summary>
     public interface IArchive
     {
         /// <summary>Descriptive name of the plugin</summary>

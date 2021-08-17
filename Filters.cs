@@ -46,8 +46,14 @@ using Aaru.Console;
 
 namespace Aaru.CommonTypes
 {
+    /// <summary>
+    /// Manages the known filters
+    /// </summary>
     public sealed class FiltersList
     {
+        /// <summary>
+        /// List of known filters
+        /// </summary>
         public readonly SortedDictionary<string, IFilter> Filters;
 
         /// <summary>Fills the list of all known filters</summary>

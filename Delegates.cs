@@ -75,6 +75,7 @@ namespace Aaru.CommonTypes
     /// <summary>Shows an error message</summary>
     public delegate void ErrorMessageHandler(string text);
 
+    /// <summary>Initializes a block map that's going to be filled with a media scan</summary>
     public delegate void InitBlockMapHandler(ulong blocks, ulong blockSize, ulong blocksToRead, ushort currentProfile);
 
     /// <summary>Updates lists of time taken on scanning from the specified sector</summary>
@@ -84,5 +85,6 @@ namespace Aaru.CommonTypes
     /// <summary>Specified a number of blocks could not be read on scan</summary>
     public delegate void ScanUnreadableHandler(ulong sector);
 
+    /// <summary>Sends the speed of scanning a specific sector</summary>
     public delegate void ScanSpeedHandler(ulong sector, double currentSpeed);
 }

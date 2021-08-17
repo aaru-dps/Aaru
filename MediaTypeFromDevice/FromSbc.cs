@@ -39,6 +39,15 @@ namespace Aaru.CommonTypes
 {
     public static partial class MediaTypeFromDevice
     {
+        /// <summary>
+        /// Gets the media type from a SCSI Block Commands compliant device
+        /// </summary>
+        /// <param name="vendor">Vendor string</param>
+        /// <param name="model">Model string</param>
+        /// <param name="mediumType">Medium type from MODE SENSE</param>
+        /// <param name="blocks">Number of blocks in device</param>
+        /// <param name="blockSize">Size of a block in bytes</param>
+        /// <returns>Media type</returns>
         static MediaType GetFromSbc(string vendor, string model, byte mediumType, ulong blocks, uint blockSize)
         {
             if(vendor.ToLowerInvariant() == "syquest" &&

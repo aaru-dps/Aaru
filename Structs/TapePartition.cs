@@ -38,6 +38,9 @@
 
 namespace Aaru.CommonTypes.Structs
 {
+    /// <summary>
+    /// Describes a tape partition
+    /// </summary>
     public struct TapePartition
     {
         /// <summary>Partition number</summary>

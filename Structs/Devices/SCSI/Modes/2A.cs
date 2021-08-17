@@ -46,6 +46,9 @@ namespace Aaru.CommonTypes.Structs.Devices.SCSI.Modes
      SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public class ModePage_2A
     {
+        /// <summary>
+        /// Write speed performance descriptors
+        /// </summary>
         public ModePage_2A_WriteDescriptor[] WriteSpeedPerformanceDescriptors;
         /// <summary>Parameters can be saved</summary>
         public bool PS { get; set; }
@@ -94,43 +97,135 @@ namespace Aaru.CommonTypes.Structs.Devices.SCSI.Modes
         /// <summary>Current drive speed in Kbytes/second</summary>
         public ushort CurrentSpeed { get; set; }
 
+        /// <summary>
+        /// Can read packet media
+        /// </summary>
         public bool Method2      { get; set; }
+        /// <summary>
+        /// Can read CD-RW
+        /// </summary>
         public bool ReadCDRW     { get; set; }
+        /// <summary>
+        /// Can read CD-R
+        /// </summary>
         public bool ReadCDR      { get; set; }
+        /// <summary>
+        /// Can write CD-RW
+        /// </summary>
         public bool WriteCDRW    { get; set; }
+        /// <summary>
+        /// Can write CD-R
+        /// </summary>
         public bool WriteCDR     { get; set; }
+        /// <summary>
+        /// Supports IEC-958 digital output on port 2
+        /// </summary>
         public bool DigitalPort2 { get; set; }
+        /// <summary>
+        /// Supports IEC-958 digital output on port 1
+        /// </summary>
         public bool DigitalPort1 { get; set; }
+        /// <summary>
+        /// Can deliver a composite audio and video data stream
+        /// </summary>
         public bool Composite    { get; set; }
+        /// <summary>
+        /// This bit controls the behavior of the LOAD/UNLOAD command when trying to load a Slot with no Disc present
+        /// </summary>
         public bool SSS          { get; set; }
+        /// <summary>
+        /// Contains a changer that can report the exact contents of the slots
+        /// </summary>
         public bool SDP          { get; set; }
+        /// <summary>
+        /// Page length
+        /// </summary>
         public byte Length       { get; set; }
+        /// <summary>
+        /// Set if LSB comes first
+        /// </summary>
         public bool LSBF         { get; set; }
+        /// <summary>
+        /// Set if HIGH on LRCK indicates left channel. Clear if HIGH on LRCK indicates right channel.
+        /// </summary>
         public bool RCK          { get; set; }
+        /// <summary>
+        /// Set if data valid on the falling edge of the BCK signal. Clear if data valid on the rising edge of the BCK signal
+        /// </summary>
         public bool BCK          { get; set; }
 
+        /// <summary>
+        /// Can do a test write
+        /// </summary>
         public bool   TestWrite         { get; set; }
+        /// <summary>
+        /// Maximum write speed
+        /// </summary>
         public ushort MaxWriteSpeed     { get; set; }
+        /// <summary>
+        /// Current write speed
+        /// </summary>
         public ushort CurrentWriteSpeed { get; set; }
-
+        /// <summary>
+        /// Can read disc's barcode
+        /// </summary>
         public bool ReadBarcode { get; set; }
-
+        /// <summary>
+        /// Can read DVD-RAM
+        /// </summary>
         public bool   ReadDVDRAM   { get; set; }
+        /// <summary>
+        /// Can read DVD-R
+        /// </summary>
         public bool   ReadDVDR     { get; set; }
+        /// <summary>
+        /// Can read DVD-ROM
+        /// </summary>
         public bool   ReadDVDROM   { get; set; }
+        /// <summary>
+        /// Can write DVD-RAM
+        /// </summary>
         public bool   WriteDVDRAM  { get; set; }
+        /// <summary>
+        /// Can write DVD-R
+        /// </summary>
         public bool   WriteDVDR    { get; set; }
+        /// <summary>
+        /// Can read raw R-W subchannel from the Lead-In
+        /// </summary>
         public bool   LeadInPW     { get; set; }
+        /// <summary>
+        /// Can read both sides of a disc
+        /// </summary>
         public bool   SCC          { get; set; }
+        /// <summary>
+        /// Support copyright management
+        /// </summary>
         public ushort CMRSupported { get; set; }
-
+        /// <summary>
+        /// Supports buffer under-run free recording
+        /// </summary>
         public bool   BUF                       { get; set; }
+        /// <summary>
+        /// Selected rotational control
+        /// </summary>
         public byte   RotationControlSelected   { get; set; }
+        /// <summary>
+        /// Current write speed selected
+        /// </summary>
         public ushort CurrentWriteSpeedSelected { get; set; }
 
+        /// <summary>
+        /// Database ID
+        /// </summary>
         [JsonIgnore, Key]
         public int Id { get; set; }
 
+        /// <summary>
+        /// Decodes the page 2Ah of a MODE SENSE response
+        /// </summary>
+        /// <param name="pageResponse">Raw page 2Ah</param>
+        /// <returns>Decoded page 2Ah</returns>
         public static ModePage_2A Decode(byte[] pageResponse)
         {
             if((pageResponse?[0] & 0x40) == 0x40)
@@ -242,6 +337,11 @@ namespace Aaru.CommonTypes.Structs.Devices.SCSI.Modes
             return decoded;
         }
 
+        /// <summary>
+        /// Encodes a page 2Ah of a MODE SENSE response
+        /// </summary>
+        /// <param name="decoded">Decoded page 2Ah</param>
+        /// <returns>Raw page 2Ah</returns>
         public static byte[] Encode(ModePage_2A decoded)
         {
             byte[] pageResponse = new byte[512];
@@ -464,10 +564,19 @@ namespace Aaru.CommonTypes.Structs.Devices.SCSI.Modes
         }
     }
 
+    /// <summary>
+    /// Page 2Ah write descriptor
+    /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public struct ModePage_2A_WriteDescriptor
     {
+        /// <summary>
+        /// Rotational control
+        /// </summary>
         public byte   RotationControl;
+        /// <summary>
+        /// Write speed
+        /// </summary>
         public ushort WriteSpeed;
     }
     #endregion Mode Page 0x2A: CD-ROM capabilities page

@@ -45,6 +45,9 @@ namespace Aaru.CommonTypes.Interfaces
     /// <summary>Interface to implement filesystem plugins.</summary>
     public interface IFilesystem
     {
+        /// <summary>
+        /// Defines the encoding used to interpret strings in the filesystem
+        /// </summary>
         Encoding Encoding { get; }
         /// <summary>Plugin name.</summary>
         string Name { get; }

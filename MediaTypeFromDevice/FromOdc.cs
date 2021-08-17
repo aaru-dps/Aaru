@@ -38,6 +38,13 @@ namespace Aaru.CommonTypes
 {
     public static partial class MediaTypeFromDevice
     {
+        /// <summary>
+        /// Gets the device type from a SCSI Optical Device
+        /// </summary>
+        /// <param name="mediumType">Medium type from MODE SENSE</param>
+        /// <param name="blocks">Number of blocks in device</param>
+        /// <param name="blockSize">Size in bytes of a block</param>
+        /// <returns>Media type</returns>
         static MediaType GetFromOdc(byte mediumType, ulong blocks, uint blockSize)
         {
             if(mediumType != 0x01 &&

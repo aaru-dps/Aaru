@@ -43,6 +43,8 @@ using Aaru.CommonTypes.Structs.Devices.ATA;
 using Aaru.CommonTypes.Structs.Devices.SCSI;
 using Aaru.CommonTypes.Structs.Devices.SCSI.Modes;
 using Newtonsoft.Json;
+// This is obsolete
+#pragma warning disable 1591
 
 // ReSharper disable InconsistentNaming
 // ReSharper disable UnusedAutoPropertyAccessor.Global

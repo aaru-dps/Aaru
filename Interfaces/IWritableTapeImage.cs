@@ -41,6 +41,9 @@ using Aaru.CommonTypes.Structs;
 
 namespace Aaru.CommonTypes.Interfaces
 {
+    /// <summary>
+    /// Defines an image that is writable and can store information about a streaming, digital, tape
+    /// </summary>
     public interface IWritableTapeImage : ITapeImage, IWritableImage
     {
         /// <summary>Registers a new file in the image</summary>

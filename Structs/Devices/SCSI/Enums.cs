@@ -34,6 +34,9 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Aaru.CommonTypes.Structs.Devices.SCSI
 {
+    /// <summary>
+    /// List of known SCSI peripheral qualifiers
+    /// </summary>
     public enum PeripheralQualifiers : byte
     {
         /// <summary>Peripheral qualifier: Device is connected and supported</summary>
@@ -48,6 +51,9 @@ namespace Aaru.CommonTypes.Structs.Devices.SCSI
         VendorMask = 0x04
     }
 
+    /// <summary>
+    /// List of known peripheral device types
+    /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public enum PeripheralDeviceTypes : byte
     {
@@ -99,6 +105,9 @@ namespace Aaru.CommonTypes.Structs.Devices.SCSI
         UnknownDevice = 0x1F
     }
 
+    /// <summary>
+    /// List of known ANSI SCSI standards
+    /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public enum ANSIVersions : byte
     {
@@ -118,6 +127,9 @@ namespace Aaru.CommonTypes.Structs.Devices.SCSI
         ANSI2008Version = 0x06
     }
 
+    /// <summary>
+    /// List of known ECMA SCSI standards
+    /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public enum ECMAVersions : byte
     {
@@ -127,6 +139,9 @@ namespace Aaru.CommonTypes.Structs.Devices.SCSI
         ECMA111 = 0x01
     }
 
+    /// <summary>
+    /// List of known ISO SCSI standards
+    /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public enum ISOVersions : byte
     {
@@ -136,6 +151,9 @@ namespace Aaru.CommonTypes.Structs.Devices.SCSI
         ISO1995Version = 0x02
     }
 
+    /// <summary>
+    /// List of known SCSI Parallel Interface clocking types
+    /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public enum SPIClocking : byte
     {
@@ -149,6 +167,9 @@ namespace Aaru.CommonTypes.Structs.Devices.SCSI
         STandDT = 0x03
     }
 
+    /// <summary>
+    /// List of known TGPS values
+    /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public enum TGPSValues : byte
     {
@@ -162,6 +183,9 @@ namespace Aaru.CommonTypes.Structs.Devices.SCSI
         Both = 0x03
     }
 
+    /// <summary>
+    /// List of known SCSI protocols
+    /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public enum ProtocolIdentifiers : byte
     {
@@ -193,13 +217,37 @@ namespace Aaru.CommonTypes.Structs.Devices.SCSI
         NoProtocol = 15
     }
 
+    /// <summary>
+    /// List of known SCSI definitions
+    /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public enum ScsiDefinitions : byte
     {
-        Current = 0, SCSI1 = 1, CCS = 2,
-        SCSI2   = 3, SCSI3 = 4
+        /// <summary>
+        /// Unknown
+        /// </summary>
+        Current = 0,
+        /// <summary>
+        /// SCSI-1
+        /// </summary>
+        SCSI1 = 1,
+        /// <summary>
+        /// Unknown
+        /// </summary>
+        CCS = 2,
+        /// <summary>
+        /// SCSI-2
+        /// </summary>
+        SCSI2   = 3,
+        /// <summary>
+        /// SCSI-3
+        /// </summary>
+        SCSI3 = 4
     }
 
+    /// <summary>
+    /// List of known SCSI physical interfaces
+    /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public enum PhysicalInterfaces : uint
     {

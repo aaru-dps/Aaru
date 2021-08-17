@@ -47,6 +47,8 @@ using Aaru.CommonTypes.Structs.Devices.ATA;
 using Aaru.CommonTypes.Structs.Devices.SCSI;
 using Aaru.CommonTypes.Structs.Devices.SCSI.Modes;
 using Newtonsoft.Json;
+// TODO: Re-enable CS1591 in this file
+#pragma warning disable 1591
 
 // ReSharper disable VirtualMemberNeverOverridden.Global
 // ReSharper disable VirtualMemberCallInConstructor

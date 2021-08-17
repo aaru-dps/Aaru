@@ -40,12 +40,30 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Aaru.CommonTypes.Metadata
 {
+    /// <summary>
+    /// Describes CD reading offset
+    /// </summary>
     public class CdOffset
     {
+        /// <summary>
+        /// Drive manufacturer
+        /// </summary>
         public string Manufacturer { get; set; }
+        /// <summary>
+        /// Drive model
+        /// </summary>
         public string Model        { get; set; }
+        /// <summary>
+        /// Reading offset
+        /// </summary>
         public short  Offset       { get; set; }
+        /// <summary>
+        /// Number of times this offset has been submitted
+        /// </summary>
         public int    Submissions  { get; set; }
+        /// <summary>
+        /// Percentage of submissions in agreement with this offset
+        /// </summary>
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:P0}")]
         public float Agreement { get; set; }
     }

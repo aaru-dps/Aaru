@@ -37,8 +37,22 @@ using Aaru.Console;
 
 namespace Aaru.CommonTypes
 {
+    /// <summary>
+    /// Gets the media type from a real device
+    /// </summary>
     public static partial class MediaTypeFromDevice
     {
+        /// <summary>
+        /// Gets the media type from an SCSI MultiMedia Commands compliant device
+        /// </summary>
+        /// <param name="model">Model string</param>
+        /// <param name="mediumType">Medium type from MODE SENSE</param>
+        /// <param name="densityCode">Density code from MODE SENSE</param>
+        /// <param name="blocks">Number of blocks in media</param>
+        /// <param name="blockSize">Size of a block in bytes</param>
+        /// <param name="isUsb">Is the device USB attached</param>
+        /// <param name="opticalDisc">Is the media an optical disc</param>
+        /// <returns>Media type</returns>
         static MediaType GetFromMmc(string model, byte mediumType, byte densityCode, ulong blocks, uint blockSize,
                                     bool isUsb, bool opticalDisc)
         {

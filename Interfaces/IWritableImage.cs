@@ -62,7 +62,13 @@ namespace Aaru.CommonTypes.Interfaces
         /// <summary>Gets a list of known extensions for format auto-choosing</summary>
         IEnumerable<string> KnownExtensions { get; }
 
+        /// <summary>
+        /// If set to <c>true</c> means the image is opened for writing
+        /// </summary>
         bool   IsWriting    { get; }
+        /// <summary>
+        /// Contains a description of the last error
+        /// </summary>
         string ErrorMessage { get; }
 
         /// <summary>

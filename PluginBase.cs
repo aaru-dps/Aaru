@@ -82,6 +82,10 @@ namespace Aaru.CommonTypes
             Archives             = new SortedDictionary<string, IArchive>();
         }
 
+        /// <summary>
+        /// Adds plugins to the central plugin register
+        /// </summary>
+        /// <param name="pluginRegister">Plugin register</param>
         public void AddPlugins(IPluginRegister pluginRegister)
         {
             foreach(Type type in pluginRegister.GetAllChecksumPlugins() ?? Enumerable.Empty<Type>())

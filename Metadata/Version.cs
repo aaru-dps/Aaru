@@ -41,6 +41,9 @@ using Schemas;
 
 namespace Aaru.CommonTypes.Metadata
 {
+    /// <summary>
+    /// Manages Aaru's version for metadata
+    /// </summary>
     public static class Version
     {
         /// <summary>Gets XML software type for the running version</summary>

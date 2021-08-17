@@ -48,8 +48,8 @@ namespace Aaru.CommonTypes
         /// <param name="blocks">How many blocks are on the media</param>
         /// <param name="blockSize">Size in bytes of each block</param>
         /// <param name="isUsb">Device is USB</param>
-        /// <param name="opticalDisc"></param>
-        /// <returns></returns>
+        /// <param name="opticalDisc">Is media an optical disc?</param>
+        /// <returns>The media type</returns>
         public static MediaType GetFromScsi(byte scsiPeripheralType, string vendor, string model, byte mediumType,
                                             byte densityCode, ulong blocks, uint blockSize, bool isUsb,
                                             bool opticalDisc)

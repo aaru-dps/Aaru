@@ -38,6 +38,9 @@
 
 namespace Aaru.CommonTypes.Structs
 {
+    /// <summary>
+    /// Describes a tape file
+    /// </summary>
     public struct TapeFile
     {
         /// <summary>File number</summary>

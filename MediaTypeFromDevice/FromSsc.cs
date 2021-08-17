@@ -39,6 +39,17 @@ namespace Aaru.CommonTypes
 {
     public static partial class MediaTypeFromDevice
     {
+        /// <summary>
+        /// Gets the media type from an SCSI Streaming Commands compliant device
+        /// </summary>
+        /// <param name="scsiPeripheralType">Peripheral type</param>
+        /// <param name="vendor">Vendor string</param>
+        /// <param name="model">Model string</param>
+        /// <param name="mediumType">Medium type from MODE SENSE</param>
+        /// <param name="densityCode">Density code from MODE SENSE</param>
+        /// <param name="blocks">Number of blocks in media</param>
+        /// <param name="blockSize">Size of a block in bytes</param>
+        /// <returns>Media type</returns>
         public static MediaType GetFromSsc(byte scsiPeripheralType, string vendor, string model, byte mediumType,
                                            byte densityCode, ulong blocks, uint blockSize)
         {

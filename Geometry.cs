@@ -40,8 +40,14 @@ using System.Linq;
 
 namespace Aaru.CommonTypes
 {
+    /// <summary>
+    /// Handles CHS geometries
+    /// </summary>
     public static class Geometry
     {
+        /// <summary>
+        /// List of known disk geometries
+        /// </summary>
         public static readonly (ushort cylinders, byte heads, ushort sectorsPerTrack, uint bytesPerSector, MediaEncoding
             encoding, bool variableSectorsPerTrack, MediaType type)[] KnownGeometries =
             {
@@ -116,6 +122,11 @@ namespace Aaru.CommonTypes
                 (1024, 2, 32, 512, MediaEncoding.MFM, false, MediaType.FD32MB)
             };
 
+        /// <summary>
+        /// Gets the media type for a given geometry
+        /// </summary>
+        /// <param name="geometry">Geometry</param>
+        /// <returns>Media type</returns>
         public static MediaType GetMediaType(
             (ushort cylinders, byte heads, ushort sectorsPerTrack, uint bytesPerSector, MediaEncoding encoding, bool
                 variableSectorsPerTrack) geometry) => (from geom in KnownGeometries
@@ -128,6 +139,11 @@ namespace Aaru.CommonTypes
                                                              geometry.variableSectorsPerTrack select geom.type).
             FirstOrDefault();
 
+        /// <summary>
+        /// Gets the geometry for a given media type
+        /// </summary>
+        /// <param name="mediaType">Media type</param>
+        /// <returns>Geometry</returns>
         public static (ushort cylinders, byte heads, ushort sectorsPerTrack, uint bytesPerSector, MediaEncoding encoding
             , bool variableSectorsPerTrack, MediaType type) GetGeometry(MediaType mediaType) =>
             (from geom in KnownGeometries where geom.type == mediaType select geom).FirstOrDefault();

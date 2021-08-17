@@ -38,6 +38,9 @@
 
 namespace Aaru.CommonTypes.Interfaces
 {
+    /// <summary>
+    /// Defines the interface to implement a checksum or hashing algorithm
+    /// </summary>
     public interface IChecksum
     {
         /// <summary>Updates the hash with data.</summary>

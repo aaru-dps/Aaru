@@ -41,6 +41,9 @@ using System.Collections.Generic;
 
 namespace Aaru.CommonTypes.Interfaces
 {
+    /// <summary>
+    /// Defines a register of all known plugins
+    /// </summary>
     public interface IPluginRegister
     {
         /// <summary>Gets all checksum plugins</summary>

@@ -38,6 +38,16 @@ namespace Aaru.CommonTypes
 {
     public static partial class MediaTypeFromDevice
     {
+        /// <summary>
+        /// Gets the media type from an ATA (not ATAPI) device
+        /// </summary>
+        /// <param name="manufacturer">Manufacturer string</param>
+        /// <param name="model">Model string</param>
+        /// <param name="removable">Is the device removable?</param>
+        /// <param name="compactFlash">Does the device self-identify as CompactFlash?</param>
+        /// <param name="pcmcia">Is the device attached thru PCMCIA or CardBus?</param>
+        /// <param name="blocks">Number of blocks in device</param>
+        /// <returns>The media type</returns>
         public static MediaType GetFromAta(string manufacturer, string model, bool removable, bool compactFlash,
                                            bool pcmcia, ulong blocks)
         {

@@ -64,13 +64,16 @@ namespace Aaru.CommonTypes
         /// <summary>Name of partition scheme that contains this partition</summary>
         public string Scheme;
 
+        /// <inheritdoc />
         /// <summary>Compares two partitions</summary>
         /// <param name="other">Partition to compare with</param>
         /// <returns>0 if both partitions start and end at the same sector</returns>
         public bool Equals(Partition other) => Start == other.Start && Length == other.Length;
 
+        /// <inheritdoc />
         public override bool Equals(object obj) => obj is Partition partition && Equals(partition);
 
+        /// <inheritdoc />
         public override int GetHashCode() => Start.GetHashCode() + End.GetHashCode();
 
         /// <summary>
@@ -79,6 +82,7 @@ namespace Aaru.CommonTypes
         /// </summary>
         /// <param name="other">Partition to compare with</param>
         /// <returns>A value that indicates the relative equality of the partitions being compared.</returns>
+        /// <inheritdoc />
         public int CompareTo(Partition other)
         {
             if(Start == other.Start &&

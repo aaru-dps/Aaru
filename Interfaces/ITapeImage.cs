@@ -42,6 +42,9 @@ using Aaru.CommonTypes.Structs;
 
 namespace Aaru.CommonTypes.Interfaces
 {
+    /// <summary>
+    /// Defines an image that can store the information from streaming, digital, tapes
+    /// </summary>
     public interface ITapeImage : IMediaImage
     {
         /// <summary>Gets a list of all the files registered in the image</summary>
