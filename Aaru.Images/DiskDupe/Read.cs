@@ -105,7 +105,7 @@ namespace Aaru.DiscImages
             {
                 Stream strm = _ddiImageFilter.GetDataForkStream();
 
-                strm.Seek(_trackOffsets[trackNum] + sectorOffset * _imageInfo.SectorSize, SeekOrigin.Begin);
+                strm.Seek(_trackOffsets[trackNum] + (sectorOffset * _imageInfo.SectorSize), SeekOrigin.Begin);
 
                 strm.Read(result, 0, (int)_imageInfo.SectorSize);
             }

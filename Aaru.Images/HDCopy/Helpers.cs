@@ -50,17 +50,17 @@ namespace Aaru.DiscImages
             FileHeader fheader;
 
             /* assume it's a regular HD-Copy file without the disk name */
-            dataStartOffset = 2 + 2 * numTracks;
-            fheader.lastCylinder = (byte)stream.ReadByte();
+            dataStartOffset         = 2 + (2 * numTracks);
+            fheader.lastCylinder    = (byte)stream.ReadByte();
             fheader.sectorsPerTrack = (byte)stream.ReadByte();
             if (fheader.lastCylinder == 0xff && fheader.sectorsPerTrack == 0x18)
             {
                 /* This is an "extended" HD-Copy file with filename information and 84 tracks */
                 stream.Seek(0x0e, SeekOrigin.Begin);
-                fheader.lastCylinder = (byte)stream.ReadByte();
+                fheader.lastCylinder    = (byte)stream.ReadByte();
                 fheader.sectorsPerTrack = (byte)stream.ReadByte();
-                numTracks = 84;
-                dataStartOffset = 16 + 2 * numTracks;
+                numTracks               = 84;
+                dataStartOffset         = 16 + (2 * numTracks);
             }
             fheader.trackMap = new byte[2 * numTracks];
             stream.Read(fheader.trackMap, 0, 2 * numTracks);
