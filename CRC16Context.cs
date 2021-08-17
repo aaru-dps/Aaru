@@ -113,7 +113,7 @@ namespace Aaru.Checksums
                         if((entry & 1) == 1)
                             entry = (entry >> 1) ^ polynomial;
                         else
-                            entry = entry >> 1;
+                            entry >>= 1;
 
                     table[i] = (ushort)entry;
                 }
@@ -215,9 +215,7 @@ namespace Aaru.Checksums
             return crc16Output.ToString();
         }
 
-        /// <summary>
-        /// Calculates the CRC16 of the specified buffer with the specified parameters
-        /// </summary>
+        /// <summary>Calculates the CRC16 of the specified buffer with the specified parameters</summary>
         /// <param name="buffer">Buffer</param>
         /// <param name="polynomial">Polynomial</param>
         /// <param name="seed">Seed</param>

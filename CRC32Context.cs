@@ -37,6 +37,7 @@ using Aaru.Helpers;
 
 namespace Aaru.Checksums
 {
+    /// <inheritdoc />
     /// <summary>Implements a CRC32 algorithm</summary>
     public sealed class Crc32Context : IChecksum
     {
@@ -63,7 +64,7 @@ namespace Aaru.Checksums
                     if((entry & 1) == 1)
                         entry = (entry >> 1) ^ CRC32_ISO_POLY;
                     else
-                        entry = entry >> 1;
+                        entry >>= 1;
 
                 _table[i] = entry;
             }
@@ -85,7 +86,7 @@ namespace Aaru.Checksums
                     if((entry & 1) == 1)
                         entry = (entry >> 1) ^ polynomial;
                     else
-                        entry = entry >> 1;
+                        entry >>= 1;
 
                 _table[i] = entry;
             }
@@ -146,7 +147,7 @@ namespace Aaru.Checksums
         {
             var fileStream = new FileStream(filename, FileMode.Open);
 
-            uint localhashInt = seed;
+            uint localHashInt = seed;
 
             uint[] localTable = new uint[256];
 
@@ -158,16 +159,16 @@ namespace Aaru.Checksums
                     if((entry & 1) == 1)
                         entry = (entry >> 1) ^ polynomial;
                     else
-                        entry = entry >> 1;
+                        entry >>= 1;
 
                 localTable[i] = entry;
             }
 
             for(int i = 0; i < fileStream.Length; i++)
-                localhashInt = (localhashInt >> 8) ^ localTable[fileStream.ReadByte() ^ (localhashInt & 0xff)];
+                localHashInt = (localHashInt >> 8) ^ localTable[fileStream.ReadByte() ^ (localHashInt & 0xff)];
 
-            localhashInt ^= seed;
-            hash         =  BigEndianBitConverter.GetBytes(localhashInt);
+            localHashInt ^= seed;
+            hash         =  BigEndianBitConverter.GetBytes(localHashInt);
 
             var crc32Output = new StringBuilder();
 
@@ -194,7 +195,7 @@ namespace Aaru.Checksums
         /// <param name="seed">CRC seed</param>
         public static string Data(byte[] data, uint len, out byte[] hash, uint polynomial, uint seed)
         {
-            uint localhashInt = seed;
+            uint localHashInt = seed;
 
             uint[] localTable = new uint[256];
 
@@ -206,16 +207,16 @@ namespace Aaru.Checksums
                     if((entry & 1) == 1)
                         entry = (entry >> 1) ^ polynomial;
                     else
-                        entry = entry >> 1;
+                        entry >>= 1;
 
                 localTable[i] = entry;
             }
 
             for(int i = 0; i < len; i++)
-                localhashInt = (localhashInt >> 8) ^ localTable[data[i] ^ (localhashInt & 0xff)];
+                localHashInt = (localHashInt >> 8) ^ localTable[data[i] ^ (localHashInt & 0xff)];
 
-            localhashInt ^= seed;
-            hash         =  BigEndianBitConverter.GetBytes(localhashInt);
+            localHashInt ^= seed;
+            hash         =  BigEndianBitConverter.GetBytes(localHashInt);
 
             var crc32Output = new StringBuilder();
 

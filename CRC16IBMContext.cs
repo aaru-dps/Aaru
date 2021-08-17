@@ -33,9 +33,7 @@
 namespace Aaru.Checksums
 {
     /// <inheritdoc />
-    /// <summary>
-    /// Implements the CRC16 algorithm with IBM polynomial and seed
-    /// </summary>
+    /// <summary>Implements the CRC16 algorithm with IBM polynomial and seed</summary>
     public sealed class CRC16IBMContext : Crc16Context
     {
         const ushort CRC16_IBM_POLY = 0xA001;
@@ -65,9 +63,7 @@ namespace Aaru.Checksums
             0x8641, 0x8201, 0x42C0, 0x4380, 0x8341, 0x4100, 0x81C1, 0x8081, 0x4040
         };
 
-        /// <summary>
-        /// Initializes an instance of the CRC16 with IBM polynomial and seed.
-        /// </summary>
+        /// <summary>Initializes an instance of the CRC16 with IBM polynomial and seed.</summary>
         /// <inheritdoc />
         public CRC16IBMContext() : base(CRC16_IBM_POLY, CRC16_IBM_SEED, _ibmCrc16Table, false) {}
 
@@ -98,9 +94,7 @@ namespace Aaru.Checksums
         /// <param name="hash">Byte array of the hash value.</param>
         public static string Data(byte[] data, out byte[] hash) => Data(data, (uint)data.Length, out hash);
 
-        /// <summary>
-        /// Calculates the IBM CRC16 of the specified buffer with the specified parameters
-        /// </summary>
+        /// <summary>Calculates the IBM CRC16 of the specified buffer with the specified parameters</summary>
         /// <param name="buffer">Buffer</param>
         public static ushort Calculate(byte[] buffer) =>
             Calculate(buffer, CRC16_IBM_POLY, CRC16_IBM_SEED, _ibmCrc16Table, false);

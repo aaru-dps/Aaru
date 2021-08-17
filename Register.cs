@@ -48,10 +48,9 @@ namespace Aaru.Checksums
     public sealed class Register : IPluginRegister
     {
         /// <inheritdoc />
-        public List<Type> GetAllChecksumPlugins() => Assembly.
-                                                     GetExecutingAssembly().GetTypes().
-                                                     Where(t => t.GetInterfaces().Contains(typeof(IChecksum))).
-                                                     Where(t => t.IsClass).ToList();
+        public List<Type> GetAllChecksumPlugins() => Assembly.GetExecutingAssembly().GetTypes().
+                                                              Where(t => t.GetInterfaces().Contains(typeof(IChecksum))).
+                                                              Where(t => t.IsClass).ToList();
 
         /// <inheritdoc />
         public List<Type> GetAllFilesystemPlugins() => null;

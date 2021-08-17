@@ -33,9 +33,7 @@
 namespace Aaru.Checksums
 {
     /// <inheritdoc />
-    /// <summary>
-    /// Implements the CRC16 algorithm with CCITT polynomial and seed
-    /// </summary>
+    /// <summary>Implements the CRC16 algorithm with CCITT polynomial and seed</summary>
     public sealed class CRC16CCITTContext : Crc16Context
     {
         /// <summary>CCITT CRC16 polynomial</summary>
@@ -66,9 +64,7 @@ namespace Aaru.Checksums
             0x9ff8, 0x6e17, 0x7e36, 0x4e55, 0x5e74, 0x2e93, 0x3eb2, 0x0ed1, 0x1ef0
         };
 
-        /// <summary>
-        /// Initializes an instance of the CRC16 with CCITT polynomial and seed.
-        /// </summary>
+        /// <summary>Initializes an instance of the CRC16 with CCITT polynomial and seed.</summary>
         /// <inheritdoc />
         public CRC16CCITTContext() : base(CRC16_CCITT_POLY, CRC16_CCITT_SEED, _ccittCrc16Table, true) {}
 
@@ -99,9 +95,7 @@ namespace Aaru.Checksums
         /// <param name="hash">Byte array of the hash value.</param>
         public static string Data(byte[] data, out byte[] hash) => Data(data, (uint)data.Length, out hash);
 
-        /// <summary>
-        /// Calculates the CCITT CRC16 of the specified buffer with the specified parameters
-        /// </summary>
+        /// <summary>Calculates the CCITT CRC16 of the specified buffer with the specified parameters</summary>
         /// <param name="buffer">Buffer</param>
         public static ushort Calculate(byte[] buffer) =>
             Calculate(buffer, CRC16_CCITT_POLY, CRC16_CCITT_SEED, _ccittCrc16Table, true);

@@ -37,6 +37,7 @@ using Aaru.Helpers;
 
 namespace Aaru.Checksums
 {
+    /// <inheritdoc />
     /// <summary>Implements the Adler-32 algorithm</summary>
     public sealed class Adler32Context : IChecksum
     {

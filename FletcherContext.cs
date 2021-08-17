@@ -164,6 +164,7 @@ namespace Aaru.Checksums
         public static string Data(byte[] data, out byte[] hash) => Data(data, (uint)data.Length, out hash);
     }
 
+    /// <inheritdoc />
     /// <summary>Implements the Fletcher-16 algorithm</summary>
     public sealed class Fletcher16Context : IChecksum
     {

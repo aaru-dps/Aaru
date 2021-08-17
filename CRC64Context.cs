@@ -41,13 +41,9 @@ namespace Aaru.Checksums
     /// <summary>Implements a CRC64 algorithm</summary>
     public sealed class Crc64Context : IChecksum
     {
-        /// <summary>
-        /// ECMA CRC64 polynomial
-        /// </summary>
+        /// <summary>ECMA CRC64 polynomial</summary>
         public const ulong CRC64_ECMA_POLY = 0xC96C5795D7870F42;
-        /// <summary>
-        /// ECMA CRC64 seed
-        /// </summary>
+        /// <summary>ECMA CRC64 seed</summary>
         public const ulong CRC64_ECMA_SEED = 0xFFFFFFFFFFFFFFFF;
 
         readonly ulong   _finalSeed;
@@ -69,7 +65,7 @@ namespace Aaru.Checksums
                     if((entry & 1) == 1)
                         entry = (entry >> 1) ^ CRC64_ECMA_POLY;
                     else
-                        entry = entry >> 1;
+                        entry >>= 1;
 
                 _table[i] = entry;
             }
@@ -92,7 +88,7 @@ namespace Aaru.Checksums
                     if((entry & 1) == 1)
                         entry = (entry >> 1) ^ polynomial;
                     else
-                        entry = entry >> 1;
+                        entry >>= 1;
 
                 _table[i] = entry;
             }
@@ -155,7 +151,7 @@ namespace Aaru.Checksums
         {
             var fileStream = new FileStream(filename, FileMode.Open);
 
-            ulong localhashInt = seed;
+            ulong localHashInt = seed;
 
             ulong[] localTable = new ulong[256];
 
@@ -167,16 +163,16 @@ namespace Aaru.Checksums
                     if((entry & 1) == 1)
                         entry = (entry >> 1) ^ polynomial;
                     else
-                        entry = entry >> 1;
+                        entry >>= 1;
 
                 localTable[i] = entry;
             }
 
             for(int i = 0; i < fileStream.Length; i++)
-                localhashInt = (localhashInt >> 8) ^ localTable[(ulong)fileStream.ReadByte() ^ (localhashInt & 0xffL)];
+                localHashInt = (localHashInt >> 8) ^ localTable[(ulong)fileStream.ReadByte() ^ (localHashInt & 0xffL)];
 
-            localhashInt ^= seed;
-            hash         =  BigEndianBitConverter.GetBytes(localhashInt);
+            localHashInt ^= seed;
+            hash         =  BigEndianBitConverter.GetBytes(localHashInt);
 
             var crc64Output = new StringBuilder();
 
@@ -203,7 +199,7 @@ namespace Aaru.Checksums
         /// <param name="seed">CRC seed</param>
         public static string Data(byte[] data, uint len, out byte[] hash, ulong polynomial, ulong seed)
         {
-            ulong localhashInt = seed;
+            ulong localHashInt = seed;
 
             ulong[] localTable = new ulong[256];
 
@@ -215,16 +211,16 @@ namespace Aaru.Checksums
                     if((entry & 1) == 1)
                         entry = (entry >> 1) ^ polynomial;
                     else
-                        entry = entry >> 1;
+                        entry >>= 1;
 
                 localTable[i] = entry;
             }
 
             for(int i = 0; i < len; i++)
-                localhashInt = (localhashInt >> 8) ^ localTable[data[i] ^ (localhashInt & 0xff)];
+                localHashInt = (localHashInt >> 8) ^ localTable[data[i] ^ (localHashInt & 0xff)];
 
-            localhashInt ^= seed;
-            hash         =  BigEndianBitConverter.GetBytes(localhashInt);
+            localHashInt ^= seed;
+            hash         =  BigEndianBitConverter.GetBytes(localHashInt);
 
             var crc64Output = new StringBuilder();
 

@@ -45,21 +45,32 @@ namespace Aaru.Checksums
         static byte[] _eccBTable;
         static uint[] _edcTable;
 
-        /// <summary>
-        /// Checks the EDC and ECC of a CD sector
-        /// </summary>
+        /// <summary>Checks the EDC and ECC of a CD sector</summary>
         /// <param name="buffer">CD sector</param>
-        /// <returns><c>true</c> if all checks were correct, <c>false</c> if any of them weren't, and <c>null</c> if none of them are present.</returns>
+        /// <returns>
+        ///     <c>true</c> if all checks were correct, <c>false</c> if any of them weren't, and <c>null</c> if none of them
+        ///     are present.
+        /// </returns>
         public static bool? CheckCdSector(byte[] buffer) => CheckCdSector(buffer, out _, out _, out _);
 
-        /// <summary>
-        /// Checks the EDC and ECC of a CD sector
-        /// </summary>
+        /// <summary>Checks the EDC and ECC of a CD sector</summary>
         /// <param name="buffer">CD sector</param>
-        /// <param name="correctEccP"><c>true</c> if ECC P is correct, <c>false</c> if it isn't, and <c>null</c> if there is no ECC P in sector.</param>
-        /// <param name="correctEccQ"><c>true</c> if ECC Q is correct, <c>false</c> if it isn't, and <c>null</c> if there is no ECC Q in sector.</param>
-        /// <param name="correctEdc"><c>true</c> if EDC is correct, <c>false</c> if it isn't, and <c>null</c> if there is no EDC in sector.</param>
-        /// <returns><c>true</c> if all checks were correct, <c>false</c> if any of them weren't, and <c>null</c> if none of them are present.</returns>
+        /// <param name="correctEccP">
+        ///     <c>true</c> if ECC P is correct, <c>false</c> if it isn't, and <c>null</c> if there is no ECC
+        ///     P in sector.
+        /// </param>
+        /// <param name="correctEccQ">
+        ///     <c>true</c> if ECC Q is correct, <c>false</c> if it isn't, and <c>null</c> if there is no ECC
+        ///     Q in sector.
+        /// </param>
+        /// <param name="correctEdc">
+        ///     <c>true</c> if EDC is correct, <c>false</c> if it isn't, and <c>null</c> if there is no EDC in
+        ///     sector.
+        /// </param>
+        /// <returns>
+        ///     <c>true</c> if all checks were correct, <c>false</c> if any of them weren't, and <c>null</c> if none of them
+        ///     are present.
+        /// </returns>
         public static bool? CheckCdSector(byte[] buffer, out bool? correctEccP, out bool? correctEccQ,
                                           out bool? correctEdc)
         {
