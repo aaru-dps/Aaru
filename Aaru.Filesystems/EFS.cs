@@ -131,7 +131,7 @@ namespace Aaru.Filesystems
             if(imagePlugin.Info.SectorSize < 512)
                 return;
 
-            var efsSb = new Superblock();
+            Superblock efsSb;
 
             // Misaligned
             if(imagePlugin.Info.XmlMediaType == XmlMediaType.OpticalDisc)

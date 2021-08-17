@@ -52,7 +52,7 @@ namespace Aaru.Core.Devices.Scanning
             MhddLog mhddLog;
             IbgLog  ibgLog;
             byte[]  senseBuf;
-            bool    sense            = false;
+            bool    sense;
             uint    blockSize        = 0;
             ushort  currentProfile   = 0x0001;
             bool    foundReadCommand = false;

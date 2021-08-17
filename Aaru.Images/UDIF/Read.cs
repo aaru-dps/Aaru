@@ -294,10 +294,9 @@ namespace Aaru.DiscImages
 
             foreach(byte[] blkxBytes in blkxList)
             {
-                var    bHdr  = new BlockHeader();
-                byte[] bHdrB = new byte[Marshal.SizeOf<BlockHeader>()];
+                byte[]      bHdrB = new byte[Marshal.SizeOf<BlockHeader>()];
                 Array.Copy(blkxBytes, 0, bHdrB, 0, Marshal.SizeOf<BlockHeader>());
-                bHdr = Marshal.ByteArrayToStructureBigEndian<BlockHeader>(bHdrB);
+                BlockHeader bHdr = Marshal.ByteArrayToStructureBigEndian<BlockHeader>(bHdrB);
 
                 AaruConsole.DebugWriteLine("UDIF plugin", "bHdr.signature = 0x{0:X8}", bHdr.signature);
                 AaruConsole.DebugWriteLine("UDIF plugin", "bHdr.version = {0}", bHdr.version);
@@ -325,13 +324,12 @@ namespace Aaru.DiscImages
 
                 for(int i = 0; i < bHdr.chunks; i++)
                 {
-                    var    bChnk  = new BlockChunk();
-                    byte[] bChnkB = new byte[Marshal.SizeOf<BlockChunk>()];
+                    byte[]     bChnkB = new byte[Marshal.SizeOf<BlockChunk>()];
 
                     Array.Copy(blkxBytes, Marshal.SizeOf<BlockHeader>() + (Marshal.SizeOf<BlockChunk>() * i), bChnkB, 0,
                                Marshal.SizeOf<BlockChunk>());
 
-                    bChnk = Marshal.ByteArrayToStructureBigEndian<BlockChunk>(bChnkB);
+                    BlockChunk bChnk = Marshal.ByteArrayToStructureBigEndian<BlockChunk>(bChnkB);
 
                     AaruConsole.DebugWriteLine("UDIF plugin", "bHdr.chunk[{0}].type = 0x{1:X8}", i, bChnk.type);
                     AaruConsole.DebugWriteLine("UDIF plugin", "bHdr.chunk[{0}].comment = {1}", i, bChnk.comment);

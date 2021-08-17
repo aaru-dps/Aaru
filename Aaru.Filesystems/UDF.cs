@@ -279,10 +279,10 @@ namespace Aaru.Filesystems
 
             ulong count = 0;
 
-            var pvd    = new PrimaryVolumeDescriptor();
-            var lvd    = new LogicalVolumeDescriptor();
-            var lvid   = new LogicalVolumeIntegrityDescriptor();
-            var lvidiu = new LogicalVolumeIntegrityDescriptorImplementationUse();
+            var                              pvd = new PrimaryVolumeDescriptor();
+            var                              lvd = new LogicalVolumeDescriptor();
+            LogicalVolumeIntegrityDescriptor lvid;
+            var                              lvidiu = new LogicalVolumeIntegrityDescriptorImplementationUse();
 
             while(count < 256)
             {

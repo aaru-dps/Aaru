@@ -170,7 +170,7 @@ namespace Aaru.Tests.WritableImages
                     Assert.IsTrue(outputFormat.SetTracks(inputFormat.Tracks),
                                   $"Error {outputFormat.ErrorMessage} sending tracks list to output image.");
 
-                    ulong doneSectors = 0;
+                    ulong doneSectors;
 
                     foreach(Track track in inputFormat.Tracks)
                     {

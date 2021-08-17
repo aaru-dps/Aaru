@@ -422,7 +422,6 @@ namespace Aaru.Filesystems
                    fat1Sector0[1]          == 0xFF &&
                    validRootDir)
                 {
-                    useDecRainbowBpb = true;
                     AaruConsole.DebugWriteLine("FAT plugin", "Using DEC Rainbow hardcoded BPB.");
                     fakeBpb.bps       = 512;
                     fakeBpb.spc       = 1;

@@ -466,7 +466,6 @@ namespace Aaru.DiscImages
                             case DataType.CdSectorPrefixCorrected:
                             case DataType.CdSectorSuffixCorrected:
                             {
-                                uint[] cdDdt           = new uint[ddtHeader.entries];
                                 byte[] decompressedDdt = new byte[ddtHeader.length];
 
                                 AaruConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
@@ -509,7 +508,7 @@ namespace Aaru.DiscImages
                                             ImageNotSupportedException($"Found unsupported compression algorithm {(ushort)ddtHeader.compression}");
                                 }
 
-                                cdDdt = MemoryMarshal.Cast<byte, uint>(decompressedDdt).ToArray();
+                                uint[] cdDdt = MemoryMarshal.Cast<byte, uint>(decompressedDdt).ToArray();
 
                                 switch(entry.dataType)
                                 {

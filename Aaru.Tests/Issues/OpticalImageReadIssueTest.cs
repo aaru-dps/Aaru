@@ -73,8 +73,6 @@ namespace Aaru.Tests.Issues
 
                     ctx.Update(sector);
                 }
-
-                previousTrackEnd = currentTrack.TrackEndSector;
             }
         }
     }

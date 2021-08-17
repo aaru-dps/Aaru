@@ -286,25 +286,6 @@ namespace Aaru.Commands.Device
                 {
                     Identify.IdentifyDevice ATAID = decodedIdentify.Value;
 
-                    uint blockSize;
-
-                    if((ATAID.PhysLogSectorSize & 0x8000) == 0x0000 &&
-                       (ATAID.PhysLogSectorSize & 0x4000) == 0x4000)
-                    {
-                        if((ATAID.PhysLogSectorSize & 0x1000) == 0x1000)
-                            if(ATAID.LogicalSectorWords <= 255 ||
-                               ATAID.LogicalAlignment   == 0xFFFF)
-                                blockSize = 512;
-                            else
-                                blockSize = ATAID.LogicalSectorWords * 2;
-                        else
-                            blockSize = 512;
-                    }
-                    else
-                    {
-                        blockSize = 512;
-                    }
-
                     ulong blocks;
 
                     if(ATAID.CurrentCylinders       > 0 &&

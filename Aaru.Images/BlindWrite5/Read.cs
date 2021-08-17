@@ -787,7 +787,7 @@ namespace Aaru.DiscImages
                         string? filename           = Path.GetFileNameWithoutExtension(splitStartChars.FilePath);
                         bool    lowerCaseExtension = false;
                         bool    lowerCaseFileName  = false;
-                        string  basePath           = "";
+                        string  basePath;
 
                         bool version5 = string.Compare(Path.GetExtension(imageFilter.GetFilename()), ".B5T",
                                                        StringComparison.OrdinalIgnoreCase) == 0;

@@ -146,7 +146,6 @@ namespace Aaru.Filesystems
             byte[] eas  = new byte[size];
             Array.Copy(full, 0, eas, 0, size);
 
-            full = null;
             eaMs.Close();
 
             return GetEas(eas);
