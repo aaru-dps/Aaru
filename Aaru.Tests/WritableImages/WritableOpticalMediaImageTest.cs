@@ -469,7 +469,7 @@ namespace Aaru.Tests.WritableImages
                     filter      = filtersList.GetFilter(outputPath);
                     filter.Open(outputPath);
 
-                    string? tmpFolder = Path.GetDirectoryName(outputPath);
+                    string tmpFolder = Path.GetDirectoryName(outputPath);
                     Environment.CurrentDirectory = tmpFolder;
 
                     var image = Activator.CreateInstance(OutputPlugin.GetType()) as IOpticalMediaImage;

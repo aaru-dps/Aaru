@@ -784,7 +784,7 @@ namespace Aaru.DiscImages
                         DataFileCharacteristics splitStartChars =
                             _filePaths.FirstOrDefault(f => Path.GetExtension(f.FilePath).ToLowerInvariant() == ".b00");
 
-                        string? filename           = Path.GetFileNameWithoutExtension(splitStartChars.FilePath);
+                        string filename           = Path.GetFileNameWithoutExtension(splitStartChars.FilePath);
                         bool    lowerCaseExtension = false;
                         bool    lowerCaseFileName  = false;
                         string  basePath;
