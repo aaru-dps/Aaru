@@ -2095,6 +2095,7 @@ namespace Aaru.CommonTypes.Metadata
             return obj.GetType() == GetType() && Equals((DensityCode)obj);
         }
 
+        // ReSharper disable once NonReadonlyMemberInGetHashCode
         public override int GetHashCode() => Code;
     }
 
