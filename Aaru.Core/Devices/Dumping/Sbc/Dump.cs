@@ -175,6 +175,7 @@ namespace Aaru.Core.Devices.Dumping
                         if(decMode.Value.Header.BlockDescriptors?.Length > 0)
                             scsiDensityCode = (byte)decMode.Value.Header.BlockDescriptors[0].Density;
 
+                        // TODO: Fix this
                         containsFloppyPage = decMode.Value.Pages?.Aggregate(containsFloppyPage,
                                                                             (current, modePage) =>
                                                                                 current | (modePage.Page == 0x05)) ==
