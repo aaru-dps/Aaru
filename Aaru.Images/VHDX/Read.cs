@@ -323,7 +323,7 @@ namespace Aaru.DiscImages
                 _hasParent = true;
             }
 
-            _chunkRatio = (long)((Math.Pow(2, 23) * _logicalSectorSize) / _vFileParms.blockSize);
+            _chunkRatio = (long)(Math.Pow(2, 23) * _logicalSectorSize / _vFileParms.blockSize);
             _dataBlocks = _virtualDiskSize / _vFileParms.blockSize;
 
             if(_virtualDiskSize % _vFileParms.blockSize > 0)
@@ -439,8 +439,8 @@ namespace Aaru.DiscImages
             if(_sectorCache.TryGetValue(sectorAddress, out byte[] sector))
                 return sector;
 
-            ulong index  = (sectorAddress * _logicalSectorSize) / _vFileParms.blockSize;
-            ulong secOff = (sectorAddress * _logicalSectorSize) % _vFileParms.blockSize;
+            ulong index  = sectorAddress * _logicalSectorSize / _vFileParms.blockSize;
+            ulong secOff = sectorAddress * _logicalSectorSize % _vFileParms.blockSize;
 
             ulong blkPtr   = _blockAllocationTable[index];
             ulong blkFlags = blkPtr & BAT_FLAGS_MASK;

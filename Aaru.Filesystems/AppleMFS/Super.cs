@@ -88,8 +88,8 @@ namespace Aaru.Filesystems
             _volMdb.drVN = StringHandlers.PascalToString(variableSize, Encoding);
 
             _directoryBlocks = _device.ReadSectors(_volMdb.drDirSt + _partitionStart, _volMdb.drBlLen);
-            int bytesInBlockMap = ((_volMdb.drNmAlBlks * 12) / 8) + ((_volMdb.drNmAlBlks * 12) % 8);
-            int bytesInWholeMdb = bytesInBlockMap                 + BYTES_BEFORE_BLOCK_MAP;
+            int bytesInBlockMap = (_volMdb.drNmAlBlks * 12 / 8) + (_volMdb.drNmAlBlks * 12 % 8);
+            int bytesInWholeMdb = bytesInBlockMap               + BYTES_BEFORE_BLOCK_MAP;
 
             int sectorsInWholeMdb = (bytesInWholeMdb / (int)_device.Info.SectorSize) +
                                     (bytesInWholeMdb % (int)_device.Info.SectorSize);

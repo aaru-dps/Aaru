@@ -116,7 +116,7 @@ namespace Aaru.Tests.Devices
                 frame =  ((leadOutTrack.PFRAME >> 4) * 10) + (leadOutTrack.PFRAME & 0x0F);
             }
 
-            int sectors = ((min * 60 * 75) + (sec * 75) + frame) - 150;
+            int sectors = (min * 60 * 75) + (sec * 75) + frame - 150;
 
             AaruConsole.WriteLine("Trap disc shows {0} sectors...", sectors);
 

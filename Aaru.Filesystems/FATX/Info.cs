@@ -111,7 +111,7 @@ namespace Aaru.Filesystems
                 VolumeSerial = $"{fatxSb.id:X8}"
             };
 
-            XmlFsType.Clusters = (((partition.End - partition.Start) + 1) * imagePlugin.Info.SectorSize) /
+            XmlFsType.Clusters = (partition.End - partition.Start + 1) * imagePlugin.Info.SectorSize /
                                  XmlFsType.ClusterSize;
         }
     }

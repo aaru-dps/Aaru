@@ -518,7 +518,7 @@ namespace Aaru.Filesystems
             XmlFsType.FreeClustersSpecified = true;
 
             sb.AppendFormat("{0} inodes with {1} free inodes ({2}%)", supblk.inodes, supblk.free_inodes,
-                            (supblk.free_inodes * 100) / supblk.inodes).AppendLine();
+                            supblk.free_inodes * 100 / supblk.inodes).AppendLine();
 
             if(supblk.first_inode > 0)
                 sb.AppendFormat("First inode is {0}", supblk.first_inode).AppendLine();

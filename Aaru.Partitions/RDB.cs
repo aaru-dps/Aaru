@@ -710,7 +710,7 @@ namespace Aaru.Partitions
                 Description = AmigaDosTypeToDescriptionString(rdbEntry.DosEnvVec.DosType),
                 Name = rdbEntry.DriveName,
                 Sequence = sequence,
-                Length = ((rdbEntry.DosEnvVec.HighCylinder + 1) - rdbEntry.DosEnvVec.LowCylinder) *
+                Length = (rdbEntry.DosEnvVec.HighCylinder + 1 - rdbEntry.DosEnvVec.LowCylinder) *
                          rdbEntry.DosEnvVec.Surfaces * rdbEntry.DosEnvVec.Bpt,
                 Start = (rdbEntry.DosEnvVec.LowCylinder * rdbEntry.DosEnvVec.Surfaces * rdbEntry.DosEnvVec.Bpt) +
                         sectorOffset,
@@ -718,7 +718,7 @@ namespace Aaru.Partitions
                 Scheme = Name,
                 Offset = ((rdbEntry.DosEnvVec.LowCylinder * rdbEntry.DosEnvVec.Surfaces * rdbEntry.DosEnvVec.Bpt) +
                           sectorOffset) * rdb.BlockSize,
-                Size = ((rdbEntry.DosEnvVec.HighCylinder + 1) - rdbEntry.DosEnvVec.LowCylinder) *
+                Size = (rdbEntry.DosEnvVec.HighCylinder + 1 - rdbEntry.DosEnvVec.LowCylinder) *
                        rdbEntry.DosEnvVec.Surfaces * rdbEntry.DosEnvVec.Bpt * rdb.BlockSize
             }))
             {

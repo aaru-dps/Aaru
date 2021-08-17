@@ -429,7 +429,7 @@ namespace Aaru.DiscImages
             for(uint i = 0; i < length; i++)
             {
                 trackStream.
-                    Seek((long)(track.TrackFileOffset + (((i + sectorAddress) - track.TrackStartSector) * (ulong)(track.TrackRawBytesPerSector + subchannelSize))),
+                    Seek((long)(track.TrackFileOffset + ((i + sectorAddress - track.TrackStartSector) * (ulong)(track.TrackRawBytesPerSector + subchannelSize))),
                          SeekOrigin.Begin);
 
                 trackStream.Write(data, (int)(i * track.TrackRawBytesPerSector), track.TrackRawBytesPerSector);
@@ -484,10 +484,10 @@ namespace Aaru.DiscImages
                 _writingTracks.Add(newTrack);
 
                 currentOffset += (ulong)newTrack.TrackRawBytesPerSector *
-                                 ((newTrack.TrackEndSector - newTrack.TrackStartSector) + 1);
+                                 (newTrack.TrackEndSector - newTrack.TrackStartSector + 1);
 
                 if(track.TrackSubchannelType != TrackSubchannelType.None)
-                    currentOffset += 96 * ((newTrack.TrackEndSector - newTrack.TrackStartSector) + 1);
+                    currentOffset += 96 * (newTrack.TrackEndSector - newTrack.TrackStartSector + 1);
             }
 
             _writingStreams = new Dictionary<uint, FileStream>();
@@ -606,12 +606,12 @@ namespace Aaru.DiscImages
                     _descriptorStream.WriteLine("ISRC {0}", isrc);
 
                 (byte minute, byte second, byte frame) msf =
-                    LbaToMsf((track.TrackEndSector - track.TrackStartSector) + 1);
+                    LbaToMsf(track.TrackEndSector - track.TrackStartSector + 1);
 
                 _descriptorStream.WriteLine("DATAFILE \"{0}\" #{1} {2:D2}:{3:D2}:{4:D2} // length in bytes: {5}",
                                             Path.GetFileName(track.TrackFile), track.TrackFileOffset, msf.minute,
                                             msf.second, msf.frame,
-                                            ((track.TrackEndSector - track.TrackStartSector) + 1) *
+                                            (track.TrackEndSector - track.TrackStartSector + 1) *
                                             (ulong)(track.TrackRawBytesPerSector +
                                                     (track.TrackSubchannelType != TrackSubchannelType.None ? 96 : 0)));
 
@@ -791,7 +791,7 @@ namespace Aaru.DiscImages
                     for(uint i = 0; i < length; i++)
                     {
                         trackStream.
-                            Seek((long)(track.TrackFileOffset + (((i + sectorAddress) - track.TrackStartSector) * (ulong)(track.TrackRawBytesPerSector + 96))) + track.TrackRawBytesPerSector,
+                            Seek((long)(track.TrackFileOffset + ((i + sectorAddress - track.TrackStartSector) * (ulong)(track.TrackRawBytesPerSector + 96))) + track.TrackRawBytesPerSector,
                                  SeekOrigin.Begin);
 
                         trackStream.Write(data, (int)(i * 96), 96);

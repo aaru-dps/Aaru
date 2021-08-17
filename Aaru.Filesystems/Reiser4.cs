@@ -139,7 +139,7 @@ namespace Aaru.Filesystems
             {
                 Type         = "Reiser 4 filesystem",
                 ClusterSize  = reiserSb.blocksize,
-                Clusters     = ((partition.End - partition.Start) * imagePlugin.Info.SectorSize) / reiserSb.blocksize,
+                Clusters     = (partition.End - partition.Start) * imagePlugin.Info.SectorSize / reiserSb.blocksize,
                 VolumeName   = StringHandlers.CToString(reiserSb.label, Encoding),
                 VolumeSerial = reiserSb.uuid.ToString()
             };

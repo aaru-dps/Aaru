@@ -79,11 +79,11 @@ namespace Aaru.Partitions
 
                 var part = new Partition
                 {
-                    Length   = (end   - start) + 1,
+                    Length   = end - start + 1,
                     Offset   = (start + sectorOffset) * imagePlugin.Info.SectorSize,
                     Scheme   = Name,
                     Sequence = (ulong)partitions.Count,
-                    Size     = ((end - start) + 1) * imagePlugin.Info.SectorSize,
+                    Size     = (end - start + 1) * imagePlugin.Info.SectorSize,
                     Start    = start + sectorOffset,
                     Type     = tokens[1]
                 };

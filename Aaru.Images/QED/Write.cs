@@ -65,7 +65,7 @@ namespace Aaru.DiscImages
             }
 
             // TODO: Correct this calculation
-            if((sectors * sectorSize) / DEFAULT_CLUSTER_SIZE > uint.MaxValue)
+            if(sectors * sectorSize / DEFAULT_CLUSTER_SIZE > uint.MaxValue)
             {
                 ErrorMessage = "Too many sectors for selected cluster size";
 
@@ -100,8 +100,8 @@ namespace Aaru.DiscImages
                 image_size      = sectors * sectorSize
             };
 
-            _clusterSectors = _qHdr.cluster_size                      / 512;
-            _tableSize      = (_qHdr.cluster_size * _qHdr.table_size) / 8;
+            _clusterSectors = _qHdr.cluster_size                    / 512;
+            _tableSize      = _qHdr.cluster_size * _qHdr.table_size / 8;
 
             _l1Table = new ulong[_tableSize];
             _l1Mask  = 0;

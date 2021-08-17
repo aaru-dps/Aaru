@@ -135,15 +135,15 @@ namespace Aaru.Partitions
 
                         var part = new Partition
                         {
-                            Size     = (ulong)(ddm.sbMap[i].ddSize         * 512),
-                            Length   = (ulong)((ddm.sbMap[i].ddSize * 512) / sectorSize),
+                            Size     = (ulong)(ddm.sbMap[i].ddSize       * 512),
+                            Length   = (ulong)(ddm.sbMap[i].ddSize * 512 / sectorSize),
                             Sequence = sequence,
                             Offset   = ddm.sbMap[i].ddBlock * sectorSize,
                             Start    = ddm.sbMap[i].ddBlock + sectorOffset,
                             Type     = "Apple_Driver"
                         };
 
-                        if((ddm.sbMap[i].ddSize * 512) % sectorSize > 0)
+                        if(ddm.sbMap[i].ddSize * 512 % sectorSize > 0)
                             part.Length++;
 
                         partitions.Add(part);
@@ -188,11 +188,11 @@ namespace Aaru.Partitions
 
                     var part = new Partition
                     {
-                        Size     = oldEntry.pdStart                     * ddm.sbBlockSize,
-                        Length   = (oldEntry.pdStart * ddm.sbBlockSize) / sectorSize,
+                        Size     = oldEntry.pdStart                   * ddm.sbBlockSize,
+                        Length   = oldEntry.pdStart * ddm.sbBlockSize / sectorSize,
                         Sequence = sequence,
-                        Offset   = oldEntry.pdSize                     * ddm.sbBlockSize,
-                        Start    = (oldEntry.pdSize * ddm.sbBlockSize) / sectorSize,
+                        Offset   = oldEntry.pdSize                   * ddm.sbBlockSize,
+                        Start    = oldEntry.pdSize * ddm.sbBlockSize / sectorSize,
                         Scheme   = Name,
                         Type     = oldEntry.pdFSID == HFS_MAGIC_OLD ? "Apple_HFS" : $"0x{oldEntry.pdFSID:X8}"
                     };
@@ -225,7 +225,7 @@ namespace Aaru.Partitions
                     entrySize     = 512;
                     entryCount    = entry.entries;
                     skipDdm       = 512;
-                    sectorsToRead = (((entryCount + 1) * 512) / sectorSize) + 1;
+                    sectorsToRead = ((entryCount + 1) * 512 / sectorSize) + 1;
                 }
                 else
                 {
@@ -334,8 +334,8 @@ namespace Aaru.Partitions
                     Name     = StringHandlers.CToString(entry.name),
                     Offset   = entry.start   * entrySize,
                     Size     = entry.sectors * entrySize,
-                    Start    = ((entry.start * entrySize) / sectorSize) + sectorOffset,
-                    Length   = (entry.sectors             * entrySize) / sectorSize,
+                    Start    = (entry.start * entrySize / sectorSize) + sectorOffset,
+                    Length   = entry.sectors * entrySize / sectorSize,
                     Scheme   = Name
                 };
 
@@ -361,7 +361,7 @@ namespace Aaru.Partitions
 
                 if(flags.HasFlag(AppleMapFlags.Bootable))
                 {
-                    sb.AppendFormat("First boot sector: {0}", (entry.first_boot_block * entrySize) / sectorSize).
+                    sb.AppendFormat("First boot sector: {0}", entry.first_boot_block * entrySize / sectorSize).
                        AppendLine();
 
                     sb.AppendFormat("Boot is {0} bytes.", entry.boot_size).AppendLine();

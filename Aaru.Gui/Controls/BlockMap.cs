@@ -170,7 +170,7 @@ namespace Aaru.Gui.Controls
             {
                 case nameof(Blocks):
                     if(_maxBlocks == 0)
-                        _maxBlocks = (ulong)((Width / _blockSize) * (Height / _blockSize));
+                        _maxBlocks = (ulong)(Width / _blockSize * (Height / _blockSize));
 
                     if(Blocks > _maxBlocks)
                     {
@@ -225,7 +225,7 @@ namespace Aaru.Gui.Controls
             if((int?)_bitmap?.Size.Height != (int)Height ||
                (int?)_bitmap?.Size.Width  != (int)Width)
             {
-                _maxBlocks = (ulong)((Width / _blockSize) * (Height / _blockSize));
+                _maxBlocks = (ulong)(Width / _blockSize * (Height / _blockSize));
                 CreateBitmap();
             }
 
@@ -398,7 +398,7 @@ namespace Aaru.Gui.Controls
         void CreateBitmap()
         {
             if(_maxBlocks == 0)
-                _maxBlocks = (ulong)((Width / _blockSize) * (Height / _blockSize));
+                _maxBlocks = (ulong)(Width / _blockSize * (Height / _blockSize));
 
             _bitmap?.Dispose();
 
@@ -423,7 +423,7 @@ namespace Aaru.Gui.Controls
             {
                 for(ulong x = 0; x < Width; x += _blockSize)
                 {
-                    ulong currentBlockValue = ((y * clustersPerRow) / _blockSize) + (x / _blockSize);
+                    ulong currentBlockValue = (y * clustersPerRow / _blockSize) + (x / _blockSize);
 
                     if(currentBlockValue >= _maxBlocks ||
                        currentBlockValue >= Blocks)

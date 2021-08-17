@@ -1192,7 +1192,7 @@ namespace Aaru.Gui.ViewModels.Windows
                 foreach(Track track in tracks.TakeWhile(track => !_cancel))
                 {
                     doneSectors = 0;
-                    ulong trackSectors = (track.TrackEndSector - track.TrackStartSector) + 1;
+                    ulong trackSectors = track.TrackEndSector - track.TrackStartSector + 1;
 
                     await Dispatcher.UIThread.InvokeAsync(() =>
                     {
@@ -1313,7 +1313,7 @@ namespace Aaru.Gui.ViewModels.Windows
                     foreach(Track track in tracks.TakeWhile(track => !_cancel))
                     {
                         doneSectors = 0;
-                        ulong  trackSectors = (track.TrackEndSector - track.TrackStartSector) + 1;
+                        ulong  trackSectors = track.TrackEndSector - track.TrackStartSector + 1;
                         byte[] sector;
                         bool   result;
 

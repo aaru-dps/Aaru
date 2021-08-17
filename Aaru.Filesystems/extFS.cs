@@ -127,7 +127,7 @@ namespace Aaru.Filesystems
             sb.AppendFormat("{0} free blocks ({1} bytes)", extSb.freecountblk, extSb.freecountblk * 1024);
 
             sb.AppendFormat("{0} inodes on volume, {1} free ({2}%)", extSb.inodes, extSb.freecountind,
-                            (extSb.freecountind * 100) / extSb.inodes);
+                            extSb.freecountind * 100 / extSb.inodes);
 
             sb.AppendFormat("First free inode is {0}", extSb.firstfreeind);
             sb.AppendFormat("First free block is {0}", extSb.firstfreeblk);
@@ -141,7 +141,7 @@ namespace Aaru.Filesystems
                 FreeClusters          = extSb.freecountblk,
                 FreeClustersSpecified = true,
                 ClusterSize           = 1024,
-                Clusters              = (((partition.End - partition.Start) + 1) * imagePlugin.Info.SectorSize) / 1024
+                Clusters              = (partition.End - partition.Start + 1) * imagePlugin.Info.SectorSize / 1024
             };
 
             information = sb.ToString();

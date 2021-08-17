@@ -152,10 +152,10 @@ namespace Aaru.Partitions
 
                 var part = new CommonTypes.Partition
                 {
-                    Start = (dvh.partitions[i].first_block * dvh.device_params.dp_secbytes) /
+                    Start = dvh.partitions[i].first_block * dvh.device_params.dp_secbytes /
                             imagePlugin.Info.SectorSize,
                     Offset = dvh.partitions[i].first_block * dvh.device_params.dp_secbytes,
-                    Length = (dvh.partitions[i].num_blocks * dvh.device_params.dp_secbytes) /
+                    Length = dvh.partitions[i].num_blocks * dvh.device_params.dp_secbytes /
                              imagePlugin.Info.SectorSize,
                     Size     = dvh.partitions[i].num_blocks * dvh.device_params.dp_secbytes,
                     Type     = TypeToString(dvh.partitions[i].type),

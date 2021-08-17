@@ -63,7 +63,7 @@ namespace Aaru.DiscImages
 
             // read and check disk type byte
             fHeader.diskType = (byte)stream.ReadByte();
-            if ((fHeader.diskType < 1) || (fHeader.diskType > 4))
+            if (fHeader.diskType < 1 || fHeader.diskType > 4)
                 return false;
 
             // seek to start of the trackmap

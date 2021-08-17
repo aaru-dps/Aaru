@@ -485,7 +485,7 @@ namespace Aaru.Gui.ViewModels.Windows
                         if(ChecksumTracksChecked)
                             trackChecksum = new Checksum(enabledChecksums);
 
-                        ulong sectors     = (currentTrack.TrackEndSector - currentTrack.TrackStartSector) + 1;
+                        ulong sectors     = currentTrack.TrackEndSector - currentTrack.TrackStartSector + 1;
                         ulong doneSectors = 0;
 
                         while(doneSectors < sectors)

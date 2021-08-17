@@ -207,7 +207,7 @@ namespace Aaru.Core.Devices.Dumping
                         ibgLog.Write(i, 0);
                     }
 
-                    double newSpeed = ((double)blockSize * _maximumReadable) / 1048576 / (cmdDuration / 1000);
+                    double newSpeed = (double)blockSize * _maximumReadable / 1048576 / (cmdDuration / 1000);
 
                     if(!double.IsInfinity(newSpeed))
                         currentSpeed = newSpeed;
@@ -376,7 +376,7 @@ namespace Aaru.Core.Devices.Dumping
                         ibgLog.Write(i, 0);
                     }
 
-                    double newSpeed = ((double)blockSize * _maximumReadable) / 1048576 / (cmdDuration / 1000);
+                    double newSpeed = (double)blockSize * _maximumReadable / 1048576 / (cmdDuration / 1000);
 
                     if(!double.IsInfinity(newSpeed))
                         currentSpeed = newSpeed;

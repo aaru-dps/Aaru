@@ -117,14 +117,14 @@ namespace Aaru.Filters
                 return null;
 
             if(_isBytes)
-                return new OffsetStream(_bytes, _dataFork.offset, (_dataFork.offset + _dataFork.length) - 1);
+                return new OffsetStream(_bytes, _dataFork.offset, _dataFork.offset + _dataFork.length - 1);
 
             if(_isStream)
-                return new OffsetStream(_stream, _dataFork.offset, (_dataFork.offset + _dataFork.length) - 1);
+                return new OffsetStream(_stream, _dataFork.offset, _dataFork.offset + _dataFork.length - 1);
 
             if(_isPath)
                 return new OffsetStream(_basePath, FileMode.Open, FileAccess.Read, _dataFork.offset,
-                                        (_dataFork.offset + _dataFork.length) - 1);
+                                        _dataFork.offset + _dataFork.length - 1);
 
             return null;
         }
@@ -154,14 +154,14 @@ namespace Aaru.Filters
                 return null;
 
             if(_isBytes)
-                return new OffsetStream(_bytes, _rsrcFork.offset, (_rsrcFork.offset + _rsrcFork.length) - 1);
+                return new OffsetStream(_bytes, _rsrcFork.offset, _rsrcFork.offset + _rsrcFork.length - 1);
 
             if(_isStream)
-                return new OffsetStream(_stream, _rsrcFork.offset, (_rsrcFork.offset + _rsrcFork.length) - 1);
+                return new OffsetStream(_stream, _rsrcFork.offset, _rsrcFork.offset + _rsrcFork.length - 1);
 
             if(_isPath)
                 return new OffsetStream(_basePath, FileMode.Open, FileAccess.Read, _rsrcFork.offset,
-                                        (_rsrcFork.offset + _rsrcFork.length) - 1);
+                                        _rsrcFork.offset + _rsrcFork.length - 1);
 
             return null;
         }

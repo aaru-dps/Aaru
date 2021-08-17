@@ -35,12 +35,12 @@ namespace Aaru.DiscImages
     public sealed partial class CloneCd
     {
         static ulong GetLba(int minute, int second, int frame) =>
-            (ulong)(((minute * 60 * 75) + (second * 75) + frame) - 150);
+            (ulong)((minute * 60 * 75) + (second * 75) + frame - 150);
 
         static long MsfToLba((byte minute, byte second, byte frame) msf) =>
-            ((msf.minute * 60 * 75) + (msf.second * 75) + msf.frame) - 150;
+            (msf.minute * 60 * 75) + (msf.second * 75) + msf.frame - 150;
 
         static (byte minute, byte second, byte frame) LbaToMsf(ulong sector) =>
-            ((byte)((sector + 150) / 75 / 60), (byte)(((sector + 150) / 75) % 60), (byte)((sector + 150) % 75));
+            ((byte)((sector + 150) / 75 / 60), (byte)((sector + 150) / 75 % 60), (byte)((sector + 150) % 75));
     }
 }

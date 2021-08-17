@@ -82,7 +82,7 @@ namespace Aaru.DiscImages
                         TrackSubchannelType    = TrackSubchannelType.None
                     };
 
-                    track.TrackEndSector = (track.TrackStartSector + gdiTrack.Sectors) - 1;
+                    track.TrackEndSector = track.TrackStartSector + gdiTrack.Sectors - 1;
 
                     tracks.Add(track);
                 }

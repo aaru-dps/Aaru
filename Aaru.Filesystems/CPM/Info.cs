@@ -234,8 +234,8 @@ namespace Aaru.Filesystems
                             for(int i = 0; i < _dpb.psh; i++)
                                 _dpb.phm += (byte)Math.Pow(2, i);
 
-                            _dpb.spt = (ushort)(amsSb.spt * (sectorSize                / 128));
-                            uint directoryLength = (uint)((((ulong)_dpb.drm + 1) * 32) / sectorSize);
+                            _dpb.spt = (ushort)(amsSb.spt * (sectorSize              / 128));
+                            uint directoryLength = (uint)(((ulong)_dpb.drm + 1) * 32 / sectorSize);
 
                             directory = imagePlugin.ReadSectors(firstDirectorySector + partition.Start,
                                                                 directoryLength);
@@ -361,7 +361,7 @@ namespace Aaru.Filesystems
                                 spt = hddSb.spt
                             };
 
-                            uint directoryLength = (uint)((((ulong)_dpb.drm + 1) * 32) / sectorSize);
+                            uint directoryLength = (uint)(((ulong)_dpb.drm + 1) * 32 / sectorSize);
 
                             directory = imagePlugin.ReadSectors(firstDirectorySector + partition.Start,
                                                                 directoryLength);
@@ -884,7 +884,7 @@ namespace Aaru.Filesystems
 
                     if(_cpmFound)
                     {
-                        uint directoryLength = (uint)((((ulong)_dpb.drm + 1) * 32) / imagePlugin.Info.SectorSize);
+                        uint directoryLength = (uint)(((ulong)_dpb.drm + 1) * 32 / imagePlugin.Info.SectorSize);
                         directory = imagePlugin.ReadSectors(firstDirectorySector86 + partition.Start, directoryLength);
                         AaruConsole.DebugWriteLine("CP/M Plugin", "Found CP/M-86 floppy identifier.");
                     }
@@ -929,7 +929,7 @@ namespace Aaru.Filesystems
                             else
                                 offset = (ulong)(def.ofs * def.sectorsPerTrack);
 
-                            int dirLen = ((def.drm + 1) * 32) / def.bytesPerSector;
+                            int dirLen = (def.drm + 1) * 32 / def.bytesPerSector;
 
                             if(def.sides == 1)
                             {
@@ -951,7 +951,7 @@ namespace Aaru.Filesystems
                                     // Skip first track (first side)
                                     for(int m = 0; m < def.side2.sectorIds.Length; m++)
                                         _sectorMask[m + def.side1.sectorIds.Length] =
-                                            (def.side2.sectorIds[m] - def.side2.sectorIds[0]) +
+                                            def.side2.sectorIds[m] - def.side2.sectorIds[0] +
                                             def.side1.sectorIds.Length;
                                 }
 
@@ -965,7 +965,7 @@ namespace Aaru.Filesystems
                                     // Skip first track (first side) and first track (second side)
                                     for(int m = 0; m < def.side1.sectorIds.Length; m++)
                                         _sectorMask[m + def.side1.sectorIds.Length] =
-                                            (def.side1.sectorIds[m] - def.side1.sectorIds[0]) +
+                                            def.side1.sectorIds[m] - def.side1.sectorIds[0] +
                                             def.side1.sectorIds.Length + def.side2.sectorIds.Length;
                                 }
 
@@ -1005,7 +1005,7 @@ namespace Aaru.Filesystems
                             {
                                 byte[] dirSector =
                                     imagePlugin.ReadSector((ulong)((int)offset + (int)partition.Start +
-                                                                   ((p / _sectorMask.Length) * _sectorMask.Length) +
+                                                                   (p / _sectorMask.Length * _sectorMask.Length) +
                                                                    _sectorMask[p % _sectorMask.Length]));
 
                                 ms.Write(dirSector, 0, dirSector.Length);
@@ -1044,7 +1044,7 @@ namespace Aaru.Filesystems
                                     dsm = (ushort)def.dsm,
                                     exm = (byte)def.exm,
                                     off = (ushort)def.ofs,
-                                    spt = (ushort)((def.sectorsPerTrack * def.bytesPerSector) / 128)
+                                    spt = (ushort)(def.sectorsPerTrack * def.bytesPerSector / 128)
                                 };
 
                                 switch(def.bytesPerSector)

@@ -94,7 +94,7 @@ namespace Aaru.DiscImages
                     lastCylinder = blockHeader.cylinder;
                     lastHead     = 0;
                     TrackOffsets.Add(t, offset);
-                    TrackLengths.Add(t, (thisOffset - offset) + 1);
+                    TrackLengths.Add(t, thisOffset - offset + 1);
                     offset = thisOffset;
                     t++;
                 }
@@ -103,7 +103,7 @@ namespace Aaru.DiscImages
                 {
                     lastHead = blockHeader.head;
                     TrackOffsets.Add(t, offset);
-                    TrackLengths.Add(t, (thisOffset - offset) + 1);
+                    TrackLengths.Add(t, thisOffset - offset + 1);
                     offset = thisOffset;
                     t++;
                 }

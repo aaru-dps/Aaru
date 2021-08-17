@@ -50,9 +50,9 @@ namespace Aaru.Filesystems
             if(_blockSize % 2048 > 0)
                 sectorCount++;
 
-            realSector = (sector * _blockSize) / 2048;
+            realSector = sector * _blockSize / 2048;
 
-            ulong offset = (sector * _blockSize) % 2048;
+            ulong offset = sector * _blockSize % 2048;
 
             byte[] data;
 

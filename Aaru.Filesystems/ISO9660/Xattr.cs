@@ -87,7 +87,7 @@ namespace Aaru.Filesystems
             // TODO: No more exceptions
             try
             {
-                byte[] sector = _image.ReadSectorLong((entry.Extents[0].extent * _blockSize) / 2048);
+                byte[] sector = _image.ReadSectorLong(entry.Extents[0].extent * _blockSize / 2048);
 
                 if(sector[15] != 2)
                     return Errno.NoError;

@@ -116,10 +116,10 @@ namespace Aaru.Filesystems
 
             ulong[] rootPtrs =
             {
-                bRootPtr + partition.Start, ((((partition.End - partition.Start) + 1) / 2) + partition.Start) - 2,
-                ((((partition.End                             - partition.Start) + 1) / 2) + partition.Start) - 1,
-                (((partition.End - partition.Start) + 1) / 2) + partition.Start,
-                (((partition.End - partition.Start) + 1) / 2) + partition.Start + 4
+                bRootPtr + partition.Start, ((partition.End - partition.Start + 1) / 2) + partition.Start - 2,
+                ((partition.End - partition.Start                           + 1) / 2) + partition.Start - 1,
+                ((partition.End - partition.Start + 1) / 2) + partition.Start,
+                ((partition.End - partition.Start + 1) / 2) + partition.Start + 4
             };
 
             var rblk = new RootBlock();
@@ -201,10 +201,10 @@ namespace Aaru.Filesystems
 
             ulong[] rootPtrs =
             {
-                bRootPtr + partition.Start, ((((partition.End - partition.Start) + 1) / 2) + partition.Start) - 2,
-                ((((partition.End                             - partition.Start) + 1) / 2) + partition.Start) - 1,
-                (((partition.End - partition.Start) + 1) / 2) + partition.Start,
-                (((partition.End - partition.Start) + 1) / 2) + partition.Start + 4
+                bRootPtr + partition.Start, ((partition.End - partition.Start + 1) / 2) + partition.Start - 2,
+                ((partition.End - partition.Start                           + 1) / 2) + partition.Start - 1,
+                ((partition.End - partition.Start + 1) / 2) + partition.Start,
+                ((partition.End - partition.Start + 1) / 2) + partition.Start + 4
             };
 
             var    rootBlk         = new RootBlock();
@@ -342,7 +342,7 @@ namespace Aaru.Filesystems
                (bootBlk.diskType & 0xFF) == 5)
                 sbInformation.AppendFormat("Directory cache starts at block {0}", rootBlk.extension).AppendLine();
 
-            ulong blocks = (((partition.End - partition.Start) + 1) * imagePlugin.Info.SectorSize) / blockSize;
+            ulong blocks = (partition.End - partition.Start + 1) * imagePlugin.Info.SectorSize / blockSize;
 
             sbInformation.AppendFormat("Volume block size is {0} bytes", blockSize).AppendLine();
             sbInformation.AppendFormat("Volume has {0} blocks", blocks).AppendLine();

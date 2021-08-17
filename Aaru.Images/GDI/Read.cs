@@ -169,8 +169,8 @@ namespace Aaru.DiscImages
                             if(sessions[s].StartSector > trk.StartSector)
                                 sessions[s].StartSector = trk.StartSector;
 
-                            if(sessions[s].EndSector < (trk.Sectors + trk.StartSector) - 1)
-                                sessions[s].EndSector = (trk.Sectors + trk.StartSector) - 1;
+                            if(sessions[s].EndSector < trk.Sectors                    + trk.StartSector - 1)
+                                sessions[s].EndSector = trk.Sectors + trk.StartSector - 1;
                         }
                     }
                     else
@@ -190,8 +190,8 @@ namespace Aaru.DiscImages
                             if(sessions[s].StartSector > trk.StartSector)
                                 sessions[s].StartSector = trk.StartSector;
 
-                            if(sessions[s].EndSector < (trk.Sectors + trk.StartSector) - 1)
-                                sessions[s].EndSector = (trk.Sectors + trk.StartSector) - 1;
+                            if(sessions[s].EndSector < trk.Sectors                    + trk.StartSector - 1)
+                                sessions[s].EndSector = trk.Sectors + trk.StartSector - 1;
                         }
                     }
 
@@ -888,7 +888,7 @@ namespace Aaru.DiscImages
                         TrackSubchannelType    = TrackSubchannelType.None
                     };
 
-                    track.TrackEndSector = (track.TrackStartSector + gdiTrack.Sectors) - 1;
+                    track.TrackEndSector = track.TrackStartSector + gdiTrack.Sectors - 1;
 
                     tracks.Add(track);
                 }

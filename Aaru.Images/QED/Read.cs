@@ -95,8 +95,8 @@ namespace Aaru.DiscImages
             if((_qHdr.features & QED_FEATURE_BACKING_FILE) == QED_FEATURE_BACKING_FILE)
                 throw new NotImplementedException("Differencing images not yet supported");
 
-            _clusterSectors = _qHdr.cluster_size                      / 512;
-            _tableSize      = (_qHdr.cluster_size * _qHdr.table_size) / 8;
+            _clusterSectors = _qHdr.cluster_size                    / 512;
+            _tableSize      = _qHdr.cluster_size * _qHdr.table_size / 8;
 
             AaruConsole.DebugWriteLine("QED plugin", "qHdr.clusterSectors = {0}", _clusterSectors);
             AaruConsole.DebugWriteLine("QED plugin", "qHdr.tableSize = {0}", _tableSize);

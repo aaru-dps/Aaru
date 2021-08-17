@@ -697,7 +697,7 @@ namespace Aaru.Filesystems
                                            initialEntry.sector_count);
 
                 byte[] bootImage =
-                    (initialEntry.load_rba + partition.Start + initialEntry.sector_count) - 1 <= partition.End
+                    initialEntry.load_rba + partition.Start + initialEntry.sector_count - 1 <= partition.End
                         ? imagePlugin.ReadSectors(initialEntry.load_rba + partition.Start, initialEntry.sector_count)
                         : null;
 
@@ -790,7 +790,7 @@ namespace Aaru.Filesystems
                         if(sectionEntry.bootable == ElToritoIndicator.Bootable)
                         {
                             bootImage =
-                                (sectionEntry.load_rba + partition.Start + sectionEntry.sector_count) - 1 <=
+                                sectionEntry.load_rba + partition.Start + sectionEntry.sector_count - 1 <=
                                 partition.End
                                     ? imagePlugin.ReadSectors(sectionEntry.load_rba + partition.Start,
                                                               sectionEntry.sector_count) : null;

@@ -176,10 +176,10 @@ namespace Aaru.Partitions
 
                 var part = new Partition
                 {
-                    Start    = (dl.d_partitions[i].p_offset * dl.d_secsize) / imagePlugin.Info.SectorSize,
-                    Offset   = dl.d_partitions[i].p_offset                  * dl.d_secsize,
-                    Length   = (dl.d_partitions[i].p_size * dl.d_secsize)   / imagePlugin.Info.SectorSize,
-                    Size     = dl.d_partitions[i].p_size                    * dl.d_secsize,
+                    Start    = dl.d_partitions[i].p_offset * dl.d_secsize / imagePlugin.Info.SectorSize,
+                    Offset   = dl.d_partitions[i].p_offset                * dl.d_secsize,
+                    Length   = dl.d_partitions[i].p_size * dl.d_secsize   / imagePlugin.Info.SectorSize,
+                    Size     = dl.d_partitions[i].p_size                  * dl.d_secsize,
                     Type     = fsTypeToString(dl.d_partitions[i].p_fstype),
                     Sequence = counter,
                     Scheme   = Name

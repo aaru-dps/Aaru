@@ -121,7 +121,7 @@ namespace Aaru.Filesystems
                 Type        = "BFS",
                 VolumeName  = bfsSb.s_volume,
                 ClusterSize = imagePlugin.Info.SectorSize,
-                Clusters    = (partition.End - partition.Start) + 1
+                Clusters    = partition.End - partition.Start + 1
             };
 
             information = sb.ToString();

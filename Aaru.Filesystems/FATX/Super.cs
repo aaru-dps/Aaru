@@ -98,7 +98,7 @@ namespace Aaru.Filesystems
                 VolumeSerial = $"{_superblock.id:X8}"
             };
 
-            XmlFsType.Clusters = (((partition.End - partition.Start) + 1) * imagePlugin.Info.SectorSize) /
+            XmlFsType.Clusters = (partition.End - partition.Start + 1) * imagePlugin.Info.SectorSize /
                                  XmlFsType.ClusterSize;
 
             _statfs = new FileSystemInfo
@@ -135,17 +135,17 @@ namespace Aaru.Filesystems
             {
                 AaruConsole.DebugWriteLine("Xbox FAT plugin", "Reading FAT32");
 
-                fatSize = (uint)(((_statfs.Blocks + 1) * sizeof(uint)) / imagePlugin.Info.SectorSize);
+                fatSize = (uint)((_statfs.Blocks + 1) * sizeof(uint) / imagePlugin.Info.SectorSize);
 
-                if((uint)(((_statfs.Blocks + 1) * sizeof(uint)) % imagePlugin.Info.SectorSize) > 0)
+                if((uint)((_statfs.Blocks + 1) * sizeof(uint) % imagePlugin.Info.SectorSize) > 0)
                     fatSize++;
 
-                long fatClusters = (fatSize * imagePlugin.Info.SectorSize) / 4096;
+                long fatClusters = fatSize * imagePlugin.Info.SectorSize / 4096;
 
-                if((fatSize * imagePlugin.Info.SectorSize) % 4096 > 0)
+                if(fatSize * imagePlugin.Info.SectorSize % 4096 > 0)
                     fatClusters++;
 
-                fatSize = (uint)((fatClusters * 4096) / imagePlugin.Info.SectorSize);
+                fatSize = (uint)(fatClusters * 4096 / imagePlugin.Info.SectorSize);
 
                 AaruConsole.DebugWriteLine("Xbox FAT plugin", "FAT is {0} sectors", fatSize);
 
@@ -167,17 +167,17 @@ namespace Aaru.Filesystems
             {
                 AaruConsole.DebugWriteLine("Xbox FAT plugin", "Reading FAT16");
 
-                fatSize = (uint)(((_statfs.Blocks + 1) * sizeof(ushort)) / imagePlugin.Info.SectorSize);
+                fatSize = (uint)((_statfs.Blocks + 1) * sizeof(ushort) / imagePlugin.Info.SectorSize);
 
-                if((uint)(((_statfs.Blocks + 1) * sizeof(ushort)) % imagePlugin.Info.SectorSize) > 0)
+                if((uint)((_statfs.Blocks + 1) * sizeof(ushort) % imagePlugin.Info.SectorSize) > 0)
                     fatSize++;
 
-                long fatClusters = (fatSize * imagePlugin.Info.SectorSize) / 4096;
+                long fatClusters = fatSize * imagePlugin.Info.SectorSize / 4096;
 
-                if((fatSize * imagePlugin.Info.SectorSize) % 4096 > 0)
+                if(fatSize * imagePlugin.Info.SectorSize % 4096 > 0)
                     fatClusters++;
 
-                fatSize = (uint)((fatClusters * 4096) / imagePlugin.Info.SectorSize);
+                fatSize = (uint)(fatClusters * 4096 / imagePlugin.Info.SectorSize);
 
                 AaruConsole.DebugWriteLine("Xbox FAT plugin", "FAT is {0} sectors", fatSize);
 

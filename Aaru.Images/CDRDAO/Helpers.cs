@@ -86,7 +86,7 @@ namespace Aaru.DiscImages
         }
 
         static (byte minute, byte second, byte frame) LbaToMsf(ulong sector) =>
-            ((byte)(sector / 75 / 60), (byte)((sector / 75) % 60), (byte)(sector % 75));
+            ((byte)(sector / 75 / 60), (byte)(sector / 75 % 60), (byte)(sector % 75));
 
         static string GetTrackMode(Track track)
         {

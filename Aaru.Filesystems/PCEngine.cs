@@ -79,7 +79,7 @@ namespace Aaru.Filesystems
             XmlFsType = new FileSystemType
             {
                 Type        = "PC Engine filesystem",
-                Clusters    = (((partition.End - partition.Start) + 1) / imagePlugin.Info.SectorSize) * 2048,
+                Clusters    = (partition.End - partition.Start + 1) / imagePlugin.Info.SectorSize * 2048,
                 ClusterSize = 2048
             };
         }

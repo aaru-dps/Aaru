@@ -299,7 +299,7 @@ namespace Aaru.Commands.Image
                             if(separatedTracks)
                                 trackChecksum = new Checksum(enabledChecksums);
 
-                            ulong sectors     = (currentTrack.TrackEndSector - currentTrack.TrackStartSector) + 1;
+                            ulong sectors     = currentTrack.TrackEndSector - currentTrack.TrackStartSector + 1;
                             ulong doneSectors = 0;
                             AaruConsole.WriteLine("Track {0} has {1} sectors", currentTrack.TrackSequence, sectors);
 
@@ -401,7 +401,7 @@ namespace Aaru.Commands.Image
                         if(separatedTracks)
                             trackChecksum = new Checksum(enabledChecksums);
 
-                        ulong sectors     = (currentFile.LastBlock - currentFile.FirstBlock) + 1;
+                        ulong sectors     = currentFile.LastBlock - currentFile.FirstBlock + 1;
                         ulong doneSectors = 0;
                         AaruConsole.WriteLine("File {0} has {1} sectors", currentFile.File, sectors);
 

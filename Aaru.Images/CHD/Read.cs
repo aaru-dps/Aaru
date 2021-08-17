@@ -109,7 +109,7 @@ namespace Aaru.DiscImages
 
                     _hunkTable = new ulong[hdrV1.totalhunks];
 
-                    uint hunkSectorCount = (uint)Math.Ceiling(((double)hdrV1.totalhunks * 8) / 512);
+                    uint hunkSectorCount = (uint)Math.Ceiling((double)hdrV1.totalhunks * 8 / 512);
 
                     byte[] hunkSectorBytes = new byte[512];
 
@@ -124,11 +124,11 @@ namespace Aaru.DiscImages
                         // This restores the order of elements
                         Array.Reverse(hunkSector.hunkEntry);
 
-                        if(_hunkTable.Length >= ((i * 512) / 8) + (512 / 8))
-                            Array.Copy(hunkSector.hunkEntry, 0, _hunkTable, (i * 512) / 8, 512 / 8);
+                        if(_hunkTable.Length >= (i                                  * 512 / 8) + (512 / 8))
+                            Array.Copy(hunkSector.hunkEntry, 0, _hunkTable, i * 512 / 8, 512 / 8);
                         else
-                            Array.Copy(hunkSector.hunkEntry, 0, _hunkTable, (i * 512) / 8,
-                                       _hunkTable.Length - ((i * 512)          / 8));
+                            Array.Copy(hunkSector.hunkEntry, 0, _hunkTable, i * 512 / 8,
+                                       _hunkTable.Length - (i * 512 / 8));
                     }
 
                     DateTime end = DateTime.UtcNow;
@@ -186,7 +186,7 @@ namespace Aaru.DiscImages
                     _hunkTable = new ulong[hdrV2.totalhunks];
 
                     // How many sectors uses the BAT
-                    uint hunkSectorCount = (uint)Math.Ceiling(((double)hdrV2.totalhunks * 8) / 512);
+                    uint hunkSectorCount = (uint)Math.Ceiling((double)hdrV2.totalhunks * 8 / 512);
 
                     byte[] hunkSectorBytes = new byte[512];
 
@@ -201,11 +201,11 @@ namespace Aaru.DiscImages
                         // This restores the order of elements
                         Array.Reverse(hunkSector.hunkEntry);
 
-                        if(_hunkTable.Length >= ((i * 512) / 8) + (512 / 8))
-                            Array.Copy(hunkSector.hunkEntry, 0, _hunkTable, (i * 512) / 8, 512 / 8);
+                        if(_hunkTable.Length >= (i                                  * 512 / 8) + (512 / 8))
+                            Array.Copy(hunkSector.hunkEntry, 0, _hunkTable, i * 512 / 8, 512 / 8);
                         else
-                            Array.Copy(hunkSector.hunkEntry, 0, _hunkTable, (i * 512) / 8,
-                                       _hunkTable.Length - ((i * 512)          / 8));
+                            Array.Copy(hunkSector.hunkEntry, 0, _hunkTable, i * 512 / 8,
+                                       _hunkTable.Length - (i * 512 / 8));
                     }
 
                     DateTime end = DateTime.UtcNow;
@@ -387,7 +387,7 @@ namespace Aaru.DiscImages
 
                         _hunkTableSmall = new uint[hdrV5.logicalbytes / hdrV5.hunkbytes];
 
-                        uint hunkSectorCount = (uint)Math.Ceiling(((double)_hunkTableSmall.Length * 4) / 512);
+                        uint hunkSectorCount = (uint)Math.Ceiling((double)_hunkTableSmall.Length * 4 / 512);
 
                         byte[] hunkSectorBytes = new byte[512];
 
@@ -406,11 +406,11 @@ namespace Aaru.DiscImages
                             // This restores the order of elements
                             Array.Reverse(hunkSector.hunkEntry);
 
-                            if(_hunkTableSmall.Length >= ((i * 512) / 4) + (512 / 4))
-                                Array.Copy(hunkSector.hunkEntry, 0, _hunkTableSmall, (i * 512) / 4, 512 / 4);
+                            if(_hunkTableSmall.Length >= (i                                  * 512 / 4) + (512 / 4))
+                                Array.Copy(hunkSector.hunkEntry, 0, _hunkTableSmall, i * 512 / 4, 512 / 4);
                             else
-                                Array.Copy(hunkSector.hunkEntry, 0, _hunkTableSmall, (i * 512) / 4,
-                                           _hunkTableSmall.Length - ((i * 512)          / 4));
+                                Array.Copy(hunkSector.hunkEntry, 0, _hunkTableSmall, i * 512 / 4,
+                                           _hunkTableSmall.Length - (i * 512 / 4));
                         }
 
                         DateTime end = DateTime.UtcNow;
@@ -590,8 +590,8 @@ namespace Aaru.DiscImages
                                             ImageNotSupportedException($"Unsupported subchannel type {chdTrack.type}");
                                 }
 
-                                aaruTrack.TrackDescription = $"Track {i     + 1}";
-                                aaruTrack.TrackEndSector   = (currentSector + chdTrack.frames) - 1;
+                                aaruTrack.TrackDescription = $"Track {i + 1}";
+                                aaruTrack.TrackEndSector   = currentSector + chdTrack.frames - 1;
                                 aaruTrack.TrackFile        = imageFilter.GetFilename();
                                 aaruTrack.TrackFileType    = "BINARY";
                                 aaruTrack.TrackFilter      = imageFilter;
@@ -717,7 +717,7 @@ namespace Aaru.DiscImages
                                 }
 
                                 aaruTrack.TrackDescription = $"Track {trackNo}";
-                                aaruTrack.TrackEndSector   = (currentSector + frames) - 1;
+                                aaruTrack.TrackEndSector   = currentSector + frames - 1;
                                 aaruTrack.TrackFile        = imageFilter.GetFilename();
                                 aaruTrack.TrackFileType    = "BINARY";
                                 aaruTrack.TrackFilter      = imageFilter;
@@ -856,7 +856,7 @@ namespace Aaru.DiscImages
                                 }
 
                                 aaruTrack.TrackDescription = $"Track {trackNo}";
-                                aaruTrack.TrackEndSector   = (currentSector + frames) - 1;
+                                aaruTrack.TrackEndSector   = currentSector + frames - 1;
                                 aaruTrack.TrackFile        = imageFilter.GetFilename();
                                 aaruTrack.TrackFileType    = "BINARY";
                                 aaruTrack.TrackFilter      = imageFilter;
@@ -1013,7 +1013,7 @@ namespace Aaru.DiscImages
                                 }
 
                                 aaruTrack.TrackDescription = $"Track {trackNo}";
-                                aaruTrack.TrackEndSector   = (currentSector + frames) - 1;
+                                aaruTrack.TrackEndSector   = currentSector + frames - 1;
                                 aaruTrack.TrackFile        = imageFilter.GetFilename();
                                 aaruTrack.TrackFileType    = "BINARY";
                                 aaruTrack.TrackFilter      = imageFilter;
@@ -1113,7 +1113,7 @@ namespace Aaru.DiscImages
                     _imageInfo.XmlMediaType = XmlMediaType.OpticalDisc;
 
                     foreach(Track aaruTrack in _tracks.Values)
-                        _imageInfo.Sectors += (aaruTrack.TrackEndSector - aaruTrack.TrackStartSector) + 1;
+                        _imageInfo.Sectors += aaruTrack.TrackEndSector - aaruTrack.TrackStartSector + 1;
                 }
                 else if(_isGdrom)
                 {
@@ -1123,7 +1123,7 @@ namespace Aaru.DiscImages
                     _imageInfo.XmlMediaType = XmlMediaType.OpticalDisc;
 
                     foreach(Track aaruTrack in _tracks.Values)
-                        _imageInfo.Sectors += (aaruTrack.TrackEndSector - aaruTrack.TrackStartSector) + 1;
+                        _imageInfo.Sectors += aaruTrack.TrackEndSector - aaruTrack.TrackStartSector + 1;
                 }
                 else
                     throw new ImageNotSupportedException("Image does not represent a known media, aborting");
@@ -1140,9 +1140,9 @@ namespace Aaru.DiscImages
                     var partition = new Partition
                     {
                         Description = aaruTrack.TrackDescription,
-                        Size = ((aaruTrack.TrackEndSector - (ulong)aaruTrack.Indexes[1]) + 1) *
+                        Size = (aaruTrack.TrackEndSector - (ulong)aaruTrack.Indexes[1] + 1) *
                                (ulong)aaruTrack.TrackRawBytesPerSector,
-                        Length   = (aaruTrack.TrackEndSector - (ulong)aaruTrack.Indexes[1]) + 1,
+                        Length   = aaruTrack.TrackEndSector - (ulong)aaruTrack.Indexes[1] + 1,
                         Sequence = aaruTrack.TrackSequence,
                         Offset   = partPos,
                         Start    = (ulong)aaruTrack.Indexes[1],
@@ -1263,8 +1263,8 @@ namespace Aaru.DiscImages
                     sectorSize = (uint)track.TrackRawBytesPerSector;
                 }
 
-                ulong hunkNo = sectorAddress                / _sectorsPerHunk;
-                ulong secOff = (sectorAddress * sectorSize) % (_sectorsPerHunk * sectorSize);
+                ulong hunkNo = sectorAddress              / _sectorsPerHunk;
+                ulong secOff = sectorAddress * sectorSize % (_sectorsPerHunk * sectorSize);
 
                 byte[] hunk = GetHunk(hunkNo);
 
@@ -1389,8 +1389,8 @@ namespace Aaru.DiscImages
                 track      = GetTrack(sectorAddress);
                 sectorSize = (uint)track.TrackRawBytesPerSector;
 
-                ulong hunkNo = sectorAddress                / _sectorsPerHunk;
-                ulong secOff = (sectorAddress * sectorSize) % (_sectorsPerHunk * sectorSize);
+                ulong hunkNo = sectorAddress              / _sectorsPerHunk;
+                ulong secOff = sectorAddress * sectorSize % (_sectorsPerHunk * sectorSize);
 
                 byte[] hunk = GetHunk(hunkNo);
 
@@ -1687,8 +1687,8 @@ namespace Aaru.DiscImages
                 track = GetTrack(sectorAddress);
                 uint sectorSize = (uint)track.TrackRawBytesPerSector;
 
-                ulong hunkNo = sectorAddress                / _sectorsPerHunk;
-                ulong secOff = (sectorAddress * sectorSize) % (_sectorsPerHunk * sectorSize);
+                ulong hunkNo = sectorAddress              / _sectorsPerHunk;
+                ulong secOff = sectorAddress * sectorSize % (_sectorsPerHunk * sectorSize);
 
                 byte[] hunk = GetHunk(hunkNo);
 

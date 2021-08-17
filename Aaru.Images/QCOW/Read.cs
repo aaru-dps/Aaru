@@ -101,7 +101,7 @@ namespace Aaru.DiscImages
 
             _clusterSize    = 1 << _qHdr.cluster_bits;
             _clusterSectors = 1 << (_qHdr.cluster_bits - 9);
-            _l1Size         = (uint)(((_qHdr.size + (ulong)(1 << shift)) - 1) >> shift);
+            _l1Size         = (uint)((_qHdr.size + (ulong)(1 << shift) - 1) >> shift);
             _l2Size         = 1 << _qHdr.l2_bits;
 
             AaruConsole.DebugWriteLine("QCOW plugin", "qHdr.clusterSize = {0}", _clusterSize);

@@ -129,7 +129,7 @@ namespace Aaru.Filters
                 return null;
 
             return new OffsetStream(_headerPath, FileMode.Open, FileAccess.Read, _rsrcFork.offset,
-                                    (_rsrcFork.offset + _rsrcFork.length) - 1);
+                                    _rsrcFork.offset + _rsrcFork.length - 1);
         }
 
         /// <inheritdoc />

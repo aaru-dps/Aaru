@@ -102,7 +102,7 @@ namespace Aaru.Filesystems
             {
                 Type        = "ECMA-67",
                 ClusterSize = 256,
-                Clusters    = (partition.End - partition.Start) + 1,
+                Clusters    = partition.End - partition.Start + 1,
                 VolumeName  = Encoding.ASCII.GetString(vol.volumeIdentifier)
             };
 

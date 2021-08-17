@@ -581,7 +581,7 @@ namespace Aaru.Filesystems
                     try
                     {
                         byte[] fullSector =
-                            _image.ReadSectorTag(((extents[i].extent + currentExtentSector) * _blockSize) / 2048,
+                            _image.ReadSectorTag((extents[i].extent + currentExtentSector) * _blockSize / 2048,
                                                  SectorTagType.CdSectorSubHeader);
 
                         ms.Write(fullSector, copy ? 0 : 4, 4);

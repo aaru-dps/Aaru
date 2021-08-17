@@ -582,8 +582,8 @@ namespace Aaru.DiscImages
                     return sector;
             }
 
-            ulong index  = sectorAddress                / _grainSize;
-            ulong secOff = (sectorAddress % _grainSize) * SECTOR_SIZE;
+            ulong index  = sectorAddress              / _grainSize;
+            ulong secOff = sectorAddress % _grainSize * SECTOR_SIZE;
 
             uint grainOff = _gTable[index];
 

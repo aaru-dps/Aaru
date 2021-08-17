@@ -314,9 +314,9 @@ namespace Aaru.Core.Logging
         /// <param name="message">Message to log</param>
         public void WriteMessageWithPosition(long lba, string message)
         {
-            long   minute = (lba + 150)          / 4500;
-            long   second = ((lba + 150) % 4500) / 75;
-            long   frame  = (lba + 150)          % 4500 % 75;
+            long   minute = (lba + 150)        / 4500;
+            long   second = (lba + 150) % 4500 / 75;
+            long   frame  = (lba + 150)        % 4500 % 75;
             string area   = lba < 0 ? "Lead-In" : "Program";
 
             _logSw.WriteLine($"{minute:D2}:{second:D2}:{frame:D2} - LBA {lba,6}: {area} area, {message}");

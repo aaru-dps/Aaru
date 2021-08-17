@@ -157,7 +157,7 @@ namespace Aaru.Core
                     tapeWorker.Update(sector);
                 }
 
-                tapeFile.EndBlock  =  (tapeFile.StartBlock + sectors) - 1;
+                tapeFile.EndBlock  =  tapeFile.StartBlock + sectors - 1;
                 currentBlock       += sectors;
                 totalSize          += (ulong)_fs.Length;
                 tapeFile.Checksums =  fileWorker.End().ToArray();

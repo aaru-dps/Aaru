@@ -126,7 +126,7 @@ namespace Aaru.Filesystems
                 CreationDateSpecified     = true,
                 ModificationDate          = DateHandlers.UnixUnsignedToDateTime(mtimeSecs, mtimeNanoSecs),
                 ModificationDateSpecified = true,
-                Clusters                  = (volInfo.size * 256) / imagePlugin.Info.SectorSize,
+                Clusters                  = volInfo.size * 256 / imagePlugin.Info.SectorSize,
                 ClusterSize               = imagePlugin.Info.SectorSize,
                 VolumeSerial              = volInfo.uuid.ToString()
             };

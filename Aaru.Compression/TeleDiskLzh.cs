@@ -68,7 +68,7 @@ namespace Aaru.Compression
 
         /* Huffman coding parameters */
 
-        const int N_CHAR = (256 - THRESHOLD) + F;
+        const int N_CHAR = 256 - THRESHOLD + F;
         /* character code (= 0..N_CHAR-1) */
         const int T        = (N_CHAR * 2) - 1; /* Size of table */
         const int ROOT     = T            - 1; /* root position */
@@ -129,7 +129,7 @@ namespace Aaru.Compression
 
         /* pointing children nodes (son[], son[] + 1)*/
         readonly short[] _son     = new short[T];
-        readonly byte[]  _textBuf = new byte[(N + F) - 1];
+        readonly byte[]  _textBuf = new byte[N + F - 1];
 
         ushort _getbuf;
         byte   _getlen;
@@ -196,7 +196,7 @@ namespace Aaru.Compression
                             return count; // fatal error
 
                         _tdctl.Bufpos = (ushort)((_tdctl.R - pos - 1) & (N - 1));
-                        _tdctl.Bufcnt = (ushort)((c        - 255) + THRESHOLD);
+                        _tdctl.Bufcnt = (ushort)(c - 255 + THRESHOLD);
                         _tdctl.Bufndx = 0;
                     }
                 }

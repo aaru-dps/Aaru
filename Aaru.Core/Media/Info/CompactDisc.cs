@@ -131,12 +131,12 @@ namespace Aaru.Core.Media.Info
                                     frame  = cmdBuf[i + 14];
 
                                     // Convert to binary
-                                    minute = ((minute / 16) * 10) + (minute & 0x0F);
-                                    second = ((second / 16) * 10) + (second & 0x0F);
-                                    frame  = ((frame  / 16) * 10) + (frame  & 0x0F);
+                                    minute = (minute / 16 * 10) + (minute & 0x0F);
+                                    second = (second / 16 * 10) + (second & 0x0F);
+                                    frame  = (frame  / 16 * 10) + (frame  & 0x0F);
 
                                     // Calculate the first found LBA
-                                    lba = ((minute * 60 * 75) + (second * 75) + frame) - 150;
+                                    lba = (minute * 60 * 75) + (second * 75) + frame - 150;
 
                                     // Calculate the difference between the found LBA and the requested one
                                     diff = (int)wantedLba - lba;
@@ -191,12 +191,12 @@ namespace Aaru.Core.Media.Info
                                     frame  = cmdBuf[i + 14];
 
                                     // Convert to binary
-                                    minute = ((minute / 16) * 10) + (minute & 0x0F);
-                                    second = ((second / 16) * 10) + (second & 0x0F);
-                                    frame  = ((frame  / 16) * 10) + (frame  & 0x0F);
+                                    minute = (minute / 16 * 10) + (minute & 0x0F);
+                                    second = (second / 16 * 10) + (second & 0x0F);
+                                    frame  = (frame  / 16 * 10) + (frame  & 0x0F);
 
                                     // Calculate the first found LBA
-                                    lba = ((minute * 60 * 75) + (second * 75) + frame) - 150;
+                                    lba = (minute * 60 * 75) + (second * 75) + frame - 150;
 
                                     // Calculate the difference between the found LBA and the requested one
                                     diff = (int)wantedLba - lba;

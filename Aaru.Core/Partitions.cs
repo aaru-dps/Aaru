@@ -161,7 +161,7 @@ namespace Aaru.Core
                                                        Select(tapeFile => new Partition
                                                        {
                                                            Start    = tapeFile.FirstBlock,
-                                                           Length   = (tapeFile.LastBlock - tapeFile.FirstBlock) + 1,
+                                                           Length   = tapeFile.LastBlock - tapeFile.FirstBlock + 1,
                                                            Sequence = tapeFile.File
                                                        }));
             }

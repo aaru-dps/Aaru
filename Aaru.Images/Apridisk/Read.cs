@@ -70,7 +70,7 @@ namespace Aaru.DiscImages
                     // Deleted record, just skip it
                     case RecordType.Deleted:
                         AaruConsole.DebugWriteLine("Apridisk plugin", "Found deleted record at {0}", stream.Position);
-                        stream.Seek((record.headerSize - recordSize) + record.dataSize, SeekOrigin.Current);
+                        stream.Seek(record.headerSize - recordSize + record.dataSize, SeekOrigin.Current);
 
                         break;
                     case RecordType.Comment:
@@ -112,7 +112,7 @@ namespace Aaru.DiscImages
                         if(record.sector > maxSector)
                             maxSector = record.sector;
 
-                        stream.Seek((record.headerSize - recordSize) + record.dataSize, SeekOrigin.Current);
+                        stream.Seek(record.headerSize - recordSize + record.dataSize, SeekOrigin.Current);
 
                         break;
                     default:
@@ -170,7 +170,7 @@ namespace Aaru.DiscImages
                     case RecordType.Deleted:
                     case RecordType.Comment:
                     case RecordType.Creator:
-                        stream.Seek((record.headerSize - recordSize) + record.dataSize, SeekOrigin.Current);
+                        stream.Seek(record.headerSize - recordSize + record.dataSize, SeekOrigin.Current);
                         headerSizes += record.headerSize + record.dataSize;
 
                         break;

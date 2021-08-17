@@ -141,9 +141,9 @@ namespace Aaru.Partitions
                 sectorSize = imagePlugin.Info.SectorSize;
             }
 
-            uint totalEntriesSectors = (hdr.entries * hdr.entriesSize) / imagePlugin.Info.SectorSize;
+            uint totalEntriesSectors = hdr.entries * hdr.entriesSize / imagePlugin.Info.SectorSize;
 
-            if((hdr.entries * hdr.entriesSize) % imagePlugin.Info.SectorSize > 0)
+            if(hdr.entries * hdr.entriesSize % imagePlugin.Info.SectorSize > 0)
                 totalEntriesSectors++;
 
             byte[] temp         = imagePlugin.ReadSectors(hdr.entryLBA / divisor, totalEntriesSectors + modulo);
@@ -189,9 +189,9 @@ namespace Aaru.Partitions
                 var part = new Partition
                 {
                     Description = $"ID: {entry.partitionId}",
-                    Size        = ((entry.endLBA - entry.startLBA) + 1) * sectorSize,
+                    Size        = (entry.endLBA - entry.startLBA + 1) * sectorSize,
                     Name        = entry.name,
-                    Length      = ((entry.endLBA - entry.startLBA) + 1) / divisor,
+                    Length      = (entry.endLBA - entry.startLBA + 1) / divisor,
                     Sequence    = pSeq++,
                     Offset      = entry.startLBA * sectorSize,
                     Start       = entry.startLBA / divisor,

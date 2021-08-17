@@ -151,7 +151,7 @@ namespace Aaru.DiscImages
 
                 for(minor = 0; minor < minorCount; minor++)
                 {
-                    byte temp = idx < 4 ? address[idx + addressOffset] : data[(idx + dataOffset) - 4];
+                    byte temp = idx < 4 ? address[idx + addressOffset] : data[idx + dataOffset - 4];
                     idx += minorInc;
 
                     if(idx >= size)
@@ -187,7 +187,7 @@ namespace Aaru.DiscImages
 
                 for(minor = 0; minor < minorCount; minor++)
                 {
-                    byte temp = idx < 4 ? address[idx + addressOffset] : data[(idx + dataOffset) - 4];
+                    byte temp = idx < 4 ? address[idx + addressOffset] : data[idx + dataOffset - 4];
                     idx += minorInc;
 
                     if(idx >= size)
@@ -212,7 +212,7 @@ namespace Aaru.DiscImages
         }
 
         static (byte minute, byte second, byte frame) LbaToMsf(long pos) =>
-            ((byte)((pos + 150) / 75 / 60), (byte)(((pos + 150) / 75) % 60), (byte)((pos + 150) % 75));
+            ((byte)((pos + 150) / 75 / 60), (byte)((pos + 150) / 75 % 60), (byte)((pos + 150) % 75));
 
         void ReconstructPrefix(ref byte[] sector, // must point to a full 2352-byte sector
                                TrackType type, long lba)
