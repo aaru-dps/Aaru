@@ -48,6 +48,7 @@ using Aaru.Console;
 using Aaru.Core;
 using Aaru.Database;
 using Aaru.Settings;
+using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
 
 namespace Aaru
@@ -58,7 +59,7 @@ namespace Aaru
         static string                                _assemblyTitle;
         static AssemblyInformationalVersionAttribute _assemblyVersion;
 
-        public static int Main(string[] args)
+        public static int Main([NotNull] string[] args)
         {
             object[] attributes = typeof(MainClass).Assembly.GetCustomAttributes(typeof(AssemblyTitleAttribute), false);
             _assemblyTitle = ((AssemblyTitleAttribute)attributes[0]).Title;
