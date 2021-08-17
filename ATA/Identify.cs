@@ -105,8 +105,8 @@ namespace Aaru.Decoders.ATA
             if(ATAID.CommandSet3.HasFlag(CommonTypes.Structs.Devices.ATA.Identify.CommandSetBit3.MustBeSet) &&
                !ATAID.CommandSet3.HasFlag(CommonTypes.Structs.Devices.ATA.Identify.CommandSetBit3.MustBeClear))
             {
-                if(ATAID.EnabledCommandSet3.HasFlag(CommonTypes.Structs.Devices.ATA.Identify.CommandSetBit3.MediaSerial)
-                )
+                if(ATAID.EnabledCommandSet3.HasFlag(CommonTypes.Structs.Devices.ATA.Identify.CommandSetBit3.
+                                                                MediaSerial))
                 {
                     if(ATAID.MediaManufacturer != "")
                         sb.AppendFormat("Media manufacturer: {0}", ATAID.MediaManufacturer).AppendLine();
@@ -849,8 +849,8 @@ namespace Aaru.Decoders.ATA
                             sb.AppendFormat("Device size in 48-bit LBA mode: {0} bytes, {1} Tb, {2} TiB",
                                             ATAID.ExtendedUserSectors                     * logicalSectorSize,
                                             ATAID.ExtendedUserSectors * logicalSectorSize / 1000 / 1000 / 1000 / 1000,
-                                            ATAID.ExtendedUserSectors * logicalSectorSize / 1024 / 1024 / 1024 /
-                                            1024).AppendLine();
+                                            ATAID.ExtendedUserSectors * logicalSectorSize / 1024 / 1024 / 1024 / 1024).
+                               AppendLine();
                         else if(ATAID.ExtendedUserSectors * logicalSectorSize / 1024 / 1024 > 1000)
                             sb.AppendFormat("Device size in 48-bit LBA mode: {0} bytes, {1} Gb, {2} GiB",
                                             ATAID.ExtendedUserSectors                     * logicalSectorSize,
@@ -933,8 +933,8 @@ namespace Aaru.Decoders.ATA
                 switch(ATAID.BufferType)
                 {
                     case 1:
-                        sb.AppendFormat("{0} KiB of single ported single sector buffer",
-                                        ATAID.BufferSize * 512 / 1024).AppendLine();
+                        sb.AppendFormat("{0} KiB of single ported single sector buffer", ATAID.BufferSize * 512 / 1024).
+                           AppendLine();
 
                         break;
                     case 2:
@@ -962,8 +962,8 @@ namespace Aaru.Decoders.ATA
 
             sb.Append("Device capabilities:");
 
-            if(ATAID.Capabilities.HasFlag(CommonTypes.Structs.Devices.ATA.Identify.CapabilitiesBit.StandardStandbyTimer)
-            )
+            if(ATAID.Capabilities.HasFlag(CommonTypes.Structs.Devices.ATA.Identify.CapabilitiesBit.
+                                                      StandardStandbyTimer))
                 sb.AppendLine().Append("Standby time values are standard");
 
             if(ATAID.Capabilities.HasFlag(CommonTypes.Structs.Devices.ATA.Identify.CapabilitiesBit.IORDY))
@@ -1012,8 +1012,8 @@ namespace Aaru.Decoders.ATA
                 if(ATAID.Capabilities.HasFlag(CommonTypes.Structs.Devices.ATA.Identify.CapabilitiesBit.CommandQueue))
                     sb.AppendLine().Append("ATAPI device supports command queueing");
 
-                if(ATAID.Capabilities.HasFlag(CommonTypes.Structs.Devices.ATA.Identify.CapabilitiesBit.OverlapOperation)
-                )
+                if(ATAID.Capabilities.HasFlag(CommonTypes.Structs.Devices.ATA.Identify.CapabilitiesBit.
+                                                          OverlapOperation))
                     sb.AppendLine().Append("ATAPI device supports overlapped operations");
 
                 if(ATAID.Capabilities.HasFlag(CommonTypes.Structs.Devices.ATA.Identify.CapabilitiesBit.
@@ -1332,8 +1332,8 @@ namespace Aaru.Decoders.ATA
                     }
                 }
 
-                if(!ATAID.SATACapabilities2.HasFlag(CommonTypes.Structs.Devices.ATA.Identify.SATACapabilitiesBit2.Clear)
-                )
+                if(!ATAID.SATACapabilities2.HasFlag(CommonTypes.Structs.Devices.ATA.Identify.SATACapabilitiesBit2.
+                                                                Clear))
                 {
                     if(!ATAID.SATACapabilities.HasFlag(CommonTypes.Structs.Devices.ATA.Identify.SATACapabilitiesBit.
                                                                    Clear) &&
@@ -1943,8 +1943,8 @@ namespace Aaru.Decoders.ATA
                                                                   ReadLogDMAExt))
                         sb.AppendLine().Append("READ LOG DMA EXT is supported");
 
-                if(!ATAID.SATACapabilities2.HasFlag(CommonTypes.Structs.Devices.ATA.Identify.SATACapabilitiesBit2.Clear)
-                )
+                if(!ATAID.SATACapabilities2.HasFlag(CommonTypes.Structs.Devices.ATA.Identify.SATACapabilitiesBit2.
+                                                                Clear))
                     if(ATAID.SATACapabilities2.HasFlag(CommonTypes.Structs.Devices.ATA.Identify.SATACapabilitiesBit2.
                                                                    FPDMAQ))
                         sb.AppendLine().Append("RECEIVE FPDMA QUEUED and SEND FPDMA QUEUED are supported");
@@ -2021,8 +2021,8 @@ namespace Aaru.Decoders.ATA
                             sb.Append(" and enabled");
                     }
 
-                    if(ATAID.SATAFeatures.HasFlag(CommonTypes.Structs.Devices.ATA.Identify.SATAFeaturesBit.NCQAutoSense)
-                    )
+                    if(ATAID.SATAFeatures.HasFlag(CommonTypes.Structs.Devices.ATA.Identify.SATAFeaturesBit.
+                                                              NCQAutoSense))
                         sb.AppendLine().Append("NCQ Autosense is supported");
 
                     if(ATAID.EnabledSATAFeatures.HasFlag(CommonTypes.Structs.Devices.ATA.Identify.SATAFeaturesBit.

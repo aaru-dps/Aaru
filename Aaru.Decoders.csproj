@@ -54,132 +54,132 @@
     <ConsolePause>false</ConsolePause>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System" />
+    <Reference Include="System"/>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Bluray\BCA.cs" />
-    <Compile Include="Bluray\Cartridge.cs" />
-    <Compile Include="Bluray\DDS.cs" />
-    <Compile Include="Bluray\DI.cs" />
-    <Compile Include="Bluray\Spare.cs" />
-    <Compile Include="CD\SectorBuilder.cs" />
-    <Compile Include="CD\Subchannel.cs" />
-    <Compile Include="SCSI\Inquiry.cs" />
-    <Compile Include="Floppy\Enums.cs" />
-    <Compile Include="Floppy\System3740.cs" />
-    <Compile Include="Floppy\System34.cs" />
-    <Compile Include="Floppy\Perpendicular.cs" />
-    <Compile Include="Floppy\ISO.cs" />
-    <Compile Include="Floppy\Apple2.cs" />
-    <Compile Include="Floppy\AppleSony.cs" />
-    <Compile Include="Floppy\Commodore.cs" />
-    <Compile Include="Floppy\Amiga.cs" />
-    <Compile Include="DVD\Enums.cs" />
-    <Compile Include="DVD\PFI.cs" />
-    <Compile Include="DVD\DMI.cs" />
-    <Compile Include="DVD\BCA.cs" />
-    <Compile Include="DVD\DDS.cs" />
-    <Compile Include="DVD\RMD.cs" />
-    <Compile Include="DVD\Spare.cs" />
-    <Compile Include="DVD\PRI.cs" />
-    <Compile Include="DVD\UDI.cs" />
-    <Compile Include="DVD\ADIP.cs" />
-    <Compile Include="DVD\Layers.cs" />
-    <Compile Include="DVD\AACS.cs" />
-    <Compile Include="DVD\CSS&amp;CPRM.cs" />
-    <Compile Include="DVD\CPRM.cs" />
-    <Compile Include="DVD\Cartridge.cs" />
-    <Compile Include="CD\TOC.cs" />
-    <Compile Include="CD\Session.cs" />
-    <Compile Include="CD\FullTOC.cs" />
-    <Compile Include="CD\PMA.cs" />
-    <Compile Include="CD\ATIP.cs" />
-    <Compile Include="CD\Enums.cs" />
-    <Compile Include="CD\CDTextOnLeadIn.cs" />
-    <Compile Include="SCSI\MMC\AACS.cs" />
-    <Compile Include="SCSI\MMC\CPRM.cs" />
-    <Compile Include="SCSI\MMC\Enums.cs" />
-    <Compile Include="SCSI\MMC\Hybrid.cs" />
-    <Compile Include="SCSI\MMC\TrackInformation.cs" />
-    <Compile Include="SCSI\MMC\WriteProtect.cs" />
-    <Compile Include="SCSI\MMC\DiscInformation.cs" />
-    <Compile Include="SCSI\Modes\00_SFF.cs" />
-    <Compile Include="SCSI\Modes\01.cs" />
-    <Compile Include="SCSI\Modes\01_MMC.cs" />
-    <Compile Include="SCSI\Modes\02.cs" />
-    <Compile Include="SCSI\Modes\03.cs" />
-    <Compile Include="SCSI\Modes\04.cs" />
-    <Compile Include="SCSI\Modes\05.cs" />
-    <Compile Include="SCSI\Modes\06.cs" />
-    <Compile Include="SCSI\Modes\07.cs" />
-    <Compile Include="SCSI\Modes\07_MMC.cs" />
-    <Compile Include="SCSI\Modes\08.cs" />
-    <Compile Include="SCSI\Modes\0A.cs" />
-    <Compile Include="SCSI\Modes\0B.cs" />
-    <Compile Include="SCSI\Modes\0C.cs" />
-    <Compile Include="SCSI\Modes\0D.cs" />
-    <Compile Include="SCSI\Modes\0E.cs" />
-    <Compile Include="SCSI\Modes\0F.cs" />
-    <Compile Include="SCSI\Modes\10.cs" />
-    <Compile Include="SCSI\Modes\10_SSC.cs" />
-    <Compile Include="SCSI\Modes\11.cs" />
-    <Compile Include="SCSI\Modes\12_13_14.cs" />
-    <Compile Include="SCSI\Modes\1A.cs" />
-    <Compile Include="SCSI\Modes\1B.cs" />
-    <Compile Include="SCSI\Modes\1C.cs" />
-    <Compile Include="SCSI\Modes\1C_SFF.cs" />
-    <Compile Include="SCSI\Modes\1D.cs" />
-    <Compile Include="SCSI\Modes\21_Certance.cs" />
-    <Compile Include="SCSI\Modes\22_Certance.cs" />
-    <Compile Include="SCSI\Modes\24_IBM.cs" />
-    <Compile Include="SCSI\Modes\2A.cs" />
-    <Compile Include="SCSI\Modes\2F_IBM.cs" />
-    <Compile Include="SCSI\Modes\30_Apple.cs" />
-    <Compile Include="SCSI\Modes\3B_HP.cs" />
-    <Compile Include="SCSI\Modes\3C_HP.cs" />
-    <Compile Include="SCSI\Modes\3D_HP.cs" />
-    <Compile Include="SCSI\Modes\3D_IBM.cs" />
-    <Compile Include="SCSI\Modes\3E_Fujitsu.cs" />
-    <Compile Include="SCSI\Modes\3E_HP.cs" />
-    <Compile Include="SCSI\Modes\Headers.cs" />
-    <Compile Include="SCSI\Modes\Mode10.cs" />
-    <Compile Include="SCSI\Modes\Mode6.cs" />
-    <Compile Include="SCSI\Modes\Structs.cs" />
-    <Compile Include="SCSI\VendorString.cs" />
-    <Compile Include="ATA\Identify.cs" />
-    <Compile Include="SCSI\EVPD.cs" />
-    <Compile Include="SCSI\MMC\Features.cs" />
-    <Compile Include="SCSI\DiscStructureCapabilities.cs" />
-    <Compile Include="SCSI\Sense.cs" />
-    <Compile Include="ATA\Registers.cs" />
-    <Compile Include="Xbox\DMI.cs" />
-    <Compile Include="SCSI\SSC\BlockLimits.cs" />
-    <Compile Include="SCSI\SSC\DensitySupport.cs" />
-    <Compile Include="SCSI\Types.cs" />
-    <Compile Include="LisaTag.cs" />
-    <Compile Include="CD\Sector.cs" />
-    <Compile Include="PCMCIA\Enums.cs" />
-    <Compile Include="PCMCIA\Types.cs" />
-    <Compile Include="PCMCIA\CIS.cs" />
-    <Compile Include="PCMCIA\VendorCode.cs" />
-    <Compile Include="MMC\CSD.cs" />
-    <Compile Include="MMC\CID.cs" />
-    <Compile Include="MMC\ExtendedCSD.cs" />
-    <Compile Include="MMC\OCR.cs" />
-    <Compile Include="MMC\VendorString.cs" />
-    <Compile Include="SecureDigital\CID.cs" />
-    <Compile Include="SecureDigital\CSD.cs" />
-    <Compile Include="SecureDigital\SCR.cs" />
-    <Compile Include="SecureDigital\OCR.cs" />
-    <Compile Include="SecureDigital\VendorString.cs" />
-    <Compile Include="Xbox\SS.cs" />
-    <Compile Include="Sega\CD.cs" />
-    <Compile Include="Sega\Saturn.cs" />
-    <Compile Include="Sega\Dreamcast.cs" />
+    <Compile Include="Bluray\BCA.cs"/>
+    <Compile Include="Bluray\Cartridge.cs"/>
+    <Compile Include="Bluray\DDS.cs"/>
+    <Compile Include="Bluray\DI.cs"/>
+    <Compile Include="Bluray\Spare.cs"/>
+    <Compile Include="CD\SectorBuilder.cs"/>
+    <Compile Include="CD\Subchannel.cs"/>
+    <Compile Include="SCSI\Inquiry.cs"/>
+    <Compile Include="Floppy\Enums.cs"/>
+    <Compile Include="Floppy\System3740.cs"/>
+    <Compile Include="Floppy\System34.cs"/>
+    <Compile Include="Floppy\Perpendicular.cs"/>
+    <Compile Include="Floppy\ISO.cs"/>
+    <Compile Include="Floppy\Apple2.cs"/>
+    <Compile Include="Floppy\AppleSony.cs"/>
+    <Compile Include="Floppy\Commodore.cs"/>
+    <Compile Include="Floppy\Amiga.cs"/>
+    <Compile Include="DVD\Enums.cs"/>
+    <Compile Include="DVD\PFI.cs"/>
+    <Compile Include="DVD\DMI.cs"/>
+    <Compile Include="DVD\BCA.cs"/>
+    <Compile Include="DVD\DDS.cs"/>
+    <Compile Include="DVD\RMD.cs"/>
+    <Compile Include="DVD\Spare.cs"/>
+    <Compile Include="DVD\PRI.cs"/>
+    <Compile Include="DVD\UDI.cs"/>
+    <Compile Include="DVD\ADIP.cs"/>
+    <Compile Include="DVD\Layers.cs"/>
+    <Compile Include="DVD\AACS.cs"/>
+    <Compile Include="DVD\CSS&amp;CPRM.cs"/>
+    <Compile Include="DVD\CPRM.cs"/>
+    <Compile Include="DVD\Cartridge.cs"/>
+    <Compile Include="CD\TOC.cs"/>
+    <Compile Include="CD\Session.cs"/>
+    <Compile Include="CD\FullTOC.cs"/>
+    <Compile Include="CD\PMA.cs"/>
+    <Compile Include="CD\ATIP.cs"/>
+    <Compile Include="CD\Enums.cs"/>
+    <Compile Include="CD\CDTextOnLeadIn.cs"/>
+    <Compile Include="SCSI\MMC\AACS.cs"/>
+    <Compile Include="SCSI\MMC\CPRM.cs"/>
+    <Compile Include="SCSI\MMC\Enums.cs"/>
+    <Compile Include="SCSI\MMC\Hybrid.cs"/>
+    <Compile Include="SCSI\MMC\TrackInformation.cs"/>
+    <Compile Include="SCSI\MMC\WriteProtect.cs"/>
+    <Compile Include="SCSI\MMC\DiscInformation.cs"/>
+    <Compile Include="SCSI\Modes\00_SFF.cs"/>
+    <Compile Include="SCSI\Modes\01.cs"/>
+    <Compile Include="SCSI\Modes\01_MMC.cs"/>
+    <Compile Include="SCSI\Modes\02.cs"/>
+    <Compile Include="SCSI\Modes\03.cs"/>
+    <Compile Include="SCSI\Modes\04.cs"/>
+    <Compile Include="SCSI\Modes\05.cs"/>
+    <Compile Include="SCSI\Modes\06.cs"/>
+    <Compile Include="SCSI\Modes\07.cs"/>
+    <Compile Include="SCSI\Modes\07_MMC.cs"/>
+    <Compile Include="SCSI\Modes\08.cs"/>
+    <Compile Include="SCSI\Modes\0A.cs"/>
+    <Compile Include="SCSI\Modes\0B.cs"/>
+    <Compile Include="SCSI\Modes\0C.cs"/>
+    <Compile Include="SCSI\Modes\0D.cs"/>
+    <Compile Include="SCSI\Modes\0E.cs"/>
+    <Compile Include="SCSI\Modes\0F.cs"/>
+    <Compile Include="SCSI\Modes\10.cs"/>
+    <Compile Include="SCSI\Modes\10_SSC.cs"/>
+    <Compile Include="SCSI\Modes\11.cs"/>
+    <Compile Include="SCSI\Modes\12_13_14.cs"/>
+    <Compile Include="SCSI\Modes\1A.cs"/>
+    <Compile Include="SCSI\Modes\1B.cs"/>
+    <Compile Include="SCSI\Modes\1C.cs"/>
+    <Compile Include="SCSI\Modes\1C_SFF.cs"/>
+    <Compile Include="SCSI\Modes\1D.cs"/>
+    <Compile Include="SCSI\Modes\21_Certance.cs"/>
+    <Compile Include="SCSI\Modes\22_Certance.cs"/>
+    <Compile Include="SCSI\Modes\24_IBM.cs"/>
+    <Compile Include="SCSI\Modes\2A.cs"/>
+    <Compile Include="SCSI\Modes\2F_IBM.cs"/>
+    <Compile Include="SCSI\Modes\30_Apple.cs"/>
+    <Compile Include="SCSI\Modes\3B_HP.cs"/>
+    <Compile Include="SCSI\Modes\3C_HP.cs"/>
+    <Compile Include="SCSI\Modes\3D_HP.cs"/>
+    <Compile Include="SCSI\Modes\3D_IBM.cs"/>
+    <Compile Include="SCSI\Modes\3E_Fujitsu.cs"/>
+    <Compile Include="SCSI\Modes\3E_HP.cs"/>
+    <Compile Include="SCSI\Modes\Headers.cs"/>
+    <Compile Include="SCSI\Modes\Mode10.cs"/>
+    <Compile Include="SCSI\Modes\Mode6.cs"/>
+    <Compile Include="SCSI\Modes\Structs.cs"/>
+    <Compile Include="SCSI\VendorString.cs"/>
+    <Compile Include="ATA\Identify.cs"/>
+    <Compile Include="SCSI\EVPD.cs"/>
+    <Compile Include="SCSI\MMC\Features.cs"/>
+    <Compile Include="SCSI\DiscStructureCapabilities.cs"/>
+    <Compile Include="SCSI\Sense.cs"/>
+    <Compile Include="ATA\Registers.cs"/>
+    <Compile Include="Xbox\DMI.cs"/>
+    <Compile Include="SCSI\SSC\BlockLimits.cs"/>
+    <Compile Include="SCSI\SSC\DensitySupport.cs"/>
+    <Compile Include="SCSI\Types.cs"/>
+    <Compile Include="LisaTag.cs"/>
+    <Compile Include="CD\Sector.cs"/>
+    <Compile Include="PCMCIA\Enums.cs"/>
+    <Compile Include="PCMCIA\Types.cs"/>
+    <Compile Include="PCMCIA\CIS.cs"/>
+    <Compile Include="PCMCIA\VendorCode.cs"/>
+    <Compile Include="MMC\CSD.cs"/>
+    <Compile Include="MMC\CID.cs"/>
+    <Compile Include="MMC\ExtendedCSD.cs"/>
+    <Compile Include="MMC\OCR.cs"/>
+    <Compile Include="MMC\VendorString.cs"/>
+    <Compile Include="SecureDigital\CID.cs"/>
+    <Compile Include="SecureDigital\CSD.cs"/>
+    <Compile Include="SecureDigital\SCR.cs"/>
+    <Compile Include="SecureDigital\OCR.cs"/>
+    <Compile Include="SecureDigital\VendorString.cs"/>
+    <Compile Include="Xbox\SS.cs"/>
+    <Compile Include="Sega\CD.cs"/>
+    <Compile Include="Sega\Saturn.cs"/>
+    <Compile Include="Sega\Dreamcast.cs"/>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Aaru.Checksums\Aaru.Checksums.csproj" />
-    <ProjectReference Include="..\Aaru.CommonTypes\Aaru.CommonTypes.csproj" />
+    <ProjectReference Include="..\Aaru.Checksums\Aaru.Checksums.csproj"/>
+    <ProjectReference Include="..\Aaru.CommonTypes\Aaru.CommonTypes.csproj"/>
     <ProjectReference Include="..\Aaru.Helpers\Aaru.Helpers.csproj">
       <Project>{F8BDF57B-1571-4CD0-84B3-B422088D359A}</Project>
       <Name>Aaru.Helpers</Name>
@@ -190,20 +190,20 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Blu-ray" />
-    <Folder Include="SCSI\" />
-    <Folder Include="ATA\" />
-    <Folder Include="Blu-ray\" />
-    <Folder Include="DVD\" />
-    <Folder Include="SCSI\MMC\" />
-    <Folder Include="CD\" />
-    <Folder Include="Floppy\" />
-    <Folder Include="Xbox\" />
-    <Folder Include="SCSI\SSC\" />
-    <Folder Include="PCMCIA\" />
-    <Folder Include="MMC\" />
-    <Folder Include="SecureDigital\" />
-    <Folder Include="Sega\" />
+    <Folder Include="Blu-ray"/>
+    <Folder Include="SCSI\"/>
+    <Folder Include="ATA\"/>
+    <Folder Include="Blu-ray\"/>
+    <Folder Include="DVD\"/>
+    <Folder Include="SCSI\MMC\"/>
+    <Folder Include="CD\"/>
+    <Folder Include="Floppy\"/>
+    <Folder Include="Xbox\"/>
+    <Folder Include="SCSI\SSC\"/>
+    <Folder Include="PCMCIA\"/>
+    <Folder Include="MMC\"/>
+    <Folder Include="SecureDigital\"/>
+    <Folder Include="Sega\"/>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="..\LICENSE.LGPL">
@@ -211,41 +211,41 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-    <PackageReference Include="System.ComponentModel.Annotations" Version="4.7.0" />
-    <PackageReference Include="Unclassified.NetRevisionTask" Version="0.3.0" PrivateAssets="all" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3"/>
+    <PackageReference Include="System.ComponentModel.Annotations" Version="4.7.0"/>
+    <PackageReference Include="Unclassified.NetRevisionTask" Version="0.3.0" PrivateAssets="all"/>
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
       <Properties>
         <Policies>
-          <DotNetNamingPolicy DirectoryNamespaceAssociation="PrefixedHierarchical" ResourceNamePolicy="MSBuild" />
-          <StandardHeader IncludeInNewFiles="True" Text="/***************************************************************************&#xA;Aaru Data Preservation Suite&#xA;----------------------------------------------------------------------------&#xA; &#xA;Filename       : ${FileName}&#xA;Author(s)      : ${AuthorName} &lt;${AuthorEmail}&gt;&#xA;&#xA;Component      : Component&#xA; &#xA;--[ Description ] ----------------------------------------------------------&#xA; &#xA;    Description&#xA; &#xA;--[ License ] --------------------------------------------------------------&#xA; &#xA;    This library is free software; you can redistribute it and/or modify&#xA;    it under the terms of the GNU Lesser General Public License as&#xA;    published by the Free Software Foundation; either version 2.1 of the&#xA;    License, or (at your option) any later version.&#xA;&#xA;    This library is distributed in the hope that it will be useful, but&#xA;    WITHOUT ANY WARRANTY; without even the implied warranty of&#xA;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU&#xA;    Lesser General Public License for more details.&#xA;&#xA;    You should have received a copy of the GNU Lesser General Public&#xA;    License along with this library; if not, see &lt;http://www.gnu.org/licenses/&gt;.&#xA;&#xA;----------------------------------------------------------------------------&#xA;Copyright © 2011-${Year} ${CopyrightHolder}&#xA;****************************************************************************/" />
-          <TextStylePolicy FileWidth="120" TabWidth="4" IndentWidth="4" RemoveTrailingWhitespace="True" NoTabsAfterNonTabs="False" EolMarker="Native" TabsToSpaces="True" scope="text/x-csharp" />
-          <CSharpFormattingPolicy IndentBlock="True" IndentBraces="False" IndentSwitchSection="True" IndentSwitchCaseSection="True" LabelPositioning="OneLess" NewLinesForBracesInTypes="True" NewLinesForBracesInMethods="True" NewLinesForBracesInProperties="True" NewLinesForBracesInAccessors="True" NewLinesForBracesInAnonymousMethods="True" NewLinesForBracesInControlBlocks="True" NewLinesForBracesInAnonymousTypes="True" NewLinesForBracesInObjectCollectionArrayInitializers="True" NewLinesForBracesInLambdaExpressionBody="True" NewLineForElse="True" NewLineForCatch="True" NewLineForFinally="True" NewLineForMembersInObjectInit="True" NewLineForMembersInAnonymousTypes="True" NewLineForClausesInQuery="True" SpacingAfterMethodDeclarationName="False" SpaceWithinMethodDeclarationParenthesis="False" SpaceBetweenEmptyMethodDeclarationParentheses="False" SpaceAfterMethodCallName="False" SpaceWithinMethodCallParentheses="False" SpaceBetweenEmptyMethodCallParentheses="False" SpaceWithinExpressionParentheses="False" SpaceWithinCastParentheses="False" SpaceWithinOtherParentheses="False" SpaceAfterCast="False" SpacesIgnoreAroundVariableDeclaration="False" SpaceBeforeOpenSquareBracket="False" SpaceBetweenEmptySquareBrackets="False" SpaceWithinSquareBrackets="False" SpaceAfterColonInBaseTypeDeclaration="True" SpaceAfterComma="True" SpaceAfterDot="False" SpaceAfterSemicolonsInForStatement="True" SpaceBeforeColonInBaseTypeDeclaration="True" SpaceBeforeComma="False" SpaceBeforeDot="False" SpaceBeforeSemicolonsInForStatement="False" SpacingAroundBinaryOperator="Single" WrappingPreserveSingleLine="True" WrappingKeepStatementsOnSingleLine="True" PlaceSystemDirectiveFirst="True" SpaceAfterControlFlowStatementKeyword="False" scope="text/x-csharp" />
+          <DotNetNamingPolicy DirectoryNamespaceAssociation="PrefixedHierarchical" ResourceNamePolicy="MSBuild"/>
+          <StandardHeader IncludeInNewFiles="True" Text="/***************************************************************************&#xA;Aaru Data Preservation Suite&#xA;----------------------------------------------------------------------------&#xA; &#xA;Filename       : ${FileName}&#xA;Author(s)      : ${AuthorName} &lt;${AuthorEmail}&gt;&#xA;&#xA;Component      : Component&#xA; &#xA;--[ Description ] ----------------------------------------------------------&#xA; &#xA;    Description&#xA; &#xA;--[ License ] --------------------------------------------------------------&#xA; &#xA;    This library is free software; you can redistribute it and/or modify&#xA;    it under the terms of the GNU Lesser General Public License as&#xA;    published by the Free Software Foundation; either version 2.1 of the&#xA;    License, or (at your option) any later version.&#xA;&#xA;    This library is distributed in the hope that it will be useful, but&#xA;    WITHOUT ANY WARRANTY; without even the implied warranty of&#xA;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU&#xA;    Lesser General Public License for more details.&#xA;&#xA;    You should have received a copy of the GNU Lesser General Public&#xA;    License along with this library; if not, see &lt;http://www.gnu.org/licenses/&gt;.&#xA;&#xA;----------------------------------------------------------------------------&#xA;Copyright © 2011-${Year} ${CopyrightHolder}&#xA;****************************************************************************/"/>
+          <TextStylePolicy FileWidth="120" TabWidth="4" IndentWidth="4" RemoveTrailingWhitespace="True" NoTabsAfterNonTabs="False" EolMarker="Native" TabsToSpaces="True" scope="text/x-csharp"/>
+          <CSharpFormattingPolicy IndentBlock="True" IndentBraces="False" IndentSwitchSection="True" IndentSwitchCaseSection="True" LabelPositioning="OneLess" NewLinesForBracesInTypes="True" NewLinesForBracesInMethods="True" NewLinesForBracesInProperties="True" NewLinesForBracesInAccessors="True" NewLinesForBracesInAnonymousMethods="True" NewLinesForBracesInControlBlocks="True" NewLinesForBracesInAnonymousTypes="True" NewLinesForBracesInObjectCollectionArrayInitializers="True" NewLinesForBracesInLambdaExpressionBody="True" NewLineForElse="True" NewLineForCatch="True" NewLineForFinally="True" NewLineForMembersInObjectInit="True" NewLineForMembersInAnonymousTypes="True" NewLineForClausesInQuery="True" SpacingAfterMethodDeclarationName="False" SpaceWithinMethodDeclarationParenthesis="False" SpaceBetweenEmptyMethodDeclarationParentheses="False" SpaceAfterMethodCallName="False" SpaceWithinMethodCallParentheses="False" SpaceBetweenEmptyMethodCallParentheses="False" SpaceWithinExpressionParentheses="False" SpaceWithinCastParentheses="False" SpaceWithinOtherParentheses="False" SpaceAfterCast="False" SpacesIgnoreAroundVariableDeclaration="False" SpaceBeforeOpenSquareBracket="False" SpaceBetweenEmptySquareBrackets="False" SpaceWithinSquareBrackets="False" SpaceAfterColonInBaseTypeDeclaration="True" SpaceAfterComma="True" SpaceAfterDot="False" SpaceAfterSemicolonsInForStatement="True" SpaceBeforeColonInBaseTypeDeclaration="True" SpaceBeforeComma="False" SpaceBeforeDot="False" SpaceBeforeSemicolonsInForStatement="False" SpacingAroundBinaryOperator="Single" WrappingPreserveSingleLine="True" WrappingKeepStatementsOnSingleLine="True" PlaceSystemDirectiveFirst="True" SpaceAfterControlFlowStatementKeyword="False" scope="text/x-csharp"/>
         </Policies>
       </Properties>
     </MonoDevelop>
   </ProjectExtensions>
-    <PropertyGroup Condition="$(TargetFramework.StartsWith('net4')) and '$(OS)' == 'Unix'">
-        <!-- When compiling .NET SDK 2.0 projects targeting .NET 4.x on Mono using 'dotnet build' you -->
-        <!-- have to teach MSBuild where the Mono copy of the reference asssemblies is -->
-        <!-- Look in the standard install locations -->
-        <BaseFrameworkPathOverrideForMono Condition="'$(BaseFrameworkPathOverrideForMono)' == '' AND EXISTS('/Library/Frameworks/Mono.framework/Versions/Current/lib/mono')">/Library/Frameworks/Mono.framework/Versions/Current/lib/mono</BaseFrameworkPathOverrideForMono>
-        <BaseFrameworkPathOverrideForMono Condition="'$(BaseFrameworkPathOverrideForMono)' == '' AND EXISTS('/usr/lib/mono')">/usr/lib/mono</BaseFrameworkPathOverrideForMono>
-        <BaseFrameworkPathOverrideForMono Condition="'$(BaseFrameworkPathOverrideForMono)' == '' AND EXISTS('/usr/local/lib/mono')">/usr/local/lib/mono</BaseFrameworkPathOverrideForMono>
-        <!-- If we found Mono reference assemblies, then use them -->
-        <FrameworkPathOverride Condition="'$(BaseFrameworkPathOverrideForMono)' != '' AND '$(TargetFramework)' == 'net40'">$(BaseFrameworkPathOverrideForMono)/4.0-api</FrameworkPathOverride>
-        <FrameworkPathOverride Condition="'$(BaseFrameworkPathOverrideForMono)' != '' AND '$(TargetFramework)' == 'net45'">$(BaseFrameworkPathOverrideForMono)/4.5-api</FrameworkPathOverride>
-        <FrameworkPathOverride Condition="'$(BaseFrameworkPathOverrideForMono)' != '' AND '$(TargetFramework)' == 'net451'">$(BaseFrameworkPathOverrideForMono)/4.5.1-api</FrameworkPathOverride>
-        <FrameworkPathOverride Condition="'$(BaseFrameworkPathOverrideForMono)' != '' AND '$(TargetFramework)' == 'net452'">$(BaseFrameworkPathOverrideForMono)/4.5.2-api</FrameworkPathOverride>
-        <FrameworkPathOverride Condition="'$(BaseFrameworkPathOverrideForMono)' != '' AND '$(TargetFramework)' == 'net46'">$(BaseFrameworkPathOverrideForMono)/4.6-api</FrameworkPathOverride>
-        <FrameworkPathOverride Condition="'$(BaseFrameworkPathOverrideForMono)' != '' AND '$(TargetFramework)' == 'net461'">$(BaseFrameworkPathOverrideForMono)/4.6.1-api</FrameworkPathOverride>
-        <FrameworkPathOverride Condition="'$(BaseFrameworkPathOverrideForMono)' != '' AND '$(TargetFramework)' == 'net462'">$(BaseFrameworkPathOverrideForMono)/4.6.2-api</FrameworkPathOverride>
-        <FrameworkPathOverride Condition="'$(BaseFrameworkPathOverrideForMono)' != '' AND '$(TargetFramework)' == 'net47'">$(BaseFrameworkPathOverrideForMono)/4.7-api</FrameworkPathOverride>
-        <FrameworkPathOverride Condition="'$(BaseFrameworkPathOverrideForMono)' != '' AND '$(TargetFramework)' == 'net471'">$(BaseFrameworkPathOverrideForMono)/4.7.1-api</FrameworkPathOverride>
-        <EnableFrameworkPathOverride Condition="'$(BaseFrameworkPathOverrideForMono)' != ''">true</EnableFrameworkPathOverride>
-        <!-- Add the Facades directory.  Not sure how else to do this. Necessary at least for .NET 4.5 -->
-        <AssemblySearchPaths Condition="'$(BaseFrameworkPathOverrideForMono)' != ''">$(FrameworkPathOverride)/Facades;$(AssemblySearchPaths)</AssemblySearchPaths>
-    </PropertyGroup>
+  <PropertyGroup Condition="$(TargetFramework.StartsWith('net4')) and '$(OS)' == 'Unix'">
+    <!-- When compiling .NET SDK 2.0 projects targeting .NET 4.x on Mono using 'dotnet build' you -->
+    <!-- have to teach MSBuild where the Mono copy of the reference asssemblies is -->
+    <!-- Look in the standard install locations -->
+    <BaseFrameworkPathOverrideForMono Condition="'$(BaseFrameworkPathOverrideForMono)' == '' AND EXISTS('/Library/Frameworks/Mono.framework/Versions/Current/lib/mono')">/Library/Frameworks/Mono.framework/Versions/Current/lib/mono</BaseFrameworkPathOverrideForMono>
+    <BaseFrameworkPathOverrideForMono Condition="'$(BaseFrameworkPathOverrideForMono)' == '' AND EXISTS('/usr/lib/mono')">/usr/lib/mono</BaseFrameworkPathOverrideForMono>
+    <BaseFrameworkPathOverrideForMono Condition="'$(BaseFrameworkPathOverrideForMono)' == '' AND EXISTS('/usr/local/lib/mono')">/usr/local/lib/mono</BaseFrameworkPathOverrideForMono>
+    <!-- If we found Mono reference assemblies, then use them -->
+    <FrameworkPathOverride Condition="'$(BaseFrameworkPathOverrideForMono)' != '' AND '$(TargetFramework)' == 'net40'">$(BaseFrameworkPathOverrideForMono)/4.0-api</FrameworkPathOverride>
+    <FrameworkPathOverride Condition="'$(BaseFrameworkPathOverrideForMono)' != '' AND '$(TargetFramework)' == 'net45'">$(BaseFrameworkPathOverrideForMono)/4.5-api</FrameworkPathOverride>
+    <FrameworkPathOverride Condition="'$(BaseFrameworkPathOverrideForMono)' != '' AND '$(TargetFramework)' == 'net451'">$(BaseFrameworkPathOverrideForMono)/4.5.1-api</FrameworkPathOverride>
+    <FrameworkPathOverride Condition="'$(BaseFrameworkPathOverrideForMono)' != '' AND '$(TargetFramework)' == 'net452'">$(BaseFrameworkPathOverrideForMono)/4.5.2-api</FrameworkPathOverride>
+    <FrameworkPathOverride Condition="'$(BaseFrameworkPathOverrideForMono)' != '' AND '$(TargetFramework)' == 'net46'">$(BaseFrameworkPathOverrideForMono)/4.6-api</FrameworkPathOverride>
+    <FrameworkPathOverride Condition="'$(BaseFrameworkPathOverrideForMono)' != '' AND '$(TargetFramework)' == 'net461'">$(BaseFrameworkPathOverrideForMono)/4.6.1-api</FrameworkPathOverride>
+    <FrameworkPathOverride Condition="'$(BaseFrameworkPathOverrideForMono)' != '' AND '$(TargetFramework)' == 'net462'">$(BaseFrameworkPathOverrideForMono)/4.6.2-api</FrameworkPathOverride>
+    <FrameworkPathOverride Condition="'$(BaseFrameworkPathOverrideForMono)' != '' AND '$(TargetFramework)' == 'net47'">$(BaseFrameworkPathOverrideForMono)/4.7-api</FrameworkPathOverride>
+    <FrameworkPathOverride Condition="'$(BaseFrameworkPathOverrideForMono)' != '' AND '$(TargetFramework)' == 'net471'">$(BaseFrameworkPathOverrideForMono)/4.7.1-api</FrameworkPathOverride>
+    <EnableFrameworkPathOverride Condition="'$(BaseFrameworkPathOverrideForMono)' != ''">true</EnableFrameworkPathOverride>
+    <!-- Add the Facades directory.  Not sure how else to do this. Necessary at least for .NET 4.5 -->
+    <AssemblySearchPaths Condition="'$(BaseFrameworkPathOverrideForMono)' != ''">$(FrameworkPathOverride)/Facades;$(AssemblySearchPaths)</AssemblySearchPaths>
+  </PropertyGroup>
 </Project>

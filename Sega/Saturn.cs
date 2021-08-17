@@ -40,16 +40,12 @@ using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Decoders.Sega
 {
-    /// <summary>
-    /// Represents the IP.BIN from a SEGA Saturn
-    /// </summary>
+    /// <summary>Represents the IP.BIN from a SEGA Saturn</summary>
     [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
      SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public static class Saturn
     {
-        /// <summary>
-        /// Decodes an IP.BIN sector in Saturn format
-        /// </summary>
+        /// <summary>Decodes an IP.BIN sector in Saturn format</summary>
         /// <param name="ipbin_sector">IP.BIN sector</param>
         /// <returns>Decoded IP.BIN</returns>
         public static IPBin? DecodeIPBin(byte[] ipbin_sector)
@@ -103,9 +99,7 @@ namespace Aaru.Decoders.Sega
             return Encoding.ASCII.GetString(ipbin.SegaHardwareID) == "SEGA SEGASATURN " ? ipbin : (IPBin?)null;
         }
 
-        /// <summary>
-        /// Pretty prints a decoded IP.BIN in Saturn format
-        /// </summary>
+        /// <summary>Pretty prints a decoded IP.BIN in Saturn format</summary>
         /// <param name="decoded">Decoded IP.BIN</param>
         /// <returns>Description of the IP.BIN contents</returns>
         public static string Prettify(IPBin? decoded)

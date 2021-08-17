@@ -40,16 +40,12 @@ using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Decoders.Sega
 {
-    /// <summary>
-    /// Represents the IP.BIN from a SEGA CD / MEGA CD
-    /// </summary>
+    /// <summary>Represents the IP.BIN from a SEGA CD / MEGA CD</summary>
     [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
      SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public static class CD
     {
-        /// <summary>
-        /// Decodes an IP.BIN sector in SEGA CD / MEGA CD format
-        /// </summary>
+        /// <summary>Decodes an IP.BIN sector in SEGA CD / MEGA CD format</summary>
         /// <param name="ipbin_sector">IP.BIN sector</param>
         /// <returns>Decoded IP.BIN</returns>
         public static IPBin? DecodeIPBin(byte[] ipbin_sector)
@@ -125,9 +121,7 @@ namespace Aaru.Decoders.Sega
                        : (IPBin?)null;
         }
 
-        /// <summary>
-        /// Pretty prints a decoded IP.BIN in SEGA CD / MEGA CD format
-        /// </summary>
+        /// <summary>Pretty prints a decoded IP.BIN in SEGA CD / MEGA CD format</summary>
         /// <param name="decoded">Decoded IP.BIN</param>
         /// <returns>Description of the IP.BIN contents</returns>
         public static string Prettify(IPBin? decoded)
