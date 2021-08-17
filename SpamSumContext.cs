@@ -275,7 +275,7 @@ namespace Aaru.Checksums
             result = new byte[FUZZY_MAX_RESULT];
 
             /* Verify that our elimination was not overeager. */
-            if(!(bi == 0 || ((ulong)SSDEEP_BS(bi) / 2) * SPAMSUM_LENGTH < _self.TotalSize))
+            if(!(bi == 0 || (ulong)SSDEEP_BS(bi) / 2 * SPAMSUM_LENGTH < _self.TotalSize))
                 throw new Exception("Assertion failed");
 
             int resultOff = 0;

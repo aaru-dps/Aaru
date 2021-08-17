@@ -203,7 +203,7 @@ namespace Aaru.Checksums
             _alphaTo = new int[n + 1];
             _indexOf = new int[n + 1];
 
-            _gg = new int[(_nn - _kk) + 1];
+            _gg = new int[_nn - _kk + 1];
 
             generate_gf();
             gen_poly();
@@ -349,12 +349,12 @@ namespace Aaru.Checksums
                  */
                 for(int j = i - 1; j > 0; j--)
                     if(_gg[j] != 0)
-                        _gg[j] = _gg[j - 1] ^ _alphaTo[Modnn((_indexOf[_gg[j]] + B0 + i) - 1)];
+                        _gg[j] = _gg[j - 1] ^ _alphaTo[Modnn(_indexOf[_gg[j]] + B0 + i - 1)];
                     else
                         _gg[j] = _gg[j - 1];
 
                 /* Gg[0] can never be zero */
-                _gg[0] = _alphaTo[Modnn((_indexOf[_gg[0]] + B0 + i) - 1)];
+                _gg[0] = _alphaTo[Modnn(_indexOf[_gg[0]] + B0 + i - 1)];
             }
 
             /* convert Gg[] to index form for quicker encoding */
@@ -444,14 +444,14 @@ namespace Aaru.Checksums
             int   i, j;
             int   q, tmp;
             int[] recd   = new int[_nn];
-            int[] lambda = new int[(_nn - _kk) + 1]; /* Err+Eras Locator poly */
-            int[] s      = new int[(_nn - _kk) + 1]; /* syndrome poly */
-            int[] b      = new int[(_nn - _kk) + 1];
-            int[] t      = new int[(_nn - _kk) + 1];
-            int[] omega  = new int[(_nn - _kk) + 1];
-            int[] root   = new int[_nn         - _kk];
-            int[] reg    = new int[(_nn - _kk) + 1];
-            int[] loc    = new int[_nn         - _kk];
+            int[] lambda = new int[_nn - _kk + 1]; /* Err+Eras Locator poly */
+            int[] s      = new int[_nn - _kk + 1]; /* syndrome poly */
+            int[] b      = new int[_nn - _kk + 1];
+            int[] t      = new int[_nn - _kk + 1];
+            int[] omega  = new int[_nn - _kk + 1];
+            int[] root   = new int[_nn       - _kk];
+            int[] reg    = new int[_nn - _kk + 1];
+            int[] loc    = new int[_nn       - _kk];
             int   count;
 
             /* data[] is in polynomial form, copy and convert to index form */
@@ -475,7 +475,7 @@ namespace Aaru.Checksums
 
                 for(j = 0; j < _nn; j++)
                     if(recd[j] != _a0) /* recd[j] in index form */
-                        tmp ^= _alphaTo[Modnn(recd[j] + (((B0 + i) - 1) * j))];
+                        tmp ^= _alphaTo[Modnn(recd[j] + ((B0 + i - 1) * j))];
 
                 synError |= tmp; /* set flag if non-zero syndrome =>
                      * error */
@@ -554,7 +554,7 @@ namespace Aaru.Checksums
             #endif
             }
 
-            for(i = 0; i < (_nn - _kk) + 1; i++)
+            for(i = 0; i < _nn - _kk + 1; i++)
                 b[i] = _indexOf[lambda[i]];
 
             /*
@@ -594,16 +594,16 @@ namespace Aaru.Checksums
                         else
                             t[i + 1] = lambda[i + 1];
 
-                    if(2 * el <= (r + noEras) - 1)
+                    if(2 * el <= r + noEras - 1)
                     {
-                        el = (r + noEras) - el;
+                        el = r + noEras - el;
 
                         /*
                          * 2 lines below: B(x) <-- inv(discr_r) *
                          * lambda(x)
                          */
                         for(i = 0; i <= _nn - _kk; i++)
-                            b[i] = lambda[i] == 0 ? _a0 : Modnn((_indexOf[lambda[i]] - discrR) + _nn);
+                            b[i] = lambda[i] == 0 ? _a0 : Modnn(_indexOf[lambda[i]] - discrR + _nn);
                     }
                     else
                     {
@@ -612,14 +612,14 @@ namespace Aaru.Checksums
                         b[0] = _a0;
                     }
 
-                    Copy(ref lambda, ref t, (_nn - _kk) + 1);
+                    Copy(ref lambda, ref t, _nn - _kk + 1);
                 }
             }
 
             /* Convert lambda to index form and compute deg(lambda(x)) */
             int degLambda = 0;
 
-            for(i = 0; i < (_nn - _kk) + 1; i++)
+            for(i = 0; i < _nn - _kk + 1; i++)
             {
                 lambda[i] = _indexOf[lambda[i]];
 
@@ -680,9 +680,9 @@ namespace Aaru.Checksums
                 j   = degLambda < i ? degLambda : i;
 
                 for(; j >= 0; j--)
-                    if(s[(i + 1) - j] != _a0 &&
-                       lambda[j]      != _a0)
-                        tmp ^= _alphaTo[Modnn(s[(i + 1) - j] + lambda[j])];
+                    if(s[i + 1 - j] != _a0 &&
+                       lambda[j]    != _a0)
+                        tmp ^= _alphaTo[Modnn(s[i + 1 - j] + lambda[j])];
 
                 if(tmp != 0)
                     degOmega = i;
@@ -721,7 +721,7 @@ namespace Aaru.Checksums
 
                 /* Apply error to data */
                 if(num1 != 0)
-                    data[loc[j]] ^= _alphaTo[Modnn((_indexOf[num1] + _indexOf[num2] + _nn) - _indexOf[den])];
+                    data[loc[j]] ^= _alphaTo[Modnn(_indexOf[num1] + _indexOf[num2] + _nn - _indexOf[den])];
             }
 
             return count;
