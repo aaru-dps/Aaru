@@ -294,7 +294,7 @@ namespace Aaru.DiscImages
 
             foreach(byte[] blkxBytes in blkxList)
             {
-                byte[]      bHdrB = new byte[Marshal.SizeOf<BlockHeader>()];
+                byte[] bHdrB = new byte[Marshal.SizeOf<BlockHeader>()];
                 Array.Copy(blkxBytes, 0, bHdrB, 0, Marshal.SizeOf<BlockHeader>());
                 BlockHeader bHdr = Marshal.ByteArrayToStructureBigEndian<BlockHeader>(bHdrB);
 
@@ -324,7 +324,7 @@ namespace Aaru.DiscImages
 
                 for(int i = 0; i < bHdr.chunks; i++)
                 {
-                    byte[]     bChnkB = new byte[Marshal.SizeOf<BlockChunk>()];
+                    byte[] bChnkB = new byte[Marshal.SizeOf<BlockChunk>()];
 
                     Array.Copy(blkxBytes, Marshal.SizeOf<BlockHeader>() + (Marshal.SizeOf<BlockChunk>() * i), bChnkB, 0,
                                Marshal.SizeOf<BlockChunk>());

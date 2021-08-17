@@ -37,9 +37,7 @@ namespace Aaru.Devices
 {
     public sealed partial class Device
     {
-        /// <summary>
-        /// Reads the CSD register from a SecureDigital or MultiMediaCard device
-        /// </summary>
+        /// <summary>Reads the CSD register from a SecureDigital or MultiMediaCard device</summary>
         /// <param name="buffer">Data buffer</param>
         /// <param name="response">Response</param>
         /// <param name="timeout">Timeout to wait for command execution</param>
@@ -60,9 +58,7 @@ namespace Aaru.Devices
             return sense;
         }
 
-        /// <summary>
-        /// Reads the CID register from a SecureDigital or MultiMediaCard device
-        /// </summary>
+        /// <summary>Reads the CID register from a SecureDigital or MultiMediaCard device</summary>
         /// <param name="buffer">Data buffer</param>
         /// <param name="response">Response</param>
         /// <param name="timeout">Timeout to wait for command execution</param>
@@ -83,9 +79,7 @@ namespace Aaru.Devices
             return sense;
         }
 
-        /// <summary>
-        /// Reads the OCR register from a MultiMediaCard device
-        /// </summary>
+        /// <summary>Reads the OCR register from a MultiMediaCard device</summary>
         /// <param name="buffer">Data buffer</param>
         /// <param name="response">Response</param>
         /// <param name="timeout">Timeout to wait for command execution</param>
@@ -106,9 +100,7 @@ namespace Aaru.Devices
             return sense;
         }
 
-        /// <summary>
-        /// Reads the extended CSD from a MultiMediaCard device
-        /// </summary>
+        /// <summary>Reads the extended CSD from a MultiMediaCard device</summary>
         /// <param name="buffer">Data buffer</param>
         /// <param name="response">Response</param>
         /// <param name="timeout">Timeout to wait for command execution</param>
@@ -129,9 +121,7 @@ namespace Aaru.Devices
             return sense;
         }
 
-        /// <summary>
-        /// Sets the block length for transfers from a SecureDigital or MultiMediaCard device
-        /// </summary>
+        /// <summary>Sets the block length for transfers from a SecureDigital or MultiMediaCard device</summary>
         /// <param name="length">Block length in bytes</param>
         /// <param name="response">Response</param>
         /// <param name="timeout">Timeout to wait for command execution</param>
@@ -152,9 +142,7 @@ namespace Aaru.Devices
             return sense;
         }
 
-        /// <summary>
-        /// Reads blocks from a SecureDigital or MultiMediaCard device
-        /// </summary>
+        /// <summary>Reads blocks from a SecureDigital or MultiMediaCard device</summary>
         /// <param name="buffer">Data buffer</param>
         /// <param name="response">Response</param>
         /// <param name="lba">LBA to start reading from</param>
@@ -186,9 +174,7 @@ namespace Aaru.Devices
             return sense;
         }
 
-        /// <summary>
-        /// Reads a single block from a SecureDigital or MultiMediaCard device
-        /// </summary>
+        /// <summary>Reads a single block from a SecureDigital or MultiMediaCard device</summary>
         /// <param name="buffer">Data buffer</param>
         /// <param name="response">Response</param>
         /// <param name="lba">LBA to start reading from</param>
@@ -222,9 +208,7 @@ namespace Aaru.Devices
 
         static bool _readMultipleBlockCannotSetBlockCount;
 
-        /// <summary>
-        /// Reads multiple blocks from a SecureDigital or MultiMediaCard device
-        /// </summary>
+        /// <summary>Reads multiple blocks from a SecureDigital or MultiMediaCard device</summary>
         /// <param name="buffer">Data buffer</param>
         /// <param name="response">Response</param>
         /// <param name="lba">LBA to start reading from</param>
@@ -265,9 +249,7 @@ namespace Aaru.Devices
             return sense;
         }
 
-        /// <summary>
-        /// Reads blocks using a single block read from a SecureDigital or MultiMediaCard device
-        /// </summary>
+        /// <summary>Reads blocks using a single block read from a SecureDigital or MultiMediaCard device</summary>
         /// <param name="buffer">Data buffer</param>
         /// <param name="response">Response</param>
         /// <param name="lba">LBA to start reading from</param>
@@ -316,9 +298,7 @@ namespace Aaru.Devices
             return sense;
         }
 
-        /// <summary>
-        /// Reads status register from a MultiMediaCard device
-        /// </summary>
+        /// <summary>Reads status register from a MultiMediaCard device</summary>
         /// <param name="buffer">Data buffer</param>
         /// <param name="response">Response</param>
         /// <param name="timeout">Timeout to wait for command execution</param>
@@ -339,9 +319,7 @@ namespace Aaru.Devices
             return sense;
         }
 
-        /// <summary>
-        /// Reads blocks with block count from a SecureDigital or MultiMediaCard device
-        /// </summary>
+        /// <summary>Reads blocks with block count from a SecureDigital or MultiMediaCard device</summary>
         /// <param name="buffer">Data buffer</param>
         /// <param name="response">Response</param>
         /// <param name="lba">LBA to start reading from</param>

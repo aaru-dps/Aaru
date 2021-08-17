@@ -41,24 +41,24 @@ namespace Aaru.DiscImages
     public sealed partial class DiscJuggler
     {
         /// <inheritdoc />
-        public string                 Name         => "DiscJuggler";
+        public string Name => "DiscJuggler";
         /// <inheritdoc />
-        public Guid                   Id           => new Guid("2444DBC6-CD35-424C-A227-39B0C4DB01B2");
+        public Guid Id => new Guid("2444DBC6-CD35-424C-A227-39B0C4DB01B2");
         /// <inheritdoc />
-        public ImageInfo              Info         => _imageInfo;
+        public ImageInfo Info => _imageInfo;
         /// <inheritdoc />
-        public string                 Format       => "DiscJuggler";
+        public string Format => "DiscJuggler";
         /// <inheritdoc />
-        public string                 Author       => "Natalia Portillo";
+        public string Author => "Natalia Portillo";
         /// <inheritdoc />
-        public List<Partition>        Partitions   { get; private set; }
+        public List<Partition> Partitions { get; private set; }
         /// <inheritdoc />
-        public List<Track>            Tracks       { get; private set; }
+        public List<Track> Tracks { get; private set; }
         /// <inheritdoc />
-        public List<Session>          Sessions     { get; private set; }
+        public List<Session> Sessions { get; private set; }
         /// <inheritdoc />
         public List<DumpHardwareType> DumpHardware => null;
         /// <inheritdoc />
-        public CICMMetadataType       CicmMetadata => null;
+        public CICMMetadataType CicmMetadata => null;
     }
 }

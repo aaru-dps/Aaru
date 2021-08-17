@@ -47,9 +47,7 @@ namespace Aaru.Filesystems
 {
     // Information from Apple ProDOS 8 Technical Reference
     /// <inheritdoc />
-    /// <summary>
-    /// Implements detection of Apple ProDOS filesystem
-    /// </summary>
+    /// <summary>Implements detection of Apple ProDOS filesystem</summary>
     [SuppressMessage("ReSharper", "UnusedMember.Local"), SuppressMessage("ReSharper", "UnusedType.Local")]
     public sealed class ProDOSPlugin : IFilesystem
     {
@@ -88,13 +86,13 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
         /// <inheritdoc />
-        public Encoding       Encoding  { get; private set; }
+        public Encoding Encoding { get; private set; }
         /// <inheritdoc />
-        public string         Name      => "Apple ProDOS filesystem";
+        public string Name => "Apple ProDOS filesystem";
         /// <inheritdoc />
-        public Guid           Id        => new Guid("43874265-7B8A-4739-BCF7-07F80D5932BF");
+        public Guid Id => new Guid("43874265-7B8A-4739-BCF7-07F80D5932BF");
         /// <inheritdoc />
-        public string         Author    => "Natalia Portillo";
+        public string Author => "Natalia Portillo";
 
         /// <inheritdoc />
         public bool Identify(IMediaImage imagePlugin, Partition partition)

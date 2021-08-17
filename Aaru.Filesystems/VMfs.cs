@@ -43,9 +43,7 @@ using Marshal = Aaru.Helpers.Marshal;
 namespace Aaru.Filesystems
 {
     /// <inheritdoc />
-    /// <summary>
-    /// Implements detection of the VMware filesystem
-    /// </summary>
+    /// <summary>Implements detection of the VMware filesystem</summary>
     [SuppressMessage("ReSharper", "UnusedType.Local"), SuppressMessage("ReSharper", "IdentifierTypo"),
      SuppressMessage("ReSharper", "UnusedMember.Local")]
     public sealed class VMfs : IFilesystem
@@ -57,13 +55,13 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
         /// <inheritdoc />
-        public Encoding       Encoding  { get; private set; }
+        public Encoding Encoding { get; private set; }
         /// <inheritdoc />
-        public string         Name      => "VMware filesystem";
+        public string Name => "VMware filesystem";
         /// <inheritdoc />
-        public Guid           Id        => new Guid("EE52BDB8-B49C-4122-A3DA-AD21CBE79843");
+        public Guid Id => new Guid("EE52BDB8-B49C-4122-A3DA-AD21CBE79843");
         /// <inheritdoc />
-        public string         Author    => "Natalia Portillo";
+        public string Author => "Natalia Portillo";
 
         /// <inheritdoc />
         public bool Identify(IMediaImage imagePlugin, Partition partition)

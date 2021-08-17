@@ -155,8 +155,9 @@ namespace Aaru.Gui.ViewModels.Windows
                     a.Bus
                 }).Where(a => a.Count() > 1).Distinct().Select(a => a.Key))
                     ctx.RemoveRange(ctx.SeenDevices!.
-                                    Where(d => d.Manufacturer == duplicate.Manufacturer && d.Model == duplicate.Model &&
-                                               d.Revision     == duplicate.Revision && d.Bus == duplicate.Bus).Skip(1));
+                                        Where(d => d.Manufacturer == duplicate.Manufacturer &&
+                                                   d.Model == duplicate.Model && d.Revision == duplicate.Revision &&
+                                                   d.Bus == duplicate.Bus).Skip(1));
 
                 // Remove nulls
                 ctx.RemoveRange(ctx.SeenDevices!.Where(d => d.Manufacturer == null && d.Model == null &&

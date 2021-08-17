@@ -777,9 +777,7 @@ namespace Aaru.Devices
             return sense;
         }
 
-        /// <summary>
-        /// Requests the device fixed sense
-        /// </summary>
+        /// <summary>Requests the device fixed sense</summary>
         /// <param name="buffer">Sense buffer</param>
         /// <param name="timeout">Timeout in seconds.</param>
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
@@ -787,9 +785,7 @@ namespace Aaru.Devices
         public bool RequestSense(out byte[] buffer, uint timeout, out double duration) =>
             RequestSense(false, out buffer, timeout, out duration);
 
-        /// <summary>
-        /// Requests the device sense
-        /// </summary>
+        /// <summary>Requests the device sense</summary>
         /// <param name="descriptor">Request a descriptor sense</param>
         /// <param name="buffer">Sense buffer</param>
         /// <param name="timeout">Timeout in seconds.</param>

@@ -42,9 +42,7 @@ using Marshal = Aaru.Helpers.Marshal;
 namespace Aaru.Filesystems
 {
     /// <inheritdoc />
-    /// <summary>
-    /// Implements detection of the Apple File System (APFS)
-    /// </summary>
+    /// <summary>Implements detection of the Apple File System (APFS)</summary>
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
     public sealed class APFS : IFilesystem
     {
@@ -54,13 +52,13 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
         /// <inheritdoc />
-        public Encoding       Encoding  { get; private set; }
+        public Encoding Encoding { get; private set; }
         /// <inheritdoc />
-        public string         Name      => "Apple File System";
+        public string Name => "Apple File System";
         /// <inheritdoc />
-        public Guid           Id        => new Guid("A4060F9D-2909-42E2-9D95-DB31FA7EA797");
+        public Guid Id => new Guid("A4060F9D-2909-42E2-9D95-DB31FA7EA797");
         /// <inheritdoc />
-        public string         Author    => "Natalia Portillo";
+        public string Author => "Natalia Portillo";
 
         /// <inheritdoc />
         public bool Identify(IMediaImage imagePlugin, Partition partition)

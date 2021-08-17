@@ -37,14 +37,10 @@ using Aaru.Helpers;
 
 namespace Aaru.Core
 {
-    /// <summary>
-    /// Prints all SCSI MODE pages
-    /// </summary>
+    /// <summary>Prints all SCSI MODE pages</summary>
     public static class PrintScsiModePages
     {
-        /// <summary>
-        /// Prints all SCSI MODE pages
-        /// </summary>
+        /// <summary>Prints all SCSI MODE pages</summary>
         /// <param name="decMode">Decoded SCSI MODE SENSE</param>
         /// <param name="devType">SCSI Peripheral Type</param>
         /// <param name="vendorId">SCSI vendor identification</param>

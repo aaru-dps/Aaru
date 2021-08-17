@@ -58,9 +58,9 @@ namespace Aaru.Filters
         Stream     _stream;
 
         /// <inheritdoc />
-        public string Name   => "MacBinary";
+        public string Name => "MacBinary";
         /// <inheritdoc />
-        public Guid   Id     => new Guid("D7C321D3-E51F-45DF-A150-F6BFDF0D7704");
+        public Guid Id => new Guid("D7C321D3-E51F-45DF-A150-F6BFDF0D7704");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 

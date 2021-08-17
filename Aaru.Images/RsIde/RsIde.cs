@@ -39,9 +39,7 @@ using Aaru.CommonTypes.Structs;
 namespace Aaru.DiscImages
 {
     /// <inheritdoc />
-    /// <summary>
-    /// Implements reading and writing RS-IDE disk images
-    /// </summary>
+    /// <summary>Implements reading and writing RS-IDE disk images</summary>
     public sealed partial class RsIde : IWritableImage
     {
         ushort     _dataOff;

@@ -1309,7 +1309,7 @@ namespace Aaru.DiscImages
 
                 Partitions = new List<Partition>();
 
-                ulong  partitionSequence      = 0;
+                ulong partitionSequence = 0;
 
                 _offsetMap = new Dictionary<uint, ulong>();
 
@@ -1345,8 +1345,7 @@ namespace Aaru.DiscImages
                         _offsetMap.Add(_discImage.Tracks[i].Sequence,
                                        (ulong)(_discImage.Tracks[i].Indexes[1] - _discImage.Tracks[i].Pregap));
                     else
-                        _offsetMap.Add(_discImage.Tracks[i].Sequence,
-                                       (ulong)_discImage.Tracks[i].Indexes[1]);
+                        _offsetMap.Add(_discImage.Tracks[i].Sequence, (ulong)_discImage.Tracks[i].Indexes[1]);
 
                     Partitions.Add(partition);
                 }

@@ -42,12 +42,12 @@ namespace Aaru.DiscImages
     {
         bool TryReadHeader(Stream stream, ref FileHeader fhdr, ref TrackInfo[] tmap, ref long[] toffsets)
         {
-            int numTracks;
-            int trackLen; // the length of a single track, in bytes
+            int         numTracks;
+            int         trackLen; // the length of a single track, in bytes
             TrackInfo[] trackMap;
-            byte[] buffer = new byte[6];
-            FileHeader fHeader;
-            long[] trackOffsets;
+            byte[]      buffer = new byte[6];
+            FileHeader  fHeader;
+            long[]      trackOffsets;
 
             stream.Seek(0, SeekOrigin.Begin);
 
@@ -57,35 +57,40 @@ namespace Aaru.DiscImages
             // read and check signature
             fHeader.signature = new byte[10];
             stream.Read(fHeader.signature, 0, 10);
-            if (!fHeader.signature.SequenceEqual(_headerMagic))
+
+            if(!fHeader.signature.SequenceEqual(_headerMagic))
                 return false;
 
             // read and check disk type byte
             fHeader.diskType = (byte)stream.ReadByte();
-            if (fHeader.diskType < 1 || fHeader.diskType > 4)
+
+            if(fHeader.diskType < 1 ||
+               fHeader.diskType > 4)
                 return false;
 
             // seek to start of the trackmap
             stream.Seek(TRACKMAP_OFFSET, SeekOrigin.Begin);
-            numTracks = _diskTypes[fHeader.diskType].cyl * _diskTypes[fHeader.diskType].hd;
-            trackLen = 512 * _diskTypes[fHeader.diskType].spt;
-            trackMap = new TrackInfo[numTracks];
+            numTracks    = _diskTypes[fHeader.diskType].cyl * _diskTypes[fHeader.diskType].hd;
+            trackLen     = 512                              * _diskTypes[fHeader.diskType].spt;
+            trackMap     = new TrackInfo[numTracks];
             trackOffsets = new long[numTracks];
 
             AaruConsole.DebugWriteLine("DiskDupe plugin", "Identified image with C/H/S = {0}/{1}/{2}",
-                    _diskTypes[fHeader.diskType].cyl, _diskTypes[fHeader.diskType].hd, _diskTypes[fHeader.diskType].spt);
+                                       _diskTypes[fHeader.diskType].cyl, _diskTypes[fHeader.diskType].hd,
+                                       _diskTypes[fHeader.diskType].spt);
 
             // read the trackmap and store the track offsets
-            for (int i = 0; i < numTracks; i++)
+            for(int i = 0; i < numTracks; i++)
             {
                 stream.Read(buffer, 0, 6);
-                trackMap[i] = Marshal.ByteArrayToStructureBigEndian<TrackInfo>(buffer);
+                trackMap[i]     = Marshal.ByteArrayToStructureBigEndian<TrackInfo>(buffer);
                 trackOffsets[i] = trackLen * trackMap[i].trackNumber;
             }
 
-            fhdr = fHeader;
-            tmap = trackMap;
+            fhdr     = fHeader;
+            tmap     = trackMap;
             toffsets = trackOffsets;
+
             return true;
         }
     }

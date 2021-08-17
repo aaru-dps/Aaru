@@ -36,14 +36,10 @@ using System.Text;
 
 namespace Aaru.Core
 {
-    /// <summary>
-    /// Option parsing
-    /// </summary>
+    /// <summary>Option parsing</summary>
     public static class Options
     {
-        /// <summary>
-        /// Parses a string with options
-        /// </summary>
+        /// <summary>Parses a string with options</summary>
         /// <param name="options">Options string</param>
         /// <returns>Options name-value dictionary</returns>
         public static Dictionary<string, string> Parse(string options)

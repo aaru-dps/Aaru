@@ -44,16 +44,16 @@ namespace Aaru.DiscImages
         public ImageInfo Info => _imageInfo;
 
         /// <inheritdoc />
-        public string                 Name         => "d2f disk image";
+        public string Name => "d2f disk image";
         /// <inheritdoc />
-        public Guid                   Id           => new Guid("DDE01493-BCA2-41C2-A269-7E56D3716D2F");
+        public Guid Id => new Guid("DDE01493-BCA2-41C2-A269-7E56D3716D2F");
         /// <inheritdoc />
-        public string                 Author       => "Michael Drüing";
+        public string Author => "Michael Drüing";
         /// <inheritdoc />
-        public string                 Format       => "d2f disk image";
+        public string Format => "d2f disk image";
         /// <inheritdoc />
         public List<DumpHardwareType> DumpHardware => null;
         /// <inheritdoc />
-        public CICMMetadataType       CicmMetadata => null;
+        public CICMMetadataType CicmMetadata => null;
     }
 }

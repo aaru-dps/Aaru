@@ -45,9 +45,7 @@ using Marshal = Aaru.Helpers.Marshal;
 namespace Aaru.Filesystems
 {
     /// <inheritdoc />
-    /// <summary>
-    /// Implements detection of Amiga Fast File System (AFFS)
-    /// </summary>
+    /// <summary>Implements detection of Amiga Fast File System (AFFS)</summary>
     public sealed class AmigaDOSPlugin : IFilesystem
     {
         const uint FFS_MASK  = 0x444F5300;
@@ -59,13 +57,13 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
         /// <inheritdoc />
-        public string         Name      => "Amiga DOS filesystem";
+        public string Name => "Amiga DOS filesystem";
         /// <inheritdoc />
-        public Guid           Id        => new Guid("3c882400-208c-427d-a086-9119852a1bc7");
+        public Guid Id => new Guid("3c882400-208c-427d-a086-9119852a1bc7");
         /// <inheritdoc />
-        public Encoding       Encoding  { get; private set; }
+        public Encoding Encoding { get; private set; }
         /// <inheritdoc />
-        public string         Author    => "Natalia Portillo";
+        public string Author => "Natalia Portillo";
 
         /// <inheritdoc />
         public bool Identify(IMediaImage imagePlugin, Partition partition)
@@ -117,7 +115,7 @@ namespace Aaru.Filesystems
             ulong[] rootPtrs =
             {
                 bRootPtr + partition.Start, ((partition.End - partition.Start + 1) / 2) + partition.Start - 2,
-                ((partition.End - partition.Start                           + 1) / 2) + partition.Start - 1,
+                ((partition.End                             - partition.Start + 1) / 2) + partition.Start - 1,
                 ((partition.End - partition.Start + 1) / 2) + partition.Start,
                 ((partition.End - partition.Start + 1) / 2) + partition.Start + 4
             };
@@ -202,7 +200,7 @@ namespace Aaru.Filesystems
             ulong[] rootPtrs =
             {
                 bRootPtr + partition.Start, ((partition.End - partition.Start + 1) / 2) + partition.Start - 2,
-                ((partition.End - partition.Start                           + 1) / 2) + partition.Start - 1,
+                ((partition.End                             - partition.Start + 1) / 2) + partition.Start - 1,
                 ((partition.End - partition.Start + 1) / 2) + partition.Start,
                 ((partition.End - partition.Start + 1) / 2) + partition.Start + 4
             };

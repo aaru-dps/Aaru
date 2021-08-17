@@ -89,7 +89,9 @@ namespace Aaru.Core.Devices.Dumping
         readonly ushort                     _retryPasses;
         readonly bool                       _retrySubchannel;
         readonly bool                       _stopOnError;
+        readonly bool                       _storeEncrypted;
         readonly DumpSubchannel             _subchannel;
+        readonly bool                       _titleKeys;
         readonly bool                       _trim;
         readonly bool                       _useBufferedReads;
         bool                                _aborted;
@@ -105,8 +107,6 @@ namespace Aaru.Core.Devices.Dumping
         int                                 _speed;
         int                                 _speedMultiplier;
         bool                                _supportsPlextorD8;
-        readonly bool                       _storeEncrypted;
-        readonly bool                       _titleKeys;
 
         /// <summary>Initializes dumpers</summary>
         /// <param name="doResume">Should resume?</param>
@@ -275,9 +275,7 @@ namespace Aaru.Core.Devices.Dumping
             fs.Close();
         }
 
-        /// <summary>
-        /// Aborts the dump in progress
-        /// </summary>
+        /// <summary>Aborts the dump in progress</summary>
         public void Abort()
         {
             _aborted = true;

@@ -88,9 +88,7 @@ namespace Aaru.Devices
             return sense;
         }
 
-        /// <summary>
-        /// Reads sectors using CHS addressing and DMA transfer, retrying on error
-        /// </summary>
+        /// <summary>Reads sectors using CHS addressing and DMA transfer, retrying on error</summary>
         /// <param name="buffer">Buffer that contains the read data</param>
         /// <param name="statusRegisters">Returned status registers</param>
         /// <param name="cylinder">Cylinder of read start</param>
@@ -104,9 +102,7 @@ namespace Aaru.Devices
                             byte sector, byte count, uint timeout, out double duration) =>
             ReadDma(out buffer, out statusRegisters, true, cylinder, head, sector, count, timeout, out duration);
 
-        /// <summary>
-        /// Reads sectors using CHS addressing and DMA transfer
-        /// </summary>
+        /// <summary>Reads sectors using CHS addressing and DMA transfer</summary>
         /// <param name="buffer">Buffer that contains the read data</param>
         /// <param name="statusRegisters">Returned status registers</param>
         /// <param name="retry">Retry on error</param>
@@ -143,7 +139,8 @@ namespace Aaru.Devices
         }
 
         /// <summary>
-        /// Reads sectors using CHS addressing and PIO transfer, sending an interrupt only after all the sectors have been transferred
+        ///     Reads sectors using CHS addressing and PIO transfer, sending an interrupt only after all the sectors have been
+        ///     transferred
         /// </summary>
         /// <param name="buffer">Buffer that contains the read data</param>
         /// <param name="statusRegisters">Returned status registers</param>
@@ -180,9 +177,7 @@ namespace Aaru.Devices
             return sense;
         }
 
-        /// <summary>
-        /// Reads sectors using CHS addressing and PIO transfer, retrying on error
-        /// </summary>
+        /// <summary>Reads sectors using CHS addressing and PIO transfer, retrying on error</summary>
         /// <param name="buffer">Buffer that contains the read data</param>
         /// <param name="statusRegisters">Returned status registers</param>
         /// <param name="cylinder">Cylinder of read start</param>
@@ -196,9 +191,7 @@ namespace Aaru.Devices
                          byte sector, byte count, uint timeout, out double duration) =>
             Read(out buffer, out statusRegisters, true, cylinder, head, sector, count, timeout, out duration);
 
-        /// <summary>
-        /// Reads sectors using CHS addressing and PIO transfer
-        /// </summary>
+        /// <summary>Reads sectors using CHS addressing and PIO transfer</summary>
         /// <param name="buffer">Buffer that contains the read data</param>
         /// <param name="statusRegisters">Returned status registers</param>
         /// <param name="retry">Retry on error</param>
@@ -235,9 +228,7 @@ namespace Aaru.Devices
             return sense;
         }
 
-        /// <summary>
-        /// Reads a long sector using CHS addressing and PIO transfer, retrying on error
-        /// </summary>
+        /// <summary>Reads a long sector using CHS addressing and PIO transfer, retrying on error</summary>
         /// <param name="buffer">Buffer that contains the read data</param>
         /// <param name="statusRegisters">Returned status registers</param>
         /// <param name="cylinder">Cylinder of read start</param>
@@ -251,9 +242,7 @@ namespace Aaru.Devices
                              byte sector, uint blockSize, uint timeout, out double duration) =>
             ReadLong(out buffer, out statusRegisters, true, cylinder, head, sector, blockSize, timeout, out duration);
 
-        /// <summary>
-        /// Reads a long sector using CHS addressing and PIO transfer, retrying on error
-        /// </summary>
+        /// <summary>Reads a long sector using CHS addressing and PIO transfer, retrying on error</summary>
         /// <param name="buffer">Buffer that contains the read data</param>
         /// <param name="statusRegisters">Returned status registers</param>
         /// <param name="retry">Retry on error</param>
@@ -290,9 +279,7 @@ namespace Aaru.Devices
             return sense;
         }
 
-        /// <summary>
-        /// Sets the reading mechanism ready to read the specified block using CHS addressing
-        /// </summary>
+        /// <summary>Sets the reading mechanism ready to read the specified block using CHS addressing</summary>
         /// <param name="statusRegisters">Returned status registers</param>
         /// <param name="cylinder">Cylinder to position reading mechanism ready to read</param>
         /// <param name="head">Head to position reading mechanism ready to read</param>
@@ -325,9 +312,7 @@ namespace Aaru.Devices
             return sense;
         }
 
-        /// <summary>
-        /// Enables drive features
-        /// </summary>
+        /// <summary>Enables drive features</summary>
         /// <param name="statusRegisters">Returned status registers</param>
         /// <param name="feature">Feature to enable</param>
         /// <param name="timeout">Timeout to wait for command execution</param>
@@ -337,9 +322,7 @@ namespace Aaru.Devices
                                 out double duration) =>
             SetFeatures(out statusRegisters, feature, 0, 0, 0, 0, timeout, out duration);
 
-        /// <summary>
-        /// Enables drive features
-        /// </summary>
+        /// <summary>Enables drive features</summary>
         /// <param name="statusRegisters">Returned status registers</param>
         /// <param name="feature">Feature to enable</param>
         /// <param name="cylinder">Value for the cylinder register</param>
@@ -376,9 +359,7 @@ namespace Aaru.Devices
             return sense;
         }
 
-        /// <summary>
-        /// Prevents ejection of the media inserted in the drive
-        /// </summary>
+        /// <summary>Prevents ejection of the media inserted in the drive</summary>
         /// <param name="statusRegisters">Returned status registers</param>
         /// <param name="timeout">Timeout to wait for command execution</param>
         /// <param name="duration">Time the device took to execute the command in milliseconds</param>
@@ -403,9 +384,7 @@ namespace Aaru.Devices
             return sense;
         }
 
-        /// <summary>
-        /// Allows ejection of the media inserted in the drive
-        /// </summary>
+        /// <summary>Allows ejection of the media inserted in the drive</summary>
         /// <param name="statusRegisters">Returned status registers</param>
         /// <param name="timeout">Timeout to wait for command execution</param>
         /// <param name="duration">Time the device took to execute the command in milliseconds</param>
@@ -430,9 +409,7 @@ namespace Aaru.Devices
             return sense;
         }
 
-        /// <summary>
-        /// Ejects the media inserted in the drive
-        /// </summary>
+        /// <summary>Ejects the media inserted in the drive</summary>
         /// <param name="statusRegisters">Returned status registers</param>
         /// <param name="timeout">Timeout to wait for command execution</param>
         /// <param name="duration">Time the device took to execute the command in milliseconds</param>

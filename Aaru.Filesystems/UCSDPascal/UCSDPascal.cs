@@ -41,9 +41,7 @@ namespace Aaru.Filesystems.UCSDPascal
 {
     // Information from Call-A.P.P.L.E. Pascal Disk Directory Structure
     /// <inheritdoc />
-    /// <summary>
-    /// Implements the U.C.S.D. Pascal filesystem
-    /// </summary>
+    /// <summary>Implements the U.C.S.D. Pascal filesystem</summary>
     public sealed partial class PascalPlugin : IReadOnlyFilesystem
     {
         byte[]                _bootBlocks;
@@ -59,13 +57,13 @@ namespace Aaru.Filesystems.UCSDPascal
         /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
         /// <inheritdoc />
-        public string         Name      => "U.C.S.D. Pascal filesystem";
+        public string Name => "U.C.S.D. Pascal filesystem";
         /// <inheritdoc />
-        public Guid           Id        => new Guid("B0AC2CB5-72AA-473A-9200-270B5A2C2D53");
+        public Guid Id => new Guid("B0AC2CB5-72AA-473A-9200-270B5A2C2D53");
         /// <inheritdoc />
-        public Encoding       Encoding  { get; private set; }
+        public Encoding Encoding { get; private set; }
         /// <inheritdoc />
-        public string         Author    => "Natalia Portillo";
+        public string Author => "Natalia Portillo";
 
         /// <inheritdoc />
         public Errno ListXAttr(string path, out List<string> xattrs)

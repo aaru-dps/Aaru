@@ -44,22 +44,20 @@ namespace Aaru.Filesystems
 {
     // Not a filesystem, more like an executable header
     /// <inheritdoc />
-    /// <summary>
-    /// Implements detection of NEC PC-FX headers
-    /// </summary>
+    /// <summary>Implements detection of NEC PC-FX headers</summary>
     public sealed class PCFX : IFilesystem
     {
-        const  string         IDENTIFIER = "PC-FX:Hu_CD-ROM ";
+        const string IDENTIFIER = "PC-FX:Hu_CD-ROM ";
         /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
         /// <inheritdoc />
-        public Encoding       Encoding  { get; private set; }
+        public Encoding Encoding { get; private set; }
         /// <inheritdoc />
-        public string         Name      => "PC-FX Plugin";
+        public string Name => "PC-FX Plugin";
         /// <inheritdoc />
-        public Guid           Id        => new Guid("8BC27CCE-D9E9-48F8-BA93-C66A86EB565A");
+        public Guid Id => new Guid("8BC27CCE-D9E9-48F8-BA93-C66A86EB565A");
         /// <inheritdoc />
-        public string         Author    => "Natalia Portillo";
+        public string Author => "Natalia Portillo";
 
         /// <inheritdoc />
         public bool Identify(IMediaImage imagePlugin, Partition partition)

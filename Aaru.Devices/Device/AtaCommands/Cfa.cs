@@ -38,9 +38,7 @@ namespace Aaru.Devices
 {
     public sealed partial class Device
     {
-        /// <summary>
-        /// Requests to translate an LBA to a card physical address
-        /// </summary>
+        /// <summary>Requests to translate an LBA to a card physical address</summary>
         /// <param name="buffer">Data buffer</param>
         /// <param name="statusRegisters">Returned status registers</param>
         /// <param name="lba">LBA to start reading from</param>
@@ -74,9 +72,7 @@ namespace Aaru.Devices
             return sense;
         }
 
-        /// <summary>
-        /// Requests to translate a CHS to a card physical address
-        /// </summary>
+        /// <summary>Requests to translate a CHS to a card physical address</summary>
         /// <param name="buffer">Data buffer</param>
         /// <param name="statusRegisters">Returned status registers</param>
         /// <param name="cylinder">Cylinder</param>
@@ -110,9 +106,7 @@ namespace Aaru.Devices
             return sense;
         }
 
-        /// <summary>
-        /// Requests an extended error code
-        /// </summary>
+        /// <summary>Requests an extended error code</summary>
         /// <param name="errorCode">Error code</param>
         /// <param name="statusRegisters">Returned status registers</param>
         /// <param name="timeout">Timeout to wait for command execution</param>

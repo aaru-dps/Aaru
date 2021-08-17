@@ -42,19 +42,19 @@ namespace Aaru.DiscImages
     public sealed partial class Nhdr0
     {
         /// <inheritdoc />
-        public string                 Name         => "T98-Next NHD r0 Disk Image";
+        public string Name => "T98-Next NHD r0 Disk Image";
         /// <inheritdoc />
-        public Guid                   Id           => new Guid("6ECACD0A-8F4D-4465-8815-AEA000D370E3");
+        public Guid Id => new Guid("6ECACD0A-8F4D-4465-8815-AEA000D370E3");
         /// <inheritdoc />
-        public ImageInfo              Info         => _imageInfo;
+        public ImageInfo Info => _imageInfo;
         /// <inheritdoc />
-        public string                 Author       => "Natalia Portillo";
+        public string Author => "Natalia Portillo";
         /// <inheritdoc />
-        public string                 Format       => "NHDr0 disk image";
+        public string Format => "NHDr0 disk image";
         /// <inheritdoc />
         public List<DumpHardwareType> DumpHardware => null;
         /// <inheritdoc />
-        public CICMMetadataType       CicmMetadata => null;
+        public CICMMetadataType CicmMetadata => null;
         /// <inheritdoc />
         public IEnumerable<MediaTagType> SupportedMediaTags => new MediaTagType[]
             {};
@@ -78,7 +78,7 @@ namespace Aaru.DiscImages
             ".nhd"
         };
         /// <inheritdoc />
-        public bool   IsWriting    { get; private set; }
+        public bool IsWriting { get; private set; }
         /// <inheritdoc />
         public string ErrorMessage { get; private set; }
     }

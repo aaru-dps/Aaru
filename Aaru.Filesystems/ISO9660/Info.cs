@@ -152,8 +152,8 @@ namespace Aaru.Filesystems
 
                 if(Encoding.GetString(vdMagic) != ISO_MAGIC         &&
                    Encoding.GetString(hsMagic) != HIGH_SIERRA_MAGIC &&
-                   Encoding.GetString(vdMagic) != CDI_MAGIC
-                ) // Recognized, it is an ISO9660, now check for rest of data.
+                   Encoding.GetString(vdMagic) !=
+                   CDI_MAGIC) // Recognized, it is an ISO9660, now check for rest of data.
                 {
                     if(counter == 0)
                         return;
@@ -790,8 +790,7 @@ namespace Aaru.Filesystems
                         if(sectionEntry.bootable == ElToritoIndicator.Bootable)
                         {
                             bootImage =
-                                sectionEntry.load_rba + partition.Start + sectionEntry.sector_count - 1 <=
-                                partition.End
+                                sectionEntry.load_rba + partition.Start + sectionEntry.sector_count - 1 <= partition.End
                                     ? imagePlugin.ReadSectors(sectionEntry.load_rba + partition.Start,
                                                               sectionEntry.sector_count) : null;
 

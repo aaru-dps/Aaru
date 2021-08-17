@@ -38,9 +38,7 @@ using Aaru.Console;
 
 namespace Aaru.Core
 {
-    /// <summary>
-    /// Core media image format operations
-    /// </summary>
+    /// <summary>Core media image format operations</summary>
     public static class ImageFormat
     {
         /// <summary>Detects the image plugin that recognizes the data inside a filter</summary>

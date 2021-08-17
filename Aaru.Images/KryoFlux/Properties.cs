@@ -39,20 +39,20 @@ namespace Aaru.DiscImages
 {
     public sealed partial class KryoFlux
     {
-        ImageInfo              _imageInfo;
+        ImageInfo _imageInfo;
         /// <inheritdoc />
-        public ImageInfo              Info         => _imageInfo;
+        public ImageInfo Info => _imageInfo;
         /// <inheritdoc />
-        public string                 Author       => "Natalia Portillo";
+        public string Author => "Natalia Portillo";
         /// <inheritdoc />
-        public string                 Name         => "KryoFlux STREAM";
+        public string Name => "KryoFlux STREAM";
         /// <inheritdoc />
-        public Guid                   Id           => new Guid("4DBC95E4-93EE-4F7A-9492-919887E60EFE");
+        public Guid Id => new Guid("4DBC95E4-93EE-4F7A-9492-919887E60EFE");
         /// <inheritdoc />
-        public string                 Format       => "KryoFlux STREAM";
+        public string Format => "KryoFlux STREAM";
         /// <inheritdoc />
         public List<DumpHardwareType> DumpHardware => null;
         /// <inheritdoc />
-        public CICMMetadataType       CicmMetadata => null;
+        public CICMMetadataType CicmMetadata => null;
     }
 }

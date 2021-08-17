@@ -49,6 +49,8 @@ namespace Aaru.Settings
         ///     up, and the user asked to opt-in.
         /// </summary>
         public const ulong GDPR_LEVEL = 1;
+        /// <summary>If set to <c>true</c>, enables the ability to decrypt encrypted data</summary>
+        public bool EnableDecryption;
         /// <summary>Set of GDPR compliance, if lower than <see cref="GDPR_LEVEL" />, ask user for compliance.</summary>
         public ulong GdprCompliance;
 
@@ -56,8 +58,6 @@ namespace Aaru.Settings
         public bool SaveReportsGlobally;
         /// <summary>If set to <c>true</c>, reports will be sent to Aaru.Server</summary>
         public bool ShareReports;
-        /// <summary>If set to <c>true</c>, enables the ability to decrypt encrypted data</summary>
-        public bool EnableDecryption;
         /// <summary>Statistics</summary>
         public StatsSettings Stats;
     }
@@ -66,13 +66,9 @@ namespace Aaru.Settings
     /// <summary>User settings, for media dumps, completely unused</summary>
     public class UserSettings
     {
-        /// <summary>
-        /// User email
-        /// </summary>
+        /// <summary>User email</summary>
         public string Email;
-        /// <summary>
-        /// User name or nick
-        /// </summary>
+        /// <summary>User name or nick</summary>
         public string Name;
     }
 
@@ -119,14 +115,10 @@ namespace Aaru.Settings
         /// <summary>Global path to save statistics</summary>
         public static string StatsPath { get; private set; }
 
-        /// <summary>
-        /// Local database path
-        /// </summary>
+        /// <summary>Local database path</summary>
         public static string LocalDbPath { get; private set; }
-        /// <summary>
-        /// Main database path
-        /// </summary>
-        public static string MainDbPath  { get; private set; }
+        /// <summary>Main database path</summary>
+        public static string MainDbPath { get; private set; }
 
         /// <summary>Loads settings</summary>
         public static void LoadSettings()
@@ -507,9 +499,7 @@ namespace Aaru.Settings
             }
         }
 
-        /// <summary>
-        /// Saves current settings
-        /// </summary>
+        /// <summary>Saves current settings</summary>
         public static void SaveSettings()
         {
             try

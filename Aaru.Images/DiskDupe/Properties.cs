@@ -41,18 +41,18 @@ namespace Aaru.DiscImages
     public sealed partial class DiskDupe
     {
         /// <inheritdoc />
-        public string                 Name         => "DiskDupe DDI Disk Image";
+        public string Name => "DiskDupe DDI Disk Image";
         /// <inheritdoc />
-        public Guid                   Id           => new Guid("5439B4A2-5F38-33A7-B8DC-3910D296B3DD");
+        public Guid Id => new Guid("5439B4A2-5F38-33A7-B8DC-3910D296B3DD");
         /// <inheritdoc />
-        public string                 Author       => "Michael Drüing";
+        public string Author => "Michael Drüing";
         /// <inheritdoc />
-        public string                 Format       => "DDI disk image";
+        public string Format => "DDI disk image";
         /// <inheritdoc />
-        public ImageInfo              Info         => _imageInfo;
+        public ImageInfo Info => _imageInfo;
         /// <inheritdoc />
         public List<DumpHardwareType> DumpHardware => null;
         /// <inheritdoc />
-        public CICMMetadataType       CicmMetadata => null;
+        public CICMMetadataType CicmMetadata => null;
     }
 }

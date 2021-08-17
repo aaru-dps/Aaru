@@ -45,17 +45,17 @@ namespace Aaru.DiscImages
         public ImageInfo Info => _imageInfo;
 
         /// <inheritdoc />
-        public string                 Name         => "QEMU Copy-On-Write disk image";
+        public string Name => "QEMU Copy-On-Write disk image";
         /// <inheritdoc />
-        public Guid                   Id           => new Guid("A5C35765-9FE2-469D-BBBF-ACDEBDB7B954");
+        public Guid Id => new Guid("A5C35765-9FE2-469D-BBBF-ACDEBDB7B954");
         /// <inheritdoc />
-        public string                 Author       => "Natalia Portillo";
+        public string Author => "Natalia Portillo";
         /// <inheritdoc />
-        public string                 Format       => "QEMU Copy-On-Write";
+        public string Format => "QEMU Copy-On-Write";
         /// <inheritdoc />
         public List<DumpHardwareType> DumpHardware => null;
         /// <inheritdoc />
-        public CICMMetadataType       CicmMetadata => null;
+        public CICMMetadataType CicmMetadata => null;
         /// <inheritdoc />
         public IEnumerable<MediaTagType> SupportedMediaTags => new MediaTagType[]
             {};
@@ -79,7 +79,7 @@ namespace Aaru.DiscImages
             ".qcow", ".qc"
         };
         /// <inheritdoc />
-        public bool   IsWriting    { get; private set; }
+        public bool IsWriting { get; private set; }
         /// <inheritdoc />
         public string ErrorMessage { get; private set; }
     }

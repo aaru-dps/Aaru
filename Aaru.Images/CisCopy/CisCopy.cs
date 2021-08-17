@@ -54,9 +54,7 @@ namespace Aaru.DiscImages
      * Then the data for whole tracks follow.
      */
     /// <inheritdoc />
-    /// <summary>
-    /// Implements reading and writing CisCopy disk images
-    /// </summary>
+    /// <summary>Implements reading and writing CisCopy disk images</summary>
     public sealed partial class CisCopy : IWritableImage
     {
         byte[]     _decodedDisk;

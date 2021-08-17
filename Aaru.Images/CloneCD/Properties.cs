@@ -56,25 +56,25 @@ namespace Aaru.DiscImages
                                                                OpticalImageCapabilities.CanStoreCookedData |
                                                                OpticalImageCapabilities.CanStoreMultipleTracks;
         /// <inheritdoc />
-        public ImageInfo              Info         => _imageInfo;
+        public ImageInfo Info => _imageInfo;
         /// <inheritdoc />
-        public string                 Name         => "CloneCD";
+        public string Name => "CloneCD";
         /// <inheritdoc />
-        public Guid                   Id           => new Guid("EE9C2975-2E79-427A-8EE9-F86F19165784");
+        public Guid Id => new Guid("EE9C2975-2E79-427A-8EE9-F86F19165784");
         /// <inheritdoc />
-        public string                 Format       => "CloneCD";
+        public string Format => "CloneCD";
         /// <inheritdoc />
-        public string                 Author       => "Natalia Portillo";
+        public string Author => "Natalia Portillo";
         /// <inheritdoc />
-        public List<Partition>        Partitions   { get; private set; }
+        public List<Partition> Partitions { get; private set; }
         /// <inheritdoc />
-        public List<Track>            Tracks       { get; private set; }
+        public List<Track> Tracks { get; private set; }
         /// <inheritdoc />
-        public List<Session>          Sessions     { get; private set; }
+        public List<Session> Sessions { get; private set; }
         /// <inheritdoc />
         public List<DumpHardwareType> DumpHardware => null;
         /// <inheritdoc />
-        public CICMMetadataType       CicmMetadata => null;
+        public CICMMetadataType CicmMetadata => null;
         /// <inheritdoc />
         public IEnumerable<MediaTagType> SupportedMediaTags => new[]
         {
@@ -108,7 +108,7 @@ namespace Aaru.DiscImages
             ".ccd"
         };
         /// <inheritdoc />
-        public bool   IsWriting    { get; private set; }
+        public bool IsWriting { get; private set; }
         /// <inheritdoc />
         public string ErrorMessage { get; private set; }
     }

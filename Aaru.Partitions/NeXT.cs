@@ -46,9 +46,7 @@ using Marshal = Aaru.Helpers.Marshal;
 namespace Aaru.Partitions
 {
     /// <inheritdoc />
-    /// <summary>
-    /// Implements decoding of NeXT disklabels
-    /// </summary>
+    /// <summary>Implements decoding of NeXT disklabels</summary>
     [SuppressMessage("ReSharper", "UnusedMember.Local"), SuppressMessage("ReSharper", "UnusedType.Local")]
     public sealed class NeXTDisklabel : IPartition
     {
@@ -64,9 +62,9 @@ namespace Aaru.Partitions
         const ushort DISKTAB_ENTRY_SIZE = 0x2C;
 
         /// <inheritdoc />
-        public string Name   => "NeXT Disklabel";
+        public string Name => "NeXT Disklabel";
         /// <inheritdoc />
-        public Guid   Id     => new Guid("246A6D93-4F1A-1F8A-344D-50187A5513A9");
+        public Guid Id => new Guid("246A6D93-4F1A-1F8A-344D-50187A5513A9");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
@@ -224,8 +222,8 @@ namespace Aaru.Partitions
                     Sequence = (ulong)i,
                     Name     = StringHandlers.CToString(label.dl_dt.d_partitions[i].p_mountpt),
                     Length   = (ulong)(label.dl_dt.d_partitions[i].p_size * label.dl_dt.d_secsize / sectorSize),
-                    Start = (ulong)((label.dl_dt.d_partitions[i].p_base + label.dl_dt.d_front) *
-                                    label.dl_dt.d_secsize / sectorSize),
+                    Start = (ulong)((label.dl_dt.d_partitions[i].p_base + label.dl_dt.d_front) * label.dl_dt.d_secsize /
+                                    sectorSize),
                     Scheme = Name
                 };
 

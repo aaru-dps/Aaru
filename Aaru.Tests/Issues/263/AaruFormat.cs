@@ -12,7 +12,7 @@ namespace Aaru.Tests.Issues._263
      * https://pastebin.com/AuKum4QR.
      * Link to the image files themselves: https://drive.google.com/file/d/1lXlhV-EUVrSg-ceKi0xI7t5OAdGWvH9_/view?usp=sharing
      */
-    
+
     // 20200309 CLAUNIA: Fixed in 3b2bb0ebf0c6c615c5622aebff494ed34b51055d
     public class AaruFormat : FsExtractIssueTest
     {

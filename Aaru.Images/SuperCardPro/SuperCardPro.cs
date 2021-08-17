@@ -38,9 +38,7 @@ using Aaru.CommonTypes.Structs;
 
 namespace Aaru.DiscImages
 {
-    /// <summary>
-    /// Implements reading SuperCardPro flux images
-    /// </summary>
+    /// <summary>Implements reading SuperCardPro flux images</summary>
     public sealed partial class SuperCardPro : IMediaImage, IVerifiableImage, IVerifiableSectorsImage
     {
         ImageInfo _imageInfo;

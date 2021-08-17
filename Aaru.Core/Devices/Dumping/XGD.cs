@@ -327,9 +327,9 @@ namespace Aaru.Core.Devices.Dumping
             }
 
             AaruConsole.DebugWriteLine("Dump-media command", "Unlocked total size: {0} sectors", totalSize);
-            ulong                         blocks      = totalSize + 1;
+            ulong blocks = totalSize + 1;
 
-            var wxRipperPfiNullable = PFI.Decode(readBuffer, MediaType.DVDROM);
+            PFI.PhysicalFormatInformation? wxRipperPfiNullable = PFI.Decode(readBuffer, MediaType.DVDROM);
 
             if(wxRipperPfiNullable == null)
             {

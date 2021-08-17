@@ -124,8 +124,9 @@ namespace Aaru.Filesystems
                 {
                     DirectoryEntry dirent = _littleEndian
                                                 ? Marshal.
-                                                    ByteArrayToStructureLittleEndian<DirectoryEntry
-                                                    >(directoryBuffer, pos, Marshal.SizeOf<DirectoryEntry>())
+                                                    ByteArrayToStructureLittleEndian<
+                                                        DirectoryEntry>(directoryBuffer, pos,
+                                                                        Marshal.SizeOf<DirectoryEntry>())
                                                 : Marshal.ByteArrayToStructureBigEndian<DirectoryEntry>(directoryBuffer,
                                                     pos, Marshal.SizeOf<DirectoryEntry>());
 

@@ -58,11 +58,11 @@ namespace Aaru.Gui.ViewModels.Windows
 {
     public sealed class DecodeMediaTagsViewModel : ViewModelBase
     {
-        const int          HEX_COLUMNS = 32;
+        const    int       HEX_COLUMNS = 32;
+        readonly MediaType _mediaType;
         string             _decodedText;
         bool               _decodedVisible;
         string             _hexViewText;
-        readonly MediaType _mediaType;
         MediaTagModel      _selectedTag;
 
         public DecodeMediaTagsViewModel([NotNull] IMediaImage inputFormat)

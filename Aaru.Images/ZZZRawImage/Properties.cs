@@ -52,13 +52,13 @@ namespace Aaru.DiscImages
 
         // Non-random UUID to recognize this specific plugin
         /// <inheritdoc />
-        public Guid      Id     => new Guid("12345678-AAAA-BBBB-CCCC-123456789000");
+        public Guid Id => new Guid("12345678-AAAA-BBBB-CCCC-123456789000");
         /// <inheritdoc />
-        public ImageInfo Info   => _imageInfo;
+        public ImageInfo Info => _imageInfo;
         /// <inheritdoc />
-        public string    Author => "Natalia Portillo";
+        public string Author => "Natalia Portillo";
         /// <inheritdoc />
-        public string    Format => "Raw disk image (sector by sector copy)";
+        public string Format => "Raw disk image (sector by sector copy)";
 
         /// <inheritdoc />
         public List<Track> Tracks
@@ -170,7 +170,7 @@ namespace Aaru.DiscImages
         /// <inheritdoc />
         public List<DumpHardwareType> DumpHardware => null;
         /// <inheritdoc />
-        public CICMMetadataType       CicmMetadata { get; private set; }
+        public CICMMetadataType CicmMetadata { get; private set; }
         /// <inheritdoc />
         public IEnumerable<MediaTagType> SupportedMediaTags => _readWriteSidecars.Concat(_writeOnlySidecars).
             OrderBy(t => t.tag).Select(t => t.tag).ToArray();
@@ -227,7 +227,7 @@ namespace Aaru.DiscImages
             ".8kn", ".16kn", ".32kn", ".64kn", ".512e", ".512", ".128", ".256"
         };
         /// <inheritdoc />
-        public bool   IsWriting    { get; private set; }
+        public bool IsWriting { get; private set; }
         /// <inheritdoc />
         public string ErrorMessage { get; private set; }
     }

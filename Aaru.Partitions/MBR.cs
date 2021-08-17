@@ -45,9 +45,7 @@ namespace Aaru.Partitions
 {
     // TODO: Support AAP extensions
     /// <inheritdoc />
-    /// <summary>
-    /// Implements decoding of Intel/Microsoft Master Boot Record and extensions
-    /// </summary>
+    /// <summary>Implements decoding of Intel/Microsoft Master Boot Record and extensions</summary>
     public sealed class MBR : IPartition
     {
         const ulong GPT_MAGIC = 0x5452415020494645;
@@ -255,9 +253,9 @@ namespace Aaru.Partitions
         };
 
         /// <inheritdoc />
-        public string Name   => "Master Boot Record";
+        public string Name => "Master Boot Record";
         /// <inheritdoc />
-        public Guid   Id     => new Guid("5E8A34E8-4F1A-59E6-4BF7-7EA647063A76");
+        public Guid Id => new Guid("5E8A34E8-4F1A-59E6-4BF7-7EA647063A76");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 

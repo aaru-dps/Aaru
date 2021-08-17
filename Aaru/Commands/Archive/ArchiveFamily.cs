@@ -37,8 +37,7 @@ namespace Aaru.Commands.Archive
 {
     internal sealed class ArchiveFamily : Command
     {
-        internal ArchiveFamily() : base("archive",
-             "Commands to manage archive files")
+        internal ArchiveFamily() : base("archive", "Commands to manage archive files")
         {
             AddAlias("arc");
 

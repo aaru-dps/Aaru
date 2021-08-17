@@ -61,8 +61,8 @@ namespace Aaru.Filesystems
                                  ? path.Substring(1).ToLower(CultureInfo.CurrentUICulture)
                                  : path.ToLower(CultureInfo.CurrentUICulture);
 
-            if(_directoryCache.TryGetValue(cutPath, out Dictionary<string, DirectoryEntryWithPointers> currentDirectory)
-            )
+            if(_directoryCache.TryGetValue(cutPath,
+                                           out Dictionary<string, DirectoryEntryWithPointers> currentDirectory))
             {
                 contents = currentDirectory.Keys.ToList();
 

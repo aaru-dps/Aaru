@@ -71,9 +71,7 @@ namespace Aaru.Core.Devices.Report
             return response;
         }
 
-        /// <summary>
-        /// Creates a report for the GET CONFIGURATION response of an MMC device
-        /// </summary>
+        /// <summary>Creates a report for the GET CONFIGURATION response of an MMC device</summary>
         /// <returns>MMC features report</returns>
         public MmcFeatures ReportMmcFeatures()
         {
@@ -574,9 +572,7 @@ namespace Aaru.Core.Devices.Report
             return report;
         }
 
-        /// <summary>
-        /// Creates a report for media inserted into an MMC device
-        /// </summary>
+        /// <summary>Creates a report for media inserted into an MMC device</summary>
         /// <param name="mediaType">Expected media type name</param>
         /// <param name="tryPlextor">Try Plextor vendor commands</param>
         /// <param name="tryPioneer">Try Pioneer vendor commands</param>

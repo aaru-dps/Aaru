@@ -42,9 +42,7 @@ using Aaru.CommonTypes.Structs;
 namespace Aaru.DiscImages
 {
     /// <inheritdoc />
-    /// <summary>
-    /// Implements reading Hyper-V disk images
-    /// </summary>
+    /// <summary>Implements reading Hyper-V disk images</summary>
     public sealed partial class Vhdx : IMediaImage
     {
         long                      _batOffset;

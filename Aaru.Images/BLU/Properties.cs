@@ -42,19 +42,19 @@ namespace Aaru.DiscImages
     public sealed partial class Blu
     {
         /// <inheritdoc />
-        public ImageInfo              Info         => _imageInfo;
+        public ImageInfo Info => _imageInfo;
         /// <inheritdoc />
-        public string                 Name         => "Basic Lisa Utility";
+        public string Name => "Basic Lisa Utility";
         /// <inheritdoc />
-        public Guid                   Id           => new Guid("A153E2F8-4235-432D-9A7F-20807B0BCD74");
+        public Guid Id => new Guid("A153E2F8-4235-432D-9A7F-20807B0BCD74");
         /// <inheritdoc />
-        public string                 Author       => "Natalia Portillo";
+        public string Author => "Natalia Portillo";
         /// <inheritdoc />
-        public string                 Format       => "Basic Lisa Utility";
+        public string Format => "Basic Lisa Utility";
         /// <inheritdoc />
         public List<DumpHardwareType> DumpHardware => null;
         /// <inheritdoc />
-        public CICMMetadataType       CicmMetadata => null;
+        public CICMMetadataType CicmMetadata => null;
         /// <inheritdoc />
         public IEnumerable<MediaTagType> SupportedMediaTags => new MediaTagType[]
             {};
@@ -80,7 +80,7 @@ namespace Aaru.DiscImages
             ".blu"
         }; // Just invented
         /// <inheritdoc />
-        public bool   IsWriting    { get; private set; }
+        public bool IsWriting { get; private set; }
         /// <inheritdoc />
         public string ErrorMessage { get; private set; }
     }

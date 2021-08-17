@@ -51,9 +51,9 @@ namespace Aaru.Filters
         bool     _opened;
 
         /// <inheritdoc />
-        public string Name   => "BZip2";
+        public string Name => "BZip2";
         /// <inheritdoc />
-        public Guid   Id     => new Guid("FCCFB0C3-32EF-40D8-9714-2333F6AC72A9");
+        public Guid Id => new Guid("FCCFB0C3-32EF-40D8-9714-2333F6AC72A9");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 

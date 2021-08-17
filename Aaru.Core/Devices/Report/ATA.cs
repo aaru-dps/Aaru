@@ -41,9 +41,7 @@ namespace Aaru.Core.Devices.Report
 {
     public sealed partial class DeviceReport
     {
-        /// <summary>
-        /// Creates a report for media inserted into an ATA device
-        /// </summary>
+        /// <summary>Creates a report for media inserted into an ATA device</summary>
         /// <returns>Media report</returns>
         public TestedMedia ReportAtaMedia()
         {
@@ -725,9 +723,7 @@ namespace Aaru.Core.Devices.Report
             return capabilities;
         }
 
-        /// <summary>
-        /// Clear serial numbers and other private fields from an IDENTIFY ATA DEVICE response
-        /// </summary>
+        /// <summary>Clear serial numbers and other private fields from an IDENTIFY ATA DEVICE response</summary>
         /// <param name="buffer">IDENTIFY ATA DEVICE response</param>
         /// <returns>IDENTIFY ATA DEVICE response without the private fields</returns>
         public static byte[] ClearIdentify(byte[] buffer)

@@ -42,19 +42,19 @@ namespace Aaru.DiscImages
     public sealed partial class RayDim
     {
         /// <inheritdoc />
-        public string                 Name         => "Ray Arachelian's Disk IMage";
+        public string Name => "Ray Arachelian's Disk IMage";
         /// <inheritdoc />
-        public Guid                   Id           => new Guid("F541F4E7-C1E3-4A2D-B07F-D863E87AB961");
+        public Guid Id => new Guid("F541F4E7-C1E3-4A2D-B07F-D863E87AB961");
         /// <inheritdoc />
-        public ImageInfo              Info         => _imageInfo;
+        public ImageInfo Info => _imageInfo;
         /// <inheritdoc />
-        public string                 Author       => "Natalia Portillo";
+        public string Author => "Natalia Portillo";
         /// <inheritdoc />
-        public string                 Format       => "Ray Arachelian's Disk IMage";
+        public string Format => "Ray Arachelian's Disk IMage";
         /// <inheritdoc />
         public List<DumpHardwareType> DumpHardware => null;
         /// <inheritdoc />
-        public CICMMetadataType       CicmMetadata => null;
+        public CICMMetadataType CicmMetadata => null;
         /// <inheritdoc />
         public IEnumerable<MediaTagType> SupportedMediaTags => new MediaTagType[]
             {};
@@ -83,7 +83,7 @@ namespace Aaru.DiscImages
             ".dim"
         };
         /// <inheritdoc />
-        public bool   IsWriting    { get; private set; }
+        public bool IsWriting { get; private set; }
         /// <inheritdoc />
         public string ErrorMessage { get; private set; }
     }

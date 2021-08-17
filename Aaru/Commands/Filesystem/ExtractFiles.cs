@@ -336,8 +336,8 @@ namespace Aaru.Commands.Filesystem
             return (int)ErrorNumber.NoError;
         }
 
-        static void ExtractFilesInDir(string path, [NotNull] IReadOnlyFilesystem fs, string volumeName, string outputDir,
-                                      bool doXattrs)
+        static void ExtractFilesInDir(string path, [NotNull] IReadOnlyFilesystem fs, string volumeName,
+                                      string outputDir, bool doXattrs)
         {
             if(path.StartsWith('/'))
                 path = path.Substring(1);
@@ -421,7 +421,8 @@ namespace Aaru.Commands.Filesystem
                                 if(error != Errno.NoError)
                                     continue;
 
-                                outputPath = Path.Combine(outputDir, fs.XmlFsType.Type, volumeName, ".xattrs", path, xattr);
+                                outputPath = Path.Combine(outputDir, fs.XmlFsType.Type, volumeName, ".xattrs", path,
+                                                          xattr);
 
                                 Directory.CreateDirectory(outputPath);
 

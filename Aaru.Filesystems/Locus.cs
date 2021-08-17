@@ -68,9 +68,7 @@ using time_t = System.Int32;
 namespace Aaru.Filesystems
 {
     /// <inheritdoc />
-    /// <summary>
-    /// Implements detection of the Locus filesystem
-    /// </summary>
+    /// <summary>Implements detection of the Locus filesystem</summary>
     public sealed class Locus : IFilesystem
     {
         const int NICINOD    = 325;
@@ -86,13 +84,13 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
         /// <inheritdoc />
-        public Encoding       Encoding  { get; private set; }
+        public Encoding Encoding { get; private set; }
         /// <inheritdoc />
-        public string         Name      => "Locus Filesystem Plugin";
+        public string Name => "Locus Filesystem Plugin";
         /// <inheritdoc />
-        public Guid           Id        => new Guid("1A70B30A-437D-479A-88E1-D0C9C1797FF4");
+        public Guid Id => new Guid("1A70B30A-437D-479A-88E1-D0C9C1797FF4");
         /// <inheritdoc />
-        public string         Author    => "Natalia Portillo";
+        public string Author => "Natalia Portillo";
 
         /// <inheritdoc />
         public bool Identify(IMediaImage imagePlugin, Partition partition)
@@ -186,6 +184,7 @@ namespace Aaru.Filesystems
 
             // ReSharper disable once InconsistentNaming
             string s_fsmnt = StringHandlers.CToString(locusSb.s_fsmnt, Encoding);
+
             // ReSharper disable once InconsistentNaming
             string s_fpack = StringHandlers.CToString(locusSb.s_fpack, Encoding);
 

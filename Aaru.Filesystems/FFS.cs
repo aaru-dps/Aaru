@@ -48,9 +48,7 @@ namespace Aaru.Filesystems
 {
     // Using information from Linux kernel headers
     /// <inheritdoc />
-    /// <summary>
-    /// Implements detection of BSD Fast File System (FFS, aka UNIX File System)
-    /// </summary>
+    /// <summary>Implements detection of BSD Fast File System (FFS, aka UNIX File System)</summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public sealed class FFSPlugin : IFilesystem
     {
@@ -100,13 +98,13 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
         /// <inheritdoc />
-        public Encoding       Encoding  { get; private set; }
+        public Encoding Encoding { get; private set; }
         /// <inheritdoc />
-        public string         Name      => "BSD Fast File System (aka UNIX File System, UFS)";
+        public string Name => "BSD Fast File System (aka UNIX File System, UFS)";
         /// <inheritdoc />
-        public Guid           Id        => new Guid("CC90D342-05DB-48A8-988C-C1FE000034A3");
+        public Guid Id => new Guid("CC90D342-05DB-48A8-988C-C1FE000034A3");
         /// <inheritdoc />
-        public string         Author    => "Natalia Portillo";
+        public string Author => "Natalia Portillo";
 
         /// <inheritdoc />
         public bool Identify(IMediaImage imagePlugin, Partition partition)

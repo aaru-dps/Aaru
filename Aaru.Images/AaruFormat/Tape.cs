@@ -39,11 +39,11 @@ namespace Aaru.DiscImages
     public sealed partial class AaruFormat
     {
         /// <inheritdoc />
-        public List<TapeFile>      Files          { get; private set; }
+        public List<TapeFile> Files { get; private set; }
         /// <inheritdoc />
         public List<TapePartition> TapePartitions { get; private set; }
         /// <inheritdoc />
-        public bool                IsTape         { get; private set; }
+        public bool IsTape { get; private set; }
 
         /// <inheritdoc />
         public bool AddFile(TapeFile file)

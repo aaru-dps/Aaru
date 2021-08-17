@@ -32,9 +32,7 @@
 
 namespace Aaru.Devices.Remote
 {
-    /// <summary>
-    /// Packet type enumeration
-    /// </summary>
+    /// <summary>Packet type enumeration</summary>
     public enum AaruPacketType : sbyte
     {
         #pragma warning disable 1591
@@ -52,42 +50,24 @@ namespace Aaru.Devices.Remote
         #pragma warning restore 1591
     }
 
-    /// <summary>
-    /// Reasons for non-data request or response
-    /// </summary>
+    /// <summary>Reasons for non-data request or response</summary>
     public enum AaruNopReason : byte
     {
-        /// <summary>
-        /// Request or response has arrived unexpectedly
-        /// </summary>
-        OutOfOrder       = 0,
-        /// <summary>
-        /// Packet or version of packet is not implemented
-        /// </summary>
+        /// <summary>Request or response has arrived unexpectedly</summary>
+        OutOfOrder = 0,
+        /// <summary>Packet or version of packet is not implemented</summary>
         NotImplemented = 1,
-        /// <summary>
-        /// Unknown or non-recognized packet
-        /// </summary>
+        /// <summary>Unknown or non-recognized packet</summary>
         NotRecognized = 2,
-        /// <summary>
-        /// Error trying to get list of devices
-        /// </summary>
+        /// <summary>Error trying to get list of devices</summary>
         ErrorListDevices = 3,
-        /// <summary>
-        /// Device opened correctly
-        /// </summary>
-        OpenOk         = 4,
-        /// <summary>
-        /// An error occurred opening the device
-        /// </summary>
-        OpenError     = 5,
-        /// <summary>
-        /// Device re-opened correctly
-        /// </summary>
-        ReOpenOk         = 6,
-        /// <summary>
-        /// An error occurred closing the device
-        /// </summary>
-        CloseError     = 7
+        /// <summary>Device opened correctly</summary>
+        OpenOk = 4,
+        /// <summary>An error occurred opening the device</summary>
+        OpenError = 5,
+        /// <summary>Device re-opened correctly</summary>
+        ReOpenOk = 6,
+        /// <summary>An error occurred closing the device</summary>
+        CloseError = 7
     }
 }

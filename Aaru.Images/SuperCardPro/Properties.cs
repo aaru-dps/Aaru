@@ -40,18 +40,18 @@ namespace Aaru.DiscImages
     public sealed partial class SuperCardPro
     {
         /// <inheritdoc />
-        public ImageInfo              Info         => _imageInfo;
+        public ImageInfo Info => _imageInfo;
         /// <inheritdoc />
-        public string                 Name         => "SuperCardPro";
+        public string Name => "SuperCardPro";
         /// <inheritdoc />
-        public Guid                   Id           => new Guid("C5D3182E-1D45-4767-A205-E6E5C83444DC");
+        public Guid Id => new Guid("C5D3182E-1D45-4767-A205-E6E5C83444DC");
         /// <inheritdoc />
-        public string                 Author       => "Natalia Portillo";
+        public string Author => "Natalia Portillo";
         /// <inheritdoc />
-        public string                 Format       => "SuperCardPro";
+        public string Format => "SuperCardPro";
         /// <inheritdoc />
         public List<DumpHardwareType> DumpHardware => null;
         /// <inheritdoc />
-        public CICMMetadataType       CicmMetadata => null;
+        public CICMMetadataType CicmMetadata => null;
     }
 }

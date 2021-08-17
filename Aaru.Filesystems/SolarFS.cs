@@ -43,21 +43,19 @@ namespace Aaru.Filesystems
 {
     // Based on FAT's BPB, cannot find a FAT or directory
     /// <inheritdoc />
-    /// <summary>
-    /// Implements detection of the Solar OS filesystem
-    /// </summary>
+    /// <summary>Implements detection of the Solar OS filesystem</summary>
     public sealed class SolarFS : IFilesystem
     {
         /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
         /// <inheritdoc />
-        public Encoding       Encoding  { get; private set; }
+        public Encoding Encoding { get; private set; }
         /// <inheritdoc />
-        public string         Name      => "Solar_OS filesystem";
+        public string Name => "Solar_OS filesystem";
         /// <inheritdoc />
-        public Guid           Id        => new Guid("EA3101C1-E777-4B4F-B5A3-8C57F50F6E65");
+        public Guid Id => new Guid("EA3101C1-E777-4B4F-B5A3-8C57F50F6E65");
         /// <inheritdoc />
-        public string         Author    => "Natalia Portillo";
+        public string Author => "Natalia Portillo";
 
         /// <inheritdoc />
         public bool Identify(IMediaImage imagePlugin, Partition partition)

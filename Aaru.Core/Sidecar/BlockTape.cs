@@ -36,9 +36,7 @@ using Schemas;
 
 namespace Aaru.Core
 {
-    /// <summary>
-    /// Sidecar operations
-    /// </summary>
+    /// <summary>Sidecar operations</summary>
     public sealed partial class Sidecar
     {
         /// <summary>Creates a metadata sidecar for a block tape (e.g. scsi streaming)</summary>
@@ -116,8 +114,8 @@ namespace Aaru.Core
                 };
 
                 const uint sectorsToRead = 512;
-                ulong      sectors         = (ulong)_fs.Length / blockSize;
-                ulong      doneSectors     = 0;
+                ulong      sectors       = (ulong)_fs.Length / blockSize;
+                ulong      doneSectors   = 0;
 
                 InitProgress2();
 

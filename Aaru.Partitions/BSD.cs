@@ -44,9 +44,7 @@ using Marshal = Aaru.Helpers.Marshal;
 namespace Aaru.Partitions
 {
     /// <inheritdoc />
-    /// <summary>
-    /// Implements decoding of BSD disklabels
-    /// </summary>
+    /// <summary>Implements decoding of BSD disklabels</summary>
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
     public sealed class BSD : IPartition
     {
@@ -66,9 +64,9 @@ namespace Aaru.Partitions
         };
 
         /// <inheritdoc />
-        public string Name   => "BSD disklabel";
+        public string Name => "BSD disklabel";
         /// <inheritdoc />
-        public Guid   Id     => new Guid("246A6D93-4F1A-1F8A-344D-50187A5513A9");
+        public Guid Id => new Guid("246A6D93-4F1A-1F8A-344D-50187A5513A9");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
@@ -392,8 +390,7 @@ namespace Aaru.Partitions
         }
 
         /// <summary>Drive flags</summary>
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        [Flags]
+        [SuppressMessage("ReSharper", "InconsistentNaming"), Flags]
         enum dFlags : uint
         {
             /// <summary>Removable media</summary>

@@ -41,9 +41,7 @@ namespace Aaru.DiscImages
     // TODO: Support version 0
     // TODO: Support fixed images
     /// <inheritdoc />
-    /// <summary>
-    /// Implements reading and writing VirtualBox disk images
-    /// </summary>
+    /// <summary>Implements reading and writing VirtualBox disk images</summary>
     public sealed partial class Vdi : IWritableImage
     {
         ulong                     _currentWritingPosition;

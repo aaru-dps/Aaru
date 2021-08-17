@@ -42,19 +42,19 @@ namespace Aaru.DiscImages
     public sealed partial class MaxiDisk
     {
         /// <inheritdoc />
-        public ImageInfo              Info         => _imageInfo;
+        public ImageInfo Info => _imageInfo;
         /// <inheritdoc />
-        public string                 Author       => "Natalia Portillo";
+        public string Author => "Natalia Portillo";
         /// <inheritdoc />
-        public string                 Name         => "MAXI Disk image";
+        public string Name => "MAXI Disk image";
         /// <inheritdoc />
-        public Guid                   Id           => new Guid("D27D924A-7034-466E-ADE1-B81EF37E469E");
+        public Guid Id => new Guid("D27D924A-7034-466E-ADE1-B81EF37E469E");
         /// <inheritdoc />
-        public string                 Format       => "MAXI Disk";
+        public string Format => "MAXI Disk";
         /// <inheritdoc />
         public List<DumpHardwareType> DumpHardware => null;
         /// <inheritdoc />
-        public CICMMetadataType       CicmMetadata => null;
+        public CICMMetadataType CicmMetadata => null;
         /// <inheritdoc />
         public IEnumerable<MediaTagType> SupportedMediaTags => new MediaTagType[]
             {};
@@ -83,7 +83,7 @@ namespace Aaru.DiscImages
             ".hdk"
         };
         /// <inheritdoc />
-        public bool   IsWriting    { get; private set; }
+        public bool IsWriting { get; private set; }
         /// <inheritdoc />
         public string ErrorMessage { get; private set; }
     }

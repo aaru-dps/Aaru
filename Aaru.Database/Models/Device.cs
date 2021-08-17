@@ -37,19 +37,13 @@ using Aaru.CommonTypes.Metadata;
 
 namespace Aaru.Database.Models
 {
-    /// <summary>
-    /// Known device
-    /// </summary>
+    /// <summary>Known device</summary>
     public class Device : DeviceReportV2
     {
-        /// <summary>
-        /// Builds an empty device
-        /// </summary>
+        /// <summary>Builds an empty device</summary>
         public Device() => LastSynchronized = DateTime.UtcNow;
 
-        /// <summary>
-        /// Builds a device from a device report
-        /// </summary>
+        /// <summary>Builds a device from a device report</summary>
         /// <param name="report">Device report</param>
         [SuppressMessage("ReSharper", "VirtualMemberCallInConstructor")]
         public Device(DeviceReportV2 report)
@@ -71,20 +65,14 @@ namespace Aaru.Database.Models
             GdRomSwapDiscCapabilities = report.GdRomSwapDiscCapabilities;
         }
 
-        /// <summary>
-        /// When this known device was last synchronized with the server
-        /// </summary>
+        /// <summary>When this known device was last synchronized with the server</summary>
         public DateTime LastSynchronized { get; set; }
 
-        /// <summary>
-        /// Optimal number of blocks to read at once
-        /// </summary>
+        /// <summary>Optimal number of blocks to read at once</summary>
         [DefaultValue(0)]
         public int OptimalMultipleSectorsRead { get; set; }
 
-        /// <summary>
-        /// Can read GD-ROM using swap trick?
-        /// </summary>
+        /// <summary>Can read GD-ROM using swap trick?</summary>
         [DefaultValue(null)]
         public bool? CanReadGdRomUsingSwapDisc { get; set; }
     }

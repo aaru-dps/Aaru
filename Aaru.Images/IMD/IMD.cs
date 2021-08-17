@@ -38,9 +38,7 @@ using Aaru.CommonTypes.Structs;
 namespace Aaru.DiscImages
 {
     /// <inheritdoc />
-    /// <summary>
-    /// Implements reading IMageDisk disk images
-    /// </summary>
+    /// <summary>Implements reading IMageDisk disk images</summary>
     public sealed partial class Imd : IMediaImage
     {
         ImageInfo    _imageInfo;

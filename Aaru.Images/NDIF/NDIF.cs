@@ -43,9 +43,7 @@ namespace Aaru.DiscImages
     // TODO: Implement segments
     // TODO: Implement compression
     /// <inheritdoc />
-    /// <summary>
-    /// Implements reading Apple New Disk Image Format disk images
-    /// </summary>
+    /// <summary>Implements reading Apple New Disk Image Format disk images</summary>
     public sealed partial class Ndif : IMediaImage
     {
         uint                          _bufferSize;

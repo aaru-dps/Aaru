@@ -23,5 +23,5 @@ namespace Aaru.Tests.Issues._590
         protected override string                     Encoding         => null;
         protected override bool                       ExpectPartitions => true;
         protected override string                     Namespace        => null;
-   }
+    }
 }

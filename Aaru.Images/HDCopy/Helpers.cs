@@ -53,7 +53,9 @@ namespace Aaru.DiscImages
             dataStartOffset         = 2 + (2 * numTracks);
             fheader.lastCylinder    = (byte)stream.ReadByte();
             fheader.sectorsPerTrack = (byte)stream.ReadByte();
-            if (fheader.lastCylinder == 0xff && fheader.sectorsPerTrack == 0x18)
+
+            if(fheader.lastCylinder    == 0xff &&
+               fheader.sectorsPerTrack == 0x18)
             {
                 /* This is an "extended" HD-Copy file with filename information and 84 tracks */
                 stream.Seek(0x0e, SeekOrigin.Begin);
@@ -62,6 +64,7 @@ namespace Aaru.DiscImages
                 numTracks               = 84;
                 dataStartOffset         = 16 + (2 * numTracks);
             }
+
             fheader.trackMap = new byte[2 * numTracks];
             stream.Read(fheader.trackMap, 0, 2 * numTracks);
 
@@ -89,6 +92,7 @@ namespace Aaru.DiscImages
 
             /* return success */
             fhdr = fheader;
+
             return true;
         }
 

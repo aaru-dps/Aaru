@@ -46,9 +46,7 @@ using Aaru.Helpers;
 namespace Aaru.Partitions
 {
     /// <inheritdoc />
-    /// <summary>
-    /// Implements decoding of the Amiga Rigid Disk Block
-    /// </summary>
+    /// <summary>Implements decoding of the Amiga Rigid Disk Block</summary>
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
     public sealed class AmigaRigidDiskBlock : IPartition
     {
@@ -130,17 +128,21 @@ namespace Aaru.Partitions
         /// <summary>Type ID for NetBSD unused root partition, "NBR\0"</summary>
         const uint TYPEID_NETBSD_ROOT_UNUSED = 0x4E425200;
         /// <summary>Type ID for NetBSD 4.2 FFS root partition, "NBR\7"</summary>
+
         // ReSharper disable once InconsistentNaming
         const uint TYPEID_NETBSD_ROOT_42FFS = 0x4E425207;
         /// <summary>Type ID for NetBSD 4.4 LFS root partition, "NBR\9"</summary>
+
         // ReSharper disable once InconsistentNaming
         const uint TYPEID_NETBSD_ROOT_44LFS = 0x4E425209;
         /// <summary>Type ID for NetBSD unused user partition, "NBR\0"</summary>
         const uint TYPEID_NETBSD_USER_UNUSED = 0x4E425500;
         /// <summary>Type ID for NetBSD 4.2 FFS user partition, "NBR\7"</summary>
+
         // ReSharper disable once InconsistentNaming
         const uint TYPEID_NETBSD_USER_42FFS = 0x4E425507;
         /// <summary>Type ID for NetBSD 4.4 LFS user partition, "NBR\9"</summary>
+
         // ReSharper disable once InconsistentNaming
         const uint TYPEID_NETBSD_USER_44LFS = 0x4E425509;
         /// <summary>Type ID for NetBSD swap partition</summary>
@@ -175,9 +177,9 @@ namespace Aaru.Partitions
         const uint FLAGS_NO_AUTOMOUNT = 0x00000002;
 
         /// <inheritdoc />
-        public string Name   => "Amiga Rigid Disk Block";
+        public string Name => "Amiga Rigid Disk Block";
         /// <inheritdoc />
-        public Guid   Id     => new Guid("8D72ED97-1854-4170-9CE4-6E8446FD9863");
+        public Guid Id => new Guid("8D72ED97-1854-4170-9CE4-6E8446FD9863");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 

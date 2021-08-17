@@ -46,11 +46,11 @@ namespace Aaru.DiscImages
         {
             Stream stream = imageFilter.GetDataForkStream();
 
-            FileHeader fHeader = new FileHeader();
-            TrackInfo[] trackMap = null;
-            long[] trackOffsets = null;
+            var         fHeader      = new FileHeader();
+            TrackInfo[] trackMap     = null;
+            long[]      trackOffsets = null;
 
-            if (!TryReadHeader(stream, ref fHeader, ref trackMap, ref trackOffsets))
+            if(!TryReadHeader(stream, ref fHeader, ref trackMap, ref trackOffsets))
             {
                 return false;
             }
@@ -63,7 +63,7 @@ namespace Aaru.DiscImages
             _imageInfo.Heads           = _diskTypes[fHeader.diskType].hd;
             _imageInfo.SectorsPerTrack = _diskTypes[fHeader.diskType].spt;
             _imageInfo.SectorSize      = 512; // only 512 bytes per sector supported
-            _imageInfo.Sectors         = _imageInfo.Heads * _imageInfo.Cylinders * _imageInfo.SectorsPerTrack;
+            _imageInfo.Sectors         = _imageInfo.Heads   * _imageInfo.Cylinders * _imageInfo.SectorsPerTrack;
             _imageInfo.ImageSize       = _imageInfo.Sectors * _imageInfo.SectorSize;
 
             _imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
@@ -75,7 +75,6 @@ namespace Aaru.DiscImages
             _imageInfo.MediaType = Geometry.GetMediaType(((ushort)_imageInfo.Cylinders, (byte)_imageInfo.Heads,
                                                           (ushort)_imageInfo.SectorsPerTrack, 512, MediaEncoding.MFM,
                                                           false));
-
 
             // save some variables for later use
             _fileHeader     = fHeader;

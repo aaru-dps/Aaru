@@ -45,9 +45,7 @@ using Aaru.Decoders.CD;
 namespace Aaru.DiscImages
 {
     /// <inheritdoc />
-    /// <summary>
-    /// Implements reading Nero Burning ROM disc images
-    /// </summary>
+    /// <summary>Implements reading Nero Burning ROM disc images</summary>
     [SuppressMessage("ReSharper", "NotAccessedField.Local"),
      SuppressMessage("ReSharper", "CollectionNeverQueried.Local")]
     public sealed partial class Nero : IOpticalMediaImage

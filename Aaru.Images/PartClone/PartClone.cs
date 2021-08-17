@@ -39,9 +39,7 @@ using Aaru.CommonTypes.Structs;
 
 namespace Aaru.DiscImages
 {
-    /// <summary>
-    /// Implements reading partclone disk images
-    /// </summary>
+    /// <summary>Implements reading partclone disk images</summary>
     public sealed partial class PartClone : IMediaImage, IVerifiableImage
     {
         // The used block "bitmap" uses one byte per block

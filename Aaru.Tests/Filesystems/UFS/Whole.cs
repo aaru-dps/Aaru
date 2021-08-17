@@ -172,7 +172,7 @@ namespace Aaru.Tests.Filesystems.UFS
                 SectorSize  = 512,
                 Clusters    = 2880,
                 ClusterSize = 512,
-                VolumeName = "",
+                VolumeName  = "",
                 Type        = "UFS2"
             },
             new FileSystemTest

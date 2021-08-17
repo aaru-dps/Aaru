@@ -77,9 +77,9 @@ namespace Aaru.DiscImages
         /// <inheritdoc />
         public List<Type> GetAllWritableFloppyImagePlugins() => Assembly.GetExecutingAssembly().GetTypes().
                                                                          Where(t => t.GetInterfaces().
-                                                                                   Contains(typeof(IWritableFloppyImage
-                                                                                   ))).Where(t => t.IsClass).
-                                                                         ToList();
+                                                                                   Contains(typeof(
+                                                                                       IWritableFloppyImage))).
+                                                                         Where(t => t.IsClass).ToList();
 
         /// <inheritdoc />
         public List<Type> GetAllWritableImagePlugins() => Assembly.GetExecutingAssembly().GetTypes().

@@ -45,21 +45,19 @@ namespace Aaru.Filesystems
 {
     // Information from http://www.trailing-edge.com/~shoppa/rt11fs/
     /// <inheritdoc />
-    /// <summary>
-    /// Implements detection of the DEC RT-11 filesystem
-    /// </summary>
+    /// <summary>Implements detection of the DEC RT-11 filesystem</summary>
     public sealed class RT11 : IFilesystem
     {
         /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
         /// <inheritdoc />
-        public Encoding       Encoding  { get; private set; }
+        public Encoding Encoding { get; private set; }
         /// <inheritdoc />
-        public string         Name      => "RT-11 file system";
+        public string Name => "RT-11 file system";
         /// <inheritdoc />
-        public Guid           Id        => new Guid("DB3E2F98-8F98-463C-8126-E937843DA024");
+        public Guid Id => new Guid("DB3E2F98-8F98-463C-8126-E937843DA024");
         /// <inheritdoc />
-        public string         Author    => "Natalia Portillo";
+        public string Author => "Natalia Portillo";
 
         /// <inheritdoc />
         public bool Identify(IMediaImage imagePlugin, Partition partition)

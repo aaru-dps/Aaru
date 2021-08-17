@@ -45,9 +45,7 @@ namespace Aaru.Filesystems
 {
     // Information from the Linux kernel
     /// <inheritdoc />
-    /// <summary>
-    /// Implements detection of the UNIX System V filesystem
-    /// </summary>
+    /// <summary>Implements detection of the UNIX System V filesystem</summary>
     [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "UnusedMember.Local"),
      SuppressMessage("ReSharper", "UnusedType.Local")]
     public sealed class SysVfs : IFilesystem
@@ -76,13 +74,13 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
         /// <inheritdoc />
-        public Encoding       Encoding  { get; private set; }
+        public Encoding Encoding { get; private set; }
         /// <inheritdoc />
-        public string         Name      => "UNIX System V filesystem";
+        public string Name => "UNIX System V filesystem";
         /// <inheritdoc />
-        public Guid           Id        => new Guid("9B8D016A-8561-400E-A12A-A198283C211D");
+        public Guid Id => new Guid("9B8D016A-8561-400E-A12A-A198283C211D");
         /// <inheritdoc />
-        public string         Author    => "Natalia Portillo";
+        public string Author => "Natalia Portillo";
 
         /// <inheritdoc />
         public bool Identify(IMediaImage imagePlugin, Partition partition)
@@ -278,8 +276,8 @@ namespace Aaru.Filesystems
 
                 if(magic == XENIX_MAGIC)
                 {
-                    xenix3    = true;
-                    start     = i;
+                    xenix3 = true;
+                    start  = i;
 
                     break;
                 }
@@ -297,8 +295,8 @@ namespace Aaru.Filesystems
 
                 if(magic == SYSV_MAGIC)
                 {
-                    sysv      = true;
-                    start     = i;
+                    sysv  = true;
+                    start = i;
 
                     break;
                 }
@@ -322,8 +320,8 @@ namespace Aaru.Filesystems
                    (s_fname == COH_XXXXX && s_fpack == COH_XXXXX) ||
                    (s_fname == COH_XXXXS && s_fpack == COH_XXXXN))
                 {
-                    coherent  = true;
-                    start     = i;
+                    coherent = true;
+                    start    = i;
 
                     break;
                 }

@@ -40,9 +40,7 @@ using Schemas;
 namespace Aaru.Filesystems
 {
     /// <inheritdoc />
-    /// <summary>
-    /// Implements the CP/M filesystem
-    /// </summary>
+    /// <summary>Implements the CP/M filesystem</summary>
     public sealed partial class CPM : IReadOnlyFilesystem
     {
         /// <summary>True if <see cref="Identify" /> thinks this is a CP/M filesystem</summary>
@@ -86,13 +84,13 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
         /// <inheritdoc />
-        public Encoding       Encoding  { get; private set; }
+        public Encoding Encoding { get; private set; }
         /// <inheritdoc />
-        public string         Name      => "CP/M File System";
+        public string Name => "CP/M File System";
         /// <inheritdoc />
-        public Guid           Id        => new Guid("AA2B8585-41DF-4E3B-8A35-D1A935E2F8A1");
+        public Guid Id => new Guid("AA2B8585-41DF-4E3B-8A35-D1A935E2F8A1");
         /// <inheritdoc />
-        public string         Author    => "Natalia Portillo";
+        public string Author => "Natalia Portillo";
 
         /// <inheritdoc />
         public IEnumerable<(string name, Type type, string description)> SupportedOptions =>

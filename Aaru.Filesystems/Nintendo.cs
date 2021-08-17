@@ -41,21 +41,19 @@ using Schemas;
 namespace Aaru.Filesystems
 {
     /// <inheritdoc />
-    /// <summary>
-    /// Implements detection of the filesystem used by Nintendo Gamecube and Wii discs
-    /// </summary>
+    /// <summary>Implements detection of the filesystem used by Nintendo Gamecube and Wii discs</summary>
     public sealed class NintendoPlugin : IFilesystem
     {
         /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
         /// <inheritdoc />
-        public Encoding       Encoding  { get; private set; }
+        public Encoding Encoding { get; private set; }
         /// <inheritdoc />
-        public string         Name      => "Nintendo optical filesystems";
+        public string Name => "Nintendo optical filesystems";
         /// <inheritdoc />
-        public Guid           Id        => new Guid("4675fcb4-4418-4288-9e4a-33d6a4ac1126");
+        public Guid Id => new Guid("4675fcb4-4418-4288-9e4a-33d6a4ac1126");
         /// <inheritdoc />
-        public string         Author    => "Natalia Portillo";
+        public string Author => "Natalia Portillo";
 
         /// <inheritdoc />
         public bool Identify(IMediaImage imagePlugin, Partition partition)

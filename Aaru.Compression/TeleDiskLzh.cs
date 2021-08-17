@@ -53,9 +53,7 @@ namespace Aaru.Compression
      * Adaptive Huffman Coding coded by Haruyasu YOSHIZAKI
      * Edited and translated to English by Kenji RIKITAKE
      */
-    /// <summary>
-    /// Implements the TeleDisk version of LZH
-    /// </summary>
+    /// <summary>Implements the TeleDisk version of LZH</summary>
     public class TeleDiskLzh
     {
         const int BUFSZ = 512;
@@ -136,9 +134,7 @@ namespace Aaru.Compression
 
         Tdlzhuf _tdctl;
 
-        /// <summary>
-        /// Implements the TeleDisk LZH algorithm over the specified stream.
-        /// </summary>
+        /// <summary>Implements the TeleDisk LZH algorithm over the specified stream.</summary>
         /// <param name="dataStream">Stream with compressed data.</param>
         public TeleDiskLzh(Stream dataStream)
         {
@@ -163,9 +159,7 @@ namespace Aaru.Compression
 
         */
 
-        /// <summary>
-        /// Decompresses data
-        /// </summary>
+        /// <summary>Decompresses data</summary>
         /// <param name="buf">Buffer to write the decompressed data to</param>
         /// <param name="len">Number of bytes to decompress</param>
         /// <returns>Number of decompressed bytes</returns>

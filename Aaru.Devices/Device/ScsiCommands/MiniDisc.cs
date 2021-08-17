@@ -32,6 +32,7 @@
 
 using System;
 using Aaru.Console;
+
 // ReSharper disable InconsistentNaming
 
 namespace Aaru.Devices
@@ -137,8 +138,7 @@ namespace Aaru.Devices
         /// <param name="timeout">Timeout in seconds.</param>
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
         /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
-        public bool MiniDiscStopPlaying(out byte[] buffer, out byte[] senseBuffer, uint timeout,
-                                        out double duration)
+        public bool MiniDiscStopPlaying(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
         {
             senseBuffer = new byte[64];
             byte[] cdb = new byte[10];

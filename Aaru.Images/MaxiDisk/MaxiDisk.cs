@@ -39,9 +39,7 @@ using Aaru.CommonTypes.Structs;
 namespace Aaru.DiscImages
 {
     /// <inheritdoc />
-    /// <summary>
-    /// Implements reading and writing MaxiDisk disk images
-    /// </summary>
+    /// <summary>Implements reading and writing MaxiDisk disk images</summary>
     public sealed partial class MaxiDisk : IWritableImage
     {
         /// <summary>Disk image file</summary>

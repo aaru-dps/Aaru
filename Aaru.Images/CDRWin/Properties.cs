@@ -57,15 +57,15 @@ namespace Aaru.DiscImages
                                                                OpticalImageCapabilities.CanStoreNotCdTracks    |
                                                                OpticalImageCapabilities.CanStoreIndexes;
         /// <inheritdoc />
-        public ImageInfo       Info       => _imageInfo;
+        public ImageInfo Info => _imageInfo;
         /// <inheritdoc />
-        public string          Name       => "CDRWin cuesheet";
+        public string Name => "CDRWin cuesheet";
         /// <inheritdoc />
-        public Guid            Id         => new Guid("664568B2-15D4-4E64-8A7A-20BDA8B8386F");
+        public Guid Id => new Guid("664568B2-15D4-4E64-8A7A-20BDA8B8386F");
         /// <inheritdoc />
-        public string          Format     => "CDRWin CUESheet";
+        public string Format => "CDRWin CUESheet";
         /// <inheritdoc />
-        public string          Author     => "Natalia Portillo";
+        public string Author => "Natalia Portillo";
         /// <inheritdoc />
         public List<Partition> Partitions { get; private set; }
 
@@ -154,11 +154,11 @@ namespace Aaru.DiscImages
         }
 
         /// <inheritdoc />
-        public List<Session>          Sessions     => _discImage.Sessions;
+        public List<Session> Sessions => _discImage.Sessions;
         /// <inheritdoc />
         public List<DumpHardwareType> DumpHardware { get; private set; }
         /// <inheritdoc />
-        public CICMMetadataType       CicmMetadata => null;
+        public CICMMetadataType CicmMetadata => null;
         /// <inheritdoc />
         public IEnumerable<MediaTagType> SupportedMediaTags => new[]
         {
@@ -200,7 +200,7 @@ namespace Aaru.DiscImages
             ".cue"
         };
         /// <inheritdoc />
-        public bool   IsWriting    { get; private set; }
+        public bool IsWriting { get; private set; }
         /// <inheritdoc />
         public string ErrorMessage { get; private set; }
     }

@@ -43,15 +43,15 @@ namespace Aaru.DiscImages
     public sealed partial class Gdi
     {
         /// <inheritdoc />
-        public string    Name   => "Dreamcast GDI image";
+        public string Name => "Dreamcast GDI image";
         /// <inheritdoc />
-        public Guid      Id     => new Guid("281ECBF2-D2A7-414C-8497-1A33F6DCB2DD");
+        public Guid Id => new Guid("281ECBF2-D2A7-414C-8497-1A33F6DCB2DD");
         /// <inheritdoc />
-        public ImageInfo Info   => _imageInfo;
+        public ImageInfo Info => _imageInfo;
         /// <inheritdoc />
-        public string    Author => "Natalia Portillo";
+        public string Author => "Natalia Portillo";
         /// <inheritdoc />
-        public string    Format => "Dreamcast GDI image";
+        public string Format => "Dreamcast GDI image";
 
         /// <inheritdoc />
         public List<Partition> Partitions { get; private set; }
@@ -92,10 +92,10 @@ namespace Aaru.DiscImages
         }
 
         /// <inheritdoc />
-        public List<Session>          Sessions     => _discImage.Sessions;
+        public List<Session> Sessions => _discImage.Sessions;
         /// <inheritdoc />
         public List<DumpHardwareType> DumpHardware => null;
         /// <inheritdoc />
-        public CICMMetadataType       CicmMetadata => null;
+        public CICMMetadataType CicmMetadata => null;
     }
 }

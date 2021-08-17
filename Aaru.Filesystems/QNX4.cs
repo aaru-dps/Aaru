@@ -44,9 +44,7 @@ using Marshal = Aaru.Helpers.Marshal;
 namespace Aaru.Filesystems
 {
     /// <inheritdoc />
-    /// <summary>
-    /// Implements detection of QNX 4 filesystem
-    /// </summary>
+    /// <summary>Implements detection of QNX 4 filesystem</summary>
     [SuppressMessage("ReSharper", "UnusedType.Local")]
     public sealed class QNX4 : IFilesystem
     {
@@ -58,13 +56,13 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
         /// <inheritdoc />
-        public Encoding       Encoding  { get; private set; }
+        public Encoding Encoding { get; private set; }
         /// <inheritdoc />
-        public string         Name      => "QNX4 Plugin";
+        public string Name => "QNX4 Plugin";
         /// <inheritdoc />
-        public Guid           Id        => new Guid("E73A63FA-B5B0-48BF-BF82-DA5F0A8170D2");
+        public Guid Id => new Guid("E73A63FA-B5B0-48BF-BF82-DA5F0A8170D2");
         /// <inheritdoc />
-        public string         Author    => "Natalia Portillo";
+        public string Author => "Natalia Portillo";
 
         /// <inheritdoc />
         public bool Identify(IMediaImage imagePlugin, Partition partition)

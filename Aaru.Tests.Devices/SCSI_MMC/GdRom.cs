@@ -44,7 +44,7 @@ namespace Aaru.Tests.Devices
                 if(!sense)
                     break;
 
-                var decodedSense = Sense.Decode(senseBuffer);
+                DecodedSense? decodedSense = Sense.Decode(senseBuffer);
 
                 if(decodedSense.Value.ASC != 0x04)
                     break;
@@ -152,7 +152,7 @@ namespace Aaru.Tests.Devices
                 if(!sense)
                     break;
 
-                var decodedSense = Sense.Decode(senseBuffer);
+                DecodedSense? decodedSense = Sense.Decode(senseBuffer);
 
                 if(decodedSense.Value.ASC != 0x04)
                     break;

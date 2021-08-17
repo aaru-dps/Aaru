@@ -40,18 +40,18 @@ namespace Aaru.DiscImages
     public sealed partial class Ndif
     {
         /// <inheritdoc />
-        public ImageInfo              Info         => _imageInfo;
+        public ImageInfo Info => _imageInfo;
         /// <inheritdoc />
-        public string                 Name         => "Apple New Disk Image Format";
+        public string Name => "Apple New Disk Image Format";
         /// <inheritdoc />
-        public Guid                   Id           => new Guid("5A7FF7D8-491E-458D-8674-5B5EADBECC24");
+        public Guid Id => new Guid("5A7FF7D8-491E-458D-8674-5B5EADBECC24");
         /// <inheritdoc />
-        public string                 Format       => "Apple New Disk Image Format";
+        public string Format => "Apple New Disk Image Format";
         /// <inheritdoc />
-        public string                 Author       => "Natalia Portillo";
+        public string Author => "Natalia Portillo";
         /// <inheritdoc />
         public List<DumpHardwareType> DumpHardware => null;
         /// <inheritdoc />
-        public CICMMetadataType       CicmMetadata => null;
+        public CICMMetadataType CicmMetadata => null;
     }
 }

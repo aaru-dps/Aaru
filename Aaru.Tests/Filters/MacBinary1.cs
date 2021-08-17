@@ -29,6 +29,7 @@
 using System.IO;
 using Aaru.Checksums;
 using Aaru.CommonTypes.Interfaces;
+using Aaru.Filters;
 using NUnit.Framework;
 
 namespace Aaru.Tests.Filters
@@ -47,7 +48,7 @@ namespace Aaru.Tests.Filters
         [Test]
         public void CheckContents()
         {
-            IFilter filter = new Aaru.Filters.MacBinary();
+            IFilter filter = new MacBinary();
             filter.Open(_location);
             Stream str  = filter.GetDataForkStream();
             byte[] data = new byte[737280];
@@ -69,14 +70,14 @@ namespace Aaru.Tests.Filters
         [Test]
         public void CheckFilterId()
         {
-            IFilter filter = new Aaru.Filters.MacBinary();
+            IFilter filter = new MacBinary();
             Assert.AreEqual(true, filter.Identify(_location));
         }
 
         [Test]
         public void CheckResource()
         {
-            IFilter filter = new Aaru.Filters.MacBinary();
+            IFilter filter = new MacBinary();
             filter.Open(_location);
             Stream str  = filter.GetResourceForkStream();
             byte[] data = new byte[286];
@@ -91,7 +92,7 @@ namespace Aaru.Tests.Filters
         [Test]
         public void Test()
         {
-            IFilter filter = new Aaru.Filters.MacBinary();
+            IFilter filter = new MacBinary();
             filter.Open(_location);
             Assert.AreEqual(true, filter.IsOpened());
             Assert.AreEqual(737280, filter.GetDataForkLength());

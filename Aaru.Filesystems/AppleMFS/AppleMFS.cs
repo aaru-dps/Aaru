@@ -40,9 +40,7 @@ namespace Aaru.Filesystems
 {
     // Information from Inside Macintosh Volume II
     /// <inheritdoc />
-    /// <summary>
-    /// Implements the Apple Macintosh File System
-    /// </summary>
+    /// <summary>Implements the Apple Macintosh File System</summary>
     public sealed partial class AppleMFS : IReadOnlyFilesystem
     {
         bool                        _mounted;
@@ -67,13 +65,13 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
         /// <inheritdoc />
-        public string         Name      => "Apple Macintosh File System";
+        public string Name => "Apple Macintosh File System";
         /// <inheritdoc />
-        public Guid           Id        => new Guid("36405F8D-0D26-4066-6538-5DBF5D065C3A");
+        public Guid Id => new Guid("36405F8D-0D26-4066-6538-5DBF5D065C3A");
         /// <inheritdoc />
-        public Encoding       Encoding  { get; private set; }
+        public Encoding Encoding { get; private set; }
         /// <inheritdoc />
-        public string         Author    => "Natalia Portillo";
+        public string Author => "Natalia Portillo";
 
         // TODO: Implement Finder namespace (requires decoding Desktop database)
         /// <inheritdoc />

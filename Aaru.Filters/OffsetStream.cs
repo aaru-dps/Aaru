@@ -33,7 +33,6 @@
 using System;
 using System.IO;
 using Microsoft.Win32.SafeHandles;
-
 #if !NETSTANDARD2_0
 
 #endif
@@ -50,7 +49,8 @@ namespace Aaru.Filters
 
         /// <inheritdoc />
         /// <summary>
-        /// Initializes a stream that only allows reading from <paramref name="start" /> to <paramref name="end" /> of the specified stream, both inclusive.
+        ///     Initializes a stream that only allows reading from <paramref name="start" /> to <paramref name="end" /> of the
+        ///     specified stream, both inclusive.
         /// </summary>
         /// <param name="stream">Base stream</param>
         /// <param name="start">Start position</param>
@@ -77,13 +77,23 @@ namespace Aaru.Filters
 
         /// <inheritdoc />
         /// <summary>
-        /// Initializes a stream that only allows reading from <paramref name="start" /> to <paramref name="end" /> of the specified file, both inclusive.
+        ///     Initializes a stream that only allows reading from <paramref name="start" /> to <paramref name="end" /> of the
+        ///     specified file, both inclusive.
         /// </summary>
         /// <param name="path">A relative or absolute path for the file that the stream will encapsulate.</param>
         /// <param name="mode">One of the enumeration values that determines how to open or create the file.</param>
-        /// <param name="access">A bitwise combination of the enumeration values that determines how the file can be accessed by a <see cref="T:System.IO.FileStream" /> object.</param>
-        /// <param name="share">A bitwise combination of the enumeration values that determines how the file will be shared by processes.</param>
-        /// <param name="bufferSize">A positive Int32 value greater than 0 indicating the buffer size. The default buffer size is 4096.</param>
+        /// <param name="access">
+        ///     A bitwise combination of the enumeration values that determines how the file can be accessed by a
+        ///     <see cref="T:System.IO.FileStream" /> object.
+        /// </param>
+        /// <param name="share">
+        ///     A bitwise combination of the enumeration values that determines how the file will be shared by
+        ///     processes.
+        /// </param>
+        /// <param name="bufferSize">
+        ///     A positive Int32 value greater than 0 indicating the buffer size. The default buffer size is
+        ///     4096.
+        /// </param>
         /// <param name="options">A bitwise combination of the enumeration values that specifies additional file options.</param>
         /// <param name="start">Start position</param>
         /// <param name="end">Last readable position</param>
@@ -110,10 +120,14 @@ namespace Aaru.Filters
 
         /// <inheritdoc />
         /// <summary>
-        /// Initializes a stream that only allows reading from <paramref name="start" /> to <paramref name="end" /> of the specified file, both inclusive.
+        ///     Initializes a stream that only allows reading from <paramref name="start" /> to <paramref name="end" /> of the
+        ///     specified file, both inclusive.
         /// </summary>
         /// <param name="handle">A file handle for the file that the stream will encapsulate.</param>
-        /// <param name="access">A bitwise combination of the enumeration values that determines how the file can be accessed by a <see cref="T:System.IO.FileStream" /> object.</param>
+        /// <param name="access">
+        ///     A bitwise combination of the enumeration values that determines how the file can be accessed by a
+        ///     <see cref="T:System.IO.FileStream" /> object.
+        /// </param>
         /// <param name="start">Start position</param>
         /// <param name="end">Last readable position</param>
         /// <exception cref="T:System.ArgumentOutOfRangeException">Invalid range</exception>
@@ -138,11 +152,18 @@ namespace Aaru.Filters
 
         /// <inheritdoc />
         /// <summary>
-        /// Initializes a stream that only allows reading from <paramref name="start" /> to <paramref name="end" /> of the specified file, both inclusive.
+        ///     Initializes a stream that only allows reading from <paramref name="start" /> to <paramref name="end" /> of the
+        ///     specified file, both inclusive.
         /// </summary>
         /// <param name="handle">A file handle for the file that the stream will encapsulate.</param>
-        /// <param name="access">A bitwise combination of the enumeration values that determines how the file can be accessed by a <see cref="T:System.IO.FileStream" /> object.</param>
-        /// <param name="bufferSize">A positive Int32 value greater than 0 indicating the buffer size. The default buffer size is 4096.</param>
+        /// <param name="access">
+        ///     A bitwise combination of the enumeration values that determines how the file can be accessed by a
+        ///     <see cref="T:System.IO.FileStream" /> object.
+        /// </param>
+        /// <param name="bufferSize">
+        ///     A positive Int32 value greater than 0 indicating the buffer size. The default buffer size is
+        ///     4096.
+        /// </param>
         /// <param name="start">Start position</param>
         /// <param name="end">Last readable position</param>
         /// <exception cref="T:System.ArgumentOutOfRangeException">Invalid range</exception>
@@ -167,11 +188,18 @@ namespace Aaru.Filters
 
         /// <inheritdoc />
         /// <summary>
-        /// Initializes a stream that only allows reading from <paramref name="start" /> to <paramref name="end" /> of the specified file, both inclusive.
+        ///     Initializes a stream that only allows reading from <paramref name="start" /> to <paramref name="end" /> of the
+        ///     specified file, both inclusive.
         /// </summary>
         /// <param name="handle">A file handle for the file that the stream will encapsulate.</param>
-        /// <param name="access">A bitwise combination of the enumeration values that determines how the file can be accessed by a <see cref="T:System.IO.FileStream" /> object.</param>
-        /// <param name="bufferSize">A positive Int32 value greater than 0 indicating the buffer size. The default buffer size is 4096.</param>
+        /// <param name="access">
+        ///     A bitwise combination of the enumeration values that determines how the file can be accessed by a
+        ///     <see cref="T:System.IO.FileStream" /> object.
+        /// </param>
+        /// <param name="bufferSize">
+        ///     A positive Int32 value greater than 0 indicating the buffer size. The default buffer size is
+        ///     4096.
+        /// </param>
         /// <param name="isAsync">Specifies whether to use asynchronous I/O or synchronous I/O.</param>
         /// <param name="start">Start position</param>
         /// <param name="end">Last readable position</param>
@@ -198,13 +226,23 @@ namespace Aaru.Filters
 
         /// <inheritdoc />
         /// <summary>
-        /// Initializes a stream that only allows reading from <paramref name="start" /> to <paramref name="end" /> of the specified file, both inclusive.
+        ///     Initializes a stream that only allows reading from <paramref name="start" /> to <paramref name="end" /> of the
+        ///     specified file, both inclusive.
         /// </summary>
         /// <param name="path">A relative or absolute path for the file that the stream will encapsulate.</param>
         /// <param name="mode">One of the enumeration values that determines how to open or create the file.</param>
-        /// <param name="access">A bitwise combination of the enumeration values that determines how the file can be accessed by a <see cref="T:System.IO.FileStream" /> object.</param>
-        /// <param name="share">A bitwise combination of the enumeration values that determines how the file will be shared by processes.</param>
-        /// <param name="bufferSize">A positive Int32 value greater than 0 indicating the buffer size. The default buffer size is 4096.</param>
+        /// <param name="access">
+        ///     A bitwise combination of the enumeration values that determines how the file can be accessed by a
+        ///     <see cref="T:System.IO.FileStream" /> object.
+        /// </param>
+        /// <param name="share">
+        ///     A bitwise combination of the enumeration values that determines how the file will be shared by
+        ///     processes.
+        /// </param>
+        /// <param name="bufferSize">
+        ///     A positive Int32 value greater than 0 indicating the buffer size. The default buffer size is
+        ///     4096.
+        /// </param>
         /// <param name="useAsync">Specifies whether to use asynchronous I/O or synchronous I/O.</param>
         /// <param name="start">Start position</param>
         /// <param name="end">Last readable position</param>
@@ -231,13 +269,23 @@ namespace Aaru.Filters
 
         /// <inheritdoc />
         /// <summary>
-        /// Initializes a stream that only allows reading from <paramref name="start" /> to <paramref name="end" /> of the specified file, both inclusive.
+        ///     Initializes a stream that only allows reading from <paramref name="start" /> to <paramref name="end" /> of the
+        ///     specified file, both inclusive.
         /// </summary>
         /// <param name="path">A relative or absolute path for the file that the stream will encapsulate.</param>
         /// <param name="mode">One of the enumeration values that determines how to open or create the file.</param>
-        /// <param name="access">A bitwise combination of the enumeration values that determines how the file can be accessed by a <see cref="T:System.IO.FileStream" /> object.</param>
-        /// <param name="share">A bitwise combination of the enumeration values that determines how the file will be shared by processes.</param>
-        /// <param name="bufferSize">A positive Int32 value greater than 0 indicating the buffer size. The default buffer size is 4096.</param>
+        /// <param name="access">
+        ///     A bitwise combination of the enumeration values that determines how the file can be accessed by a
+        ///     <see cref="T:System.IO.FileStream" /> object.
+        /// </param>
+        /// <param name="share">
+        ///     A bitwise combination of the enumeration values that determines how the file will be shared by
+        ///     processes.
+        /// </param>
+        /// <param name="bufferSize">
+        ///     A positive Int32 value greater than 0 indicating the buffer size. The default buffer size is
+        ///     4096.
+        /// </param>
         /// <param name="start">Start position</param>
         /// <param name="end">Last readable position</param>
         /// <exception cref="T:System.ArgumentOutOfRangeException">Invalid range</exception>
@@ -263,12 +311,19 @@ namespace Aaru.Filters
 
         /// <inheritdoc />
         /// <summary>
-        /// Initializes a stream that only allows reading from <paramref name="start" /> to <paramref name="end" /> of the specified file, both inclusive.
+        ///     Initializes a stream that only allows reading from <paramref name="start" /> to <paramref name="end" /> of the
+        ///     specified file, both inclusive.
         /// </summary>
         /// <param name="path">A relative or absolute path for the file that the stream will encapsulate.</param>
         /// <param name="mode">One of the enumeration values that determines how to open or create the file.</param>
-        /// <param name="access">A bitwise combination of the enumeration values that determines how the file can be accessed by a <see cref="T:System.IO.FileStream" /> object.</param>
-        /// <param name="share">A bitwise combination of the enumeration values that determines how the file will be shared by processes.</param>
+        /// <param name="access">
+        ///     A bitwise combination of the enumeration values that determines how the file can be accessed by a
+        ///     <see cref="T:System.IO.FileStream" /> object.
+        /// </param>
+        /// <param name="share">
+        ///     A bitwise combination of the enumeration values that determines how the file will be shared by
+        ///     processes.
+        /// </param>
         /// <param name="start">Start position</param>
         /// <param name="end">Last readable position</param>
         /// <exception cref="T:System.ArgumentOutOfRangeException">Invalid range</exception>
@@ -293,11 +348,15 @@ namespace Aaru.Filters
 
         /// <inheritdoc />
         /// <summary>
-        /// Initializes a stream that only allows reading from <paramref name="start" /> to <paramref name="end" /> of the specified file, both inclusive.
+        ///     Initializes a stream that only allows reading from <paramref name="start" /> to <paramref name="end" /> of the
+        ///     specified file, both inclusive.
         /// </summary>
         /// <param name="path">A relative or absolute path for the file that the stream will encapsulate.</param>
         /// <param name="mode">One of the enumeration values that determines how to open or create the file.</param>
-        /// <param name="access">A bitwise combination of the enumeration values that determines how the file can be accessed by a <see cref="T:System.IO.FileStream" /> object.</param>
+        /// <param name="access">
+        ///     A bitwise combination of the enumeration values that determines how the file can be accessed by a
+        ///     <see cref="T:System.IO.FileStream" /> object.
+        /// </param>
         /// <param name="start">Start position</param>
         /// <param name="end">Last readable position</param>
         /// <exception cref="T:System.ArgumentOutOfRangeException">Invalid range</exception>
@@ -322,7 +381,8 @@ namespace Aaru.Filters
 
         /// <inheritdoc />
         /// <summary>
-        /// Initializes a stream that only allows reading from <paramref name="start" /> to <paramref name="end" /> of the specified file, both inclusive.
+        ///     Initializes a stream that only allows reading from <paramref name="start" /> to <paramref name="end" /> of the
+        ///     specified file, both inclusive.
         /// </summary>
         /// <param name="path">A relative or absolute path for the file that the stream will encapsulate.</param>
         /// <param name="mode">One of the enumeration values that determines how to open or create the file.</param>
@@ -350,7 +410,8 @@ namespace Aaru.Filters
 
         /// <inheritdoc />
         /// <summary>
-        /// Initializes a stream that only allows reading from <paramref name="start" /> to <paramref name="end" /> of the specified byte array, both inclusive.
+        ///     Initializes a stream that only allows reading from <paramref name="start" /> to <paramref name="end" /> of the
+        ///     specified byte array, both inclusive.
         /// </summary>
         /// <param name="buffer">The array of unsigned bytes to add at the end of this stream.</param>
         /// <param name="index">The index into <paramref name="buffer" /> at which the stream begins.</param>
@@ -382,7 +443,8 @@ namespace Aaru.Filters
 
         /// <inheritdoc />
         /// <summary>
-        /// Initializes a stream that only allows reading from <paramref name="start" /> to <paramref name="end" /> of the specified byte array, both inclusive.
+        ///     Initializes a stream that only allows reading from <paramref name="start" /> to <paramref name="end" /> of the
+        ///     specified byte array, both inclusive.
         /// </summary>
         /// <param name="buffer">The array of unsigned bytes to add at the end of this stream.</param>
         /// <param name="index">The index into <paramref name="buffer" /> at which the stream begins.</param>
@@ -412,7 +474,8 @@ namespace Aaru.Filters
 
         /// <inheritdoc />
         /// <summary>
-        /// Initializes a stream that only allows reading from <paramref name="start" /> to <paramref name="end" /> of the specified byte array, both inclusive.
+        ///     Initializes a stream that only allows reading from <paramref name="start" /> to <paramref name="end" /> of the
+        ///     specified byte array, both inclusive.
         /// </summary>
         /// <param name="buffer">The array of unsigned bytes to add at the end of this stream.</param>
         /// <param name="index">The index into <paramref name="buffer" /> at which the stream begins.</param>
@@ -441,7 +504,8 @@ namespace Aaru.Filters
 
         /// <inheritdoc />
         /// <summary>
-        /// Initializes a stream that only allows reading from <paramref name="start" /> to <paramref name="end" /> of the specified byte array, both inclusive.
+        ///     Initializes a stream that only allows reading from <paramref name="start" /> to <paramref name="end" /> of the
+        ///     specified byte array, both inclusive.
         /// </summary>
         /// <param name="buffer">The array of unsigned bytes to add at the end of this stream.</param>
         /// <param name="writable">The setting of the CanWrite property, currently ignored.</param>
@@ -469,7 +533,8 @@ namespace Aaru.Filters
 
         /// <inheritdoc />
         /// <summary>
-        /// Initializes a stream that only allows reading from <paramref name="start" /> to <paramref name="end" /> of the specified byte array, both inclusive.
+        ///     Initializes a stream that only allows reading from <paramref name="start" /> to <paramref name="end" /> of the
+        ///     specified byte array, both inclusive.
         /// </summary>
         /// <param name="buffer">The array of unsigned bytes to add at the end of this stream.</param>
         /// <param name="start">Start position</param>

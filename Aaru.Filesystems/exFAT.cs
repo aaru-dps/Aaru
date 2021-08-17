@@ -44,9 +44,7 @@ namespace Aaru.Filesystems
 {
     // Information from https://www.sans.org/reading-room/whitepapers/forensics/reverse-engineering-microsoft-exfat-file-system-33274
     /// <inheritdoc />
-    /// <summary>
-    /// Implements detection of the exFAT filesystem
-    /// </summary>
+    /// <summary>Implements detection of the exFAT filesystem</summary>
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
     public sealed class exFAT : IFilesystem
     {
@@ -60,13 +58,13 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
         /// <inheritdoc />
-        public Encoding       Encoding  { get; private set; }
+        public Encoding Encoding { get; private set; }
         /// <inheritdoc />
-        public string         Name      => "Microsoft Extended File Allocation Table";
+        public string Name => "Microsoft Extended File Allocation Table";
         /// <inheritdoc />
-        public Guid           Id        => new Guid("8271D088-1533-4CB3-AC28-D802B68BB95C");
+        public Guid Id => new Guid("8271D088-1533-4CB3-AC28-D802B68BB95C");
         /// <inheritdoc />
-        public string         Author    => "Natalia Portillo";
+        public string Author => "Natalia Portillo";
 
         /// <inheritdoc />
         public bool Identify(IMediaImage imagePlugin, Partition partition)

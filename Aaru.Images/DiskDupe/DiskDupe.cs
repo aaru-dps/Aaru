@@ -65,9 +65,7 @@ using Aaru.CommonTypes.Structs;
 namespace Aaru.DiscImages
 {
     /// <inheritdoc />
-    /// <summary>
-    /// Implements reading DiskDupe disk images
-    /// </summary>
+    /// <summary>Implements reading DiskDupe disk images</summary>
     public sealed partial class DiskDupe : IMediaImage
     {
         /// <summary>The DDI file header after the image has been opened</summary>

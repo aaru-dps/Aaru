@@ -47,12 +47,12 @@ namespace Aaru.DiscImages
         {
             Stream stream = imageFilter.GetDataForkStream();
 
-            FileHeader fheader = new FileHeader();
+            var fheader = new FileHeader();
 
             // the start offset of the track data
             long currentOffset = 0;
 
-            if (!TryReadHeader(stream, ref fheader, ref currentOffset))
+            if(!TryReadHeader(stream, ref fheader, ref currentOffset))
             {
                 return false;
             }

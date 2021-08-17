@@ -40,9 +40,7 @@ namespace Aaru.DiscImages
 {
     // TODO: Check writing
     /// <inheritdoc />
-    /// <summary>
-    /// Implements reading and writing Apridisk disk images
-    /// </summary>
+    /// <summary>Implements reading and writing Apridisk disk images</summary>
     public sealed partial class Apridisk : IWritableImage
     {
         ImageInfo _imageInfo;

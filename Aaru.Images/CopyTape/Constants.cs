@@ -34,9 +34,9 @@ namespace Aaru.DiscImages
 {
     public sealed partial class CopyTape
     {
-        const string BLOCK_REGEX        = @"^CPTP:BLK (?<blockSize>\d{6})\n$";
+        const string BLOCK_REGEX         = @"^CPTP:BLK (?<blockSize>\d{6})\n$";
         const string PARTIAL_BLOCK_REGEX = @"^CPTP:BLK $";
-        const string FILEMARK_REGEX     = @"^CPTP:MRK\n$";
-        const string END_OF_TAPE_REGEX    = @"^CPTP:EOT\n$";
+        const string FILEMARK_REGEX      = @"^CPTP:MRK\n$";
+        const string END_OF_TAPE_REGEX   = @"^CPTP:EOT\n$";
     }
 }

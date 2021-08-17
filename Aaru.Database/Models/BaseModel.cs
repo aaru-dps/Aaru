@@ -34,14 +34,10 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Aaru.Database.Models
 {
-    /// <summary>
-    /// Base database model
-    /// </summary>
+    /// <summary>Base database model</summary>
     public abstract class BaseModel
     {
-        /// <summary>
-        /// Database ID
-        /// </summary>
+        /// <summary>Database ID</summary>
         [Key]
         public int Id { get; set; }
     }

@@ -428,6 +428,7 @@ namespace Aaru.Core.Devices.Dumping
                             }
                         }
                     }
+
                     _dumpLog.WriteLine("Reading Disc Manufacturing Information");
 
                     sense = _dev.ReadDiscStructure(out cmdBuf, out _, MmcDiscStructureMediaType.Dvd, 0, 0,
@@ -458,8 +459,7 @@ namespace Aaru.Core.Devices.Dumping
 
                             sense = _dev.ScsiInquiry(out byte[] inqBuf, out _);
 
-                            if(sense                            ||
-                               Inquiry.Decode(inqBuf)?.KreonPresent != true)
+                            if(sense || Inquiry.Decode(inqBuf)?.KreonPresent != true)
                             {
                                 _dumpLog.WriteLine("Dumping Xbox Game Discs requires a drive with Kreon firmware.");
 
@@ -532,7 +532,8 @@ namespace Aaru.Core.Devices.Dumping
 
                                     sense = dvdDecrypt.ReadBusKey(out cmdBuf, out _,
                                                                   CSS_CPRM.DecodeLeadInCopyright(cmdBuf)?.
-                                                                           CopyrightType ?? CopyrightType.NoProtection, _dev.Timeout, out _);
+                                                                           CopyrightType ?? CopyrightType.NoProtection,
+                                                                  _dev.Timeout, out _);
 
                                     if(!sense)
                                     {

@@ -47,9 +47,9 @@ namespace Aaru.Filters
         bool     _opened;
 
         /// <inheritdoc />
-        public string Name   => "No filter";
+        public string Name => "No filter";
         /// <inheritdoc />
-        public Guid   Id     => new Guid("12345678-AAAA-BBBB-CCCC-123456789000");
+        public Guid Id => new Guid("12345678-AAAA-BBBB-CCCC-123456789000");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 

@@ -39,9 +39,7 @@ using Aaru.CommonTypes.Structs;
 namespace Aaru.DiscImages
 {
     /// <inheritdoc />
-    /// <summary>
-    /// Implements reading and writing QEMU's Copy On Write v2 and v3 disk images
-    /// </summary>
+    /// <summary>Implements reading and writing QEMU's Copy On Write v2 and v3 disk images</summary>
     public sealed partial class Qcow2 : IWritableImage
     {
         Dictionary<ulong, byte[]>  _clusterCache;

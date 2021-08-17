@@ -40,9 +40,7 @@ namespace Aaru.DiscImages
 {
     // Created following notes from Dave Dunfield
     // http://www.classiccmp.org/dunfield/img54306/td0notes.txt
-    /// <summary>
-    /// Implements reading of Sydex TeleDisk disk images
-    /// </summary>
+    /// <summary>Implements reading of Sydex TeleDisk disk images</summary>
     public sealed partial class TeleDisk : IMediaImage, IVerifiableImage, IVerifiableSectorsImage
     {
         readonly List<ulong> _sectorsWhereCrcHasFailed;

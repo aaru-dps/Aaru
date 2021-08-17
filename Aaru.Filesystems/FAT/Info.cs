@@ -325,8 +325,8 @@ namespace Aaru.Filesystems
                     return true;
             }
 
-            byte   fat2          = fatSector[1];
-            byte   fat3          = fatSector[2];
+            byte   fat2        = fatSector[1];
+            byte   fat3        = fatSector[2];
             ushort fatCluster2 = (ushort)(((fat2 << 8) + fat3) & 0xFFF);
 
             AaruConsole.DebugWriteLine("FAT plugin", "1st fat cluster 1 = {0:X3}", fatCluster2);
@@ -397,8 +397,8 @@ namespace Aaru.Filesystems
 
             byte[] fat2Sector = imagePlugin.ReadSector(fat2SectorNo);
 
-            fat2          = fat2Sector[1];
-            fat3          = fat2Sector[2];
+            fat2        = fat2Sector[1];
+            fat3        = fat2Sector[2];
             fatCluster2 = (ushort)(((fat2 << 8) + fat3) & 0xFFF);
 
             if(fatCluster2 < 0xFF0)

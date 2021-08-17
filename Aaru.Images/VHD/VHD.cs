@@ -41,9 +41,9 @@ namespace Aaru.DiscImages
 {
     /// <inheritdoc />
     /// <summary>
-    /// Supports Connectix/Microsoft Virtual PC hard disk image format.
-    /// Until Virtual PC 5 there existed no format, and the hard disk image was merely a sector by sector (RAW)
-    /// image with a resource fork giving information to Virtual PC itself.
+    ///     Supports Connectix/Microsoft Virtual PC hard disk image format. Until Virtual PC 5 there existed no format,
+    ///     and the hard disk image was merely a sector by sector (RAW) image with a resource fork giving information to
+    ///     Virtual PC itself.
     /// </summary>
     public sealed partial class Vhd : IWritableImage
     {

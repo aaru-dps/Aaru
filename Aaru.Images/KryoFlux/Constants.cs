@@ -43,8 +43,8 @@ namespace Aaru.DiscImages
         const string KF_VERSION = "version";
         const string KF_DATE    = "date";
         const string KF_TIME    = "time";
-        const string KF_HW_ID    = "hwid";
-        const string KF_HW_RV    = "hwrv";
+        const string KF_HW_ID   = "hwid";
+        const string KF_HW_RV   = "hwrv";
         const string KF_SCK     = "sck";
         const string KF_ICK     = "ick";
     }

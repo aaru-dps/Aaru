@@ -36,9 +36,7 @@ namespace Aaru.Devices
 {
     public sealed partial class Device
     {
-        /// <summary>
-        /// Reads the status register from a SecureDigital device
-        /// </summary>
+        /// <summary>Reads the status register from a SecureDigital device</summary>
         /// <param name="buffer">Data buffer</param>
         /// <param name="response">Response</param>
         /// <param name="timeout">Timeout to wait for command execution</param>
@@ -59,9 +57,7 @@ namespace Aaru.Devices
             return sense;
         }
 
-        /// <summary>
-        /// Reads the OCR register from a SecureDigital device
-        /// </summary>
+        /// <summary>Reads the OCR register from a SecureDigital device</summary>
         /// <param name="buffer">Data buffer</param>
         /// <param name="response">Response</param>
         /// <param name="timeout">Timeout to wait for command execution</param>
@@ -82,9 +78,7 @@ namespace Aaru.Devices
             return sense;
         }
 
-        /// <summary>
-        /// Reads the SCR register from a SecureDigital device
-        /// </summary>
+        /// <summary>Reads the SCR register from a SecureDigital device</summary>
         /// <param name="buffer">Data buffer</param>
         /// <param name="response">Response</param>
         /// <param name="timeout">Timeout to wait for command execution</param>

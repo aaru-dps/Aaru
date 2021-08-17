@@ -1,75 +1,42 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   version="1.1"
-   id="svg2"
-   viewBox="0 0 197.07422 58.796024"
-   style="fill-rule:evenodd"
-   height="208.33237"
-   width="698.29449"
-   xml:space="preserve"><metadata
+<svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.w3.org/2000/svg" version="1.1" id="svg2"
+     viewBox="0 0 197.07422 58.796024" style="fill-rule:evenodd" height="208.33237" width="698.29449"
+     xml:space="preserve"><metadata
    id="metadata22"><rdf:RDF><cc:Work
-       rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
-         rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title></dc:title></cc:Work></rdf:RDF></metadata>
- <defs
-   id="defs4">
-  <style
-   id="style6"
-   type="text/css">
-   
+       rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/><dc:title></dc:title></cc:Work></rdf:RDF></metadata>
+    <defs id="defs4">
+  <style id="style6" type="text/css">
+
     .fil0 {fill:#02ABCA}
     .fil1 {fill:#8B8B8B;fill-rule:nonzero}
-   
+
   </style>
  </defs>
- <g
-   transform="translate(-5.8253889,-5.6213889)"
-   id="Capa_x0020_1">
-  <metadata
-   id="CorelCorpID_0Corel-Layer" />
-  <g
-   id="_56610944">
-   <path
-   style="fill:#009ac7;fill-opacity:1;stroke:none"
-   d="m 165.011,25.954 c 0,13.4272 15.875,11.5068 15.875,2.1167 V 5.8457 h -15.875 z"
-   class="fil0"
-   id="_56666168" />
-   <path
-   style="fill:#009ac7;fill-opacity:1;stroke:none"
-   d="m 143.139,40.0651 c 0,6.6341 4.5822,10.5833 11.2889,10.5833 h 38.1 c 5.6587,0 10.2306,-3.9072 10.2306,-9.525 V 13.254 c 0,-3.3857 -2.5233,-7.0555 -5.6444,-7.0555 h -8.8195 V 29.129 c 0,17.4161 -30.3389,17.282 -30.3389,0.3528 V 5.8457 h -6.7028 c -4.3638,0 -8.1139,2.7649 -8.1139,7.0555 z"
-   class="fil0"
-   id="_56603080" />
-   <path
-   style="fill:#8b8b8b;fill-opacity:1;fill-rule:nonzero;stroke:none"
-   d="m 90.4019,12.4334 c 0,3.6214 3.0496,6.671 6.8616,6.671 4.0026,0 7.1475,-2.9544 7.1475,-6.671 0,-3.7167 -3.1449,-6.6709 -7.1475,-6.6709 -3.812,0 -6.8616,2.9542 -6.8616,6.6709 z"
-   class="fil1"
-   id="_56604928" />
-   <polygon
-   style="fill:#8b8b8b;fill-opacity:1;fill-rule:nonzero;stroke:none"
-   points="91.5455,25.68 91.5455,63.8951 103.363,63.8951 103.363,25.68 "
-   class="fil1"
-   id="_56605920" />
-   <path
-   style="fill:#8b8b8b;fill-opacity:1;fill-rule:nonzero;stroke:none"
-   d="m 114.322,12.4334 c 0,3.6214 3.1449,6.671 6.9569,6.671 3.9072,0 7.0521,-2.9544 7.0521,-6.671 0,-3.7167 -3.1449,-6.6709 -7.0521,-6.6709 -3.812,0 -6.9569,2.9542 -6.9569,6.6709 z"
-   class="fil1"
-   id="_56605848" />
-   <polygon
-   style="fill:#8b8b8b;fill-opacity:1;fill-rule:nonzero;stroke:none"
-   points="115.466,25.68 115.466,63.8951 127.283,63.8951 127.283,25.68 "
-   class="fil1"
-   id="_56607936" />
-   <path
-   style="fill:#8b8b8b;fill-opacity:1;fill-rule:nonzero;stroke:none"
-   d="M 72.7715,9.0026 62.4791,49.505 c 0,0 -7.9098,-30.4006 -9.244,-34.7845 -1.2389,-4.2884 -3.9073,-6.1944 -7.624,-6.1944 -3.8119,0 -6.385,1.906 -7.7193,6.1944 C 36.653,19.1044 28.7431,49.505 28.7431,49.505 L 18.3555,9.0026 H 5.9665 c 0,0 11.9125,43.1707 13.5326,48.2216 1.2388,3.9073 4.2885,7.0521 8.6722,7.0521 5.1461,0 7.5287,-3.7166 8.5769,-7.0521 1.1436,-3.4308 8.8629,-31.9254 8.8629,-31.9254 0,0 7.7192,28.4946 8.7676,31.9254 1.1436,3.3355 3.526,7.0521 8.577,7.0521 4.479,0 7.4333,-3.1448 8.7675,-7.0521 1.62,-5.0509 13.5326,-48.2216 13.5326,-48.2216 z"
-   class="fil1"
-   id="_56607472" />
-   
-   
+    <g transform="translate(-5.8253889,-5.6213889)" id="Capa_x0020_1">
+  <metadata id="CorelCorpID_0Corel-Layer"/>
+        <g id="_56610944">
+   <path style="fill:#009ac7;fill-opacity:1;stroke:none"
+         d="m 165.011,25.954 c 0,13.4272 15.875,11.5068 15.875,2.1167 V 5.8457 h -15.875 z" class="fil0"
+         id="_56666168"/>
+            <path style="fill:#009ac7;fill-opacity:1;stroke:none"
+                  d="m 143.139,40.0651 c 0,6.6341 4.5822,10.5833 11.2889,10.5833 h 38.1 c 5.6587,0 10.2306,-3.9072 10.2306,-9.525 V 13.254 c 0,-3.3857 -2.5233,-7.0555 -5.6444,-7.0555 h -8.8195 V 29.129 c 0,17.4161 -30.3389,17.282 -30.3389,0.3528 V 5.8457 h -6.7028 c -4.3638,0 -8.1139,2.7649 -8.1139,7.0555 z"
+                  class="fil0" id="_56603080"/>
+            <path style="fill:#8b8b8b;fill-opacity:1;fill-rule:nonzero;stroke:none"
+                  d="m 90.4019,12.4334 c 0,3.6214 3.0496,6.671 6.8616,6.671 4.0026,0 7.1475,-2.9544 7.1475,-6.671 0,-3.7167 -3.1449,-6.6709 -7.1475,-6.6709 -3.812,0 -6.8616,2.9542 -6.8616,6.6709 z"
+                  class="fil1" id="_56604928"/>
+            <polygon style="fill:#8b8b8b;fill-opacity:1;fill-rule:nonzero;stroke:none"
+                     points="91.5455,25.68 91.5455,63.8951 103.363,63.8951 103.363,25.68 " class="fil1" id="_56605920"/>
+            <path style="fill:#8b8b8b;fill-opacity:1;fill-rule:nonzero;stroke:none"
+                  d="m 114.322,12.4334 c 0,3.6214 3.1449,6.671 6.9569,6.671 3.9072,0 7.0521,-2.9544 7.0521,-6.671 0,-3.7167 -3.1449,-6.6709 -7.0521,-6.6709 -3.812,0 -6.9569,2.9542 -6.9569,6.6709 z"
+                  class="fil1" id="_56605848"/>
+            <polygon style="fill:#8b8b8b;fill-opacity:1;fill-rule:nonzero;stroke:none"
+                     points="115.466,25.68 115.466,63.8951 127.283,63.8951 127.283,25.68 " class="fil1" id="_56607936"/>
+            <path style="fill:#8b8b8b;fill-opacity:1;fill-rule:nonzero;stroke:none"
+                  d="M 72.7715,9.0026 62.4791,49.505 c 0,0 -7.9098,-30.4006 -9.244,-34.7845 -1.2389,-4.2884 -3.9073,-6.1944 -7.624,-6.1944 -3.8119,0 -6.385,1.906 -7.7193,6.1944 C 36.653,19.1044 28.7431,49.505 28.7431,49.505 L 18.3555,9.0026 H 5.9665 c 0,0 11.9125,43.1707 13.5326,48.2216 1.2388,3.9073 4.2885,7.0521 8.6722,7.0521 5.1461,0 7.5287,-3.7166 8.5769,-7.0521 1.1436,-3.4308 8.8629,-31.9254 8.8629,-31.9254 0,0 7.7192,28.4946 8.7676,31.9254 1.1436,3.3355 3.526,7.0521 8.577,7.0521 4.479,0 7.4333,-3.1448 8.7675,-7.0521 1.62,-5.0509 13.5326,-48.2216 13.5326,-48.2216 z"
+                  class="fil1" id="_56607472"/>
+
+
   </g>
  </g>
 </svg>

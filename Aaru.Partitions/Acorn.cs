@@ -42,9 +42,7 @@ using Marshal = Aaru.Helpers.Marshal;
 namespace Aaru.Partitions
 {
     /// <inheritdoc />
-    /// <summary>
-    /// Implements decoding of Acorn partitions
-    /// </summary>
+    /// <summary>Implements decoding of Acorn partitions</summary>
     public sealed class Acorn : IPartition
     {
         const ulong ADFS_SB_POS      = 0xC00;
@@ -57,9 +55,9 @@ namespace Aaru.Partitions
         const uint  TYPE_MASK        = 15;
 
         /// <inheritdoc />
-        public string Name   => "Acorn FileCore partitions";
+        public string Name => "Acorn FileCore partitions";
         /// <inheritdoc />
-        public Guid   Id     => new Guid("A7C8FEBE-8D00-4933-B9F3-42184C8BA808");
+        public Guid Id => new Guid("A7C8FEBE-8D00-4933-B9F3-42184C8BA808");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 

@@ -41,9 +41,7 @@ namespace Aaru.Filesystems
 {
     // Information from the Linux kernel
     /// <inheritdoc />
-    /// <summary>
-    /// Implements detection of the Linux extended filesystem
-    /// </summary>
+    /// <summary>Implements detection of the Linux extended filesystem</summary>
     public sealed class extFS : IFilesystem
     {
         const int SB_POS = 0x400;
@@ -54,13 +52,13 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
         /// <inheritdoc />
-        public string         Name      => "Linux extended Filesystem";
+        public string Name => "Linux extended Filesystem";
         /// <inheritdoc />
-        public Guid           Id        => new Guid("076CB3A2-08C2-4D69-BC8A-FCAA2E502BE2");
+        public Guid Id => new Guid("076CB3A2-08C2-4D69-BC8A-FCAA2E502BE2");
         /// <inheritdoc />
-        public Encoding       Encoding  { get; private set; }
+        public Encoding Encoding { get; private set; }
         /// <inheritdoc />
-        public string         Author    => "Natalia Portillo";
+        public string Author => "Natalia Portillo";
 
         /// <inheritdoc />
         public bool Identify(IMediaImage imagePlugin, Partition partition)

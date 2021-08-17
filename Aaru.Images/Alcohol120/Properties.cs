@@ -56,13 +56,13 @@ namespace Aaru.DiscImages
                                                                OpticalImageCapabilities.CanStoreCookedData |
                                                                OpticalImageCapabilities.CanStoreMultipleTracks;
         /// <inheritdoc />
-        public ImageInfo Info   => _imageInfo;
+        public ImageInfo Info => _imageInfo;
         /// <inheritdoc />
-        public string    Name   => "Alcohol 120% Media Descriptor Structure";
+        public string Name => "Alcohol 120% Media Descriptor Structure";
         /// <inheritdoc />
-        public Guid      Id     => new Guid("A78FBEBA-0307-4915-BDE3-B8A3B57F843F");
+        public Guid Id => new Guid("A78FBEBA-0307-4915-BDE3-B8A3B57F843F");
         /// <inheritdoc />
-        public string    Author => "Natalia Portillo";
+        public string Author => "Natalia Portillo";
 
         /// <inheritdoc />
         public string Format => "Alcohol 120% Media Descriptor Structure";
@@ -153,7 +153,7 @@ namespace Aaru.DiscImages
         /// <inheritdoc />
         public List<DumpHardwareType> DumpHardware => null;
         /// <inheritdoc />
-        public CICMMetadataType       CicmMetadata => null;
+        public CICMMetadataType CicmMetadata => null;
 
         /// <inheritdoc />
         public IEnumerable<MediaTagType> SupportedMediaTags => new[]
@@ -195,7 +195,7 @@ namespace Aaru.DiscImages
             ".mds"
         };
         /// <inheritdoc />
-        public bool   IsWriting    { get; private set; }
+        public bool IsWriting { get; private set; }
         /// <inheritdoc />
         public string ErrorMessage { get; private set; }
     }

@@ -56,9 +56,7 @@ namespace Aaru.Core
         FileStream              _fs;
         CICMMetadataType        _sidecar;
 
-        /// <summary>
-        /// Initializes a new instance of this class
-        /// </summary>
+        /// <summary>Initializes a new instance of this class</summary>
         public Sidecar()
         {
             _plugins      = GetPluginBase.Instance;
@@ -170,9 +168,7 @@ namespace Aaru.Core
             return _sidecar;
         }
 
-        /// <summary>
-        /// Aborts sidecar running operation
-        /// </summary>
+        /// <summary>Aborts sidecar running operation</summary>
         public void Abort()
         {
             UpdateStatus("Aborting...");

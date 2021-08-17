@@ -45,18 +45,16 @@ using Marshal = Aaru.Helpers.Marshal;
 namespace Aaru.Partitions
 {
     /// <inheritdoc />
-    /// <summary>
-    /// Implements decoding of the SGI Disk Volume Header
-    /// </summary>
+    /// <summary>Implements decoding of the SGI Disk Volume Header</summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public sealed class SGI : IPartition
     {
         const int SGI_MAGIC = 0x0BE5A941;
 
         /// <inheritdoc />
-        public string Name   => "SGI Disk Volume Header";
+        public string Name => "SGI Disk Volume Header";
         /// <inheritdoc />
-        public Guid   Id     => new Guid("AEF5AB45-4880-4CE8-8735-F0A402E2E5F2");
+        public Guid Id => new Guid("AEF5AB45-4880-4CE8-8735-F0A402E2E5F2");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
@@ -152,15 +150,13 @@ namespace Aaru.Partitions
 
                 var part = new CommonTypes.Partition
                 {
-                    Start = dvh.partitions[i].first_block * dvh.device_params.dp_secbytes /
-                            imagePlugin.Info.SectorSize,
+                    Start = dvh.partitions[i].first_block * dvh.device_params.dp_secbytes / imagePlugin.Info.SectorSize,
                     Offset = dvh.partitions[i].first_block * dvh.device_params.dp_secbytes,
-                    Length = dvh.partitions[i].num_blocks * dvh.device_params.dp_secbytes /
-                             imagePlugin.Info.SectorSize,
-                    Size     = dvh.partitions[i].num_blocks * dvh.device_params.dp_secbytes,
-                    Type     = TypeToString(dvh.partitions[i].type),
+                    Length = dvh.partitions[i].num_blocks * dvh.device_params.dp_secbytes / imagePlugin.Info.SectorSize,
+                    Size = dvh.partitions[i].num_blocks * dvh.device_params.dp_secbytes,
+                    Type = TypeToString(dvh.partitions[i].type),
                     Sequence = counter,
-                    Scheme   = Name
+                    Scheme = Name
                 };
 
                 if(part.Size              <= 0              ||

@@ -1086,6 +1086,7 @@ namespace Aaru.DiscImages
                 case MediaType.CDR:
                     if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdTrackFlags))
                         _imageInfo.ReadableSectorTags.Add(SectorTagType.CdTrackFlags);
+
                     goto case MediaType.BDRE;
                 case MediaType.BDRE:
                 case MediaType.BDROM:
@@ -1531,7 +1532,7 @@ namespace Aaru.DiscImages
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
             const uint sectorSize = 2352;
-            uint       sectorSkip  = 0;
+            uint       sectorSkip = 0;
 
             if(_hasSubchannel)
                 sectorSkip += 96;

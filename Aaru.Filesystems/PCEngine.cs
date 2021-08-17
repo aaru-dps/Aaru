@@ -39,21 +39,19 @@ using Schemas;
 namespace Aaru.Filesystems
 {
     /// <inheritdoc />
-    /// <summary>
-    /// Implements detection of the PC-Engine CD file headers
-    /// </summary>
+    /// <summary>Implements detection of the PC-Engine CD file headers</summary>
     public sealed class PCEnginePlugin : IFilesystem
     {
         /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
         /// <inheritdoc />
-        public Encoding       Encoding  { get; private set; }
+        public Encoding Encoding { get; private set; }
         /// <inheritdoc />
-        public string         Name      => "PC Engine CD Plugin";
+        public string Name => "PC Engine CD Plugin";
         /// <inheritdoc />
-        public Guid           Id        => new Guid("e5ee6d7c-90fa-49bd-ac89-14ef750b8af3");
+        public Guid Id => new Guid("e5ee6d7c-90fa-49bd-ac89-14ef750b8af3");
         /// <inheritdoc />
-        public string         Author    => "Natalia Portillo";
+        public string Author => "Natalia Portillo";
 
         /// <inheritdoc />
         public bool Identify(IMediaImage imagePlugin, Partition partition)

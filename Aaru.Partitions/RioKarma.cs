@@ -41,18 +41,16 @@ using Marshal = Aaru.Helpers.Marshal;
 namespace Aaru.Partitions
 {
     /// <inheritdoc />
-    /// <summary>
-    /// Implements decoding of Rio Karma partitions
-    /// </summary>
+    /// <summary>Implements decoding of Rio Karma partitions</summary>
     public sealed class RioKarma : IPartition
     {
         const ushort KARMA_MAGIC = 0xAB56;
         const byte   ENTRY_MAGIC = 0x4D;
 
         /// <inheritdoc />
-        public string Name   => "Rio Karma partitioning";
+        public string Name => "Rio Karma partitioning";
         /// <inheritdoc />
-        public Guid   Id     => new Guid("246A6D93-4F1A-1F8A-344D-50187A5513A9");
+        public Guid Id => new Guid("246A6D93-4F1A-1F8A-344D-50187A5513A9");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 

@@ -43,16 +43,16 @@ namespace Aaru.DiscImages
         public ImageInfo Info => _imageInfo;
 
         /// <inheritdoc />
-        public string                 Name         => "Apple NIB";
+        public string Name => "Apple NIB";
         /// <inheritdoc />
-        public Guid                   Id           => new Guid("AE171AE8-6747-49CC-B861-9D450B7CD42E");
+        public Guid Id => new Guid("AE171AE8-6747-49CC-B861-9D450B7CD42E");
         /// <inheritdoc />
-        public string                 Author       => "Natalia Portillo";
+        public string Author => "Natalia Portillo";
         /// <inheritdoc />
-        public string                 Format       => "Apple nibbles";
+        public string Format => "Apple nibbles";
         /// <inheritdoc />
         public List<DumpHardwareType> DumpHardware => null;
         /// <inheritdoc />
-        public CICMMetadataType       CicmMetadata => null;
+        public CICMMetadataType CicmMetadata => null;
     }
 }

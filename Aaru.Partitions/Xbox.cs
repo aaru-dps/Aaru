@@ -41,34 +41,32 @@ using Marshal = Aaru.Helpers.Marshal;
 namespace Aaru.Partitions
 {
     /// <inheritdoc />
-    /// <summary>
-    /// Implements decoding of Xbox partitions
-    /// </summary>
+    /// <summary>Implements decoding of Xbox partitions</summary>
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
     public sealed class Xbox : IPartition
     {
-        const uint XBOX_CIGAM                = 0x46415458;
-        const uint XBOX_MAGIC                = 0x58544146;
+        const uint XBOX_CIGAM                  = 0x46415458;
+        const uint XBOX_MAGIC                  = 0x58544146;
         const long MEMORY_UNIT_DATA_OFF        = 0x7FF000;
         const long XBOX360_SECURITY_SECTOR_OFF = 0x2000;
         const long XBOX360_SYSTEM_CACHE_OFF    = 0x80000;
         const long XBOX360_GAME_CACHE_OFF      = 0x8008000;
         const long XBOX368_SYS_EXT_OFF         = 0x10C080000;
         const long XBOX360_SYS_EXT2_OFF        = 0x118EB0000;
-        const long XBOX360_COMPAT_OFF         = 0x120EB0000;
-        const long XBOX_360DATA_OFF           = 0x130EB0000;
+        const long XBOX360_COMPAT_OFF          = 0x120EB0000;
+        const long XBOX_360DATA_OFF            = 0x130EB0000;
         const long XBOX360_SECURITY_SECTOR_LEN = 0x80000;
         const long XBOX360_SYSTEM_CACHE_LEN    = 0x80000000;
         const long XBOX360_GAME_CACHE_LEN      = 0xA0E30000;
         const long XBOX368_SYS_EXT_LEN         = 0xCE30000;
         const long XBOX360_SYS_EXT2_LEN        = 0x8000000;
-        const long XBOX360_COMPAT_LEN         = 0x10000000;
-        const uint XBOX360_DEVKIT_MAGIC = 0x00020000;
+        const long XBOX360_COMPAT_LEN          = 0x10000000;
+        const uint XBOX360_DEVKIT_MAGIC        = 0x00020000;
 
         /// <inheritdoc />
-        public string Name   => "Xbox partitioning";
+        public string Name => "Xbox partitioning";
         /// <inheritdoc />
-        public Guid   Id     => new Guid("E3F6FB91-D358-4F22-A550-81E92D50EB78");
+        public Guid Id => new Guid("E3F6FB91-D358-4F22-A550-81E92D50EB78");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 

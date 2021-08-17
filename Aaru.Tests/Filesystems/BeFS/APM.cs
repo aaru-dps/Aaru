@@ -74,7 +74,7 @@ namespace Aaru.Tests.Filesystems.BeFS
                 Clusters    = 130976,
                 ClusterSize = 1024,
                 VolumeName  = "Volume label"
-            },
+            }
         };
     }
 }

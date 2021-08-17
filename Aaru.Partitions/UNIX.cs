@@ -43,9 +43,7 @@ namespace Aaru.Partitions
     // They depend on exact device, indeed the kernel chooses what to use depending on the disk driver, so that's what we do.
     // Currently only DEC devices used in Ultrix are added, probably it's missing a lot of entries.
     /// <inheritdoc />
-    /// <summary>
-    /// Implements decoding of historic UNIX static partitions
-    /// </summary>
+    /// <summary>Implements decoding of historic UNIX static partitions</summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public sealed class UNIX : IPartition
     {
@@ -1376,9 +1374,9 @@ namespace Aaru.Partitions
         };
 
         /// <inheritdoc />
-        public string Name   => "UNIX hardwired";
+        public string Name => "UNIX hardwired";
         /// <inheritdoc />
-        public Guid   Id     => new Guid("9ED7E30B-53BF-4619-87A0-5D2002155617");
+        public Guid Id => new Guid("9ED7E30B-53BF-4619-87A0-5D2002155617");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 

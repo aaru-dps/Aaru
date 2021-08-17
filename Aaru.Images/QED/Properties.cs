@@ -45,17 +45,17 @@ namespace Aaru.DiscImages
         public ImageInfo Info => _imageInfo;
 
         /// <inheritdoc />
-        public string                 Name         => "QEMU Enhanced Disk image";
+        public string Name => "QEMU Enhanced Disk image";
         /// <inheritdoc />
-        public Guid                   Id           => new Guid("B9DBB155-A69A-4C10-BF91-96BF431B9BB6");
+        public Guid Id => new Guid("B9DBB155-A69A-4C10-BF91-96BF431B9BB6");
         /// <inheritdoc />
-        public string                 Author       => "Natalia Portillo";
+        public string Author => "Natalia Portillo";
         /// <inheritdoc />
-        public string                 Format       => "QEMU Enhanced Disk";
+        public string Format => "QEMU Enhanced Disk";
         /// <inheritdoc />
         public List<DumpHardwareType> DumpHardware => null;
         /// <inheritdoc />
-        public CICMMetadataType       CicmMetadata => null;
+        public CICMMetadataType CicmMetadata => null;
 
         /// <inheritdoc />
         public IEnumerable<MediaTagType> SupportedMediaTags => new MediaTagType[]
@@ -82,7 +82,7 @@ namespace Aaru.DiscImages
             ".qed"
         };
         /// <inheritdoc />
-        public bool   IsWriting    { get; private set; }
+        public bool IsWriting { get; private set; }
         /// <inheritdoc />
         public string ErrorMessage { get; private set; }
     }

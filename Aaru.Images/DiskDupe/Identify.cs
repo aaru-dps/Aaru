@@ -41,10 +41,10 @@ namespace Aaru.DiscImages
         /// <inheritdoc />
         public bool Identify(IFilter imageFilter)
         {
-            Stream stream = imageFilter.GetDataForkStream();
-            FileHeader fHeader = new FileHeader();
-            TrackInfo[] trackMap = null;
-            long[] trackOffsets = null;
+            Stream      stream       = imageFilter.GetDataForkStream();
+            var         fHeader      = new FileHeader();
+            TrackInfo[] trackMap     = null;
+            long[]      trackOffsets = null;
 
             // TODO: validate the tracks
             // For now, having a valid header should be sufficient.

@@ -40,18 +40,18 @@ namespace Aaru.DiscImages
     public sealed partial class Imd
     {
         /// <inheritdoc />
-        public string                 Name         => "Dunfield's IMD";
+        public string Name => "Dunfield's IMD";
         /// <inheritdoc />
-        public Guid                   Id           => new Guid("0D67162E-38A3-407D-9B1A-CF40080A48CB");
+        public Guid Id => new Guid("0D67162E-38A3-407D-9B1A-CF40080A48CB");
         /// <inheritdoc />
-        public ImageInfo              Info         => _imageInfo;
+        public ImageInfo Info => _imageInfo;
         /// <inheritdoc />
-        public string                 Author       => "Natalia Portillo";
+        public string Author => "Natalia Portillo";
         /// <inheritdoc />
-        public string                 Format       => "IMageDisk";
+        public string Format => "IMageDisk";
         /// <inheritdoc />
         public List<DumpHardwareType> DumpHardware => null;
         /// <inheritdoc />
-        public CICMMetadataType       CicmMetadata => null;
+        public CICMMetadataType CicmMetadata => null;
     }
 }

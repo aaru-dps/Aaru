@@ -48,9 +48,7 @@ using Marshal = Aaru.Helpers.Marshal;
 namespace Aaru.Filesystems
 {
     /// <inheritdoc />
-    /// <summary>
-    /// Implements detection for the HAMMER filesystem
-    /// </summary>
+    /// <summary>Implements detection for the HAMMER filesystem</summary>
     public sealed class HAMMER : IFilesystem
     {
         const ulong HAMMER_FSBUF_VOLUME     = 0xC8414D4DC5523031;
@@ -61,13 +59,13 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
         /// <inheritdoc />
-        public Encoding       Encoding  { get; private set; }
+        public Encoding Encoding { get; private set; }
         /// <inheritdoc />
-        public string         Name      => "HAMMER Filesystem";
+        public string Name => "HAMMER Filesystem";
         /// <inheritdoc />
-        public Guid           Id        => new Guid("91A188BF-5FD7-4677-BBD3-F59EBA9C864D");
+        public Guid Id => new Guid("91A188BF-5FD7-4677-BBD3-F59EBA9C864D");
         /// <inheritdoc />
-        public string         Author    => "Natalia Portillo";
+        public string Author => "Natalia Portillo";
 
         /// <inheritdoc />
         public bool Identify(IMediaImage imagePlugin, Partition partition)

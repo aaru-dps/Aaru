@@ -46,9 +46,7 @@ namespace Aaru.Filesystems
 {
     // TODO: Detect bootable
     /// <inheritdoc />
-    /// <summary>
-    /// Implements detection of the Universal Disk Format filesystem
-    /// </summary>
+    /// <summary>Implements detection of the Universal Disk Format filesystem</summary>
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
     public sealed class UDF : IFilesystem
     {
@@ -61,13 +59,13 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
         /// <inheritdoc />
-        public Encoding       Encoding  { get; private set; }
+        public Encoding Encoding { get; private set; }
         /// <inheritdoc />
-        public string         Name      => "Universal Disk Format";
+        public string Name => "Universal Disk Format";
         /// <inheritdoc />
-        public Guid           Id        => new Guid("83976FEC-A91B-464B-9293-56C719461BAB");
+        public Guid Id => new Guid("83976FEC-A91B-464B-9293-56C719461BAB");
         /// <inheritdoc />
-        public string         Author    => "Natalia Portillo";
+        public string Author => "Natalia Portillo";
 
         /// <inheritdoc />
         public bool Identify(IMediaImage imagePlugin, Partition partition)

@@ -42,19 +42,19 @@ namespace Aaru.DiscImages
     public sealed partial class SaveDskF
     {
         /// <inheritdoc />
-        public string                 Name         => "IBM SaveDskF";
+        public string Name => "IBM SaveDskF";
         /// <inheritdoc />
-        public Guid                   Id           => new Guid("288CE058-1A51-4034-8C45-5A256CAE1461");
+        public Guid Id => new Guid("288CE058-1A51-4034-8C45-5A256CAE1461");
         /// <inheritdoc />
-        public ImageInfo              Info         => _imageInfo;
+        public ImageInfo Info => _imageInfo;
         /// <inheritdoc />
-        public string                 Author       => "Natalia Portillo";
+        public string Author => "Natalia Portillo";
         /// <inheritdoc />
-        public string                 Format       => "IBM SaveDskF";
+        public string Format => "IBM SaveDskF";
         /// <inheritdoc />
         public List<DumpHardwareType> DumpHardware => null;
         /// <inheritdoc />
-        public CICMMetadataType       CicmMetadata => null;
+        public CICMMetadataType CicmMetadata => null;
         /// <inheritdoc />
         public IEnumerable<MediaTagType> SupportedMediaTags => new MediaTagType[]
             {};
@@ -85,7 +85,7 @@ namespace Aaru.DiscImages
         };
 
         /// <inheritdoc />
-        public bool   IsWriting    { get; private set; }
+        public bool IsWriting { get; private set; }
         /// <inheritdoc />
         public string ErrorMessage { get; private set; }
     }

@@ -43,16 +43,16 @@ namespace Aaru.DiscImages
         public ImageInfo Info => _imageInfo;
 
         /// <inheritdoc />
-        public string                 Name         => "Partimage disk image";
+        public string Name => "Partimage disk image";
         /// <inheritdoc />
-        public Guid                   Id           => new Guid("AAFDB99D-2B77-49EA-831C-C9BB58C68C95");
+        public Guid Id => new Guid("AAFDB99D-2B77-49EA-831C-C9BB58C68C95");
         /// <inheritdoc />
-        public string                 Author       => "Natalia Portillo";
+        public string Author => "Natalia Portillo";
         /// <inheritdoc />
-        public string                 Format       => "Partimage";
+        public string Format => "Partimage";
         /// <inheritdoc />
         public List<DumpHardwareType> DumpHardware => null;
         /// <inheritdoc />
-        public CICMMetadataType       CicmMetadata => null;
+        public CICMMetadataType CicmMetadata => null;
     }
 }

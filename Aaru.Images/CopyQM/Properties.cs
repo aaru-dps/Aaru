@@ -40,18 +40,18 @@ namespace Aaru.DiscImages
     public sealed partial class CopyQm
     {
         /// <inheritdoc />
-        public ImageInfo              Info         => _imageInfo;
+        public ImageInfo Info => _imageInfo;
         /// <inheritdoc />
-        public string                 Name         => "Sydex CopyQM";
+        public string Name => "Sydex CopyQM";
         /// <inheritdoc />
-        public Guid                   Id           => new Guid("147E927D-3A92-4E0C-82CD-142F5A4FA76D");
+        public Guid Id => new Guid("147E927D-3A92-4E0C-82CD-142F5A4FA76D");
         /// <inheritdoc />
-        public string                 Format       => "Sydex CopyQM";
+        public string Format => "Sydex CopyQM";
         /// <inheritdoc />
-        public string                 Author       => "Natalia Portillo";
+        public string Author => "Natalia Portillo";
         /// <inheritdoc />
         public List<DumpHardwareType> DumpHardware => null;
         /// <inheritdoc />
-        public CICMMetadataType       CicmMetadata => null;
+        public CICMMetadataType CicmMetadata => null;
     }
 }

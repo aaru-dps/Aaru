@@ -43,22 +43,19 @@ using Aaru.Console;
 using Aaru.Decoders.ATA;
 using Marshal = Aaru.Helpers.Marshal;
 using Version = Aaru.CommonTypes.Interop.Version;
+
 // ReSharper disable MemberCanBeInternal
 
 namespace Aaru.Devices.Remote
 {
     /// <inheritdoc />
-    /// <summary>
-    /// Handles communication with a remote device that's connected using the AaruRemote protocol
-    /// </summary>
+    /// <summary>Handles communication with a remote device that's connected using the AaruRemote protocol</summary>
     public class Remote : IDisposable
     {
         readonly string _host;
         readonly Socket _socket;
 
-        /// <summary>
-        /// Connects using TCP/IP to the specified remote
-        /// </summary>
+        /// <summary>Connects using TCP/IP to the specified remote</summary>
         /// <param name="uri">URI of the remote</param>
         /// <exception cref="ArgumentException">Unsupported or invalid remote protocol.</exception>
         /// <exception cref="SocketException">Host not found.</exception>
@@ -197,34 +194,20 @@ namespace Aaru.Devices.Remote
             throw new IOException();
         }
 
-        /// <summary>
-        /// Remote server application
-        /// </summary>
-        public string ServerApplication            { get; }
-        /// <summary>
-        /// Remote server application version
-        /// </summary>
-        public string ServerVersion                { get; }
-        /// <summary>
-        /// Remote server operating system
-        /// </summary>
-        public string ServerOperatingSystem        { get; }
-        /// <summary>
-        /// Remote server operating system version
-        /// </summary>
+        /// <summary>Remote server application</summary>
+        public string ServerApplication { get; }
+        /// <summary>Remote server application version</summary>
+        public string ServerVersion { get; }
+        /// <summary>Remote server operating system</summary>
+        public string ServerOperatingSystem { get; }
+        /// <summary>Remote server operating system version</summary>
         public string ServerOperatingSystemVersion { get; }
-        /// <summary>
-        /// Remote server architecture
-        /// </summary>
-        public string ServerArchitecture           { get; }
-        /// <summary>
-        /// Remote server protocol version
-        /// </summary>
-        public int    ServerProtocolVersion        { get; }
+        /// <summary>Remote server architecture</summary>
+        public string ServerArchitecture { get; }
+        /// <summary>Remote server protocol version</summary>
+        public int ServerProtocolVersion { get; }
 
-        /// <summary>
-        /// Is remote running with administrative (aka root) privileges?
-        /// </summary>
+        /// <summary>Is remote running with administrative (aka root) privileges?</summary>
         public bool IsRoot
         {
             get
@@ -300,9 +283,7 @@ namespace Aaru.Devices.Remote
         /// <inheritdoc />
         public void Dispose() => Disconnect();
 
-        /// <summary>
-        /// Disconnects from remote
-        /// </summary>
+        /// <summary>Disconnects from remote</summary>
         public void Disconnect()
         {
             try
@@ -316,9 +297,7 @@ namespace Aaru.Devices.Remote
             }
         }
 
-        /// <summary>
-        /// Lists devices attached to remote
-        /// </summary>
+        /// <summary>Lists devices attached to remote</summary>
         /// <returns>List of devices</returns>
         public DeviceInfo[] ListDevices()
         {
@@ -428,13 +407,14 @@ namespace Aaru.Devices.Remote
             return devices.ToArray();
         }
 
-        /// <summary>
-        /// Opens the specified device path on the remote
-        /// </summary>
+        /// <summary>Opens the specified device path on the remote</summary>
         /// <param name="devicePath">Device path</param>
         /// <param name="lastError">Returned error</param>
         /// <returns><c>true</c> if opened correctly, <c>false</c>otherwise</returns>
-        /// <exception cref="NotImplementedException">Support for the specified device has not yet been implemented in the remote application.</exception>
+        /// <exception cref="NotImplementedException">
+        ///     Support for the specified device has not yet been implemented in the remote
+        ///     application.
+        /// </exception>
         public bool Open(string devicePath, out int lastError)
         {
             lastError = 0;
@@ -1080,10 +1060,10 @@ namespace Aaru.Devices.Remote
             return (int)res.res.error_no;
         }
 
-        /// <summary>
-        /// Gets the <see cref="DeviceType"/> for the remote device
-        /// </summary>
-        /// <returns><see cref="DeviceType"/></returns>
+        /// <summary>Gets the <see cref="DeviceType" /> for the remote device</summary>
+        /// <returns>
+        ///     <see cref="DeviceType" />
+        /// </returns>
         public DeviceType GetDeviceType()
         {
             var cmdPkt = new AaruPacketCmdGetDeviceType
@@ -1153,9 +1133,7 @@ namespace Aaru.Devices.Remote
             return res.device_type;
         }
 
-        /// <summary>
-        /// Retrieves the SDHCI registers from the remote device
-        /// </summary>
+        /// <summary>Retrieves the SDHCI registers from the remote device</summary>
         /// <param name="csd">CSD register</param>
         /// <param name="cid">CID register</param>
         /// <param name="ocr">OCR register</param>
@@ -1276,9 +1254,7 @@ namespace Aaru.Devices.Remote
             return res.isSdhci;
         }
 
-        /// <summary>
-        /// Gets the USB data from the remote device
-        /// </summary>
+        /// <summary>Gets the USB data from the remote device</summary>
         /// <param name="descriptors">USB descriptors</param>
         /// <param name="idVendor">USB vendor ID</param>
         /// <param name="idProduct">USB product ID</param>
@@ -1373,9 +1349,7 @@ namespace Aaru.Devices.Remote
             return true;
         }
 
-        /// <summary>
-        /// Gets the FireWire data from the remote device
-        /// </summary>
+        /// <summary>Gets the FireWire data from the remote device</summary>
         /// <param name="idVendor">FireWire vendor ID</param>
         /// <param name="idProduct">FireWire product ID</param>
         /// <param name="vendor">FireWire vendor string</param>
@@ -1468,9 +1442,7 @@ namespace Aaru.Devices.Remote
             return true;
         }
 
-        /// <summary>
-        /// Gets the PCMCIA/CardBus data from the remote device
-        /// </summary>
+        /// <summary>Gets the PCMCIA/CardBus data from the remote device</summary>
         /// <param name="cis">Card Information Structure</param>
         /// <returns><c>true</c> if the device is attached via PCMCIA or CardBus, <c>false</c> otherwise</returns>
         public bool GetPcmciaData(out byte[] cis)
@@ -1549,9 +1521,7 @@ namespace Aaru.Devices.Remote
             return true;
         }
 
-        /// <summary>
-        /// Receives data from a socket into a buffer
-        /// </summary>
+        /// <summary>Receives data from a socket into a buffer</summary>
         /// <param name="socket">Socket</param>
         /// <param name="buffer">Data buffer</param>
         /// <param name="size">Expected total size in bytes</param>
@@ -1575,9 +1545,7 @@ namespace Aaru.Devices.Remote
             return offset;
         }
 
-        /// <summary>
-        /// Closes the remote device, without closing the network connection
-        /// </summary>
+        /// <summary>Closes the remote device, without closing the network connection</summary>
         public void Close()
         {
             var cmdPkt = new AaruPacketCmdClose
@@ -1605,7 +1573,8 @@ namespace Aaru.Devices.Remote
         }
 
         /// <summary>
-        /// Concatenates a queue of commands to be send to a remote SecureDigital or MultiMediaCard attached to an SDHCI controller
+        ///     Concatenates a queue of commands to be send to a remote SecureDigital or MultiMediaCard attached to an SDHCI
+        ///     controller
         /// </summary>
         /// <param name="commands">List of commands</param>
         /// <param name="duration">Duration to execute all commands, in milliseconds</param>
@@ -1766,7 +1735,8 @@ namespace Aaru.Devices.Remote
         }
 
         /// <summary>
-        /// Concatenates a queue of commands to be send to a remote SecureDigital or MultiMediaCard attached to an SDHCI controller, using protocol version 1 without specific support for such a queueing
+        ///     Concatenates a queue of commands to be send to a remote SecureDigital or MultiMediaCard attached to an SDHCI
+        ///     controller, using protocol version 1 without specific support for such a queueing
         /// </summary>
         /// <param name="commands">List of commands</param>
         /// <param name="duration">Duration to execute all commands, in milliseconds</param>
@@ -1795,9 +1765,7 @@ namespace Aaru.Devices.Remote
             return error;
         }
 
-        /// <summary>
-        /// Closes then immediately reopens a remote device
-        /// </summary>
+        /// <summary>Closes then immediately reopens a remote device</summary>
         /// <returns>Returned error number if any</returns>
         public bool ReOpen()
         {
@@ -1891,9 +1859,7 @@ namespace Aaru.Devices.Remote
             return false;
         }
 
-        /// <summary>
-        /// Reads data using operating system buffers.
-        /// </summary>
+        /// <summary>Reads data using operating system buffers.</summary>
         /// <param name="buffer">Data buffer</param>
         /// <param name="offset">Offset in remote device to start reading, in bytes</param>
         /// <param name="length">Number of bytes to read</param>

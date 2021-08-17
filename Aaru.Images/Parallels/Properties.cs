@@ -42,19 +42,19 @@ namespace Aaru.DiscImages
     public sealed partial class Parallels
     {
         /// <inheritdoc />
-        public string                 Name         => "Parallels disk image";
+        public string Name => "Parallels disk image";
         /// <inheritdoc />
-        public Guid                   Id           => new Guid("E314DE35-C103-48A3-AD36-990F68523C46");
+        public Guid Id => new Guid("E314DE35-C103-48A3-AD36-990F68523C46");
         /// <inheritdoc />
-        public ImageInfo              Info         => _imageInfo;
+        public ImageInfo Info => _imageInfo;
         /// <inheritdoc />
-        public string                 Author       => "Natalia Portillo";
+        public string Author => "Natalia Portillo";
         /// <inheritdoc />
-        public string                 Format       => "Parallels";
+        public string Format => "Parallels";
         /// <inheritdoc />
         public List<DumpHardwareType> DumpHardware => null;
         /// <inheritdoc />
-        public CICMMetadataType       CicmMetadata => null;
+        public CICMMetadataType CicmMetadata => null;
         /// <inheritdoc />
         public IEnumerable<MediaTagType> SupportedMediaTags => new MediaTagType[]
             {};
@@ -80,7 +80,7 @@ namespace Aaru.DiscImages
             ".hdd"
         };
         /// <inheritdoc />
-        public bool   IsWriting    { get; private set; }
+        public bool IsWriting { get; private set; }
         /// <inheritdoc />
         public string ErrorMessage { get; private set; }
     }

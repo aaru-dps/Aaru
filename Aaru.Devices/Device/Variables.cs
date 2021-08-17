@@ -166,9 +166,7 @@ namespace Aaru.Devices
         bool?                  _isRemoteAdmin;
         readonly string        _devicePath;
 
-        /// <summary>
-        /// Returns if remote is running under administrative (aka root) privileges
-        /// </summary>
+        /// <summary>Returns if remote is running under administrative (aka root) privileges</summary>
         public bool IsRemoteAdmin
         {
             get
@@ -179,33 +177,19 @@ namespace Aaru.Devices
             }
         }
 
-        /// <summary>
-        /// Current device is remote
-        /// </summary>
-        public bool   IsRemote                     => _remote != null;
-        /// <summary>
-        /// Remote application
-        /// </summary>
-        public string RemoteApplication            => _remote?.ServerApplication;
-        /// <summary>
-        /// Remote application server
-        /// </summary>
-        public string RemoteVersion                => _remote?.ServerVersion;
-        /// <summary>
-        /// Remote operating system name
-        /// </summary>
-        public string RemoteOperatingSystem        => _remote?.ServerOperatingSystem;
-        /// <summary>
-        /// Remote operating system version
-        /// </summary>
+        /// <summary>Current device is remote</summary>
+        public bool IsRemote => _remote != null;
+        /// <summary>Remote application</summary>
+        public string RemoteApplication => _remote?.ServerApplication;
+        /// <summary>Remote application server</summary>
+        public string RemoteVersion => _remote?.ServerVersion;
+        /// <summary>Remote operating system name</summary>
+        public string RemoteOperatingSystem => _remote?.ServerOperatingSystem;
+        /// <summary>Remote operating system version</summary>
         public string RemoteOperatingSystemVersion => _remote?.ServerOperatingSystemVersion;
-        /// <summary>
-        /// Remote architecture
-        /// </summary>
-        public string RemoteArchitecture           => _remote?.ServerArchitecture;
-        /// <summary>
-        /// Remote protocol version
-        /// </summary>
-        public int    RemoteProtocolVersion        => _remote?.ServerProtocolVersion ?? 0;
+        /// <summary>Remote architecture</summary>
+        public string RemoteArchitecture => _remote?.ServerArchitecture;
+        /// <summary>Remote protocol version</summary>
+        public int RemoteProtocolVersion => _remote?.ServerProtocolVersion ?? 0;
     }
 }

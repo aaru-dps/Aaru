@@ -45,9 +45,7 @@ using Marshal = Aaru.Helpers.Marshal;
 namespace Aaru.Filesystems
 {
     /// <inheritdoc />
-    /// <summary>
-    /// Implements detection of IBM's Journaled File System
-    /// </summary>
+    /// <summary>Implements detection of IBM's Journaled File System</summary>
     public sealed class JFS : IFilesystem
     {
         const uint JFS_BOOT_BLOCKS_SIZE = 0x8000;
@@ -56,13 +54,13 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
         /// <inheritdoc />
-        public Encoding       Encoding  { get; private set; }
+        public Encoding Encoding { get; private set; }
         /// <inheritdoc />
-        public string         Name      => "JFS Plugin";
+        public string Name => "JFS Plugin";
         /// <inheritdoc />
-        public Guid           Id        => new Guid("D3BE2A41-8F28-4055-94DC-BB6C72A0E9C4");
+        public Guid Id => new Guid("D3BE2A41-8F28-4055-94DC-BB6C72A0E9C4");
         /// <inheritdoc />
-        public string         Author    => "Natalia Portillo";
+        public string Author => "Natalia Portillo";
 
         /// <inheritdoc />
         public bool Identify(IMediaImage imagePlugin, Partition partition)
@@ -203,8 +201,7 @@ namespace Aaru.Filesystems
             information = sb.ToString();
         }
 
-        [Flags]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
+        [Flags, SuppressMessage("ReSharper", "InconsistentNaming")]
         enum Flags : uint
         {
             Unicode      = 0x00000001, RemountRO = 0x00000002, Continue    = 0x00000004,

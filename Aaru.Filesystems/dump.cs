@@ -45,9 +45,7 @@ using ufs_daddr_t = System.Int32;
 namespace Aaru.Filesystems
 {
     /// <inheritdoc />
-    /// <summary>
-    /// Implements identification of a dump(8) image (virtual filesystem on a file)
-    /// </summary>
+    /// <summary>Implements identification of a dump(8) image (virtual filesystem on a file)</summary>
     [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "UnusedMember.Local")]
     public sealed class dump : IFilesystem
     {
@@ -93,15 +91,15 @@ namespace Aaru.Filesystems
         const int NIADDR = 3;
 
         /// <inheritdoc />
-        public Encoding       Encoding  { get; private set; }
+        public Encoding Encoding { get; private set; }
         /// <inheritdoc />
-        public string         Name      => "dump(8) Plugin";
+        public string Name => "dump(8) Plugin";
         /// <inheritdoc />
-        public Guid           Id        => new Guid("E53B4D28-C858-4800-B092-DDAE80D361B9");
+        public Guid Id => new Guid("E53B4D28-C858-4800-B092-DDAE80D361B9");
         /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
         /// <inheritdoc />
-        public string         Author    => "Natalia Portillo";
+        public string Author => "Natalia Portillo";
 
         /// <inheritdoc />
         public bool Identify(IMediaImage imagePlugin, Partition partition)

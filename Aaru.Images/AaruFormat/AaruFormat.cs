@@ -82,9 +82,7 @@ using SharpCompress.Compressors.LZMA;
 
 namespace Aaru.DiscImages
 {
-    /// <summary>
-    /// Implements reading and writing AaruFormat media images
-    /// </summary>
+    /// <summary>Implements reading and writing AaruFormat media images</summary>
     public sealed partial class AaruFormat : IWritableOpticalImage, IVerifiableImage, IWritableTapeImage
     {
         bool _alreadyWrittenZero;
@@ -138,11 +136,11 @@ namespace Aaru.DiscImages
         byte[] _mode2Subheaders;
         /// <summary>If DDT is on-disk, this is the image stream offset at which it starts.</summary>
         long _outMemoryDdtPosition;
-        bool _rewinded;
+        bool   _rewinded;
+        byte[] _sectorCpiMai;
+        byte[] _sectorDecryptedTitleKey;
         /// <summary>Cache for data that prefixes the user data on a sector (e.g. sync).</summary>
         byte[] _sectorPrefix;
-        byte[]            _sectorCpiMai;
-        byte[]            _sectorDecryptedTitleKey;
         uint[]            _sectorPrefixDdt;
         NonClosableStream _sectorPrefixMs;
         /// <summary>Cache for data that goes side by side with user data (e.g. CompactDisc subchannel).</summary>

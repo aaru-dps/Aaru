@@ -61,9 +61,9 @@ namespace Aaru.Filters
         string       _rsrcPath;
 
         /// <inheritdoc />
-        public string Name   => "PCExchange";
+        public string Name => "PCExchange";
         /// <inheritdoc />
-        public Guid   Id     => new Guid("9264EB9F-D634-4F9B-BE12-C24CD44988C6");
+        public Guid Id => new Guid("9264EB9F-D634-4F9B-BE12-C24CD44988C6");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 

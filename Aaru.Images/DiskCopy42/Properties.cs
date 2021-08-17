@@ -42,19 +42,19 @@ namespace Aaru.DiscImages
     public sealed partial class DiskCopy42
     {
         /// <inheritdoc />
-        public ImageInfo              Info         => imageInfo;
+        public ImageInfo Info => imageInfo;
         /// <inheritdoc />
-        public string                 Name         => "Apple DiskCopy 4.2";
+        public string Name => "Apple DiskCopy 4.2";
         /// <inheritdoc />
-        public Guid                   Id           => new Guid("0240B7B1-E959-4CDC-B0BD-386D6E467B88");
+        public Guid Id => new Guid("0240B7B1-E959-4CDC-B0BD-386D6E467B88");
         /// <inheritdoc />
-        public string                 Author       => "Natalia Portillo";
+        public string Author => "Natalia Portillo";
         /// <inheritdoc />
         public List<DumpHardwareType> DumpHardware => null;
         /// <inheritdoc />
-        public CICMMetadataType       CicmMetadata => null;
+        public CICMMetadataType CicmMetadata => null;
         /// <inheritdoc />
-        public string                 Format       => "Apple DiskCopy 4.2";
+        public string Format => "Apple DiskCopy 4.2";
         /// <inheritdoc />
         public IEnumerable<MediaTagType> SupportedMediaTags => new MediaTagType[]
             {};
@@ -80,7 +80,7 @@ namespace Aaru.DiscImages
             ".dc42", ".diskcopy42", ".image"
         };
         /// <inheritdoc />
-        public bool   IsWriting    { get; private set; }
+        public bool IsWriting { get; private set; }
         /// <inheritdoc />
         public string ErrorMessage { get; private set; }
     }

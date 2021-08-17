@@ -33,8 +33,6 @@
 namespace Aaru.Database.Models
 {
     /// <inheritdoc />
-    /// <summary>
-    /// Remote architecture
-    /// </summary>
+    /// <summary>Remote architecture</summary>
     public class RemoteArchitecture : NameCountModel {}
 }

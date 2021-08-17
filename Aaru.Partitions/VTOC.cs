@@ -44,9 +44,7 @@ using Marshal = Aaru.Helpers.Marshal;
 namespace Aaru.Partitions
 {
     /// <inheritdoc />
-    /// <summary>
-    /// Implements decoding of UNIX VTOC partitions
-    /// </summary>
+    /// <summary>Implements decoding of UNIX VTOC partitions</summary>
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
     public sealed class VTOC : IPartition
     {
@@ -58,9 +56,9 @@ namespace Aaru.Partitions
         const uint XPDVERS   = 3; /* 1st version of extended pdinfo */
 
         /// <inheritdoc />
-        public string Name   => "UNIX VTOC";
+        public string Name => "UNIX VTOC";
         /// <inheritdoc />
-        public Guid   Id     => new Guid("6D35A66F-8D77-426F-A562-D88F6A1F1702");
+        public Guid Id => new Guid("6D35A66F-8D77-426F-A562-D88F6A1F1702");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
@@ -547,6 +545,7 @@ namespace Aaru.Partitions
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
+
         // ReSharper disable once InconsistentNaming
         struct partition
         {
@@ -605,8 +604,7 @@ namespace Aaru.Partitions
             V_VMPRIVATE = 0x000F
         }
 
-        [Flags]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
+        [Flags, SuppressMessage("ReSharper", "InconsistentNaming")]
         enum pFlag : ushort
         {
             /* Partition permission flags */ V_UNMNT = 0x01, /* Unmountable partition */ V_RONLY = 0x10, /* Read only */

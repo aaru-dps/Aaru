@@ -58,25 +58,25 @@ namespace Aaru.DiscImages
                                                                OpticalImageCapabilities.CanStoreNotCdTracks    |
                                                                OpticalImageCapabilities.CanStoreIndexes;
         /// <inheritdoc />
-        public ImageInfo              Info         => _imageInfo;
+        public ImageInfo Info => _imageInfo;
         /// <inheritdoc />
-        public string                 Name         => "Aaru Format";
+        public string Name => "Aaru Format";
         /// <inheritdoc />
-        public Guid                   Id           => new Guid("49360069-1784-4A2F-B723-0C844D610B0A");
+        public Guid Id => new Guid("49360069-1784-4A2F-B723-0C844D610B0A");
         /// <inheritdoc />
-        public string                 Format       => "Aaru";
+        public string Format => "Aaru";
         /// <inheritdoc />
-        public string                 Author       => "Natalia Portillo";
+        public string Author => "Natalia Portillo";
         /// <inheritdoc />
-        public List<Partition>        Partitions   { get; private set; }
+        public List<Partition> Partitions { get; private set; }
         /// <inheritdoc />
-        public List<Track>            Tracks       { get; private set; }
+        public List<Track> Tracks { get; private set; }
         /// <inheritdoc />
-        public List<Session>          Sessions     { get; private set; }
+        public List<Session> Sessions { get; private set; }
         /// <inheritdoc />
         public List<DumpHardwareType> DumpHardware { get; private set; }
         /// <inheritdoc />
-        public CICMMetadataType       CicmMetadata { get; private set; }
+        public CICMMetadataType CicmMetadata { get; private set; }
         /// <inheritdoc />
         public IEnumerable<MediaTagType> SupportedMediaTags =>
             Enum.GetValues(typeof(MediaTagType)).Cast<MediaTagType>();
@@ -98,8 +98,7 @@ namespace Aaru.DiscImages
             ("sha256", typeof(bool), "Calculate and store SHA256 of image's user data", false),
             ("spamsum", typeof(bool), "Calculate and store SpamSum of image's user data", false),
             ("deduplicate", typeof(bool),
-             "Store only unique sectors. This consumes more memory and is slower, but it's enabled by default",
-             true),
+             "Store only unique sectors. This consumes more memory and is slower, but it's enabled by default", true),
             ("compress", typeof(bool), "Compress user data blocks. Other blocks will always be compressed",
              (object)true)
         };
@@ -109,7 +108,7 @@ namespace Aaru.DiscImages
             ".dicf", ".aaru", ".aaruformat", ".aaruf", ".aif"
         };
         /// <inheritdoc />
-        public bool   IsWriting    { get; private set; }
+        public bool IsWriting { get; private set; }
         /// <inheritdoc />
         public string ErrorMessage { get; private set; }
     }

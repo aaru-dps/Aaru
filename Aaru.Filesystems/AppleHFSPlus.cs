@@ -43,21 +43,19 @@ namespace Aaru.Filesystems
 {
     // Information from Apple TechNote 1150: https://developer.apple.com/legacy/library/technotes/tn/tn1150.html
     /// <inheritdoc />
-    /// <summary>
-    /// Implements detection of Apple Hierarchical File System Plus (HFS+)
-    /// </summary>
+    /// <summary>Implements detection of Apple Hierarchical File System Plus (HFS+)</summary>
     public sealed class AppleHFSPlus : IFilesystem
     {
         /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
         /// <inheritdoc />
-        public Encoding       Encoding  { get; private set; }
+        public Encoding Encoding { get; private set; }
         /// <inheritdoc />
-        public string         Name      => "Apple HFS+ filesystem";
+        public string Name => "Apple HFS+ filesystem";
         /// <inheritdoc />
-        public Guid           Id        => new Guid("36405F8D-0D26-6EBE-436F-62F0586B4F08");
+        public Guid Id => new Guid("36405F8D-0D26-6EBE-436F-62F0586B4F08");
         /// <inheritdoc />
-        public string         Author    => "Natalia Portillo";
+        public string Author => "Natalia Portillo";
 
         /// <inheritdoc />
         public bool Identify(IMediaImage imagePlugin, Partition partition)

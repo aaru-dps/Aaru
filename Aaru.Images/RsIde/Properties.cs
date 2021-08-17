@@ -42,19 +42,19 @@ namespace Aaru.DiscImages
     public sealed partial class RsIde
     {
         /// <inheritdoc />
-        public string                 Name         => "RS-IDE Hard Disk Image";
+        public string Name => "RS-IDE Hard Disk Image";
         /// <inheritdoc />
-        public Guid                   Id           => new Guid("47C3E78D-2BE2-4BA5-AA6B-FEE27C86FC65");
+        public Guid Id => new Guid("47C3E78D-2BE2-4BA5-AA6B-FEE27C86FC65");
         /// <inheritdoc />
-        public ImageInfo              Info         => _imageInfo;
+        public ImageInfo Info => _imageInfo;
         /// <inheritdoc />
-        public string                 Author       => "Natalia Portillo";
+        public string Author => "Natalia Portillo";
         /// <inheritdoc />
-        public string                 Format       => "RS-IDE disk image";
+        public string Format => "RS-IDE disk image";
         /// <inheritdoc />
         public List<DumpHardwareType> DumpHardware => null;
         /// <inheritdoc />
-        public CICMMetadataType       CicmMetadata => null;
+        public CICMMetadataType CicmMetadata => null;
         /// <inheritdoc />
         public IEnumerable<MediaTagType> SupportedMediaTags => new[]
         {
@@ -80,7 +80,7 @@ namespace Aaru.DiscImages
             ".ide"
         };
         /// <inheritdoc />
-        public bool   IsWriting    { get; private set; }
+        public bool IsWriting { get; private set; }
         /// <inheritdoc />
         public string ErrorMessage { get; private set; }
     }

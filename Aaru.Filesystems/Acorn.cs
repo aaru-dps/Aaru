@@ -44,9 +44,7 @@ using Marshal = Aaru.Helpers.Marshal;
 namespace Aaru.Filesystems
 {
     /// <inheritdoc />
-    /// <summary>
-    /// Implements detection of Acorn's Advanced Data Filing System (ADFS)
-    /// </summary>
+    /// <summary>Implements detection of Acorn's Advanced Data Filing System (ADFS)</summary>
     public sealed class AcornADFS : IFilesystem
     {
         /// <summary>Location for boot block, in bytes</summary>
@@ -70,13 +68,13 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
         /// <inheritdoc />
-        public string         Name      => "Acorn Advanced Disc Filing System";
+        public string Name => "Acorn Advanced Disc Filing System";
         /// <inheritdoc />
-        public Guid           Id        => new Guid("BAFC1E50-9C64-4CD3-8400-80628CC27AFA");
+        public Guid Id => new Guid("BAFC1E50-9C64-4CD3-8400-80628CC27AFA");
         /// <inheritdoc />
-        public Encoding       Encoding  { get; private set; }
+        public Encoding Encoding { get; private set; }
         /// <inheritdoc />
-        public string         Author    => "Natalia Portillo";
+        public string Author => "Natalia Portillo";
 
         // TODO: BBC Master hard disks are untested...
         /// <inheritdoc />

@@ -42,19 +42,19 @@ namespace Aaru.DiscImages
     public sealed partial class Virtual98
     {
         /// <inheritdoc />
-        public ImageInfo              Info         => _imageInfo;
+        public ImageInfo Info => _imageInfo;
         /// <inheritdoc />
-        public string                 Name         => "Virtual98 Disk Image";
+        public string Name => "Virtual98 Disk Image";
         /// <inheritdoc />
-        public Guid                   Id           => new Guid("C0CDE13D-04D0-4913-8740-AFAA44D0A107");
+        public Guid Id => new Guid("C0CDE13D-04D0-4913-8740-AFAA44D0A107");
         /// <inheritdoc />
-        public string                 Author       => "Natalia Portillo";
+        public string Author => "Natalia Portillo";
         /// <inheritdoc />
-        public string                 Format       => "Virtual98 disk image";
+        public string Format => "Virtual98 disk image";
         /// <inheritdoc />
         public List<DumpHardwareType> DumpHardware => null;
         /// <inheritdoc />
-        public CICMMetadataType       CicmMetadata => null;
+        public CICMMetadataType CicmMetadata => null;
         /// <inheritdoc />
         public IEnumerable<MediaTagType> SupportedMediaTags => new MediaTagType[]
             {};
@@ -78,7 +78,7 @@ namespace Aaru.DiscImages
             ".v98"
         };
         /// <inheritdoc />
-        public bool   IsWriting    { get; private set; }
+        public bool IsWriting { get; private set; }
         /// <inheritdoc />
         public string ErrorMessage { get; private set; }
     }

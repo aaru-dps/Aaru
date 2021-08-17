@@ -38,9 +38,7 @@ namespace Aaru.Devices
 {
     public sealed partial class Device
     {
-        /// <summary>
-        /// Gets native max address using 48-bit addressing
-        /// </summary>
+        /// <summary>Gets native max address using 48-bit addressing</summary>
         /// <param name="lba">Maximum addressable block</param>
         /// <param name="statusRegisters">Returned status registers</param>
         /// <param name="timeout">Timeout to wait for command execution</param>
@@ -80,9 +78,7 @@ namespace Aaru.Devices
             return sense;
         }
 
-        /// <summary>
-        /// Reads sectors using 48-bit addressing and DMA transfer
-        /// </summary>
+        /// <summary>Reads sectors using 48-bit addressing and DMA transfer</summary>
         /// <param name="buffer">Buffer that contains the read data</param>
         /// <param name="statusRegisters">Returned status registers</param>
         /// <param name="lba">LBA of read start</param>
@@ -119,9 +115,7 @@ namespace Aaru.Devices
             return sense;
         }
 
-        /// <summary>
-        /// Reads a drive log using PIO transfer
-        /// </summary>
+        /// <summary>Reads a drive log using PIO transfer</summary>
         /// <param name="buffer">Buffer that contains the read data</param>
         /// <param name="statusRegisters">Returned status registers</param>
         /// <param name="logAddress">Log address</param>
@@ -156,9 +150,7 @@ namespace Aaru.Devices
             return sense;
         }
 
-        /// <summary>
-        /// Reads a drive log using DMA transfer
-        /// </summary>
+        /// <summary>Reads a drive log using DMA transfer</summary>
         /// <param name="buffer">Buffer that contains the read data</param>
         /// <param name="statusRegisters">Returned status registers</param>
         /// <param name="logAddress">Log address</param>
@@ -193,7 +185,8 @@ namespace Aaru.Devices
         }
 
         /// <summary>
-        /// Reads sectors using 48-bit addressing and PIO transfer, sending an interrupt only after all the sectors have been transferred
+        ///     Reads sectors using 48-bit addressing and PIO transfer, sending an interrupt only after all the sectors have
+        ///     been transferred
         /// </summary>
         /// <param name="buffer">Buffer that contains the read data</param>
         /// <param name="statusRegisters">Returned status registers</param>
@@ -232,9 +225,7 @@ namespace Aaru.Devices
             return sense;
         }
 
-        /// <summary>
-        /// Reads native max address using 48-bit addressing
-        /// </summary>
+        /// <summary>Reads native max address using 48-bit addressing</summary>
         /// <param name="lba">Maximum addressable block</param>
         /// <param name="statusRegisters">Returned status registers</param>
         /// <param name="timeout">Timeout to wait for command execution</param>
@@ -275,9 +266,7 @@ namespace Aaru.Devices
             return sense;
         }
 
-        /// <summary>
-        /// Reads sectors using 48-bit addressing and PIO transfer
-        /// </summary>
+        /// <summary>Reads sectors using 48-bit addressing and PIO transfer</summary>
         /// <param name="buffer">Buffer that contains the read data</param>
         /// <param name="statusRegisters">Returned status registers</param>
         /// <param name="lba">LBA of read start</param>

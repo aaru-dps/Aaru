@@ -56,7 +56,7 @@ namespace Aaru.Core.Devices.Dumping
 
                 if(sense)
                 {
-                    var decSense = Sense.Decode(senseBuf);
+                    DecodedSense? decSense = Sense.Decode(senseBuf);
 
                     if(decSense.HasValue)
                     {

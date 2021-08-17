@@ -38,9 +38,7 @@ namespace Aaru.Devices
 {
     public sealed partial class Device
     {
-        /// <summary>
-        /// Disables S.M.A.R.T.
-        /// </summary>
+        /// <summary>Disables S.M.A.R.T.</summary>
         /// <param name="statusRegisters">Returned status registers</param>
         /// <param name="timeout">Timeout to wait for command execution</param>
         /// <param name="duration">Time the device took to execute the command in milliseconds</param>
@@ -68,9 +66,7 @@ namespace Aaru.Devices
             return sense;
         }
 
-        /// <summary>
-        /// Enables auto-saving of S.M.A.R.T. attributes
-        /// </summary>
+        /// <summary>Enables auto-saving of S.M.A.R.T. attributes</summary>
         /// <param name="statusRegisters">Returned status registers</param>
         /// <param name="timeout">Timeout to wait for command execution</param>
         /// <param name="duration">Time the device took to execute the command in milliseconds</param>
@@ -100,9 +96,7 @@ namespace Aaru.Devices
             return sense;
         }
 
-        /// <summary>
-        /// Disables auto-saving of S.M.A.R.T. attributes
-        /// </summary>
+        /// <summary>Disables auto-saving of S.M.A.R.T. attributes</summary>
         /// <param name="statusRegisters">Returned status registers</param>
         /// <param name="timeout">Timeout to wait for command execution</param>
         /// <param name="duration">Time the device took to execute the command in milliseconds</param>
@@ -131,9 +125,7 @@ namespace Aaru.Devices
             return sense;
         }
 
-        /// <summary>
-        /// Enables S.M.A.R.T.
-        /// </summary>
+        /// <summary>Enables S.M.A.R.T.</summary>
         /// <param name="statusRegisters">Returned status registers</param>
         /// <param name="timeout">Timeout to wait for command execution</param>
         /// <param name="duration">Time the device took to execute the command in milliseconds</param>
@@ -161,9 +153,7 @@ namespace Aaru.Devices
             return sense;
         }
 
-        /// <summary>
-        /// Requests drive to execute offline immediate S.M.A.R.T. test
-        /// </summary>
+        /// <summary>Requests drive to execute offline immediate S.M.A.R.T. test</summary>
         /// <param name="subcommand">Subcommand</param>
         /// <param name="statusRegisters">Returned status registers</param>
         /// <param name="timeout">Timeout to wait for command execution</param>
@@ -194,9 +184,7 @@ namespace Aaru.Devices
             return sense;
         }
 
-        /// <summary>
-        /// Reads S.M.A.R.T. data
-        /// </summary>
+        /// <summary>Reads S.M.A.R.T. data</summary>
         /// <param name="buffer">Buffer containing data</param>
         /// <param name="statusRegisters">Returned status registers</param>
         /// <param name="timeout">Timeout to wait for command execution</param>
@@ -226,9 +214,7 @@ namespace Aaru.Devices
             return sense;
         }
 
-        /// <summary>
-        /// Reads S.M.A.R.T. log
-        /// </summary>
+        /// <summary>Reads S.M.A.R.T. log</summary>
         /// <param name="buffer">Buffer containing log</param>
         /// <param name="statusRegisters">Returned status registers</param>
         /// <param name="logAddress">Log address</param>
@@ -260,9 +246,7 @@ namespace Aaru.Devices
             return sense;
         }
 
-        /// <summary>
-        /// Retrieves S.M.A.R.T. status
-        /// </summary>
+        /// <summary>Retrieves S.M.A.R.T. status</summary>
         /// <param name="statusRegisters">Returned status registers</param>
         /// <param name="timeout">Timeout to wait for command execution</param>
         /// <param name="duration">Time the device took to execute the command in milliseconds</param>

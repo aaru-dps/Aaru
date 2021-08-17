@@ -45,9 +45,7 @@ using Device = Aaru.Database.Models.Device;
 
 namespace Aaru.Core.Media.Info
 {
-    /// <summary>
-    /// Core operations for retrieving information about CD based media
-    /// </summary>
+    /// <summary>Core operations for retrieving information about CD based media</summary>
     public static class CompactDisc
     {
         /// <summary>Gets the offset bytes from a Compact Disc</summary>

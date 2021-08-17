@@ -44,9 +44,7 @@ namespace Aaru.Filesystems
 {
     // Information from the Linux kernel
     /// <inheritdoc />
-    /// <summary>
-    /// Implements detection of the Linux extended filesystem v2, v3 and v4
-    /// </summary>
+    /// <summary>Implements detection of the Linux extended filesystem v2, v3 and v4</summary>
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
     public sealed class ext2FS : IFilesystem
     {
@@ -169,13 +167,13 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
         /// <inheritdoc />
-        public Encoding       Encoding  { get; private set; }
+        public Encoding Encoding { get; private set; }
         /// <inheritdoc />
-        public string         Name      => "Linux extended Filesystem 2, 3 and 4";
+        public string Name => "Linux extended Filesystem 2, 3 and 4";
         /// <inheritdoc />
-        public Guid           Id        => new Guid("6AA91B88-150B-4A7B-AD56-F84FB2DF4184");
+        public Guid Id => new Guid("6AA91B88-150B-4A7B-AD56-F84FB2DF4184");
         /// <inheritdoc />
-        public string         Author    => "Natalia Portillo";
+        public string Author => "Natalia Portillo";
 
         /// <inheritdoc />
         public bool Identify(IMediaImage imagePlugin, Partition partition)

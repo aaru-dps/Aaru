@@ -44,9 +44,7 @@ using Marshal = Aaru.Helpers.Marshal;
 namespace Aaru.Partitions
 {
     /// <inheritdoc />
-    /// <summary>
-    /// Implements decoding of the GUID Partition Table
-    /// </summary>
+    /// <summary>Implements decoding of the GUID Partition Table</summary>
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
     public sealed class GuidPartitionTable : IPartition
     {
@@ -54,9 +52,9 @@ namespace Aaru.Partitions
         const uint  GPT_REVISION1 = 0x00010000;
 
         /// <inheritdoc />
-        public string Name   => "GUID Partition Table";
+        public string Name => "GUID Partition Table";
         /// <inheritdoc />
-        public Guid   Id     => new Guid("CBC9D281-C1D0-44E8-9038-4D66FD2678AB");
+        public Guid Id => new Guid("CBC9D281-C1D0-44E8-9038-4D66FD2678AB");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 

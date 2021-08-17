@@ -42,19 +42,19 @@ namespace Aaru.DiscImages
     public sealed partial class T98
     {
         /// <inheritdoc />
-        public string                 Name         => "T98 Hard Disk Image";
+        public string Name => "T98 Hard Disk Image";
         /// <inheritdoc />
-        public Guid                   Id           => new Guid("0410003E-6E7B-40E6-9328-BA5651ADF6B7");
+        public Guid Id => new Guid("0410003E-6E7B-40E6-9328-BA5651ADF6B7");
         /// <inheritdoc />
-        public ImageInfo              Info         => _imageInfo;
+        public ImageInfo Info => _imageInfo;
         /// <inheritdoc />
-        public string                 Author       => "Natalia Portillo";
+        public string Author => "Natalia Portillo";
         /// <inheritdoc />
-        public string                 Format       => "T98 disk image";
+        public string Format => "T98 disk image";
         /// <inheritdoc />
         public List<DumpHardwareType> DumpHardware => null;
         /// <inheritdoc />
-        public CICMMetadataType       CicmMetadata => null;
+        public CICMMetadataType CicmMetadata => null;
         /// <inheritdoc />
         public IEnumerable<MediaTagType> SupportedMediaTags => new MediaTagType[]
             {};
@@ -78,7 +78,7 @@ namespace Aaru.DiscImages
             ".t98"
         };
         /// <inheritdoc />
-        public bool   IsWriting    { get; private set; }
+        public bool IsWriting { get; private set; }
         /// <inheritdoc />
         public string ErrorMessage { get; private set; }
     }

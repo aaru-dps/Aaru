@@ -33,8 +33,6 @@
 namespace Aaru.Database.Models
 {
     /// <inheritdoc />
-    /// <summary>
-    /// Filesystem found
-    /// </summary>
+    /// <summary>Filesystem found</summary>
     public class Filesystem : NameCountModel {}
 }

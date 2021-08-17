@@ -45,17 +45,17 @@ namespace Aaru.DiscImages
         public ImageInfo Info => _imageInfo;
 
         /// <inheritdoc />
-        public string                 Name         => "Digital Research DiskCopy";
+        public string Name => "Digital Research DiskCopy";
         /// <inheritdoc />
-        public Guid                   Id           => new Guid("9F0BE551-8BAB-4038-8B5A-691F1BF5FFF3");
+        public Guid Id => new Guid("9F0BE551-8BAB-4038-8B5A-691F1BF5FFF3");
         /// <inheritdoc />
-        public string                 Author       => "Natalia Portillo";
+        public string Author => "Natalia Portillo";
         /// <inheritdoc />
-        public string                 Format       => "Digital Research DiskCopy";
+        public string Format => "Digital Research DiskCopy";
         /// <inheritdoc />
         public List<DumpHardwareType> DumpHardware => null;
         /// <inheritdoc />
-        public CICMMetadataType       CicmMetadata => null;
+        public CICMMetadataType CicmMetadata => null;
         /// <inheritdoc />
         public IEnumerable<MediaTagType> SupportedMediaTags => new MediaTagType[]
             {};
@@ -85,7 +85,7 @@ namespace Aaru.DiscImages
             ".dsk"
         };
         /// <inheritdoc />
-        public bool   IsWriting    { get; private set; }
+        public bool IsWriting { get; private set; }
         /// <inheritdoc />
         public string ErrorMessage { get; private set; }
     }

@@ -42,9 +42,7 @@ namespace Aaru.DiscImages
     // TODO: There seems no be no clear definition on how to treat pregaps that are not included in the file, so this is just appending it to start of track
     // TODO: This format doesn't support to specify pregaps that are included in the file (like Redump ones)
     /// <inheritdoc />
-    /// <summary>
-    /// Implements reading Dreamcast GDI disc images
-    /// </summary>
+    /// <summary>Implements reading Dreamcast GDI disc images</summary>
     public sealed partial class Gdi : IOpticalMediaImage
     {
         ulong        _densitySeparationSectors;

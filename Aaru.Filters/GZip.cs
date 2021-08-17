@@ -51,9 +51,9 @@ namespace Aaru.Filters
         Stream   _zStream;
 
         /// <inheritdoc />
-        public string Name   => "GZip";
+        public string Name => "GZip";
         /// <inheritdoc />
-        public Guid   Id     => new Guid("F4996661-4A29-42C9-A2C7-3904EF40F3B0");
+        public Guid Id => new Guid("F4996661-4A29-42C9-A2C7-3904EF40F3B0");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 

@@ -952,9 +952,7 @@ namespace Aaru.Devices
             return sense;
         }
 
-        /// <summary>
-        /// Writes a space mark in the media
-        /// </summary>
+        /// <summary>Writes a space mark in the media</summary>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="code">Space type code.</param>
         /// <param name="count">How many marks to write</param>

@@ -41,9 +41,7 @@ namespace Aaru.Filesystems.LisaFS
     // All information by Natalia Portillo
     // Variable names from Lisa API
     /// <inheritdoc />
-    /// <summary>
-    /// Implements the Apple Lisa File System
-    /// </summary>
+    /// <summary>Implements the Apple Lisa File System</summary>
     public sealed partial class LisaFS : IReadOnlyFilesystem
     {
         bool        _debug;
@@ -55,15 +53,15 @@ namespace Aaru.Filesystems.LisaFS
         ulong       _volumePrefix;
 
         /// <inheritdoc />
-        public string         Name      => "Apple Lisa File System";
+        public string Name => "Apple Lisa File System";
         /// <inheritdoc />
-        public Guid           Id        => new Guid("7E6034D1-D823-4248-A54D-239742B28391");
+        public Guid Id => new Guid("7E6034D1-D823-4248-A54D-239742B28391");
         /// <inheritdoc />
-        public Encoding       Encoding  { get; private set; }
+        public Encoding Encoding { get; private set; }
         /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
         /// <inheritdoc />
-        public string         Author    => "Natalia Portillo";
+        public string Author => "Natalia Portillo";
 
         // TODO: Implement Lisa 7/7 namespace (needs decoding {!CATALOG} file)
         /// <inheritdoc />

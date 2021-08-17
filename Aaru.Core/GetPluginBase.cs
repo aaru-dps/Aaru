@@ -36,14 +36,10 @@ using Aaru.CommonTypes.Interfaces;
 
 namespace Aaru.Core
 {
-    /// <summary>
-    /// Plugin base operations
-    /// </summary>
+    /// <summary>Plugin base operations</summary>
     public static class GetPluginBase
     {
-        /// <summary>
-        /// Gets an instance with all the known plugins
-        /// </summary>
+        /// <summary>Gets an instance with all the known plugins</summary>
         public static PluginBase Instance
         {
             get
@@ -55,7 +51,7 @@ namespace Aaru.Core
                 IPluginRegister filesystemsRegister = new Aaru.Filesystems.Register();
                 IPluginRegister filtersRegister     = new Filters.Register();
                 IPluginRegister partitionsRegister  = new Aaru.Partitions.Register();
-                IPluginRegister archiveRegister     = new Aaru.Archives.Register();
+                IPluginRegister archiveRegister     = new Archives.Register();
 
                 instance.AddPlugins(checksumRegister);
                 instance.AddPlugins(imagesRegister);

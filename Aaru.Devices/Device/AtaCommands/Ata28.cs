@@ -38,9 +38,7 @@ namespace Aaru.Devices
 {
     public sealed partial class Device
     {
-        /// <summary>
-        /// Reads the drive buffer using PIO transfer
-        /// </summary>
+        /// <summary>Reads the drive buffer using PIO transfer</summary>
         /// <param name="buffer">Buffer that contains the read data</param>
         /// <param name="statusRegisters">Returned status registers</param>
         /// <param name="timeout">Timeout to wait for command execution</param>
@@ -67,9 +65,7 @@ namespace Aaru.Devices
             return sense;
         }
 
-        /// <summary>
-        /// Reads the drive buffer using DMA transfer
-        /// </summary>
+        /// <summary>Reads the drive buffer using DMA transfer</summary>
         /// <param name="buffer">Buffer that contains the read data</param>
         /// <param name="statusRegisters">Returned status registers</param>
         /// <param name="timeout">Timeout to wait for command execution</param>
@@ -95,9 +91,7 @@ namespace Aaru.Devices
             return sense;
         }
 
-        /// <summary>
-        /// Reads sectors using 28-bit addressing and DMA transfer, retrying on error
-        /// </summary>
+        /// <summary>Reads sectors using 28-bit addressing and DMA transfer, retrying on error</summary>
         /// <param name="buffer">Buffer that contains the read data</param>
         /// <param name="statusRegisters">Returned status registers</param>
         /// <param name="lba">LBA of read start</param>
@@ -109,9 +103,7 @@ namespace Aaru.Devices
                             uint timeout, out double duration) =>
             ReadDma(out buffer, out statusRegisters, true, lba, count, timeout, out duration);
 
-        /// <summary>
-        /// Reads sectors using 48-bit addressing and DMA transfer
-        /// </summary>
+        /// <summary>Reads sectors using 48-bit addressing and DMA transfer</summary>
         /// <param name="buffer">Buffer that contains the read data</param>
         /// <param name="statusRegisters">Returned status registers</param>
         /// <param name="retry">Retry on error</param>
@@ -148,7 +140,8 @@ namespace Aaru.Devices
         }
 
         /// <summary>
-        /// Reads sectors using 28-bit addressing and PIO transfer, sending an interrupt only after all the sectors have been transferred
+        ///     Reads sectors using 28-bit addressing and PIO transfer, sending an interrupt only after all the sectors have
+        ///     been transferred
         /// </summary>
         /// <param name="buffer">Buffer that contains the read data</param>
         /// <param name="statusRegisters">Returned status registers</param>
@@ -185,9 +178,7 @@ namespace Aaru.Devices
             return sense;
         }
 
-        /// <summary>
-        /// Reads native max address using 28-bit addressing
-        /// </summary>
+        /// <summary>Reads native max address using 28-bit addressing</summary>
         /// <param name="lba">Maximum addressable block</param>
         /// <param name="statusRegisters">Returned status registers</param>
         /// <param name="timeout">Timeout to wait for command execution</param>
@@ -226,9 +217,7 @@ namespace Aaru.Devices
             return sense;
         }
 
-        /// <summary>
-        /// Reads sectors using 28-bit addressing and PIO transfer, retrying on error
-        /// </summary>
+        /// <summary>Reads sectors using 28-bit addressing and PIO transfer, retrying on error</summary>
         /// <param name="buffer">Buffer that contains the read data</param>
         /// <param name="statusRegisters">Returned status registers</param>
         /// <param name="lba">LBA of read start</param>
@@ -240,9 +229,7 @@ namespace Aaru.Devices
                          uint timeout, out double duration) =>
             Read(out buffer, out statusRegisters, true, lba, count, timeout, out duration);
 
-        /// <summary>
-        /// Reads sectors using 28-bit addressing and PIO transfer, retrying on error
-        /// </summary>
+        /// <summary>Reads sectors using 28-bit addressing and PIO transfer, retrying on error</summary>
         /// <param name="buffer">Buffer that contains the read data</param>
         /// <param name="statusRegisters">Returned status registers</param>
         /// <param name="retry">Retry on error</param>
@@ -279,9 +266,7 @@ namespace Aaru.Devices
             return sense;
         }
 
-        /// <summary>
-        /// Reads a long sector using 28-bit addressing and PIO transfer, retrying on error
-        /// </summary>
+        /// <summary>Reads a long sector using 28-bit addressing and PIO transfer, retrying on error</summary>
         /// <param name="buffer">Buffer that contains the read data</param>
         /// <param name="statusRegisters">Returned status registers</param>
         /// <param name="lba">LBA of read start</param>
@@ -293,9 +278,7 @@ namespace Aaru.Devices
                              uint timeout, out double duration) =>
             ReadLong(out buffer, out statusRegisters, true, lba, blockSize, timeout, out duration);
 
-        /// <summary>
-        /// Reads a long sector using 28-bit addressing and PIO transfer, retrying on error
-        /// </summary>
+        /// <summary>Reads a long sector using 28-bit addressing and PIO transfer, retrying on error</summary>
         /// <param name="buffer">Buffer that contains the read data</param>
         /// <param name="statusRegisters">Returned status registers</param>
         /// <param name="retry">Retry on error</param>
@@ -332,9 +315,7 @@ namespace Aaru.Devices
             return sense;
         }
 
-        /// <summary>
-        /// Sets the reading mechanism ready to read the specified block using 28-bit LBA addressing
-        /// </summary>
+        /// <summary>Sets the reading mechanism ready to read the specified block using 28-bit LBA addressing</summary>
         /// <param name="statusRegisters">Returned status registers</param>
         /// <param name="lba">LBA to position reading mechanism ready to read</param>
         /// <param name="timeout">Timeout to wait for command execution</param>

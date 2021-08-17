@@ -2674,8 +2674,7 @@ namespace Aaru.Devices
         SendScr = 51
     }
 
-    [Flags]
-    [SuppressMessage("ReSharper", "ShiftExpressionZeroLeftOperand")]
+    [Flags, SuppressMessage("ReSharper", "ShiftExpressionZeroLeftOperand")]
     public enum MmcFlags : uint
     {
         ResponsePresent = 1 << 0, Response136 = 1 << 1, ResponseCrc = 1 << 2,

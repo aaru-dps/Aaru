@@ -40,9 +40,7 @@ namespace Aaru.DiscImages
 {
     // TODO: CloneCD stores subchannel deinterleaved
     /// <inheritdoc />
-    /// <summary>
-    /// Implements reading and writing CloneCD disc images
-    /// </summary>
+    /// <summary>Implements reading and writing CloneCD disc images</summary>
     public sealed partial class CloneCd : IWritableOpticalImage
     {
         string                  _catalog; // TODO: Use it

@@ -41,17 +41,13 @@ using Aaru.Console;
 
 namespace Aaru.Core
 {
-    /// <summary>
-    /// Media image entropy operations
-    /// </summary>
+    /// <summary>Media image entropy operations</summary>
     public sealed class Entropy
     {
         readonly bool        _debug;
         readonly IMediaImage _inputFormat;
 
-        /// <summary>
-        /// Initializes an instance with the specified parameters
-        /// </summary>
+        /// <summary>Initializes an instance with the specified parameters</summary>
         /// <param name="debug">Debug enabled</param>
         /// <param name="inputFormat">Media image</param>
         public Entropy(bool debug, IMediaImage inputFormat)
@@ -61,21 +57,19 @@ namespace Aaru.Core
         }
 
         /// <summary>Event raised when a progress bar is needed</summary>
-        public event InitProgressHandler   InitProgressEvent;
+        public event InitProgressHandler InitProgressEvent;
         /// <summary>Event raised to update the values of a determinate progress bar</summary>
         public event UpdateProgressHandler UpdateProgressEvent;
         /// <summary>Event raised when the progress bar is not longer needed</summary>
-        public event EndProgressHandler    EndProgressEvent;
+        public event EndProgressHandler EndProgressEvent;
         /// <summary>Event raised when a progress bar is needed</summary>
-        public event InitProgressHandler   InitProgress2Event;
+        public event InitProgressHandler InitProgress2Event;
         /// <summary>Event raised to update the values of a determinate progress bar</summary>
         public event UpdateProgressHandler UpdateProgress2Event;
         /// <summary>Event raised when the progress bar is not longer needed</summary>
-        public event EndProgressHandler    EndProgress2Event;
+        public event EndProgressHandler EndProgress2Event;
 
-        /// <summary>
-        /// Calculates the tracks entropy
-        /// </summary>
+        /// <summary>Calculates the tracks entropy</summary>
         /// <param name="duplicatedSectors">Checks for duplicated sectors</param>
         /// <returns>Calculated entropy</returns>
         public EntropyResults[] CalculateTracksEntropy(bool duplicatedSectors)
@@ -163,9 +157,7 @@ namespace Aaru.Core
             return entropyResults.ToArray();
         }
 
-        /// <summary>
-        /// Calculates the media entropy
-        /// </summary>
+        /// <summary>Calculates the media entropy</summary>
         /// <param name="duplicatedSectors">Checks for duplicated sectors</param>
         /// <returns>Calculated entropy</returns>
         public EntropyResults CalculateMediaEntropy(bool duplicatedSectors)
@@ -214,26 +206,16 @@ namespace Aaru.Core
         }
     }
 
-    /// <summary>
-    /// Entropy results
-    /// </summary>
+    /// <summary>Entropy results</summary>
     public struct EntropyResults
     {
-        /// <summary>
-        /// Track number, if applicable
-        /// </summary>
-        public uint   Track;
-        /// <summary>
-        /// Entropy
-        /// </summary>
+        /// <summary>Track number, if applicable</summary>
+        public uint Track;
+        /// <summary>Entropy</summary>
         public double Entropy;
-        /// <summary>
-        /// Number of unique sectors
-        /// </summary>
-        public int?   UniqueSectors;
-        /// <summary>
-        /// Number of total sectors
-        /// </summary>
-        public ulong  Sectors;
+        /// <summary>Number of unique sectors</summary>
+        public int? UniqueSectors;
+        /// <summary>Number of total sectors</summary>
+        public ulong Sectors;
     }
 }

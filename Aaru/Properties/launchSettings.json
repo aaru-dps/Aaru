@@ -3,8 +3,8 @@
     "Aaru": {
       "commandName": "Project"
     },
-    "GUI": {
-      "commandName": "Project",
+    "GUI" : {
+      "commandName"    : "Project",
       "commandLineArgs": "gui -d"
     }
   }

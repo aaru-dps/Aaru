@@ -42,9 +42,7 @@ using Marshal = Aaru.Helpers.Marshal;
 namespace Aaru.Filesystems
 {
     /// <inheritdoc />
-    /// <summary>
-    /// Implements detection of the filesystem described in ECMA-67
-    /// </summary>
+    /// <summary>Implements detection of the filesystem described in ECMA-67</summary>
     public sealed class ECMA67 : IFilesystem
     {
         readonly byte[] _magic =
@@ -53,15 +51,15 @@ namespace Aaru.Filesystems
         };
 
         /// <inheritdoc />
-        public Encoding       Encoding  { get; private set; }
+        public Encoding Encoding { get; private set; }
         /// <inheritdoc />
-        public string         Name      => "ECMA-67";
+        public string Name => "ECMA-67";
         /// <inheritdoc />
-        public Guid           Id        => new Guid("62A2D44A-CBC1-4377-B4B6-28C5C92034A1");
+        public Guid Id => new Guid("62A2D44A-CBC1-4377-B4B6-28C5C92034A1");
         /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
         /// <inheritdoc />
-        public string         Author    => "Natalia Portillo";
+        public string Author => "Natalia Portillo";
 
         /// <inheritdoc />
         public bool Identify(IMediaImage imagePlugin, Partition partition)

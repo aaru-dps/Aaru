@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 // ReSharper disable InconsistentNaming
+
 namespace Aaru.DiscImages
 {
     public sealed partial class DiskCopy42

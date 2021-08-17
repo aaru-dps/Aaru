@@ -41,9 +41,7 @@ namespace Aaru.Partitions
 {
     // TODO: Find better documentation, this is working for XENIX 2 but not for SCO OpenServer...
     /// <inheritdoc />
-    /// <summary>
-    /// Implements decoding of XENIX partitions
-    /// </summary>
+    /// <summary>Implements decoding of XENIX partitions</summary>
     public sealed class XENIX : IPartition
     {
         const ushort PAMAGIC     = 0x1234;
@@ -54,9 +52,9 @@ namespace Aaru.Partitions
         const uint XENIX_OFFSET = 977;
 
         /// <inheritdoc />
-        public string Name   => "XENIX";
+        public string Name => "XENIX";
         /// <inheritdoc />
-        public Guid   Id     => new Guid("53BE01DE-E68B-469F-A17F-EC2E4BD61CD9");
+        public Guid Id => new Guid("53BE01DE-E68B-469F-A17F-EC2E4BD61CD9");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 

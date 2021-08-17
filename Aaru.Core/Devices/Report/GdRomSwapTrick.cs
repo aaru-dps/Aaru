@@ -45,9 +45,7 @@ namespace Aaru.Core.Devices.Report
 {
     public sealed partial class DeviceReport
     {
-        /// <summary>
-        /// Tries and checks reading a GD-ROM disc using the swap disc trick and adds the result to a device report
-        /// </summary>
+        /// <summary>Tries and checks reading a GD-ROM disc using the swap disc trick and adds the result to a device report</summary>
         /// <param name="report">Device report</param>
         public void ReportGdRomSwapTrick(ref DeviceReportV2 report)
         {

@@ -41,9 +41,7 @@ namespace Aaru.DiscImages
     // Japanese comments copied from there
     // TODO: Solve media types
     /// <inheritdoc />
-    /// <summary>
-    /// Implements reading Quasi88 disk images
-    /// </summary>
+    /// <summary>Implements reading Quasi88 disk images</summary>
     public sealed partial class D88 : IMediaImage
     {
         ImageInfo    _imageInfo;

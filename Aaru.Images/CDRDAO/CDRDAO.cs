@@ -42,9 +42,7 @@ namespace Aaru.DiscImages
     // TODO: Doesn't support compositing from several files
     // TODO: Doesn't support silences that are not in files
     /// <inheritdoc />
-    /// <summary>
-    /// Implements reading and writing cdrdao cuesheet disc images
-    /// </summary>
+    /// <summary>Implements reading and writing cdrdao cuesheet disc images</summary>
     public sealed partial class Cdrdao : IWritableOpticalImage
     {
         IFilter      _cdrdaoFilter;

@@ -43,9 +43,7 @@ namespace Aaru.Filesystems
 {
     // Information from the Linux kernel
     /// <inheritdoc />
-    /// <summary>
-    /// Implements detection of the MINIX filesystem
-    /// </summary>
+    /// <summary>Implements detection of the MINIX filesystem</summary>
     public sealed class MinixFS : IFilesystem
     {
         /// <summary>Minix v1, 14 char filenames</summary>
@@ -74,13 +72,13 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
         /// <inheritdoc />
-        public Encoding       Encoding  { get; private set; }
+        public Encoding Encoding { get; private set; }
         /// <inheritdoc />
-        public string         Name      => "Minix Filesystem";
+        public string Name => "Minix Filesystem";
         /// <inheritdoc />
-        public Guid           Id        => new Guid("FE248C3B-B727-4AE5-A39F-79EA9A07D4B3");
+        public Guid Id => new Guid("FE248C3B-B727-4AE5-A39F-79EA9A07D4B3");
         /// <inheritdoc />
-        public string         Author    => "Natalia Portillo";
+        public string Author => "Natalia Portillo";
 
         /// <inheritdoc />
         public bool Identify(IMediaImage imagePlugin, Partition partition)

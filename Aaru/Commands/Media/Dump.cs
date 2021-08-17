@@ -317,8 +317,7 @@ namespace Aaru.Commands.Media
                                  uint skip, byte speed, bool stopOnError, string format, string subchannel,
                                  bool @private, bool fixSubchannelPosition, bool retrySubchannel, bool fixSubchannel,
                                  bool fixSubchannelCrc, bool generateSubchannels, bool skipCdiReadyHole, bool eject,
-                                 uint maxBlocks, bool useBufferedReads, bool storeEncrypted,
-                                 bool titleKeys)
+                                 uint maxBlocks, bool useBufferedReads, bool storeEncrypted, bool titleKeys)
         {
             MainClass.PrintCopyright();
 

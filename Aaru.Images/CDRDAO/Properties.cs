@@ -55,15 +55,15 @@ namespace Aaru.DiscImages
                                                                OpticalImageCapabilities.CanStoreMultipleTracks |
                                                                OpticalImageCapabilities.CanStoreIndexes;
         /// <inheritdoc />
-        public ImageInfo       Info       => _imageInfo;
+        public ImageInfo Info => _imageInfo;
         /// <inheritdoc />
-        public string          Name       => "CDRDAO tocfile";
+        public string Name => "CDRDAO tocfile";
         /// <inheritdoc />
-        public Guid            Id         => new Guid("04D7BA12-1BE8-44D4-97A4-1B48A505463E");
+        public Guid Id => new Guid("04D7BA12-1BE8-44D4-97A4-1B48A505463E");
         /// <inheritdoc />
-        public string          Format     => "CDRDAO tocfile";
+        public string Format => "CDRDAO tocfile";
         /// <inheritdoc />
-        public string          Author     => "Natalia Portillo";
+        public string Author => "Natalia Portillo";
         /// <inheritdoc />
         public List<Partition> Partitions { get; private set; }
 
@@ -163,7 +163,7 @@ namespace Aaru.DiscImages
         /// <inheritdoc />
         public List<DumpHardwareType> DumpHardware => null;
         /// <inheritdoc />
-        public CICMMetadataType       CicmMetadata => null;
+        public CICMMetadataType CicmMetadata => null;
 
         // TODO: Decode CD-Text to text
         /// <inheritdoc />
@@ -201,7 +201,7 @@ namespace Aaru.DiscImages
             ".toc"
         };
         /// <inheritdoc />
-        public bool   IsWriting    { get; private set; }
+        public bool IsWriting { get; private set; }
         /// <inheritdoc />
         public string ErrorMessage { get; private set; }
     }

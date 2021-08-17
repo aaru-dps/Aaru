@@ -111,9 +111,7 @@ namespace Aaru.Core
             submitThread.Start();
         }
 
-        /// <summary>
-        /// Updates the main database
-        /// </summary>
+        /// <summary>Updates the main database</summary>
         /// <param name="create">If <c>true</c> creates the database from scratch, otherwise updates an existing database</param>
         public static void UpdateMainDatabase(bool create)
         {

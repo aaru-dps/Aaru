@@ -45,9 +45,7 @@ namespace Aaru.Filesystems
     // Information has been extracted looking at available disk images
     // This may be missing fields, or not, I don't know russian so any help is appreciated
     /// <inheritdoc />
-    /// <summary>
-    /// Implements detection of the AO-DOS filesystem
-    /// </summary>
+    /// <summary>Implements detection of the AO-DOS filesystem</summary>
     public sealed class AODOS : IFilesystem
     {
         readonly byte[] _identifier =
@@ -57,13 +55,13 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
         /// <inheritdoc />
-        public string         Name      => "Alexander Osipov DOS file system";
+        public string Name => "Alexander Osipov DOS file system";
         /// <inheritdoc />
-        public Guid           Id        => new Guid("668E5039-9DDD-442A-BE1B-A315D6E38E26");
+        public Guid Id => new Guid("668E5039-9DDD-442A-BE1B-A315D6E38E26");
         /// <inheritdoc />
-        public Encoding       Encoding  { get; private set; }
+        public Encoding Encoding { get; private set; }
         /// <inheritdoc />
-        public string         Author    => "Natalia Portillo";
+        public string Author => "Natalia Portillo";
 
         /// <inheritdoc />
         public bool Identify(IMediaImage imagePlugin, Partition partition)

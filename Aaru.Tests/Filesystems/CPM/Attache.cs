@@ -37,7 +37,8 @@ namespace Aaru.Tests.Filesystems.CPM
     {
         public Attache() : base("CP/M") {}
 
-        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "CPM", "Otrona Attaché");
+        public override string DataFolder =>
+            Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "CPM", "Otrona Attaché");
 
         public override IFilesystem Plugin     => new Aaru.Filesystems.CPM();
         public override bool        Partitions => false;

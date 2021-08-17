@@ -45,9 +45,7 @@ namespace Aaru.Devices
         /// </summary>
         ~Device() => Close();
 
-        /// <summary>
-        /// Closes a device
-        /// </summary>
+        /// <summary>Closes a device</summary>
         public void Close()
         {
             if(_remote != null)

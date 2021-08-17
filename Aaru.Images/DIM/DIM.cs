@@ -39,9 +39,7 @@ namespace Aaru.DiscImages
 {
     // TODO: What are the real supported floppies for this image format?
     /// <inheritdoc />
-    /// <summary>
-    /// Implements reading DIM disk images
-    /// </summary>
+    /// <summary>Implements reading DIM disk images</summary>
     public sealed partial class Dim : IMediaImage
     {
         byte[]    _comment;

@@ -41,9 +41,7 @@ namespace Aaru.Core.Devices.Report
 {
     public sealed partial class DeviceReport
     {
-        /// <summary>
-        /// Creates a report from a SCSI Sequential Commands device
-        /// </summary>
+        /// <summary>Creates a report from a SCSI Sequential Commands device</summary>
         /// <returns>SSC report</returns>
         public Ssc ReportScsiSsc()
         {
@@ -141,9 +139,7 @@ namespace Aaru.Core.Devices.Report
             return report;
         }
 
-        /// <summary>
-        /// Creates a report for media inserted into an SSC device
-        /// </summary>
+        /// <summary>Creates a report for media inserted into an SSC device</summary>
         /// <returns>Media report</returns>
         public TestedSequentialMedia ReportSscMedia()
         {

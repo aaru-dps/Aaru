@@ -41,9 +41,7 @@ using Schemas;
 namespace Aaru.Filesystems
 {
     /// <inheritdoc />
-    /// <summary>
-    /// Implements the Xbox File Allocation Table (FATX or XTAF) filesystem.
-    /// </summary>
+    /// <summary>Implements the Xbox File Allocation Table (FATX or XTAF) filesystem.</summary>
     public sealed partial class XboxFatPlugin : IReadOnlyFilesystem
     {
         uint                                                   _bytesPerCluster;
@@ -65,13 +63,13 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
         /// <inheritdoc />
-        public Encoding       Encoding  { get; private set; }
+        public Encoding Encoding { get; private set; }
         /// <inheritdoc />
-        public string         Name      => "FATX Filesystem Plugin";
+        public string Name => "FATX Filesystem Plugin";
         /// <inheritdoc />
-        public Guid           Id        => new Guid("ED27A721-4A17-4649-89FD-33633B46E228");
+        public Guid Id => new Guid("ED27A721-4A17-4649-89FD-33633B46E228");
         /// <inheritdoc />
-        public string         Author    => "Natalia Portillo";
+        public string Author => "Natalia Portillo";
 
         /// <inheritdoc />
         public Errno ListXAttr(string path, out List<string> xattrs)

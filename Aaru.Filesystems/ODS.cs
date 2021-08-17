@@ -53,21 +53,19 @@ namespace Aaru.Filesystems
     // Time is a 64 bit unsigned integer, tenths of microseconds since 1858/11/17 00:00:00.
     // TODO: Implement checksum
     /// <inheritdoc />
-    /// <summary>
-    /// Implements detection of DEC's On-Disk Structure, aka the ODS filesystem
-    /// </summary>
+    /// <summary>Implements detection of DEC's On-Disk Structure, aka the ODS filesystem</summary>
     public sealed class ODS : IFilesystem
     {
         /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
         /// <inheritdoc />
-        public Encoding       Encoding  { get; private set; }
+        public Encoding Encoding { get; private set; }
         /// <inheritdoc />
-        public string         Name      => "Files-11 On-Disk Structure";
+        public string Name => "Files-11 On-Disk Structure";
         /// <inheritdoc />
-        public Guid           Id        => new Guid("de20633c-8021-4384-aeb0-83b0df14491f");
+        public Guid Id => new Guid("de20633c-8021-4384-aeb0-83b0df14491f");
         /// <inheritdoc />
-        public string         Author    => "Natalia Portillo";
+        public string Author => "Natalia Portillo";
 
         /// <inheritdoc />
         public bool Identify(IMediaImage imagePlugin, Partition partition)

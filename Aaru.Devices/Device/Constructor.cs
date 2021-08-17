@@ -59,9 +59,7 @@ using VendorString = Aaru.Decoders.SecureDigital.VendorString;
 
 namespace Aaru.Devices
 {
-    /// <summary>
-    /// Implements a device or media containing drive
-    /// </summary>
+    /// <summary>Implements a device or media containing drive</summary>
     [SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), SuppressMessage("ReSharper", "UnusedMember.Global"),
      SuppressMessage("ReSharper", "UnusedMethodReturnValue.Global")]
     public sealed partial class Device

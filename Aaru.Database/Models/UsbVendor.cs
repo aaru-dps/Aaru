@@ -36,19 +36,13 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Aaru.Database.Models
 {
-    /// <summary>
-    /// USB vendor
-    /// </summary>
+    /// <summary>USB vendor</summary>
     public class UsbVendor
     {
-        /// <summary>
-        /// Builds an empty USB vendor
-        /// </summary>
+        /// <summary>Builds an empty USB vendor</summary>
         public UsbVendor() {}
 
-        /// <summary>
-        /// Builds a USB vendor with the specified parameters
-        /// </summary>
+        /// <summary>Builds a USB vendor with the specified parameters</summary>
         /// <param name="id">Vendor ID</param>
         /// <param name="vendor">Vendor name</param>
         public UsbVendor(ushort id, string vendor)
@@ -58,27 +52,17 @@ namespace Aaru.Database.Models
             AddedWhen = ModifiedWhen = DateTime.UtcNow;
         }
 
-        /// <summary>
-        /// Database ID
-        /// </summary>
+        /// <summary>Database ID</summary>
         [Key]
-        public ushort Id { get;             set; }
-        /// <summary>
-        /// Vendor name
-        /// </summary>
-        public string   Vendor       { get; set; }
-        /// <summary>
-        /// Date when model has been added to the database
-        /// </summary>
-        public DateTime AddedWhen    { get; set; }
-        /// <summary>
-        /// Date when model was last modified
-        /// </summary>
+        public ushort Id { get; set; }
+        /// <summary>Vendor name</summary>
+        public string Vendor { get; set; }
+        /// <summary>Date when model has been added to the database</summary>
+        public DateTime AddedWhen { get; set; }
+        /// <summary>Date when model was last modified</summary>
         public DateTime ModifiedWhen { get; set; }
 
-        /// <summary>
-        /// List of products from this vendor
-        /// </summary>
+        /// <summary>List of products from this vendor</summary>
         public virtual ICollection<UsbProduct> Products { get; set; }
     }
 }

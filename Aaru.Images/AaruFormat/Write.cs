@@ -1388,7 +1388,9 @@ namespace Aaru.DiscImages
                             {
                                 var lastTrackInSession = new Track();
 
-                                foreach(Track trk in Tracks.Where(trk => trk.TrackSession == leadOuts.Key).Where(trk => trk.TrackSequence > lastTrackInSession.TrackSequence))
+                                foreach(Track trk in Tracks.Where(trk => trk.TrackSession == leadOuts.Key).
+                                                            Where(trk => trk.TrackSequence >
+                                                                         lastTrackInSession.TrackSequence))
                                     lastTrackInSession = trk;
 
                                 if(lastTrackInSession.TrackSequence  == 0 ||

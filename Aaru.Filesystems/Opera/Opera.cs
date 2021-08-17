@@ -40,9 +40,7 @@ using Schemas;
 namespace Aaru.Filesystems
 {
     /// <inheritdoc />
-    /// <summary>
-    /// Implements the 3DO Opera filesystem
-    /// </summary>
+    /// <summary>Implements the 3DO Opera filesystem</summary>
     public sealed partial class OperaFS : IReadOnlyFilesystem
     {
         bool                                                               _debug;
@@ -56,13 +54,13 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
         /// <inheritdoc />
-        public Encoding       Encoding  { get; private set; }
+        public Encoding Encoding { get; private set; }
         /// <inheritdoc />
-        public string         Name      => "Opera Filesystem Plugin";
+        public string Name => "Opera Filesystem Plugin";
         /// <inheritdoc />
-        public Guid           Id        => new Guid("0ec84ec7-eae6-4196-83fe-943b3fe46dbd");
+        public Guid Id => new Guid("0ec84ec7-eae6-4196-83fe-943b3fe46dbd");
         /// <inheritdoc />
-        public string         Author    => "Natalia Portillo";
+        public string Author => "Natalia Portillo";
 
         /// <inheritdoc />
         public Errno ListXAttr(string path, out List<string> xattrs)

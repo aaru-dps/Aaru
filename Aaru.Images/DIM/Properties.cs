@@ -48,18 +48,18 @@ namespace Aaru.DiscImages
         public List<Session> Sessions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         /// <inheritdoc />
-        public string                 Name         => "DIM Disk Image";
+        public string Name => "DIM Disk Image";
         /// <inheritdoc />
-        public Guid                   Id           => new Guid("0240B7B1-E959-4CDC-B0BD-386D6E467B88");
+        public Guid Id => new Guid("0240B7B1-E959-4CDC-B0BD-386D6E467B88");
         /// <inheritdoc />
-        public ImageInfo              Info         => _imageInfo;
+        public ImageInfo Info => _imageInfo;
         /// <inheritdoc />
-        public string                 Author       => "Natalia Portillo";
+        public string Author => "Natalia Portillo";
         /// <inheritdoc />
-        public string                 Format       => "DIM disk image";
+        public string Format => "DIM disk image";
         /// <inheritdoc />
         public List<DumpHardwareType> DumpHardware => null;
         /// <inheritdoc />
-        public CICMMetadataType       CicmMetadata => null;
+        public CICMMetadataType CicmMetadata => null;
     }
 }

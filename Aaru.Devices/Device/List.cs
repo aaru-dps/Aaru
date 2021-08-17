@@ -38,66 +38,49 @@ using PlatformID = Aaru.CommonTypes.Interop.PlatformID;
 
 namespace Aaru.Devices
 {
-    /// <summary>
-    /// Contains device information
-    /// </summary>
+    /// <summary>Contains device information</summary>
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
     public struct DeviceInfo
     {
-        /// <summary>
-        /// Device path
-        /// </summary>
+        /// <summary>Device path</summary>
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 1024)]
         public string Path;
 
-        /// <summary>
-        /// Device vendor or manufacturer
-        /// </summary>
+        /// <summary>Device vendor or manufacturer</summary>
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
         public string Vendor;
 
-        /// <summary>
-        /// Device model or product name
-        /// </summary>
+        /// <summary>Device model or product name</summary>
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
         public string Model;
 
-        /// <summary>
-        /// Device serial number
-        /// </summary>
+        /// <summary>Device serial number</summary>
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
         public string Serial;
 
-        /// <summary>
-        /// Bus the device is attached to
-        /// </summary>
+        /// <summary>Bus the device is attached to</summary>
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
         public string Bus;
 
         /// <summary>
-        /// Set to <c>true</c> if Aaru can send commands to the device in the current machine or remote, <c>false</c> otherwise
+        ///     Set to <c>true</c> if Aaru can send commands to the device in the current machine or remote, <c>false</c>
+        ///     otherwise
         /// </summary>
         [MarshalAs(UnmanagedType.U1)]
         public bool Supported;
 
-        /// <summary>
-        /// Padding
-        /// </summary>
+        /// <summary>Padding</summary>
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
         public readonly byte[] Padding;
     }
 
     public sealed partial class Device
     {
-        /// <summary>
-        /// Lists devices attached to current machine
-        /// </summary>
+        /// <summary>Lists devices attached to current machine</summary>
         /// <returns>List of devices</returns>
         public static DeviceInfo[] ListDevices() => ListDevices(out _, out _, out _, out _, out _, out _);
 
-        /// <summary>
-        /// Lists devices attached to current machine or specified remote
-        /// </summary>
+        /// <summary>Lists devices attached to current machine or specified remote</summary>
         /// <param name="isRemote">Is remote</param>
         /// <param name="serverApplication">Remote application</param>
         /// <param name="serverVersion">Remote application version</param>

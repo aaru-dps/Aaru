@@ -42,9 +42,7 @@ using Marshal = Aaru.Helpers.Marshal;
 namespace Aaru.Filesystems
 {
     /// <inheritdoc />
-    /// <summary>
-    /// Implements detection of the Veritas filesystem
-    /// </summary>
+    /// <summary>Implements detection of the Veritas filesystem</summary>
     public sealed class VxFS : IFilesystem
     {
         /// <summary>Identifier for VxFS</summary>
@@ -54,13 +52,13 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
         /// <inheritdoc />
-        public Encoding       Encoding  { get; private set; }
+        public Encoding Encoding { get; private set; }
         /// <inheritdoc />
-        public string         Name      => "Veritas filesystem";
+        public string Name => "Veritas filesystem";
         /// <inheritdoc />
-        public Guid           Id        => new Guid("EC372605-7687-453C-8BEA-7E0DFF79CB03");
+        public Guid Id => new Guid("EC372605-7687-453C-8BEA-7E0DFF79CB03");
         /// <inheritdoc />
-        public string         Author    => "Natalia Portillo";
+        public string Author => "Natalia Portillo";
 
         /// <inheritdoc />
         public bool Identify(IMediaImage imagePlugin, Partition partition)

@@ -44,9 +44,9 @@ namespace Aaru.DiscImages
         public ImageInfo Info => _imageInfo;
 
         /// <inheritdoc />
-        public string Name   => "BlindWrite 4";
+        public string Name => "BlindWrite 4";
         /// <inheritdoc />
-        public Guid   Id     => new Guid("664568B2-15D4-4E64-8A7A-20BDA8B8386F");
+        public Guid Id => new Guid("664568B2-15D4-4E64-8A7A-20BDA8B8386F");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
         /// <inheritdoc />
@@ -59,10 +59,10 @@ namespace Aaru.DiscImages
         public List<Track> Tracks { get; set; }
 
         /// <inheritdoc />
-        public List<Session>          Sessions     { get; set; }
+        public List<Session> Sessions { get; set; }
         /// <inheritdoc />
         public List<DumpHardwareType> DumpHardware => null;
         /// <inheritdoc />
-        public CICMMetadataType       CicmMetadata => null;
+        public CICMMetadataType CicmMetadata => null;
     }
 }

@@ -45,9 +45,9 @@ namespace Aaru.DiscImages
         public ImageInfo Info => _imageInfo;
 
         /// <inheritdoc />
-        public string Name   => "Apple ][ Interleaved Disk Image";
+        public string Name => "Apple ][ Interleaved Disk Image";
         /// <inheritdoc />
-        public Guid   Id     => new Guid("A5828AC0-62C9-4304-81D4-EFD4AAE47360");
+        public Guid Id => new Guid("A5828AC0-62C9-4304-81D4-EFD4AAE47360");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
         /// <inheritdoc />
@@ -57,7 +57,7 @@ namespace Aaru.DiscImages
         /// <inheritdoc />
         public List<DumpHardwareType> DumpHardware => null;
         /// <inheritdoc />
-        public CICMMetadataType       CicmMetadata => null;
+        public CICMMetadataType CicmMetadata => null;
         /// <inheritdoc />
         public IEnumerable<MediaTagType> SupportedMediaTags => new MediaTagType[]
             {};
@@ -79,7 +79,7 @@ namespace Aaru.DiscImages
             ".do", ".po"
         };
         /// <inheritdoc />
-        public bool   IsWriting    { get; private set; }
+        public bool IsWriting { get; private set; }
         /// <inheritdoc />
         public string ErrorMessage { get; private set; }
     }

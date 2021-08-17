@@ -11,16 +11,15 @@ Copyright © 2011-2021 Natalia Portillo <claunia@claunia.com>
 
 You can see statistics and device reports [here](https://www.aaru.app/Stats)
 
-Aaru is a fully featured media dump management solution. You usually know media dumps
-as disc images, disk images, tape images, etc.
+Aaru is a fully featured media dump management solution. You usually know media dumps as disc images, disk images, tape
+images, etc.
 
-With Aaru you can identify a media dump, extract files from it (for supported
-filesystems), compare two of them, create them from real media using the appropriate drive,
-create a sidecar metadata with information about the media dump, and a lot of other features
-that commonly would require you to use separate applications.
+With Aaru you can identify a media dump, extract files from it (for supported filesystems), compare two of them, create
+them from real media using the appropriate drive, create a sidecar metadata with information about the media dump, and a
+lot of other features that commonly would require you to use separate applications.
 
-To see last changes, check the [changelog](Changelog.md).
-To see list of pending things to do, check the [list of issues](https://github.com/aaru-dps/Aaru/issues).
+To see last changes, check the [changelog](Changelog.md). To see list of pending things to do, check
+the [list of issues](https://github.com/aaru-dps/Aaru/issues).
 
 If you want to contribute in any way please read the [contributing guide](CONTRIBUTING.md).
 
@@ -29,13 +28,13 @@ Stable releases in [Github](https://github.com/aaru-dps/Aaru/releases).
 
 System requirements
 ===================
-Aaru is created using .NET Core 3.1 and can be compiled with all the major IDEs.
-To run it you require to use one of the stable releases, or build it yourself.
+Aaru is created using .NET Core 3.1 and can be compiled with all the major IDEs. To run it you require to use one of the
+stable releases, or build it yourself.
 
 Usage
 =====
 
-aaru.exe 
+aaru.exe
 
 And read help.
 
@@ -43,7 +42,9 @@ Or read the [documentation](https://github.com/aaru-dps/Aaru.Documentation/blob/
 
 Features
 ========
-* Identifies a disk image getting information about the disk itself and shows information about partitions and filesystems inside them
+
+* Identifies a disk image getting information about the disk itself and shows information about partitions and
+  filesystems inside them
 * Can checksum the disks (and if optical disc, separate tracks) user-data (tags and metadata coming soon)
 * Can compare two disk images, even different formats, for different sectors and/or metadata
 * Can list and extract contents from supported filesystems
@@ -51,17 +52,20 @@ Features
 * Can read several known sector by sector formats with variable bytes per sector.
 * Can read standard sector by sector copies for optical and magnetic discs with constant bytes per sector.
 * Can verify sectors or disk images if supported by the underlying format
-* Can dump media from ATA, ATAPI, SCSI, USB, FireWire and SDHCI drives (magnetic disks, optical discs, magnetoptical disks, flash devices, memory cards and tapes) to several supported image formats.
+* Can dump media from ATA, ATAPI, SCSI, USB, FireWire and SDHCI drives (magnetic disks, optical discs, magnetoptical
+  disks, flash devices, memory cards and tapes) to several supported image formats.
 * Can convert between image formats.
 * Includes an open-source archival image format with compression and deduplication.
 * Can create standard open XML metadata from existing images.
 * Can measure readability and speed of media (same that can be dumped, MHDD style)
 * Has an online database with drive capabilities, and can report the capabilities of any drive.
-* Works on any operating system and architecture where .NET Core is supported (drive access requires Windows, Linux or FreeBSD).
+* Works on any operating system and architecture where .NET Core is supported (drive access requires Windows, Linux or
+  FreeBSD).
 * Has a graphical interface (work in progress)
 
 Supported disk image formats (read-only)
 ========================================
+
 * Apple Disk Archival/Retrieval Tool (DART)
 * Apple II nibble images (NIB)
 * BlindWrite 4 TOC files (.BWT/.BWI/.BWS)
@@ -84,6 +88,7 @@ Supported disk image formats (read-only)
 
 Supported disk image formats (read and write)
 =============================================
+
 * Alcohol 120% Media Descriptor Structure (.MDS/.MDF)
 * Anex86 disk images (.FDI for floppies, .HDI for hard disks)
 * Any 512 bytes/sector disk image format (sector by sector copy, aka raw)
@@ -122,6 +127,7 @@ Supported disk image formats (read and write)
 
 Supported partitioning schemes
 ==============================
+
 * Acorn Linux and RISCiX partitions
 * ACT Apricot partitions
 * Amiga Rigid Disk Block (RDB)
@@ -149,6 +155,7 @@ Supported partitioning schemes
 
 Supported file systems for read-only operations
 ===============================================
+
 * 3DO Opera file system
 * Apple DOS file system
 * Apple Lisa file system
@@ -165,6 +172,7 @@ Supported file systems for read-only operations
 
 Supported file systems for identification and information only
 ==============================================================
+
 * Acorn Advanced Disc Filing System
 * Alexander Osipov DOS (AO-DOS for Electronika BK-0011) file system
 * Amiga Fast File System v2, untested
@@ -230,6 +238,7 @@ Supported file systems for identification and information only
 
 Supported checksums
 ===================
+
 * Adler-32
 * CRC-16
 * CRC-32
@@ -243,6 +252,7 @@ Supported checksums
 
 Supported filters
 =================
+
 * Apple PCExchange (FINDER.DAT & RESOURCE.FRK)
 * AppleDouble
 * AppleSingle
@@ -255,10 +265,10 @@ Supported filters
 Partially supported disk image formats
 ======================================
 These disk image formats cannot be read, but their contents can be checksummed on sidecar creation
+
 * DiscFerret
 * KryoFlux STREAM
 * SuperCardPro
-
 
 License
 =======

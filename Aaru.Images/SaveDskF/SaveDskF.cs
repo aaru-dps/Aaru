@@ -38,9 +38,7 @@ using Aaru.CommonTypes.Structs;
 
 namespace Aaru.DiscImages
 {
-    /// <summary>
-    /// Implements reading and writing IBM's SaveDskF disk images
-    /// </summary>
+    /// <summary>Implements reading and writing IBM's SaveDskF disk images</summary>
     public sealed partial class SaveDskF : IWritableImage, IVerifiableImage
     {
         uint       _calculatedChk;

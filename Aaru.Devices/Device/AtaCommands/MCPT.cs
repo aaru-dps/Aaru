@@ -38,9 +38,7 @@ namespace Aaru.Devices
 {
     public sealed partial class Device
     {
-        /// <summary>
-        /// Enables media card pass through
-        /// </summary>
+        /// <summary>Enables media card pass through</summary>
         /// <param name="statusRegisters">Status registers.</param>
         /// <param name="timeout">Timeout in seconds</param>
         /// <param name="duration">Time it took to execute the command in milliseconds</param>
@@ -49,9 +47,7 @@ namespace Aaru.Devices
                                                out double duration) =>
             CheckMediaCardType(1, out statusRegisters, timeout, out duration);
 
-        /// <summary>
-        /// Disables media card pass through
-        /// </summary>
+        /// <summary>Disables media card pass through</summary>
         /// <param name="statusRegisters">Status registers.</param>
         /// <param name="timeout">Timeout in seconds</param>
         /// <param name="duration">Time it took to execute the command in milliseconds</param>
@@ -60,9 +56,7 @@ namespace Aaru.Devices
                                                 out double duration) =>
             CheckMediaCardType(0, out statusRegisters, timeout, out duration);
 
-        /// <summary>
-        /// Checks media card pass through
-        /// </summary>
+        /// <summary>Checks media card pass through</summary>
         /// <param name="feature">Feature</param>
         /// <param name="statusRegisters">Status registers.</param>
         /// <param name="timeout">Timeout in seconds</param>

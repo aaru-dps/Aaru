@@ -38,9 +38,7 @@ using Aaru.CommonTypes.Structs;
 
 namespace Aaru.DiscImages
 {
-    /// <summary>
-    /// Implements reading Basic Lisa Utility disk images
-    /// </summary>
+    /// <summary>Implements reading Basic Lisa Utility disk images</summary>
     public sealed partial class Blu : IWritableImage, IVerifiableSectorsImage
     {
         IFilter    _bluImageFilter;

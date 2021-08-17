@@ -35,19 +35,13 @@ using System;
 namespace Aaru.Database.Models
 {
     /// <inheritdoc />
-    /// <summary>
-    /// CD read offset
-    /// </summary>
+    /// <summary>CD read offset</summary>
     public class CdOffset : CommonTypes.Metadata.CdOffset
     {
-        /// <summary>
-        /// Builds an empty CD read offset
-        /// </summary>
+        /// <summary>Builds an empty CD read offset</summary>
         public CdOffset() {}
 
-        /// <summary>
-        /// Builds a CD read offset with the specified parameters
-        /// </summary>
+        /// <summary>Builds a CD read offset with the specified parameters</summary>
         /// <param name="manufacturer">Manufacturer</param>
         /// <param name="model">Model</param>
         /// <param name="offset">Read offset</param>
@@ -63,9 +57,7 @@ namespace Aaru.Database.Models
             AddedWhen    = ModifiedWhen = DateTime.UtcNow;
         }
 
-        /// <summary>
-        /// Builds a CD read offset from the metadata type
-        /// </summary>
+        /// <summary>Builds a CD read offset from the metadata type</summary>
         /// <param name="offset">Read offset metadata</param>
         public CdOffset(CommonTypes.Metadata.CdOffset offset)
         {
@@ -77,17 +69,11 @@ namespace Aaru.Database.Models
             AddedWhen    = ModifiedWhen = DateTime.UtcNow;
         }
 
-        /// <summary>
-        /// Database ID
-        /// </summary>
-        public int      Id           { get; set; }
-        /// <summary>
-        /// Date when model has been added to the database
-        /// </summary>
-        public DateTime AddedWhen    { get; set; }
-        /// <summary>
-        /// Date when model was last modified
-        /// </summary>
+        /// <summary>Database ID</summary>
+        public int Id { get; set; }
+        /// <summary>Date when model has been added to the database</summary>
+        public DateTime AddedWhen { get; set; }
+        /// <summary>Date when model was last modified</summary>
         public DateTime ModifiedWhen { get; set; }
     }
 }

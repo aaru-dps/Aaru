@@ -45,9 +45,9 @@ namespace Aaru.DiscImages
         public ImageInfo Info => _imageInfo;
 
         /// <inheritdoc />
-        public string Name   => "Apple 2IMG";
+        public string Name => "Apple 2IMG";
         /// <inheritdoc />
-        public Guid   Id     => new Guid("CBAF8824-BA5F-415F-953A-19A03519B2D1");
+        public Guid Id => new Guid("CBAF8824-BA5F-415F-953A-19A03519B2D1");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
         /// <inheritdoc />
@@ -56,7 +56,7 @@ namespace Aaru.DiscImages
         /// <inheritdoc />
         public List<DumpHardwareType> DumpHardware => null;
         /// <inheritdoc />
-        public CICMMetadataType       CicmMetadata => null;
+        public CICMMetadataType CicmMetadata => null;
 
         /// <inheritdoc />
         public IEnumerable<MediaTagType> SupportedMediaTags => new MediaTagType[]
@@ -82,7 +82,7 @@ namespace Aaru.DiscImages
             ".2mg"
         };
         /// <inheritdoc />
-        public bool   IsWriting    { get; private set; }
+        public bool IsWriting { get; private set; }
         /// <inheritdoc />
         public string ErrorMessage { get; private set; }
     }

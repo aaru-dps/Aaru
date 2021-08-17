@@ -44,21 +44,19 @@ namespace Aaru.Filesystems
 {
     // Information from an old unnamed document
     /// <inheritdoc />
-    /// <summary>
-    /// Implements detection of IBM's High Performance File System (HPFS)
-    /// </summary>
+    /// <summary>Implements detection of IBM's High Performance File System (HPFS)</summary>
     public sealed class HPFS : IFilesystem
     {
         /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
         /// <inheritdoc />
-        public Encoding       Encoding  { get; private set; }
+        public Encoding Encoding { get; private set; }
         /// <inheritdoc />
-        public string         Name      => "OS/2 High Performance File System";
+        public string Name => "OS/2 High Performance File System";
         /// <inheritdoc />
-        public Guid           Id        => new Guid("33513B2C-f590-4acb-8bf2-0b1d5e19dec5");
+        public Guid Id => new Guid("33513B2C-f590-4acb-8bf2-0b1d5e19dec5");
         /// <inheritdoc />
-        public string         Author    => "Natalia Portillo";
+        public string Author => "Natalia Portillo";
 
         /// <inheritdoc />
         public bool Identify(IMediaImage imagePlugin, Partition partition)

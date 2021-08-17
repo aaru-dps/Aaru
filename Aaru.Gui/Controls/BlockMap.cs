@@ -441,7 +441,7 @@ namespace Aaru.Gui.Controls
         void DrawSquares(Color[] colors, int borderWidth, int sideLength)
         {
             using IDrawingContextImpl ctxi = _bitmap.CreateDrawingContext(null);
-            using var ctx                  = new DrawingContext(ctxi, false);
+            using var                 ctx  = new DrawingContext(ctxi, false);
 
             int squareWidth  = (sideLength - (2 * borderWidth)) / colors.Length;
             int squareHeight = squareWidth;
@@ -452,9 +452,10 @@ namespace Aaru.Gui.Controls
             {
                 ctx.FillRectangle(new SolidColorBrush(color), new Rect(x, y, squareWidth, squareHeight));
                 x += squareWidth + (2 * borderWidth);
+
                 if(x >= sideLength)
                 {
-                    x = 0;
+                    x =  0;
                     y += squareHeight + (2 * borderWidth);
                 }
             }

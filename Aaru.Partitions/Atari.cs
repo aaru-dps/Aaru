@@ -42,28 +42,26 @@ using Aaru.Helpers;
 namespace Aaru.Partitions
 {
     /// <inheritdoc />
-    /// <summary>
-    /// Implements decoding of Atari GEMDOS partitions
-    /// </summary>
+    /// <summary>Implements decoding of Atari GEMDOS partitions</summary>
     public sealed class AtariPartitions : IPartition
     {
-        const uint TYPE_GEMDOS     = 0x0047454D;
+        const uint TYPE_GEMDOS      = 0x0047454D;
         const uint TYPE_BIG_GEMDOS  = 0x0042474D;
-        const uint TYPE_EXTENDED   = 0x0058474D;
-        const uint TYPE_LINUX      = 0x004C4E58;
-        const uint TYPE_SWAP       = 0x00535750;
-        const uint TYPE_RAW        = 0x00524157;
-        const uint TYPE_NETBSD     = 0x004E4244;
+        const uint TYPE_EXTENDED    = 0x0058474D;
+        const uint TYPE_LINUX       = 0x004C4E58;
+        const uint TYPE_SWAP        = 0x00535750;
+        const uint TYPE_RAW         = 0x00524157;
+        const uint TYPE_NETBSD      = 0x004E4244;
         const uint TYPE_NETBSD_SWAP = 0x004E4253;
-        const uint TYPE_SYSTEM_V       = 0x00554E58;
-        const uint TYPE_MAC        = 0x004D4143;
-        const uint TYPE_MINIX      = 0x004D4958;
-        const uint TYPE_MINIX2     = 0x004D4E58;
+        const uint TYPE_SYSTEM_V    = 0x00554E58;
+        const uint TYPE_MAC         = 0x004D4143;
+        const uint TYPE_MINIX       = 0x004D4958;
+        const uint TYPE_MINIX2      = 0x004D4E58;
 
         /// <inheritdoc />
-        public string Name   => "Atari partitions";
+        public string Name => "Atari partitions";
         /// <inheritdoc />
-        public Guid   Id     => new Guid("d1dd0f24-ec39-4c4d-9072-be31919a3b5e");
+        public Guid Id => new Guid("d1dd0f24-ec39-4c4d-9072-be31919a3b5e");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
@@ -275,16 +273,16 @@ namespace Aaru.Partitions
                         {
                             uint extendedType = extendedTable.Entries[j].Type & 0x00FFFFFF;
 
-                            if(extendedType != TYPE_GEMDOS     &&
+                            if(extendedType != TYPE_GEMDOS      &&
                                extendedType != TYPE_BIG_GEMDOS  &&
-                               extendedType != TYPE_LINUX      &&
-                               extendedType != TYPE_SWAP       &&
-                               extendedType != TYPE_RAW        &&
-                               extendedType != TYPE_NETBSD     &&
+                               extendedType != TYPE_LINUX       &&
+                               extendedType != TYPE_SWAP        &&
+                               extendedType != TYPE_RAW         &&
+                               extendedType != TYPE_NETBSD      &&
                                extendedType != TYPE_NETBSD_SWAP &&
-                               extendedType != TYPE_SYSTEM_V       &&
-                               extendedType != TYPE_MAC        &&
-                               extendedType != TYPE_MINIX      &&
+                               extendedType != TYPE_SYSTEM_V    &&
+                               extendedType != TYPE_MAC         &&
+                               extendedType != TYPE_MINIX       &&
                                extendedType != TYPE_MINIX2)
                                 continue;
 
@@ -385,16 +383,16 @@ namespace Aaru.Partitions
             {
                 uint type = table.IcdEntries[i].Type & 0x00FFFFFF;
 
-                if(type != TYPE_GEMDOS     &&
+                if(type != TYPE_GEMDOS      &&
                    type != TYPE_BIG_GEMDOS  &&
-                   type != TYPE_LINUX      &&
-                   type != TYPE_SWAP       &&
-                   type != TYPE_RAW        &&
-                   type != TYPE_NETBSD     &&
+                   type != TYPE_LINUX       &&
+                   type != TYPE_SWAP        &&
+                   type != TYPE_RAW         &&
+                   type != TYPE_NETBSD      &&
                    type != TYPE_NETBSD_SWAP &&
-                   type != TYPE_SYSTEM_V       &&
-                   type != TYPE_MAC        &&
-                   type != TYPE_MINIX      &&
+                   type != TYPE_SYSTEM_V    &&
+                   type != TYPE_MAC         &&
+                   type != TYPE_MINIX       &&
                    type != TYPE_MINIX2)
                     continue;
 

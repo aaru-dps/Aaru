@@ -39,9 +39,7 @@ namespace Aaru.Devices
 {
     public sealed partial class Device
     {
-        /// <summary>
-        /// Sets the data for the integrated display
-        /// </summary>
+        /// <summary>Sets the data for the integrated display</summary>
         /// <param name="senseBuffer">Returned SENSE buffer</param>
         /// <param name="flash">If the display should start flashing</param>
         /// <param name="mode">Display mode</param>

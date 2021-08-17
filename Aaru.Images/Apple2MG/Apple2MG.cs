@@ -39,9 +39,7 @@ using Aaru.CommonTypes.Structs;
 namespace Aaru.DiscImages
 {
     /// <inheritdoc />
-    /// <summary>
-    /// Implements reading and writing XGD emulator disk images
-    /// </summary>
+    /// <summary>Implements reading and writing XGD emulator disk images</summary>
     public sealed partial class Apple2Mg : IWritableImage
     {
         IFilter    _a2MgImageFilter;

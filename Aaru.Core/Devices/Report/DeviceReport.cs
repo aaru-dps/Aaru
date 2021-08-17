@@ -38,9 +38,7 @@ namespace Aaru.Core.Devices.Report
     {
         readonly Device _dev;
 
-        /// <summary>
-        /// Initializes a device report for the specified device (must be opened)
-        /// </summary>
+        /// <summary>Initializes a device report for the specified device (must be opened)</summary>
         /// <param name="device">Device</param>
         public DeviceReport(Device device) => _dev = device;
     }

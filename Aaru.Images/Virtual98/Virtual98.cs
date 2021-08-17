@@ -40,9 +40,7 @@ namespace Aaru.DiscImages
 {
     // Info from Neko Project II emulator
     /// <inheritdoc />
-    /// <summary>
-    /// Implements reading Virtual98 disk images
-    /// </summary>
+    /// <summary>Implements reading Virtual98 disk images</summary>
     public sealed partial class Virtual98 : IWritableImage
     {
         ImageInfo       _imageInfo;

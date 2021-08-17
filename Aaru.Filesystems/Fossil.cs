@@ -43,9 +43,7 @@ using Marshal = Aaru.Helpers.Marshal;
 namespace Aaru.Filesystems
 {
     /// <inheritdoc />
-    /// <summary>
-    /// Implements detection for the Plan-9 Fossil on-disk filesystem
-    /// </summary>
+    /// <summary>Implements detection for the Plan-9 Fossil on-disk filesystem</summary>
     public sealed class Fossil : IFilesystem
     {
         const uint FOSSIL_HDR_MAGIC = 0x3776AE89;
@@ -57,13 +55,13 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
         /// <inheritdoc />
-        public Encoding       Encoding  { get; private set; }
+        public Encoding Encoding { get; private set; }
         /// <inheritdoc />
-        public string         Name      => "Fossil Filesystem Plugin";
+        public string Name => "Fossil Filesystem Plugin";
         /// <inheritdoc />
-        public Guid           Id        => new Guid("932BF104-43F6-494F-973C-45EF58A51DA9");
+        public Guid Id => new Guid("932BF104-43F6-494F-973C-45EF58A51DA9");
         /// <inheritdoc />
-        public string         Author    => "Natalia Portillo";
+        public string Author => "Natalia Portillo";
 
         /// <inheritdoc />
         public bool Identify(IMediaImage imagePlugin, Partition partition)

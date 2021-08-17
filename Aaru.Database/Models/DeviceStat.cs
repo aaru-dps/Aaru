@@ -33,30 +33,18 @@
 namespace Aaru.Database.Models
 {
     /// <inheritdoc />
-    /// <summary>
-    /// Device found in usage
-    /// </summary>
+    /// <summary>Device found in usage</summary>
     public class DeviceStat : BaseModel
     {
-        /// <summary>
-        /// Manufacturer
-        /// </summary>
+        /// <summary>Manufacturer</summary>
         public string Manufacturer { get; set; }
-        /// <summary>
-        /// Model
-        /// </summary>
-        public string Model        { get; set; }
-        /// <summary>
-        /// Revision or firmware version
-        /// </summary>
-        public string Revision     { get; set; }
-        /// <summary>
-        /// Bus
-        /// </summary>
-        public string Bus          { get; set; }
-        /// <summary>
-        /// Has already been synchronized with Aaru's server
-        /// </summary>
-        public bool   Synchronized { get; set; }
+        /// <summary>Model</summary>
+        public string Model { get; set; }
+        /// <summary>Revision or firmware version</summary>
+        public string Revision { get; set; }
+        /// <summary>Bus</summary>
+        public string Bus { get; set; }
+        /// <summary>Has already been synchronized with Aaru's server</summary>
+        public bool Synchronized { get; set; }
     }
 }

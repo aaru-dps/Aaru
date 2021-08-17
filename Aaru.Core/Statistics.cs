@@ -627,8 +627,8 @@ namespace Aaru.Core
                         {
                             dto.Filters = new List<NameValueStats>();
 
-                            foreach(string nvs in ctx.Filters.Where(c => !c.Synchronized).Select(c => c.Name).Distinct()
-                            )
+                            foreach(string nvs in ctx.Filters.Where(c => !c.Synchronized).Select(c => c.Name).
+                                                      Distinct())
                                 dto.Filters.Add(new NameValueStats
                                 {
                                     name  = nvs,
@@ -868,8 +868,8 @@ namespace Aaru.Core
                             }
 
                         if(ctx.Filters.Any(c => !c.Synchronized))
-                            foreach(string nvs in ctx.Filters.Where(c => !c.Synchronized).Select(c => c.Name).Distinct()
-                            )
+                            foreach(string nvs in ctx.Filters.Where(c => !c.Synchronized).Select(c => c.Name).
+                                                      Distinct())
                             {
                                 Filter existing = ctx.Filters.FirstOrDefault(c => c.Synchronized && c.Name == nvs) ??
                                                   new Filter

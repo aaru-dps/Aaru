@@ -45,9 +45,7 @@ using Marshal = Aaru.Helpers.Marshal;
 namespace Aaru.Filesystems
 {
     /// <inheritdoc />
-    /// <summary>
-    /// Implements identification for the SGI Extent FileSystem
-    /// </summary>
+    /// <summary>Implements identification for the SGI Extent FileSystem</summary>
     public sealed class EFS : IFilesystem
     {
         const uint EFS_MAGIC     = 0x00072959;
@@ -56,13 +54,13 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
         /// <inheritdoc />
-        public Encoding       Encoding  { get; private set; }
+        public Encoding Encoding { get; private set; }
         /// <inheritdoc />
-        public string         Name      => "Extent File System Plugin";
+        public string Name => "Extent File System Plugin";
         /// <inheritdoc />
-        public Guid           Id        => new Guid("52A43F90-9AF3-4391-ADFE-65598DEEABAB");
+        public Guid Id => new Guid("52A43F90-9AF3-4391-ADFE-65598DEEABAB");
         /// <inheritdoc />
-        public string         Author    => "Natalia Portillo";
+        public string Author => "Natalia Portillo";
 
         /// <inheritdoc />
         public bool Identify(IMediaImage imagePlugin, Partition partition)

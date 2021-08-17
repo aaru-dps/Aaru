@@ -71,9 +71,9 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public List<Type> GetAllReadOnlyFilesystemPlugins() => Assembly.GetExecutingAssembly().GetTypes().
                                                                         Where(t => t.GetInterfaces().
-                                                                                  Contains(typeof(IReadOnlyFilesystem
-                                                                                  ))).Where(t => t.IsClass).
-                                                                        ToList();
+                                                                                  Contains(typeof(
+                                                                                      IReadOnlyFilesystem))).
+                                                                        Where(t => t.IsClass).ToList();
 
         /// <inheritdoc />
         public List<Type> GetAllWritableFloppyImagePlugins() => null;

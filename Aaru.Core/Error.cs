@@ -34,14 +34,10 @@ using Aaru.CommonTypes.Interop;
 
 namespace Aaru.Core
 {
-    /// <summary>
-    /// Prints the description of a system error number.
-    /// </summary>
+    /// <summary>Prints the description of a system error number.</summary>
     public static class Error
     {
-        /// <summary>
-        /// Prints the description of a system error number.
-        /// </summary>
+        /// <summary>Prints the description of a system error number.</summary>
         /// <param name="errno">System error number.</param>
         /// <returns>Error description.</returns>
         public static string Print(int errno)

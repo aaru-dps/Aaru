@@ -40,21 +40,17 @@ using Aaru.Decoders.ATA;
 using Aaru.Decoders.DVD;
 using Aaru.Decoders.SCSI;
 using Aaru.Decryption;
-using DVDDecryption = Aaru.Decryption.DVD.Dump;
 using Aaru.Devices;
 using Aaru.Helpers;
+using DVDDecryption = Aaru.Decryption.DVD.Dump;
 using Inquiry = Aaru.CommonTypes.Structs.Devices.SCSI.Inquiry;
 
 namespace Aaru.Core.Devices.Info
 {
-    /// <summary>
-    /// Obtains and contains information about a device
-    /// </summary>
+    /// <summary>Obtains and contains information about a device</summary>
     public partial class DeviceInfo
     {
-        /// <summary>
-        /// Initializes an instance of this class for the specified device
-        /// </summary>
+        /// <summary>Initializes an instance of this class for the specified device</summary>
         /// <param name="dev">Device</param>
         public DeviceInfo(Device dev)
         {

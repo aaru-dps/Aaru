@@ -38,9 +38,7 @@ using Aaru.CommonTypes.Structs;
 
 namespace Aaru.DiscImages
 {
-    /// <summary>
-    /// Implements reading KryoFlux flux images
-    /// </summary>
+    /// <summary>Implements reading KryoFlux flux images</summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public sealed partial class KryoFlux : IMediaImage, IVerifiableSectorsImage
     {

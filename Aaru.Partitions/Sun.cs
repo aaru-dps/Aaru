@@ -44,9 +44,7 @@ using Marshal = Aaru.Helpers.Marshal;
 namespace Aaru.Partitions
 {
     /// <inheritdoc />
-    /// <summary>
-    /// Implements decoding of Sun disklabels
-    /// </summary>
+    /// <summary>Implements decoding of Sun disklabels</summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public sealed class SunDisklabel : IPartition
     {
@@ -77,9 +75,9 @@ namespace Aaru.Partitions
                                                    (4 * 4) + (12 * 2) + (2 * 2));
 
         /// <inheritdoc />
-        public string Name   => "Sun Disklabel";
+        public string Name => "Sun Disklabel";
         /// <inheritdoc />
-        public Guid   Id     => new Guid("50F35CC4-8375-4445-8DCB-1BA550C931A3");
+        public Guid Id => new Guid("50F35CC4-8375-4445-8DCB-1BA550C931A3");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 

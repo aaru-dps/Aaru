@@ -84,9 +84,9 @@ namespace Aaru.Filters
         Entry    _rsrcFork;
 
         /// <inheritdoc />
-        public string Name   => "AppleDouble";
+        public string Name => "AppleDouble";
         /// <inheritdoc />
-        public Guid   Id     => new Guid("1B2165EE-C9DF-4B21-BBBB-9E5892B2DF4D");
+        public Guid Id => new Guid("1B2165EE-C9DF-4B21-BBBB-9E5892B2DF4D");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
