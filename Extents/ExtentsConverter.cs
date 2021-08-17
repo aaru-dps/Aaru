@@ -43,14 +43,10 @@ using Schemas;
 
 namespace Aaru.CommonTypes.Extents
 {
-    /// <summary>
-    /// Converts extents
-    /// </summary>
+    /// <summary>Converts extents</summary>
     public static class ExtentsConverter
     {
-        /// <summary>
-        /// Converts unsigned long integer extents into XML based extents
-        /// </summary>
+        /// <summary>Converts unsigned long integer extents into XML based extents</summary>
         /// <param name="extents">Extents</param>
         /// <returns>XML based extents</returns>
         public static ExtentType[] ToMetadata(ExtentsULong extents)
@@ -71,9 +67,7 @@ namespace Aaru.CommonTypes.Extents
             return array;
         }
 
-        /// <summary>
-        /// Converts XML based extents into unsigned long integer extents
-        /// </summary>
+        /// <summary>Converts XML based extents into unsigned long integer extents</summary>
         /// <param name="extents">XML based extents</param>
         /// <returns>Extents</returns>
         public static ExtentsULong FromMetadata(ExtentType[] extents)

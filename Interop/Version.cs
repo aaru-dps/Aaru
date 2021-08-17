@@ -42,18 +42,14 @@ using System.Runtime;
 
 namespace Aaru.CommonTypes.Interop
 {
-    /// <summary>
-    /// Gets our own, or the runtime's version
-    /// </summary>
+    /// <summary>Gets our own, or the runtime's version</summary>
     public static class Version
     {
         /// <summary>Gets version string</summary>
         /// <returns>Version</returns>
         public static string GetVersion() => typeof(Version).Assembly.GetName().Version?.ToString();
 
-        /// <summary>
-        /// Gets .NET Core version
-        /// </summary>
+        /// <summary>Gets .NET Core version</summary>
         /// <returns>Version</returns>
         public static string GetNetCoreVersion()
         {
@@ -76,9 +72,7 @@ namespace Aaru.CommonTypes.Interop
             return null;
         }
 
-        /// <summary>
-        /// Gets Mono version
-        /// </summary>
+        /// <summary>Gets Mono version</summary>
         /// <returns>Version</returns>
         public static string GetMonoVersion()
         {

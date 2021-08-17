@@ -42,14 +42,10 @@ using Schemas;
 
 namespace Aaru.CommonTypes.Metadata
 {
-    /// <summary>
-    /// Physical dimensions for media types
-    /// </summary>
+    /// <summary>Physical dimensions for media types</summary>
     public static class Dimensions
     {
-        /// <summary>
-        /// Gets the physical dimensions, in metadata expected format, for a given media type
-        /// </summary>
+        /// <summary>Gets the physical dimensions, in metadata expected format, for a given media type</summary>
         /// <param name="dskType">Media type</param>
         /// <returns>Dimensions metadata</returns>
         public static DimensionsType DimensionsFromMediaType(CommonTypes.MediaType dskType)

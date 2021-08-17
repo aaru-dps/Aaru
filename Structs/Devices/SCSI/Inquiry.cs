@@ -251,9 +251,7 @@ namespace Aaru.CommonTypes.Structs.Devices.SCSI
             0x48, 0x69, 0x2D, 0x4D, 0x44, 0x20, 0x20, 0x20
         };
 
-        /// <summary>
-        /// Decodes a SCSI INQUIRY response
-        /// </summary>
+        /// <summary>Decodes a SCSI INQUIRY response</summary>
         /// <param name="SCSIInquiryResponse">INQUIRY raw response data</param>
         /// <returns>Decoded SCSI INQUIRY</returns>
         #region Public methods
@@ -513,9 +511,7 @@ namespace Aaru.CommonTypes.Structs.Devices.SCSI
             return decoded;
         }
 
-        /// <summary>
-        /// Encodes a SCSI INQUIRY response
-        /// </summary>
+        /// <summary>Encodes a SCSI INQUIRY response</summary>
         /// <param name="inq">Decoded SCSI INQUIRY</param>
         /// <returns>Raw SCSI INQUIRY response</returns>
         public static byte[] Encode(Inquiry? inq)

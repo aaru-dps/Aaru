@@ -109,10 +109,10 @@ namespace Aaru.CommonTypes.Structs.Devices.ATA
             MustBeSet = 0x4000,
             #pragma warning disable 1591
             Reserved13 = 0x2000, Reserved12 = 0x1000, Reserved11 = 0x0800,
-            Reserved10                     = 0x0400, Reserved09 = 0x0200, Reserved08 = 0x0100,
-            Reserved07                     = 0x0080, Reserved06 = 0x0040, Reserved05 = 0x0020,
-            Reserved04                     = 0x0010, Reserved03 = 0x0008, Reserved02 = 0x0004,
-            Reserved01                     = 0x0002,
+            Reserved10 = 0x0400, Reserved09 = 0x0200, Reserved08 = 0x0100,
+            Reserved07 = 0x0080, Reserved06 = 0x0040, Reserved05 = 0x0020,
+            Reserved04 = 0x0010, Reserved03 = 0x0008, Reserved02 = 0x0004,
+            Reserved01 = 0x0002,
             #pragma warning restore 1591
             /// <summary>Indicates a device specific minimum standby timer value</summary>
             SpecificStandbyTimer = 0x0001
@@ -265,7 +265,7 @@ namespace Aaru.CommonTypes.Structs.Devices.ATA
             MustBeSet = 0x4000,
             #pragma warning disable 1591
             Reserved13 = 0x2000, Reserved12 = 0x1000, Reserved11 = 0x0800,
-            Reserved10                     = 0x0400,
+            Reserved10 = 0x0400,
             #pragma warning restore 1591
             /// <summary>DSN feature set is supported</summary>
             DSN = 0x0200,
@@ -327,9 +327,7 @@ namespace Aaru.CommonTypes.Structs.Devices.ATA
             ZonedBit0 = 0x0001
         }
 
-        /// <summary>
-        /// Data set management flag bits.
-        /// </summary>
+        /// <summary>Data set management flag bits.</summary>
         [Flags]
         public enum DataSetMgmtBit : ushort
         {
@@ -344,9 +342,7 @@ namespace Aaru.CommonTypes.Structs.Devices.ATA
             Trim = 0x0001
         }
 
-        /// <summary>
-        /// Device form factor
-        /// </summary>
+        /// <summary>Device form factor</summary>
         public enum DeviceFormFactorEnum : ushort
         {
             /// <summary>Size not reported</summary>
@@ -460,9 +456,7 @@ namespace Aaru.CommonTypes.Structs.Devices.ATA
             #pragma warning restore 1591
         }
 
-        /// <summary>
-        /// SATA capabilities flags
-        /// </summary>
+        /// <summary>SATA capabilities flags</summary>
         [Flags]
         public enum SATACapabilitiesBit : ushort
         {
@@ -484,7 +478,7 @@ namespace Aaru.CommonTypes.Structs.Devices.ATA
             NCQ = 0x0100,
             #pragma warning disable 1591
             Reserved07 = 0x0080, Reserved06 = 0x0040, Reserved05 = 0x0020,
-            Reserved04               = 0x0010,
+            Reserved04 = 0x0010,
             #pragma warning restore 1591
             /// <summary>Supports SATA Gen. 3 Signaling Speed (6.0Gb/s)</summary>
             Gen3Speed = 0x0008,
@@ -496,9 +490,7 @@ namespace Aaru.CommonTypes.Structs.Devices.ATA
             Clear = 0x0001
         }
 
-        /// <summary>
-        /// More SATA capabilities flags
-        /// </summary>
+        /// <summary>More SATA capabilities flags</summary>
         [Flags]
         public enum SATACapabilitiesBit2 : ushort
         {
@@ -527,9 +519,7 @@ namespace Aaru.CommonTypes.Structs.Devices.ATA
             Clear = 0x0001
         }
 
-        /// <summary>
-        /// SATA features flags
-        /// </summary>
+        /// <summary>SATA features flags</summary>
         [Flags]
         public enum SATAFeaturesBit : ushort
         {
@@ -560,9 +550,7 @@ namespace Aaru.CommonTypes.Structs.Devices.ATA
             Clear = 0x0001
         }
 
-        /// <summary>
-        /// SCT Command Transport flags
-        /// </summary>
+        /// <summary>SCT Command Transport flags</summary>
         [Flags]
         public enum SCTCommandTransportBit : ushort
         {
@@ -614,9 +602,7 @@ namespace Aaru.CommonTypes.Structs.Devices.ATA
             Supported = 0x0001
         }
 
-        /// <summary>
-        /// Specific configuration flags
-        /// </summary>
+        /// <summary>Specific configuration flags</summary>
         public enum SpecificConfigurationEnum : ushort
         {
             /// <summary>Device requires SET FEATURES to spin up and IDENTIFY DEVICE response is incomplete</summary>
@@ -629,9 +615,7 @@ namespace Aaru.CommonTypes.Structs.Devices.ATA
             NotRequiresSetCompleteResponse = 0xC837
         }
 
-        /// <summary>
-        /// Transfer mode flags
-        /// </summary>
+        /// <summary>Transfer mode flags</summary>
         [Flags]
         public enum TransferMode : byte
         {
@@ -642,9 +626,7 @@ namespace Aaru.CommonTypes.Structs.Devices.ATA
             #pragma warning restore 1591
         }
 
-        /// <summary>
-        /// Trusted Computing flags
-        /// </summary>
+        /// <summary>Trusted Computing flags</summary>
         [Flags]
         public enum TrustedComputingBit : ushort
         {
@@ -654,18 +636,16 @@ namespace Aaru.CommonTypes.Structs.Devices.ATA
             Set = 0x4000,
             #pragma warning disable 1591
             Reserved13 = 0x2000, Reserved12 = 0x1000, Reserved11 = 0x0800,
-            Reserved10               = 0x0400, Reserved09 = 0x0200, Reserved08 = 0x0100,
-            Reserved07               = 0x0080, Reserved06 = 0x0040, Reserved05 = 0x0020,
-            Reserved04               = 0x0010, Reserved03 = 0x0008, Reserved02 = 0x0004,
-            Reserved01               = 0x0002,
+            Reserved10 = 0x0400, Reserved09 = 0x0200, Reserved08 = 0x0100,
+            Reserved07 = 0x0080, Reserved06 = 0x0040, Reserved05 = 0x0020,
+            Reserved04 = 0x0010, Reserved03 = 0x0008, Reserved02 = 0x0004,
+            Reserved01 = 0x0002,
             #pragma warning restore 1591
             /// <summary>Trusted Computing feature set is supported</summary>
             TrustedComputing = 0x0001
         }
 
-        /// <summary>
-        /// IDENTIFY DEVICE decoded response
-        /// </summary>
+        /// <summary>IDENTIFY DEVICE decoded response</summary>
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 2)]
         public struct IdentifyDevice
         {
@@ -1017,9 +997,7 @@ namespace Aaru.CommonTypes.Structs.Devices.ATA
             public byte Checksum;
         }
 
-        /// <summary>
-        /// Decodes a raw IDENTIFY DEVICE response
-        /// </summary>
+        /// <summary>Decodes a raw IDENTIFY DEVICE response</summary>
         /// <param name="IdentifyDeviceResponse">Raw IDENTIFY DEVICE response</param>
         /// <returns>Decoded IDENTIFY DEVICE</returns>
         public static IdentifyDevice? Decode(byte[] IdentifyDeviceResponse)
@@ -1050,9 +1028,7 @@ namespace Aaru.CommonTypes.Structs.Devices.ATA
             return ATAID;
         }
 
-        /// <summary>
-        /// Encodes a raw IDENTIFY DEVICE response
-        /// </summary>
+        /// <summary>Encodes a raw IDENTIFY DEVICE response</summary>
         /// <param name="identify">Decoded IDENTIFY DEVICE</param>
         /// <returns>Raw IDENTIFY DEVICE response</returns>
         public static byte[] Encode(IdentifyDevice? identify)

@@ -39,14 +39,13 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Xml.Serialization;
+
 // ReSharper disable ClassNeverInstantiated.Global
 // ReSharper disable UnusedMember.Global
 
 namespace Aaru.CommonTypes.Metadata
 {
-    /// <summary>
-    /// Statistics
-    /// </summary>
+    /// <summary>Statistics</summary>
     [XmlRoot("DicStats", Namespace = "", IsNullable = false)]
     public class Stats
     {
@@ -75,50 +74,46 @@ namespace Aaru.CommonTypes.Metadata
         public List<DeviceStats> Devices { get; set; }
         /// <summary>Found media types, real, and in image</summary>
         [XmlArrayItem("Media")]
-        public List<MediaStats> Medias { get;  set; }
+        public List<MediaStats> Medias { get; set; }
         /// <summary>Benchmark statistics</summary>
         public BenchmarkStats Benchmark { get; set; }
         /// <summary>Media scanning statistics</summary>
         public MediaScanStats MediaScan { get; set; }
         /// <summary>Image verification statistics</summary>
-        public VerifyStats    Verify    { get; set; }
+        public VerifyStats Verify { get; set; }
     }
 
-    /// <summary>
-    /// DTO for statistics
-    /// </summary>
+    /// <summary>DTO for statistics</summary>
     [SuppressMessage("ReSharper", "CollectionNeverQueried.Global")]
     public class StatsDto
     {
         /// <summary>Executed commands</summary>
-        public List<NameValueStats> Commands               { get; set; }
+        public List<NameValueStats> Commands { get; set; }
         /// <summary>Operating systems Aaru has run from</summary>
-        public List<OsStats>        OperatingSystems       { get; set; }
+        public List<OsStats> OperatingSystems { get; set; }
         /// <summary>Aaru versions</summary>
-        public List<NameValueStats> Versions               { get; set; }
+        public List<NameValueStats> Versions { get; set; }
         /// <summary>Detected filesystems</summary>
-        public List<NameValueStats> Filesystems            { get; set; }
+        public List<NameValueStats> Filesystems { get; set; }
         /// <summary>Detected partitioning schemes</summary>
-        public List<NameValueStats> Partitions             { get; set; }
+        public List<NameValueStats> Partitions { get; set; }
         /// <summary>Media image formats</summary>
-        public List<NameValueStats> MediaFormats           { get; set; }
+        public List<NameValueStats> MediaFormats { get; set; }
         /// <summary>Used filters</summary>
-        public List<NameValueStats> Filters                { get; set; }
+        public List<NameValueStats> Filters { get; set; }
         /// <summary>Found devices</summary>
-        public List<DeviceStats>    Devices                { get; set; }
+        public List<DeviceStats> Devices { get; set; }
         /// <summary>Found media types, real, and in image</summary>
-        public List<MediaStats>     Medias                 { get; set; }
+        public List<MediaStats> Medias { get; set; }
         /// <summary>Remote applications</summary>
-        public List<OsStats>        RemoteApplications     { get; set; }
+        public List<OsStats> RemoteApplications { get; set; }
         /// <summary>Remote application architectures</summary>
-        public List<NameValueStats> RemoteArchitectures    { get; set; }
+        public List<NameValueStats> RemoteArchitectures { get; set; }
         /// <summary>Operating systems where a remote application has been running</summary>
-        public List<OsStats>        RemoteOperatingSystems { get; set; }
+        public List<OsStats> RemoteOperatingSystems { get; set; }
     }
 
-    /// <summary>
-    /// Command execution statistics
-    /// </summary>
+    /// <summary>Command execution statistics</summary>
     [SuppressMessage("ReSharper", "UnassignedField.Global")]
     public class CommandsStats
     {
@@ -175,47 +170,29 @@ namespace Aaru.CommonTypes.Metadata
         public long Failed;
     }
 
-    /// <summary>
-    /// Verification statistics
-    /// </summary>
+    /// <summary>Verification statistics</summary>
     public class VerifyStats
     {
-        /// <summary>
-        /// Image verification statistics
-        /// </summary>
-        public VerifiedItems  MediaImages;
-        /// <summary>
-        /// Image contents verification statistics
-        /// </summary>
+        /// <summary>Image verification statistics</summary>
+        public VerifiedItems MediaImages;
+        /// <summary>Image contents verification statistics</summary>
         public ScannedSectors Sectors;
     }
 
-    /// <summary>
-    /// Image contents verification statistics
-    /// </summary>
+    /// <summary>Image contents verification statistics</summary>
     public class ScannedSectors
     {
-        /// <summary>
-        /// Sectors found to be correct
-        /// </summary>
+        /// <summary>Sectors found to be correct</summary>
         public long Correct;
-        /// <summary>
-        /// Sectors found to be incorrect
-        /// </summary>
+        /// <summary>Sectors found to be incorrect</summary>
         public long Error;
-        /// <summary>
-        /// Total number of verified sectors
-        /// </summary>
+        /// <summary>Total number of verified sectors</summary>
         public long Total;
-        /// <summary>
-        /// Total number of sectors that could not be verified
-        /// </summary>
+        /// <summary>Total number of sectors that could not be verified</summary>
         public long Unverifiable;
     }
 
-    /// <summary>
-    /// Media scanning time statistics
-    /// </summary>
+    /// <summary>Media scanning time statistics</summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public class TimeStats
     {
@@ -233,159 +210,99 @@ namespace Aaru.CommonTypes.Metadata
         public long MoreThan500ms;
     }
 
-    /// <summary>
-    /// Media scanning statistics
-    /// </summary>
+    /// <summary>Media scanning statistics</summary>
     public class MediaScanStats
     {
-        /// <summary>
-        /// Statistics of scanned sectors
-        /// </summary>
+        /// <summary>Statistics of scanned sectors</summary>
         public ScannedSectors Sectors;
-        /// <summary>
-        /// Scan time statistics
-        /// </summary>
-        public TimeStats      Times;
+        /// <summary>Scan time statistics</summary>
+        public TimeStats Times;
     }
 
-    /// <summary>
-    /// Checksum type statistics
-    /// </summary>
+    /// <summary>Checksum type statistics</summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public class ChecksumStats
     {
-        /// <summary>
-        /// Checksum algorithm
-        /// </summary>
+        /// <summary>Checksum algorithm</summary>
         [XmlAttribute]
         public string algorithm;
-        /// <summary>
-        /// Time taken to execute algorithm
-        /// </summary>
+        /// <summary>Time taken to execute algorithm</summary>
         [XmlText]
         public double Value;
     }
 
-    /// <summary>
-    /// Benchmark statistics
-    /// </summary>
+    /// <summary>Benchmark statistics</summary>
     public class BenchmarkStats
     {
-        /// <summary>
-        /// Total time taken to run the checksum algorithms in parallel
-        /// </summary>
+        /// <summary>Total time taken to run the checksum algorithms in parallel</summary>
         public double All;
-        /// <summary>
-        /// List of time taken by each checksum algorithm
-        /// </summary>
+        /// <summary>List of time taken by each checksum algorithm</summary>
         [XmlElement("Checksum")]
         public List<ChecksumStats> Checksum;
-        /// <summary>
-        /// Time taken to benchmark entropy calculation
-        /// </summary>
+        /// <summary>Time taken to benchmark entropy calculation</summary>
         public double Entropy;
-        /// <summary>
-        /// Maximum amount of memory used while running the benchmark
-        /// </summary>
-        public long   MaxMemory;
-        /// <summary>
-        /// Minimum amount of memory used while running the benchmark
-        /// </summary>
-        public long   MinMemory;
-        /// <summary>
-        /// Total time taken to run the checksum algorithms sequentially
-        /// </summary>
+        /// <summary>Maximum amount of memory used while running the benchmark</summary>
+        public long MaxMemory;
+        /// <summary>Minimum amount of memory used while running the benchmark</summary>
+        public long MinMemory;
+        /// <summary>Total time taken to run the checksum algorithms sequentially</summary>
         public double Sequential;
     }
 
-    /// <summary>
-    /// Media statistics
-    /// </summary>
+    /// <summary>Media statistics</summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public class MediaStats
     {
-        /// <summary>
-        /// Found in a real device?
-        /// </summary>
+        /// <summary>Found in a real device?</summary>
         [XmlAttribute]
         public bool real;
-        /// <summary>
-        /// Media type
-        /// </summary>
+        /// <summary>Media type</summary>
         [XmlAttribute]
         public string type;
-        /// <summary>
-        /// Number of times it has been found
-        /// </summary>
+        /// <summary>Number of times it has been found</summary>
         [XmlText]
         public long Value;
     }
 
-    /// <summary>
-    /// Device statistics
-    /// </summary>
+    /// <summary>Device statistics</summary>
     public class DeviceStats
     {
-        /// <summary>
-        /// Is manufacturer null?
-        /// </summary>
+        /// <summary>Is manufacturer null?</summary>
         [XmlIgnore]
         public bool ManufacturerSpecified;
-        /// <summary>
-        /// Manufacturer string
-        /// </summary>
+        /// <summary>Manufacturer string</summary>
         public string Manufacturer { get; set; }
-        /// <summary>
-        /// Model string
-        /// </summary>
-        public string Model        { get; set; }
-        /// <summary>
-        /// Revision or firmware version
-        /// </summary>
-        public string Revision     { get; set; }
-        /// <summary>
-        /// Bus the device was attached to
-        /// </summary>
-        public string Bus          { get; set; }
+        /// <summary>Model string</summary>
+        public string Model { get; set; }
+        /// <summary>Revision or firmware version</summary>
+        public string Revision { get; set; }
+        /// <summary>Bus the device was attached to</summary>
+        public string Bus { get; set; }
     }
 
-    /// <summary>
-    /// Name=value pair statistics
-    /// </summary>
+    /// <summary>Name=value pair statistics</summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public class NameValueStats
     {
-        /// <summary>
-        /// Name
-        /// </summary>
+        /// <summary>Name</summary>
         [XmlAttribute]
         public string name { get; set; }
-        /// <summary>
-        /// Number of times it has been used/found
-        /// </summary>
+        /// <summary>Number of times it has been used/found</summary>
         [XmlText]
         public long Value { get; set; }
     }
 
-    /// <summary>
-    /// Operating system statistics
-    /// </summary>
+    /// <summary>Operating system statistics</summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public class OsStats
     {
-        /// <summary>
-        /// Operating system name
-        /// </summary>
+        /// <summary>Operating system name</summary>
         [XmlAttribute]
         public string name { get; set; }
-        /// <summary>
-        /// Operating system version
-        /// </summary>
+        /// <summary>Operating system version</summary>
         [XmlAttribute]
         public string version { get; set; }
-        /// <summary>
-        /// Number of times Aaru run on it
-        /// </summary>
+        /// <summary>Number of times Aaru run on it</summary>
         [XmlText]
         public long Value { get; set; }
     }

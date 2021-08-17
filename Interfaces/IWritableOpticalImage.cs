@@ -42,14 +42,10 @@ using Aaru.CommonTypes.Structs;
 
 namespace Aaru.CommonTypes.Interfaces
 {
-    /// <summary>
-    /// Defines an image that is writable and can store an optical disc (CD, DVD, etc)
-    /// </summary>
+    /// <summary>Defines an image that is writable and can store an optical disc (CD, DVD, etc)</summary>
     public interface IWritableOpticalImage : IWritableImage, IOpticalMediaImage
     {
-        /// <summary>
-        /// Image format capabilities
-        /// </summary>
+        /// <summary>Image format capabilities</summary>
         OpticalImageCapabilities OpticalCapabilities { get; }
 
         /// <summary>Sets tracks for optical media</summary>

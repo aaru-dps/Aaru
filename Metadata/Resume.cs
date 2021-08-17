@@ -43,61 +43,37 @@ using Schemas;
 
 namespace Aaru.CommonTypes.Metadata
 {
-    /// <summary>
-    /// Information that allows to resume a dump
-    /// </summary>
+    /// <summary>Information that allows to resume a dump</summary>
     [Serializable, XmlRoot("DicResume", Namespace = "", IsNullable = false)]
     public class Resume
     {
-        /// <summary>
-        /// List of blocks that returned an error on reading
-        /// </summary>
+        /// <summary>List of blocks that returned an error on reading</summary>
         [XmlArrayItem("Block")]
         public List<ulong> BadBlocks;
-        /// <summary>
-        /// Date/time this resume file was created
-        /// </summary>
+        /// <summary>Date/time this resume file was created</summary>
         [XmlElement(DataType = "dateTime")]
         public DateTime CreationDate;
-        /// <summary>
-        /// Last block on media
-        /// </summary>
+        /// <summary>Last block on media</summary>
         public ulong LastBlock;
-        /// <summary>
-        /// Date/time this resume file was last written to
-        /// </summary>
+        /// <summary>Date/time this resume file was last written to</summary>
         [XmlElement(DataType = "dateTime")]
         public DateTime LastWriteDate;
-        /// <summary>
-        /// Next block to read
-        /// </summary>
+        /// <summary>Next block to read</summary>
         public ulong NextBlock;
-        /// <summary>
-        /// Is media removable?
-        /// </summary>
-        public bool  Removable;
-        /// <summary>
-        /// Is media a tape?
-        /// </summary>
-        public bool  Tape;
-        /// <summary>
-        /// List of CD subchannels that did not read correctly
-        /// </summary>
+        /// <summary>Is media removable?</summary>
+        public bool Removable;
+        /// <summary>Is media a tape?</summary>
+        public bool Tape;
+        /// <summary>List of CD subchannels that did not read correctly</summary>
         [XmlArrayItem("Block")]
         public List<int> BadSubchannels;
-        /// <summary>
-        /// Extents of BLANK sectors for magneto-opticals
-        /// </summary>
+        /// <summary>Extents of BLANK sectors for magneto-opticals</summary>
         [XmlArrayItem("Extent")]
         public ExtentType[] BlankExtents;
-        /// <summary>
-        /// Title keys that has not been read
-        /// </summary>
+        /// <summary>Title keys that has not been read</summary>
         [XmlArrayItem("Block")]
         public List<ulong> MissingTitleKeys;
-        /// <summary>
-        /// List of dump tries
-        /// </summary>
+        /// <summary>List of dump tries</summary>
         [XmlArrayItem("DumpTry")]
         public List<DumpHardwareType> Tries;
     }

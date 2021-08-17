@@ -39,9 +39,7 @@ namespace Aaru.CommonTypes
 {
     public static partial class MediaTypeFromDevice
     {
-        /// <summary>
-        /// Gets the media type from an SCSI Streaming Commands compliant device
-        /// </summary>
+        /// <summary>Gets the media type from an SCSI Streaming Commands compliant device</summary>
         /// <param name="scsiPeripheralType">Peripheral type</param>
         /// <param name="vendor">Vendor string</param>
         /// <param name="model">Model string</param>

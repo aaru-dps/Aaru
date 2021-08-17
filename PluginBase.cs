@@ -46,6 +46,8 @@ namespace Aaru.CommonTypes
     /// <summary>Contain all plugins (filesystem, partition and image)</summary>
     public class PluginBase
     {
+        /// <summary>List of all archive formats</summary>
+        public readonly SortedDictionary<string, IArchive> Archives;
         /// <summary>List of checksum plugins</summary>
         public readonly List<IChecksum> Checksums;
         /// <summary>List of filter plugins</summary>
@@ -64,8 +66,6 @@ namespace Aaru.CommonTypes
         public readonly SortedDictionary<string, IWritableFloppyImage> WritableFloppyImages;
         /// <summary>List of writable media image plugins</summary>
         public readonly SortedDictionary<string, IWritableImage> WritableImages;
-        /// <summary>List of all archive formats</summary>
-        public readonly SortedDictionary<string, IArchive> Archives;
 
         /// <summary>Initializes the plugins lists</summary>
         public PluginBase()
@@ -82,9 +82,7 @@ namespace Aaru.CommonTypes
             Archives             = new SortedDictionary<string, IArchive>();
         }
 
-        /// <summary>
-        /// Adds plugins to the central plugin register
-        /// </summary>
+        /// <summary>Adds plugins to the central plugin register</summary>
         /// <param name="pluginRegister">Plugin register</param>
         public void AddPlugins(IPluginRegister pluginRegister)
         {

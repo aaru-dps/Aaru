@@ -41,9 +41,7 @@ using System.Collections.Generic;
 
 namespace Aaru.CommonTypes.Interfaces
 {
-    /// <summary>
-    /// Defines an image that can verify the integrity of the sectors it contains
-    /// </summary>
+    /// <summary>Defines an image that can verify the integrity of the sectors it contains</summary>
     public interface IVerifiableSectorsImage
     {
         /// <summary>Verifies a sector.</summary>

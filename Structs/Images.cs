@@ -167,9 +167,7 @@ namespace Aaru.CommonTypes.Structs
         /// <summary>Partition type</summary>
         public TrackType TrackType;
 
-        /// <summary>
-        /// Initializes an empty instance of this structure
-        /// </summary>
+        /// <summary>Initializes an empty instance of this structure</summary>
         public Track() => Indexes = new Dictionary<ushort, int>();
     }
 

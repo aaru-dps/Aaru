@@ -44,29 +44,19 @@ using System.Security.Principal;
 
 namespace Aaru.CommonTypes.Interop
 {
-    /// <summary>
-    /// Detects the underlying execution framework and operating system
-    /// </summary>
+    /// <summary>Detects the underlying execution framework and operating system</summary>
     public static class DetectOS
     {
-        /// <summary>
-        /// Are we running under Mono?
-        /// </summary>
+        /// <summary>Are we running under Mono?</summary>
         public static readonly bool IsMono =
             RuntimeInformation.FrameworkDescription.StartsWith("Mono", StringComparison.Ordinal);
-        /// <summary>
-        /// Are we running under .NET Framework?
-        /// </summary>
+        /// <summary>Are we running under .NET Framework?</summary>
         public static readonly bool IsNetFramework =
             RuntimeInformation.FrameworkDescription.StartsWith(".NET Framework", StringComparison.Ordinal);
-        /// <summary>
-        /// Are we running under .NET Core?
-        /// </summary>
+        /// <summary>Are we running under .NET Core?</summary>
         public static readonly bool IsNetCore =
             RuntimeInformation.FrameworkDescription.StartsWith(".NET Core", StringComparison.Ordinal);
-        /// <summary>
-        /// Are we running under .NET Native?
-        /// </summary>
+        /// <summary>Are we running under .NET Native?</summary>
         public static readonly bool IsNetNative =
             RuntimeInformation.FrameworkDescription.StartsWith(".NET Native", StringComparison.Ordinal);
 
@@ -76,9 +66,7 @@ namespace Aaru.CommonTypes.Interop
         /// <summary>Checks if the underlying runtime runs in 32-bit mode</summary>
         public static readonly bool Is32Bit = IntPtr.Size == 4;
 
-        /// <summary>
-        /// Are we running under Windows?
-        /// </summary>
+        /// <summary>Are we running under Windows?</summary>
         public static bool IsWindows => GetRealPlatformID() == PlatformID.Win32NT      ||
                                         GetRealPlatformID() == PlatformID.Win32S       ||
                                         GetRealPlatformID() == PlatformID.Win32Windows ||
@@ -86,9 +74,7 @@ namespace Aaru.CommonTypes.Interop
                                         GetRealPlatformID() == PlatformID.WindowsPhone ||
                                         GetRealPlatformID() == PlatformID.Xbox;
 
-        /// <summary>
-        /// Are we running with administrative (root) privileges?
-        /// </summary>
+        /// <summary>Are we running with administrative (root) privileges?</summary>
         public static bool IsAdmin
         {
             get

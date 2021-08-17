@@ -42,8 +42,8 @@ using System.IO;
 namespace Aaru.CommonTypes.Interfaces
 {
     /// <summary>
-    /// Defines a filter, that is, a transformation of the data from a file, like, for example, a compressor (e.g. GZIP),
-    /// or a container (e.g. AppleDouble)
+    ///     Defines a filter, that is, a transformation of the data from a file, like, for example, a compressor (e.g.
+    ///     GZIP), or a container (e.g. AppleDouble)
     /// </summary>
     public interface IFilter
     {

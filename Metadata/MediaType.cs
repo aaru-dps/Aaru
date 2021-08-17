@@ -39,14 +39,10 @@
 #pragma warning disable 612
 namespace Aaru.CommonTypes.Metadata
 {
-    /// <summary>
-    /// Handles media type for metadata
-    /// </summary>
+    /// <summary>Handles media type for metadata</summary>
     public static class MediaType
     {
-        /// <summary>
-        /// Converts a media type of a pair of type and subtype strings to use in metadata
-        /// </summary>
+        /// <summary>Converts a media type of a pair of type and subtype strings to use in metadata</summary>
         /// <param name="dskType">Media type</param>
         /// <returns>Media type and subtype for metadata</returns>
         public static (string type, string subType) MediaTypeToString(CommonTypes.MediaType dskType)

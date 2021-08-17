@@ -227,9 +227,7 @@ namespace Aaru.CommonTypes.Structs
         }
     }
 
-    /// <summary>
-    /// Information about a volume
-    /// </summary>
+    /// <summary>Information about a volume</summary>
     public class FileSystemInfo
     {
         /// <summary>Blocks for this filesystem</summary>
@@ -249,53 +247,35 @@ namespace Aaru.CommonTypes.Structs
         /// <summary>Filesystem type</summary>
         public string Type;
 
-        /// <summary>
-        /// Initializes an empty instance of this structure
-        /// </summary>
+        /// <summary>Initializes an empty instance of this structure</summary>
         public FileSystemInfo() => Id = new FileSystemId();
 
-        /// <summary>
-        /// Gets a clone of this structure
-        /// </summary>
+        /// <summary>Gets a clone of this structure</summary>
         /// <returns>Clone of this structure</returns>
         public FileSystemInfo ShallowCopy() => (FileSystemInfo)MemberwiseClone();
     }
 
-    /// <summary>
-    /// Stores a filesystem volume unique identifier or serial number
-    /// </summary>
+    /// <summary>Stores a filesystem volume unique identifier or serial number</summary>
     [StructLayout(LayoutKind.Explicit)]
     public struct FileSystemId
     {
-        /// <summary>
-        /// Set to <c>true</c> if the identifier is a 32-bit integer
-        /// </summary>
+        /// <summary>Set to <c>true</c> if the identifier is a 32-bit integer</summary>
         [FieldOffset(0)]
         public bool IsInt;
-        /// <summary>
-        /// Set to <c>true</c> if the identifier is a 64-bit integer
-        /// </summary>
+        /// <summary>Set to <c>true</c> if the identifier is a 64-bit integer</summary>
         [FieldOffset(1)]
         public bool IsLong;
-        /// <summary>
-        /// Set to <c>true</c> if the identifier is a GUID
-        /// </summary>
+        /// <summary>Set to <c>true</c> if the identifier is a GUID</summary>
         [FieldOffset(2)]
         public bool IsGuid;
 
-        /// <summary>
-        /// Identifier as a 32-bit integer
-        /// </summary>
+        /// <summary>Identifier as a 32-bit integer</summary>
         [FieldOffset(3)]
         public uint Serial32;
-        /// <summary>
-        /// Identifier as a 64-bit integer
-        /// </summary>
+        /// <summary>Identifier as a 64-bit integer</summary>
         [FieldOffset(3)]
         public ulong Serial64;
-        /// <summary>
-        /// Identifier as a GUID
-        /// </summary>
+        /// <summary>Identifier as a GUID</summary>
         [FieldOffset(3)]
         public Guid uuid;
     }

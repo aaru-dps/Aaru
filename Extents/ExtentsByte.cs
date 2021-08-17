@@ -149,7 +149,7 @@ namespace Aaru.CommonTypes.Extents
         }
 
         /// <summary>Checks if the specified item is contained by an extent on this instance</summary>
-        /// <param name="item">Item to seach for</param>
+        /// <param name="item">Item to search for</param>
         /// <returns><c>true</c> if any of the extents on this instance contains the item</returns>
         public bool Contains(byte item) => _backend.Any(extent => item >= extent.Item1 && item <= extent.Item2);
 

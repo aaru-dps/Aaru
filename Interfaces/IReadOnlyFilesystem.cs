@@ -45,17 +45,13 @@ using Aaru.CommonTypes.Structs;
 namespace Aaru.CommonTypes.Interfaces
 {
     /// <inheritdoc />
-    /// <summary>
-    /// Defines the interface to implement reading the contents of a filesystem
-    /// </summary>
+    /// <summary>Defines the interface to implement reading the contents of a filesystem</summary>
     public interface IReadOnlyFilesystem : IFilesystem
     {
         /// <summary>Retrieves a list of options supported by the filesystem, with name, type and description</summary>
         IEnumerable<(string name, Type type, string description)> SupportedOptions { get; }
 
-        /// <summary>
-        /// Supported namespaces
-        /// </summary>
+        /// <summary>Supported namespaces</summary>
         Dictionary<string, string> Namespaces { get; }
 
         /// <summary>

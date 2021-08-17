@@ -38,9 +38,7 @@ namespace Aaru.CommonTypes
 {
     public static partial class MediaTypeFromDevice
     {
-        /// <summary>
-        /// Gets the media type from an ATA (not ATAPI) device
-        /// </summary>
+        /// <summary>Gets the media type from an ATA (not ATAPI) device</summary>
         /// <param name="manufacturer">Manufacturer string</param>
         /// <param name="model">Model string</param>
         /// <param name="removable">Is the device removable?</param>

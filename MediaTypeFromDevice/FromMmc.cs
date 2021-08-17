@@ -37,14 +37,10 @@ using Aaru.Console;
 
 namespace Aaru.CommonTypes
 {
-    /// <summary>
-    /// Gets the media type from a real device
-    /// </summary>
+    /// <summary>Gets the media type from a real device</summary>
     public static partial class MediaTypeFromDevice
     {
-        /// <summary>
-        /// Gets the media type from an SCSI MultiMedia Commands compliant device
-        /// </summary>
+        /// <summary>Gets the media type from an SCSI MultiMedia Commands compliant device</summary>
         /// <param name="model">Model string</param>
         /// <param name="mediumType">Medium type from MODE SENSE</param>
         /// <param name="densityCode">Density code from MODE SENSE</param>

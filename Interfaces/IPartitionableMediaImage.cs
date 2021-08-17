@@ -41,9 +41,7 @@ using System.Collections.Generic;
 
 namespace Aaru.CommonTypes.Interfaces
 {
-    /// <summary>
-    /// Defines an image that can contain partitions
-    /// </summary>
+    /// <summary>Defines an image that can contain partitions</summary>
     public interface IPartitionableMediaImage
     {
         /// <summary>

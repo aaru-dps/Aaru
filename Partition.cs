@@ -74,6 +74,7 @@ namespace Aaru.CommonTypes
         public override bool Equals(object obj) => obj is Partition partition && Equals(partition);
 
         /// <inheritdoc />
+
         // ReSharper disable once NonReadonlyMemberInGetHashCode
         public override int GetHashCode() => Start.GetHashCode() + End.GetHashCode();
 

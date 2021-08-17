@@ -39,9 +39,7 @@ namespace Aaru.CommonTypes
 {
     public static partial class MediaTypeFromDevice
     {
-        /// <summary>
-        /// Gets the media type from a SCSI Block Commands compliant device
-        /// </summary>
+        /// <summary>Gets the media type from a SCSI Block Commands compliant device</summary>
         /// <param name="vendor">Vendor string</param>
         /// <param name="model">Model string</param>
         /// <param name="mediumType">Medium type from MODE SENSE</param>

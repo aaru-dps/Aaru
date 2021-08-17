@@ -321,9 +321,7 @@ namespace Aaru.CommonTypes.Enums
         NotFound = 0x40
     }
 
-    /// <summary>
-    /// Types of floppy disks
-    /// </summary>
+    /// <summary>Types of floppy disks</summary>
     public enum FloppyTypes : byte
     {
         /// <summary>8" floppy</summary>
@@ -340,9 +338,7 @@ namespace Aaru.CommonTypes.Enums
         QuickDisk
     }
 
-    /// <summary>
-    /// Enumeration of floppy densities
-    /// </summary>
+    /// <summary>Enumeration of floppy densities</summary>
     public enum FloppyDensities : byte
     {
         /// <summary>Standard coercivity (about 300Oe as found in 8" and 5.25"-double-density disks).</summary>
@@ -355,76 +351,43 @@ namespace Aaru.CommonTypes.Enums
         Extended
     }
 
-    /// <summary>
-    /// Capabilities for optical media image formats
-    /// </summary>
+    /// <summary>Capabilities for optical media image formats</summary>
     [Flags]
     public enum OpticalImageCapabilities : ulong
     {
-        /// <summary>
-        /// Can store Red Book audio tracks?
-        /// </summary>
+        /// <summary>Can store Red Book audio tracks?</summary>
         CanStoreAudioTracks = 0x01,
-        /// <summary>
-        /// Can store CD-V analogue video tracks?
-        /// </summary>
+        /// <summary>Can store CD-V analogue video tracks?</summary>
         CanStoreVideoTracks = 0x02,
-        /// <summary>
-        /// Can store Yellow Book data tracks?
-        /// </summary>
-        CanStoreDataTracks     = 0x03,
-        /// <summary>
-        /// Can store pregaps without needing to interpret the subchannel?
-        /// </summary>
-        CanStorePregaps     = 0x04,
-        /// <summary>
-        /// Can store indexes without needing to interpret the subchannel?
-        /// </summary>
-        CanStoreIndexes     = 0x08,
-        /// <summary>
-        /// Can store raw P to W subchannel data?
-        /// </summary>
-        CanStoreSubchannelRw   = 0x10,
-        /// <summary>
-        /// Can store more than one session?
-        /// </summary>
-        CanStoreSessions    = 0x20,
-        /// <summary>
-        /// Can store track ISRCs without needing to interpret the subchannel?
-        /// </summary>
-        CanStoreIsrc        = 0x40,
-        /// <summary>
-        /// Can store Lead-In's CD-TEXT?
-        /// </summary>
-        CanStoreCdText         = 0x80,
-        /// <summary>
-        /// Can store the MCN without needing to interpret the subchannel?
-        /// </summary>
-        CanStoreMcn         = 0x100,
-        /// <summary>
-        /// Can store the whole 2352 bytes of a sector?
-        /// </summary>
-        CanStoreRawData    = 0x200,
-        /// <summary>
-        /// Can store more than 1 session in media that is not CD based (DVD et al)?
-        /// </summary>
+        /// <summary>Can store Yellow Book data tracks?</summary>
+        CanStoreDataTracks = 0x03,
+        /// <summary>Can store pregaps without needing to interpret the subchannel?</summary>
+        CanStorePregaps = 0x04,
+        /// <summary>Can store indexes without needing to interpret the subchannel?</summary>
+        CanStoreIndexes = 0x08,
+        /// <summary>Can store raw P to W subchannel data?</summary>
+        CanStoreSubchannelRw = 0x10,
+        /// <summary>Can store more than one session?</summary>
+        CanStoreSessions = 0x20,
+        /// <summary>Can store track ISRCs without needing to interpret the subchannel?</summary>
+        CanStoreIsrc = 0x40,
+        /// <summary>Can store Lead-In's CD-TEXT?</summary>
+        CanStoreCdText = 0x80,
+        /// <summary>Can store the MCN without needing to interpret the subchannel?</summary>
+        CanStoreMcn = 0x100,
+        /// <summary>Can store the whole 2352 bytes of a sector?</summary>
+        CanStoreRawData = 0x200,
+        /// <summary>Can store more than 1 session in media that is not CD based (DVD et al)?</summary>
         CanStoreNotCdSessions = 0x2000,
-        /// <summary>
-        /// Can store more than 1 track in media that is not CD based (DVD et al)?
-        /// </summary>
+        /// <summary>Can store more than 1 track in media that is not CD based (DVD et al)?</summary>
         CanStoreNotCdTracks = 0x4000,
+
         // TODO: Implement
-        /// <summary>
-        /// Can store scrambled data?
-        /// </summary>
+        /// <summary>Can store scrambled data?</summary>
         CanStoreScrambledData = 0x400,
-        /// <summary>
-        /// Can store only the user area of a sector (2048, 2324, etc)?
-        /// </summary>
+        /// <summary>Can store only the user area of a sector (2048, 2324, etc)?</summary>
         CanStoreCookedData = 0x800,
-        /// <summary>
-        /// Can store more than 1 track?
-        /// </summary>
+        /// <summary>Can store more than 1 track?</summary>
         CanStoreMultipleTracks = 0x1000
     }
 }
