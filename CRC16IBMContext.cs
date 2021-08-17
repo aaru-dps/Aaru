@@ -32,6 +32,7 @@
 
 namespace Aaru.Checksums
 {
+    /// <inheritdoc />
     /// <summary>
     /// Implements the CRC16 algorithm with IBM polynomial and seed
     /// </summary>
