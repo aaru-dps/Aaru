@@ -389,13 +389,13 @@ namespace Aaru.Core.Logging
                     prettySense = prettySense.Replace("\n", " - ");
 
                     _logSw.WriteLine("SCSI command {0} error: SENSE {1} ASC {2:X2}h ASCQ {3:X2}h, {4}, {5}.", command,
-                                     decodedSense?.SenseKey, decodedSense?.ASC, decodedSense?.ASCQ, hexSense,
+                                     decodedSense.Value.SenseKey, decodedSense.Value.ASC, decodedSense.Value.ASCQ, hexSense,
                                      prettySense);
                 }
                 else
                 {
                     _logSw.WriteLine("SCSI command {0} error: SENSE {1} ASC {2:X2}h ASCQ {3:X2}h, {4}.", command,
-                                     decodedSense?.SenseKey, decodedSense?.ASC, decodedSense?.ASCQ, hexSense);
+                                     decodedSense.Value.SenseKey, decodedSense.Value.ASC, decodedSense.Value.ASCQ, hexSense);
                 }
             }
             else
@@ -456,13 +456,13 @@ namespace Aaru.Core.Logging
                     prettySense = prettySense.Replace("\n", " - ");
 
                     _logSw.WriteLine("SCSI reading LBA {0} error: SENSE {1} ASC {2:X2}h ASCQ {3:X2}h, {4}, {5}.", block,
-                                     decodedSense?.SenseKey, decodedSense?.ASC, decodedSense?.ASCQ, hexSense,
+                                     decodedSense.Value.SenseKey, decodedSense.Value.ASC, decodedSense.Value.ASCQ, hexSense,
                                      prettySense);
                 }
                 else
                 {
                     _logSw.WriteLine("SCSI reading LBA {0} error: SENSE {1} ASC {2:X2}h ASCQ {3:X2}h, {4}.", block,
-                                     decodedSense?.SenseKey, decodedSense?.ASC, decodedSense?.ASCQ, hexSense);
+                                     decodedSense.Value.SenseKey, decodedSense.Value.ASC, decodedSense.Value.ASCQ, hexSense);
                 }
             }
             else

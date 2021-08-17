@@ -548,11 +548,11 @@ namespace Aaru.Core.Devices.Report
                 {
                     mediaTest.SupportsReadLong = true;
 
-                    bool valid       = decSense?.Fixed?.InformationValid == true;
-                    bool ili         = decSense?.Fixed?.ILI              == true;
-                    uint information = decSense?.Fixed?.Information ?? 0;
+                    bool valid       = decSense.Value.Fixed?.InformationValid == true;
+                    bool ili         = decSense.Value.Fixed?.ILI              == true;
+                    uint information = decSense.Value.Fixed?.Information ?? 0;
 
-                    if(decSense?.Descriptor.HasValue == true &&
+                    if(decSense.Value.Descriptor.HasValue &&
                        decSense.Value.Descriptor.Value.Descriptors.TryGetValue(0, out byte[] desc00))
                     {
                         valid       = true;
@@ -578,11 +578,11 @@ namespace Aaru.Core.Devices.Report
                 {
                     mediaTest.SupportsReadLong16 = true;
 
-                    bool valid       = decSense?.Fixed?.InformationValid == true;
-                    bool ili         = decSense?.Fixed?.ILI              == true;
-                    uint information = decSense?.Fixed?.Information ?? 0;
+                    bool valid       = decSense.Value.Fixed?.InformationValid == true;
+                    bool ili         = decSense.Value.Fixed?.ILI              == true;
+                    uint information = decSense.Value.Fixed?.Information ?? 0;
 
-                    if(decSense?.Descriptor.HasValue == true &&
+                    if(decSense.Value.Descriptor.HasValue &&
                        decSense.Value.Descriptor.Value.Descriptors.TryGetValue(0, out byte[] desc00))
                     {
                         valid       = true;
@@ -821,11 +821,11 @@ namespace Aaru.Core.Devices.Report
                 {
                     capabilities.SupportsReadLong = true;
 
-                    bool valid       = decSense?.Fixed?.InformationValid == true;
-                    bool ili         = decSense?.Fixed?.ILI              == true;
-                    uint information = decSense?.Fixed?.Information ?? 0;
+                    bool valid       = decSense.Value.Fixed?.InformationValid == true;
+                    bool ili         = decSense.Value.Fixed?.ILI              == true;
+                    uint information = decSense.Value.Fixed?.Information ?? 0;
 
-                    if(decSense?.Descriptor.HasValue == true &&
+                    if(decSense.Value.Descriptor.HasValue &&
                        decSense.Value.Descriptor.Value.Descriptors.TryGetValue(0, out byte[] desc00))
                     {
                         valid       = true;
@@ -852,11 +852,11 @@ namespace Aaru.Core.Devices.Report
                 {
                     capabilities.SupportsReadLong16 = true;
 
-                    bool valid       = decSense?.Fixed?.InformationValid == true;
-                    bool ili         = decSense?.Fixed?.ILI              == true;
-                    uint information = decSense?.Fixed?.Information ?? 0;
+                    bool valid       = decSense.Value.Fixed?.InformationValid == true;
+                    bool ili         = decSense.Value.Fixed?.ILI              == true;
+                    uint information = decSense.Value.Fixed?.Information ?? 0;
 
-                    if(decSense?.Descriptor.HasValue == true &&
+                    if(decSense.Value.Descriptor.HasValue &&
                        decSense.Value.Descriptor.Value.Descriptors.TryGetValue(0, out byte[] desc00))
                     {
                         valid       = true;
