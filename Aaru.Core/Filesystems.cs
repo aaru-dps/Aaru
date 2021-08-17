@@ -49,6 +49,7 @@ namespace Aaru.Core
         /// <param name="imagePlugin">Media image</param>
         /// <param name="idPlugins">List of plugins recognizing the filesystem</param>
         /// <param name="partition">Partition</param>
+        /// <param name="getGuid">Gets plugin GUID</param>
         public static void Identify(IMediaImage imagePlugin, out List<string> idPlugins, Partition partition,
                                     bool getGuid = false)
         {

@@ -51,6 +51,7 @@ namespace Aaru.Core
         /// <param name="plugins">Image plugins</param>
         /// <param name="imgChecksums">List of image checksums</param>
         /// <param name="sidecar">Metadata sidecar</param>
+        /// <param name="encoding">Encoding to be used for filesystem plugins</param>
         void LinearMedia(IMediaImage image, Guid filterId, string imagePath, FileInfo fi, PluginBase plugins,
                          List<ChecksumType> imgChecksums, ref CICMMetadataType sidecar, Encoding encoding) =>
             sidecar.LinearMedia = new[]

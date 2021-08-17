@@ -57,6 +57,7 @@ namespace Aaru.Core.Devices.Dumping
         /// <param name="firmware">Firmware revision</param>
         /// <param name="isTape">Set to <c>true</c> if device is a streaming tape, <c>false</c> otherwise</param>
         /// <param name="private">Disable saving paths or serial numbers in images and logs</param>
+        /// <param name="force">Force dump enabled</param>
         /// <exception cref="System.NotImplementedException">If device uses CHS addressing</exception>
         /// <exception cref="System.InvalidOperationException">
         ///     If the provided resume does not correspond with the current in

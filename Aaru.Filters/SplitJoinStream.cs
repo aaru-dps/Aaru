@@ -111,6 +111,7 @@ namespace Aaru.Filters
         /// <param name="handle">A file handle for the file that the stream will encapsulate.</param>
         /// <param name="access">A bitwise combination of the enumeration values that determines how the file can be accessed by a <see cref="FileStream" /> object.</param>
         /// <param name="bufferSize">A positive Int32 value greater than 0 indicating the buffer size. The default buffer size is 4096.</param>
+        /// <param name="isAsync">Specifies whether to use asynchronous I/O or synchronous I/O.</param>
         public void Add(SafeFileHandle handle, FileAccess access, int bufferSize, bool isAsync) =>
             Add(new FileStream(handle, access, bufferSize, isAsync));
 
@@ -180,7 +181,7 @@ namespace Aaru.Filters
         /// <param name="index">The index into <paramref name="buffer"/> at which the stream begins.</param>
         /// <param name="count">The length in bytes to add to the end of the current stream.</param>
         /// <param name="writable">The setting of the CanWrite property, currently ignored.</param>
-        public void Add(byte[] buffer, int index, int count, bool writable, long start, long end) =>
+        public void Add(byte[] buffer, int index, int count, bool writable) =>
             Add(new MemoryStream(buffer, index, count, writable));
 
         /// <summary>
