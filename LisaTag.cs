@@ -36,10 +36,19 @@ using Aaru.Helpers;
 
 namespace Aaru.Decoders
 {
+    /// <summary>
+    /// Represents a Lisa Office 7/7 sector tag
+    /// </summary>
     [SuppressMessage("ReSharper", "MemberCanBeInternal"), SuppressMessage("ReSharper", "NotAccessedField.Global"),
      SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [SuppressMessage("ReSharper", "StructMemberCanBeMadeReadOnly")]
     public static class LisaTag
     {
+        /// <summary>
+        /// Decodes tag from a 3.5" Sony micro-floppy
+        /// </summary>
+        /// <param name="tag">Byte array containing raw tag data</param>
+        /// <returns>Decoded tag in Sony's format</returns>
         public static SonyTag? DecodeSonyTag(byte[] tag)
         {
             if(tag        == null ||
@@ -64,6 +73,11 @@ namespace Aaru.Decoders
             return snTag;
         }
 
+        /// <summary>
+        /// Decodes tag from a Profile
+        /// </summary>
+        /// <param name="tag">Byte array containing raw tag data</param>
+        /// <returns>Decoded tag in Profile's format</returns>
         public static ProfileTag? DecodeProfileTag(byte[] tag)
         {
             if(tag        == null ||
@@ -109,6 +123,11 @@ namespace Aaru.Decoders
             return phTag;
         }
 
+        /// <summary>
+        /// Decodes tag from a Priam
+        /// </summary>
+        /// <param name="tag">Byte array containing raw tag data</param>
+        /// <returns>Decoded tag in Priam's format</returns>
         public static PriamTag? DecodePriamTag(byte[] tag)
         {
             if(tag        == null ||
@@ -156,6 +175,11 @@ namespace Aaru.Decoders
             return pmTag;
         }
 
+        /// <summary>
+        /// Decodes tag from any known format
+        /// </summary>
+        /// <param name="tag">Byte array containing raw tag data</param>
+        /// <returns>Decoded tag in Priam's format</returns>
         public static PriamTag? DecodeTag(byte[] tag)
         {
             if(tag == null)
