@@ -32,9 +32,7 @@
 
 namespace Aaru.Helpers
 {
-    /// <summary>
-    /// Helper operations to count bits
-    /// </summary>
+    /// <summary>Helper operations to count bits</summary>
     public static class CountBits
     {
         /// <summary>Counts the number of bits set to <c>true</c> in a number</summary>

@@ -32,9 +32,7 @@
 
 namespace Aaru.Helpers
 {
-    /// <summary>
-    /// Helper operations to work with CHS values
-    /// </summary>
+    /// <summary>Helper operations to work with CHS values</summary>
     public static class CHS
     {
         /// <summary>Converts a CHS position to a LBA one</summary>

@@ -266,8 +266,7 @@ namespace Aaru.Helpers
         /// <summary>Swaps all members of a structure</summary>
         /// <param name="str"></param>
         /// <returns></returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
+        [MethodImpl(MethodImplOptions.AggressiveInlining), SuppressMessage("ReSharper", "InconsistentNaming")]
         public static object SwapStructureMembersEndian(object str)
         {
             Type        t         = str.GetType();
@@ -362,9 +361,7 @@ namespace Aaru.Helpers
             return str;
         }
 
-        /// <summary>
-        /// Swaps all fields in an structure considering them to follow PDP endian conventions
-        /// </summary>
+        /// <summary>Swaps all fields in an structure considering them to follow PDP endian conventions</summary>
         /// <param name="str">Source structure</param>
         /// <returns>Resulting structure</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -435,9 +432,7 @@ namespace Aaru.Helpers
         public static byte[] StructureToByteArrayBigEndian<T>(T str) where T : struct =>
             StructureToByteArrayLittleEndian((T)SwapStructureMembersEndian(str));
 
-        /// <summary>
-        /// Converts a hexadecimal string into a byte array
-        /// </summary>
+        /// <summary>Converts a hexadecimal string into a byte array</summary>
         /// <param name="hex">Hexadecimal string</param>
         /// <param name="outBuf">Resulting byte array</param>
         /// <returns>Number of output bytes processed</returns>
