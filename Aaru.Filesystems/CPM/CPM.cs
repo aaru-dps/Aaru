@@ -50,7 +50,6 @@ namespace Aaru.Filesystems
 
         /// <summary>Cached <see cref="FileSystemInfo" /></summary>
         FileSystemInfo _cpmStat;
-        bool _debug;
 
         /// <summary>Cached file passwords, decoded</summary>
         Dictionary<string, byte[]> _decodedPasswordCache;

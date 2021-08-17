@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;

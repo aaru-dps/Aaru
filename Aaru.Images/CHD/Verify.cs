@@ -153,13 +153,5 @@ namespace Aaru.DiscImages
 
             return _expectedChecksum.SequenceEqual(calculated);
         }
-
-        public bool? VerifySector(ulong sectorAddress, uint track)
-        {
-            if(_isHdd)
-                throw new FeaturedNotSupportedByDiscImageException("Cannot access optical tracks on a hard disk image");
-
-            return VerifySector(GetAbsoluteSector(sectorAddress, track));
-        }
     }
 }

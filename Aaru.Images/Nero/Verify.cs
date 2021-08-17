@@ -46,13 +46,6 @@ namespace Aaru.DiscImages
             return CdChecksums.CheckCdSector(buffer);
         }
 
-        public bool? VerifySector(ulong sectorAddress, uint track)
-        {
-            byte[] buffer = ReadSectorLong(sectorAddress, track);
-
-            return CdChecksums.CheckCdSector(buffer);
-        }
-
         /// <inheritdoc />
         public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
                                    out List<ulong> unknownLbas)

@@ -369,7 +369,7 @@ namespace Aaru.DiscImages
                 if(!_alcTracks.TryGetValue(alcSes.lastTrack, out Track endingTrack))
                     break;
 
-                if(!_alcTrackExtras.TryGetValue(alcSes.firstTrack, out TrackExtra startingTrackExtra))
+                if(!_alcTrackExtras.TryGetValue(alcSes.firstTrack, out _))
                     break;
 
                 if(!_alcTrackExtras.TryGetValue(alcSes.lastTrack, out TrackExtra endingTrackExtra))

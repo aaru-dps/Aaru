@@ -308,15 +308,5 @@ namespace Aaru.DiscImages
 
             return failingLbas.Count <= 0;
         }
-
-        public bool? VerifySector(ulong sectorAddress, uint track)
-        {
-            if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
-                return null;
-
-            byte[] buffer = ReadSectorLong(sectorAddress, track);
-
-            return CdChecksums.CheckCdSector(buffer);
-        }
     }
 }

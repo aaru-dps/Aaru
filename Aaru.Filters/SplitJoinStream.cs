@@ -263,17 +263,6 @@ namespace Aaru.Filters
             _position = 0;
         }
 
-        new void Dispose()
-        {
-            foreach(Stream stream in _baseStreams.Values)
-                stream.Dispose();
-
-            _baseStreams.Clear();
-            _position = 0;
-
-            base.Dispose();
-        }
-
         /// <inheritdoc />
         public override int EndRead(IAsyncResult asyncResult) =>
             throw new NotSupportedException("Asynchronous I/O is not supported.");

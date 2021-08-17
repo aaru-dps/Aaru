@@ -42,12 +42,6 @@ namespace Aaru.DiscImages
 {
     public sealed partial class DiskDupe
     {
-        public List<Partition> Partitions =>
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        public List<Track> Tracks =>
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        public List<Session> Sessions =>
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
         /// <inheritdoc />
         public string                 Name         => "DiskDupe DDI Disk Image";
         /// <inheritdoc />

@@ -48,12 +48,5 @@ namespace Aaru.DiscImages
 
             return (_sectorBitmap[index] & val) == val;
         }
-
-        static uint VhdxChecksum(IEnumerable<byte> data)
-        {
-            uint checksum = data.Aggregate<byte, uint>(0, (current, b) => current + b);
-
-            return ~checksum;
-        }
     }
 }

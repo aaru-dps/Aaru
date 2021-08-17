@@ -37,22 +37,6 @@ namespace Aaru.DiscImages
 {
     public sealed partial class Cdrdao
     {
-        static ushort CdrdaoTrackTypeToBytesPerSector(string trackType)
-        {
-            switch(trackType)
-            {
-                case CDRDAO_TRACK_TYPE_MODE1:
-                case CDRDAO_TRACK_TYPE_MODE2_FORM1: return 2048;
-                case CDRDAO_TRACK_TYPE_MODE2_FORM2: return 2324;
-                case CDRDAO_TRACK_TYPE_MODE2:
-                case CDRDAO_TRACK_TYPE_MODE2_MIX: return 2336;
-                case CDRDAO_TRACK_TYPE_AUDIO:
-                case CDRDAO_TRACK_TYPE_MODE1_RAW:
-                case CDRDAO_TRACK_TYPE_MODE2_RAW: return 2352;
-                default: return 0;
-            }
-        }
-
         static ushort CdrdaoTrackTypeToCookedBytesPerSector(string trackType)
         {
             switch(trackType)

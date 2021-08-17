@@ -456,26 +456,6 @@ namespace Aaru.Devices.Windows
             return error;
         }
 
-        /// <summary>Gets the device number for a specified handle</summary>
-        /// <param name="deviceHandle">Device handle</param>
-        /// <returns>Device number</returns>
-        static uint GetDeviceNumber(SafeFileHandle deviceHandle)
-        {
-            var sdn = new StorageDeviceNumber
-            {
-                deviceNumber = -1
-            };
-
-            uint k = 0;
-
-            if(!Extern.DeviceIoControlGetDeviceNumber(deviceHandle, WindowsIoctl.IoctlStorageGetDeviceNumber,
-                                                      IntPtr.Zero, 0, ref sdn, (uint)Marshal.SizeOf(sdn), ref k,
-                                                      IntPtr.Zero))
-                return uint.MaxValue;
-
-            return (uint)sdn.deviceNumber;
-        }
-
         /// <summary>Returns true if the specified handle is controlled by a SFFDISK (aka SDHCI) driver</summary>
         /// <param name="fd">Device handle</param>
         /// <returns><c>true</c> if SDHCI, false otherwise</returns>

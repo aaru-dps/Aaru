@@ -39,8 +39,5 @@ namespace Aaru.DiscImages
 
         static long MsfToLba((byte minute, byte second, byte frame) msf) =>
             (msf.minute * 60 * 75) + (msf.second * 75) + msf.frame - 150;
-
-        static (byte minute, byte second, byte frame) LbaToMsf(ulong sector) =>
-            ((byte)((sector + 150) / 75 / 60), (byte)((sector + 150) / 75 % 60), (byte)((sector + 150) % 75));
     }
 }

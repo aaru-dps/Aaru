@@ -87,15 +87,12 @@ namespace Aaru.Filesystems.LisaFS
             return Errno.NoError;
         }
 
-        Errno ReadDir(short dirId, out List<string> contents)
-        {
+        void ReadDir(short dirId, out List<string> contents) =>
+
             // Do same trick as Mac OS X, replace filesystem '/' with '-',
             // as '-' is the path separator in Lisa OS
             contents = (from entry in _catalogCache where entry.parentID == dirId
                         select StringHandlers.CToString(entry.filename, Encoding).Replace('/', '-')).ToList();
-
-            return Errno.NoError;
-        }
 
         /// <summary>Reads, interprets and caches the Catalog File</summary>
         Errno ReadCatalog()

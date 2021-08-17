@@ -57,11 +57,6 @@ namespace Aaru.Filesystems
             _device  = imagePlugin;
             Encoding = encoding ?? Encoding.GetEncoding("IBM437");
 
-            options ??= GetDefaultOptions();
-
-            if(options.TryGetValue("debug", out string debugString))
-                bool.TryParse(debugString, out _debug);
-
             // As the identification is so complex, just call Identify() and relay on its findings
             if(!Identify(_device, partition) ||
                !_cpmFound                    ||

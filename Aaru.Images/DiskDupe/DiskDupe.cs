@@ -70,12 +70,6 @@ namespace Aaru.DiscImages
     /// </summary>
     public sealed partial class DiskDupe : IMediaImage
     {
-        /// <summary>Every track that has been read is cached here</summary>
-        readonly Dictionary<int, byte[]> _trackCache = new Dictionary<int, byte[]>();
-
-        /// <summary>The offset in the file where each track starts, or -1 if the track is not present</summary>
-        readonly Dictionary<int, long> _trackOffset = new Dictionary<int, long>();
-
         /// <summary>The DDI file header after the image has been opened</summary>
         FileHeader _fileHeader;
 

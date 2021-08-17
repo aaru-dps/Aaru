@@ -549,12 +549,6 @@ namespace Aaru.Filters
         /// <inheritdoc />
         public override void Close() => _baseStream.Close();
 
-        new void Dispose()
-        {
-            _baseStream.Dispose();
-            base.Dispose();
-        }
-
         /// <inheritdoc />
         public override int EndRead(IAsyncResult asyncResult) => _baseStream.EndRead(asyncResult);
 

@@ -103,7 +103,6 @@
     <Compile Include="AppleDOS\Unsupported.cs" />
     <Compile Include="AppleDOS\Write.cs" />
     <Compile Include="AppleNIB\Constants.cs" />
-    <Compile Include="AppleNIB\Helpers.cs" />
     <Compile Include="AppleNIB\Identify.cs" />
     <Compile Include="AppleNIB\Properties.cs" />
     <Compile Include="AppleNIB\Read.cs" />
