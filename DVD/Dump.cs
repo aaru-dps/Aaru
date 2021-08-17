@@ -44,8 +44,8 @@ namespace Aaru.Decryption.DVD
 {
     public sealed class Dump
     {
-        const    byte   _keySize       = 5;
-        const    byte   _challengeSize = 2 * _keySize;
+        const    byte   KEY_SIZE       = 5;
+        const    byte   CHALLENGE_SIZE = 2 * KEY_SIZE;
         readonly Device _dev;
 
         public Dump(Device dev)
@@ -360,8 +360,8 @@ namespace Aaru.Decryption.DVD
             senseBuffer = new byte[64];
 
             bool   sense     = false;
-            byte[] challenge = new byte[_challengeSize];
-            byte[] key1      = new byte[_keySize];
+            byte[] challenge = new byte[CHALLENGE_SIZE];
+            byte[] key1      = new byte[KEY_SIZE];
             byte   variant   = 0;
 
             for(byte i = 0; i < 4; i++)
@@ -397,7 +397,7 @@ namespace Aaru.Decryption.DVD
                 return true;
             }
 
-            for(byte i = 0; i < _challengeSize; i++)
+            for(byte i = 0; i < CHALLENGE_SIZE; i++)
                 challenge[i] = i;
 
             sense = SendChallenge(out buffer, out senseBuffer, DvdCssKeyClass.DvdCssCppmOrCprm, challenge, timeout,
@@ -415,7 +415,7 @@ namespace Aaru.Decryption.DVD
                 return true;
             }
 
-            for(byte i = 0; i < _keySize; i++)
+            for(byte i = 0; i < KEY_SIZE; i++)
                 key1[i] = buffer[8 - i];
 
             for(byte i = 0; i < 32; i++)
@@ -445,7 +445,7 @@ namespace Aaru.Decryption.DVD
                 return true;
             }
 
-            for(byte i = 0; i < _challengeSize; i++)
+            for(byte i = 0; i < CHALLENGE_SIZE; i++)
                 challenge[i] = buffer[13 - i];
 
             CSS.EncryptKey(DvdCssKeyType.Key2, variant, challenge, out byte[] key2);
