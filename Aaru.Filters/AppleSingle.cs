@@ -41,6 +41,7 @@ using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Filters
 {
+    /// <inheritdoc />
     /// <summary>Decodes AppleSingle files</summary>
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
     public sealed class AppleSingle : IFilter

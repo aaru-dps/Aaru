@@ -41,6 +41,7 @@ using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Filters
 {
+    /// <inheritdoc />
     /// <summary>Decodes AppleDouble files</summary>
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
     public sealed class AppleDouble : IFilter

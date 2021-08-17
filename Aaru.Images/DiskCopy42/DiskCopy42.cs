@@ -40,7 +40,6 @@ using Aaru.CommonTypes.Structs;
 namespace Aaru.DiscImages
 {
     // Checked using several images and strings inside Apple's DiskImages.framework
-    /// <inheritdoc />
     /// <summary>
     /// Implements reading and writing Apple DiskCopy 4.2 disk images
     /// </summary>

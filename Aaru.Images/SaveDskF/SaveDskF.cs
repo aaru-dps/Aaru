@@ -38,7 +38,6 @@ using Aaru.CommonTypes.Structs;
 
 namespace Aaru.DiscImages
 {
-    /// <inheritdoc />
     /// <summary>
     /// Implements reading and writing IBM's SaveDskF disk images
     /// </summary>

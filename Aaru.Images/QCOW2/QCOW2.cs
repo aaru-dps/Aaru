@@ -38,6 +38,7 @@ using Aaru.CommonTypes.Structs;
 
 namespace Aaru.DiscImages
 {
+    /// <inheritdoc />
     /// <summary>
     /// Implements reading and writing QEMU's Copy On Write v2 and v3 disk images
     /// </summary>

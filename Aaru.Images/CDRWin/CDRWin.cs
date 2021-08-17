@@ -40,7 +40,6 @@ using Aaru.Decoders.CD;
 namespace Aaru.DiscImages
 {
     // TODO: Implement track flags
-    /// <inheritdoc />
     /// <summary>
     /// Implements reading and writing CDRWin cuesheet disc images
     /// </summary>

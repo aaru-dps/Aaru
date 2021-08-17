@@ -38,6 +38,7 @@ using Aaru.CommonTypes.Structs;
 
 namespace Aaru.DiscImages
 {
+    /// <inheritdoc />
     /// <summary>
     /// Implements reading and writing QEMU Enhanced Disk images
     /// </summary>

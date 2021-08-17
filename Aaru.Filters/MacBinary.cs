@@ -41,6 +41,7 @@ using Marshal = Aaru.Helpers.Marshal;
 namespace Aaru.Filters
 {
     // TODO: Interpret fdScript
+    /// <inheritdoc />
     /// <summary>Decodes MacBinary files</summary>
     public sealed class MacBinary : IFilter
     {

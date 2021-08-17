@@ -72,6 +72,7 @@ using Aaru.CommonTypes.Structs;
 
 namespace Aaru.DiscImages
 {
+    /// <inheritdoc />
     /// <summary>
     /// Implements reading HD-Copy disk images
     /// </summary>

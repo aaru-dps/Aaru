@@ -37,6 +37,7 @@ using Aaru.CommonTypes.Structs;
 
 namespace Aaru.DiscImages
 {
+    /// <inheritdoc />
     /// <summary>
     /// Implements reading IMageDisk disk images
     /// </summary>

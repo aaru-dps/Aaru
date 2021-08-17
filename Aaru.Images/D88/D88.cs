@@ -40,6 +40,7 @@ namespace Aaru.DiscImages
     // Information from Quasi88's FORMAT.TXT file
     // Japanese comments copied from there
     // TODO: Solve media types
+    /// <inheritdoc />
     /// <summary>
     /// Implements reading Quasi88 disk images
     /// </summary>
