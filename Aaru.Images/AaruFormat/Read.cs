@@ -1670,11 +1670,11 @@ namespace Aaru.DiscImages
                     case SectorTagType.CdSectorHeader:
                     case SectorTagType.CdSectorSubchannel:
                     case SectorTagType.CdSectorSubHeader:
-                    case SectorTagType.CdSectorSync: break;
-                    case SectorTagType.CdTrackFlags:
+                    case SectorTagType.CdSectorSync:
                     case SectorTagType.DvdCmi:
                     case SectorTagType.DvdTitleKey:
-                    case SectorTagType.DvdTitleKeyDecrypted:
+                    case SectorTagType.DvdTitleKeyDecrypted: break;
+                    case SectorTagType.CdTrackFlags:
                         return _trackFlags.TryGetValue((byte)sectorAddress, out byte flags) ? new[]
                         {
                             flags
