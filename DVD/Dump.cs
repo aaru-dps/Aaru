@@ -51,7 +51,7 @@ namespace Aaru.Decryption.DVD
         public Dump(Device dev)
         {
             _dev   = dev;
-            BusKey = null;
+            BusKey = new byte[0];
             Agid   = 0;
         }
 
@@ -431,7 +431,7 @@ namespace Aaru.Decryption.DVD
 
                 if(i >= 31)
                 {
-                    senseBuffer = null;
+                    senseBuffer = new byte[0];
 
                     return true;
                 }
