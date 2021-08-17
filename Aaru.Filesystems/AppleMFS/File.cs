@@ -43,6 +43,7 @@ namespace Aaru.Filesystems
     // Information from Inside Macintosh Volume II
     public sealed partial class AppleMFS
     {
+        /// <inheritdoc />
         public Errno MapBlock(string path, long fileBlock, out long deviceBlock)
         {
             deviceBlock = new long();
@@ -92,6 +93,7 @@ namespace Aaru.Filesystems
             return Errno.InOutError;
         }
 
+        /// <inheritdoc />
         public Errno GetAttributes(string path, out FileAttributes attributes)
         {
             attributes = new FileAttributes();
@@ -155,6 +157,7 @@ namespace Aaru.Filesystems
             return Errno.NoError;
         }
 
+        /// <inheritdoc />
         public Errno Read(string path, long offset, long size, ref byte[] buf)
         {
             if(!_mounted)
@@ -199,6 +202,7 @@ namespace Aaru.Filesystems
             return Errno.NoError;
         }
 
+        /// <inheritdoc />
         public Errno Stat(string path, out FileEntryInfo stat)
         {
             stat = null;
@@ -287,6 +291,7 @@ namespace Aaru.Filesystems
             return Errno.NoError;
         }
 
+        /// <inheritdoc />
         public Errno ReadLink(string path, out string dest)
         {
             dest = null;

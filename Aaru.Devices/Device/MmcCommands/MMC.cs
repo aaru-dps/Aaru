@@ -37,6 +37,14 @@ namespace Aaru.Devices
 {
     public sealed partial class Device
     {
+        /// <summary>
+        /// Reads the CSD register from a SecureDigital or MultiMediaCard device
+        /// </summary>
+        /// <param name="buffer">Data buffer</param>
+        /// <param name="response">Response</param>
+        /// <param name="timeout">Timeout to wait for command execution</param>
+        /// <param name="duration">Time the device took to execute the command in milliseconds</param>
+        /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
         public bool ReadCsd(out byte[] buffer, out uint[] response, uint timeout, out double duration)
         {
             buffer = new byte[16];
@@ -52,6 +60,14 @@ namespace Aaru.Devices
             return sense;
         }
 
+        /// <summary>
+        /// Reads the CID register from a SecureDigital or MultiMediaCard device
+        /// </summary>
+        /// <param name="buffer">Data buffer</param>
+        /// <param name="response">Response</param>
+        /// <param name="timeout">Timeout to wait for command execution</param>
+        /// <param name="duration">Time the device took to execute the command in milliseconds</param>
+        /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
         public bool ReadCid(out byte[] buffer, out uint[] response, uint timeout, out double duration)
         {
             buffer = new byte[16];
@@ -67,6 +83,14 @@ namespace Aaru.Devices
             return sense;
         }
 
+        /// <summary>
+        /// Reads the OCR register from a MultiMediaCard device
+        /// </summary>
+        /// <param name="buffer">Data buffer</param>
+        /// <param name="response">Response</param>
+        /// <param name="timeout">Timeout to wait for command execution</param>
+        /// <param name="duration">Time the device took to execute the command in milliseconds</param>
+        /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
         public bool ReadOcr(out byte[] buffer, out uint[] response, uint timeout, out double duration)
         {
             buffer = new byte[4];
@@ -82,6 +106,14 @@ namespace Aaru.Devices
             return sense;
         }
 
+        /// <summary>
+        /// Reads the extended CSD from a MultiMediaCard device
+        /// </summary>
+        /// <param name="buffer">Data buffer</param>
+        /// <param name="response">Response</param>
+        /// <param name="timeout">Timeout to wait for command execution</param>
+        /// <param name="duration">Time the device took to execute the command in milliseconds</param>
+        /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
         public bool ReadExtendedCsd(out byte[] buffer, out uint[] response, uint timeout, out double duration)
         {
             buffer = new byte[512];
@@ -97,6 +129,14 @@ namespace Aaru.Devices
             return sense;
         }
 
+        /// <summary>
+        /// Sets the block length for transfers from a SecureDigital or MultiMediaCard device
+        /// </summary>
+        /// <param name="length">Block length in bytes</param>
+        /// <param name="response">Response</param>
+        /// <param name="timeout">Timeout to wait for command execution</param>
+        /// <param name="duration">Time the device took to execute the command in milliseconds</param>
+        /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
         public bool SetBlockLength(uint length, out uint[] response, uint timeout, out double duration)
         {
             byte[] buffer = new byte[0];
@@ -112,6 +152,18 @@ namespace Aaru.Devices
             return sense;
         }
 
+        /// <summary>
+        /// Reads blocks from a SecureDigital or MultiMediaCard device
+        /// </summary>
+        /// <param name="buffer">Data buffer</param>
+        /// <param name="response">Response</param>
+        /// <param name="lba">LBA to start reading from</param>
+        /// <param name="blockSize">Block size in bytes</param>
+        /// <param name="transferLength">Number of bytes to transfer</param>
+        /// <param name="byteAddressed">Card is byte-addressed</param>
+        /// <param name="timeout">Timeout to wait for command execution</param>
+        /// <param name="duration">Time the device took to execute the command in milliseconds</param>
+        /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
         public bool Read(out byte[] buffer, out uint[] response, uint lba, uint blockSize, ushort transferLength,
                          bool byteAddressed, uint timeout, out double duration)
         {
@@ -134,6 +186,17 @@ namespace Aaru.Devices
             return sense;
         }
 
+        /// <summary>
+        /// Reads a single block from a SecureDigital or MultiMediaCard device
+        /// </summary>
+        /// <param name="buffer">Data buffer</param>
+        /// <param name="response">Response</param>
+        /// <param name="lba">LBA to start reading from</param>
+        /// <param name="blockSize">Block size in bytes</param>
+        /// <param name="byteAddressed">Card is byte-addressed</param>
+        /// <param name="timeout">Timeout to wait for command execution</param>
+        /// <param name="duration">Time the device took to execute the command in milliseconds</param>
+        /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
         public bool ReadSingleBlock(out byte[] buffer, out uint[] response, uint lba, uint blockSize,
                                     bool byteAddressed, uint timeout, out double duration)
         {
@@ -159,6 +222,18 @@ namespace Aaru.Devices
 
         static bool _readMultipleBlockCannotSetBlockCount;
 
+        /// <summary>
+        /// Reads multiple blocks from a SecureDigital or MultiMediaCard device
+        /// </summary>
+        /// <param name="buffer">Data buffer</param>
+        /// <param name="response">Response</param>
+        /// <param name="lba">LBA to start reading from</param>
+        /// <param name="blockSize">Block size in bytes</param>
+        /// <param name="transferLength">Number of bytes to transfer</param>
+        /// <param name="byteAddressed">Card is byte-addressed</param>
+        /// <param name="timeout">Timeout to wait for command execution</param>
+        /// <param name="duration">Time the device took to execute the command in milliseconds</param>
+        /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
         public bool ReadMultipleBlock(out byte[] buffer, out uint[] response, uint lba, uint blockSize,
                                       ushort transferLength, bool byteAddressed, uint timeout, out double duration)
         {
@@ -190,6 +265,18 @@ namespace Aaru.Devices
             return sense;
         }
 
+        /// <summary>
+        /// Reads blocks using a single block read from a SecureDigital or MultiMediaCard device
+        /// </summary>
+        /// <param name="buffer">Data buffer</param>
+        /// <param name="response">Response</param>
+        /// <param name="lba">LBA to start reading from</param>
+        /// <param name="blockSize">Block size in bytes</param>
+        /// <param name="transferLength">Number of bytes to transfer</param>
+        /// <param name="byteAddressed">Card is byte-addressed</param>
+        /// <param name="timeout">Timeout to wait for command execution</param>
+        /// <param name="duration">Time the device took to execute the command in milliseconds</param>
+        /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
         public bool ReadMultipleUsingSingle(out byte[] buffer, out uint[] response, uint lba, uint blockSize,
                                             ushort transferLength, bool byteAddressed, uint timeout,
                                             out double duration)
@@ -229,6 +316,14 @@ namespace Aaru.Devices
             return sense;
         }
 
+        /// <summary>
+        /// Reads status register from a MultiMediaCard device
+        /// </summary>
+        /// <param name="buffer">Data buffer</param>
+        /// <param name="response">Response</param>
+        /// <param name="timeout">Timeout to wait for command execution</param>
+        /// <param name="duration">Time the device took to execute the command in milliseconds</param>
+        /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
         public bool ReadStatus(out byte[] buffer, out uint[] response, uint timeout, out double duration)
         {
             buffer = new byte[4];
@@ -244,6 +339,18 @@ namespace Aaru.Devices
             return sense;
         }
 
+        /// <summary>
+        /// Reads blocks with block count from a SecureDigital or MultiMediaCard device
+        /// </summary>
+        /// <param name="buffer">Data buffer</param>
+        /// <param name="response">Response</param>
+        /// <param name="lba">LBA to start reading from</param>
+        /// <param name="blockSize">Block size in bytes</param>
+        /// <param name="transferLength">Number of bytes to transfer</param>
+        /// <param name="byteAddressed">Card is byte-addressed</param>
+        /// <param name="timeout">Timeout to wait for command execution</param>
+        /// <param name="duration">Time the device took to execute the command in milliseconds</param>
+        /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
         public bool ReadWithBlockCount(out byte[] buffer, out uint[] response, uint lba, uint blockSize,
                                        ushort transferLength, bool byteAddressed, uint timeout, out double duration)
         {

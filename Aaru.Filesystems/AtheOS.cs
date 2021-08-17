@@ -42,6 +42,9 @@ using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Filesystems
 {
+    /// <summary>
+    /// Implements detection for the AtheOS filesystem
+    /// </summary>
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
     public sealed class AtheOS : IFilesystem
     {
@@ -54,12 +57,18 @@ namespace Aaru.Filesystems
         const uint AFS_SUPERBLOCK_SIZE = 1024;
         const uint AFS_BOOTBLOCK_SIZE  = AFS_SUPERBLOCK_SIZE;
 
+        /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
+        /// <inheritdoc />
         public Encoding       Encoding  { get; private set; }
+        /// <inheritdoc />
         public string         Name      => "AtheOS Filesystem";
+        /// <inheritdoc />
         public Guid           Id        => new Guid("AAB2C4F1-DC07-49EE-A948-576CC51B58C5");
+        /// <inheritdoc />
         public string         Author    => "Natalia Portillo";
 
+        /// <inheritdoc />
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             ulong sector = AFS_BOOTBLOCK_SIZE / imagePlugin.Info.SectorSize;
@@ -85,6 +94,7 @@ namespace Aaru.Filesystems
             return magic == AFS_MAGIC1;
         }
 
+        /// <inheritdoc />
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                    Encoding encoding)
         {

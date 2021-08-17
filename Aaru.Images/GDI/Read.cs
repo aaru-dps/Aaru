@@ -48,6 +48,7 @@ namespace Aaru.DiscImages
 {
     public sealed partial class Gdi
     {
+        /// <inheritdoc />
         public bool Open(IFilter imageFilter)
         {
             if(imageFilter == null)
@@ -324,15 +325,20 @@ namespace Aaru.DiscImages
             }
         }
 
+        /// <inheritdoc />
         public byte[] ReadSector(ulong sectorAddress) => ReadSectors(sectorAddress, 1);
 
+        /// <inheritdoc />
         public byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag) => ReadSectorsTag(sectorAddress, 1, tag);
 
+        /// <inheritdoc />
         public byte[] ReadSector(ulong sectorAddress, uint track) => ReadSectors(sectorAddress, 1, track);
 
+        /// <inheritdoc />
         public byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag) =>
             ReadSectorsTag(sectorAddress, 1, track, tag);
 
+        /// <inheritdoc />
         public byte[] ReadSectors(ulong sectorAddress, uint length)
         {
             foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetMap where sectorAddress >= kvp.Value
@@ -350,6 +356,7 @@ namespace Aaru.DiscImages
             throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
         }
 
+        /// <inheritdoc />
         public byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
         {
             foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetMap where sectorAddress >= kvp.Value
@@ -367,6 +374,7 @@ namespace Aaru.DiscImages
             throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
         }
 
+        /// <inheritdoc />
         public byte[] ReadSectors(ulong sectorAddress, uint length, uint track)
         {
             if(track == 0)
@@ -486,6 +494,7 @@ namespace Aaru.DiscImages
             return buffer;
         }
 
+        /// <inheritdoc />
         public byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag)
         {
             if(tag == SectorTagType.CdTrackFlags)
@@ -672,10 +681,13 @@ namespace Aaru.DiscImages
             return buffer;
         }
 
+        /// <inheritdoc />
         public byte[] ReadSectorLong(ulong sectorAddress) => ReadSectorsLong(sectorAddress, 1);
 
+        /// <inheritdoc />
         public byte[] ReadSectorLong(ulong sectorAddress, uint track) => ReadSectorsLong(sectorAddress, 1, track);
 
+        /// <inheritdoc />
         public byte[] ReadSectorsLong(ulong sectorAddress, uint length)
         {
             foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetMap where sectorAddress >= kvp.Value
@@ -687,6 +699,7 @@ namespace Aaru.DiscImages
             throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
         }
 
+        /// <inheritdoc />
         public byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
         {
             if(track == 0)
@@ -827,6 +840,7 @@ namespace Aaru.DiscImages
             return buffer;
         }
 
+        /// <inheritdoc />
         public List<Track> GetSessionTracks(Session session)
         {
             if(_discImage.Sessions.Contains(session))
@@ -835,6 +849,7 @@ namespace Aaru.DiscImages
             throw new ImageNotSupportedException("Session does not exist in disc image");
         }
 
+        /// <inheritdoc />
         public List<Track> GetSessionTracks(ushort session)
         {
             List<Track> tracks = new List<Track>();

@@ -41,32 +41,46 @@ namespace Aaru.DiscImages
 {
     public sealed partial class Qcow
     {
+        /// <inheritdoc />
         public ImageInfo Info => _imageInfo;
 
+        /// <inheritdoc />
         public string                 Name         => "QEMU Copy-On-Write disk image";
+        /// <inheritdoc />
         public Guid                   Id           => new Guid("A5C35765-9FE2-469D-BBBF-ACDEBDB7B954");
+        /// <inheritdoc />
         public string                 Author       => "Natalia Portillo";
+        /// <inheritdoc />
         public string                 Format       => "QEMU Copy-On-Write";
+        /// <inheritdoc />
         public List<DumpHardwareType> DumpHardware => null;
+        /// <inheritdoc />
         public CICMMetadataType       CicmMetadata => null;
+        /// <inheritdoc />
         public IEnumerable<MediaTagType> SupportedMediaTags => new MediaTagType[]
             {};
+        /// <inheritdoc />
         public IEnumerable<SectorTagType> SupportedSectorTags => new SectorTagType[]
             {};
+        /// <inheritdoc />
         public IEnumerable<MediaType> SupportedMediaTypes => new[]
         {
             MediaType.Unknown, MediaType.GENERIC_HDD, MediaType.FlashDrive, MediaType.CompactFlash,
             MediaType.CompactFlashType2, MediaType.PCCardTypeI, MediaType.PCCardTypeII, MediaType.PCCardTypeIII,
             MediaType.PCCardTypeIV
         };
+        /// <inheritdoc />
         public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>
             new (string name, Type type, string description, object @default)[]
                 {};
+        /// <inheritdoc />
         public IEnumerable<string> KnownExtensions => new[]
         {
             ".qcow", ".qc"
         };
+        /// <inheritdoc />
         public bool   IsWriting    { get; private set; }
+        /// <inheritdoc />
         public string ErrorMessage { get; private set; }
     }
 }

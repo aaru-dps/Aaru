@@ -6,6 +6,9 @@ using Aaru.CommonTypes.Structs;
 
 namespace Aaru.DiscImages
 {
+    /// <summary>
+    /// Implements reading and writing copytape tape images
+    /// </summary>
     public sealed partial class CopyTape : IWritableTapeImage
     {
         long[]    _blockPositionCache;

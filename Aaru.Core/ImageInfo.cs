@@ -56,6 +56,9 @@ using Tuple = Aaru.Decoders.PCMCIA.Tuple;
 
 namespace Aaru.Core
 {
+    /// <summary>
+    /// Image information operations
+    /// </summary>
     public static class ImageInfo
     {
         const string MANUFACTURER_STRING = "Manufacturer";
@@ -67,6 +70,10 @@ namespace Aaru.Core
         const string START_STRING        = "Start";
         const string END_STRING          = "End";
 
+        /// <summary>
+        /// Prints image information to console
+        /// </summary>
+        /// <param name="imageFormat">Media image</param>
         public static void PrintImageInfo(IMediaImage imageFormat)
         {
             AaruConsole.WriteLine("Image information:");

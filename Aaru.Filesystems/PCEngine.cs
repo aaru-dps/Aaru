@@ -38,14 +38,23 @@ using Schemas;
 
 namespace Aaru.Filesystems
 {
+    /// <summary>
+    /// Implements detection of the PC-Engine CD file headers
+    /// </summary>
     public sealed class PCEnginePlugin : IFilesystem
     {
+        /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
+        /// <inheritdoc />
         public Encoding       Encoding  { get; private set; }
+        /// <inheritdoc />
         public string         Name      => "PC Engine CD Plugin";
+        /// <inheritdoc />
         public Guid           Id        => new Guid("e5ee6d7c-90fa-49bd-ac89-14ef750b8af3");
+        /// <inheritdoc />
         public string         Author    => "Natalia Portillo";
 
+        /// <inheritdoc />
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(2 + partition.Start >= partition.End)
@@ -59,6 +68,7 @@ namespace Aaru.Filesystems
             return Encoding.ASCII.GetString(systemDescriptor) == "PC Engine CD-ROM SYSTEM";
         }
 
+        /// <inheritdoc />
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                    Encoding encoding)
         {

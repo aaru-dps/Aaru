@@ -41,16 +41,25 @@ using Schemas;
 namespace Aaru.Filesystems
 {
     // Information from the Linux kernel
+    /// <summary>
+    /// Implements detection of the UNIX boot filesystem
+    /// </summary>
     public sealed class BFS : IFilesystem
     {
         const uint BFS_MAGIC = 0x1BADFACE;
 
+        /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
+        /// <inheritdoc />
         public Encoding       Encoding  { get; private set; }
+        /// <inheritdoc />
         public string         Name      => "UNIX Boot filesystem";
+        /// <inheritdoc />
         public Guid           Id        => new Guid("1E6E0DA6-F7E4-494C-80C6-CB5929E96155");
+        /// <inheritdoc />
         public string         Author    => "Natalia Portillo";
 
+        /// <inheritdoc />
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(2 + partition.Start >= partition.End)
@@ -61,6 +70,7 @@ namespace Aaru.Filesystems
             return magic == BFS_MAGIC;
         }
 
+        /// <inheritdoc />
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                    Encoding encoding)
         {

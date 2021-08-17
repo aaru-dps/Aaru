@@ -39,6 +39,7 @@ namespace Aaru.DiscImages
 {
     public sealed partial class DiscJuggler
     {
+        /// <inheritdoc />
         public bool Identify(IFilter imageFilter)
         {
             _imageStream = imageFilter.GetDataForkStream();

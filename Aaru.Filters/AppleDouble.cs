@@ -82,32 +82,47 @@ namespace Aaru.Filters
         bool     _opened;
         Entry    _rsrcFork;
 
+        /// <inheritdoc />
         public string Name   => "AppleDouble";
+        /// <inheritdoc />
         public Guid   Id     => new Guid("1B2165EE-C9DF-4B21-BBBB-9E5892B2DF4D");
+        /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
+        /// <inheritdoc />
         public void Close() => _opened = false;
 
+        /// <inheritdoc />
         public string GetBasePath() => _basePath;
 
+        /// <inheritdoc />
         public DateTime GetCreationTime() => _creationTime;
 
+        /// <inheritdoc />
         public long GetDataForkLength() => _dataFork.length;
 
+        /// <inheritdoc />
         public Stream GetDataForkStream() => new FileStream(_basePath, FileMode.Open, FileAccess.Read);
 
+        /// <inheritdoc />
         public string GetFilename() => Path.GetFileName(_basePath);
 
+        /// <inheritdoc />
         public DateTime GetLastWriteTime() => _lastWriteTime;
 
+        /// <inheritdoc />
         public long GetLength() => _dataFork.length + _rsrcFork.length;
 
+        /// <inheritdoc />
         public string GetParentFolder() => Path.GetDirectoryName(_basePath);
 
+        /// <inheritdoc />
         public string GetPath() => _basePath;
 
+        /// <inheritdoc />
         public long GetResourceForkLength() => _rsrcFork.length;
 
+        /// <inheritdoc />
         public Stream GetResourceForkStream()
         {
             if(_rsrcFork.length == 0)
@@ -117,12 +132,16 @@ namespace Aaru.Filters
                                     (_rsrcFork.offset + _rsrcFork.length) - 1);
         }
 
+        /// <inheritdoc />
         public bool HasResourceFork() => _rsrcFork.length > 0;
 
+        /// <inheritdoc />
         public bool Identify(byte[] buffer) => false;
 
+        /// <inheritdoc />
         public bool Identify(Stream stream) => false;
 
+        /// <inheritdoc />
         public bool Identify(string path)
         {
             string filename      = Path.GetFileName(path);
@@ -302,14 +321,18 @@ namespace Aaru.Filters
             return _header.magic == MAGIC && (_header.version == VERSION || _header.version == VERSION2);
         }
 
+        /// <inheritdoc />
         public bool IsOpened() => _opened;
 
         // Now way to have two files in a single byte array
+        /// <inheritdoc />
         public void Open(byte[] buffer) => throw new NotSupportedException();
 
         // Now way to have two files in a single stream
+        /// <inheritdoc />
         public void Open(Stream stream) => throw new NotSupportedException();
 
+        /// <inheritdoc />
         public void Open(string path)
         {
             string filename      = Path.GetFileName(path);

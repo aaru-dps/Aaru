@@ -38,6 +38,7 @@ namespace Aaru.DiscImages
 {
     public sealed partial class ZZZRawImage
     {
+        /// <inheritdoc />
         public bool Identify(IFilter imageFilter)
         {
             _extension = Path.GetExtension(imageFilter.GetFilename())?.ToLower();

@@ -45,6 +45,7 @@ namespace Aaru.Filesystems.UCSDPascal
     // Information from Call-A.P.P.L.E. Pascal Disk Directory Structure
     public sealed partial class PascalPlugin
     {
+        /// <inheritdoc />
         public Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding,
                            Dictionary<string, string> options, string @namespace)
         {
@@ -138,6 +139,7 @@ namespace Aaru.Filesystems.UCSDPascal
             return Errno.NoError;
         }
 
+        /// <inheritdoc />
         public Errno Unmount()
         {
             _mounted     = false;
@@ -146,6 +148,7 @@ namespace Aaru.Filesystems.UCSDPascal
             return Errno.NoError;
         }
 
+        /// <inheritdoc />
         public Errno StatFs(out FileSystemInfo stat)
         {
             stat = new FileSystemInfo

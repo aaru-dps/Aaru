@@ -43,16 +43,25 @@ using Marshal = Aaru.Helpers.Marshal;
 namespace Aaru.Filesystems
 {
     // Information from http://www.hp9845.net/9845/projects/hpdir/#lif_filesystem
+    /// <summary>
+    /// Implements detection of the LIF filesystem
+    /// </summary>
     public sealed class LIF : IFilesystem
     {
         const uint LIF_MAGIC = 0x8000;
 
+        /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
+        /// <inheritdoc />
         public Encoding       Encoding  { get; private set; }
+        /// <inheritdoc />
         public string         Name      => "HP Logical Interchange Format Plugin";
+        /// <inheritdoc />
         public Guid           Id        => new Guid("41535647-77A5-477B-9206-DA727ACDC704");
+        /// <inheritdoc />
         public string         Author    => "Natalia Portillo";
 
+        /// <inheritdoc />
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(imagePlugin.Info.SectorSize < 256)
@@ -65,6 +74,7 @@ namespace Aaru.Filesystems
             return lifSb.magic == LIF_MAGIC;
         }
 
+        /// <inheritdoc />
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                    Encoding encoding)
         {

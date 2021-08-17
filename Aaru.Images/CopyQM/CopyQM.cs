@@ -38,6 +38,9 @@ using Aaru.CommonTypes.Structs;
 
 namespace Aaru.DiscImages
 {
+    /// <summary>
+    /// Implements reading CopyQM disk images
+    /// </summary>
     public sealed partial class CopyQm : IMediaImage, IVerifiableImage
     {
         uint         _calculatedDataCrc;

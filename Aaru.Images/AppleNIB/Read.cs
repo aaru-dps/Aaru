@@ -45,6 +45,7 @@ namespace Aaru.DiscImages
 {
     public sealed partial class AppleNib
     {
+        /// <inheritdoc />
         public bool Open(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
@@ -172,6 +173,7 @@ namespace Aaru.DiscImages
             return true;
         }
 
+        /// <inheritdoc />
         public byte[] ReadSector(ulong sectorAddress)
         {
             if(sectorAddress > _imageInfo.Sectors - 1)
@@ -183,6 +185,7 @@ namespace Aaru.DiscImages
             return temp;
         }
 
+        /// <inheritdoc />
         public byte[] ReadSectors(ulong sectorAddress, uint length)
         {
             if(sectorAddress > _imageInfo.Sectors - 1)
@@ -203,6 +206,7 @@ namespace Aaru.DiscImages
             return ms.ToArray();
         }
 
+        /// <inheritdoc />
         public byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
         {
             if(sectorAddress > _imageInfo.Sectors - 1)
@@ -217,6 +221,7 @@ namespace Aaru.DiscImages
             return temp;
         }
 
+        /// <inheritdoc />
         public byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
         {
             if(sectorAddress > _imageInfo.Sectors - 1)
@@ -240,6 +245,7 @@ namespace Aaru.DiscImages
             return ms.ToArray();
         }
 
+        /// <inheritdoc />
         public byte[] ReadSectorLong(ulong sectorAddress)
         {
             if(sectorAddress > _imageInfo.Sectors - 1)
@@ -251,6 +257,7 @@ namespace Aaru.DiscImages
             return temp;
         }
 
+        /// <inheritdoc />
         public byte[] ReadSectorsLong(ulong sectorAddress, uint length)
         {
             if(sectorAddress > _imageInfo.Sectors - 1)

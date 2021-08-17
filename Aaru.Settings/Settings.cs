@@ -66,7 +66,13 @@ namespace Aaru.Settings
     /// <summary>User settings, for media dumps, completely unused</summary>
     public class UserSettings
     {
+        /// <summary>
+        /// User email
+        /// </summary>
         public string Email;
+        /// <summary>
+        /// User name or nick
+        /// </summary>
         public string Name;
     }
 
@@ -113,7 +119,13 @@ namespace Aaru.Settings
         /// <summary>Global path to save statistics</summary>
         public static string StatsPath { get; private set; }
 
+        /// <summary>
+        /// Local database path
+        /// </summary>
         public static string LocalDbPath { get; private set; }
+        /// <summary>
+        /// Main database path
+        /// </summary>
         public static string MainDbPath  { get; private set; }
 
         /// <summary>Loads settings</summary>
@@ -495,6 +507,9 @@ namespace Aaru.Settings
             }
         }
 
+        /// <summary>
+        /// Saves current settings
+        /// </summary>
         public static void SaveSettings()
         {
             try

@@ -45,6 +45,9 @@ namespace Aaru.Partitions
 {
     // Information about structures learnt from Inside Macintosh
     // Constants from image testing
+    /// <summary>
+    /// Implements decoding of the Apple Partition Map
+    /// </summary>
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
     public sealed class AppleMap : IPartition
     {
@@ -57,10 +60,14 @@ namespace Aaru.Partitions
         /// <summary>Old indicator for HFS partition, "TFS1"</summary>
         const uint HFS_MAGIC_OLD = 0x54465331;
 
+        /// <inheritdoc />
         public string Name   => "Apple Partition Map";
+        /// <inheritdoc />
         public Guid   Id     => new Guid("36405F8D-4F1A-07F5-209C-223D735D6D22");
+        /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
+        /// <inheritdoc />
         public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
             uint sectorSize;

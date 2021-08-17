@@ -32,5 +32,8 @@
 
 namespace Aaru.Database.Models
 {
+    /// <summary>
+    /// Remote application
+    /// </summary>
     public class RemoteApplication : BaseOperatingSystem {}
 }

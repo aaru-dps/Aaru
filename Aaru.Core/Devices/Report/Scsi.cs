@@ -45,6 +45,10 @@ namespace Aaru.Core.Devices.Report
 {
     public sealed partial class DeviceReport
     {
+        /// <summary>
+        /// Creates a report for the SCSI INQUIRY response
+        /// </summary>
+        /// <returns>SCSI report</returns>
         public Scsi ReportScsiInquiry()
         {
             AaruConsole.WriteLine("Querying SCSI INQUIRY...");
@@ -85,6 +89,11 @@ namespace Aaru.Core.Devices.Report
             return inquiry;
         }
 
+        /// <summary>
+        /// Returns a list of decoded SCSI EVPD pages
+        /// </summary>
+        /// <param name="vendor">Decoded SCSI vendor identification</param>
+        /// <returns>List of decoded SCSI EVPD pages</returns>
         public List<ScsiPage> ReportEvpdPages(string vendor)
         {
             AaruConsole.WriteLine("Querying list of SCSI EVPDs...");
@@ -187,6 +196,12 @@ namespace Aaru.Core.Devices.Report
             return pageResponse;
         }
 
+        /// <summary>
+        /// Adds reports for the decoded SCSI MODE SENSE pages to a device report
+        /// </summary>
+        /// <param name="report">Device report</param>
+        /// <param name="cdromMode">Returns raw MODE SENSE page 2Ah, aka CD-ROM page</param>
+        /// <param name="mediumType">Returns decoded list of supported media types response</param>
         public void ReportScsiModes(ref DeviceReportV2 report, out byte[] cdromMode, out MediumTypes mediumType)
         {
             Modes.DecodedMode?    decMode = null;
@@ -419,6 +434,10 @@ namespace Aaru.Core.Devices.Report
                 report.SCSI.ModeSense.ModePages = modePages;
         }
 
+        /// <summary>
+        /// Creates a report for media inserted into a SCSI device
+        /// </summary>
+        /// <returns>Media report</returns>
         public TestedMedia ReportScsiMedia()
         {
             var mediaTest = new TestedMedia();
@@ -684,6 +703,10 @@ namespace Aaru.Core.Devices.Report
             return mediaTest;
         }
 
+        /// <summary>
+        /// Creates a media report for a non-removable SCSI device
+        /// </summary>
+        /// <returns>Media report</returns>
         public TestedMedia ReportScsi()
         {
             var capabilities = new TestedMedia

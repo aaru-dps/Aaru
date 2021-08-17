@@ -41,19 +41,29 @@ namespace Aaru.DiscImages
 {
     public sealed partial class Qed
     {
+        /// <inheritdoc />
         public ImageInfo Info => _imageInfo;
 
+        /// <inheritdoc />
         public string                 Name         => "QEMU Enhanced Disk image";
+        /// <inheritdoc />
         public Guid                   Id           => new Guid("B9DBB155-A69A-4C10-BF91-96BF431B9BB6");
+        /// <inheritdoc />
         public string                 Author       => "Natalia Portillo";
+        /// <inheritdoc />
         public string                 Format       => "QEMU Enhanced Disk";
+        /// <inheritdoc />
         public List<DumpHardwareType> DumpHardware => null;
+        /// <inheritdoc />
         public CICMMetadataType       CicmMetadata => null;
 
+        /// <inheritdoc />
         public IEnumerable<MediaTagType> SupportedMediaTags => new MediaTagType[]
             {};
+        /// <inheritdoc />
         public IEnumerable<SectorTagType> SupportedSectorTags => new SectorTagType[]
             {};
+        /// <inheritdoc />
         public IEnumerable<MediaType> SupportedMediaTypes => new[]
         {
             MediaType.Unknown, MediaType.GENERIC_HDD, MediaType.FlashDrive, MediaType.CompactFlash,
@@ -62,14 +72,18 @@ namespace Aaru.DiscImages
         };
 
         // TODO: Add cluster size option
+        /// <inheritdoc />
         public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>
             new (string name, Type type, string description, object @default)[]
                 {};
+        /// <inheritdoc />
         public IEnumerable<string> KnownExtensions => new[]
         {
             ".qed"
         };
+        /// <inheritdoc />
         public bool   IsWriting    { get; private set; }
+        /// <inheritdoc />
         public string ErrorMessage { get; private set; }
     }
 }

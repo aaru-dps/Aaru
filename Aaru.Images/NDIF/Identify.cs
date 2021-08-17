@@ -39,6 +39,7 @@ namespace Aaru.DiscImages
 {
     public sealed partial class Ndif
     {
+        /// <inheritdoc />
         public bool Identify(IFilter imageFilter)
         {
             if(!imageFilter.HasResourceFork() ||

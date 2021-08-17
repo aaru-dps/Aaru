@@ -38,6 +38,9 @@ using Aaru.CommonTypes.Structs;
 
 namespace Aaru.DiscImages
 {
+    /// <summary>
+    /// Implements reading and writing Anex-86 disk images
+    /// </summary>
     public sealed partial class Anex86 : IWritableImage
     {
         IFilter    _anexImageFilter;

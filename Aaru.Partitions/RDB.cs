@@ -45,6 +45,9 @@ using Aaru.Helpers;
 
 namespace Aaru.Partitions
 {
+    /// <summary>
+    /// Implements decoding of the Amiga Rigid Disk Block
+    /// </summary>
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
     public sealed class AmigaRigidDiskBlock : IPartition
     {
@@ -166,10 +169,14 @@ namespace Aaru.Partitions
         /// <summary>Partition should not be mounted automatically</summary>
         const uint FLAGS_NO_AUTOMOUNT = 0x00000002;
 
+        /// <inheritdoc />
         public string Name   => "Amiga Rigid Disk Block";
+        /// <inheritdoc />
         public Guid   Id     => new Guid("8D72ED97-1854-4170-9CE4-6E8446FD9863");
+        /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
+        /// <inheritdoc />
         public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
             partitions = new List<Partition>();

@@ -39,7 +39,12 @@ using Aaru.CommonTypes.Structs;
 
 namespace Aaru.DiscImages
 {
+    /// <inheritdoc />
+    /// <summary>
+    /// Manages floppy disk images created with d2f by DataPackRat
+    /// </summary>
     [SuppressMessage("ReSharper", "NotAccessedField.Local")]
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public sealed partial class WCDiskImage : IMediaImage
     {
         readonly Dictionary<(int cylinder, int head, int sector), bool> _badSectors =
@@ -55,6 +60,9 @@ namespace Aaru.DiscImages
         /// <summary>The ImageFilter we're reading from, after the file has been opened</summary>
         IFilter _wcImageFilter;
 
+        /// <summary>
+        /// Manages floppy disk images created with d2f by DataPackRat
+        /// </summary>
         public WCDiskImage() => _imageInfo = new ImageInfo
         {
             ReadableSectorTags    = new List<SectorTagType>(),

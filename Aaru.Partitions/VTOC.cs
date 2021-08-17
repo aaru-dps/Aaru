@@ -43,6 +43,9 @@ using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Partitions
 {
+    /// <summary>
+    /// Implements decoding of UNIX VTOC partitions
+    /// </summary>
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
     public sealed class VTOC : IPartition
     {
@@ -53,10 +56,14 @@ namespace Aaru.Partitions
         const int  V_NUMPAR  = 16;
         const uint XPDVERS   = 3; /* 1st version of extended pdinfo */
 
+        /// <inheritdoc />
         public string Name   => "UNIX VTOC";
+        /// <inheritdoc />
         public Guid   Id     => new Guid("6D35A66F-8D77-426F-A562-D88F6A1F1702");
+        /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
+        /// <inheritdoc />
         public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
             partitions = new List<Partition>();

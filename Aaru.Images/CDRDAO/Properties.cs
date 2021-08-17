@@ -42,6 +42,7 @@ namespace Aaru.DiscImages
 {
     public sealed partial class Cdrdao
     {
+        /// <inheritdoc />
         public OpticalImageCapabilities OpticalCapabilities => OpticalImageCapabilities.CanStoreAudioTracks    |
                                                                OpticalImageCapabilities.CanStoreDataTracks     |
                                                                OpticalImageCapabilities.CanStorePregaps        |
@@ -53,13 +54,20 @@ namespace Aaru.DiscImages
                                                                OpticalImageCapabilities.CanStoreCookedData     |
                                                                OpticalImageCapabilities.CanStoreMultipleTracks |
                                                                OpticalImageCapabilities.CanStoreIndexes;
+        /// <inheritdoc />
         public ImageInfo       Info       => _imageInfo;
+        /// <inheritdoc />
         public string          Name       => "CDRDAO tocfile";
+        /// <inheritdoc />
         public Guid            Id         => new Guid("04D7BA12-1BE8-44D4-97A4-1B48A505463E");
+        /// <inheritdoc />
         public string          Format     => "CDRDAO tocfile";
+        /// <inheritdoc />
         public string          Author     => "Natalia Portillo";
+        /// <inheritdoc />
         public List<Partition> Partitions { get; private set; }
 
+        /// <inheritdoc />
         public List<Session> Sessions
         {
             get
@@ -81,6 +89,7 @@ namespace Aaru.DiscImages
             }
         }
 
+        /// <inheritdoc />
         public List<Track> Tracks
         {
             get
@@ -151,14 +160,18 @@ namespace Aaru.DiscImages
             }
         }
 
+        /// <inheritdoc />
         public List<DumpHardwareType> DumpHardware => null;
+        /// <inheritdoc />
         public CICMMetadataType       CicmMetadata => null;
 
         // TODO: Decode CD-Text to text
+        /// <inheritdoc />
         public IEnumerable<MediaTagType> SupportedMediaTags => new[]
         {
             MediaTagType.CD_MCN
         };
+        /// <inheritdoc />
         public IEnumerable<SectorTagType> SupportedSectorTags => new[]
         {
             SectorTagType.CdSectorEcc, SectorTagType.CdSectorEccP, SectorTagType.CdSectorEccQ,
@@ -166,6 +179,7 @@ namespace Aaru.DiscImages
             SectorTagType.CdSectorSubHeader, SectorTagType.CdSectorSync, SectorTagType.CdTrackFlags,
             SectorTagType.CdTrackIsrc
         };
+        /// <inheritdoc />
         public IEnumerable<MediaType> SupportedMediaTypes => new[]
         {
             MediaType.CD, MediaType.CDDA, MediaType.CDEG, MediaType.CDG, MediaType.CDI, MediaType.CDMIDI,
@@ -176,15 +190,19 @@ namespace Aaru.DiscImages
             MediaType.Nuon, MediaType.Playdia, MediaType.Pippin, MediaType.FMTOWNS, MediaType.MilCD, MediaType.VideoNow,
             MediaType.VideoNowColor, MediaType.VideoNowXp, MediaType.CVD, MediaType.PCD
         };
+        /// <inheritdoc />
         public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions => new[]
         {
             ("separate", typeof(bool), "Write each track to a separate file.", (object)false)
         };
+        /// <inheritdoc />
         public IEnumerable<string> KnownExtensions => new[]
         {
             ".toc"
         };
+        /// <inheritdoc />
         public bool   IsWriting    { get; private set; }
+        /// <inheritdoc />
         public string ErrorMessage { get; private set; }
     }
 }

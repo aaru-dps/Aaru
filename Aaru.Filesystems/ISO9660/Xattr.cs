@@ -40,6 +40,7 @@ namespace Aaru.Filesystems
 {
     public sealed partial class ISO9660
     {
+        /// <inheritdoc />
         public Errno ListXAttr(string path, out List<string> xattrs)
         {
             xattrs = null;
@@ -102,6 +103,7 @@ namespace Aaru.Filesystems
             return Errno.NoError;
         }
 
+        /// <inheritdoc />
         public Errno GetXattr(string path, string xattr, ref byte[] buf)
         {
             buf = null;

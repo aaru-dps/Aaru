@@ -40,6 +40,7 @@ namespace Aaru.DiscImages
 {
     public sealed partial class RayDim
     {
+        /// <inheritdoc />
         public bool Identify(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();

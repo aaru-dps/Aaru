@@ -44,6 +44,7 @@ namespace Aaru.Filesystems
     // Information from Inside Macintosh Volume II
     public sealed partial class AppleMFS
     {
+        /// <inheritdoc />
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(2 + partition.Start >= partition.End)
@@ -56,6 +57,7 @@ namespace Aaru.Filesystems
             return drSigWord == MFS_MAGIC;
         }
 
+        /// <inheritdoc />
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                    Encoding encoding)
         {

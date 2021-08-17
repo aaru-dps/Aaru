@@ -71,6 +71,10 @@ namespace Aaru.Core.Devices.Report
             return response;
         }
 
+        /// <summary>
+        /// Creates a report for the GET CONFIGURATION response of an MMC device
+        /// </summary>
+        /// <returns>MMC features report</returns>
         public MmcFeatures ReportMmcFeatures()
         {
             AaruConsole.WriteLine("Querying MMC GET CONFIGURATION...");
@@ -570,6 +574,16 @@ namespace Aaru.Core.Devices.Report
             return report;
         }
 
+        /// <summary>
+        /// Creates a report for media inserted into an MMC device
+        /// </summary>
+        /// <param name="mediaType">Expected media type name</param>
+        /// <param name="tryPlextor">Try Plextor vendor commands</param>
+        /// <param name="tryPioneer">Try Pioneer vendor commands</param>
+        /// <param name="tryNec">Try NEC vendor commands</param>
+        /// <param name="tryHldtst">Try HL-DT-ST vendor commands</param>
+        /// <param name="tryMediaTekF106">Try MediaTek vendor commands</param>
+        /// <returns></returns>
         public TestedMedia ReportMmcMedia(string mediaType, bool tryPlextor, bool tryPioneer, bool tryNec,
                                           bool tryHldtst, bool tryMediaTekF106)
         {

@@ -38,6 +38,9 @@ using Aaru.CommonTypes.Structs;
 namespace Aaru.DiscImages
 {
     // TODO: Checksum sectors
+    /// <summary>
+    /// Implements reading nibbelized Apple II disk images
+    /// </summary>
     public sealed partial class AppleNib : IMediaImage
     {
         Dictionary<ulong, byte[]> _addressFields;

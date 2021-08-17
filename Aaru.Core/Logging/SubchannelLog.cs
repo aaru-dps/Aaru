@@ -32,13 +32,16 @@ using Aaru.Decoders.CD;
 
 namespace Aaru.Core.Logging
 {
+    /// <summary>
+    /// Logs subchannel data
+    /// </summary>
     public class SubchannelLog
     {
         const    int          _subSize = 96;
         readonly bool         _bcd;
         readonly StreamWriter _logSw;
 
-        /// <summary>Initializes the dump log</summary>
+        /// <summary>Initializes the subchannel log</summary>
         /// <param name="outputFile">Output log file</param>
         /// <param name="bcd">Drive returns subchannel in BCD format</param>
         public SubchannelLog(string outputFile, bool bcd)
@@ -55,7 +58,7 @@ namespace Aaru.Core.Logging
             _logSw.Flush();
         }
 
-        /// <summary>Finishes and closes the dump log</summary>
+        /// <summary>Finishes and closes the subchannel log</summary>
         public void Close()
         {
             _logSw.WriteLine("######################################################");
@@ -63,6 +66,15 @@ namespace Aaru.Core.Logging
             _logSw.Close();
         }
 
+        /// <summary>
+        /// Logs an entry to the subchannel log
+        /// </summary>
+        /// <param name="subchannel">Subchannel data</param>
+        /// <param name="raw">Set to <c>true</c> if the subchannel data is raw</param>
+        /// <param name="startingLba">First LBA read from drive to retrieve the data</param>
+        /// <param name="blocks">Number of blocks read</param>
+        /// <param name="generated">Set to <c>true</c> if the subchannel has been generated, <c>false</c> if read from media</param>
+        /// <param name="fixed">Set to <c>true</c> if the subchannel has been fixed, <c>false</c> if as is</param>
         public void WriteEntry(byte[] subchannel, bool raw, long startingLba, uint blocks, bool generated, bool @fixed)
         {
             if(subchannel.Length / _subSize != blocks)
@@ -219,34 +231,87 @@ namespace Aaru.Core.Logging
             _logSw.Flush();
         }
 
+        /// <summary>
+        /// Logs message indicating the P subchannel has been fixed
+        /// </summary>
+        /// <param name="lba">LBA fix belongs to</param>
         public void WritePFix(long lba) => WriteMessageWithPosition(lba, "fixed P subchannel using weight average.");
 
+        /// <summary>
+        /// Logs message indicating the R-W subchannels have been fixed
+        /// </summary>
+        /// <param name="lba">LBA fix belongs to</param>
         public void WriteRwFix(long lba) => WriteMessageWithPosition(lba, "fixed R-W subchannels writing empty data.");
 
+        /// <summary>
+        /// Logs message indicating the ADR field of the Q subchannel has been fixed
+        /// </summary>
+        /// <param name="lba">LBA fix belongs to</param>
         public void WriteQAdrFix(long lba) => WriteMessageWithPosition(lba, "fixed Q subchannel with correct ADR.");
 
+        /// <summary>
+        /// Logs message indicating the CONTROL field of the Q subchannel has been fixed
+        /// </summary>
+        /// <param name="lba">LBA fix belongs to</param>
         public void WriteQCtrlFix(long lba) =>
             WriteMessageWithPosition(lba, "fixed Q subchannel with correct CONTROL.");
 
+        /// <summary>
+        /// Logs message indicating the ZERO field of the Q subchannel has been fixed
+        /// </summary>
+        /// <param name="lba">LBA fix belongs to</param>
         public void WriteQZeroFix(long lba) => WriteMessageWithPosition(lba, "fixed Q subchannel with correct ZERO.");
 
+        /// <summary>
+        /// Logs message indicating the TNO field of the Q subchannel has been fixed
+        /// </summary>
+        /// <param name="lba">LBA fix belongs to</param>
         public void WriteQTnoFix(long lba) => WriteMessageWithPosition(lba, "fixed Q subchannel with correct TNO.");
 
+        /// <summary>
+        /// Logs message indicating the INDEX field of the Q subchannel has been fixed
+        /// </summary>
+        /// <param name="lba">LBA fix belongs to</param>
         public void WriteQIndexFix(long lba) => WriteMessageWithPosition(lba, "fixed Q subchannel with correct INDEX.");
 
+        /// <summary>
+        /// Logs message indicating the relative position of the Q subchannel has been fixed
+        /// </summary>
+        /// <param name="lba">LBA fix belongs to</param>
         public void WriteQRelPosFix(long lba) =>
             WriteMessageWithPosition(lba, "fixed Q subchannel with correct RELATIVE POSITION.");
 
+        /// <summary>
+        /// Logs message indicating the absolute position of the Q subchannel has been fixed
+        /// </summary>
+        /// <param name="lba">LBA fix belongs to</param>
         public void WriteQAbsPosFix(long lba) =>
             WriteMessageWithPosition(lba, "fixed Q subchannel with correct ABSOLUTE POSITION.");
 
+        /// <summary>
+        /// Logs message indicating the CRC of the Q subchannel has been fixed
+        /// </summary>
+        /// <param name="lba">LBA fix belongs to</param>
         public void WriteQCrcFix(long lba) => WriteMessageWithPosition(lba, "fixed Q subchannel with correct CRC.");
 
+        /// <summary>
+        /// Logs message indicating the the Q subchannel has been fixed with a known good MCN
+        /// </summary>
+        /// <param name="lba">LBA fix belongs to</param>
         public void WriteQMcnFix(long lba) => WriteMessageWithPosition(lba, "fixed Q subchannel with known good MCN.");
 
+        /// <summary>
+        /// Logs message indicating the the Q subchannel has been fixed with a known good ISRC
+        /// </summary>
+        /// <param name="lba">LBA fix belongs to</param>
         public void WriteQIsrcFix(long lba) =>
             WriteMessageWithPosition(lba, "fixed Q subchannel with known good ISRC.");
 
+        /// <summary>
+        /// Logs a message with a specified position
+        /// </summary>
+        /// <param name="lba">LBA position</param>
+        /// <param name="message">Message to log</param>
         public void WriteMessageWithPosition(long lba, string message)
         {
             long   minute = (lba + 150)          / 4500;

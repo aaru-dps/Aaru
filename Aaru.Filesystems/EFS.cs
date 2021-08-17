@@ -44,17 +44,26 @@ using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Filesystems
 {
+    /// <summary>
+    /// Implements identification for the SGI Extent FileSystem
+    /// </summary>
     public sealed class EFS : IFilesystem
     {
         const uint EFS_MAGIC     = 0x00072959;
         const uint EFS_MAGIC_NEW = 0x0007295A;
 
+        /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
+        /// <inheritdoc />
         public Encoding       Encoding  { get; private set; }
+        /// <inheritdoc />
         public string         Name      => "Extent File System Plugin";
+        /// <inheritdoc />
         public Guid           Id        => new Guid("52A43F90-9AF3-4391-ADFE-65598DEEABAB");
+        /// <inheritdoc />
         public string         Author    => "Natalia Portillo";
 
+        /// <inheritdoc />
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(imagePlugin.Info.SectorSize < 512)
@@ -111,6 +120,7 @@ namespace Aaru.Filesystems
             return false;
         }
 
+        /// <inheritdoc />
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                    Encoding encoding)
         {

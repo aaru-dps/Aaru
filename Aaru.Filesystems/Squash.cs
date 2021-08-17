@@ -41,18 +41,27 @@ using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Filesystems
 {
+    /// <summary>
+    /// Implements detection of the squash filesystem
+    /// </summary>
     public sealed class Squash : IFilesystem
     {
         /// <summary>Identifier for Squash</summary>
         const uint SQUASH_MAGIC = 0x73717368;
         const uint SQUASH_CIGAM = 0x68737173;
 
+        /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
+        /// <inheritdoc />
         public Encoding       Encoding  { get; private set; }
+        /// <inheritdoc />
         public string         Name      => "Squash filesystem";
+        /// <inheritdoc />
         public Guid           Id        => new Guid("F8F6E46F-7A2A-48E3-9C0A-46AF4DC29E09");
+        /// <inheritdoc />
         public string         Author    => "Natalia Portillo";
 
+        /// <inheritdoc />
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(partition.Start >= partition.End)
@@ -65,6 +74,7 @@ namespace Aaru.Filesystems
             return magic == SQUASH_MAGIC || magic == SQUASH_CIGAM;
         }
 
+        /// <inheritdoc />
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                    Encoding encoding)
         {

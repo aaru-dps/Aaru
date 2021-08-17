@@ -43,6 +43,9 @@ using Marshal = Aaru.Helpers.Marshal;
 namespace Aaru.Filesystems
 {
     // Information from Practical Filesystem Design, ISBN 1-55860-497-9
+    /// <summary>
+    /// Implements detection of the Be (new) filesystem
+    /// </summary>
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
     public sealed class BeFS : IFilesystem
     {
@@ -60,12 +63,18 @@ namespace Aaru.Filesystems
         const uint BEFS_CLEAN = 0x434C454E;
         const uint BEFS_DIRTY = 0x44495254;
 
+        /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
+        /// <inheritdoc />
         public Encoding       Encoding  { get; private set; }
+        /// <inheritdoc />
         public string         Name      => "Be Filesystem";
+        /// <inheritdoc />
         public Guid           Id        => new Guid("dc8572b3-b6ad-46e4-8de9-cbe123ff6672");
+        /// <inheritdoc />
         public string         Author    => "Natalia Portillo";
 
+        /// <inheritdoc />
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(2 + partition.Start >= partition.End)
@@ -98,6 +107,7 @@ namespace Aaru.Filesystems
             return magic == BEFS_MAGIC1 || magicBe == BEFS_MAGIC1;
         }
 
+        /// <inheritdoc />
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                    Encoding encoding)
         {

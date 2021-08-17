@@ -41,6 +41,7 @@ namespace Aaru.DiscImages
 {
     public sealed partial class AaruFormat
     {
+        /// <inheritdoc />
         public bool? VerifyMediaImage()
         {
             // This will traverse all blocks and check their CRC64 without uncompressing them
@@ -205,6 +206,7 @@ namespace Aaru.DiscImages
             return true;
         }
 
+        /// <inheritdoc />
         public bool? VerifySector(ulong sectorAddress)
         {
             if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
@@ -215,6 +217,7 @@ namespace Aaru.DiscImages
             return CdChecksums.CheckCdSector(buffer);
         }
 
+        /// <inheritdoc />
         public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
                                    out List<ulong> unknownLbas)
         {
@@ -260,6 +263,7 @@ namespace Aaru.DiscImages
             return failingLbas.Count <= 0;
         }
 
+        /// <inheritdoc />
         public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
                                    out List<ulong> unknownLbas)
         {

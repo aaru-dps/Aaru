@@ -64,6 +64,9 @@ using Aaru.CommonTypes.Structs;
 
 namespace Aaru.DiscImages
 {
+    /// <summary>
+    /// Implements reading DiskDupe disk images
+    /// </summary>
     public sealed partial class DiskDupe : IMediaImage
     {
         /// <summary>Every track that has been read is cached here</summary>

@@ -44,6 +44,9 @@ using Marshal = Aaru.Helpers.Marshal;
 namespace Aaru.Partitions
 {
     // TODO: Support AAP extensions
+    /// <summary>
+    /// Implements decoding of Intel/Microsoft Master Boot Record and extensions
+    /// </summary>
     public sealed class MBR : IPartition
     {
         const ulong GPT_MAGIC = 0x5452415020494645;
@@ -250,10 +253,14 @@ namespace Aaru.Partitions
             "VMWare VMKCORE", "Linux RAID, FreeDOS", "SpeedStor, LANStep, PS/2 IML", "Xenix bad block"
         };
 
+        /// <inheritdoc />
         public string Name   => "Master Boot Record";
+        /// <inheritdoc />
         public Guid   Id     => new Guid("5E8A34E8-4F1A-59E6-4BF7-7EA647063A76");
+        /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
+        /// <inheritdoc />
         [SuppressMessage("ReSharper", "UnusedVariable")]
         public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {

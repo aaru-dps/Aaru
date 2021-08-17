@@ -43,6 +43,7 @@ namespace Aaru.DiscImages
 {
     public sealed partial class DiskCopy42
     {
+        /// <inheritdoc />
         public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
                            uint sectorSize)
         {
@@ -213,6 +214,7 @@ namespace Aaru.DiscImages
             return true;
         }
 
+        /// <inheritdoc />
         public bool WriteMediaTag(byte[] data, MediaTagType tag)
         {
             ErrorMessage = "Unsupported feature";
@@ -220,6 +222,7 @@ namespace Aaru.DiscImages
             return false;
         }
 
+        /// <inheritdoc />
         public bool WriteSector(byte[] data, ulong sectorAddress)
         {
             if(!IsWriting)
@@ -251,6 +254,7 @@ namespace Aaru.DiscImages
             return true;
         }
 
+        /// <inheritdoc />
         public bool WriteSectors(byte[] data, ulong sectorAddress, uint length)
         {
             if(!IsWriting)
@@ -282,6 +286,7 @@ namespace Aaru.DiscImages
             return true;
         }
 
+        /// <inheritdoc />
         public bool WriteSectorLong(byte[] data, ulong sectorAddress)
         {
             if(!IsWriting)
@@ -322,6 +327,7 @@ namespace Aaru.DiscImages
             return true;
         }
 
+        /// <inheritdoc />
         public bool WriteSectorsLong(byte[] data, ulong sectorAddress, uint length)
         {
             if(!IsWriting)
@@ -367,6 +373,7 @@ namespace Aaru.DiscImages
             return true;
         }
 
+        /// <inheritdoc />
         public bool Close()
         {
             if(!IsWriting)
@@ -417,6 +424,7 @@ namespace Aaru.DiscImages
             return true;
         }
 
+        /// <inheritdoc />
         public bool SetMetadata(ImageInfo metadata)
         {
             header.DiskName = metadata.MediaTitle ?? "-Aaru converted image-";
@@ -424,8 +432,10 @@ namespace Aaru.DiscImages
             return true;
         }
 
+        /// <inheritdoc />
         public bool SetGeometry(uint cylinders, uint heads, uint sectorsPerTrack) => true;
 
+        /// <inheritdoc />
         public bool WriteSectorTag(byte[] data, ulong sectorAddress, SectorTagType tag)
         {
             ErrorMessage = "Unsupported feature";
@@ -433,6 +443,7 @@ namespace Aaru.DiscImages
             return false;
         }
 
+        /// <inheritdoc />
         public bool WriteSectorsTag(byte[] data, ulong sectorAddress, uint length, SectorTagType tag)
         {
             ErrorMessage = "Unsupported feature";
@@ -440,8 +451,10 @@ namespace Aaru.DiscImages
             return false;
         }
 
+        /// <inheritdoc />
         public bool SetDumpHardware(List<DumpHardwareType> dumpHardware) => false;
 
+        /// <inheritdoc />
         public bool SetCicmMetadata(CICMMetadataType metadata) => false;
     }
 }

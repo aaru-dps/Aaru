@@ -41,31 +41,45 @@ namespace Aaru.DiscImages
 {
     public sealed partial class T98
     {
+        /// <inheritdoc />
         public string                 Name         => "T98 Hard Disk Image";
+        /// <inheritdoc />
         public Guid                   Id           => new Guid("0410003E-6E7B-40E6-9328-BA5651ADF6B7");
+        /// <inheritdoc />
         public ImageInfo              Info         => _imageInfo;
+        /// <inheritdoc />
         public string                 Author       => "Natalia Portillo";
+        /// <inheritdoc />
         public string                 Format       => "T98 disk image";
+        /// <inheritdoc />
         public List<DumpHardwareType> DumpHardware => null;
+        /// <inheritdoc />
         public CICMMetadataType       CicmMetadata => null;
+        /// <inheritdoc />
         public IEnumerable<MediaTagType> SupportedMediaTags => new MediaTagType[]
             {};
+        /// <inheritdoc />
         public IEnumerable<SectorTagType> SupportedSectorTags => new SectorTagType[]
             {};
+        /// <inheritdoc />
         public IEnumerable<MediaType> SupportedMediaTypes => new[]
         {
             MediaType.GENERIC_HDD, MediaType.Unknown, MediaType.FlashDrive, MediaType.CompactFlash,
             MediaType.CompactFlashType2, MediaType.PCCardTypeI, MediaType.PCCardTypeII, MediaType.PCCardTypeIII,
             MediaType.PCCardTypeIV
         };
+        /// <inheritdoc />
         public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>
             new (string name, Type type, string description, object @default)[]
                 {};
+        /// <inheritdoc />
         public IEnumerable<string> KnownExtensions => new[]
         {
             ".t98"
         };
+        /// <inheritdoc />
         public bool   IsWriting    { get; private set; }
+        /// <inheritdoc />
         public string ErrorMessage { get; private set; }
     }
 }

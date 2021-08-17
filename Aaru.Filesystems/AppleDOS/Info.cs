@@ -42,6 +42,7 @@ namespace Aaru.Filesystems
 {
     public sealed partial class AppleDOS
     {
+        /// <inheritdoc />
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(imagePlugin.Info.Sectors != 455 &&
@@ -61,6 +62,7 @@ namespace Aaru.Filesystems
                    _vtoc.sectorsPerTrack == spt && _vtoc.bytesPerSector               == 256;
         }
 
+        /// <inheritdoc />
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                    Encoding encoding)
         {

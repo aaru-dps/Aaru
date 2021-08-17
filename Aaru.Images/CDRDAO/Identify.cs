@@ -40,6 +40,7 @@ namespace Aaru.DiscImages
 {
     public sealed partial class Cdrdao
     {
+        /// <inheritdoc />
         public bool Identify(IFilter imageFilter)
         {
             try

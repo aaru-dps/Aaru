@@ -952,6 +952,15 @@ namespace Aaru.Devices
             return sense;
         }
 
+        /// <summary>
+        /// Writes a space mark in the media
+        /// </summary>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="code">Space type code.</param>
+        /// <param name="count">How many marks to write</param>
+        /// <param name="timeout">Timeout.</param>
+        /// <param name="duration">Duration.</param>
+        /// <returns><c>true</c>, if select was tracked, <c>false</c> otherwise.</returns>
         public bool Space(out byte[] senseBuffer, SscSpaceCodes code, int count, uint timeout, out double duration)
         {
             senseBuffer = new byte[64];

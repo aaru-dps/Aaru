@@ -52,6 +52,7 @@ namespace Aaru.DiscImages
 {
     public sealed partial class Chd
     {
+        /// <inheritdoc />
         [SuppressMessage("ReSharper", "UnusedVariable")]
         public bool Open(IFilter imageFilter)
         {
@@ -1242,6 +1243,7 @@ namespace Aaru.DiscImages
             return true;
         }
 
+        /// <inheritdoc />
         public byte[] ReadSector(ulong sectorAddress)
         {
             if(sectorAddress > _imageInfo.Sectors - 1)
@@ -1368,6 +1370,7 @@ namespace Aaru.DiscImages
             return buffer;
         }
 
+        /// <inheritdoc />
         public byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
         {
             if(_isHdd)
@@ -1623,6 +1626,7 @@ namespace Aaru.DiscImages
             return buffer;
         }
 
+        /// <inheritdoc />
         public byte[] ReadSectors(ulong sectorAddress, uint length)
         {
             if(sectorAddress > _imageInfo.Sectors - 1)
@@ -1644,6 +1648,7 @@ namespace Aaru.DiscImages
             return ms.ToArray();
         }
 
+        /// <inheritdoc />
         public byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
         {
             if(sectorAddress > _imageInfo.Sectors - 1)
@@ -1665,6 +1670,7 @@ namespace Aaru.DiscImages
             return ms.ToArray();
         }
 
+        /// <inheritdoc />
         public byte[] ReadSectorLong(ulong sectorAddress)
         {
             if(_isHdd)
@@ -1760,6 +1766,7 @@ namespace Aaru.DiscImages
             return buffer;
         }
 
+        /// <inheritdoc />
         public byte[] ReadSectorsLong(ulong sectorAddress, uint length)
         {
             if(sectorAddress > _imageInfo.Sectors - 1)
@@ -1781,6 +1788,7 @@ namespace Aaru.DiscImages
             return ms.ToArray();
         }
 
+        /// <inheritdoc />
         public byte[] ReadDiskTag(MediaTagType tag)
         {
             if(_imageInfo.ReadableMediaTags.Contains(MediaTagType.ATA_IDENTIFY))
@@ -1792,6 +1800,7 @@ namespace Aaru.DiscImages
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
+        /// <inheritdoc />
         public List<Track> GetSessionTracks(Session session)
         {
             if(_isHdd)
@@ -1800,6 +1809,7 @@ namespace Aaru.DiscImages
             return GetSessionTracks(session.SessionSequence);
         }
 
+        /// <inheritdoc />
         public List<Track> GetSessionTracks(ushort session)
         {
             if(_isHdd)
@@ -1808,6 +1818,7 @@ namespace Aaru.DiscImages
             return _tracks.Values.Where(track => track.TrackSession == session).ToList();
         }
 
+        /// <inheritdoc />
         public byte[] ReadSector(ulong sectorAddress, uint track)
         {
             if(_isHdd)
@@ -1816,6 +1827,7 @@ namespace Aaru.DiscImages
             return ReadSector(GetAbsoluteSector(sectorAddress, track));
         }
 
+        /// <inheritdoc />
         public byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag)
         {
             if(_isHdd)
@@ -1824,6 +1836,7 @@ namespace Aaru.DiscImages
             return ReadSectorTag(GetAbsoluteSector(sectorAddress, track), tag);
         }
 
+        /// <inheritdoc />
         public byte[] ReadSectors(ulong sectorAddress, uint length, uint track)
         {
             if(_isHdd)
@@ -1832,6 +1845,7 @@ namespace Aaru.DiscImages
             return ReadSectors(GetAbsoluteSector(sectorAddress, track), length);
         }
 
+        /// <inheritdoc />
         public byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag)
         {
             if(_isHdd)
@@ -1840,6 +1854,7 @@ namespace Aaru.DiscImages
             return ReadSectorsTag(GetAbsoluteSector(sectorAddress, track), length, tag);
         }
 
+        /// <inheritdoc />
         public byte[] ReadSectorLong(ulong sectorAddress, uint track)
         {
             if(_isHdd)
@@ -1848,6 +1863,7 @@ namespace Aaru.DiscImages
             return ReadSectorLong(GetAbsoluteSector(sectorAddress, track));
         }
 
+        /// <inheritdoc />
         public byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
         {
             if(_isHdd)

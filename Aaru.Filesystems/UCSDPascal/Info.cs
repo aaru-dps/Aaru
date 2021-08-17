@@ -45,6 +45,7 @@ namespace Aaru.Filesystems.UCSDPascal
     // Information from Call-A.P.P.L.E. Pascal Disk Directory Structure
     public sealed partial class PascalPlugin
     {
+        /// <inheritdoc />
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(partition.Length < 3)
@@ -112,6 +113,7 @@ namespace Aaru.Filesystems.UCSDPascal
             return volEntry.Files >= 0;
         }
 
+        /// <inheritdoc />
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                    Encoding encoding)
         {

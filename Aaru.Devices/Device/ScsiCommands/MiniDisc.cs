@@ -31,11 +31,18 @@
 // ****************************************************************************/
 
 using Aaru.Console;
+// ReSharper disable InconsistentNaming
 
 namespace Aaru.Devices
 {
     public sealed partial class Device
     {
+        /// <summary>Reads the data TOC from an MD-DATA</summary>
+        /// <param name="buffer">Buffer where the response will be stored</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="timeout">Timeout in seconds.</param>
+        /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         public bool MiniDiscReadDataTOC(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
         {
             ushort transferLength = 2336;
@@ -59,6 +66,13 @@ namespace Aaru.Devices
             return sense;
         }
 
+        /// <summary>Reads the user TOC from an MD-DATA</summary>
+        /// <param name="buffer">Buffer where the response will be stored</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="sector">TOC sector to read</param>
+        /// <param name="timeout">Timeout in seconds.</param>
+        /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         public bool MiniDiscReadUserTOC(out byte[] buffer, out byte[] senseBuffer, uint sector, uint timeout,
                                         out double duration)
         {
@@ -87,6 +101,12 @@ namespace Aaru.Devices
             return sense;
         }
 
+        /// <summary>Sends a D5h command to a MD-DATA drive (harmless)</summary>
+        /// <param name="buffer">Buffer where the response will be stored</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="timeout">Timeout in seconds.</param>
+        /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         public bool MiniDiscD5(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
         {
             ushort transferLength = 4;
@@ -110,7 +130,13 @@ namespace Aaru.Devices
             return sense;
         }
 
-        public bool MiniDiscStopPlaying(out byte[] buffer, out byte[] senseBuffer, uint sector, uint timeout,
+        /// <summary>Stops playing MiniDisc audio from an MD-DATA drive</summary>
+        /// <param name="buffer">Buffer where the response will be stored</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="timeout">Timeout in seconds.</param>
+        /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
+        public bool MiniDiscStopPlaying(out byte[] buffer, out byte[] senseBuffer, uint timeout,
                                         out double duration)
         {
             senseBuffer = new byte[64];
@@ -130,6 +156,12 @@ namespace Aaru.Devices
             return sense;
         }
 
+        /// <summary>Gets current position while playing MiniDisc audio from an MD-DATA drive</summary>
+        /// <param name="buffer">Buffer where the response will be stored</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="timeout">Timeout in seconds.</param>
+        /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         public bool MiniDiscReadPosition(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
         {
             ushort transferLength = 4;
@@ -153,6 +185,12 @@ namespace Aaru.Devices
             return sense;
         }
 
+        /// <summary>Gets MiniDisc type from an MD-DATA drive</summary>
+        /// <param name="buffer">Buffer where the response will be stored</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="timeout">Timeout in seconds.</param>
+        /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         public bool MiniDiscGetType(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
         {
             ushort transferLength = 8;

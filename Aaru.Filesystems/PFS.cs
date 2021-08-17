@@ -43,6 +43,9 @@ using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Filesystems
 {
+    /// <summary>
+    /// Implements detection of the Professional File System
+    /// </summary>
     public sealed class PFS : IFilesystem
     {
         /// <summary>Identifier for AFS (PFS v1)</summary>
@@ -56,12 +59,18 @@ namespace Aaru.Filesystems
         /// <summary>Identifier for multi-user PFS</summary>
         const uint MUPFS_DISK = 0x6D755046;
 
+        /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
+        /// <inheritdoc />
         public Encoding       Encoding  { get; private set; }
+        /// <inheritdoc />
         public string         Name      => "Professional File System";
+        /// <inheritdoc />
         public Guid           Id        => new Guid("68DE769E-D957-406A-8AE4-3781CA8CDA77");
+        /// <inheritdoc />
         public string         Author    => "Natalia Portillo";
 
+        /// <inheritdoc />
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(partition.Length < 3)
@@ -75,6 +84,7 @@ namespace Aaru.Filesystems
                    magic == MUPFS_DISK;
         }
 
+        /// <inheritdoc />
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                    Encoding encoding)
         {

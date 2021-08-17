@@ -39,15 +39,22 @@ using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Partitions
 {
+    /// <summary>
+    /// Implements decoding of DEC disklabels
+    /// </summary>
     public sealed class DEC : IPartition
     {
         const int PT_MAGIC = 0x032957;
         const int PT_VALID = 1;
 
+        /// <inheritdoc />
         public string Name   => "DEC disklabel";
+        /// <inheritdoc />
         public Guid   Id     => new Guid("58CEC3B7-3B93-4D47-86EE-D6DADE9D444F");
+        /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
+        /// <inheritdoc />
         public bool GetInformation(IMediaImage imagePlugin, out List<CommonTypes.Partition> partitions,
                                    ulong sectorOffset)
         {

@@ -40,6 +40,7 @@ namespace Aaru.Filesystems
 {
     public sealed partial class XboxFatPlugin
     {
+        /// <inheritdoc />
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(imagePlugin.Info.SectorSize < 512)
@@ -52,6 +53,7 @@ namespace Aaru.Filesystems
             return sb.magic == FATX_MAGIC || sb.magic == FATX_CIGAM;
         }
 
+        /// <inheritdoc />
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                    Encoding encoding)
         {

@@ -38,6 +38,9 @@ using Aaru.CommonTypes.Structs;
 
 namespace Aaru.DiscImages
 {
+    /// <summary>
+    /// Implements reading and writing QEMU Enhanced Disk images
+    /// </summary>
     public sealed partial class Qed : IWritableImage
     {
         int                        _clusterBits;

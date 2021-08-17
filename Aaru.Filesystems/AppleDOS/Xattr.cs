@@ -39,10 +39,6 @@ namespace Aaru.Filesystems
     public sealed partial class AppleDOS
     {
         /// <inheritdoc />
-        /// <summary>Lists all extended attributes, alternate data streams and forks of the given file.</summary>
-        /// <returns>Error number.</returns>
-        /// <param name="path">Path.</param>
-        /// <param name="xattrs">List of extended attributes, alternate data streams and forks.</param>
         public Errno ListXAttr(string path, out List<string> xattrs)
         {
             xattrs = null;
@@ -83,11 +79,6 @@ namespace Aaru.Filesystems
         }
 
         /// <inheritdoc />
-        /// <summary>Reads an extended attribute, alternate data stream or fork from the given file.</summary>
-        /// <returns>Error number.</returns>
-        /// <param name="path">File path.</param>
-        /// <param name="xattr">Extended attribute, alternate data stream or fork name.</param>
-        /// <param name="buf">Buffer.</param>
         public Errno GetXattr(string path, string xattr, ref byte[] buf)
         {
             if(!_mounted)

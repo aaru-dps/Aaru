@@ -41,6 +41,9 @@ using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Filesystems
 {
+    /// <summary>
+    /// Implements detection of the Smart File System
+    /// </summary>
     public sealed class SFS : IFilesystem
     {
         /// <summary>Identifier for SFS v1</summary>
@@ -48,12 +51,18 @@ namespace Aaru.Filesystems
         /// <summary>Identifier for SFS v2</summary>
         const uint SFS2_MAGIC = 0x53465302;
 
+        /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
+        /// <inheritdoc />
         public Encoding       Encoding  { get; private set; }
+        /// <inheritdoc />
         public string         Name      => "SmartFileSystem";
+        /// <inheritdoc />
         public Guid           Id        => new Guid("26550C19-3671-4A2D-BC2F-F20CEB7F48DC");
+        /// <inheritdoc />
         public string         Author    => "Natalia Portillo";
 
+        /// <inheritdoc />
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(partition.Start >= partition.End)
@@ -66,6 +75,7 @@ namespace Aaru.Filesystems
             return magic == SFS_MAGIC || magic == SFS2_MAGIC;
         }
 
+        /// <inheritdoc />
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                    Encoding encoding)
         {

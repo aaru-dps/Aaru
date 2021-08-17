@@ -46,6 +46,7 @@ namespace Aaru.DiscImages
 {
     public sealed partial class PartClone
     {
+        /// <inheritdoc />
         public bool Open(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
@@ -137,6 +138,7 @@ namespace Aaru.DiscImages
             return true;
         }
 
+        /// <inheritdoc />
         public byte[] ReadSector(ulong sectorAddress)
         {
             if(sectorAddress > _imageInfo.Sectors - 1)
@@ -163,6 +165,7 @@ namespace Aaru.DiscImages
             return sector;
         }
 
+        /// <inheritdoc />
         public byte[] ReadSectors(ulong sectorAddress, uint length)
         {
             if(sectorAddress > _imageInfo.Sectors - 1)

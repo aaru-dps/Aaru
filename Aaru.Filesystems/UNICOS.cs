@@ -51,6 +51,9 @@ using time_t = System.Int64;
 
 namespace Aaru.Filesystems
 {
+    /// <summary>
+    /// Implements detection for the Cray UNICOS filesystem
+    /// </summary>
     public sealed class UNICOS : IFilesystem
     {
         const int NC1_MAXPART = 64;
@@ -59,12 +62,18 @@ namespace Aaru.Filesystems
         const ulong UNICOS_MAGIC  = 0x6e6331667331636e;
         const ulong UNICOS_SECURE = 0xcd076d1771d670cd;
 
+        /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
+        /// <inheritdoc />
         public Encoding       Encoding  { get; private set; }
+        /// <inheritdoc />
         public string         Name      => "UNICOS Filesystem Plugin";
+        /// <inheritdoc />
         public Guid           Id        => new Guid("61712F04-066C-44D5-A2A0-1E44C66B33F0");
+        /// <inheritdoc />
         public string         Author    => "Natalia Portillo";
 
+        /// <inheritdoc />
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(imagePlugin.Info.SectorSize < 512)
@@ -91,6 +100,7 @@ namespace Aaru.Filesystems
             return unicosSb.s_magic == UNICOS_MAGIC;
         }
 
+        /// <inheritdoc />
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                    Encoding encoding)
         {

@@ -46,6 +46,7 @@ namespace Aaru.Filesystems.LisaFS
 {
     public sealed partial class LisaFS
     {
+        /// <inheritdoc />
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             try
@@ -130,6 +131,7 @@ namespace Aaru.Filesystems.LisaFS
             }
         }
 
+        /// <inheritdoc />
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                    Encoding encoding)
         {

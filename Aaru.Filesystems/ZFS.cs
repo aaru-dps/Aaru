@@ -61,6 +61,9 @@ namespace Aaru.Filesystems
      * It can also be encoded little or big endian.
      * Because of this variations, ZFS stored a header indicating the used encoding and endianess before the encoded nvlist.
      */
+    /// <summary>
+    /// Implements detection for the Zettabyte File System (ZFS)
+    /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "UnusedType.Local"),
      SuppressMessage("ReSharper", "UnusedMember.Local"), SuppressMessage("ReSharper", "NotAccessedField.Local")]
     public sealed class ZFS : IFilesystem
@@ -78,12 +81,18 @@ namespace Aaru.Filesystems
 
         const uint ZFS_MAGIC = 0x58465342;
 
+        /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
+        /// <inheritdoc />
         public Encoding       Encoding  { get; private set; }
+        /// <inheritdoc />
         public string         Name      => "ZFS Filesystem Plugin";
+        /// <inheritdoc />
         public Guid           Id        => new Guid("0750014F-A714-4692-A369-E23F6EC3659C");
+        /// <inheritdoc />
         public string         Author    => "Natalia Portillo";
 
+        /// <inheritdoc />
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(imagePlugin.Info.SectorSize < 512)
@@ -111,6 +120,7 @@ namespace Aaru.Filesystems
             return magic == ZEC_MAGIC || magic == ZEC_CIGAM;
         }
 
+        /// <inheritdoc />
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                    Encoding encoding)
         {

@@ -40,6 +40,9 @@ using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Partitions
 {
+    /// <summary>
+    /// Implements decoding of Xbox partitions
+    /// </summary>
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
     public sealed class Xbox : IPartition
     {
@@ -62,10 +65,14 @@ namespace Aaru.Partitions
 
         const uint XBOX360_DEVKIT_MAGIC = 0x00020000;
 
+        /// <inheritdoc />
         public string Name   => "Xbox partitioning";
+        /// <inheritdoc />
         public Guid   Id     => new Guid("E3F6FB91-D358-4F22-A550-81E92D50EB78");
+        /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
+        /// <inheritdoc />
         public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
             partitions = new List<Partition>();

@@ -42,6 +42,9 @@ using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Filesystems
 {
+    /// <summary>
+    /// Implements detection for the Plan-9 Fossil on-disk filesystem
+    /// </summary>
     public sealed class Fossil : IFilesystem
     {
         const uint FOSSIL_HDR_MAGIC = 0x3776AE89;
@@ -50,12 +53,18 @@ namespace Aaru.Filesystems
         // Fossil header starts at 128KiB
         const ulong HEADER_POS = 128 * 1024;
 
+        /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
+        /// <inheritdoc />
         public Encoding       Encoding  { get; private set; }
+        /// <inheritdoc />
         public string         Name      => "Fossil Filesystem Plugin";
+        /// <inheritdoc />
         public Guid           Id        => new Guid("932BF104-43F6-494F-973C-45EF58A51DA9");
+        /// <inheritdoc />
         public string         Author    => "Natalia Portillo";
 
+        /// <inheritdoc />
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             ulong hdrSector = HEADER_POS / imagePlugin.Info.SectorSize;
@@ -72,6 +81,7 @@ namespace Aaru.Filesystems
             return hdr.magic == FOSSIL_HDR_MAGIC;
         }
 
+        /// <inheritdoc />
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                    Encoding encoding)
         {

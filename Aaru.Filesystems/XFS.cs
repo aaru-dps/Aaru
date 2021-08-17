@@ -43,16 +43,25 @@ using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Filesystems
 {
+    /// <summary>
+    /// Implements detection of SGI's XFS
+    /// </summary>
     public sealed class XFS : IFilesystem
     {
         const uint XFS_MAGIC = 0x58465342;
 
+        /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
+        /// <inheritdoc />
         public Encoding       Encoding  { get; private set; }
+        /// <inheritdoc />
         public string         Name      => "XFS Filesystem Plugin";
+        /// <inheritdoc />
         public Guid           Id        => new Guid("1D8CD8B8-27E6-410F-9973-D16409225FBA");
+        /// <inheritdoc />
         public string         Author    => "Natalia Portillo";
 
+        /// <inheritdoc />
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(imagePlugin.Info.SectorSize < 512)
@@ -119,6 +128,7 @@ namespace Aaru.Filesystems
             return false;
         }
 
+        /// <inheritdoc />
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                    Encoding encoding)
         {

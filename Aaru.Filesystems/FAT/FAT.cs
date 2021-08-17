@@ -42,6 +42,9 @@ namespace Aaru.Filesystems
 {
     // TODO: Differentiate between Atari and X68k FAT, as this one uses a standard BPB.
     // X68K uses cdate/adate from direntry for extending filename
+    /// <summary>
+    /// Implements the File Allocation Table, aka FAT, filesystem (FAT12, FAT16 and FAT32 variants).
+    /// </summary>
     public sealed partial class FAT : IReadOnlyFilesystem
     {
         uint                                                           _bytesPerCluster;
@@ -65,17 +68,23 @@ namespace Aaru.Filesystems
         FileSystemInfo                                                 _statfs;
         bool                                                           _useFirstFat;
 
+        /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
-
+        /// <inheritdoc />
         public Encoding Encoding { get; private set; }
+        /// <inheritdoc />
         public string   Name     => "Microsoft File Allocation Table";
+        /// <inheritdoc />
         public Guid     Id       => new Guid("33513B2C-0D26-0D2D-32C3-79D8611158E0");
+        /// <inheritdoc />
         public string   Author   => "Natalia Portillo";
 
+        /// <inheritdoc />
         public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
             new (string name, Type type, string description)[]
                 {};
 
+        /// <inheritdoc />
         public Dictionary<string, string> Namespaces => new Dictionary<string, string>
         {
             {

@@ -38,6 +38,7 @@ namespace Aaru.DiscImages
 {
     public sealed partial class Udif
     {
+        /// <inheritdoc />
         public bool Identify(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();

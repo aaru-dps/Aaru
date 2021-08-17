@@ -41,6 +41,7 @@ namespace Aaru.Filesystems.LisaFS
 {
     public sealed partial class LisaFS
     {
+        /// <inheritdoc />
         public Errno GetAttributes(string path, out FileAttributes attributes)
         {
             attributes = new FileAttributes();
@@ -58,6 +59,7 @@ namespace Aaru.Filesystems.LisaFS
             return Errno.NoError;
         }
 
+        /// <inheritdoc />
         public Errno Read(string path, long offset, long size, ref byte[] buf)
         {
             if(size == 0)
@@ -112,6 +114,7 @@ namespace Aaru.Filesystems.LisaFS
             return Errno.NoError;
         }
 
+        /// <inheritdoc />
         public Errno Stat(string path, out FileEntryInfo stat)
         {
             stat = null;

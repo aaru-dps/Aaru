@@ -38,6 +38,10 @@ using Aaru.CommonTypes.Structs;
 
 namespace Aaru.DiscImages
 {
+    /// <inheritdoc />
+    /// <summary>
+    /// Implements reading and writing T98 disk images
+    /// </summary>
     public sealed partial class T98 : IWritableImage
     {
         ImageInfo  _imageInfo;

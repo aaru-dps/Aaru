@@ -43,6 +43,7 @@ namespace Aaru.Filesystems
     // https://developer.apple.com/legacy/library/documentation/mac/pdf/Files/File_Manager.pdf
     public sealed partial class AppleHFS
     {
+        /// <inheritdoc />
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(2 + partition.Start >= partition.End)
@@ -96,6 +97,7 @@ namespace Aaru.Filesystems
             return false;
         }
 
+        /// <inheritdoc />
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                    Encoding encoding)
         {

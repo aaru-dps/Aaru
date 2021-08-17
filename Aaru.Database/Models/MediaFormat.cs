@@ -32,5 +32,8 @@
 
 namespace Aaru.Database.Models
 {
+    /// <summary>
+    /// Media image format
+    /// </summary>
     public class MediaFormat : NameCountModel {}
 }

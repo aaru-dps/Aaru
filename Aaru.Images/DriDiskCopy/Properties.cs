@@ -41,20 +41,30 @@ namespace Aaru.DiscImages
 {
     public sealed partial class DriDiskCopy
     {
+        /// <inheritdoc />
         public ImageInfo Info => _imageInfo;
 
+        /// <inheritdoc />
         public string                 Name         => "Digital Research DiskCopy";
+        /// <inheritdoc />
         public Guid                   Id           => new Guid("9F0BE551-8BAB-4038-8B5A-691F1BF5FFF3");
+        /// <inheritdoc />
         public string                 Author       => "Natalia Portillo";
+        /// <inheritdoc />
         public string                 Format       => "Digital Research DiskCopy";
+        /// <inheritdoc />
         public List<DumpHardwareType> DumpHardware => null;
+        /// <inheritdoc />
         public CICMMetadataType       CicmMetadata => null;
+        /// <inheritdoc />
         public IEnumerable<MediaTagType> SupportedMediaTags => new MediaTagType[]
             {};
+        /// <inheritdoc />
         public IEnumerable<SectorTagType> SupportedSectorTags => new SectorTagType[]
             {};
 
         // TODO: Test with real hardware to see real supported media
+        /// <inheritdoc />
         public IEnumerable<MediaType> SupportedMediaTypes => new[]
         {
             MediaType.ACORN_35_DS_DD, MediaType.ACORN_35_DS_HD, MediaType.Apricot_35, MediaType.ATARI_35_DS_DD,
@@ -65,14 +75,18 @@ namespace Aaru.DiscImages
             MediaType.FDFORMAT_35_DD, MediaType.FDFORMAT_35_HD, MediaType.FDFORMAT_525_DD, MediaType.FDFORMAT_525_HD,
             MediaType.RX50, MediaType.XDF_35, MediaType.XDF_525
         };
+        /// <inheritdoc />
         public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>
             new (string name, Type type, string description, object @default)[]
                 {};
+        /// <inheritdoc />
         public IEnumerable<string> KnownExtensions => new[]
         {
             ".dsk"
         };
+        /// <inheritdoc />
         public bool   IsWriting    { get; private set; }
+        /// <inheritdoc />
         public string ErrorMessage { get; private set; }
     }
 }

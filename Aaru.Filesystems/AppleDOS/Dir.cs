@@ -42,9 +42,6 @@ namespace Aaru.Filesystems
     public sealed partial class AppleDOS
     {
         /// <inheritdoc />
-        /// <summary>Solves a symbolic link.</summary>
-        /// <param name="path">Link path.</param>
-        /// <param name="dest">Link destination.</param>
         public Errno ReadLink(string path, out string dest)
         {
             dest = null;
@@ -53,9 +50,6 @@ namespace Aaru.Filesystems
         }
 
         /// <inheritdoc />
-        /// <summary>Lists contents from a directory.</summary>
-        /// <param name="path">Directory path.</param>
-        /// <param name="contents">Directory contents.</param>
         public Errno ReadDir(string path, out List<string> contents)
         {
             contents = null;

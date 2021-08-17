@@ -41,6 +41,7 @@ namespace Aaru.Filesystems.LisaFS
 {
     public sealed partial class LisaFS
     {
+        /// <inheritdoc />
         public Errno MapBlock(string path, long fileBlock, out long deviceBlock)
         {
             deviceBlock = 0;

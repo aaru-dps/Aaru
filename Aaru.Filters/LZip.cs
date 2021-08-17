@@ -49,10 +49,14 @@ namespace Aaru.Filters
         DateTime _lastWriteTime;
         bool     _opened;
 
+        /// <inheritdoc />
         public string Name   => "LZip";
+        /// <inheritdoc />
         public Guid   Id     => new Guid("09D715E9-20C0-48B1-A8D9-D8897CEC57C9");
+        /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
+        /// <inheritdoc />
         public void Close()
         {
             _dataStream?.Close();
@@ -61,19 +65,26 @@ namespace Aaru.Filters
             _opened     = false;
         }
 
+        /// <inheritdoc />
         public string GetBasePath() => _basePath;
 
+        /// <inheritdoc />
         public Stream GetDataForkStream() => _innerStream;
 
+        /// <inheritdoc />
         public string GetPath() => _basePath;
 
+        /// <inheritdoc />
         public Stream GetResourceForkStream() => null;
 
+        /// <inheritdoc />
         public bool HasResourceFork() => false;
 
+        /// <inheritdoc />
         public bool Identify(byte[] buffer) => buffer[0] == 0x4C && buffer[1] == 0x5A && buffer[2] == 0x49 &&
                                                buffer[3] == 0x50 && buffer[4] == 0x01;
 
+        /// <inheritdoc />
         public bool Identify(Stream stream)
         {
             byte[] buffer = new byte[5];
@@ -86,6 +97,7 @@ namespace Aaru.Filters
                    buffer[4] == 0x01;
         }
 
+        /// <inheritdoc />
         public bool Identify(string path)
         {
             if(!File.Exists(path))
@@ -102,6 +114,7 @@ namespace Aaru.Filters
                    buffer[4] == 0x01;
         }
 
+        /// <inheritdoc />
         public void Open(byte[] buffer)
         {
             _dataStream       = new MemoryStream(buffer);
@@ -115,6 +128,7 @@ namespace Aaru.Filters
             _opened = true;
         }
 
+        /// <inheritdoc />
         public void Open(Stream stream)
         {
             _dataStream    = stream;
@@ -130,6 +144,7 @@ namespace Aaru.Filters
             _opened      = true;
         }
 
+        /// <inheritdoc />
         public void Open(string path)
         {
             _dataStream = new FileStream(path, FileMode.Open, FileAccess.Read);
@@ -147,16 +162,22 @@ namespace Aaru.Filters
             _opened      = true;
         }
 
+        /// <inheritdoc />
         public DateTime GetCreationTime() => _creationTime;
 
+        /// <inheritdoc />
         public long GetDataForkLength() => _decompressedSize;
 
+        /// <inheritdoc />
         public DateTime GetLastWriteTime() => _lastWriteTime;
 
+        /// <inheritdoc />
         public long GetLength() => _decompressedSize;
 
+        /// <inheritdoc />
         public long GetResourceForkLength() => 0;
 
+        /// <inheritdoc />
         public string GetFilename()
         {
             if(_basePath?.EndsWith(".lz", StringComparison.InvariantCultureIgnoreCase) == true)
@@ -166,8 +187,10 @@ namespace Aaru.Filters
                        ? _basePath.Substring(0, _basePath.Length - 5) : _basePath;
         }
 
+        /// <inheritdoc />
         public string GetParentFolder() => Path.GetDirectoryName(_basePath);
 
+        /// <inheritdoc />
         public bool IsOpened() => _opened;
     }
 }

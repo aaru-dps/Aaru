@@ -43,14 +43,23 @@ using Marshal = Aaru.Helpers.Marshal;
 namespace Aaru.Filesystems
 {
     // Information from Inside Windows NT
+    /// <summary>
+    /// Implements detection of the New Technology File System (NTFS)
+    /// </summary>
     public sealed class NTFS : IFilesystem
     {
+        /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
+        /// <inheritdoc />
         public Encoding       Encoding  { get; private set; }
+        /// <inheritdoc />
         public string         Name      => "New Technology File System (NTFS)";
+        /// <inheritdoc />
         public Guid           Id        => new Guid("33513B2C-1e6d-4d21-a660-0bbc789c3871");
+        /// <inheritdoc />
         public string         Author    => "Natalia Portillo";
 
+        /// <inheritdoc />
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(2 + partition.Start >= partition.End)
@@ -79,6 +88,7 @@ namespace Aaru.Filesystems
             return signature == 0xAA55;
         }
 
+        /// <inheritdoc />
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                    Encoding encoding)
         {

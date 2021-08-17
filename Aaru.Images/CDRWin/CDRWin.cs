@@ -40,6 +40,9 @@ using Aaru.Decoders.CD;
 namespace Aaru.DiscImages
 {
     // TODO: Implement track flags
+    /// <summary>
+    /// Implements reading and writing CDRWin cuesheet disc images
+    /// </summary>
     public sealed partial class CdrWin : IWritableOpticalImage, IVerifiableImage
     {
         IFilter      _cdrwinFilter;

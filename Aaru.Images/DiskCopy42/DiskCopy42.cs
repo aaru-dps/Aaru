@@ -40,6 +40,9 @@ using Aaru.CommonTypes.Structs;
 namespace Aaru.DiscImages
 {
     // Checked using several images and strings inside Apple's DiskImages.framework
+    /// <summary>
+    /// Implements reading and writing Apple DiskCopy 4.2 disk images
+    /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public sealed partial class DiskCopy42 : IWritableImage, IVerifiableImage
     {

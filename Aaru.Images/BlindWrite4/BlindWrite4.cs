@@ -39,6 +39,9 @@ using Aaru.CommonTypes.Structs;
 namespace Aaru.DiscImages
 {
     // TODO: Too many unknowns, plus a completely unknown footer, to make this writable
+    /// <summary>
+    /// Implements reading BlindWrite 4 disc images
+    /// </summary>
     public sealed partial class BlindWrite4 : IOpticalMediaImage
     {
         List<TrackDescriptor>   _bwTracks;

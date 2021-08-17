@@ -41,6 +41,7 @@ namespace Aaru.Filesystems.UCSDPascal
     // Information from Call-A.P.P.L.E. Pascal Disk Directory Structure
     public sealed partial class PascalPlugin
     {
+        /// <inheritdoc />
         public Errno ReadDir(string path, out List<string> contents)
         {
             contents = null;

@@ -32,5 +32,8 @@
 
 namespace Aaru.Database.Models
 {
+    /// <summary>
+    /// Partitioning scheme
+    /// </summary>
     public class Partition : NameCountModel {}
 }

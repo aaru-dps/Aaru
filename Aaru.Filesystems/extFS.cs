@@ -40,6 +40,9 @@ using Schemas;
 namespace Aaru.Filesystems
 {
     // Information from the Linux kernel
+    /// <summary>
+    /// Implements detection of the Linux extended filesystem
+    /// </summary>
     public sealed class extFS : IFilesystem
     {
         const int SB_POS = 0x400;
@@ -47,12 +50,18 @@ namespace Aaru.Filesystems
         /// <summary>ext superblock magic</summary>
         const ushort EXT_MAGIC = 0x137D;
 
+        /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
+        /// <inheritdoc />
         public string         Name      => "Linux extended Filesystem";
+        /// <inheritdoc />
         public Guid           Id        => new Guid("076CB3A2-08C2-4D69-BC8A-FCAA2E502BE2");
+        /// <inheritdoc />
         public Encoding       Encoding  { get; private set; }
+        /// <inheritdoc />
         public string         Author    => "Natalia Portillo";
 
+        /// <inheritdoc />
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(imagePlugin.Info.SectorSize < 512)
@@ -77,6 +86,7 @@ namespace Aaru.Filesystems
             return magic == EXT_MAGIC;
         }
 
+        /// <inheritdoc />
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                    Encoding encoding)
         {

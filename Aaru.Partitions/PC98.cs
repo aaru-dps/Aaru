@@ -41,12 +41,19 @@ using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Partitions
 {
+    /// <summary>
+    /// Implements decoding of NEC PC-9800 partitions
+    /// </summary>
     public sealed class PC98 : IPartition
     {
+        /// <inheritdoc />
         public string Name   => "NEC PC-9800 partition table";
+        /// <inheritdoc />
         public Guid   Id     => new Guid("27333401-C7C2-447D-961C-22AD0641A09A");
+        /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
+        /// <inheritdoc />
         public bool GetInformation(IMediaImage imagePlugin, out List<CommonTypes.Partition> partitions,
                                    ulong sectorOffset)
         {

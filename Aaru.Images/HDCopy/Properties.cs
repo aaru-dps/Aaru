@@ -40,13 +40,20 @@ namespace Aaru.DiscImages
 {
     public sealed partial class HdCopy
     {
+        /// <inheritdoc />
         public ImageInfo Info => _imageInfo;
 
+        /// <inheritdoc />
         public string                 Name         => "HD-Copy disk image";
+        /// <inheritdoc />
         public Guid                   Id           => new Guid("8D57483F-71A5-42EC-9B87-66AEC439C792");
+        /// <inheritdoc />
         public string                 Author       => "Michael Drüing";
+        /// <inheritdoc />
         public string                 Format       => "HD-Copy image";
+        /// <inheritdoc />
         public List<DumpHardwareType> DumpHardware => null;
+        /// <inheritdoc />
         public CICMMetadataType       CicmMetadata => null;
     }
 }

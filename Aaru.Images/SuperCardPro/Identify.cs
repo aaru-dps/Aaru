@@ -39,6 +39,7 @@ namespace Aaru.DiscImages
 {
     public sealed partial class SuperCardPro
     {
+        /// <inheritdoc />
         public bool Identify(IFilter imageFilter)
         {
             Header = new ScpHeader();

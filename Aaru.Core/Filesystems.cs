@@ -37,6 +37,9 @@ using Aaru.CommonTypes.Interfaces;
 
 namespace Aaru.Core
 {
+    /// <summary>
+    /// Core filesystem operations
+    /// </summary>
     public static class Filesystems
     {
         /// <summary>

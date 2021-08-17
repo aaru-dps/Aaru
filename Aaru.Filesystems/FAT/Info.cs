@@ -49,6 +49,7 @@ namespace Aaru.Filesystems
 {
     public sealed partial class FAT
     {
+        /// <inheritdoc />
         [SuppressMessage("ReSharper", "JoinDeclarationAndInitializer")]
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
@@ -406,6 +407,7 @@ namespace Aaru.Filesystems
             return fatId == fat2Sector[0];
         }
 
+        /// <inheritdoc />
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                    Encoding encoding)
         {

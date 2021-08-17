@@ -41,18 +41,27 @@ using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Filesystems
 {
+    /// <summary>
+    /// Implements detection of the Apple File System (APFS)
+    /// </summary>
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
     public sealed class APFS : IFilesystem
     {
         const uint APFS_CONTAINER_MAGIC = 0x4253584E; // "NXSB"
         const uint APFS_VOLUME_MAGIC    = 0x42535041; // "APSB"
 
+        /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
+        /// <inheritdoc />
         public Encoding       Encoding  { get; private set; }
+        /// <inheritdoc />
         public string         Name      => "Apple File System";
+        /// <inheritdoc />
         public Guid           Id        => new Guid("A4060F9D-2909-42E2-9D95-DB31FA7EA797");
+        /// <inheritdoc />
         public string         Author    => "Natalia Portillo";
 
+        /// <inheritdoc />
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(partition.Start >= partition.End)
@@ -73,6 +82,7 @@ namespace Aaru.Filesystems
             return nxSb.magic == APFS_CONTAINER_MAGIC;
         }
 
+        /// <inheritdoc />
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                    Encoding encoding)
         {

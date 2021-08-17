@@ -40,6 +40,9 @@ using Schemas;
 namespace Aaru.Filesystems.UCSDPascal
 {
     // Information from Call-A.P.P.L.E. Pascal Disk Directory Structure
+    /// <summary>
+    /// Implements the U.C.S.D. Pascal filesystem
+    /// </summary>
     public sealed partial class PascalPlugin : IReadOnlyFilesystem
     {
         byte[]                _bootBlocks;
@@ -52,12 +55,18 @@ namespace Aaru.Filesystems.UCSDPascal
         /// <summary>Apple II disks use 256 bytes / sector, but filesystem assumes it's 512 bytes / sector</summary>
         uint _multiplier;
 
+        /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
+        /// <inheritdoc />
         public string         Name      => "U.C.S.D. Pascal filesystem";
+        /// <inheritdoc />
         public Guid           Id        => new Guid("B0AC2CB5-72AA-473A-9200-270B5A2C2D53");
+        /// <inheritdoc />
         public Encoding       Encoding  { get; private set; }
+        /// <inheritdoc />
         public string         Author    => "Natalia Portillo";
 
+        /// <inheritdoc />
         public Errno ListXAttr(string path, out List<string> xattrs)
         {
             xattrs = null;
@@ -65,8 +74,10 @@ namespace Aaru.Filesystems.UCSDPascal
             return Errno.NotSupported;
         }
 
+        /// <inheritdoc />
         public Errno GetXattr(string path, string xattr, ref byte[] buf) => Errno.NotSupported;
 
+        /// <inheritdoc />
         public Errno ReadLink(string path, out string dest)
         {
             dest = null;
@@ -74,10 +85,12 @@ namespace Aaru.Filesystems.UCSDPascal
             return Errno.NotSupported;
         }
 
+        /// <inheritdoc />
         public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
             new (string name, Type type, string description)[]
                 {};
 
+        /// <inheritdoc />
         public Dictionary<string, string> Namespaces => null;
 
         static Dictionary<string, string> GetDefaultOptions() => new Dictionary<string, string>

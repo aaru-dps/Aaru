@@ -43,6 +43,9 @@ using Marshal = Aaru.Helpers.Marshal;
 namespace Aaru.Filesystems
 {
     // Information from the Linux kernel
+    /// <summary>
+    /// Implements detection for the Xia filesystem
+    /// </summary>
     [SuppressMessage("ReSharper", "UnusedMember.Local"), SuppressMessage("ReSharper", "UnusedType.Local")]
     public sealed class Xia : IFilesystem
     {
@@ -54,12 +57,18 @@ namespace Aaru.Filesystems
         const int  XIAFS_NUM_BLOCK_POINTERS = 10;
         const int  XIAFS_NAME_LEN           = 248;
 
+        /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
+        /// <inheritdoc />
         public Encoding       Encoding  { get; private set; }
+        /// <inheritdoc />
         public string         Name      => "Xia filesystem";
+        /// <inheritdoc />
         public Guid           Id        => new Guid("169E1DE5-24F2-4EF6-A04D-A4B2CA66DE9D");
+        /// <inheritdoc />
         public string         Author    => "Natalia Portillo";
 
+        /// <inheritdoc />
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             int  sbSizeInBytes   = Marshal.SizeOf<SuperBlock>();
@@ -77,6 +86,7 @@ namespace Aaru.Filesystems
             return supblk.s_magic == XIAFS_SUPER_MAGIC;
         }
 
+        /// <inheritdoc />
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                    Encoding encoding)
         {

@@ -32,10 +32,22 @@
 
 namespace Aaru.Database.Models
 {
+    /// <summary>
+    /// Model for name-count values.
+    /// </summary>
     public abstract class NameCountModel : BaseModel
     {
+        /// <summary>
+        /// Value name
+        /// </summary>
         public string Name         { get; set; }
+        /// <summary>
+        /// Has already been synchronized with Aaru's server
+        /// </summary>
         public bool   Synchronized { get; set; }
+        /// <summary>
+        /// Value count
+        /// </summary>
         public ulong  Count        { get; set; }
     }
 }

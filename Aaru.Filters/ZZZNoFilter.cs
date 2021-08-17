@@ -45,10 +45,14 @@ namespace Aaru.Filters
         DateTime _lastWriteTime;
         bool     _opened;
 
+        /// <inheritdoc />
         public string Name   => "No filter";
+        /// <inheritdoc />
         public Guid   Id     => new Guid("12345678-AAAA-BBBB-CCCC-123456789000");
+        /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
+        /// <inheritdoc />
         public void Close()
         {
             _dataStream?.Close();
@@ -57,22 +61,31 @@ namespace Aaru.Filters
             _opened     = false;
         }
 
+        /// <inheritdoc />
         public string GetBasePath() => _basePath;
 
+        /// <inheritdoc />
         public Stream GetDataForkStream() => _dataStream;
 
+        /// <inheritdoc />
         public string GetPath() => _basePath;
 
+        /// <inheritdoc />
         public Stream GetResourceForkStream() => null;
 
+        /// <inheritdoc />
         public bool HasResourceFork() => false;
 
+        /// <inheritdoc />
         public bool Identify(byte[] buffer) => buffer != null && buffer.Length > 0;
 
+        /// <inheritdoc />
         public bool Identify(Stream stream) => stream != null && stream.Length > 0;
 
+        /// <inheritdoc />
         public bool Identify(string path) => File.Exists(path);
 
+        /// <inheritdoc />
         public void Open(byte[] buffer)
         {
             _dataStream    = new MemoryStream(buffer);
@@ -82,6 +95,7 @@ namespace Aaru.Filters
             _opened        = true;
         }
 
+        /// <inheritdoc />
         public void Open(Stream stream)
         {
             _dataStream    = stream;
@@ -91,6 +105,7 @@ namespace Aaru.Filters
             _opened        = true;
         }
 
+        /// <inheritdoc />
         public void Open(string path)
         {
             _dataStream = new FileStream(path, FileMode.Open, FileAccess.Read);
@@ -101,20 +116,28 @@ namespace Aaru.Filters
             _opened        = true;
         }
 
+        /// <inheritdoc />
         public DateTime GetCreationTime() => _creationTime;
 
+        /// <inheritdoc />
         public long GetDataForkLength() => _dataStream.Length;
 
+        /// <inheritdoc />
         public DateTime GetLastWriteTime() => _lastWriteTime;
 
+        /// <inheritdoc />
         public long GetLength() => _dataStream.Length;
 
+        /// <inheritdoc />
         public long GetResourceForkLength() => 0;
 
+        /// <inheritdoc />
         public string GetFilename() => Path.GetFileName(_basePath);
 
+        /// <inheritdoc />
         public string GetParentFolder() => Path.GetDirectoryName(_basePath);
 
+        /// <inheritdoc />
         public bool IsOpened() => _opened;
     }
 }

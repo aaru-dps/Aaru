@@ -43,6 +43,9 @@ using Marshal = Aaru.Helpers.Marshal;
 namespace Aaru.Filesystems
 {
     // Information from https://www.sans.org/reading-room/whitepapers/forensics/reverse-engineering-microsoft-exfat-file-system-33274
+    /// <summary>
+    /// Implements detection of the exFAT filesystem
+    /// </summary>
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
     public sealed class exFAT : IFilesystem
     {
@@ -53,12 +56,18 @@ namespace Aaru.Filesystems
             0x45, 0x58, 0x46, 0x41, 0x54, 0x20, 0x20, 0x20
         };
 
+        /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
+        /// <inheritdoc />
         public Encoding       Encoding  { get; private set; }
+        /// <inheritdoc />
         public string         Name      => "Microsoft Extended File Allocation Table";
+        /// <inheritdoc />
         public Guid           Id        => new Guid("8271D088-1533-4CB3-AC28-D802B68BB95C");
+        /// <inheritdoc />
         public string         Author    => "Natalia Portillo";
 
+        /// <inheritdoc />
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(12 + partition.Start >= partition.End)
@@ -74,6 +83,7 @@ namespace Aaru.Filesystems
             return _signature.SequenceEqual(vbr.signature);
         }
 
+        /// <inheritdoc />
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                    Encoding encoding)
         {

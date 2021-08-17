@@ -242,19 +242,59 @@ namespace Aaru.Devices
                            timeout);
         }
 
+        /// <summary>
+        /// Encapsulates a single MMC command to send in a queue
+        /// </summary>
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
+        [SuppressMessage("ReSharper", "MemberCanBeInternal")]
         public class MmcSingleCommand
         {
+            /// <summary>
+            /// Command argument
+            /// </summary>
             public uint        argument;
+            /// <summary>
+            /// How many blocks to transfer
+            /// </summary>
             public uint        blocks;
+            /// <summary>
+            /// Size of block in bytes
+            /// </summary>
             public uint        blockSize;
+            /// <summary>
+            /// Buffer for MMC/SD command response
+            /// </summary>
             public byte[]      buffer;
+            /// <summary>
+            /// MMC/SD opcode
+            /// </summary>
             public MmcCommands command;
+            /// <summary>
+            /// Flags indicating kind and place of response
+            /// </summary>
             public MmcFlags    flags;
+            /// <summary>
+            /// <c>True</c> if command should be preceded with CMD55
+            /// </summary>
             public bool        isApplication;
+            /// <summary>
+            /// Response registers
+            /// </summary>
             public uint[]      response;
+            /// <summary>
+            /// <c>True</c> if data is sent from host to card
+            /// </summary>
             public bool        write;
         }
 
+        /// <summary>
+        /// Concatenates a queue of commands to be send to a remote SecureDigital or MultiMediaCard attached to an SDHCI controller
+        /// </summary>
+        /// <param name="commands">List of commands</param>
+        /// <param name="duration">Duration to execute all commands, in milliseconds</param>
+        /// <param name="sense">Set to <c>true</c> if any of the commands returned an error status, <c>false</c> otherwise</param>
+        /// <param name="timeout">Maximum allowed time to execute a single command</param>
+        /// <returns>0 if no error occurred, otherwise, errno</returns>
         public int SendMultipleMmcCommands(MmcSingleCommand[] commands, out double duration, out bool sense,
                                            uint timeout = 15)
         {
@@ -293,6 +333,10 @@ namespace Aaru.Devices
             return error;
         }
 
+        /// <summary>
+        /// Closes then immediately reopens a device
+        /// </summary>
+        /// <returns>Returned error number if any</returns>
         public bool ReOpen()
         {
             if(!(_remote is null))
@@ -308,6 +352,14 @@ namespace Aaru.Devices
             return Error;
         }
 
+        /// <summary>
+        /// Reads data using operating system buffers.
+        /// </summary>
+        /// <param name="buffer">Data buffer</param>
+        /// <param name="offset">Offset in remote device to start reading, in bytes</param>
+        /// <param name="length">Number of bytes to read</param>
+        /// <param name="duration">Total time in milliseconds the reading took</param>
+        /// <returns><c>true</c> if there was an error, <c>false</c> otherwise</returns>
         public bool BufferedOsRead(out byte[] buffer, long offset, uint length, out double duration)
         {
             if(!(_remote is null))

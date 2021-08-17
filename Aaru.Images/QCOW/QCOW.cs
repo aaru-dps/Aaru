@@ -38,6 +38,9 @@ using Aaru.CommonTypes.Structs;
 
 namespace Aaru.DiscImages
 {
+    /// <summary>
+    /// Implements reading and writing QEMU's Copy On Write disk images
+    /// </summary>
     public sealed partial class Qcow : IWritableImage
     {
         Dictionary<ulong, byte[]>  _clusterCache;

@@ -41,22 +41,32 @@ namespace Aaru.DiscImages
 {
     public sealed partial class Anex86
     {
+        /// <inheritdoc />
         public ImageInfo Info => _imageInfo;
 
+        /// <inheritdoc />
         public string Name   => "Anex86 Disk Image";
+        /// <inheritdoc />
         public Guid   Id     => new Guid("0410003E-6E7B-40E6-9328-BA5651ADF6B7");
+        /// <inheritdoc />
         public string Author => "Natalia Portillo";
+        /// <inheritdoc />
         public string Format => "Anex86 disk image";
 
+        /// <inheritdoc />
         public List<DumpHardwareType> DumpHardware => null;
+        /// <inheritdoc />
         public CICMMetadataType       CicmMetadata => null;
 
+        /// <inheritdoc />
         public IEnumerable<MediaTagType> SupportedMediaTags => new MediaTagType[]
             {};
+        /// <inheritdoc />
         public IEnumerable<SectorTagType> SupportedSectorTags => new SectorTagType[]
             {};
 
         // TODO: Test with real hardware to see real supported media
+        /// <inheritdoc />
         public IEnumerable<MediaType> SupportedMediaTypes => new[]
         {
             MediaType.IBM23FD, MediaType.ECMA_66, MediaType.DOS_525_SS_DD_8, MediaType.DOS_525_SS_DD_9,
@@ -72,15 +82,19 @@ namespace Aaru.DiscImages
             MediaType.FlashDrive, MediaType.CompactFlash, MediaType.CompactFlashType2, MediaType.PCCardTypeI,
             MediaType.PCCardTypeII, MediaType.PCCardTypeIII, MediaType.PCCardTypeIV
         };
+        /// <inheritdoc />
         public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>
             new (string name, Type type, string description, object @default)[]
                 {};
+        /// <inheritdoc />
         public IEnumerable<string> KnownExtensions => new[]
         {
             ".fdi", ".hdi"
         };
 
+        /// <inheritdoc />
         public bool   IsWriting    { get; private set; }
+        /// <inheritdoc />
         public string ErrorMessage { get; private set; }
     }
 }

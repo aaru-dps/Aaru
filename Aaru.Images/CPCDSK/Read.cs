@@ -48,6 +48,7 @@ namespace Aaru.DiscImages
 {
     public sealed partial class Cpcdsk
     {
+        /// <inheritdoc />
         public bool Open(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
@@ -287,6 +288,7 @@ namespace Aaru.DiscImages
             return true;
         }
 
+        /// <inheritdoc />
         public byte[] ReadSector(ulong sectorAddress)
         {
             if(_sectors.TryGetValue(sectorAddress, out byte[] sector))
@@ -295,6 +297,7 @@ namespace Aaru.DiscImages
             throw new ArgumentOutOfRangeException(nameof(sectorAddress), $"Sector address {sectorAddress} not found");
         }
 
+        /// <inheritdoc />
         public byte[] ReadSectors(ulong sectorAddress, uint length)
         {
             if(sectorAddress > _imageInfo.Sectors - 1)
@@ -315,6 +318,7 @@ namespace Aaru.DiscImages
             return ms.ToArray();
         }
 
+        /// <inheritdoc />
         public byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
         {
             if(tag != SectorTagType.FloppyAddressMark)
@@ -326,6 +330,7 @@ namespace Aaru.DiscImages
             throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
         }
 
+        /// <inheritdoc />
         public byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
         {
             if(tag != SectorTagType.FloppyAddressMark)

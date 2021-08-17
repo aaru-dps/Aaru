@@ -39,12 +39,19 @@ namespace Aaru.DiscImages
 {
     public sealed partial class D88
     {
+        /// <inheritdoc />
         public string                 Name         => "D88 Disk Image";
+        /// <inheritdoc />
         public Guid                   Id           => new Guid("669EDC77-EC41-4720-A88C-49C38CFFBAA0");
+        /// <inheritdoc />
         public ImageInfo              Info         => _imageInfo;
+        /// <inheritdoc />
         public string                 Format       => "D88 disk image";
+        /// <inheritdoc />
         public string                 Author       => "Natalia Portillo";
+        /// <inheritdoc />
         public List<DumpHardwareType> DumpHardware => null;
+        /// <inheritdoc />
         public CICMMetadataType       CicmMetadata => null;
     }
 }

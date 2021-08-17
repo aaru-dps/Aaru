@@ -41,6 +41,7 @@ namespace Aaru.Filesystems
 {
     public sealed partial class OperaFS
     {
+        /// <inheritdoc />
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(2 + partition.Start >= partition.End)
@@ -61,6 +62,7 @@ namespace Aaru.Filesystems
             return Encoding.ASCII.GetString(syncBytes) == SYNC;
         }
 
+        /// <inheritdoc />
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                    Encoding encoding)
         {

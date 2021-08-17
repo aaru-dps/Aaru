@@ -40,6 +40,7 @@ namespace Aaru.Filesystems
 {
     public sealed partial class XboxFatPlugin
     {
+        /// <inheritdoc />
         public Errno ReadDir(string path, out List<string> contents)
         {
             contents = null;

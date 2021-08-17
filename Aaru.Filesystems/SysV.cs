@@ -44,6 +44,9 @@ using Schemas;
 namespace Aaru.Filesystems
 {
     // Information from the Linux kernel
+    /// <summary>
+    /// Implements detection of the UNIX System V filesystem
+    /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "UnusedMember.Local"),
      SuppressMessage("ReSharper", "UnusedType.Local")]
     public sealed class SysVfs : IFilesystem
@@ -69,12 +72,18 @@ namespace Aaru.Filesystems
         const ushort V7_NICFREE = 100;
         const uint   V7_MAXSIZE = 0x00FFFFFF;
 
+        /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
+        /// <inheritdoc />
         public Encoding       Encoding  { get; private set; }
+        /// <inheritdoc />
         public string         Name      => "UNIX System V filesystem";
+        /// <inheritdoc />
         public Guid           Id        => new Guid("9B8D016A-8561-400E-A12A-A198283C211D");
+        /// <inheritdoc />
         public string         Author    => "Natalia Portillo";
 
+        /// <inheritdoc />
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(2 + partition.Start >= partition.End)
@@ -188,6 +197,7 @@ namespace Aaru.Filesystems
             return false;
         }
 
+        /// <inheritdoc />
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                    Encoding encoding)
         {

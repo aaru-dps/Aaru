@@ -41,6 +41,10 @@ using Aaru.CommonTypes.Structs;
 
 namespace Aaru.DiscImages
 {
+    /// <inheritdoc />
+    /// <summary>
+    /// Implements reading and writing Apple's Universal Disk Image Format disk images
+    /// </summary>
     public sealed partial class Udif : IWritableImage
     {
         uint                          _buffersize;

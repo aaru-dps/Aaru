@@ -41,21 +41,34 @@ namespace Aaru.DiscImages
 {
     public sealed partial class CopyTape
     {
+        /// <inheritdoc />
         public ImageInfo              Info           => _imageInfo;
+        /// <inheritdoc />
         public string                 Name           => "CopyTape";
+        /// <inheritdoc />
         public Guid                   Id             => new Guid("C537D41E-D6A7-4922-9AA9-8E8442D0E340");
+        /// <inheritdoc />
         public string                 Author         => "Natalia Portillo";
+        /// <inheritdoc />
         public string                 Format         => "CopyTape";
+        /// <inheritdoc />
         public List<DumpHardwareType> DumpHardware   => null;
+        /// <inheritdoc />
         public CICMMetadataType       CicmMetadata   => null;
+        /// <inheritdoc />
         public List<TapeFile>         Files          { get; private set; }
+        /// <inheritdoc />
         public List<TapePartition>    TapePartitions { get; private set; }
+        /// <inheritdoc />
         public bool                   IsTape         { get; set; }
 
+        /// <inheritdoc />
         public IEnumerable<MediaTagType> SupportedMediaTags => new MediaTagType[]
             {};
+        /// <inheritdoc />
         public IEnumerable<SectorTagType> SupportedSectorTags => new SectorTagType[]
             {};
+        /// <inheritdoc />
         public IEnumerable<MediaType> SupportedMediaTypes => new[]
         {
             MediaType.UnknownTape, MediaType.ADR2120, MediaType.ADR260, MediaType.ADR30, MediaType.ADR50,
@@ -84,15 +97,19 @@ namespace Aaru.DiscImages
             MediaType.Travan, MediaType.Travan1Ex, MediaType.Travan3, MediaType.Travan3Ex, MediaType.Travan4,
             MediaType.Travan5, MediaType.Travan7, MediaType.VXA1, MediaType.VXA2, MediaType.VXA3
         };
+        /// <inheritdoc />
         public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>
             new (string name, Type type, string description, object @default)[]
                 {};
+        /// <inheritdoc />
         public IEnumerable<string> KnownExtensions => new[]
         {
             ".cptp"
         };
 
+        /// <inheritdoc />
         public bool   IsWriting    { get; private set; }
+        /// <inheritdoc />
         public string ErrorMessage { get; private set; }
     }
 }

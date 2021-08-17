@@ -35,10 +35,22 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Aaru.Database.Models
 {
+    /// <summary>
+    /// USB product
+    /// </summary>
     public class UsbProduct
     {
+        /// <summary>
+        /// Builds an empty USB product
+        /// </summary>
         public UsbProduct() {}
 
+        /// <summary>
+        /// Builds a USB product with the specified parameters
+        /// </summary>
+        /// <param name="vendorId">Vendor ID</param>
+        /// <param name="id">Product ID</param>
+        /// <param name="product">Product name</param>
         public UsbProduct(ushort vendorId, ushort id, string product)
         {
             VendorId  = vendorId;
@@ -47,13 +59,34 @@ namespace Aaru.Database.Models
             AddedWhen = ModifiedWhen = DateTime.UtcNow;
         }
 
+        /// <summary>
+        /// Database ID
+        /// </summary>
         [Key]
         public int Id { get;                         set; }
+        /// <summary>
+        /// Product ID
+        /// </summary>
         public         ushort    ProductId    { get; set; }
+        /// <summary>
+        /// Product name
+        /// </summary>
         public         string    Product      { get; set; }
+        /// <summary>
+        /// Date when model has been added to the database
+        /// </summary>
         public         DateTime  AddedWhen    { get; set; }
+        /// <summary>
+        /// Date when model was last modified
+        /// </summary>
         public         DateTime  ModifiedWhen { get; set; }
+        /// <summary>
+        /// USB vendor ID
+        /// </summary>
         public         ushort    VendorId     { get; set; }
+        /// <summary>
+        /// Database link to USB vendor
+        /// </summary>
         public virtual UsbVendor Vendor       { get; set; }
     }
 }

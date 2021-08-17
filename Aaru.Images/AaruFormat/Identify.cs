@@ -38,6 +38,7 @@ namespace Aaru.DiscImages
 {
     public sealed partial class AaruFormat
     {
+        /// <inheritdoc />
         public bool Identify(IFilter imageFilter)
         {
             _imageStream = imageFilter.GetDataForkStream();

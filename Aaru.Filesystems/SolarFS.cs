@@ -41,14 +41,23 @@ using Schemas;
 namespace Aaru.Filesystems
 {
     // Based on FAT's BPB, cannot find a FAT or directory
+    /// <summary>
+    /// Implements detection of the Solar OS filesystem
+    /// </summary>
     public sealed class SolarFS : IFilesystem
     {
+        /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
+        /// <inheritdoc />
         public Encoding       Encoding  { get; private set; }
+        /// <inheritdoc />
         public string         Name      => "Solar_OS filesystem";
+        /// <inheritdoc />
         public Guid           Id        => new Guid("EA3101C1-E777-4B4F-B5A3-8C57F50F6E65");
+        /// <inheritdoc />
         public string         Author    => "Natalia Portillo";
 
+        /// <inheritdoc />
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(2 + partition.Start >= partition.End)
@@ -65,6 +74,7 @@ namespace Aaru.Filesystems
             return signature == 0x29 && fsType == "SOL_FS  ";
         }
 
+        /// <inheritdoc />
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                    Encoding encoding)
         {

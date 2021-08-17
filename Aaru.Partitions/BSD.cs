@@ -43,6 +43,9 @@ using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Partitions
 {
+    /// <summary>
+    /// Implements decoding of BSD disklabels
+    /// </summary>
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
     public sealed class BSD : IPartition
     {
@@ -61,10 +64,14 @@ namespace Aaru.Partitions
             0, 9, 64, 128, 516
         };
 
+        /// <inheritdoc />
         public string Name   => "BSD disklabel";
+        /// <inheritdoc />
         public Guid   Id     => new Guid("246A6D93-4F1A-1F8A-344D-50187A5513A9");
+        /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
+        /// <inheritdoc />
         public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
             partitions = new List<Partition>();

@@ -40,6 +40,9 @@ using Aaru.CommonTypes.Structs;
 
 namespace Aaru.DiscImages
 {
+    /// <summary>
+    /// Implements reading and writing Parallels' disk images
+    /// </summary>
     public sealed partial class Parallels : IWritableImage
     {
         uint[]                    _bat;

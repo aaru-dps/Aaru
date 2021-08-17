@@ -42,6 +42,7 @@ namespace Aaru.DiscImages
 {
     public sealed partial class ZZZRawImage
     {
+        /// <inheritdoc />
         public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
                            uint sectorSize)
         {
@@ -107,8 +108,10 @@ namespace Aaru.DiscImages
             return true;
         }
 
+        /// <inheritdoc />
         public bool SetGeometry(uint cylinders, uint heads, uint sectorsPerTrack) => true;
 
+        /// <inheritdoc />
         public bool WriteSectorTag(byte[] data, ulong sectorAddress, SectorTagType tag)
         {
             ErrorMessage = "Unsupported feature";
@@ -116,6 +119,7 @@ namespace Aaru.DiscImages
             return false;
         }
 
+        /// <inheritdoc />
         public bool WriteSectorsTag(byte[] data, ulong sectorAddress, uint length, SectorTagType tag)
         {
             ErrorMessage = "Unsupported feature";
@@ -123,10 +127,13 @@ namespace Aaru.DiscImages
             return false;
         }
 
+        /// <inheritdoc />
         public bool SetDumpHardware(List<DumpHardwareType> dumpHardware) => false;
 
+        /// <inheritdoc />
         public bool SetCicmMetadata(CICMMetadataType metadata) => false;
 
+        /// <inheritdoc />
         public bool WriteMediaTag(byte[] data, MediaTagType tag)
         {
             if(!SupportedMediaTags.Contains(tag))
@@ -144,6 +151,7 @@ namespace Aaru.DiscImages
             return true;
         }
 
+        /// <inheritdoc />
         public bool WriteSector(byte[] data, ulong sectorAddress)
         {
             if(!IsWriting)
@@ -175,6 +183,7 @@ namespace Aaru.DiscImages
             return true;
         }
 
+        /// <inheritdoc />
         public bool WriteSectors(byte[] data, ulong sectorAddress, uint length)
         {
             if(!IsWriting)
@@ -206,6 +215,7 @@ namespace Aaru.DiscImages
             return true;
         }
 
+        /// <inheritdoc />
         public bool WriteSectorLong(byte[] data, ulong sectorAddress)
         {
             ErrorMessage = "Writing sectors with tags is not supported.";
@@ -213,6 +223,7 @@ namespace Aaru.DiscImages
             return false;
         }
 
+        /// <inheritdoc />
         public bool WriteSectorsLong(byte[] data, ulong sectorAddress, uint length)
         {
             ErrorMessage = "Writing sectors with tags is not supported.";
@@ -220,6 +231,7 @@ namespace Aaru.DiscImages
             return false;
         }
 
+        /// <inheritdoc />
         public bool SetTracks(List<Track> tracks)
         {
             if(tracks.Count <= 1)
@@ -230,6 +242,7 @@ namespace Aaru.DiscImages
             return false;
         }
 
+        /// <inheritdoc />
         public bool Close()
         {
             if(!IsWriting)
@@ -261,6 +274,7 @@ namespace Aaru.DiscImages
             return true;
         }
 
+        /// <inheritdoc />
         public bool SetMetadata(ImageInfo metadata) => true;
     }
 }

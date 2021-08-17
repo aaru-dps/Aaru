@@ -44,15 +44,23 @@ using Marshal = Aaru.Helpers.Marshal;
 namespace Aaru.Filesystems
 {
     // Information from http://www.trailing-edge.com/~shoppa/rt11fs/
-    // TODO: Implement Radix-50
+    /// <summary>
+    /// Implements detection of the DEC RT-11 filesystem
+    /// </summary>
     public sealed class RT11 : IFilesystem
     {
+        /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
+        /// <inheritdoc />
         public Encoding       Encoding  { get; private set; }
+        /// <inheritdoc />
         public string         Name      => "RT-11 file system";
+        /// <inheritdoc />
         public Guid           Id        => new Guid("DB3E2F98-8F98-463C-8126-E937843DA024");
+        /// <inheritdoc />
         public string         Author    => "Natalia Portillo";
 
+        /// <inheritdoc />
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(1 + partition.Start >= partition.End)
@@ -70,6 +78,7 @@ namespace Aaru.Filesystems
             return magic == "DECRT11A    ";
         }
 
+        /// <inheritdoc />
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                    Encoding encoding)
         {

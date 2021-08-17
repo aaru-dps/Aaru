@@ -39,6 +39,9 @@ using Schemas;
 
 namespace Aaru.Filesystems
 {
+    /// <summary>
+    /// Implements the 3DO Opera filesystem
+    /// </summary>
     public sealed partial class OperaFS : IReadOnlyFilesystem
     {
         bool                                                               _debug;
@@ -49,12 +52,18 @@ namespace Aaru.Filesystems
         FileSystemInfo                                                     _statfs;
         uint                                                               _volumeBlockSizeRatio;
 
+        /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
+        /// <inheritdoc />
         public Encoding       Encoding  { get; private set; }
+        /// <inheritdoc />
         public string         Name      => "Opera Filesystem Plugin";
+        /// <inheritdoc />
         public Guid           Id        => new Guid("0ec84ec7-eae6-4196-83fe-943b3fe46dbd");
+        /// <inheritdoc />
         public string         Author    => "Natalia Portillo";
 
+        /// <inheritdoc />
         public Errno ListXAttr(string path, out List<string> xattrs)
         {
             xattrs = null;
@@ -62,8 +71,10 @@ namespace Aaru.Filesystems
             return Errno.NotSupported;
         }
 
+        /// <inheritdoc />
         public Errno GetXattr(string path, string xattr, ref byte[] buf) => Errno.NotSupported;
 
+        /// <inheritdoc />
         public Errno ReadLink(string path, out string dest)
         {
             dest = null;
@@ -71,10 +82,12 @@ namespace Aaru.Filesystems
             return Errno.NotSupported;
         }
 
+        /// <inheritdoc />
         public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
             new (string name, Type type, string description)[]
                 {};
 
+        /// <inheritdoc />
         public Dictionary<string, string> Namespaces => null;
 
         static Dictionary<string, string> GetDefaultOptions() => new Dictionary<string, string>

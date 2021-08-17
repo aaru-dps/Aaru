@@ -36,6 +36,9 @@ namespace Aaru.Core.Devices.Dumping
 {
     public partial class Dump
     {
+        /// <summary>
+        /// Dumps an NVMe device
+        /// </summary>
         public void NVMe() => StoppingErrorMessage?.Invoke("NVMe devices not yet supported.");
     }
 }

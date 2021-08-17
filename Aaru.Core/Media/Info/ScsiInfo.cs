@@ -53,8 +53,15 @@ using Inquiry = Aaru.CommonTypes.Structs.Devices.SCSI.Inquiry;
 
 namespace Aaru.Core.Media.Info
 {
+    /// <summary>
+    /// Retrieves information from a SCSI device
+    /// </summary>
     public sealed class ScsiInfo
     {
+        /// <summary>
+        /// Initializes this class with the specific device, and fills in the information
+        /// </summary>
+        /// <param name="dev">Device</param>
         public ScsiInfo(Device dev)
         {
             if(dev.Type != DeviceType.SCSI &&
@@ -1492,74 +1499,281 @@ namespace Aaru.Core.Media.Info
             MediaType = tmpType;
         }
 
+        /// <summary>
+        /// Decoded DVD Pre-Recorded Information
+        /// </summary>
         public PRI.PreRecordedInformation?              DecodedDvdPrePitInformation   { get; }
+        /// <summary>
+        /// Decoded recordable DVD Physical Format Information
+        /// </summary>
         public PFI.PhysicalFormatInformation?           DecodedDvdrPfi                { get; }
+        /// <summary>
+        /// Raw media serial number
+        /// </summary>
         public byte[]                                   MediaSerialNumber             { get; }
+        /// <summary>
+        /// Raw Xbox security sectors
+        /// </summary>
         public byte[]                                   XboxSecuritySector            { get; }
+        /// <summary>
+        /// Decoded Xbox security sectors
+        /// </summary>
         public SS.SecuritySector?                       DecodedXboxSecuritySector     { get; }
+        /// <summary>
+        /// Information about an XGD, XGD2 or XGD3 media
+        /// </summary>
         public XgdInfo                                  XgdInfo                       { get; }
+        /// <summary>
+        /// MMC drive raw GET CONFIGURATION
+        /// </summary>
         public byte[]                                   MmcConfiguration              { get; }
+        /// <summary>
+        /// Raw recognized format layers
+        /// </summary>
         public byte[]                                   RecognizedFormatLayers        { get; }
+        /// <summary>
+        /// Raw write protection status
+        /// </summary>
         public byte[]                                   WriteProtectionStatus         { get; }
+        /// <summary>
+        /// Raw DVD Physical Format Information
+        /// </summary>
         public byte[]                                   DvdPfi                        { get; }
+        /// <summary>
+        /// Decoded DVD Physical Format Information
+        /// </summary>
         public PFI.PhysicalFormatInformation?           DecodedPfi                    { get; }
+        /// <summary>
+        /// Raw DVD Disc Manufacturing Information
+        /// </summary>
         public byte[]                                   DvdDmi                        { get; }
+        /// <summary>
+        /// Raw DVD Copyright Management Information
+        /// </summary>
         public byte[]                                   DvdCmi                        { get; }
+        /// <summary>
+        /// Raw DVD Burst Cutting Area
+        /// </summary>
         public byte[]                                   DvdBca                        { get; }
+        /// <summary>
+        /// Raw DVD AACS information
+        /// </summary>
         public byte[]                                   DvdAacs                       { get; }
+        /// <summary>
+        /// Raw DVD-RAM Disc Definition Structure
+        /// </summary>
         public byte[]                                   DvdRamDds                     { get; }
+        /// <summary>
+        /// Raw DVD-RAM Cartridge Status
+        /// </summary>
         public byte[]                                   DvdRamCartridgeStatus         { get; }
+        /// <summary>
+        /// Raw DVD-RAM Spare Area Information
+        /// </summary>
         public byte[]                                   DvdRamSpareArea               { get; }
+        /// <summary>
+        /// Raw DVD-R(W) Last Border-Out RMD
+        /// </summary>
         public byte[]                                   LastBorderOutRmd              { get; }
+        /// <summary>
+        /// Raw DVD-R(W) Pre-Recorded Information
+        /// </summary>
         public byte[]                                   DvdPreRecordedInfo            { get; }
+        /// <summary>
+        /// Raw DVD-R Media ID
+        /// </summary>
         public byte[]                                   DvdrMediaIdentifier           { get; }
+        /// <summary>
+        /// Raw recordable DVD Physical Format Information
+        /// </summary>
         public byte[]                                   DvdrPhysicalInformation       { get; }
+        /// <summary>
+        /// Raw DVD+R(W) ADIP
+        /// </summary>
         public byte[]                                   DvdPlusAdip                   { get; }
+        /// <summary>
+        /// Raw DVD+R(W) Disc Control Blocks
+        /// </summary>
         public byte[]                                   DvdPlusDcb                    { get; }
+        /// <summary>
+        /// Raw HD DVD Copyright Management Information
+        /// </summary>
         public byte[]                                   HddvdCopyrightInformation     { get; }
+        /// <summary>
+        /// Raw HD DVD-R Medium Status
+        /// </summary>
         public byte[]                                   HddvdrMediumStatus            { get; }
+        /// <summary>
+        /// Raw HD DVD-R(W) Last Border-Out RMD
+        /// </summary>
         public byte[]                                   HddvdrLastRmd                 { get; }
+        /// <summary>
+        /// Raw DVD-R(W) Layer Capacity
+        /// </summary>
         public byte[]                                   DvdrLayerCapacity             { get; }
+        /// <summary>
+        /// Raw DVD-R DL Middle Zone start
+        /// </summary>
         public byte[]                                   DvdrDlMiddleZoneStart         { get; }
+        /// <summary>
+        /// Raw DVD-R DL Jump Interval size
+        /// </summary>
         public byte[]                                   DvdrDlJumpIntervalSize        { get; }
+        /// <summary>
+        /// Raw DVD-R DL Manual Layer Jump Start LBA
+        /// </summary>
         public byte[]                                   DvdrDlManualLayerJumpStartLba { get; }
+        /// <summary>
+        /// Raw DVD-R DL Remap Anchor Point
+        /// </summary>
         public byte[]                                   DvdrDlRemapAnchorPoint        { get; }
+        /// <summary>
+        /// Raw Blu-ray Disc Information
+        /// </summary>
         public byte[]                                   BlurayDiscInformation         { get; }
+        /// <summary>
+        /// Raw Blu-ray PAC
+        /// </summary>
         public byte[]                                   BlurayPac                     { get; }
+        /// <summary>
+        /// Raw Blu-ray Burst Cutting Area
+        /// </summary>
         public byte[]                                   BlurayBurstCuttingArea        { get; }
+        /// <summary>
+        /// Raw Blu-ray Disc Definition Structure
+        /// </summary>
         public byte[]                                   BlurayDds                     { get; }
+        /// <summary>
+        /// Raw Blu-ray Cartridge Status
+        /// </summary>
         public byte[]                                   BlurayCartridgeStatus         { get; }
+        /// <summary>
+        /// Raw Blu-ray Spare Area Information
+        /// </summary>
         public byte[]                                   BluraySpareAreaInformation    { get; }
+        /// <summary>
+        /// Raw Blu-ray DFL
+        /// </summary>
         public byte[]                                   BlurayRawDfl                  { get; }
+        /// <summary>
+        /// Raw Blu-ray Pseudo OverWrite Resources
+        /// </summary>
         public byte[]                                   BlurayPowResources            { get; }
+        /// <summary>
+        /// Raw READ TOC response
+        /// </summary>
         public byte[]                                   Toc                           { get; }
+        /// <summary>
+        /// Raw READ ATIP response
+        /// </summary>
         public byte[]                                   Atip                          { get; }
+        /// <summary>
+        /// Raw READ DISC INFORMATION response
+        /// </summary>
         public byte[]                                   DiscInformation               { get; }
+        /// <summary>
+        /// Raw READ SESSION response
+        /// </summary>
         public byte[]                                   Session                       { get; }
+        /// <summary>
+        /// Raw READ FULL TOC response
+        /// </summary>
         public byte[]                                   RawToc                        { get; }
+        /// <summary>
+        /// Raw READ PMA response
+        /// </summary>
         public byte[]                                   Pma                           { get; }
+        /// <summary>
+        /// Raw Lead-In's CD-TEXT response
+        /// </summary>
         public byte[]                                   CdTextLeadIn                  { get; }
+        /// <summary>
+        /// Decoded READ TOC response
+        /// </summary>
         public TOC.CDTOC?                               DecodedToc                    { get; }
+        /// <summary>
+        /// Decoded READ ATIP response
+        /// </summary>
         public ATIP.CDATIP                              DecodedAtip                   { get; }
+        /// <summary>
+        /// Decoded READ SESSION response
+        /// </summary>
         public Session.CDSessionInfo?                   DecodedSession                { get; }
+        /// <summary>
+        /// Decoded READ FULL TOC response
+        /// </summary>
         public FullTOC.CDFullTOC?                       FullToc                       { get; }
+        /// <summary>
+        /// Decoded Lead-In CD-TEXT response
+        /// </summary>
         public CDTextOnLeadIn.CDText?                   DecodedCdTextLeadIn           { get; }
+        /// <summary>
+        /// Raw Blu-ray track resources
+        /// </summary>
         public byte[]                                   BlurayTrackResources          { get; }
+        /// <summary>
+        /// Decoded Blu-ray Disc Information
+        /// </summary>
         public DiscInformation.StandardDiscInformation? DecodedDiscInformation        { get; }
+        /// <summary>
+        /// Decoded Media Catalogue Number
+        /// </summary>
         public string                                   Mcn                           { get; }
+        /// <summary>
+        /// List of decoded track ISRCs
+        /// </summary>
         public Dictionary<byte, string>                 Isrcs                         { get; }
+        /// <summary>
+        /// Set if media is inserted in drive
+        /// </summary>
         public bool                                     MediaInserted                 { get; }
+        /// <summary>
+        /// Detected media type
+        /// </summary>
         public MediaType                                MediaType                     { get; }
+        /// <summary>
+        /// Device information
+        /// </summary>
         public DeviceInfo                               DeviceInfo                    { get; }
+        /// <summary>
+        /// Raw READ CAPACITY(10) response
+        /// </summary>
         public byte[]                                   ReadCapacity                  { get; }
+        /// <summary>
+        /// Number of blocks in media
+        /// </summary>
         public ulong                                    Blocks                        { get; }
+        /// <summary>
+        /// Logical block size
+        /// </summary>
         public uint                                     BlockSize                     { get; }
+        /// <summary>
+        /// Raw READ CAPACITY(16) response
+        /// </summary>
         public byte[]                                   ReadCapacity16                { get; }
+        /// <summary>
+        /// Raw SSC Density support
+        /// </summary>
         public byte[]                                   DensitySupport                { get; }
+        /// <summary>
+        /// Decoded SSC Density support
+        /// </summary>
         public DensitySupport.DensitySupportHeader?     DensitySupportHeader          { get; }
+        /// <summary>
+        /// Raw SSC media support
+        /// </summary>
         public byte[]                                   MediaTypeSupport              { get; }
+        /// <summary>
+        /// Decoded SSC media support
+        /// </summary>
         public DensitySupport.MediaTypeSupportHeader?   MediaTypeSupportHeader        { get; }
+        /// <summary>
+        /// Raw data from DVD sector Copyright Management Information
+        /// </summary>
         public byte[]                                   DvdSectorCmi                  { get; }
+        /// <summary>
+        /// Raw DVD Disc Key
+        /// </summary>
         public byte[]                                   DvdDiscKey                    { get; }
     }
 }

@@ -38,6 +38,7 @@ namespace Aaru.DiscImages
 {
     public sealed partial class DiscFerret
     {
+        /// <inheritdoc />
         public bool Identify(IFilter imageFilter)
         {
             byte[] magicB = new byte[4];

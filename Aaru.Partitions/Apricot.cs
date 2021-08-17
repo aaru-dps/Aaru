@@ -41,6 +41,9 @@ using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Partitions
 {
+    /// <summary>
+    /// Implements decoding of Apricot partitions
+    /// </summary>
     public sealed class Apricot : IPartition
     {
         readonly int[] _baudRates =
@@ -81,10 +84,14 @@ namespace Aaru.Partitions
             1, 1.5, 2
         };
 
+        /// <inheritdoc />
         public string Name   => "ACT Apricot partitions";
+        /// <inheritdoc />
         public Guid   Id     => new Guid("8CBF5864-7B5A-47A0-8CEB-199C74FA22DE");
+        /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
+        /// <inheritdoc />
         public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
             partitions = new List<Partition>();

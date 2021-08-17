@@ -39,12 +39,20 @@ namespace Aaru.Filesystems
 {
     // Information from test floppy images created with OS/2 HPOFS 2.0
     // Need to get IBM document GA32-0224 -> IBM 3995 Optical Library Dataserver Products: Optical Disk Format
+    /// <summary>
+    /// Implements identification of IBM's High Performance Optical File System
+    /// </summary>
     public sealed partial class HPOFS : IFilesystem
     {
+        /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
+        /// <inheritdoc />
         public Encoding       Encoding  { get; private set; }
+        /// <inheritdoc />
         public string         Name      => "High Performance Optical File System";
+        /// <inheritdoc />
         public Guid           Id        => new Guid("1b72dcd5-d031-4757-8a9f-8d2fb18c59e2");
+        /// <inheritdoc />
         public string         Author    => "Natalia Portillo";
     }
 }

@@ -41,6 +41,9 @@ namespace Aaru.Partitions
     // These partitions are hardwired in kernel sources for some UNIX versions predating System V.
     // They depend on exact device, indeed the kernel chooses what to use depending on the disk driver, so that's what we do.
     // Currently only DEC devices used in Ultrix are added, probably it's missing a lot of entries.
+    /// <summary>
+    /// Implements decoding of historic UNIX static partitions
+    /// </summary>
     public sealed class UNIX : IPartition
     {
         readonly Partition[] RA60 =
@@ -1369,10 +1372,14 @@ namespace Aaru.Partitions
             }
         };
 
+        /// <inheritdoc />
         public string Name   => "UNIX hardwired";
+        /// <inheritdoc />
         public Guid   Id     => new Guid("9ED7E30B-53BF-4619-87A0-5D2002155617");
+        /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
+        /// <inheritdoc />
         public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
             partitions = new List<Partition>();

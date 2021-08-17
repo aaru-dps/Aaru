@@ -44,16 +44,23 @@ namespace Aaru.DiscImages
 {
     public sealed partial class ZZZRawImage
     {
+        /// <inheritdoc />
         public OpticalImageCapabilities OpticalCapabilities => OpticalImageCapabilities.CanStoreDataTracks |
                                                                OpticalImageCapabilities.CanStoreCookedData;
+        /// <inheritdoc />
         public string Name => "Raw Disk Image";
 
         // Non-random UUID to recognize this specific plugin
+        /// <inheritdoc />
         public Guid      Id     => new Guid("12345678-AAAA-BBBB-CCCC-123456789000");
+        /// <inheritdoc />
         public ImageInfo Info   => _imageInfo;
+        /// <inheritdoc />
         public string    Author => "Natalia Portillo";
+        /// <inheritdoc />
         public string    Format => "Raw disk image (sector by sector copy)";
 
+        /// <inheritdoc />
         public List<Track> Tracks
         {
             get
@@ -102,6 +109,7 @@ namespace Aaru.DiscImages
             }
         }
 
+        /// <inheritdoc />
         public List<Session> Sessions
         {
             get
@@ -127,6 +135,7 @@ namespace Aaru.DiscImages
             }
         }
 
+        /// <inheritdoc />
         public List<Partition> Partitions
         {
             get
@@ -158,14 +167,19 @@ namespace Aaru.DiscImages
             }
         }
 
+        /// <inheritdoc />
         public List<DumpHardwareType> DumpHardware => null;
+        /// <inheritdoc />
         public CICMMetadataType       CicmMetadata { get; private set; }
+        /// <inheritdoc />
         public IEnumerable<MediaTagType> SupportedMediaTags => _readWriteSidecars.Concat(_writeOnlySidecars).
             OrderBy(t => t.tag).Select(t => t.tag).ToArray();
 
+        /// <inheritdoc />
         public IEnumerable<SectorTagType> SupportedSectorTags => new SectorTagType[]
             {};
 
+        /// <inheritdoc />
         public IEnumerable<MediaType> SupportedMediaTypes
         {
             get
@@ -202,15 +216,19 @@ namespace Aaru.DiscImages
             }
         }
 
+        /// <inheritdoc />
         public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>
             new (string name, Type type, string description, object @default)[]
                 {};
+        /// <inheritdoc />
         public IEnumerable<string> KnownExtensions => new[]
         {
             ".adf", ".adl", ".d81", ".dsk", ".hdf", ".ima", ".img", ".iso", ".ssd", ".st", ".1kn", ".2kn", ".4kn",
             ".8kn", ".16kn", ".32kn", ".64kn", ".512e", ".512", ".128", ".256"
         };
+        /// <inheritdoc />
         public bool   IsWriting    { get; private set; }
+        /// <inheritdoc />
         public string ErrorMessage { get; private set; }
     }
 }

@@ -41,6 +41,9 @@ using Aaru.Helpers;
 
 namespace Aaru.Partitions
 {
+    /// <summary>
+    /// Implements decoding of Atari GEMDOS partitions
+    /// </summary>
     public sealed class AtariPartitions : IPartition
     {
         const uint TypeGEMDOS     = 0x0047454D;
@@ -56,10 +59,14 @@ namespace Aaru.Partitions
         const uint TypeMinix      = 0x004D4958;
         const uint TypeMinix2     = 0x004D4E58;
 
+        /// <inheritdoc />
         public string Name   => "Atari partitions";
+        /// <inheritdoc />
         public Guid   Id     => new Guid("d1dd0f24-ec39-4c4d-9072-be31919a3b5e");
+        /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
+        /// <inheritdoc />
         public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
             partitions = new List<Partition>();

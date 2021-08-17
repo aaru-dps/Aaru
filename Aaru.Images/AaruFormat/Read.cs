@@ -59,6 +59,7 @@ namespace Aaru.DiscImages
 {
     public sealed partial class AaruFormat
     {
+        /// <inheritdoc />
         public bool Open(IFilter imageFilter)
         {
             AaruConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes", GC.GetTotalMemory(false));
@@ -1472,6 +1473,7 @@ namespace Aaru.DiscImages
             return true;
         }
 
+        /// <inheritdoc />
         public byte[] ReadDiskTag(MediaTagType tag)
         {
             if(_mediaTags.TryGetValue(tag, out byte[] data))
@@ -1480,6 +1482,7 @@ namespace Aaru.DiscImages
             throw new FeatureNotPresentImageException("Requested tag is not present in image");
         }
 
+        /// <inheritdoc />
         public byte[] ReadSector(ulong sectorAddress)
         {
             if(sectorAddress > _imageInfo.Sectors - 1)
@@ -1584,8 +1587,10 @@ namespace Aaru.DiscImages
             return sector;
         }
 
+        /// <inheritdoc />
         public byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag) => ReadSectorsTag(sectorAddress, 1, tag);
 
+        /// <inheritdoc />
         public byte[] ReadSector(ulong sectorAddress, uint track)
         {
             if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
@@ -1599,6 +1604,7 @@ namespace Aaru.DiscImages
             return ReadSector(trk.TrackStartSector + sectorAddress);
         }
 
+        /// <inheritdoc />
         public byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag)
         {
             if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
@@ -1612,6 +1618,7 @@ namespace Aaru.DiscImages
             return ReadSectorTag(trk.TrackStartSector + sectorAddress, tag);
         }
 
+        /// <inheritdoc />
         public byte[] ReadSectors(ulong sectorAddress, uint length)
         {
             if(sectorAddress > _imageInfo.Sectors - 1)
@@ -1632,6 +1639,7 @@ namespace Aaru.DiscImages
             return ms.ToArray();
         }
 
+        /// <inheritdoc />
         public byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
         {
             uint   sectorOffset;
@@ -1910,6 +1918,7 @@ namespace Aaru.DiscImages
             return data;
         }
 
+        /// <inheritdoc />
         public byte[] ReadSectors(ulong sectorAddress, uint length, uint track)
         {
             if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
@@ -1927,6 +1936,7 @@ namespace Aaru.DiscImages
             return ReadSectors(trk.TrackStartSector + sectorAddress, length);
         }
 
+        /// <inheritdoc />
         public byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag)
         {
             if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
@@ -1944,6 +1954,7 @@ namespace Aaru.DiscImages
             return ReadSectorsTag(trk.TrackStartSector + sectorAddress, length, tag);
         }
 
+        /// <inheritdoc />
         public byte[] ReadSectorLong(ulong sectorAddress)
         {
             switch(_imageInfo.XmlMediaType)
@@ -2145,6 +2156,7 @@ namespace Aaru.DiscImages
             throw new FeatureNotPresentImageException("Feature not present in image");
         }
 
+        /// <inheritdoc />
         public byte[] ReadSectorLong(ulong sectorAddress, uint track)
         {
             if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
@@ -2158,6 +2170,7 @@ namespace Aaru.DiscImages
             return ReadSectorLong(trk.TrackStartSector + sectorAddress);
         }
 
+        /// <inheritdoc />
         public byte[] ReadSectorsLong(ulong sectorAddress, uint length)
         {
             byte[] sectors;
@@ -2319,6 +2332,7 @@ namespace Aaru.DiscImages
             throw new FeatureNotPresentImageException("Feature not present in image");
         }
 
+        /// <inheritdoc />
         public byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
         {
             if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
@@ -2336,9 +2350,11 @@ namespace Aaru.DiscImages
             return ReadSectorsLong(trk.TrackStartSector + sectorAddress, length);
         }
 
+        /// <inheritdoc />
         public List<Track> GetSessionTracks(Session session) =>
             Tracks.Where(t => t.TrackSequence == session.SessionSequence).ToList();
 
+        /// <inheritdoc />
         public List<Track> GetSessionTracks(ushort session) => Tracks.Where(t => t.TrackSequence == session).ToList();
     }
 }

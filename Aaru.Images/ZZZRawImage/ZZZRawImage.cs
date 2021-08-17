@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
@@ -38,6 +39,10 @@ using Aaru.CommonTypes.Structs;
 
 namespace Aaru.DiscImages
 {
+    /// <summary>
+    /// Implements reading and writing raw (sector by sector) images
+    /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public sealed partial class ZZZRawImage : IWritableOpticalImage
     {
         string                           _basePath;
@@ -51,6 +56,9 @@ namespace Aaru.DiscImages
         IFilter                          _rawImageFilter;
         FileStream                       _writingStream;
 
+        /// <summary>
+        /// Implements reading and writing raw (sector by sector) images
+        /// </summary>
         public ZZZRawImage() => _imageInfo = new ImageInfo
         {
             ReadableSectorTags    = new List<SectorTagType>(),

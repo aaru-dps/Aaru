@@ -42,6 +42,9 @@ using Marshal = Aaru.Helpers.Marshal;
 namespace Aaru.Filesystems
 {
     // Information from the Linux kernel
+    /// <summary>
+    /// Implements detection of the MINIX filesystem
+    /// </summary>
     public sealed class MinixFS : IFilesystem
     {
         /// <summary>Minix v1, 14 char filenames</summary>
@@ -67,12 +70,18 @@ namespace Aaru.Filesystems
         /// <summary>Minix v3, 60 char filenames</summary>
         const ushort MINIX3_CIGAM = 0x5A4D;
 
+        /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
+        /// <inheritdoc />
         public Encoding       Encoding  { get; private set; }
+        /// <inheritdoc />
         public string         Name      => "Minix Filesystem";
+        /// <inheritdoc />
         public Guid           Id        => new Guid("FE248C3B-B727-4AE5-A39F-79EA9A07D4B3");
+        /// <inheritdoc />
         public string         Author    => "Natalia Portillo";
 
+        /// <inheritdoc />
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             uint sector = 2;
@@ -115,6 +124,7 @@ namespace Aaru.Filesystems
                    magic == MINIX2_CIGAM || magic == MINIX3_CIGAM;
         }
 
+        /// <inheritdoc />
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                    Encoding encoding)
         {

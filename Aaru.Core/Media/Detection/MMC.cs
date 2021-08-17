@@ -51,6 +51,9 @@ using DMI = Aaru.Decoders.Xbox.DMI;
 
 namespace Aaru.Core.Media.Detection
 {
+    /// <summary>
+    /// Detects media type for MMC class devices
+    /// </summary>
     public static class MMC
     {
         /// <summary>SHA256 of PlayStation 2 boot sectors, seen in PAL discs</summary>

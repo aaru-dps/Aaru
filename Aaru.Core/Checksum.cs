@@ -39,18 +39,68 @@ using Schemas;
 
 namespace Aaru.Core
 {
+    /// <summary>
+    /// Enabled checksums
+    /// </summary>
     [Flags]
     public enum EnableChecksum
     {
-        Adler32 = 1, Crc16         = 2, Crc32         = 4,
-        Crc64   = 8, Md5           = 16, Sha1         = 64,
-        Sha256  = 128, Sha384      = 256, Sha512      = 512,
-        SpamSum = 1024, Fletcher16 = 2048, Fletcher32 = 4096,
+        /// <summary>
+        /// Enables Adler-32
+        /// </summary>
+        Adler32 = 1,
+        /// <summary>
+        /// Enables CRC-16
+        /// </summary>
+        Crc16         = 2,
+        /// <summary>
+        /// Enables CRC-32
+        /// </summary>
+        Crc32         = 4,
+        /// <summary>
+        /// Enables CRC-64
+        /// </summary>
+        Crc64   = 8,
+        /// <summary>
+        /// Enables MD5
+        /// </summary>
+        Md5           = 16,
+        /// <summary>
+        /// Enables SHA1
+        /// </summary>
+        Sha1         = 64,
+        /// <summary>
+        /// Enables SHA2-256
+        /// </summary>
+        Sha256  = 128,
+        /// <summary>
+        /// Enables SHA2-384
+        /// </summary>
+        Sha384      = 256,
+        /// <summary>
+        /// Enables SHA2-512
+        /// </summary>
+        Sha512      = 512,
+        /// <summary>
+        /// Enables SpamSum
+        /// </summary>
+        SpamSum = 1024,
+        /// <summary>
+        /// Enables Fletcher-16
+        /// </summary>
+        Fletcher16 = 2048,
+        /// <summary>
+        /// Enables Fletcher-32
+        /// </summary>
+        Fletcher32 = 4096,
+        /// <summary>
+        /// Enables all known checksums
+        /// </summary>
         All = Adler32 | Crc16 | Crc32 | Crc64 | Md5 | Sha1 | Sha256 | Sha384 | Sha512 | SpamSum | Fletcher16 |
               Fletcher32
     }
 
-    /// <summary>Checksums and hashes data, with different algorithms multithreaded</summary>
+    /// <summary>Checksums and hashes data, with different algorithms, multithreaded</summary>
     public sealed class Checksum
     {
         readonly IChecksum      _adler32Ctx;
@@ -91,6 +141,10 @@ namespace Aaru.Core
         HashPacket              _spamsumPkt;
         Thread                  _spamsumThread;
 
+        /// <summary>
+        /// Initializes an instance of the checksum operations
+        /// </summary>
+        /// <param name="enabled">Enabled checksums</param>
         public Checksum(EnableChecksum enabled = EnableChecksum.All)
         {
             _enabled = enabled;
@@ -229,6 +283,10 @@ namespace Aaru.Core
             _f32Thread     = new Thread(UpdateHash);
         }
 
+        /// <summary>
+        /// Updates the checksum with new data
+        /// </summary>
+        /// <param name="data">New data</param>
         public void Update(byte[] data)
         {
             if(_enabled.HasFlag(EnableChecksum.Adler32))
@@ -353,6 +411,10 @@ namespace Aaru.Core
                 _f32Thread = new Thread(UpdateHash);
         }
 
+        /// <summary>
+        /// Finishes the checksums
+        /// </summary>
+        /// <returns>Returns the checksum results</returns>
         public List<ChecksumType> End()
         {
             List<ChecksumType> chks = new List<ChecksumType>();

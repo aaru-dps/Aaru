@@ -43,14 +43,23 @@ using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Filesystems
 {
+    /// <summary>
+    /// Implements detection of the filesystem used in 8-bit Commodore microcomputers
+    /// </summary>
     public sealed class CBM : IFilesystem
     {
+        /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
+        /// <inheritdoc />
         public string         Name      => "Commodore file system";
+        /// <inheritdoc />
         public Guid           Id        => new Guid("D104744E-A376-450C-BAC0-1347C93F983B");
+        /// <inheritdoc />
         public Encoding       Encoding  { get; private set; }
+        /// <inheritdoc />
         public string         Author    => "Natalia Portillo";
 
+        /// <inheritdoc />
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(partition.Start > 0)
@@ -92,6 +101,7 @@ namespace Aaru.Filesystems
             return false;
         }
 
+        /// <inheritdoc />
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                    Encoding encoding)
         {

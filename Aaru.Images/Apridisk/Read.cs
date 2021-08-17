@@ -43,6 +43,7 @@ namespace Aaru.DiscImages
 {
     public sealed partial class Apridisk
     {
+        /// <inheritdoc />
         public bool Open(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
@@ -229,6 +230,7 @@ namespace Aaru.DiscImages
             return true;
         }
 
+        /// <inheritdoc />
         public byte[] ReadSector(ulong sectorAddress)
         {
             (ushort cylinder, byte head, byte sector) = LbaToChs(sectorAddress);
@@ -245,6 +247,7 @@ namespace Aaru.DiscImages
             return _sectorsData[cylinder][head][sector];
         }
 
+        /// <inheritdoc />
         public byte[] ReadSectors(ulong sectorAddress, uint length)
         {
             if(sectorAddress > _imageInfo.Sectors - 1)

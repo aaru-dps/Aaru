@@ -42,12 +42,18 @@ namespace Aaru.DiscImages
 {
     public sealed partial class Chd
     {
+        /// <inheritdoc />
         public ImageInfo Info   => _imageInfo;
+        /// <inheritdoc />
         public string    Name   => "MAME Compressed Hunks of Data";
+        /// <inheritdoc />
         public Guid      Id     => new Guid("0D50233A-08BD-47D4-988B-27EAA0358597");
+        /// <inheritdoc />
         public string    Format => "Compressed Hunks of Data";
+        /// <inheritdoc />
         public string    Author => "Natalia Portillo";
 
+        /// <inheritdoc />
         public List<Partition> Partitions
         {
             get
@@ -60,6 +66,7 @@ namespace Aaru.DiscImages
             }
         }
 
+        /// <inheritdoc />
         public List<Track> Tracks
         {
             get
@@ -72,6 +79,7 @@ namespace Aaru.DiscImages
             }
         }
 
+        /// <inheritdoc />
         public List<Session> Sessions
         {
             get
@@ -84,7 +92,9 @@ namespace Aaru.DiscImages
             }
         }
 
+        /// <inheritdoc />
         public List<DumpHardwareType> DumpHardware => null;
+        /// <inheritdoc />
         public CICMMetadataType       CicmMetadata => null;
     }
 }

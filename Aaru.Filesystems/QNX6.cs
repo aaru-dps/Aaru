@@ -41,18 +41,27 @@ using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Filesystems
 {
+    /// <summary>
+    /// Implements detection of QNX 6 filesystem
+    /// </summary>
     public sealed class QNX6 : IFilesystem
     {
         const uint QNX6_SUPER_BLOCK_SIZE = 0x1000;
         const uint QNX6_BOOT_BLOCKS_SIZE = 0x2000;
         const uint QNX6_MAGIC            = 0x68191122;
 
+        /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
+        /// <inheritdoc />
         public Encoding       Encoding  { get; private set; }
+        /// <inheritdoc />
         public string         Name      => "QNX6 Plugin";
+        /// <inheritdoc />
         public Guid           Id        => new Guid("3E610EA2-4D08-4D70-8947-830CD4C74FC0");
+        /// <inheritdoc />
         public string         Author    => "Natalia Portillo";
 
+        /// <inheritdoc />
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             uint sectors     = QNX6_SUPER_BLOCK_SIZE / imagePlugin.Info.SectorSize;
@@ -74,6 +83,7 @@ namespace Aaru.Filesystems
             return qnxSb.magic == QNX6_MAGIC || audiSb.magic == QNX6_MAGIC;
         }
 
+        /// <inheritdoc />
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                    Encoding encoding)
         {

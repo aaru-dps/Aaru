@@ -35,6 +35,9 @@ using Aaru.Decoders.SCSI;
 
 namespace Aaru.Core.Logging
 {
+    /// <summary>
+    /// Logs errors
+    /// </summary>
     public sealed class ErrorLog
     {
         readonly StreamWriter _logSw;

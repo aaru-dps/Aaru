@@ -48,7 +48,6 @@ namespace Aaru.Filesystems.LisaFS
     public sealed partial class LisaFS
     {
         /// <inheritdoc />
-        /// <summary>Mounts an Apple Lisa filesystem</summary>
         public Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding,
                            Dictionary<string, string> options, string @namespace)
         {
@@ -358,7 +357,6 @@ namespace Aaru.Filesystems.LisaFS
         }
 
         /// <inheritdoc />
-        /// <summary>Unmounts this Lisa filesystem</summary>
         public Errno Unmount()
         {
             _mounted         = false;
@@ -377,8 +375,6 @@ namespace Aaru.Filesystems.LisaFS
         }
 
         /// <inheritdoc />
-        /// <summary>Gets information about the mounted volume.</summary>
-        /// <param name="stat">Information about the mounted volume.</param>
         public Errno StatFs(out FileSystemInfo stat)
         {
             stat = null;

@@ -42,18 +42,27 @@ using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Filesystems
 {
+    /// <summary>
+    /// Implements detection of the Locus filesystem
+    /// </summary>
     public sealed class RBF : IFilesystem
     {
         /// <summary>Magic number for OS-9. Same for OS-9000?</summary>
         const uint RBF_SYNC = 0x4372757A;
         const uint RBF_CNYS = 0x7A757243;
 
+        /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
+        /// <inheritdoc />
         public Encoding       Encoding  { get; private set; }
+        /// <inheritdoc />
         public string         Name      => "OS-9 Random Block File Plugin";
+        /// <inheritdoc />
         public Guid           Id        => new Guid("E864E45B-0B52-4D29-A858-7BDFA9199FB2");
+        /// <inheritdoc />
         public string         Author    => "Natalia Portillo";
 
+        /// <inheritdoc />
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(imagePlugin.Info.SectorSize < 256)
@@ -98,6 +107,7 @@ namespace Aaru.Filesystems
             return false;
         }
 
+        /// <inheritdoc />
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                    Encoding encoding)
         {

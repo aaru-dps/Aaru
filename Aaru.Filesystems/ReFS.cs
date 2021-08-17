@@ -43,6 +43,9 @@ using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Filesystems
 {
+    /// <summary>
+    /// Implements detection of Microsoft's Resilient filesystem (ReFS)
+    /// </summary>
     public sealed class ReFS : IFilesystem
     {
         const uint FSRS = 0x53525346;
@@ -50,12 +53,18 @@ namespace Aaru.Filesystems
         {
             0x52, 0x65, 0x46, 0x53, 0x00, 0x00, 0x00, 0x00
         };
+        /// <inheritdoc />
         public string         Name      => "Resilient File System plugin";
+        /// <inheritdoc />
         public Guid           Id        => new Guid("37766C4E-EBF5-4113-A712-B758B756ABD6");
+        /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
+        /// <inheritdoc />
         public Encoding       Encoding  { get; private set; }
+        /// <inheritdoc />
         public string         Author    => "Natalia Portillo";
 
+        /// <inheritdoc />
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             uint sbSize = (uint)(Marshal.SizeOf<VolumeHeader>() / imagePlugin.Info.SectorSize);
@@ -77,6 +86,7 @@ namespace Aaru.Filesystems
                    vhdr.signature.SequenceEqual(_signature);
         }
 
+        /// <inheritdoc />
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                    Encoding encoding)
         {

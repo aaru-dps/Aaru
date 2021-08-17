@@ -32,13 +32,34 @@
 
 namespace Aaru.Core.Media.Info
 {
+    /// <summary>
+    /// Information about an XGD, XGD2 or XGD3 media.
+    /// </summary>
     public sealed class XgdInfo
     {
+        /// <summary>
+        /// Size of the game partition
+        /// </summary>
         public ulong GameSize;
+        /// <summary>
+        /// Size of layer 0 of the video partition
+        /// </summary>
         public ulong L0Video;
+        /// <summary>
+        /// Size of layer 1 of the video partition
+        /// </summary>
         public ulong L1Video;
+        /// <summary>
+        /// Real layer break
+        /// </summary>
         public ulong LayerBreak;
+        /// <summary>
+        /// Size of the middle zone
+        /// </summary>
         public ulong MiddleZone;
+        /// <summary>
+        /// Total size of media
+        /// </summary>
         public ulong TotalSize;
     }
 }

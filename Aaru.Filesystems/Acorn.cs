@@ -43,6 +43,9 @@ using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Filesystems
 {
+    /// <summary>
+    /// Implements detection of Acorn's Advanced Data Filing System (ADFS)
+    /// </summary>
     public sealed class AcornADFS : IFilesystem
     {
         /// <summary>Location for boot block, in bytes</summary>
@@ -63,13 +66,19 @@ namespace Aaru.Filesystems
         /// <summary>Old directory format magic number, "Hugo"</summary>
         const uint OLD_DIR_MAGIC = 0x6F677548;
 
+        /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
+        /// <inheritdoc />
         public string         Name      => "Acorn Advanced Disc Filing System";
+        /// <inheritdoc />
         public Guid           Id        => new Guid("BAFC1E50-9C64-4CD3-8400-80628CC27AFA");
+        /// <inheritdoc />
         public Encoding       Encoding  { get; private set; }
+        /// <inheritdoc />
         public string         Author    => "Natalia Portillo";
 
         // TODO: BBC Master hard disks are untested...
+        /// <inheritdoc />
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(partition.Start >= partition.End)
@@ -261,6 +270,7 @@ namespace Aaru.Filesystems
         // TODO: Find root directory on volumes with DiscRecord
         // TODO: Support big directories (ADFS-G?)
         // TODO: Find the real freemap on volumes with DiscRecord, as DiscRecord's discid may be empty but this one isn't
+        /// <inheritdoc />
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                    Encoding encoding)
         {

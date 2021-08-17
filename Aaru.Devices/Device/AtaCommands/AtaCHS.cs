@@ -87,10 +87,35 @@ namespace Aaru.Devices
             return sense;
         }
 
+        /// <summary>
+        /// Reads sectors using CHS addressing and DMA transfer, retrying on error
+        /// </summary>
+        /// <param name="buffer">Buffer that contains the read data</param>
+        /// <param name="statusRegisters">Returned status registers</param>
+        /// <param name="cylinder">Cylinder of read start</param>
+        /// <param name="head">Head of read start</param>
+        /// <param name="sector">Sector of read start</param>
+        /// <param name="count">How many blocks to read, or 0 to indicate 256 blocks</param>
+        /// <param name="timeout">Timeout to wait for command execution</param>
+        /// <param name="duration">Time the device took to execute the command in milliseconds</param>
+        /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
         public bool ReadDma(out byte[] buffer, out AtaErrorRegistersChs statusRegisters, ushort cylinder, byte head,
                             byte sector, byte count, uint timeout, out double duration) =>
             ReadDma(out buffer, out statusRegisters, true, cylinder, head, sector, count, timeout, out duration);
 
+        /// <summary>
+        /// Reads sectors using CHS addressing and DMA transfer
+        /// </summary>
+        /// <param name="buffer">Buffer that contains the read data</param>
+        /// <param name="statusRegisters">Returned status registers</param>
+        /// <param name="retry">Retry on error</param>
+        /// <param name="cylinder">Cylinder of read start</param>
+        /// <param name="head">Head of read start</param>
+        /// <param name="sector">Sector of read start</param>
+        /// <param name="count">How many blocks to read, or 0 to indicate 256 blocks</param>
+        /// <param name="timeout">Timeout to wait for command execution</param>
+        /// <param name="duration">Time the device took to execute the command in milliseconds</param>
+        /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
         public bool ReadDma(out byte[] buffer, out AtaErrorRegistersChs statusRegisters, bool retry, ushort cylinder,
                             byte head, byte sector, byte count, uint timeout, out double duration)
         {
@@ -116,6 +141,18 @@ namespace Aaru.Devices
             return sense;
         }
 
+        /// <summary>
+        /// Reads sectors using CHS addressing and PIO transfer, sending an interrupt only after all the sectors have been transferred
+        /// </summary>
+        /// <param name="buffer">Buffer that contains the read data</param>
+        /// <param name="statusRegisters">Returned status registers</param>
+        /// <param name="cylinder">Cylinder of read start</param>
+        /// <param name="head">Head of read start</param>
+        /// <param name="sector">Sector of read start</param>
+        /// <param name="count">How many blocks to read, or 0 to indicate 256 blocks</param>
+        /// <param name="timeout">Timeout to wait for command execution</param>
+        /// <param name="duration">Time the device took to execute the command in milliseconds</param>
+        /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
         public bool ReadMultiple(out byte[] buffer, out AtaErrorRegistersChs statusRegisters, ushort cylinder,
                                  byte head, byte sector, byte count, uint timeout, out double duration)
         {
@@ -142,10 +179,35 @@ namespace Aaru.Devices
             return sense;
         }
 
+        /// <summary>
+        /// Reads sectors using CHS addressing and PIO transfer, retrying on error
+        /// </summary>
+        /// <param name="buffer">Buffer that contains the read data</param>
+        /// <param name="statusRegisters">Returned status registers</param>
+        /// <param name="cylinder">Cylinder of read start</param>
+        /// <param name="head">Head of read start</param>
+        /// <param name="sector">Sector of read start</param>
+        /// <param name="count">How many blocks to read, or 0 to indicate 256 blocks</param>
+        /// <param name="timeout">Timeout to wait for command execution</param>
+        /// <param name="duration">Time the device took to execute the command in milliseconds</param>
+        /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
         public bool Read(out byte[] buffer, out AtaErrorRegistersChs statusRegisters, ushort cylinder, byte head,
                          byte sector, byte count, uint timeout, out double duration) =>
             Read(out buffer, out statusRegisters, true, cylinder, head, sector, count, timeout, out duration);
 
+        /// <summary>
+        /// Reads sectors using CHS addressing and PIO transfer
+        /// </summary>
+        /// <param name="buffer">Buffer that contains the read data</param>
+        /// <param name="statusRegisters">Returned status registers</param>
+        /// <param name="retry">Retry on error</param>
+        /// <param name="cylinder">Cylinder of read start</param>
+        /// <param name="head">Head of read start</param>
+        /// <param name="sector">Sector of read start</param>
+        /// <param name="count">How many blocks to read, or 0 to indicate 256 blocks</param>
+        /// <param name="timeout">Timeout to wait for command execution</param>
+        /// <param name="duration">Time the device took to execute the command in milliseconds</param>
+        /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
         public bool Read(out byte[] buffer, out AtaErrorRegistersChs statusRegisters, bool retry, ushort cylinder,
                          byte head, byte sector, byte count, uint timeout, out double duration)
         {
@@ -172,10 +234,35 @@ namespace Aaru.Devices
             return sense;
         }
 
+        /// <summary>
+        /// Reads a long sector using CHS addressing and PIO transfer, retrying on error
+        /// </summary>
+        /// <param name="buffer">Buffer that contains the read data</param>
+        /// <param name="statusRegisters">Returned status registers</param>
+        /// <param name="cylinder">Cylinder of read start</param>
+        /// <param name="head">Head of read start</param>
+        /// <param name="sector">Sector of read start</param>
+        /// <param name="blockSize">Size in bytes of the long sector</param>
+        /// <param name="timeout">Timeout to wait for command execution</param>
+        /// <param name="duration">Time the device took to execute the command in milliseconds</param>
+        /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
         public bool ReadLong(out byte[] buffer, out AtaErrorRegistersChs statusRegisters, ushort cylinder, byte head,
                              byte sector, uint blockSize, uint timeout, out double duration) =>
             ReadLong(out buffer, out statusRegisters, true, cylinder, head, sector, blockSize, timeout, out duration);
 
+        /// <summary>
+        /// Reads a long sector using CHS addressing and PIO transfer, retrying on error
+        /// </summary>
+        /// <param name="buffer">Buffer that contains the read data</param>
+        /// <param name="statusRegisters">Returned status registers</param>
+        /// <param name="retry">Retry on error</param>
+        /// <param name="cylinder">Cylinder of read start</param>
+        /// <param name="head">Head of read start</param>
+        /// <param name="sector">Sector of read start</param>
+        /// <param name="blockSize">Size in bytes of the long sector</param>
+        /// <param name="timeout">Timeout to wait for command execution</param>
+        /// <param name="duration">Time the device took to execute the command in milliseconds</param>
+        /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
         public bool ReadLong(out byte[] buffer, out AtaErrorRegistersChs statusRegisters, bool retry, ushort cylinder,
                              byte head, byte sector, uint blockSize, uint timeout, out double duration)
         {
@@ -202,6 +289,16 @@ namespace Aaru.Devices
             return sense;
         }
 
+        /// <summary>
+        /// Sets the reading mechanism ready to read the specified block using CHS addressing
+        /// </summary>
+        /// <param name="statusRegisters">Returned status registers</param>
+        /// <param name="cylinder">Cylinder to position reading mechanism ready to read</param>
+        /// <param name="head">Head to position reading mechanism ready to read</param>
+        /// <param name="sector">Sector to position reading mechanism ready to read</param>
+        /// <param name="timeout">Timeout to wait for command execution</param>
+        /// <param name="duration">Time the device took to execute the command in milliseconds</param>
+        /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
         public bool Seek(out AtaErrorRegistersChs statusRegisters, ushort cylinder, byte head, byte sector,
                          uint timeout, out double duration)
         {
@@ -227,10 +324,30 @@ namespace Aaru.Devices
             return sense;
         }
 
+        /// <summary>
+        /// Enables drive features
+        /// </summary>
+        /// <param name="statusRegisters">Returned status registers</param>
+        /// <param name="feature">Feature to enable</param>
+        /// <param name="timeout">Timeout to wait for command execution</param>
+        /// <param name="duration">Time the device took to execute the command in milliseconds</param>
+        /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
         public bool SetFeatures(out AtaErrorRegistersChs statusRegisters, AtaFeatures feature, uint timeout,
                                 out double duration) =>
             SetFeatures(out statusRegisters, feature, 0, 0, 0, 0, timeout, out duration);
 
+        /// <summary>
+        /// Enables drive features
+        /// </summary>
+        /// <param name="statusRegisters">Returned status registers</param>
+        /// <param name="feature">Feature to enable</param>
+        /// <param name="cylinder">Value for the cylinder register</param>
+        /// <param name="head">Value for the head register</param>
+        /// <param name="sector">Value for the sector register</param>
+        /// <param name="sectorCount">Value for the sector count register</param>
+        /// <param name="timeout">Timeout to wait for command execution</param>
+        /// <param name="duration">Time the device took to execute the command in milliseconds</param>
+        /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
         public bool SetFeatures(out AtaErrorRegistersChs statusRegisters, AtaFeatures feature, ushort cylinder,
                                 byte head, byte sector, byte sectorCount, uint timeout, out double duration)
         {
@@ -258,6 +375,13 @@ namespace Aaru.Devices
             return sense;
         }
 
+        /// <summary>
+        /// Prevents ejection of the media inserted in the drive
+        /// </summary>
+        /// <param name="statusRegisters">Returned status registers</param>
+        /// <param name="timeout">Timeout to wait for command execution</param>
+        /// <param name="duration">Time the device took to execute the command in milliseconds</param>
+        /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
         public bool DoorLock(out AtaErrorRegistersChs statusRegisters, uint timeout, out double duration)
         {
             byte[] buffer = new byte[0];
@@ -278,6 +402,13 @@ namespace Aaru.Devices
             return sense;
         }
 
+        /// <summary>
+        /// Allows ejection of the media inserted in the drive
+        /// </summary>
+        /// <param name="statusRegisters">Returned status registers</param>
+        /// <param name="timeout">Timeout to wait for command execution</param>
+        /// <param name="duration">Time the device took to execute the command in milliseconds</param>
+        /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
         public bool DoorUnlock(out AtaErrorRegistersChs statusRegisters, uint timeout, out double duration)
         {
             byte[] buffer = new byte[0];
@@ -298,6 +429,13 @@ namespace Aaru.Devices
             return sense;
         }
 
+        /// <summary>
+        /// Ejects the media inserted in the drive
+        /// </summary>
+        /// <param name="statusRegisters">Returned status registers</param>
+        /// <param name="timeout">Timeout to wait for command execution</param>
+        /// <param name="duration">Time the device took to execute the command in milliseconds</param>
+        /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
         public bool MediaEject(out AtaErrorRegistersChs statusRegisters, uint timeout, out double duration)
         {
             byte[] buffer = new byte[0];

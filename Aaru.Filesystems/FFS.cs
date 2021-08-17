@@ -47,6 +47,9 @@ using ufs_daddr_t = System.Int32;
 namespace Aaru.Filesystems
 {
     // Using information from Linux kernel headers
+    /// <summary>
+    /// Implements detection of BSD Fast File System (FFS, aka UNIX File System)
+    /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public sealed class FFSPlugin : IFilesystem
     {
@@ -93,12 +96,18 @@ namespace Aaru.Filesystems
         // Big-endian incomplete newfs
         const uint UFS_BAD_CIGAM = 0x08049619;
 
+        /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
+        /// <inheritdoc />
         public Encoding       Encoding  { get; private set; }
+        /// <inheritdoc />
         public string         Name      => "BSD Fast File System (aka UNIX File System, UFS)";
+        /// <inheritdoc />
         public Guid           Id        => new Guid("CC90D342-05DB-48A8-988C-C1FE000034A3");
+        /// <inheritdoc />
         public string         Author    => "Natalia Portillo";
 
+        /// <inheritdoc />
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(2 + partition.Start >= partition.End)
@@ -135,6 +144,7 @@ namespace Aaru.Filesystems
             }
         }
 
+        /// <inheritdoc />
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                    Encoding encoding)
         {

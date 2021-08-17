@@ -46,6 +46,9 @@ using Encoding = System.Text.Encoding;
 namespace Aaru.Filesystems
 {
     // Information from Apple ProDOS 8 Technical Reference
+    /// <summary>
+    /// Implements detection of Apple ProDOS filesystem
+    /// </summary>
     [SuppressMessage("ReSharper", "UnusedMember.Local"), SuppressMessage("ReSharper", "UnusedType.Local")]
     public sealed class ProDOSPlugin : IFilesystem
     {
@@ -81,12 +84,18 @@ namespace Aaru.Filesystems
         const byte ENTRY_LENGTH      = 0x27;
         const byte ENTRIES_PER_BLOCK = 0x0D;
 
+        /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
+        /// <inheritdoc />
         public Encoding       Encoding  { get; private set; }
+        /// <inheritdoc />
         public string         Name      => "Apple ProDOS filesystem";
+        /// <inheritdoc />
         public Guid           Id        => new Guid("43874265-7B8A-4739-BCF7-07F80D5932BF");
+        /// <inheritdoc />
         public string         Author    => "Natalia Portillo";
 
+        /// <inheritdoc />
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(partition.Length < 3)
@@ -159,6 +168,7 @@ namespace Aaru.Filesystems
             return totalBlocks <= partition.End - partition.Start + 1;
         }
 
+        /// <inheritdoc />
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                    Encoding encoding)
         {

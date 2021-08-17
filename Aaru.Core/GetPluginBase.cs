@@ -36,8 +36,14 @@ using Aaru.CommonTypes.Interfaces;
 
 namespace Aaru.Core
 {
+    /// <summary>
+    /// Plugin base operations
+    /// </summary>
     public static class GetPluginBase
     {
+        /// <summary>
+        /// Gets an instance with all the known plugins
+        /// </summary>
         public static PluginBase Instance
         {
             get

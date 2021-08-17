@@ -48,10 +48,19 @@ using Schemas;
 
 namespace Aaru.Core.Devices.Dumping
 {
+    /// <summary>Subchannel requested to dump</summary>
     public enum DumpSubchannel
     {
-        Any, Rw, RwOrPq,
-        Pq, None
+        /// <summary>Any available subchannel, in order: raw P to W, PQ, none</summary>
+        Any,
+        /// <summary>Raw P to W</summary>
+        Rw,
+        /// <summary>Raw P to W or PQ if not possible</summary>
+        RwOrPq,
+        /// <summary>PQ</summary>
+        Pq,
+        /// <summary>None</summary>
+        None
     }
 
     public partial class Dump
@@ -266,6 +275,9 @@ namespace Aaru.Core.Devices.Dumping
             fs.Close();
         }
 
+        /// <summary>
+        /// Aborts the dump in progress
+        /// </summary>
         public void Abort()
         {
             _aborted = true;

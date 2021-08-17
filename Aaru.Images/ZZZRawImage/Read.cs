@@ -57,6 +57,7 @@ namespace Aaru.DiscImages
 {
     public sealed partial class ZZZRawImage
     {
+        /// <inheritdoc />
         public bool Open(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
@@ -1193,8 +1194,10 @@ namespace Aaru.DiscImages
             return true;
         }
 
+        /// <inheritdoc />
         public byte[] ReadSector(ulong sectorAddress) => ReadSectors(sectorAddress, 1);
 
+        /// <inheritdoc />
         public byte[] ReadSectors(ulong sectorAddress, uint length)
         {
             if(_differentTrackZeroSize)
@@ -1258,6 +1261,7 @@ namespace Aaru.DiscImages
             return buffer;
         }
 
+        /// <inheritdoc />
         public List<Track> GetSessionTracks(Session session)
         {
             if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
@@ -1290,6 +1294,7 @@ namespace Aaru.DiscImages
             return lst;
         }
 
+        /// <inheritdoc />
         public List<Track> GetSessionTracks(ushort session)
         {
             if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
@@ -1322,6 +1327,7 @@ namespace Aaru.DiscImages
             return lst;
         }
 
+        /// <inheritdoc />
         public byte[] ReadSector(ulong sectorAddress, uint track)
         {
             if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
@@ -1333,6 +1339,7 @@ namespace Aaru.DiscImages
             return ReadSector(sectorAddress);
         }
 
+        /// <inheritdoc />
         public byte[] ReadSectors(ulong sectorAddress, uint length, uint track)
         {
             if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
@@ -1344,6 +1351,7 @@ namespace Aaru.DiscImages
             return ReadSectors(sectorAddress, length);
         }
 
+        /// <inheritdoc />
         public byte[] ReadSectorLong(ulong sectorAddress, uint track)
         {
             if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
@@ -1355,6 +1363,7 @@ namespace Aaru.DiscImages
             return ReadSectorsLong(sectorAddress, 1);
         }
 
+        /// <inheritdoc />
         public byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
         {
             if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
@@ -1366,6 +1375,7 @@ namespace Aaru.DiscImages
             return ReadSectorsLong(sectorAddress, length);
         }
 
+        /// <inheritdoc />
         public byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
         {
             if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc ||
@@ -1375,6 +1385,7 @@ namespace Aaru.DiscImages
             return ReadSectorsTag(sectorAddress, 1, tag);
         }
 
+        /// <inheritdoc />
         public byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
         {
             if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc ||
@@ -1503,8 +1514,10 @@ namespace Aaru.DiscImages
             return buffer;
         }
 
+        /// <inheritdoc />
         public byte[] ReadSectorLong(ulong sectorAddress) => ReadSectorsLong(sectorAddress, 1);
 
+        /// <inheritdoc />
         public byte[] ReadSectorsLong(ulong sectorAddress, uint length)
         {
             if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc ||
@@ -1544,6 +1557,7 @@ namespace Aaru.DiscImages
             return buffer;
         }
 
+        /// <inheritdoc />
         public byte[] ReadDiskTag(MediaTagType tag)
         {
             if(_mediaTags.TryGetValue(tag, out byte[] data))
@@ -1552,6 +1566,7 @@ namespace Aaru.DiscImages
             throw new FeatureNotPresentImageException("Requested tag is not present in image");
         }
 
+        /// <inheritdoc />
         public byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag)
         {
             if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc ||
@@ -1564,6 +1579,7 @@ namespace Aaru.DiscImages
             return ReadSectorsTag(sectorAddress, 1, track, tag);
         }
 
+        /// <inheritdoc />
         public byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag)
         {
             if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc ||

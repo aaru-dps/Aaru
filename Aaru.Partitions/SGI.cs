@@ -44,15 +44,22 @@ using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Partitions
 {
+    /// <summary>
+    /// Implements decoding of the SGI Disk Volume Header
+    /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public sealed class SGI : IPartition
     {
         const int SGI_MAGIC = 0x0BE5A941;
 
+        /// <inheritdoc />
         public string Name   => "SGI Disk Volume Header";
+        /// <inheritdoc />
         public Guid   Id     => new Guid("AEF5AB45-4880-4CE8-8735-F0A402E2E5F2");
+        /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
+        /// <inheritdoc />
         public bool GetInformation(IMediaImage imagePlugin, out List<CommonTypes.Partition> partitions,
                                    ulong sectorOffset)
         {

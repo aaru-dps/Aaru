@@ -37,6 +37,9 @@ using Aaru.CommonTypes.Structs;
 
 namespace Aaru.DiscImages
 {
+    /// <summary>
+    /// Implements reading CPCDSK disk images
+    /// </summary>
     public sealed partial class Cpcdsk : IMediaImage
     {
         Dictionary<ulong, byte[]> _addressMarks;

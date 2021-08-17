@@ -82,6 +82,9 @@ using SharpCompress.Compressors.LZMA;
 
 namespace Aaru.DiscImages
 {
+    /// <summary>
+    /// Implements reading and writing AaruFormat media images
+    /// </summary>
     public sealed partial class AaruFormat : IWritableOpticalImage, IVerifiableImage, IWritableTapeImage
     {
         bool _alreadyWrittenZero;

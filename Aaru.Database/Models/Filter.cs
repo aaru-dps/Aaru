@@ -32,5 +32,8 @@
 
 namespace Aaru.Database.Models
 {
+    /// <summary>
+    /// Filter used
+    /// </summary>
     public class Filter : NameCountModel {}
 }

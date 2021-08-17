@@ -38,6 +38,9 @@ using Schemas;
 
 namespace Aaru.Filesystems
 {
+    /// <summary>
+    /// Implements the Apple DOS 3 filesystem
+    /// </summary>
     public sealed partial class AppleDOS : IReadOnlyFilesystem
     {
         bool        _debug;
@@ -51,16 +54,23 @@ namespace Aaru.Filesystems
         uint        _usedSectors;
         Vtoc        _vtoc;
 
+        /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
+        /// <inheritdoc />
         public Encoding       Encoding  { get; private set; }
+        /// <inheritdoc />
         public string         Name      => "Apple DOS File System";
+        /// <inheritdoc />
         public Guid           Id        => new Guid("8658A1E9-B2E7-4BCC-9638-157A31B0A700\n");
+        /// <inheritdoc />
         public string         Author    => "Natalia Portillo";
 
+        /// <inheritdoc />
         public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
             new (string name, Type type, string description)[]
                 {};
 
+        /// <inheritdoc />
         public Dictionary<string, string> Namespaces => null;
 
         static Dictionary<string, string> GetDefaultOptions() => new Dictionary<string, string>

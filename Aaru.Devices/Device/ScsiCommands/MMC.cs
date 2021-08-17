@@ -527,12 +527,29 @@ namespace Aaru.Devices
             return sense;
         }
 
+        /// <summary>Prevents ejection of the media inserted in the drive</summary>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="timeout">Timeout in seconds.</param>
+        /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         public bool PreventMediumRemoval(out byte[] senseBuffer, uint timeout, out double duration) =>
             PreventAllowMediumRemoval(out senseBuffer, false, true, timeout, out duration);
 
+        /// <summary>Allows ejection of the media inserted in the drive</summary>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="timeout">Timeout in seconds.</param>
+        /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         public bool AllowMediumRemoval(out byte[] senseBuffer, uint timeout, out double duration) =>
             PreventAllowMediumRemoval(out senseBuffer, false, false, timeout, out duration);
 
+        /// <summary>Prevents or allows ejection of the media inserted in the drive</summary>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="persistent">Persistent.</param>
+        /// <param name="prevent">Prevent.</param>
+        /// <param name="timeout">Timeout in seconds.</param>
+        /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         public bool PreventAllowMediumRemoval(out byte[] senseBuffer, bool persistent, bool prevent, uint timeout,
                                               out double duration)
         {
@@ -560,18 +577,49 @@ namespace Aaru.Devices
             return sense;
         }
 
+        /// <summary>Loads the media tray</summary>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="timeout">Timeout in seconds.</param>
+        /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         public bool LoadTray(out byte[] senseBuffer, uint timeout, out double duration) =>
             StartStopUnit(out senseBuffer, false, 0, 0, false, true, true, timeout, out duration);
 
+        /// <summary>Ejects the media or its tray</summary>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="timeout">Timeout in seconds.</param>
+        /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         public bool EjectTray(out byte[] senseBuffer, uint timeout, out double duration) =>
             StartStopUnit(out senseBuffer, false, 0, 0, false, true, false, timeout, out duration);
 
+        /// <summary>Starts the drive's reading mechanism</summary>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="timeout">Timeout in seconds.</param>
+        /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         public bool StartUnit(out byte[] senseBuffer, uint timeout, out double duration) =>
             StartStopUnit(out senseBuffer, false, 0, 0, false, false, true, timeout, out duration);
 
+        /// <summary>Stops the drive's reading mechanism</summary>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="timeout">Timeout in seconds.</param>
+        /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         public bool StopUnit(out byte[] senseBuffer, uint timeout, out double duration) =>
             StartStopUnit(out senseBuffer, false, 0, 0, false, false, false, timeout, out duration);
 
+        /// <summary>Starts or stops the drive's reading mechanism or tray</summary>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="immediate">Return from execution immediately</param>
+        /// <param name="formatLayer">Choose density layer for hybrid discs</param>
+        /// <param name="powerConditions">Power condition</param>
+        /// <param name="changeFormatLayer">Change format layer</param>
+        /// <param name="loadEject">Loads or ejects the media</param>
+        /// <param name="start">Starts the mechanism</param>
+        /// <param name="timeout">Timeout in seconds.</param>
+        /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         public bool StartStopUnit(out byte[] senseBuffer, bool immediate, byte formatLayer, byte powerConditions,
                                   bool changeFormatLayer, bool loadEject, bool start, uint timeout, out double duration)
         {
@@ -613,6 +661,13 @@ namespace Aaru.Devices
             return sense;
         }
 
+        /// <summary>Reads the MCN from a disc</summary>
+        /// <param name="mcn">Decoded MCN.</param>
+        /// <param name="buffer">Buffer containing raw drive response.</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="timeout">Timeout in seconds.</param>
+        /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         public bool ReadMcn(out string mcn, out byte[] buffer, out byte[] senseBuffer, uint timeout,
                             out double duration)
         {
@@ -645,6 +700,14 @@ namespace Aaru.Devices
             return sense;
         }
 
+        /// <summary>Reads the ISRC from a track</summary>
+        /// <param name="trackNumber">Track number.</param>
+        /// <param name="isrc">Decoded ISRC.</param>
+        /// <param name="buffer">Buffer containing raw drive response.</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="timeout">Timeout in seconds.</param>
+        /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         public bool ReadIsrc(byte trackNumber, out string isrc, out byte[] buffer, out byte[] senseBuffer, uint timeout,
                              out double duration)
         {
@@ -678,6 +741,14 @@ namespace Aaru.Devices
             return sense;
         }
 
+        /// <summary>Sets the reading speed</summary>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="rotationalControl">Rotational control.</param>
+        /// <param name="readSpeed">Read speed.</param>
+        /// <param name="writeSpeed">Write speed.</param>
+        /// <param name="timeout">Timeout in seconds.</param>
+        /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         public bool SetCdSpeed(out byte[] senseBuffer, RotationalControl rotationalControl, ushort readSpeed,
                                ushort writeSpeed, uint timeout, out double duration)
         {

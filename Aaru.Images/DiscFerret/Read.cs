@@ -42,6 +42,7 @@ namespace Aaru.DiscImages
 {
     public sealed partial class DiscFerret
     {
+        /// <inheritdoc />
         public bool Open(IFilter imageFilter)
         {
             byte[] magicB = new byte[4];
@@ -123,23 +124,30 @@ namespace Aaru.DiscImages
             throw new NotImplementedException("Flux decoding is not yet implemented.");
         }
 
+        /// <inheritdoc />
         public byte[] ReadDiskTag(MediaTagType tag) =>
             throw new NotImplementedException("Flux decoding is not yet implemented.");
 
+        /// <inheritdoc />
         public byte[] ReadSector(ulong sectorAddress) => ReadSectors(sectorAddress, 1);
 
+        /// <inheritdoc />
         public byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag) =>
             throw new NotImplementedException("Flux decoding is not yet implemented.");
 
+        /// <inheritdoc />
         public byte[] ReadSectors(ulong sectorAddress, uint length) =>
             throw new NotImplementedException("Flux decoding is not yet implemented.");
 
+        /// <inheritdoc />
         public byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag) =>
             throw new NotImplementedException("Flux decoding is not yet implemented.");
 
+        /// <inheritdoc />
         public byte[] ReadSectorLong(ulong sectorAddress) =>
             throw new NotImplementedException("Flux decoding is not yet implemented.");
 
+        /// <inheritdoc />
         public byte[] ReadSectorsLong(ulong sectorAddress, uint length) =>
             throw new NotImplementedException("Flux decoding is not yet implemented.");
     }

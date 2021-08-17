@@ -42,6 +42,7 @@ namespace Aaru.DiscImages
 {
     public sealed partial class Alcohol120
     {
+        /// <inheritdoc />
         public OpticalImageCapabilities OpticalCapabilities => OpticalImageCapabilities.CanStoreAudioTracks  |
                                                                OpticalImageCapabilities.CanStoreDataTracks   |
                                                                OpticalImageCapabilities.CanStoreSubchannelRw |
@@ -54,15 +55,22 @@ namespace Aaru.DiscImages
                                                                OpticalImageCapabilities.CanStoreRawData    |
                                                                OpticalImageCapabilities.CanStoreCookedData |
                                                                OpticalImageCapabilities.CanStoreMultipleTracks;
+        /// <inheritdoc />
         public ImageInfo Info   => _imageInfo;
+        /// <inheritdoc />
         public string    Name   => "Alcohol 120% Media Descriptor Structure";
+        /// <inheritdoc />
         public Guid      Id     => new Guid("A78FBEBA-0307-4915-BDE3-B8A3B57F843F");
+        /// <inheritdoc />
         public string    Author => "Natalia Portillo";
 
+        /// <inheritdoc />
         public string Format => "Alcohol 120% Media Descriptor Structure";
 
+        /// <inheritdoc />
         public List<Partition> Partitions { get; private set; }
 
+        /// <inheritdoc />
         public List<CommonTypes.Structs.Track> Tracks
         {
             get
@@ -139,21 +147,27 @@ namespace Aaru.DiscImages
             }
         }
 
+        /// <inheritdoc />
         public List<CommonTypes.Structs.Session> Sessions { get; private set; }
 
+        /// <inheritdoc />
         public List<DumpHardwareType> DumpHardware => null;
+        /// <inheritdoc />
         public CICMMetadataType       CicmMetadata => null;
 
+        /// <inheritdoc />
         public IEnumerable<MediaTagType> SupportedMediaTags => new[]
         {
             MediaTagType.CD_FullTOC, MediaTagType.DVD_BCA, MediaTagType.DVD_DMI, MediaTagType.DVD_PFI
         };
+        /// <inheritdoc />
         public IEnumerable<SectorTagType> SupportedSectorTags => new[]
         {
             SectorTagType.CdSectorEcc, SectorTagType.CdSectorEccP, SectorTagType.CdSectorEccQ,
             SectorTagType.CdSectorEdc, SectorTagType.CdSectorHeader, SectorTagType.CdSectorSubHeader,
             SectorTagType.CdSectorSync, SectorTagType.CdTrackFlags, SectorTagType.CdSectorSubchannel
         };
+        /// <inheritdoc />
         public IEnumerable<MediaType> SupportedMediaTypes => new[]
         {
             MediaType.BDR, MediaType.BDRE, MediaType.BDREXL, MediaType.BDROM, MediaType.UHDBD, MediaType.BDRXL,
@@ -171,14 +185,18 @@ namespace Aaru.DiscImages
             MediaType.FMTOWNS, MediaType.MilCD, MediaType.VideoNow, MediaType.VideoNowColor, MediaType.VideoNowXp,
             MediaType.CVD, MediaType.PCD
         };
+        /// <inheritdoc />
         public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>
             new (string name, Type type, string description, object @default)[]
                 {};
+        /// <inheritdoc />
         public IEnumerable<string> KnownExtensions => new[]
         {
             ".mds"
         };
+        /// <inheritdoc />
         public bool   IsWriting    { get; private set; }
+        /// <inheritdoc />
         public string ErrorMessage { get; private set; }
     }
 }

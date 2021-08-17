@@ -41,6 +41,7 @@ namespace Aaru.DiscImages
     public sealed partial class CdrWin
     {
         // Due to .cue format, this method must parse whole file, ignoring errors (those will be thrown by OpenImage()).
+        /// <inheritdoc />
         public bool Identify(IFilter imageFilter)
         {
             _cdrwinFilter = imageFilter;

@@ -40,6 +40,7 @@ namespace Aaru.DiscImages
 {
     public sealed partial class CloneCd
     {
+        /// <inheritdoc />
         public bool Identify(IFilter imageFilter)
         {
             _ccdFilter = imageFilter;

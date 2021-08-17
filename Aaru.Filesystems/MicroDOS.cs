@@ -43,19 +43,29 @@ using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Filesystems
 {
-    // Information from http://www.owg.ru/mkt/BK/MKDOS.TXT
-    // Thanks to tarlabnor for translating it
+    /// <summary>
+    /// Implements detection for the MicroDOS filesystem.
+    ///
+    /// Information from http://www.owg.ru/mkt/BK/MKDOS.TXT
+    /// Thanks to tarlabnor for translating it
+    /// </summary>
     public sealed class MicroDOS : IFilesystem
     {
         const ushort MAGIC  = 0xA72E;
         const ushort MAGIC2 = 0x530C;
 
+        /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
+        /// <inheritdoc />
         public Encoding       Encoding  { get; private set; }
+        /// <inheritdoc />
         public string         Name      => "MicroDOS file system";
+        /// <inheritdoc />
         public Guid           Id        => new Guid("9F9A364A-1A27-48A3-B730-7A7122000324");
+        /// <inheritdoc />
         public string         Author    => "Natalia Portillo";
 
+        /// <inheritdoc />
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(1 + partition.Start >= partition.End)
@@ -71,6 +81,7 @@ namespace Aaru.Filesystems
             return block0.label == MAGIC && block0.mklabel == MAGIC2;
         }
 
+        /// <inheritdoc />
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                    Encoding encoding)
         {

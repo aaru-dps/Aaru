@@ -45,6 +45,7 @@ namespace Aaru.DiscImages
 {
     public sealed partial class WCDiskImage
     {
+        /// <inheritdoc />
         public bool Open(IFilter imageFilter)
         {
             string comments = string.Empty;
@@ -161,6 +162,7 @@ namespace Aaru.DiscImages
             return true;
         }
 
+        /// <inheritdoc />
         public byte[] ReadSector(ulong sectorAddress)
         {
             int sectorNumber   = (int)(sectorAddress % _imageInfo.SectorsPerTrack) + 1;
@@ -184,6 +186,7 @@ namespace Aaru.DiscImages
             return _sectorCache[(cylinderNumber, headNumber, sectorNumber)];
         }
 
+        /// <inheritdoc />
         public byte[] ReadSectors(ulong sectorAddress, uint length)
         {
             byte[] result = new byte[length * _imageInfo.SectorSize];

@@ -39,6 +39,7 @@ namespace Aaru.Filters
     ///     ForcedSeekStream allows to seek a forward-readable stream (like System.IO.Compression streams) by doing the
     ///     slow and known trick of rewinding and forward reading until arriving the desired position.
     /// </summary>
+    /// <inheritdoc />
     public sealed class ForcedSeekStream<T> : Stream where T : Stream
     {
         const    int        BUFFER_LEN = 1048576;
@@ -50,6 +51,7 @@ namespace Aaru.Filters
         /// <summary>Initializes a new instance of the <see cref="T:Aaru.Filters.ForcedSeekStream`1" /> class.</summary>
         /// <param name="length">The real (uncompressed) length of the stream.</param>
         /// <param name="args">Parameters that are used to create the base stream.</param>
+        /// <inheritdoc />
         public ForcedSeekStream(long length, params object[] args)
         {
             _streamLength = length;
@@ -63,6 +65,7 @@ namespace Aaru.Filters
 
         /// <summary>Initializes a new instance of the <see cref="T:Aaru.Filters.ForcedSeekStream`1" /> class.</summary>
         /// <param name="args">Parameters that are used to create the base stream.</param>
+        /// <inheritdoc />
         public ForcedSeekStream(params object[] args)
         {
             _baseStream = (T)Activator.CreateInstance(typeof(T), args);
@@ -71,14 +74,19 @@ namespace Aaru.Filters
             CalculateLength();
         }
 
+        /// <inheritdoc />
         public override bool CanRead => _baseStream.CanRead;
 
+        /// <inheritdoc />
         public override bool CanSeek => true;
 
+        /// <inheritdoc />
         public override bool CanWrite => false;
 
+        /// <inheritdoc />
         public override long Length => _streamLength;
 
+        /// <inheritdoc />
         public override long Position
         {
             get => _backStream.Position;
@@ -139,12 +147,14 @@ namespace Aaru.Filters
             _backStream.Write(buffer, 0, restToRead);
         }
 
+        /// <inheritdoc />
         public override void Flush()
         {
             _baseStream.Flush();
             _backStream.Flush();
         }
 
+        /// <inheritdoc />
         public override int Read(byte[] buffer, int offset, int count)
         {
             if(_backStream.Position + count > _streamLength)
@@ -159,6 +169,7 @@ namespace Aaru.Filters
             return _backStream.Read(buffer, offset, count);
         }
 
+        /// <inheritdoc />
         public override int ReadByte()
         {
             if(_backStream.Position + 1 > _streamLength)
@@ -173,6 +184,7 @@ namespace Aaru.Filters
             return _backStream.ReadByte();
         }
 
+        /// <inheritdoc />
         public override long Seek(long offset, SeekOrigin origin)
         {
             switch(origin)
@@ -203,10 +215,13 @@ namespace Aaru.Filters
             return _backStream.Position;
         }
 
+        /// <inheritdoc />
         public override void SetLength(long value) => throw new NotSupportedException();
 
+        /// <inheritdoc />
         public override void Write(byte[] buffer, int offset, int count) => throw new NotSupportedException();
 
+        /// <inheritdoc />
         public override void Close()
         {
             _backStream?.Close();

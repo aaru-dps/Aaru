@@ -68,6 +68,11 @@ namespace Aaru.Core.Devices.Scanning
             _useBufferedReads = useBufferedReads;
         }
 
+        /// <summary>
+        /// Starts a media scan
+        /// </summary>
+        /// <returns>Media scan results</returns>
+        /// <exception cref="NotSupportedException">Unknown device type</exception>
         public ScanResults Scan()
         {
             switch(_dev.Type)
@@ -82,6 +87,9 @@ namespace Aaru.Core.Devices.Scanning
             }
         }
 
+        /// <summary>
+        /// Aborts the running media scan
+        /// </summary>
         public void Abort() => _aborted = true;
 
         /// <summary>Event raised when the progress bar is not longer needed</summary>
@@ -96,9 +104,13 @@ namespace Aaru.Core.Devices.Scanning
         public event UpdateProgressHandler UpdateProgress;
         /// <summary>Event raised to update the status of an indeterminate progress bar</summary>
         public event PulseProgressHandler PulseProgress;
+        /// <summary>Updates lists of time taken on scanning from the specified sector</summary>
         public event ScanTimeHandler       ScanTime;
+        /// <summary>Specified a number of blocks could not be read on scan</summary>
         public event ScanUnreadableHandler ScanUnreadable;
+        /// <summary>Initializes a block map that's going to be filled with a media scan</summary>
         public event InitBlockMapHandler   InitBlockMap;
+        /// <summary>Sends the speed of scanning a specific sector</summary>
         public event ScanSpeedHandler      ScanSpeed;
     }
 }

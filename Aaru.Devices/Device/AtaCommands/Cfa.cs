@@ -37,6 +37,15 @@ namespace Aaru.Devices
 {
     public sealed partial class Device
     {
+        /// <summary>
+        /// Requests to translate an LBA to a card physical address
+        /// </summary>
+        /// <param name="buffer">Data buffer</param>
+        /// <param name="statusRegisters">Returned status registers</param>
+        /// <param name="lba">LBA to start reading from</param>
+        /// <param name="timeout">Timeout to wait for command execution</param>
+        /// <param name="duration">Time the device took to execute the command in milliseconds</param>
+        /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
         public bool TranslateSector(out byte[] buffer, out AtaErrorRegistersLba28 statusRegisters, uint lba,
                                     uint timeout, out double duration)
         {
@@ -64,6 +73,17 @@ namespace Aaru.Devices
             return sense;
         }
 
+        /// <summary>
+        /// Requests to translate a CHS to a card physical address
+        /// </summary>
+        /// <param name="buffer">Data buffer</param>
+        /// <param name="statusRegisters">Returned status registers</param>
+        /// <param name="cylinder">Cylinder</param>
+        /// <param name="head">Head</param>
+        /// <param name="sector">Sector</param>
+        /// <param name="timeout">Timeout to wait for command execution</param>
+        /// <param name="duration">Time the device took to execute the command in milliseconds</param>
+        /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
         public bool TranslateSector(out byte[] buffer, out AtaErrorRegistersChs statusRegisters, ushort cylinder,
                                     byte head, byte sector, uint timeout, out double duration)
         {
@@ -89,6 +109,14 @@ namespace Aaru.Devices
             return sense;
         }
 
+        /// <summary>
+        /// Requests an extended error code
+        /// </summary>
+        /// <param name="errorCode">Error code</param>
+        /// <param name="statusRegisters">Returned status registers</param>
+        /// <param name="timeout">Timeout to wait for command execution</param>
+        /// <param name="duration">Time the device took to execute the command in milliseconds</param>
+        /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
         public bool RequestExtendedErrorCode(out byte errorCode, out AtaErrorRegistersLba28 statusRegisters,
                                              uint timeout, out double duration)
         {

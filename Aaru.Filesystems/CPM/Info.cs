@@ -44,6 +44,7 @@ namespace Aaru.Filesystems
 {
     public sealed partial class CPM
     {
+        /// <inheritdoc />
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             // This will only continue on devices with a chance to have ever been used by CP/M while failing on all others
@@ -1125,6 +1126,7 @@ namespace Aaru.Filesystems
             }
         }
 
+        /// <inheritdoc />
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                    Encoding encoding)
         {

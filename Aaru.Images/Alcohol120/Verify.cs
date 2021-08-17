@@ -38,6 +38,7 @@ namespace Aaru.DiscImages
 {
     public sealed partial class Alcohol120
     {
+        /// <inheritdoc />
         public bool? VerifySector(ulong sectorAddress)
         {
             byte[] buffer = ReadSectorLong(sectorAddress);
@@ -45,6 +46,7 @@ namespace Aaru.DiscImages
             return CdChecksums.CheckCdSector(buffer);
         }
 
+        /// <inheritdoc />
         public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
                                    out List<ulong> unknownLbas)
         {
@@ -78,6 +80,7 @@ namespace Aaru.DiscImages
             return failingLbas.Count <= 0;
         }
 
+        /// <inheritdoc />
         public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
                                    out List<ulong> unknownLbas)
         {

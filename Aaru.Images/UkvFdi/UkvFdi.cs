@@ -37,6 +37,9 @@ using Aaru.CommonTypes.Structs;
 
 namespace Aaru.DiscImages
 {
+    /// <summary>
+    /// Implements reading UKV FDI disk images
+    /// </summary>
     public sealed partial class UkvFdi : IMediaImage
     {
         ImageInfo _imageInfo;

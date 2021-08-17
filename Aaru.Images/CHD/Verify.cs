@@ -40,6 +40,7 @@ namespace Aaru.DiscImages
 {
     public sealed partial class Chd
     {
+        /// <inheritdoc />
         public bool? VerifySector(ulong sectorAddress)
         {
             if(_isHdd)
@@ -50,6 +51,7 @@ namespace Aaru.DiscImages
             return CdChecksums.CheckCdSector(buffer);
         }
 
+        /// <inheritdoc />
         public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
                                    out List<ulong> unknownLbas)
         {
@@ -87,6 +89,7 @@ namespace Aaru.DiscImages
             return failingLbas.Count <= 0;
         }
 
+        /// <inheritdoc />
         public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
                                    out List<ulong> unknownLbas)
         {
@@ -124,6 +127,7 @@ namespace Aaru.DiscImages
             return failingLbas.Count <= 0;
         }
 
+        /// <inheritdoc />
         public bool? VerifyMediaImage()
         {
             byte[] calculated;
@@ -150,6 +154,7 @@ namespace Aaru.DiscImages
             return _expectedChecksum.SequenceEqual(calculated);
         }
 
+        /// <inheritdoc />
         public bool? VerifySector(ulong sectorAddress, uint track)
         {
             if(_isHdd)

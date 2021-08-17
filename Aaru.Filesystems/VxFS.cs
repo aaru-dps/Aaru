@@ -41,18 +41,27 @@ using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Filesystems
 {
+    /// <summary>
+    /// Implements detection of the Veritas filesystem
+    /// </summary>
     public sealed class VxFS : IFilesystem
     {
         /// <summary>Identifier for VxFS</summary>
         const uint VXFS_MAGIC = 0xA501FCF5;
         const uint VXFS_BASE = 0x400;
 
+        /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
+        /// <inheritdoc />
         public Encoding       Encoding  { get; private set; }
+        /// <inheritdoc />
         public string         Name      => "Veritas filesystem";
+        /// <inheritdoc />
         public Guid           Id        => new Guid("EC372605-7687-453C-8BEA-7E0DFF79CB03");
+        /// <inheritdoc />
         public string         Author    => "Natalia Portillo";
 
+        /// <inheritdoc />
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             ulong vmfsSuperOff = VXFS_BASE / imagePlugin.Info.SectorSize;
@@ -67,6 +76,7 @@ namespace Aaru.Filesystems
             return magic == VXFS_MAGIC;
         }
 
+        /// <inheritdoc />
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                    Encoding encoding)
         {

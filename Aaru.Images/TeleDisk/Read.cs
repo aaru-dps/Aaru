@@ -43,6 +43,7 @@ namespace Aaru.DiscImages
 {
     public sealed partial class TeleDisk
     {
+        /// <inheritdoc />
         public bool Open(IFilter imageFilter)
         {
             _header = new Header();
@@ -528,6 +529,7 @@ namespace Aaru.DiscImages
             return true;
         }
 
+        /// <inheritdoc />
         public byte[] ReadSector(ulong sectorAddress)
         {
             (ushort cylinder, byte head, byte sector) = LbaToChs(sectorAddress);
@@ -544,6 +546,7 @@ namespace Aaru.DiscImages
             return _sectorsData[cylinder][head][sector];
         }
 
+        /// <inheritdoc />
         public byte[] ReadSectors(ulong sectorAddress, uint length)
         {
             if(sectorAddress > _imageInfo.Sectors - 1)
@@ -563,10 +566,13 @@ namespace Aaru.DiscImages
             return buffer.ToArray();
         }
 
+        /// <inheritdoc />
         public byte[] ReadSectorLong(ulong sectorAddress) => ReadSectors(sectorAddress, 1);
 
+        /// <inheritdoc />
         public byte[] ReadSectorsLong(ulong sectorAddress, uint length) => ReadSectors(sectorAddress, length);
 
+        /// <inheritdoc />
         public byte[] ReadDiskTag(MediaTagType tag)
         {
             if(tag != MediaTagType.Floppy_LeadOut)

@@ -42,6 +42,7 @@ namespace Aaru.Filesystems
     // Information from Inside Macintosh Volume II
     public sealed partial class AppleMFS
     {
+        /// <inheritdoc />
         public Errno ReadDir(string path, out List<string> contents)
         {
             contents = null;

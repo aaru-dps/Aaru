@@ -37,6 +37,13 @@ namespace Aaru.Devices
 {
     public sealed partial class Device
     {
+        /// <summary>
+        /// Disables S.M.A.R.T.
+        /// </summary>
+        /// <param name="statusRegisters">Returned status registers</param>
+        /// <param name="timeout">Timeout to wait for command execution</param>
+        /// <param name="duration">Time the device took to execute the command in milliseconds</param>
+        /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
         public bool SmartDisable(out AtaErrorRegistersLba28 statusRegisters, uint timeout, out double duration)
         {
             byte[] buffer = new byte[0];
@@ -60,6 +67,13 @@ namespace Aaru.Devices
             return sense;
         }
 
+        /// <summary>
+        /// Enables auto-saving of S.M.A.R.T. attributes
+        /// </summary>
+        /// <param name="statusRegisters">Returned status registers</param>
+        /// <param name="timeout">Timeout to wait for command execution</param>
+        /// <param name="duration">Time the device took to execute the command in milliseconds</param>
+        /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
         public bool SmartEnableAttributeAutosave(out AtaErrorRegistersLba28 statusRegisters, uint timeout,
                                                  out double duration)
         {
@@ -85,6 +99,13 @@ namespace Aaru.Devices
             return sense;
         }
 
+        /// <summary>
+        /// Disables auto-saving of S.M.A.R.T. attributes
+        /// </summary>
+        /// <param name="statusRegisters">Returned status registers</param>
+        /// <param name="timeout">Timeout to wait for command execution</param>
+        /// <param name="duration">Time the device took to execute the command in milliseconds</param>
+        /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
         public bool SmartDisableAttributeAutosave(out AtaErrorRegistersLba28 statusRegisters, uint timeout,
                                                   out double duration)
         {
@@ -109,6 +130,13 @@ namespace Aaru.Devices
             return sense;
         }
 
+        /// <summary>
+        /// Enables S.M.A.R.T.
+        /// </summary>
+        /// <param name="statusRegisters">Returned status registers</param>
+        /// <param name="timeout">Timeout to wait for command execution</param>
+        /// <param name="duration">Time the device took to execute the command in milliseconds</param>
+        /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
         public bool SmartEnable(out AtaErrorRegistersLba28 statusRegisters, uint timeout, out double duration)
         {
             byte[] buffer = new byte[0];
@@ -132,6 +160,14 @@ namespace Aaru.Devices
             return sense;
         }
 
+        /// <summary>
+        /// Requests drive to execute offline immediate S.M.A.R.T. test
+        /// </summary>
+        /// <param name="subcommand">Subcommand</param>
+        /// <param name="statusRegisters">Returned status registers</param>
+        /// <param name="timeout">Timeout to wait for command execution</param>
+        /// <param name="duration">Time the device took to execute the command in milliseconds</param>
+        /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
         public bool SmartExecuteOffLineImmediate(out AtaErrorRegistersLba28 statusRegisters, byte subcommand,
                                                  uint timeout, out double duration)
         {
@@ -157,6 +193,14 @@ namespace Aaru.Devices
             return sense;
         }
 
+        /// <summary>
+        /// Reads S.M.A.R.T. data
+        /// </summary>
+        /// <param name="buffer">Buffer containing data</param>
+        /// <param name="statusRegisters">Returned status registers</param>
+        /// <param name="timeout">Timeout to wait for command execution</param>
+        /// <param name="duration">Time the device took to execute the command in milliseconds</param>
+        /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
         public bool SmartReadData(out byte[] buffer, out AtaErrorRegistersLba28 statusRegisters, uint timeout,
                                   out double duration)
         {
@@ -181,6 +225,15 @@ namespace Aaru.Devices
             return sense;
         }
 
+        /// <summary>
+        /// Reads S.M.A.R.T. log
+        /// </summary>
+        /// <param name="buffer">Buffer containing log</param>
+        /// <param name="statusRegisters">Returned status registers</param>
+        /// <param name="logAddress">Log address</param>
+        /// <param name="timeout">Timeout to wait for command execution</param>
+        /// <param name="duration">Time the device took to execute the command in milliseconds</param>
+        /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
         public bool SmartReadLog(out byte[] buffer, out AtaErrorRegistersLba28 statusRegisters, byte logAddress,
                                  uint timeout, out double duration)
         {
@@ -206,6 +259,13 @@ namespace Aaru.Devices
             return sense;
         }
 
+        /// <summary>
+        /// Retrieves S.M.A.R.T. status
+        /// </summary>
+        /// <param name="statusRegisters">Returned status registers</param>
+        /// <param name="timeout">Timeout to wait for command execution</param>
+        /// <param name="duration">Time the device took to execute the command in milliseconds</param>
+        /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
         public bool SmartReturnStatus(out AtaErrorRegistersLba28 statusRegisters, uint timeout, out double duration)
         {
             byte[] buffer = new byte[0];

@@ -39,6 +39,17 @@ namespace Aaru.Devices
 {
     public sealed partial class Device
     {
+        /// <summary>
+        /// Sets the data for the integrated display
+        /// </summary>
+        /// <param name="senseBuffer">Returned SENSE buffer</param>
+        /// <param name="flash">If the display should start flashing</param>
+        /// <param name="mode">Display mode</param>
+        /// <param name="firstHalf">String to be shown in the first line of the display</param>
+        /// <param name="secondHalf">String to be shown in the second line of the display</param>
+        /// <param name="timeout">Timeout to wait for command execution</param>
+        /// <param name="duration">Time the device took to execute the command in milliseconds</param>
+        /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
         public bool FujitsuDisplay(out byte[] senseBuffer, bool flash, FujitsuDisplayModes mode, string firstHalf,
                                    string secondHalf, uint timeout, out double duration)
         {

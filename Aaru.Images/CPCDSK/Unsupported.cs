@@ -37,12 +37,15 @@ namespace Aaru.DiscImages
 {
     public sealed partial class Cpcdsk
     {
+        /// <inheritdoc />
         public byte[] ReadDiskTag(MediaTagType tag) =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
+        /// <inheritdoc />
         public byte[] ReadSectorLong(ulong sectorAddress) =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
+        /// <inheritdoc />
         public byte[] ReadSectorsLong(ulong sectorAddress, uint length) =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
     }

@@ -38,6 +38,9 @@ using Aaru.CommonTypes.Structs;
 
 namespace Aaru.DiscImages
 {
+    /// <summary>
+    /// Implements reading and writing DR-DOS' DISKCOPY disk images
+    /// </summary>
     public sealed partial class DriDiskCopy : IWritableImage
     {
         /// <summary>Disk image file</summary>

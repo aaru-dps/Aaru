@@ -37,6 +37,9 @@ using Aaru.CommonTypes.Structs;
 
 namespace Aaru.DiscImages
 {
+    /// <summary>
+    /// Implements reading Apple DART disk images
+    /// </summary>
     public sealed partial class Dart : IMediaImage
     {
         // DART images are at most 1474560 bytes, so let's cache the whole

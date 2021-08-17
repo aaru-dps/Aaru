@@ -46,6 +46,7 @@ namespace Aaru.DiscImages
 {
     public sealed partial class Vhd
     {
+        /// <inheritdoc />
         public bool Open(IFilter imageFilter)
         {
             Stream imageStream = imageFilter.GetDataForkStream();
@@ -657,6 +658,7 @@ namespace Aaru.DiscImages
             }
         }
 
+        /// <inheritdoc />
         public byte[] ReadSector(ulong sectorAddress)
         {
             switch(_thisFooter.DiskType)
@@ -728,6 +730,7 @@ namespace Aaru.DiscImages
             }
         }
 
+        /// <inheritdoc />
         public byte[] ReadSectors(ulong sectorAddress, uint length)
         {
             switch(_thisFooter.DiskType)

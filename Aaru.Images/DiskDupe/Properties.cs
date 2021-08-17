@@ -48,12 +48,19 @@ namespace Aaru.DiscImages
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         public List<Session> Sessions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
+        /// <inheritdoc />
         public string                 Name         => "DiskDupe DDI Disk Image";
+        /// <inheritdoc />
         public Guid                   Id           => new Guid("5439B4A2-5F38-33A7-B8DC-3910D296B3DD");
+        /// <inheritdoc />
         public string                 Author       => "Michael Drüing";
+        /// <inheritdoc />
         public string                 Format       => "DDI disk image";
+        /// <inheritdoc />
         public ImageInfo              Info         => _imageInfo;
+        /// <inheritdoc />
         public List<DumpHardwareType> DumpHardware => null;
+        /// <inheritdoc />
         public CICMMetadataType       CicmMetadata => null;
     }
 }

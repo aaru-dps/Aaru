@@ -46,6 +46,7 @@ namespace Aaru.Filesystems
 {
     public sealed partial class ISO9660
     {
+        /// <inheritdoc />
         public Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding,
                            Dictionary<string, string> options, string @namespace)
         {
@@ -753,6 +754,7 @@ namespace Aaru.Filesystems
             return Errno.NoError;
         }
 
+        /// <inheritdoc />
         public Errno Unmount()
         {
             if(!_mounted)
@@ -765,6 +767,7 @@ namespace Aaru.Filesystems
             return Errno.NoError;
         }
 
+        /// <inheritdoc />
         public Errno StatFs(out FileSystemInfo stat)
         {
             stat = null;

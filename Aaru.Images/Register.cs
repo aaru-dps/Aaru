@@ -44,39 +44,50 @@ using Aaru.CommonTypes.Interfaces;
 
 namespace Aaru.DiscImages
 {
+    /// <inheritdoc />
     public sealed class Register : IPluginRegister
     {
+        /// <inheritdoc />
         public List<Type> GetAllChecksumPlugins() => null;
 
+        /// <inheritdoc />
         public List<Type> GetAllFilesystemPlugins() => null;
 
+        /// <inheritdoc />
         public List<Type> GetAllFilterPlugins() => null;
 
+        /// <inheritdoc />
         public List<Type> GetAllFloppyImagePlugins() => Assembly.GetExecutingAssembly().GetTypes().
                                                                  Where(t => t.GetInterfaces().
                                                                               Contains(typeof(IFloppyImage))).
                                                                  Where(t => t.IsClass).ToList();
 
+        /// <inheritdoc />
         public List<Type> GetAllMediaImagePlugins() => Assembly.GetExecutingAssembly().GetTypes().
                                                                 Where(t => t.GetInterfaces().
                                                                              Contains(typeof(IMediaImage))).
                                                                 Where(t => t.IsClass).ToList();
 
+        /// <inheritdoc />
         public List<Type> GetAllPartitionPlugins() => null;
 
+        /// <inheritdoc />
         public List<Type> GetAllReadOnlyFilesystemPlugins() => null;
 
+        /// <inheritdoc />
         public List<Type> GetAllWritableFloppyImagePlugins() => Assembly.GetExecutingAssembly().GetTypes().
                                                                          Where(t => t.GetInterfaces().
                                                                                    Contains(typeof(IWritableFloppyImage
                                                                                    ))).Where(t => t.IsClass).
                                                                          ToList();
 
+        /// <inheritdoc />
         public List<Type> GetAllWritableImagePlugins() => Assembly.GetExecutingAssembly().GetTypes().
                                                                    Where(t => t.GetInterfaces().
                                                                              Contains(typeof(IWritableImage))).
                                                                    Where(t => t.IsClass).ToList();
 
+        /// <inheritdoc />
         public List<Type> GetAllArchivePlugins() => null;
     }
 }

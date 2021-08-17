@@ -59,40 +59,59 @@ namespace Aaru.Filters
         long         _rsrcLen;
         string       _rsrcPath;
 
+        /// <inheritdoc />
         public string Name   => "PCExchange";
+        /// <inheritdoc />
         public Guid   Id     => new Guid("9264EB9F-D634-4F9B-BE12-C24CD44988C6");
+        /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
+        /// <inheritdoc />
         public void Close() => _opened = false;
 
+        /// <inheritdoc />
         public string GetBasePath() => _basePath;
 
+        /// <inheritdoc />
         public DateTime GetCreationTime() => _creationTime;
 
+        /// <inheritdoc />
         public long GetDataForkLength() => _dataLen;
 
+        /// <inheritdoc />
         public Stream GetDataForkStream() => new FileStream(_dataPath, FileMode.Open, FileAccess.Read);
 
+        /// <inheritdoc />
         public string GetFilename() => Path.GetFileName(_basePath);
 
+        /// <inheritdoc />
         public DateTime GetLastWriteTime() => _lastWriteTime;
 
+        /// <inheritdoc />
         public long GetLength() => _dataLen + _rsrcLen;
 
+        /// <inheritdoc />
         public string GetParentFolder() => Path.GetDirectoryName(_basePath);
 
+        /// <inheritdoc />
         public string GetPath() => _basePath;
 
+        /// <inheritdoc />
         public long GetResourceForkLength() => _rsrcLen;
 
+        /// <inheritdoc />
         public Stream GetResourceForkStream() => new FileStream(_rsrcPath, FileMode.Open, FileAccess.Read);
 
+        /// <inheritdoc />
         public bool HasResourceFork() => _rsrcPath != null;
 
+        /// <inheritdoc />
         public bool Identify(byte[] buffer) => false;
 
+        /// <inheritdoc />
         public bool Identify(Stream stream) => false;
 
+        /// <inheritdoc />
         public bool Identify(string path)
         {
             string parentFolder = Path.GetDirectoryName(path);
@@ -154,12 +173,16 @@ namespace Aaru.Filters
             return dataFound && rsrcFound;
         }
 
+        /// <inheritdoc />
         public bool IsOpened() => _opened;
 
+        /// <inheritdoc />
         public void Open(byte[] buffer) => throw new NotSupportedException();
 
+        /// <inheritdoc />
         public void Open(Stream stream) => throw new NotSupportedException();
 
+        /// <inheritdoc />
         public void Open(string path)
         {
             string parentFolder = Path.GetDirectoryName(path);

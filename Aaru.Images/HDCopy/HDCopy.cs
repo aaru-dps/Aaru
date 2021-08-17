@@ -72,6 +72,9 @@ using Aaru.CommonTypes.Structs;
 
 namespace Aaru.DiscImages
 {
+    /// <summary>
+    /// Implements reading HD-Copy disk images
+    /// </summary>
     public sealed partial class HdCopy : IMediaImage
     {
         /// <summary>Every track that has been read is cached here</summary>

@@ -40,6 +40,7 @@ namespace Aaru.Filesystems.UCSDPascal
     // Information from Call-A.P.P.L.E. Pascal Disk Directory Structure
     public sealed partial class PascalPlugin
     {
+        /// <inheritdoc />
         public Errno MapBlock(string path, long fileBlock, out long deviceBlock)
         {
             deviceBlock = 0;
@@ -47,6 +48,7 @@ namespace Aaru.Filesystems.UCSDPascal
             return !_mounted ? Errno.AccessDenied : Errno.NotImplemented;
         }
 
+        /// <inheritdoc />
         public Errno GetAttributes(string path, out FileAttributes attributes)
         {
             attributes = new FileAttributes();
@@ -72,6 +74,7 @@ namespace Aaru.Filesystems.UCSDPascal
             return error;
         }
 
+        /// <inheritdoc />
         public Errno Read(string path, long offset, long size, ref byte[] buf)
         {
             if(!_mounted)
@@ -119,6 +122,7 @@ namespace Aaru.Filesystems.UCSDPascal
             return Errno.NoError;
         }
 
+        /// <inheritdoc />
         public Errno Stat(string path, out FileEntryInfo stat)
         {
             stat = null;

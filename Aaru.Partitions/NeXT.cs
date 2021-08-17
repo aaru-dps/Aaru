@@ -45,6 +45,9 @@ using Marshal = Aaru.Helpers.Marshal;
 // Information learnt from XNU source and testing against real disks
 namespace Aaru.Partitions
 {
+    /// <summary>
+    /// Implements decoding of NeXT disklabels
+    /// </summary>
     [SuppressMessage("ReSharper", "UnusedMember.Local"), SuppressMessage("ReSharper", "UnusedType.Local")]
     public sealed class NeXTDisklabel : IPartition
     {
@@ -59,10 +62,14 @@ namespace Aaru.Partitions
         /// <summary>44</summary>
         const ushort DISKTAB_ENTRY_SIZE = 0x2C;
 
+        /// <inheritdoc />
         public string Name   => "NeXT Disklabel";
+        /// <inheritdoc />
         public Guid   Id     => new Guid("246A6D93-4F1A-1F8A-344D-50187A5513A9");
+        /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
+        /// <inheritdoc />
         public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
             bool   magicFound = false;

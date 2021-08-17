@@ -35,6 +35,9 @@ using System.IO;
 
 namespace Aaru.Compression
 {
+    /// <summary>
+    /// Implements the Apple version of RLE
+    /// </summary>
     public class AppleRle
     {
         const uint DART_CHUNK = 20960;
@@ -45,6 +48,10 @@ namespace Aaru.Compression
         byte            _repeatedByteA, _repeatedByteB;
         bool            _repeatMode; // true if we're repeating, false if we're just copying
 
+        /// <summary>
+        /// Initializes a decompressor for the specified stream
+        /// </summary>
+        /// <param name="stream">Stream containing the compressed data</param>
         public AppleRle(Stream stream)
         {
             _inStream = stream;
@@ -59,6 +66,10 @@ namespace Aaru.Compression
             _repeatMode    = false;
         }
 
+        /// <summary>
+        /// Decompresses a byte
+        /// </summary>
+        /// <returns>Decompressed byte</returns>
         public int ProduceByte()
         {
             if(_repeatMode && _count > 0)

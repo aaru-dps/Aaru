@@ -43,15 +43,24 @@ using Marshal = Aaru.Helpers.Marshal;
 namespace Aaru.Filesystems
 {
     // Not a filesystem, more like an executable header
+    /// <summary>
+    /// Implements detection of NEC PC-FX headers
+    /// </summary>
     public sealed class PCFX : IFilesystem
     {
         const  string         IDENTIFIER = "PC-FX:Hu_CD-ROM ";
+        /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
+        /// <inheritdoc />
         public Encoding       Encoding  { get; private set; }
+        /// <inheritdoc />
         public string         Name      => "PC-FX Plugin";
+        /// <inheritdoc />
         public Guid           Id        => new Guid("8BC27CCE-D9E9-48F8-BA93-C66A86EB565A");
+        /// <inheritdoc />
         public string         Author    => "Natalia Portillo";
 
+        /// <inheritdoc />
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(2 + partition.Start           >= partition.End ||
@@ -65,6 +74,7 @@ namespace Aaru.Filesystems
             return encoding.GetString(sector, 0, 16) == IDENTIFIER;
         }
 
+        /// <inheritdoc />
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                    Encoding encoding)
         {

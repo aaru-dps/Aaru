@@ -39,6 +39,7 @@ namespace Aaru.DiscImages
 {
     public sealed partial class DiskDupe
     {
+        /// <inheritdoc />
         public bool Identify(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();

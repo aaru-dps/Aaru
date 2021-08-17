@@ -37,6 +37,7 @@ namespace Aaru.DiscImages
 {
     public sealed partial class SuperCardPro
     {
+        /// <inheritdoc />
         public bool? VerifyMediaImage()
         {
             if(Header.flags.HasFlag(ScpFlags.Writable))
@@ -54,9 +55,11 @@ namespace Aaru.DiscImages
             return Header.checksum == sum;
         }
 
+        /// <inheritdoc />
         public bool? VerifySector(ulong sectorAddress) =>
             throw new NotImplementedException("Flux decoding is not yet implemented.");
 
+        /// <inheritdoc />
         public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
                                    out List<ulong> unknownLbas) =>
             throw new NotImplementedException("Flux decoding is not yet implemented.");

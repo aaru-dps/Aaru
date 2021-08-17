@@ -37,6 +37,7 @@ namespace Aaru.DiscImages
 {
     public sealed partial class DiskCopy42
     {
+        /// <inheritdoc />
         public bool? VerifyMediaImage()
         {
             byte[] data    = new byte[header.DataSize];

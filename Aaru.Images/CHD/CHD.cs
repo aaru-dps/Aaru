@@ -42,6 +42,9 @@ using Aaru.Decoders.CD;
 namespace Aaru.DiscImages
 {
     // TODO: Implement PCMCIA support
+    /// <summary>
+    /// Implements reading MAME CHD disk images
+    /// </summary>
     [SuppressMessage("ReSharper", "NotAccessedField.Local")]
     public sealed partial class Chd : IOpticalMediaImage, IVerifiableImage
     {

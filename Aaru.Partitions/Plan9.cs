@@ -44,12 +44,19 @@ namespace Aaru.Partitions
     // "part type start end\n"
     // One line per partition, start and end relative to offset
     // e.g.: "part nvram 10110 10112\npart fossil 10112 3661056\n"
+    /// <summary>
+    /// Implements decoding of Plan-9 partitions
+    /// </summary>
     public sealed class Plan9 : IPartition
     {
+        /// <inheritdoc />
         public string Name   => "Plan9 partition table";
+        /// <inheritdoc />
         public Guid   Id     => new Guid("F0BF4FFC-056E-4E7C-8B65-4EAEE250ADD9");
+        /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
+        /// <inheritdoc />
         public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
             partitions = new List<Partition>();

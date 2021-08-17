@@ -40,15 +40,22 @@ using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Partitions
 {
+    /// <summary>
+    /// Implements decoding of DragonFly BSD disklabels
+    /// </summary>
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
     public sealed class DragonFlyBSD : IPartition
     {
         const uint DISK_MAGIC64 = 0xC4464C59;
 
+        /// <inheritdoc />
         public string Name   => "DragonFly BSD 64-bit disklabel";
+        /// <inheritdoc />
         public Guid   Id     => new Guid("D49E41A6-D952-4760-9D94-03DAE2450C5F");
+        /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
+        /// <inheritdoc />
         public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
             partitions = new List<Partition>();

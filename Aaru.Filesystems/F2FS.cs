@@ -42,6 +42,9 @@ using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Filesystems
 {
+    /// <summary>
+    /// Implements detection of the Flash-Friendly File System (F2FS)
+    /// </summary>
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
     public sealed class F2FS : IFilesystem
     {
@@ -51,12 +54,18 @@ namespace Aaru.Filesystems
         const uint F2FS_MAX_SECTOR   = 4096;
         const uint F2FS_BLOCK_SIZE   = 4096;
 
+        /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
+        /// <inheritdoc />
         public Encoding       Encoding  { get; private set; }
+        /// <inheritdoc />
         public string         Name      => "F2FS Plugin";
+        /// <inheritdoc />
         public Guid           Id        => new Guid("82B0920F-5F0D-4063-9F57-ADE0AE02ECE5");
+        /// <inheritdoc />
         public string         Author    => "Natalia Portillo";
 
+        /// <inheritdoc />
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(imagePlugin.Info.SectorSize < F2FS_MIN_SECTOR ||
@@ -86,6 +95,7 @@ namespace Aaru.Filesystems
             return sb.magic == F2FS_MAGIC;
         }
 
+        /// <inheritdoc />
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                    Encoding encoding)
         {

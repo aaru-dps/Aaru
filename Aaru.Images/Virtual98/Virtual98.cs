@@ -39,6 +39,9 @@ using Aaru.CommonTypes.Structs;
 namespace Aaru.DiscImages
 {
     // Info from Neko Project II emulator
+    /// <summary>
+    /// Implements reading Virtual98 disk images
+    /// </summary>
     public sealed partial class Virtual98 : IWritableImage
     {
         ImageInfo       _imageInfo;

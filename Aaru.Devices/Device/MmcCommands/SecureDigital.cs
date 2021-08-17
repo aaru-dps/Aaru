@@ -36,6 +36,14 @@ namespace Aaru.Devices
 {
     public sealed partial class Device
     {
+        /// <summary>
+        /// Reads the status register from a SecureDigital device
+        /// </summary>
+        /// <param name="buffer">Data buffer</param>
+        /// <param name="response">Response</param>
+        /// <param name="timeout">Timeout to wait for command execution</param>
+        /// <param name="duration">Time the device took to execute the command in milliseconds</param>
+        /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
         public bool ReadSdStatus(out byte[] buffer, out uint[] response, uint timeout, out double duration)
         {
             buffer = new byte[64];
@@ -51,6 +59,14 @@ namespace Aaru.Devices
             return sense;
         }
 
+        /// <summary>
+        /// Reads the OCR register from a SecureDigital device
+        /// </summary>
+        /// <param name="buffer">Data buffer</param>
+        /// <param name="response">Response</param>
+        /// <param name="timeout">Timeout to wait for command execution</param>
+        /// <param name="duration">Time the device took to execute the command in milliseconds</param>
+        /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
         public bool ReadSdocr(out byte[] buffer, out uint[] response, uint timeout, out double duration)
         {
             buffer = new byte[4];
@@ -66,6 +82,14 @@ namespace Aaru.Devices
             return sense;
         }
 
+        /// <summary>
+        /// Reads the SCR register from a SecureDigital device
+        /// </summary>
+        /// <param name="buffer">Data buffer</param>
+        /// <param name="response">Response</param>
+        /// <param name="timeout">Timeout to wait for command execution</param>
+        /// <param name="duration">Time the device took to execute the command in milliseconds</param>
+        /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
         public bool ReadScr(out byte[] buffer, out uint[] response, uint timeout, out double duration)
         {
             buffer = new byte[8];

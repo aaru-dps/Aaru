@@ -45,6 +45,9 @@ using Marshal = Aaru.Helpers.Marshal;
 namespace Aaru.Filesystems
 {
     // TODO: Detect bootable
+    /// <summary>
+    /// Implements detection of the Universal Disk Format filesystem
+    /// </summary>
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
     public sealed class UDF : IFilesystem
     {
@@ -54,12 +57,18 @@ namespace Aaru.Filesystems
             0x74, 0x00, 0x00, 0x00, 0x00
         };
 
+        /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
+        /// <inheritdoc />
         public Encoding       Encoding  { get; private set; }
+        /// <inheritdoc />
         public string         Name      => "Universal Disk Format";
+        /// <inheritdoc />
         public Guid           Id        => new Guid("83976FEC-A91B-464B-9293-56C719461BAB");
+        /// <inheritdoc />
         public string         Author    => "Natalia Portillo";
 
+        /// <inheritdoc />
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             // UDF needs at least that
@@ -199,6 +208,7 @@ namespace Aaru.Filesystems
             return false;
         }
 
+        /// <inheritdoc />
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                    Encoding encoding)
         {

@@ -35,14 +35,24 @@ using Aaru.CommonTypes.Metadata;
 
 namespace Aaru.Database.Models
 {
+    /// <summary>
+    /// Device report
+    /// </summary>
     public class Report : DeviceReportV2
     {
+        /// <summary>
+        /// Builds an empty device report
+        /// </summary>
         public Report()
         {
             Created  = DateTime.UtcNow;
             Uploaded = false;
         }
 
+        /// <summary>
+        /// Builds a device report model from a device report
+        /// </summary>
+        /// <param name="report">Device report</param>
         public Report(DeviceReportV2 report)
         {
             ATA            = report.ATA;
@@ -62,7 +72,13 @@ namespace Aaru.Database.Models
             Type           = report.Type;
         }
 
+        /// <summary>
+        /// Date when the device report was created
+        /// </summary>
         public DateTime Created  { get; set; }
+        /// <summary>
+        /// If this model has already been upload
+        /// </summary>
         public bool     Uploaded { get; set; }
     }
 }

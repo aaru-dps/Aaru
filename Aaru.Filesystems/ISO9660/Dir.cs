@@ -46,6 +46,7 @@ namespace Aaru.Filesystems
     {
         Dictionary<string, Dictionary<string, DecodedDirectoryEntry>> _directoryCache;
 
+        /// <inheritdoc />
         public Errno ReadDir(string path, out List<string> contents)
         {
             contents = null;

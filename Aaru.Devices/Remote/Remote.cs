@@ -43,14 +43,26 @@ using Aaru.Console;
 using Aaru.Decoders.ATA;
 using Marshal = Aaru.Helpers.Marshal;
 using Version = Aaru.CommonTypes.Interop.Version;
+// ReSharper disable MemberCanBeInternal
 
 namespace Aaru.Devices.Remote
 {
+    /// <inheritdoc />
+    /// <summary>
+    /// Handles communication with a remote device that's connected using the AaruRemote protocol
+    /// </summary>
     public class Remote : IDisposable
     {
         readonly string _host;
         readonly Socket _socket;
 
+        /// <summary>
+        /// Connects using TCP/IP to the specified remote
+        /// </summary>
+        /// <param name="uri">URI of the remote</param>
+        /// <exception cref="ArgumentException">Unsupported or invalid remote protocol.</exception>
+        /// <exception cref="SocketException">Host not found.</exception>
+        /// <exception cref="IOException">Network error.</exception>
         public Remote(Uri uri)
         {
             if(uri.Scheme != "aaru" &&
@@ -185,13 +197,34 @@ namespace Aaru.Devices.Remote
             throw new IOException();
         }
 
+        /// <summary>
+        /// Remote server application
+        /// </summary>
         public string ServerApplication            { get; }
+        /// <summary>
+        /// Remote server application version
+        /// </summary>
         public string ServerVersion                { get; }
+        /// <summary>
+        /// Remote server operating system
+        /// </summary>
         public string ServerOperatingSystem        { get; }
+        /// <summary>
+        /// Remote server operating system version
+        /// </summary>
         public string ServerOperatingSystemVersion { get; }
+        /// <summary>
+        /// Remote server architecture
+        /// </summary>
         public string ServerArchitecture           { get; }
+        /// <summary>
+        /// Remote server protocol version
+        /// </summary>
         public int    ServerProtocolVersion        { get; }
 
+        /// <summary>
+        /// Is remote running with administrative (aka root) privileges?
+        /// </summary>
         public bool IsRoot
         {
             get
@@ -264,8 +297,12 @@ namespace Aaru.Devices.Remote
             }
         }
 
+        /// <inheritdoc />
         public void Dispose() => Disconnect();
 
+        /// <summary>
+        /// Disconnects from remote
+        /// </summary>
         public void Disconnect()
         {
             try
@@ -279,6 +316,10 @@ namespace Aaru.Devices.Remote
             }
         }
 
+        /// <summary>
+        /// Lists devices attached to remote
+        /// </summary>
+        /// <returns>List of devices</returns>
         public DeviceInfo[] ListDevices()
         {
             var cmdPkt = new AaruPacketCommandListDevices
@@ -387,6 +428,13 @@ namespace Aaru.Devices.Remote
             return devices.ToArray();
         }
 
+        /// <summary>
+        /// Opens the specified device path on the remote
+        /// </summary>
+        /// <param name="devicePath">Device path</param>
+        /// <param name="lastError">Returned error</param>
+        /// <returns><c>true</c> if opened correctly, <c>false</c>otherwise</returns>
+        /// <exception cref="NotImplementedException">Support for the specified device has not yet been implemented in the remote application.</exception>
         public bool Open(string devicePath, out int lastError)
         {
             lastError = 0;
@@ -474,6 +522,18 @@ namespace Aaru.Devices.Remote
             return false;
         }
 
+        /// <summary>Sends a SCSI command to the remote device</summary>
+        /// <returns>0 if no error occurred, otherwise, errno</returns>
+        /// <param name="cdb">SCSI CDB</param>
+        /// <param name="buffer">Buffer for SCSI command response</param>
+        /// <param name="senseBuffer">Buffer with the SCSI sense</param>
+        /// <param name="timeout">Timeout in seconds</param>
+        /// <param name="direction">SCSI command transfer direction</param>
+        /// <param name="duration">Time it took to execute the command in milliseconds</param>
+        /// <param name="sense">
+        ///     <c>True</c> if SCSI command returned non-OK status and <paramref name="senseBuffer" /> contains
+        ///     SCSI sense
+        /// </param>
         public int SendScsiCommand(byte[] cdb, ref byte[] buffer, out byte[] senseBuffer, uint timeout,
                                    ScsiDirection direction, out double duration, out bool sense)
         {
@@ -572,6 +632,20 @@ namespace Aaru.Devices.Remote
             return (int)res.error_no;
         }
 
+        /// <summary>Sends an ATA/ATAPI command to the remote device using CHS addressing</summary>
+        /// <returns>0 if no error occurred, otherwise, errno</returns>
+        /// <param name="registers">ATA registers.</param>
+        /// <param name="errorRegisters">Status/error registers.</param>
+        /// <param name="protocol">ATA Protocol.</param>
+        /// <param name="transferRegister">Indicates which register indicates the transfer length</param>
+        /// <param name="buffer">Buffer for ATA/ATAPI command response</param>
+        /// <param name="timeout">Timeout in seconds</param>
+        /// <param name="transferBlocks">
+        ///     If set to <c>true</c>, transfer is indicated in blocks, otherwise, it is indicated in
+        ///     bytes.
+        /// </param>
+        /// <param name="duration">Time it took to execute the command in milliseconds</param>
+        /// <param name="sense"><c>True</c> if ATA/ATAPI command returned non-OK status</param>
         public int SendAtaCommand(AtaRegistersChs registers, out AtaErrorRegistersChs errorRegisters,
                                   AtaProtocol protocol, AtaTransferRegister transferRegister, ref byte[] buffer,
                                   uint timeout, bool transferBlocks, out double duration, out bool sense)
@@ -667,6 +741,20 @@ namespace Aaru.Devices.Remote
             return (int)res.error_no;
         }
 
+        /// <summary>Sends an ATA/ATAPI command to the remote device using 28-bit LBA addressing</summary>
+        /// <returns>0 if no error occurred, otherwise, errno</returns>
+        /// <param name="registers">ATA registers.</param>
+        /// <param name="errorRegisters">Status/error registers.</param>
+        /// <param name="protocol">ATA Protocol.</param>
+        /// <param name="transferRegister">Indicates which register indicates the transfer length</param>
+        /// <param name="buffer">Buffer for ATA/ATAPI command response</param>
+        /// <param name="timeout">Timeout in seconds</param>
+        /// <param name="transferBlocks">
+        ///     If set to <c>true</c>, transfer is indicated in blocks, otherwise, it is indicated in
+        ///     bytes.
+        /// </param>
+        /// <param name="duration">Time it took to execute the command in milliseconds</param>
+        /// <param name="sense"><c>True</c> if ATA/ATAPI command returned non-OK status</param>
         public int SendAtaCommand(AtaRegistersLba28 registers, out AtaErrorRegistersLba28 errorRegisters,
                                   AtaProtocol protocol, AtaTransferRegister transferRegister, ref byte[] buffer,
                                   uint timeout, bool transferBlocks, out double duration, out bool sense)
@@ -763,6 +851,20 @@ namespace Aaru.Devices.Remote
             return (int)res.error_no;
         }
 
+        /// <summary>Sends an ATA/ATAPI command to the remote device using 48-bit LBA addressing</summary>
+        /// <returns>0 if no error occurred, otherwise, errno</returns>
+        /// <param name="registers">ATA registers.</param>
+        /// <param name="errorRegisters">Status/error registers.</param>
+        /// <param name="protocol">ATA Protocol.</param>
+        /// <param name="transferRegister">Indicates which register indicates the transfer length</param>
+        /// <param name="buffer">Buffer for ATA/ATAPI command response</param>
+        /// <param name="timeout">Timeout in seconds</param>
+        /// <param name="transferBlocks">
+        ///     If set to <c>true</c>, transfer is indicated in blocks, otherwise, it is indicated in
+        ///     bytes.
+        /// </param>
+        /// <param name="duration">Time it took to execute the command in milliseconds</param>
+        /// <param name="sense"><c>True</c> if ATA/ATAPI command returned non-OK status</param>
         public int SendAtaCommand(AtaRegistersLba48 registers, out AtaErrorRegistersLba48 errorRegisters,
                                   AtaProtocol protocol, AtaTransferRegister transferRegister, ref byte[] buffer,
                                   uint timeout, bool transferBlocks, out double duration, out bool sense)
@@ -859,6 +961,20 @@ namespace Aaru.Devices.Remote
             return (int)res.error_no;
         }
 
+        /// <summary>Sends a MMC/SD command to the remote device</summary>
+        /// <returns>The result of the command.</returns>
+        /// <param name="command">MMC/SD opcode</param>
+        /// <param name="buffer">Buffer for MMC/SD command response</param>
+        /// <param name="timeout">Timeout in seconds</param>
+        /// <param name="duration">Time it took to execute the command in milliseconds</param>
+        /// <param name="sense"><c>True</c> if MMC/SD returned non-OK status</param>
+        /// <param name="write"><c>True</c> if data is sent from host to card</param>
+        /// <param name="isApplication"><c>True</c> if command should be preceded with CMD55</param>
+        /// <param name="flags">Flags indicating kind and place of response</param>
+        /// <param name="blocks">How many blocks to transfer</param>
+        /// <param name="argument">Command argument</param>
+        /// <param name="response">Response registers</param>
+        /// <param name="blockSize">Size of block in bytes</param>
         public int SendMmcCommand(MmcCommands command, bool write, bool isApplication, MmcFlags flags, uint argument,
                                   uint blockSize, uint blocks, ref byte[] buffer, out uint[] response,
                                   out double duration, out bool sense, uint timeout = 0)
@@ -964,6 +1080,10 @@ namespace Aaru.Devices.Remote
             return (int)res.res.error_no;
         }
 
+        /// <summary>
+        /// Gets the <see cref="DeviceType"/> for the remote device
+        /// </summary>
+        /// <returns><see cref="DeviceType"/></returns>
         public DeviceType GetDeviceType()
         {
             var cmdPkt = new AaruPacketCmdGetDeviceType
@@ -1033,6 +1153,14 @@ namespace Aaru.Devices.Remote
             return res.device_type;
         }
 
+        /// <summary>
+        /// Retrieves the SDHCI registers from the remote device
+        /// </summary>
+        /// <param name="csd">CSD register</param>
+        /// <param name="cid">CID register</param>
+        /// <param name="ocr">OCR register</param>
+        /// <param name="scr">SCR register</param>
+        /// <returns><c>true</c> if the device is attached to an SDHCI controller, <c>false</c> otherwise</returns>
         public bool GetSdhciRegisters(out byte[] csd, out byte[] cid, out byte[] ocr, out byte[] scr)
         {
             csd = null;
@@ -1148,6 +1276,16 @@ namespace Aaru.Devices.Remote
             return res.isSdhci;
         }
 
+        /// <summary>
+        /// Gets the USB data from the remote device
+        /// </summary>
+        /// <param name="descriptors">USB descriptors</param>
+        /// <param name="idVendor">USB vendor ID</param>
+        /// <param name="idProduct">USB product ID</param>
+        /// <param name="manufacturer">USB manufacturer string</param>
+        /// <param name="product">USB product string</param>
+        /// <param name="serial">USB serial number string</param>
+        /// <returns><c>true</c> if the device is attached via USB, <c>false</c> otherwise</returns>
         public bool GetUsbData(out byte[] descriptors, out ushort idVendor, out ushort idProduct,
                                out string manufacturer, out string product, out string serial)
         {
@@ -1235,6 +1373,15 @@ namespace Aaru.Devices.Remote
             return true;
         }
 
+        /// <summary>
+        /// Gets the FireWire data from the remote device
+        /// </summary>
+        /// <param name="idVendor">FireWire vendor ID</param>
+        /// <param name="idProduct">FireWire product ID</param>
+        /// <param name="vendor">FireWire vendor string</param>
+        /// <param name="model">FireWire model string</param>
+        /// <param name="guid">FireWire GUID</param>
+        /// <returns><c>true</c> if the device is attached via FireWire, <c>false</c> otherwise</returns>
         public bool GetFireWireData(out uint idVendor, out uint idProduct, out ulong guid, out string vendor,
                                     out string model)
         {
@@ -1321,6 +1468,11 @@ namespace Aaru.Devices.Remote
             return true;
         }
 
+        /// <summary>
+        /// Gets the PCMCIA/CardBus data from the remote device
+        /// </summary>
+        /// <param name="cis">Card Information Structure</param>
+        /// <returns><c>true</c> if the device is attached via PCMCIA or CardBus, <c>false</c> otherwise</returns>
         public bool GetPcmciaData(out byte[] cis)
         {
             cis = null;
@@ -1397,6 +1549,14 @@ namespace Aaru.Devices.Remote
             return true;
         }
 
+        /// <summary>
+        /// Receives data from a socket into a buffer
+        /// </summary>
+        /// <param name="socket">Socket</param>
+        /// <param name="buffer">Data buffer</param>
+        /// <param name="size">Expected total size in bytes</param>
+        /// <param name="socketFlags">Socket flags</param>
+        /// <returns>Retrieved number of bytes</returns>
         static int Receive(Socket socket, byte[] buffer, int size, SocketFlags socketFlags)
         {
             int offset = 0;
@@ -1415,6 +1575,9 @@ namespace Aaru.Devices.Remote
             return offset;
         }
 
+        /// <summary>
+        /// Closes the remote device, without closing the network connection
+        /// </summary>
         public void Close()
         {
             var cmdPkt = new AaruPacketCmdClose
@@ -1441,6 +1604,14 @@ namespace Aaru.Devices.Remote
             }
         }
 
+        /// <summary>
+        /// Concatenates a queue of commands to be send to a remote SecureDigital or MultiMediaCard attached to an SDHCI controller
+        /// </summary>
+        /// <param name="commands">List of commands</param>
+        /// <param name="duration">Duration to execute all commands, in milliseconds</param>
+        /// <param name="sense">Set to <c>true</c> if any of the commands returned an error status, <c>false</c> otherwise</param>
+        /// <param name="timeout">Maximum allowed time to execute a single command</param>
+        /// <returns>0 if no error occurred, otherwise, errno</returns>
         public int SendMultipleMmcCommands(Device.MmcSingleCommand[] commands, out double duration, out bool sense,
                                            uint timeout = 0)
         {
@@ -1599,6 +1770,14 @@ namespace Aaru.Devices.Remote
             return error;
         }
 
+        /// <summary>
+        /// Concatenates a queue of commands to be send to a remote SecureDigital or MultiMediaCard attached to an SDHCI controller, using protocol version 1 without specific support for such a queueing
+        /// </summary>
+        /// <param name="commands">List of commands</param>
+        /// <param name="duration">Duration to execute all commands, in milliseconds</param>
+        /// <param name="sense">Set to <c>true</c> if any of the commands returned an error status, <c>false</c> otherwise</param>
+        /// <param name="timeout">Maximum allowed time to execute a single command</param>
+        /// <returns>0 if no error occurred, otherwise, errno</returns>
         int SendMultipleMmcCommandsV1(Device.MmcSingleCommand[] commands, out double duration, out bool sense,
                                       uint timeout)
         {
@@ -1621,6 +1800,10 @@ namespace Aaru.Devices.Remote
             return error;
         }
 
+        /// <summary>
+        /// Closes then immediately reopens a remote device
+        /// </summary>
+        /// <returns>Returned error number if any</returns>
         public bool ReOpen()
         {
             if(ServerProtocolVersion < 2)
@@ -1713,6 +1896,14 @@ namespace Aaru.Devices.Remote
             return false;
         }
 
+        /// <summary>
+        /// Reads data using operating system buffers.
+        /// </summary>
+        /// <param name="buffer">Data buffer</param>
+        /// <param name="offset">Offset in remote device to start reading, in bytes</param>
+        /// <param name="length">Number of bytes to read</param>
+        /// <param name="duration">Total time in milliseconds the reading took</param>
+        /// <returns><c>true</c> if there was an error, <c>false</c> otherwise</returns>
         public bool BufferedOsRead(out byte[] buffer, long offset, uint length, out double duration)
         {
             duration = 0;

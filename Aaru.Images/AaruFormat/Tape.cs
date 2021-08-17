@@ -38,10 +38,14 @@ namespace Aaru.DiscImages
 {
     public sealed partial class AaruFormat
     {
+        /// <inheritdoc />
         public List<TapeFile>      Files          { get; private set; }
+        /// <inheritdoc />
         public List<TapePartition> TapePartitions { get; private set; }
+        /// <inheritdoc />
         public bool                IsTape         { get; private set; }
 
+        /// <inheritdoc />
         public bool AddFile(TapeFile file)
         {
             if(Files.Any(f => f.File == file.File))
@@ -55,6 +59,7 @@ namespace Aaru.DiscImages
             return true;
         }
 
+        /// <inheritdoc />
         public bool AddPartition(TapePartition partition)
         {
             if(TapePartitions.Any(f => f.Number == partition.Number))
@@ -68,6 +73,7 @@ namespace Aaru.DiscImages
             return true;
         }
 
+        /// <inheritdoc />
         public bool SetTape()
         {
             Files          = new List<TapeFile>();

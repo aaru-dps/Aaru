@@ -37,9 +37,11 @@ namespace Aaru.DiscImages
 {
     public sealed partial class TeleDisk
     {
+        /// <inheritdoc />
         public byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag) =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
+        /// <inheritdoc />
         public byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag) =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
     }

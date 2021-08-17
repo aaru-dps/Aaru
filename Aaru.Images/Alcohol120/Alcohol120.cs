@@ -38,6 +38,9 @@ using Aaru.CommonTypes.Structs;
 
 namespace Aaru.DiscImages
 {
+    /// <summary>
+    /// Implements reading and writing Alcohol 120% disk images
+    /// </summary>
     public sealed partial class Alcohol120 : IWritableOpticalImage
     {
         Footer                                  _alcFooter;

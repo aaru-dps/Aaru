@@ -41,6 +41,9 @@ using Aaru.Helpers;
 
 namespace Aaru.Core.Media
 {
+    /// <summary>
+    /// Operations over CD based media
+    /// </summary>
     public static class CompactDisc
     {
         /// <summary>Writes subchannel data to an image</summary>

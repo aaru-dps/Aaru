@@ -52,14 +52,23 @@ namespace Aaru.Filesystems
     // There is an ODS with signature "DECFILES11A", yet to be seen
     // Time is a 64 bit unsigned integer, tenths of microseconds since 1858/11/17 00:00:00.
     // TODO: Implement checksum
+    /// <summary>
+    /// Implements detection of DEC's On-Disk Structure, aka the ODS filesystem
+    /// </summary>
     public sealed class ODS : IFilesystem
     {
+        /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
+        /// <inheritdoc />
         public Encoding       Encoding  { get; private set; }
+        /// <inheritdoc />
         public string         Name      => "Files-11 On-Disk Structure";
+        /// <inheritdoc />
         public Guid           Id        => new Guid("de20633c-8021-4384-aeb0-83b0df14491f");
+        /// <inheritdoc />
         public string         Author    => "Natalia Portillo";
 
+        /// <inheritdoc />
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(2 + partition.Start >= partition.End)
@@ -97,6 +106,7 @@ namespace Aaru.Filesystems
             return magic == "DECFILE11A  " || magic == "DECFILE11B  ";
         }
 
+        /// <inheritdoc />
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                    Encoding encoding)
         {

@@ -41,6 +41,7 @@ namespace Aaru.Filesystems
 {
     public sealed partial class OperaFS
     {
+        /// <inheritdoc />
         public Errno ReadDir(string path, out List<string> contents)
         {
             contents = null;

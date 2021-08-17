@@ -47,6 +47,7 @@ namespace Aaru.Filesystems
     {
         const int BYTES_BEFORE_BLOCK_MAP = 64;
 
+        /// <inheritdoc />
         public Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding,
                            Dictionary<string, string> options, string @namespace)
         {
@@ -194,6 +195,7 @@ namespace Aaru.Filesystems
             return Errno.NoError;
         }
 
+        /// <inheritdoc />
         public Errno Unmount()
         {
             _mounted      = false;
@@ -205,6 +207,7 @@ namespace Aaru.Filesystems
             return Errno.NoError;
         }
 
+        /// <inheritdoc />
         public Errno StatFs(out FileSystemInfo stat)
         {
             stat = new FileSystemInfo

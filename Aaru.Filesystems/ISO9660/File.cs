@@ -47,6 +47,7 @@ namespace Aaru.Filesystems
 {
     public sealed partial class ISO9660
     {
+        /// <inheritdoc />
         public Errno MapBlock(string path, long fileBlock, out long deviceBlock)
         {
             deviceBlock = 0;
@@ -72,6 +73,7 @@ namespace Aaru.Filesystems
             return Errno.NoError;
         }
 
+        /// <inheritdoc />
         public Errno GetAttributes(string path, out FileAttributes attributes)
         {
             attributes = new FileAttributes();
@@ -90,6 +92,7 @@ namespace Aaru.Filesystems
         }
 
         // TODO: Resolve symbolic link
+        /// <inheritdoc />
         public Errno Read(string path, long offset, long size, ref byte[] buf)
         {
             buf = null;
@@ -161,6 +164,7 @@ namespace Aaru.Filesystems
             return Errno.NoError;
         }
 
+        /// <inheritdoc />
         public Errno Stat(string path, out FileEntryInfo stat)
         {
             stat = null;
@@ -412,6 +416,7 @@ namespace Aaru.Filesystems
             return Errno.NoError;
         }
 
+        /// <inheritdoc />
         public Errno ReadLink(string path, out string dest)
         {
             dest = null;

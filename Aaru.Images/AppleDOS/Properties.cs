@@ -41,32 +41,46 @@ namespace Aaru.DiscImages
 {
     public sealed partial class AppleDos
     {
+        /// <inheritdoc />
         public ImageInfo Info => _imageInfo;
 
+        /// <inheritdoc />
         public string Name   => "Apple ][ Interleaved Disk Image";
+        /// <inheritdoc />
         public Guid   Id     => new Guid("A5828AC0-62C9-4304-81D4-EFD4AAE47360");
+        /// <inheritdoc />
         public string Author => "Natalia Portillo";
+        /// <inheritdoc />
         public string Format => _extension == ".po" ? "Apple ][ Interleaved Disk Image (ProDOS order)"
                                     : "Apple ][ Interleaved Disk Image (DOS order)";
 
+        /// <inheritdoc />
         public List<DumpHardwareType> DumpHardware => null;
+        /// <inheritdoc />
         public CICMMetadataType       CicmMetadata => null;
+        /// <inheritdoc />
         public IEnumerable<MediaTagType> SupportedMediaTags => new MediaTagType[]
             {};
+        /// <inheritdoc />
         public IEnumerable<SectorTagType> SupportedSectorTags => new SectorTagType[]
             {};
+        /// <inheritdoc />
         public IEnumerable<MediaType> SupportedMediaTypes => new[]
         {
             MediaType.Apple33SS
         };
+        /// <inheritdoc />
         public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>
             new (string name, Type type, string description, object @default)[]
                 {};
+        /// <inheritdoc />
         public IEnumerable<string> KnownExtensions => new[]
         {
             ".do", ".po"
         };
+        /// <inheritdoc />
         public bool   IsWriting    { get; private set; }
+        /// <inheritdoc />
         public string ErrorMessage { get; private set; }
     }
 }

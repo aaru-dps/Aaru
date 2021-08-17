@@ -37,6 +37,7 @@ namespace Aaru.DiscImages
 {
     public sealed partial class DiskCopy42
     {
+        /// <inheritdoc />
         public byte[] ReadDiskTag(MediaTagType tag) =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
     }

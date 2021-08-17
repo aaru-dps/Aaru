@@ -44,6 +44,9 @@ using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Filesystems
 {
+    /// <summary>
+    /// Implements detection of Amiga Fast File System (AFFS)
+    /// </summary>
     public sealed class AmigaDOSPlugin : IFilesystem
     {
         const uint FFS_MASK  = 0x444F5300;
@@ -52,12 +55,18 @@ namespace Aaru.Filesystems
         const uint TYPE_HEADER  = 2;
         const uint SUBTYPE_ROOT = 1;
 
+        /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
+        /// <inheritdoc />
         public string         Name      => "Amiga DOS filesystem";
+        /// <inheritdoc />
         public Guid           Id        => new Guid("3c882400-208c-427d-a086-9119852a1bc7");
+        /// <inheritdoc />
         public Encoding       Encoding  { get; private set; }
+        /// <inheritdoc />
         public string         Author    => "Natalia Portillo";
 
+        /// <inheritdoc />
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(partition.Start + 4 >= partition.End)
@@ -164,6 +173,7 @@ namespace Aaru.Filesystems
             return false;
         }
 
+        /// <inheritdoc />
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                    Encoding encoding)
         {

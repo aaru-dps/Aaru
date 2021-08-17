@@ -38,6 +38,9 @@ using Aaru.CommonTypes.Structs;
 
 namespace Aaru.DiscImages
 {
+    /// <summary>
+    /// Implements reading and writing Ray Arachellian's DIM disk images
+    /// </summary>
     public sealed partial class RayDim : IWritableImage
     {
         MemoryStream _disk;

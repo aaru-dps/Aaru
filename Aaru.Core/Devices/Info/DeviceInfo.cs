@@ -47,8 +47,15 @@ using Inquiry = Aaru.CommonTypes.Structs.Devices.SCSI.Inquiry;
 
 namespace Aaru.Core.Devices.Info
 {
+    /// <summary>
+    /// Obtains and contains information about a device
+    /// </summary>
     public partial class DeviceInfo
     {
+        /// <summary>
+        /// Initializes an instance of this class for the specified device
+        /// </summary>
+        /// <param name="dev">Device</param>
         public DeviceInfo(Device dev)
         {
             Type                  = dev.Type;

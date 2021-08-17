@@ -44,6 +44,9 @@ using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Filesystems
 {
+    /// <summary>
+    /// Implements detection of the CRAM filesystem
+    /// </summary>
     [SuppressMessage("ReSharper", "UnusedType.Local")]
     public sealed class Cram : IFilesystem
     {
@@ -51,12 +54,18 @@ namespace Aaru.Filesystems
         const uint CRAM_MAGIC = 0x28CD3D45;
         const uint CRAM_CIGAM = 0x453DCD28;
 
+        /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
+        /// <inheritdoc />
         public Encoding       Encoding  { get; private set; }
+        /// <inheritdoc />
         public string         Name      => "Cram filesystem";
+        /// <inheritdoc />
         public Guid           Id        => new Guid("F8F6E46F-7A2A-48E3-9C0A-46AF4DC29E09");
+        /// <inheritdoc />
         public string         Author    => "Natalia Portillo";
 
+        /// <inheritdoc />
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(partition.Start >= partition.End)
@@ -69,6 +78,7 @@ namespace Aaru.Filesystems
             return magic == CRAM_MAGIC || magic == CRAM_CIGAM;
         }
 
+        /// <inheritdoc />
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                    Encoding encoding)
         {

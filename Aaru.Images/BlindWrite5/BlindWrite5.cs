@@ -39,6 +39,9 @@ using Aaru.CommonTypes.Structs;
 namespace Aaru.DiscImages
 {
     // TODO: Too many unknowns to make this writable
+    /// <summary>
+    /// Implements reading BlindWrite 5/6/7 disc images
+    /// </summary>
     public sealed partial class BlindWrite5 : IOpticalMediaImage
     {
         byte[]                        _atip;

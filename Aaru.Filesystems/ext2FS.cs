@@ -43,6 +43,9 @@ using Marshal = Aaru.Helpers.Marshal;
 namespace Aaru.Filesystems
 {
     // Information from the Linux kernel
+    /// <summary>
+    /// Implements detection of the Linux extended filesystem v2, v3 and v4
+    /// </summary>
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
     public sealed class ext2FS : IFilesystem
     {
@@ -162,12 +165,18 @@ namespace Aaru.Filesystems
         /// <summary>Testing development code</summary>
         const uint EXT2_FLAGS_TEST_FILESYS = 0x00000004;
 
+        /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
+        /// <inheritdoc />
         public Encoding       Encoding  { get; private set; }
+        /// <inheritdoc />
         public string         Name      => "Linux extended Filesystem 2, 3 and 4";
+        /// <inheritdoc />
         public Guid           Id        => new Guid("6AA91B88-150B-4A7B-AD56-F84FB2DF4184");
+        /// <inheritdoc />
         public string         Author    => "Natalia Portillo";
 
+        /// <inheritdoc />
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             ulong sbSectorOff = SB_POS / imagePlugin.Info.SectorSize;
@@ -195,6 +204,7 @@ namespace Aaru.Filesystems
             return magic == EXT2_MAGIC || magic == EXT2_MAGIC_OLD;
         }
 
+        /// <inheritdoc />
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                    Encoding encoding)
         {

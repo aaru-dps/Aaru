@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+#pragma warning disable 1591
 
 // ReSharper disable UnusedType.Global
 

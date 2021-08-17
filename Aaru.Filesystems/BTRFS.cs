@@ -41,17 +41,26 @@ using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Filesystems
 {
+    /// <summary>
+    /// Implements detection of the b-tree filesystem (btrfs)
+    /// </summary>
     public sealed class BTRFS : IFilesystem
     {
         /// <summary>BTRFS magic "_BHRfS_M"</summary>
         const ulong BTRFS_MAGIC = 0x4D5F53665248425F;
 
+        /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
+        /// <inheritdoc />
         public Encoding       Encoding  { get; private set; }
+        /// <inheritdoc />
         public string         Name      => "B-tree file system";
+        /// <inheritdoc />
         public Guid           Id        => new Guid("C904CF15-5222-446B-B7DB-02EAC5D781B3");
+        /// <inheritdoc />
         public string         Author    => "Natalia Portillo";
 
+        /// <inheritdoc />
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(partition.Start >= partition.End)
@@ -83,6 +92,7 @@ namespace Aaru.Filesystems
             return btrfsSb.magic == BTRFS_MAGIC;
         }
 
+        /// <inheritdoc />
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                    Encoding encoding)
         {

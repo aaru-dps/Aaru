@@ -39,6 +39,7 @@ namespace Aaru.DiscImages
 {
     public sealed partial class CopyTape
     {
+        /// <inheritdoc />
         public bool Identify(IFilter imageFilter)
         {
             if(imageFilter.GetDataForkLength() <= 16)

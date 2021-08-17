@@ -44,6 +44,7 @@ namespace Aaru.DiscImages
 {
     public sealed partial class CopyTape
     {
+        /// <inheritdoc />
         public bool Open(IFilter imageFilter)
         {
             List<long> blockPositions = new List<long>();
@@ -163,6 +164,7 @@ namespace Aaru.DiscImages
             return true;
         }
 
+        /// <inheritdoc />
         public byte[] ReadSector(ulong sectorAddress)
         {
             if(sectorAddress >= (ulong)_blockPositionCache.LongLength)
@@ -203,6 +205,7 @@ namespace Aaru.DiscImages
             return data;
         }
 
+        /// <inheritdoc />
         public byte[] ReadSectors(ulong sectorAddress, uint length)
         {
             var dataMs = new MemoryStream();

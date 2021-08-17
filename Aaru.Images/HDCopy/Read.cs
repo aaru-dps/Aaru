@@ -43,6 +43,7 @@ namespace Aaru.DiscImages
 {
     public sealed partial class HdCopy
     {
+        /// <inheritdoc />
         public bool Open(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
@@ -118,6 +119,7 @@ namespace Aaru.DiscImages
             return true;
         }
 
+        /// <inheritdoc />
         public byte[] ReadSector(ulong sectorAddress)
         {
             int trackNum     = (int)(sectorAddress / _imageInfo.SectorsPerTrack);
@@ -146,6 +148,7 @@ namespace Aaru.DiscImages
             return result;
         }
 
+        /// <inheritdoc />
         public byte[] ReadSectors(ulong sectorAddress, uint length)
         {
             byte[] result = new byte[length * _imageInfo.SectorSize];

@@ -43,17 +43,26 @@ using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Filesystems
 {
+    /// <summary>
+    /// Implements detection of the New Implementation of a Log-structured File System v2
+    /// </summary>
     public sealed class NILFS2 : IFilesystem
     {
         const ushort NILFS2_MAGIC        = 0x3434;
         const uint   NILFS2_SUPER_OFFSET = 1024;
 
+        /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
+        /// <inheritdoc />
         public Encoding       Encoding  { get; private set; }
+        /// <inheritdoc />
         public string         Name      => "NILFS2 Plugin";
+        /// <inheritdoc />
         public Guid           Id        => new Guid("35224226-C5CC-48B5-8FFD-3781E91E86B6");
+        /// <inheritdoc />
         public string         Author    => "Natalia Portillo";
 
+        /// <inheritdoc />
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(imagePlugin.Info.SectorSize < 512)
@@ -82,6 +91,7 @@ namespace Aaru.Filesystems
             return nilfsSb.magic == NILFS2_MAGIC;
         }
 
+        /// <inheritdoc />
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                    Encoding encoding)
         {

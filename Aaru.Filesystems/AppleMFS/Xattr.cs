@@ -42,6 +42,7 @@ namespace Aaru.Filesystems
     // Information from Inside Macintosh Volume II
     public sealed partial class AppleMFS
     {
+        /// <inheritdoc />
         public Errno ListXAttr(string path, out List<string> xattrs)
         {
             xattrs = null;
@@ -99,6 +100,7 @@ namespace Aaru.Filesystems
             return Errno.NoError;
         }
 
+        /// <inheritdoc />
         public Errno GetXattr(string path, string xattr, ref byte[] buf)
         {
             if(!_mounted)

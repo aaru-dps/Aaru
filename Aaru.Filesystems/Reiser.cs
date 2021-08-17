@@ -42,6 +42,9 @@ using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Filesystems
 {
+    /// <summary>
+    /// Implements detection of the Reiser v3 filesystem
+    /// </summary>
     public sealed class Reiser : IFilesystem
     {
         const uint REISER_SUPER_OFFSET = 0x10000;
@@ -59,12 +62,18 @@ namespace Aaru.Filesystems
             0x52, 0x65, 0x49, 0x73, 0x45, 0x72, 0x33, 0x46, 0x73, 0x00
         };
 
+        /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
+        /// <inheritdoc />
         public Encoding       Encoding  { get; private set; }
+        /// <inheritdoc />
         public string         Name      => "Reiser Filesystem Plugin";
+        /// <inheritdoc />
         public Guid           Id        => new Guid("1D8CD8B8-27E6-410F-9973-D16409225FBA");
+        /// <inheritdoc />
         public string         Author    => "Natalia Portillo";
 
+        /// <inheritdoc />
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(imagePlugin.Info.SectorSize < 512)
@@ -94,6 +103,7 @@ namespace Aaru.Filesystems
                    _magicJr.SequenceEqual(reiserSb.magic);
         }
 
+        /// <inheritdoc />
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                    Encoding encoding)
         {

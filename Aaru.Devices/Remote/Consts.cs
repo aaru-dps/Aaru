@@ -32,11 +32,26 @@
 
 namespace Aaru.Devices.Remote
 {
+    /// <summary>
+    /// AaruRemote protocol constants
+    /// </summary>
     public class Consts
     {
+        /// <summary>
+        /// Primary unique packet identifier
+        /// </summary>
         public const uint REMOTE_ID      = 0x52434944; // "DICR"
+        /// <summary>
+        /// Secondary unique packet identifier
+        /// </summary>
         public const uint PACKET_ID      = 0x544B4350; // "PCKT"
+        /// <summary>
+        /// Default packet version
+        /// </summary>
         public const int  PACKET_VERSION = 1;
+        /// <summary>
+        /// Maximum supported protocol version
+        /// </summary>
         public const int  MAX_PROTOCOL   = 2;
     }
 }

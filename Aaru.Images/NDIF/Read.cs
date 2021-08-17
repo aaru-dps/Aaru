@@ -50,6 +50,7 @@ namespace Aaru.DiscImages
 {
     public sealed partial class Ndif
     {
+        /// <inheritdoc />
         public bool Open(IFilter imageFilter)
         {
             if(!imageFilter.HasResourceFork() ||
@@ -309,6 +310,7 @@ namespace Aaru.DiscImages
             return true;
         }
 
+        /// <inheritdoc />
         public byte[] ReadSector(ulong sectorAddress)
         {
             if(sectorAddress > _imageInfo.Sectors - 1)
@@ -438,6 +440,7 @@ namespace Aaru.DiscImages
             throw new ImageNotSupportedException($"Unsupported chunk type 0x{currentChunk.type:X8} found");
         }
 
+        /// <inheritdoc />
         public byte[] ReadSectors(ulong sectorAddress, uint length)
         {
             if(sectorAddress > _imageInfo.Sectors - 1)

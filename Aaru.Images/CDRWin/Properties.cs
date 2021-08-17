@@ -42,6 +42,7 @@ namespace Aaru.DiscImages
 {
     public sealed partial class CdrWin
     {
+        /// <inheritdoc />
         public OpticalImageCapabilities OpticalCapabilities => OpticalImageCapabilities.CanStoreAudioTracks    |
                                                                OpticalImageCapabilities.CanStoreDataTracks     |
                                                                OpticalImageCapabilities.CanStorePregaps        |
@@ -55,13 +56,20 @@ namespace Aaru.DiscImages
                                                                OpticalImageCapabilities.CanStoreNotCdSessions  |
                                                                OpticalImageCapabilities.CanStoreNotCdTracks    |
                                                                OpticalImageCapabilities.CanStoreIndexes;
+        /// <inheritdoc />
         public ImageInfo       Info       => _imageInfo;
+        /// <inheritdoc />
         public string          Name       => "CDRWin cuesheet";
+        /// <inheritdoc />
         public Guid            Id         => new Guid("664568B2-15D4-4E64-8A7A-20BDA8B8386F");
+        /// <inheritdoc />
         public string          Format     => "CDRWin CUESheet";
+        /// <inheritdoc />
         public string          Author     => "Natalia Portillo";
+        /// <inheritdoc />
         public List<Partition> Partitions { get; private set; }
 
+        /// <inheritdoc />
         public List<Track> Tracks
         {
             get
@@ -145,19 +153,25 @@ namespace Aaru.DiscImages
             }
         }
 
+        /// <inheritdoc />
         public List<Session>          Sessions     => _discImage.Sessions;
+        /// <inheritdoc />
         public List<DumpHardwareType> DumpHardware { get; private set; }
+        /// <inheritdoc />
         public CICMMetadataType       CicmMetadata => null;
+        /// <inheritdoc />
         public IEnumerable<MediaTagType> SupportedMediaTags => new[]
         {
             MediaTagType.CD_MCN, MediaTagType.CD_TEXT
         };
+        /// <inheritdoc />
         public IEnumerable<SectorTagType> SupportedSectorTags => new[]
         {
             SectorTagType.CdSectorEcc, SectorTagType.CdSectorEccP, SectorTagType.CdSectorEccQ,
             SectorTagType.CdSectorEdc, SectorTagType.CdSectorHeader, SectorTagType.CdSectorSubHeader,
             SectorTagType.CdSectorSync, SectorTagType.CdTrackFlags, SectorTagType.CdTrackIsrc
         };
+        /// <inheritdoc />
         public IEnumerable<MediaType> SupportedMediaTypes => new[]
         {
             MediaType.BDR, MediaType.BDRE, MediaType.BDREXL, MediaType.BDROM, MediaType.UHDBD, MediaType.BDRXL,
@@ -175,15 +189,19 @@ namespace Aaru.DiscImages
             MediaType.Nuon, MediaType.Playdia, MediaType.Pippin, MediaType.FMTOWNS, MediaType.MilCD, MediaType.VideoNow,
             MediaType.VideoNowColor, MediaType.VideoNowXp, MediaType.CVD, MediaType.PCD
         };
+        /// <inheritdoc />
         public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions => new[]
         {
             ("separate", typeof(bool), "Write each track to a separate file.", (object)false)
         };
+        /// <inheritdoc />
         public IEnumerable<string> KnownExtensions => new[]
         {
             ".cue"
         };
+        /// <inheritdoc />
         public bool   IsWriting    { get; private set; }
+        /// <inheritdoc />
         public string ErrorMessage { get; private set; }
     }
 }

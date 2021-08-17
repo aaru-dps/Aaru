@@ -46,6 +46,7 @@ namespace Aaru.Filesystems
 {
     public sealed partial class ISO9660
     {
+        /// <inheritdoc />
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             // ISO9660 is designed for 2048 bytes/sector devices
@@ -83,6 +84,7 @@ namespace Aaru.Filesystems
                    Encoding.ASCII.GetString(vdMagic) == CDI_MAGIC;
         }
 
+        /// <inheritdoc />
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                    Encoding encoding)
         {
