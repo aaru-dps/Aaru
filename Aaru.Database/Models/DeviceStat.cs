@@ -32,6 +32,7 @@
 
 namespace Aaru.Database.Models
 {
+    /// <inheritdoc />
     /// <summary>
     /// Device found in usage
     /// </summary>

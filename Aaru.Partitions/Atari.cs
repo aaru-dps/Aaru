@@ -41,6 +41,7 @@ using Aaru.Helpers;
 
 namespace Aaru.Partitions
 {
+    /// <inheritdoc />
     /// <summary>
     /// Implements decoding of Atari GEMDOS partitions
     /// </summary>

@@ -38,6 +38,7 @@ using Aaru.CommonTypes.Structs;
 namespace Aaru.DiscImages
 {
     // TODO: Checksum sectors
+    /// <inheritdoc />
     /// <summary>
     /// Implements reading nibbelized Apple II disk images
     /// </summary>

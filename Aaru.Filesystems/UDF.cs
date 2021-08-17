@@ -45,6 +45,7 @@ using Marshal = Aaru.Helpers.Marshal;
 namespace Aaru.Filesystems
 {
     // TODO: Detect bootable
+    /// <inheritdoc />
     /// <summary>
     /// Implements detection of the Universal Disk Format filesystem
     /// </summary>

@@ -42,6 +42,7 @@ namespace Aaru.DiscImages
     // TODO: Check checksum
     // TODO: Implement segments
     // TODO: Implement compression
+    /// <inheritdoc />
     /// <summary>
     /// Implements reading Apple New Disk Image Format disk images
     /// </summary>

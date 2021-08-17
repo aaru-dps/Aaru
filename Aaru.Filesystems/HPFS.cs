@@ -43,6 +43,7 @@ using Marshal = Aaru.Helpers.Marshal;
 namespace Aaru.Filesystems
 {
     // Information from an old unnamed document
+    /// <inheritdoc />
     /// <summary>
     /// Implements detection of IBM's High Performance File System (HPFS)
     /// </summary>

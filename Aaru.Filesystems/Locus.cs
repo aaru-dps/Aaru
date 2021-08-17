@@ -67,6 +67,7 @@ using time_t = System.Int32;
 
 namespace Aaru.Filesystems
 {
+    /// <inheritdoc />
     /// <summary>
     /// Implements detection of the Locus filesystem
     /// </summary>

@@ -45,6 +45,7 @@ namespace Aaru.Partitions
 {
     // Information about structures learnt from Inside Macintosh
     // Constants from image testing
+    /// <inheritdoc />
     /// <summary>
     /// Implements decoding of the Apple Partition Map
     /// </summary>

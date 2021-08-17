@@ -43,6 +43,7 @@ using Marshal = Aaru.Helpers.Marshal;
 namespace Aaru.Filesystems
 {
     // Information from the Linux kernel
+    /// <inheritdoc />
     /// <summary>
     /// Implements detection of the Linux extended filesystem v2, v3 and v4
     /// </summary>

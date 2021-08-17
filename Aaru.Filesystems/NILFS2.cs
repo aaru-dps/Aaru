@@ -43,6 +43,7 @@ using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Filesystems
 {
+    /// <inheritdoc />
     /// <summary>
     /// Implements detection of the New Implementation of a Log-structured File System v2
     /// </summary>

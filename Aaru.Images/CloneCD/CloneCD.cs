@@ -39,6 +39,7 @@ using Aaru.CommonTypes.Structs;
 namespace Aaru.DiscImages
 {
     // TODO: CloneCD stores subchannel deinterleaved
+    /// <inheritdoc />
     /// <summary>
     /// Implements reading and writing CloneCD disc images
     /// </summary>

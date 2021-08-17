@@ -38,6 +38,7 @@ using Aaru.CommonTypes.Structs;
 namespace Aaru.DiscImages
 {
     // TODO: What are the real supported floppies for this image format?
+    /// <inheritdoc />
     /// <summary>
     /// Implements reading DIM disk images
     /// </summary>

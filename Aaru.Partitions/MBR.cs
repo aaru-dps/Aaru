@@ -44,6 +44,7 @@ using Marshal = Aaru.Helpers.Marshal;
 namespace Aaru.Partitions
 {
     // TODO: Support AAP extensions
+    /// <inheritdoc />
     /// <summary>
     /// Implements decoding of Intel/Microsoft Master Boot Record and extensions
     /// </summary>

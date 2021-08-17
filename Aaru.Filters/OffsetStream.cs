@@ -48,13 +48,14 @@ namespace Aaru.Filters
         readonly long   _streamEnd;
         readonly long   _streamStart;
 
+        /// <inheritdoc />
         /// <summary>
-        /// Initializes a stream that only allows reading from <paramref name="start"/> to <paramref name="end"/> of the specified stream, both inclusive.
+        /// Initializes a stream that only allows reading from <paramref name="start" /> to <paramref name="end" /> of the specified stream, both inclusive.
         /// </summary>
         /// <param name="stream">Base stream</param>
         /// <param name="start">Start position</param>
         /// <param name="end">Last readable position</param>
-        /// <exception cref="ArgumentOutOfRangeException">Invalid range</exception>
+        /// <exception cref="T:System.ArgumentOutOfRangeException">Invalid range</exception>
         public OffsetStream(Stream stream, long start, long end)
         {
             if(start < 0)
@@ -74,18 +75,19 @@ namespace Aaru.Filters
             _baseStream.Position = start;
         }
 
+        /// <inheritdoc />
         /// <summary>
-        /// Initializes a stream that only allows reading from <paramref name="start"/> to <paramref name="end"/> of the specified file, both inclusive.
+        /// Initializes a stream that only allows reading from <paramref name="start" /> to <paramref name="end" /> of the specified file, both inclusive.
         /// </summary>
         /// <param name="path">A relative or absolute path for the file that the stream will encapsulate.</param>
         /// <param name="mode">One of the enumeration values that determines how to open or create the file.</param>
-        /// <param name="access">A bitwise combination of the enumeration values that determines how the file can be accessed by a <see cref="FileStream" /> object.</param>
+        /// <param name="access">A bitwise combination of the enumeration values that determines how the file can be accessed by a <see cref="T:System.IO.FileStream" /> object.</param>
         /// <param name="share">A bitwise combination of the enumeration values that determines how the file will be shared by processes.</param>
         /// <param name="bufferSize">A positive Int32 value greater than 0 indicating the buffer size. The default buffer size is 4096.</param>
         /// <param name="options">A bitwise combination of the enumeration values that specifies additional file options.</param>
         /// <param name="start">Start position</param>
         /// <param name="end">Last readable position</param>
-        /// <exception cref="ArgumentOutOfRangeException">Invalid range</exception>
+        /// <exception cref="T:System.ArgumentOutOfRangeException">Invalid range</exception>
         public OffsetStream(string path, FileMode mode, FileAccess access, FileShare share, int bufferSize,
                             FileOptions options, long start, long end)
         {
@@ -106,14 +108,15 @@ namespace Aaru.Filters
             _baseStream.Position = start;
         }
 
+        /// <inheritdoc />
         /// <summary>
-        /// Initializes a stream that only allows reading from <paramref name="start"/> to <paramref name="end"/> of the specified file, both inclusive.
+        /// Initializes a stream that only allows reading from <paramref name="start" /> to <paramref name="end" /> of the specified file, both inclusive.
         /// </summary>
         /// <param name="handle">A file handle for the file that the stream will encapsulate.</param>
-        /// <param name="access">A bitwise combination of the enumeration values that determines how the file can be accessed by a <see cref="FileStream" /> object.</param>
+        /// <param name="access">A bitwise combination of the enumeration values that determines how the file can be accessed by a <see cref="T:System.IO.FileStream" /> object.</param>
         /// <param name="start">Start position</param>
         /// <param name="end">Last readable position</param>
-        /// <exception cref="ArgumentOutOfRangeException">Invalid range</exception>
+        /// <exception cref="T:System.ArgumentOutOfRangeException">Invalid range</exception>
         public OffsetStream(SafeFileHandle handle, FileAccess access, long start, long end)
         {
             if(start < 0)
@@ -133,15 +136,16 @@ namespace Aaru.Filters
             _baseStream.Position = start;
         }
 
+        /// <inheritdoc />
         /// <summary>
-        /// Initializes a stream that only allows reading from <paramref name="start"/> to <paramref name="end"/> of the specified file, both inclusive.
+        /// Initializes a stream that only allows reading from <paramref name="start" /> to <paramref name="end" /> of the specified file, both inclusive.
         /// </summary>
         /// <param name="handle">A file handle for the file that the stream will encapsulate.</param>
-        /// <param name="access">A bitwise combination of the enumeration values that determines how the file can be accessed by a <see cref="FileStream" /> object.</param>
+        /// <param name="access">A bitwise combination of the enumeration values that determines how the file can be accessed by a <see cref="T:System.IO.FileStream" /> object.</param>
         /// <param name="bufferSize">A positive Int32 value greater than 0 indicating the buffer size. The default buffer size is 4096.</param>
         /// <param name="start">Start position</param>
         /// <param name="end">Last readable position</param>
-        /// <exception cref="ArgumentOutOfRangeException">Invalid range</exception>
+        /// <exception cref="T:System.ArgumentOutOfRangeException">Invalid range</exception>
         public OffsetStream(SafeFileHandle handle, FileAccess access, int bufferSize, long start, long end)
         {
             if(start < 0)
@@ -161,16 +165,17 @@ namespace Aaru.Filters
             _baseStream.Position = start;
         }
 
+        /// <inheritdoc />
         /// <summary>
-        /// Initializes a stream that only allows reading from <paramref name="start"/> to <paramref name="end"/> of the specified file, both inclusive.
+        /// Initializes a stream that only allows reading from <paramref name="start" /> to <paramref name="end" /> of the specified file, both inclusive.
         /// </summary>
         /// <param name="handle">A file handle for the file that the stream will encapsulate.</param>
-        /// <param name="access">A bitwise combination of the enumeration values that determines how the file can be accessed by a <see cref="FileStream" /> object.</param>
+        /// <param name="access">A bitwise combination of the enumeration values that determines how the file can be accessed by a <see cref="T:System.IO.FileStream" /> object.</param>
         /// <param name="bufferSize">A positive Int32 value greater than 0 indicating the buffer size. The default buffer size is 4096.</param>
         /// <param name="isAsync">Specifies whether to use asynchronous I/O or synchronous I/O.</param>
         /// <param name="start">Start position</param>
         /// <param name="end">Last readable position</param>
-        /// <exception cref="ArgumentOutOfRangeException">Invalid range</exception>
+        /// <exception cref="T:System.ArgumentOutOfRangeException">Invalid range</exception>
         public OffsetStream(SafeFileHandle handle, FileAccess access, int bufferSize, bool isAsync, long start,
                             long end)
         {
@@ -191,18 +196,19 @@ namespace Aaru.Filters
             _baseStream.Position = start;
         }
 
+        /// <inheritdoc />
         /// <summary>
-        /// Initializes a stream that only allows reading from <paramref name="start"/> to <paramref name="end"/> of the specified file, both inclusive.
+        /// Initializes a stream that only allows reading from <paramref name="start" /> to <paramref name="end" /> of the specified file, both inclusive.
         /// </summary>
         /// <param name="path">A relative or absolute path for the file that the stream will encapsulate.</param>
         /// <param name="mode">One of the enumeration values that determines how to open or create the file.</param>
-        /// <param name="access">A bitwise combination of the enumeration values that determines how the file can be accessed by a <see cref="FileStream" /> object.</param>
+        /// <param name="access">A bitwise combination of the enumeration values that determines how the file can be accessed by a <see cref="T:System.IO.FileStream" /> object.</param>
         /// <param name="share">A bitwise combination of the enumeration values that determines how the file will be shared by processes.</param>
         /// <param name="bufferSize">A positive Int32 value greater than 0 indicating the buffer size. The default buffer size is 4096.</param>
         /// <param name="useAsync">Specifies whether to use asynchronous I/O or synchronous I/O.</param>
         /// <param name="start">Start position</param>
         /// <param name="end">Last readable position</param>
-        /// <exception cref="ArgumentOutOfRangeException">Invalid range</exception>
+        /// <exception cref="T:System.ArgumentOutOfRangeException">Invalid range</exception>
         public OffsetStream(string path, FileMode mode, FileAccess access, FileShare share, int bufferSize,
                             bool useAsync, long start, long end)
         {
@@ -223,17 +229,18 @@ namespace Aaru.Filters
             _baseStream.Position = start;
         }
 
+        /// <inheritdoc />
         /// <summary>
-        /// Initializes a stream that only allows reading from <paramref name="start"/> to <paramref name="end"/> of the specified file, both inclusive.
+        /// Initializes a stream that only allows reading from <paramref name="start" /> to <paramref name="end" /> of the specified file, both inclusive.
         /// </summary>
         /// <param name="path">A relative or absolute path for the file that the stream will encapsulate.</param>
         /// <param name="mode">One of the enumeration values that determines how to open or create the file.</param>
-        /// <param name="access">A bitwise combination of the enumeration values that determines how the file can be accessed by a <see cref="FileStream" /> object.</param>
+        /// <param name="access">A bitwise combination of the enumeration values that determines how the file can be accessed by a <see cref="T:System.IO.FileStream" /> object.</param>
         /// <param name="share">A bitwise combination of the enumeration values that determines how the file will be shared by processes.</param>
         /// <param name="bufferSize">A positive Int32 value greater than 0 indicating the buffer size. The default buffer size is 4096.</param>
         /// <param name="start">Start position</param>
         /// <param name="end">Last readable position</param>
-        /// <exception cref="ArgumentOutOfRangeException">Invalid range</exception>
+        /// <exception cref="T:System.ArgumentOutOfRangeException">Invalid range</exception>
         public OffsetStream(string path, FileMode mode, FileAccess access, FileShare share, int bufferSize, long start,
                             long end)
         {
@@ -254,16 +261,17 @@ namespace Aaru.Filters
             _baseStream.Position = start;
         }
 
+        /// <inheritdoc />
         /// <summary>
-        /// Initializes a stream that only allows reading from <paramref name="start"/> to <paramref name="end"/> of the specified file, both inclusive.
+        /// Initializes a stream that only allows reading from <paramref name="start" /> to <paramref name="end" /> of the specified file, both inclusive.
         /// </summary>
         /// <param name="path">A relative or absolute path for the file that the stream will encapsulate.</param>
         /// <param name="mode">One of the enumeration values that determines how to open or create the file.</param>
-        /// <param name="access">A bitwise combination of the enumeration values that determines how the file can be accessed by a <see cref="FileStream" /> object.</param>
+        /// <param name="access">A bitwise combination of the enumeration values that determines how the file can be accessed by a <see cref="T:System.IO.FileStream" /> object.</param>
         /// <param name="share">A bitwise combination of the enumeration values that determines how the file will be shared by processes.</param>
         /// <param name="start">Start position</param>
         /// <param name="end">Last readable position</param>
-        /// <exception cref="ArgumentOutOfRangeException">Invalid range</exception>
+        /// <exception cref="T:System.ArgumentOutOfRangeException">Invalid range</exception>
         public OffsetStream(string path, FileMode mode, FileAccess access, FileShare share, long start, long end)
         {
             if(start < 0)
@@ -283,15 +291,16 @@ namespace Aaru.Filters
             _baseStream.Position = start;
         }
 
+        /// <inheritdoc />
         /// <summary>
-        /// Initializes a stream that only allows reading from <paramref name="start"/> to <paramref name="end"/> of the specified file, both inclusive.
+        /// Initializes a stream that only allows reading from <paramref name="start" /> to <paramref name="end" /> of the specified file, both inclusive.
         /// </summary>
         /// <param name="path">A relative or absolute path for the file that the stream will encapsulate.</param>
         /// <param name="mode">One of the enumeration values that determines how to open or create the file.</param>
-        /// <param name="access">A bitwise combination of the enumeration values that determines how the file can be accessed by a <see cref="FileStream" /> object.</param>
+        /// <param name="access">A bitwise combination of the enumeration values that determines how the file can be accessed by a <see cref="T:System.IO.FileStream" /> object.</param>
         /// <param name="start">Start position</param>
         /// <param name="end">Last readable position</param>
-        /// <exception cref="ArgumentOutOfRangeException">Invalid range</exception>
+        /// <exception cref="T:System.ArgumentOutOfRangeException">Invalid range</exception>
         public OffsetStream(string path, FileMode mode, FileAccess access, long start, long end)
         {
             if(start < 0)
@@ -311,14 +320,15 @@ namespace Aaru.Filters
             _baseStream.Position = start;
         }
 
+        /// <inheritdoc />
         /// <summary>
-        /// Initializes a stream that only allows reading from <paramref name="start"/> to <paramref name="end"/> of the specified file, both inclusive.
+        /// Initializes a stream that only allows reading from <paramref name="start" /> to <paramref name="end" /> of the specified file, both inclusive.
         /// </summary>
         /// <param name="path">A relative or absolute path for the file that the stream will encapsulate.</param>
         /// <param name="mode">One of the enumeration values that determines how to open or create the file.</param>
         /// <param name="start">Start position</param>
         /// <param name="end">Last readable position</param>
-        /// <exception cref="ArgumentOutOfRangeException">Invalid range</exception>
+        /// <exception cref="T:System.ArgumentOutOfRangeException">Invalid range</exception>
         public OffsetStream(string path, FileMode mode, long start, long end)
         {
             if(start < 0)
@@ -338,17 +348,18 @@ namespace Aaru.Filters
             _baseStream.Position = start;
         }
 
+        /// <inheritdoc />
         /// <summary>
-        /// Initializes a stream that only allows reading from <paramref name="start"/> to <paramref name="end"/> of the specified byte array, both inclusive.
+        /// Initializes a stream that only allows reading from <paramref name="start" /> to <paramref name="end" /> of the specified byte array, both inclusive.
         /// </summary>
         /// <param name="buffer">The array of unsigned bytes to add at the end of this stream.</param>
-        /// <param name="index">The index into <paramref name="buffer"/> at which the stream begins.</param>
+        /// <param name="index">The index into <paramref name="buffer" /> at which the stream begins.</param>
         /// <param name="count">The length in bytes to add to the end of the current stream.</param>
         /// <param name="writable">The setting of the CanWrite property, currently ignored.</param>
         /// <param name="publiclyVisible">Currently ignored.</param>
         /// <param name="start">Start position</param>
         /// <param name="end">Last readable position</param>
-        /// <exception cref="ArgumentOutOfRangeException">Invalid range</exception>
+        /// <exception cref="T:System.ArgumentOutOfRangeException">Invalid range</exception>
         public OffsetStream(byte[] buffer, int index, int count, bool writable, bool publiclyVisible, long start,
                             long end)
         {
@@ -369,16 +380,17 @@ namespace Aaru.Filters
             _baseStream.Position = start;
         }
 
+        /// <inheritdoc />
         /// <summary>
-        /// Initializes a stream that only allows reading from <paramref name="start"/> to <paramref name="end"/> of the specified byte array, both inclusive.
+        /// Initializes a stream that only allows reading from <paramref name="start" /> to <paramref name="end" /> of the specified byte array, both inclusive.
         /// </summary>
         /// <param name="buffer">The array of unsigned bytes to add at the end of this stream.</param>
-        /// <param name="index">The index into <paramref name="buffer"/> at which the stream begins.</param>
+        /// <param name="index">The index into <paramref name="buffer" /> at which the stream begins.</param>
         /// <param name="count">The length in bytes to add to the end of the current stream.</param>
         /// <param name="writable">The setting of the CanWrite property, currently ignored.</param>
         /// <param name="start">Start position</param>
         /// <param name="end">Last readable position</param>
-        /// <exception cref="ArgumentOutOfRangeException">Invalid range</exception>
+        /// <exception cref="T:System.ArgumentOutOfRangeException">Invalid range</exception>
         public OffsetStream(byte[] buffer, int index, int count, bool writable, long start, long end)
         {
             if(start < 0)
@@ -398,15 +410,16 @@ namespace Aaru.Filters
             _baseStream.Position = start;
         }
 
+        /// <inheritdoc />
         /// <summary>
-        /// Initializes a stream that only allows reading from <paramref name="start"/> to <paramref name="end"/> of the specified byte array, both inclusive.
+        /// Initializes a stream that only allows reading from <paramref name="start" /> to <paramref name="end" /> of the specified byte array, both inclusive.
         /// </summary>
         /// <param name="buffer">The array of unsigned bytes to add at the end of this stream.</param>
-        /// <param name="index">The index into <paramref name="buffer"/> at which the stream begins.</param>
+        /// <param name="index">The index into <paramref name="buffer" /> at which the stream begins.</param>
         /// <param name="count">The length in bytes to add to the end of the current stream.</param>
         /// <param name="start">Start position</param>
         /// <param name="end">Last readable position</param>
-        /// <exception cref="ArgumentOutOfRangeException">Invalid range</exception>
+        /// <exception cref="T:System.ArgumentOutOfRangeException">Invalid range</exception>
         public OffsetStream(byte[] buffer, int index, int count, long start, long end)
         {
             if(start < 0)
@@ -426,14 +439,15 @@ namespace Aaru.Filters
             _baseStream.Position = start;
         }
 
+        /// <inheritdoc />
         /// <summary>
-        /// Initializes a stream that only allows reading from <paramref name="start"/> to <paramref name="end"/> of the specified byte array, both inclusive.
+        /// Initializes a stream that only allows reading from <paramref name="start" /> to <paramref name="end" /> of the specified byte array, both inclusive.
         /// </summary>
         /// <param name="buffer">The array of unsigned bytes to add at the end of this stream.</param>
         /// <param name="writable">The setting of the CanWrite property, currently ignored.</param>
         /// <param name="start">Start position</param>
         /// <param name="end">Last readable position</param>
-        /// <exception cref="ArgumentOutOfRangeException">Invalid range</exception>
+        /// <exception cref="T:System.ArgumentOutOfRangeException">Invalid range</exception>
         public OffsetStream(byte[] buffer, bool writable, long start, long end)
         {
             if(start < 0)
@@ -453,13 +467,14 @@ namespace Aaru.Filters
             _baseStream.Position = start;
         }
 
+        /// <inheritdoc />
         /// <summary>
-        /// Initializes a stream that only allows reading from <paramref name="start"/> to <paramref name="end"/> of the specified byte array, both inclusive.
+        /// Initializes a stream that only allows reading from <paramref name="start" /> to <paramref name="end" /> of the specified byte array, both inclusive.
         /// </summary>
         /// <param name="buffer">The array of unsigned bytes to add at the end of this stream.</param>
         /// <param name="start">Start position</param>
         /// <param name="end">Last readable position</param>
-        /// <exception cref="ArgumentOutOfRangeException">Invalid range</exception>
+        /// <exception cref="T:System.ArgumentOutOfRangeException">Invalid range</exception>
         public OffsetStream(byte[] buffer, long start, long end)
         {
             if(start < 0)

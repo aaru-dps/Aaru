@@ -42,6 +42,7 @@ using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Partitions
 {
+    /// <inheritdoc />
     /// <summary>
     /// Implements decoding of Sharp's Human68K partitions
     /// </summary>

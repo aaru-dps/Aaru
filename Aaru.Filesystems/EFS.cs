@@ -44,6 +44,7 @@ using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Filesystems
 {
+    /// <inheritdoc />
     /// <summary>
     /// Implements identification for the SGI Extent FileSystem
     /// </summary>

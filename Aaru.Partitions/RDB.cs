@@ -45,6 +45,7 @@ using Aaru.Helpers;
 
 namespace Aaru.Partitions
 {
+    /// <inheritdoc />
     /// <summary>
     /// Implements decoding of the Amiga Rigid Disk Block
     /// </summary>

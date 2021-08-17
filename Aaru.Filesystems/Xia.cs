@@ -43,6 +43,7 @@ using Marshal = Aaru.Helpers.Marshal;
 namespace Aaru.Filesystems
 {
     // Information from the Linux kernel
+    /// <inheritdoc />
     /// <summary>
     /// Implements detection for the Xia filesystem
     /// </summary>

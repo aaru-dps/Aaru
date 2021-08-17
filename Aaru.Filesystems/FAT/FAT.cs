@@ -42,6 +42,7 @@ namespace Aaru.Filesystems
 {
     // TODO: Differentiate between Atari and X68k FAT, as this one uses a standard BPB.
     // X68K uses cdate/adate from direntry for extending filename
+    /// <inheritdoc />
     /// <summary>
     /// Implements the File Allocation Table, aka FAT, filesystem (FAT12, FAT16 and FAT32 variants).
     /// </summary>

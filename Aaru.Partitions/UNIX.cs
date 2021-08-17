@@ -41,6 +41,7 @@ namespace Aaru.Partitions
     // These partitions are hardwired in kernel sources for some UNIX versions predating System V.
     // They depend on exact device, indeed the kernel chooses what to use depending on the disk driver, so that's what we do.
     // Currently only DEC devices used in Ultrix are added, probably it's missing a lot of entries.
+    /// <inheritdoc />
     /// <summary>
     /// Implements decoding of historic UNIX static partitions
     /// </summary>

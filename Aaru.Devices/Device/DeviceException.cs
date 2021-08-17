@@ -34,6 +34,7 @@ using System;
 
 namespace Aaru.Devices
 {
+    /// <inheritdoc />
     /// <summary>Exception to be returned by the device constructor</summary>
     public sealed class DeviceException : Exception
     {

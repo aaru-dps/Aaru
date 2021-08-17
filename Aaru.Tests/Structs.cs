@@ -20,6 +20,7 @@ namespace Aaru.Tests
         public override string ToString() => TestFile;
     }
 
+    /// <inheritdoc />
     /// <summary>Class to define expected data when testing filesystem info</summary>
     public class FileSystemTest : MediaInfoTest
     {

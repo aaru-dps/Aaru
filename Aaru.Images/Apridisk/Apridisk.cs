@@ -39,6 +39,7 @@ using Aaru.CommonTypes.Structs;
 namespace Aaru.DiscImages
 {
     // TODO: Check writing
+    /// <inheritdoc />
     /// <summary>
     /// Implements reading and writing Apridisk disk images
     /// </summary>

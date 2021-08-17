@@ -40,6 +40,7 @@ using Schemas;
 namespace Aaru.Filesystems.UCSDPascal
 {
     // Information from Call-A.P.P.L.E. Pascal Disk Directory Structure
+    /// <inheritdoc />
     /// <summary>
     /// Implements the U.C.S.D. Pascal filesystem
     /// </summary>

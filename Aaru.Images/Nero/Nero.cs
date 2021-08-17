@@ -44,6 +44,7 @@ using Aaru.Decoders.CD;
 
 namespace Aaru.DiscImages
 {
+    /// <inheritdoc />
     /// <summary>
     /// Implements reading Nero Burning ROM disc images
     /// </summary>

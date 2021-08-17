@@ -43,6 +43,7 @@ using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Filesystems
 {
+    /// <inheritdoc />
     /// <summary>
     /// Implements detection of QNX 4 filesystem
     /// </summary>

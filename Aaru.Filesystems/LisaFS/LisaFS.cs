@@ -40,6 +40,7 @@ namespace Aaru.Filesystems.LisaFS
 {
     // All information by Natalia Portillo
     // Variable names from Lisa API
+    /// <inheritdoc />
     /// <summary>
     /// Implements the Apple Lisa File System
     /// </summary>

@@ -42,6 +42,7 @@ using Marshal = Aaru.Helpers.Marshal;
 namespace Aaru.Filesystems
 {
     // Information from Apple TechNote 1150: https://developer.apple.com/legacy/library/technotes/tn/tn1150.html
+    /// <inheritdoc />
     /// <summary>
     /// Implements detection of Apple Hierarchical File System Plus (HFS+)
     /// </summary>

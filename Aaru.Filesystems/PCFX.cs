@@ -43,6 +43,7 @@ using Marshal = Aaru.Helpers.Marshal;
 namespace Aaru.Filesystems
 {
     // Not a filesystem, more like an executable header
+    /// <inheritdoc />
     /// <summary>
     /// Implements detection of NEC PC-FX headers
     /// </summary>

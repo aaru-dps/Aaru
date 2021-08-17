@@ -44,6 +44,7 @@ namespace Aaru.Filesystems
 {
     // Information has been extracted looking at available disk images
     // This may be missing fields, or not, I don't know russian so any help is appreciated
+    /// <inheritdoc />
     /// <summary>
     /// Implements detection of the AO-DOS filesystem
     /// </summary>

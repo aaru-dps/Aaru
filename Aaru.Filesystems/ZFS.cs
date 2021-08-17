@@ -61,6 +61,7 @@ namespace Aaru.Filesystems
      * It can also be encoded little or big endian.
      * Because of this variations, ZFS stored a header indicating the used encoding and endianess before the encoded nvlist.
      */
+    /// <inheritdoc />
     /// <summary>
     /// Implements detection for the Zettabyte File System (ZFS)
     /// </summary>

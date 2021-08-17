@@ -44,6 +44,7 @@ using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Filesystems
 {
+    /// <inheritdoc />
     /// <summary>
     /// Implements detection of Amiga Fast File System (AFFS)
     /// </summary>

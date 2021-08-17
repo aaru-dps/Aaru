@@ -154,7 +154,6 @@ namespace Aaru.DiscImages
             return _expectedChecksum.SequenceEqual(calculated);
         }
 
-        /// <inheritdoc />
         public bool? VerifySector(ulong sectorAddress, uint track)
         {
             if(_isHdd)

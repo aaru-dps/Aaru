@@ -38,6 +38,7 @@ using Schemas;
 
 namespace Aaru.Filesystems
 {
+    /// <inheritdoc />
     /// <summary>
     /// Implements detection of the PC-Engine CD file headers
     /// </summary>

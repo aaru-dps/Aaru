@@ -42,6 +42,7 @@ using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Filesystems
 {
+    /// <inheritdoc />
     /// <summary>
     /// Implements detection for the Plan-9 Fossil on-disk filesystem
     /// </summary>

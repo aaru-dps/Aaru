@@ -45,6 +45,7 @@ using Marshal = Aaru.Helpers.Marshal;
 // Information learnt from XNU source and testing against real disks
 namespace Aaru.Partitions
 {
+    /// <inheritdoc />
     /// <summary>
     /// Implements decoding of NeXT disklabels
     /// </summary>

@@ -43,6 +43,7 @@ using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Filesystems
 {
+    /// <inheritdoc />
     /// <summary>
     /// Implements detection of the filesystem used in 8-bit Commodore microcomputers
     /// </summary>

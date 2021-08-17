@@ -40,6 +40,7 @@ using Schemas;
 namespace Aaru.Filesystems
 {
     // Information from the Linux kernel
+    /// <inheritdoc />
     /// <summary>
     /// Implements detection of the Linux extended filesystem
     /// </summary>

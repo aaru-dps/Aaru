@@ -41,6 +41,7 @@ using Schemas;
 namespace Aaru.Filesystems
 {
     // Based on FAT's BPB, cannot find a FAT or directory
+    /// <inheritdoc />
     /// <summary>
     /// Implements detection of the Solar OS filesystem
     /// </summary>

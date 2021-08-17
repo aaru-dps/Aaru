@@ -44,6 +44,7 @@ using Marshal = Aaru.Helpers.Marshal;
 namespace Aaru.Filesystems
 {
     // Information from http://www.trailing-edge.com/~shoppa/rt11fs/
+    /// <inheritdoc />
     /// <summary>
     /// Implements detection of the DEC RT-11 filesystem
     /// </summary>

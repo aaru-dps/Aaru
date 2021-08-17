@@ -39,6 +39,7 @@ using Schemas;
 
 namespace Aaru.Filesystems
 {
+    /// <inheritdoc />
     /// <summary>
     /// Implements the CP/M filesystem
     /// </summary>

@@ -51,6 +51,7 @@ using time_t = System.Int64;
 
 namespace Aaru.Filesystems
 {
+    /// <inheritdoc />
     /// <summary>
     /// Implements detection for the Cray UNICOS filesystem
     /// </summary>

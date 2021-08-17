@@ -43,6 +43,7 @@ using Marshal = Aaru.Helpers.Marshal;
 namespace Aaru.Filesystems
 {
     // Information from Practical Filesystem Design, ISBN 1-55860-497-9
+    /// <inheritdoc />
     /// <summary>
     /// Implements detection of the Be (new) filesystem
     /// </summary>

@@ -41,6 +41,7 @@ namespace Aaru.Database
     /// </summary>
     public sealed class AaruContext : DbContext
     {
+        /// <inheritdoc />
         /// <summary>
         /// Creates a database context with the specified options
         /// </summary>

@@ -40,6 +40,7 @@ using Marshal = Aaru.Helpers.Marshal;
 namespace Aaru.Partitions
 {
     // TODO: Find better documentation, this is working for XENIX 2 but not for SCO OpenServer...
+    /// <inheritdoc />
     /// <summary>
     /// Implements decoding of XENIX partitions
     /// </summary>

@@ -40,6 +40,7 @@ using Schemas;
 
 namespace Aaru.Filesystems
 {
+    /// <inheritdoc />
     /// <summary>
     /// Implements the Xbox File Allocation Table (FATX or XTAF) filesystem.
     /// </summary>

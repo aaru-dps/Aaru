@@ -43,6 +43,7 @@ using Marshal = Aaru.Helpers.Marshal;
 namespace Aaru.Filesystems
 {
     // Information from Inside Windows NT
+    /// <inheritdoc />
     /// <summary>
     /// Implements detection of the New Technology File System (NTFS)
     /// </summary>

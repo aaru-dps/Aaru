@@ -39,6 +39,7 @@ using Aaru.CommonTypes.Structs;
 namespace Aaru.DiscImages
 {
     // TODO: Too many unknowns to make this writable
+    /// <inheritdoc />
     /// <summary>
     /// Implements reading BlindWrite 5/6/7 disc images
     /// </summary>

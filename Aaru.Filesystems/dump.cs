@@ -44,6 +44,7 @@ using ufs_daddr_t = System.Int32;
 
 namespace Aaru.Filesystems
 {
+    /// <inheritdoc />
     /// <summary>
     /// Implements identification of a dump(8) image (virtual filesystem on a file)
     /// </summary>

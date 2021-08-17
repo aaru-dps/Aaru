@@ -38,6 +38,7 @@ using Schemas;
 
 namespace Aaru.Filesystems
 {
+    /// <inheritdoc />
     /// <summary>
     /// Implements the Apple DOS 3 filesystem
     /// </summary>

@@ -43,6 +43,7 @@ using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Partitions
 {
+    /// <inheritdoc />
     /// <summary>
     /// Implements decoding of Sun disklabels
     /// </summary>

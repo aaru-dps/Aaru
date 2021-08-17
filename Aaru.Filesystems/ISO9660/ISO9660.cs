@@ -42,6 +42,7 @@ using Schemas;
 namespace Aaru.Filesystems
 {
     // This is coded following ECMA-119.
+    /// <inheritdoc />
     /// <summary>
     /// Implements the High Sierra, ISO9660 and CD-i filesystems
     /// </summary>

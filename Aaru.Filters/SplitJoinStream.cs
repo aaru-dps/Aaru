@@ -8,6 +8,7 @@ using Microsoft.Win32.SafeHandles;
 
 namespace Aaru.Filters
 {
+    /// <inheritdoc />
     /// <summary>
     /// Implements a stream that joins two or more files (sequentially) as a single stream
     /// </summary>

@@ -39,6 +39,7 @@ using Aaru.CommonTypes.Structs;
 namespace Aaru.DiscImages
 {
     // Info from http://www.geocities.jp/t98next/nhdr0.txt
+    /// <inheritdoc />
     /// <summary>
     /// Implements reading and writing T98-Next disk images
     /// </summary>

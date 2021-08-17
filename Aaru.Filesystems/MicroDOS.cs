@@ -43,12 +43,12 @@ using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Filesystems
 {
-    /// <summary>
-    /// Implements detection for the MicroDOS filesystem.
-    ///
-    /// Information from http://www.owg.ru/mkt/BK/MKDOS.TXT
-    /// Thanks to tarlabnor for translating it
-    /// </summary>
+    /// <inheritdoc />
+    ///  <summary>
+    ///  Implements detection for the MicroDOS filesystem.
+    ///  Information from http://www.owg.ru/mkt/BK/MKDOS.TXT
+    ///  Thanks to tarlabnor for translating it
+    ///  </summary>
     public sealed class MicroDOS : IFilesystem
     {
         const ushort MAGIC  = 0xA72E;

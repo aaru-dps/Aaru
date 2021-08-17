@@ -47,6 +47,7 @@ using ufs_daddr_t = System.Int32;
 namespace Aaru.Filesystems
 {
     // Using information from Linux kernel headers
+    /// <inheritdoc />
     /// <summary>
     /// Implements detection of BSD Fast File System (FFS, aka UNIX File System)
     /// </summary>

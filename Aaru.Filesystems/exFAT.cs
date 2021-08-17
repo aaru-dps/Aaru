@@ -43,6 +43,7 @@ using Marshal = Aaru.Helpers.Marshal;
 namespace Aaru.Filesystems
 {
     // Information from https://www.sans.org/reading-room/whitepapers/forensics/reverse-engineering-microsoft-exfat-file-system-33274
+    /// <inheritdoc />
     /// <summary>
     /// Implements detection of the exFAT filesystem
     /// </summary>
