@@ -57,9 +57,9 @@ namespace Aaru.Commands
             return DoConfigure(false);
         }
 
-        internal int DoConfigure(bool _gdprChange)
+        internal int DoConfigure(bool gdprChange)
         {
-            if(_gdprChange)
+            if(gdprChange)
             {
                 AaruConsole.
                     WriteLine("In compliance with the European Union General Data Protection Regulation 2016/679 (GDPR),\n" +

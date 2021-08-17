@@ -284,30 +284,30 @@ namespace Aaru.Commands.Device
 
                 if(decodedIdentify.HasValue)
                 {
-                    Identify.IdentifyDevice ATAID = decodedIdentify.Value;
+                    Identify.IdentifyDevice ataid = decodedIdentify.Value;
 
                     ulong blocks;
 
-                    if(ATAID.CurrentCylinders       > 0 &&
-                       ATAID.CurrentHeads           > 0 &&
-                       ATAID.CurrentSectorsPerTrack > 0)
+                    if(ataid.CurrentCylinders       > 0 &&
+                       ataid.CurrentHeads           > 0 &&
+                       ataid.CurrentSectorsPerTrack > 0)
                     {
                         blocks =
-                            (ulong)Math.Max(ATAID.CurrentCylinders * ATAID.CurrentHeads * ATAID.CurrentSectorsPerTrack,
-                                            ATAID.CurrentSectors);
+                            (ulong)Math.Max(ataid.CurrentCylinders * ataid.CurrentHeads * ataid.CurrentSectorsPerTrack,
+                                            ataid.CurrentSectors);
                     }
                     else
                     {
-                        blocks = (ulong)(ATAID.Cylinders * ATAID.Heads * ATAID.SectorsPerTrack);
+                        blocks = (ulong)(ataid.Cylinders * ataid.Heads * ataid.SectorsPerTrack);
                     }
 
-                    if(ATAID.Capabilities.HasFlag(Identify.CapabilitiesBit.LBASupport))
-                        blocks = ATAID.LBASectors;
+                    if(ataid.Capabilities.HasFlag(Identify.CapabilitiesBit.LBASupport))
+                        blocks = ataid.LBASectors;
 
-                    if(ATAID.CommandSet2.HasFlag(Identify.CommandSetBit2.LBA48))
-                        blocks = ATAID.LBA48Sectors;
+                    if(ataid.CommandSet2.HasFlag(Identify.CommandSetBit2.LBA48))
+                        blocks = ataid.LBA48Sectors;
 
-                    bool removable = ATAID.GeneralConfiguration.HasFlag(Identify.GeneralConfigurationBit.Removable);
+                    bool removable = ataid.GeneralConfiguration.HasFlag(Identify.GeneralConfigurationBit.Removable);
 
                     MediaType mediaType = MediaTypeFromDevice.GetFromAta(dev.Manufacturer, dev.Model, removable,
                                                                          dev.IsCompactFlash, dev.IsPcmcia, blocks);
