@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Aaru.Console;
 
@@ -668,6 +669,7 @@ namespace Aaru.Devices
         /// <param name="timeout">Timeout in seconds.</param>
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
         /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
+        [SuppressMessage("ReSharper", "ShiftExpressionZeroLeftOperand")]
         public bool ReadMcn(out string mcn, out byte[] buffer, out byte[] senseBuffer, uint timeout,
                             out double duration)
         {
@@ -708,6 +710,7 @@ namespace Aaru.Devices
         /// <param name="timeout">Timeout in seconds.</param>
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
         /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
+        [SuppressMessage("ReSharper", "ShiftExpressionZeroLeftOperand")]
         public bool ReadIsrc(byte trackNumber, out string isrc, out byte[] buffer, out byte[] senseBuffer, uint timeout,
                              out double duration)
         {

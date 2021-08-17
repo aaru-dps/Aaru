@@ -31,6 +31,8 @@
 // ****************************************************************************/
 
 using System;
+using System.Diagnostics.CodeAnalysis;
+
 #pragma warning disable 1591
 
 // ReSharper disable UnusedType.Global
@@ -2673,6 +2675,7 @@ namespace Aaru.Devices
     }
 
     [Flags]
+    [SuppressMessage("ReSharper", "ShiftExpressionZeroLeftOperand")]
     public enum MmcFlags : uint
     {
         ResponsePresent = 1 << 0, Response136 = 1 << 1, ResponseCrc = 1 << 2,
