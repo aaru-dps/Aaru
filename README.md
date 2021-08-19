@@ -9,7 +9,7 @@ Copyright © 2011-2021 Natalia Portillo <claunia@claunia.com>
 [![Build status](https://ci.appveyor.com/api/projects/status/vim4c8h028pn5oys?svg=true)](https://ci.appveyor.com/project/claunia/aaru)
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fclaunia%2FDiscImageChef.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fclaunia%2FDiscImageChef?ref=badge_shield)
 
-You can see statistics and device reports [here](https://www.aaru.app/Stats)
+You can see user documentation [here](https://www.aaru.app)
 
 Aaru is a fully featured media dump management solution. You usually know media dumps as disc images, disk images, tape
 images, etc.
@@ -38,7 +38,7 @@ aaru.exe
 
 And read help.
 
-Or read the [documentation](https://github.com/aaru-dps/Aaru.Documentation/blob/master/5.0/README.md).
+Or read the [documentation](https://www.aaru.app).
 
 Features
 ========

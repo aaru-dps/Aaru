@@ -12,23 +12,24 @@ The community is governed by this document with the goal of defining how communi
 
 The following code repositories are governed by Aaru community and maintained under the `aaru-dps` organization.
 
-* **[Aaru](https://github.com/aaru-dps/aaru):** Main Aaru codebase.
-* **[Aaru.Documentation](https://github.com/aaru-dps/Aaru.Documentation):** Official documentation.
-* **[Aaru.Decryption](https://github.com/aaru-dps/Aaru.Decryption):** Library for the decryption of media.
-* **[Aaru.CommonTypes](https://github.com/aaru-dps/Aaru.CommonTypes):** Common types needed by the different Aaru modules.
-* **[Aaru.Decoders](https://github.com/aaru-dps/Aaru.Decoders):** Library for the decoding of structures from media and drives.
-* **[Aaru.Server](https://github.com/aaru-dps/Aaru.Server):** https://aaru.app server codebase.
-* **[fstester](https://github.com/aaru-dps/fstester):** Toolkit for the generation of test filesystems for later reverse engineer.
-* **[aaruremote](https://github.com/aaru-dps/aaruremote):** Small application allowing to send Aaru commands to a different computer.
-* **[Aaru.Dto](https://github.com/aaru-dps/Aaru.Dto):** DTOs for interchange between client and server portions of Aaru.
-* **[Aaru.Console](https://github.com/aaru-dps/Aaru.Console):** Text console handler.
-* **[Aaru.Helpers](https://github.com/aaru-dps/Aaru.Helpers):** Helper functions.
-* **[Aaru.Checksums](https://github.com/aaru-dps/Aaru.Checksums):** Library that implements the hashing functionality.
 * **[010templates](https://github.com/aaru-dps/010templates):** Templates for [010editor](https://www.sweetscape.com/010editor).
-* **[libaaruformat](https://github.com/aaru-dps/libaaruformat):** Main implementation of Aaru Media Image Format.
+* **[Aaru.Checksums](https://github.com/aaru-dps/Aaru.Checksums):** Library that implements the hashing functionality.
+* **[Aaru.CommonTypes](https://github.com/aaru-dps/Aaru.CommonTypes):** Common types needed by the different Aaru modules.
+* **[Aaru.Console](https://github.com/aaru-dps/Aaru.Console):** Text console handler.
+* **[Aaru.Decoders](https://github.com/aaru-dps/Aaru.Decoders):** Library for the decoding of structures from media and drives.
+* **[Aaru.Decryption](https://github.com/aaru-dps/Aaru.Decryption):** Library for the decryption of media.
+* **[Aaru.Documentation](https://github.com/aaru-dps/Aaru.Documentation):** Official documentation.
+* **[Aaru.Dreamcast](https://github.com/aaru-dps/Aaru.Dreamcast):** Tool for dumping GD-ROM using a real Dreamcast.
+* **[Aaru.Dto](https://github.com/aaru-dps/Aaru.Dto):** DTOs for interchange between client and server portions of Aaru.
+* **[Aaru.Helpers](https://github.com/aaru-dps/Aaru.Helpers):** Helper functions.
+* **[Aaru](https://github.com/aaru-dps/aaru):** Main Aaru codebase.
+* **[aaruremote](https://github.com/aaru-dps/aaruremote):** Small application allowing to send Aaru commands to a different computer.
+* **[Aaru.Server](https://github.com/aaru-dps/Aaru.Server):** https://aaru.app server codebase.
 * **[Aaru.VideoNow](https://github.com/aaru-dps/Aaru.VideoNow):** VideoNow decoding and converting tool.
 * **[archaaru](https://github.com/aaru-dps/archaaru):** Scripts for the generation of Arch Linux Rescue CD including Aaru Data Preservation Suite.
-* **[Aaru.Dreamcast](https://github.com/aaru-dps/Aaru.Dreamcast):** Tool for dumping GD-ROM using a real Dreamcast.
+* **[fstester](https://github.com/aaru-dps/fstester):** Toolkit for the generation of test filesystems for later reverse engineer.
+* **[libaaruformat](https://github.com/aaru-dps/libaaruformat):** Main implementation of Aaru Media Image Format.
+* **[RedBookPlayer](https://github.com/aaru-dps/RedBookPlayer):** Application to play Red Book audio from media dumps.
 
 ## Community Roles
 
@@ -48,7 +49,7 @@ New technical committee members must be nominated by an existing member and must
 ### Supermajority
 
 A supermajority is defined as two-thirds of members in the group.
-A supermajority of [Maintainers](#maintainers) is required for certain decisions as outlined above. A supermajority vote is equivalent to the number of votes in favor being at least twice the number of votes against. For example, if you have 5 maintainers, a supermajority vote is 4 votes. Voting on decisions can happen on the mailing list, GitHub, Discord, email, or via a voting service, when appropriate. Maintainers can either vote "agree, yes, +1", "disagree, no, -1", or "abstain". A vote passes when supermajority is met. An abstain vote equals not voting at all.
+A supermajority of [Maintainers](MAINTAINERS.md) is required for certain decisions as outlined above. A supermajority vote is equivalent to the number of votes in favor being at least twice the number of votes against. For example, if you have 5 maintainers, a supermajority vote is 4 votes. Voting on decisions can happen on the mailing list, GitHub, Discord, email, or via a voting service, when appropriate. Maintainers can either vote "agree, yes, +1", "disagree, no, -1", or "abstain". A vote passes when supermajority is met. An abstain vote equals not voting at all.
 
 ### Decision Making
 

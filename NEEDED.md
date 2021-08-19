@@ -12,12 +12,10 @@ special workarounds. If a drive is listed here, but the media it uses is not lis
 Drives are preferred in ATA/ATAPI, SCSI, USB or FireWire buses. Parallel port drives require a larger amount of work,
 and there is no guarantee it can work, at all, with other drives. If in doubt, please contact us.
 
-- 5.25" magneto-optical (preferibly the 9.6Gb supporting one)
 - 8" shugart floppy drive (preferibly the 240VAC one)
 - ADR tape drive
 - AIT tape drive
 - Apple FileWare "twiggy"
-- Caleb UHD144
 - Castlewood Orb 5.7
 - DLT tape drive
 - DiscFerret
@@ -50,7 +48,6 @@ hardware.
 - ADR tapes
 - AIT tapes
 - Apple FileWare "twiggy" floppies
-- Caleb UHD144 floppy
 - Castlewood Orb 5.7
 - DLTtape, DLTtapeII, DLTtapeIII
 - Rewritable HD-DVD
@@ -139,3 +136,15 @@ dumping of such characteristics. Usually those are copy protections.
     - ObsCure II
     - Shift 2 Unleashed
     - Warfare
+
+Information and test data
+=========================
+
+This is a list of information I need, including test disk images.
+
+- DiscFerret stream images
+- Information about the KenCode compression algorithm, or an implementation in C or Pascal
+- Information about the structure and compression algorithm for XPACK disk images, or an implementation in C
+- KryoFlux stream images
+- NetWare 286 license and installation media for adding support to its filesystem
+- NetWare 386 license and installation media for adding support to its filesystem

@@ -9,6 +9,7 @@
 | Natalia Portillo | [claunia](https://github.com/claunia) | [Aaru](https://aaru.app) |
 | Michael Drüing | [darkstar](https://github.com/darkstar) | [Aaru](https://aaru.app) |
 | Rebecca Wallander | [FakeShemp](https://github.com/FakeShemp) | [Aaru](https://aaru.app) |
+| Matt Nadareski | [mnadareski](https://github.com/mnadareski) | [Aaru](https://aaru.app) |
 
 ## Technical committee
 
@@ -25,4 +26,3 @@
 | Development | Michael Drüing | [darkstar](https://github.com/darkstar) | [Aaru](https://aaru.app) |
 | Development | Rebecca Wallander | [FakeShemp](https://github.com/FakeShemp) | [Aaru](https://aaru.app) |
 | QA | Silas Laspada | [SilasLaspada](https://github.com/SilasLaspada) | [Aaru](https://aaru.app) |
-| MPF (UI) | Matt Nadareski | [mnadareski](https://github.com/mnadareski) | SabreTools |

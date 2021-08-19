@@ -29,7 +29,7 @@ Use your best judgment, and feel free to propose changes to this document in a p
 [Styleguides](#styleguides)
 
 * [Git Commit Messages](#git-commit-messages)
-* [Code Styleguide](#code-styleguide)
+* [Code Styleguide](#code-style-guide)
 
 ## Code of Conduct
 
@@ -75,11 +75,12 @@ Aaru is intentionally very modular. Here's a list of them:
   functions and commands that are called by the user interface itself.
 * [Aaru.Decoders](https://github.com/aaru-dps/Aaru.Decoders) - This module contains internal disk, drive and protocol
   structures as well as code to marshal, decode and print them.
+* [Aaru.Decryption](https://github.com/aaru-dps/Aaru.Decryption) - This module contains the media decryption code, like CSS or CPRM.
 * [Aaru.Devices](https://github.com/aaru-dps/Aaru/tree/master/Aaru.Devices) - This module contains code to talk with
-  hardware devices in different platforms. Each platform has lowlevel calls in its own folder, and each device protocol
-  has highlevel calls in its own folder. Device commands are separated by protocol standard, or vendor name.
+  hardware devices in different platforms. Each platform has low-level calls in its own folder, and each device protocol
+  has high-level calls in its own folder. Device commands are separated by protocol standard, or vendor name.
 * [Aaru.Device.Report](https://github.com/aaru-dps/Aaru/tree/master/Aaru.Device.Report) - This is a separate application
-  in C89 designed to create device reports on enviroments where you can't run .NET or Mono but can run Linux.
+  in C89 designed to create device reports on environments where you can't run .NET or Mono but can run Linux.
 * [Aaru.DiscImages](https://github.com/aaru-dps/Aaru/tree/master/Aaru.DiscImages) - This module provides reading
   capabilities for the disk/disc images, one per file.
 * [Aaru.DiscImages](https://github.com/aaru-dps/Aaru.Dto) - This module provides common structures between Aaru and
@@ -89,8 +90,8 @@ Aaru is intentionally very modular. Here's a list of them:
   folder should be used.
 * [Aaru.Filters](https://github.com/aaru-dps/Aaru/tree/master/Aaru.Filters) - A filter is a modification of the data
   before it can be passed to the disk image module
-  (compression, fork union, etc), and this module provides support for them. If a image is compressed, say in gzip, or
-  encoded, say in AppleDouble, a filter is the responsible of decompressing or decoding it on-the-fly.
+  (compression, fork union, etc.), and this module provides support for them. If an image is compressed, say in gzip, or
+  encoded, say in AppleDouble, a filter is the responsible for decompressing or decoding it on-the-fly.
 * [Aaru.Helpers](https://github.com/aaru-dps/Aaru.Helpers) - This module contains a collection of helpers for array
   manipulation, big-endian marshalling, datetime conversion, hexadecimal printing, string manipulation and byte
   swapping.
@@ -102,21 +103,20 @@ Aaru is intentionally very modular. Here's a list of them:
   Aaru settings.
 * [Aaru.Tests](https://github.com/aaru-dps/Aaru/tree/master/Aaru.Tests) - This module contains the unit tests for the
   rest of the modules. You should add new unit tests here but cannot run all of them because the test images they
-  require amount to more than 100GiB.
-* [Aaru.Tests.Devices](https://github.com/aaru-dps/Aaru/tree/master/Aaru.Tests.Devices) - This module presents a menu
-  driven interface to send commands to devices, as a way to test the Core module, as those tests cannot be automated. It
+  require amount to more than 900 GiB.
+* [Aaru.Tests.Devices](https://github.com/aaru-dps/Aaru/tree/master/Aaru.Tests.Devices) - This module presents a menu-driven interface to send commands to devices, as a way to test the Core module, as those tests cannot be automated. It
   can be used to debug drive responses.
 
 ## How Can I Contribute?
 
 ### Reporting Devices
 
-Aaru tries to be as universal as possible. However some devices do not behave in the expected ways, some media is
+Aaru tries to be as universal as possible. However, some devices do not behave in the expected ways, some media is
 unknown and needs to be known prior to enabling dumping of it, etc.
 
 For that reason, Aaru includes
 the [device-report command](https://github.com/aaru-dps/Aaru/wiki/Reporting-physical-device-capabilities). Using this
-command will guide you thru a series of questions about the device, and if it contains removable media, for you to
+command will guide you through a series of questions about the device, and if it contains removable media, for you to
 insert the different media you have, and create a report of its abilities. The report will automatically be sent to our
 server and saved on your computer. Please note that we do not store any personal information and when possible remove
 the drive serial numbers from the report.
@@ -134,15 +134,15 @@ mag_right:.
 Before creating bug reports, please check [this list](#before-submitting-a-bug-report) as you might find out that you
 don't need to create one. When you are creating a bug report, please
 [include as many details as possible](#how-do-i-submit-a-good-bug-report). Fill out
-[the required template](.github/ISSUE_TEMPLATE.md), the information it asks for helps us resolve issues faster.
+the required template, the information it asks for helps us resolve issues faster.
 
 > **Note:** If you find a **Closed** issue that seems like it is the same thing that you're experiencing, open a new issue and include a link to the original issue in the body of your new one.
 
 #### Before Submitting A Bug Report
 
-* **Check the [wiki](https://github.com/aaru-dps/Aaru/wiki)** for a list of common questions and problems.
+* **Check the [documentation](https://aaru.app)** for a list of common questions and problems.
 * **Determine [which module the problem should be reported in](#aaru-and-modules)**.
-* **Perform a [cursory search](https://github.com/search?q=+is%3Aissue+user%3Aclaunia)**
+* **Perform a [cursory search](https://github.com/search?q=+is%3Aissue)**
   to see if the problem has already been reported. If it has **and the issue is still open**, add a comment to the
   existing issue instead of opening a new one.
 
@@ -150,8 +150,7 @@ don't need to create one. When you are creating a bug report, please
 
 Bugs are tracked as [GitHub issues](https://guides.github.com/features/issues/). After you've
 determined [which module](#aaru-and-modules) your bug is related to, create an issue on that repository and provide the
-following information by filling in
-[the template](.github/ISSUE_TEMPLATE.md).
+following information by filling in the template.
 
 Explain the problem and include additional details to help maintainers reproduce the problem:
 
@@ -192,7 +191,7 @@ your suggestion :pencil: and find related suggestions :mag_right:.
 
 Before creating enhancement suggestions,
 please [include as many details as possible](#how-do-i-submit-a-good-enhancement-suggestion). Fill
-in [the template](.github/ISSUE_TEMPLATE.md), including the steps that you imagine you would take if the feature you're
+in the template, including the steps that you imagine you would take if the feature you're
 requesting existed.
 
 #### How Do I Submit A (Good) Enhancement Suggestion?
@@ -226,16 +225,15 @@ If you want to read about using Aaru, the [wiki](https://github.com/aaru-dps/Aar
 Do not modify the interfaces. If you need or want to, comment in an issue how and why you want to change it and we'll
 discuss it. Same applies for creating new interfaces.
 
-Aaru uses C# 7 language features (inline declaration, Tuples, etc.) so it can only be compiled
-with [VisualStudio](http://www.visualstudio.com) 2017 or higher, [Xamarin Studio](https://www.xamarin.com/download)
-7 or higher, [MonoDevelop](http://www.monodevelop.com) 7 or higher,
-or [JetBrains Rider](https://www.jetbrains.com/rider/) 2017.2 or higher.
+Aaru uses C# 8 language features (inline declaration, Tuples, etc.) so it can only be compiled
+with [VisualStudio](http://www.visualstudio.com) 2019 or higher, [Visual Studio for Mac](https://www.xamarin.com/download)
+2019 or higher, or [JetBrains Rider](https://www.jetbrains.com/rider/) 2019.1 or higher.
 
 ### Pull Requests
 
 * Fill in [the required template](.github/PULL_REQUEST_TEMPLATE.md)
 * Do not include issue numbers in the PR title
-* Follow the [code styleguide](#code-styleguide).
+* Follow the [code styleguide](#code-style-guide).
 * Include test files as applicable, that do not have software under copyright inside them, if possible.
 * Document new code based using XML documentation wherever possible.
 * DO NOT end files with a newline.
@@ -265,7 +263,7 @@ for them.
 
 * Use the present tense ("Add feature" not "Added feature")
 * Use the imperative mood ("Move cursor to..." not "Moves cursor to...")
-* Limit the first line to 72 characters or less
+* Limit the first line to 72 characters or fewer
 * Reference issues and pull requests liberally after the first line
 
 ### Code Style Guide
@@ -282,7 +280,7 @@ for them.
 - If you will only store variables, use a struct. If you need it to be nullable, use a nullable struct if applicable.
 - Indent statements and cases.
 - Indent using 4 spaces (soft tab).
-- Instace and static fields should be lowerCamelCase.
+- Instance and static fields should be lowerCamelCase.
 - Public fields should be UpperCamelCase.
 - Separate attributes.
 - Use 120 columns margins.
@@ -291,7 +289,7 @@ for them.
 - Use implicit modifiers.
 - Use inline variable declaration.
 - Use struct implicit constructor.
-- Use UNIX (`\n`) endline character.
+- Use UNIX (`\n`) end line character.
 
 > Note: There is an included editorconfig file that sets the appropriate code style.
 
