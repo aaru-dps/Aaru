@@ -1088,7 +1088,7 @@ namespace Aaru.Commands.Image
 
                     uint sectorsToDo;
 
-                    if(inputTape.IsTape)
+                    if(inputTape?.IsTape == true)
                         sectorsToDo = 1;
                     else if(inputFormat.Info.Sectors - doneSectors >= (ulong)count)
                         sectorsToDo = (uint)count;
