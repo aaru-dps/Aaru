@@ -309,12 +309,50 @@ namespace Aaru.Core.Devices.Dumping
                             // Try to workaround firmware
                             if(decSense?.ASC == 0x64)
                             {
-                                sense = _dev.ReadCd(out cmdBuf, out _, firstSectorToRead, blockSize, blocksToRead,
-                                                    MmcSectorTypes.Cdda, false, false, false, MmcHeaderCodes.None, true,
-                                                    false, MmcErrorField.None, supportedSubchannel, _dev.Timeout,
-                                                    out double cmdDuration2);
+                                bool goBackTrackTypeChange = false;
 
-                                cmdDuration += cmdDuration2;
+                                // Go one for one as the drive does not tell us which one failed
+                                for(int bi = 0; bi < blocksToRead; bi++)
+                                {
+                                    sense = _dev.ReadCd(out cmdBuf, out senseBuf, (uint)(firstSectorToRead + bi),
+                                                        blockSize, 1, MmcSectorTypes.AllTypes, false, false, true,
+                                                        MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
+                                                        supportedSubchannel, _dev.Timeout, out double cmdDuration2);
+
+                                    cmdDuration += cmdDuration2;
+
+                                    if(!sense             &&
+                                       cmdBuf[0]  == 0x00 &&
+                                       cmdBuf[1]  == 0xFF &&
+                                       cmdBuf[2]  == 0xFF &&
+                                       cmdBuf[3]  == 0xFF &&
+                                       cmdBuf[4]  == 0xFF &&
+                                       cmdBuf[5]  == 0xFF &&
+                                       cmdBuf[6]  == 0xFF &&
+                                       cmdBuf[7]  == 0xFF &&
+                                       cmdBuf[8]  == 0xFF &&
+                                       cmdBuf[9]  == 0xFF &&
+                                       cmdBuf[10] == 0xFF &&
+                                       cmdBuf[11] == 0x00)
+                                        continue;
+
+                                    // Set those sectors as audio
+                                    for(int bip = bi; bip < blocksToRead; bip++)
+                                        audioExtents.Add((ulong)(firstSectorToRead + bip));
+
+                                    goBackTrackTypeChange = true;
+
+                                    break;
+                                }
+
+                                // Go back to read again
+                                if(goBackTrackTypeChange)
+                                {
+                                    blocksToRead = 0;
+                                    nextData     = true;
+
+                                    continue;
+                                }
                             }
                         }
                     }
