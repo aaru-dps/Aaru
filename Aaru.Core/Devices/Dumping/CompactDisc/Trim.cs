@@ -157,6 +157,8 @@ namespace Aaru.Core.Devices.Dumping
                     sectorsToTrim = (byte)(sectorsForOffset + 1);
                 }
 
+                bool forceFixOffset = false;
+
                 if(_supportsPlextorD8 && audioExtents.Contains(badSector))
                     sense = ReadPlextorWithSubchannel(out cmdBuf, out senseBuf, badSectorToRead, blockSize,
                                                       sectorsToTrim, supportedPlextorSubchannel, out cmdDuration);
@@ -197,8 +199,7 @@ namespace Aaru.Core.Devices.Dumping
                             DecodedSense? decSense = Sense.Decode(senseBuf);
 
                             // Try to workaround firmware
-                            if((decSense?.ASC == 0x11 && decSense?.ASCQ == 0x05) ||
-                               decSense?.ASC == 0x64)
+                            if(decSense?.ASC == 0x64)
                             {
                                 sense = _dev.ReadCd(out cmdBuf, out _, badSectorToRead, blockSize, sectorsToTrim,
                                                     MmcSectorTypes.Cdda, false, false, false, MmcHeaderCodes.None, true,
