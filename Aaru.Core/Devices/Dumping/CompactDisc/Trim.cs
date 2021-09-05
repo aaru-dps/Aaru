@@ -120,9 +120,10 @@ namespace Aaru.Core.Devices.Dumping
             start = DateTime.UtcNow;
             UpdateStatus?.Invoke("Trimming skipped sectors");
             _dumpLog.WriteLine("Trimming skipped sectors");
-
-            ulong[] tmpArray = _resume.BadBlocks.ToArray();
             InitProgress?.Invoke();
+
+            trimStart:
+            ulong[] tmpArray = _resume.BadBlocks.ToArray();
 
             for(int b = 0; b < tmpArray.Length; b++)
             {
@@ -265,6 +266,8 @@ namespace Aaru.Core.Devices.Dumping
                     else
                         _outputPlugin.WriteSector(Sector.GetUserData(data), badSector);
 
+                    ulong trkStartBefore = track.TrackStartSector;
+
                     bool indexesChanged = Media.CompactDisc.WriteSubchannelToImage(supportedSubchannel,
                         desiredSubchannel, sub, badSector, 1, subLog, isrcs, (byte)track.TrackSequence, ref mcn,
                         tracks, subchannelExtents, _fixSubchannelPosition, _outputPlugin, _fixSubchannel,
@@ -275,6 +278,15 @@ namespace Aaru.Core.Devices.Dumping
                         continue;
 
                     (_outputPlugin as IWritableOpticalImage).SetTracks(tracks.ToList());
+
+                    if(track.TrackStartSector != trkStartBefore &&
+                       !_resume.BadBlocks.Contains(track.TrackStartSector))
+                    {
+                        _resume.BadBlocks.Add(track.TrackStartSector);
+
+                        goto trimStart;
+                    }
+
                     b--;
 
                     continue;
