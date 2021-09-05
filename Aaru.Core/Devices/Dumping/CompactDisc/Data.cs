@@ -234,16 +234,16 @@ namespace Aaru.Core.Devices.Dumping
                     }
                 }
 
-                /*    if(!inData &&
-                       currentReadSpeed == 0xFFFF)
-                    {
-                        _dumpLog.WriteLine("Setting speed to 8x for audio reading.");
-                        UpdateStatus?.Invoke("Setting speed to 8x for audio reading.");
+                if(!inData &&
+                   currentReadSpeed == 0xFFFF)
+                {
+                    _dumpLog.WriteLine("Setting speed to 8x for audio reading.");
+                    UpdateStatus?.Invoke("Setting speed to 8x for audio reading.");
 
-                        _dev.SetCdSpeed(out _, RotationalControl.ClvAndImpureCav, 1416, 0, _dev.Timeout, out _);
+                    _dev.SetCdSpeed(out _, RotationalControl.ClvAndImpureCav, 1416, 0, _dev.Timeout, out _);
 
-                        currentReadSpeed = 1200;
-                    }*/
+                    currentReadSpeed = 1200;
+                }
 
                 if(inData && currentReadSpeed != _speed)
                 {
