@@ -133,6 +133,7 @@ namespace Aaru.Core.Devices.Dumping
             int  currentReadSpeed      = _speed;
             bool crossingLeadOut       = false;
             bool failedCrossingLeadOut = false;
+            bool skippingLead          = false;
 
             for(ulong i = _resume.NextBlock; (long)i <= lastSector; i += blocksToRead)
             {
@@ -147,6 +148,7 @@ namespace Aaru.Core.Devices.Dumping
 
                 while(leadOutExtents.Contains(i))
                 {
+                    skippingLead = true;
                     i++;
                 }
 
@@ -204,6 +206,16 @@ namespace Aaru.Core.Devices.Dumping
                 if(blocksToRead == 1 &&
                    !inData)
                     blocksToRead += (uint)sectorsForOffset;
+
+                if(blocksToRead == 0)
+                {
+                    if(!skippingLead)
+                        i += (ulong)sectorsForOffset;
+
+                    skippingLead = false;
+
+                    continue;
+                }
 
                 if(_fixOffset && !inData)
                 {
