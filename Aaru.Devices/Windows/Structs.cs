@@ -114,7 +114,7 @@ namespace Aaru.Devices.Windows
         public AtaPassThroughEx aptd;
         public uint             filler;
 
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64 * 512)]
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256 * 512)]
         public byte[] dataBuffer;
     }
 
