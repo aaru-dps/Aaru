@@ -556,10 +556,13 @@ namespace Aaru.DiscImages
 
                 if(track.TrackPregap > 0 && _isCd)
                 {
-                    _descriptorStream.WriteLine("    INDEX {0:D2} {1:D2}:{2:D2}:{3:D2}", 0, msf.minute, msf.second,
-                                                msf.frame);
+                    if(track.TrackSequence > _writingTracks.Where(t => t.TrackSession == track.TrackSession).
+                                                            Min(t => t.TrackSequence))
+                        _descriptorStream.WriteLine("    INDEX {0:D2} {1:D2}:{2:D2}:{3:D2}", 0, msf.minute, msf.second,
+                                                    msf.frame);
 
-                    msf = LbaToMsf(track.TrackStartSector + track.TrackPregap);
+                    if(track.TrackSequence > 1)
+                        msf = LbaToMsf(track.TrackStartSector + track.TrackPregap);
 
                     _descriptorStream.WriteLine("    INDEX {0:D2} {1:D2}:{2:D2}:{3:D2}", 1, msf.minute, msf.second,
                                                 msf.frame);
