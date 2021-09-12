@@ -36,6 +36,7 @@ using System.CommandLine.Invocation;
 using Aaru.CommonTypes.Enums;
 using Aaru.Console;
 using Aaru.Settings;
+using Spectre.Console;
 
 namespace Aaru.Commands
 {
@@ -49,10 +50,29 @@ namespace Aaru.Commands
             MainClass.PrintCopyright();
 
             if(debug)
-                AaruConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
+            {
+                IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
+                {
+                    Out = new AnsiConsoleOutput(System.Console.Error)
+                });
+
+                AaruConsole.DebugWriteLineEvent += (format, objects) =>
+                {
+                    if(objects is null)
+                        stderrConsole.MarkupLine(format);
+                    else
+                        stderrConsole.MarkupLine(format, objects);
+                };
+            }
 
             if(verbose)
-                AaruConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+                AaruConsole.WriteEvent += (format, objects) =>
+                {
+                    if(objects is null)
+                        AnsiConsole.Markup(format);
+                    else
+                        AnsiConsole.Markup(format, objects);
+                };
 
             return DoConfigure(false);
         }
@@ -62,16 +82,16 @@ namespace Aaru.Commands
             if(gdprChange)
             {
                 AaruConsole.
-                    WriteLine("In compliance with the European Union General Data Protection Regulation 2016/679 (GDPR),\n" +
-                              "we must give you the following information about Aaru and ask if you want to opt-in\n" +
+                    WriteLine("In compliance with the [bold]European Union General Data Protection Regulation 2016/679 ([italic]GDPR[/])[/],\n" +
+                              "we must give you the following information about [italic]Aaru[/] and ask if you want to opt-in\n" +
                               "in some information sharing.");
 
                 AaruConsole.WriteLine();
 
                 AaruConsole.
-                    WriteLine("Disclaimer: Because Aaru is an open source software this information, and therefore,\n" +
-                              "compliance with GDPR only holds true if you obtained a certificated copy from its original\n" +
-                              "authors. In case of doubt, close Aaru now and ask in our IRC support channel.");
+                    WriteLine("Disclaimer: Because [italic]Aaru[/] is an open source software this information, and therefore,\n" +
+                              "compliance with [bold]GDPR[/] only holds true if you obtained a certificated copy from its original\n" +
+                              "authors. In case of doubt, close [italic]Aaru[/] now and ask in our IRC support channel.");
 
                 AaruConsole.WriteLine();
 
@@ -86,15 +106,17 @@ namespace Aaru.Commands
             AaruConsole.WriteLine();
 
             AaruConsole.
-                WriteLine("Do you want to enable the decryption of copy protected media (also known as DRM),\n"    +
-                          "like for example DVD Video CSS encryption.\n"                                           +
-                          "Consult your local laws before enabling it, as this is illegal in some countries, or\n" +
-                          "only legal under some circumstances.");
+                WriteLine("Do you want to enable the decryption of copy protected media (also known as [italic]DRM[/]),\n" +
+                          "like for example [italic]DVD Video CSS[/] encryption.\n" +
+                          "[bold]Consult your local laws before enabling it, as this is illegal in some countries, or\n" +
+                          "only legal under some circumstances[/].");
 
             while(pressedKey.Key != ConsoleKey.Y &&
                   pressedKey.Key != ConsoleKey.N)
             {
-                AaruConsole.Write("Do you want to enable decryption of copy protected media? (Y/N): ");
+                AaruConsole.
+                    Write("[italic]Do you want to enable decryption of copy protected media?[/] [bold]([green]Y[/]/[red]N[/]):[/] ");
+
                 pressedKey = System.Console.ReadKey();
                 AaruConsole.WriteLine();
             }
@@ -105,18 +127,21 @@ namespace Aaru.Commands
             AaruConsole.WriteLine();
 
             AaruConsole.
-                WriteLine("With the 'device-report' command, Aaru creates a report of a device, that includes its\n" +
+                WriteLine(
+                          "With the 'device-report' command, [italic]Aaru[/] creates a report of a device, that includes its\n" +
                           "manufacturer, model, firmware revision and/or version, attached bus, size, and supported commands.\n" +
                           "The serial number of the device is not stored in the report. If used with the debug parameter,\n" +
                           "extra information about the device will be stored in the report. This information is known to contain\n" +
                           "the device serial number in non-standard places that prevent the automatic removal of it on a handful\n" +
                           "of devices. A human-readable copy of the report in XML format is always created in the same directory\n" +
-                          "where Aaru is being run from.");
+                          "where [italic]Aaru[/] is being run from.");
 
             while(pressedKey.Key != ConsoleKey.Y &&
                   pressedKey.Key != ConsoleKey.N)
             {
-                AaruConsole.Write("Do you want to save device reports in shared folder of your computer? (Y/N): ");
+                AaruConsole.
+                    Write("[italic]Do you want to save device reports in shared folder of your computer? [bold]([green]Y[/]/[red]N[/]):[/] ");
+
                 pressedKey = System.Console.ReadKey();
                 AaruConsole.WriteLine();
             }
@@ -129,14 +154,16 @@ namespace Aaru.Commands
             AaruConsole.
                 WriteLine("Sharing a report with us will send it to our server, that's in the european union territory, where it\n" +
                           "will be manually analyzed by an european union citizen to remove any trace of personal identification\n" +
-                          "from it. Once that is done, it will be shared in our stats website, https://www.aaru.app\n" +
-                          "These report will be used to improve Aaru support, and in some cases, to provide emulation of the\n" +
+                          "from it. Once that is done, it will be shared in our stats website, [italic][blue]https://www.aaru.app[/][/]\n" +
+                          "These report will be used to improve [italic]Aaru[/] support, and in some cases, to provide emulation of the\n" +
                           "devices to other open-source projects. In any case, no information linking the report to you will be stored.");
 
             while(pressedKey.Key != ConsoleKey.Y &&
                   pressedKey.Key != ConsoleKey.N)
             {
-                AaruConsole.Write("Do you want to share your device reports with us? (Y/N): ");
+                AaruConsole.
+                    Write("[italic]Do you want to share your device reports with us?[/] [bold]([green]Y[/]/[red]N[/]):[/] ");
+
                 pressedKey = System.Console.ReadKey();
                 AaruConsole.WriteLine();
             }
@@ -148,7 +175,7 @@ namespace Aaru.Commands
             AaruConsole.WriteLine();
 
             AaruConsole.
-                WriteLine("Aaru can store some usage statistics. These statistics are limited to the number of times a\n" +
+                WriteLine("[italic]Aaru[/] can store some usage statistics. These statistics are limited to the number of times a\n" +
                           "command is executed, a filesystem, partition, or device is used, the operating system version, and other.\n" +
                           "In no case, any information besides pure statistical usage numbers is stored, and they're just joint to the\n" +
                           "pool with no way of using them to identify you.");
@@ -158,7 +185,9 @@ namespace Aaru.Commands
             while(pressedKey.Key != ConsoleKey.Y &&
                   pressedKey.Key != ConsoleKey.N)
             {
-                AaruConsole.Write("Do you want to save stats about your Aaru usage? (Y/N): ");
+                AaruConsole.
+                    Write("[italic]Do you want to save stats about your Aaru usage?[/] [bold]([green]Y[/]/[red]N[/]):[/] ");
+
                 pressedKey = System.Console.ReadKey();
                 AaruConsole.WriteLine();
             }
@@ -172,7 +201,9 @@ namespace Aaru.Commands
                 while(pressedKey.Key != ConsoleKey.Y &&
                       pressedKey.Key != ConsoleKey.N)
                 {
-                    AaruConsole.Write("Do you want to share your stats (anonymously)? (Y/N): ");
+                    AaruConsole.
+                        Write("[italic]Do you want to share your stats (anonymously)?[/] [bold]([green]Y[/]/[red]N[/]):[/] ");
+
                     pressedKey = System.Console.ReadKey();
                     AaruConsole.WriteLine();
                 }
@@ -184,7 +215,9 @@ namespace Aaru.Commands
                 while(pressedKey.Key != ConsoleKey.Y &&
                       pressedKey.Key != ConsoleKey.N)
                 {
-                    AaruConsole.Write("Do you want to gather statistics about command usage? (Y/N): ");
+                    AaruConsole.
+                        Write("[italic]Do you want to gather statistics about command usage?[/] [bold]([green]Y[/]/[red]N[/]):[/] ");
+
                     pressedKey = System.Console.ReadKey();
                     AaruConsole.WriteLine();
                 }
@@ -196,7 +229,9 @@ namespace Aaru.Commands
                 while(pressedKey.Key != ConsoleKey.Y &&
                       pressedKey.Key != ConsoleKey.N)
                 {
-                    AaruConsole.Write("Do you want to gather statistics about found devices? (Y/N): ");
+                    AaruConsole.
+                        Write("[italic]Do you want to gather statistics about found devices?[/] [bold]([green]Y[/]/[red]N[/]):[/] ");
+
                     pressedKey = System.Console.ReadKey();
                     AaruConsole.WriteLine();
                 }
@@ -208,7 +243,9 @@ namespace Aaru.Commands
                 while(pressedKey.Key != ConsoleKey.Y &&
                       pressedKey.Key != ConsoleKey.N)
                 {
-                    AaruConsole.Write("Do you want to gather statistics about found filesystems? (Y/N): ");
+                    AaruConsole.
+                        Write("[italic]Do you want to gather statistics about found filesystems?[/] [bold]([green]Y[/]/[red]N[/]):[/] ");
+
                     pressedKey = System.Console.ReadKey();
                     AaruConsole.WriteLine();
                 }
@@ -220,7 +257,9 @@ namespace Aaru.Commands
                 while(pressedKey.Key != ConsoleKey.Y &&
                       pressedKey.Key != ConsoleKey.N)
                 {
-                    AaruConsole.Write("Do you want to gather statistics about found file filters? (Y/N): ");
+                    AaruConsole.
+                        Write("[italic]Do you want to gather statistics about found file filters?[/] [bold]([green]Y[/]/[red]N[/]):[/] ");
+
                     pressedKey = System.Console.ReadKey();
                     AaruConsole.WriteLine();
                 }
@@ -232,7 +271,9 @@ namespace Aaru.Commands
                 while(pressedKey.Key != ConsoleKey.Y &&
                       pressedKey.Key != ConsoleKey.N)
                 {
-                    AaruConsole.Write("Do you want to gather statistics about found media image formats? (Y/N): ");
+                    AaruConsole.
+                        Write("[italic]Do you want to gather statistics about found media image formats?[/] [bold]([green]Y[/]/[red]N[/]):[/] ");
+
                     pressedKey = System.Console.ReadKey();
                     AaruConsole.WriteLine();
                 }
@@ -244,7 +285,9 @@ namespace Aaru.Commands
                 while(pressedKey.Key != ConsoleKey.Y &&
                       pressedKey.Key != ConsoleKey.N)
                 {
-                    AaruConsole.Write("Do you want to gather statistics about scanned media? (Y/N): ");
+                    AaruConsole.
+                        Write("[italic]Do you want to gather statistics about scanned media?[/] [bold]([green]Y[/]/[red]N[/]):[/] ");
+
                     pressedKey = System.Console.ReadKey();
                     AaruConsole.WriteLine();
                 }
@@ -256,7 +299,9 @@ namespace Aaru.Commands
                 while(pressedKey.Key != ConsoleKey.Y &&
                       pressedKey.Key != ConsoleKey.N)
                 {
-                    AaruConsole.Write("Do you want to gather statistics about found partitioning schemes? (Y/N): ");
+                    AaruConsole.
+                        Write("[italic]Do you want to gather statistics about found partitioning schemes?[/] [bold]([green]Y[/]/[red]N[/]):[/] ");
+
                     pressedKey = System.Console.ReadKey();
                     AaruConsole.WriteLine();
                 }
@@ -268,7 +313,9 @@ namespace Aaru.Commands
                 while(pressedKey.Key != ConsoleKey.Y &&
                       pressedKey.Key != ConsoleKey.N)
                 {
-                    AaruConsole.Write("Do you want to gather statistics about media types? (Y/N): ");
+                    AaruConsole.
+                        Write("[italic]Do you want to gather statistics about media types?[/] [bold]([green]Y[/]/[red]N[/]):[/] ");
+
                     pressedKey = System.Console.ReadKey();
                     AaruConsole.WriteLine();
                 }
@@ -280,7 +327,9 @@ namespace Aaru.Commands
                 while(pressedKey.Key != ConsoleKey.Y &&
                       pressedKey.Key != ConsoleKey.N)
                 {
-                    AaruConsole.Write("Do you want to gather statistics about media image verifications? (Y/N): ");
+                    AaruConsole.
+                        Write("[italic]Do you want to gather statistics about media image verifications?[/] [bold]([green]Y[/]/[red]N[/]):[/] ");
+
                     pressedKey = System.Console.ReadKey();
                     AaruConsole.WriteLine();
                 }
