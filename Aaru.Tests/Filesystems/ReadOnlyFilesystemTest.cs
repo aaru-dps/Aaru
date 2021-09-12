@@ -240,6 +240,9 @@ namespace Aaru.Tests.Filesystems
             Dictionary<string, FileData> children = new Dictionary<string, FileData>();
             fs.ReadDir(path, out List<string> contents);
 
+            if(contents is null)
+                return children;
+
             foreach(string child in contents)
             {
                 string childPath = $"{path}/{child}";
