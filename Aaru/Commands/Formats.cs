@@ -147,18 +147,6 @@ namespace Aaru.Commands
                 else
                     AaruConsole.WriteLine(kvp.Value.Name);
 
-            AaruConsole.WriteLine();
-            AaruConsole.WriteLine("Supported archive formats ({0}):", plugins.Archives.Count);
-
-            if(verbose)
-                AaruConsole.VerboseWriteLine("GUID\t\t\t\t\tPlugin");
-
-            foreach(KeyValuePair<string, IArchive> kvp in plugins.Archives)
-                if(verbose)
-                    AaruConsole.VerboseWriteLine("{0}\t{1}", kvp.Value.Id, kvp.Value.Name);
-                else
-                    AaruConsole.WriteLine(kvp.Value.Name);
-
             return (int)ErrorNumber.NoError;
         }
     }

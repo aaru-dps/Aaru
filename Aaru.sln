@@ -34,8 +34,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aaru.Database", "Aaru.Datab
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aaru.Dto", "Aaru.Dto\Aaru.Dto.csproj", "{F4399FF5-9BD0-475A-9EA7-3DAE45291FE2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aaru.Gui", "Aaru.Gui\Aaru.Gui.csproj", "{18C4C44D-2562-4B6D-8181-32D7EA067D96}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CUETools.Codecs", "cuetools.net\CUETools.Codecs\CUETools.Codecs.csproj", "{D1F69B02-A6A4-4EF2-A916-815BACC18F71}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aaru.Tests", "Aaru.Tests\Aaru.Tests.csproj", "{B2A2CCF8-150D-4A00-BCB5-1B0CBCFA95D5}"
@@ -45,8 +43,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CUETools.Codecs.Flake", "cuetools.net\CUETools.Codecs.Flake\CUETools.Codecs.Flake.csproj", "{69FAC887-A3DE-4C23-84A5-9C5F64E4C3E1}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aaru.Decryption", "Aaru.Decryption\Aaru.Decryption.csproj", "{B609D333-80C5-4503-BF46-8B9B91F04E97}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aaru.Archives", "Aaru.Archives\Aaru.Archives.csproj", "{282271D0-CCC2-4ED7-BA38-EC06A84BB974}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -184,14 +180,6 @@ Global
 		{F4399FF5-9BD0-475A-9EA7-3DAE45291FE2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F4399FF5-9BD0-475A-9EA7-3DAE45291FE2}.Release|x86.ActiveCfg = Release|Any CPU
 		{F4399FF5-9BD0-475A-9EA7-3DAE45291FE2}.Release|x86.Build.0 = Release|Any CPU
-		{18C4C44D-2562-4B6D-8181-32D7EA067D96}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{18C4C44D-2562-4B6D-8181-32D7EA067D96}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{18C4C44D-2562-4B6D-8181-32D7EA067D96}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{18C4C44D-2562-4B6D-8181-32D7EA067D96}.Debug|x86.Build.0 = Debug|Any CPU
-		{18C4C44D-2562-4B6D-8181-32D7EA067D96}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{18C4C44D-2562-4B6D-8181-32D7EA067D96}.Release|Any CPU.Build.0 = Release|Any CPU
-		{18C4C44D-2562-4B6D-8181-32D7EA067D96}.Release|x86.ActiveCfg = Release|Any CPU
-		{18C4C44D-2562-4B6D-8181-32D7EA067D96}.Release|x86.Build.0 = Release|Any CPU
 		{D1F69B02-A6A4-4EF2-A916-815BACC18F71}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D1F69B02-A6A4-4EF2-A916-815BACC18F71}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D1F69B02-A6A4-4EF2-A916-815BACC18F71}.Debug|x86.ActiveCfg = Debug|Any CPU
@@ -232,14 +220,6 @@ Global
 		{B609D333-80C5-4503-BF46-8B9B91F04E97}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B609D333-80C5-4503-BF46-8B9B91F04E97}.Release|x86.ActiveCfg = Release|Any CPU
 		{B609D333-80C5-4503-BF46-8B9B91F04E97}.Release|x86.Build.0 = Release|Any CPU
-		{282271D0-CCC2-4ED7-BA38-EC06A84BB974}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{282271D0-CCC2-4ED7-BA38-EC06A84BB974}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{282271D0-CCC2-4ED7-BA38-EC06A84BB974}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{282271D0-CCC2-4ED7-BA38-EC06A84BB974}.Debug|x86.Build.0 = Debug|Any CPU
-		{282271D0-CCC2-4ED7-BA38-EC06A84BB974}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{282271D0-CCC2-4ED7-BA38-EC06A84BB974}.Release|Any CPU.Build.0 = Release|Any CPU
-		{282271D0-CCC2-4ED7-BA38-EC06A84BB974}.Release|x86.ActiveCfg = Release|Any CPU
-		{282271D0-CCC2-4ED7-BA38-EC06A84BB974}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

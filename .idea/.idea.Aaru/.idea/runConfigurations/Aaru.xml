@@ -1,8 +1,8 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Aaru" type="DotNetProject" factoryName=".NET Project">
-    <option name="EXE_PATH" value="$PROJECT_DIR$/Aaru/bin/Debug/netcoreapp3.1/aaru" />
-    <option name="PROGRAM_PARAMETERS" value="i info bluraysampler.aif" />
-    <option name="WORKING_DIRECTORY" value="/mnt/datos" />
+    <option name="EXE_PATH" value="$PROJECT_DIR$/Aaru/bin/Release/netcoreapp3.1/aaru" />
+    <option name="PROGRAM_PARAMETERS" value="i convert -f &quot;Roadsters (USA).cue&quot; foo.aif" />
+    <option name="WORKING_DIRECTORY" value="/mnt/DiscImageChef/Issues/Fixed/issue288/roadsters" />
     <option name="PASS_PARENT_ENVS" value="1" />
     <option name="USE_EXTERNAL_CONSOLE" value="0" />
     <option name="USE_MONO" value="0" />
