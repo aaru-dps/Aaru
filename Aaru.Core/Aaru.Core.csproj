@@ -11,7 +11,7 @@
     <ReleaseVersion>$(Version)</ReleaseVersion>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-    <Version>5.2.99.3380-alpha</Version>
+    <Version>5.3.0-rc1</Version>
     <Company>Claunia.com</Company>
     <Copyright>Copyright © 2011-2021 Natalia Portillo</Copyright>
     <Product>Aaru Data Preservation Suite</Product>
@@ -144,7 +144,6 @@
     <Compile Include="Logging\DumpLog.cs"/>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Aaru.Archives\Aaru.Archives.csproj"/>
     <ProjectReference Include="..\Aaru.Console\Aaru.Console.csproj">
       <Project>{ccaa7afe-c094-4d82-a66d-630de8a3f545}</Project>
       <Name>Aaru.Console</Name>
