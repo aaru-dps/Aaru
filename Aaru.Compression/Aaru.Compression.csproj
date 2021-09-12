@@ -59,14 +59,14 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System"/>
-    <Reference Include="System.Core"/>
-    <Reference Include="System.Data"/>
-    <Reference Include="System.Xml"/>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AppleRle.cs"/>
-    <Compile Include="TeleDiskLzh.cs"/>
+    <Compile Include="AppleRle.cs" />
+    <Compile Include="TeleDiskLzh.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="..\LICENSE.LGPL">
@@ -74,7 +74,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Unclassified.NetRevisionTask" Version="0.3.0" PrivateAssets="all"/>
+    <PackageReference Include="Unclassified.NetRevisionTask" Version="0.4.1" PrivateAssets="all" />
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
          Other similar extension points exist, see Microsoft.Common.targets.

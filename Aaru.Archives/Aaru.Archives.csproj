@@ -76,8 +76,11 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="SharpCompress" Version="0.24.0" />
-    <PackageReference Include="Unclassified.NetRevisionTask" Version="0.3.0" />
+    <PackageReference Include="SharpCompress" Version="0.29.0" />
+    <PackageReference Include="Unclassified.NetRevisionTask" Version="0.4.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

@@ -46,47 +46,47 @@
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System"/>
+    <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Main.cs"/>
-    <Compile Include="Device.cs"/>
-    <Compile Include="Command.cs"/>
-    <Compile Include="SCSI.cs"/>
-    <Compile Include="ATA.cs"/>
-    <Compile Include="NVMe.cs"/>
-    <Compile Include="SCSI_MMC\GdRom.cs"/>
-    <Compile Include="SCSI_MMC\LeadOutTrap.cs"/>
-    <Compile Include="SCSI_MMC\MediaTek.cs"/>
-    <Compile Include="SCSI_MMC\SCSI_MMC.cs"/>
-    <Compile Include="SecureDigital.cs"/>
-    <Compile Include="SCSI\Adaptec.cs"/>
-    <Compile Include="SCSI\ArchiveCorp.cs"/>
-    <Compile Include="SCSI\Certance.cs"/>
-    <Compile Include="SCSI\Fujitsu.cs"/>
-    <Compile Include="SCSI\HL-DT-ST.cs"/>
-    <Compile Include="SCSI\HP.cs"/>
-    <Compile Include="SCSI\Kreon.cs"/>
-    <Compile Include="SCSI\MMC.cs"/>
-    <Compile Include="SCSI\NEC.cs"/>
-    <Compile Include="SCSI\Pioneer.cs"/>
-    <Compile Include="SCSI\Plasmon.cs"/>
-    <Compile Include="SCSI\Plextor.cs"/>
-    <Compile Include="SCSI\SBC.cs"/>
-    <Compile Include="SCSI\SMC.cs"/>
-    <Compile Include="SCSI\SPC.cs"/>
-    <Compile Include="SCSI\SSC.cs"/>
-    <Compile Include="SCSI\SyQuest.cs"/>
-    <Compile Include="ATA\Ata28.cs"/>
-    <Compile Include="ATA\Ata48.cs"/>
-    <Compile Include="ATA\AtaCHS.cs"/>
-    <Compile Include="ATA\Atapi.cs"/>
-    <Compile Include="ATA\Cfa.cs"/>
-    <Compile Include="ATA\MCPT.cs"/>
-    <Compile Include="ATA\Smart.cs"/>
-    <Compile Include="SecureDigital\SecureDigital.cs"/>
-    <Compile Include="SecureDigital\MultiMediaCard.cs"/>
-    <Compile Include="DecodeATARegisters.cs"/>
+    <Compile Include="Main.cs" />
+    <Compile Include="Device.cs" />
+    <Compile Include="Command.cs" />
+    <Compile Include="SCSI.cs" />
+    <Compile Include="ATA.cs" />
+    <Compile Include="NVMe.cs" />
+    <Compile Include="SCSI_MMC\GdRom.cs" />
+    <Compile Include="SCSI_MMC\LeadOutTrap.cs" />
+    <Compile Include="SCSI_MMC\MediaTek.cs" />
+    <Compile Include="SCSI_MMC\SCSI_MMC.cs" />
+    <Compile Include="SecureDigital.cs" />
+    <Compile Include="SCSI\Adaptec.cs" />
+    <Compile Include="SCSI\ArchiveCorp.cs" />
+    <Compile Include="SCSI\Certance.cs" />
+    <Compile Include="SCSI\Fujitsu.cs" />
+    <Compile Include="SCSI\HL-DT-ST.cs" />
+    <Compile Include="SCSI\HP.cs" />
+    <Compile Include="SCSI\Kreon.cs" />
+    <Compile Include="SCSI\MMC.cs" />
+    <Compile Include="SCSI\NEC.cs" />
+    <Compile Include="SCSI\Pioneer.cs" />
+    <Compile Include="SCSI\Plasmon.cs" />
+    <Compile Include="SCSI\Plextor.cs" />
+    <Compile Include="SCSI\SBC.cs" />
+    <Compile Include="SCSI\SMC.cs" />
+    <Compile Include="SCSI\SPC.cs" />
+    <Compile Include="SCSI\SSC.cs" />
+    <Compile Include="SCSI\SyQuest.cs" />
+    <Compile Include="ATA\Ata28.cs" />
+    <Compile Include="ATA\Ata48.cs" />
+    <Compile Include="ATA\AtaCHS.cs" />
+    <Compile Include="ATA\Atapi.cs" />
+    <Compile Include="ATA\Cfa.cs" />
+    <Compile Include="ATA\MCPT.cs" />
+    <Compile Include="ATA\Smart.cs" />
+    <Compile Include="SecureDigital\SecureDigital.cs" />
+    <Compile Include="SecureDigital\MultiMediaCard.cs" />
+    <Compile Include="DecodeATARegisters.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Aaru.Console\Aaru.Console.csproj">
@@ -107,20 +107,23 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="SCSI\"/>
-    <Folder Include="ATA\"/>
-    <Folder Include="SecureDigital\"/>
+    <Folder Include="SCSI\" />
+    <Folder Include="ATA\" />
+    <Folder Include="SecureDigital\" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Unclassified.NetRevisionTask" Version="0.3.0"/>
+    <PackageReference Include="Unclassified.NetRevisionTask" Version="0.4.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
       <Properties>
         <Policies>
-          <TextStylePolicy FileWidth="120" TabWidth="4" IndentWidth="4" RemoveTrailingWhitespace="True" NoTabsAfterNonTabs="False" EolMarker="Native" TabsToSpaces="True" scope="text/x-csharp"/>
-          <CSharpFormattingPolicy IndentBlock="True" IndentBraces="False" IndentSwitchSection="True" IndentSwitchCaseSection="True" LabelPositioning="OneLess" NewLinesForBracesInTypes="True" NewLinesForBracesInMethods="True" NewLinesForBracesInProperties="True" NewLinesForBracesInAccessors="True" NewLinesForBracesInAnonymousMethods="True" NewLinesForBracesInControlBlocks="True" NewLinesForBracesInAnonymousTypes="True" NewLinesForBracesInObjectCollectionArrayInitializers="True" NewLinesForBracesInLambdaExpressionBody="True" NewLineForElse="True" NewLineForCatch="True" NewLineForFinally="True" SpacingAfterMethodDeclarationName="False" SpaceWithinMethodDeclarationParenthesis="False" SpaceBetweenEmptyMethodDeclarationParentheses="False" SpaceAfterMethodCallName="False" SpaceWithinMethodCallParentheses="False" SpaceBetweenEmptyMethodCallParentheses="False" SpaceWithinExpressionParentheses="False" SpaceWithinCastParentheses="False" SpaceWithinOtherParentheses="False" SpaceAfterCast="False" SpacesIgnoreAroundVariableDeclaration="False" SpaceBeforeOpenSquareBracket="False" SpaceBetweenEmptySquareBrackets="False" SpaceWithinSquareBrackets="False" SpaceAfterColonInBaseTypeDeclaration="True" SpaceAfterComma="True" SpaceAfterDot="False" SpaceAfterSemicolonsInForStatement="True" SpaceBeforeColonInBaseTypeDeclaration="True" SpaceBeforeComma="False" SpaceBeforeDot="False" SpaceBeforeSemicolonsInForStatement="False" SpacingAroundBinaryOperator="Single" WrappingPreserveSingleLine="True" WrappingKeepStatementsOnSingleLine="True" PlaceSystemDirectiveFirst="True" NewLineForMembersInObjectInit="False" NewLineForMembersInAnonymousTypes="False" NewLineForClausesInQuery="False" SpaceAfterControlFlowStatementKeyword="False" scope="text/x-csharp"/>
-          <DotNetNamingPolicy DirectoryNamespaceAssociation="PrefixedHierarchical" ResourceNamePolicy="MSBuild"/>
+          <TextStylePolicy FileWidth="120" TabWidth="4" IndentWidth="4" RemoveTrailingWhitespace="True" NoTabsAfterNonTabs="False" EolMarker="Native" TabsToSpaces="True" scope="text/x-csharp" />
+          <CSharpFormattingPolicy IndentBlock="True" IndentBraces="False" IndentSwitchSection="True" IndentSwitchCaseSection="True" LabelPositioning="OneLess" NewLinesForBracesInTypes="True" NewLinesForBracesInMethods="True" NewLinesForBracesInProperties="True" NewLinesForBracesInAccessors="True" NewLinesForBracesInAnonymousMethods="True" NewLinesForBracesInControlBlocks="True" NewLinesForBracesInAnonymousTypes="True" NewLinesForBracesInObjectCollectionArrayInitializers="True" NewLinesForBracesInLambdaExpressionBody="True" NewLineForElse="True" NewLineForCatch="True" NewLineForFinally="True" SpacingAfterMethodDeclarationName="False" SpaceWithinMethodDeclarationParenthesis="False" SpaceBetweenEmptyMethodDeclarationParentheses="False" SpaceAfterMethodCallName="False" SpaceWithinMethodCallParentheses="False" SpaceBetweenEmptyMethodCallParentheses="False" SpaceWithinExpressionParentheses="False" SpaceWithinCastParentheses="False" SpaceWithinOtherParentheses="False" SpaceAfterCast="False" SpacesIgnoreAroundVariableDeclaration="False" SpaceBeforeOpenSquareBracket="False" SpaceBetweenEmptySquareBrackets="False" SpaceWithinSquareBrackets="False" SpaceAfterColonInBaseTypeDeclaration="True" SpaceAfterComma="True" SpaceAfterDot="False" SpaceAfterSemicolonsInForStatement="True" SpaceBeforeColonInBaseTypeDeclaration="True" SpaceBeforeComma="False" SpaceBeforeDot="False" SpaceBeforeSemicolonsInForStatement="False" SpacingAroundBinaryOperator="Single" WrappingPreserveSingleLine="True" WrappingKeepStatementsOnSingleLine="True" PlaceSystemDirectiveFirst="True" NewLineForMembersInObjectInit="False" NewLineForMembersInAnonymousTypes="False" NewLineForClausesInQuery="False" SpaceAfterControlFlowStatementKeyword="False" scope="text/x-csharp" />
+          <DotNetNamingPolicy DirectoryNamespaceAssociation="PrefixedHierarchical" ResourceNamePolicy="MSBuild" />
         </Policies>
       </Properties>
     </MonoDevelop>
