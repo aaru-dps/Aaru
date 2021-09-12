@@ -276,6 +276,9 @@
     <PackageReference Include="System.Runtime.InteropServices" Version="4.3.0" />
     <PackageReference Include="System.Net.Primitives" Version="4.3.1" />
     <PackageReference Include="System.IO.FileSystem" Version="4.3.0" />
+    <PackageReference Update="Packaging.Targets">
+      <Version>0.1.189</Version>
+    </PackageReference>
   </ItemGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
     <DebugPackage>-dbg</DebugPackage>
