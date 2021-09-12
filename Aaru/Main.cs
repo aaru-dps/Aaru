@@ -50,6 +50,7 @@ using Aaru.Database;
 using Aaru.Settings;
 using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
+using Spectre.Console;
 
 namespace Aaru
 {
@@ -61,6 +62,11 @@ namespace Aaru
 
         public static int Main([NotNull] string[] args)
         {
+            IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
+            {
+                Out = new AnsiConsoleOutput(System.Console.Error)
+            });
+
             object[] attributes = typeof(MainClass).Assembly.GetCustomAttributes(typeof(AssemblyTitleAttribute), false);
             _assemblyTitle = ((AssemblyTitleAttribute)attributes[0]).Title;
             attributes     = typeof(MainClass).Assembly.GetCustomAttributes(typeof(AssemblyCopyrightAttribute), false);
@@ -77,9 +83,29 @@ namespace Aaru
                 return Gui.Main.Start(args);
             }
 
-            AaruConsole.WriteLineEvent      += System.Console.WriteLine;
-            AaruConsole.WriteEvent          += System.Console.Write;
-            AaruConsole.ErrorWriteLineEvent += System.Console.Error.WriteLine;
+            AaruConsole.WriteLineEvent += (format, objects) =>
+            {
+                if(objects is null)
+                    AnsiConsole.MarkupLine(format);
+                else
+                    AnsiConsole.MarkupLine(format, objects);
+            };
+
+            AaruConsole.WriteEvent += (format, objects) =>
+            {
+                if(objects is null)
+                    AnsiConsole.Markup(format);
+                else
+                    AnsiConsole.Markup(format, objects);
+            };
+
+            AaruConsole.ErrorWriteLineEvent += (format, objects) =>
+            {
+                if(objects is null)
+                    stderrConsole.MarkupLine(format);
+                else
+                    stderrConsole.MarkupLine(format, objects);
+            };
 
             Settings.Settings.LoadSettings();
 
@@ -220,8 +246,10 @@ namespace Aaru
 
         internal static void PrintCopyright()
         {
-            AaruConsole.WriteLine("{0} {1}", _assemblyTitle, _assemblyVersion?.InformationalVersion);
-            AaruConsole.WriteLine("{0}", _assemblyCopyright);
+            AaruConsole.WriteLine("[bold][red]{0}[/] [green]{1}[/][/]", _assemblyTitle,
+                                  _assemblyVersion?.InformationalVersion);
+
+            AaruConsole.WriteLine("[bold][blue]{0}[/][/]", _assemblyCopyright);
             AaruConsole.WriteLine();
         }
     }
