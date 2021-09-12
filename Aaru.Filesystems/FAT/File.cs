@@ -196,8 +196,8 @@ namespace Aaru.Filesystems
 
                 if((_fat32 && entry.ea_handle << 16 > 0) ||
                    entry.start_cluster > 0)
-                    stat.Blocks = _fat32 ? GetClusters((uint)((entry.ea_handle << 16) + entry.start_cluster)).Length
-                                      : GetClusters(entry.start_cluster).Length;
+                    stat.Blocks = _fat32 ? (GetClusters((uint)((entry.ea_handle << 16) + entry.start_cluster))?.Length ?? 0)
+                                      : (GetClusters(entry.start_cluster)?.Length??0);
 
                 stat.Length = stat.Blocks * stat.BlockSize;
             }
