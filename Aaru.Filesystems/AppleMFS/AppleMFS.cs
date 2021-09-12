@@ -67,7 +67,7 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public string Name => "Apple Macintosh File System";
         /// <inheritdoc />
-        public Guid Id => new Guid("36405F8D-0D26-4066-6538-5DBF5D065C3A");
+        public Guid Id => new("36405F8D-0D26-4066-6538-5DBF5D065C3A");
         /// <inheritdoc />
         public Encoding Encoding { get; private set; }
         /// <inheritdoc />
@@ -82,7 +82,7 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public Dictionary<string, string> Namespaces => null;
 
-        static Dictionary<string, string> GetDefaultOptions() => new Dictionary<string, string>
+        static Dictionary<string, string> GetDefaultOptions() => new()
         {
             {
                 "debug", false.ToString()

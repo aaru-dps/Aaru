@@ -122,11 +122,11 @@ namespace Aaru.Filesystems
                 hsOff = 8;
 
             _cdi = false;
-            List<ulong> bvdSectors = new List<ulong>();
-            List<ulong> pvdSectors = new List<ulong>();
-            List<ulong> svdSectors = new List<ulong>();
-            List<ulong> evdSectors = new List<ulong>();
-            List<ulong> vpdSectors = new List<ulong>();
+            List<ulong> bvdSectors = new();
+            List<ulong> pvdSectors = new();
+            List<ulong> svdSectors = new();
+            List<ulong> evdSectors = new();
+            List<ulong> vpdSectors = new();
 
             while(true)
             {

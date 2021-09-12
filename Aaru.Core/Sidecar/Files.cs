@@ -52,8 +52,8 @@ namespace Aaru.Core
             if(ret != Errno.NoError)
                 return null;
 
-            List<DirectoryType>    directories = new List<DirectoryType>();
-            List<ContentsFileType> files       = new List<ContentsFileType>();
+            List<DirectoryType>    directories = new();
+            List<ContentsFileType> files       = new();
 
             foreach(string dirent in dirents)
             {
@@ -155,8 +155,8 @@ namespace Aaru.Core
             if(ret != Errno.NoError)
                 return null;
 
-            List<DirectoryType>    directories = new List<DirectoryType>();
-            List<ContentsFileType> files       = new List<ContentsFileType>();
+            List<DirectoryType>    directories = new();
+            List<ContentsFileType> files       = new();
 
             foreach(string dirent in dirents)
             {
@@ -297,7 +297,7 @@ namespace Aaru.Core
             if(ret != Errno.NoError)
                 return file;
 
-            List<ExtendedAttributeType> xattrTypes = new List<ExtendedAttributeType>();
+            List<ExtendedAttributeType> xattrTypes = new();
 
             foreach(string xattr in xattrs)
             {

@@ -325,7 +325,7 @@ namespace Aaru.Commands.Filesystem
                 return;
             }
 
-            Dictionary<string, FileEntryInfo> stats = new Dictionary<string, FileEntryInfo>();
+            Dictionary<string, FileEntryInfo> stats = new();
 
             foreach(string entry in directory)
             {

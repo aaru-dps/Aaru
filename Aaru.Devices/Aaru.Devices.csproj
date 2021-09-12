@@ -17,8 +17,8 @@
     <Product>Aaru Data Preservation Suite</Product>
     <Title>Aaru.Devices</Title>
     <ApplicationVersion>$(Version)</ApplicationVersion>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
-    <LangVersion>8</LangVersion>
+    <TargetFramework>net6</TargetFramework>
+    <LangVersion>10</LangVersion>
     <Description>Media device hardware interface implementation used by the Aaru Data Preservation Suite.</Description>
     <PackageProjectUrl>https://github.com/aaru-dps/</PackageProjectUrl>
     <PackageLicenseExpression>LGPL-2.1-only</PackageLicenseExpression>
@@ -29,6 +29,7 @@
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <Authors>Natalia Portillo &lt;claunia@claunia.com&gt;</Authors>
+    <DisableImplicitNamespaceImports>true</DisableImplicitNamespaceImports>
   </PropertyGroup>
   <PropertyGroup>
     <NrtRevisionFormat>$(Version)+{chash:8}</NrtRevisionFormat>
@@ -55,87 +56,87 @@
     <ConsolePause>false</ConsolePause>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System"/>
-    <Reference Include="System.Management"/>
+    <Reference Include="System" />
+    <Reference Include="System.Management" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Device\DeviceException.cs"/>
-    <Compile Include="Device\ScsiCommands\MediaTek.cs"/>
-    <Compile Include="Device\ScsiCommands\MiniDisc.cs"/>
-    <Compile Include="Device\ScsiCommands\Optical.cs"/>
-    <Compile Include="FreeBSD\ListDevices.cs"/>
-    <Compile Include="Linux\Extern.cs"/>
-    <Compile Include="Linux\Structs.cs"/>
-    <Compile Include="Linux\Enums.cs"/>
-    <Compile Include="Enums.cs"/>
-    <Compile Include="Remote\Consts.cs"/>
-    <Compile Include="Remote\Enums.cs"/>
-    <Compile Include="Remote\Remote.cs"/>
-    <Compile Include="Remote\Structs.cs"/>
-    <Compile Include="Windows\Extern.cs"/>
-    <Compile Include="Windows\ListDevices.cs"/>
-    <Compile Include="Windows\Structs.cs"/>
-    <Compile Include="Windows\Enums.cs"/>
-    <Compile Include="Windows\Command.cs"/>
-    <Compile Include="Linux\Command.cs"/>
-    <Compile Include="Command.cs"/>
-    <Compile Include="Device\Constructor.cs"/>
-    <Compile Include="Device\Variables.cs"/>
-    <Compile Include="Device\Destructor.cs"/>
-    <Compile Include="Device\Commands.cs"/>
-    <Compile Include="Device\ScsiCommands\MMC.cs"/>
-    <Compile Include="Device\ScsiCommands\SPC.cs"/>
-    <Compile Include="Device\ScsiCommands\SBC.cs"/>
-    <Compile Include="Device\ScsiCommands\Pioneer.cs"/>
-    <Compile Include="Device\ScsiCommands\Plextor.cs"/>
-    <Compile Include="Device\ScsiCommands\NEC.cs"/>
-    <Compile Include="Device\ScsiCommands\HL-DT-ST.cs"/>
-    <Compile Include="Device\ScsiCommands\SSC.cs"/>
-    <Compile Include="Device\ScsiCommands\SMC.cs"/>
-    <Compile Include="Device\ScsiCommands\Adaptec.cs"/>
-    <Compile Include="Device\ScsiCommands\ArchiveCorp.cs"/>
-    <Compile Include="Device\ScsiCommands\Certance.cs"/>
-    <Compile Include="Device\ScsiCommands\Fujitsu.cs"/>
-    <Compile Include="Device\ScsiCommands\HP.cs"/>
-    <Compile Include="Device\ScsiCommands\Plasmon.cs"/>
-    <Compile Include="Device\ScsiCommands\SyQuest.cs"/>
-    <Compile Include="Device\AtaCommands\AtaCHS.cs"/>
-    <Compile Include="Device\AtaCommands\Atapi.cs"/>
-    <Compile Include="Device\AtaCommands\Ata28.cs"/>
-    <Compile Include="Device\AtaCommands\Ata48.cs"/>
-    <Compile Include="Device\AtaCommands\Smart.cs"/>
-    <Compile Include="Device\AtaCommands\Cfa.cs"/>
-    <Compile Include="Device\AtaCommands\MCPT.cs"/>
-    <Compile Include="FreeBSD\Command.cs"/>
-    <Compile Include="FreeBSD\Enums.cs"/>
-    <Compile Include="FreeBSD\Extern.cs"/>
-    <Compile Include="FreeBSD\Structs.cs"/>
-    <Compile Include="Device\MmcCommands\MMC.cs"/>
-    <Compile Include="Device\MmcCommands\SecureDigital.cs"/>
-    <Compile Include="Device\ScsiCommands\Kreon.cs"/>
-    <Compile Include="Device\List.cs"/>
-    <Compile Include="Linux\ListDevices.cs"/>
-    <Compile Include="Windows\Usb.cs"/>
-    <Compile Include="Windows\UsbFunctions.cs"/>
+    <Compile Include="Device\DeviceException.cs" />
+    <Compile Include="Device\ScsiCommands\MediaTek.cs" />
+    <Compile Include="Device\ScsiCommands\MiniDisc.cs" />
+    <Compile Include="Device\ScsiCommands\Optical.cs" />
+    <Compile Include="FreeBSD\ListDevices.cs" />
+    <Compile Include="Linux\Extern.cs" />
+    <Compile Include="Linux\Structs.cs" />
+    <Compile Include="Linux\Enums.cs" />
+    <Compile Include="Enums.cs" />
+    <Compile Include="Remote\Consts.cs" />
+    <Compile Include="Remote\Enums.cs" />
+    <Compile Include="Remote\Remote.cs" />
+    <Compile Include="Remote\Structs.cs" />
+    <Compile Include="Windows\Extern.cs" />
+    <Compile Include="Windows\ListDevices.cs" />
+    <Compile Include="Windows\Structs.cs" />
+    <Compile Include="Windows\Enums.cs" />
+    <Compile Include="Windows\Command.cs" />
+    <Compile Include="Linux\Command.cs" />
+    <Compile Include="Command.cs" />
+    <Compile Include="Device\Constructor.cs" />
+    <Compile Include="Device\Variables.cs" />
+    <Compile Include="Device\Destructor.cs" />
+    <Compile Include="Device\Commands.cs" />
+    <Compile Include="Device\ScsiCommands\MMC.cs" />
+    <Compile Include="Device\ScsiCommands\SPC.cs" />
+    <Compile Include="Device\ScsiCommands\SBC.cs" />
+    <Compile Include="Device\ScsiCommands\Pioneer.cs" />
+    <Compile Include="Device\ScsiCommands\Plextor.cs" />
+    <Compile Include="Device\ScsiCommands\NEC.cs" />
+    <Compile Include="Device\ScsiCommands\HL-DT-ST.cs" />
+    <Compile Include="Device\ScsiCommands\SSC.cs" />
+    <Compile Include="Device\ScsiCommands\SMC.cs" />
+    <Compile Include="Device\ScsiCommands\Adaptec.cs" />
+    <Compile Include="Device\ScsiCommands\ArchiveCorp.cs" />
+    <Compile Include="Device\ScsiCommands\Certance.cs" />
+    <Compile Include="Device\ScsiCommands\Fujitsu.cs" />
+    <Compile Include="Device\ScsiCommands\HP.cs" />
+    <Compile Include="Device\ScsiCommands\Plasmon.cs" />
+    <Compile Include="Device\ScsiCommands\SyQuest.cs" />
+    <Compile Include="Device\AtaCommands\AtaCHS.cs" />
+    <Compile Include="Device\AtaCommands\Atapi.cs" />
+    <Compile Include="Device\AtaCommands\Ata28.cs" />
+    <Compile Include="Device\AtaCommands\Ata48.cs" />
+    <Compile Include="Device\AtaCommands\Smart.cs" />
+    <Compile Include="Device\AtaCommands\Cfa.cs" />
+    <Compile Include="Device\AtaCommands\MCPT.cs" />
+    <Compile Include="FreeBSD\Command.cs" />
+    <Compile Include="FreeBSD\Enums.cs" />
+    <Compile Include="FreeBSD\Extern.cs" />
+    <Compile Include="FreeBSD\Structs.cs" />
+    <Compile Include="Device\MmcCommands\MMC.cs" />
+    <Compile Include="Device\MmcCommands\SecureDigital.cs" />
+    <Compile Include="Device\ScsiCommands\Kreon.cs" />
+    <Compile Include="Device\List.cs" />
+    <Compile Include="Linux\ListDevices.cs" />
+    <Compile Include="Windows\Usb.cs" />
+    <Compile Include="Windows\UsbFunctions.cs" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="System.Management" Version="4.7.0"/>
-    <PackageReference Include="Unclassified.NetRevisionTask" Version="0.3.0" PrivateAssets="all"/>
+    <PackageReference Include="System.Management" Version="6.0.0-preview.7.21377.19" />
+    <PackageReference Include="Unclassified.NetRevisionTask" Version="0.3.0" PrivateAssets="all" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
       <Properties>
         <Policies>
-          <DotNetNamingPolicy DirectoryNamespaceAssociation="PrefixedHierarchical" ResourceNamePolicy="MSBuild"/>
-          <StandardHeader IncludeInNewFiles="True" Text="/***************************************************************************&#xA;Aaru Data Preservation Suite&#xA;----------------------------------------------------------------------------&#xA; &#xA;Filename       : ${FileName}&#xA;Author(s)      : ${AuthorName} &lt;${AuthorEmail}&gt;&#xA;&#xA;Component      : Component&#xA; &#xA;--[ Description ] ----------------------------------------------------------&#xA; &#xA;    Description&#xA; &#xA;--[ License ] --------------------------------------------------------------&#xA; &#xA;    This library is free software; you can redistribute it and/or modify&#xA;    it under the terms of the GNU Lesser General Public License as&#xA;    published by the Free Software Foundation; either version 2.1 of the&#xA;    License, or (at your option) any later version.&#xA;&#xA;    This library is distributed in the hope that it will be useful, but&#xA;    WITHOUT ANY WARRANTY; without even the implied warranty of&#xA;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU&#xA;    Lesser General Public License for more details.&#xA;&#xA;    You should have received a copy of the GNU Lesser General Public&#xA;    License along with this library; if not, see &lt;http://www.gnu.org/licenses/&gt;.&#xA;&#xA;----------------------------------------------------------------------------&#xA;Copyright © 2011-${Year} ${CopyrightHolder}&#xA;****************************************************************************/"/>
-          <TextStylePolicy FileWidth="120" TabWidth="4" IndentWidth="4" RemoveTrailingWhitespace="True" NoTabsAfterNonTabs="False" EolMarker="Native" TabsToSpaces="True" scope="text/x-csharp"/>
-          <CSharpFormattingPolicy IndentBlock="True" IndentBraces="False" IndentSwitchSection="True" IndentSwitchCaseSection="True" LabelPositioning="OneLess" NewLinesForBracesInTypes="True" NewLinesForBracesInMethods="True" NewLinesForBracesInProperties="True" NewLinesForBracesInAccessors="True" NewLinesForBracesInAnonymousMethods="True" NewLinesForBracesInControlBlocks="True" NewLinesForBracesInAnonymousTypes="True" NewLinesForBracesInObjectCollectionArrayInitializers="True" NewLinesForBracesInLambdaExpressionBody="True" NewLineForElse="True" NewLineForCatch="True" NewLineForFinally="True" NewLineForMembersInObjectInit="True" NewLineForMembersInAnonymousTypes="True" NewLineForClausesInQuery="True" SpacingAfterMethodDeclarationName="False" SpaceWithinMethodDeclarationParenthesis="False" SpaceBetweenEmptyMethodDeclarationParentheses="False" SpaceAfterMethodCallName="False" SpaceWithinMethodCallParentheses="False" SpaceBetweenEmptyMethodCallParentheses="False" SpaceWithinExpressionParentheses="False" SpaceWithinCastParentheses="False" SpaceWithinOtherParentheses="False" SpaceAfterCast="False" SpacesIgnoreAroundVariableDeclaration="False" SpaceBeforeOpenSquareBracket="False" SpaceBetweenEmptySquareBrackets="False" SpaceWithinSquareBrackets="False" SpaceAfterColonInBaseTypeDeclaration="True" SpaceAfterComma="True" SpaceAfterDot="False" SpaceAfterSemicolonsInForStatement="True" SpaceBeforeColonInBaseTypeDeclaration="True" SpaceBeforeComma="False" SpaceBeforeDot="False" SpaceBeforeSemicolonsInForStatement="False" SpacingAroundBinaryOperator="Single" WrappingPreserveSingleLine="True" WrappingKeepStatementsOnSingleLine="True" PlaceSystemDirectiveFirst="True" SpaceAfterControlFlowStatementKeyword="False" scope="text/x-csharp"/>
+          <DotNetNamingPolicy DirectoryNamespaceAssociation="PrefixedHierarchical" ResourceNamePolicy="MSBuild" />
+          <StandardHeader IncludeInNewFiles="True" Text="/***************************************************************************&#xA;Aaru Data Preservation Suite&#xA;----------------------------------------------------------------------------&#xA; &#xA;Filename       : ${FileName}&#xA;Author(s)      : ${AuthorName} &lt;${AuthorEmail}&gt;&#xA;&#xA;Component      : Component&#xA; &#xA;--[ Description ] ----------------------------------------------------------&#xA; &#xA;    Description&#xA; &#xA;--[ License ] --------------------------------------------------------------&#xA; &#xA;    This library is free software; you can redistribute it and/or modify&#xA;    it under the terms of the GNU Lesser General Public License as&#xA;    published by the Free Software Foundation; either version 2.1 of the&#xA;    License, or (at your option) any later version.&#xA;&#xA;    This library is distributed in the hope that it will be useful, but&#xA;    WITHOUT ANY WARRANTY; without even the implied warranty of&#xA;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU&#xA;    Lesser General Public License for more details.&#xA;&#xA;    You should have received a copy of the GNU Lesser General Public&#xA;    License along with this library; if not, see &lt;http://www.gnu.org/licenses/&gt;.&#xA;&#xA;----------------------------------------------------------------------------&#xA;Copyright © 2011-${Year} ${CopyrightHolder}&#xA;****************************************************************************/" />
+          <TextStylePolicy FileWidth="120" TabWidth="4" IndentWidth="4" RemoveTrailingWhitespace="True" NoTabsAfterNonTabs="False" EolMarker="Native" TabsToSpaces="True" scope="text/x-csharp" />
+          <CSharpFormattingPolicy IndentBlock="True" IndentBraces="False" IndentSwitchSection="True" IndentSwitchCaseSection="True" LabelPositioning="OneLess" NewLinesForBracesInTypes="True" NewLinesForBracesInMethods="True" NewLinesForBracesInProperties="True" NewLinesForBracesInAccessors="True" NewLinesForBracesInAnonymousMethods="True" NewLinesForBracesInControlBlocks="True" NewLinesForBracesInAnonymousTypes="True" NewLinesForBracesInObjectCollectionArrayInitializers="True" NewLinesForBracesInLambdaExpressionBody="True" NewLineForElse="True" NewLineForCatch="True" NewLineForFinally="True" NewLineForMembersInObjectInit="True" NewLineForMembersInAnonymousTypes="True" NewLineForClausesInQuery="True" SpacingAfterMethodDeclarationName="False" SpaceWithinMethodDeclarationParenthesis="False" SpaceBetweenEmptyMethodDeclarationParentheses="False" SpaceAfterMethodCallName="False" SpaceWithinMethodCallParentheses="False" SpaceBetweenEmptyMethodCallParentheses="False" SpaceWithinExpressionParentheses="False" SpaceWithinCastParentheses="False" SpaceWithinOtherParentheses="False" SpaceAfterCast="False" SpacesIgnoreAroundVariableDeclaration="False" SpaceBeforeOpenSquareBracket="False" SpaceBetweenEmptySquareBrackets="False" SpaceWithinSquareBrackets="False" SpaceAfterColonInBaseTypeDeclaration="True" SpaceAfterComma="True" SpaceAfterDot="False" SpaceAfterSemicolonsInForStatement="True" SpaceBeforeColonInBaseTypeDeclaration="True" SpaceBeforeComma="False" SpaceBeforeDot="False" SpaceBeforeSemicolonsInForStatement="False" SpacingAroundBinaryOperator="Single" WrappingPreserveSingleLine="True" WrappingKeepStatementsOnSingleLine="True" PlaceSystemDirectiveFirst="True" SpaceAfterControlFlowStatementKeyword="False" scope="text/x-csharp" />
         </Policies>
       </Properties>
     </MonoDevelop>
   </ProjectExtensions>
   <ItemGroup>
-    <ProjectReference Include="..\Aaru.CommonTypes\Aaru.CommonTypes.csproj"/>
+    <ProjectReference Include="..\Aaru.CommonTypes\Aaru.CommonTypes.csproj" />
     <ProjectReference Include="..\Aaru.Console\Aaru.Console.csproj">
       <Project>{CCAA7AFE-C094-4D82-A66D-630DE8A3F545}</Project>
       <Name>Aaru.Console</Name>

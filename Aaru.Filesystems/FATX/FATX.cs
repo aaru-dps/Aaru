@@ -67,7 +67,7 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public string Name => "FATX Filesystem Plugin";
         /// <inheritdoc />
-        public Guid Id => new Guid("ED27A721-4A17-4649-89FD-33633B46E228");
+        public Guid Id => new("ED27A721-4A17-4649-89FD-33633B46E228");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
@@ -98,7 +98,7 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public Dictionary<string, string> Namespaces => null;
 
-        static Dictionary<string, string> GetDefaultOptions() => new Dictionary<string, string>
+        static Dictionary<string, string> GetDefaultOptions() => new()
         {
             {
                 "debug", false.ToString()

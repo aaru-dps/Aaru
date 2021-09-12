@@ -28,7 +28,7 @@ Stable releases in [Github](https://github.com/aaru-dps/Aaru/releases).
 
 System requirements
 ===================
-Aaru is created using .NET Core 3.1 and can be compiled with all the major IDEs. To run it you require to use one of the
+Aaru is created using .NET 6 and can be compiled with all the major IDEs. To run it you require to use one of the
 stable releases, or build it yourself.
 
 Usage

@@ -88,7 +88,7 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public string Name => "CP/M File System";
         /// <inheritdoc />
-        public Guid Id => new Guid("AA2B8585-41DF-4E3B-8A35-D1A935E2F8A1");
+        public Guid Id => new("AA2B8585-41DF-4E3B-8A35-D1A935E2F8A1");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
@@ -100,7 +100,7 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public Dictionary<string, string> Namespaces => null;
 
-        static Dictionary<string, string> GetDefaultOptions() => new Dictionary<string, string>
+        static Dictionary<string, string> GetDefaultOptions() => new()
         {
             {
                 "debug", false.ToString()

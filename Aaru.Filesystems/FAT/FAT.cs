@@ -74,7 +74,7 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public string Name => "Microsoft File Allocation Table";
         /// <inheritdoc />
-        public Guid Id => new Guid("33513B2C-0D26-0D2D-32C3-79D8611158E0");
+        public Guid Id => new("33513B2C-0D26-0D2D-32C3-79D8611158E0");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
@@ -84,7 +84,7 @@ namespace Aaru.Filesystems
                 {};
 
         /// <inheritdoc />
-        public Dictionary<string, string> Namespaces => new Dictionary<string, string>
+        public Dictionary<string, string> Namespaces => new()
         {
             {
                 "dos", "DOS (8.3 all uppercase)"
@@ -103,7 +103,7 @@ namespace Aaru.Filesystems
             }
         };
 
-        static Dictionary<string, string> GetDefaultOptions() => new Dictionary<string, string>
+        static Dictionary<string, string> GetDefaultOptions() => new()
         {
             {
                 "debug", false.ToString()

@@ -60,7 +60,7 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public string Name => "Apple DOS File System";
         /// <inheritdoc />
-        public Guid Id => new Guid("8658A1E9-B2E7-4BCC-9638-157A31B0A700\n");
+        public Guid Id => new("8658A1E9-B2E7-4BCC-9638-157A31B0A700\n");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
@@ -72,7 +72,7 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public Dictionary<string, string> Namespaces => null;
 
-        static Dictionary<string, string> GetDefaultOptions() => new Dictionary<string, string>
+        static Dictionary<string, string> GetDefaultOptions() => new()
         {
             {
                 "debug", false.ToString()

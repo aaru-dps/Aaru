@@ -55,7 +55,7 @@ namespace Aaru.Filesystems.LisaFS
         /// <inheritdoc />
         public string Name => "Apple Lisa File System";
         /// <inheritdoc />
-        public Guid Id => new Guid("7E6034D1-D823-4248-A54D-239742B28391");
+        public Guid Id => new("7E6034D1-D823-4248-A54D-239742B28391");
         /// <inheritdoc />
         public Encoding Encoding { get; private set; }
         /// <inheritdoc />
@@ -70,7 +70,7 @@ namespace Aaru.Filesystems.LisaFS
                 {};
 
         /// <inheritdoc />
-        public Dictionary<string, string> Namespaces => new Dictionary<string, string>
+        public Dictionary<string, string> Namespaces => new()
         {
             {
                 "workshop", "Filenames as shown by the Lisa Pascal Workshop (default)"
@@ -80,7 +80,7 @@ namespace Aaru.Filesystems.LisaFS
             }
         };
 
-        static Dictionary<string, string> GetDefaultOptions() => new Dictionary<string, string>
+        static Dictionary<string, string> GetDefaultOptions() => new()
         {
             {
                 "debug", false.ToString()

@@ -17,8 +17,8 @@
     <Product>Aaru Data Preservation Suite</Product>
     <Title>Aaru.Archives</Title>
     <ApplicationVersion>$(Version)</ApplicationVersion>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
-    <LangVersion>8</LangVersion>
+    <TargetFramework>net6</TargetFramework>
+    <LangVersion>10</LangVersion>
     <Description>Archive implementations used by the Aaru Data Preservation Suite.</Description>
     <PackageProjectUrl>https://github.com/aaru-dps/</PackageProjectUrl>
     <PackageLicenseExpression>LGPL-2.1-only</PackageLicenseExpression>
@@ -29,6 +29,7 @@
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <Authors>Natalia Portillo &lt;claunia@claunia.com&gt;</Authors>
+    <DisableImplicitNamespaceImports>true</DisableImplicitNamespaceImports>
   </PropertyGroup>
   <PropertyGroup>
     <NrtRevisionFormat>$(Version)+{chash:8}</NrtRevisionFormat>

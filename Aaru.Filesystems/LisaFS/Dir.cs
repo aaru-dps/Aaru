@@ -112,7 +112,7 @@ namespace Aaru.Filesystems.LisaFS
                     return error;
 
                 int                  offset    = 0;
-                List<CatalogEntryV2> catalogV2 = new List<CatalogEntryV2>();
+                List<CatalogEntryV2> catalogV2 = new();
 
                 // For each entry on the catalog
                 while(offset + 54 < buf.Length)
@@ -206,7 +206,7 @@ namespace Aaru.Filesystems.LisaFS
 
             ulong nextCatalogPointer = BigEndianBitConverter.ToUInt32(firstCatalogBlock, 0x7FA);
 
-            List<byte[]> catalogBlocks = new List<byte[]>
+            List<byte[]> catalogBlocks = new()
             {
                 firstCatalogBlock
             };

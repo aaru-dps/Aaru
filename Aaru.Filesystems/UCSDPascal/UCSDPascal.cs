@@ -59,7 +59,7 @@ namespace Aaru.Filesystems.UCSDPascal
         /// <inheritdoc />
         public string Name => "U.C.S.D. Pascal filesystem";
         /// <inheritdoc />
-        public Guid Id => new Guid("B0AC2CB5-72AA-473A-9200-270B5A2C2D53");
+        public Guid Id => new("B0AC2CB5-72AA-473A-9200-270B5A2C2D53");
         /// <inheritdoc />
         public Encoding Encoding { get; private set; }
         /// <inheritdoc />
@@ -92,7 +92,7 @@ namespace Aaru.Filesystems.UCSDPascal
         /// <inheritdoc />
         public Dictionary<string, string> Namespaces => null;
 
-        static Dictionary<string, string> GetDefaultOptions() => new Dictionary<string, string>
+        static Dictionary<string, string> GetDefaultOptions() => new()
         {
             {
                 "debug", false.ToString()

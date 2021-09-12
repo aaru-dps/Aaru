@@ -58,7 +58,7 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public string Name => "Opera Filesystem Plugin";
         /// <inheritdoc />
-        public Guid Id => new Guid("0ec84ec7-eae6-4196-83fe-943b3fe46dbd");
+        public Guid Id => new("0ec84ec7-eae6-4196-83fe-943b3fe46dbd");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
@@ -89,7 +89,7 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public Dictionary<string, string> Namespaces => null;
 
-        static Dictionary<string, string> GetDefaultOptions() => new Dictionary<string, string>
+        static Dictionary<string, string> GetDefaultOptions() => new()
         {
             {
                 "debug", false.ToString()

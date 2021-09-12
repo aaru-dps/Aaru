@@ -36,11 +36,11 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reactive;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Aaru.Gui.Models;
 using Aaru.Gui.Views.Dialogs;
 using JetBrains.Annotations;
-using Microsoft.DotNet.PlatformAbstractions;
 using ReactiveUI;
 
 namespace Aaru.Gui.ViewModels.Dialogs
@@ -148,29 +148,22 @@ Logo and art:
                 }
             };
 
-            switch(RuntimeEnvironment.OperatingSystemPlatform)
+            if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                case Platform.Unknown: return;
-                case Platform.Windows:
-                    process.StartInfo.FileName  = "cmd";
-                    process.StartInfo.Arguments = $"/c start {process.StartInfo.Arguments.Replace("&", "^&")}";
-
-                    break;
-                case Platform.FreeBSD:
-                case Platform.Linux:
-                    process.StartInfo.FileName = "xdg-open";
-
-                    break;
-                case Platform.Darwin:
-                    process.StartInfo.FileName = "open";
-
-                    break;
-                default:
-                    if(Debugger.IsAttached)
-                        throw new ArgumentOutOfRangeException();
-
-                    return;
+                process.StartInfo.FileName  = "cmd";
+                process.StartInfo.Arguments = $"/c start {process.StartInfo.Arguments.Replace("&", "^&")}";
             }
+            else if(RuntimeInformation.IsOSPlatform(OSPlatform.FreeBSD) ||
+                    RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                process.StartInfo.FileName = "xdg-open";
+            }
+            else if(RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                process.StartInfo.FileName = "open";
+            }
+            else
+                return;
 
             process.Start();
         }

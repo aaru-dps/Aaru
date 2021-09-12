@@ -69,7 +69,7 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public string Name => "ISO9660 Filesystem";
         /// <inheritdoc />
-        public Guid Id => new Guid("d812f4d3-c357-400d-90fd-3b22ef786aa8");
+        public Guid Id => new("d812f4d3-c357-400d-90fd-3b22ef786aa8");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
@@ -84,7 +84,7 @@ namespace Aaru.Filesystems
             };
 
         /// <inheritdoc />
-        public Dictionary<string, string> Namespaces => new Dictionary<string, string>
+        public Dictionary<string, string> Namespaces => new()
         {
             {
                 "normal", "Primary Volume Descriptor, ignoring ;1 suffixes"
@@ -103,7 +103,7 @@ namespace Aaru.Filesystems
             }
         };
 
-        static Dictionary<string, string> GetDefaultOptions() => new Dictionary<string, string>
+        static Dictionary<string, string> GetDefaultOptions() => new()
         {
             {
                 "debug", false.ToString()
