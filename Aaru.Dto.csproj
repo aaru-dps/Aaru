@@ -63,7 +63,7 @@
         </EmbeddedResource>
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="Unclassified.NetRevisionTask" Version="0.3.0" PrivateAssets="all"/>
+        <PackageReference Include="Unclassified.NetRevisionTask" Version="0.4.1" PrivateAssets="all" />
     </ItemGroup>
     <ItemGroup>
       <Compile Include="CdOffsetDto.cs" />
