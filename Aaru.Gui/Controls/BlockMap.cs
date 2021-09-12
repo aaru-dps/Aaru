@@ -40,6 +40,7 @@ using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using Avalonia.Threading;
+using Avalonia.Visuals.Media.Imaging;
 using JetBrains.Annotations;
 
 namespace Aaru.Gui.Controls
@@ -162,7 +163,7 @@ namespace Aaru.Gui.Controls
             set => SetValue(BlocksProperty, value);
         }
 
-        protected override void OnPropertyChanged([NotNull] AvaloniaPropertyChangedEventArgs e)
+        protected override void OnPropertyChanged<T>([NotNull] AvaloniaPropertyChangedEventArgs<T> e)
         {
             base.OnPropertyChanged(e);
 
@@ -229,7 +230,9 @@ namespace Aaru.Gui.Controls
                 CreateBitmap();
             }
 
-            context.DrawImage(_bitmap, 1, new Rect(0, 0, Width, Height), new Rect(0, 0, Width, Height));
+            context.DrawImage(_bitmap, new Rect(0, 0, Width, Height), new Rect(0, 0, Width, Height),
+                              BitmapInterpolationMode.HighQuality);
+
             Dispatcher.UIThread.Post(InvalidateVisual, DispatcherPriority.Background);
             base.Render(context);
         }

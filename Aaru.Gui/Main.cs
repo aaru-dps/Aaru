@@ -29,7 +29,6 @@
 using System.Text;
 using Avalonia;
 using Avalonia.Dialogs;
-using Avalonia.Logging.Serilog;
 using Avalonia.ReactiveUI;
 
 namespace Aaru.Gui
