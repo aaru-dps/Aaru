@@ -41,6 +41,7 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Core;
 using JetBrains.Annotations;
+using Spectre.Console;
 
 namespace Aaru.Commands.Image
 {
@@ -54,10 +55,29 @@ namespace Aaru.Commands.Image
             MainClass.PrintCopyright();
 
             if(debug)
-                AaruConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
+            {
+                IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
+                {
+                    Out = new AnsiConsoleOutput(System.Console.Error)
+                });
+
+                AaruConsole.DebugWriteLineEvent += (format, objects) =>
+                {
+                    if(objects is null)
+                        stderrConsole.MarkupLine(format);
+                    else
+                        stderrConsole.MarkupLine(format, objects);
+                };
+            }
 
             if(verbose)
-                AaruConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+                AaruConsole.WriteEvent += (format, objects) =>
+                {
+                    if(objects is null)
+                        AnsiConsole.Markup(format);
+                    else
+                        AnsiConsole.Markup(format, objects);
+                };
 
             AaruConsole.DebugWriteLine("List-Options command", "--debug={0}", debug);
             AaruConsole.DebugWriteLine("List-Options command", "--verbose={0}", verbose);
@@ -75,14 +95,22 @@ namespace Aaru.Commands.Image
                 if(options.Count == 0)
                     continue;
 
-                AaruConsole.WriteLine("\tOptions for {0}:", kvp.Value.Name);
-                AaruConsole.WriteLine("\t\t{0,-20} {1,-10} {2,-12} {3,-8}", "Name", "Type", "Default", "Description");
+                var table = new Table
+                {
+                    Title = new TableTitle($"Options for {kvp.Value.Name}:")
+                };
+
+                table.AddColumn("Name");
+                table.AddColumn("Type");
+                table.AddColumn("Default");
+                table.AddColumn("Description");
 
                 foreach((string name, Type type, string description, object @default) option in
                     options.OrderBy(t => t.name))
-                    AaruConsole.WriteLine("\t\t{0,-20} {1,-10} {2,-12} {3,-8}", option.name, TypeToString(option.type),
-                                          option.@default, option.description);
+                    table.AddRow(Markup.Escape(option.name), TypeToString(option.type),
+                                 option.@default?.ToString() ?? "", Markup.Escape(option.description));
 
+                AnsiConsole.Render(table);
                 AaruConsole.WriteLine();
             }
 
