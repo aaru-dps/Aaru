@@ -38,6 +38,7 @@ using System.CommandLine.Invocation;
 using Aaru.CommonTypes.Enums;
 using Aaru.Console;
 using Aaru.Core;
+using Spectre.Console;
 using Remote = Aaru.Devices.Remote.Remote;
 
 namespace Aaru.Commands
@@ -61,10 +62,29 @@ namespace Aaru.Commands
             MainClass.PrintCopyright();
 
             if(debug)
-                AaruConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
+            {
+                IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
+                {
+                    Out = new AnsiConsoleOutput(System.Console.Error)
+                });
+
+                AaruConsole.DebugWriteLineEvent += (format, objects) =>
+                {
+                    if(objects is null)
+                        stderrConsole.MarkupLine(format);
+                    else
+                        stderrConsole.MarkupLine(format, objects);
+                };
+            }
 
             if(verbose)
-                AaruConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+                AaruConsole.WriteEvent += (format, objects) =>
+                {
+                    if(objects is null)
+                        AnsiConsole.Markup(format);
+                    else
+                        AnsiConsole.Markup(format, objects);
+                };
 
             Statistics.AddCommand("remote");
 
@@ -79,12 +99,23 @@ namespace Aaru.Commands
                 Statistics.AddRemote(remote.ServerApplication, remote.ServerVersion, remote.ServerOperatingSystem,
                                      remote.ServerOperatingSystemVersion, remote.ServerArchitecture);
 
-                AaruConsole.WriteLine("Server application: {0} {1}", remote.ServerApplication, remote.ServerVersion);
+                Table table = new()
+                {
+                    Title = new TableTitle("Server information")
+                };
 
-                AaruConsole.WriteLine("Server operating system: {0} {1} ({2})", remote.ServerOperatingSystem,
-                                      remote.ServerOperatingSystemVersion, remote.ServerArchitecture);
+                table.AddColumn("");
+                table.AddColumn("");
+                table.Columns[0].RightAligned();
 
-                AaruConsole.WriteLine("Server maximum protocol: {0}", remote.ServerProtocolVersion);
+                table.AddRow("Server application", $"{remote.ServerApplication} {remote.ServerVersion}");
+
+                table.AddRow("Server operating system",
+                             $"{remote.ServerOperatingSystem} {remote.ServerOperatingSystemVersion} ({remote.ServerArchitecture})");
+
+                table.AddRow("Server maximum protocol", $"{remote.ServerProtocolVersion}");
+
+                AnsiConsole.Render(table);
                 remote.Disconnect();
             }
             catch(Exception)
