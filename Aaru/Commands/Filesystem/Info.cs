@@ -189,7 +189,15 @@ namespace Aaru.Commands.Filesystem
 
                 try
                 {
-                    if(!imageFormat.Open(inputFilter))
+                    bool opened = false;
+
+                    Core.Spectre.ProgressSingleSpinner(ctx =>
+                    {
+                        ctx.AddTask("Opening image file...").IsIndeterminate();
+                        opened = imageFormat.Open(inputFilter);
+                    });
+
+                    if(!opened)
                     {
                         AaruConsole.WriteLine("Unable to open image format");
                         AaruConsole.WriteLine("No error given");
