@@ -30,9 +30,11 @@
 // Copyright © 2011-2021 Natalia Portillo
 // ****************************************************************************/
 
+using System;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Metadata;
 using Aaru.Console;
+using Spectre.Console;
 
 namespace Aaru.Core.Devices.Report
 {
@@ -42,10 +44,18 @@ namespace Aaru.Core.Devices.Report
         /// <summary>Creates a device report for a SecureDigital or MultiMediaCard flash card</summary>
         public MmcSd MmcSdReport()
         {
-            var report = new MmcSd();
+            var    report = new MmcSd();
+            bool   sense  = true;
+            byte[] cid    = Array.Empty<byte>();
+            byte[] csd    = Array.Empty<byte>();
+            byte[] ecsd   = Array.Empty<byte>();
+            byte[] scr    = Array.Empty<byte>();
 
-            AaruConsole.WriteLine("Trying to get CID...");
-            bool sense = _dev.ReadCid(out byte[] cid, out _, _dev.Timeout, out _);
+            Spectre.ProgressSingleSpinner(ctx =>
+            {
+                ctx.AddTask("Trying to get CID...").IsIndeterminate();
+                sense = _dev.ReadCid(out cid, out _, _dev.Timeout, out _);
+            });
 
             if(!sense)
             {
@@ -79,8 +89,11 @@ namespace Aaru.Core.Devices.Report
             else
                 AaruConsole.WriteLine("Could not read CID...");
 
-            AaruConsole.WriteLine("Trying to get CSD...");
-            sense = _dev.ReadCsd(out byte[] csd, out _, _dev.Timeout, out _);
+            Spectre.ProgressSingleSpinner(ctx =>
+            {
+                ctx.AddTask("Trying to get CSD...").IsIndeterminate();
+                sense = _dev.ReadCsd(out csd, out _, _dev.Timeout, out _);
+            });
 
             if(!sense)
             {
@@ -92,23 +105,27 @@ namespace Aaru.Core.Devices.Report
 
             sense = true;
             byte[] ocr = null;
-            AaruConsole.WriteLine("Trying to get OCR...");
 
-            switch(_dev.Type)
+            Spectre.ProgressSingleSpinner(ctx =>
             {
-                case DeviceType.MMC:
-                {
-                    sense = _dev.ReadOcr(out ocr, out _, _dev.Timeout, out _);
+                ctx.AddTask("Trying to get OCR...").IsIndeterminate();
 
-                    break;
-                }
-                case DeviceType.SecureDigital:
+                switch(_dev.Type)
                 {
-                    sense = _dev.ReadSdocr(out ocr, out _, _dev.Timeout, out _);
+                    case DeviceType.MMC:
+                    {
+                        sense = _dev.ReadOcr(out ocr, out _, _dev.Timeout, out _);
 
-                    break;
+                        break;
+                    }
+                    case DeviceType.SecureDigital:
+                    {
+                        sense = _dev.ReadSdocr(out ocr, out _, _dev.Timeout, out _);
+
+                        break;
+                    }
                 }
-            }
+            });
 
             if(!sense)
             {
@@ -122,8 +139,11 @@ namespace Aaru.Core.Devices.Report
             {
                 case DeviceType.MMC:
                 {
-                    AaruConsole.WriteLine("Trying to get Extended CSD...");
-                    sense = _dev.ReadExtendedCsd(out byte[] ecsd, out _, _dev.Timeout, out _);
+                    Spectre.ProgressSingleSpinner(ctx =>
+                    {
+                        ctx.AddTask("Trying to get Extended CSD...").IsIndeterminate();
+                        sense = _dev.ReadExtendedCsd(out ecsd, out _, _dev.Timeout, out _);
+                    });
 
                     if(!sense)
                     {
@@ -137,8 +157,11 @@ namespace Aaru.Core.Devices.Report
                 }
                 case DeviceType.SecureDigital:
                 {
-                    AaruConsole.WriteLine("Trying to get SCR...");
-                    sense = _dev.ReadScr(out byte[] scr, out _, _dev.Timeout, out _);
+                    Spectre.ProgressSingleSpinner(ctx =>
+                    {
+                        ctx.AddTask("Trying to get SCR...").IsIndeterminate();
+                        sense = _dev.ReadScr(out scr, out _, _dev.Timeout, out _);
+                    });
 
                     if(!sense)
                     {

@@ -30,12 +30,13 @@
 // Copyright © 2011-2021 Natalia Portillo
 // ****************************************************************************/
 
+using System;
 using System.Linq;
 using Aaru.CommonTypes.Metadata;
-using Aaru.Console;
 using Aaru.Decoders.SCSI;
 using Aaru.Decoders.SCSI.SSC;
 using Aaru.Devices;
+using Spectre.Console;
 
 namespace Aaru.Core.Devices.Report
 {
@@ -45,9 +46,15 @@ namespace Aaru.Core.Devices.Report
         /// <returns>SSC report</returns>
         public Ssc ReportScsiSsc()
         {
-            var report = new Ssc();
-            AaruConsole.WriteLine("Querying SCSI READ BLOCK LIMITS...");
-            bool sense = _dev.ReadBlockLimits(out byte[] buffer, out byte[] _, _dev.Timeout, out _);
+            var    report = new Ssc();
+            bool   sense  = true;
+            byte[] buffer = Array.Empty<byte>();
+
+            Spectre.ProgressSingleSpinner(ctx =>
+            {
+                ctx.AddTask("Querying SCSI READ BLOCK LIMITS...").IsIndeterminate();
+                sense = _dev.ReadBlockLimits(out buffer, out _, _dev.Timeout, out _);
+            });
 
             if(!sense)
             {
@@ -63,8 +70,11 @@ namespace Aaru.Core.Devices.Report
                     report.MinBlockLength = decBl.Value.minBlockLen;
             }
 
-            AaruConsole.WriteLine("Querying SCSI REPORT DENSITY SUPPORT...");
-            sense = _dev.ReportDensitySupport(out buffer, out byte[] _, false, false, _dev.Timeout, out _);
+            Spectre.ProgressSingleSpinner(ctx =>
+            {
+                ctx.AddTask("Querying SCSI REPORT DENSITY SUPPORT...").IsIndeterminate();
+                sense = _dev.ReportDensitySupport(out buffer, out _, false, false, _dev.Timeout, out _);
+            });
 
             if(!sense)
             {
@@ -95,8 +105,11 @@ namespace Aaru.Core.Devices.Report
                 }
             }
 
-            AaruConsole.WriteLine("Querying SCSI REPORT DENSITY SUPPORT for medium types...");
-            sense = _dev.ReportDensitySupport(out buffer, out byte[] _, true, false, _dev.Timeout, out _);
+            Spectre.ProgressSingleSpinner(ctx =>
+            {
+                ctx.AddTask("Querying SCSI REPORT DENSITY SUPPORT for medium types...").IsIndeterminate();
+                sense = _dev.ReportDensitySupport(out buffer, out _, true, false, _dev.Timeout, out _);
+            });
 
             if(sense)
                 return report;
@@ -143,14 +156,19 @@ namespace Aaru.Core.Devices.Report
         /// <returns>Media report</returns>
         public TestedSequentialMedia ReportSscMedia()
         {
-            var seqTest = new TestedSequentialMedia();
+            var    seqTest = new TestedSequentialMedia();
+            bool   sense   = true;
+            byte[] buffer  = Array.Empty<byte>();
 
             Modes.DecodedMode? decMode = null;
 
-            AaruConsole.WriteLine("Querying SCSI MODE SENSE (10)...");
+            Spectre.ProgressSingleSpinner(ctx =>
+            {
+                ctx.AddTask("Querying SCSI MODE SENSE (10)...").IsIndeterminate();
 
-            bool sense = _dev.ModeSense10(out byte[] buffer, out byte[] _, false, true,
-                                          ScsiModeSensePageControl.Current, 0x3F, 0x00, _dev.Timeout, out _);
+                sense = _dev.ModeSense10(out buffer, out _, false, true, ScsiModeSensePageControl.Current, 0x3F, 0x00,
+                                         _dev.Timeout, out _);
+            });
 
             if(!sense &&
                !_dev.Error)
@@ -159,8 +177,11 @@ namespace Aaru.Core.Devices.Report
                 seqTest.ModeSense10Data = buffer;
             }
 
-            AaruConsole.WriteLine("Querying SCSI MODE SENSE...");
-            sense = _dev.ModeSense(out buffer, out byte[] _, _dev.Timeout, out _);
+            Spectre.ProgressSingleSpinner(ctx =>
+            {
+                ctx.AddTask("Querying SCSI MODE SENSE...").IsIndeterminate();
+                sense = _dev.ModeSense(out buffer, out _, _dev.Timeout, out _);
+            });
 
             if(!sense &&
                !_dev.Error)
@@ -178,8 +199,11 @@ namespace Aaru.Core.Devices.Report
                     seqTest.Density = (byte)decMode.Value.Header.BlockDescriptors?[0].Density;
             }
 
-            AaruConsole.WriteLine("Querying SCSI REPORT DENSITY SUPPORT for current media...");
-            sense = _dev.ReportDensitySupport(out buffer, out byte[] _, false, true, _dev.Timeout, out _);
+            Spectre.ProgressSingleSpinner(ctx =>
+            {
+                ctx.AddTask("Querying SCSI REPORT DENSITY SUPPORT for current media...").IsIndeterminate();
+                sense = _dev.ReportDensitySupport(out buffer, out _, false, true, _dev.Timeout, out _);
+            });
 
             if(!sense)
             {
@@ -210,8 +234,13 @@ namespace Aaru.Core.Devices.Report
                 }
             }
 
-            AaruConsole.WriteLine("Querying SCSI REPORT DENSITY SUPPORT for medium types for current media...");
-            sense = _dev.ReportDensitySupport(out buffer, out byte[] _, true, true, _dev.Timeout, out _);
+            Spectre.ProgressSingleSpinner(ctx =>
+            {
+                ctx.AddTask("Querying SCSI REPORT DENSITY SUPPORT for medium types for current media...").
+                    IsIndeterminate();
+
+                sense = _dev.ReportDensitySupport(out buffer, out _, true, true, _dev.Timeout, out _);
+            });
 
             if(!sense)
             {
@@ -251,8 +280,11 @@ namespace Aaru.Core.Devices.Report
                 }
             }
 
-            AaruConsole.WriteLine("Trying SCSI READ MEDIA SERIAL NUMBER...");
-            seqTest.CanReadMediaSerial = !_dev.ReadMediaSerialNumber(out buffer, out byte[] _, _dev.Timeout, out _);
+            Spectre.ProgressSingleSpinner(ctx =>
+            {
+                ctx.AddTask("Trying SCSI READ MEDIA SERIAL NUMBER...").IsIndeterminate();
+                seqTest.CanReadMediaSerial = !_dev.ReadMediaSerialNumber(out buffer, out _, _dev.Timeout, out _);
+            });
 
             return seqTest;
         }

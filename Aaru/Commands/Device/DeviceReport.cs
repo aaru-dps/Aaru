@@ -51,8 +51,10 @@ using Aaru.Decoders.SCSI.MMC;
 using Aaru.Devices;
 using Aaru.Helpers;
 using Newtonsoft.Json;
+using Spectre.Console;
 using Command = System.CommandLine.Command;
 using DeviceReport = Aaru.Core.Devices.Report.DeviceReport;
+using Profile = Aaru.Decoders.SCSI.MMC.Profile;
 
 namespace Aaru.Commands.Device
 {
@@ -85,10 +87,29 @@ namespace Aaru.Commands.Device
             MainClass.PrintCopyright();
 
             if(debug)
-                AaruConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
+            {
+                IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
+                {
+                    Out = new AnsiConsoleOutput(System.Console.Error)
+                });
+
+                AaruConsole.DebugWriteLineEvent += (format, objects) =>
+                {
+                    if(objects is null)
+                        stderrConsole.MarkupLine(format);
+                    else
+                        stderrConsole.MarkupLine(format, objects);
+                };
+            }
 
             if(verbose)
-                AaruConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+                AaruConsole.WriteEvent += (format, objects) =>
+                {
+                    if(objects is null)
+                        AnsiConsole.Markup(format);
+                    else
+                        AnsiConsole.Markup(format, objects);
+                };
 
             Statistics.AddCommand("device-report");
 
@@ -176,70 +197,46 @@ namespace Aaru.Commands.Device
 
             if(dev.IsUsb)
             {
-                pressedKey = new ConsoleKeyInfo();
-
-                while(pressedKey.Key != ConsoleKey.Y &&
-                      pressedKey.Key != ConsoleKey.N)
+                if(AnsiConsole.Confirm("[italic]Is the device natively USB (in case of doubt, press Y)?[/]"))
                 {
-                    AaruConsole.Write("Is the device natively USB (in case of doubt, press Y)? (Y/N): ");
-                    pressedKey = System.Console.ReadKey();
-                    AaruConsole.WriteLine();
-                }
-
-                if(pressedKey.Key == ConsoleKey.Y)
-                {
-                    report.USB = reporter.UsbReport();
-
-                    pressedKey = new ConsoleKeyInfo();
-
-                    while(pressedKey.Key != ConsoleKey.Y &&
-                          pressedKey.Key != ConsoleKey.N)
+                    Core.Spectre.ProgressSingleSpinner(ctx =>
                     {
-                        AaruConsole.Write("Is the media removable from the reading/writing elements? (Y/N): ");
-                        pressedKey = System.Console.ReadKey();
-                        AaruConsole.WriteLine();
-                    }
+                        ctx.AddTask("Querying USB information...").IsIndeterminate();
+                        report.USB = reporter.UsbReport();
+                    });
 
-                    report.USB.RemovableMedia = pressedKey.Key == ConsoleKey.Y;
-                    removable                 = report.USB.RemovableMedia;
+                    report.USB.RemovableMedia =
+                        AnsiConsole.Confirm("[italic]Is the media removable from the reading/writing elements?[/]");
+
+                    removable = report.USB.RemovableMedia;
                 }
             }
 
             if(dev.IsFireWire)
             {
-                pressedKey = new ConsoleKeyInfo();
-
-                while(pressedKey.Key != ConsoleKey.Y &&
-                      pressedKey.Key != ConsoleKey.N)
+                if(AnsiConsole.Confirm("[italic]Is the device natively FireWire (in case of doubt, press Y)?[/]"))
                 {
-                    AaruConsole.Write("Is the device natively FireWire (in case of doubt, press Y)? (Y/N): ");
-                    pressedKey = System.Console.ReadKey();
-                    AaruConsole.WriteLine();
-                }
-
-                if(pressedKey.Key != ConsoleKey.Y)
-                {
-                    report.FireWire = reporter.FireWireReport();
-
-                    pressedKey = new ConsoleKeyInfo();
-
-                    while(pressedKey.Key != ConsoleKey.Y &&
-                          pressedKey.Key != ConsoleKey.N)
+                    Core.Spectre.ProgressSingleSpinner(ctx =>
                     {
-                        AaruConsole.Write("Is the media removable from the reading/writing elements? (Y/N): ");
-                        pressedKey = System.Console.ReadKey();
-                        AaruConsole.WriteLine();
-                    }
+                        ctx.AddTask("Querying FireWire information...").IsIndeterminate();
+                        report.FireWire = reporter.FireWireReport();
+                    });
 
-                    report.FireWire.RemovableMedia = pressedKey.Key == ConsoleKey.Y;
-                    removable                      = report.FireWire.RemovableMedia;
+                    report.FireWire.RemovableMedia =
+                        AnsiConsole.Confirm("[italic]Is the media removable from the reading/writing elements?[/]");
+
+                    removable = report.FireWire.RemovableMedia;
                 }
             }
 
             if(dev.IsPcmcia)
-                report.PCMCIA = reporter.PcmciaReport();
+                Core.Spectre.ProgressSingleSpinner(ctx =>
+                {
+                    ctx.AddTask("Querying PCMCIA information...").IsIndeterminate();
+                    report.PCMCIA = reporter.PcmciaReport();
+                });
 
-            byte[] buffer;
+            byte[] buffer = Array.Empty<byte>();
             string mediumTypeName;
             string mediumModel;
 
@@ -247,9 +244,11 @@ namespace Aaru.Commands.Device
             {
                 case DeviceType.ATA:
                 {
-                    AaruConsole.WriteLine("Querying ATA IDENTIFY...");
-
-                    dev.AtaIdentify(out buffer, out _, dev.Timeout, out _);
+                    Core.Spectre.ProgressSingleSpinner(ctx =>
+                    {
+                        ctx.AddTask("Querying ATA IDENTIFY...").IsIndeterminate();
+                        dev.AtaIdentify(out buffer, out _, dev.Timeout, out _);
+                    });
 
                     if(!Identify.Decode(buffer).HasValue)
                         break;
@@ -270,19 +269,8 @@ namespace Aaru.Commands.Device
                     else if(!removable &&
                             report.ATA.IdentifyDevice?.GeneralConfiguration.HasFlag(Identify.GeneralConfigurationBit.
                                 Removable) == true)
-                    {
-                        pressedKey = new ConsoleKeyInfo();
-
-                        while(pressedKey.Key != ConsoleKey.Y &&
-                              pressedKey.Key != ConsoleKey.N)
-                        {
-                            AaruConsole.Write("Is the media removable from the reading/writing elements? (Y/N): ");
-                            pressedKey = System.Console.ReadKey();
-                            AaruConsole.WriteLine();
-                        }
-
-                        removable = pressedKey.Key == ConsoleKey.Y;
-                    }
+                        removable =
+                            AnsiConsole.Confirm("[italic]Is the media removable from the reading/writing elements?[/]");
 
                     if(removable)
                     {
@@ -290,35 +278,26 @@ namespace Aaru.Commands.Device
                             WriteLine("Please remove any media from the device and press any key when it is out.");
 
                         System.Console.ReadKey(true);
-                        AaruConsole.WriteLine("Querying ATA IDENTIFY...");
-                        dev.AtaIdentify(out buffer, out _, dev.Timeout, out _);
-                        report.ATA.Identify = DeviceReport.ClearIdentify(buffer);
-                        List<TestedMedia> mediaTests = new List<TestedMedia>();
 
-                        pressedKey = new ConsoleKeyInfo();
-
-                        while(pressedKey.Key != ConsoleKey.N)
+                        Core.Spectre.ProgressSingleSpinner(ctx =>
                         {
-                            pressedKey = new ConsoleKeyInfo();
+                            ctx.AddTask("Querying ATA IDENTIFY...").IsIndeterminate();
+                            dev.AtaIdentify(out buffer, out _, dev.Timeout, out _);
+                        });
 
-                            while(pressedKey.Key != ConsoleKey.Y &&
-                                  pressedKey.Key != ConsoleKey.N)
-                            {
-                                AaruConsole.Write("Do you have media that you can insert in the drive? (Y/N): ");
-                                pressedKey = System.Console.ReadKey();
-                                AaruConsole.WriteLine();
-                            }
+                        report.ATA.Identify = DeviceReport.ClearIdentify(buffer);
+                        List<TestedMedia> mediaTests = new();
 
-                            if(pressedKey.Key != ConsoleKey.Y)
-                                continue;
-
+                        while(AnsiConsole.Confirm("[italic]Do you have media that you can insert in the drive?[/]"))
+                        {
                             AaruConsole.WriteLine("Please insert it in the drive and press any key when it is ready.");
                             System.Console.ReadKey(true);
 
-                            AaruConsole.Write("Please write a description of the media type and press enter: ");
-                            mediumTypeName = System.Console.ReadLine();
-                            AaruConsole.Write("Please write the media model and press enter: ");
-                            mediumModel = System.Console.ReadLine();
+                            mediumTypeName =
+                                AnsiConsole.
+                                    Ask<string>("Please write a description of the media type and press enter: ");
+
+                            mediumModel = AnsiConsole.Ask<string>("Please write the media model and press enter: ");
 
                             TestedMedia mediaTest = reporter.ReportAtaMedia();
                             mediaTest.MediumTypeName = mediumTypeName;
@@ -347,9 +326,11 @@ namespace Aaru.Commands.Device
                     break;
                 case DeviceType.NVMe: throw new NotImplementedException("NVMe devices not yet supported.");
                 case DeviceType.ATAPI:
-                    AaruConsole.WriteLine("Querying ATAPI IDENTIFY...");
-
-                    dev.AtapiIdentify(out buffer, out _, dev.Timeout, out _);
+                    Core.Spectre.ProgressSingleSpinner(ctx =>
+                    {
+                        ctx.AddTask("Querying ATAPI IDENTIFY...").IsIndeterminate();
+                        dev.AtapiIdentify(out buffer, out _, dev.Timeout, out _);
+                    });
 
                     if(Identify.Decode(buffer).HasValue)
                         report.ATAPI = new Ata
@@ -381,21 +362,9 @@ namespace Aaru.Commands.Device
                     if(!dev.IsUsb      &&
                        !dev.IsFireWire &&
                        dev.IsRemovable)
-                    {
-                        pressedKey = new ConsoleKeyInfo();
-
-                        while(pressedKey.Key != ConsoleKey.Y &&
-                              pressedKey.Key != ConsoleKey.N)
-                        {
-                            AaruConsole.
-                                Write("Is the media removable from the reading/writing elements (flash memories ARE NOT removable)? (Y/N): ");
-
-                            pressedKey = System.Console.ReadKey();
-                            AaruConsole.WriteLine();
-                        }
-
-                        removable = pressedKey.Key == ConsoleKey.Y;
-                    }
+                        removable =
+                            AnsiConsole.
+                                Confirm("[italic]Is the media removable from the reading/writing elements (flash memories ARE NOT removable)?[/]");
 
                     if(removable)
                     {
@@ -411,8 +380,14 @@ namespace Aaru.Commands.Device
                                 break;
                             case PeripheralDeviceTypes.SequentialAccess:
                                 dev.SpcAllowMediumRemoval(out buffer, dev.Timeout, out _);
-                                AaruConsole.WriteLine("Asking drive to unload tape (can take a few minutes)...");
-                                dev.Unload(out buffer, dev.Timeout, out _);
+
+                                Core.Spectre.ProgressSingleSpinner(ctx =>
+                                {
+                                    ctx.AddTask("Asking drive to unload tape (can take a few minutes)...").
+                                        IsIndeterminate();
+
+                                    dev.Unload(out buffer, dev.Timeout, out _);
+                                });
 
                                 break;
                         }
@@ -435,8 +410,8 @@ namespace Aaru.Commands.Device
                     reporter.ReportScsiModes(ref report, out byte[] cdromMode, out MediumTypes mediumType);
 
                     string mediumManufacturer;
-                    byte[] senseBuffer;
-                    bool   sense;
+                    byte[] senseBuffer = Array.Empty<byte>();
+                    bool   sense       = true;
 
                     switch(dev.ScsiType)
                     {
@@ -462,61 +437,29 @@ namespace Aaru.Commands.Device
                                     return (int)ErrorNumber.InvalidArgument;
                                 }
 
-                                pressedKey = new ConsoleKeyInfo();
-
-                                while(pressedKey.Key != ConsoleKey.Y &&
-                                      pressedKey.Key != ConsoleKey.N)
-                                {
-                                    AaruConsole.
-                                        Write("Are you sure you want to do a report using a trap disc and the swapping method?\n" +
-                                              "This method can damage the drive, or the disc, and requires some ability.\n" +
-                                              "In you are unsure, please press N to not continue.\n" +
-                                              "Press Y to continue (Y/N): ");
-
-                                    pressedKey = System.Console.ReadKey();
-                                    AaruConsole.WriteLine();
-                                }
-
-                                if(pressedKey.Key == ConsoleKey.N)
+                                if(
+                                    !AnsiConsole.
+                                        Confirm("[italic]Are you sure you want to do a report using a trap disc and the swapping method?\n" +
+                                                "This method can damage the drive, or the disc, and requires some ability.\n" +
+                                                "In you are unsure, please press N to not continue.[/]"))
                                     return (int)ErrorNumber.NoError;
 
-                                pressedKey = new ConsoleKeyInfo();
-
-                                while(pressedKey.Key != ConsoleKey.Y &&
-                                      pressedKey.Key != ConsoleKey.N)
-                                {
-                                    AaruConsole.Write("Do you have an audio trap disc (if unsure press N)? (Y/N): ");
-
-                                    pressedKey = System.Console.ReadKey();
-                                    AaruConsole.WriteLine();
-                                }
-
-                                if(pressedKey.Key == ConsoleKey.N)
+                                if(!AnsiConsole.
+                                       Confirm("[italic]Do you have an audio trap disc (if unsure press N)?[/]"))
                                 {
                                     AaruConsole.ErrorWriteLine("Please burn an audio trap disc before continuing...");
 
                                     return (int)ErrorNumber.NoError;
                                 }
 
-                                pressedKey = new ConsoleKeyInfo();
-
-                                while(pressedKey.Key != ConsoleKey.Y &&
-                                      pressedKey.Key != ConsoleKey.N)
-                                {
-                                    AaruConsole.Write("Do you have a GD-ROM disc (if unsure press N)? (Y/N): ");
-
-                                    pressedKey = System.Console.ReadKey();
-                                    AaruConsole.WriteLine();
-                                }
-
-                                if(pressedKey.Key == ConsoleKey.Y)
+                                if(AnsiConsole.Confirm("[italic]Do you have a GD-ROM disc (if unsure press N)?[/]"))
                                     reporter.ReportGdRomSwapTrick(ref report);
                                 else
                                     return (int)ErrorNumber.NoError;
                             }
                             else
                             {
-                                List<string> mediaTypes = new List<string>();
+                                List<string> mediaTypes = new();
 
                                 report.SCSI.MultiMediaDevice = new Mmc
                                 {
@@ -780,109 +723,44 @@ namespace Aaru.Commands.Device
                                 if(!iomegaRev)
                                 {
                                     if(!tryPlextor)
-                                    {
-                                        pressedKey = new ConsoleKeyInfo();
-
-                                        while(pressedKey.Key != ConsoleKey.Y &&
-                                              pressedKey.Key != ConsoleKey.N)
-                                        {
-                                            AaruConsole.
-                                                Write("Do you have want to try Plextor vendor commands? THIS IS DANGEROUS AND CAN IRREVERSIBLY DESTROY YOUR DRIVE (IF IN DOUBT PRESS 'N') (Y/N): ");
-
-                                            pressedKey = System.Console.ReadKey();
-                                            AaruConsole.WriteLine();
-                                        }
-
-                                        tryPlextor |= pressedKey.Key == ConsoleKey.Y;
-                                    }
+                                        tryPlextor |=
+                                            AnsiConsole.
+                                                Confirm("[italic]Do you have want to try Plextor vendor commands? [red]THIS IS DANGEROUS AND CAN IRREVERSIBLY DESTROY YOUR DRIVE (IF IN DOUBT PRESS 'N')[/][/]",
+                                                        false);
 
                                     if(!tryNec)
-                                    {
-                                        pressedKey = new ConsoleKeyInfo();
-
-                                        while(pressedKey.Key != ConsoleKey.Y &&
-                                              pressedKey.Key != ConsoleKey.N)
-                                        {
-                                            AaruConsole.
-                                                Write("Do you have want to try NEC vendor commands? THIS IS DANGEROUS AND CAN IRREVERSIBLY DESTROY YOUR DRIVE (IF IN DOUBT PRESS 'N') (Y/N): ");
-
-                                            pressedKey = System.Console.ReadKey();
-                                            AaruConsole.WriteLine();
-                                        }
-
-                                        tryNec |= pressedKey.Key == ConsoleKey.Y;
-                                    }
+                                        tryNec |=
+                                            AnsiConsole.
+                                                Confirm("[italic]Do you have want to try NEC vendor commands? [red]THIS IS DANGEROUS AND CAN IRREVERSIBLY DESTROY YOUR DRIVE (IF IN DOUBT PRESS 'N')[/][/]",
+                                                        false);
 
                                     if(!tryPioneer)
-                                    {
-                                        pressedKey = new ConsoleKeyInfo();
-
-                                        while(pressedKey.Key != ConsoleKey.Y &&
-                                              pressedKey.Key != ConsoleKey.N)
-                                        {
-                                            AaruConsole.
-                                                Write("Do you have want to try Pioneer vendor commands? THIS IS DANGEROUS AND CAN IRREVERSIBLY DESTROY YOUR DRIVE (IF IN DOUBT PRESS 'N') (Y/N): ");
-
-                                            pressedKey = System.Console.ReadKey();
-                                            AaruConsole.WriteLine();
-                                        }
-
-                                        tryPioneer |= pressedKey.Key == ConsoleKey.Y;
-                                    }
+                                        tryPioneer |=
+                                            AnsiConsole.
+                                                Confirm("[italic]Do you have want to try Pioneer vendor commands? [red]THIS IS DANGEROUS AND CAN IRREVERSIBLY DESTROY YOUR DRIVE (IF IN DOUBT PRESS 'N')[/][/]",
+                                                        false);
 
                                     if(!tryHldtst)
-                                    {
-                                        pressedKey = new ConsoleKeyInfo();
+                                        tryHldtst |=
+                                            AnsiConsole.
+                                                Confirm("[italic]Do you have want to try HL-DT-ST (aka LG) vendor commands? [red]THIS IS DANGEROUS AND CAN IRREVERSIBLY DESTROY YOUR DRIVE (IF IN DOUBT PRESS 'N')[/][/]",
+                                                        false);
 
-                                        while(pressedKey.Key != ConsoleKey.Y &&
-                                              pressedKey.Key != ConsoleKey.N)
-                                        {
-                                            AaruConsole.
-                                                Write("Do you have want to try HL-DT-ST (aka LG) vendor commands? THIS IS DANGEROUS AND CAN IRREVERSIBLY DESTROY YOUR DRIVE (IF IN DOUBT PRESS 'N') (Y/N): ");
-
-                                            pressedKey = System.Console.ReadKey();
-                                            AaruConsole.WriteLine();
-                                        }
-
-                                        tryHldtst |= pressedKey.Key == ConsoleKey.Y;
-                                    }
-
-                                    pressedKey = new ConsoleKeyInfo();
-
-                                    while(pressedKey.Key != ConsoleKey.Y &&
-                                          pressedKey.Key != ConsoleKey.N)
-                                    {
-                                        AaruConsole.
-                                            Write("Do you have want to try MediaTek vendor command F1h subcommand 06h? THIS IS DANGEROUS AND CAN IRREVERSIBLY DESTROY YOUR DRIVE (IF IN DOUBT PRESS 'N') (Y/N): ");
-
-                                        pressedKey = System.Console.ReadKey();
-                                        AaruConsole.WriteLine();
-                                    }
-
-                                    tryMediaTekF106 = pressedKey.Key == ConsoleKey.Y;
+                                    tryMediaTekF106 =
+                                        AnsiConsole.
+                                            Confirm("[italic]Do you have want to try MediaTek vendor command F1h subcommand 06h? [red]THIS IS DANGEROUS AND CAN IRREVERSIBLY DESTROY YOUR DRIVE (IF IN DOUBT PRESS 'N')[/][/]",
+                                                    false);
                                 }
 
                                 if(dev.Model.StartsWith("PD-", StringComparison.Ordinal))
                                     mediaTypes.Add("PD-650");
 
-                                List<TestedMedia> mediaTests = new List<TestedMedia>();
+                                List<TestedMedia> mediaTests = new();
 
                                 foreach(string mediaType in mediaTypes)
                                 {
-                                    pressedKey = new ConsoleKeyInfo();
-
-                                    while(pressedKey.Key != ConsoleKey.Y &&
-                                          pressedKey.Key != ConsoleKey.N)
-                                    {
-                                        AaruConsole.
-                                            Write("Do you have a {0} disc that you can insert in the drive? (Y/N): ",
-                                                  mediaType);
-
-                                        pressedKey = System.Console.ReadKey();
-                                        AaruConsole.WriteLine();
-                                    }
-
-                                    if(pressedKey.Key != ConsoleKey.Y)
+                                    if(!AnsiConsole.
+                                           Confirm($"[italic]Do you have a {mediaType} disc that you can insert in the drive?[/]"))
                                         continue;
 
                                     AaruConsole.
@@ -892,10 +770,14 @@ namespace Aaru.Commands.Device
 
                                     bool mediaIsRecognized = true;
 
-                                    sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
-
-                                    if(sense)
+                                    Core.Spectre.ProgressSingleSpinner(ctx =>
                                     {
+                                        ctx.AddTask("Waiting for drive to become ready").IsIndeterminate();
+                                        sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
+
+                                        if(!sense)
+                                            return;
+
                                         DecodedSense? decSense = Sense.Decode(senseBuffer);
 
                                         if(decSense.HasValue)
@@ -908,7 +790,6 @@ namespace Aaru.Commands.Device
 
                                                     while(leftRetries > 0)
                                                     {
-                                                        AaruConsole.Write("\rWaiting for drive to become ready");
                                                         Thread.Sleep(2000);
 
                                                         sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout,
@@ -934,7 +815,6 @@ namespace Aaru.Commands.Device
 
                                                     while(leftRetries > 0)
                                                     {
-                                                        AaruConsole.Write("\rWaiting for drive to become ready");
                                                         Thread.Sleep(2000);
 
                                                         sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout,
@@ -958,7 +838,6 @@ namespace Aaru.Commands.Device
 
                                                     while(leftRetries > 0)
                                                     {
-                                                        AaruConsole.Write("\rWaiting for drive to become ready");
                                                         Thread.Sleep(2000);
 
                                                         sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout,
@@ -994,7 +873,7 @@ namespace Aaru.Commands.Device
 
                                             mediaIsRecognized = false;
                                         }
-                                    }
+                                    });
 
                                     var mediaTest = new TestedMedia();
 
@@ -1007,54 +886,57 @@ namespace Aaru.Commands.Device
                                             continue;
 
                                         if((mediaTest.SupportsReadLong   == true ||
-                                            mediaTest.SupportsReadLong16 == true) &&
-                                           mediaTest.LongBlockSize == mediaTest.BlockSize)
+                                            mediaTest.SupportsReadLong16 == true)         &&
+                                           mediaTest.LongBlockSize == mediaTest.BlockSize &&
+                                           AnsiConsole.
+                                               Confirm("[italic]Drive supports SCSI READ LONG but I cannot find the correct size. Do you want me to try? (This can take hours)[/]"))
                                         {
-                                            pressedKey = new ConsoleKeyInfo();
+                                            AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
+                                                        Columns(new TaskDescriptionColumn(), new ProgressBarColumn(),
+                                                                new PercentageColumn()).Start(ctx =>
+                                                        {
+                                                            ProgressTask task = ctx.AddTask("Trying to READ LONG...");
+                                                            task.MaxValue = ushort.MaxValue;
 
-                                            while(pressedKey.Key != ConsoleKey.Y &&
-                                                  pressedKey.Key != ConsoleKey.N)
-                                            {
-                                                AaruConsole.
-                                                    Write("Drive supports SCSI READ LONG but I cannot find the correct size. Do you want me to try? (This can take hours) (Y/N): ");
+                                                            for(ushort i = (ushort)mediaTest.BlockSize;; i++)
+                                                            {
+                                                                task.Description =
+                                                                    $"Trying to READ LONG with a size of {i} bytes...";
 
-                                                pressedKey = System.Console.ReadKey();
-                                                AaruConsole.WriteLine();
-                                            }
+                                                                task.Value = i;
 
-                                            if(pressedKey.Key == ConsoleKey.Y)
-                                            {
-                                                for(ushort i = (ushort)mediaTest.BlockSize;; i++)
-                                                {
-                                                    AaruConsole.
-                                                        Write("\rTrying to READ LONG with a size of {0} bytes...", i);
+                                                                sense = mediaTest.SupportsReadLong16 == true
+                                                                            ? dev.ReadLong16(out buffer,
+                                                                                out senseBuffer, false, 0, i,
+                                                                                dev.Timeout, out _)
+                                                                            : dev.ReadLong10(out buffer,
+                                                                                out senseBuffer, false, false, 0,
+                                                                                i, dev.Timeout, out _);
 
-                                                    sense = mediaTest.SupportsReadLong16 == true
-                                                                ? dev.ReadLong16(out buffer, out senseBuffer, false, 0,
-                                                                    i, dev.Timeout, out _)
-                                                                : dev.ReadLong10(out buffer, out senseBuffer, false,
-                                                                    false, 0, i, dev.Timeout, out _);
+                                                                if(!sense)
+                                                                {
+                                                                    mediaTest.LongBlockSize = i;
 
-                                                    if(!sense)
-                                                    {
-                                                        mediaTest.LongBlockSize = i;
+                                                                    break;
+                                                                }
 
-                                                        break;
-                                                    }
-
-                                                    if(i == ushort.MaxValue)
-                                                        break;
-                                                }
-
-                                                AaruConsole.WriteLine();
-                                            }
+                                                                if(i == ushort.MaxValue)
+                                                                    break;
+                                                            }
+                                                        });
                                         }
 
                                         if(mediaTest.SupportsReadLong == true &&
                                            mediaTest.LongBlockSize    != mediaTest.BlockSize)
                                         {
-                                            sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0,
-                                                                   (ushort)mediaTest.LongBlockSize, dev.Timeout, out _);
+                                            Core.Spectre.ProgressSingleSpinner(ctx =>
+                                            {
+                                                ctx.AddTask("Trying SCSI READ LONG (10)...").IsIndeterminate();
+
+                                                sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0,
+                                                                       (ushort)mediaTest.LongBlockSize, dev.Timeout,
+                                                                       out _);
+                                            });
 
                                             if(!sense)
                                                 mediaTest.ReadLong10Data = buffer;
@@ -1063,8 +945,14 @@ namespace Aaru.Commands.Device
                                         if(mediaTest.SupportsReadLong16 == true &&
                                            mediaTest.LongBlockSize      != mediaTest.BlockSize)
                                         {
-                                            sense = dev.ReadLong16(out buffer, out senseBuffer, false, 0,
-                                                                   mediaTest.LongBlockSize.Value, dev.Timeout, out _);
+                                            Core.Spectre.ProgressSingleSpinner(ctx =>
+                                            {
+                                                ctx.AddTask("Trying SCSI READ LONG (16)...").IsIndeterminate();
+
+                                                sense = dev.ReadLong16(out buffer, out senseBuffer, false, 0,
+                                                                       mediaTest.LongBlockSize.Value, dev.Timeout,
+                                                                       out _);
+                                            });
 
                                             if(!sense)
                                                 mediaTest.ReadLong16Data = buffer;
@@ -1088,44 +976,36 @@ namespace Aaru.Commands.Device
                         {
                             report.SCSI.SequentialDevice = reporter.ReportScsiSsc();
 
-                            List<TestedSequentialMedia> seqTests = new List<TestedSequentialMedia>();
+                            List<TestedSequentialMedia> seqTests = new();
 
-                            pressedKey = new ConsoleKeyInfo();
-
-                            while(pressedKey.Key != ConsoleKey.N)
+                            while(AnsiConsole.Confirm("[italic]Do you have media that you can insert in the drive?[/]"))
                             {
-                                pressedKey = new ConsoleKeyInfo();
-
-                                while(pressedKey.Key != ConsoleKey.Y &&
-                                      pressedKey.Key != ConsoleKey.N)
-                                {
-                                    AaruConsole.Write("Do you have media that you can insert in the drive? (Y/N): ");
-                                    pressedKey = System.Console.ReadKey();
-                                    AaruConsole.WriteLine();
-                                }
-
-                                if(pressedKey.Key != ConsoleKey.Y)
-                                    continue;
-
                                 AaruConsole.
                                     WriteLine("Please insert it in the drive and press any key when it is ready.");
 
                                 System.Console.ReadKey(true);
 
-                                AaruConsole.Write("Please write a description of the media type and press enter: ");
-                                mediumTypeName = System.Console.ReadLine();
-                                AaruConsole.Write("Please write the media manufacturer and press enter: ");
-                                mediumManufacturer = System.Console.ReadLine();
-                                AaruConsole.Write("Please write the media model and press enter: ");
-                                mediumModel = System.Console.ReadLine();
+                                mediumTypeName =
+                                    AnsiConsole.
+                                        Ask<string>("Please write a description of the media type and press enter: ");
+
+                                mediumManufacturer =
+                                    AnsiConsole.Ask<string>("Please write the media manufacturer and press enter: ");
+
+                                mediumModel = AnsiConsole.Ask<string>("Please write the media model and press enter: ");
 
                                 bool mediaIsRecognized = true;
 
-                                sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
-                                AaruConsole.DebugWriteLine("Device reporting", "sense = {0}", sense);
-
-                                if(sense)
+                                Core.Spectre.ProgressSingleSpinner(ctx =>
                                 {
+                                    ctx.AddTask("Waiting for drive to become ready").IsIndeterminate();
+
+                                    sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
+                                    AaruConsole.DebugWriteLine("Device reporting", "sense = {0}", sense);
+
+                                    if(!sense)
+                                        return;
+
                                     DecodedSense? decSense = Sense.Decode(senseBuffer);
 
                                     if(decSense.HasValue)
@@ -1138,8 +1018,8 @@ namespace Aaru.Commands.Device
 
                                                 while(leftRetries > 0)
                                                 {
-                                                    AaruConsole.Write("\rWaiting for drive to become ready");
                                                     Thread.Sleep(2000);
+
                                                     sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
 
                                                     if(!sense)
@@ -1162,8 +1042,8 @@ namespace Aaru.Commands.Device
 
                                                 while(leftRetries > 0)
                                                 {
-                                                    AaruConsole.Write("\rWaiting for drive to become ready");
                                                     Thread.Sleep(2000);
+
                                                     sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
 
                                                     if(!sense)
@@ -1184,8 +1064,8 @@ namespace Aaru.Commands.Device
 
                                                 while(leftRetries > 0)
                                                 {
-                                                    AaruConsole.Write("\rWaiting for drive to become ready");
                                                     Thread.Sleep(2000);
+
                                                     sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
 
                                                     if(!sense)
@@ -1218,7 +1098,7 @@ namespace Aaru.Commands.Device
 
                                         mediaIsRecognized = false;
                                     }
-                                }
+                                });
 
                                 var seqTest = new TestedSequentialMedia();
 
@@ -1232,9 +1112,14 @@ namespace Aaru.Commands.Device
 
                                 seqTests.Add(seqTest);
 
-                                dev.SpcAllowMediumRemoval(out buffer, dev.Timeout, out _);
-                                AaruConsole.WriteLine("Asking drive to unload tape (can take a few minutes)...");
-                                dev.Unload(out buffer, dev.Timeout, out _);
+                                Core.Spectre.ProgressSingleSpinner(ctx =>
+                                {
+                                    ctx.AddTask("Asking drive to unload tape (can take a few minutes)...").
+                                        IsIndeterminate();
+
+                                    dev.SpcAllowMediumRemoval(out buffer, dev.Timeout, out _);
+                                    dev.Unload(out buffer, dev.Timeout, out _);
+                                });
                             }
 
                             report.SCSI.SequentialDevice.TestedMedia = seqTests;
@@ -1245,7 +1130,7 @@ namespace Aaru.Commands.Device
                             when dev.Model.StartsWith("MDM", StringComparison.Ordinal) ||
                                  dev.Model.StartsWith("MDH", StringComparison.Ordinal):
                         {
-                            List<string> mediaTypes = new List<string>
+                            List<string> mediaTypes = new()
                             {
                                 "MD DATA (140Mb data MiniDisc)",
                                 "60 minutes rewritable MiniDisc",
@@ -1256,24 +1141,12 @@ namespace Aaru.Commands.Device
 
                             mediaTypes.Sort();
 
-                            List<TestedMedia> mediaTests = new List<TestedMedia>();
+                            List<TestedMedia> mediaTests = new();
 
                             foreach(string mediaType in mediaTypes)
                             {
-                                pressedKey = new ConsoleKeyInfo();
-
-                                while(pressedKey.Key != ConsoleKey.Y &&
-                                      pressedKey.Key != ConsoleKey.N)
-                                {
-                                    AaruConsole.
-                                        Write("Do you have a {0} disc that you can insert in the drive? (Y/N): ",
-                                              mediaType);
-
-                                    pressedKey = System.Console.ReadKey();
-                                    AaruConsole.WriteLine();
-                                }
-
-                                if(pressedKey.Key != ConsoleKey.Y)
+                                if(!AnsiConsole.
+                                       Confirm($"[italic]Do you have a {mediaType} disc that you can insert in the drive?[/]"))
                                     continue;
 
                                 AaruConsole.
@@ -1283,10 +1156,15 @@ namespace Aaru.Commands.Device
 
                                 bool mediaIsRecognized = true;
 
-                                sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
-
-                                if(sense)
+                                Core.Spectre.ProgressSingleSpinner(ctx =>
                                 {
+                                    ctx.AddTask("Waiting for drive to become ready").IsIndeterminate();
+
+                                    sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
+
+                                    if(!sense)
+                                        return;
+
                                     DecodedSense? decSense = Sense.Decode(senseBuffer);
 
                                     if(decSense.HasValue)
@@ -1299,8 +1177,8 @@ namespace Aaru.Commands.Device
 
                                                 while(leftRetries > 0)
                                                 {
-                                                    AaruConsole.Write("\rWaiting for drive to become ready");
                                                     Thread.Sleep(2000);
+
                                                     sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
 
                                                     if(!sense)
@@ -1308,8 +1186,6 @@ namespace Aaru.Commands.Device
 
                                                     leftRetries--;
                                                 }
-
-                                                AaruConsole.WriteLine();
 
                                                 mediaIsRecognized &= !sense;
 
@@ -1323,8 +1199,8 @@ namespace Aaru.Commands.Device
 
                                                 while(leftRetries > 0)
                                                 {
-                                                    AaruConsole.Write("\rWaiting for drive to become ready");
                                                     Thread.Sleep(2000);
+
                                                     sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
 
                                                     if(!sense)
@@ -1332,8 +1208,6 @@ namespace Aaru.Commands.Device
 
                                                     leftRetries--;
                                                 }
-
-                                                AaruConsole.WriteLine();
 
                                                 mediaIsRecognized &= !sense;
 
@@ -1345,8 +1219,8 @@ namespace Aaru.Commands.Device
 
                                                 while(leftRetries > 0)
                                                 {
-                                                    AaruConsole.Write("\rWaiting for drive to become ready");
                                                     Thread.Sleep(2000);
+
                                                     sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
 
                                                     if(!sense)
@@ -1354,8 +1228,6 @@ namespace Aaru.Commands.Device
 
                                                     leftRetries--;
                                                 }
-
-                                                AaruConsole.WriteLine();
 
                                                 mediaIsRecognized &= !sense;
 
@@ -1379,7 +1251,7 @@ namespace Aaru.Commands.Device
 
                                         mediaIsRecognized = false;
                                     }
-                                }
+                                });
 
                                 var mediaTest = new TestedMedia();
 
@@ -1391,53 +1263,56 @@ namespace Aaru.Commands.Device
                                         continue;
 
                                     if((mediaTest.SupportsReadLong == true || mediaTest.SupportsReadLong16 == true) &&
-                                       mediaTest.LongBlockSize == mediaTest.BlockSize)
+                                       mediaTest.LongBlockSize == mediaTest.BlockSize                               &&
+                                       AnsiConsole.
+                                           Confirm("[italic]Drive supports SCSI READ LONG but I cannot find the correct size. Do you want me to try? (This can take hours)[/]"))
                                     {
-                                        pressedKey = new ConsoleKeyInfo();
+                                        AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
+                                                    Columns(new TaskDescriptionColumn(), new ProgressBarColumn(),
+                                                            new PercentageColumn()).Start(ctx =>
+                                                    {
+                                                        ProgressTask task = ctx.AddTask("Trying to READ LONG...");
+                                                        task.MaxValue = ushort.MaxValue;
 
-                                        while(pressedKey.Key != ConsoleKey.Y &&
-                                              pressedKey.Key != ConsoleKey.N)
-                                        {
-                                            AaruConsole.
-                                                Write("Drive supports SCSI READ LONG but I cannot find the correct size. Do you want me to try? (This can take hours) (Y/N): ");
+                                                        for(ushort i = (ushort)mediaTest.BlockSize;; i++)
+                                                        {
+                                                            task.Value = i;
 
-                                            pressedKey = System.Console.ReadKey();
-                                            AaruConsole.WriteLine();
-                                        }
+                                                            task.Description =
+                                                                $"Trying to READ LONG with a size of {i} bytes...";
 
-                                        if(pressedKey.Key == ConsoleKey.Y)
-                                        {
-                                            for(ushort i = (ushort)mediaTest.BlockSize;; i++)
-                                            {
-                                                AaruConsole.Write("\rTrying to READ LONG with a size of {0} bytes...",
-                                                                  i);
+                                                            sense = mediaTest.SupportsReadLong16 == true
+                                                                        ? dev.ReadLong16(out buffer, out senseBuffer,
+                                                                            false, 0, i, dev.Timeout, out _)
+                                                                        : dev.ReadLong10(out buffer, out senseBuffer,
+                                                                            false, false, 0, i, dev.Timeout,
+                                                                            out _);
 
-                                                sense = mediaTest.SupportsReadLong16 == true
-                                                            ? dev.ReadLong16(out buffer, out senseBuffer, false, 0, i,
-                                                                             dev.Timeout, out _)
-                                                            : dev.ReadLong10(out buffer, out senseBuffer, false, false,
-                                                                             0, i, dev.Timeout, out _);
+                                                            if(!sense)
+                                                            {
+                                                                mediaTest.LongBlockSize = i;
 
-                                                if(!sense)
-                                                {
-                                                    mediaTest.LongBlockSize = i;
+                                                                break;
+                                                            }
 
-                                                    break;
-                                                }
+                                                            if(i == ushort.MaxValue)
+                                                                break;
+                                                        }
 
-                                                if(i == ushort.MaxValue)
-                                                    break;
-                                            }
-
-                                            AaruConsole.WriteLine();
-                                        }
+                                                        AaruConsole.WriteLine();
+                                                    });
                                     }
 
                                     if(mediaTest.SupportsReadLong == true &&
                                        mediaTest.LongBlockSize    != mediaTest.BlockSize)
                                     {
-                                        sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0,
-                                                               (ushort)mediaTest.LongBlockSize, dev.Timeout, out _);
+                                        Core.Spectre.ProgressSingleSpinner(ctx =>
+                                        {
+                                            ctx.AddTask("Trying SCSI READ LONG (10)...").IsIndeterminate();
+
+                                            sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0,
+                                                                   (ushort)mediaTest.LongBlockSize, dev.Timeout, out _);
+                                        });
 
                                         if(!sense)
                                             mediaTest.ReadLong10Data = buffer;
@@ -1446,8 +1321,13 @@ namespace Aaru.Commands.Device
                                     if(mediaTest.SupportsReadLong16 == true &&
                                        mediaTest.LongBlockSize      != mediaTest.BlockSize)
                                     {
-                                        sense = dev.ReadLong16(out buffer, out senseBuffer, false, 0,
-                                                               (ushort)mediaTest.LongBlockSize, dev.Timeout, out _);
+                                        Core.Spectre.ProgressSingleSpinner(ctx =>
+                                        {
+                                            ctx.AddTask("Trying SCSI READ LONG (16)...").IsIndeterminate();
+
+                                            sense = dev.ReadLong16(out buffer, out senseBuffer, false, 0,
+                                                                   (ushort)mediaTest.LongBlockSize, dev.Timeout, out _);
+                                        });
 
                                         if(!sense)
                                             mediaTest.ReadLong16Data = buffer;
@@ -1494,45 +1374,38 @@ namespace Aaru.Commands.Device
                         {
                             if(removable)
                             {
-                                List<TestedMedia> mediaTests = new List<TestedMedia>();
+                                List<TestedMedia> mediaTests = new();
 
-                                pressedKey = new ConsoleKeyInfo();
-
-                                while(pressedKey.Key != ConsoleKey.N)
+                                while(AnsiConsole.
+                                    Confirm("[italic]Do you have media that you can insert in the drive?[/]"))
                                 {
-                                    pressedKey = new ConsoleKeyInfo();
-
-                                    while(pressedKey.Key != ConsoleKey.Y &&
-                                          pressedKey.Key != ConsoleKey.N)
-                                    {
-                                        AaruConsole.
-                                            Write("Do you have media that you can insert in the drive? (Y/N): ");
-
-                                        pressedKey = System.Console.ReadKey();
-                                        AaruConsole.WriteLine();
-                                    }
-
-                                    if(pressedKey.Key != ConsoleKey.Y)
-                                        continue;
-
                                     AaruConsole.
                                         WriteLine("Please insert it in the drive and press any key when it is ready.");
 
                                     System.Console.ReadKey(true);
 
-                                    AaruConsole.Write("Please write a description of the media type and press enter: ");
-                                    mediumTypeName = System.Console.ReadLine();
-                                    AaruConsole.Write("Please write the media manufacturer and press enter: ");
-                                    mediumManufacturer = System.Console.ReadLine();
-                                    AaruConsole.Write("Please write the media model and press enter: ");
-                                    mediumModel = System.Console.ReadLine();
+                                    mediumTypeName =
+                                        AnsiConsole.
+                                            Ask<
+                                                string>("Please write a description of the media type and press enter: ");
+
+                                    mediumManufacturer =
+                                        AnsiConsole.
+                                            Ask<string>("Please write the media manufacturer and press enter: ");
+
+                                    mediumModel =
+                                        AnsiConsole.Ask<string>("Please write the media model and press enter: ");
 
                                     bool mediaIsRecognized = true;
 
-                                    sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
-
-                                    if(sense)
+                                    Core.Spectre.ProgressSingleSpinner(ctx =>
                                     {
+                                        ctx.AddTask("Waiting for drive to become ready").IsIndeterminate();
+                                        sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
+
+                                        if(!sense)
+                                            return;
+
                                         DecodedSense? decSense = Sense.Decode(senseBuffer);
 
                                         if(decSense.HasValue)
@@ -1544,7 +1417,6 @@ namespace Aaru.Commands.Device
 
                                                     while(leftRetries > 0)
                                                     {
-                                                        AaruConsole.Write("\rWaiting for drive to become ready");
                                                         Thread.Sleep(2000);
 
                                                         sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout,
@@ -1555,8 +1427,6 @@ namespace Aaru.Commands.Device
 
                                                         leftRetries--;
                                                     }
-
-                                                    AaruConsole.WriteLine();
 
                                                     mediaIsRecognized &= !sense;
 
@@ -1568,7 +1438,6 @@ namespace Aaru.Commands.Device
 
                                                     while(leftRetries > 0)
                                                     {
-                                                        AaruConsole.Write("\rWaiting for drive to become ready");
                                                         Thread.Sleep(2000);
 
                                                         sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout,
@@ -1579,8 +1448,6 @@ namespace Aaru.Commands.Device
 
                                                         leftRetries--;
                                                     }
-
-                                                    AaruConsole.WriteLine();
 
                                                     mediaIsRecognized &= !sense;
 
@@ -1593,7 +1460,7 @@ namespace Aaru.Commands.Device
                                             }
                                         else
                                             mediaIsRecognized = false;
-                                    }
+                                    });
 
                                     var mediaTest = new TestedMedia();
 
@@ -1602,54 +1469,59 @@ namespace Aaru.Commands.Device
                                         mediaTest = reporter.ReportScsiMedia();
 
                                         if((mediaTest.SupportsReadLong   == true ||
-                                            mediaTest.SupportsReadLong16 == true) &&
-                                           mediaTest.LongBlockSize == mediaTest.BlockSize)
+                                            mediaTest.SupportsReadLong16 == true)         &&
+                                           mediaTest.LongBlockSize == mediaTest.BlockSize &&
+                                           AnsiConsole.
+                                               Confirm("[italic]Drive supports SCSI READ LONG but I cannot find the correct size. Do you want me to try? (This can take hours)[/]"))
                                         {
-                                            pressedKey = new ConsoleKeyInfo();
+                                            AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
+                                                        Columns(new TaskDescriptionColumn(), new ProgressBarColumn(),
+                                                                new PercentageColumn()).Start(ctx =>
+                                                        {
+                                                            ProgressTask task = ctx.AddTask("Trying to READ LONG...");
+                                                            task.MaxValue = ushort.MaxValue;
 
-                                            while(pressedKey.Key != ConsoleKey.Y &&
-                                                  pressedKey.Key != ConsoleKey.N)
-                                            {
-                                                AaruConsole.
-                                                    Write("Drive supports SCSI READ LONG but I cannot find the correct size. Do you want me to try? (This can take hours) (Y/N): ");
+                                                            for(ushort i = (ushort)mediaTest.BlockSize;; i++)
+                                                            {
+                                                                task.Value = i;
 
-                                                pressedKey = System.Console.ReadKey();
-                                                AaruConsole.WriteLine();
-                                            }
+                                                                task.Description =
+                                                                    $"Trying to READ LONG with a size of {i} bytes...";
 
-                                            if(pressedKey.Key == ConsoleKey.Y)
-                                            {
-                                                for(ushort i = (ushort)mediaTest.BlockSize;; i++)
-                                                {
-                                                    AaruConsole.
-                                                        Write("\rTrying to READ LONG with a size of {0} bytes...", i);
+                                                                sense = mediaTest.SupportsReadLong16 == true
+                                                                            ? dev.ReadLong16(out buffer,
+                                                                                out senseBuffer, false, 0, i,
+                                                                                dev.Timeout, out _)
+                                                                            : dev.ReadLong10(out buffer,
+                                                                                out senseBuffer, false, false, 0,
+                                                                                i, dev.Timeout, out _);
 
-                                                    sense = mediaTest.SupportsReadLong16 == true
-                                                                ? dev.ReadLong16(out buffer, out senseBuffer, false, 0,
-                                                                    i, dev.Timeout, out _)
-                                                                : dev.ReadLong10(out buffer, out senseBuffer, false,
-                                                                    false, 0, i, dev.Timeout, out _);
+                                                                if(!sense)
+                                                                {
+                                                                    mediaTest.LongBlockSize = i;
 
-                                                    if(!sense)
-                                                    {
-                                                        mediaTest.LongBlockSize = i;
+                                                                    break;
+                                                                }
 
-                                                        break;
-                                                    }
+                                                                if(i == ushort.MaxValue)
+                                                                    break;
+                                                            }
 
-                                                    if(i == ushort.MaxValue)
-                                                        break;
-                                                }
-
-                                                AaruConsole.WriteLine();
-                                            }
+                                                            AaruConsole.WriteLine();
+                                                        });
                                         }
 
                                         if(mediaTest.SupportsReadLong == true &&
                                            mediaTest.LongBlockSize    != mediaTest.BlockSize)
                                         {
-                                            sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0,
-                                                                   (ushort)mediaTest.LongBlockSize, dev.Timeout, out _);
+                                            Core.Spectre.ProgressSingleSpinner(ctx =>
+                                            {
+                                                ctx.AddTask("Trying SCSI READ LONG (10)...").IsIndeterminate();
+
+                                                sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0,
+                                                                       (ushort)mediaTest.LongBlockSize, dev.Timeout,
+                                                                       out _);
+                                            });
 
                                             if(!sense)
                                                 mediaTest.ReadLong10Data = buffer;
@@ -1658,8 +1530,14 @@ namespace Aaru.Commands.Device
                                         if(mediaTest.SupportsReadLong16 == true &&
                                            mediaTest.LongBlockSize      != mediaTest.BlockSize)
                                         {
-                                            sense = dev.ReadLong16(out buffer, out senseBuffer, false, 0,
-                                                                   (ushort)mediaTest.LongBlockSize, dev.Timeout, out _);
+                                            Core.Spectre.ProgressSingleSpinner(ctx =>
+                                            {
+                                                ctx.AddTask("Trying SCSI READ LONG (16)...").IsIndeterminate();
+
+                                                sense = dev.ReadLong16(out buffer, out senseBuffer, false, 0,
+                                                                       (ushort)mediaTest.LongBlockSize, dev.Timeout,
+                                                                       out _);
+                                            });
 
                                             if(!sense)
                                                 mediaTest.ReadLong16Data = buffer;
@@ -1687,51 +1565,58 @@ namespace Aaru.Commands.Device
                                     report.SCSI.ReadCapabilities.SupportsReadLong16 == true) &&
                                    report.SCSI.ReadCapabilities.LongBlockSize == report.SCSI.ReadCapabilities.BlockSize)
                                 {
-                                    pressedKey = new ConsoleKeyInfo();
-
-                                    while(pressedKey.Key != ConsoleKey.Y &&
-                                          pressedKey.Key != ConsoleKey.N)
+                                    if(AnsiConsole.
+                                        Confirm("[italic]Drive supports SCSI READ LONG but I cannot find the correct size. Do you want me to try? (This can take hours)[/]"))
                                     {
-                                        AaruConsole.
-                                            Write("Drive supports SCSI READ LONG but I cannot find the correct size. Do you want me to try? (This can take hours) (Y/N): ");
+                                        AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
+                                                    Columns(new TaskDescriptionColumn(), new ProgressBarColumn(),
+                                                            new PercentageColumn()).Start(ctx =>
+                                                    {
+                                                        ProgressTask task = ctx.AddTask("Trying to READ LONG...");
+                                                        task.MaxValue = ushort.MaxValue;
 
-                                        pressedKey = System.Console.ReadKey();
-                                        AaruConsole.WriteLine();
-                                    }
+                                                        for(ushort i = (ushort)report.SCSI.ReadCapabilities.BlockSize;;
+                                                            i++)
+                                                        {
+                                                            task.Value = i;
 
-                                    if(pressedKey.Key == ConsoleKey.Y)
-                                    {
-                                        for(ushort i = (ushort)report.SCSI.ReadCapabilities.BlockSize;; i++)
-                                        {
-                                            AaruConsole.Write("\rTrying to READ LONG with a size of {0} bytes...", i);
+                                                            task.Description =
+                                                                $"Trying to READ LONG with a size of {i} bytes...";
 
-                                            sense = report.SCSI.ReadCapabilities.SupportsReadLong16 == true
-                                                        ? dev.ReadLong16(out buffer, out senseBuffer, false, 0, i,
-                                                                         dev.Timeout, out _)
-                                                        : dev.ReadLong10(out buffer, out senseBuffer, false, false, 0,
-                                                                         i, dev.Timeout, out _);
+                                                            sense =
+                                                                report.SCSI.ReadCapabilities.SupportsReadLong16 == true
+                                                                    ? dev.ReadLong16(out buffer, out senseBuffer, false,
+                                                                        0, i, dev.Timeout, out _)
+                                                                    : dev.ReadLong10(out buffer, out senseBuffer, false,
+                                                                        false, 0, i, dev.Timeout, out _);
 
-                                            if(!sense)
-                                            {
-                                                report.SCSI.ReadCapabilities.LongBlockSize = i;
+                                                            if(!sense)
+                                                            {
+                                                                report.SCSI.ReadCapabilities.LongBlockSize = i;
 
-                                                break;
-                                            }
+                                                                break;
+                                                            }
 
-                                            if(i == ushort.MaxValue)
-                                                break;
-                                        }
+                                                            if(i == ushort.MaxValue)
+                                                                break;
+                                                        }
 
-                                        AaruConsole.WriteLine();
+                                                        AaruConsole.WriteLine();
+                                                    });
                                     }
                                 }
 
                                 if(report.SCSI.ReadCapabilities.SupportsReadLong == true &&
                                    report.SCSI.ReadCapabilities.LongBlockSize != report.SCSI.ReadCapabilities.BlockSize)
                                 {
-                                    sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0,
-                                                           (ushort)report.SCSI.ReadCapabilities.LongBlockSize,
-                                                           dev.Timeout, out _);
+                                    Core.Spectre.ProgressSingleSpinner(ctx =>
+                                    {
+                                        ctx.AddTask("Trying SCSI READ LONG (10)...").IsIndeterminate();
+
+                                        sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0,
+                                                               (ushort)report.SCSI.ReadCapabilities.LongBlockSize,
+                                                               dev.Timeout, out _);
+                                    });
 
                                     if(!sense)
                                         report.SCSI.ReadCapabilities.ReadLong10Data = buffer;
@@ -1740,9 +1625,14 @@ namespace Aaru.Commands.Device
                                 if(report.SCSI.ReadCapabilities.SupportsReadLong16 == true &&
                                    report.SCSI.ReadCapabilities.LongBlockSize != report.SCSI.ReadCapabilities.BlockSize)
                                 {
-                                    sense = dev.ReadLong16(out buffer, out senseBuffer, false, 0,
-                                                           report.SCSI.ReadCapabilities.LongBlockSize.Value,
-                                                           dev.Timeout, out _);
+                                    Core.Spectre.ProgressSingleSpinner(ctx =>
+                                    {
+                                        ctx.AddTask("Trying SCSI READ LONG (16)...").IsIndeterminate();
+
+                                        sense = dev.ReadLong16(out buffer, out senseBuffer, false, 0,
+                                                               report.SCSI.ReadCapabilities.LongBlockSize.Value,
+                                                               dev.Timeout, out _);
+                                    });
 
                                     if(!sense)
                                         report.SCSI.ReadCapabilities.ReadLong16Data = buffer;

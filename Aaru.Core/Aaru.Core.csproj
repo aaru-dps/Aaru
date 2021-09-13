@@ -105,6 +105,7 @@
     <Compile Include="Error.cs" />
     <Compile Include="PrintScsiModePages.cs" />
     <Compile Include="Sidecar\Files.cs" />
+    <Compile Include="Spectre.cs" />
     <Compile Include="Statistics.cs" />
     <Compile Include="Checksum.cs" />
     <Compile Include="Logging\IBGLog.cs" />

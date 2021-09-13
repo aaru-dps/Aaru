@@ -35,6 +35,7 @@ using Aaru.CommonTypes.Metadata;
 using Aaru.Console;
 using Aaru.Decoders.ATA;
 using Aaru.Devices;
+using Spectre.Console;
 using Identify = Aaru.CommonTypes.Structs.Devices.ATA.Identify;
 
 namespace Aaru.Core.Devices.Report
@@ -45,16 +46,26 @@ namespace Aaru.Core.Devices.Report
         /// <returns>Media report</returns>
         public TestedMedia ReportAtaMedia()
         {
-            var mediaTest = new TestedMedia();
-            AaruConsole.Write("Please write a description of the media type and press enter: ");
-            mediaTest.MediumTypeName = System.Console.ReadLine();
-            AaruConsole.Write("Please write the media model and press enter: ");
-            mediaTest.Model = System.Console.ReadLine();
+            bool                   sense      = true;
+            AtaErrorRegistersChs   errorChs   = new();
+            AtaErrorRegistersLba28 errorLba   = new();
+            AtaErrorRegistersLba48 errorLba48 = new();
+            byte[]                 buffer     = Array.Empty<byte>();
+            byte[]                 readBuf    = Array.Empty<byte>();
 
-            mediaTest.MediaIsRecognized = true;
+            var mediaTest = new TestedMedia
+            {
+                MediumTypeName =
+                    AnsiConsole.Ask<string>("Please write a description of the media type and press enter: "),
+                Model             = AnsiConsole.Ask<string>("Please write the media model and press enter: "),
+                MediaIsRecognized = true
+            };
 
-            AaruConsole.WriteLine("Querying ATA IDENTIFY...");
-            _dev.AtaIdentify(out byte[] buffer, out _, _dev.Timeout, out _);
+            Spectre.ProgressSingleSpinner(ctx =>
+            {
+                ctx.AddTask("Querying ATA IDENTIFY...").IsIndeterminate();
+                _dev.AtaIdentify(out buffer, out _, _dev.Timeout, out _);
+            });
 
             mediaTest.IdentifyData   = ClearIdentify(buffer);
             mediaTest.IdentifyDevice = Identify.Decode(buffer);
@@ -178,10 +189,11 @@ namespace Aaru.Core.Devices.Report
 
                 ulong checkCorrectRead = BitConverter.ToUInt64(buffer, 0);
 
-                AaruConsole.WriteLine("Trying READ SECTOR(S) in CHS mode...");
-
-                bool sense = _dev.Read(out byte[] readBuf, out AtaErrorRegistersChs errorChs, false, 0, 0, 1, 1,
-                                       _dev.Timeout, out _);
+                Spectre.ProgressSingleSpinner(ctx =>
+                {
+                    ctx.AddTask("Trying READ SECTOR(S) in CHS mode...").IsIndeterminate();
+                    sense = _dev.Read(out readBuf, out errorChs, false, 0, 0, 1, 1, _dev.Timeout, out _);
+                });
 
                 mediaTest.SupportsReadSectors = !sense && (errorChs.Status & 0x01) != 0x01 && errorChs.Error == 0 &&
                                                 readBuf.Length                     > 0;
@@ -192,8 +204,11 @@ namespace Aaru.Core.Devices.Report
 
                 mediaTest.ReadSectorsData = readBuf;
 
-                AaruConsole.WriteLine("Trying READ SECTOR(S) RETRY in CHS mode...");
-                sense = _dev.Read(out readBuf, out errorChs, true, 0, 0, 1, 1, _dev.Timeout, out _);
+                Spectre.ProgressSingleSpinner(ctx =>
+                {
+                    ctx.AddTask("Trying READ SECTOR(S) RETRY in CHS mode...").IsIndeterminate();
+                    sense = _dev.Read(out readBuf, out errorChs, true, 0, 0, 1, 1, _dev.Timeout, out _);
+                });
 
                 mediaTest.SupportsReadRetry = !sense && (errorChs.Status & 0x01) != 0x01 && errorChs.Error == 0 &&
                                               readBuf.Length                     > 0;
@@ -204,8 +219,11 @@ namespace Aaru.Core.Devices.Report
 
                 mediaTest.ReadSectorsRetryData = readBuf;
 
-                AaruConsole.WriteLine("Trying READ DMA in CHS mode...");
-                sense = _dev.ReadDma(out readBuf, out errorChs, false, 0, 0, 1, 1, _dev.Timeout, out _);
+                Spectre.ProgressSingleSpinner(ctx =>
+                {
+                    ctx.AddTask("Trying READ DMA in CHS mode...").IsIndeterminate();
+                    sense = _dev.ReadDma(out readBuf, out errorChs, false, 0, 0, 1, 1, _dev.Timeout, out _);
+                });
 
                 mediaTest.SupportsReadDma = !sense && (errorChs.Status & 0x01) != 0x01 && errorChs.Error == 0 &&
                                             readBuf.Length                     > 0;
@@ -216,8 +234,11 @@ namespace Aaru.Core.Devices.Report
 
                 mediaTest.ReadDmaData = readBuf;
 
-                AaruConsole.WriteLine("Trying READ DMA RETRY in CHS mode...");
-                sense = _dev.ReadDma(out readBuf, out errorChs, true, 0, 0, 1, 1, _dev.Timeout, out _);
+                Spectre.ProgressSingleSpinner(ctx =>
+                {
+                    ctx.AddTask("Trying READ DMA RETRY in CHS mode...").IsIndeterminate();
+                    sense = _dev.ReadDma(out readBuf, out errorChs, true, 0, 0, 1, 1, _dev.Timeout, out _);
+                });
 
                 mediaTest.SupportsReadDmaRetry = !sense && (errorChs.Status & 0x01) != 0x01 && errorChs.Error == 0 &&
                                                  readBuf.Length                     > 0;
@@ -228,15 +249,22 @@ namespace Aaru.Core.Devices.Report
 
                 mediaTest.ReadDmaRetryData = readBuf;
 
-                AaruConsole.WriteLine("Trying SEEK in CHS mode...");
-                sense                  = _dev.Seek(out errorChs, 0, 0, 1, _dev.Timeout, out _);
+                Spectre.ProgressSingleSpinner(ctx =>
+                {
+                    ctx.AddTask("Trying SEEK in CHS mode...").IsIndeterminate();
+                    sense = _dev.Seek(out errorChs, 0, 0, 1, _dev.Timeout, out _);
+                });
+
                 mediaTest.SupportsSeek = !sense && (errorChs.Status & 0x01) != 0x01 && errorChs.Error == 0;
 
                 AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}", sense,
                                            errorChs.Status, errorChs.Error);
 
-                AaruConsole.WriteLine("Trying READ SECTOR(S) in LBA mode...");
-                sense = _dev.Read(out readBuf, out AtaErrorRegistersLba28 errorLba, false, 0, 1, _dev.Timeout, out _);
+                Spectre.ProgressSingleSpinner(ctx =>
+                {
+                    ctx.AddTask("Trying READ SECTOR(S) in LBA mode...").IsIndeterminate();
+                    sense = _dev.Read(out readBuf, out errorLba, false, 0, 1, _dev.Timeout, out _);
+                });
 
                 mediaTest.SupportsReadLba = !sense && (errorLba.Status & 0x01) != 0x01 && errorLba.Error == 0 &&
                                             readBuf.Length                     > 0;
@@ -247,8 +275,11 @@ namespace Aaru.Core.Devices.Report
 
                 mediaTest.ReadLbaData = readBuf;
 
-                AaruConsole.WriteLine("Trying READ SECTOR(S) RETRY in LBA mode...");
-                sense = _dev.Read(out readBuf, out errorLba, true, 0, 1, _dev.Timeout, out _);
+                Spectre.ProgressSingleSpinner(ctx =>
+                {
+                    ctx.AddTask("Trying READ SECTOR(S) RETRY in LBA mode...").IsIndeterminate();
+                    sense = _dev.Read(out readBuf, out errorLba, true, 0, 1, _dev.Timeout, out _);
+                });
 
                 mediaTest.SupportsReadRetryLba = !sense && (errorLba.Status & 0x01) != 0x01 && errorLba.Error == 0 &&
                                                  readBuf.Length                     > 0;
@@ -259,8 +290,11 @@ namespace Aaru.Core.Devices.Report
 
                 mediaTest.ReadRetryLbaData = readBuf;
 
-                AaruConsole.WriteLine("Trying READ DMA in LBA mode...");
-                sense = _dev.ReadDma(out readBuf, out errorLba, false, 0, 1, _dev.Timeout, out _);
+                Spectre.ProgressSingleSpinner(ctx =>
+                {
+                    ctx.AddTask("Trying READ DMA in LBA mode...").IsIndeterminate();
+                    sense = _dev.ReadDma(out readBuf, out errorLba, false, 0, 1, _dev.Timeout, out _);
+                });
 
                 mediaTest.SupportsReadDmaLba = !sense && (errorLba.Status & 0x01) != 0x01 && errorLba.Error == 0 &&
                                                readBuf.Length                     > 0;
@@ -271,8 +305,11 @@ namespace Aaru.Core.Devices.Report
 
                 mediaTest.ReadDmaLbaData = readBuf;
 
-                AaruConsole.WriteLine("Trying READ DMA RETRY in LBA mode...");
-                sense = _dev.ReadDma(out readBuf, out errorLba, true, 0, 1, _dev.Timeout, out _);
+                Spectre.ProgressSingleSpinner(ctx =>
+                {
+                    ctx.AddTask("Trying READ DMA RETRY in LBA mode...").IsIndeterminate();
+                    sense = _dev.ReadDma(out readBuf, out errorLba, true, 0, 1, _dev.Timeout, out _);
+                });
 
                 mediaTest.SupportsReadDmaRetryLba = !sense && (errorLba.Status & 0x01) != 0x01 && errorLba.Error == 0 &&
                                                     readBuf.Length                     > 0;
@@ -283,15 +320,22 @@ namespace Aaru.Core.Devices.Report
 
                 mediaTest.ReadDmaRetryLbaData = readBuf;
 
-                AaruConsole.WriteLine("Trying SEEK in LBA mode...");
-                sense                     = _dev.Seek(out errorLba, 0, _dev.Timeout, out _);
+                Spectre.ProgressSingleSpinner(ctx =>
+                {
+                    ctx.AddTask("Trying SEEK in LBA mode...").IsIndeterminate();
+                    sense = _dev.Seek(out errorLba, 0, _dev.Timeout, out _);
+                });
+
                 mediaTest.SupportsSeekLba = !sense && (errorLba.Status & 0x01) != 0x01 && errorLba.Error == 0;
 
                 AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}", sense,
                                            errorChs.Status, errorChs.Error);
 
-                AaruConsole.WriteLine("Trying READ SECTOR(S) in LBA48 mode...");
-                sense = _dev.Read(out readBuf, out AtaErrorRegistersLba48 errorLba48, 0, 1, _dev.Timeout, out _);
+                Spectre.ProgressSingleSpinner(ctx =>
+                {
+                    ctx.AddTask("Trying READ SECTOR(S) in LBA48 mode...").IsIndeterminate();
+                    sense = _dev.Read(out readBuf, out AtaErrorRegistersLba48 errorLba48, 0, 1, _dev.Timeout, out _);
+                });
 
                 mediaTest.SupportsReadLba48 = !sense && (errorLba48.Status & 0x01) != 0x01 && errorLba48.Error == 0 &&
                                               readBuf.Length                       > 0;
@@ -302,8 +346,11 @@ namespace Aaru.Core.Devices.Report
 
                 mediaTest.ReadLba48Data = readBuf;
 
-                AaruConsole.WriteLine("Trying READ DMA in LBA48 mode...");
-                sense = _dev.ReadDma(out readBuf, out errorLba48, 0, 1, _dev.Timeout, out _);
+                Spectre.ProgressSingleSpinner(ctx =>
+                {
+                    ctx.AddTask("Trying READ DMA in LBA48 mode...").IsIndeterminate();
+                    sense = _dev.ReadDma(out readBuf, out errorLba48, 0, 1, _dev.Timeout, out _);
+                });
 
                 mediaTest.SupportsReadDmaLba48 = !sense && (errorLba48.Status & 0x01) != 0x01 &&
                                                  errorLba48.Error                     == 0    && readBuf.Length > 0;
@@ -334,10 +381,13 @@ namespace Aaru.Core.Devices.Report
                         mediaTest.LongBlockSize = ataId.UnformattedBPS;
                 }
 
-                AaruConsole.WriteLine("Trying READ LONG in CHS mode...");
+                Spectre.ProgressSingleSpinner(ctx =>
+                {
+                    ctx.AddTask("Trying READ LONG in CHS mode...").IsIndeterminate();
 
-                sense = _dev.ReadLong(out readBuf, out errorChs, false, 0, 0, 1, mediaTest.LongBlockSize ?? 0,
-                                      _dev.Timeout, out _);
+                    sense = _dev.ReadLong(out readBuf, out errorChs, false, 0, 0, 1, mediaTest.LongBlockSize ?? 0,
+                                          _dev.Timeout, out _);
+                });
 
                 mediaTest.SupportsReadLong = !sense && (errorChs.Status & 0x01) != 0x01 && errorChs.Error == 0 &&
                                              readBuf.Length                     > 0     &&
@@ -349,10 +399,13 @@ namespace Aaru.Core.Devices.Report
 
                 mediaTest.ReadLongData = readBuf;
 
-                AaruConsole.WriteLine("Trying READ LONG RETRY in CHS mode...");
+                Spectre.ProgressSingleSpinner(ctx =>
+                {
+                    ctx.AddTask("Trying READ LONG RETRY in CHS mode...").IsIndeterminate();
 
-                sense = _dev.ReadLong(out readBuf, out errorChs, true, 0, 0, 1, mediaTest.LongBlockSize ?? 0,
-                                      _dev.Timeout, out _);
+                    sense = _dev.ReadLong(out readBuf, out errorChs, true, 0, 0, 1, mediaTest.LongBlockSize ?? 0,
+                                          _dev.Timeout, out _);
+                });
 
                 mediaTest.SupportsReadLongRetry = !sense && (errorChs.Status & 0x01) != 0x01 && errorChs.Error == 0 &&
                                                   readBuf.Length > 0 && BitConverter.ToUInt64(readBuf, 0) !=
@@ -364,10 +417,13 @@ namespace Aaru.Core.Devices.Report
 
                 mediaTest.ReadLongRetryData = readBuf;
 
-                AaruConsole.WriteLine("Trying READ LONG in LBA mode...");
+                Spectre.ProgressSingleSpinner(ctx =>
+                {
+                    ctx.AddTask("Trying READ LONG in LBA mode...").IsIndeterminate();
 
-                sense = _dev.ReadLong(out readBuf, out errorLba, false, 0, mediaTest.LongBlockSize ?? 0, _dev.Timeout,
-                                      out _);
+                    sense = _dev.ReadLong(out readBuf, out errorLba, false, 0, mediaTest.LongBlockSize ?? 0,
+                                          _dev.Timeout, out _);
+                });
 
                 mediaTest.SupportsReadLongLba = !sense && (errorLba.Status & 0x01) != 0x01 && errorLba.Error == 0 &&
                                                 readBuf.Length                     > 0     &&
@@ -379,10 +435,13 @@ namespace Aaru.Core.Devices.Report
 
                 mediaTest.ReadLongLbaData = readBuf;
 
-                AaruConsole.WriteLine("Trying READ LONG RETRY in LBA mode...");
+                Spectre.ProgressSingleSpinner(ctx =>
+                {
+                    ctx.AddTask("Trying READ LONG RETRY in LBA mode...").IsIndeterminate();
 
-                sense = _dev.ReadLong(out readBuf, out errorLba, true, 0, mediaTest.LongBlockSize ?? 0, _dev.Timeout,
-                                      out _);
+                    sense = _dev.ReadLong(out readBuf, out errorLba, true, 0, mediaTest.LongBlockSize ?? 0,
+                                          _dev.Timeout, out _);
+                });
 
                 mediaTest.SupportsReadLongRetryLba = !sense && (errorLba.Status & 0x01) != 0x01 &&
                                                      errorLba.Error                     == 0    && readBuf.Length > 0 &&
@@ -403,7 +462,12 @@ namespace Aaru.Core.Devices.Report
         /// <summary>Creates a report of an ATA device</summary>
         public TestedMedia ReportAta(Identify.IdentifyDevice ataId)
         {
-            var capabilities = new TestedMedia();
+            bool                   sense        = true;
+            byte[]                 readBuf      = Array.Empty<byte>();
+            AtaErrorRegistersChs   errorChs     = new();
+            AtaErrorRegistersLba28 errorLba     = new();
+            AtaErrorRegistersLba48 errorLba48   = new();
+            var                    capabilities = new TestedMedia();
 
             if(ataId.UnformattedBPT != 0)
                 capabilities.UnformattedBPT = ataId.UnformattedBPT;
@@ -519,10 +583,11 @@ namespace Aaru.Core.Devices.Report
 
             ulong checkCorrectRead = 0;
 
-            AaruConsole.WriteLine("Trying READ SECTOR(S) in CHS mode...");
-
-            bool sense = _dev.Read(out byte[] readBuf, out AtaErrorRegistersChs errorChs, false, 0, 0, 1, 1,
-                                   _dev.Timeout, out _);
+            Spectre.ProgressSingleSpinner(ctx =>
+            {
+                ctx.AddTask("Trying READ SECTOR(S) in CHS mode...").IsIndeterminate();
+                sense = _dev.Read(out readBuf, out errorChs, false, 0, 0, 1, 1, _dev.Timeout, out _);
+            });
 
             capabilities.SupportsReadSectors = !sense && (errorChs.Status & 0x01) != 0x01 && errorChs.Error == 0 &&
                                                readBuf.Length                     > 0;
@@ -532,8 +597,11 @@ namespace Aaru.Core.Devices.Report
 
             capabilities.ReadSectorsData = readBuf;
 
-            AaruConsole.WriteLine("Trying READ SECTOR(S) RETRY in CHS mode...");
-            sense = _dev.Read(out readBuf, out errorChs, true, 0, 0, 1, 1, _dev.Timeout, out _);
+            Spectre.ProgressSingleSpinner(ctx =>
+            {
+                ctx.AddTask("Trying READ SECTOR(S) RETRY in CHS mode...").IsIndeterminate();
+                sense = _dev.Read(out readBuf, out errorChs, true, 0, 0, 1, 1, _dev.Timeout, out _);
+            });
 
             capabilities.SupportsReadRetry =
                 !sense && (errorChs.Status & 0x01) != 0x01 && errorChs.Error == 0 && readBuf.Length > 0;
@@ -543,8 +611,11 @@ namespace Aaru.Core.Devices.Report
 
             capabilities.ReadSectorsRetryData = readBuf;
 
-            AaruConsole.WriteLine("Trying READ DMA in CHS mode...");
-            sense = _dev.ReadDma(out readBuf, out errorChs, false, 0, 0, 1, 1, _dev.Timeout, out _);
+            Spectre.ProgressSingleSpinner(ctx =>
+            {
+                ctx.AddTask("Trying READ DMA in CHS mode...").IsIndeterminate();
+                sense = _dev.ReadDma(out readBuf, out errorChs, false, 0, 0, 1, 1, _dev.Timeout, out _);
+            });
 
             capabilities.SupportsReadDma =
                 !sense && (errorChs.Status & 0x01) != 0x01 && errorChs.Error == 0 && readBuf.Length > 0;
@@ -554,8 +625,11 @@ namespace Aaru.Core.Devices.Report
 
             capabilities.ReadDmaData = readBuf;
 
-            AaruConsole.WriteLine("Trying READ DMA RETRY in CHS mode...");
-            sense = _dev.ReadDma(out readBuf, out errorChs, true, 0, 0, 1, 1, _dev.Timeout, out _);
+            Spectre.ProgressSingleSpinner(ctx =>
+            {
+                ctx.AddTask("Trying READ DMA RETRY in CHS mode...").IsIndeterminate();
+                sense = _dev.ReadDma(out readBuf, out errorChs, true, 0, 0, 1, 1, _dev.Timeout, out _);
+            });
 
             capabilities.SupportsReadDmaRetry = !sense && (errorChs.Status & 0x01) != 0x01 && errorChs.Error == 0 &&
                                                 readBuf.Length                     > 0;
@@ -565,15 +639,22 @@ namespace Aaru.Core.Devices.Report
 
             capabilities.ReadDmaRetryData = readBuf;
 
-            AaruConsole.WriteLine("Trying SEEK in CHS mode...");
-            sense                     = _dev.Seek(out errorChs, 0, 0, 1, _dev.Timeout, out _);
+            Spectre.ProgressSingleSpinner(ctx =>
+            {
+                ctx.AddTask("Trying SEEK in CHS mode...").IsIndeterminate();
+                sense = _dev.Seek(out errorChs, 0, 0, 1, _dev.Timeout, out _);
+            });
+
             capabilities.SupportsSeek = !sense && (errorChs.Status & 0x01) != 0x01 && errorChs.Error == 0;
 
             AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}", sense,
                                        errorChs.Status, errorChs.Error);
 
-            AaruConsole.WriteLine("Trying READ SECTOR(S) in LBA mode...");
-            sense = _dev.Read(out readBuf, out AtaErrorRegistersLba28 errorLba, false, 0, 1, _dev.Timeout, out _);
+            Spectre.ProgressSingleSpinner(ctx =>
+            {
+                ctx.AddTask("Trying READ SECTOR(S) in LBA mode...").IsIndeterminate();
+                sense = _dev.Read(out readBuf, out errorLba, false, 0, 1, _dev.Timeout, out _);
+            });
 
             capabilities.SupportsReadLba =
                 !sense && (errorLba.Status & 0x01) != 0x01 && errorLba.Error == 0 && readBuf.Length > 0;
@@ -583,8 +664,11 @@ namespace Aaru.Core.Devices.Report
 
             capabilities.ReadLbaData = readBuf;
 
-            AaruConsole.WriteLine("Trying READ SECTOR(S) RETRY in LBA mode...");
-            sense = _dev.Read(out readBuf, out errorLba, true, 0, 1, _dev.Timeout, out _);
+            Spectre.ProgressSingleSpinner(ctx =>
+            {
+                ctx.AddTask("Trying READ SECTOR(S) RETRY in LBA mode...").IsIndeterminate();
+                sense = _dev.Read(out readBuf, out errorLba, true, 0, 1, _dev.Timeout, out _);
+            });
 
             capabilities.SupportsReadRetryLba = !sense && (errorLba.Status & 0x01) != 0x01 && errorLba.Error == 0 &&
                                                 readBuf.Length                     > 0;
@@ -594,8 +678,11 @@ namespace Aaru.Core.Devices.Report
 
             capabilities.ReadRetryLbaData = readBuf;
 
-            AaruConsole.WriteLine("Trying READ DMA in LBA mode...");
-            sense = _dev.ReadDma(out readBuf, out errorLba, false, 0, 1, _dev.Timeout, out _);
+            Spectre.ProgressSingleSpinner(ctx =>
+            {
+                ctx.AddTask("Trying READ DMA in LBA mode...").IsIndeterminate();
+                sense = _dev.ReadDma(out readBuf, out errorLba, false, 0, 1, _dev.Timeout, out _);
+            });
 
             capabilities.SupportsReadDmaLba = !sense && (errorLba.Status & 0x01) != 0x01 && errorLba.Error == 0 &&
                                               readBuf.Length                     > 0;
@@ -605,8 +692,11 @@ namespace Aaru.Core.Devices.Report
 
             capabilities.ReadDmaLbaData = readBuf;
 
-            AaruConsole.WriteLine("Trying READ DMA RETRY in LBA mode...");
-            sense = _dev.ReadDma(out readBuf, out errorLba, true, 0, 1, _dev.Timeout, out _);
+            Spectre.ProgressSingleSpinner(ctx =>
+            {
+                ctx.AddTask("Trying READ DMA RETRY in LBA mode...").IsIndeterminate();
+                sense = _dev.ReadDma(out readBuf, out errorLba, true, 0, 1, _dev.Timeout, out _);
+            });
 
             capabilities.SupportsReadDmaRetryLba =
                 !sense && (errorLba.Status & 0x01) != 0x01 && errorLba.Error == 0 && readBuf.Length > 0;
@@ -616,15 +706,22 @@ namespace Aaru.Core.Devices.Report
 
             capabilities.ReadDmaRetryLbaData = readBuf;
 
-            AaruConsole.WriteLine("Trying SEEK in LBA mode...");
-            sense                        = _dev.Seek(out errorLba, 0, _dev.Timeout, out _);
+            Spectre.ProgressSingleSpinner(ctx =>
+            {
+                ctx.AddTask("Trying SEEK in LBA mode...").IsIndeterminate();
+                sense = _dev.Seek(out errorLba, 0, _dev.Timeout, out _);
+            });
+
             capabilities.SupportsSeekLba = !sense && (errorLba.Status & 0x01) != 0x01 && errorLba.Error == 0;
 
             AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}", sense,
                                        errorLba.Status, errorLba.Error);
 
-            AaruConsole.WriteLine("Trying READ SECTOR(S) in LBA48 mode...");
-            sense = _dev.Read(out readBuf, out AtaErrorRegistersLba48 errorLba48, 0, 1, _dev.Timeout, out _);
+            Spectre.ProgressSingleSpinner(ctx =>
+            {
+                ctx.AddTask("Trying READ SECTOR(S) in LBA48 mode...").IsIndeterminate();
+                sense = _dev.Read(out readBuf, out errorLba48, 0, 1, _dev.Timeout, out _);
+            });
 
             capabilities.SupportsReadLba48 = !sense && (errorLba48.Status & 0x01) != 0x01 && errorLba48.Error == 0 &&
                                              readBuf.Length                       > 0;
@@ -634,8 +731,11 @@ namespace Aaru.Core.Devices.Report
 
             capabilities.ReadLba48Data = readBuf;
 
-            AaruConsole.WriteLine("Trying READ DMA in LBA48 mode...");
-            sense = _dev.ReadDma(out readBuf, out errorLba48, 0, 1, _dev.Timeout, out _);
+            Spectre.ProgressSingleSpinner(ctx =>
+            {
+                ctx.AddTask("Trying READ DMA in LBA48 mode...").IsIndeterminate();
+                sense = _dev.ReadDma(out readBuf, out errorLba48, 0, 1, _dev.Timeout, out _);
+            });
 
             capabilities.SupportsReadDmaLba48 = !sense && (errorLba48.Status & 0x01) != 0x01 && errorLba48.Error == 0 &&
                                                 readBuf.Length                       > 0;
@@ -665,10 +765,13 @@ namespace Aaru.Core.Devices.Report
                     capabilities.LongBlockSize = ataId.UnformattedBPS;
             }
 
-            AaruConsole.WriteLine("Trying READ LONG in CHS mode...");
+            Spectre.ProgressSingleSpinner(ctx =>
+            {
+                ctx.AddTask("Trying READ LONG in CHS mode...").IsIndeterminate();
 
-            sense = _dev.ReadLong(out readBuf, out errorChs, false, 0, 0, 1, capabilities.LongBlockSize ?? 0,
-                                  _dev.Timeout, out _);
+                sense = _dev.ReadLong(out readBuf, out errorChs, false, 0, 0, 1, capabilities.LongBlockSize ?? 0,
+                                      _dev.Timeout, out _);
+            });
 
             capabilities.SupportsReadLong = !sense && (errorChs.Status & 0x01) != 0x01 && errorChs.Error == 0 &&
                                             readBuf.Length > 0 && BitConverter.ToUInt64(readBuf, 0) != checkCorrectRead;
@@ -678,10 +781,13 @@ namespace Aaru.Core.Devices.Report
 
             capabilities.ReadLongData = readBuf;
 
-            AaruConsole.WriteLine("Trying READ LONG RETRY in CHS mode...");
+            Spectre.ProgressSingleSpinner(ctx =>
+            {
+                ctx.AddTask("Trying READ LONG RETRY in CHS mode...").IsIndeterminate();
 
-            sense = _dev.ReadLong(out readBuf, out errorChs, true, 0, 0, 1, capabilities.LongBlockSize ?? 0,
-                                  _dev.Timeout, out _);
+                sense = _dev.ReadLong(out readBuf, out errorChs, true, 0, 0, 1, capabilities.LongBlockSize ?? 0,
+                                      _dev.Timeout, out _);
+            });
 
             capabilities.SupportsReadLongRetry = !sense && (errorChs.Status & 0x01) != 0x01 && errorChs.Error == 0 &&
                                                  readBuf.Length > 0 && BitConverter.ToUInt64(readBuf, 0) !=
@@ -692,10 +798,13 @@ namespace Aaru.Core.Devices.Report
 
             capabilities.ReadLongRetryData = readBuf;
 
-            AaruConsole.WriteLine("Trying READ LONG in LBA mode...");
+            Spectre.ProgressSingleSpinner(ctx =>
+            {
+                ctx.AddTask("Trying READ LONG in LBA mode...").IsIndeterminate();
 
-            sense = _dev.ReadLong(out readBuf, out errorLba, false, 0, capabilities.LongBlockSize ?? 0, _dev.Timeout,
-                                  out _);
+                sense = _dev.ReadLong(out readBuf, out errorLba, false, 0, capabilities.LongBlockSize ?? 0,
+                                      _dev.Timeout, out _);
+            });
 
             capabilities.SupportsReadLongLba = !sense && (errorLba.Status & 0x01) != 0x01 && errorLba.Error == 0 &&
                                                readBuf.Length                     > 0     &&
@@ -706,10 +815,13 @@ namespace Aaru.Core.Devices.Report
 
             capabilities.ReadLongLbaData = readBuf;
 
-            AaruConsole.WriteLine("Trying READ LONG RETRY in LBA mode...");
+            Spectre.ProgressSingleSpinner(ctx =>
+            {
+                ctx.AddTask("Trying READ LONG RETRY in LBA mode...").IsIndeterminate();
 
-            sense = _dev.ReadLong(out readBuf, out errorLba, true, 0, capabilities.LongBlockSize ?? 0, _dev.Timeout,
-                                  out _);
+                sense = _dev.ReadLong(out readBuf, out errorLba, true, 0, capabilities.LongBlockSize ?? 0, _dev.Timeout,
+                                      out _);
+            });
 
             capabilities.SupportsReadLongRetryLba = !sense && (errorLba.Status & 0x01) != 0x01 && errorLba.Error == 0 &&
                                                     readBuf.Length > 0 && BitConverter.ToUInt64(readBuf, 0) !=

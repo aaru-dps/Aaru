@@ -60,53 +60,53 @@ namespace Aaru.Core
         {
             var submitThread = new Thread(() =>
             {
-                try
+                Spectre.ProgressSingleSpinner(ctx =>
                 {
-                #if DEBUG
-                    System.Console.WriteLine("Uploading device report");
-                #else
-                    Aaru.Console.AaruConsole.DebugWriteLine("Submit stats", "Uploading device report");
-                #endif
+                    ctx.AddTask("Uploading device report").IsIndeterminate();
 
-                    string json = JsonConvert.SerializeObject(report, Formatting.Indented, new JsonSerializerSettings
+                    try
                     {
-                        NullValueHandling = NullValueHandling.Ignore
-                    });
+                        string json = JsonConvert.SerializeObject(report, Formatting.Indented,
+                                                                  new JsonSerializerSettings
+                                                                  {
+                                                                      NullValueHandling = NullValueHandling.Ignore
+                                                                  });
 
-                    byte[] jsonBytes = Encoding.UTF8.GetBytes(json);
-                    var    request   = WebRequest.Create("https://www.aaru.app/api/uploadreportv2");
-                    ((HttpWebRequest)request).UserAgent = $"Aaru {typeof(Version).Assembly.GetName().Version}";
-                    request.Method                      = "POST";
-                    request.ContentLength               = jsonBytes.Length;
-                    request.ContentType                 = "application/json";
-                    Stream reqStream = request.GetRequestStream();
-                    reqStream.Write(jsonBytes, 0, jsonBytes.Length);
-                    reqStream.Close();
-                    WebResponse response = request.GetResponse();
+                        byte[] jsonBytes = Encoding.UTF8.GetBytes(json);
+                        var    request   = WebRequest.Create("https://www.aaru.app/api/uploadreportv2");
+                        ((HttpWebRequest)request).UserAgent = $"Aaru {typeof(Version).Assembly.GetName().Version}";
+                        request.Method                      = "POST";
+                        request.ContentLength               = jsonBytes.Length;
+                        request.ContentType                 = "application/json";
+                        Stream reqStream = request.GetRequestStream();
+                        reqStream.Write(jsonBytes, 0, jsonBytes.Length);
+                        reqStream.Close();
+                        WebResponse response = request.GetResponse();
 
-                    if(((HttpWebResponse)response).StatusCode != HttpStatusCode.OK)
-                        return;
+                        if(((HttpWebResponse)response).StatusCode != HttpStatusCode.OK)
+                            return;
 
-                    Stream data   = response.GetResponseStream();
-                    var    reader = new StreamReader(data ?? throw new InvalidOperationException());
+                        Stream data   = response.GetResponseStream();
+                        var    reader = new StreamReader(data ?? throw new InvalidOperationException());
 
-                    reader.ReadToEnd();
-                    data.Close();
-                    response.Close();
-                }
-                catch(WebException)
-                {
-                    // Can't connect to the server, do nothing
-                }
+                        reader.ReadToEnd();
+                        data.Close();
+                        response.Close();
+                    }
+                    catch(WebException)
+                    {
+                        // Can't connect to the server, do nothing
+                    }
 
-                // ReSharper disable once RedundantCatchClause
-                catch
-                {
-                #if DEBUG
-                    if(Debugger.IsAttached)
-                        throw;
-                #endif
-                }
+                    // ReSharper disable once RedundantCatchClause
+                    catch
+                    {
+                    #if DEBUG
+                        if(Debugger.IsAttached)
+                            throw;
+                    #endif
+                    }
+                });
             });
 
             submitThread.Start();
@@ -439,12 +439,11 @@ namespace Aaru.Core
             }
             finally
             {
-                AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
-                            Columns(new TaskDescriptionColumn(), new SpinnerColumn()).Start(ctx =>
-                            {
-                                ctx.AddTask("Saving changes...").IsIndeterminate();
-                                mctx.SaveChanges();
-                            });
+                Spectre.ProgressSingleSpinner(ctx =>
+                {
+                    ctx.AddTask("Saving changes...").IsIndeterminate();
+                    mctx.SaveChanges();
+                });
             }
         }
     }
