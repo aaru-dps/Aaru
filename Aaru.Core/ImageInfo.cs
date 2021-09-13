@@ -48,6 +48,7 @@ using Aaru.Decoders.SCSI;
 using Aaru.Decoders.Xbox;
 using Aaru.Helpers;
 using Schemas;
+using Spectre.Console;
 using DDS = Aaru.Decoders.DVD.DDS;
 using DMI = Aaru.Decoders.Xbox.DMI;
 using Inquiry = Aaru.Decoders.SCSI.Inquiry;
@@ -72,19 +73,23 @@ namespace Aaru.Core
         /// <param name="imageFormat">Media image</param>
         public static void PrintImageInfo(IMediaImage imageFormat)
         {
-            AaruConsole.WriteLine("Image information:");
+            Table table;
+
+            AaruConsole.WriteLine("[bold]Image information:[/]");
 
             if(!string.IsNullOrWhiteSpace(imageFormat.Info.Version))
-                AaruConsole.WriteLine("Format: {0} version {1}", imageFormat.Format, imageFormat.Info.Version);
+                AaruConsole.WriteLine("[bold]Format:[/] [italic]{0}[/] version {1}", Markup.Escape(imageFormat.Format),
+                                      Markup.Escape(imageFormat.Info.Version));
             else
-                AaruConsole.WriteLine("Format: {0}", imageFormat.Format);
+                AaruConsole.WriteLine("[bold]Format:[/] [italic]{0}[/]", Markup.Escape(imageFormat.Format));
 
             if(!string.IsNullOrWhiteSpace(imageFormat.Info.Application) &&
                !string.IsNullOrWhiteSpace(imageFormat.Info.ApplicationVersion))
-                AaruConsole.WriteLine("Was created with {0} version {1}", imageFormat.Info.Application,
-                                      imageFormat.Info.ApplicationVersion);
+                AaruConsole.WriteLine("Was created with [italic]{0}[/] version [italic]{1}[/]",
+                                      Markup.Escape(imageFormat.Info.Application),
+                                      Markup.Escape(imageFormat.Info.ApplicationVersion));
             else if(!string.IsNullOrWhiteSpace(imageFormat.Info.Application))
-                AaruConsole.WriteLine("Was created with {0}", imageFormat.Info.Application);
+                AaruConsole.WriteLine("Was created with [italic]{0}[/]", Markup.Escape(imageFormat.Info.Application));
 
             AaruConsole.WriteLine("Image without headers is {0} bytes long", imageFormat.Info.ImageSize);
 
@@ -94,7 +99,7 @@ namespace Aaru.Core
                           imageFormat.Info.Sectors * imageFormat.Info.SectorSize);
 
             if(!string.IsNullOrWhiteSpace(imageFormat.Info.Creator))
-                AaruConsole.WriteLine("Created by: {0}", imageFormat.Info.Creator);
+                AaruConsole.WriteLine("[bold]Created by:[/] {0}", Markup.Escape(imageFormat.Info.Creator));
 
             if(imageFormat.Info.CreationTime != DateTime.MinValue)
                 AaruConsole.WriteLine("Created on {0}", imageFormat.Info.CreationTime);
@@ -102,14 +107,14 @@ namespace Aaru.Core
             if(imageFormat.Info.LastModificationTime != DateTime.MinValue)
                 AaruConsole.WriteLine("Last modified on {0}", imageFormat.Info.LastModificationTime);
 
-            AaruConsole.WriteLine("Contains a media of type {0} and XML type {1}", imageFormat.Info.MediaType,
-                                  imageFormat.Info.XmlMediaType);
+            AaruConsole.WriteLine("Contains a media of type [italic]{0}[/] and XML type [italic]{1}[/]",
+                                  imageFormat.Info.MediaType, imageFormat.Info.XmlMediaType);
 
             AaruConsole.WriteLine("{0} partitions", imageFormat.Info.HasPartitions ? "Has" : "Doesn't have");
             AaruConsole.WriteLine("{0} sessions", imageFormat.Info.HasSessions ? "Has" : "Doesn't have");
 
             if(!string.IsNullOrWhiteSpace(imageFormat.Info.Comments))
-                AaruConsole.WriteLine("Comments: {0}", imageFormat.Info.Comments);
+                AaruConsole.WriteLine("[bold]Comments:[/] {0}", Markup.Escape(imageFormat.Info.Comments));
 
             if(imageFormat.Info.MediaSequence     != 0 &&
                imageFormat.Info.LastMediaSequence != 0)
@@ -117,51 +122,62 @@ namespace Aaru.Core
                                       imageFormat.Info.LastMediaSequence);
 
             if(!string.IsNullOrWhiteSpace(imageFormat.Info.MediaTitle))
-                AaruConsole.WriteLine("Media title: {0}", imageFormat.Info.MediaTitle);
+                AaruConsole.WriteLine("[bold]Media title:[/] [italic]{0}[/]",
+                                      Markup.Escape(imageFormat.Info.MediaTitle));
 
             if(!string.IsNullOrWhiteSpace(imageFormat.Info.MediaManufacturer))
-                AaruConsole.WriteLine("Media manufacturer: {0}", imageFormat.Info.MediaManufacturer);
+                AaruConsole.WriteLine("[bold]Media manufacturer:[/] [italic]{0}[/]",
+                                      Markup.Escape(imageFormat.Info.MediaManufacturer));
 
             if(!string.IsNullOrWhiteSpace(imageFormat.Info.MediaModel))
-                AaruConsole.WriteLine("Media model: {0}", imageFormat.Info.MediaModel);
+                AaruConsole.WriteLine("[bold]Media model:[/] [italic]{0}[/]",
+                                      Markup.Escape(imageFormat.Info.MediaModel));
 
             if(!string.IsNullOrWhiteSpace(imageFormat.Info.MediaSerialNumber))
-                AaruConsole.WriteLine("Media serial number: {0}", imageFormat.Info.MediaSerialNumber);
+                AaruConsole.WriteLine("[bold]Media serial number:[/] [italic]{0}[/]",
+                                      Markup.Escape(imageFormat.Info.MediaSerialNumber));
 
             if(!string.IsNullOrWhiteSpace(imageFormat.Info.MediaBarcode))
-                AaruConsole.WriteLine("Media barcode: {0}", imageFormat.Info.MediaBarcode);
+                AaruConsole.WriteLine("[bold]Media barcode:[/] [italic]{0}[/]",
+                                      Markup.Escape(imageFormat.Info.MediaBarcode));
 
             if(!string.IsNullOrWhiteSpace(imageFormat.Info.MediaPartNumber))
-                AaruConsole.WriteLine("Media part number: {0}", imageFormat.Info.MediaPartNumber);
+                AaruConsole.WriteLine("[bold]Media part number:[/] [italic]{0}[/]",
+                                      Markup.Escape(imageFormat.Info.MediaPartNumber));
 
             if(!string.IsNullOrWhiteSpace(imageFormat.Info.DriveManufacturer))
-                AaruConsole.WriteLine("Drive manufacturer: {0}", imageFormat.Info.DriveManufacturer);
+                AaruConsole.WriteLine("[bold]Drive manufacturer:[/] [italic]{0}[/]",
+                                      Markup.Escape(imageFormat.Info.DriveManufacturer));
 
             if(!string.IsNullOrWhiteSpace(imageFormat.Info.DriveModel))
-                AaruConsole.WriteLine("Drive model: {0}", imageFormat.Info.DriveModel);
+                AaruConsole.WriteLine("[bold]Drive model:[/] [italic]{0}[/]",
+                                      Markup.Escape(imageFormat.Info.DriveModel));
 
             if(!string.IsNullOrWhiteSpace(imageFormat.Info.DriveSerialNumber))
-                AaruConsole.WriteLine("Drive serial number: {0}", imageFormat.Info.DriveSerialNumber);
+                AaruConsole.WriteLine("[bold]Drive serial number:[/] [italic]{0}[/]",
+                                      Markup.Escape(imageFormat.Info.DriveSerialNumber));
 
             if(!string.IsNullOrWhiteSpace(imageFormat.Info.DriveFirmwareRevision))
-                AaruConsole.WriteLine("Drive firmware info: {0}", imageFormat.Info.DriveFirmwareRevision);
+                AaruConsole.WriteLine("[bold]Drive firmware info:[/] [italic]{0}[/]",
+                                      Markup.Escape(imageFormat.Info.DriveFirmwareRevision));
 
             if(imageFormat.Info.Cylinders       > 0                         &&
                imageFormat.Info.Heads           > 0                         &&
                imageFormat.Info.SectorsPerTrack > 0                         &&
                imageFormat.Info.XmlMediaType    != XmlMediaType.OpticalDisc &&
                (!(imageFormat is ITapeImage tapeImage) || !tapeImage.IsTape))
-                AaruConsole.WriteLine("Media geometry: {0} cylinders, {1} heads, {2} sectors per track",
-                                      imageFormat.Info.Cylinders, imageFormat.Info.Heads,
-                                      imageFormat.Info.SectorsPerTrack);
+                AaruConsole.
+                    WriteLine("[bold]Media geometry:[/] [italic]{0} cylinders, {1} heads, {2} sectors per track[/]",
+                              imageFormat.Info.Cylinders, imageFormat.Info.Heads, imageFormat.Info.SectorsPerTrack);
 
             if(imageFormat.Info.ReadableMediaTags       != null &&
                imageFormat.Info.ReadableMediaTags.Count > 0)
             {
-                AaruConsole.WriteLine("Contains {0} readable media tags:", imageFormat.Info.ReadableMediaTags.Count);
+                AaruConsole.WriteLine("[bold]Contains {0} readable media tags:[/]",
+                                      imageFormat.Info.ReadableMediaTags.Count);
 
                 foreach(MediaTagType tag in imageFormat.Info.ReadableMediaTags.OrderBy(t => t))
-                    AaruConsole.Write("{0} ", tag);
+                    AaruConsole.Write("[italic]{0}[/] ", Markup.Escape(tag.ToString()));
 
                 AaruConsole.WriteLine();
             }
@@ -169,10 +185,11 @@ namespace Aaru.Core
             if(imageFormat.Info.ReadableSectorTags       != null &&
                imageFormat.Info.ReadableSectorTags.Count > 0)
             {
-                AaruConsole.WriteLine("Contains {0} readable sector tags:", imageFormat.Info.ReadableSectorTags.Count);
+                AaruConsole.WriteLine("[bold]Contains {0} readable sector tags:[/]",
+                                      imageFormat.Info.ReadableSectorTags.Count);
 
                 foreach(SectorTagType tag in imageFormat.Info.ReadableSectorTags.OrderBy(t => t))
-                    AaruConsole.Write("{0} ", tag);
+                    AaruConsole.Write("[italic]{0}[/] ", tag);
 
                 AaruConsole.WriteLine();
             }
@@ -193,7 +210,7 @@ namespace Aaru.Core
                     Array.Copy(inquiry, 8, scsiVendorId, 0, 8);
                 }
 
-                AaruConsole.WriteLine("SCSI INQUIRY contained in image:");
+                AaruConsole.WriteLine("[bold]SCSI INQUIRY contained in image:[/]");
                 AaruConsole.Write("{0}", Inquiry.Prettify(inquiry));
                 AaruConsole.WriteLine();
             }
@@ -202,7 +219,7 @@ namespace Aaru.Core
             {
                 byte[] identify = imageFormat.ReadDiskTag(MediaTagType.ATA_IDENTIFY);
 
-                AaruConsole.WriteLine("ATA IDENTIFY contained in image:");
+                AaruConsole.WriteLine("[bold]ATA IDENTIFY contained in image:[/]");
                 AaruConsole.Write("{0}", Identify.Prettify(identify));
                 AaruConsole.WriteLine();
             }
@@ -211,7 +228,7 @@ namespace Aaru.Core
             {
                 byte[] identify = imageFormat.ReadDiskTag(MediaTagType.ATAPI_IDENTIFY);
 
-                AaruConsole.WriteLine("ATAPI IDENTIFY contained in image:");
+                AaruConsole.WriteLine("[bold]ATAPI IDENTIFY contained in image:[/]");
                 AaruConsole.Write("{0}", Identify.Prettify(identify));
                 AaruConsole.WriteLine();
             }
@@ -223,7 +240,7 @@ namespace Aaru.Core
 
                 if(decMode.HasValue)
                 {
-                    AaruConsole.WriteLine("SCSI MODE SENSE (10) contained in image:");
+                    AaruConsole.WriteLine("[bold]SCSI MODE SENSE (10) contained in image:[/]");
                     PrintScsiModePages.Print(decMode.Value, scsiDeviceType, scsiVendorId);
                     AaruConsole.WriteLine();
                 }
@@ -235,7 +252,7 @@ namespace Aaru.Core
 
                 if(decMode.HasValue)
                 {
-                    AaruConsole.WriteLine("SCSI MODE SENSE (6) contained in image:");
+                    AaruConsole.WriteLine("[bold]SCSI MODE SENSE (6) contained in image:[/]");
                     PrintScsiModePages.Print(decMode.Value, scsiDeviceType, scsiVendorId);
                     AaruConsole.WriteLine();
                 }
@@ -265,7 +282,7 @@ namespace Aaru.Core
                         toc    = tmp;
                     }
 
-                    AaruConsole.WriteLine("CompactDisc Table of Contents contained in image:");
+                    AaruConsole.WriteLine("[bold]CompactDisc Table of Contents contained in image:[/]");
                     AaruConsole.Write("{0}", FullTOC.Prettify(toc));
                     AaruConsole.WriteLine();
                 }
@@ -288,7 +305,7 @@ namespace Aaru.Core
                         pma    = tmp;
                     }
 
-                    AaruConsole.WriteLine("CompactDisc Power Management Area contained in image:");
+                    AaruConsole.WriteLine("[bold]CompactDisc Power Management Area contained in image:[/]");
                     AaruConsole.Write("{0}", PMA.Prettify(pma));
                     AaruConsole.WriteLine();
                 }
@@ -311,7 +328,7 @@ namespace Aaru.Core
                     atip   = tmp;
                 }
 
-                AaruConsole.WriteLine("CompactDisc Absolute Time In Pregroove (ATIP) contained in image:");
+                AaruConsole.WriteLine("[bold]CompactDisc Absolute Time In Pregroove (ATIP) contained in image:[/]");
                 AaruConsole.Write("{0}", ATIP.Prettify(atip));
                 AaruConsole.WriteLine();
             }
@@ -333,7 +350,7 @@ namespace Aaru.Core
                     cdtext = tmp;
                 }
 
-                AaruConsole.WriteLine("CompactDisc Lead-in's CD-Text contained in image:");
+                AaruConsole.WriteLine("[bold]CompactDisc Lead-in's CD-Text contained in image:[/]");
                 AaruConsole.Write("{0}", CDTextOnLeadIn.Prettify(cdtext));
                 AaruConsole.WriteLine();
             }
@@ -342,7 +359,7 @@ namespace Aaru.Core
             {
                 byte[] mcn = imageFormat.ReadDiskTag(MediaTagType.CD_MCN);
 
-                AaruConsole.WriteLine("CompactDisc Media Catalogue Number contained in image: {0}",
+                AaruConsole.WriteLine("[bold]CompactDisc Media Catalogue Number contained in image:[/] {0}",
                                       Encoding.UTF8.GetString(mcn));
 
                 AaruConsole.WriteLine();
@@ -352,7 +369,7 @@ namespace Aaru.Core
             {
                 byte[] pri = imageFormat.ReadDiskTag(MediaTagType.DVDR_PreRecordedInfo);
 
-                AaruConsole.WriteLine("DVD-R(W) Pre-Recorded Information:");
+                AaruConsole.WriteLine("[bold]DVD-R(W) Pre-Recorded Information:[/]");
                 AaruConsole.Write("{0}", PRI.Prettify(pri));
                 AaruConsole.WriteLine();
             }
@@ -361,7 +378,7 @@ namespace Aaru.Core
             {
                 byte[] pfi = imageFormat.ReadDiskTag(MediaTagType.DVD_PFI);
 
-                AaruConsole.WriteLine("DVD Physical Format Information contained in image:");
+                AaruConsole.WriteLine("[bold]DVD Physical Format Information contained in image:[/]");
                 AaruConsole.Write("{0}", PFI.Prettify(pfi, imageFormat.Info.MediaType));
                 AaruConsole.WriteLine();
             }
@@ -370,7 +387,7 @@ namespace Aaru.Core
             {
                 byte[] dds = imageFormat.ReadDiskTag(MediaTagType.DVDRAM_DDS);
 
-                AaruConsole.WriteLine("DVD-RAM Disc Definition Structure contained in image:");
+                AaruConsole.WriteLine("[bold]DVD-RAM Disc Definition Structure contained in image:[/]");
                 AaruConsole.Write("{0}", DDS.Prettify(dds));
                 AaruConsole.WriteLine();
             }
@@ -379,7 +396,7 @@ namespace Aaru.Core
             {
                 byte[] pfi = imageFormat.ReadDiskTag(MediaTagType.DVDR_PFI);
 
-                AaruConsole.WriteLine("DVD-R Physical Format Information contained in image:");
+                AaruConsole.WriteLine("[bold]DVD-R Physical Format Information contained in image:[/]");
                 AaruConsole.Write("{0}", PFI.Prettify(pfi, imageFormat.Info.MediaType));
                 AaruConsole.WriteLine();
             }
@@ -388,7 +405,7 @@ namespace Aaru.Core
             {
                 byte[] di = imageFormat.ReadDiskTag(MediaTagType.BD_DI);
 
-                AaruConsole.WriteLine("Bluray Disc Information contained in image:");
+                AaruConsole.WriteLine("[bold]Bluray Disc Information contained in image:[/]");
                 AaruConsole.Write("{0}", DI.Prettify(di));
                 AaruConsole.WriteLine();
             }
@@ -397,7 +414,7 @@ namespace Aaru.Core
             {
                 byte[] dds = imageFormat.ReadDiskTag(MediaTagType.BD_DDS);
 
-                AaruConsole.WriteLine("Bluray Disc Definition Structure contained in image:");
+                AaruConsole.WriteLine("[bold]Bluray Disc Definition Structure contained in image:[/]");
                 AaruConsole.Write("{0}", Decoders.Bluray.DDS.Prettify(dds));
                 AaruConsole.WriteLine();
             }
@@ -406,7 +423,7 @@ namespace Aaru.Core
             {
                 byte[] cis = imageFormat.ReadDiskTag(MediaTagType.PCMCIA_CIS);
 
-                AaruConsole.WriteLine("PCMCIA CIS:");
+                AaruConsole.WriteLine("[bold]PCMCIA CIS:[/]");
                 Tuple[] tuples = CIS.GetTuples(cis);
 
                 if(tuples != null)
@@ -480,7 +497,7 @@ namespace Aaru.Core
             {
                 byte[] cid = imageFormat.ReadDiskTag(MediaTagType.SD_CID);
 
-                AaruConsole.WriteLine("SecureDigital CID contained in image:");
+                AaruConsole.WriteLine("[bold]SecureDigital CID contained in image:[/]");
                 AaruConsole.Write("{0}", Decoders.SecureDigital.Decoders.PrettifyCID(cid));
                 AaruConsole.WriteLine();
             }
@@ -489,7 +506,7 @@ namespace Aaru.Core
             {
                 byte[] csd = imageFormat.ReadDiskTag(MediaTagType.SD_CSD);
 
-                AaruConsole.WriteLine("SecureDigital CSD contained in image:");
+                AaruConsole.WriteLine("[bold]SecureDigital CSD contained in image:[/]");
                 AaruConsole.Write("{0}", Decoders.SecureDigital.Decoders.PrettifyCSD(csd));
                 AaruConsole.WriteLine();
             }
@@ -498,7 +515,7 @@ namespace Aaru.Core
             {
                 byte[] scr = imageFormat.ReadDiskTag(MediaTagType.SD_SCR);
 
-                AaruConsole.WriteLine("SecureDigital SCR contained in image:");
+                AaruConsole.WriteLine("[bold]SecureDigital SCR contained in image:[/]");
                 AaruConsole.Write("{0}", Decoders.SecureDigital.Decoders.PrettifySCR(scr));
                 AaruConsole.WriteLine();
             }
@@ -507,7 +524,7 @@ namespace Aaru.Core
             {
                 byte[] ocr = imageFormat.ReadDiskTag(MediaTagType.SD_OCR);
 
-                AaruConsole.WriteLine("SecureDigital OCR contained in image:");
+                AaruConsole.WriteLine("[bold]SecureDigital OCR contained in image:[/]");
                 AaruConsole.Write("{0}", Decoders.SecureDigital.Decoders.PrettifyOCR(ocr));
                 AaruConsole.WriteLine();
             }
@@ -516,7 +533,7 @@ namespace Aaru.Core
             {
                 byte[] cid = imageFormat.ReadDiskTag(MediaTagType.MMC_CID);
 
-                AaruConsole.WriteLine("MultiMediaCard CID contained in image:");
+                AaruConsole.WriteLine("[bold]MultiMediaCard CID contained in image:[/]");
                 AaruConsole.Write("{0}", Decoders.MMC.Decoders.PrettifyCID(cid));
                 AaruConsole.WriteLine();
             }
@@ -525,7 +542,7 @@ namespace Aaru.Core
             {
                 byte[] csd = imageFormat.ReadDiskTag(MediaTagType.MMC_CSD);
 
-                AaruConsole.WriteLine("MultiMediaCard CSD contained in image:");
+                AaruConsole.WriteLine("[bold]MultiMediaCard CSD contained in image:[/]");
                 AaruConsole.Write("{0}", Decoders.MMC.Decoders.PrettifyCSD(csd));
                 AaruConsole.WriteLine();
             }
@@ -534,7 +551,7 @@ namespace Aaru.Core
             {
                 byte[] ecsd = imageFormat.ReadDiskTag(MediaTagType.MMC_ExtendedCSD);
 
-                AaruConsole.WriteLine("MultiMediaCard ExtendedCSD contained in image:");
+                AaruConsole.WriteLine("[bold]MultiMediaCard ExtendedCSD contained in image:[/]");
                 AaruConsole.Write("{0}", Decoders.MMC.Decoders.PrettifyExtendedCSD(ecsd));
                 AaruConsole.WriteLine();
             }
@@ -543,7 +560,7 @@ namespace Aaru.Core
             {
                 byte[] ocr = imageFormat.ReadDiskTag(MediaTagType.MMC_OCR);
 
-                AaruConsole.WriteLine("MultiMediaCard OCR contained in image:");
+                AaruConsole.WriteLine("[bold]MultiMediaCard OCR contained in image:[/]");
                 AaruConsole.Write("{0}", Decoders.MMC.Decoders.PrettifyOCR(ocr));
                 AaruConsole.WriteLine();
             }
@@ -552,7 +569,7 @@ namespace Aaru.Core
             {
                 byte[] xpfi = imageFormat.ReadDiskTag(MediaTagType.Xbox_PFI);
 
-                AaruConsole.WriteLine("Xbox Physical Format Information contained in image:");
+                AaruConsole.WriteLine("[bold]Xbox Physical Format Information contained in image:[/]");
                 AaruConsole.Write("{0}", PFI.Prettify(xpfi, imageFormat.Info.MediaType));
                 AaruConsole.WriteLine();
             }
@@ -567,7 +584,7 @@ namespace Aaru.Core
 
                     if(xmi.HasValue)
                     {
-                        AaruConsole.WriteLine("Xbox DMI contained in image:");
+                        AaruConsole.WriteLine("[bold]Xbox DMI contained in image:[/]");
                         AaruConsole.Write("{0}", DMI.PrettifyXbox(xmi));
                         AaruConsole.WriteLine();
                     }
@@ -579,7 +596,7 @@ namespace Aaru.Core
 
                     if(xmi.HasValue)
                     {
-                        AaruConsole.WriteLine("Xbox 360 DMI contained in image:");
+                        AaruConsole.WriteLine("[bold]Xbox 360 DMI contained in image:[/]");
                         AaruConsole.Write("{0}", DMI.PrettifyXbox360(xmi));
                         AaruConsole.WriteLine();
                     }
@@ -590,7 +607,7 @@ namespace Aaru.Core
             {
                 byte[] toc = imageFormat.ReadDiskTag(MediaTagType.Xbox_SecuritySector);
 
-                AaruConsole.WriteLine("Xbox Security Sectors contained in image:");
+                AaruConsole.WriteLine("[bold]Xbox Security Sectors contained in image:[/]");
                 AaruConsole.Write("{0}", SS.Prettify(toc));
                 AaruConsole.WriteLine();
             }
@@ -602,18 +619,23 @@ namespace Aaru.Core
                     if(opticalImage.Sessions       != null &&
                        opticalImage.Sessions.Count > 0)
                     {
-                        AaruConsole.WriteLine("Image sessions:");
+                        table = new Table
+                        {
+                            Title = new TableTitle("Image sessions")
+                        };
 
-                        AaruConsole.WriteLine("{0,-9}{1,-13}{2,-12}{3,-12}{4,-12}", "Session", "First track",
-                                              "Last track", "Start", "End");
-
-                        AaruConsole.WriteLine("=========================================================");
+                        table.AddColumn("Session");
+                        table.AddColumn("First track");
+                        table.AddColumn("Last track");
+                        table.AddColumn("Start");
+                        table.AddColumn("End");
 
                         foreach(Session session in opticalImage.Sessions)
-                            AaruConsole.WriteLine("{0,-9}{1,-13}{2,-12}{3,-12}{4,-12}", session.SessionSequence,
-                                                  session.StartTrack, session.EndTrack, session.StartSector,
-                                                  session.EndSector);
+                            table.AddRow(session.SessionSequence.ToString(), session.StartTrack.ToString(),
+                                         session.EndTrack.ToString(), session.StartSector.ToString(),
+                                         session.EndSector.ToString());
 
+                        AnsiConsole.Render(table);
                         AaruConsole.WriteLine();
                     }
                 }
@@ -627,34 +649,47 @@ namespace Aaru.Core
                     if(opticalImage.Tracks       != null &&
                        opticalImage.Tracks.Count > 0)
                     {
-                        AaruConsole.WriteLine("Image tracks:");
+                        table = new Table
+                        {
+                            Title = new TableTitle("Image tracks")
+                        };
 
-                        AaruConsole.WriteLine("{0,-7}{1,-17}{2,-6}{3,-8}{4,-12}{5,-8}{6,-12}{7,-12}", "Track", "Type",
-                                              "Bps", "Raw bps", "Subchannel", "Pregap", "Start", "End");
-
-                        AaruConsole.
-                            WriteLine("=================================================================================");
+                        table.AddColumn("Track");
+                        table.AddColumn("Type");
+                        table.AddColumn("Bps");
+                        table.AddColumn("Raw bps");
+                        table.AddColumn("Subchannel");
+                        table.AddColumn("Pregap");
+                        table.AddColumn("Start");
+                        table.AddColumn("End");
 
                         foreach(Track track in opticalImage.Tracks)
-                            AaruConsole.WriteLine("{0,-7}{1,-17}{2,-6}{3,-8}{4,-12}{5,-8}{6,-12}{7,-12}",
-                                                  track.TrackSequence, track.TrackType, track.TrackBytesPerSector,
-                                                  track.TrackRawBytesPerSector, track.TrackSubchannelType,
-                                                  track.TrackPregap, track.TrackStartSector, track.TrackEndSector);
+                            table.AddRow(track.TrackSequence.ToString(), track.TrackType.ToString(),
+                                         track.TrackBytesPerSector.ToString(), track.TrackRawBytesPerSector.ToString(),
+                                         track.TrackSubchannelType.ToString(), track.TrackPregap.ToString(),
+                                         track.TrackStartSector.ToString(), track.TrackEndSector.ToString());
+
+                        AnsiConsole.Render(table);
 
                         if(opticalImage.Tracks.Any(t => t.Indexes.Any()))
                         {
                             AaruConsole.WriteLine();
 
-                            AaruConsole.WriteLine("Track indexes:");
+                            table = new Table
+                            {
+                                Title = new TableTitle("Image indexes")
+                            };
 
-                            AaruConsole.WriteLine("{0,-7}{1,-7}{2,-12}", "Track", "Index", "Start");
-
-                            AaruConsole.WriteLine("=======================");
+                            table.AddColumn("Track");
+                            table.AddColumn("Index");
+                            table.AddColumn("Start");
 
                             foreach(Track track in opticalImage.Tracks)
                                 foreach(KeyValuePair<ushort, int> index in track.Indexes)
-                                    AaruConsole.WriteLine("{0,-7}{1,-7}{2,-12}", track.TrackSequence, index.Key,
-                                                          index.Value);
+                                    table.AddRow(track.TrackSequence.ToString(), index.Key.ToString(),
+                                                 index.Value.ToString());
+
+                            AnsiConsole.Render(table);
                         }
                     }
                 }
@@ -709,37 +744,27 @@ namespace Aaru.Core
                 }
             }
 
-            manufacturerLen += 2;
-            modelLen        += 2;
-            serialLen       += 2;
-            softwareLen     += 2;
-            versionLen      += 2;
-            osLen           += 2;
-            sectorLen       += 2;
-            sectorLen       += 2;
+            table = new Table
+            {
+                Title = new TableTitle("Dump hardware information")
+            };
 
-            char[] separator = new char[manufacturerLen + modelLen + serialLen + softwareLen + versionLen + osLen +
-                                        sectorLen       + sectorLen];
-
-            for(int i = 0; i < separator.Length; i++)
-                separator[i] = '=';
-
-            string format =
-                $"{{0,-{manufacturerLen}}}{{1,-{modelLen}}}{{2,-{serialLen}}}{{3,-{softwareLen}}}{{4,-{versionLen}}}{{5,-{osLen}}}{{6,-{sectorLen}}}{{7,-{sectorLen}}}";
-
-            AaruConsole.WriteLine("Dump hardware information:");
-
-            AaruConsole.WriteLine(format, MANUFACTURER_STRING, MODEL_STRING, SERIAL_STRING, SOFTWARE_STRING,
-                                  VERSION_STRING, OS_STRING, START_STRING, END_STRING);
-
-            AaruConsole.WriteLine(new string(separator));
+            table.AddColumn(MANUFACTURER_STRING);
+            table.AddColumn(MODEL_STRING);
+            table.AddColumn(SERIAL_STRING);
+            table.AddColumn(SOFTWARE_STRING);
+            table.AddColumn(VERSION_STRING);
+            table.AddColumn(OS_STRING);
+            table.AddColumn(START_STRING);
+            table.AddColumn(END_STRING);
 
             foreach(DumpHardwareType dump in imageFormat.DumpHardware)
             {
                 foreach(ExtentType extent in dump.Extents)
-                    AaruConsole.WriteLine(format, dump.Manufacturer, dump.Model, dump.Serial, dump.Software.Name,
-                                          dump.Software.Version, dump.Software.OperatingSystem, extent.Start,
-                                          extent.End);
+                    table.AddRow(Markup.Escape(dump.Manufacturer), Markup.Escape(dump.Model),
+                                 Markup.Escape(dump.Serial), Markup.Escape(dump.Software.Name),
+                                 Markup.Escape(dump.Software.Version), Markup.Escape(dump.Software.OperatingSystem),
+                                 extent.Start.ToString(), extent.End.ToString());
             }
 
             AaruConsole.WriteLine();
