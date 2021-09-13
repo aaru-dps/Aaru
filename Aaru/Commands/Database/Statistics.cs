@@ -288,41 +288,61 @@ namespace Aaru.Commands.Database
                 thereAreStats = true;
             }
 
-            if(ctx.Medias.Any())
+            if(ctx.Medias.Any(ms => ms.Real))
             {
                 table = new Table
                 {
-                    Title = new TableTitle("Media statistics")
+                    Title = new TableTitle("Media found in real device statistics")
                 };
 
                 table.AddColumn("Type");
                 table.AddColumn("Times found");
-                table.AddColumn("Real?");
                 table.Columns[1].RightAligned();
 
-                foreach(string media in ctx.Medias.Select(ms => ms.Type).Distinct().OrderBy(ms => ms))
+                foreach(string media in ctx.Medias.Where(ms => ms.Real).Select(ms => ms.Type).Distinct().
+                                            OrderBy(ms => ms))
                 {
                     ulong count = ctx.Medias.Where(c => c.Type == media && c.Synchronized && c.Real).
                                       Select(c => c.Count).FirstOrDefault();
 
                     count += (ulong)ctx.Medias.LongCount(c => c.Type == media && !c.Synchronized && c.Real);
 
-                    if(count > 0)
-                    {
-                        table.AddRow(Markup.Escape(media), $"{count}", "Yes");
+                    if(count <= 0)
+                        continue;
 
-                        thereAreStats = true;
-                    }
+                    table.AddRow(Markup.Escape(media), $"{count}");
 
-                    count = ctx.Medias.Where(c => c.Type == media && c.Synchronized && !c.Real).Select(c => c.Count).
-                                FirstOrDefault();
+                    thereAreStats = true;
+                }
+
+                AnsiConsole.Render(table);
+                AaruConsole.WriteLine();
+            }
+
+            if(ctx.Medias.Any(ms => !ms.Real))
+            {
+                table = new Table
+                {
+                    Title = new TableTitle("Media found in images statistics")
+                };
+
+                table.AddColumn("Type");
+                table.AddColumn("Times found");
+                table.Columns[1].RightAligned();
+
+                foreach(string media in ctx.Medias.Where(ms => !ms.Real).Select(ms => ms.Type).Distinct().
+                                            OrderBy(ms => ms))
+                {
+                    ulong count = ctx.Medias.Where(c => c.Type == media && c.Synchronized && !c.Real).
+                                      Select(c => c.Count).FirstOrDefault();
 
                     count += (ulong)ctx.Medias.LongCount(c => c.Type == media && !c.Synchronized && !c.Real);
 
-                    if(count == 0)
+                    if(count <= 0)
                         continue;
 
-                    table.AddRow(Markup.Escape(media), $"{count}", "No");
+                    table.AddRow(Markup.Escape(media), $"{count}");
+
                     thereAreStats = true;
                 }
 
