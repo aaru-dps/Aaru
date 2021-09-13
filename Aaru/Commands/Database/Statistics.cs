@@ -132,7 +132,7 @@ namespace Aaru.Commands.Database
                     ctx.SaveChanges();
                 }
 
-                foreach(string command in ctx.Commands.OrderBy(c => c.Name).Select(c => c.Name).Distinct())
+                foreach(string command in ctx.Commands.Select(c => c.Name).Distinct().OrderBy(c => c))
                 {
                     ulong count = ctx.Commands.Where(c => c.Name == command && c.Synchronized).Select(c => c.Count).
                                       FirstOrDefault();
@@ -161,7 +161,7 @@ namespace Aaru.Commands.Database
                 table.AddColumn("Times found");
                 table.Columns[1].RightAligned();
 
-                foreach(string filter in ctx.Filters.OrderBy(c => c.Name).Select(c => c.Name).Distinct())
+                foreach(string filter in ctx.Filters.Select(c => c.Name).Distinct().OrderBy(c => c))
                 {
                     ulong count = ctx.Filters.Where(c => c.Name == filter && c.Synchronized).Select(c => c.Count).
                                       FirstOrDefault();
@@ -190,7 +190,7 @@ namespace Aaru.Commands.Database
                 table.AddColumn("Times found");
                 table.Columns[1].RightAligned();
 
-                foreach(string format in ctx.MediaFormats.OrderBy(c => c.Name).Select(c => c.Name).Distinct())
+                foreach(string format in ctx.MediaFormats.Select(c => c.Name).Distinct().OrderBy(c => c))
                 {
                     ulong count = ctx.MediaFormats.Where(c => c.Name == format && c.Synchronized).Select(c => c.Count).
                                       FirstOrDefault();
@@ -219,7 +219,7 @@ namespace Aaru.Commands.Database
                 table.AddColumn("Times found");
                 table.Columns[1].RightAligned();
 
-                foreach(string partition in ctx.Partitions.OrderBy(c => c.Name).Select(c => c.Name).Distinct())
+                foreach(string partition in ctx.Partitions.Select(c => c.Name).Distinct().OrderBy(c => c))
                 {
                     ulong count = ctx.Partitions.Where(c => c.Name == partition && c.Synchronized).Select(c => c.Count).
                                       FirstOrDefault();
@@ -248,7 +248,7 @@ namespace Aaru.Commands.Database
                 table.AddColumn("Times found");
                 table.Columns[1].RightAligned();
 
-                foreach(string filesystem in ctx.Filesystems.OrderBy(c => c.Name).Select(c => c.Name).Distinct())
+                foreach(string filesystem in ctx.Filesystems.Select(c => c.Name).Distinct().OrderBy(c => c))
                 {
                     ulong count = ctx.Filesystems.Where(c => c.Name == filesystem && c.Synchronized).
                                       Select(c => c.Count).FirstOrDefault();
@@ -300,7 +300,7 @@ namespace Aaru.Commands.Database
                 table.AddColumn("Real?");
                 table.Columns[1].RightAligned();
 
-                foreach(string media in ctx.Medias.OrderBy(ms => ms.Type).Select(ms => ms.Type).Distinct())
+                foreach(string media in ctx.Medias.Select(ms => ms.Type).Distinct().OrderBy(ms => ms))
                 {
                     ulong count = ctx.Medias.Where(c => c.Type == media && c.Synchronized && c.Real).
                                       Select(c => c.Count).FirstOrDefault();
