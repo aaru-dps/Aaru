@@ -39,6 +39,7 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Core;
+using Spectre.Console;
 
 namespace Aaru.Commands
 {
@@ -53,10 +54,29 @@ namespace Aaru.Commands
             MainClass.PrintCopyright();
 
             if(debug)
-                AaruConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
+            {
+                IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
+                {
+                    Out = new AnsiConsoleOutput(System.Console.Error)
+                });
+
+                AaruConsole.DebugWriteLineEvent += (format, objects) =>
+                {
+                    if(objects is null)
+                        stderrConsole.MarkupLine(format);
+                    else
+                        stderrConsole.MarkupLine(format, objects);
+                };
+            }
 
             if(verbose)
-                AaruConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+                AaruConsole.WriteEvent += (format, objects) =>
+                {
+                    if(objects is null)
+                        AnsiConsole.Markup(format);
+                    else
+                        AnsiConsole.Markup(format, objects);
+                };
 
             AaruConsole.DebugWriteLine("List-Namespaces command", "--debug={0}", debug);
             AaruConsole.DebugWriteLine("List-Namespaces command", "--verbose={0}", verbose);
@@ -67,12 +87,18 @@ namespace Aaru.Commands
             foreach(KeyValuePair<string, IReadOnlyFilesystem> kvp in
                 plugins.ReadOnlyFilesystems.Where(kvp => !(kvp.Value.Namespaces is null)))
             {
-                AaruConsole.WriteLine("\tNamespaces for {0}:", kvp.Value.Name);
-                AaruConsole.WriteLine("\t\t{0,-16} {1,-16}", "Namespace", "Description");
+                Table table = new()
+                {
+                    Title = new TableTitle($"Namespaces for {kvp.Value.Name}:")
+                };
+
+                table.AddColumn("Namespace");
+                table.AddColumn("Description");
 
                 foreach(KeyValuePair<string, string> @namespace in kvp.Value.Namespaces.OrderBy(t => t.Key))
-                    AaruConsole.WriteLine("\t\t{0,-16} {1,-16}", @namespace.Key, @namespace.Value);
+                    table.AddRow(@namespace.Key, @namespace.Value);
 
+                AnsiConsole.Render(table);
                 AaruConsole.WriteLine();
             }
 
