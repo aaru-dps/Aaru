@@ -38,6 +38,7 @@ using System.Text;
 using Aaru.CommonTypes.Enums;
 using Aaru.Console;
 using Aaru.Core;
+using Spectre.Console;
 
 namespace Aaru.Commands
 {
@@ -51,10 +52,29 @@ namespace Aaru.Commands
             MainClass.PrintCopyright();
 
             if(debug)
-                AaruConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
+            {
+                IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
+                {
+                    Out = new AnsiConsoleOutput(System.Console.Error)
+                });
+
+                AaruConsole.DebugWriteLineEvent += (format, objects) =>
+                {
+                    if(objects is null)
+                        stderrConsole.MarkupLine(format);
+                    else
+                        stderrConsole.MarkupLine(format, objects);
+                };
+            }
 
             if(verbose)
-                AaruConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+                AaruConsole.WriteEvent += (format, objects) =>
+                {
+                    if(objects is null)
+                        AnsiConsole.Markup(format);
+                    else
+                        AnsiConsole.Markup(format, objects);
+                };
 
             Statistics.AddCommand("list-encodings");
 
@@ -73,10 +93,14 @@ namespace Aaru.Commands
                 DisplayName = info.DisplayName
             }));
 
-            AaruConsole.WriteLine("{0,-16} {1,-8}", "Name", "Description");
+            Table table = new();
+            table.AddColumn("Name");
+            table.AddColumn("Description");
 
             foreach(CommonEncodingInfo info in encodings.OrderBy(t => t.DisplayName))
-                AaruConsole.WriteLine("{0,-16} {1,-8}", info.Name, info.DisplayName);
+                table.AddRow(info.Name, info.DisplayName);
+
+            AnsiConsole.Render(table);
 
             return (int)ErrorNumber.NoError;
         }
