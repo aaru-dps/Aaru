@@ -50,6 +50,8 @@ namespace Aaru.Commands.Filesystem
 {
     internal sealed class ExtractFilesCommand : Command
     {
+        const long BUFFER_SIZE = 16777216;
+
         public ExtractFilesCommand() : base("extract", "Extracts all files in disc image.")
         {
             Add(new Option(new[]
@@ -567,70 +569,88 @@ namespace Aaru.Commands.Filesystem
 
                     if(!File.Exists(outputPath))
                     {
-                        byte[] outBuf = Array.Empty<byte>();
+                        long position = 0;
 
-                        Core.Spectre.ProgressSingleSpinner(ctx =>
+                        outputFile = new FileStream(outputPath, FileMode.CreateNew, FileAccess.ReadWrite,
+                                                    FileShare.None);
+
+                        AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
+                                    Columns(new TaskDescriptionColumn(), new ProgressBarColumn(),
+                                            new PercentageColumn()).Start(ctx =>
+                                    {
+                                        ProgressTask task = ctx.AddTask($"Reading file {Markup.Escape(entry)}...");
+
+                                        task.MaxValue = stat.Length;
+
+                                        while(position < stat.Length)
+                                        {
+                                            long bytesToRead;
+
+                                            if(stat.Length - position > BUFFER_SIZE)
+                                                bytesToRead = BUFFER_SIZE;
+                                            else
+                                                bytesToRead = stat.Length - position;
+
+                                            byte[] outBuf = Array.Empty<byte>();
+
+                                            error = fs.Read(path + "/" + entry, position, bytesToRead, ref outBuf);
+
+                                            if(error == Errno.NoError)
+                                                outputFile.Write(outBuf, 0, outBuf.Length);
+                                            else
+                                            {
+                                                AaruConsole.ErrorWriteLine("Error {0} reading file {1}", error, entry);
+
+                                                break;
+                                            }
+
+                                            position += bytesToRead;
+                                            task.Increment(bytesToRead);
+                                        }
+                                    });
+
+                        outputFile.Close();
+
+                        var fi = new FileInfo(outputPath);
+                        #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
+                        try
                         {
-                            ctx.AddTask("Reading file data...").IsIndeterminate();
-                            error = fs.Read(path + "/" + entry, 0, stat.Length, ref outBuf);
-                        });
-
-                        if(error == Errno.NoError)
-                        {
-                            Core.Spectre.ProgressSingleSpinner(ctx =>
-                            {
-                                ctx.AddTask("Writing file data...").IsIndeterminate();
-
-                                outputFile = new FileStream(outputPath, FileMode.CreateNew, FileAccess.ReadWrite,
-                                                            FileShare.None);
-
-                                outputFile.Write(outBuf, 0, outBuf.Length);
-                                outputFile.Close();
-                            });
-
-                            var fi = new FileInfo(outputPath);
-                            #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
-                            try
-                            {
-                                if(stat.CreationTimeUtc.HasValue)
-                                    fi.CreationTimeUtc = stat.CreationTimeUtc.Value;
-                            }
-                            catch
-                            {
-                                // ignored
-                            }
-
-                            try
-                            {
-                                if(stat.LastWriteTimeUtc.HasValue)
-                                    fi.LastWriteTimeUtc = stat.LastWriteTimeUtc.Value;
-                            }
-                            catch
-                            {
-                                // ignored
-                            }
-
-                            try
-                            {
-                                if(stat.AccessTimeUtc.HasValue)
-                                    fi.LastAccessTimeUtc = stat.AccessTimeUtc.Value;
-                            }
-                            catch
-                            {
-                                // ignored
-                            }
-                            #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
-                            AaruConsole.WriteLine("Written {0} bytes of file {1} to {2}", outBuf.Length, entry,
-                                                  outputPath);
+                            if(stat.CreationTimeUtc.HasValue)
+                                fi.CreationTimeUtc = stat.CreationTimeUtc.Value;
                         }
-                        else
-                            AaruConsole.ErrorWriteLine("Error {0} reading file {1}", error, entry);
+                        catch
+                        {
+                            // ignored
+                        }
+
+                        try
+                        {
+                            if(stat.LastWriteTimeUtc.HasValue)
+                                fi.LastWriteTimeUtc = stat.LastWriteTimeUtc.Value;
+                        }
+                        catch
+                        {
+                            // ignored
+                        }
+
+                        try
+                        {
+                            if(stat.AccessTimeUtc.HasValue)
+                                fi.LastAccessTimeUtc = stat.AccessTimeUtc.Value;
+                        }
+                        catch
+                        {
+                            // ignored
+                        }
+                        #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
+                        AaruConsole.WriteLine("Written {0} bytes of file {1} to {2}", position, Markup.Escape(entry),
+                                              Markup.Escape(outputPath));
                     }
                     else
-                        AaruConsole.ErrorWriteLine("Cannot write file {0}, output exists", entry);
+                        AaruConsole.ErrorWriteLine("Cannot write file {0}, output exists", Markup.Escape(entry));
                 }
                 else
-                    AaruConsole.ErrorWriteLine("Error reading file {0}", entry);
+                    AaruConsole.ErrorWriteLine("Error reading file {0}", Markup.Escape(entry));
             }
         }
     }
