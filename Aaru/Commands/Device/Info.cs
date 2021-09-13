@@ -51,6 +51,7 @@ using Aaru.Decoders.SCSI.MMC;
 using Aaru.Decoders.SCSI.SSC;
 using Aaru.Devices;
 using Aaru.Helpers;
+using Spectre.Console;
 using Command = System.CommandLine.Command;
 using DeviceInfo = Aaru.Core.Devices.Info.DeviceInfo;
 using Inquiry = Aaru.Decoders.SCSI.Inquiry;
@@ -86,10 +87,29 @@ namespace Aaru.Commands.Device
             MainClass.PrintCopyright();
 
             if(debug)
-                AaruConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
+            {
+                IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
+                {
+                    Out = new AnsiConsoleOutput(System.Console.Error)
+                });
+
+                AaruConsole.DebugWriteLineEvent += (format, objects) =>
+                {
+                    if(objects is null)
+                        stderrConsole.MarkupLine(format);
+                    else
+                        stderrConsole.MarkupLine(format, objects);
+                };
+            }
 
             if(verbose)
-                AaruConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+                AaruConsole.WriteEvent += (format, objects) =>
+                {
+                    if(objects is null)
+                        AnsiConsole.Markup(format);
+                    else
+                        AnsiConsole.Markup(format, objects);
+                };
 
             Statistics.AddCommand("device-info");
 
@@ -130,35 +150,58 @@ namespace Aaru.Commands.Device
 
             Statistics.AddDevice(dev);
 
+            Table table;
+
             if(dev.IsUsb)
             {
-                AaruConsole.WriteLine("USB device");
+                table = new Table
+                {
+                    Title = new TableTitle("[bold]USB device[/]")
+                };
+
+                table.HideHeaders();
+                table.AddColumn("");
+                table.AddColumn("");
+                table.Columns[0].RightAligned();
 
                 if(dev.UsbDescriptors != null)
-                    AaruConsole.WriteLine("USB descriptor is {0} bytes", dev.UsbDescriptors.Length);
+                    table.AddRow("Descriptor size", $"{dev.UsbDescriptors.Length}");
 
-                AaruConsole.WriteLine("USB Vendor ID: {0:X4}", dev.UsbVendorId);
-                AaruConsole.WriteLine("USB Product ID: {0:X4}", dev.UsbProductId);
-                AaruConsole.WriteLine("USB Manufacturer: {0}", dev.UsbManufacturerString);
-                AaruConsole.WriteLine("USB Product: {0}", dev.UsbProductString);
-                AaruConsole.WriteLine("USB Serial number: {0}", dev.UsbSerialString);
+                table.AddRow("Vendor ID", $"{dev.UsbVendorId:X4}");
+                table.AddRow("Product ID", $"{dev.UsbProductId:X4}");
+                table.AddRow("Manufacturer", $"{Markup.Escape(dev.UsbManufacturerString)}");
+                table.AddRow("Product", $"{Markup.Escape(dev.UsbProductString)}");
+                table.AddRow("Serial number", $"{Markup.Escape(dev.UsbSerialString)}");
+
+                AnsiConsole.Render(table);
                 AaruConsole.WriteLine();
             }
 
             if(dev.IsFireWire)
             {
-                AaruConsole.WriteLine("FireWire device");
-                AaruConsole.WriteLine("FireWire Vendor ID: {0:X6}", dev.FireWireVendor);
-                AaruConsole.WriteLine("FireWire Model ID: {0:X6}", dev.FireWireModel);
-                AaruConsole.WriteLine("FireWire Manufacturer: {0}", dev.FireWireVendorName);
-                AaruConsole.WriteLine("FireWire Model: {0}", dev.FireWireModelName);
-                AaruConsole.WriteLine("FireWire GUID: {0:X16}", dev.FireWireGuid);
+                table = new Table
+                {
+                    Title = new TableTitle("[bold]FireWire device[/]")
+                };
+
+                table.HideHeaders();
+                table.AddColumn("");
+                table.AddColumn("");
+                table.Columns[0].RightAligned();
+
+                table.AddRow("Vendor ID", $"{dev.FireWireVendor:X6}");
+                table.AddRow("Model ID", $"{dev.FireWireModel:X6}");
+                table.AddRow("Vendor", $"{Markup.Escape(dev.FireWireVendorName)}");
+                table.AddRow("Model", $"{Markup.Escape(dev.FireWireModelName)}");
+                table.AddRow("GUID", $"{dev.FireWireGuid:X16}");
+
+                AnsiConsole.Render(table);
                 AaruConsole.WriteLine();
             }
 
             if(dev.IsPcmcia)
             {
-                AaruConsole.WriteLine("PCMCIA device");
+                AaruConsole.WriteLine("[bold]PCMCIA device[/]");
                 AaruConsole.WriteLine("PCMCIA CIS is {0} bytes", dev.Cis.Length);
                 Tuple[] tuples = CIS.GetTuples(dev.Cis);
 
@@ -330,7 +373,7 @@ namespace Aaru.Commands.Device
             if(devInfo.ScsiInquiry != null)
             {
                 if(dev.Type != DeviceType.ATAPI)
-                    AaruConsole.WriteLine("SCSI device");
+                    AaruConsole.WriteLine("[bold]SCSI device[/]");
 
                 DataFile.WriteTo("Device-Info command", outputPrefix, "_scsi_inquiry.bin", "SCSI INQUIRY",
                                  devInfo.ScsiInquiryData);
@@ -557,7 +600,7 @@ namespace Aaru.Commands.Device
 
                     if(ftr.Descriptors != null)
                     {
-                        AaruConsole.WriteLine("SCSI MMC GET CONFIGURATION Features:");
+                        AaruConsole.WriteLine("[bold]SCSI MMC GET CONFIGURATION Features:[/]");
 
                         foreach(Features.FeatureDescriptor desc in ftr.Descriptors)
                         {
@@ -955,7 +998,7 @@ namespace Aaru.Commands.Device
 
                 if(devInfo.ScsiInquiry.Value.KreonPresent)
                 {
-                    AaruConsole.WriteLine("Drive has kreon firmware:");
+                    AaruConsole.WriteLine("[bold]Drive has kreon firmware:[/]");
 
                     if(devInfo.KreonFeatures.HasFlag(KreonFeatures.ChallengeResponse))
                         AaruConsole.WriteLine("\tCan do challenge/response with Xbox discs");
