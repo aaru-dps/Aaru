@@ -183,7 +183,7 @@ namespace Aaru.Decoders.SCSI
             if(length != modeResponse.Length)
                 return decoded;
 
-            List<ModePage> listpages = new List<ModePage>();
+            List<ModePage> listpages = new();
 
             while(offset < modeResponse.Length)
             {
@@ -201,7 +201,7 @@ namespace Aaru.Decoders.SCSI
                 }
                 else
                 {
-                    if(isSubpage)
+                    if(isSubpage && offset + 3 < modeResponse.Length)
                     {
                         pg.PageResponse = new byte[(modeResponse[offset + 2] << 8) + modeResponse[offset + 3] + 4];
                         int copyLen = pg.PageResponse.Length;
@@ -214,7 +214,7 @@ namespace Aaru.Decoders.SCSI
                         pg.Subpage =  modeResponse[offset + 1];
                         offset     += pg.PageResponse.Length;
                     }
-                    else
+                    else if(isSubpage && offset + 1 < modeResponse.Length)
                     {
                         pg.PageResponse = new byte[modeResponse[offset + 1] + 2];
                         int copyLen = pg.PageResponse.Length;
@@ -227,6 +227,8 @@ namespace Aaru.Decoders.SCSI
                         pg.Subpage =  0;
                         offset     += pg.PageResponse.Length;
                     }
+                    else
+                        offset = modeResponse.Length;
                 }
 
                 listpages.Add(pg);
