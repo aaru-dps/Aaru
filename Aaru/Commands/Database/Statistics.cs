@@ -36,6 +36,7 @@ using Aaru.CommonTypes.Enums;
 using Aaru.Console;
 using Aaru.Database;
 using Aaru.Database.Models;
+using Spectre.Console;
 using Command = System.CommandLine.Command;
 
 namespace Aaru.Commands.Database
@@ -50,10 +51,29 @@ namespace Aaru.Commands.Database
             MainClass.PrintCopyright();
 
             if(debug)
-                AaruConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
+            {
+                IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
+                {
+                    Out = new AnsiConsoleOutput(System.Console.Error)
+                });
+
+                AaruConsole.DebugWriteLineEvent += (format, objects) =>
+                {
+                    if(objects is null)
+                        stderrConsole.MarkupLine(format);
+                    else
+                        stderrConsole.MarkupLine(format, objects);
+                };
+            }
 
             if(verbose)
-                AaruConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+                AaruConsole.WriteEvent += (format, objects) =>
+                {
+                    if(objects is null)
+                        AnsiConsole.Markup(format);
+                    else
+                        AnsiConsole.Markup(format, objects);
+                };
 
             var ctx = AaruContext.Create(Settings.Settings.LocalDbPath);
 
@@ -70,12 +90,19 @@ namespace Aaru.Commands.Database
                 return (int)ErrorNumber.NothingFound;
             }
 
-            bool thereAreStats = false;
+            bool  thereAreStats = false;
+            Table table;
 
             if(ctx.Commands.Any())
             {
-                AaruConsole.WriteLine("Commands statistics");
-                AaruConsole.WriteLine("===================");
+                table = new Table
+                {
+                    Title = new TableTitle("Commands statistics")
+                };
+
+                table.AddColumn("Command");
+                table.AddColumn("Times used");
+                table.Columns[1].RightAligned();
 
                 if(ctx.Commands.Any(c => c.Name == "analyze"))
                 {
@@ -115,17 +142,24 @@ namespace Aaru.Commands.Database
                     if(count == 0)
                         continue;
 
-                    AaruConsole.WriteLine("You have called the {0} command {1} times.", command, count);
+                    table.AddRow(Markup.Escape(command), $"{count}");
                     thereAreStats = true;
                 }
 
+                AnsiConsole.Render(table);
                 AaruConsole.WriteLine();
             }
 
             if(ctx.Filters.Any())
             {
-                AaruConsole.WriteLine("Filters statistics");
-                AaruConsole.WriteLine("==================");
+                table = new Table
+                {
+                    Title = new TableTitle("Filters statistics")
+                };
+
+                table.AddColumn("Filter");
+                table.AddColumn("Times found");
+                table.Columns[1].RightAligned();
 
                 foreach(string filter in ctx.Filters.OrderBy(c => c.Name).Select(c => c.Name).Distinct())
                 {
@@ -137,17 +171,24 @@ namespace Aaru.Commands.Database
                     if(count == 0)
                         continue;
 
-                    AaruConsole.WriteLine("Filter {0} has been found {1} times.", filter, count);
+                    table.AddRow(Markup.Escape(filter), $"{count}");
                     thereAreStats = true;
                 }
 
+                AnsiConsole.Render(table);
                 AaruConsole.WriteLine();
             }
 
             if(ctx.MediaFormats.Any())
             {
-                AaruConsole.WriteLine("Media image statistics");
-                AaruConsole.WriteLine("======================");
+                table = new Table
+                {
+                    Title = new TableTitle("Media image format statistics")
+                };
+
+                table.AddColumn("Format");
+                table.AddColumn("Times found");
+                table.Columns[1].RightAligned();
 
                 foreach(string format in ctx.MediaFormats.OrderBy(c => c.Name).Select(c => c.Name).Distinct())
                 {
@@ -159,17 +200,24 @@ namespace Aaru.Commands.Database
                     if(count == 0)
                         continue;
 
-                    AaruConsole.WriteLine("Format {0} has been found {1} times.", format, count);
+                    table.AddRow(Markup.Escape(format), $"{count}");
                     thereAreStats = true;
                 }
 
+                AnsiConsole.Render(table);
                 AaruConsole.WriteLine();
             }
 
             if(ctx.Partitions.Any())
             {
-                AaruConsole.WriteLine("Partition statistics");
-                AaruConsole.WriteLine("====================");
+                table = new Table
+                {
+                    Title = new TableTitle("Partitioning scheme statistics")
+                };
+
+                table.AddColumn("Scheme");
+                table.AddColumn("Times found");
+                table.Columns[1].RightAligned();
 
                 foreach(string partition in ctx.Partitions.OrderBy(c => c.Name).Select(c => c.Name).Distinct())
                 {
@@ -181,17 +229,24 @@ namespace Aaru.Commands.Database
                     if(count == 0)
                         continue;
 
-                    AaruConsole.WriteLine("Partitioning scheme {0} has been found {1} times.", partition, count);
+                    table.AddRow(Markup.Escape(partition), $"{count}");
                     thereAreStats = true;
                 }
 
+                AnsiConsole.Render(table);
                 AaruConsole.WriteLine();
             }
 
             if(ctx.Filesystems.Any())
             {
-                AaruConsole.WriteLine("Filesystem statistics");
-                AaruConsole.WriteLine("=====================");
+                table = new Table
+                {
+                    Title = new TableTitle("Filesystem statistics")
+                };
+
+                table.AddColumn("Filesystem");
+                table.AddColumn("Times found");
+                table.Columns[1].RightAligned();
 
                 foreach(string filesystem in ctx.Filesystems.OrderBy(c => c.Name).Select(c => c.Name).Distinct())
                 {
@@ -203,32 +258,47 @@ namespace Aaru.Commands.Database
                     if(count == 0)
                         continue;
 
-                    AaruConsole.WriteLine("Filesystem {0} has been found {1} times.", filesystem, count);
+                    table.AddRow(Markup.Escape(filesystem), $"{count}");
                     thereAreStats = true;
                 }
 
+                AnsiConsole.Render(table);
                 AaruConsole.WriteLine();
             }
 
             if(ctx.SeenDevices.Any())
             {
-                AaruConsole.WriteLine("Device statistics");
-                AaruConsole.WriteLine("=================");
+                table = new Table
+                {
+                    Title = new TableTitle("Device statistics")
+                };
+
+                table.AddColumn("Manufacturer");
+                table.AddColumn("Model");
+                table.AddColumn("Revision");
+                table.AddColumn("Bus");
 
                 foreach(DeviceStat ds in ctx.SeenDevices.OrderBy(ds => ds.Manufacturer).ThenBy(ds => ds.Model).
                                              ThenBy(ds => ds.Revision).ThenBy(ds => ds.Bus))
-                    AaruConsole.
-                        WriteLine("Device model {0}, manufactured by {1}, with revision {2} and attached via {3}.",
-                                  ds.Model, ds.Manufacturer, ds.Revision, ds.Bus);
+                    table.AddRow(Markup.Escape(ds.Manufacturer ?? ""), Markup.Escape(ds.Model ?? ""),
+                                 Markup.Escape(ds.Revision     ?? ""), Markup.Escape(ds.Bus   ?? ""));
 
+                AnsiConsole.Render(table);
                 AaruConsole.WriteLine();
                 thereAreStats = true;
             }
 
             if(ctx.Medias.Any())
             {
-                AaruConsole.WriteLine("Media statistics");
-                AaruConsole.WriteLine("================");
+                table = new Table
+                {
+                    Title = new TableTitle("Media statistics")
+                };
+
+                table.AddColumn("Type");
+                table.AddColumn("Times found");
+                table.AddColumn("Real?");
+                table.Columns[1].RightAligned();
 
                 foreach(string media in ctx.Medias.OrderBy(ms => ms.Type).Select(ms => ms.Type).Distinct())
                 {
@@ -239,8 +309,7 @@ namespace Aaru.Commands.Database
 
                     if(count > 0)
                     {
-                        AaruConsole.WriteLine("Media type {0} has been found {1} times in a real device.", media,
-                                              count);
+                        table.AddRow(Markup.Escape(media), $"{count}", "Yes");
 
                         thereAreStats = true;
                     }
@@ -253,10 +322,11 @@ namespace Aaru.Commands.Database
                     if(count == 0)
                         continue;
 
-                    AaruConsole.WriteLine("Media type {0} has been found {1} times in a media image.", media, count);
+                    table.AddRow(Markup.Escape(media), $"{count}", "No");
                     thereAreStats = true;
                 }
 
+                AnsiConsole.Render(table);
                 AaruConsole.WriteLine();
             }
 
