@@ -38,6 +38,7 @@ using Aaru.Console;
 using Aaru.Core;
 using Aaru.Devices;
 using JetBrains.Annotations;
+using Spectre.Console;
 
 namespace Aaru.Commands.Device
 {
@@ -60,10 +61,29 @@ namespace Aaru.Commands.Device
             MainClass.PrintCopyright();
 
             if(debug)
-                AaruConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
+            {
+                IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
+                {
+                    Out = new AnsiConsoleOutput(System.Console.Error)
+                });
+
+                AaruConsole.DebugWriteLineEvent += (format, objects) =>
+                {
+                    if(objects is null)
+                        stderrConsole.MarkupLine(format);
+                    else
+                        stderrConsole.MarkupLine(format, objects);
+                };
+            }
 
             if(verbose)
-                AaruConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+                AaruConsole.WriteEvent += (format, objects) =>
+                {
+                    if(objects is null)
+                        AnsiConsole.Markup(format);
+                    else
+                        AnsiConsole.Markup(format, objects);
+                };
 
             Statistics.AddCommand("list-devices");
 
@@ -89,35 +109,20 @@ namespace Aaru.Commands.Device
             }
             else
             {
-                devices = devices.OrderBy(d => d.Path).ToArray();
+                Table table = new();
+                table.AddColumn("Path");
+                table.AddColumn("Vendor");
+                table.AddColumn("Model");
+                table.AddColumn("Serial");
+                table.AddColumn("Bus");
+                table.AddColumn("Supported?");
 
-                if(aaruRemoteHost is null)
-                {
-                    AaruConsole.WriteLine("{0,-22}|{1,-16}|{2,-24}|{3,-24}|{4,-10}|{5,-10}", "Path", "Vendor", "Model",
-                                          "Serial", "Bus", "Supported?");
+                foreach(DeviceInfo dev in devices.OrderBy(d => d.Path))
+                    table.AddRow(Markup.Escape(dev.Path), Markup.Escape(dev.Vendor), Markup.Escape(dev.Model),
+                                 Markup.Escape(dev.Serial), Markup.Escape(dev.Bus),
+                                 dev.Supported ? "[green]✓[/]" : "[red]✗[/]");
 
-                    AaruConsole.WriteLine("{0,-22}+{1,-16}+{2,-24}+{3,-24}+{4,-10}+{5,-10}", "----------------------",
-                                          "----------------", "------------------------", "------------------------",
-                                          "----------", "----------");
-
-                    foreach(DeviceInfo dev in devices)
-                        AaruConsole.WriteLine("{0,-22}|{1,-16}|{2,-24}|{3,-24}|{4,-10}|{5,-10}", dev.Path, dev.Vendor,
-                                              dev.Model, dev.Serial, dev.Bus, dev.Supported);
-                }
-                else
-                {
-                    AaruConsole.WriteLine("{0,-48}|{1,-16}|{2,-24}|{3,-24}|{4,-10}|{5,-10}", "Path", "Vendor", "Model",
-                                          "Serial", "Bus", "Supported?");
-
-                    AaruConsole.WriteLine("{0,-48}+{1,-16}+{2,-24}+{3,-24}+{4,-10}+{5,-10}",
-                                          "------------------------------------------------", "----------------",
-                                          "------------------------", "------------------------", "----------",
-                                          "----------");
-
-                    foreach(DeviceInfo dev in devices)
-                        AaruConsole.WriteLine("{0,-48}|{1,-16}|{2,-24}|{3,-24}|{4,-10}|{5,-10}", dev.Path, dev.Vendor,
-                                              dev.Model, dev.Serial, dev.Bus, dev.Supported);
-                }
+                AnsiConsole.Render(table);
             }
 
             return (int)ErrorNumber.NoError;
