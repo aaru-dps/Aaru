@@ -43,6 +43,7 @@ using Aaru.CommonTypes.Structs;
 using Aaru.Console;
 using Aaru.Core;
 using JetBrains.Annotations;
+using Spectre.Console;
 using FileAttributes = Aaru.CommonTypes.Structs.FileAttributes;
 
 namespace Aaru.Commands.Filesystem
@@ -110,10 +111,29 @@ namespace Aaru.Commands.Filesystem
             MainClass.PrintCopyright();
 
             if(debug)
-                AaruConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
+            {
+                IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
+                {
+                    Out = new AnsiConsoleOutput(System.Console.Error)
+                });
+
+                AaruConsole.DebugWriteLineEvent += (format, objects) =>
+                {
+                    if(objects is null)
+                        stderrConsole.MarkupLine(format);
+                    else
+                        stderrConsole.MarkupLine(format, objects);
+                };
+            }
 
             if(verbose)
-                AaruConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+                AaruConsole.WriteEvent += (format, objects) =>
+                {
+                    if(objects is null)
+                        AnsiConsole.Markup(format);
+                    else
+                        AnsiConsole.Markup(format, objects);
+                };
 
             Statistics.AddCommand("extract-files");
 
@@ -126,7 +146,13 @@ namespace Aaru.Commands.Filesystem
             AaruConsole.DebugWriteLine("Extract-Files command", "--xattrs={0}", xattrs);
 
             var     filtersList = new FiltersList();
-            IFilter inputFilter = filtersList.GetFilter(imagePath);
+            IFilter inputFilter = null;
+
+            Core.Spectre.ProgressSingleSpinner(ctx =>
+            {
+                ctx.AddTask("Identifying file filter...").IsIndeterminate();
+                inputFilter = filtersList.GetFilter(imagePath);
+            });
 
             Dictionary<string, string> parsedOptions = Core.Options.Parse(options);
             AaruConsole.DebugWriteLine("Extract-Files command", "Parsed options:");
@@ -164,7 +190,13 @@ namespace Aaru.Commands.Filesystem
 
             try
             {
-                IMediaImage imageFormat = ImageFormat.Detect(inputFilter);
+                IMediaImage imageFormat = null;
+
+                Core.Spectre.ProgressSingleSpinner(ctx =>
+                {
+                    ctx.AddTask("Identifying image format...").IsIndeterminate();
+                    imageFormat = ImageFormat.Detect(inputFilter);
+                });
 
                 if(imageFormat == null)
                 {
@@ -198,7 +230,15 @@ namespace Aaru.Commands.Filesystem
 
                 try
                 {
-                    if(!imageFormat.Open(inputFilter))
+                    bool opened = false;
+
+                    Core.Spectre.ProgressSingleSpinner(ctx =>
+                    {
+                        ctx.AddTask("Opening image file...").IsIndeterminate();
+                        opened = imageFormat.Open(inputFilter);
+                    });
+
+                    if(!opened)
                     {
                         AaruConsole.WriteLine("Unable to open image format");
                         AaruConsole.WriteLine("No error given");
@@ -229,7 +269,14 @@ namespace Aaru.Commands.Filesystem
                     return (int)ErrorNumber.CannotOpenFormat;
                 }
 
-                List<Partition> partitions = Core.Partitions.GetAll(imageFormat);
+                List<Partition> partitions = null;
+
+                Core.Spectre.ProgressSingleSpinner(ctx =>
+                {
+                    ctx.AddTask("Enumerating partitions...").IsIndeterminate();
+                    partitions = Core.Partitions.GetAll(imageFormat);
+                });
+
                 Core.Partitions.AddSchemesToStats(partitions);
 
                 if(partitions.Count == 0)
@@ -252,34 +299,43 @@ namespace Aaru.Commands.Filesystem
                 for(int i = 0; i < partitions.Count; i++)
                 {
                     AaruConsole.WriteLine();
-                    AaruConsole.WriteLine("Partition {0}:", partitions[i].Sequence);
+                    AaruConsole.WriteLine("[bold]Partition {0}:[/]", partitions[i].Sequence);
 
-                    AaruConsole.WriteLine("Identifying filesystem on partition");
+                    List<string> idPlugins = null;
 
-                    Core.Filesystems.Identify(imageFormat, out List<string> idPlugins, partitions[i]);
+                    Core.Spectre.ProgressSingleSpinner(ctx =>
+                    {
+                        ctx.AddTask("Identifying filesystems on partition...").IsIndeterminate();
+                        Core.Filesystems.Identify(imageFormat, out idPlugins, partitions[i]);
+                    });
 
                     if(idPlugins.Count == 0)
                         AaruConsole.WriteLine("Filesystem not identified");
                     else
                     {
                         IReadOnlyFilesystem plugin;
-                        Errno               error;
+                        Errno               error = Errno.InvalidArgument;
 
                         if(idPlugins.Count > 1)
                         {
-                            AaruConsole.WriteLine($"Identified by {idPlugins.Count} plugins");
+                            AaruConsole.WriteLine($"[italic]Identified by {idPlugins.Count} plugins[/]");
 
                             foreach(string pluginName in idPlugins)
                                 if(plugins.ReadOnlyFilesystems.TryGetValue(pluginName, out plugin))
                                 {
-                                    AaruConsole.WriteLine($"As identified by {plugin.Name}.");
+                                    AaruConsole.WriteLine($"[bold]As identified by {plugin.Name}.[/]");
 
                                     var fs = (IReadOnlyFilesystem)plugin.GetType().GetConstructor(Type.EmptyTypes)?.
                                                                          Invoke(new object[]
                                                                                     {});
 
-                                    error = fs.Mount(imageFormat, partitions[i], encodingClass, parsedOptions,
-                                                     @namespace);
+                                    Core.Spectre.ProgressSingleSpinner(ctx =>
+                                    {
+                                        ctx.AddTask("Mounting filesystem...").IsIndeterminate();
+
+                                        error = fs.Mount(imageFormat, partitions[i], encodingClass, parsedOptions,
+                                                         @namespace);
+                                    });
 
                                     if(error == Errno.NoError)
                                     {
@@ -302,13 +358,17 @@ namespace Aaru.Commands.Filesystem
                             if(plugin == null)
                                 continue;
 
-                            AaruConsole.WriteLine($"Identified by {plugin.Name}.");
+                            AaruConsole.WriteLine($"[bold]Identified by {plugin.Name}.[/]");
 
                             var fs = (IReadOnlyFilesystem)plugin.GetType().GetConstructor(Type.EmptyTypes)?.
                                                                  Invoke(new object[]
                                                                             {});
 
-                            error = fs.Mount(imageFormat, partitions[i], encodingClass, parsedOptions, @namespace);
+                            Core.Spectre.ProgressSingleSpinner(ctx =>
+                            {
+                                ctx.AddTask("Mounting filesystem...").IsIndeterminate();
+                                error = fs.Mount(imageFormat, partitions[i], encodingClass, parsedOptions, @namespace);
+                            });
 
                             if(error == Errno.NoError)
                             {
@@ -353,7 +413,13 @@ namespace Aaru.Commands.Filesystem
 
             foreach(string entry in directory)
             {
-                error = fs.Stat(path + "/" + entry, out FileEntryInfo stat);
+                FileEntryInfo stat = new();
+
+                Core.Spectre.ProgressSingleSpinner(ctx =>
+                {
+                    ctx.AddTask("Retrieving file information...").IsIndeterminate();
+                    error = fs.Stat(path + "/" + entry, out stat);
+                });
 
                 if(error == Errno.NoError)
                 {
@@ -365,7 +431,7 @@ namespace Aaru.Commands.Filesystem
 
                         Directory.CreateDirectory(outputPath);
 
-                        AaruConsole.WriteLine("Created subdirectory at {0}", outputPath);
+                        AaruConsole.WriteLine("Created subdirectory at {0}", Markup.Escape(outputPath));
 
                         ExtractFilesInDir(path + "/" + entry, fs, volumeName, outputDir, doXattrs);
 
@@ -410,13 +476,24 @@ namespace Aaru.Commands.Filesystem
 
                     if(doXattrs)
                     {
-                        error = fs.ListXAttr(path + "/" + entry, out List<string> xattrs);
+                        List<string> xattrs = null;
+
+                        Core.Spectre.ProgressSingleSpinner(ctx =>
+                        {
+                            ctx.AddTask("Listing extended attributes...").IsIndeterminate();
+                            error = fs.ListXAttr(path + "/" + entry, out xattrs);
+                        });
 
                         if(error == Errno.NoError)
                             foreach(string xattr in xattrs)
                             {
                                 byte[] xattrBuf = Array.Empty<byte>();
-                                error = fs.GetXattr(path + "/" + entry, xattr, ref xattrBuf);
+
+                                Core.Spectre.ProgressSingleSpinner(ctx =>
+                                {
+                                    ctx.AddTask("Reading extended attribute...").IsIndeterminate();
+                                    error = fs.GetXattr(path + "/" + entry, xattr, ref xattrBuf);
+                                });
 
                                 if(error != Errno.NoError)
                                     continue;
@@ -430,11 +507,17 @@ namespace Aaru.Commands.Filesystem
 
                                 if(!File.Exists(outputPath))
                                 {
-                                    outputFile = new FileStream(outputPath, FileMode.CreateNew, FileAccess.ReadWrite,
-                                                                FileShare.None);
+                                    Core.Spectre.ProgressSingleSpinner(ctx =>
+                                    {
+                                        ctx.AddTask("Writing extended attribute...").IsIndeterminate();
 
-                                    outputFile.Write(xattrBuf, 0, xattrBuf.Length);
-                                    outputFile.Close();
+                                        outputFile = new FileStream(outputPath, FileMode.CreateNew,
+                                                                    FileAccess.ReadWrite, FileShare.None);
+
+                                        outputFile.Write(xattrBuf, 0, xattrBuf.Length);
+                                        outputFile.Close();
+                                    });
+
                                     var fi = new FileInfo(outputPath);
                                     #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
                                     try
@@ -486,15 +569,25 @@ namespace Aaru.Commands.Filesystem
                     {
                         byte[] outBuf = Array.Empty<byte>();
 
-                        error = fs.Read(path + "/" + entry, 0, stat.Length, ref outBuf);
+                        Core.Spectre.ProgressSingleSpinner(ctx =>
+                        {
+                            ctx.AddTask("Reading file data...").IsIndeterminate();
+                            error = fs.Read(path + "/" + entry, 0, stat.Length, ref outBuf);
+                        });
 
                         if(error == Errno.NoError)
                         {
-                            outputFile = new FileStream(outputPath, FileMode.CreateNew, FileAccess.ReadWrite,
-                                                        FileShare.None);
+                            Core.Spectre.ProgressSingleSpinner(ctx =>
+                            {
+                                ctx.AddTask("Writing file data...").IsIndeterminate();
 
-                            outputFile.Write(outBuf, 0, outBuf.Length);
-                            outputFile.Close();
+                                outputFile = new FileStream(outputPath, FileMode.CreateNew, FileAccess.ReadWrite,
+                                                            FileShare.None);
+
+                                outputFile.Write(outBuf, 0, outBuf.Length);
+                                outputFile.Close();
+                            });
+
                             var fi = new FileInfo(outputPath);
                             #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
                             try
