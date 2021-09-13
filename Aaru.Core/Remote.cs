@@ -45,6 +45,7 @@ using Aaru.Database.Models;
 using Aaru.Dto;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using Spectre.Console;
 using CdOffset = Aaru.Database.Models.CdOffset;
 using Version = Aaru.CommonTypes.Metadata.Version;
 
@@ -142,7 +143,7 @@ namespace Aaru.Core
 
                 if(!create)
                 {
-                    List<DateTime> latestAll = new List<DateTime>();
+                    List<DateTime> latestAll = new();
 
                     if(mctx.UsbVendors.Any())
                         latestAll.Add(mctx.UsbVendors.Max(v => v.ModifiedWhen));
@@ -192,41 +193,82 @@ namespace Aaru.Core
 
                 Stream  data   = response.GetResponseStream();
                 var     reader = new StreamReader(data ?? throw new InvalidOperationException());
-                SyncDto sync   = JsonConvert.DeserializeObject<SyncDto>(reader.ReadToEnd());
+                SyncDto sync   = JsonConvert.DeserializeObject<SyncDto>(reader.ReadToEnd()) ?? new SyncDto();
 
                 if(create)
                 {
-                    AaruConsole.WriteLine("Adding USB vendors");
+                    AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
+                                Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
+                                Start(ctx =>
+                                {
+                                    ProgressTask task = ctx.AddTask("Adding USB vendors");
+                                    task.MaxValue = sync.UsbVendors.Count;
 
-                    foreach(UsbVendorDto vendor in sync.UsbVendors)
-                        mctx.UsbVendors.Add(new UsbVendor(vendor.VendorId, vendor.Vendor));
+                                    foreach(UsbVendorDto vendor in sync.UsbVendors)
+                                    {
+                                        task.Increment(1);
+                                        mctx.UsbVendors.Add(new UsbVendor(vendor.VendorId, vendor.Vendor));
+                                    }
+                                });
 
                     AaruConsole.WriteLine("Added {0} usb vendors", sync.UsbVendors.Count);
 
-                    AaruConsole.WriteLine("Adding USB products");
+                    AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
+                                Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
+                                Start(ctx =>
+                                {
+                                    ProgressTask task = ctx.AddTask("Adding USB products");
+                                    task.MaxValue = sync.UsbProducts.Count;
 
-                    foreach(UsbProductDto product in sync.UsbProducts)
-                        mctx.UsbProducts.Add(new UsbProduct(product.VendorId, product.ProductId, product.Product));
+                                    foreach(UsbProductDto product in sync.UsbProducts)
+                                    {
+                                        task.Increment(1);
+
+                                        mctx.UsbProducts.Add(new UsbProduct(product.VendorId, product.ProductId,
+                                                                            product.Product));
+                                    }
+                                });
 
                     AaruConsole.WriteLine("Added {0} usb products", sync.UsbProducts.Count);
 
-                    AaruConsole.WriteLine("Adding CompactDisc read offsets");
+                    AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
+                                Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
+                                Start(ctx =>
+                                {
+                                    ProgressTask task = ctx.AddTask("Adding CompactDisc read offsets");
+                                    task.MaxValue = sync.Offsets.Count;
 
-                    foreach(CdOffsetDto offset in sync.Offsets)
-                        mctx.CdOffsets.Add(new CdOffset(offset)
-                        {
-                            Id = offset.Id
-                        });
+                                    foreach(CdOffsetDto offset in sync.Offsets)
+                                    {
+                                        task.Increment(1);
+
+                                        mctx.CdOffsets.Add(new CdOffset(offset)
+                                        {
+                                            Id = offset.Id
+                                        });
+                                    }
+                                });
 
                     AaruConsole.WriteLine("Added {0} CompactDisc read offsets", sync.Offsets.Count);
 
-                    AaruConsole.WriteLine("Adding known devices");
+                    AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
+                                Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
+                                Start(ctx =>
+                                {
+                                    ProgressTask task = ctx.AddTask("Adding known devices");
+                                    task.MaxValue = sync.Devices.Count;
 
-                    foreach(DeviceDto device in sync.Devices)
-                        mctx.Devices.Add(new Device(device)
-                        {
-                            Id = device.Id
-                        });
+                                    foreach(DeviceDto device in sync.Devices)
+
+                                    {
+                                        task.Increment(1);
+
+                                        mctx.Devices.Add(new Device(device)
+                                        {
+                                            Id = device.Id
+                                        });
+                                    }
+                                });
 
                     AaruConsole.WriteLine("Added {0} known devices", sync.Devices.Count);
                 }
@@ -241,118 +283,151 @@ namespace Aaru.Core
                     long modifiedOffsets  = 0;
                     long modifiedDevices  = 0;
 
-                    AaruConsole.WriteLine("Updating USB vendors");
+                    AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
+                                Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
+                                Start(ctx =>
+                                {
+                                    ProgressTask task = ctx.AddTask("Updating USB vendors");
+                                    task.MaxValue = sync.UsbVendors.Count;
 
-                    foreach(UsbVendorDto vendor in sync.UsbVendors)
-                    {
-                        UsbVendor existing = mctx.UsbVendors.FirstOrDefault(v => v.Id == vendor.VendorId);
+                                    foreach(UsbVendorDto vendor in sync.UsbVendors)
+                                    {
+                                        task.Increment(1);
 
-                        if(existing != null)
-                        {
-                            modifiedVendors++;
-                            existing.Vendor       = vendor.Vendor;
-                            existing.ModifiedWhen = updateStart;
-                            mctx.UsbVendors.Update(existing);
-                        }
-                        else
-                        {
-                            addedVendors++;
-                            mctx.UsbVendors.Add(new UsbVendor(vendor.VendorId, vendor.Vendor));
-                        }
-                    }
+                                        UsbVendor existing =
+                                            mctx.UsbVendors.FirstOrDefault(v => v.Id == vendor.VendorId);
+
+                                        if(existing != null)
+                                        {
+                                            modifiedVendors++;
+                                            existing.Vendor       = vendor.Vendor;
+                                            existing.ModifiedWhen = updateStart;
+                                            mctx.UsbVendors.Update(existing);
+                                        }
+                                        else
+                                        {
+                                            addedVendors++;
+                                            mctx.UsbVendors.Add(new UsbVendor(vendor.VendorId, vendor.Vendor));
+                                        }
+                                    }
+                                });
 
                     AaruConsole.WriteLine("Added {0} USB vendors", addedVendors);
                     AaruConsole.WriteLine("Modified {0} USB vendors", modifiedVendors);
 
-                    AaruConsole.WriteLine("Updating USB products");
+                    AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
+                                Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
+                                Start(ctx =>
+                                {
+                                    ProgressTask task = ctx.AddTask("Updating USB products");
+                                    task.MaxValue = sync.UsbVendors.Count;
 
-                    foreach(UsbProductDto product in sync.UsbProducts)
-                    {
-                        UsbProduct existing =
-                            mctx.UsbProducts.FirstOrDefault(p => p.VendorId  == product.VendorId &&
-                                                                 p.ProductId == product.ProductId);
+                                    foreach(UsbProductDto product in sync.UsbProducts)
+                                    {
+                                        task.Increment(1);
 
-                        if(existing != null)
-                        {
-                            modifiedProducts++;
-                            existing.Product      = product.Product;
-                            existing.ModifiedWhen = updateStart;
-                            mctx.UsbProducts.Update(existing);
-                        }
-                        else
-                        {
-                            addedProducts++;
-                            mctx.UsbProducts.Add(new UsbProduct(product.VendorId, product.ProductId, product.Product));
-                        }
-                    }
+                                        UsbProduct existing =
+                                            mctx.UsbProducts.FirstOrDefault(p => p.VendorId == product.VendorId &&
+                                                                                p.ProductId == product.ProductId);
+
+                                        if(existing != null)
+                                        {
+                                            modifiedProducts++;
+                                            existing.Product      = product.Product;
+                                            existing.ModifiedWhen = updateStart;
+                                            mctx.UsbProducts.Update(existing);
+                                        }
+                                        else
+                                        {
+                                            addedProducts++;
+
+                                            mctx.UsbProducts.Add(new UsbProduct(product.VendorId, product.ProductId,
+                                                                                    product.Product));
+                                        }
+                                    }
+                                });
 
                     AaruConsole.WriteLine("Added {0} USB products", addedProducts);
                     AaruConsole.WriteLine("Modified {0} USB products", modifiedProducts);
 
-                    AaruConsole.WriteLine("Updating CompactDisc read offsets");
+                    AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
+                                Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
+                                Start(ctx =>
+                                {
+                                    ProgressTask task = ctx.AddTask("Updating CompactDisc read offsets");
+                                    task.MaxValue = sync.Offsets.Count;
 
-                    foreach(CdOffsetDto offset in sync.Offsets)
-                    {
-                        CdOffset existing = mctx.CdOffsets.FirstOrDefault(o => o.Id == offset.Id);
+                                    foreach(CdOffsetDto offset in sync.Offsets)
+                                    {
+                                        CdOffset existing = mctx.CdOffsets.FirstOrDefault(o => o.Id == offset.Id);
+                                        task.Increment(1);
 
-                        if(existing != null)
-                        {
-                            modifiedOffsets++;
-                            existing.Agreement    = offset.Agreement;
-                            existing.Manufacturer = offset.Manufacturer;
-                            existing.Model        = offset.Model;
-                            existing.Submissions  = offset.Submissions;
-                            existing.Offset       = offset.Offset;
-                            existing.ModifiedWhen = updateStart;
-                            mctx.CdOffsets.Update(existing);
-                        }
-                        else
-                        {
-                            addedOffsets++;
+                                        if(existing != null)
+                                        {
+                                            modifiedOffsets++;
+                                            existing.Agreement    = offset.Agreement;
+                                            existing.Manufacturer = offset.Manufacturer;
+                                            existing.Model        = offset.Model;
+                                            existing.Submissions  = offset.Submissions;
+                                            existing.Offset       = offset.Offset;
+                                            existing.ModifiedWhen = updateStart;
+                                            mctx.CdOffsets.Update(existing);
+                                        }
+                                        else
+                                        {
+                                            addedOffsets++;
 
-                            mctx.CdOffsets.Add(new CdOffset(offset)
-                            {
-                                Id = offset.Id
-                            });
-                        }
-                    }
+                                            mctx.CdOffsets.Add(new CdOffset(offset)
+                                            {
+                                                Id = offset.Id
+                                            });
+                                        }
+                                    }
+                                });
 
                     AaruConsole.WriteLine("Added {0} CompactDisc read offsets", addedOffsets);
                     AaruConsole.WriteLine("Modified {0} CompactDisc read offsets", modifiedOffsets);
 
-                    AaruConsole.WriteLine("Updating known devices");
+                    AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
+                                Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
+                                Start(ctx =>
+                                {
+                                    ProgressTask task = ctx.AddTask("Updating known devices");
+                                    task.MaxValue = sync.Offsets.Count;
 
-                    foreach(DeviceDto device in sync.Devices)
-                    {
-                        Device existing = mctx.Devices.FirstOrDefault(d => d.Id == device.Id);
+                                    foreach(DeviceDto device in sync.Devices)
+                                    {
+                                        task.Increment(1);
+                                        Device existing = mctx.Devices.FirstOrDefault(d => d.Id == device.Id);
 
-                        if(existing != null)
-                        {
-                            modifiedDevices++;
+                                        if(existing != null)
+                                        {
+                                            modifiedDevices++;
 
-                            mctx.Remove(existing);
+                                            mctx.Remove(existing);
 
-                            existing = new Device(device)
-                            {
-                                Id                         = device.Id,
-                                OptimalMultipleSectorsRead = device.OptimalMultipleSectorsRead,
-                                CanReadGdRomUsingSwapDisc  = device.CanReadGdRomUsingSwapDisc
-                            };
+                                            existing = new Device(device)
+                                            {
+                                                Id                         = device.Id,
+                                                OptimalMultipleSectorsRead = device.OptimalMultipleSectorsRead,
+                                                CanReadGdRomUsingSwapDisc  = device.CanReadGdRomUsingSwapDisc
+                                            };
 
-                            mctx.Devices.Add(existing);
-                        }
-                        else
-                        {
-                            addedDevices++;
+                                            mctx.Devices.Add(existing);
+                                        }
+                                        else
+                                        {
+                                            addedDevices++;
 
-                            mctx.Devices.Add(new Device(device)
-                            {
-                                Id                         = device.Id,
-                                OptimalMultipleSectorsRead = device.OptimalMultipleSectorsRead,
-                                CanReadGdRomUsingSwapDisc  = device.CanReadGdRomUsingSwapDisc
-                            });
-                        }
-                    }
+                                            mctx.Devices.Add(new Device(device)
+                                            {
+                                                Id                         = device.Id,
+                                                OptimalMultipleSectorsRead = device.OptimalMultipleSectorsRead,
+                                                CanReadGdRomUsingSwapDisc  = device.CanReadGdRomUsingSwapDisc
+                                            });
+                                        }
+                                    }
+                                });
 
                     AaruConsole.WriteLine("Added {0} known devices", addedDevices);
                     AaruConsole.WriteLine("Modified {0} known devices", modifiedDevices);
@@ -364,8 +439,12 @@ namespace Aaru.Core
             }
             finally
             {
-                AaruConsole.WriteLine("Saving changes...");
-                mctx.SaveChanges();
+                AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
+                            Columns(new TaskDescriptionColumn(), new SpinnerColumn()).Start(ctx =>
+                            {
+                                ctx.AddTask("Saving changes...").IsIndeterminate();
+                                mctx.SaveChanges();
+                            });
             }
         }
     }

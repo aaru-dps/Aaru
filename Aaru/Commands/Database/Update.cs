@@ -40,6 +40,7 @@ using Aaru.Console;
 using Aaru.Core;
 using Aaru.Database;
 using Microsoft.EntityFrameworkCore;
+using Spectre.Console;
 
 namespace Aaru.Commands.Database
 {
@@ -74,10 +75,29 @@ namespace Aaru.Commands.Database
             MainClass.PrintCopyright();
 
             if(debug)
-                AaruConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
+            {
+                IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
+                {
+                    Out = new AnsiConsoleOutput(System.Console.Error)
+                });
+
+                AaruConsole.DebugWriteLineEvent += (format, objects) =>
+                {
+                    if(objects is null)
+                        stderrConsole.MarkupLine(format);
+                    else
+                        stderrConsole.MarkupLine(format, objects);
+                };
+            }
 
             if(verbose)
-                AaruConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+                AaruConsole.WriteEvent += (format, objects) =>
+                {
+                    if(objects is null)
+                        AnsiConsole.Markup(format);
+                    else
+                        AnsiConsole.Markup(format, objects);
+                };
 
             AaruConsole.DebugWriteLine("Update command", "--debug={0}", debug);
             AaruConsole.DebugWriteLine("Update command", "--verbose={0}", verbose);
