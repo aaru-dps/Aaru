@@ -118,9 +118,9 @@ namespace Aaru.Commands.Device
                 table.AddColumn("Supported?");
 
                 foreach(DeviceInfo dev in devices.OrderBy(d => d.Path))
-                    table.AddRow(Markup.Escape(dev.Path), Markup.Escape(dev.Vendor), Markup.Escape(dev.Model),
-                                 Markup.Escape(dev.Serial), Markup.Escape(dev.Bus),
-                                 dev.Supported ? "[green]✓[/]" : "[red]✗[/]");
+                    table.AddRow(Markup.Escape(dev.Path  ?? ""), Markup.Escape(dev.Vendor ?? ""),
+                                 Markup.Escape(dev.Model ?? ""), Markup.Escape(dev.Serial ?? ""),
+                                 Markup.Escape(dev.Bus   ?? ""), dev.Supported ? "[green]✓[/]" : "[red]✗[/]");
 
                 AnsiConsole.Render(table);
             }
