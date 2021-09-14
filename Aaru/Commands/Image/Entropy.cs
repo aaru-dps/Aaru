@@ -37,11 +37,15 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Core;
+using Spectre.Console;
 
 namespace Aaru.Commands.Image
 {
     internal sealed class EntropyCommand : Command
     {
+        static ProgressTask _progressTask1;
+        static ProgressTask _progressTask2;
+
         public EntropyCommand() : base("entropy", "Calculates entropy and/or duplicated sectors of an image.")
         {
             Add(new Option(new[]
@@ -87,10 +91,29 @@ namespace Aaru.Commands.Image
             MainClass.PrintCopyright();
 
             if(debug)
-                AaruConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
+            {
+                IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
+                {
+                    Out = new AnsiConsoleOutput(System.Console.Error)
+                });
+
+                AaruConsole.DebugWriteLineEvent += (format, objects) =>
+                {
+                    if(objects is null)
+                        stderrConsole.MarkupLine(format);
+                    else
+                        stderrConsole.MarkupLine(format, objects);
+                };
+            }
 
             if(verbose)
-                AaruConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+                AaruConsole.WriteEvent += (format, objects) =>
+                {
+                    if(objects is null)
+                        AnsiConsole.Markup(format);
+                    else
+                        AnsiConsole.Markup(format, objects);
+                };
 
             Statistics.AddCommand("entropy");
 
@@ -102,7 +125,13 @@ namespace Aaru.Commands.Image
             AaruConsole.DebugWriteLine("Entropy command", "--whole-disc={0}", wholeDisc);
 
             var     filtersList = new FiltersList();
-            IFilter inputFilter = filtersList.GetFilter(imagePath);
+            IFilter inputFilter = null;
+
+            Core.Spectre.ProgressSingleSpinner(ctx =>
+            {
+                ctx.AddTask("Identifying file filter...").IsIndeterminate();
+                inputFilter = filtersList.GetFilter(imagePath);
+            });
 
             if(inputFilter == null)
             {
@@ -111,7 +140,13 @@ namespace Aaru.Commands.Image
                 return (int)ErrorNumber.CannotOpenFile;
             }
 
-            IMediaImage inputFormat = ImageFormat.Detect(inputFilter);
+            IMediaImage inputFormat = null;
+
+            Core.Spectre.ProgressSingleSpinner(ctx =>
+            {
+                ctx.AddTask("Identifying image format...").IsIndeterminate();
+                inputFormat = ImageFormat.Detect(inputFilter);
+            });
 
             if(inputFormat == null)
             {
@@ -120,52 +155,108 @@ namespace Aaru.Commands.Image
                 return (int)ErrorNumber.UnrecognizedFormat;
             }
 
-            inputFormat.Open(inputFilter);
+            bool opened = false;
+
+            Core.Spectre.ProgressSingleSpinner(ctx =>
+            {
+                ctx.AddTask("Opening image file...").IsIndeterminate();
+                opened = inputFormat.Open(inputFilter);
+            });
+
+            if(!opened)
+            {
+                AaruConsole.WriteLine("Unable to open image format");
+                AaruConsole.WriteLine("No error given");
+
+                return (int)ErrorNumber.CannotOpenFormat;
+            }
+
             Statistics.AddMediaFormat(inputFormat.Format);
             Statistics.AddMedia(inputFormat.Info.MediaType, false);
             Statistics.AddFilter(inputFilter.Name);
 
             var entropyCalculator = new Entropy(debug, inputFormat);
-            entropyCalculator.InitProgressEvent    += Progress.InitProgress;
-            entropyCalculator.InitProgress2Event   += Progress.InitProgress2;
-            entropyCalculator.UpdateProgressEvent  += Progress.UpdateProgress;
-            entropyCalculator.UpdateProgress2Event += Progress.UpdateProgress2;
-            entropyCalculator.EndProgressEvent     += Progress.EndProgress;
-            entropyCalculator.EndProgress2Event    += Progress.EndProgress2;
 
-            if(wholeDisc                                       &&
-               inputFormat is IOpticalMediaImage opticalFormat &&
-               opticalFormat.Sessions?.Count > 1)
-            {
-                AaruConsole.ErrorWriteLine("Calculating disc entropy of multisession images is not yet implemented.");
-                wholeDisc = false;
-            }
+            AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
+                        Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
+                        Start(ctx =>
+                        {
+                            entropyCalculator.InitProgressEvent += () =>
+                            {
+                                _progressTask1 = ctx.AddTask("Progress");
+                            };
 
-            if(separatedTracks)
-            {
-                EntropyResults[] tracksEntropy = entropyCalculator.CalculateTracksEntropy(duplicatedSectors);
+                            entropyCalculator.InitProgress2Event += () =>
+                            {
+                                _progressTask2 = ctx.AddTask("Progress");
+                            };
 
-                foreach(EntropyResults trackEntropy in tracksEntropy)
-                {
-                    AaruConsole.WriteLine("Entropy for track {0} is {1:F4}.", trackEntropy.Track, trackEntropy.Entropy);
+                            entropyCalculator.UpdateProgressEvent += (text, current, maximum) =>
+                            {
+                                _progressTask1             ??= ctx.AddTask("Progress");
+                                _progressTask1.Description =   Markup.Escape(text);
+                                _progressTask1.Value       =   current;
+                                _progressTask1.MaxValue    =   maximum;
+                            };
 
-                    if(trackEntropy.UniqueSectors != null)
-                        AaruConsole.WriteLine("Track {0} has {1} unique sectors ({2:P3})", trackEntropy.Track,
-                                              trackEntropy.UniqueSectors,
-                                              (double)trackEntropy.UniqueSectors / trackEntropy.Sectors);
-                }
-            }
+                            entropyCalculator.UpdateProgress2Event += (text, current, maximum) =>
+                            {
+                                _progressTask2             ??= ctx.AddTask("Progress");
+                                _progressTask2.Description =   Markup.Escape(text);
+                                _progressTask2.Value       =   current;
+                                _progressTask2.MaxValue    =   maximum;
+                            };
 
-            if(!wholeDisc)
-                return (int)ErrorNumber.NoError;
+                            entropyCalculator.EndProgressEvent += () =>
+                            {
+                                _progressTask1?.StopTask();
+                                _progressTask1 = null;
+                            };
 
-            EntropyResults entropy = entropyCalculator.CalculateMediaEntropy(duplicatedSectors);
+                            entropyCalculator.EndProgress2Event += () =>
+                            {
+                                _progressTask2?.StopTask();
+                                _progressTask2 = null;
+                            };
 
-            AaruConsole.WriteLine("Entropy for disk is {0:F4}.", entropy.Entropy);
+                            if(wholeDisc                                       &&
+                               inputFormat is IOpticalMediaImage opticalFormat &&
+                               opticalFormat.Sessions?.Count > 1)
+                            {
+                                AaruConsole.
+                                    ErrorWriteLine("Calculating disc entropy of multisession images is not yet implemented.");
 
-            if(entropy.UniqueSectors != null)
-                AaruConsole.WriteLine("Disk has {0} unique sectors ({1:P3})", entropy.UniqueSectors,
-                                      (double)entropy.UniqueSectors / entropy.Sectors);
+                                wholeDisc = false;
+                            }
+
+                            if(!separatedTracks)
+                                return;
+
+                            EntropyResults[] tracksEntropy =
+                                entropyCalculator.CalculateTracksEntropy(duplicatedSectors);
+
+                            foreach(EntropyResults trackEntropy in tracksEntropy)
+                            {
+                                AaruConsole.WriteLine("Entropy for track {0} is {1:F4}.", trackEntropy.Track,
+                                                      trackEntropy.Entropy);
+
+                                if(trackEntropy.UniqueSectors != null)
+                                    AaruConsole.WriteLine("Track {0} has {1} unique sectors ({2:P3})",
+                                                          trackEntropy.Track, trackEntropy.UniqueSectors,
+                                                          (double)trackEntropy.UniqueSectors / trackEntropy.Sectors);
+                            }
+
+                            if(!wholeDisc)
+                                return;
+
+                            EntropyResults entropy = entropyCalculator.CalculateMediaEntropy(duplicatedSectors);
+
+                            AaruConsole.WriteLine("Entropy for disk is {0:F4}.", entropy.Entropy);
+
+                            if(entropy.UniqueSectors != null)
+                                AaruConsole.WriteLine("Disk has {0} unique sectors ({1:P3})", entropy.UniqueSectors,
+                                                      (double)entropy.UniqueSectors / entropy.Sectors);
+                        });
 
             return (int)ErrorNumber.NoError;
         }
