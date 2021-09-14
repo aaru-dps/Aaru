@@ -40,6 +40,7 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Console;
 using Aaru.Core;
+using Spectre.Console;
 
 namespace Aaru.Commands.Image
 {
@@ -81,10 +82,29 @@ namespace Aaru.Commands.Image
             MainClass.PrintCopyright();
 
             if(debug)
-                AaruConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
+            {
+                IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
+                {
+                    Out = new AnsiConsoleOutput(System.Console.Error)
+                });
+
+                AaruConsole.DebugWriteLineEvent += (format, objects) =>
+                {
+                    if(objects is null)
+                        stderrConsole.MarkupLine(format);
+                    else
+                        stderrConsole.MarkupLine(format, objects);
+                };
+            }
 
             if(verbose)
-                AaruConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+                AaruConsole.WriteEvent += (format, objects) =>
+                {
+                    if(objects is null)
+                        AnsiConsole.Markup(format);
+                    else
+                        AnsiConsole.Markup(format, objects);
+                };
 
             Statistics.AddCommand("verify");
 
@@ -95,7 +115,13 @@ namespace Aaru.Commands.Image
             AaruConsole.DebugWriteLine("Verify command", "--verify-sectors={0}", verifySectors);
 
             var     filtersList = new FiltersList();
-            IFilter inputFilter = filtersList.GetFilter(imagePath);
+            IFilter inputFilter = null;
+
+            Core.Spectre.ProgressSingleSpinner(ctx =>
+            {
+                ctx.AddTask("Identifying file filter...").IsIndeterminate();
+                inputFilter = filtersList.GetFilter(imagePath);
+            });
 
             if(inputFilter == null)
             {
@@ -104,7 +130,13 @@ namespace Aaru.Commands.Image
                 return (int)ErrorNumber.CannotOpenFile;
             }
 
-            IMediaImage inputFormat = ImageFormat.Detect(inputFilter);
+            IMediaImage inputFormat = null;
+
+            Core.Spectre.ProgressSingleSpinner(ctx =>
+            {
+                ctx.AddTask("Identifying image format...").IsIndeterminate();
+                inputFormat = ImageFormat.Detect(inputFilter);
+            });
 
             if(inputFormat == null)
             {
@@ -113,7 +145,22 @@ namespace Aaru.Commands.Image
                 return (int)ErrorNumber.FormatNotFound;
             }
 
-            inputFormat.Open(inputFilter);
+            bool opened = false;
+
+            Core.Spectre.ProgressSingleSpinner(ctx =>
+            {
+                ctx.AddTask("Opening image file...").IsIndeterminate();
+                opened = inputFormat.Open(inputFilter);
+            });
+
+            if(!opened)
+            {
+                AaruConsole.WriteLine("Unable to open image format");
+                AaruConsole.WriteLine("No error given");
+
+                return (int)ErrorNumber.CannotOpenFormat;
+            }
+
             Statistics.AddMediaFormat(inputFormat.Format);
             Statistics.AddMedia(inputFormat.Info.MediaType, false);
             Statistics.AddFilter(inputFilter.Name);
@@ -136,11 +183,18 @@ namespace Aaru.Commands.Image
 
             if(verifyDisc && verifiableImage != null)
             {
-                DateTime startCheck      = DateTime.UtcNow;
-                bool?    discCheckStatus = verifiableImage.VerifyMediaImage();
-                DateTime endCheck        = DateTime.UtcNow;
+                bool?    discCheckStatus = null;
+                TimeSpan checkTime       = new();
 
-                TimeSpan checkTime = endCheck - startCheck;
+                Core.Spectre.ProgressSingleSpinner(ctx =>
+                {
+                    ctx.AddTask("Verifying image checksums...").IsIndeterminate();
+
+                    DateTime startCheck = DateTime.UtcNow;
+                    discCheckStatus = verifiableImage.VerifyMediaImage();
+                    DateTime endCheck = DateTime.UtcNow;
+                    checkTime = endCheck - startCheck;
+                });
 
                 switch(discCheckStatus)
                 {
@@ -166,8 +220,8 @@ namespace Aaru.Commands.Image
             {
                 DateTime    startCheck  = DateTime.Now;
                 DateTime    endCheck    = startCheck;
-                List<ulong> failingLbas = new List<ulong>();
-                List<ulong> unknownLbas = new List<ulong>();
+                List<ulong> failingLbas = new();
+                List<ulong> unknownLbas = new();
 
                 if(verifiableSectorsImage is IOpticalMediaImage { Tracks: {} } opticalMediaImage)
                 {
@@ -176,91 +230,124 @@ namespace Aaru.Commands.Image
 
                     startCheck = DateTime.UtcNow;
 
-                    foreach(Track currentTrack in inputTracks)
-                    {
-                        ulong remainingSectors = currentTrack.TrackEndSector - currentTrack.TrackStartSector + 1;
-                        ulong currentSector    = 0;
+                    AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
+                                Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
+                                Start(ctx =>
+                                {
+                                    ProgressTask discTask = ctx.AddTask("Checking tracks...");
+                                    discTask.MaxValue = inputTracks.Count;
 
-                        while(remainingSectors > 0)
-                        {
-                            AaruConsole.Write("\rChecking sector {0} of {1}, on track {2}", currentSectorAll,
-                                              inputFormat.Info.Sectors, currentTrack.TrackSequence);
+                                    foreach(Track currentTrack in inputTracks)
+                                    {
+                                        discTask.Description =
+                                            $"Checking track {discTask.Value + 1} of {inputTracks.Count}";
 
-                            List<ulong> tempFailingLbas;
-                            List<ulong> tempUnknownLbas;
+                                        ulong remainingSectors =
+                                            currentTrack.TrackEndSector - currentTrack.TrackStartSector + 1;
 
-                            if(remainingSectors < 512)
-                                opticalMediaImage.VerifySectors(currentSector, (uint)remainingSectors,
-                                                                currentTrack.TrackSequence, out tempFailingLbas,
-                                                                out tempUnknownLbas);
-                            else
-                                opticalMediaImage.VerifySectors(currentSector, 512, currentTrack.TrackSequence,
-                                                                out tempFailingLbas, out tempUnknownLbas);
+                                        ulong currentSector = 0;
 
-                            failingLbas.AddRange(tempFailingLbas);
+                                        ProgressTask trackTask = ctx.AddTask("Checking sector");
+                                        trackTask.MaxValue = remainingSectors;
 
-                            unknownLbas.AddRange(tempUnknownLbas);
+                                        while(remainingSectors > 0)
+                                        {
+                                            trackTask.Description =
+                                                $"Checking sector {currentSectorAll} of {inputFormat.Info.Sectors}, on track {currentTrack.TrackSequence}";
 
-                            if(remainingSectors < 512)
-                            {
-                                currentSector    += remainingSectors;
-                                currentSectorAll += remainingSectors;
-                                remainingSectors =  0;
-                            }
-                            else
-                            {
-                                currentSector    += 512;
-                                currentSectorAll += 512;
-                                remainingSectors -= 512;
-                            }
-                        }
-                    }
+                                            List<ulong> tempFailingLbas;
+                                            List<ulong> tempUnknownLbas;
 
-                    endCheck = DateTime.UtcNow;
+                                            if(remainingSectors < 512)
+                                                opticalMediaImage.VerifySectors(currentSector, (uint)remainingSectors,
+                                                                                    currentTrack.TrackSequence,
+                                                                                    out tempFailingLbas,
+                                                                                    out tempUnknownLbas);
+                                            else
+                                                opticalMediaImage.VerifySectors(currentSector, 512,
+                                                                                    currentTrack.TrackSequence,
+                                                                                    out tempFailingLbas,
+                                                                                    out tempUnknownLbas);
+
+                                            failingLbas.AddRange(tempFailingLbas);
+
+                                            unknownLbas.AddRange(tempUnknownLbas);
+
+                                            if(remainingSectors < 512)
+                                            {
+                                                currentSector    += remainingSectors;
+                                                currentSectorAll += remainingSectors;
+                                                trackTask.Value  += remainingSectors;
+                                                remainingSectors =  0;
+                                            }
+                                            else
+                                            {
+                                                currentSector    += 512;
+                                                currentSectorAll += 512;
+                                                trackTask.Value  += 512;
+                                                remainingSectors -= 512;
+                                            }
+                                        }
+
+                                        trackTask.StopTask();
+                                        discTask.Increment(1);
+                                    }
+
+                                    endCheck = DateTime.UtcNow;
+                                });
                 }
                 else if(verifiableSectorsImage != null)
                 {
                     ulong remainingSectors = inputFormat.Info.Sectors;
                     ulong currentSector    = 0;
 
-                    startCheck = DateTime.UtcNow;
+                    AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
+                                Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
+                                Start(ctx =>
+                                {
+                                    ProgressTask diskTask = ctx.AddTask("Checking sectors...");
+                                    diskTask.MaxValue = inputFormat.Info.Sectors;
 
-                    while(remainingSectors > 0)
-                    {
-                        AaruConsole.Write("\rChecking sector {0} of {1}", currentSector, inputFormat.Info.Sectors);
+                                    startCheck = DateTime.UtcNow;
 
-                        List<ulong> tempFailingLbas;
-                        List<ulong> tempUnknownLbas;
+                                    while(remainingSectors > 0)
+                                    {
+                                        diskTask.Description =
+                                            $"Checking sector {currentSector} of {inputFormat.Info.Sectors}";
 
-                        if(remainingSectors < 512)
-                            verifiableSectorsImage.VerifySectors(currentSector, (uint)remainingSectors,
-                                                                 out tempFailingLbas, out tempUnknownLbas);
-                        else
-                            verifiableSectorsImage.VerifySectors(currentSector, 512, out tempFailingLbas,
-                                                                 out tempUnknownLbas);
+                                        List<ulong> tempFailingLbas;
+                                        List<ulong> tempUnknownLbas;
 
-                        failingLbas.AddRange(tempFailingLbas);
+                                        if(remainingSectors < 512)
+                                            verifiableSectorsImage.VerifySectors(currentSector, (uint)remainingSectors,
+                                                out tempFailingLbas, out tempUnknownLbas);
+                                        else
+                                            verifiableSectorsImage.VerifySectors(currentSector, 512,
+                                                out tempFailingLbas, out tempUnknownLbas);
 
-                        unknownLbas.AddRange(tempUnknownLbas);
+                                        failingLbas.AddRange(tempFailingLbas);
 
-                        if(remainingSectors < 512)
-                        {
-                            currentSector    += remainingSectors;
-                            remainingSectors =  0;
-                        }
-                        else
-                        {
-                            currentSector    += 512;
-                            remainingSectors -= 512;
-                        }
-                    }
+                                        unknownLbas.AddRange(tempUnknownLbas);
 
-                    endCheck = DateTime.UtcNow;
+                                        if(remainingSectors < 512)
+                                        {
+                                            currentSector    += remainingSectors;
+                                            diskTask.Value   += remainingSectors;
+                                            remainingSectors =  0;
+                                        }
+                                        else
+                                        {
+                                            currentSector    += 512;
+                                            diskTask.Value   += 512;
+                                            remainingSectors -= 512;
+                                        }
+                                    }
+
+                                    endCheck = DateTime.UtcNow;
+                                });
                 }
 
                 TimeSpan checkTime = endCheck - startCheck;
-
-                AaruConsole.Write("\r" + new string(' ', System.Console.WindowWidth - 1) + "\r");
 
                 if(unknownSectors > 0)
                     AaruConsole.WriteLine("There is at least one sector that does not contain a checksum");
@@ -276,27 +363,27 @@ namespace Aaru.Commands.Image
 
                 if(verbose)
                 {
-                    AaruConsole.VerboseWriteLine("LBAs with error:");
+                    AaruConsole.VerboseWriteLine("[red]LBAs with error:[/]");
 
                     if(failingLbas.Count == (int)inputFormat.Info.Sectors)
-                        AaruConsole.VerboseWriteLine("\tall sectors.");
+                        AaruConsole.VerboseWriteLine("\t[red]all sectors.[/]");
                     else
                         foreach(ulong t in failingLbas)
                             AaruConsole.VerboseWriteLine("\t{0}", t);
 
-                    AaruConsole.WriteLine("LBAs without checksum:");
+                    AaruConsole.WriteLine("[yellow3_1]LBAs without checksum:[/]");
 
                     if(unknownLbas.Count == (int)inputFormat.Info.Sectors)
-                        AaruConsole.VerboseWriteLine("\tall sectors.");
+                        AaruConsole.VerboseWriteLine("\t[yellow3_1]all sectors.[/]");
                     else
                         foreach(ulong t in unknownLbas)
                             AaruConsole.VerboseWriteLine("\t{0}", t);
                 }
 
-                AaruConsole.WriteLine("Total sectors........... {0}", inputFormat.Info.Sectors);
-                AaruConsole.WriteLine("Total errors............ {0}", failingLbas.Count);
-                AaruConsole.WriteLine("Total unknowns.......... {0}", unknownLbas.Count);
-                AaruConsole.WriteLine("Total errors+unknowns... {0}", failingLbas.Count + unknownLbas.Count);
+                AaruConsole.WriteLine("[italic]Total sectors...........[/] {0}", inputFormat.Info.Sectors);
+                AaruConsole.WriteLine("[italic]Total errors............[/] {0}", failingLbas.Count);
+                AaruConsole.WriteLine("[italic]Total unknowns..........[/] {0}", unknownLbas.Count);
+                AaruConsole.WriteLine("[italic]Total errors+unknowns...[/] {0}", failingLbas.Count + unknownLbas.Count);
 
                 if(failingLbas.Count > 0)
                     correctSectors = false;
