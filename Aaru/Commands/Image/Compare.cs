@@ -42,6 +42,7 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Core;
 using Aaru.Helpers;
+using Spectre.Console;
 using ImageInfo = Aaru.CommonTypes.Structs.ImageInfo;
 
 namespace Aaru.Commands.Image
@@ -74,10 +75,29 @@ namespace Aaru.Commands.Image
             MainClass.PrintCopyright();
 
             if(debug)
-                AaruConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
+            {
+                IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
+                {
+                    Out = new AnsiConsoleOutput(System.Console.Error)
+                });
+
+                AaruConsole.DebugWriteLineEvent += (format, objects) =>
+                {
+                    if(objects is null)
+                        stderrConsole.MarkupLine(format);
+                    else
+                        stderrConsole.MarkupLine(format, objects);
+                };
+            }
 
             if(verbose)
-                AaruConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+                AaruConsole.WriteEvent += (format, objects) =>
+                {
+                    if(objects is null)
+                        AnsiConsole.Markup(format);
+                    else
+                        AnsiConsole.Markup(format, objects);
+                };
 
             Statistics.AddCommand("compare");
 
@@ -87,9 +107,22 @@ namespace Aaru.Commands.Image
             AaruConsole.DebugWriteLine("Compare command", "--verbose={0}", verbose);
 
             var     filtersList  = new FiltersList();
-            IFilter inputFilter1 = filtersList.GetFilter(imagePath1);
+            IFilter inputFilter1 = null;
+            IFilter inputFilter2 = null;
+
+            Core.Spectre.ProgressSingleSpinner(ctx =>
+            {
+                ctx.AddTask("Identifying file 1 filter...").IsIndeterminate();
+                inputFilter1 = filtersList.GetFilter(imagePath1);
+            });
+
             filtersList = new FiltersList();
-            IFilter inputFilter2 = filtersList.GetFilter(imagePath2);
+
+            Core.Spectre.ProgressSingleSpinner(ctx =>
+            {
+                ctx.AddTask("Identifying file 2 filter...").IsIndeterminate();
+                inputFilter2 = filtersList.GetFilter(imagePath2);
+            });
 
             if(inputFilter1 == null)
             {
@@ -105,8 +138,20 @@ namespace Aaru.Commands.Image
                 return (int)ErrorNumber.CannotOpenFile;
             }
 
-            IMediaImage input1Format = ImageFormat.Detect(inputFilter1);
-            IMediaImage input2Format = ImageFormat.Detect(inputFilter2);
+            IMediaImage input1Format = null;
+            IMediaImage input2Format = null;
+
+            Core.Spectre.ProgressSingleSpinner(ctx =>
+            {
+                ctx.AddTask("Identifying image 1 format...").IsIndeterminate();
+                input1Format = ImageFormat.Detect(inputFilter1);
+            });
+
+            Core.Spectre.ProgressSingleSpinner(ctx =>
+            {
+                ctx.AddTask("Identifying image 1 format...").IsIndeterminate();
+                input2Format = ImageFormat.Detect(inputFilter2);
+            });
 
             if(input1Format == null)
             {
@@ -134,8 +179,36 @@ namespace Aaru.Commands.Image
             else
                 AaruConsole.WriteLine("Input file 2 format identified by {0}.", input2Format.Name);
 
-            input1Format.Open(inputFilter1);
-            input2Format.Open(inputFilter2);
+            bool opened1 = false;
+            bool opened2 = false;
+
+            Core.Spectre.ProgressSingleSpinner(ctx =>
+            {
+                ctx.AddTask("Opening image 1 file...").IsIndeterminate();
+                opened1 = input1Format.Open(inputFilter1);
+            });
+
+            if(!opened1)
+            {
+                AaruConsole.WriteLine("Unable to open image 1 format");
+                AaruConsole.WriteLine("No error given");
+
+                return (int)ErrorNumber.CannotOpenFormat;
+            }
+
+            Core.Spectre.ProgressSingleSpinner(ctx =>
+            {
+                ctx.AddTask("Opening image 2 file...").IsIndeterminate();
+                opened2 = input2Format.Open(inputFilter2);
+            });
+
+            if(!opened2)
+            {
+                AaruConsole.WriteLine("Unable to open image 1 format");
+                AaruConsole.WriteLine("No error given");
+
+                return (int)ErrorNumber.CannotOpenFormat;
+            }
 
             Statistics.AddMediaFormat(input1Format.Format);
             Statistics.AddMediaFormat(input2Format.Format);
@@ -144,32 +217,30 @@ namespace Aaru.Commands.Image
             Statistics.AddFilter(inputFilter1.Name);
             Statistics.AddFilter(inputFilter2.Name);
 
-            var sb = new StringBuilder();
+            var   sb    = new StringBuilder();
+            Table table = new();
+            table.AddColumn("");
+            table.AddColumn("Disc image 1");
+            table.AddColumn("Disc image 2");
+            table.Columns[0].RightAligned();
 
             if(verbose)
             {
-                sb.AppendFormat("{0,50}{1,20}", "Disc image 1", "Disc image 2").AppendLine();
-                sb.AppendLine("================================================================================================");
-                sb.AppendFormat("{0,-38}{1}", "File", imagePath1).AppendLine();
-
-                sb.AppendFormat("                                                          {0}", imagePath2).
-                   AppendLine();
-
-                sb.AppendFormat("{0,-38}{1,-20}{2}", "Disc image format", input1Format.Name, input2Format.Name).
-                   AppendLine();
+                table.AddRow("File", Markup.Escape(imagePath1), Markup.Escape(imagePath2));
+                table.AddRow("Disc image format", input1Format.Name, input2Format.Name);
             }
             else
             {
-                sb.AppendFormat("Disc image 1: {0}", imagePath1).AppendLine();
-                sb.AppendFormat("Disc image 2: {0}", imagePath2).AppendLine();
+                sb.AppendFormat("[bold]Disc image 1:[/] {0}", imagePath1).AppendLine();
+                sb.AppendFormat("[bold]Disc image 2:[/] {0}", imagePath2).AppendLine();
             }
 
             bool imagesDiffer = false;
 
             ImageInfo                        image1Info     = input1Format.Info;
             ImageInfo                        image2Info     = input2Format.Info;
-            Dictionary<MediaTagType, byte[]> image1DiskTags = new Dictionary<MediaTagType, byte[]>();
-            Dictionary<MediaTagType, byte[]> image2DiskTags = new Dictionary<MediaTagType, byte[]>();
+            Dictionary<MediaTagType, byte[]> image1DiskTags = new();
+            Dictionary<MediaTagType, byte[]> image2DiskTags = new();
 
             foreach(MediaTagType diskTag in Enum.GetValues(typeof(MediaTagType)))
             {
@@ -203,191 +274,189 @@ namespace Aaru.Commands.Image
 
             if(verbose)
             {
-                sb.AppendFormat("{0,-38}{1,-20}{2}", "Has partitions?", image1Info.HasPartitions,
-                                image2Info.HasPartitions).AppendLine();
+                table.AddRow("Has partitions?", image1Info.HasPartitions.ToString(),
+                             image2Info.HasPartitions.ToString());
 
-                sb.AppendFormat("{0,-38}{1,-20}{2}", "Has sessions?", image1Info.HasSessions, image2Info.HasSessions).
-                   AppendLine();
+                table.AddRow("Has sessions?", image1Info.HasSessions.ToString(), image2Info.HasSessions.ToString());
 
-                sb.AppendFormat("{0,-38}{1,-20}{2}", "Image size", image1Info.ImageSize, image2Info.ImageSize).
-                   AppendLine();
+                table.AddRow("Image size", image1Info.ImageSize.ToString(), image2Info.ImageSize.ToString());
 
-                sb.AppendFormat("{0,-38}{1,-20}{2}", "Sectors", image1Info.Sectors, image2Info.Sectors).AppendLine();
+                table.AddRow("Sectors", image1Info.Sectors.ToString(), image2Info.Sectors.ToString());
 
-                sb.AppendFormat("{0,-38}{1,-20}{2}", "Sector size", image1Info.SectorSize, image2Info.SectorSize).
-                   AppendLine();
+                table.AddRow("Sector size", image1Info.SectorSize.ToString(), image2Info.SectorSize.ToString());
 
-                sb.AppendFormat("{0,-38}{1,-20}{2}", "Creation time", image1Info.CreationTime, image2Info.CreationTime).
-                   AppendLine();
+                table.AddRow("Creation time", image1Info.CreationTime.ToString(), image2Info.CreationTime.ToString());
 
-                sb.AppendFormat("{0,-38}{1,-20}{2}", "Last modification time", image1Info.LastModificationTime,
-                                image2Info.LastModificationTime).AppendLine();
+                table.AddRow("Last modification time", image1Info.LastModificationTime.ToString(),
+                             image2Info.LastModificationTime.ToString());
 
-                sb.AppendFormat("{0,-38}{1,-20}{2}", "Disk type", image1Info.MediaType, image2Info.MediaType).
-                   AppendLine();
+                table.AddRow("Disk type", image1Info.MediaType.ToString(), image2Info.MediaType.ToString());
 
-                sb.AppendFormat("{0,-38}{1,-20}{2}", "Image version", image1Info.Version, image2Info.Version).
-                   AppendLine();
+                table.AddRow("Image version", image1Info.Version ?? "", image2Info.Version ?? "");
 
-                sb.AppendFormat("{0,-38}{1,-20}{2}", "Image application", image1Info.Application,
-                                image2Info.Application).AppendLine();
+                table.AddRow("Image application", image1Info.Application ?? "", image2Info.Application ?? "");
 
-                sb.AppendFormat("{0,-38}{1,-20}{2}", "Image application version", image1Info.ApplicationVersion,
-                                image2Info.ApplicationVersion).AppendLine();
+                table.AddRow("Image application version", image1Info.ApplicationVersion ?? "",
+                             image2Info.ApplicationVersion                              ?? "");
 
-                sb.AppendFormat("{0,-38}{1,-20}{2}", "Image creator", image1Info.Creator, image2Info.Creator).
-                   AppendLine();
+                table.AddRow("Image creator", image1Info.Creator ?? "", image2Info.Creator ?? "");
 
-                sb.AppendFormat("{0,-38}{1,-20}{2}", "Image name", image1Info.MediaTitle, image2Info.MediaTitle).
-                   AppendLine();
+                table.AddRow("Image name", image1Info.MediaTitle ?? "", image2Info.MediaTitle ?? "");
 
-                sb.AppendFormat("{0,-38}{1,-20}{2}", "Image comments", image1Info.Comments, image2Info.Comments).
-                   AppendLine();
+                table.AddRow("Image comments", image1Info.Comments ?? "", image2Info.Comments ?? "");
 
-                sb.AppendFormat("{0,-38}{1,-20}{2}", "Image comments", image1Info.Comments, image2Info.Comments).
-                   AppendLine();
+                table.AddRow("Disk manufacturer", image1Info.MediaManufacturer ?? "",
+                             image2Info.MediaManufacturer                      ?? "");
 
-                sb.AppendFormat("{0,-38}{1,-20}{2}", "Disk manufacturer", image1Info.MediaManufacturer,
-                                image2Info.MediaManufacturer).AppendLine();
+                table.AddRow("Disk model", image1Info.MediaModel ?? "", image2Info.MediaModel ?? "");
 
-                sb.AppendFormat("{0,-38}{1,-20}{2}", "Disk model", image1Info.MediaModel, image2Info.MediaModel).
-                   AppendLine();
+                table.AddRow("Disk serial number", image1Info.MediaSerialNumber ?? "",
+                             image2Info.MediaSerialNumber                       ?? "");
 
-                sb.AppendFormat("{0,-38}{1,-20}{2}", "Disk serial number", image1Info.MediaSerialNumber,
-                                image2Info.MediaSerialNumber).AppendLine();
+                table.AddRow("Disk barcode", image1Info.MediaBarcode ?? "", image2Info.MediaBarcode ?? "");
 
-                sb.AppendFormat("{0,-38}{1,-20}{2}", "Disk barcode", image1Info.MediaBarcode, image2Info.MediaBarcode).
-                   AppendLine();
+                table.AddRow("Disk part no.", image1Info.MediaPartNumber ?? "", image2Info.MediaPartNumber ?? "");
 
-                sb.AppendFormat("{0,-38}{1,-20}{2}", "Disk part no.", image1Info.MediaPartNumber,
-                                image2Info.MediaPartNumber).AppendLine();
+                table.AddRow("Disk sequence", image1Info.MediaSequence.ToString(), image2Info.MediaSequence.ToString());
 
-                sb.AppendFormat("{0,-38}{1,-20}{2}", "Disk sequence", image1Info.MediaSequence,
-                                image2Info.MediaSequence).AppendLine();
+                table.AddRow("Last disk on sequence", image1Info.LastMediaSequence.ToString(),
+                             image2Info.LastMediaSequence.ToString());
 
-                sb.AppendFormat("{0,-38}{1,-20}{2}", "Last disk on sequence", image1Info.LastMediaSequence,
-                                image2Info.LastMediaSequence).AppendLine();
+                table.AddRow("Drive manufacturer", image1Info.DriveManufacturer ?? "",
+                             image2Info.DriveManufacturer                       ?? "");
 
-                sb.AppendFormat("{0,-38}{1,-20}{2}", "Drive manufacturer", image1Info.DriveManufacturer,
-                                image2Info.DriveManufacturer).AppendLine();
+                table.AddRow("Drive firmware revision", image1Info.DriveFirmwareRevision ?? "",
+                             image2Info.DriveFirmwareRevision                            ?? "");
 
-                sb.AppendFormat("{0,-38}{1,-20}{2}", "Drive firmware revision", image1Info.DriveFirmwareRevision,
-                                image2Info.DriveFirmwareRevision).AppendLine();
+                table.AddRow("Drive model", image1Info.DriveModel ?? "", image2Info.DriveModel ?? "");
 
-                sb.AppendFormat("{0,-38}{1,-20}{2}", "Drive model", image1Info.DriveModel, image2Info.DriveModel).
-                   AppendLine();
-
-                sb.AppendFormat("{0,-38}{1,-20}{2}", "Drive serial number", image1Info.DriveSerialNumber,
-                                image2Info.DriveSerialNumber).AppendLine();
+                table.AddRow("Drive serial number", image1Info.DriveSerialNumber ?? "",
+                             image2Info.DriveSerialNumber                        ?? "");
 
                 foreach(MediaTagType diskTag in
                     (Enum.GetValues(typeof(MediaTagType)) as MediaTagType[]).OrderBy(e => e.ToString()))
-                    sb.AppendFormat("{0,-38}{1,-20}{2}", $"Has {diskTag}?", image1DiskTags.ContainsKey(diskTag),
-                                    image2DiskTags.ContainsKey(diskTag)).AppendLine();
+                    table.AddRow($"Has {diskTag}?", image1DiskTags.ContainsKey(diskTag).ToString(),
+                                 image2DiskTags.ContainsKey(diskTag).ToString());
             }
 
-            AaruConsole.WriteLine("Comparing disk image characteristics");
+            ulong leastSectors = 0;
 
-            if(image1Info.HasPartitions != image2Info.HasPartitions)
+            Core.Spectre.ProgressSingleSpinner(ctx =>
             {
-                imagesDiffer = true;
+                ctx.AddTask("Comparing disk image characteristics").IsIndeterminate();
 
-                if(!verbose)
-                    sb.AppendLine("Image partitioned status differ");
-            }
-
-            if(image1Info.HasSessions != image2Info.HasSessions)
-            {
-                imagesDiffer = true;
-
-                if(!verbose)
-                    sb.AppendLine("Image session status differ");
-            }
-
-            if(image1Info.Sectors != image2Info.Sectors)
-            {
-                imagesDiffer = true;
-
-                if(!verbose)
-                    sb.AppendLine("Image sectors differ");
-            }
-
-            if(image1Info.SectorSize != image2Info.SectorSize)
-            {
-                imagesDiffer = true;
-
-                if(!verbose)
-                    sb.AppendLine("Image sector size differ");
-            }
-
-            if(image1Info.MediaType != image2Info.MediaType)
-            {
-                imagesDiffer = true;
-
-                if(!verbose)
-                    sb.AppendLine("Disk type differ");
-            }
-
-            ulong leastSectors;
-
-            if(image1Info.Sectors < image2Info.Sectors)
-            {
-                imagesDiffer = true;
-                leastSectors = image1Info.Sectors;
-
-                if(!verbose)
-                    sb.AppendLine("Image 2 has more sectors");
-            }
-            else if(image1Info.Sectors > image2Info.Sectors)
-            {
-                imagesDiffer = true;
-                leastSectors = image2Info.Sectors;
-
-                if(!verbose)
-                    sb.AppendLine("Image 1 has more sectors");
-            }
-            else
-                leastSectors = image1Info.Sectors;
-
-            AaruConsole.WriteLine("Comparing sectors...");
-
-            for(ulong sector = 0; sector < leastSectors; sector++)
-            {
-                AaruConsole.Write("\rComparing sector {0} of {1}...", sector + 1, leastSectors);
-
-                try
+                if(image1Info.HasPartitions != image2Info.HasPartitions)
                 {
-                    byte[] image1Sector = input1Format.ReadSector(sector);
-                    byte[] image2Sector = input2Format.ReadSector(sector);
-                    ArrayHelpers.CompareBytes(out bool different, out bool sameSize, image1Sector, image2Sector);
+                    imagesDiffer = true;
 
-                    if(different)
-                    {
-                        imagesDiffer = true;
-                        sb.AppendFormat("Sector {0} is different", sector).AppendLine();
-                    }
-                    else if(!sameSize)
-                    {
-                        imagesDiffer = true;
-
-                        sb.
-                            AppendFormat("Sector {0} has different sizes ({1} bytes in image 1, {2} in image 2) but are otherwise identical",
-                                         sector, image1Sector.LongLength, image2Sector.LongLength).AppendLine();
-                    }
+                    if(!verbose)
+                        sb.AppendLine("Image partitioned status differ");
                 }
-                #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
-                catch
+
+                if(image1Info.HasSessions != image2Info.HasSessions)
                 {
-                    // ignored
+                    imagesDiffer = true;
+
+                    if(!verbose)
+                        sb.AppendLine("Image session status differ");
                 }
-                #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
-            }
+
+                if(image1Info.Sectors != image2Info.Sectors)
+                {
+                    imagesDiffer = true;
+
+                    if(!verbose)
+                        sb.AppendLine("Image sectors differ");
+                }
+
+                if(image1Info.SectorSize != image2Info.SectorSize)
+                {
+                    imagesDiffer = true;
+
+                    if(!verbose)
+                        sb.AppendLine("Image sector size differ");
+                }
+
+                if(image1Info.MediaType != image2Info.MediaType)
+                {
+                    imagesDiffer = true;
+
+                    if(!verbose)
+                        sb.AppendLine("Disk type differ");
+                }
+
+                if(image1Info.Sectors < image2Info.Sectors)
+                {
+                    imagesDiffer = true;
+                    leastSectors = image1Info.Sectors;
+
+                    if(!verbose)
+                        sb.AppendLine("Image 2 has more sectors");
+                }
+                else if(image1Info.Sectors > image2Info.Sectors)
+                {
+                    imagesDiffer = true;
+                    leastSectors = image2Info.Sectors;
+
+                    if(!verbose)
+                        sb.AppendLine("Image 1 has more sectors");
+                }
+                else
+                    leastSectors = image1Info.Sectors;
+            });
+
+            AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
+                        Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
+                        Start(ctx =>
+                        {
+                            ProgressTask task = ctx.AddTask("Comparing sectors...");
+                            task.MaxValue = leastSectors;
+
+                            for(ulong sector = 0; sector < leastSectors; sector++)
+                            {
+                                task.Value       = sector;
+                                task.Description = $"Comparing sector {sector + 1} of {leastSectors}...";
+
+                                try
+                                {
+                                    byte[] image1Sector = input1Format.ReadSector(sector);
+                                    byte[] image2Sector = input2Format.ReadSector(sector);
+
+                                    ArrayHelpers.CompareBytes(out bool different, out bool sameSize, image1Sector,
+                                                              image2Sector);
+
+                                    if(different)
+                                    {
+                                        imagesDiffer = true;
+
+                                        //       sb.AppendFormat("Sector {0} is different", sector).AppendLine();
+                                    }
+                                    else if(!sameSize)
+                                    {
+                                        imagesDiffer = true;
+
+                                        /*     sb.
+                                                 AppendFormat("Sector {0} has different sizes ({1} bytes in image 1, {2} in image 2) but are otherwise identical",
+                                                              sector, image1Sector.LongLength, image2Sector.LongLength).AppendLine();*/
+                                    }
+                                }
+                                #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
+                                catch
+                                {
+                                    // ignored
+                                }
+                                #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
+                            }
+                        });
 
             AaruConsole.WriteLine();
 
             sb.AppendLine(imagesDiffer ? "Images differ" : "Images do not differ");
 
-            AaruConsole.WriteLine(sb.ToString());
+            if(verbose)
+                AnsiConsole.Render(table);
+            else
+                AaruConsole.WriteLine(sb.ToString());
 
             return (int)ErrorNumber.NoError;
         }
