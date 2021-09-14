@@ -52,12 +52,16 @@ using Aaru.Core.Devices.Dumping;
 using Aaru.Core.Logging;
 using Aaru.Devices;
 using Schemas;
+using Spectre.Console;
 
 namespace Aaru.Commands.Media
 {
     // TODO: Add raw dumping
     internal sealed class DumpMediaCommand : Command
     {
+        static ProgressTask _progressTask1;
+        static ProgressTask _progressTask2;
+
         public DumpMediaCommand() : base("dump", "Dumps the media inserted on a device to a media image.")
         {
             Add(new Option(new[]
@@ -322,10 +326,29 @@ namespace Aaru.Commands.Media
             MainClass.PrintCopyright();
 
             if(debug)
-                AaruConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
+            {
+                IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
+                {
+                    Out = new AnsiConsoleOutput(System.Console.Error)
+                });
+
+                AaruConsole.DebugWriteLineEvent += (format, objects) =>
+                {
+                    if(objects is null)
+                        stderrConsole.MarkupLine(format);
+                    else
+                        stderrConsole.MarkupLine(format, objects);
+                };
+            }
 
             if(verbose)
-                AaruConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+                AaruConsole.WriteEvent += (format, objects) =>
+                {
+                    if(objects is null)
+                        AnsiConsole.Markup(format);
+                    else
+                        AnsiConsole.Markup(format, objects);
+                };
 
             if(fixSubchannelCrc)
                 fixSubchannel = true;
@@ -445,7 +468,7 @@ namespace Aaru.Commands.Media
                 eject = true;
 
             PluginBase           plugins    = GetPluginBase.Instance;
-            List<IWritableImage> candidates = new List<IWritableImage>();
+            List<IWritableImage> candidates = new();
             string               extension  = Path.GetExtension(outputPath);
 
             // Try extension
@@ -513,11 +536,15 @@ namespace Aaru.Commands.Media
                    char.IsLetter(devicePath[0]))
                     devicePath = "\\\\.\\" + char.ToUpper(devicePath[0]) + ':';
 
-                Devices.Device dev;
+                Devices.Device dev = null;
 
                 try
                 {
-                    dev = new Devices.Device(devicePath);
+                    Core.Spectre.ProgressSingleSpinner(ctx =>
+                    {
+                        ctx.AddTask("Opening device...").IsIndeterminate();
+                        dev = new Devices.Device(devicePath);
+                    });
 
                     if(dev.IsRemote)
                         Statistics.AddRemote(dev.RemoteApplication, dev.RemoteVersion, dev.RemoteOperatingSystem,
@@ -659,62 +686,125 @@ namespace Aaru.Commands.Media
                                       skipCdiReadyHole, errorLog, generateSubchannels, maxBlocks, useBufferedReads,
                                       storeEncrypted, titleKeys);
 
-                dumper.UpdateStatus         += Progress.UpdateStatus;
-                dumper.ErrorMessage         += Progress.ErrorMessage;
-                dumper.StoppingErrorMessage += Progress.ErrorMessage;
-                dumper.UpdateProgress       += Progress.UpdateProgress;
-                dumper.PulseProgress        += Progress.PulseProgress;
-                dumper.InitProgress         += Progress.InitProgress;
-                dumper.EndProgress          += Progress.EndProgress;
-                dumper.InitProgress2        += Progress.InitProgress2;
-                dumper.EndProgress2         += Progress.EndProgress2;
-                dumper.UpdateProgress2      += Progress.UpdateProgress2;
+                AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
+                            Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
+                            Start(ctx =>
+                            {
+                                dumper.UpdateStatus += text =>
+                                {
+                                    AaruConsole.WriteLine(Markup.Escape(text));
+                                };
 
-                System.Console.CancelKeyPress += (sender, e) =>
-                {
-                    e.Cancel = true;
-                    dumper.Abort();
-                };
+                                dumper.ErrorMessage += text =>
+                                {
+                                    AaruConsole.ErrorWriteLine($"[red]{Markup.Escape(text)}[/]");
+                                };
 
-                dumper.Start();
+                                dumper.StoppingErrorMessage += text =>
+                                {
+                                    AaruConsole.ErrorWriteLine($"[red]{Markup.Escape(text)}[/]");
+                                };
+
+                                dumper.UpdateProgress += (text, current, maximum) =>
+                                {
+                                    _progressTask1             ??= ctx.AddTask("Progress");
+                                    _progressTask1.Description =   Markup.Escape(text);
+                                    _progressTask1.Value       =   current;
+                                    _progressTask1.MaxValue    =   maximum;
+                                };
+
+                                dumper.PulseProgress += text =>
+                                {
+                                    if(_progressTask1 is null)
+                                        ctx.AddTask(Markup.Escape(text)).IsIndeterminate();
+                                    else
+                                    {
+                                        _progressTask1.Description     = Markup.Escape(text);
+                                        _progressTask1.IsIndeterminate = true;
+                                    }
+                                };
+
+                                dumper.InitProgress += () =>
+                                {
+                                    _progressTask1 = ctx.AddTask("Progress");
+                                };
+
+                                dumper.EndProgress += () =>
+                                {
+                                    _progressTask1?.StopTask();
+                                    _progressTask1 = null;
+                                };
+
+                                dumper.InitProgress2 += () =>
+                                {
+                                    _progressTask2 = ctx.AddTask("Progress");
+                                };
+
+                                dumper.EndProgress2 += () =>
+                                {
+                                    _progressTask2?.StopTask();
+                                    _progressTask2 = null;
+                                };
+
+                                dumper.UpdateProgress2 += (text, current, maximum) =>
+                                {
+                                    _progressTask2             ??= ctx.AddTask("Progress");
+                                    _progressTask2.Description =   Markup.Escape(text);
+                                    _progressTask2.Value       =   current;
+                                    _progressTask2.MaxValue    =   maximum;
+                                };
+
+                                System.Console.CancelKeyPress += (sender, e) =>
+                                {
+                                    e.Cancel = true;
+                                    dumper.Abort();
+                                };
+
+                                dumper.Start();
+                            });
 
                 if(eject && dev.IsRemovable)
                 {
-                    switch(dev.Type)
+                    Core.Spectre.ProgressSingleSpinner(ctx =>
                     {
-                        case DeviceType.ATA:
-                            dev.DoorUnlock(out _, dev.Timeout, out _);
-                            dev.MediaEject(out _, dev.Timeout, out _);
+                        ctx.AddTask("Ejecting media...").IsIndeterminate();
 
-                            break;
-                        case DeviceType.ATAPI:
-                        case DeviceType.SCSI:
-                            switch(dev.ScsiType)
-                            {
-                                case PeripheralDeviceTypes.DirectAccess:
-                                case PeripheralDeviceTypes.SimplifiedDevice:
-                                case PeripheralDeviceTypes.SCSIZonedBlockDevice:
-                                case PeripheralDeviceTypes.WriteOnceDevice:
-                                case PeripheralDeviceTypes.OpticalDevice:
-                                case PeripheralDeviceTypes.OCRWDevice:
-                                    dev.SpcAllowMediumRemoval(out _, dev.Timeout, out _);
-                                    dev.EjectTray(out _, dev.Timeout, out _);
+                        switch(dev.Type)
+                        {
+                            case DeviceType.ATA:
+                                dev.DoorUnlock(out _, dev.Timeout, out _);
+                                dev.MediaEject(out _, dev.Timeout, out _);
 
-                                    break;
-                                case PeripheralDeviceTypes.MultiMediaDevice:
-                                    dev.AllowMediumRemoval(out _, dev.Timeout, out _);
-                                    dev.EjectTray(out _, dev.Timeout, out _);
+                                break;
+                            case DeviceType.ATAPI:
+                            case DeviceType.SCSI:
+                                switch(dev.ScsiType)
+                                {
+                                    case PeripheralDeviceTypes.DirectAccess:
+                                    case PeripheralDeviceTypes.SimplifiedDevice:
+                                    case PeripheralDeviceTypes.SCSIZonedBlockDevice:
+                                    case PeripheralDeviceTypes.WriteOnceDevice:
+                                    case PeripheralDeviceTypes.OpticalDevice:
+                                    case PeripheralDeviceTypes.OCRWDevice:
+                                        dev.SpcAllowMediumRemoval(out _, dev.Timeout, out _);
+                                        dev.EjectTray(out _, dev.Timeout, out _);
 
-                                    break;
-                                case PeripheralDeviceTypes.SequentialAccess:
-                                    dev.SpcAllowMediumRemoval(out _, dev.Timeout, out _);
-                                    dev.LoadUnload(out _, true, false, false, false, false, dev.Timeout, out _);
+                                        break;
+                                    case PeripheralDeviceTypes.MultiMediaDevice:
+                                        dev.AllowMediumRemoval(out _, dev.Timeout, out _);
+                                        dev.EjectTray(out _, dev.Timeout, out _);
 
-                                    break;
-                            }
+                                        break;
+                                    case PeripheralDeviceTypes.SequentialAccess:
+                                        dev.SpcAllowMediumRemoval(out _, dev.Timeout, out _);
+                                        dev.LoadUnload(out _, true, false, false, false, false, dev.Timeout, out _);
 
-                            break;
-                    }
+                                        break;
+                                }
+
+                                break;
+                        }
+                    });
                 }
 
                 dev.Close();
