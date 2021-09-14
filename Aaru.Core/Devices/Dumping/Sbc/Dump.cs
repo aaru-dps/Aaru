@@ -376,6 +376,8 @@ namespace Aaru.Core.Devices.Dumping
                     sense = _dev.ReadDiscInformation(out readBuffer, out _, MmcDiscInformationDataTypes.DiscInformation,
                                                      _dev.Timeout, out _);
 
+                    bool writeSingleOpticalTrack = true;
+
                     if(!sense)
                     {
                         DiscInformation.StandardDiscInformation? discInformation =
@@ -391,6 +393,8 @@ namespace Aaru.Core.Devices.Dumping
 
                         if(discInformation.HasValue)
                         {
+                            writeSingleOpticalTrack = false;
+
                             if(discInformation?.Sessions > 1 &&
                                !canStoreNotCdSessions)
                             {
@@ -555,6 +559,28 @@ namespace Aaru.Core.Devices.Dumping
                                     }
                                 });
                         }
+                    }
+
+                    if(writeSingleOpticalTrack)
+                    {
+                        _dumpLog.WriteLine("Creating single track as could not retrieve track list from drive.");
+
+                        StoppingErrorMessage?.
+                            Invoke("Creating single track as could not retrieve track list from drive.");
+
+                        opticalPlugin.SetTracks(new List<Track>
+                        {
+                            new Track
+                            {
+                                TrackBytesPerSector    = (int)blockSize,
+                                TrackEndSector         = blocks - 1,
+                                TrackSequence          = 1,
+                                TrackRawBytesPerSector = (int)blockSize,
+                                TrackSubchannelType    = TrackSubchannelType.None,
+                                TrackSession           = 1,
+                                TrackType              = TrackType.Data
+                            }
+                        });
                     }
                 }
                 else
