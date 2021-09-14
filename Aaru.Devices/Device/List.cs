@@ -107,7 +107,6 @@ namespace Aaru.Devices
                 {
                     case PlatformID.Win32NT: return Windows.ListDevices.GetList();
                     case PlatformID.Linux:   return Linux.ListDevices.GetList();
-                    case PlatformID.FreeBSD: return FreeBSD.ListDevices.GetList();
                     default:
                         throw new
                             InvalidOperationException($"Platform {DetectOS.GetRealPlatformID()} not yet supported.");

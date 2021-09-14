@@ -30,10 +30,9 @@
 // Copyright © 2011-2021 Natalia Portillo
 // ****************************************************************************/
 
-using System;
+using Aaru.CommonTypes.Interop;
 using Aaru.Devices.Linux;
 using Microsoft.Win32.SafeHandles;
-using PlatformID = Aaru.CommonTypes.Interop.PlatformID;
 
 namespace Aaru.Devices
 {
@@ -67,10 +66,6 @@ namespace Aaru.Devices
                     break;
                 case PlatformID.Linux:
                     Extern.close((int)FileHandle);
-
-                    break;
-                case PlatformID.FreeBSD:
-                    FreeBSD.Extern.cam_close_device((IntPtr)FileHandle);
 
                     break;
             }

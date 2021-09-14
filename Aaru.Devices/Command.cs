@@ -33,7 +33,6 @@
 using System;
 using Aaru.CommonTypes.Interop;
 using Aaru.Decoders.ATA;
-using Aaru.Devices.FreeBSD;
 using Aaru.Devices.Windows;
 using Microsoft.Win32.SafeHandles;
 using PlatformID = Aaru.CommonTypes.Interop.PlatformID;
@@ -142,36 +141,6 @@ namespace Aaru.Devices
                     return Linux.Command.SendScsiCommand((int)fd, cdb, ref buffer, out senseBuffer, timeout, dir,
                                                          out duration, out sense);
                 }
-                case PlatformID.FreeBSD:
-                {
-                    CcbFlags flags = 0;
-
-                    switch(direction)
-                    {
-                        case ScsiDirection.In:
-                            flags = CcbFlags.CamDirIn;
-
-                            break;
-                        case ScsiDirection.Out:
-                            flags = CcbFlags.CamDirOut;
-
-                            break;
-                        case ScsiDirection.Bidirectional:
-                            flags = CcbFlags.CamDirBoth;
-
-                            break;
-                        case ScsiDirection.None:
-                            flags = CcbFlags.CamDirNone;
-
-                            break;
-                    }
-
-                    return IntPtr.Size == 8
-                               ? FreeBSD.Command.SendScsiCommand64((IntPtr)fd, cdb, ref buffer, out senseBuffer,
-                                                                   timeout, flags, out duration, out sense)
-                               : FreeBSD.Command.SendScsiCommand((IntPtr)fd, cdb, ref buffer, out senseBuffer, timeout,
-                                                                 flags, out duration, out sense);
-                }
                 default: throw new InvalidOperationException($"Platform {ptId} not yet supported.");
             }
         }
@@ -241,11 +210,6 @@ namespace Aaru.Devices
                     return Linux.Command.SendAtaCommand((int)fd, registers, out errorRegisters, protocol,
                                                         transferRegister, ref buffer, timeout, transferBlocks,
                                                         out duration, out sense);
-                }
-                case PlatformID.FreeBSD:
-                {
-                    return FreeBSD.Command.SendAtaCommand((IntPtr)fd, registers, out errorRegisters, protocol,
-                                                          ref buffer, timeout, out duration, out sense);
                 }
                 default: throw new InvalidOperationException($"Platform {ptId} not yet supported.");
             }
@@ -317,11 +281,6 @@ namespace Aaru.Devices
                                                         transferRegister, ref buffer, timeout, transferBlocks,
                                                         out duration, out sense);
                 }
-                case PlatformID.FreeBSD:
-                {
-                    return FreeBSD.Command.SendAtaCommand((IntPtr)fd, registers, out errorRegisters, protocol,
-                                                          ref buffer, timeout, out duration, out sense);
-                }
                 default: throw new InvalidOperationException($"Platform {ptId} not yet supported.");
             }
         }
@@ -379,9 +338,6 @@ namespace Aaru.Devices
                     return Linux.Command.SendAtaCommand((int)fd, registers, out errorRegisters, protocol,
                                                         transferRegister, ref buffer, timeout, transferBlocks,
                                                         out duration, out sense);
-                case PlatformID.FreeBSD:
-                    return FreeBSD.Command.SendAtaCommand((IntPtr)fd, registers, out errorRegisters, protocol,
-                                                          ref buffer, timeout, out duration, out sense);
                 default: throw new InvalidOperationException($"Platform {ptId} not yet supported.");
             }
         }

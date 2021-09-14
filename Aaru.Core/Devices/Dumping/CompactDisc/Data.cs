@@ -221,7 +221,6 @@ namespace Aaru.Core.Devices.Dumping
 
                 if(_fixOffset && !inData)
                 {
-                    // TODO: FreeBSD bug
                     if(offsetBytes < 0)
                     {
                         if(i == 0)

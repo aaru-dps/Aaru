@@ -153,15 +153,10 @@ Logo and art:
                 process.StartInfo.FileName  = "cmd";
                 process.StartInfo.Arguments = $"/c start {process.StartInfo.Arguments.Replace("&", "^&")}";
             }
-            else if(RuntimeInformation.IsOSPlatform(OSPlatform.FreeBSD) ||
-                    RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-            {
+            else if(RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
                 process.StartInfo.FileName = "xdg-open";
-            }
             else if(RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-            {
                 process.StartInfo.FileName = "open";
-            }
             else
                 return;
 

@@ -42,14 +42,13 @@ using Aaru.CommonTypes.Structs.Devices.SCSI;
 using Aaru.Decoders.SCSI;
 using Aaru.Decoders.SCSI.MMC;
 using Aaru.Decoders.SecureDigital;
-using Aaru.Devices.FreeBSD;
+using Aaru.Devices.Linux;
 using Aaru.Devices.Windows;
 using Aaru.Helpers;
 using Microsoft.Win32.SafeHandles;
 using Extern = Aaru.Devices.Windows.Extern;
 using FileAccess = Aaru.Devices.Windows.FileAccess;
 using FileAttributes = Aaru.Devices.Windows.FileAttributes;
-using FileFlags = Aaru.Devices.Linux.FileFlags;
 using FileMode = Aaru.Devices.Windows.FileMode;
 using FileShare = Aaru.Devices.Windows.FileShare;
 using Inquiry = Aaru.CommonTypes.Structs.Devices.SCSI.Inquiry;
@@ -151,25 +150,7 @@ namespace Aaru.Devices
 
                         break;
                     }
-                    case PlatformID.FreeBSD:
-                    {
-                        FileHandle = FreeBSD.Extern.cam_open_device(devicePath, FreeBSD.FileFlags.ReadWrite);
-
-                        if(((IntPtr)FileHandle).ToInt64() == 0)
-                        {
-                            Error     = true;
-                            LastError = Marshal.GetLastWin32Error();
-                        }
-
-                        var camDevice = (CamDevice)Marshal.PtrToStructure((IntPtr)FileHandle, typeof(CamDevice));
-
-                        if(StringHandlers.CToString(camDevice.SimName) == "ata")
-                            throw new
-                                DeviceException("Parallel ATA devices are not supported on FreeBSD due to upstream bug #224250.");
-
-                        break;
-                    }
-                    default: throw new DeviceException($"Platform {PlatformId} not yet supported.");
+                    default: throw new DeviceException($"Platform {PlatformId} not supported.");
                 }
             }
 

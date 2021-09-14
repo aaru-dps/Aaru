@@ -197,7 +197,6 @@ namespace Aaru.Core.Devices.Dumping
 
                 if(cdiReadyReadAsAudio)
                 {
-                    // TODO: FreeBSD bug
                     if(offsetBytes < 0)
                     {
                         if(i == 0)
