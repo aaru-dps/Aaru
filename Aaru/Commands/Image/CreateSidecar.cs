@@ -45,11 +45,15 @@ using Aaru.Console;
 using Aaru.Core;
 using JetBrains.Annotations;
 using Schemas;
+using Spectre.Console;
 
 namespace Aaru.Commands.Image
 {
     internal sealed class CreateSidecarCommand : Command
     {
+        static ProgressTask _progressTask1;
+        static ProgressTask _progressTask2;
+
         public CreateSidecarCommand() : base("create-sidecar", "Creates CICM Metadata XML sidecar.")
         {
             Add(new Option(new[]
@@ -97,10 +101,29 @@ namespace Aaru.Commands.Image
             MainClass.PrintCopyright();
 
             if(debug)
-                AaruConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
+            {
+                IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
+                {
+                    Out = new AnsiConsoleOutput(System.Console.Error)
+                });
+
+                AaruConsole.DebugWriteLineEvent += (format, objects) =>
+                {
+                    if(objects is null)
+                        stderrConsole.MarkupLine(format);
+                    else
+                        stderrConsole.MarkupLine(format, objects);
+                };
+            }
 
             if(verbose)
-                AaruConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+                AaruConsole.WriteEvent += (format, objects) =>
+                {
+                    if(objects is null)
+                        AnsiConsole.Markup(format);
+                    else
+                        AnsiConsole.Markup(format, objects);
+                };
 
             Statistics.AddCommand("create-sidecar");
 
@@ -138,7 +161,13 @@ namespace Aaru.Commands.Image
                 }
 
                 var     filtersList = new FiltersList();
-                IFilter inputFilter = filtersList.GetFilter(imagePath);
+                IFilter inputFilter = null;
+
+                Core.Spectre.ProgressSingleSpinner(ctx =>
+                {
+                    ctx.AddTask("Identifying file filter...").IsIndeterminate();
+                    inputFilter = filtersList.GetFilter(imagePath);
+                });
 
                 if(inputFilter == null)
                 {
@@ -149,7 +178,13 @@ namespace Aaru.Commands.Image
 
                 try
                 {
-                    IMediaImage imageFormat = ImageFormat.Detect(inputFilter);
+                    IMediaImage imageFormat = null;
+
+                    Core.Spectre.ProgressSingleSpinner(ctx =>
+                    {
+                        ctx.AddTask("Identifying image format...").IsIndeterminate();
+                        imageFormat = ImageFormat.Detect(inputFilter);
+                    });
 
                     if(imageFormat == null)
                     {
@@ -166,7 +201,15 @@ namespace Aaru.Commands.Image
 
                     try
                     {
-                        if(!imageFormat.Open(inputFilter))
+                        bool opened = false;
+
+                        Core.Spectre.ProgressSingleSpinner(ctx =>
+                        {
+                            ctx.AddTask("Opening image file...").IsIndeterminate();
+                            opened = imageFormat.Open(inputFilter);
+                        });
+
+                        if(!opened)
                         {
                             AaruConsole.WriteLine("Unable to open image format");
                             AaruConsole.WriteLine("No error given");
@@ -187,33 +230,78 @@ namespace Aaru.Commands.Image
                     Statistics.AddMediaFormat(imageFormat.Format);
                     Statistics.AddFilter(inputFilter.Name);
 
-                    var sidecarClass = new Sidecar(imageFormat, imagePath, inputFilter.Id, encodingClass);
-                    sidecarClass.InitProgressEvent    += Progress.InitProgress;
-                    sidecarClass.UpdateProgressEvent  += Progress.UpdateProgress;
-                    sidecarClass.EndProgressEvent     += Progress.EndProgress;
-                    sidecarClass.InitProgressEvent2   += Progress.InitProgress2;
-                    sidecarClass.UpdateProgressEvent2 += Progress.UpdateProgress2;
-                    sidecarClass.EndProgressEvent2    += Progress.EndProgress2;
-                    sidecarClass.UpdateStatusEvent    += Progress.UpdateStatus;
+                    var              sidecarClass = new Sidecar(imageFormat, imagePath, inputFilter.Id, encodingClass);
+                    CICMMetadataType sidecar      = new();
 
-                    System.Console.CancelKeyPress += (sender, e) =>
+                    AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
+                                Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
+                                Start(ctx =>
+                                {
+                                    sidecarClass.InitProgressEvent += () =>
+                                    {
+                                        _progressTask1 = ctx.AddTask("Progress");
+                                    };
+
+                                    sidecarClass.InitProgressEvent2 += () =>
+                                    {
+                                        _progressTask2 = ctx.AddTask("Progress");
+                                    };
+
+                                    sidecarClass.UpdateProgressEvent += (text, current, maximum) =>
+                                    {
+                                        _progressTask1             ??= ctx.AddTask("Progress");
+                                        _progressTask1.Description =   Markup.Escape(text);
+                                        _progressTask1.Value       =   current;
+                                        _progressTask1.MaxValue    =   maximum;
+                                    };
+
+                                    sidecarClass.UpdateProgressEvent2 += (text, current, maximum) =>
+                                    {
+                                        _progressTask2             ??= ctx.AddTask("Progress");
+                                        _progressTask2.Description =   Markup.Escape(text);
+                                        _progressTask2.Value       =   current;
+                                        _progressTask2.MaxValue    =   maximum;
+                                    };
+
+                                    sidecarClass.EndProgressEvent += () =>
+                                    {
+                                        _progressTask1?.StopTask();
+                                        _progressTask1 = null;
+                                    };
+
+                                    sidecarClass.EndProgressEvent2 += () =>
+                                    {
+                                        _progressTask2?.StopTask();
+                                        _progressTask2 = null;
+                                    };
+
+                                    sidecarClass.UpdateStatusEvent += text =>
+                                    {
+                                        AaruConsole.WriteLine(Markup.Escape(text));
+                                    };
+
+                                    System.Console.CancelKeyPress += (_, e) =>
+                                    {
+                                        e.Cancel = true;
+                                        sidecarClass.Abort();
+                                    };
+
+                                    sidecar = sidecarClass.Create();
+                                });
+
+                    Core.Spectre.ProgressSingleSpinner(ctx =>
                     {
-                        e.Cancel = true;
-                        sidecarClass.Abort();
-                    };
+                        ctx.AddTask("Writing metadata sidecar").IsIndeterminate();
 
-                    CICMMetadataType sidecar = sidecarClass.Create();
+                        var xmlFs =
+                            new
+                                FileStream(Path.Combine(Path.GetDirectoryName(imagePath) ?? throw new InvalidOperationException(), Path.GetFileNameWithoutExtension(imagePath) + ".cicm.xml"),
+                                           FileMode.CreateNew);
 
-                    AaruConsole.WriteLine("Writing metadata sidecar");
-
-                    var xmlFs =
-                        new
-                            FileStream(Path.Combine(Path.GetDirectoryName(imagePath) ?? throw new InvalidOperationException(), Path.GetFileNameWithoutExtension(imagePath) + ".cicm.xml"),
-                                       FileMode.CreateNew);
-
-                    var xmlSer = new XmlSerializer(typeof(CICMMetadataType));
-                    xmlSer.Serialize(xmlFs, sidecar);
-                    xmlFs.Close();
+                        var xmlSer = new XmlSerializer(typeof(CICMMetadataType));
+                        xmlSer.Serialize(xmlFs, sidecar);
+                        xmlFs.Close();
+                    });
                 }
                 catch(Exception ex)
                 {
@@ -237,26 +325,78 @@ namespace Aaru.Commands.Image
 
                 files.Sort(StringComparer.CurrentCultureIgnoreCase);
 
-                var sidecarClass = new Sidecar();
-                sidecarClass.InitProgressEvent    += Progress.InitProgress;
-                sidecarClass.UpdateProgressEvent  += Progress.UpdateProgress;
-                sidecarClass.EndProgressEvent     += Progress.EndProgress;
-                sidecarClass.InitProgressEvent2   += Progress.InitProgress2;
-                sidecarClass.UpdateProgressEvent2 += Progress.UpdateProgress2;
-                sidecarClass.EndProgressEvent2    += Progress.EndProgress2;
-                sidecarClass.UpdateStatusEvent    += Progress.UpdateStatus;
-                CICMMetadataType sidecar = sidecarClass.BlockTape(Path.GetFileName(imagePath), files, blockSize);
+                var              sidecarClass = new Sidecar();
+                CICMMetadataType sidecar      = new();
 
-                AaruConsole.WriteLine("Writing metadata sidecar");
+                AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
+                            Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
+                            Start(ctx =>
+                            {
+                                sidecarClass.InitProgressEvent += () =>
+                                {
+                                    _progressTask1 = ctx.AddTask("Progress");
+                                };
 
-                var xmlFs =
-                    new
-                        FileStream(Path.Combine(Path.GetDirectoryName(imagePath) ?? throw new InvalidOperationException(), Path.GetFileNameWithoutExtension(imagePath) + ".cicm.xml"),
-                                   FileMode.CreateNew);
+                                sidecarClass.InitProgressEvent2 += () =>
+                                {
+                                    _progressTask2 = ctx.AddTask("Progress");
+                                };
 
-                var xmlSer = new XmlSerializer(typeof(CICMMetadataType));
-                xmlSer.Serialize(xmlFs, sidecar);
-                xmlFs.Close();
+                                sidecarClass.UpdateProgressEvent += (text, current, maximum) =>
+                                {
+                                    _progressTask1             ??= ctx.AddTask("Progress");
+                                    _progressTask1.Description =   Markup.Escape(text);
+                                    _progressTask1.Value       =   current;
+                                    _progressTask1.MaxValue    =   maximum;
+                                };
+
+                                sidecarClass.UpdateProgressEvent2 += (text, current, maximum) =>
+                                {
+                                    _progressTask2             ??= ctx.AddTask("Progress");
+                                    _progressTask2.Description =   Markup.Escape(text);
+                                    _progressTask2.Value       =   current;
+                                    _progressTask2.MaxValue    =   maximum;
+                                };
+
+                                sidecarClass.EndProgressEvent += () =>
+                                {
+                                    _progressTask1?.StopTask();
+                                    _progressTask1 = null;
+                                };
+
+                                sidecarClass.EndProgressEvent2 += () =>
+                                {
+                                    _progressTask2?.StopTask();
+                                    _progressTask2 = null;
+                                };
+
+                                sidecarClass.UpdateStatusEvent += text =>
+                                {
+                                    AaruConsole.WriteLine(Markup.Escape(text));
+                                };
+
+                                System.Console.CancelKeyPress += (_, e) =>
+                                {
+                                    e.Cancel = true;
+                                    sidecarClass.Abort();
+                                };
+
+                                sidecar = sidecarClass.BlockTape(Path.GetFileName(imagePath), files, blockSize);
+                            });
+
+                Core.Spectre.ProgressSingleSpinner(ctx =>
+                {
+                    ctx.AddTask("Writing metadata sidecar").IsIndeterminate();
+
+                    var xmlFs =
+                        new
+                            FileStream(Path.Combine(Path.GetDirectoryName(imagePath) ?? throw new InvalidOperationException(), Path.GetFileNameWithoutExtension(imagePath) + ".cicm.xml"),
+                                       FileMode.CreateNew);
+
+                    var xmlSer = new XmlSerializer(typeof(CICMMetadataType));
+                    xmlSer.Serialize(xmlFs, sidecar);
+                    xmlFs.Close();
+                });
             }
             else
                 AaruConsole.ErrorWriteLine("The specified input file cannot be found.");
