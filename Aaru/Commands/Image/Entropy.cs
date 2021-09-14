@@ -219,31 +219,36 @@ namespace Aaru.Commands.Image
                                 _progressTask2 = null;
                             };
 
-                            if(wholeDisc                                       &&
-                               inputFormat is IOpticalMediaImage opticalFormat &&
-                               opticalFormat.Sessions?.Count > 1)
+                            if(wholeDisc && inputFormat is IOpticalMediaImage opticalFormat)
                             {
-                                AaruConsole.
-                                    ErrorWriteLine("Calculating disc entropy of multisession images is not yet implemented.");
+                                if(opticalFormat.Sessions?.Count > 1)
+                                {
+                                    AaruConsole.
+                                        ErrorWriteLine("Calculating disc entropy of multisession images is not yet implemented.");
 
-                                wholeDisc = false;
+                                    wholeDisc = false;
+                                }
+
+                                if(opticalFormat.Tracks?.Count == 1)
+                                    separatedTracks = false;
                             }
 
-                            if(!separatedTracks)
-                                return;
-
-                            EntropyResults[] tracksEntropy =
-                                entropyCalculator.CalculateTracksEntropy(duplicatedSectors);
-
-                            foreach(EntropyResults trackEntropy in tracksEntropy)
+                            if(separatedTracks)
                             {
-                                AaruConsole.WriteLine("Entropy for track {0} is {1:F4}.", trackEntropy.Track,
-                                                      trackEntropy.Entropy);
+                                EntropyResults[] tracksEntropy =
+                                    entropyCalculator.CalculateTracksEntropy(duplicatedSectors);
 
-                                if(trackEntropy.UniqueSectors != null)
-                                    AaruConsole.WriteLine("Track {0} has {1} unique sectors ({2:P3})",
-                                                          trackEntropy.Track, trackEntropy.UniqueSectors,
-                                                          (double)trackEntropy.UniqueSectors / trackEntropy.Sectors);
+                                foreach(EntropyResults trackEntropy in tracksEntropy)
+                                {
+                                    AaruConsole.WriteLine("Entropy for track {0} is {1:F4}.", trackEntropy.Track,
+                                                          trackEntropy.Entropy);
+
+                                    if(trackEntropy.UniqueSectors != null)
+                                        AaruConsole.WriteLine("Track {0} has {1} unique sectors ({2:P3})",
+                                                              trackEntropy.Track, trackEntropy.UniqueSectors,
+                                                              (double)trackEntropy.UniqueSectors /
+                                                              trackEntropy.Sectors);
+                                }
                             }
 
                             if(!wholeDisc)
