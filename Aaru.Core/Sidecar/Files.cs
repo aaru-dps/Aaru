@@ -285,7 +285,7 @@ namespace Aaru.Core
 
                 fileChkWorker.Update(data);
 
-                EndProgress();
+                EndProgress2();
 
                 file.Checksums = fileChkWorker.End().ToArray();
             }
