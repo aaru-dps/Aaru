@@ -51,6 +51,7 @@ using Aaru.Decoders.SCSI.MMC;
 using Aaru.Decoders.SCSI.SSC;
 using Aaru.Decoders.Xbox;
 using Aaru.Devices;
+using Spectre.Console;
 using BCA = Aaru.Decoders.Bluray.BCA;
 using Cartridge = Aaru.Decoders.DVD.Cartridge;
 using Command = System.CommandLine.Command;
@@ -89,10 +90,29 @@ namespace Aaru.Commands.Media
             MainClass.PrintCopyright();
 
             if(debug)
-                AaruConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
+            {
+                IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
+                {
+                    Out = new AnsiConsoleOutput(System.Console.Error)
+                });
+
+                AaruConsole.DebugWriteLineEvent += (format, objects) =>
+                {
+                    if(objects is null)
+                        stderrConsole.MarkupLine(format);
+                    else
+                        stderrConsole.MarkupLine(format, objects);
+                };
+            }
 
             if(verbose)
-                AaruConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+                AaruConsole.WriteEvent += (format, objects) =>
+                {
+                    if(objects is null)
+                        AnsiConsole.Markup(format);
+                    else
+                        AnsiConsole.Markup(format, objects);
+                };
 
             Statistics.AddCommand("media-info");
 
@@ -107,11 +127,15 @@ namespace Aaru.Commands.Media
                char.IsLetter(devicePath[0]))
                 devicePath = "\\\\.\\" + char.ToUpper(devicePath[0]) + ':';
 
-            Devices.Device dev;
+            Devices.Device dev = null;
 
             try
             {
-                dev = new Devices.Device(devicePath);
+                Core.Spectre.ProgressSingleSpinner(ctx =>
+                {
+                    ctx.AddTask("Opening device...").IsIndeterminate();
+                    dev = new Devices.Device(devicePath);
+                });
 
                 if(dev.IsRemote)
                     Statistics.AddRemote(dev.RemoteApplication, dev.RemoteVersion, dev.RemoteOperatingSystem,
@@ -168,7 +192,13 @@ namespace Aaru.Commands.Media
 
         static void DoScsiMediaInfo(bool debug, string outputPrefix, Devices.Device dev)
         {
-            var scsiInfo = new ScsiInfo(dev);
+            ScsiInfo scsiInfo = null;
+
+            Core.Spectre.ProgressSingleSpinner(ctx =>
+            {
+                ctx.AddTask("Retrieving SCSI information...").IsIndeterminate();
+                scsiInfo = new ScsiInfo(dev);
+            });
 
             if(!scsiInfo.MediaInserted)
                 return;
@@ -231,7 +261,7 @@ namespace Aaru.Commands.Media
 
                         if(scsiInfo.DensitySupportHeader.HasValue)
                         {
-                            AaruConsole.WriteLine("Densities supported by currently inserted media:");
+                            AaruConsole.WriteLine("[bold]Densities supported by currently inserted media:[/]");
                             AaruConsole.WriteLine(DensitySupport.PrettifyDensity(scsiInfo.DensitySupportHeader));
                         }
                     }
@@ -244,7 +274,7 @@ namespace Aaru.Commands.Media
 
                         if(scsiInfo.MediaTypeSupportHeader.HasValue)
                         {
-                            AaruConsole.WriteLine("Medium types currently inserted in device:");
+                            AaruConsole.WriteLine("[bold]Medium types currently inserted in device:[/]");
                             AaruConsole.WriteLine(DensitySupport.PrettifyMediumType(scsiInfo.MediaTypeSupportHeader));
                         }
 
@@ -283,9 +313,11 @@ namespace Aaru.Commands.Media
                                      "SCSI READ DISC STRUCTURE", scsiInfo.DvdDmi);
 
                     if(DMI.IsXbox(scsiInfo.DvdDmi))
-                        AaruConsole.WriteLine("Xbox DMI:\n{0}", DMI.PrettifyXbox(scsiInfo.DvdDmi));
+                        AaruConsole.WriteLine("[bold]Xbox DMI:[/]\n{0}",
+                                              Markup.Escape(DMI.PrettifyXbox(scsiInfo.DvdDmi)));
                     else if(DMI.IsXbox360(scsiInfo.DvdDmi))
-                        AaruConsole.WriteLine("Xbox 360 DMI:\n{0}", DMI.PrettifyXbox360(scsiInfo.DvdDmi));
+                        AaruConsole.WriteLine("[bold]Xbox 360 DMI:[/]\n{0}",
+                                              Markup.Escape(DMI.PrettifyXbox360(scsiInfo.DvdDmi)));
                 }
 
                 if(scsiInfo.DvdCmi != null)
@@ -293,7 +325,8 @@ namespace Aaru.Commands.Media
                     DataFile.WriteTo("Media-Info command", outputPrefix, "_readdiscstructure_dvd_cmi.bin",
                                      "SCSI READ DISC STRUCTURE", scsiInfo.DvdCmi);
 
-                    AaruConsole.WriteLine("Lead-In CMI:\n{0}", CSS_CPRM.PrettifyLeadInCopyright(scsiInfo.DvdCmi));
+                    AaruConsole.WriteLine("[bold]Lead-In CMI:[/]\n{0}",
+                                          Markup.Escape(CSS_CPRM.PrettifyLeadInCopyright(scsiInfo.DvdCmi)));
                 }
 
                 if(scsiInfo.DvdDiscKey != null)
@@ -317,7 +350,8 @@ namespace Aaru.Commands.Media
                     DataFile.WriteTo("Media-Info command", outputPrefix, "_readdiscstructure_dvdram_dds.bin",
                                      "SCSI READ DISC STRUCTURE", scsiInfo.DvdRamDds);
 
-                    AaruConsole.WriteLine("Disc Definition Structure:\n{0}", DDS.Prettify(scsiInfo.DvdRamDds));
+                    AaruConsole.WriteLine("[bold]Disc Definition Structure:[/]\n{0}",
+                                          Markup.Escape(DDS.Prettify(scsiInfo.DvdRamDds)));
                 }
 
                 if(scsiInfo.DvdRamCartridgeStatus != null)
@@ -325,7 +359,8 @@ namespace Aaru.Commands.Media
                     DataFile.WriteTo("Media-Info command", outputPrefix, "_readdiscstructure_dvdram_status.bin",
                                      "SCSI READ DISC STRUCTURE", scsiInfo.DvdRamCartridgeStatus);
 
-                    AaruConsole.WriteLine("Medium Status:\n{0}", Cartridge.Prettify(scsiInfo.DvdRamCartridgeStatus));
+                    AaruConsole.WriteLine("[bold]Medium Status:[/]\n{0}",
+                                          Markup.Escape(Cartridge.Prettify(scsiInfo.DvdRamCartridgeStatus)));
                 }
 
                 if(scsiInfo.DvdRamSpareArea != null)
@@ -333,7 +368,8 @@ namespace Aaru.Commands.Media
                     DataFile.WriteTo("Media-Info command", outputPrefix, "_readdiscstructure_dvdram_spare.bin",
                                      "SCSI READ DISC STRUCTURE", scsiInfo.DvdRamSpareArea);
 
-                    AaruConsole.WriteLine("Spare Area Information:\n{0}", Spare.Prettify(scsiInfo.DvdRamSpareArea));
+                    AaruConsole.WriteLine("[bold]Spare Area Information:[/]\n{0}",
+                                          Markup.Escape(Spare.Prettify(scsiInfo.DvdRamSpareArea)));
                 }
 
                 if(scsiInfo.LastBorderOutRmd != null)
@@ -346,8 +382,8 @@ namespace Aaru.Commands.Media
                                      "SCSI READ DISC STRUCTURE", scsiInfo.DvdPreRecordedInfo);
 
                     if(scsiInfo.DecodedDvdPrePitInformation.HasValue)
-                        AaruConsole.WriteLine("DVD-R(W) Pre-Recorded Information:\n{0}",
-                                              PRI.Prettify(scsiInfo.DecodedDvdPrePitInformation));
+                        AaruConsole.WriteLine("[bold]DVD-R(W) Pre-Recorded Information:[/]\n{0}",
+                                              Markup.Escape(PRI.Prettify(scsiInfo.DecodedDvdPrePitInformation)));
                 }
 
                 if(scsiInfo.DvdrMediaIdentifier != null)
@@ -360,7 +396,8 @@ namespace Aaru.Commands.Media
                                      "SCSI READ DISC STRUCTURE", scsiInfo.DvdrPhysicalInformation);
 
                     if(scsiInfo.DecodedDvdrPfi.HasValue)
-                        AaruConsole.WriteLine("DVD-R(W) PFI:\n{0}", PFI.Prettify(scsiInfo.DecodedDvdrPfi));
+                        AaruConsole.WriteLine("[bold]DVD-R(W) PFI:[/]\n{0}",
+                                              Markup.Escape(PFI.Prettify(scsiInfo.DecodedDvdrPfi)));
                 }
 
                 if(scsiInfo.DvdPlusAdip != null)
@@ -408,8 +445,8 @@ namespace Aaru.Commands.Media
                     DataFile.WriteTo("Media-Info command", outputPrefix, "_readdiscstructure_bd_di.bin",
                                      "SCSI READ DISC STRUCTURE", scsiInfo.BlurayDiscInformation);
 
-                    AaruConsole.WriteLine("Blu-ray Disc Information:\n{0}",
-                                          DI.Prettify(scsiInfo.BlurayDiscInformation));
+                    AaruConsole.WriteLine("[bold]Blu-ray Disc Information:[/]\n{0}",
+                                          Markup.Escape(DI.Prettify(scsiInfo.BlurayDiscInformation)));
                 }
 
                 if(scsiInfo.BlurayPac != null)
@@ -421,8 +458,8 @@ namespace Aaru.Commands.Media
                     DataFile.WriteTo("Media-Info command", outputPrefix, "_readdiscstructure_bd_bca.bin",
                                      "SCSI READ DISC STRUCTURE", scsiInfo.BlurayBurstCuttingArea);
 
-                    AaruConsole.WriteLine("Blu-ray Burst Cutting Area:\n{0}",
-                                          BCA.Prettify(scsiInfo.BlurayBurstCuttingArea));
+                    AaruConsole.WriteLine("[bold]Blu-ray Burst Cutting Area:[/]\n{0}",
+                                          Markup.Escape(BCA.Prettify(scsiInfo.BlurayBurstCuttingArea)));
                 }
 
                 if(scsiInfo.BlurayDds != null)
@@ -430,8 +467,8 @@ namespace Aaru.Commands.Media
                     DataFile.WriteTo("Media-Info command", outputPrefix, "_readdiscstructure_bd_dds.bin",
                                      "SCSI READ DISC STRUCTURE", scsiInfo.BlurayDds);
 
-                    AaruConsole.WriteLine("Blu-ray Disc Definition Structure:\n{0}",
-                                          Decoders.Bluray.DDS.Prettify(scsiInfo.BlurayDds));
+                    AaruConsole.WriteLine("[bold]Blu-ray Disc Definition Structure:[/]\n{0}",
+                                          Markup.Escape(Decoders.Bluray.DDS.Prettify(scsiInfo.BlurayDds)));
                 }
 
                 if(scsiInfo.BlurayCartridgeStatus != null)
@@ -439,8 +476,9 @@ namespace Aaru.Commands.Media
                     DataFile.WriteTo("Media-Info command", outputPrefix, "_readdiscstructure_bd_cartstatus.bin",
                                      "SCSI READ DISC STRUCTURE", scsiInfo.BlurayCartridgeStatus);
 
-                    AaruConsole.WriteLine("Blu-ray Cartridge Status:\n{0}",
-                                          Decoders.Bluray.Cartridge.Prettify(scsiInfo.BlurayCartridgeStatus));
+                    AaruConsole.WriteLine("[bold]Blu-ray Cartridge Status:[/]\n{0}",
+                                          Markup.Escape(Decoders.Bluray.Cartridge.Prettify(scsiInfo.
+                                                            BlurayCartridgeStatus)));
                 }
 
                 if(scsiInfo.BluraySpareAreaInformation != null)
@@ -448,8 +486,9 @@ namespace Aaru.Commands.Media
                     DataFile.WriteTo("Media-Info command", outputPrefix, "_readdiscstructure_bd_spare.bin",
                                      "SCSI READ DISC STRUCTURE", scsiInfo.BluraySpareAreaInformation);
 
-                    AaruConsole.WriteLine("Blu-ray Spare Area Information:\n{0}",
-                                          Decoders.Bluray.Spare.Prettify(scsiInfo.BluraySpareAreaInformation));
+                    AaruConsole.WriteLine("[bold]Blu-ray Spare Area Information:[/]\n{0}",
+                                          Markup.Escape(Decoders.Bluray.Spare.Prettify(scsiInfo.
+                                                            BluraySpareAreaInformation)));
                 }
 
                 if(scsiInfo.BlurayRawDfl != null)
@@ -458,8 +497,8 @@ namespace Aaru.Commands.Media
 
                 if(scsiInfo.BlurayTrackResources != null)
                 {
-                    AaruConsole.WriteLine("Track Resources Information:\n{0}",
-                                          DiscInformation.Prettify(scsiInfo.BlurayTrackResources));
+                    AaruConsole.WriteLine("[bold]Track Resources Information:[/]\n{0}",
+                                          Markup.Escape(DiscInformation.Prettify(scsiInfo.BlurayTrackResources)));
 
                     DataFile.WriteTo("Media-Info command", outputPrefix, "_readdiscinformation_001b.bin",
                                      "SCSI READ DISC INFORMATION", scsiInfo.BlurayTrackResources);
@@ -467,8 +506,8 @@ namespace Aaru.Commands.Media
 
                 if(scsiInfo.BlurayPowResources != null)
                 {
-                    AaruConsole.WriteLine("POW Resources Information:\n{0}",
-                                          DiscInformation.Prettify(scsiInfo.BlurayPowResources));
+                    AaruConsole.WriteLine("[bold]POW Resources Information:[/]\n{0}",
+                                          Markup.Escape(DiscInformation.Prettify(scsiInfo.BlurayPowResources)));
 
                     DataFile.WriteTo("Media-Info command", outputPrefix, "_readdiscinformation_010b.bin",
                                      "SCSI READ DISC INFORMATION", scsiInfo.BlurayPowResources);
@@ -480,7 +519,7 @@ namespace Aaru.Commands.Media
                                      scsiInfo.Toc);
 
                     if(scsiInfo.DecodedToc.HasValue)
-                        AaruConsole.WriteLine("TOC:\n{0}", TOC.Prettify(scsiInfo.DecodedToc));
+                        AaruConsole.WriteLine("[bold]TOC:[/]\n{0}", Markup.Escape(TOC.Prettify(scsiInfo.DecodedToc)));
                 }
 
                 if(scsiInfo.Atip != null)
@@ -489,7 +528,8 @@ namespace Aaru.Commands.Media
                                      scsiInfo.Atip);
 
                     if(scsiInfo.DecodedAtip != null)
-                        AaruConsole.WriteLine("ATIP:\n{0}", ATIP.Prettify(scsiInfo.DecodedAtip));
+                        AaruConsole.WriteLine("[bold]ATIP:[/]\n{0}",
+                                              Markup.Escape(ATIP.Prettify(scsiInfo.DecodedAtip)));
                 }
 
                 if(scsiInfo.DiscInformation != null)
@@ -498,8 +538,9 @@ namespace Aaru.Commands.Media
                                      "SCSI READ DISC INFORMATION", scsiInfo.DiscInformation);
 
                     if(scsiInfo.DecodedDiscInformation.HasValue)
-                        AaruConsole.WriteLine("Standard Disc Information:\n{0}",
-                                              DiscInformation.Prettify000b(scsiInfo.DecodedDiscInformation));
+                        AaruConsole.WriteLine("Standard Disc Information:[/]\n{0}",
+                                              Markup.Escape(DiscInformation.
+                                                                Prettify000b(scsiInfo.DecodedDiscInformation)));
                 }
 
                 if(scsiInfo.Session != null)
@@ -508,7 +549,8 @@ namespace Aaru.Commands.Media
                                      scsiInfo.Session);
 
                     if(scsiInfo.DecodedSession.HasValue)
-                        AaruConsole.WriteLine("Session information:\n{0}", Session.Prettify(scsiInfo.DecodedSession));
+                        AaruConsole.WriteLine("[bold]Session information:[/]\n{0}",
+                                              Markup.Escape(Session.Prettify(scsiInfo.DecodedSession)));
                 }
 
                 if(scsiInfo.RawToc != null)
@@ -517,7 +559,8 @@ namespace Aaru.Commands.Media
                                      scsiInfo.RawToc);
 
                     if(scsiInfo.FullToc.HasValue)
-                        AaruConsole.WriteLine("Raw TOC:\n{0}", FullTOC.Prettify(scsiInfo.RawToc));
+                        AaruConsole.WriteLine("[bold]Raw TOC:[/]\n{0}",
+                                              Markup.Escape(FullTOC.Prettify(scsiInfo.RawToc)));
                 }
 
                 if(scsiInfo.Pma != null)
@@ -525,7 +568,7 @@ namespace Aaru.Commands.Media
                     DataFile.WriteTo("Media-Info command", outputPrefix, "_pma.bin", "SCSI READ TOC/PMA/ATIP",
                                      scsiInfo.Pma);
 
-                    AaruConsole.WriteLine("PMA:\n{0}", PMA.Prettify(scsiInfo.Pma));
+                    AaruConsole.WriteLine("[bold]PMA:\n[/]{0}", Markup.Escape(PMA.Prettify(scsiInfo.Pma)));
                 }
 
                 if(scsiInfo.CdTextLeadIn != null)
@@ -534,33 +577,33 @@ namespace Aaru.Commands.Media
                                      scsiInfo.CdTextLeadIn);
 
                     if(scsiInfo.DecodedCdTextLeadIn.HasValue)
-                        AaruConsole.WriteLine("CD-TEXT on Lead-In:\n{0}",
-                                              CDTextOnLeadIn.Prettify(scsiInfo.DecodedCdTextLeadIn));
+                        AaruConsole.WriteLine("[bold]CD-TEXT on Lead-In:[/]\n{0}",
+                                              Markup.Escape(CDTextOnLeadIn.Prettify(scsiInfo.DecodedCdTextLeadIn)));
                 }
 
                 if(!string.IsNullOrEmpty(scsiInfo.Mcn))
-                    AaruConsole.WriteLine("MCN: {0}", scsiInfo.Mcn);
+                    AaruConsole.WriteLine("[bold]MCN:[/] {0}", Markup.Escape(scsiInfo.Mcn));
 
                 if(scsiInfo.Isrcs != null)
                     foreach(KeyValuePair<byte, string> isrc in scsiInfo.Isrcs)
-                        AaruConsole.WriteLine("Track's {0} ISRC: {1}", isrc.Key, isrc.Value);
+                        AaruConsole.WriteLine("[bold]Track's {0} ISRC:[/] {1}", isrc.Key, Markup.Escape(isrc.Value));
 
                 if(scsiInfo.XboxSecuritySector != null)
                     DataFile.WriteTo("Media-Info command", outputPrefix, "_xbox_ss.bin", "KREON EXTRACT SS",
                                      scsiInfo.XboxSecuritySector);
 
                 if(scsiInfo.DecodedXboxSecuritySector.HasValue)
-                    AaruConsole.WriteLine("Xbox Security Sector:\n{0}",
-                                          SS.Prettify(scsiInfo.DecodedXboxSecuritySector));
+                    AaruConsole.WriteLine("[bold]Xbox Security Sector:[/]\n{0}",
+                                          Markup.Escape(SS.Prettify(scsiInfo.DecodedXboxSecuritySector)));
 
                 if(scsiInfo.XgdInfo != null)
                 {
-                    AaruConsole.WriteLine("Video layer 0 size: {0} sectors", scsiInfo.XgdInfo.L0Video);
-                    AaruConsole.WriteLine("Video layer 1 size: {0} sectors", scsiInfo.XgdInfo.L1Video);
-                    AaruConsole.WriteLine("Middle zone size: {0} sectors", scsiInfo.XgdInfo.MiddleZone);
-                    AaruConsole.WriteLine("Game data size: {0} sectors", scsiInfo.XgdInfo.GameSize);
-                    AaruConsole.WriteLine("Total size: {0} sectors", scsiInfo.XgdInfo.TotalSize);
-                    AaruConsole.WriteLine("Real layer break: {0}", scsiInfo.XgdInfo.LayerBreak);
+                    AaruConsole.WriteLine("[bold]Video layer 0 size:[/] {0} sectors", scsiInfo.XgdInfo.L0Video);
+                    AaruConsole.WriteLine("[bold]Video layer 1 size:[/] {0} sectors", scsiInfo.XgdInfo.L1Video);
+                    AaruConsole.WriteLine("[bold]Middle zone size:[/] {0} sectors", scsiInfo.XgdInfo.MiddleZone);
+                    AaruConsole.WriteLine("[bold]Game data size:[/] {0} sectors", scsiInfo.XgdInfo.GameSize);
+                    AaruConsole.WriteLine("[bold]Total size:[/] {0} sectors", scsiInfo.XgdInfo.TotalSize);
+                    AaruConsole.WriteLine("[bold]Real layer break:[/] {0}", scsiInfo.XgdInfo.LayerBreak);
                     AaruConsole.WriteLine();
                 }
             }
@@ -570,7 +613,7 @@ namespace Aaru.Commands.Media
                 DataFile.WriteTo("Media-Info command", outputPrefix, "_mediaserialnumber.bin",
                                  "SCSI READ MEDIA SERIAL NUMBER", scsiInfo.MediaSerialNumber);
 
-                AaruConsole.Write("Media Serial Number: ");
+                AaruConsole.Write("[bold]Media Serial Number:[/] ");
 
                 for(int i = 4; i < scsiInfo.MediaSerialNumber.Length; i++)
                     AaruConsole.Write("{0:X2}", scsiInfo.MediaSerialNumber[i]);
@@ -578,7 +621,7 @@ namespace Aaru.Commands.Media
                 AaruConsole.WriteLine();
             }
 
-            AaruConsole.WriteLine("Media identified as {0}", scsiInfo.MediaType);
+            AaruConsole.WriteLine("[bold]Media identified as [italic]{0}[/][/]", scsiInfo.MediaType);
             Statistics.AddMedia(scsiInfo.MediaType, true);
 
             if(scsiInfo.Toc    != null ||
@@ -611,11 +654,11 @@ namespace Aaru.Commands.Media
                     tracks[^1].TrackEndSector = (ulong)lastSector;
 
                     AaruConsole.WriteLine();
-                    AaruConsole.WriteLine("Track calculations:");
+                    AaruConsole.WriteLine("[bold]Track calculations:[/]");
 
                     if(inexactPositioning)
                         AaruConsole.
-                            WriteLine("WARNING: The drive has returned incorrect Q positioning when calculating pregaps. A best effort has been tried but they may be incorrect.");
+                            WriteLine("[yellow]WARNING: The drive has returned incorrect Q positioning when calculating pregaps. A best effort has been tried but they may be incorrect.[/]");
 
                     if(firstLba > 0)
                         AaruConsole.WriteLine("Hidden track starts at LBA {0}, ends at LBA {1}", 0, firstLba - 1);
@@ -627,7 +670,7 @@ namespace Aaru.Commands.Media
                                       track.TrackPregap, track.TrackType);
 
                     AaruConsole.WriteLine();
-                    AaruConsole.WriteLine("Offsets:");
+                    AaruConsole.WriteLine("[bold]Offsets:[/]");
 
                     // Search for read offset in main database
                     CdOffset cdOffset =
@@ -643,15 +686,15 @@ namespace Aaru.Commands.Media
                     {
                         if(driveOffset is null)
                         {
-                            AaruConsole.WriteLine("Drive reading offset not found in database.");
-                            AaruConsole.WriteLine("Disc offset cannot be calculated.");
+                            AaruConsole.WriteLine("[red]Drive reading offset not found in database.[/]");
+                            AaruConsole.WriteLine("[red]Disc offset cannot be calculated.[/]");
                         }
                         else
                         {
                             AaruConsole.
                                 WriteLine($"Drive reading offset is {driveOffset} bytes ({driveOffset / 4} samples).");
 
-                            AaruConsole.WriteLine("Disc write offset is unknown.");
+                            AaruConsole.WriteLine("[red]Disc write offset is unknown.[/]");
                         }
                     }
                     else
@@ -660,7 +703,7 @@ namespace Aaru.Commands.Media
 
                         if(driveOffset is null)
                         {
-                            AaruConsole.WriteLine("Drive reading offset not found in database.");
+                            AaruConsole.WriteLine("[red]Drive reading offset not found in database.[/]");
 
                             AaruConsole.
                                 WriteLine($"Combined disc and drive offset are {offsetBytes} bytes ({offsetBytes / 4} samples).");
