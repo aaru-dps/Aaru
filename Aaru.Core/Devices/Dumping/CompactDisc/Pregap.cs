@@ -191,7 +191,7 @@ namespace Aaru.Core.Devices.Dumping
 
             // Initialize the dictionary
             foreach(Track t in tracks)
-                pregaps[t.TrackSequence] = 0;
+                pregaps[t.Sequence] = 0;
 
             for(int t = 0; t < tracks.Length; t++)
             {
@@ -199,22 +199,22 @@ namespace Aaru.Core.Devices.Dumping
                 int   trackRetries = 0;
 
                 // First track of each session has at least 150 sectors of pregap and is not always readable
-                if(tracks.Where(trk => trk.TrackSession == track.TrackSession).OrderBy(trk => trk.TrackSequence).
-                          FirstOrDefault().TrackSequence == track.TrackSequence)
+                if(tracks.Where(trk => trk.Session == track.Session).OrderBy(trk => trk.Sequence).
+                          FirstOrDefault().Sequence == track.Sequence)
                 {
-                    AaruConsole.DebugWriteLine("Pregap calculator", "Skipping track {0}", track.TrackSequence);
+                    AaruConsole.DebugWriteLine("Pregap calculator", "Skipping track {0}", track.Sequence);
 
-                    if(track.TrackSequence > 1)
-                        pregaps[track.TrackSequence] = 150;
+                    if(track.Sequence > 1)
+                        pregaps[track.Sequence] = 150;
 
                     continue;
                 }
 
                 if(t                       > 0                    &&
-                   tracks[t - 1].TrackType == tracks[t].TrackType &&
+                   tracks[t - 1].Type == tracks[t].Type &&
                    dumping)
                 {
-                    AaruConsole.DebugWriteLine("Pregap calculator", "Skipping track {0}", track.TrackSequence);
+                    AaruConsole.DebugWriteLine("Pregap calculator", "Skipping track {0}", track.Sequence);
 
                     continue;
                 }
@@ -222,16 +222,16 @@ namespace Aaru.Core.Devices.Dumping
                 if(dumping && dev.Manufacturer.ToLowerInvariant().StartsWith("plextor", StringComparison.Ordinal))
                 {
                     AaruConsole.DebugWriteLine("Pregap calculator", "Skipping track {0} due to Plextor firmware bug",
-                                               track.TrackSequence);
+                                               track.Sequence);
 
                     continue;
                 }
 
-                AaruConsole.DebugWriteLine("Pregap calculator", "Track {0}", track.TrackSequence);
+                AaruConsole.DebugWriteLine("Pregap calculator", "Track {0}", track.Sequence);
 
-                int   lba           = (int)track.TrackStartSector - 1;
+                int   lba           = (int)track.StartSector - 1;
                 bool  pregapFound   = false;
-                Track previousTrack = tracks.FirstOrDefault(trk => trk.TrackSequence == track.TrackSequence - 1);
+                Track previousTrack = tracks.FirstOrDefault(trk => trk.Sequence == track.Sequence - 1);
 
                 bool goneBack                      = false;
                 bool goFront                       = false;
@@ -244,8 +244,8 @@ namespace Aaru.Core.Devices.Dumping
                 {
                     sense = supportsRwSubchannel
                                 ? GetSectorForPregapRaw(dev, (uint)lba, dbDev, out subBuf,
-                                                        track.TrackType == TrackType.Audio)
-                                : GetSectorForPregapQ16(dev, (uint)lba, out subBuf, track.TrackType == TrackType.Audio);
+                                                        track.Type == TrackType.Audio)
+                                : GetSectorForPregapQ16(dev, (uint)lba, out subBuf, track.Type == TrackType.Audio);
 
                     if(sense)
                     {
@@ -319,12 +319,12 @@ namespace Aaru.Core.Devices.Dumping
 
                     posQ = (subBuf[7] * 60 * 75) + (subBuf[8] * 75) + subBuf[9] - 150;
 
-                    if(subBuf[1] != track.TrackSequence - 1 ||
+                    if(subBuf[1] != track.Sequence - 1 ||
                        subBuf[2] == 0                       ||
                        posQ      != lba)
                         break;
 
-                    pregaps[track.TrackSequence] = 0;
+                    pregaps[track.Sequence] = 0;
 
                     pregapFound = true;
                 }
@@ -333,26 +333,26 @@ namespace Aaru.Core.Devices.Dumping
                     continue;
 
                 // Calculate pregap
-                lba = (int)track.TrackStartSector - 150;
+                lba = (int)track.StartSector - 150;
 
-                while(lba > (int)previousTrack.TrackStartSector &&
-                      lba <= (int)track.TrackStartSector)
+                while(lba > (int)previousTrack.StartSector &&
+                      lba <= (int)track.StartSector)
                 {
                     // Some drives crash if you try to read just before the previous read, so seek away first
                     if(!forward)
                         sense = supportsRwSubchannel
                                     ? GetSectorForPregapRaw(dev, (uint)lba - 10, dbDev, out subBuf,
-                                                            track.TrackType == TrackType.Audio)
+                                                            track.Type == TrackType.Audio)
                                     : GetSectorForPregapQ16(dev, (uint)lba - 10, out subBuf,
-                                                            track.TrackType == TrackType.Audio);
+                                                            track.Type == TrackType.Audio);
 
                     for(retries = 0; retries < 10; retries++)
                     {
                         sense = supportsRwSubchannel
                                     ? GetSectorForPregapRaw(dev, (uint)lba, dbDev, out subBuf,
-                                                            track.TrackType == TrackType.Audio)
+                                                            track.Type == TrackType.Audio)
                                     : GetSectorForPregapQ16(dev, (uint)lba, out subBuf,
-                                                            track.TrackType == TrackType.Audio);
+                                                            track.Type == TrackType.Audio);
 
                         if(sense)
                             continue;
@@ -426,12 +426,12 @@ namespace Aaru.Core.Devices.Dumping
 
                             if(trackRetries >= 10)
                             {
-                                if(pregaps[track.TrackSequence] == 0)
+                                if(pregaps[track.Sequence] == 0)
                                 {
-                                    if((previousTrack.TrackType == TrackType.Audio &&
-                                        track.TrackType         != TrackType.Audio) ||
-                                       (previousTrack.TrackType != TrackType.Audio &&
-                                        track.TrackType         == TrackType.Audio))
+                                    if((previousTrack.Type == TrackType.Audio &&
+                                        track.Type         != TrackType.Audio) ||
+                                       (previousTrack.Type != TrackType.Audio &&
+                                        track.Type         == TrackType.Audio))
                                     {
                                         dumpLog?.
                                             WriteLine("Could not read subchannel for this track, supposing 150 sectors.");
@@ -451,10 +451,10 @@ namespace Aaru.Core.Devices.Dumping
                                 else
                                 {
                                     dumpLog?.
-                                        WriteLine($"Could not read subchannel for this track, supposing {pregaps[track.TrackSequence]} sectors.");
+                                        WriteLine($"Could not read subchannel for this track, supposing {pregaps[track.Sequence]} sectors.");
 
                                     updateStatus?.
-                                        Invoke($"Could not read subchannel for this track, supposing {pregaps[track.TrackSequence]} sectors.");
+                                        Invoke($"Could not read subchannel for this track, supposing {pregaps[track.Sequence]} sectors.");
                                 }
 
                                 break;
@@ -493,7 +493,7 @@ namespace Aaru.Core.Devices.Dumping
                             lba++;
                             forward = true;
 
-                            if(lba == (int)previousTrack.TrackStartSector)
+                            if(lba == (int)previousTrack.StartSector)
                                 break;
 
                             continue;
@@ -508,7 +508,7 @@ namespace Aaru.Core.Devices.Dumping
                     }
 
                     // Previous track
-                    if(subBuf[1] < track.TrackSequence)
+                    if(subBuf[1] < track.Sequence)
                     {
                         lba++;
                         forward                       = true;
@@ -522,7 +522,7 @@ namespace Aaru.Core.Devices.Dumping
                     }
 
                     // Same track, but not pregap
-                    if(subBuf[1] == track.TrackSequence &&
+                    if(subBuf[1] == track.Sequence &&
                        subBuf[2] > 0)
                     {
                         lba--;
@@ -539,7 +539,7 @@ namespace Aaru.Core.Devices.Dumping
                     // Pregap according to Q position
                     posQ = (subBuf[7] * 60 * 75) + (subBuf[8] * 75) + subBuf[9] - 150;
                     int diff    = posQ                        - lba;
-                    int pregapQ = (int)track.TrackStartSector - lba;
+                    int pregapQ = (int)track.StartSector - lba;
 
                     if(diff != 0)
                     {
@@ -561,26 +561,26 @@ namespace Aaru.Core.Devices.Dumping
                     }
 
                     // Bigger than known change, otherwise we found it
-                    if(pregapQ > pregaps[track.TrackSequence])
+                    if(pregapQ > pregaps[track.Sequence])
                     {
                         // If CRC is not OK, only accept pregaps less than 10 sectors longer than previously now
-                        if(crcOk || pregapQ - pregaps[track.TrackSequence] < 10)
+                        if(crcOk || pregapQ - pregaps[track.Sequence] < 10)
                         {
                             AaruConsole.DebugWriteLine("Pregap calculator", "Pregap for track {0}: {1}",
-                                                       track.TrackSequence, pregapQ);
+                                                       track.Sequence, pregapQ);
 
-                            pregaps[track.TrackSequence] = pregapQ;
+                            pregaps[track.Sequence] = pregapQ;
                         }
 
                         // We are going forward, so we have already been in the previous track, so add 1 to pregap and get out of here
                         else if(forward)
                         {
-                            pregaps[track.TrackSequence]++;
+                            pregaps[track.Sequence]++;
 
                             break;
                         }
                     }
-                    else if(pregapQ == pregaps[track.TrackSequence])
+                    else if(pregapQ == pregaps[track.Sequence])
                         break;
 
                     lba--;
@@ -590,11 +590,11 @@ namespace Aaru.Core.Devices.Dumping
 
             foreach(Track trk in tracks)
             {
-                trk.TrackPregap = (ulong)pregaps[trk.TrackSequence];
+                trk.Pregap = (ulong)pregaps[trk.Sequence];
 
                 // Do not reduce pregap, or starting position of session's first track
-                if(tracks.Where(t => t.TrackSession == trk.TrackSession).OrderBy(t => t.TrackSequence).FirstOrDefault().
-                          TrackSequence == trk.TrackSequence)
+                if(tracks.Where(t => t.Session == trk.Session).OrderBy(t => t.Sequence).FirstOrDefault().
+                          Sequence == trk.Sequence)
                     continue;
 
                 if(dumping)
@@ -602,19 +602,19 @@ namespace Aaru.Core.Devices.Dumping
                     // Minus five, to ensure dumping will fix if there is a pregap LBA 0
                     int red = 5;
 
-                    while(trk.TrackPregap > 0 &&
+                    while(trk.Pregap > 0 &&
                           red             > 0)
                     {
-                        trk.TrackPregap--;
+                        trk.Pregap--;
                         red--;
                     }
                 }
 
-                trk.TrackStartSector -= trk.TrackPregap;
+                trk.StartSector -= trk.Pregap;
 
             #if DEBUG
-                dumpLog?.WriteLine($"Track {trk.TrackSequence} pregap is {trk.TrackPregap} sectors");
-                updateStatus?.Invoke($"Track {trk.TrackSequence} pregap is {trk.TrackPregap} sectors");
+                dumpLog?.WriteLine($"Track {trk.Sequence} pregap is {trk.Pregap} sectors");
+                updateStatus?.Invoke($"Track {trk.Sequence} pregap is {trk.Pregap} sectors");
             #endif
             }
         }

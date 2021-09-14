@@ -476,18 +476,18 @@ namespace Aaru.Core.Devices.Dumping
 
                                 var track = new Track
                                 {
-                                    TrackSequence = trkInfo.LogicalTrackNumber,
-                                    TrackSession = (ushort)(canStoreNotCdSessions ? trkInfo.SessionNumber : 1),
-                                    TrackType = TrackType.Data,
-                                    TrackStartSector = trkInfo.LogicalTrackStartAddress,
-                                    TrackEndSector = trkInfo.LogicalTrackSize + trkInfo.LogicalTrackStartAddress - 1,
-                                    TrackRawBytesPerSector = (int)blockSize,
-                                    TrackBytesPerSector = (int)blockSize,
-                                    TrackSubchannelType = TrackSubchannelType.None
+                                    Sequence = trkInfo.LogicalTrackNumber,
+                                    Session = (ushort)(canStoreNotCdSessions ? trkInfo.SessionNumber : 1),
+                                    Type = TrackType.Data,
+                                    StartSector = trkInfo.LogicalTrackStartAddress,
+                                    EndSector = trkInfo.LogicalTrackSize + trkInfo.LogicalTrackStartAddress - 1,
+                                    RawBytesPerSector = (int)blockSize,
+                                    BytesPerSector = (int)blockSize,
+                                    SubchannelType = TrackSubchannelType.None
                                 };
 
-                                if(track.TrackEndSector >= blocks)
-                                    blocks = track.TrackEndSector + 1;
+                                if(track.EndSector >= blocks)
+                                    blocks = track.EndSector + 1;
 
                                 tracks.Add(track);
                             }
@@ -495,16 +495,16 @@ namespace Aaru.Core.Devices.Dumping
                             if(tracks.Count == 0)
                                 tracks.Add(new Track
                                 {
-                                    TrackBytesPerSector    = (int)blockSize,
-                                    TrackEndSector         = blocks - 1,
-                                    TrackSequence          = 1,
-                                    TrackRawBytesPerSector = (int)blockSize,
-                                    TrackSubchannelType    = TrackSubchannelType.None,
-                                    TrackSession           = 1,
-                                    TrackType              = TrackType.Data
+                                    BytesPerSector    = (int)blockSize,
+                                    EndSector         = blocks - 1,
+                                    Sequence          = 1,
+                                    RawBytesPerSector = (int)blockSize,
+                                    SubchannelType    = TrackSubchannelType.None,
+                                    Session           = 1,
+                                    Type              = TrackType.Data
                                 });
                             else
-                                tracks = tracks.OrderBy(t => t.TrackSequence).ToList();
+                                tracks = tracks.OrderBy(t => t.Sequence).ToList();
 
                             ret = _outputPlugin.Create(_outputPath, dskType, _formatOptions, blocks, blockSize);
 
@@ -525,7 +525,7 @@ namespace Aaru.Core.Devices.Dumping
                         #if DEBUG
                             foreach(Track trk in tracks)
                                 UpdateStatus?.
-                                    Invoke($"Track {trk.TrackSequence} starts at LBA {trk.TrackStartSector} and ends at LBA {trk.TrackEndSector}");
+                                    Invoke($"Track {trk.Sequence} starts at LBA {trk.StartSector} and ends at LBA {trk.EndSector}");
                         #endif
 
                             if(canStoreNotCdTracks)
@@ -549,13 +549,13 @@ namespace Aaru.Core.Devices.Dumping
                                 {
                                     new Track
                                     {
-                                        TrackBytesPerSector    = (int)blockSize,
-                                        TrackEndSector         = blocks - 1,
-                                        TrackSequence          = 1,
-                                        TrackRawBytesPerSector = (int)blockSize,
-                                        TrackSubchannelType    = TrackSubchannelType.None,
-                                        TrackSession           = 1,
-                                        TrackType              = TrackType.Data
+                                        BytesPerSector    = (int)blockSize,
+                                        EndSector         = blocks - 1,
+                                        Sequence          = 1,
+                                        RawBytesPerSector = (int)blockSize,
+                                        SubchannelType    = TrackSubchannelType.None,
+                                        Session           = 1,
+                                        Type              = TrackType.Data
                                     }
                                 });
                         }
@@ -572,13 +572,13 @@ namespace Aaru.Core.Devices.Dumping
                         {
                             new Track
                             {
-                                TrackBytesPerSector    = (int)blockSize,
-                                TrackEndSector         = blocks - 1,
-                                TrackSequence          = 1,
-                                TrackRawBytesPerSector = (int)blockSize,
-                                TrackSubchannelType    = TrackSubchannelType.None,
-                                TrackSession           = 1,
-                                TrackType              = TrackType.Data
+                                BytesPerSector    = (int)blockSize,
+                                EndSector         = blocks - 1,
+                                Sequence          = 1,
+                                RawBytesPerSector = (int)blockSize,
+                                SubchannelType    = TrackSubchannelType.None,
+                                Session           = 1,
+                                Type              = TrackType.Data
                             }
                         });
                     }

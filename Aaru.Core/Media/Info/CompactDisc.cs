@@ -86,9 +86,9 @@ namespace Aaru.Core.Media.Info
 
             if(dskType != MediaType.VideoNowColor)
             {
-                if(tracks.Any(t => t.TrackType != TrackType.Audio))
+                if(tracks.Any(t => t.Type != TrackType.Audio))
                 {
-                    dataTrack = tracks.FirstOrDefault(t => t.TrackType != TrackType.Audio);
+                    dataTrack = tracks.FirstOrDefault(t => t.Type != TrackType.Audio);
 
                     if(dataTrack != null)
                     {
@@ -101,7 +101,7 @@ namespace Aaru.Core.Media.Info
                         tmpBuf = new byte[sectorSync.Length];
 
                         // Ensure to be out of the pregap, or multi-session discs give funny values
-                        uint wantedLba = (uint)(dataTrack.TrackStartSector + 151);
+                        uint wantedLba = (uint)(dataTrack.StartSector + 151);
 
                         // Plextor READ CDDA
                         if(dbDev?.ATAPI?.RemovableMedias?.Any(d => d.SupportsPlextorReadCDDA == true) == true ||
@@ -216,8 +216,8 @@ namespace Aaru.Core.Media.Info
 
                 for(int i = 1; i < tracks.Length; i++)
                 {
-                    if(tracks[i - 1].TrackType == TrackType.Audio ||
-                       tracks[i].TrackType     != TrackType.Audio)
+                    if(tracks[i - 1].Type == TrackType.Audio ||
+                       tracks[i].Type     != TrackType.Audio)
                         continue;
 
                     dataTrack  = tracks[i - 1];
@@ -231,21 +231,21 @@ namespace Aaru.Core.Media.Info
                     return;
 
                 // Found them
-                sense = dev.ReadCd(out cmdBuf, out _, (uint)audioTrack.TrackStartSector, sectorSize, 3,
+                sense = dev.ReadCd(out cmdBuf, out _, (uint)audioTrack.StartSector, sectorSize, 3,
                                    MmcSectorTypes.Cdda, false, false, false, MmcHeaderCodes.None, true, false,
                                    MmcErrorField.None, MmcSubchannel.None, dev.Timeout, out _);
 
                 if(sense || dev.Error)
                     return;
 
-                dataTrack.TrackEndSector += 150;
+                dataTrack.EndSector += 150;
 
                 // Calculate MSF
-                minute = (int)dataTrack.TrackEndSector                     / 4500;
-                second = ((int)dataTrack.TrackEndSector - (minute * 4500)) / 75;
-                frame  = (int)dataTrack.TrackEndSector - (minute * 4500) - (second * 75);
+                minute = (int)dataTrack.EndSector                     / 4500;
+                second = ((int)dataTrack.EndSector - (minute * 4500)) / 75;
+                frame  = (int)dataTrack.EndSector - (minute * 4500) - (second * 75);
 
-                dataTrack.TrackEndSector -= 150;
+                dataTrack.EndSector -= 150;
 
                 // Convert to BCD
                 minute = ((minute / 10) << 4) + (minute % 10);
@@ -278,10 +278,10 @@ namespace Aaru.Core.Media.Info
                     break;
                 }
 
-                if(offsetFound || audioTrack.TrackPregap <= 0)
+                if(offsetFound || audioTrack.Pregap <= 0)
                     return;
 
-                sense = dev.ReadCd(out byte[] dataBuf, out _, (uint)dataTrack.TrackEndSector, sectorSize, 1,
+                sense = dev.ReadCd(out byte[] dataBuf, out _, (uint)dataTrack.EndSector, sectorSize, 1,
                                    MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true, true,
                                    MmcErrorField.None, MmcSubchannel.None, dev.Timeout, out _);
 

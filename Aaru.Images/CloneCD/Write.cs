@@ -162,8 +162,7 @@ namespace Aaru.DiscImages
             }
 
             Track track =
-                Tracks.FirstOrDefault(trk => sectorAddress >= trk.TrackStartSector &&
-                                             sectorAddress <= trk.TrackEndSector);
+                Tracks.FirstOrDefault(trk => sectorAddress >= trk.StartSector && sectorAddress <= trk.EndSector);
 
             if(track is null)
             {
@@ -172,7 +171,7 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            if(data.Length != track.TrackRawBytesPerSector)
+            if(data.Length != track.RawBytesPerSector)
             {
                 ErrorMessage = "Incorrect data size";
 
@@ -180,7 +179,7 @@ namespace Aaru.DiscImages
             }
 
             _dataStream.
-                Seek((long)(track.TrackFileOffset + ((sectorAddress - track.TrackStartSector) * (ulong)track.TrackRawBytesPerSector)),
+                Seek((long)(track.FileOffset + ((sectorAddress - track.StartSector) * (ulong)track.RawBytesPerSector)),
                      SeekOrigin.Begin);
 
             _dataStream.Write(data, 0, data.Length);
@@ -199,8 +198,7 @@ namespace Aaru.DiscImages
             }
 
             Track track =
-                Tracks.FirstOrDefault(trk => sectorAddress >= trk.TrackStartSector &&
-                                             sectorAddress <= trk.TrackEndSector);
+                Tracks.FirstOrDefault(trk => sectorAddress >= trk.StartSector && sectorAddress <= trk.EndSector);
 
             if(track is null)
             {
@@ -209,14 +207,14 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            if(sectorAddress + length > track.TrackEndSector + 1)
+            if(sectorAddress + length > track.EndSector + 1)
             {
                 ErrorMessage = "Can't cross tracks";
 
                 return false;
             }
 
-            if(data.Length % track.TrackRawBytesPerSector != 0)
+            if(data.Length % track.RawBytesPerSector != 0)
             {
                 ErrorMessage = "Incorrect data size";
 
@@ -224,7 +222,7 @@ namespace Aaru.DiscImages
             }
 
             _dataStream.
-                Seek((long)(track.TrackFileOffset + ((sectorAddress - track.TrackStartSector) * (ulong)track.TrackRawBytesPerSector)),
+                Seek((long)(track.FileOffset + ((sectorAddress - track.StartSector) * (ulong)track.RawBytesPerSector)),
                      SeekOrigin.Begin);
 
             _dataStream.Write(data, 0, data.Length);
@@ -240,25 +238,25 @@ namespace Aaru.DiscImages
 
             Tracks = new List<Track>();
 
-            foreach(Track track in tracks.OrderBy(t => t.TrackSequence))
+            foreach(Track track in tracks.OrderBy(t => t.Sequence))
             {
                 Track newTrack = track;
 
-                if(newTrack.TrackSession > 1)
+                if(newTrack.Session > 1)
                 {
-                    Track firstSessionTrack = tracks.FirstOrDefault(t => t.TrackSession == newTrack.TrackSession);
+                    Track firstSessionTrack = tracks.FirstOrDefault(t => t.Session == newTrack.Session);
 
-                    if(firstSessionTrack?.TrackSequence == newTrack.TrackSequence &&
-                       newTrack.TrackPregap             >= 150)
+                    if(firstSessionTrack?.Sequence == newTrack.Sequence &&
+                       newTrack.Pregap             >= 150)
                     {
-                        newTrack.TrackPregap      -= 150;
-                        newTrack.TrackStartSector += 150;
+                        newTrack.Pregap      -= 150;
+                        newTrack.StartSector += 150;
                     }
                 }
 
                 uint subchannelSize;
 
-                switch(newTrack.TrackSubchannelType)
+                switch(newTrack.SubchannelType)
                 {
                     case TrackSubchannelType.None:
                         subchannelSize = 0;
@@ -270,18 +268,18 @@ namespace Aaru.DiscImages
 
                         break;
                     default:
-                        ErrorMessage = $"Unsupported subchannel type {newTrack.TrackSubchannelType}";
+                        ErrorMessage = $"Unsupported subchannel type {newTrack.SubchannelType}";
 
                         return false;
                 }
 
-                newTrack.TrackFileOffset       = currentDataOffset;
-                newTrack.TrackSubchannelOffset = currentSubchannelOffset;
+                newTrack.FileOffset       = currentDataOffset;
+                newTrack.SubchannelOffset = currentSubchannelOffset;
 
-                currentDataOffset += (ulong)newTrack.TrackRawBytesPerSector *
-                                     (newTrack.TrackEndSector - newTrack.TrackStartSector + 1);
+                currentDataOffset += (ulong)newTrack.RawBytesPerSector *
+                                     (newTrack.EndSector - newTrack.StartSector + 1);
 
-                currentSubchannelOffset += subchannelSize * (newTrack.TrackEndSector - newTrack.TrackStartSector + 1);
+                currentSubchannelOffset += subchannelSize * (newTrack.EndSector - newTrack.StartSector + 1);
 
                 Tracks.Add(newTrack);
             }
@@ -335,9 +333,9 @@ namespace Aaru.DiscImages
             {
                 _descriptorStream.WriteLine("[Session {0}]", i);
 
-                Track firstSessionTrack = Tracks.FirstOrDefault(t => t.TrackSession == i);
+                Track firstSessionTrack = Tracks.FirstOrDefault(t => t.Session == i);
 
-                switch(firstSessionTrack?.TrackType)
+                switch(firstSessionTrack?.Type)
                 {
                     case TrackType.Audio:
                         // CloneCD always writes this value for first track in disc, however the Rainbow Books
@@ -429,8 +427,7 @@ namespace Aaru.DiscImages
             }
 
             Track track =
-                Tracks.FirstOrDefault(trk => sectorAddress >= trk.TrackStartSector &&
-                                             sectorAddress <= trk.TrackEndSector);
+                Tracks.FirstOrDefault(trk => sectorAddress >= trk.StartSector && sectorAddress <= trk.EndSector);
 
             if(track is null)
             {
@@ -456,10 +453,10 @@ namespace Aaru.DiscImages
                 }
                 case SectorTagType.CdSectorSubchannel:
                 {
-                    if(track.TrackSubchannelType == 0)
+                    if(track.SubchannelType == 0)
                     {
                         ErrorMessage =
-                            $"Trying to write subchannel to track {track.TrackSequence}, that does not have subchannel";
+                            $"Trying to write subchannel to track {track.Sequence}, that does not have subchannel";
 
                         return false;
                     }
@@ -484,9 +481,8 @@ namespace Aaru.DiscImages
                             return false;
                         }
 
-                    _subStream.
-                        Seek((long)(track.TrackSubchannelOffset + ((sectorAddress - track.TrackStartSector) * 96)),
-                             SeekOrigin.Begin);
+                    _subStream.Seek((long)(track.SubchannelOffset + ((sectorAddress - track.StartSector) * 96)),
+                                    SeekOrigin.Begin);
 
                     _subStream.Write(Subchannel.Deinterleave(data), 0, data.Length);
 
@@ -510,8 +506,7 @@ namespace Aaru.DiscImages
             }
 
             Track track =
-                Tracks.FirstOrDefault(trk => sectorAddress >= trk.TrackStartSector &&
-                                             sectorAddress <= trk.TrackEndSector);
+                Tracks.FirstOrDefault(trk => sectorAddress >= trk.StartSector && sectorAddress <= trk.EndSector);
 
             if(track is null)
             {
@@ -526,10 +521,10 @@ namespace Aaru.DiscImages
                 case SectorTagType.CdTrackIsrc: return WriteSectorTag(data, sectorAddress, tag);
                 case SectorTagType.CdSectorSubchannel:
                 {
-                    if(track.TrackSubchannelType == 0)
+                    if(track.SubchannelType == 0)
                     {
                         ErrorMessage =
-                            $"Trying to write subchannel to track {track.TrackSequence}, that does not have subchannel";
+                            $"Trying to write subchannel to track {track.Sequence}, that does not have subchannel";
 
                         return false;
                     }
@@ -554,9 +549,8 @@ namespace Aaru.DiscImages
                             return false;
                         }
 
-                    _subStream.
-                        Seek((long)(track.TrackSubchannelOffset + ((sectorAddress - track.TrackStartSector) * 96)),
-                             SeekOrigin.Begin);
+                    _subStream.Seek((long)(track.SubchannelOffset + ((sectorAddress - track.StartSector) * 96)),
+                                    SeekOrigin.Begin);
 
                     _subStream.Write(Subchannel.Deinterleave(data), 0, data.Length);
 

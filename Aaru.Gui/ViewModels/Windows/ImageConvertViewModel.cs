@@ -711,7 +711,7 @@ namespace Aaru.Gui.ViewModels.Windows
                 return;
             }
 
-            Dictionary<string, string> parsedOptions = new Dictionary<string, string>();
+            Dictionary<string, string> parsedOptions = new();
 
             /* TODO:
             if(grpOptions.Content is StackLayout stkImageOptions)
@@ -996,23 +996,23 @@ namespace Aaru.Gui.ViewModels.Windows
                     Progress2Value = Progress2MaxValue;
                 });
 
-                Dictionary<byte, string> isrcs                     = new Dictionary<byte, string>();
-                Dictionary<byte, byte>   trackFlags                = new Dictionary<byte, byte>();
+                Dictionary<byte, string> isrcs                     = new();
+                Dictionary<byte, byte>   trackFlags                = new();
                 string                   mcn                       = null;
-                HashSet<int>             subchannelExtents         = new HashSet<int>();
-                Dictionary<byte, int>    smallestPregapLbaPerTrack = new Dictionary<byte, int>();
+                HashSet<int>             subchannelExtents         = new();
+                Dictionary<byte, int>    smallestPregapLbaPerTrack = new();
 
                 foreach(SectorTagType tag in _inputFormat.Info.ReadableSectorTags.
                                                           Where(t => t == SectorTagType.CdTrackIsrc).OrderBy(t => t))
                 {
                     foreach(Track track in inputOptical.Tracks)
                     {
-                        byte[] isrc = _inputFormat.ReadSectorTag(track.TrackSequence, tag);
+                        byte[] isrc = _inputFormat.ReadSectorTag(track.Sequence, tag);
 
                         if(isrc is null)
                             continue;
 
-                        isrcs[(byte)track.TrackSequence] = Encoding.UTF8.GetString(isrc);
+                        isrcs[(byte)track.Sequence] = Encoding.UTF8.GetString(isrc);
                     }
                 }
 
@@ -1021,12 +1021,12 @@ namespace Aaru.Gui.ViewModels.Windows
                 {
                     foreach(Track track in inputOptical.Tracks)
                     {
-                        byte[] flags = _inputFormat.ReadSectorTag(track.TrackSequence, tag);
+                        byte[] flags = _inputFormat.ReadSectorTag(track.Sequence, tag);
 
                         if(flags is null)
                             continue;
 
-                        trackFlags[(byte)track.TrackSequence] = flags[0];
+                        trackFlags[(byte)track.Sequence] = flags[0];
                     }
                 }
 
@@ -1097,15 +1097,15 @@ namespace Aaru.Gui.ViewModels.Windows
                         if(sectorsToDo == 1)
                         {
                             sector = _inputFormat.ReadSectorTag(doneSectors, tag);
-                            Track track = tracks.LastOrDefault(t => t.TrackStartSector >= doneSectors);
+                            Track track = tracks.LastOrDefault(t => t.StartSector >= doneSectors);
 
                             if(tag   == SectorTagType.CdSectorSubchannel &&
                                track != null)
                             {
                                 bool indexesChanged = CompactDisc.WriteSubchannelToImage(MmcSubchannel.Raw,
-                                    MmcSubchannel.Raw, sector, doneSectors, 1, null, isrcs,
-                                    (byte)track.TrackSequence, ref mcn, tracks.ToArray(), subchannelExtents, false,
-                                    outputFormat, false, false, null, null, smallestPregapLbaPerTrack, false);
+                                    MmcSubchannel.Raw, sector, doneSectors, 1, null, isrcs, (byte)track.Sequence,
+                                    ref mcn, tracks.ToArray(), subchannelExtents, false, outputFormat, false,
+                                    false, null, null, smallestPregapLbaPerTrack, false);
 
                                 if(indexesChanged)
                                     outputOptical.SetTracks(tracks.ToList());
@@ -1118,7 +1118,7 @@ namespace Aaru.Gui.ViewModels.Windows
                         else
                         {
                             sector = _inputFormat.ReadSectorsTag(doneSectors, sectorsToDo, tag);
-                            Track track = tracks.LastOrDefault(t => t.TrackStartSector >= doneSectors);
+                            Track track = tracks.LastOrDefault(t => t.StartSector >= doneSectors);
 
                             if(tag   == SectorTagType.CdSectorSubchannel &&
                                track != null)
@@ -1126,7 +1126,7 @@ namespace Aaru.Gui.ViewModels.Windows
                             {
                                 bool indexesChanged = CompactDisc.WriteSubchannelToImage(MmcSubchannel.Raw,
                                     MmcSubchannel.Raw, sector, doneSectors, sectorsToDo, null, isrcs,
-                                    (byte)track.TrackSequence, ref mcn, tracks.ToArray(), subchannelExtents, false,
+                                    (byte)track.Sequence, ref mcn, tracks.ToArray(), subchannelExtents, false,
                                     outputFormat, false, false, null, null, smallestPregapLbaPerTrack, false);
 
                                 if(indexesChanged)
@@ -1192,11 +1192,11 @@ namespace Aaru.Gui.ViewModels.Windows
                 foreach(Track track in tracks.TakeWhile(track => !_cancel))
                 {
                     doneSectors = 0;
-                    ulong trackSectors = track.TrackEndSector - track.TrackStartSector + 1;
+                    ulong trackSectors = track.EndSector - track.StartSector + 1;
 
                     await Dispatcher.UIThread.InvokeAsync(() =>
                     {
-                        ProgressText = $"Converting sectors in track {track.TrackSequence}";
+                        ProgressText = $"Converting sectors in track {track.Sequence}";
                         ProgressValue++;
                         Progress2Text          = "";
                         Progress2Indeterminate = false;
@@ -1222,7 +1222,7 @@ namespace Aaru.Gui.ViewModels.Windows
                         await Dispatcher.UIThread.InvokeAsync(() =>
                         {
                             Progress2Text =
-                                $"Converting sectors {sectors + track.TrackStartSector} to {sectors + sectorsToDo + track.TrackStartSector} in track {track.TrackSequence} ({(sectors + track.TrackStartSector) / (double)_inputFormat.Info.Sectors:P2} done)";
+                                $"Converting sectors {sectors + track.StartSector} to {sectors + sectorsToDo + track.StartSector} in track {track.Sequence} ({(sectors + track.StartSector) / (double)_inputFormat.Info.Sectors:P2} done)";
 
                             Progress2Value = (int)(sectors / SectorsValue);
                         });
@@ -1232,29 +1232,28 @@ namespace Aaru.Gui.ViewModels.Windows
                         if(useLong)
                             if(sectorsToDo == 1)
                             {
-                                sector = _inputFormat.ReadSectorLong(doneSectors          + track.TrackStartSector);
-                                result = outputFormat.WriteSectorLong(sector, doneSectors + track.TrackStartSector);
+                                sector = _inputFormat.ReadSectorLong(doneSectors          + track.StartSector);
+                                result = outputFormat.WriteSectorLong(sector, doneSectors + track.StartSector);
                             }
                             else
                             {
-                                sector = _inputFormat.ReadSectorsLong(doneSectors + track.TrackStartSector,
-                                                                      sectorsToDo);
+                                sector = _inputFormat.ReadSectorsLong(doneSectors + track.StartSector, sectorsToDo);
 
-                                result = outputFormat.WriteSectorsLong(sector, doneSectors + track.TrackStartSector,
+                                result = outputFormat.WriteSectorsLong(sector, doneSectors + track.StartSector,
                                                                        sectorsToDo);
                             }
                         else
                         {
                             if(sectorsToDo == 1)
                             {
-                                sector = _inputFormat.ReadSector(doneSectors          + track.TrackStartSector);
-                                result = outputFormat.WriteSector(sector, doneSectors + track.TrackStartSector);
+                                sector = _inputFormat.ReadSector(doneSectors          + track.StartSector);
+                                result = outputFormat.WriteSector(sector, doneSectors + track.StartSector);
                             }
                             else
                             {
-                                sector = _inputFormat.ReadSectors(doneSectors + track.TrackStartSector, sectorsToDo);
+                                sector = _inputFormat.ReadSectors(doneSectors + track.StartSector, sectorsToDo);
 
-                                result = outputFormat.WriteSectors(sector, doneSectors + track.TrackStartSector,
+                                result = outputFormat.WriteSectors(sector, doneSectors + track.StartSector,
                                                                    sectorsToDo);
                             }
                         }
@@ -1313,13 +1312,13 @@ namespace Aaru.Gui.ViewModels.Windows
                     foreach(Track track in tracks.TakeWhile(track => !_cancel))
                     {
                         doneSectors = 0;
-                        ulong  trackSectors = track.TrackEndSector - track.TrackStartSector + 1;
+                        ulong  trackSectors = track.EndSector - track.StartSector + 1;
                         byte[] sector;
                         bool   result;
 
                         await Dispatcher.UIThread.InvokeAsync(() =>
                         {
-                            ProgressText = $"Converting tag {tag} in track {track.TrackSequence}.";
+                            ProgressText = $"Converting tag {tag} in track {track.Sequence}.";
                             ProgressValue++;
                             Progress2Text          = "";
                             Progress2Indeterminate = false;
@@ -1331,8 +1330,8 @@ namespace Aaru.Gui.ViewModels.Windows
                             case SectorTagType.CdTrackFlags:
                             case SectorTagType.CdTrackIsrc:
 
-                                sector = _inputFormat.ReadSectorTag(track.TrackSequence, tag);
-                                result = outputFormat.WriteSectorTag(sector, track.TrackSequence, tag);
+                                sector = _inputFormat.ReadSectorTag(track.Sequence, tag);
+                                result = outputFormat.WriteSectorTag(sector, track.Sequence, tag);
 
                                 if(!result)
                                     if(ForceChecked)
@@ -1374,22 +1373,21 @@ namespace Aaru.Gui.ViewModels.Windows
                             await Dispatcher.UIThread.InvokeAsync(() =>
                             {
                                 Progress2Text =
-                                    $"Converting tag {tag} for sectors {sectors + track.TrackStartSector} to {sectors + sectorsToDo + track.TrackStartSector} in track {track.TrackSequence} ({(sectors + track.TrackStartSector) / (double)_inputFormat.Info.Sectors:P2} done)";
+                                    $"Converting tag {tag} for sectors {sectors + track.StartSector} to {sectors + sectorsToDo + track.StartSector} in track {track.Sequence} ({(sectors + track.StartSector) / (double)_inputFormat.Info.Sectors:P2} done)";
 
                                 Progress2Value = (int)(sectors / SectorsValue);
                             });
 
                             if(sectorsToDo == 1)
                             {
-                                sector = _inputFormat.ReadSectorTag(doneSectors          + track.TrackStartSector, tag);
-                                result = outputFormat.WriteSectorTag(sector, doneSectors + track.TrackStartSector, tag);
+                                sector = _inputFormat.ReadSectorTag(doneSectors          + track.StartSector, tag);
+                                result = outputFormat.WriteSectorTag(sector, doneSectors + track.StartSector, tag);
                             }
                             else
                             {
-                                sector = _inputFormat.ReadSectorsTag(doneSectors + track.TrackStartSector, sectorsToDo,
-                                                                     tag);
+                                sector = _inputFormat.ReadSectorsTag(doneSectors + track.StartSector, sectorsToDo, tag);
 
-                                result = outputFormat.WriteSectorsTag(sector, doneSectors + track.TrackStartSector,
+                                result = outputFormat.WriteSectorsTag(sector, doneSectors + track.StartSector,
                                                                       sectorsToDo, tag);
                             }
 

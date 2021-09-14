@@ -60,7 +60,7 @@ namespace Aaru.DiscImages
         /// <inheritdoc />
         public string Name => "Alcohol 120% Media Descriptor Structure";
         /// <inheritdoc />
-        public Guid Id => new Guid("A78FBEBA-0307-4915-BDE3-B8A3B57F843F");
+        public Guid Id => new("A78FBEBA-0307-4915-BDE3-B8A3B57F843F");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
@@ -79,7 +79,7 @@ namespace Aaru.DiscImages
                    _alcTracks     == null)
                     return _writingTracks;
 
-                List<CommonTypes.Structs.Track> tracks = new List<CommonTypes.Structs.Track>();
+                List<CommonTypes.Structs.Track> tracks = new();
                 _alcTracks ??= new Dictionary<int, Track>();
 
                 foreach(Track alcTrack in _alcTracks.Values)
@@ -87,25 +87,25 @@ namespace Aaru.DiscImages
                     ushort sessionNo =
                         (from session in Sessions
                          where alcTrack.point >= session.StartTrack && alcTrack.point <= session.EndTrack
-                         select session.SessionSequence).FirstOrDefault();
+                         select session.Sequence).FirstOrDefault();
 
                     if(!_alcTrackExtras.TryGetValue(alcTrack.point, out TrackExtra alcExtra))
                         continue;
 
                     var aaruTrack = new CommonTypes.Structs.Track
                     {
-                        TrackStartSector       = alcTrack.startLba,
-                        TrackEndSector         = alcTrack.startLba + alcExtra.sectors - 1,
-                        TrackPregap            = alcExtra.pregap,
-                        TrackSession           = sessionNo,
-                        TrackSequence          = alcTrack.point,
-                        TrackType              = TrackModeToTrackType(alcTrack.mode),
-                        TrackFilter            = _alcImage,
-                        TrackFile              = _alcImage.GetFilename(),
-                        TrackFileOffset        = alcTrack.startOffset,
-                        TrackFileType          = "BINARY",
-                        TrackRawBytesPerSector = alcTrack.sectorSize,
-                        TrackBytesPerSector    = TrackModeToCookedBytesPerSector(alcTrack.mode)
+                        StartSector       = alcTrack.startLba,
+                        EndSector         = alcTrack.startLba + alcExtra.sectors - 1,
+                        Pregap            = alcExtra.pregap,
+                        Session           = sessionNo,
+                        Sequence          = alcTrack.point,
+                        Type              = TrackModeToTrackType(alcTrack.mode),
+                        Filter            = _alcImage,
+                        File              = _alcImage.GetFilename(),
+                        FileOffset        = alcTrack.startOffset,
+                        FileType          = "BINARY",
+                        RawBytesPerSector = alcTrack.sectorSize,
+                        BytesPerSector    = TrackModeToCookedBytesPerSector(alcTrack.mode)
                     };
 
                     if(alcExtra.pregap > 0)
@@ -115,19 +115,19 @@ namespace Aaru.DiscImages
 
                     if(aaruTrack.Indexes.ContainsKey(0) &&
                        aaruTrack.Indexes[0] >= 0)
-                        aaruTrack.TrackStartSector = (ulong)aaruTrack.Indexes[0];
+                        aaruTrack.StartSector = (ulong)aaruTrack.Indexes[0];
 
                     switch(alcTrack.subMode)
                     {
                         case SubchannelMode.Interleaved:
-                            aaruTrack.TrackSubchannelFilter = _alcImage;
-                            aaruTrack.TrackSubchannelFile   = _alcImage.GetFilename();
-                            aaruTrack.TrackSubchannelOffset = alcTrack.startOffset;
-                            aaruTrack.TrackSubchannelType   = TrackSubchannelType.RawInterleaved;
+                            aaruTrack.SubchannelFilter = _alcImage;
+                            aaruTrack.SubchannelFile   = _alcImage.GetFilename();
+                            aaruTrack.SubchannelOffset = alcTrack.startOffset;
+                            aaruTrack.SubchannelType   = TrackSubchannelType.RawInterleaved;
 
                             break;
                         case SubchannelMode.None:
-                            aaruTrack.TrackSubchannelType = TrackSubchannelType.None;
+                            aaruTrack.SubchannelType = TrackSubchannelType.None;
 
                             break;
                     }
@@ -136,7 +136,7 @@ namespace Aaru.DiscImages
                        _header.type != MediumType.CDR &&
                        _header.type != MediumType.CDRW)
                     {
-                        aaruTrack.TrackPregap = 0;
+                        aaruTrack.Pregap = 0;
                         aaruTrack.Indexes?.Clear();
                     }
 

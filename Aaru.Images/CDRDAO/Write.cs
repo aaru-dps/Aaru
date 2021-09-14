@@ -149,8 +149,8 @@ namespace Aaru.DiscImages
             }
 
             Track track =
-                _writingTracks.FirstOrDefault(trk => sectorAddress >= trk.TrackStartSector &&
-                                                     sectorAddress <= trk.TrackEndSector);
+                _writingTracks.FirstOrDefault(trk => sectorAddress >= trk.StartSector &&
+                                                     sectorAddress <= trk.EndSector);
 
             if(track is null)
             {
@@ -159,7 +159,7 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            FileStream trackStream = _writingStreams.FirstOrDefault(kvp => kvp.Key == track.TrackSequence).Value;
+            FileStream trackStream = _writingStreams.FirstOrDefault(kvp => kvp.Key == track.Sequence).Value;
 
             if(trackStream == null)
             {
@@ -168,14 +168,14 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            if(track.TrackBytesPerSector != track.TrackRawBytesPerSector)
+            if(track.BytesPerSector != track.RawBytesPerSector)
             {
                 ErrorMessage = "Invalid write mode for this sector";
 
                 return false;
             }
 
-            if(data.Length != track.TrackRawBytesPerSector)
+            if(data.Length != track.RawBytesPerSector)
             {
                 ErrorMessage = "Incorrect data size";
 
@@ -183,7 +183,7 @@ namespace Aaru.DiscImages
             }
 
             // cdrdao audio tracks are endian swapped corresponding to Aaru
-            if(track.TrackType == TrackType.Audio)
+            if(track.Type == TrackType.Audio)
             {
                 byte[] swapped = new byte[data.Length];
 
@@ -197,7 +197,7 @@ namespace Aaru.DiscImages
             }
 
             trackStream.
-                Seek((long)(track.TrackFileOffset + ((sectorAddress - track.TrackStartSector) * (ulong)track.TrackRawBytesPerSector)),
+                Seek((long)(track.FileOffset + ((sectorAddress - track.StartSector) * (ulong)track.RawBytesPerSector)),
                      SeekOrigin.Begin);
 
             trackStream.Write(data, 0, data.Length);
@@ -216,8 +216,8 @@ namespace Aaru.DiscImages
             }
 
             Track track =
-                _writingTracks.FirstOrDefault(trk => sectorAddress >= trk.TrackStartSector &&
-                                                     sectorAddress <= trk.TrackEndSector);
+                _writingTracks.FirstOrDefault(trk => sectorAddress >= trk.StartSector &&
+                                                     sectorAddress <= trk.EndSector);
 
             if(track is null)
             {
@@ -226,7 +226,7 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            FileStream trackStream = _writingStreams.FirstOrDefault(kvp => kvp.Key == track.TrackSequence).Value;
+            FileStream trackStream = _writingStreams.FirstOrDefault(kvp => kvp.Key == track.Sequence).Value;
 
             if(trackStream == null)
             {
@@ -235,21 +235,21 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            if(track.TrackBytesPerSector != track.TrackRawBytesPerSector)
+            if(track.BytesPerSector != track.RawBytesPerSector)
             {
                 ErrorMessage = "Invalid write mode for this sector";
 
                 return false;
             }
 
-            if(sectorAddress + length > track.TrackEndSector + 1)
+            if(sectorAddress + length > track.EndSector + 1)
             {
                 ErrorMessage = "Can't cross tracks";
 
                 return false;
             }
 
-            if(data.Length % track.TrackRawBytesPerSector != 0)
+            if(data.Length % track.RawBytesPerSector != 0)
             {
                 ErrorMessage = "Incorrect data size";
 
@@ -257,7 +257,7 @@ namespace Aaru.DiscImages
             }
 
             // cdrdao audio tracks are endian swapped corresponding to Aaru
-            if(track.TrackType == TrackType.Audio)
+            if(track.Type == TrackType.Audio)
             {
                 byte[] swapped = new byte[data.Length];
 
@@ -270,11 +270,11 @@ namespace Aaru.DiscImages
                 data = swapped;
             }
 
-            switch(track.TrackSubchannelType)
+            switch(track.SubchannelType)
             {
                 case TrackSubchannelType.None:
                     trackStream.
-                        Seek((long)(track.TrackFileOffset + ((sectorAddress - track.TrackStartSector) * (ulong)track.TrackRawBytesPerSector)),
+                        Seek((long)(track.FileOffset + ((sectorAddress - track.StartSector) * (ulong)track.RawBytesPerSector)),
                              SeekOrigin.Begin);
 
                     trackStream.Write(data, 0, data.Length);
@@ -285,12 +285,12 @@ namespace Aaru.DiscImages
                 case TrackSubchannelType.Raw:
                 case TrackSubchannelType.RawInterleaved:
                     trackStream.
-                        Seek((long)(track.TrackFileOffset + ((sectorAddress - track.TrackStartSector) * (ulong)(track.TrackRawBytesPerSector + 96))),
+                        Seek((long)(track.FileOffset + ((sectorAddress - track.StartSector) * (ulong)(track.RawBytesPerSector + 96))),
                              SeekOrigin.Begin);
 
                     for(uint i = 0; i < length; i++)
                     {
-                        trackStream.Write(data, (int)(i * track.TrackRawBytesPerSector), track.TrackRawBytesPerSector);
+                        trackStream.Write(data, (int)(i * track.RawBytesPerSector), track.RawBytesPerSector);
                         trackStream.Position += 96;
                     }
 
@@ -315,8 +315,8 @@ namespace Aaru.DiscImages
             }
 
             Track track =
-                _writingTracks.FirstOrDefault(trk => sectorAddress >= trk.TrackStartSector &&
-                                                     sectorAddress <= trk.TrackEndSector);
+                _writingTracks.FirstOrDefault(trk => sectorAddress >= trk.StartSector &&
+                                                     sectorAddress <= trk.EndSector);
 
             if(track is null)
             {
@@ -325,7 +325,7 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            FileStream trackStream = _writingStreams.FirstOrDefault(kvp => kvp.Key == track.TrackSequence).Value;
+            FileStream trackStream = _writingStreams.FirstOrDefault(kvp => kvp.Key == track.Sequence).Value;
 
             if(trackStream == null)
             {
@@ -334,7 +334,7 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            if(data.Length != track.TrackRawBytesPerSector)
+            if(data.Length != track.RawBytesPerSector)
             {
                 ErrorMessage = "Incorrect data size";
 
@@ -342,7 +342,7 @@ namespace Aaru.DiscImages
             }
 
             // cdrdao audio tracks are endian swapped corresponding to Aaru
-            if(track.TrackType == TrackType.Audio)
+            if(track.Type == TrackType.Audio)
             {
                 byte[] swapped = new byte[data.Length];
 
@@ -355,10 +355,10 @@ namespace Aaru.DiscImages
                 data = swapped;
             }
 
-            uint subchannelSize = (uint)(track.TrackSubchannelType != TrackSubchannelType.None ? 96 : 0);
+            uint subchannelSize = (uint)(track.SubchannelType != TrackSubchannelType.None ? 96 : 0);
 
             trackStream.
-                Seek((long)(track.TrackFileOffset + ((sectorAddress - track.TrackStartSector) * (ulong)(track.TrackRawBytesPerSector + subchannelSize))),
+                Seek((long)(track.FileOffset + ((sectorAddress - track.StartSector) * (ulong)(track.RawBytesPerSector + subchannelSize))),
                      SeekOrigin.Begin);
 
             trackStream.Write(data, 0, data.Length);
@@ -377,8 +377,8 @@ namespace Aaru.DiscImages
             }
 
             Track track =
-                _writingTracks.FirstOrDefault(trk => sectorAddress >= trk.TrackStartSector &&
-                                                     sectorAddress <= trk.TrackEndSector);
+                _writingTracks.FirstOrDefault(trk => sectorAddress >= trk.StartSector &&
+                                                     sectorAddress <= trk.EndSector);
 
             if(track is null)
             {
@@ -387,7 +387,7 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            FileStream trackStream = _writingStreams.FirstOrDefault(kvp => kvp.Key == track.TrackSequence).Value;
+            FileStream trackStream = _writingStreams.FirstOrDefault(kvp => kvp.Key == track.Sequence).Value;
 
             if(trackStream == null)
             {
@@ -396,14 +396,14 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            if(sectorAddress + length > track.TrackEndSector + 1)
+            if(sectorAddress + length > track.EndSector + 1)
             {
                 ErrorMessage = "Can't cross tracks";
 
                 return false;
             }
 
-            if(data.Length % track.TrackRawBytesPerSector != 0)
+            if(data.Length % track.RawBytesPerSector != 0)
             {
                 ErrorMessage = "Incorrect data size";
 
@@ -411,7 +411,7 @@ namespace Aaru.DiscImages
             }
 
             // cdrdao audio tracks are endian swapped corresponding to Aaru
-            if(track.TrackType == TrackType.Audio)
+            if(track.Type == TrackType.Audio)
             {
                 byte[] swapped = new byte[data.Length];
 
@@ -424,15 +424,15 @@ namespace Aaru.DiscImages
                 data = swapped;
             }
 
-            uint subchannelSize = (uint)(track.TrackSubchannelType != TrackSubchannelType.None ? 96 : 0);
+            uint subchannelSize = (uint)(track.SubchannelType != TrackSubchannelType.None ? 96 : 0);
 
             for(uint i = 0; i < length; i++)
             {
                 trackStream.
-                    Seek((long)(track.TrackFileOffset + ((i + sectorAddress - track.TrackStartSector) * (ulong)(track.TrackRawBytesPerSector + subchannelSize))),
+                    Seek((long)(track.FileOffset + ((i + sectorAddress - track.StartSector) * (ulong)(track.RawBytesPerSector + subchannelSize))),
                          SeekOrigin.Begin);
 
-                trackStream.Write(data, (int)(i * track.TrackRawBytesPerSector), track.TrackRawBytesPerSector);
+                trackStream.Write(data, (int)(i * track.RawBytesPerSector), track.RawBytesPerSector);
             }
 
             return true;
@@ -464,38 +464,36 @@ namespace Aaru.DiscImages
             ulong currentOffset = 0;
             _writingTracks = new List<Track>();
 
-            foreach(Track track in tracks.OrderBy(t => t.TrackSequence))
+            foreach(Track track in tracks.OrderBy(t => t.Sequence))
             {
-                if(track.TrackSubchannelType == TrackSubchannelType.Q16 ||
-                   track.TrackSubchannelType == TrackSubchannelType.Q16Interleaved)
+                if(track.SubchannelType == TrackSubchannelType.Q16 ||
+                   track.SubchannelType == TrackSubchannelType.Q16Interleaved)
                 {
-                    ErrorMessage =
-                        $"Unsupported subchannel type {track.TrackSubchannelType} for track {track.TrackSequence}";
+                    ErrorMessage = $"Unsupported subchannel type {track.SubchannelType} for track {track.Sequence}";
 
                     return false;
                 }
 
                 Track newTrack = track;
 
-                newTrack.TrackFile = _separateTracksWriting ? _writingBaseName + $"_track{track.TrackSequence:D2}.bin"
-                                         : _writingBaseName                    + ".bin";
+                newTrack.File = _separateTracksWriting ? _writingBaseName + $"_track{track.Sequence:D2}.bin"
+                                    : _writingBaseName                    + ".bin";
 
-                newTrack.TrackFileOffset = _separateTracksWriting ? 0 : currentOffset;
+                newTrack.FileOffset = _separateTracksWriting ? 0 : currentOffset;
                 _writingTracks.Add(newTrack);
 
-                currentOffset += (ulong)newTrack.TrackRawBytesPerSector *
-                                 (newTrack.TrackEndSector - newTrack.TrackStartSector + 1);
+                currentOffset += (ulong)newTrack.RawBytesPerSector * (newTrack.EndSector - newTrack.StartSector + 1);
 
-                if(track.TrackSubchannelType != TrackSubchannelType.None)
-                    currentOffset += 96 * (newTrack.TrackEndSector - newTrack.TrackStartSector + 1);
+                if(track.SubchannelType != TrackSubchannelType.None)
+                    currentOffset += 96 * (newTrack.EndSector - newTrack.StartSector + 1);
             }
 
             _writingStreams = new Dictionary<uint, FileStream>();
 
             if(_separateTracksWriting)
                 foreach(Track track in _writingTracks)
-                    _writingStreams.Add(track.TrackSequence,
-                                        new FileStream(track.TrackFile, FileMode.OpenOrCreate, FileAccess.ReadWrite,
+                    _writingStreams.Add(track.Sequence,
+                                        new FileStream(track.File, FileMode.OpenOrCreate, FileAccess.ReadWrite,
                                                        FileShare.None));
             else
             {
@@ -503,7 +501,7 @@ namespace Aaru.DiscImages
                                                  FileShare.None);
 
                 foreach(Track track in _writingTracks)
-                    _writingStreams.Add(track.TrackSequence, jointStream);
+                    _writingStreams.Add(track.Sequence, jointStream);
             }
 
             return true;
@@ -531,11 +529,11 @@ namespace Aaru.DiscImages
                 _writingStreams.First().Value.Close();
             }
 
-            bool data = _writingTracks.Count(t => t.TrackType != TrackType.Audio) > 0;
+            bool data = _writingTracks.Count(t => t.Type != TrackType.Audio) > 0;
 
-            bool mode2 = _writingTracks.Count(t => t.TrackType == TrackType.CdMode2Form1 ||
-                                                   t.TrackType == TrackType.CdMode2Form2 ||
-                                                   t.TrackType == TrackType.CdMode2Formless) > 0;
+            bool mode2 = _writingTracks.Count(t => t.Type == TrackType.CdMode2Form1 ||
+                                                   t.Type == TrackType.CdMode2Form2 ||
+                                                   t.Type == TrackType.CdMode2Formless) > 0;
 
             if(mode2)
                 _descriptorStream.WriteLine("CD_ROM_XA");
@@ -563,11 +561,11 @@ namespace Aaru.DiscImages
             foreach(Track track in _writingTracks)
             {
                 _descriptorStream.WriteLine();
-                _descriptorStream.WriteLine("// Track {0}", track.TrackSequence);
+                _descriptorStream.WriteLine("// Track {0}", track.Sequence);
 
                 string subchannelType;
 
-                switch(track.TrackSubchannelType)
+                switch(track.SubchannelType)
                 {
                     case TrackSubchannelType.Packed:
                     case TrackSubchannelType.PackedInterleaved:
@@ -587,13 +585,13 @@ namespace Aaru.DiscImages
 
                 _descriptorStream.WriteLine("TRACK {0}{1}", GetTrackMode(track), subchannelType);
 
-                _trackFlags.TryGetValue((byte)track.TrackSequence, out byte flagsByte);
+                _trackFlags.TryGetValue((byte)track.Sequence, out byte flagsByte);
 
                 var flags = (CdFlags)flagsByte;
 
                 _descriptorStream.WriteLine("{0}COPY", flags.HasFlag(CdFlags.CopyPermitted) ? "" : "NO ");
 
-                if(track.TrackType == TrackType.Audio)
+                if(track.Type == TrackType.Audio)
                 {
                     _descriptorStream.WriteLine("{0}PRE_EMPHASIS", flags.HasFlag(CdFlags.PreEmphasis) ? "" : "NO ");
 
@@ -601,23 +599,22 @@ namespace Aaru.DiscImages
                                                 flags.HasFlag(CdFlags.FourChannel) ? "FOUR" : "TWO");
                 }
 
-                if(_trackIsrcs.TryGetValue((byte)track.TrackSequence, out string isrc) &&
+                if(_trackIsrcs.TryGetValue((byte)track.Sequence, out string isrc) &&
                    !string.IsNullOrWhiteSpace(isrc))
                     _descriptorStream.WriteLine("ISRC {0}", isrc);
 
-                (byte minute, byte second, byte frame) msf =
-                    LbaToMsf(track.TrackEndSector - track.TrackStartSector + 1);
+                (byte minute, byte second, byte frame) msf = LbaToMsf(track.EndSector - track.StartSector + 1);
 
                 _descriptorStream.WriteLine("DATAFILE \"{0}\" #{1} {2:D2}:{3:D2}:{4:D2} // length in bytes: {5}",
-                                            Path.GetFileName(track.TrackFile), track.TrackFileOffset, msf.minute,
-                                            msf.second, msf.frame,
-                                            (track.TrackEndSector - track.TrackStartSector + 1) *
-                                            (ulong)(track.TrackRawBytesPerSector +
-                                                    (track.TrackSubchannelType != TrackSubchannelType.None ? 96 : 0)));
+                                            Path.GetFileName(track.File), track.FileOffset, msf.minute, msf.second,
+                                            msf.frame,
+                                            (track.EndSector - track.StartSector + 1) *
+                                            (ulong)(track.RawBytesPerSector +
+                                                    (track.SubchannelType != TrackSubchannelType.None ? 96 : 0)));
 
                 foreach(KeyValuePair<ushort, int> index in track.Indexes.OrderBy(i => i.Key).Where(i => i.Key > 1))
                 {
-                    msf = LbaToMsf((ulong)index.Value - (track.TrackPregap + track.TrackStartSector));
+                    msf = LbaToMsf((ulong)index.Value - (track.Pregap + track.StartSector));
 
                     _descriptorStream.WriteLine("INDEX {0:D2}:{1:D2}:{2:D2}", msf.minute, msf.second, msf.frame);
                 }
@@ -662,8 +659,8 @@ namespace Aaru.DiscImages
             }
 
             Track track =
-                _writingTracks.FirstOrDefault(trk => sectorAddress >= trk.TrackStartSector &&
-                                                     sectorAddress <= trk.TrackEndSector);
+                _writingTracks.FirstOrDefault(trk => sectorAddress >= trk.StartSector &&
+                                                     sectorAddress <= trk.EndSector);
 
             if(track is null)
             {
@@ -696,10 +693,10 @@ namespace Aaru.DiscImages
                 }
                 case SectorTagType.CdSectorSubchannel:
                 {
-                    if(track.TrackSubchannelType == 0)
+                    if(track.SubchannelType == 0)
                     {
                         ErrorMessage =
-                            $"Trying to write subchannel to track {track.TrackSequence}, that does not have subchannel";
+                            $"Trying to write subchannel to track {track.Sequence}, that does not have subchannel";
 
                         return false;
                     }
@@ -711,8 +708,7 @@ namespace Aaru.DiscImages
                         return false;
                     }
 
-                    FileStream trackStream =
-                        _writingStreams.FirstOrDefault(kvp => kvp.Key == track.TrackSequence).Value;
+                    FileStream trackStream = _writingStreams.FirstOrDefault(kvp => kvp.Key == track.Sequence).Value;
 
                     if(trackStream == null)
                     {
@@ -722,7 +718,7 @@ namespace Aaru.DiscImages
                     }
 
                     trackStream.
-                        Seek((long)(track.TrackFileOffset + ((sectorAddress - track.TrackStartSector) * (ulong)(track.TrackRawBytesPerSector + 96))) + track.TrackRawBytesPerSector,
+                        Seek((long)(track.FileOffset + ((sectorAddress - track.StartSector) * (ulong)(track.RawBytesPerSector + 96))) + track.RawBytesPerSector,
                              SeekOrigin.Begin);
 
                     trackStream.Write(data, 0, data.Length);
@@ -747,8 +743,8 @@ namespace Aaru.DiscImages
             }
 
             Track track =
-                _writingTracks.FirstOrDefault(trk => sectorAddress >= trk.TrackStartSector &&
-                                                     sectorAddress <= trk.TrackEndSector);
+                _writingTracks.FirstOrDefault(trk => sectorAddress >= trk.StartSector &&
+                                                     sectorAddress <= trk.EndSector);
 
             if(track is null)
             {
@@ -763,10 +759,10 @@ namespace Aaru.DiscImages
                 case SectorTagType.CdTrackIsrc: return WriteSectorTag(data, sectorAddress, tag);
                 case SectorTagType.CdSectorSubchannel:
                 {
-                    if(track.TrackSubchannelType == 0)
+                    if(track.SubchannelType == 0)
                     {
                         ErrorMessage =
-                            $"Trying to write subchannel to track {track.TrackSequence}, that does not have subchannel";
+                            $"Trying to write subchannel to track {track.Sequence}, that does not have subchannel";
 
                         return false;
                     }
@@ -778,8 +774,7 @@ namespace Aaru.DiscImages
                         return false;
                     }
 
-                    FileStream trackStream =
-                        _writingStreams.FirstOrDefault(kvp => kvp.Key == track.TrackSequence).Value;
+                    FileStream trackStream = _writingStreams.FirstOrDefault(kvp => kvp.Key == track.Sequence).Value;
 
                     if(trackStream == null)
                     {
@@ -791,7 +786,7 @@ namespace Aaru.DiscImages
                     for(uint i = 0; i < length; i++)
                     {
                         trackStream.
-                            Seek((long)(track.TrackFileOffset + ((i + sectorAddress - track.TrackStartSector) * (ulong)(track.TrackRawBytesPerSector + 96))) + track.TrackRawBytesPerSector,
+                            Seek((long)(track.FileOffset + ((i + sectorAddress - track.StartSector) * (ulong)(track.RawBytesPerSector + 96))) + track.RawBytesPerSector,
                                  SeekOrigin.Begin);
 
                         trackStream.Write(data, (int)(i * 96), 96);

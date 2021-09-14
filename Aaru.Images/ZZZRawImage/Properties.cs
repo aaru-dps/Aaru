@@ -52,7 +52,7 @@ namespace Aaru.DiscImages
 
         // Non-random UUID to recognize this specific plugin
         /// <inheritdoc />
-        public Guid Id => new Guid("12345678-AAAA-BBBB-CCCC-123456789000");
+        public Guid Id => new("12345678-AAAA-BBBB-CCCC-123456789000");
         /// <inheritdoc />
         public ImageInfo Info => _imageInfo;
         /// <inheritdoc />
@@ -70,37 +70,36 @@ namespace Aaru.DiscImages
 
                 var trk = new Track
                 {
-                    TrackBytesPerSector = _rawCompactDisc ? _mode2
-                                                                ? 2336
-                                                                : 2048 : (int)_imageInfo.SectorSize,
-                    TrackEndSector         = _imageInfo.Sectors - 1,
-                    TrackFile              = _rawImageFilter?.GetFilename() ?? _basePath,
-                    TrackFileOffset        = 0,
-                    TrackFileType          = "BINARY",
-                    TrackRawBytesPerSector = _rawCompactDisc ? 2352 : (int)_imageInfo.SectorSize,
-                    TrackSequence          = 1,
-                    TrackStartSector       = 0,
-                    TrackSubchannelType =
-                        _hasSubchannel ? TrackSubchannelType.RawInterleaved : TrackSubchannelType.None,
-                    TrackType = _rawCompactDisc ? _mode2
-                                                      ? TrackType.CdMode2Formless
-                                                      : TrackType.CdMode1 : TrackType.Data,
-                    TrackSession = 1
+                    BytesPerSector = _rawCompactDisc ? _mode2
+                                                           ? 2336
+                                                           : 2048 : (int)_imageInfo.SectorSize,
+                    EndSector         = _imageInfo.Sectors - 1,
+                    File              = _rawImageFilter?.GetFilename() ?? _basePath,
+                    FileOffset        = 0,
+                    FileType          = "BINARY",
+                    RawBytesPerSector = _rawCompactDisc ? 2352 : (int)_imageInfo.SectorSize,
+                    Sequence          = 1,
+                    StartSector       = 0,
+                    SubchannelType    = _hasSubchannel ? TrackSubchannelType.RawInterleaved : TrackSubchannelType.None,
+                    Type = _rawCompactDisc ? _mode2
+                                                 ? TrackType.CdMode2Formless
+                                                 : TrackType.CdMode1 : TrackType.Data,
+                    Session = 1
                 };
 
                 if(_imageInfo.MediaType == MediaType.CD   ||
                    _imageInfo.MediaType == MediaType.CDRW ||
                    _imageInfo.MediaType == MediaType.CDR)
                 {
-                    trk.TrackPregap = 150;
-                    trk.Indexes[0]  = -150;
-                    trk.Indexes[1]  = 0;
+                    trk.Pregap     = 150;
+                    trk.Indexes[0] = -150;
+                    trk.Indexes[1] = 0;
 
-                    if(trk.TrackType == TrackType.Data)
-                        trk.TrackType = TrackType.CdMode1;
+                    if(trk.Type == TrackType.Data)
+                        trk.Type = TrackType.CdMode1;
                 }
 
-                List<Track> lst = new List<Track>
+                List<Track> lst = new()
                 {
                     trk
                 };
@@ -119,14 +118,14 @@ namespace Aaru.DiscImages
 
                 var sess = new Session
                 {
-                    EndSector       = _imageInfo.Sectors - 1,
-                    EndTrack        = 1,
-                    SessionSequence = 1,
-                    StartSector     = 0,
-                    StartTrack      = 1
+                    EndSector   = _imageInfo.Sectors - 1,
+                    EndTrack    = 1,
+                    Sequence    = 1,
+                    StartSector = 0,
+                    StartTrack  = 1
                 };
 
-                List<Session> lst = new List<Session>
+                List<Session> lst = new()
                 {
                     sess
                 };
@@ -143,7 +142,7 @@ namespace Aaru.DiscImages
                 if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
                     return null;
 
-                List<Partition> parts = new List<Partition>();
+                List<Partition> parts = new();
 
                 var part = new Partition
                 {
@@ -184,7 +183,7 @@ namespace Aaru.DiscImages
         {
             get
             {
-                List<MediaType> types = new List<MediaType>();
+                List<MediaType> types = new();
 
                 foreach(MediaType type in Enum.GetValues(typeof(MediaType)))
                     switch(type)

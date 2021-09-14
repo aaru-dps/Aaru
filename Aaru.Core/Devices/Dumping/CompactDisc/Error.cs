@@ -236,8 +236,8 @@ namespace Aaru.Core.Devices.Dumping
                                                     forward ? "forward" : "reverse",
                                                     runningPersistent ? "recovering partial data, " : ""));
 
-                Track track = tracks.OrderBy(t => t.TrackStartSector).
-                                     LastOrDefault(t => badSector >= t.TrackStartSector);
+                Track track = tracks.OrderBy(t => t.StartSector).
+                                     LastOrDefault(t => badSector >= t.StartSector);
 
                 byte sectorsToReRead   = 1;
                 uint badSectorToReRead = (uint)badSector;
@@ -365,7 +365,7 @@ namespace Aaru.Core.Devices.Dumping
                         _outputPlugin.WriteSector(Sector.GetUserData(data), badSector);
 
                     bool indexesChanged = Media.CompactDisc.WriteSubchannelToImage(supportedSubchannel,
-                        desiredSubchannel, sub, badSector, 1, subLog, isrcs, (byte)track.TrackSequence, ref mcn,
+                        desiredSubchannel, sub, badSector, 1, subLog, isrcs, (byte)track.Sequence, ref mcn,
                         tracks, subchannelExtents, _fixSubchannelPosition, _outputPlugin, _fixSubchannel,
                         _fixSubchannelCrc, _dumpLog, UpdateStatus, smallestPregapLbaPerTrack, true);
 
@@ -461,8 +461,8 @@ namespace Aaru.Core.Devices.Dumping
 
                         PulseProgress?.Invoke($"Trying to get partial data for sector {badSector}");
 
-                        Track track = tracks.OrderBy(t => t.TrackStartSector).
-                                             LastOrDefault(t => badSector >= t.TrackStartSector);
+                        Track track = tracks.OrderBy(t => t.StartSector).
+                                             LastOrDefault(t => badSector >= t.StartSector);
 
                         if(readcd)
                         {
@@ -496,7 +496,7 @@ namespace Aaru.Core.Devices.Dumping
                                 _outputPlugin.WriteSector(Sector.GetUserData(data), badSector);
 
                             bool indexesChanged = Media.CompactDisc.WriteSubchannelToImage(supportedSubchannel,
-                                desiredSubchannel, sub, badSector, 1, subLog, isrcs, (byte)track.TrackSequence,
+                                desiredSubchannel, sub, badSector, 1, subLog, isrcs, (byte)track.Sequence,
                                 ref mcn, tracks, subchannelExtents, _fixSubchannelPosition, _outputPlugin,
                                 _fixSubchannel, _fixSubchannelCrc, _dumpLog, UpdateStatus,
                                 smallestPregapLbaPerTrack, true);
@@ -619,8 +619,8 @@ namespace Aaru.Core.Devices.Dumping
             {
                 uint badSector = (uint)bs;
 
-                Track track = tracks.OrderBy(t => t.TrackStartSector).
-                                     LastOrDefault(t => badSector >= t.TrackStartSector);
+                Track track = tracks.OrderBy(t => t.StartSector).
+                                     LastOrDefault(t => badSector >= t.StartSector);
 
                 if(_aborted)
                 {
@@ -644,7 +644,7 @@ namespace Aaru.Core.Devices.Dumping
                 else if(readcd)
                 {
                     sense = _dev.ReadCd(out cmdBuf, out senseBuf, startSector, subSize, 5,
-                                        track.TrackType == TrackType.Audio ? MmcSectorTypes.Cdda
+                                        track.Type == TrackType.Audio ? MmcSectorTypes.Cdda
                                             : MmcSectorTypes.AllTypes, false, false, false, MmcHeaderCodes.None, false,
                                         false, MmcErrorField.None, supportedSubchannel, _dev.Timeout, out cmdDuration);
 
@@ -659,7 +659,7 @@ namespace Aaru.Core.Devices.Dumping
                 }
 
                 Media.CompactDisc.WriteSubchannelToImage(supportedSubchannel, desiredSubchannel, cmdBuf, badSector, 5,
-                                                         subLog, isrcs, (byte)track.TrackSequence, ref mcn, tracks,
+                                                         subLog, isrcs, (byte)track.Sequence, ref mcn, tracks,
                                                          subchannelExtents, _fixSubchannelPosition, _outputPlugin,
                                                          _fixSubchannel, _fixSubchannelCrc, _dumpLog, UpdateStatus,
                                                          smallestPregapLbaPerTrack, true);

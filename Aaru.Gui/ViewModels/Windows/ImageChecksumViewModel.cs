@@ -455,14 +455,13 @@ namespace Aaru.Gui.ViewModels.Windows
                     {
                         await Dispatcher.UIThread.InvokeAsync(() =>
                         {
-                            ProgressText =
-                                $"Hashing track {currentTrack.TrackSequence} of {opticalMediaImage.Tracks.Count}";
+                            ProgressText = $"Hashing track {currentTrack.Sequence} of {opticalMediaImage.Tracks.Count}";
 
                             ProgressValue++;
                         });
 
-                        if(currentTrack.TrackStartSector - previousTrackEnd != 0 && ChecksumMediaChecked)
-                            for(ulong i = previousTrackEnd + 1; i < currentTrack.TrackStartSector; i++)
+                        if(currentTrack.StartSector - previousTrackEnd != 0 && ChecksumMediaChecked)
+                            for(ulong i = previousTrackEnd + 1; i < currentTrack.StartSector; i++)
                             {
                                 ulong sector = i;
 
@@ -479,13 +478,13 @@ namespace Aaru.Gui.ViewModels.Windows
 
                         AaruConsole.DebugWriteLine("Checksum command",
                                                    "Track {0} starts at sector {1} and ends at sector {2}",
-                                                   currentTrack.TrackSequence, currentTrack.TrackStartSector,
-                                                   currentTrack.TrackEndSector);
+                                                   currentTrack.Sequence, currentTrack.StartSector,
+                                                   currentTrack.EndSector);
 
                         if(ChecksumTracksChecked)
                             trackChecksum = new Checksum(enabledChecksums);
 
-                        ulong sectors     = currentTrack.TrackEndSector - currentTrack.TrackStartSector + 1;
+                        ulong sectors     = currentTrack.EndSector - currentTrack.StartSector + 1;
                         ulong doneSectors = 0;
 
                         while(doneSectors < sectors)
@@ -507,7 +506,7 @@ namespace Aaru.Gui.ViewModels.Windows
                             if(sectors - doneSectors >= SECTORS_TO_READ)
                             {
                                 sector = opticalMediaImage.ReadSectors(doneSectors, SECTORS_TO_READ,
-                                                                       currentTrack.TrackSequence);
+                                                                       currentTrack.Sequence);
 
                                 ulong doneSectorsToInvoke = doneSectors;
 
@@ -516,7 +515,7 @@ namespace Aaru.Gui.ViewModels.Windows
                                     Progress2Value = (int)(doneSectorsToInvoke / SECTORS_TO_READ);
 
                                     Progress2Text =
-                                        $"Hashing sectors {doneSectorsToInvoke} to {doneSectorsToInvoke + SECTORS_TO_READ} of track {currentTrack.TrackSequence}";
+                                        $"Hashing sectors {doneSectorsToInvoke} to {doneSectorsToInvoke + SECTORS_TO_READ} of track {currentTrack.Sequence}";
                                 });
 
                                 doneSectors += SECTORS_TO_READ;
@@ -524,7 +523,7 @@ namespace Aaru.Gui.ViewModels.Windows
                             else
                             {
                                 sector = opticalMediaImage.ReadSectors(doneSectors, (uint)(sectors - doneSectors),
-                                                                       currentTrack.TrackSequence);
+                                                                       currentTrack.Sequence);
 
                                 ulong doneSectorsToInvoke = doneSectors;
 
@@ -533,7 +532,7 @@ namespace Aaru.Gui.ViewModels.Windows
                                     Progress2Value = (int)(doneSectorsToInvoke / SECTORS_TO_READ);
 
                                     Progress2Text =
-                                        $"Hashing sectors {doneSectorsToInvoke} to {doneSectorsToInvoke + (sectors - doneSectorsToInvoke)} of track {currentTrack.TrackSequence}";
+                                        $"Hashing sectors {doneSectorsToInvoke} to {doneSectorsToInvoke + (sectors - doneSectorsToInvoke)} of track {currentTrack.Sequence}";
                                 });
 
                                 doneSectors += sectors - doneSectors;
@@ -557,13 +556,13 @@ namespace Aaru.Gui.ViewModels.Windows
                             foreach(ChecksumType chk in trackChecksum.End())
                                 TrackChecksums.Add(new ChecksumModel
                                 {
-                                    Track     = currentTrack.TrackSequence.ToString(),
+                                    Track     = currentTrack.Sequence.ToString(),
                                     Algorithm = chk.type.ToString(),
                                     Hash      = chk.Value
                                 });
                         });
 
-                        previousTrackEnd = currentTrack.TrackEndSector;
+                        previousTrackEnd = currentTrack.EndSector;
                     }
 
                     if(opticalMediaImage.Info.Sectors - previousTrackEnd != 0 && ChecksumMediaChecked)

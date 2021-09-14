@@ -45,7 +45,7 @@ namespace Aaru.DiscImages
         /// <inheritdoc />
         public string Name => "Dreamcast GDI image";
         /// <inheritdoc />
-        public Guid Id => new Guid("281ECBF2-D2A7-414C-8497-1A33F6DCB2DD");
+        public Guid Id => new("281ECBF2-D2A7-414C-8497-1A33F6DCB2DD");
         /// <inheritdoc />
         public ImageInfo Info => _imageInfo;
         /// <inheritdoc />
@@ -61,28 +61,28 @@ namespace Aaru.DiscImages
         {
             get
             {
-                List<Track> tracks = new List<Track>();
+                List<Track> tracks = new();
 
                 foreach(GdiTrack gdiTrack in _discImage.Tracks)
                 {
                     var track = new Track
                     {
-                        TrackDescription       = null,
-                        TrackStartSector       = gdiTrack.StartSector,
-                        TrackPregap            = gdiTrack.Pregap,
-                        TrackSession           = (ushort)(gdiTrack.HighDensity ? 2 : 1),
-                        TrackSequence          = gdiTrack.Sequence,
-                        TrackType              = gdiTrack.TrackType,
-                        TrackFilter            = gdiTrack.TrackFilter,
-                        TrackFile              = gdiTrack.TrackFile,
-                        TrackFileOffset        = (ulong)gdiTrack.Offset,
-                        TrackFileType          = "BINARY",
-                        TrackRawBytesPerSector = gdiTrack.Bps,
-                        TrackBytesPerSector    = gdiTrack.TrackType == TrackType.Data ? 2048 : 2352,
-                        TrackSubchannelType    = TrackSubchannelType.None
+                        Description       = null,
+                        StartSector       = gdiTrack.StartSector,
+                        Pregap            = gdiTrack.Pregap,
+                        Session           = (ushort)(gdiTrack.HighDensity ? 2 : 1),
+                        Sequence          = gdiTrack.Sequence,
+                        Type              = gdiTrack.TrackType,
+                        Filter            = gdiTrack.TrackFilter,
+                        File              = gdiTrack.TrackFile,
+                        FileOffset        = (ulong)gdiTrack.Offset,
+                        FileType          = "BINARY",
+                        RawBytesPerSector = gdiTrack.Bps,
+                        BytesPerSector    = gdiTrack.TrackType == TrackType.Data ? 2048 : 2352,
+                        SubchannelType    = TrackSubchannelType.None
                     };
 
-                    track.TrackEndSector = track.TrackStartSector + gdiTrack.Sectors - 1;
+                    track.EndSector = track.StartSector + gdiTrack.Sectors - 1;
 
                     tracks.Add(track);
                 }

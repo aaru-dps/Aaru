@@ -161,7 +161,7 @@ namespace Aaru.Core.Devices.Dumping
             byte[]     senseBuf;                           // Sense buffer
             double     cmdDuration;                        // Command execution time
             const uint sectorSize = 2352;                  // Full sector size
-            Track      firstTrack = tracks.FirstOrDefault(t => t.TrackSequence == 1);
+            Track      firstTrack = tracks.FirstOrDefault(t => t.Sequence == 1);
             uint       blocksToRead; // How many sectors to read at once
 
             if(firstTrack is null)
@@ -177,7 +177,7 @@ namespace Aaru.Core.Devices.Dumping
 
             InitProgress?.Invoke();
 
-            for(ulong i = _resume.NextBlock; i < firstTrack.TrackStartSector; i += blocksToRead)
+            for(ulong i = _resume.NextBlock; i < firstTrack.StartSector; i += blocksToRead)
             {
                 if(_aborted)
                 {
@@ -291,13 +291,13 @@ namespace Aaru.Core.Devices.Dumping
                         {
                             _errorLog?.WriteLine(i + r, _dev.Error, _dev.LastError, senseBuf);
 
-                            leadOutExtents.Add(i + r, firstTrack.TrackStartSector - 1);
+                            leadOutExtents.Add(i + r, firstTrack.StartSector - 1);
 
                             UpdateStatus?.
-                                Invoke($"Adding CD-i Ready hole from LBA {i + r} to {firstTrack.TrackStartSector - 1} inclusive.");
+                                Invoke($"Adding CD-i Ready hole from LBA {i + r} to {firstTrack.StartSector - 1} inclusive.");
 
                             _dumpLog.WriteLine("Adding CD-i Ready hole from LBA {0} to {1} inclusive.", i + r,
-                                               firstTrack.TrackStartSector                                - 1);
+                                               firstTrack.StartSector                                - 1);
 
                             break;
                         }
@@ -391,7 +391,7 @@ namespace Aaru.Core.Devices.Dumping
                 {
                     _errorLog?.WriteLine(i, _dev.Error, _dev.LastError, senseBuf);
 
-                    _resume.NextBlock = firstTrack.TrackStartSector;
+                    _resume.NextBlock = firstTrack.StartSector;
 
                     break;
                 }

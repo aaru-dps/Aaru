@@ -149,21 +149,18 @@ namespace Aaru.DiscImages
 
         static string GetTrackMode(Track track)
         {
-            switch(track.TrackType)
+            switch(track.Type)
             {
-                case TrackType.Audio when track.TrackRawBytesPerSector == 2352:   return CDRWIN_TRACK_TYPE_AUDIO;
-                case TrackType.Data:                                              return CDRWIN_TRACK_TYPE_MODE1;
-                case TrackType.CdMode1 when track.TrackRawBytesPerSector == 2352: return CDRWIN_TRACK_TYPE_MODE1_RAW;
+                case TrackType.Audio when track.RawBytesPerSector == 2352:   return CDRWIN_TRACK_TYPE_AUDIO;
+                case TrackType.Data:                                         return CDRWIN_TRACK_TYPE_MODE1;
+                case TrackType.CdMode1 when track.RawBytesPerSector == 2352: return CDRWIN_TRACK_TYPE_MODE1_RAW;
                 case TrackType.CdMode2Formless
-                    when track.TrackRawBytesPerSector != 2352: return CDRWIN_TRACK_TYPE_MODE2_FORMLESS;
-                case TrackType.CdMode2Form1
-                    when track.TrackRawBytesPerSector != 2352: return CDRWIN_TRACK_TYPE_MODE2_FORM1;
-                case TrackType.CdMode2Form2
-                    when track.TrackRawBytesPerSector != 2352: return CDRWIN_TRACK_TYPE_MODE2_FORM2;
-                case TrackType.CdMode2Formless when track.TrackRawBytesPerSector == 2352:
-                case TrackType.CdMode2Form1 when track.TrackRawBytesPerSector    == 2352:
-                case TrackType.CdMode2Form2
-                    when track.TrackRawBytesPerSector == 2352: return CDRWIN_TRACK_TYPE_MODE2_RAW;
+                    when track.RawBytesPerSector != 2352: return CDRWIN_TRACK_TYPE_MODE2_FORMLESS;
+                case TrackType.CdMode2Form1 when track.RawBytesPerSector != 2352: return CDRWIN_TRACK_TYPE_MODE2_FORM1;
+                case TrackType.CdMode2Form2 when track.RawBytesPerSector != 2352: return CDRWIN_TRACK_TYPE_MODE2_FORM2;
+                case TrackType.CdMode2Formless when track.RawBytesPerSector == 2352:
+                case TrackType.CdMode2Form1 when track.RawBytesPerSector    == 2352:
+                case TrackType.CdMode2Form2 when track.RawBytesPerSector    == 2352: return CDRWIN_TRACK_TYPE_MODE2_RAW;
                 default: return CDRWIN_TRACK_TYPE_MODE1;
             }
         }

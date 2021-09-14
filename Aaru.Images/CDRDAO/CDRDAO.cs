@@ -50,7 +50,7 @@ namespace Aaru.DiscImages
         CdrdaoDisc   _discimage;
         ImageInfo    _imageInfo;
         Stream       _imageStream;
-        /// <summary>Dictionary, index is track #, value is TrackFile</summary>
+        /// <summary>Dictionary, index is track #, value is File</summary>
         Dictionary<uint, ulong> _offsetmap;
         SectorBuilder                _sectorBuilder;
         bool                         _separateTracksWriting;

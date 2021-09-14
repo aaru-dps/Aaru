@@ -154,7 +154,7 @@ namespace Aaru.DiscImages
                 for(int s = 0; s < sessions.Length; s++)
                     if(s == 0)
                     {
-                        sessions[s].SessionSequence = 1;
+                        sessions[s].Sequence = 1;
 
                         foreach(GdiTrack trk in _discImage.Tracks.Where(trk => !trk.HighDensity))
                         {
@@ -175,7 +175,7 @@ namespace Aaru.DiscImages
                     }
                     else
                     {
-                        sessions[s].SessionSequence = 2;
+                        sessions[s].Sequence = 2;
 
                         foreach(GdiTrack trk in _discImage.Tracks.Where(trk => trk.HighDensity))
                         {
@@ -844,7 +844,7 @@ namespace Aaru.DiscImages
         public List<Track> GetSessionTracks(Session session)
         {
             if(_discImage.Sessions.Contains(session))
-                return GetSessionTracks(session.SessionSequence);
+                return GetSessionTracks(session.Sequence);
 
             throw new ImageNotSupportedException("Session does not exist in disc image");
         }
@@ -852,7 +852,7 @@ namespace Aaru.DiscImages
         /// <inheritdoc />
         public List<Track> GetSessionTracks(ushort session)
         {
-            List<Track> tracks = new List<Track>();
+            List<Track> tracks = new();
             bool        expectedDensity;
 
             switch(session)
@@ -873,22 +873,22 @@ namespace Aaru.DiscImages
                 {
                     var track = new Track
                     {
-                        TrackDescription       = null,
-                        TrackStartSector       = gdiTrack.StartSector,
-                        TrackPregap            = gdiTrack.Pregap,
-                        TrackSession           = (ushort)(gdiTrack.HighDensity ? 2 : 1),
-                        TrackSequence          = gdiTrack.Sequence,
-                        TrackType              = gdiTrack.TrackType,
-                        TrackFilter            = gdiTrack.TrackFilter,
-                        TrackFile              = gdiTrack.TrackFile,
-                        TrackFileOffset        = (ulong)gdiTrack.Offset,
-                        TrackFileType          = "BINARY",
-                        TrackRawBytesPerSector = gdiTrack.Bps,
-                        TrackBytesPerSector    = gdiTrack.TrackType == TrackType.Data ? 2048 : 2352,
-                        TrackSubchannelType    = TrackSubchannelType.None
+                        Description       = null,
+                        StartSector       = gdiTrack.StartSector,
+                        Pregap            = gdiTrack.Pregap,
+                        Session           = (ushort)(gdiTrack.HighDensity ? 2 : 1),
+                        Sequence          = gdiTrack.Sequence,
+                        Type              = gdiTrack.TrackType,
+                        Filter            = gdiTrack.TrackFilter,
+                        File              = gdiTrack.TrackFile,
+                        FileOffset        = (ulong)gdiTrack.Offset,
+                        FileType          = "BINARY",
+                        RawBytesPerSector = gdiTrack.Bps,
+                        BytesPerSector    = gdiTrack.TrackType == TrackType.Data ? 2048 : 2352,
+                        SubchannelType    = TrackSubchannelType.None
                     };
 
-                    track.TrackEndSector = track.TrackStartSector + gdiTrack.Sectors - 1;
+                    track.EndSector = track.StartSector + gdiTrack.Sectors - 1;
 
                     tracks.Add(track);
                 }

@@ -157,7 +157,7 @@ namespace Aaru.Core.Devices.Dumping
 
                 uint firstSectorToRead = (uint)i;
 
-                Track track = tracks.OrderBy(t => t.TrackStartSector).LastOrDefault(t => i >= t.TrackStartSector);
+                Track track = tracks.OrderBy(t => t.StartSector).LastOrDefault(t => i >= t.StartSector);
 
                 blocksToRead = 0;
                 bool inData = nextData;
@@ -201,9 +201,9 @@ namespace Aaru.Core.Devices.Dumping
                     }
                 }
 
-                if(track.TrackSequence                        != 0 &&
-                   i + blocksToRead - (ulong)sectorsForOffset > track.TrackEndSector + 1)
-                    blocksToRead = (uint)(track.TrackEndSector + 1 - i + (ulong)sectorsForOffset);
+                if(track.Sequence                        != 0 &&
+                   i + blocksToRead - (ulong)sectorsForOffset > track.EndSector + 1)
+                    blocksToRead = (uint)(track.EndSector + 1 - i + (ulong)sectorsForOffset);
 
                 if(blocksToRead == 1 &&
                    !inData)
@@ -504,7 +504,7 @@ namespace Aaru.Core.Devices.Dumping
                                 }
 
                                 bool indexesChanged = Media.CompactDisc.WriteSubchannelToImage(supportedSubchannel,
-                                    desiredSubchannel, sub, i + r, 1, subLog, isrcs, (byte)track.TrackSequence,
+                                    desiredSubchannel, sub, i + r, 1, subLog, isrcs, (byte)track.Sequence,
                                     ref mcn, tracks, subchannelExtents, _fixSubchannelPosition, _outputPlugin,
                                     _fixSubchannel, _fixSubchannelCrc, _dumpLog, UpdateStatus,
                                     smallestPregapLbaPerTrack, true);
@@ -648,7 +648,7 @@ namespace Aaru.Core.Devices.Dumping
                         }
 
                         bool indexesChanged = Media.CompactDisc.WriteSubchannelToImage(supportedSubchannel,
-                            desiredSubchannel, sub, i, blocksToRead, subLog, isrcs, (byte)track.TrackSequence,
+                            desiredSubchannel, sub, i, blocksToRead, subLog, isrcs, (byte)track.Sequence,
                             ref mcn, tracks, subchannelExtents, _fixSubchannelPosition, _outputPlugin,
                             _fixSubchannel, _fixSubchannelCrc, _dumpLog, UpdateStatus, smallestPregapLbaPerTrack,
                             true);

@@ -52,7 +52,7 @@ namespace Aaru.DiscImages
         bool         _isCd;
         uint         _lostPregap;
         bool         _negativeEnd;
-        /// <summary>Dictionary, index is track #, value is TrackFile</summary>
+        /// <summary>Dictionary, index is track #, value is File</summary>
         Dictionary<uint, ulong> _offsetMap;
         SectorBuilder                _sectorBuilder;
         bool                         _separateTracksWriting;

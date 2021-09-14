@@ -148,7 +148,7 @@ namespace Aaru.DiscImages
             foreach(Session session in _alcSessions.Values)
             {
                 stream.Seek(session.trackOffset, SeekOrigin.Begin);
-                Dictionary<int, Track> sesToc = new Dictionary<int, Track>();
+                Dictionary<int, Track> sesToc = new();
 
                 for(int i = 0; i < session.allBlocks; i++)
                 {
@@ -375,11 +375,11 @@ namespace Aaru.DiscImages
                 if(!_alcTrackExtras.TryGetValue(alcSes.lastTrack, out TrackExtra endingTrackExtra))
                     break;
 
-                session.StartSector     = startingTrack.startLba;
-                session.StartTrack      = alcSes.firstTrack;
-                session.SessionSequence = alcSes.sessionSequence;
-                session.EndSector       = endingTrack.startLba + endingTrackExtra.sectors - 1;
-                session.EndTrack        = alcSes.lastTrack;
+                session.StartSector = startingTrack.startLba;
+                session.StartTrack  = alcSes.firstTrack;
+                session.Sequence    = alcSes.sessionSequence;
+                session.EndSector   = endingTrack.startLba + endingTrackExtra.sectors - 1;
+                session.EndTrack    = alcSes.lastTrack;
 
                 Sessions.Add(session);
 
@@ -1480,7 +1480,7 @@ namespace Aaru.DiscImages
         public List<CommonTypes.Structs.Track> GetSessionTracks(CommonTypes.Structs.Session session)
         {
             if(Sessions.Contains(session))
-                return GetSessionTracks(session.SessionSequence);
+                return GetSessionTracks(session.Sequence);
 
             throw new ImageNotSupportedException("Session does not exist in disc image");
         }
@@ -1488,13 +1488,13 @@ namespace Aaru.DiscImages
         /// <inheritdoc />
         public List<CommonTypes.Structs.Track> GetSessionTracks(ushort session)
         {
-            List<CommonTypes.Structs.Track> tracks = new List<CommonTypes.Structs.Track>();
+            List<CommonTypes.Structs.Track> tracks = new();
 
             foreach(Track alcTrack in _alcTracks.Values)
             {
                 ushort sessionNo =
                     (from ses in Sessions where alcTrack.point >= ses.StartTrack || alcTrack.point <= ses.EndTrack
-                     select ses.SessionSequence).FirstOrDefault();
+                     select ses.Sequence).FirstOrDefault();
 
                 if(!_alcTrackExtras.TryGetValue(alcTrack.point, out TrackExtra alcExtra) ||
                    session != sessionNo)
@@ -1502,18 +1502,18 @@ namespace Aaru.DiscImages
 
                 var aaruTrack = new CommonTypes.Structs.Track
                 {
-                    TrackStartSector       = alcTrack.startLba,
-                    TrackEndSector         = alcExtra.sectors - 1,
-                    TrackPregap            = alcExtra.pregap,
-                    TrackSession           = sessionNo,
-                    TrackSequence          = alcTrack.point,
-                    TrackType              = TrackModeToTrackType(alcTrack.mode),
-                    TrackFilter            = _alcImage,
-                    TrackFile              = _alcImage.GetFilename(),
-                    TrackFileOffset        = alcTrack.startOffset,
-                    TrackFileType          = "BINARY",
-                    TrackRawBytesPerSector = alcTrack.sectorSize,
-                    TrackBytesPerSector    = TrackModeToCookedBytesPerSector(alcTrack.mode)
+                    StartSector       = alcTrack.startLba,
+                    EndSector         = alcExtra.sectors - 1,
+                    Pregap            = alcExtra.pregap,
+                    Session           = sessionNo,
+                    Sequence          = alcTrack.point,
+                    Type              = TrackModeToTrackType(alcTrack.mode),
+                    Filter            = _alcImage,
+                    File              = _alcImage.GetFilename(),
+                    FileOffset        = alcTrack.startOffset,
+                    FileType          = "BINARY",
+                    RawBytesPerSector = alcTrack.sectorSize,
+                    BytesPerSector    = TrackModeToCookedBytesPerSector(alcTrack.mode)
                 };
 
                 if(alcExtra.pregap > 0)
@@ -1524,14 +1524,14 @@ namespace Aaru.DiscImages
                 switch(alcTrack.subMode)
                 {
                     case SubchannelMode.Interleaved:
-                        aaruTrack.TrackSubchannelFilter = _alcImage;
-                        aaruTrack.TrackSubchannelFile   = _alcImage.GetFilename();
-                        aaruTrack.TrackSubchannelOffset = alcTrack.startOffset;
-                        aaruTrack.TrackSubchannelType   = TrackSubchannelType.RawInterleaved;
+                        aaruTrack.SubchannelFilter = _alcImage;
+                        aaruTrack.SubchannelFile   = _alcImage.GetFilename();
+                        aaruTrack.SubchannelOffset = alcTrack.startOffset;
+                        aaruTrack.SubchannelType   = TrackSubchannelType.RawInterleaved;
 
                         break;
                     case SubchannelMode.None:
-                        aaruTrack.TrackSubchannelType = TrackSubchannelType.None;
+                        aaruTrack.SubchannelType = TrackSubchannelType.None;
 
                         break;
                 }

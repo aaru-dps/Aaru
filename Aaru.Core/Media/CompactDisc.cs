@@ -395,7 +395,7 @@ namespace Aaru.Core.Media
 
                         for(int i = 0; i < tracks.Length; i++)
                         {
-                            if(tracks[i].TrackSequence != trackNo)
+                            if(tracks[i].Sequence != trackNo)
                                 continue;
 
                             // Pregap
@@ -413,50 +413,50 @@ namespace Aaru.Core.Media
                                     smallestPregapLbaPerTrack[trackNo] = dumping ? 1 : 0;
 
                                 uint firstTrackNumberInSameSession = tracks.
-                                                                     Where(t => t.TrackSession ==
-                                                                               tracks[i].TrackSession).
-                                                                     Min(t => t.TrackSequence);
+                                                                     Where(t => t.Session ==
+                                                                               tracks[i].Session).
+                                                                     Min(t => t.Sequence);
 
-                                if(tracks[i].TrackSequence == firstTrackNumberInSameSession)
+                                if(tracks[i].Sequence == firstTrackNumberInSameSession)
                                     continue;
 
                                 if(qPos < smallestPregapLbaPerTrack[trackNo])
                                 {
                                     int dif = smallestPregapLbaPerTrack[trackNo] - qPos;
-                                    tracks[i].TrackPregap              += (ulong)dif;
-                                    tracks[i].TrackStartSector         -= (ulong)dif;
+                                    tracks[i].Pregap              += (ulong)dif;
+                                    tracks[i].StartSector         -= (ulong)dif;
                                     smallestPregapLbaPerTrack[trackNo] =  qPos;
 
                                     if(i                            > 0 &&
-                                       tracks[i - 1].TrackEndSector >= tracks[i].TrackStartSector)
-                                        tracks[i - 1].TrackEndSector = tracks[i].TrackStartSector - 1;
+                                       tracks[i - 1].EndSector >= tracks[i].StartSector)
+                                        tracks[i - 1].EndSector = tracks[i].StartSector - 1;
 
                                     dumpLog?.
-                                        WriteLine($"Pregap for track {trackNo} set to {tracks[i].TrackPregap} sectors.");
+                                        WriteLine($"Pregap for track {trackNo} set to {tracks[i].Pregap} sectors.");
 
                                     updateStatus?.
-                                        Invoke($"Pregap for track {trackNo} set to {tracks[i].TrackPregap} sectors.");
+                                        Invoke($"Pregap for track {trackNo} set to {tracks[i].Pregap} sectors.");
 
                                     status = true;
                                 }
 
-                                if(tracks[i].TrackPregap >= (ulong)qPos)
+                                if(tracks[i].Pregap >= (ulong)qPos)
                                     continue;
 
-                                ulong oldPregap = tracks[i].TrackPregap;
+                                ulong oldPregap = tracks[i].Pregap;
 
-                                tracks[i].TrackPregap      =  (ulong)qPos;
-                                tracks[i].TrackStartSector -= tracks[i].TrackPregap - oldPregap;
+                                tracks[i].Pregap      =  (ulong)qPos;
+                                tracks[i].StartSector -= tracks[i].Pregap - oldPregap;
 
                                 if(i                            > 0 &&
-                                   tracks[i - 1].TrackEndSector >= tracks[i].TrackStartSector)
-                                    tracks[i - 1].TrackEndSector = tracks[i].TrackStartSector - 1;
+                                   tracks[i - 1].EndSector >= tracks[i].StartSector)
+                                    tracks[i - 1].EndSector = tracks[i].StartSector - 1;
 
                                 dumpLog?.
-                                    WriteLine($"Pregap for track {trackNo} set to {tracks[i].TrackPregap} sectors.");
+                                    WriteLine($"Pregap for track {trackNo} set to {tracks[i].Pregap} sectors.");
 
                                 updateStatus?.
-                                    Invoke($"Pregap for track {trackNo} set to {tracks[i].TrackPregap} sectors.");
+                                    Invoke($"Pregap for track {trackNo} set to {tracks[i].Pregap} sectors.");
 
                                 status = true;
 
@@ -1589,7 +1589,7 @@ namespace Aaru.Core.Media
 
             foreach(int sector in subchannelExtents)
             {
-                Track track = tracks.LastOrDefault(t => (int)t.TrackStartSector <= sector);
+                Track track = tracks.LastOrDefault(t => (int)t.StartSector <= sector);
                 byte  trkFlags;
                 byte  flags;
                 ulong trackStart;
@@ -1599,20 +1599,20 @@ namespace Aaru.Core.Media
                     continue;
 
                 // Hidden track
-                if(track.TrackSequence == 0)
+                if(track.Sequence == 0)
                 {
-                    track      = tracks.FirstOrDefault(t => (int)t.TrackSequence == 1);
+                    track      = tracks.FirstOrDefault(t => (int)t.Sequence == 1);
                     trackStart = 0;
-                    pregap     = track?.TrackStartSector ?? 0;
+                    pregap     = track?.StartSector ?? 0;
                 }
                 else
                 {
-                    trackStart = track.TrackStartSector;
-                    pregap     = track.TrackPregap;
+                    trackStart = track.StartSector;
+                    pregap     = track.Pregap;
                 }
 
-                if(!trackFlags.TryGetValue((byte)(track?.TrackSequence ?? 0), out trkFlags) &&
-                   track?.TrackType != TrackType.Audio)
+                if(!trackFlags.TryGetValue((byte)(track?.Sequence ?? 0), out trkFlags) &&
+                   track?.Type != TrackType.Audio)
                     flags = (byte)CdFlags.DataTrack;
                 else
                     flags = trkFlags;
@@ -1627,7 +1627,7 @@ namespace Aaru.Core.Media
                 updateProgress?.Invoke($"Generating subchannel for sector {sector}...", sector, (long)blocks);
                 dumpLog?.WriteLine($"Generating subchannel for sector {sector}.");
 
-                byte[] sub = Subchannel.Generate(sector, track?.TrackSequence ?? 0, (int)pregap, (int)trackStart, flags,
+                byte[] sub = Subchannel.Generate(sector, track?.Sequence ?? 0, (int)pregap, (int)trackStart, flags,
                                                  index);
 
                 outputPlugin.WriteSectorsTag(sub, (ulong)sector, 1, SectorTagType.CdSectorSubchannel);

@@ -1268,26 +1268,26 @@ namespace Aaru.DiscImages
             if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
                 throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
-            if(session.SessionSequence != 1)
+            if(session.Sequence != 1)
                 throw new ArgumentOutOfRangeException(nameof(session), "Only a single session is supported");
 
             var trk = new Track
             {
-                TrackBytesPerSector    = (int)_imageInfo.SectorSize,
-                TrackEndSector         = _imageInfo.Sectors - 1,
-                TrackFilter            = _rawImageFilter,
-                TrackFile              = _rawImageFilter.GetFilename(),
-                TrackFileOffset        = 0,
-                TrackFileType          = "BINARY",
-                TrackRawBytesPerSector = (int)_imageInfo.SectorSize,
-                TrackSequence          = 1,
-                TrackStartSector       = 0,
-                TrackSubchannelType    = TrackSubchannelType.None,
-                TrackType              = TrackType.Data,
-                TrackSession           = 1
+                BytesPerSector    = (int)_imageInfo.SectorSize,
+                EndSector         = _imageInfo.Sectors - 1,
+                Filter            = _rawImageFilter,
+                File              = _rawImageFilter.GetFilename(),
+                FileOffset        = 0,
+                FileType          = "BINARY",
+                RawBytesPerSector = (int)_imageInfo.SectorSize,
+                Sequence          = 1,
+                StartSector       = 0,
+                SubchannelType    = TrackSubchannelType.None,
+                Type              = TrackType.Data,
+                Session           = 1
             };
 
-            List<Track> lst = new List<Track>
+            List<Track> lst = new()
             {
                 trk
             };
@@ -1306,21 +1306,21 @@ namespace Aaru.DiscImages
 
             var trk = new Track
             {
-                TrackBytesPerSector    = (int)_imageInfo.SectorSize,
-                TrackEndSector         = _imageInfo.Sectors - 1,
-                TrackFilter            = _rawImageFilter,
-                TrackFile              = _rawImageFilter.GetFilename(),
-                TrackFileOffset        = 0,
-                TrackFileType          = "BINARY",
-                TrackRawBytesPerSector = (int)_imageInfo.SectorSize,
-                TrackSequence          = 1,
-                TrackStartSector       = 0,
-                TrackSubchannelType    = TrackSubchannelType.None,
-                TrackType              = TrackType.Data,
-                TrackSession           = 1
+                BytesPerSector    = (int)_imageInfo.SectorSize,
+                EndSector         = _imageInfo.Sectors - 1,
+                Filter            = _rawImageFilter,
+                File              = _rawImageFilter.GetFilename(),
+                FileOffset        = 0,
+                FileType          = "BINARY",
+                RawBytesPerSector = (int)_imageInfo.SectorSize,
+                Sequence          = 1,
+                StartSector       = 0,
+                SubchannelType    = TrackSubchannelType.None,
+                Type              = TrackType.Data,
+                Session           = 1
             };
 
-            List<Track> lst = new List<Track>
+            List<Track> lst = new()
             {
                 trk
             };

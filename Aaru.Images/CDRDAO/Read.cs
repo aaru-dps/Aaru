@@ -1485,7 +1485,7 @@ namespace Aaru.DiscImages
         }
 
         /// <inheritdoc />
-        public List<Track> GetSessionTracks(Session session) => GetSessionTracks(session.SessionSequence);
+        public List<Track> GetSessionTracks(Session session) => GetSessionTracks(session.Sequence);
 
         /// <inheritdoc />
         public List<Track> GetSessionTracks(ushort session)

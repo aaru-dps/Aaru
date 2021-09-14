@@ -129,7 +129,7 @@ namespace Aaru.DiscImages
 
                 int trackCount = 0;
 
-                Dictionary<byte, int> leadouts = new Dictionary<byte, int>();
+                Dictionary<byte, int> leadouts = new();
 
                 while(_cueStream.Peek() >= 0)
                 {
@@ -323,7 +323,7 @@ namespace Aaru.DiscImages
                         {
                             existingDump.Extents = new List<ExtentType>(existingDump.Extents)
                             {
-                                new ExtentType
+                                new()
                                 {
                                     Start = extentStart,
                                     End   = extentEnd
@@ -884,7 +884,7 @@ namespace Aaru.DiscImages
                 for(int s = 1; s <= sessions.Length; s++)
                 {
                     bool firstTrackRead = false;
-                    sessions[s - 1].SessionSequence = (ushort)s;
+                    sessions[s - 1].Sequence = (ushort)s;
 
                     ulong sessionSectors   = 0;
                     int   lastSessionTrack = 0;
@@ -1251,7 +1251,7 @@ namespace Aaru.DiscImages
                         currentFilePath        = track.TrackFile.DataFilter.GetBasePath();
                     }
 
-                    Dictionary<ushort, int> newIndexes = new Dictionary<ushort, int>();
+                    Dictionary<ushort, int> newIndexes = new();
 
                     foreach(KeyValuePair<ushort, int> index in track.Indexes)
                         newIndexes[index.Key] = index.Value + currentFileStartSector;
@@ -1530,8 +1530,8 @@ namespace Aaru.DiscImages
 
                         for(int s = 0; s < sessions.Length; s++)
                         {
-                            if(sessions[s].SessionSequence > 1 &&
-                               track.Sequence              == sessions[s].StartTrack)
+                            if(sessions[s].Sequence > 1 &&
+                               track.Sequence       == sessions[s].StartTrack)
                             {
                                 track.TrackFile.Offset  += 307200;
                                 track.Sectors           -= 150;
@@ -2251,13 +2251,13 @@ namespace Aaru.DiscImages
         public List<Track> GetSessionTracks(Session session)
         {
             if(_discImage.Sessions.Contains(session))
-                return GetSessionTracks(session.SessionSequence);
+                return GetSessionTracks(session.Sequence);
 
             throw new ImageNotSupportedException("Session does not exist in disc image");
         }
 
         /// <inheritdoc />
         public List<Track> GetSessionTracks(ushort session) =>
-            Tracks.Where(t => t.TrackSession == session).OrderBy(t => t.TrackSequence).ToList();
+            Tracks.Where(t => t.Session == session).OrderBy(t => t.Sequence).ToList();
     }
 }

@@ -93,31 +93,31 @@ namespace Aaru.Core
                 {
                     var trackEntropy = new EntropyResults
                     {
-                        Track   = currentTrack.TrackSequence,
+                        Track   = currentTrack.Sequence,
                         Entropy = 0
                     };
 
                     UpdateProgressEvent?.
-                        Invoke($"Entropying track {currentTrack.TrackSequence} of {inputTracks.Max(t => t.TrackSequence)}",
-                               currentTrack.TrackSequence, inputTracks.Max(t => t.TrackSequence));
+                        Invoke($"Entropying track {currentTrack.Sequence} of {inputTracks.Max(t => t.Sequence)}",
+                               currentTrack.Sequence, inputTracks.Max(t => t.Sequence));
 
                     ulong[]      entTable              = new ulong[256];
                     ulong        trackSize             = 0;
                     List<string> uniqueSectorsPerTrack = new List<string>();
 
-                    trackEntropy.Sectors = currentTrack.TrackEndSector - currentTrack.TrackStartSector + 1;
+                    trackEntropy.Sectors = currentTrack.EndSector - currentTrack.StartSector + 1;
 
-                    AaruConsole.VerboseWriteLine("Track {0} has {1} sectors", currentTrack.TrackSequence,
+                    AaruConsole.VerboseWriteLine("Track {0} has {1} sectors", currentTrack.Sequence,
                                                  trackEntropy.Sectors);
 
                     InitProgress2Event?.Invoke();
 
                     for(ulong i = 0; i < trackEntropy.Sectors; i++)
                     {
-                        UpdateProgress2Event?.Invoke($"Entropying sector {i + 1} of track {currentTrack.TrackSequence}",
-                                                     (long)(i               + 1), (long)currentTrack.TrackEndSector);
+                        UpdateProgress2Event?.Invoke($"Entropying sector {i + 1} of track {currentTrack.Sequence}",
+                                                     (long)(i               + 1), (long)currentTrack.EndSector);
 
-                        byte[] sector = opticalMediaImage.ReadSector(i, currentTrack.TrackSequence);
+                        byte[] sector = opticalMediaImage.ReadSector(i, currentTrack.Sequence);
 
                         if(duplicatedSectors)
                         {

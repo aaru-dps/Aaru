@@ -445,8 +445,8 @@ namespace Aaru.Gui.ViewModels.Windows
             {
                 DateTime    startCheck  = DateTime.Now;
                 DateTime    endCheck    = startCheck;
-                List<ulong> failingLbas = new List<ulong>();
-                List<ulong> unknownLbas = new List<ulong>();
+                List<ulong> failingLbas = new();
+                List<ulong> unknownLbas = new();
 
                 await Dispatcher.UIThread.InvokeAsync(() =>
                 {
@@ -466,13 +466,12 @@ namespace Aaru.Gui.ViewModels.Windows
                     {
                         await Dispatcher.UIThread.InvokeAsync(() =>
                         {
-                            ProgressText =
-                                $"Verifying track {currentTrack.TrackSequence} of {inputOptical.Tracks.Count}";
+                            ProgressText = $"Verifying track {currentTrack.Sequence} of {inputOptical.Tracks.Count}";
 
                             ProgressValue++;
                         });
 
-                        ulong remainingSectors = currentTrack.TrackEndSector - currentTrack.TrackStartSector;
+                        ulong remainingSectors = currentTrack.EndSector - currentTrack.StartSector;
                         ulong currentSector    = 0;
 
                         while(remainingSectors > 0)
@@ -496,18 +495,17 @@ namespace Aaru.Gui.ViewModels.Windows
                                 Progress2Value = all / 512d;
 
                                 Progress2Text =
-                                    $"Checking sector {all} of {_inputFormat.Info.Sectors}, on track {currentTrack.TrackSequence}";
+                                    $"Checking sector {all} of {_inputFormat.Info.Sectors}, on track {currentTrack.Sequence}";
                             });
 
                             List<ulong> tempFailingLbas;
                             List<ulong> tempUnknownLbas;
 
                             if(remainingSectors < 512)
-                                inputOptical.VerifySectors(currentSector, (uint)remainingSectors,
-                                                           currentTrack.TrackSequence, out tempFailingLbas,
-                                                           out tempUnknownLbas);
+                                inputOptical.VerifySectors(currentSector, (uint)remainingSectors, currentTrack.Sequence,
+                                                           out tempFailingLbas, out tempUnknownLbas);
                             else
-                                inputOptical.VerifySectors(currentSector, 512, currentTrack.TrackSequence,
+                                inputOptical.VerifySectors(currentSector, 512, currentTrack.Sequence,
                                                            out tempFailingLbas, out tempUnknownLbas);
 
                             failingLbas.AddRange(tempFailingLbas);

@@ -168,8 +168,8 @@ namespace Aaru.DiscImages
             }
 
             Track track =
-                _writingTracks.FirstOrDefault(trk => sectorAddress >= trk.TrackStartSector &&
-                                                     sectorAddress <= trk.TrackEndSector);
+                _writingTracks.FirstOrDefault(trk => sectorAddress >= trk.StartSector &&
+                                                     sectorAddress <= trk.EndSector);
 
             if(track is null)
             {
@@ -178,7 +178,7 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            FileStream trackStream = _writingStreams.FirstOrDefault(kvp => kvp.Key == track.TrackSequence).Value;
+            FileStream trackStream = _writingStreams.FirstOrDefault(kvp => kvp.Key == track.Sequence).Value;
 
             if(trackStream == null)
             {
@@ -187,14 +187,14 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            if(track.TrackBytesPerSector != track.TrackRawBytesPerSector)
+            if(track.BytesPerSector != track.RawBytesPerSector)
             {
                 ErrorMessage = "Invalid write mode for this sector";
 
                 return false;
             }
 
-            if(data.Length != track.TrackRawBytesPerSector)
+            if(data.Length != track.RawBytesPerSector)
             {
                 ErrorMessage = "Incorrect data size";
 
@@ -202,7 +202,7 @@ namespace Aaru.DiscImages
             }
 
             trackStream.
-                Seek((long)(track.TrackFileOffset + ((sectorAddress - track.TrackStartSector) * (ulong)track.TrackRawBytesPerSector)),
+                Seek((long)(track.FileOffset + ((sectorAddress - track.StartSector) * (ulong)track.RawBytesPerSector)),
                      SeekOrigin.Begin);
 
             trackStream.Write(data, 0, data.Length);
@@ -221,8 +221,8 @@ namespace Aaru.DiscImages
             }
 
             Track track =
-                _writingTracks.FirstOrDefault(trk => sectorAddress >= trk.TrackStartSector &&
-                                                     sectorAddress <= trk.TrackEndSector);
+                _writingTracks.FirstOrDefault(trk => sectorAddress >= trk.StartSector &&
+                                                     sectorAddress <= trk.EndSector);
 
             if(track is null)
             {
@@ -231,7 +231,7 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            FileStream trackStream = _writingStreams.FirstOrDefault(kvp => kvp.Key == track.TrackSequence).Value;
+            FileStream trackStream = _writingStreams.FirstOrDefault(kvp => kvp.Key == track.Sequence).Value;
 
             if(trackStream == null)
             {
@@ -240,21 +240,21 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            if(track.TrackBytesPerSector != track.TrackRawBytesPerSector)
+            if(track.BytesPerSector != track.RawBytesPerSector)
             {
                 ErrorMessage = "Invalid write mode for this sector";
 
                 return false;
             }
 
-            if(sectorAddress + length > track.TrackEndSector + 1)
+            if(sectorAddress + length > track.EndSector + 1)
             {
                 ErrorMessage = "Can't cross tracks";
 
                 return false;
             }
 
-            if(data.Length % track.TrackRawBytesPerSector != 0)
+            if(data.Length % track.RawBytesPerSector != 0)
             {
                 ErrorMessage = "Incorrect data size";
 
@@ -262,7 +262,7 @@ namespace Aaru.DiscImages
             }
 
             trackStream.
-                Seek((long)(track.TrackFileOffset + ((sectorAddress - track.TrackStartSector) * (ulong)track.TrackRawBytesPerSector)),
+                Seek((long)(track.FileOffset + ((sectorAddress - track.StartSector) * (ulong)track.RawBytesPerSector)),
                      SeekOrigin.Begin);
 
             trackStream.Write(data, 0, data.Length);
@@ -281,8 +281,8 @@ namespace Aaru.DiscImages
             }
 
             Track track =
-                _writingTracks.FirstOrDefault(trk => sectorAddress >= trk.TrackStartSector &&
-                                                     sectorAddress <= trk.TrackEndSector);
+                _writingTracks.FirstOrDefault(trk => sectorAddress >= trk.StartSector &&
+                                                     sectorAddress <= trk.EndSector);
 
             if(track is null)
             {
@@ -291,7 +291,7 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            FileStream trackStream = _writingStreams.FirstOrDefault(kvp => kvp.Key == track.TrackSequence).Value;
+            FileStream trackStream = _writingStreams.FirstOrDefault(kvp => kvp.Key == track.Sequence).Value;
 
             if(trackStream == null)
             {
@@ -300,7 +300,7 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            if(data.Length != track.TrackRawBytesPerSector)
+            if(data.Length != track.RawBytesPerSector)
             {
                 ErrorMessage = "Incorrect data size";
 
@@ -308,7 +308,7 @@ namespace Aaru.DiscImages
             }
 
             trackStream.
-                Seek((long)(track.TrackFileOffset + ((sectorAddress - track.TrackStartSector) * (ulong)track.TrackRawBytesPerSector)),
+                Seek((long)(track.FileOffset + ((sectorAddress - track.StartSector) * (ulong)track.RawBytesPerSector)),
                      SeekOrigin.Begin);
 
             trackStream.Write(data, 0, data.Length);
@@ -327,8 +327,8 @@ namespace Aaru.DiscImages
             }
 
             Track track =
-                _writingTracks.FirstOrDefault(trk => sectorAddress >= trk.TrackStartSector &&
-                                                     sectorAddress <= trk.TrackEndSector);
+                _writingTracks.FirstOrDefault(trk => sectorAddress >= trk.StartSector &&
+                                                     sectorAddress <= trk.EndSector);
 
             if(track is null)
             {
@@ -337,7 +337,7 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            FileStream trackStream = _writingStreams.FirstOrDefault(kvp => kvp.Key == track.TrackSequence).Value;
+            FileStream trackStream = _writingStreams.FirstOrDefault(kvp => kvp.Key == track.Sequence).Value;
 
             if(trackStream == null)
             {
@@ -346,14 +346,14 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            if(sectorAddress + length > track.TrackEndSector + 1)
+            if(sectorAddress + length > track.EndSector + 1)
             {
                 ErrorMessage = "Can't cross tracks";
 
                 return false;
             }
 
-            if(data.Length % track.TrackRawBytesPerSector != 0)
+            if(data.Length % track.RawBytesPerSector != 0)
             {
                 ErrorMessage = "Incorrect data size";
 
@@ -361,7 +361,7 @@ namespace Aaru.DiscImages
             }
 
             trackStream.
-                Seek((long)(track.TrackFileOffset + ((sectorAddress - track.TrackStartSector) * (ulong)track.TrackRawBytesPerSector)),
+                Seek((long)(track.FileOffset + ((sectorAddress - track.StartSector) * (ulong)track.RawBytesPerSector)),
                      SeekOrigin.Begin);
 
             trackStream.Write(data, 0, data.Length);
@@ -394,14 +394,14 @@ namespace Aaru.DiscImages
 
             _writingTracks = new List<Track>();
 
-            foreach(Track track in tracks.OrderBy(t => t.TrackSequence))
+            foreach(Track track in tracks.OrderBy(t => t.Sequence))
             {
                 Track newTrack = track;
 
-                newTrack.TrackFile = _separateTracksWriting ? _writingBaseName + $"_track{track.TrackSequence:D2}.bin"
-                                         : _writingBaseName                    + ".bin";
+                newTrack.File = _separateTracksWriting ? _writingBaseName + $"_track{track.Sequence:D2}.bin"
+                                    : _writingBaseName                    + ".bin";
 
-                newTrack.TrackFileOffset = _separateTracksWriting ? 0 : track.TrackStartSector * 2352;
+                newTrack.FileOffset = _separateTracksWriting ? 0 : track.StartSector * 2352;
                 _writingTracks.Add(newTrack);
             }
 
@@ -409,8 +409,8 @@ namespace Aaru.DiscImages
 
             if(_separateTracksWriting)
                 foreach(Track track in _writingTracks)
-                    _writingStreams.Add(track.TrackSequence,
-                                        new FileStream(track.TrackFile, FileMode.OpenOrCreate, FileAccess.ReadWrite,
+                    _writingStreams.Add(track.Sequence,
+                                        new FileStream(track.File, FileMode.OpenOrCreate, FileAccess.ReadWrite,
                                                        FileShare.None));
             else
             {
@@ -418,7 +418,7 @@ namespace Aaru.DiscImages
                                                  FileShare.None);
 
                 foreach(Track track in _writingTracks)
-                    _writingStreams.Add(track.TrackSequence, jointStream);
+                    _writingStreams.Add(track.Sequence, jointStream);
             }
 
             return true;
@@ -512,7 +512,7 @@ namespace Aaru.DiscImages
 
             foreach(Track track in _writingTracks)
             {
-                switch(track.TrackSequence)
+                switch(track.Sequence)
                 {
                     // You should not be able to write CD-i Ready as this format, but just in case
                     case 0 when _imageInfo.MediaType != MediaType.CDIREADY:
@@ -520,24 +520,24 @@ namespace Aaru.DiscImages
 
                         continue;
                     case 1 when trackZero != null && !track.Indexes.ContainsKey(0):
-                        track.TrackStartSector = trackZero.TrackStartSector;
-                        track.TrackPregap      = (ulong)track.Indexes[1] - track.TrackStartSector;
+                        track.StartSector = trackZero.StartSector;
+                        track.Pregap      = (ulong)track.Indexes[1] - track.StartSector;
 
                         break;
                 }
 
-                if(track.TrackSession > currentSession)
+                if(track.Session > currentSession)
                     _descriptorStream.WriteLine("REM SESSION {0}", ++currentSession);
 
                 if(_separateTracksWriting)
-                    _descriptorStream.WriteLine("FILE \"{0}\" BINARY", Path.GetFileName(track.TrackFile));
+                    _descriptorStream.WriteLine("FILE \"{0}\" BINARY", Path.GetFileName(track.File));
 
-                (byte minute, byte second, byte frame) msf = LbaToMsf(track.TrackStartSector);
-                _descriptorStream.WriteLine("  TRACK {0:D2} {1}", track.TrackSequence, GetTrackMode(track));
+                (byte minute, byte second, byte frame) msf = LbaToMsf(track.StartSector);
+                _descriptorStream.WriteLine("  TRACK {0:D2} {1}", track.Sequence, GetTrackMode(track));
 
                 if(_isCd)
                 {
-                    if(_trackFlags.TryGetValue((byte)track.TrackSequence, out byte flagsByte))
+                    if(_trackFlags.TryGetValue((byte)track.Sequence, out byte flagsByte))
                         if(flagsByte != 0 &&
                            flagsByte != (byte)CdFlags.DataTrack)
                         {
@@ -549,20 +549,19 @@ namespace Aaru.DiscImages
                                                         flags.HasFlag(CdFlags.PreEmphasis) ? " PRE" : "");
                         }
 
-                    if(_trackIsrcs.TryGetValue((byte)track.TrackSequence, out string isrc) &&
+                    if(_trackIsrcs.TryGetValue((byte)track.Sequence, out string isrc) &&
                        !string.IsNullOrWhiteSpace(isrc))
                         _descriptorStream.WriteLine("    ISRC {0}", isrc);
                 }
 
-                if(track.TrackPregap > 0 && _isCd)
+                if(track.Pregap > 0 && _isCd)
                 {
-                    if(track.TrackSequence > _writingTracks.Where(t => t.TrackSession == track.TrackSession).
-                                                            Min(t => t.TrackSequence))
+                    if(track.Sequence > _writingTracks.Where(t => t.Session == track.Session).Min(t => t.Sequence))
                         _descriptorStream.WriteLine("    INDEX {0:D2} {1:D2}:{2:D2}:{3:D2}", 0, msf.minute, msf.second,
                                                     msf.frame);
 
-                    if(track.TrackSequence > 1)
-                        msf = LbaToMsf(track.TrackStartSector + track.TrackPregap);
+                    if(track.Sequence > 1)
+                        msf = LbaToMsf(track.StartSector + track.Pregap);
 
                     _descriptorStream.WriteLine("    INDEX {0:D2} {1:D2}:{2:D2}:{3:D2}", 1, msf.minute, msf.second,
                                                 msf.frame);
@@ -580,18 +579,18 @@ namespace Aaru.DiscImages
                                                     msf.second, msf.frame);
                     }
 
-                ushort lastSession = _writingTracks.Max(t => t.TrackSession);
+                ushort lastSession = _writingTracks.Max(t => t.Session);
 
                 if(currentSession >= lastSession)
                     continue;
 
-                Track lastTrackInSession = _writingTracks.Where(t => t.TrackSession == currentSession).
-                                                          OrderBy(t => t.TrackSequence).LastOrDefault();
+                Track lastTrackInSession = _writingTracks.Where(t => t.Session == currentSession).
+                                                          OrderBy(t => t.Sequence).LastOrDefault();
 
-                if(track.TrackSequence != lastTrackInSession.TrackSequence)
+                if(track.Sequence != lastTrackInSession.Sequence)
                     continue;
 
-                msf = LbaToMsf(track.TrackEndSector + 1);
+                msf = LbaToMsf(track.EndSector + 1);
                 _descriptorStream.WriteLine("REM LEAD-OUT {0:D2}:{1:D2}:{2:D2}", msf.minute, msf.second, msf.frame);
             }
 
@@ -623,8 +622,8 @@ namespace Aaru.DiscImages
             }
 
             Track track =
-                _writingTracks.FirstOrDefault(trk => sectorAddress >= trk.TrackStartSector &&
-                                                     sectorAddress <= trk.TrackEndSector);
+                _writingTracks.FirstOrDefault(trk => sectorAddress >= trk.StartSector &&
+                                                     sectorAddress <= trk.EndSector);
 
             if(track is null)
             {

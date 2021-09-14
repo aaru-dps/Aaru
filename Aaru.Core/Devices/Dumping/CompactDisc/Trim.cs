@@ -140,8 +140,8 @@ namespace Aaru.Core.Devices.Dumping
 
                 PulseProgress?.Invoke($"Trimming sector {badSector}");
 
-                Track track = tracks.OrderBy(t => t.TrackStartSector).
-                                     LastOrDefault(t => badSector >= t.TrackStartSector);
+                Track track = tracks.OrderBy(t => t.StartSector).
+                                     LastOrDefault(t => badSector >= t.StartSector);
 
                 byte sectorsToTrim   = 1;
                 uint badSectorToRead = (uint)badSector;
@@ -266,10 +266,10 @@ namespace Aaru.Core.Devices.Dumping
                     else
                         _outputPlugin.WriteSector(Sector.GetUserData(data), badSector);
 
-                    ulong trkStartBefore = track.TrackStartSector;
+                    ulong trkStartBefore = track.StartSector;
 
                     bool indexesChanged = Media.CompactDisc.WriteSubchannelToImage(supportedSubchannel,
-                        desiredSubchannel, sub, badSector, 1, subLog, isrcs, (byte)track.TrackSequence, ref mcn,
+                        desiredSubchannel, sub, badSector, 1, subLog, isrcs, (byte)track.Sequence, ref mcn,
                         tracks, subchannelExtents, _fixSubchannelPosition, _outputPlugin, _fixSubchannel,
                         _fixSubchannelCrc, _dumpLog, UpdateStatus, smallestPregapLbaPerTrack, true);
 
@@ -279,10 +279,10 @@ namespace Aaru.Core.Devices.Dumping
 
                     (_outputPlugin as IWritableOpticalImage).SetTracks(tracks.ToList());
 
-                    if(track.TrackStartSector != trkStartBefore &&
-                       !_resume.BadBlocks.Contains(track.TrackStartSector))
+                    if(track.StartSector != trkStartBefore &&
+                       !_resume.BadBlocks.Contains(track.StartSector))
                     {
-                        _resume.BadBlocks.Add(track.TrackStartSector);
+                        _resume.BadBlocks.Add(track.StartSector);
 
                         goto trimStart;
                     }

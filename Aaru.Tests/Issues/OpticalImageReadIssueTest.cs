@@ -50,7 +50,7 @@ namespace Aaru.Tests.Issues
 
             foreach(Track currentTrack in inputTracks)
             {
-                ulong sectors     = currentTrack.TrackEndSector - currentTrack.TrackStartSector + 1;
+                ulong sectors     = currentTrack.EndSector - currentTrack.StartSector + 1;
                 ulong doneSectors = 0;
 
                 while(doneSectors < sectors)
@@ -59,14 +59,14 @@ namespace Aaru.Tests.Issues
 
                     if(sectors - doneSectors >= SECTORS_TO_READ)
                     {
-                        sector = opticalInput.ReadSectors(doneSectors, SECTORS_TO_READ, currentTrack.TrackSequence);
+                        sector = opticalInput.ReadSectors(doneSectors, SECTORS_TO_READ, currentTrack.Sequence);
 
                         doneSectors += SECTORS_TO_READ;
                     }
                     else
                     {
                         sector = opticalInput.ReadSectors(doneSectors, (uint)(sectors - doneSectors),
-                                                          currentTrack.TrackSequence);
+                                                          currentTrack.Sequence);
 
                         doneSectors += sectors - doneSectors;
                     }

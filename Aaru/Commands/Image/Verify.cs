@@ -242,8 +242,7 @@ namespace Aaru.Commands.Image
                                         discTask.Description =
                                             $"Checking track {discTask.Value + 1} of {inputTracks.Count}";
 
-                                        ulong remainingSectors =
-                                            currentTrack.TrackEndSector - currentTrack.TrackStartSector + 1;
+                                        ulong remainingSectors = currentTrack.EndSector - currentTrack.StartSector + 1;
 
                                         ulong currentSector = 0;
 
@@ -253,19 +252,19 @@ namespace Aaru.Commands.Image
                                         while(remainingSectors > 0)
                                         {
                                             trackTask.Description =
-                                                $"Checking sector {currentSectorAll} of {inputFormat.Info.Sectors}, on track {currentTrack.TrackSequence}";
+                                                $"Checking sector {currentSectorAll} of {inputFormat.Info.Sectors}, on track {currentTrack.Sequence}";
 
                                             List<ulong> tempFailingLbas;
                                             List<ulong> tempUnknownLbas;
 
                                             if(remainingSectors < 512)
                                                 opticalMediaImage.VerifySectors(currentSector, (uint)remainingSectors,
-                                                                                    currentTrack.TrackSequence,
+                                                                                    currentTrack.Sequence,
                                                                                     out tempFailingLbas,
                                                                                     out tempUnknownLbas);
                                             else
                                                 opticalMediaImage.VerifySectors(currentSector, 512,
-                                                                                    currentTrack.TrackSequence,
+                                                                                    currentTrack.Sequence,
                                                                                     out tempFailingLbas,
                                                                                     out tempUnknownLbas);
 

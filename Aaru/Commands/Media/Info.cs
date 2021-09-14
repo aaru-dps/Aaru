@@ -632,7 +632,7 @@ namespace Aaru.Commands.Media
 
                 if(tracks != null)
                 {
-                    uint firstLba = (uint)tracks.Min(t => t.TrackStartSector);
+                    uint firstLba = (uint)tracks.Min(t => t.StartSector);
 
                     bool supportsPqSubchannel = Dump.SupportsPqSubchannel(dev, null, null, firstLba);
                     bool supportsRwSubchannel = Dump.SupportsRwSubchannel(dev, null, null, firstLba);
@@ -649,9 +649,9 @@ namespace Aaru.Commands.Media
                                            out bool inexactPositioning, false);
 
                     for(int t = 1; t < tracks.Length; t++)
-                        tracks[t - 1].TrackEndSector = tracks[t].TrackStartSector - 1;
+                        tracks[t - 1].EndSector = tracks[t].StartSector - 1;
 
-                    tracks[^1].TrackEndSector = (ulong)lastSector;
+                    tracks[^1].EndSector = (ulong)lastSector;
 
                     AaruConsole.WriteLine();
                     AaruConsole.WriteLine("[bold]Track calculations:[/]");
@@ -666,8 +666,7 @@ namespace Aaru.Commands.Media
                     foreach(Track track in tracks)
                         AaruConsole.
                             WriteLine("Track {0} starts at LBA {1}, ends at LBA {2}, has a pregap of {3} sectors and is of type {4}",
-                                      track.TrackSequence, track.TrackStartSector, track.TrackEndSector,
-                                      track.TrackPregap, track.TrackType);
+                                      track.Sequence, track.StartSector, track.EndSector, track.Pregap, track.Type);
 
                     AaruConsole.WriteLine();
                     AaruConsole.WriteLine("[bold]Offsets:[/]");

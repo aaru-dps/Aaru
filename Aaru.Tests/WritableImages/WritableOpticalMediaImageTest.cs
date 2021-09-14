@@ -69,16 +69,16 @@ namespace Aaru.Tests.WritableImages
 
                             Assert.AreEqual(test.Tracks.Length, image.Tracks.Count, $"Tracks: {testFile}");
 
-                            image.Tracks.Select(t => t.TrackSession).Should().
+                            image.Tracks.Select(t => t.Session).Should().
                                   BeEquivalentTo(test.Tracks.Select(s => s.Session), $"Track session: {testFile}");
 
-                            image.Tracks.Select(t => t.TrackStartSector).Should().
+                            image.Tracks.Select(t => t.StartSector).Should().
                                   BeEquivalentTo(test.Tracks.Select(s => s.Start), $"Track start: {testFile}");
 
-                            image.Tracks.Select(t => t.TrackEndSector).Should().
+                            image.Tracks.Select(t => t.EndSector).Should().
                                   BeEquivalentTo(test.Tracks.Select(s => s.End), $"Track end: {testFile}");
 
-                            image.Tracks.Select(t => t.TrackPregap).Should().
+                            image.Tracks.Select(t => t.Pregap).Should().
                                   BeEquivalentTo(test.Tracks.Select(s => s.Pregap), $"Track pregap: {testFile}");
 
                             int trackNo = 0;
@@ -88,11 +88,11 @@ namespace Aaru.Tests.WritableImages
 
                             foreach(Track currentTrack in image.Tracks)
                             {
-                                if(currentTrack.TrackEndSector > latestEndSector)
-                                    latestEndSector = currentTrack.TrackEndSector;
+                                if(currentTrack.EndSector > latestEndSector)
+                                    latestEndSector = currentTrack.EndSector;
 
                                 if(image.Info.ReadableSectorTags.Contains(SectorTagType.CdTrackFlags))
-                                    flags[trackNo] = image.ReadSectorTag(currentTrack.TrackSequence,
+                                    flags[trackNo] = image.ReadSectorTag(currentTrack.Sequence,
                                                                          SectorTagType.CdTrackFlags)[0];
 
                                 trackNo++;
@@ -175,7 +175,7 @@ namespace Aaru.Tests.WritableImages
                     foreach(Track track in inputFormat.Tracks)
                     {
                         doneSectors = 0;
-                        ulong trackSectors = track.TrackEndSector - track.TrackStartSector + 1;
+                        ulong trackSectors = track.EndSector - track.StartSector + 1;
 
                         while(doneSectors < trackSectors)
                         {
@@ -195,15 +195,15 @@ namespace Aaru.Tests.WritableImages
                             {
                                 if(sectorsToDo == 1)
                                 {
-                                    sector = inputFormat.ReadSectorLong(doneSectors           + track.TrackStartSector);
-                                    result = outputFormat.WriteSectorLong(sector, doneSectors + track.TrackStartSector);
+                                    sector = inputFormat.ReadSectorLong(doneSectors           + track.StartSector);
+                                    result = outputFormat.WriteSectorLong(sector, doneSectors + track.StartSector);
                                 }
                                 else
                                 {
-                                    sector = inputFormat.ReadSectorsLong(doneSectors + track.TrackStartSector,
+                                    sector = inputFormat.ReadSectorsLong(doneSectors + track.StartSector,
                                                                          sectorsToDo);
 
-                                    result = outputFormat.WriteSectorsLong(sector, doneSectors + track.TrackStartSector,
+                                    result = outputFormat.WriteSectorsLong(sector, doneSectors + track.StartSector,
                                                                            sectorsToDo);
                                 }
 
@@ -216,20 +216,20 @@ namespace Aaru.Tests.WritableImages
                             {
                                 if(sectorsToDo == 1)
                                 {
-                                    sector = inputFormat.ReadSector(doneSectors           + track.TrackStartSector);
-                                    result = outputFormat.WriteSector(sector, doneSectors + track.TrackStartSector);
+                                    sector = inputFormat.ReadSector(doneSectors           + track.StartSector);
+                                    result = outputFormat.WriteSector(sector, doneSectors + track.StartSector);
                                 }
                                 else
                                 {
-                                    sector = inputFormat.ReadSectors(doneSectors + track.TrackStartSector, sectorsToDo);
+                                    sector = inputFormat.ReadSectors(doneSectors + track.StartSector, sectorsToDo);
 
-                                    result = outputFormat.WriteSectors(sector, doneSectors + track.TrackStartSector,
+                                    result = outputFormat.WriteSectors(sector, doneSectors + track.StartSector,
                                                                        sectorsToDo);
                                 }
                             }
 
                             Assert.IsTrue(result,
-                                          $"Error {outputFormat.ErrorMessage} writing sector {doneSectors + track.TrackStartSector}...");
+                                          $"Error {outputFormat.ErrorMessage} writing sector {doneSectors + track.StartSector}...");
 
                             doneSectors += sectorsToDo;
                         }
@@ -247,16 +247,16 @@ namespace Aaru.Tests.WritableImages
                         tracks[i] = new Track
                         {
                             Indexes                = new Dictionary<ushort, int>(),
-                            TrackDescription       = inputFormat.Tracks[i].TrackDescription,
-                            TrackEndSector         = inputFormat.Tracks[i].TrackEndSector,
-                            TrackStartSector       = inputFormat.Tracks[i].TrackStartSector,
-                            TrackPregap            = inputFormat.Tracks[i].TrackPregap,
-                            TrackSequence          = inputFormat.Tracks[i].TrackSequence,
-                            TrackSession           = inputFormat.Tracks[i].TrackSession,
-                            TrackBytesPerSector    = inputFormat.Tracks[i].TrackBytesPerSector,
-                            TrackRawBytesPerSector = inputFormat.Tracks[i].TrackRawBytesPerSector,
-                            TrackType              = inputFormat.Tracks[i].TrackType,
-                            TrackSubchannelType    = inputFormat.Tracks[i].TrackSubchannelType
+                            Description       = inputFormat.Tracks[i].Description,
+                            EndSector         = inputFormat.Tracks[i].EndSector,
+                            StartSector       = inputFormat.Tracks[i].StartSector,
+                            Pregap            = inputFormat.Tracks[i].Pregap,
+                            Sequence          = inputFormat.Tracks[i].Sequence,
+                            Session           = inputFormat.Tracks[i].Session,
+                            BytesPerSector    = inputFormat.Tracks[i].BytesPerSector,
+                            RawBytesPerSector = inputFormat.Tracks[i].RawBytesPerSector,
+                            Type              = inputFormat.Tracks[i].Type,
+                            SubchannelType    = inputFormat.Tracks[i].SubchannelType
                         };
 
                         foreach(KeyValuePair<ushort, int> idx in inputFormat.Tracks[i].Indexes)
@@ -268,12 +268,12 @@ namespace Aaru.Tests.WritableImages
                     {
                         foreach(Track track in tracks)
                         {
-                            byte[] isrc = inputFormat.ReadSectorTag(track.TrackSequence, tag);
+                            byte[] isrc = inputFormat.ReadSectorTag(track.Sequence, tag);
 
                             if(isrc is null)
                                 continue;
 
-                            isrcs[(byte)track.TrackSequence] = Encoding.UTF8.GetString(isrc);
+                            isrcs[(byte)track.Sequence] = Encoding.UTF8.GetString(isrc);
                         }
                     }
 
@@ -283,12 +283,12 @@ namespace Aaru.Tests.WritableImages
                     {
                         foreach(Track track in tracks)
                         {
-                            byte[] flags = inputFormat.ReadSectorTag(track.TrackSequence, tag);
+                            byte[] flags = inputFormat.ReadSectorTag(track.Sequence, tag);
 
                             if(flags is null)
                                 continue;
 
-                            trackFlags[(byte)track.TrackSequence] = flags[0];
+                            trackFlags[(byte)track.Sequence] = flags[0];
                         }
                     }
 
@@ -323,7 +323,7 @@ namespace Aaru.Tests.WritableImages
                         foreach(Track track in inputFormat.Tracks)
                         {
                             doneSectors = 0;
-                            ulong  trackSectors = track.TrackEndSector - track.TrackStartSector + 1;
+                            ulong  trackSectors = track.EndSector - track.StartSector + 1;
                             byte[] sector;
                             bool   result;
 
@@ -331,8 +331,8 @@ namespace Aaru.Tests.WritableImages
                             {
                                 case SectorTagType.CdTrackFlags:
                                 case SectorTagType.CdTrackIsrc:
-                                    sector = inputFormat.ReadSectorTag(track.TrackSequence, tag);
-                                    result = outputFormat.WriteSectorTag(sector, track.TrackSequence, tag);
+                                    sector = inputFormat.ReadSectorTag(track.Sequence, tag);
+                                    result = outputFormat.WriteSectorTag(sector, track.Sequence, tag);
 
                                     Assert.IsTrue(result,
                                                   $"Error {outputFormat.ErrorMessage} writing tag, not continuing...");
@@ -351,13 +351,13 @@ namespace Aaru.Tests.WritableImages
 
                                 if(sectorsToDo == 1)
                                 {
-                                    sector = inputFormat.ReadSectorTag(doneSectors + track.TrackStartSector, tag);
+                                    sector = inputFormat.ReadSectorTag(doneSectors + track.StartSector, tag);
 
                                     if(tag == SectorTagType.CdSectorSubchannel)
                                     {
                                         bool indexesChanged = CompactDisc.WriteSubchannelToImage(MmcSubchannel.Raw,
-                                            MmcSubchannel.Raw, sector, doneSectors + track.TrackStartSector, 1,
-                                            null, isrcs, (byte)track.TrackSequence, ref mcn, tracks,
+                                            MmcSubchannel.Raw, sector, doneSectors + track.StartSector, 1,
+                                            null, isrcs, (byte)track.Sequence, ref mcn, tracks,
                                             subchannelExtents, true, outputFormat, true, true, null, null,
                                             smallestPregapLbaPerTrack, false);
 
@@ -368,19 +368,19 @@ namespace Aaru.Tests.WritableImages
                                     }
                                     else
                                         result =
-                                            outputFormat.WriteSectorTag(sector, doneSectors + track.TrackStartSector,
+                                            outputFormat.WriteSectorTag(sector, doneSectors + track.StartSector,
                                                                         tag);
                                 }
                                 else
                                 {
-                                    sector = inputFormat.ReadSectorsTag(doneSectors + track.TrackStartSector,
+                                    sector = inputFormat.ReadSectorsTag(doneSectors + track.StartSector,
                                                                         sectorsToDo, tag);
 
                                     if(tag == SectorTagType.CdSectorSubchannel)
                                     {
                                         bool indexesChanged = CompactDisc.WriteSubchannelToImage(MmcSubchannel.Raw,
-                                            MmcSubchannel.Raw, sector, doneSectors + track.TrackStartSector,
-                                            sectorsToDo, null, isrcs, (byte)track.TrackSequence, ref mcn, tracks,
+                                            MmcSubchannel.Raw, sector, doneSectors + track.StartSector,
+                                            sectorsToDo, null, isrcs, (byte)track.Sequence, ref mcn, tracks,
                                             subchannelExtents, true, outputFormat, true, true, null, null,
                                             smallestPregapLbaPerTrack, false);
 
@@ -391,12 +391,12 @@ namespace Aaru.Tests.WritableImages
                                     }
                                     else
                                         result =
-                                            outputFormat.WriteSectorsTag(sector, doneSectors + track.TrackStartSector,
+                                            outputFormat.WriteSectorsTag(sector, doneSectors + track.StartSector,
                                                                          sectorsToDo, tag);
                                 }
 
                                 Assert.IsTrue(result,
-                                              $"Error {outputFormat.ErrorMessage} writing tag for sector {doneSectors + track.TrackStartSector}, not continuing...");
+                                              $"Error {outputFormat.ErrorMessage} writing tag for sector {doneSectors + track.StartSector}, not continuing...");
 
                                 doneSectors += sectorsToDo;
                             }
@@ -493,17 +493,17 @@ namespace Aaru.Tests.WritableImages
 
                             Assert.AreEqual(test.Tracks.Length, image.Tracks.Count, $"Tracks (output): {testFile}");
 
-                            image.Tracks.Select(t => t.TrackSession).Should().
+                            image.Tracks.Select(t => t.Session).Should().
                                   BeEquivalentTo(test.Tracks.Select(s => s.Session),
                                                  $"Track session (output): {testFile}");
 
-                            image.Tracks.Select(t => t.TrackStartSector).Should().
+                            image.Tracks.Select(t => t.StartSector).Should().
                                   BeEquivalentTo(test.Tracks.Select(s => s.Start), $"Track start (output): {testFile}");
 
-                            image.Tracks.Select(t => t.TrackEndSector).Should().
+                            image.Tracks.Select(t => t.EndSector).Should().
                                   BeEquivalentTo(test.Tracks.Select(s => s.End), $"Track end (output): {testFile}");
 
-                            image.Tracks.Select(t => t.TrackPregap).Should().
+                            image.Tracks.Select(t => t.Pregap).Should().
                                   BeEquivalentTo(test.Tracks.Select(s => s.Pregap),
                                                  $"Track pregap (output): {testFile}");
 
@@ -514,11 +514,11 @@ namespace Aaru.Tests.WritableImages
 
                             foreach(Track currentTrack in image.Tracks)
                             {
-                                if(currentTrack.TrackEndSector > latestEndSector)
-                                    latestEndSector = currentTrack.TrackEndSector;
+                                if(currentTrack.EndSector > latestEndSector)
+                                    latestEndSector = currentTrack.EndSector;
 
                                 if(image.Info.ReadableSectorTags.Contains(SectorTagType.CdTrackFlags))
-                                    flags[trackNo] = image.ReadSectorTag(currentTrack.TrackSequence,
+                                    flags[trackNo] = image.ReadSectorTag(currentTrack.Sequence,
                                                                          SectorTagType.CdTrackFlags)[0];
 
                                 trackNo++;
@@ -543,7 +543,7 @@ namespace Aaru.Tests.WritableImages
 
                         foreach(Track currentTrack in image.Tracks)
                         {
-                            ulong sectors = currentTrack.TrackEndSector - currentTrack.TrackStartSector + 1;
+                            ulong sectors = currentTrack.EndSector - currentTrack.StartSector + 1;
                             doneSectors = 0;
 
                             while(doneSectors < sectors)
@@ -554,9 +554,9 @@ namespace Aaru.Tests.WritableImages
                                 {
                                     sector =
                                         @long ? image.ReadSectorsLong(doneSectors, SECTORS_TO_READ,
-                                                                      currentTrack.TrackSequence)
+                                                                      currentTrack.Sequence)
                                             : image.ReadSectors(doneSectors, SECTORS_TO_READ,
-                                                                currentTrack.TrackSequence);
+                                                                currentTrack.Sequence);
 
                                     doneSectors += SECTORS_TO_READ;
                                 }
@@ -564,9 +564,9 @@ namespace Aaru.Tests.WritableImages
                                 {
                                     sector =
                                         @long ? image.ReadSectorsLong(doneSectors, (uint)(sectors - doneSectors),
-                                                                      currentTrack.TrackSequence)
+                                                                      currentTrack.Sequence)
                                             : image.ReadSectors(doneSectors, (uint)(sectors - doneSectors),
-                                                                currentTrack.TrackSequence);
+                                                                currentTrack.Sequence);
 
                                     doneSectors += sectors - doneSectors;
                                 }
@@ -586,7 +586,7 @@ namespace Aaru.Tests.WritableImages
 
                     foreach(Track currentTrack in image.Tracks)
                     {
-                        ulong sectors = currentTrack.TrackEndSector - currentTrack.TrackStartSector + 1;
+                        ulong sectors = currentTrack.EndSector - currentTrack.StartSector + 1;
                         doneSectors = 0;
 
                         while(doneSectors < sectors)
@@ -595,7 +595,7 @@ namespace Aaru.Tests.WritableImages
 
                             if(sectors - doneSectors >= SECTORS_TO_READ)
                             {
-                                sector = image.ReadSectorsTag(doneSectors, SECTORS_TO_READ, currentTrack.TrackSequence,
+                                sector = image.ReadSectorsTag(doneSectors, SECTORS_TO_READ, currentTrack.Sequence,
                                                               SectorTagType.CdSectorSubchannel);
 
                                 doneSectors += SECTORS_TO_READ;
@@ -603,7 +603,7 @@ namespace Aaru.Tests.WritableImages
                             else
                             {
                                 sector = image.ReadSectorsTag(doneSectors, (uint)(sectors - doneSectors),
-                                                              currentTrack.TrackSequence,
+                                                              currentTrack.Sequence,
                                                               SectorTagType.CdSectorSubchannel);
 
                                 doneSectors += sectors - doneSectors;

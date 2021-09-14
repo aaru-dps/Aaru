@@ -122,7 +122,7 @@ namespace Aaru.Tests.Issues
             foreach(Track track in inputOptical.Tracks)
             {
                 doneSectors = 0;
-                ulong trackSectors = track.TrackEndSector - track.TrackStartSector + 1;
+                ulong trackSectors = track.EndSector - track.StartSector + 1;
 
                 while(doneSectors < trackSectors)
                 {
@@ -142,14 +142,14 @@ namespace Aaru.Tests.Issues
                     {
                         if(sectorsToDo == 1)
                         {
-                            sector = inputFormat.ReadSectorLong(doneSectors            + track.TrackStartSector);
-                            result = outputOptical.WriteSectorLong(sector, doneSectors + track.TrackStartSector);
+                            sector = inputFormat.ReadSectorLong(doneSectors            + track.StartSector);
+                            result = outputOptical.WriteSectorLong(sector, doneSectors + track.StartSector);
                         }
                         else
                         {
-                            sector = inputFormat.ReadSectorsLong(doneSectors + track.TrackStartSector, sectorsToDo);
+                            sector = inputFormat.ReadSectorsLong(doneSectors + track.StartSector, sectorsToDo);
 
-                            result = outputOptical.WriteSectorsLong(sector, doneSectors + track.TrackStartSector,
+                            result = outputOptical.WriteSectorsLong(sector, doneSectors + track.StartSector,
                                                                     sectorsToDo);
                         }
 
@@ -162,20 +162,20 @@ namespace Aaru.Tests.Issues
                     {
                         if(sectorsToDo == 1)
                         {
-                            sector = inputFormat.ReadSector(doneSectors            + track.TrackStartSector);
-                            result = outputOptical.WriteSector(sector, doneSectors + track.TrackStartSector);
+                            sector = inputFormat.ReadSector(doneSectors            + track.StartSector);
+                            result = outputOptical.WriteSector(sector, doneSectors + track.StartSector);
                         }
                         else
                         {
-                            sector = inputFormat.ReadSectors(doneSectors + track.TrackStartSector, sectorsToDo);
+                            sector = inputFormat.ReadSectors(doneSectors + track.StartSector, sectorsToDo);
 
-                            result = outputOptical.WriteSectors(sector, doneSectors + track.TrackStartSector,
+                            result = outputOptical.WriteSectors(sector, doneSectors + track.StartSector,
                                                                 sectorsToDo);
                         }
                     }
 
                     Assert.IsTrue(result,
-                                  $"Error {outputOptical.ErrorMessage} writing sector {doneSectors + track.TrackStartSector}, not continuing...");
+                                  $"Error {outputOptical.ErrorMessage} writing sector {doneSectors + track.StartSector}, not continuing...");
 
                     doneSectors += sectorsToDo;
                 }
@@ -193,16 +193,16 @@ namespace Aaru.Tests.Issues
                 tracks[i] = new Track
                 {
                     Indexes                = new Dictionary<ushort, int>(),
-                    TrackDescription       = inputOptical.Tracks[i].TrackDescription,
-                    TrackEndSector         = inputOptical.Tracks[i].TrackEndSector,
-                    TrackStartSector       = inputOptical.Tracks[i].TrackStartSector,
-                    TrackPregap            = inputOptical.Tracks[i].TrackPregap,
-                    TrackSequence          = inputOptical.Tracks[i].TrackSequence,
-                    TrackSession           = inputOptical.Tracks[i].TrackSession,
-                    TrackBytesPerSector    = inputOptical.Tracks[i].TrackBytesPerSector,
-                    TrackRawBytesPerSector = inputOptical.Tracks[i].TrackRawBytesPerSector,
-                    TrackType              = inputOptical.Tracks[i].TrackType,
-                    TrackSubchannelType    = inputOptical.Tracks[i].TrackSubchannelType
+                    Description       = inputOptical.Tracks[i].Description,
+                    EndSector         = inputOptical.Tracks[i].EndSector,
+                    StartSector       = inputOptical.Tracks[i].StartSector,
+                    Pregap            = inputOptical.Tracks[i].Pregap,
+                    Sequence          = inputOptical.Tracks[i].Sequence,
+                    Session           = inputOptical.Tracks[i].Session,
+                    BytesPerSector    = inputOptical.Tracks[i].BytesPerSector,
+                    RawBytesPerSector = inputOptical.Tracks[i].RawBytesPerSector,
+                    Type              = inputOptical.Tracks[i].Type,
+                    SubchannelType    = inputOptical.Tracks[i].SubchannelType
                 };
 
                 foreach(KeyValuePair<ushort, int> idx in inputOptical.Tracks[i].Indexes)
@@ -214,12 +214,12 @@ namespace Aaru.Tests.Issues
             {
                 foreach(Track track in tracks)
                 {
-                    byte[] isrc = inputFormat.ReadSectorTag(track.TrackSequence, tag);
+                    byte[] isrc = inputFormat.ReadSectorTag(track.Sequence, tag);
 
                     if(isrc is null)
                         continue;
 
-                    isrcs[(byte)track.TrackSequence] = Encoding.UTF8.GetString(isrc);
+                    isrcs[(byte)track.Sequence] = Encoding.UTF8.GetString(isrc);
                 }
             }
 
@@ -228,12 +228,12 @@ namespace Aaru.Tests.Issues
             {
                 foreach(Track track in tracks)
                 {
-                    byte[] flags = inputFormat.ReadSectorTag(track.TrackSequence, tag);
+                    byte[] flags = inputFormat.ReadSectorTag(track.Sequence, tag);
 
                     if(flags is null)
                         continue;
 
-                    trackFlags[(byte)track.TrackSequence] = flags[0];
+                    trackFlags[(byte)track.Sequence] = flags[0];
                 }
             }
 
@@ -267,7 +267,7 @@ namespace Aaru.Tests.Issues
                 foreach(Track track in inputOptical.Tracks)
                 {
                     doneSectors = 0;
-                    ulong  trackSectors = track.TrackEndSector - track.TrackStartSector + 1;
+                    ulong  trackSectors = track.EndSector - track.StartSector + 1;
                     byte[] sector;
                     bool   result;
 
@@ -275,8 +275,8 @@ namespace Aaru.Tests.Issues
                     {
                         case SectorTagType.CdTrackFlags:
                         case SectorTagType.CdTrackIsrc:
-                            sector = inputFormat.ReadSectorTag(track.TrackSequence, tag);
-                            result = outputOptical.WriteSectorTag(sector, track.TrackSequence, tag);
+                            sector = inputFormat.ReadSectorTag(track.Sequence, tag);
+                            result = outputOptical.WriteSectorTag(sector, track.Sequence, tag);
 
                             Assert.IsTrue(result, $"Error {outputOptical.ErrorMessage} writing tag, not continuing...");
 
@@ -294,13 +294,13 @@ namespace Aaru.Tests.Issues
 
                         if(sectorsToDo == 1)
                         {
-                            sector = inputFormat.ReadSectorTag(doneSectors + track.TrackStartSector, tag);
+                            sector = inputFormat.ReadSectorTag(doneSectors + track.StartSector, tag);
 
                             if(tag == SectorTagType.CdSectorSubchannel)
                             {
                                 bool indexesChanged = CompactDisc.WriteSubchannelToImage(MmcSubchannel.Raw,
-                                    MmcSubchannel.Raw, sector, doneSectors + track.TrackStartSector, 1, null,
-                                    isrcs, (byte)track.TrackSequence, ref mcn, tracks, subchannelExtents, true,
+                                    MmcSubchannel.Raw, sector, doneSectors + track.StartSector, 1, null,
+                                    isrcs, (byte)track.Sequence, ref mcn, tracks, subchannelExtents, true,
                                     outputOptical, true, true, null, null, smallestPregapLbaPerTrack, false);
 
                                 if(indexesChanged)
@@ -309,18 +309,18 @@ namespace Aaru.Tests.Issues
                                 result = true;
                             }
                             else
-                                result = outputOptical.WriteSectorTag(sector, doneSectors + track.TrackStartSector,
+                                result = outputOptical.WriteSectorTag(sector, doneSectors + track.StartSector,
                                                                       tag);
                         }
                         else
                         {
-                            sector = inputFormat.ReadSectorsTag(doneSectors + track.TrackStartSector, sectorsToDo, tag);
+                            sector = inputFormat.ReadSectorsTag(doneSectors + track.StartSector, sectorsToDo, tag);
 
                             if(tag == SectorTagType.CdSectorSubchannel)
                             {
                                 bool indexesChanged = CompactDisc.WriteSubchannelToImage(MmcSubchannel.Raw,
-                                    MmcSubchannel.Raw, sector, doneSectors + track.TrackStartSector, sectorsToDo,
-                                    null, isrcs, (byte)track.TrackSequence, ref mcn, tracks, subchannelExtents,
+                                    MmcSubchannel.Raw, sector, doneSectors + track.StartSector, sectorsToDo,
+                                    null, isrcs, (byte)track.Sequence, ref mcn, tracks, subchannelExtents,
                                     true, outputOptical, true, true, null, null, smallestPregapLbaPerTrack, false);
 
                                 if(indexesChanged)
@@ -329,12 +329,12 @@ namespace Aaru.Tests.Issues
                                 result = true;
                             }
                             else
-                                result = outputOptical.WriteSectorsTag(sector, doneSectors + track.TrackStartSector,
+                                result = outputOptical.WriteSectorsTag(sector, doneSectors + track.StartSector,
                                                                        sectorsToDo, tag);
                         }
 
                         Assert.IsTrue(result,
-                                      $"Error {outputOptical.ErrorMessage} writing tag for sector {doneSectors + track.TrackStartSector}, not continuing...");
+                                      $"Error {outputOptical.ErrorMessage} writing tag for sector {doneSectors + track.StartSector}, not continuing...");
 
                         doneSectors += sectorsToDo;
                     }

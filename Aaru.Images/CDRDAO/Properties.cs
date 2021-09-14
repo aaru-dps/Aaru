@@ -59,7 +59,7 @@ namespace Aaru.DiscImages
         /// <inheritdoc />
         public string Name => "CDRDAO tocfile";
         /// <inheritdoc />
-        public Guid Id => new Guid("04D7BA12-1BE8-44D4-97A4-1B48A505463E");
+        public Guid Id => new("04D7BA12-1BE8-44D4-97A4-1B48A505463E");
         /// <inheritdoc />
         public string Format => "CDRDAO tocfile";
         /// <inheritdoc />
@@ -72,18 +72,18 @@ namespace Aaru.DiscImages
         {
             get
             {
-                Track firstTrack = Tracks.First(t => t.TrackSequence == Tracks.Min(m => m.TrackSequence));
-                Track lastTrack  = Tracks.First(t => t.TrackSequence == Tracks.Max(m => m.TrackSequence));
+                Track firstTrack = Tracks.First(t => t.Sequence == Tracks.Min(m => m.Sequence));
+                Track lastTrack  = Tracks.First(t => t.Sequence == Tracks.Max(m => m.Sequence));
 
                 return new List<Session>
                 {
-                    new Session
+                    new()
                     {
-                        SessionSequence = 1,
-                        StartSector     = firstTrack.TrackStartSector,
-                        EndSector       = lastTrack.TrackEndSector,
-                        StartTrack      = firstTrack.TrackSequence,
-                        EndTrack        = lastTrack.TrackSequence
+                        Sequence    = 1,
+                        StartSector = firstTrack.StartSector,
+                        EndSector   = lastTrack.EndSector,
+                        StartTrack  = firstTrack.Sequence,
+                        EndTrack    = lastTrack.Sequence
                     }
                 };
             }
@@ -94,47 +94,46 @@ namespace Aaru.DiscImages
         {
             get
             {
-                List<Track> tracks = new List<Track>();
+                List<Track> tracks = new();
 
                 foreach(CdrdaoTrack cdrTrack in _discimage.Tracks)
                 {
                     var aaruTrack = new Track
                     {
-                        TrackDescription       = cdrTrack.Title,
-                        TrackStartSector       = cdrTrack.StartSector,
-                        TrackPregap            = cdrTrack.Pregap,
-                        TrackSession           = 1,
-                        TrackSequence          = cdrTrack.Sequence,
-                        TrackType              = CdrdaoTrackTypeToTrackType(cdrTrack.Tracktype),
-                        TrackFilter            = cdrTrack.Trackfile.Datafilter,
-                        TrackFile              = cdrTrack.Trackfile.Datafilter.GetFilename(),
-                        TrackFileOffset        = cdrTrack.Trackfile.Offset,
-                        TrackFileType          = cdrTrack.Trackfile.Filetype,
-                        TrackRawBytesPerSector = cdrTrack.Bps,
-                        TrackBytesPerSector    = CdrdaoTrackTypeToCookedBytesPerSector(cdrTrack.Tracktype)
+                        Description       = cdrTrack.Title,
+                        StartSector       = cdrTrack.StartSector,
+                        Pregap            = cdrTrack.Pregap,
+                        Session           = 1,
+                        Sequence          = cdrTrack.Sequence,
+                        Type              = CdrdaoTrackTypeToTrackType(cdrTrack.Tracktype),
+                        Filter            = cdrTrack.Trackfile.Datafilter,
+                        File              = cdrTrack.Trackfile.Datafilter.GetFilename(),
+                        FileOffset        = cdrTrack.Trackfile.Offset,
+                        FileType          = cdrTrack.Trackfile.Filetype,
+                        RawBytesPerSector = cdrTrack.Bps,
+                        BytesPerSector    = CdrdaoTrackTypeToCookedBytesPerSector(cdrTrack.Tracktype)
                     };
 
-                    aaruTrack.TrackEndSector = aaruTrack.TrackStartSector + cdrTrack.Sectors - 1;
+                    aaruTrack.EndSector = aaruTrack.StartSector + cdrTrack.Sectors - 1;
 
-                    if(!cdrTrack.Indexes.TryGetValue(0, out aaruTrack.TrackStartSector))
-                        cdrTrack.Indexes.TryGetValue(1, out aaruTrack.TrackStartSector);
+                    if(!cdrTrack.Indexes.TryGetValue(0, out aaruTrack.StartSector))
+                        cdrTrack.Indexes.TryGetValue(1, out aaruTrack.StartSector);
 
                     if(cdrTrack.Subchannel)
                     {
-                        aaruTrack.TrackSubchannelType = cdrTrack.Packedsubchannel
-                                                            ? TrackSubchannelType.PackedInterleaved
-                                                            : TrackSubchannelType.RawInterleaved;
+                        aaruTrack.SubchannelType = cdrTrack.Packedsubchannel ? TrackSubchannelType.PackedInterleaved
+                                                       : TrackSubchannelType.RawInterleaved;
 
-                        aaruTrack.TrackSubchannelFilter = cdrTrack.Trackfile.Datafilter;
-                        aaruTrack.TrackSubchannelFile   = cdrTrack.Trackfile.Datafilter.GetFilename();
-                        aaruTrack.TrackSubchannelOffset = cdrTrack.Trackfile.Offset;
+                        aaruTrack.SubchannelFilter = cdrTrack.Trackfile.Datafilter;
+                        aaruTrack.SubchannelFile   = cdrTrack.Trackfile.Datafilter.GetFilename();
+                        aaruTrack.SubchannelOffset = cdrTrack.Trackfile.Offset;
                     }
                     else
-                        aaruTrack.TrackSubchannelType = TrackSubchannelType.None;
+                        aaruTrack.SubchannelType = TrackSubchannelType.None;
 
-                    if(aaruTrack.TrackSequence == 1)
+                    if(aaruTrack.Sequence == 1)
                     {
-                        aaruTrack.TrackPregap = 150;
+                        aaruTrack.Pregap = 150;
 
                         if(cdrTrack.Indexes.Count == 0)
                         {

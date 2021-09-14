@@ -107,16 +107,16 @@ namespace Aaru.Core.Devices.Dumping
                     {
                         trackList.Add(new Track
                         {
-                            TrackSequence = trk.POINT,
-                            TrackSession  = trk.SessionNumber,
-                            TrackType = (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrack ||
+                            Sequence = trk.POINT,
+                            Session  = trk.SessionNumber,
+                            Type = (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrack ||
                                         (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrackIncremental
                                             ? TrackType.Data : TrackType.Audio,
-                            TrackStartSector =
+                            StartSector =
                                 (ulong)((trk.PHOUR * 3600 * 75) + (trk.PMIN * 60 * 75) + (trk.PSEC * 75) + trk.PFRAME -
                                         150),
-                            TrackBytesPerSector    = (int)sectorSize,
-                            TrackRawBytesPerSector = (int)sectorSize
+                            BytesPerSector    = (int)sectorSize,
+                            RawBytesPerSector = (int)sectorSize
                         });
 
                         trackFlags?.Add(trk.POINT, trk.CONTROL);
@@ -199,14 +199,14 @@ namespace Aaru.Core.Devices.Dumping
                         {
                             trackList.Add(new Track
                             {
-                                TrackSequence = trk.TrackNumber,
-                                TrackSession  = 1,
-                                TrackType = (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrack ||
+                                Sequence = trk.TrackNumber,
+                                Session  = 1,
+                                Type = (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrack ||
                                             (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrackIncremental
                                                 ? TrackType.Data : TrackType.Audio,
-                                TrackStartSector       = trk.TrackStartAddress,
-                                TrackBytesPerSector    = (int)sectorSize,
-                                TrackRawBytesPerSector = (int)sectorSize
+                                StartSector       = trk.TrackStartAddress,
+                                BytesPerSector    = (int)sectorSize,
+                                RawBytesPerSector = (int)sectorSize
                             });
 
                             trackFlags?.Add(trk.TrackNumber, trk.CONTROL);
@@ -229,12 +229,12 @@ namespace Aaru.Core.Devices.Dumping
 
                 trackList.Add(new Track
                 {
-                    TrackSequence          = 1,
-                    TrackSession           = 1,
-                    TrackType              = leadoutTrackType,
-                    TrackStartSector       = 0,
-                    TrackBytesPerSector    = (int)sectorSize,
-                    TrackRawBytesPerSector = (int)sectorSize
+                    Sequence          = 1,
+                    Session           = 1,
+                    Type              = leadoutTrackType,
+                    StartSector       = 0,
+                    BytesPerSector    = (int)sectorSize,
+                    RawBytesPerSector = (int)sectorSize
                 });
 
                 trackFlags?.Add(1, (byte)(leadoutTrackType == TrackType.Audio ? 0 : 4));

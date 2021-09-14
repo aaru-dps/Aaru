@@ -337,8 +337,8 @@ namespace Aaru.Commands.Image
                                             ProgressTask trackTask = ctx.AddTask("Hashing sector");
 
                                             /*
-                                            if(currentTrack.TrackStartSector - previousTrackEnd != 0 && wholeDisc)
-                                                for(ulong i = previousTrackEnd + 1; i < currentTrack.TrackStartSector; i++)
+                                            if(currentTrack.StartSector - previousTrackEnd != 0 && wholeDisc)
+                                                for(ulong i = previousTrackEnd + 1; i < currentTrack.StartSector; i++)
                                                 {
                                                     AaruConsole.Write("\rHashing track-less sector {0}", i);
 
@@ -350,15 +350,13 @@ namespace Aaru.Commands.Image
 
                                             AaruConsole.DebugWriteLine("Checksum command",
                                                                        "Track {0} starts at sector {1} and ends at sector {2}",
-                                                                       currentTrack.TrackSequence,
-                                                                       currentTrack.TrackStartSector,
-                                                                       currentTrack.TrackEndSector);
+                                                                       currentTrack.Sequence, currentTrack.StartSector,
+                                                                       currentTrack.EndSector);
 
                                             if(separatedTracks)
                                                 trackChecksum = new Checksum(enabledChecksums);
 
-                                            ulong sectors =
-                                                currentTrack.TrackEndSector - currentTrack.TrackStartSector + 1;
+                                            ulong sectors = currentTrack.EndSector - currentTrack.StartSector + 1;
 
                                             trackTask.MaxValue = sectors;
 
@@ -371,11 +369,11 @@ namespace Aaru.Commands.Image
                                                 if(sectors - doneSectors >= SECTORS_TO_READ)
                                                 {
                                                     sector = opticalInput.ReadSectors(doneSectors, SECTORS_TO_READ,
-                                                        currentTrack.TrackSequence);
+                                                        currentTrack.Sequence);
 
                                                     trackTask.Description =
                                                         string.Format("Hashing sectors {0} to {2} of track {1}",
-                                                                      doneSectors, currentTrack.TrackSequence,
+                                                                      doneSectors, currentTrack.Sequence,
                                                                       doneSectors + SECTORS_TO_READ);
 
                                                     doneSectors += SECTORS_TO_READ;
@@ -383,11 +381,11 @@ namespace Aaru.Commands.Image
                                                 else
                                                 {
                                                     sector = opticalInput.ReadSectors(doneSectors,
-                                                        (uint)(sectors - doneSectors), currentTrack.TrackSequence);
+                                                        (uint)(sectors - doneSectors), currentTrack.Sequence);
 
                                                     trackTask.Description =
                                                         string.Format("Hashing sectors {0} to {2} of track {1}",
-                                                                      doneSectors, currentTrack.TrackSequence,
+                                                                      doneSectors, currentTrack.Sequence,
                                                                       doneSectors + (sectors - doneSectors));
 
                                                     doneSectors += sectors - doneSectors;
@@ -413,7 +411,7 @@ namespace Aaru.Commands.Image
 
                                             foreach(ChecksumType chk in trackChecksum.End())
                                                 AaruConsole.WriteLine("[bold]Track {0}'s {1}:[/] {2}",
-                                                                      currentTrack.TrackSequence, chk.type, chk.Value);
+                                                                      currentTrack.Sequence, chk.type, chk.Value);
 
                                             discTask.Increment(1);
                                         }

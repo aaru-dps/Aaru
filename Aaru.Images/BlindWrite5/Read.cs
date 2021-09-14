@@ -644,11 +644,11 @@ namespace Aaru.DiscImages
             {
                 Sessions.Add(new Session
                 {
-                    SessionSequence = ses.Sequence,
-                    StartSector     = ses.Start < 0 ? 0 : (ulong)ses.Start,
-                    EndSector       = (ulong)ses.End - 1,
-                    StartTrack      = ses.FirstTrack,
-                    EndTrack        = ses.LastTrack
+                    Sequence    = ses.Sequence,
+                    StartSector = ses.Start < 0 ? 0 : (ulong)ses.Start,
+                    EndSector   = (ulong)ses.End - 1,
+                    StartTrack  = ses.FirstTrack,
+                    EndTrack    = ses.LastTrack
                 });
 
                 if(ses.Sequence < firstSession)
@@ -683,8 +683,8 @@ namespace Aaru.DiscImages
                     switch(trk.type)
                     {
                         case TrackType.Audio:
-                            track.TrackBytesPerSector    = 2352;
-                            track.TrackRawBytesPerSector = 2352;
+                            track.BytesPerSector    = 2352;
+                            track.RawBytesPerSector = 2352;
 
                             if(_imageInfo.SectorSize < 2352)
                                 _imageInfo.SectorSize = 2352;
@@ -713,8 +713,8 @@ namespace Aaru.DiscImages
                             if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEdc))
                                 _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEdc);
 
-                            track.TrackBytesPerSector    = 2048;
-                            track.TrackRawBytesPerSector = 2352;
+                            track.BytesPerSector    = 2048;
+                            track.RawBytesPerSector = 2352;
 
                             if(_imageInfo.SectorSize < 2048)
                                 _imageInfo.SectorSize = 2048;
@@ -727,8 +727,8 @@ namespace Aaru.DiscImages
                             if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
                                 _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
 
-                            track.TrackBytesPerSector    = 2336;
-                            track.TrackRawBytesPerSector = 2352;
+                            track.BytesPerSector    = 2336;
+                            track.RawBytesPerSector = 2352;
 
                             if(_imageInfo.SectorSize < 2336)
                                 _imageInfo.SectorSize = 2336;
@@ -747,16 +747,16 @@ namespace Aaru.DiscImages
                             if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEdc))
                                 _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEdc);
 
-                            track.TrackBytesPerSector    = 2336;
-                            track.TrackRawBytesPerSector = 2352;
+                            track.BytesPerSector    = 2336;
+                            track.RawBytesPerSector = 2352;
 
                             if(_imageInfo.SectorSize < 2324)
                                 _imageInfo.SectorSize = 2324;
 
                             break;
                         case TrackType.Dvd:
-                            track.TrackBytesPerSector    = 2048;
-                            track.TrackRawBytesPerSector = 2048;
+                            track.BytesPerSector    = 2048;
+                            track.RawBytesPerSector = 2048;
 
                             if(_imageInfo.SectorSize < 2048)
                                 _imageInfo.SectorSize = 2048;
@@ -766,9 +766,9 @@ namespace Aaru.DiscImages
                             break;
                     }
 
-                    track.TrackDescription = $"Track {trk.point}";
-                    track.TrackStartSector = (ulong)(trk.startLba + trk.pregap);
-                    track.TrackEndSector   = (ulong)(trk.sectors + trk.startLba) - 1;
+                    track.Description = $"Track {trk.point}";
+                    track.StartSector = (ulong)(trk.startLba + trk.pregap);
+                    track.EndSector   = (ulong)(trk.sectors + trk.startLba) - 1;
 
                     List<DataFileCharacteristics> fileCharsForThisTrack = _filePaths.
                                                                           Where(chars =>
@@ -979,23 +979,23 @@ namespace Aaru.DiscImages
                             return false;
                         }
 
-                        track.TrackFilter = splitStream.Filter;
-                        track.TrackFile   = $"{filename}.{extension}";
+                        track.Filter = splitStream.Filter;
+                        track.File   = $"{filename}.{extension}";
 
                         if(trk.startLba >= 0)
-                            track.TrackFileOffset =
+                            track.FileOffset =
                                 (ulong)((trk.startLba * splitStartChars.SectorSize) + splitStartChars.Offset);
                         else
-                            track.TrackFileOffset = (ulong)(trk.startLba * -1 * splitStartChars.SectorSize);
+                            track.FileOffset = (ulong)(trk.startLba * -1 * splitStartChars.SectorSize);
 
-                        track.TrackFileType = "BINARY";
+                        track.FileType = "BINARY";
 
                         if(splitStartChars.Subchannel != TrackSubchannelType.None)
                         {
-                            track.TrackSubchannelFilter = track.TrackFilter;
-                            track.TrackSubchannelFile   = track.TrackFile;
-                            track.TrackSubchannelType   = splitStartChars.Subchannel;
-                            track.TrackSubchannelOffset = track.TrackFileOffset;
+                            track.SubchannelFilter = track.Filter;
+                            track.SubchannelFile   = track.File;
+                            track.SubchannelType   = splitStartChars.Subchannel;
+                            track.SubchannelOffset = track.FileOffset;
 
                             if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel))
                                 _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubchannel);
@@ -1010,23 +1010,23 @@ namespace Aaru.DiscImages
                     else
                         foreach(DataFileCharacteristics chars in fileCharsForThisTrack)
                         {
-                            track.TrackFilter = chars.FileFilter;
-                            track.TrackFile   = chars.FileFilter.GetFilename();
+                            track.Filter = chars.FileFilter;
+                            track.File   = chars.FileFilter.GetFilename();
 
                             if(trk.startLba >= 0)
-                                track.TrackFileOffset =
-                                    (ulong)((trk.startLba - chars.StartLba) * chars.SectorSize) + chars.Offset;
+                                track.FileOffset = (ulong)((trk.startLba - chars.StartLba) * chars.SectorSize) +
+                                                   chars.Offset;
                             else
-                                track.TrackFileOffset = (ulong)(trk.startLba * -1 * chars.SectorSize);
+                                track.FileOffset = (ulong)(trk.startLba * -1 * chars.SectorSize);
 
-                            track.TrackFileType = "BINARY";
+                            track.FileType = "BINARY";
 
                             if(chars.Subchannel != TrackSubchannelType.None)
                             {
-                                track.TrackSubchannelFilter = track.TrackFilter;
-                                track.TrackSubchannelFile   = track.TrackFile;
-                                track.TrackSubchannelType   = chars.Subchannel;
-                                track.TrackSubchannelOffset = track.TrackFileOffset;
+                                track.SubchannelFilter = track.Filter;
+                                track.SubchannelFile   = track.File;
+                                track.SubchannelType   = chars.Subchannel;
+                                track.SubchannelOffset = track.FileOffset;
 
                                 if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel))
                                     _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubchannel);
@@ -1035,78 +1035,73 @@ namespace Aaru.DiscImages
                             break;
                         }
 
-                    if(track.TrackFilter is null)
+                    if(track.Filter is null)
                     {
                         AaruConsole.ErrorWriteLine("Could not find image for track {0}", trk.point);
 
                         return false;
                     }
 
-                    track.TrackPregap   = trk.pregap;
-                    track.TrackSequence = trk.point;
-                    track.TrackType     = BlindWriteTrackTypeToTrackType(trk.type);
+                    track.Pregap   = trk.pregap;
+                    track.Sequence = trk.point;
+                    track.Type     = BlindWriteTrackTypeToTrackType(trk.type);
 
-                    if(trk.pregap             > 0 &&
-                       track.TrackStartSector > 0)
+                    if(trk.pregap        > 0 &&
+                       track.StartSector > 0)
                     {
-                        track.Indexes[0] = (int)track.TrackStartSector - (int)trk.pregap;
+                        track.Indexes[0] = (int)track.StartSector - (int)trk.pregap;
 
                         if(track.Indexes[0] < 0)
                             track.Indexes[0] = 0;
                     }
 
-                    track.Indexes[1] = (int)track.TrackStartSector;
+                    track.Indexes[1] = (int)track.StartSector;
 
-                    partition.Description = track.TrackDescription;
+                    partition.Description = track.Description;
 
-                    partition.Size = (track.TrackEndSector - track.TrackStartSector) *
-                                     (ulong)track.TrackRawBytesPerSector;
+                    partition.Size = (track.EndSector - track.StartSector) * (ulong)track.RawBytesPerSector;
 
-                    partition.Length   = track.TrackEndSector - track.TrackStartSector + 1;
-                    partition.Sequence = track.TrackSequence;
+                    partition.Length   = track.EndSector - track.StartSector + 1;
+                    partition.Sequence = track.Sequence;
                     partition.Offset   = offsetBytes;
-                    partition.Start    = track.TrackStartSector;
-                    partition.Type     = track.TrackType.ToString();
+                    partition.Start    = track.StartSector;
+                    partition.Type     = track.Type.ToString();
 
                     offsetBytes += partition.Size;
 
-                    if(track.TrackStartSector >= trk.pregap)
-                        track.TrackStartSector -= trk.pregap;
+                    if(track.StartSector >= trk.pregap)
+                        track.StartSector -= trk.pregap;
 
-                    if(track.TrackEndSector > _imageInfo.Sectors)
-                        _imageInfo.Sectors = track.TrackEndSector + 1;
+                    if(track.EndSector > _imageInfo.Sectors)
+                        _imageInfo.Sectors = track.EndSector + 1;
 
                     Tracks.Add(track);
                     Partitions.Add(partition);
-                    _offsetMap.Add(track.TrackSequence, track.TrackStartSector);
+                    _offsetMap.Add(track.Sequence, track.StartSector);
                 }
             }
 
             foreach(Track track in Tracks)
             {
                 Session trackSession =
-                    Sessions.FirstOrDefault(s => track.TrackSequence >= s.StartTrack &&
-                                                 track.TrackSequence <= s.EndTrack);
+                    Sessions.FirstOrDefault(s => track.Sequence >= s.StartTrack && track.Sequence <= s.EndTrack);
 
-                track.TrackSession = trackSession.SessionSequence;
+                track.Session = trackSession.Sequence;
             }
 
             AaruConsole.DebugWriteLine("BlindWrite5 plugin", "printing track map");
 
             foreach(Track track in Tracks)
             {
-                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "Partition sequence: {0}", track.TrackSequence);
+                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "Partition sequence: {0}", track.Sequence);
 
-                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "\tPartition description: {0}",
-                                           track.TrackDescription);
+                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "\tPartition description: {0}", track.Description);
 
-                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "\tPartition type: {0}", track.TrackType);
+                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "\tPartition type: {0}", track.Type);
 
-                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "\tPartition starting sector: {0}",
-                                           track.TrackStartSector);
+                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "\tPartition starting sector: {0}", track.StartSector);
 
-                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "\tPartition ending sector: {0}",
-                                           track.TrackEndSector);
+                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "\tPartition ending sector: {0}", track.EndSector);
             }
 
             AaruConsole.DebugWriteLine("BlindWrite5 plugin", "printing partition map");
@@ -1226,18 +1221,18 @@ namespace Aaru.DiscImages
                 foreach(Track bwTrack in Tracks)
                 {
                     // First track is audio
-                    firstAudio |= bwTrack.TrackSequence == 1 && bwTrack.TrackType == CommonTypes.Enums.TrackType.Audio;
+                    firstAudio |= bwTrack.Sequence == 1 && bwTrack.Type == CommonTypes.Enums.TrackType.Audio;
 
                     // First track is data
-                    firstData |= bwTrack.TrackSequence == 1 && bwTrack.TrackType != CommonTypes.Enums.TrackType.Audio;
+                    firstData |= bwTrack.Sequence == 1 && bwTrack.Type != CommonTypes.Enums.TrackType.Audio;
 
                     // Any non first track is data
-                    data |= bwTrack.TrackSequence != 1 && bwTrack.TrackType != CommonTypes.Enums.TrackType.Audio;
+                    data |= bwTrack.Sequence != 1 && bwTrack.Type != CommonTypes.Enums.TrackType.Audio;
 
                     // Any non first track is audio
-                    audio |= bwTrack.TrackSequence != 1 && bwTrack.TrackType == CommonTypes.Enums.TrackType.Audio;
+                    audio |= bwTrack.Sequence != 1 && bwTrack.Type == CommonTypes.Enums.TrackType.Audio;
 
-                    switch(bwTrack.TrackType)
+                    switch(bwTrack.Type)
                     {
                         case CommonTypes.Enums.TrackType.CdMode2Formless:
                         case CommonTypes.Enums.TrackType.CdMode2Form1:
@@ -1388,7 +1383,7 @@ namespace Aaru.DiscImages
                _header.profile != ProfileNumber.CDROM)
                 foreach(Track track in Tracks)
                 {
-                    track.TrackPregap = 0;
+                    track.Pregap = 0;
                     track.Indexes?.Clear();
                 }
 
@@ -1478,10 +1473,10 @@ namespace Aaru.DiscImages
         /// <inheritdoc />
         public byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetMap where sectorAddress     >= kvp.Value
-                                                     from track in Tracks where track.TrackSequence == kvp.Key
-                                                     where sectorAddress                                 - kvp.Value <
-                                                           track.TrackEndSector - track.TrackStartSector + 1 select kvp)
+            foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetMap where sectorAddress >= kvp.Value
+                                                     from track in Tracks where track.Sequence  == kvp.Key
+                                                     where sectorAddress                       - kvp.Value <
+                                                           track.EndSector - track.StartSector + 1 select kvp)
                 return ReadSectors(sectorAddress - kvp.Value, length, kvp.Key);
 
             throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
@@ -1490,10 +1485,10 @@ namespace Aaru.DiscImages
         /// <inheritdoc />
         public byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
         {
-            foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetMap where sectorAddress     >= kvp.Value
-                                                     from track in Tracks where track.TrackSequence == kvp.Key
-                                                     where sectorAddress                                 - kvp.Value <
-                                                           track.TrackEndSector - track.TrackStartSector + 1 select kvp)
+            foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetMap where sectorAddress >= kvp.Value
+                                                     from track in Tracks where track.Sequence  == kvp.Key
+                                                     where sectorAddress                       - kvp.Value <
+                                                           track.EndSector - track.StartSector + 1 select kvp)
                 return ReadSectorsTag(sectorAddress - kvp.Value, length, kvp.Key, tag);
 
             throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
@@ -1505,10 +1500,10 @@ namespace Aaru.DiscImages
             // TODO: Cross data files
             var aaruTrack = new Track
             {
-                TrackSequence = 0
+                Sequence = 0
             };
 
-            foreach(Track bwTrack in Tracks.Where(bwTrack => bwTrack.TrackSequence == track))
+            foreach(Track bwTrack in Tracks.Where(bwTrack => bwTrack.Sequence == track))
             {
                 aaruTrack = bwTrack;
 
@@ -1518,14 +1513,14 @@ namespace Aaru.DiscImages
             if(aaruTrack is null)
                 throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
 
-            if(length + sectorAddress > aaruTrack.TrackEndSector - aaruTrack.TrackStartSector + 1)
+            if(length + sectorAddress > aaruTrack.EndSector - aaruTrack.StartSector + 1)
                 throw new ArgumentOutOfRangeException(nameof(length),
-                                                      $"Requested more sectors ({length + sectorAddress}) than present in track ({aaruTrack.TrackEndSector - aaruTrack.TrackStartSector + 1}), won't cross tracks");
+                                                      $"Requested more sectors ({length + sectorAddress}) than present in track ({aaruTrack.EndSector - aaruTrack.StartSector + 1}), won't cross tracks");
 
             DataFileCharacteristics chars = (from characteristics in _filePaths let firstSector =
                                                  characteristics.StartLba let lastSector =
                                                  firstSector + characteristics.Sectors - 1 let wantedSector =
-                                                 (int)(sectorAddress + aaruTrack.TrackStartSector)
+                                                 (int)(sectorAddress + aaruTrack.StartSector)
                                              where wantedSector >= firstSector && wantedSector <= lastSector
                                              select characteristics).FirstOrDefault();
 
@@ -1538,7 +1533,7 @@ namespace Aaru.DiscImages
             uint sectorSkip;
             bool mode2 = false;
 
-            switch(aaruTrack.TrackType)
+            switch(aaruTrack.Type)
             {
                 case CommonTypes.Enums.TrackType.CdMode1:
                 {
@@ -1601,7 +1596,7 @@ namespace Aaru.DiscImages
             var br = new BinaryReader(_imageStream);
 
             br.BaseStream.
-               Seek((long)aaruTrack.TrackFileOffset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
+               Seek((long)aaruTrack.FileOffset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
                     SeekOrigin.Begin);
 
             if(mode2)
@@ -1641,10 +1636,10 @@ namespace Aaru.DiscImages
             // TODO: Cross data files
             var aaruTrack = new Track
             {
-                TrackSequence = 0
+                Sequence = 0
             };
 
-            foreach(Track bwTrack in Tracks.Where(bwTrack => bwTrack.TrackSequence == track))
+            foreach(Track bwTrack in Tracks.Where(bwTrack => bwTrack.Sequence == track))
             {
                 aaruTrack = bwTrack;
 
@@ -1654,14 +1649,14 @@ namespace Aaru.DiscImages
             if(aaruTrack is null)
                 throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
 
-            if(length + sectorAddress > aaruTrack.TrackEndSector - aaruTrack.TrackStartSector + 1)
+            if(length + sectorAddress > aaruTrack.EndSector - aaruTrack.StartSector + 1)
                 throw new ArgumentOutOfRangeException(nameof(length),
-                                                      $"Requested more sectors ({length + sectorAddress}) than present in track ({aaruTrack.TrackEndSector - aaruTrack.TrackStartSector + 1}), won't cross tracks");
+                                                      $"Requested more sectors ({length + sectorAddress}) than present in track ({aaruTrack.EndSector - aaruTrack.StartSector + 1}), won't cross tracks");
 
             DataFileCharacteristics chars = (from characteristics in _filePaths let firstSector =
                                                  characteristics.StartLba let lastSector =
                                                  firstSector + characteristics.Sectors - 1 let wantedSector =
-                                                 (int)(sectorAddress + aaruTrack.TrackStartSector)
+                                                 (int)(sectorAddress + aaruTrack.StartSector)
                                              where wantedSector >= firstSector && wantedSector <= lastSector
                                              select characteristics).FirstOrDefault();
 
@@ -1669,7 +1664,7 @@ namespace Aaru.DiscImages
                chars.FileFilter == null)
                 throw new ArgumentOutOfRangeException(nameof(chars.FileFilter), "Track does not exist in disc image");
 
-            if(aaruTrack.TrackType == CommonTypes.Enums.TrackType.Data)
+            if(aaruTrack.Type == CommonTypes.Enums.TrackType.Data)
                 throw new ArgumentException("Unsupported tag requested", nameof(tag));
 
             switch(tag)
@@ -1697,7 +1692,7 @@ namespace Aaru.DiscImages
             uint sectorSize;
             uint sectorSkip;
 
-            switch(aaruTrack.TrackType)
+            switch(aaruTrack.Type)
             {
                 case CommonTypes.Enums.TrackType.CdMode1:
                     switch(tag)
@@ -2095,11 +2090,11 @@ namespace Aaru.DiscImages
 
             byte[] buffer = new byte[sectorSize * length];
 
-            _imageStream = aaruTrack.TrackFilter.GetDataForkStream();
+            _imageStream = aaruTrack.Filter.GetDataForkStream();
             var br = new BinaryReader(_imageStream);
 
             br.BaseStream.
-               Seek((long)aaruTrack.TrackFileOffset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
+               Seek((long)aaruTrack.FileOffset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
                     SeekOrigin.Begin);
 
             if(sectorOffset == 0 &&
@@ -2134,10 +2129,10 @@ namespace Aaru.DiscImages
         /// <inheritdoc />
         public byte[] ReadSectorsLong(ulong sectorAddress, uint length)
         {
-            foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetMap where sectorAddress     >= kvp.Value
-                                                     from track in Tracks where track.TrackSequence == kvp.Key
-                                                     where sectorAddress                                 - kvp.Value <
-                                                           track.TrackEndSector - track.TrackStartSector + 1 select kvp)
+            foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetMap where sectorAddress >= kvp.Value
+                                                     from track in Tracks where track.Sequence  == kvp.Key
+                                                     where sectorAddress                       - kvp.Value <
+                                                           track.EndSector - track.StartSector + 1 select kvp)
                 return ReadSectorsLong(sectorAddress - kvp.Value, length, kvp.Key);
 
             throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
@@ -2149,10 +2144,10 @@ namespace Aaru.DiscImages
             // TODO: Cross data files
             var aaruTrack = new Track
             {
-                TrackSequence = 0
+                Sequence = 0
             };
 
-            foreach(Track bwTrack in Tracks.Where(bwTrack => bwTrack.TrackSequence == track))
+            foreach(Track bwTrack in Tracks.Where(bwTrack => bwTrack.Sequence == track))
             {
                 aaruTrack = bwTrack;
 
@@ -2162,14 +2157,14 @@ namespace Aaru.DiscImages
             if(aaruTrack is null)
                 throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
 
-            if(length + sectorAddress > aaruTrack.TrackEndSector - aaruTrack.TrackStartSector + 1)
+            if(length + sectorAddress > aaruTrack.EndSector - aaruTrack.StartSector + 1)
                 throw new ArgumentOutOfRangeException(nameof(length),
-                                                      $"Requested more sectors ({length + sectorAddress}) than present in track ({aaruTrack.TrackEndSector - aaruTrack.TrackStartSector + 1}), won't cross tracks");
+                                                      $"Requested more sectors ({length + sectorAddress}) than present in track ({aaruTrack.EndSector - aaruTrack.StartSector + 1}), won't cross tracks");
 
             DataFileCharacteristics chars = (from characteristics in _filePaths let firstSector =
                                                  characteristics.StartLba let lastSector =
                                                  firstSector + characteristics.Sectors - 1 let wantedSector =
-                                                 (int)(sectorAddress + aaruTrack.TrackStartSector)
+                                                 (int)(sectorAddress + aaruTrack.StartSector)
                                              where wantedSector >= firstSector && wantedSector <= lastSector
                                              select characteristics).FirstOrDefault();
 
@@ -2181,7 +2176,7 @@ namespace Aaru.DiscImages
             uint sectorSize;
             uint sectorSkip;
 
-            switch(aaruTrack.TrackType)
+            switch(aaruTrack.Type)
             {
                 case CommonTypes.Enums.TrackType.CdMode1:
                 case CommonTypes.Enums.TrackType.CdMode2Formless:
@@ -2225,11 +2220,11 @@ namespace Aaru.DiscImages
 
             byte[] buffer = new byte[sectorSize * length];
 
-            _imageStream = aaruTrack.TrackFilter.GetDataForkStream();
+            _imageStream = aaruTrack.Filter.GetDataForkStream();
             var br = new BinaryReader(_imageStream);
 
             br.BaseStream.
-               Seek((long)aaruTrack.TrackFileOffset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
+               Seek((long)aaruTrack.FileOffset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
                     SeekOrigin.Begin);
 
             if(sectorOffset == 0 &&
@@ -2251,13 +2246,13 @@ namespace Aaru.DiscImages
         public List<Track> GetSessionTracks(Session session)
         {
             if(Sessions.Contains(session))
-                return GetSessionTracks(session.SessionSequence);
+                return GetSessionTracks(session.Sequence);
 
             throw new ImageNotSupportedException("Session does not exist in disc image");
         }
 
         /// <inheritdoc />
         public List<Track> GetSessionTracks(ushort session) =>
-            Tracks.Where(aaruTrack => aaruTrack.TrackSession == session).ToList();
+            Tracks.Where(aaruTrack => aaruTrack.Session == session).ToList();
     }
 }

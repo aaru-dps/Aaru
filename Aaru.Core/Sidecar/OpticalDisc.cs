@@ -309,7 +309,7 @@ namespace Aaru.Core
 
                 var xmlTrk = new TrackType();
 
-                switch(trk.TrackType)
+                switch(trk.Type)
                 {
                     case CommonTypes.Enums.TrackType.Audio:
                         xmlTrk.TrackType1 = TrackTypeTrackType.audio;
@@ -361,12 +361,12 @@ namespace Aaru.Core
 
                 xmlTrk.Sequence = new TrackSequenceType
                 {
-                    Session     = trk.TrackSession,
-                    TrackNumber = trk.TrackSequence
+                    Session     = trk.Session,
+                    TrackNumber = trk.Sequence
                 };
 
-                xmlTrk.StartSector = trk.TrackStartSector;
-                xmlTrk.EndSector   = trk.TrackEndSector;
+                xmlTrk.StartSector = trk.StartSector;
+                xmlTrk.EndSector   = trk.EndSector;
 
                 int idx0 = -1;
 
@@ -391,19 +391,19 @@ namespace Aaru.Core
 
                 xmlTrk.Image = new ImageType
                 {
-                    Value  = Path.GetFileName(trk.TrackFile),
-                    format = trk.TrackFileType
+                    Value  = Path.GetFileName(trk.File),
+                    format = trk.FileType
                 };
 
-                if(trk.TrackFileOffset > 0)
+                if(trk.FileOffset > 0)
                 {
-                    xmlTrk.Image.offset          = trk.TrackFileOffset;
+                    xmlTrk.Image.offset          = trk.FileOffset;
                     xmlTrk.Image.offsetSpecified = true;
                 }
 
-                xmlTrk.Size = (xmlTrk.EndSector - xmlTrk.StartSector + 1) * (ulong)trk.TrackRawBytesPerSector;
+                xmlTrk.Size = (xmlTrk.EndSector - xmlTrk.StartSector + 1) * (ulong)trk.RawBytesPerSector;
 
-                xmlTrk.BytesPerSector = (uint)trk.TrackBytesPerSector;
+                xmlTrk.BytesPerSector = (uint)trk.BytesPerSector;
 
                 uint  sectorsToRead = 512;
                 ulong sectors       = xmlTrk.EndSector - xmlTrk.StartSector + 1;
@@ -420,7 +420,7 @@ namespace Aaru.Core
                     xmlTrk.Checksums = sidecar.OpticalDisc[0].Checksums;
                 else
                 {
-                    UpdateProgress("Track {0} of {1}", trk.TrackSequence, tracks.Count);
+                    UpdateProgress("Track {0} of {1}", trk.Sequence, tracks.Count);
 
                     // For fast debugging, skip checksum
                     //goto skipChecksum;
@@ -446,7 +446,7 @@ namespace Aaru.Core
                             sector = image.ReadSectorsLong(doneSectors, sectorsToRead, xmlTrk.Sequence.TrackNumber);
 
                             UpdateProgress2("Hashing sector {0} of {1}", (long)doneSectors,
-                                            (long)(trk.TrackEndSector - trk.TrackStartSector + 1));
+                                            (long)(trk.EndSector - trk.StartSector + 1));
 
                             doneSectors += sectorsToRead;
                         }
@@ -456,7 +456,7 @@ namespace Aaru.Core
                                                            xmlTrk.Sequence.TrackNumber);
 
                             UpdateProgress2("Hashing sector {0} of {1}", (long)doneSectors,
-                                            (long)(trk.TrackEndSector - trk.TrackStartSector + 1));
+                                            (long)(trk.EndSector - trk.StartSector + 1));
 
                             doneSectors += sectors - doneSectors;
                         }
@@ -471,20 +471,20 @@ namespace Aaru.Core
                     EndProgress2();
                 }
 
-                if(trk.TrackSubchannelType != TrackSubchannelType.None)
+                if(trk.SubchannelType != TrackSubchannelType.None)
                 {
                     xmlTrk.SubChannel = new SubChannelType
                     {
                         Image = new ImageType
                         {
-                            Value = trk.TrackSubchannelFile
+                            Value = trk.SubchannelFile
                         },
 
                         // TODO: Packed subchannel has different size?
                         Size = (xmlTrk.EndSector - xmlTrk.StartSector + 1) * 96
                     };
 
-                    switch(trk.TrackSubchannelType)
+                    switch(trk.SubchannelType)
                     {
                         case TrackSubchannelType.Packed:
                         case TrackSubchannelType.PackedInterleaved:
@@ -503,9 +503,9 @@ namespace Aaru.Core
                             break;
                     }
 
-                    if(trk.TrackFileOffset > 0)
+                    if(trk.FileOffset > 0)
                     {
-                        xmlTrk.SubChannel.Image.offset          = trk.TrackSubchannelOffset;
+                        xmlTrk.SubChannel.Image.offset          = trk.SubchannelOffset;
                         xmlTrk.SubChannel.Image.offsetSpecified = true;
                     }
 
@@ -534,7 +534,7 @@ namespace Aaru.Core
                                                           SectorTagType.CdSectorSubchannel);
 
                             UpdateProgress2("Hashing subchannel sector {0} of {1}", (long)doneSectors,
-                                            (long)(trk.TrackEndSector - trk.TrackStartSector + 1));
+                                            (long)(trk.EndSector - trk.StartSector + 1));
 
                             doneSectors += sectorsToRead;
                         }
@@ -545,7 +545,7 @@ namespace Aaru.Core
                                                           SectorTagType.CdSectorSubchannel);
 
                             UpdateProgress2("Hashing subchannel sector {0} of {1}", (long)doneSectors,
-                                            (long)(trk.TrackEndSector - trk.TrackStartSector + 1));
+                                            (long)(trk.EndSector - trk.StartSector + 1));
 
                             doneSectors += sectors - doneSectors;
                         }
@@ -564,8 +564,8 @@ namespace Aaru.Core
                 //skipChecksum:
 
                 List<Partition> trkPartitions = partitions.
-                                                Where(p => p.Start >= trk.TrackStartSector &&
-                                                           p.End   <= trk.TrackEndSector).ToList();
+                                                Where(p => p.Start >= trk.StartSector &&
+                                                           p.End   <= trk.EndSector).ToList();
 
                 xmlTrk.FileSystemInformation = new PartitionType[1];
 
@@ -704,7 +704,7 @@ namespace Aaru.Core
 
                 try
                 {
-                    byte[] isrcData = image.ReadSectorTag(trk.TrackSequence, SectorTagType.CdTrackIsrc);
+                    byte[] isrcData = image.ReadSectorTag(trk.Sequence, SectorTagType.CdTrackIsrc);
 
                     if(isrcData?.Length > 0)
                         xmlTrk.ISRC = Encoding.UTF8.GetString(isrcData);
@@ -716,7 +716,7 @@ namespace Aaru.Core
 
                 try
                 {
-                    byte[] flagsData = image.ReadSectorTag(trk.TrackSequence, SectorTagType.CdTrackFlags);
+                    byte[] flagsData = image.ReadSectorTag(trk.Sequence, SectorTagType.CdTrackFlags);
 
                     if(flagsData?.Length > 0)
                     {

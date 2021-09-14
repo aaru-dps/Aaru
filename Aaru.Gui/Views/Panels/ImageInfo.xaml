@@ -117,14 +117,14 @@
                 </TabItem.Header>
                 <DataGrid Items="{Binding Tracks}" IsVisible="{Binding !!Tracks.Count}" IsReadOnly="True">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Track" Binding="{Binding TrackSequence}" Width="Auto" />
-                        <DataGridTextColumn Header="Type" Binding="{Binding TrackType}" Width="Auto" />
-                        <DataGridTextColumn Header="Bps" Binding="{Binding TrackBytesPerSector}" Width="Auto" />
-                        <DataGridTextColumn Header="Raw bps" Binding="{Binding TrackRawBytesPerSector}" Width="Auto" />
-                        <DataGridTextColumn Header="Subchannel" Binding="{Binding TrackSubchannelType}" Width="Auto" />
-                        <DataGridTextColumn Header="Pregap" Binding="{Binding TrackPregap}" Width="Auto" />
-                        <DataGridTextColumn Header="Start" Binding="{Binding TrackStartSector}" Width="Auto" />
-                        <DataGridTextColumn Header="End" Binding="{Binding TrackEndSector}" Width="Auto" />
+                        <DataGridTextColumn Header="Track" Binding="{Binding Sequence}" Width="Auto" />
+                        <DataGridTextColumn Header="Type" Binding="{Binding Type}" Width="Auto" />
+                        <DataGridTextColumn Header="Bps" Binding="{Binding BytesPerSector}" Width="Auto" />
+                        <DataGridTextColumn Header="Raw bps" Binding="{Binding RawBytesPerSector}" Width="Auto" />
+                        <DataGridTextColumn Header="Subchannel" Binding="{Binding SubchannelType}" Width="Auto" />
+                        <DataGridTextColumn Header="Pregap" Binding="{Binding Pregap}" Width="Auto" />
+                        <DataGridTextColumn Header="Start" Binding="{Binding StartSector}" Width="Auto" />
+                        <DataGridTextColumn Header="End" Binding="{Binding EndSector}" Width="Auto" />
                     </DataGrid.Columns>
                 </DataGrid>
             </TabItem>

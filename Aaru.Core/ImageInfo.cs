@@ -631,7 +631,7 @@ namespace Aaru.Core
                         table.AddColumn("End");
 
                         foreach(Session session in opticalImage.Sessions)
-                            table.AddRow(session.SessionSequence.ToString(), session.StartTrack.ToString(),
+                            table.AddRow(session.Sequence.ToString(), session.StartTrack.ToString(),
                                          session.EndTrack.ToString(), session.StartSector.ToString(),
                                          session.EndSector.ToString());
 
@@ -664,10 +664,10 @@ namespace Aaru.Core
                         table.AddColumn("End");
 
                         foreach(Track track in opticalImage.Tracks)
-                            table.AddRow(track.TrackSequence.ToString(), track.TrackType.ToString(),
-                                         track.TrackBytesPerSector.ToString(), track.TrackRawBytesPerSector.ToString(),
-                                         track.TrackSubchannelType.ToString(), track.TrackPregap.ToString(),
-                                         track.TrackStartSector.ToString(), track.TrackEndSector.ToString());
+                            table.AddRow(track.Sequence.ToString(), track.Type.ToString(),
+                                         track.BytesPerSector.ToString(), track.RawBytesPerSector.ToString(),
+                                         track.SubchannelType.ToString(), track.Pregap.ToString(),
+                                         track.StartSector.ToString(), track.EndSector.ToString());
 
                         AnsiConsole.Render(table);
 
@@ -686,7 +686,7 @@ namespace Aaru.Core
 
                             foreach(Track track in opticalImage.Tracks)
                                 foreach(KeyValuePair<ushort, int> index in track.Indexes)
-                                    table.AddRow(track.TrackSequence.ToString(), index.Key.ToString(),
+                                    table.AddRow(track.Sequence.ToString(), index.Key.ToString(),
                                                  index.Value.ToString());
 
                             AnsiConsole.Render(table);

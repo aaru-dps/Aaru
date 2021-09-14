@@ -142,7 +142,7 @@ namespace Aaru.Core.Devices.Dumping
                 return;
             }
 
-            firstLba = (uint)tracks.Min(t => t.TrackStartSector);
+            firstLba = (uint)tracks.Min(t => t.StartSector);
 
             // Check subchannels support
             supportsPqSubchannel = SupportsPqSubchannel(_dev, _dumpLog, UpdateStatus, firstLba);
@@ -400,7 +400,7 @@ namespace Aaru.Core.Devices.Dumping
             }
 
             foreach(Track trk in tracks)
-                trk.TrackSubchannelType = subType;
+                trk.SubchannelType = subType;
 
             _dumpLog.WriteLine("Calculating pregaps, can take some time...");
             UpdateStatus?.Invoke("Calculating pregaps, can take some time...");
@@ -437,7 +437,7 @@ namespace Aaru.Core.Devices.Dumping
 
             if(!(_outputPlugin as IWritableOpticalImage).OpticalCapabilities.HasFlag(OpticalImageCapabilities.
                    CanStoreAudioTracks) &&
-               tracks.Any(track => track.TrackType == TrackType.Audio))
+               tracks.Any(track => track.Type == TrackType.Audio))
             {
                 _dumpLog.WriteLine("Output format does not support audio tracks, cannot continue...");
 
@@ -448,9 +448,9 @@ namespace Aaru.Core.Devices.Dumping
 
             if(!(_outputPlugin as IWritableOpticalImage).OpticalCapabilities.HasFlag(OpticalImageCapabilities.
                    CanStorePregaps) &&
-               tracks.Where(track => track.TrackSequence !=
-                                     tracks.First(t => t.TrackSession == track.TrackSession).TrackSequence).
-                      Any(track => track.TrackPregap > 0))
+               tracks.Where(track => track.Sequence !=
+                                     tracks.First(t => t.Session == track.Session).Sequence).
+                      Any(track => track.Pregap > 0))
             {
                 if(!_force)
                 {
@@ -469,9 +469,9 @@ namespace Aaru.Core.Devices.Dumping
             }
 
             for(int t = 1; t < tracks.Length; t++)
-                tracks[t - 1].TrackEndSector = tracks[t].TrackStartSector - 1;
+                tracks[t - 1].EndSector = tracks[t].StartSector - 1;
 
-            tracks[^1].TrackEndSector = (ulong)lastSector;
+            tracks[^1].EndSector = (ulong)lastSector;
             blocks                    = (ulong)(lastSector + 1);
 
             if(blocks == 0)
@@ -538,14 +538,14 @@ namespace Aaru.Core.Devices.Dumping
                 UpdateStatus?.Invoke("Solving lead-outs...");
 
                 foreach(KeyValuePair<int, long> leadOuts in leadOutStarts)
-                    foreach(Track trk in tracks.Where(trk => trk.TrackSession   == leadOuts.Key).
-                                                Where(trk => trk.TrackEndSector >= (ulong)leadOuts.Value))
-                        trk.TrackEndSector = (ulong)leadOuts.Value - 1;
+                    foreach(Track trk in tracks.Where(trk => trk.Session   == leadOuts.Key).
+                                                Where(trk => trk.EndSector >= (ulong)leadOuts.Value))
+                        trk.EndSector = (ulong)leadOuts.Value - 1;
 
                 var dataExtents = new ExtentsULong();
 
                 foreach(Track trk in tracks)
-                    dataExtents.Add(trk.TrackStartSector, trk.TrackEndSector);
+                    dataExtents.Add(trk.StartSector, trk.EndSector);
 
                 Tuple<ulong, ulong>[] dataExtentsArray = dataExtents.ToArray();
 
@@ -568,14 +568,14 @@ namespace Aaru.Core.Devices.Dumping
                 {
                     new Track
                     {
-                        TrackSequence          = 0,
-                        TrackSession           = 1,
-                        TrackType              = hiddenData ? TrackType.Data : TrackType.Audio,
-                        TrackStartSector       = 0,
-                        TrackBytesPerSector    = (int)sectorSize,
-                        TrackRawBytesPerSector = (int)sectorSize,
-                        TrackSubchannelType    = subType,
-                        TrackEndSector         = tracks.First(t => t.TrackSequence == 1).TrackStartSector - 1
+                        Sequence          = 0,
+                        Session           = 1,
+                        Type              = hiddenData ? TrackType.Data : TrackType.Audio,
+                        StartSector       = 0,
+                        BytesPerSector    = (int)sectorSize,
+                        RawBytesPerSector = (int)sectorSize,
+                        SubchannelType    = subType,
+                        EndSector         = tracks.First(t => t.Sequence == 1).StartSector - 1
                     }
                 };
 
@@ -583,7 +583,7 @@ namespace Aaru.Core.Devices.Dumping
                 tracks = trkList.ToArray();
             }
 
-            if(tracks.Any(t => t.TrackType == TrackType.Audio) &&
+            if(tracks.Any(t => t.Type == TrackType.Audio) &&
                desiredSubchannel != MmcSubchannel.Raw)
             {
                 _dumpLog.WriteLine("WARNING: If disc says CD+G, CD+EG, CD-MIDI, CD Graphics or CD Enhanced Graphics, dump will be incorrect!");
@@ -593,27 +593,27 @@ namespace Aaru.Core.Devices.Dumping
             }
 
             // Check mode for tracks
-            foreach(Track trk in tracks.Where(t => t.TrackType != TrackType.Audio))
+            foreach(Track trk in tracks.Where(t => t.Type != TrackType.Audio))
             {
                 if(!readcd)
                 {
-                    trk.TrackType = TrackType.CdMode1;
+                    trk.Type = TrackType.CdMode1;
 
                     continue;
                 }
 
-                _dumpLog.WriteLine("Checking mode for track {0}...", trk.TrackSequence);
-                UpdateStatus?.Invoke($"Checking mode for track {trk.TrackSequence}...");
+                _dumpLog.WriteLine("Checking mode for track {0}...", trk.Sequence);
+                UpdateStatus?.Invoke($"Checking mode for track {trk.Sequence}...");
 
-                sense = _dev.ReadCd(out cmdBuf, out _, (uint)(trk.TrackStartSector + trk.TrackPregap), blockSize, 1,
+                sense = _dev.ReadCd(out cmdBuf, out _, (uint)(trk.StartSector + trk.Pregap), blockSize, 1,
                                     MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true, true,
                                     MmcErrorField.None, supportedSubchannel, _dev.Timeout, out _);
 
                 if(sense)
                 {
-                    _dumpLog.WriteLine("Unable to guess mode for track {0}, continuing...", trk.TrackSequence);
+                    _dumpLog.WriteLine("Unable to guess mode for track {0}, continuing...", trk.Sequence);
 
-                    UpdateStatus?.Invoke($"Unable to guess mode for track {trk.TrackSequence}, continuing...");
+                    UpdateStatus?.Invoke($"Unable to guess mode for track {trk.Sequence}, continuing...");
 
                     continue;
                 }
@@ -643,9 +643,9 @@ namespace Aaru.Core.Devices.Dumping
                 {
                     case 1:
                     case 0x61: // Scrambled
-                        UpdateStatus?.Invoke($"Track {trk.TrackSequence} is MODE1");
-                        _dumpLog.WriteLine("Track {0} is MODE1", trk.TrackSequence);
-                        trk.TrackType = TrackType.CdMode1;
+                        UpdateStatus?.Invoke($"Track {trk.Sequence} is MODE1");
+                        _dumpLog.WriteLine("Track {0} is MODE1", trk.Sequence);
+                        trk.Type = TrackType.CdMode1;
 
                         break;
                     case 2:
@@ -653,25 +653,25 @@ namespace Aaru.Core.Devices.Dumping
                         if(dskType == MediaType.CDI ||
                            dskType == MediaType.CDIREADY)
                         {
-                            UpdateStatus?.Invoke($"Track {trk.TrackSequence} is MODE2");
-                            _dumpLog.WriteLine("Track {0} is MODE2", trk.TrackSequence);
-                            trk.TrackType = TrackType.CdMode2Formless;
+                            UpdateStatus?.Invoke($"Track {trk.Sequence} is MODE2");
+                            _dumpLog.WriteLine("Track {0} is MODE2", trk.Sequence);
+                            trk.Type = TrackType.CdMode2Formless;
 
                             break;
                         }
 
                         if((cmdBuf[0x012] & 0x20) == 0x20) // mode 2 form 2
                         {
-                            UpdateStatus?.Invoke($"Track {trk.TrackSequence} is MODE2 FORM 2");
-                            _dumpLog.WriteLine("Track {0} is MODE2 FORM 2", trk.TrackSequence);
-                            trk.TrackType = TrackType.CdMode2Form2;
+                            UpdateStatus?.Invoke($"Track {trk.Sequence} is MODE2 FORM 2");
+                            _dumpLog.WriteLine("Track {0} is MODE2 FORM 2", trk.Sequence);
+                            trk.Type = TrackType.CdMode2Form2;
 
                             break;
                         }
 
-                        UpdateStatus?.Invoke($"Track {trk.TrackSequence} is MODE2 FORM 1");
-                        _dumpLog.WriteLine("Track {0} is MODE2 FORM 1", trk.TrackSequence);
-                        trk.TrackType = TrackType.CdMode2Form1;
+                        UpdateStatus?.Invoke($"Track {trk.Sequence} is MODE2 FORM 1");
+                        _dumpLog.WriteLine("Track {0} is MODE2 FORM 1", trk.Sequence);
+                        trk.Type = TrackType.CdMode2Form1;
 
                         // These media type specifications do not legally allow mode 2 tracks to be present
                         if(dskType == MediaType.CDROM  ||
@@ -681,8 +681,8 @@ namespace Aaru.Core.Devices.Dumping
 
                         break;
                     default:
-                        UpdateStatus?.Invoke($"Track {trk.TrackSequence} is unknown mode {cmdBuf[15]}");
-                        _dumpLog.WriteLine("Track {0} is unknown mode {1}", trk.TrackSequence, cmdBuf[15]);
+                        UpdateStatus?.Invoke($"Track {trk.Sequence} is unknown mode {cmdBuf[15]}");
+                        _dumpLog.WriteLine("Track {0} is unknown mode {1}", trk.Sequence, cmdBuf[15]);
 
                         break;
                 }
@@ -698,7 +698,7 @@ namespace Aaru.Core.Devices.Dumping
                     return;
                 }
 
-                if(tracks.Any(t => t.TrackType == TrackType.Audio))
+                if(tracks.Any(t => t.Type == TrackType.Audio))
                 {
                     StoppingErrorMessage?.Invoke("Output format does not support audio tracks, not continuing...");
                     _dumpLog.WriteLine("Output format does not support audio tracks, not continuing...");
@@ -706,7 +706,7 @@ namespace Aaru.Core.Devices.Dumping
                     return;
                 }
 
-                if(tracks.Any(t => t.TrackType != TrackType.CdMode1))
+                if(tracks.Any(t => t.Type != TrackType.CdMode1))
                 {
                     StoppingErrorMessage?.Invoke("Output format only supports MODE 1 tracks, not continuing...");
                     _dumpLog.WriteLine("Output format only supports MODE 1 tracks, not continuing...");
@@ -848,24 +848,24 @@ namespace Aaru.Core.Devices.Dumping
                     try
                     {
                         byte[] isrcBytes =
-                            (_outputPlugin as IWritableOpticalImage).ReadSectorTag(imgTrack.TrackSequence,
+                            (_outputPlugin as IWritableOpticalImage).ReadSectorTag(imgTrack.Sequence,
                                 SectorTagType.CdTrackIsrc);
 
                         if(isrcBytes != null)
-                            isrcs[(byte)imgTrack.TrackSequence] = Encoding.ASCII.GetString(isrcBytes);
+                            isrcs[(byte)imgTrack.Sequence] = Encoding.ASCII.GetString(isrcBytes);
                     }
                     catch(Exception)
                     {
                         // TODO: Replace for error number
                     }
 
-                    Track trk = tracks.FirstOrDefault(t => t.TrackSequence == imgTrack.TrackSequence);
+                    Track trk = tracks.FirstOrDefault(t => t.Sequence == imgTrack.Sequence);
 
                     if(trk != null)
                     {
-                        trk.TrackPregap      = imgTrack.TrackPregap;
-                        trk.TrackStartSector = imgTrack.TrackStartSector;
-                        trk.TrackEndSector   = imgTrack.TrackEndSector;
+                        trk.Pregap      = imgTrack.Pregap;
+                        trk.StartSector = imgTrack.StartSector;
+                        trk.EndSector   = imgTrack.EndSector;
 
                         foreach(KeyValuePair<ushort, int> imgIdx in imgTrack.Indexes)
                             trk.Indexes[imgIdx.Key] = imgIdx.Value;
@@ -913,13 +913,13 @@ namespace Aaru.Core.Devices.Dumping
             // Set track flags
             foreach(KeyValuePair<byte, byte> kvp in trackFlags)
             {
-                Track track = tracks.FirstOrDefault(t => t.TrackSequence == kvp.Key);
+                Track track = tracks.FirstOrDefault(t => t.Sequence == kvp.Key);
 
                 if(track is null)
                     continue;
 
-                _dumpLog.WriteLine("Setting flags for track {0}...", track.TrackSequence);
-                UpdateStatus?.Invoke($"Setting flags for track {track.TrackSequence}...");
+                _dumpLog.WriteLine("Setting flags for track {0}...", track.Sequence);
+                UpdateStatus?.Invoke($"Setting flags for track {track.Sequence}...");
 
                 _outputPlugin.WriteSectorTag(new[]
                 {
@@ -947,17 +947,17 @@ namespace Aaru.Core.Devices.Dumping
             if(supportedSubchannel == MmcSubchannel.None)
                 foreach(Track trk in tracks)
                 {
-                    sense = _dev.ReadIsrc((byte)trk.TrackSequence, out string isrc, out _, out _, _dev.Timeout, out _);
+                    sense = _dev.ReadIsrc((byte)trk.Sequence, out string isrc, out _, out _, _dev.Timeout, out _);
 
                     if(sense        ||
                        isrc == null ||
                        isrc == "000000000000")
                         continue;
 
-                    isrcs[(byte)trk.TrackSequence] = isrc;
+                    isrcs[(byte)trk.Sequence] = isrc;
 
-                    UpdateStatus?.Invoke($"Found ISRC for track {trk.TrackSequence}: {isrc}");
-                    _dumpLog.WriteLine($"Found ISRC for track {trk.TrackSequence}: {isrc}");
+                    UpdateStatus?.Invoke($"Found ISRC for track {trk.Sequence}: {isrc}");
+                    _dumpLog.WriteLine($"Found ISRC for track {trk.Sequence}: {isrc}");
                 }
 
             if(supportedSubchannel != MmcSubchannel.None &&
@@ -987,13 +987,13 @@ namespace Aaru.Core.Devices.Dumping
         #if DEBUG
             foreach(Track trk in tracks)
                 UpdateStatus?.
-                    Invoke($"Track {trk.TrackSequence} starts at LBA {trk.TrackStartSector} and ends at LBA {trk.TrackEndSector}");
+                    Invoke($"Track {trk.Sequence} starts at LBA {trk.StartSector} and ends at LBA {trk.EndSector}");
         #endif
 
             // Check offset
             if(_fixOffset)
             {
-                if(tracks.All(t => t.TrackType != TrackType.Audio))
+                if(tracks.All(t => t.Type != TrackType.Audio))
                 {
                     // No audio tracks so no need to fix offset
                     _dumpLog.WriteLine("No audio tracks, disabling offset fix.");
@@ -1012,7 +1012,7 @@ namespace Aaru.Core.Devices.Dumping
                     _fixOffset = false;
                 }
             }
-            else if(tracks.Any(t => t.TrackType == TrackType.Audio))
+            else if(tracks.Any(t => t.Type == TrackType.Audio))
             {
                 _dumpLog.WriteLine("There are audio tracks and offset fixing is disabled, dump may not be correct.");
                 UpdateStatus?.Invoke("There are audio tracks and offset fixing is disabled, dump may not be correct.");
@@ -1036,7 +1036,7 @@ namespace Aaru.Core.Devices.Dumping
                     _dumpLog.WriteLine("Disc offset cannot be calculated.");
                     UpdateStatus?.Invoke("Disc offset cannot be calculated.");
 
-                    if(tracks.Any(t => t.TrackType == TrackType.Audio))
+                    if(tracks.Any(t => t.Type == TrackType.Audio))
                     {
                         _dumpLog.WriteLine("Dump may not be correct.");
 
@@ -1099,7 +1099,7 @@ namespace Aaru.Core.Devices.Dumping
             }
 
             if(!_fixOffset ||
-               tracks.All(t => t.TrackType != TrackType.Audio))
+               tracks.All(t => t.Type != TrackType.Audio))
             {
                 offsetBytes      = 0;
                 sectorsForOffset = 0;
@@ -1110,9 +1110,9 @@ namespace Aaru.Core.Devices.Dumping
 
             audioExtents = new ExtentsULong();
 
-            foreach(Track audioTrack in tracks.Where(t => t.TrackType == TrackType.Audio))
+            foreach(Track audioTrack in tracks.Where(t => t.Type == TrackType.Audio))
             {
-                audioExtents.Add(audioTrack.TrackStartSector, audioTrack.TrackEndSector);
+                audioExtents.Add(audioTrack.StartSector, audioTrack.EndSector);
             }
 
             // Set speed
@@ -1135,9 +1135,9 @@ namespace Aaru.Core.Devices.Dumping
 
             if(dskType == MediaType.CDIREADY)
             {
-                Track track0 = tracks.FirstOrDefault(t => t.TrackSequence == 0);
+                Track track0 = tracks.FirstOrDefault(t => t.Sequence == 0);
 
-                track0.TrackType = TrackType.CdMode2Formless;
+                track0.Type = TrackType.CdMode2Formless;
 
                 if(!supportsLongSectors)
                 {
@@ -1232,7 +1232,7 @@ namespace Aaru.Core.Devices.Dumping
 
             ReadCdData(audioExtents, blocks, blockSize, ref currentSpeed, currentTry, extents, ibgLog,
                        ref imageWriteDuration, lastSector, leadOutExtents, ref maxSpeed, mhddLog, ref minSpeed,
-                       out newTrim, tracks[0].TrackType != TrackType.Audio, offsetBytes, read6, read10, read12, read16,
+                       out newTrim, tracks[0].Type != TrackType.Audio, offsetBytes, read6, read10, read12, read16,
                        readcd, sectorsForOffset, subSize, supportedSubchannel, supportsLongSectors, ref totalDuration,
                        tracks, subLog, desiredSubchannel, isrcs, ref mcn, subchannelExtents, smallestPregapLbaPerTrack);
 
@@ -1364,14 +1364,14 @@ namespace Aaru.Core.Devices.Dumping
             foreach(Track trk in tracks)
             {
                 // Fix track starts in each session's first track
-                if(tracks.Where(t => t.TrackSession == trk.TrackSession).OrderBy(t => t.TrackSequence).FirstOrDefault().
-                          TrackSequence == trk.TrackSequence)
+                if(tracks.Where(t => t.Session == trk.Session).OrderBy(t => t.Sequence).FirstOrDefault().
+                          Sequence == trk.Sequence)
                 {
-                    if(trk.TrackSequence == 1)
+                    if(trk.Sequence == 1)
                         continue;
 
-                    trk.TrackStartSector -= trk.TrackPregap;
-                    trk.Indexes[0]       =  (int)trk.TrackStartSector;
+                    trk.StartSector -= trk.Pregap;
+                    trk.Indexes[0]       =  (int)trk.StartSector;
 
                     continue;
                 }

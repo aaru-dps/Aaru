@@ -159,13 +159,13 @@ namespace Aaru.Core.Devices.Dumping
             {
                 new Track
                 {
-                    TrackBytesPerSector    = (int)blockSize,
-                    TrackEndSector         = blocks - 1,
-                    TrackSequence          = 1,
-                    TrackRawBytesPerSector = (int)blockSize,
-                    TrackSubchannelType    = TrackSubchannelType.None,
-                    TrackSession           = 1,
-                    TrackType              = TrackType.Data
+                    BytesPerSector    = (int)blockSize,
+                    EndSector         = blocks - 1,
+                    Sequence          = 1,
+                    RawBytesPerSector = (int)blockSize,
+                    SubchannelType    = TrackSubchannelType.None,
+                    Session           = 1,
+                    Type              = TrackType.Data
                 }
             });
 
