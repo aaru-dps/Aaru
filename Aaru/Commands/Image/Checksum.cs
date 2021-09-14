@@ -41,6 +41,7 @@ using Aaru.CommonTypes.Structs;
 using Aaru.Console;
 using Aaru.Core;
 using Schemas;
+using Spectre.Console;
 
 namespace Aaru.Commands.Image
 {
@@ -175,10 +176,29 @@ namespace Aaru.Commands.Image
             MainClass.PrintCopyright();
 
             if(debug)
-                AaruConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
+            {
+                IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
+                {
+                    Out = new AnsiConsoleOutput(System.Console.Error)
+                });
+
+                AaruConsole.DebugWriteLineEvent += (format, objects) =>
+                {
+                    if(objects is null)
+                        stderrConsole.MarkupLine(format);
+                    else
+                        stderrConsole.MarkupLine(format, objects);
+                };
+            }
 
             if(verbose)
-                AaruConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+                AaruConsole.WriteEvent += (format, objects) =>
+                {
+                    if(objects is null)
+                        AnsiConsole.Markup(format);
+                    else
+                        AnsiConsole.Markup(format, objects);
+                };
 
             Statistics.AddCommand("checksum");
 
@@ -201,7 +221,13 @@ namespace Aaru.Commands.Image
             AaruConsole.DebugWriteLine("Checksum command", "--whole-disc={0}", wholeDisc);
 
             var     filtersList = new FiltersList();
-            IFilter inputFilter = filtersList.GetFilter(imagePath);
+            IFilter inputFilter = null;
+
+            Core.Spectre.ProgressSingleSpinner(ctx =>
+            {
+                ctx.AddTask("Identifying file filter...").IsIndeterminate();
+                inputFilter = filtersList.GetFilter(imagePath);
+            });
 
             if(inputFilter == null)
             {
@@ -210,7 +236,13 @@ namespace Aaru.Commands.Image
                 return (int)ErrorNumber.CannotOpenFile;
             }
 
-            IMediaImage inputFormat = ImageFormat.Detect(inputFilter);
+            IMediaImage inputFormat = null;
+
+            Core.Spectre.ProgressSingleSpinner(ctx =>
+            {
+                ctx.AddTask("Identifying image format...").IsIndeterminate();
+                inputFormat = ImageFormat.Detect(inputFilter);
+            });
 
             if(inputFormat == null)
             {
@@ -219,7 +251,22 @@ namespace Aaru.Commands.Image
                 return (int)ErrorNumber.UnrecognizedFormat;
             }
 
-            inputFormat.Open(inputFilter);
+            bool opened = false;
+
+            Core.Spectre.ProgressSingleSpinner(ctx =>
+            {
+                ctx.AddTask("Opening image file...").IsIndeterminate();
+                opened = inputFormat.Open(inputFilter);
+            });
+
+            if(!opened)
+            {
+                AaruConsole.WriteLine("Unable to open image format");
+                AaruConsole.WriteLine("No error given");
+
+                return (int)ErrorNumber.CannotOpenFormat;
+            }
+
             Statistics.AddMediaFormat(inputFormat.Format);
             Statistics.AddMedia(inputFormat.Info.MediaType, false);
             Statistics.AddFilter(inputFilter.Name);
@@ -275,89 +322,124 @@ namespace Aaru.Commands.Image
 
                         List<Track> inputTracks = opticalInput.Tracks;
 
-                        foreach(Track currentTrack in inputTracks)
-                        {
-                            /*
-                            if(currentTrack.TrackStartSector - previousTrackEnd != 0 && wholeDisc)
-                                for(ulong i = previousTrackEnd + 1; i < currentTrack.TrackStartSector; i++)
-                                {
-                                    AaruConsole.Write("\rHashing track-less sector {0}", i);
+                        AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
+                                    Columns(new TaskDescriptionColumn(), new ProgressBarColumn(),
+                                            new PercentageColumn()).Start(ctx =>
+                                    {
+                                        ProgressTask discTask = ctx.AddTask("Hashing tracks...");
+                                        discTask.MaxValue = inputTracks.Count;
 
-                                    byte[] hiddenSector = inputFormat.ReadSector(i);
+                                        foreach(Track currentTrack in inputTracks)
+                                        {
+                                            discTask.Description =
+                                                $"Hashing track {discTask.Value + 1} of {inputTracks.Count}";
 
-                                    mediaChecksum?.Update(hiddenSector);
-                                }
-                            */
+                                            ProgressTask trackTask = ctx.AddTask("Hashing sector");
 
-                            AaruConsole.DebugWriteLine("Checksum command",
-                                                       "Track {0} starts at sector {1} and ends at sector {2}",
-                                                       currentTrack.TrackSequence, currentTrack.TrackStartSector,
-                                                       currentTrack.TrackEndSector);
+                                            /*
+                                            if(currentTrack.TrackStartSector - previousTrackEnd != 0 && wholeDisc)
+                                                for(ulong i = previousTrackEnd + 1; i < currentTrack.TrackStartSector; i++)
+                                                {
+                                                    AaruConsole.Write("\rHashing track-less sector {0}", i);
 
-                            if(separatedTracks)
-                                trackChecksum = new Checksum(enabledChecksums);
+                                                    byte[] hiddenSector = inputFormat.ReadSector(i);
 
-                            ulong sectors     = currentTrack.TrackEndSector - currentTrack.TrackStartSector + 1;
-                            ulong doneSectors = 0;
-                            AaruConsole.WriteLine("Track {0} has {1} sectors", currentTrack.TrackSequence, sectors);
+                                                    mediaChecksum?.Update(hiddenSector);
+                                                }
+                                            */
 
-                            while(doneSectors < sectors)
-                            {
-                                byte[] sector;
+                                            AaruConsole.DebugWriteLine("Checksum command",
+                                                                       "Track {0} starts at sector {1} and ends at sector {2}",
+                                                                       currentTrack.TrackSequence,
+                                                                       currentTrack.TrackStartSector,
+                                                                       currentTrack.TrackEndSector);
 
-                                if(sectors - doneSectors >= SECTORS_TO_READ)
-                                {
-                                    sector = opticalInput.ReadSectors(doneSectors, SECTORS_TO_READ,
-                                                                      currentTrack.TrackSequence);
+                                            if(separatedTracks)
+                                                trackChecksum = new Checksum(enabledChecksums);
 
-                                    AaruConsole.Write("\rHashing sectors {0} to {2} of track {1}", doneSectors,
-                                                      currentTrack.TrackSequence, doneSectors + SECTORS_TO_READ);
+                                            ulong sectors =
+                                                currentTrack.TrackEndSector - currentTrack.TrackStartSector + 1;
 
-                                    doneSectors += SECTORS_TO_READ;
-                                }
-                                else
-                                {
-                                    sector = opticalInput.ReadSectors(doneSectors, (uint)(sectors - doneSectors),
-                                                                      currentTrack.TrackSequence);
+                                            trackTask.MaxValue = sectors;
 
-                                    AaruConsole.Write("\rHashing sectors {0} to {2} of track {1}", doneSectors,
-                                                      currentTrack.TrackSequence,
-                                                      doneSectors + (sectors - doneSectors));
+                                            ulong doneSectors = 0;
 
-                                    doneSectors += sectors - doneSectors;
-                                }
+                                            while(doneSectors < sectors)
+                                            {
+                                                byte[] sector;
 
-                                if(wholeDisc)
-                                    mediaChecksum?.Update(sector);
+                                                if(sectors - doneSectors >= SECTORS_TO_READ)
+                                                {
+                                                    sector = opticalInput.ReadSectors(doneSectors, SECTORS_TO_READ,
+                                                        currentTrack.TrackSequence);
 
-                                if(separatedTracks)
-                                    trackChecksum?.Update(sector);
-                            }
+                                                    trackTask.Description =
+                                                        string.Format("Hashing sectors {0} to {2} of track {1}",
+                                                                      doneSectors, currentTrack.TrackSequence,
+                                                                      doneSectors + SECTORS_TO_READ);
 
-                            AaruConsole.WriteLine();
+                                                    doneSectors += SECTORS_TO_READ;
+                                                }
+                                                else
+                                                {
+                                                    sector = opticalInput.ReadSectors(doneSectors,
+                                                        (uint)(sectors - doneSectors), currentTrack.TrackSequence);
 
-                            if(separatedTracks)
-                                if(trackChecksum != null)
-                                    foreach(ChecksumType chk in trackChecksum.End())
-                                        AaruConsole.WriteLine("Track {0}'s {1}: {2}", currentTrack.TrackSequence,
-                                                              chk.type, chk.Value);
-                        }
+                                                    trackTask.Description =
+                                                        string.Format("Hashing sectors {0} to {2} of track {1}",
+                                                                      doneSectors, currentTrack.TrackSequence,
+                                                                      doneSectors + (sectors - doneSectors));
 
-                        /*
-                        if(opticalInput.Info.Sectors - previousTrackEnd != 0 && wholeDisc)
-                            for(ulong i = previousTrackEnd + 1; i < opticalInput.Info.Sectors; i++)
-                            {
-                                AaruConsole.Write("\rHashing track-less sector {0}", i);
+                                                    doneSectors += sectors - doneSectors;
+                                                }
 
-                                byte[] hiddenSector = inputFormat.ReadSector(i);
-                                mediaChecksum?.Update(hiddenSector);
-                            }
-                        */
+                                                if(wholeDisc)
+                                                    mediaChecksum?.Update(sector);
 
-                        if(wholeDisc)
-                            if(mediaChecksum != null)
-                                foreach(ChecksumType chk in mediaChecksum.End())
-                                    AaruConsole.WriteLine("Disk's {0}: {1}", chk.type, chk.Value);
+                                                if(separatedTracks)
+                                                    trackChecksum?.Update(sector);
+
+                                                trackTask.Value = doneSectors;
+                                            }
+
+                                            trackTask.StopTask();
+                                            AaruConsole.WriteLine();
+
+                                            if(!separatedTracks)
+                                                continue;
+
+                                            if(trackChecksum == null)
+                                                continue;
+
+                                            foreach(ChecksumType chk in trackChecksum.End())
+                                                AaruConsole.WriteLine("[bold]Track {0}'s {1}:[/] {2}",
+                                                                      currentTrack.TrackSequence, chk.type, chk.Value);
+
+                                            discTask.Increment(1);
+                                        }
+
+                                        /*
+                                        if(opticalInput.Info.Sectors - previousTrackEnd != 0 && wholeDisc)
+                                            for(ulong i = previousTrackEnd + 1; i < opticalInput.Info.Sectors; i++)
+                                            {
+                                                AaruConsole.Write("\rHashing track-less sector {0}", i);
+
+                                                byte[] hiddenSector = inputFormat.ReadSector(i);
+                                                mediaChecksum?.Update(hiddenSector);
+                                            }
+                                        */
+
+                                        if(!wholeDisc)
+                                            return;
+
+                                        if(mediaChecksum == null)
+                                            return;
+
+                                        AaruConsole.WriteLine();
+
+                                        foreach(ChecksumType chk in mediaChecksum.End())
+                                            AaruConsole.WriteLine("[bold]Disc's {0}:[/] {1}", chk.type, chk.Value);
+                                    });
                     }
                     catch(Exception ex)
                     {
@@ -376,85 +458,127 @@ namespace Aaru.Commands.Image
                     if(wholeDisc)
                         mediaChecksum = new Checksum(enabledChecksums);
 
-                    ulong previousTrackEnd = 0;
+                    ulong previousFileEnd = 0;
 
-                    foreach(TapeFile currentFile in tapeImage.Files)
+                    AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
+                                Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
+                                Start(ctx =>
+                                {
+                                    ProgressTask tapeTask = ctx.AddTask("Hashing files...");
+                                    tapeTask.MaxValue = tapeImage.Files.Count;
+
+                                    foreach(TapeFile currentFile in tapeImage.Files)
+                                    {
+                                        tapeTask.Description =
+                                            $"Hashing file {currentFile.File} of {tapeImage.Files.Count}";
+
+                                        if(currentFile.FirstBlock - previousFileEnd != 0 && wholeDisc)
+                                        {
+                                            ProgressTask preFileTask = ctx.AddTask("Hashing sector");
+                                            preFileTask.MaxValue = currentFile.FirstBlock - previousFileEnd;
+
+                                            for(ulong i = previousFileEnd + 1; i < currentFile.FirstBlock; i++)
+                                            {
+                                                preFileTask.Description = $"Hashing file-less block {i}";
+
+                                                byte[] hiddenSector = inputFormat.ReadSector(i);
+
+                                                mediaChecksum?.Update(hiddenSector);
+                                                preFileTask.Increment(1);
+                                            }
+
+                                            preFileTask.StopTask();
+                                        }
+
+                                        AaruConsole.DebugWriteLine("Checksum command",
+                                                                   "File {0} starts at sector {1} and ends at block {2}",
+                                                                   currentFile.File, currentFile.FirstBlock,
+                                                                   currentFile.LastBlock);
+
+                                        if(separatedTracks)
+                                            trackChecksum = new Checksum(enabledChecksums);
+
+                                        ulong sectors     = currentFile.LastBlock - currentFile.FirstBlock + 1;
+                                        ulong doneSectors = 0;
+
+                                        ProgressTask fileTask = ctx.AddTask("Hashing sector");
+                                        fileTask.MaxValue = sectors;
+
+                                        while(doneSectors < sectors)
+                                        {
+                                            byte[] sector;
+
+                                            if(sectors - doneSectors >= SECTORS_TO_READ)
+                                            {
+                                                sector = tapeImage.ReadSectors(doneSectors + currentFile.FirstBlock,
+                                                                               SECTORS_TO_READ);
+
+                                                fileTask.Description =
+                                                    string.Format("Hashing blocks {0} to {2} of file {1}", doneSectors,
+                                                                  currentFile.File, doneSectors + SECTORS_TO_READ);
+
+                                                doneSectors += SECTORS_TO_READ;
+                                            }
+                                            else
+                                            {
+                                                sector = tapeImage.ReadSectors(doneSectors + currentFile.FirstBlock,
+                                                                               (uint)(sectors - doneSectors));
+
+                                                fileTask.Description =
+                                                    string.Format("Hashing blocks {0} to {2} of file {1}", doneSectors,
+                                                                  currentFile.File,
+                                                                  doneSectors + (sectors - doneSectors));
+
+                                                doneSectors += sectors - doneSectors;
+                                            }
+
+                                            fileTask.Value = doneSectors;
+
+                                            if(wholeDisc)
+                                                mediaChecksum?.Update(sector);
+
+                                            if(separatedTracks)
+                                                trackChecksum?.Update(sector);
+                                        }
+
+                                        fileTask.StopTask();
+                                        AaruConsole.WriteLine();
+
+                                        if(separatedTracks)
+                                            if(trackChecksum != null)
+                                                foreach(ChecksumType chk in trackChecksum.End())
+                                                    AaruConsole.WriteLine("[bold]File {0}'s {1}[/]: {2}",
+                                                                          currentFile.File, chk.type, chk.Value);
+
+                                        previousFileEnd = currentFile.LastBlock;
+
+                                        tapeTask.Increment(1);
+                                    }
+
+                                    if(tapeImage.Info.Sectors - previousFileEnd == 0 ||
+                                       !wholeDisc)
+                                        return;
+
+                                    ProgressTask postFileTask = ctx.AddTask("Hashing sector");
+                                    postFileTask.MaxValue = tapeImage.Info.Sectors - previousFileEnd;
+
+                                    for(ulong i = previousFileEnd + 1; i < tapeImage.Info.Sectors; i++)
+                                    {
+                                        postFileTask.Description = $"Hashing file-less block {i}";
+
+                                        byte[] hiddenSector = inputFormat.ReadSector(i);
+                                        mediaChecksum?.Update(hiddenSector);
+                                        postFileTask.Increment(1);
+                                    }
+                                });
+
+                    if(wholeDisc && mediaChecksum != null)
                     {
-                        if(currentFile.FirstBlock - previousTrackEnd != 0 && wholeDisc)
-                            for(ulong i = previousTrackEnd + 1; i < currentFile.FirstBlock; i++)
-                            {
-                                AaruConsole.Write("\rHashing file-less block {0}", i);
-
-                                byte[] hiddenSector = inputFormat.ReadSector(i);
-
-                                mediaChecksum?.Update(hiddenSector);
-                            }
-
-                        AaruConsole.DebugWriteLine("Checksum command",
-                                                   "Track {0} starts at sector {1} and ends at block {2}",
-                                                   currentFile.File, currentFile.FirstBlock, currentFile.LastBlock);
-
-                        if(separatedTracks)
-                            trackChecksum = new Checksum(enabledChecksums);
-
-                        ulong sectors     = currentFile.LastBlock - currentFile.FirstBlock + 1;
-                        ulong doneSectors = 0;
-                        AaruConsole.WriteLine("File {0} has {1} sectors", currentFile.File, sectors);
-
-                        while(doneSectors < sectors)
-                        {
-                            byte[] sector;
-
-                            if(sectors - doneSectors >= SECTORS_TO_READ)
-                            {
-                                sector = tapeImage.ReadSectors(doneSectors + currentFile.FirstBlock, SECTORS_TO_READ);
-
-                                AaruConsole.Write("\rHashing blocks {0} to {2} of file {1}", doneSectors,
-                                                  currentFile.File, doneSectors + SECTORS_TO_READ);
-
-                                doneSectors += SECTORS_TO_READ;
-                            }
-                            else
-                            {
-                                sector = tapeImage.ReadSectors(doneSectors + currentFile.FirstBlock,
-                                                               (uint)(sectors - doneSectors));
-
-                                AaruConsole.Write("\rHashing blocks {0} to {2} of file {1}", doneSectors,
-                                                  currentFile.File, doneSectors + (sectors - doneSectors));
-
-                                doneSectors += sectors - doneSectors;
-                            }
-
-                            if(wholeDisc)
-                                mediaChecksum?.Update(sector);
-
-                            if(separatedTracks)
-                                trackChecksum?.Update(sector);
-                        }
-
                         AaruConsole.WriteLine();
 
-                        if(separatedTracks)
-                            if(trackChecksum != null)
-                                foreach(ChecksumType chk in trackChecksum.End())
-                                    AaruConsole.WriteLine("File {0}'s {1}: {2}", currentFile.File, chk.type, chk.Value);
-
-                        previousTrackEnd = currentFile.LastBlock;
+                        foreach(ChecksumType chk in mediaChecksum.End())
+                            AaruConsole.WriteLine("[bold]Tape's {0}:[/] {1}", chk.type, chk.Value);
                     }
-
-                    if(tapeImage.Info.Sectors - previousTrackEnd != 0 && wholeDisc)
-                        for(ulong i = previousTrackEnd + 1; i < tapeImage.Info.Sectors; i++)
-                        {
-                            AaruConsole.Write("\rHashing file-less sector {0}", i);
-
-                            byte[] hiddenSector = inputFormat.ReadSector(i);
-                            mediaChecksum?.Update(hiddenSector);
-                        }
-
-                    if(wholeDisc)
-                        if(mediaChecksum != null)
-                            foreach(ChecksumType chk in mediaChecksum.End())
-                                AaruConsole.WriteLine("Tape's {0}: {1}", chk.type, chk.Value);
 
                     break;
                 }
@@ -463,40 +587,48 @@ namespace Aaru.Commands.Image
                 {
                     mediaChecksum = new Checksum(enabledChecksums);
 
-                    ulong sectors = inputFormat.Info.Sectors;
-                    AaruConsole.WriteLine("Sectors {0}", sectors);
-                    ulong doneSectors = 0;
+                    AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
+                                Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
+                                Start(ctx =>
+                                {
+                                    ProgressTask diskTask = ctx.AddTask("Hashing sectors...");
+                                    ulong        sectors  = inputFormat.Info.Sectors;
+                                    diskTask.MaxValue = sectors;
+                                    ulong doneSectors = 0;
 
-                    while(doneSectors < sectors)
-                    {
-                        byte[] sector;
+                                    while(doneSectors < sectors)
+                                    {
+                                        byte[] sector;
 
-                        if(sectors - doneSectors >= SECTORS_TO_READ)
-                        {
-                            sector = inputFormat.ReadSectors(doneSectors, SECTORS_TO_READ);
+                                        if(sectors - doneSectors >= SECTORS_TO_READ)
+                                        {
+                                            sector = inputFormat.ReadSectors(doneSectors, SECTORS_TO_READ);
 
-                            AaruConsole.Write("\rHashing sectors {0} to {1}", doneSectors,
-                                              doneSectors + SECTORS_TO_READ);
+                                            diskTask.Description =
+                                                $"Hashing sectors {doneSectors} to {doneSectors + SECTORS_TO_READ}";
 
-                            doneSectors += SECTORS_TO_READ;
-                        }
-                        else
-                        {
-                            sector = inputFormat.ReadSectors(doneSectors, (uint)(sectors - doneSectors));
+                                            doneSectors += SECTORS_TO_READ;
+                                        }
+                                        else
+                                        {
+                                            sector = inputFormat.ReadSectors(doneSectors,
+                                                                             (uint)(sectors - doneSectors));
 
-                            AaruConsole.Write("\rHashing sectors {0} to {1}", doneSectors,
-                                              doneSectors + (sectors - doneSectors));
+                                            diskTask.Description =
+                                                $"Hashing sectors {doneSectors} to {doneSectors + (sectors - doneSectors)}";
 
-                            doneSectors += sectors - doneSectors;
-                        }
+                                            doneSectors += sectors - doneSectors;
+                                        }
 
-                        mediaChecksum.Update(sector);
-                    }
+                                        mediaChecksum.Update(sector);
+                                        diskTask.Value = doneSectors;
+                                    }
+                                });
 
                     AaruConsole.WriteLine();
 
                     foreach(ChecksumType chk in mediaChecksum.End())
-                        AaruConsole.WriteLine("Disk's {0}: {1}", chk.type, chk.Value);
+                        AaruConsole.WriteLine("[bold]Disk's {0}:[/] {1}", chk.type, chk.Value);
 
                     break;
                 }
