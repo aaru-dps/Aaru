@@ -30,6 +30,7 @@
 // Copyright © 2011-2021 Natalia Portillo
 // ****************************************************************************/
 
+using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using Aaru.CommonTypes;
@@ -38,6 +39,7 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Core;
 using Aaru.Helpers;
+using Spectre.Console;
 
 namespace Aaru.Commands.Image
 {
@@ -97,10 +99,29 @@ namespace Aaru.Commands.Image
             MainClass.PrintCopyright();
 
             if(debug)
-                AaruConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
+            {
+                IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
+                {
+                    Out = new AnsiConsoleOutput(System.Console.Error)
+                });
+
+                AaruConsole.DebugWriteLineEvent += (format, objects) =>
+                {
+                    if(objects is null)
+                        stderrConsole.MarkupLine(format);
+                    else
+                        stderrConsole.MarkupLine(format, objects);
+                };
+            }
 
             if(verbose)
-                AaruConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+                AaruConsole.WriteEvent += (format, objects) =>
+                {
+                    if(objects is null)
+                        AnsiConsole.Markup(format);
+                    else
+                        AnsiConsole.Markup(format, objects);
+                };
 
             Statistics.AddCommand("print-hex");
 
@@ -113,7 +134,13 @@ namespace Aaru.Commands.Image
             AaruConsole.DebugWriteLine("PrintHex command", "--width={0}", width);
 
             var     filtersList = new FiltersList();
-            IFilter inputFilter = filtersList.GetFilter(imagePath);
+            IFilter inputFilter = null;
+
+            Core.Spectre.ProgressSingleSpinner(ctx =>
+            {
+                ctx.AddTask("Identifying file filter...").IsIndeterminate();
+                inputFilter = filtersList.GetFilter(imagePath);
+            });
 
             if(inputFilter == null)
             {
@@ -122,7 +149,13 @@ namespace Aaru.Commands.Image
                 return (int)ErrorNumber.CannotOpenFile;
             }
 
-            IMediaImage inputFormat = ImageFormat.Detect(inputFilter);
+            IMediaImage inputFormat = null;
+
+            Core.Spectre.ProgressSingleSpinner(ctx =>
+            {
+                ctx.AddTask("Identifying image format...").IsIndeterminate();
+                inputFormat = ImageFormat.Detect(inputFilter);
+            });
 
             if(inputFormat == null)
             {
@@ -131,11 +164,25 @@ namespace Aaru.Commands.Image
                 return (int)ErrorNumber.UnrecognizedFormat;
             }
 
-            inputFormat.Open(inputFilter);
+            bool opened = false;
+
+            Core.Spectre.ProgressSingleSpinner(ctx =>
+            {
+                ctx.AddTask("Opening image file...").IsIndeterminate();
+                opened = inputFormat.Open(inputFilter);
+            });
+
+            if(!opened)
+            {
+                AaruConsole.WriteLine("Unable to open image format");
+                AaruConsole.WriteLine("No error given");
+
+                return (int)ErrorNumber.CannotOpenFormat;
+            }
 
             for(ulong i = 0; i < length; i++)
             {
-                AaruConsole.WriteLine("Sector {0}", start + i);
+                AaruConsole.WriteLine("[bold][italic]Sector {0}[/][/]", start + i);
 
                 if(inputFormat.Info.ReadableSectorTags == null)
                 {
@@ -155,9 +202,15 @@ namespace Aaru.Commands.Image
                     }
                 }
 
-                byte[] sector = longSectors ? inputFormat.ReadSectorLong(start + i) : inputFormat.ReadSector(start + i);
+                byte[] sector = Array.Empty<byte>();
 
-                PrintHex.PrintHexArray(sector, width);
+                Core.Spectre.ProgressSingleSpinner(ctx =>
+                {
+                    ctx.AddTask("Reading sector...").IsIndeterminate();
+                    sector = longSectors ? inputFormat.ReadSectorLong(start + i) : inputFormat.ReadSector(start + i);
+                });
+
+                AaruConsole.WriteLine(Markup.Escape(PrintHex.ByteArrayToHexArrayString(sector, width, true)));
             }
 
             return (int)ErrorNumber.NoError;
