@@ -34,7 +34,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Aaru.CommonTypes;
-using Aaru.CommonTypes.Exceptions;
 using Aaru.CommonTypes.Structs;
 using Schemas;
 
@@ -47,37 +46,17 @@ namespace Aaru.DiscImages
         /// <inheritdoc />
         public string Name => "MAME Compressed Hunks of Data";
         /// <inheritdoc />
-        public Guid Id => new Guid("0D50233A-08BD-47D4-988B-27EAA0358597");
+        public Guid Id => new("0D50233A-08BD-47D4-988B-27EAA0358597");
         /// <inheritdoc />
         public string Format => "Compressed Hunks of Data";
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
         /// <inheritdoc />
-        public List<Partition> Partitions
-        {
-            get
-            {
-                if(_isHdd)
-                    throw new
-                        FeaturedNotSupportedByDiscImageException("Cannot access optical tracks on a hard disk image");
-
-                return _partitions;
-            }
-        }
+        public List<Partition> Partitions => _isHdd ? null : _partitions;
 
         /// <inheritdoc />
-        public List<Track> Tracks
-        {
-            get
-            {
-                if(_isHdd)
-                    throw new
-                        FeaturedNotSupportedByDiscImageException("Cannot access optical tracks on a hard disk image");
-
-                return _tracks.Values.ToList();
-            }
-        }
+        public List<Track> Tracks => _isHdd ? null : _tracks.Values.ToList();
 
         /// <inheritdoc />
         public List<Session> Sessions
@@ -85,8 +64,7 @@ namespace Aaru.DiscImages
             get
             {
                 if(_isHdd)
-                    throw new
-                        FeaturedNotSupportedByDiscImageException("Cannot access optical sessions on a hard disk image");
+                    return null;
 
                 throw new NotImplementedException();
             }
