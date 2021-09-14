@@ -636,20 +636,20 @@ namespace Aaru.Decoders.CD
                                        bool createC0Entry = false)
         {
             var                    toc                = new CDFullTOC();
-            Dictionary<byte, byte> sessionEndingTrack = new Dictionary<byte, byte>();
+            Dictionary<byte, byte> sessionEndingTrack = new();
             toc.FirstCompleteSession = byte.MaxValue;
             toc.LastCompleteSession  = byte.MinValue;
-            List<TrackDataDescriptor> trackDescriptors = new List<TrackDataDescriptor>();
+            List<TrackDataDescriptor> trackDescriptors = new();
             byte                      currentTrack     = 0;
 
-            foreach(Track track in tracks.OrderBy(t => t.TrackSession).ThenBy(t => t.TrackSequence))
+            foreach(Track track in tracks.OrderBy(t => t.Session).ThenBy(t => t.Sequence))
             {
-                if(track.TrackSession < toc.FirstCompleteSession)
-                    toc.FirstCompleteSession = (byte)track.TrackSession;
+                if(track.Session < toc.FirstCompleteSession)
+                    toc.FirstCompleteSession = (byte)track.Session;
 
-                if(track.TrackSession <= toc.LastCompleteSession)
+                if(track.Session <= toc.LastCompleteSession)
                 {
-                    currentTrack = (byte)track.TrackSequence;
+                    currentTrack = (byte)track.Sequence;
 
                     continue;
                 }
@@ -657,34 +657,32 @@ namespace Aaru.Decoders.CD
                 if(toc.LastCompleteSession > 0)
                     sessionEndingTrack.Add(toc.LastCompleteSession, currentTrack);
 
-                toc.LastCompleteSession = (byte)track.TrackSession;
+                toc.LastCompleteSession = (byte)track.Session;
             }
 
             if(!sessionEndingTrack.ContainsKey(toc.LastCompleteSession))
                 sessionEndingTrack[toc.LastCompleteSession] = (byte)tracks.
-                                                                    Where(t => t.TrackSession ==
-                                                                               toc.LastCompleteSession).
-                                                                    Max(t => t.TrackSequence);
+                                                                    Where(t => t.Session == toc.LastCompleteSession).
+                                                                    Max(t => t.Sequence);
 
             byte currentSession = 0;
 
-            foreach(Track track in tracks.OrderBy(t => t.TrackSession).ThenBy(t => t.TrackSequence))
+            foreach(Track track in tracks.OrderBy(t => t.Session).ThenBy(t => t.Sequence))
             {
-                trackFlags.TryGetValue((byte)track.TrackSequence, out byte trackControl);
+                trackFlags.TryGetValue((byte)track.Sequence, out byte trackControl);
 
-                if(trackControl    == 0 &&
-                   track.TrackType != TrackType.Audio)
+                if(trackControl == 0 &&
+                   track.Type   != TrackType.Audio)
                     trackControl = (byte)CdFlags.DataTrack;
 
                 // Lead-Out
-                if(track.TrackSession > currentSession &&
-                   currentSession     != 0)
+                if(track.Session  > currentSession &&
+                   currentSession != 0)
                 {
-                    (byte minute, byte second, byte frame) leadoutAmsf = LbaToMsf(track.TrackStartSector - 150);
+                    (byte minute, byte second, byte frame) leadoutAmsf = LbaToMsf(track.StartSector - 150);
 
                     (byte minute, byte second, byte frame) leadoutPmsf =
-                        LbaToMsf(tracks.OrderBy(t => t.TrackSession).ThenBy(t => t.TrackSequence).Last().
-                                        TrackStartSector);
+                        LbaToMsf(tracks.OrderBy(t => t.Session).ThenBy(t => t.Sequence).Last().StartSector);
 
                     // Lead-out
                     trackDescriptors.Add(new TrackDataDescriptor
@@ -719,14 +717,13 @@ namespace Aaru.Decoders.CD
                 }
 
                 // Lead-in
-                if(track.TrackSession > currentSession)
+                if(track.Session > currentSession)
                 {
-                    currentSession = (byte)track.TrackSession;
+                    currentSession = (byte)track.Session;
                     sessionEndingTrack.TryGetValue(currentSession, out byte endingTrackNumber);
 
                     (byte minute, byte second, byte frame) leadinPmsf =
-                        LbaToMsf((tracks.FirstOrDefault(t => t.TrackSequence == endingTrackNumber)?.TrackEndSector ??
-                                  0) + 1);
+                        LbaToMsf((tracks.FirstOrDefault(t => t.Sequence == endingTrackNumber)?.EndSector ?? 0) + 1);
 
                     // Starting track
                     trackDescriptors.Add(new TrackDataDescriptor
@@ -735,7 +732,7 @@ namespace Aaru.Decoders.CD
                         POINT         = 0xA0,
                         ADR           = 1,
                         CONTROL       = trackControl,
-                        PMIN          = (byte)track.TrackSequence
+                        PMIN          = (byte)track.Sequence
                     });
 
                     // Ending track
@@ -767,8 +764,8 @@ namespace Aaru.Decoders.CD
                 // Track
                 trackDescriptors.Add(new TrackDataDescriptor
                 {
-                    SessionNumber = (byte)track.TrackSession,
-                    POINT         = (byte)track.TrackSequence,
+                    SessionNumber = (byte)track.Session,
+                    POINT         = (byte)track.Sequence,
                     ADR           = 1,
                     CONTROL       = trackControl,
                     PHOUR         = 0,
