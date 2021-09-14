@@ -37,11 +37,14 @@ using Aaru.Console;
 using Aaru.Core;
 using Aaru.Core.Devices.Scanning;
 using Aaru.Devices;
+using Spectre.Console;
 
 namespace Aaru.Commands.Media
 {
     internal sealed class MediaScanCommand : Command
     {
+        static ProgressTask _progressTask1;
+
         public MediaScanCommand() : base("scan", "Scans the media inserted on a device.")
         {
             Add(new Option(new[]
@@ -87,10 +90,29 @@ namespace Aaru.Commands.Media
             MainClass.PrintCopyright();
 
             if(debug)
-                AaruConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
+            {
+                IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
+                {
+                    Out = new AnsiConsoleOutput(System.Console.Error)
+                });
+
+                AaruConsole.DebugWriteLineEvent += (format, objects) =>
+                {
+                    if(objects is null)
+                        stderrConsole.MarkupLine(format);
+                    else
+                        stderrConsole.MarkupLine(format, objects);
+                };
+            }
 
             if(verbose)
-                AaruConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+                AaruConsole.WriteEvent += (format, objects) =>
+                {
+                    if(objects is null)
+                        AnsiConsole.Markup(format);
+                    else
+                        AnsiConsole.Markup(format, objects);
+                };
 
             Statistics.AddCommand("media-scan");
 
@@ -107,11 +129,15 @@ namespace Aaru.Commands.Media
                char.IsLetter(devicePath[0]))
                 devicePath = "\\\\.\\" + char.ToUpper(devicePath[0]) + ':';
 
-            Devices.Device dev;
+            Devices.Device dev = null;
 
             try
             {
-                dev = new Devices.Device(devicePath);
+                Core.Spectre.ProgressSingleSpinner(ctx =>
+                {
+                    ctx.AddTask("Opening device...").IsIndeterminate();
+                    dev = new Devices.Device(devicePath);
+                });
 
                 if(dev.IsRemote)
                     Statistics.AddRemote(dev.RemoteApplication, dev.RemoteVersion, dev.RemoteOperatingSystem,
@@ -133,21 +159,61 @@ namespace Aaru.Commands.Media
 
             Statistics.AddDevice(dev);
 
-            var scanner = new MediaScan(mhddLog, ibgLog, devicePath, dev, useBufferedReads);
-            scanner.UpdateStatus         += Progress.UpdateStatus;
-            scanner.StoppingErrorMessage += Progress.ErrorMessage;
-            scanner.UpdateProgress       += Progress.UpdateProgress;
-            scanner.PulseProgress        += Progress.PulseProgress;
-            scanner.InitProgress         += Progress.InitProgress;
-            scanner.EndProgress          += Progress.EndProgress;
+            var         scanner = new MediaScan(mhddLog, ibgLog, devicePath, dev, useBufferedReads);
+            ScanResults results = new();
 
-            System.Console.CancelKeyPress += (sender, e) =>
-            {
-                e.Cancel = true;
-                scanner.Abort();
-            };
+            AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
+                        Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
+                        Start(ctx =>
+                        {
+                            scanner.UpdateStatus += text =>
+                            {
+                                AaruConsole.WriteLine(Markup.Escape(text));
+                            };
 
-            ScanResults results = scanner.Scan();
+                            scanner.StoppingErrorMessage += text =>
+                            {
+                                AaruConsole.ErrorWriteLine($"[red]{Markup.Escape(text)}[/]");
+                            };
+
+                            scanner.UpdateProgress += (text, current, maximum) =>
+                            {
+                                _progressTask1             ??= ctx.AddTask("Progress");
+                                _progressTask1.Description =   Markup.Escape(text);
+                                _progressTask1.Value       =   current;
+                                _progressTask1.MaxValue    =   maximum;
+                            };
+
+                            scanner.PulseProgress += text =>
+                            {
+                                if(_progressTask1 is null)
+                                    ctx.AddTask(Markup.Escape(text)).IsIndeterminate();
+                                else
+                                {
+                                    _progressTask1.Description     = Markup.Escape(text);
+                                    _progressTask1.IsIndeterminate = true;
+                                }
+                            };
+
+                            scanner.InitProgress += () =>
+                            {
+                                _progressTask1 = ctx.AddTask("Progress");
+                            };
+
+                            scanner.EndProgress += () =>
+                            {
+                                _progressTask1?.StopTask();
+                                _progressTask1 = null;
+                            };
+
+                            System.Console.CancelKeyPress += (_, e) =>
+                            {
+                                e.Cancel = true;
+                                scanner.Abort();
+                            };
+
+                            results = scanner.Scan();
+                        });
 
             AaruConsole.WriteLine("Took a total of {0} seconds ({1} processing commands).", results.TotalTime,
                                   results.ProcessingTime);
@@ -155,14 +221,15 @@ namespace Aaru.Commands.Media
             AaruConsole.WriteLine("Average speed: {0:F3} MiB/sec.", results.AvgSpeed);
             AaruConsole.WriteLine("Fastest speed burst: {0:F3} MiB/sec.", results.MaxSpeed);
             AaruConsole.WriteLine("Slowest speed burst: {0:F3} MiB/sec.", results.MinSpeed);
-            AaruConsole.WriteLine("Summary:");
-            AaruConsole.WriteLine("{0} sectors took less than 3 ms.", results.A);
-            AaruConsole.WriteLine("{0} sectors took less than 10 ms but more than 3 ms.", results.B);
-            AaruConsole.WriteLine("{0} sectors took less than 50 ms but more than 10 ms.", results.C);
-            AaruConsole.WriteLine("{0} sectors took less than 150 ms but more than 50 ms.", results.D);
-            AaruConsole.WriteLine("{0} sectors took less than 500 ms but more than 150 ms.", results.E);
-            AaruConsole.WriteLine("{0} sectors took more than 500 ms.", results.F);
-            AaruConsole.WriteLine("{0} sectors could not be read.", results.UnreadableSectors.Count);
+            AaruConsole.WriteLine();
+            AaruConsole.WriteLine("[bold]Summary:[/]");
+            AaruConsole.WriteLine("[lime]{0} sectors took less than 3 ms.[/]", results.A);
+            AaruConsole.WriteLine("[green]{0} sectors took less than 10 ms but more than 3 ms.[/]", results.B);
+            AaruConsole.WriteLine("[darkorange]{0} sectors took less than 50 ms but more than 10 ms.[/]", results.C);
+            AaruConsole.WriteLine("[olive]{0} sectors took less than 150 ms but more than 50 ms.[/]", results.D);
+            AaruConsole.WriteLine("[orange3]{0} sectors took less than 500 ms but more than 150 ms.[/]", results.E);
+            AaruConsole.WriteLine("[red]{0} sectors took more than 500 ms.[/]", results.F);
+            AaruConsole.WriteLine("[maroon]{0} sectors could not be read.[/]", results.UnreadableSectors.Count);
 
             if(results.UnreadableSectors.Count > 0)
                 foreach(ulong bad in results.UnreadableSectors)
