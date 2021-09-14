@@ -48,6 +48,7 @@ using Aaru.Core;
 using Aaru.Core.Media;
 using Aaru.Devices;
 using Schemas;
+using Spectre.Console;
 using ImageInfo = Aaru.CommonTypes.Structs.ImageInfo;
 using MediaType = Aaru.CommonTypes.MediaType;
 using Version = Aaru.CommonTypes.Interop.Version;
@@ -275,10 +276,29 @@ namespace Aaru.Commands.Image
             MainClass.PrintCopyright();
 
             if(debug)
-                AaruConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
+            {
+                IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
+                {
+                    Out = new AnsiConsoleOutput(System.Console.Error)
+                });
+
+                AaruConsole.DebugWriteLineEvent += (format, objects) =>
+                {
+                    if(objects is null)
+                        stderrConsole.MarkupLine(format);
+                    else
+                        stderrConsole.MarkupLine(format, objects);
+                };
+            }
 
             if(verbose)
-                AaruConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+                AaruConsole.WriteEvent += (format, objects) =>
+                {
+                    if(objects is null)
+                        AnsiConsole.Markup(format);
+                    else
+                        AnsiConsole.Markup(format, objects);
+                };
 
             if(fixSubchannelCrc)
                 fixSubchannel = true;
@@ -425,7 +445,13 @@ namespace Aaru.Commands.Image
                 }
 
             var     filtersList = new FiltersList();
-            IFilter inputFilter = filtersList.GetFilter(inputPath);
+            IFilter inputFilter = null;
+
+            Core.Spectre.ProgressSingleSpinner(ctx =>
+            {
+                ctx.AddTask("Identifying file filter...").IsIndeterminate();
+                inputFilter = filtersList.GetFilter(inputPath);
+            });
 
             if(inputFilter == null)
             {
@@ -442,7 +468,13 @@ namespace Aaru.Commands.Image
             }
 
             PluginBase  plugins     = GetPluginBase.Instance;
-            IMediaImage inputFormat = ImageFormat.Detect(inputFilter);
+            IMediaImage inputFormat = null;
+
+            Core.Spectre.ProgressSingleSpinner(ctx =>
+            {
+                ctx.AddTask("Identifying image format...").IsIndeterminate();
+                inputFormat = ImageFormat.Detect(inputFilter);
+            });
 
             if(inputFormat == null)
             {
@@ -459,7 +491,15 @@ namespace Aaru.Commands.Image
 
             try
             {
-                if(!inputFormat.Open(inputFilter))
+                bool opened = false;
+
+                Core.Spectre.ProgressSingleSpinner(ctx =>
+                {
+                    ctx.AddTask("Opening image file...").IsIndeterminate();
+                    opened = inputFormat.Open(inputFilter);
+                });
+
+                if(!opened)
                 {
                     AaruConsole.WriteLine("Unable to open image format");
                     AaruConsole.WriteLine("No error given");
@@ -510,7 +550,7 @@ namespace Aaru.Commands.Image
                 return (int)ErrorNumber.CannotOpenFormat;
             }
 
-            List<IWritableImage> candidates = new List<IWritableImage>();
+            List<IWritableImage> candidates = new();
 
             // Try extension
             if(string.IsNullOrEmpty(format))
@@ -633,8 +673,17 @@ namespace Aaru.Commands.Image
                 AaruConsole.ErrorWriteLine("Output format does not support sessions, this will end in a loss of data, continuing...");*/
             }
 
-            if(!outputFormat.Create(outputPath, mediaType, parsedOptions, inputFormat.Info.Sectors,
-                                    inputFormat.Info.SectorSize))
+            bool created = false;
+
+            Core.Spectre.ProgressSingleSpinner(ctx =>
+            {
+                ctx.AddTask("Opening image file...").IsIndeterminate();
+
+                created = outputFormat.Create(outputPath, mediaType, parsedOptions, inputFormat.Info.Sectors,
+                                              inputFormat.Info.SectorSize);
+            });
+
+            if(!created)
             {
                 AaruConsole.ErrorWriteLine("Error {0} creating output image.", outputFormat.ErrorMessage);
 
@@ -681,21 +730,31 @@ namespace Aaru.Commands.Image
             foreach(MediaTagType mediaTag in inputFormat.Info.ReadableMediaTags.Where(mediaTag =>
                 !force || outputFormat.SupportedMediaTags.Contains(mediaTag)))
             {
-                AaruConsole.WriteLine("Converting media tag {0}", mediaTag);
-                byte[] tag = inputFormat.ReadDiskTag(mediaTag);
+                ErrorNumber errno = ErrorNumber.NoError;
 
-                if(outputFormat.WriteMediaTag(tag, mediaTag))
-                    continue;
+                AnsiConsole.Progress().AutoClear(false).HideCompleted(false).
+                            Columns(new TaskDescriptionColumn(), new SpinnerColumn()).Start(ctx =>
+                            {
+                                ctx.AddTask($"Converting media tag {Markup.Escape(mediaTag.ToString())}");
+                                byte[] tag = inputFormat.ReadDiskTag(mediaTag);
 
-                if(force)
-                    AaruConsole.ErrorWriteLine("Error {0} writing media tag, continuing...", outputFormat.ErrorMessage);
-                else
-                {
-                    AaruConsole.ErrorWriteLine("Error {0} writing media tag, not continuing...",
-                                               outputFormat.ErrorMessage);
+                                if(outputFormat.WriteMediaTag(tag, mediaTag))
+                                    return;
 
-                    return (int)ErrorNumber.WriteError;
-                }
+                                if(force)
+                                    AaruConsole.ErrorWriteLine("Error {0} writing media tag, continuing...",
+                                                               outputFormat.ErrorMessage);
+                                else
+                                {
+                                    AaruConsole.ErrorWriteLine("Error {0} writing media tag, not continuing...",
+                                                               outputFormat.ErrorMessage);
+
+                                    errno = ErrorNumber.WriteError;
+                                }
+                            });
+
+                if(errno != ErrorNumber.NoError)
+                    return (int)errno;
             }
 
             AaruConsole.WriteLine("{0} sectors to convert", inputFormat.Info.Sectors);
@@ -713,105 +772,139 @@ namespace Aaru.Commands.Image
                     return (int)ErrorNumber.WriteError;
                 }
 
-                foreach(Track track in inputOptical.Tracks)
-                {
-                    doneSectors = 0;
-                    ulong trackSectors = track.TrackEndSector - track.TrackStartSector + 1;
+                ErrorNumber errno = ErrorNumber.NoError;
 
-                    while(doneSectors < trackSectors)
-                    {
-                        byte[] sector;
-
-                        uint sectorsToDo;
-
-                        if(trackSectors - doneSectors >= (ulong)count)
-                            sectorsToDo = (uint)count;
-                        else
-                            sectorsToDo = (uint)(trackSectors - doneSectors);
-
-                        AaruConsole.Write("\rConverting sectors {0} to {1} in track {3} ({2:P2} done)",
-                                          doneSectors + track.TrackStartSector,
-                                          doneSectors + sectorsToDo + track.TrackStartSector,
-                                          (doneSectors + track.TrackStartSector) / (double)inputFormat.Info.Sectors,
-                                          track.TrackSequence);
-
-                        bool useNotLong = false;
-                        bool result     = false;
-
-                        if(useLong)
-                        {
-                            if(sectorsToDo == 1)
+                AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
+                            Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
+                            Start(ctx =>
                             {
-                                sector = inputFormat.ReadSectorLong(doneSectors           + track.TrackStartSector);
-                                result = outputFormat.WriteSectorLong(sector, doneSectors + track.TrackStartSector);
-                            }
-                            else
-                            {
-                                sector = inputFormat.ReadSectorsLong(doneSectors + track.TrackStartSector, sectorsToDo);
+                                ProgressTask discTask = ctx.AddTask("Converting disc...");
+                                discTask.MaxValue = inputOptical.Tracks.Count;
 
-                                result = outputFormat.WriteSectorsLong(sector, doneSectors + track.TrackStartSector,
-                                                                       sectorsToDo);
-                            }
-
-                            if(!result &&
-                               sector.Length % 2352 != 0)
-                            {
-                                if(!force)
+                                foreach(Track track in inputOptical.Tracks)
                                 {
-                                    AaruConsole.
-                                        ErrorWriteLine("Input image is not returning raw sectors, use force if you want to continue...");
+                                    discTask.Description =
+                                        $"Converting sectors in track {discTask.Value + 1} of {discTask.MaxValue}";
 
-                                    return (int)Errno.InOutError;
+                                    doneSectors = 0;
+                                    ulong trackSectors = track.TrackEndSector - track.TrackStartSector + 1;
+
+                                    ProgressTask trackTask = ctx.AddTask("Converting track");
+                                    trackTask.MaxValue = trackSectors;
+
+                                    while(doneSectors < trackSectors)
+                                    {
+                                        byte[] sector;
+
+                                        uint sectorsToDo;
+
+                                        if(trackSectors - doneSectors >= (ulong)count)
+                                            sectorsToDo = (uint)count;
+                                        else
+                                            sectorsToDo = (uint)(trackSectors - doneSectors);
+
+                                        trackTask.Description =
+                                            $"Converting sectors {doneSectors + track.TrackStartSector} to {doneSectors + sectorsToDo + track.TrackStartSector} in track {track.TrackSequence}";
+
+                                        bool useNotLong = false;
+                                        bool result     = false;
+
+                                        if(useLong)
+                                        {
+                                            if(sectorsToDo == 1)
+                                            {
+                                                sector =
+                                                    inputFormat.ReadSectorLong(doneSectors + track.TrackStartSector);
+
+                                                result =
+                                                    outputFormat.WriteSectorLong(sector,
+                                                        doneSectors + track.TrackStartSector);
+                                            }
+                                            else
+                                            {
+                                                sector =
+                                                    inputFormat.ReadSectorsLong(doneSectors + track.TrackStartSector,
+                                                                                    sectorsToDo);
+
+                                                result =
+                                                    outputFormat.WriteSectorsLong(sector,
+                                                        doneSectors + track.TrackStartSector, sectorsToDo);
+                                            }
+
+                                            if(!result &&
+                                               sector.Length % 2352 != 0)
+                                            {
+                                                if(!force)
+                                                {
+                                                    AaruConsole.
+                                                        ErrorWriteLine("Input image is not returning raw sectors, use force if you want to continue...");
+
+                                                    errno = (ErrorNumber)Errno.InOutError;
+
+                                                    return;
+                                                }
+
+                                                useNotLong = true;
+                                            }
+                                        }
+
+                                        if(!useLong || useNotLong)
+                                        {
+                                            if(sectorsToDo == 1)
+                                            {
+                                                sector = inputFormat.ReadSector(doneSectors + track.TrackStartSector);
+
+                                                result =
+                                                    outputFormat.WriteSector(sector,
+                                                                             doneSectors + track.TrackStartSector);
+                                            }
+                                            else
+                                            {
+                                                sector = inputFormat.ReadSectors(doneSectors + track.TrackStartSector,
+                                                    sectorsToDo);
+
+                                                result =
+                                                    outputFormat.WriteSectors(sector,
+                                                                              doneSectors + track.TrackStartSector,
+                                                                              sectorsToDo);
+                                            }
+                                        }
+
+                                        if(!result)
+                                            if(force)
+                                                AaruConsole.
+                                                    ErrorWriteLine("Error {0} writing sector {1}, continuing...",
+                                                                   outputFormat.ErrorMessage,
+                                                                   doneSectors + track.TrackStartSector);
+                                            else
+                                            {
+                                                AaruConsole.
+                                                    ErrorWriteLine("Error {0} writing sector {1}, not continuing...",
+                                                                   outputFormat.ErrorMessage,
+                                                                   doneSectors + track.TrackStartSector);
+
+                                                errno = ErrorNumber.WriteError;
+
+                                                return;
+                                            }
+
+                                        doneSectors     += sectorsToDo;
+                                        trackTask.Value += sectorsToDo;
+                                    }
+
+                                    trackTask.StopTask();
+                                    discTask.Increment(1);
                                 }
+                            });
 
-                                useNotLong = true;
-                            }
-                        }
+                if(errno != ErrorNumber.NoError)
+                    return (int)errno;
 
-                        if(!useLong || useNotLong)
-                        {
-                            if(sectorsToDo == 1)
-                            {
-                                sector = inputFormat.ReadSector(doneSectors           + track.TrackStartSector);
-                                result = outputFormat.WriteSector(sector, doneSectors + track.TrackStartSector);
-                            }
-                            else
-                            {
-                                sector = inputFormat.ReadSectors(doneSectors + track.TrackStartSector, sectorsToDo);
-
-                                result = outputFormat.WriteSectors(sector, doneSectors + track.TrackStartSector,
-                                                                   sectorsToDo);
-                            }
-                        }
-
-                        if(!result)
-                            if(force)
-                                AaruConsole.ErrorWriteLine("Error {0} writing sector {1}, continuing...",
-                                                           outputFormat.ErrorMessage,
-                                                           doneSectors + track.TrackStartSector);
-                            else
-                            {
-                                AaruConsole.ErrorWriteLine("Error {0} writing sector {1}, not continuing...",
-                                                           outputFormat.ErrorMessage,
-                                                           doneSectors + track.TrackStartSector);
-
-                                return (int)ErrorNumber.WriteError;
-                            }
-
-                        doneSectors += sectorsToDo;
-                    }
-                }
-
-                AaruConsole.Write("\rConverting sectors {0} to {1} in track {3} ({2:P2} done)",
-                                  inputFormat.Info.Sectors, inputFormat.Info.Sectors, 1.0, inputOptical.Tracks.Count);
-
-                AaruConsole.WriteLine();
-
-                Dictionary<byte, string> isrcs                     = new Dictionary<byte, string>();
-                Dictionary<byte, byte>   trackFlags                = new Dictionary<byte, byte>();
+                Dictionary<byte, string> isrcs                     = new();
+                Dictionary<byte, byte>   trackFlags                = new();
                 string                   mcn                       = null;
-                HashSet<int>             subchannelExtents         = new HashSet<int>();
-                Dictionary<byte, int>    smallestPregapLbaPerTrack = new Dictionary<byte, int>();
+                HashSet<int>             subchannelExtents         = new();
+                Dictionary<byte, int>    smallestPregapLbaPerTrack = new();
                 Track[]                  tracks                    = new Track[inputOptical.Tracks.Count];
 
                 for(int i = 0; i < tracks.Length; i++)
@@ -891,133 +984,153 @@ namespace Aaru.Commands.Image
                     if(force && !outputFormat.SupportedSectorTags.Contains(tag))
                         continue;
 
-                    foreach(Track track in inputOptical.Tracks)
-                    {
-                        doneSectors = 0;
-                        ulong  trackSectors = track.TrackEndSector - track.TrackStartSector + 1;
-                        byte[] sector;
-                        bool   result;
+                    errno = ErrorNumber.NoError;
 
-                        switch(tag)
-                        {
-                            case SectorTagType.CdTrackFlags:
-                            case SectorTagType.CdTrackIsrc:
-                                AaruConsole.Write("\rConverting tag {0} in track {1} ({2:P2} done).", tag,
-                                                  track.TrackSequence,
-                                                  track.TrackSequence / (double)inputOptical.Tracks.Count);
+                    AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
+                                Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
+                                Start(ctx =>
+                                {
+                                    ProgressTask discTask = ctx.AddTask("Converting disc...");
+                                    discTask.MaxValue = inputOptical.Tracks.Count;
 
-                                sector = inputFormat.ReadSectorTag(track.TrackSequence, tag);
-                                result = outputFormat.WriteSectorTag(sector, track.TrackSequence, tag);
-
-                                if(!result)
-                                    if(force)
-                                        AaruConsole.ErrorWriteLine("Error {0} writing tag, continuing...",
-                                                                   outputFormat.ErrorMessage);
-                                    else
+                                    foreach(Track track in inputOptical.Tracks)
                                     {
-                                        AaruConsole.ErrorWriteLine("Error {0} writing tag, not continuing...",
-                                                                   outputFormat.ErrorMessage);
+                                        discTask.Description =
+                                            $"Converting tags in track {discTask.Value + 1} of {discTask.MaxValue}";
 
-                                        return (int)ErrorNumber.WriteError;
+                                        doneSectors = 0;
+                                        ulong  trackSectors = track.TrackEndSector - track.TrackStartSector + 1;
+                                        byte[] sector;
+                                        bool   result;
+
+                                        switch(tag)
+                                        {
+                                            case SectorTagType.CdTrackFlags:
+                                            case SectorTagType.CdTrackIsrc:
+                                                sector = inputFormat.ReadSectorTag(track.TrackSequence, tag);
+                                                result = outputFormat.WriteSectorTag(sector, track.TrackSequence, tag);
+
+                                                if(!result)
+                                                    if(force)
+                                                        AaruConsole.
+                                                            ErrorWriteLine("Error {0} writing tag, continuing...",
+                                                                           outputFormat.ErrorMessage);
+                                                    else
+                                                    {
+                                                        AaruConsole.
+                                                            ErrorWriteLine("Error {0} writing tag, not continuing...",
+                                                                           outputFormat.ErrorMessage);
+
+                                                        errno = ErrorNumber.WriteError;
+
+                                                        return;
+                                                    }
+
+                                                continue;
+                                        }
+
+                                        ProgressTask trackTask = ctx.AddTask("Converting track");
+                                        trackTask.MaxValue = trackSectors;
+
+                                        while(doneSectors < trackSectors)
+                                        {
+                                            uint sectorsToDo;
+
+                                            if(trackSectors - doneSectors >= (ulong)count)
+                                                sectorsToDo = (uint)count;
+                                            else
+                                                sectorsToDo = (uint)(trackSectors - doneSectors);
+
+                                            trackTask.Description =
+                                                string.Format("Converting tag {3} for sectors {0} to {1} in track {2}",
+                                                              doneSectors + track.TrackStartSector,
+                                                              doneSectors + sectorsToDo + track.TrackStartSector,
+                                                              track.TrackSequence, tag);
+
+                                            if(sectorsToDo == 1)
+                                            {
+                                                sector = inputFormat.ReadSectorTag(doneSectors + track.TrackStartSector,
+                                                    tag);
+
+                                                if(tag == SectorTagType.CdSectorSubchannel)
+                                                {
+                                                    bool indexesChanged =
+                                                        CompactDisc.WriteSubchannelToImage(MmcSubchannel.Raw,
+                                                            MmcSubchannel.Raw, sector,
+                                                            doneSectors + track.TrackStartSector, 1, null, isrcs,
+                                                            (byte)track.TrackSequence, ref mcn, tracks,
+                                                            subchannelExtents, fixSubchannelPosition, outputFormat,
+                                                            fixSubchannel, fixSubchannelCrc, null, null,
+                                                            smallestPregapLbaPerTrack, false);
+
+                                                    if(indexesChanged)
+                                                        outputOptical.SetTracks(tracks.ToList());
+
+                                                    result = true;
+                                                }
+                                                else
+                                                    result =
+                                                        outputFormat.WriteSectorTag(sector,
+                                                            doneSectors + track.TrackStartSector, tag);
+                                            }
+                                            else
+                                            {
+                                                sector =
+                                                    inputFormat.ReadSectorsTag(doneSectors + track.TrackStartSector,
+                                                                               sectorsToDo, tag);
+
+                                                if(tag == SectorTagType.CdSectorSubchannel)
+                                                {
+                                                    bool indexesChanged =
+                                                        CompactDisc.WriteSubchannelToImage(MmcSubchannel.Raw,
+                                                            MmcSubchannel.Raw, sector,
+                                                            doneSectors + track.TrackStartSector, sectorsToDo,
+                                                            null, isrcs, (byte)track.TrackSequence, ref mcn,
+                                                            tracks, subchannelExtents, fixSubchannelPosition,
+                                                            outputFormat, fixSubchannel, fixSubchannelCrc, null,
+                                                            null, smallestPregapLbaPerTrack, false);
+
+                                                    if(indexesChanged)
+                                                        outputOptical.SetTracks(tracks.ToList());
+
+                                                    result = true;
+                                                }
+                                                else
+                                                    result =
+                                                        outputFormat.WriteSectorsTag(sector,
+                                                            doneSectors + track.TrackStartSector, sectorsToDo,
+                                                            tag);
+                                            }
+
+                                            if(!result)
+                                                if(force)
+                                                    AaruConsole.
+                                                        ErrorWriteLine("Error {0} writing tag for sector {1}, continuing...",
+                                                                       outputFormat.ErrorMessage,
+                                                                       doneSectors + track.TrackStartSector);
+                                                else
+                                                {
+                                                    AaruConsole.
+                                                        ErrorWriteLine("Error {0} writing tag for sector {1}, not continuing...",
+                                                                       outputFormat.ErrorMessage,
+                                                                       doneSectors + track.TrackStartSector);
+
+                                                    errno = ErrorNumber.WriteError;
+
+                                                    return;
+                                                }
+
+                                            doneSectors     += sectorsToDo;
+                                            trackTask.Value += sectorsToDo;
+                                        }
+
+                                        trackTask.StopTask();
+                                        discTask.Increment(1);
                                     }
+                                });
 
-                                continue;
-                        }
-
-                        while(doneSectors < trackSectors)
-                        {
-                            uint sectorsToDo;
-
-                            if(trackSectors - doneSectors >= (ulong)count)
-                                sectorsToDo = (uint)count;
-                            else
-                                sectorsToDo = (uint)(trackSectors - doneSectors);
-
-                            AaruConsole.Write("\rConverting tag {4} for sectors {0} to {1} in track {3} ({2:P2} done)",
-                                              doneSectors + track.TrackStartSector,
-                                              doneSectors + sectorsToDo + track.TrackStartSector,
-                                              (doneSectors + track.TrackStartSector) / (double)inputFormat.Info.Sectors,
-                                              track.TrackSequence, tag);
-
-                            if(sectorsToDo == 1)
-                            {
-                                sector = inputFormat.ReadSectorTag(doneSectors + track.TrackStartSector, tag);
-
-                                if(tag == SectorTagType.CdSectorSubchannel)
-                                {
-                                    bool indexesChanged = CompactDisc.WriteSubchannelToImage(MmcSubchannel.Raw,
-                                        MmcSubchannel.Raw, sector, doneSectors + track.TrackStartSector, 1, null,
-                                        isrcs, (byte)track.TrackSequence, ref mcn, tracks, subchannelExtents,
-                                        fixSubchannelPosition, outputFormat, fixSubchannel, fixSubchannelCrc, null,
-                                        null, smallestPregapLbaPerTrack, false);
-
-                                    if(indexesChanged)
-                                        outputOptical.SetTracks(tracks.ToList());
-
-                                    result = true;
-                                }
-                                else
-                                    result = outputFormat.WriteSectorTag(sector, doneSectors + track.TrackStartSector,
-                                                                         tag);
-                            }
-                            else
-                            {
-                                sector = inputFormat.ReadSectorsTag(doneSectors + track.TrackStartSector, sectorsToDo,
-                                                                    tag);
-
-                                if(tag == SectorTagType.CdSectorSubchannel)
-                                {
-                                    bool indexesChanged = CompactDisc.WriteSubchannelToImage(MmcSubchannel.Raw,
-                                        MmcSubchannel.Raw, sector, doneSectors + track.TrackStartSector,
-                                        sectorsToDo, null, isrcs, (byte)track.TrackSequence, ref mcn, tracks,
-                                        subchannelExtents, fixSubchannelPosition, outputFormat, fixSubchannel,
-                                        fixSubchannelCrc, null, null, smallestPregapLbaPerTrack, false);
-
-                                    if(indexesChanged)
-                                        outputOptical.SetTracks(tracks.ToList());
-
-                                    result = true;
-                                }
-                                else
-                                    result = outputFormat.WriteSectorsTag(sector, doneSectors + track.TrackStartSector,
-                                                                          sectorsToDo, tag);
-                            }
-
-                            if(!result)
-                                if(force)
-                                    AaruConsole.ErrorWriteLine("Error {0} writing tag for sector {1}, continuing...",
-                                                               outputFormat.ErrorMessage,
-                                                               doneSectors + track.TrackStartSector);
-                                else
-                                {
-                                    AaruConsole.
-                                        ErrorWriteLine("Error {0} writing tag for sector {1}, not continuing...",
-                                                       outputFormat.ErrorMessage, doneSectors + track.TrackStartSector);
-
-                                    return (int)ErrorNumber.WriteError;
-                                }
-
-                            doneSectors += sectorsToDo;
-                        }
-                    }
-
-                    switch(tag)
-                    {
-                        case SectorTagType.CdTrackFlags:
-                        case SectorTagType.CdTrackIsrc:
-                            AaruConsole.Write("\rConverting tag {0} in track {1} ({2:P2} done).", tag,
-                                              inputOptical.Tracks.Count, 1.0);
-
-                            break;
-                        default:
-                            AaruConsole.Write("\rConverting tag {4} for sectors {0} to {1} in track {3} ({2:P2} done)",
-                                              inputFormat.Info.Sectors, inputFormat.Info.Sectors, 1.0,
-                                              inputOptical.Tracks.Count, tag);
-
-                            break;
-                    }
-
-                    AaruConsole.WriteLine();
+                    if(errno != ErrorNumber.NoError)
+                        return (int)errno;
                 }
 
                 if(isrcs.Count > 0)
@@ -1060,8 +1173,15 @@ namespace Aaru.Commands.Image
                     inputFormat.Info.MediaType == MediaType.VideoNowColor ||
                     inputFormat.Info.MediaType == MediaType.VideoNowXp ||
                     inputFormat.Info.MediaType == MediaType.CVD) && generateSubchannels)
-                    CompactDisc.GenerateSubchannels(subchannelExtents, tracks, trackFlags, inputFormat.Info.Sectors,
-                                                    null, null, null, null, null, outputFormat);
+                {
+                    Core.Spectre.ProgressSingleSpinner(ctx =>
+                    {
+                        ctx.AddTask("Generating subchannels...").IsIndeterminate();
+
+                        CompactDisc.GenerateSubchannels(subchannelExtents, tracks, trackFlags, inputFormat.Info.Sectors,
+                                                        null, null, null, null, null, outputFormat);
+                    });
+                }
             }
             else
             {
@@ -1082,171 +1202,205 @@ namespace Aaru.Commands.Image
                                                    outputFormat.ErrorMessage);
                 }
 
-                while(doneSectors < inputFormat.Info.Sectors)
-                {
-                    byte[] sector;
+                ErrorNumber errno = ErrorNumber.NoError;
 
-                    uint sectorsToDo;
-
-                    if(inputTape?.IsTape == true)
-                        sectorsToDo = 1;
-                    else if(inputFormat.Info.Sectors - doneSectors >= (ulong)count)
-                        sectorsToDo = (uint)count;
-                    else
-                        sectorsToDo = (uint)(inputFormat.Info.Sectors - doneSectors);
-
-                    AaruConsole.Write("\rConverting sectors {0} to {1} ({2:P2} done)", doneSectors,
-                                      doneSectors + sectorsToDo, doneSectors / (double)inputFormat.Info.Sectors);
-
-                    bool result;
-
-                    if(useLong)
-                        if(sectorsToDo == 1)
-                        {
-                            sector = inputFormat.ReadSectorLong(doneSectors);
-                            result = outputFormat.WriteSectorLong(sector, doneSectors);
-                        }
-                        else
-                        {
-                            sector = inputFormat.ReadSectorsLong(doneSectors, sectorsToDo);
-                            result = outputFormat.WriteSectorsLong(sector, doneSectors, sectorsToDo);
-                        }
-                    else
-                    {
-                        if(sectorsToDo == 1)
-                        {
-                            sector = inputFormat.ReadSector(doneSectors);
-                            result = outputFormat.WriteSector(sector, doneSectors);
-                        }
-                        else
-                        {
-                            sector = inputFormat.ReadSectors(doneSectors, sectorsToDo);
-                            result = outputFormat.WriteSectors(sector, doneSectors, sectorsToDo);
-                        }
-                    }
-
-                    if(!result)
-                        if(force)
-                            AaruConsole.ErrorWriteLine("Error {0} writing sector {1}, continuing...",
-                                                       outputFormat.ErrorMessage, doneSectors);
-                        else
-                        {
-                            AaruConsole.ErrorWriteLine("Error {0} writing sector {1}, not continuing...",
-                                                       outputFormat.ErrorMessage, doneSectors);
-
-                            return (int)ErrorNumber.WriteError;
-                        }
-
-                    doneSectors += sectorsToDo;
-                }
-
-                AaruConsole.Write("\rConverting sectors {0} to {1} ({2:P2} done)", inputFormat.Info.Sectors,
-                                  inputFormat.Info.Sectors, 1.0);
-
-                AaruConsole.WriteLine();
-
-                foreach(SectorTagType tag in inputFormat.Info.ReadableSectorTags.TakeWhile(tag => useLong))
-                {
-                    switch(tag)
-                    {
-                        case SectorTagType.AppleSectorTag:
-                        case SectorTagType.CdSectorSync:
-                        case SectorTagType.CdSectorHeader:
-                        case SectorTagType.CdSectorSubHeader:
-                        case SectorTagType.CdSectorEdc:
-                        case SectorTagType.CdSectorEccP:
-                        case SectorTagType.CdSectorEccQ:
-                        case SectorTagType.CdSectorEcc:
-                            // This tags are inline in long sector
-                            continue;
-                    }
-
-                    if(force && !outputFormat.SupportedSectorTags.Contains(tag))
-                        continue;
-
-                    doneSectors = 0;
-
-                    while(doneSectors < inputFormat.Info.Sectors)
-                    {
-                        byte[] sector;
-
-                        uint sectorsToDo;
-
-                        if(inputFormat.Info.Sectors - doneSectors >= (ulong)count)
-                            sectorsToDo = (uint)count;
-                        else
-                            sectorsToDo = (uint)(inputFormat.Info.Sectors - doneSectors);
-
-                        AaruConsole.Write("\rConverting tag {2} for sectors {0} to {1} ({2:P2} done)", doneSectors,
-                                          doneSectors + sectorsToDo, doneSectors / (double)inputFormat.Info.Sectors,
-                                          tag);
-
-                        bool result;
-
-                        if(sectorsToDo == 1)
-                        {
-                            sector = inputFormat.ReadSectorTag(doneSectors, tag);
-                            result = outputFormat.WriteSectorTag(sector, doneSectors, tag);
-                        }
-                        else
-                        {
-                            sector = inputFormat.ReadSectorsTag(doneSectors, sectorsToDo, tag);
-                            result = outputFormat.WriteSectorsTag(sector, doneSectors, sectorsToDo, tag);
-                        }
-
-                        if(!result)
-                            if(force)
-                                AaruConsole.ErrorWriteLine("Error {0} writing sector {1}, continuing...",
-                                                           outputFormat.ErrorMessage, doneSectors);
-                            else
+                AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
+                            Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
+                            Start(ctx =>
                             {
-                                AaruConsole.ErrorWriteLine("Error {0} writing sector {1}, not continuing...",
-                                                           outputFormat.ErrorMessage, doneSectors);
+                                ProgressTask mediaTask = ctx.AddTask("Converting media");
+                                mediaTask.MaxValue = inputFormat.Info.Sectors;
 
-                                return (int)ErrorNumber.WriteError;
-                            }
+                                while(doneSectors < inputFormat.Info.Sectors)
+                                {
+                                    byte[] sector;
 
-                        doneSectors += sectorsToDo;
-                    }
+                                    uint sectorsToDo;
 
-                    AaruConsole.Write("\rConverting tag {2} for sectors {0} to {1} ({2:P2} done)",
-                                      inputFormat.Info.Sectors, inputFormat.Info.Sectors, 1.0, tag);
+                                    if(inputTape?.IsTape == true)
+                                        sectorsToDo = 1;
+                                    else if(inputFormat.Info.Sectors - doneSectors >= (ulong)count)
+                                        sectorsToDo = (uint)count;
+                                    else
+                                        sectorsToDo = (uint)(inputFormat.Info.Sectors - doneSectors);
 
-                    AaruConsole.WriteLine();
-                }
+                                    mediaTask.Description =
+                                        $"Converting sectors {doneSectors} to {doneSectors + sectorsToDo}";
 
-                if(inputTape  != null &&
-                   outputTape != null &&
-                   inputTape.IsTape)
-                {
-                    foreach(TapeFile tapeFile in inputTape.Files)
-                    {
-                        AaruConsole.Write("\rConverting file {0} of partition {1}...", tapeFile.File,
-                                          tapeFile.Partition);
+                                    bool result;
 
-                        outputTape.AddFile(tapeFile);
-                    }
+                                    if(useLong)
+                                        if(sectorsToDo == 1)
+                                        {
+                                            sector = inputFormat.ReadSectorLong(doneSectors);
+                                            result = outputFormat.WriteSectorLong(sector, doneSectors);
+                                        }
+                                        else
+                                        {
+                                            sector = inputFormat.ReadSectorsLong(doneSectors, sectorsToDo);
+                                            result = outputFormat.WriteSectorsLong(sector, doneSectors, sectorsToDo);
+                                        }
+                                    else
+                                    {
+                                        if(sectorsToDo == 1)
+                                        {
+                                            sector = inputFormat.ReadSector(doneSectors);
+                                            result = outputFormat.WriteSector(sector, doneSectors);
+                                        }
+                                        else
+                                        {
+                                            sector = inputFormat.ReadSectors(doneSectors, sectorsToDo);
+                                            result = outputFormat.WriteSectors(sector, doneSectors, sectorsToDo);
+                                        }
+                                    }
 
-                    AaruConsole.WriteLine();
+                                    if(!result)
+                                        if(force)
+                                            AaruConsole.ErrorWriteLine("Error {0} writing sector {1}, continuing...",
+                                                                       outputFormat.ErrorMessage, doneSectors);
+                                        else
+                                        {
+                                            AaruConsole.
+                                                ErrorWriteLine("Error {0} writing sector {1}, not continuing...",
+                                                               outputFormat.ErrorMessage, doneSectors);
 
-                    foreach(TapePartition tapePartition in inputTape.TapePartitions)
-                    {
-                        AaruConsole.Write("\rConverting tape partition {0}...", tapePartition.Number);
+                                            errno = ErrorNumber.WriteError;
 
-                        outputTape.AddPartition(tapePartition);
-                    }
+                                            return;
+                                        }
 
-                    AaruConsole.WriteLine();
-                }
+                                    doneSectors     += sectorsToDo;
+                                    mediaTask.Value += sectorsToDo;
+                                }
+
+                                mediaTask.StopTask();
+
+                                foreach(SectorTagType tag in
+                                    inputFormat.Info.ReadableSectorTags.TakeWhile(tag => useLong))
+                                {
+                                    switch(tag)
+                                    {
+                                        case SectorTagType.AppleSectorTag:
+                                        case SectorTagType.CdSectorSync:
+                                        case SectorTagType.CdSectorHeader:
+                                        case SectorTagType.CdSectorSubHeader:
+                                        case SectorTagType.CdSectorEdc:
+                                        case SectorTagType.CdSectorEccP:
+                                        case SectorTagType.CdSectorEccQ:
+                                        case SectorTagType.CdSectorEcc:
+                                            // This tags are inline in long sector
+                                            continue;
+                                    }
+
+                                    if(force && !outputFormat.SupportedSectorTags.Contains(tag))
+                                        continue;
+
+                                    doneSectors = 0;
+
+                                    ProgressTask tagsTask = ctx.AddTask("Converting tags");
+                                    tagsTask.MaxValue = inputFormat.Info.Sectors;
+
+                                    while(doneSectors < inputFormat.Info.Sectors)
+                                    {
+                                        byte[] sector;
+
+                                        uint sectorsToDo;
+
+                                        if(inputFormat.Info.Sectors - doneSectors >= (ulong)count)
+                                            sectorsToDo = (uint)count;
+                                        else
+                                            sectorsToDo = (uint)(inputFormat.Info.Sectors - doneSectors);
+
+                                        tagsTask.Description =
+                                            string.Format("Converting tag {2} for sectors {0} to {1}", doneSectors,
+                                                          doneSectors + sectorsToDo, tag);
+
+                                        bool result;
+
+                                        if(sectorsToDo == 1)
+                                        {
+                                            sector = inputFormat.ReadSectorTag(doneSectors, tag);
+                                            result = outputFormat.WriteSectorTag(sector, doneSectors, tag);
+                                        }
+                                        else
+                                        {
+                                            sector = inputFormat.ReadSectorsTag(doneSectors, sectorsToDo, tag);
+
+                                            result = outputFormat.WriteSectorsTag(sector, doneSectors, sectorsToDo,
+                                                tag);
+                                        }
+
+                                        if(!result)
+                                            if(force)
+                                                AaruConsole.
+                                                    ErrorWriteLine("Error {0} writing sector {1}, continuing...",
+                                                                   outputFormat.ErrorMessage, doneSectors);
+                                            else
+                                            {
+                                                AaruConsole.
+                                                    ErrorWriteLine("Error {0} writing sector {1}, not continuing...",
+                                                                   outputFormat.ErrorMessage, doneSectors);
+
+                                                errno = ErrorNumber.WriteError;
+
+                                                return;
+                                            }
+
+                                        doneSectors    += sectorsToDo;
+                                        tagsTask.Value += sectorsToDo;
+                                    }
+
+                                    tagsTask.StopTask();
+                                }
+
+                                if(inputTape  == null ||
+                                   outputTape == null ||
+                                   !inputTape.IsTape)
+                                    return;
+
+                                ProgressTask filesTask = ctx.AddTask("Converting files");
+                                filesTask.MaxValue = inputTape.Files.Count;
+
+                                foreach(TapeFile tapeFile in inputTape.Files)
+                                {
+                                    filesTask.Description =
+                                        $"Converting file {tapeFile.File} of partition {tapeFile.Partition}...";
+
+                                    outputTape.AddFile(tapeFile);
+                                    filesTask.Increment(1);
+                                }
+
+                                filesTask.StopTask();
+
+                                ProgressTask partitionTask = ctx.AddTask("Converting files");
+                                partitionTask.MaxValue = inputTape.TapePartitions.Count;
+
+                                foreach(TapePartition tapePartition in inputTape.TapePartitions)
+                                {
+                                    partitionTask.Description = $"Converting tape partition {tapePartition.Number}...";
+
+                                    outputTape.AddPartition(tapePartition);
+                                }
+
+                                partitionTask.StopTask();
+                            });
+
+                if(errno != ErrorNumber.NoError)
+                    return (int)errno;
             }
 
             if(resume       != null ||
                dumpHardware != null)
             {
-                if(resume != null)
-                    ret = outputFormat.SetDumpHardware(resume.Tries);
-                else if(dumpHardware != null)
-                    ret = outputFormat.SetDumpHardware(dumpHardware);
+                Core.Spectre.ProgressSingleSpinner(ctx =>
+                {
+                    ctx.AddTask("Writing dump hardware list...").IsIndeterminate();
+
+                    if(resume != null)
+                        ret = outputFormat.SetDumpHardware(resume.Tries);
+                    else if(dumpHardware != null)
+                        ret = outputFormat.SetDumpHardware(dumpHardware);
+                });
 
                 if(ret)
                     AaruConsole.WriteLine("Written dump hardware list to output image.");
@@ -1257,22 +1411,36 @@ namespace Aaru.Commands.Image
             if(sidecar      != null ||
                cicmMetadata != null)
             {
-                if(sidecar != null)
-                    ret = outputFormat.SetCicmMetadata(sidecar);
-                else if(cicmMetadata != null)
-                    ret = outputFormat.SetCicmMetadata(cicmMetadata);
+                Core.Spectre.ProgressSingleSpinner(ctx =>
+                {
+                    ctx.AddTask("Writing metadata...").IsIndeterminate();
+
+                    if(sidecar != null)
+                        ret = outputFormat.SetCicmMetadata(sidecar);
+                    else if(cicmMetadata != null)
+                        ret = outputFormat.SetCicmMetadata(cicmMetadata);
+                });
 
                 if(ret)
                     AaruConsole.WriteLine("Written CICM XML metadata to output image.");
             }
 
-            AaruConsole.WriteLine("Closing output image.");
+            bool closed = false;
 
-            if(!outputFormat.Close())
+            Core.Spectre.ProgressSingleSpinner(ctx =>
+            {
+                ctx.AddTask("Closing output image...").IsIndeterminate();
+                closed = outputFormat.Close();
+            });
+
+            if(!closed)
+            {
                 AaruConsole.ErrorWriteLine("Error {0} closing output image... Contents are not correct.",
                                            outputFormat.ErrorMessage);
 
-            AaruConsole.WriteLine();
+                return (int)ErrorNumber.WriteError;
+            }
+
             AaruConsole.WriteLine("Conversion done.");
 
             return (int)ErrorNumber.NoError;
