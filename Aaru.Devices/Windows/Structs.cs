@@ -68,7 +68,7 @@ namespace Aaru.Devices.Windows
     }
 
     [StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
-    internal struct AtaPassThroughEx
+    internal struct AtaPassThroughDirect
     {
         /// <summary>Length in bytes of this structure</summary>
         public ushort Length;
@@ -98,24 +98,14 @@ namespace Aaru.Devices.Windows
         /// <summary>Reserved</summary>
         public uint ReservedAsUlong;
 
-        /// <summary>Pointer to data buffer relative to start of this structure</summary>
-        public IntPtr DataBufferOffset;
+        /// <summary>Pointer to data buffer</summary>
+        public IntPtr DataBuffer;
 
         /// <summary>Previous ATA registers, for LBA48</summary>
         public AtaTaskFile PreviousTaskFile;
 
         /// <summary>ATA registers</summary>
         public AtaTaskFile CurrentTaskFile;
-    }
-
-    [StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
-    internal struct AtaPassThroughExBuffer
-    {
-        public AtaPassThroughEx aptd;
-        public uint             filler;
-
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64 * 512)]
-        public byte[] dataBuffer;
     }
 
     [StructLayout(LayoutKind.Explicit), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]

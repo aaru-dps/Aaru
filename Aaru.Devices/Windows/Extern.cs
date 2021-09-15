@@ -58,8 +58,8 @@ namespace Aaru.Devices.Windows
 
         [DllImport("Kernel32.dll", SetLastError = true, EntryPoint = "DeviceIoControl", CharSet = CharSet.Auto)]
         internal static extern bool DeviceIoControlAta(SafeFileHandle hDevice, WindowsIoctl ioControlCode,
-                                                       ref AtaPassThroughExBuffer inBuffer, uint nInBufferSize,
-                                                       ref AtaPassThroughExBuffer outBuffer, uint nOutBufferSize,
+                                                       ref AtaPassThroughDirect inBuffer, uint nInBufferSize,
+                                                       ref AtaPassThroughDirect outBuffer, uint nOutBufferSize,
                                                        ref uint pBytesReturned, IntPtr overlapped);
 
         [DllImport("Kernel32.dll", SetLastError = true, EntryPoint = "DeviceIoControl", CharSet = CharSet.Auto)]
