@@ -136,29 +136,23 @@ namespace Aaru.Devices.Windows
             if(buffer == null)
                 return -1;
 
-            uint offsetForBuffer = (uint)(Marshal.SizeOf(typeof(AtaPassThroughEx)) + Marshal.SizeOf(typeof(uint)));
-
-            var aptdBuf = new AtaPassThroughExBuffer
+            var aptd = new AtaPassThroughDirect
             {
-                aptd = new AtaPassThroughEx
+                TimeOutValue       = timeout,
+                DataBuffer         = Marshal.AllocHGlobal(buffer.Length),
+                Length             = (ushort)Marshal.SizeOf(typeof(AtaPassThroughDirect)),
+                DataTransferLength = (uint)buffer.Length,
+                PreviousTaskFile   = new AtaTaskFile(),
+                CurrentTaskFile = new AtaTaskFile
                 {
-                    TimeOutValue       = timeout,
-                    DataBufferOffset   = (IntPtr)offsetForBuffer,
-                    Length             = (ushort)Marshal.SizeOf(typeof(AtaPassThroughEx)),
-                    DataTransferLength = (uint)buffer.Length,
-                    PreviousTaskFile   = new AtaTaskFile(),
-                    CurrentTaskFile = new AtaTaskFile
-                    {
-                        Command      = registers.Command,
-                        CylinderHigh = registers.CylinderHigh,
-                        CylinderLow  = registers.CylinderLow,
-                        DeviceHead   = registers.DeviceHead,
-                        Features     = registers.Feature,
-                        SectorCount  = registers.SectorCount,
-                        SectorNumber = registers.Sector
-                    }
-                },
-                dataBuffer = new byte[64 * 512]
+                    Command      = registers.Command,
+                    CylinderHigh = registers.CylinderHigh,
+                    CylinderLow  = registers.CylinderLow,
+                    DeviceHead   = registers.DeviceHead,
+                    Features     = registers.Feature,
+                    SectorCount  = registers.SectorCount,
+                    SectorNumber = registers.Sector
+                }
             };
 
             switch(protocol)
@@ -166,12 +160,12 @@ namespace Aaru.Devices.Windows
                 case AtaProtocol.PioIn:
                 case AtaProtocol.UDmaIn:
                 case AtaProtocol.Dma:
-                    aptdBuf.aptd.AtaFlags = AtaFlags.DataIn;
+                    aptd.AtaFlags = AtaFlags.DataIn;
 
                     break;
                 case AtaProtocol.PioOut:
                 case AtaProtocol.UDmaOut:
-                    aptdBuf.aptd.AtaFlags = AtaFlags.DataOut;
+                    aptd.AtaFlags = AtaFlags.DataOut;
 
                     break;
             }
@@ -183,43 +177,45 @@ namespace Aaru.Devices.Windows
                 case AtaProtocol.FpDma:
                 case AtaProtocol.UDmaIn:
                 case AtaProtocol.UDmaOut:
-                    aptdBuf.aptd.AtaFlags |= AtaFlags.Dma;
+                    aptd.AtaFlags |= AtaFlags.Dma;
 
                     break;
             }
 
             // Unknown if needed
-            aptdBuf.aptd.AtaFlags |= AtaFlags.DrdyRequired;
+            aptd.AtaFlags |= AtaFlags.DrdyRequired;
 
             uint k     = 0;
             int  error = 0;
 
-            Array.Copy(buffer, 0, aptdBuf.dataBuffer, 0, buffer.Length);
+            Marshal.Copy(buffer, 0, aptd.DataBuffer, buffer.Length);
 
             DateTime start = DateTime.Now;
 
-            sense = !Extern.DeviceIoControlAta(fd, WindowsIoctl.IoctlAtaPassThrough, ref aptdBuf,
-                                               (uint)Marshal.SizeOf(aptdBuf), ref aptdBuf,
-                                               (uint)Marshal.SizeOf(aptdBuf), ref k, IntPtr.Zero);
+            sense = !Extern.DeviceIoControlAta(fd, WindowsIoctl.IoctlAtaPassThroughDirect, ref aptd,
+                                               (uint)Marshal.SizeOf(aptd), ref aptd, (uint)Marshal.SizeOf(aptd), ref k,
+                                               IntPtr.Zero);
 
             DateTime end = DateTime.Now;
 
             if(sense)
                 error = Marshal.GetLastWin32Error();
 
-            Array.Copy(aptdBuf.dataBuffer, 0, buffer, 0, buffer.Length);
+            Marshal.Copy(aptd.DataBuffer, buffer, 0, buffer.Length);
 
             duration = (end - start).TotalMilliseconds;
 
-            errorRegisters.CylinderHigh = aptdBuf.aptd.CurrentTaskFile.CylinderHigh;
-            errorRegisters.CylinderLow  = aptdBuf.aptd.CurrentTaskFile.CylinderLow;
-            errorRegisters.DeviceHead   = aptdBuf.aptd.CurrentTaskFile.DeviceHead;
-            errorRegisters.Error        = aptdBuf.aptd.CurrentTaskFile.Error;
-            errorRegisters.Sector       = aptdBuf.aptd.CurrentTaskFile.SectorNumber;
-            errorRegisters.SectorCount  = aptdBuf.aptd.CurrentTaskFile.SectorCount;
-            errorRegisters.Status       = aptdBuf.aptd.CurrentTaskFile.Status;
+            errorRegisters.CylinderHigh = aptd.CurrentTaskFile.CylinderHigh;
+            errorRegisters.CylinderLow  = aptd.CurrentTaskFile.CylinderLow;
+            errorRegisters.DeviceHead   = aptd.CurrentTaskFile.DeviceHead;
+            errorRegisters.Error        = aptd.CurrentTaskFile.Error;
+            errorRegisters.Sector       = aptd.CurrentTaskFile.SectorNumber;
+            errorRegisters.SectorCount  = aptd.CurrentTaskFile.SectorCount;
+            errorRegisters.Status       = aptd.CurrentTaskFile.Status;
 
             sense = errorRegisters.Error != 0 || (errorRegisters.Status & 0xA5) != 0;
+
+            Marshal.FreeHGlobal(aptd.DataBuffer);
 
             return error;
         }
@@ -245,29 +241,23 @@ namespace Aaru.Devices.Windows
             if(buffer == null)
                 return -1;
 
-            uint offsetForBuffer = (uint)(Marshal.SizeOf(typeof(AtaPassThroughEx)) + Marshal.SizeOf(typeof(uint)));
-
-            var aptdBuf = new AtaPassThroughExBuffer
+            var aptd = new AtaPassThroughDirect
             {
-                aptd = new AtaPassThroughEx
+                TimeOutValue       = timeout,
+                DataBuffer         = Marshal.AllocHGlobal(buffer.Length),
+                Length             = (ushort)Marshal.SizeOf(typeof(AtaPassThroughDirect)),
+                DataTransferLength = (uint)buffer.Length,
+                PreviousTaskFile   = new AtaTaskFile(),
+                CurrentTaskFile = new AtaTaskFile
                 {
-                    TimeOutValue       = timeout,
-                    DataBufferOffset   = (IntPtr)offsetForBuffer,
-                    Length             = (ushort)Marshal.SizeOf(typeof(AtaPassThroughEx)),
-                    DataTransferLength = (uint)buffer.Length,
-                    PreviousTaskFile   = new AtaTaskFile(),
-                    CurrentTaskFile = new AtaTaskFile
-                    {
-                        Command      = registers.Command,
-                        CylinderHigh = registers.LbaHigh,
-                        CylinderLow  = registers.LbaMid,
-                        DeviceHead   = registers.DeviceHead,
-                        Features     = registers.Feature,
-                        SectorCount  = registers.SectorCount,
-                        SectorNumber = registers.LbaLow
-                    }
-                },
-                dataBuffer = new byte[64 * 512]
+                    Command      = registers.Command,
+                    CylinderHigh = registers.LbaHigh,
+                    CylinderLow  = registers.LbaMid,
+                    DeviceHead   = registers.DeviceHead,
+                    Features     = registers.Feature,
+                    SectorCount  = registers.SectorCount,
+                    SectorNumber = registers.LbaLow
+                }
             };
 
             switch(protocol)
@@ -275,12 +265,12 @@ namespace Aaru.Devices.Windows
                 case AtaProtocol.PioIn:
                 case AtaProtocol.UDmaIn:
                 case AtaProtocol.Dma:
-                    aptdBuf.aptd.AtaFlags = AtaFlags.DataIn;
+                    aptd.AtaFlags = AtaFlags.DataIn;
 
                     break;
                 case AtaProtocol.PioOut:
                 case AtaProtocol.UDmaOut:
-                    aptdBuf.aptd.AtaFlags = AtaFlags.DataOut;
+                    aptd.AtaFlags = AtaFlags.DataOut;
 
                     break;
             }
@@ -292,43 +282,45 @@ namespace Aaru.Devices.Windows
                 case AtaProtocol.FpDma:
                 case AtaProtocol.UDmaIn:
                 case AtaProtocol.UDmaOut:
-                    aptdBuf.aptd.AtaFlags |= AtaFlags.Dma;
+                    aptd.AtaFlags |= AtaFlags.Dma;
 
                     break;
             }
 
             // Unknown if needed
-            aptdBuf.aptd.AtaFlags |= AtaFlags.DrdyRequired;
+            aptd.AtaFlags |= AtaFlags.DrdyRequired;
 
             uint k     = 0;
             int  error = 0;
 
-            Array.Copy(buffer, 0, aptdBuf.dataBuffer, 0, buffer.Length);
+            Marshal.Copy(buffer, 0, aptd.DataBuffer, buffer.Length);
 
             DateTime start = DateTime.Now;
 
-            sense = !Extern.DeviceIoControlAta(fd, WindowsIoctl.IoctlAtaPassThrough, ref aptdBuf,
-                                               (uint)Marshal.SizeOf(aptdBuf), ref aptdBuf,
-                                               (uint)Marshal.SizeOf(aptdBuf), ref k, IntPtr.Zero);
+            sense = !Extern.DeviceIoControlAta(fd, WindowsIoctl.IoctlAtaPassThroughDirect, ref aptd,
+                                               (uint)Marshal.SizeOf(aptd), ref aptd, (uint)Marshal.SizeOf(aptd), ref k,
+                                               IntPtr.Zero);
 
             DateTime end = DateTime.Now;
 
             if(sense)
                 error = Marshal.GetLastWin32Error();
 
-            Array.Copy(aptdBuf.dataBuffer, 0, buffer, 0, buffer.Length);
+            Marshal.Copy(aptd.DataBuffer, buffer, 0, buffer.Length);
 
             duration = (end - start).TotalMilliseconds;
 
-            errorRegisters.LbaHigh     = aptdBuf.aptd.CurrentTaskFile.CylinderHigh;
-            errorRegisters.LbaMid      = aptdBuf.aptd.CurrentTaskFile.CylinderLow;
-            errorRegisters.DeviceHead  = aptdBuf.aptd.CurrentTaskFile.DeviceHead;
-            errorRegisters.Error       = aptdBuf.aptd.CurrentTaskFile.Error;
-            errorRegisters.LbaLow      = aptdBuf.aptd.CurrentTaskFile.SectorNumber;
-            errorRegisters.SectorCount = aptdBuf.aptd.CurrentTaskFile.SectorCount;
-            errorRegisters.Status      = aptdBuf.aptd.CurrentTaskFile.Status;
+            errorRegisters.LbaHigh     = aptd.CurrentTaskFile.CylinderHigh;
+            errorRegisters.LbaMid      = aptd.CurrentTaskFile.CylinderLow;
+            errorRegisters.DeviceHead  = aptd.CurrentTaskFile.DeviceHead;
+            errorRegisters.Error       = aptd.CurrentTaskFile.Error;
+            errorRegisters.LbaLow      = aptd.CurrentTaskFile.SectorNumber;
+            errorRegisters.SectorCount = aptd.CurrentTaskFile.SectorCount;
+            errorRegisters.Status      = aptd.CurrentTaskFile.Status;
 
             sense = errorRegisters.Error != 0 || (errorRegisters.Status & 0xA5) != 0;
+
+            Marshal.FreeHGlobal(aptd.DataBuffer);
 
             return error;
         }
@@ -354,36 +346,30 @@ namespace Aaru.Devices.Windows
             if(buffer == null)
                 return -1;
 
-            uint offsetForBuffer = (uint)(Marshal.SizeOf(typeof(AtaPassThroughEx)) + Marshal.SizeOf(typeof(uint)));
-
-            var aptdBuf = new AtaPassThroughExBuffer
+            var aptd = new AtaPassThroughDirect
             {
-                aptd = new AtaPassThroughEx
+                TimeOutValue       = timeout,
+                DataBuffer         = Marshal.AllocHGlobal(buffer.Length),
+                Length             = (ushort)Marshal.SizeOf(typeof(AtaPassThroughDirect)),
+                DataTransferLength = (uint)buffer.Length,
+                PreviousTaskFile = new AtaTaskFile
                 {
-                    TimeOutValue       = timeout,
-                    DataBufferOffset   = (IntPtr)offsetForBuffer,
-                    Length             = (ushort)Marshal.SizeOf(typeof(AtaPassThroughEx)),
-                    DataTransferLength = (uint)buffer.Length,
-                    PreviousTaskFile = new AtaTaskFile
-                    {
-                        CylinderHigh = registers.LbaHighPrevious,
-                        CylinderLow  = registers.LbaMidPrevious,
-                        Features     = (byte)((registers.Feature     & 0xFF00) >> 8),
-                        SectorCount  = (byte)((registers.SectorCount & 0xFF00) >> 8),
-                        SectorNumber = registers.LbaLowPrevious
-                    },
-                    CurrentTaskFile = new AtaTaskFile
-                    {
-                        Command      = registers.Command,
-                        CylinderHigh = registers.LbaHighCurrent,
-                        CylinderLow  = registers.LbaMidCurrent,
-                        DeviceHead   = registers.DeviceHead,
-                        Features     = (byte)(registers.Feature     & 0xFF),
-                        SectorCount  = (byte)(registers.SectorCount & 0xFF),
-                        SectorNumber = registers.LbaLowCurrent
-                    }
+                    CylinderHigh = registers.LbaHighPrevious,
+                    CylinderLow  = registers.LbaMidPrevious,
+                    Features     = (byte)((registers.Feature     & 0xFF00) >> 8),
+                    SectorCount  = (byte)((registers.SectorCount & 0xFF00) >> 8),
+                    SectorNumber = registers.LbaLowPrevious
                 },
-                dataBuffer = new byte[64 * 512]
+                CurrentTaskFile = new AtaTaskFile
+                {
+                    Command      = registers.Command,
+                    CylinderHigh = registers.LbaHighCurrent,
+                    CylinderLow  = registers.LbaMidCurrent,
+                    DeviceHead   = registers.DeviceHead,
+                    Features     = (byte)(registers.Feature     & 0xFF),
+                    SectorCount  = (byte)(registers.SectorCount & 0xFF),
+                    SectorNumber = registers.LbaLowCurrent
+                }
             };
 
             switch(protocol)
@@ -391,12 +377,12 @@ namespace Aaru.Devices.Windows
                 case AtaProtocol.PioIn:
                 case AtaProtocol.UDmaIn:
                 case AtaProtocol.Dma:
-                    aptdBuf.aptd.AtaFlags = AtaFlags.DataIn;
+                    aptd.AtaFlags = AtaFlags.DataIn;
 
                     break;
                 case AtaProtocol.PioOut:
                 case AtaProtocol.UDmaOut:
-                    aptdBuf.aptd.AtaFlags = AtaFlags.DataOut;
+                    aptd.AtaFlags = AtaFlags.DataOut;
 
                     break;
             }
@@ -408,50 +394,52 @@ namespace Aaru.Devices.Windows
                 case AtaProtocol.FpDma:
                 case AtaProtocol.UDmaIn:
                 case AtaProtocol.UDmaOut:
-                    aptdBuf.aptd.AtaFlags |= AtaFlags.Dma;
+                    aptd.AtaFlags |= AtaFlags.Dma;
 
                     break;
             }
 
-            aptdBuf.aptd.AtaFlags |= AtaFlags.ExtendedCommand;
+            aptd.AtaFlags |= AtaFlags.ExtendedCommand;
 
             // Unknown if needed
-            aptdBuf.aptd.AtaFlags |= AtaFlags.DrdyRequired;
+            aptd.AtaFlags |= AtaFlags.DrdyRequired;
 
             uint k     = 0;
             int  error = 0;
 
-            Array.Copy(buffer, 0, aptdBuf.dataBuffer, 0, buffer.Length);
+            Marshal.Copy(buffer, 0, aptd.DataBuffer, buffer.Length);
 
             DateTime start = DateTime.Now;
 
-            sense = !Extern.DeviceIoControlAta(fd, WindowsIoctl.IoctlAtaPassThrough, ref aptdBuf,
-                                               (uint)Marshal.SizeOf(aptdBuf), ref aptdBuf,
-                                               (uint)Marshal.SizeOf(aptdBuf), ref k, IntPtr.Zero);
+            sense = !Extern.DeviceIoControlAta(fd, WindowsIoctl.IoctlAtaPassThroughDirect, ref aptd,
+                                               (uint)Marshal.SizeOf(aptd), ref aptd, (uint)Marshal.SizeOf(aptd), ref k,
+                                               IntPtr.Zero);
 
             DateTime end = DateTime.Now;
 
             if(sense)
                 error = Marshal.GetLastWin32Error();
 
-            Array.Copy(aptdBuf.dataBuffer, 0, buffer, 0, buffer.Length);
+            Marshal.Copy(aptd.DataBuffer, buffer, 0, buffer.Length);
 
             duration = (end - start).TotalMilliseconds;
 
-            errorRegisters.SectorCount = (ushort)((aptdBuf.aptd.PreviousTaskFile.SectorCount << 8) +
-                                                  aptdBuf.aptd.CurrentTaskFile.SectorCount);
+            errorRegisters.SectorCount = (ushort)((aptd.PreviousTaskFile.SectorCount << 8) +
+                                                  aptd.CurrentTaskFile.SectorCount);
 
-            errorRegisters.LbaLowPrevious  = aptdBuf.aptd.PreviousTaskFile.SectorNumber;
-            errorRegisters.LbaMidPrevious  = aptdBuf.aptd.PreviousTaskFile.CylinderLow;
-            errorRegisters.LbaHighPrevious = aptdBuf.aptd.PreviousTaskFile.CylinderHigh;
-            errorRegisters.LbaLowCurrent   = aptdBuf.aptd.CurrentTaskFile.SectorNumber;
-            errorRegisters.LbaMidCurrent   = aptdBuf.aptd.CurrentTaskFile.CylinderLow;
-            errorRegisters.LbaHighCurrent  = aptdBuf.aptd.CurrentTaskFile.CylinderHigh;
-            errorRegisters.DeviceHead      = aptdBuf.aptd.CurrentTaskFile.DeviceHead;
-            errorRegisters.Error           = aptdBuf.aptd.CurrentTaskFile.Error;
-            errorRegisters.Status          = aptdBuf.aptd.CurrentTaskFile.Status;
+            errorRegisters.LbaLowPrevious  = aptd.PreviousTaskFile.SectorNumber;
+            errorRegisters.LbaMidPrevious  = aptd.PreviousTaskFile.CylinderLow;
+            errorRegisters.LbaHighPrevious = aptd.PreviousTaskFile.CylinderHigh;
+            errorRegisters.LbaLowCurrent   = aptd.CurrentTaskFile.SectorNumber;
+            errorRegisters.LbaMidCurrent   = aptd.CurrentTaskFile.CylinderLow;
+            errorRegisters.LbaHighCurrent  = aptd.CurrentTaskFile.CylinderHigh;
+            errorRegisters.DeviceHead      = aptd.CurrentTaskFile.DeviceHead;
+            errorRegisters.Error           = aptd.CurrentTaskFile.Error;
+            errorRegisters.Status          = aptd.CurrentTaskFile.Status;
 
             sense = errorRegisters.Error != 0 || (errorRegisters.Status & 0xA5) != 0;
+
+            Marshal.FreeHGlobal(aptd.DataBuffer);
 
             return error;
         }
