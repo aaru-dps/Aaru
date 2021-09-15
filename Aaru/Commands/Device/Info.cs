@@ -169,9 +169,9 @@ namespace Aaru.Commands.Device
 
                 table.AddRow("Vendor ID", $"{dev.UsbVendorId:X4}");
                 table.AddRow("Product ID", $"{dev.UsbProductId:X4}");
-                table.AddRow("Manufacturer", $"{Markup.Escape(dev.UsbManufacturerString)}");
-                table.AddRow("Product", $"{Markup.Escape(dev.UsbProductString)}");
-                table.AddRow("Serial number", $"{Markup.Escape(dev.UsbSerialString)}");
+                table.AddRow("Manufacturer", $"{Markup.Escape(dev.UsbManufacturerString ?? "")}");
+                table.AddRow("Product", $"{Markup.Escape(dev.UsbProductString           ?? "")}");
+                table.AddRow("Serial number", $"{Markup.Escape(dev.UsbSerialString      ?? "")}");
 
                 AnsiConsole.Render(table);
                 AaruConsole.WriteLine();
@@ -191,8 +191,8 @@ namespace Aaru.Commands.Device
 
                 table.AddRow("Vendor ID", $"{dev.FireWireVendor:X6}");
                 table.AddRow("Model ID", $"{dev.FireWireModel:X6}");
-                table.AddRow("Vendor", $"{Markup.Escape(dev.FireWireVendorName)}");
-                table.AddRow("Model", $"{Markup.Escape(dev.FireWireModelName)}");
+                table.AddRow("Vendor", $"{Markup.Escape(dev.FireWireVendorName ?? "")}");
+                table.AddRow("Model", $"{Markup.Escape(dev.FireWireModelName   ?? "")}");
                 table.AddRow("GUID", $"{dev.FireWireGuid:X16}");
 
                 AnsiConsole.Render(table);
