@@ -88,6 +88,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="DotNetZip" Version="1.15.0" />
     <PackageReference Include="SharpCompress" Version="0.29.0" />
     <PackageReference Include="Unclassified.NetRevisionTask" Version="0.4.1" PrivateAssets="all" />
   </ItemGroup>

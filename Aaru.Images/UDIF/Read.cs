@@ -45,7 +45,7 @@ using Claunia.PropertyList;
 using Claunia.RsrcFork;
 using Ionic.Zlib;
 using SharpCompress.Compressors.ADC;
-using SharpCompress.Compressors.BZip2;
+using Ionic.BZip2;
 using Version = Resources.Version;
 
 #pragma warning disable 612
@@ -446,8 +446,7 @@ namespace Aaru.DiscImages
 
                             break;
                         case CHUNK_TYPE_BZIP:
-                            decStream = new BZip2Stream(cmpMs, SharpCompress.Compressors.CompressionMode.Decompress,
-                                                        false);
+                            decStream = new BZip2InputStream(cmpMs, false);
 
                             break;
                         case CHUNK_TYPE_RLE: break;

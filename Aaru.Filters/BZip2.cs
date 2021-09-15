@@ -34,8 +34,7 @@ using System;
 using System.IO;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
-using SharpCompress.Compressors;
-using SharpCompress.Compressors.BZip2;
+using Ionic.BZip2;
 
 namespace Aaru.Filters
 {
@@ -157,7 +156,7 @@ namespace Aaru.Filters
             BasePath       = null;
             CreationTime   = DateTime.UtcNow;
             LastWriteTime  = CreationTime;
-            _innerStream   = new ForcedSeekStream<BZip2Stream>(_dataStream, CompressionMode.Decompress, false);
+            _innerStream   = new ForcedSeekStream<BZip2InputStream>(_dataStream, false);
             DataForkLength = _innerStream.Length;
 
             return Errno.NoError;
@@ -170,7 +169,7 @@ namespace Aaru.Filters
             BasePath       = null;
             CreationTime   = DateTime.UtcNow;
             LastWriteTime  = CreationTime;
-            _innerStream   = new ForcedSeekStream<BZip2Stream>(_dataStream, CompressionMode.Decompress, false);
+            _innerStream   = new ForcedSeekStream<BZip2InputStream>(_dataStream, false);
             DataForkLength = _innerStream.Length;
 
             return Errno.NoError;
@@ -185,7 +184,7 @@ namespace Aaru.Filters
             var fi = new FileInfo(path);
             CreationTime   = fi.CreationTimeUtc;
             LastWriteTime  = fi.LastWriteTimeUtc;
-            _innerStream   = new ForcedSeekStream<BZip2Stream>(_dataStream, CompressionMode.Decompress, false);
+            _innerStream   = new ForcedSeekStream<BZip2InputStream>(_dataStream, false);
             DataForkLength = _innerStream.Length;
 
             return Errno.NoError;
