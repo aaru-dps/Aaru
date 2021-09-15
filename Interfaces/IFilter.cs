@@ -54,43 +54,36 @@ namespace Aaru.CommonTypes.Interfaces
         /// <summary>Plugin author</summary>
         string Author { get; }
 
-        /// <summary>Closes all opened streams.</summary>
-        void Close();
-
         /// <summary>
         ///     Gets the path used to open this filter.<br /> UNIX: /path/to/archive.zip/path/to/file.bin =&gt;
         ///     /path/to/archive.zip/path/to/file.bin <br /> Windows: C:\path\to\archive.zip\path\to\file.bin =&gt;
         ///     C:\path\to\archive.zip\path\to\file.bin
         /// </summary>
         /// <returns>Path used to open this filter.</returns>
-        string GetBasePath();
+        string BasePath { get; }
 
         /// <summary>Gets creation time of file referenced by this filter.</summary>
         /// <returns>The creation time.</returns>
-        DateTime GetCreationTime();
+        DateTime CreationTime { get; }
 
         /// <summary>Gets length of this filter's data fork.</summary>
         /// <returns>The data fork length.</returns>
-        long GetDataForkLength();
-
-        /// <summary>Gets a stream to access the data fork contents.</summary>
-        /// <returns>The data fork stream.</returns>
-        Stream GetDataForkStream();
+        long DataForkLength { get; }
 
         /// <summary>
         ///     Gets the filename for the file referenced by this filter.<br /> UNIX: /path/to/archive.zip/path/to/file.bin =
         ///     &gt; file.bin <br /> Windows: C:\path\to\archive.zip\path\to\file.bin =&gt; file.bin
         /// </summary>
         /// <returns>The filename.</returns>
-        string GetFilename();
+        string Filename { get; }
 
         /// <summary>Gets last write time of file referenced by this filter.</summary>
         /// <returns>The last write time.</returns>
-        DateTime GetLastWriteTime();
+        DateTime LastWriteTime { get; }
 
         /// <summary>Gets length of file referenced by ths filter.</summary>
         /// <returns>The length.</returns>
-        long GetLength();
+        long Length { get; }
 
         /// <summary>
         ///     Gets full path to file referenced by this filter. If it's an archive, it's the path inside the archive.<br />
@@ -98,7 +91,7 @@ namespace Aaru.CommonTypes.Interfaces
         ///     C:\path\to\archive.zip\path\to\file.bin =&gt; \path\to\file.bin
         /// </summary>
         /// <returns>The path.</returns>
-        string GetPath();
+        string Path { get; }
 
         /// <summary>
         ///     Gets path to parent folder to the file referenced by this filter. If it's an archive, it's the full path to
@@ -106,18 +99,31 @@ namespace Aaru.CommonTypes.Interfaces
         ///     C:\path\to\archive.zip\path\to\file.bin =&gt; C:\path\to\archive.zip
         /// </summary>
         /// <returns>The parent folder.</returns>
-        string GetParentFolder();
+        string ParentFolder { get; }
 
         /// <summary>Gets length of this filter's resource fork.</summary>
         /// <returns>The resource fork length.</returns>
-        long GetResourceForkLength();
+        long ResourceForkLength { get; }
+
+        /// <summary>Returns true if the file referenced by this filter has a resource fork</summary>
+        bool HasResourceFork { get; }
+
+        /// <summary>
+        ///     Returns true if the filter has a file/stream/buffer currently opened and no
+        ///     <see cref="M:Aaru.Filters.Filter.Close" /> has been issued.
+        /// </summary>
+        bool Opened { get; }
+
+        /// <summary>Closes all opened streams.</summary>
+        void Close();
+
+        /// <summary>Gets a stream to access the data fork contents.</summary>
+        /// <returns>The data fork stream.</returns>
+        Stream GetDataForkStream();
 
         /// <summary>Gets a stream to access the resource fork contents.</summary>
         /// <returns>The resource fork stream.</returns>
         Stream GetResourceForkStream();
-
-        /// <summary>Returns true if the file referenced by this filter has a resource fork</summary>
-        bool HasResourceFork();
 
         /// <summary>Identifies if the specified path contains data recognizable by this filter instance</summary>
         /// <param name="path">Path.</param>
@@ -130,12 +136,6 @@ namespace Aaru.CommonTypes.Interfaces
         /// <summary>Identifies if the specified buffer contains data recognizable by this filter instance</summary>
         /// <param name="buffer">Buffer.</param>
         bool Identify(byte[] buffer);
-
-        /// <summary>
-        ///     Returns true if the filter has a file/stream/buffer currently opened and no
-        ///     <see cref="M:Aaru.Filters.Filter.Close" /> has been issued.
-        /// </summary>
-        bool IsOpened();
 
         /// <summary>Opens the specified path with this filter instance</summary>
         /// <param name="path">Path.</param>

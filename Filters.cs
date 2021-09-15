@@ -95,7 +95,7 @@ namespace Aaru.CommonTypes
 
                         foundFilter?.Open(path);
 
-                        if(foundFilter?.IsOpened() == true)
+                        if(foundFilter.Opened)
                             return foundFilter;
                     }
                     else
