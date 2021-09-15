@@ -33,6 +33,7 @@
 using System;
 using System.IO;
 using Aaru.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Structs;
 
 namespace Aaru.Filters
 {
@@ -55,7 +56,6 @@ namespace Aaru.Filters
             _dataStream?.Close();
             _dataStream = null;
             BasePath    = null;
-            Opened      = false;
         }
 
         /// <inheritdoc />
@@ -83,34 +83,37 @@ namespace Aaru.Filters
         public bool Identify(string path) => File.Exists(path);
 
         /// <inheritdoc />
-        public void Open(byte[] buffer)
+        public Errno Open(byte[] buffer)
         {
             _dataStream   = new MemoryStream(buffer);
             BasePath      = null;
             CreationTime  = DateTime.UtcNow;
             LastWriteTime = CreationTime;
-            Opened        = true;
+
+            return Errno.NoError;
         }
 
         /// <inheritdoc />
-        public void Open(Stream stream)
+        public Errno Open(Stream stream)
         {
             _dataStream   = stream;
             BasePath      = null;
             CreationTime  = DateTime.UtcNow;
             LastWriteTime = CreationTime;
-            Opened        = true;
+
+            return Errno.NoError;
         }
 
         /// <inheritdoc />
-        public void Open(string path)
+        public Errno Open(string path)
         {
             _dataStream = new FileStream(path, FileMode.Open, FileAccess.Read);
             BasePath    = System.IO.Path.GetFullPath(path);
             var fi = new FileInfo(path);
             CreationTime  = fi.CreationTimeUtc;
             LastWriteTime = fi.LastWriteTimeUtc;
-            Opened        = true;
+
+            return Errno.NoError;
         }
 
         /// <inheritdoc />
@@ -133,8 +136,5 @@ namespace Aaru.Filters
 
         /// <inheritdoc />
         public string ParentFolder => System.IO.Path.GetDirectoryName(BasePath);
-
-        /// <inheritdoc />
-        public bool Opened { get; private set; }
     }
 }

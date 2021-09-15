@@ -36,6 +36,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using Aaru.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Structs;
 using Aaru.Helpers;
 using Marshal = Aaru.Helpers.Marshal;
 
@@ -74,54 +75,50 @@ namespace Aaru.Filters
         {
             0x56, 0x41, 0x58, 0x20, 0x56, 0x4D, 0x53, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20
         };
-        string   _basePath;
-        DateTime _creationTime;
-        Entry    _dataFork;
-        Header   _header;
-        string   _headerPath;
-        DateTime _lastWriteTime;
-        bool     _opened;
-        Entry    _rsrcFork;
+        Entry  _dataFork;
+        Header _header;
+        string _headerPath;
+        Entry  _rsrcFork;
 
         /// <inheritdoc />
         public string Name => "AppleDouble";
         /// <inheritdoc />
-        public Guid Id => new Guid("1B2165EE-C9DF-4B21-BBBB-9E5892B2DF4D");
+        public Guid Id => new("1B2165EE-C9DF-4B21-BBBB-9E5892B2DF4D");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
         /// <inheritdoc />
-        public void Close() => _opened = false;
+        public void Close() {}
 
         /// <inheritdoc />
-        public string GetBasePath() => _basePath;
+        public string BasePath { get; private set; }
 
         /// <inheritdoc />
-        public DateTime GetCreationTime() => _creationTime;
+        public DateTime CreationTime { get; private set; }
 
         /// <inheritdoc />
-        public long GetDataForkLength() => _dataFork.length;
+        public long DataForkLength => _dataFork.length;
 
         /// <inheritdoc />
-        public Stream GetDataForkStream() => new FileStream(_basePath, FileMode.Open, FileAccess.Read);
+        public Stream GetDataForkStream() => new FileStream(BasePath, FileMode.Open, FileAccess.Read);
 
         /// <inheritdoc />
-        public string GetFilename() => Path.GetFileName(_basePath);
+        public string Filename => System.IO.Path.GetFileName(BasePath);
 
         /// <inheritdoc />
-        public DateTime GetLastWriteTime() => _lastWriteTime;
+        public DateTime LastWriteTime { get; private set; }
 
         /// <inheritdoc />
-        public long GetLength() => _dataFork.length + _rsrcFork.length;
+        public long Length => _dataFork.length + _rsrcFork.length;
 
         /// <inheritdoc />
-        public string GetParentFolder() => Path.GetDirectoryName(_basePath);
+        public string ParentFolder => System.IO.Path.GetDirectoryName(BasePath);
 
         /// <inheritdoc />
-        public string GetPath() => _basePath;
+        public string Path => BasePath;
 
         /// <inheritdoc />
-        public long GetResourceForkLength() => _rsrcFork.length;
+        public long ResourceForkLength => _rsrcFork.length;
 
         /// <inheritdoc />
         public Stream GetResourceForkStream()
@@ -134,7 +131,7 @@ namespace Aaru.Filters
         }
 
         /// <inheritdoc />
-        public bool HasResourceFork() => _rsrcFork.length > 0;
+        public bool HasResourceFork => _rsrcFork.length > 0;
 
         /// <inheritdoc />
         public bool Identify(byte[] buffer) => false;
@@ -145,9 +142,9 @@ namespace Aaru.Filters
         /// <inheritdoc />
         public bool Identify(string path)
         {
-            string filename      = Path.GetFileName(path);
-            string filenameNoExt = Path.GetFileNameWithoutExtension(path);
-            string parentFolder  = Path.GetDirectoryName(path);
+            string filename      = System.IO.Path.GetFileName(path);
+            string filenameNoExt = System.IO.Path.GetFileNameWithoutExtension(path);
+            string parentFolder  = System.IO.Path.GetDirectoryName(path);
 
             parentFolder ??= "";
 
@@ -156,28 +153,28 @@ namespace Aaru.Filters
                 return false;
 
             // Prepend data fork name with "R."
-            string proDosAppleDouble = Path.Combine(parentFolder, "R." + filename);
+            string proDosAppleDouble = System.IO.Path.Combine(parentFolder, "R." + filename);
 
             // Prepend data fork name with '%'
-            string unixAppleDouble = Path.Combine(parentFolder, "%" + filename);
+            string unixAppleDouble = System.IO.Path.Combine(parentFolder, "%" + filename);
 
             // Change file extension to ADF
-            string dosAppleDouble = Path.Combine(parentFolder, filenameNoExt + ".ADF");
+            string dosAppleDouble = System.IO.Path.Combine(parentFolder, filenameNoExt + ".ADF");
 
             // Change file extension to adf
-            string dosAppleDoubleLower = Path.Combine(parentFolder, filenameNoExt + ".adf");
+            string dosAppleDoubleLower = System.IO.Path.Combine(parentFolder, filenameNoExt + ".adf");
 
             // Store AppleDouble header file in ".AppleDouble" folder with same name
-            string netatalkAppleDouble = Path.Combine(parentFolder, ".AppleDouble", filename);
+            string netatalkAppleDouble = System.IO.Path.Combine(parentFolder, ".AppleDouble", filename);
 
             // Store AppleDouble header file in "resource.frk" folder with same name
-            string daveAppleDouble = Path.Combine(parentFolder, "resource.frk", filename);
+            string daveAppleDouble = System.IO.Path.Combine(parentFolder, "resource.frk", filename);
 
             // Prepend data fork name with "._"
-            string osxAppleDouble = Path.Combine(parentFolder, "._" + filename);
+            string osxAppleDouble = System.IO.Path.Combine(parentFolder, "._" + filename);
 
             // Adds ".rsrc" extension
-            string unArAppleDouble = Path.Combine(parentFolder, filename + ".rsrc");
+            string unArAppleDouble = System.IO.Path.Combine(parentFolder, filename + ".rsrc");
 
             // Check AppleDouble created by A/UX in ProDOS filesystem
             if(File.Exists(proDosAppleDouble))
@@ -322,53 +319,50 @@ namespace Aaru.Filters
             return _header.magic == MAGIC && (_header.version == VERSION || _header.version == VERSION2);
         }
 
-        /// <inheritdoc />
-        public bool IsOpened() => _opened;
-
         // Now way to have two files in a single byte array
         /// <inheritdoc />
-        public void Open(byte[] buffer) => throw new NotSupportedException();
+        public Errno Open(byte[] buffer) => Errno.NotSupported;
 
         // Now way to have two files in a single stream
         /// <inheritdoc />
-        public void Open(Stream stream) => throw new NotSupportedException();
+        public Errno Open(Stream stream) => Errno.NotSupported;
 
         /// <inheritdoc />
-        public void Open(string path)
+        public Errno Open(string path)
         {
-            string filename      = Path.GetFileName(path);
-            string filenameNoExt = Path.GetFileNameWithoutExtension(path);
-            string parentFolder  = Path.GetDirectoryName(path);
+            string filename      = System.IO.Path.GetFileName(path);
+            string filenameNoExt = System.IO.Path.GetFileNameWithoutExtension(path);
+            string parentFolder  = System.IO.Path.GetDirectoryName(path);
 
             parentFolder ??= "";
 
             if(filename is null ||
                filenameNoExt is null)
-                throw new ArgumentNullException(nameof(path));
+                return Errno.InvalidArgument;
 
             // Prepend data fork name with "R."
-            string proDosAppleDouble = Path.Combine(parentFolder, "R." + filename);
+            string proDosAppleDouble = System.IO.Path.Combine(parentFolder, "R." + filename);
 
             // Prepend data fork name with '%'
-            string unixAppleDouble = Path.Combine(parentFolder, "%" + filename);
+            string unixAppleDouble = System.IO.Path.Combine(parentFolder, "%" + filename);
 
             // Change file extension to ADF
-            string dosAppleDouble = Path.Combine(parentFolder, filenameNoExt + ".ADF");
+            string dosAppleDouble = System.IO.Path.Combine(parentFolder, filenameNoExt + ".ADF");
 
             // Change file extension to adf
-            string dosAppleDoubleLower = Path.Combine(parentFolder, filenameNoExt + ".adf");
+            string dosAppleDoubleLower = System.IO.Path.Combine(parentFolder, filenameNoExt + ".adf");
 
             // Store AppleDouble header file in ".AppleDouble" folder with same name
-            string netatalkAppleDouble = Path.Combine(parentFolder, ".AppleDouble", filename);
+            string netatalkAppleDouble = System.IO.Path.Combine(parentFolder, ".AppleDouble", filename);
 
             // Store AppleDouble header file in "resource.frk" folder with same name
-            string daveAppleDouble = Path.Combine(parentFolder, "resource.frk", filename);
+            string daveAppleDouble = System.IO.Path.Combine(parentFolder, "resource.frk", filename);
 
             // Prepend data fork name with "._"
-            string osxAppleDouble = Path.Combine(parentFolder, "._" + filename);
+            string osxAppleDouble = System.IO.Path.Combine(parentFolder, "._" + filename);
 
             // Adds ".rsrc" extension
-            string unArAppleDouble = Path.Combine(parentFolder, filename + ".rsrc");
+            string unArAppleDouble = System.IO.Path.Combine(parentFolder, filename + ".rsrc");
 
             // Check AppleDouble created by A/UX in ProDOS filesystem
             if(File.Exists(proDosAppleDouble))
@@ -514,6 +508,10 @@ namespace Aaru.Filters
                 }
             }
 
+            // TODO: More appropriate error
+            if(_headerPath is null)
+                return Errno.NotSupported;
+
             var fs = new FileStream(_headerPath, FileMode.Open, FileAccess.Read);
             fs.Seek(0, SeekOrigin.Begin);
 
@@ -530,8 +528,8 @@ namespace Aaru.Filters
                 entries[i] = Marshal.ByteArrayToStructureBigEndian<Entry>(entry);
             }
 
-            _creationTime  = DateTime.UtcNow;
-            _lastWriteTime = _creationTime;
+            CreationTime  = DateTime.UtcNow;
+            LastWriteTime = CreationTime;
 
             foreach(Entry entry in entries)
                 switch((EntryId)entry.id)
@@ -546,8 +544,8 @@ namespace Aaru.Filters
 
                         FileDates dates = Marshal.ByteArrayToStructureBigEndian<FileDates>(datesB);
 
-                        _creationTime  = DateHandlers.UnixUnsignedToDateTime(dates.creationDate);
-                        _lastWriteTime = DateHandlers.UnixUnsignedToDateTime(dates.modificationDate);
+                        CreationTime  = DateHandlers.UnixUnsignedToDateTime(dates.creationDate);
+                        LastWriteTime = DateHandlers.UnixUnsignedToDateTime(dates.modificationDate);
 
                         break;
                     case EntryId.FileInfo:
@@ -559,28 +557,28 @@ namespace Aaru.Filters
                         {
                             MacFileInfo macinfo = Marshal.ByteArrayToStructureBigEndian<MacFileInfo>(finfo);
 
-                            _creationTime  = DateHandlers.MacToDateTime(macinfo.creationDate);
-                            _lastWriteTime = DateHandlers.MacToDateTime(macinfo.modificationDate);
+                            CreationTime  = DateHandlers.MacToDateTime(macinfo.creationDate);
+                            LastWriteTime = DateHandlers.MacToDateTime(macinfo.modificationDate);
                         }
                         else if(_proDosHome.SequenceEqual(_header.homeFilesystem))
                         {
                             ProDOSFileInfo prodosinfo = Marshal.ByteArrayToStructureBigEndian<ProDOSFileInfo>(finfo);
 
-                            _creationTime  = DateHandlers.MacToDateTime(prodosinfo.creationDate);
-                            _lastWriteTime = DateHandlers.MacToDateTime(prodosinfo.modificationDate);
+                            CreationTime  = DateHandlers.MacToDateTime(prodosinfo.creationDate);
+                            LastWriteTime = DateHandlers.MacToDateTime(prodosinfo.modificationDate);
                         }
                         else if(_unixHome.SequenceEqual(_header.homeFilesystem))
                         {
                             UnixFileInfo unixinfo = Marshal.ByteArrayToStructureBigEndian<UnixFileInfo>(finfo);
 
-                            _creationTime  = DateHandlers.UnixUnsignedToDateTime(unixinfo.creationDate);
-                            _lastWriteTime = DateHandlers.UnixUnsignedToDateTime(unixinfo.modificationDate);
+                            CreationTime  = DateHandlers.UnixUnsignedToDateTime(unixinfo.creationDate);
+                            LastWriteTime = DateHandlers.UnixUnsignedToDateTime(unixinfo.modificationDate);
                         }
                         else if(_dosHome.SequenceEqual(_header.homeFilesystem))
                         {
                             DOSFileInfo dosinfo = Marshal.ByteArrayToStructureBigEndian<DOSFileInfo>(finfo);
 
-                            _lastWriteTime =
+                            LastWriteTime =
                                 DateHandlers.DosToDateTime(dosinfo.modificationDate, dosinfo.modificationTime);
                         }
 
@@ -604,8 +602,9 @@ namespace Aaru.Filters
             }
 
             fs.Close();
-            _opened   = true;
-            _basePath = path;
+            BasePath = path;
+
+            return Errno.NoError;
         }
 
         enum EntryId : uint

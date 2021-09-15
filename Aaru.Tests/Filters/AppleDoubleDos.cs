@@ -29,6 +29,7 @@
 using System.IO;
 using Aaru.Checksums;
 using Aaru.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Structs;
 using Aaru.Filters;
 using NUnit.Framework;
 
@@ -101,8 +102,7 @@ namespace Aaru.Tests.Filters
         public void Test()
         {
             IFilter filter = new AppleDouble();
-            filter.Open(_location);
-            Assert.AreEqual(true, filter.Opened);
+            Assert.AreEqual(Errno.NoError, filter.Open(_location));
             Assert.AreEqual(737280, filter.DataForkLength);
             Assert.AreNotEqual(null, filter.GetDataForkStream());
             Assert.AreEqual(286, filter.ResourceForkLength);

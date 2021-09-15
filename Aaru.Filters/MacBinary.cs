@@ -35,6 +35,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Structs;
 using Aaru.Helpers;
 using Marshal = Aaru.Helpers.Marshal;
 
@@ -68,7 +69,6 @@ namespace Aaru.Filters
             _isBytes  = false;
             _isStream = false;
             _isPath   = false;
-            Opened    = false;
         }
 
         /// <inheritdoc />
@@ -198,10 +198,7 @@ namespace Aaru.Filters
         }
 
         /// <inheritdoc />
-        public bool Opened { get; private set; }
-
-        /// <inheritdoc />
-        public void Open(byte[] buffer)
+        public Errno Open(byte[] buffer)
         {
             var ms = new MemoryStream(buffer);
             ms.Seek(0, SeekOrigin.Begin);
@@ -229,13 +226,14 @@ namespace Aaru.Filters
             LastWriteTime = DateHandlers.MacToDateTime(_header.modificationTime);
 
             ms.Close();
-            Opened   = true;
             _isBytes = true;
             _bytes   = buffer;
+
+            return Errno.NoError;
         }
 
         /// <inheritdoc />
-        public void Open(Stream stream)
+        public Errno Open(Stream stream)
         {
             stream.Seek(0, SeekOrigin.Begin);
 
@@ -262,13 +260,14 @@ namespace Aaru.Filters
             LastWriteTime = DateHandlers.MacToDateTime(_header.modificationTime);
 
             stream.Seek(0, SeekOrigin.Begin);
-            Opened    = true;
             _isStream = true;
             _stream   = stream;
+
+            return Errno.NoError;
         }
 
         /// <inheritdoc />
-        public void Open(string path)
+        public Errno Open(string path)
         {
             var fs = new FileStream(path, FileMode.Open, FileAccess.Read);
             fs.Seek(0, SeekOrigin.Begin);
@@ -296,9 +295,10 @@ namespace Aaru.Filters
             LastWriteTime = DateHandlers.MacToDateTime(_header.modificationTime);
 
             fs.Close();
-            Opened   = true;
             _isPath  = true;
             BasePath = path;
+
+            return Errno.NoError;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]

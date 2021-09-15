@@ -38,6 +38,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Structs;
 using Aaru.Helpers;
 using Marshal = System.Runtime.InteropServices.Marshal;
 
@@ -62,7 +63,7 @@ namespace Aaru.Filters
         public string Author => "Natalia Portillo";
 
         /// <inheritdoc />
-        public void Close() => Opened = false;
+        public void Close() {}
 
         /// <inheritdoc />
         public string BasePath { get; private set; }
@@ -170,16 +171,13 @@ namespace Aaru.Filters
         }
 
         /// <inheritdoc />
-        public bool Opened { get; private set; }
+        public Errno Open(byte[] buffer) => Errno.NotSupported;
 
         /// <inheritdoc />
-        public void Open(byte[] buffer) => throw new NotSupportedException();
+        public Errno Open(Stream stream) => Errno.NotSupported;
 
         /// <inheritdoc />
-        public void Open(Stream stream) => throw new NotSupportedException();
-
-        /// <inheritdoc />
-        public void Open(string path)
+        public Errno Open(string path)
         {
             string parentFolder = System.IO.Path.GetDirectoryName(path);
             string baseFilename = System.IO.Path.GetFileName(path);
@@ -239,9 +237,10 @@ namespace Aaru.Filters
             ResourceForkLength = new FileInfo(_rsrcPath ?? throw new InvalidOperationException()).Length;
 
             BasePath = path;
-            Opened   = true;
 
             finderDatStream.Close();
+
+            return Errno.NoError;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]

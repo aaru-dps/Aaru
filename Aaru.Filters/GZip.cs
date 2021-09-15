@@ -34,6 +34,7 @@ using System;
 using System.IO;
 using System.IO.Compression;
 using Aaru.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Structs;
 using Aaru.Helpers;
 
 namespace Aaru.Filters
@@ -59,7 +60,6 @@ namespace Aaru.Filters
             _dataStream?.Close();
             _dataStream = null;
             BasePath    = null;
-            Opened      = false;
         }
 
         /// <inheritdoc />
@@ -109,7 +109,7 @@ namespace Aaru.Filters
         }
 
         /// <inheritdoc />
-        public void Open(byte[] buffer)
+        public Errno Open(byte[] buffer)
         {
             byte[] mtimeB = new byte[4];
             byte[] isizeB = new byte[4];
@@ -132,11 +132,11 @@ namespace Aaru.Filters
 
             _zStream = new ForcedSeekStream<GZipStream>(_decompressedSize, _dataStream, CompressionMode.Decompress);
 
-            Opened = true;
+            return Errno.NoError;
         }
 
         /// <inheritdoc />
-        public void Open(Stream stream)
+        public Errno Open(Stream stream)
         {
             byte[] mtimeB = new byte[4];
             byte[] isizeB = new byte[4];
@@ -159,11 +159,11 @@ namespace Aaru.Filters
 
             _zStream = new ForcedSeekStream<GZipStream>(_decompressedSize, _dataStream, CompressionMode.Decompress);
 
-            Opened = true;
+            return Errno.NoError;
         }
 
         /// <inheritdoc />
-        public void Open(string path)
+        public Errno Open(string path)
         {
             byte[] mtimeB = new byte[4];
             byte[] isizeB = new byte[4];
@@ -185,7 +185,8 @@ namespace Aaru.Filters
             CreationTime = fi.CreationTimeUtc;
             LastWriteTime = DateHandlers.UnixUnsignedToDateTime(mtime);
             _zStream = new ForcedSeekStream<GZipStream>(_decompressedSize, _dataStream, CompressionMode.Decompress);
-            Opened = true;
+
+            return Errno.NoError;
         }
 
         /// <inheritdoc />
@@ -218,8 +219,5 @@ namespace Aaru.Filters
 
         /// <inheritdoc />
         public string ParentFolder => System.IO.Path.GetDirectoryName(BasePath);
-
-        /// <inheritdoc />
-        public bool Opened { get; private set; }
     }
 }

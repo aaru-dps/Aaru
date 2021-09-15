@@ -369,7 +369,7 @@ namespace Aaru.DiscImages
                     var     filters = new FiltersList();
                     IFilter filter  = filters.GetFilter(basename + sidecar.name);
 
-                    if(filter.Opened != true)
+                    if(filter is null)
                         continue;
 
                     AaruConsole.DebugWriteLine("ZZZRawImage Plugin", "Found media tag {0}", sidecar.tag);
