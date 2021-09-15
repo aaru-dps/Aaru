@@ -42,6 +42,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using Aaru.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Structs;
 using Aaru.Console;
 
 namespace Aaru.CommonTypes
@@ -93,9 +94,7 @@ namespace Aaru.CommonTypes
                         var foundFilter = (IFilter)filter.GetType().GetConstructor(Type.EmptyTypes)?.Invoke(new object[]
                             {});
 
-                        foundFilter?.Open(path);
-
-                        if(foundFilter.Opened)
+                        if(foundFilter?.Open(path) == Errno.NoError)
                             return foundFilter;
                     }
                     else

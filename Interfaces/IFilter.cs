@@ -38,6 +38,7 @@
 
 using System;
 using System.IO;
+using Aaru.CommonTypes.Structs;
 
 namespace Aaru.CommonTypes.Interfaces
 {
@@ -108,12 +109,6 @@ namespace Aaru.CommonTypes.Interfaces
         /// <summary>Returns true if the file referenced by this filter has a resource fork</summary>
         bool HasResourceFork { get; }
 
-        /// <summary>
-        ///     Returns true if the filter has a file/stream/buffer currently opened and no
-        ///     <see cref="M:Aaru.Filters.Filter.Close" /> has been issued.
-        /// </summary>
-        bool Opened { get; }
-
         /// <summary>Closes all opened streams.</summary>
         void Close();
 
@@ -139,14 +134,14 @@ namespace Aaru.CommonTypes.Interfaces
 
         /// <summary>Opens the specified path with this filter instance</summary>
         /// <param name="path">Path.</param>
-        void Open(string path);
+        Errno Open(string path);
 
         /// <summary>Opens the specified stream with this filter instance</summary>
         /// <param name="stream">Stream.</param>
-        void Open(Stream stream);
+        Errno Open(Stream stream);
 
         /// <summary>Opens the specified buffer with this filter instance</summary>
         /// <param name="buffer">Buffer.</param>
-        void Open(byte[] buffer);
+        Errno Open(byte[] buffer);
     }
 }
