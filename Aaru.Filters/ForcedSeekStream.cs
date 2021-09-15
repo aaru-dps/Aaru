@@ -134,16 +134,36 @@ namespace Aaru.Filters
             int    fullBufferReads = (int)(toPosition / BUFFER_LEN);
             int    restToRead      = (int)(toPosition % BUFFER_LEN);
             byte[] buffer;
+            var    bufPos = 0;
+            var    left   = BUFFER_LEN;
 
             for(int i = 0; i < fullBufferReads; i++)
             {
                 buffer = new byte[BUFFER_LEN];
-                _baseStream.Read(buffer, 0, BUFFER_LEN);
+                bufPos = 0;
+                left   = BUFFER_LEN;
+
+                while(left > 0)
+                {
+                    var done = _baseStream.Read(buffer, bufPos, left);
+                    left   -= done;
+                    bufPos += done;
+                }
+
                 _backStream.Write(buffer, 0, BUFFER_LEN);
             }
 
             buffer = new byte[restToRead];
-            _baseStream.Read(buffer, 0, restToRead);
+            bufPos = 0;
+            left   = restToRead;
+
+            while(left > 0)
+            {
+                var done = _baseStream.Read(buffer, bufPos, left);
+                left   -= done;
+                bufPos += done;
+            }
+
             _backStream.Write(buffer, 0, restToRead);
         }
 
@@ -163,8 +183,9 @@ namespace Aaru.Filters
             if(_backStream.Position + count <= _backStream.Length)
                 return _backStream.Read(buffer, offset, count);
 
+            var oldPosition = _backStream.Position;
             SetPosition(_backStream.Position + count);
-            SetPosition(_backStream.Position - count);
+            SetPosition(oldPosition);
 
             return _backStream.Read(buffer, offset, count);
         }
