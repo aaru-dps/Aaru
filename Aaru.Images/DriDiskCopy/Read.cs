@@ -81,8 +81,8 @@ namespace Aaru.DiscImages
             _driImageFilter = imageFilter;
 
             _imageInfo.ImageSize            = (ulong)(stream.Length - Marshal.SizeOf<Footer>());
-            _imageInfo.CreationTime         = imageFilter.GetCreationTime();
-            _imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
+            _imageInfo.CreationTime         = imageFilter.CreationTime;
+            _imageInfo.LastModificationTime = imageFilter.LastWriteTime;
 
             AaruConsole.DebugWriteLine("DRI DiskCopy plugin", "Image application = {0} version {1}",
                                        _imageInfo.Application, _imageInfo.ApplicationVersion);

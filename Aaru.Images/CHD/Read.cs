@@ -570,7 +570,7 @@ namespace Aaru.DiscImages
                                 switch((SubTypeOld)chdTrack.subType)
                                 {
                                     case SubTypeOld.Cooked:
-                                        aaruTrack.SubchannelFile   = imageFilter.GetFilename();
+                                        aaruTrack.SubchannelFile   = imageFilter.Filename;
                                         aaruTrack.SubchannelType   = TrackSubchannelType.PackedInterleaved;
                                         aaruTrack.SubchannelFilter = imageFilter;
 
@@ -580,7 +580,7 @@ namespace Aaru.DiscImages
 
                                         break;
                                     case SubTypeOld.Raw:
-                                        aaruTrack.SubchannelFile   = imageFilter.GetFilename();
+                                        aaruTrack.SubchannelFile   = imageFilter.Filename;
                                         aaruTrack.SubchannelType   = TrackSubchannelType.RawInterleaved;
                                         aaruTrack.SubchannelFilter = imageFilter;
 
@@ -592,7 +592,7 @@ namespace Aaru.DiscImages
 
                                 aaruTrack.Description = $"Track {i + 1}";
                                 aaruTrack.EndSector   = currentSector + chdTrack.frames - 1;
-                                aaruTrack.File        = imageFilter.GetFilename();
+                                aaruTrack.File        = imageFilter.Filename;
                                 aaruTrack.FileType    = "BINARY";
                                 aaruTrack.Filter      = imageFilter;
                                 aaruTrack.StartSector = currentSector;
@@ -697,7 +697,7 @@ namespace Aaru.DiscImages
                                 switch(subtype)
                                 {
                                     case SUB_TYPE_COOKED:
-                                        aaruTrack.SubchannelFile   = imageFilter.GetFilename();
+                                        aaruTrack.SubchannelFile   = imageFilter.Filename;
                                         aaruTrack.SubchannelType   = TrackSubchannelType.PackedInterleaved;
                                         aaruTrack.SubchannelFilter = imageFilter;
 
@@ -707,7 +707,7 @@ namespace Aaru.DiscImages
 
                                         break;
                                     case SUB_TYPE_RAW:
-                                        aaruTrack.SubchannelFile   = imageFilter.GetFilename();
+                                        aaruTrack.SubchannelFile   = imageFilter.Filename;
                                         aaruTrack.SubchannelType   = TrackSubchannelType.RawInterleaved;
                                         aaruTrack.SubchannelFilter = imageFilter;
 
@@ -718,7 +718,7 @@ namespace Aaru.DiscImages
 
                                 aaruTrack.Description = $"Track {trackNo}";
                                 aaruTrack.EndSector   = currentSector + frames - 1;
-                                aaruTrack.File        = imageFilter.GetFilename();
+                                aaruTrack.File        = imageFilter.Filename;
                                 aaruTrack.FileType    = "BINARY";
                                 aaruTrack.Filter      = imageFilter;
                                 aaruTrack.StartSector = currentSector;
@@ -836,7 +836,7 @@ namespace Aaru.DiscImages
                                 switch(subtype)
                                 {
                                     case SUB_TYPE_COOKED:
-                                        aaruTrack.SubchannelFile   = imageFilter.GetFilename();
+                                        aaruTrack.SubchannelFile   = imageFilter.Filename;
                                         aaruTrack.SubchannelType   = TrackSubchannelType.PackedInterleaved;
                                         aaruTrack.SubchannelFilter = imageFilter;
 
@@ -846,7 +846,7 @@ namespace Aaru.DiscImages
 
                                         break;
                                     case SUB_TYPE_RAW:
-                                        aaruTrack.SubchannelFile   = imageFilter.GetFilename();
+                                        aaruTrack.SubchannelFile   = imageFilter.Filename;
                                         aaruTrack.SubchannelType   = TrackSubchannelType.RawInterleaved;
                                         aaruTrack.SubchannelFilter = imageFilter;
 
@@ -857,7 +857,7 @@ namespace Aaru.DiscImages
 
                                 aaruTrack.Description = $"Track {trackNo}";
                                 aaruTrack.EndSector   = currentSector + frames - 1;
-                                aaruTrack.File        = imageFilter.GetFilename();
+                                aaruTrack.File        = imageFilter.Filename;
                                 aaruTrack.FileType    = "BINARY";
                                 aaruTrack.Filter      = imageFilter;
                                 aaruTrack.StartSector = currentSector;
@@ -993,7 +993,7 @@ namespace Aaru.DiscImages
                                 switch(subtype)
                                 {
                                     case SUB_TYPE_COOKED:
-                                        aaruTrack.SubchannelFile   = imageFilter.GetFilename();
+                                        aaruTrack.SubchannelFile   = imageFilter.Filename;
                                         aaruTrack.SubchannelType   = TrackSubchannelType.PackedInterleaved;
                                         aaruTrack.SubchannelFilter = imageFilter;
 
@@ -1003,7 +1003,7 @@ namespace Aaru.DiscImages
 
                                         break;
                                     case SUB_TYPE_RAW:
-                                        aaruTrack.SubchannelFile   = imageFilter.GetFilename();
+                                        aaruTrack.SubchannelFile   = imageFilter.Filename;
                                         aaruTrack.SubchannelType   = TrackSubchannelType.RawInterleaved;
                                         aaruTrack.SubchannelFilter = imageFilter;
 
@@ -1014,7 +1014,7 @@ namespace Aaru.DiscImages
 
                                 aaruTrack.Description = $"Track {trackNo}";
                                 aaruTrack.EndSector   = currentSector + frames - 1;
-                                aaruTrack.File        = imageFilter.GetFilename();
+                                aaruTrack.File        = imageFilter.Filename;
                                 aaruTrack.FileType    = "BINARY";
                                 aaruTrack.Filter      = imageFilter;
                                 aaruTrack.StartSector = currentSector;

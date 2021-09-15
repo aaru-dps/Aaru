@@ -89,7 +89,7 @@ namespace Aaru.DiscImages
                         Session           = cdrTrack.Session,
                         Sequence          = cdrTrack.Sequence,
                         Type              = _isCd ? CdrWinTrackTypeToTrackType(cdrTrack.TrackType) : TrackType.Data,
-                        File              = cdrTrack.TrackFile.DataFilter.GetFilename(),
+                        File              = cdrTrack.TrackFile.DataFilter.Filename,
                         Filter            = cdrTrack.TrackFile.DataFilter,
                         FileOffset        = cdrTrack.TrackFile.Offset,
                         FileType          = cdrTrack.TrackFile.FileType,
@@ -125,14 +125,14 @@ namespace Aaru.DiscImages
                        previousStartSector < gdRomSession2Offset)
                         aaruTrack.StartSector = gdRomSession2Offset;
 
-                    previousTrackFile = cdrTrack.TrackFile.DataFilter.GetFilename();
+                    previousTrackFile = cdrTrack.TrackFile.DataFilter.Filename;
 
                     aaruTrack.EndSector = aaruTrack.StartSector + cdrTrack.Sectors - 1;
 
                     if(cdrTrack.TrackType == CDRWIN_TRACK_TYPE_CDG)
                     {
                         aaruTrack.SubchannelFilter = cdrTrack.TrackFile.DataFilter;
-                        aaruTrack.SubchannelFile   = cdrTrack.TrackFile.DataFilter.GetFilename();
+                        aaruTrack.SubchannelFile   = cdrTrack.TrackFile.DataFilter.Filename;
                         aaruTrack.SubchannelOffset = cdrTrack.TrackFile.Offset;
                         aaruTrack.SubchannelType   = TrackSubchannelType.RawInterleaved;
                     }

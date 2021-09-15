@@ -41,18 +41,13 @@ namespace Aaru.Filters
     /// <summary>Decompress xz files while reading</summary>
     public sealed class XZ : IFilter
     {
-        string   _basePath;
-        DateTime _creationTime;
-        Stream   _dataStream;
-        long     _decompressedSize;
-        Stream   _innerStream;
-        DateTime _lastWriteTime;
-        bool     _opened;
+        Stream _dataStream;
+        Stream _innerStream;
 
         /// <inheritdoc />
         public string Name => "XZ";
         /// <inheritdoc />
-        public Guid Id => new Guid("666A8617-0444-4C05-9F4F-DF0FD758D0D2");
+        public Guid Id => new("666A8617-0444-4C05-9F4F-DF0FD758D0D2");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
@@ -61,24 +56,24 @@ namespace Aaru.Filters
         {
             _dataStream?.Close();
             _dataStream = null;
-            _basePath   = null;
-            _opened     = false;
+            BasePath    = null;
+            Opened      = false;
         }
 
         /// <inheritdoc />
-        public string GetBasePath() => _basePath;
+        public string BasePath { get; private set; }
 
         /// <inheritdoc />
         public Stream GetDataForkStream() => _innerStream;
 
         /// <inheritdoc />
-        public string GetPath() => _basePath;
+        public string Path => BasePath;
 
         /// <inheritdoc />
         public Stream GetResourceForkStream() => null;
 
         /// <inheritdoc />
-        public bool HasResourceFork() => false;
+        public bool HasResourceFork => false;
 
         /// <inheritdoc />
         public bool Identify(byte[] buffer) => buffer[0]  == 0xFD && buffer[1]  == 0x37 && buffer[2] == 0x7A &&
@@ -130,75 +125,78 @@ namespace Aaru.Filters
         /// <inheritdoc />
         public void Open(byte[] buffer)
         {
-            _dataStream    = new MemoryStream(buffer);
-            _basePath      = null;
-            _creationTime  = DateTime.UtcNow;
-            _lastWriteTime = _creationTime;
+            _dataStream   = new MemoryStream(buffer);
+            BasePath      = null;
+            CreationTime  = DateTime.UtcNow;
+            LastWriteTime = CreationTime;
             GuessSize();
-            _innerStream = new ForcedSeekStream<XZStream>(_decompressedSize, _dataStream);
-            _opened      = true;
+            _innerStream = new ForcedSeekStream<XZStream>(DataForkLength, _dataStream);
+            Opened       = true;
         }
 
         /// <inheritdoc />
         public void Open(Stream stream)
         {
-            _dataStream    = stream;
-            _basePath      = null;
-            _creationTime  = DateTime.UtcNow;
-            _lastWriteTime = _creationTime;
+            _dataStream   = stream;
+            BasePath      = null;
+            CreationTime  = DateTime.UtcNow;
+            LastWriteTime = CreationTime;
             GuessSize();
-            _innerStream = new ForcedSeekStream<XZStream>(_decompressedSize, _dataStream);
-            _opened      = true;
+            _innerStream = new ForcedSeekStream<XZStream>(DataForkLength, _dataStream);
+            Opened       = true;
         }
 
         /// <inheritdoc />
         public void Open(string path)
         {
             _dataStream = new FileStream(path, FileMode.Open, FileAccess.Read);
-            _basePath   = Path.GetFullPath(path);
+            BasePath    = System.IO.Path.GetFullPath(path);
 
             var fi = new FileInfo(path);
-            _creationTime  = fi.CreationTimeUtc;
-            _lastWriteTime = fi.LastWriteTimeUtc;
+            CreationTime  = fi.CreationTimeUtc;
+            LastWriteTime = fi.LastWriteTimeUtc;
             GuessSize();
-            _innerStream = new ForcedSeekStream<XZStream>(_decompressedSize, _dataStream);
-            _opened      = true;
+            _innerStream = new ForcedSeekStream<XZStream>(DataForkLength, _dataStream);
+            Opened       = true;
         }
 
         /// <inheritdoc />
-        public DateTime GetCreationTime() => _creationTime;
+        public DateTime CreationTime { get; private set; }
 
         /// <inheritdoc />
-        public long GetDataForkLength() => _decompressedSize;
+        public long DataForkLength { get; private set; }
 
         /// <inheritdoc />
-        public DateTime GetLastWriteTime() => _lastWriteTime;
+        public DateTime LastWriteTime { get; private set; }
 
         /// <inheritdoc />
-        public long GetLength() => _decompressedSize;
+        public long Length => DataForkLength;
 
         /// <inheritdoc />
-        public long GetResourceForkLength() => 0;
+        public long ResourceForkLength => 0;
 
         /// <inheritdoc />
-        public string GetFilename()
+        public string Filename
         {
-            if(_basePath?.EndsWith(".xz", StringComparison.InvariantCultureIgnoreCase) == true)
-                return _basePath.Substring(0, _basePath.Length - 3);
+            get
+            {
+                if(BasePath?.EndsWith(".xz", StringComparison.InvariantCultureIgnoreCase) == true)
+                    return BasePath.Substring(0, BasePath.Length - 3);
 
-            return _basePath?.EndsWith(".xzip", StringComparison.InvariantCultureIgnoreCase) == true
-                       ? _basePath.Substring(0, _basePath.Length - 5) : _basePath;
+                return BasePath?.EndsWith(".xzip", StringComparison.InvariantCultureIgnoreCase) == true
+                           ? BasePath.Substring(0, BasePath.Length - 5) : BasePath;
+            }
         }
 
         /// <inheritdoc />
-        public string GetParentFolder() => Path.GetDirectoryName(_basePath);
+        public string ParentFolder => System.IO.Path.GetDirectoryName(BasePath);
 
         /// <inheritdoc />
-        public bool IsOpened() => _opened;
+        public bool Opened { get; private set; }
 
         void GuessSize()
         {
-            _decompressedSize = 0;
+            DataForkLength = 0;
 
             // Seek to footer backwards size field
             _dataStream.Seek(-8, SeekOrigin.End);
@@ -220,7 +218,7 @@ namespace Aaru.Filters
             tmp = new byte[backwardSize - 2 - ignore];
             _dataStream.Read(tmp, 0, tmp.Length);
             Decode(tmp, tmp.Length, ref number);
-            _decompressedSize = (long)number;
+            DataForkLength = (long)number;
 
             _dataStream.Seek(0, SeekOrigin.Begin);
         }

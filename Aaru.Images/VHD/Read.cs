@@ -331,9 +331,9 @@ namespace Aaru.DiscImages
             _imageInfo.Sectors    = _thisFooter.CurrentSize / 512;
             _imageInfo.SectorSize = 512;
 
-            _imageInfo.CreationTime         = imageFilter.GetCreationTime();
+            _imageInfo.CreationTime         = imageFilter.CreationTime;
             _imageInfo.LastModificationTime = _thisDateTime;
-            _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.Filename);
 
             _imageInfo.Cylinders       = (_thisFooter.DiskGeometry & 0xFFFF0000) >> 16;
             _imageInfo.Heads           = (_thisFooter.DiskGeometry & 0xFF00)     >> 8;
@@ -590,7 +590,7 @@ namespace Aaru.DiscImages
                             AaruConsole.DebugWriteLine("VirtualPC plugin", "Possible parent path: \"{0}\"", parentPath);
 
                             IFilter parentFilter =
-                                new FiltersList().GetFilter(Path.Combine(imageFilter.GetParentFolder(), parentPath));
+                                new FiltersList().GetFilter(Path.Combine(imageFilter.ParentFolder, parentPath));
 
                             if(parentFilter != null)
                                 locatorFound = true;
@@ -610,7 +610,7 @@ namespace Aaru.DiscImages
                         _parentImage = new Vhd();
 
                         IFilter parentFilter =
-                            new FiltersList().GetFilter(Path.Combine(imageFilter.GetParentFolder(), parentPath));
+                            new FiltersList().GetFilter(Path.Combine(imageFilter.ParentFolder, parentPath));
 
                         if(parentFilter == null)
                             throw new ImageNotSupportedException("(VirtualPC plugin): Cannot find parent image filter");

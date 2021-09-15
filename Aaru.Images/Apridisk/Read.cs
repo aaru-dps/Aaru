@@ -221,9 +221,9 @@ namespace Aaru.DiscImages
                                                           false));
 
             _imageInfo.ImageSize            = (ulong)stream.Length - headerSizes;
-            _imageInfo.CreationTime         = imageFilter.GetCreationTime();
-            _imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
-            _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            _imageInfo.CreationTime         = imageFilter.CreationTime;
+            _imageInfo.LastModificationTime = imageFilter.LastWriteTime;
+            _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.Filename);
             _imageInfo.Sectors              = _imageInfo.Cylinders * _imageInfo.Heads * _imageInfo.SectorsPerTrack;
             _imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
 

@@ -190,9 +190,9 @@ namespace Aaru.DiscImages
             _dimImageFilter = imageFilter;
 
             _imageInfo.ImageSize            = (ulong)diskSize;
-            _imageInfo.CreationTime         = imageFilter.GetCreationTime();
-            _imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
-            _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            _imageInfo.CreationTime         = imageFilter.CreationTime;
+            _imageInfo.LastModificationTime = imageFilter.LastWriteTime;
+            _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.Filename);
             _imageInfo.Sectors              = _imageInfo.ImageSize / _imageInfo.SectorSize;
             _imageInfo.Comments             = StringHandlers.CToString(_comment, Encoding.GetEncoding(932));
             _imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;

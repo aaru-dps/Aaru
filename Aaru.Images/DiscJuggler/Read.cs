@@ -591,12 +591,12 @@ namespace Aaru.DiscImages
                         default: throw new ImageNotSupportedException($"Unknown track mode {trackMode}");
                     }
 
-                    track.File   = imageFilter.GetFilename();
+                    track.File   = imageFilter.Filename;
                     track.Filter = imageFilter;
 
                     if(track.SubchannelType != TrackSubchannelType.None)
                     {
-                        track.SubchannelFile   = imageFilter.GetFilename();
+                        track.SubchannelFile   = imageFilter.Filename;
                         track.SubchannelFilter = imageFilter;
 
                         if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel))
@@ -758,9 +758,9 @@ namespace Aaru.DiscImages
                 _imageInfo.ReadableSectorTags.Add(SectorTagType.CdTrackFlags);
 
             _imageInfo.Application          = "DiscJuggler";
-            _imageInfo.ImageSize            = (ulong)imageFilter.GetDataForkLength();
-            _imageInfo.CreationTime         = imageFilter.GetCreationTime();
-            _imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
+            _imageInfo.ImageSize            = (ulong)imageFilter.DataForkLength;
+            _imageInfo.CreationTime         = imageFilter.CreationTime;
+            _imageInfo.LastModificationTime = imageFilter.LastWriteTime;
             _imageInfo.XmlMediaType         = XmlMediaType.OpticalDisc;
 
             _sectorBuilder = new SectorBuilder();

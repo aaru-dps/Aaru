@@ -271,9 +271,9 @@ namespace Aaru.DiscImages
             AaruConsole.DebugWriteLine("D88 plugin", "MediaType: {0}", _imageInfo.MediaType);
 
             _imageInfo.ImageSize            = (ulong)hdr.disk_size;
-            _imageInfo.CreationTime         = imageFilter.GetCreationTime();
-            _imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
-            _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            _imageInfo.CreationTime         = imageFilter.CreationTime;
+            _imageInfo.LastModificationTime = imageFilter.LastWriteTime;
+            _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.Filename);
             _imageInfo.Sectors              = (ulong)_sectorsData.Count;
             _imageInfo.Comments             = StringHandlers.CToString(hdr.name, shiftjis);
             _imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;

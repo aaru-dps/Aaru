@@ -782,7 +782,7 @@ namespace Aaru.DiscImages
                                 EndSector   = (ulong)trackEntry.end,
                                 Pregap      = (ulong)trackEntry.pregap,
                                 Session     = trackEntry.session,
-                                File        = imageFilter.GetFilename(),
+                                File        = imageFilter.Filename,
                                 FileType    = "BINARY",
                                 Filter      = imageFilter
                             });
@@ -1277,7 +1277,7 @@ namespace Aaru.DiscImages
                         {
                             BytesPerSector    = (int)_imageInfo.SectorSize,
                             EndSector         = _imageInfo.Sectors - 1,
-                            File              = imageFilter.GetFilename(),
+                            File              = imageFilter.Filename,
                             FileType          = "BINARY",
                             Filter            = imageFilter,
                             RawBytesPerSector = (int)_imageInfo.SectorSize,

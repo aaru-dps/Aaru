@@ -91,9 +91,9 @@ namespace Aaru.DiscImages
 
             _empty = (_pHdr.flags & PARALLELS_EMPTY) == PARALLELS_EMPTY;
 
-            _imageInfo.CreationTime         = imageFilter.GetCreationTime();
-            _imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
-            _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            _imageInfo.CreationTime         = imageFilter.CreationTime;
+            _imageInfo.LastModificationTime = imageFilter.LastWriteTime;
+            _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.Filename);
             _imageInfo.Sectors              = _pHdr.sectors;
             _imageInfo.SectorSize           = 512;
             _imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;

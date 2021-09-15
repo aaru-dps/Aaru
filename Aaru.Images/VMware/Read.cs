@@ -109,7 +109,7 @@ namespace Aaru.DiscImages
                     throw new Exception("Not a descriptor.");
 
                 stream.Seek(0, SeekOrigin.Begin);
-                byte[] ddfExternal = new byte[imageFilter.GetDataForkLength()];
+                byte[] ddfExternal = new byte[imageFilter.DataForkLength];
                 stream.Read(ddfExternal, 0, ddfExternal.Length);
                 ddfStream.Write(ddfExternal, 0, ddfExternal.Length);
             }
@@ -122,7 +122,7 @@ namespace Aaru.DiscImages
             if(cowD)
             {
                 int    cowCount = 1;
-                string basePath = Path.GetFileNameWithoutExtension(imageFilter.GetBasePath());
+                string basePath = Path.GetFileNameWithoutExtension(imageFilter.BasePath);
 
                 while(true)
                 {
@@ -153,7 +153,7 @@ namespace Aaru.DiscImages
                         {
                             Access   = "RW",
                             Filter   = extentFilter,
-                            Filename = extentFilter.GetFilename(),
+                            Filename = extentFilter.Filename,
                             Offset   = 0,
                             Sectors  = extHdrCow.sectors,
                             Type     = "SPARSE"
@@ -233,9 +233,8 @@ namespace Aaru.DiscImages
 
                         if(!embedded)
                             newExtent.Filter =
-                                new FiltersList().
-                                    GetFilter(Path.Combine(Path.GetDirectoryName(imageFilter.GetBasePath()),
-                                                           matchExtent.Groups["filename"].Value));
+                                new FiltersList().GetFilter(Path.Combine(Path.GetDirectoryName(imageFilter.BasePath),
+                                                                         matchExtent.Groups["filename"].Value));
                         else
                             newExtent.Filter = imageFilter;
 
@@ -483,8 +482,7 @@ namespace Aaru.DiscImages
 
             if(_hasParent)
             {
-                IFilter parentFilter =
-                    new FiltersList().GetFilter(Path.Combine(imageFilter.GetParentFolder(), _parentName));
+                IFilter parentFilter = new FiltersList().GetFilter(Path.Combine(imageFilter.ParentFolder, _parentName));
 
                 if(parentFilter == null)
                     throw new Exception($"Cannot find parent \"{_parentName}\".");
@@ -497,9 +495,9 @@ namespace Aaru.DiscImages
 
             _sectorCache = new Dictionary<ulong, byte[]>();
 
-            _imageInfo.CreationTime         = imageFilter.GetCreationTime();
-            _imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
-            _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            _imageInfo.CreationTime         = imageFilter.CreationTime;
+            _imageInfo.LastModificationTime = imageFilter.LastWriteTime;
+            _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.Filename);
             _imageInfo.SectorSize           = SECTOR_SIZE;
             _imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
             _imageInfo.MediaType            = MediaType.GENERIC_HDD;

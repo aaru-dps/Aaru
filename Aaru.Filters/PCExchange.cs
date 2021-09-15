@@ -51,60 +51,54 @@ namespace Aaru.Filters
         const string FILE_ID     = "FILEID.DAT";
         const string FINDER_INFO = "FINDER.DAT";
         const string RESOURCES   = "RESOURCE.FRK";
-        string       _basePath;
-        DateTime     _creationTime;
-        long         _dataLen;
         string       _dataPath;
-        DateTime     _lastWriteTime;
-        bool         _opened;
-        long         _rsrcLen;
         string       _rsrcPath;
 
         /// <inheritdoc />
         public string Name => "PCExchange";
         /// <inheritdoc />
-        public Guid Id => new Guid("9264EB9F-D634-4F9B-BE12-C24CD44988C6");
+        public Guid Id => new("9264EB9F-D634-4F9B-BE12-C24CD44988C6");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
         /// <inheritdoc />
-        public void Close() => _opened = false;
+        public void Close() => Opened = false;
 
         /// <inheritdoc />
-        public string GetBasePath() => _basePath;
+        public string BasePath { get; private set; }
 
         /// <inheritdoc />
-        public DateTime GetCreationTime() => _creationTime;
+        public DateTime CreationTime { get; private set; }
 
         /// <inheritdoc />
-        public long GetDataForkLength() => _dataLen;
+        public long DataForkLength { get; private set; }
 
         /// <inheritdoc />
         public Stream GetDataForkStream() => new FileStream(_dataPath, FileMode.Open, FileAccess.Read);
 
         /// <inheritdoc />
-        public string GetFilename() => Path.GetFileName(_basePath);
+        public string Filename => System.IO.Path.GetFileName(BasePath);
 
         /// <inheritdoc />
-        public DateTime GetLastWriteTime() => _lastWriteTime;
+        public DateTime LastWriteTime { get; private set; }
 
         /// <inheritdoc />
-        public long GetLength() => _dataLen + _rsrcLen;
+        public long Length => DataForkLength + ResourceForkLength;
 
         /// <inheritdoc />
-        public string GetParentFolder() => Path.GetDirectoryName(_basePath);
+        public string ParentFolder => System.IO.Path.GetDirectoryName(BasePath);
 
         /// <inheritdoc />
-        public string GetPath() => _basePath;
+        public string Path => BasePath;
 
         /// <inheritdoc />
-        public long GetResourceForkLength() => _rsrcLen;
+        public long ResourceForkLength { get; private set; }
 
         /// <inheritdoc />
         public Stream GetResourceForkStream() => new FileStream(_rsrcPath, FileMode.Open, FileAccess.Read);
 
         /// <inheritdoc />
-        public bool HasResourceFork() => _rsrcPath != null;
+        public bool HasResourceFork => _rsrcPath != null;
 
         /// <inheritdoc />
         public bool Identify(byte[] buffer) => false;
@@ -115,23 +109,23 @@ namespace Aaru.Filters
         /// <inheritdoc />
         public bool Identify(string path)
         {
-            string parentFolder = Path.GetDirectoryName(path);
+            string parentFolder = System.IO.Path.GetDirectoryName(path);
 
             parentFolder ??= "";
 
-            if(!File.Exists(Path.Combine(parentFolder, FINDER_INFO)))
+            if(!File.Exists(System.IO.Path.Combine(parentFolder, FINDER_INFO)))
                 return false;
 
-            if(!Directory.Exists(Path.Combine(parentFolder, RESOURCES)))
+            if(!Directory.Exists(System.IO.Path.Combine(parentFolder, RESOURCES)))
                 return false;
 
-            string baseFilename = Path.GetFileName(path);
+            string baseFilename = System.IO.Path.GetFileName(path);
 
             bool dataFound = false;
             bool rsrcFound = false;
 
-            var finderDatStream =
-                new FileStream(Path.Combine(parentFolder, FINDER_INFO), FileMode.Open, FileAccess.Read);
+            var finderDatStream = new FileStream(System.IO.Path.Combine(parentFolder, FINDER_INFO), FileMode.Open,
+                                                 FileAccess.Read);
 
             while(finderDatStream.Position + 0x5C <= finderDatStream.Length)
             {
@@ -159,12 +153,13 @@ namespace Aaru.Filters
                     continue;
 
                 dataFound |=
-                    File.Exists(Path.Combine(parentFolder, macName ?? throw new InvalidOperationException())) ||
-                    File.Exists(Path.Combine(parentFolder, dosName))                                          ||
-                    File.Exists(Path.Combine(parentFolder, dosNameLow));
+                    File.Exists(System.IO.Path.Combine(parentFolder,
+                                                       macName ?? throw new InvalidOperationException())) ||
+                    File.Exists(System.IO.Path.Combine(parentFolder, dosName))                            ||
+                    File.Exists(System.IO.Path.Combine(parentFolder, dosNameLow));
 
-                rsrcFound |= File.Exists(Path.Combine(parentFolder, RESOURCES, dosName)) ||
-                             File.Exists(Path.Combine(parentFolder, RESOURCES, dosNameLow));
+                rsrcFound |= File.Exists(System.IO.Path.Combine(parentFolder, RESOURCES, dosName)) ||
+                             File.Exists(System.IO.Path.Combine(parentFolder, RESOURCES, dosNameLow));
 
                 break;
             }
@@ -175,7 +170,7 @@ namespace Aaru.Filters
         }
 
         /// <inheritdoc />
-        public bool IsOpened() => _opened;
+        public bool Opened { get; private set; }
 
         /// <inheritdoc />
         public void Open(byte[] buffer) => throw new NotSupportedException();
@@ -186,13 +181,13 @@ namespace Aaru.Filters
         /// <inheritdoc />
         public void Open(string path)
         {
-            string parentFolder = Path.GetDirectoryName(path);
-            string baseFilename = Path.GetFileName(path);
+            string parentFolder = System.IO.Path.GetDirectoryName(path);
+            string baseFilename = System.IO.Path.GetFileName(path);
 
             parentFolder ??= "";
 
-            var finderDatStream =
-                new FileStream(Path.Combine(parentFolder, FINDER_INFO), FileMode.Open, FileAccess.Read);
+            var finderDatStream = new FileStream(System.IO.Path.Combine(parentFolder, FINDER_INFO), FileMode.Open,
+                                                 FileAccess.Read);
 
             while(finderDatStream.Position + 0x5C <= finderDatStream.Length)
             {
@@ -218,33 +213,33 @@ namespace Aaru.Filters
                    baseFilename != dosNameLow)
                     continue;
 
-                if(File.Exists(Path.Combine(parentFolder, macName ?? throw new InvalidOperationException())))
-                    _dataPath = Path.Combine(parentFolder, macName);
-                else if(File.Exists(Path.Combine(parentFolder, dosName)))
-                    _dataPath = Path.Combine(parentFolder, dosName);
-                else if(File.Exists(Path.Combine(parentFolder, dosNameLow)))
-                    _dataPath = Path.Combine(parentFolder, dosNameLow);
+                if(File.Exists(System.IO.Path.Combine(parentFolder, macName ?? throw new InvalidOperationException())))
+                    _dataPath = System.IO.Path.Combine(parentFolder, macName);
+                else if(File.Exists(System.IO.Path.Combine(parentFolder, dosName)))
+                    _dataPath = System.IO.Path.Combine(parentFolder, dosName);
+                else if(File.Exists(System.IO.Path.Combine(parentFolder, dosNameLow)))
+                    _dataPath = System.IO.Path.Combine(parentFolder, dosNameLow);
                 else
                     _dataPath = null;
 
-                if(File.Exists(Path.Combine(parentFolder, RESOURCES, dosName)))
-                    _rsrcPath = Path.Combine(parentFolder, RESOURCES, dosName);
-                else if(File.Exists(Path.Combine(parentFolder, RESOURCES, dosNameLow)))
-                    _rsrcPath = Path.Combine(parentFolder, RESOURCES, dosNameLow);
+                if(File.Exists(System.IO.Path.Combine(parentFolder, RESOURCES, dosName)))
+                    _rsrcPath = System.IO.Path.Combine(parentFolder, RESOURCES, dosName);
+                else if(File.Exists(System.IO.Path.Combine(parentFolder, RESOURCES, dosNameLow)))
+                    _rsrcPath = System.IO.Path.Combine(parentFolder, RESOURCES, dosNameLow);
                 else
                     _rsrcPath = null;
 
-                _lastWriteTime = DateHandlers.MacToDateTime(datEntry.modificationDate);
-                _creationTime  = DateHandlers.MacToDateTime(datEntry.creationDate);
+                LastWriteTime = DateHandlers.MacToDateTime(datEntry.modificationDate);
+                CreationTime  = DateHandlers.MacToDateTime(datEntry.creationDate);
 
                 break;
             }
 
-            _dataLen = new FileInfo(_dataPath ?? throw new InvalidOperationException()).Length;
-            _rsrcLen = new FileInfo(_rsrcPath ?? throw new InvalidOperationException()).Length;
+            DataForkLength     = new FileInfo(_dataPath ?? throw new InvalidOperationException()).Length;
+            ResourceForkLength = new FileInfo(_rsrcPath ?? throw new InvalidOperationException()).Length;
 
-            _basePath = path;
-            _opened   = true;
+            BasePath = path;
+            Opened   = true;
 
             finderDatStream.Close();
         }

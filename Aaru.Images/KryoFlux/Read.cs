@@ -79,9 +79,8 @@ namespace Aaru.DiscImages
             byte heads   = 2;
             bool topHead = false;
 
-            string basename = Path.Combine(imageFilter.GetParentFolder(),
-                                           imageFilter.GetFilename().
-                                                       Substring(0, imageFilter.GetFilename().Length - 8));
+            string basename = Path.Combine(imageFilter.ParentFolder,
+                                           imageFilter.Filename.Substring(0, imageFilter.Filename.Length - 8));
 
             for(byte t = 0; t < 166; t += step)
             {
@@ -129,7 +128,7 @@ namespace Aaru.DiscImages
                 var trackFilter = new ZZZNoFilter();
                 trackFilter.Open(trackfile);
 
-                if(!trackFilter.IsOpened())
+                if(!trackFilter.Opened)
                     throw new IOException("Could not open KryoFlux track file.");
 
                 _imageInfo.CreationTime         = DateTime.MaxValue;

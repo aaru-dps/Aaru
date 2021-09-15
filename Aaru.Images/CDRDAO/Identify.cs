@@ -98,7 +98,7 @@ namespace Aaru.DiscImages
             }
             catch(Exception ex)
             {
-                AaruConsole.ErrorWriteLine("Exception trying to identify image file {0}", _cdrdaoFilter.GetFilename());
+                AaruConsole.ErrorWriteLine("Exception trying to identify image file {0}", _cdrdaoFilter.Filename);
                 AaruConsole.ErrorWriteLine("Exception: {0}", ex.Message);
                 AaruConsole.ErrorWriteLine("Stack trace: {0}", ex.StackTrace);
 

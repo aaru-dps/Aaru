@@ -42,8 +42,8 @@ namespace Aaru.DiscImages
         /// <inheritdoc />
         public bool Identify(IFilter imageFilter)
         {
-            if(!imageFilter.HasResourceFork() ||
-               imageFilter.GetResourceForkLength() == 0)
+            if(!imageFilter.HasResourceFork ||
+               imageFilter.ResourceForkLength == 0)
                 return false;
 
             try

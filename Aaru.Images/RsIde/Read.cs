@@ -64,9 +64,9 @@ namespace Aaru.DiscImages
             _imageInfo.SectorSize           = (uint)(hdr.flags.HasFlag(RsIdeFlags.HalfSectors) ? 256 : 512);
             _imageInfo.ImageSize            = (ulong)(stream.Length - _dataOff);
             _imageInfo.Sectors              = _imageInfo.ImageSize / _imageInfo.SectorSize;
-            _imageInfo.CreationTime         = imageFilter.GetCreationTime();
-            _imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
-            _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            _imageInfo.CreationTime         = imageFilter.CreationTime;
+            _imageInfo.LastModificationTime = imageFilter.LastWriteTime;
+            _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.Filename);
             _imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
             _imageInfo.Version              = $"{hdr.revision >> 8}.{hdr.revision & 0x0F}";
 

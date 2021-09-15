@@ -89,7 +89,7 @@ namespace Aaru.DiscImages
                 return false;
 
             // Some versions seem to incorrectly create little endian fields
-            if(header.DataSize + header.TagSize + 0x54 != imageFilter.GetDataForkLength() &&
+            if(header.DataSize + header.TagSize + 0x54 != imageFilter.DataForkLength &&
                header.Format                           != kSigmaFormatTwiggy)
             {
                 header.DataSize     = BitConverter.ToUInt32(buffer, 0x40);
@@ -97,7 +97,7 @@ namespace Aaru.DiscImages
                 header.DataChecksum = BitConverter.ToUInt32(buffer, 0x48);
                 header.TagChecksum  = BitConverter.ToUInt32(buffer, 0x4C);
 
-                if(header.DataSize + header.TagSize + 0x54 != imageFilter.GetDataForkLength() &&
+                if(header.DataSize + header.TagSize + 0x54 != imageFilter.DataForkLength &&
                    header.Format                           != kSigmaFormatTwiggy)
                     return false;
             }
@@ -163,8 +163,8 @@ namespace Aaru.DiscImages
             }
 
             imageInfo.ImageSize            = (imageInfo.Sectors * imageInfo.SectorSize) + (imageInfo.Sectors * bptag);
-            imageInfo.CreationTime         = imageFilter.GetCreationTime();
-            imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
+            imageInfo.CreationTime         = imageFilter.CreationTime;
+            imageInfo.LastModificationTime = imageFilter.LastWriteTime;
             imageInfo.MediaTitle           = header.DiskName;
 
             switch(header.Format)
@@ -313,7 +313,7 @@ namespace Aaru.DiscImages
 
             try
             {
-                if(imageFilter.HasResourceFork())
+                if(imageFilter.HasResourceFork)
                 {
                     var rsrcFork = new ResourceFork(imageFilter.GetResourceForkStream());
 

@@ -393,26 +393,26 @@ namespace Aaru.DiscImages
             if(!string.IsNullOrEmpty(_header.DataFile))
                 while(true)
                 {
-                    _dataFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), _header.DataFile));
+                    _dataFilter = filtersList.GetFilter(Path.Combine(imageFilter.ParentFolder, _header.DataFile));
 
                     if(_dataFilter != null)
                         break;
 
-                    _dataFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
+                    _dataFilter = filtersList.GetFilter(Path.Combine(imageFilter.ParentFolder,
                                                                      _header.DataFile.ToLower(CultureInfo.
                                                                          CurrentCulture)));
 
                     if(_dataFilter != null)
                         break;
 
-                    _dataFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
+                    _dataFilter = filtersList.GetFilter(Path.Combine(imageFilter.ParentFolder,
                                                                      _header.DataFile.ToUpper(CultureInfo.
                                                                          CurrentCulture)));
 
                     if(_dataFilter != null)
                         break;
 
-                    _dataFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), _header.DataFile.
+                    _dataFilter = filtersList.GetFilter(Path.Combine(imageFilter.ParentFolder, _header.DataFile.
                                                                          Split(new[]
                                                                          {
                                                                              '\\'
@@ -422,7 +422,7 @@ namespace Aaru.DiscImages
                     if(_dataFilter != null)
                         break;
 
-                    _dataFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), _header.DataFile.
+                    _dataFilter = filtersList.GetFilter(Path.Combine(imageFilter.ParentFolder, _header.DataFile.
                                                                          Split(new[]
                                                                          {
                                                                              '\\'
@@ -432,7 +432,7 @@ namespace Aaru.DiscImages
                     if(_dataFilter != null)
                         break;
 
-                    _dataFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), _header.DataFile.
+                    _dataFilter = filtersList.GetFilter(Path.Combine(imageFilter.ParentFolder, _header.DataFile.
                                                                          Split(new[]
                                                                          {
                                                                              '\\'
@@ -452,25 +452,22 @@ namespace Aaru.DiscImages
                 filtersList = new FiltersList();
 
                 _subFilter =
-                    ((((filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), _header.SubchannelFile)) ??
-                        filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
+                    ((((filtersList.GetFilter(Path.Combine(imageFilter.ParentFolder, _header.SubchannelFile)) ??
+                        filtersList.GetFilter(Path.Combine(imageFilter.ParentFolder,
                                                            _header.SubchannelFile.
                                                                    ToLower(CultureInfo.CurrentCulture)))) ??
-                       filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
+                       filtersList.GetFilter(Path.Combine(imageFilter.ParentFolder,
                                                           _header.SubchannelFile.
                                                                   ToUpper(CultureInfo.CurrentCulture)))) ??
-                      filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), _header.SubchannelFile.
-                                                             Split(new[]
-                                                             {
-                                                                 '\\'
-                                                             }, StringSplitOptions.RemoveEmptyEntries).Last()))) ??
-                     filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), _header.SubchannelFile.
-                                                            Split(new[]
-                                                            {
-                                                                '\\'
-                                                            }, StringSplitOptions.RemoveEmptyEntries).Last().
-                                                            ToLower(CultureInfo.CurrentCulture)))) ??
-                    filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), _header.SubchannelFile.Split(new[]
+                      filtersList.GetFilter(Path.Combine(imageFilter.ParentFolder, _header.SubchannelFile.Split(new[]
+                      {
+                          '\\'
+                      }, StringSplitOptions.RemoveEmptyEntries).Last()))) ??
+                     filtersList.GetFilter(Path.Combine(imageFilter.ParentFolder, _header.SubchannelFile.Split(new[]
+                     {
+                         '\\'
+                     }, StringSplitOptions.RemoveEmptyEntries).Last().ToLower(CultureInfo.CurrentCulture)))) ??
+                    filtersList.GetFilter(Path.Combine(imageFilter.ParentFolder, _header.SubchannelFile.Split(new[]
                     {
                         '\\'
                     }, StringSplitOptions.RemoveEmptyEntries).Last().ToUpper(CultureInfo.CurrentCulture)));
@@ -497,73 +494,70 @@ namespace Aaru.DiscImages
                         do
                         {
                             track.Filter =
-                                filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), bwTrack.filename));
+                                filtersList.GetFilter(Path.Combine(imageFilter.ParentFolder, bwTrack.filename));
 
                             if(track.Filter != null)
                                 break;
 
-                            track.Filter =
-                                filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
-                                                                   bwTrack.filename.ToLower(CultureInfo.
-                                                                       CurrentCulture)));
+                            track.Filter = filtersList.GetFilter(Path.Combine(imageFilter.ParentFolder,
+                                                                              bwTrack.filename.ToLower(CultureInfo.
+                                                                                  CurrentCulture)));
 
                             if(track.Filter != null)
                                 break;
 
-                            track.Filter =
-                                filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
-                                                                   bwTrack.filename.ToUpper(CultureInfo.
-                                                                       CurrentCulture)));
+                            track.Filter = filtersList.GetFilter(Path.Combine(imageFilter.ParentFolder,
+                                                                              bwTrack.filename.ToUpper(CultureInfo.
+                                                                                  CurrentCulture)));
 
                             if(track.Filter != null)
                                 break;
 
-                            track.Filter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
-                                                                          bwTrack.filename.Split(new[]
+                            track.Filter = filtersList.GetFilter(Path.Combine(imageFilter.ParentFolder,
+                                                                              bwTrack.filename.Split(new[]
                                                                                   {
                                                                                       '\\'
                                                                                   },
                                                                                   StringSplitOptions.
                                                                                       RemoveEmptyEntries).
-                                                                              Last()));
+                                                                                  Last()));
 
                             if(track.Filter != null)
                                 break;
 
-                            track.Filter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
-                                                                          bwTrack.filename.Split(new[]
+                            track.Filter = filtersList.GetFilter(Path.Combine(imageFilter.ParentFolder,
+                                                                              bwTrack.filename.Split(new[]
                                                                                   {
                                                                                       '\\'
                                                                                   },
                                                                                   StringSplitOptions.
                                                                                       RemoveEmptyEntries).
-                                                                              Last().
-                                                                              ToLower(CultureInfo.CurrentCulture)));
+                                                                                  Last().ToLower(CultureInfo.
+                                                                                      CurrentCulture)));
 
                             if(track.Filter != null)
                                 break;
 
-                            track.Filter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
-                                                                          bwTrack.filename.Split(new[]
+                            track.Filter = filtersList.GetFilter(Path.Combine(imageFilter.ParentFolder,
+                                                                              bwTrack.filename.Split(new[]
                                                                                   {
                                                                                       '\\'
                                                                                   },
                                                                                   StringSplitOptions.
                                                                                       RemoveEmptyEntries).
-                                                                              Last().
-                                                                              ToUpper(CultureInfo.CurrentCulture)));
+                                                                                  Last().ToUpper(CultureInfo.
+                                                                                      CurrentCulture)));
 
                             track.Filter = _dataFilter;
                         } while(true);
                     else
                         track.Filter = _dataFilter;
 
-                    track.File = _dataFilter.GetFilename();
+                    track.File = _dataFilter.Filename;
 
                     track.FileOffset = bwTrack.offset + ((150 - bwTrack.pregapOffsetAdjustment) * 2352);
 
-                    track.SubchannelOffset =
-                        ((bwTrack.offset / 2352) + (150 - bwTrack.pregapOffsetAdjustment)) * 96;
+                    track.SubchannelOffset = ((bwTrack.offset / 2352) + (150 - bwTrack.pregapOffsetAdjustment)) * 96;
 
                     if(bwTrack.pregap > 0)
                     {
@@ -592,7 +586,7 @@ namespace Aaru.DiscImages
                         maxSession = track.Session;
 
                     track.SubchannelFilter = _subFilter;
-                    track.SubchannelFile   = _subFilter?.GetFilename();
+                    track.SubchannelFile   = _subFilter?.Filename;
 
                     if(_subFilter != null)
                     {
@@ -607,9 +601,9 @@ namespace Aaru.DiscImages
                     switch(bwTrack.trackMode)
                     {
                         case TrackType.Audio:
-                            track.Type           = CommonTypes.Enums.TrackType.Audio;
-                            _imageInfo.SectorSize     = 2352;
-                            track.BytesPerSector = 2352;
+                            track.Type            = CommonTypes.Enums.TrackType.Audio;
+                            _imageInfo.SectorSize = 2352;
+                            track.BytesPerSector  = 2352;
 
                             break;
                         case TrackType.Mode1:
@@ -660,7 +654,7 @@ namespace Aaru.DiscImages
                         default:
                             track.Type              = CommonTypes.Enums.TrackType.Data;
                             track.RawBytesPerSector = 2048;
-                            _imageInfo.SectorSize        = 2048;
+                            _imageInfo.SectorSize   = 2048;
                             track.BytesPerSector    = 2048;
 
                             break;
@@ -717,9 +711,9 @@ namespace Aaru.DiscImages
             {
                 var session = new Session
                 {
-                    Sequence = i,
-                    StartTrack      = uint.MaxValue,
-                    StartSector     = uint.MaxValue
+                    Sequence    = i,
+                    StartTrack  = uint.MaxValue,
+                    StartSector = uint.MaxValue
                 };
 
                 foreach(Track track in Tracks.Where(track => track.Session == i))
@@ -751,9 +745,9 @@ namespace Aaru.DiscImages
             _imageInfo.ApplicationVersion = "4";
             _imageInfo.Version            = "4";
 
-            _imageInfo.ImageSize            = (ulong)_dataFilter.GetDataForkLength();
-            _imageInfo.CreationTime         = _dataFilter.GetCreationTime();
-            _imageInfo.LastModificationTime = _dataFilter.GetLastWriteTime();
+            _imageInfo.ImageSize            = (ulong)_dataFilter.DataForkLength;
+            _imageInfo.CreationTime         = _dataFilter.CreationTime;
+            _imageInfo.LastModificationTime = _dataFilter.LastWriteTime;
             _imageInfo.XmlMediaType         = XmlMediaType.OpticalDisc;
 
             bool data       = false;
@@ -843,9 +837,9 @@ namespace Aaru.DiscImages
         /// <inheritdoc />
         public byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetMap where sectorAddress     >= kvp.Value
-                                                     from track in Tracks where track.Sequence == kvp.Key
-                                                     where sectorAddress                                 - kvp.Value <
+            foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetMap where sectorAddress >= kvp.Value
+                                                     from track in Tracks where track.Sequence  == kvp.Key
+                                                     where sectorAddress                       - kvp.Value <
                                                            track.EndSector - track.StartSector + 1 select kvp)
                 return ReadSectors(sectorAddress - kvp.Value, length, kvp.Key);
 
@@ -855,9 +849,9 @@ namespace Aaru.DiscImages
         /// <inheritdoc />
         public byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
         {
-            foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetMap where sectorAddress     >= kvp.Value
-                                                     from track in Tracks where track.Sequence == kvp.Key
-                                                     where sectorAddress                                 - kvp.Value <
+            foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetMap where sectorAddress >= kvp.Value
+                                                     from track in Tracks where track.Sequence  == kvp.Key
+                                                     where sectorAddress                       - kvp.Value <
                                                            track.EndSector - track.StartSector + 1 select kvp)
                 return ReadSectorsTag(sectorAddress - kvp.Value, length, kvp.Key, tag);
 
@@ -1181,9 +1175,9 @@ namespace Aaru.DiscImages
         /// <inheritdoc />
         public byte[] ReadSectorsLong(ulong sectorAddress, uint length)
         {
-            foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetMap where sectorAddress     >= kvp.Value
-                                                     from track in Tracks where track.Sequence == kvp.Key
-                                                     where sectorAddress                                 - kvp.Value <
+            foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetMap where sectorAddress >= kvp.Value
+                                                     from track in Tracks where track.Sequence  == kvp.Key
+                                                     where sectorAddress                       - kvp.Value <
                                                            track.EndSector - track.StartSector + 1 select kvp)
                 return ReadSectorsLong(sectorAddress - kvp.Value, length, kvp.Key);
 
@@ -1254,7 +1248,6 @@ namespace Aaru.DiscImages
         }
 
         /// <inheritdoc />
-        public List<Track> GetSessionTracks(ushort session) =>
-            Tracks.Where(track => track.Session == session).ToList();
+        public List<Track> GetSessionTracks(ushort session) => Tracks.Where(track => track.Session == session).ToList();
     }
 }

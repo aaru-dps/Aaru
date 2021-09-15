@@ -66,9 +66,9 @@ namespace Aaru.DiscImages
             AaruConsole.DebugWriteLine("Anex86 plugin", "MediaType: {0}", _imageInfo.MediaType);
 
             _imageInfo.ImageSize            = (ulong)_header.dskSize;
-            _imageInfo.CreationTime         = imageFilter.GetCreationTime();
-            _imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
-            _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            _imageInfo.CreationTime         = imageFilter.CreationTime;
+            _imageInfo.LastModificationTime = imageFilter.LastWriteTime;
+            _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.Filename);
             _imageInfo.Sectors              = (ulong)(_header.cylinders * _header.heads * _header.spt);
             _imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
             _imageInfo.SectorSize           = (uint)_header.bps;

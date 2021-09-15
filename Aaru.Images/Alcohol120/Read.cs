@@ -326,15 +326,15 @@ namespace Aaru.DiscImages
 
             if(_alcFooter.filenameOffset == 0)
             {
-                if(Path.GetExtension(imageFilter.GetBasePath()).ToLowerInvariant() == ".mds")
-                    alcFile = Path.GetFileNameWithoutExtension(imageFilter.GetBasePath()) + ".mdf";
-                else if(Path.GetExtension(imageFilter.GetBasePath()).ToLowerInvariant() == ".xmd")
-                    alcFile = Path.GetFileNameWithoutExtension(imageFilter.GetBasePath()) + ".xmf";
+                if(Path.GetExtension(imageFilter.BasePath).ToLowerInvariant() == ".mds")
+                    alcFile = Path.GetFileNameWithoutExtension(imageFilter.BasePath) + ".mdf";
+                else if(Path.GetExtension(imageFilter.BasePath).ToLowerInvariant() == ".xmd")
+                    alcFile = Path.GetFileNameWithoutExtension(imageFilter.BasePath) + ".xmf";
             }
             else if(string.Compare(alcFile, "*.mdf", StringComparison.InvariantCultureIgnoreCase) == 0)
-                alcFile = Path.GetFileNameWithoutExtension(imageFilter.GetBasePath()) + ".mdf";
+                alcFile = Path.GetFileNameWithoutExtension(imageFilter.BasePath) + ".mdf";
             else if(string.Compare(alcFile, "*.xmf", StringComparison.InvariantCultureIgnoreCase) == 0)
-                alcFile = Path.GetFileNameWithoutExtension(imageFilter.GetBasePath()) + ".xmf";
+                alcFile = Path.GetFileNameWithoutExtension(imageFilter.BasePath) + ".xmf";
 
             if(_header.bcaLength > 0 &&
                _header.bcaOffset > 0 &&
@@ -680,9 +680,9 @@ namespace Aaru.DiscImages
             if(_alcImage == null)
                 throw new Exception("Cannot open data file");
 
-            _imageInfo.ImageSize            = (ulong)_alcImage.GetDataForkLength();
-            _imageInfo.CreationTime         = _alcImage.GetCreationTime();
-            _imageInfo.LastModificationTime = _alcImage.GetLastWriteTime();
+            _imageInfo.ImageSize            = (ulong)_alcImage.DataForkLength;
+            _imageInfo.CreationTime         = _alcImage.CreationTime;
+            _imageInfo.LastModificationTime = _alcImage.LastWriteTime;
             _imageInfo.XmlMediaType         = XmlMediaType.OpticalDisc;
             _imageInfo.Version              = $"{_header.version[0]}.{_header.version[1]}";
 
@@ -1509,7 +1509,7 @@ namespace Aaru.DiscImages
                     Sequence          = alcTrack.point,
                     Type              = TrackModeToTrackType(alcTrack.mode),
                     Filter            = _alcImage,
-                    File              = _alcImage.GetFilename(),
+                    File              = _alcImage.Filename,
                     FileOffset        = alcTrack.startOffset,
                     FileType          = "BINARY",
                     RawBytesPerSector = alcTrack.sectorSize,
@@ -1525,7 +1525,7 @@ namespace Aaru.DiscImages
                 {
                     case SubchannelMode.Interleaved:
                         aaruTrack.SubchannelFilter = _alcImage;
-                        aaruTrack.SubchannelFile   = _alcImage.GetFilename();
+                        aaruTrack.SubchannelFile   = _alcImage.Filename;
                         aaruTrack.SubchannelOffset = alcTrack.startOffset;
                         aaruTrack.SubchannelType   = TrackSubchannelType.RawInterleaved;
 

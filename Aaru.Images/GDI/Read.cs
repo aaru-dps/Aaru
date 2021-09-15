@@ -110,12 +110,12 @@ namespace Aaru.DiscImages
                             Offset      = long.Parse(trackMatch.Groups["offset"].Value),
                             Sequence    = uint.Parse(trackMatch.Groups["track"].Value),
                             StartSector = ulong.Parse(trackMatch.Groups["start"].Value),
-                            TrackFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
+                            TrackFilter = filtersList.GetFilter(Path.Combine(imageFilter.ParentFolder,
                                                                              trackMatch.Groups["filename"].Value.
                                                                                  Replace("\\\"", "\"").Trim('"')))
                         };
 
-                        currentTrack.TrackFile = currentTrack.TrackFilter.GetFilename();
+                        currentTrack.TrackFile = currentTrack.TrackFilter.Filename;
 
                         if(currentTrack.StartSector - currentStart > 0)
                             if(currentTrack.StartSector == 45000)
@@ -131,12 +131,11 @@ namespace Aaru.DiscImages
                                 currentTrack.StartSector -= currentTrack.StartSector - currentStart;
                             }
 
-                        if((currentTrack.TrackFilter.GetDataForkLength() - currentTrack.Offset) % currentTrack.Bps != 0)
+                        if((currentTrack.TrackFilter.DataForkLength - currentTrack.Offset) % currentTrack.Bps != 0)
                             throw new ImageNotSupportedException("Track size not a multiple of sector size");
 
-                        currentTrack.Sectors =
-                            (ulong)((currentTrack.TrackFilter.GetDataForkLength() - currentTrack.Offset) /
-                                    currentTrack.Bps);
+                        currentTrack.Sectors = (ulong)((currentTrack.TrackFilter.DataForkLength - currentTrack.Offset) /
+                                                       currentTrack.Bps);
 
                         currentTrack.Sectors     += currentTrack.Pregap;
                         currentStart             += currentTrack.Sectors;
@@ -300,8 +299,8 @@ namespace Aaru.DiscImages
                     _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEdc);
                 }
 
-                _imageInfo.CreationTime         = imageFilter.GetCreationTime();
-                _imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
+                _imageInfo.CreationTime         = imageFilter.CreationTime;
+                _imageInfo.LastModificationTime = imageFilter.LastWriteTime;
 
                 _imageInfo.MediaType = _discImage.Disktype;
 
@@ -317,7 +316,7 @@ namespace Aaru.DiscImages
             }
             catch(Exception ex)
             {
-                AaruConsole.ErrorWriteLine("Exception trying to identify image file {0}", imageFilter.GetBasePath());
+                AaruConsole.ErrorWriteLine("Exception trying to identify image file {0}", imageFilter.BasePath);
                 AaruConsole.ErrorWriteLine("Exception: {0}", ex.Message);
                 AaruConsole.ErrorWriteLine("Stack trace: {0}", ex.StackTrace);
 

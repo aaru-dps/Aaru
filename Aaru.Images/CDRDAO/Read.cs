@@ -398,7 +398,7 @@ namespace Aaru.DiscImages
                             currentTrack.Trackfile = new CdrdaoTrackFile
                             {
                                 Datafilter =
-                                    filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
+                                    filtersList.GetFilter(Path.Combine(imageFilter.ParentFolder,
                                                                        matchAudioFile.Groups["filename"].Value)),
                                 Datafile = matchAudioFile.Groups["filename"].Value,
                                 Offset = matchAudioFile.Groups["base_offset"].Value != ""
@@ -429,7 +429,7 @@ namespace Aaru.DiscImages
                             }
                             else
                                 currentTrack.Sectors =
-                                    ((ulong)currentTrack.Trackfile.Datafilter.GetDataForkLength() -
+                                    ((ulong)currentTrack.Trackfile.Datafilter.DataForkLength -
                                      currentTrack.Trackfile.Offset) / currentTrack.Bps;
                         }
                         else if(matchFile.Success)
@@ -442,7 +442,7 @@ namespace Aaru.DiscImages
                             currentTrack.Trackfile = new CdrdaoTrackFile
                             {
                                 Datafilter =
-                                    filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
+                                    filtersList.GetFilter(Path.Combine(imageFilter.ParentFolder,
                                                                        matchFile.Groups["filename"].Value)),
                                 Datafile = matchAudioFile.Groups["filename"].Value,
                                 Offset = matchFile.Groups["base_offset"].Value != ""
@@ -461,7 +461,7 @@ namespace Aaru.DiscImages
                             }
                             else
                                 currentTrack.Sectors =
-                                    ((ulong)currentTrack.Trackfile.Datafilter.GetDataForkLength() -
+                                    ((ulong)currentTrack.Trackfile.Datafilter.DataForkLength -
                                      currentTrack.Trackfile.Offset) / currentTrack.Bps;
                         }
                         else if(matchTitle.Success)
@@ -651,7 +651,7 @@ namespace Aaru.DiscImages
 
                     AaruConsole.DebugWriteLine("CDRDAO plugin",
                                                "\t\tTrack resides in file {0}, type defined as {1}, starting at byte {2}",
-                                               _discimage.Tracks[i].Trackfile.Datafilter.GetFilename(),
+                                               _discimage.Tracks[i].Trackfile.Datafilter.Filename,
                                                _discimage.Tracks[i].Trackfile.Filetype,
                                                _discimage.Tracks[i].Trackfile.Offset);
 
@@ -779,8 +779,8 @@ namespace Aaru.DiscImages
 
                 _imageInfo.Application = "CDRDAO";
 
-                _imageInfo.CreationTime         = imageFilter.GetCreationTime();
-                _imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
+                _imageInfo.CreationTime         = imageFilter.CreationTime;
+                _imageInfo.LastModificationTime = imageFilter.LastWriteTime;
 
                 _imageInfo.Comments          = _discimage.Comment;
                 _imageInfo.MediaSerialNumber = _discimage.Mcn;

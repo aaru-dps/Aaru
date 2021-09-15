@@ -53,8 +53,8 @@ namespace Aaru.DiscImages
         /// <inheritdoc />
         public bool Open(IFilter imageFilter)
         {
-            if(!imageFilter.HasResourceFork() ||
-               imageFilter.GetResourceForkLength() == 0)
+            if(!imageFilter.HasResourceFork ||
+               imageFilter.ResourceForkLength == 0)
                 return false;
 
             ResourceFork rsrcFork;
@@ -261,8 +261,8 @@ namespace Aaru.DiscImages
             _imageStream           = imageFilter.GetDataForkStream();
             _bufferSize            = _header.maxSectorsPerChunk * SECTOR_SIZE;
 
-            _imageInfo.CreationTime         = imageFilter.GetCreationTime();
-            _imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
+            _imageInfo.CreationTime         = imageFilter.CreationTime;
+            _imageInfo.LastModificationTime = imageFilter.LastWriteTime;
 
             _imageInfo.MediaTitle = StringHandlers.PascalToString(_header.name, Encoding.GetEncoding("macintosh"));
 

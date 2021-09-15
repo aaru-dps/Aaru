@@ -42,7 +42,7 @@ namespace Aaru.DiscImages
         /// <inheritdoc />
         public bool Identify(IFilter imageFilter)
         {
-            if(imageFilter.GetDataForkLength() <= 16)
+            if(imageFilter.DataForkLength <= 16)
                 return false;
 
             byte[] header = new byte[16];
@@ -68,7 +68,7 @@ namespace Aaru.DiscImages
                 return false;
 
             if(blockSize      == 0 ||
-               blockSize + 17 >= imageFilter.GetDataForkLength())
+               blockSize + 17 >= imageFilter.DataForkLength)
                 return false;
 
             strm.Position += blockSize;

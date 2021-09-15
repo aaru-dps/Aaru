@@ -178,7 +178,7 @@ namespace Aaru.DiscImages
 
             try
             {
-                if(imageFilter.HasResourceFork())
+                if(imageFilter.HasResourceFork)
                 {
                     var rsrcFork = new ResourceFork(imageFilter.GetResourceForkStream());
 
@@ -280,9 +280,9 @@ namespace Aaru.DiscImages
                                        _imageInfo.ApplicationVersion);
 
             _imageInfo.Sectors              = (ulong)(header.srcSize * 2);
-            _imageInfo.CreationTime         = imageFilter.GetCreationTime();
-            _imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
-            _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            _imageInfo.CreationTime         = imageFilter.CreationTime;
+            _imageInfo.LastModificationTime = imageFilter.LastWriteTime;
+            _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.Filename);
             _imageInfo.SectorSize           = SECTOR_SIZE;
             _imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
             _imageInfo.ImageSize            = _imageInfo.Sectors * SECTOR_SIZE;

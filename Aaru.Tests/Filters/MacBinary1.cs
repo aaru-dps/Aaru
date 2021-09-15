@@ -94,12 +94,12 @@ namespace Aaru.Tests.Filters
         {
             IFilter filter = new MacBinary();
             filter.Open(_location);
-            Assert.AreEqual(true, filter.IsOpened());
-            Assert.AreEqual(737280, filter.GetDataForkLength());
+            Assert.AreEqual(true, filter.Opened);
+            Assert.AreEqual(737280, filter.DataForkLength);
             Assert.AreNotEqual(null, filter.GetDataForkStream());
-            Assert.AreEqual(286, filter.GetResourceForkLength());
+            Assert.AreEqual(286, filter.ResourceForkLength);
             Assert.AreNotEqual(null, filter.GetResourceForkStream());
-            Assert.AreEqual(true, filter.HasResourceFork());
+            Assert.AreEqual(true, filter.HasResourceFork);
             filter.Close();
         }
     }

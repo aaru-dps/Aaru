@@ -118,7 +118,7 @@ namespace Aaru.DiscImages
                                        ArrayHelpers.ArrayIsNullOrEmpty(_footer.reserved4));
 
             // Block chunks and headers
-            List<byte[]> blkxList = new List<byte[]>();
+            List<byte[]> blkxList = new();
             _chunks = new Dictionary<ulong, BlockChunk>();
 
             byte[] vers = null;
@@ -198,7 +198,7 @@ namespace Aaru.DiscImages
             }
             else
             {
-                if(imageFilter.GetResourceForkLength() == 0)
+                if(imageFilter.ResourceForkLength == 0)
                     throw new Exception("This image needs the resource fork to work.");
 
                 AaruConsole.DebugWriteLine("UDIF plugin", "Reading resource fork.");
@@ -378,9 +378,9 @@ namespace Aaru.DiscImages
             _currentChunkCacheSize = 0;
             _imageStream           = stream;
 
-            _imageInfo.CreationTime         = imageFilter.GetCreationTime();
-            _imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
-            _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            _imageInfo.CreationTime         = imageFilter.CreationTime;
+            _imageInfo.LastModificationTime = imageFilter.LastWriteTime;
+            _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.Filename);
             _imageInfo.SectorSize           = SECTOR_SIZE;
             _imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
             _imageInfo.MediaType            = MediaType.GENERIC_HDD;

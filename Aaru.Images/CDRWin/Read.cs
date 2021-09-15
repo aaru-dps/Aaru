@@ -499,11 +499,10 @@ namespace Aaru.DiscImages
                                 currentFile.Sequence   = currentTrack.Sequence;
                                 currentTrack.TrackFile = currentFile;
 
-                                _negativeEnd = currentFile.DataFilter.GetLength() - (long)currentFile.Offset < 0;
+                                _negativeEnd = currentFile.DataFilter.Length - (long)currentFile.Offset < 0;
 
-                                currentTrack.Sectors =
-                                    ((ulong)currentFile.DataFilter.GetLength() - currentFile.Offset) /
-                                    CdrWinTrackTypeToBytesPerSector(currentTrack.TrackType);
+                                currentTrack.Sectors = ((ulong)currentFile.DataFilter.Length - currentFile.Offset) /
+                                                       CdrWinTrackTypeToBytesPerSector(currentTrack.TrackType);
 
                                 cueTracks[currentTrack.Sequence - 1] = currentTrack;
                                 inTrack                              = false;
@@ -536,7 +535,7 @@ namespace Aaru.DiscImages
 
                                         if(currentFile.DataFilter == null)
                                         {
-                                            string path = imageFilter.GetParentFolder() + Path.PathSeparator +
+                                            string path = imageFilter.ParentFolder + Path.PathSeparator +
                                                           unixPathMatch.Groups[1].Value;
 
                                             currentFile.DataFilter = filtersList.GetFilter(path);
@@ -566,7 +565,7 @@ namespace Aaru.DiscImages
 
                                         if(currentFile.DataFilter == null)
                                         {
-                                            string path = imageFilter.GetParentFolder() + Path.PathSeparator +
+                                            string path = imageFilter.ParentFolder + Path.PathSeparator +
                                                           winPathMatch.Groups[1].Value;
 
                                             currentFile.DataFilter = filtersList.GetFilter(path);
@@ -582,7 +581,7 @@ namespace Aaru.DiscImages
                                 }
                                 else
                                 {
-                                    string path = imageFilter.GetParentFolder() + Path.PathSeparator + datafile;
+                                    string path = imageFilter.ParentFolder + Path.PathSeparator + datafile;
                                     currentFile.DataFilter = filtersList.GetFilter(path);
 
                                     if(currentFile.DataFilter == null)
@@ -592,7 +591,7 @@ namespace Aaru.DiscImages
 
                             // File does exist, process it
                             AaruConsole.DebugWriteLine("CDRWin plugin", "File \"{0}\" found",
-                                                       currentFile.DataFilter.GetFilename());
+                                                       currentFile.DataFilter.Filename);
 
                             switch(currentFile.FileType)
                             {
@@ -830,9 +829,9 @@ namespace Aaru.DiscImages
                     currentFile.Sequence   = currentTrack.Sequence;
                     currentTrack.TrackFile = currentFile;
 
-                    _negativeEnd = currentFile.DataFilter.GetLength() - (long)currentFile.Offset < 0;
+                    _negativeEnd = currentFile.DataFilter.Length - (long)currentFile.Offset < 0;
 
-                    currentTrack.Sectors = ((ulong)currentFile.DataFilter.GetLength() - currentFile.Offset) /
+                    currentTrack.Sectors = ((ulong)currentFile.DataFilter.Length - currentFile.Offset) /
                                            CdrWinTrackTypeToBytesPerSector(currentTrack.TrackType);
 
                     cueTracks[currentTrack.Sequence - 1] = currentTrack;
@@ -840,9 +839,9 @@ namespace Aaru.DiscImages
 
                 if(_negativeEnd)
                 {
-                    string firstFile = cueTracks[0].TrackFile.DataFilter.GetPath();
+                    string firstFile = cueTracks[0].TrackFile.DataFilter.Path;
 
-                    if(cueTracks.Any(t => t.Session > 1 || t.TrackFile.DataFilter.GetPath() != firstFile) ||
+                    if(cueTracks.Any(t => t.Session > 1 || t.TrackFile.DataFilter.Path != firstFile) ||
                        cueTracks[0].Indexes.ContainsKey(0))
                     {
                         AaruConsole.
@@ -857,8 +856,7 @@ namespace Aaru.DiscImages
                     foreach(CdrWinTrack track in cueTracks)
                         track.TrackFile.Offset -= (ulong)reduceOffset;
 
-                    if(currentFile.DataFilter.GetLength() -
-                       (long)cueTracks[currentTrack.Sequence - 1].TrackFile.Offset < 0)
+                    if(currentFile.DataFilter.Length - (long)cueTracks[currentTrack.Sequence - 1].TrackFile.Offset < 0)
                     {
                         AaruConsole.
                             ErrorWriteLine("The data files are not correct according to the cuesheet file, cannot continue with this file.");
@@ -867,8 +865,7 @@ namespace Aaru.DiscImages
                     }
 
                     cueTracks[currentTrack.Sequence - 1].Sectors =
-                        ((ulong)currentFile.DataFilter.GetLength() -
-                         cueTracks[currentTrack.Sequence - 1].TrackFile.Offset) /
+                        ((ulong)currentFile.DataFilter.Length - cueTracks[currentTrack.Sequence - 1].TrackFile.Offset) /
                         cueTracks[currentTrack.Sequence - 1].Bps;
 
                     cueTracks[0].Indexes[0] =  0;
@@ -936,8 +933,8 @@ namespace Aaru.DiscImages
                     if(firstSessionTrack.Pregap < 150)
                         firstSessionTrack.Pregap = 150;
 
-                    if(cueTracks.Any(i => i.TrackFile.DataFilter.GetFilename() !=
-                                          cueTracks.First().TrackFile.DataFilter.GetFilename()))
+                    if(cueTracks.Any(i => i.TrackFile.DataFilter.Filename !=
+                                          cueTracks.First().TrackFile.DataFilter.Filename))
                         continue;
 
                     if(firstSessionTrack.Indexes.TryGetValue(0, out int sessionStart))
@@ -1188,7 +1185,7 @@ namespace Aaru.DiscImages
 
                     AaruConsole.DebugWriteLine("CDRWin plugin",
                                                "\t\tTrack resides in file {0}, type defined as {1}, starting at byte {2}",
-                                               _discImage.Tracks[i].TrackFile.DataFilter.GetFilename(),
+                                               _discImage.Tracks[i].TrackFile.DataFilter.Filename,
                                                _discImage.Tracks[i].TrackFile.FileType,
                                                _discImage.Tracks[i].TrackFile.Offset);
 
@@ -1245,10 +1242,10 @@ namespace Aaru.DiscImages
 
                 foreach(CdrWinTrack track in _discImage.Tracks)
                 {
-                    if(track.TrackFile.DataFilter.GetBasePath() != currentFilePath)
+                    if(track.TrackFile.DataFilter.BasePath != currentFilePath)
                     {
                         currentFileStartSector = currentSector;
-                        currentFilePath        = track.TrackFile.DataFilter.GetBasePath();
+                        currentFilePath        = track.TrackFile.DataFilter.BasePath;
                     }
 
                     Dictionary<ushort, int> newIndexes = new();
@@ -1400,8 +1397,8 @@ namespace Aaru.DiscImages
                         _imageInfo.Application = "CDRWin";
                 }
 
-                _imageInfo.CreationTime         = imageFilter.GetCreationTime();
-                _imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
+                _imageInfo.CreationTime         = imageFilter.CreationTime;
+                _imageInfo.LastModificationTime = imageFilter.LastWriteTime;
 
                 _imageInfo.Comments          = _discImage.Comment;
                 _imageInfo.MediaSerialNumber = _discImage.Mcn;
@@ -1547,7 +1544,7 @@ namespace Aaru.DiscImages
             }
             catch(Exception ex)
             {
-                AaruConsole.ErrorWriteLine("Exception trying to identify image file {0}", imageFilter.GetFilename());
+                AaruConsole.ErrorWriteLine("Exception trying to identify image file {0}", imageFilter.Filename);
                 AaruConsole.ErrorWriteLine("Exception: {0}", ex.Message);
                 AaruConsole.ErrorWriteLine("Stack trace: {0}", ex.StackTrace);
 

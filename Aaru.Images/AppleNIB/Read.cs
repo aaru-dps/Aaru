@@ -61,7 +61,7 @@ namespace Aaru.DiscImages
             List<Apple2.RawTrack> tracks = Apple2.MarshalDisk(buffer);
             AaruConsole.DebugWriteLine("Apple NIB Plugin", "Got {0} tracks", tracks.Count);
 
-            Dictionary<ulong, Apple2.RawSector> rawSectors = new Dictionary<ulong, Apple2.RawSector>();
+            Dictionary<ulong, Apple2.RawSector> rawSectors = new();
 
             int  spt            = 0;
             bool allTracksEqual = true;
@@ -131,10 +131,10 @@ namespace Aaru.DiscImages
                 _addressFields.Add(kvp.Key, addr);
             }
 
-            _imageInfo.ImageSize            = (ulong)imageFilter.GetDataForkLength();
-            _imageInfo.CreationTime         = imageFilter.GetCreationTime();
-            _imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
-            _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            _imageInfo.ImageSize            = (ulong)imageFilter.DataForkLength;
+            _imageInfo.CreationTime         = imageFilter.CreationTime;
+            _imageInfo.LastModificationTime = imageFilter.LastWriteTime;
+            _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.Filename);
 
             if(_imageInfo.Sectors == 455)
                 _imageInfo.MediaType = MediaType.Apple32SS;

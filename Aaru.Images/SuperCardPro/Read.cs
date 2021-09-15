@@ -216,11 +216,11 @@ namespace Aaru.DiscImages
 
                         _imageInfo.CreationTime = footer.creationTime != 0
                                                       ? DateHandlers.UnixToDateTime(footer.creationTime)
-                                                      : imageFilter.GetCreationTime();
+                                                      : imageFilter.CreationTime;
 
                         _imageInfo.LastModificationTime = footer.modificationTime != 0
                                                               ? DateHandlers.UnixToDateTime(footer.modificationTime)
-                                                              : imageFilter.GetLastWriteTime();
+                                                              : imageFilter.LastWriteTime;
 
                         AaruConsole.DebugWriteLine("SuperCardPro plugin", "ImageInfo.imageCreationTime = {0}",
                                                    _imageInfo.CreationTime);
@@ -246,8 +246,8 @@ namespace Aaru.DiscImages
             {
                 _imageInfo.Application          = "SuperCardPro";
                 _imageInfo.ApplicationVersion   = $"{(Header.version & 0xF0) >> 4}.{Header.version & 0xF}";
-                _imageInfo.CreationTime         = imageFilter.GetCreationTime();
-                _imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
+                _imageInfo.CreationTime         = imageFilter.CreationTime;
+                _imageInfo.LastModificationTime = imageFilter.LastWriteTime;
                 _imageInfo.Version              = "1.5";
             }
 

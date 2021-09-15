@@ -903,9 +903,9 @@ namespace Aaru.DiscImages
                 _imageInfo.HasPartitions         = true;
                 _imageInfo.HasSessions           = true;
                 _imageInfo.Creator               = null;
-                _imageInfo.CreationTime          = imageFilter.GetCreationTime();
-                _imageInfo.LastModificationTime  = imageFilter.GetLastWriteTime();
-                _imageInfo.MediaTitle            = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+                _imageInfo.CreationTime          = imageFilter.CreationTime;
+                _imageInfo.LastModificationTime  = imageFilter.LastWriteTime;
+                _imageInfo.MediaTitle            = Path.GetFileNameWithoutExtension(imageFilter.Filename);
                 _imageInfo.Comments              = null;
                 _imageInfo.MediaManufacturer     = null;
                 _imageInfo.MediaModel            = null;
@@ -1059,7 +1059,7 @@ namespace Aaru.DiscImages
                     track.Sequence       = neroTrack.Sequence;
                     track.Session        = currentSession;
                     track.Type           = NeroTrackModeToTrackType((DaoMode)neroTrack.Mode);
-                    track.File           = imageFilter.GetFilename();
+                    track.File           = imageFilter.Filename;
                     track.Filter         = imageFilter;
                     track.FileOffset     = neroTrack.Offset;
                     track.FileType       = "BINARY";
@@ -1181,7 +1181,7 @@ namespace Aaru.DiscImages
                     if(track.SubchannelType == TrackSubchannelType.RawInterleaved)
                     {
                         track.SubchannelFilter = imageFilter;
-                        track.SubchannelFile   = imageFilter.GetFilename();
+                        track.SubchannelFile   = imageFilter.Filename;
                         track.SubchannelOffset = neroTrack.Offset;
 
                         if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel))
@@ -1271,7 +1271,7 @@ namespace Aaru.DiscImages
                     track.Sequence       = _neroTracks[1].Sequence;
                     track.Session        = currentSession;
                     track.Type           = NeroTrackModeToTrackType((DaoMode)_neroTracks[1].Mode);
-                    track.File           = imageFilter.GetFilename();
+                    track.File           = imageFilter.Filename;
                     track.Filter         = imageFilter;
                     track.FileType       = "BINARY";
                     track.SubchannelType = TrackSubchannelType.None;
@@ -1356,7 +1356,7 @@ namespace Aaru.DiscImages
                     if(track.SubchannelType == TrackSubchannelType.RawInterleaved)
                     {
                         track.SubchannelFilter = imageFilter;
-                        track.SubchannelFile   = imageFilter.GetFilename();
+                        track.SubchannelFile   = imageFilter.Filename;
                         track.SubchannelOffset = (ulong)(150 * (track.RawBytesPerSector + subSize));
 
                         if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel))

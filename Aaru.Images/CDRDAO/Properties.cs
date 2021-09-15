@@ -107,7 +107,7 @@ namespace Aaru.DiscImages
                         Sequence          = cdrTrack.Sequence,
                         Type              = CdrdaoTrackTypeToTrackType(cdrTrack.Tracktype),
                         Filter            = cdrTrack.Trackfile.Datafilter,
-                        File              = cdrTrack.Trackfile.Datafilter.GetFilename(),
+                        File              = cdrTrack.Trackfile.Datafilter.Filename,
                         FileOffset        = cdrTrack.Trackfile.Offset,
                         FileType          = cdrTrack.Trackfile.Filetype,
                         RawBytesPerSector = cdrTrack.Bps,
@@ -125,7 +125,7 @@ namespace Aaru.DiscImages
                                                        : TrackSubchannelType.RawInterleaved;
 
                         aaruTrack.SubchannelFilter = cdrTrack.Trackfile.Datafilter;
-                        aaruTrack.SubchannelFile   = cdrTrack.Trackfile.Datafilter.GetFilename();
+                        aaruTrack.SubchannelFile   = cdrTrack.Trackfile.Datafilter.Filename;
                         aaruTrack.SubchannelOffset = cdrTrack.Trackfile.Offset;
                     }
                     else

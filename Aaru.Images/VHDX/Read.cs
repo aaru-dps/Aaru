@@ -254,7 +254,7 @@ namespace Aaru.DiscImages
                         try
                         {
                             parentFilter =
-                                new FiltersList().GetFilter(Path.Combine(imageFilter.GetParentFolder(), entryValue));
+                                new FiltersList().GetFilter(Path.Combine(imageFilter.ParentFolder, entryValue));
 
                             if(parentFilter != null &&
                                _parentImage.Open(parentFilter))
@@ -269,12 +269,12 @@ namespace Aaru.DiscImages
                             parentWorks = false;
                         }
 
-                        string relEntry = Path.Combine(Path.GetDirectoryName(imageFilter.GetPath()), entryValue);
+                        string relEntry = Path.Combine(Path.GetDirectoryName(imageFilter.Path), entryValue);
 
                         try
                         {
                             parentFilter =
-                                new FiltersList().GetFilter(Path.Combine(imageFilter.GetParentFolder(), relEntry));
+                                new FiltersList().GetFilter(Path.Combine(imageFilter.ParentFolder, relEntry));
 
                             if(parentFilter == null ||
                                !_parentImage.Open(parentFilter))
@@ -300,7 +300,7 @@ namespace Aaru.DiscImages
                         try
                         {
                             parentFilter =
-                                new FiltersList().GetFilter(Path.Combine(imageFilter.GetParentFolder(), entryValue));
+                                new FiltersList().GetFilter(Path.Combine(imageFilter.ParentFolder, entryValue));
 
                             if(parentFilter == null ||
                                !_parentImage.Open(parentFilter))
@@ -410,9 +410,9 @@ namespace Aaru.DiscImages
             _sectorCache = new Dictionary<ulong, byte[]>();
             _blockCache  = new Dictionary<ulong, byte[]>();
 
-            _imageInfo.CreationTime         = imageFilter.GetCreationTime();
-            _imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
-            _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            _imageInfo.CreationTime         = imageFilter.CreationTime;
+            _imageInfo.LastModificationTime = imageFilter.LastWriteTime;
+            _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.Filename);
             _imageInfo.SectorSize           = _logicalSectorSize;
             _imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
             _imageInfo.MediaType            = MediaType.GENERIC_HDD;

@@ -101,7 +101,7 @@ namespace Aaru.DiscImages
                         Sequence          = alcTrack.point,
                         Type              = TrackModeToTrackType(alcTrack.mode),
                         Filter            = _alcImage,
-                        File              = _alcImage.GetFilename(),
+                        File              = _alcImage.Filename,
                         FileOffset        = alcTrack.startOffset,
                         FileType          = "BINARY",
                         RawBytesPerSector = alcTrack.sectorSize,
@@ -121,7 +121,7 @@ namespace Aaru.DiscImages
                     {
                         case SubchannelMode.Interleaved:
                             aaruTrack.SubchannelFilter = _alcImage;
-                            aaruTrack.SubchannelFile   = _alcImage.GetFilename();
+                            aaruTrack.SubchannelFile   = _alcImage.Filename;
                             aaruTrack.SubchannelOffset = alcTrack.startOffset;
                             aaruTrack.SubchannelType   = TrackSubchannelType.RawInterleaved;
 

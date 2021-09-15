@@ -82,12 +82,12 @@ namespace Aaru.Tests.Filters
         {
             IFilter filter = new Aaru.Filters.BZip2();
             filter.Open(_location);
-            Assert.AreEqual(true, filter.IsOpened());
-            Assert.AreEqual(1048576, filter.GetDataForkLength());
+            Assert.AreEqual(true, filter.Opened);
+            Assert.AreEqual(1048576, filter.DataForkLength);
             Assert.AreNotEqual(null, filter.GetDataForkStream());
-            Assert.AreEqual(0, filter.GetResourceForkLength());
+            Assert.AreEqual(0, filter.ResourceForkLength);
             Assert.AreEqual(null, filter.GetResourceForkStream());
-            Assert.AreEqual(false, filter.HasResourceFork());
+            Assert.AreEqual(false, filter.HasResourceFork);
             filter.Close();
         }
     }

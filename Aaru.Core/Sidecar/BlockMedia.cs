@@ -384,7 +384,7 @@ namespace Aaru.Core
 
             if(image is ITapeImage { IsTape: true } tapeImage)
             {
-                List<TapePartitionType> tapePartitions = new List<TapePartitionType>();
+                List<TapePartitionType> tapePartitions = new();
 
                 foreach(TapePartition tapePartition in tapeImage.TapePartitions)
                 {
@@ -457,7 +457,7 @@ namespace Aaru.Core
                         EndProgress2();
                     }
 
-                    List<TapeFileType> filesInPartition = new List<TapeFileType>();
+                    List<TapeFileType> filesInPartition = new();
 
                     foreach(TapeFile tapeFile in tapeImage.Files.Where(f => f.Partition == tapePartition.Number))
                     {
@@ -577,7 +577,7 @@ namespace Aaru.Core
                         Type        = partitions[i].Type
                     };
 
-                    List<FileSystemType> lstFs = new List<FileSystemType>();
+                    List<FileSystemType> lstFs = new();
 
                     foreach(IFilesystem plugin in plugins.PluginsList.Values)
                         try
@@ -632,7 +632,7 @@ namespace Aaru.Core
                     Size   = image.Info.Sectors * image.Info.SectorSize
                 };
 
-                List<FileSystemType> lstFs = new List<FileSystemType>();
+                List<FileSystemType> lstFs = new();
 
                 foreach(IFilesystem plugin in plugins.PluginsList.Values)
                     try
@@ -869,7 +869,7 @@ namespace Aaru.Core
                        (image.Info.Heads == 1 && (scpImage.Header.heads == 1 || scpImage.Header.heads == 2)))
                         if(scpImage.Header.end + 1 >= image.Info.Cylinders)
                         {
-                            List<BlockTrackType> scpBlockTrackTypes = new List<BlockTrackType>();
+                            List<BlockTrackType> scpBlockTrackTypes = new();
                             ulong                currentSector      = 0;
                             Stream               scpStream          = scpFilter.GetDataForkStream();
 
@@ -976,7 +976,7 @@ namespace Aaru.Core
                     if(kfImage.Info.Heads == image.Info.Heads)
                         if(kfImage.Info.Cylinders >= image.Info.Cylinders)
                         {
-                            List<BlockTrackType> kfBlockTrackTypes = new List<BlockTrackType>();
+                            List<BlockTrackType> kfBlockTrackTypes = new();
 
                             ulong currentSector = 0;
 
@@ -994,8 +994,8 @@ namespace Aaru.Core
                                         format = kfImage.Format,
                                         Value = kfDir
                                                     ? Path.
-                                                        Combine(Path.GetFileName(Path.GetDirectoryName(kvp.Value.GetBasePath())),
-                                                                kvp.Value.GetFilename()) : kvp.Value.GetFilename(),
+                                                        Combine(Path.GetFileName(Path.GetDirectoryName(kvp.Value.BasePath)),
+                                                                kvp.Value.Filename) : kvp.Value.Filename,
                                         offset = 0
                                     }
                                 };
@@ -1063,7 +1063,7 @@ namespace Aaru.Core
             if(image.Info.Heads == dfiImage.Info.Heads)
                 if(dfiImage.Info.Cylinders >= image.Info.Cylinders)
                 {
-                    List<BlockTrackType> dfiBlockTrackTypes = new List<BlockTrackType>();
+                    List<BlockTrackType> dfiBlockTrackTypes = new();
                     ulong                currentSector      = 0;
                     Stream               dfiStream          = dfiFilter.GetDataForkStream();
 

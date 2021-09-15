@@ -42,18 +42,14 @@ namespace Aaru.Filters
     /// <summary>Decompress gzip files while reading</summary>
     public sealed class GZip : IFilter
     {
-        string   _basePath;
-        DateTime _creationTime;
-        Stream   _dataStream;
-        uint     _decompressedSize;
-        DateTime _lastWriteTime;
-        bool     _opened;
-        Stream   _zStream;
+        Stream _dataStream;
+        uint   _decompressedSize;
+        Stream _zStream;
 
         /// <inheritdoc />
         public string Name => "GZip";
         /// <inheritdoc />
-        public Guid Id => new Guid("F4996661-4A29-42C9-A2C7-3904EF40F3B0");
+        public Guid Id => new("F4996661-4A29-42C9-A2C7-3904EF40F3B0");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
@@ -62,24 +58,24 @@ namespace Aaru.Filters
         {
             _dataStream?.Close();
             _dataStream = null;
-            _basePath   = null;
-            _opened     = false;
+            BasePath    = null;
+            Opened      = false;
         }
 
         /// <inheritdoc />
-        public string GetBasePath() => _basePath;
+        public string BasePath { get; private set; }
 
         /// <inheritdoc />
         public Stream GetDataForkStream() => _zStream;
 
         /// <inheritdoc />
-        public string GetPath() => _basePath;
+        public string Path => BasePath;
 
         /// <inheritdoc />
         public Stream GetResourceForkStream() => null;
 
         /// <inheritdoc />
-        public bool HasResourceFork() => false;
+        public bool HasResourceFork => false;
 
         /// <inheritdoc />
         public bool Identify(byte[] buffer) => buffer[0] == 0x1F && buffer[1] == 0x8B && buffer[2] == 0x08;
@@ -119,7 +115,7 @@ namespace Aaru.Filters
             byte[] isizeB = new byte[4];
 
             _dataStream = new MemoryStream(buffer);
-            _basePath   = null;
+            BasePath    = null;
 
             _dataStream.Seek(4, SeekOrigin.Begin);
             _dataStream.Read(mtimeB, 0, 4);
@@ -131,12 +127,12 @@ namespace Aaru.Filters
             uint isize = BitConverter.ToUInt32(isizeB, 0);
 
             _decompressedSize = isize;
-            _creationTime     = DateHandlers.UnixUnsignedToDateTime(mtime);
-            _lastWriteTime    = _creationTime;
+            CreationTime      = DateHandlers.UnixUnsignedToDateTime(mtime);
+            LastWriteTime     = CreationTime;
 
             _zStream = new ForcedSeekStream<GZipStream>(_decompressedSize, _dataStream, CompressionMode.Decompress);
 
-            _opened = true;
+            Opened = true;
         }
 
         /// <inheritdoc />
@@ -146,7 +142,7 @@ namespace Aaru.Filters
             byte[] isizeB = new byte[4];
 
             _dataStream = stream;
-            _basePath   = null;
+            BasePath    = null;
 
             _dataStream.Seek(4, SeekOrigin.Begin);
             _dataStream.Read(mtimeB, 0, 4);
@@ -158,12 +154,12 @@ namespace Aaru.Filters
             uint isize = BitConverter.ToUInt32(isizeB, 0);
 
             _decompressedSize = isize;
-            _creationTime     = DateHandlers.UnixUnsignedToDateTime(mtime);
-            _lastWriteTime    = _creationTime;
+            CreationTime      = DateHandlers.UnixUnsignedToDateTime(mtime);
+            LastWriteTime     = CreationTime;
 
             _zStream = new ForcedSeekStream<GZipStream>(_decompressedSize, _dataStream, CompressionMode.Decompress);
 
-            _opened = true;
+            Opened = true;
         }
 
         /// <inheritdoc />
@@ -173,7 +169,7 @@ namespace Aaru.Filters
             byte[] isizeB = new byte[4];
 
             _dataStream = new FileStream(path, FileMode.Open, FileAccess.Read);
-            _basePath   = Path.GetFullPath(path);
+            BasePath    = System.IO.Path.GetFullPath(path);
 
             _dataStream.Seek(4, SeekOrigin.Begin);
             _dataStream.Read(mtimeB, 0, 4);
@@ -186,41 +182,44 @@ namespace Aaru.Filters
 
             _decompressedSize = isize;
             var fi = new FileInfo(path);
-            _creationTime = fi.CreationTimeUtc;
-            _lastWriteTime = DateHandlers.UnixUnsignedToDateTime(mtime);
+            CreationTime = fi.CreationTimeUtc;
+            LastWriteTime = DateHandlers.UnixUnsignedToDateTime(mtime);
             _zStream = new ForcedSeekStream<GZipStream>(_decompressedSize, _dataStream, CompressionMode.Decompress);
-            _opened = true;
+            Opened = true;
         }
 
         /// <inheritdoc />
-        public DateTime GetCreationTime() => _creationTime;
+        public DateTime CreationTime { get; private set; }
 
         /// <inheritdoc />
-        public long GetDataForkLength() => _decompressedSize;
+        public long DataForkLength => _decompressedSize;
 
         /// <inheritdoc />
-        public DateTime GetLastWriteTime() => _lastWriteTime;
+        public DateTime LastWriteTime { get; private set; }
 
         /// <inheritdoc />
-        public long GetLength() => _decompressedSize;
+        public long Length => _decompressedSize;
 
         /// <inheritdoc />
-        public long GetResourceForkLength() => 0;
+        public long ResourceForkLength => 0;
 
         /// <inheritdoc />
-        public string GetFilename()
+        public string Filename
         {
-            if(_basePath?.EndsWith(".gz", StringComparison.InvariantCultureIgnoreCase) == true)
-                return _basePath.Substring(0, _basePath.Length - 3);
+            get
+            {
+                if(BasePath?.EndsWith(".gz", StringComparison.InvariantCultureIgnoreCase) == true)
+                    return BasePath.Substring(0, BasePath.Length - 3);
 
-            return _basePath?.EndsWith(".gzip", StringComparison.InvariantCultureIgnoreCase) == true
-                       ? _basePath.Substring(0, _basePath.Length - 5) : _basePath;
+                return BasePath?.EndsWith(".gzip", StringComparison.InvariantCultureIgnoreCase) == true
+                           ? BasePath.Substring(0, BasePath.Length - 5) : BasePath;
+            }
         }
 
         /// <inheritdoc />
-        public string GetParentFolder() => Path.GetDirectoryName(_basePath);
+        public string ParentFolder => System.IO.Path.GetDirectoryName(BasePath);
 
         /// <inheritdoc />
-        public bool IsOpened() => _opened;
+        public bool Opened { get; private set; }
     }
 }

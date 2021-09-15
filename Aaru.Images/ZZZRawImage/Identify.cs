@@ -41,25 +41,23 @@ namespace Aaru.DiscImages
         /// <inheritdoc />
         public bool Identify(IFilter imageFilter)
         {
-            _extension = Path.GetExtension(imageFilter.GetFilename())?.ToLower();
+            _extension = Path.GetExtension(imageFilter.Filename)?.ToLower();
 
             switch(_extension)
             {
-                case ".1kn":  return imageFilter.GetDataForkLength() % 1024  == 0;
-                case ".2kn":  return imageFilter.GetDataForkLength() % 2048  == 0;
-                case ".4kn":  return imageFilter.GetDataForkLength() % 4096  == 0;
-                case ".8kn":  return imageFilter.GetDataForkLength() % 8192  == 0;
-                case ".16kn": return imageFilter.GetDataForkLength() % 16384 == 0;
-                case ".32kn": return imageFilter.GetDataForkLength() % 32768 == 0;
-                case ".64kn": return imageFilter.GetDataForkLength() % 65536 == 0;
+                case ".1kn":  return imageFilter.DataForkLength % 1024  == 0;
+                case ".2kn":  return imageFilter.DataForkLength % 2048  == 0;
+                case ".4kn":  return imageFilter.DataForkLength % 4096  == 0;
+                case ".8kn":  return imageFilter.DataForkLength % 8192  == 0;
+                case ".16kn": return imageFilter.DataForkLength % 16384 == 0;
+                case ".32kn": return imageFilter.DataForkLength % 32768 == 0;
+                case ".64kn": return imageFilter.DataForkLength % 65536 == 0;
                 case ".512":
-                case ".512e": return imageFilter.GetDataForkLength() % 512 == 0;
-                case ".128": return imageFilter.GetDataForkLength() % 128 == 0;
-                case ".256": return imageFilter.GetDataForkLength() % 256 == 0;
-                case ".2352" when imageFilter.GetDataForkLength() % 2352 == 0 &&
-                                  imageFilter.GetDataForkLength()        <= 846720000:
-                case ".2448" when imageFilter.GetDataForkLength() % 2448 == 0 &&
-                                  imageFilter.GetDataForkLength()        <= 881280000:
+                case ".512e": return imageFilter.DataForkLength % 512 == 0;
+                case ".128": return imageFilter.DataForkLength % 128 == 0;
+                case ".256": return imageFilter.DataForkLength % 256 == 0;
+                case ".2352" when imageFilter.DataForkLength % 2352 == 0 && imageFilter.DataForkLength <= 846720000:
+                case ".2448" when imageFilter.DataForkLength % 2448 == 0 && imageFilter.DataForkLength <= 881280000:
                     byte[] sync   = new byte[12];
                     Stream stream = imageFilter.GetDataForkStream();
                     stream.Position = 0;
@@ -69,16 +67,16 @@ namespace Aaru.DiscImages
             }
 
             // Check if file is not multiple of 512
-            if(imageFilter.GetDataForkLength() % 512 == 0)
+            if(imageFilter.DataForkLength % 512 == 0)
                 return true;
 
-            if(_extension                            == ".hdf" &&
-               imageFilter.GetDataForkLength() % 256 == 0)
+            if(_extension                       == ".hdf" &&
+               imageFilter.DataForkLength % 256 == 0)
                 return true;
 
             // Only for single track data CDs
-            if((imageFilter.GetDataForkLength() % 2352 == 0 && imageFilter.GetDataForkLength() <= 846720000) ||
-               (imageFilter.GetDataForkLength() % 2448 == 0 && imageFilter.GetDataForkLength() <= 881280000))
+            if((imageFilter.DataForkLength % 2352 == 0 && imageFilter.DataForkLength <= 846720000) ||
+               (imageFilter.DataForkLength % 2448 == 0 && imageFilter.DataForkLength <= 881280000))
             {
                 byte[] sync   = new byte[12];
                 Stream stream = imageFilter.GetDataForkStream();
@@ -89,7 +87,7 @@ namespace Aaru.DiscImages
             }
 
             // Check known disk sizes with sectors smaller than 512
-            switch(imageFilter.GetDataForkLength())
+            switch(imageFilter.DataForkLength)
             {
                 #region Commodore
                 case 174848:

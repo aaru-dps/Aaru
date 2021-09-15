@@ -46,21 +46,17 @@ namespace Aaru.Filters
     public sealed class MacBinary : IFilter
     {
         const uint MAGIC = 0x6D42494E;
-        string     _basePath;
         byte[]     _bytes;
-        DateTime   _creationTime;
         long       _dataForkOff;
-        string     _filename;
         Header     _header;
-        bool       _isBytes, _isStream, _isPath, _opened;
-        DateTime   _lastWriteTime;
+        bool       _isBytes, _isStream, _isPath;
         long       _rsrcForkOff;
         Stream     _stream;
 
         /// <inheritdoc />
         public string Name => "MacBinary";
         /// <inheritdoc />
-        public Guid Id => new Guid("D7C321D3-E51F-45DF-A150-F6BFDF0D7704");
+        public Guid Id => new("D7C321D3-E51F-45DF-A150-F6BFDF0D7704");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
@@ -72,17 +68,17 @@ namespace Aaru.Filters
             _isBytes  = false;
             _isStream = false;
             _isPath   = false;
-            _opened   = false;
+            Opened    = false;
         }
 
         /// <inheritdoc />
-        public string GetBasePath() => _basePath;
+        public string BasePath { get; private set; }
 
         /// <inheritdoc />
-        public DateTime GetCreationTime() => _creationTime;
+        public DateTime CreationTime { get; private set; }
 
         /// <inheritdoc />
-        public long GetDataForkLength() => _header.dataLength;
+        public long DataForkLength => _header.dataLength;
 
         /// <inheritdoc />
         public Stream GetDataForkStream()
@@ -97,29 +93,29 @@ namespace Aaru.Filters
                 return new OffsetStream(_stream, _dataForkOff, _dataForkOff + _header.dataLength - 1);
 
             if(_isPath)
-                return new OffsetStream(_basePath, FileMode.Open, FileAccess.Read, _dataForkOff,
+                return new OffsetStream(BasePath, FileMode.Open, FileAccess.Read, _dataForkOff,
                                         _dataForkOff + _header.dataLength - 1);
 
             return null;
         }
 
         /// <inheritdoc />
-        public string GetFilename() => _filename;
+        public string Filename { get; private set; }
 
         /// <inheritdoc />
-        public DateTime GetLastWriteTime() => _lastWriteTime;
+        public DateTime LastWriteTime { get; private set; }
 
         /// <inheritdoc />
-        public long GetLength() => _header.dataLength + _header.resourceLength;
+        public long Length => _header.dataLength + _header.resourceLength;
 
         /// <inheritdoc />
-        public string GetParentFolder() => Path.GetDirectoryName(_basePath);
+        public string ParentFolder => System.IO.Path.GetDirectoryName(BasePath);
 
         /// <inheritdoc />
-        public string GetPath() => _basePath;
+        public string Path => BasePath;
 
         /// <inheritdoc />
-        public long GetResourceForkLength() => _header.resourceLength;
+        public long ResourceForkLength => _header.resourceLength;
 
         /// <inheritdoc />
         public Stream GetResourceForkStream()
@@ -134,14 +130,14 @@ namespace Aaru.Filters
                 return new OffsetStream(_stream, _rsrcForkOff, _rsrcForkOff + _header.resourceLength - 1);
 
             if(_isPath)
-                return new OffsetStream(_basePath, FileMode.Open, FileAccess.Read, _rsrcForkOff,
+                return new OffsetStream(BasePath, FileMode.Open, FileAccess.Read, _rsrcForkOff,
                                         _rsrcForkOff + _header.resourceLength - 1);
 
             return null;
         }
 
         /// <inheritdoc />
-        public bool HasResourceFork() => _header.resourceLength > 0;
+        public bool HasResourceFork => _header.resourceLength > 0;
 
         /// <inheritdoc />
         public bool Identify(byte[] buffer)
@@ -202,7 +198,7 @@ namespace Aaru.Filters
         }
 
         /// <inheritdoc />
-        public bool IsOpened() => _opened;
+        public bool Opened { get; private set; }
 
         /// <inheritdoc />
         public void Open(byte[] buffer)
@@ -228,12 +224,12 @@ namespace Aaru.Filters
 
             _rsrcForkOff = blocks * 128;
 
-            _filename      = StringHandlers.PascalToString(_header.filename, Encoding.GetEncoding("macintosh"));
-            _creationTime  = DateHandlers.MacToDateTime(_header.creationTime);
-            _lastWriteTime = DateHandlers.MacToDateTime(_header.modificationTime);
+            Filename      = StringHandlers.PascalToString(_header.filename, Encoding.GetEncoding("macintosh"));
+            CreationTime  = DateHandlers.MacToDateTime(_header.creationTime);
+            LastWriteTime = DateHandlers.MacToDateTime(_header.modificationTime);
 
             ms.Close();
-            _opened  = true;
+            Opened   = true;
             _isBytes = true;
             _bytes   = buffer;
         }
@@ -261,12 +257,12 @@ namespace Aaru.Filters
 
             _rsrcForkOff = blocks * 128;
 
-            _filename      = StringHandlers.PascalToString(_header.filename, Encoding.GetEncoding("macintosh"));
-            _creationTime  = DateHandlers.MacToDateTime(_header.creationTime);
-            _lastWriteTime = DateHandlers.MacToDateTime(_header.modificationTime);
+            Filename      = StringHandlers.PascalToString(_header.filename, Encoding.GetEncoding("macintosh"));
+            CreationTime  = DateHandlers.MacToDateTime(_header.creationTime);
+            LastWriteTime = DateHandlers.MacToDateTime(_header.modificationTime);
 
             stream.Seek(0, SeekOrigin.Begin);
-            _opened   = true;
+            Opened    = true;
             _isStream = true;
             _stream   = stream;
         }
@@ -295,14 +291,14 @@ namespace Aaru.Filters
 
             _rsrcForkOff = blocks * 128;
 
-            _filename      = StringHandlers.PascalToString(_header.filename, Encoding.GetEncoding("macintosh"));
-            _creationTime  = DateHandlers.MacToDateTime(_header.creationTime);
-            _lastWriteTime = DateHandlers.MacToDateTime(_header.modificationTime);
+            Filename      = StringHandlers.PascalToString(_header.filename, Encoding.GetEncoding("macintosh"));
+            CreationTime  = DateHandlers.MacToDateTime(_header.creationTime);
+            LastWriteTime = DateHandlers.MacToDateTime(_header.modificationTime);
 
             fs.Close();
-            _opened   = true;
-            _isPath   = true;
-            _basePath = path;
+            Opened   = true;
+            _isPath  = true;
+            BasePath = path;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]

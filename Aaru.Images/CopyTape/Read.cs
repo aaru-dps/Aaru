@@ -47,13 +47,13 @@ namespace Aaru.DiscImages
         /// <inheritdoc />
         public bool Open(IFilter imageFilter)
         {
-            List<long> blockPositions = new List<long>();
+            List<long> blockPositions = new();
             var        partialBlockRx = new Regex(PARTIAL_BLOCK_REGEX);
             var        blockRx        = new Regex(BLOCK_REGEX);
             var        filemarkRx     = new Regex(FILEMARK_REGEX);
             var        eotRx          = new Regex(END_OF_TAPE_REGEX);
 
-            if(imageFilter.GetDataForkLength() <= 16)
+            if(imageFilter.DataForkLength <= 16)
                 return false;
 
             _imageStream          = imageFilter.GetDataForkStream();
@@ -123,7 +123,7 @@ namespace Aaru.DiscImages
                     throw new ArgumentException("Cannot decode block header, cannot open.");
 
                 if(blockSize      == 0 ||
-                   blockSize + 17 > imageFilter.GetDataForkLength())
+                   blockSize + 17 > imageFilter.DataForkLength)
                     throw new ArgumentException("Cannot decode block header, cannot open.");
 
                 _imageStream.Position += blockSize;
@@ -145,7 +145,7 @@ namespace Aaru.DiscImages
 
             TapePartitions = new List<TapePartition>
             {
-                new TapePartition
+                new()
                 {
                     FirstBlock = 0,
                     LastBlock  = currentBlock - 1,
@@ -156,8 +156,8 @@ namespace Aaru.DiscImages
             _imageInfo.Sectors              = (ulong)_blockPositionCache.LongLength;
             _imageInfo.MediaType            = MediaType.UnknownTape;
             _imageInfo.Application          = "CopyTape";
-            _imageInfo.CreationTime         = imageFilter.GetCreationTime();
-            _imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
+            _imageInfo.CreationTime         = imageFilter.CreationTime;
+            _imageInfo.LastModificationTime = imageFilter.LastWriteTime;
             _imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
             IsTape                          = true;
 

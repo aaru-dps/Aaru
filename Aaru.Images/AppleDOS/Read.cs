@@ -46,10 +46,10 @@ namespace Aaru.DiscImages
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
 
-            byte[] tmp = new byte[imageFilter.GetDataForkLength()];
+            byte[] tmp = new byte[imageFilter.DataForkLength];
             stream.Read(tmp, 0, tmp.Length);
 
-            _extension = Path.GetExtension(imageFilter.GetFilename())?.ToLower();
+            _extension = Path.GetExtension(imageFilter.Filename)?.ToLower();
 
             if((_extension == ".d13" || _extension == ".do") &&
                tmp.Length == 116480)
@@ -81,10 +81,10 @@ namespace Aaru.DiscImages
             }
 
             _imageInfo.SectorSize           = 256;
-            _imageInfo.ImageSize            = (ulong)imageFilter.GetDataForkLength();
-            _imageInfo.CreationTime         = imageFilter.GetCreationTime();
-            _imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
-            _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            _imageInfo.ImageSize            = (ulong)imageFilter.DataForkLength;
+            _imageInfo.CreationTime         = imageFilter.CreationTime;
+            _imageInfo.LastModificationTime = imageFilter.LastWriteTime;
+            _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.Filename);
             _imageInfo.Sectors              = _dos32 ? 455u : 560u;
             _imageInfo.MediaType            = _dos32 ? MediaType.Apple32SS : MediaType.Apple33SS;
             _imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;

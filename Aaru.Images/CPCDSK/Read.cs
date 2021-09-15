@@ -175,8 +175,8 @@ namespace Aaru.DiscImages
                         else
                             allTracksSameSize = false;
 
-                    Dictionary<int, byte[]> thisTrackSectors      = new Dictionary<int, byte[]>();
-                    Dictionary<int, byte[]> thisTrackAddressMarks = new Dictionary<int, byte[]>();
+                    Dictionary<int, byte[]> thisTrackSectors      = new();
+                    Dictionary<int, byte[]> thisTrackAddressMarks = new();
 
                     for(int k = 1; k <= trackInfo.sectors; k++)
                     {
@@ -273,9 +273,9 @@ namespace Aaru.DiscImages
             AaruConsole.DebugWriteLine("CPCDSK plugin", "All tracks are same size? {0}", allTracksSameSize);
 
             _imageInfo.Application          = StringHandlers.CToString(header.creator);
-            _imageInfo.CreationTime         = imageFilter.GetCreationTime();
-            _imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
-            _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            _imageInfo.CreationTime         = imageFilter.CreationTime;
+            _imageInfo.LastModificationTime = imageFilter.LastWriteTime;
+            _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.Filename);
             _imageInfo.Sectors              = (ulong)_sectors.Count;
             _imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
             _imageInfo.MediaType            = MediaType.CompactFloppy;

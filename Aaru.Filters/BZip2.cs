@@ -42,18 +42,13 @@ namespace Aaru.Filters
     /// <summary>Decompress bz2 files while reading</summary>
     public class BZip2 : IFilter
     {
-        string   _basePath;
-        DateTime _creationTime;
-        Stream   _dataStream;
-        long     _decompressedSize;
-        Stream   _innerStream;
-        DateTime _lastWriteTime;
-        bool     _opened;
+        Stream _dataStream;
+        Stream _innerStream;
 
         /// <inheritdoc />
         public string Name => "BZip2";
         /// <inheritdoc />
-        public Guid Id => new Guid("FCCFB0C3-32EF-40D8-9714-2333F6AC72A9");
+        public Guid Id => new("FCCFB0C3-32EF-40D8-9714-2333F6AC72A9");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
@@ -62,24 +57,24 @@ namespace Aaru.Filters
         {
             _dataStream?.Close();
             _dataStream = null;
-            _basePath   = null;
-            _opened     = false;
+            BasePath    = null;
+            Opened      = false;
         }
 
         /// <inheritdoc />
-        public string GetBasePath() => _basePath;
+        public string BasePath { get; private set; }
 
         /// <inheritdoc />
         public Stream GetDataForkStream() => _innerStream;
 
         /// <inheritdoc />
-        public string GetPath() => _basePath;
+        public string Path => BasePath;
 
         /// <inheritdoc />
         public Stream GetResourceForkStream() => null;
 
         /// <inheritdoc />
-        public bool HasResourceFork() => false;
+        public bool HasResourceFork => false;
 
         /// <inheritdoc />
         public bool Identify(byte[] buffer)
@@ -158,70 +153,73 @@ namespace Aaru.Filters
         /// <inheritdoc />
         public void Open(byte[] buffer)
         {
-            _dataStream       = new MemoryStream(buffer);
-            _basePath         = null;
-            _creationTime     = DateTime.UtcNow;
-            _lastWriteTime    = _creationTime;
-            _innerStream      = new ForcedSeekStream<BZip2Stream>(_dataStream, CompressionMode.Decompress, false);
-            _decompressedSize = _innerStream.Length;
-            _opened           = true;
+            _dataStream    = new MemoryStream(buffer);
+            BasePath       = null;
+            CreationTime   = DateTime.UtcNow;
+            LastWriteTime  = CreationTime;
+            _innerStream   = new ForcedSeekStream<BZip2Stream>(_dataStream, CompressionMode.Decompress, false);
+            DataForkLength = _innerStream.Length;
+            Opened         = true;
         }
 
         /// <inheritdoc />
         public void Open(Stream stream)
         {
-            _dataStream       = stream;
-            _basePath         = null;
-            _creationTime     = DateTime.UtcNow;
-            _lastWriteTime    = _creationTime;
-            _innerStream      = new ForcedSeekStream<BZip2Stream>(_dataStream, CompressionMode.Decompress, false);
-            _decompressedSize = _innerStream.Length;
-            _opened           = true;
+            _dataStream    = stream;
+            BasePath       = null;
+            CreationTime   = DateTime.UtcNow;
+            LastWriteTime  = CreationTime;
+            _innerStream   = new ForcedSeekStream<BZip2Stream>(_dataStream, CompressionMode.Decompress, false);
+            DataForkLength = _innerStream.Length;
+            Opened         = true;
         }
 
         /// <inheritdoc />
         public void Open(string path)
         {
             _dataStream = new FileStream(path, FileMode.Open, FileAccess.Read);
-            _basePath   = Path.GetFullPath(path);
+            BasePath    = System.IO.Path.GetFullPath(path);
 
             var fi = new FileInfo(path);
-            _creationTime     = fi.CreationTimeUtc;
-            _lastWriteTime    = fi.LastWriteTimeUtc;
-            _innerStream      = new ForcedSeekStream<BZip2Stream>(_dataStream, CompressionMode.Decompress, false);
-            _decompressedSize = _innerStream.Length;
-            _opened           = true;
+            CreationTime   = fi.CreationTimeUtc;
+            LastWriteTime  = fi.LastWriteTimeUtc;
+            _innerStream   = new ForcedSeekStream<BZip2Stream>(_dataStream, CompressionMode.Decompress, false);
+            DataForkLength = _innerStream.Length;
+            Opened         = true;
         }
 
         /// <inheritdoc />
-        public DateTime GetCreationTime() => _creationTime;
+        public DateTime CreationTime { get; private set; }
 
         /// <inheritdoc />
-        public long GetDataForkLength() => _decompressedSize;
+        public long DataForkLength { get; private set; }
 
         /// <inheritdoc />
-        public DateTime GetLastWriteTime() => _lastWriteTime;
+        public DateTime LastWriteTime { get; private set; }
 
         /// <inheritdoc />
-        public long GetLength() => _decompressedSize;
+        public long Length => DataForkLength;
 
         /// <inheritdoc />
-        public long GetResourceForkLength() => 0;
+        public long ResourceForkLength => 0;
 
         /// <inheritdoc />
-        public string GetFilename()
+        public string Filename
         {
-            if(_basePath?.EndsWith(".bz2", StringComparison.InvariantCultureIgnoreCase) == true)
-                return _basePath.Substring(0, _basePath.Length - 4);
+            get
+            {
+                if(BasePath?.EndsWith(".bz2", StringComparison.InvariantCultureIgnoreCase) == true)
+                    return BasePath.Substring(0, BasePath.Length - 4);
 
-            return _basePath?.EndsWith(".bzip2", StringComparison.InvariantCultureIgnoreCase) == true
-                       ? _basePath.Substring(0, _basePath.Length - 6) : _basePath;
+                return BasePath?.EndsWith(".bzip2", StringComparison.InvariantCultureIgnoreCase) == true
+                           ? BasePath.Substring(0, BasePath.Length - 6) : BasePath;
+            }
         }
 
         /// <inheritdoc />
-        public string GetParentFolder() => Path.GetDirectoryName(_basePath);
+        public string ParentFolder => System.IO.Path.GetDirectoryName(BasePath);
 
         /// <inheritdoc />
-        public bool IsOpened() => _opened;
+        public bool Opened { get; private set; }
     }
 }

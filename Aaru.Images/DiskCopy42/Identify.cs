@@ -83,7 +83,7 @@ namespace Aaru.DiscImages
                 return false;
 
             // Some versions seem to incorrectly create little endian fields
-            if(tmpHeader.DataSize + tmpHeader.TagSize + 0x54 != imageFilter.GetDataForkLength() &&
+            if(tmpHeader.DataSize + tmpHeader.TagSize + 0x54 != imageFilter.DataForkLength &&
                tmpHeader.Format                              != kSigmaFormatTwiggy)
             {
                 tmpHeader.DataSize     = BitConverter.ToUInt32(buffer, 0x40);
@@ -91,7 +91,7 @@ namespace Aaru.DiscImages
                 tmpHeader.DataChecksum = BitConverter.ToUInt32(buffer, 0x48);
                 tmpHeader.TagChecksum  = BitConverter.ToUInt32(buffer, 0x4C);
 
-                if(tmpHeader.DataSize + tmpHeader.TagSize + 0x54 != imageFilter.GetDataForkLength() &&
+                if(tmpHeader.DataSize + tmpHeader.TagSize + 0x54 != imageFilter.DataForkLength &&
                    tmpHeader.Format                              != kSigmaFormatTwiggy)
                     return false;
             }

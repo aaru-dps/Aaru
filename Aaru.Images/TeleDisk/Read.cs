@@ -71,7 +71,7 @@ namespace Aaru.DiscImages
             _header.Sides         = headerBytes[9];
             _header.Crc           = BitConverter.ToUInt16(headerBytes, 10);
 
-            _imageInfo.MediaTitle  = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            _imageInfo.MediaTitle  = Path.GetFileNameWithoutExtension(imageFilter.Filename);
             _imageInfo.Version     = $"{(_header.Version & 0xF0) >> 4}.{_header.Version & 0x0F}";
             _imageInfo.Application = _imageInfo.Version;
 
@@ -202,9 +202,9 @@ namespace Aaru.DiscImages
             }
 
             if(_imageInfo.CreationTime == DateTime.MinValue)
-                _imageInfo.CreationTime = imageFilter.GetCreationTime();
+                _imageInfo.CreationTime = imageFilter.CreationTime;
 
-            _imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
+            _imageInfo.LastModificationTime = imageFilter.LastWriteTime;
 
             AaruConsole.DebugWriteLine("TeleDisk plugin", "Image created on {0}", _imageInfo.CreationTime);
             AaruConsole.DebugWriteLine("TeleDisk plugin", "Image modified on {0}", _imageInfo.LastModificationTime);

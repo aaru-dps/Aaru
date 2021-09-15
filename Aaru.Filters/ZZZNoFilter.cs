@@ -40,16 +40,12 @@ namespace Aaru.Filters
     /// <summary>No filter for reading files not recognized by any filter</summary>
     public sealed class ZZZNoFilter : IFilter
     {
-        string   _basePath;
-        DateTime _creationTime;
-        Stream   _dataStream;
-        DateTime _lastWriteTime;
-        bool     _opened;
+        Stream _dataStream;
 
         /// <inheritdoc />
         public string Name => "No filter";
         /// <inheritdoc />
-        public Guid Id => new Guid("12345678-AAAA-BBBB-CCCC-123456789000");
+        public Guid Id => new("12345678-AAAA-BBBB-CCCC-123456789000");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
@@ -58,24 +54,24 @@ namespace Aaru.Filters
         {
             _dataStream?.Close();
             _dataStream = null;
-            _basePath   = null;
-            _opened     = false;
+            BasePath    = null;
+            Opened      = false;
         }
 
         /// <inheritdoc />
-        public string GetBasePath() => _basePath;
+        public string BasePath { get; private set; }
 
         /// <inheritdoc />
         public Stream GetDataForkStream() => _dataStream;
 
         /// <inheritdoc />
-        public string GetPath() => _basePath;
+        public string Path => BasePath;
 
         /// <inheritdoc />
         public Stream GetResourceForkStream() => null;
 
         /// <inheritdoc />
-        public bool HasResourceFork() => false;
+        public bool HasResourceFork => false;
 
         /// <inheritdoc />
         public bool Identify(byte[] buffer) => buffer != null && buffer.Length > 0;
@@ -89,56 +85,56 @@ namespace Aaru.Filters
         /// <inheritdoc />
         public void Open(byte[] buffer)
         {
-            _dataStream    = new MemoryStream(buffer);
-            _basePath      = null;
-            _creationTime  = DateTime.UtcNow;
-            _lastWriteTime = _creationTime;
-            _opened        = true;
+            _dataStream   = new MemoryStream(buffer);
+            BasePath      = null;
+            CreationTime  = DateTime.UtcNow;
+            LastWriteTime = CreationTime;
+            Opened        = true;
         }
 
         /// <inheritdoc />
         public void Open(Stream stream)
         {
-            _dataStream    = stream;
-            _basePath      = null;
-            _creationTime  = DateTime.UtcNow;
-            _lastWriteTime = _creationTime;
-            _opened        = true;
+            _dataStream   = stream;
+            BasePath      = null;
+            CreationTime  = DateTime.UtcNow;
+            LastWriteTime = CreationTime;
+            Opened        = true;
         }
 
         /// <inheritdoc />
         public void Open(string path)
         {
             _dataStream = new FileStream(path, FileMode.Open, FileAccess.Read);
-            _basePath   = Path.GetFullPath(path);
+            BasePath    = System.IO.Path.GetFullPath(path);
             var fi = new FileInfo(path);
-            _creationTime  = fi.CreationTimeUtc;
-            _lastWriteTime = fi.LastWriteTimeUtc;
-            _opened        = true;
+            CreationTime  = fi.CreationTimeUtc;
+            LastWriteTime = fi.LastWriteTimeUtc;
+            Opened        = true;
         }
 
         /// <inheritdoc />
-        public DateTime GetCreationTime() => _creationTime;
+        public DateTime CreationTime { get; private set; }
 
         /// <inheritdoc />
-        public long GetDataForkLength() => _dataStream.Length;
+        public long DataForkLength => _dataStream.Length;
 
         /// <inheritdoc />
-        public DateTime GetLastWriteTime() => _lastWriteTime;
+        public DateTime LastWriteTime { get; private set; }
 
         /// <inheritdoc />
-        public long GetLength() => _dataStream.Length;
+        public long Length => _dataStream.Length;
 
         /// <inheritdoc />
-        public long GetResourceForkLength() => 0;
+        public long ResourceForkLength => 0;
 
         /// <inheritdoc />
-        public string GetFilename() => Path.GetFileName(_basePath);
+        public string Filename => System.IO.Path.GetFileName(BasePath);
 
         /// <inheritdoc />
-        public string GetParentFolder() => Path.GetDirectoryName(_basePath);
+        public string ParentFolder => System.IO.Path.GetDirectoryName(BasePath);
 
         /// <inheritdoc />
-        public bool IsOpened() => _opened;
+        public bool Opened { get; private set; }
     }
 }

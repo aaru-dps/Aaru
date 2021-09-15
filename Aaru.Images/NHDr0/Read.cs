@@ -62,9 +62,9 @@ namespace Aaru.DiscImages
             _imageInfo.MediaType = MediaType.GENERIC_HDD;
 
             _imageInfo.ImageSize            = (ulong)(stream.Length - _nhdhdr.dwHeadSize);
-            _imageInfo.CreationTime         = imageFilter.GetCreationTime();
-            _imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
-            _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            _imageInfo.CreationTime         = imageFilter.CreationTime;
+            _imageInfo.LastModificationTime = imageFilter.LastWriteTime;
+            _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.Filename);
             _imageInfo.Sectors              = (ulong)(_nhdhdr.dwCylinder * _nhdhdr.wHead * _nhdhdr.wSect);
             _imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
             _imageInfo.SectorSize           = (uint)_nhdhdr.wSectLen;

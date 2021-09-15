@@ -125,9 +125,9 @@ namespace Aaru.DiscImages
 
             _sectorCache = new Dictionary<ulong, byte[]>();
 
-            _imageInfo.CreationTime         = imageFilter.GetCreationTime();
-            _imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
-            _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            _imageInfo.CreationTime         = imageFilter.CreationTime;
+            _imageInfo.LastModificationTime = imageFilter.LastWriteTime;
+            _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.Filename);
             _imageInfo.Sectors              = _pHdr.totalBlocks;
             _imageInfo.SectorSize           = _pHdr.blockSize;
             _imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;

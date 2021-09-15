@@ -74,7 +74,7 @@ namespace Aaru.DiscImages
                                                            ? 2336
                                                            : 2048 : (int)_imageInfo.SectorSize,
                     EndSector         = _imageInfo.Sectors - 1,
-                    File              = _rawImageFilter?.GetFilename() ?? _basePath,
+                    File              = _rawImageFilter?.Filename ?? _basePath,
                     FileOffset        = 0,
                     FileType          = "BINARY",
                     RawBytesPerSector = _rawCompactDisc ? 2352 : (int)_imageInfo.SectorSize,

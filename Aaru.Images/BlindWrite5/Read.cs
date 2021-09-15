@@ -476,37 +476,36 @@ namespace Aaru.DiscImages
                 string path        = Path.Combine(_dataPath, dataFile.Filename);
                 var    filtersList = new FiltersList();
 
-                if(filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), path)) != null)
+                if(filtersList.GetFilter(Path.Combine(imageFilter.ParentFolder, path)) != null)
                 {
-                    chars.FileFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), path));
+                    chars.FileFilter = filtersList.GetFilter(Path.Combine(imageFilter.ParentFolder, path));
                     chars.FilePath   = path;
                 }
                 else
                 {
                     path = Path.Combine(_dataPath, dataFile.Filename.ToLower(CultureInfo.CurrentCulture));
 
-                    if(filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), path)) != null)
+                    if(filtersList.GetFilter(Path.Combine(imageFilter.ParentFolder, path)) != null)
                     {
-                        chars.FileFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), path));
+                        chars.FileFilter = filtersList.GetFilter(Path.Combine(imageFilter.ParentFolder, path));
                         chars.FilePath   = path;
                     }
                     else
                     {
                         path = Path.Combine(_dataPath, dataFile.Filename.ToUpper(CultureInfo.CurrentCulture));
 
-                        if(filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), path)) != null)
+                        if(filtersList.GetFilter(Path.Combine(imageFilter.ParentFolder, path)) != null)
                         {
-                            chars.FileFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), path));
+                            chars.FileFilter = filtersList.GetFilter(Path.Combine(imageFilter.ParentFolder, path));
                             chars.FilePath   = path;
                         }
                         else
                         {
                             path = Path.Combine(_dataPath.ToLower(CultureInfo.CurrentCulture), dataFile.Filename);
 
-                            if(filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), path)) != null)
+                            if(filtersList.GetFilter(Path.Combine(imageFilter.ParentFolder, path)) != null)
                             {
-                                chars.FileFilter =
-                                    filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), path));
+                                chars.FileFilter = filtersList.GetFilter(Path.Combine(imageFilter.ParentFolder, path));
 
                                 chars.FilePath = path;
                             }
@@ -514,10 +513,10 @@ namespace Aaru.DiscImages
                             {
                                 path = Path.Combine(_dataPath.ToUpper(CultureInfo.CurrentCulture), dataFile.Filename);
 
-                                if(filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), path)) != null)
+                                if(filtersList.GetFilter(Path.Combine(imageFilter.ParentFolder, path)) != null)
                                 {
                                     chars.FileFilter =
-                                        filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), path));
+                                        filtersList.GetFilter(Path.Combine(imageFilter.ParentFolder, path));
 
                                     chars.FilePath = path;
                                 }
@@ -525,57 +524,57 @@ namespace Aaru.DiscImages
                                 {
                                     path = Path.Combine(_dataPath, dataFile.Filename);
 
-                                    if(filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
+                                    if(filtersList.GetFilter(Path.Combine(imageFilter.ParentFolder,
                                                                           path.ToLower(CultureInfo.CurrentCulture))) !=
                                        null)
                                     {
                                         chars.FilePath = path.ToLower(CultureInfo.CurrentCulture);
 
                                         chars.FileFilter =
-                                            filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
+                                            filtersList.GetFilter(Path.Combine(imageFilter.ParentFolder,
                                                                                path.ToLower(CultureInfo.
                                                                                    CurrentCulture)));
                                     }
-                                    else if(filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
+                                    else if(filtersList.GetFilter(Path.Combine(imageFilter.ParentFolder,
                                                                                path.ToUpper(CultureInfo.
                                                                                    CurrentCulture))) != null)
                                     {
                                         chars.FilePath = path.ToUpper(CultureInfo.CurrentCulture);
 
                                         chars.FileFilter =
-                                            filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
+                                            filtersList.GetFilter(Path.Combine(imageFilter.ParentFolder,
                                                                                path.ToUpper(CultureInfo.
                                                                                    CurrentCulture)));
                                     }
-                                    else if(filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
+                                    else if(filtersList.GetFilter(Path.Combine(imageFilter.ParentFolder,
                                                                                dataFile.Filename.ToLower(CultureInfo.
                                                                                    CurrentCulture))) != null)
                                     {
                                         chars.FilePath = dataFile.Filename.ToLower(CultureInfo.CurrentCulture);
 
                                         chars.FileFilter =
-                                            filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
+                                            filtersList.GetFilter(Path.Combine(imageFilter.ParentFolder,
                                                                                dataFile.Filename.ToLower(CultureInfo.
                                                                                    CurrentCulture)));
                                     }
-                                    else if(filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
+                                    else if(filtersList.GetFilter(Path.Combine(imageFilter.ParentFolder,
                                                                                dataFile.Filename.ToUpper(CultureInfo.
                                                                                    CurrentCulture))) != null)
                                     {
                                         chars.FilePath = dataFile.Filename.ToUpper(CultureInfo.CurrentCulture);
 
                                         chars.FileFilter =
-                                            filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
+                                            filtersList.GetFilter(Path.Combine(imageFilter.ParentFolder,
                                                                                dataFile.Filename.ToUpper(CultureInfo.
                                                                                    CurrentCulture)));
                                     }
-                                    else if(filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
+                                    else if(filtersList.GetFilter(Path.Combine(imageFilter.ParentFolder,
                                                                                dataFile.Filename)) != null)
                                     {
                                         chars.FilePath = dataFile.Filename;
 
                                         chars.FileFilter =
-                                            filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
+                                            filtersList.GetFilter(Path.Combine(imageFilter.ParentFolder,
                                                                                dataFile.Filename));
                                     }
                                     else
@@ -789,32 +788,32 @@ namespace Aaru.DiscImages
                         bool   lowerCaseFileName  = false;
                         string basePath;
 
-                        bool version5 = string.Compare(Path.GetExtension(imageFilter.GetFilename()), ".B5T",
+                        bool version5 = string.Compare(Path.GetExtension(imageFilter.Filename), ".B5T",
                                                        StringComparison.OrdinalIgnoreCase) == 0;
 
                         string firstExtension      = version5 ? "B5I" : "B6I";
                         string firstExtensionLower = version5 ? "b5i" : "b6i";
 
-                        if(File.Exists(Path.Combine(imageFilter.GetParentFolder(), $"{filename}.{firstExtension}")))
+                        if(File.Exists(Path.Combine(imageFilter.ParentFolder, $"{filename}.{firstExtension}")))
                         {
-                            basePath = imageFilter.GetParentFolder();
+                            basePath = imageFilter.ParentFolder;
                         }
-                        else if(File.Exists(Path.Combine(imageFilter.GetParentFolder(),
+                        else if(File.Exists(Path.Combine(imageFilter.ParentFolder,
                                                          $"{filename}.{firstExtensionLower}")))
                         {
-                            basePath           = imageFilter.GetParentFolder();
+                            basePath           = imageFilter.ParentFolder;
                             lowerCaseExtension = true;
                         }
-                        else if(File.Exists(Path.Combine(imageFilter.GetParentFolder(),
+                        else if(File.Exists(Path.Combine(imageFilter.ParentFolder,
                                                          $"{filename.ToLower(CultureInfo.CurrentCulture)}.{firstExtension}")))
                         {
-                            basePath          = imageFilter.GetParentFolder();
+                            basePath          = imageFilter.ParentFolder;
                             lowerCaseFileName = true;
                         }
-                        else if(File.Exists(Path.Combine(imageFilter.GetParentFolder(),
+                        else if(File.Exists(Path.Combine(imageFilter.ParentFolder,
                                                          $"{filename.ToLower(CultureInfo.CurrentCulture)}.{firstExtensionLower}")))
                         {
-                            basePath           = imageFilter.GetParentFolder();
+                            basePath           = imageFilter.ParentFolder;
                             lowerCaseFileName  = true;
                             lowerCaseExtension = true;
                         }
@@ -867,61 +866,61 @@ namespace Aaru.DiscImages
                             lowerCaseExtension = true;
                         }
 
-                        else if(File.Exists(Path.Combine(imageFilter.GetParentFolder(), _dataPath,
+                        else if(File.Exists(Path.Combine(imageFilter.ParentFolder, _dataPath,
                                                          $"{filename}.{firstExtension}")))
                         {
-                            basePath = Path.Combine(imageFilter.GetParentFolder(), _dataPath);
+                            basePath = Path.Combine(imageFilter.ParentFolder, _dataPath);
                         }
-                        else if(File.Exists(Path.Combine(imageFilter.GetParentFolder(), _dataPath,
+                        else if(File.Exists(Path.Combine(imageFilter.ParentFolder, _dataPath,
                                                          $"{filename}.{firstExtensionLower}")))
                         {
-                            basePath           = Path.Combine(imageFilter.GetParentFolder(), _dataPath);
+                            basePath           = Path.Combine(imageFilter.ParentFolder, _dataPath);
                             lowerCaseExtension = true;
                         }
-                        else if(File.Exists(Path.Combine(imageFilter.GetParentFolder(), _dataPath,
+                        else if(File.Exists(Path.Combine(imageFilter.ParentFolder, _dataPath,
                                                          $"{filename.ToLower(CultureInfo.CurrentCulture)}.{firstExtension}")))
                         {
-                            basePath          = Path.Combine(imageFilter.GetParentFolder(), _dataPath);
+                            basePath          = Path.Combine(imageFilter.ParentFolder, _dataPath);
                             lowerCaseFileName = true;
                         }
-                        else if(File.Exists(Path.Combine(imageFilter.GetParentFolder(), _dataPath,
+                        else if(File.Exists(Path.Combine(imageFilter.ParentFolder, _dataPath,
                                                          $"{filename.ToLower(CultureInfo.CurrentCulture)}.{firstExtensionLower}")))
                         {
-                            basePath           = Path.Combine(imageFilter.GetParentFolder(), _dataPath);
+                            basePath           = Path.Combine(imageFilter.ParentFolder, _dataPath);
                             lowerCaseFileName  = true;
                             lowerCaseExtension = true;
                         }
 
-                        else if(File.Exists(Path.Combine(imageFilter.GetParentFolder(),
+                        else if(File.Exists(Path.Combine(imageFilter.ParentFolder,
                                                          _dataPath.ToLower(CultureInfo.CurrentCulture),
                                                          $"{filename}.{firstExtension}")))
                         {
-                            basePath = Path.Combine(imageFilter.GetParentFolder(),
+                            basePath = Path.Combine(imageFilter.ParentFolder,
                                                     _dataPath.ToLower(CultureInfo.CurrentCulture));
                         }
-                        else if(File.Exists(Path.Combine(imageFilter.GetParentFolder(),
+                        else if(File.Exists(Path.Combine(imageFilter.ParentFolder,
                                                          _dataPath.ToLower(CultureInfo.CurrentCulture),
                                                          $"{filename}.b00")))
                         {
-                            basePath = Path.Combine(imageFilter.GetParentFolder(),
+                            basePath = Path.Combine(imageFilter.ParentFolder,
                                                     _dataPath.ToLower(CultureInfo.CurrentCulture));
 
                             lowerCaseExtension = true;
                         }
-                        else if(File.Exists(Path.Combine(imageFilter.GetParentFolder(),
+                        else if(File.Exists(Path.Combine(imageFilter.ParentFolder,
                                                          _dataPath.ToLower(CultureInfo.CurrentCulture),
                                                          $"{filename.ToLower(CultureInfo.CurrentCulture)}.{firstExtension}")))
                         {
-                            basePath = Path.Combine(imageFilter.GetParentFolder(),
+                            basePath = Path.Combine(imageFilter.ParentFolder,
                                                     _dataPath.ToLower(CultureInfo.CurrentCulture));
 
                             lowerCaseFileName = true;
                         }
-                        else if(File.Exists(Path.Combine(imageFilter.GetParentFolder(),
+                        else if(File.Exists(Path.Combine(imageFilter.ParentFolder,
                                                          _dataPath.ToLower(CultureInfo.CurrentCulture),
                                                          $"{filename.ToLower(CultureInfo.CurrentCulture)}.{firstExtensionLower}")))
                         {
-                            basePath = Path.Combine(imageFilter.GetParentFolder(),
+                            basePath = Path.Combine(imageFilter.ParentFolder,
                                                     _dataPath.ToLower(CultureInfo.CurrentCulture));
 
                             lowerCaseFileName  = true;
@@ -1011,7 +1010,7 @@ namespace Aaru.DiscImages
                         foreach(DataFileCharacteristics chars in fileCharsForThisTrack)
                         {
                             track.Filter = chars.FileFilter;
-                            track.File   = chars.FileFilter.GetFilename();
+                            track.File   = chars.FileFilter.Filename;
 
                             if(trk.startLba >= 0)
                                 track.FileOffset = (ulong)((trk.startLba - chars.StartLba) * chars.SectorSize) +
@@ -1264,18 +1263,17 @@ namespace Aaru.DiscImages
             _imageInfo.DriveFirmwareRevision = StringHandlers.CToString(_header.revision);
             _imageInfo.Application           = "BlindWrite";
 
-            if(string.Compare(Path.GetExtension(imageFilter.GetFilename()), ".B5T",
-                              StringComparison.OrdinalIgnoreCase) == 0)
+            if(string.Compare(Path.GetExtension(imageFilter.Filename), ".B5T", StringComparison.OrdinalIgnoreCase) == 0)
                 _imageInfo.ApplicationVersion = "5";
-            else if(string.Compare(Path.GetExtension(imageFilter.GetFilename()), ".B6T",
+            else if(string.Compare(Path.GetExtension(imageFilter.Filename), ".B6T",
                                    StringComparison.OrdinalIgnoreCase) == 0)
                 _imageInfo.ApplicationVersion = "6";
 
             _imageInfo.Version = "5";
 
-            _imageInfo.ImageSize            = (ulong)imageFilter.GetDataForkLength();
-            _imageInfo.CreationTime         = imageFilter.GetCreationTime();
-            _imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
+            _imageInfo.ImageSize            = (ulong)imageFilter.DataForkLength;
+            _imageInfo.CreationTime         = imageFilter.CreationTime;
+            _imageInfo.LastModificationTime = imageFilter.LastWriteTime;
             _imageInfo.XmlMediaType         = XmlMediaType.OpticalDisc;
 
             if(_pma != null)

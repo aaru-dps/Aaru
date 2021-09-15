@@ -175,9 +175,9 @@ namespace Aaru.DiscImages
             // TODO: What about double sided, half track pitch compact floppies?
             _imageInfo.MediaType            = MediaType.CompactFloppy;
             _imageInfo.ImageSize            = (ulong)stream.Length - hdr.dataOff;
-            _imageInfo.CreationTime         = imageFilter.GetCreationTime();
-            _imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
-            _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            _imageInfo.CreationTime         = imageFilter.CreationTime;
+            _imageInfo.LastModificationTime = imageFilter.LastWriteTime;
+            _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.Filename);
             _imageInfo.SectorsPerTrack      = (uint)spt;
             _imageInfo.Sectors              = _imageInfo.Cylinders * _imageInfo.Heads * _imageInfo.SectorsPerTrack;
             _imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;

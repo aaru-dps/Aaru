@@ -124,9 +124,9 @@ namespace Aaru.DiscImages
             }
 
             _imageInfo.Application          = "CisCopy";
-            _imageInfo.CreationTime         = imageFilter.GetCreationTime();
-            _imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
-            _imageInfo.MediaTitle           = imageFilter.GetFilename();
+            _imageInfo.CreationTime         = imageFilter.CreationTime;
+            _imageInfo.LastModificationTime = imageFilter.LastWriteTime;
+            _imageInfo.MediaTitle           = imageFilter.Filename;
             _imageInfo.ImageSize            = (ulong)(stream.Length - 2 - trackBytes.Length);
             _imageInfo.SectorSize           = 512;
 

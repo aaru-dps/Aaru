@@ -396,8 +396,8 @@ namespace Aaru.DiscImages
                 _fullToc = tocMs.ToArray();
                 _imageInfo.ReadableMediaTags.Add(MediaTagType.CD_FullTOC);
 
-                string dataFile = Path.GetFileNameWithoutExtension(imageFilter.GetBasePath()) + ".img";
-                string subFile  = Path.GetFileNameWithoutExtension(imageFilter.GetBasePath()) + ".sub";
+                string dataFile = Path.GetFileNameWithoutExtension(imageFilter.BasePath) + ".img";
+                string subFile  = Path.GetFileNameWithoutExtension(imageFilter.BasePath) + ".sub";
 
                 var filtersList = new FiltersList();
                 _dataFilter = filtersList.GetFilter(dataFile);
@@ -466,7 +466,7 @@ namespace Aaru.DiscImages
                                         currentTrack = new Track
                                         {
                                             BytesPerSector = 2352,
-                                            File = _dataFilter.GetFilename(),
+                                            File = _dataFilter.Filename,
                                             FileType = _scrambled ? "SCRAMBLED" : "BINARY",
                                             Filter = _dataFilter,
                                             RawBytesPerSector = 2352,
@@ -517,7 +517,7 @@ namespace Aaru.DiscImages
 
                                         if(_subFilter != null)
                                         {
-                                            currentTrack.SubchannelFile   = _subFilter.GetFilename();
+                                            currentTrack.SubchannelFile   = _subFilter.Filename;
                                             currentTrack.SubchannelFilter = _subFilter;
                                             currentTrack.SubchannelType   = TrackSubchannelType.Raw;
                                         }
@@ -879,16 +879,16 @@ namespace Aaru.DiscImages
                     _imageInfo.MediaType = MediaType.CD;
 
                 _imageInfo.Application          = "CloneCD";
-                _imageInfo.ImageSize            = (ulong)imageFilter.GetDataForkLength();
-                _imageInfo.CreationTime         = imageFilter.GetCreationTime();
-                _imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
+                _imageInfo.ImageSize            = (ulong)imageFilter.DataForkLength;
+                _imageInfo.CreationTime         = imageFilter.CreationTime;
+                _imageInfo.LastModificationTime = imageFilter.LastWriteTime;
                 _imageInfo.XmlMediaType         = XmlMediaType.OpticalDisc;
 
                 return true;
             }
             catch(Exception ex)
             {
-                AaruConsole.ErrorWriteLine("Exception trying to identify image file {0}", imageFilter.GetFilename());
+                AaruConsole.ErrorWriteLine("Exception trying to identify image file {0}", imageFilter.Filename);
                 AaruConsole.ErrorWriteLine("Exception: {0}", ex.Message);
                 AaruConsole.ErrorWriteLine("Stack trace: {0}", ex.StackTrace);
 

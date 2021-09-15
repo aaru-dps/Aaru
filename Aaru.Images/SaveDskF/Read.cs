@@ -103,9 +103,9 @@ namespace Aaru.DiscImages
                                        _calculatedChk == _header.checksum);
 
             _imageInfo.Application          = "SaveDskF";
-            _imageInfo.CreationTime         = imageFilter.GetCreationTime();
-            _imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
-            _imageInfo.MediaTitle           = imageFilter.GetFilename();
+            _imageInfo.CreationTime         = imageFilter.CreationTime;
+            _imageInfo.LastModificationTime = imageFilter.LastWriteTime;
+            _imageInfo.MediaTitle           = imageFilter.Filename;
             _imageInfo.ImageSize            = (ulong)(stream.Length - _header.dataOffset);
             _imageInfo.Sectors              = (ulong)(_header.sectorsPerTrack * _header.heads * _header.cylinders);
             _imageInfo.SectorSize           = _header.sectorSize;

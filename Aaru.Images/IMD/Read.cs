@@ -117,7 +117,7 @@ namespace Aaru.DiscImages
                 if(spt > _imageInfo.SectorsPerTrack)
                     _imageInfo.SectorsPerTrack = spt;
 
-                SortedDictionary<byte, byte[]> track = new SortedDictionary<byte, byte[]>();
+                SortedDictionary<byte, byte[]> track = new();
 
                 for(int i = 0; i < spt; i++)
                 {
@@ -172,9 +172,9 @@ namespace Aaru.DiscImages
             _imageInfo.Application = "IMD";
 
             // TODO: The header is the date of dump or the date of the application compilation?
-            _imageInfo.CreationTime         = imageFilter.GetCreationTime();
-            _imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
-            _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            _imageInfo.CreationTime         = imageFilter.CreationTime;
+            _imageInfo.LastModificationTime = imageFilter.LastWriteTime;
+            _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.Filename);
             _imageInfo.Comments             = StringHandlers.CToString(cmt.ToArray());
             _imageInfo.Sectors              = currentLba;
             _imageInfo.MediaType            = MediaType.Unknown;

@@ -88,8 +88,8 @@ namespace Aaru.DiscImages
             _hdkImageFilter = imageFilter;
 
             _imageInfo.ImageSize            = (ulong)(stream.Length - 8);
-            _imageInfo.CreationTime         = imageFilter.GetCreationTime();
-            _imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
+            _imageInfo.CreationTime         = imageFilter.CreationTime;
+            _imageInfo.LastModificationTime = imageFilter.LastWriteTime;
 
             _imageInfo.MediaType = Geometry.GetMediaType(((ushort)_imageInfo.Cylinders, (byte)_imageInfo.Heads,
                                                           (ushort)_imageInfo.SectorsPerTrack, _imageInfo.SectorSize,

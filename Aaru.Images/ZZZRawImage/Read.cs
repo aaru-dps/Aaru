@@ -63,7 +63,7 @@ namespace Aaru.DiscImages
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
 
-            _extension = Path.GetExtension(imageFilter.GetFilename())?.ToLower();
+            _extension = Path.GetExtension(imageFilter.Filename)?.ToLower();
 
             switch(_extension)
             {
@@ -117,24 +117,24 @@ namespace Aaru.DiscImages
 
                     break;
 
-                case ".iso" when imageFilter.GetDataForkLength() % 2048 == 0:
+                case ".iso" when imageFilter.DataForkLength % 2048 == 0:
                     _imageInfo.SectorSize = 2048;
 
                     break;
-                case ".d81" when imageFilter.GetDataForkLength() == 819200:
+                case ".d81" when imageFilter.DataForkLength == 819200:
                     _imageInfo.SectorSize = 256;
 
                     break;
                 default:
                     if((_extension == ".adf" || _extension == ".adl" || _extension == ".ssd" || _extension == ".dsd") &&
-                       (imageFilter.GetDataForkLength() == 163840 || imageFilter.GetDataForkLength() == 327680 ||
-                        imageFilter.GetDataForkLength() == 655360))
+                       (imageFilter.DataForkLength == 163840 || imageFilter.DataForkLength == 327680 ||
+                        imageFilter.DataForkLength == 655360))
                         _imageInfo.SectorSize = 256;
                     else if((_extension == ".adf" || _extension == ".adl") &&
-                            imageFilter.GetDataForkLength() == 819200)
+                            imageFilter.DataForkLength == 819200)
                         _imageInfo.SectorSize = 1024;
                     else
-                        switch(imageFilter.GetDataForkLength())
+                        switch(imageFilter.DataForkLength)
                         {
                             case 242944:
                             case 256256:
@@ -204,14 +204,14 @@ namespace Aaru.DiscImages
                     break;
             }
 
-            _imageInfo.ImageSize            = (ulong)imageFilter.GetDataForkLength();
-            _imageInfo.CreationTime         = imageFilter.GetCreationTime();
-            _imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
-            _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            _imageInfo.ImageSize            = (ulong)imageFilter.DataForkLength;
+            _imageInfo.CreationTime         = imageFilter.CreationTime;
+            _imageInfo.LastModificationTime = imageFilter.LastWriteTime;
+            _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.Filename);
             _differentTrackZeroSize         = false;
             _rawImageFilter                 = imageFilter;
 
-            switch(imageFilter.GetDataForkLength())
+            switch(imageFilter.DataForkLength)
             {
                 case 242944:
                     _imageInfo.Sectors = 1898;
@@ -358,7 +358,7 @@ namespace Aaru.DiscImages
                 }
 
             // Search for known tags
-            string basename = imageFilter.GetBasePath();
+            string basename = imageFilter.BasePath;
             basename = basename.Substring(0, basename.Length - _extension.Length);
 
             _mediaTags = new Dictionary<MediaTagType, byte[]>();
@@ -369,11 +369,11 @@ namespace Aaru.DiscImages
                     var     filters = new FiltersList();
                     IFilter filter  = filters.GetFilter(basename + sidecar.name);
 
-                    if(filter?.IsOpened() != true)
+                    if(filter.Opened != true)
                         continue;
 
                     AaruConsole.DebugWriteLine("ZZZRawImage Plugin", "Found media tag {0}", sidecar.tag);
-                    byte[] data = new byte[filter.GetDataForkLength()];
+                    byte[] data = new byte[filter.DataForkLength];
                     filter.GetDataForkStream().Read(data, 0, data.Length);
                     _mediaTags.Add(sidecar.tag, data);
                 }
@@ -1276,7 +1276,7 @@ namespace Aaru.DiscImages
                 BytesPerSector    = (int)_imageInfo.SectorSize,
                 EndSector         = _imageInfo.Sectors - 1,
                 Filter            = _rawImageFilter,
-                File              = _rawImageFilter.GetFilename(),
+                File              = _rawImageFilter.Filename,
                 FileOffset        = 0,
                 FileType          = "BINARY",
                 RawBytesPerSector = (int)_imageInfo.SectorSize,
@@ -1309,7 +1309,7 @@ namespace Aaru.DiscImages
                 BytesPerSector    = (int)_imageInfo.SectorSize,
                 EndSector         = _imageInfo.Sectors - 1,
                 Filter            = _rawImageFilter,
-                File              = _rawImageFilter.GetFilename(),
+                File              = _rawImageFilter.Filename,
                 FileOffset        = 0,
                 FileType          = "BINARY",
                 RawBytesPerSector = (int)_imageInfo.SectorSize,
