@@ -38,7 +38,7 @@
 
 using System;
 using System.IO;
-using Aaru.CommonTypes.Structs;
+using Aaru.CommonTypes.Enums;
 
 namespace Aaru.CommonTypes.Interfaces
 {
@@ -134,14 +134,14 @@ namespace Aaru.CommonTypes.Interfaces
 
         /// <summary>Opens the specified path with this filter instance</summary>
         /// <param name="path">Path.</param>
-        Errno Open(string path);
+        ErrorNumber Open(string path);
 
         /// <summary>Opens the specified stream with this filter instance</summary>
         /// <param name="stream">Stream.</param>
-        Errno Open(Stream stream);
+        ErrorNumber Open(Stream stream);
 
         /// <summary>Opens the specified buffer with this filter instance</summary>
         /// <param name="buffer">Buffer.</param>
-        Errno Open(byte[] buffer);
+        ErrorNumber Open(byte[] buffer);
     }
 }
