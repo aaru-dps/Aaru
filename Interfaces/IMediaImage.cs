@@ -72,7 +72,7 @@ namespace Aaru.CommonTypes.Interfaces
         /// <summary>Opens the image.</summary>
         /// <returns><c>true</c>, if image was opened, <c>false</c> otherwise.</returns>
         /// <param name="imageFilter">Image filter.</param>
-        bool Open(IFilter imageFilter);
+        ErrorNumber Open(IFilter imageFilter);
 
         /// <summary>Reads a disk tag.</summary>
         /// <returns>Disk tag</returns>
