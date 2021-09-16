@@ -46,13 +46,13 @@ namespace Aaru.DiscImages
     public sealed partial class Vdi
     {
         /// <inheritdoc />
-        public bool Open(IFilter imageFilter)
+        public ErrorNumber Open(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
 
             if(stream.Length < 512)
-                return false;
+                return ErrorNumber.InvalidArgument;
 
             byte[] vHdrB = new byte[Marshal.SizeOf<Header>()];
             stream.Read(vHdrB, 0, Marshal.SizeOf<Header>());
@@ -165,7 +165,7 @@ namespace Aaru.DiscImages
             }
 
             if(_imageInfo.Cylinders != 0)
-                return true;
+                return ErrorNumber.InvalidArgument;
 
             // Same calculation as done by VirtualBox
             _imageInfo.Cylinders       = (uint)(_imageInfo.Sectors / 16 / 63);
@@ -190,7 +190,7 @@ namespace Aaru.DiscImages
                     break;
             }
 
-            return true;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />

@@ -46,20 +46,20 @@ namespace Aaru.DiscImages
     public sealed partial class Vhdx
     {
         /// <inheritdoc />
-        public bool Open(IFilter imageFilter)
+        public ErrorNumber Open(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
 
             if(stream.Length < 512)
-                return false;
+                return ErrorNumber.InvalidArgument;
 
             byte[] vhdxIdB = new byte[Marshal.SizeOf<Identifier>()];
             stream.Read(vhdxIdB, 0, Marshal.SizeOf<Identifier>());
             _id = Marshal.ByteArrayToStructureLittleEndian<Identifier>(vhdxIdB);
 
             if(_id.signature != VHDX_SIGNATURE)
-                return false;
+                return ErrorNumber.InvalidArgument;
 
             _imageInfo.Application = Encoding.Unicode.GetString(_id.creator);
 
@@ -256,8 +256,8 @@ namespace Aaru.DiscImages
                             parentFilter =
                                 new FiltersList().GetFilter(Path.Combine(imageFilter.ParentFolder, entryValue));
 
-                            if(parentFilter != null &&
-                               _parentImage.Open(parentFilter))
+                            if(parentFilter                    != null &&
+                               _parentImage.Open(parentFilter) == ErrorNumber.NoError)
                             {
                                 parentWorks = true;
 
@@ -276,8 +276,8 @@ namespace Aaru.DiscImages
                             parentFilter =
                                 new FiltersList().GetFilter(Path.Combine(imageFilter.ParentFolder, relEntry));
 
-                            if(parentFilter == null ||
-                               !_parentImage.Open(parentFilter))
+                            if(parentFilter                    == null ||
+                               _parentImage.Open(parentFilter) != ErrorNumber.NoError)
                                 continue;
 
                             parentWorks = true;
@@ -302,8 +302,8 @@ namespace Aaru.DiscImages
                             parentFilter =
                                 new FiltersList().GetFilter(Path.Combine(imageFilter.ParentFolder, entryValue));
 
-                            if(parentFilter == null ||
-                               !_parentImage.Open(parentFilter))
+                            if(parentFilter                    == null ||
+                               _parentImage.Open(parentFilter) != ErrorNumber.NoError)
                                 continue;
 
                             parentWorks = true;
@@ -426,7 +426,7 @@ namespace Aaru.DiscImages
             _imageInfo.Heads           = 16;
             _imageInfo.SectorsPerTrack = 63;
 
-            return true;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />

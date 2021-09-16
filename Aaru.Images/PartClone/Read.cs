@@ -47,13 +47,13 @@ namespace Aaru.DiscImages
     public sealed partial class PartClone
     {
         /// <inheritdoc />
-        public bool Open(IFilter imageFilter)
+        public ErrorNumber Open(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
 
             if(stream.Length < 512)
-                return false;
+                return ErrorNumber.InvalidArgument;
 
             byte[] pHdrB = new byte[Marshal.SizeOf<Header>()];
             stream.Read(pHdrB, 0, Marshal.SizeOf<Header>());
@@ -135,7 +135,7 @@ namespace Aaru.DiscImages
             _imageInfo.ImageSize            = (ulong)(stream.Length - (4096 + 0x40 + (long)_pHdr.totalBlocks));
             _imageStream                    = stream;
 
-            return true;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />

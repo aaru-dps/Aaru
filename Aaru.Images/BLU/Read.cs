@@ -44,7 +44,7 @@ namespace Aaru.DiscImages
     public sealed partial class Blu
     {
         /// <inheritdoc />
-        public bool Open(IFilter imageFilter)
+        public ErrorNumber Open(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
@@ -70,10 +70,10 @@ namespace Aaru.DiscImages
 
             for(int i = 0; i < 0xD; i++)
                 if(_imageHeader.DeviceName[i] < 0x20)
-                    return false;
+                    return ErrorNumber.InvalidArgument;
 
             if((_imageHeader.BytesPerBlock & 0xFE00) != 0x200)
-                return false;
+                return ErrorNumber.InvalidArgument;
 
             stream.Seek(0, SeekOrigin.Begin);
             header = new byte[_imageHeader.BytesPerBlock];
@@ -149,7 +149,7 @@ namespace Aaru.DiscImages
 
             AaruConsole.VerboseWriteLine("BLU image contains a disk of type {0}", _imageInfo.MediaType);
 
-            return true;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />

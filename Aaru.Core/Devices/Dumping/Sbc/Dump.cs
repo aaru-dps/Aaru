@@ -445,7 +445,7 @@ namespace Aaru.Core.Devices.Dumping
                             UpdateStatus?.Invoke("Building track map...");
                             _dumpLog.WriteLine("Building track map...");
 
-                            List<Track> tracks = new List<Track>();
+                            List<Track> tracks = new();
 
                             for(ushort tno = discInformation.Value.FirstTrackNumber;
                                 tno <= discInformation?.LastTrackLastSession; tno++)
@@ -476,14 +476,14 @@ namespace Aaru.Core.Devices.Dumping
 
                                 var track = new Track
                                 {
-                                    Sequence = trkInfo.LogicalTrackNumber,
-                                    Session = (ushort)(canStoreNotCdSessions ? trkInfo.SessionNumber : 1),
-                                    Type = TrackType.Data,
-                                    StartSector = trkInfo.LogicalTrackStartAddress,
-                                    EndSector = trkInfo.LogicalTrackSize + trkInfo.LogicalTrackStartAddress - 1,
+                                    Sequence          = trkInfo.LogicalTrackNumber,
+                                    Session           = (ushort)(canStoreNotCdSessions ? trkInfo.SessionNumber : 1),
+                                    Type              = TrackType.Data,
+                                    StartSector       = trkInfo.LogicalTrackStartAddress,
+                                    EndSector         = trkInfo.LogicalTrackSize + trkInfo.LogicalTrackStartAddress - 1,
                                     RawBytesPerSector = (int)blockSize,
-                                    BytesPerSector = (int)blockSize,
-                                    SubchannelType = TrackSubchannelType.None
+                                    BytesPerSector    = (int)blockSize,
+                                    SubchannelType    = TrackSubchannelType.None
                                 };
 
                                 if(track.EndSector >= blocks)
@@ -547,7 +547,7 @@ namespace Aaru.Core.Devices.Dumping
                             else
                                 opticalPlugin.SetTracks(new List<Track>
                                 {
-                                    new Track
+                                    new()
                                     {
                                         BytesPerSector    = (int)blockSize,
                                         EndSector         = blocks - 1,
@@ -570,7 +570,7 @@ namespace Aaru.Core.Devices.Dumping
 
                         opticalPlugin.SetTracks(new List<Track>
                         {
-                            new Track
+                            new()
                             {
                                 BytesPerSector    = (int)blockSize,
                                 EndSector         = blocks - 1,
@@ -988,10 +988,11 @@ namespace Aaru.Core.Devices.Dumping
                     var         filters     = new FiltersList();
                     IFilter     filter      = filters.GetFilter(_outputPath);
                     IMediaImage inputPlugin = ImageFormat.Detect(filter);
+                    ErrorNumber opened      = inputPlugin.Open(filter);
 
-                    if(!inputPlugin.Open(filter))
+                    if(opened != ErrorNumber.NoError)
                     {
-                        StoppingErrorMessage?.Invoke("Could not open created image.");
+                        StoppingErrorMessage?.Invoke(string.Format("Error {0} opening created image.", opened));
 
                         return;
                     }
@@ -1162,7 +1163,7 @@ namespace Aaru.Core.Devices.Dumping
                             }
                         }
 
-                        List<(ulong start, string type)> filesystems = new List<(ulong start, string type)>();
+                        List<(ulong start, string type)> filesystems = new();
 
                         if(sidecar.BlockMedia[0].FileSystemInformation != null)
                             filesystems.AddRange(from partition in sidecar.BlockMedia[0].FileSystemInformation

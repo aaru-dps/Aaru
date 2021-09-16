@@ -45,13 +45,13 @@ namespace Aaru.DiscImages
     public sealed partial class Dim
     {
         /// <inheritdoc />
-        public bool Open(IFilter imageFilter)
+        public ErrorNumber Open(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
 
             if(stream.Length < DATA_OFFSET)
-                return false;
+                return ErrorNumber.InvalidArgument;
 
             long diskSize = stream.Length - DATA_OFFSET;
 
@@ -65,7 +65,7 @@ namespace Aaru.DiscImages
             stream.Read(_comment, 0, 60);
 
             if(!_headerId.SequenceEqual(_hdrId))
-                return false;
+                return ErrorNumber.InvalidArgument;
 
             _imageInfo.MediaType = MediaType.Unknown;
 
@@ -78,7 +78,7 @@ namespace Aaru.DiscImages
                         AaruConsole.ErrorWriteLine("DIM shows unknown image with {0} tracks",
                                                    diskSize / (2 * 8 * 1024));
 
-                        return false;
+                        return ErrorNumber.NotSupported;
                     }
 
                     if(diskSize / (2 * 8 * 1024) == 77)
@@ -94,7 +94,7 @@ namespace Aaru.DiscImages
                     {
                         AaruConsole.ErrorWriteLine("DIM shows unknown image with {0} tracks", diskSize / (2 * 9 * 512));
 
-                        return false;
+                        return ErrorNumber.NotSupported;
                     }
 
                     if(diskSize / (2 * 9 * 512) == 80)
@@ -111,7 +111,7 @@ namespace Aaru.DiscImages
                         AaruConsole.ErrorWriteLine("DIM shows unknown image with {0} tracks",
                                                    diskSize / (2 * 15 * 512));
 
-                        return false;
+                        return ErrorNumber.NotSupported;
                     }
 
                     if(diskSize / (2 * 15 * 512) == 80)
@@ -127,7 +127,7 @@ namespace Aaru.DiscImages
                     {
                         AaruConsole.ErrorWriteLine("DIM shows unknown image with {0} tracks", diskSize / (2 * 9 * 512));
 
-                        return false;
+                        return ErrorNumber.NotSupported;
                     }
 
                     if(diskSize / (2 * 9 * 512) == 80)
@@ -144,7 +144,7 @@ namespace Aaru.DiscImages
                         AaruConsole.ErrorWriteLine("DIM shows unknown image with {0} tracks",
                                                    diskSize / (2 * 18 * 512));
 
-                        return false;
+                        return ErrorNumber.NotSupported;
                     }
 
                     if(diskSize / (2 * 18 * 512) == 80)
@@ -175,11 +175,11 @@ namespace Aaru.DiscImages
                         AaruConsole.ErrorWriteLine("DIM shows unknown image with {0} tracks",
                                                    diskSize / (2 * 26 * 256));
 
-                        return false;
+                        return ErrorNumber.NotSupported;
                     }
 
                     break;
-                default: return false;
+                default: return ErrorNumber.InvalidArgument;
             }
 
             AaruConsole.VerboseWriteLine("DIM image contains a disk of type {0}", _imageInfo.MediaType);
@@ -238,7 +238,7 @@ namespace Aaru.DiscImages
                     break;
             }
 
-            return true;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />

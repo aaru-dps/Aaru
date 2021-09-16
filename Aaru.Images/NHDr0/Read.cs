@@ -43,7 +43,7 @@ namespace Aaru.DiscImages
     public sealed partial class Nhdr0
     {
         /// <inheritdoc />
-        public bool Open(IFilter imageFilter)
+        public ErrorNumber Open(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
@@ -52,7 +52,7 @@ namespace Aaru.DiscImages
             var shiftjis = Encoding.GetEncoding("shift_jis");
 
             if(stream.Length < Marshal.SizeOf<Header>())
-                return false;
+                return ErrorNumber.InvalidArgument;
 
             byte[] hdrB = new byte[Marshal.SizeOf<Header>()];
             stream.Read(hdrB, 0, hdrB.Length);
@@ -75,7 +75,7 @@ namespace Aaru.DiscImages
 
             _nhdImageFilter = imageFilter;
 
-            return true;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />

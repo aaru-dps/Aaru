@@ -43,7 +43,7 @@ namespace Aaru.DiscImages
     public sealed partial class DiscFerret
     {
         /// <inheritdoc />
-        public bool Open(IFilter imageFilter)
+        public ErrorNumber Open(IFilter imageFilter)
         {
             byte[] magicB = new byte[4];
             Stream stream = imageFilter.GetDataForkStream();
@@ -52,7 +52,7 @@ namespace Aaru.DiscImages
 
             if(magic != DFI_MAGIC &&
                magic != DFI_MAGIC2)
-                return false;
+                return ErrorNumber.InvalidArgument;
 
             TrackOffsets = new SortedDictionary<int, long>();
             TrackLengths = new SortedDictionary<int, long>();
@@ -121,7 +121,9 @@ namespace Aaru.DiscImages
             _imageInfo.Application        = "DiscFerret";
             _imageInfo.ApplicationVersion = magic == DFI_MAGIC2 ? "2.0" : "1.0";
 
-            throw new NotImplementedException("Flux decoding is not yet implemented.");
+            AaruConsole.ErrorWriteLine("Flux decoding is not yet implemented.");
+
+            return ErrorNumber.NotImplemented;
         }
 
         /// <inheritdoc />

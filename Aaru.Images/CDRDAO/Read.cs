@@ -50,10 +50,10 @@ namespace Aaru.DiscImages
     public sealed partial class Cdrdao
     {
         /// <inheritdoc />
-        public bool Open(IFilter imageFilter)
+        public ErrorNumber Open(IFilter imageFilter)
         {
             if(imageFilter == null)
-                return false;
+                return ErrorNumber.NoSuchFile;
 
             _cdrdaoFilter = imageFilter;
 
@@ -133,7 +133,7 @@ namespace Aaru.DiscImages
                         AaruConsole.DebugWriteLine("CDRDAO plugin", "Not a CDRDAO TOC or TOC type not in line {0}.",
                                                    lineNumber);
 
-                        return false;
+                        return ErrorNumber.InvalidArgument;
                     }
 
                     break;
@@ -284,8 +284,12 @@ namespace Aaru.DiscImages
 
                                 break;
                             default:
-                                throw new
-                                    NotSupportedException($"Track mode {matchTrack.Groups["type"].Value} is unsupported");
+                            {
+                                AaruConsole.
+                                    ErrorWriteLine($"Track mode {matchTrack.Groups["type"].Value} is unsupported");
+
+                                return ErrorNumber.NotSupported;
+                            }
                         }
 
                         switch(matchTrack.Groups["subchan"].Value)
@@ -299,8 +303,12 @@ namespace Aaru.DiscImages
 
                                 break;
                             default:
-                                throw new
-                                    NotSupportedException($"Track subchannel mode {matchTrack.Groups["subchan"].Value} is unsupported");
+                            {
+                                AaruConsole.
+                                    ErrorWriteLine($"Track subchannel mode {matchTrack.Groups["subchan"].Value} is unsupported");
+
+                                return ErrorNumber.NotSupported;
+                            }
                         }
 
                         currentTrack.Tracktype = matchTrack.Groups["type"].Value;
@@ -555,7 +563,8 @@ namespace Aaru.DiscImages
                     /*
                     else // Non-empty unknown field
                     {
-                        throw new FeatureUnsupportedImageException(string.Format("Found unknown field defined at line {0}: \"{1}\"", line, _line));
+                        AaruConsole.ErrorWriteLine(string.Format("Found unknown field defined at line {0}: \"{1}\"", line, _line));
+                        return ErrorNumber.NotSupported;
                     }
                     */
                 }
@@ -708,7 +717,11 @@ namespace Aaru.DiscImages
 
                     if(_discimage.Tracks[i].Sequence == 1 &&
                        i                             != 0)
-                        throw new ImageNotSupportedException("Unordered tracks");
+                    {
+                        AaruConsole.ErrorWriteLine("Unordered tracks");
+
+                        return ErrorNumber.NotSupported;
+                    }
 
                     // Index 01
                     var partition = new Partition
@@ -868,15 +881,14 @@ namespace Aaru.DiscImages
 
                 _sectorBuilder = new SectorBuilder();
 
-                return true;
+                return ErrorNumber.NoError;
             }
             catch(Exception ex)
             {
                 AaruConsole.ErrorWriteLine("Exception trying to identify image file {0}", imageFilter);
-                AaruConsole.ErrorWriteLine("Exception: {0}", ex.Message);
-                AaruConsole.ErrorWriteLine("Stack trace: {0}", ex.StackTrace);
+                AaruConsole.ErrorWriteLine("Exception: {0}", ex);
 
-                return false;
+                return ErrorNumber.UnexpectedException;
             }
         }
 

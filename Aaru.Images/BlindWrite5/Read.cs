@@ -57,13 +57,13 @@ namespace Aaru.DiscImages
     public sealed partial class BlindWrite5
     {
         /// <inheritdoc />
-        public bool Open(IFilter imageFilter)
+        public ErrorNumber Open(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
 
             if(stream.Length < 276)
-                return false;
+                return ErrorNumber.InvalidArgument;
 
             byte[] hdr = new byte[260];
             stream.Read(hdr, 0, 260);
@@ -606,7 +606,7 @@ namespace Aaru.DiscImages
                             AaruConsole.ErrorWriteLine("BlindWrite5 found unknown subchannel size: {0}",
                                                        sectorSize - 2352);
 
-                            return false;
+                            return ErrorNumber.NotSupported;
                     }
                 else
                     chars.Subchannel = TrackSubchannelType.None;
@@ -953,7 +953,7 @@ namespace Aaru.DiscImages
                         {
                             AaruConsole.ErrorWriteLine("Could not find image for track {0}", trk.point);
 
-                            return false;
+                            return ErrorNumber.NoSuchFile;
                         }
 
                         var splitStream = new SplitJoinStream();
@@ -975,7 +975,7 @@ namespace Aaru.DiscImages
                         {
                             AaruConsole.ErrorWriteLine("Could not find image for track {0}", trk.point);
 
-                            return false;
+                            return ErrorNumber.NoSuchFile;
                         }
 
                         track.Filter = splitStream.Filter;
@@ -1038,7 +1038,7 @@ namespace Aaru.DiscImages
                     {
                         AaruConsole.ErrorWriteLine("Could not find image for track {0}", trk.point);
 
-                        return false;
+                        return ErrorNumber.NoSuchFile;
                     }
 
                     track.Pregap   = trk.pregap;
@@ -1385,7 +1385,7 @@ namespace Aaru.DiscImages
                     track.Indexes?.Clear();
                 }
 
-            return true;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />

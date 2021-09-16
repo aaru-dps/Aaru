@@ -46,7 +46,7 @@ namespace Aaru.DiscImages
     public sealed partial class WCDiskImage
     {
         /// <inheritdoc />
-        public bool Open(IFilter imageFilter)
+        public ErrorNumber Open(IFilter imageFilter)
         {
             string comments = string.Empty;
             Stream stream   = imageFilter.GetDataForkStream();
@@ -159,7 +159,7 @@ namespace Aaru.DiscImages
             _fileHeader    = fheader;
             _wcImageFilter = imageFilter;
 
-            return true;
+            return ErrorNumber.InvalidArgument;
         }
 
         /// <inheritdoc />

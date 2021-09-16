@@ -48,7 +48,7 @@ namespace Aaru.DiscImages
     public sealed partial class DiskCopy42
     {
         /// <inheritdoc />
-        public bool Open(IFilter imageFilter)
+        public ErrorNumber Open(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
@@ -59,7 +59,7 @@ namespace Aaru.DiscImages
 
             // Incorrect pascal string length, not DC42
             if(buffer[0] > 63)
-                return false;
+                return ErrorNumber.InvalidArgument;
 
             header = new Header();
 
@@ -86,7 +86,7 @@ namespace Aaru.DiscImages
 
             if(header.Valid    != 1 ||
                header.Reserved != 0)
-                return false;
+                return ErrorNumber.InvalidArgument;
 
             // Some versions seem to incorrectly create little endian fields
             if(header.DataSize + header.TagSize + 0x54 != imageFilter.DataForkLength &&
@@ -99,7 +99,7 @@ namespace Aaru.DiscImages
 
                 if(header.DataSize + header.TagSize + 0x54 != imageFilter.DataForkLength &&
                    header.Format                           != kSigmaFormatTwiggy)
-                    return false;
+                    return ErrorNumber.InvalidArgument;
             }
 
             if(header.Format != kSonyFormat400K    &&
@@ -112,7 +112,7 @@ namespace Aaru.DiscImages
             {
                 AaruConsole.DebugWriteLine("DC42 plugin", "Unknown header.format = 0x{0:X2} value", header.Format);
 
-                return false;
+                return ErrorNumber.NotSupported;
             }
 
             if(header.FmtByte != kSonyFmtByte400K          &&
@@ -127,14 +127,14 @@ namespace Aaru.DiscImages
                 AaruConsole.DebugWriteLine("DC42 plugin", "Unknown tmp_header.fmtByte = 0x{0:X2} value",
                                            header.FmtByte);
 
-                return false;
+                return ErrorNumber.NotSupported;
             }
 
             if(header.FmtByte == kInvalidFmtByte)
             {
                 AaruConsole.DebugWriteLine("DC42 plugin", "Image says it's unformatted");
 
-                return false;
+                return ErrorNumber.InvalidArgument;
             }
 
             dataOffset           = 0x54;
@@ -156,7 +156,7 @@ namespace Aaru.DiscImages
                 {
                     AaruConsole.DebugWriteLine("DC42 plugin", "Unknown tag size");
 
-                    return false;
+                    return ErrorNumber.NotSupported;
                 }
 
                 imageInfo.ReadableSectorTags.Add(SectorTagType.AppleSectorTag);
@@ -464,7 +464,7 @@ namespace Aaru.DiscImages
                     break;
             }
 
-            return true;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />

@@ -49,12 +49,12 @@ namespace Aaru.DiscImages
     public sealed partial class Dart
     {
         /// <inheritdoc />
-        public bool Open(IFilter imageFilter)
+        public ErrorNumber Open(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
 
             if(stream.Length < 84)
-                return false;
+                return ErrorNumber.InvalidArgument;
 
             stream.Seek(0, SeekOrigin.Begin);
             byte[] headerB = new byte[Marshal.SizeOf<Header>()];
@@ -63,7 +63,7 @@ namespace Aaru.DiscImages
             Header header = Marshal.ByteArrayToStructureBigEndian<Header>(headerB);
 
             if(header.srcCmp > COMPRESS_NONE)
-                return false;
+                return ErrorNumber.NotSupported;
 
             int expectedMaxSize = 84 + (header.srcSize * 2 * 524);
 
@@ -72,43 +72,43 @@ namespace Aaru.DiscImages
                 case DISK_MAC:
                     if(header.srcSize != SIZE_MAC_SS &&
                        header.srcSize != SIZE_MAC)
-                        return false;
+                        return ErrorNumber.InvalidArgument;
 
                     break;
                 case DISK_LISA:
                     if(header.srcSize != SIZE_LISA)
-                        return false;
+                        return ErrorNumber.InvalidArgument;
 
                     break;
                 case DISK_APPLE2:
                     if(header.srcSize != DISK_APPLE2)
-                        return false;
+                        return ErrorNumber.InvalidArgument;
 
                     break;
                 case DISK_MAC_HD:
                     if(header.srcSize != SIZE_MAC_HD)
-                        return false;
+                        return ErrorNumber.InvalidArgument;
 
                     expectedMaxSize += 64;
 
                     break;
                 case DISK_DOS:
                     if(header.srcSize != SIZE_DOS)
-                        return false;
+                        return ErrorNumber.InvalidArgument;
 
                     break;
                 case DISK_DOS_HD:
                     if(header.srcSize != SIZE_DOS_HD)
-                        return false;
+                        return ErrorNumber.InvalidArgument;
 
                     expectedMaxSize += 64;
 
                     break;
-                default: return false;
+                default: return ErrorNumber.InvalidArgument;
             }
 
             if(stream.Length > expectedMaxSize)
-                return false;
+                return ErrorNumber.InvalidArgument;
 
             short[] bLength;
 
@@ -320,7 +320,7 @@ namespace Aaru.DiscImages
                     break;
             }
 
-            return true;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />

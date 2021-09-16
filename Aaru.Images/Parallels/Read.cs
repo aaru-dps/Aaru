@@ -45,13 +45,13 @@ namespace Aaru.DiscImages
     public sealed partial class Parallels
     {
         /// <inheritdoc />
-        public bool Open(IFilter imageFilter)
+        public ErrorNumber Open(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
 
             if(stream.Length < 512)
-                return false;
+                return ErrorNumber.InvalidArgument;
 
             byte[] pHdrB = new byte[Marshal.SizeOf<Header>()];
             stream.Read(pHdrB, 0, Marshal.SizeOf<Header>());
@@ -104,7 +104,7 @@ namespace Aaru.DiscImages
             _imageInfo.SectorsPerTrack      = (uint)(_imageInfo.Sectors / _imageInfo.Cylinders / _imageInfo.Heads);
             _imageStream                    = stream;
 
-            return true;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />

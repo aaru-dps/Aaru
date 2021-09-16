@@ -44,12 +44,12 @@ namespace Aaru.DiscImages
     public sealed partial class DriDiskCopy
     {
         /// <inheritdoc />
-        public bool Open(IFilter imageFilter)
+        public ErrorNumber Open(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
 
             if((stream.Length - Marshal.SizeOf<Footer>()) % 512 != 0)
-                return false;
+                return ErrorNumber.InvalidArgument;
 
             byte[] buffer = new byte[Marshal.SizeOf<Footer>()];
             stream.Seek(-buffer.Length, SeekOrigin.End);
@@ -63,13 +63,13 @@ namespace Aaru.DiscImages
             Match matchSignature = regexSignature.Match(sig);
 
             if(!matchSignature.Success)
-                return false;
+                return ErrorNumber.InvalidArgument;
 
             if(_footer.bpb.sptrack * _footer.bpb.cylinders * _footer.bpb.heads != _footer.bpb.sectors)
-                return false;
+                return ErrorNumber.InvalidArgument;
 
             if((_footer.bpb.sectors * _footer.bpb.bps) + Marshal.SizeOf<Footer>() != stream.Length)
-                return false;
+                return ErrorNumber.InvalidArgument;
 
             _imageInfo.Cylinders          = _footer.bpb.cylinders;
             _imageInfo.Heads              = _footer.bpb.heads;
@@ -126,7 +126,7 @@ namespace Aaru.DiscImages
             AaruConsole.VerboseWriteLine("Digital Research DiskCopy image contains a disk of type {0}",
                                          _imageInfo.MediaType);
 
-            return true;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />

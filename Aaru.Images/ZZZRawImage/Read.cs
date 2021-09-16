@@ -58,7 +58,7 @@ namespace Aaru.DiscImages
     public sealed partial class ZZZRawImage
     {
         /// <inheritdoc />
-        public bool Open(IFilter imageFilter)
+        public ErrorNumber Open(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
@@ -1148,7 +1148,7 @@ namespace Aaru.DiscImages
             _imageInfo.ReadableMediaTags = new List<MediaTagType>(_mediaTags.Keys);
 
             if(!_rawCompactDisc)
-                return true;
+                return ErrorNumber.NoError;
 
             if(_hasSubchannel)
                 if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel))
@@ -1192,7 +1192,7 @@ namespace Aaru.DiscImages
                     _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEdc);
             }
 
-            return true;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />

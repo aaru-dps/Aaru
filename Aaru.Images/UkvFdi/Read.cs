@@ -43,13 +43,13 @@ namespace Aaru.DiscImages
     public sealed partial class UkvFdi
     {
         /// <inheritdoc />
-        public bool Open(IFilter imageFilter)
+        public ErrorNumber Open(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
 
             if(stream.Length < Marshal.SizeOf<Header>())
-                return false;
+                return ErrorNumber.InvalidArgument;
 
             byte[] hdrB = new byte[Marshal.SizeOf<Header>()];
             stream.Read(hdrB, 0, hdrB.Length);
@@ -182,7 +182,7 @@ namespace Aaru.DiscImages
             _imageInfo.Sectors              = _imageInfo.Cylinders * _imageInfo.Heads * _imageInfo.SectorsPerTrack;
             _imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
 
-            return true;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />

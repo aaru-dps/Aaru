@@ -44,14 +44,14 @@ namespace Aaru.DiscImages
     public sealed partial class SuperCardPro
     {
         /// <inheritdoc />
-        public bool Open(IFilter imageFilter)
+        public ErrorNumber Open(IFilter imageFilter)
         {
             Header     = new ScpHeader();
             _scpStream = imageFilter.GetDataForkStream();
             _scpStream.Seek(0, SeekOrigin.Begin);
 
             if(_scpStream.Length < Marshal.SizeOf<ScpHeader>())
-                return false;
+                return ErrorNumber.InvalidArgument;
 
             byte[] hdr = new byte[Marshal.SizeOf<ScpHeader>()];
             _scpStream.Read(hdr, 0, Marshal.SizeOf<ScpHeader>());
@@ -75,7 +75,7 @@ namespace Aaru.DiscImages
             AaruConsole.DebugWriteLine("SuperCardPro plugin", "header.checksum = 0x{0:X8}", Header.checksum);
 
             if(!_scpSignature.SequenceEqual(Header.signature))
-                return false;
+                return ErrorNumber.InvalidArgument;
 
             ScpTracks = new Dictionary<byte, TrackHeader>();
 
@@ -251,7 +251,9 @@ namespace Aaru.DiscImages
                 _imageInfo.Version              = "1.5";
             }
 
-            throw new NotImplementedException("Flux decoding is not yet implemented.");
+            AaruConsole.ErrorWriteLine("Flux decoding is not yet implemented.");
+
+            return ErrorNumber.NotImplemented;
         }
 
         /// <inheritdoc />

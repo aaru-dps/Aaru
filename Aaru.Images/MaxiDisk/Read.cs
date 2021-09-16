@@ -42,12 +42,12 @@ namespace Aaru.DiscImages
     public sealed partial class MaxiDisk
     {
         /// <inheritdoc />
-        public bool Open(IFilter imageFilter)
+        public ErrorNumber Open(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
 
             if(stream.Length < 8)
-                return false;
+                return ErrorNumber.InvalidArgument;
 
             byte[] buffer = new byte[8];
             stream.Seek(0, SeekOrigin.Begin);
@@ -63,21 +63,21 @@ namespace Aaru.DiscImages
             // Only floppies supported
             if(tmpHeader.heads == 0 ||
                tmpHeader.heads > 2)
-                return false;
+                return ErrorNumber.InvalidArgument;
 
             // No floppies with more than this?
             if(tmpHeader.cylinders > 90)
-                return false;
+                return ErrorNumber.InvalidArgument;
 
             // Maximum supported bps is 16384
             if(tmpHeader.bytesPerSector > 7)
-                return false;
+                return ErrorNumber.InvalidArgument;
 
             int expectedFileSize = (tmpHeader.heads * tmpHeader.cylinders * tmpHeader.sectorsPerTrack *
                                     (128 << tmpHeader.bytesPerSector)) + 8;
 
             if(expectedFileSize != stream.Length)
-                return false;
+                return ErrorNumber.InvalidArgument;
 
             _imageInfo.Cylinders       = tmpHeader.cylinders;
             _imageInfo.Heads           = tmpHeader.heads;
@@ -97,7 +97,7 @@ namespace Aaru.DiscImages
 
             _imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
 
-            return true;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />

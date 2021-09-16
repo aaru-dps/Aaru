@@ -47,7 +47,7 @@ namespace Aaru.DiscImages
     public sealed partial class Vhd
     {
         /// <inheritdoc />
-        public bool Open(IFilter imageFilter)
+        public ErrorNumber Open(IFilter imageFilter)
         {
             Stream imageStream = imageFilter.GetDataForkStream();
             byte[] header      = new byte[512];
@@ -500,7 +500,7 @@ namespace Aaru.DiscImages
                 case TYPE_DYNAMIC:
                 {
                     // Nothing to do here, really.
-                    return true;
+                    return ErrorNumber.NoError;
                 }
 
                 case TYPE_DIFFERENCING:
@@ -623,8 +623,15 @@ namespace Aaru.DiscImages
                             throw new
                                 ImageNotSupportedException("(VirtualPC plugin): Parent image is not a Virtual PC disk image");
 
-                        if(!_parentImage.Open(parentFilter))
-                            throw new ImageNotSupportedException("(VirtualPC plugin): Cannot open parent disk image");
+                        ErrorNumber parentError = _parentImage.Open(parentFilter);
+
+                        if(parentError != ErrorNumber.NoError)
+                        {
+                            AaruConsole.
+                                ErrorWriteLine($"(VirtualPC plugin): Error {parentError} opening parent disk image");
+
+                            return parentError;
+                        }
 
                         // While specification says that parent and child disk images should contain UUID relationship
                         // in reality it seems that old differencing disk images stored a parent UUID that, nonetheless
@@ -636,7 +643,7 @@ namespace Aaru.DiscImages
                                 ImageNotSupportedException("(VirtualPC plugin): Parent image is of different size");
                     }
 
-                    return true;
+                    return ErrorNumber.NoError;
                 }
 
                 case TYPE_DEPRECATED1:

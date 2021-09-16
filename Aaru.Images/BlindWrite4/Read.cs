@@ -51,13 +51,13 @@ namespace Aaru.DiscImages
     public sealed partial class BlindWrite4
     {
         /// <inheritdoc />
-        public bool Open(IFilter imageFilter)
+        public ErrorNumber Open(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
 
             if(stream.Length < 19)
-                return false;
+                return ErrorNumber.InvalidArgument;
 
             byte[] tmpArray  = new byte[19];
             byte[] tmpUShort = new byte[2];
@@ -67,7 +67,7 @@ namespace Aaru.DiscImages
             stream.Read(tmpArray, 0, 19);
 
             if(!_bw4Signature.SequenceEqual(tmpArray))
-                return false;
+                return ErrorNumber.InvalidArgument;
 
             _header = new Header
             {
@@ -442,10 +442,16 @@ namespace Aaru.DiscImages
                     if(_dataFilter != null)
                         break;
 
-                    throw new ArgumentException($"Data file {_header.DataFile} not found");
+                    AaruConsole.ErrorWriteLine($"Data file {_header.DataFile} not found");
+
+                    return ErrorNumber.NoSuchFile;
                 }
             else
-                throw new ArgumentException("Unable to find data file");
+            {
+                AaruConsole.ErrorWriteLine("Unable to find data file");
+
+                return ErrorNumber.NoSuchFile;
+            }
 
             if(!string.IsNullOrEmpty(_header.SubchannelFile))
             {
@@ -801,7 +807,7 @@ namespace Aaru.DiscImages
             if(!string.IsNullOrEmpty(_imageInfo.Comments))
                 AaruConsole.VerboseWriteLine("BlindWrite comments: {0}", _imageInfo.Comments);
 
-            return true;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />

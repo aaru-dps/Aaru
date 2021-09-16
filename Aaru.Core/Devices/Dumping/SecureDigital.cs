@@ -89,7 +89,7 @@ namespace Aaru.Core.Devices.Dumping
             uint[]       response;
             bool         supportsCmd23 = false;
 
-            Dictionary<MediaTagType, byte[]> mediaTags = new Dictionary<MediaTagType, byte[]>();
+            Dictionary<MediaTagType, byte[]> mediaTags = new();
 
             switch(_dev.Type)
             {
@@ -783,9 +783,10 @@ namespace Aaru.Core.Devices.Dumping
                 var         filters     = new FiltersList();
                 IFilter     filter      = filters.GetFilter(_outputPath);
                 IMediaImage inputPlugin = ImageFormat.Detect(filter);
+                ErrorNumber opened      = inputPlugin.Open(filter);
 
-                if(!inputPlugin.Open(filter))
-                    StoppingErrorMessage?.Invoke("Could not open created image.");
+                if(opened != ErrorNumber.NoError)
+                    StoppingErrorMessage?.Invoke($"Error {opened} opening created image.");
 
                 DateTime chkStart = DateTime.UtcNow;
                 _sidecarClass                      =  new Sidecar(inputPlugin, _outputPath, filter.Id, _encoding);

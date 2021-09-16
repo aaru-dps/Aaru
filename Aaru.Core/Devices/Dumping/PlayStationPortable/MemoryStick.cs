@@ -38,6 +38,7 @@ using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Extents;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Metadata;
@@ -561,10 +562,11 @@ namespace Aaru.Core.Devices.Dumping
                 var         filters     = new FiltersList();
                 IFilter     filter      = filters.GetFilter(_outputPath);
                 IMediaImage inputPlugin = ImageFormat.Detect(filter);
+                ErrorNumber opened      = inputPlugin.Open(filter);
 
-                if(!inputPlugin.Open(filter))
+                if(opened != ErrorNumber.NoError)
                 {
-                    StoppingErrorMessage?.Invoke("Could not open created image.");
+                    StoppingErrorMessage?.Invoke($"Error {opened} opening created image.");
 
                     return;
                 }
@@ -600,7 +602,7 @@ namespace Aaru.Core.Devices.Dumping
                         sidecar                = _preSidecar;
                     }
 
-                    List<(ulong start, string type)> filesystems = new List<(ulong start, string type)>();
+                    List<(ulong start, string type)> filesystems = new();
 
                     if(sidecar.BlockMedia[0].FileSystemInformation != null)
                         filesystems.AddRange(from partition in sidecar.BlockMedia[0].FileSystemInformation

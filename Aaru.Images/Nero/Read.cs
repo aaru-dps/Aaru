@@ -49,7 +49,7 @@ namespace Aaru.DiscImages
     public sealed partial class Nero
     {
         /// <inheritdoc />
-        public bool Open(IFilter imageFilter)
+        public ErrorNumber Open(IFilter imageFilter)
         {
             try
             {
@@ -93,7 +93,7 @@ namespace Aaru.DiscImages
                 {
                     AaruConsole.DebugWrite("Nero plugin", "Nero version not recognized.");
 
-                    return false;
+                    return ErrorNumber.NotSupported;
                 }
 
                 // Seek to first chunk
@@ -1257,7 +1257,7 @@ namespace Aaru.DiscImages
                     {
                         AaruConsole.ErrorWriteLine("Image corrupted beyond recovery, cannot open.");
 
-                        return false;
+                        return ErrorNumber.InvalidArgument;
                     }
 
                     var track = new Track();
@@ -1545,7 +1545,7 @@ namespace Aaru.DiscImages
                         _imageInfo.MediaType == CommonTypes.MediaType.CVD;
 
                 if(_isCd)
-                    return true;
+                    return ErrorNumber.NoError;
 
                 foreach(Track track in Tracks)
                 {
@@ -1557,13 +1557,13 @@ namespace Aaru.DiscImages
                 _imageInfo.ReadableSectorTags.Remove(SectorTagType.CdTrackIsrc);
                 _imageInfo.ReadableSectorTags.Remove(SectorTagType.CdTrackFlags);
 
-                return true;
+                return ErrorNumber.NoError;
             }
             catch
             {
                 AaruConsole.DebugWrite("Nero plugin", "Exception occurred opening file.");
 
-                return false;
+                return ErrorNumber.UnexpectedException;
             }
         }
 

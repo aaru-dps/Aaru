@@ -44,7 +44,7 @@ namespace Aaru.DiscImages
     public sealed partial class TeleDisk
     {
         /// <inheritdoc />
-        public bool Open(IFilter imageFilter)
+        public ErrorNumber Open(IFilter imageFilter)
         {
             _header = new Header();
             byte[] headerBytes = new byte[12];
@@ -59,7 +59,7 @@ namespace Aaru.DiscImages
 
             if(_header.Signature != TD_MAGIC &&
                _header.Signature != TD_ADV_COMP_MAGIC)
-                return false;
+                return ErrorNumber.InvalidArgument;
 
             _header.Sequence      = headerBytes[2];
             _header.DiskSet       = headerBytes[3];
@@ -102,12 +102,12 @@ namespace Aaru.DiscImages
             }
 
             if(_header.Sequence != 0x00)
-                return false;
+                return ErrorNumber.InvalidArgument;
 
             if(_header.DataRate != DATA_RATE_250_KBPS &&
                _header.DataRate != DATA_RATE_300_KBPS &&
                _header.DataRate != DATA_RATE_500_KBPS)
-                return false;
+                return ErrorNumber.NotSupported;
 
             if(_header.DriveType != DRIVE_TYPE_35_DD          &&
                _header.DriveType != DRIVE_TYPE_35_ED          &&
@@ -116,7 +116,7 @@ namespace Aaru.DiscImages
                _header.DriveType != DRIVE_TYPE_525_HD         &&
                _header.DriveType != DRIVE_TYPE_525_HD_DD_DISK &&
                _header.DriveType != DRIVE_TYPE_8_INCH)
-                return false;
+                return ErrorNumber.NotSupported;
 
             if(_header.Signature == TD_ADV_COMP_MAGIC)
             {
@@ -526,7 +526,7 @@ namespace Aaru.DiscImages
             _inStream.Dispose();
             stream.Dispose();
 
-            return true;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />

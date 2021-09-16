@@ -164,8 +164,9 @@ namespace Aaru.Tests.Filesystems
                 var         filtersList = new FiltersList();
                 IFilter     inputFilter = filtersList.GetFilter(testFile);
                 IMediaImage image       = ImageFormat.Detect(inputFilter);
+                ErrorNumber opened      = image.Open(inputFilter);
 
-                if(!image.Open(inputFilter))
+                if(opened != ErrorNumber.NoError)
                     continue;
 
                 List<string> idPlugins;
@@ -238,7 +239,7 @@ namespace Aaru.Tests.Filesystems
             if(path == "/")
                 path = "";
 
-            Dictionary<string, FileData> children = new Dictionary<string, FileData>();
+            Dictionary<string, FileData> children = new();
             fs.ReadDir(path, out List<string> contents);
 
             if(contents is null)
@@ -297,7 +298,7 @@ namespace Aaru.Tests.Filesystems
             if(path == "/")
                 path = "";
 
-            List<string> expectedNotFound = new List<string>();
+            List<string> expectedNotFound = new();
 
             foreach(KeyValuePair<string, FileData> child in children)
             {
@@ -402,7 +403,7 @@ namespace Aaru.Tests.Filesystems
                contents.Count == 0)
                 return;
 
-            List<string> expectedNotFound = new List<string>();
+            List<string> expectedNotFound = new();
 
             foreach(KeyValuePair<string, string> xattr in xattrs)
             {

@@ -52,10 +52,10 @@ namespace Aaru.DiscImages
     public sealed partial class CdrWin
     {
         /// <inheritdoc />
-        public bool Open(IFilter imageFilter)
+        public ErrorNumber Open(IFilter imageFilter)
         {
             if(imageFilter == null)
-                return false;
+                return ErrorNumber.InvalidArgument;
 
             _cdrwinFilter = imageFilter;
 
@@ -814,13 +814,16 @@ namespace Aaru.DiscImages
                             AaruConsole.
                                 ErrorWriteLine("This image from PowerISO is damaged beyond possible recovery. Will not open.");
 
-                            return false;
+                            return ErrorNumber.InvalidArgument;
                         }
                         else if(line == "") // Empty line, ignore it
                         {}
                         else // Non-empty unknown field
-                            throw new
-                                FeatureUnsupportedImageException($"Found unknown field defined at line {lineNumber}: \"{line}\"");
+                        {
+                            AaruConsole.ErrorWriteLine($"Found unknown field defined at line {lineNumber}: \"{line}\"");
+
+                            return ErrorNumber.NotSupported;
+                        }
                     }
                 }
 
@@ -847,7 +850,7 @@ namespace Aaru.DiscImages
                         AaruConsole.
                             ErrorWriteLine("The data files are not correct according to the cuesheet file, cannot continue with this file.");
 
-                        return false;
+                        return ErrorNumber.InvalidArgument;
                     }
 
                     cueTracks[0].Pregap = cueTracks[0].Indexes[1];
@@ -861,7 +864,7 @@ namespace Aaru.DiscImages
                         AaruConsole.
                             ErrorWriteLine("The data files are not correct according to the cuesheet file, cannot continue with this file.");
 
-                        return false;
+                        return ErrorNumber.InvalidArgument;
                     }
 
                     cueTracks[currentTrack.Sequence - 1].Sectors =
@@ -1540,15 +1543,14 @@ namespace Aaru.DiscImages
                     _discImage.Sessions = sessions.ToList();
                 }
 
-                return true;
+                return ErrorNumber.NoError;
             }
             catch(Exception ex)
             {
                 AaruConsole.ErrorWriteLine("Exception trying to identify image file {0}", imageFilter.Filename);
-                AaruConsole.ErrorWriteLine("Exception: {0}", ex.Message);
-                AaruConsole.ErrorWriteLine("Stack trace: {0}", ex.StackTrace);
+                AaruConsole.ErrorWriteLine("Exception: {0}", ex);
 
-                return false;
+                return ErrorNumber.UnexpectedException;
             }
         }
 

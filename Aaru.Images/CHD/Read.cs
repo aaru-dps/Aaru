@@ -54,7 +54,7 @@ namespace Aaru.DiscImages
     {
         /// <inheritdoc />
         [SuppressMessage("ReSharper", "UnusedVariable")]
-        public bool Open(IFilter imageFilter)
+        public ErrorNumber Open(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
@@ -62,7 +62,7 @@ namespace Aaru.DiscImages
             stream.Read(magic, 0, 8);
 
             if(!_chdTag.SequenceEqual(magic))
-                return false;
+                return ErrorNumber.InvalidArgument;
 
             // Read length
             byte[] buffer = new byte[4];
@@ -337,7 +337,9 @@ namespace Aaru.DiscImages
                 case 5:
                 {
                     // TODO: Check why reading is misaligned
-                    throw new ImageNotSupportedException("CHD version 5 is not yet supported.");
+                    AaruConsole.ErrorWriteLine("CHD version 5 is not yet supported.");
+
+                    return ErrorNumber.NotSupported;
 
                     HeaderV5 hdrV5 = Marshal.ByteArrayToStructureBigEndian<HeaderV5>(buffer);
 
@@ -417,7 +419,11 @@ namespace Aaru.DiscImages
                         AaruConsole.DebugWriteLine("CHD plugin", "Took {0} seconds", (end - start).TotalSeconds);
                     }
                     else
-                        throw new ImageNotSupportedException("Cannot read compressed CHD version 5");
+                    {
+                        AaruConsole.ErrorWriteLine("Cannot read compressed CHD version 5");
+
+                        return ErrorNumber.NotSupported;
+                    }
 
                     nextMetaOff = hdrV5.metaoffset;
 
@@ -435,7 +441,10 @@ namespace Aaru.DiscImages
                     break;
                 }
 
-                default: throw new ImageNotSupportedException($"Unsupported CHD version {version}");
+                default:
+                    AaruConsole.ErrorWriteLine($"Unsupported CHD version {version}");
+
+                    return ErrorNumber.NotSupported;
             }
 
             if(_mapVersion >= 3)
@@ -468,8 +477,12 @@ namespace Aaru.DiscImages
                         // "GDDD"
                         case HARD_DISK_METADATA:
                             if(_isCdrom || _isGdrom)
-                                throw new
-                                    ImageNotSupportedException("Image cannot be a hard disk and a C/GD-ROM at the same time, aborting.");
+                            {
+                                AaruConsole.
+                                    ErrorWriteLine("Image cannot be a hard disk and a C/GD-ROM at the same time, aborting.");
+
+                                return ErrorNumber.NotSupported;
+                            }
 
                             string gddd      = StringHandlers.CToString(meta);
                             var    gdddRegEx = new Regex(REGEX_METADATA_HDD);
@@ -489,12 +502,20 @@ namespace Aaru.DiscImages
                         // "CHCD"
                         case CDROM_OLD_METADATA:
                             if(_isHdd)
-                                throw new
-                                    ImageNotSupportedException("Image cannot be a hard disk and a CD-ROM at the same time, aborting.");
+                            {
+                                AaruConsole.
+                                    ErrorWriteLine("Image cannot be a hard disk and a CD-ROM at the same time, aborting.");
+
+                                return ErrorNumber.NotSupported;
+                            }
 
                             if(_isGdrom)
-                                throw new
-                                    ImageNotSupportedException("Image cannot be a GD-ROM and a CD-ROM at the same time, aborting.");
+                            {
+                                AaruConsole.
+                                    ErrorWriteLine("Image cannot be a GD-ROM and a CD-ROM at the same time, aborting.");
+
+                                return ErrorNumber.NotSupported;
+                            }
 
                             uint chdTracksNumber = BigEndianBitConverter.ToUInt32(meta, 0);
 
@@ -564,7 +585,11 @@ namespace Aaru.DiscImages
 
                                         break;
                                     default:
-                                        throw new ImageNotSupportedException($"Unsupported track type {chdTrack.type}");
+                                    {
+                                        AaruConsole.ErrorWriteLine($"Unsupported track type {chdTrack.type}");
+
+                                        return ErrorNumber.NotSupported;
+                                    }
                                 }
 
                                 switch((SubTypeOld)chdTrack.subType)
@@ -586,8 +611,11 @@ namespace Aaru.DiscImages
 
                                         break;
                                     default:
-                                        throw new
-                                            ImageNotSupportedException($"Unsupported subchannel type {chdTrack.type}");
+                                    {
+                                        AaruConsole.ErrorWriteLine($"Unsupported subchannel type {chdTrack.type}");
+
+                                        return ErrorNumber.NotSupported;
+                                    }
                                 }
 
                                 aaruTrack.Description = $"Track {i + 1}";
@@ -614,12 +642,20 @@ namespace Aaru.DiscImages
                         // "CHTR"
                         case CDROM_TRACK_METADATA:
                             if(_isHdd)
-                                throw new
-                                    ImageNotSupportedException("Image cannot be a hard disk and a CD-ROM at the same time, aborting.");
+                            {
+                                AaruConsole.
+                                    ErrorWriteLine("Image cannot be a hard disk and a CD-ROM at the same time, aborting.");
+
+                                return ErrorNumber.NotSupported;
+                            }
 
                             if(_isGdrom)
-                                throw new
-                                    ImageNotSupportedException("Image cannot be a GD-ROM and a CD-ROM at the same time, aborting.");
+                            {
+                                AaruConsole.
+                                    ErrorWriteLine("Image cannot be a GD-ROM and a CD-ROM at the same time, aborting.");
+
+                                return ErrorNumber.NotSupported;
+                            }
 
                             string chtr      = StringHandlers.CToString(meta);
                             var    chtrRegEx = new Regex(REGEX_METADATA_CDROM);
@@ -635,7 +671,11 @@ namespace Aaru.DiscImages
                                 string tracktype = chtrMatch.Groups["track_type"].Value;
 
                                 if(trackNo != currentTrack)
-                                    throw new ImageNotSupportedException("Unsorted tracks, cannot proceed.");
+                                {
+                                    AaruConsole.ErrorWriteLine("Unsorted tracks, cannot proceed.");
+
+                                    return ErrorNumber.NotSupported;
+                                }
 
                                 var aaruTrack = new Track();
 
@@ -691,7 +731,11 @@ namespace Aaru.DiscImages
 
                                         break;
                                     default:
-                                        throw new ImageNotSupportedException($"Unsupported track type {tracktype}");
+                                    {
+                                        AaruConsole.ErrorWriteLine($"Unsupported track type {tracktype}");
+
+                                        return ErrorNumber.NotSupported;
+                                    }
                                 }
 
                                 switch(subtype)
@@ -713,7 +757,11 @@ namespace Aaru.DiscImages
 
                                         break;
                                     default:
-                                        throw new ImageNotSupportedException($"Unsupported subchannel type {subtype}");
+                                    {
+                                        AaruConsole.ErrorWriteLine($"Unsupported subchannel type {subtype}");
+
+                                        return ErrorNumber.NotSupported;
+                                    }
                                 }
 
                                 aaruTrack.Description = $"Track {trackNo}";
@@ -739,12 +787,20 @@ namespace Aaru.DiscImages
                         // "CHT2"
                         case CDROM_TRACK_METADATA2:
                             if(_isHdd)
-                                throw new
-                                    ImageNotSupportedException("Image cannot be a hard disk and a CD-ROM at the same time, aborting.");
+                            {
+                                AaruConsole.
+                                    ErrorWriteLine("Image cannot be a hard disk and a CD-ROM at the same time, aborting.");
+
+                                return ErrorNumber.NotSupported;
+                            }
 
                             if(_isGdrom)
-                                throw new
-                                    ImageNotSupportedException("Image cannot be a GD-ROM and a CD-ROM at the same time, aborting.");
+                            {
+                                AaruConsole.
+                                    ErrorWriteLine("Image cannot be a GD-ROM and a CD-ROM at the same time, aborting.");
+
+                                return ErrorNumber.NotSupported;
+                            }
 
                             string cht2      = StringHandlers.CToString(meta);
                             var    cht2RegEx = new Regex(REGEX_METADATA_CDROM2);
@@ -774,7 +830,11 @@ namespace Aaru.DiscImages
                                 uint postgap = uint.Parse(cht2Match.Groups["postgap"].Value);
 
                                 if(trackNo != currentTrack)
-                                    throw new ImageNotSupportedException("Unsorted tracks, cannot proceed.");
+                                {
+                                    AaruConsole.ErrorWriteLine("Unsorted tracks, cannot proceed.");
+
+                                    return ErrorNumber.NotSupported;
+                                }
 
                                 var aaruTrack = new Track();
 
@@ -830,7 +890,11 @@ namespace Aaru.DiscImages
 
                                         break;
                                     default:
-                                        throw new ImageNotSupportedException($"Unsupported track type {trackType}");
+                                    {
+                                        AaruConsole.ErrorWriteLine($"Unsupported track type {trackType}");
+
+                                        return ErrorNumber.NotSupported;
+                                    }
                                 }
 
                                 switch(subtype)
@@ -852,7 +916,11 @@ namespace Aaru.DiscImages
 
                                         break;
                                     default:
-                                        throw new ImageNotSupportedException($"Unsupported subchannel type {subtype}");
+                                    {
+                                        AaruConsole.ErrorWriteLine($"Unsupported subchannel type {subtype}");
+
+                                        return ErrorNumber.NotSupported;
+                                    }
                                 }
 
                                 aaruTrack.Description = $"Track {trackNo}";
@@ -903,12 +971,20 @@ namespace Aaru.DiscImages
                         // "CHGD"
                         case GDROM_METADATA:
                             if(_isHdd)
-                                throw new
-                                    ImageNotSupportedException("Image cannot be a hard disk and a GD-ROM at the same time, aborting.");
+                            {
+                                AaruConsole.
+                                    ErrorWriteLine("Image cannot be a hard disk and a GD-ROM at the same time, aborting.");
+
+                                return ErrorNumber.NotSupported;
+                            }
 
                             if(_isCdrom)
-                                throw new
-                                    ImageNotSupportedException("Image cannot be a CD-ROM and a GD-ROM at the same time, aborting.");
+                            {
+                                AaruConsole.
+                                    ErrorWriteLine("Image cannot be a CD-ROM and a GD-ROM at the same time, aborting.");
+
+                                return ErrorNumber.NotSupported;
+                            }
 
                             string chgd      = StringHandlers.CToString(meta);
                             var    chgdRegEx = new Regex(REGEX_METADATA_GDROM);
@@ -931,7 +1007,11 @@ namespace Aaru.DiscImages
                                 uint   pad           = uint.Parse(chgdMatch.Groups["pad"].Value);
 
                                 if(trackNo != currentTrack)
-                                    throw new ImageNotSupportedException("Unsorted tracks, cannot proceed.");
+                                {
+                                    AaruConsole.ErrorWriteLine("Unsorted tracks, cannot proceed.");
+
+                                    return ErrorNumber.NotSupported;
+                                }
 
                                 var aaruTrack = new Track();
 
@@ -987,7 +1067,11 @@ namespace Aaru.DiscImages
 
                                         break;
                                     default:
-                                        throw new ImageNotSupportedException($"Unsupported track type {trackType}");
+                                    {
+                                        AaruConsole.ErrorWriteLine($"Unsupported track type {trackType}");
+
+                                        return ErrorNumber.NotSupported;
+                                    }
                                 }
 
                                 switch(subtype)
@@ -1009,7 +1093,11 @@ namespace Aaru.DiscImages
 
                                         break;
                                     default:
-                                        throw new ImageNotSupportedException($"Unsupported subchannel type {subtype}");
+                                    {
+                                        AaruConsole.ErrorWriteLine($"Unsupported subchannel type {subtype}");
+
+                                        return ErrorNumber.NotSupported;
+                                    }
                                 }
 
                                 aaruTrack.Description = $"Track {trackNo}";
@@ -1126,7 +1214,11 @@ namespace Aaru.DiscImages
                         _imageInfo.Sectors += aaruTrack.EndSector - aaruTrack.StartSector + 1;
                 }
                 else
-                    throw new ImageNotSupportedException("Image does not represent a known media, aborting");
+                {
+                    AaruConsole.ErrorWriteLine("Image does not represent a known media, aborting");
+
+                    return ErrorNumber.NotSupported;
+                }
             }
 
             if(_isCdrom || _isGdrom)
@@ -1240,7 +1332,7 @@ namespace Aaru.DiscImages
 
             _sectorBuilder = new SectorBuilder();
 
-            return true;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />

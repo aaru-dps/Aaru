@@ -49,10 +49,10 @@ namespace Aaru.DiscImages
     public sealed partial class Gdi
     {
         /// <inheritdoc />
-        public bool Open(IFilter imageFilter)
+        public ErrorNumber Open(IFilter imageFilter)
         {
             if(imageFilter == null)
-                return false;
+                return ErrorNumber.NoSuchFile;
 
             try
             {
@@ -312,15 +312,14 @@ namespace Aaru.DiscImages
 
                 _sectorBuilder = new SectorBuilder();
 
-                return true;
+                return ErrorNumber.NoError;
             }
             catch(Exception ex)
             {
                 AaruConsole.ErrorWriteLine("Exception trying to identify image file {0}", imageFilter.BasePath);
-                AaruConsole.ErrorWriteLine("Exception: {0}", ex.Message);
-                AaruConsole.ErrorWriteLine("Stack trace: {0}", ex.StackTrace);
+                AaruConsole.ErrorWriteLine("Exception: {0}", ex);
 
-                return false;
+                return ErrorNumber.UnexpectedException;
             }
         }
 

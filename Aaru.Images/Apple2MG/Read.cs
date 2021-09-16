@@ -45,7 +45,7 @@ namespace Aaru.DiscImages
     public sealed partial class Apple2Mg
     {
         /// <inheritdoc />
-        public bool Open(IFilter imageFilter)
+        public ErrorNumber Open(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
@@ -100,7 +100,7 @@ namespace Aaru.DiscImages
             if(_imageHeader.DataSize    == 0 &&
                _imageHeader.Blocks      == 0 &&
                _imageHeader.ImageFormat != SectorOrder.ProDos)
-                return false;
+                return ErrorNumber.InvalidArgument;
 
             byte[] tmp;
             int[]  offsets;
@@ -298,7 +298,7 @@ namespace Aaru.DiscImages
                     break;
             }
 
-            return true;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />

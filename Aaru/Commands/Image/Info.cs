@@ -130,7 +130,7 @@ namespace Aaru.Commands.Image
 
                 try
                 {
-                    bool opened = false;
+                    ErrorNumber opened = ErrorNumber.NoData;
 
                     Core.Spectre.ProgressSingleSpinner(ctx =>
                     {
@@ -138,12 +138,11 @@ namespace Aaru.Commands.Image
                         opened = imageFormat.Open(inputFilter);
                     });
 
-                    if(!opened)
+                    if(opened != ErrorNumber.NoError)
                     {
-                        AaruConsole.WriteLine("Unable to open image format");
-                        AaruConsole.WriteLine("No error given");
+                        AaruConsole.WriteLine("Error {opened} opening image format");
 
-                        return (int)ErrorNumber.CannotOpenFormat;
+                        return (int)opened;
                     }
 
                     ImageInfo.PrintImageInfo(imageFormat);

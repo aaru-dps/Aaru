@@ -43,9 +43,9 @@ using Aaru.Console;
 using Aaru.Helpers;
 using Claunia.PropertyList;
 using Claunia.RsrcFork;
+using Ionic.BZip2;
 using Ionic.Zlib;
 using SharpCompress.Compressors.ADC;
-using Ionic.BZip2;
 using Version = Resources.Version;
 
 #pragma warning disable 612
@@ -55,12 +55,12 @@ namespace Aaru.DiscImages
     public sealed partial class Udif
     {
         /// <inheritdoc />
-        public bool Open(IFilter imageFilter)
+        public ErrorNumber Open(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
 
             if(stream.Length < 512)
-                return false;
+                return ErrorNumber.InvalidArgument;
 
             stream.Seek(-Marshal.SizeOf<Footer>(), SeekOrigin.End);
             byte[] footerB = new byte[Marshal.SizeOf<Footer>()];
@@ -391,7 +391,7 @@ namespace Aaru.DiscImages
             _imageInfo.Heads           = 16;
             _imageInfo.SectorsPerTrack = 63;
 
-            return true;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />

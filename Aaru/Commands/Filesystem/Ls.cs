@@ -204,7 +204,7 @@ namespace Aaru.Commands.Filesystem
 
                 try
                 {
-                    bool opened = false;
+                    ErrorNumber opened = ErrorNumber.NoData;
 
                     Core.Spectre.ProgressSingleSpinner(ctx =>
                     {
@@ -212,12 +212,12 @@ namespace Aaru.Commands.Filesystem
                         opened = imageFormat.Open(inputFilter);
                     });
 
-                    if(!opened)
+                    if(opened != ErrorNumber.NoError)
                     {
                         AaruConsole.WriteLine("Unable to open image format");
-                        AaruConsole.WriteLine("No error given");
+                        AaruConsole.WriteLine("Error {0}", opened);
 
-                        return (int)ErrorNumber.CannotOpenFormat;
+                        return (int)opened;
                     }
 
                     AaruConsole.DebugWriteLine("Ls command", "Correctly opened image file.");
@@ -287,7 +287,7 @@ namespace Aaru.Commands.Filesystem
                     else
                     {
                         IReadOnlyFilesystem plugin;
-                        ErrorNumber               error = ErrorNumber.InvalidArgument;
+                        ErrorNumber         error = ErrorNumber.InvalidArgument;
 
                         if(idPlugins.Count > 1)
                         {
@@ -371,7 +371,7 @@ namespace Aaru.Commands.Filesystem
 
         static void ListFilesInDir(string path, [NotNull] IReadOnlyFilesystem fs, bool longFormat)
         {
-            ErrorNumber        error     = ErrorNumber.InvalidArgument;
+            ErrorNumber  error     = ErrorNumber.InvalidArgument;
             List<string> directory = new();
 
             if(path.StartsWith('/'))

@@ -42,7 +42,7 @@ namespace Aaru.DiscImages
 {
     public sealed partial class DiskDupe
     {
-        public bool Open(IFilter imageFilter)
+        public ErrorNumber Open(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
 
@@ -51,9 +51,7 @@ namespace Aaru.DiscImages
             long[]      trackOffsets = null;
 
             if(!TryReadHeader(stream, ref fHeader, ref trackMap, ref trackOffsets))
-            {
-                return false;
-            }
+                return ErrorNumber.InvalidArgument;
 
             AaruConsole.DebugWriteLine("DiskDupe Plugin",
                                        "Detected DiskDupe DDI image with {0} tracks and {1} sectors per track.",
@@ -82,7 +80,7 @@ namespace Aaru.DiscImages
             _trackMap       = trackMap;
             _trackOffsets   = trackOffsets;
 
-            return true;
+            return ErrorNumber.NoError;
         }
 
         public byte[] ReadSector(ulong sectorAddress)

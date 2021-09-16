@@ -47,10 +47,10 @@ namespace Aaru.Tests.WritableImages
                     var image = Activator.CreateInstance(InputPlugin.GetType()) as IOpticalMediaImage;
                     Assert.NotNull(image, $"Could not instantiate filesystem for {testFile}");
 
-                    bool opened = image.Open(filter);
-                    Assert.AreEqual(true, opened, $"Open: {testFile}");
+                    ErrorNumber opened = image.Open(filter);
+                    Assert.AreEqual(ErrorNumber.NoError, opened, $"Open: {testFile}");
 
-                    if(!opened)
+                    if(opened != ErrorNumber.NoError)
                         continue;
 
                     using(new AssertionScope())
@@ -134,10 +134,10 @@ namespace Aaru.Tests.WritableImages
                     var inputFormat = Activator.CreateInstance(InputPlugin.GetType()) as IOpticalMediaImage;
                     Assert.NotNull(inputFormat, $"Could not instantiate input plugin for {testFile}");
 
-                    bool opened = inputFormat.Open(filter);
-                    Assert.AreEqual(true, opened, $"Open: {testFile}");
+                    ErrorNumber opened = inputFormat.Open(filter);
+                    Assert.AreEqual(ErrorNumber.NoError, opened, $"Open: {testFile}");
 
-                    if(!opened)
+                    if(opened != ErrorNumber.NoError)
                         continue;
 
                     string outputPath =
@@ -200,8 +200,7 @@ namespace Aaru.Tests.WritableImages
                                 }
                                 else
                                 {
-                                    sector = inputFormat.ReadSectorsLong(doneSectors + track.StartSector,
-                                                                         sectorsToDo);
+                                    sector = inputFormat.ReadSectorsLong(doneSectors + track.StartSector, sectorsToDo);
 
                                     result = outputFormat.WriteSectorsLong(sector, doneSectors + track.StartSector,
                                                                            sectorsToDo);
@@ -235,18 +234,18 @@ namespace Aaru.Tests.WritableImages
                         }
                     }
 
-                    Dictionary<byte, string> isrcs                     = new Dictionary<byte, string>();
-                    Dictionary<byte, byte>   trackFlags                = new Dictionary<byte, byte>();
+                    Dictionary<byte, string> isrcs                     = new();
+                    Dictionary<byte, byte>   trackFlags                = new();
                     string                   mcn                       = null;
-                    HashSet<int>             subchannelExtents         = new HashSet<int>();
-                    Dictionary<byte, int>    smallestPregapLbaPerTrack = new Dictionary<byte, int>();
+                    HashSet<int>             subchannelExtents         = new();
+                    Dictionary<byte, int>    smallestPregapLbaPerTrack = new();
                     Track[]                  tracks                    = new Track[inputFormat.Tracks.Count];
 
                     for(int i = 0; i < tracks.Length; i++)
                     {
                         tracks[i] = new Track
                         {
-                            Indexes                = new Dictionary<ushort, int>(),
+                            Indexes           = new Dictionary<ushort, int>(),
                             Description       = inputFormat.Tracks[i].Description,
                             EndSector         = inputFormat.Tracks[i].EndSector,
                             StartSector       = inputFormat.Tracks[i].StartSector,
@@ -356,10 +355,10 @@ namespace Aaru.Tests.WritableImages
                                     if(tag == SectorTagType.CdSectorSubchannel)
                                     {
                                         bool indexesChanged = CompactDisc.WriteSubchannelToImage(MmcSubchannel.Raw,
-                                            MmcSubchannel.Raw, sector, doneSectors + track.StartSector, 1,
-                                            null, isrcs, (byte)track.Sequence, ref mcn, tracks,
-                                            subchannelExtents, true, outputFormat, true, true, null, null,
-                                            smallestPregapLbaPerTrack, false);
+                                            MmcSubchannel.Raw, sector, doneSectors + track.StartSector, 1, null,
+                                            isrcs, (byte)track.Sequence, ref mcn, tracks, subchannelExtents, true,
+                                            outputFormat, true, true, null, null, smallestPregapLbaPerTrack,
+                                            false);
 
                                         if(indexesChanged)
                                             outputFormat.SetTracks(tracks.ToList());
@@ -367,14 +366,13 @@ namespace Aaru.Tests.WritableImages
                                         result = true;
                                     }
                                     else
-                                        result =
-                                            outputFormat.WriteSectorTag(sector, doneSectors + track.StartSector,
-                                                                        tag);
+                                        result = outputFormat.WriteSectorTag(sector, doneSectors + track.StartSector,
+                                                                             tag);
                                 }
                                 else
                                 {
-                                    sector = inputFormat.ReadSectorsTag(doneSectors + track.StartSector,
-                                                                        sectorsToDo, tag);
+                                    sector = inputFormat.ReadSectorsTag(doneSectors + track.StartSector, sectorsToDo,
+                                                                        tag);
 
                                     if(tag == SectorTagType.CdSectorSubchannel)
                                     {
@@ -390,9 +388,8 @@ namespace Aaru.Tests.WritableImages
                                         result = true;
                                     }
                                     else
-                                        result =
-                                            outputFormat.WriteSectorsTag(sector, doneSectors + track.StartSector,
-                                                                         sectorsToDo, tag);
+                                        result = outputFormat.WriteSectorsTag(sector, doneSectors + track.StartSector,
+                                                                              sectorsToDo, tag);
                                 }
 
                                 Assert.IsTrue(result,
@@ -476,9 +473,9 @@ namespace Aaru.Tests.WritableImages
                     Assert.NotNull(image, $"Could not instantiate output plugin for {testFile}");
 
                     opened = image.Open(filter);
-                    Assert.AreEqual(true, opened, $"Open created: {testFile}");
+                    Assert.AreEqual(ErrorNumber.NoError, opened, $"Open created: {testFile}");
 
-                    if(!opened)
+                    if(opened != ErrorNumber.NoError)
                         continue;
 
                     using(new AssertionScope())
@@ -555,8 +552,7 @@ namespace Aaru.Tests.WritableImages
                                     sector =
                                         @long ? image.ReadSectorsLong(doneSectors, SECTORS_TO_READ,
                                                                       currentTrack.Sequence)
-                                            : image.ReadSectors(doneSectors, SECTORS_TO_READ,
-                                                                currentTrack.Sequence);
+                                            : image.ReadSectors(doneSectors, SECTORS_TO_READ, currentTrack.Sequence);
 
                                     doneSectors += SECTORS_TO_READ;
                                 }
@@ -603,8 +599,7 @@ namespace Aaru.Tests.WritableImages
                             else
                             {
                                 sector = image.ReadSectorsTag(doneSectors, (uint)(sectors - doneSectors),
-                                                              currentTrack.Sequence,
-                                                              SectorTagType.CdSectorSubchannel);
+                                                              currentTrack.Sequence, SectorTagType.CdSectorSubchannel);
 
                                 doneSectors += sectors - doneSectors;
                             }

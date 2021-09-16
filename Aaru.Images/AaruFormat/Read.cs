@@ -60,7 +60,7 @@ namespace Aaru.DiscImages
     public sealed partial class AaruFormat
     {
         /// <inheritdoc />
-        public bool Open(IFilter imageFilter)
+        public ErrorNumber Open(IFilter imageFilter)
         {
             AaruConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes", GC.GetTotalMemory(false));
 
@@ -68,15 +68,18 @@ namespace Aaru.DiscImages
             _imageStream.Seek(0, SeekOrigin.Begin);
 
             if(_imageStream.Length < Marshal.SizeOf<AaruHeader>())
-                return false;
+                return ErrorNumber.InvalidArgument;
 
             _structureBytes = new byte[Marshal.SizeOf<AaruHeader>()];
             _imageStream.Read(_structureBytes, 0, _structureBytes.Length);
             _header = Marshal.ByteArrayToStructureLittleEndian<AaruHeader>(_structureBytes);
 
             if(_header.imageMajorVersion > AARUFMT_VERSION)
-                throw
-                    new FeatureUnsupportedImageException($"Image version {_header.imageMajorVersion} not recognized.");
+            {
+                AaruConsole.ErrorWriteLine($"Image version {_header.imageMajorVersion} not recognized.");
+
+                return ErrorNumber.NotSupported;
+            }
 
             _imageInfo.Application        = _header.application;
             _imageInfo.ApplicationVersion = $"{_header.applicationMajorVersion}.{_header.applicationMinorVersion}";
@@ -93,7 +96,11 @@ namespace Aaru.DiscImages
 
             if(idxHeader.identifier != BlockType.Index &&
                idxHeader.identifier != BlockType.Index2)
-                throw new FeatureUnsupportedImageException("Index not found!");
+            {
+                AaruConsole.ErrorWriteLine("Index not found!");
+
+                return ErrorNumber.InvalidArgument;
+            }
 
             if(idxHeader.identifier == BlockType.Index2)
             {
@@ -456,8 +463,10 @@ namespace Aaru.DiscImages
 
                                         break;
                                     default:
-                                        throw new
-                                            ImageNotSupportedException($"Found unsupported compression algorithm {(ushort)ddtHeader.compression}");
+                                        AaruConsole.
+                                            ErrorWriteLine($"Found unsupported compression algorithm {(ushort)ddtHeader.compression}");
+
+                                        return ErrorNumber.NotSupported;
                                 }
 
                                 foundUserDataDdt = true;
@@ -504,8 +513,10 @@ namespace Aaru.DiscImages
 
                                         break;
                                     default:
-                                        throw new
-                                            ImageNotSupportedException($"Found unsupported compression algorithm {(ushort)ddtHeader.compression}");
+                                        AaruConsole.
+                                            ErrorWriteLine($"Found unsupported compression algorithm {(ushort)ddtHeader.compression}");
+
+                                        return ErrorNumber.NotSupported;
                                 }
 
                                 uint[] cdDdt = MemoryMarshal.Cast<byte, uint>(decompressedDdt).ToArray();
@@ -1116,7 +1127,11 @@ namespace Aaru.DiscImages
             }
 
             if(!foundUserDataDdt)
-                throw new ImageNotSupportedException("Could not find user data deduplication table.");
+            {
+                AaruConsole.ErrorWriteLine("Could not find user data deduplication table.");
+
+                return ErrorNumber.InvalidArgument;
+            }
 
             _imageInfo.CreationTime = DateTime.FromFileTimeUtc(_header.creationTime);
             AaruConsole.DebugWriteLine("Aaru Format plugin", "Image created on {0}", _imageInfo.CreationTime);
@@ -1414,7 +1429,7 @@ namespace Aaru.DiscImages
             AaruConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes", GC.GetTotalMemory(false));
 
             if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
-                return true;
+                return ErrorNumber.NoError;
 
             if(_imageInfo.MediaType == MediaType.CD            ||
                _imageInfo.MediaType == MediaType.CDDA          ||
@@ -1456,7 +1471,7 @@ namespace Aaru.DiscImages
                _imageInfo.MediaType == MediaType.VideoNowColor ||
                _imageInfo.MediaType == MediaType.VideoNowXp    ||
                _imageInfo.MediaType == MediaType.CVD)
-                return true;
+                return ErrorNumber.NoError;
 
             {
                 foreach(Track track in Tracks)
@@ -1466,7 +1481,7 @@ namespace Aaru.DiscImages
                 }
             }
 
-            return true;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />

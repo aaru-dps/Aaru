@@ -43,7 +43,7 @@ namespace Aaru.DiscImages
     public sealed partial class HdCopy
     {
         /// <inheritdoc />
-        public bool Open(IFilter imageFilter)
+        public ErrorNumber Open(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
 
@@ -53,9 +53,7 @@ namespace Aaru.DiscImages
             long currentOffset = 0;
 
             if(!TryReadHeader(stream, ref fheader, ref currentOffset))
-            {
-                return false;
-            }
+                return ErrorNumber.InvalidArgument;
 
             AaruConsole.DebugWriteLine("HDCP plugin",
                                        "Detected HD-Copy image with {0} tracks and {1} sectors per track.",
@@ -86,7 +84,7 @@ namespace Aaru.DiscImages
                 {
                     // track is present, read the block header
                     if(currentOffset + 3 >= stream.Length)
-                        return false;
+                        return ErrorNumber.InvalidArgument;
 
                     byte[] blkHeader = new byte[2];
                     stream.Read(blkHeader, 0, 2);
@@ -94,7 +92,7 @@ namespace Aaru.DiscImages
 
                     // assume block sizes are positive
                     if(blkLength < 0)
-                        return false;
+                        return ErrorNumber.InvalidArgument;
 
                     AaruConsole.DebugWriteLine("HDCP plugin", "Track {0} offset 0x{1:x8}, size={2:x4}", i,
                                                currentOffset, blkLength);
@@ -109,13 +107,13 @@ namespace Aaru.DiscImages
 
             // ensure that the last track is present completely
             if(currentOffset > stream.Length)
-                return false;
+                return ErrorNumber.InvalidArgument;
 
             // save some variables for later use
             _fileHeader      = fheader;
             _hdcpImageFilter = imageFilter;
 
-            return true;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />

@@ -35,7 +35,6 @@ using System.IO;
 using System.Text;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
-using Aaru.CommonTypes.Exceptions;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
@@ -45,7 +44,7 @@ namespace Aaru.DiscImages
     public sealed partial class SaveDskF
     {
         /// <inheritdoc />
-        public bool Open(IFilter imageFilter)
+        public ErrorNumber Open(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
@@ -123,8 +122,11 @@ namespace Aaru.DiscImages
 
             // TODO: Support compressed images
             if(_header.magic == SDF_MAGIC_COMPRESSED)
-                throw new
-                    FeatureSupportedButNotImplementedImageException("Compressed SaveDskF images are not supported.");
+            {
+                AaruConsole.ErrorWriteLine("Compressed SaveDskF images are not supported.");
+
+                return ErrorNumber.NotSupported;
+            }
 
             // SaveDskF only omits ending clusters, leaving no gaps behind, so reading all data we have...
             stream.Seek(_header.dataOffset, SeekOrigin.Begin);
@@ -135,7 +137,7 @@ namespace Aaru.DiscImages
             _imageInfo.Heads           = _header.heads;
             _imageInfo.SectorsPerTrack = _header.sectorsPerTrack;
 
-            return true;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />

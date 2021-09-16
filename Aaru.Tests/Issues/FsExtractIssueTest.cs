@@ -46,7 +46,7 @@ namespace Aaru.Tests.Issues
 
             Assert.NotNull(imageFormat, "Image format not identified, not proceeding with analysis.");
 
-            Assert.True(imageFormat.Open(inputFilter), "Unable to open image format");
+            Assert.AreEqual(ErrorNumber.NoError, imageFormat.Open(inputFilter), "Unable to open image format");
 
             List<Partition> partitions = Core.Partitions.GetAll(imageFormat);
 

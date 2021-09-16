@@ -45,13 +45,13 @@ namespace Aaru.DiscImages
     public sealed partial class Qed
     {
         /// <inheritdoc />
-        public bool Open(IFilter imageFilter)
+        public ErrorNumber Open(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
 
             if(stream.Length < 512)
-                return false;
+                return ErrorNumber.InvalidArgument;
 
             byte[] qHdrB = new byte[68];
             stream.Read(qHdrB, 0, 68);
@@ -157,7 +157,7 @@ namespace Aaru.DiscImages
             _imageInfo.Heads           = 16;
             _imageInfo.SectorsPerTrack = 63;
 
-            return true;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />

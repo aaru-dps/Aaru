@@ -637,10 +637,11 @@ namespace Aaru.Core.Devices.Dumping
                         var         filters     = new FiltersList();
                         IFilter     filter      = filters.GetFilter(_outputPath);
                         IMediaImage inputPlugin = ImageFormat.Detect(filter);
+                        ErrorNumber opened      = inputPlugin.Open(filter);
 
-                        if(!inputPlugin.Open(filter))
+                        if(opened != ErrorNumber.NoError)
                         {
-                            StoppingErrorMessage?.Invoke("Could not open created image.");
+                            StoppingErrorMessage?.Invoke($"Error {opened} opening created image.");
 
                             return;
                         }
@@ -769,7 +770,7 @@ namespace Aaru.Core.Devices.Dumping
                             _dumpLog.WriteLine("Average checksum speed {0:F3} KiB/sec.",
                                                blockSize * (double)(blocks + 1) / 1024 / (totalChkDuration / 1000));
 
-                            List<(ulong start, string type)> filesystems = new List<(ulong start, string type)>();
+                            List<(ulong start, string type)> filesystems = new();
 
                             if(sidecar.BlockMedia[0].FileSystemInformation != null)
                                 filesystems.AddRange(from partition in sidecar.BlockMedia[0].FileSystemInformation

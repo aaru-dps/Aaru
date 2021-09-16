@@ -46,13 +46,13 @@ namespace Aaru.DiscImages
     public sealed partial class KryoFlux
     {
         /// <inheritdoc />
-        public bool Open(IFilter imageFilter)
+        public ErrorNumber Open(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
 
             if(stream.Length < Marshal.SizeOf<OobBlock>())
-                return false;
+                return ErrorNumber.InvalidArgument;
 
             byte[] hdr = new byte[Marshal.SizeOf<OobBlock>()];
             stream.Read(hdr, 0, Marshal.SizeOf<OobBlock>());
@@ -71,7 +71,7 @@ namespace Aaru.DiscImages
                footer.blockId   != BlockIds.Oob    ||
                footer.blockType != OobTypes.EOF    ||
                footer.length    != 0x0D0D)
-                return false;
+                return ErrorNumber.InvalidArgument;
 
             // TODO: This is supposing NoFilter, shouldn't
             tracks = new SortedDictionary<byte, IFilter>();
@@ -250,7 +250,9 @@ namespace Aaru.DiscImages
             _imageInfo.Heads     = heads;
             _imageInfo.Cylinders = (uint)(tracks.Count / heads);
 
-            throw new NotImplementedException("Flux decoding is not yet implemented.");
+            AaruConsole.ErrorWriteLine("Flux decoding is not yet implemented.");
+
+            return ErrorNumber.NotImplemented;
         }
 
         /// <inheritdoc />

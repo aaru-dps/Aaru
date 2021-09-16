@@ -44,7 +44,7 @@ namespace Aaru.DiscImages
     public sealed partial class CisCopy
     {
         /// <inheritdoc />
-        public bool Open(IFilter imageFilter)
+        public ErrorNumber Open(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
@@ -197,7 +197,7 @@ namespace Aaru.DiscImages
 
             AaruConsole.VerboseWriteLine("CisCopy image contains a disk of type {0}", _imageInfo.MediaType);
 
-            return true;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />

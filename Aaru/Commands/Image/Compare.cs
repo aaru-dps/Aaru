@@ -179,8 +179,8 @@ namespace Aaru.Commands.Image
             else
                 AaruConsole.WriteLine("Input file 2 format identified by {0}.", input2Format.Name);
 
-            bool opened1 = false;
-            bool opened2 = false;
+            ErrorNumber opened1 = ErrorNumber.NoData;
+            ErrorNumber opened2 = ErrorNumber.NoData;
 
             Core.Spectre.ProgressSingleSpinner(ctx =>
             {
@@ -188,12 +188,12 @@ namespace Aaru.Commands.Image
                 opened1 = input1Format.Open(inputFilter1);
             });
 
-            if(!opened1)
+            if(opened1 != ErrorNumber.NoError)
             {
                 AaruConsole.WriteLine("Unable to open image 1 format");
-                AaruConsole.WriteLine("No error given");
+                AaruConsole.WriteLine("Error {0}", opened1);
 
-                return (int)ErrorNumber.CannotOpenFormat;
+                return (int)opened1;
             }
 
             Core.Spectre.ProgressSingleSpinner(ctx =>
@@ -202,12 +202,12 @@ namespace Aaru.Commands.Image
                 opened2 = input2Format.Open(inputFilter2);
             });
 
-            if(!opened2)
+            if(opened2 != ErrorNumber.NoError)
             {
-                AaruConsole.WriteLine("Unable to open image 1 format");
-                AaruConsole.WriteLine("No error given");
+                AaruConsole.WriteLine("Unable to open image 2 format");
+                AaruConsole.WriteLine("Error {0}", opened2);
 
-                return (int)ErrorNumber.CannotOpenFormat;
+                return (int)opened2;
             }
 
             Statistics.AddMediaFormat(input1Format.Format);

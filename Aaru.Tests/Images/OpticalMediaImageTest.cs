@@ -50,10 +50,10 @@ namespace Aaru.Tests.Images
                     var image = Activator.CreateInstance(_plugin.GetType()) as IOpticalMediaImage;
                     Assert.NotNull(image, $"Could not instantiate filesystem for {testFile}");
 
-                    bool opened = image.Open(filter);
-                    Assert.AreEqual(true, opened, $"Open: {testFile}");
+                    ErrorNumber opened = image.Open(filter);
+                    Assert.AreEqual(ErrorNumber.NoError, opened, $"Open: {testFile}");
 
-                    if(!opened)
+                    if(opened != ErrorNumber.NoError)
                         continue;
 
                     using(new AssertionScope())
@@ -137,10 +137,10 @@ namespace Aaru.Tests.Images
                     var image = Activator.CreateInstance(_plugin.GetType()) as IOpticalMediaImage;
                     Assert.NotNull(image, $"Could not instantiate filesystem for {testFile}");
 
-                    bool opened = image.Open(filter);
-                    Assert.AreEqual(true, opened, $"Open: {testFile}");
+                    ErrorNumber opened = image.Open(filter);
+                    Assert.AreEqual(ErrorNumber.NoError, opened, $"Open: {testFile}");
 
-                    if(!opened)
+                    if(opened != ErrorNumber.NoError)
                         continue;
 
                     using(new AssertionScope())
@@ -307,10 +307,10 @@ namespace Aaru.Tests.Images
                     var image = Activator.CreateInstance(_plugin.GetType()) as IOpticalMediaImage;
                     Assert.NotNull(image, $"Could not instantiate filesystem for {testFile}");
 
-                    bool opened = image.Open(filter);
-                    Assert.AreEqual(true, opened, $"Open: {testFile}");
+                    ErrorNumber opened = image.Open(filter);
+                    Assert.AreEqual(ErrorNumber.NoError, opened, $"Open: {testFile}");
 
-                    if(!opened)
+                    if(opened != ErrorNumber.NoError)
                         return;
 
                     Md5Context ctx;

@@ -47,7 +47,7 @@ namespace Aaru.DiscImages
     public sealed partial class D88
     {
         /// <inheritdoc />
-        public bool Open(IFilter imageFilter)
+        public ErrorNumber Open(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
@@ -56,7 +56,7 @@ namespace Aaru.DiscImages
             var shiftjis = Encoding.GetEncoding("shift_jis");
 
             if(stream.Length < Marshal.SizeOf<Header>())
-                return false;
+                return ErrorNumber.InvalidArgument;
 
             byte[] hdrB = new byte[Marshal.SizeOf<Header>()];
             stream.Read(hdrB, 0, hdrB.Length);
@@ -76,15 +76,15 @@ namespace Aaru.DiscImages
             AaruConsole.DebugWriteLine("D88 plugin", "d88hdr.disk_size = {0}", hdr.disk_size);
 
             if(hdr.disk_size != stream.Length)
-                return false;
+                return ErrorNumber.InvalidArgument;
 
             if(hdr.disk_type != DiskType.D2  &&
                hdr.disk_type != DiskType.Dd2 &&
                hdr.disk_type != DiskType.Hd2)
-                return false;
+                return ErrorNumber.InvalidArgument;
 
             if(!hdr.reserved.SequenceEqual(_reservedEmpty))
-                return false;
+                return ErrorNumber.InvalidArgument;
 
             int trkCounter = 0;
 
@@ -95,13 +95,13 @@ namespace Aaru.DiscImages
 
                 if(t < 0 ||
                    t > stream.Length)
-                    return false;
+                    return ErrorNumber.InvalidArgument;
             }
 
             AaruConsole.DebugWriteLine("D88 plugin", "{0} tracks", trkCounter);
 
             if(trkCounter == 0)
-                return false;
+                return ErrorNumber.InvalidArgument;
 
             hdrB = new byte[Marshal.SizeOf<SectorHeader>()];
             stream.Seek(hdr.track_table[0], SeekOrigin.Begin);
@@ -128,7 +128,7 @@ namespace Aaru.DiscImages
             {
                 stream.Seek(hdr.track_table[i], SeekOrigin.Begin);
                 stream.Read(hdrB, 0, hdrB.Length);
-                SortedDictionary<byte, byte[]> sectors = new SortedDictionary<byte, byte[]>();
+                SortedDictionary<byte, byte[]> sectors = new();
 
                 sechdr = Marshal.ByteArrayToStructureLittleEndian<SectorHeader>(hdrB);
 
@@ -362,7 +362,7 @@ namespace Aaru.DiscImages
                     break;
             }
 
-            return true;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />

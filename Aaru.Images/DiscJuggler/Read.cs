@@ -50,7 +50,7 @@ namespace Aaru.DiscImages
     public sealed partial class DiscJuggler
     {
         /// <inheritdoc />
-        public bool Open(IFilter imageFilter)
+        public ErrorNumber Open(IFilter imageFilter)
         {
             _imageStream = imageFilter.GetDataForkStream();
 
@@ -61,7 +61,7 @@ namespace Aaru.DiscImages
             int dscLen = BitConverter.ToInt32(dscLenB, 0);
 
             if(dscLen >= _imageStream.Length)
-                return false;
+                return ErrorNumber.InvalidArgument;
 
             byte[] descriptor = new byte[dscLen];
             _imageStream.Seek(-dscLen, SeekOrigin.End);
@@ -70,7 +70,7 @@ namespace Aaru.DiscImages
             // Sessions
             if(descriptor[0] > 99 ||
                descriptor[0] == 0)
-                return false;
+                return ErrorNumber.InvalidArgument;
 
             int position = 1;
 
@@ -140,7 +140,7 @@ namespace Aaru.DiscImages
                     }
 
                     if(!nextFound)
-                        return Tracks.Count > 0;
+                        return Tracks.Count > 0 ? ErrorNumber.NoError : ErrorNumber.InvalidArgument;
 
                     position += 15;
 
@@ -149,7 +149,7 @@ namespace Aaru.DiscImages
 
                 // Too many tracks
                 if(descriptor[position + 1] > 99)
-                    return false;
+                    return ErrorNumber.InvalidArgument;
 
                 byte maxT = descriptor[position + 1];
                 AaruConsole.DebugWriteLine("DiscJuggler plugin", "maxT = {0}", maxT);
@@ -768,7 +768,7 @@ namespace Aaru.DiscImages
             _isCd = mediumType == 152;
 
             if(_isCd)
-                return true;
+                return ErrorNumber.NoError;
 
             foreach(Track track in Tracks)
             {
@@ -786,7 +786,7 @@ namespace Aaru.DiscImages
             _imageInfo.ReadableSectorTags.Remove(SectorTagType.CdTrackFlags);
             _imageInfo.ReadableSectorTags.Remove(SectorTagType.CdTrackIsrc);
 
-            return true;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />

@@ -58,7 +58,7 @@ namespace Aaru.Tests.Issues
 
             Assert.IsNotNull(inputFormat, "Input image format not identified, not proceeding with conversion.");
 
-            Assert.IsTrue(inputFormat.Open(inputFilter), "Unable to open image format");
+            Assert.AreEqual(ErrorNumber.NoError, inputFormat.Open(inputFilter), "Unable to open image format");
 
             Assert.IsTrue(OutputFormat.SupportedMediaTypes.Contains(inputFormat.Info.MediaType),
                           "Output format does not support media type, cannot continue...");
@@ -169,8 +169,7 @@ namespace Aaru.Tests.Issues
                         {
                             sector = inputFormat.ReadSectors(doneSectors + track.StartSector, sectorsToDo);
 
-                            result = outputOptical.WriteSectors(sector, doneSectors + track.StartSector,
-                                                                sectorsToDo);
+                            result = outputOptical.WriteSectors(sector, doneSectors + track.StartSector, sectorsToDo);
                         }
                     }
 
@@ -181,18 +180,18 @@ namespace Aaru.Tests.Issues
                 }
             }
 
-            Dictionary<byte, string> isrcs                     = new Dictionary<byte, string>();
-            Dictionary<byte, byte>   trackFlags                = new Dictionary<byte, byte>();
+            Dictionary<byte, string> isrcs                     = new();
+            Dictionary<byte, byte>   trackFlags                = new();
             string                   mcn                       = null;
-            HashSet<int>             subchannelExtents         = new HashSet<int>();
-            Dictionary<byte, int>    smallestPregapLbaPerTrack = new Dictionary<byte, int>();
+            HashSet<int>             subchannelExtents         = new();
+            Dictionary<byte, int>    smallestPregapLbaPerTrack = new();
             Track[]                  tracks                    = new Track[inputOptical.Tracks.Count];
 
             for(int i = 0; i < tracks.Length; i++)
             {
                 tracks[i] = new Track
                 {
-                    Indexes                = new Dictionary<ushort, int>(),
+                    Indexes           = new Dictionary<ushort, int>(),
                     Description       = inputOptical.Tracks[i].Description,
                     EndSector         = inputOptical.Tracks[i].EndSector,
                     StartSector       = inputOptical.Tracks[i].StartSector,
@@ -299,9 +298,9 @@ namespace Aaru.Tests.Issues
                             if(tag == SectorTagType.CdSectorSubchannel)
                             {
                                 bool indexesChanged = CompactDisc.WriteSubchannelToImage(MmcSubchannel.Raw,
-                                    MmcSubchannel.Raw, sector, doneSectors + track.StartSector, 1, null,
-                                    isrcs, (byte)track.Sequence, ref mcn, tracks, subchannelExtents, true,
-                                    outputOptical, true, true, null, null, smallestPregapLbaPerTrack, false);
+                                    MmcSubchannel.Raw, sector, doneSectors + track.StartSector, 1, null, isrcs,
+                                    (byte)track.Sequence, ref mcn, tracks, subchannelExtents, true, outputOptical,
+                                    true, true, null, null, smallestPregapLbaPerTrack, false);
 
                                 if(indexesChanged)
                                     outputOptical.SetTracks(tracks.ToList());
@@ -309,8 +308,7 @@ namespace Aaru.Tests.Issues
                                 result = true;
                             }
                             else
-                                result = outputOptical.WriteSectorTag(sector, doneSectors + track.StartSector,
-                                                                      tag);
+                                result = outputOptical.WriteSectorTag(sector, doneSectors + track.StartSector, tag);
                         }
                         else
                         {
@@ -319,9 +317,9 @@ namespace Aaru.Tests.Issues
                             if(tag == SectorTagType.CdSectorSubchannel)
                             {
                                 bool indexesChanged = CompactDisc.WriteSubchannelToImage(MmcSubchannel.Raw,
-                                    MmcSubchannel.Raw, sector, doneSectors + track.StartSector, sectorsToDo,
-                                    null, isrcs, (byte)track.Sequence, ref mcn, tracks, subchannelExtents,
-                                    true, outputOptical, true, true, null, null, smallestPregapLbaPerTrack, false);
+                                    MmcSubchannel.Raw, sector, doneSectors + track.StartSector, sectorsToDo, null,
+                                    isrcs, (byte)track.Sequence, ref mcn, tracks, subchannelExtents, true,
+                                    outputOptical, true, true, null, null, smallestPregapLbaPerTrack, false);
 
                                 if(indexesChanged)
                                     outputOptical.SetTracks(tracks.ToList());

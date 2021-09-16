@@ -45,7 +45,7 @@ namespace Aaru.DiscImages
     public sealed partial class RsIde
     {
         /// <inheritdoc />
-        public bool Open(IFilter imageFilter)
+        public ErrorNumber Open(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
@@ -56,7 +56,7 @@ namespace Aaru.DiscImages
             Header hdr = Marshal.ByteArrayToStructureLittleEndian<Header>(hdrB);
 
             if(!hdr.magic.SequenceEqual(_signature))
-                return false;
+                return ErrorNumber.InvalidArgument;
 
             _dataOff = hdr.dataOff;
 
@@ -101,7 +101,7 @@ namespace Aaru.DiscImages
 
             _rsIdeImageFilter = imageFilter;
 
-            return true;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />

@@ -49,13 +49,13 @@ namespace Aaru.DiscImages
     public sealed partial class Cpcdsk
     {
         /// <inheritdoc />
-        public bool Open(IFilter imageFilter)
+        public ErrorNumber Open(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
 
             if(stream.Length < 512)
-                return false;
+                return ErrorNumber.InvalidArgument;
 
             byte[] headerB = new byte[256];
             stream.Read(headerB, 0, 256);
@@ -70,7 +70,7 @@ namespace Aaru.DiscImages
             }
 
             if(pos >= 254)
-                return false;
+                return ErrorNumber.InvalidArgument;
 
             string magic = Encoding.ASCII.GetString(headerB, 0, pos);
 
@@ -82,7 +82,7 @@ namespace Aaru.DiscImages
             if(string.Compare(CPCDSK_ID, magic, StringComparison.InvariantCultureIgnoreCase) != 0 &&
                string.Compare(EDSK_ID, magic, StringComparison.InvariantCultureIgnoreCase)   != 0 &&
                string.Compare(DU54_ID, magic, StringComparison.InvariantCultureIgnoreCase)   != 0)
-                return false;
+                return ErrorNumber.InvalidArgument;
 
             _extended = string.Compare(EDSK_ID, magic, StringComparison.InvariantCultureIgnoreCase) == 0;
             AaruConsole.DebugWriteLine("CPCDSK plugin", "Extended = {0}", _extended);
@@ -137,7 +137,7 @@ namespace Aaru.DiscImages
                     {
                         AaruConsole.ErrorWriteLine("Not the expected track info.");
 
-                        return false;
+                        return ErrorNumber.InvalidArgument;
                     }
 
                     AaruConsole.DebugWriteLine("CPCDSK plugin", "trackInfo[{1}:{2}].magic = \"{0}\"",
@@ -285,7 +285,7 @@ namespace Aaru.DiscImages
             _imageInfo.Heads           = header.sides;
             _imageInfo.SectorsPerTrack = (uint)(_imageInfo.Sectors / (_imageInfo.Cylinders * _imageInfo.Heads));
 
-            return true;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />

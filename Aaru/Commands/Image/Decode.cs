@@ -165,7 +165,7 @@ namespace Aaru.Commands.Image
                 return (int)ErrorNumber.UnrecognizedFormat;
             }
 
-            bool opened = false;
+            ErrorNumber opened = ErrorNumber.NoData;
 
             Core.Spectre.ProgressSingleSpinner(ctx =>
             {
@@ -173,12 +173,11 @@ namespace Aaru.Commands.Image
                 opened = inputFormat.Open(inputFilter);
             });
 
-            if(!opened)
+            if(opened != ErrorNumber.NoError)
             {
-                AaruConsole.WriteLine("Unable to open image format");
-                AaruConsole.WriteLine("No error given");
+                AaruConsole.WriteLine("Error {opened} opening image format");
 
-                return (int)ErrorNumber.CannotOpenFormat;
+                return (int)opened;
             }
 
             Statistics.AddMediaFormat(inputFormat.Format);

@@ -41,20 +41,20 @@ namespace Aaru.DiscImages
     public sealed partial class T98
     {
         /// <inheritdoc />
-        public bool Open(IFilter imageFilter)
+        public ErrorNumber Open(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
 
             if(stream.Length % 256 != 0)
-                return false;
+                return ErrorNumber.InvalidArgument;
 
             byte[] hdrB = new byte[256];
             stream.Read(hdrB, 0, hdrB.Length);
 
             for(int i = 4; i < 256; i++)
                 if(hdrB[i] != 0)
-                    return false;
+                    return ErrorNumber.InvalidArgument;
 
             int cylinders = BitConverter.ToInt32(hdrB, 0);
 
@@ -73,7 +73,7 @@ namespace Aaru.DiscImages
 
             _t98ImageFilter = imageFilter;
 
-            return true;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />

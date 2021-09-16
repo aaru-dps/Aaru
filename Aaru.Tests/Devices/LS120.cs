@@ -29,6 +29,7 @@
 using System;
 using System.IO;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
 using Aaru.DiscImages;
 using Aaru.Filters;
 using FluentAssertions.Execution;
@@ -73,12 +74,12 @@ namespace Aaru.Tests.Devices
                     var filter = new LZip();
                     filter.Open(_testFiles[i]);
 
-                    var  image  = new ZZZRawImage();
-                    bool opened = image.Open(filter);
+                    var         image  = new ZZZRawImage();
+                    ErrorNumber opened = image.Open(filter);
 
-                    Assert.AreEqual(true, opened, $"Open: {_testFiles[i]}");
+                    Assert.AreEqual(ErrorNumber.NoError, opened, $"Open: {_testFiles[i]}");
 
-                    if(!opened)
+                    if(opened != ErrorNumber.NoError)
                         continue;
 
                     using(new AssertionScope())

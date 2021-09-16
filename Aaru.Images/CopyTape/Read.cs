@@ -39,13 +39,14 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
+using Aaru.Console;
 
 namespace Aaru.DiscImages
 {
     public sealed partial class CopyTape
     {
         /// <inheritdoc />
-        public bool Open(IFilter imageFilter)
+        public ErrorNumber Open(IFilter imageFilter)
         {
             List<long> blockPositions = new();
             var        partialBlockRx = new Regex(PARTIAL_BLOCK_REGEX);
@@ -54,7 +55,7 @@ namespace Aaru.DiscImages
             var        eotRx          = new Regex(END_OF_TAPE_REGEX);
 
             if(imageFilter.DataForkLength <= 16)
-                return false;
+                return ErrorNumber.InvalidArgument;
 
             _imageStream          = imageFilter.GetDataForkStream();
             _imageStream.Position = 0;
@@ -97,7 +98,11 @@ namespace Aaru.DiscImages
                 }
 
                 if(!partialBlockMt.Success)
-                    throw new ArgumentException("Found unhandled header, cannot open.");
+                {
+                    AaruConsole.ErrorWriteLine("Found unhandled header, cannot open.");
+
+                    return ErrorNumber.InvalidArgument;
+                }
 
                 _imageStream.Position -= 9;
 
@@ -112,26 +117,46 @@ namespace Aaru.DiscImages
                 Match blockMt = blockRx.Match(mark);
 
                 if(!blockMt.Success)
-                    throw new ArgumentException("Cannot decode block header, cannot open.");
+                {
+                    AaruConsole.ErrorWriteLine("Cannot decode block header, cannot open.");
+
+                    return ErrorNumber.InvalidArgument;
+                }
 
                 string blkSize = blockMt.Groups["blockSize"].Value;
 
                 if(string.IsNullOrWhiteSpace(blkSize))
-                    throw new ArgumentException("Cannot decode block header, cannot open.");
+                {
+                    AaruConsole.ErrorWriteLine("Cannot decode block header, cannot open.");
+
+                    return ErrorNumber.InvalidArgument;
+                }
 
                 if(!uint.TryParse(blkSize, out uint blockSize))
-                    throw new ArgumentException("Cannot decode block header, cannot open.");
+                {
+                    AaruConsole.ErrorWriteLine("Cannot decode block header, cannot open.");
+
+                    return ErrorNumber.InvalidArgument;
+                }
 
                 if(blockSize      == 0 ||
                    blockSize + 17 > imageFilter.DataForkLength)
-                    throw new ArgumentException("Cannot decode block header, cannot open.");
+                {
+                    AaruConsole.ErrorWriteLine("Cannot decode block header, cannot open.");
+
+                    return ErrorNumber.InvalidArgument;
+                }
 
                 _imageStream.Position += blockSize;
 
                 int newLine = _imageStream.ReadByte();
 
                 if(newLine != 0x0A)
-                    throw new ArgumentException("Cannot decode block header, cannot open.");
+                {
+                    AaruConsole.ErrorWriteLine("Cannot decode block header, cannot open.");
+
+                    return ErrorNumber.InvalidArgument;
+                }
 
                 blockPositions.Add(_imageStream.Position - blockSize - 17);
                 currentBlock++;
@@ -161,7 +186,7 @@ namespace Aaru.DiscImages
             _imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
             IsTape                          = true;
 
-            return true;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />

@@ -43,7 +43,7 @@ namespace Aaru.DiscImages
     public sealed partial class CopyQm
     {
         /// <inheritdoc />
-        public bool Open(IFilter imageFilter)
+        public ErrorNumber Open(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
@@ -192,7 +192,7 @@ namespace Aaru.DiscImages
             _imageInfo.Cylinders       = _header.totalCylinders;
             _imageInfo.SectorsPerTrack = _header.sectorsPerTrack;
 
-            return true;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />

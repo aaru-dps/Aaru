@@ -41,7 +41,7 @@ namespace Aaru.DiscImages
     public sealed partial class AppleDos
     {
         /// <inheritdoc />
-        public bool Open(IFilter imageFilter)
+        public ErrorNumber Open(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
@@ -92,7 +92,7 @@ namespace Aaru.DiscImages
             _imageInfo.Heads                = 1;
             _imageInfo.SectorsPerTrack      = _dos32 ? 13u : 16u;
 
-            return true;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />

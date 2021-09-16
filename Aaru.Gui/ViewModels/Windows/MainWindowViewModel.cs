@@ -537,9 +537,11 @@ namespace Aaru.Gui.ViewModels.Windows
 
                 try
                 {
-                    if(!imageFormat.Open(inputFilter))
+                    ErrorNumber opened = imageFormat.Open(inputFilter);
+
+                    if(opened != ErrorNumber.NoError)
                     {
-                        MessageBoxManager.GetMessageBoxStandardWindow("Error", "Unable to open image format.",
+                        MessageBoxManager.GetMessageBoxStandardWindow("Error", $"Error {opened} opening image format.",
                                                                       ButtonEnum.Ok, Icon.Error);
 
                         AaruConsole.ErrorWriteLine("Unable to open image format");

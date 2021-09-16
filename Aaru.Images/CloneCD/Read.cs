@@ -49,10 +49,10 @@ namespace Aaru.DiscImages
     public sealed partial class CloneCd
     {
         /// <inheritdoc />
-        public bool Open(IFilter imageFilter)
+        public ErrorNumber Open(IFilter imageFilter)
         {
             if(imageFilter == null)
-                return false;
+                return ErrorNumber.NoSuchFile;
 
             _ccdFilter = imageFilter;
 
@@ -132,8 +132,11 @@ namespace Aaru.DiscImages
                            inEntry   ||
                            inTrack   ||
                            inCdText)
-                            throw new
-                                FeatureUnsupportedImageException($"Found [CloneCD] out of order in line {lineNumber}");
+                        {
+                            AaruConsole.ErrorWriteLine($"Found [CloneCD] out of order in line {lineNumber}");
+
+                            return ErrorNumber.InvalidArgument;
+                        }
 
                         inCcd     = true;
                         inDisk    = false;
@@ -367,7 +370,11 @@ namespace Aaru.DiscImages
                     entries.Add(currentEntry);
 
                 if(entries.Count == 0)
-                    throw new FeatureUnsupportedImageException("Did not find any track.");
+                {
+                    AaruConsole.ErrorWriteLine("Did not find any track.");
+
+                    return ErrorNumber.InvalidArgument;
+                }
 
                 FullTOC.CDFullTOC toc;
                 toc.TrackDescriptors     = entries.ToArray();
@@ -403,7 +410,11 @@ namespace Aaru.DiscImages
                 _dataFilter = filtersList.GetFilter(dataFile);
 
                 if(_dataFilter == null)
-                    throw new Exception("Cannot open data file");
+                {
+                    AaruConsole.ErrorWriteLine("Cannot open data file");
+
+                    return ErrorNumber.NoSuchFile;
+                }
 
                 filtersList = new FiltersList();
                 _subFilter  = filtersList.GetFilter(subFile);
@@ -884,15 +895,14 @@ namespace Aaru.DiscImages
                 _imageInfo.LastModificationTime = imageFilter.LastWriteTime;
                 _imageInfo.XmlMediaType         = XmlMediaType.OpticalDisc;
 
-                return true;
+                return ErrorNumber.NoError;
             }
             catch(Exception ex)
             {
                 AaruConsole.ErrorWriteLine("Exception trying to identify image file {0}", imageFilter.Filename);
-                AaruConsole.ErrorWriteLine("Exception: {0}", ex.Message);
-                AaruConsole.ErrorWriteLine("Stack trace: {0}", ex.StackTrace);
+                AaruConsole.ErrorWriteLine("Exception: {0}", ex);
 
-                return false;
+                return ErrorNumber.UnexpectedException;
             }
         }
 

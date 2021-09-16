@@ -43,12 +43,12 @@ namespace Aaru.DiscImages
     public sealed partial class RayDim
     {
         /// <inheritdoc />
-        public bool Open(IFilter imageFilter)
+        public ErrorNumber Open(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
 
             if(stream.Length < Marshal.SizeOf<Header>())
-                return false;
+                return ErrorNumber.InvalidArgument;
 
             byte[] buffer = new byte[Marshal.SizeOf<Header>()];
             stream.Seek(0, SeekOrigin.Begin);
@@ -62,7 +62,7 @@ namespace Aaru.DiscImages
             Match sm = sx.Match(signature);
 
             if(!sm.Success)
-                return false;
+                return ErrorNumber.InvalidArgument;
 
             _imageInfo.ApplicationVersion = $"{sm.Groups["major"].Value}.{sm.Groups["minor"].Value}";
 
@@ -106,7 +106,7 @@ namespace Aaru.DiscImages
 
             _imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
 
-            return true;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />

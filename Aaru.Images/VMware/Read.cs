@@ -49,7 +49,7 @@ namespace Aaru.DiscImages
     public sealed partial class VMware
     {
         /// <inheritdoc />
-        public bool Open(IFilter imageFilter)
+        public ErrorNumber Open(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
 
@@ -488,9 +488,14 @@ namespace Aaru.DiscImages
                     throw new Exception($"Cannot find parent \"{_parentName}\".");
 
                 _parentImage = new VMware();
+                ErrorNumber parentError = _parentImage.Open(parentFilter);
 
-                if(!_parentImage.Open(parentFilter))
-                    throw new Exception($"Cannot open parent \"{_parentName}\".");
+                if(parentError != ErrorNumber.NoError)
+                {
+                    AaruConsole.ErrorWriteLine($"Error {parentError} opening parent \"{_parentName}\".");
+
+                    return parentError;
+                }
             }
 
             _sectorCache = new Dictionary<ulong, byte[]>();
@@ -521,7 +526,7 @@ namespace Aaru.DiscImages
                 _imageInfo.SectorsPerTrack = 63;
             }
 
-            return true;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />

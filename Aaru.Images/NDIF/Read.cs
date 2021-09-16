@@ -51,11 +51,11 @@ namespace Aaru.DiscImages
     public sealed partial class Ndif
     {
         /// <inheritdoc />
-        public bool Open(IFilter imageFilter)
+        public ErrorNumber Open(IFilter imageFilter)
         {
             if(!imageFilter.HasResourceFork ||
                imageFilter.ResourceForkLength == 0)
-                return false;
+                return ErrorNumber.InvalidArgument;
 
             ResourceFork rsrcFork;
             Resource     rsrc;
@@ -66,7 +66,7 @@ namespace Aaru.DiscImages
                 rsrcFork = new ResourceFork(imageFilter.GetResourceForkStream());
 
                 if(!rsrcFork.ContainsKey(NDIF_RESOURCE))
-                    return false;
+                    return ErrorNumber.InvalidArgument;
 
                 rsrc = rsrcFork.GetResource(NDIF_RESOURCE);
 
@@ -74,11 +74,14 @@ namespace Aaru.DiscImages
 
                 if(bcems        == null ||
                    bcems.Length == 0)
-                    return false;
+                    return ErrorNumber.InvalidArgument;
             }
-            catch(InvalidCastException)
+            catch(InvalidCastException ex)
             {
-                return false;
+                AaruConsole.ErrorWriteLine("Exception trying to open image file {0}", imageFilter.BasePath);
+                AaruConsole.ErrorWriteLine("Exception: {0}", ex);
+
+                return ErrorNumber.UnexpectedException;
             }
 
             _imageInfo.Sectors = 0;
@@ -86,7 +89,7 @@ namespace Aaru.DiscImages
             foreach(byte[] bcem in bcems.Select(id => rsrc.GetResource(NDIF_RESOURCEID)))
             {
                 if(bcem.Length < 128)
-                    return false;
+                    return ErrorNumber.InvalidArgument;
 
                 _header = Marshal.ByteArrayToStructureBigEndian<ChunkHeader>(bcem);
 
@@ -307,7 +310,7 @@ namespace Aaru.DiscImages
                     break;
             }
 
-            return true;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />

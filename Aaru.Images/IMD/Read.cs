@@ -45,7 +45,7 @@ namespace Aaru.DiscImages
     public sealed partial class Imd
     {
         /// <inheritdoc />
-        public bool Open(IFilter imageFilter)
+        public ErrorNumber Open(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
@@ -213,7 +213,7 @@ namespace Aaru.DiscImages
             if(!string.IsNullOrEmpty(_imageInfo.Comments))
                 AaruConsole.VerboseWriteLine("IMD comments: {0}", _imageInfo.Comments);
 
-            return true;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />

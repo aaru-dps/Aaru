@@ -46,13 +46,13 @@ namespace Aaru.DiscImages
     public sealed partial class Partimage
     {
         /// <inheritdoc />
-        public bool Open(IFilter imageFilter)
+        public ErrorNumber Open(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
 
             if(stream.Length < 512)
-                return false;
+                return ErrorNumber.InvalidArgument;
 
             byte[] hdrB = new byte[Marshal.SizeOf<Header>()];
             stream.Read(hdrB, 0, Marshal.SizeOf<Header>());
@@ -349,7 +349,7 @@ namespace Aaru.DiscImages
 
             _imageStream = stream;
 
-            return true;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />

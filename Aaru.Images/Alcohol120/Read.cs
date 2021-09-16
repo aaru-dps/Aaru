@@ -50,13 +50,13 @@ namespace Aaru.DiscImages
     public sealed partial class Alcohol120
     {
         /// <inheritdoc />
-        public bool Open(IFilter imageFilter)
+        public ErrorNumber Open(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
 
             if(stream.Length < 88)
-                return false;
+                return ErrorNumber.InvalidArgument;
 
             _isDvd = false;
             byte[] hdr = new byte[88];
@@ -99,7 +99,7 @@ namespace Aaru.DiscImages
             AaruConsole.DebugWriteLine("Alcohol 120% plugin", "header.dpmOffset = {0}", _header.dpmOffset);
 
             if(_header.version[0] > MAXIMUM_SUPPORTED_VERSION)
-                return false;
+                return ErrorNumber.NotSupported;
 
             stream.Seek(_header.sessionOffset, SeekOrigin.Begin);
             _alcSessions = new Dictionary<int, Session>();
@@ -678,7 +678,11 @@ namespace Aaru.DiscImages
             _alcImage = filtersList.GetFilter(alcFile);
 
             if(_alcImage == null)
-                throw new Exception("Cannot open data file");
+            {
+                AaruConsole.ErrorWriteLine("Cannot open data file");
+
+                return ErrorNumber.NoSuchFile;
+            }
 
             _imageInfo.ImageSize            = (ulong)_alcImage.DataForkLength;
             _imageInfo.CreationTime         = _alcImage.CreationTime;
@@ -742,7 +746,7 @@ namespace Aaru.DiscImages
                 AaruConsole.
                     WriteLine("Incorrect Alcohol 120% image created by an old version of Aaru. Convert image to correct it.");
 
-            return true;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />
