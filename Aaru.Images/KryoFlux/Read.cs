@@ -37,7 +37,6 @@ using System.IO;
 using System.Linq;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.CommonTypes.Structs;
 using Aaru.Console;
 using Aaru.Filters;
 using Aaru.Helpers;
@@ -128,7 +127,7 @@ namespace Aaru.DiscImages
 
                 var trackFilter = new ZZZNoFilter();
 
-                if(trackFilter.Open(trackfile) != Errno.NoError)
+                if(trackFilter.Open(trackfile) != ErrorNumber.NoError)
                     throw new IOException("Could not open KryoFlux track file.");
 
                 _imageInfo.CreationTime         = DateTime.MaxValue;

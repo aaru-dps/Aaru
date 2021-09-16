@@ -48,8 +48,8 @@ namespace Aaru.Filesystems.LisaFS
     public sealed partial class LisaFS
     {
         /// <inheritdoc />
-        public Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding,
-                           Dictionary<string, string> options, string @namespace)
+        public ErrorNumber Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding,
+                                 Dictionary<string, string> options, string @namespace)
         {
             try
             {
@@ -63,7 +63,7 @@ namespace Aaru.Filesystems.LisaFS
                 {
                     AaruConsole.DebugWriteLine("LisaFS plugin", "Underlying device does not support Lisa tags");
 
-                    return Errno.InOutError;
+                    return ErrorNumber.InOutError;
                 }
 
                 // Minimal LisaOS disk is 3.5" single sided double density, 800 sectors
@@ -71,7 +71,7 @@ namespace Aaru.Filesystems.LisaFS
                 {
                     AaruConsole.DebugWriteLine("LisaFS plugin", "Device is too small");
 
-                    return Errno.InOutError;
+                    return ErrorNumber.InOutError;
                 }
 
                 // MDDF cannot be at end of device, of course
@@ -188,7 +188,7 @@ namespace Aaru.Filesystems.LisaFS
                     {
                         AaruConsole.DebugWriteLine("LisaFS plugin", "Incorrect MDDF found");
 
-                        return Errno.InvalidArgument;
+                        return ErrorNumber.InvalidArgument;
                     }
 
                     // Check MDDF version
@@ -209,7 +209,7 @@ namespace Aaru.Filesystems.LisaFS
                         default:
                             AaruConsole.ErrorWriteLine("Cannot mount LisaFS version {0}", _mddf.fsversion.ToString());
 
-                            return Errno.NotSupported;
+                            return ErrorNumber.NotSupported;
                     }
 
                     // Initialize caches
@@ -231,9 +231,9 @@ namespace Aaru.Filesystems.LisaFS
                         _printedExtents = new List<short>();
 
                     // Read the S-Records file
-                    Errno error = ReadSRecords();
+                    ErrorNumber error = ReadSRecords();
 
-                    if(error != Errno.NoError)
+                    if(error != ErrorNumber.NoError)
                     {
                         AaruConsole.ErrorWriteLine("Error {0} reading S-Records file.", error);
 
@@ -250,7 +250,7 @@ namespace Aaru.Filesystems.LisaFS
                     // Read the Catalog File
                     error = ReadCatalog();
 
-                    if(error != Errno.NoError)
+                    if(error != ErrorNumber.NoError)
                     {
                         AaruConsole.DebugWriteLine("LisaFS plugin", "Cannot read Catalog File, error {0}",
                                                    error.ToString());
@@ -265,7 +265,7 @@ namespace Aaru.Filesystems.LisaFS
                     {
                         error = ReadSystemFile(FILEID_BOOT_SIGNED, out _);
 
-                        if(error != Errno.NoError)
+                        if(error != ErrorNumber.NoError)
                         {
                             AaruConsole.DebugWriteLine("LisaFS plugin", "Unable to read boot blocks");
                             _mounted = false;
@@ -275,7 +275,7 @@ namespace Aaru.Filesystems.LisaFS
 
                         error = ReadSystemFile(FILEID_LOADER_SIGNED, out _);
 
-                        if(error != Errno.NoError)
+                        if(error != ErrorNumber.NoError)
                         {
                             AaruConsole.DebugWriteLine("LisaFS plugin", "Unable to read boot loader");
                             _mounted = false;
@@ -285,7 +285,7 @@ namespace Aaru.Filesystems.LisaFS
 
                         error = ReadSystemFile((short)FILEID_MDDF, out _);
 
-                        if(error != Errno.NoError)
+                        if(error != ErrorNumber.NoError)
                         {
                             AaruConsole.DebugWriteLine("LisaFS plugin", "Unable to read MDDF");
                             _mounted = false;
@@ -295,7 +295,7 @@ namespace Aaru.Filesystems.LisaFS
 
                         error = ReadSystemFile((short)FILEID_BITMAP, out _);
 
-                        if(error != Errno.NoError)
+                        if(error != ErrorNumber.NoError)
                         {
                             AaruConsole.DebugWriteLine("LisaFS plugin", "Unable to read volume bitmap");
                             _mounted = false;
@@ -305,7 +305,7 @@ namespace Aaru.Filesystems.LisaFS
 
                         error = ReadSystemFile((short)FILEID_SRECORD, out _);
 
-                        if(error != Errno.NoError)
+                        if(error != ErrorNumber.NoError)
                         {
                             AaruConsole.DebugWriteLine("LisaFS plugin", "Unable to read S-Records file");
                             _mounted = false;
@@ -341,23 +341,23 @@ namespace Aaru.Filesystems.LisaFS
                     XmlFsType.VolumeName            = _mddf.volname;
                     XmlFsType.VolumeSerial          = $"{_mddf.volid:X16}";
 
-                    return Errno.NoError;
+                    return ErrorNumber.NoError;
                 }
 
                 AaruConsole.DebugWriteLine("LisaFS plugin", "Not a Lisa filesystem");
 
-                return Errno.NotSupported;
+                return ErrorNumber.NotSupported;
             }
             catch(Exception ex)
             {
                 AaruConsole.ErrorWriteLine("Exception {0}, {1}, {2}", ex.Message, ex.InnerException, ex.StackTrace);
 
-                return Errno.InOutError;
+                return ErrorNumber.InOutError;
             }
         }
 
         /// <inheritdoc />
-        public Errno Unmount()
+        public ErrorNumber Unmount()
         {
             _mounted         = false;
             _extentCache     = null;
@@ -371,16 +371,16 @@ namespace Aaru.Filesystems.LisaFS
             _devTagSize      = 0;
             _srecords        = null;
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />
-        public Errno StatFs(out FileSystemInfo stat)
+        public ErrorNumber StatFs(out FileSystemInfo stat)
         {
             stat = null;
 
             if(!_mounted)
-                return Errno.AccessDenied;
+                return ErrorNumber.AccessDenied;
 
             stat = new FileSystemInfo
             {
@@ -414,7 +414,7 @@ namespace Aaru.Filesystems.LisaFS
                     break;
             }
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
     }
 }

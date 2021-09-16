@@ -36,6 +36,7 @@ using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Console;
@@ -48,8 +49,8 @@ namespace Aaru.Filesystems
     public sealed partial class XboxFatPlugin
     {
         /// <inheritdoc />
-        public Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding,
-                           Dictionary<string, string> options, string @namespace)
+        public ErrorNumber Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding,
+                                 Dictionary<string, string> options, string @namespace)
         {
             Encoding      = Encoding.GetEncoding("iso-8859-15");
             _littleEndian = true;
@@ -60,7 +61,7 @@ namespace Aaru.Filesystems
                 bool.TryParse(debugString, out _debug);
 
             if(imagePlugin.Info.SectorSize < 512)
-                return Errno.InvalidArgument;
+                return ErrorNumber.InvalidArgument;
 
             AaruConsole.DebugWriteLine("Xbox FAT plugin", "Reading superblock");
 
@@ -75,7 +76,7 @@ namespace Aaru.Filesystems
             }
 
             if(_superblock.magic != FATX_MAGIC)
-                return Errno.InvalidArgument;
+                return ErrorNumber.InvalidArgument;
 
             AaruConsole.DebugWriteLine("Xbox FAT plugin",
                                        _littleEndian ? "Filesystem is little endian" : "Filesystem is big endian");
@@ -161,7 +162,7 @@ namespace Aaru.Filesystems
                 AaruConsole.DebugWriteLine("Xbox FAT plugin", "fat32[0] == FATX32_ID = {0}", _fat32[0] == FATX32_ID);
 
                 if(_fat32[0] != FATX32_ID)
-                    return Errno.InvalidArgument;
+                    return ErrorNumber.InvalidArgument;
             }
             else
             {
@@ -193,7 +194,7 @@ namespace Aaru.Filesystems
                 AaruConsole.DebugWriteLine("Xbox FAT plugin", "fat16[0] == FATX16_ID = {0}", _fat16[0] == FATX16_ID);
 
                 if(_fat16[0] != FATX16_ID)
-                    return Errno.InvalidArgument;
+                    return ErrorNumber.InvalidArgument;
             }
 
             _sectorsPerCluster  = (uint)(_superblock.sectorsPerCluster * logicalSectorsPerPhysicalSectors);
@@ -208,7 +209,7 @@ namespace Aaru.Filesystems
             uint[] rootDirectoryClusters = GetClusters(_superblock.rootDirectoryCluster);
 
             if(rootDirectoryClusters is null)
-                return Errno.InvalidArgument;
+                return ErrorNumber.InvalidArgument;
 
             byte[] rootDirectoryBuffer = new byte[_bytesPerCluster * rootDirectoryClusters.Length];
 
@@ -256,34 +257,34 @@ namespace Aaru.Filesystems
             _directoryCache = new Dictionary<string, Dictionary<string, DirectoryEntry>>();
             _mounted        = true;
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />
-        public Errno Unmount()
+        public ErrorNumber Unmount()
         {
             if(!_mounted)
-                return Errno.AccessDenied;
+                return ErrorNumber.AccessDenied;
 
             _fat16       = null;
             _fat32       = null;
             _imagePlugin = null;
             _mounted     = false;
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />
-        public Errno StatFs(out FileSystemInfo stat)
+        public ErrorNumber StatFs(out FileSystemInfo stat)
         {
             stat = null;
 
             if(!_mounted)
-                return Errno.AccessDenied;
+                return ErrorNumber.AccessDenied;
 
             stat = _statfs.ShallowCopy();
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
     }
 }

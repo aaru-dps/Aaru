@@ -43,29 +43,29 @@ namespace Aaru.Filesystems.LisaFS
     public sealed partial class LisaFS
     {
         /// <inheritdoc />
-        public Errno ReadLink(string path, out string dest)
+        public ErrorNumber ReadLink(string path, out string dest)
         {
             dest = null;
 
             // LisaFS does not support symbolic links (afaik)
-            return Errno.NotSupported;
+            return ErrorNumber.NotSupported;
         }
 
         /// <inheritdoc />
-        public Errno ReadDir(string path, out List<string> contents)
+        public ErrorNumber ReadDir(string path, out List<string> contents)
         {
             contents = null;
-            Errno error = LookupFileId(path, out short fileId, out bool isDir);
+            ErrorNumber error = LookupFileId(path, out short fileId, out bool isDir);
 
-            if(error != Errno.NoError)
+            if(error != ErrorNumber.NoError)
                 return error;
 
             if(!isDir)
-                return Errno.NotDirectory;
+                return ErrorNumber.NotDirectory;
 
             /*List<CatalogEntry> catalog;
             error = ReadCatalog(fileId, out catalog);
-            if(error != Errno.NoError)
+            if(error != ErrorNumber.NoError)
                 return error;*/
 
             ReadDir(fileId, out contents);
@@ -84,7 +84,7 @@ namespace Aaru.Filesystems.LisaFS
 
             contents.Sort();
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
 
         void ReadDir(short dirId, out List<string> contents) =>
@@ -95,10 +95,10 @@ namespace Aaru.Filesystems.LisaFS
                         select StringHandlers.CToString(entry.filename, Encoding).Replace('/', '-')).ToList();
 
         /// <summary>Reads, interprets and caches the Catalog File</summary>
-        Errno ReadCatalog()
+        ErrorNumber ReadCatalog()
         {
             if(!_mounted)
-                return Errno.AccessDenied;
+                return ErrorNumber.AccessDenied;
 
             _catalogCache = new List<CatalogEntry>();
 
@@ -106,9 +106,9 @@ namespace Aaru.Filesystems.LisaFS
             if(_mddf.fsversion == LISA_V2 ||
                _mddf.fsversion == LISA_V1)
             {
-                Errno error = ReadFile((short)FILEID_CATALOG, out byte[] buf);
+                ErrorNumber error = ReadFile((short)FILEID_CATALOG, out byte[] buf);
 
-                if(error != Errno.NoError)
+                if(error != ErrorNumber.NoError)
                     return error;
 
                 int                  offset    = 0;
@@ -146,7 +146,7 @@ namespace Aaru.Filesystems.LisaFS
                 {
                     error = ReadExtentsFile(entV2.fileID, out ExtentFile ext);
 
-                    if(error != Errno.NoError)
+                    if(error != ErrorNumber.NoError)
                         continue;
 
                     var entV3 = new CatalogEntry
@@ -164,7 +164,7 @@ namespace Aaru.Filesystems.LisaFS
                     _catalogCache.Add(entV3);
                 }
 
-                return Errno.NoError;
+                return ErrorNumber.NoError;
             }
 
             byte[] firstCatalogBlock = null;
@@ -187,7 +187,7 @@ namespace Aaru.Filesystems.LisaFS
 
             // Catalog not found
             if(firstCatalogBlock == null)
-                return Errno.NoSuchFile;
+                return ErrorNumber.NoSuchFile;
 
             ulong prevCatalogPointer = BigEndianBitConverter.ToUInt32(firstCatalogBlock, 0x7F6);
 
@@ -198,7 +198,7 @@ namespace Aaru.Filesystems.LisaFS
                           out LisaTag.PriamTag prevTag);
 
                 if(prevTag.FileId != FILEID_CATALOG)
-                    return Errno.InvalidArgument;
+                    return ErrorNumber.InvalidArgument;
 
                 firstCatalogBlock  = _device.ReadSectors(prevCatalogPointer + _mddf.mddf_block + _volumePrefix, 4);
                 prevCatalogPointer = BigEndianBitConverter.ToUInt32(firstCatalogBlock, 0x7F6);
@@ -218,7 +218,7 @@ namespace Aaru.Filesystems.LisaFS
                           out LisaTag.PriamTag nextTag);
 
                 if(nextTag.FileId != FILEID_CATALOG)
-                    return Errno.InvalidArgument;
+                    return ErrorNumber.InvalidArgument;
 
                 byte[] nextCatalogBlock = _device.ReadSectors(nextCatalogPointer + _mddf.mddf_block + _volumePrefix, 4);
                 nextCatalogPointer = BigEndianBitConverter.ToUInt32(nextCatalogBlock, 0x7FA);
@@ -268,7 +268,7 @@ namespace Aaru.Filesystems.LisaFS
                         Array.Copy(buf, offset + 0x03, entry.filename, 0, E_NAME);
                         Array.Copy(buf, offset + 0x38, entry.tail, 0, 8);
 
-                        if(ReadExtentsFile(entry.fileID, out _) == Errno.NoError)
+                        if(ReadExtentsFile(entry.fileID, out _) == ErrorNumber.NoError)
                             if(!_fileSizeCache.ContainsKey(entry.fileID))
                             {
                                 _catalogCache.Add(entry);
@@ -311,15 +311,15 @@ namespace Aaru.Filesystems.LisaFS
                         break;
             }
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
 
-        Errno StatDir(short dirId, out FileEntryInfo stat)
+        ErrorNumber StatDir(short dirId, out FileEntryInfo stat)
         {
             stat = null;
 
             if(!_mounted)
-                return Errno.AccessDenied;
+                return ErrorNumber.AccessDenied;
 
             stat = new FileEntryInfo
             {
@@ -338,7 +338,7 @@ namespace Aaru.Filesystems.LisaFS
             _directoryDtcCache.TryGetValue(dirId, out DateTime tmp);
             stat.CreationTime = tmp;
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
     }
 }

@@ -33,8 +33,8 @@
 using System;
 using System.IO;
 using System.IO.Compression;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.CommonTypes.Structs;
 using Aaru.Helpers;
 
 namespace Aaru.Filters
@@ -109,7 +109,7 @@ namespace Aaru.Filters
         }
 
         /// <inheritdoc />
-        public Errno Open(byte[] buffer)
+        public ErrorNumber Open(byte[] buffer)
         {
             byte[] mtimeB = new byte[4];
             byte[] isizeB = new byte[4];
@@ -132,11 +132,11 @@ namespace Aaru.Filters
 
             _zStream = new ForcedSeekStream<GZipStream>(_decompressedSize, _dataStream, CompressionMode.Decompress);
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />
-        public Errno Open(Stream stream)
+        public ErrorNumber Open(Stream stream)
         {
             byte[] mtimeB = new byte[4];
             byte[] isizeB = new byte[4];
@@ -159,11 +159,11 @@ namespace Aaru.Filters
 
             _zStream = new ForcedSeekStream<GZipStream>(_decompressedSize, _dataStream, CompressionMode.Decompress);
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />
-        public Errno Open(string path)
+        public ErrorNumber Open(string path)
         {
             byte[] mtimeB = new byte[4];
             byte[] isizeB = new byte[4];
@@ -186,7 +186,7 @@ namespace Aaru.Filters
             LastWriteTime = DateHandlers.UnixUnsignedToDateTime(mtime);
             _zStream = new ForcedSeekStream<GZipStream>(_decompressedSize, _dataStream, CompressionMode.Decompress);
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />

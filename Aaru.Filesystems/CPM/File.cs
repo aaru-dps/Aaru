@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 using Aaru.Helpers;
 
@@ -39,12 +40,12 @@ namespace Aaru.Filesystems
     public sealed partial class CPM
     {
         /// <inheritdoc />
-        public Errno GetAttributes(string path, out FileAttributes attributes)
+        public ErrorNumber GetAttributes(string path, out FileAttributes attributes)
         {
             attributes = new FileAttributes();
 
             if(!_mounted)
-                return Errno.AccessDenied;
+                return ErrorNumber.AccessDenied;
 
             string[] pathElements = path.Split(new[]
             {
@@ -52,7 +53,7 @@ namespace Aaru.Filesystems
             }, StringSplitOptions.RemoveEmptyEntries);
 
             if(pathElements.Length != 1)
-                return Errno.NotSupported;
+                return ErrorNumber.NotSupported;
 
             if(string.IsNullOrEmpty(pathElements[0]) ||
                string.Compare(pathElements[0], "/", StringComparison.OrdinalIgnoreCase) == 0)
@@ -60,41 +61,41 @@ namespace Aaru.Filesystems
                 attributes = new FileAttributes();
                 attributes = FileAttributes.Directory;
 
-                return Errno.NoError;
+                return ErrorNumber.NoError;
             }
 
             if(!_statCache.TryGetValue(pathElements[0].ToUpperInvariant(), out FileEntryInfo fInfo))
-                return Errno.NoSuchFile;
+                return ErrorNumber.NoSuchFile;
 
             attributes = fInfo.Attributes;
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
 
         // TODO: Implementing this would require storing the interleaving
         /// <inheritdoc />
-        public Errno MapBlock(string path, long fileBlock, out long deviceBlock)
+        public ErrorNumber MapBlock(string path, long fileBlock, out long deviceBlock)
         {
             deviceBlock = 0;
 
-            return !_mounted ? Errno.AccessDenied : Errno.NotImplemented;
+            return !_mounted ? ErrorNumber.AccessDenied : ErrorNumber.NotImplemented;
         }
 
         /// <inheritdoc />
-        public Errno Read(string path, long offset, long size, ref byte[] buf)
+        public ErrorNumber Read(string path, long offset, long size, ref byte[] buf)
         {
             if(!_mounted)
-                return Errno.AccessDenied;
+                return ErrorNumber.AccessDenied;
 
             if(size == 0)
             {
                 buf = Array.Empty<byte>();
 
-                return Errno.NoError;
+                return ErrorNumber.NoError;
             }
 
             if(offset < 0)
-                return Errno.InvalidArgument;
+                return ErrorNumber.InvalidArgument;
 
             string[] pathElements = path.Split(new[]
             {
@@ -102,13 +103,13 @@ namespace Aaru.Filesystems
             }, StringSplitOptions.RemoveEmptyEntries);
 
             if(pathElements.Length != 1)
-                return Errno.NotSupported;
+                return ErrorNumber.NotSupported;
 
             if(!_fileCache.TryGetValue(pathElements[0].ToUpperInvariant(), out byte[] file))
-                return Errno.NoSuchFile;
+                return ErrorNumber.NoSuchFile;
 
             if(offset >= file.Length)
-                return Errno.EINVAL;
+                return ErrorNumber.EINVAL;
 
             if(size + offset >= file.Length)
                 size = file.Length - offset;
@@ -116,24 +117,24 @@ namespace Aaru.Filesystems
             buf = new byte[size];
             Array.Copy(file, offset, buf, 0, size);
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />
-        public Errno ReadLink(string path, out string dest)
+        public ErrorNumber ReadLink(string path, out string dest)
         {
             dest = null;
 
-            return !_mounted ? Errno.AccessDenied : Errno.NotSupported;
+            return !_mounted ? ErrorNumber.AccessDenied : ErrorNumber.NotSupported;
         }
 
         /// <inheritdoc />
-        public Errno Stat(string path, out FileEntryInfo stat)
+        public ErrorNumber Stat(string path, out FileEntryInfo stat)
         {
             stat = null;
 
             if(!_mounted)
-                return Errno.AccessDenied;
+                return ErrorNumber.AccessDenied;
 
             string[] pathElements = path.Split(new[]
             {
@@ -141,12 +142,12 @@ namespace Aaru.Filesystems
             }, StringSplitOptions.RemoveEmptyEntries);
 
             if(pathElements.Length != 1)
-                return Errno.NotSupported;
+                return ErrorNumber.NotSupported;
 
             if(!string.IsNullOrEmpty(path) &&
                string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) != 0)
-                return _statCache.TryGetValue(pathElements[0].ToUpperInvariant(), out stat) ? Errno.NoError
-                           : Errno.NoSuchFile;
+                return _statCache.TryGetValue(pathElements[0].ToUpperInvariant(), out stat) ? ErrorNumber.NoError
+                           : ErrorNumber.NoSuchFile;
 
             stat = new FileEntryInfo
             {
@@ -160,7 +161,7 @@ namespace Aaru.Filesystems
             if(_labelUpdateDate != null)
                 stat.StatusChangeTime = DateHandlers.CpmToDateTime(_labelUpdateDate);
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
     }
 }

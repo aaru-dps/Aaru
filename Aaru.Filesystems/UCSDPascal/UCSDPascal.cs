@@ -33,8 +33,8 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.CommonTypes.Structs;
 using Schemas;
 
 namespace Aaru.Filesystems.UCSDPascal
@@ -66,22 +66,22 @@ namespace Aaru.Filesystems.UCSDPascal
         public string Author => "Natalia Portillo";
 
         /// <inheritdoc />
-        public Errno ListXAttr(string path, out List<string> xattrs)
+        public ErrorNumber ListXAttr(string path, out List<string> xattrs)
         {
             xattrs = null;
 
-            return Errno.NotSupported;
+            return ErrorNumber.NotSupported;
         }
 
         /// <inheritdoc />
-        public Errno GetXattr(string path, string xattr, ref byte[] buf) => Errno.NotSupported;
+        public ErrorNumber GetXattr(string path, string xattr, ref byte[] buf) => ErrorNumber.NotSupported;
 
         /// <inheritdoc />
-        public Errno ReadLink(string path, out string dest)
+        public ErrorNumber ReadLink(string path, out string dest)
         {
             dest = null;
 
-            return Errno.NotSupported;
+            return ErrorNumber.NotSupported;
         }
 
         /// <inheritdoc />

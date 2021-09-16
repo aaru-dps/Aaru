@@ -38,6 +38,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Console;
@@ -51,8 +52,8 @@ namespace Aaru.Filesystems
     public sealed partial class CPM
     {
         /// <inheritdoc />
-        public Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding,
-                           Dictionary<string, string> options, string @namespace)
+        public ErrorNumber Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding,
+                                 Dictionary<string, string> options, string @namespace)
         {
             _device  = imagePlugin;
             Encoding = encoding ?? Encoding.GetEncoding("IBM437");
@@ -62,7 +63,7 @@ namespace Aaru.Filesystems
                !_cpmFound                    ||
                _workingDefinition == null    ||
                _dpb               == null)
-                return Errno.InvalidArgument;
+                return ErrorNumber.InvalidArgument;
 
             // Build the software interleaving sector mask
             if(_workingDefinition.sides == 1)
@@ -106,7 +107,7 @@ namespace Aaru.Filesystems
                     // TODO: Implement CYLINDERS ordering
                     AaruConsole.DebugWriteLine("CP/M Plugin", "CYLINDERS ordering not yet implemented.");
 
-                    return Errno.NotImplemented;
+                    return ErrorNumber.NotImplemented;
                 }
 
                 // TODO: Implement COLUMBIA ordering
@@ -116,7 +117,7 @@ namespace Aaru.Filesystems
                     AaruConsole.DebugWriteLine("CP/M Plugin",
                                                "Don't know how to handle COLUMBIA ordering, not proceeding with this definition.");
 
-                    return Errno.NotImplemented;
+                    return ErrorNumber.NotImplemented;
                 }
 
                 // TODO: Implement EAGLE ordering
@@ -126,7 +127,7 @@ namespace Aaru.Filesystems
                     AaruConsole.DebugWriteLine("CP/M Plugin",
                                                "Don't know how to handle EAGLE ordering, not proceeding with this definition.");
 
-                    return Errno.NotImplemented;
+                    return ErrorNumber.NotImplemented;
                 }
                 else
                 {
@@ -134,12 +135,12 @@ namespace Aaru.Filesystems
                                                "Unknown order type \"{0}\", not proceeding with this definition.",
                                                _workingDefinition.order);
 
-                    return Errno.NotSupported;
+                    return ErrorNumber.NotSupported;
                 }
             }
 
             // Deinterleave whole volume
-            Dictionary<ulong, byte[]> deinterleavedSectors = new Dictionary<ulong, byte[]>();
+            Dictionary<ulong, byte[]> deinterleavedSectors = new();
 
             if(_workingDefinition.sides                                                                       == 1 ||
                string.Compare(_workingDefinition.order, "SIDES", StringComparison.InvariantCultureIgnoreCase) == 0)
@@ -165,7 +166,7 @@ namespace Aaru.Filesystems
             var                       blockMs          = new MemoryStream();
             ulong                     blockNo          = 0;
             int                       sectorsPerBlock  = 0;
-            Dictionary<ulong, byte[]> allocationBlocks = new Dictionary<ulong, byte[]>();
+            Dictionary<ulong, byte[]> allocationBlocks = new();
 
             AaruConsole.DebugWriteLine("CP/M Plugin", "Creating allocation blocks.");
 
@@ -224,15 +225,14 @@ namespace Aaru.Filesystems
             byte[] directory = dirMs.ToArray();
 
             if(directory == null)
-                return Errno.InvalidArgument;
+                return ErrorNumber.InvalidArgument;
 
             int    dirCnt = 0;
             string file1  = null;
             string file2  = null;
             string file3  = null;
 
-            Dictionary<string, Dictionary<int, List<ushort>>> fileExtents =
-                new Dictionary<string, Dictionary<int, List<ushort>>>();
+            Dictionary<string, Dictionary<int, List<ushort>>> fileExtents = new();
 
             _statCache = new Dictionary<string, FileEntryInfo>();
             _cpmStat   = new FileSystemInfo();
@@ -798,24 +798,24 @@ namespace Aaru.Filesystems
 
             _mounted = true;
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />
-        public Errno StatFs(out FileSystemInfo stat)
+        public ErrorNumber StatFs(out FileSystemInfo stat)
         {
             stat = null;
 
             if(!_mounted)
-                return Errno.AccessDenied;
+                return ErrorNumber.AccessDenied;
 
             stat = _cpmStat;
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />
-        public Errno Unmount()
+        public ErrorNumber Unmount()
         {
             _mounted              = false;
             _definitions          = null;
@@ -829,7 +829,7 @@ namespace Aaru.Filesystems
             _labelCreationDate    = null;
             _labelUpdateDate      = null;
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
     }
 }

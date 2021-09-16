@@ -158,7 +158,7 @@ namespace Aaru.Commands.Device
 
                 AaruConsole.ErrorWriteLine("Not continuing.");
 
-                return (int)ErrorNumber.NotEnoughPermissions;
+                return (int)ErrorNumber.NotPermitted;
             }
 
             var report = new DeviceReportV2

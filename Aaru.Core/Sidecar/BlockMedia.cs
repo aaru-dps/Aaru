@@ -589,7 +589,7 @@ namespace Aaru.Core
                                 continue;
 
                             if(plugin is IReadOnlyFilesystem fsPlugin &&
-                               fsPlugin.Mount(image, partitions[i], encoding, null, null) == Errno.NoError)
+                               fsPlugin.Mount(image, partitions[i], encoding, null, null) == ErrorNumber.NoError)
                             {
                                 UpdateStatus($"Mounting {fsPlugin.XmlFsType.Type}");
 
@@ -644,7 +644,7 @@ namespace Aaru.Core
                             continue;
 
                         if(plugin is IReadOnlyFilesystem fsPlugin &&
-                           fsPlugin.Mount(image, wholePart, encoding, null, null) == Errno.NoError)
+                           fsPlugin.Mount(image, wholePart, encoding, null, null) == ErrorNumber.NoError)
                         {
                             UpdateStatus($"Mounting {fsPlugin.XmlFsType.Type}");
 

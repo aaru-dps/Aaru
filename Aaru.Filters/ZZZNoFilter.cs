@@ -32,8 +32,8 @@
 
 using System;
 using System.IO;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.CommonTypes.Structs;
 
 namespace Aaru.Filters
 {
@@ -83,29 +83,29 @@ namespace Aaru.Filters
         public bool Identify(string path) => File.Exists(path);
 
         /// <inheritdoc />
-        public Errno Open(byte[] buffer)
+        public ErrorNumber Open(byte[] buffer)
         {
             _dataStream   = new MemoryStream(buffer);
             BasePath      = null;
             CreationTime  = DateTime.UtcNow;
             LastWriteTime = CreationTime;
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />
-        public Errno Open(Stream stream)
+        public ErrorNumber Open(Stream stream)
         {
             _dataStream   = stream;
             BasePath      = null;
             CreationTime  = DateTime.UtcNow;
             LastWriteTime = CreationTime;
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />
-        public Errno Open(string path)
+        public ErrorNumber Open(string path)
         {
             _dataStream = new FileStream(path, FileMode.Open, FileAccess.Read);
             BasePath    = System.IO.Path.GetFullPath(path);
@@ -113,7 +113,7 @@ namespace Aaru.Filters
             CreationTime  = fi.CreationTimeUtc;
             LastWriteTime = fi.LastWriteTimeUtc;
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />

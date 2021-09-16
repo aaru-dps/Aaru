@@ -37,8 +37,8 @@ using System.Globalization;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.CommonTypes.Structs;
 using Aaru.Helpers;
 using Marshal = System.Runtime.InteropServices.Marshal;
 
@@ -171,13 +171,13 @@ namespace Aaru.Filters
         }
 
         /// <inheritdoc />
-        public Errno Open(byte[] buffer) => Errno.NotSupported;
+        public ErrorNumber Open(byte[] buffer) => ErrorNumber.NotSupported;
 
         /// <inheritdoc />
-        public Errno Open(Stream stream) => Errno.NotSupported;
+        public ErrorNumber Open(Stream stream) => ErrorNumber.NotSupported;
 
         /// <inheritdoc />
-        public Errno Open(string path)
+        public ErrorNumber Open(string path)
         {
             string parentFolder = System.IO.Path.GetDirectoryName(path);
             string baseFilename = System.IO.Path.GetFileName(path);
@@ -240,7 +240,7 @@ namespace Aaru.Filters
 
             finderDatStream.Close();
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]

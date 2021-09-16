@@ -44,12 +44,12 @@ namespace Aaru.Filesystems
     public sealed partial class AppleMFS
     {
         /// <inheritdoc />
-        public Errno MapBlock(string path, long fileBlock, out long deviceBlock)
+        public ErrorNumber MapBlock(string path, long fileBlock, out long deviceBlock)
         {
             deviceBlock = new long();
 
             if(!_mounted)
-                return Errno.AccessDenied;
+                return ErrorNumber.AccessDenied;
 
             string[] pathElements = path.Split(new[]
             {
@@ -57,18 +57,18 @@ namespace Aaru.Filesystems
             }, StringSplitOptions.RemoveEmptyEntries);
 
             if(pathElements.Length != 1)
-                return Errno.NotSupported;
+                return ErrorNumber.NotSupported;
 
             path = pathElements[0];
 
             if(!_filenameToId.TryGetValue(path.ToLowerInvariant(), out uint fileId))
-                return Errno.NoSuchFile;
+                return ErrorNumber.NoSuchFile;
 
             if(!_idToEntry.TryGetValue(fileId, out FileEntry entry))
-                return Errno.NoSuchFile;
+                return ErrorNumber.NoSuchFile;
 
             if(fileBlock > entry.flPyLen / _volMdb.drAlBlkSiz)
-                return Errno.InvalidArgument;
+                return ErrorNumber.InvalidArgument;
 
             uint nextBlock = entry.flStBlk;
             long relBlock  = 0;
@@ -79,7 +79,7 @@ namespace Aaru.Filesystems
                 {
                     deviceBlock = ((nextBlock - 2) * _sectorsPerBlock) + _volMdb.drAlBlSt + (long)_partitionStart;
 
-                    return Errno.NoError;
+                    return ErrorNumber.NoError;
                 }
 
                 if(_blockMap[nextBlock] == BMAP_FREE ||
@@ -90,16 +90,16 @@ namespace Aaru.Filesystems
                 relBlock++;
             }
 
-            return Errno.InOutError;
+            return ErrorNumber.InOutError;
         }
 
         /// <inheritdoc />
-        public Errno GetAttributes(string path, out FileAttributes attributes)
+        public ErrorNumber GetAttributes(string path, out FileAttributes attributes)
         {
             attributes = new FileAttributes();
 
             if(!_mounted)
-                return Errno.AccessDenied;
+                return ErrorNumber.AccessDenied;
 
             string[] pathElements = path.Split(new[]
             {
@@ -107,15 +107,15 @@ namespace Aaru.Filesystems
             }, StringSplitOptions.RemoveEmptyEntries);
 
             if(pathElements.Length != 1)
-                return Errno.NotSupported;
+                return ErrorNumber.NotSupported;
 
             path = pathElements[0];
 
             if(!_filenameToId.TryGetValue(path.ToLowerInvariant(), out uint fileId))
-                return Errno.NoSuchFile;
+                return ErrorNumber.NoSuchFile;
 
             if(!_idToEntry.TryGetValue(fileId, out FileEntry entry))
-                return Errno.NoSuchFile;
+                return ErrorNumber.NoSuchFile;
 
             if(entry.flUsrWds.fdFlags.HasFlag(AppleCommon.FinderFlags.kIsAlias))
                 attributes |= FileAttributes.Alias;
@@ -154,17 +154,17 @@ namespace Aaru.Filesystems
 
             attributes |= FileAttributes.BlockUnits;
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />
-        public Errno Read(string path, long offset, long size, ref byte[] buf)
+        public ErrorNumber Read(string path, long offset, long size, ref byte[] buf)
         {
             if(!_mounted)
-                return Errno.AccessDenied;
+                return ErrorNumber.AccessDenied;
 
-            byte[] file;
-            Errno  error = Errno.NoError;
+            byte[]      file;
+            ErrorNumber error = ErrorNumber.NoError;
 
             if(_debug && string.Compare(path, "$", StringComparison.InvariantCulture) == 0)
                 file = _directoryBlocks;
@@ -179,18 +179,18 @@ namespace Aaru.Filesystems
             else
                 error = ReadFile(path, out file, false, false);
 
-            if(error != Errno.NoError)
+            if(error != ErrorNumber.NoError)
                 return error;
 
             if(size == 0)
             {
                 buf = Array.Empty<byte>();
 
-                return Errno.NoError;
+                return ErrorNumber.NoError;
             }
 
             if(offset >= file.Length)
-                return Errno.InvalidArgument;
+                return ErrorNumber.InvalidArgument;
 
             if(size + offset >= file.Length)
                 size = file.Length - offset;
@@ -199,16 +199,16 @@ namespace Aaru.Filesystems
 
             Array.Copy(file, offset, buf, 0, size);
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />
-        public Errno Stat(string path, out FileEntryInfo stat)
+        public ErrorNumber Stat(string path, out FileEntryInfo stat)
         {
             stat = null;
 
             if(!_mounted)
-                return Errno.AccessDenied;
+                return ErrorNumber.AccessDenied;
 
             string[] pathElements = path.Split(new[]
             {
@@ -216,7 +216,7 @@ namespace Aaru.Filesystems
             }, StringSplitOptions.RemoveEmptyEntries);
 
             if(pathElements.Length != 1)
-                return Errno.NotSupported;
+                return ErrorNumber.NotSupported;
 
             path = pathElements[0];
 
@@ -260,20 +260,20 @@ namespace Aaru.Filesystems
                         stat.Length = _mdbBlocks.Length;
                     }
                     else
-                        return Errno.InvalidArgument;
+                        return ErrorNumber.InvalidArgument;
 
-                    return Errno.NoError;
+                    return ErrorNumber.NoError;
                 }
 
             if(!_filenameToId.TryGetValue(path.ToLowerInvariant(), out uint fileId))
-                return Errno.NoSuchFile;
+                return ErrorNumber.NoSuchFile;
 
             if(!_idToEntry.TryGetValue(fileId, out FileEntry entry))
-                return Errno.NoSuchFile;
+                return ErrorNumber.NoSuchFile;
 
-            Errno error = GetAttributes(path, out FileAttributes attr);
+            ErrorNumber error = GetAttributes(path, out FileAttributes attr);
 
-            if(error != Errno.NoError)
+            if(error != ErrorNumber.NoError)
                 return error;
 
             stat = new FileEntryInfo
@@ -288,23 +288,23 @@ namespace Aaru.Filesystems
                 Links         = 1
             };
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />
-        public Errno ReadLink(string path, out string dest)
+        public ErrorNumber ReadLink(string path, out string dest)
         {
             dest = null;
 
-            return Errno.NotImplemented;
+            return ErrorNumber.NotImplemented;
         }
 
-        Errno ReadFile(string path, out byte[] buf, bool resourceFork, bool tags)
+        ErrorNumber ReadFile(string path, out byte[] buf, bool resourceFork, bool tags)
         {
             buf = null;
 
             if(!_mounted)
-                return Errno.AccessDenied;
+                return ErrorNumber.AccessDenied;
 
             string[] pathElements = path.Split(new[]
             {
@@ -312,15 +312,15 @@ namespace Aaru.Filesystems
             }, StringSplitOptions.RemoveEmptyEntries);
 
             if(pathElements.Length != 1)
-                return Errno.NotSupported;
+                return ErrorNumber.NotSupported;
 
             path = pathElements[0];
 
             if(!_filenameToId.TryGetValue(path.ToLowerInvariant(), out uint fileId))
-                return Errno.NoSuchFile;
+                return ErrorNumber.NoSuchFile;
 
             if(!_idToEntry.TryGetValue(fileId, out FileEntry entry))
-                return Errno.NoSuchFile;
+                return ErrorNumber.NoSuchFile;
 
             uint nextBlock;
 
@@ -330,7 +330,7 @@ namespace Aaru.Filesystems
                 {
                     buf = Array.Empty<byte>();
 
-                    return Errno.NoError;
+                    return ErrorNumber.NoError;
                 }
 
                 nextBlock = entry.flRStBlk;
@@ -341,7 +341,7 @@ namespace Aaru.Filesystems
                 {
                     buf = Array.Empty<byte>();
 
-                    return Errno.NoError;
+                    return ErrorNumber.NoError;
                 }
 
                 nextBlock = entry.flStBlk;
@@ -400,7 +400,7 @@ namespace Aaru.Filesystems
                 }
             }
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
     }
 }

@@ -225,7 +225,7 @@ namespace Aaru.Commands.Filesystem
                 {
                     AaruConsole.ErrorWriteLine("Destination exists, aborting.");
 
-                    return (int)ErrorNumber.DestinationExists;
+                    return (int)ErrorNumber.FileExists;
                 }
 
                 Directory.CreateDirectory(outputDir);
@@ -316,7 +316,7 @@ namespace Aaru.Commands.Filesystem
                     else
                     {
                         IReadOnlyFilesystem plugin;
-                        Errno               error = Errno.InvalidArgument;
+                        ErrorNumber         error = ErrorNumber.InvalidArgument;
 
                         if(idPlugins.Count > 1)
                         {
@@ -339,7 +339,7 @@ namespace Aaru.Commands.Filesystem
                                                          @namespace);
                                     });
 
-                                    if(error == Errno.NoError)
+                                    if(error == ErrorNumber.NoError)
                                     {
                                         string volumeName = string.IsNullOrEmpty(fs.XmlFsType.VolumeName) ? "NO NAME"
                                                                 : fs.XmlFsType.VolumeName;
@@ -372,7 +372,7 @@ namespace Aaru.Commands.Filesystem
                                 error = fs.Mount(imageFormat, partitions[i], encodingClass, parsedOptions, @namespace);
                             });
 
-                            if(error == Errno.NoError)
+                            if(error == ErrorNumber.NoError)
                             {
                                 string volumeName = string.IsNullOrEmpty(fs.XmlFsType.VolumeName) ? "NO NAME"
                                                         : fs.XmlFsType.VolumeName;
@@ -404,9 +404,9 @@ namespace Aaru.Commands.Filesystem
             if(path.StartsWith('/'))
                 path = path.Substring(1);
 
-            Errno error = fs.ReadDir(path, out List<string> directory);
+            ErrorNumber error = fs.ReadDir(path, out List<string> directory);
 
-            if(error != Errno.NoError)
+            if(error != ErrorNumber.NoError)
             {
                 AaruConsole.ErrorWriteLine("Error {0} reading root directory {0}", error.ToString());
 
@@ -423,7 +423,7 @@ namespace Aaru.Commands.Filesystem
                     error = fs.Stat(path + "/" + entry, out stat);
                 });
 
-                if(error == Errno.NoError)
+                if(error == ErrorNumber.NoError)
                 {
                     string outputPath;
 
@@ -486,7 +486,7 @@ namespace Aaru.Commands.Filesystem
                             error = fs.ListXAttr(path + "/" + entry, out xattrs);
                         });
 
-                        if(error == Errno.NoError)
+                        if(error == ErrorNumber.NoError)
                             foreach(string xattr in xattrs)
                             {
                                 byte[] xattrBuf = Array.Empty<byte>();
@@ -497,7 +497,7 @@ namespace Aaru.Commands.Filesystem
                                     error = fs.GetXattr(path + "/" + entry, xattr, ref xattrBuf);
                                 });
 
-                                if(error != Errno.NoError)
+                                if(error != ErrorNumber.NoError)
                                     continue;
 
                                 outputPath = Path.Combine(outputDir, fs.XmlFsType.Type, volumeName, ".xattrs", path,
@@ -595,7 +595,7 @@ namespace Aaru.Commands.Filesystem
 
                                             error = fs.Read(path + "/" + entry, position, bytesToRead, ref outBuf);
 
-                                            if(error == Errno.NoError)
+                                            if(error == ErrorNumber.NoError)
                                                 outputFile.Write(outBuf, 0, outBuf.Length);
                                             else
                                             {

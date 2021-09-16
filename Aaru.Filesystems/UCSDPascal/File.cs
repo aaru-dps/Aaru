@@ -32,6 +32,7 @@
 
 using System;
 using System.Linq;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 using Aaru.Helpers;
 
@@ -41,20 +42,20 @@ namespace Aaru.Filesystems.UCSDPascal
     public sealed partial class PascalPlugin
     {
         /// <inheritdoc />
-        public Errno MapBlock(string path, long fileBlock, out long deviceBlock)
+        public ErrorNumber MapBlock(string path, long fileBlock, out long deviceBlock)
         {
             deviceBlock = 0;
 
-            return !_mounted ? Errno.AccessDenied : Errno.NotImplemented;
+            return !_mounted ? ErrorNumber.AccessDenied : ErrorNumber.NotImplemented;
         }
 
         /// <inheritdoc />
-        public Errno GetAttributes(string path, out FileAttributes attributes)
+        public ErrorNumber GetAttributes(string path, out FileAttributes attributes)
         {
             attributes = new FileAttributes();
 
             if(!_mounted)
-                return Errno.AccessDenied;
+                return ErrorNumber.AccessDenied;
 
             string[] pathElements = path.Split(new[]
             {
@@ -62,11 +63,11 @@ namespace Aaru.Filesystems.UCSDPascal
             }, StringSplitOptions.RemoveEmptyEntries);
 
             if(pathElements.Length != 1)
-                return Errno.NotSupported;
+                return ErrorNumber.NotSupported;
 
-            Errno error = GetFileEntry(path, out _);
+            ErrorNumber error = GetFileEntry(path, out _);
 
-            if(error != Errno.NoError)
+            if(error != ErrorNumber.NoError)
                 return error;
 
             attributes = FileAttributes.File;
@@ -75,10 +76,10 @@ namespace Aaru.Filesystems.UCSDPascal
         }
 
         /// <inheritdoc />
-        public Errno Read(string path, long offset, long size, ref byte[] buf)
+        public ErrorNumber Read(string path, long offset, long size, ref byte[] buf)
         {
             if(!_mounted)
-                return Errno.AccessDenied;
+                return ErrorNumber.AccessDenied;
 
             string[] pathElements = path.Split(new[]
             {
@@ -86,7 +87,7 @@ namespace Aaru.Filesystems.UCSDPascal
             }, StringSplitOptions.RemoveEmptyEntries);
 
             if(pathElements.Length != 1)
-                return Errno.NotSupported;
+                return ErrorNumber.NotSupported;
 
             byte[] file;
 
@@ -95,9 +96,9 @@ namespace Aaru.Filesystems.UCSDPascal
                 file = string.Compare(path, "$", StringComparison.InvariantCulture) == 0 ? _catalogBlocks : _bootBlocks;
             else
             {
-                Errno error = GetFileEntry(path, out PascalFileEntry entry);
+                ErrorNumber error = GetFileEntry(path, out PascalFileEntry entry);
 
-                if(error != Errno.NoError)
+                if(error != ErrorNumber.NoError)
                     return error;
 
                 byte[] tmp = _device.ReadSectors((ulong)entry.FirstBlock                    * _multiplier,
@@ -110,7 +111,7 @@ namespace Aaru.Filesystems.UCSDPascal
             }
 
             if(offset >= file.Length)
-                return Errno.EINVAL;
+                return ErrorNumber.EINVAL;
 
             if(size + offset >= file.Length)
                 size = file.Length - offset;
@@ -119,11 +120,11 @@ namespace Aaru.Filesystems.UCSDPascal
 
             Array.Copy(file, offset, buf, 0, size);
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />
-        public Errno Stat(string path, out FileEntryInfo stat)
+        public ErrorNumber Stat(string path, out FileEntryInfo stat)
         {
             stat = null;
 
@@ -133,7 +134,7 @@ namespace Aaru.Filesystems.UCSDPascal
             }, StringSplitOptions.RemoveEmptyEntries);
 
             if(pathElements.Length != 1)
-                return Errno.NotSupported;
+                return ErrorNumber.NotSupported;
 
             if(_debug)
                 if(string.Compare(path, "$", StringComparison.InvariantCulture)     == 0 ||
@@ -159,12 +160,12 @@ namespace Aaru.Filesystems.UCSDPascal
                         stat.Length = _bootBlocks.Length;
                     }
 
-                    return Errno.NoError;
+                    return ErrorNumber.NoError;
                 }
 
-            Errno error = GetFileEntry(path, out PascalFileEntry entry);
+            ErrorNumber error = GetFileEntry(path, out PascalFileEntry entry);
 
-            if(error != Errno.NoError)
+            if(error != ErrorNumber.NoError)
                 return error;
 
             stat = new FileEntryInfo
@@ -178,10 +179,10 @@ namespace Aaru.Filesystems.UCSDPascal
                 Links = 1
             };
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
 
-        Errno GetFileEntry(string path, out PascalFileEntry entry)
+        ErrorNumber GetFileEntry(string path, out PascalFileEntry entry)
         {
             entry = new PascalFileEntry();
 
@@ -194,10 +195,10 @@ namespace Aaru.Filesystems.UCSDPascal
             {
                 entry = ent;
 
-                return Errno.NoError;
+                return ErrorNumber.NoError;
             }
 
-            return Errno.NoSuchFile;
+            return ErrorNumber.NoSuchFile;
         }
     }
 }

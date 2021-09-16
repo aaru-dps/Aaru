@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Core;
@@ -74,7 +75,7 @@ namespace Aaru.Tests.Issues
                     continue;
 
                 IReadOnlyFilesystem plugin;
-                Errno               error;
+                ErrorNumber         error;
 
                 if(idPlugins.Count > 1)
                 {
@@ -93,7 +94,8 @@ namespace Aaru.Tests.Issues
 
                             error = fs.Mount(imageFormat, partitions[i], encodingClass, options, Namespace);
 
-                            Assert.AreEqual(Errno.NoError, error, $"Could not mount {pluginName} in partition {i}.");
+                            Assert.AreEqual(ErrorNumber.NoError, error,
+                                            $"Could not mount {pluginName} in partition {i}.");
 
                             ExtractFilesInDir("/", fs, Xattrs);
                         }
@@ -114,7 +116,7 @@ namespace Aaru.Tests.Issues
 
                     error = fs.Mount(imageFormat, partitions[i], encodingClass, options, Namespace);
 
-                    Assert.AreEqual(Errno.NoError, error, $"Could not mount {plugin.Name} in partition {i}.");
+                    Assert.AreEqual(ErrorNumber.NoError, error, $"Could not mount {plugin.Name} in partition {i}.");
 
                     ExtractFilesInDir("/", fs, Xattrs);
                 }
@@ -128,16 +130,16 @@ namespace Aaru.Tests.Issues
             if(path.StartsWith('/'))
                 path = path[1..];
 
-            Errno error = fs.ReadDir(path, out List<string> directory);
+            ErrorNumber error = fs.ReadDir(path, out List<string> directory);
 
-            Assert.AreEqual(Errno.NoError, error,
+            Assert.AreEqual(ErrorNumber.NoError, error,
                             string.Format("Error {0} reading root directory {0}", error.ToString()));
 
             foreach(string entry in directory)
             {
                 error = fs.Stat(path + "/" + entry, out FileEntryInfo stat);
 
-                Assert.AreEqual(Errno.NoError, error, $"Error getting stat for entry {entry}");
+                Assert.AreEqual(ErrorNumber.NoError, error, $"Error getting stat for entry {entry}");
 
                 if(stat.Attributes.HasFlag(FileAttributes.Directory))
                 {
@@ -150,16 +152,16 @@ namespace Aaru.Tests.Issues
                 {
                     error = fs.ListXAttr(path + "/" + entry, out List<string> xattrs);
 
-                    Assert.AreEqual(Errno.NoError, error,
+                    Assert.AreEqual(ErrorNumber.NoError, error,
                                     $"Error {error} getting extended attributes for entry {path + "/" + entry}");
 
-                    if(error == Errno.NoError)
+                    if(error == ErrorNumber.NoError)
                         foreach(string xattr in xattrs)
                         {
                             byte[] xattrBuf = Array.Empty<byte>();
                             error = fs.GetXattr(path + "/" + entry, xattr, ref xattrBuf);
 
-                            Assert.AreEqual(Errno.NoError, error,
+                            Assert.AreEqual(ErrorNumber.NoError, error,
                                             $"Error {error} reading extended attributes for entry {path + "/" + entry}");
                         }
                 }
@@ -168,7 +170,7 @@ namespace Aaru.Tests.Issues
 
                 error = fs.Read(path + "/" + entry, 0, stat.Length, ref outBuf);
 
-                Assert.AreEqual(Errno.NoError, error, $"Error {error} reading file {path + "/" + entry}");
+                Assert.AreEqual(ErrorNumber.NoError, error, $"Error {error} reading file {path + "/" + entry}");
             }
         }
     }

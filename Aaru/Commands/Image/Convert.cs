@@ -417,7 +417,7 @@ namespace Aaru.Commands.Image
                 {
                     AaruConsole.ErrorWriteLine("Could not find metadata sidecar, not continuing...");
 
-                    return (int)ErrorNumber.FileNotFound;
+                    return (int)ErrorNumber.NoSuchFile;
                 }
 
             xs = new XmlSerializer(typeof(Resume));
@@ -441,7 +441,7 @@ namespace Aaru.Commands.Image
                 {
                     AaruConsole.ErrorWriteLine("Could not find resume file, not continuing...");
 
-                    return (int)ErrorNumber.FileNotFound;
+                    return (int)ErrorNumber.NoSuchFile;
                 }
 
             var     filtersList = new FiltersList();
@@ -464,7 +464,7 @@ namespace Aaru.Commands.Image
             {
                 AaruConsole.ErrorWriteLine("Output file already exists, not continuing.");
 
-                return (int)ErrorNumber.DestinationExists;
+                return (int)ErrorNumber.FileExists;
             }
 
             PluginBase  plugins     = GetPluginBase.Instance;
@@ -730,7 +730,7 @@ namespace Aaru.Commands.Image
             foreach(MediaTagType mediaTag in inputFormat.Info.ReadableMediaTags.Where(mediaTag =>
                 !force || outputFormat.SupportedMediaTags.Contains(mediaTag)))
             {
-                ErrorNumber errno = ErrorNumber.NoError;
+                ErrorNumber ErrorNumber = ErrorNumber.NoError;
 
                 AnsiConsole.Progress().AutoClear(false).HideCompleted(false).
                             Columns(new TaskDescriptionColumn(), new SpinnerColumn()).Start(ctx =>
@@ -749,12 +749,12 @@ namespace Aaru.Commands.Image
                                     AaruConsole.ErrorWriteLine("Error {0} writing media tag, not continuing...",
                                                                outputFormat.ErrorMessage);
 
-                                    errno = ErrorNumber.WriteError;
+                                    ErrorNumber = ErrorNumber.WriteError;
                                 }
                             });
 
-                if(errno != ErrorNumber.NoError)
-                    return (int)errno;
+                if(ErrorNumber != ErrorNumber.NoError)
+                    return (int)ErrorNumber;
             }
 
             AaruConsole.WriteLine("{0} sectors to convert", inputFormat.Info.Sectors);
@@ -837,7 +837,7 @@ namespace Aaru.Commands.Image
                                                     AaruConsole.
                                                         ErrorWriteLine("Input image is not returning raw sectors, use force if you want to continue...");
 
-                                                    errno = (ErrorNumber)Errno.InOutError;
+                                                    errno = ErrorNumber.InOutError;
 
                                                     return;
                                                 }
@@ -1196,7 +1196,7 @@ namespace Aaru.Commands.Image
                                                    outputFormat.ErrorMessage);
                 }
 
-                ErrorNumber errno = ErrorNumber.NoError;
+                ErrorNumber ErrorNumber = ErrorNumber.NoError;
 
                 AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
                             Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
@@ -1258,7 +1258,7 @@ namespace Aaru.Commands.Image
                                                 ErrorWriteLine("Error {0} writing sector {1}, not continuing...",
                                                                outputFormat.ErrorMessage, doneSectors);
 
-                                            errno = ErrorNumber.WriteError;
+                                            ErrorNumber = ErrorNumber.WriteError;
 
                                             return;
                                         }
@@ -1335,7 +1335,7 @@ namespace Aaru.Commands.Image
                                                     ErrorWriteLine("Error {0} writing sector {1}, not continuing...",
                                                                    outputFormat.ErrorMessage, doneSectors);
 
-                                                errno = ErrorNumber.WriteError;
+                                                ErrorNumber = ErrorNumber.WriteError;
 
                                                 return;
                                             }
@@ -1379,8 +1379,8 @@ namespace Aaru.Commands.Image
                                 partitionTask.StopTask();
                             });
 
-                if(errno != ErrorNumber.NoError)
-                    return (int)errno;
+                if(ErrorNumber != ErrorNumber.NoError)
+                    return (int)ErrorNumber;
             }
 
             if(resume       != null ||

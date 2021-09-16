@@ -35,6 +35,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Console;
@@ -47,8 +48,8 @@ namespace Aaru.Filesystems
     public sealed partial class ISO9660
     {
         /// <inheritdoc />
-        public Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding,
-                           Dictionary<string, string> options, string @namespace)
+        public ErrorNumber Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding,
+                                 Dictionary<string, string> options, string @namespace)
         {
             Encoding = encoding ?? Encoding.GetEncoding(1252);
             byte[] vdMagic = new byte[5]; // Volume Descriptor magic "CD001"
@@ -93,7 +94,7 @@ namespace Aaru.Filesystems
                     _namespace = Namespace.Romeo;
 
                     break;
-                default: return Errno.InvalidArgument;
+                default: return ErrorNumber.InvalidArgument;
             }
 
             PrimaryVolumeDescriptor?           pvd      = null;
@@ -104,11 +105,11 @@ namespace Aaru.Filesystems
 
             // ISO9660 is designed for 2048 bytes/sector devices
             if(imagePlugin.Info.SectorSize < 2048)
-                return Errno.InvalidArgument;
+                return ErrorNumber.InvalidArgument;
 
             // ISO9660 Primary Volume Descriptor starts at sector 16, so that's minimal size.
             if(partition.End < 16)
-                return Errno.InvalidArgument;
+                return ErrorNumber.InvalidArgument;
 
             ulong counter = 0;
 
@@ -144,7 +145,7 @@ namespace Aaru.Filesystems
                 if(vdType == 255) // Supposedly we are in the PVD.
                 {
                     if(counter == 0)
-                        return Errno.InvalidArgument;
+                        return ErrorNumber.InvalidArgument;
 
                     break;
                 }
@@ -158,7 +159,7 @@ namespace Aaru.Filesystems
                    CDI_MAGIC) // Recognized, it is an ISO9660, now check for rest of data.
                 {
                     if(counter == 0)
-                        return Errno.InvalidArgument;
+                        return ErrorNumber.InvalidArgument;
 
                     break;
                 }
@@ -253,7 +254,7 @@ namespace Aaru.Filesystems
             {
                 AaruConsole.ErrorWriteLine("ERROR: Could not find primary volume descriptor");
 
-                return Errno.InvalidArgument;
+                return ErrorNumber.InvalidArgument;
             }
 
             if(_highSierra)
@@ -406,7 +407,7 @@ namespace Aaru.Filesystems
                         {
                             AaruConsole.ErrorWriteLine("Cannot find root directory...");
 
-                            return Errno.InvalidArgument;
+                            return ErrorNumber.InvalidArgument;
                         }
 
                         _usePathTable = true;
@@ -462,7 +463,7 @@ namespace Aaru.Filesystems
             }
             catch
             {
-                return Errno.InvalidArgument;
+                return ErrorNumber.InvalidArgument;
             }
 
             byte[]           ipbinSector = ReadSector(partition.Start);
@@ -751,33 +752,33 @@ namespace Aaru.Filesystems
 
             _mounted = true;
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />
-        public Errno Unmount()
+        public ErrorNumber Unmount()
         {
             if(!_mounted)
-                return Errno.AccessDenied;
+                return ErrorNumber.AccessDenied;
 
             _rootDirectoryCache = null;
             _directoryCache     = null;
             _mounted            = false;
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />
-        public Errno StatFs(out FileSystemInfo stat)
+        public ErrorNumber StatFs(out FileSystemInfo stat)
         {
             stat = null;
 
             if(!_mounted)
-                return Errno.AccessDenied;
+                return ErrorNumber.AccessDenied;
 
             stat = _statfs.ShallowCopy();
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
     }
 }

@@ -4,6 +4,7 @@ using System.IO;
 using System.Text;
 using Aaru.Checksums;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Core;
@@ -107,9 +108,9 @@ namespace Aaru.Tests.Filesystems
 
                     test.Encoding ??= Encoding.ASCII;
 
-                    Errno ret = fs.Mount(image, partition, test.Encoding, null, test.Namespace);
+                    ErrorNumber ret = fs.Mount(image, partition, test.Encoding, null, test.Namespace);
 
-                    Assert.AreEqual(Errno.NoError, ret, $"Unmountable: {testFile}");
+                    Assert.AreEqual(ErrorNumber.NoError, ret, $"Unmountable: {testFile}");
 
                     var serializer = new JsonSerializer
                     {
@@ -259,7 +260,7 @@ namespace Aaru.Tests.Filesystems
                 }
                 else if(stat.Attributes.HasFlag(FileAttributes.Symlink))
                 {
-                    if(fs.ReadLink(childPath, out string link) == Errno.NoError)
+                    if(fs.ReadLink(childPath, out string link) == ErrorNumber.NoError)
                         data.LinkTarget = link;
                 }
                 else
@@ -284,9 +285,9 @@ namespace Aaru.Tests.Filesystems
         internal static void TestDirectory(IReadOnlyFilesystem fs, string path, Dictionary<string, FileData> children,
                                            string testFile, bool testXattr)
         {
-            Errno ret = fs.ReadDir(path, out List<string> contents);
+            ErrorNumber ret = fs.ReadDir(path, out List<string> contents);
 
-            Assert.AreEqual(Errno.NoError, ret,
+            Assert.AreEqual(ErrorNumber.NoError, ret,
                             $"Unexpected error {ret} when reading directory \"{path}\" of {testFile}.");
 
             if(children.Count == 0 &&
@@ -303,7 +304,7 @@ namespace Aaru.Tests.Filesystems
                 string childPath = $"{path}/{child.Key}";
                 ret = fs.Stat(childPath, out FileEntryInfo stat);
 
-                if(ret == Errno.NoSuchFile ||
+                if(ret == ErrorNumber.NoSuchFile ||
                    !contents.Contains(child.Key))
                 {
                     expectedNotFound.Add(child.Key);
@@ -313,7 +314,7 @@ namespace Aaru.Tests.Filesystems
 
                 contents.Remove(child.Key);
 
-                Assert.AreEqual(Errno.NoError, ret,
+                Assert.AreEqual(ErrorNumber.NoError, ret,
                                 $"Unexpected error {ret} retrieving stats for \"{childPath}\" in {testFile}");
 
                 stat.Should().BeEquivalentTo(child.Value.Info, $"Wrong info for \"{childPath}\" in {testFile}");
@@ -324,7 +325,7 @@ namespace Aaru.Tests.Filesystems
                 {
                     ret = fs.Read(childPath, 0, 1, ref buffer);
 
-                    Assert.AreEqual(Errno.IsDirectory, ret,
+                    Assert.AreEqual(ErrorNumber.IsDirectory, ret,
                                     $"Got wrong data for directory \"{childPath}\" in {testFile}");
 
                     Assert.IsNotNull(child.Value.Children,
@@ -337,7 +338,7 @@ namespace Aaru.Tests.Filesystems
                 {
                     ret = fs.ReadLink(childPath, out string link);
 
-                    Assert.AreEqual(Errno.NoError, ret,
+                    Assert.AreEqual(ErrorNumber.NoError, ret,
                                     $"Got wrong data for symbolic link \"{childPath}\" in {testFile}");
 
                     Assert.AreEqual(child.Value.LinkTarget, link,
@@ -353,7 +354,7 @@ namespace Aaru.Tests.Filesystems
 
                 ret = fs.ListXAttr(childPath, out List<string> xattrs);
 
-                if(ret == Errno.NotSupported)
+                if(ret == ErrorNumber.NotSupported)
                 {
                     Assert.IsNull(child.Value.XattrsWithMd5,
                                   $"Defined extended attributes for \"{childPath}\" in {testFile} are not supported by filesystem.");
@@ -361,7 +362,7 @@ namespace Aaru.Tests.Filesystems
                     continue;
                 }
 
-                Assert.AreEqual(Errno.NoError, ret,
+                Assert.AreEqual(ErrorNumber.NoError, ret,
                                 $"Unexpected error {ret} when listing extended attributes for \"{childPath}\" in {testFile}");
 
                 if(xattrs.Count > 0)
@@ -382,10 +383,10 @@ namespace Aaru.Tests.Filesystems
 
         static void TestFile(IReadOnlyFilesystem fs, string path, string md5, long length, string testFile)
         {
-            byte[] buffer = new byte[length];
-            Errno  ret    = fs.Read(path, 0, length, ref buffer);
+            byte[]      buffer = new byte[length];
+            ErrorNumber ret    = fs.Read(path, 0, length, ref buffer);
 
-            Assert.AreEqual(Errno.NoError, ret, $"Unexpected error {ret} when reading \"{path}\" in {testFile}");
+            Assert.AreEqual(ErrorNumber.NoError, ret, $"Unexpected error {ret} when reading \"{path}\" in {testFile}");
 
             string data = Md5Context.Data(buffer, out _);
 
@@ -405,10 +406,10 @@ namespace Aaru.Tests.Filesystems
 
             foreach(KeyValuePair<string, string> xattr in xattrs)
             {
-                byte[] buffer = Array.Empty<byte>();
-                Errno  ret    = fs.GetXattr(path, xattr.Key, ref buffer);
+                byte[]      buffer = Array.Empty<byte>();
+                ErrorNumber ret    = fs.GetXattr(path, xattr.Key, ref buffer);
 
-                if(ret == Errno.NoSuchExtendedAttribute ||
+                if(ret == ErrorNumber.NoSuchExtendedAttribute ||
                    !contents.Contains(xattr.Key))
                 {
                     expectedNotFound.Add(xattr.Key);
@@ -418,7 +419,7 @@ namespace Aaru.Tests.Filesystems
 
                 contents.Remove(xattr.Key);
 
-                Assert.AreEqual(Errno.NoError, ret,
+                Assert.AreEqual(ErrorNumber.NoError, ret,
                                 $"Unexpected error {ret} retrieving extended attributes for \"{path}\" in {testFile}");
 
                 string data = Md5Context.Data(buffer, out _);

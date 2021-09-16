@@ -48,8 +48,8 @@ namespace Aaru.Filesystems
         const int BYTES_BEFORE_BLOCK_MAP = 64;
 
         /// <inheritdoc />
-        public Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding,
-                           Dictionary<string, string> options, string @namespace)
+        public ErrorNumber Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding,
+                                 Dictionary<string, string> options, string @namespace)
         {
             _device         = imagePlugin;
             _partitionStart = partition.Start;
@@ -68,7 +68,7 @@ namespace Aaru.Filesystems
             _volMdb.drSigWord = BigEndianBitConverter.ToUInt16(_mdbBlocks, 0x000);
 
             if(_volMdb.drSigWord != MFS_MAGIC)
-                return Errno.InvalidArgument;
+                return ErrorNumber.InvalidArgument;
 
             _volMdb.drCrDate   = BigEndianBitConverter.ToUInt32(_mdbBlocks, 0x002);
             _volMdb.drLsBkUp   = BigEndianBitConverter.ToUInt32(_mdbBlocks, 0x006);
@@ -158,7 +158,7 @@ namespace Aaru.Filesystems
             _sectorsPerBlock = (int)(_volMdb.drAlBlkSiz / _device.Info.SectorSize);
 
             if(!FillDirectory())
-                return Errno.InvalidArgument;
+                return ErrorNumber.InvalidArgument;
 
             _mounted = true;
 
@@ -192,11 +192,11 @@ namespace Aaru.Filesystems
             XmlFsType.Type                  = "MFS";
             XmlFsType.VolumeName            = _volMdb.drVN;
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />
-        public Errno Unmount()
+        public ErrorNumber Unmount()
         {
             _mounted      = false;
             _idToFilename = null;
@@ -204,11 +204,11 @@ namespace Aaru.Filesystems
             _filenameToId = null;
             _bootBlocks   = null;
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />
-        public Errno StatFs(out FileSystemInfo stat)
+        public ErrorNumber StatFs(out FileSystemInfo stat)
         {
             stat = new FileSystemInfo
             {
@@ -222,7 +222,7 @@ namespace Aaru.Filesystems
 
             stat.FreeFiles = uint.MaxValue - stat.Files;
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
     }
 }

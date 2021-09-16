@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using Aaru.Checksums;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.CommonTypes.Structs;
 using Aaru.Core;
 using Aaru.Tests.Filesystems;
 using FluentAssertions.Execution;
@@ -241,10 +241,10 @@ namespace Aaru.Tests.Images
 
                                         Errno error = fs.Mount(image, partitions[i], null, null, null);
 
-                                        Assert.AreEqual(Errno.NoError, error,
+                                        Assert.AreEqual(ErrorNumber.NoError, error,
                                                         $"Could not mount {pluginName} in partition {i}.");
 
-                                        if(error != Errno.NoError)
+                                        if(error != ErrorNumber.NoError)
                                             continue;
 
                                         expectedData[j] = new VolumeData
@@ -282,12 +282,12 @@ namespace Aaru.Tests.Images
                                     Assert.IsNotNull(fs,
                                                      $"Could not instantiate filesystem {pluginName} in {testFile}");
 
-                                    Errno error = fs.Mount(image, partitions[i], null, null, null);
+                                    ErrorNumber error = fs.Mount(image, partitions[i], null, null, null);
 
-                                    Assert.AreEqual(Errno.NoError, error,
+                                    Assert.AreEqual(ErrorNumber.NoError, error,
                                                     $"Could not mount {pluginName} in partition {i} in {testFile}.");
 
-                                    if(error != Errno.NoError)
+                                    if(error != ErrorNumber.NoError)
                                         continue;
 
                                     VolumeData volumeData = expectedData[j];

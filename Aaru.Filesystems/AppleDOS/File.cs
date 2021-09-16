@@ -34,6 +34,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 using Aaru.Helpers;
 using FileAttributes = Aaru.CommonTypes.Structs.FileAttributes;
@@ -43,12 +44,12 @@ namespace Aaru.Filesystems
     public sealed partial class AppleDOS
     {
         /// <inheritdoc />
-        public Errno GetAttributes(string path, out FileAttributes attributes)
+        public ErrorNumber GetAttributes(string path, out FileAttributes attributes)
         {
             attributes = new FileAttributes();
 
             if(!_mounted)
-                return Errno.AccessDenied;
+                return ErrorNumber.AccessDenied;
 
             string[] pathElements = path.Split(new[]
             {
@@ -56,12 +57,12 @@ namespace Aaru.Filesystems
             }, StringSplitOptions.RemoveEmptyEntries);
 
             if(pathElements.Length != 1)
-                return Errno.NotSupported;
+                return ErrorNumber.NotSupported;
 
             string filename = pathElements[0].ToUpperInvariant();
 
             if(!_fileCache.ContainsKey(filename))
-                return Errno.NoSuchFile;
+                return ErrorNumber.NoSuchFile;
 
             attributes =  FileAttributes.Extents;
             attributes |= FileAttributes.File;
@@ -74,14 +75,14 @@ namespace Aaru.Filesystems
                           string.Compare(path, "$Vtoc", StringComparison.InvariantCulture) == 0))
                 attributes |= FileAttributes.System;
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />
-        public Errno Read(string path, long offset, long size, ref byte[] buf)
+        public ErrorNumber Read(string path, long offset, long size, ref byte[] buf)
         {
             if(!_mounted)
-                return Errno.AccessDenied;
+                return ErrorNumber.AccessDenied;
 
             string[] pathElements = path.Split(new[]
             {
@@ -89,13 +90,13 @@ namespace Aaru.Filesystems
             }, StringSplitOptions.RemoveEmptyEntries);
 
             if(pathElements.Length != 1)
-                return Errno.NotSupported;
+                return ErrorNumber.NotSupported;
 
             byte[] file;
             string filename = pathElements[0].ToUpperInvariant();
 
             if(filename.Length > 30)
-                return Errno.NameTooLong;
+                return ErrorNumber.NameTooLong;
 
             if(_debug && (string.Compare(path, "$", StringComparison.InvariantCulture)     == 0 ||
                           string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0 ||
@@ -110,18 +111,18 @@ namespace Aaru.Filesystems
             {
                 if(!_fileCache.TryGetValue(filename, out file))
                 {
-                    Errno error = CacheFile(filename);
+                    ErrorNumber error = CacheFile(filename);
 
-                    if(error != Errno.NoError)
+                    if(error != ErrorNumber.NoError)
                         return error;
 
                     if(!_fileCache.TryGetValue(filename, out file))
-                        return Errno.InvalidArgument;
+                        return ErrorNumber.InvalidArgument;
                 }
             }
 
             if(offset >= file.Length)
-                return Errno.InvalidArgument;
+                return ErrorNumber.InvalidArgument;
 
             if(size + offset >= file.Length)
                 size = file.Length - offset;
@@ -130,16 +131,16 @@ namespace Aaru.Filesystems
 
             Array.Copy(file, offset, buf, 0, size);
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />
-        public Errno Stat(string path, out FileEntryInfo stat)
+        public ErrorNumber Stat(string path, out FileEntryInfo stat)
         {
             stat = null;
 
             if(!_mounted)
-                return Errno.AccessDenied;
+                return ErrorNumber.AccessDenied;
 
             string[] pathElements = path.Split(new[]
             {
@@ -147,15 +148,15 @@ namespace Aaru.Filesystems
             }, StringSplitOptions.RemoveEmptyEntries);
 
             if(pathElements.Length != 1)
-                return Errno.NotSupported;
+                return ErrorNumber.NotSupported;
 
             string filename = pathElements[0].ToUpperInvariant();
 
             if(filename.Length > 30)
-                return Errno.NameTooLong;
+                return ErrorNumber.NameTooLong;
 
             if(!_fileCache.ContainsKey(filename))
-                return Errno.NoSuchFile;
+                return ErrorNumber.NoSuchFile;
 
             stat = new FileEntryInfo();
 
@@ -185,19 +186,19 @@ namespace Aaru.Filesystems
             stat.BlockSize  = _vtoc.bytesPerSector;
             stat.Links      = 1;
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />
-        public Errno MapBlock(string path, long fileBlock, out long deviceBlock)
+        public ErrorNumber MapBlock(string path, long fileBlock, out long deviceBlock)
         {
             deviceBlock = 0;
 
             // TODO: Not really important.
-            return !_mounted ? Errno.AccessDenied : Errno.NotImplemented;
+            return !_mounted ? ErrorNumber.AccessDenied : ErrorNumber.NotImplemented;
         }
 
-        Errno CacheFile(string path)
+        ErrorNumber CacheFile(string path)
         {
             string[] pathElements = path.Split(new[]
             {
@@ -205,15 +206,15 @@ namespace Aaru.Filesystems
             }, StringSplitOptions.RemoveEmptyEntries);
 
             if(pathElements.Length != 1)
-                return Errno.NotSupported;
+                return ErrorNumber.NotSupported;
 
             string filename = pathElements[0].ToUpperInvariant();
 
             if(filename.Length > 30)
-                return Errno.NameTooLong;
+                return ErrorNumber.NameTooLong;
 
             if(!_catalogCache.TryGetValue(filename, out ushort ts))
-                return Errno.NoSuchFile;
+                return ErrorNumber.NoSuchFile;
 
             ulong  lba           = (ulong)((((ts & 0xFF00) >> 8) * _sectorsPerTrack) + (ts & 0xFF));
             var    fileMs        = new MemoryStream();
@@ -266,15 +267,16 @@ namespace Aaru.Filesystems
             _fileCache.Add(filename, fileMs.ToArray());
             _extentCache.Add(filename, tsListMs.ToArray());
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
 
-        Errno CacheAllFiles()
+        ErrorNumber CacheAllFiles()
         {
             _fileCache   = new Dictionary<string, byte[]>();
             _extentCache = new Dictionary<string, byte[]>();
 
-            foreach(Errno error in _catalogCache.Keys.Select(CacheFile).Where(error => error != Errno.NoError))
+            foreach(ErrorNumber error in _catalogCache.Keys.Select(CacheFile).
+                                                       Where(error => error != ErrorNumber.NoError))
                 return error;
 
             uint tracksOnBoot = 1;
@@ -288,7 +290,7 @@ namespace Aaru.Filesystems
             _bootBlocks  =  _device.ReadSectors(0, (uint)(tracksOnBoot * _sectorsPerTrack));
             _usedSectors += (uint)(_bootBlocks.Length / _vtoc.bytesPerSector);
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
     }
 }

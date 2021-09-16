@@ -33,7 +33,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Aaru.CommonTypes.Structs;
+using Aaru.CommonTypes.Enums;
 using Aaru.Helpers;
 
 namespace Aaru.Filesystems
@@ -41,19 +41,19 @@ namespace Aaru.Filesystems
     public sealed partial class XboxFatPlugin
     {
         /// <inheritdoc />
-        public Errno ReadDir(string path, out List<string> contents)
+        public ErrorNumber ReadDir(string path, out List<string> contents)
         {
             contents = null;
 
             if(!_mounted)
-                return Errno.AccessDenied;
+                return ErrorNumber.AccessDenied;
 
             if(string.IsNullOrWhiteSpace(path) ||
                path == "/")
             {
                 contents = _rootDirectory.Keys.ToList();
 
-                return Errno.NoError;
+                return ErrorNumber.NoError;
             }
 
             string cutPath = path.StartsWith('/') ? path.Substring(1).ToLower(_cultureInfo)
@@ -63,7 +63,7 @@ namespace Aaru.Filesystems
             {
                 contents = currentDirectory.Keys.ToList();
 
-                return Errno.NoError;
+                return ErrorNumber.NoError;
             }
 
             string[] pieces = cutPath.Split(new[]
@@ -75,10 +75,10 @@ namespace Aaru.Filesystems
                 _rootDirectory.FirstOrDefault(t => t.Key.ToLower(_cultureInfo) == pieces[0]);
 
             if(string.IsNullOrEmpty(entry.Key))
-                return Errno.NoSuchFile;
+                return ErrorNumber.NoSuchFile;
 
             if(!entry.Value.attributes.HasFlag(Attributes.Directory))
-                return Errno.NotDirectory;
+                return ErrorNumber.NotDirectory;
 
             string currentPath = pieces[0];
 
@@ -89,10 +89,10 @@ namespace Aaru.Filesystems
                 entry = currentDirectory.FirstOrDefault(t => t.Key.ToLower(_cultureInfo) == pieces[p]);
 
                 if(string.IsNullOrEmpty(entry.Key))
-                    return Errno.NoSuchFile;
+                    return ErrorNumber.NoSuchFile;
 
                 if(!entry.Value.attributes.HasFlag(Attributes.Directory))
-                    return Errno.NotDirectory;
+                    return ErrorNumber.NotDirectory;
 
                 currentPath = p == 0 ? pieces[0] : $"{currentPath}/{pieces[p]}";
                 uint currentCluster = entry.Value.firstCluster;
@@ -103,7 +103,7 @@ namespace Aaru.Filesystems
                 uint[] clusters = GetClusters(currentCluster);
 
                 if(clusters is null)
-                    return Errno.InvalidArgument;
+                    return ErrorNumber.InvalidArgument;
 
                 byte[] directoryBuffer = new byte[_bytesPerCluster * clusters.Length];
 
@@ -150,7 +150,7 @@ namespace Aaru.Filesystems
 
             contents = currentDirectory?.Keys.ToList();
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
     }
 }

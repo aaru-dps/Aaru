@@ -41,7 +41,6 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Interop;
-using Aaru.CommonTypes.Structs;
 using Aaru.CommonTypes.Structs.Devices.SCSI;
 using Aaru.Console;
 using Aaru.Core;
@@ -624,11 +623,11 @@ namespace Aaru.Gui.ViewModels.Windows
 
                                             if(fsPlugin != null)
                                             {
-                                                Errno error =
+                                                ErrorNumber error =
                                                     fsPlugin.Mount(imageFormat, partition, null,
                                                                    new Dictionary<string, string>(), null);
 
-                                                if(error != Errno.NoError)
+                                                if(error != ErrorNumber.NoError)
                                                     fsPlugin = null;
                                             }
 
@@ -693,10 +692,10 @@ namespace Aaru.Gui.ViewModels.Windows
 
                                     if(fsPlugin != null)
                                     {
-                                        Errno error = fsPlugin.Mount(imageFormat, wholePart, null,
-                                                                     new Dictionary<string, string>(), null);
+                                        ErrorNumber error = fsPlugin.Mount(imageFormat, wholePart, null,
+                                                                           new Dictionary<string, string>(), null);
 
-                                        if(error != Errno.NoError)
+                                        if(error != ErrorNumber.NoError)
                                             fsPlugin = null;
                                     }
 

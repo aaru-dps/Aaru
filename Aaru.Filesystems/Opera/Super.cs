@@ -33,6 +33,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Helpers;
@@ -43,8 +44,8 @@ namespace Aaru.Filesystems
     public sealed partial class OperaFS
     {
         /// <inheritdoc />
-        public Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding,
-                           Dictionary<string, string> options, string @namespace)
+        public ErrorNumber Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding,
+                                 Dictionary<string, string> options, string @namespace)
         {
             // TODO: Find correct default encoding
             Encoding = Encoding.ASCII;
@@ -60,10 +61,10 @@ namespace Aaru.Filesystems
 
             if(sb.record_type    != 1 ||
                sb.record_version != 1)
-                return Errno.InvalidArgument;
+                return ErrorNumber.InvalidArgument;
 
             if(Encoding.ASCII.GetString(sb.sync_bytes) != SYNC)
-                return Errno.InvalidArgument;
+                return ErrorNumber.InvalidArgument;
 
             if(imagePlugin.Info.SectorSize == 2336 ||
                imagePlugin.Info.SectorSize == 2352 ||
@@ -102,31 +103,31 @@ namespace Aaru.Filesystems
             _directoryCache     = new Dictionary<string, Dictionary<string, DirectoryEntryWithPointers>>();
             _mounted            = true;
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />
-        public Errno Unmount()
+        public ErrorNumber Unmount()
         {
             if(!_mounted)
-                return Errno.AccessDenied;
+                return ErrorNumber.AccessDenied;
 
             _mounted = false;
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />
-        public Errno StatFs(out FileSystemInfo stat)
+        public ErrorNumber StatFs(out FileSystemInfo stat)
         {
             stat = null;
 
             if(!_mounted)
-                return Errno.AccessDenied;
+                return ErrorNumber.AccessDenied;
 
             stat = _statfs.ShallowCopy();
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
     }
 }

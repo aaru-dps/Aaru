@@ -157,7 +157,7 @@ namespace Aaru.Commands.Image
                 {
                     AaruConsole.ErrorWriteLine("You cannot use --tape option when input is a file.");
 
-                    return (int)ErrorNumber.ExpectedDirectory;
+                    return (int)ErrorNumber.NotDirectory;
                 }
 
                 var     filtersList = new FiltersList();
@@ -317,7 +317,7 @@ namespace Aaru.Commands.Image
                 {
                     AaruConsole.ErrorWriteLine("Cannot create a sidecar from a directory.");
 
-                    return (int)ErrorNumber.ExpectedFile;
+                    return (int)ErrorNumber.IsDirectory;
                 }
 
                 string[]     contents = Directory.GetFiles(imagePath, "*", SearchOption.TopDirectoryOnly);

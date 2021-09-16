@@ -34,6 +34,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Console;
@@ -47,9 +48,9 @@ namespace Aaru.Core
         {
             var contents = new FilesystemContentsType();
 
-            Errno ret = filesystem.ReadDir("/", out List<string> dirents);
+            ErrorNumber ret = filesystem.ReadDir("/", out List<string> dirents);
 
-            if(ret != Errno.NoError)
+            if(ret != ErrorNumber.NoError)
                 return null;
 
             List<DirectoryType>    directories = new();
@@ -59,7 +60,7 @@ namespace Aaru.Core
             {
                 ret = filesystem.Stat(dirent, out FileEntryInfo stat);
 
-                if(ret != Errno.NoError)
+                if(ret != ErrorNumber.NoError)
                 {
                     AaruConsole.DebugWriteLine("Create-Sidecar command", "Cannot stat {0}", dirent);
 
@@ -150,9 +151,9 @@ namespace Aaru.Core
                 directory.statusChangeTimeSpecified = true;
             }
 
-            Errno ret = filesystem.ReadDir(path + "/" + filename, out List<string> dirents);
+            ErrorNumber ret = filesystem.ReadDir(path + "/" + filename, out List<string> dirents);
 
-            if(ret != Errno.NoError)
+            if(ret != ErrorNumber.NoError)
                 return null;
 
             List<DirectoryType>    directories = new();
@@ -162,7 +163,7 @@ namespace Aaru.Core
             {
                 ret = filesystem.Stat(path + "/" + filename + "/" + dirent, out FileEntryInfo entryStat);
 
-                if(ret != Errno.NoError)
+                if(ret != ErrorNumber.NoError)
                 {
                     AaruConsole.DebugWriteLine("Create-Sidecar command", "Cannot stat {0}", dirent);
 
@@ -292,9 +293,9 @@ namespace Aaru.Core
             else
                 file.Checksums = _emptyChecksums;
 
-            Errno ret = filesystem.ListXAttr(path + "/" + filename, out List<string> xattrs);
+            ErrorNumber ret = filesystem.ListXAttr(path + "/" + filename, out List<string> xattrs);
 
-            if(ret != Errno.NoError)
+            if(ret != ErrorNumber.NoError)
                 return file;
 
             List<ExtendedAttributeType> xattrTypes = new();
@@ -303,7 +304,7 @@ namespace Aaru.Core
             {
                 ret = filesystem.GetXattr(path + "/" + filename, xattr, ref data);
 
-                if(ret != Errno.NoError)
+                if(ret != ErrorNumber.NoError)
                     continue;
 
                 var xattrChkWorker = new Checksum();

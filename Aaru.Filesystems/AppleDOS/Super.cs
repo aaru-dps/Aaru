@@ -32,6 +32,7 @@
 
 using System.Collections.Generic;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Console;
@@ -45,8 +46,8 @@ namespace Aaru.Filesystems
     public sealed partial class AppleDOS
     {
         /// <inheritdoc />
-        public Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding,
-                           Dictionary<string, string> options, string @namespace)
+        public ErrorNumber Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding,
+                                 Dictionary<string, string> options, string @namespace)
         {
             _device  = imagePlugin;
             _start   = partition.Start;
@@ -57,21 +58,21 @@ namespace Aaru.Filesystems
             {
                 AaruConsole.DebugWriteLine("Apple DOS plugin", "Incorrect device size.");
 
-                return Errno.InOutError;
+                return ErrorNumber.InOutError;
             }
 
             if(_start > 0)
             {
                 AaruConsole.DebugWriteLine("Apple DOS plugin", "Partitions are not supported.");
 
-                return Errno.InOutError;
+                return ErrorNumber.InOutError;
             }
 
             if(_device.Info.SectorSize != 256)
             {
                 AaruConsole.DebugWriteLine("Apple DOS plugin", "Incorrect sector size.");
 
-                return Errno.InOutError;
+                return ErrorNumber.InOutError;
             }
 
             _sectorsPerTrack = _device.Info.Sectors == 455 ? 13 : 16;
@@ -84,9 +85,9 @@ namespace Aaru.Filesystems
             _track2UsedByFiles = false;
             _usedSectors       = 1;
 
-            Errno error = ReadCatalog();
+            ErrorNumber error = ReadCatalog();
 
-            if(error != Errno.NoError)
+            if(error != ErrorNumber.NoError)
             {
                 AaruConsole.DebugWriteLine("Apple DOS plugin", "Unable to read catalog.");
 
@@ -95,7 +96,7 @@ namespace Aaru.Filesystems
 
             error = CacheAllFiles();
 
-            if(error != Errno.NoError)
+            if(error != ErrorNumber.NoError)
             {
                 AaruConsole.DebugWriteLine("Apple DOS plugin", "Unable cache all files.");
 
@@ -123,11 +124,11 @@ namespace Aaru.Filesystems
 
             _mounted = true;
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />
-        public Errno Unmount()
+        public ErrorNumber Unmount()
         {
             _mounted       = false;
             _extentCache   = null;
@@ -135,11 +136,11 @@ namespace Aaru.Filesystems
             _catalogCache  = null;
             _fileSizeCache = null;
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />
-        public Errno StatFs(out FileSystemInfo stat)
+        public ErrorNumber StatFs(out FileSystemInfo stat)
         {
             stat = new FileSystemInfo
             {
@@ -153,7 +154,7 @@ namespace Aaru.Filesystems
             stat.FreeFiles  = _totalFileEntries - stat.Files;
             stat.FreeBlocks = stat.Blocks       - _usedSectors;
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
     }
 }

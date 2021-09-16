@@ -227,10 +227,10 @@ namespace Aaru.Tests.Images
 
                                     track.FileSystems[i].Encoding ??= Encoding.ASCII;
 
-                                    Errno ret = rofs.Mount(image, partition, track.FileSystems[i].Encoding, null,
-                                                           track.FileSystems[i].Namespace);
+                                    ErrorNumber ret = rofs.Mount(image, partition, track.FileSystems[i].Encoding, null,
+                                                                 track.FileSystems[i].Namespace);
 
-                                    Assert.AreEqual(Errno.NoError, ret, $"Unmountable: {testFile}");
+                                    Assert.AreEqual(ErrorNumber.NoError, ret, $"Unmountable: {testFile}");
 
                                     var serializer = new JsonSerializer
                                     {

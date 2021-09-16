@@ -32,8 +32,8 @@
 
 using System;
 using System.IO;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.CommonTypes.Structs;
 using SharpCompress.Compressors;
 using SharpCompress.Compressors.LZMA;
 
@@ -111,7 +111,7 @@ namespace Aaru.Filters
         }
 
         /// <inheritdoc />
-        public Errno Open(byte[] buffer)
+        public ErrorNumber Open(byte[] buffer)
         {
             _dataStream    = new MemoryStream(buffer);
             BasePath       = null;
@@ -121,11 +121,11 @@ namespace Aaru.Filters
 
             _innerStream = new ForcedSeekStream<LZipStream>(DataForkLength, _dataStream, CompressionMode.Decompress);
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />
-        public Errno Open(Stream stream)
+        public ErrorNumber Open(Stream stream)
         {
             _dataStream   = stream;
             BasePath      = null;
@@ -138,11 +138,11 @@ namespace Aaru.Filters
             _dataStream.Seek(0, SeekOrigin.Begin);
             _innerStream = new ForcedSeekStream<LZipStream>(DataForkLength, _dataStream, CompressionMode.Decompress);
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />
-        public Errno Open(string path)
+        public ErrorNumber Open(string path)
         {
             _dataStream = new FileStream(path, FileMode.Open, FileAccess.Read);
             BasePath    = System.IO.Path.GetFullPath(path);
@@ -157,7 +157,7 @@ namespace Aaru.Filters
             _dataStream.Seek(0, SeekOrigin.Begin);
             _innerStream = new ForcedSeekStream<LZipStream>(DataForkLength, _dataStream, CompressionMode.Decompress);
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />

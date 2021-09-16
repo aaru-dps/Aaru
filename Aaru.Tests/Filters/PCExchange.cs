@@ -28,6 +28,7 @@
 
 using System.IO;
 using Aaru.Checksums;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using NUnit.Framework;
@@ -95,7 +96,7 @@ namespace Aaru.Tests.Filters
         public void Test()
         {
             IFilter filter = new Aaru.Filters.PcExchange();
-            Assert.AreEqual(Errno.NoError, filter.Open(_location));
+            Assert.AreEqual(ErrorNumber.NoError, filter.Open(_location));
             Assert.AreEqual(737280, filter.DataForkLength);
             Assert.AreNotEqual(null, filter.GetDataForkStream());
             Assert.AreEqual(546, filter.ResourceForkLength);

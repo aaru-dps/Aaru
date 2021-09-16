@@ -43,12 +43,12 @@ namespace Aaru.Filesystems
     public sealed partial class AppleMFS
     {
         /// <inheritdoc />
-        public Errno ListXAttr(string path, out List<string> xattrs)
+        public ErrorNumber ListXAttr(string path, out List<string> xattrs)
         {
             xattrs = null;
 
             if(!_mounted)
-                return Errno.AccessDenied;
+                return ErrorNumber.AccessDenied;
 
             string[] pathElements = path.Split(new[]
             {
@@ -56,7 +56,7 @@ namespace Aaru.Filesystems
             }, StringSplitOptions.RemoveEmptyEntries);
 
             if(pathElements.Length != 1)
-                return Errno.NotSupported;
+                return ErrorNumber.NotSupported;
 
             path = pathElements[0];
 
@@ -71,14 +71,14 @@ namespace Aaru.Filesystems
                     if(_device.Info.ReadableSectorTags.Contains(SectorTagType.AppleSectorTag))
                         xattrs.Add("com.apple.macintosh.tags");
 
-                    return Errno.NoError;
+                    return ErrorNumber.NoError;
                 }
 
             if(!_filenameToId.TryGetValue(path.ToLowerInvariant(), out uint fileId))
-                return Errno.NoSuchFile;
+                return ErrorNumber.NoSuchFile;
 
             if(!_idToEntry.TryGetValue(fileId, out FileEntry entry))
-                return Errno.NoSuchFile;
+                return ErrorNumber.NoSuchFile;
 
             if(entry.flRLgLen > 0)
             {
@@ -97,14 +97,14 @@ namespace Aaru.Filesystems
 
             xattrs.Sort();
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />
-        public Errno GetXattr(string path, string xattr, ref byte[] buf)
+        public ErrorNumber GetXattr(string path, string xattr, ref byte[] buf)
         {
             if(!_mounted)
-                return Errno.AccessDenied;
+                return ErrorNumber.AccessDenied;
 
             string[] pathElements = path.Split(new[]
             {
@@ -112,7 +112,7 @@ namespace Aaru.Filesystems
             }, StringSplitOptions.RemoveEmptyEntries);
 
             if(pathElements.Length != 1)
-                return Errno.NotSupported;
+                return ErrorNumber.NotSupported;
 
             path = pathElements[0];
 
@@ -129,7 +129,7 @@ namespace Aaru.Filesystems
                             buf = new byte[_directoryTags.Length];
                             Array.Copy(_directoryTags, 0, buf, 0, buf.Length);
 
-                            return Errno.NoError;
+                            return ErrorNumber.NoError;
                         }
 
                         if(string.Compare(path, "$Bitmap", StringComparison.InvariantCulture) == 0)
@@ -137,7 +137,7 @@ namespace Aaru.Filesystems
                             buf = new byte[_bitmapTags.Length];
                             Array.Copy(_bitmapTags, 0, buf, 0, buf.Length);
 
-                            return Errno.NoError;
+                            return ErrorNumber.NoError;
                         }
 
                         if(string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0)
@@ -145,7 +145,7 @@ namespace Aaru.Filesystems
                             buf = new byte[_bootTags.Length];
                             Array.Copy(_bootTags, 0, buf, 0, buf.Length);
 
-                            return Errno.NoError;
+                            return ErrorNumber.NoError;
                         }
 
                         if(string.Compare(path, "$MDB", StringComparison.InvariantCulture) == 0)
@@ -153,19 +153,19 @@ namespace Aaru.Filesystems
                             buf = new byte[_mdbTags.Length];
                             Array.Copy(_mdbTags, 0, buf, 0, buf.Length);
 
-                            return Errno.NoError;
+                            return ErrorNumber.NoError;
                         }
                     }
                     else
-                        return Errno.NoSuchExtendedAttribute;
+                        return ErrorNumber.NoSuchExtendedAttribute;
 
-            Errno error;
+            ErrorNumber error;
 
             if(!_filenameToId.TryGetValue(path.ToLowerInvariant(), out uint fileId))
-                return Errno.NoSuchFile;
+                return ErrorNumber.NoSuchFile;
 
             if(!_idToEntry.TryGetValue(fileId, out FileEntry entry))
-                return Errno.NoSuchFile;
+                return ErrorNumber.NoSuchFile;
 
             if(entry.flRLgLen                                                                     > 0 &&
                string.Compare(xattr, "com.apple.ResourceFork", StringComparison.InvariantCulture) == 0)
@@ -187,13 +187,13 @@ namespace Aaru.Filesystems
             {
                 buf = Marshal.StructureToByteArrayBigEndian(entry.flUsrWds);
 
-                return Errno.NoError;
+                return ErrorNumber.NoError;
             }
 
             if(!_debug                                                                 ||
                !_device.Info.ReadableSectorTags.Contains(SectorTagType.AppleSectorTag) ||
                string.Compare(xattr, "com.apple.macintosh.tags", StringComparison.InvariantCulture) != 0)
-                return Errno.NoSuchExtendedAttribute;
+                return ErrorNumber.NoSuchExtendedAttribute;
 
             error = ReadFile(path, out buf, false, true);
 

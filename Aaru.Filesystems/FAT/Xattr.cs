@@ -35,7 +35,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using Aaru.CommonTypes.Structs;
+using Aaru.CommonTypes.Enums;
 using Aaru.Helpers;
 
 namespace Aaru.Filesystems
@@ -45,17 +45,17 @@ namespace Aaru.Filesystems
         Dictionary<string, Dictionary<string, byte[]>> _eaCache;
 
         /// <inheritdoc />
-        public Errno ListXAttr(string path, out List<string> xattrs)
+        public ErrorNumber ListXAttr(string path, out List<string> xattrs)
         {
             xattrs = null;
 
             if(!_mounted)
-                return Errno.AccessDenied;
+                return ErrorNumber.AccessDenied;
 
             // No other xattr recognized yet
             if(_cachedEaData is null &&
                !_fat32)
-                return Errno.NotSupported;
+                return ErrorNumber.NotSupported;
 
             if(path[0] == '/')
                 path = path.Substring(1);
@@ -64,12 +64,12 @@ namespace Aaru.Filesystems
             {
                 xattrs = eas.Keys.ToList();
 
-                return Errno.NoError;
+                return ErrorNumber.NoError;
             }
 
-            Errno err = GetFileEntry(path, out CompleteDirectoryEntry entry);
+            ErrorNumber err = GetFileEntry(path, out CompleteDirectoryEntry entry);
 
-            if(err != Errno.NoError ||
+            if(err != ErrorNumber.NoError ||
                entry is null)
                 return err;
 
@@ -78,54 +78,54 @@ namespace Aaru.Filesystems
             if(!_fat32)
             {
                 if(entry.Dirent.ea_handle == 0)
-                    return Errno.NoError;
+                    return ErrorNumber.NoError;
 
                 eas = GetEas(entry.Dirent.ea_handle);
             }
             else
             {
                 if(entry.Fat32Ea.start_cluster == 0)
-                    return Errno.NoError;
+                    return ErrorNumber.NoError;
 
                 eas = GetEas(entry.Fat32Ea);
             }
 
             if(eas is null)
-                return Errno.NoError;
+                return ErrorNumber.NoError;
 
             _eaCache.Add(path.ToLower(_cultureInfo), eas);
             xattrs = eas.Keys.ToList();
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />
-        public Errno GetXattr(string path, string xattr, ref byte[] buf)
+        public ErrorNumber GetXattr(string path, string xattr, ref byte[] buf)
         {
             if(!_mounted)
-                return Errno.AccessDenied;
+                return ErrorNumber.AccessDenied;
 
-            Errno err = ListXAttr(path, out List<string> xattrs);
+            ErrorNumber err = ListXAttr(path, out List<string> xattrs);
 
-            if(err != Errno.NoError)
+            if(err != ErrorNumber.NoError)
                 return err;
 
             if(path[0] == '/')
                 path = path.Substring(1);
 
             if(!xattrs.Contains(xattr.ToLower(_cultureInfo)))
-                return Errno.NoSuchExtendedAttribute;
+                return ErrorNumber.NoSuchExtendedAttribute;
 
             if(!_eaCache.TryGetValue(path.ToLower(_cultureInfo), out Dictionary<string, byte[]> eas))
-                return Errno.InvalidArgument;
+                return ErrorNumber.InvalidArgument;
 
             if(!eas.TryGetValue(xattr.ToLower(_cultureInfo), out byte[] data))
-                return Errno.InvalidArgument;
+                return ErrorNumber.InvalidArgument;
 
             buf = new byte[data.Length];
             data.CopyTo(buf, 0);
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
 
         Dictionary<string, byte[]> GetEas(DirectoryEntry entryFat32Ea)
@@ -189,7 +189,7 @@ namespace Aaru.Filesystems
                eaData.Length < 4)
                 return null;
 
-            Dictionary<string, byte[]> eas = new Dictionary<string, byte[]>();
+            Dictionary<string, byte[]> eas = new();
 
             if(_debug)
                 eas.Add("com.microsoft.os2.fea", eaData);

@@ -32,7 +32,6 @@
 
 using System;
 using Aaru.CommonTypes.Enums;
-using Aaru.CommonTypes.Structs;
 using Aaru.Console;
 using Aaru.Decoders;
 using Aaru.Helpers;
@@ -42,42 +41,42 @@ namespace Aaru.Filesystems.LisaFS
     public sealed partial class LisaFS
     {
         /// <inheritdoc />
-        public Errno MapBlock(string path, long fileBlock, out long deviceBlock)
+        public ErrorNumber MapBlock(string path, long fileBlock, out long deviceBlock)
         {
             deviceBlock = 0;
 
             // TODO: Not really important.
-            return Errno.NotImplemented;
+            return ErrorNumber.NotImplemented;
         }
 
         /// <summary>Searches the disk for an extents file (or gets it from cache)</summary>
         /// <returns>Error.</returns>
         /// <param name="fileId">File identifier.</param>
         /// <param name="file">Extents file.</param>
-        Errno ReadExtentsFile(short fileId, out ExtentFile file)
+        ErrorNumber ReadExtentsFile(short fileId, out ExtentFile file)
         {
             file = new ExtentFile();
 
             if(!_mounted)
-                return Errno.AccessDenied;
+                return ErrorNumber.AccessDenied;
 
             if(fileId < 4 ||
                (fileId == 4 && _mddf.fsversion != LISA_V2 && _mddf.fsversion != LISA_V1))
-                return Errno.InvalidArgument;
+                return ErrorNumber.InvalidArgument;
 
             if(_extentCache.TryGetValue(fileId, out file))
-                return Errno.NoError;
+                return ErrorNumber.NoError;
 
             // A file ID that cannot be stored in the S-Records File
             if(fileId >= _srecords.Length)
-                return Errno.InvalidArgument;
+                return ErrorNumber.InvalidArgument;
 
             ulong ptr = _srecords[fileId].extent_ptr;
 
             // An invalid pointer denotes file does not exist
             if(ptr == 0xFFFFFFFF ||
                ptr == 0x00000000)
-                return Errno.NoSuchFile;
+                return ErrorNumber.NoSuchFile;
 
             // Pointers are relative to MDDF
             ptr += _mddf.mddf_block + _volumePrefix;
@@ -105,20 +104,20 @@ namespace Aaru.Filesystems.LisaFS
                 }
 
                 if(!found)
-                    return Errno.InvalidArgument;
+                    return ErrorNumber.InvalidArgument;
             }
 
             // Checks that the sector tag indicates its the Extents File we are searching for
             DecodeTag(_device.ReadSectorTag(ptr, SectorTagType.AppleSectorTag), out extTag);
 
             if(extTag.FileId != (short)(-1 * fileId))
-                return Errno.NoSuchFile;
+                return ErrorNumber.NoSuchFile;
 
             byte[] sector = _mddf.fsversion == LISA_V1 ? _device.ReadSectors(ptr, 2) : _device.ReadSector(ptr);
 
             if(sector[0] >= 32 ||
                sector[0] == 0)
-                return Errno.InvalidArgument;
+                return ErrorNumber.InvalidArgument;
 
             file.filenameLen = sector[0];
             file.filename    = new byte[file.filenameLen];
@@ -197,10 +196,10 @@ namespace Aaru.Filesystems.LisaFS
             _extentCache.Add(fileId, file);
 
             if(!_debug)
-                return Errno.NoError;
+                return ErrorNumber.NoError;
 
             if(_printedExtents.Contains(fileId))
-                return Errno.NoError;
+                return ErrorNumber.NoError;
 
             AaruConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].filenameLen = {1}", fileId, file.filenameLen);
 
@@ -277,14 +276,14 @@ namespace Aaru.Filesystems.LisaFS
 
             _printedExtents.Add(fileId);
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
 
         /// <summary>Reads all the S-Records and caches it</summary>
-        Errno ReadSRecords()
+        ErrorNumber ReadSRecords()
         {
             if(!_mounted)
-                return Errno.AccessDenied;
+                return ErrorNumber.AccessDenied;
 
             // Searches the S-Records place using MDDF pointers
             byte[] sectors = _device.ReadSectors(_mddf.srec_ptr + _mddf.mddf_block + _volumePrefix, _mddf.srec_len);
@@ -301,7 +300,7 @@ namespace Aaru.Filesystems.LisaFS
                     flags      = BigEndianBitConverter.ToUInt16(sectors, 0x0C + (14 * s))
                 };
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
     }
 }

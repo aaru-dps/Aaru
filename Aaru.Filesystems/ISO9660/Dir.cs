@@ -37,7 +37,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
-using Aaru.CommonTypes.Structs;
+using Aaru.CommonTypes.Enums;
 using Aaru.Helpers;
 
 namespace Aaru.Filesystems
@@ -47,19 +47,19 @@ namespace Aaru.Filesystems
         Dictionary<string, Dictionary<string, DecodedDirectoryEntry>> _directoryCache;
 
         /// <inheritdoc />
-        public Errno ReadDir(string path, out List<string> contents)
+        public ErrorNumber ReadDir(string path, out List<string> contents)
         {
             contents = null;
 
             if(!_mounted)
-                return Errno.AccessDenied;
+                return ErrorNumber.AccessDenied;
 
             if(string.IsNullOrWhiteSpace(path) ||
                path == "/")
             {
                 contents = GetFilenames(_rootDirectoryCache);
 
-                return Errno.NoError;
+                return ErrorNumber.NoError;
             }
 
             string cutPath = path.StartsWith("/", StringComparison.Ordinal)
@@ -70,7 +70,7 @@ namespace Aaru.Filesystems
             {
                 contents = currentDirectory.Keys.ToList();
 
-                return Errno.NoError;
+                return ErrorNumber.NoError;
             }
 
             string[] pieces = cutPath.Split(new[]
@@ -82,10 +82,10 @@ namespace Aaru.Filesystems
                 _rootDirectoryCache.FirstOrDefault(t => t.Key.ToLower(CultureInfo.CurrentUICulture) == pieces[0]);
 
             if(string.IsNullOrEmpty(entry.Key))
-                return Errno.NoSuchFile;
+                return ErrorNumber.NoSuchFile;
 
             if(!entry.Value.Flags.HasFlag(FileFlags.Directory))
-                return Errno.NotDirectory;
+                return ErrorNumber.NotDirectory;
 
             string currentPath = pieces[0];
 
@@ -96,10 +96,10 @@ namespace Aaru.Filesystems
                 entry = currentDirectory.FirstOrDefault(t => t.Key.ToLower(CultureInfo.CurrentUICulture) == pieces[p]);
 
                 if(string.IsNullOrEmpty(entry.Key))
-                    return Errno.NoSuchFile;
+                    return ErrorNumber.NoSuchFile;
 
                 if(!entry.Value.Flags.HasFlag(FileFlags.Directory))
-                    return Errno.NotDirectory;
+                    return ErrorNumber.NotDirectory;
 
                 currentPath = p == 0 ? pieces[0] : $"{currentPath}/{pieces[p]}";
 
@@ -107,7 +107,7 @@ namespace Aaru.Filesystems
                     continue;
 
                 if(entry.Value.Extents.Count == 0)
-                    return Errno.InvalidArgument;
+                    return ErrorNumber.InvalidArgument;
 
                 currentDirectory = _cdi
                                        ? DecodeCdiDirectory(entry.Value.Extents[0].extent + entry.Value.XattrLength,
@@ -131,12 +131,12 @@ namespace Aaru.Filesystems
 
             contents = GetFilenames(currentDirectory);
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
 
         List<string> GetFilenames(Dictionary<string, DecodedDirectoryEntry> dirents)
         {
-            List<string> contents = new List<string>();
+            List<string> contents = new();
 
             foreach(DecodedDirectoryEntry entry in dirents.Values)
                 switch(_namespace)
@@ -161,7 +161,7 @@ namespace Aaru.Filesystems
 
         Dictionary<string, DecodedDirectoryEntry> DecodeCdiDirectory(ulong start, uint size)
         {
-            Dictionary<string, DecodedDirectoryEntry> entries  = new Dictionary<string, DecodedDirectoryEntry>();
+            Dictionary<string, DecodedDirectoryEntry> entries  = new();
             int                                       entryOff = 0;
 
             byte[] data = ReadSingleExtent(size, (uint)start);
@@ -238,7 +238,7 @@ namespace Aaru.Filesystems
 
         Dictionary<string, DecodedDirectoryEntry> DecodeHighSierraDirectory(ulong start, uint size)
         {
-            Dictionary<string, DecodedDirectoryEntry> entries  = new Dictionary<string, DecodedDirectoryEntry>();
+            Dictionary<string, DecodedDirectoryEntry> entries  = new();
             int                                       entryOff = 0;
 
             byte[] data = ReadSingleExtent(size, (uint)start);
@@ -309,7 +309,7 @@ namespace Aaru.Filesystems
 
         Dictionary<string, DecodedDirectoryEntry> DecodeIsoDirectory(ulong start, uint size)
         {
-            Dictionary<string, DecodedDirectoryEntry> entries  = new Dictionary<string, DecodedDirectoryEntry>();
+            Dictionary<string, DecodedDirectoryEntry> entries  = new();
             int                                       entryOff = 0;
 
             byte[] data = ReadSingleExtent(size, (uint)start);
@@ -1010,7 +1010,7 @@ namespace Aaru.Filesystems
         PathTableEntryInternal[] GetPathTableEntries(string path)
         {
             IEnumerable<PathTableEntryInternal> tableEntries;
-            List<PathTableEntryInternal>        pathTableList = new List<PathTableEntryInternal>(_pathTable);
+            List<PathTableEntryInternal>        pathTableList = new(_pathTable);
 
             if(path == "" ||
                path == "/")
@@ -1050,7 +1050,7 @@ namespace Aaru.Filesystems
         DecodedDirectoryEntry[] GetSubdirsFromCdiPathTable(string path)
         {
             PathTableEntryInternal[]    tableEntries = GetPathTableEntries(path);
-            List<DecodedDirectoryEntry> entries      = new List<DecodedDirectoryEntry>();
+            List<DecodedDirectoryEntry> entries      = new();
 
             foreach(PathTableEntryInternal tEntry in tableEntries)
             {
@@ -1100,7 +1100,7 @@ namespace Aaru.Filesystems
         DecodedDirectoryEntry[] GetSubdirsFromIsoPathTable(string path)
         {
             PathTableEntryInternal[]    tableEntries = GetPathTableEntries(path);
-            List<DecodedDirectoryEntry> entries      = new List<DecodedDirectoryEntry>();
+            List<DecodedDirectoryEntry> entries      = new();
 
             foreach(PathTableEntryInternal tEntry in tableEntries)
             {
@@ -1150,7 +1150,7 @@ namespace Aaru.Filesystems
         DecodedDirectoryEntry[] GetSubdirsFromHighSierraPathTable(string path)
         {
             PathTableEntryInternal[]    tableEntries = GetPathTableEntries(path);
-            List<DecodedDirectoryEntry> entries      = new List<DecodedDirectoryEntry>();
+            List<DecodedDirectoryEntry> entries      = new();
 
             foreach(PathTableEntryInternal tEntry in tableEntries)
             {

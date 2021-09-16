@@ -35,8 +35,8 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.CommonTypes.Structs;
 using Aaru.Helpers;
 using Marshal = Aaru.Helpers.Marshal;
 
@@ -217,7 +217,7 @@ namespace Aaru.Filters
         }
 
         /// <inheritdoc />
-        public Errno Open(byte[] buffer)
+        public ErrorNumber Open(byte[] buffer)
         {
             var ms = new MemoryStream(buffer);
             ms.Seek(0, SeekOrigin.Begin);
@@ -301,11 +301,11 @@ namespace Aaru.Filters
             _isBytes = true;
             _bytes   = buffer;
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />
-        public Errno Open(Stream stream)
+        public ErrorNumber Open(Stream stream)
         {
             stream.Seek(0, SeekOrigin.Begin);
 
@@ -388,11 +388,11 @@ namespace Aaru.Filters
             _isStream = true;
             _stream   = stream;
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />
-        public Errno Open(string path)
+        public ErrorNumber Open(string path)
         {
             var fs = new FileStream(path, FileMode.Open, FileAccess.Read);
             fs.Seek(0, SeekOrigin.Begin);
@@ -476,7 +476,7 @@ namespace Aaru.Filters
             _isPath  = true;
             BasePath = path;
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
 
         enum AppleSingleEntryID : uint

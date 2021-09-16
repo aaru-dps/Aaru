@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections.Generic;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 
 namespace Aaru.Filesystems
@@ -39,12 +40,12 @@ namespace Aaru.Filesystems
     public sealed partial class AppleDOS
     {
         /// <inheritdoc />
-        public Errno ListXAttr(string path, out List<string> xattrs)
+        public ErrorNumber ListXAttr(string path, out List<string> xattrs)
         {
             xattrs = null;
 
             if(!_mounted)
-                return Errno.AccessDenied;
+                return ErrorNumber.AccessDenied;
 
             string[] pathElements = path.Split(new[]
             {
@@ -52,12 +53,12 @@ namespace Aaru.Filesystems
             }, StringSplitOptions.RemoveEmptyEntries);
 
             if(pathElements.Length != 1)
-                return Errno.NotSupported;
+                return ErrorNumber.NotSupported;
 
             string filename = pathElements[0].ToUpperInvariant();
 
             if(filename.Length > 30)
-                return Errno.NameTooLong;
+                return ErrorNumber.NameTooLong;
 
             xattrs = new List<string>();
 
@@ -67,7 +68,7 @@ namespace Aaru.Filesystems
             else
             {
                 if(!_catalogCache.ContainsKey(filename))
-                    return Errno.NoSuchFile;
+                    return ErrorNumber.NoSuchFile;
 
                 xattrs.Add("com.apple.dos.type");
 
@@ -75,14 +76,14 @@ namespace Aaru.Filesystems
                     xattrs.Add("com.apple.dos.tracksectorlist");
             }
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />
-        public Errno GetXattr(string path, string xattr, ref byte[] buf)
+        public ErrorNumber GetXattr(string path, string xattr, ref byte[] buf)
         {
             if(!_mounted)
-                return Errno.AccessDenied;
+                return ErrorNumber.AccessDenied;
 
             string[] pathElements = path.Split(new[]
             {
@@ -90,43 +91,43 @@ namespace Aaru.Filesystems
             }, StringSplitOptions.RemoveEmptyEntries);
 
             if(pathElements.Length != 1)
-                return Errno.NotSupported;
+                return ErrorNumber.NotSupported;
 
             string filename = pathElements[0].ToUpperInvariant();
 
             if(filename.Length > 30)
-                return Errno.NameTooLong;
+                return ErrorNumber.NameTooLong;
 
             if(_debug && (string.Compare(path, "$", StringComparison.InvariantCulture)     == 0 ||
                           string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0 ||
                           string.Compare(path, "$Vtoc", StringComparison.InvariantCulture) == 0))
-                return Errno.NoSuchExtendedAttribute;
+                return ErrorNumber.NoSuchExtendedAttribute;
 
             if(!_catalogCache.ContainsKey(filename))
-                return Errno.NoSuchFile;
+                return ErrorNumber.NoSuchFile;
 
             if(string.Compare(xattr, "com.apple.dos.type", StringComparison.InvariantCulture) == 0)
             {
                 if(!_fileTypeCache.TryGetValue(filename, out byte type))
-                    return Errno.InvalidArgument;
+                    return ErrorNumber.InvalidArgument;
 
                 buf    = new byte[1];
                 buf[0] = type;
 
-                return Errno.NoError;
+                return ErrorNumber.NoError;
             }
 
             if(string.Compare(xattr, "com.apple.dos.tracksectorlist", StringComparison.InvariantCulture) != 0 ||
                !_debug)
-                return Errno.NoSuchExtendedAttribute;
+                return ErrorNumber.NoSuchExtendedAttribute;
 
             if(!_extentCache.TryGetValue(filename, out byte[] ts))
-                return Errno.InvalidArgument;
+                return ErrorNumber.InvalidArgument;
 
             buf = new byte[ts.Length];
             Array.Copy(ts, 0, buf, 0, buf.Length);
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
     }
 }

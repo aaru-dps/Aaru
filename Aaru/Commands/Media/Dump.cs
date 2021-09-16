@@ -638,7 +638,7 @@ namespace Aaru.Commands.Media
                         if(isResponse)
                             continue;
 
-                        return (int)ErrorNumber.FileNotFound;
+                        return (int)ErrorNumber.NoSuchFile;
                     }
 
                 plugins    = GetPluginBase.Instance;

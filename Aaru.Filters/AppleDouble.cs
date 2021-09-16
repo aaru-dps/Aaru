@@ -35,8 +35,8 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.CommonTypes.Structs;
 using Aaru.Helpers;
 using Marshal = Aaru.Helpers.Marshal;
 
@@ -321,14 +321,14 @@ namespace Aaru.Filters
 
         // Now way to have two files in a single byte array
         /// <inheritdoc />
-        public Errno Open(byte[] buffer) => Errno.NotSupported;
+        public ErrorNumber Open(byte[] buffer) => ErrorNumber.NotSupported;
 
         // Now way to have two files in a single stream
         /// <inheritdoc />
-        public Errno Open(Stream stream) => Errno.NotSupported;
+        public ErrorNumber Open(Stream stream) => ErrorNumber.NotSupported;
 
         /// <inheritdoc />
-        public Errno Open(string path)
+        public ErrorNumber Open(string path)
         {
             string filename      = System.IO.Path.GetFileName(path);
             string filenameNoExt = System.IO.Path.GetFileNameWithoutExtension(path);
@@ -338,7 +338,7 @@ namespace Aaru.Filters
 
             if(filename is null ||
                filenameNoExt is null)
-                return Errno.InvalidArgument;
+                return ErrorNumber.InvalidArgument;
 
             // Prepend data fork name with "R."
             string proDosAppleDouble = System.IO.Path.Combine(parentFolder, "R." + filename);
@@ -510,7 +510,7 @@ namespace Aaru.Filters
 
             // TODO: More appropriate error
             if(_headerPath is null)
-                return Errno.NotSupported;
+                return ErrorNumber.NotSupported;
 
             var fs = new FileStream(_headerPath, FileMode.Open, FileAccess.Read);
             fs.Seek(0, SeekOrigin.Begin);
@@ -604,7 +604,7 @@ namespace Aaru.Filters
             fs.Close();
             BasePath = path;
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
 
         enum EntryId : uint

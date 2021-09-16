@@ -36,6 +36,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Reactive;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interop;
 using Aaru.CommonTypes.Structs;
 using Aaru.Console;
@@ -63,9 +64,9 @@ namespace Aaru.Gui.ViewModels.Panels
             _model              = model;
             _view               = view;
 
-            Errno errno = model.Plugin.ReadDir(model.Path, out List<string> dirents);
+            ErrorNumber errno = model.Plugin.ReadDir(model.Path, out List<string> dirents);
 
-            if(errno != Errno.NoError)
+            if(errno != ErrorNumber.NoError)
             {
                 MessageBoxManager.
                     GetMessageBoxStandardWindow("Error",
@@ -79,7 +80,7 @@ namespace Aaru.Gui.ViewModels.Panels
             {
                 errno = model.Plugin.Stat(model.Path + "/" + dirent, out FileEntryInfo stat);
 
-                if(errno != Errno.NoError)
+                if(errno != ErrorNumber.NoError)
                 {
                     AaruConsole.
                         ErrorWriteLine($"Error {errno} trying to get information about filesystem entry named {dirent}");
@@ -242,7 +243,7 @@ namespace Aaru.Gui.ViewModels.Panels
                             chars[2] = '_';
                         }
 
-                        string corrected = new string(chars);
+                        string corrected = new(chars);
 
                         mboxResult = await MessageBoxManager.GetMessageBoxStandardWindow("Unsupported filename",
                                          $"The file name {filename} is not supported on this platform.\nDo you want to rename it to {corrected}?",
@@ -290,9 +291,10 @@ namespace Aaru.Gui.ViewModels.Panels
                 {
                     byte[] outBuf = Array.Empty<byte>();
 
-                    Errno error = _model.Plugin.Read(_model.Path + "/" + file.Name, 0, file.Stat.Length, ref outBuf);
+                    ErrorNumber error =
+                        _model.Plugin.Read(_model.Path + "/" + file.Name, 0, file.Stat.Length, ref outBuf);
 
-                    if(error != Errno.NoError)
+                    if(error != ErrorNumber.NoError)
                     {
                         mboxResult = await MessageBoxManager.GetMessageBoxStandardWindow("Error reading file",
                                          $"Error {error} reading file.\nDo you want to continue?",

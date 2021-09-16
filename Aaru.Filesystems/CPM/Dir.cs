@@ -33,6 +33,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 using Aaru.Helpers;
 
@@ -41,20 +42,20 @@ namespace Aaru.Filesystems
     public sealed partial class CPM
     {
         /// <inheritdoc />
-        public Errno ReadDir(string path, out List<string> contents)
+        public ErrorNumber ReadDir(string path, out List<string> contents)
         {
             contents = null;
 
             if(!_mounted)
-                return Errno.AccessDenied;
+                return ErrorNumber.AccessDenied;
 
             if(!string.IsNullOrEmpty(path) &&
                string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) != 0)
-                return Errno.NotSupported;
+                return ErrorNumber.NotSupported;
 
             contents = new List<string>(_dirList);
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
 
         /// <summary>

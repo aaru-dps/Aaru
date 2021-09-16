@@ -32,17 +32,17 @@
 
 using System;
 using System.Collections.Generic;
-using Aaru.CommonTypes.Structs;
+using Aaru.CommonTypes.Enums;
 
 namespace Aaru.Filesystems
 {
     public sealed partial class CPM
     {
         /// <inheritdoc />
-        public Errno GetXattr(string path, string xattr, ref byte[] buf)
+        public ErrorNumber GetXattr(string path, string xattr, ref byte[] buf)
         {
             if(!_mounted)
-                return Errno.AccessDenied;
+                return ErrorNumber.AccessDenied;
 
             string[] pathElements = path.Split(new[]
             {
@@ -50,29 +50,29 @@ namespace Aaru.Filesystems
             }, StringSplitOptions.RemoveEmptyEntries);
 
             if(pathElements.Length != 1)
-                return Errno.NotSupported;
+                return ErrorNumber.NotSupported;
 
             if(!_fileCache.ContainsKey(pathElements[0].ToUpperInvariant()))
-                return Errno.NoSuchFile;
+                return ErrorNumber.NoSuchFile;
 
             if(string.Compare(xattr, "com.caldera.cpm.password", StringComparison.InvariantCulture) == 0)
                 if(!_passwordCache.TryGetValue(pathElements[0].ToUpperInvariant(), out buf))
-                    return Errno.NoError;
+                    return ErrorNumber.NoError;
 
             if(string.Compare(xattr, "com.caldera.cpm.password.text", StringComparison.InvariantCulture) != 0)
-                return Errno.NoSuchExtendedAttribute;
+                return ErrorNumber.NoSuchExtendedAttribute;
 
-            return !_passwordCache.TryGetValue(pathElements[0].ToUpperInvariant(), out buf) ? Errno.NoError
-                       : Errno.NoSuchExtendedAttribute;
+            return !_passwordCache.TryGetValue(pathElements[0].ToUpperInvariant(), out buf) ? ErrorNumber.NoError
+                       : ErrorNumber.NoSuchExtendedAttribute;
         }
 
         /// <inheritdoc />
-        public Errno ListXAttr(string path, out List<string> xattrs)
+        public ErrorNumber ListXAttr(string path, out List<string> xattrs)
         {
             xattrs = null;
 
             if(!_mounted)
-                return Errno.AccessDenied;
+                return ErrorNumber.AccessDenied;
 
             string[] pathElements = path.Split(new[]
             {
@@ -80,10 +80,10 @@ namespace Aaru.Filesystems
             }, StringSplitOptions.RemoveEmptyEntries);
 
             if(pathElements.Length != 1)
-                return Errno.NotSupported;
+                return ErrorNumber.NotSupported;
 
             if(!_fileCache.ContainsKey(pathElements[0].ToUpperInvariant()))
-                return Errno.NoSuchFile;
+                return ErrorNumber.NoSuchFile;
 
             xattrs = new List<string>();
 
@@ -93,7 +93,7 @@ namespace Aaru.Filesystems
             if(_decodedPasswordCache.ContainsKey(pathElements[0].ToUpperInvariant()))
                 xattrs.Add("com.caldera.cpm.password.text");
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
     }
 }

@@ -48,79 +48,79 @@ namespace Aaru.Filesystems
     public sealed partial class ISO9660
     {
         /// <inheritdoc />
-        public Errno MapBlock(string path, long fileBlock, out long deviceBlock)
+        public ErrorNumber MapBlock(string path, long fileBlock, out long deviceBlock)
         {
             deviceBlock = 0;
 
             if(!_mounted)
-                return Errno.AccessDenied;
+                return ErrorNumber.AccessDenied;
 
-            Errno err = GetFileEntry(path, out DecodedDirectoryEntry entry);
+            ErrorNumber err = GetFileEntry(path, out DecodedDirectoryEntry entry);
 
-            if(err != Errno.NoError)
+            if(err != ErrorNumber.NoError)
                 return err;
 
             if(entry.Flags.HasFlag(FileFlags.Directory) &&
                !_debug)
-                return Errno.IsDirectory;
+                return ErrorNumber.IsDirectory;
 
             // TODO: Multi-extents
             if(entry.Extents.Count > 1)
-                return Errno.NotImplemented;
+                return ErrorNumber.NotImplemented;
 
             deviceBlock = entry.Extents[0].extent + fileBlock;
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />
-        public Errno GetAttributes(string path, out FileAttributes attributes)
+        public ErrorNumber GetAttributes(string path, out FileAttributes attributes)
         {
             attributes = new FileAttributes();
 
             if(!_mounted)
-                return Errno.AccessDenied;
+                return ErrorNumber.AccessDenied;
 
-            Errno err = Stat(path, out FileEntryInfo stat);
+            ErrorNumber err = Stat(path, out FileEntryInfo stat);
 
-            if(err != Errno.NoError)
+            if(err != ErrorNumber.NoError)
                 return err;
 
             attributes = stat.Attributes;
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
 
         // TODO: Resolve symbolic link
         /// <inheritdoc />
-        public Errno Read(string path, long offset, long size, ref byte[] buf)
+        public ErrorNumber Read(string path, long offset, long size, ref byte[] buf)
         {
             buf = null;
 
             if(!_mounted)
-                return Errno.AccessDenied;
+                return ErrorNumber.AccessDenied;
 
-            Errno err = GetFileEntry(path, out DecodedDirectoryEntry entry);
+            ErrorNumber err = GetFileEntry(path, out DecodedDirectoryEntry entry);
 
-            if(err != Errno.NoError)
+            if(err != ErrorNumber.NoError)
                 return err;
 
             if(entry.Flags.HasFlag(FileFlags.Directory) &&
                !_debug)
-                return Errno.IsDirectory;
+                return ErrorNumber.IsDirectory;
 
             if(entry.Extents is null)
-                return Errno.InvalidArgument;
+                return ErrorNumber.InvalidArgument;
 
             if(entry.Size == 0)
             {
                 buf = Array.Empty<byte>();
 
-                return Errno.NoError;
+                return ErrorNumber.NoError;
             }
 
             if(offset >= (long)entry.Size)
-                return Errno.InvalidArgument;
+                return ErrorNumber.InvalidArgument;
 
             if(size + offset >= (long)entry.Size)
                 size = (long)entry.Size - offset;
@@ -145,14 +145,14 @@ namespace Aaru.Filesystems
                     buf = new byte[size];
                     Array.Copy(buffer, offsetInSector, buf, 0, size);
 
-                    return Errno.NoError;
+                    return ErrorNumber.NoError;
                 }
                 catch(Exception e)
                 {
                     AaruConsole.DebugWriteLine("ISO9660 plugin", "Exception reading CD-i audio file");
                     AaruConsole.DebugWriteLine("ISO9660 plugin", "{0}", e);
 
-                    return Errno.InOutError;
+                    return ErrorNumber.InOutError;
                 }
             }
 
@@ -161,20 +161,20 @@ namespace Aaru.Filesystems
                                   entry.XA?.attributes.HasFlag(XaAttributes.Interleaved) == true,
                                   entry.XA?.filenumber ?? 0);
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />
-        public Errno Stat(string path, out FileEntryInfo stat)
+        public ErrorNumber Stat(string path, out FileEntryInfo stat)
         {
             stat = null;
 
             if(!_mounted)
-                return Errno.AccessDenied;
+                return ErrorNumber.AccessDenied;
 
-            Errno err = GetFileEntry(path, out DecodedDirectoryEntry entry);
+            ErrorNumber err = GetFileEntry(path, out DecodedDirectoryEntry entry);
 
-            if(err != Errno.NoError)
+            if(err != ErrorNumber.NoError)
                 return err;
 
             stat = new FileEntryInfo
@@ -357,7 +357,7 @@ namespace Aaru.Filesystems
             if(entry.XattrLength == 0 ||
                _cdi                   ||
                _highSierra)
-                return Errno.NoError;
+                return ErrorNumber.NoError;
 
             if(entry.CdiSystemArea != null)
             {
@@ -413,28 +413,28 @@ namespace Aaru.Filesystems
             stat.CreationTimeUtc  = DateHandlers.Iso9660ToDateTime(ear.creation_date);
             stat.LastWriteTimeUtc = DateHandlers.Iso9660ToDateTime(ear.modification_date);
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />
-        public Errno ReadLink(string path, out string dest)
+        public ErrorNumber ReadLink(string path, out string dest)
         {
             dest = null;
 
-            Errno err = GetFileEntry(path, out DecodedDirectoryEntry entry);
+            ErrorNumber err = GetFileEntry(path, out DecodedDirectoryEntry entry);
 
-            if(err != Errno.NoError)
+            if(err != ErrorNumber.NoError)
                 return err;
 
             if(entry.SymbolicLink is null)
-                return Errno.InvalidArgument;
+                return ErrorNumber.InvalidArgument;
 
             dest = entry.SymbolicLink;
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
 
-        Errno GetFileEntry(string path, out DecodedDirectoryEntry entry)
+        ErrorNumber GetFileEntry(string path, out DecodedDirectoryEntry entry)
         {
             entry = null;
 
@@ -448,15 +448,15 @@ namespace Aaru.Filesystems
             }, StringSplitOptions.RemoveEmptyEntries);
 
             if(pieces.Length == 0)
-                return Errno.InvalidArgument;
+                return ErrorNumber.InvalidArgument;
 
             string parentPath = string.Join("/", pieces, 0, pieces.Length - 1);
 
             if(!_directoryCache.TryGetValue(parentPath, out _))
             {
-                Errno err = ReadDir(parentPath, out _);
+                ErrorNumber err = ReadDir(parentPath, out _);
 
-                if(err != Errno.NoError)
+                if(err != ErrorNumber.NoError)
                     return err;
             }
 
@@ -465,7 +465,7 @@ namespace Aaru.Filesystems
             if(pieces.Length == 1)
                 parent = _rootDirectoryCache;
             else if(!_directoryCache.TryGetValue(parentPath, out parent))
-                return Errno.InvalidArgument;
+                return ErrorNumber.InvalidArgument;
 
             KeyValuePair<string, DecodedDirectoryEntry> dirent =
                 parent.FirstOrDefault(t => t.Key.ToLower(CultureInfo.CurrentUICulture) == pieces[^1]);
@@ -479,15 +479,15 @@ namespace Aaru.Filesystems
                                                         pieces[^1] + ";1");
 
                     if(string.IsNullOrEmpty(dirent.Key))
-                        return Errno.NoSuchFile;
+                        return ErrorNumber.NoSuchFile;
                 }
                 else
-                    return Errno.NoSuchFile;
+                    return ErrorNumber.NoSuchFile;
             }
 
             entry = dirent.Value;
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

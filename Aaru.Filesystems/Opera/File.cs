@@ -34,6 +34,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 
 namespace Aaru.Filesystems
@@ -41,74 +42,74 @@ namespace Aaru.Filesystems
     public sealed partial class OperaFS
     {
         /// <inheritdoc />
-        public Errno MapBlock(string path, long fileBlock, out long deviceBlock)
+        public ErrorNumber MapBlock(string path, long fileBlock, out long deviceBlock)
         {
             deviceBlock = 0;
 
             if(!_mounted)
-                return Errno.AccessDenied;
+                return ErrorNumber.AccessDenied;
 
-            Errno err = GetFileEntry(path, out DirectoryEntryWithPointers entry);
+            ErrorNumber err = GetFileEntry(path, out DirectoryEntryWithPointers entry);
 
-            if(err != Errno.NoError)
+            if(err != ErrorNumber.NoError)
                 return err;
 
             if((entry.Entry.flags & FLAGS_MASK) == (uint)FileFlags.Directory &&
                !_debug)
-                return Errno.IsDirectory;
+                return ErrorNumber.IsDirectory;
 
             deviceBlock = entry.Pointers[0] + fileBlock;
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />
-        public Errno GetAttributes(string path, out FileAttributes attributes)
+        public ErrorNumber GetAttributes(string path, out FileAttributes attributes)
         {
             attributes = new FileAttributes();
 
             if(!_mounted)
-                return Errno.AccessDenied;
+                return ErrorNumber.AccessDenied;
 
-            Errno err = Stat(path, out FileEntryInfo stat);
+            ErrorNumber err = Stat(path, out FileEntryInfo stat);
 
-            if(err != Errno.NoError)
+            if(err != ErrorNumber.NoError)
                 return err;
 
             attributes = stat.Attributes;
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />
-        public Errno Read(string path, long offset, long size, ref byte[] buf)
+        public ErrorNumber Read(string path, long offset, long size, ref byte[] buf)
         {
             buf = null;
 
             if(!_mounted)
-                return Errno.AccessDenied;
+                return ErrorNumber.AccessDenied;
 
-            Errno err = GetFileEntry(path, out DirectoryEntryWithPointers entry);
+            ErrorNumber err = GetFileEntry(path, out DirectoryEntryWithPointers entry);
 
-            if(err != Errno.NoError)
+            if(err != ErrorNumber.NoError)
                 return err;
 
             if((entry.Entry.flags & FLAGS_MASK) == (uint)FileFlags.Directory &&
                !_debug)
-                return Errno.IsDirectory;
+                return ErrorNumber.IsDirectory;
 
             if(entry.Pointers.Length < 1)
-                return Errno.InvalidArgument;
+                return ErrorNumber.InvalidArgument;
 
             if(entry.Entry.byte_count == 0)
             {
                 buf = Array.Empty<byte>();
 
-                return Errno.NoError;
+                return ErrorNumber.NoError;
             }
 
             if(offset >= entry.Entry.byte_count)
-                return Errno.InvalidArgument;
+                return ErrorNumber.InvalidArgument;
 
             if(size + offset >= entry.Entry.byte_count)
                 size = entry.Entry.byte_count - offset;
@@ -135,20 +136,20 @@ namespace Aaru.Filesystems
             buf = new byte[size];
             Array.Copy(buffer, offsetInBlock, buf, 0, size);
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />
-        public Errno Stat(string path, out FileEntryInfo stat)
+        public ErrorNumber Stat(string path, out FileEntryInfo stat)
         {
             stat = null;
 
             if(!_mounted)
-                return Errno.AccessDenied;
+                return ErrorNumber.AccessDenied;
 
-            Errno err = GetFileEntry(path, out DirectoryEntryWithPointers entryWithPointers);
+            ErrorNumber err = GetFileEntry(path, out DirectoryEntryWithPointers entryWithPointers);
 
-            if(err != Errno.NoError)
+            if(err != ErrorNumber.NoError)
                 return err;
 
             DirectoryEntry entry = entryWithPointers.Entry;
@@ -171,10 +172,10 @@ namespace Aaru.Filesystems
             if(flags == FileFlags.Special)
                 stat.Attributes |= FileAttributes.Device;
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
 
-        Errno GetFileEntry(string path, out DirectoryEntryWithPointers entry)
+        ErrorNumber GetFileEntry(string path, out DirectoryEntryWithPointers entry)
         {
             entry = null;
 
@@ -188,15 +189,15 @@ namespace Aaru.Filesystems
             }, StringSplitOptions.RemoveEmptyEntries);
 
             if(pieces.Length == 0)
-                return Errno.InvalidArgument;
+                return ErrorNumber.InvalidArgument;
 
             string parentPath = string.Join("/", pieces, 0, pieces.Length - 1);
 
             if(!_directoryCache.TryGetValue(parentPath, out _))
             {
-                Errno err = ReadDir(parentPath, out _);
+                ErrorNumber err = ReadDir(parentPath, out _);
 
-                if(err != Errno.NoError)
+                if(err != ErrorNumber.NoError)
                     return err;
             }
 
@@ -205,17 +206,17 @@ namespace Aaru.Filesystems
             if(pieces.Length == 1)
                 parent = _rootDirectoryCache;
             else if(!_directoryCache.TryGetValue(parentPath, out parent))
-                return Errno.InvalidArgument;
+                return ErrorNumber.InvalidArgument;
 
             KeyValuePair<string, DirectoryEntryWithPointers> dirent =
                 parent.FirstOrDefault(t => t.Key.ToLower(CultureInfo.CurrentUICulture) == pieces[^1]);
 
             if(string.IsNullOrEmpty(dirent.Key))
-                return Errno.NoSuchFile;
+                return ErrorNumber.NoSuchFile;
 
             entry = dirent.Value;
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
     }
 }

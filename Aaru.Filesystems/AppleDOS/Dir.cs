@@ -34,6 +34,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 using Aaru.Helpers;
 
@@ -42,24 +43,24 @@ namespace Aaru.Filesystems
     public sealed partial class AppleDOS
     {
         /// <inheritdoc />
-        public Errno ReadLink(string path, out string dest)
+        public ErrorNumber ReadLink(string path, out string dest)
         {
             dest = null;
 
-            return !_mounted ? Errno.AccessDenied : Errno.NotSupported;
+            return !_mounted ? ErrorNumber.AccessDenied : ErrorNumber.NotSupported;
         }
 
         /// <inheritdoc />
-        public Errno ReadDir(string path, out List<string> contents)
+        public ErrorNumber ReadDir(string path, out List<string> contents)
         {
             contents = null;
 
             if(!_mounted)
-                return Errno.AccessDenied;
+                return ErrorNumber.AccessDenied;
 
             if(!string.IsNullOrEmpty(path) &&
                string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) != 0)
-                return Errno.NotSupported;
+                return ErrorNumber.NotSupported;
 
             contents = _catalogCache.Keys.ToList();
 
@@ -72,10 +73,10 @@ namespace Aaru.Filesystems
 
             contents.Sort();
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
 
-        Errno ReadCatalog()
+        ErrorNumber ReadCatalog()
         {
             var   catalogMs = new MemoryStream();
             ulong lba       = (ulong)((_vtoc.catalogTrack * _sectorsPerTrack) + _vtoc.catalogSector);
@@ -87,7 +88,7 @@ namespace Aaru.Filesystems
 
             if(lba == 0 ||
                lba > _device.Info.Sectors)
-                return Errno.InvalidArgument;
+                return ErrorNumber.InvalidArgument;
 
             while(lba != 0)
             {
@@ -138,7 +139,7 @@ namespace Aaru.Filesystems
             if(_debug)
                 _catalogBlocks = catalogMs.ToArray();
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
     }
 }

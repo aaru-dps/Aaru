@@ -55,8 +55,8 @@ namespace Aaru.Filesystems
         IMediaImage _image;
 
         /// <inheritdoc />
-        public Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding,
-                           Dictionary<string, string> options, string @namespace)
+        public ErrorNumber Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding,
+                                 Dictionary<string, string> options, string @namespace)
         {
             XmlFsType = new FileSystemType();
 
@@ -94,7 +94,7 @@ namespace Aaru.Filesystems
                     _namespace = Namespace.Human;
 
                     break;
-                default: return Errno.InvalidArgument;
+                default: return ErrorNumber.InvalidArgument;
             }
 
             AaruConsole.DebugWriteLine("FAT plugin", "Reading BPB");
@@ -553,7 +553,7 @@ namespace Aaru.Filesystems
             else
             {
                 if(rootDirectoryCluster == 0)
-                    return Errno.InvalidArgument;
+                    return ErrorNumber.InvalidArgument;
 
                 var    rootMs                = new MemoryStream();
                 uint[] rootDirectoryClusters = GetClusters(rootDirectoryCluster);
@@ -574,7 +574,7 @@ namespace Aaru.Filesystems
             }
 
             if(rootDirectory is null)
-                return Errno.InvalidArgument;
+                return ErrorNumber.InvalidArgument;
 
             byte[] lastLfnName     = null;
             byte   lastLfnChecksum = 0;
@@ -1050,32 +1050,32 @@ namespace Aaru.Filesystems
             if(string.IsNullOrWhiteSpace(XmlFsType.VolumeName))
                 XmlFsType.VolumeName = null;
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />
-        public Errno Unmount()
+        public ErrorNumber Unmount()
         {
             if(!_mounted)
-                return Errno.AccessDenied;
+                return ErrorNumber.AccessDenied;
 
             _mounted    = false;
             _fatEntries = null;
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />
-        public Errno StatFs(out FileSystemInfo stat)
+        public ErrorNumber StatFs(out FileSystemInfo stat)
         {
             stat = null;
 
             if(!_mounted)
-                return Errno.AccessDenied;
+                return ErrorNumber.AccessDenied;
 
             stat = _statfs.ShallowCopy();
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
     }
 }

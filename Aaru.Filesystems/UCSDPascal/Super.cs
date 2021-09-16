@@ -33,6 +33,7 @@
 using System;
 using System.Collections.Generic;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Helpers;
@@ -46,8 +47,8 @@ namespace Aaru.Filesystems.UCSDPascal
     public sealed partial class PascalPlugin
     {
         /// <inheritdoc />
-        public Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding,
-                           Dictionary<string, string> options, string @namespace)
+        public ErrorNumber Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding,
+                                 Dictionary<string, string> options, string @namespace)
         {
             _device  = imagePlugin;
             Encoding = encoding ?? new Apple2();
@@ -58,7 +59,7 @@ namespace Aaru.Filesystems.UCSDPascal
                 bool.TryParse(debugString, out _debug);
 
             if(_device.Info.Sectors < 3)
-                return Errno.InvalidArgument;
+                return ErrorNumber.InvalidArgument;
 
             _multiplier = (uint)(imagePlugin.Info.SectorSize == 256 ? 2 : 1);
 
@@ -90,7 +91,7 @@ namespace Aaru.Filesystems.UCSDPascal
                _mountedVolEntry.Blocks        < 0                                   ||
                (ulong)_mountedVolEntry.Blocks != _device.Info.Sectors / _multiplier ||
                _mountedVolEntry.Files         < 0)
-                return Errno.InvalidArgument;
+                return ErrorNumber.InvalidArgument;
 
             _catalogBlocks = _device.ReadSectors(_multiplier * 2,
                                                  (uint)(_mountedVolEntry.LastBlock - _mountedVolEntry.FirstBlock - 2) *
@@ -136,20 +137,20 @@ namespace Aaru.Filesystems.UCSDPascal
 
             _mounted = true;
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />
-        public Errno Unmount()
+        public ErrorNumber Unmount()
         {
             _mounted     = false;
             _fileEntries = null;
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />
-        public Errno StatFs(out FileSystemInfo stat)
+        public ErrorNumber StatFs(out FileSystemInfo stat)
         {
             stat = new FileSystemInfo
             {
@@ -167,7 +168,7 @@ namespace Aaru.Filesystems.UCSDPascal
             foreach(PascalFileEntry entry in _fileEntries)
                 stat.FreeBlocks -= (ulong)(entry.LastBlock - entry.FirstBlock);
 
-            return Errno.NotImplemented;
+            return ErrorNumber.NotImplemented;
         }
     }
 }

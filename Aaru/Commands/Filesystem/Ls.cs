@@ -287,7 +287,7 @@ namespace Aaru.Commands.Filesystem
                     else
                     {
                         IReadOnlyFilesystem plugin;
-                        Errno               error = Errno.InvalidArgument;
+                        ErrorNumber               error = ErrorNumber.InvalidArgument;
 
                         if(idPlugins.Count > 1)
                         {
@@ -313,7 +313,7 @@ namespace Aaru.Commands.Filesystem
                                                          @namespace);
                                     });
 
-                                    if(error == Errno.NoError)
+                                    if(error == ErrorNumber.NoError)
                                     {
                                         ListFilesInDir("/", fs, longFormat);
 
@@ -346,7 +346,7 @@ namespace Aaru.Commands.Filesystem
                                 error = fs.Mount(imageFormat, partitions[i], encodingClass, parsedOptions, @namespace);
                             });
 
-                            if(error == Errno.NoError)
+                            if(error == ErrorNumber.NoError)
                             {
                                 ListFilesInDir("/", fs, longFormat);
 
@@ -371,7 +371,7 @@ namespace Aaru.Commands.Filesystem
 
         static void ListFilesInDir(string path, [NotNull] IReadOnlyFilesystem fs, bool longFormat)
         {
-            Errno        error     = Errno.InvalidArgument;
+            ErrorNumber        error     = ErrorNumber.InvalidArgument;
             List<string> directory = new();
 
             if(path.StartsWith('/'))
@@ -385,7 +385,7 @@ namespace Aaru.Commands.Filesystem
                 error = fs.ReadDir(path, out directory);
             });
 
-            if(error != Errno.NoError)
+            if(error != ErrorNumber.NoError)
             {
                 AaruConsole.ErrorWriteLine("Error {0} reading root directory {1}", error.ToString(), path);
 
@@ -426,7 +426,7 @@ namespace Aaru.Commands.Filesystem
 
                         error = fs.ListXAttr(path + "/" + entry.Key, out List<string> xattrs);
 
-                        if(error != Errno.NoError)
+                        if(error != ErrorNumber.NoError)
                             continue;
 
                         foreach(string xattr in xattrs)
@@ -434,7 +434,7 @@ namespace Aaru.Commands.Filesystem
                             byte[] xattrBuf = Array.Empty<byte>();
                             error = fs.GetXattr(path + "/" + entry.Key, xattr, ref xattrBuf);
 
-                            if(error == Errno.NoError)
+                            if(error == ErrorNumber.NoError)
                                 AaruConsole.WriteLine("\t\t{0}\t{1:##,#}", Markup.Escape(xattr), xattrBuf.Length);
                         }
                     }

@@ -34,6 +34,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 using Aaru.Helpers;
 using FileAttributes = Aaru.CommonTypes.Structs.FileAttributes;
@@ -43,74 +44,74 @@ namespace Aaru.Filesystems
     public sealed partial class FAT
     {
         /// <inheritdoc />
-        public Errno MapBlock(string path, long fileBlock, out long deviceBlock)
+        public ErrorNumber MapBlock(string path, long fileBlock, out long deviceBlock)
         {
             deviceBlock = 0;
 
             if(!_mounted)
-                return Errno.AccessDenied;
+                return ErrorNumber.AccessDenied;
 
-            Errno err = Stat(path, out FileEntryInfo stat);
+            ErrorNumber err = Stat(path, out FileEntryInfo stat);
 
-            if(err != Errno.NoError)
+            if(err != ErrorNumber.NoError)
                 return err;
 
             if(stat.Attributes.HasFlag(FileAttributes.Directory) &&
                !_debug)
-                return Errno.IsDirectory;
+                return ErrorNumber.IsDirectory;
 
             uint[] clusters = GetClusters((uint)stat.Inode);
 
             if(fileBlock >= clusters.Length)
-                return Errno.InvalidArgument;
+                return ErrorNumber.InvalidArgument;
 
             deviceBlock = (long)(_firstClusterSector + (clusters[fileBlock] * _sectorsPerCluster));
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />
-        public Errno GetAttributes(string path, out FileAttributes attributes)
+        public ErrorNumber GetAttributes(string path, out FileAttributes attributes)
         {
             attributes = new FileAttributes();
 
             if(!_mounted)
-                return Errno.AccessDenied;
+                return ErrorNumber.AccessDenied;
 
-            Errno err = Stat(path, out FileEntryInfo stat);
+            ErrorNumber err = Stat(path, out FileEntryInfo stat);
 
-            if(err != Errno.NoError)
+            if(err != ErrorNumber.NoError)
                 return err;
 
             attributes = stat.Attributes;
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />
-        public Errno Read(string path, long offset, long size, ref byte[] buf)
+        public ErrorNumber Read(string path, long offset, long size, ref byte[] buf)
         {
             if(!_mounted)
-                return Errno.AccessDenied;
+                return ErrorNumber.AccessDenied;
 
-            Errno err = Stat(path, out FileEntryInfo stat);
+            ErrorNumber err = Stat(path, out FileEntryInfo stat);
 
-            if(err != Errno.NoError)
+            if(err != ErrorNumber.NoError)
                 return err;
 
             if(stat.Attributes.HasFlag(FileAttributes.Directory) &&
                !_debug)
-                return Errno.IsDirectory;
+                return ErrorNumber.IsDirectory;
 
             if(size == 0)
             {
                 buf = Array.Empty<byte>();
 
-                return Errno.NoError;
+                return ErrorNumber.NoError;
             }
 
             if(offset >= stat.Length)
-                return Errno.InvalidArgument;
+                return ErrorNumber.InvalidArgument;
 
             if(size + offset >= stat.Length)
                 size = stat.Length - offset;
@@ -118,7 +119,7 @@ namespace Aaru.Filesystems
             uint[] clusters = GetClusters((uint)stat.Inode);
 
             if(clusters is null)
-                return Errno.InvalidArgument;
+                return ErrorNumber.InvalidArgument;
 
             long firstCluster    = offset                   / _bytesPerCluster;
             long offsetInCluster = offset                   % _bytesPerCluster;
@@ -132,7 +133,7 @@ namespace Aaru.Filesystems
             for(int i = 0; i < sizeInClusters; i++)
             {
                 if(i + firstCluster >= clusters.Length)
-                    return Errno.InvalidArgument;
+                    return ErrorNumber.InvalidArgument;
 
                 byte[] buffer =
                     _image.ReadSectors(_firstClusterSector + (clusters[i + firstCluster] * _sectorsPerCluster),
@@ -145,20 +146,20 @@ namespace Aaru.Filesystems
             buf         = new byte[size];
             ms.Read(buf, 0, (int)size);
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />
-        public Errno Stat(string path, out FileEntryInfo stat)
+        public ErrorNumber Stat(string path, out FileEntryInfo stat)
         {
             stat = null;
 
             if(!_mounted)
-                return Errno.AccessDenied;
+                return ErrorNumber.AccessDenied;
 
-            Errno err = GetFileEntry(path, out CompleteDirectoryEntry completeEntry);
+            ErrorNumber err = GetFileEntry(path, out CompleteDirectoryEntry completeEntry);
 
-            if(err != Errno.NoError)
+            if(err != ErrorNumber.NoError)
                 return err;
 
             DirectoryEntry entry = completeEntry.Dirent;
@@ -196,8 +197,9 @@ namespace Aaru.Filesystems
 
                 if((_fat32 && entry.ea_handle << 16 > 0) ||
                    entry.start_cluster > 0)
-                    stat.Blocks = _fat32 ? (GetClusters((uint)((entry.ea_handle << 16) + entry.start_cluster))?.Length ?? 0)
-                                      : (GetClusters(entry.start_cluster)?.Length??0);
+                    stat.Blocks =
+                        _fat32 ? GetClusters((uint)((entry.ea_handle << 16) + entry.start_cluster))?.Length ?? 0
+                            : GetClusters(entry.start_cluster)?.Length                                      ?? 0;
 
                 stat.Length = stat.Blocks * stat.BlockSize;
             }
@@ -217,7 +219,7 @@ namespace Aaru.Filesystems
             if(entry.attributes.HasFlag(FatAttributes.Device))
                 stat.Attributes |= FileAttributes.Device;
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
 
         uint[] GetClusters(uint startCluster)
@@ -228,7 +230,7 @@ namespace Aaru.Filesystems
             if(startCluster >= XmlFsType.Clusters)
                 return null;
 
-            List<uint> clusters = new List<uint>();
+            List<uint> clusters = new();
 
             uint nextCluster = startCluster;
 
@@ -283,7 +285,7 @@ namespace Aaru.Filesystems
             return clusters.ToArray();
         }
 
-        Errno GetFileEntry(string path, out CompleteDirectoryEntry entry)
+        ErrorNumber GetFileEntry(string path, out CompleteDirectoryEntry entry)
         {
             entry = null;
 
@@ -296,15 +298,15 @@ namespace Aaru.Filesystems
             }, StringSplitOptions.RemoveEmptyEntries);
 
             if(pieces.Length == 0)
-                return Errno.InvalidArgument;
+                return ErrorNumber.InvalidArgument;
 
             string parentPath = string.Join("/", pieces, 0, pieces.Length - 1);
 
             if(!_directoryCache.TryGetValue(parentPath, out _))
             {
-                Errno err = ReadDir(parentPath, out _);
+                ErrorNumber err = ReadDir(parentPath, out _);
 
-                if(err != Errno.NoError)
+                if(err != ErrorNumber.NoError)
                     return err;
             }
 
@@ -313,17 +315,17 @@ namespace Aaru.Filesystems
             if(pieces.Length == 1)
                 parent = _rootDirectoryCache;
             else if(!_directoryCache.TryGetValue(parentPath, out parent))
-                return Errno.InvalidArgument;
+                return ErrorNumber.InvalidArgument;
 
             KeyValuePair<string, CompleteDirectoryEntry> dirent =
                 parent.FirstOrDefault(t => t.Key.ToLower(_cultureInfo) == pieces[^1]);
 
             if(string.IsNullOrEmpty(dirent.Key))
-                return Errno.NoSuchFile;
+                return ErrorNumber.NoSuchFile;
 
             entry = dirent.Value;
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
 
         byte LfnChecksum(byte[] name, byte[] extension)

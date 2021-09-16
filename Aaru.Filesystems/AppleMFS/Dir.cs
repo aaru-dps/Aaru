@@ -33,7 +33,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Aaru.CommonTypes.Structs;
+using Aaru.CommonTypes.Enums;
 using Aaru.Console;
 using Aaru.Helpers;
 
@@ -43,16 +43,16 @@ namespace Aaru.Filesystems
     public sealed partial class AppleMFS
     {
         /// <inheritdoc />
-        public Errno ReadDir(string path, out List<string> contents)
+        public ErrorNumber ReadDir(string path, out List<string> contents)
         {
             contents = null;
 
             if(!_mounted)
-                return Errno.AccessDenied;
+                return ErrorNumber.AccessDenied;
 
             if(!string.IsNullOrEmpty(path) &&
                string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) != 0)
-                return Errno.NotSupported;
+                return ErrorNumber.NotSupported;
 
             contents = _idToFilename.Select(kvp => kvp.Value).ToList();
 
@@ -68,7 +68,7 @@ namespace Aaru.Filesystems
 
             contents.Sort();
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
 
         bool FillDirectory()

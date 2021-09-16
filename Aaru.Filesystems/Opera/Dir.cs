@@ -34,7 +34,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using Aaru.CommonTypes.Structs;
+using Aaru.CommonTypes.Enums;
 using Aaru.Helpers;
 
 namespace Aaru.Filesystems
@@ -42,19 +42,19 @@ namespace Aaru.Filesystems
     public sealed partial class OperaFS
     {
         /// <inheritdoc />
-        public Errno ReadDir(string path, out List<string> contents)
+        public ErrorNumber ReadDir(string path, out List<string> contents)
         {
             contents = null;
 
             if(!_mounted)
-                return Errno.AccessDenied;
+                return ErrorNumber.AccessDenied;
 
             if(string.IsNullOrWhiteSpace(path) ||
                path == "/")
             {
                 contents = _rootDirectoryCache.Keys.ToList();
 
-                return Errno.NoError;
+                return ErrorNumber.NoError;
             }
 
             string cutPath = path.StartsWith("/", StringComparison.Ordinal)
@@ -66,7 +66,7 @@ namespace Aaru.Filesystems
             {
                 contents = currentDirectory.Keys.ToList();
 
-                return Errno.NoError;
+                return ErrorNumber.NoError;
             }
 
             string[] pieces = cutPath.Split(new[]
@@ -78,10 +78,10 @@ namespace Aaru.Filesystems
                 _rootDirectoryCache.FirstOrDefault(t => t.Key.ToLower(CultureInfo.CurrentUICulture) == pieces[0]);
 
             if(string.IsNullOrEmpty(entry.Key))
-                return Errno.NoSuchFile;
+                return ErrorNumber.NoSuchFile;
 
             if((entry.Value.Entry.flags & FLAGS_MASK) != (int)FileFlags.Directory)
-                return Errno.NotDirectory;
+                return ErrorNumber.NotDirectory;
 
             string currentPath = pieces[0];
 
@@ -92,10 +92,10 @@ namespace Aaru.Filesystems
                 entry = currentDirectory.FirstOrDefault(t => t.Key.ToLower(CultureInfo.CurrentUICulture) == pieces[p]);
 
                 if(string.IsNullOrEmpty(entry.Key))
-                    return Errno.NoSuchFile;
+                    return ErrorNumber.NoSuchFile;
 
                 if((entry.Value.Entry.flags & FLAGS_MASK) != (int)FileFlags.Directory)
-                    return Errno.NotDirectory;
+                    return ErrorNumber.NotDirectory;
 
                 currentPath = p == 0 ? pieces[0] : $"{currentPath}/{pieces[p]}";
 
@@ -103,7 +103,7 @@ namespace Aaru.Filesystems
                     continue;
 
                 if(entry.Value.Pointers.Length < 1)
-                    return Errno.InvalidArgument;
+                    return ErrorNumber.InvalidArgument;
 
                 currentDirectory = DecodeDirectory((int)entry.Value.Pointers[0]);
 
@@ -112,13 +112,12 @@ namespace Aaru.Filesystems
 
             contents = currentDirectory?.Keys.ToList();
 
-            return Errno.NoError;
+            return ErrorNumber.NoError;
         }
 
         Dictionary<string, DirectoryEntryWithPointers> DecodeDirectory(int firstBlock)
         {
-            Dictionary<string, DirectoryEntryWithPointers> entries =
-                new Dictionary<string, DirectoryEntryWithPointers>();
+            Dictionary<string, DirectoryEntryWithPointers> entries = new();
 
             int nextBlock = firstBlock;
 
