@@ -197,79 +197,104 @@ namespace Aaru.Core
             AaruConsole.WriteLine();
             PeripheralDeviceTypes scsiDeviceType = PeripheralDeviceTypes.DirectAccess;
             byte[]                scsiVendorId   = null;
+            ErrorNumber           errno;
 
             if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.SCSI_INQUIRY) == true)
             {
-                byte[] inquiry = imageFormat.ReadDiskTag(MediaTagType.SCSI_INQUIRY);
+                errno = imageFormat.ReadMediaTag(MediaTagType.SCSI_INQUIRY, out byte[] inquiry);
 
-                scsiDeviceType = (PeripheralDeviceTypes)(inquiry[0] & 0x1F);
-
-                if(inquiry.Length >= 16)
+                if(errno == ErrorNumber.NoError)
                 {
-                    scsiVendorId = new byte[8];
-                    Array.Copy(inquiry, 8, scsiVendorId, 0, 8);
-                }
+                    scsiDeviceType = (PeripheralDeviceTypes)(inquiry[0] & 0x1F);
 
-                AaruConsole.WriteLine("[bold]SCSI INQUIRY contained in image:[/]");
-                AaruConsole.Write("{0}", Inquiry.Prettify(inquiry));
-                AaruConsole.WriteLine();
+                    if(inquiry.Length >= 16)
+                    {
+                        scsiVendorId = new byte[8];
+                        Array.Copy(inquiry, 8, scsiVendorId, 0, 8);
+                    }
+
+                    AaruConsole.WriteLine("[bold]SCSI INQUIRY contained in image:[/]");
+                    AaruConsole.Write("{0}", Inquiry.Prettify(inquiry));
+                    AaruConsole.WriteLine();
+                }
             }
 
             if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.ATA_IDENTIFY) == true)
             {
-                byte[] identify = imageFormat.ReadDiskTag(MediaTagType.ATA_IDENTIFY);
+                errno = imageFormat.ReadMediaTag(MediaTagType.ATA_IDENTIFY, out byte[] identify);
 
-                AaruConsole.WriteLine("[bold]ATA IDENTIFY contained in image:[/]");
-                AaruConsole.Write("{0}", Identify.Prettify(identify));
-                AaruConsole.WriteLine();
+                if(errno == ErrorNumber.NoError)
+
+                {
+                    AaruConsole.WriteLine("[bold]ATA IDENTIFY contained in image:[/]");
+                    AaruConsole.Write("{0}", Identify.Prettify(identify));
+                    AaruConsole.WriteLine();
+                }
             }
 
             if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.ATAPI_IDENTIFY) == true)
             {
-                byte[] identify = imageFormat.ReadDiskTag(MediaTagType.ATAPI_IDENTIFY);
+                errno = imageFormat.ReadMediaTag(MediaTagType.ATAPI_IDENTIFY, out byte[] identify);
 
-                AaruConsole.WriteLine("[bold]ATAPI IDENTIFY contained in image:[/]");
-                AaruConsole.Write("{0}", Identify.Prettify(identify));
-                AaruConsole.WriteLine();
+                if(errno == ErrorNumber.NoError)
+
+                {
+                    AaruConsole.WriteLine("[bold]ATAPI IDENTIFY contained in image:[/]");
+                    AaruConsole.Write("{0}", Identify.Prettify(identify));
+                    AaruConsole.WriteLine();
+                }
             }
 
             if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.SCSI_MODESENSE_10) == true)
             {
-                byte[]             modeSense10 = imageFormat.ReadDiskTag(MediaTagType.SCSI_MODESENSE_10);
-                Modes.DecodedMode? decMode     = Modes.DecodeMode10(modeSense10, scsiDeviceType);
+                errno = imageFormat.ReadMediaTag(MediaTagType.SCSI_MODESENSE_10, out byte[] modeSense10);
 
-                if(decMode.HasValue)
+                if(errno == ErrorNumber.NoError)
+
                 {
-                    AaruConsole.WriteLine("[bold]SCSI MODE SENSE (10) contained in image:[/]");
-                    PrintScsiModePages.Print(decMode.Value, scsiDeviceType, scsiVendorId);
-                    AaruConsole.WriteLine();
+                    Modes.DecodedMode? decMode = Modes.DecodeMode10(modeSense10, scsiDeviceType);
+
+                    if(decMode.HasValue)
+                    {
+                        AaruConsole.WriteLine("[bold]SCSI MODE SENSE (10) contained in image:[/]");
+                        PrintScsiModePages.Print(decMode.Value, scsiDeviceType, scsiVendorId);
+                        AaruConsole.WriteLine();
+                    }
                 }
             }
             else if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.SCSI_MODESENSE_6) == true)
             {
-                byte[]             modeSense6 = imageFormat.ReadDiskTag(MediaTagType.SCSI_MODESENSE_6);
-                Modes.DecodedMode? decMode    = Modes.DecodeMode6(modeSense6, scsiDeviceType);
+                errno = imageFormat.ReadMediaTag(MediaTagType.SCSI_MODESENSE_6, out byte[] modeSense6);
 
-                if(decMode.HasValue)
+                if(errno == ErrorNumber.NoError)
                 {
-                    AaruConsole.WriteLine("[bold]SCSI MODE SENSE (6) contained in image:[/]");
-                    PrintScsiModePages.Print(decMode.Value, scsiDeviceType, scsiVendorId);
-                    AaruConsole.WriteLine();
+                    Modes.DecodedMode? decMode = Modes.DecodeMode6(modeSense6, scsiDeviceType);
+
+                    if(decMode.HasValue)
+                    {
+                        AaruConsole.WriteLine("[bold]SCSI MODE SENSE (6) contained in image:[/]");
+                        PrintScsiModePages.Print(decMode.Value, scsiDeviceType, scsiVendorId);
+                        AaruConsole.WriteLine();
+                    }
                 }
             }
             else if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.SCSI_MODEPAGE_2A) == true)
             {
-                byte[] mode2A = imageFormat.ReadDiskTag(MediaTagType.SCSI_MODEPAGE_2A);
+                errno = imageFormat.ReadMediaTag(MediaTagType.SCSI_MODEPAGE_2A, out byte[] mode2A);
 
-                AaruConsole.Write("{0}", Modes.PrettifyModePage_2A(mode2A));
-                AaruConsole.WriteLine();
+                if(errno == ErrorNumber.NoError)
+                {
+                    AaruConsole.Write("{0}", Modes.PrettifyModePage_2A(mode2A));
+                    AaruConsole.WriteLine();
+                }
             }
 
             if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.CD_FullTOC) == true)
             {
-                byte[] toc = imageFormat.ReadDiskTag(MediaTagType.CD_FullTOC);
+                errno = imageFormat.ReadMediaTag(MediaTagType.CD_FullTOC, out byte[] toc);
 
-                if(toc.Length > 0)
+                if(errno      == ErrorNumber.NoError &&
+                   toc.Length > 0)
                 {
                     ushort dataLen = Swapping.Swap(BitConverter.ToUInt16(toc, 0));
 
@@ -290,9 +315,10 @@ namespace Aaru.Core
 
             if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.CD_PMA) == true)
             {
-                byte[] pma = imageFormat.ReadDiskTag(MediaTagType.CD_PMA);
+                errno = imageFormat.ReadMediaTag(MediaTagType.CD_PMA, out byte[] pma);
 
-                if(pma.Length > 0)
+                if(errno      == ErrorNumber.NoError &&
+                   pma.Length > 0)
                 {
                     ushort dataLen = Swapping.Swap(BitConverter.ToUInt16(pma, 0));
 
@@ -313,303 +339,366 @@ namespace Aaru.Core
 
             if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.CD_ATIP) == true)
             {
-                byte[] atip = imageFormat.ReadDiskTag(MediaTagType.CD_ATIP);
+                errno = imageFormat.ReadMediaTag(MediaTagType.CD_ATIP, out byte[] atip);
 
-                uint dataLen = Swapping.Swap(BitConverter.ToUInt32(atip, 0));
-
-                if(dataLen + 4 != atip.Length)
+                if(errno == ErrorNumber.NoError)
                 {
-                    byte[] tmp = new byte[atip.Length + 4];
-                    Array.Copy(atip, 0, tmp, 4, atip.Length);
-                    tmp[0] = (byte)((atip.Length & 0xFF000000) >> 24);
-                    tmp[1] = (byte)((atip.Length & 0xFF0000)   >> 16);
-                    tmp[2] = (byte)((atip.Length & 0xFF00)     >> 8);
-                    tmp[3] = (byte)(atip.Length & 0xFF);
-                    atip   = tmp;
-                }
+                    uint dataLen = Swapping.Swap(BitConverter.ToUInt32(atip, 0));
 
-                AaruConsole.WriteLine("[bold]CompactDisc Absolute Time In Pregroove (ATIP) contained in image:[/]");
-                AaruConsole.Write("{0}", ATIP.Prettify(atip));
-                AaruConsole.WriteLine();
+                    if(dataLen + 4 != atip.Length)
+                    {
+                        byte[] tmp = new byte[atip.Length + 4];
+                        Array.Copy(atip, 0, tmp, 4, atip.Length);
+                        tmp[0] = (byte)((atip.Length & 0xFF000000) >> 24);
+                        tmp[1] = (byte)((atip.Length & 0xFF0000)   >> 16);
+                        tmp[2] = (byte)((atip.Length & 0xFF00)     >> 8);
+                        tmp[3] = (byte)(atip.Length & 0xFF);
+                        atip   = tmp;
+                    }
+
+                    AaruConsole.WriteLine("[bold]CompactDisc Absolute Time In Pregroove (ATIP) contained in image:[/]");
+                    AaruConsole.Write("{0}", ATIP.Prettify(atip));
+                    AaruConsole.WriteLine();
+                }
             }
 
             if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.CD_TEXT) == true)
             {
-                byte[] cdtext = imageFormat.ReadDiskTag(MediaTagType.CD_TEXT);
+                errno = imageFormat.ReadMediaTag(MediaTagType.CD_TEXT, out byte[] cdtext);
 
-                uint dataLen = Swapping.Swap(BitConverter.ToUInt32(cdtext, 0));
-
-                if(dataLen + 4 != cdtext.Length)
+                if(errno == ErrorNumber.NoError)
                 {
-                    byte[] tmp = new byte[cdtext.Length + 4];
-                    Array.Copy(cdtext, 0, tmp, 4, cdtext.Length);
-                    tmp[0] = (byte)((cdtext.Length & 0xFF000000) >> 24);
-                    tmp[1] = (byte)((cdtext.Length & 0xFF0000)   >> 16);
-                    tmp[2] = (byte)((cdtext.Length & 0xFF00)     >> 8);
-                    tmp[3] = (byte)(cdtext.Length & 0xFF);
-                    cdtext = tmp;
-                }
+                    uint dataLen = Swapping.Swap(BitConverter.ToUInt32(cdtext, 0));
 
-                AaruConsole.WriteLine("[bold]CompactDisc Lead-in's CD-Text contained in image:[/]");
-                AaruConsole.Write("{0}", CDTextOnLeadIn.Prettify(cdtext));
-                AaruConsole.WriteLine();
+                    if(dataLen + 4 != cdtext.Length)
+                    {
+                        byte[] tmp = new byte[cdtext.Length + 4];
+                        Array.Copy(cdtext, 0, tmp, 4, cdtext.Length);
+                        tmp[0] = (byte)((cdtext.Length & 0xFF000000) >> 24);
+                        tmp[1] = (byte)((cdtext.Length & 0xFF0000)   >> 16);
+                        tmp[2] = (byte)((cdtext.Length & 0xFF00)     >> 8);
+                        tmp[3] = (byte)(cdtext.Length & 0xFF);
+                        cdtext = tmp;
+                    }
+
+                    AaruConsole.WriteLine("[bold]CompactDisc Lead-in's CD-Text contained in image:[/]");
+                    AaruConsole.Write("{0}", CDTextOnLeadIn.Prettify(cdtext));
+                    AaruConsole.WriteLine();
+                }
             }
 
             if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.CD_MCN) == true)
             {
-                byte[] mcn = imageFormat.ReadDiskTag(MediaTagType.CD_MCN);
+                errno = imageFormat.ReadMediaTag(MediaTagType.CD_MCN, out byte[] mcn);
 
-                AaruConsole.WriteLine("[bold]CompactDisc Media Catalogue Number contained in image:[/] {0}",
-                                      Encoding.UTF8.GetString(mcn));
+                if(errno == ErrorNumber.NoError)
+                {
+                    AaruConsole.WriteLine("[bold]CompactDisc Media Catalogue Number contained in image:[/] {0}",
+                                          Encoding.UTF8.GetString(mcn));
 
-                AaruConsole.WriteLine();
+                    AaruConsole.WriteLine();
+                }
             }
 
             if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.DVDR_PreRecordedInfo) == true)
             {
-                byte[] pri = imageFormat.ReadDiskTag(MediaTagType.DVDR_PreRecordedInfo);
+                errno = imageFormat.ReadMediaTag(MediaTagType.DVDR_PreRecordedInfo, out byte[] pri);
 
-                AaruConsole.WriteLine("[bold]DVD-R(W) Pre-Recorded Information:[/]");
-                AaruConsole.Write("{0}", PRI.Prettify(pri));
-                AaruConsole.WriteLine();
+                if(errno == ErrorNumber.NoError)
+                {
+                    AaruConsole.WriteLine("[bold]DVD-R(W) Pre-Recorded Information:[/]");
+                    AaruConsole.Write("{0}", PRI.Prettify(pri));
+                    AaruConsole.WriteLine();
+                }
             }
 
             if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.DVD_PFI) == true)
             {
-                byte[] pfi = imageFormat.ReadDiskTag(MediaTagType.DVD_PFI);
+                errno = imageFormat.ReadMediaTag(MediaTagType.DVD_PFI, out byte[] pfi);
 
-                AaruConsole.WriteLine("[bold]DVD Physical Format Information contained in image:[/]");
-                AaruConsole.Write("{0}", PFI.Prettify(pfi, imageFormat.Info.MediaType));
-                AaruConsole.WriteLine();
+                if(errno == ErrorNumber.NoError)
+                {
+                    AaruConsole.WriteLine("[bold]DVD Physical Format Information contained in image:[/]");
+                    AaruConsole.Write("{0}", PFI.Prettify(pfi, imageFormat.Info.MediaType));
+                    AaruConsole.WriteLine();
+                }
             }
 
             if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.DVDRAM_DDS) == true)
             {
-                byte[] dds = imageFormat.ReadDiskTag(MediaTagType.DVDRAM_DDS);
+                errno = imageFormat.ReadMediaTag(MediaTagType.DVDRAM_DDS, out byte[] dds);
 
-                AaruConsole.WriteLine("[bold]DVD-RAM Disc Definition Structure contained in image:[/]");
-                AaruConsole.Write("{0}", DDS.Prettify(dds));
-                AaruConsole.WriteLine();
+                if(errno == ErrorNumber.NoError)
+                {
+                    AaruConsole.WriteLine("[bold]DVD-RAM Disc Definition Structure contained in image:[/]");
+                    AaruConsole.Write("{0}", DDS.Prettify(dds));
+                    AaruConsole.WriteLine();
+                }
             }
 
             if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.DVDR_PFI) == true)
             {
-                byte[] pfi = imageFormat.ReadDiskTag(MediaTagType.DVDR_PFI);
+                errno = imageFormat.ReadMediaTag(MediaTagType.DVDR_PFI, out byte[] pfi);
 
-                AaruConsole.WriteLine("[bold]DVD-R Physical Format Information contained in image:[/]");
-                AaruConsole.Write("{0}", PFI.Prettify(pfi, imageFormat.Info.MediaType));
-                AaruConsole.WriteLine();
+                if(errno == ErrorNumber.NoError)
+                {
+                    AaruConsole.WriteLine("[bold]DVD-R Physical Format Information contained in image:[/]");
+                    AaruConsole.Write("{0}", PFI.Prettify(pfi, imageFormat.Info.MediaType));
+                    AaruConsole.WriteLine();
+                }
             }
 
             if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.BD_DI) == true)
             {
-                byte[] di = imageFormat.ReadDiskTag(MediaTagType.BD_DI);
+                errno = imageFormat.ReadMediaTag(MediaTagType.BD_DI, out byte[] di);
 
-                AaruConsole.WriteLine("[bold]Bluray Disc Information contained in image:[/]");
-                AaruConsole.Write("{0}", DI.Prettify(di));
-                AaruConsole.WriteLine();
+                if(errno == ErrorNumber.NoError)
+                {
+                    AaruConsole.WriteLine("[bold]Bluray Disc Information contained in image:[/]");
+                    AaruConsole.Write("{0}", DI.Prettify(di));
+                    AaruConsole.WriteLine();
+                }
             }
 
             if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.BD_DDS) == true)
             {
-                byte[] dds = imageFormat.ReadDiskTag(MediaTagType.BD_DDS);
+                errno = imageFormat.ReadMediaTag(MediaTagType.BD_DDS, out byte[] dds);
 
-                AaruConsole.WriteLine("[bold]Bluray Disc Definition Structure contained in image:[/]");
-                AaruConsole.Write("{0}", Decoders.Bluray.DDS.Prettify(dds));
-                AaruConsole.WriteLine();
+                if(errno == ErrorNumber.NoError)
+                {
+                    AaruConsole.WriteLine("[bold]Bluray Disc Definition Structure contained in image:[/]");
+                    AaruConsole.Write("{0}", Decoders.Bluray.DDS.Prettify(dds));
+                    AaruConsole.WriteLine();
+                }
             }
 
             if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.PCMCIA_CIS) == true)
             {
-                byte[] cis = imageFormat.ReadDiskTag(MediaTagType.PCMCIA_CIS);
+                errno = imageFormat.ReadMediaTag(MediaTagType.PCMCIA_CIS, out byte[] cis);
 
-                AaruConsole.WriteLine("[bold]PCMCIA CIS:[/]");
-                Tuple[] tuples = CIS.GetTuples(cis);
+                if(errno == ErrorNumber.NoError)
+                {
+                    AaruConsole.WriteLine("[bold]PCMCIA CIS:[/]");
+                    Tuple[] tuples = CIS.GetTuples(cis);
 
-                if(tuples != null)
-                    foreach(Tuple tuple in tuples)
-                        switch(tuple.Code)
-                        {
-                            case TupleCodes.CISTPL_NULL:
-                            case TupleCodes.CISTPL_END: break;
-                            case TupleCodes.CISTPL_DEVICEGEO:
-                            case TupleCodes.CISTPL_DEVICEGEO_A:
-                                AaruConsole.WriteLine("{0}", CIS.PrettifyDeviceGeometryTuple(tuple));
+                    if(tuples != null)
+                        foreach(Tuple tuple in tuples)
+                            switch(tuple.Code)
+                            {
+                                case TupleCodes.CISTPL_NULL:
+                                case TupleCodes.CISTPL_END: break;
+                                case TupleCodes.CISTPL_DEVICEGEO:
+                                case TupleCodes.CISTPL_DEVICEGEO_A:
+                                    AaruConsole.WriteLine("{0}", CIS.PrettifyDeviceGeometryTuple(tuple));
 
-                                break;
-                            case TupleCodes.CISTPL_MANFID:
-                                AaruConsole.WriteLine("{0}", CIS.PrettifyManufacturerIdentificationTuple(tuple));
+                                    break;
+                                case TupleCodes.CISTPL_MANFID:
+                                    AaruConsole.WriteLine("{0}", CIS.PrettifyManufacturerIdentificationTuple(tuple));
 
-                                break;
-                            case TupleCodes.CISTPL_VERS_1:
-                                AaruConsole.WriteLine("{0}", CIS.PrettifyLevel1VersionTuple(tuple));
+                                    break;
+                                case TupleCodes.CISTPL_VERS_1:
+                                    AaruConsole.WriteLine("{0}", CIS.PrettifyLevel1VersionTuple(tuple));
 
-                                break;
-                            case TupleCodes.CISTPL_ALTSTR:
-                            case TupleCodes.CISTPL_BAR:
-                            case TupleCodes.CISTPL_BATTERY:
-                            case TupleCodes.CISTPL_BYTEORDER:
-                            case TupleCodes.CISTPL_CFTABLE_ENTRY:
-                            case TupleCodes.CISTPL_CFTABLE_ENTRY_CB:
-                            case TupleCodes.CISTPL_CHECKSUM:
-                            case TupleCodes.CISTPL_CONFIG:
-                            case TupleCodes.CISTPL_CONFIG_CB:
-                            case TupleCodes.CISTPL_DATE:
-                            case TupleCodes.CISTPL_DEVICE:
-                            case TupleCodes.CISTPL_DEVICE_A:
-                            case TupleCodes.CISTPL_DEVICE_OA:
-                            case TupleCodes.CISTPL_DEVICE_OC:
-                            case TupleCodes.CISTPL_EXTDEVIC:
-                            case TupleCodes.CISTPL_FORMAT:
-                            case TupleCodes.CISTPL_FORMAT_A:
-                            case TupleCodes.CISTPL_FUNCE:
-                            case TupleCodes.CISTPL_FUNCID:
-                            case TupleCodes.CISTPL_GEOMETRY:
-                            case TupleCodes.CISTPL_INDIRECT:
-                            case TupleCodes.CISTPL_JEDEC_A:
-                            case TupleCodes.CISTPL_JEDEC_C:
-                            case TupleCodes.CISTPL_LINKTARGET:
-                            case TupleCodes.CISTPL_LONGLINK_A:
-                            case TupleCodes.CISTPL_LONGLINK_C:
-                            case TupleCodes.CISTPL_LONGLINK_CB:
-                            case TupleCodes.CISTPL_LONGLINK_MFC:
-                            case TupleCodes.CISTPL_NO_LINK:
-                            case TupleCodes.CISTPL_ORG:
-                            case TupleCodes.CISTPL_PWR_MGMNT:
-                            case TupleCodes.CISTPL_SPCL:
-                            case TupleCodes.CISTPL_SWIL:
-                            case TupleCodes.CISTPL_VERS_2:
-                                AaruConsole.DebugWriteLine("Device-Info command", "Found undecoded tuple ID {0}",
-                                                           tuple.Code);
+                                    break;
+                                case TupleCodes.CISTPL_ALTSTR:
+                                case TupleCodes.CISTPL_BAR:
+                                case TupleCodes.CISTPL_BATTERY:
+                                case TupleCodes.CISTPL_BYTEORDER:
+                                case TupleCodes.CISTPL_CFTABLE_ENTRY:
+                                case TupleCodes.CISTPL_CFTABLE_ENTRY_CB:
+                                case TupleCodes.CISTPL_CHECKSUM:
+                                case TupleCodes.CISTPL_CONFIG:
+                                case TupleCodes.CISTPL_CONFIG_CB:
+                                case TupleCodes.CISTPL_DATE:
+                                case TupleCodes.CISTPL_DEVICE:
+                                case TupleCodes.CISTPL_DEVICE_A:
+                                case TupleCodes.CISTPL_DEVICE_OA:
+                                case TupleCodes.CISTPL_DEVICE_OC:
+                                case TupleCodes.CISTPL_EXTDEVIC:
+                                case TupleCodes.CISTPL_FORMAT:
+                                case TupleCodes.CISTPL_FORMAT_A:
+                                case TupleCodes.CISTPL_FUNCE:
+                                case TupleCodes.CISTPL_FUNCID:
+                                case TupleCodes.CISTPL_GEOMETRY:
+                                case TupleCodes.CISTPL_INDIRECT:
+                                case TupleCodes.CISTPL_JEDEC_A:
+                                case TupleCodes.CISTPL_JEDEC_C:
+                                case TupleCodes.CISTPL_LINKTARGET:
+                                case TupleCodes.CISTPL_LONGLINK_A:
+                                case TupleCodes.CISTPL_LONGLINK_C:
+                                case TupleCodes.CISTPL_LONGLINK_CB:
+                                case TupleCodes.CISTPL_LONGLINK_MFC:
+                                case TupleCodes.CISTPL_NO_LINK:
+                                case TupleCodes.CISTPL_ORG:
+                                case TupleCodes.CISTPL_PWR_MGMNT:
+                                case TupleCodes.CISTPL_SPCL:
+                                case TupleCodes.CISTPL_SWIL:
+                                case TupleCodes.CISTPL_VERS_2:
+                                    AaruConsole.DebugWriteLine("Device-Info command", "Found undecoded tuple ID {0}",
+                                                               tuple.Code);
 
-                                break;
-                            default:
-                                AaruConsole.DebugWriteLine("Device-Info command", "Found unknown tuple ID 0x{0:X2}",
-                                                           (byte)tuple.Code);
+                                    break;
+                                default:
+                                    AaruConsole.DebugWriteLine("Device-Info command", "Found unknown tuple ID 0x{0:X2}",
+                                                               (byte)tuple.Code);
 
-                                break;
-                        }
-                else
-                    AaruConsole.DebugWriteLine("Device-Info command", "Could not get tuples");
+                                    break;
+                            }
+                    else
+                        AaruConsole.DebugWriteLine("Device-Info command", "Could not get tuples");
+                }
             }
 
             if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.SD_CID) == true)
             {
-                byte[] cid = imageFormat.ReadDiskTag(MediaTagType.SD_CID);
+                errno = imageFormat.ReadMediaTag(MediaTagType.SD_CID, out byte[] cid);
 
-                AaruConsole.WriteLine("[bold]SecureDigital CID contained in image:[/]");
-                AaruConsole.Write("{0}", Decoders.SecureDigital.Decoders.PrettifyCID(cid));
-                AaruConsole.WriteLine();
+                if(errno == ErrorNumber.NoError)
+                {
+                    AaruConsole.WriteLine("[bold]SecureDigital CID contained in image:[/]");
+                    AaruConsole.Write("{0}", Decoders.SecureDigital.Decoders.PrettifyCID(cid));
+                    AaruConsole.WriteLine();
+                }
             }
 
             if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.SD_CSD) == true)
             {
-                byte[] csd = imageFormat.ReadDiskTag(MediaTagType.SD_CSD);
+                errno = imageFormat.ReadMediaTag(MediaTagType.SD_CSD, out byte[] csd);
 
-                AaruConsole.WriteLine("[bold]SecureDigital CSD contained in image:[/]");
-                AaruConsole.Write("{0}", Decoders.SecureDigital.Decoders.PrettifyCSD(csd));
-                AaruConsole.WriteLine();
+                if(errno == ErrorNumber.NoError)
+                {
+                    AaruConsole.WriteLine("[bold]SecureDigital CSD contained in image:[/]");
+                    AaruConsole.Write("{0}", Decoders.SecureDigital.Decoders.PrettifyCSD(csd));
+                    AaruConsole.WriteLine();
+                }
             }
 
             if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.SD_SCR) == true)
             {
-                byte[] scr = imageFormat.ReadDiskTag(MediaTagType.SD_SCR);
+                errno = imageFormat.ReadMediaTag(MediaTagType.SD_SCR, out byte[] scr);
 
-                AaruConsole.WriteLine("[bold]SecureDigital SCR contained in image:[/]");
-                AaruConsole.Write("{0}", Decoders.SecureDigital.Decoders.PrettifySCR(scr));
-                AaruConsole.WriteLine();
+                if(errno == ErrorNumber.NoError)
+                {
+                    AaruConsole.WriteLine("[bold]SecureDigital SCR contained in image:[/]");
+                    AaruConsole.Write("{0}", Decoders.SecureDigital.Decoders.PrettifySCR(scr));
+                    AaruConsole.WriteLine();
+                }
             }
 
             if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.SD_OCR) == true)
             {
-                byte[] ocr = imageFormat.ReadDiskTag(MediaTagType.SD_OCR);
+                errno = imageFormat.ReadMediaTag(MediaTagType.SD_OCR, out byte[] ocr);
 
-                AaruConsole.WriteLine("[bold]SecureDigital OCR contained in image:[/]");
-                AaruConsole.Write("{0}", Decoders.SecureDigital.Decoders.PrettifyOCR(ocr));
-                AaruConsole.WriteLine();
+                if(errno == ErrorNumber.NoError)
+                {
+                    AaruConsole.WriteLine("[bold]SecureDigital OCR contained in image:[/]");
+                    AaruConsole.Write("{0}", Decoders.SecureDigital.Decoders.PrettifyOCR(ocr));
+                    AaruConsole.WriteLine();
+                }
             }
 
             if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.MMC_CID) == true)
             {
-                byte[] cid = imageFormat.ReadDiskTag(MediaTagType.MMC_CID);
+                errno = imageFormat.ReadMediaTag(MediaTagType.MMC_CID, out byte[] cid);
 
-                AaruConsole.WriteLine("[bold]MultiMediaCard CID contained in image:[/]");
-                AaruConsole.Write("{0}", Decoders.MMC.Decoders.PrettifyCID(cid));
-                AaruConsole.WriteLine();
+                if(errno == ErrorNumber.NoError)
+                {
+                    AaruConsole.WriteLine("[bold]MultiMediaCard CID contained in image:[/]");
+                    AaruConsole.Write("{0}", Decoders.MMC.Decoders.PrettifyCID(cid));
+                    AaruConsole.WriteLine();
+                }
             }
 
             if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.MMC_CSD) == true)
             {
-                byte[] csd = imageFormat.ReadDiskTag(MediaTagType.MMC_CSD);
+                errno = imageFormat.ReadMediaTag(MediaTagType.MMC_CSD, out byte[] csd);
 
-                AaruConsole.WriteLine("[bold]MultiMediaCard CSD contained in image:[/]");
-                AaruConsole.Write("{0}", Decoders.MMC.Decoders.PrettifyCSD(csd));
-                AaruConsole.WriteLine();
+                if(errno == ErrorNumber.NoError)
+                {
+                    AaruConsole.WriteLine("[bold]MultiMediaCard CSD contained in image:[/]");
+                    AaruConsole.Write("{0}", Decoders.MMC.Decoders.PrettifyCSD(csd));
+                    AaruConsole.WriteLine();
+                }
             }
 
             if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.MMC_ExtendedCSD) == true)
             {
-                byte[] ecsd = imageFormat.ReadDiskTag(MediaTagType.MMC_ExtendedCSD);
+                errno = imageFormat.ReadMediaTag(MediaTagType.MMC_ExtendedCSD, out byte[] ecsd);
 
-                AaruConsole.WriteLine("[bold]MultiMediaCard ExtendedCSD contained in image:[/]");
-                AaruConsole.Write("{0}", Decoders.MMC.Decoders.PrettifyExtendedCSD(ecsd));
-                AaruConsole.WriteLine();
+                if(errno == ErrorNumber.NoError)
+                {
+                    AaruConsole.WriteLine("[bold]MultiMediaCard ExtendedCSD contained in image:[/]");
+                    AaruConsole.Write("{0}", Decoders.MMC.Decoders.PrettifyExtendedCSD(ecsd));
+                    AaruConsole.WriteLine();
+                }
             }
 
             if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.MMC_OCR) == true)
             {
-                byte[] ocr = imageFormat.ReadDiskTag(MediaTagType.MMC_OCR);
+                errno = imageFormat.ReadMediaTag(MediaTagType.MMC_OCR, out byte[] ocr);
 
-                AaruConsole.WriteLine("[bold]MultiMediaCard OCR contained in image:[/]");
-                AaruConsole.Write("{0}", Decoders.MMC.Decoders.PrettifyOCR(ocr));
-                AaruConsole.WriteLine();
+                if(errno == ErrorNumber.NoError)
+                {
+                    AaruConsole.WriteLine("[bold]MultiMediaCard OCR contained in image:[/]");
+                    AaruConsole.Write("{0}", Decoders.MMC.Decoders.PrettifyOCR(ocr));
+                    AaruConsole.WriteLine();
+                }
             }
 
             if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.Xbox_PFI) == true)
             {
-                byte[] xpfi = imageFormat.ReadDiskTag(MediaTagType.Xbox_PFI);
+                errno = imageFormat.ReadMediaTag(MediaTagType.Xbox_PFI, out byte[] xpfi);
 
-                AaruConsole.WriteLine("[bold]Xbox Physical Format Information contained in image:[/]");
-                AaruConsole.Write("{0}", PFI.Prettify(xpfi, imageFormat.Info.MediaType));
-                AaruConsole.WriteLine();
+                if(errno == ErrorNumber.NoError)
+                {
+                    AaruConsole.WriteLine("[bold]Xbox Physical Format Information contained in image:[/]");
+                    AaruConsole.Write("{0}", PFI.Prettify(xpfi, imageFormat.Info.MediaType));
+                    AaruConsole.WriteLine();
+                }
             }
 
             if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.Xbox_DMI) == true)
             {
-                byte[] xdmi = imageFormat.ReadDiskTag(MediaTagType.Xbox_DMI);
+                errno = imageFormat.ReadMediaTag(MediaTagType.Xbox_DMI, out byte[] xdmi);
 
-                if(DMI.IsXbox(xdmi))
+                if(errno == ErrorNumber.NoError)
                 {
-                    DMI.XboxDMI? xmi = DMI.DecodeXbox(xdmi);
-
-                    if(xmi.HasValue)
+                    if(DMI.IsXbox(xdmi))
                     {
-                        AaruConsole.WriteLine("[bold]Xbox DMI contained in image:[/]");
-                        AaruConsole.Write("{0}", DMI.PrettifyXbox(xmi));
-                        AaruConsole.WriteLine();
+                        DMI.XboxDMI? xmi = DMI.DecodeXbox(xdmi);
+
+                        if(xmi.HasValue)
+                        {
+                            AaruConsole.WriteLine("[bold]Xbox DMI contained in image:[/]");
+                            AaruConsole.Write("{0}", DMI.PrettifyXbox(xmi));
+                            AaruConsole.WriteLine();
+                        }
                     }
-                }
 
-                if(DMI.IsXbox360(xdmi))
-                {
-                    DMI.Xbox360DMI? xmi = DMI.DecodeXbox360(xdmi);
-
-                    if(xmi.HasValue)
+                    if(DMI.IsXbox360(xdmi))
                     {
-                        AaruConsole.WriteLine("[bold]Xbox 360 DMI contained in image:[/]");
-                        AaruConsole.Write("{0}", DMI.PrettifyXbox360(xmi));
-                        AaruConsole.WriteLine();
+                        DMI.Xbox360DMI? xmi = DMI.DecodeXbox360(xdmi);
+
+                        if(xmi.HasValue)
+                        {
+                            AaruConsole.WriteLine("[bold]Xbox 360 DMI contained in image:[/]");
+                            AaruConsole.Write("{0}", DMI.PrettifyXbox360(xmi));
+                            AaruConsole.WriteLine();
+                        }
                     }
                 }
             }
 
             if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.Xbox_SecuritySector) == true)
             {
-                byte[] toc = imageFormat.ReadDiskTag(MediaTagType.Xbox_SecuritySector);
+                errno = imageFormat.ReadMediaTag(MediaTagType.Xbox_SecuritySector, out byte[] toc);
 
-                AaruConsole.WriteLine("[bold]Xbox Security Sectors contained in image:[/]");
-                AaruConsole.Write("{0}", SS.Prettify(toc));
-                AaruConsole.WriteLine();
+                if(errno == ErrorNumber.NoError)
+                {
+                    AaruConsole.WriteLine("[bold]Xbox Security Sectors contained in image:[/]");
+                    AaruConsole.Write("{0}", SS.Prettify(toc));
+                    AaruConsole.WriteLine();
+                }
             }
 
             if(imageFormat is IOpticalMediaImage opticalImage)

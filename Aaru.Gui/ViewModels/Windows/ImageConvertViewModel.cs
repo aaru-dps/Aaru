@@ -855,26 +855,43 @@ namespace Aaru.Gui.ViewModels.Windows
                 if(ForceChecked && !outputFormat.SupportedMediaTags.Contains(mediaTag))
                     continue;
 
-                byte[] tag = _inputFormat.ReadDiskTag(mediaTag);
+                var errno = _inputFormat.ReadMediaTag(mediaTag, out byte[] tag);
 
-                if(outputFormat.WriteMediaTag(tag, mediaTag))
+                if(errno == ErrorNumber.NoError && outputFormat.WriteMediaTag(tag, mediaTag))
                     continue;
 
                 if(ForceChecked)
                 {
                     warning = true;
-                    AaruConsole.ErrorWriteLine("Error {0} writing media tag, continuing...", outputFormat.ErrorMessage);
+
+                    if(errno == ErrorNumber.NoError)
+                        AaruConsole.ErrorWriteLine("Error {0} writing media tag, continuing...", outputFormat.ErrorMessage);
+                    else
+                        AaruConsole.ErrorWriteLine("Error {0} reading media tag, continuing...", errno);
                 }
                 else
                 {
-                    await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
-                                                                                  GetMessageBoxStandardWindow("Error",
-                                                                                      $"Error {outputFormat.ErrorMessage} writing media tag, not continuing...",
-                                                                                      icon: Icon.Error).
-                                                                                  ShowDialog(_view));
+                    if(errno == ErrorNumber.NoError)
+                    {
+                        await Dispatcher.UIThread.InvokeAsync(action: async () =>
+                                                                  await MessageBoxManager.
+                                                                        GetMessageBoxStandardWindow("Error",
+                                                                            $"Error {outputFormat.ErrorMessage} writing media tag, not continuing...",
+                                                                            icon: Icon.Error).ShowDialog(_view));
 
-                    AaruConsole.ErrorWriteLine("Error {0} writing media tag, not continuing...",
-                                               outputFormat.ErrorMessage);
+                        AaruConsole.ErrorWriteLine("Error {0} writing media tag, not continuing...",
+                                                   outputFormat.ErrorMessage);
+                    }else
+                    {
+                        await Dispatcher.UIThread.InvokeAsync(action: async () =>
+                                                                  await MessageBoxManager.
+                                                                        GetMessageBoxStandardWindow("Error",
+                                                                            $"Error {errno} reading media tag, not continuing...",
+                                                                            icon: Icon.Error).ShowDialog(_view));
+
+                        AaruConsole.ErrorWriteLine("Error {0} reading media tag, not continuing...",
+                                                   errno);
+                    }
 
                     return;
                 }

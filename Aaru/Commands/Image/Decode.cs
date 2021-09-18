@@ -183,6 +183,7 @@ namespace Aaru.Commands.Image
             Statistics.AddMediaFormat(inputFormat.Format);
             Statistics.AddMedia(inputFormat.Info.MediaType, false);
             Statistics.AddFilter(inputFilter.Name);
+            ErrorNumber errno;
 
             if(diskTags)
                 if(inputFormat.Info.ReadableMediaTags.Count == 0)
@@ -193,10 +194,11 @@ namespace Aaru.Commands.Image
                         {
                             case MediaTagType.SCSI_INQUIRY:
                             {
-                                byte[] inquiry = inputFormat.ReadDiskTag(MediaTagType.SCSI_INQUIRY);
+                                errno = inputFormat.ReadMediaTag(MediaTagType.SCSI_INQUIRY, out byte[] inquiry);
 
                                 if(inquiry == null)
-                                    AaruConsole.WriteLine("Error reading SCSI INQUIRY response from disc image");
+                                    AaruConsole.WriteLine("Error {0} reading SCSI INQUIRY response from disc image",
+                                                          errno);
                                 else
                                 {
                                     AaruConsole.WriteLine("[bold]SCSI INQUIRY command response:[/]");
@@ -214,10 +216,12 @@ namespace Aaru.Commands.Image
                             }
                             case MediaTagType.ATA_IDENTIFY:
                             {
-                                byte[] identify = inputFormat.ReadDiskTag(MediaTagType.ATA_IDENTIFY);
+                                errno = inputFormat.ReadMediaTag(MediaTagType.ATA_IDENTIFY, out byte[] identify);
 
-                                if(identify == null)
-                                    AaruConsole.WriteLine("Error reading ATA IDENTIFY DEVICE response from disc image");
+                                if(errno != ErrorNumber.NoError)
+                                    AaruConsole.
+                                        WriteLine("Error {0} reading ATA IDENTIFY DEVICE response from disc image",
+                                                  errno);
                                 else
                                 {
                                     AaruConsole.WriteLine("[bold]ATA IDENTIFY DEVICE command response:[/]");
@@ -235,11 +239,12 @@ namespace Aaru.Commands.Image
                             }
                             case MediaTagType.ATAPI_IDENTIFY:
                             {
-                                byte[] identify = inputFormat.ReadDiskTag(MediaTagType.ATAPI_IDENTIFY);
+                                errno = inputFormat.ReadMediaTag(MediaTagType.ATAPI_IDENTIFY, out byte[] identify);
 
                                 if(identify == null)
                                     AaruConsole.
-                                        WriteLine("Error reading ATA IDENTIFY PACKET DEVICE response from disc image");
+                                        WriteLine("Error {0} reading ATA IDENTIFY PACKET DEVICE response from disc image",
+                                                  errno);
                                 else
                                 {
                                     AaruConsole.WriteLine("[bold]ATA IDENTIFY PACKET DEVICE command response:[/]");
@@ -257,10 +262,10 @@ namespace Aaru.Commands.Image
                             }
                             case MediaTagType.CD_ATIP:
                             {
-                                byte[] atip = inputFormat.ReadDiskTag(MediaTagType.CD_ATIP);
+                                errno = inputFormat.ReadMediaTag(MediaTagType.CD_ATIP, out byte[] atip);
 
-                                if(atip == null)
-                                    AaruConsole.WriteLine("Error reading CD ATIP from disc image");
+                                if(errno != ErrorNumber.NoError)
+                                    AaruConsole.WriteLine("Error {0} reading CD ATIP from disc image", errno);
                                 else
                                 {
                                     AaruConsole.WriteLine("[bold]CD ATIP:[/]");
@@ -278,10 +283,10 @@ namespace Aaru.Commands.Image
                             }
                             case MediaTagType.CD_FullTOC:
                             {
-                                byte[] fullToc = inputFormat.ReadDiskTag(MediaTagType.CD_FullTOC);
+                                errno = inputFormat.ReadMediaTag(MediaTagType.CD_FullTOC, out byte[] fullToc);
 
-                                if(fullToc == null)
-                                    AaruConsole.WriteLine("Error reading CD full TOC from disc image");
+                                if(errno != ErrorNumber.NoError)
+                                    AaruConsole.WriteLine("Error {0} reading CD full TOC from disc image", errno);
                                 else
                                 {
                                     AaruConsole.WriteLine("[bold]CD full TOC:[/]");
@@ -299,10 +304,10 @@ namespace Aaru.Commands.Image
                             }
                             case MediaTagType.CD_PMA:
                             {
-                                byte[] pma = inputFormat.ReadDiskTag(MediaTagType.CD_PMA);
+                                errno = inputFormat.ReadMediaTag(MediaTagType.CD_PMA, out byte[] pma);
 
-                                if(pma == null)
-                                    AaruConsole.WriteLine("Error reading CD PMA from disc image");
+                                if(errno != ErrorNumber.NoError)
+                                    AaruConsole.WriteLine("Error {0} reading CD PMA from disc image", errno);
                                 else
                                 {
                                     AaruConsole.WriteLine("[bold]CD PMA:[/]");
@@ -320,10 +325,11 @@ namespace Aaru.Commands.Image
                             }
                             case MediaTagType.CD_SessionInfo:
                             {
-                                byte[] sessionInfo = inputFormat.ReadDiskTag(MediaTagType.CD_SessionInfo);
+                                errno = inputFormat.ReadMediaTag(MediaTagType.CD_SessionInfo, out byte[] sessionInfo);
 
-                                if(sessionInfo == null)
-                                    AaruConsole.WriteLine("Error reading CD session information from disc image");
+                                if(errno != ErrorNumber.NoError)
+                                    AaruConsole.WriteLine("Error {0} reading CD session information from disc image",
+                                                          errno);
                                 else
                                 {
                                     AaruConsole.WriteLine("[bold]CD session information:[/]");
@@ -341,9 +347,9 @@ namespace Aaru.Commands.Image
                             }
                             case MediaTagType.CD_TEXT:
                             {
-                                byte[] cdText = inputFormat.ReadDiskTag(MediaTagType.CD_TEXT);
+                                errno = inputFormat.ReadMediaTag(MediaTagType.CD_TEXT, out byte[] cdText);
 
-                                if(cdText == null)
+                                if(errno != ErrorNumber.NoError)
                                     AaruConsole.WriteLine("Error reading CD-TEXT from disc image");
                                 else
                                 {
@@ -362,7 +368,7 @@ namespace Aaru.Commands.Image
                             }
                             case MediaTagType.CD_TOC:
                             {
-                                byte[] toc = inputFormat.ReadDiskTag(MediaTagType.CD_TOC);
+                                errno = inputFormat.ReadMediaTag(MediaTagType.CD_TOC, out byte[] toc);
 
                                 if(toc == null)
                                     AaruConsole.WriteLine("Error reading CD TOC from disc image");

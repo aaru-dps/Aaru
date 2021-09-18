@@ -736,7 +736,22 @@ namespace Aaru.Commands.Image
                             Columns(new TaskDescriptionColumn(), new SpinnerColumn()).Start(ctx =>
                             {
                                 ctx.AddTask($"Converting media tag {Markup.Escape(mediaTag.ToString())}");
-                                byte[] tag = inputFormat.ReadDiskTag(mediaTag);
+                                ErrorNumber errno = inputFormat.ReadMediaTag(mediaTag, out byte[] tag);
+
+                                if(errno != ErrorNumber.NoError)
+                                {
+                                    if(force)
+                                        AaruConsole.ErrorWriteLine("Error {0} reading media tag, continuing...", errno);
+                                    else
+                                    {
+                                        AaruConsole.ErrorWriteLine("Error {0} writing media tag, not continuing...",
+                                                                   errno);
+
+                                        ErrorNumber = errno;
+                                    }
+
+                                    return;
+                                }
 
                                 if(outputFormat.WriteMediaTag(tag, mediaTag))
                                     return;

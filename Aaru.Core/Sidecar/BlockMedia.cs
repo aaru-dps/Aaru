@@ -101,6 +101,8 @@ namespace Aaru.Core
             }
 
             UpdateStatus("Hashing media tags...");
+            ErrorNumber errno;
+            byte[]      buffer;
 
             foreach(MediaTagType tagType in image.Info.ReadableMediaTags)
             {
@@ -110,31 +112,42 @@ namespace Aaru.Core
                 switch(tagType)
                 {
                     case MediaTagType.ATAPI_IDENTIFY:
+                        errno = image.ReadMediaTag(MediaTagType.ATAPI_IDENTIFY, out buffer);
+
+                        if(errno != ErrorNumber.NoError)
+                            break;
+
                         sidecar.BlockMedia[0].ATA = new ATAType
                         {
                             Identify = new DumpType
                             {
-                                Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.ATAPI_IDENTIFY)).
-                                                     ToArray(),
-                                Size = (ulong)image.ReadDiskTag(MediaTagType.ATAPI_IDENTIFY).Length
+                                Checksums = Checksum.GetChecksums(buffer).ToArray(),
+                                Size      = (ulong)buffer.Length
                             }
                         };
 
                         break;
                     case MediaTagType.ATA_IDENTIFY:
+                        errno = image.ReadMediaTag(MediaTagType.ATA_IDENTIFY, out buffer);
+
+                        if(errno != ErrorNumber.NoError)
+                            break;
+
                         sidecar.BlockMedia[0].ATA = new ATAType
                         {
                             Identify = new DumpType
                             {
-                                Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.ATA_IDENTIFY)).
-                                                     ToArray(),
-                                Size = (ulong)image.ReadDiskTag(MediaTagType.ATA_IDENTIFY).Length
+                                Checksums = Checksum.GetChecksums(buffer).ToArray(),
+                                Size      = (ulong)buffer.Length
                             }
                         };
 
                         break;
                     case MediaTagType.PCMCIA_CIS:
-                        byte[] cis = image.ReadDiskTag(MediaTagType.PCMCIA_CIS);
+                        errno = image.ReadMediaTag(MediaTagType.PCMCIA_CIS, out byte[] cis);
+
+                        if(errno != ErrorNumber.NoError)
+                            break;
 
                         sidecar.BlockMedia[0].PCMCIA = new PCMCIAType
                         {
@@ -185,128 +198,183 @@ namespace Aaru.Core
 
                         break;
                     case MediaTagType.SCSI_INQUIRY:
+                        errno = image.ReadMediaTag(MediaTagType.SCSI_INQUIRY, out buffer);
+
+                        if(errno != ErrorNumber.NoError)
+                            break;
+
                         sidecar.BlockMedia[0].SCSI = new SCSIType
                         {
                             Inquiry = new DumpType
                             {
-                                Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.SCSI_INQUIRY)).
-                                                     ToArray(),
-                                Size = (ulong)image.ReadDiskTag(MediaTagType.SCSI_INQUIRY).Length
+                                Checksums = Checksum.GetChecksums(buffer).ToArray(),
+                                Size      = (ulong)buffer.Length
                             }
                         };
 
                         break;
                     case MediaTagType.SD_CID:
+                        errno = image.ReadMediaTag(MediaTagType.SD_CID, out buffer);
+
+                        if(errno != ErrorNumber.NoError)
+                            break;
+
                         sidecar.BlockMedia[0].SecureDigital ??= new SecureDigitalType();
 
                         sidecar.BlockMedia[0].SecureDigital.CID = new DumpType
                         {
-                            Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.SD_CID)).ToArray(),
-                            Size      = (ulong)image.ReadDiskTag(MediaTagType.SD_CID).Length
+                            Checksums = Checksum.GetChecksums(buffer).ToArray(),
+                            Size      = (ulong)buffer.Length
                         };
 
                         break;
                     case MediaTagType.SD_CSD:
+                        errno = image.ReadMediaTag(MediaTagType.SD_CSD, out buffer);
+
+                        if(errno != ErrorNumber.NoError)
+                            break;
+
                         sidecar.BlockMedia[0].SecureDigital ??= new SecureDigitalType();
 
                         sidecar.BlockMedia[0].SecureDigital.CSD = new DumpType
                         {
-                            Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.SD_CSD)).ToArray(),
-                            Size      = (ulong)image.ReadDiskTag(MediaTagType.SD_CSD).Length
+                            Checksums = Checksum.GetChecksums(buffer).ToArray(),
+                            Size      = (ulong)buffer.Length
                         };
 
                         break;
                     case MediaTagType.SD_SCR:
+                        errno = image.ReadMediaTag(MediaTagType.SD_SCR, out buffer);
+
+                        if(errno != ErrorNumber.NoError)
+                            break;
+
                         sidecar.BlockMedia[0].SecureDigital ??= new SecureDigitalType();
 
                         sidecar.BlockMedia[0].SecureDigital.SCR = new DumpType
                         {
-                            Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.SD_SCR)).ToArray(),
-                            Size      = (ulong)image.ReadDiskTag(MediaTagType.SD_SCR).Length
+                            Checksums = Checksum.GetChecksums(buffer).ToArray(),
+                            Size      = (ulong)buffer.Length
                         };
 
                         break;
                     case MediaTagType.SD_OCR:
+                        errno = image.ReadMediaTag(MediaTagType.SD_OCR, out buffer);
+
+                        if(errno != ErrorNumber.NoError)
+                            break;
+
                         sidecar.BlockMedia[0].SecureDigital ??= new SecureDigitalType();
 
                         sidecar.BlockMedia[0].SecureDigital.OCR = new DumpType
                         {
-                            Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.SD_OCR)).ToArray(),
-                            Size      = (ulong)image.ReadDiskTag(MediaTagType.SD_OCR).Length
+                            Checksums = Checksum.GetChecksums(buffer).ToArray(),
+                            Size      = (ulong)buffer.Length
                         };
 
                         break;
                     case MediaTagType.MMC_CID:
+                        errno = image.ReadMediaTag(MediaTagType.MMC_CID, out buffer);
+
+                        if(errno != ErrorNumber.NoError)
+                            break;
+
                         sidecar.BlockMedia[0].MultiMediaCard ??= new MultiMediaCardType();
 
                         sidecar.BlockMedia[0].MultiMediaCard.CID = new DumpType
                         {
-                            Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.MMC_CID)).ToArray(),
-                            Size      = (ulong)image.ReadDiskTag(MediaTagType.MMC_CID).Length
+                            Checksums = Checksum.GetChecksums(buffer).ToArray(),
+                            Size      = (ulong)buffer.Length
                         };
 
                         break;
                     case MediaTagType.MMC_CSD:
+                        errno = image.ReadMediaTag(MediaTagType.MMC_CSD, out buffer);
+
+                        if(errno != ErrorNumber.NoError)
+                            break;
+
                         sidecar.BlockMedia[0].MultiMediaCard ??= new MultiMediaCardType();
 
                         sidecar.BlockMedia[0].MultiMediaCard.CSD = new DumpType
                         {
-                            Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.MMC_CSD)).ToArray(),
-                            Size      = (ulong)image.ReadDiskTag(MediaTagType.MMC_CSD).Length
+                            Checksums = Checksum.GetChecksums(buffer).ToArray(),
+                            Size      = (ulong)buffer.Length
                         };
 
                         break;
                     case MediaTagType.MMC_OCR:
+                        errno = image.ReadMediaTag(MediaTagType.MMC_OCR, out buffer);
+
+                        if(errno != ErrorNumber.NoError)
+                            break;
+
                         sidecar.BlockMedia[0].MultiMediaCard ??= new MultiMediaCardType();
 
                         sidecar.BlockMedia[0].MultiMediaCard.OCR = new DumpType
                         {
-                            Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.MMC_OCR)).ToArray(),
-                            Size      = (ulong)image.ReadDiskTag(MediaTagType.MMC_OCR).Length
+                            Checksums = Checksum.GetChecksums(buffer).ToArray(),
+                            Size      = (ulong)buffer.Length
                         };
 
                         break;
                     case MediaTagType.MMC_ExtendedCSD:
+                        errno = image.ReadMediaTag(MediaTagType.MMC_ExtendedCSD, out buffer);
+
+                        if(errno != ErrorNumber.NoError)
+                            break;
+
                         sidecar.BlockMedia[0].MultiMediaCard ??= new MultiMediaCardType();
 
                         sidecar.BlockMedia[0].MultiMediaCard.ExtendedCSD = new DumpType
                         {
-                            Checksums =
-                                Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.MMC_ExtendedCSD)).ToArray(),
-                            Size = (ulong)image.ReadDiskTag(MediaTagType.MMC_ExtendedCSD).Length
+                            Checksums = Checksum.GetChecksums(buffer).ToArray(),
+                            Size      = (ulong)buffer.Length
                         };
 
                         break;
                     case MediaTagType.USB_Descriptors:
+                        errno = image.ReadMediaTag(MediaTagType.USB_Descriptors, out buffer);
+
+                        if(errno != ErrorNumber.NoError)
+                            break;
+
                         sidecar.BlockMedia[0].USB ??= new USBType();
 
                         sidecar.BlockMedia[0].USB.Descriptors = new DumpType
                         {
-                            Checksums =
-                                Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.USB_Descriptors)).ToArray(),
-                            Size = (ulong)image.ReadDiskTag(MediaTagType.USB_Descriptors).Length
+                            Checksums = Checksum.GetChecksums(buffer).ToArray(),
+                            Size      = (ulong)buffer.Length
                         };
 
                         break;
                     case MediaTagType.SCSI_MODESENSE_6:
+                        errno = image.ReadMediaTag(MediaTagType.SCSI_MODESENSE_6, out buffer);
+
+                        if(errno != ErrorNumber.NoError)
+                            break;
+
                         sidecar.BlockMedia[0].SCSI ??= new SCSIType();
 
                         sidecar.BlockMedia[0].SCSI.ModeSense = new DumpType
                         {
-                            Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.SCSI_MODESENSE_6)).
-                                                 ToArray(),
-                            Size = (ulong)image.ReadDiskTag(MediaTagType.SCSI_MODESENSE_6).Length
+                            Checksums = Checksum.GetChecksums(buffer).ToArray(),
+                            Size      = (ulong)buffer.Length
                         };
 
                         break;
                     case MediaTagType.SCSI_MODESENSE_10:
+                        errno = image.ReadMediaTag(MediaTagType.SCSI_MODESENSE_10, out buffer);
+
+                        if(errno != ErrorNumber.NoError)
+                            break;
+
                         sidecar.BlockMedia[0].SCSI ??= new SCSIType();
 
                         sidecar.BlockMedia[0].SCSI.ModeSense10 = new DumpType
                         {
-                            Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.SCSI_MODESENSE_10)).
-                                                 ToArray(),
-                            Size = (ulong)image.ReadDiskTag(MediaTagType.SCSI_MODESENSE_10).Length
+                            Checksums = Checksum.GetChecksums(buffer).ToArray(),
+                            Size      = (ulong)buffer.Length
                         };
 
                         break;
@@ -685,7 +753,11 @@ namespace Aaru.Core
 
             if(image.Info.ReadableMediaTags.Contains(MediaTagType.ATA_IDENTIFY))
             {
-                Identify.IdentifyDevice? ataId = Identify.Decode(image.ReadDiskTag(MediaTagType.ATA_IDENTIFY));
+                Identify.IdentifyDevice? ataId = null;
+                errno = image.ReadMediaTag(MediaTagType.ATA_IDENTIFY, out buffer);
+
+                if(errno == ErrorNumber.NoError)
+                    ataId = Identify.Decode(buffer);
 
                 if(ataId.HasValue)
                     if(ataId.Value.CurrentCylinders       > 0 &&

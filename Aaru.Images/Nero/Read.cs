@@ -1568,14 +1568,19 @@ namespace Aaru.DiscImages
         }
 
         /// <inheritdoc />
-        public byte[] ReadDiskTag(MediaTagType tag)
+        public ErrorNumber ReadMediaTag(MediaTagType tag, out byte[] buffer)
         {
+            buffer = null;
+
             switch(tag)
             {
-                case MediaTagType.CD_MCN:  return _upc;
-                case MediaTagType.CD_TEXT: throw new NotImplementedException("Not yet implemented");
-                default:
-                    throw new FeaturedNotSupportedByDiscImageException("Requested disk tag not supported by image");
+                case MediaTagType.CD_MCN:
+                    buffer = _upc?.Clone() as byte[];
+
+                    return buffer != null ? ErrorNumber.NoError : ErrorNumber.NoData;
+
+                case MediaTagType.CD_TEXT: return ErrorNumber.NotImplemented;
+                default:                   return ErrorNumber.NotSupported;
             }
         }
 

@@ -72,20 +72,16 @@ namespace Aaru.Gui.ViewModels.Windows
             _mediaType = inputFormat.Info.MediaType;
 
             foreach(MediaTagType tag in inputFormat.Info.ReadableMediaTags)
-                try
-                {
-                    byte[] data = inputFormat.ReadDiskTag(tag);
+            {
+                ErrorNumber errno = inputFormat.ReadMediaTag(tag, out byte[] data);
 
+                if(errno == ErrorNumber.NoError)
                     TagsList.Add(new MediaTagModel
                     {
                         Tag  = tag,
                         Data = data
                     });
-                }
-                catch
-                {
-                    //ignore
-                }
+            }
         }
 
         public string                              Title    { get; }

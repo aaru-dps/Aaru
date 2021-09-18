@@ -893,19 +893,22 @@ namespace Aaru.DiscImages
         }
 
         /// <inheritdoc />
-        public byte[] ReadDiskTag(MediaTagType tag)
+        public ErrorNumber ReadMediaTag(MediaTagType tag, out byte[] buffer)
         {
+            buffer = null;
+
             switch(tag)
             {
                 case MediaTagType.CD_MCN:
                 {
-                    if(_discimage.Mcn != null)
-                        return Encoding.ASCII.GetBytes(_discimage.Mcn);
+                    if(_discimage.Mcn == null)
+                        return ErrorNumber.NoData;
 
-                    throw new FeatureNotPresentImageException("Image does not contain MCN information.");
+                    buffer = Encoding.ASCII.GetBytes(_discimage.Mcn);
+
+                    return ErrorNumber.NoError;
                 }
-                default:
-                    throw new FeatureSupportedButNotImplementedImageException("Feature not supported by image format");
+                default: return ErrorNumber.NotSupported;
             }
         }
 

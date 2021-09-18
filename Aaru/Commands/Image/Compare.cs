@@ -235,7 +235,8 @@ namespace Aaru.Commands.Image
                 sb.AppendFormat("[bold]Disc image 2:[/] {0}", imagePath2).AppendLine();
             }
 
-            bool imagesDiffer = false;
+            bool        imagesDiffer = false;
+            ErrorNumber errno;
 
             ImageInfo                        image1Info     = input1Format.Info;
             ImageInfo                        image2Info     = input2Format.Info;
@@ -244,32 +245,18 @@ namespace Aaru.Commands.Image
 
             foreach(MediaTagType diskTag in Enum.GetValues(typeof(MediaTagType)))
             {
-                try
-                {
-                    byte[] tempArray = input1Format.ReadDiskTag(diskTag);
+                errno = input1Format.ReadMediaTag(diskTag, out byte[] tempArray);
+
+                if(errno == ErrorNumber.NoError)
                     image1DiskTags.Add(diskTag, tempArray);
-                }
-                #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
-                catch
-                {
-                    // ignored
-                }
-                #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
             }
 
             foreach(MediaTagType diskTag in Enum.GetValues(typeof(MediaTagType)))
             {
-                try
-                {
-                    byte[] tempArray = input2Format.ReadDiskTag(diskTag);
+                errno = input2Format.ReadMediaTag(diskTag, out byte[] tempArray);
+
+                if(errno == ErrorNumber.NoError)
                     image2DiskTags.Add(diskTag, tempArray);
-                }
-                #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
-                catch
-                {
-                    // ignored
-                }
-                #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
             }
 
             if(verbose)

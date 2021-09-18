@@ -1555,28 +1555,27 @@ namespace Aaru.DiscImages
         }
 
         /// <inheritdoc />
-        public byte[] ReadDiskTag(MediaTagType tag)
+        public ErrorNumber ReadMediaTag(MediaTagType tag, out byte[] buffer)
         {
+            buffer = null;
+
             switch(tag)
             {
                 case MediaTagType.CD_MCN:
                 {
-                    if(_discImage.Mcn != null)
-                        return Encoding.ASCII.GetBytes(_discImage.Mcn);
+                    if(_discImage.Mcn == null)
+                        return ErrorNumber.NoData;
 
-                    throw new FeatureNotPresentImageException("Image does not contain MCN information.");
+                    buffer = Encoding.ASCII.GetBytes(_discImage.Mcn);
+
+                    return ErrorNumber.NoError;
                 }
                 case MediaTagType.CD_TEXT:
                 {
-                    if(_discImage.CdTextFile != null)
-
-                        // TODO: Check binary text file exists, open it, read it, send it to caller.
-                        throw new FeatureSupportedButNotImplementedImageException("Feature not yet implemented");
-
-                    throw new FeatureNotPresentImageException("Image does not contain CD-TEXT information.");
+                    // TODO: Check binary text file exists, open it, read it, send it to caller.
+                    return _discImage.CdTextFile != null ? ErrorNumber.NotImplemented : ErrorNumber.NoData;
                 }
-                default:
-                    throw new FeatureSupportedButNotImplementedImageException("Feature not supported by image format");
+                default: return ErrorNumber.NotSupported;
             }
         }
 

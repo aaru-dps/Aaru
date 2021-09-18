@@ -38,8 +38,12 @@ namespace Aaru.DiscImages
     public sealed partial class D88
     {
         /// <inheritdoc />
-        public byte[] ReadDiskTag(MediaTagType tag) =>
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+        public ErrorNumber ReadMediaTag(MediaTagType tag, out byte[] buffer)
+        {
+            buffer = null;
+
+            return ErrorNumber.NotSupported;
+        }
 
         /// <inheritdoc />
         public byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag) =>

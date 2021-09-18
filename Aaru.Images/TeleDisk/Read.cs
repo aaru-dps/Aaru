@@ -573,15 +573,16 @@ namespace Aaru.DiscImages
         public byte[] ReadSectorsLong(ulong sectorAddress, uint length) => ReadSectors(sectorAddress, length);
 
         /// <inheritdoc />
-        public byte[] ReadDiskTag(MediaTagType tag)
+        public ErrorNumber ReadMediaTag(MediaTagType tag, out byte[] buffer)
         {
+            buffer = null;
+
             if(tag != MediaTagType.Floppy_LeadOut)
-                throw new FeatureUnsupportedImageException("Feature not supported by image format");
+                return ErrorNumber.NotSupported;
 
-            if(_leadOut != null)
-                return _leadOut;
+            buffer = _leadOut?.Clone() as byte[];
 
-            throw new FeatureNotPresentImageException("Lead-out not present in disk image");
+            return buffer != null ? ErrorNumber.NoError : ErrorNumber.NoData;
         }
     }
 }

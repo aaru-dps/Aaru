@@ -35,7 +35,6 @@ using System.IO;
 using System.Linq;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
-using Aaru.CommonTypes.Exceptions;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs.Devices.ATA;
 using Aaru.Helpers;
@@ -128,16 +127,17 @@ namespace Aaru.DiscImages
         }
 
         /// <inheritdoc />
-        public byte[] ReadDiskTag(MediaTagType tag)
+        public ErrorNumber ReadMediaTag(MediaTagType tag, out byte[] buffer)
         {
+            buffer = null;
+
             if(!_imageInfo.ReadableMediaTags.Contains(tag) ||
                tag != MediaTagType.ATA_IDENTIFY)
-                throw new FeatureUnsupportedImageException("Feature not supported by image format");
+                return ErrorNumber.NotSupported;
 
-            byte[] buffer = new byte[512];
-            Array.Copy(_identify, 0, buffer, 0, 512);
+            buffer = _identify?.Clone() as byte[];
 
-            return buffer;
+            return buffer is null ? ErrorNumber.NoData : ErrorNumber.NoError;
         }
     }
 }

@@ -38,7 +38,7 @@ namespace Aaru.DiscImages
     public sealed partial class Gdi
     {
         /// <inheritdoc />
-        public byte[] ReadDiskTag(MediaTagType tag) =>
+        public ErrorNumber ReadMediaTag(MediaTagType tag, out byte[] buffer) =>
             throw new FeatureSupportedButNotImplementedImageException("Feature not supported by image format");
     }
 }

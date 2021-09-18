@@ -108,8 +108,9 @@ namespace Aaru.Tests.Issues
                 outputOptical.SupportedMediaTags.Contains(mediaTag)))
             {
                 AaruConsole.WriteLine("Converting media tag {0}", mediaTag);
-                byte[] tag = inputFormat.ReadDiskTag(mediaTag);
+                ErrorNumber errno = inputFormat.ReadMediaTag(mediaTag, out byte[] tag);
 
+                Assert.AreEqual(ErrorNumber.NoError, errno);
                 Assert.IsTrue(outputOptical.WriteMediaTag(tag, mediaTag));
             }
 

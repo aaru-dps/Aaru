@@ -204,26 +204,34 @@ namespace Aaru.Gui.ViewModels.Panels
             Modes.DecodedMode?    scsiMode        = null;
             byte[]                scsiModeSense6  = null;
             byte[]                scsiModeSense10 = null;
+            ErrorNumber           errno;
 
             if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.SCSI_INQUIRY) == true)
             {
-                scsiInquiryData = imageFormat.ReadDiskTag(MediaTagType.SCSI_INQUIRY);
+                errno = imageFormat.ReadMediaTag(MediaTagType.SCSI_INQUIRY, out scsiInquiryData);
 
-                scsiDeviceType = (PeripheralDeviceTypes)(scsiInquiryData[0] & 0x1F);
+                if(errno == ErrorNumber.NoError)
+                {
+                    scsiDeviceType = (PeripheralDeviceTypes)(scsiInquiryData[0] & 0x1F);
 
-                scsiInquiry = Inquiry.Decode(scsiInquiryData);
+                    scsiInquiry = Inquiry.Decode(scsiInquiryData);
+                }
             }
 
             if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.SCSI_MODESENSE_6) == true)
             {
-                scsiModeSense6 = imageFormat.ReadDiskTag(MediaTagType.SCSI_MODESENSE_6);
-                scsiMode       = Modes.DecodeMode6(scsiModeSense6, scsiDeviceType);
+                errno = imageFormat.ReadMediaTag(MediaTagType.SCSI_MODESENSE_6, out scsiModeSense6);
+
+                if(errno == ErrorNumber.NoError)
+                    scsiMode = Modes.DecodeMode6(scsiModeSense6, scsiDeviceType);
             }
 
             if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.SCSI_MODESENSE_10) == true)
             {
-                scsiModeSense10 = imageFormat.ReadDiskTag(MediaTagType.SCSI_MODESENSE_10);
-                scsiMode        = Modes.DecodeMode10(scsiModeSense10, scsiDeviceType);
+                errno = imageFormat.ReadMediaTag(MediaTagType.SCSI_MODESENSE_10, out scsiModeSense10);
+
+                if(errno == ErrorNumber.NoError)
+                    scsiMode = Modes.DecodeMode10(scsiModeSense10, scsiDeviceType);
             }
 
             ScsiInfo = new ScsiInfo
@@ -234,17 +242,19 @@ namespace Aaru.Gui.ViewModels.Panels
 
             byte[] ataIdentify   = null;
             byte[] atapiIdentify = null;
+            errno = ErrorNumber.NoData;
 
             if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.ATA_IDENTIFY) == true)
-                ataIdentify = imageFormat.ReadDiskTag(MediaTagType.ATA_IDENTIFY);
+                errno = imageFormat.ReadMediaTag(MediaTagType.ATA_IDENTIFY, out ataIdentify);
 
-            if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.ATAPI_IDENTIFY) == true)
-                atapiIdentify = imageFormat.ReadDiskTag(MediaTagType.ATAPI_IDENTIFY);
+            else if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.ATAPI_IDENTIFY) == true)
+                errno = imageFormat.ReadMediaTag(MediaTagType.ATAPI_IDENTIFY, out atapiIdentify);
 
-            AtaInfo = new AtaInfo
-            {
-                DataContext = new AtaInfoViewModel(ataIdentify, atapiIdentify, null, view)
-            };
+            if(errno == ErrorNumber.NoError)
+                AtaInfo = new AtaInfo
+                {
+                    DataContext = new AtaInfoViewModel(ataIdentify, atapiIdentify, null, view)
+                };
 
             byte[]                 toc                  = null;
             TOC.CDTOC?             decodedToc           = null;
@@ -259,9 +269,10 @@ namespace Aaru.Gui.ViewModels.Panels
 
             if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.CD_TOC) == true)
             {
-                toc = imageFormat.ReadDiskTag(MediaTagType.CD_TOC);
+                errno = imageFormat.ReadMediaTag(MediaTagType.CD_TOC, out toc);
 
-                if(toc.Length > 0)
+                if(errno      == ErrorNumber.NoError &&
+                   toc.Length > 0)
                 {
                     ushort dataLen = Swapping.Swap(BitConverter.ToUInt16(toc, 0));
 
@@ -280,9 +291,10 @@ namespace Aaru.Gui.ViewModels.Panels
 
             if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.CD_FullTOC) == true)
             {
-                fullToc = imageFormat.ReadDiskTag(MediaTagType.CD_FullTOC);
+                errno = imageFormat.ReadMediaTag(MediaTagType.CD_FullTOC, out fullToc);
 
-                if(fullToc.Length > 0)
+                if(errno          == ErrorNumber.NoError &&
+                   fullToc.Length > 0)
                 {
                     ushort dataLen = Swapping.Swap(BitConverter.ToUInt16(fullToc, 0));
 
@@ -301,9 +313,10 @@ namespace Aaru.Gui.ViewModels.Panels
 
             if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.CD_PMA) == true)
             {
-                pma = imageFormat.ReadDiskTag(MediaTagType.CD_PMA);
+                errno = imageFormat.ReadMediaTag(MediaTagType.CD_PMA, out pma);
 
-                if(pma.Length > 0)
+                if(errno      == ErrorNumber.NoError &&
+                   pma.Length > 0)
                 {
                     ushort dataLen = Swapping.Swap(BitConverter.ToUInt16(pma, 0));
 
@@ -320,49 +333,56 @@ namespace Aaru.Gui.ViewModels.Panels
 
             if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.CD_ATIP) == true)
             {
-                atip = imageFormat.ReadDiskTag(MediaTagType.CD_ATIP);
+                errno = imageFormat.ReadMediaTag(MediaTagType.CD_ATIP, out atip);
 
-                uint dataLen = Swapping.Swap(BitConverter.ToUInt32(atip, 0));
-
-                if(dataLen + 4 != atip.Length)
+                if(errno == ErrorNumber.NoError)
                 {
-                    byte[] tmp = new byte[atip.Length + 4];
-                    Array.Copy(atip, 0, tmp, 4, atip.Length);
-                    tmp[0] = (byte)((atip.Length & 0xFF000000) >> 24);
-                    tmp[1] = (byte)((atip.Length & 0xFF0000)   >> 16);
-                    tmp[2] = (byte)((atip.Length & 0xFF00)     >> 8);
-                    tmp[3] = (byte)(atip.Length & 0xFF);
-                    atip   = tmp;
-                }
+                    uint dataLen = Swapping.Swap(BitConverter.ToUInt32(atip, 0));
 
-                decodedAtip = ATIP.Decode(atip);
+                    if(dataLen + 4 != atip.Length)
+                    {
+                        byte[] tmp = new byte[atip.Length + 4];
+                        Array.Copy(atip, 0, tmp, 4, atip.Length);
+                        tmp[0] = (byte)((atip.Length & 0xFF000000) >> 24);
+                        tmp[1] = (byte)((atip.Length & 0xFF0000)   >> 16);
+                        tmp[2] = (byte)((atip.Length & 0xFF00)     >> 8);
+                        tmp[3] = (byte)(atip.Length & 0xFF);
+                        atip   = tmp;
+                    }
+
+                    decodedAtip = ATIP.Decode(atip);
+                }
             }
 
             if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.CD_TEXT) == true)
             {
-                cdtext = imageFormat.ReadDiskTag(MediaTagType.CD_TEXT);
+                errno = imageFormat.ReadMediaTag(MediaTagType.CD_TEXT, out cdtext);
 
-                uint dataLen = Swapping.Swap(BitConverter.ToUInt32(cdtext, 0));
-
-                if(dataLen + 4 != cdtext.Length)
+                if(errno == ErrorNumber.NoError)
                 {
-                    byte[] tmp = new byte[cdtext.Length + 4];
-                    Array.Copy(cdtext, 0, tmp, 4, cdtext.Length);
-                    tmp[0] = (byte)((cdtext.Length & 0xFF000000) >> 24);
-                    tmp[1] = (byte)((cdtext.Length & 0xFF0000)   >> 16);
-                    tmp[2] = (byte)((cdtext.Length & 0xFF00)     >> 8);
-                    tmp[3] = (byte)(cdtext.Length & 0xFF);
-                    cdtext = tmp;
-                }
+                    uint dataLen = Swapping.Swap(BitConverter.ToUInt32(cdtext, 0));
 
-                decodedCdText = CDTextOnLeadIn.Decode(cdtext);
+                    if(dataLen + 4 != cdtext.Length)
+                    {
+                        byte[] tmp = new byte[cdtext.Length + 4];
+                        Array.Copy(cdtext, 0, tmp, 4, cdtext.Length);
+                        tmp[0] = (byte)((cdtext.Length & 0xFF000000) >> 24);
+                        tmp[1] = (byte)((cdtext.Length & 0xFF0000)   >> 16);
+                        tmp[2] = (byte)((cdtext.Length & 0xFF00)     >> 8);
+                        tmp[3] = (byte)(cdtext.Length & 0xFF);
+                        cdtext = tmp;
+                    }
+
+                    decodedCdText = CDTextOnLeadIn.Decode(cdtext);
+                }
             }
 
             if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.CD_MCN) == true)
             {
-                byte[] mcn = imageFormat.ReadDiskTag(MediaTagType.CD_MCN);
+                errno = imageFormat.ReadMediaTag(MediaTagType.CD_MCN, out byte[] mcn);
 
-                mediaCatalogueNumber = Encoding.UTF8.GetString(mcn);
+                if(errno == ErrorNumber.NoError)
+                    mediaCatalogueNumber = Encoding.UTF8.GetString(mcn);
             }
 
             CompactDiscInfo = new CompactDiscInfo
@@ -381,21 +401,23 @@ namespace Aaru.Gui.ViewModels.Panels
 
             if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.DVD_PFI) == true)
             {
-                dvdPfi     = imageFormat.ReadDiskTag(MediaTagType.DVD_PFI);
-                decodedPfi = PFI.Decode(dvdPfi, imageFormat.Info.MediaType);
+                errno = imageFormat.ReadMediaTag(MediaTagType.DVD_PFI, out dvdPfi);
+
+                if(errno == ErrorNumber.NoError)
+                    decodedPfi = PFI.Decode(dvdPfi, imageFormat.Info.MediaType);
             }
 
             if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.DVD_DMI) == true)
-                dvdDmi = imageFormat.ReadDiskTag(MediaTagType.DVD_DMI);
+                imageFormat.ReadMediaTag(MediaTagType.DVD_DMI, out dvdDmi);
 
             if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.DVD_CMI) == true)
-                dvdCmi = imageFormat.ReadDiskTag(MediaTagType.DVD_CMI);
+                imageFormat.ReadMediaTag(MediaTagType.DVD_CMI, out dvdCmi);
 
             if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.HDDVD_CPI) == true)
-                hddvdCopyrightInformation = imageFormat.ReadDiskTag(MediaTagType.HDDVD_CPI);
+                imageFormat.ReadMediaTag(MediaTagType.HDDVD_CPI, out hddvdCopyrightInformation);
 
             if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.DVD_BCA) == true)
-                dvdBca = imageFormat.ReadDiskTag(MediaTagType.DVD_BCA);
+                imageFormat.ReadMediaTag(MediaTagType.DVD_BCA, out dvdBca);
 
             DvdInfo = new DvdInfo
             {
@@ -419,46 +441,46 @@ namespace Aaru.Gui.ViewModels.Panels
             byte[] dvdPlusDcb                    = null;
 
             if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.DVDRAM_DDS) == true)
-                dvdRamDds = imageFormat.ReadDiskTag(MediaTagType.DVDRAM_DDS);
+                imageFormat.ReadMediaTag(MediaTagType.DVDRAM_DDS, out dvdRamDds);
 
             if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.DVDRAM_MediumStatus) == true)
-                dvdRamCartridgeStatus = imageFormat.ReadDiskTag(MediaTagType.DVDRAM_MediumStatus);
+                imageFormat.ReadMediaTag(MediaTagType.DVDRAM_MediumStatus, out dvdRamCartridgeStatus);
 
             if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.DVDRAM_SpareArea) == true)
-                dvdRamSpareArea = imageFormat.ReadDiskTag(MediaTagType.DVDRAM_SpareArea);
+                imageFormat.ReadMediaTag(MediaTagType.DVDRAM_SpareArea, out dvdRamSpareArea);
 
             if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.DVDR_RMD) == true)
-                lastBorderOutRmd = imageFormat.ReadDiskTag(MediaTagType.DVDR_RMD);
+                imageFormat.ReadMediaTag(MediaTagType.DVDR_RMD, out lastBorderOutRmd);
 
             if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.DVDR_PreRecordedInfo) == true)
-                dvdPreRecordedInfo = imageFormat.ReadDiskTag(MediaTagType.DVDR_PreRecordedInfo);
+                imageFormat.ReadMediaTag(MediaTagType.DVDR_PreRecordedInfo, out dvdPreRecordedInfo);
 
             if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.DVDR_MediaIdentifier) == true)
-                dvdrMediaIdentifier = imageFormat.ReadDiskTag(MediaTagType.DVDR_MediaIdentifier);
+                imageFormat.ReadMediaTag(MediaTagType.DVDR_MediaIdentifier, out dvdrMediaIdentifier);
 
             if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.DVDR_PFI) == true)
-                dvdrPhysicalInformation = imageFormat.ReadDiskTag(MediaTagType.DVDR_PFI);
+                imageFormat.ReadMediaTag(MediaTagType.DVDR_PFI, out dvdrPhysicalInformation);
 
             if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.HDDVD_MediumStatus) == true)
-                hddvdrMediumStatus = imageFormat.ReadDiskTag(MediaTagType.HDDVD_MediumStatus);
+                imageFormat.ReadMediaTag(MediaTagType.HDDVD_MediumStatus, out hddvdrMediumStatus);
 
             if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.DVDDL_LayerCapacity) == true)
-                dvdrLayerCapacity = imageFormat.ReadDiskTag(MediaTagType.DVDDL_LayerCapacity);
+                imageFormat.ReadMediaTag(MediaTagType.DVDDL_LayerCapacity, out dvdrLayerCapacity);
 
             if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.DVDDL_MiddleZoneAddress) == true)
-                dvdrDlMiddleZoneStart = imageFormat.ReadDiskTag(MediaTagType.DVDDL_MiddleZoneAddress);
+                imageFormat.ReadMediaTag(MediaTagType.DVDDL_MiddleZoneAddress, out dvdrDlMiddleZoneStart);
 
             if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.DVDDL_JumpIntervalSize) == true)
-                dvdrDlJumpIntervalSize = imageFormat.ReadDiskTag(MediaTagType.DVDDL_JumpIntervalSize);
+                imageFormat.ReadMediaTag(MediaTagType.DVDDL_JumpIntervalSize, out dvdrDlJumpIntervalSize);
 
             if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.DVDDL_ManualLayerJumpLBA) == true)
-                dvdrDlManualLayerJumpStartLba = imageFormat.ReadDiskTag(MediaTagType.DVDDL_ManualLayerJumpLBA);
+                imageFormat.ReadMediaTag(MediaTagType.DVDDL_ManualLayerJumpLBA, out dvdrDlManualLayerJumpStartLba);
 
             if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.DVD_ADIP) == true)
-                dvdPlusAdip = imageFormat.ReadDiskTag(MediaTagType.DVD_ADIP);
+                imageFormat.ReadMediaTag(MediaTagType.DVD_ADIP, out dvdPlusAdip);
 
             if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.DCB) == true)
-                dvdPlusDcb = imageFormat.ReadDiskTag(MediaTagType.DCB);
+                imageFormat.ReadMediaTag(MediaTagType.DCB, out dvdPlusDcb);
 
             DvdWritableInfo = new DvdWritableInfo
             {
@@ -480,25 +502,25 @@ namespace Aaru.Gui.ViewModels.Panels
             byte[] blurayTrackResources       = null;
 
             if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.BD_BCA) == true)
-                blurayBurstCuttingArea = imageFormat.ReadDiskTag(MediaTagType.BD_BCA);
+                imageFormat.ReadMediaTag(MediaTagType.BD_BCA, out blurayBurstCuttingArea);
 
             if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.BD_CartridgeStatus) == true)
-                blurayCartridgeStatus = imageFormat.ReadDiskTag(MediaTagType.BD_CartridgeStatus);
+                imageFormat.ReadMediaTag(MediaTagType.BD_CartridgeStatus, out blurayCartridgeStatus);
 
             if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.BD_DDS) == true)
-                blurayDds = imageFormat.ReadDiskTag(MediaTagType.BD_DDS);
+                imageFormat.ReadMediaTag(MediaTagType.BD_DDS, out blurayDds);
 
             if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.BD_DI) == true)
-                blurayDiscInformation = imageFormat.ReadDiskTag(MediaTagType.BD_DI);
+                imageFormat.ReadMediaTag(MediaTagType.BD_DI, out blurayDiscInformation);
 
             if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.MMC_POWResourcesInformation) == true)
-                blurayPowResources = imageFormat.ReadDiskTag(MediaTagType.MMC_POWResourcesInformation);
+                imageFormat.ReadMediaTag(MediaTagType.MMC_POWResourcesInformation, out blurayPowResources);
 
             if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.BD_SpareArea) == true)
-                bluraySpareAreaInformation = imageFormat.ReadDiskTag(MediaTagType.BD_SpareArea);
+                imageFormat.ReadMediaTag(MediaTagType.BD_SpareArea, out bluraySpareAreaInformation);
 
             if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.MMC_TrackResourcesInformation) == true)
-                bluraySpareAreaInformation = imageFormat.ReadDiskTag(MediaTagType.MMC_TrackResourcesInformation);
+                imageFormat.ReadMediaTag(MediaTagType.MMC_TrackResourcesInformation, out blurayTrackResources);
 
             BlurayInfo = new BlurayInfo
             {
@@ -512,12 +534,14 @@ namespace Aaru.Gui.ViewModels.Panels
             SS.SecuritySector? decodedXboxSecuritySector = null;
 
             if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.Xbox_DMI) == true)
-                xboxDmi = imageFormat.ReadDiskTag(MediaTagType.Xbox_DMI);
+                imageFormat.ReadMediaTag(MediaTagType.Xbox_DMI, out xboxDmi);
 
             if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.Xbox_SecuritySector) == true)
             {
-                xboxSecuritySector        = imageFormat.ReadDiskTag(MediaTagType.Xbox_SecuritySector);
-                decodedXboxSecuritySector = SS.Decode(xboxSecuritySector);
+                errno = imageFormat.ReadMediaTag(MediaTagType.Xbox_SecuritySector, out xboxSecuritySector);
+
+                if(errno == ErrorNumber.NoError)
+                    decodedXboxSecuritySector = SS.Decode(xboxSecuritySector);
             }
 
             XboxInfo = new XboxInfo
@@ -525,15 +549,17 @@ namespace Aaru.Gui.ViewModels.Panels
                 DataContext = new XboxInfoViewModel(null, xboxDmi, xboxSecuritySector, decodedXboxSecuritySector, view)
             };
 
+            errno = ErrorNumber.NoData;
             byte[] pcmciaCis = null;
 
             if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.PCMCIA_CIS) == true)
-                pcmciaCis = imageFormat.ReadDiskTag(MediaTagType.PCMCIA_CIS);
+                errno = imageFormat.ReadMediaTag(MediaTagType.PCMCIA_CIS, out pcmciaCis);
 
-            PcmciaInfo = new PcmciaInfo
-            {
-                DataContext = new PcmciaInfoViewModel(pcmciaCis, view)
-            };
+            if(errno == ErrorNumber.NoError)
+                PcmciaInfo = new PcmciaInfo
+                {
+                    DataContext = new PcmciaInfoViewModel(pcmciaCis, view)
+                };
 
             DeviceType deviceType  = DeviceType.Unknown;
             byte[]     cid         = null;
@@ -544,50 +570,50 @@ namespace Aaru.Gui.ViewModels.Panels
 
             if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.SD_CID) == true)
             {
-                cid        = imageFormat.ReadDiskTag(MediaTagType.SD_CID);
+                imageFormat.ReadMediaTag(MediaTagType.SD_CID, out cid);
                 deviceType = DeviceType.SecureDigital;
             }
 
             if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.SD_CSD) == true)
             {
-                csd        = imageFormat.ReadDiskTag(MediaTagType.SD_CSD);
+                imageFormat.ReadMediaTag(MediaTagType.SD_CSD, out csd);
                 deviceType = DeviceType.SecureDigital;
             }
 
             if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.SD_OCR) == true)
             {
-                ocr        = imageFormat.ReadDiskTag(MediaTagType.SD_OCR);
+                imageFormat.ReadMediaTag(MediaTagType.SD_OCR, out ocr);
                 deviceType = DeviceType.SecureDigital;
             }
 
             if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.SD_SCR) == true)
             {
-                scr        = imageFormat.ReadDiskTag(MediaTagType.SD_SCR);
+                imageFormat.ReadMediaTag(MediaTagType.SD_SCR, out scr);
                 deviceType = DeviceType.SecureDigital;
             }
 
             if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.MMC_CID) == true)
             {
-                cid        = imageFormat.ReadDiskTag(MediaTagType.MMC_CID);
+                imageFormat.ReadMediaTag(MediaTagType.MMC_CID, out cid);
                 deviceType = DeviceType.MMC;
             }
 
             if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.MMC_CSD) == true)
             {
-                csd        = imageFormat.ReadDiskTag(MediaTagType.MMC_CSD);
+                imageFormat.ReadMediaTag(MediaTagType.MMC_CSD, out csd);
                 deviceType = DeviceType.MMC;
             }
 
             if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.MMC_OCR) == true)
             {
-                ocr        = imageFormat.ReadDiskTag(MediaTagType.MMC_OCR);
+                imageFormat.ReadMediaTag(MediaTagType.MMC_OCR, out ocr);
                 deviceType = DeviceType.MMC;
             }
 
             if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.MMC_ExtendedCSD) == true)
             {
-                extendedCsd = imageFormat.ReadDiskTag(MediaTagType.MMC_ExtendedCSD);
-                deviceType  = DeviceType.MMC;
+                imageFormat.ReadMediaTag(MediaTagType.MMC_ExtendedCSD, out extendedCsd);
+                deviceType = DeviceType.MMC;
             }
 
             SdMmcInfo = new SdMmcInfo

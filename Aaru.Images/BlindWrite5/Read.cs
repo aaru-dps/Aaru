@@ -1389,69 +1389,46 @@ namespace Aaru.DiscImages
         }
 
         /// <inheritdoc />
-        public byte[] ReadDiskTag(MediaTagType tag)
+        public ErrorNumber ReadMediaTag(MediaTagType tag, out byte[] buffer)
         {
+            buffer = null;
+
             switch(tag)
             {
                 case MediaTagType.SCSI_MODEPAGE_2A:
-                {
-                    if(_mode2A != null)
-                        return (byte[])_mode2A.Clone();
+                    buffer = _mode2A?.Clone() as byte[];
 
-                    throw new FeatureNotPresentImageException("Image does not contain SCSI MODE PAGE 2Ah.");
-                }
+                    return buffer != null ? ErrorNumber.NoError : ErrorNumber.NoData;
                 case MediaTagType.CD_PMA:
-                {
-                    if(_pma != null)
-                        return (byte[])_pma.Clone();
+                    buffer = _pma?.Clone() as byte[];
 
-                    throw new FeatureNotPresentImageException("Image does not contain PMA information.");
-                }
+                    return buffer != null ? ErrorNumber.NoError : ErrorNumber.NoData;
                 case MediaTagType.CD_ATIP:
-                {
-                    if(_atip != null)
-                        return (byte[])_atip.Clone();
+                    buffer = _atip?.Clone() as byte[];
 
-                    throw new FeatureNotPresentImageException("Image does not contain ATIP information.");
-                }
+                    return buffer != null ? ErrorNumber.NoError : ErrorNumber.NoData;
                 case MediaTagType.CD_TEXT:
-                {
-                    if(_cdtext != null)
-                        return (byte[])_cdtext.Clone();
+                    buffer = _cdtext?.Clone() as byte[];
 
-                    throw new FeatureNotPresentImageException("Image does not contain CD-Text information.");
-                }
+                    return buffer != null ? ErrorNumber.NoError : ErrorNumber.NoData;
                 case MediaTagType.DVD_BCA:
                 case MediaTagType.BD_BCA:
-                {
-                    if(_bca != null)
-                        return (byte[])_bca.Clone();
+                    buffer = _bca?.Clone() as byte[];
 
-                    throw new FeatureNotPresentImageException("Image does not contain BCA information.");
-                }
+                    return buffer != null ? ErrorNumber.NoError : ErrorNumber.NoData;
                 case MediaTagType.DVD_PFI:
-                {
-                    if(_pfi != null)
-                        return (byte[])_pfi.Clone();
+                    buffer = _pfi?.Clone() as byte[];
 
-                    throw new FeatureNotPresentImageException("Image does not contain PFI.");
-                }
+                    return buffer != null ? ErrorNumber.NoError : ErrorNumber.NoData;
                 case MediaTagType.DVD_DMI:
-                {
-                    if(_dmi != null)
-                        return (byte[])_dmi.Clone();
+                    buffer = _dmi?.Clone() as byte[];
 
-                    throw new FeatureNotPresentImageException("Image does not contain DMI.");
-                }
+                    return buffer != null ? ErrorNumber.NoError : ErrorNumber.NoData;
                 case MediaTagType.CD_FullTOC:
-                {
-                    if(_fullToc != null)
-                        return (byte[])_fullToc.Clone();
+                    buffer = _fullToc?.Clone() as byte[];
 
-                    throw new FeatureNotPresentImageException("Image does not contain TOC information.");
-                }
-                default:
-                    throw new FeatureSupportedButNotImplementedImageException("Feature not supported by image format");
+                    return buffer != null ? ErrorNumber.NoError : ErrorNumber.NoData;
+                default: return ErrorNumber.NotSupported;
             }
         }
 

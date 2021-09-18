@@ -31,14 +31,17 @@
 // ****************************************************************************/
 
 using Aaru.CommonTypes.Enums;
-using Aaru.CommonTypes.Exceptions;
 
 namespace Aaru.DiscImages
 {
     public sealed partial class Blu
     {
         /// <inheritdoc />
-        public byte[] ReadDiskTag(MediaTagType tag) =>
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+        public ErrorNumber ReadMediaTag(MediaTagType tag, out byte[] buffer)
+        {
+            buffer = null;
+
+            return ErrorNumber.NotSupported;
+        }
     }
 }

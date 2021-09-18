@@ -109,7 +109,10 @@ namespace Aaru.Core
                 if(_aborted)
                     return;
 
-                byte[] tag = image.ReadDiskTag(tagType);
+                ErrorNumber errno = image.ReadMediaTag(tagType, out byte[] tag);
+
+                if(errno != ErrorNumber.NoError)
+                    continue;
 
                 Dump.AddMediaTagToSidecar(imagePath, tagType, tag, ref sidecar);
 
@@ -564,8 +567,8 @@ namespace Aaru.Core
                 //skipChecksum:
 
                 List<Partition> trkPartitions = partitions.
-                                                Where(p => p.Start >= trk.StartSector &&
-                                                           p.End   <= trk.EndSector).ToList();
+                                                Where(p => p.Start >= trk.StartSector && p.End <= trk.EndSector).
+                                                ToList();
 
                 xmlTrk.FileSystemInformation = new PartitionType[1];
 
@@ -585,7 +588,7 @@ namespace Aaru.Core
                             Type        = trkPartitions[i].Type
                         };
 
-                        List<FileSystemType> lstFs = new List<FileSystemType>();
+                        List<FileSystemType> lstFs = new();
 
                         foreach(IFilesystem plugin in plugins.PluginsList.Values)
                             try
@@ -643,7 +646,7 @@ namespace Aaru.Core
                         StartSector = xmlTrk.StartSector
                     };
 
-                    List<FileSystemType> lstFs = new List<FileSystemType>();
+                    List<FileSystemType> lstFs = new();
 
                     var xmlPart = new Partition
                     {

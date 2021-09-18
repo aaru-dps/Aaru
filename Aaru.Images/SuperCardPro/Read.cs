@@ -257,8 +257,12 @@ namespace Aaru.DiscImages
         }
 
         /// <inheritdoc />
-        public byte[] ReadDiskTag(MediaTagType tag) =>
-            throw new NotImplementedException("Flux decoding is not yet implemented.");
+        public ErrorNumber ReadMediaTag(MediaTagType tag, out byte[] buffer)
+        {
+            buffer = null;
+
+            return ErrorNumber.NotImplemented;
+        }
 
         /// <inheritdoc />
         public byte[] ReadSector(ulong sectorAddress) => ReadSectors(sectorAddress, 1);

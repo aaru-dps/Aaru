@@ -750,44 +750,33 @@ namespace Aaru.DiscImages
         }
 
         /// <inheritdoc />
-        public byte[] ReadDiskTag(MediaTagType tag)
+        public ErrorNumber ReadMediaTag(MediaTagType tag, out byte[] buffer)
         {
+            buffer = null;
+
             switch(tag)
             {
                 case MediaTagType.DVD_BCA:
-                {
-                    if(_bca != null)
-                        return (byte[])_bca.Clone();
+                    buffer = _bca?.Clone() as byte[];
 
-                    throw new FeatureNotPresentImageException("Image does not contain BCA information.");
-                }
+                    return buffer != null ? ErrorNumber.NoError : ErrorNumber.NoData;
 
                 case MediaTagType.DVD_PFI:
-                {
-                    if(_pfi != null)
-                        return (byte[])_pfi.Clone();
+                    buffer = _bca?.Clone() as byte[];
 
-                    throw new FeatureNotPresentImageException("Image does not contain PFI.");
-                }
+                    return buffer != null ? ErrorNumber.NoError : ErrorNumber.NoData;
 
                 case MediaTagType.DVD_DMI:
-                {
-                    if(_dmi != null)
-                        return (byte[])_dmi.Clone();
+                    buffer = _bca?.Clone() as byte[];
 
-                    throw new FeatureNotPresentImageException("Image does not contain DMI.");
-                }
+                    return buffer != null ? ErrorNumber.NoError : ErrorNumber.NoData;
 
                 case MediaTagType.CD_FullTOC:
-                {
-                    if(_fullToc != null)
-                        return (byte[])_fullToc.Clone();
+                    buffer = _bca?.Clone() as byte[];
 
-                    throw new FeatureNotPresentImageException("Image does not contain TOC information.");
-                }
+                    return buffer != null ? ErrorNumber.NoError : ErrorNumber.NoData;
 
-                default:
-                    throw new FeatureSupportedButNotImplementedImageException("Feature not supported by image format");
+                default: return ErrorNumber.NotSupported;
             }
         }
 

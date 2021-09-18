@@ -448,9 +448,8 @@ namespace Aaru.Core.Devices.Dumping
 
             if(!(_outputPlugin as IWritableOpticalImage).OpticalCapabilities.HasFlag(OpticalImageCapabilities.
                    CanStorePregaps) &&
-               tracks.Where(track => track.Sequence !=
-                                     tracks.First(t => t.Session == track.Session).Sequence).
-                      Any(track => track.Pregap > 0))
+               tracks.Where(track => track.Sequence != tracks.First(t => t.Session == track.Session).Sequence).
+                      Any(track => track.Pregap     > 0))
             {
                 if(!_force)
                 {
@@ -472,7 +471,7 @@ namespace Aaru.Core.Devices.Dumping
                 tracks[t - 1].EndSector = tracks[t].StartSector - 1;
 
             tracks[^1].EndSector = (ulong)lastSector;
-            blocks                    = (ulong)(lastSector + 1);
+            blocks               = (ulong)(lastSector + 1);
 
             if(blocks == 0)
             {
@@ -830,17 +829,10 @@ namespace Aaru.Core.Devices.Dumping
                 return;
             }
 
-            try
-            {
-                byte[] mcnBytes = _outputPlugin.ReadDiskTag(MediaTagType.CD_MCN);
+            ErrorNumber errno = _outputPlugin.ReadMediaTag(MediaTagType.CD_MCN, out byte[] mcnBytes);
 
-                if(mcnBytes != null)
-                    mcn = Encoding.ASCII.GetString(mcnBytes);
-            }
-            catch(Exception)
-            {
-                // TODO: Replace for error number
-            }
+            if(errno == ErrorNumber.NoError)
+                mcn = Encoding.ASCII.GetString(mcnBytes);
 
             if((_outputPlugin as IWritableOpticalImage).Tracks != null)
                 foreach(Track imgTrack in (_outputPlugin as IWritableOpticalImage).Tracks)
@@ -1364,14 +1356,14 @@ namespace Aaru.Core.Devices.Dumping
             foreach(Track trk in tracks)
             {
                 // Fix track starts in each session's first track
-                if(tracks.Where(t => t.Session == trk.Session).OrderBy(t => t.Sequence).FirstOrDefault().
-                          Sequence == trk.Sequence)
+                if(tracks.Where(t => t.Session == trk.Session).OrderBy(t => t.Sequence).FirstOrDefault().Sequence ==
+                   trk.Sequence)
                 {
                     if(trk.Sequence == 1)
                         continue;
 
                     trk.StartSector -= trk.Pregap;
-                    trk.Indexes[0]       =  (int)trk.StartSector;
+                    trk.Indexes[0]  =  (int)trk.StartSector;
 
                     continue;
                 }

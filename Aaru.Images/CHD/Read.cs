@@ -1881,15 +1881,24 @@ namespace Aaru.DiscImages
         }
 
         /// <inheritdoc />
-        public byte[] ReadDiskTag(MediaTagType tag)
+        public ErrorNumber ReadMediaTag(MediaTagType tag, out byte[] buffer)
         {
-            if(_imageInfo.ReadableMediaTags.Contains(MediaTagType.ATA_IDENTIFY))
-                return _identify;
+            buffer = null;
 
-            if(_imageInfo.ReadableMediaTags.Contains(MediaTagType.PCMCIA_CIS))
-                return _cis;
+            switch(tag)
+            {
+                case MediaTagType.ATA_IDENTIFY:
+                    if(_imageInfo.ReadableMediaTags.Contains(MediaTagType.ATA_IDENTIFY))
+                        buffer = _identify?.Clone() as byte[];
 
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+                    return buffer == null ? ErrorNumber.NoData : ErrorNumber.NoError;
+                case MediaTagType.PCMCIA_CIS:
+                    if(_imageInfo.ReadableMediaTags.Contains(MediaTagType.PCMCIA_CIS))
+                        buffer = _cis?.Clone() as byte[];
+
+                    return buffer == null ? ErrorNumber.NoData : ErrorNumber.NoError;
+                default: return ErrorNumber.NotSupported;
+            }
         }
 
         /// <inheritdoc />

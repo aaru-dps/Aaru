@@ -54,7 +54,11 @@ namespace Aaru.DiscImages
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
         /// <inheritdoc />
-        public byte[] ReadDiskTag(MediaTagType tag) =>
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+        public ErrorNumber ReadMediaTag(MediaTagType tag, out byte[] buffer)
+        {
+            buffer = null;
+
+            return ErrorNumber.NotSupported;
+        }
     }
 }

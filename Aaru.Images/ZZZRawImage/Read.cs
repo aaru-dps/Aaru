@@ -1559,12 +1559,16 @@ namespace Aaru.DiscImages
         }
 
         /// <inheritdoc />
-        public byte[] ReadDiskTag(MediaTagType tag)
+        public ErrorNumber ReadMediaTag(MediaTagType tag, out byte[] buffer)
         {
-            if(_mediaTags.TryGetValue(tag, out byte[] data))
-                return data;
+            buffer = null;
 
-            throw new FeatureNotPresentImageException("Requested tag is not present in image");
+            if(!_mediaTags.TryGetValue(tag, out byte[] data))
+                return ErrorNumber.NoData;
+
+            buffer = data?.Clone() as byte[];
+
+            return buffer == null ? ErrorNumber.NoData : ErrorNumber.NoError;
         }
 
         /// <inheritdoc />
