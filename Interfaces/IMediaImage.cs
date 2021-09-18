@@ -75,9 +75,10 @@ namespace Aaru.CommonTypes.Interfaces
         ErrorNumber Open(IFilter imageFilter);
 
         /// <summary>Reads a disk tag.</summary>
-        /// <returns>Disk tag</returns>
+        /// <returns></returns>
         /// <param name="tag">Tag type to read.</param>
-        byte[] ReadDiskTag(MediaTagType tag);
+        /// <param name="buffer">Disk tag</param>
+        ErrorNumber ReadMediaTag(MediaTagType tag, out byte[] buffer);
 
         /// <summary>Reads a sector's user data.</summary>
         /// <returns>The sector's user data.</returns>
