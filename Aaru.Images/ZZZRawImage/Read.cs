@@ -121,6 +121,18 @@ namespace Aaru.DiscImages
                     _imageInfo.SectorSize = 2048;
 
                     break;
+                case ".toast" when imageFilter.DataForkLength % 2048 == 0:
+                    _imageInfo.SectorSize = 2048;
+
+                    break;
+                case ".toast" when imageFilter.DataForkLength % 2336 == 0:
+                    _imageInfo.SectorSize = 2336;
+
+                    break;
+                case ".toast" when imageFilter.DataForkLength % 2352 == 0:
+                    _imageInfo.SectorSize = 2352;
+
+                    break;
                 case ".d81" when imageFilter.DataForkLength == 819200:
                     _imageInfo.SectorSize = 256;
 
