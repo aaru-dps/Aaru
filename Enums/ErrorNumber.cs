@@ -170,6 +170,7 @@ namespace Aaru.CommonTypes.Enums
         /// <summary>Cannot open device</summary>
         CannotOpenDevice = 27,
         /// <summary>Cannot remove the existing database</summary>
-        CannotRemoveDatabase = -28
+        CannotRemoveDatabase = 28,
+        SectorNotFound=29
     }
 }

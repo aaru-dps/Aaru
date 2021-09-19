@@ -83,7 +83,8 @@ namespace Aaru.CommonTypes.Interfaces
         /// <summary>Reads a sector's user data.</summary>
         /// <returns>The sector's user data.</returns>
         /// <param name="sectorAddress">Sector address (LBA).</param>
-        byte[] ReadSector(ulong sectorAddress);
+        /// <param name="buffer"></param>
+        ErrorNumber ReadSector(ulong sectorAddress, out byte[] buffer);
 
         /// <summary>Reads a sector's tag.</summary>
         /// <returns>The sector's tag.</returns>
@@ -95,7 +96,8 @@ namespace Aaru.CommonTypes.Interfaces
         /// <returns>The sectors user data.</returns>
         /// <param name="sectorAddress">Starting sector address (LBA).</param>
         /// <param name="length">How many sectors to read.</param>
-        byte[] ReadSectors(ulong sectorAddress, uint length);
+        /// <param name="buffer"></param>
+        ErrorNumber ReadSectors(ulong sectorAddress, uint length, out byte[] buffer);
 
         /// <summary>Reads tag from several sectors.</summary>
         /// <returns>The sectors tag.</returns>
