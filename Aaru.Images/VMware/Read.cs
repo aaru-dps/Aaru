@@ -530,14 +530,15 @@ namespace Aaru.DiscImages
         }
 
         /// <inheritdoc />
-        public byte[] ReadSector(ulong sectorAddress)
+        public ErrorNumber ReadSector(ulong sectorAddress, out byte[] buffer)
         {
-            if(sectorAddress > _imageInfo.Sectors - 1)
-                throw new ArgumentOutOfRangeException(nameof(sectorAddress),
-                                                      $"Sector address {sectorAddress} not found");
+            buffer = null;
 
-            if(_sectorCache.TryGetValue(sectorAddress, out byte[] sector))
-                return sector;
+            if(sectorAddress > _imageInfo.Sectors - 1)
+                return ErrorNumber.OutOfRange;
+
+            if(_sectorCache.TryGetValue(sectorAddress, out buffer))
+                return ErrorNumber.NoError;
 
             var   currentExtent     = new Extent();
             bool  extentFound       = false;
@@ -551,22 +552,21 @@ namespace Aaru.DiscImages
             }
 
             if(!extentFound)
-                throw new ArgumentOutOfRangeException(nameof(sectorAddress),
-                                                      $"Sector address {sectorAddress} not found");
+                return ErrorNumber.SectorNotFound;
 
             Stream dataStream;
 
             switch(currentExtent.Type)
             {
                 case "ZERO":
-                    sector = new byte[SECTOR_SIZE];
+                    buffer = new byte[SECTOR_SIZE];
 
                     if(_sectorCache.Count >= MAX_CACHED_SECTORS)
                         _sectorCache.Clear();
 
-                    _sectorCache.Add(sectorAddress, sector);
+                    _sectorCache.Add(sectorAddress, buffer);
 
-                    return sector;
+                    return ErrorNumber.NoError;
                 case "FLAT":
                 case "VMFS":
                     dataStream = currentExtent.Filter.GetDataForkStream();
@@ -574,15 +574,15 @@ namespace Aaru.DiscImages
                     dataStream.Seek((long)((currentExtent.Offset + (sectorAddress - extentStartSector)) * SECTOR_SIZE),
                                     SeekOrigin.Begin);
 
-                    sector = new byte[SECTOR_SIZE];
-                    dataStream.Read(sector, 0, sector.Length);
+                    buffer = new byte[SECTOR_SIZE];
+                    dataStream.Read(buffer, 0, buffer.Length);
 
                     if(_sectorCache.Count >= MAX_CACHED_SECTORS)
                         _sectorCache.Clear();
 
-                    _sectorCache.Add(sectorAddress, sector);
+                    _sectorCache.Add(sectorAddress, buffer);
 
-                    return sector;
+                    return ErrorNumber.NoError;
             }
 
             ulong index  = sectorAddress              / _grainSize;
@@ -591,19 +591,19 @@ namespace Aaru.DiscImages
             uint grainOff = _gTable[index];
 
             if(grainOff == 0 && _hasParent)
-                return _parentImage.ReadSector(sectorAddress);
+                return _parentImage.ReadSector(sectorAddress, out buffer);
 
             if(grainOff == 0 ||
                grainOff == 1)
             {
-                sector = new byte[SECTOR_SIZE];
+                buffer = new byte[SECTOR_SIZE];
 
                 if(_sectorCache.Count >= MAX_CACHED_SECTORS)
                     _sectorCache.Clear();
 
-                _sectorCache.Add(sectorAddress, sector);
+                _sectorCache.Add(sectorAddress, buffer);
 
-                return sector;
+                return ErrorNumber.NoError;
             }
 
             if(!_grainCache.TryGetValue(grainOff, out byte[] grain))
@@ -619,36 +619,43 @@ namespace Aaru.DiscImages
                 _grainCache.Add(grainOff, grain);
             }
 
-            sector = new byte[SECTOR_SIZE];
-            Array.Copy(grain, (int)secOff, sector, 0, SECTOR_SIZE);
+            buffer = new byte[SECTOR_SIZE];
+            Array.Copy(grain, (int)secOff, buffer, 0, SECTOR_SIZE);
 
             if(_sectorCache.Count > MAX_CACHED_SECTORS)
                 _sectorCache.Clear();
 
-            _sectorCache.Add(sectorAddress, sector);
+            _sectorCache.Add(sectorAddress, buffer);
 
-            return sector;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />
-        public byte[] ReadSectors(ulong sectorAddress, uint length)
+        public ErrorNumber ReadSectors(ulong sectorAddress, uint length, out byte[] buffer)
         {
+            buffer = null;
+
             if(sectorAddress > _imageInfo.Sectors - 1)
-                throw new ArgumentOutOfRangeException(nameof(sectorAddress),
-                                                      $"Sector address {sectorAddress} not found");
+                return ErrorNumber.OutOfRange;
 
             if(sectorAddress + length > _imageInfo.Sectors)
-                throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
+                return ErrorNumber.OutOfRange;
 
             var ms = new MemoryStream();
 
             for(uint i = 0; i < length; i++)
             {
-                byte[] sector = ReadSector(sectorAddress + i);
+                ErrorNumber errno = ReadSector(sectorAddress + i, out byte[] sector);
+
+                if(errno != ErrorNumber.NoError)
+                    return errno;
+
                 ms.Write(sector, 0, sector.Length);
             }
 
-            return ms.ToArray();
+            buffer = ms.ToArray();
+
+            return ErrorNumber.NoError;
         }
     }
 }

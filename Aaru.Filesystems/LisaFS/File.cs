@@ -192,6 +192,7 @@ namespace Aaru.Filesystems.LisaFS
         ErrorNumber ReadSystemFile(short fileId, out byte[] buf, bool tags)
         {
             buf = null;
+            ErrorNumber errno;
 
             if(!_mounted ||
                !_debug)
@@ -212,7 +213,12 @@ namespace Aaru.Filesystems.LisaFS
             if(fileId == FILEID_SRECORD)
                 if(!tags)
                 {
-                    buf = _device.ReadSectors(_mddf.mddf_block + _volumePrefix + _mddf.srec_ptr, _mddf.srec_len);
+                    errno = _device.ReadSectors(_mddf.mddf_block + _volumePrefix + _mddf.srec_ptr, _mddf.srec_len,
+                                                out buf);
+
+                    if(errno != ErrorNumber.NoError)
+                        return errno;
+
                     _systemFileCache.Add(fileId, buf);
 
                     return ErrorNumber.NoError;
@@ -249,7 +255,17 @@ namespace Aaru.Filesystems.LisaFS
                 if(sysTag.FileId != fileId)
                     continue;
 
-                byte[] sector = !tags ? _device.ReadSector(i) : _device.ReadSectorTag(i, SectorTagType.AppleSectorTag);
+                byte[] sector;
+
+                if(!tags)
+                {
+                    errno = _device.ReadSector(i, out sector);
+
+                    if(errno != ErrorNumber.NoError)
+                        continue;
+                }
+                else
+                    sector = _device.ReadSectorTag(i, SectorTagType.AppleSectorTag);
 
                 // Relative block for $Loader starts at $Boot block
                 if(sysTag.FileId == FILEID_LOADER_SIGNED)
@@ -367,6 +383,7 @@ namespace Aaru.Filesystems.LisaFS
         ErrorNumber ReadFile(short fileId, out byte[] buf, bool tags)
         {
             buf = null;
+            ErrorNumber errno;
 
             if(!_mounted)
                 return ErrorNumber.AccessDenied;
@@ -402,8 +419,13 @@ namespace Aaru.Filesystems.LisaFS
                 byte[] sector;
 
                 if(!tags)
-                    sector = _device.ReadSectors((ulong)file.extents[i].start + _mddf.mddf_block + _volumePrefix,
-                                                 (uint)file.extents[i].length);
+                {
+                    errno = _device.ReadSectors((ulong)file.extents[i].start + _mddf.mddf_block + _volumePrefix,
+                                                (uint)file.extents[i].length, out sector);
+
+                    if(errno != ErrorNumber.NoError)
+                        return errno;
+                }
                 else
                     sector = _device.ReadSectorsTag((ulong)file.extents[i].start + _mddf.mddf_block + _volumePrefix,
                                                     (uint)file.extents[i].length, SectorTagType.AppleSectorTag);

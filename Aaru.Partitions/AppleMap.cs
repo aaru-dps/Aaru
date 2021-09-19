@@ -36,6 +36,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
@@ -62,7 +63,7 @@ namespace Aaru.Partitions
         /// <inheritdoc />
         public string Name => "Apple Partition Map";
         /// <inheritdoc />
-        public Guid Id => new Guid("36405F8D-4F1A-07F5-209C-223D735D6D22");
+        public Guid Id => new("36405F8D-4F1A-07F5-209C-223D735D6D22");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
@@ -82,7 +83,10 @@ namespace Aaru.Partitions
             if(sectorOffset + 2 >= imagePlugin.Info.Sectors)
                 return false;
 
-            byte[] ddmSector = imagePlugin.ReadSector(sectorOffset);
+            ErrorNumber errno = imagePlugin.ReadSector(sectorOffset, out byte[] ddmSector);
+
+            if(errno != ErrorNumber.NoError)
+                return false;
 
             ushort maxDrivers = 61;
 
@@ -150,7 +154,10 @@ namespace Aaru.Partitions
                     }
                 }
 
-            byte[] partSector = imagePlugin.ReadSector(1 + sectorOffset);
+            errno = imagePlugin.ReadSector(1 + sectorOffset, out byte[] partSector);
+
+            if(errno != ErrorNumber.NoError)
+                return false;
 
             AppleOldDevicePartitionMap oldMap =
                 Marshal.ByteArrayToStructureBigEndian<AppleOldDevicePartitionMap>(partSector);
@@ -257,7 +264,11 @@ namespace Aaru.Partitions
                     return partitions.Count > 0;
             }
 
-            byte[] entries = imagePlugin.ReadSectors(sectorOffset, sectorsToRead);
+            errno = imagePlugin.ReadSectors(sectorOffset, sectorsToRead, out byte[] entries);
+
+            if(errno != ErrorNumber.NoError)
+                return false;
+
             AaruConsole.DebugWriteLine("AppleMap Plugin", "entry_size = {0}", entrySize);
             AaruConsole.DebugWriteLine("AppleMap Plugin", "entry_count = {0}", entryCount);
             AaruConsole.DebugWriteLine("AppleMap Plugin", "skip_ddm = {0}", skipDdm);

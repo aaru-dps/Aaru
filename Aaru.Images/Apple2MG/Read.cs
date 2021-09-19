@@ -115,7 +115,11 @@ namespace Aaru.DiscImages
                     var noFilter  = new ZZZNoFilter();
                     noFilter.Open(tmp);
                     nibPlugin.Open(noFilter);
-                    _decodedImage         = nibPlugin.ReadSectors(0, (uint)nibPlugin.Info.Sectors);
+                    ErrorNumber errno = nibPlugin.ReadSectors(0, (uint)nibPlugin.Info.Sectors, out _decodedImage);
+
+                    if(errno != ErrorNumber.NoError)
+                        return errno;
+
                     _imageInfo.Sectors    = nibPlugin.Info.Sectors;
                     _imageInfo.SectorSize = nibPlugin.Info.SectorSize;
 
@@ -302,18 +306,21 @@ namespace Aaru.DiscImages
         }
 
         /// <inheritdoc />
-        public byte[] ReadSector(ulong sectorAddress) => ReadSectors(sectorAddress, 1);
+        public ErrorNumber ReadSector(ulong sectorAddress, out byte[] buffer) =>
+            ReadSectors(sectorAddress, 1, out buffer);
 
         /// <inheritdoc />
-        public byte[] ReadSectors(ulong sectorAddress, uint length)
+        public ErrorNumber ReadSectors(ulong sectorAddress, uint length, out byte[] buffer)
         {
+            buffer = null;
+
             if(sectorAddress > _imageInfo.Sectors - 1)
-                throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
+                return ErrorNumber.OutOfRange;
 
             if(sectorAddress + length > _imageInfo.Sectors)
-                throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
+                return ErrorNumber.OutOfRange;
 
-            byte[] buffer = new byte[length * _imageInfo.SectorSize];
+            buffer = new byte[length * _imageInfo.SectorSize];
 
             if(_decodedImage != null)
                 Array.Copy(_decodedImage, (long)(sectorAddress * _imageInfo.SectorSize), buffer, 0,
@@ -328,7 +335,7 @@ namespace Aaru.DiscImages
                 stream.Read(buffer, 0, (int)(length * _imageInfo.SectorSize));
             }
 
-            return buffer;
+            return ErrorNumber.NoError;
         }
     }
 }

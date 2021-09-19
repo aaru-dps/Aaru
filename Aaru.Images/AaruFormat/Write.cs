@@ -1496,7 +1496,11 @@ namespace Aaru.DiscImages
 
                     foreach(Track trk in tracks)
                     {
-                        byte[] sector = ReadSector(trk.StartSector);
+                        ErrorNumber errno = ReadSector(trk.StartSector, out byte[] sector);
+
+                        if(errno != ErrorNumber.NoError)
+                            continue;
+
                         trk.BytesPerSector = sector.Length;
 
                         trk.RawBytesPerSector =

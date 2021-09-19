@@ -202,15 +202,23 @@ namespace Aaru.Commands.Image
                     }
                 }
 
-                byte[] sector = Array.Empty<byte>();
+                byte[]      sector = Array.Empty<byte>();
+                ErrorNumber errno  = ErrorNumber.NoError;
 
                 Core.Spectre.ProgressSingleSpinner(ctx =>
                 {
                     ctx.AddTask("Reading sector...").IsIndeterminate();
-                    sector = longSectors ? inputFormat.ReadSectorLong(start + i) : inputFormat.ReadSector(start + i);
+
+                    if(longSectors)
+                        sector = inputFormat.ReadSectorLong(start + i);
+                    else
+                        errno = inputFormat.ReadSector(start + i, out sector);
                 });
 
-                AaruConsole.WriteLine(Markup.Escape(PrintHex.ByteArrayToHexArrayString(sector, width, true)));
+                if(errno == ErrorNumber.NoError)
+                    AaruConsole.WriteLine(Markup.Escape(PrintHex.ByteArrayToHexArrayString(sector, width, true)));
+                else
+                    AaruConsole.ErrorWriteLine($"Error {errno} reading sector {start + i}.");
             }
 
             return (int)ErrorNumber.NoError;

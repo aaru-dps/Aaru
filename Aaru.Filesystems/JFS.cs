@@ -35,6 +35,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 using Schemas;
@@ -58,7 +59,7 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public string Name => "JFS Plugin";
         /// <inheritdoc />
-        public Guid Id => new Guid("D3BE2A41-8F28-4055-94DC-BB6C72A0E9C4");
+        public Guid Id => new("D3BE2A41-8F28-4055-94DC-BB6C72A0E9C4");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
@@ -70,7 +71,10 @@ namespace Aaru.Filesystems
             if(partition.Start + bootSectors >= partition.End)
                 return false;
 
-            byte[] sector = imagePlugin.ReadSector(partition.Start + bootSectors);
+            ErrorNumber errno = imagePlugin.ReadSector(partition.Start + bootSectors, out byte[] sector);
+
+            if(errno != ErrorNumber.NoError)
+                return false;
 
             if(sector.Length < 512)
                 return false;
@@ -86,9 +90,12 @@ namespace Aaru.Filesystems
         {
             Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";
-            var    sb          = new StringBuilder();
-            uint   bootSectors = JFS_BOOT_BLOCKS_SIZE / imagePlugin.Info.SectorSize;
-            byte[] sector      = imagePlugin.ReadSector(partition.Start + bootSectors);
+            var         sb          = new StringBuilder();
+            uint        bootSectors = JFS_BOOT_BLOCKS_SIZE / imagePlugin.Info.SectorSize;
+            ErrorNumber errno       = imagePlugin.ReadSector(partition.Start + bootSectors, out byte[] sector);
+
+            if(errno != ErrorNumber.NoError)
+                return;
 
             if(sector.Length < 512)
                 return;

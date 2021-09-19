@@ -430,14 +430,15 @@ namespace Aaru.DiscImages
         }
 
         /// <inheritdoc />
-        public byte[] ReadSector(ulong sectorAddress)
+        public ErrorNumber ReadSector(ulong sectorAddress, out byte[] buffer)
         {
-            if(sectorAddress > _imageInfo.Sectors - 1)
-                throw new ArgumentOutOfRangeException(nameof(sectorAddress),
-                                                      $"Sector address {sectorAddress} not found");
+            buffer = null;
 
-            if(_sectorCache.TryGetValue(sectorAddress, out byte[] sector))
-                return sector;
+            if(sectorAddress > _imageInfo.Sectors - 1)
+                return ErrorNumber.OutOfRange;
+
+            if(_sectorCache.TryGetValue(sectorAddress, out buffer))
+                return ErrorNumber.NoError;
 
             ulong index  = sectorAddress * _logicalSectorSize / _vFileParms.blockSize;
             ulong secOff = sectorAddress * _logicalSectorSize % _vFileParms.blockSize;
@@ -452,10 +453,18 @@ namespace Aaru.DiscImages
             switch(blkFlags & BAT_FLAGS_MASK)
             {
                 case PAYLOAD_BLOCK_NOT_PRESENT:
-                    return _hasParent ? _parentImage.ReadSector(sectorAddress) : new byte[_logicalSectorSize];
+                    if(_hasParent)
+                        return _parentImage.ReadSector(sectorAddress, out buffer);
+
+                    buffer = new byte[_logicalSectorSize];
+
+                    return ErrorNumber.NoError;
                 case PAYLOAD_BLOCK_UNDEFINED:
                 case PAYLOAD_BLOCK_ZERO:
-                case PAYLOAD_BLOCK_UNMAPPER: return new byte[_logicalSectorSize];
+                case PAYLOAD_BLOCK_UNMAPPER:
+                    buffer = new byte[_logicalSectorSize];
+
+                    return ErrorNumber.NoError;
             }
 
             bool partialBlock;
@@ -464,7 +473,7 @@ namespace Aaru.DiscImages
             if(partialBlock &&
                _hasParent   &&
                !CheckBitmap(sectorAddress))
-                return _parentImage.ReadSector(sectorAddress);
+                return _parentImage.ReadSector(sectorAddress, out buffer);
 
             if(!_blockCache.TryGetValue(blkPtr & BAT_FILE_OFFSET_MASK, out byte[] block))
             {
@@ -478,37 +487,43 @@ namespace Aaru.DiscImages
                 _blockCache.Add(blkPtr & BAT_FILE_OFFSET_MASK, block);
             }
 
-            sector = new byte[_logicalSectorSize];
-            Array.Copy(block, (int)secOff, sector, 0, sector.Length);
+            buffer = new byte[_logicalSectorSize];
+            Array.Copy(block, (int)secOff, buffer, 0, buffer.Length);
 
             if(_sectorCache.Count >= _maxSectorCache)
                 _sectorCache.Clear();
 
-            _sectorCache.Add(sectorAddress, sector);
+            _sectorCache.Add(sectorAddress, buffer);
 
-            return sector;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />
-        public byte[] ReadSectors(ulong sectorAddress, uint length)
+        public ErrorNumber ReadSectors(ulong sectorAddress, uint length, out byte[] buffer)
         {
+            buffer = null;
+
             if(sectorAddress > _imageInfo.Sectors - 1)
-                throw new ArgumentOutOfRangeException(nameof(sectorAddress),
-                                                      $"Sector address {sectorAddress} not found");
+                return ErrorNumber.OutOfRange;
 
             if(sectorAddress + length > _imageInfo.Sectors)
-                throw new ArgumentOutOfRangeException(nameof(length),
-                                                      $"Requested more sectors ({sectorAddress + length}) than available ({_imageInfo.Sectors})");
+                return ErrorNumber.OutOfRange;
 
             var ms = new MemoryStream();
 
             for(uint i = 0; i < length; i++)
             {
-                byte[] sector = ReadSector(sectorAddress + i);
+                ErrorNumber errno = ReadSector(sectorAddress + i, out byte[] sector);
+
+                if(errno != ErrorNumber.NoError)
+                    return errno;
+
                 ms.Write(sector, 0, sector.Length);
             }
 
-            return ms.ToArray();
+            buffer = ms.ToArray();
+
+            return ErrorNumber.NoError;
         }
     }
 }

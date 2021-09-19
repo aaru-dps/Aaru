@@ -34,6 +34,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Schemas;
@@ -55,7 +56,7 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public string Name => "B-tree file system";
         /// <inheritdoc />
-        public Guid Id => new Guid("C904CF15-5222-446B-B7DB-02EAC5D781B3");
+        public Guid Id => new("C904CF15-5222-446B-B7DB-02EAC5D781B3");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
@@ -71,7 +72,11 @@ namespace Aaru.Filesystems
             if(sbSectorOff + partition.Start >= partition.End)
                 return false;
 
-            byte[]     sector = imagePlugin.ReadSectors(sbSectorOff + partition.Start, sbSectorSize);
+            ErrorNumber errno = imagePlugin.ReadSectors(sbSectorOff + partition.Start, sbSectorSize, out byte[] sector);
+
+            if(errno != ErrorNumber.NoError)
+                return false;
+
             SuperBlock btrfsSb;
 
             try
@@ -103,7 +108,10 @@ namespace Aaru.Filesystems
             ulong sbSectorOff  = 0x10000 / imagePlugin.Info.SectorSize;
             uint  sbSectorSize = 0x1000  / imagePlugin.Info.SectorSize;
 
-            byte[] sector = imagePlugin.ReadSectors(sbSectorOff + partition.Start, sbSectorSize);
+            ErrorNumber errno = imagePlugin.ReadSectors(sbSectorOff + partition.Start, sbSectorSize, out byte[] sector);
+
+            if(errno != ErrorNumber.NoError)
+                return;
 
             SuperBlock btrfsSb = Marshal.ByteArrayToStructureLittleEndian<SuperBlock>(sector);
 

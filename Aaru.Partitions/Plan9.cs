@@ -34,6 +34,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 
@@ -51,7 +52,7 @@ namespace Aaru.Partitions
         /// <inheritdoc />
         public string Name => "Plan9 partition table";
         /// <inheritdoc />
-        public Guid Id => new Guid("F0BF4FFC-056E-4E7C-8B65-4EAEE250ADD9");
+        public Guid Id => new("F0BF4FFC-056E-4E7C-8B65-4EAEE250ADD9");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
@@ -63,7 +64,10 @@ namespace Aaru.Partitions
             if(sectorOffset + 2 >= imagePlugin.Info.Sectors)
                 return false;
 
-            byte[] sector = imagePlugin.ReadSector(sectorOffset + 1);
+            ErrorNumber errno = imagePlugin.ReadSector(sectorOffset + 1, out byte[] sector);
+
+            if(errno != ErrorNumber.NoError)
+                return false;
 
             // While all of Plan9 is supposedly UTF-8, it uses ASCII strcmp for reading its partition table
             string[] really = StringHandlers.CToString(sector).Split('\n');

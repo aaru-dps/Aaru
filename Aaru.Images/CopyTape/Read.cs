@@ -30,7 +30,6 @@
 // Copyright © 2011-2021 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -190,11 +189,12 @@ namespace Aaru.DiscImages
         }
 
         /// <inheritdoc />
-        public byte[] ReadSector(ulong sectorAddress)
+        public ErrorNumber ReadSector(ulong sectorAddress, out byte[] buffer)
         {
+            buffer = null;
+
             if(sectorAddress >= (ulong)_blockPositionCache.LongLength)
-                throw new ArgumentOutOfRangeException(nameof(sectorAddress),
-                                                      $"Sector address {sectorAddress} not found");
+                return ErrorNumber.OutOfRange;
 
             _imageStream.Position = _blockPositionCache[sectorAddress];
 
@@ -206,42 +206,47 @@ namespace Aaru.DiscImages
             Match  blockMt = blockRx.Match(mark);
 
             if(!blockMt.Success)
-                throw new ArgumentException("Cannot decode block header, cannot read.");
+                return ErrorNumber.InvalidArgument;
 
             string blkSize = blockMt.Groups["blockSize"].Value;
 
             if(string.IsNullOrWhiteSpace(blkSize))
-                throw new ArgumentException("Cannot decode block header, cannot read.");
+                return ErrorNumber.InvalidArgument;
 
             if(!uint.TryParse(blkSize, out uint blockSize))
-                throw new ArgumentException("Cannot decode block header, cannot read.");
+                return ErrorNumber.InvalidArgument;
 
             if(blockSize      == 0 ||
                blockSize + 17 > _imageStream.Length)
-                throw new ArgumentException("Cannot decode block header, cannot read.");
+                return ErrorNumber.InvalidArgument;
 
-            byte[] data = new byte[blockSize];
+            buffer = new byte[blockSize];
 
-            _imageStream.Read(data, 0, (int)blockSize);
+            _imageStream.Read(buffer, 0, (int)blockSize);
 
-            if(_imageStream.ReadByte() != 0x0A)
-                throw new ArgumentException("Cannot decode block header, cannot read.");
-
-            return data;
+            return _imageStream.ReadByte() != 0x0A ? ErrorNumber.InvalidArgument : ErrorNumber.NoError;
         }
 
         /// <inheritdoc />
-        public byte[] ReadSectors(ulong sectorAddress, uint length)
+        public ErrorNumber ReadSectors(ulong sectorAddress, uint length, out byte[] buffer)
         {
-            var dataMs = new MemoryStream();
+            buffer = null;
+
+            var ms = new MemoryStream();
 
             for(uint i = 0; i < length; i++)
             {
-                byte[] data = ReadSector(sectorAddress + i);
-                dataMs.Write(data, 0, data.Length);
+                ErrorNumber errno = ReadSector(sectorAddress + i, out byte[] sector);
+
+                if(errno != ErrorNumber.NoError)
+                    return errno;
+
+                ms.Write(sector, 0, sector.Length);
             }
 
-            return dataMs.ToArray();
+            buffer = ms.ToArray();
+
+            return ErrorNumber.NoError;
         }
     }
 }

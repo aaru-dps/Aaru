@@ -34,6 +34,7 @@
 using System.Linq;
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
@@ -49,8 +50,12 @@ namespace Aaru.Filesystems
             if(16 + partition.Start >= partition.End)
                 return false;
 
-            byte[] hpofsBpbSector =
-                imagePlugin.ReadSector(0 + partition.Start); // Seek to BIOS parameter block, on logical sector 0
+            ErrorNumber errno =
+                imagePlugin.ReadSector(0 + partition.Start,
+                                       out byte[] hpofsBpbSector); // Seek to BIOS parameter block, on logical sector 0
+
+            if(errno != ErrorNumber.NoError)
+                return false;
 
             if(hpofsBpbSector.Length < 512)
                 return false;
@@ -69,14 +74,24 @@ namespace Aaru.Filesystems
 
             var sb = new StringBuilder();
 
-            byte[] hpofsBpbSector =
-                imagePlugin.ReadSector(0 + partition.Start); // Seek to BIOS parameter block, on logical sector 0
+            ErrorNumber errno =
+                imagePlugin.ReadSector(0 + partition.Start,
+                                       out byte[] hpofsBpbSector); // Seek to BIOS parameter block, on logical sector 0
 
-            byte[] medInfoSector =
-                imagePlugin.ReadSector(13 + partition.Start); // Seek to media information block, on logical sector 13
+            if(errno != ErrorNumber.NoError)
+                return;
 
-            byte[] volInfoSector =
-                imagePlugin.ReadSector(14 + partition.Start); // Seek to volume information block, on logical sector 14
+            errno = imagePlugin.ReadSector(13 + partition.Start,
+                                           out byte[] medInfoSector); // Seek to media information block, on logical sector 13
+
+            if(errno != ErrorNumber.NoError)
+                return;
+
+            errno = imagePlugin.ReadSector(14 + partition.Start,
+                                           out byte[] volInfoSector); // Seek to volume information block, on logical sector 14
+
+            if(errno != ErrorNumber.NoError)
+                return;
 
             BiosParameterBlock     bpb = Marshal.ByteArrayToStructureLittleEndian<BiosParameterBlock>(hpofsBpbSector);
             MediaInformationBlock  mib = Marshal.ByteArrayToStructureBigEndian<MediaInformationBlock>(medInfoSector);

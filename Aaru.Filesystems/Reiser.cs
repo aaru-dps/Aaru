@@ -35,6 +35,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 using Schemas;
@@ -68,7 +69,7 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public string Name => "Reiser Filesystem Plugin";
         /// <inheritdoc />
-        public Guid Id => new Guid("1D8CD8B8-27E6-410F-9973-D16409225FBA");
+        public Guid Id => new("1D8CD8B8-27E6-410F-9973-D16409225FBA");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
@@ -91,7 +92,10 @@ namespace Aaru.Filesystems
             if(partition.Start + sbAddr + sbSize >= partition.End)
                 return false;
 
-            byte[] sector = imagePlugin.ReadSectors(partition.Start + sbAddr, sbSize);
+            ErrorNumber errno = imagePlugin.ReadSectors(partition.Start + sbAddr, sbSize, out byte[] sector);
+
+            if(errno != ErrorNumber.NoError)
+                return false;
 
             if(sector.Length < Marshal.SizeOf<Superblock>())
                 return false;
@@ -122,7 +126,10 @@ namespace Aaru.Filesystems
             if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0)
                 sbSize++;
 
-            byte[] sector = imagePlugin.ReadSectors(partition.Start + sbAddr, sbSize);
+            ErrorNumber errno = imagePlugin.ReadSectors(partition.Start + sbAddr, sbSize, out byte[] sector);
+
+            if(errno != ErrorNumber.NoError)
+                return;
 
             if(sector.Length < Marshal.SizeOf<Superblock>())
                 return;
@@ -219,7 +226,7 @@ namespace Aaru.Filesystems
             public readonly ushort reserved_for_journal;
             public readonly uint   inode_generation;
             public readonly uint   flags;
-            public          Guid   uuid;
+            public readonly Guid   uuid;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
             public readonly byte[] label;
             public readonly ushort mnt_count;

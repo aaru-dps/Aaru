@@ -54,6 +54,7 @@ namespace Aaru.Filesystems
             _device         = imagePlugin;
             _partitionStart = partition.Start;
             Encoding        = encoding ?? Encoding.GetEncoding("macintosh");
+            ErrorNumber errno;
 
             options ??= GetDefaultOptions();
 
@@ -62,8 +63,15 @@ namespace Aaru.Filesystems
 
             _volMdb = new MasterDirectoryBlock();
 
-            _mdbBlocks  = _device.ReadSector(2 + _partitionStart);
-            _bootBlocks = _device.ReadSector(0 + _partitionStart);
+            errno = _device.ReadSector(2 + _partitionStart, out _mdbBlocks);
+
+            if(errno != ErrorNumber.NoError)
+                return errno;
+
+            errno = _device.ReadSector(0 + _partitionStart, out _bootBlocks);
+
+            if(errno != ErrorNumber.NoError)
+                return errno;
 
             _volMdb.drSigWord = BigEndianBitConverter.ToUInt16(_mdbBlocks, 0x000);
 
@@ -87,14 +95,22 @@ namespace Aaru.Filesystems
             Array.Copy(_mdbBlocks, 0x024, variableSize, 0, _volMdb.drVNSiz + 1);
             _volMdb.drVN = StringHandlers.PascalToString(variableSize, Encoding);
 
-            _directoryBlocks = _device.ReadSectors(_volMdb.drDirSt + _partitionStart, _volMdb.drBlLen);
+            errno = _device.ReadSectors(_volMdb.drDirSt + _partitionStart, _volMdb.drBlLen, out _directoryBlocks);
+
+            if(errno != ErrorNumber.NoError)
+                return errno;
+
             int bytesInBlockMap = (_volMdb.drNmAlBlks * 12 / 8) + (_volMdb.drNmAlBlks * 12 % 8);
             int bytesInWholeMdb = bytesInBlockMap               + BYTES_BEFORE_BLOCK_MAP;
 
             int sectorsInWholeMdb = (bytesInWholeMdb / (int)_device.Info.SectorSize) +
                                     (bytesInWholeMdb % (int)_device.Info.SectorSize);
 
-            byte[] wholeMdb = _device.ReadSectors(_partitionStart + 2, (uint)sectorsInWholeMdb);
+            errno = _device.ReadSectors(_partitionStart + 2, (uint)sectorsInWholeMdb, out byte[] wholeMdb);
+
+            if(errno != ErrorNumber.NoError)
+                return errno;
+
             _blockMapBytes = new byte[bytesInBlockMap];
             Array.Copy(wholeMdb, BYTES_BEFORE_BLOCK_MAP, _blockMapBytes, 0, _blockMapBytes.Length);
 

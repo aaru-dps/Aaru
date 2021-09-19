@@ -32,6 +32,7 @@
 
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 using Schemas;
@@ -46,7 +47,10 @@ namespace Aaru.Filesystems
             if(imagePlugin.Info.SectorSize < 512)
                 return false;
 
-            byte[] sector = imagePlugin.ReadSector(partition.Start);
+            ErrorNumber errno = imagePlugin.ReadSector(partition.Start, out byte[] sector);
+
+            if(errno != ErrorNumber.NoError)
+                return false;
 
             Superblock sb = Marshal.ByteArrayToStructureBigEndian<Superblock>(sector);
 
@@ -65,7 +69,10 @@ namespace Aaru.Filesystems
 
             bool bigEndian = true;
 
-            byte[] sector = imagePlugin.ReadSector(partition.Start);
+            ErrorNumber errno = imagePlugin.ReadSector(partition.Start, out byte[] sector);
+
+            if(errno != ErrorNumber.NoError)
+                return;
 
             Superblock fatxSb = Marshal.ByteArrayToStructureBigEndian<Superblock>(sector);
 

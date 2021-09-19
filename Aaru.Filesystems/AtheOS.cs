@@ -35,6 +35,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 using Schemas;
@@ -63,7 +64,7 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public string Name => "AtheOS Filesystem";
         /// <inheritdoc />
-        public Guid Id => new Guid("AAB2C4F1-DC07-49EE-A948-576CC51B58C5");
+        public Guid Id => new("AAB2C4F1-DC07-49EE-A948-576CC51B58C5");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
@@ -80,7 +81,11 @@ namespace Aaru.Filesystems
             if(sector + partition.Start >= partition.End)
                 return false;
 
-            byte[] tmp      = imagePlugin.ReadSectors(sector + partition.Start, run);
+            ErrorNumber errno = imagePlugin.ReadSectors(sector + partition.Start, run, out byte[] tmp);
+
+            if(errno != ErrorNumber.NoError)
+                return false;
+
             byte[] sbSector = new byte[AFS_SUPERBLOCK_SIZE];
 
             if(offset + AFS_SUPERBLOCK_SIZE > tmp.Length)
@@ -109,7 +114,11 @@ namespace Aaru.Filesystems
             if(imagePlugin.Info.SectorSize < AFS_SUPERBLOCK_SIZE)
                 run = AFS_SUPERBLOCK_SIZE / imagePlugin.Info.SectorSize;
 
-            byte[] tmp      = imagePlugin.ReadSectors(sector + partition.Start, run);
+            ErrorNumber errno = imagePlugin.ReadSectors(sector + partition.Start, run, out byte[] tmp);
+
+            if(errno != ErrorNumber.NoError)
+                return;
+
             byte[] sbSector = new byte[AFS_SUPERBLOCK_SIZE];
             Array.Copy(tmp, offset, sbSector, 0, AFS_SUPERBLOCK_SIZE);
 

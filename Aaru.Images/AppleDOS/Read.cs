@@ -96,22 +96,25 @@ namespace Aaru.DiscImages
         }
 
         /// <inheritdoc />
-        public byte[] ReadSector(ulong sectorAddress) => ReadSectors(sectorAddress, 1);
+        public ErrorNumber ReadSector(ulong sectorAddress, out byte[] buffer) =>
+            ReadSectors(sectorAddress, 1, out buffer);
 
         /// <inheritdoc />
-        public byte[] ReadSectors(ulong sectorAddress, uint length)
+        public ErrorNumber ReadSectors(ulong sectorAddress, uint length, out byte[] buffer)
         {
+            buffer = null;
+
             if(sectorAddress > _imageInfo.Sectors - 1)
-                throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
+                return ErrorNumber.OutOfRange;
 
             if(sectorAddress + length > _imageInfo.Sectors)
-                throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
+                return ErrorNumber.OutOfRange;
 
-            byte[] buffer = new byte[length * _imageInfo.SectorSize];
+            buffer = new byte[length * _imageInfo.SectorSize];
 
             Array.Copy(_deinterleaved, (int)(sectorAddress * _imageInfo.SectorSize), buffer, 0, buffer.Length);
 
-            return buffer;
+            return ErrorNumber.NoError;
         }
     }
 }

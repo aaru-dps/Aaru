@@ -55,7 +55,10 @@ namespace Aaru.Filesystems
             if(options.TryGetValue("debug", out string debugString))
                 bool.TryParse(debugString, out _debug);
 
-            byte[] sbSector = imagePlugin.ReadSector(0 + partition.Start);
+            ErrorNumber errno = imagePlugin.ReadSector(0 + partition.Start, out byte[] sbSector);
+
+            if(errno != ErrorNumber.NoError)
+                return errno;
 
             SuperBlock sb = Marshal.ByteArrayToStructureBigEndian<SuperBlock>(sbSector);
 

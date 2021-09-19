@@ -34,6 +34,7 @@ using System;
 using System.Linq;
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 using Schemas;
@@ -50,14 +51,18 @@ namespace Aaru.Filesystems
             if(2 + partition.Start >= partition.End)
                 return false;
 
-            byte[] mdbSector;
-            ushort drSigWord;
+            byte[]      mdbSector;
+            ushort      drSigWord;
+            ErrorNumber errno;
 
             if(imagePlugin.Info.SectorSize == 2352 ||
                imagePlugin.Info.SectorSize == 2448 ||
                imagePlugin.Info.SectorSize == 2048)
             {
-                mdbSector = imagePlugin.ReadSectors(partition.Start, 2);
+                errno = imagePlugin.ReadSectors(partition.Start, 2, out mdbSector);
+
+                if(errno != ErrorNumber.NoError)
+                    return false;
 
                 foreach(int offset in new[]
                 {
@@ -77,7 +82,10 @@ namespace Aaru.Filesystems
             }
             else
             {
-                mdbSector = imagePlugin.ReadSector(2 + partition.Start);
+                errno = imagePlugin.ReadSector(2 + partition.Start, out mdbSector);
+
+                if(errno != ErrorNumber.NoError)
+                    return false;
 
                 if(mdbSector.Length < 0x7C + 2)
                     return false;
@@ -104,9 +112,10 @@ namespace Aaru.Filesystems
 
             var sb = new StringBuilder();
 
-            byte[] bbSector  = null;
-            byte[] mdbSector = null;
-            ushort drSigWord;
+            byte[]      bbSector  = null;
+            byte[]      mdbSector = null;
+            ushort      drSigWord;
+            ErrorNumber errno;
 
             bool apmFromHddOnCd = false;
 
@@ -114,7 +123,10 @@ namespace Aaru.Filesystems
                imagePlugin.Info.SectorSize == 2448 ||
                imagePlugin.Info.SectorSize == 2048)
             {
-                byte[] tmpSector = imagePlugin.ReadSectors(partition.Start, 2);
+                errno = imagePlugin.ReadSectors(partition.Start, 2, out byte[] tmpSector);
+
+                if(errno != ErrorNumber.NoError)
+                    return;
 
                 foreach(int offset in new[]
                 {
@@ -143,11 +155,20 @@ namespace Aaru.Filesystems
             }
             else
             {
-                mdbSector = imagePlugin.ReadSector(2 + partition.Start);
+                errno = imagePlugin.ReadSector(2 + partition.Start, out mdbSector);
+
+                if(errno != ErrorNumber.NoError)
+                    return;
+
                 drSigWord = BigEndianBitConverter.ToUInt16(mdbSector, 0);
 
                 if(drSigWord == AppleCommon.HFS_MAGIC)
-                    bbSector = imagePlugin.ReadSector(partition.Start);
+                {
+                    errno = imagePlugin.ReadSector(partition.Start, out bbSector);
+
+                    if(errno != ErrorNumber.NoError)
+                        return;
+                }
                 else
                     return;
             }

@@ -130,8 +130,11 @@ namespace Aaru.Filesystems
             else
                 fileBlockSizeRatio = entry.Entry.block_size / _image.Info.SectorSize;
 
-            byte[] buffer = _image.ReadSectors((ulong)(entry.Pointers[0] + (firstBlock * fileBlockSizeRatio)),
-                                               (uint)(sizeInBlocks * fileBlockSizeRatio));
+            ErrorNumber errno = _image.ReadSectors((ulong)(entry.Pointers[0] + (firstBlock * fileBlockSizeRatio)),
+                                                   (uint)(sizeInBlocks * fileBlockSizeRatio), out byte[] buffer);
+
+            if(errno != ErrorNumber.NoError)
+                return errno;
 
             buf = new byte[size];
             Array.Copy(buffer, offsetInBlock, buf, 0, size);

@@ -78,14 +78,18 @@ namespace Aaru.Filesystems
             _sectorsPerTrack = _device.Info.Sectors == 455 ? 13 : 16;
 
             // Read the VTOC
-            _vtocBlocks = _device.ReadSector((ulong)(17 * _sectorsPerTrack));
-            _vtoc       = Marshal.ByteArrayToStructureLittleEndian<Vtoc>(_vtocBlocks);
+            ErrorNumber error = _device.ReadSector((ulong)(17 * _sectorsPerTrack), out _vtocBlocks);
+
+            if(error != ErrorNumber.NoError)
+                return error;
+
+            _vtoc = Marshal.ByteArrayToStructureLittleEndian<Vtoc>(_vtocBlocks);
 
             _track1UsedByFiles = false;
             _track2UsedByFiles = false;
             _usedSectors       = 1;
 
-            ErrorNumber error = ReadCatalog();
+            error = ReadCatalog();
 
             if(error != ErrorNumber.NoError)
             {

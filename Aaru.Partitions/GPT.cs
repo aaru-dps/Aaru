@@ -54,7 +54,7 @@ namespace Aaru.Partitions
         /// <inheritdoc />
         public string Name => "GUID Partition Table";
         /// <inheritdoc />
-        public Guid Id => new Guid("CBC9D281-C1D0-44E8-9038-4D66FD2678AB");
+        public Guid Id => new("CBC9D281-C1D0-44E8-9038-4D66FD2678AB");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
@@ -66,7 +66,11 @@ namespace Aaru.Partitions
             if(sectorOffset + 2 >= imagePlugin.Info.Sectors)
                 return false;
 
-            byte[] hdrBytes = imagePlugin.ReadSector(1 + sectorOffset);
+            ErrorNumber errno = imagePlugin.ReadSector(1 + sectorOffset, out byte[] hdrBytes);
+
+            if(errno != ErrorNumber.NoError)
+                return false;
+
             Header hdr;
 
             ulong signature  = BitConverter.ToUInt64(hdrBytes, 0);
@@ -77,7 +81,11 @@ namespace Aaru.Partitions
             if(signature != GPT_MAGIC)
                 if(imagePlugin.Info.XmlMediaType == XmlMediaType.OpticalDisc)
                 {
-                    hdrBytes  = imagePlugin.ReadSector(sectorOffset);
+                    errno = imagePlugin.ReadSector(sectorOffset, out hdrBytes);
+
+                    if(errno != ErrorNumber.NoError)
+                        return false;
+
                     signature = BitConverter.ToUInt64(hdrBytes, 512);
                     AaruConsole.DebugWriteLine("GPT Plugin", "hdr.signature @ 0x200 = 0x{0:X16}", signature);
 
@@ -144,10 +152,14 @@ namespace Aaru.Partitions
             if(hdr.entries * hdr.entriesSize % imagePlugin.Info.SectorSize > 0)
                 totalEntriesSectors++;
 
-            byte[] temp         = imagePlugin.ReadSectors(hdr.entryLBA / divisor, totalEntriesSectors + modulo);
-            byte[] entriesBytes = new byte[temp.Length - (modulo       * 512)];
+            errno = imagePlugin.ReadSectors(hdr.entryLBA / divisor, totalEntriesSectors + modulo, out byte[] temp);
+
+            if(errno != ErrorNumber.NoError)
+                return false;
+
+            byte[] entriesBytes = new byte[temp.Length - (modulo * 512)];
             Array.Copy(temp, modulo * 512, entriesBytes, 0, entriesBytes.Length);
-            List<Entry> entries = new List<Entry>();
+            List<Entry> entries = new();
 
             for(int i = 0; i < hdr.entries; i++)
             {

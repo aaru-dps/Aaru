@@ -56,7 +56,7 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public string Name => "XFS Filesystem Plugin";
         /// <inheritdoc />
-        public Guid Id => new Guid("1D8CD8B8-27E6-410F-9973-D16409225FBA");
+        public Guid Id => new("1D8CD8B8-27E6-410F-9973-D16409225FBA");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
@@ -74,7 +74,10 @@ namespace Aaru.Filesystems
                 if((Marshal.SizeOf<Superblock>() + 0x400) % imagePlugin.Info.SectorSize != 0)
                     sbSize++;
 
-                byte[] sector = imagePlugin.ReadSectors(partition.Start, sbSize);
+                ErrorNumber errno = imagePlugin.ReadSectors(partition.Start, sbSize, out byte[] sector);
+
+                if(errno != ErrorNumber.NoError)
+                    return false;
 
                 if(sector.Length < Marshal.SizeOf<Superblock>())
                     return false;
@@ -110,7 +113,10 @@ namespace Aaru.Filesystems
                     if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0)
                         sbSize++;
 
-                    byte[] sector = imagePlugin.ReadSectors(partition.Start + location, sbSize);
+                    ErrorNumber errno = imagePlugin.ReadSectors(partition.Start + location, sbSize, out byte[] sector);
+
+                    if(errno != ErrorNumber.NoError)
+                        continue;
 
                     if(sector.Length < Marshal.SizeOf<Superblock>())
                         return false;
@@ -147,9 +153,10 @@ namespace Aaru.Filesystems
                 if((Marshal.SizeOf<Superblock>() + 0x400) % imagePlugin.Info.SectorSize != 0)
                     sbSize++;
 
-                byte[] sector = imagePlugin.ReadSectors(partition.Start, sbSize);
+                ErrorNumber errno = imagePlugin.ReadSectors(partition.Start, sbSize, out byte[] sector);
 
-                if(sector.Length < Marshal.SizeOf<Superblock>())
+                if(errno         != ErrorNumber.NoError ||
+                   sector.Length < Marshal.SizeOf<Superblock>())
                     return;
 
                 byte[] sbpiece = new byte[Marshal.SizeOf<Superblock>()];
@@ -182,9 +189,10 @@ namespace Aaru.Filesystems
                     if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0)
                         sbSize++;
 
-                    byte[] sector = imagePlugin.ReadSectors(partition.Start + location, sbSize);
+                    ErrorNumber errno = imagePlugin.ReadSectors(partition.Start + location, sbSize, out byte[] sector);
 
-                    if(sector.Length < Marshal.SizeOf<Superblock>())
+                    if(errno         != ErrorNumber.NoError ||
+                       sector.Length < Marshal.SizeOf<Superblock>())
                         return;
 
                     xfsSb = Marshal.ByteArrayToStructureBigEndian<Superblock>(sector);

@@ -34,6 +34,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
@@ -53,7 +54,7 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public string Name => "Solar_OS filesystem";
         /// <inheritdoc />
-        public Guid Id => new Guid("EA3101C1-E777-4B4F-B5A3-8C57F50F6E65");
+        public Guid Id => new("EA3101C1-E777-4B4F-B5A3-8C57F50F6E65");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
@@ -63,7 +64,10 @@ namespace Aaru.Filesystems
             if(2 + partition.Start >= partition.End)
                 return false;
 
-            byte[] bpb = imagePlugin.ReadSector(0 + partition.Start);
+            ErrorNumber errno = imagePlugin.ReadSector(0 + partition.Start, out byte[] bpb);
+
+            if(errno != ErrorNumber.NoError)
+                return false;
 
             byte[] fsTypeB = new byte[8];
 
@@ -81,8 +85,11 @@ namespace Aaru.Filesystems
             Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";
 
-            var    sb        = new StringBuilder();
-            byte[] bpbSector = imagePlugin.ReadSector(0 + partition.Start);
+            var         sb    = new StringBuilder();
+            ErrorNumber errno = imagePlugin.ReadSector(0 + partition.Start, out byte[] bpbSector);
+
+            if(errno != ErrorNumber.NoError)
+                return;
 
             var bpb = new BiosParameterBlock
             {

@@ -35,6 +35,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.Checksums;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 using Schemas;
@@ -54,7 +55,7 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public string Name => "OS/2 High Performance File System";
         /// <inheritdoc />
-        public Guid Id => new Guid("33513B2C-f590-4acb-8bf2-0b1d5e19dec5");
+        public Guid Id => new("33513B2C-f590-4acb-8bf2-0b1d5e19dec5");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
@@ -64,8 +65,12 @@ namespace Aaru.Filesystems
             if(16 + partition.Start >= partition.End)
                 return false;
 
-            byte[] hpfsSbSector =
-                imagePlugin.ReadSector(16 + partition.Start); // Seek to superblock, on logical sector 16
+            ErrorNumber errno =
+                imagePlugin.ReadSector(16 + partition.Start,
+                                       out byte[] hpfsSbSector); // Seek to superblock, on logical sector 16
+
+            if(errno != ErrorNumber.NoError)
+                return false;
 
             uint magic1 = BitConverter.ToUInt32(hpfsSbSector, 0x000);
             uint magic2 = BitConverter.ToUInt32(hpfsSbSector, 0x004);
@@ -82,14 +87,24 @@ namespace Aaru.Filesystems
 
             var sb = new StringBuilder();
 
-            byte[] hpfsBpbSector =
-                imagePlugin.ReadSector(0 + partition.Start); // Seek to BIOS parameter block, on logical sector 0
+            ErrorNumber errno =
+                imagePlugin.ReadSector(0 + partition.Start,
+                                       out byte[] hpfsBpbSector); // Seek to BIOS parameter block, on logical sector 0
 
-            byte[] hpfsSbSector =
-                imagePlugin.ReadSector(16 + partition.Start); // Seek to superblock, on logical sector 16
+            if(errno != ErrorNumber.NoError)
+                return;
 
-            byte[] hpfsSpSector =
-                imagePlugin.ReadSector(17 + partition.Start); // Seek to spareblock, on logical sector 17
+            errno = imagePlugin.ReadSector(16 + partition.Start,
+                                           out byte[] hpfsSbSector); // Seek to superblock, on logical sector 16
+
+            if(errno != ErrorNumber.NoError)
+                return;
+
+            errno = imagePlugin.ReadSector(17 + partition.Start,
+                                           out byte[] hpfsSpSector); // Seek to spareblock, on logical sector 17
+
+            if(errno != ErrorNumber.NoError)
+                return;
 
             BiosParameterBlock bpb = Marshal.ByteArrayToStructureLittleEndian<BiosParameterBlock>(hpfsBpbSector);
 

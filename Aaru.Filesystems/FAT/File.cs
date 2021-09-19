@@ -91,6 +91,8 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public ErrorNumber Read(string path, long offset, long size, ref byte[] buf)
         {
+            ErrorNumber errno;
+
             if(!_mounted)
                 return ErrorNumber.AccessDenied;
 
@@ -135,9 +137,11 @@ namespace Aaru.Filesystems
                 if(i + firstCluster >= clusters.Length)
                     return ErrorNumber.InvalidArgument;
 
-                byte[] buffer =
-                    _image.ReadSectors(_firstClusterSector + (clusters[i + firstCluster] * _sectorsPerCluster),
-                                       _sectorsPerCluster);
+                errno = _image.ReadSectors(_firstClusterSector + (clusters[i + firstCluster] * _sectorsPerCluster),
+                                           _sectorsPerCluster, out byte[] buffer);
+
+                if(errno != ErrorNumber.NoError)
+                    return errno;
 
                 ms.Write(buffer, 0, buffer.Length);
             }
@@ -239,8 +243,11 @@ namespace Aaru.Filesystems
 
             int nextEntry = (int)(nextCluster % _fatEntriesPerSector);
 
-            ulong  currentSector = nextSector;
-            byte[] fatData       = _image.ReadSector(currentSector);
+            ulong       currentSector = nextSector;
+            ErrorNumber errno         = _image.ReadSector(currentSector, out byte[] fatData);
+
+            if(errno != ErrorNumber.NoError)
+                return null;
 
             if(_fat32)
                 while((nextCluster & FAT32_MASK) > 0 &&
@@ -250,7 +257,11 @@ namespace Aaru.Filesystems
 
                     if(currentSector != nextSector)
                     {
-                        fatData       = _image.ReadSector(nextSector);
+                        errno = _image.ReadSector(nextSector, out fatData);
+
+                        if(errno != ErrorNumber.NoError)
+                            return null;
+
                         currentSector = nextSector;
                     }
 

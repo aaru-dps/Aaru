@@ -36,6 +36,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
@@ -102,7 +103,7 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public string Name => "BSD Fast File System (aka UNIX File System, UFS)";
         /// <inheritdoc />
-        public Guid Id => new Guid("CC90D342-05DB-48A8-988C-C1FE000034A3");
+        public Guid Id => new("CC90D342-05DB-48A8-988C-C1FE000034A3");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
@@ -130,12 +131,31 @@ namespace Aaru.Filesystems
 
             try
             {
-                return locations.Where(loc => partition.End > partition.Start + loc + sbSizeInSectors).
-                                 Select(loc => imagePlugin.ReadSectors(partition.Start + loc, sbSizeInSectors)).
-                                 Select(ufsSbSectors => BitConverter.ToUInt32(ufsSbSectors, 0x055C)).
-                                 Any(magic => magic == UFS_MAGIC     || magic == UFS_CIGAM  || magic == UFS_MAGIC_BW ||
-                                              magic == UFS_CIGAM_BW  || magic == UFS2_MAGIC || magic == UFS2_CIGAM   ||
-                                              magic == UFS_BAD_MAGIC || magic == UFS_BAD_CIGAM);
+                foreach(ulong loc in locations)
+                {
+                    if(partition.End > partition.Start + loc + sbSizeInSectors)
+                    {
+                        ErrorNumber errno =
+                            imagePlugin.ReadSectors(partition.Start + loc, sbSizeInSectors, out byte[] ufsSbSectors);
+
+                        if(errno != ErrorNumber.NoError)
+                            continue;
+
+                        uint magic = BitConverter.ToUInt32(ufsSbSectors, 0x055C);
+
+                        if(magic == UFS_MAGIC     ||
+                           magic == UFS_CIGAM     ||
+                           magic == UFS_MAGIC_BW  ||
+                           magic == UFS_CIGAM_BW  ||
+                           magic == UFS2_MAGIC    ||
+                           magic == UFS2_CIGAM    ||
+                           magic == UFS_BAD_MAGIC ||
+                           magic == UFS_BAD_CIGAM)
+                            return true;
+                    }
+                }
+
+                return false;
             }
             catch(Exception)
             {
@@ -177,10 +197,16 @@ namespace Aaru.Filesystems
                 262144 / imagePlugin.Info.SectorSize
             };
 
+            ErrorNumber errno;
+
             foreach(ulong loc in locations.Where(loc => partition.End > partition.Start + loc + sb_size_in_sectors))
             {
-                ufs_sb_sectors = imagePlugin.ReadSectors(partition.Start + loc, sb_size_in_sectors);
-                magic          = BitConverter.ToUInt32(ufs_sb_sectors, 0x055C);
+                errno = imagePlugin.ReadSectors(partition.Start + loc, sb_size_in_sectors, out ufs_sb_sectors);
+
+                if(errno != ErrorNumber.NoError)
+                    continue;
+
+                magic = BitConverter.ToUInt32(ufs_sb_sectors, 0x055C);
 
                 if(magic == UFS_MAGIC     ||
                    magic == UFS_CIGAM     ||
@@ -255,7 +281,10 @@ namespace Aaru.Filesystems
             }
 
             // Fun with seeking follows on superblock reading!
-            ufs_sb_sectors = imagePlugin.ReadSectors(sb_offset, sb_size_in_sectors);
+            errno = imagePlugin.ReadSectors(sb_offset, sb_size_in_sectors, out ufs_sb_sectors);
+
+            if(errno != ErrorNumber.NoError)
+                return;
 
             SuperBlock sb = Marshal.ByteArrayToStructureLittleEndian<SuperBlock>(ufs_sb_sectors);
 

@@ -35,6 +35,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
@@ -55,7 +56,7 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public string Name => "ECMA-67";
         /// <inheritdoc />
-        public Guid Id => new Guid("62A2D44A-CBC1-4377-B4B6-28C5C92034A1");
+        public Guid Id => new("62A2D44A-CBC1-4377-B4B6-28C5C92034A1");
         /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
         /// <inheritdoc />
@@ -70,7 +71,10 @@ namespace Aaru.Filesystems
             if(partition.End < 8)
                 return false;
 
-            byte[] sector = imagePlugin.ReadSector(6);
+            ErrorNumber errno = imagePlugin.ReadSector(6, out byte[] sector);
+
+            if(errno != ErrorNumber.NoError)
+                return false;
 
             if(sector.Length != 128)
                 return false;
@@ -84,8 +88,12 @@ namespace Aaru.Filesystems
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                    Encoding encoding)
         {
-            Encoding = encoding ?? Encoding.GetEncoding("iso-8859-1");
-            byte[] sector = imagePlugin.ReadSector(6);
+            Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-1");
+            information = "";
+            ErrorNumber errno = imagePlugin.ReadSector(6, out byte[] sector);
+
+            if(errno != ErrorNumber.NoError)
+                return;
 
             var sbInformation = new StringBuilder();
 

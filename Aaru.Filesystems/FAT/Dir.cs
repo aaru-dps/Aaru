@@ -61,6 +61,7 @@ namespace Aaru.Filesystems
         public ErrorNumber ReadDir(string path, out List<string> contents)
         {
             contents = null;
+            ErrorNumber errno = ErrorNumber.NoError;
 
             if(!_mounted)
                 return ErrorNumber.AccessDenied;
@@ -138,8 +139,11 @@ namespace Aaru.Filesystems
 
                 for(int i = 0; i < clusters.Length; i++)
                 {
-                    byte[] buffer = _image.ReadSectors(_firstClusterSector + (clusters[i] * _sectorsPerCluster),
-                                                       _sectorsPerCluster);
+                    errno = _image.ReadSectors(_firstClusterSector + (clusters[i] * _sectorsPerCluster),
+                                               _sectorsPerCluster, out byte[] buffer);
+
+                    if(errno != ErrorNumber.NoError)
+                        return errno;
 
                     Array.Copy(buffer, 0, directoryBuffer, i * _bytesPerCluster, _bytesPerCluster);
                 }

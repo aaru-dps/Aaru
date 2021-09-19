@@ -36,6 +36,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
@@ -77,7 +78,7 @@ namespace Aaru.Partitions
         /// <inheritdoc />
         public string Name => "Sun Disklabel";
         /// <inheritdoc />
-        public Guid Id => new Guid("50F35CC4-8375-4445-8DCB-1BA550C931A3");
+        public Guid Id => new("50F35CC4-8375-4445-8DCB-1BA550C931A3");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
@@ -94,7 +95,10 @@ namespace Aaru.Partitions
 
             bool useDkl = false, useDkl8 = false, useDkl16 = false;
 
-            byte[] sunSector = imagePlugin.ReadSector(sectorOffset);
+            ErrorNumber errno = imagePlugin.ReadSector(sectorOffset, out byte[] sunSector);
+
+            if(errno != ErrorNumber.NoError)
+                return false;
 
             dk_label   dkl   = Marshal.ByteArrayToStructureLittleEndian<dk_label>(sunSector);
             dk_label8  dkl8  = Marshal.ByteArrayToStructureLittleEndian<dk_label8>(sunSector);
@@ -119,22 +123,25 @@ namespace Aaru.Partitions
                !useDkl8 &&
                !useDkl16)
             {
-                sunSector = imagePlugin.ReadSector(sectorOffset + 1);
+                errno = imagePlugin.ReadSector(sectorOffset + 1, out sunSector);
 
-                dkl   = Marshal.ByteArrayToStructureLittleEndian<dk_label>(sunSector);
-                dkl8  = Marshal.ByteArrayToStructureLittleEndian<dk_label8>(sunSector);
-                dkl16 = Marshal.ByteArrayToStructureLittleEndian<dk_label16>(sunSector);
+                if(errno == ErrorNumber.NoError)
+                {
+                    dkl   = Marshal.ByteArrayToStructureLittleEndian<dk_label>(sunSector);
+                    dkl8  = Marshal.ByteArrayToStructureLittleEndian<dk_label8>(sunSector);
+                    dkl16 = Marshal.ByteArrayToStructureLittleEndian<dk_label16>(sunSector);
 
-                if(dkl.dkl_magic == DKL_MAGIC ||
-                   dkl.dkl_magic == DKL_CIGAM)
-                    if(dkl16.dkl_vtoc.v_sanity == VTOC_SANE ||
-                       dkl16.dkl_vtoc.v_sanity == VTOC_ENAS)
-                        useDkl16 = true;
-                    else if(dkl8.dkl_vtoc.v_sanity == VTOC_SANE ||
-                            dkl8.dkl_vtoc.v_sanity == VTOC_ENAS)
-                        useDkl8 = true;
-                    else
-                        useDkl = true;
+                    if(dkl.dkl_magic == DKL_MAGIC ||
+                       dkl.dkl_magic == DKL_CIGAM)
+                        if(dkl16.dkl_vtoc.v_sanity == VTOC_SANE ||
+                           dkl16.dkl_vtoc.v_sanity == VTOC_ENAS)
+                            useDkl16 = true;
+                        else if(dkl8.dkl_vtoc.v_sanity == VTOC_SANE ||
+                                dkl8.dkl_vtoc.v_sanity == VTOC_ENAS)
+                            useDkl8 = true;
+                        else
+                            useDkl = true;
+                }
             }
 
             if(!useDkl  &&

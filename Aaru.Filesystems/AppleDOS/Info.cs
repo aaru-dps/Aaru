@@ -32,6 +32,7 @@
 
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 using Claunia.Encoding;
@@ -55,7 +56,11 @@ namespace Aaru.Filesystems
 
             int spt = imagePlugin.Info.Sectors == 455 ? 13 : 16;
 
-            byte[] vtocB = imagePlugin.ReadSector((ulong)(17 * spt));
+            var errno = imagePlugin.ReadSector((ulong)(17 * spt), out byte[] vtocB);
+
+            if(errno != ErrorNumber.NoError)
+                return false;
+
             _vtoc = Marshal.ByteArrayToStructureLittleEndian<Vtoc>(vtocB);
 
             return _vtoc.catalogSector   < spt  && _vtoc.maxTrackSectorPairsPerSector <= 122 &&
@@ -72,7 +77,11 @@ namespace Aaru.Filesystems
 
             int spt = imagePlugin.Info.Sectors == 455 ? 13 : 16;
 
-            byte[] vtocB = imagePlugin.ReadSector((ulong)(17 * spt));
+            var errno = imagePlugin.ReadSector((ulong)(17 * spt), out byte[] vtocB);
+
+            if(errno != ErrorNumber.NoError)
+                return;
+
             _vtoc = Marshal.ByteArrayToStructureLittleEndian<Vtoc>(vtocB);
 
             sb.AppendLine("Apple DOS File System");

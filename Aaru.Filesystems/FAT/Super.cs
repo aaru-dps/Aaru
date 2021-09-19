@@ -59,6 +59,7 @@ namespace Aaru.Filesystems
                                  Dictionary<string, string> options, string @namespace)
         {
             XmlFsType = new FileSystemType();
+            ErrorNumber errno;
 
             options ??= GetDefaultOptions();
 
@@ -101,7 +102,10 @@ namespace Aaru.Filesystems
 
             uint sectorsPerBpb = imagePlugin.Info.SectorSize < 512 ? 512 / imagePlugin.Info.SectorSize : 1;
 
-            byte[] bpbSector = imagePlugin.ReadSectors(0 + partition.Start, sectorsPerBpb);
+            errno = imagePlugin.ReadSectors(0 + partition.Start, sectorsPerBpb, out byte[] bpbSector);
+
+            if(errno != ErrorNumber.NoError)
+                return errno;
 
             BpbKind bpbKind = DetectBpbKind(bpbSector, imagePlugin, partition, out BiosParameterBlockEbpb fakeBpb,
                                             out HumanParameterBlock humanBpb, out AtariParameterBlock atariBpb,
@@ -222,7 +226,11 @@ namespace Aaru.Filesystems
 
                     if(fat32Bpb.fsinfo_sector + partition.Start <= partition.End)
                     {
-                        byte[] fsinfoSector = imagePlugin.ReadSector(fat32Bpb.fsinfo_sector + partition.Start);
+                        errno = imagePlugin.ReadSector(fat32Bpb.fsinfo_sector + partition.Start,
+                                                       out byte[] fsinfoSector);
+
+                        if(errno != ErrorNumber.NoError)
+                            return errno;
 
                         FsInfoSector fsInfo = Marshal.ByteArrayToStructureLittleEndian<FsInfoSector>(fsinfoSector);
 
@@ -323,7 +331,10 @@ namespace Aaru.Filesystems
                         sectorsPerRealSector = fakeBpb.bps / imagePlugin.Info.SectorSize;
                         _fatFirstSector      = partition.Start + (_reservedSectors * sectorsPerRealSector);
 
-                        byte[] fatBytes = imagePlugin.ReadSectors(_fatFirstSector, fakeBpb.spfat);
+                        errno = imagePlugin.ReadSectors(_fatFirstSector, fakeBpb.spfat, out byte[] fatBytes);
+
+                        if(errno != ErrorNumber.NoError)
+                            return errno;
 
                         int pos = 0;
 
@@ -535,17 +546,27 @@ namespace Aaru.Filesystems
             if(!_fat32)
             {
                 _firstClusterSector = firstRootSector + sectorsForRootDirectory - (_sectorsPerCluster * 2);
-                rootDirectory       = imagePlugin.ReadSectors(firstRootSector, sectorsForRootDirectory);
+                errno = imagePlugin.ReadSectors(firstRootSector, sectorsForRootDirectory, out rootDirectory);
+
+                if(errno != ErrorNumber.NoError)
+                    return errno;
 
                 if(bpbKind == BpbKind.DecRainbow)
                 {
                     var rootMs = new MemoryStream();
 
-                    foreach(byte[] tmp in from ulong rootSector in new[]
+                    foreach(ulong rootSector in new[]
                     {
                         0x17, 0x19, 0x1B, 0x1D, 0x1E, 0x20
-                    } select imagePlugin.ReadSector(rootSector))
+                    })
+                    {
+                        errno = imagePlugin.ReadSector(rootSector, out byte[] tmp);
+
+                        if(errno != ErrorNumber.NoError)
+                            return errno;
+
                         rootMs.Write(tmp, 0, tmp.Length);
+                    }
 
                     rootDirectory = rootMs.ToArray();
                 }
@@ -558,11 +579,14 @@ namespace Aaru.Filesystems
                 var    rootMs                = new MemoryStream();
                 uint[] rootDirectoryClusters = GetClusters(rootDirectoryCluster);
 
-                foreach(byte[] buffer in rootDirectoryClusters.Select(cluster =>
-                                                                          imagePlugin.
-                                                                              ReadSectors(_firstClusterSector + (cluster * _sectorsPerCluster),
-                                                                                  _sectorsPerCluster)))
+                foreach(uint cluster in rootDirectoryClusters)
                 {
+                    errno = imagePlugin.ReadSectors(_firstClusterSector + (cluster * _sectorsPerCluster),
+                                                    _sectorsPerCluster, out byte[] buffer);
+
+                    if(errno != ErrorNumber.NoError)
+                        return errno;
+
                     rootMs.Write(buffer, 0, buffer.Length);
                 }
 
@@ -848,7 +872,10 @@ namespace Aaru.Filesystems
             {
                 AaruConsole.DebugWriteLine("FAT plugin", "Reading FAT12");
 
-                byte[] fatBytes = imagePlugin.ReadSectors(_fatFirstSector, _sectorsPerFat);
+                errno = imagePlugin.ReadSectors(_fatFirstSector, _sectorsPerFat, out byte[] fatBytes);
+
+                if(errno != ErrorNumber.NoError)
+                    return errno;
 
                 int pos = 0;
 
@@ -862,7 +889,10 @@ namespace Aaru.Filesystems
                     firstFatEntries[pos++] = (ushort)(((fatBytes[i + 1] & 0xF0) >> 4) + (fatBytes[i + 2] << 4));
                 }
 
-                fatBytes = imagePlugin.ReadSectors(_fatFirstSector + _sectorsPerFat, _sectorsPerFat);
+                errno = imagePlugin.ReadSectors(_fatFirstSector + _sectorsPerFat, _sectorsPerFat, out fatBytes);
+
+                if(errno != ErrorNumber.NoError)
+                    return errno;
 
                 _fatEntries = new ushort[_statfs.Blocks];
 
@@ -911,12 +941,18 @@ namespace Aaru.Filesystems
             {
                 AaruConsole.DebugWriteLine("FAT plugin", "Reading FAT16");
 
-                byte[] fatBytes = imagePlugin.ReadSectors(_fatFirstSector, _sectorsPerFat);
+                errno = imagePlugin.ReadSectors(_fatFirstSector, _sectorsPerFat, out byte[] fatBytes);
+
+                if(errno != ErrorNumber.NoError)
+                    return errno;
 
                 AaruConsole.DebugWriteLine("FAT plugin", "Casting FAT");
                 firstFatEntries = MemoryMarshal.Cast<byte, ushort>(fatBytes).ToArray();
 
-                fatBytes = imagePlugin.ReadSectors(_fatFirstSector + _sectorsPerFat, _sectorsPerFat);
+                errno = imagePlugin.ReadSectors(_fatFirstSector + _sectorsPerFat, _sectorsPerFat, out fatBytes);
+
+                if(errno != ErrorNumber.NoError)
+                    return errno;
 
                 AaruConsole.DebugWriteLine("FAT plugin", "Casting FAT");
                 secondFatEntries = MemoryMarshal.Cast<byte, ushort>(fatBytes).ToArray();

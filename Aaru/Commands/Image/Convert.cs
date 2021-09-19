@@ -863,21 +863,38 @@ namespace Aaru.Commands.Image
 
                                         if(!useLong || useNotLong)
                                         {
-                                            if(sectorsToDo == 1)
-                                            {
-                                                sector = inputFormat.ReadSector(doneSectors + track.StartSector);
+                                            errno = sectorsToDo == 1
+                                                        ? inputFormat.ReadSector(doneSectors + track.StartSector,
+                                                            out sector)
+                                                        : inputFormat.ReadSectors(doneSectors + track.StartSector,
+                                                            sectorsToDo, out sector);
 
-                                                result =
-                                                    outputFormat.WriteSector(sector, doneSectors + track.StartSector);
+                                            if(errno == ErrorNumber.NoError)
+                                            {
+                                                result = sectorsToDo == 1
+                                                             ? outputFormat.WriteSector(sector,
+                                                                 doneSectors + track.StartSector)
+                                                             : outputFormat.WriteSectors(sector,
+                                                                 doneSectors + track.StartSector, sectorsToDo);
                                             }
                                             else
                                             {
-                                                sector = inputFormat.ReadSectors(doneSectors + track.StartSector,
-                                                    sectorsToDo);
+                                                result = true;
 
-                                                result =
-                                                    outputFormat.WriteSectors(sector, doneSectors + track.StartSector,
-                                                                              sectorsToDo);
+                                                if(force)
+                                                    AaruConsole.
+                                                        ErrorWriteLine("Error {0} reading sector {1}, continuing...",
+                                                                       errno, doneSectors + track.StartSector);
+                                                else
+                                                {
+                                                    AaruConsole.
+                                                        ErrorWriteLine("Error {0} reading sector {1}, not continuing...",
+                                                                       errno, doneSectors + track.StartSector);
+
+                                                    errno = ErrorNumber.WriteError;
+
+                                                    return;
+                                                }
                                             }
                                         }
 
@@ -1211,7 +1228,7 @@ namespace Aaru.Commands.Image
                                                    outputFormat.ErrorMessage);
                 }
 
-                ErrorNumber ErrorNumber = ErrorNumber.NoError;
+                ErrorNumber errno = ErrorNumber.NoError;
 
                 AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
                             Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
@@ -1251,15 +1268,30 @@ namespace Aaru.Commands.Image
                                         }
                                     else
                                     {
-                                        if(sectorsToDo == 1)
+                                        errno = sectorsToDo == 1 ? inputFormat.ReadSector(doneSectors, out sector)
+                                                    : inputFormat.ReadSectors(doneSectors, sectorsToDo, out sector);
+
+                                        if(errno == ErrorNumber.NoError)
                                         {
-                                            sector = inputFormat.ReadSector(doneSectors);
-                                            result = outputFormat.WriteSector(sector, doneSectors);
+                                            result = sectorsToDo == 1 ? outputFormat.WriteSector(sector, doneSectors)
+                                                         : outputFormat.WriteSectors(sector, doneSectors, sectorsToDo);
                                         }
                                         else
                                         {
-                                            sector = inputFormat.ReadSectors(doneSectors, sectorsToDo);
-                                            result = outputFormat.WriteSectors(sector, doneSectors, sectorsToDo);
+                                            result = true;
+
+                                            if(force)
+                                                AaruConsole.
+                                                    ErrorWriteLine("Error {0} reading sector {1}, continuing...", errno,
+                                                                   doneSectors);
+                                            else
+                                            {
+                                                AaruConsole.
+                                                    ErrorWriteLine("Error {0} reading sector {1}, not continuing...",
+                                                                   errno, doneSectors);
+
+                                                return;
+                                            }
                                         }
                                     }
 
@@ -1273,7 +1305,7 @@ namespace Aaru.Commands.Image
                                                 ErrorWriteLine("Error {0} writing sector {1}, not continuing...",
                                                                outputFormat.ErrorMessage, doneSectors);
 
-                                            ErrorNumber = ErrorNumber.WriteError;
+                                            errno = ErrorNumber.WriteError;
 
                                             return;
                                         }
@@ -1350,7 +1382,7 @@ namespace Aaru.Commands.Image
                                                     ErrorWriteLine("Error {0} writing sector {1}, not continuing...",
                                                                    outputFormat.ErrorMessage, doneSectors);
 
-                                                ErrorNumber = ErrorNumber.WriteError;
+                                                errno = ErrorNumber.WriteError;
 
                                                 return;
                                             }
@@ -1394,8 +1426,8 @@ namespace Aaru.Commands.Image
                                 partitionTask.StopTask();
                             });
 
-                if(ErrorNumber != ErrorNumber.NoError)
-                    return (int)ErrorNumber;
+                if(errno != ErrorNumber.NoError)
+                    return (int)errno;
             }
 
             if(resume       != null ||

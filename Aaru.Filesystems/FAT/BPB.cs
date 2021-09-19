@@ -32,7 +32,6 @@
 
 using System;
 using System.IO;
-using System.Linq;
 using System.Text;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
@@ -53,6 +52,7 @@ namespace Aaru.Filesystems
             minBootNearJump = 0;
             andosOemCorrect = false;
             bootable        = false;
+            ErrorNumber errno;
 
             humanBpb = Marshal.ByteArrayToStructureBigEndian<HumanParameterBlock>(bpbSector);
             atariBpb = Marshal.ByteArrayToStructureLittleEndian<AtariParameterBlock>(bpbSector);
@@ -381,20 +381,23 @@ namespace Aaru.Filesystems
                 byte z80Di = bpbSector[0];
 
                 // First FAT1 sector resides at LBA 0x14
-                byte[] fat1Sector0 = imagePlugin.ReadSector(0x14);
+                imagePlugin.ReadSector(0x14, out byte[] fat1Sector0);
 
                 // First FAT2 sector resides at LBA 0x1A
-                byte[] fat2Sector0 = imagePlugin.ReadSector(0x1A);
-                bool   equalFatIds = fat1Sector0[0] == fat2Sector0[0] && fat1Sector0[1] == fat2Sector0[1];
+                imagePlugin.ReadSector(0x1A, out byte[] fat2Sector0);
+                bool equalFatIds = fat1Sector0[0] == fat2Sector0[0] && fat1Sector0[1] == fat2Sector0[1];
 
                 // Volume is software interleaved 2:1
                 var rootMs = new MemoryStream();
 
-                foreach(byte[] tmp in from ulong rootSector in new[]
+                foreach(ulong rootSector in new[]
                 {
                     0x17, 0x19, 0x1B, 0x1D, 0x1E, 0x20
-                } select imagePlugin.ReadSector(rootSector))
+                })
+                {
+                    imagePlugin.ReadSector(rootSector, out byte[] tmp);
                     rootMs.Write(tmp, 0, tmp.Length);
+                }
 
                 byte[] rootDir      = rootMs.ToArray();
                 bool   validRootDir = true;
@@ -455,7 +458,7 @@ namespace Aaru.Filesystems
                !useApricotBpb        &&
                !useDecRainbowBpb)
             {
-                byte[] fatSector = imagePlugin.ReadSector(1 + partition.Start);
+                imagePlugin.ReadSector(1 + partition.Start, out byte[] fatSector);
 
                 switch(fatSector[0])
                 {
@@ -812,9 +815,9 @@ namespace Aaru.Filesystems
 
                 if(apricotBpb.bootLocation                       > 0 &&
                    apricotBpb.bootLocation + apricotBpb.bootSize < imagePlugin.Info.Sectors)
-                    fakeBpb.boot_code = imagePlugin.ReadSectors(apricotBpb.bootLocation,
+                    imagePlugin.ReadSectors(apricotBpb.bootLocation,
                                                                 (uint)(apricotBpb.sectorSize * apricotBpb.bootSize) /
-                                                                imagePlugin.Info.SectorSize);
+                                                                imagePlugin.Info.SectorSize, out fakeBpb.boot_code);
 
                 return BpbKind.Apricot;
             }

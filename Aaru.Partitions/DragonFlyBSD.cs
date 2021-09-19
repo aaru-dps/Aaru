@@ -35,6 +35,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Marshal = Aaru.Helpers.Marshal;
 
@@ -50,7 +51,7 @@ namespace Aaru.Partitions
         /// <inheritdoc />
         public string Name => "DragonFly BSD 64-bit disklabel";
         /// <inheritdoc />
-        public Guid Id => new Guid("D49E41A6-D952-4760-9D94-03DAE2450C5F");
+        public Guid Id => new("D49E41A6-D952-4760-9D94-03DAE2450C5F");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
@@ -66,9 +67,10 @@ namespace Aaru.Partitions
             if(sectorOffset + nSectors >= imagePlugin.Info.Sectors)
                 return false;
 
-            byte[] sectors = imagePlugin.ReadSectors(sectorOffset, nSectors);
+            ErrorNumber errno = imagePlugin.ReadSectors(sectorOffset, nSectors, out byte[] sectors);
 
-            if(sectors.Length < 2048)
+            if(errno          != ErrorNumber.NoError ||
+               sectors.Length < 2048)
                 return false;
 
             Disklabel64 disklabel = Marshal.ByteArrayToStructureLittleEndian<Disklabel64>(sectors);

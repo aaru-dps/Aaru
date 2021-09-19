@@ -36,6 +36,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.InteropServices;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
@@ -67,19 +68,23 @@ namespace Aaru.Partitions
         {
             partitions = new List<Partition>();
 
-            uint   magic      = 0;
-            ulong  pdloc      = 0;
-            byte[] pdsector   = null;
-            bool   magicFound = false;
-            bool   absolute   = false;
+            uint        magic      = 0;
+            ulong       pdloc      = 0;
+            byte[]      pdsector   = null;
+            bool        magicFound = false;
+            bool        absolute   = false;
+            ErrorNumber errno;
 
             foreach(ulong i in new ulong[]
             {
                 0, 1, 8, 29
             }.TakeWhile(i => i + sectorOffset < imagePlugin.Info.Sectors))
             {
-                pdsector = imagePlugin.ReadSector(i + sectorOffset);
-                magic    = BitConverter.ToUInt32(pdsector, 4);
+                errno = imagePlugin.ReadSector(i + sectorOffset, out pdsector);
+
+                if(errno != ErrorNumber.NoError)
+                    continue;
+                magic = BitConverter.ToUInt32(pdsector, 4);
 
                 AaruConsole.DebugWriteLine("VTOC plugin", "sanity at {0} is 0x{1:X8} (should be 0x{2:X8} or 0x{3:X8})",
                                            i + sectorOffset, magic, PD_MAGIC, PD_CIGAM);
@@ -158,7 +163,10 @@ namespace Aaru.Partitions
 
             magicFound = false;
             bool   useOld     = false;
-            byte[] vtocsector = imagePlugin.ReadSector(pdloc + sectorOffset + 1);
+            errno = imagePlugin.ReadSector(pdloc + sectorOffset + 1, out byte[] vtocsector);
+
+            if(errno != ErrorNumber.NoError)
+                return false;
             var    vtoc       = new vtoc();
             var    vtocOld    = new vtocold();
             magic = BitConverter.ToUInt32(vtocsector, 0);
@@ -237,7 +245,10 @@ namespace Aaru.Partitions
                     return false;
                 }
 
-                byte[] tmp = imagePlugin.ReadSectors(relSecPtr + sectorOffset, secCount);
+                errno      = imagePlugin.ReadSectors(relSecPtr + sectorOffset, secCount, out byte[] tmp);
+
+                if(errno != ErrorNumber.NoError)
+                    return false;
                 vtocsector = new byte[pd.vtoc_len];
                 Array.Copy(tmp, relSecOff, vtocsector, 0, pd.vtoc_len);
                 magic = BitConverter.ToUInt32(vtocsector, 0);

@@ -55,7 +55,7 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public string Name => "PC-FX Plugin";
         /// <inheritdoc />
-        public Guid Id => new Guid("8BC27CCE-D9E9-48F8-BA93-C66A86EB565A");
+        public Guid Id => new("8BC27CCE-D9E9-48F8-BA93-C66A86EB565A");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
@@ -66,7 +66,10 @@ namespace Aaru.Filesystems
                imagePlugin.Info.XmlMediaType != XmlMediaType.OpticalDisc)
                 return false;
 
-            byte[] sector = imagePlugin.ReadSectors(partition.Start, 2);
+            ErrorNumber errno = imagePlugin.ReadSectors(partition.Start, 2, out byte[] sector);
+
+            if(errno != ErrorNumber.NoError)
+                return false;
 
             var encoding = Encoding.GetEncoding("shift_jis");
 
@@ -81,7 +84,11 @@ namespace Aaru.Filesystems
             Encoding    = Encoding.GetEncoding("shift_jis");
             information = "";
 
-            byte[] sector = imagePlugin.ReadSectors(partition.Start, 2);
+            ErrorNumber errno = imagePlugin.ReadSectors(partition.Start, 2, out byte[] sector);
+
+            if(errno != ErrorNumber.NoError)
+                return;
+
             Header header = Marshal.ByteArrayToStructureLittleEndian<Header>(sector);
 
             string   date;

@@ -149,10 +149,13 @@ namespace Aaru.Filesystems
 
                 for(int p = 0; p <= (int)(partition.End - partition.Start); p++)
                 {
-                    byte[] readSector =
-                        _device.ReadSector((ulong)((int)partition.Start                          +
-                                                   (p / _sectorMask.Length * _sectorMask.Length) +
-                                                   _sectorMask[p % _sectorMask.Length]));
+                    ErrorNumber errno =
+                        _device.
+                            ReadSector((ulong)((int)partition.Start + (p / _sectorMask.Length * _sectorMask.Length) + _sectorMask[p % _sectorMask.Length]),
+                                       out byte[] readSector);
+
+                    if(errno != ErrorNumber.NoError)
+                        return errno;
 
                     if(_workingDefinition.complement)
                         for(int b = 0; b < readSector.Length; b++)

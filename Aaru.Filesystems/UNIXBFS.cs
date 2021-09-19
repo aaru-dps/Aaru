@@ -34,6 +34,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
@@ -55,7 +56,7 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public string Name => "UNIX Boot filesystem";
         /// <inheritdoc />
-        public Guid Id => new Guid("1E6E0DA6-F7E4-494C-80C6-CB5929E96155");
+        public Guid Id => new("1E6E0DA6-F7E4-494C-80C6-CB5929E96155");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
@@ -65,7 +66,12 @@ namespace Aaru.Filesystems
             if(2 + partition.Start >= partition.End)
                 return false;
 
-            uint magic = BitConverter.ToUInt32(imagePlugin.ReadSector(0 + partition.Start), 0);
+            ErrorNumber errno = imagePlugin.ReadSector(0 + partition.Start, out byte[] tmp);
+
+            if(errno != ErrorNumber.NoError)
+                return false;
+
+            uint magic = BitConverter.ToUInt32(tmp, 0);
 
             return magic == BFS_MAGIC;
         }
@@ -77,9 +83,13 @@ namespace Aaru.Filesystems
             Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";
 
-            var    sb          = new StringBuilder();
-            byte[] bfsSbSector = imagePlugin.ReadSector(0 + partition.Start);
-            byte[] sbStrings   = new byte[6];
+            var         sb    = new StringBuilder();
+            ErrorNumber errno = imagePlugin.ReadSector(0 + partition.Start, out byte[] bfsSbSector);
+
+            if(errno != ErrorNumber.NoError)
+                return;
+
+            byte[] sbStrings = new byte[6];
 
             var bfsSb = new SuperBlock
             {

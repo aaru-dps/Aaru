@@ -842,6 +842,8 @@ namespace Aaru.Gui.ViewModels.Windows
                 }
             }
 
+            ErrorNumber errno;
+
             foreach(MediaTagType mediaTag in _inputFormat.Info.ReadableMediaTags.TakeWhile(mediaTag => !_cancel))
             {
                 await Dispatcher.UIThread.InvokeAsync(() =>
@@ -855,9 +857,10 @@ namespace Aaru.Gui.ViewModels.Windows
                 if(ForceChecked && !outputFormat.SupportedMediaTags.Contains(mediaTag))
                     continue;
 
-                var errno = _inputFormat.ReadMediaTag(mediaTag, out byte[] tag);
+                errno = _inputFormat.ReadMediaTag(mediaTag, out byte[] tag);
 
-                if(errno == ErrorNumber.NoError && outputFormat.WriteMediaTag(tag, mediaTag))
+                if(errno == ErrorNumber.NoError &&
+                   outputFormat.WriteMediaTag(tag, mediaTag))
                     continue;
 
                 if(ForceChecked)
@@ -865,7 +868,8 @@ namespace Aaru.Gui.ViewModels.Windows
                     warning = true;
 
                     if(errno == ErrorNumber.NoError)
-                        AaruConsole.ErrorWriteLine("Error {0} writing media tag, continuing...", outputFormat.ErrorMessage);
+                        AaruConsole.ErrorWriteLine("Error {0} writing media tag, continuing...",
+                                                   outputFormat.ErrorMessage);
                     else
                         AaruConsole.ErrorWriteLine("Error {0} reading media tag, continuing...", errno);
                 }
@@ -881,7 +885,8 @@ namespace Aaru.Gui.ViewModels.Windows
 
                         AaruConsole.ErrorWriteLine("Error {0} writing media tag, not continuing...",
                                                    outputFormat.ErrorMessage);
-                    }else
+                    }
+                    else
                     {
                         await Dispatcher.UIThread.InvokeAsync(action: async () =>
                                                                   await MessageBoxManager.
@@ -889,8 +894,7 @@ namespace Aaru.Gui.ViewModels.Windows
                                                                             $"Error {errno} reading media tag, not continuing...",
                                                                             icon: Icon.Error).ShowDialog(_view));
 
-                        AaruConsole.ErrorWriteLine("Error {0} reading media tag, not continuing...",
-                                                   errno);
+                        AaruConsole.ErrorWriteLine("Error {0} reading media tag, not continuing...", errno);
                     }
 
                     return;
@@ -969,15 +973,36 @@ namespace Aaru.Gui.ViewModels.Windows
                         }
                     else
                     {
-                        if(sectorsToDo == 1)
-                        {
-                            sector = _inputFormat.ReadSector(doneSectors);
-                            result = outputFormat.WriteSector(sector, doneSectors);
-                        }
+                        errno = sectorsToDo == 1 ? _inputFormat.ReadSector(doneSectors, out sector)
+                                    : _inputFormat.ReadSectors(doneSectors, sectorsToDo, out sector);
+
+                        if(errno == ErrorNumber.NoError)
+                            result = sectorsToDo == 1 ? outputFormat.WriteSector(sector, doneSectors)
+                                         : outputFormat.WriteSectors(sector, doneSectors, sectorsToDo);
                         else
                         {
-                            sector = _inputFormat.ReadSectors(doneSectors, sectorsToDo);
-                            result = outputFormat.WriteSectors(sector, doneSectors, sectorsToDo);
+                            result = true;
+
+                            if(ForceChecked)
+                            {
+                                warning = true;
+
+                                AaruConsole.ErrorWriteLine("Error {0} reading sector {1}, continuing...", errno,
+                                                           doneSectors);
+                            }
+                            else
+                            {
+                                await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
+                                                                          GetMessageBoxStandardWindow("Error",
+                                                                              $"Error {errno} reading sector {doneSectors}, not continuing...",
+                                                                              icon: Icon.Error).
+                                                                          ShowDialog(_view));
+
+                                AaruConsole.ErrorWriteLine("Error {0} reading sector {1}, not continuing...", errno,
+                                                           doneSectors);
+
+                                return;
+                            }
                         }
                     }
 
@@ -1261,17 +1286,37 @@ namespace Aaru.Gui.ViewModels.Windows
                             }
                         else
                         {
-                            if(sectorsToDo == 1)
-                            {
-                                sector = _inputFormat.ReadSector(doneSectors          + track.StartSector);
-                                result = outputFormat.WriteSector(sector, doneSectors + track.StartSector);
-                            }
+                            errno = sectorsToDo == 1
+                                        ? _inputFormat.ReadSector(doneSectors + track.StartSector, out sector)
+                                        : _inputFormat.ReadSectors(doneSectors + track.StartSector, sectorsToDo,
+                                                                   out sector);
+
+                            if(errno == ErrorNumber.NoError)
+                                result = sectorsToDo == 1
+                                             ? outputFormat.WriteSector(sector, doneSectors + track.StartSector)
+                                             : outputFormat.WriteSectors(sector, doneSectors + track.StartSector,
+                                                                         sectorsToDo);
                             else
                             {
-                                sector = _inputFormat.ReadSectors(doneSectors + track.StartSector, sectorsToDo);
+                                result = true;
 
-                                result = outputFormat.WriteSectors(sector, doneSectors + track.StartSector,
-                                                                   sectorsToDo);
+                                if(ForceChecked)
+                                {
+                                    warning = true;
+
+                                    AaruConsole.ErrorWriteLine("Error {0} reading sector {1}, continuing...", errno,
+                                                               doneSectors);
+                                }
+                                else
+                                {
+                                    await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
+                                                                              GetMessageBoxStandardWindow("Error",
+                                                                                  $"Error {errno} reading sector {doneSectors}, not continuing...",
+                                                                                  icon: Icon.Error).
+                                                                              ShowDialog(_view));
+
+                                    return;
+                                }
                             }
                         }
 

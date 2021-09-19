@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Core;
 using FluentAssertions;
@@ -39,7 +40,7 @@ namespace Aaru.Tests.Partitions
 
                 Assert.IsNotNull(image, $"Image format: {testFile}");
 
-                Assert.AreEqual(true, image.Open(inputFilter), $"Cannot open image for {testFile}");
+                Assert.AreEqual(ErrorNumber.NoError, image.Open(inputFilter), $"Cannot open image for {testFile}");
 
                 List<Partition> partitions = Core.Partitions.GetAll(image);
 

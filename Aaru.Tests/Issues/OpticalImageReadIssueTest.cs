@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using Aaru.Checksums;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Core;
@@ -34,7 +35,7 @@ namespace Aaru.Tests.Issues
 
             Assert.IsNotNull(image, "Image format for test file is not detected");
 
-            Assert.AreEqual(true, image.Open(inputFilter), "Cannot open image for test file");
+            Assert.AreEqual(ErrorNumber.NoError, image.Open(inputFilter), "Cannot open image for test file");
 
             var opticalInput = image as IOpticalMediaImage;
 

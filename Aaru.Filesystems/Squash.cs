@@ -34,6 +34,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 using Schemas;
@@ -56,7 +57,7 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public string Name => "Squash filesystem";
         /// <inheritdoc />
-        public Guid Id => new Guid("F8F6E46F-7A2A-48E3-9C0A-46AF4DC29E09");
+        public Guid Id => new("F8F6E46F-7A2A-48E3-9C0A-46AF4DC29E09");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
@@ -66,7 +67,10 @@ namespace Aaru.Filesystems
             if(partition.Start >= partition.End)
                 return false;
 
-            byte[] sector = imagePlugin.ReadSector(partition.Start);
+            ErrorNumber errno = imagePlugin.ReadSector(partition.Start, out byte[] sector);
+
+            if(errno != ErrorNumber.NoError)
+                return false;
 
             uint magic = BitConverter.ToUInt32(sector, 0x00);
 
@@ -77,9 +81,14 @@ namespace Aaru.Filesystems
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                    Encoding encoding)
         {
-            Encoding = encoding ?? Encoding.UTF8;
-            byte[] sector = imagePlugin.ReadSector(partition.Start);
-            uint   magic  = BitConverter.ToUInt32(sector, 0x00);
+            Encoding    = encoding ?? Encoding.UTF8;
+            information = "";
+            ErrorNumber errno = imagePlugin.ReadSector(partition.Start, out byte[] sector);
+
+            if(errno != ErrorNumber.NoError)
+                return;
+
+            uint magic = BitConverter.ToUInt32(sector, 0x00);
 
             var  sqSb         = new SuperBlock();
             bool littleEndian = true;

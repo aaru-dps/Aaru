@@ -35,6 +35,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
@@ -88,7 +89,7 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public string Name => "Locus Filesystem Plugin";
         /// <inheritdoc />
-        public Guid Id => new Guid("1A70B30A-437D-479A-88E1-D0C9C1797FF4");
+        public Guid Id => new("1A70B30A-437D-479A-88E1-D0C9C1797FF4");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
@@ -108,7 +109,10 @@ namespace Aaru.Filesystems
                 if(partition.Start + location + sbSize >= imagePlugin.Info.Sectors)
                     break;
 
-                byte[] sector = imagePlugin.ReadSectors(partition.Start + location, sbSize);
+                ErrorNumber errno = imagePlugin.ReadSectors(partition.Start + location, sbSize, out byte[] sector);
+
+                if(errno != ErrorNumber.NoError)
+                    return false;
 
                 if(sector.Length < Marshal.SizeOf<Superblock>())
                     return false;
@@ -147,7 +151,10 @@ namespace Aaru.Filesystems
                 if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0)
                     sbSize++;
 
-                sector = imagePlugin.ReadSectors(partition.Start + location, sbSize);
+                ErrorNumber errno = imagePlugin.ReadSectors(partition.Start + location, sbSize, out sector);
+
+                if(errno != ErrorNumber.NoError)
+                    continue;
 
                 if(sector.Length < Marshal.SizeOf<Superblock>())
                     return;

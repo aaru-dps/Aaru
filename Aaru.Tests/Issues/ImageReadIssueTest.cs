@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using Aaru.Checksums;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Core;
 using NUnit.Framework;
@@ -32,10 +33,11 @@ namespace Aaru.Tests.Issues
 
             Assert.IsNotNull(image, "Image format for test file is not detected");
 
-            Assert.AreEqual(true, image.Open(inputFilter), "Cannot open image for test file");
+            Assert.AreEqual(ErrorNumber.NoError, image.Open(inputFilter), "Cannot open image for test file");
 
-            ulong doneSectors = 0;
-            var   ctx         = new Crc32Context();
+            ulong       doneSectors = 0;
+            var         ctx         = new Crc32Context();
+            ErrorNumber errno;
 
             while(doneSectors < image.Info.Sectors)
             {
@@ -43,14 +45,16 @@ namespace Aaru.Tests.Issues
 
                 if(image.Info.Sectors - doneSectors >= SECTORS_TO_READ)
                 {
-                    sector      =  image.ReadSectors(doneSectors, SECTORS_TO_READ);
+                    errno       =  image.ReadSectors(doneSectors, SECTORS_TO_READ, out sector);
                     doneSectors += SECTORS_TO_READ;
                 }
                 else
                 {
-                    sector      =  image.ReadSectors(doneSectors, (uint)(image.Info.Sectors - doneSectors));
+                    errno       =  image.ReadSectors(doneSectors, (uint)(image.Info.Sectors - doneSectors), out sector);
                     doneSectors += image.Info.Sectors - doneSectors;
                 }
+
+                Assert.AreEqual(ErrorNumber.NoError, errno);
 
                 ctx.Update(sector);
             }

@@ -36,6 +36,7 @@ using System.Collections.Generic;
 using System.Text;
 using Aaru.Checksums;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Decoders.Sega;
@@ -58,7 +59,10 @@ namespace Aaru.Filesystems
                 return false;
 
             // Read to Volume Descriptor
-            byte[] vdSector = imagePlugin.ReadSector(16 + partition.Start);
+            ErrorNumber errno = imagePlugin.ReadSector(16 + partition.Start, out byte[] vdSector);
+
+            if(errno != ErrorNumber.NoError)
+                return false;
 
             int xaOff = 0;
 
@@ -113,8 +117,12 @@ namespace Aaru.Filesystems
 
             ulong counter = 0;
 
-            byte[] vdSector = imagePlugin.ReadSector(16 + counter + partition.Start);
-            int    xaOff    = vdSector.Length == 2336 ? 8 : 0;
+            ErrorNumber errno = imagePlugin.ReadSector(16 + counter + partition.Start, out byte[] vdSector);
+
+            if(errno != ErrorNumber.NoError)
+                return;
+
+            int xaOff = vdSector.Length == 2336 ? 8 : 0;
             Array.Copy(vdSector, 0x009 + xaOff, hsMagic, 0, 5);
             bool highSierraInfo = Encoding.GetString(hsMagic) == HIGH_SIERRA_MAGIC;
             int  hsOff          = 0;
@@ -132,7 +140,11 @@ namespace Aaru.Filesystems
 
                 // Seek to Volume Descriptor
                 AaruConsole.DebugWriteLine("ISO9660 plugin", "Reading sector {0}", 16 + counter + partition.Start);
-                byte[] vdSectorTmp = imagePlugin.ReadSector(16 + counter + partition.Start);
+                errno = imagePlugin.ReadSector(16 + counter + partition.Start, out byte[] vdSectorTmp);
+
+                if(errno != ErrorNumber.NoError)
+                    return;
+
                 vdSector = new byte[vdSectorTmp.Length - xaOff];
                 Array.Copy(vdSectorTmp, xaOff, vdSector, 0, vdSector.Length);
 
@@ -289,12 +301,17 @@ namespace Aaru.Filesystems
             bool                   ziso            = false;
             bool                   amiga           = false;
             bool                   aaip            = false;
-            List<ContinuationArea> contareas       = new List<ContinuationArea>();
-            List<byte[]>           refareas        = new List<byte[]>();
+            List<ContinuationArea> contareas       = new();
+            List<byte[]>           refareas        = new();
             var                    suspInformation = new StringBuilder();
 
             if(rootLocation + rootSize < imagePlugin.Info.Sectors)
-                rootDir = imagePlugin.ReadSectors(rootLocation, rootSize);
+            {
+                errno = imagePlugin.ReadSectors(rootLocation, rootSize, out rootDir);
+
+                if(errno != ErrorNumber.NoError)
+                    return;
+            }
 
             // Walk thru root directory to see system area extensions in use
             while(rootOff + Marshal.SizeOf<DirectoryRecord>() < rootDir.Length &&
@@ -455,8 +472,12 @@ namespace Aaru.Filesystems
                    (highSierraInfo ? hsvd.Value.logical_block_size : pvd.Value.logical_block_size) > 0)
                     caLen++;
 
-                byte[] caSectors = imagePlugin.ReadSectors(ca.block_be, caLen);
-                byte[] caData    = new byte[ca.ca_length_be];
+                errno = imagePlugin.ReadSectors(ca.block_be, caLen, out byte[] caSectors);
+
+                if(errno != ErrorNumber.NoError)
+                    return;
+
+                byte[] caData = new byte[ca.ca_length_be];
                 Array.Copy(caSectors, ca.offset_be, caData, 0, ca.ca_length_be);
                 int caOff = 0;
 
@@ -525,10 +546,14 @@ namespace Aaru.Filesystems
                 }
             }
 
-            byte[]           ipbinSector = imagePlugin.ReadSector(0 + partition.Start);
-            CD.IPBin?        segaCd      = CD.DecodeIPBin(ipbinSector);
-            Saturn.IPBin?    saturn      = Saturn.DecodeIPBin(ipbinSector);
-            Dreamcast.IPBin? dreamcast   = Dreamcast.DecodeIPBin(ipbinSector);
+            errno = imagePlugin.ReadSector(0 + partition.Start, out byte[] ipbinSector);
+
+            if(errno != ErrorNumber.NoError)
+                return;
+
+            CD.IPBin?        segaCd    = CD.DecodeIPBin(ipbinSector);
+            Saturn.IPBin?    saturn    = Saturn.DecodeIPBin(ipbinSector);
+            Dreamcast.IPBin? dreamcast = Dreamcast.DecodeIPBin(ipbinSector);
 
             string fsFormat;
 
@@ -668,7 +693,10 @@ namespace Aaru.Filesystems
 
             if(torito != null)
             {
-                vdSector = imagePlugin.ReadSector(torito.Value.catalog_sector + partition.Start);
+                errno = imagePlugin.ReadSector(torito.Value.catalog_sector + partition.Start, out vdSector);
+
+                if(errno != ErrorNumber.NoError)
+                    return;
 
                 int toritoOff = 0;
 
@@ -696,10 +724,11 @@ namespace Aaru.Filesystems
                 AaruConsole.DebugWriteLine("DEBUG (ISO9660 plugin)", "initialEntry.sector_count = {0}",
                                            initialEntry.sector_count);
 
-                byte[] bootImage =
-                    initialEntry.load_rba + partition.Start + initialEntry.sector_count - 1 <= partition.End
-                        ? imagePlugin.ReadSectors(initialEntry.load_rba + partition.Start, initialEntry.sector_count)
-                        : null;
+                byte[] bootImage = null;
+
+                if(initialEntry.load_rba + partition.Start + initialEntry.sector_count - 1 <= partition.End)
+                    imagePlugin.ReadSectors(initialEntry.load_rba + partition.Start, initialEntry.sector_count,
+                                            out bootImage);
 
                 isoMetadata.AppendLine("----------------------");
                 isoMetadata.AppendLine("EL TORITO INFORMATION:");
@@ -789,10 +818,11 @@ namespace Aaru.Filesystems
 
                         if(sectionEntry.bootable == ElToritoIndicator.Bootable)
                         {
-                            bootImage =
-                                sectionEntry.load_rba + partition.Start + sectionEntry.sector_count - 1 <= partition.End
-                                    ? imagePlugin.ReadSectors(sectionEntry.load_rba + partition.Start,
-                                                              sectionEntry.sector_count) : null;
+                            bootImage = null;
+
+                            if(sectionEntry.load_rba + partition.Start + sectionEntry.sector_count - 1 <= partition.End)
+                                imagePlugin.ReadSectors(sectionEntry.load_rba + partition.Start,
+                                                        sectionEntry.sector_count, out bootImage);
 
                             isoMetadata.AppendFormat("\t\tBootable on {0}", sectionHeader.platform_id).AppendLine();
 

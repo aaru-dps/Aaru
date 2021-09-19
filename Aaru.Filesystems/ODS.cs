@@ -63,7 +63,7 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public string Name => "Files-11 On-Disk Structure";
         /// <inheritdoc />
-        public Guid Id => new Guid("de20633c-8021-4384-aeb0-83b0df14491f");
+        public Guid Id => new("de20633c-8021-4384-aeb0-83b0df14491f");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
@@ -76,8 +76,11 @@ namespace Aaru.Filesystems
             if(imagePlugin.Info.SectorSize < 512)
                 return false;
 
-            byte[] magicB   = new byte[12];
-            byte[] hbSector = imagePlugin.ReadSector(1 + partition.Start);
+            byte[]      magicB = new byte[12];
+            ErrorNumber errno  = imagePlugin.ReadSector(1 + partition.Start, out byte[] hbSector);
+
+            if(errno != ErrorNumber.NoError)
+                return false;
 
             Array.Copy(hbSector, 0x1F0, magicB, 0, 12);
             string magic = Encoding.ASCII.GetString(magicB);
@@ -95,7 +98,10 @@ namespace Aaru.Filesystems
             if(hbSector.Length < 0x400)
                 return false;
 
-            hbSector = imagePlugin.ReadSector(partition.Start);
+            errno = imagePlugin.ReadSector(partition.Start, out hbSector);
+
+            if(errno != ErrorNumber.NoError)
+                return false;
 
             Array.Copy(hbSector, 0x3F0, magicB, 0, 12);
             magic = Encoding.ASCII.GetString(magicB);
@@ -114,7 +120,10 @@ namespace Aaru.Filesystems
 
             var sb = new StringBuilder();
 
-            byte[] hbSector = imagePlugin.ReadSector(1 + partition.Start);
+            ErrorNumber errno = imagePlugin.ReadSector(1 + partition.Start, out byte[] hbSector);
+
+            if(errno != ErrorNumber.NoError)
+                return;
 
             HomeBlock homeblock = Marshal.ByteArrayToStructureLittleEndian<HomeBlock>(hbSector);
 
@@ -126,7 +135,11 @@ namespace Aaru.Filesystems
                 if(hbSector.Length < 0x400)
                     return;
 
-                byte[] tmp = imagePlugin.ReadSector(partition.Start);
+                errno = imagePlugin.ReadSector(partition.Start, out byte[] tmp);
+
+                if(errno != ErrorNumber.NoError)
+                    return;
+
                 hbSector = new byte[0x200];
                 Array.Copy(tmp, 0x200, hbSector, 0, 0x200);
 

@@ -34,6 +34,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Schemas;
 
@@ -54,7 +55,7 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public string Name => "Linux extended Filesystem";
         /// <inheritdoc />
-        public Guid Id => new Guid("076CB3A2-08C2-4D69-BC8A-FCAA2E502BE2");
+        public Guid Id => new("076CB3A2-08C2-4D69-BC8A-FCAA2E502BE2");
         /// <inheritdoc />
         public Encoding Encoding { get; private set; }
         /// <inheritdoc />
@@ -72,8 +73,12 @@ namespace Aaru.Filesystems
             if(sbSectorOff + partition.Start >= partition.End)
                 return false;
 
-            byte[] sbSector = imagePlugin.ReadSector(sbSectorOff + partition.Start);
-            byte[] sb       = new byte[512];
+            ErrorNumber errno = imagePlugin.ReadSector(sbSectorOff + partition.Start, out byte[] sbSector);
+
+            if(errno != ErrorNumber.NoError)
+                return false;
+
+            byte[] sb = new byte[512];
 
             if(sbOff + 512 > sbSector.Length)
                 return false;
@@ -103,7 +108,11 @@ namespace Aaru.Filesystems
             if(sbSectorOff + partition.Start >= partition.End)
                 return;
 
-            byte[] sblock   = imagePlugin.ReadSector(sbSectorOff + partition.Start);
+            ErrorNumber errno = imagePlugin.ReadSector(sbSectorOff + partition.Start, out byte[] sblock);
+
+            if(errno != ErrorNumber.NoError)
+                return;
+
             byte[] sbSector = new byte[512];
             Array.Copy(sblock, sbOff, sbSector, 0, 512);
 

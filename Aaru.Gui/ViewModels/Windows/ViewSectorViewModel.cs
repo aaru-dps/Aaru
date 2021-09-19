@@ -30,6 +30,7 @@
 // Copyright © 2011-2021 Natalia Portillo
 // ****************************************************************************/
 
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 using JetBrains.Annotations;
@@ -79,10 +80,16 @@ namespace Aaru.Gui.ViewModels.Windows
             {
                 this.RaiseAndSetIfChanged(ref _sectorNumber, value);
 
-                PrintHexText =
-                    PrintHex.
-                        ByteArrayToHexArrayString(LongSectorChecked ? _inputFormat.ReadSectorLong((ulong)SectorNumber) : _inputFormat.ReadSector((ulong)SectorNumber),
-                                                  HEX_COLUMNS);
+                byte[]      sector;
+                ErrorNumber errno = ErrorNumber.NoError;
+
+                if(LongSectorChecked)
+                    sector = _inputFormat.ReadSectorLong((ulong)SectorNumber);
+                else
+                    errno = _inputFormat.ReadSector((ulong)SectorNumber, out sector);
+
+                if(errno == ErrorNumber.NoError)
+                    PrintHexText = PrintHex.ByteArrayToHexArrayString(sector, HEX_COLUMNS);
             }
         }
 

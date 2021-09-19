@@ -125,10 +125,13 @@ namespace Aaru.Filesystems
                 if(i + firstCluster >= clusters.Length)
                     return ErrorNumber.InvalidArgument;
 
-                byte[] buffer =
+                ErrorNumber errno =
                     _imagePlugin.
                         ReadSectors(_firstClusterSector + ((clusters[i + firstCluster] - 1) * _sectorsPerCluster),
-                                    _sectorsPerCluster);
+                                    _sectorsPerCluster, out byte[] buffer);
+
+                if(errno != ErrorNumber.NoError)
+                    return errno;
 
                 ms.Write(buffer, 0, buffer.Length);
             }

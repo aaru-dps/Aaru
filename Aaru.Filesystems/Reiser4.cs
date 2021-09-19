@@ -35,6 +35,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 using Schemas;
@@ -60,7 +61,7 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public string Name => "Reiser4 Filesystem Plugin";
         /// <inheritdoc />
-        public Guid Id => new Guid("301F2D00-E8D5-4F04-934E-81DFB21D15BA");
+        public Guid Id => new("301F2D00-E8D5-4F04-934E-81DFB21D15BA");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
@@ -83,7 +84,10 @@ namespace Aaru.Filesystems
             if(partition.Start + sbAddr + sbSize >= partition.End)
                 return false;
 
-            byte[] sector = imagePlugin.ReadSectors(partition.Start + sbAddr, sbSize);
+            ErrorNumber errno = imagePlugin.ReadSectors(partition.Start + sbAddr, sbSize, out byte[] sector);
+
+            if(errno != ErrorNumber.NoError)
+                return false;
 
             if(sector.Length < Marshal.SizeOf<Superblock>())
                 return false;
@@ -113,7 +117,10 @@ namespace Aaru.Filesystems
             if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0)
                 sbSize++;
 
-            byte[] sector = imagePlugin.ReadSectors(partition.Start + sbAddr, sbSize);
+            ErrorNumber errno = imagePlugin.ReadSectors(partition.Start + sbAddr, sbSize, out byte[] sector);
+
+            if(errno != ErrorNumber.NoError)
+                return;
 
             if(sector.Length < Marshal.SizeOf<Superblock>())
                 return;

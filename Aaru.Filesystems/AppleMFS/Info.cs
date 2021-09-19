@@ -33,6 +33,7 @@
 using System;
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 using Claunia.Encoding;
@@ -50,7 +51,10 @@ namespace Aaru.Filesystems
             if(2 + partition.Start >= partition.End)
                 return false;
 
-            byte[] mdbSector = imagePlugin.ReadSector(2 + partition.Start);
+            ErrorNumber errno = imagePlugin.ReadSector(2 + partition.Start, out byte[] mdbSector);
+
+            if(errno != ErrorNumber.NoError)
+                return false;
 
             ushort drSigWord = BigEndianBitConverter.ToUInt16(mdbSector, 0x000);
 
@@ -68,8 +72,15 @@ namespace Aaru.Filesystems
 
             var mdb = new MasterDirectoryBlock();
 
-            byte[] mdbSector = imagePlugin.ReadSector(2 + partition.Start);
-            byte[] bbSector  = imagePlugin.ReadSector(0 + partition.Start);
+            ErrorNumber errno = imagePlugin.ReadSector(2 + partition.Start, out byte[] mdbSector);
+
+            if(errno != ErrorNumber.NoError)
+                return;
+
+            errno = imagePlugin.ReadSector(0 + partition.Start, out byte[] bbSector);
+
+            if(errno != ErrorNumber.NoError)
+                return;
 
             mdb.drSigWord = BigEndianBitConverter.ToUInt16(mdbSector, 0x000);
 

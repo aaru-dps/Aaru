@@ -37,6 +37,7 @@ using System.Linq;
 using System.Text;
 using Aaru.Checksums;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
@@ -179,7 +180,7 @@ namespace Aaru.Partitions
         /// <inheritdoc />
         public string Name => "Amiga Rigid Disk Block";
         /// <inheritdoc />
-        public Guid Id => new Guid("8D72ED97-1854-4170-9CE4-6E8446FD9863");
+        public Guid Id => new("8D72ED97-1854-4170-9CE4-6E8446FD9863");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
@@ -187,8 +188,9 @@ namespace Aaru.Partitions
         public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
             partitions = new List<Partition>();
-            ulong rdbBlock = 0;
-            bool  foundRdb = false;
+            ulong       rdbBlock = 0;
+            bool        foundRdb = false;
+            ErrorNumber errno;
 
             while(rdbBlock < 16)
             {
@@ -198,8 +200,16 @@ namespace Aaru.Partitions
                 if(rdbBlock + sectorOffset >= imagePlugin.Info.Sectors)
                     break;
 
-                byte[] tmpSector = imagePlugin.ReadSector(rdbBlock + sectorOffset);
-                uint   magic     = BigEndianBitConverter.ToUInt32(tmpSector, 0);
+                errno = imagePlugin.ReadSector(rdbBlock + sectorOffset, out byte[] tmpSector);
+
+                if(errno != ErrorNumber.NoError)
+                {
+                    rdbBlock++;
+
+                    continue;
+                }
+
+                uint magic = BigEndianBitConverter.ToUInt32(tmpSector, 0);
 
                 AaruConsole.DebugWriteLine("Amiga RDB plugin", "Possible magic at block {0} is 0x{1:X8}", rdbBlock,
                                            magic);
@@ -223,7 +233,10 @@ namespace Aaru.Partitions
 
             var rdb = new RigidDiskBlock();
 
-            byte[] sector = imagePlugin.ReadSector(rdbBlock);
+            errno = imagePlugin.ReadSector(rdbBlock, out byte[] sector);
+
+            if(errno != ErrorNumber.NoError)
+                return false;
 
             rdb.Magic           = BigEndianBitConverter.ToUInt32(sector, 0x00);
             rdb.Size            = BigEndianBitConverter.ToUInt32(sector, 0x04);
@@ -354,7 +367,7 @@ namespace Aaru.Partitions
             AaruConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved25 = 0x{0:X8}", rdb.Reserved25);
 
             // Reading BadBlock list
-            List<BadBlockList> badBlockChain = new List<BadBlockList>();
+            List<BadBlockList> badBlockChain = new();
             ulong              nextBlock     = rdb.BadblockPtr;
 
             while(nextBlock != 0xFFFFFFFF)
@@ -362,7 +375,11 @@ namespace Aaru.Partitions
                 AaruConsole.DebugWriteLine("Amiga RDB plugin", "Going to block {0} in search of a BadBlock block",
                                            nextBlock);
 
-                sector = imagePlugin.ReadSector(nextBlock);
+                errno = imagePlugin.ReadSector(nextBlock, out sector);
+
+                if(errno != ErrorNumber.NoError)
+                    break;
+
                 uint magic = BigEndianBitConverter.ToUInt32(sector, 0);
 
                 if(magic != BAD_BLOCK_LIST_MAGIC)
@@ -410,7 +427,7 @@ namespace Aaru.Partitions
             }
 
             // Reading BadBlock list
-            List<PartitionEntry> partitionEntries = new List<PartitionEntry>();
+            List<PartitionEntry> partitionEntries = new();
             nextBlock = rdb.PartitionPtr;
 
             while(nextBlock != 0xFFFFFFFF)
@@ -418,7 +435,11 @@ namespace Aaru.Partitions
                 AaruConsole.DebugWriteLine("Amiga RDB plugin", "Going to block {0} in search of a PartitionEntry block",
                                            nextBlock + sectorOffset);
 
-                sector = imagePlugin.ReadSector(nextBlock + sectorOffset);
+                errno = imagePlugin.ReadSector(nextBlock + sectorOffset, out sector);
+
+                if(errno != ErrorNumber.NoError)
+                    break;
+
                 uint magic = BigEndianBitConverter.ToUInt32(sector, 0);
 
                 if(magic != PARTITION_BLOCK_MAGIC)
@@ -577,8 +598,8 @@ namespace Aaru.Partitions
             }
 
             // Reading BadBlock list
-            List<FileSystemHeader> fshdEntries    = new List<FileSystemHeader>();
-            List<LoadSegment>      segmentEntries = new List<LoadSegment>();
+            List<FileSystemHeader> fshdEntries    = new();
+            List<LoadSegment>      segmentEntries = new();
             nextBlock = rdb.FsheaderPtr;
 
             while(nextBlock != 0xFFFFFFFF)
@@ -586,7 +607,11 @@ namespace Aaru.Partitions
                 AaruConsole.DebugWriteLine("Amiga RDB plugin",
                                            "Going to block {0} in search of a FileSystemHeader block", nextBlock);
 
-                sector = imagePlugin.ReadSector(nextBlock);
+                errno = imagePlugin.ReadSector(nextBlock, out sector);
+
+                if(errno != ErrorNumber.NoError)
+                    break;
+
                 uint magic = BigEndianBitConverter.ToUInt32(sector, 0);
 
                 if(magic != FILESYSTEM_HEADER_MAGIC)
@@ -662,7 +687,11 @@ namespace Aaru.Partitions
                     AaruConsole.DebugWriteLine("Amiga RDB plugin",
                                                "Going to block {0} in search of a LoadSegment block", nextBlock);
 
-                    sector = imagePlugin.ReadSector(nextBlock);
+                    errno = imagePlugin.ReadSector(nextBlock, out sector);
+
+                    if(errno != ErrorNumber.NoError)
+                        break;
+
                     uint magicSeg = BigEndianBitConverter.ToUInt32(sector, 0);
 
                     if(magicSeg != LOAD_SEG_MAGIC)

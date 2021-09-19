@@ -36,6 +36,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.InteropServices;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
@@ -66,7 +67,7 @@ namespace Aaru.Partitions
         /// <inheritdoc />
         public string Name => "BSD disklabel";
         /// <inheritdoc />
-        public Guid Id => new Guid("246A6D93-4F1A-1F8A-344D-50187A5513A9");
+        public Guid Id => new("246A6D93-4F1A-1F8A-344D-50187A5513A9");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
@@ -87,7 +88,10 @@ namespace Aaru.Partitions
                 if(location + run + sectorOffset >= imagePlugin.Info.Sectors)
                     return false;
 
-                byte[] tmp = imagePlugin.ReadSectors(location + sectorOffset, run);
+                ErrorNumber errno = imagePlugin.ReadSectors(location + sectorOffset, run, out byte[] tmp);
+
+                if(errno != ErrorNumber.NoError)
+                    continue;
 
                 foreach(uint offset in _labelOffsets)
                 {

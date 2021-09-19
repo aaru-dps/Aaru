@@ -289,33 +289,35 @@ namespace Aaru.DiscImages
         }
 
         /// <inheritdoc />
-        public byte[] ReadSector(ulong sectorAddress)
-        {
-            if(_sectors.TryGetValue(sectorAddress, out byte[] sector))
-                return sector;
-
-            throw new ArgumentOutOfRangeException(nameof(sectorAddress), $"Sector address {sectorAddress} not found");
-        }
+        public ErrorNumber ReadSector(ulong sectorAddress, out byte[] buffer) =>
+            _sectors.TryGetValue(sectorAddress, out buffer) ? ErrorNumber.NoError : ErrorNumber.SectorNotFound;
 
         /// <inheritdoc />
-        public byte[] ReadSectors(ulong sectorAddress, uint length)
+        public ErrorNumber ReadSectors(ulong sectorAddress, uint length, out byte[] buffer)
         {
+            buffer = null;
+
             if(sectorAddress > _imageInfo.Sectors - 1)
-                throw new ArgumentOutOfRangeException(nameof(sectorAddress),
-                                                      $"Sector address {sectorAddress} not found");
+                return ErrorNumber.OutOfRange;
 
             if(sectorAddress + length > _imageInfo.Sectors)
-                throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
+                return ErrorNumber.OutOfRange;
 
             var ms = new MemoryStream();
 
             for(uint i = 0; i < length; i++)
             {
-                byte[] sector = ReadSector(sectorAddress + i);
+                ErrorNumber errno = ReadSector(sectorAddress + i, out byte[] sector);
+
+                if(errno != ErrorNumber.NoError)
+                    return errno;
+
                 ms.Write(sector, 0, sector.Length);
             }
 
-            return ms.ToArray();
+            buffer = ms.ToArray();
+
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />
@@ -347,7 +349,11 @@ namespace Aaru.DiscImages
 
             for(uint i = 0; i < length; i++)
             {
-                byte[] addressMark = ReadSector(sectorAddress + i);
+                ErrorNumber errno = ReadSector(sectorAddress + i, out byte[] addressMark);
+
+                if(errno != ErrorNumber.NoError)
+                    return null;
+
                 ms.Write(addressMark, 0, addressMark.Length);
             }
 

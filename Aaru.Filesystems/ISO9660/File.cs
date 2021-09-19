@@ -525,9 +525,11 @@ namespace Aaru.Filesystems
 
                 while(leftExtentSize > 0)
                 {
-                    byte[] sector = ReadSector(extents[i].extent + currentExtentSector, interleaved, fileNumber);
+                    ErrorNumber errno = ReadSector(extents[i].extent + currentExtentSector, out byte[] sector,
+                                                   interleaved, fileNumber);
 
-                    if(sector is null)
+                    if(errno != ErrorNumber.NoError ||
+                       sector is null)
                     {
                         currentExtentSector++;
 

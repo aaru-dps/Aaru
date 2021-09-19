@@ -64,7 +64,10 @@ namespace Aaru.Filesystems.UCSDPascal
             _multiplier = (uint)(imagePlugin.Info.SectorSize == 256 ? 2 : 1);
 
             // Blocks 0 and 1 are boot code
-            _catalogBlocks = _device.ReadSectors(_multiplier * 2, _multiplier);
+            ErrorNumber errno = _device.ReadSectors(_multiplier * 2, _multiplier, out _catalogBlocks);
+
+            if(errno != ErrorNumber.NoError)
+                return errno;
 
             // On Apple //, it's little endian
             // TODO: Fix
@@ -93,9 +96,12 @@ namespace Aaru.Filesystems.UCSDPascal
                _mountedVolEntry.Files         < 0)
                 return ErrorNumber.InvalidArgument;
 
-            _catalogBlocks = _device.ReadSectors(_multiplier * 2,
-                                                 (uint)(_mountedVolEntry.LastBlock - _mountedVolEntry.FirstBlock - 2) *
-                                                 _multiplier);
+            errno = _device.ReadSectors(_multiplier * 2,
+                                        (uint)(_mountedVolEntry.LastBlock - _mountedVolEntry.FirstBlock - 2) *
+                                        _multiplier, out _catalogBlocks);
+
+            if(errno != ErrorNumber.NoError)
+                return errno;
 
             int offset = 26;
 
@@ -122,7 +128,10 @@ namespace Aaru.Filesystems.UCSDPascal
                 offset += 26;
             }
 
-            _bootBlocks = _device.ReadSectors(0, 2 * _multiplier);
+            errno = _device.ReadSectors(0, 2 * _multiplier, out _bootBlocks);
+
+            if(errno != ErrorNumber.NoError)
+                return errno;
 
             XmlFsType = new FileSystemType
             {

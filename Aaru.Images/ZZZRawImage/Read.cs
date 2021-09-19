@@ -1196,19 +1196,22 @@ namespace Aaru.DiscImages
         }
 
         /// <inheritdoc />
-        public byte[] ReadSector(ulong sectorAddress) => ReadSectors(sectorAddress, 1);
+        public ErrorNumber ReadSector(ulong sectorAddress, out byte[] buffer) =>
+            ReadSectors(sectorAddress, 1, out buffer);
 
         /// <inheritdoc />
-        public byte[] ReadSectors(ulong sectorAddress, uint length)
+        public ErrorNumber ReadSectors(ulong sectorAddress, uint length, out byte[] buffer)
         {
+            buffer = null;
+
             if(_differentTrackZeroSize)
                 throw new NotImplementedException("Not yet implemented");
 
             if(sectorAddress > _imageInfo.Sectors - 1)
-                throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
+                return ErrorNumber.OutOfRange;
 
             if(sectorAddress + length > _imageInfo.Sectors)
-                throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
+                return ErrorNumber.OutOfRange;
 
             Stream stream = _rawImageFilter.GetDataForkStream();
 
@@ -1226,7 +1229,7 @@ namespace Aaru.DiscImages
             if(_hasSubchannel)
                 sectorSkip += 96;
 
-            byte[] buffer = new byte[sectorSize * length];
+            buffer = new byte[sectorSize * length];
 
             var br = new BinaryReader(stream);
             br.BaseStream.Seek((long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)), SeekOrigin.Begin);
@@ -1259,7 +1262,7 @@ namespace Aaru.DiscImages
                     Array.Copy(sector, 0, buffer, i * sectorSize, sectorSize);
                 }
 
-            return buffer;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />
@@ -1337,7 +1340,9 @@ namespace Aaru.DiscImages
             if(track != 1)
                 throw new ArgumentOutOfRangeException(nameof(track), "Only a single track is supported");
 
-            return ReadSector(sectorAddress);
+            ErrorNumber errno = ReadSector(sectorAddress, out byte[] buffer);
+
+            return errno == ErrorNumber.NoError ? buffer : null;
         }
 
         /// <inheritdoc />
@@ -1349,7 +1354,9 @@ namespace Aaru.DiscImages
             if(track != 1)
                 throw new ArgumentOutOfRangeException(nameof(track), "Only a single track is supported");
 
-            return ReadSectors(sectorAddress, length);
+            ErrorNumber errno = ReadSectors(sectorAddress, length, out byte[] buffer);
+
+            return errno == ErrorNumber.NoError ? buffer : null;
         }
 
         /// <inheritdoc />

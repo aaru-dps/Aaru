@@ -33,6 +33,7 @@
 
 using System;
 using System.IO;
+using Aaru.CommonTypes.Enums;
 using Aaru.Console;
 using Aaru.Decoders.CD;
 
@@ -40,10 +41,11 @@ namespace Aaru.Filesystems
 {
     public sealed partial class ISO9660
     {
-        byte[] ReadSector(ulong sector, bool interleaved = false, byte fileNumber = 0)
+        ErrorNumber ReadSector(ulong sector, out byte[] buffer, bool interleaved = false, byte fileNumber = 0)
         {
-            ulong realSector;
-            uint  sectorCount;
+            ulong       realSector;
+            uint        sectorCount;
+            ErrorNumber errno = ErrorNumber.NoError;
 
             sectorCount = (uint)_blockSize / 2048;
 
@@ -65,7 +67,7 @@ namespace Aaru.Filesystems
                 }
                 catch
                 {
-                    data = _image.ReadSector(realSector);
+                    errno = _image.ReadSector(realSector, out data);
                 }
 
                 if(_debug)
@@ -114,12 +116,18 @@ namespace Aaru.Filesystems
                 }
 
                 if(_blockSize == 2048)
-                    return Sector.GetUserData(data, interleaved, fileNumber);
+                {
+                    buffer = Sector.GetUserData(data, interleaved, fileNumber);
+
+                    return ErrorNumber.NoError;
+                }
 
                 byte[] tmp = new byte[_blockSize];
                 Array.Copy(Sector.GetUserData(data, interleaved, fileNumber), (int)offset, tmp, 0, _blockSize);
 
-                return tmp;
+                buffer = tmp;
+
+                return errno;
             }
             else
             {
@@ -136,7 +144,7 @@ namespace Aaru.Filesystems
                     }
                     catch
                     {
-                        data = _image.ReadSector(dstSector);
+                        errno = _image.ReadSector(dstSector, out data);
                     }
 
                     if(_debug)
@@ -191,8 +199,9 @@ namespace Aaru.Filesystems
 
                 byte[] tmp = new byte[_blockSize];
                 Array.Copy(Sector.GetUserData(ms.ToArray(), interleaved, fileNumber), 0, tmp, 0, _blockSize);
+                buffer = tmp;
 
-                return tmp;
+                return errno;
             }
         }
     }

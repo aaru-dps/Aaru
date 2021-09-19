@@ -34,6 +34,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Marshal = Aaru.Helpers.Marshal;
 
@@ -49,7 +50,7 @@ namespace Aaru.Partitions
         /// <inheritdoc />
         public string Name => "DEC disklabel";
         /// <inheritdoc />
-        public Guid Id => new Guid("58CEC3B7-3B93-4D47-86EE-D6DADE9D444F");
+        public Guid Id => new("58CEC3B7-3B93-4D47-86EE-D6DADE9D444F");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
@@ -62,9 +63,10 @@ namespace Aaru.Partitions
             if(31 + sectorOffset >= imagePlugin.Info.Sectors)
                 return false;
 
-            byte[] sector = imagePlugin.ReadSector(31 + sectorOffset);
+            ErrorNumber errno = imagePlugin.ReadSector(31 + sectorOffset, out byte[] sector);
 
-            if(sector.Length < 512)
+            if(errno         != ErrorNumber.NoError ||
+               sector.Length < 512)
                 return false;
 
             Label table = Marshal.ByteArrayToStructureLittleEndian<Label>(sector);

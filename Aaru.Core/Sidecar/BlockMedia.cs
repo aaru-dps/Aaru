@@ -413,13 +413,31 @@ namespace Aaru.Core
 
                     if(sectors - doneSectors >= sectorsToRead)
                     {
-                        sector = image.ReadSectors(doneSectors, sectorsToRead);
+                        errno = image.ReadSectors(doneSectors, sectorsToRead, out sector);
+
+                        if(errno != ErrorNumber.NoError)
+                        {
+                            AaruConsole.ErrorWriteLine($"Error {errno} reading sector {doneSectors}");
+                            EndProgress2();
+
+                            return;
+                        }
+
                         UpdateProgress2("Hashing sector {0} of {1}", (long)doneSectors, (long)sectors);
                         doneSectors += sectorsToRead;
                     }
                     else
                     {
-                        sector = image.ReadSectors(doneSectors, (uint)(sectors - doneSectors));
+                        errno = image.ReadSectors(doneSectors, (uint)(sectors - doneSectors), out sector);
+
+                        if(errno != ErrorNumber.NoError)
+                        {
+                            AaruConsole.ErrorWriteLine($"Error {errno} reading sector {doneSectors}");
+                            EndProgress2();
+
+                            return;
+                        }
+
                         UpdateProgress2("Hashing sector {0} of {1}", (long)doneSectors, (long)sectors);
                         doneSectors += sectors - doneSectors;
                     }
@@ -497,14 +515,36 @@ namespace Aaru.Core
 
                             if(sectors - doneSectors >= sectorsToRead)
                             {
-                                sector = image.ReadSectors(tapePartition.FirstBlock + doneSectors, sectorsToRead);
+                                errno = image.ReadSectors(tapePartition.FirstBlock + doneSectors, sectorsToRead,
+                                                          out sector);
+
+                                if(errno != ErrorNumber.NoError)
+                                {
+                                    AaruConsole.
+                                        ErrorWriteLine($"Error {errno} reading sector {tapePartition.FirstBlock + doneSectors}");
+
+                                    EndProgress2();
+
+                                    return;
+                                }
+
                                 UpdateProgress2("Hashing blocks {0} of {1}", (long)doneSectors, (long)sectors);
                                 doneSectors += sectorsToRead;
                             }
                             else
                             {
-                                sector = image.ReadSectors(tapePartition.FirstBlock + doneSectors,
-                                                           (uint)(sectors - doneSectors));
+                                errno = image.ReadSectors(tapePartition.FirstBlock + doneSectors,
+                                                          (uint)(sectors - doneSectors), out sector);
+
+                                if(errno != ErrorNumber.NoError)
+                                {
+                                    AaruConsole.
+                                        ErrorWriteLine($"Error {errno} reading sector {tapePartition.FirstBlock + doneSectors}");
+
+                                    EndProgress2();
+
+                                    return;
+                                }
 
                                 UpdateProgress2("Hashing blocks {0} of {1}", (long)doneSectors, (long)sectors);
                                 doneSectors += sectors - doneSectors;
@@ -575,14 +615,36 @@ namespace Aaru.Core
 
                                 if(sectors - doneSectors >= sectorsToRead)
                                 {
-                                    sector = image.ReadSectors(tapeFile.FirstBlock + doneSectors, sectorsToRead);
+                                    errno = image.ReadSectors(tapeFile.FirstBlock + doneSectors, sectorsToRead,
+                                                              out sector);
+
+                                    if(errno != ErrorNumber.NoError)
+                                    {
+                                        AaruConsole.
+                                            ErrorWriteLine($"Error {errno} reading sector {tapeFile.FirstBlock + doneSectors}");
+
+                                        EndProgress2();
+
+                                        return;
+                                    }
+
                                     UpdateProgress2("Hashing blocks {0} of {1}", (long)doneSectors, (long)sectors);
                                     doneSectors += sectorsToRead;
                                 }
                                 else
                                 {
-                                    sector = image.ReadSectors(tapeFile.FirstBlock + doneSectors,
-                                                               (uint)(sectors - doneSectors));
+                                    errno = image.ReadSectors(tapeFile.FirstBlock + doneSectors,
+                                                              (uint)(sectors - doneSectors), out sector);
+
+                                    if(errno != ErrorNumber.NoError)
+                                    {
+                                        AaruConsole.
+                                            ErrorWriteLine($"Error {errno} reading sector {tapeFile.FirstBlock + doneSectors}");
+
+                                        EndProgress2();
+
+                                        return;
+                                    }
 
                                     UpdateProgress2("Hashing blocks {0} of {1}", (long)doneSectors, (long)sectors);
                                     doneSectors += sectors - doneSectors;

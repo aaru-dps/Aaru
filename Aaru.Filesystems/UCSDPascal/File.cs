@@ -101,8 +101,11 @@ namespace Aaru.Filesystems.UCSDPascal
                 if(error != ErrorNumber.NoError)
                     return error;
 
-                byte[] tmp = _device.ReadSectors((ulong)entry.FirstBlock                    * _multiplier,
-                                                 (uint)(entry.LastBlock - entry.FirstBlock) * _multiplier);
+                error = _device.ReadSectors((ulong)entry.FirstBlock                    * _multiplier,
+                                            (uint)(entry.LastBlock - entry.FirstBlock) * _multiplier, out byte[] tmp);
+
+                if(error != ErrorNumber.NoError)
+                    return error;
 
                 file = new byte[((entry.LastBlock - entry.FirstBlock - 1) * _device.Info.SectorSize * _multiplier) +
                                 entry.LastBytes];

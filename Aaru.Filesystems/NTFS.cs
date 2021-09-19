@@ -35,6 +35,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.Checksums;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 using Schemas;
@@ -54,7 +55,7 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public string Name => "New Technology File System (NTFS)";
         /// <inheritdoc />
-        public Guid Id => new Guid("33513B2C-1e6d-4d21-a660-0bbc789c3871");
+        public Guid Id => new("33513B2C-1e6d-4d21-a660-0bbc789c3871");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
@@ -66,7 +67,10 @@ namespace Aaru.Filesystems
 
             byte[] eigthBytes = new byte[8];
 
-            byte[] ntfsBpb = imagePlugin.ReadSector(0 + partition.Start);
+            ErrorNumber errno = imagePlugin.ReadSector(0 + partition.Start, out byte[] ntfsBpb);
+
+            if(errno != ErrorNumber.NoError)
+                return false;
 
             Array.Copy(ntfsBpb, 0x003, eigthBytes, 0, 8);
             string oemName = StringHandlers.CToString(eigthBytes);
@@ -96,7 +100,10 @@ namespace Aaru.Filesystems
 
             var sb = new StringBuilder();
 
-            byte[] ntfsBpb = imagePlugin.ReadSector(0 + partition.Start);
+            ErrorNumber errno = imagePlugin.ReadSector(0 + partition.Start, out byte[] ntfsBpb);
+
+            if(errno != ErrorNumber.NoError)
+                return;
 
             BiosParameterBlock ntfsBb = Marshal.ByteArrayToStructureLittleEndian<BiosParameterBlock>(ntfsBpb);
 

@@ -34,6 +34,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 using Schemas;
@@ -57,7 +58,7 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public string Name => "NILFS2 Plugin";
         /// <inheritdoc />
-        public Guid Id => new Guid("35224226-C5CC-48B5-8FFD-3781E91E86B6");
+        public Guid Id => new("35224226-C5CC-48B5-8FFD-3781E91E86B6");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
@@ -80,7 +81,10 @@ namespace Aaru.Filesystems
             if(partition.Start + sbAddr + sbSize >= partition.End)
                 return false;
 
-            byte[] sector = imagePlugin.ReadSectors(partition.Start + sbAddr, sbSize);
+            ErrorNumber errno = imagePlugin.ReadSectors(partition.Start + sbAddr, sbSize, out byte[] sector);
+
+            if(errno != ErrorNumber.NoError)
+                return false;
 
             if(sector.Length < Marshal.SizeOf<Superblock>())
                 return false;
@@ -110,7 +114,10 @@ namespace Aaru.Filesystems
             if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0)
                 sbSize++;
 
-            byte[] sector = imagePlugin.ReadSectors(partition.Start + sbAddr, sbSize);
+            ErrorNumber errno = imagePlugin.ReadSectors(partition.Start + sbAddr, sbSize, out byte[] sector);
+
+            if(errno != ErrorNumber.NoError)
+                return;
 
             if(sector.Length < Marshal.SizeOf<Superblock>())
                 return;

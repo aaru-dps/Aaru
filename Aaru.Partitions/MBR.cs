@@ -255,7 +255,7 @@ namespace Aaru.Partitions
         /// <inheritdoc />
         public string Name => "Master Boot Record";
         /// <inheritdoc />
-        public Guid Id => new Guid("5E8A34E8-4F1A-59E6-4BF7-7EA647063A76");
+        public Guid Id => new("5E8A34E8-4F1A-59E6-4BF7-7EA647063A76");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
@@ -281,7 +281,10 @@ namespace Aaru.Partitions
                 divider    = 4;
             }
 
-            byte[] sector = imagePlugin.ReadSector(sectorOffset);
+            ErrorNumber errno = imagePlugin.ReadSector(sectorOffset, out byte[] sector);
+
+            if(errno != ErrorNumber.NoError)
+                return false;
 
             MasterBootRecord      mbr     = Marshal.ByteArrayToStructureLittleEndian<MasterBootRecord>(sector);
             TimedMasterBootRecord mbrTime = Marshal.ByteArrayToStructureLittleEndian<TimedMasterBootRecord>(sector);
@@ -301,7 +304,10 @@ namespace Aaru.Partitions
             if(mbr.magic != MBR_MAGIC)
                 return false; // Not MBR
 
-            byte[] hdrBytes = imagePlugin.ReadSector(1 + sectorOffset);
+            errno = imagePlugin.ReadSector(1 + sectorOffset, out byte[] hdrBytes);
+
+            if(errno != ErrorNumber.NoError)
+                return false;
 
             ulong signature = BitConverter.ToUInt64(hdrBytes, 0);
 
@@ -313,7 +319,11 @@ namespace Aaru.Partitions
             if(signature                     != GPT_MAGIC &&
                imagePlugin.Info.XmlMediaType == XmlMediaType.OpticalDisc)
             {
-                hdrBytes  = imagePlugin.ReadSector(sectorOffset);
+                errno = imagePlugin.ReadSector(sectorOffset, out hdrBytes);
+
+                if(errno != ErrorNumber.NoError)
+                    return false;
+
                 signature = BitConverter.ToUInt64(hdrBytes, 512);
                 AaruConsole.DebugWriteLine("MBR Plugin", "gpt.signature @ 0x200 = 0x{0:X16}", signature);
 
@@ -461,7 +471,10 @@ namespace Aaru.Partitions
 
                 while(processingExtended)
                 {
-                    sector = imagePlugin.ReadSector(lbaStart);
+                    errno = imagePlugin.ReadSector(lbaStart, out sector);
+
+                    if(errno != ErrorNumber.NoError)
+                        break;
 
                     ExtendedBootRecord ebr = Marshal.ByteArrayToStructureLittleEndian<ExtendedBootRecord>(sector);
 
@@ -597,7 +610,10 @@ namespace Aaru.Partitions
         {
             partitions = new List<Partition>();
 
-            byte[] sector = imagePlugin.ReadSector(start);
+            ErrorNumber errno = imagePlugin.ReadSector(start, out byte[] sector);
+
+            if(errno != ErrorNumber.NoError)
+                return false;
 
             ExtendedBootRecord mnx = Marshal.ByteArrayToStructureLittleEndian<ExtendedBootRecord>(sector);
 

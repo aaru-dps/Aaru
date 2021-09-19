@@ -44,6 +44,7 @@ namespace Aaru.Tests.Issues
 
             Resume           resume  = null;
             CICMMetadataType sidecar = null;
+            ErrorNumber      errno;
 
             var     filtersList = new FiltersList();
             IFilter inputFilter = filtersList.GetFilter(InputPath);
@@ -108,7 +109,7 @@ namespace Aaru.Tests.Issues
                 outputOptical.SupportedMediaTags.Contains(mediaTag)))
             {
                 AaruConsole.WriteLine("Converting media tag {0}", mediaTag);
-                ErrorNumber errno = inputFormat.ReadMediaTag(mediaTag, out byte[] tag);
+                errno = inputFormat.ReadMediaTag(mediaTag, out byte[] tag);
 
                 Assert.AreEqual(ErrorNumber.NoError, errno);
                 Assert.IsTrue(outputOptical.WriteMediaTag(tag, mediaTag));
@@ -161,17 +162,13 @@ namespace Aaru.Tests.Issues
 
                     if(!UseLong || useNotLong)
                     {
-                        if(sectorsToDo == 1)
-                        {
-                            sector = inputFormat.ReadSector(doneSectors            + track.StartSector);
-                            result = outputOptical.WriteSector(sector, doneSectors + track.StartSector);
-                        }
-                        else
-                        {
-                            sector = inputFormat.ReadSectors(doneSectors + track.StartSector, sectorsToDo);
+                        errno = sectorsToDo == 1 ? inputFormat.ReadSector(doneSectors + track.StartSector, out sector)
+                                    : inputFormat.ReadSectors(doneSectors + track.StartSector, sectorsToDo, out sector);
 
-                            result = outputOptical.WriteSectors(sector, doneSectors + track.StartSector, sectorsToDo);
-                        }
+                        Assert.AreEqual(ErrorNumber.NoError, errno);
+
+                        result = sectorsToDo == 1 ? outputOptical.WriteSector(sector, doneSectors + track.StartSector)
+                                     : outputOptical.WriteSectors(sector, doneSectors + track.StartSector, sectorsToDo);
                     }
 
                     Assert.IsTrue(result,

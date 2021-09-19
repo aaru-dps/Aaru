@@ -1377,7 +1377,11 @@ namespace Aaru.DiscImages
 
                 foreach(Track trk in tracks)
                 {
-                    byte[] sector = ReadSector(trk.StartSector);
+                    ErrorNumber errno = ReadSector(trk.StartSector, out byte[] sector);
+
+                    if(errno != ErrorNumber.NoError)
+                        continue;
+
                     trk.BytesPerSector = sector.Length;
 
                     trk.RawBytesPerSector =
@@ -1493,11 +1497,12 @@ namespace Aaru.DiscImages
         }
 
         /// <inheritdoc />
-        public byte[] ReadSector(ulong sectorAddress)
+        public ErrorNumber ReadSector(ulong sectorAddress, out byte[] buffer)
         {
+            buffer = null;
+
             if(sectorAddress > _imageInfo.Sectors - 1)
-                throw new ArgumentOutOfRangeException(nameof(sectorAddress),
-                                                      $"Sector address {sectorAddress} not found");
+                return ErrorNumber.OutOfRange;
 
             ulong ddtEntry    = GetDdtEntry(sectorAddress);
             uint  offsetMask  = (uint)((1 << _shift) - 1);
@@ -1506,18 +1511,20 @@ namespace Aaru.DiscImages
 
             // Partially written image... as we can't know the real sector size just assume it's common :/
             if(ddtEntry == 0)
-                return new byte[_imageInfo.SectorSize];
+            {
+                buffer = new byte[_imageInfo.SectorSize];
 
-            byte[] sector;
+                return ErrorNumber.NoError;
+            }
 
             // Check if block is cached
             if(_blockCache.TryGetValue(blockOffset, out byte[] block) &&
                _blockHeaderCache.TryGetValue(blockOffset, out BlockHeader blockHeader))
             {
-                sector = new byte[blockHeader.sectorSize];
-                Array.Copy(block, (long)(offset * blockHeader.sectorSize), sector, 0, blockHeader.sectorSize);
+                buffer = new byte[blockHeader.sectorSize];
+                Array.Copy(block, (long)(offset * blockHeader.sectorSize), buffer, 0, blockHeader.sectorSize);
 
-                return sector;
+                return ErrorNumber.NoError;
             }
 
             // Read block header
@@ -1571,9 +1578,7 @@ namespace Aaru.DiscImages
                                                GC.GetTotalMemory(false));
 
                     break;
-                default:
-                    throw new
-                        ImageNotSupportedException($"Found unsupported compression algorithm {(ushort)blockHeader.compression}");
+                default: return ErrorNumber.NotSupported;
             }
 
             // Check if cache needs to be emptied
@@ -1589,12 +1594,12 @@ namespace Aaru.DiscImages
             _blockHeaderCache.Add(blockOffset, blockHeader);
             _blockCache.Add(blockOffset, block);
 
-            sector = new byte[blockHeader.sectorSize];
-            Array.Copy(block, (long)(offset * blockHeader.sectorSize), sector, 0, blockHeader.sectorSize);
+            buffer = new byte[blockHeader.sectorSize];
+            Array.Copy(block, (long)(offset * blockHeader.sectorSize), buffer, 0, blockHeader.sectorSize);
 
             AaruConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes", GC.GetTotalMemory(false));
 
-            return sector;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />
@@ -1611,7 +1616,9 @@ namespace Aaru.DiscImages
             if(trk?.Sequence != track)
                 throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
 
-            return ReadSector(trk.StartSector + sectorAddress);
+            ReadSector(trk.StartSector + sectorAddress, out byte[] sector);
+
+            return sector;
         }
 
         /// <inheritdoc />
@@ -1629,24 +1636,31 @@ namespace Aaru.DiscImages
         }
 
         /// <inheritdoc />
-        public byte[] ReadSectors(ulong sectorAddress, uint length)
+        public ErrorNumber ReadSectors(ulong sectorAddress, uint length, out byte[] buffer)
         {
+            buffer = null;
+
             if(sectorAddress > _imageInfo.Sectors - 1)
-                throw new ArgumentOutOfRangeException(nameof(sectorAddress),
-                                                      $"Sector address {sectorAddress} not found");
+                return ErrorNumber.OutOfRange;
 
             if(sectorAddress + length > _imageInfo.Sectors)
-                throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
+                return ErrorNumber.OutOfRange;
 
             var ms = new MemoryStream();
 
             for(uint i = 0; i < length; i++)
             {
-                byte[] sector = ReadSector(sectorAddress + i);
+                ErrorNumber errno = ReadSector(sectorAddress + i, out byte[] sector);
+
+                if(errno != ErrorNumber.NoError)
+                    return errno;
+
                 ms.Write(sector, 0, sector.Length);
             }
 
-            return ms.ToArray();
+            buffer = ms.ToArray();
+
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />
@@ -1942,7 +1956,9 @@ namespace Aaru.DiscImages
                 throw new ArgumentOutOfRangeException(nameof(length),
                                                       $"Requested more sectors ({length + sectorAddress}) than present in track ({trk.EndSector - trk.StartSector + 1}), won't cross tracks");
 
-            return ReadSectors(trk.StartSector + sectorAddress, length);
+            ReadSectors(trk.StartSector + sectorAddress, length, out byte[] buffer);
+
+            return buffer;
         }
 
         /// <inheritdoc />
@@ -1966,6 +1982,8 @@ namespace Aaru.DiscImages
         /// <inheritdoc />
         public byte[] ReadSectorLong(ulong sectorAddress)
         {
+            ErrorNumber errno;
+
             switch(_imageInfo.XmlMediaType)
             {
                 case XmlMediaType.OpticalDisc:
@@ -1984,10 +2002,14 @@ namespace Aaru.DiscImages
 
                     if((_sectorSuffix   == null || _sectorPrefix   == null) &&
                        (_sectorSuffixMs == null || _sectorPrefixMs == null))
-                        return ReadSector(sectorAddress);
+                    {
+                        errno = ReadSector(sectorAddress, out byte[] buffer);
+
+                        return errno != ErrorNumber.NoError ? null : buffer;
+                    }
 
                     byte[] sector = new byte[2352];
-                    byte[] data   = ReadSector(sectorAddress);
+                    errno = ReadSector(sectorAddress, out byte[] data);
 
                     switch(trk.Type)
                     {
@@ -2182,8 +2204,9 @@ namespace Aaru.DiscImages
         /// <inheritdoc />
         public byte[] ReadSectorsLong(ulong sectorAddress, uint length)
         {
-            byte[] sectors;
-            byte[] data;
+            byte[]      sectors;
+            byte[]      data;
+            ErrorNumber errno;
 
             switch(_imageInfo.XmlMediaType)
             {
@@ -2209,7 +2232,10 @@ namespace Aaru.DiscImages
                     {
                         // These types only contain user data
                         case TrackType.Audio:
-                        case TrackType.Data: return ReadSectors(sectorAddress, length);
+                        case TrackType.Data:
+                            errno = ReadSectors(sectorAddress, length, out data);
+
+                            return errno == ErrorNumber.NoError ? data : null;
 
                         // Join prefix (sync, header) with user data with suffix (edc, ecc p, ecc q)
                         case TrackType.CdMode1:
@@ -2217,7 +2243,10 @@ namespace Aaru.DiscImages
                                _sectorSuffix != null)
                             {
                                 sectors = new byte[2352 * length];
-                                data    = ReadSectors(sectorAddress, length);
+                                errno   = ReadSectors(sectorAddress, length, out data);
+
+                                if(errno != ErrorNumber.NoError)
+                                    return null;
 
                                 for(uint i = 0; i < length; i++)
                                 {
@@ -2246,7 +2275,11 @@ namespace Aaru.DiscImages
                                 return sectors;
                             }
                             else
-                                return ReadSectors(sectorAddress, length);
+                            {
+                                errno = ReadSectors(sectorAddress, length, out data);
+
+                                return errno == ErrorNumber.NoError ? data : null;
+                            }
 
                         // Join prefix (sync, header) with user data
                         case TrackType.CdMode2Formless:
@@ -2256,7 +2289,10 @@ namespace Aaru.DiscImages
                                _sectorSuffix != null)
                             {
                                 sectors = new byte[2352 * length];
-                                data    = ReadSectors(sectorAddress, length);
+                                errno   = ReadSectors(sectorAddress, length, out data);
+
+                                if(errno != ErrorNumber.NoError)
+                                    return null;
 
                                 for(uint i = 0; i < length; i++)
                                 {
@@ -2282,7 +2318,9 @@ namespace Aaru.DiscImages
                                 return sectors;
                             }
 
-                            return ReadSectors(sectorAddress, length);
+                            errno = ReadSectors(sectorAddress, length, out data);
+
+                            return errno == ErrorNumber.NoError ? data : null;
                     }
 
                     break;
@@ -2297,7 +2335,11 @@ namespace Aaru.DiscImages
                         case MediaType.AppleWidget:
                         case MediaType.PriamDataTower:
                             if(_sectorSubchannel == null)
-                                return ReadSector(sectorAddress);
+                            {
+                                errno = ReadSector(sectorAddress, out data);
+
+                                return errno == ErrorNumber.NoError ? data : null;
+                            }
 
                             uint tagSize = 0;
 
@@ -2321,7 +2363,11 @@ namespace Aaru.DiscImages
                             }
 
                             uint sectorSize = 512 + tagSize;
-                            data    = ReadSectors(sectorAddress, length);
+                            errno = ReadSectors(sectorAddress, length, out data);
+
+                            if(errno != ErrorNumber.NoError)
+                                return null;
+
                             sectors = new byte[(sectorSize + 512) * length];
 
                             for(uint i = 0; i < length; i++)

@@ -35,6 +35,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
@@ -52,7 +53,7 @@ namespace Aaru.Partitions
         /// <inheritdoc />
         public string Name => "Human 68k partitions";
         /// <inheritdoc />
-        public Guid Id => new Guid("246A6D93-4F1A-1F8A-344D-50187A5513A9");
+        public Guid Id => new("246A6D93-4F1A-1F8A-344D-50187A5513A9");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
@@ -61,8 +62,9 @@ namespace Aaru.Partitions
         {
             partitions = new List<Partition>();
 
-            byte[] sector;
-            ulong  sectsPerUnit;
+            byte[]      sector;
+            ulong       sectsPerUnit;
+            ErrorNumber errno;
 
             AaruConsole.DebugWriteLine("Human68k plugin", "sectorSize = {0}", imagePlugin.Info.SectorSize);
 
@@ -72,22 +74,25 @@ namespace Aaru.Partitions
             switch(imagePlugin.Info.SectorSize)
             {
                 case 256:
-                    sector       = imagePlugin.ReadSector(4 + sectorOffset);
+                    errno        = imagePlugin.ReadSector(4 + sectorOffset, out sector);
                     sectsPerUnit = 1;
 
                     break;
                 case 512:
-                    sector       = imagePlugin.ReadSector(4 + sectorOffset);
+                    errno        = imagePlugin.ReadSector(4 + sectorOffset, out sector);
                     sectsPerUnit = 2;
 
                     break;
                 case 1024:
-                    sector       = imagePlugin.ReadSector(2 + sectorOffset);
+                    errno        = imagePlugin.ReadSector(2 + sectorOffset, out sector);
                     sectsPerUnit = 1;
 
                     break;
                 default: return false;
             }
+
+            if(errno != ErrorNumber.NoError)
+                return false;
 
             Table table = Marshal.ByteArrayToStructureBigEndian<Table>(sector);
 

@@ -65,7 +65,10 @@ namespace Aaru.Filesystems
 
             AaruConsole.DebugWriteLine("Xbox FAT plugin", "Reading superblock");
 
-            byte[] sector = imagePlugin.ReadSector(partition.Start);
+            ErrorNumber errno = imagePlugin.ReadSector(partition.Start, out byte[] sector);
+
+            if(errno != ErrorNumber.NoError)
+                return errno;
 
             _superblock = Marshal.ByteArrayToStructureLittleEndian<Superblock>(sector);
 
@@ -150,7 +153,10 @@ namespace Aaru.Filesystems
 
                 AaruConsole.DebugWriteLine("Xbox FAT plugin", "FAT is {0} sectors", fatSize);
 
-                buffer = imagePlugin.ReadSectors(_fatStartSector, fatSize);
+                errno = imagePlugin.ReadSectors(_fatStartSector, fatSize, out buffer);
+
+                if(errno != ErrorNumber.NoError)
+                    return errno;
 
                 AaruConsole.DebugWriteLine("Xbox FAT plugin", "Casting FAT");
                 _fat32 = MemoryMarshal.Cast<byte, uint>(buffer).ToArray();
@@ -182,7 +188,10 @@ namespace Aaru.Filesystems
 
                 AaruConsole.DebugWriteLine("Xbox FAT plugin", "FAT is {0} sectors", fatSize);
 
-                buffer = imagePlugin.ReadSectors(_fatStartSector, fatSize);
+                errno = imagePlugin.ReadSectors(_fatStartSector, fatSize, out buffer);
+
+                if(errno != ErrorNumber.NoError)
+                    return errno;
 
                 AaruConsole.DebugWriteLine("Xbox FAT plugin", "Casting FAT");
                 _fat16 = MemoryMarshal.Cast<byte, ushort>(buffer).ToArray();
@@ -217,9 +226,12 @@ namespace Aaru.Filesystems
 
             for(int i = 0; i < rootDirectoryClusters.Length; i++)
             {
-                buffer =
+                errno =
                     imagePlugin.ReadSectors(_firstClusterSector + ((rootDirectoryClusters[i] - 1) * _sectorsPerCluster),
-                                            _sectorsPerCluster);
+                                            _sectorsPerCluster, out buffer);
+
+                if(errno != ErrorNumber.NoError)
+                    return errno;
 
                 Array.Copy(buffer, 0, rootDirectoryBuffer, i * _bytesPerCluster, _bytesPerCluster);
             }

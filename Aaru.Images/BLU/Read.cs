@@ -153,24 +153,27 @@ namespace Aaru.DiscImages
         }
 
         /// <inheritdoc />
-        public byte[] ReadSector(ulong sectorAddress) => ReadSectors(sectorAddress, 1);
+        public ErrorNumber ReadSector(ulong sectorAddress, out byte[] buffer) =>
+            ReadSectors(sectorAddress, 1, out buffer);
 
         /// <inheritdoc />
         public byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag) => ReadSectorsTag(sectorAddress, 1, tag);
 
         /// <inheritdoc />
-        public byte[] ReadSectors(ulong sectorAddress, uint length)
+        public ErrorNumber ReadSectors(ulong sectorAddress, uint length, out byte[] buffer)
         {
+            buffer = null;
+
             if(sectorAddress > _imageInfo.Sectors - 1)
-                throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
+                return ErrorNumber.OutOfRange;
 
             if(sectorAddress + length > _imageInfo.Sectors)
-                throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
+                return ErrorNumber.OutOfRange;
 
-            var buffer = new MemoryStream();
-            int seek   = 0;
-            int read   = 0x200;
-            int skip   = _bptag;
+            var ms   = new MemoryStream();
+            int seek = 0;
+            int read = 0x200;
+            int skip = _bptag;
 
             Stream stream = _bluImageFilter.GetDataForkStream();
             stream.Seek((long)((sectorAddress + 1) * _imageHeader.BytesPerBlock), SeekOrigin.Begin);
@@ -180,11 +183,13 @@ namespace Aaru.DiscImages
                 stream.Seek(seek, SeekOrigin.Current);
                 byte[] sector = new byte[read];
                 stream.Read(sector, 0, read);
-                buffer.Write(sector, 0, read);
+                ms.Write(sector, 0, read);
                 stream.Seek(skip, SeekOrigin.Current);
             }
 
-            return buffer.ToArray();
+            buffer = ms.ToArray();
+
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />

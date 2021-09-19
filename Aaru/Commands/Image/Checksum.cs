@@ -309,6 +309,8 @@ namespace Aaru.Commands.Image
 
             Checksum mediaChecksum = null;
 
+            ErrorNumber errno = ErrorNumber.NoError;
+
             switch(inputFormat)
             {
                 case IOpticalMediaImage { Tracks: {} } opticalInput:
@@ -437,6 +439,9 @@ namespace Aaru.Commands.Image
                                         foreach(ChecksumType chk in mediaChecksum.End())
                                             AaruConsole.WriteLine("[bold]Disc's {0}:[/] {1}", chk.type, chk.Value);
                                     });
+
+                        if(errno != ErrorNumber.NoError)
+                            return (int)errno;
                     }
                     catch(Exception ex)
                     {
@@ -478,7 +483,15 @@ namespace Aaru.Commands.Image
                                             {
                                                 preFileTask.Description = $"Hashing file-less block {i}";
 
-                                                byte[] hiddenSector = inputFormat.ReadSector(i);
+                                                errno = inputFormat.ReadSector(i, out byte[] hiddenSector);
+
+                                                if(errno != ErrorNumber.NoError)
+                                                {
+                                                    AaruConsole.
+                                                        ErrorWriteLine($"Error {errno} while reading sector {i}, not continuing...");
+
+                                                    return;
+                                                }
 
                                                 mediaChecksum?.Update(hiddenSector);
                                                 preFileTask.Increment(1);
@@ -507,8 +520,16 @@ namespace Aaru.Commands.Image
 
                                             if(sectors - doneSectors >= SECTORS_TO_READ)
                                             {
-                                                sector = tapeImage.ReadSectors(doneSectors + currentFile.FirstBlock,
-                                                                               SECTORS_TO_READ);
+                                                errno = tapeImage.ReadSectors(doneSectors + currentFile.FirstBlock,
+                                                                              SECTORS_TO_READ, out sector);
+
+                                                if(errno != ErrorNumber.NoError)
+                                                {
+                                                    AaruConsole.
+                                                        ErrorWriteLine($"Error {errno} while reading {SECTORS_TO_READ} sectors from sector {doneSectors + currentFile.FirstBlock}, not continuing...");
+
+                                                    return;
+                                                }
 
                                                 fileTask.Description =
                                                     string.Format("Hashing blocks {0} to {2} of file {1}", doneSectors,
@@ -518,8 +539,17 @@ namespace Aaru.Commands.Image
                                             }
                                             else
                                             {
-                                                sector = tapeImage.ReadSectors(doneSectors + currentFile.FirstBlock,
-                                                                               (uint)(sectors - doneSectors));
+                                                errno = tapeImage.ReadSectors(doneSectors + currentFile.FirstBlock,
+                                                                              (uint)(sectors - doneSectors),
+                                                                              out sector);
+
+                                                if(errno != ErrorNumber.NoError)
+                                                {
+                                                    AaruConsole.
+                                                        ErrorWriteLine($"Error {errno} while reading {sectors - doneSectors} sectors from sector {doneSectors + currentFile.FirstBlock}, not continuing...");
+
+                                                    return;
+                                                }
 
                                                 fileTask.Description =
                                                     string.Format("Hashing blocks {0} to {2} of file {1}", doneSectors,
@@ -563,11 +593,23 @@ namespace Aaru.Commands.Image
                                     {
                                         postFileTask.Description = $"Hashing file-less block {i}";
 
-                                        byte[] hiddenSector = inputFormat.ReadSector(i);
+                                        errno = inputFormat.ReadSector(i, out byte[] hiddenSector);
+
+                                        if(errno != ErrorNumber.NoError)
+                                        {
+                                            AaruConsole.
+                                                ErrorWriteLine($"Error {errno} while reading sector {i}, not continuing...");
+
+                                            return;
+                                        }
+
                                         mediaChecksum?.Update(hiddenSector);
                                         postFileTask.Increment(1);
                                     }
                                 });
+
+                    if(errno != ErrorNumber.NoError)
+                        return (int)errno;
 
                     if(wholeDisc && mediaChecksum != null)
                     {
@@ -599,7 +641,15 @@ namespace Aaru.Commands.Image
 
                                         if(sectors - doneSectors >= SECTORS_TO_READ)
                                         {
-                                            sector = inputFormat.ReadSectors(doneSectors, SECTORS_TO_READ);
+                                            errno = inputFormat.ReadSectors(doneSectors, SECTORS_TO_READ, out sector);
+
+                                            if(errno != ErrorNumber.NoError)
+                                            {
+                                                AaruConsole.
+                                                    ErrorWriteLine($"Error {errno} while reading {SECTORS_TO_READ} sectors from sector {doneSectors}, not continuing...");
+
+                                                return;
+                                            }
 
                                             diskTask.Description =
                                                 $"Hashing sectors {doneSectors} to {doneSectors + SECTORS_TO_READ}";
@@ -608,8 +658,16 @@ namespace Aaru.Commands.Image
                                         }
                                         else
                                         {
-                                            sector = inputFormat.ReadSectors(doneSectors,
-                                                                             (uint)(sectors - doneSectors));
+                                            errno = inputFormat.ReadSectors(doneSectors, (uint)(sectors - doneSectors),
+                                                                            out sector);
+
+                                            if(errno != ErrorNumber.NoError)
+                                            {
+                                                AaruConsole.
+                                                    ErrorWriteLine($"Error {errno} while reading {sectors - doneSectors} sectors from sector {doneSectors}, not continuing...");
+
+                                                return;
+                                            }
 
                                             diskTask.Description =
                                                 $"Hashing sectors {doneSectors} to {doneSectors + (sectors - doneSectors)}";
@@ -621,6 +679,9 @@ namespace Aaru.Commands.Image
                                         diskTask.Value = doneSectors;
                                     }
                                 });
+
+                    if(errno != ErrorNumber.NoError)
+                        return (int)errno;
 
                     AaruConsole.WriteLine();
 

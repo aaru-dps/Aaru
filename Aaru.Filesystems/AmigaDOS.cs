@@ -36,6 +36,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.Checksums;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
@@ -59,7 +60,7 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public string Name => "Amiga DOS filesystem";
         /// <inheritdoc />
-        public Guid Id => new Guid("3c882400-208c-427d-a086-9119852a1bc7");
+        public Guid Id => new("3c882400-208c-427d-a086-9119852a1bc7");
         /// <inheritdoc />
         public Encoding Encoding { get; private set; }
         /// <inheritdoc />
@@ -77,8 +78,12 @@ namespace Aaru.Filesystems
             // However while you can set a block size different from the sector size on formatting, the bootblock block
             // size for floppies is the sector size, and for RDB is usually is the hard disk sector size,
             // so this is not entirely wrong...
-            byte[]    sector = imagePlugin.ReadSectors(0 + partition.Start, 2);
-            BootBlock bblk   = Marshal.ByteArrayToStructureBigEndian<BootBlock>(sector);
+            ErrorNumber errno = imagePlugin.ReadSectors(0 + partition.Start, 2, out byte[] sector);
+
+            if(errno != ErrorNumber.NoError)
+                return false;
+
+            BootBlock bblk = Marshal.ByteArrayToStructureBigEndian<BootBlock>(sector);
 
             // AROS boot floppies...
             if(sector.Length               >= 512      &&
@@ -87,8 +92,12 @@ namespace Aaru.Filesystems
                (bblk.diskType & FFS_MASK)  != FFS_MASK &&
                (bblk.diskType & MUFS_MASK) != MUFS_MASK)
             {
-                sector = imagePlugin.ReadSectors(1 + partition.Start, 2);
-                bblk   = Marshal.ByteArrayToStructureBigEndian<BootBlock>(sector);
+                errno = imagePlugin.ReadSectors(1 + partition.Start, 2, out sector);
+
+                if(errno != ErrorNumber.NoError)
+                    return false;
+
+                bblk = Marshal.ByteArrayToStructureBigEndian<BootBlock>(sector);
             }
 
             // Not FFS or MuFS?
@@ -127,7 +136,10 @@ namespace Aaru.Filesystems
             {
                 AaruConsole.DebugWriteLine("AmigaDOS plugin", "Searching for Rootblock in sector {0}", rootPtr);
 
-                sector = imagePlugin.ReadSector(rootPtr);
+                errno = imagePlugin.ReadSector(rootPtr, out sector);
+
+                if(errno != ErrorNumber.NoError)
+                    continue;
 
                 rblk.type = BigEndianBitConverter.ToUInt32(sector, 0x00);
                 AaruConsole.DebugWriteLine("AmigaDOS plugin", "rblk.type = {0}", rblk.type);
@@ -151,7 +163,10 @@ namespace Aaru.Filesystems
                 if(rootPtr + sectorsPerBlock >= partition.End)
                     continue;
 
-                sector = imagePlugin.ReadSectors(rootPtr, sectorsPerBlock);
+                errno = imagePlugin.ReadSectors(rootPtr, sectorsPerBlock, out sector);
+
+                if(errno != ErrorNumber.NoError)
+                    continue;
 
                 // Clear checksum on sector
                 rblk.checksum = BigEndianBitConverter.ToUInt32(sector, 20);
@@ -180,7 +195,10 @@ namespace Aaru.Filesystems
             var sbInformation = new StringBuilder();
             XmlFsType   = new FileSystemType();
             information = null;
-            byte[] bootBlockSectors = imagePlugin.ReadSectors(0 + partition.Start, 2);
+            ErrorNumber errno = imagePlugin.ReadSectors(0 + partition.Start, 2, out byte[] bootBlockSectors);
+
+            if(errno != ErrorNumber.NoError)
+                return;
 
             BootBlock bootBlk = Marshal.ByteArrayToStructureBigEndian<BootBlock>(bootBlockSectors);
             bootBlk.bootCode = new byte[bootBlockSectors.Length - 12];
@@ -216,7 +234,10 @@ namespace Aaru.Filesystems
             {
                 AaruConsole.DebugWriteLine("AmigaDOS plugin", "Searching for Rootblock in sector {0}", rootPtr);
 
-                rootBlockSector = imagePlugin.ReadSector(rootPtr);
+                errno = imagePlugin.ReadSector(rootPtr, out rootBlockSector);
+
+                if(errno != ErrorNumber.NoError)
+                    continue;
 
                 rootBlk.type = BigEndianBitConverter.ToUInt32(rootBlockSector, 0x00);
                 AaruConsole.DebugWriteLine("AmigaDOS plugin", "rootBlk.type = {0}", rootBlk.type);
@@ -240,7 +261,10 @@ namespace Aaru.Filesystems
                 if(rootPtr + sectorsPerBlock >= partition.End)
                     continue;
 
-                rootBlockSector = imagePlugin.ReadSectors(rootPtr, sectorsPerBlock);
+                errno = imagePlugin.ReadSectors(rootPtr, sectorsPerBlock, out rootBlockSector);
+
+                if(errno != ErrorNumber.NoError)
+                    continue;
 
                 // Clear checksum on sector
                 rootBlk.checksum    = BigEndianBitConverter.ToUInt32(rootBlockSector, 20);
@@ -257,8 +281,12 @@ namespace Aaru.Filesystems
                    rootBlk.checksum != rsum)
                     continue;
 
-                rootBlockSector = imagePlugin.ReadSectors(rootPtr, sectorsPerBlock);
-                rootFound       = true;
+                errno = imagePlugin.ReadSectors(rootPtr, sectorsPerBlock, out rootBlockSector);
+
+                if(errno != ErrorNumber.NoError)
+                    continue;
+
+                rootFound = true;
 
                 break;
             }

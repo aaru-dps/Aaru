@@ -77,8 +77,15 @@ namespace Aaru.Filesystems
 
             uint sectorsPerBpb = imagePlugin.Info.SectorSize < 512 ? 512 / imagePlugin.Info.SectorSize : 1;
 
-            byte[] bpbSector = imagePlugin.ReadSectors(0            + partition.Start, sectorsPerBpb);
-            byte[] fatSector = imagePlugin.ReadSector(sectorsPerBpb + partition.Start);
+            ErrorNumber errno = imagePlugin.ReadSectors(0 + partition.Start, sectorsPerBpb, out byte[] bpbSector);
+
+            if(errno != ErrorNumber.NoError)
+                return false;
+
+            errno = imagePlugin.ReadSector(sectorsPerBpb + partition.Start, out byte[] fatSector);
+
+            if(errno != ErrorNumber.NoError)
+                return false;
 
             HumanParameterBlock humanBpb = Marshal.ByteArrayToStructureBigEndian<HumanParameterBlock>(bpbSector);
 
@@ -217,8 +224,11 @@ namespace Aaru.Filesystems
             // HPFS
             if(16 + partition.Start <= partition.End)
             {
-                byte[] hpfsSbSector =
-                    imagePlugin.ReadSector(16 + partition.Start); // Seek to superblock, on logical sector 16
+                errno = imagePlugin.ReadSector(16 + partition.Start,
+                                               out byte[] hpfsSbSector); // Seek to superblock, on logical sector 16
+
+                if(errno != ErrorNumber.NoError)
+                    return false;
 
                 uint hpfsMagic1 = BitConverter.ToUInt32(hpfsSbSector, 0x000);
                 uint hpfsMagic2 = BitConverter.ToUInt32(hpfsSbSector, 0x004);
@@ -282,20 +292,34 @@ namespace Aaru.Filesystems
                 byte z80Di = bpbSector[0];
 
                 // First FAT1 sector resides at LBA 0x14
-                byte[] fat1Sector0 = imagePlugin.ReadSector(0x14);
+                errno = imagePlugin.ReadSector(0x14, out byte[] fat1Sector0);
+
+                if(errno != ErrorNumber.NoError)
+                    return false;
 
                 // First FAT2 sector resides at LBA 0x1A
-                byte[] fat2Sector0 = imagePlugin.ReadSector(0x1A);
-                bool   equalFatIds = fat1Sector0[0] == fat2Sector0[0] && fat1Sector0[1] == fat2Sector0[1];
+                errno = imagePlugin.ReadSector(0x1A, out byte[] fat2Sector0);
+
+                if(errno != ErrorNumber.NoError)
+                    return false;
+
+                bool equalFatIds = fat1Sector0[0] == fat2Sector0[0] && fat1Sector0[1] == fat2Sector0[1];
 
                 // Volume is software interleaved 2:1
                 var rootMs = new MemoryStream();
 
-                foreach(byte[] tmp in from ulong rootSector in new ulong[]
+                foreach(ulong rootSector in new ulong[]
                 {
                     0x17, 0x19, 0x1B, 0x1D, 0x1E, 0x20
-                } select imagePlugin.ReadSector(rootSector))
+                })
+                {
+                    errno = imagePlugin.ReadSector(rootSector, out byte[] tmp);
+
+                    if(errno != ErrorNumber.NoError)
+                        return false;
+
                     rootMs.Write(tmp, 0, tmp.Length);
+                }
 
                 byte[] rootDir      = rootMs.ToArray();
                 bool   validRootDir = true;
@@ -395,7 +419,10 @@ namespace Aaru.Filesystems
 
             AaruConsole.DebugWriteLine("FAT plugin", "2nd fat starts at = {0}", fat2SectorNo);
 
-            byte[] fat2Sector = imagePlugin.ReadSector(fat2SectorNo);
+            errno = imagePlugin.ReadSector(fat2SectorNo, out byte[] fat2Sector);
+
+            if(errno != ErrorNumber.NoError)
+                return false;
 
             fat2        = fat2Sector[1];
             fat3        = fat2Sector[2];
@@ -413,13 +440,17 @@ namespace Aaru.Filesystems
         {
             Encoding    = encoding ?? Encoding.GetEncoding("IBM437");
             information = "";
+            ErrorNumber errno;
 
             var sb = new StringBuilder();
             XmlFsType = new FileSystemType();
 
             uint sectorsPerBpb = imagePlugin.Info.SectorSize < 512 ? 512 / imagePlugin.Info.SectorSize : 1;
 
-            byte[] bpbSector = imagePlugin.ReadSectors(0 + partition.Start, sectorsPerBpb);
+            errno = imagePlugin.ReadSectors(0 + partition.Start, sectorsPerBpb, out byte[] bpbSector);
+
+            if(errno != ErrorNumber.NoError)
+                return;
 
             BpbKind bpbKind = DetectBpbKind(bpbSector, imagePlugin, partition, out BiosParameterBlockEbpb fakeBpb,
                                             out HumanParameterBlock humanBpb, out AtariParameterBlock atariBpb,
@@ -587,7 +618,11 @@ namespace Aaru.Filesystems
 
                     if(fat32Bpb.fsinfo_sector + partition.Start <= partition.End)
                     {
-                        byte[] fsinfoSector = imagePlugin.ReadSector(fat32Bpb.fsinfo_sector + partition.Start);
+                        errno = imagePlugin.ReadSector(fat32Bpb.fsinfo_sector + partition.Start,
+                                                       out byte[] fsinfoSector);
+
+                        if(errno != ErrorNumber.NoError)
+                            return;
 
                         FsInfoSector fsInfo = Marshal.ByteArrayToStructureLittleEndian<FsInfoSector>(fsinfoSector);
 
@@ -716,7 +751,10 @@ namespace Aaru.Filesystems
                         sectorsPerRealSector = fakeBpb.bps / imagePlugin.Info.SectorSize;
                         _fatFirstSector      = partition.Start + (_reservedSectors * sectorsPerRealSector);
 
-                        byte[] fatBytes = imagePlugin.ReadSectors(_fatFirstSector, fakeBpb.spfat);
+                        errno = imagePlugin.ReadSectors(_fatFirstSector, fakeBpb.spfat, out byte[] fatBytes);
+
+                        if(errno != ErrorNumber.NoError)
+                            return;
 
                         int pos = 0;
 
@@ -984,18 +1022,28 @@ namespace Aaru.Filesystems
             if(rootDirectorySector + partition.Start < partition.End &&
                imagePlugin.Info.XmlMediaType         != XmlMediaType.OpticalDisc)
             {
-                byte[] rootDirectory =
-                    imagePlugin.ReadSectors(rootDirectorySector + partition.Start, sectorsForRootDirectory);
+                errno = imagePlugin.ReadSectors(rootDirectorySector + partition.Start, sectorsForRootDirectory,
+                                                out byte[] rootDirectory);
+
+                if(errno != ErrorNumber.NoError)
+                    return;
 
                 if(bpbKind == BpbKind.DecRainbow)
                 {
                     var rootMs = new MemoryStream();
 
-                    foreach(byte[] tmp in from ulong rootSector in new[]
+                    foreach(ulong rootSector in new[]
                     {
                         0x17, 0x19, 0x1B, 0x1D, 0x1E, 0x20
-                    } select imagePlugin.ReadSector(rootSector))
+                    })
+                    {
+                        errno = imagePlugin.ReadSector(rootSector, out byte[] tmp);
+
+                        if(errno != ErrorNumber.NoError)
+                            return;
+
                         rootMs.Write(tmp, 0, tmp.Length);
+                    }
 
                     rootDirectory = rootMs.ToArray();
                 }

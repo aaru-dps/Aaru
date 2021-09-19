@@ -109,9 +109,12 @@ namespace Aaru.Filesystems
 
                 for(int i = 0; i < clusters.Length; i++)
                 {
-                    byte[] buffer =
+                    ErrorNumber errno =
                         _imagePlugin.ReadSectors(_firstClusterSector + ((clusters[i] - 1) * _sectorsPerCluster),
-                                                 _sectorsPerCluster);
+                                                 _sectorsPerCluster, out byte[] buffer);
+
+                    if(errno != ErrorNumber.NoError)
+                        return errno;
 
                     Array.Copy(buffer, 0, directoryBuffer, i * _bytesPerCluster, _bytesPerCluster);
                 }

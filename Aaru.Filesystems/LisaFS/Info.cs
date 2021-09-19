@@ -49,6 +49,8 @@ namespace Aaru.Filesystems.LisaFS
         /// <inheritdoc />
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
+            ErrorNumber errno;
+
             try
             {
                 if(imagePlugin.Info.ReadableSectorTags?.Contains(SectorTagType.AppleSectorTag) != true)
@@ -75,7 +77,10 @@ namespace Aaru.Filesystems.LisaFS
                     if(searchTag.FileId != FILEID_MDDF)
                         continue;
 
-                    byte[] sector = imagePlugin.ReadSector((ulong)i);
+                    errno = imagePlugin.ReadSector((ulong)i, out byte[] sector);
+
+                    if(errno != ErrorNumber.NoError)
+                        continue;
 
                     var infoMddf = new MDDF
                     {
@@ -137,7 +142,8 @@ namespace Aaru.Filesystems.LisaFS
         {
             Encoding    = new LisaRoman();
             information = "";
-            var sb = new StringBuilder();
+            var         sb = new StringBuilder();
+            ErrorNumber errno;
 
             try
             {
@@ -165,7 +171,11 @@ namespace Aaru.Filesystems.LisaFS
                     if(searchTag.FileId != FILEID_MDDF)
                         continue;
 
-                    byte[] sector   = imagePlugin.ReadSector((ulong)i);
+                    errno = imagePlugin.ReadSector((ulong)i, out byte[] sector);
+
+                    if(errno != ErrorNumber.NoError)
+                        continue;
+
                     var    infoMddf = new MDDF();
                     byte[] pString  = new byte[33];
 

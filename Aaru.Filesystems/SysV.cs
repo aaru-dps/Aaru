@@ -35,6 +35,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 using Schemas;
@@ -78,7 +79,7 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public string Name => "UNIX System V filesystem";
         /// <inheritdoc />
-        public Guid Id => new Guid("9B8D016A-8561-400E-A12A-A198283C211D");
+        public Guid Id => new("9B8D016A-8561-400E-A12A-A198283C211D");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
@@ -113,13 +114,14 @@ namespace Aaru.Filesystems
                 spc
             };
 
-            foreach(byte[] sb_sector in locations.
-                                        TakeWhile(i => (ulong)i + partition.Start + sb_size_in_sectors <
-                                                       imagePlugin.Info.Sectors).
-                                        Select(i => imagePlugin.ReadSectors((ulong)i + partition.Start,
-                                                                            sb_size_in_sectors)))
+            foreach(int i in locations.TakeWhile(i => (ulong)i + partition.Start + sb_size_in_sectors <
+                                                      imagePlugin.Info.Sectors))
             {
-                if(sb_sector.Length < 0x400)
+                ErrorNumber errno =
+                    imagePlugin.ReadSectors((ulong)i + partition.Start, sb_size_in_sectors, out byte[] sb_sector);
+
+                if(errno            != ErrorNumber.NoError ||
+                   sb_sector.Length < 0x400)
                     continue;
 
                 uint magic = BitConverter.ToUInt32(sb_sector, 0x3F8);
@@ -233,9 +235,15 @@ namespace Aaru.Filesystems
                 spc
             };
 
+            ErrorNumber errno;
+
             foreach(int i in locations)
             {
-                sb_sector = imagePlugin.ReadSectors((ulong)i + partition.Start, sb_size_in_sectors);
+                errno = imagePlugin.ReadSectors((ulong)i + partition.Start, sb_size_in_sectors, out sb_sector);
+
+                if(errno != ErrorNumber.NoError)
+                    continue;
+
                 uint magic = BitConverter.ToUInt32(sb_sector, 0x3F8);
 
                 if(magic == XENIX_MAGIC ||
@@ -384,7 +392,10 @@ namespace Aaru.Filesystems
             {
                 byte[] xenix_strings = new byte[6];
                 var    xnx_sb        = new XenixSuperBlock();
-                sb_sector = imagePlugin.ReadSectors((ulong)start + partition.Start, sb_size_in_sectors);
+                errno = imagePlugin.ReadSectors((ulong)start + partition.Start, sb_size_in_sectors, out sb_sector);
+
+                if(errno != ErrorNumber.NoError)
+                    return;
 
                 if(xenix3)
                 {
@@ -552,7 +563,11 @@ namespace Aaru.Filesystems
 
             if(sysv)
             {
-                sb_sector = imagePlugin.ReadSectors((ulong)start + partition.Start, sb_size_in_sectors);
+                errno = imagePlugin.ReadSectors((ulong)start + partition.Start, sb_size_in_sectors, out sb_sector);
+
+                if(errno != ErrorNumber.NoError)
+                    return;
+
                 byte[] sysv_strings = new byte[6];
 
                 var sysv_sb = new SystemVRelease4SuperBlock
@@ -721,7 +736,11 @@ namespace Aaru.Filesystems
 
             if(coherent)
             {
-                sb_sector = imagePlugin.ReadSectors((ulong)start + partition.Start, sb_size_in_sectors);
+                errno = imagePlugin.ReadSectors((ulong)start + partition.Start, sb_size_in_sectors, out sb_sector);
+
+                if(errno != ErrorNumber.NoError)
+                    return;
+
                 var    coh_sb      = new CoherentSuperBlock();
                 byte[] coh_strings = new byte[6];
 
@@ -794,7 +813,11 @@ namespace Aaru.Filesystems
 
             if(sys7th)
             {
-                sb_sector = imagePlugin.ReadSectors((ulong)start + partition.Start, sb_size_in_sectors);
+                errno = imagePlugin.ReadSectors((ulong)start + partition.Start, sb_size_in_sectors, out sb_sector);
+
+                if(errno != ErrorNumber.NoError)
+                    return;
+
                 var    v7_sb        = new UNIX7thEditionSuperBlock();
                 byte[] sys7_strings = new byte[6];
 

@@ -34,6 +34,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 using Schemas;
@@ -53,7 +54,7 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public string Name => "Apple HFS+ filesystem";
         /// <inheritdoc />
-        public Guid Id => new Guid("36405F8D-0D26-6EBE-436F-62F0586B4F08");
+        public Guid Id => new("36405F8D-0D26-6EBE-436F-62F0586B4F08");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
@@ -70,7 +71,10 @@ namespace Aaru.Filesystems
             if(0x800 % imagePlugin.Info.SectorSize > 0)
                 sectorsToRead++;
 
-            byte[] vhSector = imagePlugin.ReadSectors(partition.Start, sectorsToRead);
+            ErrorNumber errno = imagePlugin.ReadSectors(partition.Start, sectorsToRead, out byte[] vhSector);
+
+            if(errno != ErrorNumber.NoError)
+                return false;
 
             if(vhSector.Length < 0x800)
                 return false;
@@ -98,7 +102,11 @@ namespace Aaru.Filesystems
             else
                 hfspOffset = 0;
 
-            vhSector = imagePlugin.ReadSectors(partition.Start + hfspOffset, sectorsToRead); // Read volume header
+            errno = imagePlugin.ReadSectors(partition.Start + hfspOffset, sectorsToRead,
+                                            out vhSector); // Read volume header
+
+            if(errno != ErrorNumber.NoError)
+                return false;
 
             drSigWord = BigEndianBitConverter.ToUInt16(vhSector, 0x400);
 
@@ -122,7 +130,10 @@ namespace Aaru.Filesystems
             if(0x800 % imagePlugin.Info.SectorSize > 0)
                 sectorsToRead++;
 
-            byte[] vhSector = imagePlugin.ReadSectors(partition.Start, sectorsToRead);
+            ErrorNumber errno = imagePlugin.ReadSectors(partition.Start, sectorsToRead, out byte[] vhSector);
+
+            if(errno != ErrorNumber.NoError)
+                return;
 
             ushort drSigWord = BigEndianBitConverter.ToUInt16(vhSector, 0x400);
 
@@ -154,7 +165,11 @@ namespace Aaru.Filesystems
                 wrapped    = false;
             }
 
-            vhSector = imagePlugin.ReadSectors(partition.Start + hfspOffset, sectorsToRead); // Read volume header
+            errno = imagePlugin.ReadSectors(partition.Start + hfspOffset, sectorsToRead,
+                                            out vhSector); // Read volume header
+
+            if(errno != ErrorNumber.NoError)
+                return;
 
             vh.signature = BigEndianBitConverter.ToUInt16(vhSector, 0x400);
 

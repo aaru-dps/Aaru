@@ -56,6 +56,7 @@ namespace Aaru.Filesystems.LisaFS
         ErrorNumber ReadExtentsFile(short fileId, out ExtentFile file)
         {
             file = new ExtentFile();
+            ErrorNumber errno;
 
             if(!_mounted)
                 return ErrorNumber.AccessDenied;
@@ -113,7 +114,13 @@ namespace Aaru.Filesystems.LisaFS
             if(extTag.FileId != (short)(-1 * fileId))
                 return ErrorNumber.NoSuchFile;
 
-            byte[] sector = _mddf.fsversion == LISA_V1 ? _device.ReadSectors(ptr, 2) : _device.ReadSector(ptr);
+            byte[] sector;
+
+            errno = _mddf.fsversion == LISA_V1 ? _device.ReadSectors(ptr, 2, out sector)
+                        : _device.ReadSector(ptr, out sector);
+
+            if(errno != ErrorNumber.NoError)
+                return errno;
 
             if(sector[0] >= 32 ||
                sector[0] == 0)
@@ -286,7 +293,11 @@ namespace Aaru.Filesystems.LisaFS
                 return ErrorNumber.AccessDenied;
 
             // Searches the S-Records place using MDDF pointers
-            byte[] sectors = _device.ReadSectors(_mddf.srec_ptr + _mddf.mddf_block + _volumePrefix, _mddf.srec_len);
+            ErrorNumber errno = _device.ReadSectors(_mddf.srec_ptr + _mddf.mddf_block + _volumePrefix, _mddf.srec_len,
+                                                    out byte[] sectors);
+
+            if(errno != ErrorNumber.NoError)
+                return errno;
 
             // Each entry takes 14 bytes
             _srecords = new SRecord[sectors.Length / 14];

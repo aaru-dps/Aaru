@@ -663,7 +663,7 @@ namespace Aaru.DiscImages
         }
 
         /// <inheritdoc />
-        public byte[] ReadSector(ulong sectorAddress)
+        public ErrorNumber ReadSector(ulong sectorAddress, out byte[] buffer)
         {
             switch(_thisFooter.DiskType)
             {
@@ -676,7 +676,11 @@ namespace Aaru.DiscImages
                     uint sectorInBlock = (uint)(sectorAddress % (_thisDynamic.BlockSize / 512));
 
                     if(_blockAllocationTable[blockNumber] == 0xFFFFFFFF)
-                        return new byte[512];
+                    {
+                        buffer = new byte[512];
+
+                        return ErrorNumber.NoError;
+                    }
 
                     byte[] bitmap = new byte[_bitmapSize * 512];
 
@@ -709,19 +713,19 @@ namespace Aaru.DiscImages
 
                     // Sector has been written, read from child image
                     if(!dirty)
-                        return _parentImage.ReadSector(sectorAddress);
+                        return _parentImage.ReadSector(sectorAddress, out buffer);
                     /* Too noisy
                         AaruConsole.DebugWriteLine("VirtualPC plugin", "Sector {0} is dirty", sectorAddress);
                         */
 
-                    byte[] data         = new byte[512];
-                    uint   sectorOffset = _blockAllocationTable[blockNumber] + _bitmapSize + sectorInBlock;
+                    buffer = new byte[512];
+                    uint sectorOffset = _blockAllocationTable[blockNumber] + _bitmapSize + sectorInBlock;
                     thisStream = _thisFilter.GetDataForkStream();
 
                     thisStream.Seek(sectorOffset * 512, SeekOrigin.Begin);
-                    thisStream.Read(data, 0, 512);
+                    thisStream.Read(buffer, 0, 512);
 
-                    return data;
+                    return ErrorNumber.NoError;
 
                     /* Too noisy
                     AaruConsole.DebugWriteLine("VirtualPC plugin", "Sector {0} is clean", sectorAddress);
@@ -730,24 +734,26 @@ namespace Aaru.DiscImages
                     // Read sector from parent image
                 }
 
-                default: return ReadSectors(sectorAddress, 1);
+                default: return ReadSectors(sectorAddress, 1, out buffer);
             }
         }
 
         /// <inheritdoc />
-        public byte[] ReadSectors(ulong sectorAddress, uint length)
+        public ErrorNumber ReadSectors(ulong sectorAddress, uint length, out byte[] buffer)
         {
+            buffer = null;
+
             switch(_thisFooter.DiskType)
             {
                 case TYPE_FIXED:
                 {
-                    byte[] data       = new byte[512 * length];
+                    buffer = new byte[512 * length];
                     Stream thisStream = _thisFilter.GetDataForkStream();
 
                     thisStream.Seek((long)(sectorAddress * 512), SeekOrigin.Begin);
-                    thisStream.Read(data, 0, (int)(512   * length));
+                    thisStream.Read(buffer, 0, (int)(512 * length));
 
-                    return data;
+                    return ErrorNumber.NoError;
                 }
 
                 // Contrary to Microsoft's specifications that tell us to check the bitmap
@@ -774,7 +780,12 @@ namespace Aaru.DiscImages
                     // Asked to read more sectors than are remaining in block
                     if(length > remainingInBlock)
                     {
-                        suffix            = ReadSectors(sectorAddress + remainingInBlock, length - remainingInBlock);
+                        ErrorNumber errno = ReadSectors(sectorAddress + remainingInBlock, length - remainingInBlock,
+                                                        out suffix);
+
+                        if(errno != ErrorNumber.NoError)
+                            return errno;
+
                         sectorsToReadHere = remainingInBlock;
                     }
                     else
@@ -800,28 +811,36 @@ namespace Aaru.DiscImages
 
                     // If we needed to read from another block, join all the data
                     if(suffix == null)
-                        return prefix;
+                    {
+                        buffer = prefix;
 
-                    byte[] data = new byte[512 * length];
-                    Array.Copy(prefix, 0, data, 0, prefix.Length);
-                    Array.Copy(suffix, 0, data, prefix.Length, suffix.Length);
+                        return ErrorNumber.NoError;
+                    }
 
-                    return data;
+                    buffer = new byte[512 * length];
+                    Array.Copy(prefix, 0, buffer, 0, prefix.Length);
+                    Array.Copy(suffix, 0, buffer, prefix.Length, suffix.Length);
+
+                    return ErrorNumber.NoError;
                 }
 
                 case TYPE_DIFFERENCING:
                 {
                     // As on differencing images, each independent sector can be read from child or parent
                     // image, we must read sector one by one
-                    byte[] fullData = new byte[512 * length];
+                    buffer = new byte[512 * length];
 
                     for(ulong i = 0; i < length; i++)
                     {
-                        byte[] oneSector = ReadSector(sectorAddress + i);
-                        Array.Copy(oneSector, 0, fullData, (int)(i * 512), 512);
+                        ErrorNumber errno = ReadSector(sectorAddress + i, out byte[] oneSector);
+
+                        if(errno != ErrorNumber.NoError)
+                            return errno;
+
+                        Array.Copy(oneSector, 0, buffer, (int)(i * 512), 512);
                     }
 
-                    return fullData;
+                    return ErrorNumber.NoError;
                 }
 
                 case TYPE_DEPRECATED1:

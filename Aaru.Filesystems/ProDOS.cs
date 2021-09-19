@@ -35,6 +35,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Claunia.Encoding;
@@ -90,7 +91,7 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public string Name => "Apple ProDOS filesystem";
         /// <inheritdoc />
-        public Guid Id => new Guid("43874265-7B8A-4739-BCF7-07F80D5932BF");
+        public Guid Id => new("43874265-7B8A-4739-BCF7-07F80D5932BF");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
@@ -103,14 +104,19 @@ namespace Aaru.Filesystems
             uint multiplier = (uint)(imagePlugin.Info.SectorSize == 256 ? 2 : 1);
 
             // Blocks 0 and 1 are boot code
-            byte[] rootDirectoryKeyBlock = imagePlugin.ReadSectors((2 * multiplier) + partition.Start, multiplier);
-            bool   apmFromHddOnCd        = false;
+            ErrorNumber errno = imagePlugin.ReadSectors((2 * multiplier) + partition.Start, multiplier,
+                                                        out byte[] rootDirectoryKeyBlock);
+
+            bool apmFromHddOnCd = false;
 
             if(imagePlugin.Info.SectorSize == 2352 ||
                imagePlugin.Info.SectorSize == 2448 ||
                imagePlugin.Info.SectorSize == 2048)
             {
-                byte[] tmp = imagePlugin.ReadSectors(partition.Start, 2);
+                errno = imagePlugin.ReadSectors(partition.Start, 2, out byte[] tmp);
+
+                if(errno != ErrorNumber.NoError)
+                    return false;
 
                 foreach(int offset in new[]
                 {
@@ -171,12 +177,17 @@ namespace Aaru.Filesystems
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                    Encoding encoding)
         {
-            Encoding = encoding ?? new Apple2c();
+            Encoding    = encoding ?? new Apple2c();
+            information = "";
             var  sbInformation = new StringBuilder();
             uint multiplier    = (uint)(imagePlugin.Info.SectorSize == 256 ? 2 : 1);
 
             // Blocks 0 and 1 are boot code
-            byte[] rootDirectoryKeyBlockBytes = imagePlugin.ReadSectors((2 * multiplier) + partition.Start, multiplier);
+            ErrorNumber errno = imagePlugin.ReadSectors((2 * multiplier) + partition.Start, multiplier,
+                                                        out byte[] rootDirectoryKeyBlockBytes);
+
+            if(errno != ErrorNumber.NoError)
+                return;
 
             bool apmFromHddOnCd = false;
 
@@ -184,7 +195,10 @@ namespace Aaru.Filesystems
                imagePlugin.Info.SectorSize == 2448 ||
                imagePlugin.Info.SectorSize == 2048)
             {
-                byte[] tmp = imagePlugin.ReadSectors(partition.Start, 2);
+                errno = imagePlugin.ReadSectors(partition.Start, 2, out byte[] tmp);
+
+                if(errno != ErrorNumber.NoError)
+                    return;
 
                 foreach(int offset in new[]
                 {

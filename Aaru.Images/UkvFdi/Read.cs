@@ -186,40 +186,51 @@ namespace Aaru.DiscImages
         }
 
         /// <inheritdoc />
-        public byte[] ReadSector(ulong sectorAddress)
+        public ErrorNumber ReadSector(ulong sectorAddress, out byte[] buffer)
         {
+            buffer                                    = null;
             (ushort cylinder, byte head, byte sector) = LbaToChs(sectorAddress);
 
             if(cylinder >= _sectorsData.Length)
-                throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
+                return ErrorNumber.SectorNotFound;
 
             if(head >= _sectorsData[cylinder].Length)
-                throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
+                return ErrorNumber.SectorNotFound;
 
             if(sector > _sectorsData[cylinder][head].Length)
-                throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
+                return ErrorNumber.SectorNotFound;
 
-            return _sectorsData[cylinder][head][sector - 1];
+            buffer = _sectorsData[cylinder][head][sector - 1];
+
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />
-        public byte[] ReadSectors(ulong sectorAddress, uint length)
+        public ErrorNumber ReadSectors(ulong sectorAddress, uint length, out byte[] buffer)
         {
+            buffer = null;
+
             if(sectorAddress > _imageInfo.Sectors - 1)
-                throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
+                return ErrorNumber.OutOfRange;
 
             if(sectorAddress + length > _imageInfo.Sectors)
-                throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
+                return ErrorNumber.OutOfRange;
 
-            var buffer = new MemoryStream();
+            var ms = new MemoryStream();
 
             for(uint i = 0; i < length; i++)
             {
-                byte[] sector = ReadSector(sectorAddress + i);
-                buffer.Write(sector, 0, sector.Length);
+                ErrorNumber errno = ReadSector(sectorAddress + i, out byte[] sector);
+
+                if(errno != ErrorNumber.NoError)
+                    return errno;
+
+                ms.Write(sector, 0, sector.Length);
             }
 
-            return buffer.ToArray();
+            buffer = ms.ToArray();
+
+            return ErrorNumber.NoError;
         }
     }
 }

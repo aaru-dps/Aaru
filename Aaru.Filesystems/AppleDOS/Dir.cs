@@ -35,7 +35,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Aaru.CommonTypes.Enums;
-using Aaru.CommonTypes.Structs;
 using Aaru.Helpers;
 
 namespace Aaru.Filesystems
@@ -93,7 +92,11 @@ namespace Aaru.Filesystems
             while(lba != 0)
             {
                 _usedSectors++;
-                byte[] catSectorB = _device.ReadSector(lba);
+                ErrorNumber errno = _device.ReadSector(lba, out byte[] catSectorB);
+
+                if(errno != ErrorNumber.NoError)
+                    return errno;
+
                 _totalFileEntries += 7;
 
                 if(_debug)

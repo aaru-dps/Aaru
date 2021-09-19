@@ -33,6 +33,7 @@
 using System;
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Schemas;
 
@@ -49,7 +50,7 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public string Name => "PC Engine CD Plugin";
         /// <inheritdoc />
-        public Guid Id => new Guid("e5ee6d7c-90fa-49bd-ac89-14ef750b8af3");
+        public Guid Id => new("e5ee6d7c-90fa-49bd-ac89-14ef750b8af3");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
@@ -59,8 +60,11 @@ namespace Aaru.Filesystems
             if(2 + partition.Start >= partition.End)
                 return false;
 
-            byte[] systemDescriptor = new byte[23];
-            byte[] sector           = imagePlugin.ReadSector(1 + partition.Start);
+            byte[]      systemDescriptor = new byte[23];
+            ErrorNumber errno            = imagePlugin.ReadSector(1 + partition.Start, out byte[] sector);
+
+            if(errno != ErrorNumber.NoError)
+                return false;
 
             Array.Copy(sector, 0x20, systemDescriptor, 0, 23);
 

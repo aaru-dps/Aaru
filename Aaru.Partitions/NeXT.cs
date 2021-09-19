@@ -37,6 +37,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
@@ -64,7 +65,7 @@ namespace Aaru.Partitions
         /// <inheritdoc />
         public string Name => "NeXT Disklabel";
         /// <inheritdoc />
-        public Guid Id => new Guid("246A6D93-4F1A-1F8A-344D-50187A5513A9");
+        public Guid Id => new("246A6D93-4F1A-1F8A-344D-50187A5513A9");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
@@ -84,14 +85,19 @@ namespace Aaru.Partitions
 
             partitions = new List<Partition>();
 
-            ulong labelPosition = 0;
+            ulong       labelPosition = 0;
+            ErrorNumber errno;
 
             foreach(ulong i in new ulong[]
             {
                 0, 4, 15, 16
             }.TakeWhile(i => i + sectorOffset < imagePlugin.Info.Sectors))
             {
-                labelSector = imagePlugin.ReadSector(i + sectorOffset);
+                errno = imagePlugin.ReadSector(i + sectorOffset, out labelSector);
+
+                if(errno != ErrorNumber.NoError)
+                    continue;
+
                 uint magic = BigEndianBitConverter.ToUInt32(labelSector, 0x00);
 
                 if(magic != NEXT_MAGIC1 &&
@@ -113,7 +119,10 @@ namespace Aaru.Partitions
             if(7680 % imagePlugin.Info.SectorSize > 0)
                 sectorsToRead++;
 
-            labelSector = imagePlugin.ReadSectors(labelPosition, sectorsToRead);
+            errno = imagePlugin.ReadSectors(labelPosition, sectorsToRead, out labelSector);
+
+            if(errno != ErrorNumber.NoError)
+                return false;
 
             Label  label    = Marshal.ByteArrayToStructureBigEndian<Label>(labelSector);
             byte[] disktabB = new byte[498];

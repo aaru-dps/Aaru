@@ -35,6 +35,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
@@ -95,7 +96,7 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public string Name => "dump(8) Plugin";
         /// <inheritdoc />
-        public Guid Id => new Guid("E53B4D28-C858-4800-B092-DDAE80D361B9");
+        public Guid Id => new("E53B4D28-C858-4800-B092-DDAE80D361B9");
         /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
         /// <inheritdoc />
@@ -116,7 +117,10 @@ namespace Aaru.Filesystems
             if(Marshal.SizeOf<s_spcl>() % imagePlugin.Info.SectorSize != 0)
                 sbSize++;
 
-            byte[] sector = imagePlugin.ReadSectors(partition.Start, sbSize);
+            ErrorNumber errno = imagePlugin.ReadSectors(partition.Start, sbSize, out byte[] sector);
+
+            if(errno != ErrorNumber.NoError)
+                return false;
 
             if(sector.Length < Marshal.SizeOf<s_spcl>())
                 return false;
@@ -152,7 +156,10 @@ namespace Aaru.Filesystems
             if(Marshal.SizeOf<s_spcl>() % imagePlugin.Info.SectorSize != 0)
                 sbSize++;
 
-            byte[] sector = imagePlugin.ReadSectors(partition.Start, sbSize);
+            ErrorNumber errno = imagePlugin.ReadSectors(partition.Start, sbSize, out byte[] sector);
+
+            if(errno != ErrorNumber.NoError)
+                return;
 
             if(sector.Length < Marshal.SizeOf<s_spcl>())
                 return;

@@ -33,6 +33,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Marshal = Aaru.Helpers.Marshal;
@@ -54,7 +55,7 @@ namespace Aaru.Partitions
         /// <inheritdoc />
         public string Name => "XENIX";
         /// <inheritdoc />
-        public Guid Id => new Guid("53BE01DE-E68B-469F-A17F-EC2E4BD61CD9");
+        public Guid Id => new("53BE01DE-E68B-469F-A17F-EC2E4BD61CD9");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
@@ -67,7 +68,10 @@ namespace Aaru.Partitions
             if(42 + sectorOffset >= imagePlugin.Info.Sectors)
                 return false;
 
-            byte[] tblsector = imagePlugin.ReadSector(42 + sectorOffset);
+            ErrorNumber errno = imagePlugin.ReadSector(42 + sectorOffset, out byte[] tblsector);
+
+            if(errno != ErrorNumber.NoError)
+                return false;
 
             Partable xnxtbl = Marshal.ByteArrayToStructureLittleEndian<Partable>(tblsector);
 

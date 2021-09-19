@@ -34,6 +34,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
@@ -56,7 +57,7 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public string Name => "HP Logical Interchange Format Plugin";
         /// <inheritdoc />
-        public Guid Id => new Guid("41535647-77A5-477B-9206-DA727ACDC704");
+        public Guid Id => new("41535647-77A5-477B-9206-DA727ACDC704");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
@@ -66,8 +67,12 @@ namespace Aaru.Filesystems
             if(imagePlugin.Info.SectorSize < 256)
                 return false;
 
-            byte[]      sector = imagePlugin.ReadSector(partition.Start);
-            SystemBlock lifSb  = Marshal.ByteArrayToStructureBigEndian<SystemBlock>(sector);
+            ErrorNumber errno = imagePlugin.ReadSector(partition.Start, out byte[] sector);
+
+            if(errno != ErrorNumber.NoError)
+                return false;
+
+            SystemBlock lifSb = Marshal.ByteArrayToStructureBigEndian<SystemBlock>(sector);
             AaruConsole.DebugWriteLine("LIF plugin", "magic 0x{0:X8} (expected 0x{1:X8})", lifSb.magic, LIF_MAGIC);
 
             return lifSb.magic == LIF_MAGIC;
@@ -83,8 +88,12 @@ namespace Aaru.Filesystems
             if(imagePlugin.Info.SectorSize < 256)
                 return;
 
-            byte[]      sector = imagePlugin.ReadSector(partition.Start);
-            SystemBlock lifSb  = Marshal.ByteArrayToStructureBigEndian<SystemBlock>(sector);
+            ErrorNumber errno = imagePlugin.ReadSector(partition.Start, out byte[] sector);
+
+            if(errno != ErrorNumber.NoError)
+                return;
+
+            SystemBlock lifSb = Marshal.ByteArrayToStructureBigEndian<SystemBlock>(sector);
 
             if(lifSb.magic != LIF_MAGIC)
                 return;

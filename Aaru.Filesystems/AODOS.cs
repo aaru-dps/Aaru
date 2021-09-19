@@ -35,6 +35,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 using Schemas;
@@ -57,7 +58,7 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public string Name => "Alexander Osipov DOS file system";
         /// <inheritdoc />
-        public Guid Id => new Guid("668E5039-9DDD-442A-BE1B-A315D6E38E26");
+        public Guid Id => new("668E5039-9DDD-442A-BE1B-A315D6E38E26");
         /// <inheritdoc />
         public Encoding Encoding { get; private set; }
         /// <inheritdoc />
@@ -79,8 +80,12 @@ namespace Aaru.Filesystems
                imagePlugin.Info.Sectors != 1600)
                 return false;
 
-            byte[]    sector = imagePlugin.ReadSector(0);
-            BootBlock bb     = Marshal.ByteArrayToStructureLittleEndian<BootBlock>(sector);
+            ErrorNumber errno = imagePlugin.ReadSector(0, out byte[] sector);
+
+            if(errno != ErrorNumber.NoError)
+                return false;
+
+            BootBlock bb = Marshal.ByteArrayToStructureLittleEndian<BootBlock>(sector);
 
             return bb.identifier.SequenceEqual(_identifier);
         }
@@ -89,9 +94,14 @@ namespace Aaru.Filesystems
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                    Encoding encoding)
         {
-            Encoding = Encoding.GetEncoding("koi8-r");
-            byte[]    sector = imagePlugin.ReadSector(0);
-            BootBlock bb     = Marshal.ByteArrayToStructureLittleEndian<BootBlock>(sector);
+            information = "";
+            Encoding    = Encoding.GetEncoding("koi8-r");
+            ErrorNumber errno = imagePlugin.ReadSector(0, out byte[] sector);
+
+            if(errno != ErrorNumber.NoError)
+                return;
+
+            BootBlock bb = Marshal.ByteArrayToStructureLittleEndian<BootBlock>(sector);
 
             var sbInformation = new StringBuilder();
 

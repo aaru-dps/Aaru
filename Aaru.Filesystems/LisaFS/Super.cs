@@ -93,7 +93,11 @@ namespace Aaru.Filesystems.LisaFS
 
                     _devTagSize = _device.ReadSectorTag(i, SectorTagType.AppleSectorTag).Length;
 
-                    byte[] sector = _device.ReadSector(i);
+                    ErrorNumber errno = _device.ReadSector(i, out byte[] sector);
+
+                    if(errno != ErrorNumber.NoError)
+                        return errno;
+
                     _mddf = new MDDF();
                     byte[] pString = new byte[33];
 

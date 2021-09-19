@@ -113,8 +113,12 @@ namespace Aaru.Filesystems
 
             ulong counter = 0;
 
-            byte[] vdSector = imagePlugin.ReadSector(16 + counter + partition.Start);
-            int    xaOff    = vdSector.Length == 2336 ? 8 : 0;
+            ErrorNumber errno = imagePlugin.ReadSector(16 + counter + partition.Start, out byte[] vdSector);
+
+            if(errno != ErrorNumber.NoError)
+                return errno;
+
+            int xaOff = vdSector.Length == 2336 ? 8 : 0;
             Array.Copy(vdSector, 0x009 + xaOff, hsMagic, 0, 5);
             _highSierra = Encoding.GetString(hsMagic) == HIGH_SIERRA_MAGIC;
             int hsOff = 0;
@@ -135,7 +139,11 @@ namespace Aaru.Filesystems
 
                 // Seek to Volume Descriptor
                 AaruConsole.DebugWriteLine("ISO9660 plugin", "Reading sector {0}", 16 + counter + partition.Start);
-                byte[] vdSectorTmp = imagePlugin.ReadSector(16 + counter + partition.Start);
+                errno = imagePlugin.ReadSector(16 + counter + partition.Start, out byte[] vdSectorTmp);
+
+                if(errno != ErrorNumber.NoError)
+                    return errno;
+
                 vdSector = new byte[vdSectorTmp.Length - xaOff];
                 Array.Copy(vdSectorTmp, xaOff, vdSector, 0, vdSector.Length);
 
@@ -354,7 +362,10 @@ namespace Aaru.Filesystems
                     AaruConsole.DebugWriteLine("ISO9660 plugin",
                                                "Path table and PVD do not point to the same location for the root directory!");
 
-                    byte[] firstRootSector = ReadSector(rootLocation);
+                    errno = ReadSector(rootLocation, out byte[] firstRootSector);
+
+                    if(errno != ErrorNumber.NoError)
+                        return errno;
 
                     bool pvdWrongRoot = false;
 
@@ -384,7 +395,7 @@ namespace Aaru.Filesystems
 
                         rootLocation = _pathTable[0].Extent;
 
-                        firstRootSector = ReadSector(_pathTable[0].Extent);
+                        errno = ReadSector(_pathTable[0].Extent, out firstRootSector);
 
                         if(_highSierra)
                         {
@@ -418,7 +429,10 @@ namespace Aaru.Filesystems
             {
                 rootLocation = _pathTable[0].Extent;
 
-                byte[] firstRootSector = ReadSector(rootLocation);
+                errno = ReadSector(rootLocation, out byte[] firstRootSector);
+
+                if(errno != ErrorNumber.NoError)
+                    return errno;
 
                 CdiDirectoryRecord rootEntry =
                     Marshal.ByteArrayToStructureBigEndian<CdiDirectoryRecord>(firstRootSector);
@@ -437,7 +451,10 @@ namespace Aaru.Filesystems
             {
                 rootLocation = _pathTable[0].Extent;
 
-                byte[] firstRootSector = ReadSector(rootLocation);
+                errno = ReadSector(rootLocation, out byte[] firstRootSector);
+
+                if(errno != ErrorNumber.NoError)
+                    return errno;
 
                 if(_highSierra)
                 {
@@ -466,10 +483,14 @@ namespace Aaru.Filesystems
                 return ErrorNumber.InvalidArgument;
             }
 
-            byte[]           ipbinSector = ReadSector(partition.Start);
-            CD.IPBin?        segaCd      = CD.DecodeIPBin(ipbinSector);
-            Saturn.IPBin?    saturn      = Saturn.DecodeIPBin(ipbinSector);
-            Dreamcast.IPBin? dreamcast   = Dreamcast.DecodeIPBin(ipbinSector);
+            errno = ReadSector(partition.Start, out byte[] ipbinSector);
+
+            if(errno != ErrorNumber.NoError)
+                return errno;
+
+            CD.IPBin?        segaCd    = CD.DecodeIPBin(ipbinSector);
+            Saturn.IPBin?    saturn    = Saturn.DecodeIPBin(ipbinSector);
+            Dreamcast.IPBin? dreamcast = Dreamcast.DecodeIPBin(ipbinSector);
 
             if(_namespace == Namespace.Joliet ||
                _namespace == Namespace.Rrip)

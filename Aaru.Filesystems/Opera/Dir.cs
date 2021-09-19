@@ -125,7 +125,12 @@ namespace Aaru.Filesystems
 
             do
             {
-                byte[] data = _image.ReadSectors((ulong)(nextBlock * _volumeBlockSizeRatio), _volumeBlockSizeRatio);
+                ErrorNumber errno = _image.ReadSectors((ulong)(nextBlock * _volumeBlockSizeRatio),
+                                                       _volumeBlockSizeRatio, out byte[] data);
+
+                if(errno != ErrorNumber.NoError)
+                    break;
+
                 header    = Marshal.ByteArrayToStructureBigEndian<DirectoryHeader>(data);
                 nextBlock = header.next_block + firstBlock;
 

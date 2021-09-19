@@ -76,7 +76,8 @@ namespace Aaru.Filesystems
                 if((Marshal.SizeOf<Superblock>() + 0x200) % imagePlugin.Info.SectorSize != 0)
                     sbSize++;
 
-                byte[] sector = imagePlugin.ReadSectors(partition.Start, sbSize);
+                var errno = imagePlugin.ReadSectors(partition.Start, sbSize, out byte[] sector);
+                if(errno != ErrorNumber.NoError) return false;
 
                 if(sector.Length < Marshal.SizeOf<Superblock>())
                     return false;
@@ -101,7 +102,8 @@ namespace Aaru.Filesystems
                 if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0)
                     sbSize++;
 
-                byte[] sector = imagePlugin.ReadSectors(partition.Start + 1, sbSize);
+                var errno = imagePlugin.ReadSectors(partition.Start + 1, sbSize, out byte[] sector);
+                if(errno != ErrorNumber.NoError) return false;
 
                 if(sector.Length < Marshal.SizeOf<Superblock>())
                     return false;
@@ -139,7 +141,8 @@ namespace Aaru.Filesystems
                 if((Marshal.SizeOf<Superblock>() + 0x400) % imagePlugin.Info.SectorSize != 0)
                     sbSize++;
 
-                byte[] sector = imagePlugin.ReadSectors(partition.Start, sbSize);
+                var errno = imagePlugin.ReadSectors(partition.Start, sbSize, out byte[] sector);
+                if(errno != ErrorNumber.NoError) return;
 
                 if(sector.Length < Marshal.SizeOf<Superblock>())
                     return;
@@ -160,7 +163,8 @@ namespace Aaru.Filesystems
                 if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0)
                     sbSize++;
 
-                byte[] sector = imagePlugin.ReadSectors(partition.Start + 1, sbSize);
+                var errno = imagePlugin.ReadSectors(partition.Start + 1, sbSize, out byte[] sector);
+                if(errno != ErrorNumber.NoError) return;
 
                 if(sector.Length < Marshal.SizeOf<Superblock>())
                     return;

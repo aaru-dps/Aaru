@@ -35,6 +35,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
@@ -68,7 +69,7 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public string Name => "UNICOS Filesystem Plugin";
         /// <inheritdoc />
-        public Guid Id => new Guid("61712F04-066C-44D5-A2A0-1E44C66B33F0");
+        public Guid Id => new("61712F04-066C-44D5-A2A0-1E44C66B33F0");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
@@ -86,7 +87,10 @@ namespace Aaru.Filesystems
             if(partition.Start + sbSize >= partition.End)
                 return false;
 
-            byte[] sector = imagePlugin.ReadSectors(partition.Start, sbSize);
+            ErrorNumber errno = imagePlugin.ReadSectors(partition.Start, sbSize, out byte[] sector);
+
+            if(errno != ErrorNumber.NoError)
+                return false;
 
             if(sector.Length < Marshal.SizeOf<Superblock>())
                 return false;
@@ -114,7 +118,10 @@ namespace Aaru.Filesystems
             if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0)
                 sbSize++;
 
-            byte[] sector = imagePlugin.ReadSectors(partition.Start, sbSize);
+            ErrorNumber errno = imagePlugin.ReadSectors(partition.Start, sbSize, out byte[] sector);
+
+            if(errno != ErrorNumber.NoError)
+                return;
 
             if(sector.Length < Marshal.SizeOf<Superblock>())
                 return;

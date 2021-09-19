@@ -34,6 +34,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Reactive;
 using System.Threading;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Console;
@@ -439,7 +440,8 @@ namespace Aaru.Gui.ViewModels.Windows
             if(Fletcher32Checked)
                 enabledChecksums |= EnableChecksum.Fletcher32;
 
-            Checksum mediaChecksum = null;
+            Checksum    mediaChecksum = null;
+            ErrorNumber errno;
 
             if(opticalMediaImage?.Tracks != null)
                 try
@@ -471,7 +473,15 @@ namespace Aaru.Gui.ViewModels.Windows
                                     Progress2Text  = $"Hashing track-less sector {sector}";
                                 });
 
-                                byte[] hiddenSector = opticalMediaImage.ReadSector(i);
+                                errno = opticalMediaImage.ReadSector(i, out byte[] hiddenSector);
+
+                                if(errno != ErrorNumber.NoError)
+                                {
+                                    AaruConsole.ErrorWriteLine($"Error {errno} reading sector {i}");
+                                    _cancel = true;
+
+                                    break;
+                                }
 
                                 mediaChecksum?.Update(hiddenSector);
                             }
@@ -576,7 +586,16 @@ namespace Aaru.Gui.ViewModels.Windows
                                 Progress2Text  = $"Hashing track-less sector {sector}";
                             });
 
-                            byte[] hiddenSector = opticalMediaImage.ReadSector(i);
+                            errno = opticalMediaImage.ReadSector(i, out byte[] hiddenSector);
+
+                            if(errno != ErrorNumber.NoError)
+                            {
+                                AaruConsole.ErrorWriteLine($"Error {errno} reading sector {i}");
+                                _cancel = true;
+
+                                break;
+                            }
+
                             mediaChecksum?.Update(hiddenSector);
                         }
 
@@ -627,7 +646,15 @@ namespace Aaru.Gui.ViewModels.Windows
 
                     if(_inputFormat.Info.Sectors - doneSectors >= SECTORS_TO_READ)
                     {
-                        sector = _inputFormat.ReadSectors(doneSectors, SECTORS_TO_READ);
+                        errno = _inputFormat.ReadSectors(doneSectors, SECTORS_TO_READ, out sector);
+
+                        if(errno != ErrorNumber.NoError)
+                        {
+                            AaruConsole.ErrorWriteLine($"Error {errno} reading sector {doneSectors}");
+                            _cancel = true;
+
+                            continue;
+                        }
 
                         ulong doneSectorsToInvoke = doneSectors;
 
@@ -643,7 +670,17 @@ namespace Aaru.Gui.ViewModels.Windows
                     }
                     else
                     {
-                        sector = _inputFormat.ReadSectors(doneSectors, (uint)(_inputFormat.Info.Sectors - doneSectors));
+                        errno = _inputFormat.ReadSectors(doneSectors, (uint)(_inputFormat.Info.Sectors - doneSectors),
+                                                         out sector);
+
+                        if(errno != ErrorNumber.NoError)
+                        {
+                            AaruConsole.ErrorWriteLine($"Error {errno} reading sector {doneSectors}");
+                            _cancel = true;
+
+                            continue;
+                        }
+
                         ulong doneSectorsToInvoke = doneSectors;
 
                         await Dispatcher.UIThread.InvokeAsync(() =>

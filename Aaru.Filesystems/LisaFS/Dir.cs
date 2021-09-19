@@ -97,6 +97,8 @@ namespace Aaru.Filesystems.LisaFS
         /// <summary>Reads, interprets and caches the Catalog File</summary>
         ErrorNumber ReadCatalog()
         {
+            ErrorNumber errno;
+
             if(!_mounted)
                 return ErrorNumber.AccessDenied;
 
@@ -180,7 +182,10 @@ namespace Aaru.Filesystems.LisaFS
                    catTag.RelPage != 0)
                     continue;
 
-                firstCatalogBlock = _device.ReadSectors(i, 4);
+                errno = _device.ReadSectors(i, 4, out firstCatalogBlock);
+
+                if(errno != ErrorNumber.NoError)
+                    return errno;
 
                 break;
             }
@@ -200,7 +205,12 @@ namespace Aaru.Filesystems.LisaFS
                 if(prevTag.FileId != FILEID_CATALOG)
                     return ErrorNumber.InvalidArgument;
 
-                firstCatalogBlock  = _device.ReadSectors(prevCatalogPointer + _mddf.mddf_block + _volumePrefix, 4);
+                errno = _device.ReadSectors(prevCatalogPointer + _mddf.mddf_block + _volumePrefix, 4,
+                                            out firstCatalogBlock);
+
+                if(errno != ErrorNumber.NoError)
+                    return errno;
+
                 prevCatalogPointer = BigEndianBitConverter.ToUInt32(firstCatalogBlock, 0x7F6);
             }
 
@@ -220,7 +230,12 @@ namespace Aaru.Filesystems.LisaFS
                 if(nextTag.FileId != FILEID_CATALOG)
                     return ErrorNumber.InvalidArgument;
 
-                byte[] nextCatalogBlock = _device.ReadSectors(nextCatalogPointer + _mddf.mddf_block + _volumePrefix, 4);
+                errno = _device.ReadSectors(nextCatalogPointer + _mddf.mddf_block + _volumePrefix, 4,
+                                            out byte[] nextCatalogBlock);
+
+                if(errno != ErrorNumber.NoError)
+                    return errno;
+
                 nextCatalogPointer = BigEndianBitConverter.ToUInt32(nextCatalogBlock, 0x7FA);
                 catalogBlocks.Add(nextCatalogBlock);
             }

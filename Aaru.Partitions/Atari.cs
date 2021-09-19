@@ -35,6 +35,7 @@ using System.Collections.Generic;
 using System.Text;
 using Aaru.Checksums;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
@@ -61,7 +62,7 @@ namespace Aaru.Partitions
         /// <inheritdoc />
         public string Name => "Atari partitions";
         /// <inheritdoc />
-        public Guid Id => new Guid("d1dd0f24-ec39-4c4d-9072-be31919a3b5e");
+        public Guid Id => new("d1dd0f24-ec39-4c4d-9072-be31919a3b5e");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
@@ -70,9 +71,10 @@ namespace Aaru.Partitions
         {
             partitions = new List<Partition>();
 
-            byte[] sector = imagePlugin.ReadSector(sectorOffset);
+            ErrorNumber errno = imagePlugin.ReadSector(sectorOffset, out byte[] sector);
 
-            if(sector.Length < 512)
+            if(errno         != ErrorNumber.NoError ||
+               sector.Length < 512)
                 return false;
 
             var table = new AtariTable
@@ -253,8 +255,12 @@ namespace Aaru.Partitions
 
                         break;
                     case TYPE_EXTENDED:
-                        byte[] extendedSector = imagePlugin.ReadSector(table.Entries[i].Start);
-                        var    extendedTable  = new AtariTable();
+                        errno = imagePlugin.ReadSector(table.Entries[i].Start, out byte[] extendedSector);
+
+                        if(errno != ErrorNumber.NoError)
+                            break;
+
+                        var extendedTable = new AtariTable();
                         extendedTable.Entries = new AtariEntry[4];
 
                         for(int j = 0; j < 4; j++)

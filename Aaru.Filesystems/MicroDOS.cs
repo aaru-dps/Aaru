@@ -34,6 +34,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
@@ -60,7 +61,7 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public string Name => "MicroDOS file system";
         /// <inheritdoc />
-        public Guid Id => new Guid("9F9A364A-1A27-48A3-B730-7A7122000324");
+        public Guid Id => new("9F9A364A-1A27-48A3-B730-7A7122000324");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
@@ -73,7 +74,10 @@ namespace Aaru.Filesystems
             if(imagePlugin.Info.SectorSize < 512)
                 return false;
 
-            byte[] bk0 = imagePlugin.ReadSector(0 + partition.Start);
+            ErrorNumber errno = imagePlugin.ReadSector(0 + partition.Start, out byte[] bk0);
+
+            if(errno != ErrorNumber.NoError)
+                return false;
 
             Block0 block0 = Marshal.ByteArrayToStructureLittleEndian<Block0>(bk0);
 
@@ -89,7 +93,10 @@ namespace Aaru.Filesystems
 
             var sb = new StringBuilder();
 
-            byte[] bk0 = imagePlugin.ReadSector(0 + partition.Start);
+            ErrorNumber errno = imagePlugin.ReadSector(0 + partition.Start, out byte[] bk0);
+
+            if(errno != ErrorNumber.NoError)
+                return;
 
             Block0 block0 = Marshal.ByteArrayToStructureLittleEndian<Block0>(bk0);
 

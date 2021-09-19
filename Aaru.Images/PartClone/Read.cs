@@ -139,41 +139,47 @@ namespace Aaru.DiscImages
         }
 
         /// <inheritdoc />
-        public byte[] ReadSector(ulong sectorAddress)
+        public ErrorNumber ReadSector(ulong sectorAddress, out byte[] buffer)
         {
+            buffer = null;
+
             if(sectorAddress > _imageInfo.Sectors - 1)
-                throw new ArgumentOutOfRangeException(nameof(sectorAddress),
-                                                      $"Sector address {sectorAddress} not found");
+                return ErrorNumber.OutOfRange;
 
             if(_byteMap[sectorAddress] == 0)
-                return new byte[_pHdr.blockSize];
+            {
+                buffer = new byte[_pHdr.blockSize];
 
-            if(_sectorCache.TryGetValue(sectorAddress, out byte[] sector))
-                return sector;
+                return ErrorNumber.NoError;
+            }
+
+            if(_sectorCache.TryGetValue(sectorAddress, out buffer))
+                return ErrorNumber.NoError;
 
             long imageOff = _dataOff + (long)(BlockOffset(sectorAddress) * (_pHdr.blockSize + CRC_SIZE));
 
-            sector = new byte[_pHdr.blockSize];
+            buffer = new byte[_pHdr.blockSize];
             _imageStream.Seek(imageOff, SeekOrigin.Begin);
-            _imageStream.Read(sector, 0, (int)_pHdr.blockSize);
+            _imageStream.Read(buffer, 0, (int)_pHdr.blockSize);
 
             if(_sectorCache.Count > MAX_CACHED_SECTORS)
                 _sectorCache.Clear();
 
-            _sectorCache.Add(sectorAddress, sector);
+            _sectorCache.Add(sectorAddress, buffer);
 
-            return sector;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />
-        public byte[] ReadSectors(ulong sectorAddress, uint length)
+        public ErrorNumber ReadSectors(ulong sectorAddress, uint length, out byte[] buffer)
         {
+            buffer = null;
+
             if(sectorAddress > _imageInfo.Sectors - 1)
-                throw new ArgumentOutOfRangeException(nameof(sectorAddress),
-                                                      $"Sector address {sectorAddress} not found");
+                return ErrorNumber.OutOfRange;
 
             if(sectorAddress + length > _imageInfo.Sectors)
-                throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
+                return ErrorNumber.OutOfRange;
 
             var ms = new MemoryStream();
 
@@ -188,15 +194,25 @@ namespace Aaru.DiscImages
                 }
 
             if(allEmpty)
-                return new byte[_pHdr.blockSize * length];
+            {
+                buffer = new byte[_pHdr.blockSize * length];
+
+                return ErrorNumber.NoError;
+            }
 
             for(uint i = 0; i < length; i++)
             {
-                byte[] sector = ReadSector(sectorAddress + i);
+                ErrorNumber errno = ReadSector(sectorAddress + i, out byte[] sector);
+
+                if(errno != ErrorNumber.NoError)
+                    return errno;
+
                 ms.Write(sector, 0, sector.Length);
             }
 
-            return ms.ToArray();
+            buffer = ms.ToArray();
+
+            return ErrorNumber.NoError;
         }
     }
 }

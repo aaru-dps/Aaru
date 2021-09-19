@@ -845,7 +845,7 @@ namespace Aaru.Filesystems
                             Marshal.ByteArrayToStructureLittleEndian<ChildLink>(data, systemAreaOff,
                                                                                     Marshal.SizeOf<ChildLink>());
 
-                        byte[] childSector = ReadSector(cl.child_dir_lba);
+                        ErrorNumber errno = ReadSector(cl.child_dir_lba, out byte[] childSector);
 
                         DirectoryRecord childRecord =
                             Marshal.ByteArrayToStructureLittleEndian<DirectoryRecord>(childSector);
@@ -1054,7 +1054,7 @@ namespace Aaru.Filesystems
 
             foreach(PathTableEntryInternal tEntry in tableEntries)
             {
-                byte[] sector = ReadSector(tEntry.Extent);
+                ErrorNumber errno = ReadSector(tEntry.Extent, out byte[] sector);
 
                 CdiDirectoryRecord record =
                     Marshal.ByteArrayToStructureBigEndian<CdiDirectoryRecord>(sector, tEntry.XattrLength,
@@ -1104,7 +1104,7 @@ namespace Aaru.Filesystems
 
             foreach(PathTableEntryInternal tEntry in tableEntries)
             {
-                byte[] sector = ReadSector(tEntry.Extent);
+                ErrorNumber errno = ReadSector(tEntry.Extent, out byte[] sector);
 
                 DirectoryRecord record =
                     Marshal.ByteArrayToStructureLittleEndian<DirectoryRecord>(sector, tEntry.XattrLength,
@@ -1154,7 +1154,7 @@ namespace Aaru.Filesystems
 
             foreach(PathTableEntryInternal tEntry in tableEntries)
             {
-                byte[] sector = ReadSector(tEntry.Extent);
+                ErrorNumber errno = ReadSector(tEntry.Extent, out byte[] sector);
 
                 HighSierraDirectoryRecord record =
                     Marshal.ByteArrayToStructureLittleEndian<HighSierraDirectoryRecord>(sector, tEntry.XattrLength,

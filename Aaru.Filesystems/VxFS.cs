@@ -34,6 +34,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 using Schemas;
@@ -56,7 +57,7 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public string Name => "Veritas filesystem";
         /// <inheritdoc />
-        public Guid Id => new Guid("EC372605-7687-453C-8BEA-7E0DFF79CB03");
+        public Guid Id => new("EC372605-7687-453C-8BEA-7E0DFF79CB03");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
@@ -68,7 +69,10 @@ namespace Aaru.Filesystems
             if(partition.Start + vmfsSuperOff >= partition.End)
                 return false;
 
-            byte[] sector = imagePlugin.ReadSector(partition.Start + vmfsSuperOff);
+            ErrorNumber errno = imagePlugin.ReadSector(partition.Start + vmfsSuperOff, out byte[] sector);
+
+            if(errno != ErrorNumber.NoError)
+                return false;
 
             uint magic = BitConverter.ToUInt32(sector, 0x00);
 
@@ -79,9 +83,13 @@ namespace Aaru.Filesystems
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                    Encoding encoding)
         {
-            Encoding = encoding ?? Encoding.UTF8;
-            ulong  vmfsSuperOff = VXFS_BASE / imagePlugin.Info.SectorSize;
-            byte[] sector       = imagePlugin.ReadSector(partition.Start + vmfsSuperOff);
+            Encoding    = encoding ?? Encoding.UTF8;
+            information = "";
+            ulong       vmfsSuperOff = VXFS_BASE / imagePlugin.Info.SectorSize;
+            ErrorNumber errno        = imagePlugin.ReadSector(partition.Start + vmfsSuperOff, out byte[] sector);
+
+            if(errno != ErrorNumber.NoError)
+                return;
 
             SuperBlock vxSb = Marshal.ByteArrayToStructureLittleEndian<SuperBlock>(sector);
 

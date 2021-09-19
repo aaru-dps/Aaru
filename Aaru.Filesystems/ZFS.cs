@@ -36,6 +36,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 using Schemas;
@@ -87,7 +88,7 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public string Name => "ZFS Filesystem Plugin";
         /// <inheritdoc />
-        public Guid Id => new Guid("0750014F-A714-4692-A369-E23F6EC3659C");
+        public Guid Id => new("0750014F-A714-4692-A369-E23F6EC3659C");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
@@ -97,13 +98,18 @@ namespace Aaru.Filesystems
             if(imagePlugin.Info.SectorSize < 512)
                 return false;
 
-            byte[] sector;
-            ulong  magic;
+            byte[]      sector;
+            ulong       magic;
+            ErrorNumber errno;
 
             if(partition.Start + 31 < partition.End)
             {
-                sector = imagePlugin.ReadSector(partition.Start + 31);
-                magic  = BitConverter.ToUInt64(sector, 0x1D8);
+                errno = imagePlugin.ReadSector(partition.Start + 31, out sector);
+
+                if(errno != ErrorNumber.NoError)
+                    return false;
+
+                magic = BitConverter.ToUInt64(sector, 0x1D8);
 
                 if(magic == ZEC_MAGIC ||
                    magic == ZEC_CIGAM)
@@ -113,8 +119,12 @@ namespace Aaru.Filesystems
             if(partition.Start + 16 >= partition.End)
                 return false;
 
-            sector = imagePlugin.ReadSector(partition.Start + 16);
-            magic  = BitConverter.ToUInt64(sector, 0x1D8);
+            errno = imagePlugin.ReadSector(partition.Start + 16, out sector);
+
+            if(errno != ErrorNumber.NoError)
+                return false;
+
+            magic = BitConverter.ToUInt64(sector, 0x1D8);
 
             return magic == ZEC_MAGIC || magic == ZEC_CIGAM;
         }
@@ -126,6 +136,7 @@ namespace Aaru.Filesystems
             // ZFS is always UTF-8
             Encoding    = Encoding.UTF8;
             information = "";
+            ErrorNumber errno;
 
             if(imagePlugin.Info.SectorSize < 512)
                 return;
@@ -138,8 +149,12 @@ namespace Aaru.Filesystems
 
             if(partition.Start + 31 < partition.End)
             {
-                sector = imagePlugin.ReadSector(partition.Start + 31);
-                magic  = BitConverter.ToUInt64(sector, 0x1D8);
+                errno = imagePlugin.ReadSector(partition.Start + 31, out sector);
+
+                if(errno != ErrorNumber.NoError)
+                    return;
+
+                magic = BitConverter.ToUInt64(sector, 0x1D8);
 
                 if(magic == ZEC_MAGIC ||
                    magic == ZEC_CIGAM)
@@ -148,8 +163,12 @@ namespace Aaru.Filesystems
 
             if(partition.Start + 16 < partition.End)
             {
-                sector = imagePlugin.ReadSector(partition.Start + 16);
-                magic  = BitConverter.ToUInt64(sector, 0x1D8);
+                errno = imagePlugin.ReadSector(partition.Start + 16, out sector);
+
+                if(errno != ErrorNumber.NoError)
+                    return;
+
+                magic = BitConverter.ToUInt64(sector, 0x1D8);
 
                 if(magic == ZEC_MAGIC ||
                    magic == ZEC_CIGAM)
@@ -159,7 +178,10 @@ namespace Aaru.Filesystems
             var sb = new StringBuilder();
             sb.AppendLine("ZFS filesystem");
 
-            byte[] nvlist = imagePlugin.ReadSectors(partition.Start + nvlistOff, nvlistLen);
+            errno = imagePlugin.ReadSectors(partition.Start + nvlistOff, nvlistLen, out byte[] nvlist);
+
+            if(errno != ErrorNumber.NoError)
+                return;
 
             sb.AppendLine(!DecodeNvList(nvlist, out Dictionary<string, NVS_Item> decodedNvList)
                               ? "Could not decode nvlist" : PrintNvList(decodedNvList));

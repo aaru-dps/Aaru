@@ -35,6 +35,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
@@ -70,7 +71,7 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public string Name => "Acorn Advanced Disc Filing System";
         /// <inheritdoc />
-        public Guid Id => new Guid("BAFC1E50-9C64-4CD3-8400-80628CC27AFA");
+        public Guid Id => new("BAFC1E50-9C64-4CD3-8400-80628CC27AFA");
         /// <inheritdoc />
         public Encoding Encoding { get; private set; }
         /// <inheritdoc />
@@ -89,16 +90,25 @@ namespace Aaru.Filesystems
             if(imagePlugin.Info.SectorSize < 256)
                 return false;
 
-            byte[] sector;
+            byte[]      sector;
+            ErrorNumber errno;
 
             // ADFS-S, ADFS-M, ADFS-L, ADFS-D without partitions
             if(partition.Start == 0)
             {
-                sector = imagePlugin.ReadSector(0);
+                errno = imagePlugin.ReadSector(0, out sector);
+
+                if(errno != ErrorNumber.NoError)
+                    return false;
+
                 byte          oldChk0 = AcornMapChecksum(sector, 255);
                 OldMapSector0 oldMap0 = Marshal.ByteArrayToStructureLittleEndian<OldMapSector0>(sector);
 
-                sector = imagePlugin.ReadSector(1);
+                errno = imagePlugin.ReadSector(1, out sector);
+
+                if(errno != ErrorNumber.NoError)
+                    return false;
+
                 byte          oldChk1 = AcornMapChecksum(sector, 255);
                 OldMapSector1 oldMap1 = Marshal.ByteArrayToStructureLittleEndian<OldMapSector1>(sector);
 
@@ -110,7 +120,11 @@ namespace Aaru.Filesystems
                    oldMap1.checksum != oldChk1 &&
                    sector.Length    >= 512)
                 {
-                    sector = imagePlugin.ReadSector(0);
+                    errno = imagePlugin.ReadSector(0, out sector);
+
+                    if(errno != ErrorNumber.NoError)
+                        return false;
+
                     byte[] tmp = new byte[256];
                     Array.Copy(sector, 256, tmp, 0, 256);
                     oldChk1 = AcornMapChecksum(tmp, 255);
@@ -131,7 +145,10 @@ namespace Aaru.Filesystems
                     if(OLD_DIRECTORY_SIZE % imagePlugin.Info.SectorSize > 0)
                         sectorsToRead++;
 
-                    sector = imagePlugin.ReadSectors(sbSector, sectorsToRead);
+                    errno = imagePlugin.ReadSectors(sbSector, sectorsToRead, out sector);
+
+                    if(errno != ErrorNumber.NoError)
+                        return false;
 
                     if(sector.Length > OLD_DIRECTORY_SIZE)
                     {
@@ -165,7 +182,10 @@ namespace Aaru.Filesystems
                     if(NEW_DIRECTORY_SIZE % imagePlugin.Info.SectorSize > 0)
                         sectorsToRead++;
 
-                    sector = imagePlugin.ReadSectors(sbSector, sectorsToRead);
+                    errno = imagePlugin.ReadSectors(sbSector, sectorsToRead, out sector);
+
+                    if(errno != ErrorNumber.NoError)
+                        return false;
 
                     if(sector.Length > OLD_DIRECTORY_SIZE)
                     {
@@ -197,7 +217,11 @@ namespace Aaru.Filesystems
             // Partitioning or not, new formats follow:
             DiscRecord drSb;
 
-            sector = imagePlugin.ReadSector(partition.Start);
+            errno = imagePlugin.ReadSector(partition.Start, out sector);
+
+            if(errno != ErrorNumber.NoError)
+                return false;
+
             byte newChk = NewMapChecksum(sector);
             AaruConsole.DebugWriteLine("ADFS Plugin", "newChk = {0}", newChk);
             AaruConsole.DebugWriteLine("ADFS Plugin", "map.zoneChecksum = {0}", sector[0]);
@@ -211,8 +235,12 @@ namespace Aaru.Filesystems
             if(sbSector + partition.Start + sectorsToRead >= partition.End)
                 return false;
 
-            byte[] bootSector = imagePlugin.ReadSectors(sbSector + partition.Start, sectorsToRead);
-            int    bootChk    = 0;
+            errno = imagePlugin.ReadSectors(sbSector + partition.Start, sectorsToRead, out byte[] bootSector);
+
+            if(errno != ErrorNumber.NoError)
+                return false;
+
+            int bootChk = 0;
 
             if(bootSector.Length < 512)
                 return false;
@@ -277,6 +305,7 @@ namespace Aaru.Filesystems
             var sbInformation = new StringBuilder();
             XmlFsType   = new FileSystemType();
             information = "";
+            ErrorNumber errno;
 
             ulong  sbSector;
             byte[] sector;
@@ -286,11 +315,19 @@ namespace Aaru.Filesystems
             // ADFS-S, ADFS-M, ADFS-L, ADFS-D without partitions
             if(partition.Start == 0)
             {
-                sector = imagePlugin.ReadSector(0);
+                errno = imagePlugin.ReadSector(0, out sector);
+
+                if(errno != ErrorNumber.NoError)
+                    return;
+
                 byte          oldChk0 = AcornMapChecksum(sector, 255);
                 OldMapSector0 oldMap0 = Marshal.ByteArrayToStructureLittleEndian<OldMapSector0>(sector);
 
-                sector = imagePlugin.ReadSector(1);
+                errno = imagePlugin.ReadSector(1, out sector);
+
+                if(errno != ErrorNumber.NoError)
+                    return;
+
                 byte          oldChk1 = AcornMapChecksum(sector, 255);
                 OldMapSector1 oldMap1 = Marshal.ByteArrayToStructureLittleEndian<OldMapSector1>(sector);
 
@@ -299,7 +336,11 @@ namespace Aaru.Filesystems
                    oldMap1.checksum != oldChk1 &&
                    sector.Length    >= 512)
                 {
-                    sector = imagePlugin.ReadSector(0);
+                    errno = imagePlugin.ReadSector(0, out sector);
+
+                    if(errno != ErrorNumber.NoError)
+                        return;
+
                     byte[] tmp = new byte[256];
                     Array.Copy(sector, 256, tmp, 0, 256);
                     oldChk1 = AcornMapChecksum(tmp, 255);
@@ -336,7 +377,10 @@ namespace Aaru.Filesystems
                         if(OLD_DIRECTORY_SIZE % imagePlugin.Info.SectorSize > 0)
                             sectorsToRead++;
 
-                        sector = imagePlugin.ReadSectors(sbSector, sectorsToRead);
+                        errno = imagePlugin.ReadSectors(sbSector, sectorsToRead, out sector);
+
+                        if(errno != ErrorNumber.NoError)
+                            return;
 
                         if(sector.Length > OLD_DIRECTORY_SIZE)
                         {
@@ -360,7 +404,10 @@ namespace Aaru.Filesystems
                             if(NEW_DIRECTORY_SIZE % imagePlugin.Info.SectorSize > 0)
                                 sectorsToRead++;
 
-                            sector = imagePlugin.ReadSectors(sbSector, sectorsToRead);
+                            errno = imagePlugin.ReadSectors(sbSector, sectorsToRead, out sector);
+
+                            if(errno != ErrorNumber.NoError)
+                                return;
 
                             if(sector.Length > OLD_DIRECTORY_SIZE)
                             {
@@ -379,7 +426,10 @@ namespace Aaru.Filesystems
                                 namebytes = oldRoot.tail.name;
                             else
                             {
-                                sector = imagePlugin.ReadSectors(sbSector, sectorsToRead);
+                                errno = imagePlugin.ReadSectors(sbSector, sectorsToRead, out sector);
+
+                                if(errno != ErrorNumber.NoError)
+                                    return;
 
                                 if(sector.Length > NEW_DIRECTORY_SIZE)
                                 {
@@ -426,7 +476,11 @@ namespace Aaru.Filesystems
             // Partitioning or not, new formats follow:
             DiscRecord drSb;
 
-            sector = imagePlugin.ReadSector(partition.Start);
+            errno = imagePlugin.ReadSector(partition.Start, out sector);
+
+            if(errno != ErrorNumber.NoError)
+                return;
+
             byte newChk = NewMapChecksum(sector);
             AaruConsole.DebugWriteLine("ADFS Plugin", "newChk = {0}", newChk);
             AaruConsole.DebugWriteLine("ADFS Plugin", "map.zoneChecksum = {0}", sector[0]);
@@ -437,8 +491,12 @@ namespace Aaru.Filesystems
             if(BOOT_BLOCK_SIZE % imagePlugin.Info.SectorSize > 0)
                 sectorsToRead++;
 
-            byte[] bootSector = imagePlugin.ReadSectors(sbSector + partition.Start, sectorsToRead);
-            int    bootChk    = 0;
+            errno = imagePlugin.ReadSectors(sbSector + partition.Start, sectorsToRead, out byte[] bootSector);
+
+            if(errno != ErrorNumber.NoError)
+                return;
+
+            int bootChk = 0;
 
             for(int i = 0; i < 0x1FF; i++)
                 bootChk = (bootChk & 0xFF) + (bootChk >> 8) + bootSector[i];

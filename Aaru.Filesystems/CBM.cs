@@ -34,6 +34,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 using Claunia.Encoding;
@@ -52,7 +53,7 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public string Name => "Commodore file system";
         /// <inheritdoc />
-        public Guid Id => new Guid("D104744E-A376-450C-BAC0-1347C93F983B");
+        public Guid Id => new("D104744E-A376-450C-BAC0-1347C93F983B");
         /// <inheritdoc />
         public Encoding Encoding { get; private set; }
         /// <inheritdoc />
@@ -77,7 +78,11 @@ namespace Aaru.Filesystems
 
             if(imagePlugin.Info.Sectors == 3200)
             {
-                sector = imagePlugin.ReadSector(1560);
+                ErrorNumber errno = imagePlugin.ReadSector(1560, out sector);
+
+                if(errno != ErrorNumber.NoError)
+                    return false;
+
                 Header cbmHdr = Marshal.ByteArrayToStructureLittleEndian<Header>(sector);
 
                 if(cbmHdr.diskDosVersion == 0x44 &&
@@ -87,7 +92,11 @@ namespace Aaru.Filesystems
             }
             else
             {
-                sector = imagePlugin.ReadSector(357);
+                ErrorNumber errno = imagePlugin.ReadSector(357, out sector);
+
+                if(errno != ErrorNumber.NoError)
+                    return false;
+
                 BAM cbmBam = Marshal.ByteArrayToStructureLittleEndian<BAM>(sector);
 
                 if(cbmBam.dosVersion == 0x41                                  &&
@@ -104,7 +113,8 @@ namespace Aaru.Filesystems
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                    Encoding encoding)
         {
-            Encoding = new PETSCII();
+            Encoding    = new PETSCII();
+            information = "";
             byte[] sector;
 
             var sbInformation = new StringBuilder();
@@ -120,7 +130,11 @@ namespace Aaru.Filesystems
 
             if(imagePlugin.Info.Sectors == 3200)
             {
-                sector = imagePlugin.ReadSector(1560);
+                ErrorNumber errno = imagePlugin.ReadSector(1560, out sector);
+
+                if(errno != ErrorNumber.NoError)
+                    return;
+
                 Header cbmHdr = Marshal.ByteArrayToStructureLittleEndian<Header>(sector);
 
                 sbInformation.AppendFormat("Directory starts at track {0} sector {1}", cbmHdr.directoryTrack,
@@ -151,7 +165,11 @@ namespace Aaru.Filesystems
             }
             else
             {
-                sector = imagePlugin.ReadSector(357);
+                ErrorNumber errno = imagePlugin.ReadSector(357, out sector);
+
+                if(errno != ErrorNumber.NoError)
+                    return;
+
                 BAM cbmBam = Marshal.ByteArrayToStructureLittleEndian<BAM>(sector);
 
                 sbInformation.AppendFormat("Directory starts at track {0} sector {1}", cbmBam.directoryTrack,

@@ -36,6 +36,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
@@ -63,7 +64,7 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public string Name => "Universal Disk Format";
         /// <inheritdoc />
-        public Guid Id => new Guid("83976FEC-A91B-464B-9293-56C719461BAB");
+        public Guid Id => new("83976FEC-A91B-464B-9293-56C719461BAB");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
@@ -124,7 +125,11 @@ namespace Aaru.Filesystems
             foreach(ulong[] position in positions.Where(position => position[0] + partition.Start + position[1] <=
                                                                     partition.End && position[0] < partition.End))
             {
-                sector = imagePlugin.ReadSectors(position[0], (uint)position[1]);
+                ErrorNumber errno = imagePlugin.ReadSectors(position[0], (uint)position[1], out sector);
+
+                if(errno != ErrorNumber.NoError)
+                    continue;
+
                 anchor = Marshal.ByteArrayToStructureLittleEndian<AnchorVolumeDescriptorPointer>(sector);
 
                 AaruConsole.DebugWriteLine("UDF Plugin", "anchor.tag.tagIdentifier = {0}", anchor.tag.tagIdentifier);
@@ -177,10 +182,17 @@ namespace Aaru.Filesystems
 
             while(count < 256)
             {
-                sector =
+                ErrorNumber errno =
                     imagePlugin.
                         ReadSectors(partition.Start + (anchor.mainVolumeDescriptorSequenceExtent.location * ratio) + (count * ratio),
-                                    ratio);
+                                    ratio, out sector);
+
+                if(errno != ErrorNumber.NoError)
+                {
+                    count++;
+
+                    continue;
+                }
 
                 var  tagId    = (TagIdentifier)BitConverter.ToUInt16(sector, 0);
                 uint location = BitConverter.ToUInt32(sector, 0x0C);
@@ -211,6 +223,9 @@ namespace Aaru.Filesystems
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                    Encoding encoding)
         {
+            information = "";
+            ErrorNumber errno;
+
             // UDF is always UTF-8
             Encoding = Encoding.UTF8;
             byte[] sector;
@@ -262,7 +277,11 @@ namespace Aaru.Filesystems
 
             foreach(ulong[] position in positions)
             {
-                sector = imagePlugin.ReadSectors(position[0], (uint)position[1]);
+                errno = imagePlugin.ReadSectors(position[0], (uint)position[1], out sector);
+
+                if(errno != ErrorNumber.NoError)
+                    continue;
+
                 anchor = Marshal.ByteArrayToStructureLittleEndian<AnchorVolumeDescriptorPointer>(sector);
 
                 if(anchor.tag.tagIdentifier != TagIdentifier.AnchorVolumeDescriptorPointer ||
@@ -284,10 +303,13 @@ namespace Aaru.Filesystems
 
             while(count < 256)
             {
-                sector =
+                errno =
                     imagePlugin.
                         ReadSectors(partition.Start + (anchor.mainVolumeDescriptorSequenceExtent.location * ratio) + (count * ratio),
-                                    ratio);
+                                    ratio, out sector);
+
+                if(errno != ErrorNumber.NoError)
+                    continue;
 
                 var  tagId    = (TagIdentifier)BitConverter.ToUInt16(sector, 0);
                 uint location = BitConverter.ToUInt32(sector, 0x0C);
@@ -315,8 +337,12 @@ namespace Aaru.Filesystems
                 count++;
             }
 
-            sector = imagePlugin.ReadSectors(lvd.integritySequenceExtent.location * ratio, ratio);
-            lvid   = Marshal.ByteArrayToStructureLittleEndian<LogicalVolumeIntegrityDescriptor>(sector);
+            errno = imagePlugin.ReadSectors(lvd.integritySequenceExtent.location * ratio, ratio, out sector);
+
+            if(errno != ErrorNumber.NoError)
+                return;
+
+            lvid = Marshal.ByteArrayToStructureLittleEndian<LogicalVolumeIntegrityDescriptor>(sector);
 
             if(lvid.tag.tagIdentifier == TagIdentifier.LogicalVolumeIntegrityDescriptor &&
                lvid.tag.tagLocation   == lvd.integritySequenceExtent.location)

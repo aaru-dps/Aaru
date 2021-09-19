@@ -35,6 +35,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 using Schemas;
@@ -63,7 +64,7 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public string Name => "Xia filesystem";
         /// <inheritdoc />
-        public Guid Id => new Guid("169E1DE5-24F2-4EF6-A04D-A4B2CA66DE9D");
+        public Guid Id => new("169E1DE5-24F2-4EF6-A04D-A4B2CA66DE9D");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
@@ -79,8 +80,12 @@ namespace Aaru.Filesystems
             if(sbSizeInSectors + partition.Start >= partition.End)
                 return false;
 
-            byte[]     sbSector = imagePlugin.ReadSectors(partition.Start, sbSizeInSectors);
-            SuperBlock supblk   = Marshal.ByteArrayToStructureLittleEndian<SuperBlock>(sbSector);
+            ErrorNumber errno = imagePlugin.ReadSectors(partition.Start, sbSizeInSectors, out byte[] sbSector);
+
+            if(errno != ErrorNumber.NoError)
+                return false;
+
+            SuperBlock supblk = Marshal.ByteArrayToStructureLittleEndian<SuperBlock>(sbSector);
 
             return supblk.s_magic == XIAFS_SUPER_MAGIC;
         }
@@ -100,8 +105,12 @@ namespace Aaru.Filesystems
             if(sbSizeInBytes % imagePlugin.Info.SectorSize > 0)
                 sbSizeInSectors++;
 
-            byte[]     sbSector = imagePlugin.ReadSectors(partition.Start, sbSizeInSectors);
-            SuperBlock supblk   = Marshal.ByteArrayToStructureLittleEndian<SuperBlock>(sbSector);
+            ErrorNumber errno = imagePlugin.ReadSectors(partition.Start, sbSizeInSectors, out byte[] sbSector);
+
+            if(errno != ErrorNumber.NoError)
+                return;
+
+            SuperBlock supblk = Marshal.ByteArrayToStructureLittleEndian<SuperBlock>(sbSector);
 
             sb.AppendFormat("{0} bytes per zone", supblk.s_zone_size).AppendLine();
 

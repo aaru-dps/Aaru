@@ -34,6 +34,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 using Schemas;
@@ -56,7 +57,7 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public string Name => "QNX6 Plugin";
         /// <inheritdoc />
-        public Guid Id => new Guid("3E610EA2-4D08-4D70-8947-830CD4C74FC0");
+        public Guid Id => new("3E610EA2-4D08-4D70-8947-830CD4C74FC0");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
@@ -69,8 +70,15 @@ namespace Aaru.Filesystems
             if(partition.Start + bootSectors + sectors >= partition.End)
                 return false;
 
-            byte[] audiSector = imagePlugin.ReadSectors(partition.Start, sectors);
-            byte[] sector     = imagePlugin.ReadSectors(partition.Start + bootSectors, sectors);
+            ErrorNumber errno = imagePlugin.ReadSectors(partition.Start, sectors, out byte[] audiSector);
+
+            if(errno != ErrorNumber.NoError)
+                return false;
+
+            errno = imagePlugin.ReadSectors(partition.Start + bootSectors, sectors, out byte[] sector);
+
+            if(errno != ErrorNumber.NoError)
+                return false;
 
             if(sector.Length < QNX6_SUPER_BLOCK_SIZE)
                 return false;
@@ -92,8 +100,15 @@ namespace Aaru.Filesystems
             uint sectors     = QNX6_SUPER_BLOCK_SIZE / imagePlugin.Info.SectorSize;
             uint bootSectors = QNX6_BOOT_BLOCKS_SIZE / imagePlugin.Info.SectorSize;
 
-            byte[] audiSector = imagePlugin.ReadSectors(partition.Start, sectors);
-            byte[] sector     = imagePlugin.ReadSectors(partition.Start + bootSectors, sectors);
+            ErrorNumber errno = imagePlugin.ReadSectors(partition.Start, sectors, out byte[] audiSector);
+
+            if(errno != ErrorNumber.NoError)
+                return;
+
+            errno = imagePlugin.ReadSectors(partition.Start + bootSectors, sectors, out byte[] sector);
+
+            if(errno != ErrorNumber.NoError)
+                return;
 
             if(sector.Length < QNX6_SUPER_BLOCK_SIZE)
                 return;

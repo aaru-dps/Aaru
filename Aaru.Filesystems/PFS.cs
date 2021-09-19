@@ -34,6 +34,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 using Schemas;
@@ -65,7 +66,7 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public string Name => "Professional File System";
         /// <inheritdoc />
-        public Guid Id => new Guid("68DE769E-D957-406A-8AE4-3781CA8CDA77");
+        public Guid Id => new("68DE769E-D957-406A-8AE4-3781CA8CDA77");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
@@ -75,7 +76,10 @@ namespace Aaru.Filesystems
             if(partition.Length < 3)
                 return false;
 
-            byte[] sector = imagePlugin.ReadSector(2 + partition.Start);
+            ErrorNumber errno = imagePlugin.ReadSector(2 + partition.Start, out byte[] sector);
+
+            if(errno != ErrorNumber.NoError)
+                return false;
 
             uint magic = BigEndianBitConverter.ToUInt32(sector, 0x00);
 
@@ -87,9 +91,14 @@ namespace Aaru.Filesystems
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                    Encoding encoding)
         {
-            Encoding = encoding ?? Encoding.GetEncoding("iso-8859-1");
-            byte[]    rootBlockSector = imagePlugin.ReadSector(2 + partition.Start);
-            RootBlock rootBlock       = Marshal.ByteArrayToStructureBigEndian<RootBlock>(rootBlockSector);
+            information = "";
+            Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-1");
+            ErrorNumber errno = imagePlugin.ReadSector(2 + partition.Start, out byte[] rootBlockSector);
+
+            if(errno != ErrorNumber.NoError)
+                return;
+
+            RootBlock rootBlock = Marshal.ByteArrayToStructureBigEndian<RootBlock>(rootBlockSector);
 
             var sbInformation = new StringBuilder();
             XmlFsType = new FileSystemType();

@@ -468,21 +468,24 @@ namespace Aaru.DiscImages
         }
 
         /// <inheritdoc />
-        public byte[] ReadSector(ulong sectorAddress) => ReadSectors(sectorAddress, 1);
+        public ErrorNumber ReadSector(ulong sectorAddress, out byte[] buffer) =>
+            ReadSectors(sectorAddress, 1, out buffer);
 
         /// <inheritdoc />
         public byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag) => ReadSectorsTag(sectorAddress, 1, tag);
 
         /// <inheritdoc />
-        public byte[] ReadSectors(ulong sectorAddress, uint length)
+        public ErrorNumber ReadSectors(ulong sectorAddress, uint length, out byte[] buffer)
         {
+            buffer = null;
+
             if(sectorAddress > imageInfo.Sectors - 1)
-                throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
+                return ErrorNumber.SectorNotFound;
 
             if(sectorAddress + length > imageInfo.Sectors)
-                throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
+                return ErrorNumber.OutOfRange;
 
-            byte[] buffer = new byte[length * imageInfo.SectorSize];
+            buffer = new byte[length * imageInfo.SectorSize];
 
             if(twiggy)
                 Array.Copy(twiggyCache, (int)sectorAddress * imageInfo.SectorSize, buffer, 0,
@@ -494,7 +497,7 @@ namespace Aaru.DiscImages
                 stream.Read(buffer, 0, (int)(length * imageInfo.SectorSize));
             }
 
-            return buffer;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />
@@ -538,7 +541,11 @@ namespace Aaru.DiscImages
             if(sectorAddress + length > imageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
-            byte[] data   = ReadSectors(sectorAddress, length);
+            ErrorNumber errno = ReadSectors(sectorAddress, length, out byte[] data);
+
+            if(errno != ErrorNumber.NoError)
+                return null;
+
             byte[] tags   = ReadSectorsTag(sectorAddress, length, SectorTagType.AppleSectorTag);
             byte[] buffer = new byte[data.Length + tags.Length];
 

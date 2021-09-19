@@ -34,6 +34,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
@@ -86,7 +87,7 @@ namespace Aaru.Partitions
         /// <inheritdoc />
         public string Name => "ACT Apricot partitions";
         /// <inheritdoc />
-        public Guid Id => new Guid("8CBF5864-7B5A-47A0-8CEB-199C74FA22DE");
+        public Guid Id => new("8CBF5864-7B5A-47A0-8CEB-199C74FA22DE");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
@@ -99,9 +100,10 @@ namespace Aaru.Partitions
             if(sectorOffset != 0)
                 return false;
 
-            byte[] sector = imagePlugin.ReadSector(0);
+            ErrorNumber errno = imagePlugin.ReadSector(0, out byte[] sector);
 
-            if(sector.Length < 512)
+            if(errno         != ErrorNumber.NoError ||
+               sector.Length < 512)
                 return false;
 
             Label label = Marshal.ByteArrayToStructureLittleEndian<Label>(sector);

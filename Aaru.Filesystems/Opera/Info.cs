@@ -33,6 +33,7 @@
 using System;
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 using Schemas;
@@ -47,7 +48,10 @@ namespace Aaru.Filesystems
             if(2 + partition.Start >= partition.End)
                 return false;
 
-            byte[] sbSector = imagePlugin.ReadSector(0 + partition.Start);
+            ErrorNumber errno = imagePlugin.ReadSector(0 + partition.Start, out byte[] sbSector);
+
+            if(errno != ErrorNumber.NoError)
+                return false;
 
             byte[] syncBytes = new byte[5];
 
@@ -71,7 +75,10 @@ namespace Aaru.Filesystems
             information = "";
             var superBlockMetadata = new StringBuilder();
 
-            byte[] sbSector = imagePlugin.ReadSector(0 + partition.Start);
+            ErrorNumber errno = imagePlugin.ReadSector(0 + partition.Start, out byte[] sbSector);
+
+            if(errno != ErrorNumber.NoError)
+                return;
 
             SuperBlock sb = Marshal.ByteArrayToStructureBigEndian<SuperBlock>(sbSector);
 

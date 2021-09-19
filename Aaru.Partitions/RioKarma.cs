@@ -35,6 +35,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Marshal = Aaru.Helpers.Marshal;
 
@@ -58,9 +59,9 @@ namespace Aaru.Partitions
         public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
             partitions = null;
-            byte[] sector = imagePlugin.ReadSector(sectorOffset);
+            var errno = imagePlugin.ReadSector(sectorOffset, out byte[] sector);
 
-            if(sector.Length < 512)
+            if(errno != ErrorNumber.NoError ||sector.Length < 512)
                 return false;
 
             Table table = Marshal.ByteArrayToStructureLittleEndian<Table>(sector);

@@ -35,6 +35,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
@@ -55,7 +56,7 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public string Name => "Resilient File System plugin";
         /// <inheritdoc />
-        public Guid Id => new Guid("37766C4E-EBF5-4113-A712-B758B756ABD6");
+        public Guid Id => new("37766C4E-EBF5-4113-A712-B758B756ABD6");
         /// <inheritdoc />
         public FileSystemType XmlFsType { get; private set; }
         /// <inheritdoc />
@@ -74,7 +75,10 @@ namespace Aaru.Filesystems
             if(partition.Start + sbSize >= partition.End)
                 return false;
 
-            byte[] sector = imagePlugin.ReadSectors(partition.Start, sbSize);
+            ErrorNumber errno = imagePlugin.ReadSectors(partition.Start, sbSize, out byte[] sector);
+
+            if(errno != ErrorNumber.NoError)
+                return false;
 
             if(sector.Length < Marshal.SizeOf<VolumeHeader>())
                 return false;
@@ -100,7 +104,10 @@ namespace Aaru.Filesystems
             if(partition.Start + sbSize >= partition.End)
                 return;
 
-            byte[] sector = imagePlugin.ReadSectors(partition.Start, sbSize);
+            ErrorNumber errno = imagePlugin.ReadSectors(partition.Start, sbSize, out byte[] sector);
+
+            if(errno != ErrorNumber.NoError)
+                return;
 
             if(sector.Length < Marshal.SizeOf<VolumeHeader>())
                 return;

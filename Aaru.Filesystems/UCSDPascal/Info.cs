@@ -33,6 +33,7 @@
 using System;
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
@@ -54,7 +55,11 @@ namespace Aaru.Filesystems.UCSDPascal
             _multiplier = (uint)(imagePlugin.Info.SectorSize == 256 ? 2 : 1);
 
             // Blocks 0 and 1 are boot code
-            byte[] volBlock = imagePlugin.ReadSectors((_multiplier * 2) + partition.Start, _multiplier);
+            ErrorNumber errno =
+                imagePlugin.ReadSectors((_multiplier * 2) + partition.Start, _multiplier, out byte[] volBlock);
+
+            if(errno != ErrorNumber.NoError)
+                return false;
 
             // On Apple II, it's little endian
             // TODO: Fix
@@ -126,7 +131,11 @@ namespace Aaru.Filesystems.UCSDPascal
                 return;
 
             // Blocks 0 and 1 are boot code
-            byte[] volBlock = imagePlugin.ReadSectors((_multiplier * 2) + partition.Start, _multiplier);
+            ErrorNumber errno =
+                imagePlugin.ReadSectors((_multiplier * 2) + partition.Start, _multiplier, out byte[] volBlock);
+
+            if(errno != ErrorNumber.NoError)
+                return;
 
             // On Apple //, it's little endian
             // TODO: Fix
@@ -191,15 +200,17 @@ namespace Aaru.Filesystems.UCSDPascal
 
             information = sbInformation.ToString();
 
+            imagePlugin.ReadSectors(partition.Start, _multiplier * 2, out byte[] boot);
+
             XmlFsType = new FileSystemType
             {
-                Bootable = !ArrayHelpers.ArrayIsNullOrEmpty(imagePlugin.ReadSectors(partition.Start, _multiplier * 2)),
-                Clusters = (ulong)volEntry.Blocks,
-                ClusterSize = imagePlugin.Info.SectorSize,
-                Files = (ulong)volEntry.Files,
+                Bootable       = !ArrayHelpers.ArrayIsNullOrEmpty(boot),
+                Clusters       = (ulong)volEntry.Blocks,
+                ClusterSize    = imagePlugin.Info.SectorSize,
+                Files          = (ulong)volEntry.Files,
                 FilesSpecified = true,
-                Type = "UCSD Pascal",
-                VolumeName = StringHandlers.PascalToString(volEntry.VolumeName, Encoding)
+                Type           = "UCSD Pascal",
+                VolumeName     = StringHandlers.PascalToString(volEntry.VolumeName, Encoding)
             };
         }
     }

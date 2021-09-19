@@ -163,7 +163,7 @@ namespace Aaru.DiscImages
         }
 
         /// <inheritdoc />
-        public byte[] ReadSector(ulong sectorAddress)
+        public ErrorNumber ReadSector(ulong sectorAddress, out byte[] buffer)
         {
             int sectorNumber   = (int)(sectorAddress % _imageInfo.SectorsPerTrack) + 1;
             int trackNumber    = (int)(sectorAddress / _imageInfo.SectorsPerTrack);
@@ -177,27 +177,49 @@ namespace Aaru.DiscImages
 
                 /* if we have sector data, return that */
                 if(_sectorCache.ContainsKey((cylinderNumber, headNumber, sectorNumber)))
-                    return _sectorCache[(cylinderNumber, headNumber, sectorNumber)];
+                {
+                    buffer = _sectorCache[(cylinderNumber, headNumber, sectorNumber)];
+
+                    return ErrorNumber.NoError;
+                }
 
                 /* otherwise, return an empty sector */
-                return new byte[512];
+                buffer = new byte[512];
+
+                return ErrorNumber.NoError;
             }
 
-            return _sectorCache[(cylinderNumber, headNumber, sectorNumber)];
+            buffer = _sectorCache[(cylinderNumber, headNumber, sectorNumber)];
+
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />
-        public byte[] ReadSectors(ulong sectorAddress, uint length)
+        public ErrorNumber ReadSectors(ulong sectorAddress, uint length, out byte[] buffer)
         {
-            byte[] result = new byte[length * _imageInfo.SectorSize];
+            buffer = null;
+
+            if(sectorAddress > _imageInfo.Sectors - 1)
+                return ErrorNumber.OutOfRange;
 
             if(sectorAddress + length > _imageInfo.Sectors)
-                throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
+                return ErrorNumber.OutOfRange;
 
-            for(int i = 0; i < length; i++)
-                ReadSector(sectorAddress + (ulong)i).CopyTo(result, i * _imageInfo.SectorSize);
+            var ms = new MemoryStream();
 
-            return result;
+            for(uint i = 0; i < length; i++)
+            {
+                ErrorNumber errno = ReadSector(sectorAddress + i, out byte[] sector);
+
+                if(errno != ErrorNumber.NoError)
+                    return errno;
+
+                ms.Write(sector, 0, sector.Length);
+            }
+
+            buffer = ms.ToArray();
+
+            return ErrorNumber.NoError;
         }
 
         /// <summary>Read a whole track and cache it</summary>

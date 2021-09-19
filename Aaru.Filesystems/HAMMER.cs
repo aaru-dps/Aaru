@@ -35,6 +35,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 using Schemas;
@@ -63,7 +64,7 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public string Name => "HAMMER Filesystem";
         /// <inheritdoc />
-        public Guid Id => new Guid("91A188BF-5FD7-4677-BBD3-F59EBA9C864D");
+        public Guid Id => new("91A188BF-5FD7-4677-BBD3-F59EBA9C864D");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
@@ -78,7 +79,10 @@ namespace Aaru.Filesystems
             if(run + partition.Start >= partition.End)
                 return false;
 
-            byte[] sbSector = imagePlugin.ReadSectors(partition.Start, run);
+            ErrorNumber errno = imagePlugin.ReadSectors(partition.Start, run, out byte[] sbSector);
+
+            if(errno != ErrorNumber.NoError)
+                return false;
 
             ulong magic = BitConverter.ToUInt64(sbSector, 0);
 
@@ -101,7 +105,10 @@ namespace Aaru.Filesystems
             if(HAMMER_VOLHDR_SIZE % imagePlugin.Info.SectorSize > 0)
                 run++;
 
-            byte[] sbSector = imagePlugin.ReadSectors(partition.Start, run);
+            ErrorNumber errno = imagePlugin.ReadSectors(partition.Start, run, out byte[] sbSector);
+
+            if(errno != ErrorNumber.NoError)
+                return;
 
             ulong magic = BitConverter.ToUInt64(sbSector, 0);
 

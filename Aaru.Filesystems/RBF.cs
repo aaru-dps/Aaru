@@ -34,6 +34,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
@@ -57,7 +58,7 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public string Name => "OS-9 Random Block File Plugin";
         /// <inheritdoc />
-        public Guid Id => new Guid("E864E45B-0B52-4D29-A858-7BDFA9199FB2");
+        public Guid Id => new("E864E45B-0B52-4D29-A858-7BDFA9199FB2");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
@@ -85,7 +86,10 @@ namespace Aaru.Filesystems
                 if(partition.Start + location + sbSize >= imagePlugin.Info.Sectors)
                     break;
 
-                byte[] sector = imagePlugin.ReadSectors(partition.Start + location, sbSize);
+                ErrorNumber errno = imagePlugin.ReadSectors(partition.Start + location, sbSize, out byte[] sector);
+
+                if(errno != ErrorNumber.NoError)
+                    return false;
 
                 if(sector.Length < Marshal.SizeOf<IdSector>())
                     return false;
@@ -130,7 +134,10 @@ namespace Aaru.Filesystems
                 if(Marshal.SizeOf<IdSector>() % imagePlugin.Info.SectorSize != 0)
                     sbSize++;
 
-                byte[] sector = imagePlugin.ReadSectors(partition.Start + location, sbSize);
+                ErrorNumber errno = imagePlugin.ReadSectors(partition.Start + location, sbSize, out byte[] sector);
+
+                if(errno != ErrorNumber.NoError)
+                    return;
 
                 if(sector.Length < Marshal.SizeOf<IdSector>())
                     return;

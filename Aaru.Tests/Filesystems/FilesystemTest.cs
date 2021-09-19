@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Core;
 using NUnit.Framework;
@@ -50,7 +51,7 @@ namespace Aaru.Tests.Filesystems
 
                     Assert.IsNotNull(image, $"Image format: {testFile}");
 
-                    Assert.AreEqual(true, image.Open(inputFilter), $"Cannot open image for {testFile}");
+                    Assert.AreEqual(ErrorNumber.NoError, image.Open(inputFilter), $"Cannot open image for {testFile}");
 
                     List<string> idPlugins;
 
@@ -126,7 +127,7 @@ namespace Aaru.Tests.Filesystems
 
                     Assert.IsNotNull(image, $"Image format: {testFile}");
 
-                    Assert.AreEqual(true, image.Open(inputFilter), $"Cannot open image for {testFile}");
+                    Assert.AreEqual(ErrorNumber.NoError, image.Open(inputFilter), $"Cannot open image for {testFile}");
 
                     Assert.AreEqual(test.MediaType, image.Info.MediaType, testFile);
                     Assert.AreEqual(test.Sectors, image.Info.Sectors, testFile);
@@ -165,7 +166,7 @@ namespace Aaru.Tests.Filesystems
 
                     Assert.IsNotNull(image, $"Image format: {testFile}");
 
-                    Assert.AreEqual(true, image.Open(inputFilter), $"Cannot open image for {testFile}");
+                    Assert.AreEqual(ErrorNumber.NoError, image.Open(inputFilter), $"Cannot open image for {testFile}");
 
                     List<string> idPlugins;
 

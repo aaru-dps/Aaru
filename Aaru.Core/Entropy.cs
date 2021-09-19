@@ -35,6 +35,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Aaru.Checksums;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Console;
@@ -74,7 +75,7 @@ namespace Aaru.Core
         /// <returns>Calculated entropy</returns>
         public EntropyResults[] CalculateTracksEntropy(bool duplicatedSectors)
         {
-            List<EntropyResults> entropyResults = new List<EntropyResults>();
+            List<EntropyResults> entropyResults = new();
 
             if(!(_inputFormat is IOpticalMediaImage opticalMediaImage))
             {
@@ -103,7 +104,7 @@ namespace Aaru.Core
 
                     ulong[]      entTable              = new ulong[256];
                     ulong        trackSize             = 0;
-                    List<string> uniqueSectorsPerTrack = new List<string>();
+                    List<string> uniqueSectorsPerTrack = new();
 
                     trackEntropy.Sectors = currentTrack.EndSector - currentTrack.StartSector + 1;
 
@@ -169,7 +170,7 @@ namespace Aaru.Core
 
             ulong[]      entTable      = new ulong[256];
             ulong        diskSize      = 0;
-            List<string> uniqueSectors = new List<string>();
+            List<string> uniqueSectors = new();
 
             entropy.Sectors = _inputFormat.Info.Sectors;
             AaruConsole.WriteLine("Sectors {0}", entropy.Sectors);
@@ -178,7 +179,14 @@ namespace Aaru.Core
             for(ulong i = 0; i < entropy.Sectors; i++)
             {
                 UpdateProgressEvent?.Invoke($"Entropying sector {i + 1}", (long)(i + 1), (long)entropy.Sectors);
-                byte[] sector = _inputFormat.ReadSector(i);
+                ErrorNumber errno = _inputFormat.ReadSector(i, out byte[] sector);
+
+                if(errno != ErrorNumber.NoError)
+                {
+                    AaruConsole.ErrorWriteLine($"Error {errno} while reading sector {i}, continuing...");
+
+                    continue;
+                }
 
                 if(duplicatedSectors)
                 {

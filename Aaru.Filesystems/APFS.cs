@@ -35,6 +35,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
@@ -56,7 +57,7 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public string Name => "Apple File System";
         /// <inheritdoc />
-        public Guid Id => new Guid("A4060F9D-2909-42E2-9D95-DB31FA7EA797");
+        public Guid Id => new("A4060F9D-2909-42E2-9D95-DB31FA7EA797");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
@@ -66,7 +67,11 @@ namespace Aaru.Filesystems
             if(partition.Start >= partition.End)
                 return false;
 
-            byte[]              sector = imagePlugin.ReadSector(partition.Start);
+            ErrorNumber errno = imagePlugin.ReadSector(partition.Start, out byte[] sector);
+
+            if(errno != ErrorNumber.NoError)
+                return false;
+
             ContainerSuperBlock nxSb;
 
             try
@@ -93,7 +98,11 @@ namespace Aaru.Filesystems
             if(partition.Start >= partition.End)
                 return;
 
-            byte[]              sector = imagePlugin.ReadSector(partition.Start);
+            ErrorNumber errno = imagePlugin.ReadSector(partition.Start, out byte[] sector);
+
+            if(errno != ErrorNumber.NoError)
+                return;
+
             ContainerSuperBlock nxSb;
 
             try

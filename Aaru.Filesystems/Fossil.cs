@@ -34,6 +34,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
@@ -59,7 +60,7 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public string Name => "Fossil Filesystem Plugin";
         /// <inheritdoc />
-        public Guid Id => new Guid("932BF104-43F6-494F-973C-45EF58A51DA9");
+        public Guid Id => new("932BF104-43F6-494F-973C-45EF58A51DA9");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
@@ -71,8 +72,12 @@ namespace Aaru.Filesystems
             if(partition.Start + hdrSector > imagePlugin.Info.Sectors)
                 return false;
 
-            byte[] sector = imagePlugin.ReadSector(partition.Start + hdrSector);
-            Header hdr    = Marshal.ByteArrayToStructureBigEndian<Header>(sector);
+            ErrorNumber errno = imagePlugin.ReadSector(partition.Start + hdrSector, out byte[] sector);
+
+            if(errno != ErrorNumber.NoError)
+                return false;
+
+            Header hdr = Marshal.ByteArrayToStructureBigEndian<Header>(sector);
 
             AaruConsole.DebugWriteLine("Fossil plugin", "magic at 0x{0:X8} (expected 0x{1:X8})", hdr.magic,
                                        FOSSIL_HDR_MAGIC);
@@ -93,8 +98,12 @@ namespace Aaru.Filesystems
 
             ulong hdrSector = HEADER_POS / imagePlugin.Info.SectorSize;
 
-            byte[] sector = imagePlugin.ReadSector(partition.Start + hdrSector);
-            Header hdr    = Marshal.ByteArrayToStructureBigEndian<Header>(sector);
+            ErrorNumber errno = imagePlugin.ReadSector(partition.Start + hdrSector, out byte[] sector);
+
+            if(errno != ErrorNumber.NoError)
+                return;
+
+            Header hdr = Marshal.ByteArrayToStructureBigEndian<Header>(sector);
 
             AaruConsole.DebugWriteLine("Fossil plugin", "magic at 0x{0:X8} (expected 0x{1:X8})", hdr.magic,
                                        FOSSIL_HDR_MAGIC);
@@ -120,7 +129,7 @@ namespace Aaru.Filesystems
 
             if(sbLocation <= partition.End)
             {
-                sector = imagePlugin.ReadSector(sbLocation);
+                errno = imagePlugin.ReadSector(sbLocation, out sector);
                 SuperBlock fsb = Marshal.ByteArrayToStructureBigEndian<SuperBlock>(sector);
 
                 AaruConsole.DebugWriteLine("Fossil plugin", "magic 0x{0:X8} (expected 0x{1:X8})", fsb.magic,

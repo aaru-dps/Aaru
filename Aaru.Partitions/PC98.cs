@@ -34,6 +34,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
@@ -48,7 +49,7 @@ namespace Aaru.Partitions
         /// <inheritdoc />
         public string Name => "NEC PC-9800 partition table";
         /// <inheritdoc />
-        public Guid Id => new Guid("27333401-C7C2-447D-961C-22AD0641A09A");
+        public Guid Id => new("27333401-C7C2-447D-961C-22AD0641A09A");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
@@ -61,11 +62,16 @@ namespace Aaru.Partitions
             if(sectorOffset != 0)
                 return false;
 
-            byte[] bootSector = imagePlugin.ReadSector(0);
-            byte[] sector     = imagePlugin.ReadSector(1);
+            ErrorNumber errno = imagePlugin.ReadSector(0, out byte[] bootSector);
 
-            if(bootSector[^2] != 0x55 ||
+            if(errno          != ErrorNumber.NoError ||
+               bootSector[^2] != 0x55                ||
                bootSector[^1] != 0xAA)
+                return false;
+
+            errno = imagePlugin.ReadSector(1, out byte[] sector);
+
+            if(errno != ErrorNumber.NoError)
                 return false;
 
             // Prevent false positives with some FAT BPBs

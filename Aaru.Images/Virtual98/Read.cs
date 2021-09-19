@@ -79,24 +79,25 @@ namespace Aaru.DiscImages
         }
 
         /// <inheritdoc />
-        public byte[] ReadSector(ulong sectorAddress) => ReadSectors(sectorAddress, 1);
+        public ErrorNumber ReadSector(ulong sectorAddress, out byte[] buffer) => ReadSectors(sectorAddress, 1, out buffer);
 
         /// <inheritdoc />
-        public byte[] ReadSectors(ulong sectorAddress, uint length)
+        public ErrorNumber ReadSectors(ulong sectorAddress, uint length, out byte[] buffer)
         {
+            buffer = null;
             if(sectorAddress > _imageInfo.Sectors - 1)
-                throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
+                return ErrorNumber.OutOfRange;
 
             if(sectorAddress + length > _imageInfo.Sectors)
-                throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
+                return ErrorNumber.OutOfRange;
 
-            byte[] buffer = new byte[length * _imageInfo.SectorSize];
+            buffer = new byte[length * _imageInfo.SectorSize];
 
             Stream stream = _nhdImageFilter.GetDataForkStream();
 
             // V98 are lazy allocated
             if((long)(0xDC + (sectorAddress * _imageInfo.SectorSize)) >= stream.Length)
-                return buffer;
+                return ErrorNumber.NoError;
 
             stream.Seek((long)(0xDC + (sectorAddress * _imageInfo.SectorSize)), SeekOrigin.Begin);
 
@@ -107,7 +108,7 @@ namespace Aaru.DiscImages
 
             stream.Read(buffer, 0, toRead);
 
-            return buffer;
+            return ErrorNumber.NoError;
         }
     }
 }

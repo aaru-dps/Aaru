@@ -52,7 +52,7 @@ namespace Aaru.Tests.Filesystems
 
                     Assert.IsNotNull(image, $"Image format: {testFile}");
 
-                    Assert.AreEqual(true, image.Open(inputFilter), $"Cannot open image for {testFile}");
+                    Assert.AreEqual(ErrorNumber.NoError, image.Open(inputFilter), $"Cannot open image for {testFile}");
 
                     List<string> idPlugins;
 
@@ -306,7 +306,8 @@ namespace Aaru.Tests.Filesystems
                 ret = fs.Stat(childPath, out FileEntryInfo stat);
 
                 if(ret == ErrorNumber.NoSuchFile ||
-                   !contents.Contains(child.Key))
+                   contents is null              ||
+                   (ret == ErrorNumber.NoError && !contents.Contains(child.Key)))
                 {
                     expectedNotFound.Add(child.Key);
 
@@ -378,8 +379,9 @@ namespace Aaru.Tests.Filesystems
             Assert.IsEmpty(expectedNotFound,
                            $"Could not find the children of \"{path}\" in {testFile}: {string.Join(" ", expectedNotFound)}");
 
-            Assert.IsEmpty(contents,
-                           $"Found the following unexpected children of \"{path}\" in {testFile}: {string.Join(" ", contents)}");
+            if(contents != null)
+                Assert.IsEmpty(contents,
+                               $"Found the following unexpected children of \"{path}\" in {testFile}: {string.Join(" ", contents)}");
         }
 
         static void TestFile(IReadOnlyFilesystem fs, string path, string md5, long length, string testFile)
@@ -397,6 +399,10 @@ namespace Aaru.Tests.Filesystems
         static void TestFileXattrs(IReadOnlyFilesystem fs, string path, Dictionary<string, string> xattrs,
                                    string testFile)
         {
+            // Nothing to test
+            if(xattrs is null)
+                return;
+
             fs.ListXAttr(path, out List<string> contents);
 
             if(xattrs.Count   == 0 &&

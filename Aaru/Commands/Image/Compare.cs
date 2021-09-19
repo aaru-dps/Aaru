@@ -406,8 +406,17 @@ namespace Aaru.Commands.Image
 
                                 try
                                 {
-                                    byte[] image1Sector = input1Format.ReadSector(sector);
-                                    byte[] image2Sector = input2Format.ReadSector(sector);
+                                    errno = input1Format.ReadSector(sector, out byte[] image1Sector);
+
+                                    if(errno != ErrorNumber.NoError)
+                                        AaruConsole.
+                                            ErrorWriteLine($"Error {errno} reading sector {sector} from image 1.");
+
+                                    errno = input2Format.ReadSector(sector, out byte[] image2Sector);
+
+                                    if(errno != ErrorNumber.NoError)
+                                        AaruConsole.
+                                            ErrorWriteLine($"Error {errno} reading sector {sector} from image 1.");
 
                                     ArrayHelpers.CompareBytes(out bool different, out bool sameSize, image1Sector,
                                                               image2Sector);

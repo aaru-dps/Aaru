@@ -35,6 +35,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 using Schemas;
@@ -69,7 +70,7 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public string Name => "Be Filesystem";
         /// <inheritdoc />
-        public Guid Id => new Guid("dc8572b3-b6ad-46e4-8de9-cbe123ff6672");
+        public Guid Id => new("dc8572b3-b6ad-46e4-8de9-cbe123ff6672");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
@@ -79,7 +80,10 @@ namespace Aaru.Filesystems
             if(2 + partition.Start >= partition.End)
                 return false;
 
-            byte[] sbSector = imagePlugin.ReadSector(0 + partition.Start);
+            ErrorNumber errno = imagePlugin.ReadSector(0 + partition.Start, out byte[] sbSector);
+
+            if(errno != ErrorNumber.NoError)
+                return false;
 
             uint magic   = BitConverter.ToUInt32(sbSector, 0x20);
             uint magicBe = BigEndianBitConverter.ToUInt32(sbSector, 0x20);
@@ -98,7 +102,10 @@ namespace Aaru.Filesystems
                magicBe == BEFS_MAGIC1)
                 return true;
 
-            sbSector = imagePlugin.ReadSector(1 + partition.Start);
+            errno = imagePlugin.ReadSector(1 + partition.Start, out sbSector);
+
+            if(errno != ErrorNumber.NoError)
+                return false;
 
             magic   = BitConverter.ToUInt32(sbSector, 0x20);
             magicBe = BigEndianBitConverter.ToUInt32(sbSector, 0x20);
@@ -117,7 +124,10 @@ namespace Aaru.Filesystems
 
             var besb = new SuperBlock();
 
-            byte[] sbSector = imagePlugin.ReadSector(0 + partition.Start);
+            ErrorNumber errno = imagePlugin.ReadSector(0 + partition.Start, out byte[] sbSector);
+
+            if(errno != ErrorNumber.NoError)
+                return;
 
             bool littleEndian;
 
@@ -128,7 +138,11 @@ namespace Aaru.Filesystems
                 littleEndian = besb.magic1 == BEFS_CIGAM1;
             else
             {
-                sbSector    = imagePlugin.ReadSector(1 + partition.Start);
+                errno = imagePlugin.ReadSector(1 + partition.Start, out sbSector);
+
+                if(errno != ErrorNumber.NoError)
+                    return;
+
                 besb.magic1 = BigEndianBitConverter.ToUInt32(sbSector, 0x20);
 
                 if(besb.magic1 == BEFS_MAGIC1 ||
@@ -136,7 +150,11 @@ namespace Aaru.Filesystems
                     littleEndian = besb.magic1 == BEFS_CIGAM1;
                 else if(sbSector.Length >= 0x400)
                 {
-                    byte[] temp = imagePlugin.ReadSector(0 + partition.Start);
+                    errno = imagePlugin.ReadSector(0 + partition.Start, out byte[] temp);
+
+                    if(errno != ErrorNumber.NoError)
+                        return;
+
                     besb.magic1 = BigEndianBitConverter.ToUInt32(temp, 0x220);
 
                     if(besb.magic1 == BEFS_MAGIC1 ||

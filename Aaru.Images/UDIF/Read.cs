@@ -395,14 +395,15 @@ namespace Aaru.DiscImages
         }
 
         /// <inheritdoc />
-        public byte[] ReadSector(ulong sectorAddress)
+        public ErrorNumber ReadSector(ulong sectorAddress, out byte[] buffer)
         {
-            if(sectorAddress > _imageInfo.Sectors - 1)
-                throw new ArgumentOutOfRangeException(nameof(sectorAddress),
-                                                      $"Sector address {sectorAddress} not found");
+            buffer = null;
 
-            if(_sectorCache.TryGetValue(sectorAddress, out byte[] sector))
-                return sector;
+            if(sectorAddress > _imageInfo.Sectors - 1)
+                return ErrorNumber.OutOfRange;
+
+            if(_sectorCache.TryGetValue(sectorAddress, out buffer))
+                return ErrorNumber.NoError;
 
             var   readChunk        = new BlockChunk();
             bool  chunkFound       = false;
@@ -418,16 +419,14 @@ namespace Aaru.DiscImages
             long relOff = ((long)sectorAddress - (long)chunkStartSector) * SECTOR_SIZE;
 
             if(relOff < 0)
-                throw new ArgumentOutOfRangeException(nameof(relOff),
-                                                      $"Got a negative offset for sector {sectorAddress}. This should not happen.");
+                return ErrorNumber.InvalidArgument;
 
             if(!chunkFound)
-                throw new ArgumentOutOfRangeException(nameof(sectorAddress),
-                                                      $"Sector address {sectorAddress} not found");
+                return ErrorNumber.SectorNotFound;
 
             if((readChunk.type & CHUNK_TYPE_COMPRESSED_MASK) == CHUNK_TYPE_COMPRESSED_MASK)
             {
-                if(!_chunkCache.TryGetValue(chunkStartSector, out byte[] buffer))
+                if(!_chunkCache.TryGetValue(chunkStartSector, out byte[] data))
                 {
                     byte[] cmpBuffer = new byte[readChunk.length];
                     _imageStream.Seek((long)(readChunk.offset + _footer.dataForkOff), SeekOrigin.Begin);
@@ -450,8 +449,7 @@ namespace Aaru.DiscImages
 
                             break;
                         case CHUNK_TYPE_RLE: break;
-                        default:
-                            throw new ImageNotSupportedException($"Unsupported chunk type 0x{readChunk.type:X8} found");
+                        default:             return ErrorNumber.NotImplemented;
                     }
 
                 #if DEBUG
@@ -468,8 +466,8 @@ namespace Aaru.DiscImages
                             case CHUNK_TYPE_BZIP:
                                 tmpBuffer = new byte[_buffersize];
                                 realSize  = decStream?.Read(tmpBuffer, 0, (int)_buffersize) ?? 0;
-                                buffer    = new byte[realSize];
-                                Array.Copy(tmpBuffer, 0, buffer, 0, realSize);
+                                data      = new byte[realSize];
+                                Array.Copy(tmpBuffer, 0, data, 0, realSize);
 
                                 if(_currentChunkCacheSize + realSize > MAX_CACHE_SIZE)
                                 {
@@ -477,7 +475,7 @@ namespace Aaru.DiscImages
                                     _currentChunkCacheSize = 0;
                                 }
 
-                                _chunkCache.Add(chunkStartSector, buffer);
+                                _chunkCache.Add(chunkStartSector, data);
                                 _currentChunkCacheSize += (uint)realSize;
 
                                 break;
@@ -497,8 +495,8 @@ namespace Aaru.DiscImages
                                     realSize++;
                                 }
 
-                                buffer = new byte[realSize];
-                                Array.Copy(tmpBuffer, 0, buffer, 0, realSize);
+                                data = new byte[realSize];
+                                Array.Copy(tmpBuffer, 0, data, 0, realSize);
 
                                 break;
                         }
@@ -513,64 +511,71 @@ namespace Aaru.DiscImages
                 #endif
                 }
 
-                sector = new byte[SECTOR_SIZE];
-                Array.Copy(buffer, relOff, sector, 0, SECTOR_SIZE);
+                buffer = new byte[SECTOR_SIZE];
+                Array.Copy(data, relOff, buffer, 0, SECTOR_SIZE);
 
                 if(_sectorCache.Count >= MAX_CACHED_SECTORS)
                     _sectorCache.Clear();
 
-                _sectorCache.Add(sectorAddress, sector);
+                _sectorCache.Add(sectorAddress, buffer);
 
-                return sector;
+                return ErrorNumber.NoError;
             }
 
             switch(readChunk.type)
             {
                 case CHUNK_TYPE_NOCOPY:
                 case CHUNK_TYPE_ZERO:
-                    sector = new byte[SECTOR_SIZE];
+                    buffer = new byte[SECTOR_SIZE];
 
                     if(_sectorCache.Count >= MAX_CACHED_SECTORS)
                         _sectorCache.Clear();
 
-                    _sectorCache.Add(sectorAddress, sector);
+                    _sectorCache.Add(sectorAddress, buffer);
 
-                    return sector;
+                    return ErrorNumber.NoError;
                 case CHUNK_TYPE_COPY:
                     _imageStream.Seek((long)(readChunk.offset + (ulong)relOff + _footer.dataForkOff), SeekOrigin.Begin);
-                    sector = new byte[SECTOR_SIZE];
-                    _imageStream.Read(sector, 0, sector.Length);
+                    buffer = new byte[SECTOR_SIZE];
+                    _imageStream.Read(buffer, 0, buffer.Length);
 
                     if(_sectorCache.Count >= MAX_CACHED_SECTORS)
                         _sectorCache.Clear();
 
-                    _sectorCache.Add(sectorAddress, sector);
+                    _sectorCache.Add(sectorAddress, buffer);
 
-                    return sector;
+                    return ErrorNumber.NoError;
             }
 
-            throw new ImageNotSupportedException($"Unsupported chunk type 0x{readChunk.type:X8} found");
+            return ErrorNumber.NotImplemented;
         }
 
         /// <inheritdoc />
-        public byte[] ReadSectors(ulong sectorAddress, uint length)
+        public ErrorNumber ReadSectors(ulong sectorAddress, uint length, out byte[] buffer)
         {
+            buffer = null;
+
             if(sectorAddress > _imageInfo.Sectors - 1)
-                throw new ArgumentOutOfRangeException(nameof(sectorAddress),
-                                                      $"Sector address {sectorAddress} not found");
+                return ErrorNumber.OutOfRange;
 
             if(sectorAddress + length > _imageInfo.Sectors)
-                throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
+                return ErrorNumber.OutOfRange;
 
             var ms = new MemoryStream();
 
             for(uint i = 0; i < length; i++)
             {
-                byte[] sector = ReadSector(sectorAddress + i);
+                ErrorNumber errno = ReadSector(sectorAddress + i, out byte[] sector);
+
+                if(errno != ErrorNumber.NoError)
+                    return errno;
+
                 ms.Write(sector, 0, sector.Length);
             }
 
-            return ms.ToArray();
+            buffer = ms.ToArray();
+
+            return ErrorNumber.NoError;
         }
     }
 }

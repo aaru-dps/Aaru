@@ -133,11 +133,14 @@ namespace Aaru.Filesystems
             var    eaMs                  = new MemoryStream();
             uint[] rootDirectoryClusters = GetClusters(entryFat32Ea.start_cluster);
 
-            foreach(byte[] buffer in rootDirectoryClusters.Select(cluster =>
-                                                                      _image.
-                                                                          ReadSectors(_firstClusterSector + (cluster * _sectorsPerCluster),
-                                                                              _sectorsPerCluster)))
+            foreach(uint cluster in rootDirectoryClusters)
             {
+                ErrorNumber errno = _image.ReadSectors(_firstClusterSector + (cluster * _sectorsPerCluster),
+                                                       _sectorsPerCluster, out byte[] buffer);
+
+                if(errno != ErrorNumber.NoError)
+                    return null;
+
                 eaMs.Write(buffer, 0, buffer.Length);
             }
 
@@ -234,10 +237,16 @@ namespace Aaru.Filesystems
 
             var eaDataMs = new MemoryStream();
 
-            foreach(byte[] buffer in GetClusters(_eaDirEntry.start_cluster).
-                Select(cluster => _image.ReadSectors(_firstClusterSector + (cluster * _sectorsPerCluster),
-                                                     _sectorsPerCluster)))
+            foreach(uint cluster in GetClusters(_eaDirEntry.start_cluster))
+            {
+                ErrorNumber errno = _image.ReadSectors(_firstClusterSector + (cluster * _sectorsPerCluster),
+                                                       _sectorsPerCluster, out byte[] buffer);
+
+                if(errno != ErrorNumber.NoError)
+                    break;
+
                 eaDataMs.Write(buffer, 0, buffer.Length);
+            }
 
             _cachedEaData = eaDataMs.ToArray();
         }

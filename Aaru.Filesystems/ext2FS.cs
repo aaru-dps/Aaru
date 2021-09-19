@@ -35,6 +35,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 using Schemas;
@@ -171,7 +172,7 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public string Name => "Linux extended Filesystem 2, 3 and 4";
         /// <inheritdoc />
-        public Guid Id => new Guid("6AA91B88-150B-4A7B-AD56-F84FB2DF4184");
+        public Guid Id => new("6AA91B88-150B-4A7B-AD56-F84FB2DF4184");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
@@ -190,8 +191,13 @@ namespace Aaru.Filesystems
             if(sbSizeInBytes % imagePlugin.Info.SectorSize > 0)
                 sbSizeInSectors++;
 
-            byte[] sbSector = imagePlugin.ReadSectors(sbSectorOff + partition.Start, sbSizeInSectors);
-            byte[] sb       = new byte[sbSizeInBytes];
+            ErrorNumber errno =
+                imagePlugin.ReadSectors(sbSectorOff + partition.Start, sbSizeInSectors, out byte[] sbSector);
+
+            if(errno != ErrorNumber.NoError)
+                return false;
+
+            byte[] sb = new byte[sbSizeInBytes];
 
             if(sbOff + sbSizeInBytes > sbSector.Length)
                 return false;
@@ -225,8 +231,13 @@ namespace Aaru.Filesystems
             ulong sbSectorOff = SB_POS / imagePlugin.Info.SectorSize;
             uint  sbOff       = SB_POS % imagePlugin.Info.SectorSize;
 
-            byte[] sbSector = imagePlugin.ReadSectors(sbSectorOff + partition.Start, sbSizeInSectors);
-            byte[] sblock   = new byte[sbSizeInBytes];
+            ErrorNumber errno =
+                imagePlugin.ReadSectors(sbSectorOff + partition.Start, sbSizeInSectors, out byte[] sbSector);
+
+            if(errno != ErrorNumber.NoError)
+                return;
+
+            byte[] sblock = new byte[sbSizeInBytes];
             Array.Copy(sbSector, sbOff, sblock, 0, sbSizeInBytes);
             SuperBlock supblk = Marshal.ByteArrayToStructureLittleEndian<SuperBlock>(sblock);
 

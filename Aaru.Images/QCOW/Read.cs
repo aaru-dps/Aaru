@@ -180,27 +180,36 @@ namespace Aaru.DiscImages
         }
 
         /// <inheritdoc />
-        public byte[] ReadSector(ulong sectorAddress)
+        public ErrorNumber ReadSector(ulong sectorAddress, out byte[] buffer)
         {
+            buffer = null;
+
             if(sectorAddress > _imageInfo.Sectors - 1)
-                throw new ArgumentOutOfRangeException(nameof(sectorAddress),
-                                                      $"Sector address {sectorAddress} not found");
+                return ErrorNumber.OutOfRange;
 
             // Check cache
-            if(_sectorCache.TryGetValue(sectorAddress, out byte[] sector))
-                return sector;
+            if(_sectorCache.TryGetValue(sectorAddress, out buffer))
+                return ErrorNumber.NoError;
 
             ulong byteAddress = sectorAddress * 512;
 
             ulong l1Off = (byteAddress & _l1Mask) >> _l1Shift;
 
             if((long)l1Off >= _l1Table.LongLength)
-                throw new ArgumentOutOfRangeException(nameof(l1Off),
-                                                      $"Trying to read past L1 table, position {l1Off} of a max {_l1Table.LongLength}");
+            {
+                AaruConsole.DebugWriteLine("QCOW plugin",
+                                           $"Trying to read past L1 table, position {l1Off} of a max {_l1Table.LongLength}");
+
+                return ErrorNumber.InvalidArgument;
+            }
 
             // TODO: Implement differential images
             if(_l1Table[l1Off] == 0)
-                return new byte[512];
+            {
+                buffer = new byte[512];
+
+                return ErrorNumber.NoError;
+            }
 
             if(!_l2TableCache.TryGetValue(l1Off, out ulong[] l2Table))
             {
@@ -223,7 +232,7 @@ namespace Aaru.DiscImages
 
             ulong offset = l2Table[l2Off];
 
-            sector = new byte[512];
+            buffer = new byte[512];
 
             if(offset != 0)
             {
@@ -247,8 +256,7 @@ namespace Aaru.DiscImages
                         int read = zStream.Read(cluster, 0, _clusterSize);
 
                         if(read != _clusterSize)
-                            throw new
-                                IOException($"Unable to decompress cluster, expected {_clusterSize} bytes got {read}");
+                            return ErrorNumber.InOutError;
                     }
                     else
                     {
@@ -263,36 +271,43 @@ namespace Aaru.DiscImages
                     _clusterCache.Add(offset, cluster);
                 }
 
-                Array.Copy(cluster, (int)(byteAddress & _sectorMask), sector, 0, 512);
+                Array.Copy(cluster, (int)(byteAddress & _sectorMask), buffer, 0, 512);
             }
 
             if(_sectorCache.Count >= MAX_CACHED_SECTORS)
                 _sectorCache.Clear();
 
-            _sectorCache.Add(sectorAddress, sector);
+            _sectorCache.Add(sectorAddress, buffer);
 
-            return sector;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />
-        public byte[] ReadSectors(ulong sectorAddress, uint length)
+        public ErrorNumber ReadSectors(ulong sectorAddress, uint length, out byte[] buffer)
         {
+            buffer = null;
+
             if(sectorAddress > _imageInfo.Sectors - 1)
-                throw new ArgumentOutOfRangeException(nameof(sectorAddress),
-                                                      $"Sector address {sectorAddress} not found");
+                return ErrorNumber.OutOfRange;
 
             if(sectorAddress + length > _imageInfo.Sectors)
-                throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
+                return ErrorNumber.OutOfRange;
 
             var ms = new MemoryStream();
 
             for(uint i = 0; i < length; i++)
             {
-                byte[] sector = ReadSector(sectorAddress + i);
+                ErrorNumber errno = ReadSector(sectorAddress + i, out byte[] sector);
+
+                if(errno != ErrorNumber.NoError)
+                    return errno;
+
                 ms.Write(sector, 0, sector.Length);
             }
 
-            return ms.ToArray();
+            buffer = ms.ToArray();
+
+            return ErrorNumber.NoError;
         }
     }
 }

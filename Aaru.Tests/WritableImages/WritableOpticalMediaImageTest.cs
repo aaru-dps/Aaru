@@ -112,6 +112,7 @@ namespace Aaru.Tests.WritableImages
         public void Convert()
         {
             Environment.CurrentDirectory = DataFolder;
+            ErrorNumber errno;
 
             Assert.Multiple(() =>
             {
@@ -218,18 +219,17 @@ namespace Aaru.Tests.WritableImages
 
                             if(!useLong || useNotLong)
                             {
-                                if(sectorsToDo == 1)
-                                {
-                                    sector = inputFormat.ReadSector(doneSectors           + track.StartSector);
-                                    result = outputFormat.WriteSector(sector, doneSectors + track.StartSector);
-                                }
-                                else
-                                {
-                                    sector = inputFormat.ReadSectors(doneSectors + track.StartSector, sectorsToDo);
+                                errno = sectorsToDo == 1
+                                            ? inputFormat.ReadSector(doneSectors + track.StartSector, out sector)
+                                            : inputFormat.ReadSectors(doneSectors + track.StartSector, sectorsToDo,
+                                                                      out sector);
 
-                                    result = outputFormat.WriteSectors(sector, doneSectors + track.StartSector,
-                                                                       sectorsToDo);
-                                }
+                                Assert.AreEqual(ErrorNumber.NoError, errno);
+
+                                result = sectorsToDo == 1
+                                             ? outputFormat.WriteSector(sector, doneSectors + track.StartSector)
+                                             : outputFormat.WriteSectors(sector, doneSectors + track.StartSector,
+                                                                         sectorsToDo);
                             }
 
                             Assert.IsTrue(result,

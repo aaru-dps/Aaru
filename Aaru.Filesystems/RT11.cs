@@ -34,6 +34,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 using Claunia.Encoding;
@@ -55,7 +56,7 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public string Name => "RT-11 file system";
         /// <inheritdoc />
-        public Guid Id => new Guid("DB3E2F98-8F98-463C-8126-E937843DA024");
+        public Guid Id => new("DB3E2F98-8F98-463C-8126-E937843DA024");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
@@ -65,8 +66,11 @@ namespace Aaru.Filesystems
             if(1 + partition.Start >= partition.End)
                 return false;
 
-            byte[] magicB   = new byte[12];
-            byte[] hbSector = imagePlugin.ReadSector(1 + partition.Start);
+            byte[]      magicB = new byte[12];
+            ErrorNumber errno  = imagePlugin.ReadSector(1 + partition.Start, out byte[] hbSector);
+
+            if(errno != ErrorNumber.NoError)
+                return false;
 
             if(hbSector.Length < 512)
                 return false;
@@ -86,7 +90,10 @@ namespace Aaru.Filesystems
 
             var sb = new StringBuilder();
 
-            byte[] hbSector = imagePlugin.ReadSector(1 + partition.Start);
+            ErrorNumber errno = imagePlugin.ReadSector(1 + partition.Start, out byte[] hbSector);
+
+            if(errno != ErrorNumber.NoError)
+                return;
 
             HomeBlock homeblock = Marshal.ByteArrayToStructureLittleEndian<HomeBlock>(hbSector);
 
@@ -115,7 +122,7 @@ namespace Aaru.Filesystems
             sb.AppendFormat("Volume label: \"{0}\"", Encoding.GetString(homeblock.volname).TrimEnd()).AppendLine();
             sb.AppendFormat("Checksum: 0x{0:X4} (calculated 0x{1:X4})", homeblock.checksum, check).AppendLine();
 
-            byte[] bootBlock = imagePlugin.ReadSector(0);
+            imagePlugin.ReadSector(0, out byte[] bootBlock);
 
             XmlFsType = new FileSystemType
             {

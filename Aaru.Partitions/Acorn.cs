@@ -35,6 +35,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 using Marshal = Aaru.Helpers.Marshal;
@@ -57,7 +58,7 @@ namespace Aaru.Partitions
         /// <inheritdoc />
         public string Name => "Acorn FileCore partitions";
         /// <inheritdoc />
-        public Guid Id => new Guid("A7C8FEBE-8D00-4933-B9F3-42184C8BA808");
+        public Guid Id => new("A7C8FEBE-8D00-4933-B9F3-42184C8BA808");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
@@ -77,9 +78,10 @@ namespace Aaru.Partitions
             else
                 sbSector = ADFS_SB_POS / imagePlugin.Info.SectorSize;
 
-            byte[] sector = imagePlugin.ReadSector(sbSector);
+            ErrorNumber errno = imagePlugin.ReadSector(sbSector, out byte[] sector);
 
-            if(sector.Length < 512)
+            if(errno         != ErrorNumber.NoError ||
+               sector.Length < 512)
                 return false;
 
             AcornBootBlock bootBlock = Marshal.ByteArrayToStructureLittleEndian<AcornBootBlock>(sector);
@@ -96,7 +98,10 @@ namespace Aaru.Partitions
             if((ulong)mapSector >= imagePlugin.Info.Sectors)
                 return false;
 
-            byte[] map = imagePlugin.ReadSector((ulong)mapSector);
+            errno = imagePlugin.ReadSector((ulong)mapSector, out byte[] map);
+
+            if(errno != ErrorNumber.NoError)
+                return false;
 
             ulong counter = 0;
 

@@ -224,7 +224,10 @@ namespace Aaru.Filesystems
             while(lba != 0)
             {
                 _usedSectors++;
-                byte[] tsSectorB = _device.ReadSector(lba);
+                ErrorNumber errno = _device.ReadSector(lba, out byte[] tsSectorB);
+
+                if(errno != ErrorNumber.NoError)
+                    return errno;
 
                 if(_debug)
                     tsListMs.Write(tsSectorB, 0, tsSectorB.Length);
@@ -250,7 +253,11 @@ namespace Aaru.Filesystems
                     if(blockLba == 0)
                         break;
 
-                    byte[] fileBlock = _device.ReadSector(blockLba);
+                    errno = _device.ReadSector(blockLba, out byte[] fileBlock);
+
+                    if(errno != ErrorNumber.NoError)
+                        return errno;
+
                     fileMs.Write(fileBlock, 0, fileBlock.Length);
                     expectedBlock++;
                 }
@@ -287,7 +294,11 @@ namespace Aaru.Filesystems
             if(!_track2UsedByFiles)
                 tracksOnBoot++;
 
-            _bootBlocks  =  _device.ReadSectors(0, (uint)(tracksOnBoot * _sectorsPerTrack));
+            ErrorNumber errno = _device.ReadSectors(0, (uint)(tracksOnBoot * _sectorsPerTrack), out _bootBlocks);
+
+            if(errno != ErrorNumber.NoError)
+                return errno;
+
             _usedSectors += (uint)(_bootBlocks.Length / _vtoc.bytesPerSector);
 
             return ErrorNumber.NoError;

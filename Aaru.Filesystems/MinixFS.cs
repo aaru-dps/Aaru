@@ -76,7 +76,7 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public string Name => "Minix Filesystem";
         /// <inheritdoc />
-        public Guid Id => new Guid("FE248C3B-B727-4AE5-A39F-79EA9A07D4B3");
+        public Guid Id => new("FE248C3B-B727-4AE5-A39F-79EA9A07D4B3");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
@@ -95,7 +95,10 @@ namespace Aaru.Filesystems
             if(sector + partition.Start >= partition.End)
                 return false;
 
-            byte[] minixSbSector = imagePlugin.ReadSector(sector + partition.Start);
+            ErrorNumber errno = imagePlugin.ReadSector(sector + partition.Start, out byte[] minixSbSector);
+
+            if(errno != ErrorNumber.NoError)
+                return false;
 
             // Optical media
             if(offset > 0)
@@ -141,10 +144,13 @@ namespace Aaru.Filesystems
                 offset = 0x400;
             }
 
-            bool   minix3 = false;
-            int    filenamesize;
-            string minixVersion;
-            byte[] minixSbSector = imagePlugin.ReadSector(sector + partition.Start);
+            bool        minix3 = false;
+            int         filenamesize;
+            string      minixVersion;
+            ErrorNumber errno = imagePlugin.ReadSector(sector + partition.Start, out byte[] minixSbSector);
+
+            if(errno != ErrorNumber.NoError)
+                return;
 
             // Optical media
             if(offset > 0)

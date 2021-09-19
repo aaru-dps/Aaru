@@ -36,6 +36,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 using Schemas;
@@ -60,7 +61,7 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public string Name => "QNX4 Plugin";
         /// <inheritdoc />
-        public Guid Id => new Guid("E73A63FA-B5B0-48BF-BF82-DA5F0A8170D2");
+        public Guid Id => new("E73A63FA-B5B0-48BF-BF82-DA5F0A8170D2");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
@@ -70,7 +71,10 @@ namespace Aaru.Filesystems
             if(partition.Start + 1 >= imagePlugin.Info.Sectors)
                 return false;
 
-            byte[] sector = imagePlugin.ReadSector(partition.Start + 1);
+            ErrorNumber errno = imagePlugin.ReadSector(partition.Start + 1, out byte[] sector);
+
+            if(errno != ErrorNumber.NoError)
+                return false;
 
             if(sector.Length < 512)
                 return false;
@@ -111,7 +115,10 @@ namespace Aaru.Filesystems
         {
             Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";
-            byte[] sector = imagePlugin.ReadSector(partition.Start + 1);
+            ErrorNumber errno = imagePlugin.ReadSector(partition.Start + 1, out byte[] sector);
+
+            if(errno != ErrorNumber.NoError)
+                return;
 
             if(sector.Length < 512)
                 return;

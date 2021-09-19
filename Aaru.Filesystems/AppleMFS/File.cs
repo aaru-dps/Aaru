@@ -351,7 +351,8 @@ namespace Aaru.Filesystems
 
             do
             {
-                byte[] sectors;
+                byte[]      sectors;
+                ErrorNumber errno = ErrorNumber.NoError;
 
                 if(tags)
                     sectors =
@@ -359,10 +360,13 @@ namespace Aaru.Filesystems
                             ReadSectorsTag((ulong)((nextBlock - 2) * _sectorsPerBlock) + _volMdb.drAlBlSt + _partitionStart,
                                            (uint)_sectorsPerBlock, SectorTagType.AppleSectorTag);
                 else
-                    sectors =
+                    errno =
                         _device.
                             ReadSectors((ulong)((nextBlock - 2) * _sectorsPerBlock) + _volMdb.drAlBlSt + _partitionStart,
-                                        (uint)_sectorsPerBlock);
+                                        (uint)_sectorsPerBlock, out sectors);
+
+                if(errno != ErrorNumber.NoError)
+                    return errno;
 
                 ms.Write(sectors, 0, sectors.Length);
 

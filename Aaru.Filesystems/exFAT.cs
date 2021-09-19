@@ -36,6 +36,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
@@ -48,7 +49,7 @@ namespace Aaru.Filesystems
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
     public sealed class exFAT : IFilesystem
     {
-        readonly Guid _oemFlashParameterGuid = new Guid("0A0C7E46-3399-4021-90C8-FA6D389C4BA2");
+        readonly Guid _oemFlashParameterGuid = new("0A0C7E46-3399-4021-90C8-FA6D389C4BA2");
 
         readonly byte[] _signature =
         {
@@ -62,7 +63,7 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public string Name => "Microsoft Extended File Allocation Table";
         /// <inheritdoc />
-        public Guid Id => new Guid("8271D088-1533-4CB3-AC28-D802B68BB95C");
+        public Guid Id => new("8271D088-1533-4CB3-AC28-D802B68BB95C");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
@@ -72,7 +73,10 @@ namespace Aaru.Filesystems
             if(12 + partition.Start >= partition.End)
                 return false;
 
-            byte[] vbrSector = imagePlugin.ReadSector(0 + partition.Start);
+            ErrorNumber errno = imagePlugin.ReadSector(0 + partition.Start, out byte[] vbrSector);
+
+            if(errno != ErrorNumber.NoError)
+                return false;
 
             if(vbrSector.Length < 512)
                 return false;
@@ -92,15 +96,26 @@ namespace Aaru.Filesystems
             var sb = new StringBuilder();
             XmlFsType = new FileSystemType();
 
-            byte[]           vbrSector = imagePlugin.ReadSector(0 + partition.Start);
-            VolumeBootRecord vbr       = Marshal.ByteArrayToStructureLittleEndian<VolumeBootRecord>(vbrSector);
+            ErrorNumber errno = imagePlugin.ReadSector(0 + partition.Start, out byte[] vbrSector);
 
-            byte[] parametersSector = imagePlugin.ReadSector(9 + partition.Start);
+            if(errno != ErrorNumber.NoError)
+                return;
+
+            VolumeBootRecord vbr = Marshal.ByteArrayToStructureLittleEndian<VolumeBootRecord>(vbrSector);
+
+            errno = imagePlugin.ReadSector(9 + partition.Start, out byte[] parametersSector);
+
+            if(errno != ErrorNumber.NoError)
+                return;
 
             OemParameterTable parametersTable =
                 Marshal.ByteArrayToStructureLittleEndian<OemParameterTable>(parametersSector);
 
-            byte[]         chkSector = imagePlugin.ReadSector(11 + partition.Start);
+            errno = imagePlugin.ReadSector(11 + partition.Start, out byte[] chkSector);
+
+            if(errno != ErrorNumber.NoError)
+                return;
+
             ChecksumSector chksector = Marshal.ByteArrayToStructureLittleEndian<ChecksumSector>(chkSector);
 
             sb.AppendLine("Microsoft exFAT");

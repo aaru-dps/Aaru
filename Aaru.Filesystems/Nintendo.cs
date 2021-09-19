@@ -33,6 +33,7 @@
 using System;
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
@@ -51,7 +52,7 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public string Name => "Nintendo optical filesystems";
         /// <inheritdoc />
-        public Guid Id => new Guid("4675fcb4-4418-4288-9e4a-33d6a4ac1126");
+        public Guid Id => new("4675fcb4-4418-4288-9e4a-33d6a4ac1126");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
@@ -64,7 +65,10 @@ namespace Aaru.Filesystems
             if(imagePlugin.Info.Sectors * imagePlugin.Info.SectorSize < 0x50000)
                 return false;
 
-            byte[] header = imagePlugin.ReadSectors(0, 0x50000 / imagePlugin.Info.SectorSize);
+            ErrorNumber errno = imagePlugin.ReadSectors(0, 0x50000 / imagePlugin.Info.SectorSize, out byte[] header);
+
+            if(errno != ErrorNumber.NoError)
+                return false;
 
             uint magicGc  = BigEndianBitConverter.ToUInt32(header, 0x1C);
             uint magicWii = BigEndianBitConverter.ToUInt32(header, 0x18);
@@ -83,7 +87,10 @@ namespace Aaru.Filesystems
 
             var fields = new NintendoFields();
 
-            byte[] header = imagePlugin.ReadSectors(0, 0x50000 / imagePlugin.Info.SectorSize);
+            ErrorNumber errno = imagePlugin.ReadSectors(0, 0x50000 / imagePlugin.Info.SectorSize, out byte[] header);
+
+            if(errno != ErrorNumber.NoError)
+                return;
 
             bool wii = false;
 

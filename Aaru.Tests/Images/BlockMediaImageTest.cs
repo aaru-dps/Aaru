@@ -69,6 +69,7 @@ namespace Aaru.Tests.Images
         public void Hashes()
         {
             Environment.CurrentDirectory = DataFolder;
+            ErrorNumber errno;
 
             Assert.Multiple(() =>
             {
@@ -106,15 +107,18 @@ namespace Aaru.Tests.Images
 
                         if(image.Info.Sectors - doneSectors >= SECTORS_TO_READ)
                         {
-                            sector      =  image.ReadSectors(doneSectors, SECTORS_TO_READ);
+                            errno       =  image.ReadSectors(doneSectors, SECTORS_TO_READ, out sector);
                             doneSectors += SECTORS_TO_READ;
                         }
                         else
                         {
-                            sector      =  image.ReadSectors(doneSectors, (uint)(image.Info.Sectors - doneSectors));
+                            errno = image.ReadSectors(doneSectors, (uint)(image.Info.Sectors - doneSectors),
+                                                      out sector);
+
                             doneSectors += image.Info.Sectors - doneSectors;
                         }
 
+                        Assert.AreEqual(ErrorNumber.NoError, errno);
                         ctx.Update(sector);
                     }
 

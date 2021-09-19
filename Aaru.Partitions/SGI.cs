@@ -34,6 +34,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
@@ -54,7 +55,7 @@ namespace Aaru.Partitions
         /// <inheritdoc />
         public string Name => "SGI Disk Volume Header";
         /// <inheritdoc />
-        public Guid Id => new Guid("AEF5AB45-4880-4CE8-8735-F0A402E2E5F2");
+        public Guid Id => new("AEF5AB45-4880-4CE8-8735-F0A402E2E5F2");
         /// <inheritdoc />
         public string Author => "Natalia Portillo";
 
@@ -64,9 +65,10 @@ namespace Aaru.Partitions
         {
             partitions = new List<CommonTypes.Partition>();
 
-            byte[] sector = imagePlugin.ReadSector(sectorOffset);
+            ErrorNumber errno = imagePlugin.ReadSector(sectorOffset, out byte[] sector);
 
-            if(sector.Length < 512)
+            if(errno         != ErrorNumber.NoError ||
+               sector.Length < 512)
                 return false;
 
             Label dvh = Marshal.ByteArrayToStructureBigEndian<Label>(sector);
