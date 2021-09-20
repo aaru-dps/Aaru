@@ -913,7 +913,8 @@ namespace Aaru.DiscImages
         }
 
         /// <inheritdoc />
-        public ErrorNumber ReadSector(ulong sectorAddress, out byte[] buffer) => ReadSectors(sectorAddress, 1, out buffer);
+        public ErrorNumber ReadSector(ulong sectorAddress, out byte[] buffer) =>
+            ReadSectors(sectorAddress, 1, out buffer);
 
         /// <inheritdoc />
         public byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag) => ReadSectorsTag(sectorAddress, 1, tag);
@@ -929,12 +930,13 @@ namespace Aaru.DiscImages
         public ErrorNumber ReadSectors(ulong sectorAddress, uint length, out byte[] buffer)
         {
             buffer = null;
+
             foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetmap where sectorAddress >= kvp.Value
                                                      from cdrdaoTrack in _discimage.Tracks
                                                      where cdrdaoTrack.Sequence      == kvp.Key
                                                      where sectorAddress - kvp.Value < cdrdaoTrack.Sectors select kvp)
             {
-                buffer= ReadSectors(sectorAddress - kvp.Value, length, kvp.Key);
+                buffer = ReadSectors(sectorAddress - kvp.Value, length, kvp.Key);
 
                 return ErrorNumber.NoError;
             }
@@ -1296,21 +1298,28 @@ namespace Aaru.DiscImages
         }
 
         /// <inheritdoc />
-        public byte[] ReadSectorLong(ulong sectorAddress) => ReadSectorsLong(sectorAddress, 1);
+        public ErrorNumber ReadSectorLong(ulong sectorAddress, out byte[] buffer) =>
+            ReadSectorsLong(sectorAddress, 1, out buffer);
 
         /// <inheritdoc />
         public byte[] ReadSectorLong(ulong sectorAddress, uint track) => ReadSectorsLong(sectorAddress, 1, track);
 
         /// <inheritdoc />
-        public byte[] ReadSectorsLong(ulong sectorAddress, uint length)
+        public ErrorNumber ReadSectorsLong(ulong sectorAddress, uint length, out byte[] buffer)
         {
+            buffer = null;
+
             foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetmap where sectorAddress >= kvp.Value
                                                      from cdrdaoTrack in _discimage.Tracks
                                                      where cdrdaoTrack.Sequence      == kvp.Key
                                                      where sectorAddress - kvp.Value < cdrdaoTrack.Sectors select kvp)
-                return ReadSectorsLong(sectorAddress - kvp.Value, length, kvp.Key);
+            {
+                buffer = ReadSectorsLong(sectorAddress - kvp.Value, length, kvp.Key);
 
-            throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
+                return buffer is null ? ErrorNumber.SectorNotFound : ErrorNumber.NoError;
+            }
+
+            return ErrorNumber.SectorNotFound;
         }
 
         /// <inheritdoc />

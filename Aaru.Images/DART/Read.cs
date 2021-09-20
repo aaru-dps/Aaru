@@ -373,24 +373,27 @@ namespace Aaru.DiscImages
         }
 
         /// <inheritdoc />
-        public byte[] ReadSectorLong(ulong sectorAddress) => ReadSectorsLong(sectorAddress, 1);
+        public ErrorNumber ReadSectorLong(ulong sectorAddress, out byte[] buffer) =>
+            ReadSectorsLong(sectorAddress, 1, out buffer);
 
         /// <inheritdoc />
-        public byte[] ReadSectorsLong(ulong sectorAddress, uint length)
+        public ErrorNumber ReadSectorsLong(ulong sectorAddress, uint length, out byte[] buffer)
         {
+            buffer = null;
+
             if(sectorAddress > _imageInfo.Sectors - 1)
-                throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
+                return ErrorNumber.OutOfRange;
 
             if(sectorAddress + length > _imageInfo.Sectors)
-                throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
+                return ErrorNumber.OutOfRange;
 
             ErrorNumber errno = ReadSectors(sectorAddress, length, out byte[] data);
 
             if(errno != ErrorNumber.NoError)
-                return null;
+                return errno;
 
-            byte[] tags   = ReadSectorsTag(sectorAddress, length, SectorTagType.AppleSectorTag);
-            byte[] buffer = new byte[data.Length + tags.Length];
+            byte[] tags = ReadSectorsTag(sectorAddress, length, SectorTagType.AppleSectorTag);
+            buffer = new byte[data.Length + tags.Length];
 
             for(uint i = 0; i < length; i++)
             {
@@ -401,7 +404,7 @@ namespace Aaru.DiscImages
                            (i * (_imageInfo.SectorSize + TAG_SECTOR_SIZE)) + _imageInfo.SectorSize, TAG_SECTOR_SIZE);
             }
 
-            return buffer;
+            return ErrorNumber.NoError;
         }
     }
 }

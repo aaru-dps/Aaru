@@ -139,8 +139,11 @@ namespace Aaru.Filesystems
                     if((size + offsetInSector) % 2352 > 0)
                         sizeInSectors++;
 
-                    byte[] buffer =
-                        _image.ReadSectorsLong((ulong)(entry.Extents[0].extent + firstSector), (uint)sizeInSectors);
+                    ErrorNumber errno = _image.ReadSectorsLong((ulong)(entry.Extents[0].extent + firstSector),
+                                                               (uint)sizeInSectors, out byte[] buffer);
+
+                    if(errno != ErrorNumber.NoError)
+                        return errno;
 
                     buf = new byte[size];
                     Array.Copy(buffer, offsetInSector, buf, 0, size);
@@ -152,7 +155,7 @@ namespace Aaru.Filesystems
                     AaruConsole.DebugWriteLine("ISO9660 plugin", "Exception reading CD-i audio file");
                     AaruConsole.DebugWriteLine("ISO9660 plugin", "{0}", e);
 
-                    return ErrorNumber.InOutError;
+                    return ErrorNumber.UnexpectedException;
                 }
             }
 

@@ -961,16 +961,39 @@ namespace Aaru.Gui.ViewModels.Windows
                     bool result;
 
                     if(useLong)
-                        if(sectorsToDo == 1)
-                        {
-                            sector = _inputFormat.ReadSectorLong(doneSectors);
-                            result = outputFormat.WriteSectorLong(sector, doneSectors);
-                        }
+                    {
+                        errno = sectorsToDo == 1 ? _inputFormat.ReadSectorLong(doneSectors, out sector)
+                                    : _inputFormat.ReadSectorsLong(doneSectors, sectorsToDo, out sector);
+
+                        if(errno == ErrorNumber.NoError)
+                            result = sectorsToDo == 1 ? outputFormat.WriteSectorLong(sector, doneSectors)
+                                         : outputFormat.WriteSectorsLong(sector, doneSectors, sectorsToDo);
                         else
                         {
-                            sector = _inputFormat.ReadSectorsLong(doneSectors, sectorsToDo);
-                            result = outputFormat.WriteSectorsLong(sector, doneSectors, sectorsToDo);
+                            result = true;
+
+                            if(ForceChecked)
+                            {
+                                warning = true;
+
+                                AaruConsole.ErrorWriteLine("Error {0} reading sector {1}, continuing...", errno,
+                                                           doneSectors);
+                            }
+                            else
+                            {
+                                await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
+                                                                          GetMessageBoxStandardWindow("Error",
+                                                                              $"Error {errno} reading sector {doneSectors}, not continuing...",
+                                                                              icon: Icon.Error).
+                                                                          ShowDialog(_view));
+
+                                AaruConsole.ErrorWriteLine("Error {0} reading sector {1}, not continuing...", errno,
+                                                           doneSectors);
+
+                                return;
+                            }
                         }
+                    }
                     else
                     {
                         errno = sectorsToDo == 1 ? _inputFormat.ReadSector(doneSectors, out sector)
@@ -1272,18 +1295,40 @@ namespace Aaru.Gui.ViewModels.Windows
                         bool result;
 
                         if(useLong)
-                            if(sectorsToDo == 1)
-                            {
-                                sector = _inputFormat.ReadSectorLong(doneSectors          + track.StartSector);
-                                result = outputFormat.WriteSectorLong(sector, doneSectors + track.StartSector);
-                            }
+                        {
+                            errno = sectorsToDo == 1
+                                        ? _inputFormat.ReadSectorLong(doneSectors + track.StartSector, out sector)
+                                        : _inputFormat.ReadSectorsLong(doneSectors + track.StartSector, sectorsToDo,
+                                                                       out sector);
+
+                            if(errno == ErrorNumber.NoError)
+                                result = sectorsToDo == 1
+                                             ? outputFormat.WriteSectorLong(sector, doneSectors + track.StartSector)
+                                             : outputFormat.WriteSectorsLong(sector, doneSectors + track.StartSector,
+                                                                             sectorsToDo);
                             else
                             {
-                                sector = _inputFormat.ReadSectorsLong(doneSectors + track.StartSector, sectorsToDo);
+                                result = true;
 
-                                result = outputFormat.WriteSectorsLong(sector, doneSectors + track.StartSector,
-                                                                       sectorsToDo);
+                                if(ForceChecked)
+                                {
+                                    warning = true;
+
+                                    AaruConsole.ErrorWriteLine("Error {0} reading sector {1}, continuing...", errno,
+                                                               doneSectors);
+                                }
+                                else
+                                {
+                                    await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
+                                                                              GetMessageBoxStandardWindow("Error",
+                                                                                  $"Error {errno} reading sector {doneSectors}, not continuing...",
+                                                                                  icon: Icon.Error).
+                                                                              ShowDialog(_view));
+
+                                    return;
+                                }
                             }
+                        }
                         else
                         {
                             errno = sectorsToDo == 1

@@ -53,15 +53,12 @@ namespace Aaru.Gui.ViewModels.Windows
         {
             _inputFormat = inputFormat;
 
-            try
-            {
-                inputFormat.ReadSectorLong(0);
+            ErrorNumber errno = inputFormat.ReadSectorLong(0, out _);
+
+            if(errno == ErrorNumber.NoError)
                 LongSectorChecked = true;
-            }
-            catch
-            {
+            else
                 LongSectorVisible = false;
-            }
 
             TotalSectorsText = $"of {inputFormat.Info.Sectors}";
             SectorNumber     = 0;
@@ -81,12 +78,10 @@ namespace Aaru.Gui.ViewModels.Windows
                 this.RaiseAndSetIfChanged(ref _sectorNumber, value);
 
                 byte[]      sector;
-                ErrorNumber errno = ErrorNumber.NoError;
+                ErrorNumber errno;
 
-                if(LongSectorChecked)
-                    sector = _inputFormat.ReadSectorLong((ulong)SectorNumber);
-                else
-                    errno = _inputFormat.ReadSector((ulong)SectorNumber, out sector);
+                errno = LongSectorChecked ? _inputFormat.ReadSectorLong((ulong)SectorNumber, out sector)
+                            : _inputFormat.ReadSector((ulong)SectorNumber, out sector);
 
                 if(errno == ErrorNumber.NoError)
                     PrintHexText = PrintHex.ByteArrayToHexArrayString(sector, HEX_COLUMNS);

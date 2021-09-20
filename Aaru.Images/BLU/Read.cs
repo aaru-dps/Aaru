@@ -228,23 +228,26 @@ namespace Aaru.DiscImages
         }
 
         /// <inheritdoc />
-        public byte[] ReadSectorLong(ulong sectorAddress) => ReadSectorsLong(sectorAddress, 1);
+        public ErrorNumber ReadSectorLong(ulong sectorAddress, out byte[] buffer) =>
+            ReadSectorsLong(sectorAddress, 1, out buffer);
 
         /// <inheritdoc />
-        public byte[] ReadSectorsLong(ulong sectorAddress, uint length)
+        public ErrorNumber ReadSectorsLong(ulong sectorAddress, uint length, out byte[] buffer)
         {
+            buffer = null;
+
             if(sectorAddress > _imageInfo.Sectors - 1)
-                throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
+                return ErrorNumber.OutOfRange;
 
             if(sectorAddress + length > _imageInfo.Sectors)
-                throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
+                return ErrorNumber.OutOfRange;
 
-            byte[] buffer = new byte[length * _imageHeader.BytesPerBlock];
+            buffer = new byte[length * _imageHeader.BytesPerBlock];
             Stream stream = _bluImageFilter.GetDataForkStream();
             stream.Seek((long)((sectorAddress + 1) * _imageHeader.BytesPerBlock), SeekOrigin.Begin);
             stream.Read(buffer, 0, buffer.Length);
 
-            return buffer;
+            return ErrorNumber.NoError;
         }
     }
 }

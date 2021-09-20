@@ -2082,21 +2082,28 @@ namespace Aaru.DiscImages
         }
 
         /// <inheritdoc />
-        public byte[] ReadSectorLong(ulong sectorAddress) => ReadSectorsLong(sectorAddress, 1);
+        public ErrorNumber ReadSectorLong(ulong sectorAddress, out byte[] buffer) =>
+            ReadSectorsLong(sectorAddress, 1, out buffer);
 
         /// <inheritdoc />
         public byte[] ReadSectorLong(ulong sectorAddress, uint track) => ReadSectorsLong(sectorAddress, 1, track);
 
         /// <inheritdoc />
-        public byte[] ReadSectorsLong(ulong sectorAddress, uint length)
+        public ErrorNumber ReadSectorsLong(ulong sectorAddress, uint length, out byte[] buffer)
         {
+            buffer = null;
+
             foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetmap where sectorAddress >= kvp.Value
                                                      from track in Tracks where track.Sequence  == kvp.Key
                                                      where sectorAddress   - kvp.Value <=
                                                            track.EndSector - track.StartSector select kvp)
-                return ReadSectorsLong(sectorAddress - kvp.Value, length, kvp.Key);
+            {
+                buffer = ReadSectorsLong(sectorAddress - kvp.Value, length, kvp.Key);
 
-            throw new ArgumentOutOfRangeException(nameof(sectorAddress), $"Sector address {sectorAddress} not found");
+                return buffer is null ? ErrorNumber.NoData : ErrorNumber.NoError;
+            }
+
+            return ErrorNumber.SectorNotFound;
         }
 
         /// <inheritdoc />

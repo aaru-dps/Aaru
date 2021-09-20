@@ -76,7 +76,7 @@ namespace Aaru.DiscImages
 
             _imageStream.Position -= _structureBytes.Length;
 
-            List<IndexEntry> vrIndex = new List<IndexEntry>();
+            List<IndexEntry> vrIndex = new();
 
             for(ushort i = 0; i < idxHeader.entries; i++)
             {
@@ -212,9 +212,9 @@ namespace Aaru.DiscImages
             if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
                 return null;
 
-            byte[] buffer = ReadSectorLong(sectorAddress);
+            ErrorNumber errno = ReadSectorLong(sectorAddress, out byte[] buffer);
 
-            return CdChecksums.CheckCdSector(buffer);
+            return errno != ErrorNumber.NoError ? null : CdChecksums.CheckCdSector(buffer);
         }
 
         /// <inheritdoc />
@@ -233,7 +233,11 @@ namespace Aaru.DiscImages
                 return null;
             }
 
-            byte[] buffer = ReadSectorsLong(sectorAddress, length);
+            ErrorNumber errno = ReadSectorsLong(sectorAddress, length, out byte[] buffer);
+
+            if(errno != ErrorNumber.NoError)
+                return null;
+
             int    bps    = (int)(buffer.Length / length);
             byte[] sector = new byte[bps];
             failingLbas = new List<ulong>();

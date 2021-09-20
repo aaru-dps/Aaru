@@ -45,7 +45,8 @@ namespace Aaru.Filesystems
         {
             ulong       realSector;
             uint        sectorCount;
-            ErrorNumber errno = ErrorNumber.NoError;
+            ErrorNumber errno;
+            buffer = null;
 
             sectorCount = (uint)_blockSize / 2048;
 
@@ -60,15 +61,13 @@ namespace Aaru.Filesystems
 
             if(sectorCount == 1)
             {
-                // TODO: No more exceptions
-                try
-                {
-                    data = _image.ReadSectorLong(realSector);
-                }
-                catch
-                {
+                errno = _image.ReadSectorLong(realSector, out data);
+
+                if(errno != ErrorNumber.NoError)
                     errno = _image.ReadSector(realSector, out data);
-                }
+
+                if(errno != ErrorNumber.NoError)
+                    return errno;
 
                 if(_debug)
                 {
@@ -137,15 +136,13 @@ namespace Aaru.Filesystems
                 {
                     ulong dstSector = realSector + 1;
 
-                    // TODO: No more exceptions
-                    try
-                    {
-                        data = _image.ReadSectorLong(dstSector);
-                    }
-                    catch
-                    {
+                    errno = _image.ReadSectorLong(dstSector, out data);
+
+                    if(errno != ErrorNumber.NoError)
                         errno = _image.ReadSector(dstSector, out data);
-                    }
+
+                    if(errno != ErrorNumber.NoError)
+                        return errno;
 
                     if(_debug)
                     {
@@ -201,7 +198,7 @@ namespace Aaru.Filesystems
                 Array.Copy(Sector.GetUserData(ms.ToArray(), interleaved, fileNumber), 0, tmp, 0, _blockSize);
                 buffer = tmp;
 
-                return errno;
+                return ErrorNumber.NoError;
             }
         }
     }

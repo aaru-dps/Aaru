@@ -1774,20 +1774,15 @@ namespace Aaru.DiscImages
         }
 
         /// <inheritdoc />
-        public byte[] ReadSectorLong(ulong sectorAddress)
+        public ErrorNumber ReadSectorLong(ulong sectorAddress, out byte[] buffer)
         {
-            byte[] buffer;
+            buffer = null;
 
             if(_isHdd)
-            {
-                ErrorNumber errno = ReadSector(sectorAddress, out buffer);
-
-                return errno == ErrorNumber.NoError ? buffer : null;
-            }
+                return ReadSector(sectorAddress, out buffer);
 
             if(sectorAddress > _imageInfo.Sectors - 1)
-                throw new ArgumentOutOfRangeException(nameof(sectorAddress),
-                                                      $"Sector address {sectorAddress} not found");
+                return ErrorNumber.OutOfRange;
 
             var track = new Track();
 
@@ -1872,29 +1867,35 @@ namespace Aaru.DiscImages
                 }
             }
 
-            return buffer;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />
-        public byte[] ReadSectorsLong(ulong sectorAddress, uint length)
+        public ErrorNumber ReadSectorsLong(ulong sectorAddress, uint length, out byte[] buffer)
         {
+            buffer = null;
+
             if(sectorAddress > _imageInfo.Sectors - 1)
-                throw new ArgumentOutOfRangeException(nameof(sectorAddress),
-                                                      $"Sector address {sectorAddress} not found");
+                return ErrorNumber.OutOfRange;
 
             if(sectorAddress + length > _imageInfo.Sectors)
-                throw new ArgumentOutOfRangeException(nameof(length),
-                                                      $"Requested more sectors ({sectorAddress + length}) than available ({_imageInfo.Sectors})");
+                return ErrorNumber.OutOfRange;
 
             var ms = new MemoryStream();
 
             for(uint i = 0; i < length; i++)
             {
-                byte[] sector = ReadSectorLong(sectorAddress + i);
+                ErrorNumber errno = ReadSectorLong(sectorAddress + i, out byte[] sector);
+
+                if(errno != ErrorNumber.NoError)
+                    return errno;
+
                 ms.Write(sector, 0, sector.Length);
             }
 
-            return ms.ToArray();
+            buffer = ms.ToArray();
+
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />
@@ -1982,7 +1983,9 @@ namespace Aaru.DiscImages
             if(_isHdd)
                 throw new FeaturedNotSupportedByDiscImageException("Cannot access optical tracks on a hard disk image");
 
-            return ReadSectorLong(GetAbsoluteSector(sectorAddress, track));
+            ErrorNumber errno = ReadSectorLong(GetAbsoluteSector(sectorAddress, track), out byte[] buffer);
+
+            return errno == ErrorNumber.NoError ? buffer : null;
         }
 
         /// <inheritdoc />

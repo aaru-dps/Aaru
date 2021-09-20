@@ -578,20 +578,12 @@ namespace Aaru.DiscImages
         }
 
         /// <inheritdoc />
-        public byte[] ReadSectorLong(ulong sectorAddress)
-        {
-            ErrorNumber errno = ReadSectors(sectorAddress, 1, out byte[] buffer);
-
-            return errno == ErrorNumber.NoError ? buffer : null;
-        }
+        public ErrorNumber ReadSectorLong(ulong sectorAddress, out byte[] buffer) =>
+            ReadSectors(sectorAddress, 1, out buffer);
 
         /// <inheritdoc />
-        public byte[] ReadSectorsLong(ulong sectorAddress, uint length)
-        {
-            ErrorNumber errno = ReadSectors(sectorAddress, 1, out byte[] buffer);
-
-            return errno == ErrorNumber.NoError ? buffer : null;
-        }
+        public ErrorNumber ReadSectorsLong(ulong sectorAddress, uint length, out byte[] buffer) =>
+            ReadSectors(sectorAddress, 1, out buffer);
 
         /// <inheritdoc />
         public ErrorNumber ReadMediaTag(MediaTagType tag, out byte[] buffer)

@@ -35,6 +35,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Aaru.Checksums;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 
@@ -149,20 +150,24 @@ namespace Aaru.DiscImages
         /// <inheritdoc />
         public bool? VerifySector(ulong sectorAddress)
         {
-            byte[] buffer = ReadSectorLong(sectorAddress);
+            ErrorNumber errno = ReadSectorLong(sectorAddress, out byte[] buffer);
 
-            return CdChecksums.CheckCdSector(buffer);
+            return errno != ErrorNumber.NoError ? null : CdChecksums.CheckCdSector(buffer);
         }
 
         /// <inheritdoc />
         public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
                                    out List<ulong> unknownLbas)
         {
-            byte[] buffer = ReadSectorsLong(sectorAddress, length);
-            int    bps    = (int)(buffer.Length / length);
-            byte[] sector = new byte[bps];
             failingLbas = new List<ulong>();
             unknownLbas = new List<ulong>();
+            ErrorNumber errno = ReadSectorsLong(sectorAddress, length, out byte[] buffer);
+
+            if(errno != ErrorNumber.NoError)
+                return null;
+
+            int    bps    = (int)(buffer.Length / length);
+            byte[] sector = new byte[bps];
 
             for(int i = 0; i < length; i++)
             {

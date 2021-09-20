@@ -246,36 +246,43 @@ namespace Aaru.DiscImages
         }
 
         /// <inheritdoc />
-        public byte[] ReadSectorLong(ulong sectorAddress)
+        public ErrorNumber ReadSectorLong(ulong sectorAddress, out byte[] buffer)
         {
+            buffer = null;
+
             if(sectorAddress > _imageInfo.Sectors - 1)
-                throw new ArgumentOutOfRangeException(nameof(sectorAddress),
-                                                      $"Sector address {sectorAddress} not found");
+                return ErrorNumber.OutOfRange;
 
-            _longSectors.TryGetValue(sectorAddress, out byte[] temp);
-
-            return temp;
+            return _longSectors.TryGetValue(sectorAddress, out buffer) ? ErrorNumber.NoError
+                       : ErrorNumber.SectorNotFound;
         }
 
         /// <inheritdoc />
-        public byte[] ReadSectorsLong(ulong sectorAddress, uint length)
+        public ErrorNumber ReadSectorsLong(ulong sectorAddress, uint length, out byte[] buffer)
         {
+            buffer = null;
+
             if(sectorAddress > _imageInfo.Sectors - 1)
-                throw new ArgumentOutOfRangeException(nameof(sectorAddress),
-                                                      $"Sector address {sectorAddress} not found");
+                return ErrorNumber.OutOfRange;
 
             if(sectorAddress + length > _imageInfo.Sectors)
-                throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
+                return ErrorNumber.OutOfRange;
 
             var ms = new MemoryStream();
 
             for(uint i = 0; i < length; i++)
             {
-                byte[] sector = ReadSectorLong(sectorAddress + i);
+                ErrorNumber errno = ReadSectorLong(sectorAddress + i, out byte[] sector);
+
+                if(errno != ErrorNumber.NoError)
+                    return errno;
+
                 ms.Write(sector, 0, sector.Length);
             }
 
-            return ms.ToArray();
+            buffer = ms.ToArray();
+
+            return ErrorNumber.NoError;
         }
     }
 }

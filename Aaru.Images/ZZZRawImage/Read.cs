@@ -1380,7 +1380,9 @@ namespace Aaru.DiscImages
             if(track != 1)
                 throw new ArgumentOutOfRangeException(nameof(track), "Only a single track is supported");
 
-            return ReadSectorsLong(sectorAddress, 1);
+            ErrorNumber errno = ReadSectorsLong(sectorAddress, 1, out byte[] buffer);
+
+            return errno != ErrorNumber.NoError ? null : buffer;
         }
 
         /// <inheritdoc />
@@ -1392,7 +1394,9 @@ namespace Aaru.DiscImages
             if(track != 1)
                 throw new ArgumentOutOfRangeException(nameof(track), "Only a single track is supported");
 
-            return ReadSectorsLong(sectorAddress, length);
+            ErrorNumber errno = ReadSectorsLong(sectorAddress, length, out byte[] buffer);
+
+            return errno != ErrorNumber.NoError ? null : buffer;
         }
 
         /// <inheritdoc />
@@ -1535,20 +1539,23 @@ namespace Aaru.DiscImages
         }
 
         /// <inheritdoc />
-        public byte[] ReadSectorLong(ulong sectorAddress) => ReadSectorsLong(sectorAddress, 1);
+        public ErrorNumber ReadSectorLong(ulong sectorAddress, out byte[] buffer) =>
+            ReadSectorsLong(sectorAddress, 1, out buffer);
 
         /// <inheritdoc />
-        public byte[] ReadSectorsLong(ulong sectorAddress, uint length)
+        public ErrorNumber ReadSectorsLong(ulong sectorAddress, uint length, out byte[] buffer)
         {
+            buffer = null;
+
             if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc ||
                !_rawCompactDisc)
-                throw new FeatureUnsupportedImageException("Feature not supported by image format");
+                return ErrorNumber.NotSupported;
 
             if(sectorAddress > _imageInfo.Sectors - 1)
-                throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
+                return ErrorNumber.OutOfRange;
 
             if(sectorAddress + length > _imageInfo.Sectors)
-                throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
+                return ErrorNumber.OutOfRange;
 
             const uint sectorSize = 2352;
             uint       sectorSkip = 0;
@@ -1556,7 +1563,7 @@ namespace Aaru.DiscImages
             if(_hasSubchannel)
                 sectorSkip += 96;
 
-            byte[] buffer = new byte[sectorSize * length];
+            buffer = new byte[sectorSize * length];
 
             Stream stream = _rawImageFilter.GetDataForkStream();
             var    br     = new BinaryReader(stream);
@@ -1574,7 +1581,7 @@ namespace Aaru.DiscImages
                     Array.Copy(sector, 0, buffer, i * sectorSize, sectorSize);
                 }
 
-            return buffer;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />

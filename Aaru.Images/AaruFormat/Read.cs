@@ -1980,9 +1980,10 @@ namespace Aaru.DiscImages
         }
 
         /// <inheritdoc />
-        public byte[] ReadSectorLong(ulong sectorAddress)
+        public ErrorNumber ReadSectorLong(ulong sectorAddress, out byte[] buffer)
         {
             ErrorNumber errno;
+            buffer = null;
 
             switch(_imageInfo.XmlMediaType)
             {
@@ -1991,39 +1992,39 @@ namespace Aaru.DiscImages
                                                            sectorAddress <= t.EndSector);
 
                     if(trk is null)
-                        throw new ArgumentOutOfRangeException(nameof(sectorAddress),
-                                                              "Can't found track containing requested sector");
+                        return ErrorNumber.SectorNotFound;
 
                     if(trk.Sequence    == 0 &&
                        trk.StartSector == 0 &&
                        trk.EndSector   == 0)
-                        throw new ArgumentOutOfRangeException(nameof(sectorAddress),
-                                                              "Can't found track containing requested sector");
+                        return ErrorNumber.SectorNotFound;
 
                     if((_sectorSuffix   == null || _sectorPrefix   == null) &&
                        (_sectorSuffixMs == null || _sectorPrefixMs == null))
-                    {
-                        errno = ReadSector(sectorAddress, out byte[] buffer);
+                        return ReadSector(sectorAddress, out buffer);
 
-                        return errno != ErrorNumber.NoError ? null : buffer;
-                    }
+                    buffer = new byte[2352];
+                    errno  = ReadSector(sectorAddress, out byte[] data);
 
-                    byte[] sector = new byte[2352];
-                    errno = ReadSector(sectorAddress, out byte[] data);
+                    if(errno != ErrorNumber.NoError)
+                        return errno;
 
                     switch(trk.Type)
                     {
                         case TrackType.Audio:
-                        case TrackType.Data: return data;
+                        case TrackType.Data:
+                            buffer = data;
+
+                            return ErrorNumber.NoError;
                         case TrackType.CdMode1:
-                            Array.Copy(data, 0, sector, 16, 2048);
+                            Array.Copy(data, 0, buffer, 16, 2048);
 
                             if(_sectorPrefix != null)
-                                Array.Copy(_sectorPrefix, (int)sectorAddress * 16, sector, 0, 16);
+                                Array.Copy(_sectorPrefix, (int)sectorAddress * 16, buffer, 0, 16);
                             else if(_sectorPrefixDdt != null)
                             {
                                 if((_sectorPrefixDdt[sectorAddress] & CD_XFIX_MASK) == (uint)CdFixFlags.Correct)
-                                    ReconstructPrefix(ref sector, trk.Type, (long)sectorAddress);
+                                    ReconstructPrefix(ref buffer, trk.Type, (long)sectorAddress);
                                 else if((_sectorPrefixDdt[sectorAddress] & CD_XFIX_MASK) ==
                                         (uint)CdFixFlags.NotDumped ||
                                         _sectorPrefixDdt[sectorAddress] == 0)
@@ -2035,23 +2036,22 @@ namespace Aaru.DiscImages
                                     uint prefixPosition = ((_sectorPrefixDdt[sectorAddress] & CD_DFIX_MASK) - 1) * 16;
 
                                     if(prefixPosition > _sectorPrefixMs.Length)
-                                        throw new
-                                            InvalidProgramException("Incorrect data found in image, please re-dump. If issue persists, please open a bug report.");
+                                        return ErrorNumber.InvalidArgument;
 
                                     _sectorPrefixMs.Position = prefixPosition;
 
-                                    _sectorPrefixMs.Read(sector, 0, 16);
+                                    _sectorPrefixMs.Read(buffer, 0, 16);
                                 }
                             }
                             else
-                                throw new InvalidProgramException("Should not have arrived here");
+                                return ErrorNumber.InvalidArgument;
 
                             if(_sectorSuffix != null)
-                                Array.Copy(_sectorSuffix, (int)sectorAddress * 288, sector, 2064, 288);
+                                Array.Copy(_sectorSuffix, (int)sectorAddress * 288, buffer, 2064, 288);
                             else if(_sectorSuffixDdt != null)
                             {
                                 if((_sectorSuffixDdt[sectorAddress] & CD_XFIX_MASK) == (uint)CdFixFlags.Correct)
-                                    ReconstructEcc(ref sector, trk.Type);
+                                    ReconstructEcc(ref buffer, trk.Type);
                                 else if((_sectorSuffixDdt[sectorAddress] & CD_XFIX_MASK) ==
                                         (uint)CdFixFlags.NotDumped ||
                                         _sectorSuffixDdt[sectorAddress] == 0)
@@ -2063,27 +2063,26 @@ namespace Aaru.DiscImages
                                     uint suffixPosition = ((_sectorSuffixDdt[sectorAddress] & CD_DFIX_MASK) - 1) * 288;
 
                                     if(suffixPosition > _sectorSuffixMs.Length)
-                                        throw new
-                                            InvalidProgramException("Incorrect data found in image, please re-dump. If issue persists, please open a bug report.");
+                                        return ErrorNumber.InvalidArgument;
 
                                     _sectorSuffixMs.Position = suffixPosition;
 
-                                    _sectorSuffixMs.Read(sector, 2064, 288);
+                                    _sectorSuffixMs.Read(buffer, 2064, 288);
                                 }
                             }
                             else
-                                throw new InvalidProgramException("Should not have arrived here");
+                                return ErrorNumber.InvalidArgument;
 
-                            return sector;
+                            return ErrorNumber.NoError;
                         case TrackType.CdMode2Formless:
                         case TrackType.CdMode2Form1:
                         case TrackType.CdMode2Form2:
                             if(_sectorPrefix != null)
-                                Array.Copy(_sectorPrefix, (int)sectorAddress * 16, sector, 0, 16);
+                                Array.Copy(_sectorPrefix, (int)sectorAddress * 16, buffer, 0, 16);
                             else if(_sectorPrefixMs != null)
                             {
                                 if((_sectorPrefixDdt[sectorAddress] & CD_XFIX_MASK) == (uint)CdFixFlags.Correct)
-                                    ReconstructPrefix(ref sector, trk.Type, (long)sectorAddress);
+                                    ReconstructPrefix(ref buffer, trk.Type, (long)sectorAddress);
                                 else if((_sectorPrefixDdt[sectorAddress] & CD_XFIX_MASK) ==
                                         (uint)CdFixFlags.NotDumped ||
                                         _sectorPrefixDdt[sectorAddress] == 0)
@@ -2095,78 +2094,84 @@ namespace Aaru.DiscImages
                                     uint prefixPosition = ((_sectorPrefixDdt[sectorAddress] & CD_DFIX_MASK) - 1) * 16;
 
                                     if(prefixPosition > _sectorPrefixMs.Length)
-                                        throw new
-                                            InvalidProgramException("Incorrect data found in image, please re-dump. If issue persists, please open a bug report.");
+                                        return ErrorNumber.InvalidArgument;
 
                                     _sectorPrefixMs.Position = prefixPosition;
 
-                                    _sectorPrefixMs.Read(sector, 0, 16);
+                                    _sectorPrefixMs.Read(buffer, 0, 16);
                                 }
                             }
                             else
-                                throw new InvalidProgramException("Should not have arrived here");
+                                return ErrorNumber.InvalidArgument;
 
                             if(_mode2Subheaders != null &&
                                _sectorSuffixDdt != null)
                             {
-                                Array.Copy(_mode2Subheaders, (int)sectorAddress * 8, sector, 16, 8);
+                                Array.Copy(_mode2Subheaders, (int)sectorAddress * 8, buffer, 16, 8);
 
-                                if((_sectorSuffixDdt[sectorAddress] & CD_XFIX_MASK) == (uint)CdFixFlags.Mode2Form1Ok)
+                                switch(_sectorSuffixDdt[sectorAddress] & CD_XFIX_MASK)
                                 {
-                                    Array.Copy(data, 0, sector, 24, 2048);
-                                    ReconstructEcc(ref sector, TrackType.CdMode2Form1);
-                                }
-                                else if((_sectorSuffixDdt[sectorAddress] & CD_XFIX_MASK) ==
-                                        (uint)CdFixFlags.Mode2Form2Ok ||
-                                        (_sectorSuffixDdt[sectorAddress] & CD_XFIX_MASK) ==
-                                        (uint)CdFixFlags.Mode2Form2NoCrc)
-                                {
-                                    Array.Copy(data, 0, sector, 24, 2324);
+                                    case (uint)CdFixFlags.Mode2Form1Ok:
+                                        Array.Copy(data, 0, buffer, 24, 2048);
+                                        ReconstructEcc(ref buffer, TrackType.CdMode2Form1);
 
-                                    if((_sectorSuffixDdt[sectorAddress] & CD_XFIX_MASK) ==
-                                       (uint)CdFixFlags.Mode2Form2Ok)
-                                        ReconstructEcc(ref sector, TrackType.CdMode2Form2);
-                                }
-                                else if((_sectorSuffixDdt[sectorAddress] & CD_XFIX_MASK) ==
-                                        (uint)CdFixFlags.NotDumped ||
-                                        _sectorSuffixDdt[sectorAddress] == 0)
-                                {
-                                    // Do nothing
-                                }
-                                else // Mode 2 where EDC failed
-                                {
-                                    // Incorrectly written images
-                                    if(data.Length == 2328)
+                                        break;
+                                    case (uint)CdFixFlags.Mode2Form2Ok:
+                                    case (uint)CdFixFlags.Mode2Form2NoCrc:
                                     {
-                                        Array.Copy(data, 0, sector, 24, 2328);
+                                        Array.Copy(data, 0, buffer, 24, 2324);
+
+                                        if((_sectorSuffixDdt[sectorAddress] & CD_XFIX_MASK) ==
+                                           (uint)CdFixFlags.Mode2Form2Ok)
+                                            ReconstructEcc(ref buffer, TrackType.CdMode2Form2);
+
+                                        break;
                                     }
-                                    else
+                                    default:
                                     {
-                                        bool form2 = (sector[18] & 0x20) == 0x20 || (sector[22] & 0x20) == 0x20;
+                                        if((_sectorSuffixDdt[sectorAddress] & CD_XFIX_MASK) ==
+                                           (uint)CdFixFlags.NotDumped ||
+                                           _sectorSuffixDdt[sectorAddress] == 0)
+                                        {
+                                            // Do nothing
+                                        }
+                                        else // Mode 2 where EDC failed
+                                        {
+                                            // Incorrectly written images
+                                            if(data.Length == 2328)
+                                            {
+                                                Array.Copy(data, 0, buffer, 24, 2328);
+                                            }
+                                            else
+                                            {
+                                                bool form2 = (buffer[18] & 0x20) == 0x20 || (buffer[22] & 0x20) == 0x20;
 
-                                        uint suffixPosition =
-                                            ((_sectorSuffixDdt[sectorAddress] & CD_DFIX_MASK) - 1) * 288;
+                                                uint suffixPosition =
+                                                    ((_sectorSuffixDdt[sectorAddress] & CD_DFIX_MASK) - 1) * 288;
 
-                                        if(suffixPosition > _sectorSuffixMs.Length)
-                                            throw new
-                                                InvalidProgramException("Incorrect data found in image, please re-dump. If issue persists, please open a bug report.");
+                                                if(suffixPosition > _sectorSuffixMs.Length)
+                                                    return ErrorNumber.InvalidArgument;
 
-                                        _sectorSuffixMs.Position = suffixPosition;
+                                                _sectorSuffixMs.Position = suffixPosition;
 
-                                        _sectorSuffixMs.Read(sector, form2 ? 2348 : 2072, form2 ? 4 : 280);
-                                        Array.Copy(data, 0, sector, 24, form2 ? 2324 : 2048);
+                                                _sectorSuffixMs.Read(buffer, form2 ? 2348 : 2072, form2 ? 4 : 280);
+                                                Array.Copy(data, 0, buffer, 24, form2 ? 2324 : 2048);
+                                            }
+                                        }
+
+                                        break;
                                     }
                                 }
                             }
                             else if(_mode2Subheaders != null)
                             {
-                                Array.Copy(_mode2Subheaders, (int)sectorAddress * 8, sector, 16, 8);
-                                Array.Copy(data, 0, sector, 24, 2328);
+                                Array.Copy(_mode2Subheaders, (int)sectorAddress * 8, buffer, 16, 8);
+                                Array.Copy(data, 0, buffer, 24, 2328);
                             }
                             else
-                                Array.Copy(data, 0, sector, 16, 2336);
+                                Array.Copy(data, 0, buffer, 16, 2336);
 
-                            return sector;
+                            return ErrorNumber.NoError;
                     }
 
                     break;
@@ -2178,13 +2183,13 @@ namespace Aaru.DiscImages
                         case MediaType.AppleSonySS:
                         case MediaType.AppleSonyDS:
                         case MediaType.AppleWidget:
-                        case MediaType.PriamDataTower: return ReadSectorsLong(sectorAddress, 1);
+                        case MediaType.PriamDataTower: return ReadSectorsLong(sectorAddress, 1, out buffer);
                     }
 
                     break;
             }
 
-            throw new FeatureNotPresentImageException("Feature not present in image");
+            return ErrorNumber.NotSupported;
         }
 
         /// <inheritdoc />
@@ -2198,15 +2203,17 @@ namespace Aaru.DiscImages
             if(trk?.Sequence != track)
                 throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
 
-            return ReadSectorLong(trk.StartSector + sectorAddress);
+            ErrorNumber errno = ReadSectorLong(trk.StartSector + sectorAddress, out byte[] buffer);
+
+            return errno != ErrorNumber.NoError ? null : buffer;
         }
 
         /// <inheritdoc />
-        public byte[] ReadSectorsLong(ulong sectorAddress, uint length)
+        public ErrorNumber ReadSectorsLong(ulong sectorAddress, uint length, out byte[] buffer)
         {
-            byte[]      sectors;
             byte[]      data;
             ErrorNumber errno;
+            buffer = null;
 
             switch(_imageInfo.XmlMediaType)
             {
@@ -2215,71 +2222,65 @@ namespace Aaru.DiscImages
                                                            sectorAddress <= t.EndSector);
 
                     if(trk is null)
-                        throw new ArgumentOutOfRangeException(nameof(sectorAddress),
-                                                              "Can't found track containing requested sector");
+                        return ErrorNumber.SectorNotFound;
 
                     if(trk.Sequence    == 0 &&
                        trk.StartSector == 0 &&
                        trk.EndSector   == 0)
-                        throw new ArgumentOutOfRangeException(nameof(sectorAddress),
-                                                              "Can't found track containing requested sector");
+                        return ErrorNumber.SectorNotFound;
 
                     if(sectorAddress + length > trk.EndSector + 1)
-                        throw new ArgumentOutOfRangeException(nameof(length),
-                                                              $"Requested more sectors ({length + sectorAddress}) than present in track ({trk.EndSector - trk.StartSector + 1}), won't cross tracks");
+                        return ErrorNumber.OutOfRange;
 
                     switch(trk.Type)
                     {
                         // These types only contain user data
                         case TrackType.Audio:
-                        case TrackType.Data:
-                            errno = ReadSectors(sectorAddress, length, out data);
-
-                            return errno == ErrorNumber.NoError ? data : null;
+                        case TrackType.Data: return ReadSectors(sectorAddress, length, out buffer);
 
                         // Join prefix (sync, header) with user data with suffix (edc, ecc p, ecc q)
                         case TrackType.CdMode1:
                             if(_sectorPrefix != null &&
                                _sectorSuffix != null)
                             {
-                                sectors = new byte[2352 * length];
-                                errno   = ReadSectors(sectorAddress, length, out data);
+                                buffer = new byte[2352 * length];
+                                errno  = ReadSectors(sectorAddress, length, out data);
 
                                 if(errno != ErrorNumber.NoError)
-                                    return null;
+                                    return errno;
 
                                 for(uint i = 0; i < length; i++)
                                 {
-                                    Array.Copy(_sectorPrefix, (int)((sectorAddress + i) * 16), sectors, (int)(i * 2352),
+                                    Array.Copy(_sectorPrefix, (int)((sectorAddress + i) * 16), buffer, (int)(i * 2352),
                                                16);
 
-                                    Array.Copy(data, (int)(i * 2048), sectors, (int)(i * 2352) + 16, 2048);
+                                    Array.Copy(data, (int)(i * 2048), buffer, (int)(i * 2352) + 16, 2048);
 
-                                    Array.Copy(_sectorSuffix, (int)((sectorAddress + i) * 288), sectors,
+                                    Array.Copy(_sectorSuffix, (int)((sectorAddress + i) * 288), buffer,
                                                (int)(i * 2352) + 2064, 288);
                                 }
 
-                                return sectors;
+                                return ErrorNumber.NoError;
                             }
                             else if(_sectorPrefixDdt != null &&
                                     _sectorSuffixDdt != null)
                             {
-                                sectors = new byte[2352 * length];
+                                buffer = new byte[2352 * length];
 
                                 for(uint i = 0; i < length; i++)
                                 {
-                                    byte[] temp = ReadSectorLong(sectorAddress + i);
-                                    Array.Copy(temp, 0, sectors, 2352 * i, 2352);
+                                    errno = ReadSectorLong(sectorAddress + i, out byte[] temp);
+
+                                    if(errno != ErrorNumber.NoError)
+                                        return errno;
+
+                                    Array.Copy(temp, 0, buffer, 2352 * i, 2352);
                                 }
 
-                                return sectors;
+                                return ErrorNumber.NoError;
                             }
                             else
-                            {
-                                errno = ReadSectors(sectorAddress, length, out data);
-
-                                return errno == ErrorNumber.NoError ? data : null;
-                            }
+                                return ReadSectors(sectorAddress, length, out buffer);
 
                         // Join prefix (sync, header) with user data
                         case TrackType.CdMode2Formless:
@@ -2288,39 +2289,41 @@ namespace Aaru.DiscImages
                             if(_sectorPrefix != null &&
                                _sectorSuffix != null)
                             {
-                                sectors = new byte[2352 * length];
-                                errno   = ReadSectors(sectorAddress, length, out data);
+                                buffer = new byte[2352 * length];
+                                errno  = ReadSectors(sectorAddress, length, out data);
 
                                 if(errno != ErrorNumber.NoError)
-                                    return null;
+                                    return errno;
 
                                 for(uint i = 0; i < length; i++)
                                 {
-                                    Array.Copy(_sectorPrefix, (int)((sectorAddress + i) * 16), sectors, (int)(i * 2352),
+                                    Array.Copy(_sectorPrefix, (int)((sectorAddress + i) * 16), buffer, (int)(i * 2352),
                                                16);
 
-                                    Array.Copy(data, (int)(i * 2336), sectors, (int)(i * 2352) + 16, 2336);
+                                    Array.Copy(data, (int)(i * 2336), buffer, (int)(i * 2352) + 16, 2336);
                                 }
 
-                                return sectors;
+                                return ErrorNumber.NoError;
                             }
                             else if(_sectorPrefixDdt != null &&
                                     _sectorSuffixDdt != null)
                             {
-                                sectors = new byte[2352 * length];
+                                buffer = new byte[2352 * length];
 
                                 for(uint i = 0; i < length; i++)
                                 {
-                                    byte[] temp = ReadSectorLong(sectorAddress + i);
-                                    Array.Copy(temp, 0, sectors, 2352 * i, 2352);
+                                    errno = ReadSectorLong(sectorAddress + i, out byte[] temp);
+
+                                    if(errno != ErrorNumber.NoError)
+                                        return errno;
+
+                                    Array.Copy(temp, 0, buffer, 2352 * i, 2352);
                                 }
 
-                                return sectors;
+                                return ErrorNumber.NoError;
                             }
 
-                            errno = ReadSectors(sectorAddress, length, out data);
-
-                            return errno == ErrorNumber.NoError ? data : null;
+                            return ReadSectors(sectorAddress, length, out buffer);
                     }
 
                     break;
@@ -2335,11 +2338,7 @@ namespace Aaru.DiscImages
                         case MediaType.AppleWidget:
                         case MediaType.PriamDataTower:
                             if(_sectorSubchannel == null)
-                            {
-                                errno = ReadSector(sectorAddress, out data);
-
-                                return errno == ErrorNumber.NoError ? data : null;
-                            }
+                                return ReadSector(sectorAddress, out buffer);
 
                             uint tagSize = 0;
 
@@ -2366,25 +2365,25 @@ namespace Aaru.DiscImages
                             errno = ReadSectors(sectorAddress, length, out data);
 
                             if(errno != ErrorNumber.NoError)
-                                return null;
+                                return errno;
 
-                            sectors = new byte[(sectorSize + 512) * length];
+                            buffer = new byte[(sectorSize + 512) * length];
 
                             for(uint i = 0; i < length; i++)
                             {
-                                Array.Copy(_sectorSubchannel, (int)((sectorAddress + i) * tagSize), sectors,
+                                Array.Copy(_sectorSubchannel, (int)((sectorAddress + i) * tagSize), buffer,
                                            (int)((i * sectorSize) + 512), tagSize);
 
-                                Array.Copy(data, (int)((sectorAddress + i) * 512), sectors, (int)(i * 512), 512);
+                                Array.Copy(data, (int)((sectorAddress + i) * 512), buffer, (int)(i * 512), 512);
                             }
 
-                            return sectors;
+                            return ErrorNumber.NoError;
                     }
 
                     break;
             }
 
-            throw new FeatureNotPresentImageException("Feature not present in image");
+            return ErrorNumber.NotSupported;
         }
 
         /// <inheritdoc />
@@ -2402,7 +2401,9 @@ namespace Aaru.DiscImages
                 throw new ArgumentOutOfRangeException(nameof(length),
                                                       $"Requested more sectors ({length + sectorAddress}) than present in track ({trk.EndSector - trk.StartSector + 1}), won't cross tracks");
 
-            return ReadSectorsLong(trk.StartSector + sectorAddress, length);
+            ErrorNumber errno = ReadSectorsLong(trk.StartSector + sectorAddress, length, out byte[] buffer);
+
+            return errno == ErrorNumber.NoError ? buffer : null;
         }
 
         /// <inheritdoc />

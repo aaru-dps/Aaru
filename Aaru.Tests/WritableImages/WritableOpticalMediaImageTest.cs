@@ -199,18 +199,15 @@ namespace Aaru.Tests.WritableImages
 
                             if(useLong)
                             {
-                                if(sectorsToDo == 1)
-                                {
-                                    sector = inputFormat.ReadSectorLong(doneSectors           + track.StartSector);
-                                    result = outputFormat.WriteSectorLong(sector, doneSectors + track.StartSector);
-                                }
-                                else
-                                {
-                                    sector = inputFormat.ReadSectorsLong(doneSectors + track.StartSector, sectorsToDo);
+                                errno = sectorsToDo == 1 ? inputFormat.ReadSectorLong(doneSectors + track.StartSector, out sector) : inputFormat.ReadSectorsLong(doneSectors + track.StartSector, sectorsToDo, out sector);
 
-                                    result = outputFormat.WriteSectorsLong(sector, doneSectors + track.StartSector,
-                                                                           sectorsToDo);
-                                }
+                                if(errno == ErrorNumber.NoError)
+                                    result = sectorsToDo == 1
+                                                 ? outputFormat.WriteSectorLong(sector, doneSectors + track.StartSector)
+                                                 : outputFormat.WriteSectorsLong(sector,
+                                                     doneSectors + track.StartSector, sectorsToDo);
+                                else
+                                    result = false;
 
                                 if(!result &&
                                    sector.Length % 2352 != 0)

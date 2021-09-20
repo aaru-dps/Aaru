@@ -84,18 +84,13 @@ namespace Aaru.Filesystems
                entry.Extents.Count == 0)
                 return ErrorNumber.NoError;
 
-            // TODO: No more exceptions
-            try
-            {
-                byte[] sector = _image.ReadSectorLong(entry.Extents[0].extent * _blockSize / 2048);
+            ErrorNumber errno = _image.ReadSectorLong(entry.Extents[0].extent * _blockSize / 2048, out byte[] sector);
 
-                if(sector[15] != 2)
-                    return ErrorNumber.NoError;
-            }
-            catch
-            {
+            if(errno != ErrorNumber.NoError)
+                return errno;
+
+            if(sector[15] != 2)
                 return ErrorNumber.NoError;
-            }
 
             xattrs.Add("org.iso.mode2.subheader");
             xattrs.Add("org.iso.mode2.subheader.copy");

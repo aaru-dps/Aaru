@@ -209,10 +209,8 @@ namespace Aaru.Commands.Image
                 {
                     ctx.AddTask("Reading sector...").IsIndeterminate();
 
-                    if(longSectors)
-                        sector = inputFormat.ReadSectorLong(start + i);
-                    else
-                        errno = inputFormat.ReadSector(start + i, out sector);
+                    errno = longSectors ? inputFormat.ReadSectorLong(start + i, out sector)
+                                : inputFormat.ReadSector(start             + i, out sector);
                 });
 
                 if(errno == ErrorNumber.NoError)
