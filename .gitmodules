@@ -20,8 +20,8 @@
 	path = Aaru.Helpers
 	url = https://github.com/aaru-dps/Aaru.Helpers
 [submodule "cuetools.net"]
-	path = cuetools.net
-	url = https://github.com/claunia/cuetools.net
+	path = Aaru.Compression/cuetools.net
+	url = https://github.com/gchudov/cuetools.net
 [submodule "Aaru.Decryption"]
 	path = Aaru.Decryption
 	url = https://github.com/aaru-dps/Aaru.Decryption
