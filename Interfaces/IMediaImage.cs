@@ -90,7 +90,8 @@ namespace Aaru.CommonTypes.Interfaces
         /// <returns>The sector's tag.</returns>
         /// <param name="sectorAddress">Sector address (LBA).</param>
         /// <param name="tag">Tag type.</param>
-        byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag);
+        /// <param name="buffer"></param>
+        ErrorNumber ReadSectorTag(ulong sectorAddress, SectorTagType tag, out byte[] buffer);
 
         /// <summary>Reads user data from several sectors.</summary>
         /// <returns>The sectors user data.</returns>
@@ -104,7 +105,8 @@ namespace Aaru.CommonTypes.Interfaces
         /// <param name="sectorAddress">Starting sector address (LBA).</param>
         /// <param name="length">How many sectors to read.</param>
         /// <param name="tag">Tag type.</param>
-        byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag);
+        /// <param name="buffer"></param>
+        ErrorNumber ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag, out byte[] buffer);
 
         /// <summary>Reads a complete sector (user data + all tags).</summary>
         /// <returns>The complete sector. Format depends on disk type.</returns>
