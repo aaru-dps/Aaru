@@ -109,12 +109,14 @@ namespace Aaru.CommonTypes.Interfaces
         /// <summary>Reads a complete sector (user data + all tags).</summary>
         /// <returns>The complete sector. Format depends on disk type.</returns>
         /// <param name="sectorAddress">Sector address (LBA).</param>
-        byte[] ReadSectorLong(ulong sectorAddress);
+        /// <param name="buffer"></param>
+        ErrorNumber ReadSectorLong(ulong sectorAddress, out byte[] buffer);
 
         /// <summary>Reads several complete sector (user data + all tags).</summary>
         /// <returns>The complete sectors. Format depends on disk type.</returns>
         /// <param name="sectorAddress">Starting sector address (LBA).</param>
         /// <param name="length">How many sectors to read.</param>
-        byte[] ReadSectorsLong(ulong sectorAddress, uint length);
+        /// <param name="buffer"></param>
+        ErrorNumber ReadSectorsLong(ulong sectorAddress, uint length, out byte[] buffer);
     }
 }
