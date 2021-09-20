@@ -975,9 +975,9 @@ namespace Aaru.Commands.Image
                 {
                     foreach(Track track in tracks)
                     {
-                        byte[] isrc = inputFormat.ReadSectorTag(track.Sequence, tag);
+                        errno = inputFormat.ReadSectorTag(track.Sequence, tag, out byte[] isrc);
 
-                        if(isrc is null)
+                        if(errno != ErrorNumber.NoError)
                             continue;
 
                         isrcs[(byte)track.Sequence] = Encoding.UTF8.GetString(isrc);
@@ -989,9 +989,9 @@ namespace Aaru.Commands.Image
                 {
                     foreach(Track track in tracks)
                     {
-                        byte[] flags = inputFormat.ReadSectorTag(track.Sequence, tag);
+                        errno = inputFormat.ReadSectorTag(track.Sequence, tag, out byte[] flags);
 
-                        if(flags is null)
+                        if(errno != ErrorNumber.NoError)
                             continue;
 
                         trackFlags[(byte)track.Sequence] = flags[0];
@@ -1049,8 +1049,29 @@ namespace Aaru.Commands.Image
                                         {
                                             case SectorTagType.CdTrackFlags:
                                             case SectorTagType.CdTrackIsrc:
-                                                sector = inputFormat.ReadSectorTag(track.Sequence, tag);
-                                                result = outputFormat.WriteSectorTag(sector, track.Sequence, tag);
+                                                errno = inputFormat.ReadSectorTag(track.Sequence, tag, out sector);
+
+                                                if(errno == ErrorNumber.NoError)
+                                                    result = outputFormat.WriteSectorTag(sector, track.Sequence, tag);
+                                                else
+                                                {
+                                                    if(force)
+                                                    {
+                                                        AaruConsole.
+                                                            ErrorWriteLine("Error {0} writing tag, continuing...",
+                                                                           outputFormat.ErrorMessage);
+
+                                                        continue;
+                                                    }
+
+                                                    AaruConsole.
+                                                        ErrorWriteLine("Error {0} writing tag, not continuing...",
+                                                                       outputFormat.ErrorMessage);
+
+                                                    errno = ErrorNumber.WriteError;
+
+                                                    return;
+                                                }
 
                                                 if(!result)
                                                     if(force)
@@ -1091,55 +1112,95 @@ namespace Aaru.Commands.Image
 
                                             if(sectorsToDo == 1)
                                             {
-                                                sector = inputFormat.ReadSectorTag(doneSectors + track.StartSector,
-                                                    tag);
+                                                errno = inputFormat.ReadSectorTag(doneSectors + track.StartSector, tag,
+                                                    out sector);
 
-                                                if(tag == SectorTagType.CdSectorSubchannel)
+                                                if(errno == ErrorNumber.NoError)
                                                 {
-                                                    bool indexesChanged =
-                                                        CompactDisc.WriteSubchannelToImage(MmcSubchannel.Raw,
-                                                            MmcSubchannel.Raw, sector,
-                                                            doneSectors + track.StartSector, 1, null, isrcs,
-                                                            (byte)track.Sequence, ref mcn, tracks,
-                                                            subchannelExtents, fixSubchannelPosition, outputFormat,
-                                                            fixSubchannel, fixSubchannelCrc, null, null,
-                                                            smallestPregapLbaPerTrack, false);
+                                                    if(tag == SectorTagType.CdSectorSubchannel)
+                                                    {
+                                                        bool indexesChanged =
+                                                            CompactDisc.WriteSubchannelToImage(MmcSubchannel.Raw,
+                                                                MmcSubchannel.Raw, sector,
+                                                                doneSectors + track.StartSector, 1, null, isrcs,
+                                                                (byte)track.Sequence, ref mcn, tracks,
+                                                                subchannelExtents, fixSubchannelPosition,
+                                                                outputFormat, fixSubchannel, fixSubchannelCrc,
+                                                                null, null, smallestPregapLbaPerTrack, false);
 
-                                                    if(indexesChanged)
-                                                        outputOptical.SetTracks(tracks.ToList());
+                                                        if(indexesChanged)
+                                                            outputOptical.SetTracks(tracks.ToList());
 
-                                                    result = true;
+                                                        result = true;
+                                                    }
+                                                    else
+                                                        result =
+                                                            outputFormat.WriteSectorTag(sector,
+                                                                doneSectors + track.StartSector, tag);
                                                 }
                                                 else
-                                                    result =
-                                                        outputFormat.WriteSectorTag(sector,
-                                                            doneSectors + track.StartSector, tag);
+                                                {
+                                                    result = true;
+
+                                                    if(force)
+                                                        AaruConsole.
+                                                            ErrorWriteLine("Error {0} reading tag for sector {1}, continuing...",
+                                                                           errno, doneSectors + track.StartSector);
+                                                    else
+                                                    {
+                                                        AaruConsole.
+                                                            ErrorWriteLine("Error {0} reading tag for sector {1}, not continuing...",
+                                                                           errno, doneSectors + track.StartSector);
+
+                                                        return;
+                                                    }
+                                                }
                                             }
                                             else
                                             {
-                                                sector = inputFormat.ReadSectorsTag(doneSectors + track.StartSector,
-                                                    sectorsToDo, tag);
+                                                errno = inputFormat.ReadSectorsTag(doneSectors + track.StartSector,
+                                                    sectorsToDo, tag, out sector);
 
-                                                if(tag == SectorTagType.CdSectorSubchannel)
+                                                if(errno == ErrorNumber.NoError)
                                                 {
-                                                    bool indexesChanged =
-                                                        CompactDisc.WriteSubchannelToImage(MmcSubchannel.Raw,
-                                                            MmcSubchannel.Raw, sector,
-                                                            doneSectors + track.StartSector, sectorsToDo, null,
-                                                            isrcs, (byte)track.Sequence, ref mcn, tracks,
-                                                            subchannelExtents, fixSubchannelPosition, outputFormat,
-                                                            fixSubchannel, fixSubchannelCrc, null, null,
-                                                            smallestPregapLbaPerTrack, false);
+                                                    if(tag == SectorTagType.CdSectorSubchannel)
+                                                    {
+                                                        bool indexesChanged =
+                                                            CompactDisc.WriteSubchannelToImage(MmcSubchannel.Raw,
+                                                                MmcSubchannel.Raw, sector,
+                                                                doneSectors + track.StartSector, sectorsToDo, null,
+                                                                isrcs, (byte)track.Sequence, ref mcn, tracks,
+                                                                subchannelExtents, fixSubchannelPosition,
+                                                                outputFormat, fixSubchannel, fixSubchannelCrc,
+                                                                null, null, smallestPregapLbaPerTrack, false);
 
-                                                    if(indexesChanged)
-                                                        outputOptical.SetTracks(tracks.ToList());
+                                                        if(indexesChanged)
+                                                            outputOptical.SetTracks(tracks.ToList());
 
-                                                    result = true;
+                                                        result = true;
+                                                    }
+                                                    else
+                                                        result =
+                                                            outputFormat.WriteSectorsTag(sector,
+                                                                doneSectors + track.StartSector, sectorsToDo, tag);
                                                 }
                                                 else
-                                                    result =
-                                                        outputFormat.WriteSectorsTag(sector,
-                                                            doneSectors + track.StartSector, sectorsToDo, tag);
+                                                {
+                                                    result = true;
+
+                                                    if(force)
+                                                        AaruConsole.
+                                                            ErrorWriteLine("Error {0} reading tag for sector {1}, continuing...",
+                                                                           errno, doneSectors + track.StartSector);
+                                                    else
+                                                    {
+                                                        AaruConsole.
+                                                            ErrorWriteLine("Error {0} reading tag for sector {1}, not continuing...",
+                                                                           errno, doneSectors + track.StartSector);
+
+                                                        return;
+                                                    }
+                                                }
                                             }
 
                                             if(!result)
@@ -1303,10 +1364,8 @@ namespace Aaru.Commands.Image
                                                     : inputFormat.ReadSectors(doneSectors, sectorsToDo, out sector);
 
                                         if(errno == ErrorNumber.NoError)
-                                        {
                                             result = sectorsToDo == 1 ? outputFormat.WriteSector(sector, doneSectors)
                                                          : outputFormat.WriteSectors(sector, doneSectors, sectorsToDo);
-                                        }
                                         else
                                         {
                                             result = true;
@@ -1389,17 +1448,32 @@ namespace Aaru.Commands.Image
 
                                         bool result;
 
-                                        if(sectorsToDo == 1)
-                                        {
-                                            sector = inputFormat.ReadSectorTag(doneSectors, tag);
-                                            result = outputFormat.WriteSectorTag(sector, doneSectors, tag);
-                                        }
+                                        errno = sectorsToDo == 1
+                                                    ? inputFormat.ReadSectorTag(doneSectors, tag, out sector)
+                                                    : inputFormat.ReadSectorsTag(doneSectors, sectorsToDo, tag,
+                                                        out sector);
+
+                                        if(errno == ErrorNumber.NoError)
+                                            result = sectorsToDo == 1
+                                                         ? outputFormat.WriteSectorTag(sector, doneSectors, tag)
+                                                         : outputFormat.WriteSectorsTag(sector, doneSectors,
+                                                             sectorsToDo, tag);
                                         else
                                         {
-                                            sector = inputFormat.ReadSectorsTag(doneSectors, sectorsToDo, tag);
+                                            result = true;
 
-                                            result = outputFormat.WriteSectorsTag(sector, doneSectors, sectorsToDo,
-                                                tag);
+                                            if(force)
+                                                AaruConsole.
+                                                    ErrorWriteLine("Error {0} reading sector {1}, continuing...", errno,
+                                                                   doneSectors);
+                                            else
+                                            {
+                                                AaruConsole.
+                                                    ErrorWriteLine("Error {0} reading sector {1}, not continuing...",
+                                                                   errno, doneSectors);
+
+                                                return;
+                                            }
                                         }
 
                                         if(!result)

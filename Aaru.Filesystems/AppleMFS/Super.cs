@@ -161,14 +161,14 @@ namespace Aaru.Filesystems
 
             if(_device.Info.ReadableSectorTags.Contains(SectorTagType.AppleSectorTag))
             {
-                _mdbTags  = _device.ReadSectorTag(2 + _partitionStart, SectorTagType.AppleSectorTag);
-                _bootTags = _device.ReadSectorTag(0 + _partitionStart, SectorTagType.AppleSectorTag);
+                _device.ReadSectorTag(2 + _partitionStart, SectorTagType.AppleSectorTag, out _mdbTags);
+                _device.ReadSectorTag(0 + _partitionStart, SectorTagType.AppleSectorTag, out _bootTags);
 
-                _directoryTags = _device.ReadSectorsTag(_volMdb.drDirSt + _partitionStart, _volMdb.drBlLen,
-                                                        SectorTagType.AppleSectorTag);
+                _device.ReadSectorsTag(_volMdb.drDirSt + _partitionStart, _volMdb.drBlLen, SectorTagType.AppleSectorTag,
+                                       out _directoryTags);
 
-                _bitmapTags = _device.ReadSectorsTag(_partitionStart + 2, (uint)sectorsInWholeMdb,
-                                                     SectorTagType.AppleSectorTag);
+                _device.ReadSectorsTag(_partitionStart + 2, (uint)sectorsInWholeMdb, SectorTagType.AppleSectorTag,
+                                       out _bitmapTags);
             }
 
             _sectorsPerBlock = (int)(_volMdb.drAlBlkSiz / _device.Info.SectorSize);

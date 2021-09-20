@@ -225,10 +225,10 @@ namespace Aaru.Filesystems.LisaFS
                 }
                 else
                 {
-                    buf = _device.ReadSectorsTag(_mddf.mddf_block + _volumePrefix + _mddf.srec_ptr, _mddf.srec_len,
-                                                 SectorTagType.AppleSectorTag);
+                    errno = _device.ReadSectorsTag(_mddf.mddf_block + _volumePrefix + _mddf.srec_ptr, _mddf.srec_len,
+                                                   SectorTagType.AppleSectorTag, out buf);
 
-                    return ErrorNumber.NoError;
+                    return errno != ErrorNumber.NoError ? errno : ErrorNumber.NoError;
                 }
 
             LisaTag.PriamTag sysTag;
@@ -236,7 +236,12 @@ namespace Aaru.Filesystems.LisaFS
             // Should be enough to check 100 sectors?
             for(ulong i = 0; i < 100; i++)
             {
-                DecodeTag(_device.ReadSectorTag(i, SectorTagType.AppleSectorTag), out sysTag);
+                errno = _device.ReadSectorTag(i, SectorTagType.AppleSectorTag, out byte[] tag);
+
+                if(errno != ErrorNumber.NoError)
+                    continue;
+
+                DecodeTag(tag, out sysTag);
 
                 if(sysTag.FileId == fileId)
                     count++;
@@ -250,22 +255,23 @@ namespace Aaru.Filesystems.LisaFS
             // Should be enough to check 100 sectors?
             for(ulong i = 0; i < 100; i++)
             {
-                DecodeTag(_device.ReadSectorTag(i, SectorTagType.AppleSectorTag), out sysTag);
+                errno = _device.ReadSectorTag(i, SectorTagType.AppleSectorTag, out byte[] tag);
+
+                if(errno != ErrorNumber.NoError)
+                    continue;
+
+                DecodeTag(tag, out sysTag);
 
                 if(sysTag.FileId != fileId)
                     continue;
 
                 byte[] sector;
 
-                if(!tags)
-                {
-                    errno = _device.ReadSector(i, out sector);
+                errno = !tags ? _device.ReadSector(i, out sector)
+                            : _device.ReadSectorTag(i, SectorTagType.AppleSectorTag, out sector);
 
-                    if(errno != ErrorNumber.NoError)
-                        continue;
-                }
-                else
-                    sector = _device.ReadSectorTag(i, SectorTagType.AppleSectorTag);
+                if(errno != ErrorNumber.NoError)
+                    continue;
 
                 // Relative block for $Loader starts at $Boot block
                 if(sysTag.FileId == FILEID_LOADER_SIGNED)
@@ -418,17 +424,14 @@ namespace Aaru.Filesystems.LisaFS
             {
                 byte[] sector;
 
-                if(!tags)
-                {
-                    errno = _device.ReadSectors((ulong)file.extents[i].start + _mddf.mddf_block + _volumePrefix,
-                                                (uint)file.extents[i].length, out sector);
+                errno = !tags ? _device.ReadSectors((ulong)file.extents[i].start + _mddf.mddf_block + _volumePrefix,
+                                                    (uint)file.extents[i].length, out sector)
+                            : _device.ReadSectorsTag((ulong)file.extents[i].start + _mddf.mddf_block + _volumePrefix,
+                                                     (uint)file.extents[i].length, SectorTagType.AppleSectorTag,
+                                                     out sector);
 
-                    if(errno != ErrorNumber.NoError)
-                        return errno;
-                }
-                else
-                    sector = _device.ReadSectorsTag((ulong)file.extents[i].start + _mddf.mddf_block + _volumePrefix,
-                                                    (uint)file.extents[i].length, SectorTagType.AppleSectorTag);
+                if(errno != ErrorNumber.NoError)
+                    return errno;
 
                 Array.Copy(sector, 0, temp, offset, sector.Length);
                 offset += sector.Length;

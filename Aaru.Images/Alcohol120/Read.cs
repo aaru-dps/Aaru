@@ -785,7 +785,8 @@ namespace Aaru.DiscImages
             ReadSectors(sectorAddress, 1, out buffer);
 
         /// <inheritdoc />
-        public byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag) => ReadSectorsTag(sectorAddress, 1, tag);
+        public ErrorNumber ReadSectorTag(ulong sectorAddress, SectorTagType tag, out byte[] buffer) =>
+            ReadSectorsTag(sectorAddress, 1, tag, out buffer);
 
         /// <inheritdoc />
         public byte[] ReadSector(ulong sectorAddress, uint track) => ReadSectors(sectorAddress, 1, track);
@@ -819,8 +820,10 @@ namespace Aaru.DiscImages
         }
 
         /// <inheritdoc />
-        public byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
+        public ErrorNumber ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag, out byte[] buffer)
         {
+            buffer = null;
+
             foreach(KeyValuePair<uint, ulong> kvp in _offsetMap)
                 if(sectorAddress >= kvp.Value)
                     foreach(Track track in _alcTracks.Values)
@@ -829,11 +832,15 @@ namespace Aaru.DiscImages
                            !_alcTrackExtras.TryGetValue(track.point, out TrackExtra extra))
                             continue;
 
-                        if(sectorAddress - kvp.Value < extra.sectors + extra.pregap)
-                            return ReadSectorsTag(sectorAddress - kvp.Value, length, kvp.Key, tag);
+                        if(sectorAddress - kvp.Value >= extra.sectors + extra.pregap)
+                            continue;
+
+                        buffer = ReadSectorsTag(sectorAddress - kvp.Value, length, kvp.Key, tag);
+
+                        return buffer is null ? ErrorNumber.NoData : ErrorNumber.NoError;
                     }
 
-            throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
+            return ErrorNumber.SectorNotFound;
         }
 
         /// <inheritdoc />

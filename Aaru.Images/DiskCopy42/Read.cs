@@ -35,7 +35,6 @@ using System.IO;
 using System.Text.RegularExpressions;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
-using Aaru.CommonTypes.Exceptions;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
@@ -472,7 +471,8 @@ namespace Aaru.DiscImages
             ReadSectors(sectorAddress, 1, out buffer);
 
         /// <inheritdoc />
-        public byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag) => ReadSectorsTag(sectorAddress, 1, tag);
+        public ErrorNumber ReadSectorTag(ulong sectorAddress, SectorTagType tag, out byte[] buffer) =>
+            ReadSectorsTag(sectorAddress, 1, tag, out buffer);
 
         /// <inheritdoc />
         public ErrorNumber ReadSectors(ulong sectorAddress, uint length, out byte[] buffer)
@@ -501,21 +501,23 @@ namespace Aaru.DiscImages
         }
 
         /// <inheritdoc />
-        public byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
+        public ErrorNumber ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag, out byte[] buffer)
         {
+            buffer = null;
+
             if(tag != SectorTagType.AppleSectorTag)
-                throw new FeatureUnsupportedImageException($"Tag {tag} not supported by image format");
+                return ErrorNumber.NotSupported;
 
             if(header.TagSize == 0)
-                throw new FeatureNotPresentImageException("Disk image does not have tags");
+                return ErrorNumber.NoData;
 
             if(sectorAddress > imageInfo.Sectors - 1)
-                throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
+                return ErrorNumber.OutOfRange;
 
             if(sectorAddress + length > imageInfo.Sectors)
-                throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
+                return ErrorNumber.OutOfRange;
 
-            byte[] buffer = new byte[length * bptag];
+            buffer = new byte[length * bptag];
 
             if(twiggy)
                 Array.Copy(twiggyCacheTags, (int)sectorAddress * bptag, buffer, 0, length * bptag);
@@ -526,7 +528,7 @@ namespace Aaru.DiscImages
                 stream.Read(buffer, 0, (int)(length * bptag));
             }
 
-            return buffer;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />
@@ -549,7 +551,11 @@ namespace Aaru.DiscImages
             if(errno != ErrorNumber.NoError)
                 return errno;
 
-            byte[] tags = ReadSectorsTag(sectorAddress, length, SectorTagType.AppleSectorTag);
+            errno = ReadSectorsTag(sectorAddress, length, SectorTagType.AppleSectorTag, out byte[] tags);
+
+            if(errno != ErrorNumber.NoError)
+                return errno;
+
             buffer = new byte[data.Length + tags.Length];
 
             for(uint i = 0; i < length; i++)

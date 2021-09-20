@@ -176,7 +176,12 @@ namespace Aaru.Filesystems.LisaFS
             // If root catalog is not pointed in MDDF (unchecked) maybe it's always following S-Records File?
             for(ulong i = 0; i < _device.Info.Sectors; i++)
             {
-                DecodeTag(_device.ReadSectorTag(i, SectorTagType.AppleSectorTag), out LisaTag.PriamTag catTag);
+                errno = _device.ReadSectorTag(i, SectorTagType.AppleSectorTag, out byte[] tag);
+
+                if(errno != ErrorNumber.NoError)
+                    continue;
+
+                DecodeTag(tag, out LisaTag.PriamTag catTag);
 
                 if(catTag.FileId  != FILEID_CATALOG ||
                    catTag.RelPage != 0)
@@ -199,8 +204,13 @@ namespace Aaru.Filesystems.LisaFS
             // Traverse double-linked list until first catalog block
             while(prevCatalogPointer != 0xFFFFFFFF)
             {
-                DecodeTag(_device.ReadSectorTag(prevCatalogPointer + _mddf.mddf_block + _volumePrefix, SectorTagType.AppleSectorTag),
-                          out LisaTag.PriamTag prevTag);
+                errno = _device.ReadSectorTag(prevCatalogPointer + _mddf.mddf_block + _volumePrefix,
+                                              SectorTagType.AppleSectorTag, out byte[] tag);
+
+                if(errno != ErrorNumber.NoError)
+                    return errno;
+
+                DecodeTag(tag, out LisaTag.PriamTag prevTag);
 
                 if(prevTag.FileId != FILEID_CATALOG)
                     return ErrorNumber.InvalidArgument;
@@ -224,8 +234,13 @@ namespace Aaru.Filesystems.LisaFS
             // Traverse double-linked list to read full catalog
             while(nextCatalogPointer != 0xFFFFFFFF)
             {
-                DecodeTag(_device.ReadSectorTag(nextCatalogPointer + _mddf.mddf_block + _volumePrefix, SectorTagType.AppleSectorTag),
-                          out LisaTag.PriamTag nextTag);
+                errno = _device.ReadSectorTag(nextCatalogPointer + _mddf.mddf_block + _volumePrefix,
+                                              SectorTagType.AppleSectorTag, out byte[] tag);
+
+                if(errno != ErrorNumber.NoError)
+                    return errno;
+
+                DecodeTag(tag, out LisaTag.PriamTag nextTag);
 
                 if(nextTag.FileId != FILEID_CATALOG)
                     return ErrorNumber.InvalidArgument;

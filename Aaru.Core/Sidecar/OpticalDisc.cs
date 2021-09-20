@@ -705,38 +705,24 @@ namespace Aaru.Core
                         xmlTrk.FileSystemInformation[0].FileSystems = lstFs.ToArray();
                 }
 
-                try
-                {
-                    byte[] isrcData = image.ReadSectorTag(trk.Sequence, SectorTagType.CdTrackIsrc);
+                ErrorNumber errno = image.ReadSectorTag(trk.Sequence, SectorTagType.CdTrackIsrc, out byte[] isrcData);
 
-                    if(isrcData?.Length > 0)
-                        xmlTrk.ISRC = Encoding.UTF8.GetString(isrcData);
-                }
-                catch(Exception)
-                {
-                    // Ignored
-                }
+                if(errno == ErrorNumber.NoError)
+                    xmlTrk.ISRC = Encoding.UTF8.GetString(isrcData);
 
-                try
-                {
-                    byte[] flagsData = image.ReadSectorTag(trk.Sequence, SectorTagType.CdTrackFlags);
+                errno = image.ReadSectorTag(trk.Sequence, SectorTagType.CdTrackFlags, out byte[] flagsData);
 
-                    if(flagsData?.Length > 0)
+                if(errno == ErrorNumber.NoError)
+                {
+                    var trackFlags = (CdFlags)flagsData[0];
+
+                    xmlTrk.Flags = new TrackFlagsType
                     {
-                        var trackFlags = (CdFlags)flagsData[0];
-
-                        xmlTrk.Flags = new TrackFlagsType
-                        {
-                            PreEmphasis   = trackFlags.HasFlag(CdFlags.PreEmphasis),
-                            CopyPermitted = trackFlags.HasFlag(CdFlags.CopyPermitted),
-                            Data          = trackFlags.HasFlag(CdFlags.DataTrack),
-                            Quadraphonic  = trackFlags.HasFlag(CdFlags.FourChannel)
-                        };
-                    }
-                }
-                catch(Exception)
-                {
-                    // Ignored
+                        PreEmphasis   = trackFlags.HasFlag(CdFlags.PreEmphasis),
+                        CopyPermitted = trackFlags.HasFlag(CdFlags.CopyPermitted),
+                        Data          = trackFlags.HasFlag(CdFlags.DataTrack),
+                        Quadraphonic  = trackFlags.HasFlag(CdFlags.FourChannel)
+                    };
                 }
 
                 if(trk.Indexes?.Count > 0)

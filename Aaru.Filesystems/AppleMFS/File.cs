@@ -352,16 +352,14 @@ namespace Aaru.Filesystems
             do
             {
                 byte[]      sectors;
-                ErrorNumber errno = ErrorNumber.NoError;
+                ErrorNumber errno;
 
-                if(tags)
-                    sectors =
-                        _device.
+                errno =
+                    tags
+                        ? _device.
                             ReadSectorsTag((ulong)((nextBlock - 2) * _sectorsPerBlock) + _volMdb.drAlBlSt + _partitionStart,
-                                           (uint)_sectorsPerBlock, SectorTagType.AppleSectorTag);
-                else
-                    errno =
-                        _device.
+                                           (uint)_sectorsPerBlock, SectorTagType.AppleSectorTag, out sectors)
+                        : _device.
                             ReadSectors((ulong)((nextBlock - 2) * _sectorsPerBlock) + _volMdb.drAlBlSt + _partitionStart,
                                         (uint)_sectorsPerBlock, out sectors);
 

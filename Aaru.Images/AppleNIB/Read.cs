@@ -30,13 +30,11 @@
 // Copyright © 2011-2021 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
-using Aaru.CommonTypes.Exceptions;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Decoders.Floppy;
@@ -207,42 +205,48 @@ namespace Aaru.DiscImages
         }
 
         /// <inheritdoc />
-        public byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
+        public ErrorNumber ReadSectorTag(ulong sectorAddress, SectorTagType tag, out byte[] buffer)
         {
+            buffer = null;
+
             if(sectorAddress > _imageInfo.Sectors - 1)
-                throw new ArgumentOutOfRangeException(nameof(sectorAddress),
-                                                      $"Sector address {sectorAddress} not found");
+                return ErrorNumber.OutOfRange;
 
             if(tag != SectorTagType.FloppyAddressMark)
-                throw new FeatureUnsupportedImageException($"Tag {tag} not supported by image format");
+                return ErrorNumber.NotSupported;
 
-            _addressFields.TryGetValue(sectorAddress, out byte[] temp);
-
-            return temp;
+            return _addressFields.TryGetValue(sectorAddress, out buffer) ? ErrorNumber.NoError : ErrorNumber.NoData;
         }
 
         /// <inheritdoc />
-        public byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
+        public ErrorNumber ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag, out byte[] buffer)
         {
+            buffer = null;
+
             if(sectorAddress > _imageInfo.Sectors - 1)
-                throw new ArgumentOutOfRangeException(nameof(sectorAddress),
-                                                      $"Sector address {sectorAddress} not found");
+                return ErrorNumber.OutOfRange;
 
             if(sectorAddress + length > _imageInfo.Sectors)
-                throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
+                return ErrorNumber.OutOfRange;
 
             if(tag != SectorTagType.FloppyAddressMark)
-                throw new FeatureUnsupportedImageException($"Tag {tag} not supported by image format");
+                return ErrorNumber.NotSupported;
 
             var ms = new MemoryStream();
 
             for(uint i = 0; i < length; i++)
             {
-                byte[] sector = ReadSectorTag(sectorAddress + i, tag);
+                ErrorNumber errno = ReadSectorTag(sectorAddress + i, tag, out byte[] sector);
+
+                if(errno != ErrorNumber.NoError)
+                    return errno;
+
                 ms.Write(sector, 0, sector.Length);
             }
 
-            return ms.ToArray();
+            buffer = ms.ToArray();
+
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />

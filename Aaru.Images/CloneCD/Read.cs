@@ -933,7 +933,8 @@ namespace Aaru.DiscImages
             ReadSectors(sectorAddress, 1, out buffer);
 
         /// <inheritdoc />
-        public byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag) => ReadSectorsTag(sectorAddress, 1, tag);
+        public ErrorNumber ReadSectorTag(ulong sectorAddress, SectorTagType tag, out byte[] buffer) =>
+            ReadSectorsTag(sectorAddress, 1, tag, out buffer);
 
         /// <inheritdoc />
         public byte[] ReadSector(ulong sectorAddress, uint track) => ReadSectors(sectorAddress, 1, track);
@@ -961,8 +962,10 @@ namespace Aaru.DiscImages
         }
 
         /// <inheritdoc />
-        public byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
+        public ErrorNumber ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag, out byte[] buffer)
         {
+            buffer = null;
+
             foreach(KeyValuePair<uint, ulong> kvp in _offsetMap.Where(kvp => sectorAddress >= kvp.Value).
                                                                 SelectMany(kvp => Tracks, (kvp, track) => new
                                                                 {
@@ -972,9 +975,13 @@ namespace Aaru.DiscImages
                                                                 Where(t => sectorAddress - t.kvp.Value <
                                                                            t.track.EndSector - t.track.StartSector + 1).
                                                                 Select(t => t.kvp))
-                return ReadSectorsTag(sectorAddress - kvp.Value, length, kvp.Key, tag);
+            {
+                buffer = ReadSectorsTag(sectorAddress - kvp.Value, length, kvp.Key, tag);
 
-            throw new ArgumentOutOfRangeException(nameof(sectorAddress), $"Sector address {sectorAddress} not found");
+                return buffer is null ? ErrorNumber.NoData : ErrorNumber.NoError;
+            }
+
+            return ErrorNumber.SectorNotFound;
         }
 
         /// <inheritdoc />

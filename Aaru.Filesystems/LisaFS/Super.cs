@@ -80,7 +80,12 @@ namespace Aaru.Filesystems.LisaFS
                 // LisaOS searches sectors until tag tells MDDF resides there, so we'll search 100 sectors
                 for(ulong i = 0; i < 100; i++)
                 {
-                    DecodeTag(_device.ReadSectorTag(i, SectorTagType.AppleSectorTag), out LisaTag.PriamTag searchTag);
+                    ErrorNumber errno = _device.ReadSectorTag(i, SectorTagType.AppleSectorTag, out byte[] tag);
+
+                    if(errno != ErrorNumber.NoError)
+                        continue;
+
+                    DecodeTag(tag, out LisaTag.PriamTag searchTag);
 
                     AaruConsole.DebugWriteLine("LisaFS plugin", "Sector {0}, file ID 0x{1:X4}", i, searchTag.FileId);
 
@@ -91,9 +96,8 @@ namespace Aaru.Filesystems.LisaFS
                     if(searchTag.FileId != FILEID_MDDF)
                         continue;
 
-                    _devTagSize = _device.ReadSectorTag(i, SectorTagType.AppleSectorTag).Length;
-
-                    ErrorNumber errno = _device.ReadSector(i, out byte[] sector);
+                    _devTagSize = tag.Length;
+                    errno       = _device.ReadSector(i, out byte[] sector);
 
                     if(errno != ErrorNumber.NoError)
                         return errno;

@@ -83,6 +83,7 @@ namespace Aaru.Filesystems.LisaFS
             ptr += _mddf.mddf_block + _volumePrefix;
 
             LisaTag.PriamTag extTag;
+            byte[]           tag;
 
             // This happens on some disks.
             // This is a filesystem corruption that makes LisaOS crash on scavenge.
@@ -93,7 +94,12 @@ namespace Aaru.Filesystems.LisaFS
 
                 for(ulong i = 0; i < _device.Info.Sectors; i++)
                 {
-                    DecodeTag(_device.ReadSectorTag(i, SectorTagType.AppleSectorTag), out extTag);
+                    errno = _device.ReadSectorTag(i, SectorTagType.AppleSectorTag, out tag);
+
+                    if(errno != ErrorNumber.NoError)
+                        continue;
+
+                    DecodeTag(tag, out extTag);
 
                     if(extTag.FileId != fileId * -1)
                         continue;
@@ -109,7 +115,12 @@ namespace Aaru.Filesystems.LisaFS
             }
 
             // Checks that the sector tag indicates its the Extents File we are searching for
-            DecodeTag(_device.ReadSectorTag(ptr, SectorTagType.AppleSectorTag), out extTag);
+            errno = _device.ReadSectorTag(ptr, SectorTagType.AppleSectorTag, out tag);
+
+            if(errno != ErrorNumber.NoError)
+                return errno;
+
+            DecodeTag(tag, out extTag);
 
             if(extTag.FileId != (short)(-1 * fileId))
                 return ErrorNumber.NoSuchFile;

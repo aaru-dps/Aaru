@@ -1400,33 +1400,39 @@ namespace Aaru.DiscImages
         }
 
         /// <inheritdoc />
-        public byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
+        public ErrorNumber ReadSectorTag(ulong sectorAddress, SectorTagType tag, out byte[] buffer)
         {
             if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc ||
                (!_rawCompactDisc && tag != SectorTagType.CdTrackFlags))
                 throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
-            return ReadSectorsTag(sectorAddress, 1, tag);
+            return ReadSectorsTag(sectorAddress, 1, tag, out buffer);
         }
 
         /// <inheritdoc />
-        public byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
+        public ErrorNumber ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag, out byte[] buffer)
         {
+            buffer = null;
+
             if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc ||
                (!_rawCompactDisc && tag != SectorTagType.CdTrackFlags))
-                throw new FeatureUnsupportedImageException("Feature not supported by image format");
+                return ErrorNumber.NotSupported;
 
             if(tag == SectorTagType.CdTrackFlags)
-                return new byte[]
+            {
+                buffer = new byte[]
                 {
                     4
                 };
 
+                return ErrorNumber.NoError;
+            }
+
             if(sectorAddress > _imageInfo.Sectors - 1)
-                throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
+                return ErrorNumber.OutOfRange;
 
             if(sectorAddress + length > _imageInfo.Sectors)
-                throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
+                return ErrorNumber.OutOfRange;
 
             uint sectorOffset;
             uint sectorSize;
@@ -1434,13 +1440,13 @@ namespace Aaru.DiscImages
 
             if(!_hasSubchannel &&
                tag == SectorTagType.CdSectorSubchannel)
-                throw new ArgumentException("No tags in image for requested track", nameof(tag));
+                return ErrorNumber.NoData;
 
             // Requires reading sector
             if(_mode2)
             {
                 if(tag != SectorTagType.CdSectorSubchannel)
-                    throw new FeatureSupportedButNotImplementedImageException("Feature not yet implemented");
+                    return ErrorNumber.NotImplemented;
 
                 sectorOffset = 2352;
                 sectorSize   = 96;
@@ -1475,8 +1481,7 @@ namespace Aaru.DiscImages
                         break;
                     }
 
-                    case SectorTagType.CdSectorSubHeader:
-                        throw new ArgumentException("Unsupported tag requested for this track", nameof(tag));
+                    case SectorTagType.CdSectorSubHeader: return ErrorNumber.NotSupported;
                     case SectorTagType.CdSectorEcc:
                     {
                         sectorOffset = 2076;
@@ -1513,11 +1518,11 @@ namespace Aaru.DiscImages
                         break;
                     }
 
-                    default: throw new ArgumentException("Unsupported tag requested", nameof(tag));
+                    default: return ErrorNumber.NotSupported;
                 }
             }
 
-            byte[] buffer = new byte[sectorSize * length];
+            buffer = new byte[sectorSize * length];
 
             Stream stream = _rawImageFilter.GetDataForkStream();
             var    br     = new BinaryReader(stream);
@@ -1535,7 +1540,7 @@ namespace Aaru.DiscImages
                     Array.Copy(sector, 0, buffer, i * sectorSize, sectorSize);
                 }
 
-            return buffer;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />
@@ -1620,7 +1625,9 @@ namespace Aaru.DiscImages
             if(track != 1)
                 throw new ArgumentOutOfRangeException(nameof(track), "Only a single track is supported");
 
-            return ReadSectorsTag(sectorAddress, length, tag);
+            ErrorNumber errno = ReadSectorsTag(sectorAddress, length, tag, out byte[] buffer);
+
+            return errno == ErrorNumber.NoError ? buffer : null;
         }
     }
 }

@@ -1584,7 +1584,8 @@ namespace Aaru.DiscImages
             ReadSectors(sectorAddress, 1, out buffer);
 
         /// <inheritdoc />
-        public byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag) => ReadSectorsTag(sectorAddress, 1, tag);
+        public ErrorNumber ReadSectorTag(ulong sectorAddress, SectorTagType tag, out byte[] buffer) =>
+            ReadSectorsTag(sectorAddress, 1, tag, out buffer);
 
         /// <inheritdoc />
         public byte[] ReadSector(ulong sectorAddress, uint track) => ReadSectors(sectorAddress, 1, track);
@@ -1612,19 +1613,29 @@ namespace Aaru.DiscImages
         }
 
         /// <inheritdoc />
-        public byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
+        public ErrorNumber ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag, out byte[] buffer)
         {
+            buffer = null;
+
             if(tag == SectorTagType.CdTrackFlags ||
                tag == SectorTagType.CdTrackIsrc)
-                return ReadSectorsTag(sectorAddress, length, 0, tag);
+            {
+                buffer = ReadSectorsTag(sectorAddress, length, 0, tag);
+
+                return buffer is null ? ErrorNumber.NoData : ErrorNumber.NoError;
+            }
 
             foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetMap where sectorAddress >= kvp.Value
                                                      from cdrwinTrack in _discImage.Tracks
                                                      where cdrwinTrack.Sequence      == kvp.Key
                                                      where sectorAddress - kvp.Value < cdrwinTrack.Sectors select kvp)
-                return ReadSectorsTag(sectorAddress - kvp.Value, length, kvp.Key, tag);
+            {
+                buffer = ReadSectorsTag(sectorAddress - kvp.Value, length, kvp.Key, tag);
 
-            throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
+                return buffer is null ? ErrorNumber.NoData : ErrorNumber.NoError;
+            }
+
+            return ErrorNumber.SectorNotFound;
         }
 
         /// <inheritdoc />

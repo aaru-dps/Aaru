@@ -34,7 +34,6 @@ using System;
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
-using Aaru.CommonTypes.Exceptions;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
@@ -157,7 +156,8 @@ namespace Aaru.DiscImages
             ReadSectors(sectorAddress, 1, out buffer);
 
         /// <inheritdoc />
-        public byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag) => ReadSectorsTag(sectorAddress, 1, tag);
+        public ErrorNumber ReadSectorTag(ulong sectorAddress, SectorTagType tag, out byte[] buffer) =>
+            ReadSectorsTag(sectorAddress, 1, tag, out buffer);
 
         /// <inheritdoc />
         public ErrorNumber ReadSectors(ulong sectorAddress, uint length, out byte[] buffer)
@@ -193,24 +193,26 @@ namespace Aaru.DiscImages
         }
 
         /// <inheritdoc />
-        public byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
+        public ErrorNumber ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag, out byte[] buffer)
         {
+            buffer = null;
+
             if(tag != SectorTagType.AppleSectorTag)
-                throw new FeatureUnsupportedImageException($"Tag {tag} not supported by image format");
+                return ErrorNumber.NotSupported;
 
             if(_bptag == 0)
-                throw new FeatureNotPresentImageException("Disk image does not have tags");
+                return ErrorNumber.NoData;
 
             if(sectorAddress > _imageInfo.Sectors - 1)
-                throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
+                return ErrorNumber.SectorNotFound;
 
             if(sectorAddress + length > _imageInfo.Sectors)
-                throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
+                return ErrorNumber.SectorNotFound;
 
-            var buffer = new MemoryStream();
-            int seek   = 0x200;
-            int read   = _bptag;
-            int skip   = 0;
+            var ms   = new MemoryStream();
+            int seek = 0x200;
+            int read = _bptag;
+            int skip = 0;
 
             Stream stream = _bluImageFilter.GetDataForkStream();
             stream.Seek((long)((sectorAddress + 1) * _imageHeader.BytesPerBlock), SeekOrigin.Begin);
@@ -220,11 +222,13 @@ namespace Aaru.DiscImages
                 stream.Seek(seek, SeekOrigin.Current);
                 byte[] sector = new byte[read];
                 stream.Read(sector, 0, read);
-                buffer.Write(sector, 0, read);
+                ms.Write(sector, 0, read);
                 stream.Seek(skip, SeekOrigin.Current);
             }
 
-            return buffer.ToArray();
+            buffer = ms.ToArray();
+
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />

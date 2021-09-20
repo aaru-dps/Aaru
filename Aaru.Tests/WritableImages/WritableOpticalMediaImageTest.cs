@@ -25,6 +25,7 @@ namespace Aaru.Tests.WritableImages
         public void Info()
         {
             Environment.CurrentDirectory = DataFolder;
+            ErrorNumber errno;
 
             Assert.Multiple(() =>
             {
@@ -92,8 +93,13 @@ namespace Aaru.Tests.WritableImages
                                     latestEndSector = currentTrack.EndSector;
 
                                 if(image.Info.ReadableSectorTags.Contains(SectorTagType.CdTrackFlags))
-                                    flags[trackNo] = image.ReadSectorTag(currentTrack.Sequence,
-                                                                         SectorTagType.CdTrackFlags)[0];
+                                {
+                                    errno = image.ReadSectorTag(currentTrack.Sequence, SectorTagType.CdTrackFlags,
+                                                                out byte[] tmp);
+
+                                    if(errno != ErrorNumber.NoError)
+                                        flags[trackNo] = tmp[0];
+                                }
 
                                 trackNo++;
                             }
@@ -199,7 +205,10 @@ namespace Aaru.Tests.WritableImages
 
                             if(useLong)
                             {
-                                errno = sectorsToDo == 1 ? inputFormat.ReadSectorLong(doneSectors + track.StartSector, out sector) : inputFormat.ReadSectorsLong(doneSectors + track.StartSector, sectorsToDo, out sector);
+                                errno = sectorsToDo == 1
+                                            ? inputFormat.ReadSectorLong(doneSectors + track.StartSector, out sector)
+                                            : inputFormat.ReadSectorsLong(doneSectors + track.StartSector, sectorsToDo,
+                                                                          out sector);
 
                                 if(errno == ErrorNumber.NoError)
                                     result = sectorsToDo == 1
@@ -269,9 +278,9 @@ namespace Aaru.Tests.WritableImages
                     {
                         foreach(Track track in tracks)
                         {
-                            byte[] isrc = inputFormat.ReadSectorTag(track.Sequence, tag);
+                            errno = inputFormat.ReadSectorTag(track.Sequence, tag, out byte[] isrc);
 
-                            if(isrc is null)
+                            if(errno != ErrorNumber.NoError)
                                 continue;
 
                             isrcs[(byte)track.Sequence] = Encoding.UTF8.GetString(isrc);
@@ -284,9 +293,9 @@ namespace Aaru.Tests.WritableImages
                     {
                         foreach(Track track in tracks)
                         {
-                            byte[] flags = inputFormat.ReadSectorTag(track.Sequence, tag);
+                            errno = inputFormat.ReadSectorTag(track.Sequence, tag, out byte[] flags);
 
-                            if(flags is null)
+                            if(errno != ErrorNumber.NoError)
                                 continue;
 
                             trackFlags[(byte)track.Sequence] = flags[0];
@@ -332,7 +341,11 @@ namespace Aaru.Tests.WritableImages
                             {
                                 case SectorTagType.CdTrackFlags:
                                 case SectorTagType.CdTrackIsrc:
-                                    sector = inputFormat.ReadSectorTag(track.Sequence, tag);
+                                    errno = inputFormat.ReadSectorTag(track.Sequence, tag, out sector);
+
+                                    Assert.AreEqual(ErrorNumber.NoError, errno,
+                                                    $"Error {errno} reading tag, not continuing...");
+
                                     result = outputFormat.WriteSectorTag(sector, track.Sequence, tag);
 
                                     Assert.IsTrue(result,
@@ -352,7 +365,10 @@ namespace Aaru.Tests.WritableImages
 
                                 if(sectorsToDo == 1)
                                 {
-                                    sector = inputFormat.ReadSectorTag(doneSectors + track.StartSector, tag);
+                                    errno = inputFormat.ReadSectorTag(doneSectors + track.StartSector, tag, out sector);
+
+                                    Assert.AreEqual(ErrorNumber.NoError, errno,
+                                                    $"Error {errno} reading tag, not continuing...");
 
                                     if(tag == SectorTagType.CdSectorSubchannel)
                                     {
@@ -373,8 +389,11 @@ namespace Aaru.Tests.WritableImages
                                 }
                                 else
                                 {
-                                    sector = inputFormat.ReadSectorsTag(doneSectors + track.StartSector, sectorsToDo,
-                                                                        tag);
+                                    errno = inputFormat.ReadSectorsTag(doneSectors + track.StartSector, sectorsToDo,
+                                                                       tag, out sector);
+
+                                    Assert.AreEqual(ErrorNumber.NoError, errno,
+                                                    $"Error {errno} reading tag, not continuing...");
 
                                     if(tag == SectorTagType.CdSectorSubchannel)
                                     {
@@ -517,8 +536,13 @@ namespace Aaru.Tests.WritableImages
                                     latestEndSector = currentTrack.EndSector;
 
                                 if(image.Info.ReadableSectorTags.Contains(SectorTagType.CdTrackFlags))
-                                    flags[trackNo] = image.ReadSectorTag(currentTrack.Sequence,
-                                                                         SectorTagType.CdTrackFlags)[0];
+                                {
+                                    errno = image.ReadSectorTag(currentTrack.Sequence, SectorTagType.CdTrackFlags,
+                                                                out byte[] tmp);
+
+                                    if(errno == ErrorNumber.NoError)
+                                        flags[trackNo] = tmp[0];
+                                }
 
                                 trackNo++;
                             }

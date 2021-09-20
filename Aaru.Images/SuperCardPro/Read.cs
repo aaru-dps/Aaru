@@ -269,8 +269,8 @@ namespace Aaru.DiscImages
             ReadSectors(sectorAddress, 1, out buffer);
 
         /// <inheritdoc />
-        public byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag) =>
-            throw new NotImplementedException("Flux decoding is not yet implemented.");
+        public ErrorNumber ReadSectorTag(ulong sectorAddress, SectorTagType tag, out byte[] buffer) =>
+            ReadSectorsTag(sectorAddress, 1, tag, out buffer);
 
         /// <inheritdoc />
         public ErrorNumber ReadSectors(ulong sectorAddress, uint length, out byte[] buffer)
@@ -281,8 +281,12 @@ namespace Aaru.DiscImages
         }
 
         /// <inheritdoc />
-        public byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag) =>
-            throw new NotImplementedException("Flux decoding is not yet implemented.");
+        public ErrorNumber ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag, out byte[] buffer)
+        {
+            buffer = null;
+
+            return ErrorNumber.NotImplemented;
+        }
 
         /// <inheritdoc />
         public ErrorNumber ReadSectorLong(ulong sectorAddress, out byte[] buffer) =>

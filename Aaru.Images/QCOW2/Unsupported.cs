@@ -31,19 +31,26 @@
 // ****************************************************************************/
 
 using Aaru.CommonTypes.Enums;
-using Aaru.CommonTypes.Exceptions;
 
 namespace Aaru.DiscImages
 {
     public sealed partial class Qcow2
     {
         /// <inheritdoc />
-        public byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag) =>
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+        public ErrorNumber ReadSectorTag(ulong sectorAddress, SectorTagType tag, out byte[] buffer)
+        {
+            buffer = null;
+
+            return ErrorNumber.NotSupported;
+        }
 
         /// <inheritdoc />
-        public byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag) =>
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+        public ErrorNumber ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag, out byte[] buffer)
+        {
+            buffer = null;
+
+            return ErrorNumber.NotSupported;
+        }
 
         /// <inheritdoc />
         public ErrorNumber ReadMediaTag(MediaTagType tag, out byte[] buffer)

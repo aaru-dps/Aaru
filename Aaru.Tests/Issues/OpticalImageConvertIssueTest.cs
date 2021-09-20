@@ -142,7 +142,10 @@ namespace Aaru.Tests.Issues
 
                     if(UseLong)
                     {
-                        errno = sectorsToDo == 1 ? inputFormat.ReadSectorLong(doneSectors + track.StartSector, out sector) : inputFormat.ReadSectorsLong(doneSectors + track.StartSector, sectorsToDo, out sector);
+                        errno = sectorsToDo == 1
+                                    ? inputFormat.ReadSectorLong(doneSectors + track.StartSector, out sector)
+                                    : inputFormat.ReadSectorsLong(doneSectors + track.StartSector, sectorsToDo,
+                                                                  out sector);
 
                         if(errno == ErrorNumber.NoError)
                             result = sectorsToDo == 1
@@ -150,7 +153,7 @@ namespace Aaru.Tests.Issues
                                          : outputOptical.WriteSectorsLong(sector, doneSectors + track.StartSector,
                                                                           sectorsToDo);
                         else
-                            result = false;
+                            result = true;
 
                         if(!result &&
                            sector.Length % 2352 != 0)
@@ -208,9 +211,9 @@ namespace Aaru.Tests.Issues
             {
                 foreach(Track track in tracks)
                 {
-                    byte[] isrc = inputFormat.ReadSectorTag(track.Sequence, tag);
+                    errno = inputFormat.ReadSectorTag(track.Sequence, tag, out byte[] isrc);
 
-                    if(isrc is null)
+                    if(errno != ErrorNumber.NoError)
                         continue;
 
                     isrcs[(byte)track.Sequence] = Encoding.UTF8.GetString(isrc);
@@ -222,9 +225,9 @@ namespace Aaru.Tests.Issues
             {
                 foreach(Track track in tracks)
                 {
-                    byte[] flags = inputFormat.ReadSectorTag(track.Sequence, tag);
+                    errno = inputFormat.ReadSectorTag(track.Sequence, tag, out byte[] flags);
 
-                    if(flags is null)
+                    if(errno != ErrorNumber.NoError)
                         continue;
 
                     trackFlags[(byte)track.Sequence] = flags[0];
@@ -269,7 +272,11 @@ namespace Aaru.Tests.Issues
                     {
                         case SectorTagType.CdTrackFlags:
                         case SectorTagType.CdTrackIsrc:
-                            sector = inputFormat.ReadSectorTag(track.Sequence, tag);
+                            errno = inputFormat.ReadSectorTag(track.Sequence, tag, out sector);
+
+                            Assert.AreEqual(ErrorNumber.NoError, errno,
+                                            $"Error {errno} reading tag, not continuing...");
+
                             result = outputOptical.WriteSectorTag(sector, track.Sequence, tag);
 
                             Assert.IsTrue(result, $"Error {outputOptical.ErrorMessage} writing tag, not continuing...");
@@ -288,7 +295,10 @@ namespace Aaru.Tests.Issues
 
                         if(sectorsToDo == 1)
                         {
-                            sector = inputFormat.ReadSectorTag(doneSectors + track.StartSector, tag);
+                            errno = inputFormat.ReadSectorTag(doneSectors + track.StartSector, tag, out sector);
+
+                            Assert.AreEqual(ErrorNumber.NoError, errno,
+                                            $"Error {errno} reading tag, not continuing...");
 
                             if(tag == SectorTagType.CdSectorSubchannel)
                             {
@@ -307,7 +317,11 @@ namespace Aaru.Tests.Issues
                         }
                         else
                         {
-                            sector = inputFormat.ReadSectorsTag(doneSectors + track.StartSector, sectorsToDo, tag);
+                            errno = inputFormat.ReadSectorsTag(doneSectors + track.StartSector, sectorsToDo, tag,
+                                                               out sector);
+
+                            Assert.AreEqual(ErrorNumber.NoError, errno,
+                                            $"Error {errno} reading tag, not continuing...");
 
                             if(tag == SectorTagType.CdSectorSubchannel)
                             {

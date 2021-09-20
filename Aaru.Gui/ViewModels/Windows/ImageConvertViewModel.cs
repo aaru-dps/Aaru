@@ -1072,9 +1072,9 @@ namespace Aaru.Gui.ViewModels.Windows
                 {
                     foreach(Track track in inputOptical.Tracks)
                     {
-                        byte[] isrc = _inputFormat.ReadSectorTag(track.Sequence, tag);
+                        errno = _inputFormat.ReadSectorTag(track.Sequence, tag, out byte[] isrc);
 
-                        if(isrc is null)
+                        if(errno != ErrorNumber.NoError)
                             continue;
 
                         isrcs[(byte)track.Sequence] = Encoding.UTF8.GetString(isrc);
@@ -1086,9 +1086,9 @@ namespace Aaru.Gui.ViewModels.Windows
                 {
                     foreach(Track track in inputOptical.Tracks)
                     {
-                        byte[] flags = _inputFormat.ReadSectorTag(track.Sequence, tag);
+                        errno = _inputFormat.ReadSectorTag(track.Sequence, tag, out byte[] flags);
 
-                        if(flags is null)
+                        if(errno != ErrorNumber.NoError)
                             continue;
 
                         trackFlags[(byte)track.Sequence] = flags[0];
@@ -1161,46 +1161,104 @@ namespace Aaru.Gui.ViewModels.Windows
 
                         if(sectorsToDo == 1)
                         {
-                            sector = _inputFormat.ReadSectorTag(doneSectors, tag);
-                            Track track = tracks.LastOrDefault(t => t.StartSector >= doneSectors);
+                            errno = _inputFormat.ReadSectorTag(doneSectors, tag, out sector);
 
-                            if(tag   == SectorTagType.CdSectorSubchannel &&
-                               track != null)
+                            if(errno == ErrorNumber.NoError)
                             {
-                                bool indexesChanged = CompactDisc.WriteSubchannelToImage(MmcSubchannel.Raw,
-                                    MmcSubchannel.Raw, sector, doneSectors, 1, null, isrcs, (byte)track.Sequence,
-                                    ref mcn, tracks.ToArray(), subchannelExtents, false, outputFormat, false,
-                                    false, null, null, smallestPregapLbaPerTrack, false);
+                                Track track = tracks.LastOrDefault(t => t.StartSector >= doneSectors);
 
-                                if(indexesChanged)
-                                    outputOptical.SetTracks(tracks.ToList());
+                                if(tag   == SectorTagType.CdSectorSubchannel &&
+                                   track != null)
+                                {
+                                    bool indexesChanged = CompactDisc.WriteSubchannelToImage(MmcSubchannel.Raw,
+                                        MmcSubchannel.Raw, sector, doneSectors, 1, null, isrcs,
+                                        (byte)track.Sequence, ref mcn, tracks.ToArray(), subchannelExtents, false,
+                                        outputFormat, false, false, null, null, smallestPregapLbaPerTrack, false);
 
-                                result = true;
+                                    if(indexesChanged)
+                                        outputOptical.SetTracks(tracks.ToList());
+
+                                    result = true;
+                                }
+                                else
+                                    result = outputFormat.WriteSectorTag(sector, doneSectors, tag);
                             }
                             else
-                                result = outputFormat.WriteSectorTag(sector, doneSectors, tag);
+                            {
+                                result = true;
+
+                                if(ForceChecked)
+                                {
+                                    warning = true;
+
+                                    AaruConsole.ErrorWriteLine("Error {0} reading sector {1}, continuing...", errno,
+                                                               doneSectors);
+                                }
+                                else
+                                {
+                                    await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
+                                                                              GetMessageBoxStandardWindow("Error",
+                                                                                  $"Error {errno} reading sector {doneSectors}, not continuing...",
+                                                                                  icon: Icon.Error).
+                                                                              ShowDialog(_view));
+
+                                    AaruConsole.ErrorWriteLine("Error {0} reading sector {1}, not continuing...", errno,
+                                                               doneSectors);
+
+                                    return;
+                                }
+                            }
                         }
                         else
                         {
-                            sector = _inputFormat.ReadSectorsTag(doneSectors, sectorsToDo, tag);
-                            Track track = tracks.LastOrDefault(t => t.StartSector >= doneSectors);
+                            errno = _inputFormat.ReadSectorsTag(doneSectors, sectorsToDo, tag, out sector);
 
-                            if(tag   == SectorTagType.CdSectorSubchannel &&
-                               track != null)
-
+                            if(errno == ErrorNumber.NoError)
                             {
-                                bool indexesChanged = CompactDisc.WriteSubchannelToImage(MmcSubchannel.Raw,
-                                    MmcSubchannel.Raw, sector, doneSectors, sectorsToDo, null, isrcs,
-                                    (byte)track.Sequence, ref mcn, tracks.ToArray(), subchannelExtents, false,
-                                    outputFormat, false, false, null, null, smallestPregapLbaPerTrack, false);
+                                Track track = tracks.LastOrDefault(t => t.StartSector >= doneSectors);
 
-                                if(indexesChanged)
-                                    outputOptical.SetTracks(tracks.ToList());
+                                if(tag   == SectorTagType.CdSectorSubchannel &&
+                                   track != null)
 
-                                result = true;
+                                {
+                                    bool indexesChanged = CompactDisc.WriteSubchannelToImage(MmcSubchannel.Raw,
+                                        MmcSubchannel.Raw, sector, doneSectors, sectorsToDo, null, isrcs,
+                                        (byte)track.Sequence, ref mcn, tracks.ToArray(), subchannelExtents, false,
+                                        outputFormat, false, false, null, null, smallestPregapLbaPerTrack, false);
+
+                                    if(indexesChanged)
+                                        outputOptical.SetTracks(tracks.ToList());
+
+                                    result = true;
+                                }
+                                else
+                                    result = outputFormat.WriteSectorsTag(sector, doneSectors, sectorsToDo, tag);
                             }
                             else
-                                result = outputFormat.WriteSectorsTag(sector, doneSectors, sectorsToDo, tag);
+                            {
+                                result = true;
+
+                                if(ForceChecked)
+                                {
+                                    warning = true;
+
+                                    AaruConsole.ErrorWriteLine("Error {0} reading sector {1}, continuing...", errno,
+                                                               doneSectors);
+                                }
+                                else
+                                {
+                                    await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
+                                                                              GetMessageBoxStandardWindow("Error",
+                                                                                  $"Error {errno} reading sector {doneSectors}, not continuing...",
+                                                                                  icon: Icon.Error).
+                                                                              ShowDialog(_view));
+
+                                    AaruConsole.ErrorWriteLine("Error {0} reading sector {1}, not continuing...", errno,
+                                                               doneSectors);
+
+                                    return;
+                                }
+                            }
                         }
 
                         if(!result)
@@ -1437,8 +1495,32 @@ namespace Aaru.Gui.ViewModels.Windows
                             case SectorTagType.CdTrackFlags:
                             case SectorTagType.CdTrackIsrc:
 
-                                sector = _inputFormat.ReadSectorTag(track.Sequence, tag);
-                                result = outputFormat.WriteSectorTag(sector, track.Sequence, tag);
+                                errno = _inputFormat.ReadSectorTag(track.Sequence, tag, out sector);
+
+                                if(errno == ErrorNumber.NoError)
+                                    result = outputFormat.WriteSectorTag(sector, track.Sequence, tag);
+                                else
+                                {
+                                    if(ForceChecked)
+                                    {
+                                        warning = true;
+
+                                        AaruConsole.ErrorWriteLine("Error {0} reading tag, continuing...", errno);
+                                    }
+                                    else
+                                    {
+                                        await Dispatcher.UIThread.InvokeAsync(action: async () =>
+                                                                                  await MessageBoxManager.
+                                                                                      GetMessageBoxStandardWindow("Error",
+                                                                                          $"Error {errno} reading tag, not continuing...",
+                                                                                          icon: Icon.Error).
+                                                                                      ShowDialog(_view));
+
+                                        return;
+                                    }
+
+                                    continue;
+                                }
 
                                 if(!result)
                                     if(ForceChecked)
@@ -1485,17 +1567,39 @@ namespace Aaru.Gui.ViewModels.Windows
                                 Progress2Value = (int)(sectors / SectorsValue);
                             });
 
-                            if(sectorsToDo == 1)
+                            errno = sectorsToDo == 1
+                                        ? _inputFormat.ReadSectorTag(doneSectors + track.StartSector, tag, out sector)
+                                        : _inputFormat.ReadSectorsTag(doneSectors + track.StartSector, sectorsToDo, tag,
+                                                                      out sector);
+
+                            if(errno == ErrorNumber.NoError)
                             {
-                                sector = _inputFormat.ReadSectorTag(doneSectors          + track.StartSector, tag);
-                                result = outputFormat.WriteSectorTag(sector, doneSectors + track.StartSector, tag);
+                                result = sectorsToDo == 1
+                                             ? outputFormat.WriteSectorTag(sector, doneSectors + track.StartSector, tag)
+                                             : outputFormat.WriteSectorsTag(sector, doneSectors + track.StartSector,
+                                                                            sectorsToDo, tag);
                             }
                             else
                             {
-                                sector = _inputFormat.ReadSectorsTag(doneSectors + track.StartSector, sectorsToDo, tag);
+                                result = true;
 
-                                result = outputFormat.WriteSectorsTag(sector, doneSectors + track.StartSector,
-                                                                      sectorsToDo, tag);
+                                if(ForceChecked)
+                                {
+                                    warning = true;
+
+                                    AaruConsole.ErrorWriteLine("Error {0} reading tag for sector {1}, continuing...",
+                                                               errno, doneSectors);
+                                }
+                                else
+                                {
+                                    await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
+                                                                              GetMessageBoxStandardWindow("Error",
+                                                                                  $"Error {errno} reading tag for sector {doneSectors}, not continuing...",
+                                                                                  icon: Icon.Error).
+                                                                              ShowDialog(_view));
+
+                                    return;
+                                }
                             }
 
                             if(!result)

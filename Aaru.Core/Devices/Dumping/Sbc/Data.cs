@@ -185,12 +185,24 @@ namespace Aaru.Core.Devices.Dumping
                         if(!_storeEncrypted)
 
                             // Todo: Flag in the _outputPlugin that a sector has been decrypted
-                            buffer = CSS.DecryptSector(buffer,
-                                                       _outputPlugin.ReadSectorsTag(i, blocksToRead,
-                                                           SectorTagType.DvdCmi),
-                                                       _outputPlugin.ReadSectorsTag(i, blocksToRead,
-                                                           SectorTagType.DvdTitleKeyDecrypted), blocksToRead,
-                                                       blockSize);
+                        {
+                            ErrorNumber errno =
+                                _outputPlugin.ReadSectorsTag(i, blocksToRead, SectorTagType.DvdCmi, out byte[] cmi);
+
+                            if(errno != ErrorNumber.NoError)
+                                ErrorMessage?.Invoke($"Error retrieving CMI for sector {i}");
+                            else
+                            {
+                                errno = _outputPlugin.ReadSectorsTag(i, blocksToRead,
+                                                                     SectorTagType.DvdTitleKeyDecrypted,
+                                                                     out byte[] titleKey);
+
+                                if(errno != ErrorNumber.NoError)
+                                    ErrorMessage?.Invoke($"Error retrieving title key for sector {i}");
+                                else
+                                    buffer = CSS.DecryptSector(buffer, cmi, titleKey, blocksToRead, blockSize);
+                            }
+                        }
                     }
 
                     mhddLog.Write(i, cmdDuration);

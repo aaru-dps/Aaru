@@ -583,18 +583,14 @@ namespace Aaru.Filesystems
 
                 while(leftExtentSize > 0)
                 {
-                    try
-                    {
-                        byte[] fullSector =
-                            _image.ReadSectorTag((extents[i].extent + currentExtentSector) * _blockSize / 2048,
-                                                 SectorTagType.CdSectorSubHeader);
+                    ErrorNumber errno =
+                        _image.ReadSectorTag((extents[i].extent + currentExtentSector) * _blockSize / 2048,
+                                             SectorTagType.CdSectorSubHeader, out byte[] fullSector);
 
-                        ms.Write(fullSector, copy ? 0 : 4, 4);
-                    }
-                    catch
-                    {
-                        // Do nothing
-                    }
+                    if(errno != ErrorNumber.NoError)
+                        return null;
+
+                    ms.Write(fullSector, copy ? 0 : 4, 4);
 
                     currentExtentSector++;
                     leftExtentSize -= 2048;

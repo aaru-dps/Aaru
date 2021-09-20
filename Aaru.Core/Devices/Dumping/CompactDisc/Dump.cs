@@ -837,31 +837,23 @@ namespace Aaru.Core.Devices.Dumping
             if((_outputPlugin as IWritableOpticalImage).Tracks != null)
                 foreach(Track imgTrack in (_outputPlugin as IWritableOpticalImage).Tracks)
                 {
-                    try
-                    {
-                        byte[] isrcBytes =
-                            (_outputPlugin as IWritableOpticalImage).ReadSectorTag(imgTrack.Sequence,
-                                SectorTagType.CdTrackIsrc);
+                    errno = (_outputPlugin as IWritableOpticalImage).ReadSectorTag(imgTrack.Sequence,
+                        SectorTagType.CdTrackIsrc, out byte[] isrcBytes);
 
-                        if(isrcBytes != null)
-                            isrcs[(byte)imgTrack.Sequence] = Encoding.ASCII.GetString(isrcBytes);
-                    }
-                    catch(Exception)
-                    {
-                        // TODO: Replace for error number
-                    }
+                    if(errno == ErrorNumber.NoError)
+                        isrcs[(byte)imgTrack.Sequence] = Encoding.ASCII.GetString(isrcBytes);
 
                     Track trk = tracks.FirstOrDefault(t => t.Sequence == imgTrack.Sequence);
 
-                    if(trk != null)
-                    {
-                        trk.Pregap      = imgTrack.Pregap;
-                        trk.StartSector = imgTrack.StartSector;
-                        trk.EndSector   = imgTrack.EndSector;
+                    if(trk == null)
+                        continue;
 
-                        foreach(KeyValuePair<ushort, int> imgIdx in imgTrack.Indexes)
-                            trk.Indexes[imgIdx.Key] = imgIdx.Value;
-                    }
+                    trk.Pregap      = imgTrack.Pregap;
+                    trk.StartSector = imgTrack.StartSector;
+                    trk.EndSector   = imgTrack.EndSector;
+
+                    foreach(KeyValuePair<ushort, int> imgIdx in imgTrack.Indexes)
+                        trk.Indexes[imgIdx.Key] = imgIdx.Value;
                 }
 
             // Send track list to output plugin. This may fail if subchannel is set but unsupported.

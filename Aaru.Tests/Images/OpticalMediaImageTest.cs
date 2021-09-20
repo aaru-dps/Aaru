@@ -95,8 +95,16 @@ namespace Aaru.Tests.Images
                                     latestEndSector = currentTrack.EndSector;
 
                                 if(image.Info.ReadableSectorTags.Contains(SectorTagType.CdTrackFlags))
-                                    flags[trackNo] = image.ReadSectorTag(currentTrack.Sequence,
-                                                                         SectorTagType.CdTrackFlags)[0];
+                                {
+                                    ErrorNumber errno =
+                                        image.ReadSectorTag(currentTrack.Sequence, SectorTagType.CdTrackFlags,
+                                                            out byte[] tmp);
+
+                                    if(errno != ErrorNumber.NoError)
+                                        continue;
+
+                                    flags[trackNo] = tmp[0];
+                                }
 
                                 trackNo++;
                             }
