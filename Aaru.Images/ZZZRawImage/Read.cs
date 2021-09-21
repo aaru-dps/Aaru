@@ -1591,31 +1591,28 @@ namespace Aaru.DiscImages
         }
 
         /// <inheritdoc />
-        public byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag)
+        public ErrorNumber ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag, out byte[] buffer)
         {
-            if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc ||
-               !_rawCompactDisc)
-                throw new FeatureUnsupportedImageException("Feature not supported by image format");
+            buffer = null;
 
-            if(track != 1)
-                throw new ArgumentOutOfRangeException(nameof(track), "Only a single track is supported");
-
-            return ReadSectorsTag(sectorAddress, 1, track, tag);
+            return _imageInfo.XmlMediaType != XmlMediaType.OpticalDisc || !_rawCompactDisc
+                       ? ErrorNumber.NotSupported
+                       : track != 1
+                           ? ErrorNumber.OutOfRange
+                           : ReadSectorsTag(sectorAddress, 1, track, tag, out buffer);
         }
 
         /// <inheritdoc />
-        public byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag)
+        public ErrorNumber ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag,
+                                          out byte[] buffer)
         {
-            if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc ||
-               !_rawCompactDisc)
-                throw new FeatureUnsupportedImageException("Feature not supported by image format");
+            buffer = null;
 
-            if(track != 1)
-                throw new ArgumentOutOfRangeException(nameof(track), "Only a single track is supported");
-
-            ErrorNumber errno = ReadSectorsTag(sectorAddress, length, tag, out byte[] buffer);
-
-            return errno == ErrorNumber.NoError ? buffer : null;
+            return _imageInfo.XmlMediaType != XmlMediaType.OpticalDisc || !_rawCompactDisc
+                       ? ErrorNumber.NotSupported
+                       : track != 1
+                           ? ErrorNumber.OutOfRange
+                           : ReadSectorsTag(sectorAddress, length, tag, out buffer);
         }
     }
 }

@@ -551,22 +551,38 @@ namespace Aaru.Core
 
                         if(sectors - doneSectors >= sectorsToRead)
                         {
-                            sector = image.ReadSectorsTag(doneSectors, sectorsToRead, xmlTrk.Sequence.TrackNumber,
-                                                          SectorTagType.CdSectorSubchannel);
+                            errno = image.ReadSectorsTag(doneSectors, sectorsToRead, xmlTrk.Sequence.TrackNumber,
+                                                         SectorTagType.CdSectorSubchannel, out sector);
 
                             UpdateProgress2("Hashing subchannel sector {0} of {1}", (long)doneSectors,
                                             (long)(trk.EndSector - trk.StartSector + 1));
+
+                            if(errno != ErrorNumber.NoError)
+                            {
+                                UpdateStatus($"Error {errno} reading sector {doneSectors}");
+                                EndProgress2();
+
+                                return;
+                            }
 
                             doneSectors += sectorsToRead;
                         }
                         else
                         {
-                            sector = image.ReadSectorsTag(doneSectors, (uint)(sectors - doneSectors),
-                                                          xmlTrk.Sequence.TrackNumber,
-                                                          SectorTagType.CdSectorSubchannel);
+                            errno = image.ReadSectorsTag(doneSectors, (uint)(sectors - doneSectors),
+                                                         xmlTrk.Sequence.TrackNumber, SectorTagType.CdSectorSubchannel,
+                                                         out sector);
 
                             UpdateProgress2("Hashing subchannel sector {0} of {1}", (long)doneSectors,
                                             (long)(trk.EndSector - trk.StartSector + 1));
+
+                            if(errno != ErrorNumber.NoError)
+                            {
+                                UpdateStatus($"Error {errno} reading sector {doneSectors}");
+                                EndProgress2();
+
+                                return;
+                            }
 
                             doneSectors += sectors - doneSectors;
                         }

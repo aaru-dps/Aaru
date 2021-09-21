@@ -42,7 +42,6 @@ using System.Xml.Serialization;
 using Aaru.Checksums;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
-using Aaru.CommonTypes.Exceptions;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Console;
@@ -1621,19 +1620,17 @@ namespace Aaru.DiscImages
         }
 
         /// <inheritdoc />
-        public byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag)
+        public ErrorNumber ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag, out byte[] buffer)
         {
+            buffer = null;
+
             if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
-                throw new FeatureNotPresentImageException("Feature not present in image");
+                return ErrorNumber.NotSupported;
 
             Track trk = Tracks.FirstOrDefault(t => t.Sequence == track);
 
-            if(trk?.Sequence != track)
-                throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
-
-            ErrorNumber errno = ReadSectorTag(trk.StartSector + sectorAddress, tag, out byte[] buffer);
-
-            return errno != ErrorNumber.NoError ? null : buffer;
+            return trk?.Sequence != track ? ErrorNumber.SectorNotFound
+                       : ReadSectorTag(trk.StartSector + sectorAddress, tag, out buffer);
         }
 
         /// <inheritdoc />
@@ -1964,23 +1961,21 @@ namespace Aaru.DiscImages
         }
 
         /// <inheritdoc />
-        public byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag)
+        public ErrorNumber ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag,
+                                          out byte[] buffer)
         {
+            buffer = null;
+
             if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
-                throw new FeatureNotPresentImageException("Feature not present in image");
+                return ErrorNumber.NotSupported;
 
             Track trk = Tracks.FirstOrDefault(t => t.Sequence == track);
 
-            if(trk?.Sequence != track)
-                throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
-
-            if(trk.StartSector + sectorAddress + length > trk.EndSector + 1)
-                throw new ArgumentOutOfRangeException(nameof(length),
-                                                      $"Requested more sectors ({length + sectorAddress}) than present in track ({trk.EndSector - trk.StartSector + 1}), won't cross tracks");
-
-            ErrorNumber errno = ReadSectorsTag(trk.StartSector + sectorAddress, length, tag, out byte[] buffer);
-
-            return errno == ErrorNumber.NoError ? buffer : null;
+            return trk?.Sequence != track
+                       ? ErrorNumber.SectorNotFound
+                       : trk.StartSector + sectorAddress + length > trk.EndSector + 1
+                           ? ErrorNumber.OutOfRange
+                           : ReadSectorsTag(trk.StartSector + sectorAddress, length, tag, out buffer);
         }
 
         /// <inheritdoc />

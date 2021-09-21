@@ -389,20 +389,21 @@ namespace Aaru.Tests.Images
 
                                 if(sectors - doneSectors >= SECTORS_TO_READ)
                                 {
-                                    sector = image.ReadSectorsTag(doneSectors, SECTORS_TO_READ, currentTrack.Sequence,
-                                                                  SectorTagType.CdSectorSubchannel);
+                                    errno = image.ReadSectorsTag(doneSectors, SECTORS_TO_READ, currentTrack.Sequence,
+                                                                 SectorTagType.CdSectorSubchannel, out sector);
 
                                     doneSectors += SECTORS_TO_READ;
                                 }
                                 else
                                 {
-                                    sector = image.ReadSectorsTag(doneSectors, (uint)(sectors - doneSectors),
-                                                                  currentTrack.Sequence,
-                                                                  SectorTagType.CdSectorSubchannel);
+                                    errno = image.ReadSectorsTag(doneSectors, (uint)(sectors - doneSectors),
+                                                                 currentTrack.Sequence,
+                                                                 SectorTagType.CdSectorSubchannel, out sector);
 
                                     doneSectors += sectors - doneSectors;
                                 }
 
+                                Assert.AreEqual(ErrorNumber.NoError, errno);
                                 ctx.Update(sector);
                             }
                         }

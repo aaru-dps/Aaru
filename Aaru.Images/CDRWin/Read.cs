@@ -1592,8 +1592,8 @@ namespace Aaru.DiscImages
             ReadSectors(sectorAddress, 1, track, out buffer);
 
         /// <inheritdoc />
-        public byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag) =>
-            ReadSectorsTag(sectorAddress, 1, track, tag);
+        public ErrorNumber ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag, out byte[] buffer) =>
+            ReadSectorsTag(sectorAddress, 1, track, tag, out buffer);
 
         /// <inheritdoc />
         public ErrorNumber ReadSectors(ulong sectorAddress, uint length, out byte[] buffer)
@@ -1616,21 +1616,13 @@ namespace Aaru.DiscImages
 
             if(tag == SectorTagType.CdTrackFlags ||
                tag == SectorTagType.CdTrackIsrc)
-            {
-                buffer = ReadSectorsTag(sectorAddress, length, 0, tag);
-
-                return buffer is null ? ErrorNumber.NoData : ErrorNumber.NoError;
-            }
+                return ReadSectorsTag(sectorAddress, length, 0, tag, out buffer);
 
             foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetMap where sectorAddress >= kvp.Value
                                                      from cdrwinTrack in _discImage.Tracks
                                                      where cdrwinTrack.Sequence      == kvp.Key
                                                      where sectorAddress - kvp.Value < cdrwinTrack.Sectors select kvp)
-            {
-                buffer = ReadSectorsTag(sectorAddress - kvp.Value, length, kvp.Key, tag);
-
-                return buffer is null ? ErrorNumber.NoData : ErrorNumber.NoError;
-            }
+                return ReadSectorsTag(sectorAddress - kvp.Value, length, kvp.Key, tag, out buffer);
 
             return ErrorNumber.SectorNotFound;
         }
@@ -1785,30 +1777,22 @@ namespace Aaru.DiscImages
         }
 
         /// <inheritdoc />
-        public byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag)
+        public ErrorNumber ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag,
+                                          out byte[] buffer)
         {
+            buffer = null;
+
             if(tag == SectorTagType.CdTrackFlags ||
                tag == SectorTagType.CdTrackIsrc)
                 track = (uint)sectorAddress;
 
-            var aaruTrack = new CdrWinTrack
-            {
-                Sequence = 0
-            };
+            CdrWinTrack? aaruTrack = _discImage.Tracks.FirstOrDefault(cdrwinTrack => cdrwinTrack.Sequence == track);
 
-            foreach(CdrWinTrack cdrwinTrack in _discImage.Tracks.Where(cdrwinTrack => cdrwinTrack.Sequence == track))
-            {
-                aaruTrack = cdrwinTrack;
-
-                break;
-            }
-
-            if(aaruTrack.Sequence == 0)
-                throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
+            if(aaruTrack is null)
+                return ErrorNumber.SectorNotFound;
 
             if(length > aaruTrack.Sectors)
-                throw new ArgumentOutOfRangeException(nameof(length),
-                                                      "Requested more sectors than present in track, won't cross tracks");
+                return ErrorNumber.OutOfRange;
 
             uint sectorOffset;
             uint sectorSize;
@@ -1841,17 +1825,22 @@ namespace Aaru.DiscImages
                     if(aaruTrack.Flag4Ch)
                         flags |= CdFlags.FourChannel;
 
-                    return new[]
+                    buffer = new[]
                     {
                         (byte)flags
                     };
+
+                    return ErrorNumber.NoError;
                 }
                 case SectorTagType.CdTrackIsrc:
-                    return aaruTrack.Isrc == null ? null : Encoding.UTF8.GetBytes(aaruTrack.Isrc);
+                    if(aaruTrack.Isrc == null)
+                        return ErrorNumber.NoData;
 
-                case SectorTagType.CdTrackText:
-                    throw new FeatureSupportedButNotImplementedImageException("Feature not yet implemented");
-                default: throw new ArgumentException("Unsupported tag requested", nameof(tag));
+                    buffer = Encoding.UTF8.GetBytes(aaruTrack.Isrc);
+
+                    return ErrorNumber.NoError;
+                case SectorTagType.CdTrackText: return ErrorNumber.NotImplemented;
+                default:                        return ErrorNumber.NotSupported;
             }
 
             switch(aaruTrack.TrackType)
@@ -1859,12 +1848,15 @@ namespace Aaru.DiscImages
                 case CDRWIN_TRACK_TYPE_MODE1:
                 case CDRWIN_TRACK_TYPE_MODE2_FORM1:
                 case CDRWIN_TRACK_TYPE_MODE2_FORM2:
-                    if(tag == SectorTagType.CdSectorSubchannel                                  &&
-                       _imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel) &&
-                       _discImage.Tracks.Any(t => t.TrackType == CDRWIN_TRACK_TYPE_CDG))
-                        return new byte[length * 96];
+                    if(tag != SectorTagType.CdSectorSubchannel                                   ||
+                       !_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel) ||
+                       _discImage.Tracks.All(t => t.TrackType != CDRWIN_TRACK_TYPE_CDG))
+                        return ErrorNumber.NoData;
 
-                    throw new ArgumentException("No tags in image for requested track", nameof(tag));
+                    buffer = new byte[length * 96];
+
+                    return ErrorNumber.NoError;
+
                 case CDRWIN_TRACK_TYPE_MODE2_FORMLESS:
                 case CDRWIN_TRACK_TYPE_CDI:
                 {
@@ -1876,12 +1868,15 @@ namespace Aaru.DiscImages
                         case SectorTagType.CdSectorEcc:
                         case SectorTagType.CdSectorEccP:
                         case SectorTagType.CdSectorEccQ:
-                            if(tag == SectorTagType.CdSectorSubchannel                                  &&
-                               _imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel) &&
-                               _discImage.Tracks.Any(t => t.TrackType == CDRWIN_TRACK_TYPE_CDG))
-                                return new byte[length * 96];
+                            if(tag != SectorTagType.CdSectorSubchannel                                   ||
+                               !_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel) ||
+                               _discImage.Tracks.All(t => t.TrackType != CDRWIN_TRACK_TYPE_CDG))
+                                return ErrorNumber.NotSupported;
 
-                            throw new ArgumentException("Unsupported tag requested for this track", nameof(tag));
+                            buffer = new byte[length * 96];
+
+                            return ErrorNumber.NoError;
+
                         case SectorTagType.CdSectorSubHeader:
                         {
                             sectorOffset = 0;
@@ -1898,13 +1893,12 @@ namespace Aaru.DiscImages
 
                             break;
                         }
-                        default: throw new ArgumentException("Unsupported tag requested", nameof(tag));
+                        default: return ErrorNumber.NotSupported;
                     }
 
                     break;
                 }
-                case CDRWIN_TRACK_TYPE_AUDIO:
-                    throw new ArgumentException("There are no tags on audio tracks", nameof(tag));
+                case CDRWIN_TRACK_TYPE_AUDIO: return ErrorNumber.NoData;
                 case CDRWIN_TRACK_TYPE_MODE1_RAW:
                 {
                     switch(tag)
@@ -1927,12 +1921,15 @@ namespace Aaru.DiscImages
                         }
                         case SectorTagType.CdSectorSubchannel:
                         case SectorTagType.CdSectorSubHeader:
-                            if(tag == SectorTagType.CdSectorSubchannel                                  &&
-                               _imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel) &&
-                               _discImage.Tracks.Any(t => t.TrackType == CDRWIN_TRACK_TYPE_CDG))
-                                return new byte[length * 96];
+                            if(tag != SectorTagType.CdSectorSubchannel                                   ||
+                               !_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel) ||
+                               _discImage.Tracks.All(t => t.TrackType != CDRWIN_TRACK_TYPE_CDG))
+                                return ErrorNumber.NotSupported;
 
-                            throw new ArgumentException("Unsupported tag requested for this track", nameof(tag));
+                            buffer = new byte[length * 96];
+
+                            return ErrorNumber.NoError;
+
                         case SectorTagType.CdSectorEcc:
                         {
                             sectorOffset = 2076;
@@ -1965,18 +1962,17 @@ namespace Aaru.DiscImages
 
                             break;
                         }
-                        default: throw new ArgumentException("Unsupported tag requested", nameof(tag));
+                        default: return ErrorNumber.NotSupported;
                     }
 
                     break;
                 }
                 case CDRWIN_TRACK_TYPE_MODE2_RAW: // Requires reading sector
-                case CDRWIN_TRACK_TYPE_CDI_RAW:
-                    throw new FeatureSupportedButNotImplementedImageException("Feature not yet implemented");
+                case CDRWIN_TRACK_TYPE_CDI_RAW: return ErrorNumber.NotImplemented;
                 case CDRWIN_TRACK_TYPE_CDG:
                 {
                     if(tag != SectorTagType.CdSectorSubchannel)
-                        throw new ArgumentException("Unsupported tag requested for this track", nameof(tag));
+                        return ErrorNumber.NotSupported;
 
                     sectorOffset = 2352;
                     sectorSize   = 96;
@@ -1984,10 +1980,10 @@ namespace Aaru.DiscImages
 
                     break;
                 }
-                default: throw new FeatureSupportedButNotImplementedImageException("Unsupported track type");
+                default: return ErrorNumber.NotSupported;
             }
 
-            byte[] buffer = new byte[sectorSize * length];
+            buffer = new byte[sectorSize * length];
 
             // If it's the lost pregap
             if(track       == 1 &&
@@ -1997,7 +1993,7 @@ namespace Aaru.DiscImages
                 {
                     // If we need to mix lost with present data
                     if(sectorAddress + length <= _lostPregap)
-                        return buffer;
+                        return ErrorNumber.NoError;
 
                     ulong pregapPos = _lostPregap - sectorAddress;
 
@@ -2005,11 +2001,11 @@ namespace Aaru.DiscImages
                         ReadSectors(_lostPregap, (uint)(length - pregapPos), track, out byte[] presentData);
 
                     if(errno != ErrorNumber.NoError)
-                        return null;
+                        return errno;
 
                     Array.Copy(presentData, 0, buffer, (long)(pregapPos * sectorSize), presentData.Length);
 
-                    return buffer;
+                    return ErrorNumber.NoError;
                 }
 
                 sectorAddress -= _lostPregap;
@@ -2034,7 +2030,7 @@ namespace Aaru.DiscImages
                     Array.Copy(sector, 0, buffer, i * sectorSize, sectorSize);
                 }
 
-            return buffer;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />

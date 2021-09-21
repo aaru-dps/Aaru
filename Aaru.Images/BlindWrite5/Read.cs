@@ -1445,8 +1445,8 @@ namespace Aaru.DiscImages
             ReadSectors(sectorAddress, 1, track, out buffer);
 
         /// <inheritdoc />
-        public byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag) =>
-            ReadSectorsTag(sectorAddress, 1, track, tag);
+        public ErrorNumber ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag, out byte[] buffer) =>
+            ReadSectorsTag(sectorAddress, 1, track, tag, out buffer);
 
         /// <inheritdoc />
         public ErrorNumber ReadSectors(ulong sectorAddress, uint length, out byte[] buffer)
@@ -1471,11 +1471,7 @@ namespace Aaru.DiscImages
                                                      from track in Tracks where track.Sequence  == kvp.Key
                                                      where sectorAddress                       - kvp.Value <
                                                            track.EndSector - track.StartSector + 1 select kvp)
-            {
-                buffer = ReadSectorsTag(sectorAddress - kvp.Value, length, kvp.Key, tag);
-
-                return buffer is null ? ErrorNumber.NoData : ErrorNumber.NoError;
-            }
+                return ReadSectorsTag(sectorAddress - kvp.Value, length, kvp.Key, tag, out buffer);
 
             return ErrorNumber.SectorNotFound;
         }
@@ -1608,27 +1604,19 @@ namespace Aaru.DiscImages
         }
 
         /// <inheritdoc />
-        public byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag)
+        public ErrorNumber ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag,
+                                          out byte[] buffer)
         {
+            buffer = null;
+
             // TODO: Cross data files
-            var aaruTrack = new Track
-            {
-                Sequence = 0
-            };
-
-            foreach(Track bwTrack in Tracks.Where(bwTrack => bwTrack.Sequence == track))
-            {
-                aaruTrack = bwTrack;
-
-                break;
-            }
+            Track? aaruTrack = Tracks.FirstOrDefault(bwTrack => bwTrack.Sequence == track);
 
             if(aaruTrack is null)
-                throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
+                return ErrorNumber.SectorNotFound;
 
             if(length + sectorAddress > aaruTrack.EndSector - aaruTrack.StartSector + 1)
-                throw new ArgumentOutOfRangeException(nameof(length),
-                                                      $"Requested more sectors ({length + sectorAddress}) than present in track ({aaruTrack.EndSector - aaruTrack.StartSector + 1}), won't cross tracks");
+                return ErrorNumber.OutOfRange;
 
             DataFileCharacteristics chars = (from characteristics in _filePaths let firstSector =
                                                  characteristics.StartLba let lastSector =
@@ -1639,10 +1627,10 @@ namespace Aaru.DiscImages
 
             if(string.IsNullOrEmpty(chars.FilePath) ||
                chars.FileFilter == null)
-                throw new ArgumentOutOfRangeException(nameof(chars.FileFilter), "Track does not exist in disc image");
+                return ErrorNumber.SectorNotFound;
 
             if(aaruTrack.Type == CommonTypes.Enums.TrackType.Data)
-                throw new ArgumentException("Unsupported tag requested", nameof(tag));
+                return ErrorNumber.NotSupported;
 
             switch(tag)
             {
@@ -1655,14 +1643,16 @@ namespace Aaru.DiscImages
                 case SectorTagType.CdSectorSubHeader:
                 case SectorTagType.CdSectorSync: break;
                 case SectorTagType.CdTrackFlags:
-                    if(_trackFlags.TryGetValue((uint)sectorAddress, out byte flag))
-                        return new[]
-                        {
-                            flag
-                        };
+                    if(!_trackFlags.TryGetValue((uint)sectorAddress, out byte flag))
+                        return ErrorNumber.NoData;
 
-                    throw new ArgumentException("Unsupported tag requested", nameof(tag));
-                default: throw new ArgumentException("Unsupported tag requested", nameof(tag));
+                    buffer = new[]
+                    {
+                        flag
+                    };
+
+                    return ErrorNumber.NoError;
+                default: return ErrorNumber.NotSupported;
             }
 
             uint sectorOffset;
@@ -1690,8 +1680,7 @@ namespace Aaru.DiscImages
 
                             break;
                         }
-                        case SectorTagType.CdSectorSubHeader:
-                            throw new ArgumentException("Unsupported tag requested for this track", nameof(tag));
+                        case SectorTagType.CdSectorSubHeader: return ErrorNumber.NotSupported;
                         case SectorTagType.CdSectorEcc:
                         {
                             sectorOffset = 2076;
@@ -1748,18 +1737,19 @@ namespace Aaru.DiscImages
                                 case TrackSubchannelType.None:
                                 {
                                     if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel))
-                                        throw new
-                                            FeatureSupportedButNotImplementedImageException("Unsupported track type");
+                                        return ErrorNumber.NotSupported;
 
-                                    return new byte[length * 96];
+                                    buffer = new byte[length * 96];
+
+                                    return ErrorNumber.NoError;
                                 }
 
-                                default: throw new ArgumentOutOfRangeException();
+                                default: return ErrorNumber.NotSupported;
                             }
 
                             break;
                         }
-                        default: throw new ArgumentException("Unsupported tag requested", nameof(tag));
+                        default: return ErrorNumber.NotSupported;
                     }
 
                     break;
@@ -1771,8 +1761,7 @@ namespace Aaru.DiscImages
                         case SectorTagType.CdSectorHeader:
                         case SectorTagType.CdSectorEcc:
                         case SectorTagType.CdSectorEccP:
-                        case SectorTagType.CdSectorEccQ:
-                            throw new ArgumentException("Unsupported tag requested for this track", nameof(tag));
+                        case SectorTagType.CdSectorEccQ: return ErrorNumber.NotSupported;
                         case SectorTagType.CdSectorSubHeader:
                         {
                             sectorOffset = 0;
@@ -1813,18 +1802,19 @@ namespace Aaru.DiscImages
                                 case TrackSubchannelType.None:
                                 {
                                     if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel))
-                                        throw new
-                                            FeatureSupportedButNotImplementedImageException("Unsupported track type");
+                                        return ErrorNumber.NotSupported;
 
-                                    return new byte[length * 96];
+                                    buffer = new byte[length * 96];
+
+                                    return ErrorNumber.NoError;
                                 }
 
-                                default: throw new ArgumentOutOfRangeException();
+                                default: return ErrorNumber.NotSupported;
                             }
 
                             break;
                         }
-                        default: throw new ArgumentException("Unsupported tag requested", nameof(tag));
+                        default: return ErrorNumber.NotSupported;
                     }
 
                     break;
@@ -1912,18 +1902,19 @@ namespace Aaru.DiscImages
                                 case TrackSubchannelType.None:
                                 {
                                     if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel))
-                                        throw new
-                                            FeatureSupportedButNotImplementedImageException("Unsupported track type");
+                                        return ErrorNumber.NotSupported;
 
-                                    return new byte[length * 96];
+                                    buffer = new byte[length * 96];
+
+                                    return ErrorNumber.NoError;
                                 }
 
-                                default: throw new ArgumentOutOfRangeException();
+                                default: return ErrorNumber.NotSupported;
                             }
 
                             break;
                         }
-                        default: throw new ArgumentException("Unsupported tag requested", nameof(tag));
+                        default: return ErrorNumber.NotSupported;
                     }
 
                     break;
@@ -1986,18 +1977,19 @@ namespace Aaru.DiscImages
                                 case TrackSubchannelType.None:
                                 {
                                     if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel))
-                                        throw new
-                                            FeatureSupportedButNotImplementedImageException("Unsupported track type");
+                                        return ErrorNumber.NotSupported;
 
-                                    return new byte[length * 96];
+                                    buffer = new byte[length * 96];
+
+                                    return ErrorNumber.NoError;
                                 }
 
-                                default: throw new ArgumentOutOfRangeException();
+                                default: return ErrorNumber.NotSupported;
                             }
 
                             break;
                         }
-                        default: throw new ArgumentException("Unsupported tag requested", nameof(tag));
+                        default: return ErrorNumber.NotSupported;
                     }
 
                     break;
@@ -2029,22 +2021,23 @@ namespace Aaru.DiscImages
                                 case TrackSubchannelType.None:
                                 {
                                     if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel))
-                                        throw new
-                                            FeatureSupportedButNotImplementedImageException("Unsupported track type");
+                                        return ErrorNumber.NotSupported;
 
-                                    return new byte[length * 96];
+                                    buffer = new byte[length * 96];
+
+                                    return ErrorNumber.NoError;
                                 }
-                                default: throw new ArgumentOutOfRangeException();
+                                default: return ErrorNumber.NotSupported;
                             }
 
                             break;
                         }
-                        default: throw new ArgumentException("Unsupported tag requested", nameof(tag));
+                        default: return ErrorNumber.NotSupported;
                     }
 
                     break;
                 }
-                default: throw new FeatureSupportedButNotImplementedImageException("Unsupported track type");
+                default: return ErrorNumber.NotSupported;
             }
 
             if(tag != SectorTagType.CdSectorSubchannel)
@@ -2062,10 +2055,10 @@ namespace Aaru.DiscImages
                         sectorSkip += 96;
 
                         break;
-                    default: throw new FeatureSupportedButNotImplementedImageException("Unsupported subchannel type");
+                    default: return ErrorNumber.NotSupported;
                 }
 
-            byte[] buffer = new byte[sectorSize * length];
+            buffer = new byte[sectorSize * length];
 
             _imageStream = aaruTrack.Filter.GetDataForkStream();
             var br = new BinaryReader(_imageStream);
@@ -2087,14 +2080,16 @@ namespace Aaru.DiscImages
                 }
 
             if(tag != SectorTagType.CdSectorSubchannel)
-                return buffer;
+                return ErrorNumber.NoError;
 
-            return chars.Subchannel switch
+            buffer = chars.Subchannel switch
             {
                 TrackSubchannelType.Q16Interleaved    => Subchannel.ConvertQToRaw(buffer),
                 TrackSubchannelType.PackedInterleaved => Subchannel.Interleave(buffer),
                 _                                     => buffer
             };
+
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />
