@@ -1182,7 +1182,8 @@ namespace Aaru.DiscImages
             ReadSectorsLong(sectorAddress, 1, out buffer);
 
         /// <inheritdoc />
-        public byte[] ReadSectorLong(ulong sectorAddress, uint track) => ReadSectorsLong(sectorAddress, 1, track);
+        public ErrorNumber ReadSectorLong(ulong sectorAddress, uint track, out byte[] buffer) =>
+            ReadSectorsLong(sectorAddress, 1, track, out buffer);
 
         /// <inheritdoc />
         public ErrorNumber ReadSectorsLong(ulong sectorAddress, uint length, out byte[] buffer)
@@ -1193,36 +1194,22 @@ namespace Aaru.DiscImages
                                                      from track in Tracks where track.Sequence  == kvp.Key
                                                      where sectorAddress                       - kvp.Value <
                                                            track.EndSector - track.StartSector + 1 select kvp)
-            {
-                buffer = ReadSectorsLong(sectorAddress - kvp.Value, length, kvp.Key);
-
-                return buffer is null ? ErrorNumber.SectorNotFound : ErrorNumber.NoError;
-            }
+                return ReadSectorsLong(sectorAddress - kvp.Value, length, kvp.Key, out buffer);
 
             return ErrorNumber.SectorNotFound;
         }
 
         /// <inheritdoc />
-        public byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
+        public ErrorNumber ReadSectorsLong(ulong sectorAddress, uint length, uint track, out byte[] buffer)
         {
-            var aaruTrack = new Track
-            {
-                Sequence = 0
-            };
-
-            foreach(Track bwTrack in Tracks.Where(bwTrack => bwTrack.Sequence == track))
-            {
-                aaruTrack = bwTrack;
-
-                break;
-            }
+            buffer = null;
+            Track? aaruTrack = Tracks.FirstOrDefault(bwTrack => bwTrack.Sequence == track);
 
             if(aaruTrack is null)
-                throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
+                return ErrorNumber.SectorNotFound;
 
             if(length + sectorAddress > aaruTrack.EndSector - aaruTrack.StartSector + 1)
-                throw new ArgumentOutOfRangeException(nameof(length),
-                                                      $"Requested more sectors ({length + sectorAddress}) than present in track ({aaruTrack.EndSector - aaruTrack.StartSector + 1}), won't cross tracks");
+                return ErrorNumber.OutOfRange;
 
             uint sectorOffset;
             uint sectorSize;
@@ -1241,7 +1228,7 @@ namespace Aaru.DiscImages
 
                     break;
                 }
-                default: throw new FeatureSupportedButNotImplementedImageException("Unsupported track type");
+                default: return ErrorNumber.NotSupported;
             }
 
             _imageStream = aaruTrack.Filter.GetDataForkStream();
@@ -1251,9 +1238,9 @@ namespace Aaru.DiscImages
                Seek((long)aaruTrack.FileOffset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
                     SeekOrigin.Begin);
 
-            byte[] buffer = br.ReadBytes((int)(sectorSize * length));
+            buffer = br.ReadBytes((int)(sectorSize * length));
 
-            return buffer;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />

@@ -100,7 +100,8 @@ namespace Aaru.Core
                 sidecar.OpticalDisc[0].Sequence.TotalMedia    = 1;
             }
 
-            MediaType dskType = image.Info.MediaType;
+            MediaType   dskType = image.Info.MediaType;
+            ErrorNumber errno;
 
             UpdateStatus("Hashing media tags...");
 
@@ -109,7 +110,7 @@ namespace Aaru.Core
                 if(_aborted)
                     return;
 
-                ErrorNumber errno = image.ReadMediaTag(tagType, out byte[] tag);
+                errno = image.ReadMediaTag(tagType, out byte[] tag);
 
                 if(errno != ErrorNumber.NoError)
                     continue;
@@ -446,20 +447,37 @@ namespace Aaru.Core
 
                         if(sectors - doneSectors >= sectorsToRead)
                         {
-                            sector = image.ReadSectorsLong(doneSectors, sectorsToRead, xmlTrk.Sequence.TrackNumber);
+                            errno = image.ReadSectorsLong(doneSectors, sectorsToRead, xmlTrk.Sequence.TrackNumber,
+                                                          out sector);
 
                             UpdateProgress2("Hashing sector {0} of {1}", (long)doneSectors,
                                             (long)(trk.EndSector - trk.StartSector + 1));
+
+                            if(errno != ErrorNumber.NoError)
+                            {
+                                UpdateStatus($"Error {errno} reading sector {doneSectors}");
+                                EndProgress2();
+
+                                return;
+                            }
 
                             doneSectors += sectorsToRead;
                         }
                         else
                         {
-                            sector = image.ReadSectorsLong(doneSectors, (uint)(sectors - doneSectors),
-                                                           xmlTrk.Sequence.TrackNumber);
+                            errno = image.ReadSectorsLong(doneSectors, (uint)(sectors - doneSectors),
+                                                          xmlTrk.Sequence.TrackNumber, out sector);
 
                             UpdateProgress2("Hashing sector {0} of {1}", (long)doneSectors,
                                             (long)(trk.EndSector - trk.StartSector + 1));
+
+                            if(errno != ErrorNumber.NoError)
+                            {
+                                UpdateStatus($"Error {errno} reading sector {doneSectors}");
+                                EndProgress2();
+
+                                return;
+                            }
 
                             doneSectors += sectors - doneSectors;
                         }
@@ -705,7 +723,7 @@ namespace Aaru.Core
                         xmlTrk.FileSystemInformation[0].FileSystems = lstFs.ToArray();
                 }
 
-                ErrorNumber errno = image.ReadSectorTag(trk.Sequence, SectorTagType.CdTrackIsrc, out byte[] isrcData);
+                errno = image.ReadSectorTag(trk.Sequence, SectorTagType.CdTrackIsrc, out byte[] isrcData);
 
                 if(errno == ErrorNumber.NoError)
                     xmlTrk.ISRC = Encoding.UTF8.GetString(isrcData);

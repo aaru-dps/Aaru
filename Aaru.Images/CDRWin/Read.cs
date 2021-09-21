@@ -2042,7 +2042,8 @@ namespace Aaru.DiscImages
             ReadSectorsLong(sectorAddress, 1, out buffer);
 
         /// <inheritdoc />
-        public byte[] ReadSectorLong(ulong sectorAddress, uint track) => ReadSectorsLong(sectorAddress, 1, track);
+        public ErrorNumber ReadSectorLong(ulong sectorAddress, uint track, out byte[] buffer) =>
+            ReadSectorsLong(sectorAddress, 1, track, out buffer);
 
         /// <inheritdoc />
         public ErrorNumber ReadSectorsLong(ulong sectorAddress, uint length, out byte[] buffer)
@@ -2053,43 +2054,26 @@ namespace Aaru.DiscImages
                                                      from cdrwinTrack in _discImage.Tracks
                                                      where cdrwinTrack.Sequence      == kvp.Key
                                                      where sectorAddress - kvp.Value < cdrwinTrack.Sectors select kvp)
-            {
-                buffer = ReadSectorsLong(sectorAddress - kvp.Value, length, kvp.Key);
-
-                return buffer is null ? ErrorNumber.SectorNotFound : ErrorNumber.NoError;
-            }
+                return ReadSectorsLong(sectorAddress - kvp.Value, length, kvp.Key, out buffer);
 
             return ErrorNumber.SectorNotFound;
         }
 
         /// <inheritdoc />
-        public byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
+        public ErrorNumber ReadSectorsLong(ulong sectorAddress, uint length, uint track, out byte[] buffer)
         {
+            buffer = null;
+
             if(!_isCd)
-            {
-                ErrorNumber errno = ReadSectors(sectorAddress, length, track, out byte[] nonCdBuffer);
+                return ReadSectors(sectorAddress, length, track, out buffer);
 
-                return errno != ErrorNumber.NoError ? null : nonCdBuffer;
-            }
+            CdrWinTrack? aaruTrack = _discImage.Tracks.FirstOrDefault(cdrwinTrack => cdrwinTrack.Sequence == track);
 
-            var aaruTrack = new CdrWinTrack
-            {
-                Sequence = 0
-            };
-
-            foreach(CdrWinTrack cdrwinTrack in _discImage.Tracks.Where(cdrwinTrack => cdrwinTrack.Sequence == track))
-            {
-                aaruTrack = cdrwinTrack;
-
-                break;
-            }
-
-            if(aaruTrack.Sequence == 0)
-                throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
+            if(aaruTrack is null)
+                return ErrorNumber.SectorNotFound;
 
             if(length > aaruTrack.Sectors)
-                throw new ArgumentOutOfRangeException(nameof(length),
-                                                      "Requested more sectors than present in track, won't cross tracks");
+                return ErrorNumber.OutOfRange;
 
             uint sectorOffset;
             uint sectorSize;
@@ -2142,10 +2126,10 @@ namespace Aaru.DiscImages
 
                     break;
                 }
-                default: throw new FeatureSupportedButNotImplementedImageException("Unsupported track type");
+                default: return ErrorNumber.NotSupported;
             }
 
-            byte[] buffer = new byte[sectorSize * length];
+            buffer = new byte[sectorSize * length];
 
             // If it's the lost pregap
             if(track       == 1 &&
@@ -2155,7 +2139,7 @@ namespace Aaru.DiscImages
                 {
                     // If we need to mix lost with present data
                     if(sectorAddress + length <= _lostPregap)
-                        return buffer;
+                        return ErrorNumber.NoError;
 
                     ulong pregapPos = _lostPregap - sectorAddress;
 
@@ -2163,11 +2147,11 @@ namespace Aaru.DiscImages
                         ReadSectors(_lostPregap, (uint)(length - pregapPos), track, out byte[] presentData);
 
                     if(errno != ErrorNumber.NoError)
-                        return null;
+                        return errno;
 
                     Array.Copy(presentData, 0, buffer, (long)(pregapPos * sectorSize), presentData.Length);
 
-                    return buffer;
+                    return ErrorNumber.NoError;
                 }
 
                 sectorAddress -= _lostPregap;
@@ -2273,7 +2257,7 @@ namespace Aaru.DiscImages
                 }
             }
 
-            return buffer;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />

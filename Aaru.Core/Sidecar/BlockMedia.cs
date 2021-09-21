@@ -417,7 +417,7 @@ namespace Aaru.Core
 
                         if(errno != ErrorNumber.NoError)
                         {
-                            AaruConsole.ErrorWriteLine($"Error {errno} reading sector {doneSectors}");
+                            UpdateStatus($"Error {errno} reading sector {doneSectors}");
                             EndProgress2();
 
                             return;
@@ -432,7 +432,7 @@ namespace Aaru.Core
 
                         if(errno != ErrorNumber.NoError)
                         {
-                            AaruConsole.ErrorWriteLine($"Error {errno} reading sector {doneSectors}");
+                            UpdateStatus($"Error {errno} reading sector {doneSectors}");
                             EndProgress2();
 
                             return;

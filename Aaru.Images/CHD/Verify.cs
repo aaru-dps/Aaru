@@ -103,7 +103,11 @@ namespace Aaru.DiscImages
             if(_isHdd)
                 return null;
 
-            byte[] buffer = ReadSectorsLong(sectorAddress, length, track);
+            ErrorNumber errno = ReadSectorsLong(sectorAddress, length, track, out byte[] buffer);
+
+            if(errno != ErrorNumber.NoError)
+                return null;
+
             int    bps    = (int)(buffer.Length / length);
             byte[] sector = new byte[bps];
 

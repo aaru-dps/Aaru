@@ -1978,23 +1978,21 @@ namespace Aaru.DiscImages
         }
 
         /// <inheritdoc />
-        public byte[] ReadSectorLong(ulong sectorAddress, uint track)
+        public ErrorNumber ReadSectorLong(ulong sectorAddress, uint track, out byte[] buffer)
         {
-            if(_isHdd)
-                throw new FeaturedNotSupportedByDiscImageException("Cannot access optical tracks on a hard disk image");
+            buffer = null;
 
-            ErrorNumber errno = ReadSectorLong(GetAbsoluteSector(sectorAddress, track), out byte[] buffer);
-
-            return errno == ErrorNumber.NoError ? buffer : null;
+            return _isHdd ? ErrorNumber.NotSupported
+                       : ReadSectorLong(GetAbsoluteSector(sectorAddress, track), out buffer);
         }
 
         /// <inheritdoc />
-        public byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
+        public ErrorNumber ReadSectorsLong(ulong sectorAddress, uint length, uint track, out byte[] buffer)
         {
-            if(_isHdd)
-                throw new FeaturedNotSupportedByDiscImageException("Cannot access optical tracks on a hard disk image");
+            buffer = null;
 
-            return ReadSectorLong(GetAbsoluteSector(sectorAddress, track), length);
+            return _isHdd ? ErrorNumber.NotSupported
+                       : ReadSectorLong(GetAbsoluteSector(sectorAddress, track), length, out buffer);
         }
     }
 }

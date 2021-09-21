@@ -283,11 +283,16 @@ namespace Aaru.DiscImages
                 return null;
             }
 
-            byte[] buffer = ReadSectorsLong(sectorAddress, length, track);
-            int    bps    = (int)(buffer.Length / length);
-            byte[] sector = new byte[bps];
             failingLbas = new List<ulong>();
             unknownLbas = new List<ulong>();
+
+            ErrorNumber errno = ReadSectorsLong(sectorAddress, length, track, out byte[] buffer);
+
+            if(errno != ErrorNumber.NoError)
+                return null;
+
+            int    bps    = (int)(buffer.Length / length);
+            byte[] sector = new byte[bps];
 
             for(int i = 0; i < length; i++)
             {

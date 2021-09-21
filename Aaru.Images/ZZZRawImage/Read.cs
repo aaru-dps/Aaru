@@ -1366,31 +1366,25 @@ namespace Aaru.DiscImages
         }
 
         /// <inheritdoc />
-        public byte[] ReadSectorLong(ulong sectorAddress, uint track)
+        public ErrorNumber ReadSectorLong(ulong sectorAddress, uint track, out byte[] buffer)
         {
+            buffer = null;
+
             if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
-                throw new FeatureUnsupportedImageException("Feature not supported by image format");
+                return ErrorNumber.NotSupported;
 
-            if(track != 1)
-                throw new ArgumentOutOfRangeException(nameof(track), "Only a single track is supported");
-
-            ErrorNumber errno = ReadSectorsLong(sectorAddress, 1, out byte[] buffer);
-
-            return errno != ErrorNumber.NoError ? null : buffer;
+            return track != 1 ? ErrorNumber.OutOfRange : ReadSectorsLong(sectorAddress, 1, out buffer);
         }
 
         /// <inheritdoc />
-        public byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
+        public ErrorNumber ReadSectorsLong(ulong sectorAddress, uint length, uint track, out byte[] buffer)
         {
+            buffer = null;
+
             if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
-                throw new FeatureUnsupportedImageException("Feature not supported by image format");
+                return ErrorNumber.NotSupported;
 
-            if(track != 1)
-                throw new ArgumentOutOfRangeException(nameof(track), "Only a single track is supported");
-
-            ErrorNumber errno = ReadSectorsLong(sectorAddress, length, out byte[] buffer);
-
-            return errno != ErrorNumber.NoError ? null : buffer;
+            return track != 1 ? ErrorNumber.OutOfRange : ReadSectorsLong(sectorAddress, length, out buffer);
         }
 
         /// <inheritdoc />

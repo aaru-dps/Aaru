@@ -2197,19 +2197,17 @@ namespace Aaru.DiscImages
         }
 
         /// <inheritdoc />
-        public byte[] ReadSectorLong(ulong sectorAddress, uint track)
+        public ErrorNumber ReadSectorLong(ulong sectorAddress, uint track, out byte[] buffer)
         {
+            buffer = null;
+
             if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
-                throw new FeatureNotPresentImageException("Feature not present in image");
+                return ErrorNumber.NotSupported;
 
             Track trk = Tracks.FirstOrDefault(t => t.Sequence == track);
 
-            if(trk?.Sequence != track)
-                throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
-
-            ErrorNumber errno = ReadSectorLong(trk.StartSector + sectorAddress, out byte[] buffer);
-
-            return errno != ErrorNumber.NoError ? null : buffer;
+            return trk?.Sequence != track ? ErrorNumber.SectorNotFound
+                       : ReadSectorLong(trk.StartSector + sectorAddress, out buffer);
         }
 
         /// <inheritdoc />
@@ -2391,23 +2389,20 @@ namespace Aaru.DiscImages
         }
 
         /// <inheritdoc />
-        public byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
+        public ErrorNumber ReadSectorsLong(ulong sectorAddress, uint length, uint track, out byte[] buffer)
         {
+            buffer = null;
+
             if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
-                throw new FeatureNotPresentImageException("Feature not present in image");
+                return ErrorNumber.NotSupported;
 
             Track trk = Tracks.FirstOrDefault(t => t.Sequence == track);
 
-            if(trk?.Sequence != track)
-                throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
-
-            if(trk.StartSector + sectorAddress + length > trk.EndSector + 1)
-                throw new ArgumentOutOfRangeException(nameof(length),
-                                                      $"Requested more sectors ({length + sectorAddress}) than present in track ({trk.EndSector - trk.StartSector + 1}), won't cross tracks");
-
-            ErrorNumber errno = ReadSectorsLong(trk.StartSector + sectorAddress, length, out byte[] buffer);
-
-            return errno == ErrorNumber.NoError ? buffer : null;
+            return trk?.Sequence != track
+                       ? ErrorNumber.SectorNotFound
+                       : trk.StartSector + sectorAddress + length > trk.EndSector + 1
+                           ? ErrorNumber.OutOfRange
+                           : ReadSectorsLong(trk.StartSector + sectorAddress, length, out buffer);
         }
 
         /// <inheritdoc />

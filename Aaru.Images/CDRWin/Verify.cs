@@ -197,11 +197,14 @@ namespace Aaru.DiscImages
         public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
                                    out List<ulong> unknownLbas)
         {
-            byte[] buffer = ReadSectorsLong(sectorAddress, length, track);
-            int    bps    = (int)(buffer.Length / length);
-            byte[] sector = new byte[bps];
             failingLbas = new List<ulong>();
             unknownLbas = new List<ulong>();
+            var    errno  = ReadSectorsLong(sectorAddress, length, track, out byte[] buffer);
+
+            if(errno != ErrorNumber.NoError)
+                return null;
+            int    bps    = (int)(buffer.Length / length);
+            byte[] sector = new byte[bps];
 
             for(int i = 0; i < length; i++)
             {

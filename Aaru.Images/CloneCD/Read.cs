@@ -1347,7 +1347,8 @@ namespace Aaru.DiscImages
             ReadSectorsLong(sectorAddress, 1, out buffer);
 
         /// <inheritdoc />
-        public byte[] ReadSectorLong(ulong sectorAddress, uint track) => ReadSectorsLong(sectorAddress, 1, track);
+        public ErrorNumber ReadSectorLong(ulong sectorAddress, uint track, out byte[] buffer) =>
+            ReadSectorsLong(sectorAddress, 1, track, out buffer);
 
         /// <inheritdoc />
         public ErrorNumber ReadSectorsLong(ulong sectorAddress, uint length, out byte[] buffer)
@@ -1358,43 +1359,29 @@ namespace Aaru.DiscImages
                                                      from track in Tracks where track.Sequence  == kvp.Key
                                                      where sectorAddress                       - kvp.Value <
                                                            track.EndSector - track.StartSector + 1 select kvp)
-            {
-                buffer = ReadSectorsLong(sectorAddress - kvp.Value, length, kvp.Key);
-
-                return buffer is null ? ErrorNumber.NoData : ErrorNumber.NoError;
-            }
+                return ReadSectorsLong(sectorAddress - kvp.Value, length, kvp.Key, out buffer);
 
             return ErrorNumber.SectorNotFound;
         }
 
         /// <inheritdoc />
-        public byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
+        public ErrorNumber ReadSectorsLong(ulong sectorAddress, uint length, uint track, out byte[] buffer)
         {
-            var aaruTrack = new Track
-            {
-                Sequence = 0
-            };
-
-            foreach(Track linqTrack in Tracks.Where(linqTrack => linqTrack.Sequence == track))
-            {
-                aaruTrack = linqTrack;
-
-                break;
-            }
+            buffer = null;
+            Track? aaruTrack = Tracks.FirstOrDefault(linqTrack => linqTrack.Sequence == track);
 
             if(aaruTrack is null)
-                throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
+                return ErrorNumber.SectorNotFound;
 
             if(length + sectorAddress - 1 > aaruTrack.EndSector)
-                throw new ArgumentOutOfRangeException(nameof(length),
-                                                      $"Requested more sectors ({length + sectorAddress}) than present in track ({aaruTrack.EndSector}), won't cross tracks");
+                return ErrorNumber.OutOfMemory;
 
-            byte[] buffer = new byte[2352 * length];
+            buffer = new byte[2352 * length];
 
             _dataStream.Seek((long)(aaruTrack.FileOffset + (sectorAddress * 2352)), SeekOrigin.Begin);
             _dataStream.Read(buffer, 0, buffer.Length);
 
-            return buffer;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />

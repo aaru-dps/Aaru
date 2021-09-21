@@ -697,7 +697,7 @@ namespace Aaru.DiscImages
             ReadSectorsLong(sectorAddress, 1, out buffer);
 
         /// <inheritdoc />
-        public byte[] ReadSectorLong(ulong sectorAddress, uint track) => ReadSectorsLong(sectorAddress, 1, track);
+        public ErrorNumber ReadSectorLong(ulong sectorAddress, uint track, out byte[] buffer) => ReadSectorsLong(sectorAddress, 1, track, out buffer);
 
         /// <inheritdoc />
         public ErrorNumber ReadSectorsLong(ulong sectorAddress, uint length, out byte[] buffer)
@@ -708,25 +708,23 @@ namespace Aaru.DiscImages
                                                      from gdiTrack in _discImage.Tracks
                                                      where gdiTrack.Sequence         == kvp.Key
                                                      where sectorAddress - kvp.Value < gdiTrack.Sectors select kvp)
-            {
-                buffer = ReadSectorsLong(sectorAddress - kvp.Value, length, kvp.Key);
-
-                return buffer is null ? ErrorNumber.SectorNotFound : ErrorNumber.NoError;
-            }
+                return ReadSectorsLong(sectorAddress - kvp.Value, length, kvp.Key, out buffer);
 
             return ErrorNumber.SectorNotFound;
         }
 
         /// <inheritdoc />
-        public byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
+        public ErrorNumber ReadSectorsLong(ulong sectorAddress, uint length, uint track, out byte[] buffer)
         {
+            buffer = null;
             if(track == 0)
             {
                 if(sectorAddress + length > _densitySeparationSectors)
-                    throw new ArgumentOutOfRangeException(nameof(length),
-                                                          "Requested more sectors than present in track, won't cross tracks");
+                    return ErrorNumber.OutOfRange;
 
-                return new byte[length * 2352];
+                buffer= new byte[length * 2352];
+
+                return ErrorNumber.NoError;
             }
 
             var aaruTrack = new GdiTrack
@@ -742,11 +740,10 @@ namespace Aaru.DiscImages
             }
 
             if(aaruTrack.Sequence == 0)
-                throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
+                return ErrorNumber.SectorNotFound;
 
             if(sectorAddress + length > aaruTrack.Sectors)
-                throw new ArgumentOutOfRangeException(nameof(length),
-                                                      "Requested more sectors than present in track, won't cross tracks");
+                return ErrorNumber.OutOfRange;
 
             uint sectorOffset;
             uint sectorSize;
@@ -779,10 +776,10 @@ namespace Aaru.DiscImages
 
                     break;
                 }
-                default: throw new FeatureSupportedButNotImplementedImageException("Unsupported track type");
+                default: return ErrorNumber.NotSupported;
             }
 
-            byte[] buffer = new byte[sectorSize * length];
+            buffer = new byte[sectorSize * length];
 
             ulong remainingSectors = length;
 
@@ -795,7 +792,7 @@ namespace Aaru.DiscImages
             }
 
             if(remainingSectors == 0)
-                return buffer;
+                return ErrorNumber.NoError;
 
             _imageStream = aaruTrack.TrackFilter.GetDataForkStream();
             var br = new BinaryReader(_imageStream);
@@ -811,9 +808,7 @@ namespace Aaru.DiscImages
             if(sectorOffset     == 0 &&
                sectorSkip       == 0 &&
                remainingSectors == length)
-            {
                 buffer = br.ReadBytes((int)(sectorSize * remainingSectors));
-            }
             else if(sectorOffset == 0 &&
                     sectorSkip   == 0)
             {
@@ -855,7 +850,7 @@ namespace Aaru.DiscImages
                 }
             }
 
-            return buffer;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />
