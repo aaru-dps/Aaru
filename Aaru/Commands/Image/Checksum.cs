@@ -369,25 +369,42 @@ namespace Aaru.Commands.Image
 
                                                 if(sectors - doneSectors >= SECTORS_TO_READ)
                                                 {
-                                                    sector = opticalInput.ReadSectors(doneSectors, SECTORS_TO_READ,
-                                                        currentTrack.Sequence);
+                                                    errno = opticalInput.ReadSectors(doneSectors, SECTORS_TO_READ,
+                                                        currentTrack.Sequence, out sector);
 
                                                     trackTask.Description =
                                                         string.Format("Hashing sectors {0} to {2} of track {1}",
                                                                       doneSectors, currentTrack.Sequence,
                                                                       doneSectors + SECTORS_TO_READ);
 
+                                                    if(errno != ErrorNumber.NoError)
+                                                    {
+                                                        AaruConsole.
+                                                            ErrorWriteLine($"Error {errno} while reading {SECTORS_TO_READ} sectors from sector {doneSectors}, not continuing...");
+
+                                                        return;
+                                                    }
+
                                                     doneSectors += SECTORS_TO_READ;
                                                 }
                                                 else
                                                 {
-                                                    sector = opticalInput.ReadSectors(doneSectors,
-                                                        (uint)(sectors - doneSectors), currentTrack.Sequence);
+                                                    errno = opticalInput.ReadSectors(doneSectors,
+                                                        (uint)(sectors - doneSectors), currentTrack.Sequence,
+                                                        out sector);
 
                                                     trackTask.Description =
                                                         string.Format("Hashing sectors {0} to {2} of track {1}",
                                                                       doneSectors, currentTrack.Sequence,
                                                                       doneSectors + (sectors - doneSectors));
+
+                                                    if(errno != ErrorNumber.NoError)
+                                                    {
+                                                        AaruConsole.
+                                                            ErrorWriteLine($"Error {errno} while reading {sectors - doneSectors} sectors from sector {doneSectors}, not continuing...");
+
+                                                        return;
+                                                    }
 
                                                     doneSectors += sectors - doneSectors;
                                                 }

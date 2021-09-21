@@ -118,7 +118,14 @@ namespace Aaru.Core
                         UpdateProgress2Event?.Invoke($"Entropying sector {i + 1} of track {currentTrack.Sequence}",
                                                      (long)(i               + 1), (long)currentTrack.EndSector);
 
-                        byte[] sector = opticalMediaImage.ReadSector(i, currentTrack.Sequence);
+                        ErrorNumber errno = opticalMediaImage.ReadSector(i, currentTrack.Sequence, out byte[] sector);
+
+                        if(errno != ErrorNumber.NoError)
+                        {
+                            AaruConsole.ErrorWriteLine($"Error {errno} while reading sector {i}, continuing...");
+
+                            continue;
+                        }
 
                         if(duplicatedSectors)
                         {

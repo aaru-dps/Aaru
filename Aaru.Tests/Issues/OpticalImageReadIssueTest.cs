@@ -48,6 +48,7 @@ namespace Aaru.Tests.Issues
             ulong previousTrackEnd = 0;
 
             List<Track> inputTracks = opticalInput.Tracks;
+            ErrorNumber errno;
 
             foreach(Track currentTrack in inputTracks)
             {
@@ -60,17 +61,20 @@ namespace Aaru.Tests.Issues
 
                     if(sectors - doneSectors >= SECTORS_TO_READ)
                     {
-                        sector = opticalInput.ReadSectors(doneSectors, SECTORS_TO_READ, currentTrack.Sequence);
+                        errno = opticalInput.ReadSectors(doneSectors, SECTORS_TO_READ, currentTrack.Sequence,
+                                                         out sector);
 
                         doneSectors += SECTORS_TO_READ;
                     }
                     else
                     {
-                        sector = opticalInput.ReadSectors(doneSectors, (uint)(sectors - doneSectors),
-                                                          currentTrack.Sequence);
+                        errno = opticalInput.ReadSectors(doneSectors, (uint)(sectors - doneSectors),
+                                                         currentTrack.Sequence, out sector);
 
                         doneSectors += sectors - doneSectors;
                     }
+
+                    Assert.AreEqual(ErrorNumber.NoError, errno);
 
                     ctx.Update(sector);
                 }

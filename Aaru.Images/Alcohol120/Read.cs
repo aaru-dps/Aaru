@@ -789,7 +789,8 @@ namespace Aaru.DiscImages
             ReadSectorsTag(sectorAddress, 1, tag, out buffer);
 
         /// <inheritdoc />
-        public byte[] ReadSector(ulong sectorAddress, uint track) => ReadSectors(sectorAddress, 1, track);
+        public ErrorNumber ReadSector(ulong sectorAddress, uint track, out byte[] buffer) =>
+            ReadSectors(sectorAddress, 1, track, out buffer);
 
         /// <inheritdoc />
         public byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag) =>
@@ -811,9 +812,7 @@ namespace Aaru.DiscImages
                         if(sectorAddress - kvp.Value >= extra.sectors + extra.pregap)
                             continue;
 
-                        buffer = ReadSectors(sectorAddress - kvp.Value, length, kvp.Key);
-
-                        return ErrorNumber.NoError;
+                        return ReadSectors(sectorAddress - kvp.Value, length, kvp.Key, out buffer);
                     }
 
             return ErrorNumber.SectorNotFound;
@@ -844,15 +843,16 @@ namespace Aaru.DiscImages
         }
 
         /// <inheritdoc />
-        public byte[] ReadSectors(ulong sectorAddress, uint length, uint track)
+        public ErrorNumber ReadSectors(ulong sectorAddress, uint length, uint track, out byte[] buffer)
         {
+            buffer = null;
+
             if(!_alcTracks.TryGetValue((int)track, out Track alcTrack) ||
                !_alcTrackExtras.TryGetValue((int)track, out TrackExtra alcExtra))
-                throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
+                return ErrorNumber.OutOfRange;
 
             if(length + sectorAddress > alcExtra.sectors + alcExtra.pregap)
-                throw new ArgumentOutOfRangeException(nameof(length),
-                                                      $"Requested more sectors ({length + sectorAddress}) than present in track ({alcExtra.sectors + alcExtra.pregap}), won't cross tracks");
+                return ErrorNumber.OutOfRange;
 
             uint sectorOffset;
             uint sectorSize;
@@ -904,7 +904,7 @@ namespace Aaru.DiscImages
                     break;
                 }
 
-                default: throw new FeatureSupportedButNotImplementedImageException("Unsupported track type");
+                default: return ErrorNumber.NotSupported;
             }
 
             switch(alcTrack.subMode)
@@ -917,16 +917,16 @@ namespace Aaru.DiscImages
                     sectorSkip += 96;
 
                     break;
-                default: throw new FeatureSupportedButNotImplementedImageException("Unsupported subchannel type");
+                default: return ErrorNumber.NotSupported;
             }
 
-            byte[] buffer = new byte[sectorSize * length];
+            buffer = new byte[sectorSize * length];
 
             if(alcTrack.point  == 1 &&
                alcExtra.pregap > 150)
             {
                 if(sectorAddress + 150 < alcExtra.pregap)
-                    return buffer;
+                    return ErrorNumber.NoError;
 
                 sectorAddress -= alcExtra.pregap - 150;
             }
@@ -971,7 +971,7 @@ namespace Aaru.DiscImages
                     Array.Copy(sector, 0, buffer, i * sectorSize, sectorSize);
                 }
 
-            return buffer;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />

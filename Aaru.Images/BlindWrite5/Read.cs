@@ -1441,7 +1441,8 @@ namespace Aaru.DiscImages
             ReadSectorsTag(sectorAddress, 1, tag, out buffer);
 
         /// <inheritdoc />
-        public byte[] ReadSector(ulong sectorAddress, uint track) => ReadSectors(sectorAddress, 1, track);
+        public ErrorNumber ReadSector(ulong sectorAddress, uint track, out byte[] buffer) =>
+            ReadSectors(sectorAddress, 1, track, out buffer);
 
         /// <inheritdoc />
         public byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag) =>
@@ -1456,11 +1457,7 @@ namespace Aaru.DiscImages
                                                      from track in Tracks where track.Sequence  == kvp.Key
                                                      where sectorAddress                       - kvp.Value <
                                                            track.EndSector - track.StartSector + 1 select kvp)
-            {
-                buffer = ReadSectors(sectorAddress - kvp.Value, length, kvp.Key);
-
-                return ErrorNumber.NoError;
-            }
+                return ReadSectors(sectorAddress - kvp.Value, length, kvp.Key, out buffer);
 
             return ErrorNumber.SectorNotFound;
         }
@@ -1484,27 +1481,18 @@ namespace Aaru.DiscImages
         }
 
         /// <inheritdoc />
-        public byte[] ReadSectors(ulong sectorAddress, uint length, uint track)
+        public ErrorNumber ReadSectors(ulong sectorAddress, uint length, uint track, out byte[] buffer)
         {
+            buffer = null;
+
             // TODO: Cross data files
-            var aaruTrack = new Track
-            {
-                Sequence = 0
-            };
-
-            foreach(Track bwTrack in Tracks.Where(bwTrack => bwTrack.Sequence == track))
-            {
-                aaruTrack = bwTrack;
-
-                break;
-            }
+            Track? aaruTrack = Tracks.FirstOrDefault(bwTrack => bwTrack.Sequence == track);
 
             if(aaruTrack is null)
-                throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
+                return ErrorNumber.SectorNotFound;
 
             if(length + sectorAddress > aaruTrack.EndSector - aaruTrack.StartSector + 1)
-                throw new ArgumentOutOfRangeException(nameof(length),
-                                                      $"Requested more sectors ({length + sectorAddress}) than present in track ({aaruTrack.EndSector - aaruTrack.StartSector + 1}), won't cross tracks");
+                return ErrorNumber.OutOfRange;
 
             DataFileCharacteristics chars = (from characteristics in _filePaths let firstSector =
                                                  characteristics.StartLba let lastSector =
@@ -1515,7 +1503,7 @@ namespace Aaru.DiscImages
 
             if(string.IsNullOrEmpty(chars.FilePath) ||
                chars.FileFilter == null)
-                throw new ArgumentOutOfRangeException(nameof(chars.FileFilter), "Track does not exist in disc image");
+                return ErrorNumber.SectorNotFound;
 
             uint sectorOffset;
             uint sectorSize;
@@ -1559,7 +1547,7 @@ namespace Aaru.DiscImages
 
                     break;
                 }
-                default: throw new FeatureSupportedButNotImplementedImageException("Unsupported track type");
+                default: return ErrorNumber.NotSupported;
             }
 
             switch(chars.Subchannel)
@@ -1576,10 +1564,10 @@ namespace Aaru.DiscImages
                     sectorSkip += 96;
 
                     break;
-                default: throw new FeatureSupportedButNotImplementedImageException("Unsupported subchannel type");
+                default: return ErrorNumber.NotSupported;
             }
 
-            byte[] buffer = new byte[sectorSize * length];
+            buffer = new byte[sectorSize * length];
 
             _imageStream = chars.FileFilter.GetDataForkStream();
             var br = new BinaryReader(_imageStream);
@@ -1616,7 +1604,7 @@ namespace Aaru.DiscImages
                     Array.Copy(sector, 0, buffer, i * sectorSize, sectorSize);
                 }
 
-            return buffer;
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />

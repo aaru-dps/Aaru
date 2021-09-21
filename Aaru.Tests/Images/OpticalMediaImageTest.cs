@@ -344,24 +344,36 @@ namespace Aaru.Tests.Images
 
                                     if(sectors - doneSectors >= SECTORS_TO_READ)
                                     {
-                                        sector =
-                                            @long ? image.ReadSectorsLong(doneSectors, SECTORS_TO_READ,
-                                                                          currentTrack.Sequence)
-                                                : image.ReadSectors(doneSectors, SECTORS_TO_READ,
-                                                                    currentTrack.Sequence);
+                                        if(@long)
+                                        {
+                                            errno = ErrorNumber.NoError;
+
+                                            sector = image.ReadSectorsLong(doneSectors, SECTORS_TO_READ,
+                                                                           currentTrack.Sequence);
+                                        }
+                                        else
+                                            errno = image.ReadSectors(doneSectors, SECTORS_TO_READ,
+                                                                      currentTrack.Sequence, out sector);
 
                                         doneSectors += SECTORS_TO_READ;
                                     }
                                     else
                                     {
-                                        sector =
-                                            @long ? image.ReadSectorsLong(doneSectors, (uint)(sectors - doneSectors),
-                                                                          currentTrack.Sequence)
-                                                : image.ReadSectors(doneSectors, (uint)(sectors - doneSectors),
-                                                                    currentTrack.Sequence);
+                                        if(@long)
+                                        {
+                                            errno = ErrorNumber.NoError;
+
+                                            sector = image.ReadSectorsLong(doneSectors, (uint)(sectors - doneSectors),
+                                                                           currentTrack.Sequence);
+                                        }
+                                        else
+                                            errno = image.ReadSectors(doneSectors, (uint)(sectors - doneSectors),
+                                                                      currentTrack.Sequence, out sector);
 
                                         doneSectors += sectors - doneSectors;
                                     }
+
+                                    Assert.AreEqual(ErrorNumber.NoError, errno);
 
                                     ctx.Update(sector);
                                 }

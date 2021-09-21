@@ -515,8 +515,16 @@ namespace Aaru.Gui.ViewModels.Windows
 
                             if(sectors - doneSectors >= SECTORS_TO_READ)
                             {
-                                sector = opticalMediaImage.ReadSectors(doneSectors, SECTORS_TO_READ,
-                                                                       currentTrack.Sequence);
+                                errno = opticalMediaImage.ReadSectors(doneSectors, SECTORS_TO_READ,
+                                                                      currentTrack.Sequence, out sector);
+
+                                if(errno != ErrorNumber.NoError)
+                                {
+                                    AaruConsole.ErrorWriteLine($"Error {errno} reading sector {doneSectors}");
+                                    _cancel = true;
+
+                                    continue;
+                                }
 
                                 ulong doneSectorsToInvoke = doneSectors;
 
@@ -532,8 +540,16 @@ namespace Aaru.Gui.ViewModels.Windows
                             }
                             else
                             {
-                                sector = opticalMediaImage.ReadSectors(doneSectors, (uint)(sectors - doneSectors),
-                                                                       currentTrack.Sequence);
+                                errno = opticalMediaImage.ReadSectors(doneSectors, (uint)(sectors - doneSectors),
+                                                                      currentTrack.Sequence, out sector);
+
+                                if(errno != ErrorNumber.NoError)
+                                {
+                                    AaruConsole.ErrorWriteLine($"Error {errno} reading sector {doneSectors}");
+                                    _cancel = true;
+
+                                    continue;
+                                }
 
                                 ulong doneSectorsToInvoke = doneSectors;
 

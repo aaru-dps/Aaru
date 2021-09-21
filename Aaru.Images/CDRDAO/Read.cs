@@ -921,7 +921,8 @@ namespace Aaru.DiscImages
             ReadSectorsTag(sectorAddress, 1, tag, out buffer);
 
         /// <inheritdoc />
-        public byte[] ReadSector(ulong sectorAddress, uint track) => ReadSectors(sectorAddress, 1, track);
+        public ErrorNumber ReadSector(ulong sectorAddress, uint track, out byte[] buffer) =>
+            ReadSectors(sectorAddress, 1, track, out buffer);
 
         /// <inheritdoc />
         public byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag) =>
@@ -936,11 +937,7 @@ namespace Aaru.DiscImages
                                                      from cdrdaoTrack in _discimage.Tracks
                                                      where cdrdaoTrack.Sequence      == kvp.Key
                                                      where sectorAddress - kvp.Value < cdrdaoTrack.Sectors select kvp)
-            {
-                buffer = ReadSectors(sectorAddress - kvp.Value, length, kvp.Key);
-
-                return ErrorNumber.NoError;
-            }
+                return ReadSectors(sectorAddress - kvp.Value, length, kvp.Key, out buffer);
 
             return ErrorNumber.SectorNotFound;
         }
@@ -964,8 +961,10 @@ namespace Aaru.DiscImages
         }
 
         /// <inheritdoc />
-        public byte[] ReadSectors(ulong sectorAddress, uint length, uint track)
+        public ErrorNumber ReadSectors(ulong sectorAddress, uint length, uint track, out byte[] buffer)
         {
+            buffer = null;
+
             var aaruTrack = new CdrdaoTrack
             {
                 Sequence = 0
@@ -979,11 +978,10 @@ namespace Aaru.DiscImages
             }
 
             if(aaruTrack.Sequence == 0)
-                throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
+                return ErrorNumber.SectorNotFound;
 
             if(length > aaruTrack.Sectors)
-                throw new ArgumentOutOfRangeException(nameof(length),
-                                                      "Requested more sectors than present in track, won't cross tracks");
+                return ErrorNumber.OutOfRange;
 
             uint sectorOffset;
             uint sectorSize;
@@ -1044,13 +1042,13 @@ namespace Aaru.DiscImages
 
                     break;
                 }
-                default: throw new FeatureSupportedButNotImplementedImageException("Unsupported track type");
+                default: return ErrorNumber.NotSupported;
             }
 
             if(aaruTrack.Subchannel)
                 sectorSkip += 96;
 
-            byte[] buffer = new byte[sectorSize * length];
+            buffer = new byte[sectorSize * length];
 
             _imageStream = aaruTrack.Trackfile.Datafilter.GetDataForkStream();
             var br = new BinaryReader(_imageStream);
@@ -1089,7 +1087,7 @@ namespace Aaru.DiscImages
 
             // cdrdao audio tracks are endian swapped corresponding to Aaru
             if(aaruTrack.Tracktype != CDRDAO_TRACK_TYPE_AUDIO)
-                return buffer;
+                return ErrorNumber.NoError;
 
             byte[] swapped = new byte[buffer.Length];
 
@@ -1099,7 +1097,9 @@ namespace Aaru.DiscImages
                 swapped[i             + 1] = buffer[i];
             }
 
-            return swapped;
+            buffer = swapped;
+
+            return ErrorNumber.NoError;
         }
 
         /// <inheritdoc />
