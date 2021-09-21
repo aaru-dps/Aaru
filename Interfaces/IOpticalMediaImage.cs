@@ -57,7 +57,8 @@ namespace Aaru.CommonTypes.Interfaces
         /// <returns>The sector's user data.</returns>
         /// <param name="sectorAddress">Sector address (relative LBA).</param>
         /// <param name="track">Track.</param>
-        byte[] ReadSector(ulong sectorAddress, uint track);
+        /// <param name="buffer"></param>
+        ErrorNumber ReadSector(ulong sectorAddress, uint track, out byte[] buffer);
 
         /// <summary>Reads a sector's tag, relative to track.</summary>
         /// <returns>The sector's tag.</returns>
@@ -71,7 +72,8 @@ namespace Aaru.CommonTypes.Interfaces
         /// <param name="sectorAddress">Starting sector address (relative LBA).</param>
         /// <param name="length">How many sectors to read.</param>
         /// <param name="track">Track.</param>
-        byte[] ReadSectors(ulong sectorAddress, uint length, uint track);
+        /// <param name="buffer"></param>
+        ErrorNumber ReadSectors(ulong sectorAddress, uint length, uint track, out byte[] buffer);
 
         /// <summary>Reads tag from several sectors, relative to track.</summary>
         /// <returns>The sectors tag.</returns>
