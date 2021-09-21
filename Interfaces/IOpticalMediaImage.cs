@@ -87,14 +87,16 @@ namespace Aaru.CommonTypes.Interfaces
         /// <returns>The complete sector. Format depends on disk type.</returns>
         /// <param name="sectorAddress">Sector address (relative LBA).</param>
         /// <param name="track">Track.</param>
-        byte[] ReadSectorLong(ulong sectorAddress, uint track);
+        /// <param name="buffer"></param>
+        ErrorNumber ReadSectorLong(ulong sectorAddress, uint track, out byte[] buffer);
 
         /// <summary>Reads several complete sector (user data + all tags), relative to track.</summary>
         /// <returns>The complete sectors. Format depends on disk type.</returns>
         /// <param name="sectorAddress">Starting sector address (relative LBA).</param>
         /// <param name="length">How many sectors to read.</param>
         /// <param name="track">Track.</param>
-        byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track);
+        /// <param name="buffer"></param>
+        ErrorNumber ReadSectorsLong(ulong sectorAddress, uint length, uint track, out byte[] buffer);
 
         /// <summary>Gets the disc track extents for a specified session.</summary>
         /// <returns>The track extents for that session.</returns>
