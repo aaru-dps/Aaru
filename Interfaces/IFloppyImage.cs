@@ -68,7 +68,8 @@ namespace Aaru.CommonTypes.Interfaces
         /// <param name="head">Physical head (0-based).</param>
         /// <param name="sector">Logical sector ID.</param>
         /// <param name="status">Status of request.</param>
-        byte[] ReadSector(ushort track, byte head, ushort sector, out FloppySectorStatus status);
+        ErrorNumber ReadSector(ushort track, byte head, ushort sector, out FloppySectorStatus status,
+                               out byte[] buffer);
 
         /// <summary>Reads a sector's tag.</summary>
         /// <returns>
@@ -83,13 +84,14 @@ namespace Aaru.CommonTypes.Interfaces
         /// <param name="sector">Logical sector ID.</param>
         /// <param name="status">Status of request.</param>
         /// <param name="tag">Sector tag</param>
-        byte[] ReadSectorTag(ushort track, byte head, ushort sector, out FloppySectorStatus status, SectorTagType tag);
+        ErrorNumber ReadSectorTag(ushort track, byte head, ushort sector, out FloppySectorStatus status,
+                                  SectorTagType tag, out byte[] buffer);
 
         /// <summary>Reads a whole track. It includes all gaps, address marks, sectors data, etc.</summary>
         /// <returns>The track data.</returns>
         /// <param name="track">Physical track (position of the heads over the floppy media, 0-based).</param>
         /// <param name="head">Physical head (0-based).</param>
-        byte[] ReadTrack(ushort track, byte head);
+        ErrorNumber ReadTrack(ushort track, byte head, out byte[] buffer);
 
         /// <summary>Reads a sector's data including all tags, address mark, and so, in a format dependent of represented media.</summary>
         /// <returns>
@@ -103,7 +105,8 @@ namespace Aaru.CommonTypes.Interfaces
         /// <param name="head">Physical head (0-based).</param>
         /// <param name="sector">Logical sector ID.</param>
         /// <param name="status">Status of request.</param>
-        byte[] ReadSectorLong(ushort track, byte head, ushort sector, out FloppySectorStatus status);
+        ErrorNumber ReadSectorLong(ushort track, byte head, ushort sector, out FloppySectorStatus status,
+                                   out byte[] buffer);
 
         /// <summary>Verifies a track.</summary>
         /// <returns>True if correct, false if incorrect, null if uncheckable.</returns>
