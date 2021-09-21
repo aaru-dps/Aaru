@@ -32,8 +32,6 @@
 
 using System;
 using System.Collections.Generic;
-using Aaru.CommonTypes;
-using Aaru.CommonTypes.Exceptions;
 using Aaru.CommonTypes.Structs;
 using Schemas;
 
@@ -44,7 +42,7 @@ namespace Aaru.DiscImages
         /// <inheritdoc />
         public string Name => "DIM Disk Image";
         /// <inheritdoc />
-        public Guid Id => new Guid("0240B7B1-E959-4CDC-B0BD-386D6E467B88");
+        public Guid Id => new("0240B7B1-E959-4CDC-B0BD-386D6E467B88");
         /// <inheritdoc />
         public ImageInfo Info => _imageInfo;
         /// <inheritdoc />
