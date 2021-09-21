@@ -34,6 +34,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Aaru.CommonTypes.Enums;
 
 // ReSharper disable UnusedMember.Global
 
@@ -92,15 +93,15 @@ namespace Aaru.CommonTypes.Interfaces
 
         /// <summary>Opens the specified path with this archive instance</summary>
         /// <param name="path">Path.</param>
-        void Open(string path);
+        ErrorNumber Open(string path);
 
         /// <summary>Opens the specified stream with this archive instance</summary>
         /// <param name="stream">Stream.</param>
-        void Open(Stream stream);
+        ErrorNumber Open(Stream stream);
 
         /// <summary>Opens the specified buffer with this archive instance</summary>
         /// <param name="buffer">Buffer.</param>
-        void Open(byte[] buffer);
+        ErrorNumber Open(byte[] buffer);
 
         /// <summary>
         ///     Returns true if the archive has a file/stream/buffer currently opened and no
@@ -181,7 +182,7 @@ namespace Aaru.CommonTypes.Interfaces
         /// <param name="entryNumber">The entry in the archive for which to retrieve the XAttr.</param>
         /// <param name="xattr">Extended attribute, alternate data stream or fork name.</param>
         /// <returns>Buffer with the XAttr data.</returns>
-        byte[] GetXattr(int entryNumber, string xattr);
+        ErrorNumber GetXattr(int entryNumber, string xattr, out byte[] buffer);
 
         /// <summary>Gets information about an entry in the archive.</summary>
         /// <remarks>Note that some of the data might be incomplete or not available at all, depending on the type of archive.</remarks>
