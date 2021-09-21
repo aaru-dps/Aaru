@@ -125,10 +125,11 @@ namespace Aaru.DiscImages
                         break;
                     }
 
-                var trackFilter = new ZZZNoFilter();
+                var         trackFilter = new ZZZNoFilter();
+                ErrorNumber errno       = trackFilter.Open(trackfile);
 
-                if(trackFilter.Open(trackfile) != ErrorNumber.NoError)
-                    throw new IOException("Could not open KryoFlux track file.");
+                if(errno != ErrorNumber.NoError)
+                    return errno;
 
                 _imageInfo.CreationTime         = DateTime.MaxValue;
                 _imageInfo.LastModificationTime = DateTime.MinValue;

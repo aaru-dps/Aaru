@@ -37,7 +37,6 @@ using System.Text;
 using Aaru.Checksums;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
-using Aaru.CommonTypes.Exceptions;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
@@ -108,8 +107,12 @@ namespace Aaru.DiscImages
                 usableChecksum = footerChecksum;
             }
             else
-                throw new
-                    ImageNotSupportedException("(VirtualPC plugin): Both header and footer are corrupt, image cannot be opened.");
+            {
+                AaruConsole.
+                    ErrorWriteLine("(VirtualPC plugin): Both header and footer are corrupt, image cannot be opened.");
+
+                return ErrorNumber.InvalidArgument;
+            }
 
             _thisFooter = new HardDiskFooter
             {
@@ -176,8 +179,12 @@ namespace Aaru.DiscImages
             if(_thisFooter.Version == VERSION1)
                 _imageInfo.Version = "1.0";
             else
-                throw new
-                    ImageNotSupportedException($"(VirtualPC plugin): Unknown image type {_thisFooter.DiskType} found. Please submit a bug with an example image.");
+            {
+                AaruConsole.
+                    ErrorWriteLine($"(VirtualPC plugin): Unknown image type {_thisFooter.DiskType} found. Please submit a bug with an example image.");
+
+                return ErrorNumber.InvalidArgument;
+            }
 
             switch(_thisFooter.CreatorApplication)
             {
@@ -360,8 +367,12 @@ namespace Aaru.DiscImages
                                            dynamicChecksumCalculated);
 
                 if(dynamicChecksum != dynamicChecksumCalculated)
-                    throw new
-                        ImageNotSupportedException("(VirtualPC plugin): Both header and footer are corrupt, image cannot be opened.");
+                {
+                    AaruConsole.
+                        ErrorWriteLine("(VirtualPC plugin): Both header and footer are corrupt, image cannot be opened.");
+
+                    return ErrorNumber.InvalidArgument;
+                }
 
                 _thisDynamic = new DynamicDiskHeader
                 {
@@ -457,8 +468,12 @@ namespace Aaru.DiscImages
                 AaruConsole.DebugWriteLine("VirtualPC plugin", "dynamic.reserved2's SHA1 = 0x{0}", sha1Ctx.End());
 
                 if(_thisDynamic.HeaderVersion != VERSION1)
-                    throw new
-                        ImageNotSupportedException($"(VirtualPC plugin): Unknown image type {_thisFooter.DiskType} found. Please submit a bug with an example image.");
+                {
+                    AaruConsole.
+                        ErrorWriteLine($"(VirtualPC plugin): Unknown image type {_thisFooter.DiskType} found. Please submit a bug with an example image.");
+
+                    return ErrorNumber.InvalidArgument;
+                }
 
                 DateTime startTime = DateTime.UtcNow;
 
@@ -603,8 +618,12 @@ namespace Aaru.DiscImages
                     }
 
                     if(!locatorFound)
-                        throw new
-                            FileNotFoundException("(VirtualPC plugin): Cannot find parent file for differencing disk image");
+                    {
+                        AaruConsole.
+                            ErrorWriteLine("(VirtualPC plugin): Cannot find parent file for differencing disk image");
+
+                        return ErrorNumber.NoSuchFile;
+                    }
 
                     {
                         _parentImage = new Vhd();
@@ -613,15 +632,26 @@ namespace Aaru.DiscImages
                             new FiltersList().GetFilter(Path.Combine(imageFilter.ParentFolder, parentPath));
 
                         if(parentFilter == null)
-                            throw new ImageNotSupportedException("(VirtualPC plugin): Cannot find parent image filter");
+                        {
+                            AaruConsole.ErrorWriteLine("(VirtualPC plugin): Cannot find parent image filter");
+
+                            return ErrorNumber.NoSuchFile;
+                        }
                         /*                            PluginBase plugins = new PluginBase();
                                                     plugins.RegisterAllPlugins();
                                                     if (!plugins.ImagePluginsList.TryGetValue(Name.ToLower(), out parentImage))
-                                                        throw new SystemException("(VirtualPC plugin): Unable to open myself");*/
+                                                    {
+                                                        AaruConsole.ErrorWriteLine("(VirtualPC plugin): Unable to open myself");
+                                                        return ErrorNumber.InvalidArgument;
+                                                    }*/
 
                         if(!_parentImage.Identify(parentFilter))
-                            throw new
-                                ImageNotSupportedException("(VirtualPC plugin): Parent image is not a Virtual PC disk image");
+                        {
+                            AaruConsole.
+                                ErrorWriteLine("(VirtualPC plugin): Parent image is not a Virtual PC disk image");
+
+                            return ErrorNumber.InvalidArgument;
+                        }
 
                         ErrorNumber parentError = _parentImage.Open(parentFilter);
 
@@ -638,9 +668,12 @@ namespace Aaru.DiscImages
                         // the parent never stored itself. So the only real way to know that images are related is
                         // because the parent IS found and SAME SIZE. Ugly...
                         // More funny even, tested parent images show an empty host OS, and child images a correct one.
-                        if(_parentImage.Info.Sectors != _imageInfo.Sectors)
-                            throw new
-                                ImageNotSupportedException("(VirtualPC plugin): Parent image is of different size");
+                        if(_parentImage.Info.Sectors == _imageInfo.Sectors)
+                            return ErrorNumber.NoError;
+
+                        AaruConsole.ErrorWriteLine("(VirtualPC plugin): Parent image is of different size");
+
+                        return ErrorNumber.InvalidArgument;
                     }
 
                     return ErrorNumber.NoError;
@@ -649,16 +682,16 @@ namespace Aaru.DiscImages
                 case TYPE_DEPRECATED1:
                 case TYPE_DEPRECATED2:
                 case TYPE_DEPRECATED3:
-                {
-                    throw new
-                        ImageNotSupportedException("(VirtualPC plugin): Deprecated image type found. Please submit a bug with an example image.");
-                }
+                    AaruConsole.
+                        ErrorWriteLine("(VirtualPC plugin): Deprecated image type found. Please submit a bug with an example image.");
+
+                    return ErrorNumber.NotImplemented;
 
                 default:
-                {
-                    throw new
-                        ImageNotSupportedException($"(VirtualPC plugin): Unknown image type {_thisFooter.DiskType} found. Please submit a bug with an example image.");
-                }
+                    AaruConsole.
+                        ErrorWriteLine($"(VirtualPC plugin): Unknown image type {_thisFooter.DiskType} found. Please submit a bug with an example image.");
+
+                    return ErrorNumber.InvalidArgument;
             }
         }
 
@@ -846,16 +879,16 @@ namespace Aaru.DiscImages
                 case TYPE_DEPRECATED1:
                 case TYPE_DEPRECATED2:
                 case TYPE_DEPRECATED3:
-                {
-                    throw new
-                        ImageNotSupportedException("(VirtualPC plugin): Deprecated image type found. Please submit a bug with an example image.");
-                }
+                    AaruConsole.
+                        ErrorWriteLine("(VirtualPC plugin): Deprecated image type found. Please submit a bug with an example image.");
+
+                    return ErrorNumber.NotImplemented;
 
                 default:
-                {
-                    throw new
-                        ImageNotSupportedException($"(VirtualPC plugin): Unknown image type {_thisFooter.DiskType} found. Please submit a bug with an example image.");
-                }
+                    AaruConsole.
+                        ErrorWriteLine($"(VirtualPC plugin): Unknown image type {_thisFooter.DiskType} found. Please submit a bug with an example image.");
+
+                    return ErrorNumber.InvalidArgument;
             }
         }
     }

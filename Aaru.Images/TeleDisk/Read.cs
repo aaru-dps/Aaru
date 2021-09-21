@@ -34,7 +34,6 @@ using System;
 using System.IO;
 using System.Text;
 using Aaru.CommonTypes.Enums;
-using Aaru.CommonTypes.Exceptions;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Compression;
 using Aaru.Console;
@@ -281,7 +280,11 @@ namespace Aaru.DiscImages
 
             if(totalCylinders <= 0 ||
                totalHeads     <= 0)
-                throw new ImageNotSupportedException("No cylinders or heads found");
+            {
+                AaruConsole.ErrorWriteLine("No cylinders or heads found");
+
+                return ErrorNumber.InvalidArgument;
+            }
 
             bool hasLeadOutOnHead0 = false;
             bool hasLeadOutOnHead1 = false;
@@ -451,7 +454,11 @@ namespace Aaru.DiscImages
                         AaruConsole.DebugWriteLine("TeleDisk plugin", "\t\tData encoding: 0x{0:X2}",
                                                    teleDiskData.DataEncoding);
 
-                        decodedData = DecodeTeleDiskData(teleDiskSector.SectorSize, teleDiskData.DataEncoding, data);
+                        ErrorNumber errno = DecodeTeleDiskData(teleDiskSector.SectorSize, teleDiskData.DataEncoding,
+                                                               data, out decodedData);
+
+                        if(errno != ErrorNumber.NoError)
+                            return errno;
 
                         byte tdSectorCalculatedCrc = (byte)(TeleDiskCrc(0, decodedData) & 0xFF);
 

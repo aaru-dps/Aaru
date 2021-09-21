@@ -34,7 +34,6 @@ using System;
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
-using Aaru.CommonTypes.Exceptions;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
@@ -67,7 +66,10 @@ namespace Aaru.DiscImages
                     tracks = 160;
 
                     break;
-                default: throw new ImageNotSupportedException($"Incorrect disk type {(byte)type}");
+                default:
+                    AaruConsole.ErrorWriteLine($"Incorrect disk type {(byte)type}");
+
+                    return ErrorNumber.InvalidArgument;
             }
 
             byte[] trackBytes = new byte[tracks];
@@ -76,7 +78,11 @@ namespace Aaru.DiscImages
             var cmpr = (Compression)stream.ReadByte();
 
             if(cmpr != Compression.None)
-                throw new FeatureSupportedButNotImplementedImageException("Compressed images are not supported.");
+            {
+                AaruConsole.ErrorWriteLine("Compressed images are not supported.");
+
+                return ErrorNumber.NotImplemented;
+            }
 
             int trackSize = 0;
 

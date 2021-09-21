@@ -37,7 +37,6 @@ using System.Linq;
 using System.Text;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
-using Aaru.CommonTypes.Exceptions;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Console;
@@ -390,7 +389,10 @@ namespace Aaru.DiscImages
                                     currentOffset += trackLen * (ulong)(track.RawBytesPerSector + 96);
 
                                     break;
-                                default: throw new ImageNotSupportedException($"Unknown read mode {readMode}");
+                                default:
+                                    AaruConsole.ErrorWriteLine($"Unknown read mode {readMode}");
+
+                                    return ErrorNumber.InvalidArgument;
                             }
 
                             break;
@@ -416,8 +418,9 @@ namespace Aaru.DiscImages
 
                                     break;
                                 case 1:
-                                    throw
-                                        new ImageNotSupportedException($"Invalid read mode {readMode} for this track");
+                                    AaruConsole.ErrorWriteLine($"Invalid read mode {readMode} for this track");
+
+                                    return ErrorNumber.InvalidArgument;
                                 case 2:
                                     track.RawBytesPerSector =  2352;
                                     currentOffset           += trackLen * (ulong)track.RawBytesPerSector;
@@ -505,7 +508,10 @@ namespace Aaru.DiscImages
                                         _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEdc);
 
                                     break;
-                                default: throw new ImageNotSupportedException($"Unknown read mode {readMode}");
+                                default:
+                                    AaruConsole.ErrorWriteLine($"Unknown read mode {readMode}");
+
+                                    return ErrorNumber.InvalidArgument;
                             }
 
                             break;
@@ -521,8 +527,9 @@ namespace Aaru.DiscImages
                             switch(readMode)
                             {
                                 case 0:
-                                    throw
-                                        new ImageNotSupportedException($"Invalid read mode {readMode} for this track");
+                                    AaruConsole.ErrorWriteLine($"Invalid read mode {readMode} for this track");
+
+                                    return ErrorNumber.InvalidArgument;
                                 case 1:
                                     track.RawBytesPerSector = 2336;
 
@@ -584,11 +591,17 @@ namespace Aaru.DiscImages
                                         _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
 
                                     break;
-                                default: throw new ImageNotSupportedException($"Unknown read mode {readMode}");
+                                default:
+                                    AaruConsole.ErrorWriteLine($"Unknown read mode {readMode}");
+
+                                    return ErrorNumber.InvalidArgument;
                             }
 
                             break;
-                        default: throw new ImageNotSupportedException($"Unknown track mode {trackMode}");
+                        default:
+                            AaruConsole.ErrorWriteLine($"Unknown track mode {trackMode}");
+
+                            return ErrorNumber.InvalidArgument;
                     }
 
                     track.File   = imageFilter.Filename;
@@ -1340,7 +1353,7 @@ namespace Aaru.DiscImages
             if(Sessions.Contains(session))
                 return GetSessionTracks(session.Sequence);
 
-            throw new ImageNotSupportedException("Session does not exist in disc image");
+            return null;
         }
 
         /// <inheritdoc />

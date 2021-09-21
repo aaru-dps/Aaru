@@ -36,7 +36,6 @@ using System.IO;
 using System.Linq;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
-using Aaru.CommonTypes.Exceptions;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Compression;
 using Aaru.Console;
@@ -149,13 +148,17 @@ namespace Aaru.DiscImages
                     switch(bChnk.type)
                     {
                         case CHUNK_TYPE_KENCODE:
-                            throw new
-                                ImageNotSupportedException("Chunks compressed with KenCode are not yet supported.");
+                            AaruConsole.ErrorWriteLine("Chunks compressed with KenCode are not yet supported.");
+
+                            return ErrorNumber.NotImplemented;
                         case CHUNK_TYPE_LZH:
-                            throw new ImageNotSupportedException("Chunks compressed with LZH are not yet supported.");
+                            AaruConsole.ErrorWriteLine("Chunks compressed with LZH are not yet supported.");
+
+                            return ErrorNumber.NotImplemented;
                         case CHUNK_TYPE_STUFFIT:
-                            throw new
-                                ImageNotSupportedException("Chunks compressed with StuffIt! are not yet supported.");
+                            AaruConsole.ErrorWriteLine("Chunks compressed with StuffIt! are not yet supported.");
+
+                            return ErrorNumber.NotImplemented;
                     }
 
                     // TODO: Handle compressed chunks
@@ -163,7 +166,11 @@ namespace Aaru.DiscImages
                        (bChnk.type > CHUNK_TYPE_ADC     && bChnk.type < CHUNK_TYPE_STUFFIT) ||
                        (bChnk.type > CHUNK_TYPE_STUFFIT && bChnk.type < CHUNK_TYPE_END)     ||
                        bChnk.type == 1)
-                        throw new ImageNotSupportedException($"Unsupported chunk type 0x{bChnk.type:X8} found");
+                    {
+                        AaruConsole.ErrorWriteLine($"Unsupported chunk type 0x{bChnk.type:X8} found");
+
+                        return ErrorNumber.InvalidArgument;
+                    }
 
                     _chunks.Add(bChnk.sector, bChnk);
                 }
@@ -172,10 +179,18 @@ namespace Aaru.DiscImages
             }
 
             if(_header.segmented > 0)
-                throw new ImageNotSupportedException("Segmented images are not yet supported.");
+            {
+                AaruConsole.ErrorWriteLine("Segmented images are not yet supported.");
+
+                return ErrorNumber.NotImplemented;
+            }
 
             if(_header.encrypted > 0)
-                throw new ImageNotSupportedException("Encrypted images are not yet supported.");
+            {
+                AaruConsole.ErrorWriteLine("Encrypted images are not yet supported.");
+
+                return ErrorNumber.NotImplemented;
+            }
 
             switch(_imageInfo.Sectors)
             {

@@ -36,7 +36,6 @@ using System.IO;
 using System.Runtime.InteropServices;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
-using Aaru.CommonTypes.Exceptions;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Marshal = Aaru.Helpers.Marshal;
@@ -89,8 +88,11 @@ namespace Aaru.DiscImages
             AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.logicalSectorSize = {0}", _vHdr.logicalSectorSize);
 
             if(_vHdr.imageType != VdiImageType.Normal)
-                throw new
-                    FeatureSupportedButNotImplementedImageException($"Support for image type {_vHdr.imageType} not yet implemented");
+            {
+                AaruConsole.ErrorWriteLine($"Support for image type {_vHdr.imageType} not yet implemented");
+
+                return ErrorNumber.InvalidArgument;
+            }
 
             DateTime start = DateTime.UtcNow;
             AaruConsole.DebugWriteLine("VirtualBox plugin", "Reading Image Block Map");

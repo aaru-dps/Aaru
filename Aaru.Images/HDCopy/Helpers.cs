@@ -33,6 +33,8 @@
 
 using System;
 using System.IO;
+using Aaru.CommonTypes.Enums;
+using Aaru.Console;
 
 namespace Aaru.DiscImages
 {
@@ -96,14 +98,18 @@ namespace Aaru.DiscImages
             return true;
         }
 
-        void ReadTrackIntoCache(Stream stream, int trackNum)
+        ErrorNumber ReadTrackIntoCache(Stream stream, int trackNum)
         {
             byte[] trackData = new byte[_imageInfo.SectorSize * _imageInfo.SectorsPerTrack];
             byte[] blkHeader = new byte[3];
 
             // check that track is present
             if(_trackOffset[trackNum] == -1)
-                throw new InvalidDataException("Tried reading a track that is not present in image");
+            {
+                AaruConsole.ErrorWriteLine("Tried reading a track that is not present in image");
+
+                return ErrorNumber.SectorNotFound;
+            }
 
             stream.Seek(_trackOffset[trackNum], SeekOrigin.Begin);
 
@@ -135,10 +141,16 @@ namespace Aaru.DiscImages
 
             // check that the number of bytes decompressed matches a whole track
             if(dIndex != _imageInfo.SectorSize * _imageInfo.SectorsPerTrack)
-                throw new InvalidDataException("Track decompression yielded incomplete data");
+            {
+                AaruConsole.ErrorWriteLine("Track decompression yielded incomplete data");
+
+                return ErrorNumber.InOutError;
+            }
 
             // store track in cache
             _trackCache[trackNum] = trackData;
+
+            return ErrorNumber.NoError;
         }
     }
 }

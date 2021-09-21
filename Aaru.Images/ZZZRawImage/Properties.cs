@@ -114,7 +114,7 @@ namespace Aaru.DiscImages
             get
             {
                 if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
-                    throw new FeatureUnsupportedImageException("Feature not supported by image format");
+                    return null;
 
                 var sess = new Session
                 {

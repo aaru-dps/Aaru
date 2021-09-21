@@ -121,7 +121,7 @@ namespace Aaru.DiscImages
                     lineNumber++;
                     line = _tocStream.ReadLine();
 
-                    matchDiskType = regexDiskType.Match(line ?? throw new InvalidOperationException());
+                    matchDiskType = regexDiskType.Match(line ?? "");
                     matchComment  = regexComment.Match(line);
 
                     // Skip comments at start of file
@@ -149,7 +149,7 @@ namespace Aaru.DiscImages
                     lineNumber++;
                     line = _tocStream.ReadLine();
 
-                    matchComment  = regexComment.Match(line ?? throw new InvalidOperationException());
+                    matchComment  = regexComment.Match(line ?? "");
                     matchDiskType = regexDiskType.Match(line);
                     Match matchMcn             = regexMcn.Match(line);
                     Match matchTrack           = regexTrack.Match(line);
@@ -1532,7 +1532,7 @@ namespace Aaru.DiscImages
             if(session == 1)
                 return Tracks;
 
-            throw new ImageNotSupportedException("Session does not exist in disc image");
+            return null;
         }
     }
 }

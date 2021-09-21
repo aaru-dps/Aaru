@@ -355,7 +355,11 @@ namespace Aaru.DiscImages
                         _descriptorStream.WriteLine("PreGapMode=2");
 
                         break;
-                    default: throw new ArgumentOutOfRangeException();
+                    default:
+                        ErrorMessage =
+                            $"Unexpected first session track type {firstSessionTrack?.Type.ToString() ?? "null"}";
+
+                        return false;
                 }
 
                 _descriptorStream.WriteLine("PreGapSubC=0");

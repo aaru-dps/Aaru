@@ -145,7 +145,14 @@ namespace Aaru.DiscImages
                 var sha1Ctx = new Sha1Context();
 
                 for(uint i = 0; i < _totalHunks; i++)
-                    sha1Ctx.Update(GetHunk(i));
+                {
+                    ErrorNumber errno = GetHunk(i, out byte[] buffer);
+
+                    if(errno != ErrorNumber.NoError)
+                        return null;
+
+                    sha1Ctx.Update(buffer);
+                }
 
                 calculated = sha1Ctx.Final();
             }
@@ -154,7 +161,14 @@ namespace Aaru.DiscImages
                 var md5Ctx = new Md5Context();
 
                 for(uint i = 0; i < _totalHunks; i++)
-                    md5Ctx.Update(GetHunk(i));
+                {
+                    ErrorNumber errno = GetHunk(i, out byte[] buffer);
+
+                    if(errno != ErrorNumber.NoError)
+                        return null;
+
+                    md5Ctx.Update(buffer);
+                }
 
                 calculated = md5Ctx.Final();
             }

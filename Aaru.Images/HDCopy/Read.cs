@@ -137,7 +137,12 @@ namespace Aaru.DiscImages
             {
                 // track is present in file, make sure it has been loaded
                 if(!_trackCache.ContainsKey(trackNum))
-                    ReadTrackIntoCache(_hdcpImageFilter.GetDataForkStream(), trackNum);
+                {
+                    ErrorNumber errno = ReadTrackIntoCache(_hdcpImageFilter.GetDataForkStream(), trackNum);
+
+                    if(errno != ErrorNumber.NoError)
+                        return errno;
+                }
 
                 Array.Copy(_trackCache[trackNum], sectorOffset * _imageInfo.SectorSize, buffer, 0,
                            _imageInfo.SectorSize);

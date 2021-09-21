@@ -83,7 +83,7 @@ namespace Aaru.DiscImages
 
                 var hdr = new Regex(CCD_IDENTIFIER);
 
-                Match hdm = hdr.Match(line ?? throw new InvalidOperationException());
+                Match hdm = hdr.Match(line ?? "");
 
                 return hdm.Success;
             }

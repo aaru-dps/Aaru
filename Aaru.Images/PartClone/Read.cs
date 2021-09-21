@@ -36,7 +36,6 @@ using System.IO;
 using System.Linq;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
-using Aaru.CommonTypes.Exceptions;
 using Aaru.CommonTypes.Extents;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
@@ -82,7 +81,11 @@ namespace Aaru.DiscImages
             AaruConsole.DebugWriteLine("PartClone plugin", "pHdr.bitmagic = {0}", StringHandlers.CToString(bitmagic));
 
             if(!_biTmAgIc.SequenceEqual(bitmagic))
-                throw new ImageNotSupportedException("Could not find partclone BiTmAgIc, not continuing...");
+            {
+                AaruConsole.ErrorWriteLine("Could not find partclone BiTmAgIc, not continuing...");
+
+                return ErrorNumber.InvalidArgument;
+            }
 
             _dataOff = stream.Position;
             AaruConsole.DebugWriteLine("PartClone plugin", "pHdr.dataOff = {0}", _dataOff);

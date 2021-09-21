@@ -35,7 +35,6 @@ using System.Collections.Generic;
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
-using Aaru.CommonTypes.Exceptions;
 using Aaru.CommonTypes.Extents;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
@@ -72,7 +71,11 @@ namespace Aaru.DiscImages
 
             // TODO: Support multifile volumes
             if(_cVolumeHeader.volumeNumber > 0)
-                throw new FeatureSupportedButNotImplementedImageException("Support for multiple volumes not supported");
+            {
+                AaruConsole.ErrorWriteLine("Support for multiple volumes not supported");
+
+                return ErrorNumber.NotImplemented;
+            }
 
             hdrB = new byte[Marshal.SizeOf<MainHeader>()];
             stream.Read(hdrB, 0, Marshal.SizeOf<MainHeader>());
@@ -204,7 +207,11 @@ namespace Aaru.DiscImages
 
             // partimage 0.6.1 does not support them either
             if(_cMainHeader.dwEncryptAlgo != PEncryption.None)
-                throw new ImageNotSupportedException("Encrypted images are currently not supported.");
+            {
+                AaruConsole.ErrorWriteLine("Encrypted images are currently not supported.");
+
+                return ErrorNumber.NotImplemented;
+            }
 
             string magic;
 
@@ -216,7 +223,11 @@ namespace Aaru.DiscImages
                 magic = StringHandlers.CToString(hdrB);
 
                 if(!magic.Equals(MAGIC_BEGIN_MBRBACKUP))
-                    throw new ImageNotSupportedException("Cannot find MBRs");
+                {
+                    AaruConsole.ErrorWriteLine("Cannot find MBRs");
+
+                    return ErrorNumber.InvalidArgument;
+                }
 
                 stream.Seek(_cMainHeader.dwMbrSize * _cMainHeader.dwMbrCount, SeekOrigin.Current);
             }
@@ -229,7 +240,11 @@ namespace Aaru.DiscImages
             magic = StringHandlers.CToString(hdrB);
 
             if(!magic.Equals(MAGIC_BEGIN_LOCALHEADER))
-                throw new ImageNotSupportedException("Cannot find local header");
+            {
+                AaruConsole.ErrorWriteLine("Cannot find local header");
+
+                return ErrorNumber.InvalidArgument;
+            }
 
             hdrB = new byte[Marshal.SizeOf<CLocalHeader>()];
             stream.Read(hdrB, 0, Marshal.SizeOf<CLocalHeader>());
@@ -259,7 +274,11 @@ namespace Aaru.DiscImages
             magic = StringHandlers.CToString(hdrB);
 
             if(!magic.Equals(MAGIC_BEGIN_BITMAP))
-                throw new ImageNotSupportedException("Cannot find bitmap");
+            {
+                AaruConsole.ErrorWriteLine("Cannot find bitmap");
+
+                return ErrorNumber.InvalidArgument;
+            }
 
             _bitmap = new byte[localHeader.qwBitmapSize];
             stream.Read(_bitmap, 0, (int)localHeader.qwBitmapSize);
@@ -269,7 +288,11 @@ namespace Aaru.DiscImages
             magic = StringHandlers.CToString(hdrB);
 
             if(!magic.Equals(MAGIC_BEGIN_INFO))
-                throw new ImageNotSupportedException("Cannot find info block");
+            {
+                AaruConsole.ErrorWriteLine("Cannot find info block");
+
+                return ErrorNumber.InvalidArgument;
+            }
 
             // Skip info block and its checksum
             stream.Seek(16384 + 4, SeekOrigin.Current);
@@ -279,7 +302,11 @@ namespace Aaru.DiscImages
             magic = StringHandlers.CToString(hdrB);
 
             if(!magic.Equals(MAGIC_BEGIN_DATABLOCKS))
-                throw new ImageNotSupportedException("Cannot find data blocks");
+            {
+                AaruConsole.ErrorWriteLine("Cannot find data blocks");
+
+                return ErrorNumber.InvalidArgument;
+            }
 
             _dataOff = stream.Position;
 
@@ -293,8 +320,11 @@ namespace Aaru.DiscImages
             magic = StringHandlers.CToString(hdrB);
 
             if(!magic.Equals(MAGIC_BEGIN_TAIL))
-                throw new
-                    ImageNotSupportedException("Cannot find tail. Multiple volumes are not supported or image is corrupt.");
+            {
+                AaruConsole.ErrorWriteLine("Cannot find tail. Multiple volumes are not supported or image is corrupt.");
+
+                return ErrorNumber.InvalidArgument;
+            }
 
             AaruConsole.DebugWriteLine("Partimage plugin", "Filling extents");
             DateTime start = DateTime.Now;

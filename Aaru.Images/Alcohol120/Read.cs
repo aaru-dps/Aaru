@@ -37,7 +37,6 @@ using System.Linq;
 using System.Text;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
-using Aaru.CommonTypes.Exceptions;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Decoders.CD;
@@ -1491,13 +1490,8 @@ namespace Aaru.DiscImages
         }
 
         /// <inheritdoc />
-        public List<CommonTypes.Structs.Track> GetSessionTracks(CommonTypes.Structs.Session session)
-        {
-            if(Sessions.Contains(session))
-                return GetSessionTracks(session.Sequence);
-
-            throw new ImageNotSupportedException("Session does not exist in disc image");
-        }
+        public List<CommonTypes.Structs.Track> GetSessionTracks(CommonTypes.Structs.Session session) =>
+            Sessions.Contains(session) ? GetSessionTracks(session.Sequence) : null;
 
         /// <inheritdoc />
         public List<CommonTypes.Structs.Track> GetSessionTracks(ushort session)

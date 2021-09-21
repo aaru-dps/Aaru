@@ -176,8 +176,11 @@ namespace Aaru.DiscImages
             ulong l1Off = (byteAddress & _l1Mask) >> _l1Shift;
 
             if((long)l1Off >= _l1Table.LongLength)
-                throw new ArgumentOutOfRangeException(nameof(l1Off),
-                                                      $"Trying to write past L1 table, position {l1Off} of a max {_l1Table.LongLength}");
+            {
+                ErrorMessage = $"Trying to write past L1 table, position {l1Off} of a max {_l1Table.LongLength}";
+
+                return false;
+            }
 
             if(_l1Table[l1Off] == 0)
             {

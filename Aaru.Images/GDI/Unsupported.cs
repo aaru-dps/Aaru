@@ -31,14 +31,17 @@
 // ****************************************************************************/
 
 using Aaru.CommonTypes.Enums;
-using Aaru.CommonTypes.Exceptions;
 
 namespace Aaru.DiscImages
 {
     public sealed partial class Gdi
     {
         /// <inheritdoc />
-        public ErrorNumber ReadMediaTag(MediaTagType tag, out byte[] buffer) =>
-            throw new FeatureSupportedButNotImplementedImageException("Feature not supported by image format");
+        public ErrorNumber ReadMediaTag(MediaTagType tag, out byte[] buffer)
+        {
+            buffer = null;
+
+            return ErrorNumber.NoData;
+        }
     }
 }

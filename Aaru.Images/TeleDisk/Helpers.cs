@@ -32,7 +32,7 @@
 
 using System;
 using Aaru.CommonTypes;
-using Aaru.CommonTypes.Exceptions;
+using Aaru.CommonTypes.Enums;
 using Aaru.Console;
 using Aaru.Helpers;
 
@@ -69,9 +69,10 @@ namespace Aaru.DiscImages
             return crc;
         }
 
-        static byte[] DecodeTeleDiskData(byte sectorSize, byte encodingType, byte[] encodedData)
+        static ErrorNumber DecodeTeleDiskData(byte sectorSize, byte encodingType, byte[] encodedData,
+                                              out byte[] decodedData)
         {
-            byte[] decodedData;
+            decodedData = null;
 
             switch(sectorSize)
             {
@@ -103,7 +104,10 @@ namespace Aaru.DiscImages
                     decodedData = new byte[8192];
 
                     break;
-                default: throw new ImageNotSupportedException($"Sector size {sectorSize} is incorrect.");
+                default:
+                    AaruConsole.ErrorWriteLine($"Sector size {sectorSize} is incorrect.");
+
+                    return ErrorNumber.InvalidArgument;
             }
 
             switch(encodingType)
@@ -189,10 +193,13 @@ namespace Aaru.DiscImages
 
                     break;
                 }
-                default: throw new ImageNotSupportedException($"Data encoding {encodingType} is incorrect.");
+                default:
+                    AaruConsole.ErrorWriteLine($"Data encoding {encodingType} is incorrect.");
+
+                    return ErrorNumber.InvalidArgument;
             }
 
-            return decodedData;
+            return ErrorNumber.NoError;
         }
 
         MediaType DecodeTeleDiskDiskType()

@@ -70,31 +70,46 @@ namespace Aaru.DiscImages
             AaruConsole.DebugWriteLine("QED plugin", "qHdr.backing_file_size = {0}", _qHdr.backing_file_size);
 
             if(_qHdr.image_size <= 1)
-                throw new ArgumentOutOfRangeException(nameof(_qHdr.image_size), "Image size is too small");
-
+            {
+                AaruConsole.ErrorWriteLine("Image size is too small");
+                return ErrorNumber.InvalidArgument;
+            }
             if(!IsPowerOfTwo(_qHdr.cluster_size))
-                throw new ArgumentOutOfRangeException(nameof(_qHdr.cluster_size), "Cluster size must be a power of 2");
-
+            {
+                AaruConsole.ErrorWriteLine("Cluster size must be a power of 2");
+                return ErrorNumber.InvalidArgument;
+            }
             if(_qHdr.cluster_size < 4096 ||
                _qHdr.cluster_size > 67108864)
-                throw new ArgumentOutOfRangeException(nameof(_qHdr.cluster_size),
-                                                      "Cluster size must be between 4 Kbytes and 64 Mbytes");
-
+            {
+                AaruConsole.ErrorWriteLine("Cluster size must be between 4 Kbytes and 64 Mbytes");
+                return ErrorNumber.InvalidArgument;
+            }
             if(!IsPowerOfTwo(_qHdr.table_size))
-                throw new ArgumentOutOfRangeException(nameof(_qHdr.table_size), "Table size must be a power of 2");
-
+            {
+                AaruConsole.ErrorWriteLine("Table size must be a power of 2");
+                return ErrorNumber.InvalidArgument;
+            }
             if(_qHdr.table_size < 1 ||
                _qHdr.table_size > 16)
-                throw new ArgumentOutOfRangeException(nameof(_qHdr.table_size),
+            {
+                AaruConsole.ErrorWriteLine(
                                                       "Table size must be between 1 and 16 clusters");
-
+                return ErrorNumber.InvalidArgument;
+            }
             if((_qHdr.features & QED_FEATURE_MASK) > 0)
-                throw new ArgumentOutOfRangeException(nameof(_qHdr.features),
+            {
+                AaruConsole.ErrorWriteLine(
                                                       $"Image uses unknown incompatible features {_qHdr.features & QED_FEATURE_MASK:X}");
 
+                return ErrorNumber.InvalidArgument;
+            }
             if((_qHdr.features & QED_FEATURE_BACKING_FILE) == QED_FEATURE_BACKING_FILE)
-                throw new NotImplementedException("Differencing images not yet supported");
+            {
+                AaruConsole.ErrorWriteLine("Differencing images not yet supported");
 
+                return ErrorNumber.NotImplemented;
+            }
             _clusterSectors = _qHdr.cluster_size                    / 512;
             _tableSize      = _qHdr.cluster_size * _qHdr.table_size / 8;
 

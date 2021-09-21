@@ -38,7 +38,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
-using Aaru.CommonTypes.Exceptions;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Console;
@@ -144,14 +143,21 @@ namespace Aaru.DiscImages
                     uint trackSeq = uint.Parse(matchTrack.Groups[1].Value);
 
                     if(trackCount + 1 != trackSeq)
-                        throw new
-                            FeatureUnsupportedImageException($"Found TRACK {trackSeq} out of order in line {lineNumber}");
+                    {
+                        AaruConsole.ErrorWriteLine($"Found TRACK {trackSeq} out of order in line {lineNumber}");
+
+                        return ErrorNumber.InvalidArgument;
+                    }
 
                     trackCount++;
                 }
 
                 if(trackCount == 0)
-                    throw new FeatureUnsupportedImageException("No tracks found");
+                {
+                    AaruConsole.ErrorWriteLine("No tracks found");
+
+                    return ErrorNumber.InvalidArgument;
+                }
 
                 CdrWinTrack[] cueTracks = new CdrWinTrack[trackCount];
 
@@ -458,8 +464,12 @@ namespace Aaru.DiscImages
                             if(!inTrack)
                                 _discImage.Barcode = matchBarCode.Groups[1].Value;
                             else
-                                throw new
-                                    FeatureUnsupportedImageException($"Found barcode field in incorrect place at line {lineNumber}");
+                            {
+                                AaruConsole.
+                                    ErrorWriteLine($"Found barcode field in incorrect place at line {lineNumber}");
+
+                                return ErrorNumber.InvalidArgument;
+                            }
                         }
                         else if(matchCdText.Success)
                         {
@@ -468,8 +478,12 @@ namespace Aaru.DiscImages
                             if(!inTrack)
                                 _discImage.CdTextFile = matchCdText.Groups[1].Value;
                             else
-                                throw new
-                                    FeatureUnsupportedImageException($"Found CD-Text file field in incorrect place at line {lineNumber}");
+                            {
+                                AaruConsole.
+                                    ErrorWriteLine($"Found CD-Text file field in incorrect place at line {lineNumber}");
+
+                                return ErrorNumber.InvalidArgument;
+                            }
                         }
                         else if(matchComposer.Success)
                         {
@@ -487,8 +501,12 @@ namespace Aaru.DiscImages
                             if(!inTrack)
                                 _discImage.DiscId = matchDiskId.Groups[1].Value;
                             else
-                                throw new
-                                    FeatureUnsupportedImageException($"Found CDDB ID field in incorrect place at line {lineNumber}");
+                            {
+                                AaruConsole.
+                                    ErrorWriteLine($"Found CDDB ID field in incorrect place at line {lineNumber}");
+
+                                return ErrorNumber.InvalidArgument;
+                            }
                         }
                         else if(matchFile.Success)
                         {
@@ -541,13 +559,20 @@ namespace Aaru.DiscImages
                                             currentFile.DataFilter = filtersList.GetFilter(path);
 
                                             if(currentFile.DataFilter == null)
-                                                throw new
-                                                    FeatureUnsupportedImageException($"File \"{matchFile.Groups[1].Value}\" not found.");
+                                            {
+                                                AaruConsole.
+                                                    ErrorWriteLine($"File \"{matchFile.Groups[1].Value}\" not found.");
+
+                                                return ErrorNumber.NoSuchFile;
+                                            }
                                         }
                                     }
                                     else
-                                        throw new
-                                            FeatureUnsupportedImageException($"File \"{matchFile.Groups[1].Value}\" not found.");
+                                    {
+                                        AaruConsole.ErrorWriteLine($"File \"{matchFile.Groups[1].Value}\" not found.");
+
+                                        return ErrorNumber.NoSuchFile;
+                                    }
                                 }
                                 else if((datafile[1] == ':'  && datafile[2] == '\\') ||
                                         (datafile[0] == '\\' && datafile[1] == '\\') ||
@@ -571,13 +596,20 @@ namespace Aaru.DiscImages
                                             currentFile.DataFilter = filtersList.GetFilter(path);
 
                                             if(currentFile.DataFilter == null)
-                                                throw new
-                                                    FeatureUnsupportedImageException($"File \"{matchFile.Groups[1].Value}\" not found.");
+                                            {
+                                                AaruConsole.
+                                                    ErrorWriteLine($"File \"{matchFile.Groups[1].Value}\" not found.");
+
+                                                return ErrorNumber.NoSuchFile;
+                                            }
                                         }
                                     }
                                     else
-                                        throw new
-                                            FeatureUnsupportedImageException($"File \"{matchFile.Groups[1].Value}\" not found.");
+                                    {
+                                        AaruConsole.ErrorWriteLine($"File \"{matchFile.Groups[1].Value}\" not found.");
+
+                                        return ErrorNumber.NoSuchFile;
+                                    }
                                 }
                                 else
                                 {
@@ -585,8 +617,11 @@ namespace Aaru.DiscImages
                                     currentFile.DataFilter = filtersList.GetFilter(path);
 
                                     if(currentFile.DataFilter == null)
-                                        throw new
-                                            FeatureUnsupportedImageException($"File \"{matchFile.Groups[1].Value}\" not found.");
+                                    {
+                                        AaruConsole.ErrorWriteLine($"File \"{matchFile.Groups[1].Value}\" not found.");
+
+                                        return ErrorNumber.NoSuchFile;
+                                    }
                                 }
 
                             // File does exist, process it
@@ -600,11 +635,13 @@ namespace Aaru.DiscImages
                                 case CDRWIN_DISK_TYPE_AIFF:
                                 case CDRWIN_DISK_TYPE_RIFF:
                                 case CDRWIN_DISK_TYPE_MP3:
-                                    throw new
-                                        FeatureSupportedButNotImplementedImageException($"Unsupported file type {currentFile.FileType}");
+                                    AaruConsole.ErrorWriteLine($"Unsupported file type {currentFile.FileType}");
+
+                                    return ErrorNumber.NotImplemented;
                                 default:
-                                    throw new
-                                        FeatureUnsupportedImageException($"Unknown file type {currentFile.FileType}");
+                                    AaruConsole.ErrorWriteLine($"Unknown file type {currentFile.FileType}");
+
+                                    return ErrorNumber.InvalidArgument;
                             }
 
                             currentFile.Offset   = 0;
@@ -615,8 +652,12 @@ namespace Aaru.DiscImages
                             AaruConsole.DebugWriteLine("CDRWin plugin", "Found FLAGS at line {0}", lineNumber);
 
                             if(!inTrack)
-                                throw new
-                                    FeatureUnsupportedImageException($"Found FLAGS field in incorrect place at line {lineNumber}");
+                            {
+                                AaruConsole.
+                                    ErrorWriteLine($"Found FLAGS field in incorrect place at line {lineNumber}");
+
+                                return ErrorNumber.InvalidArgument;
+                            }
 
                             currentTrack.FlagDcp  |= matchFlags.Groups["dcp"].Value  == "DCP";
                             currentTrack.Flag4Ch  |= matchFlags.Groups["quad"].Value == "4CH";
@@ -637,7 +678,11 @@ namespace Aaru.DiscImages
                             AaruConsole.DebugWriteLine("CDRWin plugin", "Found INDEX at line {0}", lineNumber);
 
                             if(!inTrack)
-                                throw new FeatureUnsupportedImageException($"Found INDEX before a track {lineNumber}");
+                            {
+                                AaruConsole.ErrorWriteLine($"Found INDEX before a track {lineNumber}");
+
+                                return ErrorNumber.InvalidArgument;
+                            }
 
                             ushort index  = ushort.Parse(matchIndex.Groups[1].Value);
                             int    offset = CdrWinMsfToLba(matchIndex.Groups[2].Value) + cumulativeEmptyPregap;
@@ -645,8 +690,11 @@ namespace Aaru.DiscImages
                             if(index                      != 0 &&
                                index                      != 1 &&
                                currentTrack.Indexes.Count == 0)
-                                throw new
-                                    FeatureUnsupportedImageException($"Found INDEX {index} before INDEX 00 or INDEX 01");
+                            {
+                                AaruConsole.ErrorWriteLine($"Found INDEX {index} before INDEX 00 or INDEX 01");
+
+                                return ErrorNumber.InvalidArgument;
+                            }
 
                             if(index == 0 ||
                                (index == 1 && !currentTrack.Indexes.ContainsKey(0)))
@@ -714,7 +762,11 @@ namespace Aaru.DiscImages
                             AaruConsole.DebugWriteLine("CDRWin plugin", "Found ISRC at line {0}", lineNumber);
 
                             if(!inTrack)
-                                throw new FeatureUnsupportedImageException($"Found ISRC before a track {lineNumber}");
+                            {
+                                AaruConsole.ErrorWriteLine($"Found ISRC before a track {lineNumber}");
+
+                                return ErrorNumber.InvalidArgument;
+                            }
 
                             currentTrack.Isrc = matchIsrc.Groups[1].Value;
                         }
@@ -725,8 +777,12 @@ namespace Aaru.DiscImages
                             if(!inTrack)
                                 _discImage.Mcn = matchMcn.Groups[1].Value;
                             else
-                                throw new
-                                    FeatureUnsupportedImageException($"Found CATALOG field in incorrect place at line {lineNumber}");
+                            {
+                                AaruConsole.
+                                    ErrorWriteLine($"Found CATALOG field in incorrect place at line {lineNumber}");
+
+                                return ErrorNumber.InvalidArgument;
+                            }
                         }
                         else if(matchPerformer.Success)
                         {
@@ -744,16 +800,22 @@ namespace Aaru.DiscImages
                             if(inTrack)
                                 currentTrack.Postgap = CdrWinMsfToLba(matchPostgap.Groups[1].Value);
                             else
-                                throw new
-                                    FeatureUnsupportedImageException($"Found POSTGAP field before a track at line {lineNumber}");
+                            {
+                                AaruConsole.ErrorWriteLine($"Found POSTGAP field before a track at line {lineNumber}");
+
+                                return ErrorNumber.InvalidArgument;
+                            }
                         }
                         else if(matchPregap.Success)
                         {
                             AaruConsole.DebugWriteLine("CDRWin plugin", "Found PREGAP at line {0}", lineNumber);
 
                             if(!inTrack)
-                                throw new
-                                    FeatureUnsupportedImageException($"Found PREGAP field before a track at line {lineNumber}");
+                            {
+                                AaruConsole.ErrorWriteLine($"Found PREGAP field before a track at line {lineNumber}");
+
+                                return ErrorNumber.InvalidArgument;
+                            }
 
                             currentEmptyPregap = CdrWinMsfToLba(matchPregap.Groups[1].Value);
                         }
@@ -780,8 +842,12 @@ namespace Aaru.DiscImages
                             AaruConsole.DebugWriteLine("CDRWin plugin", "Found TRACK at line {0}", lineNumber);
 
                             if(currentFile.DataFilter == null)
-                                throw new
-                                    FeatureUnsupportedImageException($"Found TRACK field before a file is defined at line {lineNumber}");
+                            {
+                                AaruConsole.
+                                    ErrorWriteLine($"Found TRACK field before a file is defined at line {lineNumber}");
+
+                                return ErrorNumber.InvalidArgument;
+                            }
 
                             if(inTrack)
                             {
@@ -1317,12 +1383,20 @@ namespace Aaru.DiscImages
                 {
                     if(_discImage.Tracks[i].Sequence == 1 &&
                        i                             != 0)
-                        throw new ImageNotSupportedException("Unordered tracks");
+                    {
+                        AaruConsole.ErrorWriteLine("Unordered tracks");
+
+                        return ErrorNumber.InvalidArgument;
+                    }
 
                     var partition = new Partition();
 
                     if(!_discImage.Tracks[i].Indexes.TryGetValue(1, out _))
-                        throw new ImageNotSupportedException($"Track {_discImage.Tracks[i].Sequence} lacks index 01");
+                    {
+                        AaruConsole.ErrorWriteLine($"Track {_discImage.Tracks[i].Sequence} lacks index 01");
+
+                        return ErrorNumber.InvalidArgument;
+                    }
 
                     // Index 01
                     partition.Description = $"Track {_discImage.Tracks[i].Sequence}.";
@@ -1506,42 +1580,46 @@ namespace Aaru.DiscImages
                    leadouts.Count == 0          &&
                    !_discImage.IsRedumpGigadisc &&
                    _isCd)
-                    throw new
-                        FeatureUnsupportedImageException("This image is missing vital multi-session data and cannot be read correctly.");
-
-                if(!_isCd)
                 {
-                    _imageInfo.ReadableSectorTags.Remove(SectorTagType.CdSectorSync);
-                    _imageInfo.ReadableSectorTags.Remove(SectorTagType.CdSectorHeader);
-                    _imageInfo.ReadableSectorTags.Remove(SectorTagType.CdSectorSubHeader);
-                    _imageInfo.ReadableSectorTags.Remove(SectorTagType.CdSectorEcc);
-                    _imageInfo.ReadableSectorTags.Remove(SectorTagType.CdSectorEccP);
-                    _imageInfo.ReadableSectorTags.Remove(SectorTagType.CdSectorEccQ);
-                    _imageInfo.ReadableSectorTags.Remove(SectorTagType.CdSectorEdc);
-                    _imageInfo.ReadableSectorTags.Remove(SectorTagType.CdTrackFlags);
-                    _imageInfo.ReadableSectorTags.Remove(SectorTagType.CdTrackIsrc);
+                    AaruConsole.
+                        ErrorWriteLine("This image is missing vital multi-session data and cannot be read correctly.");
 
-                    sessions = _discImage.Sessions.ToArray();
+                    return ErrorNumber.InvalidArgument;
+                }
 
-                    foreach(CdrWinTrack track in _discImage.Tracks)
+                if(_isCd)
+                    return ErrorNumber.NoError;
+
+                _imageInfo.ReadableSectorTags.Remove(SectorTagType.CdSectorSync);
+                _imageInfo.ReadableSectorTags.Remove(SectorTagType.CdSectorHeader);
+                _imageInfo.ReadableSectorTags.Remove(SectorTagType.CdSectorSubHeader);
+                _imageInfo.ReadableSectorTags.Remove(SectorTagType.CdSectorEcc);
+                _imageInfo.ReadableSectorTags.Remove(SectorTagType.CdSectorEccP);
+                _imageInfo.ReadableSectorTags.Remove(SectorTagType.CdSectorEccQ);
+                _imageInfo.ReadableSectorTags.Remove(SectorTagType.CdSectorEdc);
+                _imageInfo.ReadableSectorTags.Remove(SectorTagType.CdTrackFlags);
+                _imageInfo.ReadableSectorTags.Remove(SectorTagType.CdTrackIsrc);
+
+                sessions = _discImage.Sessions.ToArray();
+
+                foreach(CdrWinTrack track in _discImage.Tracks)
+                {
+                    track.Indexes.Remove(0);
+                    track.Pregap = 0;
+
+                    for(int s = 0; s < sessions.Length; s++)
                     {
-                        track.Indexes.Remove(0);
-                        track.Pregap = 0;
-
-                        for(int s = 0; s < sessions.Length; s++)
+                        if(sessions[s].Sequence > 1 &&
+                           track.Sequence       == sessions[s].StartTrack)
                         {
-                            if(sessions[s].Sequence > 1 &&
-                               track.Sequence       == sessions[s].StartTrack)
-                            {
-                                track.TrackFile.Offset  += 307200;
-                                track.Sectors           -= 150;
-                                sessions[s].StartSector =  (ulong)track.Indexes[1];
-                            }
+                            track.TrackFile.Offset  += 307200;
+                            track.Sectors           -= 150;
+                            sessions[s].StartSector =  (ulong)track.Indexes[1];
                         }
                     }
-
-                    _discImage.Sessions = sessions.ToList();
                 }
+
+                _discImage.Sessions = sessions.ToList();
 
                 return ErrorNumber.NoError;
             }
@@ -2262,7 +2340,7 @@ namespace Aaru.DiscImages
             if(_discImage.Sessions.Contains(session))
                 return GetSessionTracks(session.Sequence);
 
-            throw new ImageNotSupportedException("Session does not exist in disc image");
+            return null;
         }
 
         /// <inheritdoc />

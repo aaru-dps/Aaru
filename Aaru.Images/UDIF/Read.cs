@@ -36,7 +36,6 @@ using System.IO;
 using System.Linq;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
-using Aaru.CommonTypes.Exceptions;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Compression;
 using Aaru.Console;
@@ -77,7 +76,11 @@ namespace Aaru.DiscImages
                 _footer = Marshal.ByteArrayToStructureBigEndian<Footer>(footerB);
 
                 if(_footer.signature != UDIF_SIGNATURE)
-                    throw new Exception("Unable to find UDIF signature.");
+                {
+                    AaruConsole.ErrorWriteLine("Unable to find UDIF signature.");
+
+                    return ErrorNumber.InvalidArgument;
+                }
 
                 AaruConsole.VerboseWriteLine("Found obsolete UDIF format.");
             }
@@ -134,18 +137,30 @@ namespace Aaru.DiscImages
                 var rsrc = new ResourceFork(rsrcB);
 
                 if(!rsrc.ContainsKey(BLOCK_OS_TYPE))
-                    throw new
-                        ImageNotSupportedException("Image resource fork doesn't contain UDIF block chunks. Please fill an issue and send it to us.");
+                {
+                    AaruConsole.
+                        ErrorWriteLine("Image resource fork doesn't contain UDIF block chunks. Please fill an issue and send it to us.");
+
+                    return ErrorNumber.InvalidArgument;
+                }
 
                 Resource blkxRez = rsrc.GetResource(BLOCK_OS_TYPE);
 
                 if(blkxRez == null)
-                    throw new
-                        ImageNotSupportedException("Image resource fork doesn't contain UDIF block chunks. Please fill an issue and send it to us.");
+                {
+                    AaruConsole.
+                        ErrorWriteLine("Image resource fork doesn't contain UDIF block chunks. Please fill an issue and send it to us.");
+
+                    return ErrorNumber.InvalidArgument;
+                }
 
                 if(blkxRez.GetIds().Length == 0)
-                    throw new
-                        ImageNotSupportedException("Image resource fork doesn't contain UDIF block chunks. Please fill an issue and send it to us.");
+                {
+                    AaruConsole.
+                        ErrorWriteLine("Image resource fork doesn't contain UDIF block chunks. Please fill an issue and send it to us.");
+
+                    return ErrorNumber.InvalidArgument;
+                }
 
                 blkxList.AddRange(blkxRez.GetIds().Select(blkxId => blkxRez.GetResource(blkxId)));
 
@@ -165,25 +180,45 @@ namespace Aaru.DiscImages
                 var plist = (NSDictionary)XmlPropertyListParser.Parse(plistB);
 
                 if(plist == null)
-                    throw new Exception("Could not parse property list.");
+                {
+                    AaruConsole.ErrorWriteLine("Could not parse property list.");
+
+                    return ErrorNumber.InOutError;
+                }
 
                 if(!plist.TryGetValue(RESOURCE_FORK_KEY, out NSObject rsrcObj))
-                    throw new Exception("Could not retrieve resource fork.");
+                {
+                    AaruConsole.ErrorWriteLine("Could not retrieve resource fork.");
+
+                    return ErrorNumber.InOutError;
+                }
 
                 var rsrc = (NSDictionary)rsrcObj;
 
                 if(!rsrc.TryGetValue(BLOCK_KEY, out NSObject blkxObj))
-                    throw new Exception("Could not retrieve block chunks array.");
+                {
+                    AaruConsole.ErrorWriteLine("Could not retrieve block chunks array.");
+
+                    return ErrorNumber.InOutError;
+                }
 
                 NSObject[] blkx = ((NSArray)blkxObj).GetArray();
 
                 foreach(NSDictionary part in blkx.Cast<NSDictionary>())
                 {
                     if(!part.TryGetValue("Name", out _))
-                        throw new Exception("Could not retrieve Name");
+                    {
+                        AaruConsole.ErrorWriteLine("Could not retrieve Name");
+
+                        return ErrorNumber.InOutError;
+                    }
 
                     if(!part.TryGetValue("Data", out NSObject dataObj))
-                        throw new Exception("Could not retrieve Data");
+                    {
+                        AaruConsole.ErrorWriteLine("Could not retrieve Data");
+
+                        return ErrorNumber.InOutError;
+                    }
 
                     blkxList.Add(((NSData)dataObj).Bytes);
                 }
@@ -199,7 +234,11 @@ namespace Aaru.DiscImages
             else
             {
                 if(imageFilter.ResourceForkLength == 0)
-                    throw new Exception("This image needs the resource fork to work.");
+                {
+                    AaruConsole.ErrorWriteLine("This image needs the resource fork to work.");
+
+                    return ErrorNumber.InvalidArgument;
+                }
 
                 AaruConsole.DebugWriteLine("UDIF plugin", "Reading resource fork.");
                 Stream rsrcStream = imageFilter.GetResourceForkStream();
@@ -211,18 +250,30 @@ namespace Aaru.DiscImages
                 var rsrc = new ResourceFork(rsrcB);
 
                 if(!rsrc.ContainsKey(BLOCK_OS_TYPE))
-                    throw new
-                        ImageNotSupportedException("Image resource fork doesn't contain UDIF block chunks. Please fill an issue and send it to us.");
+                {
+                    AaruConsole.
+                        ErrorWriteLine("Image resource fork doesn't contain UDIF block chunks. Please fill an issue and send it to us.");
+
+                    return ErrorNumber.InvalidArgument;
+                }
 
                 Resource blkxRez = rsrc.GetResource(BLOCK_OS_TYPE);
 
                 if(blkxRez == null)
-                    throw new
-                        ImageNotSupportedException("Image resource fork doesn't contain UDIF block chunks. Please fill an issue and send it to us.");
+                {
+                    AaruConsole.
+                        ErrorWriteLine("Image resource fork doesn't contain UDIF block chunks. Please fill an issue and send it to us.");
+
+                    return ErrorNumber.InvalidArgument;
+                }
 
                 if(blkxRez.GetIds().Length == 0)
-                    throw new
-                        ImageNotSupportedException("Image resource fork doesn't contain UDIF block chunks. Please fill an issue and send it to us.");
+                {
+                    AaruConsole.
+                        ErrorWriteLine("Image resource fork doesn't contain UDIF block chunks. Please fill an issue and send it to us.");
+
+                    return ErrorNumber.InvalidArgument;
+                }
 
                 blkxList.AddRange(blkxRez.GetIds().Select(blkxId => blkxRez.GetResource(blkxId)));
 
@@ -287,8 +338,11 @@ namespace Aaru.DiscImages
             _imageInfo.Sectors = 0;
 
             if(blkxList.Count == 0)
-                throw new
-                    ImageNotSupportedException("Could not retrieve block chunks. Please fill an issue and send it to us.");
+            {
+                AaruConsole.ErrorWriteLine("Could not retrieve block chunks. Please fill an issue and send it to us.");
+
+                return ErrorNumber.InvalidArgument;
+            }
 
             _buffersize = 0;
 
@@ -354,19 +408,30 @@ namespace Aaru.DiscImages
 
                         // TODO: Handle compressed chunks
                         case CHUNK_TYPE_KENCODE:
-                            throw new
-                                ImageNotSupportedException("Chunks compressed with KenCode are not yet supported.");
+                            AaruConsole.ErrorWriteLine("Chunks compressed with KenCode are not yet supported.");
+
+                            return ErrorNumber.NotImplemented;
                         case CHUNK_TYPE_LZH:
-                            throw new ImageNotSupportedException("Chunks compressed with LZH are not yet supported.");
+                            AaruConsole.ErrorWriteLine("Chunks compressed with LZH are not yet supported.");
+
+                            return ErrorNumber.NotImplemented;
                         case CHUNK_TYPE_LZFSE:
-                            throw new ImageNotSupportedException("Chunks compressed with lzfse are not yet supported.");
+                            AaruConsole.ErrorWriteLine("Chunks compressed with lzfse are not yet supported.");
+
+                            return ErrorNumber.NotImplemented;
                         case CHUNK_TYPE_LZMA:
-                            throw new ImageNotSupportedException("Chunks compressed with lzma are not yet supported.");
+                            AaruConsole.ErrorWriteLine("Chunks compressed with lzma are not yet supported.");
+
+                            return ErrorNumber.NotImplemented;
                     }
 
                     if((bChnk.type > CHUNK_TYPE_NOCOPY && bChnk.type < CHUNK_TYPE_COMMNT) ||
                        (bChnk.type > CHUNK_TYPE_LZMA   && bChnk.type < CHUNK_TYPE_END))
-                        throw new ImageNotSupportedException($"Unsupported chunk type 0x{bChnk.type:X8} found");
+                    {
+                        AaruConsole.ErrorWriteLine($"Unsupported chunk type 0x{bChnk.type:X8} found");
+
+                        return ErrorNumber.InvalidArgument;
+                    }
 
                     if(bChnk.sectors > 0)
                         _chunks.Add(bChnk.sector, bChnk);

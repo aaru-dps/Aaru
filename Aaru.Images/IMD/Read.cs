@@ -35,7 +35,6 @@ using System.Collections.Generic;
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
-using Aaru.CommonTypes.Exceptions;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
@@ -158,7 +157,10 @@ namespace Aaru.DiscImages
                                 track.Add(idmap[i], data);
 
                             break;
-                        default: throw new ImageNotSupportedException($"Invalid sector type {(byte)type}");
+                        default:
+                            AaruConsole.ErrorWriteLine($"Invalid sector type {(byte)type}");
+
+                            return ErrorNumber.InvalidArgument;
                     }
                 }
 
@@ -217,12 +219,14 @@ namespace Aaru.DiscImages
         }
 
         /// <inheritdoc />
-        public ErrorNumber ReadSector(ulong sectorAddress, out byte[] buffer) => ReadSectors(sectorAddress, 1, out buffer);
+        public ErrorNumber ReadSector(ulong sectorAddress, out byte[] buffer) =>
+            ReadSectors(sectorAddress, 1, out buffer);
 
         /// <inheritdoc />
         public ErrorNumber ReadSectors(ulong sectorAddress, uint length, out byte[] buffer)
         {
             buffer = null;
+
             if(sectorAddress > _imageInfo.Sectors - 1)
                 return ErrorNumber.OutOfRange;
 

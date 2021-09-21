@@ -40,7 +40,7 @@ namespace Aaru.DiscImages
 {
     public sealed partial class CdrWin
     {
-        // Due to .cue format, this method must parse whole file, ignoring errors (those will be thrown by OpenImage()).
+        // Due to .cue format, this method must parse whole file, ignoring errors (those will be returned by OpenImage()).
         /// <inheritdoc />
         public bool Identify(IFilter imageFilter)
         {
@@ -91,7 +91,7 @@ namespace Aaru.DiscImages
                     var tr = new Regex(REGEX_CDTEXT);
 
                     // First line must be SESSION, REM, CATALOG, FILE or CDTEXTFILE.
-                    Match sm = sr.Match(line ?? throw new InvalidOperationException());
+                    Match sm = sr.Match(line ?? "");
                     Match rm = rr.Match(line);
                     Match cm = cr.Match(line);
                     Match fm = fr.Match(line);

@@ -40,7 +40,7 @@ namespace Aaru.DiscImages
 {
     public sealed partial class Gdi
     {
-        // Due to .gdi format, this method must parse whole file, ignoring errors (those will be thrown by OpenImage()).
+        // Due to .gdi format, this method must parse whole file, ignoring errors (those will be returned by OpenImage()).
         /// <inheritdoc />
         public bool Identify(IFilter imageFilter)
         {
@@ -95,7 +95,7 @@ namespace Aaru.DiscImages
                     {
                         var regexTrack = new Regex(REGEX_TRACK);
 
-                        Match trackMatch = regexTrack.Match(line ?? throw new InvalidOperationException());
+                        Match trackMatch = regexTrack.Match(line ?? "");
 
                         if(!trackMatch.Success)
                             return false;

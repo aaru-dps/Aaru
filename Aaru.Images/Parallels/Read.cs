@@ -113,8 +113,7 @@ namespace Aaru.DiscImages
             buffer = null;
 
             if(sectorAddress > _imageInfo.Sectors - 1)
-                throw new ArgumentOutOfRangeException(nameof(sectorAddress),
-                                                      $"Sector address {sectorAddress} not found");
+                return ErrorNumber.OutOfRange;
 
             if(_empty)
             {

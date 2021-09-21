@@ -43,7 +43,6 @@ using System.Xml.Serialization;
 using Aaru.Checksums;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
-using Aaru.CommonTypes.Exceptions;
 using Aaru.CommonTypes.Structs;
 using Aaru.Console;
 using Aaru.Decoders;
@@ -639,8 +638,10 @@ namespace Aaru.DiscImages
 
                                         break;
                                     default:
-                                        throw new
-                                            ImageNotSupportedException($"Found unsupported compression algorithm {(ushort)ddtHeader.compression}");
+                                        ErrorMessage =
+                                            $"Found unsupported compression algorithm {(ushort)ddtHeader.compression}";
+
+                                        return false;
                                 }
 
                                 if(IsTape)
@@ -706,8 +707,10 @@ namespace Aaru.DiscImages
 
                                         break;
                                     default:
-                                        throw new
-                                            ImageNotSupportedException($"Found unsupported compression algorithm {(ushort)ddtHeader.compression}");
+                                        ErrorMessage =
+                                            $"Found unsupported compression algorithm {(ushort)ddtHeader.compression}";
+
+                                        return false;
                                 }
 
                                 uint[] cdDdt = MemoryMarshal.Cast<byte, uint>(decompressedDdt).ToArray();

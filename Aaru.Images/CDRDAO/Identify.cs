@@ -84,7 +84,7 @@ namespace Aaru.DiscImages
                 {
                     string line = _tocStream.ReadLine();
 
-                    Match dm = dr.Match(line ?? throw new InvalidOperationException());
+                    Match dm = dr.Match(line ?? "");
                     Match cm = cr.Match(line);
 
                     // Skip comments at start of file

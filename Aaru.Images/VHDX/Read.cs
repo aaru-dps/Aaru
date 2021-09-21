@@ -36,7 +36,6 @@ using System.IO;
 using System.Text;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
-using Aaru.CommonTypes.Exceptions;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
@@ -76,7 +75,11 @@ namespace Aaru.DiscImages
                 _vHdr = Marshal.ByteArrayToStructureLittleEndian<Header>(vHdrB);
 
                 if(_vHdr.Signature != VHDX_HEADER_SIG)
-                    throw new ImageNotSupportedException("VHDX header not found");
+                {
+                    AaruConsole.ErrorWriteLine("VHDX header not found");
+
+                    return ErrorNumber.InvalidArgument;
+                }
             }
 
             stream.Seek(192 * 1024, SeekOrigin.Begin);
@@ -92,7 +95,11 @@ namespace Aaru.DiscImages
                 _vRegHdr = Marshal.ByteArrayToStructureLittleEndian<RegionTableHeader>(vRegTableB);
 
                 if(_vRegHdr.signature != VHDX_REGION_SIG)
-                    throw new ImageNotSupportedException("VHDX region table not found");
+                {
+                    AaruConsole.ErrorWriteLine("VHDX region table not found");
+
+                    return ErrorNumber.InvalidArgument;
+                }
             }
 
             _vRegs = new RegionTableEntry[_vRegHdr.entries];
@@ -108,15 +115,27 @@ namespace Aaru.DiscImages
                 else if(_vRegs[i].guid == _metadataGuid)
                     _metadataOffset = (long)_vRegs[i].offset;
                 else if((_vRegs[i].flags & REGION_FLAGS_REQUIRED) == REGION_FLAGS_REQUIRED)
-                    throw new
-                        ImageNotSupportedException($"Found unsupported and required region Guid {_vRegs[i].guid}, not proceeding with image.");
+                {
+                    AaruConsole.
+                        ErrorWriteLine($"Found unsupported and required region Guid {_vRegs[i].guid}, not proceeding with image.");
+
+                    return ErrorNumber.InvalidArgument;
+                }
             }
 
             if(_batOffset == 0)
-                throw new Exception("BAT not found, cannot continue.");
+            {
+                AaruConsole.ErrorWriteLine("BAT not found, cannot continue.");
+
+                return ErrorNumber.InvalidArgument;
+            }
 
             if(_metadataOffset == 0)
-                throw new Exception("Metadata not found, cannot continue.");
+            {
+                AaruConsole.ErrorWriteLine("Metadata not found, cannot continue.");
+
+                return ErrorNumber.InvalidArgument;
+            }
 
             uint fileParamsOff = 0, vdSizeOff = 0, p83Off = 0, logOff = 0, physOff = 0, parentOff = 0;
 
@@ -146,8 +165,12 @@ namespace Aaru.DiscImages
                 else if(_vMets[i].itemId == _parentLocatorGuid)
                     parentOff = _vMets[i].offset;
                 else if((_vMets[i].flags & METADATA_FLAGS_REQUIRED) == METADATA_FLAGS_REQUIRED)
-                    throw new
-                        ImageNotSupportedException($"Found unsupported and required metadata Guid {_vMets[i].itemId}, not proceeding with image.");
+                {
+                    AaruConsole.
+                        ErrorWriteLine($"Found unsupported and required metadata Guid {_vMets[i].itemId}, not proceeding with image.");
+
+                    return ErrorNumber.InvalidArgument;
+                }
             }
 
             byte[] tmp;
@@ -165,7 +188,11 @@ namespace Aaru.DiscImages
                 };
             }
             else
-                throw new Exception("File parameters not found.");
+            {
+                AaruConsole.ErrorWriteLine("File parameters not found.");
+
+                return ErrorNumber.InvalidArgument;
+            }
 
             if(vdSizeOff != 0)
             {
@@ -175,7 +202,11 @@ namespace Aaru.DiscImages
                 _virtualDiskSize = BitConverter.ToUInt64(tmp, 0);
             }
             else
-                throw new Exception("Virtual disk size not found.");
+            {
+                AaruConsole.ErrorWriteLine("Virtual disk size not found.");
+
+                return ErrorNumber.InvalidArgument;
+            }
 
             if(p83Off != 0)
             {
@@ -193,7 +224,11 @@ namespace Aaru.DiscImages
                 _logicalSectorSize = BitConverter.ToUInt32(tmp, 0);
             }
             else
-                throw new Exception("Logical sector size not found.");
+            {
+                AaruConsole.ErrorWriteLine("Logical sector size not found.");
+
+                return ErrorNumber.InvalidArgument;
+            }
 
             if(physOff != 0)
             {
@@ -203,7 +238,11 @@ namespace Aaru.DiscImages
                 _physicalSectorSize = BitConverter.ToUInt32(tmp, 0);
             }
             else
-                throw new Exception("Physical sector size not found.");
+            {
+                AaruConsole.ErrorWriteLine("Physical sector size not found.");
+
+                return ErrorNumber.InvalidArgument;
+            }
 
             if(parentOff                                   != 0 &&
                (_vFileParms.flags & FILE_FLAGS_HAS_PARENT) == FILE_FLAGS_HAS_PARENT)
@@ -214,8 +253,12 @@ namespace Aaru.DiscImages
                 _vParHdr = Marshal.ByteArrayToStructureLittleEndian<ParentLocatorHeader>(vParHdrB);
 
                 if(_vParHdr.locatorType != _parentTypeVhdxGuid)
-                    throw new
-                        ImageNotSupportedException($"Found unsupported and required parent locator type {_vParHdr.locatorType}, not proceeding with image.");
+                {
+                    AaruConsole.
+                        ErrorWriteLine($"Found unsupported and required parent locator type {_vParHdr.locatorType}, not proceeding with image.");
+
+                    return ErrorNumber.NotSupported;
+                }
 
                 _vPars = new ParentLocatorEntry[_vParHdr.keyValueCount];
 
@@ -227,7 +270,11 @@ namespace Aaru.DiscImages
                 }
             }
             else if((_vFileParms.flags & FILE_FLAGS_HAS_PARENT) == FILE_FLAGS_HAS_PARENT)
-                throw new Exception("Parent locator not found.");
+            {
+                AaruConsole.ErrorWriteLine("Parent locator not found.");
+
+                return ErrorNumber.NoSuchFile;
+            }
 
             if((_vFileParms.flags & FILE_FLAGS_HAS_PARENT) == FILE_FLAGS_HAS_PARENT &&
                _vParHdr.locatorType                        == _parentTypeVhdxGuid)
@@ -318,7 +365,11 @@ namespace Aaru.DiscImages
                 }
 
                 if(!parentWorks)
-                    throw new Exception("Image is differential but parent cannot be opened.");
+                {
+                    AaruConsole.ErrorWriteLine("Image is differential but parent cannot be opened.");
+
+                    return ErrorNumber.InOutError;
+                }
 
                 _hasParent = true;
             }
@@ -392,8 +443,12 @@ namespace Aaru.DiscImages
                             break;
                         default:
                             if((pt & BAT_FLAGS_MASK) != 0)
-                                throw new
-                                    ImageNotSupportedException($"Unsupported sector bitmap block flags (0x{pt & BAT_FLAGS_MASK:X16}) found, not proceeding.");
+                            {
+                                AaruConsole.
+                                    ErrorWriteLine($"Unsupported sector bitmap block flags (0x{pt & BAT_FLAGS_MASK:X16}) found, not proceeding.");
+
+                                return ErrorNumber.InvalidArgument;
+                            }
 
                             break;
                     }
@@ -447,8 +502,11 @@ namespace Aaru.DiscImages
             ulong blkFlags = blkPtr & BAT_FLAGS_MASK;
 
             if((blkPtr & BAT_RESERVED_MASK) != 0)
-                throw new
-                    ImageNotSupportedException($"Unknown flags (0x{blkPtr & BAT_RESERVED_MASK:X16}) set in block pointer");
+            {
+                AaruConsole.ErrorWriteLine($"Unknown flags (0x{blkPtr & BAT_RESERVED_MASK:X16}) set in block pointer");
+
+                return ErrorNumber.InvalidArgument;
+            }
 
             switch(blkFlags & BAT_FLAGS_MASK)
             {

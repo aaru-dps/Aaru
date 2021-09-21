@@ -38,7 +38,6 @@ using System.Linq;
 using System.Text;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
-using Aaru.CommonTypes.Exceptions;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.CommonTypes.Structs.Devices.SCSI.Modes;
@@ -2215,7 +2214,7 @@ namespace Aaru.DiscImages
             if(Sessions.Contains(session))
                 return GetSessionTracks(session.Sequence);
 
-            throw new ImageNotSupportedException("Session does not exist in disc image");
+            return null;
         }
 
         /// <inheritdoc />

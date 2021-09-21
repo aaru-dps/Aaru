@@ -1385,7 +1385,7 @@ namespace Aaru.DiscImages
             if(Sessions.Contains(session))
                 return GetSessionTracks(session.Sequence);
 
-            throw new ImageNotSupportedException("Session does not exist in disc image");
+            return null;
         }
 
         /// <inheritdoc />

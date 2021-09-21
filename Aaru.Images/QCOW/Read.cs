@@ -73,31 +73,57 @@ namespace Aaru.DiscImages
             AaruConsole.DebugWriteLine("QCOW plugin", "qHdr.l1_table_offset = {0}", _qHdr.l1_table_offset);
 
             if(_qHdr.size <= 1)
-                throw new ArgumentOutOfRangeException(nameof(_qHdr.size), "Image size is too small");
+            {
+                AaruConsole.ErrorWriteLine("Image size is too small");
+
+                return ErrorNumber.InvalidArgument;
+            }
 
             if(_qHdr.cluster_bits < 9 ||
                _qHdr.cluster_bits > 16)
-                throw new ArgumentOutOfRangeException(nameof(_qHdr.cluster_bits),
-                                                      "Cluster size must be between 512 bytes and 64 Kbytes");
+            {
+                AaruConsole.ErrorWriteLine("Cluster size must be between 512 bytes and 64 Kbytes");
+
+                return ErrorNumber.InvalidArgument;
+            }
 
             if(_qHdr.l2_bits < 9  - 3 ||
                _qHdr.l2_bits > 16 - 3)
-                throw new ArgumentOutOfRangeException(nameof(_qHdr.l2_bits),
-                                                      "L2 size must be between 512 bytes and 64 Kbytes");
+            {
+                AaruConsole.ErrorWriteLine("L2 size must be between 512 bytes and 64 Kbytes");
+
+                return ErrorNumber.InvalidArgument;
+            }
 
             if(_qHdr.crypt_method > QCOW_ENCRYPTION_AES)
-                throw new ArgumentOutOfRangeException(nameof(_qHdr.crypt_method), "Invalid encryption method");
+            {
+                AaruConsole.ErrorWriteLine("Invalid encryption method");
+
+                return ErrorNumber.InvalidArgument;
+            }
 
             if(_qHdr.crypt_method > QCOW_ENCRYPTION_NONE)
-                throw new NotImplementedException("AES encrypted images not yet supported");
+            {
+                AaruConsole.ErrorWriteLine("AES encrypted images not yet supported");
+
+                return ErrorNumber.NotImplemented;
+            }
 
             if(_qHdr.backing_file_offset != 0)
-                throw new NotImplementedException("Differencing images not yet supported");
+            {
+                AaruConsole.ErrorWriteLine("Differencing images not yet supported");
+
+                return ErrorNumber.NotImplemented;
+            }
 
             int shift = _qHdr.cluster_bits + _qHdr.l2_bits;
 
             if(_qHdr.size > ulong.MaxValue - (ulong)(1 << shift))
-                throw new ArgumentOutOfRangeException(nameof(_qHdr.size), "Image is too large");
+            {
+                AaruConsole.ErrorWriteLine("Image is too large");
+
+                return ErrorNumber.InvalidArgument;
+            }
 
             _clusterSize    = 1 << _qHdr.cluster_bits;
             _clusterSectors = 1 << (_qHdr.cluster_bits - 9);

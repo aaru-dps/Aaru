@@ -33,7 +33,6 @@
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
-using Aaru.CommonTypes.Exceptions;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
@@ -93,8 +92,7 @@ namespace Aaru.DiscImages
                     case RecordType.Sector:
                         if(record.compression != CompressType.Compressed &&
                            record.compression != CompressType.Uncompresed)
-                            throw new
-                                ImageNotSupportedException($"Found record with unknown compression type 0x{(ushort)record.compression:X4} at {stream.Position}");
+                            return ErrorNumber.NotSupported;
 
                         AaruConsole.DebugWriteLine("Apridisk plugin",
                                                    "Found {4} sector record at {0} for cylinder {1} head {2} sector {3}",
@@ -114,9 +112,7 @@ namespace Aaru.DiscImages
                         stream.Seek(record.headerSize - recordSize + record.dataSize, SeekOrigin.Current);
 
                         break;
-                    default:
-                        throw new
-                            ImageNotSupportedException($"Found record with unknown type 0x{(uint)record.type:X8} at {stream.Position}");
+                    default: return ErrorNumber.NotSupported;
                 }
             }
 
@@ -125,7 +121,7 @@ namespace Aaru.DiscImages
 
             if(totalCylinders <= 0 ||
                totalHeads     <= 0)
-                throw new ImageNotSupportedException("No cylinders or heads found");
+                return ErrorNumber.NotSupported;
 
             _sectorsData = new byte[totalCylinders][][][];
 

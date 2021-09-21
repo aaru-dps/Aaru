@@ -37,7 +37,6 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
-using Aaru.CommonTypes.Exceptions;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Console;
@@ -85,14 +84,22 @@ namespace Aaru.DiscImages
                     if(lineNumber == 1)
                     {
                         if(!int.TryParse(line, out _))
-                            throw new ImageNotSupportedException("Not a correct Dreamcast GDI image");
+                        {
+                            AaruConsole.ErrorWriteLine("Not a correct Dreamcast GDI image");
+
+                            return ErrorNumber.InvalidArgument;
+                        }
                     }
                     else
                     {
-                        Match trackMatch = regexTrack.Match(line ?? throw new InvalidOperationException());
+                        Match trackMatch = regexTrack.Match(line ?? "");
 
                         if(!trackMatch.Success)
-                            throw new ImageNotSupportedException($"Unknown line \"{line}\" at line {lineNumber}");
+                        {
+                            AaruConsole.ErrorWriteLine($"Unknown line \"{line}\" at line {lineNumber}");
+
+                            return ErrorNumber.InvalidArgument;
+                        }
 
                         AaruConsole.DebugWriteLine("GDI plugin",
                                                    "Found track {0} starts at {1} flags {2} type {3} file {4} offset {5} at line {6}",
@@ -132,7 +139,11 @@ namespace Aaru.DiscImages
                             }
 
                         if((currentTrack.TrackFilter.DataForkLength - currentTrack.Offset) % currentTrack.Bps != 0)
-                            throw new ImageNotSupportedException("Track size not a multiple of sector size");
+                        {
+                            AaruConsole.ErrorWriteLine("Track size not a multiple of sector size");
+
+                            return ErrorNumber.InvalidArgument;
+                        }
 
                         currentTrack.Sectors = (ulong)((currentTrack.TrackFilter.DataForkLength - currentTrack.Offset) /
                                                        currentTrack.Bps);
@@ -257,7 +268,11 @@ namespace Aaru.DiscImages
                 {
                     if(_discImage.Tracks[i].Sequence == 1 &&
                        i                             != 0)
-                        throw new ImageNotSupportedException("Unordered tracks");
+                    {
+                        AaruConsole.ErrorWriteLine("Unordered tracks");
+
+                        return ErrorNumber.InvalidArgument;
+                    }
 
                     // Index 01
                     var partition = new Partition
@@ -856,7 +871,7 @@ namespace Aaru.DiscImages
             if(_discImage.Sessions.Contains(session))
                 return GetSessionTracks(session.Sequence);
 
-            throw new ImageNotSupportedException("Session does not exist in disc image");
+            return null;
         }
 
         /// <inheritdoc />
@@ -875,7 +890,7 @@ namespace Aaru.DiscImages
                     expectedDensity = true;
 
                     break;
-                default: throw new ImageNotSupportedException("Session does not exist in disc image");
+                default: return null;
             }
 
             foreach(GdiTrack gdiTrack in _discImage.Tracks)

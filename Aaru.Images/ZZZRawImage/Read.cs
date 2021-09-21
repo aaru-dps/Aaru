@@ -37,7 +37,6 @@ using System.Linq;
 using System.Xml.Serialization;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
-using Aaru.CommonTypes.Exceptions;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.CommonTypes.Structs.Devices.ATA;
@@ -1217,7 +1216,7 @@ namespace Aaru.DiscImages
             buffer = null;
 
             if(_differentTrackZeroSize)
-                throw new NotImplementedException("Not yet implemented");
+                return ErrorNumber.NotImplemented;
 
             if(sectorAddress > _imageInfo.Sectors - 1)
                 return ErrorNumber.OutOfRange;
@@ -1281,10 +1280,10 @@ namespace Aaru.DiscImages
         public List<Track> GetSessionTracks(Session session)
         {
             if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
-                throw new FeatureUnsupportedImageException("Feature not supported by image format");
+                return null;
 
             if(session.Sequence != 1)
-                throw new ArgumentOutOfRangeException(nameof(session), "Only a single session is supported");
+                return null;
 
             var trk = new Track
             {
@@ -1314,10 +1313,10 @@ namespace Aaru.DiscImages
         public List<Track> GetSessionTracks(ushort session)
         {
             if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
-                throw new FeatureUnsupportedImageException("Feature not supported by image format");
+                return null;
 
             if(session != 1)
-                throw new ArgumentOutOfRangeException(nameof(session), "Only a single session is supported");
+                return null;
 
             var trk = new Track
             {
@@ -1390,9 +1389,11 @@ namespace Aaru.DiscImages
         /// <inheritdoc />
         public ErrorNumber ReadSectorTag(ulong sectorAddress, SectorTagType tag, out byte[] buffer)
         {
+            buffer = null;
+
             if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc ||
                (!_rawCompactDisc && tag != SectorTagType.CdTrackFlags))
-                throw new FeatureUnsupportedImageException("Feature not supported by image format");
+                return ErrorNumber.NotSupported;
 
             return ReadSectorsTag(sectorAddress, 1, tag, out buffer);
         }

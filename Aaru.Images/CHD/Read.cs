@@ -39,7 +39,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
-using Aaru.CommonTypes.Exceptions;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.CommonTypes.Structs.Devices.ATA;
@@ -339,7 +338,7 @@ namespace Aaru.DiscImages
                     // TODO: Check why reading is misaligned
                     AaruConsole.ErrorWriteLine("CHD version 5 is not yet supported.");
 
-                    return ErrorNumber.NotSupported;
+                    return ErrorNumber.NotImplemented;
 
                     HeaderV5 hdrV5 = Marshal.ByteArrayToStructureBigEndian<HeaderV5>(buffer);
 
@@ -1359,7 +1358,10 @@ namespace Aaru.DiscImages
                 ulong hunkNo = sectorAddress              / _sectorsPerHunk;
                 ulong secOff = sectorAddress * sectorSize % (_sectorsPerHunk * sectorSize);
 
-                byte[] hunk = GetHunk(hunkNo);
+                ErrorNumber errno = GetHunk(hunkNo, out byte[] hunk);
+
+                if(errno != ErrorNumber.NoError)
+                    return errno;
 
                 sector = new byte[_imageInfo.SectorSize];
                 Array.Copy(hunk, (int)secOff, sector, 0, sector.Length);
@@ -1490,7 +1492,10 @@ namespace Aaru.DiscImages
                 ulong hunkNo = sectorAddress              / _sectorsPerHunk;
                 ulong secOff = sectorAddress * sectorSize % (_sectorsPerHunk * sectorSize);
 
-                byte[] hunk = GetHunk(hunkNo);
+                ErrorNumber errno = GetHunk(hunkNo, out byte[] hunk);
+
+                if(errno != ErrorNumber.NoError)
+                    return errno;
 
                 sector = new byte[_imageInfo.SectorSize];
                 Array.Copy(hunk, (int)secOff, sector, 0, sector.Length);
@@ -1795,7 +1800,10 @@ namespace Aaru.DiscImages
                 ulong hunkNo = sectorAddress              / _sectorsPerHunk;
                 ulong secOff = sectorAddress * sectorSize % (_sectorsPerHunk * sectorSize);
 
-                byte[] hunk = GetHunk(hunkNo);
+                ErrorNumber errno = GetHunk(hunkNo, out byte[] hunk);
+
+                if(errno != ErrorNumber.NoError)
+                    return errno;
 
                 sector = new byte[_imageInfo.SectorSize];
                 Array.Copy(hunk, (int)secOff, sector, 0, sector.Length);
@@ -1921,22 +1929,11 @@ namespace Aaru.DiscImages
         }
 
         /// <inheritdoc />
-        public List<Track> GetSessionTracks(Session session)
-        {
-            if(_isHdd)
-                throw new FeaturedNotSupportedByDiscImageException("Cannot access optical tracks on a hard disk image");
-
-            return GetSessionTracks(session.Sequence);
-        }
+        public List<Track> GetSessionTracks(Session session) => _isHdd ? null : GetSessionTracks(session.Sequence);
 
         /// <inheritdoc />
-        public List<Track> GetSessionTracks(ushort session)
-        {
-            if(_isHdd)
-                throw new FeaturedNotSupportedByDiscImageException("Cannot access optical tracks on a hard disk image");
-
-            return _tracks.Values.Where(track => track.Session == session).ToList();
-        }
+        public List<Track> GetSessionTracks(ushort session) =>
+            _isHdd ? null : _tracks.Values.Where(track => track.Session == session).ToList();
 
         /// <inheritdoc />
         public ErrorNumber ReadSector(ulong sectorAddress, uint track, out byte[] buffer)

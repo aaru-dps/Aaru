@@ -66,7 +66,8 @@ namespace Aaru.DiscImages
                 if(_isHdd)
                     return null;
 
-                throw new NotImplementedException();
+                // TODO: Implement
+                return null;
             }
         }
 

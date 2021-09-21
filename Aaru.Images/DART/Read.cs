@@ -35,7 +35,6 @@ using System.IO;
 using System.Text.RegularExpressions;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
-using Aaru.CommonTypes.Exceptions;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Compression;
 using Aaru.Console;
@@ -161,7 +160,9 @@ namespace Aaru.DiscImages
                             temp = new byte[l];
                             stream.Read(temp, 0, temp.Length);
 
-                            throw new ImageNotSupportedException("LZH Compressed images not yet supported");
+                            AaruConsole.ErrorWriteLine("LZH Compressed images not yet supported");
+
+                            return ErrorNumber.NotImplemented;
                         }
                     }
                 }
@@ -328,7 +329,8 @@ namespace Aaru.DiscImages
             ReadSectors(sectorAddress, 1, out buffer);
 
         /// <inheritdoc />
-        public ErrorNumber ReadSectorTag(ulong sectorAddress, SectorTagType tag, out byte[] buffer) => ReadSectorsTag(sectorAddress, 1, tag, out buffer);
+        public ErrorNumber ReadSectorTag(ulong sectorAddress, SectorTagType tag, out byte[] buffer) =>
+            ReadSectorsTag(sectorAddress, 1, tag, out buffer);
 
         /// <inheritdoc />
         public ErrorNumber ReadSectors(ulong sectorAddress, uint length, out byte[] buffer)
@@ -394,7 +396,7 @@ namespace Aaru.DiscImages
             if(errno != ErrorNumber.NoError)
                 return errno;
 
-            errno  = ReadSectorsTag(sectorAddress, length, SectorTagType.AppleSectorTag, out byte[] tags);
+            errno = ReadSectorsTag(sectorAddress, length, SectorTagType.AppleSectorTag, out byte[] tags);
 
             if(errno != ErrorNumber.NoError)
                 return errno;

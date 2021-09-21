@@ -82,7 +82,12 @@ namespace Aaru.DiscImages
             for(int cyl = 0; cyl < _imageInfo.Cylinders; cyl++)
             {
                 for(int head = 0; head < _imageInfo.Heads; head++)
-                    ReadTrack(stream, cyl, head);
+                {
+                    var errno =ReadTrack(stream, cyl, head);
+
+                    if(errno != ErrorNumber.NoError)
+                        return errno;
+                }
             }
 
             /* if there are extra tracks, read them as well */
@@ -129,7 +134,11 @@ namespace Aaru.DiscImages
                 SectorHeader sheader = Marshal.ByteArrayToStructureLittleEndian<SectorHeader>(sheaderBuffer);
 
                 if(sheader.flag != SectorFlag.Comment)
-                    throw new InvalidDataException($"Invalid sector type '{sheader.flag.ToString()}' encountered");
+                {
+                    AaruConsole.ErrorWriteLine($"Invalid sector type '{sheader.flag.ToString()}' encountered");
+
+                    return ErrorNumber.InvalidArgument;
+                }
 
                 byte[] comm = new byte[sheader.crc];
                 stream.Read(comm, 0, sheader.crc);
@@ -145,7 +154,11 @@ namespace Aaru.DiscImages
                 SectorHeader sheader = Marshal.ByteArrayToStructureLittleEndian<SectorHeader>(sheaderBuffer);
 
                 if(sheader.flag != SectorFlag.Directory)
-                    throw new InvalidDataException($"Invalid sector type '{sheader.flag.ToString()}' encountered");
+                {
+                    AaruConsole.ErrorWriteLine($"Invalid sector type '{sheader.flag.ToString()}' encountered");
+
+                    return ErrorNumber.InvalidArgument;
+                }
 
                 byte[] dir = new byte[sheader.crc];
                 stream.Read(dir, 0, sheader.crc);
@@ -226,7 +239,7 @@ namespace Aaru.DiscImages
         /// <param name="stream">The stream to read from</param>
         /// <param name="cyl">The cylinder number of the track being read.</param>
         /// <param name="head">The head number of the track being read.</param>
-        void ReadTrack(Stream stream, int cyl, int head)
+        ErrorNumber ReadTrack(Stream stream, int cyl, int head)
         {
             byte[] sectorData;
             byte[] crc;
@@ -244,8 +257,12 @@ namespace Aaru.DiscImages
                 if(sheader.cylinder != cyl  ||
                    sheader.head     != head ||
                    sheader.sector   != sect)
-                    throw new
-                        InvalidDataException($"Unexpected sector encountered. Found CHS {sheader.cylinder},{sheader.head},{sheader.sector} but expected {cyl},{head},{sect}");
+                {
+                    AaruConsole.
+                        ErrorWriteLine($"Unexpected sector encountered. Found CHS {sheader.cylinder},{sheader.head},{sheader.sector} but expected {cyl},{head},{sect}");
+
+                    return ErrorNumber.InvalidArgument;
+                }
 
                 sectorData = new byte[512];
 
@@ -290,9 +307,13 @@ namespace Aaru.DiscImages
 
                         break;
                     default:
-                        throw new InvalidDataException($"Invalid sector type '{sheader.flag.ToString()}' encountered");
+                        AaruConsole.ErrorWriteLine($"Invalid sector type '{sheader.flag.ToString()}' encountered");
+
+                        return ErrorNumber.InvalidArgument;
                 }
             }
+
+            return ErrorNumber.NoError;
         }
     }
 }

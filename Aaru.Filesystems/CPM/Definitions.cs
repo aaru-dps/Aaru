@@ -33,6 +33,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Reflection;
 using System.Xml;
 using System.Xml.Serialization;
@@ -50,7 +51,7 @@ namespace Aaru.Filesystems
                 var defsReader =
                     XmlReader.Create(Assembly.GetExecutingAssembly().
                                               GetManifestResourceStream("Aaru.Filesystems.CPM.cpmdefs.xml") ??
-                                     throw new InvalidOperationException());
+                                     new MemoryStream());
 
                 var defsSerializer = new XmlSerializer(typeof(CpmDefinitions));
                 _definitions = (CpmDefinitions)defsSerializer.Deserialize(defsReader);

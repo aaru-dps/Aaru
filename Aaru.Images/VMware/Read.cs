@@ -38,7 +38,6 @@ using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
-using Aaru.CommonTypes.Exceptions;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
@@ -84,7 +83,11 @@ namespace Aaru.DiscImages
 
                 if(_vmEHdr.descriptorOffset == 0 ||
                    _vmEHdr.descriptorSize   == 0)
-                    throw new Exception("Please open VMDK descriptor.");
+                {
+                    AaruConsole.ErrorWriteLine("Please open VMDK descriptor.");
+
+                    return ErrorNumber.InvalidArgument;
+                }
 
                 byte[] ddfEmbed = new byte[_vmEHdr.descriptorSize * SECTOR_SIZE];
 
@@ -106,7 +109,11 @@ namespace Aaru.DiscImages
                 stream.Read(ddfMagic, 0, 0x15);
 
                 if(!_ddfMagicBytes.SequenceEqual(ddfMagic))
-                    throw new Exception("Not a descriptor.");
+                {
+                    AaruConsole.ErrorWriteLine("Not a descriptor.");
+
+                    return ErrorNumber.InvalidArgument;
+                }
 
                 stream.Seek(0, SeekOrigin.Begin);
                 byte[] ddfExternal = new byte[imageFilter.DataForkLength];
@@ -274,7 +281,11 @@ namespace Aaru.DiscImages
             }
 
             if(_extents.Count == 0)
-                throw new Exception("Did not find any extent");
+            {
+                AaruConsole.ErrorWriteLine("Did not find any extent");
+
+                return ErrorNumber.InvalidArgument;
+            }
 
             switch(_imageType)
             {
@@ -296,9 +307,14 @@ namespace Aaru.DiscImages
                 case VMFS_TYPE_RDMP:      //"vmfsRDMP";
                 case VMFS_TYPE_RDMP_OLD:  //"vmfsPassthroughRawDeviceMap";
                 case VMFS_TYPE_RAW:       //"vmfsRaw";
-                    throw new
-                        ImageNotSupportedException("Raw device image files are not supported, try accessing the device directly.");
-                default: throw new ImageNotSupportedException($"Dunno how to handle \"{_imageType}\" extents.");
+                    AaruConsole.
+                        ErrorWriteLine("Raw device image files are not supported, try accessing the device directly.");
+
+                    return ErrorNumber.NotSupported;
+                default:
+                    AaruConsole.ErrorWriteLine($"Dunno how to handle \"{_imageType}\" extents.");
+
+                    return ErrorNumber.InvalidArgument;
             }
 
             bool oneNoFlat = cowD;
@@ -306,10 +322,18 @@ namespace Aaru.DiscImages
             foreach(Extent extent in _extents.Values)
             {
                 if(extent.Filter == null)
-                    throw new Exception($"Extent file {extent.Filename} not found.");
+                {
+                    AaruConsole.ErrorWriteLine($"Extent file {extent.Filename} not found.");
+
+                    return ErrorNumber.NoSuchFile;
+                }
 
                 if(extent.Access == "NOACCESS")
-                    throw new Exception("Cannot access NOACCESS extents ;).");
+                {
+                    AaruConsole.ErrorWriteLine("Cannot access NOACCESS extents ;).");
+
+                    return ErrorNumber.InvalidArgument;
+                }
 
                 if(extent.Type == "FLAT" ||
                    extent.Type == "ZERO" ||
@@ -321,22 +345,38 @@ namespace Aaru.DiscImages
                 extentStream.Seek(0, SeekOrigin.Begin);
 
                 if(extentStream.Length < SECTOR_SIZE)
-                    throw new Exception($"Extent {extent.Filename} is too small.");
+                {
+                    AaruConsole.ErrorWriteLine($"Extent {extent.Filename} is too small.");
+
+                    return ErrorNumber.InvalidArgument;
+                }
 
                 byte[] extentHdrB = new byte[Marshal.SizeOf<ExtentHeader>()];
                 extentStream.Read(extentHdrB, 0, Marshal.SizeOf<ExtentHeader>());
                 ExtentHeader extentHdr = Marshal.ByteArrayToStructureLittleEndian<ExtentHeader>(extentHdrB);
 
                 if(extentHdr.magic != VMWARE_EXTENT_MAGIC)
-                    throw new Exception($"{extent.Filter} is not an VMware extent.");
+                {
+                    AaruConsole.ErrorWriteLine($"{extent.Filter} is not an VMware extent.");
+
+                    return ErrorNumber.InvalidArgument;
+                }
 
                 if(extentHdr.capacity < extent.Sectors)
-                    throw new
-                        Exception($"Extent contains incorrect number of sectors, {extentHdr.capacity}. {extent.Sectors} were expected");
+                {
+                    AaruConsole.
+                        ErrorWriteLine($"Extent contains incorrect number of sectors, {extentHdr.capacity}. {extent.Sectors} were expected");
+
+                    return ErrorNumber.InvalidArgument;
+                }
 
                 // TODO: Support compressed extents
                 if(extentHdr.compression != COMPRESSION_NONE)
-                    throw new ImageNotSupportedException("Compressed extents are not yet supported.");
+                {
+                    AaruConsole.ErrorWriteLine("Compressed extents are not yet supported.");
+
+                    return ErrorNumber.NotImplemented;
+                }
 
                 if(!vmEHdrSet)
                 {
@@ -351,8 +391,12 @@ namespace Aaru.DiscImages
             if(oneNoFlat  &&
                !vmEHdrSet &&
                !cowD)
-                throw new
-                    Exception("There are sparse extents but there is no header to find the grain tables, cannot proceed.");
+            {
+                AaruConsole.
+                    ErrorWriteLine("There are sparse extents but there is no header to find the grain tables, cannot proceed.");
+
+                return ErrorNumber.InvalidArgument;
+            }
 
             _imageInfo.Sectors = currentSector;
 
@@ -437,7 +481,11 @@ namespace Aaru.DiscImages
             {
                 if(grains    == 0 ||
                    gdEntries == 0)
-                    throw new Exception("Some error occurred setting GD sizes");
+                {
+                    AaruConsole.ErrorWriteLine("Some error occurred setting GD sizes");
+
+                    return ErrorNumber.InOutError;
+                }
 
                 AaruConsole.DebugWriteLine("VMware plugin", "{0} sectors in {1} grains in {2} tables",
                                            _imageInfo.Sectors, grains, gdEntries);
@@ -485,7 +533,11 @@ namespace Aaru.DiscImages
                 IFilter parentFilter = new FiltersList().GetFilter(Path.Combine(imageFilter.ParentFolder, _parentName));
 
                 if(parentFilter == null)
-                    throw new Exception($"Cannot find parent \"{_parentName}\".");
+                {
+                    AaruConsole.ErrorWriteLine($"Cannot find parent \"{_parentName}\".");
+
+                    return ErrorNumber.NoSuchFile;
+                }
 
                 _parentImage = new VMware();
                 ErrorNumber parentError = _parentImage.Open(parentFilter);
