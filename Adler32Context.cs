@@ -42,6 +42,7 @@ namespace Aaru.Checksums
     public sealed class Adler32Context : IChecksum
     {
         const ushort ADLER_MODULE = 65521;
+        const uint   NMAX         = 5552;
         ushort       _sum1, _sum2;
 
         /// <summary>Initializes the Adler-32 sums</summary>
@@ -55,14 +56,7 @@ namespace Aaru.Checksums
         /// <summary>Updates the hash with data.</summary>
         /// <param name="data">Data buffer.</param>
         /// <param name="len">Length of buffer to hash.</param>
-        public void Update(byte[] data, uint len)
-        {
-            for(int i = 0; i < len; i++)
-            {
-                _sum1 = (ushort)((_sum1 + data[i]) % ADLER_MODULE);
-                _sum2 = (ushort)((_sum2 + _sum1)   % ADLER_MODULE);
-            }
-        }
+        public void Update(byte[] data, uint len) => Step(ref _sum1, ref _sum2, data, len);
 
         /// <inheritdoc />
         /// <summary>Updates the hash with data.</summary>
@@ -91,6 +85,157 @@ namespace Aaru.Checksums
             return adlerOutput.ToString();
         }
 
+        static void Step(ref ushort preSum1, ref ushort preSum2, byte[] data, uint len)
+        {
+            uint sum1 = preSum1;
+            uint sum2 = preSum2;
+            uint n;
+            int  dataOff = 0;
+
+            /* in case user likes doing a byte at a time, keep it fast */
+            if(len == 1)
+            {
+                sum1 += data[dataOff];
+
+                if(sum1 >= ADLER_MODULE)
+                    sum1 -= ADLER_MODULE;
+
+                sum2 += sum1;
+
+                if(sum2 >= ADLER_MODULE)
+                    sum2 -= ADLER_MODULE;
+
+                preSum1 = (ushort)(sum1 & 0xFFFF);
+                preSum2 = (ushort)(sum2 & 0xFFFF);
+
+                return;
+            }
+
+            /* in case short lengths are provided, keep it somewhat fast */
+            if(len < 16)
+            {
+                while(len-- > 0)
+                {
+                    sum1 += data[dataOff++];
+                    sum2 += sum1;
+                }
+
+                if(sum1 >= ADLER_MODULE)
+                    sum1 -= ADLER_MODULE;
+
+                sum2    %= ADLER_MODULE; /* only added so many ADLER_MODULE's */
+                preSum1 =  (ushort)(sum1 & 0xFFFF);
+                preSum2 =  (ushort)(sum2 & 0xFFFF);
+
+                return;
+            }
+
+            /* do length NMAX blocks -- requires just one modulo operation */
+            while(len >= NMAX)
+            {
+                len -= NMAX;
+                n   =  NMAX / 16; /* NMAX is divisible by 16 */
+
+                do
+                {
+                    sum1 += data[dataOff];
+                    sum2 += sum1;
+                    sum1 += data[dataOff + 1];
+                    sum2 += sum1;
+                    sum1 += data[dataOff + 2];
+                    sum2 += sum1;
+                    sum1 += data[dataOff + 2 + 1];
+                    sum2 += sum1;
+                    sum1 += data[dataOff + 4];
+                    sum2 += sum1;
+                    sum1 += data[dataOff + 4 + 1];
+                    sum2 += sum1;
+                    sum1 += data[dataOff + 4 + 2];
+                    sum2 += sum1;
+                    sum1 += data[dataOff + 4 + 2 + 1];
+                    sum2 += sum1;
+                    sum1 += data[dataOff + 8];
+                    sum2 += sum1;
+                    sum1 += data[dataOff + 8 + 1];
+                    sum2 += sum1;
+                    sum1 += data[dataOff + 8 + 2];
+                    sum2 += sum1;
+                    sum1 += data[dataOff + 8 + 2 + 1];
+                    sum2 += sum1;
+                    sum1 += data[dataOff + 8 + 4];
+                    sum2 += sum1;
+                    sum1 += data[dataOff + 8 + 4 + 1];
+                    sum2 += sum1;
+                    sum1 += data[dataOff + 8 + 4 + 2];
+                    sum2 += sum1;
+                    sum1 += data[dataOff + 8 + 4 + 2 + 1];
+                    sum2 += sum1;
+
+                    /* 16 sums unrolled */
+                    dataOff += 16;
+                } while(--n != 0);
+
+                sum1 %= ADLER_MODULE;
+                sum2 %= ADLER_MODULE;
+            }
+
+            /* do remaining bytes (less than NMAX, still just one modulo) */
+            if(len != 0)
+            {
+                /* avoid modulos if none remaining */
+                while(len >= 16)
+                {
+                    len  -= 16;
+                    sum1 += data[dataOff];
+                    sum2 += sum1;
+                    sum1 += data[dataOff + 1];
+                    sum2 += sum1;
+                    sum1 += data[dataOff + 2];
+                    sum2 += sum1;
+                    sum1 += data[dataOff + 2 + 1];
+                    sum2 += sum1;
+                    sum1 += data[dataOff + 4];
+                    sum2 += sum1;
+                    sum1 += data[dataOff + 4 + 1];
+                    sum2 += sum1;
+                    sum1 += data[dataOff + 4 + 2];
+                    sum2 += sum1;
+                    sum1 += data[dataOff + 4 + 2 + 1];
+                    sum2 += sum1;
+                    sum1 += data[dataOff + 8];
+                    sum2 += sum1;
+                    sum1 += data[dataOff + 8 + 1];
+                    sum2 += sum1;
+                    sum1 += data[dataOff + 8 + 2];
+                    sum2 += sum1;
+                    sum1 += data[dataOff + 8 + 2 + 1];
+                    sum2 += sum1;
+                    sum1 += data[dataOff + 8 + 4];
+                    sum2 += sum1;
+                    sum1 += data[dataOff + 8 + 4 + 1];
+                    sum2 += sum1;
+                    sum1 += data[dataOff + 8 + 4 + 2];
+                    sum2 += sum1;
+                    sum1 += data[dataOff + 8 + 4 + 2 + 1];
+                    sum2 += sum1;
+
+                    dataOff += 16;
+                }
+
+                while(len-- != 0)
+                {
+                    sum1 += data[dataOff++];
+                    sum2 += sum1;
+                }
+
+                sum1 %= ADLER_MODULE;
+                sum2 %= ADLER_MODULE;
+            }
+
+            preSum1 = (ushort)(sum1 & 0xFFFF);
+            preSum2 = (ushort)(sum2 & 0xFFFF);
+        }
+
         /// <summary>Gets the hash of a file</summary>
         /// <param name="filename">File path.</param>
         public static byte[] File(string filename)
@@ -110,10 +255,13 @@ namespace Aaru.Checksums
             ushort localSum1 = 1;
             ushort localSum2 = 0;
 
-            for(int i = 0; i < fileStream.Length; i++)
+            byte[] buffer = new byte[65536];
+            int    read   = fileStream.Read(buffer, 0, 65536);
+
+            while(read > 0)
             {
-                localSum1 = (ushort)((localSum1 + fileStream.ReadByte()) % ADLER_MODULE);
-                localSum2 = (ushort)((localSum2 + localSum1)             % ADLER_MODULE);
+                Step(ref localSum1, ref localSum2, buffer, (uint)read);
+                read = fileStream.Read(buffer, 0, 65536);
             }
 
             uint finalSum = (uint)((localSum2 << 16) | localSum1);
@@ -139,11 +287,7 @@ namespace Aaru.Checksums
             ushort localSum1 = 1;
             ushort localSum2 = 0;
 
-            for(int i = 0; i < len; i++)
-            {
-                localSum1 = (ushort)((localSum1 + data[i])   % ADLER_MODULE);
-                localSum2 = (ushort)((localSum2 + localSum1) % ADLER_MODULE);
-            }
+            Step(ref localSum1, ref localSum2, data, len);
 
             uint finalSum = (uint)((localSum2 << 16) | localSum1);
 

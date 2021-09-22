@@ -43,6 +43,7 @@ namespace Aaru.Checksums
     public sealed class Fletcher32Context : IChecksum
     {
         const ushort FLETCHER_MODULE = 0xFFFF;
+        const uint   NMAX            = 5552;
         ushort       _sum1, _sum2;
 
         /// <summary>Initializes the Fletcher-32 sums</summary>
@@ -56,14 +57,7 @@ namespace Aaru.Checksums
         /// <summary>Updates the hash with data.</summary>
         /// <param name="data">Data buffer.</param>
         /// <param name="len">Length of buffer to hash.</param>
-        public void Update(byte[] data, uint len)
-        {
-            for(int i = 0; i < len; i++)
-            {
-                _sum1 = (ushort)((_sum1 + data[i]) % FLETCHER_MODULE);
-                _sum2 = (ushort)((_sum2 + _sum1)   % FLETCHER_MODULE);
-            }
-        }
+        public void Update(byte[] data, uint len) => Step(ref _sum1, ref _sum2, data, len);
 
         /// <inheritdoc />
         /// <summary>Updates the hash with data.</summary>
@@ -92,6 +86,157 @@ namespace Aaru.Checksums
             return fletcherOutput.ToString();
         }
 
+        static void Step(ref ushort previousSum1, ref ushort previousSum2, byte[] data, uint len)
+        {
+            uint sum1 = previousSum1;
+            uint sum2 = previousSum2;
+            uint n;
+            int  dataOff = 0;
+
+            /* in case user likes doing a byte at a time, keep it fast */
+            if(len == 1)
+            {
+                sum1 += data[dataOff];
+
+                if(sum1 >= FLETCHER_MODULE)
+                    sum1 -= FLETCHER_MODULE;
+
+                sum2 += sum1;
+
+                if(sum2 >= FLETCHER_MODULE)
+                    sum2 -= FLETCHER_MODULE;
+
+                previousSum1 = (ushort)(sum1 & 0xFFFF);
+                previousSum2 = (ushort)(sum2 & 0xFFFF);
+
+                return;
+            }
+
+            /* in case short lengths are provided, keep it somewhat fast */
+            if(len < 16)
+            {
+                while(len-- > 0)
+                {
+                    sum1 += data[dataOff++];
+                    sum2 += sum1;
+                }
+
+                if(sum1 >= FLETCHER_MODULE)
+                    sum1 -= FLETCHER_MODULE;
+
+                sum2         %= FLETCHER_MODULE; /* only added so many FLETCHER_MODULE's */
+                previousSum1 =  (ushort)(sum1 & 0xFFFF);
+                previousSum2 =  (ushort)(sum2 & 0xFFFF);
+
+                return;
+            }
+
+            /* do length NMAX blocks -- requires just one modulo operation */
+            while(len >= NMAX)
+            {
+                len -= NMAX;
+                n   =  NMAX / 16; /* NMAX is divisible by 16 */
+
+                do
+                {
+                    sum1 += data[dataOff];
+                    sum2 += sum1;
+                    sum1 += data[dataOff + 1];
+                    sum2 += sum1;
+                    sum1 += data[dataOff + 2];
+                    sum2 += sum1;
+                    sum1 += data[dataOff + 2 + 1];
+                    sum2 += sum1;
+                    sum1 += data[dataOff + 4];
+                    sum2 += sum1;
+                    sum1 += data[dataOff + 4 + 1];
+                    sum2 += sum1;
+                    sum1 += data[dataOff + 4 + 2];
+                    sum2 += sum1;
+                    sum1 += data[dataOff + 4 + 2 + 1];
+                    sum2 += sum1;
+                    sum1 += data[dataOff + 8];
+                    sum2 += sum1;
+                    sum1 += data[dataOff + 8 + 1];
+                    sum2 += sum1;
+                    sum1 += data[dataOff + 8 + 2];
+                    sum2 += sum1;
+                    sum1 += data[dataOff + 8 + 2 + 1];
+                    sum2 += sum1;
+                    sum1 += data[dataOff + 8 + 4];
+                    sum2 += sum1;
+                    sum1 += data[dataOff + 8 + 4 + 1];
+                    sum2 += sum1;
+                    sum1 += data[dataOff + 8 + 4 + 2];
+                    sum2 += sum1;
+                    sum1 += data[dataOff + 8 + 4 + 2 + 1];
+                    sum2 += sum1;
+
+                    /* 16 sums unrolled */
+                    dataOff += 16;
+                } while(--n != 0);
+
+                sum1 %= FLETCHER_MODULE;
+                sum2 %= FLETCHER_MODULE;
+            }
+
+            /* do remaining bytes (less than NMAX, still just one modulo) */
+            if(len != 0)
+            {
+                /* avoid modulos if none remaining */
+                while(len >= 16)
+                {
+                    len  -= 16;
+                    sum1 += data[dataOff];
+                    sum2 += sum1;
+                    sum1 += data[dataOff + 1];
+                    sum2 += sum1;
+                    sum1 += data[dataOff + 2];
+                    sum2 += sum1;
+                    sum1 += data[dataOff + 2 + 1];
+                    sum2 += sum1;
+                    sum1 += data[dataOff + 4];
+                    sum2 += sum1;
+                    sum1 += data[dataOff + 4 + 1];
+                    sum2 += sum1;
+                    sum1 += data[dataOff + 4 + 2];
+                    sum2 += sum1;
+                    sum1 += data[dataOff + 4 + 2 + 1];
+                    sum2 += sum1;
+                    sum1 += data[dataOff + 8];
+                    sum2 += sum1;
+                    sum1 += data[dataOff + 8 + 1];
+                    sum2 += sum1;
+                    sum1 += data[dataOff + 8 + 2];
+                    sum2 += sum1;
+                    sum1 += data[dataOff + 8 + 2 + 1];
+                    sum2 += sum1;
+                    sum1 += data[dataOff + 8 + 4];
+                    sum2 += sum1;
+                    sum1 += data[dataOff + 8 + 4 + 1];
+                    sum2 += sum1;
+                    sum1 += data[dataOff + 8 + 4 + 2];
+                    sum2 += sum1;
+                    sum1 += data[dataOff + 8 + 4 + 2 + 1];
+                    sum2 += sum1;
+
+                    dataOff += 16;
+                }
+
+                while(len-- != 0)
+                {
+                    sum1 += data[dataOff++];
+                    sum2 += sum1;
+                }
+
+                sum1 %= FLETCHER_MODULE;
+                sum2 %= FLETCHER_MODULE;
+            }
+
+            previousSum1 = (ushort)(sum1 & 0xFFFF);
+            previousSum2 = (ushort)(sum2 & 0xFFFF);
+        }
+
         /// <summary>Gets the hash of a file</summary>
         /// <param name="filename">File path.</param>
         public static byte[] File(string filename)
@@ -111,10 +256,14 @@ namespace Aaru.Checksums
             ushort localSum1 = 0xFFFF;
             ushort localSum2 = 0xFFFF;
 
-            for(int i = 0; i < fileStream.Length; i++)
+            byte[] buffer = new byte[65536];
+            int    read   = fileStream.Read(buffer, 0, 65536);
+
+            while(read > 0)
             {
-                localSum1 = (ushort)((localSum1 + fileStream.ReadByte()) % FLETCHER_MODULE);
-                localSum2 = (ushort)((localSum2 + localSum1)             % FLETCHER_MODULE);
+                Step(ref localSum1, ref localSum2, buffer, (uint)read);
+
+                read = fileStream.Read(buffer, 0, 65536);
             }
 
             uint finalSum = (uint)((localSum2 << 16) | localSum1);
@@ -140,11 +289,7 @@ namespace Aaru.Checksums
             ushort localSum1 = 0xFFFF;
             ushort localSum2 = 0xFFFF;
 
-            for(int i = 0; i < len; i++)
-            {
-                localSum1 = (ushort)((localSum1 + data[i])   % FLETCHER_MODULE);
-                localSum2 = (ushort)((localSum2 + localSum1) % FLETCHER_MODULE);
-            }
+            Step(ref localSum1, ref localSum2, data, len);
 
             uint finalSum = (uint)((localSum2 << 16) | localSum1);
 
@@ -169,6 +314,7 @@ namespace Aaru.Checksums
     public sealed class Fletcher16Context : IChecksum
     {
         const byte FLETCHER_MODULE = 0xFF;
+        const byte NMAX            = 22;
         byte       _sum1, _sum2;
 
         /// <summary>Initializes the Fletcher-16 sums</summary>
@@ -182,14 +328,7 @@ namespace Aaru.Checksums
         /// <summary>Updates the hash with data.</summary>
         /// <param name="data">Data buffer.</param>
         /// <param name="len">Length of buffer to hash.</param>
-        public void Update(byte[] data, uint len)
-        {
-            for(int i = 0; i < len; i++)
-            {
-                _sum1 = (byte)((_sum1 + data[i]) % FLETCHER_MODULE);
-                _sum2 = (byte)((_sum2 + _sum1)   % FLETCHER_MODULE);
-            }
-        }
+        public void Update(byte[] data, uint len) => Step(ref _sum1, ref _sum2, data, len);
 
         /// <inheritdoc />
         /// <summary>Updates the hash with data.</summary>
@@ -218,6 +357,137 @@ namespace Aaru.Checksums
             return fletcherOutput.ToString();
         }
 
+        static void Step(ref byte previousSum1, ref byte previousSum2, byte[] data, uint len)
+        {
+            uint sum1 = previousSum1;
+            uint sum2 = previousSum2;
+            uint n;
+            int  dataOff = 0;
+
+            /* in case user likes doing a byte at a time, keep it fast */
+            if(len == 1)
+            {
+                sum1 += data[dataOff];
+
+                if(sum1 >= FLETCHER_MODULE)
+                    sum1 -= FLETCHER_MODULE;
+
+                sum2 += sum1;
+
+                if(sum2 >= FLETCHER_MODULE)
+                    sum2 -= FLETCHER_MODULE;
+
+                previousSum1 = (byte)(sum1 & 0xFF);
+                previousSum2 = (byte)(sum2 & 0xFF);
+
+                return;
+            }
+
+            /* in case short lengths are provided, keep it somewhat fast */
+            if(len < 11)
+            {
+                while(len-- > 0)
+                {
+                    sum1 += data[dataOff++];
+                    sum2 += sum1;
+                }
+
+                if(sum1 >= FLETCHER_MODULE)
+                    sum1 -= FLETCHER_MODULE;
+
+                sum2         %= FLETCHER_MODULE; /* only added so many FLETCHER_MODULE's */
+                previousSum1 =  (byte)(sum1 & 0xFF);
+                previousSum2 =  (byte)(sum2 & 0xFF);
+
+                return;
+            }
+
+            /* do length NMAX blocks -- requires just one modulo operation */
+            while(len >= NMAX)
+            {
+                len -= NMAX;
+                n   =  NMAX / 11; /* NMAX is divisible by 16 */
+
+                do
+                {
+                    sum1 += data[dataOff];
+                    sum2 += sum1;
+                    sum1 += data[dataOff + 1];
+                    sum2 += sum1;
+                    sum1 += data[dataOff + 2];
+                    sum2 += sum1;
+                    sum1 += data[dataOff + 2 + 1];
+                    sum2 += sum1;
+                    sum1 += data[dataOff + 4];
+                    sum2 += sum1;
+                    sum1 += data[dataOff + 4 + 1];
+                    sum2 += sum1;
+                    sum1 += data[dataOff + 4 + 2];
+                    sum2 += sum1;
+                    sum1 += data[dataOff + 4 + 2 + 1];
+                    sum2 += sum1;
+                    sum1 += data[dataOff + 8];
+                    sum2 += sum1;
+                    sum1 += data[dataOff + 8 + 1];
+                    sum2 += sum1;
+                    sum1 += data[dataOff + 8 + 2];
+                    sum2 += sum1;
+
+                    /* 11 sums unrolled */
+                    dataOff += 11;
+                } while(--n != 0);
+
+                sum1 %= FLETCHER_MODULE;
+                sum2 %= FLETCHER_MODULE;
+            }
+
+            /* do remaining bytes (less than NMAX, still just one modulo) */
+            if(len != 0)
+            {
+                /* avoid modulos if none remaining */
+                while(len >= 11)
+                {
+                    len  -= 11;
+                    sum1 += data[dataOff];
+                    sum2 += sum1;
+                    sum1 += data[dataOff + 1];
+                    sum2 += sum1;
+                    sum1 += data[dataOff + 2];
+                    sum2 += sum1;
+                    sum1 += data[dataOff + 2 + 1];
+                    sum2 += sum1;
+                    sum1 += data[dataOff + 4];
+                    sum2 += sum1;
+                    sum1 += data[dataOff + 4 + 1];
+                    sum2 += sum1;
+                    sum1 += data[dataOff + 4 + 2];
+                    sum2 += sum1;
+                    sum1 += data[dataOff + 4 + 2 + 1];
+                    sum2 += sum1;
+                    sum1 += data[dataOff + 8];
+                    sum2 += sum1;
+                    sum1 += data[dataOff + 8 + 1];
+                    sum2 += sum1;
+                    sum1 += data[dataOff + 8 + 2];
+                    sum2 += sum1;
+
+                    dataOff += 11;
+                }
+
+                while(len-- != 0)
+                {
+                    sum1 += data[dataOff++];
+                    sum2 += sum1;
+                }
+
+                sum1 %= FLETCHER_MODULE;
+                sum2 %= FLETCHER_MODULE;
+            }
+
+            previousSum1 = (byte)(sum1 & 0xFF);
+            previousSum2 = (byte)(sum2 & 0xFF);
+        }
+
         /// <summary>Gets the hash of a file</summary>
         /// <param name="filename">File path.</param>
         public static byte[] File(string filename)
@@ -237,10 +507,14 @@ namespace Aaru.Checksums
             byte localSum1 = 0xFF;
             byte localSum2 = 0xFF;
 
-            for(int i = 0; i < fileStream.Length; i++)
+            byte[] buffer = new byte[65536];
+            int    read   = fileStream.Read(buffer, 0, 65536);
+
+            while(read > 0)
             {
-                localSum1 = (byte)((localSum1 + fileStream.ReadByte()) % FLETCHER_MODULE);
-                localSum2 = (byte)((localSum2 + localSum1)             % FLETCHER_MODULE);
+                Step(ref localSum1, ref localSum2, buffer, (uint)read);
+
+                read = fileStream.Read(buffer, 0, 65536);
             }
 
             ushort finalSum = (ushort)((localSum2 << 8) | localSum1);
@@ -266,11 +540,7 @@ namespace Aaru.Checksums
             byte localSum1 = 0xFF;
             byte localSum2 = 0xFF;
 
-            for(int i = 0; i < len; i++)
-            {
-                localSum1 = (byte)((localSum1 + data[i])   % FLETCHER_MODULE);
-                localSum2 = (byte)((localSum2 + localSum1) % FLETCHER_MODULE);
-            }
+            Step(ref localSum1, ref localSum2, data, len);
 
             ushort finalSum = (ushort)((localSum2 << 8) | localSum1);
 
