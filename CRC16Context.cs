@@ -30,8 +30,8 @@
 // Copyright © 2011-2021 Natalia Portillo
 // ****************************************************************************/
 
+using System;
 using System.IO;
-using System.Linq;
 using System.Text;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
@@ -42,13 +42,13 @@ namespace Aaru.Checksums
     /// <summary>Implements a CRC16 algorithm</summary>
     public class Crc16Context : IChecksum
     {
-        readonly ushort   _finalSeed;
-        readonly bool     _inverse;
-        readonly ushort[] _table;
-        ushort            _hashInt;
+        readonly ushort     _finalSeed;
+        readonly bool       _inverse;
+        readonly ushort[][] _table;
+        ushort              _hashInt;
 
         /// <summary>Initializes the CRC16 table with a custom polynomial and seed</summary>
-        public Crc16Context(ushort polynomial, ushort seed, ushort[] table, bool inverse)
+        public Crc16Context(ushort polynomial, ushort seed, ushort[][] table, bool inverse)
         {
             _hashInt   = seed;
             _finalSeed = seed;
@@ -63,13 +63,10 @@ namespace Aaru.Checksums
         /// <param name="len">Length of buffer to hash.</param>
         public void Update(byte[] data, uint len)
         {
-            for(int i = 0; i < len; i++)
-            {
-                if(_inverse)
-                    _hashInt = (ushort)(_table[(_hashInt >> 8) ^ data[i]] ^ (_hashInt << 8));
-                else
-                    _hashInt = (ushort)((_hashInt >> 8) ^ _table[data[i] ^ (_hashInt & 0xFF)]);
-            }
+            if(_inverse)
+                StepInverse(ref _hashInt, _table, data, len);
+            else
+                Step(ref _hashInt, _table, data, len);
         }
 
         /// <inheritdoc />
@@ -79,7 +76,8 @@ namespace Aaru.Checksums
 
         /// <inheritdoc />
         /// <summary>Returns a byte array of the hash value.</summary>
-        public byte[] Final() => BigEndianBitConverter.GetBytes((ushort)(_hashInt ^ _finalSeed));
+        public byte[] Final() => !_inverse ? BigEndianBitConverter.GetBytes((ushort)(_hashInt ^ _finalSeed))
+                                     : BigEndianBitConverter.GetBytes((ushort)~(_hashInt ^ _finalSeed));
 
         /// <inheritdoc />
         /// <summary>Returns a hexadecimal representation of the hash value.</summary>
@@ -100,9 +98,88 @@ namespace Aaru.Checksums
             return crc16Output.ToString();
         }
 
-        static ushort[] GenerateTable(ushort polynomial, bool inverseTable)
+        static void Step(ref ushort previousCrc, ushort[][] table, byte[] data, uint len)
         {
-            ushort[] table = new ushort[256];
+            // Unroll according to Intel slicing by uint8_t
+            // http://www.intel.com/technology/comms/perfnet/download/CRC_generators.pdf
+            // http://sourceforge.net/projects/slicing-by-8/
+
+            ushort    crc;
+            int       current_pos   = 0;
+            const int unroll        = 4;
+            const int bytes_at_once = 8 * unroll;
+
+            crc = previousCrc;
+
+            while(len >= bytes_at_once)
+            {
+                int unrolling;
+
+                for(unrolling = 0; unrolling < unroll; unrolling++)
+                {
+                    // TODO: What trick is Microsoft doing here that's faster than arithmetic conversion
+                    uint one = BitConverter.ToUInt32(data, current_pos) ^ crc;
+                    current_pos += 4;
+                    uint two = BitConverter.ToUInt32(data, current_pos);
+                    current_pos += 4;
+
+                    crc = (ushort)(table[0][(two >> 24) & 0xFF] ^ table[1][(two >> 16) & 0xFF] ^
+                                   table[2][(two >> 8)  & 0xFF] ^ table[3][two & 0xFF] ^ table[4][(one >> 24) & 0xFF] ^
+                                   table[5][(one >> 16) & 0xFF] ^ table[6][(one >> 8) & 0xFF] ^ table[7][one & 0xFF]);
+                }
+
+                len -= bytes_at_once;
+            }
+
+            while(len-- != 0)
+                crc = (ushort)((crc >> 8) ^ table[0][(crc & 0xFF) ^ data[current_pos++]]);
+
+            previousCrc = crc;
+        }
+
+        static void StepInverse(ref ushort previousCrc, ushort[][] table, byte[] data, uint len)
+        {
+            // Unroll according to Intel slicing by uint8_t
+            // http://www.intel.com/technology/comms/perfnet/download/CRC_generators.pdf
+            // http://sourceforge.net/projects/slicing-by-8/
+
+            ushort    crc;
+            int       current_pos   = 0;
+            const int unroll        = 4;
+            const int bytes_at_once = 8 * unroll;
+
+            crc = previousCrc;
+
+            while(len >= bytes_at_once)
+            {
+                int unrolling;
+
+                for(unrolling = 0; unrolling < unroll; unrolling++)
+                {
+                    crc = (ushort)(table[7][data[current_pos + 0] ^ (crc >> 8)]   ^
+                                   table[6][data[current_pos + 1] ^ (crc & 0xFF)] ^ table[5][data[current_pos + 2]] ^
+                                   table[4][data[current_pos + 3]] ^ table[3][data[current_pos + 4]] ^
+                                   table[2][data[current_pos + 5]] ^ table[1][data[current_pos + 6]] ^
+                                   table[0][data[current_pos + 7]]);
+
+                    current_pos += 8;
+                }
+
+                len -= bytes_at_once;
+            }
+
+            while(len-- != 0)
+                crc = (ushort)((crc << 8) ^ table[0][(crc >> 8) ^ data[current_pos++]]);
+
+            previousCrc = crc;
+        }
+
+        static ushort[][] GenerateTable(ushort polynomial, bool inverseTable)
+        {
+            ushort[][] table = new ushort[8][];
+
+            for(int i = 0; i < 8; i++)
+                table[i] = new ushort[256];
 
             if(!inverseTable)
                 for(uint i = 0; i < 256; i++)
@@ -115,7 +192,7 @@ namespace Aaru.Checksums
                         else
                             entry >>= 1;
 
-                    table[i] = (ushort)entry;
+                    table[0][i] = (ushort)entry;
                 }
             else
             {
@@ -130,10 +207,19 @@ namespace Aaru.Checksums
                         else
                             entry <<= 1;
 
-                        table[i] = (ushort)entry;
+                        table[0][i] = (ushort)entry;
                     }
                 }
             }
+
+            for(int slice = 1; slice < 8; slice++)
+                for(int i = 0; i < 256; i++)
+                {
+                    if(inverseTable)
+                        table[slice][i] = (ushort)((table[slice - 1][i] << 8) ^ table[0][table[slice - 1][i] >> 8]);
+                    else
+                        table[slice][i] = (ushort)((table[slice - 1][i] >> 8) ^ table[0][table[slice - 1][i] & 0xFF]);
+                }
 
             return table;
         }
@@ -145,22 +231,27 @@ namespace Aaru.Checksums
         /// <param name="seed">CRC seed</param>
         /// <param name="table">CRC lookup table</param>
         /// <param name="inverse">Is CRC inverted?</param>
-        public static string File(string filename, out byte[] hash, ushort polynomial, ushort seed, ushort[] table,
+        public static string File(string filename, out byte[] hash, ushort polynomial, ushort seed, ushort[][] table,
                                   bool inverse)
         {
             var fileStream = new FileStream(filename, FileMode.Open);
 
             ushort localHashInt = seed;
 
-            ushort[] localTable = table ?? GenerateTable(polynomial, inverse);
+            ushort[][] localTable = table ?? GenerateTable(polynomial, inverse);
 
-            for(int i = 0; i < fileStream.Length; i++)
+            byte[] buffer = new byte[65536];
+            int    read   = fileStream.Read(buffer, 0, 65536);
+
+            while(read > 0)
+            {
                 if(inverse)
-                    localHashInt =
-                        (ushort)(localTable[(localHashInt >> 8) ^ fileStream.ReadByte()] ^ (localHashInt << 8));
+                    StepInverse(ref localHashInt, localTable, buffer, (uint)read);
                 else
-                    localHashInt =
-                        (ushort)((localHashInt >> 8) ^ localTable[fileStream.ReadByte() ^ (localHashInt & 0xff)]);
+                    Step(ref localHashInt, localTable, buffer, (uint)read);
+
+                read = fileStream.Read(buffer, 0, 65536);
+            }
 
             localHashInt ^= seed;
 
@@ -188,17 +279,16 @@ namespace Aaru.Checksums
         /// <param name="table">CRC lookup table</param>
         /// <param name="inverse">Is CRC inverted?</param>
         public static string Data(byte[] data, uint len, out byte[] hash, ushort polynomial, ushort seed,
-                                  ushort[] table, bool inverse)
+                                  ushort[][] table, bool inverse)
         {
             ushort localHashInt = seed;
 
-            ushort[] localTable = table ?? GenerateTable(polynomial, inverse);
+            ushort[][] localTable = table ?? GenerateTable(polynomial, inverse);
 
-            for(int i = 0; i < len; i++)
-                if(inverse)
-                    localHashInt = (ushort)(localTable[(localHashInt >> 8) ^ data[i]] ^ (localHashInt << 8));
-                else
-                    localHashInt = (ushort)((localHashInt >> 8) ^ localTable[data[i] ^ (localHashInt & 0xff)]);
+            if(inverse)
+                StepInverse(ref localHashInt, localTable, data, len);
+            else
+                Step(ref localHashInt, localTable, data, len);
 
             localHashInt ^= seed;
 
@@ -222,22 +312,23 @@ namespace Aaru.Checksums
         /// <param name="table">Pre-generated lookup table</param>
         /// <param name="inverse">Inverse CRC</param>
         /// <returns>CRC16</returns>
-        public static ushort Calculate(byte[] buffer, ushort polynomial, ushort seed, ushort[] table, bool inverse)
+        public static ushort Calculate(byte[] buffer, ushort polynomial, ushort seed, ushort[][] table, bool inverse)
         {
-            ushort[] localTable = table ?? GenerateTable(polynomial, inverse);
+            ushort localHashInt = seed;
 
-            ushort crc16 =
-                buffer.Aggregate<byte, ushort>(0,
-                                               (current, b) =>
-                                                   inverse ? (ushort)(localTable[(current >> 8) ^ b] ^ (current << 8))
-                                                       : (ushort)((current >> 8) ^ localTable[b ^ (current & 0xff)]));
-
-            crc16 ^= seed;
+            ushort[][] localTable = table ?? GenerateTable(polynomial, inverse);
 
             if(inverse)
-                crc16 = (ushort)~crc16;
+                StepInverse(ref localHashInt, localTable, buffer, (uint)buffer.Length);
+            else
+                Step(ref localHashInt, localTable, buffer, (uint)buffer.Length);
 
-            return crc16;
+            localHashInt ^= seed;
+
+            if(inverse)
+                localHashInt = (ushort)~localHashInt;
+
+            return localHashInt;
         }
     }
 }
