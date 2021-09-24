@@ -367,6 +367,7 @@ namespace Aaru.DiscImages
                                                    lineNumber);
 
                         _discImage.IsRedumpGigadisc = true;
+                        firstTrackInSession         = true;
                     }
                     else if(matchRedumpHdArea.Success)
                     {
@@ -1242,11 +1243,21 @@ namespace Aaru.DiscImages
                 int    currentSector          = 0;
                 int    currentFileStartSector = 0;
                 string currentFilePath        = "";
+                firstTrackInSession = true;
 
                 foreach(CdrWinTrack track in _discImage.Tracks)
                 {
                     if(track.TrackFile.DataFilter.GetBasePath() != currentFilePath)
                     {
+                        if(_discImage.IsRedumpGigadisc &&
+                           track.Session == 2          &&
+                           firstTrackInSession)
+                        {
+                            track.Indexes.Add(0, (int)(0 - (ulong)track.Pregap));
+                            currentSector       = (int)gdRomSession2Offset;
+                            firstTrackInSession = false;
+                        }
+
                         currentFileStartSector = currentSector;
                         currentFilePath        = track.TrackFile.DataFilter.GetBasePath();
                     }
@@ -1281,9 +1292,6 @@ namespace Aaru.DiscImages
                     _discImage.Sessions.Add(sessions[s - 1]);
 
                 _imageInfo.Sectors = _discImage.Sessions.OrderByDescending(s => s.EndSector).First().EndSector + 1;
-
-                if(_discImage.IsRedumpGigadisc)
-                    _imageInfo.Sectors = 549150;
 
                 AaruConsole.DebugWriteLine("CDRWin plugin", "Session information:");
                 AaruConsole.DebugWriteLine("CDRWin plugin", "\tDisc contains {0} sessions", _discImage.Sessions.Count);
@@ -1336,11 +1344,11 @@ namespace Aaru.DiscImages
 
                     partitionSequence++;
 
-                    if(_discImage.Tracks[i].Indexes.TryGetValue(0, out int idx0))
-                        _offsetMap.Add(_discImage.Tracks[i].Sequence, (ulong)idx0);
-                    else if(_discImage.IsRedumpGigadisc &&
-                            _discImage.Tracks[i].Sequence == 3)
+                    if(_discImage.IsRedumpGigadisc &&
+                       _discImage.Tracks[i].Sequence == 3)
                         _offsetMap.Add(_discImage.Tracks[i].Sequence, gdRomSession2Offset);
+                    else if(_discImage.Tracks[i].Indexes.TryGetValue(0, out int idx0))
+                        _offsetMap.Add(_discImage.Tracks[i].Sequence, (ulong)idx0);
                     else if(_discImage.Tracks[i].Sequence > 1)
                         _offsetMap.Add(_discImage.Tracks[i].Sequence,
                                        (ulong)(_discImage.Tracks[i].Indexes[1] - _discImage.Tracks[i].Pregap));
