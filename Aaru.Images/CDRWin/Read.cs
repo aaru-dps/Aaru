@@ -121,7 +121,7 @@ namespace Aaru.DiscImages
 
                 var currentTrack = new CdrWinTrack
                 {
-                    Indexes = new Dictionary<ushort, int>()
+                    Indexes = new SortedDictionary<ushort, int>()
                 };
 
                 var  currentFile             = new CdrWinTrackFile();
@@ -798,7 +798,7 @@ namespace Aaru.DiscImages
 
                             currentTrack = new CdrWinTrack
                             {
-                                Indexes  = new Dictionary<ushort, int>(),
+                                Indexes  = new SortedDictionary<ushort, int>(),
                                 Sequence = uint.Parse(matchTrack.Groups[1].Value)
                             };
 
@@ -1262,7 +1262,7 @@ namespace Aaru.DiscImages
                         currentFilePath        = track.TrackFile.DataFilter.GetBasePath();
                     }
 
-                    Dictionary<ushort, int> newIndexes = new Dictionary<ushort, int>();
+                    SortedDictionary<ushort, int> newIndexes = new SortedDictionary<ushort, int>();
 
                     foreach(KeyValuePair<ushort, int> index in track.Indexes)
                         newIndexes[index.Key] = index.Value + currentFileStartSector;

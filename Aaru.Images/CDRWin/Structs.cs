@@ -72,7 +72,7 @@ namespace Aaru.DiscImages
             /// <summary>Track genre (from CD-Text)</summary>
             public string Genre;
             /// <summary>Indexes on this track</summary>
-            public Dictionary<ushort, int> Indexes;
+            public SortedDictionary<ushort, int> Indexes;
             /// <summary>Track ISRC</summary>
             public string Isrc;
             /// <summary>Track performer (from CD-Text)</summary>
