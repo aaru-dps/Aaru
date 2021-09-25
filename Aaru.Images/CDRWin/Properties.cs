@@ -120,14 +120,17 @@ namespace Aaru.DiscImages
                     foreach((ushort index, int position) in cdrTrack.Indexes)
                         aaruTrack.Indexes[index] = position;
 
-                    if(_discImage.IsRedumpGigadisc &&
-                       cdrTrack.Session    == 2    &&
-                       previousStartSector < gdRomSession2Offset)
-                        aaruTrack.StartSector = gdRomSession2Offset;
-
                     previousTrackFile = cdrTrack.TrackFile.DataFilter.Filename;
 
                     aaruTrack.EndSector = aaruTrack.StartSector + cdrTrack.Sectors - 1;
+
+                    if(_discImage.IsRedumpGigadisc &&
+                       cdrTrack.Session    == 2    &&
+                       previousStartSector < gdRomSession2Offset)
+                    {
+                        aaruTrack.StartSector = (ulong)cdrTrack.Indexes[0];
+                        aaruTrack.EndSector   = gdRomSession2Offset + cdrTrack.Sectors - (uint)cdrTrack.Pregap - 1;
+                    }
 
                     if(cdrTrack.TrackType == CDRWIN_TRACK_TYPE_CDG)
                     {
