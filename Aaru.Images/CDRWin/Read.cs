@@ -1253,9 +1253,11 @@ namespace Aaru.DiscImages
                            track.Session == 2          &&
                            firstTrackInSession)
                         {
-                            track.Indexes.Add(0, (int)(0 - (ulong)track.Pregap));
-                            currentSector       = (int)gdRomSession2Offset;
-                            firstTrackInSession = false;
+                            currentSector = (int)gdRomSession2Offset - track.Pregap;
+                            track.Indexes.Add(0, 0);
+                            track.Indexes[1]    =  track.Pregap;
+                            track.Sectors       += (ulong)track.Pregap;
+                            firstTrackInSession =  false;
                         }
 
                         currentFileStartSector = currentSector;
@@ -1346,7 +1348,8 @@ namespace Aaru.DiscImages
 
                     if(_discImage.IsRedumpGigadisc &&
                        _discImage.Tracks[i].Sequence == 3)
-                        _offsetMap.Add(_discImage.Tracks[i].Sequence, gdRomSession2Offset);
+                        _offsetMap.Add(_discImage.Tracks[i].Sequence,
+                                       gdRomSession2Offset - (ulong)_discImage.Tracks[i].Pregap);
                     else if(_discImage.Tracks[i].Indexes.TryGetValue(0, out int idx0))
                         _offsetMap.Add(_discImage.Tracks[i].Sequence, (ulong)idx0);
                     else if(_discImage.Tracks[i].Sequence > 1)
@@ -1744,6 +1747,29 @@ namespace Aaru.DiscImages
                 }
 
                 sectorAddress -= _lostPregap;
+            }
+
+            if(_discImage.IsRedumpGigadisc                      &&
+               aaruTrack.Session    == 2                        &&
+               aaruTrack.Indexes[0] >= 45000 - aaruTrack.Pregap &&
+               aaruTrack.Indexes[1] <= 45000)
+            {
+                if(sectorAddress < (ulong)(aaruTrack.Indexes[1] - aaruTrack.Indexes[0]))
+                {
+                    if(sectorAddress + length + (ulong)aaruTrack.Indexes[0] <= (ulong)aaruTrack.Indexes[1])
+                        return buffer;
+
+                    ulong pregapPos = (ulong)(aaruTrack.Indexes[1] - aaruTrack.Indexes[0]) - sectorAddress;
+
+                    byte[] presentData = ReadSectors((ulong)(aaruTrack.Indexes[1] - aaruTrack.Indexes[0]),
+                                                     (uint)(length                - pregapPos), track);
+
+                    Array.Copy(presentData, 0, buffer, (long)(pregapPos * sectorSize), presentData.Length);
+
+                    return buffer;
+                }
+
+                sectorAddress -= (ulong)(aaruTrack.Indexes[1] - aaruTrack.Indexes[0]);
             }
 
             _imageStream = aaruTrack.TrackFile.DataFilter.GetDataForkStream();
@@ -2150,6 +2176,29 @@ namespace Aaru.DiscImages
                 }
 
                 sectorAddress -= _lostPregap;
+            }
+
+            if(_discImage.IsRedumpGigadisc                      &&
+               aaruTrack.Session    == 2                        &&
+               aaruTrack.Indexes[0] >= 45000 - aaruTrack.Pregap &&
+               aaruTrack.Indexes[1] <= 45000)
+            {
+                if(sectorAddress < (ulong)(aaruTrack.Indexes[1] - aaruTrack.Indexes[0]))
+                {
+                    if(sectorAddress + length + (ulong)aaruTrack.Indexes[0] <= (ulong)aaruTrack.Indexes[1])
+                        return buffer;
+
+                    ulong pregapPos = (ulong)(aaruTrack.Indexes[1] - aaruTrack.Indexes[0]) - sectorAddress;
+
+                    byte[] presentData = ReadSectorsLong((ulong)(aaruTrack.Indexes[1] - aaruTrack.Indexes[0]),
+                                                         (uint)(length                - pregapPos), track);
+
+                    Array.Copy(presentData, 0, buffer, (long)(pregapPos * sectorSize), presentData.Length);
+
+                    return buffer;
+                }
+
+                sectorAddress -= (ulong)(aaruTrack.Indexes[1] - aaruTrack.Indexes[0]);
             }
 
             _imageStream = aaruTrack.TrackFile.DataFilter.GetDataForkStream();
