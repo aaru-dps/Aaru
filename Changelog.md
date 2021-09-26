@@ -139,6 +139,7 @@
 ### - RAW (sector by sector) disk image
 
 - Support setting sector size in raw image when the extension describes it.
+- Recognize Toast disc images by extension.
 
 ### - SCSI response decoders
 
@@ -259,6 +260,7 @@
 ### - Dumping
 
 - Creating sidecar from MMC trying to hash non-existing SD registers.
+- Non-CD optical media when drive does not return track list.
 - Pregap calculation on first tracks of each session when dumping CDs.
 - Re-setting track end when correctly reading a new subchannel that changes the next track start.
 - Speed calculations for very fast devices.
@@ -403,6 +405,7 @@
 - Move IRC to Libera.
 - Reduce seek times to 100 when scanning MMC/SD cards.
 - Rename *filesystem analyze* command to *filesystem info*.
+- Use ATA Pass Through Direct API in Windows.
 - Use same codepath for calculating optical media tag sidecar fields dumping or from image.
 - Use SCSI reader detection of maximum supporter blocks to read at once when scanning non-CD media.
 
