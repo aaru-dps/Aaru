@@ -1330,7 +1330,7 @@ namespace Aaru.DiscImages
                         currentFilePath        = track.TrackFile.DataFilter.BasePath;
                     }
 
-                    SortedDictionary<ushort, int> newIndexes = new SortedDictionary<ushort, int>();
+                    SortedDictionary<ushort, int> newIndexes = new();
 
                     foreach(KeyValuePair<ushort, int> index in track.Indexes)
                         newIndexes[index.Key] = index.Value + currentFileStartSector;
@@ -1835,16 +1835,19 @@ namespace Aaru.DiscImages
                 if(sectorAddress < (ulong)(aaruTrack.Indexes[1] - aaruTrack.Indexes[0]))
                 {
                     if(sectorAddress + length + (ulong)aaruTrack.Indexes[0] <= (ulong)aaruTrack.Indexes[1])
-                        return buffer;
+                        return ErrorNumber.NoError;
 
                     ulong pregapPos = (ulong)(aaruTrack.Indexes[1] - aaruTrack.Indexes[0]) - sectorAddress;
 
-                    byte[] presentData = ReadSectors((ulong)(aaruTrack.Indexes[1] - aaruTrack.Indexes[0]),
-                                                     (uint)(length                - pregapPos), track);
+                    ErrorNumber errno = ReadSectors((ulong)(aaruTrack.Indexes[1] - aaruTrack.Indexes[0]),
+                                                    (uint)(length - pregapPos), track, out byte[] presentData);
+
+                    if(errno != ErrorNumber.NoError)
+                        return errno;
 
                     Array.Copy(presentData, 0, buffer, (long)(pregapPos * sectorSize), presentData.Length);
 
-                    return buffer;
+                    return ErrorNumber.NoError;
                 }
 
                 sectorAddress -= (ulong)(aaruTrack.Indexes[1] - aaruTrack.Indexes[0]);
@@ -2273,16 +2276,19 @@ namespace Aaru.DiscImages
                 if(sectorAddress < (ulong)(aaruTrack.Indexes[1] - aaruTrack.Indexes[0]))
                 {
                     if(sectorAddress + length + (ulong)aaruTrack.Indexes[0] <= (ulong)aaruTrack.Indexes[1])
-                        return buffer;
+                        return ErrorNumber.NoError;
 
                     ulong pregapPos = (ulong)(aaruTrack.Indexes[1] - aaruTrack.Indexes[0]) - sectorAddress;
 
-                    byte[] presentData = ReadSectorsLong((ulong)(aaruTrack.Indexes[1] - aaruTrack.Indexes[0]),
-                                                         (uint)(length                - pregapPos), track);
+                    ErrorNumber errno = ReadSectorsLong((ulong)(aaruTrack.Indexes[1] - aaruTrack.Indexes[0]),
+                                                        (uint)(length - pregapPos), track, out byte[] presentData);
+
+                    if(errno != ErrorNumber.NoError)
+                        return errno;
 
                     Array.Copy(presentData, 0, buffer, (long)(pregapPos * sectorSize), presentData.Length);
 
-                    return buffer;
+                    return ErrorNumber.NoError;
                 }
 
                 sectorAddress -= (ulong)(aaruTrack.Indexes[1] - aaruTrack.Indexes[0]);
