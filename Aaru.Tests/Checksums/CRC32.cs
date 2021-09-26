@@ -34,6 +34,7 @@ using NUnit.Framework;
 
 namespace Aaru.Tests.Checksums
 {
+    // TODO: Add tests for misaligned data with PCLMUL implementation.
     [TestFixture]
     public class Crc32
     {
