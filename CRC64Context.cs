@@ -32,7 +32,9 @@
 
 using System;
 using System.IO;
+using System.Runtime.Intrinsics.X86;
 using System.Text;
+using Aaru.Checksums.CRC64;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 
@@ -273,6 +275,7 @@ namespace Aaru.Checksums
 
         readonly ulong     _finalSeed;
         readonly ulong[][] _table;
+        readonly bool      _useEcma;
         ulong              _hashInt;
 
         /// <summary>Initializes the CRC64 table and seed as CRC64-ECMA</summary>
@@ -281,6 +284,7 @@ namespace Aaru.Checksums
             _hashInt   = CRC64_ECMA_SEED;
             _table     = _ecmaCrc64Table;
             _finalSeed = CRC64_ECMA_SEED;
+            _useEcma   = true;
         }
 
         /// <summary>Initializes the CRC16 table with a custom polynomial and seed</summary>
@@ -289,13 +293,14 @@ namespace Aaru.Checksums
             _hashInt   = seed;
             _table     = GenerateTable(polynomial);
             _finalSeed = seed;
+            _useEcma   = polynomial == CRC64_ECMA_POLY && seed == CRC64_ECMA_SEED;
         }
 
         /// <inheritdoc />
         /// <summary>Updates the hash with data.</summary>
         /// <param name="data">Data buffer.</param>
         /// <param name="len">Length of buffer to hash.</param>
-        public void Update(byte[] data, uint len) => Step(ref _hashInt, _table, data, len);
+        public void Update(byte[] data, uint len) => Step(ref _hashInt, _table, data, len, _useEcma);
 
         /// <inheritdoc />
         /// <summary>Updates the hash with data.</summary>
@@ -345,8 +350,19 @@ namespace Aaru.Checksums
             return table;
         }
 
-        static void Step(ref ulong previousCrc, ulong[][] table, byte[] data, uint len)
+        static void Step(ref ulong previousCrc, ulong[][] table, byte[] data, uint len, bool useEcma)
         {
+            if(useEcma               &&
+               Pclmulqdq.IsSupported &&
+               Sse41.IsSupported     &&
+               Ssse3.IsSupported     &&
+               Sse2.IsSupported)
+            {
+                previousCrc = ~Clmul.Step(~previousCrc, data, len);
+
+                return;
+            }
+
             // Unroll according to Intel slicing by uint8_t
             // http://www.intel.com/technology/comms/perfnet/download/CRC_generators.pdf
             // http://sourceforge.net/projects/slicing-by-8/
@@ -408,7 +424,8 @@ namespace Aaru.Checksums
 
             while(read > 0)
             {
-                Step(ref localHashInt, localTable, buffer, (uint)read);
+                Step(ref localHashInt, localTable, buffer, (uint)read,
+                     polynomial == CRC64_ECMA_POLY && seed == CRC64_ECMA_SEED);
 
                 read = fileStream.Read(buffer, 0, 65536);
             }
@@ -445,7 +462,7 @@ namespace Aaru.Checksums
 
             ulong[][] localTable = GenerateTable(polynomial);
 
-            Step(ref localHashInt, localTable, data, len);
+            Step(ref localHashInt, localTable, data, len, polynomial == CRC64_ECMA_POLY && seed == CRC64_ECMA_SEED);
 
             localHashInt ^= seed;
             hash         =  BigEndianBitConverter.GetBytes(localHashInt);

@@ -61,6 +61,7 @@
     <Compile Include="CRC16CCITTContext.cs" />
     <Compile Include="CRC16IBMContext.cs" />
     <Compile Include="CRC32\clmul.cs" />
+    <Compile Include="CRC64\clmul.cs" />
     <Compile Include="Register.cs" />
     <Compile Include="SpamSumContext.cs" />
     <Compile Include="Adler32Context.cs" />
