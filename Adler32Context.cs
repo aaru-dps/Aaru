@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System.IO;
+using System.Runtime.Intrinsics.X86;
 using System.Text;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
@@ -41,9 +42,9 @@ namespace Aaru.Checksums
     /// <summary>Implements the Adler-32 algorithm</summary>
     public sealed class Adler32Context : IChecksum
     {
-        const ushort ADLER_MODULE = 65521;
-        const uint   NMAX         = 5552;
-        ushort       _sum1, _sum2;
+        internal const ushort ADLER_MODULE = 65521;
+        internal const uint   NMAX         = 5552;
+        ushort                _sum1, _sum2;
 
         /// <summary>Initializes the Adler-32 sums</summary>
         public Adler32Context()
@@ -87,6 +88,13 @@ namespace Aaru.Checksums
 
         static void Step(ref ushort preSum1, ref ushort preSum2, byte[] data, uint len)
         {
+            if(Ssse3.IsSupported)
+            {
+                Adler32.Ssse3.Step(ref preSum1, ref preSum2, data, len);
+
+                return;
+            }
+
             uint sum1 = preSum1;
             uint sum2 = preSum2;
             uint n;
