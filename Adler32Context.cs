@@ -31,10 +31,12 @@
 // ****************************************************************************/
 
 using System.IO;
-using System.Runtime.Intrinsics.X86;
+using System.Runtime.Intrinsics.Arm;
 using System.Text;
+using Aaru.Checksums.Adler32;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
+using Ssse3 = System.Runtime.Intrinsics.X86.Ssse3;
 
 namespace Aaru.Checksums
 {
@@ -91,6 +93,13 @@ namespace Aaru.Checksums
             if(Ssse3.IsSupported)
             {
                 Adler32.Ssse3.Step(ref preSum1, ref preSum2, data, len);
+
+                return;
+            }
+
+            if(AdvSimd.IsSupported)
+            {
+                neon.Step(ref preSum1, ref preSum2, data, len);
 
                 return;
             }

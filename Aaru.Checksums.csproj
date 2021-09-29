@@ -58,6 +58,7 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Adler32\neon.cs" />
     <Compile Include="Adler32\ssse3.cs" />
     <Compile Include="CRC16CCITTContext.cs" />
     <Compile Include="CRC16IBMContext.cs" />
