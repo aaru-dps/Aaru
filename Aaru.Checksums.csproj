@@ -62,6 +62,7 @@
     <Compile Include="Adler32\ssse3.cs" />
     <Compile Include="CRC16CCITTContext.cs" />
     <Compile Include="CRC16IBMContext.cs" />
+    <Compile Include="CRC32\arm_simd.cs" />
     <Compile Include="CRC32\clmul.cs" />
     <Compile Include="CRC64\clmul.cs" />
     <Compile Include="Register.cs" />

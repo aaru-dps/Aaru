@@ -32,6 +32,7 @@
 
 using System;
 using System.IO;
+using System.Runtime.Intrinsics.Arm;
 using System.Runtime.Intrinsics.X86;
 using System.Text;
 using Aaru.Checksums.CRC32;
@@ -333,8 +334,8 @@ namespace Aaru.Checksums
 
         readonly uint     _finalSeed;
         readonly uint[][] _table;
-        uint              _hashInt;
         readonly bool     _useIso;
+        uint              _hashInt;
 
         /// <summary>Initializes the CRC32 table and seed as CRC32-ISO</summary>
         public Crc32Context()
@@ -411,15 +412,31 @@ namespace Aaru.Checksums
 
         static void Step(ref uint previousCrc, uint[][] table, byte[] data, uint len, bool useIso)
         {
-            if(useIso                &&
-               Pclmulqdq.IsSupported &&
-               Sse41.IsSupported     &&
-               Ssse3.IsSupported     &&
-               Sse2.IsSupported)
+            if(useIso)
             {
-                previousCrc = ~Clmul.Step(data, len, ~previousCrc);
+                if(Pclmulqdq.IsSupported &&
+                   Sse41.IsSupported     &&
+                   Ssse3.IsSupported     &&
+                   Sse2.IsSupported)
+                {
+                    previousCrc = ~Clmul.Step(data, len, ~previousCrc);
 
-                return;
+                    return;
+                }
+
+                if(Crc32.Arm64.IsSupported)
+                {
+                    previousCrc = ArmSimd.Step64(data, len, previousCrc);
+
+                    return;
+                }
+
+                if(Crc32.IsSupported)
+                {
+                    previousCrc = ArmSimd.Step32(data, len, previousCrc);
+
+                    return;
+                }
             }
 
             // Unroll according to Intel slicing by uint8_t
