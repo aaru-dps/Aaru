@@ -73,7 +73,7 @@
 - Do not cross into each session's first track pregap as this makes some drives fail.
 - Dumping of CSS disc key and title keys.
 - Enable storing decrypted CSS sectors.
-- Enable to continue dumping non-removable drives if serial number if different using the force option.
+- Enable to continue dumping non-removable drives if serial number is different using the force option.
 - Implement reading SD/MMC using buffered OS calls.
 - Workaround some firmware bug in some audio CDs with hidden audio.
 - Write media tags to image even when aborted.
@@ -117,6 +117,7 @@
 ### - Media information
 
 - Decode Pre-Recorded Information.
+- Decode smaller disc information from older DVD drives.
 - More media manufacturers.
 - Print Disc Key and Sector CMI information.
 - Print recordable Physical Format Information (PFI).
