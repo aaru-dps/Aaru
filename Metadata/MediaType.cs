@@ -908,6 +908,11 @@ namespace Aaru.CommonTypes.Metadata
                     discSubType = "ECMA-201";
 
                     break;
+                case CommonTypes.MediaType.ISO_15041_512:
+                    discType    = "3.5\" magneto-optical";
+                    discSubType = "ISO 15041";
+
+                    break;
                 case CommonTypes.MediaType.FlashDrive:
                     discType    = "USB flash drive";
                     discSubType = "USB flash drive";

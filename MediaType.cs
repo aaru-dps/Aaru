@@ -1029,6 +1029,8 @@ namespace Aaru.CommonTypes
         ISO_14517 = 802,
         /// <summary>5,25", M.O., 2244958 sectors, 512 bytes/sector, ISO 14517, 2.3Gb/cart</summary>
         ISO_14517_512 = 803,
+        /// <summary>3,5", M.O., 1041500 sectors, 512 bytes/sector, ISO 15041, 540Mb/cart</summary>
+        ISO_15041_512 = 804,
         #endregion Magneto-optical, types 800 to 819
     }
 }

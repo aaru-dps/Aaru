@@ -231,6 +231,7 @@ namespace Aaru.CommonTypes.Metadata
                 case CommonTypes.MediaType.ECMA_223_512:
                 case CommonTypes.MediaType.GigaMo:
                 case CommonTypes.MediaType.GigaMo2:
+                case CommonTypes.MediaType.ISO_15041_512:
                     // According to ECMA-154 et al
                     dmns.Height          = 94;
                     dmns.HeightSpecified = true;

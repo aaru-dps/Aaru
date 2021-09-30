@@ -628,6 +628,12 @@ namespace Aaru.CommonTypes
                                                        mediumType, blocks, blockSize);
 
                             return MediaType.ECMA_183_512;
+                        case 1041500 when mediumType == 0x01 || mediumType == 0x02:
+                            AaruConsole.DebugWriteLine("Media detection",
+                                                       "SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to ISO 15041 conforming 3½\" magneto-optical.",
+                                                       mediumType, blocks, blockSize);
+
+                            return MediaType.ISO_15041_512;
                         case 1128772 when mediumType == 0x01 || mediumType == 0x02:
                         case 1163337 when mediumType == 0x01 || mediumType == 0x02:
                             AaruConsole.DebugWriteLine("Media detection",
