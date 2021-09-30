@@ -684,6 +684,7 @@ namespace Aaru.Core.Devices.Report
             }
 
             if(mediaType.StartsWith("DVD-", StringComparison.Ordinal)    ||
+               mediaType.StartsWith("DVD+", StringComparison.Ordinal)    ||
                mediaType.StartsWith("HD DVD-", StringComparison.Ordinal) ||
                mediaType.StartsWith("PD-", StringComparison.Ordinal))
             {
