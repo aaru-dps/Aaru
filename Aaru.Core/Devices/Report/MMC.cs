@@ -818,6 +818,34 @@ namespace Aaru.Core.Devices.Report
 
                     mediaTest.DvdBcaData = buffer;
 
+                    Spectre.ProgressSingleSpinner(ctx =>
+                    {
+                        ctx.AddTask("Querying DVD PFI...").IsIndeterminate();
+
+                        mediaTest.CanReadPFI = !_dev.ReadDiscStructure(out buffer, out senseBuffer,
+                                                                       MmcDiscStructureMediaType.Dvd, 0, 0,
+                                                                       MmcDiscStructureFormat.PhysicalInformation, 0,
+                                                                       _dev.Timeout, out _);
+                    });
+
+                    AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadPFI);
+
+                    mediaTest.PfiData = buffer;
+
+                    Spectre.ProgressSingleSpinner(ctx =>
+                    {
+                        ctx.AddTask("Querying DVD DMI...").IsIndeterminate();
+
+                        mediaTest.CanReadDMI = !_dev.ReadDiscStructure(out buffer, out senseBuffer,
+                                                                       MmcDiscStructureMediaType.Dvd, 0, 0,
+                                                                       MmcDiscStructureFormat.DiscManufacturingInformation,
+                                                                       0, _dev.Timeout, out _);
+                    });
+
+                    AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadDMI);
+
+                    mediaTest.DmiData = buffer;
+
                     break;
                 case "BD-ROM":
                 case "Ultra HD Blu-ray movie":
