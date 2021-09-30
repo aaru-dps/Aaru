@@ -10,7 +10,7 @@ for conf in Debug Release;
 do
  for distro in alpine-x64 linux-arm64 linux-arm linux-x64 osx-x64 win-arm64 win-arm win-x64 win-x86 debian-arm debian-arm64 debian-x64 rhel-arm64 rhel-x64 sles-x64;
  do
-  dotnet publish -f netcoreapp3.1 -r ${distro} -c ${conf}
+  dotnet publish -f net6 -r ${distro} -c ${conf}
 
 # Package the Linux packages
   if [[ ${distro} == alpine* ]] || [[ ${distro} == linux* ]]; then
@@ -22,7 +22,7 @@ do
   else
     pkg="deb"
   fi
-  dotnet ${pkg} -f netcoreapp3.1 -r ${distro} -c ${conf} -o ../build
+  dotnet ${pkg} -f net6 -r ${distro} -c ${conf} -o ../build
  done
 done
 
@@ -67,10 +67,10 @@ mkdir -p build/macos/Aaru.app/Contents/Resources
 mkdir -p build/macos/Aaru.app/Contents/MacOS
 cp Aaru/Aaru.icns build/macos/Aaru.app/Contents/Resources
 cp Aaru/Info.plist build/macos/Aaru.app/Contents
-cp -r Aaru/bin/Release/netcoreapp3.1/osx-x64/publish/* build/macos/Aaru.app/Contents/MacOS
+cp -r Aaru/bin/Release/net6/osx-x64/publish/* build/macos/Aaru.app/Contents/MacOS
 rm -Rf build/macos-dbg/Aaru.app
 mkdir -p build/macos-dbg/Aaru.app/Contents/Resources
 mkdir -p build/macos-dbg/Aaru.app/Contents/MacOS
 cp Aaru/Aaru.icns build/macos-dbg/Aaru.app/Contents/Resources
 cp Aaru/Info.plist build/macos-dbg/Aaru.app/Contents
-cp -r Aaru/bin/Debug/netcoreapp3.1/osx-x64/publish/* build/macos-dbg/Aaru.app/Contents/MacOS
+cp -r Aaru/bin/Debug/net6/osx-x64/publish/* build/macos-dbg/Aaru.app/Contents/MacOS
