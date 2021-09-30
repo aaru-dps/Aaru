@@ -53,7 +53,7 @@ if [[ ${OS_NAME} == Linux ]]; then
 
 fi
 
-mv pkg/pacman/stable/*.pkg.tar.xz build/
+mv pkg/pacman/stable/*.pkg.tar.zst build/
 
 cd build
 for i in *.deb *.rpm *.zip *.tar.gz;
