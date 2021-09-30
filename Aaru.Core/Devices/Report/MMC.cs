@@ -754,6 +754,28 @@ namespace Aaru.Core.Devices.Report
                     break;
                 case "Nintendo GameCube game":
                 case "Nintendo Wii game":
+                    AaruConsole.WriteLine("Querying DVD PFI...");
+
+                    mediaTest.CanReadPFI = !_dev.ReadDiscStructure(out buffer, out senseBuffer,
+                                                                   MmcDiscStructureMediaType.Dvd, 0, 0,
+                                                                   MmcDiscStructureFormat.PhysicalInformation, 0,
+                                                                   _dev.Timeout, out _);
+
+                    AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadPFI);
+
+                    mediaTest.PfiData = buffer;
+
+                    AaruConsole.WriteLine("Querying DVD DMI...");
+
+                    mediaTest.CanReadDMI = !_dev.ReadDiscStructure(out buffer, out senseBuffer,
+                                                                   MmcDiscStructureMediaType.Dvd, 0, 0,
+                                                                   MmcDiscStructureFormat.DiscManufacturingInformation,
+                                                                   0, _dev.Timeout, out _);
+
+                    AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadDMI);
+
+                    mediaTest.DmiData = buffer;
+
                     AaruConsole.WriteLine("Querying DVD BCA...");
 
                     mediaTest.CanReadBCA = !_dev.ReadDiscStructure(out buffer, out senseBuffer,
