@@ -9,8 +9,8 @@ pkgdesc='Disc image management and creation tool for disks, tapes, optical and s
 arch=('x86_64' 'armv7h' 'aarch64')
 url='http://www.aaru.app'
 license=('GPL')
-source=('aaru-src-5.2.0.3330.tar.xz::local://aaru-src-5.2.0.3330.tar.xz'
-        'aaru-src-5.2.0.3330.tar.xz.asc::local://aaru-src-5.2.0.3330.tar.xz.asc')
+source=('aaru-src-5.3.0.tar.xz::local://aaru-src-5.3.0.tar.xz'
+        'aaru-src-5.3.0.tar.xz.asc::local://aaru-src-5.3.0.tar.xz.asc')
 makedepends=('dotnet-sdk>=3.1.0')
 options=('staticlibs')
 validpgpkeys=('236F1E21B540FC0D40F7AD1751D20488C724CA9F')
