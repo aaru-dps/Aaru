@@ -1,4 +1,4 @@
-# [5.2.99.xxxx] - 2021-xx-yy
+# [5.3.0] - 2021-10-01
 
 ## Added
 
@@ -105,6 +105,8 @@
 
 ### - Media detection
 
+- Detect ISO 15041 magneto-opticals
+- Detect SyJet disks using number of sectors.
 - Detect when DVD book type is different from drive's firmware profile.
 - PlayStation 5 Ultra HD Blu-ray game discs.
 - Ultra HD Blu-ray.
@@ -2206,6 +2208,8 @@
 - Apple Partition Map (aka APM).
 - Master Boot Record (aka MBR).
 - NeXT disklabels.
+
+[5.3.0]: https://github.com/aaru-dps/Aaru/releases/tag/v5.3.0
 
 [5.2.0.3330]: https://github.com/aaru-dps/Aaru/releases/tag/v5.2.0.3330
 
