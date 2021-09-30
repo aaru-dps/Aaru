@@ -191,18 +191,19 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="SCSI\" />
-    <Folder Include="ATA\" />
-    <Folder Include="DVD\" />
-    <Folder Include="SCSI\MMC\" />
-    <Folder Include="CD\" />
-    <Folder Include="Floppy\" />
-    <Folder Include="Xbox\" />
-    <Folder Include="SCSI\SSC\" />
-    <Folder Include="PCMCIA\" />
-    <Folder Include="MMC\" />
-    <Folder Include="SecureDigital\" />
-    <Folder Include="Sega\" />
+    <Folder Include="Bluray"/>
+    <Folder Include="SCSI\"/>
+    <Folder Include="ATA\"/>
+    <Folder Include="DVD\"/>
+    <Folder Include="SCSI\MMC\"/>
+    <Folder Include="CD\"/>
+    <Folder Include="Floppy\"/>
+    <Folder Include="Xbox\"/>
+    <Folder Include="SCSI\SSC\"/>
+    <Folder Include="PCMCIA\"/>
+    <Folder Include="MMC\"/>
+    <Folder Include="SecureDigital\"/>
+    <Folder Include="Sega\"/>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="..\LICENSE.LGPL">
