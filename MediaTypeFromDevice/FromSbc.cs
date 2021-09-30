@@ -48,15 +48,6 @@ namespace Aaru.CommonTypes
         /// <returns>Media type</returns>
         static MediaType GetFromSbc(string vendor, string model, byte mediumType, ulong blocks, uint blockSize)
         {
-            if(vendor.ToLowerInvariant() == "syquest" &&
-               model.StartsWith("syjet", StringComparison.OrdinalIgnoreCase))
-            {
-                AaruConsole.DebugWriteLine("Media detection",
-                                           "Drive manufacturer is SyQuest, drive model is SyJet, setting media type to SyJet.");
-
-                return MediaType.SyJet;
-            }
-
             switch(mediumType)
             {
                 case 0x09:
@@ -682,6 +673,11 @@ namespace Aaru.CommonTypes
                                                        mediumType, blocks, blockSize);
 
                             return MediaType.ISO_14517_512;
+                        case 2929800 when vendor.ToLowerInvariant() == "syquest":
+                            AaruConsole.DebugWriteLine("Media detection",
+                                                       "Drive manufacturer is SyQuest, media has 2929800 blocks of 512 bytes, setting media type to SyJet.");
+
+                            return MediaType.SyJet;
                         case 3915600 when model.ToLowerInvariant().StartsWith("jaz", StringComparison.Ordinal):
                             AaruConsole.DebugWriteLine("Media detection",
                                                        "Drive manufacturer is IOMEGA, drive model is JAZ, media has 3915600 blocks of 512 bytes, setting media type to 2Gb JAZ.");
