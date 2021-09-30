@@ -55,7 +55,7 @@ namespace Aaru.Decoders.SCSI.MMC
     {
         public static StandardDiscInformation? Decode000b(byte[] response)
         {
-            if(response.Length < 34)
+            if(response.Length < 32)
                 return null;
 
             if((response[2] & 0xE0) != 0)
@@ -99,6 +99,9 @@ namespace Aaru.Decoders.SCSI.MMC
             Array.Copy(response, 24, temp, 0, 8);
             Array.Reverse(temp);
             decoded.DiscBarcode = BitConverter.ToUInt64(temp, 0);
+
+            if(response.Length < 34)
+                return null;
 
             decoded.DiscApplicationCode = response[32];
             decoded.OPCTablesNumber     = response[33];
