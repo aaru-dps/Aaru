@@ -407,7 +407,7 @@
 - In image information, only show indexes if there's any index to show.
 - Move IRC to Libera.
 - Reduce seek times to 100 when scanning MMC/SD cards.
-- Rename *filesystem analyze* command to *filesystem info*.
+- Rename *image analyze* command to *filesystem info*.
 - Use ATA Pass Through Direct API in Windows.
 - Use same codepath for calculating optical media tag sidecar fields dumping or from image.
 - Use SCSI reader detection of maximum supporter blocks to read at once when scanning non-CD media.
