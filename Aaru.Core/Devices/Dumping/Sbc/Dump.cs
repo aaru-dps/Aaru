@@ -367,7 +367,8 @@ namespace Aaru.Core.Devices.Dumping
             }
 
             start = DateTime.UtcNow;
-            double imageWriteDuration = 0;
+            double imageWriteDuration      = 0;
+            bool   writeSingleOpticalTrack = true;
 
             if(opticalDisc)
             {
@@ -375,8 +376,6 @@ namespace Aaru.Core.Devices.Dumping
                 {
                     sense = _dev.ReadDiscInformation(out readBuffer, out _, MmcDiscInformationDataTypes.DiscInformation,
                                                      _dev.Timeout, out _);
-
-                    bool writeSingleOpticalTrack = true;
 
                     if(!sense)
                     {
@@ -560,28 +559,6 @@ namespace Aaru.Core.Devices.Dumping
                                 });
                         }
                     }
-
-                    if(writeSingleOpticalTrack)
-                    {
-                        _dumpLog.WriteLine("Creating single track as could not retrieve track list from drive.");
-
-                        StoppingErrorMessage?.
-                            Invoke("Creating single track as could not retrieve track list from drive.");
-
-                        opticalPlugin.SetTracks(new List<Track>
-                        {
-                            new()
-                            {
-                                BytesPerSector    = (int)blockSize,
-                                EndSector         = blocks - 1,
-                                Sequence          = 1,
-                                RawBytesPerSector = (int)blockSize,
-                                SubchannelType    = TrackSubchannelType.None,
-                                Session           = 1,
-                                Type              = TrackType.Data
-                            }
-                        });
-                    }
                 }
                 else
                 {
@@ -652,6 +629,27 @@ namespace Aaru.Core.Devices.Dumping
                                                  _outputPlugin.ErrorMessage);
 
                     return;
+                }
+
+                if(writeSingleOpticalTrack)
+                {
+                    _dumpLog.WriteLine("Creating single track as could not retrieve track list from drive.");
+
+                    UpdateStatus?.Invoke("Creating single track as could not retrieve track list from drive.");
+
+                    (_outputPlugin as IWritableOpticalImage)?.SetTracks(new List<Track>
+                    {
+                        new()
+                        {
+                            BytesPerSector    = (int)blockSize,
+                            EndSector         = blocks - 1,
+                            Sequence          = 1,
+                            RawBytesPerSector = (int)blockSize,
+                            SubchannelType    = TrackSubchannelType.None,
+                            Session           = 1,
+                            Type              = TrackType.Data
+                        }
+                    });
                 }
             }
 
