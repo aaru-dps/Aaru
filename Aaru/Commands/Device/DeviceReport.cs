@@ -492,7 +492,7 @@ namespace Aaru.Commands.Device
                                                     case ProfileNumber.CDR:
                                                     case ProfileNumber.CDRW:
                                                         mediaTypes.Add("CD-ROM");
-                                                        mediaTypes.Add("Audio CD");
+                                                        mediaTypes.Add("Audio CD (without data tracks)");
                                                         mediaTypes.Add("Enhanced CD (aka E-CD, CD-Plus or CD+)");
                                                         mediaTypes.Add("CD-R");
                                                         mediaTypes.Add("CD-RW Ultra Speed (marked 16x or higher)");
@@ -579,7 +579,7 @@ namespace Aaru.Commands.Device
                                    !iomegaRev)
                                 {
                                     mediaTypes.Add("CD-ROM");
-                                    mediaTypes.Add("Audio CD");
+                                    mediaTypes.Add("Audio CD (without data tracks)");
                                     mediaTypes.Add("Enhanced CD (aka E-CD, CD-Plus or CD+)");
 
                                     if(report.SCSI.MultiMediaDevice.ModeSense2A.ReadCDR)
@@ -635,7 +635,7 @@ namespace Aaru.Commands.Device
                                        report.SCSI.MultiMediaDevice.Features.MultiRead)
                                     {
                                         mediaTypes.Add("CD-ROM");
-                                        mediaTypes.Add("Audio CD");
+                                        mediaTypes.Add("Audio CD (without data tracks)");
                                         mediaTypes.Add("Enhanced CD (aka E-CD, CD-Plus or CD+)");
                                         mediaTypes.Add("CD-R");
                                         mediaTypes.Add("CD-RW Ultra Speed (marked 16x or higher)");
@@ -701,7 +701,7 @@ namespace Aaru.Commands.Device
                                    mediaTypes.Contains("CD-ROM"))
                                 {
                                     mediaTypes.Add("CD-ROM");
-                                    mediaTypes.Add("Audio CD");
+                                    mediaTypes.Add("Audio CD (without data tracks)");
                                     mediaTypes.Add("CD-R");
                                     mediaTypes.Add("CD-RW Ultra Speed (marked 16x or higher)");
                                     mediaTypes.Add("CD-RW High Speed (marked between 8x and 12x)");
