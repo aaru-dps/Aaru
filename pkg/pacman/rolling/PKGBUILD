@@ -1,18 +1,18 @@
 #@IgnoreInspection BashAddShebang
 # Maintainer: Natalia Portillo <claunia@claunia.com>
-_netcoretarget='netcoreapp3.1'
+_netcoretarget='net6'
 _aarubase='Aaru'
 packager='Natalia Portillo <claunia@claunia.com>'
 pkgbase='aaru-git'
 pkgname=('aaru-git')
-pkgver=v5.1.0.3214.r3.g011ec1e3
+pkgver=v6.0.0.3f0f4f1a
 pkgrel=1
 pkgdesc='Disc image management and creation tool for disks, tapes, optical and solid state media'
 arch=('x86_64' 'armv7h' 'aarch64')
 url='http://www.aaru.app'
 license=('GPL')
 source=('git://github.com/aaru-dps/Aaru')
-makedepends=('dotnet-sdk>=3.1.0' 'git')
+makedepends=('dotnet-sdk>=6.0.0' 'git')
 options=('!strip' 'staticlibs')
 sha256sums=('SKIP')
 provides=('aaru')
@@ -28,8 +28,8 @@ else
 fi
 
 pkgver() {
-  cd "$SRCDEST"/"${_aarubase}"
-  git describe --tags --match "v5*" --long | sed 's/\([^-]*-g\)/r\1/;s/-/./g'
+  cd "${srcdir}"/"${_aarubase}"
+  echo v6.0.0.`git rev-parse --short HEAD`
 }
 
 prepare() {
@@ -58,7 +58,6 @@ package() {
 
     # Copy Linux dependencies
     install -m0755 -g 0 -t "${pkgdir}"/opt/Aaru *.so
-    install -m0755 -g 0 -t "${pkgdir}"/opt/Aaru *.a
     install -m0755 -g 0 -t "${pkgdir}"/opt/Aaru createdump
 
     # Copy .NET dependencies
