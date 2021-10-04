@@ -48,6 +48,7 @@ namespace Aaru.DiscImages
         public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
                            uint sectorSize)
         {
+            // TODO: Add new option for DIC-compatable CUE outputs
             if(options != null)
             {
                 if(options.TryGetValue("separate", out string tmpValue))
@@ -55,13 +56,6 @@ namespace Aaru.DiscImages
                     if(!bool.TryParse(tmpValue, out _separateTracksWriting))
                     {
                         ErrorMessage = "Invalid value for split option";
-
-                        return false;
-                    }
-
-                    if(_separateTracksWriting)
-                    {
-                        ErrorMessage = "Separate tracks not yet implemented";
 
                         return false;
                     }
@@ -84,7 +78,6 @@ namespace Aaru.DiscImages
                 Sectors    = sectors
             };
 
-            // TODO: Separate tracks
             try
             {
                 _writingBaseName =
@@ -492,6 +485,7 @@ namespace Aaru.DiscImages
                 }
             }
 
+            // TODO: Write out CD-TEXT fields to CUE for DIC compatibility
             if(!string.IsNullOrEmpty(_discImage.CdTextFile))
                 _descriptorStream.WriteLine("CDTEXTFILE \"{0}\"", Path.GetFileName(_discImage.CdTextFile));
 
@@ -532,7 +526,12 @@ namespace Aaru.DiscImages
                 if(_separateTracksWriting)
                     _descriptorStream.WriteLine("FILE \"{0}\" BINARY", Path.GetFileName(track.File));
 
-                (byte minute, byte second, byte frame) msf = LbaToMsf(track.StartSector);
+                (byte minute, byte second, byte frame) msf;
+                if(_separateTracksWriting)
+                    msf = (0, 0, 0);
+                else
+                    msf = LbaToMsf(track.StartSector);
+
                 _descriptorStream.WriteLine("  TRACK {0:D2} {1}", track.Sequence, GetTrackMode(track));
 
                 if(_isCd)
@@ -561,7 +560,12 @@ namespace Aaru.DiscImages
                                                     msf.frame);
 
                     if(track.Sequence > 1)
-                        msf = LbaToMsf(track.StartSector + track.Pregap);
+                    {
+                        if(_separateTracksWriting)
+                            msf = LbaToMsf(track.Pregap);
+                        else
+                            msf = LbaToMsf(track.StartSector + track.Pregap);
+                    }
 
                     _descriptorStream.WriteLine("    INDEX {0:D2} {1:D2}:{2:D2}:{3:D2}", 1, msf.minute, msf.second,
                                                 msf.frame);
@@ -573,7 +577,10 @@ namespace Aaru.DiscImages
                 if(_isCd)
                     foreach(KeyValuePair<ushort, int> index in track.Indexes.Where(i => i.Key > 1))
                     {
-                        msf = LbaToMsf((ulong)index.Value);
+                        if(_separateTracksWriting)
+                            msf = LbaToMsf((ulong)index.Value - track.TrackStartSector);
+                        else
+                            msf = LbaToMsf((ulong)index.Value);
 
                         _descriptorStream.WriteLine("    INDEX {0:D2} {1:D2}:{2:D2}:{3:D2}", index.Key, msf.minute,
                                                     msf.second, msf.frame);
@@ -591,6 +598,11 @@ namespace Aaru.DiscImages
                     continue;
 
                 msf = LbaToMsf(track.EndSector + 1);
+                if(_separateTracksWriting)
+                    msf = LbaToMsf(track.EndSector - track.TrackStartSector + 1);
+                else
+                    msf = LbaToMsf(track.EndSector + 1);
+
                 _descriptorStream.WriteLine("REM LEAD-OUT {0:D2}:{1:D2}:{2:D2}", msf.minute, msf.second, msf.frame);
             }
 
