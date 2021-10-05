@@ -806,6 +806,8 @@ namespace Aaru.CommonTypes
         /// <summary>3.5", 652 tracks, 2 sides, 512 bytes/sector, Floptical, ECMA-207, ISO 14169</summary>
         Floptical = 662, HiFD = 663, QuickDisk = 664, UHD144       = 665,
         VideoFloppy           = 666, Wafer     = 667, ZXMicrodrive = 668,
+        /// <summary>5.25", SS, DD, 77 tracks, 16 spt, 256 bytes/sector, MFM, 100 tpi, 300rpm</summary>
+        MetaFloppy = 669,
         #endregion Other floppy standards, types 660 to 669
 
         #region Miscellaneous, types 670 to 689

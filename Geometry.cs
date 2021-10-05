@@ -75,6 +75,7 @@ namespace Aaru.CommonTypes
                 (74, 2, 15, 512, MediaEncoding.MFM, false, MediaType.IBM53FD_512),
                 (74, 2, 26, 128, MediaEncoding.FM, false, MediaType.IBM43FD_128),
                 (74, 2, 26, 256, MediaEncoding.MFM, false, MediaType.IBM53FD_256),
+                (77, 1, 16, 256, MediaEncoding.MFM, false, MediaType.MetaFloppy),
                 (77, 1, 26, 128, MediaEncoding.FM, false, MediaType.RX01),
                 (77, 1, 26, 256, MediaEncoding.MFM, false, MediaType.RX02),
                 (77, 2, 8, 1024, MediaEncoding.MFM, false, MediaType.NEC_525_HD),

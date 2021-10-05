@@ -2536,6 +2536,11 @@ namespace Aaru.CommonTypes.Metadata
                     discSubType = "ODC5500R";
 
                     break;
+                case CommonTypes.MediaType.MetaFloppy:
+                    discType    = "5.25\" floppy";
+                    discSubType = "Micropolis MetaFloppy";
+
+                    break;
                 default:
                     discType    = "Unknown";
                     discSubType = "Unknown";
