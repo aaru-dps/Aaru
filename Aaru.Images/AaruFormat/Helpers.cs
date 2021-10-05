@@ -198,6 +198,7 @@ namespace Aaru.DiscImages
                 case MediaType.FDDVD:
                 case MediaType.LD:
                 case MediaType.LDROM:
+                case MediaType.CRVdisc:
                 case MediaType.LDROM2:
                 case MediaType.LVROM:
                 case MediaType.MegaLD:
