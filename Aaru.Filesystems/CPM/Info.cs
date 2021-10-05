@@ -150,7 +150,8 @@ namespace Aaru.Filesystems
                 case MediaType.RP06:
                 case MediaType.RP06_18:
                 case MediaType.GENERIC_HDD:
-                case MediaType.FlashDrive: break;
+                case MediaType.FlashDrive:
+                case MediaType.MetaFloppy: break;
                 default: return false;
             }
 

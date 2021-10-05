@@ -784,6 +784,7 @@ namespace Aaru.Core
                 case CommonTypes.MediaType.FDFORMAT_35_HD:
                 case CommonTypes.MediaType.Apricot_35:
                 case CommonTypes.MediaType.CompactFloppy:
+                case CommonTypes.MediaType.MetaFloppy:
                     trkFormat = "IBM MFM";
 
                     break;
