@@ -947,6 +947,14 @@ namespace Aaru.CommonTypes.Metadata
                     dmns.Thickness         = 2.5;
 
                     return dmns;
+                case CommonTypes.MediaType.CRVdisc:
+                    dmns.Height          = 344;
+                    dmns.HeightSpecified = true;
+                    dmns.Width           = 325;
+                    dmns.WidthSpecified  = true;
+                    dmns.Thickness       = 15.6;
+
+                    return dmns;
                 case CommonTypes.MediaType.REV35:
                 case CommonTypes.MediaType.REV70:
                 case CommonTypes.MediaType.REV120:

@@ -69,6 +69,7 @@ Enum,Value,Summary
 "LDROM2",82,
 "LVROM",83,
 "MegaLD",84,
+"CRVdisc",85,"Writable LaserDisc with support for component video"
 "HiMD",90,"Sony Hi-MD"
 "MD",91,"Sony MiniDisc"
 "MDData",92,"Sony MD-Data"

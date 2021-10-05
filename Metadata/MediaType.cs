@@ -327,6 +327,11 @@ namespace Aaru.CommonTypes.Metadata
                     discSubType = "LaserDisc";
 
                     break;
+                case CommonTypes.MediaType.CRVdisc:
+                    discType    = "CRVdisc";
+                    discSubType = "CRVdisc";
+
+                    break;
                 case CommonTypes.MediaType.LDROM:
                     discType    = "LaserDisc";
                     discSubType = "LD-ROM";

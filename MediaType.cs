@@ -211,6 +211,8 @@ namespace Aaru.CommonTypes
         LD = 80,
         /// <summary>Pioneer LaserDisc data</summary>
         LDROM = 81, LDROM2 = 82, LVROM = 83, MegaLD = 84,
+        /// <summary>Writable LaserDisc with support for component video</summary>
+        CRVdisc = 85,
         #endregion LaserDisc based, types 80 to 89
 
         #region MiniDisc based, types 90 to 99
