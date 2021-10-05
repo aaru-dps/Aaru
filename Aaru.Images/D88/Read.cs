@@ -184,6 +184,10 @@ namespace Aaru.DiscImages
                 else if(bps == IBMSectorSizeCode.QuarterKilo)
                     switch(trkCounter)
                     {
+                        case 77 when spt == 16:
+                            _imageInfo.MediaType = MediaType.MetaFloppy;
+
+                            break;
                         case 80 when spt == 16:
                             _imageInfo.MediaType = MediaType.NEC_525_SS;
 
@@ -357,6 +361,12 @@ namespace Aaru.DiscImages
                     _imageInfo.Cylinders       = 240;
                     _imageInfo.Heads           = 2;
                     _imageInfo.SectorsPerTrack = 38;
+
+                    break;
+                case MediaType.MetaFloppy:
+                    _imageInfo.Cylinders       = 77;
+                    _imageInfo.Heads           = 1;
+                    _imageInfo.SectorsPerTrack = 16;
 
                     break;
             }

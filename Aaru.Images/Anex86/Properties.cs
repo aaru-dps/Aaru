@@ -80,7 +80,7 @@ namespace Aaru.DiscImages
             MediaType.XDF_35, MediaType.DOS_35_ED, MediaType.FDFORMAT_35_DD, MediaType.FDFORMAT_525_HD,
             MediaType.FDFORMAT_35_HD, MediaType.NEC_35_TD, MediaType.Unknown, MediaType.GENERIC_HDD,
             MediaType.FlashDrive, MediaType.CompactFlash, MediaType.CompactFlashType2, MediaType.PCCardTypeI,
-            MediaType.PCCardTypeII, MediaType.PCCardTypeIII, MediaType.PCCardTypeIV
+            MediaType.PCCardTypeII, MediaType.PCCardTypeIII, MediaType.PCCardTypeIV, MediaType.MetaFloppy
         };
         /// <inheritdoc />
         public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>
