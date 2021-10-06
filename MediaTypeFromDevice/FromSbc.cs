@@ -308,7 +308,7 @@ namespace Aaru.CommonTypes
                                                        "SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to MetaFloppy formatted 5¼\" double density single sided floppy.",
                                                        mediumType, blocks, blockSize);
 
-                            return MediaType.MetaFloppy;
+                            return MediaType.MetaFloppy_Mod_II;
                         case 1280 when mediumType == 0x01:
                             AaruConsole.DebugWriteLine("Media detection",
                                                        "SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to Acorn formatted 5¼\" double density floppy with 80 tracks.",

@@ -807,7 +807,7 @@ namespace Aaru.CommonTypes
         Floptical = 662, HiFD = 663, QuickDisk = 664, UHD144       = 665,
         VideoFloppy           = 666, Wafer     = 667, ZXMicrodrive = 668,
         /// <summary>5.25", SS, DD, 77 tracks, 16 spt, 256 bytes/sector, MFM, 100 tpi, 300rpm</summary>
-        MetaFloppy = 669,
+        MetaFloppy_Mod_II = 669,
         #endregion Other floppy standards, types 660 to 669
 
         #region Miscellaneous, types 670 to 689
@@ -1036,5 +1036,10 @@ namespace Aaru.CommonTypes
         /// <summary>3,5", M.O., 1041500 sectors, 512 bytes/sector, ISO 15041, 540Mb/cart</summary>
         ISO_15041_512 = 804,
         #endregion Magneto-optical, types 800 to 819
+
+        #region More floppy formats, types 820 to deprecated
+        /// <summary>5.25", SS, DD, 35 tracks, 16 spt, 256 bytes/sector, MFM, 48 tpi, ???rpm</summary>
+        MetaFloppy_Mod_I = 820,
+        #endregion
     }
 }

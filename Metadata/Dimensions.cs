@@ -87,7 +87,8 @@ namespace Aaru.CommonTypes.Metadata
                 case CommonTypes.MediaType.ECMA_99_26:
                 case CommonTypes.MediaType.FDFORMAT_525_DD:
                 case CommonTypes.MediaType.FDFORMAT_525_HD:
-                case CommonTypes.MediaType.MetaFloppy:
+                case CommonTypes.MediaType.MetaFloppy_Mod_I:
+                case CommonTypes.MediaType.MetaFloppy_Mod_II:
                     // According to ECMA-99 et al
                     dmns.Height          = 133.3;
                     dmns.HeightSpecified = true;
