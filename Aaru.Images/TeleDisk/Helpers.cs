@@ -212,6 +212,8 @@ namespace Aaru.DiscImages
                 {
                     switch(_totalDiskSize)
                     {
+                        case 143360:
+                            return _imageInfo.SectorSize == 256 ? MediaType.MetaFloppy_Mod_I : MediaType.Unknown;
                         case 163840:
                         {
                             // Acorn disk uses 256 bytes/sector
@@ -227,7 +229,8 @@ namespace Aaru.DiscImages
 
                             // DOS disks use 512 bytes/sector
                         }
-                        case 315392: return _imageInfo.SectorSize == 256 ? MediaType.MetaFloppy : MediaType.Unknown;
+                        case 315392:
+                            return _imageInfo.SectorSize == 256 ? MediaType.MetaFloppy_Mod_II : MediaType.Unknown;
                         case 327680:
                         {
                             // Acorn disk uses 256 bytes/sector

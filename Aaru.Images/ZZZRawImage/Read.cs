@@ -958,7 +958,13 @@ namespace Aaru.DiscImages
                     _imageInfo.SectorsPerTrack = 32;
 
                     break;
-                case MediaType.MetaFloppy:
+                case MediaType.MetaFloppy_Mod_I:
+                    _imageInfo.Cylinders       = 35;
+                    _imageInfo.Heads           = 1;
+                    _imageInfo.SectorsPerTrack = 16;
+
+                    break;
+                case MediaType.MetaFloppy_Mod_II:
                     _imageInfo.Cylinders       = 77;
                     _imageInfo.Heads           = 1;
                     _imageInfo.SectorsPerTrack = 16;
