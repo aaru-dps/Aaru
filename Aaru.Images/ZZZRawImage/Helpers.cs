@@ -89,7 +89,7 @@ namespace Aaru.DiscImages
                 case 286720: return MediaType.Apple33DS;
                 case 287488: return MediaType.IBM33FD_256;
                 case 306432: return MediaType.IBM33FD_512;
-                case 315392: return MediaType.MetaFloppy;
+                case 315392: return MediaType.MetaFloppy_Mod_II;
                 case 322560: return MediaType.Apricot_35;
                 case 325632: return MediaType.ECMA_70;
                 case 327680:
