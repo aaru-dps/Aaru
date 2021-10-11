@@ -352,23 +352,34 @@ namespace Aaru.Checksums
 
         static void Step(ref ulong previousCrc, ulong[][] table, byte[] data, uint len, bool useEcma)
         {
+            int dataOff = 0;
+
             if(useEcma               &&
                Pclmulqdq.IsSupported &&
                Sse41.IsSupported     &&
                Ssse3.IsSupported     &&
                Sse2.IsSupported)
             {
-                previousCrc = ~Clmul.Step(~previousCrc, data, len);
+                // Only works in blocks of 32 bytes
+                uint blocks = len / 32;
 
-                return;
+                if(blocks > 0)
+                {
+                    previousCrc = ~Clmul.Step(~previousCrc, data, blocks * 32);
+
+                    dataOff =  (int)(blocks * 32);
+                    len     -= blocks * 32;
+                }
+
+                if(len == 0)
+                    return;
             }
 
             // Unroll according to Intel slicing by uint8_t
             // http://www.intel.com/technology/comms/perfnet/download/CRC_generators.pdf
             // http://sourceforge.net/projects/slicing-by-8/
 
-            ulong crc     = previousCrc;
-            int   dataOff = 0;
+            ulong crc = previousCrc;
 
             if(len > 4)
             {

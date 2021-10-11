@@ -82,91 +82,6 @@ namespace Aaru.Checksums.CRC32
         };
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        static void Fold1(ref Vector128<uint> xmmCRC0, ref Vector128<uint> xmmCRC1, ref Vector128<uint> xmmCRC2,
-                          ref Vector128<uint> xmmCRC3)
-        {
-            Vector128<uint> xmmFold4 = Vector128.Create(0xc6e41596, 0x00000001, 0x54442bd4, 0x00000001);
-
-            Vector128<uint> xTmp3 = xmmCRC3;
-
-            xmmCRC3 = xmmCRC0;
-            xmmCRC0 = Pclmulqdq.CarrylessMultiply(xmmCRC0.AsUInt64(), xmmFold4.AsUInt64(), 0x01).AsUInt32();
-            xmmCRC3 = Pclmulqdq.CarrylessMultiply(xmmCRC3.AsUInt64(), xmmFold4.AsUInt64(), 0x10).AsUInt32();
-            Vector128<float> psCRC0 = xmmCRC0.AsSingle();
-            Vector128<float> psCRC3 = xmmCRC3.AsSingle();
-            Vector128<float> psRes  = Sse.Xor(psCRC0, psCRC3);
-
-            xmmCRC0 = xmmCRC1;
-            xmmCRC1 = xmmCRC2;
-            xmmCRC2 = xTmp3;
-            xmmCRC3 = psRes.AsUInt32();
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        static void Fold2(ref Vector128<uint> xmmCRC0, ref Vector128<uint> xmmCRC1, ref Vector128<uint> xmmCRC2,
-                          ref Vector128<uint> xmmCRC3)
-        {
-            Vector128<uint> xmmFold4 = Vector128.Create(0xc6e41596, 0x00000001, 0x54442bd4, 0x00000001);
-
-            Vector128<uint> xTmp3 = xmmCRC3;
-            Vector128<uint> xTmp2 = xmmCRC2;
-
-            xmmCRC3 = xmmCRC1;
-            xmmCRC1 = Pclmulqdq.CarrylessMultiply(xmmCRC1.AsUInt64(), xmmFold4.AsUInt64(), 0x01).AsUInt32();
-            xmmCRC3 = Pclmulqdq.CarrylessMultiply(xmmCRC3.AsUInt64(), xmmFold4.AsUInt64(), 0x10).AsUInt32();
-            Vector128<float> psCRC3  = xmmCRC3.AsSingle();
-            Vector128<float> psCRC1  = xmmCRC1.AsSingle();
-            Vector128<float> psRes31 = Sse.Xor(psCRC3, psCRC1);
-
-            xmmCRC2 = xmmCRC0;
-            xmmCRC0 = Pclmulqdq.CarrylessMultiply(xmmCRC0.AsUInt64(), xmmFold4.AsUInt64(), 0x01).AsUInt32();
-            xmmCRC2 = Pclmulqdq.CarrylessMultiply(xmmCRC2.AsUInt64(), xmmFold4.AsUInt64(), 0x10).AsUInt32();
-            Vector128<float> psCRC0  = xmmCRC0.AsSingle();
-            Vector128<float> psCRC2  = xmmCRC2.AsSingle();
-            Vector128<float> psRes20 = Sse.Xor(psCRC0, psCRC2);
-
-            xmmCRC0 = xTmp2;
-            xmmCRC1 = xTmp3;
-            xmmCRC2 = psRes20.AsUInt32();
-            xmmCRC3 = psRes31.AsUInt32();
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        static void Fold3(ref Vector128<uint> xmmCRC0, ref Vector128<uint> xmmCRC1, ref Vector128<uint> xmmCRC2,
-                          ref Vector128<uint> xmmCRC3)
-        {
-            Vector128<uint> xmmFold4 = Vector128.Create(0x54442bd4, 0x00000001, 0xc6e41596, 0x00000001);
-
-            Vector128<uint> xTmp3 = xmmCRC3;
-
-            xmmCRC3 = xmmCRC2;
-            xmmCRC2 = Pclmulqdq.CarrylessMultiply(xmmCRC2.AsUInt64(), xmmFold4.AsUInt64(), 0x01).AsUInt32();
-            xmmCRC3 = Pclmulqdq.CarrylessMultiply(xmmCRC3.AsUInt64(), xmmFold4.AsUInt64(), 0x10).AsUInt32();
-            Vector128<float> psCRC2  = xmmCRC2.AsSingle();
-            Vector128<float> psCRC3  = xmmCRC3.AsSingle();
-            Vector128<float> psRes32 = Sse.Xor(psCRC2, psCRC3);
-
-            xmmCRC2 = xmmCRC1;
-            xmmCRC1 = Pclmulqdq.CarrylessMultiply(xmmCRC1.AsUInt64(), xmmFold4.AsUInt64(), 0x01).AsUInt32();
-            xmmCRC2 = Pclmulqdq.CarrylessMultiply(xmmCRC2.AsUInt64(), xmmFold4.AsUInt64(), 0x10).AsUInt32();
-            Vector128<float> psCRC1 = xmmCRC1.AsSingle();
-            psCRC2 = xmmCRC2.AsSingle();
-            Vector128<float> psRes21 = Sse.Xor(psCRC1, psCRC2);
-
-            xmmCRC1 = xmmCRC0;
-            xmmCRC0 = Pclmulqdq.CarrylessMultiply(xmmCRC0.AsUInt64(), xmmFold4.AsUInt64(), 0x01).AsUInt32();
-            xmmCRC1 = Pclmulqdq.CarrylessMultiply(xmmCRC1.AsUInt64(), xmmFold4.AsUInt64(), 0x10).AsUInt32();
-            Vector128<float> psCRC0 = xmmCRC0.AsSingle();
-            psCRC1 = xmmCRC1.AsSingle();
-            Vector128<float> psRes10 = Sse.Xor(psCRC0, psCRC1);
-
-            xmmCRC0 = xTmp3;
-            xmmCRC1 = psRes10.AsUInt32();
-            xmmCRC2 = psRes21.AsUInt32();
-            xmmCRC3 = psRes32.AsUInt32();
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         static void Fold4(ref Vector128<uint> xmmCRC0, ref Vector128<uint> xmmCRC1, ref Vector128<uint> xmmCRC2,
                           ref Vector128<uint> xmmCRC3)
         {
@@ -207,51 +122,6 @@ namespace Aaru.Checksums.CRC32
             xmmCRC3 = psRes3.AsUInt32();
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        static void PartialFold(long len, ref Vector128<uint> xmmCRC0, ref Vector128<uint> xmmCRC1,
-                                ref Vector128<uint> xmmCRC2, ref Vector128<uint> xmmCRC3,
-                                ref Vector128<uint> xmmCRCPart)
-        {
-            Vector128<uint> xmmFold4 = Vector128.Create(0x54442bd4, 0x00000001, 0xc6e41596, 0x00000001);
-            Vector128<uint> xmmMask3 = Vector128.Create(0x80808080);
-
-            Vector128<uint> xmmShl = _pshufbShfTable[len - 1];
-            Vector128<uint> xmmShr = xmmShl;
-            xmmShr = Sse2.Xor(xmmShr, xmmMask3);
-
-            Vector128<uint> xmmA00 = Ssse3.Shuffle(xmmCRC0.AsByte(), xmmShl.AsByte()).AsUInt32();
-
-            xmmCRC0 = Ssse3.Shuffle(xmmCRC0.AsByte(), xmmShr.AsByte()).AsUInt32();
-            Vector128<uint> xmmTmp1 = Ssse3.Shuffle(xmmCRC1.AsByte(), xmmShl.AsByte()).AsUInt32();
-            xmmCRC0 = Sse2.Or(xmmCRC0, xmmTmp1);
-
-            xmmCRC1 = Ssse3.Shuffle(xmmCRC1.AsByte(), xmmShr.AsByte()).AsUInt32();
-            Vector128<uint> xmmTmp2 = Ssse3.Shuffle(xmmCRC2.AsByte(), xmmShl.AsByte()).AsUInt32();
-            xmmCRC1 = Sse2.Or(xmmCRC1, xmmTmp2);
-
-            xmmCRC2 = Ssse3.Shuffle(xmmCRC2.AsByte(), xmmShr.AsByte()).AsUInt32();
-            Vector128<uint> xmmTmp3 = Ssse3.Shuffle(xmmCRC3.AsByte(), xmmShl.AsByte()).AsUInt32();
-            xmmCRC2 = Sse2.Or(xmmCRC2, xmmTmp3);
-
-            xmmCRC3    = Ssse3.Shuffle(xmmCRC3.AsByte(), xmmShr.AsByte()).AsUInt32();
-            xmmCRCPart = Ssse3.Shuffle(xmmCRCPart.AsByte(), xmmShl.AsByte()).AsUInt32();
-            xmmCRC3    = Sse2.Or(xmmCRC3, xmmCRCPart);
-
-            Vector128<uint> xmmA01 = Pclmulqdq.CarrylessMultiply(xmmA00.AsUInt64(), xmmFold4.AsUInt64(), 0x10).
-                                               AsUInt32();
-
-            xmmA00 = Pclmulqdq.CarrylessMultiply(xmmA00.AsUInt64(), xmmFold4.AsUInt64(), 0x01).AsUInt32();
-
-            Vector128<float> psCRC3 = xmmCRC3.AsSingle();
-            Vector128<float> psa00  = xmmA00.AsSingle();
-            Vector128<float> psa01  = xmmA01.AsSingle();
-
-            Vector128<float> psRes = Sse.Xor(psCRC3, psa00);
-            psRes = Sse.Xor(psRes, psa01);
-
-            xmmCRC3 = psRes.AsUInt32();
-        }
-
         internal static uint Step(byte[] src, long len, uint initialCRC)
         {
             Vector128<uint> xmmT0, xmmT1, xmmT2;
@@ -260,52 +130,13 @@ namespace Aaru.Checksums.CRC32
             Vector128<uint> xmmCRC1    = Vector128<uint>.Zero;
             Vector128<uint> xmmCRC2    = Vector128<uint>.Zero;
             Vector128<uint> xmmCRC3    = Vector128<uint>.Zero;
-            Vector128<uint> xmmCRCPart;
-            int             bufPos = 0;
+            int             bufPos     = 0;
 
             bool first = true;
 
             /* fold 512 to 32 step variable declarations for ISO-C90 compat. */
             Vector128<uint> xmmMask  = Vector128.Create(0xFFFFFFFF, 0xFFFFFFFF, 0x00000000, 0x00000000);
             Vector128<uint> xmmMask2 = Vector128.Create(0x00000000, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF);
-
-            uint crc;
-
-            if(len < 16)
-            {
-                switch(len)
-                {
-                    case 0: return initialCRC;
-                    case < 4:
-                        /*
-                     * no idea how to do this for <4 bytes, delegate to classic impl.
-                     */
-                        crc = ~initialCRC;
-
-                        switch(len)
-                        {
-                            case 3:
-                                crc = (crc >> 8) ^ Crc32Context._isoCrc32Table[0][(crc & 0xFF) ^ src[bufPos++]];
-                                goto case 2;
-                            case 2:
-                                crc = (crc >> 8) ^ Crc32Context._isoCrc32Table[0][(crc & 0xFF) ^ src[bufPos++]];
-                                goto case 1;
-                            case 1:
-                                crc = (crc >> 8) ^ Crc32Context._isoCrc32Table[0][(crc & 0xFF) ^ src[bufPos]];
-
-                                break;
-                        }
-
-                        return ~crc;
-                }
-
-                xmmCRCPart = Vector128.Create(BitConverter.ToUInt32(src, 0), BitConverter.ToUInt32(src, 4),
-                                              BitConverter.ToUInt32(src, 8), BitConverter.ToUInt32(src, 12));
-
-                xmmCRCPart = Sse2.Xor(xmmCRCPart, xmmInitial);
-
-                goto partial;
-            }
 
             while((len -= 64) >= 0)
             {
@@ -347,126 +178,6 @@ namespace Aaru.Checksums.CRC32
                 xmmCRC2 = Sse2.Xor(xmmCRC2, xmmT2);
                 xmmCRC3 = Sse2.Xor(xmmCRC3, xmmT3);
             }
-
-            /*
-             * len = num bytes left - 64
-             */
-            if(len + 16 >= 0)
-            {
-                len += 16;
-
-                xmmT0 = Vector128.Create(BitConverter.ToUInt32(src, bufPos), BitConverter.ToUInt32(src, bufPos + 4),
-                                         BitConverter.ToUInt32(src, bufPos                                     + 8),
-                                         BitConverter.ToUInt32(src, bufPos                                     + 12));
-
-                bufPos += 16;
-
-                xmmT1 = Vector128.Create(BitConverter.ToUInt32(src, bufPos), BitConverter.ToUInt32(src, bufPos + 4),
-                                         BitConverter.ToUInt32(src, bufPos                                     + 8),
-                                         BitConverter.ToUInt32(src, bufPos                                     + 12));
-
-                bufPos += 16;
-
-                xmmT2 = Vector128.Create(BitConverter.ToUInt32(src, bufPos), BitConverter.ToUInt32(src, bufPos + 4),
-                                         BitConverter.ToUInt32(src, bufPos                                     + 8),
-                                         BitConverter.ToUInt32(src, bufPos                                     + 12));
-
-                bufPos += 16;
-
-                if(first)
-                    xmmT0 = Sse2.Xor(xmmT0, xmmInitial);
-
-                Fold3(ref xmmCRC0, ref xmmCRC1, ref xmmCRC2, ref xmmCRC3);
-
-                xmmCRC1 = Sse2.Xor(xmmCRC1, xmmT0);
-                xmmCRC2 = Sse2.Xor(xmmCRC2, xmmT1);
-                xmmCRC3 = Sse2.Xor(xmmCRC3, xmmT2);
-
-                if(len == 0)
-                    goto done;
-
-                xmmCRCPart = Vector128.Create(BitConverter.ToUInt32(src, bufPos),
-                                              BitConverter.ToUInt32(src, bufPos + 4),
-                                              BitConverter.ToUInt32(src, bufPos + 8),
-                                              BitConverter.ToUInt32(src, bufPos + 12));
-            }
-            else if(len + 32 >= 0)
-            {
-                len += 32;
-
-                xmmT0 = Vector128.Create(BitConverter.ToUInt32(src, bufPos), BitConverter.ToUInt32(src, bufPos + 4),
-                                         BitConverter.ToUInt32(src, bufPos                                     + 8),
-                                         BitConverter.ToUInt32(src, bufPos                                     + 12));
-
-                bufPos += 16;
-
-                xmmT1 = Vector128.Create(BitConverter.ToUInt32(src, bufPos), BitConverter.ToUInt32(src, bufPos + 4),
-                                         BitConverter.ToUInt32(src, bufPos                                     + 8),
-                                         BitConverter.ToUInt32(src, bufPos                                     + 12));
-
-                bufPos += 16;
-
-                if(first)
-                    xmmT0 = Sse2.Xor(xmmT0, xmmInitial);
-
-                Fold2(ref xmmCRC0, ref xmmCRC1, ref xmmCRC2, ref xmmCRC3);
-
-                xmmCRC2 = Sse2.Xor(xmmCRC2, xmmT0);
-                xmmCRC3 = Sse2.Xor(xmmCRC3, xmmT1);
-
-                if(len == 0)
-                    goto done;
-
-                xmmCRCPart = Vector128.Create(BitConverter.ToUInt32(src, bufPos),
-                                              BitConverter.ToUInt32(src, bufPos + 4),
-                                              BitConverter.ToUInt32(src, bufPos + 8),
-                                              BitConverter.ToUInt32(src, bufPos + 12));
-            }
-            else if(len + 48 >= 0)
-            {
-                len += 48;
-
-                xmmT0 = Vector128.Create(BitConverter.ToUInt32(src, bufPos), BitConverter.ToUInt32(src, bufPos + 4),
-                                         BitConverter.ToUInt32(src, bufPos                                     + 8),
-                                         BitConverter.ToUInt32(src, bufPos                                     + 12));
-
-                bufPos += 16;
-
-                if(first)
-                    xmmT0 = Sse2.Xor(xmmT0, xmmInitial);
-
-                Fold1(ref xmmCRC0, ref xmmCRC1, ref xmmCRC2, ref xmmCRC3);
-
-                xmmCRC3 = Sse2.Xor(xmmCRC3, xmmT0);
-
-                if(len == 0)
-                    goto done;
-
-                xmmCRCPart = Vector128.Create(BitConverter.ToUInt32(src, bufPos),
-                                              BitConverter.ToUInt32(src, bufPos + 4),
-                                              BitConverter.ToUInt32(src, bufPos + 8),
-                                              BitConverter.ToUInt32(src, bufPos + 12));
-            }
-            else
-            {
-                len += 64;
-
-                if(len == 0)
-                    goto done;
-
-                xmmCRCPart = Vector128.Create(BitConverter.ToUInt32(src, bufPos),
-                                              BitConverter.ToUInt32(src, bufPos + 4),
-                                              BitConverter.ToUInt32(src, bufPos + 8),
-                                              BitConverter.ToUInt32(src, bufPos + 12));
-
-                if(first)
-                    xmmCRCPart = Sse2.Xor(xmmCRCPart, xmmInitial);
-            }
-
-            partial:
-            PartialFold(len, ref xmmCRC0, ref xmmCRC1, ref xmmCRC2, ref xmmCRC3, ref xmmCRCPart);
-
-            done:
 
             /* fold 512 to 32 */
 
@@ -533,9 +244,7 @@ namespace Aaru.Checksums.CRC32
              * no real advantage - it's a tiny bit slower per call, while no additional CPUs
              * would be supported by only requiring SSSE3 and CLMUL instead of SSE4.1 + CLMUL
              */
-            crc = Sse41.Extract(xmmCRC3, 2);
-
-            return ~crc;
+            return ~Sse41.Extract(xmmCRC3, 2);
         }
     }
 }

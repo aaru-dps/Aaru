@@ -412,6 +412,8 @@ namespace Aaru.Checksums
 
         static void Step(ref uint previousCrc, uint[][] table, byte[] data, uint len, bool useIso)
         {
+            int currentPos = 0;
+
             if(useIso)
             {
                 if(Pclmulqdq.IsSupported &&
@@ -419,9 +421,19 @@ namespace Aaru.Checksums
                    Ssse3.IsSupported     &&
                    Sse2.IsSupported)
                 {
-                    previousCrc = ~Clmul.Step(data, len, ~previousCrc);
+                    // Only works in blocks of 16 bytes
+                    uint blocks = len / 64;
 
-                    return;
+                    if(blocks > 0)
+                    {
+                        previousCrc = ~Clmul.Step(data, blocks * 64, ~previousCrc);
+
+                        currentPos =  (int)(blocks * 64);
+                        len        -= blocks * 64;
+                    }
+
+                    if(len == 0)
+                        return;
                 }
 
                 if(Crc32.Arm64.IsSupported)
@@ -442,7 +454,6 @@ namespace Aaru.Checksums
             // Unroll according to Intel slicing by uint8_t
             // http://www.intel.com/technology/comms/perfnet/download/CRC_generators.pdf
             // http://sourceforge.net/projects/slicing-by-8/
-            int       currentPos  = 0;
             const int unroll      = 4;
             const int bytesAtOnce = 8 * unroll;
             uint      crc         = previousCrc;

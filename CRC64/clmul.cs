@@ -81,9 +81,7 @@ namespace Aaru.Checksums.CRC64
             const ulong      pol            = 0x92d8af2baf0e1e85;
             Vector128<ulong> foldConstants1 = Vector128.Create(k1, k2);
             Vector128<ulong> foldConstants2 = Vector128.Create(mu, pol);
-            uint             leadOutSize    = length % 16;
             Vector128<ulong> initialCrc     = Vector128.Create(~crc, 0);
-            Vector128<ulong> p;
             length -= 16;
 
             // Initial CRC can simply be added to data
@@ -103,28 +101,9 @@ namespace Aaru.Checksums.CRC64
                 bufPos += 16;
             }
 
-            if(length == 16)
-            {
-                p = Sse2.Xor(accumulator,
-                             Vector128.Create(BitConverter.ToUInt64(data, bufPos),
-                                              BitConverter.ToUInt64(data, bufPos + 8)));
-            }
-            else
-            {
-                Vector128<ulong> end0 = Sse2.Xor(accumulator,
-                                                 Vector128.Create(BitConverter.ToUInt64(data, bufPos),
-                                                                  BitConverter.ToUInt64(data, bufPos + 8)));
-
-                bufPos += 16;
-
-                Vector128<ulong> end1 =
-                    Vector128.Create(BitConverter.ToUInt64(data, bufPos), BitConverter.ToUInt64(data, bufPos + 8));
-
-                ShiftRight128(end0, leadOutSize, out Vector128<ulong> a, out Vector128<ulong> b);
-                ShiftRight128(end1, leadOutSize, out Vector128<ulong> c, out _);
-
-                p = Sse2.Xor(Fold(a, foldConstants1), Sse2.Or(b, c));
-            }
+            Vector128<ulong> p = Sse2.Xor(accumulator,
+                                          Vector128.Create(BitConverter.ToUInt64(data, bufPos),
+                                                           BitConverter.ToUInt64(data, bufPos + 8)));
 
             Vector128<ulong> r = Sse2.Xor(Pclmulqdq.CarrylessMultiply(p, foldConstants1, 0x10),
                                           Sse2.ShiftRightLogical128BitLane(p, 8));
