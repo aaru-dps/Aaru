@@ -34,7 +34,6 @@ using NUnit.Framework;
 
 namespace Aaru.Tests.Checksums
 {
-    // TODO: Add tests for misaligned data with PCLMUL implementation.
     [TestFixture]
     public class Crc32
     {
@@ -45,6 +44,22 @@ namespace Aaru.Tests.Checksums
         static readonly byte[] _expectedRandom =
         {
             0x2b, 0x6e, 0x68, 0x54
+        };
+        static readonly byte[] _expectedRandom15 =
+        {
+            0xad, 0x6d, 0xa7, 0x27
+        };
+        static readonly byte[] _expectedRandom31 =
+        {
+            0xa2, 0xad, 0x2f, 0xaa
+        };
+        static readonly byte[] _expectedRandom63 =
+        {
+            0xbf, 0xf6, 0xa3, 0x41
+        };
+        static readonly byte[] _expectedRandom2352 =
+        {
+            0x08, 0xba, 0x93, 0xea
         };
 
         [Test]
@@ -123,6 +138,74 @@ namespace Aaru.Tests.Checksums
             ctx.Update(data);
             byte[] result = ctx.Final();
             result.Should().BeEquivalentTo(_expectedRandom);
+        }
+
+        [Test]
+        public void PartialInstance15()
+        {
+            byte[] data = new byte[15];
+
+            var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"),
+                                    FileMode.Open, FileAccess.Read);
+
+            fs.Read(data, 0, 15);
+            fs.Close();
+            fs.Dispose();
+            IChecksum ctx = new Crc32Context();
+            ctx.Update(data);
+            byte[] result = ctx.Final();
+            result.Should().BeEquivalentTo(_expectedRandom15);
+        }
+
+        [Test]
+        public void PartialInstance31()
+        {
+            byte[] data = new byte[31];
+
+            var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"),
+                                    FileMode.Open, FileAccess.Read);
+
+            fs.Read(data, 0, 31);
+            fs.Close();
+            fs.Dispose();
+            IChecksum ctx = new Crc32Context();
+            ctx.Update(data);
+            byte[] result = ctx.Final();
+            result.Should().BeEquivalentTo(_expectedRandom31);
+        }
+
+        [Test]
+        public void PartialInstance63()
+        {
+            byte[] data = new byte[63];
+
+            var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"),
+                                    FileMode.Open, FileAccess.Read);
+
+            fs.Read(data, 0, 63);
+            fs.Close();
+            fs.Dispose();
+            IChecksum ctx = new Crc32Context();
+            ctx.Update(data);
+            byte[] result = ctx.Final();
+            result.Should().BeEquivalentTo(_expectedRandom63);
+        }
+
+        [Test]
+        public void PartialInstance2352()
+        {
+            byte[] data = new byte[2352];
+
+            var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"),
+                                    FileMode.Open, FileAccess.Read);
+
+            fs.Read(data, 0, 2352);
+            fs.Close();
+            fs.Dispose();
+            IChecksum ctx = new Crc32Context();
+            ctx.Update(data);
+            byte[] result = ctx.Final();
+            result.Should().BeEquivalentTo(_expectedRandom2352);
         }
     }
 }

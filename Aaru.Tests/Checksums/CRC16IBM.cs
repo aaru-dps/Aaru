@@ -45,6 +45,22 @@ namespace Aaru.Tests.Checksums
         {
             0x2d, 0x6d
         };
+        static readonly byte[] _expectedRandom15 =
+        {
+            0x72, 0xa6
+        };
+        static readonly byte[] _expectedRandom31 =
+        {
+            0xf4, 0x9e
+        };
+        static readonly byte[] _expectedRandom63 =
+        {
+            0xfb, 0xd9
+        };
+        static readonly byte[] _expectedRandom2352 =
+        {
+            0x23, 0xf4
+        };
 
         [Test]
         public void EmptyData()
@@ -124,6 +140,74 @@ namespace Aaru.Tests.Checksums
             ctx.Update(data);
             byte[] result = ctx.Final();
             result.Should().BeEquivalentTo(_expectedRandom);
+        }
+
+        [Test]
+        public void PartialInstance15()
+        {
+            byte[] data = new byte[15];
+
+            var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"),
+                                    FileMode.Open, FileAccess.Read);
+
+            fs.Read(data, 0, 15);
+            fs.Close();
+            fs.Dispose();
+            IChecksum ctx = new CRC16IBMContext();
+            ctx.Update(data);
+            byte[] result = ctx.Final();
+            result.Should().BeEquivalentTo(_expectedRandom15);
+        }
+
+        [Test]
+        public void PartialInstance31()
+        {
+            byte[] data = new byte[31];
+
+            var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"),
+                                    FileMode.Open, FileAccess.Read);
+
+            fs.Read(data, 0, 31);
+            fs.Close();
+            fs.Dispose();
+            IChecksum ctx = new CRC16IBMContext();
+            ctx.Update(data);
+            byte[] result = ctx.Final();
+            result.Should().BeEquivalentTo(_expectedRandom31);
+        }
+
+        [Test]
+        public void PartialInstance63()
+        {
+            byte[] data = new byte[63];
+
+            var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"),
+                                    FileMode.Open, FileAccess.Read);
+
+            fs.Read(data, 0, 63);
+            fs.Close();
+            fs.Dispose();
+            IChecksum ctx = new CRC16IBMContext();
+            ctx.Update(data);
+            byte[] result = ctx.Final();
+            result.Should().BeEquivalentTo(_expectedRandom63);
+        }
+
+        [Test]
+        public void PartialInstance2352()
+        {
+            byte[] data = new byte[2352];
+
+            var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"),
+                                    FileMode.Open, FileAccess.Read);
+
+            fs.Read(data, 0, 2352);
+            fs.Close();
+            fs.Dispose();
+            IChecksum ctx = new CRC16IBMContext();
+            ctx.Update(data);
+            byte[] result = ctx.Final();
+            result.Should().BeEquivalentTo(_expectedRandom2352);
         }
     }
 }

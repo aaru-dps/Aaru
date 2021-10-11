@@ -46,6 +46,26 @@ namespace Aaru.Tests.Checksums
             0x37, 0x28, 0xd1, 0x86
         };
 
+        static readonly byte[] _expectedRandom15 =
+        {
+            0x34, 0xDC, 0x06, 0x7D
+        };
+
+        static readonly byte[] _expectedRandom31 =
+        {
+            0xD8, 0xF1, 0x0E, 0xAA
+        };
+
+        static readonly byte[] _expectedRandom63 =
+        {
+            0xD8, 0xAC, 0x20, 0x81
+        };
+
+        static readonly byte[] _expectedRandom2352 =
+        {
+            0xEC, 0xD1, 0x73, 0x8B
+        };
+
         [Test]
         public void EmptyData()
         {
@@ -122,6 +142,74 @@ namespace Aaru.Tests.Checksums
             ctx.Update(data);
             byte[] result = ctx.Final();
             result.Should().BeEquivalentTo(_expectedRandom);
+        }
+
+        [Test]
+        public void PartialInstanceAuto15()
+        {
+            byte[] data = new byte[15];
+
+            var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"),
+                                    FileMode.Open, FileAccess.Read);
+
+            fs.Read(data, 0, 15);
+            fs.Close();
+            fs.Dispose();
+            IChecksum ctx = new Adler32Context();
+            ctx.Update(data);
+            byte[] result = ctx.Final();
+            result.Should().BeEquivalentTo(_expectedRandom15);
+        }
+
+        [Test]
+        public void PartialInstanceAuto31()
+        {
+            byte[] data = new byte[31];
+
+            var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"),
+                                    FileMode.Open, FileAccess.Read);
+
+            fs.Read(data, 0, 31);
+            fs.Close();
+            fs.Dispose();
+            IChecksum ctx = new Adler32Context();
+            ctx.Update(data);
+            byte[] result = ctx.Final();
+            result.Should().BeEquivalentTo(_expectedRandom31);
+        }
+
+        [Test]
+        public void PartialInstanceAuto63()
+        {
+            byte[] data = new byte[63];
+
+            var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"),
+                                    FileMode.Open, FileAccess.Read);
+
+            fs.Read(data, 0, 63);
+            fs.Close();
+            fs.Dispose();
+            IChecksum ctx = new Adler32Context();
+            ctx.Update(data);
+            byte[] result = ctx.Final();
+            result.Should().BeEquivalentTo(_expectedRandom63);
+        }
+
+        [Test]
+        public void PartialInstanceAuto2352()
+        {
+            byte[] data = new byte[2352];
+
+            var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"),
+                                    FileMode.Open, FileAccess.Read);
+
+            fs.Read(data, 0, 2352);
+            fs.Close();
+            fs.Dispose();
+            IChecksum ctx = new Adler32Context();
+            ctx.Update(data);
+            byte[] result = ctx.Final();
+            result.Should().BeEquivalentTo(_expectedRandom2352);
         }
     }
 }
