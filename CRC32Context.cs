@@ -32,6 +32,7 @@
 
 using System;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Runtime.Intrinsics.Arm;
 using System.Runtime.Intrinsics.X86;
 using System.Text;
@@ -333,8 +334,10 @@ namespace Aaru.Checksums
         };
 
         readonly uint     _finalSeed;
+        readonly IntPtr   _nativeContext;
         readonly uint[][] _table;
         readonly bool     _useIso;
+        readonly bool     _useNative;
         uint              _hashInt;
 
         /// <summary>Initializes the CRC32 table and seed as CRC32-ISO</summary>
@@ -344,6 +347,12 @@ namespace Aaru.Checksums
             _finalSeed = CRC32_ISO_SEED;
             _table     = _isoCrc32Table;
             _useIso    = true;
+
+            if(!Native.IsSupported)
+                return;
+
+            _nativeContext = crc32_init();
+            _useNative     = _nativeContext != IntPtr.Zero;
         }
 
         /// <summary>Initializes the CRC32 table with a custom polynomial and seed</summary>
@@ -353,14 +362,21 @@ namespace Aaru.Checksums
             _finalSeed = seed;
             _useIso    = polynomial == CRC32_ISO_POLY && seed == CRC32_ISO_SEED;
 
-            _table = GenerateTable(polynomial);
+            if(Native.IsSupported && _useIso)
+            {
+                _nativeContext = crc32_init();
+                _useNative     = _nativeContext != IntPtr.Zero;
+            }
+            else
+                _table = GenerateTable(polynomial);
         }
 
         /// <inheritdoc />
         /// <summary>Updates the hash with data.</summary>
         /// <param name="data">Data buffer.</param>
         /// <param name="len">Length of buffer to hash.</param>
-        public void Update(byte[] data, uint len) => Step(ref _hashInt, _table, data, len, _useIso);
+        public void Update(byte[] data, uint len) =>
+            Step(ref _hashInt, _table, data, len, _useIso, _useNative, _nativeContext);
 
         /// <inheritdoc />
         /// <summary>Updates the hash with data.</summary>
@@ -369,19 +385,51 @@ namespace Aaru.Checksums
 
         /// <inheritdoc />
         /// <summary>Returns a byte array of the hash value.</summary>
-        public byte[] Final() => BigEndianBitConverter.GetBytes(_hashInt ^ _finalSeed);
+        public byte[] Final()
+        {
+            uint crc = _hashInt ^ _finalSeed;
+
+            if(!_useNative ||
+               !_useIso)
+                return BigEndianBitConverter.GetBytes(crc);
+
+            crc32_final(_nativeContext, ref crc);
+            crc32_free(_nativeContext);
+
+            return BigEndianBitConverter.GetBytes(crc);
+        }
 
         /// <inheritdoc />
         /// <summary>Returns a hexadecimal representation of the hash value.</summary>
         public string End()
         {
+            uint crc = _hashInt ^ _finalSeed;
+
             var crc32Output = new StringBuilder();
 
-            for(int i = 0; i < BigEndianBitConverter.GetBytes(_hashInt ^ _finalSeed).Length; i++)
-                crc32Output.Append(BigEndianBitConverter.GetBytes(_hashInt ^ _finalSeed)[i].ToString("x2"));
+            if(_useNative && _useIso)
+            {
+                crc32_final(_nativeContext, ref crc);
+                crc32_free(_nativeContext);
+            }
+
+            for(int i = 0; i < BigEndianBitConverter.GetBytes(crc).Length; i++)
+                crc32Output.Append(BigEndianBitConverter.GetBytes(crc)[i].ToString("x2"));
 
             return crc32Output.ToString();
         }
+
+        [DllImport("libAaru.Checksums.Native", SetLastError = true)]
+        static extern IntPtr crc32_init();
+
+        [DllImport("libAaru.Checksums.Native", SetLastError = true)]
+        static extern int crc32_update(IntPtr ctx, byte[] data, uint len);
+
+        [DllImport("libAaru.Checksums.Native", SetLastError = true)]
+        static extern int crc32_final(IntPtr ctx, ref uint crc);
+
+        [DllImport("libAaru.Checksums.Native", SetLastError = true)]
+        static extern void crc32_free(IntPtr ctx);
 
         static uint[][] GenerateTable(uint polynomial)
         {
@@ -410,8 +458,16 @@ namespace Aaru.Checksums
             return table;
         }
 
-        static void Step(ref uint previousCrc, uint[][] table, byte[] data, uint len, bool useIso)
+        static void Step(ref uint previousCrc, uint[][] table, byte[] data, uint len, bool useIso, bool useNative,
+                         IntPtr nativeContext)
         {
+            if(useNative && useIso)
+            {
+                crc32_update(nativeContext, data, len);
+
+                return;
+            }
+
             int currentPos = 0;
 
             if(useIso)
@@ -426,7 +482,7 @@ namespace Aaru.Checksums
 
                     if(blocks > 0)
                     {
-                        previousCrc = ~Clmul.Step(data, blocks * 64, ~previousCrc);
+                        previousCrc = ~CRC32.Clmul.Step(data, blocks * 64, ~previousCrc);
 
                         currentPos =  (int)(blocks * 64);
                         len        -= blocks * 64;
@@ -505,6 +561,16 @@ namespace Aaru.Checksums
         /// <param name="seed">CRC seed</param>
         public static string File(string filename, out byte[] hash, uint polynomial, uint seed)
         {
+            bool   useIso        = polynomial == CRC32_ISO_POLY && seed == CRC32_ISO_SEED;
+            bool   useNative     = Native.IsSupported;
+            IntPtr nativeContext = IntPtr.Zero;
+
+            if(useNative && useIso)
+            {
+                nativeContext = crc32_init();
+                useNative     = nativeContext != IntPtr.Zero;
+            }
+
             var fileStream = new FileStream(filename, FileMode.Open);
 
             uint localHashInt = seed;
@@ -516,14 +582,20 @@ namespace Aaru.Checksums
 
             while(read > 0)
             {
-                Step(ref localHashInt, localTable, buffer, (uint)read,
-                     polynomial == CRC32_ISO_POLY && seed == CRC32_ISO_SEED);
+                Step(ref localHashInt, localTable, buffer, (uint)read, useIso, useNative, nativeContext);
 
                 read = fileStream.Read(buffer, 0, 65536);
             }
 
             localHashInt ^= seed;
-            hash         =  BigEndianBitConverter.GetBytes(localHashInt);
+
+            if(useNative && useIso)
+            {
+                crc32_final(nativeContext, ref localHashInt);
+                crc32_free(nativeContext);
+            }
+
+            hash = BigEndianBitConverter.GetBytes(localHashInt);
 
             var crc32Output = new StringBuilder();
 
@@ -550,14 +622,31 @@ namespace Aaru.Checksums
         /// <param name="seed">CRC seed</param>
         public static string Data(byte[] data, uint len, out byte[] hash, uint polynomial, uint seed)
         {
+            bool   useIso        = polynomial == CRC32_ISO_POLY && seed == CRC32_ISO_SEED;
+            bool   useNative     = Native.IsSupported;
+            IntPtr nativeContext = IntPtr.Zero;
+
+            if(useNative && useIso)
+            {
+                nativeContext = crc32_init();
+                useNative     = nativeContext != IntPtr.Zero;
+            }
+
             uint localHashInt = seed;
 
             uint[][] localTable = GenerateTable(polynomial);
 
-            Step(ref localHashInt, localTable, data, len, polynomial == CRC32_ISO_POLY && seed == CRC32_ISO_SEED);
+            Step(ref localHashInt, localTable, data, len, useIso, useNative, nativeContext);
 
             localHashInt ^= seed;
-            hash         =  BigEndianBitConverter.GetBytes(localHashInt);
+
+            if(useNative && useIso)
+            {
+                crc32_final(nativeContext, ref localHashInt);
+                crc32_free(nativeContext);
+            }
+
+            hash = BigEndianBitConverter.GetBytes(localHashInt);
 
             var crc32Output = new StringBuilder();
 

@@ -32,9 +32,9 @@
 
 using System;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Runtime.Intrinsics.X86;
 using System.Text;
-using Aaru.Checksums.CRC64;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 
@@ -274,8 +274,10 @@ namespace Aaru.Checksums
         };
 
         readonly ulong     _finalSeed;
+        readonly IntPtr    _nativeContext;
         readonly ulong[][] _table;
         readonly bool      _useEcma;
+        readonly bool      _useNative;
         ulong              _hashInt;
 
         /// <summary>Initializes the CRC64 table and seed as CRC64-ECMA</summary>
@@ -285,22 +287,36 @@ namespace Aaru.Checksums
             _table     = _ecmaCrc64Table;
             _finalSeed = CRC64_ECMA_SEED;
             _useEcma   = true;
+
+            if(!Native.IsSupported)
+                return;
+
+            _nativeContext = crc64_init();
+            _useNative     = _nativeContext != IntPtr.Zero;
         }
 
         /// <summary>Initializes the CRC16 table with a custom polynomial and seed</summary>
         public Crc64Context(ulong polynomial, ulong seed)
         {
             _hashInt   = seed;
-            _table     = GenerateTable(polynomial);
             _finalSeed = seed;
             _useEcma   = polynomial == CRC64_ECMA_POLY && seed == CRC64_ECMA_SEED;
+
+            if(Native.IsSupported && _useEcma)
+            {
+                _nativeContext = crc64_init();
+                _useNative     = _nativeContext != IntPtr.Zero;
+            }
+            else
+                _table = GenerateTable(polynomial);
         }
 
         /// <inheritdoc />
         /// <summary>Updates the hash with data.</summary>
         /// <param name="data">Data buffer.</param>
         /// <param name="len">Length of buffer to hash.</param>
-        public void Update(byte[] data, uint len) => Step(ref _hashInt, _table, data, len, _useEcma);
+        public void Update(byte[] data, uint len) =>
+            Step(ref _hashInt, _table, data, len, _useEcma, _useNative, _nativeContext);
 
         /// <inheritdoc />
         /// <summary>Updates the hash with data.</summary>
@@ -309,19 +325,51 @@ namespace Aaru.Checksums
 
         /// <inheritdoc />
         /// <summary>Returns a byte array of the hash value.</summary>
-        public byte[] Final() => BigEndianBitConverter.GetBytes(_hashInt ^= _finalSeed);
+        public byte[] Final()
+        {
+            ulong crc = _hashInt ^ _finalSeed;
+
+            if(!_useNative ||
+               !_useEcma)
+                return BigEndianBitConverter.GetBytes(crc);
+
+            crc64_final(_nativeContext, ref crc);
+            crc64_free(_nativeContext);
+
+            return BigEndianBitConverter.GetBytes(crc);
+        }
 
         /// <inheritdoc />
         /// <summary>Returns a hexadecimal representation of the hash value.</summary>
         public string End()
         {
+            ulong crc = _hashInt ^ _finalSeed;
+
             var crc64Output = new StringBuilder();
 
-            for(int i = 0; i < BigEndianBitConverter.GetBytes(_hashInt ^= _finalSeed).Length; i++)
-                crc64Output.Append(BigEndianBitConverter.GetBytes(_hashInt ^= _finalSeed)[i].ToString("x2"));
+            if(_useNative && _useEcma)
+            {
+                crc64_final(_nativeContext, ref crc);
+                crc64_free(_nativeContext);
+            }
+
+            for(int i = 0; i < BigEndianBitConverter.GetBytes(crc).Length; i++)
+                crc64Output.Append(BigEndianBitConverter.GetBytes(crc)[i].ToString("x2"));
 
             return crc64Output.ToString();
         }
+
+        [DllImport("libAaru.Checksums.Native", SetLastError = true)]
+        static extern IntPtr crc64_init();
+
+        [DllImport("libAaru.Checksums.Native", SetLastError = true)]
+        static extern int crc64_update(IntPtr ctx, byte[] data, uint len);
+
+        [DllImport("libAaru.Checksums.Native", SetLastError = true)]
+        static extern int crc64_final(IntPtr ctx, ref ulong crc);
+
+        [DllImport("libAaru.Checksums.Native", SetLastError = true)]
+        static extern void crc64_free(IntPtr ctx);
 
         static ulong[][] GenerateTable(ulong polynomial)
         {
@@ -350,8 +398,16 @@ namespace Aaru.Checksums
             return table;
         }
 
-        static void Step(ref ulong previousCrc, ulong[][] table, byte[] data, uint len, bool useEcma)
+        static void Step(ref ulong previousCrc, ulong[][] table, byte[] data, uint len, bool useEcma, bool useNative,
+                         IntPtr nativeContext)
         {
+            if(useNative && useEcma)
+            {
+                crc64_update(nativeContext, data, len);
+
+                return;
+            }
+
             int dataOff = 0;
 
             if(useEcma               &&
@@ -365,7 +421,7 @@ namespace Aaru.Checksums
 
                 if(blocks > 0)
                 {
-                    previousCrc = ~Clmul.Step(~previousCrc, data, blocks * 32);
+                    previousCrc = ~CRC64.Clmul.Step(~previousCrc, data, blocks * 32);
 
                     dataOff =  (int)(blocks * 32);
                     len     -= blocks * 32;
@@ -424,6 +480,16 @@ namespace Aaru.Checksums
         /// <param name="seed">CRC seed</param>
         public static string File(string filename, out byte[] hash, ulong polynomial, ulong seed)
         {
+            bool   useEcma       = polynomial == CRC64_ECMA_POLY && seed == CRC64_ECMA_SEED;
+            bool   useNative     = Native.IsSupported;
+            IntPtr nativeContext = IntPtr.Zero;
+
+            if(useNative && useEcma)
+            {
+                nativeContext = crc64_init();
+                useNative     = nativeContext != IntPtr.Zero;
+            }
+
             var fileStream = new FileStream(filename, FileMode.Open);
 
             ulong localHashInt = seed;
@@ -435,14 +501,20 @@ namespace Aaru.Checksums
 
             while(read > 0)
             {
-                Step(ref localHashInt, localTable, buffer, (uint)read,
-                     polynomial == CRC64_ECMA_POLY && seed == CRC64_ECMA_SEED);
+                Step(ref localHashInt, localTable, buffer, (uint)read, useEcma, useNative, nativeContext);
 
                 read = fileStream.Read(buffer, 0, 65536);
             }
 
             localHashInt ^= seed;
-            hash         =  BigEndianBitConverter.GetBytes(localHashInt);
+
+            if(useNative && useEcma)
+            {
+                crc64_final(nativeContext, ref localHashInt);
+                crc64_free(nativeContext);
+            }
+
+            hash = BigEndianBitConverter.GetBytes(localHashInt);
 
             var crc64Output = new StringBuilder();
 
@@ -469,14 +541,31 @@ namespace Aaru.Checksums
         /// <param name="seed">CRC seed</param>
         public static string Data(byte[] data, uint len, out byte[] hash, ulong polynomial, ulong seed)
         {
+            bool   useEcma       = polynomial == CRC64_ECMA_POLY && seed == CRC64_ECMA_SEED;
+            bool   useNative     = Native.IsSupported;
+            IntPtr nativeContext = IntPtr.Zero;
+
+            if(useNative && useEcma)
+            {
+                nativeContext = crc64_init();
+                useNative     = nativeContext != IntPtr.Zero;
+            }
+
             ulong localHashInt = seed;
 
             ulong[][] localTable = GenerateTable(polynomial);
 
-            Step(ref localHashInt, localTable, data, len, polynomial == CRC64_ECMA_POLY && seed == CRC64_ECMA_SEED);
+            Step(ref localHashInt, localTable, data, len, useEcma, useNative, nativeContext);
 
             localHashInt ^= seed;
-            hash         =  BigEndianBitConverter.GetBytes(localHashInt);
+
+            if(useNative && useEcma)
+            {
+                crc64_final(nativeContext, ref localHashInt);
+                crc64_free(nativeContext);
+            }
+
+            hash = BigEndianBitConverter.GetBytes(localHashInt);
 
             var crc64Output = new StringBuilder();
 
