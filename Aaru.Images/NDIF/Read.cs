@@ -42,7 +42,6 @@ using Aaru.Console;
 using Aaru.Helpers;
 using Claunia.Encoding;
 using Claunia.RsrcFork;
-using SharpCompress.Compressors.ADC;
 using Version = Resources.Version;
 
 namespace Aaru.DiscImages
@@ -372,9 +371,8 @@ namespace Aaru.DiscImages
                     {
                         case CHUNK_TYPE_ADC:
                         {
-                            Stream decStream = new ADCStream(cmpMs);
                             byte[] tmpBuffer = new byte[_bufferSize];
-                            realSize = decStream.Read(tmpBuffer, 0, (int)_bufferSize);
+                            realSize = ADC.DecodeBuffer(cmpBuffer, tmpBuffer);
                             data     = new byte[realSize];
                             Array.Copy(tmpBuffer, 0, data, 0, realSize);
 

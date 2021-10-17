@@ -44,7 +44,6 @@ using Claunia.PropertyList;
 using Claunia.RsrcFork;
 using Ionic.BZip2;
 using Ionic.Zlib;
-using SharpCompress.Compressors.ADC;
 using Version = Resources.Version;
 
 #pragma warning disable 612
@@ -501,10 +500,6 @@ namespace Aaru.DiscImages
 
                     switch(readChunk.type)
                     {
-                        case CHUNK_TYPE_ADC:
-                            decStream = new ADCStream(cmpMs);
-
-                            break;
                         case CHUNK_TYPE_ZLIB:
                             decStream = new ZlibStream(cmpMs, CompressionMode.Decompress);
 
@@ -513,8 +508,9 @@ namespace Aaru.DiscImages
                             decStream = new BZip2InputStream(cmpMs, false);
 
                             break;
+                        case CHUNK_TYPE_ADC:
                         case CHUNK_TYPE_RLE: break;
-                        default:             return ErrorNumber.NotImplemented;
+                        default: return ErrorNumber.NotImplemented;
                     }
 
                 #if DEBUG
@@ -526,7 +522,6 @@ namespace Aaru.DiscImages
 
                         switch(readChunk.type)
                         {
-                            case CHUNK_TYPE_ADC:
                             case CHUNK_TYPE_ZLIB:
                             case CHUNK_TYPE_BZIP:
                                 tmpBuffer = new byte[_buffersize];
@@ -542,6 +537,13 @@ namespace Aaru.DiscImages
 
                                 _chunkCache.Add(chunkStartSector, data);
                                 _currentChunkCacheSize += (uint)realSize;
+
+                                break;
+                            case CHUNK_TYPE_ADC:
+                                tmpBuffer = new byte[_buffersize];
+                                realSize  = ADC.DecodeBuffer(cmpBuffer, tmpBuffer);
+                                data      = new byte[realSize];
+                                Array.Copy(tmpBuffer, 0, data, 0, realSize);
 
                                 break;
                             case CHUNK_TYPE_RLE:

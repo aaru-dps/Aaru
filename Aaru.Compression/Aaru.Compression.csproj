@@ -59,10 +59,10 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System"/>
-    <Reference Include="System.Core"/>
-    <Reference Include="System.Data"/>
-    <Reference Include="System.Xml"/>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <PropertyGroup>
     <DefaultItemExcludes>
@@ -70,6 +70,7 @@
     </DefaultItemExcludes>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="ADC.cs" />
     <Compile Include="AppleRle.cs" />
     <Compile Include="TeleDiskLzh.cs" />
     <Compile Include="cuetools.net/CUETools.Codecs/*.cs" />
