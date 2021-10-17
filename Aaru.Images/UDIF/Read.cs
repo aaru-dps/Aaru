@@ -546,21 +546,8 @@ namespace Aaru.DiscImages
                                 break;
                             case CHUNK_TYPE_RLE:
                                 tmpBuffer = new byte[_buffersize];
-                                realSize  = 0;
-                                var rle = new AppleRle(cmpMs);
-
-                                for(int i = 0; i < _buffersize; i++)
-                                {
-                                    int b = rle.ProduceByte();
-
-                                    if(b == -1)
-                                        break;
-
-                                    tmpBuffer[i] = (byte)b;
-                                    realSize++;
-                                }
-
-                                data = new byte[realSize];
+                                realSize  = AppleRle.DecodeBuffer(cmpBuffer, tmpBuffer);
+                                data      = new byte[realSize];
                                 Array.Copy(tmpBuffer, 0, data, 0, realSize);
 
                                 break;

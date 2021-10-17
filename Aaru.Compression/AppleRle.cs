@@ -31,98 +31,94 @@
 // Copyright © 2018-2019 David Ryskalczyk
 // ****************************************************************************/
 
-using System.IO;
-
 namespace Aaru.Compression
 {
     /// <summary>Implements the Apple version of RLE</summary>
-    public class AppleRle
+    public static class AppleRle
     {
         const uint DART_CHUNK = 20960;
 
-        readonly Stream _inStream;
-        int             _count;
-        bool            _nextA; // true if A, false if B
-        byte            _repeatedByteA, _repeatedByteB;
-        bool            _repeatMode; // true if we're repeating, false if we're just copying
-
-        /// <summary>Initializes a decompressor for the specified stream</summary>
-        /// <param name="stream">Stream containing the compressed data</param>
-        public AppleRle(Stream stream)
+        /// <summary>Decodes a buffer compressed with Apple RLE</summary>
+        /// <param name="source">Encoded buffer</param>
+        /// <param name="destination">Buffer where to write the decoded data</param>
+        /// <returns>The number of decoded bytes</returns>
+        public static int DecodeBuffer(byte[] source, byte[] destination)
         {
-            _inStream = stream;
-            Reset();
-        }
+            int  count         = 0;
+            bool nextA         = true; // true if A, false if B
+            byte repeatedByteA = 0, repeatedByteB = 0;
+            bool repeatMode    = false; // true if we're repeating, false if we're just copying
+            int  inPosition    = 0, outPosition = 0;
 
-        void Reset()
-        {
-            _repeatedByteA = _repeatedByteB = 0;
-            _count         = 0;
-            _nextA         = true;
-            _repeatMode    = false;
-        }
-
-        /// <summary>Decompresses a byte</summary>
-        /// <returns>Decompressed byte</returns>
-        public int ProduceByte()
-        {
-            if(_repeatMode && _count > 0)
+            while(inPosition  <= source.Length &&
+                  outPosition <= destination.Length)
             {
-                _count--;
-
-                if(_nextA)
+                switch(repeatMode)
                 {
-                    _nextA = false;
+                    case true when count > 0:
+                    {
+                        count--;
 
-                    return _repeatedByteA;
+                        if(nextA)
+                        {
+                            nextA = false;
+
+                            destination[outPosition++] = repeatedByteA;
+
+                            continue;
+                        }
+
+                        nextA = true;
+
+                        destination[outPosition++] = repeatedByteB;
+
+                        continue;
+                    }
+                    case false when count > 0:
+                        count--;
+
+                        destination[outPosition++] = source[inPosition++];
+
+                        continue;
                 }
 
-                _nextA = true;
+                if(inPosition == source.Length)
+                    break;
 
-                return _repeatedByteB;
-            }
-
-            if(!_repeatMode &&
-               _count > 0)
-            {
-                _count--;
-
-                return _inStream.ReadByte();
-            }
-
-            if(_inStream.Position == _inStream.Length)
-                return -1;
-
-            while(true)
-            {
-                byte  b1 = (byte)_inStream.ReadByte();
-                byte  b2 = (byte)_inStream.ReadByte();
-                short s  = (short)((b1 << 8) | b2);
-
-                if(s == 0          ||
-                   s >= DART_CHUNK ||
-                   s <= -DART_CHUNK)
-                    continue;
-
-                if(s < 0)
+                while(true)
                 {
-                    _repeatMode    = true;
-                    _repeatedByteA = (byte)_inStream.ReadByte();
-                    _repeatedByteB = (byte)_inStream.ReadByte();
-                    _count         = (-s * 2) - 1;
-                    _nextA         = false;
+                    byte  b1 = source[inPosition++];
+                    byte  b2 = source[inPosition++];
+                    short s  = (short)((b1 << 8) | b2);
 
-                    return _repeatedByteA;
+                    if(s == 0          ||
+                       s >= DART_CHUNK ||
+                       s <= -DART_CHUNK)
+                        continue;
+
+                    if(s < 0)
+                    {
+                        repeatMode    = true;
+                        repeatedByteA = source[inPosition++];
+                        repeatedByteB = source[inPosition++];
+                        count         = (-s * 2) - 1;
+                        nextA         = false;
+
+                        destination[outPosition++] = repeatedByteA;
+
+                        break;
+                    }
+
+                    repeatMode = false;
+                    count      = (s * 2) - 1;
+
+                    destination[outPosition++] = source[inPosition++];
+
+                    break;
                 }
-
-                if(s <= 0)
-                    continue;
-
-                _repeatMode = false;
-                _count      = (s * 2) - 1;
-
-                return _inStream.ReadByte();
             }
+
+            return outPosition;
         }
     }
 }

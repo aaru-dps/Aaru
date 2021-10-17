@@ -146,11 +146,9 @@ namespace Aaru.DiscImages
                         {
                             temp = new byte[l * 2];
                             stream.Read(temp, 0, temp.Length);
-                            var rle = new AppleRle(new MemoryStream(temp));
                             buffer = new byte[BUFFER_SIZE];
 
-                            for(int i = 0; i < BUFFER_SIZE; i++)
-                                buffer[i] = (byte)rle.ProduceByte();
+                            AppleRle.DecodeBuffer(temp, buffer);
 
                             dataMs.Write(buffer, 0, DATA_SIZE);
                             tagMs.Write(buffer, DATA_SIZE, TAG_SIZE);
