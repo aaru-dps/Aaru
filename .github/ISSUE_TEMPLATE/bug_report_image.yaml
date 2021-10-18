@@ -37,13 +37,9 @@ body:
       description: You may select more than one.
       options:
         - label: Windows
-          required: true
         - label: Linux
-          required: true
         - label: macOS
-          required: true
         - label: Other
-          required: true
   - type: checkboxes
     id: bitsize
     attributes:
