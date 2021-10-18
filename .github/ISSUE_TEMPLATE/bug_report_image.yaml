@@ -110,7 +110,7 @@ body:
     id: command_line
     attributes:
       label: Exact command line used
-      placeholder: `Aaru [command] [parameters]`
+      placeholder: "`Aaru [command] [parameters]`"
     validations:
       required: true
   - type: textarea
