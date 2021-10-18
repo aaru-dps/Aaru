@@ -28,7 +28,7 @@ body:
       label: Tested debug version?
       description: Have you reproduced the problem using the debug version?
       options:
-        - label: Yes
+        - label: "Yes"
           required: true
   - type: checkboxes
     id: os
