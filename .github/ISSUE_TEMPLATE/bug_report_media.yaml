@@ -85,18 +85,10 @@ body:
         - label: SCSI (any)
         - label: ATAPI (mark above if parallel or serial)
         - label: USB
-                   * **USB cable manufacturer**:
-                   * **USB cable model**:
         - label: FireWire
         - label: PCMCIA
         - label: SecureDigital
-                   * [ ] Using a USB card reader
-                   * **USB card reader manufacturer**:
-                   * **USB card reader model**:
         - label: MultiMediaCard
-                   * [ ] Using a USB card reader
-                   * **USB card reader manufacturer**:
-                   * **USB card reader model**:
   - type: input
     id: usb_manufacturer
     attributes:
