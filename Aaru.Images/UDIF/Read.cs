@@ -43,6 +43,7 @@ using Aaru.Helpers;
 using Claunia.PropertyList;
 using Claunia.RsrcFork;
 using Ionic.Zlib;
+using SharpCompress.Compressors.Xz;
 using Version = Resources.Version;
 
 #pragma warning disable 612
@@ -417,10 +418,6 @@ public sealed partial class Udif
                         AaruConsole.ErrorWriteLine("Chunks compressed with lzfse are not yet supported.");
 
                         return ErrorNumber.NotImplemented;
-                    case CHUNK_TYPE_LZMA:
-                        AaruConsole.ErrorWriteLine("Chunks compressed with lzma are not yet supported.");
-
-                        return ErrorNumber.NotImplemented;
                 }
 
                 if((bChnk.type > CHUNK_TYPE_NOCOPY && bChnk.type < CHUNK_TYPE_COMMNT) ||
@@ -507,6 +504,11 @@ public sealed partial class Udif
                     case CHUNK_TYPE_ADC:
                     case CHUNK_TYPE_RLE:
                     case CHUNK_TYPE_LZFSE: break;
+                    case CHUNK_TYPE_LZMA:
+                        decStream = new XZStream(cmpMs);
+
+                        break;
+
                     default: return ErrorNumber.NotImplemented;
                 }
 
@@ -520,6 +522,7 @@ public sealed partial class Udif
                     switch(readChunk.type)
                     {
                         case CHUNK_TYPE_ZLIB:
+                        case CHUNK_TYPE_LZMA:
                             tmpBuffer = new byte[_buffersize];
                             realSize  = decStream?.Read(tmpBuffer, 0, (int)_buffersize) ?? 0;
                             data      = new byte[realSize];
