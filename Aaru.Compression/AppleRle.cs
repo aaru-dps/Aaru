@@ -31,11 +31,16 @@
 // Copyright © 2018-2019 David Ryskalczyk
 // ****************************************************************************/
 
+using System.Runtime.InteropServices;
+
 namespace Aaru.Compression
 {
     /// <summary>Implements the Apple version of RLE</summary>
     public static class AppleRle
     {
+        [DllImport("libAaru.Compression.Native", SetLastError = true)]
+        static extern int AARU_apple_rle_decode_buffer(byte[] dst_buffer, int dst_size, byte[] src_buffer, int src_size);
+
         const uint DART_CHUNK = 20960;
 
         /// <summary>Decodes a buffer compressed with Apple RLE</summary>
@@ -44,6 +49,9 @@ namespace Aaru.Compression
         /// <returns>The number of decoded bytes</returns>
         public static int DecodeBuffer(byte[] source, byte[] destination)
         {
+            if(Native.IsSupported)
+                return AARU_apple_rle_decode_buffer(destination, destination.Length, source, source.Length);
+
             int  count         = 0;
             bool nextA         = true; // true if A, false if B
             byte repeatedByteA = 0, repeatedByteB = 0;
