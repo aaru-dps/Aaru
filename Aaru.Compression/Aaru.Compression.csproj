@@ -72,6 +72,7 @@
   <ItemGroup>
     <Compile Include="ADC.cs" />
     <Compile Include="AppleRle.cs" />
+    <Compile Include="Native.cs" />
     <Compile Include="TeleDiskLzh.cs" />
     <Compile Include="cuetools.net/CUETools.Codecs/*.cs" />
     <Compile Include="cuetools.net/CUETools.Codecs/CommandLine/*.cs" />
@@ -88,6 +89,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Aaru.Compression.Native" Version="6.0.0-alpha6" />
     <PackageReference Include="Newtonsoft.Json" Version="11.0.1" />
     <PackageReference Include="System.Resources.Extensions" Version="5.0.0" />
     <PackageReference Include="Unclassified.NetRevisionTask" Version="0.4.1" PrivateAssets="all" />
