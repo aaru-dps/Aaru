@@ -86,6 +86,7 @@
     <Compile Include="cuetools.net/CUETools.Codecs/WAV/*.cs" />
     <Compile Include="cuetools.net/CUETools.Codecs.Flake/*.cs" />
     <Compile Include="cuetools.net/CUETools.Codecs.Flake/Properties/*.cs" />
+    <Compile Include="ZSTD.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="..\LICENSE.LGPL">
