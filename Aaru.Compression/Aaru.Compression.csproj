@@ -73,6 +73,7 @@
     <Compile Include="ADC.cs" />
     <Compile Include="AppleRle.cs" />
     <Compile Include="BZip2.cs" />
+    <Compile Include="LZFSE.cs" />
     <Compile Include="Native.cs" />
     <Compile Include="TeleDiskLzh.cs" />
     <Compile Include="cuetools.net/CUETools.Codecs/*.cs" />
