@@ -74,6 +74,7 @@
     <Compile Include="AppleRle.cs" />
     <Compile Include="BZip2.cs" />
     <Compile Include="LZFSE.cs" />
+    <Compile Include="LZMA.cs" />
     <Compile Include="Native.cs" />
     <Compile Include="TeleDiskLzh.cs" />
     <Compile Include="cuetools.net/CUETools.Codecs/*.cs" />
@@ -94,6 +95,7 @@
     <PackageReference Include="Aaru.Compression.Native" Version="6.0.0-alpha6" />
     <PackageReference Include="DotNetZip" Version="1.15.0" />
     <PackageReference Include="Newtonsoft.Json" Version="11.0.1" />
+    <PackageReference Include="SharpCompress" Version="0.29.0" />
     <PackageReference Include="System.Resources.Extensions" Version="5.0.0" />
     <PackageReference Include="Unclassified.NetRevisionTask" Version="0.4.1" PrivateAssets="all" />
   </ItemGroup>
