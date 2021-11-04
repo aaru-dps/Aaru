@@ -42,7 +42,6 @@ using Aaru.Console;
 using Aaru.Helpers;
 using Claunia.PropertyList;
 using Claunia.RsrcFork;
-using Ionic.BZip2;
 using Ionic.Zlib;
 using Version = Resources.Version;
 
@@ -505,9 +504,6 @@ namespace Aaru.DiscImages
 
                             break;
                         case CHUNK_TYPE_BZIP:
-                            decStream = new BZip2InputStream(cmpMs, false);
-
-                            break;
                         case CHUNK_TYPE_ADC:
                         case CHUNK_TYPE_RLE: break;
                         default: return ErrorNumber.NotImplemented;
@@ -518,25 +514,22 @@ namespace Aaru.DiscImages
                     {
                     #endif
                         byte[] tmpBuffer;
-                        int    realSize;
+                        int    realSize = 0;
 
                         switch(readChunk.type)
                         {
                             case CHUNK_TYPE_ZLIB:
-                            case CHUNK_TYPE_BZIP:
                                 tmpBuffer = new byte[_buffersize];
                                 realSize  = decStream?.Read(tmpBuffer, 0, (int)_buffersize) ?? 0;
                                 data      = new byte[realSize];
                                 Array.Copy(tmpBuffer, 0, data, 0, realSize);
 
-                                if(_currentChunkCacheSize + realSize > MAX_CACHE_SIZE)
-                                {
-                                    _chunkCache.Clear();
-                                    _currentChunkCacheSize = 0;
-                                }
-
-                                _chunkCache.Add(chunkStartSector, data);
-                                _currentChunkCacheSize += (uint)realSize;
+                                break;
+                            case CHUNK_TYPE_BZIP:
+                                tmpBuffer = new byte[_buffersize];
+                                realSize  = BZip2.DecodeBuffer(cmpBuffer, tmpBuffer);
+                                data      = new byte[realSize];
+                                Array.Copy(tmpBuffer, 0, data, 0, realSize);
 
                                 break;
                             case CHUNK_TYPE_ADC:
@@ -554,6 +547,16 @@ namespace Aaru.DiscImages
 
                                 break;
                         }
+
+                        if(_currentChunkCacheSize + realSize > MAX_CACHE_SIZE)
+                        {
+                            _chunkCache.Clear();
+                            _currentChunkCacheSize = 0;
+                        }
+
+                        _chunkCache.Add(chunkStartSector, data);
+                        _currentChunkCacheSize += (uint)realSize;
+
                     #if DEBUG
                     }
                     catch(ZlibException)
