@@ -37,12 +37,16 @@
 
 using System;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace Aaru.Compression
 {
     /// <summary>Implements the Apple version of RLE</summary>
     public static class ADC
     {
+        [DllImport("libAaru.Compression.Native", SetLastError = true)]
+        static extern int AARU_adc_decode_buffer(byte[] dst_buffer, int dst_size, byte[] src_buffer, int src_size);
+
         const int PLAIN      = 1;
         const int TWO_BYTE   = 2;
         const int THREE_BYTE = 3;
@@ -79,6 +83,9 @@ namespace Aaru.Compression
         [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         public static int DecodeBuffer(byte[] source, byte[] destination)
         {
+            if(Native.IsSupported)
+                return AARU_adc_decode_buffer(destination, destination.Length, source, source.Length);
+
             int        inputPosition = 0;
             int        chunkSize;
             int        offset;
