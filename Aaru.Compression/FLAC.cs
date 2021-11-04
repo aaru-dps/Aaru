@@ -35,6 +35,11 @@ namespace Aaru.Compression;
 
 public class FLAC
 {
+    /// <summary>
+    /// Set to <c>true</c> if this algorithm is supported, <c>false</c> otherwise.
+    /// </summary>
+    public static bool IsSupported => true;
+
     [DllImport("libAaru.Compression.Native", SetLastError = true)]
     static extern nuint AARU_flac_decode_redbook_buffer(byte[] dst_buffer, nuint dst_size, byte[] src_buffer,
                                                         nuint src_size);

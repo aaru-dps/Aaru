@@ -32,6 +32,11 @@ namespace Aaru.Compression;
 
 public class LZFSE
 {
+    /// <summary>
+    /// Set to <c>true</c> if this algorithm is supported, <c>false</c> otherwise.
+    /// </summary>
+    public static bool IsSupported => Native.IsSupported;
+
     [DllImport("libAaru.Compression.Native", SetLastError = true)]
     static extern nuint AARU_lzfse_decode_buffer(byte[] dst_buffer, nuint dst_size, byte[] src_buffer, nuint src_size,
                                                  byte[] scratch_buffer);

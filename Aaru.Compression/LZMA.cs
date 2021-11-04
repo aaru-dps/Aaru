@@ -34,6 +34,11 @@ namespace Aaru.Compression;
 
 public class LZMA
 {
+    /// <summary>
+    /// Set to <c>true</c> if this algorithm is supported, <c>false</c> otherwise.
+    /// </summary>
+    public static bool IsSupported => true;
+
     [DllImport("libAaru.Compression.Native", SetLastError = true)]
     static extern int AARU_lzma_decode_buffer(byte[] dst_buffer, ref nuint dst_size, byte[] src_buffer,
                                               ref nuint src_size, byte[] props, nuint propsSize);

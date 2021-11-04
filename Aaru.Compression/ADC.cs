@@ -44,6 +44,11 @@ namespace Aaru.Compression
     /// <summary>Implements the Apple version of RLE</summary>
     public static class ADC
     {
+        /// <summary>
+        /// Set to <c>true</c> if this algorithm is supported, <c>false</c> otherwise.
+        /// </summary>
+        public static bool IsSupported => true;
+
         [DllImport("libAaru.Compression.Native", SetLastError = true)]
         static extern int AARU_adc_decode_buffer(byte[] dst_buffer, int dst_size, byte[] src_buffer, int src_size);
 

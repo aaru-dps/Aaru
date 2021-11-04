@@ -34,6 +34,11 @@ namespace Aaru.Compression;
 
 public class BZip2
 {
+    /// <summary>
+    /// Set to <c>true</c> if this algorithm is supported, <c>false</c> otherwise.
+    /// </summary>
+    public static bool IsSupported => true;
+
     [DllImport("libAaru.Compression.Native", SetLastError = true)]
     static extern int AARU_bzip2_decode_buffer(byte[] dst_buffer, ref uint dst_size, byte[] src_buffer, uint src_size);
 

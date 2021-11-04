@@ -56,6 +56,11 @@ namespace Aaru.Compression
     /// <summary>Implements the TeleDisk version of LZH</summary>
     public class TeleDiskLzh
     {
+        /// <summary>
+        /// Set to <c>true</c> if this algorithm is supported, <c>false</c> otherwise.
+        /// </summary>
+        public static bool IsSupported => true;
+
         const int BUFSZ = 512;
 
         /* LZSS Parameters */
