@@ -61,7 +61,7 @@ namespace Aaru.Compression
 
                 try
                 {
-                    version = get_acn_version();
+                    version = AARU_get_acn_version();
                 }
                 catch
                 {
@@ -78,6 +78,6 @@ namespace Aaru.Compression
         }
 
         [DllImport("libAaru.Compression.Native", SetLastError = true)]
-        static extern ulong get_acn_version();
+        static extern ulong AARU_get_acn_version();
     }
 }
