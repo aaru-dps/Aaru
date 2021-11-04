@@ -74,6 +74,7 @@
     <Compile Include="AppleRle.cs" />
     <Compile Include="BZip2.cs" />
     <Compile Include="LZFSE.cs" />
+    <Compile Include="LZIP.cs" />
     <Compile Include="LZMA.cs" />
     <Compile Include="Native.cs" />
     <Compile Include="TeleDiskLzh.cs" />
