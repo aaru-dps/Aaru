@@ -850,10 +850,11 @@ namespace Aaru.Core
             foreach(DumpHardwareType dump in imageFormat.DumpHardware)
             {
                 foreach(ExtentType extent in dump.Extents)
-                    table.AddRow(Markup.Escape(dump.Manufacturer), Markup.Escape(dump.Model),
-                                 Markup.Escape(dump.Serial), Markup.Escape(dump.Software.Name),
-                                 Markup.Escape(dump.Software.Version), Markup.Escape(dump.Software.OperatingSystem),
-                                 extent.Start.ToString(), extent.End.ToString());
+                    table.AddRow(Markup.Escape(dump.Manufacturer ?? ""), Markup.Escape(dump.Model ?? ""),
+                                 Markup.Escape(dump.Serial ?? ""), Markup.Escape(dump.Software.Name ?? ""),
+                                 Markup.Escape(dump.Software.Version ?? ""),
+                                 Markup.Escape(dump.Software.OperatingSystem ?? ""), extent.Start.ToString(),
+                                 extent.End.ToString());
             }
 
             AaruConsole.WriteLine();
