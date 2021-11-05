@@ -267,7 +267,8 @@ namespace Aaru.DiscImages
                         // Check CRC, if not correct, skip it
                         Crc64Context.Data(data, out byte[] blockCrc);
 
-                        if(BitConverter.ToUInt64(blockCrc, 0) != blockHeader.crc64)
+                        if(BitConverter.ToUInt64(blockCrc, 0) != blockHeader.crc64 &&
+                           blockHeader.crc64                  != 0)
                         {
                             AaruConsole.DebugWriteLine("Aaru Format plugin",
                                                        "Incorrect CRC found: 0x{0:X16} found, expected 0x{1:X16}, continuing...",
