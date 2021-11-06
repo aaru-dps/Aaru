@@ -44,6 +44,9 @@ namespace Aaru.DiscImages
 
         internal NonClosableStream() => _baseStream = new MemoryStream();
 
+        internal NonClosableStream(byte[] buffer, int index, int count) =>
+            _baseStream = new MemoryStream(buffer, index, count);
+
         public override bool CanRead  => _baseStream.CanRead;
         public override bool CanSeek  => _baseStream.CanSeek;
         public override bool CanWrite => _baseStream.CanWrite;

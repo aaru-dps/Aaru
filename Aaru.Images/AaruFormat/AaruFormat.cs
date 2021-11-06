@@ -78,7 +78,6 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using CUETools.Codecs.Flake;
-using SharpCompress.Compressors.LZMA;
 
 namespace Aaru.DiscImages
 {
@@ -95,6 +94,8 @@ namespace Aaru.DiscImages
         /// <summary>Provides checksum for deduplication of sectors.</summary>
         SHA256 _checksumProvider;
         bool _compress;
+        /// <summary>Memory stream to save data before compression</summary>
+        MemoryStream _compressableMemoryStream;
         /// <summary>Provides CRC64.</summary>
         Crc64Context _crc64;
         /// <summary>Header of the currently writing block.</summary>
@@ -109,6 +110,8 @@ namespace Aaru.DiscImages
         bool              _deduplicate;
         /// <summary>On-memory deduplication table indexed by checksum.</summary>
         Dictionary<string, ulong> _deduplicationTable;
+        /// <summary>Dictionary size for compression algorithms</summary>
+        uint _dictionarySize;
         /// <summary><see cref="CUETools.Codecs.Flake" /> writer.</summary>
         AudioEncoder _flakeWriter;
         /// <summary><see cref="CUETools.Codecs.Flake" /> settings.</summary>
@@ -125,11 +128,7 @@ namespace Aaru.DiscImages
         List<IndexEntry> _index;
         /// <summary>If set to <c>true</c>, the DDT entries are in-memory.</summary>
         bool _inMemoryDdt;
-        ulong _lastWrittenBlock;
-        /// <summary>LZMA stream.</summary>
-        LzmaStream _lzmaBlockStream;
-        /// <summary>LZMA properties.</summary>
-        LzmaEncoderProperties _lzmaEncoderProperties;
+        ulong      _lastWrittenBlock;
         Md5Context _md5Provider;
         /// <summary>Cache of media tags.</summary>
         Dictionary<MediaTagType, byte[]> _mediaTags;

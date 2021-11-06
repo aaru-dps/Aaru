@@ -44,12 +44,12 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
+using Aaru.Compression;
 using Aaru.Console;
 using Aaru.Decoders.CD;
 using CUETools.Codecs;
 using CUETools.Codecs.Flake;
 using Schemas;
-using SharpCompress.Compressors.LZMA;
 using Marshal = Aaru.Helpers.Marshal;
 using Session = Aaru.CommonTypes.Structs.Session;
 using TrackType = Aaru.CommonTypes.Enums.TrackType;
@@ -235,12 +235,17 @@ namespace Aaru.DiscImages
                             byte[]   lzmaProperties  = new byte[LZMA_PROPERTIES_LENGTH];
                             _imageStream.Read(lzmaProperties, 0, LZMA_PROPERTIES_LENGTH);
                             _imageStream.Read(compressedTag, 0, compressedTag.Length);
-                            var compressedTagMs = new MemoryStream(compressedTag);
-                            var lzmaBlock       = new LzmaStream(lzmaProperties, compressedTagMs);
                             data = new byte[blockHeader.length];
-                            lzmaBlock.Read(data, 0, (int)blockHeader.length);
-                            lzmaBlock.Close();
-                            compressedTagMs.Close();
+                            int decompressedLength = LZMA.DecodeBuffer(compressedTag, data, lzmaProperties);
+
+                            if(decompressedLength != blockHeader.length)
+                            {
+                                AaruConsole.DebugWriteLine("Aaru Format plugin",
+                                                           "Error decompressing block, should be {0} bytes but got {1} bytes.",
+                                                           blockHeader.length, decompressedLength);
+
+                                return ErrorNumber.InOutError;
+                            }
 
                             if(blockHeader.compression == CompressionType.LzmaClauniaSubchannelTransform)
                                 data = ClauniaSubchannelUntransform(data);
@@ -436,12 +441,20 @@ namespace Aaru.DiscImages
                                         byte[]   lzmaProperties = new byte[LZMA_PROPERTIES_LENGTH];
                                         _imageStream.Read(lzmaProperties, 0, LZMA_PROPERTIES_LENGTH);
                                         _imageStream.Read(compressedDdt, 0, compressedDdt.Length);
-                                        var    compressedDdtMs = new MemoryStream(compressedDdt);
-                                        var    lzmaDdt         = new LzmaStream(lzmaProperties, compressedDdtMs);
                                         byte[] decompressedDdt = new byte[ddtHeader.length];
-                                        lzmaDdt.Read(decompressedDdt, 0, (int)ddtHeader.length);
-                                        lzmaDdt.Close();
-                                        compressedDdtMs.Close();
+
+                                        ulong decompressedLength =
+                                            (ulong)LZMA.DecodeBuffer(compressedDdt, decompressedDdt, lzmaProperties);
+
+                                        if(decompressedLength != ddtHeader.length)
+                                        {
+                                            AaruConsole.DebugWriteLine("Aaru Format plugin",
+                                                                       "Error decompressing DDT, should be {0} bytes but got {1} bytes.",
+                                                                       ddtHeader.length, decompressedLength);
+
+                                            return ErrorNumber.InOutError;
+                                        }
+
                                         _userDataDdt = MemoryMarshal.Cast<byte, ulong>(decompressedDdt).ToArray();
                                         DateTime ddtEnd = DateTime.UtcNow;
                                         _inMemoryDdt = true;
@@ -490,12 +503,20 @@ namespace Aaru.DiscImages
                                         byte[]   lzmaProperties = new byte[LZMA_PROPERTIES_LENGTH];
                                         _imageStream.Read(lzmaProperties, 0, LZMA_PROPERTIES_LENGTH);
                                         _imageStream.Read(compressedDdt, 0, compressedDdt.Length);
-                                        var compressedDdtMs = new MemoryStream(compressedDdt);
-                                        var lzmaDdt         = new LzmaStream(lzmaProperties, compressedDdtMs);
-                                        lzmaDdt.Read(decompressedDdt, 0, (int)ddtHeader.length);
-                                        lzmaDdt.Close();
-                                        compressedDdtMs.Close();
+
+                                        ulong decompressedLength =
+                                            (ulong)LZMA.DecodeBuffer(compressedDdt, decompressedDdt, lzmaProperties);
+
                                         DateTime ddtEnd = DateTime.UtcNow;
+
+                                        if(decompressedLength != ddtHeader.length)
+                                        {
+                                            AaruConsole.DebugWriteLine("Aaru Format plugin",
+                                                                       "Error decompressing DDT, should be {0} bytes but got {1} bytes.",
+                                                                       ddtHeader.length, decompressedLength);
+
+                                            return ErrorNumber.InOutError;
+                                        }
 
                                         AaruConsole.DebugWriteLine("Aaru Format plugin",
                                                                    "Took {0} seconds to decompress DDT",
@@ -1551,12 +1572,17 @@ namespace Aaru.DiscImages
                     byte[] lzmaProperties  = new byte[LZMA_PROPERTIES_LENGTH];
                     _imageStream.Read(lzmaProperties, 0, LZMA_PROPERTIES_LENGTH);
                     _imageStream.Read(compressedBlock, 0, compressedBlock.Length);
-                    var compressedBlockMs = new MemoryStream(compressedBlock);
-                    var lzmaBlock         = new LzmaStream(lzmaProperties, compressedBlockMs);
                     block = new byte[blockHeader.length];
-                    lzmaBlock.Read(block, 0, (int)blockHeader.length);
-                    lzmaBlock.Close();
-                    compressedBlockMs.Close();
+                    ulong decompressedLength = (ulong)LZMA.DecodeBuffer(compressedBlock, block, lzmaProperties);
+
+                    if(decompressedLength != blockHeader.length)
+                    {
+                        AaruConsole.DebugWriteLine("Aaru Format plugin",
+                                                   "Error decompressing block, should be {0} bytes but got {1} bytes.",
+                                                   blockHeader.length, decompressedLength);
+
+                        return ErrorNumber.InOutError;
+                    }
 
                     AaruConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
                                                GC.GetTotalMemory(false));
