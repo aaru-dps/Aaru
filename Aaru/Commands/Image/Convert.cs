@@ -1051,6 +1051,12 @@ namespace Aaru.Commands.Image
                                             case SectorTagType.CdTrackIsrc:
                                                 errno = inputFormat.ReadSectorTag(track.Sequence, tag, out sector);
 
+                                                if(errno == ErrorNumber.NoData)
+                                                {
+                                                    errno = ErrorNumber.NoError;
+                                                    continue;
+                                                }
+
                                                 if(errno == ErrorNumber.NoError)
                                                     result = outputFormat.WriteSectorTag(sector, track.Sequence, tag);
                                                 else
@@ -1230,7 +1236,7 @@ namespace Aaru.Commands.Image
                                     }
                                 });
 
-                    if(errno != ErrorNumber.NoError)
+                    if(errno != ErrorNumber.NoError && !force)
                         return (int)errno;
                 }
 
