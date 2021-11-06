@@ -44,13 +44,10 @@ using Aaru.Checksums;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
-using Aaru.Compression;
 using Aaru.Console;
 using Aaru.Decoders;
 using Aaru.Decoders.CD;
 using Aaru.Helpers;
-using CUETools.Codecs;
-using CUETools.Codecs.Flake;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
 using Session = Aaru.CommonTypes.Structs.Session;
@@ -1631,37 +1628,6 @@ namespace Aaru.DiscImages
 
             _imageStream.Seek(0, SeekOrigin.End);
 
-            _flakeWriterSettings = new EncoderSettings
-            {
-                PCM                = AudioPCMConfig.RedBook,
-                DoMD5              = false,
-                BlockSize          = (1 << _shift) * SAMPLES_PER_SECTOR,
-                MinFixedOrder      = 0,
-                MaxFixedOrder      = 4,
-                MinLPCOrder        = 1,
-                MaxLPCOrder        = 32,
-                MaxPartitionOrder  = 8,
-                StereoMethod       = StereoMethod.Evaluate,
-                PredictionType     = PredictionType.Search,
-                WindowMethod       = WindowMethod.EvaluateN,
-                EstimationDepth    = 5,
-                MinPrecisionSearch = 1,
-                MaxPrecisionSearch = 1,
-                TukeyParts         = 0,
-                TukeyOverlap       = 1.0,
-                TukeyP             = 1.0,
-                AllowNonSubset     = true
-            };
-
-            // Check if FLAKE's block size is bigger than what we want
-            if(_flakeWriterSettings.BlockSize > MAX_FLAKE_BLOCK)
-                _flakeWriterSettings.BlockSize = MAX_FLAKE_BLOCK;
-
-            if(_flakeWriterSettings.BlockSize < MIN_FLAKE_BLOCK)
-                _flakeWriterSettings.BlockSize = MIN_FLAKE_BLOCK;
-
-            AudioEncoder.Vendor = "Aaru";
-
             IsWriting    = true;
             ErrorMessage = null;
 
@@ -1792,18 +1758,28 @@ namespace Aaru.DiscImages
                 {
                     case CompressionType.Flac:
                     {
-                        long remaining = _currentBlockOffset * SAMPLES_PER_SECTOR % _flakeWriter.Settings.BlockSize;
+                        uint currentSamples = _currentBlockOffset * SAMPLES_PER_SECTOR;
+                        uint flacBlockSize  = _currentBlockOffset * SAMPLES_PER_SECTOR;
+
+                        if(flacBlockSize > MAX_FLAKE_BLOCK)
+                            flacBlockSize = MAX_FLAKE_BLOCK;
+
+                        if(flacBlockSize < MIN_FLAKE_BLOCK)
+                            flacBlockSize = MIN_FLAKE_BLOCK;
+
+                        long remaining = currentSamples % flacBlockSize;
 
                         // Fill FLAC block
                         if(remaining != 0)
-                        {
-                            var audioBuffer =
-                                new AudioBuffer(AudioPCMConfig.RedBook, new byte[remaining * 4], (int)remaining);
+                            _compressableMemoryStream.Write(new byte[remaining * 4], 0, (int)(remaining * 4));
 
-                            _flakeWriter.Write(audioBuffer);
-                        }
+                        byte[] compressedBuffer = new byte[_compressableMemoryStream.Length + 262144];
 
-                        _flakeWriter.Close();
+                        int compressedLength = FLAC.EncodeBuffer(_compressableMemoryStream.ToArray(), compressedBuffer,
+                                                                 flacBlockSize, true, 0, "partial_tukey(0/1.0/1.0)", 0,
+                                                                 true, false, 0, 8, "Aaru");
+
+                        _blockStream = new NonClosableStream(compressedBuffer, 0, compressedLength);
 
                         break;
                     }
@@ -1894,12 +1870,6 @@ namespace Aaru.DiscImages
                 switch(_currentBlockHeader.compression)
                 {
                     case CompressionType.Flac:
-                        _flakeWriter = new AudioEncoder(_flakeWriterSettings, "", _blockStream)
-                        {
-                            DoSeekTable = false
-                        };
-
-                        break;
                     case CompressionType.Lzma:
                         _compressableMemoryStream = new MemoryStream();
 
@@ -1919,10 +1889,7 @@ namespace Aaru.DiscImages
                 _deduplicationTable.Add(hashString, ddtEntry);
 
             if(_currentBlockHeader.compression == CompressionType.Flac)
-            {
-                var audioBuffer = new AudioBuffer(AudioPCMConfig.RedBook, data, SAMPLES_PER_SECTOR);
-                _flakeWriter.Write(audioBuffer);
-            }
+                _compressableMemoryStream.Write(data, 0, data.Length);
             else
             {
                 _decompressedStream.Write(data, 0, data.Length);
@@ -2526,18 +2493,28 @@ namespace Aaru.DiscImages
 
                 if(_currentBlockHeader.compression == CompressionType.Flac)
                 {
-                    long remaining = _currentBlockOffset * SAMPLES_PER_SECTOR % _flakeWriter.Settings.BlockSize;
+                    uint currentSamples = _currentBlockOffset * SAMPLES_PER_SECTOR;
+                    uint flacBlockSize  = _currentBlockOffset * SAMPLES_PER_SECTOR;
+
+                    if(flacBlockSize > MAX_FLAKE_BLOCK)
+                        flacBlockSize = MAX_FLAKE_BLOCK;
+
+                    if(flacBlockSize < MIN_FLAKE_BLOCK)
+                        flacBlockSize = MIN_FLAKE_BLOCK;
+
+                    long remaining = currentSamples % flacBlockSize;
 
                     // Fill FLAC block
                     if(remaining != 0)
-                    {
-                        var audioBuffer =
-                            new AudioBuffer(AudioPCMConfig.RedBook, new byte[remaining * 4], (int)remaining);
+                        _compressableMemoryStream.Write(new byte[remaining * 4], 0, (int)(remaining * 4));
 
-                        _flakeWriter.Write(audioBuffer);
-                    }
+                    byte[] compressedBuffer = new byte[_compressableMemoryStream.Length + 262144];
 
-                    _flakeWriter.Close();
+                    int compressedLength = FLAC.EncodeBuffer(_compressableMemoryStream.ToArray(), compressedBuffer,
+                                                             flacBlockSize, true, 0, "partial_tukey(0/1.0/1.0)", 0,
+                                                             true, false, 0, 8, "Aaru");
+
+                    _blockStream = new NonClosableStream(compressedBuffer, 0, compressedLength);
                 }
                 else if(_currentBlockHeader.compression == CompressionType.Lzma)
                 {

@@ -77,7 +77,6 @@ using Aaru.Checksums;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
-using CUETools.Codecs.Flake;
 
 namespace Aaru.DiscImages
 {
@@ -112,10 +111,6 @@ namespace Aaru.DiscImages
         Dictionary<string, ulong> _deduplicationTable;
         /// <summary>Dictionary size for compression algorithms</summary>
         uint _dictionarySize;
-        /// <summary><see cref="CUETools.Codecs.Flake" /> writer.</summary>
-        AudioEncoder _flakeWriter;
-        /// <summary><see cref="CUETools.Codecs.Flake" /> settings.</summary>
-        EncoderSettings _flakeWriterSettings;
         /// <summary>Block with logical geometry.</summary>
         GeometryBlock _geometryBlock;
         /// <summary>Image header.</summary>

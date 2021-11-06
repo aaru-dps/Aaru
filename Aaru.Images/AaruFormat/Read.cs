@@ -47,8 +47,6 @@ using Aaru.CommonTypes.Structs;
 using Aaru.Compression;
 using Aaru.Console;
 using Aaru.Decoders.CD;
-using CUETools.Codecs;
-using CUETools.Codecs.Flake;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
 using Session = Aaru.CommonTypes.Structs.Session;
@@ -1557,6 +1555,8 @@ namespace Aaru.DiscImages
             // Decompress block
             AaruConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes", GC.GetTotalMemory(false));
 
+            ulong decompressedLength;
+
             switch(blockHeader.compression)
             {
                 case CompressionType.None:
@@ -1573,7 +1573,7 @@ namespace Aaru.DiscImages
                     _imageStream.Read(lzmaProperties, 0, LZMA_PROPERTIES_LENGTH);
                     _imageStream.Read(compressedBlock, 0, compressedBlock.Length);
                     block = new byte[blockHeader.length];
-                    ulong decompressedLength = (ulong)LZMA.DecodeBuffer(compressedBlock, block, lzmaProperties);
+                    decompressedLength = (ulong)LZMA.DecodeBuffer(compressedBlock, block, lzmaProperties);
 
                     if(decompressedLength != blockHeader.length)
                     {
@@ -1591,14 +1591,17 @@ namespace Aaru.DiscImages
                 case CompressionType.Flac:
                     byte[] flacBlock = new byte[blockHeader.cmpLength];
                     _imageStream.Read(flacBlock, 0, flacBlock.Length);
-                    var flacMs      = new MemoryStream(flacBlock);
-                    var flakeReader = new AudioDecoder(new DecoderSettings(), "", flacMs);
                     block = new byte[blockHeader.length];
-                    int samples     = (int)(block.Length / blockHeader.sectorSize * 588);
-                    var audioBuffer = new AudioBuffer(AudioPCMConfig.RedBook, block, samples);
-                    flakeReader.Read(audioBuffer, samples);
-                    flakeReader.Close();
-                    flacMs.Close();
+                    decompressedLength = (ulong)FLAC.DecodeBuffer(flacBlock, block);
+
+                    if(decompressedLength != blockHeader.length)
+                    {
+                        AaruConsole.DebugWriteLine("Aaru Format plugin",
+                                                   "Error decompressing block, should be {0} bytes but got {1} bytes.",
+                                                   blockHeader.length, decompressedLength);
+
+                        return ErrorNumber.InOutError;
+                    }
 
                     AaruConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
                                                GC.GetTotalMemory(false));
