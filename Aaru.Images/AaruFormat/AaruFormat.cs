@@ -90,7 +90,8 @@ namespace Aaru.DiscImages
         Dictionary<ulong, BlockHeader> _blockHeaderCache;
         /// <summary>Provides checksum for deduplication of sectors.</summary>
         SHA256 _checksumProvider;
-        bool _compress;
+        bool   _compress;
+        byte[] _compressedBuffer;
         /// <summary>Provides CRC64.</summary>
         Crc64Context _crc64;
         /// <summary>Header of the currently writing block.</summary>
@@ -101,8 +102,6 @@ namespace Aaru.DiscImages
         uint _currentCacheSize;
         /// <summary>Cache of DDT entries.</summary>
         Dictionary<ulong, ulong> _ddtEntryCache;
-
-        //NonClosableStream _decompressedStream;
         bool _deduplicate;
         /// <summary>On-memory deduplication table indexed by checksum.</summary>
         Dictionary<string, ulong> _deduplicationTable;

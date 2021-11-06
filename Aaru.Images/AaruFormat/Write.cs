@@ -1754,7 +1754,6 @@ namespace Aaru.DiscImages
                 var cmpCrc64Context = new Crc64Context();
 
                 byte[] lzmaProperties   = Array.Empty<byte>();
-                byte[] compressedBuffer = new byte[_writingBuffer.Length];
                 int    compressedLength = 0;
 
                 switch(_currentBlockHeader.compression)
@@ -1777,7 +1776,7 @@ namespace Aaru.DiscImages
                             for(int r = 0; r < remaining * 4; r++)
                                 _writingBuffer[_writingBufferPosition + r] = 0;
 
-                        compressedLength = FLAC.EncodeBuffer(_writingBuffer, compressedBuffer, flacBlockSize, true,
+                        compressedLength = FLAC.EncodeBuffer(_writingBuffer, _compressedBuffer, flacBlockSize, true,
                                                              false, "partial_tukey(0/1.0/1.0)", 12, 0, true, false, 0,
                                                              8, "Aaru");
 
@@ -1788,7 +1787,7 @@ namespace Aaru.DiscImages
                     }
                     case CompressionType.Lzma:
                     {
-                        compressedLength = LZMA.EncodeBuffer(_writingBuffer, compressedBuffer, out lzmaProperties, 9,
+                        compressedLength = LZMA.EncodeBuffer(_writingBuffer, _compressedBuffer, out lzmaProperties, 9,
                                                              _dictionarySize, 3, 0, 2, 273);
 
                         cmpCrc64Context.Update(lzmaProperties);
@@ -1807,7 +1806,7 @@ namespace Aaru.DiscImages
                 }
                 else
                 {
-                    cmpCrc64Context.Update(compressedBuffer, (uint)compressedLength);
+                    cmpCrc64Context.Update(_compressedBuffer, (uint)compressedLength);
                     _currentBlockHeader.cmpCrc64  = BitConverter.ToUInt64(cmpCrc64Context.Final(), 0);
                     _currentBlockHeader.cmpLength = (uint)compressedLength;
                 }
@@ -1833,15 +1832,15 @@ namespace Aaru.DiscImages
                 if(_currentBlockHeader.compression == CompressionType.None)
                     _imageStream.Write(_writingBuffer, 0, _writingBufferPosition);
                 else
-                    _imageStream.Write(compressedBuffer, 0, compressedLength);
+                    _imageStream.Write(_compressedBuffer, 0, compressedLength);
 
-                _writingBuffer = null;
+                _writingBufferPosition = 0;
                 GC.Collect(GC.MaxGeneration, GCCollectionMode.Optimized, false);
                 _currentBlockOffset = 0;
             }
 
             // No block set
-            if(_writingBuffer == null)
+            if(_writingBufferPosition == 0)
             {
                 _currentBlockHeader = new BlockHeader
                 {
@@ -1866,8 +1865,15 @@ namespace Aaru.DiscImages
                    _currentBlockHeader.compression == CompressionType.Flac)
                     _currentBlockHeader.compression = CompressionType.Lzma;
 
-                // TODO: Create at file creation
-                _writingBuffer         = new byte[(1 << _shift) * data.Length * 2];
+                int maxBufferSize = ((1 << _shift) * data.Length) + (MAX_FLAKE_BLOCK * 4);
+
+                if(_writingBuffer        == null ||
+                   _writingBuffer.Length < maxBufferSize)
+                {
+                    _writingBuffer    = new byte[maxBufferSize];
+                    _compressedBuffer = new byte[maxBufferSize * 2];
+                }
+
                 _writingBufferPosition = 0;
                 _crc64                 = new Crc64Context();
             }
@@ -2472,7 +2478,6 @@ namespace Aaru.DiscImages
                 var cmpCrc64Context = new Crc64Context();
 
                 byte[] lzmaProperties   = Array.Empty<byte>();
-                byte[] compressedBuffer = new byte[_writingBuffer.Length];
                 int    compressedLength = 0;
 
                 switch(_currentBlockHeader.compression)
@@ -2495,7 +2500,7 @@ namespace Aaru.DiscImages
                             for(int r = 0; r < remaining * 4; r++)
                                 _writingBuffer[_writingBufferPosition + r] = 0;
 
-                        compressedLength = FLAC.EncodeBuffer(_writingBuffer, compressedBuffer, flacBlockSize, true,
+                        compressedLength = FLAC.EncodeBuffer(_writingBuffer, _compressedBuffer, flacBlockSize, true,
                                                              false, "partial_tukey(0/1.0/1.0)", 12, 0, true, false, 0,
                                                              8, "Aaru");
 
@@ -2506,7 +2511,7 @@ namespace Aaru.DiscImages
                     }
                     case CompressionType.Lzma:
                     {
-                        compressedLength = LZMA.EncodeBuffer(_writingBuffer, compressedBuffer, out lzmaProperties, 9,
+                        compressedLength = LZMA.EncodeBuffer(_writingBuffer, _compressedBuffer, out lzmaProperties, 9,
                                                              _dictionarySize, 3, 0, 2, 273);
 
                         cmpCrc64Context.Update(lzmaProperties);
@@ -2525,7 +2530,7 @@ namespace Aaru.DiscImages
                 }
                 else
                 {
-                    cmpCrc64Context.Update(compressedBuffer, (uint)compressedLength);
+                    cmpCrc64Context.Update(_compressedBuffer, (uint)compressedLength);
                     _currentBlockHeader.cmpCrc64  = BitConverter.ToUInt64(cmpCrc64Context.Final(), 0);
                     _currentBlockHeader.cmpLength = (uint)compressedLength;
                 }
@@ -2551,7 +2556,7 @@ namespace Aaru.DiscImages
                 if(_currentBlockHeader.compression == CompressionType.None)
                     _imageStream.Write(_writingBuffer, 0, _writingBufferPosition);
                 else
-                    _imageStream.Write(compressedBuffer, 0, compressedLength);
+                    _imageStream.Write(_compressedBuffer, 0, compressedLength);
 
                 _writingBuffer = null;
             }
