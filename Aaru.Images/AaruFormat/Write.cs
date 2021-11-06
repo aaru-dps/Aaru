@@ -44,6 +44,7 @@ using Aaru.Checksums;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
+using Aaru.Compression;
 using Aaru.Console;
 using Aaru.Decoders;
 using Aaru.Decoders.CD;
@@ -1776,8 +1777,8 @@ namespace Aaru.DiscImages
                         byte[] compressedBuffer = new byte[_compressableMemoryStream.Length + 262144];
 
                         int compressedLength = FLAC.EncodeBuffer(_compressableMemoryStream.ToArray(), compressedBuffer,
-                                                                 flacBlockSize, true, 0, "partial_tukey(0/1.0/1.0)", 0,
-                                                                 true, false, 0, 8, "Aaru");
+                                                                 flacBlockSize, true, false, "partial_tukey(0/1.0/1.0)",
+                                                                 12, 0, true, false, 0, 8, "Aaru");
 
                         _blockStream = new NonClosableStream(compressedBuffer, 0, compressedLength);
 
@@ -2511,8 +2512,8 @@ namespace Aaru.DiscImages
                     byte[] compressedBuffer = new byte[_compressableMemoryStream.Length + 262144];
 
                     int compressedLength = FLAC.EncodeBuffer(_compressableMemoryStream.ToArray(), compressedBuffer,
-                                                             flacBlockSize, true, 0, "partial_tukey(0/1.0/1.0)", 0,
-                                                             true, false, 0, 8, "Aaru");
+                                                             flacBlockSize, true, false, "partial_tukey(0/1.0/1.0)", 12,
+                                                             0, true, false, 0, 8, "Aaru");
 
                     _blockStream = new NonClosableStream(compressedBuffer, 0, compressedLength);
                 }

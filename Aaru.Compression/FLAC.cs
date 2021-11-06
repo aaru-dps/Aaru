@@ -48,6 +48,7 @@ public class FLAC
     static extern nuint AARU_flac_encode_redbook_buffer(byte[] dst_buffer, nuint dst_size, byte[] src_buffer,
                                                         nuint src_size, uint blocksize, int do_mid_side_stereo,
                                                         int loose_mid_side_stereo, string apodization,
+                                                        uint max_lpc_order,
                                                         uint qlp_coeff_precision, int do_qlp_coeff_prec_search,
                                                         int do_exhaustive_model_search,
                                                         uint min_residual_partition_order,
@@ -80,7 +81,7 @@ public class FLAC
     /// <param name="destination">Buffer to store the compressed data</param>
     /// <returns></returns>
     public static int EncodeBuffer(byte[] source, byte[] destination, uint blockSize, bool doMidSideStereo,
-                                   int looseMidSideStereo, string apodization, uint qlpCoeffPrecision,
+                                   bool looseMidSideStereo, string apodization, uint max_lpc_order, uint qlpCoeffPrecision,
                                    bool doQlpCoeffPrecSearch, bool doExhaustiveModelSearch,
                                    uint minResidualPartitionOrder, uint maxResidualPartitionOrder,
                                    string applicationID)
@@ -88,7 +89,7 @@ public class FLAC
         if(Native.IsSupported)
             return (int)AARU_flac_encode_redbook_buffer(destination, (nuint)destination.Length, source,
                                                         (nuint)source.Length, blockSize, doMidSideStereo ? 1 : 0,
-                                                        looseMidSideStereo, apodization, qlpCoeffPrecision,
+                                                        looseMidSideStereo ? 1 : 0, apodization, max_lpc_order, qlpCoeffPrecision,
                                                         doQlpCoeffPrecSearch ? 1 : 0,
                                                         doExhaustiveModelSearch ? 1 : 0,
                                                         minResidualPartitionOrder, maxResidualPartitionOrder,
