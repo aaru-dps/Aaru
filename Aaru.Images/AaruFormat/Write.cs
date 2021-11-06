@@ -465,7 +465,7 @@ namespace Aaru.DiscImages
                                 case DataType.CdSectorPrefixCorrected:
                                     if(entry.dataType == DataType.CdSectorPrefixCorrected)
                                     {
-                                        _sectorPrefixMs = new NonClosableStream();
+                                        _sectorPrefixMs = new MemoryStream();
                                         _sectorPrefixMs.Write(data, 0, data.Length);
                                     }
                                     else
@@ -485,7 +485,7 @@ namespace Aaru.DiscImages
                                 case DataType.CdSectorSuffixCorrected:
                                     if(entry.dataType == DataType.CdSectorSuffixCorrected)
                                     {
-                                        _sectorSuffixMs = new NonClosableStream();
+                                        _sectorSuffixMs = new MemoryStream();
                                         _sectorSuffixMs.Write(data, 0, data.Length);
                                     }
                                     else
@@ -1737,7 +1737,7 @@ namespace Aaru.DiscImages
             }
 
             // Close current block first
-            if(_blockStream != null &&
+            if(_writingBuffer != null &&
 
                // When sector siz changes
                (_currentBlockHeader.sectorSize != data.Length ||
@@ -1753,7 +1753,9 @@ namespace Aaru.DiscImages
 
                 var cmpCrc64Context = new Crc64Context();
 
-                byte[] lzmaProperties = Array.Empty<byte>();
+                byte[] lzmaProperties   = Array.Empty<byte>();
+                byte[] compressedBuffer = new byte[_writingBuffer.Length];
+                int    compressedLength = 0;
 
                 switch(_currentBlockHeader.compression)
                 {
@@ -1772,29 +1774,26 @@ namespace Aaru.DiscImages
 
                         // Fill FLAC block
                         if(remaining != 0)
-                            _compressableMemoryStream.Write(new byte[remaining * 4], 0, (int)(remaining * 4));
+                            for(int r = 0; r < remaining * 4; r++)
+                                _writingBuffer[_writingBufferPosition + r] = 0;
 
-                        byte[] compressedBuffer = new byte[_compressableMemoryStream.Length + 262144];
+                        compressedLength = FLAC.EncodeBuffer(_writingBuffer, compressedBuffer, flacBlockSize, true,
+                                                             false, "partial_tukey(0/1.0/1.0)", 12, 0, true, false, 0,
+                                                             8, "Aaru");
 
-                        int compressedLength = FLAC.EncodeBuffer(_compressableMemoryStream.ToArray(), compressedBuffer,
-                                                                 flacBlockSize, true, false, "partial_tukey(0/1.0/1.0)",
-                                                                 12, 0, true, false, 0, 8, "Aaru");
-
-                        _blockStream = new NonClosableStream(compressedBuffer, 0, compressedLength);
+                        if(compressedLength >= _writingBufferPosition)
+                            _currentBlockHeader.compression = CompressionType.None;
 
                         break;
                     }
                     case CompressionType.Lzma:
                     {
-                        byte[] compressedBuffer = new byte[_compressableMemoryStream.Length + 262144];
+                        compressedLength = LZMA.EncodeBuffer(_writingBuffer, compressedBuffer, out lzmaProperties, 9,
+                                                             _dictionarySize, 3, 0, 2, 273);
 
-                        int compressedLength = LZMA.EncodeBuffer(_compressableMemoryStream.ToArray(), compressedBuffer,
-                                                                 out lzmaProperties, 9, _dictionarySize, 3, 0, 2, 273);
-
-                        _blockStream = new NonClosableStream(compressedBuffer, 0, compressedLength);
                         cmpCrc64Context.Update(lzmaProperties);
 
-                        if(_blockStream.Length >= _decompressedStream.Length)
+                        if(compressedLength >= _writingBufferPosition)
                             _currentBlockHeader.compression = CompressionType.None;
 
                         break;
@@ -1803,16 +1802,15 @@ namespace Aaru.DiscImages
 
                 if(_currentBlockHeader.compression == CompressionType.None)
                 {
-                    _blockStream                 = _decompressedStream;
-                    _currentBlockHeader.cmpCrc64 = _currentBlockHeader.crc64;
+                    _currentBlockHeader.cmpCrc64  = _currentBlockHeader.crc64;
+                    _currentBlockHeader.cmpLength = (uint)_writingBufferPosition;
                 }
                 else
                 {
-                    cmpCrc64Context.Update(_blockStream.ToArray());
-                    _currentBlockHeader.cmpCrc64 = BitConverter.ToUInt64(cmpCrc64Context.Final(), 0);
+                    cmpCrc64Context.Update(compressedBuffer, (uint)compressedLength);
+                    _currentBlockHeader.cmpCrc64  = BitConverter.ToUInt64(cmpCrc64Context.Final(), 0);
+                    _currentBlockHeader.cmpLength = (uint)compressedLength;
                 }
-
-                _currentBlockHeader.cmpLength = (uint)_blockStream.Length;
 
                 if(_currentBlockHeader.compression == CompressionType.Lzma)
                     _currentBlockHeader.cmpLength += LZMA_PROPERTIES_LENGTH;
@@ -1832,15 +1830,18 @@ namespace Aaru.DiscImages
                 if(_currentBlockHeader.compression == CompressionType.Lzma)
                     _imageStream.Write(lzmaProperties, 0, lzmaProperties.Length);
 
-                _imageStream.Write(_blockStream.ToArray(), 0, (int)_blockStream.Length);
-                _blockStream.Close();
-                _blockStream = null;
+                if(_currentBlockHeader.compression == CompressionType.None)
+                    _imageStream.Write(_writingBuffer, 0, _writingBufferPosition);
+                else
+                    _imageStream.Write(compressedBuffer, 0, compressedLength);
+
+                _writingBuffer = null;
                 GC.Collect(GC.MaxGeneration, GCCollectionMode.Optimized, false);
                 _currentBlockOffset = 0;
             }
 
             // No block set
-            if(_blockStream == null)
+            if(_writingBuffer == null)
             {
                 _currentBlockHeader = new BlockHeader
                 {
@@ -1865,23 +1866,10 @@ namespace Aaru.DiscImages
                    _currentBlockHeader.compression == CompressionType.Flac)
                     _currentBlockHeader.compression = CompressionType.Lzma;
 
-                _blockStream        = new NonClosableStream();
-                _decompressedStream = new NonClosableStream();
-
-                switch(_currentBlockHeader.compression)
-                {
-                    case CompressionType.Flac:
-                    case CompressionType.Lzma:
-                        _compressableMemoryStream = new MemoryStream();
-
-                        break;
-                    default:
-                        _compressableMemoryStream = null;
-
-                        break;
-                }
-
-                _crc64 = new Crc64Context();
+                // TODO: Create at file creation
+                _writingBuffer         = new byte[(1 << _shift) * data.Length * 2];
+                _writingBufferPosition = 0;
+                _crc64                 = new Crc64Context();
             }
 
             ulong ddtEntry = (ulong)((_imageStream.Position << _shift) + _currentBlockOffset);
@@ -1889,15 +1877,8 @@ namespace Aaru.DiscImages
             if(hash != null)
                 _deduplicationTable.Add(hashString, ddtEntry);
 
-            if(_currentBlockHeader.compression == CompressionType.Flac)
-                _compressableMemoryStream.Write(data, 0, data.Length);
-            else
-            {
-                _decompressedStream.Write(data, 0, data.Length);
-
-                if(_currentBlockHeader.compression == CompressionType.Lzma)
-                    _compressableMemoryStream.Write(data, 0, data.Length);
-            }
+            Array.Copy(data, 0, _writingBuffer, _writingBufferPosition, data.Length);
+            _writingBufferPosition += data.Length;
 
             SetDdtEntry(sectorAddress, ddtEntry);
             _crc64.Update(data);
@@ -2022,9 +2003,9 @@ namespace Aaru.DiscImages
                                 return WriteSector(sector, sectorAddress);
                             }
 
-                            _sectorSuffixMs ??= new NonClosableStream();
+                            _sectorSuffixMs ??= new MemoryStream();
 
-                            _sectorPrefixMs ??= new NonClosableStream();
+                            _sectorPrefixMs ??= new MemoryStream();
 
                             if(_sectorSuffixDdt == null)
                             {
@@ -2117,9 +2098,9 @@ namespace Aaru.DiscImages
                                 return WriteSector(sector, sectorAddress);
                             }
 
-                            _sectorSuffixMs ??= new NonClosableStream();
+                            _sectorSuffixMs ??= new MemoryStream();
 
-                            _sectorPrefixMs ??= new NonClosableStream();
+                            _sectorPrefixMs ??= new MemoryStream();
 
                             if(_sectorSuffixDdt == null)
                             {
@@ -2483,66 +2464,71 @@ namespace Aaru.DiscImages
             }
 
             // Close current block first
-            if(_blockStream != null)
+            if(_writingBuffer != null)
             {
                 _currentBlockHeader.length = _currentBlockOffset * _currentBlockHeader.sectorSize;
                 _currentBlockHeader.crc64  = BitConverter.ToUInt64(_crc64.Final(), 0);
 
                 var cmpCrc64Context = new Crc64Context();
 
-                byte[] lzmaProperties = Array.Empty<byte>();
+                byte[] lzmaProperties   = Array.Empty<byte>();
+                byte[] compressedBuffer = new byte[_writingBuffer.Length];
+                int    compressedLength = 0;
 
-                if(_currentBlockHeader.compression == CompressionType.Flac)
+                switch(_currentBlockHeader.compression)
                 {
-                    uint currentSamples = _currentBlockOffset * SAMPLES_PER_SECTOR;
-                    uint flacBlockSize  = _currentBlockOffset * SAMPLES_PER_SECTOR;
+                    case CompressionType.Flac:
+                    {
+                        uint currentSamples = _currentBlockOffset * SAMPLES_PER_SECTOR;
+                        uint flacBlockSize  = _currentBlockOffset * SAMPLES_PER_SECTOR;
 
-                    if(flacBlockSize > MAX_FLAKE_BLOCK)
-                        flacBlockSize = MAX_FLAKE_BLOCK;
+                        if(flacBlockSize > MAX_FLAKE_BLOCK)
+                            flacBlockSize = MAX_FLAKE_BLOCK;
 
-                    if(flacBlockSize < MIN_FLAKE_BLOCK)
-                        flacBlockSize = MIN_FLAKE_BLOCK;
+                        if(flacBlockSize < MIN_FLAKE_BLOCK)
+                            flacBlockSize = MIN_FLAKE_BLOCK;
 
-                    long remaining = currentSamples % flacBlockSize;
+                        long remaining = currentSamples % flacBlockSize;
 
-                    // Fill FLAC block
-                    if(remaining != 0)
-                        _compressableMemoryStream.Write(new byte[remaining * 4], 0, (int)(remaining * 4));
+                        // Fill FLAC block
+                        if(remaining != 0)
+                            for(int r = 0; r < remaining * 4; r++)
+                                _writingBuffer[_writingBufferPosition + r] = 0;
 
-                    byte[] compressedBuffer = new byte[_compressableMemoryStream.Length + 262144];
+                        compressedLength = FLAC.EncodeBuffer(_writingBuffer, compressedBuffer, flacBlockSize, true,
+                                                             false, "partial_tukey(0/1.0/1.0)", 12, 0, true, false, 0,
+                                                             8, "Aaru");
 
-                    int compressedLength = FLAC.EncodeBuffer(_compressableMemoryStream.ToArray(), compressedBuffer,
-                                                             flacBlockSize, true, false, "partial_tukey(0/1.0/1.0)", 12,
-                                                             0, true, false, 0, 8, "Aaru");
+                        if(compressedLength >= _writingBufferPosition)
+                            _currentBlockHeader.compression = CompressionType.None;
 
-                    _blockStream = new NonClosableStream(compressedBuffer, 0, compressedLength);
-                }
-                else if(_currentBlockHeader.compression == CompressionType.Lzma)
-                {
-                    byte[] compressedBuffer = new byte[_compressableMemoryStream.Length + 262144];
+                        break;
+                    }
+                    case CompressionType.Lzma:
+                    {
+                        compressedLength = LZMA.EncodeBuffer(_writingBuffer, compressedBuffer, out lzmaProperties, 9,
+                                                             _dictionarySize, 3, 0, 2, 273);
 
-                    int compressedLength = LZMA.EncodeBuffer(_compressableMemoryStream.ToArray(), compressedBuffer,
-                                                             out lzmaProperties, 9, _dictionarySize, 3, 0, 2, 273);
+                        cmpCrc64Context.Update(lzmaProperties);
 
-                    _blockStream = new NonClosableStream(compressedBuffer, 0, compressedLength);
-                    cmpCrc64Context.Update(lzmaProperties);
+                        if(compressedLength >= _writingBufferPosition)
+                            _currentBlockHeader.compression = CompressionType.None;
 
-                    if(_blockStream.Length >= _decompressedStream.Length)
-                        _currentBlockHeader.compression = CompressionType.None;
+                        break;
+                    }
                 }
 
                 if(_currentBlockHeader.compression == CompressionType.None)
                 {
-                    _blockStream                 = _decompressedStream;
-                    _currentBlockHeader.cmpCrc64 = _currentBlockHeader.crc64;
+                    _currentBlockHeader.cmpCrc64  = _currentBlockHeader.crc64;
+                    _currentBlockHeader.cmpLength = (uint)_writingBufferPosition;
                 }
                 else
                 {
-                    cmpCrc64Context.Update(_blockStream.ToArray());
-                    _currentBlockHeader.cmpCrc64 = BitConverter.ToUInt64(cmpCrc64Context.Final(), 0);
+                    cmpCrc64Context.Update(compressedBuffer, (uint)compressedLength);
+                    _currentBlockHeader.cmpCrc64  = BitConverter.ToUInt64(cmpCrc64Context.Final(), 0);
+                    _currentBlockHeader.cmpLength = (uint)compressedLength;
                 }
-
-                _currentBlockHeader.cmpLength = (uint)_blockStream.Length;
 
                 if(_currentBlockHeader.compression == CompressionType.Lzma)
                     _currentBlockHeader.cmpLength += LZMA_PROPERTIES_LENGTH;
@@ -2562,9 +2548,12 @@ namespace Aaru.DiscImages
                 if(_currentBlockHeader.compression == CompressionType.Lzma)
                     _imageStream.Write(lzmaProperties, 0, lzmaProperties.Length);
 
-                _imageStream.Write(_blockStream.ToArray(), 0, (int)_blockStream.Length);
-                _blockStream.ReallyClose();
-                _blockStream = null;
+                if(_currentBlockHeader.compression == CompressionType.None)
+                    _imageStream.Write(_writingBuffer, 0, _writingBufferPosition);
+                else
+                    _imageStream.Write(compressedBuffer, 0, compressedLength);
+
+                _writingBuffer = null;
             }
 
             if(_deduplicate)
@@ -2573,6 +2562,9 @@ namespace Aaru.DiscImages
                                            (double)_deduplicationTable.Count / _writtenSectors);
 
             IndexEntry idxEntry;
+
+            // TODO: Reuse buffer
+            MemoryStream blockStream;
 
             // Write media tag blocks
             foreach(KeyValuePair<MediaTagType, byte[]> mediaTag in _mediaTags)
@@ -2611,12 +2603,12 @@ namespace Aaru.DiscImages
                 int cmpLen = LZMA.EncodeBuffer(mediaTag.Value, cmpBuffer, out byte[] lzmaProperties, 9, _dictionarySize,
                                                3, 0, 2, 273);
 
-                _blockStream = new NonClosableStream(cmpBuffer, 0, cmpLen);
+                blockStream = new MemoryStream(cmpBuffer, 0, cmpLen);
 
                 byte[] tagData;
 
                 // Not compressible
-                if(_blockStream.Length + LZMA_PROPERTIES_LENGTH >= mediaTag.Value.Length)
+                if(blockStream.Length + LZMA_PROPERTIES_LENGTH >= mediaTag.Value.Length)
                 {
                     tagBlock.cmpLength   = tagBlock.length;
                     tagBlock.cmpCrc64    = tagBlock.crc64;
@@ -2625,7 +2617,7 @@ namespace Aaru.DiscImages
                 }
                 else
                 {
-                    tagData = _blockStream.ToArray();
+                    tagData = blockStream.ToArray();
                     var crc64Ctx = new Crc64Context();
                     crc64Ctx.Update(lzmaProperties);
                     crc64Ctx.Update(tagData);
@@ -2635,8 +2627,7 @@ namespace Aaru.DiscImages
                     tagBlock.compression = CompressionType.Lzma;
                 }
 
-                _blockStream.ReallyClose();
-                _blockStream = null;
+                blockStream.Close();
 
                 _structureBytes = new byte[Marshal.SizeOf<BlockHeader>()];
                 MemoryMarshal.Write(_structureBytes, ref tagBlock);
@@ -3086,12 +3077,12 @@ namespace Aaru.DiscImages
                 int cmpLen = LZMA.EncodeBuffer(ddtEntries, cmpBuffer, out byte[] lzmaProperties, 9, _dictionarySize, 3,
                                                0, 2, 273);
 
-                _blockStream = new NonClosableStream(cmpBuffer, 0, cmpLen);
+                blockStream = new MemoryStream(cmpBuffer, 0, cmpLen);
 
-                ddtHeader.cmpLength = (uint)_blockStream.Length + LZMA_PROPERTIES_LENGTH;
+                ddtHeader.cmpLength = (uint)blockStream.Length + LZMA_PROPERTIES_LENGTH;
                 var cmpCrc64Context = new Crc64Context();
                 cmpCrc64Context.Update(lzmaProperties);
-                cmpCrc64Context.Update(_blockStream.ToArray());
+                cmpCrc64Context.Update(blockStream.ToArray());
                 ddtHeader.cmpCrc64 = BitConverter.ToUInt64(cmpCrc64Context.Final(), 0);
 
                 _structureBytes = new byte[Marshal.SizeOf<DdtHeader>()];
@@ -3099,9 +3090,8 @@ namespace Aaru.DiscImages
                 _imageStream.Write(_structureBytes, 0, _structureBytes.Length);
                 _structureBytes = null;
                 _imageStream.Write(lzmaProperties, 0, lzmaProperties.Length);
-                _imageStream.Write(_blockStream.ToArray(), 0, (int)_blockStream.Length);
-                _blockStream.ReallyClose();
-                _blockStream = null;
+                _imageStream.Write(blockStream.ToArray(), 0, (int)blockStream.Length);
+                blockStream.Close();
 
                 _index.RemoveAll(t => t.blockType == BlockType.DeDuplicationTable && t.dataType == DataType.UserData);
 
@@ -3147,7 +3137,7 @@ namespace Aaru.DiscImages
                             prefixBlock.compression = CompressionType.None;
                             prefixBlock.cmpCrc64    = prefixBlock.crc64;
                             prefixBlock.cmpLength   = prefixBlock.length;
-                            _blockStream            = new NonClosableStream(_sectorPrefix);
+                            blockStream             = new MemoryStream(_sectorPrefix);
                         }
                         else
                         {
@@ -3158,13 +3148,13 @@ namespace Aaru.DiscImages
                             int cmpLen = LZMA.EncodeBuffer(_sectorPrefix, cmpBuffer, out lzmaProperties, 9,
                                                            _dictionarySize, 3, 0, 2, 273);
 
-                            _blockStream = new NonClosableStream(cmpBuffer, 0, cmpLen);
+                            blockStream = new MemoryStream(cmpBuffer, 0, cmpLen);
 
                             var cmpCrc = new Crc64Context();
                             cmpCrc.Update(lzmaProperties);
-                            cmpCrc.Update(_blockStream.ToArray());
+                            cmpCrc.Update(blockStream.ToArray());
                             blockCrc                = cmpCrc.Final();
-                            prefixBlock.cmpLength   = (uint)_blockStream.Length + LZMA_PROPERTIES_LENGTH;
+                            prefixBlock.cmpLength   = (uint)blockStream.Length + LZMA_PROPERTIES_LENGTH;
                             prefixBlock.cmpCrc64    = BitConverter.ToUInt64(blockCrc, 0);
                             prefixBlock.compression = CompressionType.Lzma;
 
@@ -3181,9 +3171,8 @@ namespace Aaru.DiscImages
                         if(prefixBlock.compression == CompressionType.Lzma)
                             _imageStream.Write(lzmaProperties, 0, lzmaProperties.Length);
 
-                        _imageStream.Write(_blockStream.ToArray(), 0, (int)_blockStream.Length);
-                        _blockStream.ReallyClose();
-                        _blockStream = null;
+                        _imageStream.Write(blockStream.ToArray(), 0, (int)blockStream.Length);
+                        blockStream.Close();
 
                         _index.RemoveAll(t => t.blockType == BlockType.DataBlock &&
                                               t.dataType  == DataType.CdSectorPrefix);
@@ -3216,7 +3205,7 @@ namespace Aaru.DiscImages
                             prefixBlock.compression = CompressionType.None;
                             prefixBlock.cmpCrc64    = prefixBlock.crc64;
                             prefixBlock.cmpLength   = prefixBlock.length;
-                            _blockStream            = new NonClosableStream(_sectorSuffix);
+                            blockStream             = new MemoryStream(_sectorSuffix);
                         }
                         else
                         {
@@ -3227,13 +3216,13 @@ namespace Aaru.DiscImages
                             int cmpLen = LZMA.EncodeBuffer(_sectorSuffix, cmpBuffer, out lzmaProperties, 9,
                                                            _dictionarySize, 3, 0, 2, 273);
 
-                            _blockStream = new NonClosableStream(cmpBuffer, 0, cmpLen);
+                            blockStream = new MemoryStream(cmpBuffer, 0, cmpLen);
 
                             var cmpCrc = new Crc64Context();
                             cmpCrc.Update(lzmaProperties);
-                            cmpCrc.Update(_blockStream.ToArray());
+                            cmpCrc.Update(blockStream.ToArray());
                             blockCrc                = cmpCrc.Final();
-                            prefixBlock.cmpLength   = (uint)_blockStream.Length + LZMA_PROPERTIES_LENGTH;
+                            prefixBlock.cmpLength   = (uint)blockStream.Length + LZMA_PROPERTIES_LENGTH;
                             prefixBlock.cmpCrc64    = BitConverter.ToUInt64(blockCrc, 0);
                             prefixBlock.compression = CompressionType.Lzma;
 
@@ -3250,14 +3239,13 @@ namespace Aaru.DiscImages
                         if(prefixBlock.compression == CompressionType.Lzma)
                             _imageStream.Write(lzmaProperties, 0, lzmaProperties.Length);
 
-                        _imageStream.Write(_blockStream.ToArray(), 0, (int)_blockStream.Length);
+                        _imageStream.Write(blockStream.ToArray(), 0, (int)blockStream.Length);
 
                         _index.RemoveAll(t => t.blockType == BlockType.DataBlock &&
                                               t.dataType  == DataType.CdSectorSuffix);
 
                         _index.Add(idxEntry);
-                        _blockStream.ReallyClose();
-                        _blockStream = null;
+                        blockStream.Close();
                     }
                     else if(_sectorSuffixMs  != null &&
                             _sectorSuffixDdt != null &&
@@ -3345,12 +3333,12 @@ namespace Aaru.DiscImages
                         int cmpLen = LZMA.EncodeBuffer(ddtEntries, cmpBuffer, out byte[] lzmaProperties, 9,
                                                        _dictionarySize, 3, 0, 2, 273);
 
-                        _blockStream = new NonClosableStream(cmpBuffer, 0, cmpLen);
+                        blockStream = new MemoryStream(cmpBuffer, 0, cmpLen);
 
-                        ddtHeader.cmpLength = (uint)_blockStream.Length + LZMA_PROPERTIES_LENGTH;
+                        ddtHeader.cmpLength = (uint)blockStream.Length + LZMA_PROPERTIES_LENGTH;
                         var cmpCrc64Context = new Crc64Context();
                         cmpCrc64Context.Update(lzmaProperties);
-                        cmpCrc64Context.Update(_blockStream.ToArray());
+                        cmpCrc64Context.Update(blockStream.ToArray());
                         ddtHeader.cmpCrc64 = BitConverter.ToUInt64(cmpCrc64Context.Final(), 0);
 
                         _structureBytes = new byte[Marshal.SizeOf<DdtHeader>()];
@@ -3358,9 +3346,8 @@ namespace Aaru.DiscImages
                         _imageStream.Write(_structureBytes, 0, _structureBytes.Length);
                         _structureBytes = null;
                         _imageStream.Write(lzmaProperties, 0, lzmaProperties.Length);
-                        _imageStream.Write(_blockStream.ToArray(), 0, (int)_blockStream.Length);
-                        _blockStream.ReallyClose();
-                        _blockStream = null;
+                        _imageStream.Write(blockStream.ToArray(), 0, (int)blockStream.Length);
+                        blockStream.Close();
 
                         _index.RemoveAll(t => t.blockType == BlockType.DeDuplicationTable &&
                                               t.dataType  == DataType.CdSectorPrefixCorrected);
@@ -3396,12 +3383,12 @@ namespace Aaru.DiscImages
                         cmpLen = LZMA.EncodeBuffer(ddtEntries, cmpBuffer, out lzmaProperties, 9, _dictionarySize, 3, 0,
                                                    2, 273);
 
-                        _blockStream = new NonClosableStream(cmpBuffer, 0, cmpLen);
+                        blockStream = new MemoryStream(cmpBuffer, 0, cmpLen);
 
-                        ddtHeader.cmpLength = (uint)_blockStream.Length + LZMA_PROPERTIES_LENGTH;
+                        ddtHeader.cmpLength = (uint)blockStream.Length + LZMA_PROPERTIES_LENGTH;
                         cmpCrc64Context     = new Crc64Context();
                         cmpCrc64Context.Update(lzmaProperties);
-                        cmpCrc64Context.Update(_blockStream.ToArray());
+                        cmpCrc64Context.Update(blockStream.ToArray());
                         ddtHeader.cmpCrc64 = BitConverter.ToUInt64(cmpCrc64Context.Final(), 0);
 
                         _structureBytes = new byte[Marshal.SizeOf<DdtHeader>()];
@@ -3409,9 +3396,8 @@ namespace Aaru.DiscImages
                         _imageStream.Write(_structureBytes, 0, _structureBytes.Length);
                         _structureBytes = null;
                         _imageStream.Write(lzmaProperties, 0, lzmaProperties.Length);
-                        _imageStream.Write(_blockStream.ToArray(), 0, (int)_blockStream.Length);
-                        _blockStream.ReallyClose();
-                        _blockStream = null;
+                        _imageStream.Write(blockStream.ToArray(), 0, (int)blockStream.Length);
+                        blockStream.Close();
 
                         _index.RemoveAll(t => t.blockType == BlockType.DeDuplicationTable &&
                                               t.dataType  == DataType.CdSectorSuffixCorrected);
@@ -3448,7 +3434,7 @@ namespace Aaru.DiscImages
                             prefixBlock.compression = CompressionType.None;
                             prefixBlock.cmpCrc64    = prefixBlock.crc64;
                             prefixBlock.cmpLength   = prefixBlock.length;
-                            _blockStream            = _sectorPrefixMs;
+                            blockStream             = _sectorPrefixMs;
                         }
                         else
                         {
@@ -3460,13 +3446,13 @@ namespace Aaru.DiscImages
                             cmpLen = LZMA.EncodeBuffer(sectorPrefixBuffer, cmpBuffer, out lzmaProperties, 9,
                                                        _dictionarySize, 3, 0, 2, 273);
 
-                            _blockStream = new NonClosableStream(cmpBuffer, 0, cmpLen);
+                            blockStream = new MemoryStream(cmpBuffer, 0, cmpLen);
 
                             var cmpCrc = new Crc64Context();
                             cmpCrc.Update(lzmaProperties);
-                            cmpCrc.Update(_blockStream.ToArray());
+                            cmpCrc.Update(blockStream.ToArray());
                             blockCrc                = cmpCrc.Final();
-                            prefixBlock.cmpLength   = (uint)_blockStream.Length + LZMA_PROPERTIES_LENGTH;
+                            prefixBlock.cmpLength   = (uint)blockStream.Length + LZMA_PROPERTIES_LENGTH;
                             prefixBlock.cmpCrc64    = BitConverter.ToUInt64(blockCrc, 0);
                             prefixBlock.compression = CompressionType.Lzma;
 
@@ -3483,9 +3469,8 @@ namespace Aaru.DiscImages
                         if(prefixBlock.compression == CompressionType.Lzma)
                             _imageStream.Write(lzmaProperties, 0, lzmaProperties.Length);
 
-                        _imageStream.Write(_blockStream.ToArray(), 0, (int)_blockStream.Length);
-                        _blockStream.ReallyClose();
-                        _blockStream = null;
+                        _imageStream.Write(blockStream.ToArray(), 0, (int)blockStream.Length);
+                        blockStream.Close();
 
                         _index.RemoveAll(t => t.blockType == BlockType.DataBlock &&
                                               t.dataType  == DataType.CdSectorPrefixCorrected);
@@ -3521,7 +3506,7 @@ namespace Aaru.DiscImages
                             suffixBlock.compression = CompressionType.None;
                             suffixBlock.cmpCrc64    = suffixBlock.crc64;
                             suffixBlock.cmpLength   = suffixBlock.length;
-                            _blockStream            = _sectorSuffixMs;
+                            blockStream             = _sectorSuffixMs;
                         }
                         else
                         {
@@ -3533,13 +3518,13 @@ namespace Aaru.DiscImages
                             cmpLen = LZMA.EncodeBuffer(sectorSuffixBuffer, cmpBuffer, out lzmaProperties, 9,
                                                        _dictionarySize, 3, 0, 2, 273);
 
-                            _blockStream = new NonClosableStream(cmpBuffer, 0, cmpLen);
+                            blockStream = new MemoryStream(cmpBuffer, 0, cmpLen);
 
                             var cmpCrc = new Crc64Context();
                             cmpCrc.Update(lzmaProperties);
-                            cmpCrc.Update(_blockStream.ToArray());
+                            cmpCrc.Update(blockStream.ToArray());
                             blockCrc                = cmpCrc.Final();
-                            suffixBlock.cmpLength   = (uint)_blockStream.Length + LZMA_PROPERTIES_LENGTH;
+                            suffixBlock.cmpLength   = (uint)blockStream.Length + LZMA_PROPERTIES_LENGTH;
                             suffixBlock.cmpCrc64    = BitConverter.ToUInt64(blockCrc, 0);
                             suffixBlock.compression = CompressionType.Lzma;
 
@@ -3556,9 +3541,8 @@ namespace Aaru.DiscImages
                         if(suffixBlock.compression == CompressionType.Lzma)
                             _imageStream.Write(lzmaProperties, 0, lzmaProperties.Length);
 
-                        _imageStream.Write(_blockStream.ToArray(), 0, (int)_blockStream.Length);
-                        _blockStream.ReallyClose();
-                        _blockStream = null;
+                        _imageStream.Write(blockStream.ToArray(), 0, (int)blockStream.Length);
+                        blockStream.Close();
 
                         _index.RemoveAll(t => t.blockType == BlockType.DataBlock &&
                                               t.dataType  == DataType.CdSectorSuffixCorrected);
@@ -3597,7 +3581,7 @@ namespace Aaru.DiscImages
                             subheaderBlock.compression = CompressionType.None;
                             subheaderBlock.cmpCrc64    = subheaderBlock.crc64;
                             subheaderBlock.cmpLength   = subheaderBlock.length;
-                            _blockStream               = new NonClosableStream(_mode2Subheaders);
+                            blockStream                = new MemoryStream(_mode2Subheaders);
                         }
                         else
                         {
@@ -3608,13 +3592,13 @@ namespace Aaru.DiscImages
                             int cmpLen = LZMA.EncodeBuffer(_mode2Subheaders, cmpBuffer, out lzmaProperties, 9,
                                                            _dictionarySize, 3, 0, 2, 273);
 
-                            _blockStream = new NonClosableStream(cmpBuffer, 0, cmpLen);
+                            blockStream = new MemoryStream(cmpBuffer, 0, cmpLen);
 
                             var cmpCrc = new Crc64Context();
                             cmpCrc.Update(lzmaProperties);
-                            cmpCrc.Update(_blockStream.ToArray());
+                            cmpCrc.Update(blockStream.ToArray());
                             blockCrc                   = cmpCrc.Final();
-                            subheaderBlock.cmpLength   = (uint)_blockStream.Length + LZMA_PROPERTIES_LENGTH;
+                            subheaderBlock.cmpLength   = (uint)blockStream.Length + LZMA_PROPERTIES_LENGTH;
                             subheaderBlock.cmpCrc64    = BitConverter.ToUInt64(blockCrc, 0);
                             subheaderBlock.compression = CompressionType.Lzma;
 
@@ -3632,14 +3616,13 @@ namespace Aaru.DiscImages
                         if(subheaderBlock.compression == CompressionType.Lzma)
                             _imageStream.Write(lzmaProperties, 0, lzmaProperties.Length);
 
-                        _imageStream.Write(_blockStream.ToArray(), 0, (int)_blockStream.Length);
+                        _imageStream.Write(blockStream.ToArray(), 0, (int)blockStream.Length);
 
                         _index.RemoveAll(t => t.blockType == BlockType.DataBlock &&
                                               t.dataType  == DataType.CompactDiscMode2Subheader);
 
                         _index.Add(idxEntry);
-                        _blockStream.ReallyClose();
-                        _blockStream = null;
+                        blockStream.Close();
                     }
 
                     if(_sectorSubchannel != null)
@@ -3672,7 +3655,7 @@ namespace Aaru.DiscImages
                             subchannelBlock.compression = CompressionType.None;
                             subchannelBlock.cmpCrc64    = subchannelBlock.crc64;
                             subchannelBlock.cmpLength   = subchannelBlock.length;
-                            _blockStream                = new NonClosableStream(_sectorSubchannel);
+                            blockStream                 = new MemoryStream(_sectorSubchannel);
                         }
                         else
                         {
@@ -3684,13 +3667,13 @@ namespace Aaru.DiscImages
                             int cmpLen = LZMA.EncodeBuffer(transformedSubchannel, cmpBuffer, out lzmaProperties, 9,
                                                            _dictionarySize, 3, 0, 2, 273);
 
-                            _blockStream = new NonClosableStream(cmpBuffer, 0, cmpLen);
+                            blockStream = new MemoryStream(cmpBuffer, 0, cmpLen);
 
                             var cmpCrc = new Crc64Context();
                             cmpCrc.Update(lzmaProperties);
-                            cmpCrc.Update(_blockStream.ToArray());
+                            cmpCrc.Update(blockStream.ToArray());
                             blockCrc                    = cmpCrc.Final();
-                            subchannelBlock.cmpLength   = (uint)_blockStream.Length + LZMA_PROPERTIES_LENGTH;
+                            subchannelBlock.cmpLength   = (uint)blockStream.Length + LZMA_PROPERTIES_LENGTH;
                             subchannelBlock.cmpCrc64    = BitConverter.ToUInt64(blockCrc, 0);
                             subchannelBlock.compression = CompressionType.LzmaClauniaSubchannelTransform;
 
@@ -3708,14 +3691,13 @@ namespace Aaru.DiscImages
                            subchannelBlock.compression == CompressionType.LzmaClauniaSubchannelTransform)
                             _imageStream.Write(lzmaProperties, 0, lzmaProperties.Length);
 
-                        _imageStream.Write(_blockStream.ToArray(), 0, (int)_blockStream.Length);
+                        _imageStream.Write(blockStream.ToArray(), 0, (int)blockStream.Length);
 
                         _index.RemoveAll(t => t.blockType == BlockType.DataBlock &&
                                               t.dataType  == DataType.CdSectorSubchannel);
 
                         _index.Add(idxEntry);
-                        _blockStream.ReallyClose();
-                        _blockStream = null;
+                        blockStream.Close();
                     }
 
                     if(_sectorCpiMai != null)
@@ -3748,7 +3730,7 @@ namespace Aaru.DiscImages
                             cpiMaiBlock.compression = CompressionType.None;
                             cpiMaiBlock.cmpCrc64    = cpiMaiBlock.crc64;
                             cpiMaiBlock.cmpLength   = cpiMaiBlock.length;
-                            _blockStream            = new NonClosableStream(_sectorCpiMai);
+                            blockStream             = new MemoryStream(_sectorCpiMai);
                         }
                         else
                         {
@@ -3759,13 +3741,13 @@ namespace Aaru.DiscImages
                             int cmpLen = LZMA.EncodeBuffer(_sectorCpiMai, cmpBuffer, out lzmaProperties, 9,
                                                            _dictionarySize, 3, 0, 2, 273);
 
-                            _blockStream = new NonClosableStream(cmpBuffer, 0, cmpLen);
+                            blockStream = new MemoryStream(cmpBuffer, 0, cmpLen);
 
                             var cmpCrc = new Crc64Context();
                             cmpCrc.Update(lzmaProperties);
-                            cmpCrc.Update(_blockStream.ToArray());
+                            cmpCrc.Update(blockStream.ToArray());
                             blockCrc                = cmpCrc.Final();
-                            cpiMaiBlock.cmpLength   = (uint)_blockStream.Length + LZMA_PROPERTIES_LENGTH;
+                            cpiMaiBlock.cmpLength   = (uint)blockStream.Length + LZMA_PROPERTIES_LENGTH;
                             cpiMaiBlock.cmpCrc64    = BitConverter.ToUInt64(blockCrc, 0);
                             cpiMaiBlock.compression = CompressionType.Lzma;
 
@@ -3783,14 +3765,13 @@ namespace Aaru.DiscImages
                            cpiMaiBlock.compression == CompressionType.LzmaClauniaSubchannelTransform)
                             _imageStream.Write(lzmaProperties, 0, lzmaProperties.Length);
 
-                        _imageStream.Write(_blockStream.ToArray(), 0, (int)_blockStream.Length);
+                        _imageStream.Write(blockStream.ToArray(), 0, (int)blockStream.Length);
 
                         _index.RemoveAll(t => t.blockType == BlockType.DataBlock &&
                                               t.dataType  == DataType.DvdSectorCpiMai);
 
                         _index.Add(idxEntry);
-                        _blockStream.ReallyClose();
-                        _blockStream = null;
+                        blockStream.Close();
                     }
 
                     if(_sectorDecryptedTitleKey != null)
@@ -3824,7 +3805,7 @@ namespace Aaru.DiscImages
                             titleKeyBlock.compression = CompressionType.None;
                             titleKeyBlock.cmpCrc64    = titleKeyBlock.crc64;
                             titleKeyBlock.cmpLength   = titleKeyBlock.length;
-                            _blockStream              = new NonClosableStream(_sectorDecryptedTitleKey);
+                            blockStream               = new MemoryStream(_sectorDecryptedTitleKey);
                         }
                         else
                         {
@@ -3835,13 +3816,13 @@ namespace Aaru.DiscImages
                             int cmpLen = LZMA.EncodeBuffer(_sectorDecryptedTitleKey, cmpBuffer, out lzmaProperties, 9,
                                                            _dictionarySize, 3, 0, 2, 273);
 
-                            _blockStream = new NonClosableStream(cmpBuffer, 0, cmpLen);
+                            blockStream = new MemoryStream(cmpBuffer, 0, cmpLen);
 
                             var cmpCrc = new Crc64Context();
                             cmpCrc.Update(lzmaProperties);
-                            cmpCrc.Update(_blockStream.ToArray());
+                            cmpCrc.Update(blockStream.ToArray());
                             blockCrc                  = cmpCrc.Final();
-                            titleKeyBlock.cmpLength   = (uint)_blockStream.Length + LZMA_PROPERTIES_LENGTH;
+                            titleKeyBlock.cmpLength   = (uint)blockStream.Length + LZMA_PROPERTIES_LENGTH;
                             titleKeyBlock.cmpCrc64    = BitConverter.ToUInt64(blockCrc, 0);
                             titleKeyBlock.compression = CompressionType.Lzma;
 
@@ -3860,14 +3841,13 @@ namespace Aaru.DiscImages
                            titleKeyBlock.compression == CompressionType.LzmaClauniaSubchannelTransform)
                             _imageStream.Write(lzmaProperties, 0, lzmaProperties.Length);
 
-                        _imageStream.Write(_blockStream.ToArray(), 0, (int)_blockStream.Length);
+                        _imageStream.Write(blockStream.ToArray(), 0, (int)blockStream.Length);
 
                         _index.RemoveAll(t => t.blockType == BlockType.DataBlock &&
                                               t.dataType  == DataType.DvdSectorTitleKeyDecrypted);
 
                         _index.Add(idxEntry);
-                        _blockStream.ReallyClose();
-                        _blockStream = null;
+                        blockStream.Close();
                     }
 
                     List<TrackEntry>            trackEntries            = new();
@@ -3915,7 +3895,7 @@ namespace Aaru.DiscImages
                     // If there are tracks build the tracks block
                     if(trackEntries.Count > 0)
                     {
-                        _blockStream = new NonClosableStream();
+                        blockStream = new MemoryStream();
 
                         foreach(TrackEntry entry in trackEntries)
                         {
@@ -3929,10 +3909,10 @@ namespace Aaru.DiscImages
                                                                         _structureBytes.Length);
 
                             System.Runtime.InteropServices.Marshal.FreeHGlobal(_structurePointer);
-                            _blockStream.Write(_structureBytes, 0, _structureBytes.Length);
+                            blockStream.Write(_structureBytes, 0, _structureBytes.Length);
                         }
 
-                        Crc64Context.Data(_blockStream.ToArray(), out byte[] trksCrc);
+                        Crc64Context.Data(blockStream.ToArray(), out byte[] trksCrc);
 
                         var trkHeader = new TracksHeader
                         {
@@ -3956,15 +3936,14 @@ namespace Aaru.DiscImages
                         _structureBytes = new byte[Marshal.SizeOf<TracksHeader>()];
                         MemoryMarshal.Write(_structureBytes, ref trkHeader);
                         _imageStream.Write(_structureBytes, 0, _structureBytes.Length);
-                        _imageStream.Write(_blockStream.ToArray(), 0, (int)_blockStream.Length);
-                        _blockStream.ReallyClose();
-                        _blockStream = null;
+                        _imageStream.Write(blockStream.ToArray(), 0, (int)blockStream.Length);
+                        blockStream.Close();
                     }
 
                     // If there are track indexes bigger than 1
                     if(compactDiscIndexEntries.Any(i => i.Index > 1))
                     {
-                        _blockStream = new NonClosableStream();
+                        blockStream = new MemoryStream();
 
                         foreach(CompactDiscIndexEntry entry in compactDiscIndexEntries)
                         {
@@ -3979,10 +3958,10 @@ namespace Aaru.DiscImages
                                                                         _structureBytes.Length);
 
                             System.Runtime.InteropServices.Marshal.FreeHGlobal(_structurePointer);
-                            _blockStream.Write(_structureBytes, 0, _structureBytes.Length);
+                            blockStream.Write(_structureBytes, 0, _structureBytes.Length);
                         }
 
-                        Crc64Context.Data(_blockStream.ToArray(), out byte[] cdixCrc);
+                        Crc64Context.Data(blockStream.ToArray(), out byte[] cdixCrc);
 
                         var cdixHeader = new CompactDiscIndexesHeader
                         {
@@ -4007,9 +3986,8 @@ namespace Aaru.DiscImages
                         _structureBytes = new byte[Marshal.SizeOf<CompactDiscIndexesHeader>()];
                         MemoryMarshal.Write(_structureBytes, ref cdixHeader);
                         _imageStream.Write(_structureBytes, 0, _structureBytes.Length);
-                        _imageStream.Write(_blockStream.ToArray(), 0, (int)_blockStream.Length);
-                        _blockStream.ReallyClose();
-                        _blockStream = null;
+                        _imageStream.Write(blockStream.ToArray(), 0, (int)blockStream.Length);
+                        blockStream.Close();
                     }
 
                     break;
@@ -4089,7 +4067,7 @@ namespace Aaru.DiscImages
                             subchannelBlock.compression = CompressionType.None;
                             subchannelBlock.cmpCrc64    = subchannelBlock.crc64;
                             subchannelBlock.cmpLength   = subchannelBlock.length;
-                            _blockStream                = new NonClosableStream(_sectorSubchannel);
+                            blockStream                 = new MemoryStream(_sectorSubchannel);
                         }
                         else
                         {
@@ -4098,13 +4076,13 @@ namespace Aaru.DiscImages
                             int cmpLen = LZMA.EncodeBuffer(_sectorSubchannel, cmpBuffer, out lzmaProperties, 9,
                                                            _dictionarySize, 3, 0, 2, 273);
 
-                            _blockStream = new NonClosableStream(cmpBuffer, 0, cmpLen);
+                            blockStream = new MemoryStream(cmpBuffer, 0, cmpLen);
 
                             var cmpCrc = new Crc64Context();
                             cmpCrc.Update(lzmaProperties);
-                            cmpCrc.Update(_blockStream.ToArray());
+                            cmpCrc.Update(blockStream.ToArray());
                             blockCrc                    = cmpCrc.Final();
-                            subchannelBlock.cmpLength   = (uint)_blockStream.Length + LZMA_PROPERTIES_LENGTH;
+                            subchannelBlock.cmpLength   = (uint)blockStream.Length + LZMA_PROPERTIES_LENGTH;
                             subchannelBlock.cmpCrc64    = BitConverter.ToUInt64(blockCrc, 0);
                             subchannelBlock.compression = CompressionType.Lzma;
                         }
@@ -4116,13 +4094,12 @@ namespace Aaru.DiscImages
                         if(subchannelBlock.compression == CompressionType.Lzma)
                             _imageStream.Write(lzmaProperties, 0, lzmaProperties.Length);
 
-                        _imageStream.Write(_blockStream.ToArray(), 0, (int)_blockStream.Length);
+                        _imageStream.Write(blockStream.ToArray(), 0, (int)blockStream.Length);
 
                         _index.RemoveAll(t => t.blockType == BlockType.DataBlock && t.dataType == tagType);
 
                         _index.Add(idxEntry);
-                        _blockStream.ReallyClose();
-                        _blockStream = null;
+                        blockStream.Close();
                     }
 
                     break;
@@ -4131,8 +4108,8 @@ namespace Aaru.DiscImages
             // Write metadata if present
             SetMetadataFromTags();
             var metadataBlock = new MetadataBlock();
-            _blockStream = new NonClosableStream();
-            _blockStream.Write(new byte[Marshal.SizeOf<MetadataBlock>()], 0, Marshal.SizeOf<MetadataBlock>());
+            blockStream = new MemoryStream();
+            blockStream.Write(new byte[Marshal.SizeOf<MetadataBlock>()], 0, Marshal.SizeOf<MetadataBlock>());
             byte[] tmpUtf16Le;
 
             if(_imageInfo.MediaSequence     > 0 &&
@@ -4147,11 +4124,11 @@ namespace Aaru.DiscImages
             {
                 tmpUtf16Le                  = Encoding.Unicode.GetBytes(_imageInfo.Creator);
                 metadataBlock.identifier    = BlockType.MetadataBlock;
-                metadataBlock.creatorOffset = (uint)_blockStream.Position;
+                metadataBlock.creatorOffset = (uint)blockStream.Position;
                 metadataBlock.creatorLength = (uint)(tmpUtf16Le.Length + 2);
-                _blockStream.Write(tmpUtf16Le, 0, tmpUtf16Le.Length);
+                blockStream.Write(tmpUtf16Le, 0, tmpUtf16Le.Length);
 
-                _blockStream.Write(new byte[]
+                blockStream.Write(new byte[]
                 {
                     0, 0
                 }, 0, 2);
@@ -4161,11 +4138,11 @@ namespace Aaru.DiscImages
             {
                 tmpUtf16Le                   = Encoding.Unicode.GetBytes(_imageInfo.Comments);
                 metadataBlock.identifier     = BlockType.MetadataBlock;
-                metadataBlock.commentsOffset = (uint)_blockStream.Position;
+                metadataBlock.commentsOffset = (uint)blockStream.Position;
                 metadataBlock.commentsLength = (uint)(tmpUtf16Le.Length + 2);
-                _blockStream.Write(tmpUtf16Le, 0, tmpUtf16Le.Length);
+                blockStream.Write(tmpUtf16Le, 0, tmpUtf16Le.Length);
 
-                _blockStream.Write(new byte[]
+                blockStream.Write(new byte[]
                 {
                     0, 0
                 }, 0, 2);
@@ -4175,11 +4152,11 @@ namespace Aaru.DiscImages
             {
                 tmpUtf16Le                     = Encoding.Unicode.GetBytes(_imageInfo.MediaTitle);
                 metadataBlock.identifier       = BlockType.MetadataBlock;
-                metadataBlock.mediaTitleOffset = (uint)_blockStream.Position;
+                metadataBlock.mediaTitleOffset = (uint)blockStream.Position;
                 metadataBlock.mediaTitleLength = (uint)(tmpUtf16Le.Length + 2);
-                _blockStream.Write(tmpUtf16Le, 0, tmpUtf16Le.Length);
+                blockStream.Write(tmpUtf16Le, 0, tmpUtf16Le.Length);
 
-                _blockStream.Write(new byte[]
+                blockStream.Write(new byte[]
                 {
                     0, 0
                 }, 0, 2);
@@ -4189,11 +4166,11 @@ namespace Aaru.DiscImages
             {
                 tmpUtf16Le                            = Encoding.Unicode.GetBytes(_imageInfo.MediaManufacturer);
                 metadataBlock.identifier              = BlockType.MetadataBlock;
-                metadataBlock.mediaManufacturerOffset = (uint)_blockStream.Position;
+                metadataBlock.mediaManufacturerOffset = (uint)blockStream.Position;
                 metadataBlock.mediaManufacturerLength = (uint)(tmpUtf16Le.Length + 2);
-                _blockStream.Write(tmpUtf16Le, 0, tmpUtf16Le.Length);
+                blockStream.Write(tmpUtf16Le, 0, tmpUtf16Le.Length);
 
-                _blockStream.Write(new byte[]
+                blockStream.Write(new byte[]
                 {
                     0, 0
                 }, 0, 2);
@@ -4203,11 +4180,11 @@ namespace Aaru.DiscImages
             {
                 tmpUtf16Le                     = Encoding.Unicode.GetBytes(_imageInfo.MediaModel);
                 metadataBlock.identifier       = BlockType.MetadataBlock;
-                metadataBlock.mediaModelOffset = (uint)_blockStream.Position;
+                metadataBlock.mediaModelOffset = (uint)blockStream.Position;
                 metadataBlock.mediaModelLength = (uint)(tmpUtf16Le.Length + 2);
-                _blockStream.Write(tmpUtf16Le, 0, tmpUtf16Le.Length);
+                blockStream.Write(tmpUtf16Le, 0, tmpUtf16Le.Length);
 
-                _blockStream.Write(new byte[]
+                blockStream.Write(new byte[]
                 {
                     0, 0
                 }, 0, 2);
@@ -4217,11 +4194,11 @@ namespace Aaru.DiscImages
             {
                 tmpUtf16Le                            = Encoding.Unicode.GetBytes(_imageInfo.MediaSerialNumber);
                 metadataBlock.identifier              = BlockType.MetadataBlock;
-                metadataBlock.mediaSerialNumberOffset = (uint)_blockStream.Position;
+                metadataBlock.mediaSerialNumberOffset = (uint)blockStream.Position;
                 metadataBlock.mediaSerialNumberLength = (uint)(tmpUtf16Le.Length + 2);
-                _blockStream.Write(tmpUtf16Le, 0, tmpUtf16Le.Length);
+                blockStream.Write(tmpUtf16Le, 0, tmpUtf16Le.Length);
 
-                _blockStream.Write(new byte[]
+                blockStream.Write(new byte[]
                 {
                     0, 0
                 }, 0, 2);
@@ -4231,11 +4208,11 @@ namespace Aaru.DiscImages
             {
                 tmpUtf16Le                       = Encoding.Unicode.GetBytes(_imageInfo.MediaBarcode);
                 metadataBlock.identifier         = BlockType.MetadataBlock;
-                metadataBlock.mediaBarcodeOffset = (uint)_blockStream.Position;
+                metadataBlock.mediaBarcodeOffset = (uint)blockStream.Position;
                 metadataBlock.mediaBarcodeLength = (uint)(tmpUtf16Le.Length + 2);
-                _blockStream.Write(tmpUtf16Le, 0, tmpUtf16Le.Length);
+                blockStream.Write(tmpUtf16Le, 0, tmpUtf16Le.Length);
 
-                _blockStream.Write(new byte[]
+                blockStream.Write(new byte[]
                 {
                     0, 0
                 }, 0, 2);
@@ -4245,11 +4222,11 @@ namespace Aaru.DiscImages
             {
                 tmpUtf16Le                          = Encoding.Unicode.GetBytes(_imageInfo.MediaPartNumber);
                 metadataBlock.identifier            = BlockType.MetadataBlock;
-                metadataBlock.mediaPartNumberOffset = (uint)_blockStream.Position;
+                metadataBlock.mediaPartNumberOffset = (uint)blockStream.Position;
                 metadataBlock.mediaPartNumberLength = (uint)(tmpUtf16Le.Length + 2);
-                _blockStream.Write(tmpUtf16Le, 0, tmpUtf16Le.Length);
+                blockStream.Write(tmpUtf16Le, 0, tmpUtf16Le.Length);
 
-                _blockStream.Write(new byte[]
+                blockStream.Write(new byte[]
                 {
                     0, 0
                 }, 0, 2);
@@ -4259,11 +4236,11 @@ namespace Aaru.DiscImages
             {
                 tmpUtf16Le                            = Encoding.Unicode.GetBytes(_imageInfo.DriveManufacturer);
                 metadataBlock.identifier              = BlockType.MetadataBlock;
-                metadataBlock.driveManufacturerOffset = (uint)_blockStream.Position;
+                metadataBlock.driveManufacturerOffset = (uint)blockStream.Position;
                 metadataBlock.driveManufacturerLength = (uint)(tmpUtf16Le.Length + 2);
-                _blockStream.Write(tmpUtf16Le, 0, tmpUtf16Le.Length);
+                blockStream.Write(tmpUtf16Le, 0, tmpUtf16Le.Length);
 
-                _blockStream.Write(new byte[]
+                blockStream.Write(new byte[]
                 {
                     0, 0
                 }, 0, 2);
@@ -4273,11 +4250,11 @@ namespace Aaru.DiscImages
             {
                 tmpUtf16Le                     = Encoding.Unicode.GetBytes(_imageInfo.DriveModel);
                 metadataBlock.identifier       = BlockType.MetadataBlock;
-                metadataBlock.driveModelOffset = (uint)_blockStream.Position;
+                metadataBlock.driveModelOffset = (uint)blockStream.Position;
                 metadataBlock.driveModelLength = (uint)(tmpUtf16Le.Length + 2);
-                _blockStream.Write(tmpUtf16Le, 0, tmpUtf16Le.Length);
+                blockStream.Write(tmpUtf16Le, 0, tmpUtf16Le.Length);
 
-                _blockStream.Write(new byte[]
+                blockStream.Write(new byte[]
                 {
                     0, 0
                 }, 0, 2);
@@ -4287,11 +4264,11 @@ namespace Aaru.DiscImages
             {
                 tmpUtf16Le                            = Encoding.Unicode.GetBytes(_imageInfo.DriveSerialNumber);
                 metadataBlock.identifier              = BlockType.MetadataBlock;
-                metadataBlock.driveSerialNumberOffset = (uint)_blockStream.Position;
+                metadataBlock.driveSerialNumberOffset = (uint)blockStream.Position;
                 metadataBlock.driveSerialNumberLength = (uint)(tmpUtf16Le.Length + 2);
-                _blockStream.Write(tmpUtf16Le, 0, tmpUtf16Le.Length);
+                blockStream.Write(tmpUtf16Le, 0, tmpUtf16Le.Length);
 
-                _blockStream.Write(new byte[]
+                blockStream.Write(new byte[]
                 {
                     0, 0
                 }, 0, 2);
@@ -4301,11 +4278,11 @@ namespace Aaru.DiscImages
             {
                 tmpUtf16Le                                = Encoding.Unicode.GetBytes(_imageInfo.DriveFirmwareRevision);
                 metadataBlock.identifier                  = BlockType.MetadataBlock;
-                metadataBlock.driveFirmwareRevisionOffset = (uint)_blockStream.Position;
+                metadataBlock.driveFirmwareRevisionOffset = (uint)blockStream.Position;
                 metadataBlock.driveFirmwareRevisionLength = (uint)(tmpUtf16Le.Length + 2);
-                _blockStream.Write(tmpUtf16Le, 0, tmpUtf16Le.Length);
+                blockStream.Write(tmpUtf16Le, 0, tmpUtf16Le.Length);
 
-                _blockStream.Write(new byte[]
+                blockStream.Write(new byte[]
                 {
                     0, 0
                 }, 0, 2);
@@ -4317,11 +4294,11 @@ namespace Aaru.DiscImages
                 AaruConsole.DebugWriteLine("Aaru Format plugin", "Writing metadata to position {0}",
                                            _imageStream.Position);
 
-                metadataBlock.blockSize = (uint)_blockStream.Length;
+                metadataBlock.blockSize = (uint)blockStream.Length;
                 _structureBytes         = new byte[Marshal.SizeOf<MetadataBlock>()];
                 MemoryMarshal.Write(_structureBytes, ref metadataBlock);
-                _blockStream.Position = 0;
-                _blockStream.Write(_structureBytes, 0, _structureBytes.Length);
+                blockStream.Position = 0;
+                blockStream.Write(_structureBytes, 0, _structureBytes.Length);
                 _index.RemoveAll(t => t.blockType == BlockType.MetadataBlock && t.dataType == DataType.NoData);
 
                 _index.Add(new IndexEntry
@@ -4331,16 +4308,15 @@ namespace Aaru.DiscImages
                     offset    = (ulong)_imageStream.Position
                 });
 
-                _imageStream.Write(_blockStream.ToArray(), 0, (int)_blockStream.Length);
-                _blockStream.ReallyClose();
-                _blockStream = null;
+                _imageStream.Write(blockStream.ToArray(), 0, (int)blockStream.Length);
+                blockStream.Close();
             }
 
             _header.indexOffset = (ulong)_imageStream.Position;
 
             AaruConsole.DebugWriteLine("Aaru Format plugin", "Writing index to position {0}", _header.indexOffset);
 
-            _blockStream = new NonClosableStream();
+            blockStream = new MemoryStream();
 
             // Write index to memory
             foreach(IndexEntry entry in _index)
@@ -4348,10 +4324,10 @@ namespace Aaru.DiscImages
                 _structureBytes = new byte[Marshal.SizeOf<IndexEntry>()];
                 IndexEntry indexEntry = entry;
                 MemoryMarshal.Write(_structureBytes, ref indexEntry);
-                _blockStream.Write(_structureBytes, 0, _structureBytes.Length);
+                blockStream.Write(_structureBytes, 0, _structureBytes.Length);
             }
 
-            Crc64Context.Data(_blockStream.ToArray(), out byte[] idxCrc);
+            Crc64Context.Data(blockStream.ToArray(), out byte[] idxCrc);
 
             if(_index.Count > ushort.MaxValue)
             {
@@ -4385,9 +4361,8 @@ namespace Aaru.DiscImages
             }
 
             // Write index to disk
-            _imageStream.Write(_blockStream.ToArray(), 0, (int)_blockStream.Length);
-            _blockStream.ReallyClose();
-            _blockStream = null;
+            _imageStream.Write(blockStream.ToArray(), 0, (int)blockStream.Length);
+            blockStream.Close();
 
             AaruConsole.DebugWriteLine("Aaru Format plugin", "Writing header");
             _header.lastWrittenTime = DateTime.UtcNow.ToFileTimeUtc();

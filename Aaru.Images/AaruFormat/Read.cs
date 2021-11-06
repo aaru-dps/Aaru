@@ -293,7 +293,7 @@ namespace Aaru.DiscImages
                             case DataType.CdSectorPrefixCorrected:
                                 if(entry.dataType == DataType.CdSectorPrefixCorrected)
                                 {
-                                    _sectorPrefixMs = new NonClosableStream();
+                                    _sectorPrefixMs = new MemoryStream();
                                     _sectorPrefixMs.Write(data, 0, data.Length);
                                 }
                                 else
@@ -313,7 +313,7 @@ namespace Aaru.DiscImages
                             case DataType.CdSectorSuffixCorrected:
                                 if(entry.dataType == DataType.CdSectorSuffixCorrected)
                                 {
-                                    _sectorSuffixMs = new NonClosableStream();
+                                    _sectorSuffixMs = new MemoryStream();
                                     _sectorSuffixMs.Write(data, 0, data.Length);
                                 }
                                 else
@@ -1572,7 +1572,7 @@ namespace Aaru.DiscImages
                     byte[] lzmaProperties  = new byte[LZMA_PROPERTIES_LENGTH];
                     _imageStream.Read(lzmaProperties, 0, LZMA_PROPERTIES_LENGTH);
                     _imageStream.Read(compressedBlock, 0, compressedBlock.Length);
-                    block = new byte[blockHeader.length];
+                    block              = new byte[blockHeader.length];
                     decompressedLength = (ulong)LZMA.DecodeBuffer(compressedBlock, block, lzmaProperties);
 
                     if(decompressedLength != blockHeader.length)
@@ -1591,7 +1591,7 @@ namespace Aaru.DiscImages
                 case CompressionType.Flac:
                     byte[] flacBlock = new byte[blockHeader.cmpLength];
                     _imageStream.Read(flacBlock, 0, flacBlock.Length);
-                    block = new byte[blockHeader.length];
+                    block              = new byte[blockHeader.length];
                     decompressedLength = (ulong)FLAC.DecodeBuffer(flacBlock, block);
 
                     if(decompressedLength != blockHeader.length)

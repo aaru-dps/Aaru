@@ -88,13 +88,9 @@ namespace Aaru.DiscImages
         Dictionary<ulong, byte[]> _blockCache;
         /// <summary>Cache of block headers.</summary>
         Dictionary<ulong, BlockHeader> _blockHeaderCache;
-        /// <summary>Stream used for writing blocks.</summary>
-        NonClosableStream _blockStream;
         /// <summary>Provides checksum for deduplication of sectors.</summary>
         SHA256 _checksumProvider;
         bool _compress;
-        /// <summary>Memory stream to save data before compression</summary>
-        MemoryStream _compressableMemoryStream;
         /// <summary>Provides CRC64.</summary>
         Crc64Context _crc64;
         /// <summary>Header of the currently writing block.</summary>
@@ -105,8 +101,9 @@ namespace Aaru.DiscImages
         uint _currentCacheSize;
         /// <summary>Cache of DDT entries.</summary>
         Dictionary<ulong, ulong> _ddtEntryCache;
-        NonClosableStream _decompressedStream;
-        bool              _deduplicate;
+
+        //NonClosableStream _decompressedStream;
+        bool _deduplicate;
         /// <summary>On-memory deduplication table indexed by checksum.</summary>
         Dictionary<string, ulong> _deduplicationTable;
         /// <summary>Dictionary size for compression algorithms</summary>
@@ -135,16 +132,16 @@ namespace Aaru.DiscImages
         byte[] _sectorDecryptedTitleKey;
         /// <summary>Cache for data that prefixes the user data on a sector (e.g. sync).</summary>
         byte[] _sectorPrefix;
-        uint[]            _sectorPrefixDdt;
-        NonClosableStream _sectorPrefixMs;
+        uint[]       _sectorPrefixDdt;
+        MemoryStream _sectorPrefixMs;
         /// <summary>Cache for data that goes side by side with user data (e.g. CompactDisc subchannel).</summary>
         byte[] _sectorSubchannel;
         /// <summary>Cache for data that suffixes the user data on a sector (e.g. edc, ecc).</summary>
         byte[] _sectorSuffix;
-        uint[]            _sectorSuffixDdt;
-        NonClosableStream _sectorSuffixMs;
-        Sha1Context       _sha1Provider;
-        Sha256Context     _sha256Provider;
+        uint[]        _sectorSuffixDdt;
+        MemoryStream  _sectorSuffixMs;
+        Sha1Context   _sha1Provider;
+        Sha256Context _sha256Provider;
         /// <summary>Shift for calculating number of sectors in a block.</summary>
         byte _shift;
         SpamSumContext _spamsumProvider;
@@ -159,8 +156,10 @@ namespace Aaru.DiscImages
         Dictionary<byte, string> _trackIsrcs;
         /// <summary>In-memory deduplication table</summary>
         ulong[] _userDataDdt;
-        bool  _writingLong;
-        ulong _writtenSectors;
+        byte[] _writingBuffer;
+        int    _writingBufferPosition;
+        bool   _writingLong;
+        ulong  _writtenSectors;
 
         public AaruFormat() => _imageInfo = new ImageInfo
         {
