@@ -99,7 +99,7 @@
     <PackageReference Include="DotNetZip" Version="1.15.0" />
     <PackageReference Include="Newtonsoft.Json" Version="11.0.1" />
     <PackageReference Include="SharpCompress" Version="0.29.0" />
-    <PackageReference Include="System.Resources.Extensions" Version="5.0.0" />
+    <PackageReference Include="System.Resources.Extensions" Version="6.0.0" />
     <PackageReference Include="Unclassified.NetRevisionTask" Version="0.4.1" PrivateAssets="all" />
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

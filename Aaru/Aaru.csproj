@@ -262,12 +262,12 @@
     <Content Include="..\.github\PULL_REQUEST_TEMPLATE.md" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.0-preview.7.21378.4" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="Spectre.Console" Version="0.41.0" />
     <PackageReference Include="Spectre.Console.Analyzer" Version="0.41.0" />
     <PackageReference Include="System.CommandLine" Version="2.0.0-beta1.20104.2" />
-    <PackageReference Include="System.Text.Encoding.CodePages" Version="6.0.0-preview.7.21377.19" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="6.0.0" />
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
     <PackageReference Include="Unclassified.NetRevisionTask" Version="0.4.1">
       <PrivateAssets>all</PrivateAssets>
