@@ -1831,8 +1831,8 @@ namespace Aaru.Core.Media.Detection
                     {
                         int rootPos = ri * 2048;
 
-                        while(isoSector[rootPos]           > 0                &&
-                              rootPos                      < isoSector.Length &&
+                        while(rootPos                      < isoSector.Length &&
+                              isoSector[rootPos]           > 0                &&
                               rootPos + isoSector[rootPos] <= isoSector.Length)
                         {
                             int    nameLen = isoSector[rootPos + 32];
@@ -2077,8 +2077,8 @@ namespace Aaru.Core.Media.Detection
                         {
                             int vcdPos = vi * 2048;
 
-                            while(isoSector[vcdPos]          > 0                &&
-                                  vcdPos                     < isoSector.Length &&
+                            while(vcdPos                     < isoSector.Length &&
+                                  isoSector[vcdPos]          > 0                &&
                                   vcdPos + isoSector[vcdPos] <= isoSector.Length)
                             {
                                 int    nameLen = isoSector[vcdPos + 32];
@@ -2174,8 +2174,8 @@ namespace Aaru.Core.Media.Detection
                         {
                             int pcdPos = pi * 2048;
 
-                            while(isoSector[pcdPos]          > 0                &&
-                                  pcdPos                     < isoSector.Length &&
+                            while(pcdPos                     < isoSector.Length &&
+                                  isoSector[pcdPos]          > 0                &&
                                   pcdPos + isoSector[pcdPos] <= isoSector.Length)
                             {
                                 int    nameLen = isoSector[pcdPos + 32];
