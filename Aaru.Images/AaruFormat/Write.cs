@@ -1779,7 +1779,7 @@ namespace Aaru.DiscImages
                                 _writingBuffer[_writingBufferPosition + r] = 0;
 
                         compressedLength = FLAC.EncodeBuffer(_writingBuffer, _compressedBuffer, flacBlockSize, true,
-                                                             false, "partial_tukey(0/1.0/1.0)", 12, 0, true, false, 0,
+                                                             false, "hamming", 12, 15, true, false, 0,
                                                              8, "Aaru");
 
                         if(compressedLength >= _writingBufferPosition)
@@ -2504,7 +2504,7 @@ namespace Aaru.DiscImages
                                 _writingBuffer[_writingBufferPosition + r] = 0;
 
                         compressedLength = FLAC.EncodeBuffer(_writingBuffer, _compressedBuffer, flacBlockSize, true,
-                                                             false, "partial_tukey(0/1.0/1.0)", 12, 0, true, false, 0,
+                                                             false, "hamming", 12, 15, true, false, 0,
                                                              8, "Aaru");
 
                         if(compressedLength >= _writingBufferPosition)
