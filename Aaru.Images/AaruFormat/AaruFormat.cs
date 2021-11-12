@@ -90,8 +90,9 @@ namespace Aaru.DiscImages
         Dictionary<ulong, BlockHeader> _blockHeaderCache;
         /// <summary>Provides checksum for deduplication of sectors.</summary>
         SHA256 _checksumProvider;
-        bool   _compress;
-        byte[] _compressedBuffer;
+        bool            _compress;
+        byte[]          _compressedBuffer;
+        CompressionType _compressionAlgorithm;
         /// <summary>Provides CRC64.</summary>
         Crc64Context _crc64;
         /// <summary>Header of the currently writing block.</summary>
