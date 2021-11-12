@@ -1790,7 +1790,7 @@ namespace Aaru.DiscImages
                     case CompressionType.Lzma:
                     {
                         compressedLength = LZMA.EncodeBuffer(_writingBuffer, _compressedBuffer, out lzmaProperties, 9,
-                                                             _dictionarySize, 3, 0, 2, 273);
+                                                             _dictionarySize, 4, 0, 2, 273);
 
                         cmpCrc64Context.Update(lzmaProperties);
 
@@ -2515,7 +2515,7 @@ namespace Aaru.DiscImages
                     case CompressionType.Lzma:
                     {
                         compressedLength = LZMA.EncodeBuffer(_writingBuffer, _compressedBuffer, out lzmaProperties, 9,
-                                                             _dictionarySize, 3, 0, 2, 273);
+                                                             _dictionarySize, 4, 0, 2, 273);
 
                         cmpCrc64Context.Update(lzmaProperties);
 
@@ -2616,7 +2616,7 @@ namespace Aaru.DiscImages
                 switch(_compressionAlgorithm)
                 {
                     case CompressionType.Lzma:
-                        cmpLen = LZMA.EncodeBuffer(mediaTag.Value, cmpBuffer, out lzmaProperties, 9, _dictionarySize, 3,
+                        cmpLen = LZMA.EncodeBuffer(mediaTag.Value, cmpBuffer, out lzmaProperties, 9, _dictionarySize, 4,
                                                    0, 2, 273);
 
                         if(cmpLen + LZMA_PROPERTIES_LENGTH > mediaTag.Value.Length)
@@ -3115,7 +3115,7 @@ namespace Aaru.DiscImages
 
                         break;
                     case CompressionType.Lzma:
-                        cmpLen = LZMA.EncodeBuffer(ddtEntries, cmpBuffer, out lzmaProperties, 9, _dictionarySize, 3, 0,
+                        cmpLen = LZMA.EncodeBuffer(ddtEntries, cmpBuffer, out lzmaProperties, 9, _dictionarySize, 4, 0,
                                                    2, 273);
 
                         break;
@@ -3205,7 +3205,7 @@ namespace Aaru.DiscImages
                             int cmpLen = _compressionAlgorithm switch
                             {
                                 CompressionType.Lzma => LZMA.EncodeBuffer(_sectorPrefix, cmpBuffer, out lzmaProperties,
-                                                                          9, _dictionarySize, 3, 0, 2, 273),
+                                                                          9, _dictionarySize, 4, 0, 2, 273),
                                 _ => throw new ArgumentOutOfRangeException()
                             };
 
@@ -3284,7 +3284,7 @@ namespace Aaru.DiscImages
                             int cmpLen = _compressionAlgorithm switch
                             {
                                 CompressionType.Lzma => LZMA.EncodeBuffer(_sectorSuffix, cmpBuffer, out lzmaProperties,
-                                                                          9, _dictionarySize, 3, 0, 2, 273),
+                                                                          9, _dictionarySize, 4, 0, 2, 273),
                                 _ => throw new ArgumentOutOfRangeException()
                             };
 
@@ -3415,7 +3415,7 @@ namespace Aaru.DiscImages
                         cmpLen = _compressionAlgorithm switch
                         {
                             CompressionType.Lzma => LZMA.EncodeBuffer(ddtEntries, cmpBuffer, out lzmaProperties, 9,
-                                                                      _dictionarySize, 3, 0, 2, 273),
+                                                                      _dictionarySize, 4, 0, 2, 273),
                             _ => throw new ArgumentOutOfRangeException()
                         };
 
@@ -3479,7 +3479,7 @@ namespace Aaru.DiscImages
                         cmpLen = _compressionAlgorithm switch
                         {
                             CompressionType.Lzma => LZMA.EncodeBuffer(ddtEntries, cmpBuffer, out lzmaProperties, 9,
-                                                                      _dictionarySize, 3, 0, 2, 273),
+                                                                      _dictionarySize, 4, 0, 2, 273),
                             _ => throw new ArgumentOutOfRangeException()
                         };
 
@@ -3556,7 +3556,7 @@ namespace Aaru.DiscImages
                             cmpLen = _compressionAlgorithm switch
                             {
                                 CompressionType.Lzma => LZMA.EncodeBuffer(sectorPrefixBuffer, cmpBuffer,
-                                                                          out lzmaProperties, 9, _dictionarySize, 3, 0,
+                                                                          out lzmaProperties, 9, _dictionarySize, 4, 0,
                                                                           2, 273),
                                 _ => throw new ArgumentOutOfRangeException()
                             };
@@ -3640,7 +3640,7 @@ namespace Aaru.DiscImages
                             cmpLen = _compressionAlgorithm switch
                             {
                                 CompressionType.Lzma => LZMA.EncodeBuffer(sectorSuffixBuffer, cmpBuffer,
-                                                                          out lzmaProperties, 9, _dictionarySize, 3, 0,
+                                                                          out lzmaProperties, 9, _dictionarySize, 4, 0,
                                                                           2, 273),
                                 _ => throw new ArgumentOutOfRangeException()
                             };
@@ -3726,7 +3726,7 @@ namespace Aaru.DiscImages
                             int cmpLen = _compressionAlgorithm switch
                             {
                                 CompressionType.Lzma => LZMA.EncodeBuffer(_mode2Subheaders, cmpBuffer,
-                                                                          out lzmaProperties, 9, _dictionarySize, 3, 0,
+                                                                          out lzmaProperties, 9, _dictionarySize, 4, 0,
                                                                           2, 273),
                                 _ => throw new ArgumentOutOfRangeException()
                             };
@@ -3813,7 +3813,7 @@ namespace Aaru.DiscImages
                             int cmpLen = _compressionAlgorithm switch
                             {
                                 CompressionType.Lzma => LZMA.EncodeBuffer(transformedSubchannel, cmpBuffer,
-                                                                          out lzmaProperties, 9, _dictionarySize, 3, 0,
+                                                                          out lzmaProperties, 9, _dictionarySize, 4, 0,
                                                                           2, 273),
                                 _ => throw new ArgumentOutOfRangeException()
                             };
@@ -3903,7 +3903,7 @@ namespace Aaru.DiscImages
                             int cmpLen = _compressionAlgorithm switch
                             {
                                 CompressionType.Lzma => LZMA.EncodeBuffer(_sectorCpiMai, cmpBuffer, out lzmaProperties,
-                                                                          9, _dictionarySize, 3, 0, 2, 273),
+                                                                          9, _dictionarySize, 4, 0, 2, 273),
                                 _ => throw new ArgumentOutOfRangeException()
                             };
 
@@ -3989,7 +3989,7 @@ namespace Aaru.DiscImages
                             int cmpLen = _compressionAlgorithm switch
                             {
                                 CompressionType.Lzma => LZMA.EncodeBuffer(_sectorDecryptedTitleKey, cmpBuffer,
-                                                                          out lzmaProperties, 9, _dictionarySize, 3, 0,
+                                                                          out lzmaProperties, 9, _dictionarySize, 4, 0,
                                                                           2, 273),
                                 _ => throw new ArgumentOutOfRangeException()
                             };
@@ -4261,7 +4261,7 @@ namespace Aaru.DiscImages
                             int cmpLen = _compressionAlgorithm switch
                             {
                                 CompressionType.Lzma => LZMA.EncodeBuffer(_sectorSubchannel, cmpBuffer,
-                                                                          out lzmaProperties, 9, _dictionarySize, 3, 0,
+                                                                          out lzmaProperties, 9, _dictionarySize, 4, 0,
                                                                           2, 273),
                                 _ => throw new ArgumentOutOfRangeException()
                             };
