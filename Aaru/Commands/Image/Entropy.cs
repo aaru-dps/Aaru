@@ -140,7 +140,7 @@ namespace Aaru.Commands.Image
                 return (int)ErrorNumber.CannotOpenFile;
             }
 
-            IMediaImage inputFormat = null;
+            IBaseImage inputFormat = null;
 
             Core.Spectre.ProgressSingleSpinner(ctx =>
             {
@@ -253,7 +253,11 @@ namespace Aaru.Commands.Image
                             if(!wholeDisc)
                                 return;
 
-                            EntropyResults entropy = entropyCalculator.CalculateMediaEntropy(duplicatedSectors);
+                            EntropyResults entropy;
+
+                            entropy = inputFormat.Info.XmlMediaType == XmlMediaType.LinearMedia
+                                          ? entropyCalculator.CalculateLinearMediaEntropy()
+                                          : entropyCalculator.CalculateMediaEntropy(duplicatedSectors);
 
                             AaruConsole.WriteLine("Entropy for disk is {0:F4}.", entropy.Entropy);
 

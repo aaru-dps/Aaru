@@ -40,197 +40,244 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Console;
 
-namespace Aaru.Core
+namespace Aaru.Core;
+
+/// <summary>Media image entropy operations</summary>
+public sealed class Entropy
 {
-    /// <summary>Media image entropy operations</summary>
-    public sealed class Entropy
+    readonly bool       _debug;
+    readonly IBaseImage _inputFormat;
+
+    /// <summary>Initializes an instance with the specified parameters</summary>
+    /// <param name="debug">Debug enabled</param>
+    /// <param name="inputFormat">Media image</param>
+    public Entropy(bool debug, IBaseImage inputFormat)
     {
-        readonly bool        _debug;
-        readonly IMediaImage _inputFormat;
+        _debug       = debug;
+        _inputFormat = inputFormat;
+    }
 
-        /// <summary>Initializes an instance with the specified parameters</summary>
-        /// <param name="debug">Debug enabled</param>
-        /// <param name="inputFormat">Media image</param>
-        public Entropy(bool debug, IMediaImage inputFormat)
+    /// <summary>Event raised when a progress bar is needed</summary>
+    public event InitProgressHandler InitProgressEvent;
+    /// <summary>Event raised to update the values of a determinate progress bar</summary>
+    public event UpdateProgressHandler UpdateProgressEvent;
+    /// <summary>Event raised when the progress bar is not longer needed</summary>
+    public event EndProgressHandler EndProgressEvent;
+    /// <summary>Event raised when a progress bar is needed</summary>
+    public event InitProgressHandler InitProgress2Event;
+    /// <summary>Event raised to update the values of a determinate progress bar</summary>
+    public event UpdateProgressHandler UpdateProgress2Event;
+    /// <summary>Event raised when the progress bar is not longer needed</summary>
+    public event EndProgressHandler EndProgress2Event;
+
+    /// <summary>Calculates the tracks entropy</summary>
+    /// <param name="duplicatedSectors">Checks for duplicated sectors</param>
+    /// <returns>Calculated entropy</returns>
+    public EntropyResults[] CalculateTracksEntropy(bool duplicatedSectors)
+    {
+        List<EntropyResults> entropyResults = new();
+
+        if(_inputFormat is not IOpticalMediaImage opticalMediaImage)
         {
-            _debug       = debug;
-            _inputFormat = inputFormat;
-        }
-
-        /// <summary>Event raised when a progress bar is needed</summary>
-        public event InitProgressHandler InitProgressEvent;
-        /// <summary>Event raised to update the values of a determinate progress bar</summary>
-        public event UpdateProgressHandler UpdateProgressEvent;
-        /// <summary>Event raised when the progress bar is not longer needed</summary>
-        public event EndProgressHandler EndProgressEvent;
-        /// <summary>Event raised when a progress bar is needed</summary>
-        public event InitProgressHandler InitProgress2Event;
-        /// <summary>Event raised to update the values of a determinate progress bar</summary>
-        public event UpdateProgressHandler UpdateProgress2Event;
-        /// <summary>Event raised when the progress bar is not longer needed</summary>
-        public event EndProgressHandler EndProgress2Event;
-
-        /// <summary>Calculates the tracks entropy</summary>
-        /// <param name="duplicatedSectors">Checks for duplicated sectors</param>
-        /// <returns>Calculated entropy</returns>
-        public EntropyResults[] CalculateTracksEntropy(bool duplicatedSectors)
-        {
-            List<EntropyResults> entropyResults = new();
-
-            if(!(_inputFormat is IOpticalMediaImage opticalMediaImage))
-            {
-                AaruConsole.ErrorWriteLine("The selected image does not support tracks.");
-
-                return entropyResults.ToArray();
-            }
-
-            try
-            {
-                List<Track> inputTracks = opticalMediaImage.Tracks;
-
-                InitProgressEvent?.Invoke();
-
-                foreach(Track currentTrack in inputTracks)
-                {
-                    var trackEntropy = new EntropyResults
-                    {
-                        Track   = currentTrack.Sequence,
-                        Entropy = 0
-                    };
-
-                    UpdateProgressEvent?.
-                        Invoke($"Entropying track {currentTrack.Sequence} of {inputTracks.Max(t => t.Sequence)}",
-                               currentTrack.Sequence, inputTracks.Max(t => t.Sequence));
-
-                    ulong[]      entTable              = new ulong[256];
-                    ulong        trackSize             = 0;
-                    List<string> uniqueSectorsPerTrack = new();
-
-                    trackEntropy.Sectors = currentTrack.EndSector - currentTrack.StartSector + 1;
-
-                    AaruConsole.VerboseWriteLine("Track {0} has {1} sectors", currentTrack.Sequence,
-                                                 trackEntropy.Sectors);
-
-                    InitProgress2Event?.Invoke();
-
-                    for(ulong i = 0; i < trackEntropy.Sectors; i++)
-                    {
-                        UpdateProgress2Event?.Invoke($"Entropying sector {i + 1} of track {currentTrack.Sequence}",
-                                                     (long)(i               + 1), (long)currentTrack.EndSector);
-
-                        ErrorNumber errno = opticalMediaImage.ReadSector(i, currentTrack.Sequence, out byte[] sector);
-
-                        if(errno != ErrorNumber.NoError)
-                        {
-                            AaruConsole.ErrorWriteLine($"Error {errno} while reading sector {i}, continuing...");
-
-                            continue;
-                        }
-
-                        if(duplicatedSectors)
-                        {
-                            string sectorHash = Sha1Context.Data(sector, out _);
-
-                            if(!uniqueSectorsPerTrack.Contains(sectorHash))
-                                uniqueSectorsPerTrack.Add(sectorHash);
-                        }
-
-                        foreach(byte b in sector)
-                            entTable[b]++;
-
-                        trackSize += (ulong)sector.LongLength;
-                    }
-
-                    EndProgress2Event?.Invoke();
-
-                    trackEntropy.Entropy += entTable.Select(l => l / (double)trackSize).
-                                                     Select(frequency => -(frequency * Math.Log(frequency, 2))).Sum();
-
-                    if(duplicatedSectors)
-                        trackEntropy.UniqueSectors = uniqueSectorsPerTrack.Count;
-
-                    entropyResults.Add(trackEntropy);
-                }
-
-                EndProgressEvent?.Invoke();
-            }
-            catch(Exception ex)
-            {
-                if(_debug)
-                    AaruConsole.DebugWriteLine("Could not get tracks because {0}", ex.Message);
-                else
-                    AaruConsole.ErrorWriteLine("Unable to get separate tracks, not calculating their entropy");
-            }
+            AaruConsole.ErrorWriteLine("The selected image does not support tracks.");
 
             return entropyResults.ToArray();
         }
 
-        /// <summary>Calculates the media entropy</summary>
-        /// <param name="duplicatedSectors">Checks for duplicated sectors</param>
-        /// <returns>Calculated entropy</returns>
-        public EntropyResults CalculateMediaEntropy(bool duplicatedSectors)
+        try
         {
-            var entropy = new EntropyResults
-            {
-                Entropy = 0
-            };
+            List<Track> inputTracks = opticalMediaImage.Tracks;
 
-            ulong[]      entTable      = new ulong[256];
-            ulong        diskSize      = 0;
-            List<string> uniqueSectors = new();
-
-            entropy.Sectors = _inputFormat.Info.Sectors;
-            AaruConsole.WriteLine("Sectors {0}", entropy.Sectors);
             InitProgressEvent?.Invoke();
 
-            for(ulong i = 0; i < entropy.Sectors; i++)
+            foreach(Track currentTrack in inputTracks)
             {
-                UpdateProgressEvent?.Invoke($"Entropying sector {i + 1}", (long)(i + 1), (long)entropy.Sectors);
-                ErrorNumber errno = _inputFormat.ReadSector(i, out byte[] sector);
-
-                if(errno != ErrorNumber.NoError)
+                var trackEntropy = new EntropyResults
                 {
-                    AaruConsole.ErrorWriteLine($"Error {errno} while reading sector {i}, continuing...");
+                    Track   = currentTrack.Sequence,
+                    Entropy = 0
+                };
 
-                    continue;
+                UpdateProgressEvent?.
+                    Invoke($"Entropying track {currentTrack.Sequence} of {inputTracks.Max(t => t.Sequence)}",
+                           currentTrack.Sequence, inputTracks.Max(t => t.Sequence));
+
+                ulong[]      entTable              = new ulong[256];
+                ulong        trackSize             = 0;
+                List<string> uniqueSectorsPerTrack = new();
+
+                trackEntropy.Sectors = currentTrack.EndSector - currentTrack.StartSector + 1;
+
+                AaruConsole.VerboseWriteLine("Track {0} has {1} sectors", currentTrack.Sequence, trackEntropy.Sectors);
+
+                InitProgress2Event?.Invoke();
+
+                for(ulong i = 0; i < trackEntropy.Sectors; i++)
+                {
+                    UpdateProgress2Event?.Invoke($"Entropying sector {i + 1} of track {currentTrack.Sequence}",
+                                                 (long)(i               + 1), (long)currentTrack.EndSector);
+
+                    ErrorNumber errno = opticalMediaImage.ReadSector(i, currentTrack.Sequence, out byte[] sector);
+
+                    if(errno != ErrorNumber.NoError)
+                    {
+                        AaruConsole.ErrorWriteLine($"Error {errno} while reading sector {i}, continuing...");
+
+                        continue;
+                    }
+
+                    if(duplicatedSectors)
+                    {
+                        string sectorHash = Sha1Context.Data(sector, out _);
+
+                        if(!uniqueSectorsPerTrack.Contains(sectorHash))
+                            uniqueSectorsPerTrack.Add(sectorHash);
+                    }
+
+                    foreach(byte b in sector)
+                        entTable[b]++;
+
+                    trackSize += (ulong)sector.LongLength;
                 }
+
+                EndProgress2Event?.Invoke();
+
+                trackEntropy.Entropy += entTable.Select(l => l / (double)trackSize).
+                                                 Select(frequency => -(frequency * Math.Log(frequency, 2))).Sum();
 
                 if(duplicatedSectors)
-                {
-                    string sectorHash = Sha1Context.Data(sector, out _);
+                    trackEntropy.UniqueSectors = uniqueSectorsPerTrack.Count;
 
-                    if(!uniqueSectors.Contains(sectorHash))
-                        uniqueSectors.Add(sectorHash);
-                }
-
-                foreach(byte b in sector)
-                    entTable[b]++;
-
-                diskSize += (ulong)sector.LongLength;
+                entropyResults.Add(trackEntropy);
             }
 
             EndProgressEvent?.Invoke();
+        }
+        catch(Exception ex)
+        {
+            if(_debug)
+                AaruConsole.DebugWriteLine("Could not get tracks because {0}", ex.Message);
+            else
+                AaruConsole.ErrorWriteLine("Unable to get separate tracks, not calculating their entropy");
+        }
 
-            entropy.Entropy += entTable.Select(l => l / (double)diskSize).
-                                        Select(frequency => -(frequency * Math.Log(frequency, 2))).Sum();
+        return entropyResults.ToArray();
+    }
+
+    /// <summary>Calculates the media entropy for block addressable media</summary>
+    /// <param name="duplicatedSectors">Checks for duplicated sectors</param>
+    /// <returns>Calculated entropy</returns>
+    public EntropyResults CalculateMediaEntropy(bool duplicatedSectors)
+    {
+        var entropy = new EntropyResults
+        {
+            Entropy = 0
+        };
+
+        if(_inputFormat is not IMediaImage mediaImage)
+            return entropy;
+
+        ulong[]      entTable      = new ulong[256];
+        ulong        diskSize      = 0;
+        List<string> uniqueSectors = new();
+
+        entropy.Sectors = mediaImage.Info.Sectors;
+        AaruConsole.WriteLine("Sectors {0}", entropy.Sectors);
+        InitProgressEvent?.Invoke();
+
+        for(ulong i = 0; i < entropy.Sectors; i++)
+        {
+            UpdateProgressEvent?.Invoke($"Entropying sector {i + 1}", (long)(i + 1), (long)entropy.Sectors);
+            ErrorNumber errno = mediaImage.ReadSector(i, out byte[] sector);
+
+            if(errno != ErrorNumber.NoError)
+            {
+                AaruConsole.ErrorWriteLine($"Error {errno} while reading sector {i}, continuing...");
+
+                continue;
+            }
 
             if(duplicatedSectors)
-                entropy.UniqueSectors = uniqueSectors.Count;
+            {
+                string sectorHash = Sha1Context.Data(sector, out _);
+
+                if(!uniqueSectors.Contains(sectorHash))
+                    uniqueSectors.Add(sectorHash);
+            }
+
+            foreach(byte b in sector)
+                entTable[b]++;
+
+            diskSize += (ulong)sector.LongLength;
+        }
+
+        EndProgressEvent?.Invoke();
+
+        entropy.Entropy += entTable.Select(l => l / (double)diskSize).
+                                    Select(frequency => -(frequency * Math.Log(frequency, 2))).Sum();
+
+        if(duplicatedSectors)
+            entropy.UniqueSectors = uniqueSectors.Count;
+
+        return entropy;
+    }
+
+    /// <summary>Calculates the media entropy for byte addressable media</summary>
+    /// <returns>Calculated entropy</returns>
+    public EntropyResults CalculateLinearMediaEntropy()
+    {
+        var entropy = new EntropyResults
+        {
+            Entropy = 0
+        };
+
+        if(_inputFormat is not IByteAddressableImage byteAddressableImage)
+            return entropy;
+
+        ulong[] entTable = new ulong[256];
+        byte[]  data     = new byte[byteAddressableImage.Info.Sectors];
+
+        entropy.Sectors = _inputFormat.Info.Sectors;
+        AaruConsole.WriteLine("{0} bytes", entropy.Sectors);
+        InitProgressEvent?.Invoke();
+
+        ErrorNumber errno = byteAddressableImage.ReadBytes(data, 0, data.Length, out int bytesRead);
+
+        if(errno != ErrorNumber.NoError)
+        {
+            AaruConsole.ErrorWriteLine($"Error {errno} while reading data, not continuing...");
 
             return entropy;
         }
-    }
 
-    /// <summary>Entropy results</summary>
-    public struct EntropyResults
-    {
-        /// <summary>Track number, if applicable</summary>
-        public uint Track;
-        /// <summary>Entropy</summary>
-        public double Entropy;
-        /// <summary>Number of unique sectors</summary>
-        public int? UniqueSectors;
-        /// <summary>Number of total sectors</summary>
-        public ulong Sectors;
+        if(bytesRead != data.Length)
+        {
+            byte[] tmp = new byte[bytesRead];
+            Array.Copy(data, 0, tmp, 0, bytesRead);
+            data = tmp;
+        }
+
+        foreach(byte b in data)
+            entTable[b]++;
+
+        EndProgressEvent?.Invoke();
+
+        entropy.Entropy += entTable.Select(l => l / (double)data.Length).
+                                    Select(frequency => -(frequency * Math.Log(frequency, 2))).Sum();
+
+        return entropy;
     }
+}
+
+/// <summary>Entropy results</summary>
+public struct EntropyResults
+{
+    /// <summary>Track number, if applicable</summary>
+    public uint Track;
+    /// <summary>Entropy</summary>
+    public double Entropy;
+    /// <summary>Number of unique sectors</summary>
+    public int? UniqueSectors;
+    /// <summary>Number of total sectors</summary>
+    public ulong Sectors;
 }
