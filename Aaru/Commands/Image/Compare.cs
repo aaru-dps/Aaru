@@ -45,353 +45,373 @@ using Aaru.Helpers;
 using Spectre.Console;
 using ImageInfo = Aaru.CommonTypes.Structs.ImageInfo;
 
-namespace Aaru.Commands.Image
+namespace Aaru.Commands.Image;
+
+internal sealed class CompareCommand : Command
 {
-    internal sealed class CompareCommand : Command
+    public CompareCommand() : base("compare", "Compares two disc images.")
     {
-        public CompareCommand() : base("compare", "Compares two disc images.")
+        AddAlias("cmp");
+
+        AddArgument(new Argument<string>
         {
-            AddAlias("cmp");
+            Arity       = ArgumentArity.ExactlyOne,
+            Description = "First media image path",
+            Name        = "image-path1"
+        });
 
-            AddArgument(new Argument<string>
+        AddArgument(new Argument<string>
+        {
+            Arity       = ArgumentArity.ExactlyOne,
+            Description = "Second media image path",
+            Name        = "image-path2"
+        });
+
+        Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
+    }
+
+    public static int Invoke(bool debug, bool verbose, string imagePath1, string imagePath2)
+    {
+        MainClass.PrintCopyright();
+
+        if(debug)
+        {
+            IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
             {
-                Arity       = ArgumentArity.ExactlyOne,
-                Description = "First media image path",
-                Name        = "image-path1"
+                Out = new AnsiConsoleOutput(System.Console.Error)
             });
 
-            AddArgument(new Argument<string>
+            AaruConsole.DebugWriteLineEvent += (format, objects) =>
             {
-                Arity       = ArgumentArity.ExactlyOne,
-                Description = "Second media image path",
-                Name        = "image-path2"
-            });
-
-            Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
+                if(objects is null)
+                    stderrConsole.MarkupLine(format);
+                else
+                    stderrConsole.MarkupLine(format, objects);
+            };
         }
 
-        public static int Invoke(bool debug, bool verbose, string imagePath1, string imagePath2)
+        if(verbose)
+            AaruConsole.WriteEvent += (format, objects) =>
+            {
+                if(objects is null)
+                    AnsiConsole.Markup(format);
+                else
+                    AnsiConsole.Markup(format, objects);
+            };
+
+        Statistics.AddCommand("compare");
+
+        AaruConsole.DebugWriteLine("Compare command", "--debug={0}", debug);
+        AaruConsole.DebugWriteLine("Compare command", "--input1={0}", imagePath1);
+        AaruConsole.DebugWriteLine("Compare command", "--input2={0}", imagePath2);
+        AaruConsole.DebugWriteLine("Compare command", "--verbose={0}", verbose);
+
+        var     filtersList  = new FiltersList();
+        IFilter inputFilter1 = null;
+        IFilter inputFilter2 = null;
+
+        Core.Spectre.ProgressSingleSpinner(ctx =>
         {
-            MainClass.PrintCopyright();
+            ctx.AddTask("Identifying file 1 filter...").IsIndeterminate();
+            inputFilter1 = filtersList.GetFilter(imagePath1);
+        });
 
-            if(debug)
-            {
-                IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
-                {
-                    Out = new AnsiConsoleOutput(System.Console.Error)
-                });
+        filtersList = new FiltersList();
 
-                AaruConsole.DebugWriteLineEvent += (format, objects) =>
-                {
-                    if(objects is null)
-                        stderrConsole.MarkupLine(format);
-                    else
-                        stderrConsole.MarkupLine(format, objects);
-                };
-            }
+        Core.Spectre.ProgressSingleSpinner(ctx =>
+        {
+            ctx.AddTask("Identifying file 2 filter...").IsIndeterminate();
+            inputFilter2 = filtersList.GetFilter(imagePath2);
+        });
 
-            if(verbose)
-                AaruConsole.WriteEvent += (format, objects) =>
-                {
-                    if(objects is null)
-                        AnsiConsole.Markup(format);
-                    else
-                        AnsiConsole.Markup(format, objects);
-                };
+        if(inputFilter1 == null)
+        {
+            AaruConsole.ErrorWriteLine("Cannot open input file 1");
 
-            Statistics.AddCommand("compare");
+            return (int)ErrorNumber.CannotOpenFile;
+        }
 
-            AaruConsole.DebugWriteLine("Compare command", "--debug={0}", debug);
-            AaruConsole.DebugWriteLine("Compare command", "--input1={0}", imagePath1);
-            AaruConsole.DebugWriteLine("Compare command", "--input2={0}", imagePath2);
-            AaruConsole.DebugWriteLine("Compare command", "--verbose={0}", verbose);
+        if(inputFilter2 == null)
+        {
+            AaruConsole.ErrorWriteLine("Cannot open input file 2");
 
-            var     filtersList  = new FiltersList();
-            IFilter inputFilter1 = null;
-            IFilter inputFilter2 = null;
+            return (int)ErrorNumber.CannotOpenFile;
+        }
 
-            Core.Spectre.ProgressSingleSpinner(ctx =>
-            {
-                ctx.AddTask("Identifying file 1 filter...").IsIndeterminate();
-                inputFilter1 = filtersList.GetFilter(imagePath1);
-            });
+        IBaseImage input1Format = null;
+        IBaseImage input2Format = null;
 
-            filtersList = new FiltersList();
+        Core.Spectre.ProgressSingleSpinner(ctx =>
+        {
+            ctx.AddTask("Identifying image 1 format...").IsIndeterminate();
+            input1Format = ImageFormat.Detect(inputFilter1);
+        });
 
-            Core.Spectre.ProgressSingleSpinner(ctx =>
-            {
-                ctx.AddTask("Identifying file 2 filter...").IsIndeterminate();
-                inputFilter2 = filtersList.GetFilter(imagePath2);
-            });
+        Core.Spectre.ProgressSingleSpinner(ctx =>
+        {
+            ctx.AddTask("Identifying image 1 format...").IsIndeterminate();
+            input2Format = ImageFormat.Detect(inputFilter2);
+        });
 
-            if(inputFilter1 == null)
-            {
-                AaruConsole.ErrorWriteLine("Cannot open input file 1");
+        if(input1Format == null)
+        {
+            AaruConsole.ErrorWriteLine("Input file 1 format not identified, not proceeding with comparison.");
 
-                return (int)ErrorNumber.CannotOpenFile;
-            }
+            return (int)ErrorNumber.UnrecognizedFormat;
+        }
 
-            if(inputFilter2 == null)
-            {
-                AaruConsole.ErrorWriteLine("Cannot open input file 2");
+        if(verbose)
+            AaruConsole.VerboseWriteLine("Input file 1 format identified by {0} ({1}).", input1Format.Name,
+                                         input1Format.Id);
+        else
+            AaruConsole.WriteLine("Input file 1 format identified by {0}.", input1Format.Name);
 
-                return (int)ErrorNumber.CannotOpenFile;
-            }
+        if(input2Format == null)
+        {
+            AaruConsole.ErrorWriteLine("Input file 2 format not identified, not proceeding with comparison.");
 
-            IMediaImage input1Format = null;
-            IMediaImage input2Format = null;
+            return (int)ErrorNumber.UnrecognizedFormat;
+        }
 
-            Core.Spectre.ProgressSingleSpinner(ctx =>
-            {
-                ctx.AddTask("Identifying image 1 format...").IsIndeterminate();
-                input1Format = ImageFormat.Detect(inputFilter1);
-            });
+        if(verbose)
+            AaruConsole.VerboseWriteLine("Input file 2 format identified by {0} ({1}).", input2Format.Name,
+                                         input2Format.Id);
+        else
+            AaruConsole.WriteLine("Input file 2 format identified by {0}.", input2Format.Name);
 
-            Core.Spectre.ProgressSingleSpinner(ctx =>
-            {
-                ctx.AddTask("Identifying image 1 format...").IsIndeterminate();
-                input2Format = ImageFormat.Detect(inputFilter2);
-            });
+        ErrorNumber opened1 = ErrorNumber.NoData;
+        ErrorNumber opened2 = ErrorNumber.NoData;
 
-            if(input1Format == null)
-            {
-                AaruConsole.ErrorWriteLine("Input file 1 format not identified, not proceeding with comparison.");
+        Core.Spectre.ProgressSingleSpinner(ctx =>
+        {
+            ctx.AddTask("Opening image 1 file...").IsIndeterminate();
+            opened1 = input1Format.Open(inputFilter1);
+        });
 
-                return (int)ErrorNumber.UnrecognizedFormat;
-            }
+        if(opened1 != ErrorNumber.NoError)
+        {
+            AaruConsole.WriteLine("Unable to open image 1 format");
+            AaruConsole.WriteLine("Error {0}", opened1);
 
-            if(verbose)
-                AaruConsole.VerboseWriteLine("Input file 1 format identified by {0} ({1}).", input1Format.Name,
-                                             input1Format.Id);
-            else
-                AaruConsole.WriteLine("Input file 1 format identified by {0}.", input1Format.Name);
+            return (int)opened1;
+        }
 
-            if(input2Format == null)
-            {
-                AaruConsole.ErrorWriteLine("Input file 2 format not identified, not proceeding with comparison.");
+        Core.Spectre.ProgressSingleSpinner(ctx =>
+        {
+            ctx.AddTask("Opening image 2 file...").IsIndeterminate();
+            opened2 = input2Format.Open(inputFilter2);
+        });
 
-                return (int)ErrorNumber.UnrecognizedFormat;
-            }
+        if(opened2 != ErrorNumber.NoError)
+        {
+            AaruConsole.WriteLine("Unable to open image 2 format");
+            AaruConsole.WriteLine("Error {0}", opened2);
 
-            if(verbose)
-                AaruConsole.VerboseWriteLine("Input file 2 format identified by {0} ({1}).", input2Format.Name,
-                                             input2Format.Id);
-            else
-                AaruConsole.WriteLine("Input file 2 format identified by {0}.", input2Format.Name);
+            return (int)opened2;
+        }
 
-            ErrorNumber opened1 = ErrorNumber.NoData;
-            ErrorNumber opened2 = ErrorNumber.NoData;
+        Statistics.AddMediaFormat(input1Format.Format);
+        Statistics.AddMediaFormat(input2Format.Format);
+        Statistics.AddMedia(input1Format.Info.MediaType, false);
+        Statistics.AddMedia(input2Format.Info.MediaType, false);
+        Statistics.AddFilter(inputFilter1.Name);
+        Statistics.AddFilter(inputFilter2.Name);
 
-            Core.Spectre.ProgressSingleSpinner(ctx =>
-            {
-                ctx.AddTask("Opening image 1 file...").IsIndeterminate();
-                opened1 = input1Format.Open(inputFilter1);
-            });
+        var   sb    = new StringBuilder();
+        Table table = new();
+        table.AddColumn("");
+        table.AddColumn("Media image 1");
+        table.AddColumn("Media image 2");
+        table.Columns[0].RightAligned();
 
-            if(opened1 != ErrorNumber.NoError)
-            {
-                AaruConsole.WriteLine("Unable to open image 1 format");
-                AaruConsole.WriteLine("Error {0}", opened1);
+        if(verbose)
+        {
+            table.AddRow("File", Markup.Escape(imagePath1), Markup.Escape(imagePath2));
+            table.AddRow("Media image format", input1Format.Name, input2Format.Name);
+        }
+        else
+        {
+            sb.AppendFormat("[bold]Media image 1:[/] {0}", imagePath1).AppendLine();
+            sb.AppendFormat("[bold]Media image 2:[/] {0}", imagePath2).AppendLine();
+        }
 
-                return (int)opened1;
-            }
+        bool        imagesDiffer = false;
+        ErrorNumber errno;
 
-            Core.Spectre.ProgressSingleSpinner(ctx =>
-            {
-                ctx.AddTask("Opening image 2 file...").IsIndeterminate();
-                opened2 = input2Format.Open(inputFilter2);
-            });
+        ImageInfo                        image1Info       = input1Format.Info;
+        ImageInfo                        image2Info       = input2Format.Info;
+        Dictionary<MediaTagType, byte[]> image1DiskTags   = new();
+        Dictionary<MediaTagType, byte[]> image2DiskTags   = new();
+        var                              input1MediaImage = input1Format as IMediaImage;
+        var                              input2MediaImage = input2Format as IMediaImage;
 
-            if(opened2 != ErrorNumber.NoError)
-            {
-                AaruConsole.WriteLine("Unable to open image 2 format");
-                AaruConsole.WriteLine("Error {0}", opened2);
-
-                return (int)opened2;
-            }
-
-            Statistics.AddMediaFormat(input1Format.Format);
-            Statistics.AddMediaFormat(input2Format.Format);
-            Statistics.AddMedia(input1Format.Info.MediaType, false);
-            Statistics.AddMedia(input2Format.Info.MediaType, false);
-            Statistics.AddFilter(inputFilter1.Name);
-            Statistics.AddFilter(inputFilter2.Name);
-
-            var   sb    = new StringBuilder();
-            Table table = new();
-            table.AddColumn("");
-            table.AddColumn("Disc image 1");
-            table.AddColumn("Disc image 2");
-            table.Columns[0].RightAligned();
-
-            if(verbose)
-            {
-                table.AddRow("File", Markup.Escape(imagePath1), Markup.Escape(imagePath2));
-                table.AddRow("Disc image format", input1Format.Name, input2Format.Name);
-            }
-            else
-            {
-                sb.AppendFormat("[bold]Disc image 1:[/] {0}", imagePath1).AppendLine();
-                sb.AppendFormat("[bold]Disc image 2:[/] {0}", imagePath2).AppendLine();
-            }
-
-            bool        imagesDiffer = false;
-            ErrorNumber errno;
-
-            ImageInfo                        image1Info     = input1Format.Info;
-            ImageInfo                        image2Info     = input2Format.Info;
-            Dictionary<MediaTagType, byte[]> image1DiskTags = new();
-            Dictionary<MediaTagType, byte[]> image2DiskTags = new();
-
+        if(input1MediaImage != null)
             foreach(MediaTagType diskTag in Enum.GetValues(typeof(MediaTagType)))
             {
-                errno = input1Format.ReadMediaTag(diskTag, out byte[] tempArray);
+                errno = input1MediaImage.ReadMediaTag(diskTag, out byte[] tempArray);
 
                 if(errno == ErrorNumber.NoError)
                     image1DiskTags.Add(diskTag, tempArray);
             }
 
+        if(input2MediaImage != null)
             foreach(MediaTagType diskTag in Enum.GetValues(typeof(MediaTagType)))
             {
-                errno = input2Format.ReadMediaTag(diskTag, out byte[] tempArray);
+                errno = input2MediaImage.ReadMediaTag(diskTag, out byte[] tempArray);
 
                 if(errno == ErrorNumber.NoError)
                     image2DiskTags.Add(diskTag, tempArray);
             }
 
-            if(verbose)
-            {
-                table.AddRow("Has partitions?", image1Info.HasPartitions.ToString(),
-                             image2Info.HasPartitions.ToString());
+        if(verbose)
+        {
+            table.AddRow("Has partitions?", image1Info.HasPartitions.ToString(), image2Info.HasPartitions.ToString());
 
-                table.AddRow("Has sessions?", image1Info.HasSessions.ToString(), image2Info.HasSessions.ToString());
+            table.AddRow("Has sessions?", image1Info.HasSessions.ToString(), image2Info.HasSessions.ToString());
 
-                table.AddRow("Image size", image1Info.ImageSize.ToString(), image2Info.ImageSize.ToString());
+            table.AddRow("Image size", image1Info.ImageSize.ToString(), image2Info.ImageSize.ToString());
 
-                table.AddRow("Sectors", image1Info.Sectors.ToString(), image2Info.Sectors.ToString());
+            table.AddRow("Sectors", image1Info.Sectors.ToString(), image2Info.Sectors.ToString());
 
-                table.AddRow("Sector size", image1Info.SectorSize.ToString(), image2Info.SectorSize.ToString());
+            table.AddRow("Sector size", image1Info.SectorSize.ToString(), image2Info.SectorSize.ToString());
 
-                table.AddRow("Creation time", image1Info.CreationTime.ToString(), image2Info.CreationTime.ToString());
+            table.AddRow("Creation time", image1Info.CreationTime.ToString(), image2Info.CreationTime.ToString());
 
-                table.AddRow("Last modification time", image1Info.LastModificationTime.ToString(),
-                             image2Info.LastModificationTime.ToString());
+            table.AddRow("Last modification time", image1Info.LastModificationTime.ToString(),
+                         image2Info.LastModificationTime.ToString());
 
-                table.AddRow("Disk type", image1Info.MediaType.ToString(), image2Info.MediaType.ToString());
+            table.AddRow("Disk type", image1Info.MediaType.ToString(), image2Info.MediaType.ToString());
 
-                table.AddRow("Image version", image1Info.Version ?? "", image2Info.Version ?? "");
+            table.AddRow("Image version", image1Info.Version ?? "", image2Info.Version ?? "");
 
-                table.AddRow("Image application", image1Info.Application ?? "", image2Info.Application ?? "");
+            table.AddRow("Image application", image1Info.Application ?? "", image2Info.Application ?? "");
 
-                table.AddRow("Image application version", image1Info.ApplicationVersion ?? "",
-                             image2Info.ApplicationVersion                              ?? "");
+            table.AddRow("Image application version", image1Info.ApplicationVersion ?? "",
+                         image2Info.ApplicationVersion                              ?? "");
 
-                table.AddRow("Image creator", image1Info.Creator ?? "", image2Info.Creator ?? "");
+            table.AddRow("Image creator", image1Info.Creator ?? "", image2Info.Creator ?? "");
 
-                table.AddRow("Image name", image1Info.MediaTitle ?? "", image2Info.MediaTitle ?? "");
+            table.AddRow("Image name", image1Info.MediaTitle ?? "", image2Info.MediaTitle ?? "");
 
-                table.AddRow("Image comments", image1Info.Comments ?? "", image2Info.Comments ?? "");
+            table.AddRow("Image comments", image1Info.Comments ?? "", image2Info.Comments ?? "");
 
-                table.AddRow("Disk manufacturer", image1Info.MediaManufacturer ?? "",
-                             image2Info.MediaManufacturer                      ?? "");
+            table.AddRow("Disk manufacturer", image1Info.MediaManufacturer ?? "", image2Info.MediaManufacturer ?? "");
 
-                table.AddRow("Disk model", image1Info.MediaModel ?? "", image2Info.MediaModel ?? "");
+            table.AddRow("Disk model", image1Info.MediaModel ?? "", image2Info.MediaModel ?? "");
 
-                table.AddRow("Disk serial number", image1Info.MediaSerialNumber ?? "",
-                             image2Info.MediaSerialNumber                       ?? "");
+            table.AddRow("Disk serial number", image1Info.MediaSerialNumber ?? "", image2Info.MediaSerialNumber ?? "");
 
-                table.AddRow("Disk barcode", image1Info.MediaBarcode ?? "", image2Info.MediaBarcode ?? "");
+            table.AddRow("Disk barcode", image1Info.MediaBarcode ?? "", image2Info.MediaBarcode ?? "");
 
-                table.AddRow("Disk part no.", image1Info.MediaPartNumber ?? "", image2Info.MediaPartNumber ?? "");
+            table.AddRow("Disk part no.", image1Info.MediaPartNumber ?? "", image2Info.MediaPartNumber ?? "");
 
-                table.AddRow("Disk sequence", image1Info.MediaSequence.ToString(), image2Info.MediaSequence.ToString());
+            table.AddRow("Disk sequence", image1Info.MediaSequence.ToString(), image2Info.MediaSequence.ToString());
 
-                table.AddRow("Last disk on sequence", image1Info.LastMediaSequence.ToString(),
-                             image2Info.LastMediaSequence.ToString());
+            table.AddRow("Last disk on sequence", image1Info.LastMediaSequence.ToString(),
+                         image2Info.LastMediaSequence.ToString());
 
-                table.AddRow("Drive manufacturer", image1Info.DriveManufacturer ?? "",
-                             image2Info.DriveManufacturer                       ?? "");
+            table.AddRow("Drive manufacturer", image1Info.DriveManufacturer ?? "", image2Info.DriveManufacturer ?? "");
 
-                table.AddRow("Drive firmware revision", image1Info.DriveFirmwareRevision ?? "",
-                             image2Info.DriveFirmwareRevision                            ?? "");
+            table.AddRow("Drive firmware revision", image1Info.DriveFirmwareRevision ?? "",
+                         image2Info.DriveFirmwareRevision                            ?? "");
 
-                table.AddRow("Drive model", image1Info.DriveModel ?? "", image2Info.DriveModel ?? "");
+            table.AddRow("Drive model", image1Info.DriveModel ?? "", image2Info.DriveModel ?? "");
 
-                table.AddRow("Drive serial number", image1Info.DriveSerialNumber ?? "",
-                             image2Info.DriveSerialNumber                        ?? "");
+            table.AddRow("Drive serial number", image1Info.DriveSerialNumber ?? "", image2Info.DriveSerialNumber ?? "");
 
-                foreach(MediaTagType diskTag in
+            foreach(MediaTagType diskTag in
                     (Enum.GetValues(typeof(MediaTagType)) as MediaTagType[]).OrderBy(e => e.ToString()))
-                    table.AddRow($"Has {diskTag}?", image1DiskTags.ContainsKey(diskTag).ToString(),
-                                 image2DiskTags.ContainsKey(diskTag).ToString());
+                table.AddRow($"Has {diskTag}?", image1DiskTags.ContainsKey(diskTag).ToString(),
+                             image2DiskTags.ContainsKey(diskTag).ToString());
+        }
+
+        ulong leastSectors = 0;
+
+        Core.Spectre.ProgressSingleSpinner(ctx =>
+        {
+            ctx.AddTask("Comparing disk image characteristics").IsIndeterminate();
+
+            if(image1Info.HasPartitions != image2Info.HasPartitions)
+            {
+                imagesDiffer = true;
+
+                if(!verbose)
+                    sb.AppendLine("Image partitioned status differ");
             }
 
-            ulong leastSectors = 0;
-
-            Core.Spectre.ProgressSingleSpinner(ctx =>
+            if(image1Info.HasSessions != image2Info.HasSessions)
             {
-                ctx.AddTask("Comparing disk image characteristics").IsIndeterminate();
+                imagesDiffer = true;
 
-                if(image1Info.HasPartitions != image2Info.HasPartitions)
-                {
-                    imagesDiffer = true;
+                if(!verbose)
+                    sb.AppendLine("Image session status differ");
+            }
 
-                    if(!verbose)
-                        sb.AppendLine("Image partitioned status differ");
-                }
+            if(image1Info.Sectors != image2Info.Sectors)
+            {
+                imagesDiffer = true;
 
-                if(image1Info.HasSessions != image2Info.HasSessions)
-                {
-                    imagesDiffer = true;
+                if(!verbose)
+                    sb.AppendLine("Image sectors differ");
+            }
 
-                    if(!verbose)
-                        sb.AppendLine("Image session status differ");
-                }
+            if(image1Info.SectorSize != image2Info.SectorSize)
+            {
+                imagesDiffer = true;
 
-                if(image1Info.Sectors != image2Info.Sectors)
-                {
-                    imagesDiffer = true;
+                if(!verbose)
+                    sb.AppendLine("Image sector size differ");
+            }
 
-                    if(!verbose)
-                        sb.AppendLine("Image sectors differ");
-                }
+            if(image1Info.MediaType != image2Info.MediaType)
+            {
+                imagesDiffer = true;
 
-                if(image1Info.SectorSize != image2Info.SectorSize)
-                {
-                    imagesDiffer = true;
+                if(!verbose)
+                    sb.AppendLine("Disk type differ");
+            }
 
-                    if(!verbose)
-                        sb.AppendLine("Image sector size differ");
-                }
+            if(image1Info.Sectors < image2Info.Sectors)
+            {
+                imagesDiffer = true;
+                leastSectors = image1Info.Sectors;
 
-                if(image1Info.MediaType != image2Info.MediaType)
-                {
-                    imagesDiffer = true;
+                if(!verbose)
+                    sb.AppendLine("Image 2 has more sectors");
+            }
+            else if(image1Info.Sectors > image2Info.Sectors)
+            {
+                imagesDiffer = true;
+                leastSectors = image2Info.Sectors;
 
-                    if(!verbose)
-                        sb.AppendLine("Disk type differ");
-                }
+                if(!verbose)
+                    sb.AppendLine("Image 1 has more sectors");
+            }
+            else
+                leastSectors = image1Info.Sectors;
+        });
 
-                if(image1Info.Sectors < image2Info.Sectors)
-                {
-                    imagesDiffer = true;
-                    leastSectors = image1Info.Sectors;
+        var input1ByteAddressable = input1Format as IByteAddressableImage;
+        var input2ByteAddressable = input2Format as IByteAddressableImage;
 
-                    if(!verbose)
-                        sb.AppendLine("Image 2 has more sectors");
-                }
-                else if(image1Info.Sectors > image2Info.Sectors)
-                {
-                    imagesDiffer = true;
-                    leastSectors = image2Info.Sectors;
+        if(input1ByteAddressable is null &&
+           input2ByteAddressable is not null)
+            imagesDiffer = true;
 
-                    if(!verbose)
-                        sb.AppendLine("Image 1 has more sectors");
-                }
-                else
-                    leastSectors = image1Info.Sectors;
-            });
+        if(input1ByteAddressable is not null &&
+           input2ByteAddressable is null)
+            imagesDiffer = true;
 
+        if(input1MediaImage is null &&
+           input2MediaImage is not null)
+            imagesDiffer = true;
+
+        if(input1MediaImage is not null &&
+           input2MediaImage is null)
+            imagesDiffer = true;
+
+        if(input1MediaImage is not null &&
+           input2MediaImage is not null)
             AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
                         Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
                         Start(ctx =>
@@ -406,13 +426,13 @@ namespace Aaru.Commands.Image
 
                                 try
                                 {
-                                    errno = input1Format.ReadSector(sector, out byte[] image1Sector);
+                                    errno = input1MediaImage.ReadSector(sector, out byte[] image1Sector);
 
                                     if(errno != ErrorNumber.NoError)
                                         AaruConsole.
                                             ErrorWriteLine($"Error {errno} reading sector {sector} from image 1.");
 
-                                    errno = input2Format.ReadSector(sector, out byte[] image2Sector);
+                                    errno = input1MediaImage.ReadSector(sector, out byte[] image2Sector);
 
                                     if(errno != ErrorNumber.NoError)
                                         AaruConsole.
@@ -445,16 +465,54 @@ namespace Aaru.Commands.Image
                             }
                         });
 
-            AaruConsole.WriteLine();
+        if(input1ByteAddressable is not null &&
+           input2ByteAddressable is not null)
+            AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
+                        Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
+                        Start(ctx =>
+                        {
+                            ProgressTask task = ctx.AddTask("Comparing images...");
+                            task.IsIndeterminate = true;
 
-            sb.AppendLine(imagesDiffer ? "Images differ" : "Images do not differ");
+                            byte[] data1 = new byte[input1ByteAddressable.Info.Sectors];
+                            byte[] data2 = new byte[input2ByteAddressable.Info.Sectors];
+                            byte[] tmp;
 
-            if(verbose)
-                AnsiConsole.Render(table);
-            else
-                AaruConsole.WriteLine(sb.ToString());
+                            input1ByteAddressable.ReadBytes(data1, 0, data1.Length, out int bytesRead);
 
-            return (int)ErrorNumber.NoError;
-        }
+                            if(bytesRead != data1.Length)
+                            {
+                                tmp = new byte[bytesRead];
+                                Array.Copy(data1, 0, tmp, 0, bytesRead);
+                                data1 = tmp;
+                            }
+
+                            input2ByteAddressable.ReadBytes(data2, 0, data2.Length, out bytesRead);
+
+                            if(bytesRead != data2.Length)
+                            {
+                                tmp = new byte[bytesRead];
+                                Array.Copy(data2, 0, tmp, 0, bytesRead);
+                                data2 = tmp;
+                            }
+
+                            ArrayHelpers.CompareBytes(out bool different, out bool sameSize, data1, data2);
+
+                            if(different)
+                                imagesDiffer = true;
+                            else if(!sameSize)
+                                imagesDiffer = true;
+                        });
+
+        AaruConsole.WriteLine();
+
+        sb.AppendLine(imagesDiffer ? "Images differ" : "Images do not differ");
+
+        if(verbose)
+            AnsiConsole.Render(table);
+        else
+            AaruConsole.WriteLine(sb.ToString());
+
+        return (int)ErrorNumber.NoError;
     }
 }
