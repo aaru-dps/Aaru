@@ -76,6 +76,9 @@
     <Compile Include="Extents\ExtentsUShort.cs" />
     <Compile Include="Filters.cs" />
     <Compile Include="Geometry.cs" />
+    <Compile Include="Interfaces\IBaseImage.cs" />
+    <Compile Include="Interfaces\IBaseWritableImage.cs" />
+    <Compile Include="Interfaces\IByteAddressableImage.cs" />
     <Compile Include="Interfaces\IChecksum.cs" />
     <Compile Include="Interfaces\IFilesystem.cs" />
     <Compile Include="Interfaces\IArchive.cs" />
