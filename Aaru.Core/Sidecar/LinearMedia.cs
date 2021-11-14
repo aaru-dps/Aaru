@@ -38,36 +38,35 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using Schemas;
 
-namespace Aaru.Core
+namespace Aaru.Core;
+
+public sealed partial class Sidecar
 {
-    public sealed partial class Sidecar
+    // TODO: Complete it
+    /// <summary>Creates a metadata sidecar for linear media (e.g. ROM chip)</summary>
+    /// <param name="image">Image</param>
+    /// <param name="filterId">Filter uuid</param>
+    /// <param name="imagePath">Image path</param>
+    /// <param name="fi">Image file information</param>
+    /// <param name="plugins">Image plugins</param>
+    /// <param name="imgChecksums">List of image checksums</param>
+    /// <param name="sidecar">Metadata sidecar</param>
+    /// <param name="encoding">Encoding to be used for filesystem plugins</param>
+    static void LinearMedia(IByteAddressableImage image, Guid filterId, string imagePath, FileInfo fi,
+                            PluginBase plugins, List<ChecksumType> imgChecksums, ref CICMMetadataType sidecar,
+                            Encoding encoding) => sidecar.LinearMedia = new[]
     {
-        // TODO: Complete it
-        /// <summary>Creates a metadata sidecar for linear media (e.g. ROM chip)</summary>
-        /// <param name="image">Image</param>
-        /// <param name="filterId">Filter uuid</param>
-        /// <param name="imagePath">Image path</param>
-        /// <param name="fi">Image file information</param>
-        /// <param name="plugins">Image plugins</param>
-        /// <param name="imgChecksums">List of image checksums</param>
-        /// <param name="sidecar">Metadata sidecar</param>
-        /// <param name="encoding">Encoding to be used for filesystem plugins</param>
-        void LinearMedia(IMediaImage image, Guid filterId, string imagePath, FileInfo fi, PluginBase plugins,
-                         List<ChecksumType> imgChecksums, ref CICMMetadataType sidecar, Encoding encoding) =>
-            sidecar.LinearMedia = new[]
+        new LinearMediaType
+        {
+            Checksums = imgChecksums.ToArray(),
+            Image = new ImageType
             {
-                new LinearMediaType
-                {
-                    Checksums = imgChecksums.ToArray(),
-                    Image = new ImageType
-                    {
-                        format          = image.Format,
-                        offset          = 0,
-                        offsetSpecified = true,
-                        Value           = Path.GetFileName(imagePath)
-                    },
-                    Size = (ulong)fi.Length
-                }
-            };
-    }
+                format          = image.Format,
+                offset          = 0,
+                offsetSpecified = true,
+                Value           = Path.GetFileName(imagePath)
+            },
+            Size = image.Info.Sectors
+        }
+    };
 }

@@ -52,7 +52,7 @@ namespace Aaru.Core
         /// <param name="imgChecksums">List of image checksums</param>
         /// <param name="sidecar">Metadata sidecar</param>
         /// <param name="encoding">Encoding to be used for filesystem plugins</param>
-        static void AudioMedia(IMediaImage image, Guid filterId, string imagePath, FileInfo fi, PluginBase plugins,
+        static void AudioMedia(IBaseImage image, Guid filterId, string imagePath, FileInfo fi, PluginBase plugins,
                                List<ChecksumType> imgChecksums, ref CICMMetadataType sidecar, Encoding encoding)
         {
             sidecar.AudioMedia = new[]

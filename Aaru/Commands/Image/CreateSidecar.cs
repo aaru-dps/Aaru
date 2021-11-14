@@ -178,7 +178,7 @@ namespace Aaru.Commands.Image
 
                 try
                 {
-                    IMediaImage imageFormat = null;
+                    IBaseImage imageFormat = null;
 
                     Core.Spectre.ProgressSingleSpinner(ctx =>
                     {

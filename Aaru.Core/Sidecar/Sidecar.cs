@@ -40,139 +40,155 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Schemas;
 
-namespace Aaru.Core
+namespace Aaru.Core;
+
+public sealed partial class Sidecar
 {
-    public sealed partial class Sidecar
+    readonly ChecksumType[] _emptyChecksums;
+    readonly Encoding       _encoding;
+    readonly FileInfo       _fi;
+    readonly Guid           _filterId;
+    readonly IBaseImage     _image;
+    readonly string         _imagePath;
+    readonly Checksum       _imgChkWorker;
+    readonly PluginBase     _plugins;
+    bool                    _aborted;
+    FileStream              _fs;
+    CICMMetadataType        _sidecar;
+
+    /// <summary>Initializes a new instance of this class</summary>
+    public Sidecar()
     {
-        readonly ChecksumType[] _emptyChecksums;
-        readonly Encoding       _encoding;
-        readonly FileInfo       _fi;
-        readonly Guid           _filterId;
-        readonly IMediaImage    _image;
-        readonly string         _imagePath;
-        readonly Checksum       _imgChkWorker;
-        readonly PluginBase     _plugins;
-        bool                    _aborted;
-        FileStream              _fs;
-        CICMMetadataType        _sidecar;
+        _plugins      = GetPluginBase.Instance;
+        _imgChkWorker = new Checksum();
+        _aborted      = false;
 
-        /// <summary>Initializes a new instance of this class</summary>
-        public Sidecar()
+        var emptyChkWorker = new Checksum();
+        emptyChkWorker.Update(Array.Empty<byte>());
+        _emptyChecksums = emptyChkWorker.End().ToArray();
+    }
+
+    /// <param name="image">Image</param>
+    /// <param name="imagePath">Path to image</param>
+    /// <param name="filterId">Filter uuid</param>
+    /// <param name="encoding">Encoding for analysis</param>
+    public Sidecar(IBaseImage image, string imagePath, Guid filterId, Encoding encoding)
+    {
+        _image        = image;
+        _imagePath    = imagePath;
+        _filterId     = filterId;
+        _encoding     = encoding;
+        _sidecar      = image.CicmMetadata ?? new CICMMetadataType();
+        _plugins      = GetPluginBase.Instance;
+        _fi           = new FileInfo(imagePath);
+        _fs           = new FileStream(imagePath, FileMode.Open, FileAccess.Read);
+        _imgChkWorker = new Checksum();
+        _aborted      = false;
+    }
+
+    /// <summary>Implements creating a metadata sidecar</summary>
+    /// <returns>The metadata sidecar</returns>
+    public CICMMetadataType Create()
+    {
+        // For fast debugging, skip checksum
+        //goto skipImageChecksum;
+
+        byte[] data;
+        long   position = 0;
+        UpdateStatus("Hashing image file...");
+        InitProgress();
+
+        while(position < _fi.Length - 1048576)
         {
-            _plugins      = GetPluginBase.Instance;
-            _imgChkWorker = new Checksum();
-            _aborted      = false;
+            if(_aborted)
+                return _sidecar;
 
-            var emptyChkWorker = new Checksum();
-            emptyChkWorker.Update(Array.Empty<byte>());
-            _emptyChecksums = emptyChkWorker.End().ToArray();
-        }
-
-        /// <param name="image">Image</param>
-        /// <param name="imagePath">Path to image</param>
-        /// <param name="filterId">Filter uuid</param>
-        /// <param name="encoding">Encoding for analysis</param>
-        public Sidecar(IMediaImage image, string imagePath, Guid filterId, Encoding encoding)
-        {
-            _image        = image;
-            _imagePath    = imagePath;
-            _filterId     = filterId;
-            _encoding     = encoding;
-            _sidecar      = image.CicmMetadata ?? new CICMMetadataType();
-            _plugins      = GetPluginBase.Instance;
-            _fi           = new FileInfo(imagePath);
-            _fs           = new FileStream(imagePath, FileMode.Open, FileAccess.Read);
-            _imgChkWorker = new Checksum();
-            _aborted      = false;
-        }
-
-        /// <summary>Implements creating a metadata sidecar</summary>
-        /// <returns>The metadata sidecar</returns>
-        public CICMMetadataType Create()
-        {
-            // For fast debugging, skip checksum
-            //goto skipImageChecksum;
-
-            byte[] data;
-            long   position = 0;
-            UpdateStatus("Hashing image file...");
-            InitProgress();
-
-            while(position < _fi.Length - 1048576)
-            {
-                if(_aborted)
-                    return _sidecar;
-
-                data = new byte[1048576];
-                _fs.Read(data, 0, 1048576);
-
-                UpdateProgress("Hashing image file byte {0} of {1}", position, _fi.Length);
-
-                _imgChkWorker.Update(data);
-
-                position += 1048576;
-            }
-
-            data = new byte[_fi.Length - position];
-            _fs.Read(data, 0, (int)(_fi.Length - position));
+            data = new byte[1048576];
+            _fs.Read(data, 0, 1048576);
 
             UpdateProgress("Hashing image file byte {0} of {1}", position, _fi.Length);
 
             _imgChkWorker.Update(data);
 
-            // For fast debugging, skip checksum
-            //skipImageChecksum:
+            position += 1048576;
+        }
 
-            EndProgress();
-            _fs.Close();
+        data = new byte[_fi.Length - position];
+        _fs.Read(data, 0, (int)(_fi.Length - position));
 
-            List<ChecksumType> imgChecksums = _imgChkWorker.End();
+        UpdateProgress("Hashing image file byte {0} of {1}", position, _fi.Length);
 
-            _sidecar.OpticalDisc = null;
-            _sidecar.BlockMedia  = null;
-            _sidecar.AudioMedia  = null;
-            _sidecar.LinearMedia = null;
+        _imgChkWorker.Update(data);
 
-            if(_aborted)
-                return _sidecar;
+        // For fast debugging, skip checksum
+        //skipImageChecksum:
 
-            switch(_image.Info.XmlMediaType)
-            {
-                case XmlMediaType.OpticalDisc:
-                    if(_image is IOpticalMediaImage opticalImage)
-                        OpticalDisc(opticalImage, _filterId, _imagePath, _fi, _plugins, imgChecksums, ref _sidecar,
-                                    _encoding);
-                    else
-                    {
-                        AaruConsole.
-                            ErrorWriteLine("The specified image says it contains an optical media but at the same time says it does not support them.");
+        EndProgress();
+        _fs.Close();
 
-                        AaruConsole.ErrorWriteLine("Please open an issue at Github.");
-                    }
+        List<ChecksumType> imgChecksums = _imgChkWorker.End();
 
-                    break;
-                case XmlMediaType.BlockMedia:
-                    BlockMedia(_image, _filterId, _imagePath, _fi, _plugins, imgChecksums, ref _sidecar, _encoding);
+        _sidecar.OpticalDisc = null;
+        _sidecar.BlockMedia  = null;
+        _sidecar.AudioMedia  = null;
+        _sidecar.LinearMedia = null;
 
-                    break;
-                case XmlMediaType.LinearMedia:
-                    LinearMedia(_image, _filterId, _imagePath, _fi, _plugins, imgChecksums, ref _sidecar, _encoding);
-
-                    break;
-                case XmlMediaType.AudioMedia:
-                    AudioMedia(_image, _filterId, _imagePath, _fi, _plugins, imgChecksums, ref _sidecar, _encoding);
-
-                    break;
-            }
-
+        if(_aborted)
             return _sidecar;
+
+        switch(_image.Info.XmlMediaType)
+        {
+            case XmlMediaType.OpticalDisc:
+                if(_image is IOpticalMediaImage opticalImage)
+                    OpticalDisc(opticalImage, _filterId, _imagePath, _fi, _plugins, imgChecksums, ref _sidecar,
+                                _encoding);
+                else
+                {
+                    AaruConsole.
+                        ErrorWriteLine("The specified image says it contains an optical media but at the same time says it does not support them.");
+
+                    AaruConsole.ErrorWriteLine("Please open an issue at Github.");
+                }
+
+                break;
+            case XmlMediaType.BlockMedia:
+                if(_image is IMediaImage blockImage)
+                    BlockMedia(blockImage, _filterId, _imagePath, _fi, _plugins, imgChecksums, ref _sidecar, _encoding);
+                else
+                {
+                    AaruConsole.
+                        ErrorWriteLine("The specified image says it contains a block addressable media but at the same time says it does not support them.");
+
+                    AaruConsole.ErrorWriteLine("Please open an issue at Github.");
+                }
+
+                break;
+            case XmlMediaType.LinearMedia:
+                if(_image is IByteAddressableImage byteAddressableImage)
+                    LinearMedia(byteAddressableImage, _filterId, _imagePath, _fi, _plugins, imgChecksums, ref _sidecar,
+                                _encoding);
+                else
+                {
+                    AaruConsole.
+                        ErrorWriteLine("The specified image says it contains a byte addressable media but at the same time says it does not support them.");
+
+                    AaruConsole.ErrorWriteLine("Please open an issue at Github.");
+                }
+
+                break;
+            case XmlMediaType.AudioMedia:
+                AudioMedia(_image, _filterId, _imagePath, _fi, _plugins, imgChecksums, ref _sidecar, _encoding);
+
+                break;
         }
 
-        /// <summary>Aborts sidecar running operation</summary>
-        public void Abort()
-        {
-            UpdateStatus("Aborting...");
-            _aborted = true;
-        }
+        return _sidecar;
+    }
+
+    /// <summary>Aborts sidecar running operation</summary>
+    public void Abort()
+    {
+        UpdateStatus("Aborting...");
+        _aborted = true;
     }
 }
