@@ -48,7 +48,7 @@ namespace Aaru.Tests.Issues
 
             PluginBase plugins = GetPluginBase.Instance;
 
-            IMediaImage imageFormat = ImageFormat.Detect(inputFilter);
+            IMediaImage imageFormat = ImageFormat.Detect(inputFilter) as IMediaImage;
 
             Assert.NotNull(imageFormat, "Image format not identified, not proceeding with analysis.");
 

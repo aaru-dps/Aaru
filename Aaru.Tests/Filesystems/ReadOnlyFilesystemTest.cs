@@ -48,7 +48,7 @@ namespace Aaru.Tests.Filesystems
 
                     Assert.IsNotNull(inputFilter, $"Filter: {testFile}");
 
-                    IMediaImage image = ImageFormat.Detect(inputFilter);
+                    IMediaImage image = ImageFormat.Detect(inputFilter) as IMediaImage;
 
                     Assert.IsNotNull(image, $"Image format: {testFile}");
 
@@ -163,7 +163,7 @@ namespace Aaru.Tests.Filesystems
 
                 var         filtersList = new FiltersList();
                 IFilter     inputFilter = filtersList.GetFilter(testFile);
-                IMediaImage image       = ImageFormat.Detect(inputFilter);
+                IMediaImage image       = ImageFormat.Detect(inputFilter) as IMediaImage;
                 ErrorNumber opened      = image.Open(inputFilter);
 
                 if(opened != ErrorNumber.NoError)

@@ -55,7 +55,7 @@ namespace Aaru.Tests.Issues
 
             Assert.IsFalse(File.Exists(outputPath), "Output file already exists, not continuing.");
 
-            IMediaImage inputFormat = ImageFormat.Detect(inputFilter);
+            IMediaImage inputFormat = ImageFormat.Detect(inputFilter) as IMediaImage;
 
             Assert.IsNotNull(inputFormat, "Input image format not identified, not proceeding with conversion.");
 

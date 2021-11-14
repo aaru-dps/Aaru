@@ -782,7 +782,7 @@ namespace Aaru.Core.Devices.Dumping
                 _dumpLog.WriteLine("Creating sidecar.");
                 var         filters     = new FiltersList();
                 IFilter     filter      = filters.GetFilter(_outputPath);
-                IMediaImage inputPlugin = ImageFormat.Detect(filter);
+                IMediaImage inputPlugin = ImageFormat.Detect(filter) as IMediaImage;
                 ErrorNumber opened      = inputPlugin.Open(filter);
 
                 if(opened != ErrorNumber.NoError)

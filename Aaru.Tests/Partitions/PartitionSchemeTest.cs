@@ -36,7 +36,7 @@ namespace Aaru.Tests.Partitions
 
                 Assert.IsNotNull(inputFilter, $"Filter: {testFile}");
 
-                IMediaImage image = ImageFormat.Detect(inputFilter);
+                IMediaImage image = ImageFormat.Detect(inputFilter) as IMediaImage;
 
                 Assert.IsNotNull(image, $"Image format: {testFile}");
 

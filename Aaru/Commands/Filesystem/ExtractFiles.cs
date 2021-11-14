@@ -46,612 +46,615 @@ using JetBrains.Annotations;
 using Spectre.Console;
 using FileAttributes = Aaru.CommonTypes.Structs.FileAttributes;
 
-namespace Aaru.Commands.Filesystem
+namespace Aaru.Commands.Filesystem;
+
+internal sealed class ExtractFilesCommand : Command
 {
-    internal sealed class ExtractFilesCommand : Command
+    const long BUFFER_SIZE = 16777216;
+
+    public ExtractFilesCommand() : base("extract", "Extracts all files in disc image.")
     {
-        const long BUFFER_SIZE = 16777216;
+        Add(new Option(new[]
+            {
+                "--encoding", "-e"
+            }, "Name of character encoding to use.")
+            {
+                Argument = new Argument<string>(() => null),
+                Required = false
+            });
 
-        public ExtractFilesCommand() : base("extract", "Extracts all files in disc image.")
+        Add(new Option(new[]
+            {
+                "--options", "-O"
+            }, "Comma separated name=value pairs of options to pass to filesystem plugin.")
+            {
+                Argument = new Argument<string>(() => null),
+                Required = false
+            });
+
+        Add(new Option(new[]
+            {
+                "--xattrs", "-x"
+            }, "Extract extended attributes if present.")
+            {
+                Argument = new Argument<bool>(() => false),
+                Required = false
+            });
+
+        Add(new Option(new[]
+            {
+                "--namespace", "-n"
+            }, "Namespace to use for filenames.")
+            {
+                Argument = new Argument<string>(() => null),
+                Required = false
+            });
+
+        AddArgument(new Argument<string>
         {
-            Add(new Option(new[]
-                {
-                    "--encoding", "-e"
-                }, "Name of character encoding to use.")
-                {
-                    Argument = new Argument<string>(() => null),
-                    Required = false
-                });
+            Arity       = ArgumentArity.ExactlyOne,
+            Description = "Disc image path",
+            Name        = "image-path"
+        });
 
-            Add(new Option(new[]
-                {
-                    "--options", "-O"
-                }, "Comma separated name=value pairs of options to pass to filesystem plugin.")
-                {
-                    Argument = new Argument<string>(() => null),
-                    Required = false
-                });
+        AddArgument(new Argument<string>
+        {
+            Arity       = ArgumentArity.ExactlyOne,
+            Description = "Directory where extracted files will be created. Will abort if it exists",
+            Name        = "output-dir"
+        });
 
-            Add(new Option(new[]
-                {
-                    "--xattrs", "-x"
-                }, "Extract extended attributes if present.")
-                {
-                    Argument = new Argument<bool>(() => false),
-                    Required = false
-                });
+        Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
+    }
 
-            Add(new Option(new[]
-                {
-                    "--namespace", "-n"
-                }, "Namespace to use for filenames.")
-                {
-                    Argument = new Argument<string>(() => null),
-                    Required = false
-                });
+    public static int Invoke(bool debug, bool verbose, string encoding, bool xattrs, string imagePath,
+                             string @namespace, string outputDir, string options)
+    {
+        MainClass.PrintCopyright();
 
-            AddArgument(new Argument<string>
+        if(debug)
+        {
+            IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
             {
-                Arity       = ArgumentArity.ExactlyOne,
-                Description = "Disc image path",
-                Name        = "image-path"
+                Out = new AnsiConsoleOutput(System.Console.Error)
             });
 
-            AddArgument(new Argument<string>
+            AaruConsole.DebugWriteLineEvent += (format, objects) =>
             {
-                Arity       = ArgumentArity.ExactlyOne,
-                Description = "Directory where extracted files will be created. Will abort if it exists",
-                Name        = "output-dir"
-            });
-
-            Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
+                if(objects is null)
+                    stderrConsole.MarkupLine(format);
+                else
+                    stderrConsole.MarkupLine(format, objects);
+            };
         }
 
-        public static int Invoke(bool debug, bool verbose, string encoding, bool xattrs, string imagePath,
-                                 string @namespace, string outputDir, string options)
-        {
-            MainClass.PrintCopyright();
-
-            if(debug)
+        if(verbose)
+            AaruConsole.WriteEvent += (format, objects) =>
             {
-                IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
-                {
-                    Out = new AnsiConsoleOutput(System.Console.Error)
-                });
+                if(objects is null)
+                    AnsiConsole.Markup(format);
+                else
+                    AnsiConsole.Markup(format, objects);
+            };
 
-                AaruConsole.DebugWriteLineEvent += (format, objects) =>
-                {
-                    if(objects is null)
-                        stderrConsole.MarkupLine(format);
-                    else
-                        stderrConsole.MarkupLine(format, objects);
-                };
+        Statistics.AddCommand("extract-files");
+
+        AaruConsole.DebugWriteLine("Extract-Files command", "--debug={0}", debug);
+        AaruConsole.DebugWriteLine("Extract-Files command", "--encoding={0}", encoding);
+        AaruConsole.DebugWriteLine("Extract-Files command", "--input={0}", imagePath);
+        AaruConsole.DebugWriteLine("Extract-Files command", "--options={0}", options);
+        AaruConsole.DebugWriteLine("Extract-Files command", "--output={0}", outputDir);
+        AaruConsole.DebugWriteLine("Extract-Files command", "--verbose={0}", verbose);
+        AaruConsole.DebugWriteLine("Extract-Files command", "--xattrs={0}", xattrs);
+
+        var     filtersList = new FiltersList();
+        IFilter inputFilter = null;
+
+        Core.Spectre.ProgressSingleSpinner(ctx =>
+        {
+            ctx.AddTask("Identifying file filter...").IsIndeterminate();
+            inputFilter = filtersList.GetFilter(imagePath);
+        });
+
+        Dictionary<string, string> parsedOptions = Core.Options.Parse(options);
+        AaruConsole.DebugWriteLine("Extract-Files command", "Parsed options:");
+
+        foreach(KeyValuePair<string, string> parsedOption in parsedOptions)
+            AaruConsole.DebugWriteLine("Extract-Files command", "{0} = {1}", parsedOption.Key, parsedOption.Value);
+
+        parsedOptions.Add("debug", debug.ToString());
+
+        if(inputFilter == null)
+        {
+            AaruConsole.ErrorWriteLine("Cannot open specified file.");
+
+            return (int)ErrorNumber.CannotOpenFile;
+        }
+
+        Encoding encodingClass = null;
+
+        if(encoding != null)
+            try
+            {
+                encodingClass = Claunia.Encoding.Encoding.GetEncoding(encoding);
+
+                if(verbose)
+                    AaruConsole.VerboseWriteLine("Using encoding for {0}.", encodingClass.EncodingName);
+            }
+            catch(ArgumentException)
+            {
+                AaruConsole.ErrorWriteLine("Specified encoding is not supported.");
+
+                return (int)ErrorNumber.EncodingUnknown;
             }
 
-            if(verbose)
-                AaruConsole.WriteEvent += (format, objects) =>
-                {
-                    if(objects is null)
-                        AnsiConsole.Markup(format);
-                    else
-                        AnsiConsole.Markup(format, objects);
-                };
+        PluginBase plugins = GetPluginBase.Instance;
 
-            Statistics.AddCommand("extract-files");
-
-            AaruConsole.DebugWriteLine("Extract-Files command", "--debug={0}", debug);
-            AaruConsole.DebugWriteLine("Extract-Files command", "--encoding={0}", encoding);
-            AaruConsole.DebugWriteLine("Extract-Files command", "--input={0}", imagePath);
-            AaruConsole.DebugWriteLine("Extract-Files command", "--options={0}", options);
-            AaruConsole.DebugWriteLine("Extract-Files command", "--output={0}", outputDir);
-            AaruConsole.DebugWriteLine("Extract-Files command", "--verbose={0}", verbose);
-            AaruConsole.DebugWriteLine("Extract-Files command", "--xattrs={0}", xattrs);
-
-            var     filtersList = new FiltersList();
-            IFilter inputFilter = null;
+        try
+        {
+            IMediaImage imageFormat = null;
+            IBaseImage  baseImage   = null;
 
             Core.Spectre.ProgressSingleSpinner(ctx =>
             {
-                ctx.AddTask("Identifying file filter...").IsIndeterminate();
-                inputFilter = filtersList.GetFilter(imagePath);
+                ctx.AddTask("Identifying image format...").IsIndeterminate();
+                baseImage   = ImageFormat.Detect(inputFilter);
+                imageFormat = baseImage as IMediaImage;
             });
 
-            Dictionary<string, string> parsedOptions = Core.Options.Parse(options);
-            AaruConsole.DebugWriteLine("Extract-Files command", "Parsed options:");
-
-            foreach(KeyValuePair<string, string> parsedOption in parsedOptions)
-                AaruConsole.DebugWriteLine("Extract-Files command", "{0} = {1}", parsedOption.Key, parsedOption.Value);
-
-            parsedOptions.Add("debug", debug.ToString());
-
-            if(inputFilter == null)
+            if(baseImage == null)
             {
-                AaruConsole.ErrorWriteLine("Cannot open specified file.");
+                AaruConsole.WriteLine("Image format not identified, not proceeding with analysis.");
 
-                return (int)ErrorNumber.CannotOpenFile;
+                return (int)ErrorNumber.UnrecognizedFormat;
             }
 
-            Encoding encodingClass = null;
+            if(imageFormat == null)
+            {
+                AaruConsole.WriteLine("Command not supported for this image type.");
 
-            if(encoding != null)
-                try
-                {
-                    encodingClass = Claunia.Encoding.Encoding.GetEncoding(encoding);
+                return (int)ErrorNumber.InvalidArgument;
+            }
 
-                    if(verbose)
-                        AaruConsole.VerboseWriteLine("Using encoding for {0}.", encodingClass.EncodingName);
-                }
-                catch(ArgumentException)
-                {
-                    AaruConsole.ErrorWriteLine("Specified encoding is not supported.");
+            if(verbose)
+                AaruConsole.VerboseWriteLine("Image format identified by {0} ({1}).", imageFormat.Name, imageFormat.Id);
+            else
+                AaruConsole.WriteLine("Image format identified by {0}.", imageFormat.Name);
 
-                    return (int)ErrorNumber.EncodingUnknown;
-                }
+            if(outputDir == null)
+            {
+                AaruConsole.WriteLine("Output directory missing.");
 
-            PluginBase plugins = GetPluginBase.Instance;
+                return (int)ErrorNumber.MissingArgument;
+            }
+
+            if(Directory.Exists(outputDir) ||
+               File.Exists(outputDir))
+            {
+                AaruConsole.ErrorWriteLine("Destination exists, aborting.");
+
+                return (int)ErrorNumber.FileExists;
+            }
+
+            Directory.CreateDirectory(outputDir);
 
             try
             {
-                IMediaImage imageFormat = null;
+                ErrorNumber opened = ErrorNumber.NoData;
 
                 Core.Spectre.ProgressSingleSpinner(ctx =>
                 {
-                    ctx.AddTask("Identifying image format...").IsIndeterminate();
-                    imageFormat = ImageFormat.Detect(inputFilter);
+                    ctx.AddTask("Opening image file...").IsIndeterminate();
+                    opened = imageFormat.Open(inputFilter);
                 });
 
-                if(imageFormat == null)
+                if(opened != ErrorNumber.NoError)
                 {
-                    AaruConsole.WriteLine("Image format not identified, not proceeding with analysis.");
+                    AaruConsole.WriteLine("Unable to open image format");
+                    AaruConsole.WriteLine("Error {0}", opened);
 
-                    return (int)ErrorNumber.UnrecognizedFormat;
+                    return (int)opened;
                 }
 
-                if(verbose)
-                    AaruConsole.VerboseWriteLine("Image format identified by {0} ({1}).", imageFormat.Name,
-                                                 imageFormat.Id);
-                else
-                    AaruConsole.WriteLine("Image format identified by {0}.", imageFormat.Name);
+                AaruConsole.DebugWriteLine("Extract-Files command", "Correctly opened image file.");
 
-                if(outputDir == null)
-                {
-                    AaruConsole.WriteLine("Output directory missing.");
+                AaruConsole.DebugWriteLine("Extract-Files command", "Image without headers is {0} bytes.",
+                                           imageFormat.Info.ImageSize);
 
-                    return (int)ErrorNumber.MissingArgument;
-                }
+                AaruConsole.DebugWriteLine("Extract-Files command", "Image has {0} sectors.", imageFormat.Info.Sectors);
 
-                if(Directory.Exists(outputDir) ||
-                   File.Exists(outputDir))
-                {
-                    AaruConsole.ErrorWriteLine("Destination exists, aborting.");
+                AaruConsole.DebugWriteLine("Extract-Files command", "Image identifies disk type as {0}.",
+                                           imageFormat.Info.MediaType);
 
-                    return (int)ErrorNumber.FileExists;
-                }
-
-                Directory.CreateDirectory(outputDir);
-
-                try
-                {
-                    ErrorNumber opened = ErrorNumber.NoData;
-
-                    Core.Spectre.ProgressSingleSpinner(ctx =>
-                    {
-                        ctx.AddTask("Opening image file...").IsIndeterminate();
-                        opened = imageFormat.Open(inputFilter);
-                    });
-
-                    if(opened != ErrorNumber.NoError)
-                    {
-                        AaruConsole.WriteLine("Unable to open image format");
-                        AaruConsole.WriteLine("Error {0}", opened);
-
-                        return (int)opened;
-                    }
-
-                    AaruConsole.DebugWriteLine("Extract-Files command", "Correctly opened image file.");
-
-                    AaruConsole.DebugWriteLine("Extract-Files command", "Image without headers is {0} bytes.",
-                                               imageFormat.Info.ImageSize);
-
-                    AaruConsole.DebugWriteLine("Extract-Files command", "Image has {0} sectors.",
-                                               imageFormat.Info.Sectors);
-
-                    AaruConsole.DebugWriteLine("Extract-Files command", "Image identifies disk type as {0}.",
-                                               imageFormat.Info.MediaType);
-
-                    Statistics.AddMediaFormat(imageFormat.Format);
-                    Statistics.AddMedia(imageFormat.Info.MediaType, false);
-                    Statistics.AddFilter(inputFilter.Name);
-                }
-                catch(Exception ex)
-                {
-                    AaruConsole.ErrorWriteLine("Unable to open image format");
-                    AaruConsole.ErrorWriteLine("Error: {0}", ex.Message);
-
-                    return (int)ErrorNumber.CannotOpenFormat;
-                }
-
-                List<Partition> partitions = null;
-
-                Core.Spectre.ProgressSingleSpinner(ctx =>
-                {
-                    ctx.AddTask("Enumerating partitions...").IsIndeterminate();
-                    partitions = Core.Partitions.GetAll(imageFormat);
-                });
-
-                Core.Partitions.AddSchemesToStats(partitions);
-
-                if(partitions.Count == 0)
-                {
-                    AaruConsole.DebugWriteLine("Ls command", "No partitions found");
-
-                    partitions.Add(new Partition
-                    {
-                        Description = "Whole device",
-                        Length      = imageFormat.Info.Sectors,
-                        Offset      = 0,
-                        Size        = imageFormat.Info.SectorSize * imageFormat.Info.Sectors,
-                        Sequence    = 1,
-                        Start       = 0
-                    });
-                }
-
-                AaruConsole.WriteLine("{0} partitions found.", partitions.Count);
-
-                for(int i = 0; i < partitions.Count; i++)
-                {
-                    AaruConsole.WriteLine();
-                    AaruConsole.WriteLine("[bold]Partition {0}:[/]", partitions[i].Sequence);
-
-                    List<string> idPlugins = null;
-
-                    Core.Spectre.ProgressSingleSpinner(ctx =>
-                    {
-                        ctx.AddTask("Identifying filesystems on partition...").IsIndeterminate();
-                        Core.Filesystems.Identify(imageFormat, out idPlugins, partitions[i]);
-                    });
-
-                    if(idPlugins.Count == 0)
-                        AaruConsole.WriteLine("Filesystem not identified");
-                    else
-                    {
-                        IReadOnlyFilesystem plugin;
-                        ErrorNumber         error = ErrorNumber.InvalidArgument;
-
-                        if(idPlugins.Count > 1)
-                        {
-                            AaruConsole.WriteLine($"[italic]Identified by {idPlugins.Count} plugins[/]");
-
-                            foreach(string pluginName in idPlugins)
-                                if(plugins.ReadOnlyFilesystems.TryGetValue(pluginName, out plugin))
-                                {
-                                    AaruConsole.WriteLine($"[bold]As identified by {plugin.Name}.[/]");
-
-                                    var fs = (IReadOnlyFilesystem)plugin.GetType().GetConstructor(Type.EmptyTypes)?.
-                                                                         Invoke(new object[]
-                                                                                    {});
-
-                                    Core.Spectre.ProgressSingleSpinner(ctx =>
-                                    {
-                                        ctx.AddTask("Mounting filesystem...").IsIndeterminate();
-
-                                        error = fs.Mount(imageFormat, partitions[i], encodingClass, parsedOptions,
-                                                         @namespace);
-                                    });
-
-                                    if(error == ErrorNumber.NoError)
-                                    {
-                                        string volumeName = string.IsNullOrEmpty(fs.XmlFsType.VolumeName) ? "NO NAME"
-                                                                : fs.XmlFsType.VolumeName;
-
-                                        ExtractFilesInDir("/", fs, volumeName, outputDir, xattrs);
-
-                                        Statistics.AddFilesystem(fs.XmlFsType.Type);
-                                    }
-                                    else
-                                        AaruConsole.ErrorWriteLine("Unable to mount device, error {0}",
-                                                                   error.ToString());
-                                }
-                        }
-                        else
-                        {
-                            plugins.ReadOnlyFilesystems.TryGetValue(idPlugins[0], out plugin);
-
-                            if(plugin == null)
-                                continue;
-
-                            AaruConsole.WriteLine($"[bold]Identified by {plugin.Name}.[/]");
-
-                            var fs = (IReadOnlyFilesystem)plugin.GetType().GetConstructor(Type.EmptyTypes)?.
-                                                                 Invoke(new object[]
-                                                                            {});
-
-                            Core.Spectre.ProgressSingleSpinner(ctx =>
-                            {
-                                ctx.AddTask("Mounting filesystem...").IsIndeterminate();
-                                error = fs.Mount(imageFormat, partitions[i], encodingClass, parsedOptions, @namespace);
-                            });
-
-                            if(error == ErrorNumber.NoError)
-                            {
-                                string volumeName = string.IsNullOrEmpty(fs.XmlFsType.VolumeName) ? "NO NAME"
-                                                        : fs.XmlFsType.VolumeName;
-
-                                ExtractFilesInDir("/", fs, volumeName, outputDir, xattrs);
-
-                                Statistics.AddFilesystem(fs.XmlFsType.Type);
-                            }
-                            else
-                                AaruConsole.ErrorWriteLine("Unable to mount device, error {0}", error.ToString());
-                        }
-                    }
-                }
+                Statistics.AddMediaFormat(imageFormat.Format);
+                Statistics.AddMedia(imageFormat.Info.MediaType, false);
+                Statistics.AddFilter(inputFilter.Name);
             }
             catch(Exception ex)
             {
-                AaruConsole.ErrorWriteLine($"Error reading file: {ex.Message}");
-                AaruConsole.DebugWriteLine("Extract-Files command", ex.StackTrace);
+                AaruConsole.ErrorWriteLine("Unable to open image format");
+                AaruConsole.ErrorWriteLine("Error: {0}", ex.Message);
 
-                return (int)ErrorNumber.UnexpectedException;
+                return (int)ErrorNumber.CannotOpenFormat;
             }
 
-            return (int)ErrorNumber.NoError;
-        }
+            List<Partition> partitions = null;
 
-        static void ExtractFilesInDir(string path, [NotNull] IReadOnlyFilesystem fs, string volumeName,
-                                      string outputDir, bool doXattrs)
-        {
-            if(path.StartsWith('/'))
-                path = path.Substring(1);
-
-            ErrorNumber error = fs.ReadDir(path, out List<string> directory);
-
-            if(error != ErrorNumber.NoError)
+            Core.Spectre.ProgressSingleSpinner(ctx =>
             {
-                AaruConsole.ErrorWriteLine("Error {0} reading root directory {0}", error.ToString());
+                ctx.AddTask("Enumerating partitions...").IsIndeterminate();
+                partitions = Core.Partitions.GetAll(imageFormat);
+            });
 
-                return;
+            Core.Partitions.AddSchemesToStats(partitions);
+
+            if(partitions.Count == 0)
+            {
+                AaruConsole.DebugWriteLine("Ls command", "No partitions found");
+
+                partitions.Add(new Partition
+                {
+                    Description = "Whole device",
+                    Length      = imageFormat.Info.Sectors,
+                    Offset      = 0,
+                    Size        = imageFormat.Info.SectorSize * imageFormat.Info.Sectors,
+                    Sequence    = 1,
+                    Start       = 0
+                });
             }
 
-            foreach(string entry in directory)
+            AaruConsole.WriteLine("{0} partitions found.", partitions.Count);
+
+            for(int i = 0; i < partitions.Count; i++)
             {
-                FileEntryInfo stat = new();
+                AaruConsole.WriteLine();
+                AaruConsole.WriteLine("[bold]Partition {0}:[/]", partitions[i].Sequence);
+
+                List<string> idPlugins = null;
 
                 Core.Spectre.ProgressSingleSpinner(ctx =>
                 {
-                    ctx.AddTask("Retrieving file information...").IsIndeterminate();
-                    error = fs.Stat(path + "/" + entry, out stat);
+                    ctx.AddTask("Identifying filesystems on partition...").IsIndeterminate();
+                    Core.Filesystems.Identify(imageFormat, out idPlugins, partitions[i]);
                 });
 
-                if(error == ErrorNumber.NoError)
+                if(idPlugins.Count == 0)
+                    AaruConsole.WriteLine("Filesystem not identified");
+                else
                 {
-                    string outputPath;
+                    IReadOnlyFilesystem plugin;
+                    ErrorNumber         error = ErrorNumber.InvalidArgument;
 
-                    if(stat.Attributes.HasFlag(FileAttributes.Directory))
+                    if(idPlugins.Count > 1)
                     {
-                        outputPath = Path.Combine(outputDir, fs.XmlFsType.Type, volumeName, path, entry);
+                        AaruConsole.WriteLine($"[italic]Identified by {idPlugins.Count} plugins[/]");
 
-                        Directory.CreateDirectory(outputPath);
-
-                        AaruConsole.WriteLine("Created subdirectory at {0}", Markup.Escape(outputPath));
-
-                        ExtractFilesInDir(path + "/" + entry, fs, volumeName, outputDir, doXattrs);
-
-                        var di = new DirectoryInfo(outputPath);
-
-                        #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
-                        try
-                        {
-                            if(stat.CreationTimeUtc.HasValue)
-                                di.CreationTimeUtc = stat.CreationTimeUtc.Value;
-                        }
-                        catch
-                        {
-                            // ignored
-                        }
-
-                        try
-                        {
-                            if(stat.LastWriteTimeUtc.HasValue)
-                                di.LastWriteTimeUtc = stat.LastWriteTimeUtc.Value;
-                        }
-                        catch
-                        {
-                            // ignored
-                        }
-
-                        try
-                        {
-                            if(stat.AccessTimeUtc.HasValue)
-                                di.LastAccessTimeUtc = stat.AccessTimeUtc.Value;
-                        }
-                        catch
-                        {
-                            // ignored
-                        }
-                        #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
-
-                        continue;
-                    }
-
-                    FileStream outputFile;
-
-                    if(doXattrs)
-                    {
-                        List<string> xattrs = null;
-
-                        Core.Spectre.ProgressSingleSpinner(ctx =>
-                        {
-                            ctx.AddTask("Listing extended attributes...").IsIndeterminate();
-                            error = fs.ListXAttr(path + "/" + entry, out xattrs);
-                        });
-
-                        if(error == ErrorNumber.NoError)
-                            foreach(string xattr in xattrs)
+                        foreach(string pluginName in idPlugins)
+                            if(plugins.ReadOnlyFilesystems.TryGetValue(pluginName, out plugin))
                             {
-                                byte[] xattrBuf = Array.Empty<byte>();
+                                AaruConsole.WriteLine($"[bold]As identified by {plugin.Name}.[/]");
+
+                                var fs = (IReadOnlyFilesystem)plugin.GetType().GetConstructor(Type.EmptyTypes)?.
+                                                                     Invoke(new object[]
+                                                                                {});
 
                                 Core.Spectre.ProgressSingleSpinner(ctx =>
                                 {
-                                    ctx.AddTask("Reading extended attribute...").IsIndeterminate();
-                                    error = fs.GetXattr(path + "/" + entry, xattr, ref xattrBuf);
+                                    ctx.AddTask("Mounting filesystem...").IsIndeterminate();
+
+                                    error = fs.Mount(imageFormat, partitions[i], encodingClass, parsedOptions,
+                                                     @namespace);
                                 });
 
-                                if(error != ErrorNumber.NoError)
-                                    continue;
-
-                                outputPath = Path.Combine(outputDir, fs.XmlFsType.Type, volumeName, ".xattrs", path,
-                                                          xattr);
-
-                                Directory.CreateDirectory(outputPath);
-
-                                outputPath = Path.Combine(outputPath, entry);
-
-                                if(!File.Exists(outputPath))
+                                if(error == ErrorNumber.NoError)
                                 {
-                                    Core.Spectre.ProgressSingleSpinner(ctx =>
-                                    {
-                                        ctx.AddTask("Writing extended attribute...").IsIndeterminate();
+                                    string volumeName = string.IsNullOrEmpty(fs.XmlFsType.VolumeName) ? "NO NAME"
+                                                            : fs.XmlFsType.VolumeName;
 
-                                        outputFile = new FileStream(outputPath, FileMode.CreateNew,
-                                                                    FileAccess.ReadWrite, FileShare.None);
+                                    ExtractFilesInDir("/", fs, volumeName, outputDir, xattrs);
 
-                                        outputFile.Write(xattrBuf, 0, xattrBuf.Length);
-                                        outputFile.Close();
-                                    });
-
-                                    var fi = new FileInfo(outputPath);
-                                    #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
-                                    try
-                                    {
-                                        if(stat.CreationTimeUtc.HasValue)
-                                            fi.CreationTimeUtc = stat.CreationTimeUtc.Value;
-                                    }
-                                    catch
-                                    {
-                                        // ignored
-                                    }
-
-                                    try
-                                    {
-                                        if(stat.LastWriteTimeUtc.HasValue)
-                                            fi.LastWriteTimeUtc = stat.LastWriteTimeUtc.Value;
-                                    }
-                                    catch
-                                    {
-                                        // ignored
-                                    }
-
-                                    try
-                                    {
-                                        if(stat.AccessTimeUtc.HasValue)
-                                            fi.LastAccessTimeUtc = stat.AccessTimeUtc.Value;
-                                    }
-                                    catch
-                                    {
-                                        // ignored
-                                    }
-                                    #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
-                                    AaruConsole.WriteLine("Written {0} bytes of xattr {1} from file {2} to {3}",
-                                                          xattrBuf.Length, xattr, entry, outputPath);
+                                    Statistics.AddFilesystem(fs.XmlFsType.Type);
                                 }
                                 else
-                                    AaruConsole.ErrorWriteLine("Cannot write xattr {0} for {1}, output exists", xattr,
-                                                               entry);
+                                    AaruConsole.ErrorWriteLine("Unable to mount device, error {0}", error.ToString());
                             }
                     }
+                    else
+                    {
+                        plugins.ReadOnlyFilesystems.TryGetValue(idPlugins[0], out plugin);
 
-                    outputPath = Path.Combine(outputDir, fs.XmlFsType.Type, volumeName, path);
+                        if(plugin == null)
+                            continue;
+
+                        AaruConsole.WriteLine($"[bold]Identified by {plugin.Name}.[/]");
+
+                        var fs = (IReadOnlyFilesystem)plugin.GetType().GetConstructor(Type.EmptyTypes)?.
+                                                             Invoke(new object[]
+                                                                        {});
+
+                        Core.Spectre.ProgressSingleSpinner(ctx =>
+                        {
+                            ctx.AddTask("Mounting filesystem...").IsIndeterminate();
+                            error = fs.Mount(imageFormat, partitions[i], encodingClass, parsedOptions, @namespace);
+                        });
+
+                        if(error == ErrorNumber.NoError)
+                        {
+                            string volumeName = string.IsNullOrEmpty(fs.XmlFsType.VolumeName) ? "NO NAME"
+                                                    : fs.XmlFsType.VolumeName;
+
+                            ExtractFilesInDir("/", fs, volumeName, outputDir, xattrs);
+
+                            Statistics.AddFilesystem(fs.XmlFsType.Type);
+                        }
+                        else
+                            AaruConsole.ErrorWriteLine("Unable to mount device, error {0}", error.ToString());
+                    }
+                }
+            }
+        }
+        catch(Exception ex)
+        {
+            AaruConsole.ErrorWriteLine($"Error reading file: {ex.Message}");
+            AaruConsole.DebugWriteLine("Extract-Files command", ex.StackTrace);
+
+            return (int)ErrorNumber.UnexpectedException;
+        }
+
+        return (int)ErrorNumber.NoError;
+    }
+
+    static void ExtractFilesInDir(string path, [NotNull] IReadOnlyFilesystem fs, string volumeName, string outputDir,
+                                  bool doXattrs)
+    {
+        if(path.StartsWith('/'))
+            path = path.Substring(1);
+
+        ErrorNumber error = fs.ReadDir(path, out List<string> directory);
+
+        if(error != ErrorNumber.NoError)
+        {
+            AaruConsole.ErrorWriteLine("Error {0} reading root directory {0}", error.ToString());
+
+            return;
+        }
+
+        foreach(string entry in directory)
+        {
+            FileEntryInfo stat = new();
+
+            Core.Spectre.ProgressSingleSpinner(ctx =>
+            {
+                ctx.AddTask("Retrieving file information...").IsIndeterminate();
+                error = fs.Stat(path + "/" + entry, out stat);
+            });
+
+            if(error == ErrorNumber.NoError)
+            {
+                string outputPath;
+
+                if(stat.Attributes.HasFlag(FileAttributes.Directory))
+                {
+                    outputPath = Path.Combine(outputDir, fs.XmlFsType.Type, volumeName, path, entry);
 
                     Directory.CreateDirectory(outputPath);
 
-                    outputPath = Path.Combine(outputPath, entry);
+                    AaruConsole.WriteLine("Created subdirectory at {0}", Markup.Escape(outputPath));
 
-                    if(!File.Exists(outputPath))
+                    ExtractFilesInDir(path + "/" + entry, fs, volumeName, outputDir, doXattrs);
+
+                    var di = new DirectoryInfo(outputPath);
+
+                    #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
+                    try
                     {
-                        long position = 0;
-
-                        outputFile = new FileStream(outputPath, FileMode.CreateNew, FileAccess.ReadWrite,
-                                                    FileShare.None);
-
-                        AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
-                                    Columns(new TaskDescriptionColumn(), new ProgressBarColumn(),
-                                            new PercentageColumn()).Start(ctx =>
-                                    {
-                                        ProgressTask task = ctx.AddTask($"Reading file {Markup.Escape(entry)}...");
-
-                                        task.MaxValue = stat.Length;
-
-                                        while(position < stat.Length)
-                                        {
-                                            long bytesToRead;
-
-                                            if(stat.Length - position > BUFFER_SIZE)
-                                                bytesToRead = BUFFER_SIZE;
-                                            else
-                                                bytesToRead = stat.Length - position;
-
-                                            byte[] outBuf = Array.Empty<byte>();
-
-                                            error = fs.Read(path + "/" + entry, position, bytesToRead, ref outBuf);
-
-                                            if(error == ErrorNumber.NoError)
-                                                outputFile.Write(outBuf, 0, outBuf.Length);
-                                            else
-                                            {
-                                                AaruConsole.ErrorWriteLine("Error {0} reading file {1}", error, entry);
-
-                                                break;
-                                            }
-
-                                            position += bytesToRead;
-                                            task.Increment(bytesToRead);
-                                        }
-                                    });
-
-                        outputFile.Close();
-
-                        var fi = new FileInfo(outputPath);
-                        #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
-                        try
-                        {
-                            if(stat.CreationTimeUtc.HasValue)
-                                fi.CreationTimeUtc = stat.CreationTimeUtc.Value;
-                        }
-                        catch
-                        {
-                            // ignored
-                        }
-
-                        try
-                        {
-                            if(stat.LastWriteTimeUtc.HasValue)
-                                fi.LastWriteTimeUtc = stat.LastWriteTimeUtc.Value;
-                        }
-                        catch
-                        {
-                            // ignored
-                        }
-
-                        try
-                        {
-                            if(stat.AccessTimeUtc.HasValue)
-                                fi.LastAccessTimeUtc = stat.AccessTimeUtc.Value;
-                        }
-                        catch
-                        {
-                            // ignored
-                        }
-                        #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
-                        AaruConsole.WriteLine("Written {0} bytes of file {1} to {2}", position, Markup.Escape(entry),
-                                              Markup.Escape(outputPath));
+                        if(stat.CreationTimeUtc.HasValue)
+                            di.CreationTimeUtc = stat.CreationTimeUtc.Value;
                     }
-                    else
-                        AaruConsole.ErrorWriteLine("Cannot write file {0}, output exists", Markup.Escape(entry));
+                    catch
+                    {
+                        // ignored
+                    }
+
+                    try
+                    {
+                        if(stat.LastWriteTimeUtc.HasValue)
+                            di.LastWriteTimeUtc = stat.LastWriteTimeUtc.Value;
+                    }
+                    catch
+                    {
+                        // ignored
+                    }
+
+                    try
+                    {
+                        if(stat.AccessTimeUtc.HasValue)
+                            di.LastAccessTimeUtc = stat.AccessTimeUtc.Value;
+                    }
+                    catch
+                    {
+                        // ignored
+                    }
+                    #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
+
+                    continue;
+                }
+
+                FileStream outputFile;
+
+                if(doXattrs)
+                {
+                    List<string> xattrs = null;
+
+                    Core.Spectre.ProgressSingleSpinner(ctx =>
+                    {
+                        ctx.AddTask("Listing extended attributes...").IsIndeterminate();
+                        error = fs.ListXAttr(path + "/" + entry, out xattrs);
+                    });
+
+                    if(error == ErrorNumber.NoError)
+                        foreach(string xattr in xattrs)
+                        {
+                            byte[] xattrBuf = Array.Empty<byte>();
+
+                            Core.Spectre.ProgressSingleSpinner(ctx =>
+                            {
+                                ctx.AddTask("Reading extended attribute...").IsIndeterminate();
+                                error = fs.GetXattr(path + "/" + entry, xattr, ref xattrBuf);
+                            });
+
+                            if(error != ErrorNumber.NoError)
+                                continue;
+
+                            outputPath = Path.Combine(outputDir, fs.XmlFsType.Type, volumeName, ".xattrs", path, xattr);
+
+                            Directory.CreateDirectory(outputPath);
+
+                            outputPath = Path.Combine(outputPath, entry);
+
+                            if(!File.Exists(outputPath))
+                            {
+                                Core.Spectre.ProgressSingleSpinner(ctx =>
+                                {
+                                    ctx.AddTask("Writing extended attribute...").IsIndeterminate();
+
+                                    outputFile = new FileStream(outputPath, FileMode.CreateNew, FileAccess.ReadWrite,
+                                                                FileShare.None);
+
+                                    outputFile.Write(xattrBuf, 0, xattrBuf.Length);
+                                    outputFile.Close();
+                                });
+
+                                var fi = new FileInfo(outputPath);
+                                #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
+                                try
+                                {
+                                    if(stat.CreationTimeUtc.HasValue)
+                                        fi.CreationTimeUtc = stat.CreationTimeUtc.Value;
+                                }
+                                catch
+                                {
+                                    // ignored
+                                }
+
+                                try
+                                {
+                                    if(stat.LastWriteTimeUtc.HasValue)
+                                        fi.LastWriteTimeUtc = stat.LastWriteTimeUtc.Value;
+                                }
+                                catch
+                                {
+                                    // ignored
+                                }
+
+                                try
+                                {
+                                    if(stat.AccessTimeUtc.HasValue)
+                                        fi.LastAccessTimeUtc = stat.AccessTimeUtc.Value;
+                                }
+                                catch
+                                {
+                                    // ignored
+                                }
+                                #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
+                                AaruConsole.WriteLine("Written {0} bytes of xattr {1} from file {2} to {3}",
+                                                      xattrBuf.Length, xattr, entry, outputPath);
+                            }
+                            else
+                                AaruConsole.ErrorWriteLine("Cannot write xattr {0} for {1}, output exists", xattr,
+                                                           entry);
+                        }
+                }
+
+                outputPath = Path.Combine(outputDir, fs.XmlFsType.Type, volumeName, path);
+
+                Directory.CreateDirectory(outputPath);
+
+                outputPath = Path.Combine(outputPath, entry);
+
+                if(!File.Exists(outputPath))
+                {
+                    long position = 0;
+
+                    outputFile = new FileStream(outputPath, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.None);
+
+                    AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
+                                Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
+                                Start(ctx =>
+                                {
+                                    ProgressTask task = ctx.AddTask($"Reading file {Markup.Escape(entry)}...");
+
+                                    task.MaxValue = stat.Length;
+
+                                    while(position < stat.Length)
+                                    {
+                                        long bytesToRead;
+
+                                        if(stat.Length - position > BUFFER_SIZE)
+                                            bytesToRead = BUFFER_SIZE;
+                                        else
+                                            bytesToRead = stat.Length - position;
+
+                                        byte[] outBuf = Array.Empty<byte>();
+
+                                        error = fs.Read(path + "/" + entry, position, bytesToRead, ref outBuf);
+
+                                        if(error == ErrorNumber.NoError)
+                                            outputFile.Write(outBuf, 0, outBuf.Length);
+                                        else
+                                        {
+                                            AaruConsole.ErrorWriteLine("Error {0} reading file {1}", error, entry);
+
+                                            break;
+                                        }
+
+                                        position += bytesToRead;
+                                        task.Increment(bytesToRead);
+                                    }
+                                });
+
+                    outputFile.Close();
+
+                    var fi = new FileInfo(outputPath);
+                    #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
+                    try
+                    {
+                        if(stat.CreationTimeUtc.HasValue)
+                            fi.CreationTimeUtc = stat.CreationTimeUtc.Value;
+                    }
+                    catch
+                    {
+                        // ignored
+                    }
+
+                    try
+                    {
+                        if(stat.LastWriteTimeUtc.HasValue)
+                            fi.LastWriteTimeUtc = stat.LastWriteTimeUtc.Value;
+                    }
+                    catch
+                    {
+                        // ignored
+                    }
+
+                    try
+                    {
+                        if(stat.AccessTimeUtc.HasValue)
+                            fi.LastAccessTimeUtc = stat.AccessTimeUtc.Value;
+                    }
+                    catch
+                    {
+                        // ignored
+                    }
+                    #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
+                    AaruConsole.WriteLine("Written {0} bytes of file {1} to {2}", position, Markup.Escape(entry),
+                                          Markup.Escape(outputPath));
                 }
                 else
-                    AaruConsole.ErrorWriteLine("Error reading file {0}", Markup.Escape(entry));
+                    AaruConsole.ErrorWriteLine("Cannot write file {0}, output exists", Markup.Escape(entry));
             }
+            else
+                AaruConsole.ErrorWriteLine("Error reading file {0}", Markup.Escape(entry));
         }
     }
 }

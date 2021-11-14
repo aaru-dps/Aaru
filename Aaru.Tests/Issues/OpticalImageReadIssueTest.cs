@@ -31,7 +31,7 @@ namespace Aaru.Tests.Issues
 
             Assert.IsNotNull(inputFilter, "Filter for test file is not detected");
 
-            IMediaImage image = ImageFormat.Detect(inputFilter);
+            IMediaImage image = ImageFormat.Detect(inputFilter) as IMediaImage;
 
             Assert.IsNotNull(image, "Image format for test file is not detected");
 

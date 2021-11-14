@@ -523,7 +523,7 @@ namespace Aaru.Gui.ViewModels.Windows
 
             try
             {
-                IMediaImage imageFormat = ImageFormat.Detect(inputFilter);
+                IMediaImage imageFormat = ImageFormat.Detect(inputFilter) as IMediaImage;
 
                 if(imageFormat == null)
                 {
