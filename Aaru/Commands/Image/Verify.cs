@@ -130,7 +130,7 @@ namespace Aaru.Commands.Image
                 return (int)ErrorNumber.CannotOpenFile;
             }
 
-            IMediaImage inputFormat = null;
+            IBaseImage inputFormat = null;
 
             Core.Spectre.ProgressSingleSpinner(ctx =>
             {
