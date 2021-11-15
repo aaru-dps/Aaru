@@ -42,7 +42,7 @@ using Aaru.CommonTypes.Enums;
 namespace Aaru.CommonTypes.Interfaces;
 
 /// <summary>Interface defining linear media (chips, game carts, etc) images</summary>
-public interface IByteAddressableImage : IBaseImage
+public interface IByteAddressableImage : IBaseWritableImage
 {
     /// <summary>Gets or sets the current position</summary>
     long Position { get; set; }
