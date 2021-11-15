@@ -148,7 +148,7 @@ public class PluginBase
                !Archives.ContainsKey(plugin.Name.ToLower()))
                 Archives.Add(plugin.Name.ToLower(), plugin);
 
-        foreach(Type type in pluginRegister.GetAllArchivePlugins() ?? Enumerable.Empty<Type>())
+        foreach(Type type in pluginRegister.GetAllByteAddressablePlugins() ?? Enumerable.Empty<Type>())
             if(type.GetConstructor(Type.EmptyTypes)?.Invoke(new object[]
                                                                 {}) is IByteAddressableImage plugin &&
                !ByteAddressableImages.ContainsKey(plugin.Name.ToLower()))
