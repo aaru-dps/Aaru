@@ -101,6 +101,9 @@ Enum,Value,Summary
 "GDR",153,"Sega/Yamaha recordable Gigabyte Disc"
 "SegaCard",154,
 "MilCD",155,
+"MegaDriveCartridge",156,
+"_32XCartridge",157,
+"SegaPicoCartridge",158,
 "HuCard",170,"PC-Engine / TurboGrafx cartridge"
 "SuperCDROM2",171,"PC-Engine / TurboGrafx CD"
 "JaguarCD",172,"Atari Jaguar CD"
