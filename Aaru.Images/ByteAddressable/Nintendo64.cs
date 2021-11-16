@@ -228,7 +228,7 @@ public class Nintendo64 : IByteAddressableImage
     }
 
     /// <inheritdoc />
-    public long Position { get; set; }
+    public long Position { get => _position; set => _position = value; }
 
     /// <inheritdoc />
     public ErrorNumber Create(string path, MediaType mediaType, Dictionary<string, string> options, long maximumSize)
@@ -562,6 +562,9 @@ public class Nintendo64 : IByteAddressableImage
         _dataStream.Position = 0;
         _dataStream.Write(_data, 0, _data.Length);
         _dataStream.Close();
+
+        IsWriting = false;
+        _opened   = false;
 
         return true;
     }
