@@ -56,7 +56,6 @@ public class Nintendo64 : IByteAddressableImage
     bool      _interleaved;
     bool      _littleEndian;
     bool      _opened;
-    long      _position;
     /// <inheritdoc />
     public string Author => "Natalia Portillo";
     /// <inheritdoc />
@@ -228,7 +227,7 @@ public class Nintendo64 : IByteAddressableImage
     }
 
     /// <inheritdoc />
-    public long Position { get => _position; set => _position = value; }
+    public long Position { get; set; }
 
     /// <inheritdoc />
     public ErrorNumber Create(string path, MediaType mediaType, Dictionary<string, string> options, long maximumSize)
@@ -300,7 +299,7 @@ public class Nintendo64 : IByteAddressableImage
     }
 
     /// <inheritdoc />
-    public ErrorNumber ReadByte(out byte b, bool advance = true) => ReadByteAt(_position, out b, advance);
+    public ErrorNumber ReadByte(out byte b, bool advance = true) => ReadByteAt(Position, out b, advance);
 
     /// <inheritdoc />
     public ErrorNumber ReadByteAt(long position, out byte b, bool advance = true)
@@ -324,14 +323,14 @@ public class Nintendo64 : IByteAddressableImage
         b = _data[position];
 
         if(advance)
-            _position = position + 1;
+            Position = position + 1;
 
         return ErrorNumber.NoError;
     }
 
     /// <inheritdoc />
     public ErrorNumber ReadBytes(byte[] buffer, int offset, int bytesToRead, out int bytesRead, bool advance = true) =>
-        ReadBytesAt(_position, buffer, offset, bytesToRead, out bytesRead, advance);
+        ReadBytesAt(Position, buffer, offset, bytesToRead, out bytesRead, advance);
 
     /// <inheritdoc />
     public ErrorNumber ReadBytesAt(long position, byte[] buffer, int offset, int bytesToRead, out int bytesRead,
@@ -369,7 +368,7 @@ public class Nintendo64 : IByteAddressableImage
         Array.Copy(_data, position, buffer, offset, bytesToRead);
 
         if(advance)
-            _position = position + bytesToRead;
+            Position = position + bytesToRead;
 
         bytesRead = bytesToRead;
 
@@ -414,7 +413,7 @@ public class Nintendo64 : IByteAddressableImage
     }
 
     /// <inheritdoc />
-    public ErrorNumber WriteByte(byte b, bool advance = true) => WriteByteAt(_position, b, advance);
+    public ErrorNumber WriteByte(byte b, bool advance = true) => WriteByteAt(Position, b, advance);
 
     /// <inheritdoc />
     public ErrorNumber WriteByteAt(long position, byte b, bool advance = true)
@@ -443,7 +442,7 @@ public class Nintendo64 : IByteAddressableImage
         _data[position] = b;
 
         if(advance)
-            _position = position + 1;
+            Position = position + 1;
 
         return ErrorNumber.NoError;
     }
@@ -451,7 +450,7 @@ public class Nintendo64 : IByteAddressableImage
     /// <inheritdoc />
     public ErrorNumber WriteBytes(byte[] buffer, int offset, int bytesToWrite, out int bytesWritten,
                                   bool advance = true) =>
-        WriteBytesAt(_position, buffer, offset, bytesToWrite, out bytesWritten, advance);
+        WriteBytesAt(Position, buffer, offset, bytesToWrite, out bytesWritten, advance);
 
     /// <inheritdoc />
     public ErrorNumber WriteBytesAt(long position, byte[] buffer, int offset, int bytesToWrite, out int bytesWritten,
@@ -496,7 +495,7 @@ public class Nintendo64 : IByteAddressableImage
         Array.Copy(buffer, offset, _data, position, bytesToWrite);
 
         if(advance)
-            _position = position + bytesToWrite;
+            Position = position + bytesToWrite;
 
         bytesWritten = bytesToWrite;
 
