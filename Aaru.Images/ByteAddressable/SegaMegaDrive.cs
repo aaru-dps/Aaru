@@ -352,7 +352,7 @@ public class SegaMegaDrive : IByteAddressableImage
     /// <inheritdoc />
     public IEnumerable<string> KnownExtensions => new[]
     {
-        ".smd", ".md"
+        ".smd", ".md", ".32x"
     };
     /// <inheritdoc />
     public IEnumerable<MediaTagType> SupportedMediaTags => Array.Empty<MediaTagType>();
