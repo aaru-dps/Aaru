@@ -309,8 +309,8 @@ public class SegaMegaDrive : IByteAddressableImage
 
             sb.AppendFormat("Extra RAM starts at 0x{0:X8} and ends at 0x{1:X8} ({2} bytes)", header.ExtraRamStart,
                             header.ExtraRamEnd,
-                            (header.ExtraRamType & 0x10) == 0x10 ? (header.RomEnd - header.RomStart + 1) / 2
-                                : header.RomEnd - header.RomStart + 1).AppendLine();
+                            (header.ExtraRamType & 0x10) == 0x10 ? (header.ExtraRamEnd - header.ExtraRamStart + 2) / 2
+                                : header.ExtraRamEnd - header.ExtraRamStart + 1).AppendLine();
         }
         else
             sb.AppendLine("Extra RAM not present.");
@@ -524,13 +524,116 @@ public class SegaMegaDrive : IByteAddressableImage
     {
         mappings = new LinearMemoryMap();
 
-        // TODO: Implement
-        if(_opened)
-            return ErrorNumber.NotImplemented;
+        if(!_opened)
+        {
+            ErrorMessage = "Not image has been opened.";
 
-        ErrorMessage = "Not image has been opened.";
+            return ErrorNumber.NotOpened;
+        }
 
-        return ErrorNumber.NotOpened;
+        SegaHeader header =
+            Marshal.ByteArrayToStructureBigEndian<SegaHeader>(_data, 0x100, Marshal.SizeOf<SegaHeader>());
+
+        bool extraRAM = header.ExtraRamPresent[0] == 0x52 && header.ExtraRamPresent[1] == 0x41;
+
+        mappings = new LinearMemoryMap
+        {
+            Devices = extraRAM ? new LinearMemoryDevice[2] : new LinearMemoryDevice[1]
+        };
+
+        mappings.Devices[0].Type = LinearMemoryType.ROM;
+
+        mappings.Devices[0].PhysicalAddress = new LinearMemoryAddressing
+        {
+            Start  = 0,
+            Length = (ulong)_data.Length
+        };
+
+        mappings.Devices[0].VirtualAddress = new LinearMemoryAddressing
+        {
+            Start  = header.RomStart,
+            Length = header.RomEnd - header.RomStart + 1
+        };
+
+        if(!extraRAM)
+            return ErrorNumber.NoError;
+
+        mappings.Devices[1].PhysicalAddress = new LinearMemoryAddressing
+        {
+            Start  = (ulong)_data.Length,
+            Length = header.ExtraRamEnd - header.ExtraRamStart + 2
+        };
+
+        mappings.Devices[1].VirtualAddress = new LinearMemoryAddressing
+        {
+            Start  = header.ExtraRamStart,
+            Length = header.ExtraRamEnd - header.ExtraRamStart + 2
+        };
+
+        switch(header.ExtraRamType)
+        {
+            case 0xA0: // Extra RAM uses 16-bit access.
+                mappings.Devices[1].Type = LinearMemoryType.WorkRAM;
+
+                break;
+            case 0xB0: // Extra RAM uses 8-bit access (even addresses).
+                mappings.Devices[1].Type                   =  LinearMemoryType.WorkRAM;
+                mappings.Devices[1].PhysicalAddress.Length /= 2;
+
+                mappings.Devices[1].VirtualAddress.Interleave = new LinearMemoryInterleave
+                {
+                    Offset = 0,
+                    Value  = 1
+                };
+
+                break;
+            case 0xB8: // Extra RAM uses 8-bit access (odd addresses).
+                mappings.Devices[1].Type                   =  LinearMemoryType.WorkRAM;
+                mappings.Devices[1].PhysicalAddress.Length /= 2;
+                mappings.Devices[1].VirtualAddress.Start--;
+
+                mappings.Devices[1].VirtualAddress.Interleave = new LinearMemoryInterleave
+                {
+                    Offset = 1,
+                    Value  = 1
+                };
+
+                break;
+            case 0xE0: // Extra RAM uses 16-bit access and persists when powered off.
+                mappings.Devices[1].Type = LinearMemoryType.SaveRAM;
+
+                break;
+            case 0xF0: // Extra RAM uses 8-bit access (even addresses) and persists when powered off.
+                mappings.Devices[1].Type                   =  LinearMemoryType.SaveRAM;
+                mappings.Devices[1].PhysicalAddress.Length /= 2;
+
+                mappings.Devices[1].VirtualAddress.Interleave = new LinearMemoryInterleave
+                {
+                    Offset = 0,
+                    Value  = 1
+                };
+
+                break;
+            case 0xF8: // Extra RAM uses 8-bit access (odd addresses) and persists when powered off.
+
+                mappings.Devices[1].Type                   =  LinearMemoryType.SaveRAM;
+                mappings.Devices[1].PhysicalAddress.Length /= 2;
+                mappings.Devices[1].VirtualAddress.Start--;
+
+                mappings.Devices[1].VirtualAddress.Interleave = new LinearMemoryInterleave
+                {
+                    Offset = 1,
+                    Value  = 1
+                };
+
+                break;
+            default:
+                mappings.Devices[1].Type = LinearMemoryType.Unknown;
+
+                break;
+        }
+
+        return ErrorNumber.NoError;
     }
 
     /// <inheritdoc />
@@ -638,13 +741,35 @@ public class SegaMegaDrive : IByteAddressableImage
             return ErrorNumber.NotOpened;
         }
 
-        // TODO: Implement
-        if(IsWriting)
-            return ErrorNumber.NotImplemented;
+        if(!IsWriting)
+        {
+            ErrorMessage = "Image is not opened for writing.";
 
-        ErrorMessage = "Image is not opened for writing.";
+            return ErrorNumber.ReadOnly;
+        }
 
-        return ErrorNumber.ReadOnly;
+        bool foundRom     = false;
+        bool foundSaveRam = false;
+
+        // Sanitize
+        foreach(LinearMemoryDevice map in mappings.Devices)
+        {
+            switch(map.Type)
+            {
+                case LinearMemoryType.ROM when !foundRom:
+                    foundRom = true;
+
+                    break;
+                case LinearMemoryType.SaveRAM when !foundSaveRam:
+                    foundSaveRam = true;
+
+                    break;
+                default: return ErrorNumber.InvalidArgument;
+            }
+        }
+
+        // Cannot save in this image format anyway
+        return foundRom ? ErrorNumber.NoError : ErrorNumber.InvalidArgument;
     }
 
     /// <inheritdoc />
@@ -741,9 +866,9 @@ public class SegaMegaDrive : IByteAddressableImage
      SuppressMessage("ReSharper", "FieldCanBeMadeReadOnly.Local")]
     struct SegaHeader
     {
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 15)]
         public byte[] SystemType;
-
+        public byte Unknown;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
         public byte[] Copyright;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 48)]
