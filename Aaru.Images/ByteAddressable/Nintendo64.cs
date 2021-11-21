@@ -286,9 +286,9 @@ public class Nintendo64 : IByteAddressableImage
     }
 
     /// <inheritdoc />
-    public ErrorNumber GetMappings(out object mappings)
+    public ErrorNumber GetMappings(out LinearMemoryMap mappings)
     {
-        mappings = null;
+        mappings = new LinearMemoryMap();
 
         // TODO: Implement
         if(_opened)
@@ -395,7 +395,7 @@ public class Nintendo64 : IByteAddressableImage
     }
 
     /// <inheritdoc />
-    public ErrorNumber SetMappings(object mappings)
+    public ErrorNumber SetMappings(LinearMemoryMap mappings)
     {
         if(!_opened)
         {
