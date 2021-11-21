@@ -285,17 +285,302 @@ public class Nintendo64 : IByteAddressableImage
     }
 
     /// <inheritdoc />
+    [SuppressMessage("ReSharper", "CommentTypo")]
     public ErrorNumber GetMappings(out LinearMemoryMap mappings)
     {
         mappings = new LinearMemoryMap();
 
-        // TODO: Implement
-        if(_opened)
-            return ErrorNumber.NotImplemented;
+        if(!_opened)
+        {
+            ErrorMessage = "Not image has been opened.";
 
-        ErrorMessage = "Not image has been opened.";
+            return ErrorNumber.NotOpened;
+        }
 
-        return ErrorNumber.NotOpened;
+        mappings = new LinearMemoryMap();
+        LinearMemoryType saveType   = LinearMemoryType.Unknown;
+        ulong            saveLength = 0;
+
+        Header header = Marshal.ByteArrayToStructureBigEndian<Header>(_data, 0, Marshal.SizeOf<Header>());
+
+        switch((char)header.CartridgeType)
+        {
+            case 'N':
+                switch(StringHandlers.SpacePaddedToString(header.CartridgeId))
+                {
+                    //Special case for first Japanese revisions of Kirby 64, overrides later entry
+                    case "K4" when (char)header.CountryCode == 'J' && header.Version < 2:
+                        saveType   = LinearMemoryType.SaveRAM;
+                        saveLength = 32768;
+
+                        break;
+                    case "TW": //64 de Hakken!! Tamagotchi
+                    case "HF": //64 Hanafuda: Tenshi no Yakusoku
+                    case "OS": //64 Oozumou
+                    case "TC": //64 Trump Collection
+                    case "ER": //AeroFighters Assault
+                    case "AG": //AeroGauge
+                    case "AB": //Air Boarder 64
+                    case "S3": //AI Shougi 3
+                    case "TN": //All Star Tennis '99
+                    case "BN": //Bakuretsu Muteki Bangaioh
+                    case "BK": //Banjo-Kazooie
+                    case "FH": //Bass Hunter 64
+                    case "MU": //Big Mountain 2000
+                    case "BC": //Blast Corps
+                    case "BH": //Body Harvest
+                    case "HA": //Bomberman 64: Arcade Edition (J)
+                    case "BM": //Bomberman 64
+                    case "BV": //Bomberman 64: The Second Attack!
+                    case "BD": //Bomberman Hero
+                    case "CT": //Chameleon Twist
+                    case "CH": //Chopper Attack
+                    case "CG": //Choro Q 64 II - Hacha Mecha Grand Prix Race (J)
+                    case "P2": //Chou Kuukan Night Pro Yakyuu King 2 (J)
+                    case "XO": //Cruis'n Exotica
+                    case "CU": //Cruis'n USA
+                    case "CX": //Custom Robo
+                    case "DY": //Diddy Kong Racing
+                    case "DQ": //Disney's Donald Duck - Goin' Quackers [Quack Attack (E)]
+                    case "DR": //Doraemon: Nobita to 3tsu no Seireiseki
+                    case "N6": //Dr. Mario 64
+                    case "DU": //Duck Dodgers starring Daffy Duck
+                    case "JM": //Earthworm Jim 3D
+                    case "FW": //F-1 World Grand Prix
+                    case "F2": //F-1 World Grand Prix II
+                    case "KA": //Fighters Destiny
+                    case "FG": //Fighter Destiny 2
+                    case "GL": //Getter Love!!
+                    case "GV": //Glover
+                    case "GE": //GoldenEye 007
+                    case "HP": //Heiwa Pachinko World 64
+                    case "PG": //Hey You, Pikachu!
+                    case "IJ": //Indiana Jones and the Infernal Machine
+                    case "IC": //Indy Racing 2000
+                    case "FY": //Kakutou Denshou: F-Cup Maniax
+                    case "KI": //Killer Instinct Gold
+                    case "LL": //Last Legion UX
+                    case "LR": //Lode Runner 3-D
+                    case "KT": //Mario Kart 64
+                    case "LB": //Mario Party (PAL)
+                    case "MW": //Mario Party 2
+                    case "ML": //Mickey's Speedway USA
+                    case "TM": //Mischief Makers [Yuke Yuke!! Trouble Makers (J)]
+                    case "MI": //Mission: Impossible
+                    case "MG": //Monaco Grand Prix [Racing Simulation 2 (G)]
+                    case "MO": //Monopoly
+                    case "MS": //Morita Shougi 64
+                    case "MR": //Multi-Racing Championship
+                    case "CR": //Penny Racers [Choro Q 64 (J)]
+                    case "EA": //PGA European Tour
+                    case "PW": //Pilotwings 64
+                    case "PM": //Premier Manager 64 (E)
+                    case "PY": //Puyo Puyo Sun 64
+                    case "PT": //Puyo Puyon Party
+                    case "RA": //Rally '99 (J)
+                    case "WQ": //Rally Challenge 2000
+                    case "SU": //Rocket: Robot on Wheels
+                    case "SN": //Snow Speeder (J)
+                    case "K2": //Snowboard Kids 2 [Chou Snobow Kids (J)]
+                    case "SV": //Space Station Silicon Valley
+                    case "FX": //Lylat Wars (E)
+                    case "FP": //Star Fox 64 (U)
+                    case "S6": //Star Soldier: Vanishing Earth
+                    case "NA": //Star Wars Episode I: Battle for Naboo
+                    case "RS": //Star Wars: Rogue Squadron
+                    case "SW": //Star Wars: Shadows of the Empire
+                    case "SC": //Starshot: Space Circus Fever
+                    case "SA": //Sonic Wings Assault (J)
+                    case "B6": //Super B-Daman: Battle Phoenix 64
+                    //case "SM":                                //Super Mario 64
+                    case "SS": //Super Robot Spirits
+                    case "TX": //Taz Express
+                    case "T6": //Tetris 64
+                    case "TP": //Tetrisphere
+                    case "TJ": //Tom & Jerry in Fists of Fury
+                    case "RC": //Top Gear Overdrive
+                    case "TR": //Top Gear Rally (J + E)
+                    case "TB": //Transformers: Beast Wars Metals 64
+                    case "GU": //Tsumi to Batsu: Hoshi no Keishousha (Sin and Punishment)
+                    case "IR": //Utchan Nanchan no Hono no Challenger: Denryuu Ira Ira Bou
+                    case "VL": //V-Rally Edition '99
+                    case "VY": //V-Rally Edition '99 (J)
+                    case "WR": //Wave Race 64: Kawasaki Jet Ski
+                    case "WC": //Wild Choppers
+                    case "AD": //Worms Armageddon (U)
+                    case "WU": //Worms Armageddon (E)
+                    case "YK": //Yakouchuu II: Satsujin Kouro
+                    case "MZ": //Zool - Majou Tsukai Densetsu (J)
+                    case "DK" when (char)header.CountryCode == 'J': //Dark Rift aka Space Dynamites
+                    case "WT" when (char)header.CountryCode == 'J': //Wetrix (J)
+                        saveType   = LinearMemoryType.EEPROM;
+                        saveLength = 512;
+
+                        break;
+
+                    //2KB EEPROM
+                    case "B7": //Banjo-Tooie
+                    case "GT": //City-Tour GP: Zen-Nihon GT Senshuken
+                    case "FU": //Conker's Bad Fur Day
+                    case "CW": //Cruis'n World
+                    case "CZ": //Custom Robo V2
+                    case "D6": //Densha de Go! 64
+                    case "DO": //Donkey Kong 64
+                    case "D2": //Doraemon 2: Nobita to Hikari no Shinden
+                    case "3D": //Doraemon 3: Nobita no Machi SOS!
+                    case "MX": //Excitebike 64
+                    case "GC": //GT 64: Championship Edition
+                    case "IM": //Ide Yosuke no Mahjong Juku
+                    case "K4": //Kirby 64: The Crystal Shards
+                    case "NB": //Kobe Bryant in NBA Courtside
+                    case "MV": //Mario Party 3
+                    case "M8": //Mario Tennis
+                    case "EV": //Neon Genesis Evangelion
+                    case "PP": //Parlor! Pro 64: Pachinko Jikki Simulation Game
+                    case "UB": //PD Ultraman Battle Collection 64
+                    case "PD": //Perfect Dark
+                    case "RZ": //Ridge Racer 64
+                    case "R7": //Robot Poncots 64: 7tsu no Umi no Caramel
+                    case "EP": //Star Wars Episode I: Racer
+                    case "YS": //Yoshi's Story
+
+                    //Special cases for Japanese versions of Castlevania
+                    case "D3" when (char)header.CountryCode == 'J': //Akumajou Dracula Mokushiroku (J)
+                    case "D4"
+                        when (char)header.CountryCode == 'J'
+                        : //Akumajou Dracula Mokushiroku Gaiden: Legend of Cornell (J)
+                        saveType   = LinearMemoryType.EEPROM;
+                        saveLength = 2048;
+
+                        break;
+
+                    //32KB SRAM
+                    case "TE": //1080 Snowboarding
+                    case "VB": //Bass Rush - ECOGEAR PowerWorm Championship (J)
+                    case "FZ": //F-Zero X (U + E)
+                    case "SI": //Fushigi no Dungeon: Fuurai no Shiren 2
+                    case "G6": //Ganmare Goemon: Dero Dero Douchuu Obake Tenkomori
+                    case "3H": //Ganbare! Nippon! Olympics 2000
+                    case "GP": //Goemon: Mononoke Sugoroku
+                    case "YW": //Harvest Moon 64
+                    case "HY": //Hybrid Heaven (J)
+                    case "IB": //Itoi Shigesato no Bass Tsuri No. 1 Kettei Ban!
+                    case "PS": //Jikkyou J.League 1999: Perfect Striker 2
+                    case "PA": //Jikkyou Powerful Pro Yakyuu 2000
+                    case "P4": //Jikkyou Powerful Pro Yakyuu 4
+                    case "J5": //Jikkyou Powerful Pro Yakyuu 5
+                    case "P6": //Jikkyou Powerful Pro Yakyuu 6
+                    case "PE": //Jikkyou Powerful Pro Yakyuu Basic Ban 2001
+                    case "JG": //Jinsei Game 64
+                    case "ZL": //Legend of Zelda: Ocarina of Time (E)
+                    case "KG": //Major League Baseball featuring Ken Griffey Jr.
+                    case "MF": //Mario Golf 64
+                    case "RI": //New Tetris, The
+                    case "UT": //Nushi Zuri 64
+                    case "UM": //Nushi Zuri 64: Shiokaze ni Notte
+                    case "OB": //Ogre Battle 64: Person of Lordly Caliber
+                    case "B5": //Resident Evil 2 (Japan) aka Biohazard 2
+                    case "RE": //Resident Evil 2
+                    case "AL": //Super Smash Bros. [Nintendo All-Star! Dairantou Smash Brothers (J)]
+                    case "T3": //Shin Nihon Pro Wrestling - Toukon Road 2 - The Next Generation (J)
+                    case "S4": //Super Robot Taisen 64
+                    case "A2": //Virtual Pro Wrestling 2
+                    case "VP": //Virtual Pro Wrestling 64
+                    case "WL": //Waialae Country Club: True Golf Classics
+                    case "W2": //WCW-nWo Revenge
+                    case "WX": //WWF WrestleMania 2000
+                        saveType   = LinearMemoryType.SaveRAM;
+                        saveLength = 32768;
+
+                        break;
+
+                    //128KB Flash
+                    case "CC": //Command & Conquer
+                    case "DA": //Derby Stallion 64
+                    case "AF": //Doubutsu no Mori
+                    case "JF": //Jet Force Gemini
+                    case "KJ": //Ken Griffey Jr.'s Slugfest
+                    case "ZS": //Legend of Zelda: Majora's Mask [Zelda no Densetsu - Mujura no Kamen (J)]
+                    case "M6": //Mega Man 64
+                    case "CK": //NBA Courtside 2 featuring Kobe Bryant
+                    case "MQ": //Paper Mario
+                    case "PN": //Pokemon Puzzle League
+                    case "PF": //Pokemon Snap [Pocket Monsters Snap (J)]
+                    case "PO": //Pokemon Stadium
+                    case "P3": //Pokemon Stadium 2 [Pocket Monsters Stadium - Kin Gin (J)]
+                    case "RH": //Rockman Dash (J)
+                    case "SQ": //StarCraft 64
+                    case "T9": //Tigger's Honey Hunt
+                    case "W4": //WWF No Mercy
+                    case "DP": //Dinosaur Planet
+                        saveType   = LinearMemoryType.NOR;
+                        saveLength = 131072;
+
+                        break;
+                }
+
+                break;
+            case 'C':
+                switch(StringHandlers.SpacePaddedToString(header.CartridgeId))
+                {
+                    case "LB": //Mario Party (NTSC)
+                        saveType   = LinearMemoryType.EEPROM;
+                        saveLength = 512;
+
+                        break;
+
+                    //32KB SRAM
+                    case "FZ": //F-Zero X (J)
+                    case "ZL": //Legend of Zelda: Ocarina of Time [Zelda no Densetsu - Toki no Ocarina (J)]
+                    case "PS": //Pocket Monsters Stadium (J)
+                        saveType   = LinearMemoryType.SaveRAM;
+                        saveLength = 32768;
+
+                        break;
+
+                    //96KB SRAM
+                    case "DZ": //Dezaemon 3D
+                        saveType   = LinearMemoryType.SaveRAM;
+                        saveLength = 98304;
+
+                        break;
+
+                    //128KB Flash
+                    case "P2": //Pocket Monsters Stadium 2 (J)
+                        saveType   = LinearMemoryType.NOR;
+                        saveLength = 131072;
+
+                        break;
+                }
+
+                break;
+        }
+
+        mappings = new LinearMemoryMap
+        {
+            Devices = saveLength > 0 ? new LinearMemoryDevice[2] : new LinearMemoryDevice[1]
+        };
+
+        mappings.Devices[0].Type = LinearMemoryType.ROM;
+
+        mappings.Devices[0].PhysicalAddress = new LinearMemoryAddressing
+        {
+            Start  = 0,
+            Length = (ulong)_data.Length
+        };
+
+        if(saveLength <= 0)
+            return ErrorNumber.NoError;
+
+        mappings.Devices[1].Type = saveType;
+
+        mappings.Devices[1].PhysicalAddress = new LinearMemoryAddressing
+        {
+            Start  = (ulong)_data.Length,
+            Length = saveLength
+        };
+
+        return ErrorNumber.NoError;
     }
 
     /// <inheritdoc />
@@ -403,13 +688,35 @@ public class Nintendo64 : IByteAddressableImage
             return ErrorNumber.NotOpened;
         }
 
-        // TODO: Implement
-        if(IsWriting)
-            return ErrorNumber.NotImplemented;
+        if(!IsWriting)
+        {
+            ErrorMessage = "Image is not opened for writing.";
 
-        ErrorMessage = "Image is not opened for writing.";
+            return ErrorNumber.ReadOnly;
+        }
 
-        return ErrorNumber.ReadOnly;
+        bool foundRom     = false;
+        bool foundSaveRam = false;
+
+        // Sanitize
+        foreach(LinearMemoryDevice map in mappings.Devices)
+        {
+            switch(map.Type)
+            {
+                case LinearMemoryType.ROM when !foundRom:
+                    foundRom = true;
+
+                    break;
+                case LinearMemoryType.SaveRAM when !foundSaveRam:
+                    foundSaveRam = true;
+
+                    break;
+                default: return ErrorNumber.InvalidArgument;
+            }
+        }
+
+        // Cannot save in this image format anyway
+        return foundRom ? ErrorNumber.NoError : ErrorNumber.InvalidArgument;
     }
 
     /// <inheritdoc />
