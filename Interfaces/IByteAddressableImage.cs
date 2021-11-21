@@ -38,6 +38,7 @@
 
 using System.Collections.Generic;
 using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Structs;
 
 namespace Aaru.CommonTypes.Interfaces;
 
@@ -63,7 +64,7 @@ public interface IByteAddressableImage : IBaseWritableImage
     /// <summary>Gets the linear memory mappings, e.g. interleaving, starting address, etc.</summary>
     /// <param name="mappings">Format still not decided</param>
     /// <returns>Error number</returns>
-    ErrorNumber GetMappings(out object mappings);
+    ErrorNumber GetMappings(out LinearMemoryMap mappings);
 
     /// <summary>Reads a byte from the image</summary>
     /// <param name="b">The byte read</param>
@@ -106,7 +107,7 @@ public interface IByteAddressableImage : IBaseWritableImage
     /// <summary>Sets the linear memory mappings, e.g. interleaving, starting address, etc.</summary>
     /// <param name="mappings">Format still not decided</param>
     /// <returns>Error number</returns>
-    ErrorNumber SetMappings(object mappings);
+    ErrorNumber SetMappings(LinearMemoryMap mappings);
 
     /// <summary>Writes a byte to the image</summary>
     /// <param name="b">The byte to be written</param>
