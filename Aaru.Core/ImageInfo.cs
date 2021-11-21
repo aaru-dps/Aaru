@@ -34,6 +34,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
@@ -267,13 +269,22 @@ public static class ImageInfo
 
     static void PrintByteAddressableImageInfo(IByteAddressableImage imageFormat)
     {
-        ErrorNumber errno = imageFormat.GetMappings(out object mappings);
+        ErrorNumber errno = imageFormat.GetMappings(out LinearMemoryMap mappings);
 
         if(errno != ErrorNumber.NoError)
             return;
 
         AaruConsole.WriteLine("[bold]Mapping:[/]");
-        AaruConsole.WriteLine("{0}", mappings);
+
+        AaruConsole.WriteLine("{0}", Markup.Escape(JsonSerializer.Serialize(mappings, new JsonSerializerOptions
+        {
+            WriteIndented          = true,
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+            Converters =
+            {
+                new JsonStringEnumConverter()
+            }
+        })));
     }
 
     static void PrintBlockImageInfo(IMediaImage imageFormat)
