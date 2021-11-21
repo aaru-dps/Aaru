@@ -708,6 +708,8 @@ public class Nintendo64 : IByteAddressableImage
 
                     break;
                 case LinearMemoryType.SaveRAM when !foundSaveRam:
+                case LinearMemoryType.NOR when !foundSaveRam:
+                case LinearMemoryType.EEPROM when !foundSaveRam:
                     foundSaveRam = true;
 
                     break;
