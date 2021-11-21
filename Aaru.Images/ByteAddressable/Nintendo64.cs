@@ -392,7 +392,7 @@ public class Nintendo64 : IByteAddressableImage
                     case "SC": //Starshot: Space Circus Fever
                     case "SA": //Sonic Wings Assault (J)
                     case "B6": //Super B-Daman: Battle Phoenix 64
-                    //case "SM":                                //Super Mario 64
+                    case "SM": //Super Mario 64
                     case "SS": //Super Robot Spirits
                     case "TX": //Taz Express
                     case "T6": //Tetris 64
