@@ -280,8 +280,9 @@ public enum MediaType : uint
     /// <summary>Sega/Yamaha Gigabyte Disc</summary>
     GDROM = 152,
     /// <summary>Sega/Yamaha recordable Gigabyte Disc</summary>
-    GDR = 153, SegaCard = 154, MilCD             = 155, MegaDriveCartridge = 156,
-    _32XCartridge       = 157, SegaPicoCartridge = 158,
+    GDR = 153, SegaCard = 154, MilCD               = 155, MegaDriveCartridge    = 156,
+    _32XCartridge       = 157, SegaPicoCartridge   = 158, MasterSystemCartridge = 159,
+    GameGearCartridge   = 160, SegaSaturnCartridge = 161,
     #endregion Sega game media, types 150 to 169
 
     #region Other game media, types 170 to 179
