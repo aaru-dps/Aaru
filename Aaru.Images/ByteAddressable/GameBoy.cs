@@ -16,12 +16,10 @@ namespace Aaru.DiscImages.ByteAddressable;
 
 public class GameBoy : IByteAddressableImage
 {
-    byte[] _data;
-
+    byte[]    _data;
     Stream    _dataStream;
     ImageInfo _imageInfo;
-
-    bool _opened;
+    bool      _opened;
     /// <inheritdoc />
     public string Author => "Natalia Portillo";
     /// <inheritdoc />
@@ -146,7 +144,7 @@ public class GameBoy : IByteAddressableImage
     /// <inheritdoc />
     public IEnumerable<MediaType> SupportedMediaTypes => new[]
     {
-        MediaType.N64GamePak
+        MediaType.GameBoyGamePak
     };
     /// <inheritdoc />
     public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>
