@@ -141,6 +141,7 @@
     <Compile Include="BLU\Write.cs" />
     <Compile Include="ByteAddressable\AtariLynx.cs" />
     <Compile Include="ByteAddressable\GameBoy.cs" />
+    <Compile Include="ByteAddressable\GameBoyAdvance.cs" />
     <Compile Include="ByteAddressable\MasterSystem.cs" />
     <Compile Include="ByteAddressable\Nintendo64.cs" />
     <Compile Include="ByteAddressable\SegaMegaDrive.cs" />
