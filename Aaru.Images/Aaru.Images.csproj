@@ -139,6 +139,7 @@
     <Compile Include="BLU\Unsupported.cs" />
     <Compile Include="BLU\Verify.cs" />
     <Compile Include="BLU\Write.cs" />
+    <Compile Include="ByteAddressable\AtariLynx.cs" />
     <Compile Include="ByteAddressable\GameBoy.cs" />
     <Compile Include="ByteAddressable\MasterSystem.cs" />
     <Compile Include="ByteAddressable\Nintendo64.cs" />

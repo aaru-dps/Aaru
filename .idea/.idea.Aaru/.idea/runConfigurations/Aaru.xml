@@ -1,8 +1,8 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Aaru" type="DotNetProject" factoryName=".NET Project">
-    <option name="EXE_PATH" value="$PROJECT_DIR$/Aaru/bin/Debug/netcoreapp3.1/aaru" />
-    <option name="PROGRAM_PARAMETERS" value="i info bluraysampler.aif" />
-    <option name="WORKING_DIRECTORY" value="/mnt/datos" />
+    <option name="EXE_PATH" value="$PROJECT_DIR$/Aaru/bin/Debug/net6/aaru" />
+    <option name="PROGRAM_PARAMETERS" value="i info &quot;Jimmy Connors' Tennis (USA, Europe).lnx&quot;" />
+    <option name="WORKING_DIRECTORY" value="$USER_HOME$/Desktop" />
     <option name="PASS_PARENT_ENVS" value="1" />
     <option name="USE_EXTERNAL_CONSOLE" value="0" />
     <option name="USE_MONO" value="0" />
@@ -12,7 +12,7 @@
     <option name="PROJECT_ARGUMENTS_TRACKING" value="1" />
     <option name="PROJECT_WORKING_DIRECTORY_TRACKING" value="0" />
     <option name="PROJECT_KIND" value="DotNetCore" />
-    <option name="PROJECT_TFM" value=".NETCoreApp,Version=v3.1" />
+    <option name="PROJECT_TFM" value="net6.0" />
     <method v="2">
       <option name="Build" />
     </method>
