@@ -1043,4 +1043,7 @@ public enum MediaType : uint
     /// <summary>5.25", SS, DD, 35 tracks, 16 spt, 256 bytes/sector, MFM, 48 tpi, ???rpm</summary>
     MetaFloppy_Mod_I = 820,
     #endregion
+
+    AtariLynxCard = 821,
+    AtariJaguarCartridge = 822
 }
