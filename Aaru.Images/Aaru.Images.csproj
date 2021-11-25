@@ -145,6 +145,7 @@
     <Compile Include="ByteAddressable\MasterSystem.cs" />
     <Compile Include="ByteAddressable\Nintendo64.cs" />
     <Compile Include="ByteAddressable\SegaMegaDrive.cs" />
+    <Compile Include="ByteAddressable\SuperNintendo.cs" />
     <Compile Include="CDRDAO\Constants.cs" />
     <Compile Include="CDRDAO\Helpers.cs" />
     <Compile Include="CDRDAO\Identify.cs" />
