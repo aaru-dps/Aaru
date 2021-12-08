@@ -65,6 +65,7 @@
     <Compile Include="Enums\DeviceType.cs" />
     <Compile Include="Enums\ErrorNumber.cs" />
     <Compile Include="Enums\Images.cs" />
+    <Compile Include="Enums\Nes.cs" />
     <Compile Include="Extents\ExtentsByte.cs" />
     <Compile Include="Extents\ExtentsConverter.cs" />
     <Compile Include="Extents\ExtentsInt.cs" />
