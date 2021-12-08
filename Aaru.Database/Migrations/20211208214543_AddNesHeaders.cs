@@ -15,7 +15,7 @@ namespace Aaru.Database.Migrations
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Sha256 = table.Column<string>(type: "TEXT", maxLength: 32, nullable: true),
+                    Sha256 = table.Column<string>(type: "TEXT", maxLength: 64, nullable: false),
                     NametableMirroring = table.Column<bool>(type: "INTEGER", nullable: false),
                     BatteryPresent = table.Column<bool>(type: "INTEGER", nullable: false),
                     FourScreenMode = table.Column<bool>(type: "INTEGER", nullable: false),

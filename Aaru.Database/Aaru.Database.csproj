@@ -137,8 +137,8 @@
     <Compile Include="Migrations\20200711182425_AddFieldsForF1hCommand06hSubcommand.Designer.cs" />
     <Compile Include="Migrations\20200711230202_FixGdRomCapabilitiesFieldName.cs" />
     <Compile Include="Migrations\20200711230202_FixGdRomCapabilitiesFieldName.Designer.cs" />
-    <Compile Include="Migrations\20211208202937_AddNesHeaders.cs" />
-    <Compile Include="Migrations\20211208202937_AddNesHeaders.Designer.cs" />
+    <Compile Include="Migrations\20211208214543_AddNesHeaders.cs" />
+    <Compile Include="Migrations\20211208214543_AddNesHeaders.Designer.cs" />
     <Compile Include="Migrations\AaruContextModelSnapshot.cs" />
     <Compile Include="Models\BaseModel.cs" />
     <Compile Include="Models\BaseOperatingSystem.cs" />

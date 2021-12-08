@@ -2277,7 +2277,8 @@ namespace Aaru.Database.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Sha256")
-                        .HasMaxLength(32)
+                        .IsRequired()
+                        .HasMaxLength(64)
                         .HasColumnType("TEXT");
 
                     b.Property<byte>("Submapper")

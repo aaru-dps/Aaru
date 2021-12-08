@@ -8,7 +8,7 @@ namespace Aaru.Database.Models;
 public class NesHeaderInfo : BaseModel
 {
     /// <summary>ROM hash</summary>
-    [StringLength(32)]
+    [StringLength(64), Required]
     public string Sha256 { get; set; }
     /// <summary>If <c>true</c> vertical mirroring is hard-wired, horizontal or mapper defined otherwise</summary>
     public bool NametableMirroring { get; set; }

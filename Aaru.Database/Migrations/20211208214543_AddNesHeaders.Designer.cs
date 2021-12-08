@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Aaru.Database.Migrations
 {
     [DbContext(typeof(AaruContext))]
-    [Migration("20211208202937_AddNesHeaders")]
+    [Migration("20211208214543_AddNesHeaders")]
     partial class AddNesHeaders
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -2279,7 +2279,8 @@ namespace Aaru.Database.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Sha256")
-                        .HasMaxLength(32)
+                        .IsRequired()
+                        .HasMaxLength(64)
                         .HasColumnType("TEXT");
 
                     b.Property<byte>("Submapper")
