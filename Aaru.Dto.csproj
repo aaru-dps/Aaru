@@ -68,6 +68,7 @@
     <ItemGroup>
       <Compile Include="CdOffsetDto.cs" />
       <Compile Include="DeviceDto.cs" />
+      <Compile Include="NesHeaderDto.cs" />
       <Compile Include="SyncDto.cs" />
       <Compile Include="UsbProductDto.cs" />
       <Compile Include="UsbVendorDto.cs" />
