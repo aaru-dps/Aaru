@@ -271,17 +271,52 @@ namespace Aaru.Core
                                 });
 
                     AaruConsole.WriteLine("Added {0} known devices", sync.Devices.Count);
+
+                    AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
+                                Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
+                                Start(ctx =>
+                                {
+                                    ProgressTask task = ctx.AddTask("Adding known iNES/NES 2.0 headers");
+                                    task.MaxValue = sync.NesHeaders.Count;
+
+                                    foreach(NesHeaderDto header in sync.NesHeaders)
+                                    {
+                                        task.Increment(1);
+
+                                        mctx.NesHeaders.Add(new NesHeaderInfo
+                                        {
+                                            Id = header.Id,
+                                            AddedWhen = DateTime.UtcNow,
+                                            BatteryPresent = header.BatteryPresent,
+                                            ConsoleType = header.ConsoleType,
+                                            DefaultExpansionDevice = header.DefaultExpansionDevice,
+                                            ExtendedConsoleType = header.ExtendedConsoleType,
+                                            FourScreenMode = header.FourScreenMode,
+                                            Mapper = header.Mapper,
+                                            ModifiedWhen = DateTime.UtcNow,
+                                            NametableMirroring = header.NametableMirroring,
+                                            Sha256 = header.Sha256,
+                                            Submapper = header.Submapper,
+                                            VsHardwareType = header.VsHardwareType,
+                                            VsPpuType = header.VsPpuType
+                                        });
+                                    }
+                                });
+
+                    AaruConsole.WriteLine("Added {0} known iNES/NES 2.0 headers", sync.NesHeaders.Count);
                 }
                 else
                 {
-                    long addedVendors     = 0;
-                    long addedProducts    = 0;
-                    long addedOffsets     = 0;
-                    long addedDevices     = 0;
-                    long modifiedVendors  = 0;
-                    long modifiedProducts = 0;
-                    long modifiedOffsets  = 0;
-                    long modifiedDevices  = 0;
+                    long addedVendors       = 0;
+                    long addedProducts      = 0;
+                    long addedOffsets       = 0;
+                    long addedDevices       = 0;
+                    long addedNesHeaders    = 0;
+                    long modifiedVendors    = 0;
+                    long modifiedProducts   = 0;
+                    long modifiedOffsets    = 0;
+                    long modifiedDevices    = 0;
+                    long modifiedNesHeaders = 0;
 
                     AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
                                 Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
@@ -431,6 +466,73 @@ namespace Aaru.Core
 
                     AaruConsole.WriteLine("Added {0} known devices", addedDevices);
                     AaruConsole.WriteLine("Modified {0} known devices", modifiedDevices);
+
+                    AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
+                                Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
+                                Start(ctx =>
+                                {
+                                    ProgressTask task = ctx.AddTask("Updating known iNES/NES 2.0 headers");
+                                    task.MaxValue = sync.Offsets.Count;
+
+                                    foreach(NesHeaderDto header in sync.NesHeaders)
+                                    {
+                                        task.Increment(1);
+                                        NesHeaderInfo existing = mctx.NesHeaders.FirstOrDefault(d => d.Id == header.Id);
+
+                                        if(existing != null)
+                                        {
+                                            modifiedNesHeaders++;
+                                            DateTime addedDate = existing.AddedWhen;
+
+                                            mctx.Remove(existing);
+
+                                            existing = new NesHeaderInfo
+                                            {
+                                                Id                     = header.Id,
+                                                AddedWhen              = addedDate,
+                                                BatteryPresent         = header.BatteryPresent,
+                                                ConsoleType            = header.ConsoleType,
+                                                DefaultExpansionDevice = header.DefaultExpansionDevice,
+                                                ExtendedConsoleType    = header.ExtendedConsoleType,
+                                                FourScreenMode         = header.FourScreenMode,
+                                                Mapper                 = header.Mapper,
+                                                ModifiedWhen           = DateTime.UtcNow,
+                                                NametableMirroring     = header.NametableMirroring,
+                                                Sha256                 = header.Sha256,
+                                                Submapper              = header.Submapper,
+                                                VsHardwareType         = header.VsHardwareType,
+                                                VsPpuType              = header.VsPpuType
+                                            };
+
+                                            mctx.NesHeaders.Add(existing);
+                                        }
+                                        else
+                                        {
+                                            addedNesHeaders++;
+
+                                            mctx.NesHeaders.Add(new NesHeaderInfo
+                                            {
+                                                Id                     = header.Id,
+                                                AddedWhen              = DateTime.UtcNow,
+                                                BatteryPresent         = header.BatteryPresent,
+                                                ConsoleType            = header.ConsoleType,
+                                                DefaultExpansionDevice = header.DefaultExpansionDevice,
+                                                ExtendedConsoleType    = header.ExtendedConsoleType,
+                                                FourScreenMode         = header.FourScreenMode,
+                                                Mapper                 = header.Mapper,
+                                                ModifiedWhen           = DateTime.UtcNow,
+                                                NametableMirroring     = header.NametableMirroring,
+                                                Sha256                 = header.Sha256,
+                                                Submapper              = header.Submapper,
+                                                VsHardwareType         = header.VsHardwareType,
+                                                VsPpuType              = header.VsPpuType
+                                            });
+                                        }
+                                    }
+                                });
+
+                    AaruConsole.WriteLine("Added {0} known iNES/NES 2.0 headers", addedDevices);
+                    AaruConsole.WriteLine("Modified {0} known iNES/NES 2.0 headers", modifiedDevices);
                 }
             }
             catch(Exception ex)

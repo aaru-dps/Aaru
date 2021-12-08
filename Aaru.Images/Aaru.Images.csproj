@@ -143,6 +143,7 @@
     <Compile Include="ByteAddressable\GameBoy.cs" />
     <Compile Include="ByteAddressable\GameBoyAdvance.cs" />
     <Compile Include="ByteAddressable\MasterSystem.cs" />
+    <Compile Include="ByteAddressable\NES.cs" />
     <Compile Include="ByteAddressable\Nintendo64.cs" />
     <Compile Include="ByteAddressable\SegaMegaDrive.cs" />
     <Compile Include="ByteAddressable\SuperNintendo.cs" />
