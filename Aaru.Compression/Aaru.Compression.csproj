@@ -12,7 +12,7 @@
     <ReleaseVersion>$(Version)</ReleaseVersion>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-    <Version>6.0.0-alpha7</Version>
+    <Version>6.0.0-alpha8</Version>
     <Company>Claunia.com</Company>
     <Copyright>Copyright © 2011-2021 Natalia Portillo</Copyright>
     <Product>Aaru Data Preservation Suite</Product>
@@ -95,7 +95,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Aaru.Compression.Native" Version="6.0.0-alpha7" />
+    <PackageReference Include="Aaru.Compression.Native" Version="6.0.0-alpha8" />
     <PackageReference Include="DotNetZip" Version="1.15.0" />
     <PackageReference Include="Newtonsoft.Json" Version="11.0.1" />
     <PackageReference Include="SharpCompress" Version="0.29.0" />
