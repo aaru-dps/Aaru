@@ -44,6 +44,7 @@ using Aaru.Commands.Device;
 using Aaru.Commands.Filesystem;
 using Aaru.Commands.Image;
 using Aaru.Commands.Media;
+using Aaru.CommonTypes.Enums;
 using Aaru.Console;
 using Aaru.Core;
 using Aaru.Database;
@@ -109,15 +110,25 @@ namespace Aaru
 
             Settings.Settings.LoadSettings();
 
-            AaruContext ctx;
+            AaruContext ctx=null;
 
             try
             {
-                ctx = AaruContext.Create(Settings.Settings.LocalDbPath);
+                ctx = AaruContext.Create(Settings.Settings.LocalDbPath, false);
                 ctx.Database.Migrate();
             }
             catch(NotSupportedException)
             {
+                try
+                {
+                    ctx?.Database.CloseConnection();
+                    ctx?.Dispose();
+                }
+                catch(Exception)
+                {
+                    // Should not ever arrive here, but if it does, keep trying to replace it anyway
+                }
+
                 File.Delete(Settings.Settings.LocalDbPath);
                 ctx = AaruContext.Create(Settings.Settings.LocalDbPath);
                 ctx.Database.EnsureCreated();
@@ -160,7 +171,7 @@ namespace Aaru
                 UpdateCommand.DoUpdate(true);
             }
 
-            var mainContext = AaruContext.Create(Settings.Settings.MainDbPath);
+            var mainContext = AaruContext.Create(Settings.Settings.MainDbPath, false);
 
             if(mainContext.Database.GetPendingMigrations().Any())
             {
@@ -174,8 +185,12 @@ namespace Aaru
                 {
                     AaruConsole.ErrorWriteLine("Exception trying to remove old database version, cannot continue...");
                     AaruConsole.ErrorWriteLine("Please manually remove file at {0}", Settings.Settings.MainDbPath);
+
+                    return (int)ErrorNumber.CannotRemoveDatabase;
                 }
 
+                mainContext.Database.CloseConnection();
+                mainContext.Dispose();
                 UpdateCommand.DoUpdate(true);
             }
 

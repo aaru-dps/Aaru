@@ -277,9 +277,9 @@ namespace Aaru.Core
                                 Start(ctx =>
                                 {
                                     ProgressTask task = ctx.AddTask("Adding known iNES/NES 2.0 headers");
-                                    task.MaxValue = sync.NesHeaders.Count;
+                                    task.MaxValue = sync.NesHeaders?.Count ?? 0;
 
-                                    foreach(NesHeaderDto header in sync.NesHeaders)
+                                    foreach(NesHeaderDto header in sync.NesHeaders ?? new List<NesHeaderDto>())
                                     {
                                         task.Increment(1);
 

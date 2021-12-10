@@ -85,11 +85,14 @@ public sealed class AaruContext : DbContext
 
     /// <summary>Creates a database context with the database in the specified path</summary>
     /// <param name="dbPath">Path to database file</param>
+    /// <param name="pooling">Enable database pooling</param>
     /// <returns>Database context</returns>
-    public static AaruContext Create(string dbPath)
+    public static AaruContext Create(string dbPath, bool pooling = true)
     {
         var optionsBuilder = new DbContextOptionsBuilder();
-        optionsBuilder.UseLazyLoadingProxies().UseSqlite($"Data Source={dbPath}");
+
+        optionsBuilder.UseLazyLoadingProxies().
+                       UseSqlite(!pooling ? $"Data Source={dbPath};Pooling=False" : $"Data Source={dbPath}");
 
         return new AaruContext(optionsBuilder.Options);
     }

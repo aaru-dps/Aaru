@@ -121,15 +121,25 @@ namespace Aaru.Gui.ViewModels.Windows
 
             Task.Run(() =>
             {
-                AaruContext ctx;
+                AaruContext ctx = null;
 
                 try
                 {
-                    ctx = AaruContext.Create(Settings.Settings.LocalDbPath);
+                    ctx = AaruContext.Create(Settings.Settings.LocalDbPath, false);
                     ctx.Database.Migrate();
                 }
                 catch(NotSupportedException)
                 {
+                    try
+                    {
+                        ctx?.Database.CloseConnection();
+                        ctx?.Dispose();
+                    }
+                    catch(Exception)
+                    {
+                        // Should not ever arrive here, but if it does, keep trying to replace it anyway
+                    }
+
                     File.Delete(Settings.Settings.LocalDbPath);
                     ctx = AaruContext.Create(Settings.Settings.LocalDbPath);
                     ctx.Database.EnsureCreated();
@@ -186,7 +196,7 @@ namespace Aaru.Gui.ViewModels.Windows
                     // TODO: Update database
                 }
 
-                var mainContext = AaruContext.Create(Settings.Settings.MainDbPath);
+                var mainContext = AaruContext.Create(Settings.Settings.MainDbPath, false);
 
                 if(mainContext.Database.GetPendingMigrations().Any())
                 {
@@ -202,6 +212,8 @@ namespace Aaru.Gui.ViewModels.Windows
                             ErrorWriteLine("Exception trying to remove old database version, cannot continue...");
 
                         AaruConsole.ErrorWriteLine("Please manually remove file at {0}", Settings.Settings.MainDbPath);
+
+                        return;
                     }
 
                     // TODO: Update database
