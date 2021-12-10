@@ -303,7 +303,7 @@ namespace Aaru.Core
                                     }
                                 });
 
-                    AaruConsole.WriteLine("Added {0} known iNES/NES 2.0 headers", sync.NesHeaders.Count);
+                    AaruConsole.WriteLine("Added {0} known iNES/NES 2.0 headers", sync.NesHeaders?.Count ?? 0);
                 }
                 else
                 {
