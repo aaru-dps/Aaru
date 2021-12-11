@@ -33,6 +33,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
+using Aaru.Helpers;
 
 namespace Aaru.Decoders.MMC
 {
@@ -65,28 +66,33 @@ namespace Aaru.Decoders.MMC
      SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public static partial class Decoders
     {
-        public static OCR DecodeOCR(uint response) => new OCR
+        public static OCR DecodeOCR(uint response)
         {
-            PowerUp    = (response & 0x80000000) == 0x80000000,
-            AccessMode = (byte)((response & 0x60000000) >> 29),
-            ThreeFive  = (response & 0x00800000) == 0x00800000,
-            ThreeFour  = (response & 0x00400000) == 0x00400000,
-            ThreeThree = (response & 0x00200000) == 0x00200000,
-            ThreeTwo   = (response & 0x00100000) == 0x00100000,
-            ThreeOne   = (response & 0x00080000) == 0x00080000,
-            ThreeZero  = (response & 0x00040000) == 0x00040000,
-            TwoNine    = (response & 0x00020000) == 0x00020000,
-            TwoEight   = (response & 0x00010000) == 0x00010000,
-            TwoSeven   = (response & 0x00008000) == 0x00008000,
-            TwoSix     = (response & 0x00004000) == 0x00004000,
-            TwoFive    = (response & 0x00002000) == 0x00002000,
-            TwoFour    = (response & 0x00001000) == 0x00001000,
-            TwoThree   = (response & 0x00000800) == 0x00000800,
-            TwoTwo     = (response & 0x00000400) == 0x00000400,
-            TwoOne     = (response & 0x00000200) == 0x00000200,
-            TwoZero    = (response & 0x00000100) == 0x00000100,
-            OneSix     = (response & 0x00000080) == 0x00000080
-        };
+            response = Swapping.Swap(response);
+
+            return new OCR
+            {
+                PowerUp    = (response & 0x80000000) == 0x80000000,
+                AccessMode = (byte)((response & 0x60000000) >> 29),
+                ThreeFive  = (response & 0x00800000) == 0x00800000,
+                ThreeFour  = (response & 0x00400000) == 0x00400000,
+                ThreeThree = (response & 0x00200000) == 0x00200000,
+                ThreeTwo   = (response & 0x00100000) == 0x00100000,
+                ThreeOne   = (response & 0x00080000) == 0x00080000,
+                ThreeZero  = (response & 0x00040000) == 0x00040000,
+                TwoNine    = (response & 0x00020000) == 0x00020000,
+                TwoEight   = (response & 0x00010000) == 0x00010000,
+                TwoSeven   = (response & 0x00008000) == 0x00008000,
+                TwoSix     = (response & 0x00004000) == 0x00004000,
+                TwoFive    = (response & 0x00002000) == 0x00002000,
+                TwoFour    = (response & 0x00001000) == 0x00001000,
+                TwoThree   = (response & 0x00000800) == 0x00000800,
+                TwoTwo     = (response & 0x00000400) == 0x00000400,
+                TwoOne     = (response & 0x00000200) == 0x00000200,
+                TwoZero    = (response & 0x00000100) == 0x00000100,
+                OneSix     = (response & 0x00000080) == 0x00000080
+            };
+        }
 
         public static OCR DecodeOCR(byte[] response) =>
             response?.Length != 4 ? null : DecodeOCR(BitConverter.ToUInt32(response, 0));
