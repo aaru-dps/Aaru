@@ -633,7 +633,14 @@ namespace Aaru.Devices.Linux
             end      = DateTime.Now;
             duration = (end - start).TotalMilliseconds;
 
-            return sense < 0 ? Marshal.GetLastWin32Error() : 0;
+            int errno = Marshal.GetLastWin32Error();
+
+            if(sense == length)
+                errno = 0;
+            else if(errno == 0)
+                errno = -22;
+
+            return errno;
         }
     }
 }
