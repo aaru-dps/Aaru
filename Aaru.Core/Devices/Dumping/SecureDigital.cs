@@ -313,6 +313,80 @@ namespace Aaru.Core.Devices.Dumping
                 }
             }
 
+            if(_useBufferedReads && blocksToRead > 1 && !supportsCmd23)
+            {
+                while(true)
+                {
+                    error = _dev.BufferedOsRead(out cmdBuf, 0, blockSize * blocksToRead,
+                                                out duration);
+
+                    if(error)
+                        blocksToRead /= 2;
+
+                    if(!error ||
+                       blocksToRead == 1)
+                        break;
+
+                    // Device is in timeout, reopen to reset
+                    if(_dev.LastError == 110)
+                        sense = _dev.ReOpen();
+                }
+
+                if(error)
+                {
+                    UpdateStatus?.Invoke("Buffered OS reads are not working, trying direct commands.");
+                    _dumpLog.WriteLine("Buffered OS reads are not working, trying direct commands.");
+                    blocksToRead      = 1;
+                    _useBufferedReads = false;
+                }
+            }
+
+            if(!_useBufferedReads && blocksToRead > 1 && !supportsCmd23)
+            {
+                while(true)
+                {
+                    error = _dev.ReadMultipleUsingSingle(out cmdBuf, out _, 0, blockSize, blocksToRead,
+                                                         byteAddressed, timeout, out duration);
+
+                    if(error)
+                        blocksToRead /= 2;
+
+                    // Device is in timeout, reopen to reset
+                    if(_dev.LastError == 110)
+                        sense = _dev.ReOpen();
+
+                    if(!error ||
+                       blocksToRead == 1)
+                        break;
+                }
+
+                if(error)
+                {
+                    _dumpLog.WriteLine("ERROR: Cannot get blocks to read, device error {0}.", _dev.LastError);
+
+                    StoppingErrorMessage?.
+                        Invoke($"Device error {_dev.LastError} trying to guess ideal transfer length.");
+
+                    return;
+                }
+            }
+
+            if(blocksToRead == 1)
+            {
+                error = _dev.ReadSingleBlock(out cmdBuf, out _, 0, blockSize, byteAddressed, timeout,
+                                             out duration);
+
+                if(error)
+                {
+                    _dumpLog.WriteLine("ERROR: Could not read from device, device error {0}.", _dev.LastError);
+
+                    StoppingErrorMessage?.
+                        Invoke($"Device error {_dev.LastError} trying to read from device.");
+
+                    return;
+                }
+            }
+
             if(supportsCmd23 || blocksToRead == 1)
             {
                 UpdateStatus?.Invoke($"Device can read {blocksToRead} blocks at a time.");
