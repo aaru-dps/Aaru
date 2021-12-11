@@ -32,16 +32,18 @@
 
 namespace Aaru.Decoders.MMC
 {
+    /// <summary>Decodes MultiMediaCard vendors</summary>
     public static class VendorString
     {
-        public static string Prettify(byte mmcVendorId)
+        /// <summary>Converts the byte value of a MultiMediaCard vendor ID to the manufacturer's name string</summary>
+        /// <param name="mmcVendorId">MMC vendor ID</param>
+        /// <returns>Manufacturer</returns>
+        public static string Prettify(byte mmcVendorId) => mmcVendorId switch
         {
-            switch(mmcVendorId)
-            {
-                case 0x15: return "Samsung";
-                case 0x2C: return "extreMEmory";
-                default:   return $"Unknown manufacturer ID 0x{mmcVendorId:X2}";
-            }
-        }
+            0x07 => "Nokia",
+            0x15 => "Samsung",
+            0x2C => "extreMEmory",
+            _    => $"Unknown manufacturer ID 0x{mmcVendorId:X2}"
+        };
     }
 }
