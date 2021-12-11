@@ -93,7 +93,7 @@ namespace Aaru.Core.Devices.Dumping
         readonly DumpSubchannel             _subchannel;
         readonly bool                       _titleKeys;
         readonly bool                       _trim;
-        readonly bool                       _useBufferedReads;
+        bool                                _useBufferedReads;
         bool                                _aborted;
         AaruContext                         _ctx;   // Main database context
         Database.Models.Device              _dbDev; // Device database entry
