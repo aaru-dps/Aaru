@@ -32,18 +32,20 @@
 
 namespace Aaru.Decoders.SecureDigital
 {
+    /// <summary>Decodes SecureDigital vendors</summary>
     public static class VendorString
     {
-        public static string Prettify(byte sdVendorId)
+        /// <summary>Converts the byte value of a SecureDigital vendor ID to the manufacturer's name string</summary>
+        /// <param name="sdVendorId">SD vendor ID</param>
+        /// <returns>Manufacturer</returns>
+        public static string Prettify(byte sdVendorId) => sdVendorId switch
         {
-            switch(sdVendorId)
-            {
-                case 0x02: return "Kingston";
-                case 0x03: return "Sandisk";
-                case 0x27: return "CnMemory";
-                case 0xAA: return "QEMU";
-                default:   return $"Unknown manufacturer ID 0x{sdVendorId:X2}";
-            }
-        }
+            0x41 => "Kingston",
+            0x02 => "Kingston",
+            0x03 => "Sandisk",
+            0x27 => "CnMemory",
+            0xAA => "QEMU",
+            _    => $"Unknown manufacturer ID 0x{sdVendorId:X2}"
+        };
     }
 }
