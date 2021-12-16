@@ -286,7 +286,7 @@ public class MasterSystem : IByteAddressableImage
             return ErrorNumber.InvalidArgument;
         }
 
-        if(mediaType != MediaType.GameBoyGamePak)
+        if(mediaType != MediaType.MasterSystemCartridge)
         {
             ErrorMessage = $"Unsupported media format {mediaType}";
 
