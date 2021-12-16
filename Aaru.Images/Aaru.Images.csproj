@@ -547,6 +547,7 @@
       <Project>{858398d1-7321-4763-8bab-56bbfec74e29}</Project>
       <Name>Aaru.Compression</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Aaru.Database\Aaru.Database.csproj" />
     <ProjectReference Include="..\Aaru.Helpers\Aaru.Helpers.csproj">
       <Project>{F8BDF57B-1571-4CD0-84B3-B422088D359A}</Project>
       <Name>Aaru.Helpers</Name>
@@ -563,6 +564,7 @@
       <Project>{D571B8EF-903D-4353-BDD5-B834F9F029EF}</Project>
       <Name>Aaru.Filters</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Aaru.Settings\Aaru.Settings.csproj" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="..\LICENSE.LGPL">
