@@ -321,14 +321,6 @@ public class SuperNintendo : IByteAddressableImage
     }
 
     /// <inheritdoc />
-    public ErrorNumber GetHeader(out byte[] header)
-    {
-        header = null;
-
-        return !_opened ? ErrorNumber.NotOpened : ErrorNumber.NoData;
-    }
-
-    /// <inheritdoc />
     public ErrorNumber GetMappings(out LinearMemoryMap mappings)
     {
         mappings = new LinearMemoryMap();
@@ -497,24 +489,6 @@ public class SuperNintendo : IByteAddressableImage
         bytesRead = bytesToRead;
 
         return ErrorNumber.NoError;
-    }
-
-    /// <inheritdoc />
-    public ErrorNumber SetHeader(byte[] header)
-    {
-        if(!_opened)
-        {
-            ErrorMessage = "Not image has been opened.";
-
-            return ErrorNumber.NotOpened;
-        }
-
-        if(IsWriting)
-            return ErrorNumber.NotSupported;
-
-        ErrorMessage = "Image is not opened for writing.";
-
-        return ErrorNumber.ReadOnly;
     }
 
     /// <inheritdoc />
