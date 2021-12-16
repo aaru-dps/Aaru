@@ -56,11 +56,6 @@ public interface IByteAddressableImage : IBaseWritableImage
     /// <returns>Error number</returns>
     ErrorNumber Create(string path, MediaType mediaType, Dictionary<string, string> options, long maximumSize);
 
-    /// <summary>Gets the media image header (really needed?)</summary>
-    /// <param name="header">Header, interchange format still undecided</param>
-    /// <returns>Error message</returns>
-    ErrorNumber GetHeader(out byte[] header);
-
     /// <summary>Gets the linear memory mappings, e.g. interleaving, starting address, etc.</summary>
     /// <param name="mappings">Format still not decided</param>
     /// <returns>Error number</returns>
@@ -98,11 +93,6 @@ public interface IByteAddressableImage : IBaseWritableImage
     /// <returns>Error number</returns>
     ErrorNumber ReadBytesAt(long position, byte[] buffer, int offset, int bytesToRead, out int bytesRead,
                             bool advance = true);
-
-    /// <summary>Sets the media image header (really needed?)</summary>
-    /// <param name="header">Header, interchange format still undecided</param>
-    /// <returns>Error message</returns>
-    ErrorNumber SetHeader(byte[] header);
 
     /// <summary>Sets the linear memory mappings, e.g. interleaving, starting address, etc.</summary>
     /// <param name="mappings">Format still not decided</param>
