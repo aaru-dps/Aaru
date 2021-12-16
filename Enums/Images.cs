@@ -415,5 +415,11 @@ public enum LinearMemoryType
     /// <summary>Generic Array Logic</summary>
     GAL = 9,
     /// <summary>Electronically Erasable Programmable Read Only Memory</summary>
-    EEPROM = 10
+    EEPROM = 10,
+    /// <summary>Read-only memory, character</summary>
+    CharacterROM = 11,
+    /// <summary>Read-write volatile memory for character</summary>
+    CharacterRAM = 12,
+    /// <summary>Trainer, or hack</summary>
+    Trainer      = 13
 }
