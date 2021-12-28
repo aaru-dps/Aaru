@@ -61,6 +61,21 @@ public partial class Dump
         0x5A, 0x36, 0x34
     };
 
+    static readonly byte[] _gbExtension =
+    {
+        0x47, 0x42, 0x20
+    };
+
+    static readonly byte[] _gbcExtension =
+    {
+        0x47, 0x42, 0x43
+    };
+
+    static readonly byte[] _gbaExtension =
+    {
+        0x47, 0x42, 0x41
+    };
+
     /// <summary>Dumps a game cartridge using a Retrode adapter</summary>
     void Retrode()
     {
@@ -112,6 +127,9 @@ public partial class Dump
         bool genesisFound = false;
         bool smsFound     = false;
         bool n64Found     = false;
+        bool gbFound      = false;
+        bool gbcFound      = false;
+        bool gbaFound      = false;
         tmp = new byte[3];
 
         for(romPos = 0; romPos < buffer.Length; romPos += 0x20)
@@ -145,6 +163,27 @@ public partial class Dump
 
                 break;
             }
+
+            if(tmp.SequenceEqual(_gbExtension))
+            {
+                gbFound = true;
+
+                break;
+            }
+
+            if(tmp.SequenceEqual(_gbcExtension))
+            {
+                gbcFound = true;
+
+                break;
+            }
+
+            if(tmp.SequenceEqual(_gbaExtension))
+            {
+                gbaFound = true;
+
+                break;
+            }
         }
 
         if(!sfcFound     &&
@@ -161,13 +200,17 @@ public partial class Dump
         ushort cluster = BitConverter.ToUInt16(buffer, romPos + 0x1A);
         uint   romSize = BitConverter.ToUInt32(buffer, romPos + 0x1C);
 
-        MediaType mediaType = n64Found
-                                  ? MediaType.N64GamePak
-                                  : smsFound
-                                      ? MediaType.MasterSystemCartridge
-                                      : genesisFound
-                                          ? MediaType.MegaDriveCartridge
-                                          : MediaType.SNESGamePak;
+        MediaType mediaType = gbaFound
+                                  ? MediaType.GameBoyAdvanceGamePak
+                                  : gbFound || gbcFound
+                                      ? MediaType.GameBoyGamePak
+                                      : n64Found
+                                          ? MediaType.N64GamePak
+                                          : smsFound
+                                              ? MediaType.MasterSystemCartridge
+                                              : genesisFound
+                                                  ? MediaType.MegaDriveCartridge
+                                                  : MediaType.SNESGamePak;
 
         uint   blocksToRead  = 64;
         double totalDuration = 0;
