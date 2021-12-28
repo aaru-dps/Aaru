@@ -56,6 +56,11 @@ public partial class Dump
         0x53, 0x4D, 0x53
     };
 
+    static readonly byte[] _z64Extension =
+    {
+        0x5A, 0x36, 0x34
+    };
+
     /// <summary>Dumps a game cartridge using a Retrode adapter</summary>
     void Retrode()
     {
@@ -106,6 +111,7 @@ public partial class Dump
         bool sfcFound     = false;
         bool genesisFound = false;
         bool smsFound     = false;
+        bool n64Found     = false;
         tmp = new byte[3];
 
         for(romPos = 0; romPos < buffer.Length; romPos += 0x20)
@@ -132,11 +138,19 @@ public partial class Dump
 
                 break;
             }
+
+            if(tmp.SequenceEqual(_z64Extension))
+            {
+                n64Found = true;
+
+                break;
+            }
         }
 
         if(!sfcFound     &&
            !genesisFound &&
-           !smsFound)
+           !smsFound     &&
+           !n64Found)
         {
             StoppingErrorMessage?.Invoke("No cartridge found, not dumping...");
             _dumpLog.WriteLine("No cartridge found, not dumping...");
@@ -147,11 +161,13 @@ public partial class Dump
         ushort cluster = BitConverter.ToUInt16(buffer, romPos + 0x1A);
         uint   romSize = BitConverter.ToUInt32(buffer, romPos + 0x1C);
 
-        MediaType mediaType = smsFound
-                                  ? MediaType.MasterSystemCartridge
-                                  : genesisFound
-                                      ? MediaType.MegaDriveCartridge
-                                      : MediaType.SNESGamePak;
+        MediaType mediaType = n64Found
+                                  ? MediaType.N64GamePak
+                                  : smsFound
+                                      ? MediaType.MasterSystemCartridge
+                                      : genesisFound
+                                          ? MediaType.MegaDriveCartridge
+                                          : MediaType.SNESGamePak;
 
         uint   blocksToRead  = 64;
         double totalDuration = 0;
