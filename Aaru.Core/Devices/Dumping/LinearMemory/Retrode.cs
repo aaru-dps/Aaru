@@ -46,7 +46,12 @@ public partial class Dump
         0x53, 0x46, 0x43
     };
 
-    /// <summary>Dumps a CFW PlayStation Portable UMD</summary>
+    static readonly byte[] _genesisExtension =
+    {
+        0x42, 0x49, 0x4E
+    };
+
+    /// <summary>Dumps a game cartridge using a Retrode adapter</summary>
     void Retrode()
     {
         bool sense = _dev.Read10(out byte[] buffer, out _, 0, false, true, false, false, 0, 512, 0, 1, _dev.Timeout,
@@ -92,23 +97,32 @@ public partial class Dump
             return;
         }
 
-        int    romPos;
-        bool   sfcFound = false;
+        int  romPos;
+        bool sfcFound     = false;
+        bool genesisFound = false;
         tmp = new byte[3];
 
         for(romPos = 0; romPos < buffer.Length; romPos += 0x20)
         {
             Array.Copy(buffer, romPos + 8, tmp, 0, 3);
 
-            if(!tmp.SequenceEqual(_sfcExtension))
-                continue;
+            if(tmp.SequenceEqual(_sfcExtension))
+            {
+                sfcFound = true;
 
-            sfcFound = true;
+                break;
+            }
 
-            break;
+            if(tmp.SequenceEqual(_genesisExtension))
+            {
+                genesisFound = true;
+
+                break;
+            }
         }
 
-        if(!sfcFound)
+        if(!sfcFound &&
+           !genesisFound)
         {
             StoppingErrorMessage?.Invoke("No cartridge found, not dumping...");
             _dumpLog.WriteLine("No cartridge found, not dumping...");
@@ -119,13 +133,13 @@ public partial class Dump
         ushort cluster = BitConverter.ToUInt16(buffer, romPos + 0x1A);
         uint   romSize = BitConverter.ToUInt32(buffer, romPos + 0x1C);
 
-        const MediaType mediaType     = MediaType.SNESGamePak;
-        uint            blocksToRead  = 64;
-        double          totalDuration = 0;
-        double          currentSpeed  = 0;
-        double          maxSpeed      = double.MinValue;
-        double          minSpeed      = double.MaxValue;
-        byte[]          senseBuf;
+        MediaType mediaType     = genesisFound ? MediaType.MegaDriveCartridge : MediaType.SNESGamePak;
+        uint      blocksToRead  = 64;
+        double    totalDuration = 0;
+        double    currentSpeed  = 0;
+        double    maxSpeed      = double.MinValue;
+        double    minSpeed      = double.MaxValue;
+        byte[]    senseBuf;
 
         if(_outputPlugin is not IByteAddressableImage outputBai ||
            !outputBai.SupportedMediaTypes.Contains(mediaType))
