@@ -83,10 +83,11 @@ namespace Aaru.Core.Devices.Dumping
                             Dictionary<byte, string> isrcs, ref string mcn, Track[] tracks,
                             HashSet<int> subchannelExtents, Dictionary<byte, int> smallestPregapLbaPerTrack)
         {
-            byte[]     cmdBuf     = null; // Data buffer
-            const uint sectorSize = 2352; // Full sector size
-            bool       sense      = true; // Sense indicator
-            byte[]     senseBuf   = null;
+            byte[]     cmdBuf        = null; // Data buffer
+            const uint sectorSize    = 2352; // Full sector size
+            bool       sense         = true; // Sense indicator
+            byte[]     senseBuf      = null;
+            var        outputOptical = _outputPlugin as IWritableOpticalImage;
 
             UpdateStatus?.Invoke("Reading lead-outs");
             _dumpLog.WriteLine("Reading lead-outs");
@@ -158,24 +159,24 @@ namespace Aaru.Core.Devices.Dumping
                                 Array.Copy(cmdBuf, (int)(sectorSize + (b * blockSize)), sub, subSize * b, subSize);
                             }
 
-                            _outputPlugin.WriteSectorsLong(data, i, _maximumReadable);
+                            outputOptical.WriteSectorsLong(data, i, _maximumReadable);
 
                             bool indexesChanged = Media.CompactDisc.WriteSubchannelToImage(supportedSubchannel,
                                 desiredSubchannel, sub, i, _maximumReadable, subLog, isrcs, 0xAA, ref mcn, tracks,
-                                subchannelExtents, _fixSubchannelPosition, _outputPlugin, _fixSubchannel,
+                                subchannelExtents, _fixSubchannelPosition, outputOptical, _fixSubchannel,
                                 _fixSubchannelCrc, _dumpLog, UpdateStatus, smallestPregapLbaPerTrack, true);
 
                             // Set tracks and go back
                             if(indexesChanged)
                             {
-                                (_outputPlugin as IWritableOpticalImage).SetTracks(tracks.ToList());
+                                (outputOptical as IWritableOpticalImage).SetTracks(tracks.ToList());
                                 i--;
 
                                 continue;
                             }
                         }
                         else
-                            _outputPlugin.WriteSectors(cmdBuf, i, _maximumReadable);
+                            outputOptical.WriteSectors(cmdBuf, i, _maximumReadable);
 
                         imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
                     }
@@ -192,13 +193,13 @@ namespace Aaru.Core.Devices.Dumping
 
                         if(supportedSubchannel != MmcSubchannel.None)
                         {
-                            _outputPlugin.WriteSectorsLong(new byte[sectorSize * _skip], i, 1);
+                            outputOptical.WriteSectorsLong(new byte[sectorSize * _skip], i, 1);
 
-                            _outputPlugin.WriteSectorsTag(new byte[subSize * _skip], i, 1,
+                            outputOptical.WriteSectorsTag(new byte[subSize * _skip], i, 1,
                                                           SectorTagType.CdSectorSubchannel);
                         }
                         else
-                            _outputPlugin.WriteSectors(new byte[blockSize * _skip], i, 1);
+                            outputOptical.WriteSectors(new byte[blockSize * _skip], i, 1);
 
                         imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
 
@@ -252,10 +253,11 @@ namespace Aaru.Core.Devices.Dumping
                              Dictionary<byte, string> isrcs, ref string mcn, Track[] tracks,
                              HashSet<int> subchannelExtents, Dictionary<byte, int> smallestPregapLbaPerTrack)
         {
-            byte[]     cmdBuf     = null; // Data buffer
-            const uint sectorSize = 2352; // Full sector size
-            bool       sense      = true; // Sense indicator
-            byte[]     senseBuf   = null;
+            byte[]     cmdBuf        = null; // Data buffer
+            const uint sectorSize    = 2352; // Full sector size
+            bool       sense         = true; // Sense indicator
+            byte[]     senseBuf      = null;
+            var        outputOptical = _outputPlugin as IWritableOpticalImage;
 
             _dumpLog.WriteLine("Retrying lead-outs");
 
@@ -326,24 +328,24 @@ namespace Aaru.Core.Devices.Dumping
                                 Array.Copy(cmdBuf, (int)(sectorSize + (b * blockSize)), sub, subSize * b, subSize);
                             }
 
-                            _outputPlugin.WriteSectorsLong(data, i, _maximumReadable);
+                            outputOptical.WriteSectorsLong(data, i, _maximumReadable);
 
                             bool indexesChanged = Media.CompactDisc.WriteSubchannelToImage(supportedSubchannel,
                                 desiredSubchannel, sub, i, _maximumReadable, subLog, isrcs, 0xAA, ref mcn, tracks,
-                                subchannelExtents, _fixSubchannelPosition, _outputPlugin, _fixSubchannel,
+                                subchannelExtents, _fixSubchannelPosition, outputOptical, _fixSubchannel,
                                 _fixSubchannelCrc, _dumpLog, UpdateStatus, smallestPregapLbaPerTrack, true);
 
                             // Set tracks and go back
                             if(indexesChanged)
                             {
-                                (_outputPlugin as IWritableOpticalImage).SetTracks(tracks.ToList());
+                                (outputOptical as IWritableOpticalImage).SetTracks(tracks.ToList());
                                 i--;
 
                                 continue;
                             }
                         }
                         else
-                            _outputPlugin.WriteSectors(cmdBuf, i, _maximumReadable);
+                            outputOptical.WriteSectors(cmdBuf, i, _maximumReadable);
 
                         imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
                     }
@@ -360,14 +362,14 @@ namespace Aaru.Core.Devices.Dumping
 
                         if(supportedSubchannel != MmcSubchannel.None)
                         {
-                            _outputPlugin.WriteSectorsLong(new byte[sectorSize * _skip], i, 1);
+                            outputOptical.WriteSectorsLong(new byte[sectorSize * _skip], i, 1);
 
                             if(desiredSubchannel != MmcSubchannel.None)
-                                _outputPlugin.WriteSectorsTag(new byte[subSize * _skip], i, 1,
+                                outputOptical.WriteSectorsTag(new byte[subSize * _skip], i, 1,
                                                               SectorTagType.CdSectorSubchannel);
                         }
                         else
-                            _outputPlugin.WriteSectors(new byte[blockSize * _skip], i, 1);
+                            outputOptical.WriteSectors(new byte[blockSize * _skip], i, 1);
 
                         imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
 

@@ -81,7 +81,7 @@ namespace Aaru.Core.Devices.Dumping
         readonly bool                       _generateSubchannels;
         readonly bool                       _metadata;
         readonly string                     _outputPath;
-        readonly IWritableImage             _outputPlugin;
+        readonly IBaseWritableImage             _outputPlugin;
         readonly string                     _outputPrefix;
         readonly bool                       _persistent;
         readonly CICMMetadataType           _preSidecar;
@@ -148,7 +148,7 @@ namespace Aaru.Core.Devices.Dumping
         /// </param>
         /// <param name="storeEncrypted">Store encrypted data as is</param>
         /// <param name="titleKeys">Dump DVD CSS title keys</param>
-        public Dump(bool doResume, Device dev, string devicePath, IWritableImage outputPlugin, ushort retryPasses,
+        public Dump(bool doResume, Device dev, string devicePath, IBaseWritableImage outputPlugin, ushort retryPasses,
                     bool force, bool dumpRaw, bool persistent, bool stopOnError, Resume resume, DumpLog dumpLog,
                     Encoding encoding, string outputPrefix, string outputPath, Dictionary<string, string> formatOptions,
                     CICMMetadataType preSidecar, uint skip, bool metadata, bool trim, bool dumpFirstTrackPregap,

@@ -29,6 +29,7 @@ using System;
 using System.Linq;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Extents;
+using Aaru.CommonTypes.Interfaces;
 using Aaru.Core.Logging;
 using Aaru.Decoders.DVD;
 using Aaru.Decryption;
@@ -71,6 +72,7 @@ namespace Aaru.Core.Devices.Dumping
             DateTime timeSpeedStart = DateTime.UtcNow;
             byte[]   buffer;
             uint     blocksToRead = maxBlocksToRead;
+            var      outputFormat = _outputPlugin as IWritableImage;
 
             InitProgress?.Invoke();
 
@@ -129,7 +131,7 @@ namespace Aaru.Core.Devices.Dumping
                                 CSS_CPRM.TitleKey? titleKey = CSS.DecodeTitleKey(tmpBuf, dvdDecrypt.BusKey);
 
                                 if(titleKey.HasValue)
-                                    _outputPlugin.WriteSectorTag(new[]
+                                    outputFormat.WriteSectorTag(new[]
                                     {
                                         titleKey.Value.CMI
                                     }, i + j, SectorTagType.DvdCmi);
@@ -140,12 +142,12 @@ namespace Aaru.Core.Devices.Dumping
                                 if((titleKey.Value.CMI & 0x80) >> 7 == 0)
                                 {
                                     // The CMI indicates this sector is not encrypted.
-                                    _outputPlugin.WriteSectorTag(new byte[]
+                                    outputFormat.WriteSectorTag(new byte[]
                                     {
                                         0, 0, 0, 0, 0
                                     }, i + j, SectorTagType.DvdTitleKey);
 
-                                    _outputPlugin.WriteSectorTag(new byte[]
+                                    outputFormat.WriteSectorTag(new byte[]
                                     {
                                         0, 0, 0, 0, 0
                                     }, i + j, SectorTagType.DvdTitleKeyDecrypted);
@@ -159,12 +161,12 @@ namespace Aaru.Core.Devices.Dumping
                                 // not encrypted even if the CMI says it is.
                                 if(titleKey.Value.Key.All(k => k == 0))
                                 {
-                                    _outputPlugin.WriteSectorTag(new byte[]
+                                    outputFormat.WriteSectorTag(new byte[]
                                     {
                                         0, 0, 0, 0, 0
                                     }, i + j, SectorTagType.DvdTitleKey);
 
-                                    _outputPlugin.WriteSectorTag(new byte[]
+                                    outputFormat.WriteSectorTag(new byte[]
                                     {
                                         0, 0, 0, 0, 0
                                     }, i + j, SectorTagType.DvdTitleKeyDecrypted);
@@ -174,26 +176,26 @@ namespace Aaru.Core.Devices.Dumping
                                     continue;
                                 }
 
-                                _outputPlugin.WriteSectorTag(titleKey.Value.Key, i + j, SectorTagType.DvdTitleKey);
+                                outputFormat.WriteSectorTag(titleKey.Value.Key, i + j, SectorTagType.DvdTitleKey);
                                 _resume.MissingTitleKeys.Remove(i                  + j);
 
                                 CSS.DecryptTitleKey(0, discKey, titleKey.Value.Key, out tmpBuf);
-                                _outputPlugin.WriteSectorTag(tmpBuf, i + j, SectorTagType.DvdTitleKeyDecrypted);
+                                outputFormat.WriteSectorTag(tmpBuf, i + j, SectorTagType.DvdTitleKeyDecrypted);
                             }
                         }
 
                         if(!_storeEncrypted)
 
-                            // Todo: Flag in the _outputPlugin that a sector has been decrypted
+                            // Todo: Flag in the outputFormat that a sector has been decrypted
                         {
                             ErrorNumber errno =
-                                _outputPlugin.ReadSectorsTag(i, blocksToRead, SectorTagType.DvdCmi, out byte[] cmi);
+                                outputFormat.ReadSectorsTag(i, blocksToRead, SectorTagType.DvdCmi, out byte[] cmi);
 
                             if(errno != ErrorNumber.NoError)
                                 ErrorMessage?.Invoke($"Error retrieving CMI for sector {i}");
                             else
                             {
-                                errno = _outputPlugin.ReadSectorsTag(i, blocksToRead,
+                                errno = outputFormat.ReadSectorsTag(i, blocksToRead,
                                                                      SectorTagType.DvdTitleKeyDecrypted,
                                                                      out byte[] titleKey);
 
@@ -208,7 +210,7 @@ namespace Aaru.Core.Devices.Dumping
                     mhddLog.Write(i, cmdDuration);
                     ibgLog.Write(i, currentSpeed * 1024);
                     DateTime writeStart = DateTime.Now;
-                    _outputPlugin.WriteSectors(buffer, i, blocksToRead);
+                    outputFormat.WriteSectors(buffer, i, blocksToRead);
                     imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
                     extents.Add(i, blocksToRead, true);
                 }
@@ -239,7 +241,7 @@ namespace Aaru.Core.Devices.Dumping
 
                     // Write empty data
                     DateTime writeStart = DateTime.Now;
-                    _outputPlugin.WriteSectors(new byte[blockSize * _skip], i, _skip);
+                    outputFormat.WriteSectors(new byte[blockSize * _skip], i, _skip);
                     imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
 
                     for(ulong b = i; b < i + _skip; b++)

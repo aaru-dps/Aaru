@@ -163,6 +163,7 @@ namespace Aaru.Core.Devices.Dumping
             const uint sectorSize = 2352;                  // Full sector size
             Track      firstTrack = tracks.FirstOrDefault(t => t.Sequence == 1);
             uint       blocksToRead; // How many sectors to read at once
+            var        outputOptical = _outputPlugin as IWritableOpticalImage;
 
             if(firstTrack is null)
                 return;
@@ -264,17 +265,17 @@ namespace Aaru.Core.Devices.Dumping
                                 if(cdiReadyReadAsAudio)
                                     data = Sector.Scramble(data);
 
-                                _outputPlugin.WriteSectorsLong(data, i + r, 1);
+                                outputOptical.WriteSectorsLong(data, i + r, 1);
 
                                 bool indexesChanged = Media.CompactDisc.WriteSubchannelToImage(supportedSubchannel,
                                     desiredSubchannel, sub, i + r, 1, subLog, isrcs, 1, ref mcn, tracks,
-                                    subchannelExtents, _fixSubchannelPosition, _outputPlugin, _fixSubchannel,
+                                    subchannelExtents, _fixSubchannelPosition, outputOptical, _fixSubchannel,
                                     _fixSubchannelCrc, _dumpLog, UpdateStatus, smallestPregapLbaPerTrack, true);
 
                                 // Set tracks and go back
                                 if(indexesChanged)
                                 {
-                                    (_outputPlugin as IWritableOpticalImage).SetTracks(tracks.ToList());
+                                    (outputOptical as IWritableOpticalImage).SetTracks(tracks.ToList());
                                     i -= _maximumReadable;
 
                                     continue;
@@ -282,7 +283,7 @@ namespace Aaru.Core.Devices.Dumping
                             }
                             else
                             {
-                                _outputPlugin.WriteSectorsLong(cmdBuf, i + r, 1);
+                                outputOptical.WriteSectorsLong(cmdBuf, i + r, 1);
                             }
 
                             imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
@@ -349,17 +350,17 @@ namespace Aaru.Core.Devices.Dumping
                             Array.Copy(cmdBuf, (int)(sectorSize + (b * blockSize)), sub, subSize * b, subSize);
                         }
 
-                        _outputPlugin.WriteSectorsLong(data, i, blocksToRead);
+                        outputOptical.WriteSectorsLong(data, i, blocksToRead);
 
                         bool indexesChanged = Media.CompactDisc.WriteSubchannelToImage(supportedSubchannel,
                             desiredSubchannel, sub, i, blocksToRead, subLog, isrcs, 1, ref mcn, tracks,
-                            subchannelExtents, _fixSubchannelPosition, _outputPlugin, _fixSubchannel,
+                            subchannelExtents, _fixSubchannelPosition, outputOptical, _fixSubchannel,
                             _fixSubchannelCrc, _dumpLog, UpdateStatus, smallestPregapLbaPerTrack, true);
 
                         // Set tracks and go back
                         if(indexesChanged)
                         {
-                            (_outputPlugin as IWritableOpticalImage).SetTracks(tracks.ToList());
+                            (outputOptical as IWritableOpticalImage).SetTracks(tracks.ToList());
                             i -= blocksToRead;
 
                             continue;
@@ -379,10 +380,10 @@ namespace Aaru.Core.Devices.Dumping
                                 Array.Copy(tmpData, 0, data, sectorSize * b, sectorSize);
                             }
 
-                            _outputPlugin.WriteSectorsLong(data, i, blocksToRead);
+                            outputOptical.WriteSectorsLong(data, i, blocksToRead);
                         }
                         else
-                            _outputPlugin.WriteSectorsLong(cmdBuf, i, blocksToRead);
+                            outputOptical.WriteSectorsLong(cmdBuf, i, blocksToRead);
                     }
 
                     imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;

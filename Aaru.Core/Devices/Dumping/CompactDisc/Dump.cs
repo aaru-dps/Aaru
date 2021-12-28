@@ -117,6 +117,7 @@ namespace Aaru.Core.Devices.Dumping
             HashSet<int>             subchannelExtents   = new();
             bool                     cdiReadyReadAsAudio = false;
             uint                     firstLba;
+            var                      outputOptical = _outputPlugin as IWritableOpticalImage;
 
             Dictionary<MediaTagType, byte[]> mediaTags                 = new(); // Media tags
             Dictionary<byte, int>            smallestPregapLbaPerTrack = new();
@@ -221,7 +222,7 @@ namespace Aaru.Core.Devices.Dumping
                 supportedSubchannel = MmcSubchannel.Q16;
 
             // Check if output format supports subchannels
-            if(!_outputPlugin.SupportedSectorTags.Contains(SectorTagType.CdSectorSubchannel) &&
+            if(!outputOptical.SupportedSectorTags.Contains(SectorTagType.CdSectorSubchannel) &&
                desiredSubchannel != MmcSubchannel.None)
             {
                 if(_force || _subchannel == DumpSubchannel.None)
@@ -416,7 +417,7 @@ namespace Aaru.Core.Devices.Dumping
                     Invoke("WARNING: The drive has returned incorrect Q positioning when calculating pregaps. A best effort has been tried but they may be incorrect.");
             }
 
-            if(!(_outputPlugin as IWritableOpticalImage).OpticalCapabilities.HasFlag(OpticalImageCapabilities.
+            if(!(outputOptical as IWritableOpticalImage).OpticalCapabilities.HasFlag(OpticalImageCapabilities.
                    CanStoreRawData))
             {
                 if(!_force)
@@ -435,7 +436,7 @@ namespace Aaru.Core.Devices.Dumping
                     Invoke("Output format does not support storing raw data, this may end in a loss of data, continuing...");
             }
 
-            if(!(_outputPlugin as IWritableOpticalImage).OpticalCapabilities.HasFlag(OpticalImageCapabilities.
+            if(!(outputOptical as IWritableOpticalImage).OpticalCapabilities.HasFlag(OpticalImageCapabilities.
                    CanStoreAudioTracks) &&
                tracks.Any(track => track.Type == TrackType.Audio))
             {
@@ -446,7 +447,7 @@ namespace Aaru.Core.Devices.Dumping
                 return;
             }
 
-            if(!(_outputPlugin as IWritableOpticalImage).OpticalCapabilities.HasFlag(OpticalImageCapabilities.
+            if(!(outputOptical as IWritableOpticalImage).OpticalCapabilities.HasFlag(OpticalImageCapabilities.
                    CanStorePregaps) &&
                tracks.Where(track => track.Sequence != tracks.First(t => t.Session == track.Session).Sequence).
                       Any(track => track.Pregap     > 0))
@@ -494,7 +495,7 @@ namespace Aaru.Core.Devices.Dumping
             // Read media tags
             ReadCdTags(ref dskType, mediaTags, out sessions, out firstTrackLastSession);
 
-            if(!(_outputPlugin as IWritableOpticalImage).OpticalCapabilities.HasFlag(OpticalImageCapabilities.
+            if(!(outputOptical as IWritableOpticalImage).OpticalCapabilities.HasFlag(OpticalImageCapabilities.
                    CanStoreSessions) &&
                sessions > 1)
             {
@@ -516,7 +517,7 @@ namespace Aaru.Core.Devices.Dumping
             }
 
             // Check if output format supports all disc tags we have retrieved so far
-            foreach(MediaTagType tag in mediaTags.Keys.Where(tag => !_outputPlugin.SupportedMediaTags.Contains(tag)))
+            foreach(MediaTagType tag in mediaTags.Keys.Where(tag => !outputOptical.SupportedMediaTags.Contains(tag)))
             {
                 if(_force)
                 {
@@ -687,7 +688,7 @@ namespace Aaru.Core.Devices.Dumping
                 }
             }
 
-            if(_outputPlugin.Id == new Guid("12345678-AAAA-BBBB-CCCC-123456789000"))
+            if(outputOptical.Id == new Guid("12345678-AAAA-BBBB-CCCC-123456789000"))
             {
                 if(tracks.Length > 1)
                 {
@@ -719,7 +720,7 @@ namespace Aaru.Core.Devices.Dumping
             // Check if something prevents from dumping the first track pregap
             if(_dumpFirstTrackPregap && readcd)
             {
-                if(!_outputPlugin.SupportedMediaTags.Contains(MediaTagType.CD_FirstTrackPregap))
+                if(!outputOptical.SupportedMediaTags.Contains(MediaTagType.CD_FirstTrackPregap))
                 {
                     if(_force)
                     {
@@ -814,30 +815,30 @@ namespace Aaru.Core.Devices.Dumping
             UpdateStatus?.Invoke($"SCSI device type: {_dev.ScsiType}.");
             UpdateStatus?.Invoke($"Media identified as {dskType}.");
 
-            ret = _outputPlugin.Create(_outputPath, dskType, _formatOptions, blocks,
+            ret = outputOptical.Create(_outputPath, dskType, _formatOptions, blocks,
                                        supportsLongSectors ? blockSize : 2048);
 
             // Cannot create image
             if(!ret)
             {
                 _dumpLog.WriteLine("Error creating output image, not continuing.");
-                _dumpLog.WriteLine(_outputPlugin.ErrorMessage);
+                _dumpLog.WriteLine(outputOptical.ErrorMessage);
 
                 StoppingErrorMessage?.Invoke("Error creating output image, not continuing." + Environment.NewLine +
-                                             _outputPlugin.ErrorMessage);
+                                             outputOptical.ErrorMessage);
 
                 return;
             }
 
-            ErrorNumber errno = _outputPlugin.ReadMediaTag(MediaTagType.CD_MCN, out byte[] mcnBytes);
+            ErrorNumber errno = outputOptical.ReadMediaTag(MediaTagType.CD_MCN, out byte[] mcnBytes);
 
             if(errno == ErrorNumber.NoError)
                 mcn = Encoding.ASCII.GetString(mcnBytes);
 
-            if((_outputPlugin as IWritableOpticalImage).Tracks != null)
-                foreach(Track imgTrack in (_outputPlugin as IWritableOpticalImage).Tracks)
+            if((outputOptical as IWritableOpticalImage).Tracks != null)
+                foreach(Track imgTrack in (outputOptical as IWritableOpticalImage).Tracks)
                 {
-                    errno = (_outputPlugin as IWritableOpticalImage).ReadSectorTag(imgTrack.Sequence,
+                    errno = (outputOptical as IWritableOpticalImage).ReadSectorTag(imgTrack.Sequence,
                         SectorTagType.CdTrackIsrc, out byte[] isrcBytes);
 
                     if(errno == ErrorNumber.NoError)
@@ -857,23 +858,23 @@ namespace Aaru.Core.Devices.Dumping
                 }
 
             // Send track list to output plugin. This may fail if subchannel is set but unsupported.
-            ret = (_outputPlugin as IWritableOpticalImage).SetTracks(tracks.ToList());
+            ret = (outputOptical as IWritableOpticalImage).SetTracks(tracks.ToList());
 
             if(!ret &&
                desiredSubchannel == MmcSubchannel.None)
             {
                 _dumpLog.WriteLine("Error sending tracks to output image, not continuing.");
-                _dumpLog.WriteLine(_outputPlugin.ErrorMessage);
+                _dumpLog.WriteLine(outputOptical.ErrorMessage);
 
                 StoppingErrorMessage?.Invoke("Error sending tracks to output image, not continuing." +
-                                             Environment.NewLine + _outputPlugin.ErrorMessage);
+                                             Environment.NewLine + outputOptical.ErrorMessage);
 
                 return;
             }
 
             // If a subchannel is supported, check if output plugin allows us to write it.
             if(desiredSubchannel != MmcSubchannel.None &&
-               !(_outputPlugin as IWritableOpticalImage).OpticalCapabilities.HasFlag(OpticalImageCapabilities.
+               !(outputOptical as IWritableOpticalImage).OpticalCapabilities.HasFlag(OpticalImageCapabilities.
                    CanStoreSubchannelRw))
             {
                 _dumpLog.WriteLine("Output image does not support subchannels, {0}continuing...", _force ? "" : "not ");
@@ -905,7 +906,7 @@ namespace Aaru.Core.Devices.Dumping
                 _dumpLog.WriteLine("Setting flags for track {0}...", track.Sequence);
                 UpdateStatus?.Invoke($"Setting flags for track {track.Sequence}...");
 
-                _outputPlugin.WriteSectorTag(new[]
+                outputOptical.WriteSectorTag(new[]
                 {
                     kvp.Value
                 }, kvp.Key, SectorTagType.CdTrackFlags);
@@ -1282,14 +1283,14 @@ namespace Aaru.Core.Devices.Dumping
                         continue;
                     }
 
-                    ret = _outputPlugin.WriteMediaTag(tag.Value, tag.Key);
+                    ret = outputOptical.WriteMediaTag(tag.Value, tag.Key);
 
                     if(ret || _force)
                         continue;
 
                     // Cannot write tag to image
                     _dumpLog.WriteLine($"Cannot write tag {tag.Key}.");
-                    StoppingErrorMessage?.Invoke(_outputPlugin.ErrorMessage);
+                    StoppingErrorMessage?.Invoke(outputOptical.ErrorMessage);
 
                     return;
                 }
@@ -1306,10 +1307,10 @@ namespace Aaru.Core.Devices.Dumping
             _resume.BadSubchannels.Sort();
 
             if(_generateSubchannels                                                         &&
-               _outputPlugin.SupportedSectorTags.Contains(SectorTagType.CdSectorSubchannel) &&
+               outputOptical.SupportedSectorTags.Contains(SectorTagType.CdSectorSubchannel) &&
                !_aborted)
                 Media.CompactDisc.GenerateSubchannels(subchannelExtents, tracks, trackFlags, blocks, subLog, _dumpLog,
-                                                      InitProgress, UpdateProgress, EndProgress, _outputPlugin);
+                                                      InitProgress, UpdateProgress, EndProgress, outputOptical);
 
             // TODO: Disc ID
             var metadata = new CommonTypes.Structs.ImageInfo
@@ -1318,19 +1319,19 @@ namespace Aaru.Core.Devices.Dumping
                 ApplicationVersion = Version.GetVersion()
             };
 
-            if(!_outputPlugin.SetMetadata(metadata))
+            if(!outputOptical.SetMetadata(metadata))
                 ErrorMessage?.Invoke("Error {0} setting metadata, continuing..." + Environment.NewLine +
-                                     _outputPlugin.ErrorMessage);
+                                     outputOptical.ErrorMessage);
 
-            _outputPlugin.SetDumpHardware(_resume.Tries);
+            outputOptical.SetDumpHardware(_resume.Tries);
 
             if(_preSidecar != null)
-                _outputPlugin.SetCicmMetadata(_preSidecar);
+                outputOptical.SetCicmMetadata(_preSidecar);
 
             foreach(KeyValuePair<byte, string> isrc in isrcs)
             {
                 // TODO: Track tags
-                if(!_outputPlugin.WriteSectorTag(Encoding.ASCII.GetBytes(isrc.Value), isrc.Key,
+                if(!outputOptical.WriteSectorTag(Encoding.ASCII.GetBytes(isrc.Value), isrc.Key,
                                                  SectorTagType.CdTrackIsrc))
                     continue;
 
@@ -1339,7 +1340,7 @@ namespace Aaru.Core.Devices.Dumping
             }
 
             if(mcn != null &&
-               _outputPlugin.WriteMediaTag(Encoding.ASCII.GetBytes(mcn), MediaTagType.CD_MCN))
+               outputOptical.WriteMediaTag(Encoding.ASCII.GetBytes(mcn), MediaTagType.CD_MCN))
             {
                 UpdateStatus?.Invoke($"Setting disc Media Catalogue Number to {mcn}");
                 _dumpLog.WriteLine("Setting disc Media Catalogue Number to {0}", mcn);
@@ -1366,12 +1367,12 @@ namespace Aaru.Core.Devices.Dumping
                     trk.Indexes.Remove(0);
             }
 
-            (_outputPlugin as IWritableOpticalImage).SetTracks(tracks.ToList());
+            (outputOptical as IWritableOpticalImage).SetTracks(tracks.ToList());
 
             _dumpLog.WriteLine("Closing output file.");
             UpdateStatus?.Invoke("Closing output file.");
             DateTime closeStart = DateTime.Now;
-            _outputPlugin.Close();
+            outputOptical.Close();
             DateTime closeEnd = DateTime.Now;
             UpdateStatus?.Invoke($"Closed in {(closeEnd - closeStart).TotalSeconds} seconds.");
 

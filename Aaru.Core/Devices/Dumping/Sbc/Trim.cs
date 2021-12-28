@@ -25,6 +25,7 @@
 // ****************************************************************************/
 
 using Aaru.CommonTypes.Extents;
+using Aaru.CommonTypes.Interfaces;
 using Schemas;
 
 // ReSharper disable JoinDeclarationAndInitializer
@@ -48,7 +49,8 @@ namespace Aaru.Core.Devices.Dumping
             bool    recoveredError;
             bool    blankCheck;
             byte[]  buffer;
-            bool    newBlank = false;
+            bool    newBlank     = false;
+            var     outputFormat = _outputPlugin as IWritableImage;
 
             foreach(ulong badSector in tmpArray)
             {
@@ -83,7 +85,7 @@ namespace Aaru.Core.Devices.Dumping
 
                 _resume.BadBlocks.Remove(badSector);
                 extents.Add(badSector);
-                _outputPlugin.WriteSector(buffer, badSector);
+                outputFormat.WriteSector(buffer, badSector);
             }
 
             if(newBlank)

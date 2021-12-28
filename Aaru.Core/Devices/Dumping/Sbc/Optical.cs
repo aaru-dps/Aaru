@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using Aaru.CommonTypes.Extents;
+using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Core.Logging;
 using Aaru.Decoders.SCSI;
@@ -52,6 +53,7 @@ namespace Aaru.Core.Devices.Dumping
             ulong      sectorSpeedStart = 0;
             DateTime   timeSpeedStart   = DateTime.UtcNow;
             bool       canMediumScan    = true;
+            var        outputFormat     = _outputPlugin as IWritableImage;
 
             InitProgress?.Invoke();
 
@@ -217,7 +219,7 @@ namespace Aaru.Core.Devices.Dumping
                         mhddLog.Write(i, cmdDuration);
                         ibgLog.Write(i, currentSpeed * 1024);
                         DateTime writeStart = DateTime.Now;
-                        _outputPlugin.WriteSectors(buffer, i, blocksToRead);
+                        outputFormat.WriteSectors(buffer, i, blocksToRead);
                         imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
                         extents.Add(i, blocksToRead, true);
                     }
@@ -232,7 +234,7 @@ namespace Aaru.Core.Devices.Dumping
 
                         // Write empty data
                         DateTime writeStart = DateTime.Now;
-                        _outputPlugin.WriteSectors(new byte[blockSize * _skip], i, _skip);
+                        outputFormat.WriteSectors(new byte[blockSize * _skip], i, _skip);
                         imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
 
                         for(ulong b = i; b < i + _skip; b++)

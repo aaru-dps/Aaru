@@ -559,7 +559,7 @@ internal sealed class ConvertImageCommand : Command
             return (int)ErrorNumber.CannotOpenFormat;
         }
 
-        List<IWritableImage> candidates = new();
+        List<IBaseWritableImage> candidates = new();
 
         // Try extension
         if(string.IsNullOrEmpty(format))
@@ -591,7 +591,7 @@ internal sealed class ConvertImageCommand : Command
             return (int)ErrorNumber.TooManyFormats;
         }
 
-        IWritableImage outputFormat = candidates[0];
+        IBaseWritableImage outputFormat = candidates[0];
 
         if(verbose)
             AaruConsole.VerboseWriteLine("Output image format: {0} ({1}).", outputFormat.Name, outputFormat.Id);
@@ -761,7 +761,7 @@ internal sealed class ConvertImageCommand : Command
                                 return;
                             }
 
-                            if(outputFormat.WriteMediaTag(tag, mediaTag))
+                            if((outputFormat as IWritableImage)?.WriteMediaTag(tag, mediaTag) == true)
                                 return;
 
                             if(force)
@@ -789,7 +789,7 @@ internal sealed class ConvertImageCommand : Command
         {
             if(!outputOptical.SetTracks(inputOptical.Tracks))
             {
-                AaruConsole.ErrorWriteLine("Error {0} sending tracks list to output image.", outputFormat.ErrorMessage);
+                AaruConsole.ErrorWriteLine("Error {0} sending tracks list to output image.", outputOptical.ErrorMessage);
 
                 return (int)ErrorNumber.WriteError;
             }
@@ -834,16 +834,16 @@ internal sealed class ConvertImageCommand : Command
                                     if(useLong)
                                     {
                                         errno = sectorsToDo == 1
-                                                    ? inputFormat.ReadSectorLong(doneSectors + track.StartSector,
+                                                    ? inputOptical.ReadSectorLong(doneSectors + track.StartSector,
                                                         out sector)
-                                                    : inputFormat.ReadSectorsLong(doneSectors + track.StartSector,
+                                                    : inputOptical.ReadSectorsLong(doneSectors + track.StartSector,
                                                         sectorsToDo, out sector);
 
                                         if(errno == ErrorNumber.NoError)
                                             result = sectorsToDo == 1
-                                                         ? outputFormat.WriteSectorLong(sector,
+                                                         ? outputOptical.WriteSectorLong(sector,
                                                              doneSectors + track.StartSector)
-                                                         : outputFormat.WriteSectorsLong(sector,
+                                                         : outputOptical.WriteSectorsLong(sector,
                                                              doneSectors + track.StartSector, sectorsToDo);
                                         else
                                         {
@@ -885,17 +885,17 @@ internal sealed class ConvertImageCommand : Command
                                     if(!useLong || useNotLong)
                                     {
                                         errno = sectorsToDo == 1
-                                                    ? inputFormat.ReadSector(doneSectors + track.StartSector,
+                                                    ? inputOptical.ReadSector(doneSectors + track.StartSector,
                                                                              out sector)
-                                                    : inputFormat.ReadSectors(doneSectors + track.StartSector,
-                                                                              sectorsToDo, out sector);
+                                                    : inputOptical.ReadSectors(doneSectors + track.StartSector,
+                                                                               sectorsToDo, out sector);
 
                                         if(errno == ErrorNumber.NoError)
                                         {
                                             result = sectorsToDo == 1
-                                                         ? outputFormat.WriteSector(sector,
+                                                         ? outputOptical.WriteSector(sector,
                                                              doneSectors + track.StartSector)
-                                                         : outputFormat.WriteSectors(sector,
+                                                         : outputOptical.WriteSectors(sector,
                                                              doneSectors + track.StartSector, sectorsToDo);
                                         }
                                         else
@@ -922,13 +922,13 @@ internal sealed class ConvertImageCommand : Command
                                     if(!result)
                                         if(force)
                                             AaruConsole.ErrorWriteLine("Error {0} writing sector {1}, continuing...",
-                                                                       outputFormat.ErrorMessage,
+                                                                       outputOptical.ErrorMessage,
                                                                        doneSectors + track.StartSector);
                                         else
                                         {
                                             AaruConsole.
                                                 ErrorWriteLine("Error {0} writing sector {1}, not continuing...",
-                                                               outputFormat.ErrorMessage,
+                                                               outputOptical.ErrorMessage,
                                                                doneSectors + track.StartSector);
 
                                             errno = ErrorNumber.WriteError;
@@ -976,12 +976,12 @@ internal sealed class ConvertImageCommand : Command
                     tracks[i].Indexes[idx.Key] = idx.Value;
             }
 
-            foreach(SectorTagType tag in inputFormat.Info.ReadableSectorTags.Where(t => t == SectorTagType.CdTrackIsrc).
+            foreach(SectorTagType tag in inputOptical.Info.ReadableSectorTags.Where(t => t == SectorTagType.CdTrackIsrc).
                                                      OrderBy(t => t))
             {
                 foreach(Track track in tracks)
                 {
-                    errno = inputFormat.ReadSectorTag(track.Sequence, tag, out byte[] isrc);
+                    errno = inputOptical.ReadSectorTag(track.Sequence, tag, out byte[] isrc);
 
                     if(errno != ErrorNumber.NoError)
                         continue;
@@ -990,12 +990,12 @@ internal sealed class ConvertImageCommand : Command
                 }
             }
 
-            foreach(SectorTagType tag in inputFormat.Info.ReadableSectorTags.
+            foreach(SectorTagType tag in inputOptical.Info.ReadableSectorTags.
                                                      Where(t => t == SectorTagType.CdTrackFlags).OrderBy(t => t))
             {
                 foreach(Track track in tracks)
                 {
-                    errno = inputFormat.ReadSectorTag(track.Sequence, tag, out byte[] flags);
+                    errno = inputOptical.ReadSectorTag(track.Sequence, tag, out byte[] flags);
 
                     if(errno != ErrorNumber.NoError)
                         continue;
@@ -1004,7 +1004,7 @@ internal sealed class ConvertImageCommand : Command
                 }
             }
 
-            for(ulong s = 0; s < inputFormat.Info.Sectors; s++)
+            for(ulong s = 0; s < inputOptical.Info.Sectors; s++)
             {
                 if(s > int.MaxValue)
                     break;
@@ -1012,7 +1012,7 @@ internal sealed class ConvertImageCommand : Command
                 subchannelExtents.Add((int)s);
             }
 
-            foreach(SectorTagType tag in inputFormat.Info.ReadableSectorTags.OrderBy(t => t).TakeWhile(tag => useLong))
+            foreach(SectorTagType tag in inputOptical.Info.ReadableSectorTags.OrderBy(t => t).TakeWhile(tag => useLong))
             {
                 switch(tag)
                 {
@@ -1028,7 +1028,7 @@ internal sealed class ConvertImageCommand : Command
                         continue;
                 }
 
-                if(force && !outputFormat.SupportedSectorTags.Contains(tag))
+                if(force && !outputOptical.SupportedSectorTags.Contains(tag))
                     continue;
 
                 errno = ErrorNumber.NoError;
@@ -1054,7 +1054,7 @@ internal sealed class ConvertImageCommand : Command
                                     {
                                         case SectorTagType.CdTrackFlags:
                                         case SectorTagType.CdTrackIsrc:
-                                            errno = inputFormat.ReadSectorTag(track.Sequence, tag, out sector);
+                                            errno = inputOptical.ReadSectorTag(track.Sequence, tag, out sector);
 
                                             if(errno == ErrorNumber.NoData)
                                             {
@@ -1064,19 +1064,19 @@ internal sealed class ConvertImageCommand : Command
                                             }
 
                                             if(errno == ErrorNumber.NoError)
-                                                result = outputFormat.WriteSectorTag(sector, track.Sequence, tag);
+                                                result = outputOptical.WriteSectorTag(sector, track.Sequence, tag);
                                             else
                                             {
                                                 if(force)
                                                 {
                                                     AaruConsole.ErrorWriteLine("Error {0} writing tag, continuing...",
-                                                                               outputFormat.ErrorMessage);
+                                                                               outputOptical.ErrorMessage);
 
                                                     continue;
                                                 }
 
                                                 AaruConsole.ErrorWriteLine("Error {0} writing tag, not continuing...",
-                                                                           outputFormat.ErrorMessage);
+                                                                           outputOptical.ErrorMessage);
 
                                                 errno = ErrorNumber.WriteError;
 
@@ -1086,12 +1086,12 @@ internal sealed class ConvertImageCommand : Command
                                             if(!result)
                                                 if(force)
                                                     AaruConsole.ErrorWriteLine("Error {0} writing tag, continuing...",
-                                                                               outputFormat.ErrorMessage);
+                                                                               outputOptical.ErrorMessage);
                                                 else
                                                 {
                                                     AaruConsole.
                                                         ErrorWriteLine("Error {0} writing tag, not continuing...",
-                                                                       outputFormat.ErrorMessage);
+                                                                       outputOptical.ErrorMessage);
 
                                                     errno = ErrorNumber.WriteError;
 
@@ -1121,7 +1121,7 @@ internal sealed class ConvertImageCommand : Command
 
                                         if(sectorsToDo == 1)
                                         {
-                                            errno = inputFormat.ReadSectorTag(doneSectors + track.StartSector, tag,
+                                            errno = inputOptical.ReadSectorTag(doneSectors + track.StartSector, tag,
                                                                               out sector);
 
                                             if(errno == ErrorNumber.NoError)
@@ -1133,7 +1133,7 @@ internal sealed class ConvertImageCommand : Command
                                                             MmcSubchannel.Raw, sector,
                                                             doneSectors + track.StartSector, 1, null, isrcs,
                                                             (byte)track.Sequence, ref mcn, tracks,
-                                                            subchannelExtents, fixSubchannelPosition, outputFormat,
+                                                            subchannelExtents, fixSubchannelPosition, outputOptical,
                                                             fixSubchannel, fixSubchannelCrc, null, null,
                                                             smallestPregapLbaPerTrack, false);
 
@@ -1144,7 +1144,7 @@ internal sealed class ConvertImageCommand : Command
                                                 }
                                                 else
                                                     result =
-                                                        outputFormat.WriteSectorTag(sector,
+                                                        outputOptical.WriteSectorTag(sector,
                                                             doneSectors + track.StartSector, tag);
                                             }
                                             else
@@ -1167,7 +1167,7 @@ internal sealed class ConvertImageCommand : Command
                                         }
                                         else
                                         {
-                                            errno = inputFormat.ReadSectorsTag(doneSectors + track.StartSector,
+                                            errno = inputOptical.ReadSectorsTag(doneSectors + track.StartSector,
                                                                                sectorsToDo, tag, out sector);
 
                                             if(errno == ErrorNumber.NoError)
@@ -1179,7 +1179,7 @@ internal sealed class ConvertImageCommand : Command
                                                             MmcSubchannel.Raw, sector,
                                                             doneSectors + track.StartSector, sectorsToDo, null,
                                                             isrcs, (byte)track.Sequence, ref mcn, tracks,
-                                                            subchannelExtents, fixSubchannelPosition, outputFormat,
+                                                            subchannelExtents, fixSubchannelPosition, outputOptical,
                                                             fixSubchannel, fixSubchannelCrc, null, null,
                                                             smallestPregapLbaPerTrack, false);
 
@@ -1190,7 +1190,7 @@ internal sealed class ConvertImageCommand : Command
                                                 }
                                                 else
                                                     result =
-                                                        outputFormat.WriteSectorsTag(sector,
+                                                        outputOptical.WriteSectorsTag(sector,
                                                             doneSectors + track.StartSector, sectorsToDo, tag);
                                             }
                                             else
@@ -1216,13 +1216,13 @@ internal sealed class ConvertImageCommand : Command
                                             if(force)
                                                 AaruConsole.
                                                     ErrorWriteLine("Error {0} writing tag for sector {1}, continuing...",
-                                                                   outputFormat.ErrorMessage,
+                                                                   outputOptical.ErrorMessage,
                                                                    doneSectors + track.StartSector);
                                             else
                                             {
                                                 AaruConsole.
                                                     ErrorWriteLine("Error {0} writing tag for sector {1}, not continuing...",
-                                                                   outputFormat.ErrorMessage,
+                                                                   outputOptical.ErrorMessage,
                                                                    doneSectors + track.StartSector);
 
                                                 errno = ErrorNumber.WriteError;
@@ -1260,40 +1260,42 @@ internal sealed class ConvertImageCommand : Command
                 outputOptical.WriteMediaTag(Encoding.UTF8.GetBytes(mcn), MediaTagType.CD_MCN);
 
             // TODO: Progress
-            if((inputFormat.Info.MediaType == MediaType.CD || inputFormat.Info.MediaType == MediaType.CDDA ||
-                inputFormat.Info.MediaType == MediaType.CDG || inputFormat.Info.MediaType == MediaType.CDEG ||
-                inputFormat.Info.MediaType == MediaType.CDI || inputFormat.Info.MediaType == MediaType.CDROM ||
-                inputFormat.Info.MediaType == MediaType.CDROMXA || inputFormat.Info.MediaType == MediaType.CDPLUS ||
-                inputFormat.Info.MediaType == MediaType.CDMO || inputFormat.Info.MediaType == MediaType.CDR ||
-                inputFormat.Info.MediaType == MediaType.CDRW || inputFormat.Info.MediaType == MediaType.CDMRW ||
-                inputFormat.Info.MediaType == MediaType.VCD || inputFormat.Info.MediaType == MediaType.SVCD ||
-                inputFormat.Info.MediaType == MediaType.PCD || inputFormat.Info.MediaType == MediaType.DTSCD ||
-                inputFormat.Info.MediaType == MediaType.CDMIDI || inputFormat.Info.MediaType == MediaType.CDV ||
-                inputFormat.Info.MediaType == MediaType.CDIREADY || inputFormat.Info.MediaType == MediaType.FMTOWNS ||
-                inputFormat.Info.MediaType == MediaType.PS1CD || inputFormat.Info.MediaType == MediaType.PS2CD ||
-                inputFormat.Info.MediaType == MediaType.MEGACD || inputFormat.Info.MediaType == MediaType.SATURNCD ||
-                inputFormat.Info.MediaType == MediaType.GDROM || inputFormat.Info.MediaType == MediaType.GDR ||
-                inputFormat.Info.MediaType == MediaType.MilCD || inputFormat.Info.MediaType == MediaType.SuperCDROM2 ||
-                inputFormat.Info.MediaType == MediaType.JaguarCD || inputFormat.Info.MediaType == MediaType.ThreeDO ||
-                inputFormat.Info.MediaType == MediaType.PCFX || inputFormat.Info.MediaType == MediaType.NeoGeoCD ||
-                inputFormat.Info.MediaType == MediaType.CDTV || inputFormat.Info.MediaType == MediaType.CD32 ||
-                inputFormat.Info.MediaType == MediaType.Playdia || inputFormat.Info.MediaType == MediaType.Pippin ||
-                inputFormat.Info.MediaType == MediaType.VideoNow ||
-                inputFormat.Info.MediaType == MediaType.VideoNowColor ||
-                inputFormat.Info.MediaType == MediaType.VideoNowXp || inputFormat.Info.MediaType == MediaType.CVD) &&
+            if((inputOptical.Info.MediaType == MediaType.CD || inputOptical.Info.MediaType == MediaType.CDDA ||
+                inputOptical.Info.MediaType == MediaType.CDG || inputOptical.Info.MediaType == MediaType.CDEG ||
+                inputOptical.Info.MediaType == MediaType.CDI || inputOptical.Info.MediaType == MediaType.CDROM ||
+                inputOptical.Info.MediaType == MediaType.CDROMXA || inputOptical.Info.MediaType == MediaType.CDPLUS ||
+                inputOptical.Info.MediaType == MediaType.CDMO || inputOptical.Info.MediaType == MediaType.CDR ||
+                inputOptical.Info.MediaType == MediaType.CDRW || inputOptical.Info.MediaType == MediaType.CDMRW ||
+                inputOptical.Info.MediaType == MediaType.VCD || inputOptical.Info.MediaType == MediaType.SVCD ||
+                inputOptical.Info.MediaType == MediaType.PCD || inputOptical.Info.MediaType == MediaType.DTSCD ||
+                inputOptical.Info.MediaType == MediaType.CDMIDI || inputOptical.Info.MediaType == MediaType.CDV ||
+                inputOptical.Info.MediaType == MediaType.CDIREADY || inputOptical.Info.MediaType == MediaType.FMTOWNS ||
+                inputOptical.Info.MediaType == MediaType.PS1CD || inputOptical.Info.MediaType == MediaType.PS2CD ||
+                inputOptical.Info.MediaType == MediaType.MEGACD || inputOptical.Info.MediaType == MediaType.SATURNCD ||
+                inputOptical.Info.MediaType == MediaType.GDROM || inputOptical.Info.MediaType == MediaType.GDR ||
+                inputOptical.Info.MediaType == MediaType.MilCD || inputOptical.Info.MediaType == MediaType.SuperCDROM2 ||
+                inputOptical.Info.MediaType == MediaType.JaguarCD || inputOptical.Info.MediaType == MediaType.ThreeDO ||
+                inputOptical.Info.MediaType == MediaType.PCFX || inputOptical.Info.MediaType == MediaType.NeoGeoCD ||
+                inputOptical.Info.MediaType == MediaType.CDTV || inputOptical.Info.MediaType == MediaType.CD32 ||
+                inputOptical.Info.MediaType == MediaType.Playdia || inputOptical.Info.MediaType == MediaType.Pippin ||
+                inputOptical.Info.MediaType == MediaType.VideoNow ||
+                inputOptical.Info.MediaType == MediaType.VideoNowColor ||
+                inputOptical.Info.MediaType == MediaType.VideoNowXp || inputOptical.Info.MediaType == MediaType.CVD) &&
                generateSubchannels)
             {
                 Core.Spectre.ProgressSingleSpinner(ctx =>
                 {
                     ctx.AddTask("Generating subchannels...").IsIndeterminate();
 
-                    CompactDisc.GenerateSubchannels(subchannelExtents, tracks, trackFlags, inputFormat.Info.Sectors,
-                                                    null, null, null, null, null, outputFormat);
+                    CompactDisc.GenerateSubchannels(subchannelExtents, tracks, trackFlags, inputOptical.Info.Sectors,
+                                                    null, null, null, null, null, outputOptical);
                 });
             }
         }
         else
         {
+            var outputMedia = outputFormat as IWritableImage;
+
             if(inputTape  == null ||
                outputTape == null ||
                !inputTape.IsTape)
@@ -1306,9 +1308,9 @@ internal sealed class ConvertImageCommand : Command
                 AaruConsole.WriteLine("Setting geometry to {0} cylinders, {1} heads and {2} sectors per track",
                                       chs.cylinders, chs.heads, chs.sectors);
 
-                if(!outputFormat.SetGeometry(chs.cylinders, chs.heads, chs.sectors))
+                if(!outputMedia.SetGeometry(chs.cylinders, chs.heads, chs.sectors))
                     AaruConsole.ErrorWriteLine("Error {0} setting geometry, image may be incorrect, continuing...",
-                                               outputFormat.ErrorMessage);
+                                               outputMedia.ErrorMessage);
             }
 
             ErrorNumber errno = ErrorNumber.NoError;
@@ -1344,8 +1346,8 @@ internal sealed class ConvertImageCommand : Command
                                                 : inputFormat.ReadSectorsLong(doneSectors, sectorsToDo, out sector);
 
                                     if(errno == ErrorNumber.NoError)
-                                        result = sectorsToDo == 1 ? outputFormat.WriteSectorLong(sector, doneSectors)
-                                                     : outputFormat.WriteSectorsLong(sector, doneSectors, sectorsToDo);
+                                        result = sectorsToDo == 1 ? outputMedia.WriteSectorLong(sector, doneSectors)
+                                                     : outputMedia.WriteSectorsLong(sector, doneSectors, sectorsToDo);
                                     else
                                     {
                                         result = true;
@@ -1369,8 +1371,8 @@ internal sealed class ConvertImageCommand : Command
                                                 : inputFormat.ReadSectors(doneSectors, sectorsToDo, out sector);
 
                                     if(errno == ErrorNumber.NoError)
-                                        result = sectorsToDo == 1 ? outputFormat.WriteSector(sector, doneSectors)
-                                                     : outputFormat.WriteSectors(sector, doneSectors, sectorsToDo);
+                                        result = sectorsToDo == 1 ? outputMedia.WriteSector(sector, doneSectors)
+                                                     : outputMedia.WriteSectors(sector, doneSectors, sectorsToDo);
                                     else
                                     {
                                         result = true;
@@ -1392,11 +1394,11 @@ internal sealed class ConvertImageCommand : Command
                                 if(!result)
                                     if(force)
                                         AaruConsole.ErrorWriteLine("Error {0} writing sector {1}, continuing...",
-                                                                   outputFormat.ErrorMessage, doneSectors);
+                                                                   outputMedia.ErrorMessage, doneSectors);
                                     else
                                     {
                                         AaruConsole.ErrorWriteLine("Error {0} writing sector {1}, not continuing...",
-                                                                   outputFormat.ErrorMessage, doneSectors);
+                                                                   outputMedia.ErrorMessage, doneSectors);
 
                                         errno = ErrorNumber.WriteError;
 
@@ -1425,7 +1427,7 @@ internal sealed class ConvertImageCommand : Command
                                         continue;
                                 }
 
-                                if(force && !outputFormat.SupportedSectorTags.Contains(tag))
+                                if(force && !outputMedia.SupportedSectorTags.Contains(tag))
                                     continue;
 
                                 doneSectors = 0;
@@ -1455,8 +1457,8 @@ internal sealed class ConvertImageCommand : Command
 
                                     if(errno == ErrorNumber.NoError)
                                         result = sectorsToDo == 1
-                                                     ? outputFormat.WriteSectorTag(sector, doneSectors, tag)
-                                                     : outputFormat.WriteSectorsTag(sector, doneSectors, sectorsToDo,
+                                                     ? outputMedia.WriteSectorTag(sector, doneSectors, tag)
+                                                     : outputMedia.WriteSectorsTag(sector, doneSectors, sectorsToDo,
                                                          tag);
                                     else
                                     {
@@ -1478,12 +1480,12 @@ internal sealed class ConvertImageCommand : Command
                                     if(!result)
                                         if(force)
                                             AaruConsole.ErrorWriteLine("Error {0} writing sector {1}, continuing...",
-                                                                       outputFormat.ErrorMessage, doneSectors);
+                                                                       outputMedia.ErrorMessage, doneSectors);
                                         else
                                         {
                                             AaruConsole.
                                                 ErrorWriteLine("Error {0} writing sector {1}, not continuing...",
-                                                               outputFormat.ErrorMessage, doneSectors);
+                                                               outputMedia.ErrorMessage, doneSectors);
 
                                             errno = ErrorNumber.WriteError;
 

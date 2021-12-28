@@ -71,6 +71,7 @@ namespace Aaru.Core.Devices.Dumping
             double        currentSpeed  = 0;
             double        maxSpeed      = double.MinValue;
             double        minSpeed      = double.MaxValue;
+            var           outputTape    = _outputPlugin as IWritableTapeImage;
 
             _dev.RequestSense(out byte[] senseBuf, _dev.Timeout, out double duration);
             decSense = Sense.Decode(senseBuf);
@@ -757,30 +758,30 @@ namespace Aaru.Core.Devices.Dumping
                 }
             }
 
-            bool ret = (_outputPlugin as IWritableTapeImage).SetTape();
+            bool ret = outputTape.SetTape();
 
             // Cannot set image to tape mode
             if(!ret)
             {
                 _dumpLog.WriteLine("Error setting output image in tape mode, not continuing.");
-                _dumpLog.WriteLine(_outputPlugin.ErrorMessage);
+                _dumpLog.WriteLine(outputTape.ErrorMessage);
 
                 StoppingErrorMessage?.Invoke("Error setting output image in tape mode, not continuing." +
-                                             Environment.NewLine + _outputPlugin.ErrorMessage);
+                                             Environment.NewLine + outputTape.ErrorMessage);
 
                 return;
             }
 
-            ret = _outputPlugin.Create(_outputPath, dskType, _formatOptions, 0, 0);
+            ret = outputTape.Create(_outputPath, dskType, _formatOptions, 0, 0);
 
             // Cannot create image
             if(!ret)
             {
                 _dumpLog.WriteLine("Error creating output image, not continuing.");
-                _dumpLog.WriteLine(_outputPlugin.ErrorMessage);
+                _dumpLog.WriteLine(outputTape.ErrorMessage);
 
                 StoppingErrorMessage?.Invoke("Error creating output image, not continuing." + Environment.NewLine +
-                                             _outputPlugin.ErrorMessage);
+                                             outputTape.ErrorMessage);
 
                 return;
             }
@@ -808,21 +809,20 @@ namespace Aaru.Core.Devices.Dumping
                 currentBlock = _resume.NextBlock;
 
                 currentTapeFile =
-                    (_outputPlugin as IWritableTapeImage).Files.FirstOrDefault(f => f.LastBlock ==
-                                                                                   (_outputPlugin as
-                                                                                           IWritableTapeImage)?.
-                                                                                   Files.Max(g => g.LastBlock));
+                    outputTape.Files.FirstOrDefault(f => f.LastBlock ==
+                                                         outputTape?.
+                                                         Files.Max(g => g.LastBlock));
 
                 currentTapePartition =
-                    (_outputPlugin as IWritableTapeImage).TapePartitions.FirstOrDefault(p => p.LastBlock ==
-                        (_outputPlugin as IWritableTapeImage)?.TapePartitions.Max(g => g.LastBlock));
+                    outputTape.TapePartitions.FirstOrDefault(p => p.LastBlock ==
+                                                                  outputTape?.TapePartitions.Max(g => g.LastBlock));
             }
 
             if(mode6Data != null)
-                _outputPlugin.WriteMediaTag(mode6Data, MediaTagType.SCSI_MODESENSE_6);
+                outputTape.WriteMediaTag(mode6Data, MediaTagType.SCSI_MODESENSE_6);
 
             if(mode10Data != null)
-                _outputPlugin.WriteMediaTag(mode10Data, MediaTagType.SCSI_MODESENSE_10);
+                outputTape.WriteMediaTag(mode10Data, MediaTagType.SCSI_MODESENSE_10);
 
             DateTime timeSpeedStart     = DateTime.UtcNow;
             ulong    currentSpeedSize   = 0;
@@ -849,10 +849,10 @@ namespace Aaru.Core.Devices.Dumping
                     currentTapeFile.LastBlock = currentBlock - 1;
 
                     if(currentTapeFile.LastBlock > currentTapeFile.FirstBlock)
-                        (_outputPlugin as IWritableTapeImage).AddFile(currentTapeFile);
+                        outputTape.AddFile(currentTapeFile);
 
                     currentTapePartition.LastBlock = currentBlock - 1;
-                    (_outputPlugin as IWritableTapeImage).AddPartition(currentTapePartition);
+                    outputTape.AddPartition(currentTapePartition);
 
                     currentPartition++;
 
@@ -945,7 +945,7 @@ namespace Aaru.Core.Devices.Dumping
                             StoppingErrorMessage?.Invoke("Drive could not go back one block. Sense follows..." +
                                                          Environment.NewLine + decSense.Value.Description);
 
-                            _outputPlugin.Close();
+                            outputTape.Close();
                             _dumpLog.WriteLine("Drive could not go back one block. Sense follows...");
 
                             _dumpLog.WriteLine("Device not ready. Sense {0}h ASC {1:X2}h ASCQ {2:X2}h",
@@ -961,7 +961,7 @@ namespace Aaru.Core.Devices.Dumping
                     {
                         case SenseKeys.BlankCheck when currentBlock == 0:
                             StoppingErrorMessage?.Invoke("Cannot dump a blank tape...");
-                            _outputPlugin.Close();
+                            outputTape.Close();
                             _dumpLog.WriteLine("Cannot dump a blank tape...");
 
                             return;
@@ -1001,7 +1001,7 @@ namespace Aaru.Core.Devices.Dumping
                        (decSense.Value.ASCQ == 0x01 || filemark))
                     {
                         currentTapeFile.LastBlock = currentBlock - 1;
-                        (_outputPlugin as IWritableTapeImage).AddFile(currentTapeFile);
+                        outputTape.AddFile(currentTapeFile);
 
                         currentFile++;
 
@@ -1043,7 +1043,7 @@ namespace Aaru.Core.Devices.Dumping
 
                     // Write empty data
                     DateTime writeStart = DateTime.Now;
-                    _outputPlugin.WriteSector(new byte[blockSize], currentBlock);
+                    outputTape.WriteSector(new byte[blockSize], currentBlock);
                     imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
 
                     mhddLog.Write(currentBlock, duration < 500 ? 65535 : duration);
@@ -1055,7 +1055,7 @@ namespace Aaru.Core.Devices.Dumping
                     mhddLog.Write(currentBlock, duration);
                     ibgLog.Write(currentBlock, currentSpeed * 1024);
                     DateTime writeStart = DateTime.Now;
-                    _outputPlugin.WriteSector(cmdBuf, currentBlock);
+                    outputTape.WriteSector(cmdBuf, currentBlock);
                     imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
                     extents.Add(currentBlock, 1, true);
                 }
@@ -1082,10 +1082,10 @@ namespace Aaru.Core.Devices.Dumping
             if(_aborted)
             {
                 currentTapeFile.LastBlock = currentBlock - 1;
-                (_outputPlugin as IWritableTapeImage).AddFile(currentTapeFile);
+                outputTape.AddFile(currentTapeFile);
 
                 currentTapePartition.LastBlock = currentBlock - 1;
-                (_outputPlugin as IWritableTapeImage).AddPartition(currentTapePartition);
+                outputTape.AddPartition(currentTapePartition);
             }
 
             EndProgress?.Invoke();
@@ -1228,12 +1228,12 @@ namespace Aaru.Core.Devices.Dumping
                     {
                         _resume.BadBlocks.Remove(badBlock);
                         extents.Add(badBlock);
-                        _outputPlugin.WriteSector(cmdBuf, badBlock);
+                        outputTape.WriteSector(cmdBuf, badBlock);
                         UpdateStatus?.Invoke($"Correctly retried block {badBlock} in pass {pass}.");
                         _dumpLog.WriteLine("Correctly retried block {0} in pass {1}.", badBlock, pass);
                     }
                     else if(runningPersistent)
-                        _outputPlugin.WriteSector(cmdBuf, badBlock);
+                        outputTape.WriteSector(cmdBuf, badBlock);
                 }
 
                 if(pass < _retryPasses &&
@@ -1266,7 +1266,7 @@ namespace Aaru.Core.Devices.Dumping
 
             currentTry.Extents = ExtentsConverter.ToMetadata(extents);
 
-            _outputPlugin.SetDumpHardware(_resume.Tries);
+            outputTape.SetDumpHardware(_resume.Tries);
 
             // TODO: Media Serial Number
             var metadata = new CommonTypes.Structs.ImageInfo
@@ -1275,17 +1275,17 @@ namespace Aaru.Core.Devices.Dumping
                 ApplicationVersion = Version.GetVersion()
             };
 
-            if(!_outputPlugin.SetMetadata(metadata))
+            if(!outputTape.SetMetadata(metadata))
                 ErrorMessage?.Invoke("Error {0} setting metadata, continuing..." + Environment.NewLine +
-                                     _outputPlugin.ErrorMessage);
+                                     outputTape.ErrorMessage);
 
             if(_preSidecar != null)
-                _outputPlugin.SetCicmMetadata(_preSidecar);
+                outputTape.SetCicmMetadata(_preSidecar);
 
             _dumpLog.WriteLine("Closing output file.");
             UpdateStatus?.Invoke("Closing output file.");
             DateTime closeStart = DateTime.Now;
-            _outputPlugin.Close();
+            outputTape.Close();
             DateTime closeEnd = DateTime.Now;
             UpdateStatus?.Invoke($"Closed in {(closeEnd - closeStart).TotalSeconds} seconds.");
             _dumpLog.WriteLine("Closed in {0} seconds.", (closeEnd - closeStart).TotalSeconds);

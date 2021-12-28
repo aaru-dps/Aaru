@@ -69,6 +69,7 @@ namespace Aaru.Core.Devices.Dumping
             MediaType    dskType;
             bool         sense;
             byte[]       senseBuf;
+            var          outputFormat = _outputPlugin as IWritableImage;
 
             sense = _dev.ReadCapacity(out byte[] readBuffer, out _, _dev.Timeout, out _);
 
@@ -132,16 +133,16 @@ namespace Aaru.Core.Devices.Dumping
 
             var mhddLog = new MhddLog(_outputPrefix + ".mhddlog.bin", _dev, blocks, blockSize, blocksToRead, _private);
             var ibgLog  = new IbgLog(_outputPrefix  + ".ibg", sbcProfile);
-            ret = _outputPlugin.Create(_outputPath, dskType, _formatOptions, blocks, blockSize);
+            ret = outputFormat.Create(_outputPath, dskType, _formatOptions, blocks, blockSize);
 
             // Cannot create image
             if(!ret)
             {
                 _dumpLog.WriteLine("Error creating output image, not continuing.");
-                _dumpLog.WriteLine(_outputPlugin.ErrorMessage);
+                _dumpLog.WriteLine(outputFormat.ErrorMessage);
 
                 StoppingErrorMessage?.Invoke("Error creating output image, not continuing." + Environment.NewLine +
-                                             _outputPlugin.ErrorMessage);
+                                             outputFormat.ErrorMessage);
 
                 return;
             }
@@ -208,7 +209,7 @@ namespace Aaru.Core.Devices.Dumping
                     mhddLog.Write(i, cmdDuration);
                     ibgLog.Write(i, currentSpeed * 1024);
                     DateTime writeStart = DateTime.Now;
-                    _outputPlugin.WriteSectors(readBuffer, i, blocksToRead);
+                    outputFormat.WriteSectors(readBuffer, i, blocksToRead);
                     imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
                     extents.Add(i, blocksToRead, true);
                 }
@@ -225,7 +226,7 @@ namespace Aaru.Core.Devices.Dumping
 
                     // Write empty data
                     DateTime writeStart = DateTime.Now;
-                    _outputPlugin.WriteSectors(new byte[blockSize * _skip], i, _skip);
+                    outputFormat.WriteSectors(new byte[blockSize * _skip], i, _skip);
                     imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
 
                     for(ulong b = i; b < i + _skip; b++)
@@ -315,7 +316,7 @@ namespace Aaru.Core.Devices.Dumping
 
                     _resume.BadBlocks.Remove(badSector);
                     extents.Add(badSector);
-                    _outputPlugin.WriteSector(readBuffer, badSector);
+                    outputFormat.WriteSector(readBuffer, badSector);
                 }
 
                 EndProgress?.Invoke();
@@ -471,12 +472,12 @@ namespace Aaru.Core.Devices.Dumping
                     {
                         _resume.BadBlocks.Remove(badSector);
                         extents.Add(badSector);
-                        _outputPlugin.WriteSector(readBuffer, badSector);
+                        outputFormat.WriteSector(readBuffer, badSector);
                         UpdateStatus?.Invoke($"Correctly retried block {badSector} in pass {pass}.");
                         _dumpLog.WriteLine("Correctly retried block {0} in pass {1}.", badSector, pass);
                     }
                     else if(runningPersistent)
-                        _outputPlugin.WriteSector(readBuffer, badSector);
+                        outputFormat.WriteSector(readBuffer, badSector);
                 }
 
                 if(pass < _retryPasses &&
@@ -528,19 +529,19 @@ namespace Aaru.Core.Devices.Dumping
                 ApplicationVersion = Version.GetVersion()
             };
 
-            if(!_outputPlugin.SetMetadata(metadata))
+            if(!outputFormat.SetMetadata(metadata))
                 ErrorMessage?.Invoke("Error {0} setting metadata, continuing..." + Environment.NewLine +
-                                     _outputPlugin.ErrorMessage);
+                                     outputFormat.ErrorMessage);
 
-            _outputPlugin.SetDumpHardware(_resume.Tries);
+            outputFormat.SetDumpHardware(_resume.Tries);
 
             if(_preSidecar != null)
-                _outputPlugin.SetCicmMetadata(_preSidecar);
+                outputFormat.SetCicmMetadata(_preSidecar);
 
             _dumpLog.WriteLine("Closing output file.");
             UpdateStatus?.Invoke("Closing output file.");
             DateTime closeStart = DateTime.Now;
-            _outputPlugin.Close();
+            outputFormat.Close();
             DateTime closeEnd = DateTime.Now;
             UpdateStatus?.Invoke($"Closed in {(closeEnd - closeStart).TotalSeconds} seconds.");
             _dumpLog.WriteLine("Closed in {0} seconds.", (closeEnd - closeStart).TotalSeconds);

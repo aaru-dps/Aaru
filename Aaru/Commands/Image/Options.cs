@@ -87,7 +87,7 @@ namespace Aaru.Commands.Image
 
             AaruConsole.WriteLine("Read/Write media images options:");
 
-            foreach(KeyValuePair<string, IWritableImage> kvp in plugins.WritableImages)
+            foreach(KeyValuePair<string, IBaseWritableImage> kvp in plugins.WritableImages)
             {
                 List<(string name, Type type, string description, object @default)> options =
                     kvp.Value.SupportedOptions.ToList();

@@ -69,7 +69,7 @@ namespace Aaru.Core.Media
                                                   byte[] sub, ulong sectorAddress, uint length, SubchannelLog subLog,
                                                   Dictionary<byte, string> isrcs, byte currentTrack, ref string mcn,
                                                   Track[] tracks, HashSet<int> subchannelExtents,
-                                                  bool fixSubchannelPosition, IWritableImage outputPlugin,
+                                                  bool fixSubchannelPosition, IWritableOpticalImage outputPlugin,
                                                   bool fixSubchannel, bool fixSubchannelCrc, DumpLog dumpLog,
                                                   UpdateStatusHandler updateStatus,
                                                   Dictionary<byte, int> smallestPregapLbaPerTrack, bool dumping)

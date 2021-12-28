@@ -85,6 +85,7 @@ namespace Aaru.Core.Devices.Dumping
             const uint        sectorSize = 2352; // Full sector size
             byte[]            senseBuf   = null; // Sense buffer
             PlextorSubchannel supportedPlextorSubchannel;
+            var               outputOptical = _outputPlugin as IWritableOpticalImage;
 
             switch(supportedSubchannel)
             {
@@ -360,28 +361,28 @@ namespace Aaru.Core.Devices.Dumping
                     Array.Copy(cmdBuf, sectorSize, sub, 0, subSize);
 
                     if(supportsLongSectors)
-                        _outputPlugin.WriteSectorLong(data, badSector);
+                        outputOptical.WriteSectorLong(data, badSector);
                     else
-                        _outputPlugin.WriteSector(Sector.GetUserData(data), badSector);
+                        outputOptical.WriteSector(Sector.GetUserData(data), badSector);
 
                     bool indexesChanged = Media.CompactDisc.WriteSubchannelToImage(supportedSubchannel,
                         desiredSubchannel, sub, badSector, 1, subLog, isrcs, (byte)track.Sequence, ref mcn,
-                        tracks, subchannelExtents, _fixSubchannelPosition, _outputPlugin, _fixSubchannel,
+                        tracks, subchannelExtents, _fixSubchannelPosition, outputOptical, _fixSubchannel,
                         _fixSubchannelCrc, _dumpLog, UpdateStatus, smallestPregapLbaPerTrack, true);
 
                     // Set tracks and go back
                     if(!indexesChanged)
                         continue;
 
-                    (_outputPlugin as IWritableOpticalImage).SetTracks(tracks.ToList());
+                    (outputOptical as IWritableOpticalImage).SetTracks(tracks.ToList());
                     i--;
                 }
                 else
                 {
                     if(supportsLongSectors)
-                        _outputPlugin.WriteSectorLong(cmdBuf, badSector);
+                        outputOptical.WriteSectorLong(cmdBuf, badSector);
                     else
-                        _outputPlugin.WriteSector(Sector.GetUserData(cmdBuf), badSector);
+                        outputOptical.WriteSector(Sector.GetUserData(cmdBuf), badSector);
                 }
             }
 
@@ -491,29 +492,29 @@ namespace Aaru.Core.Devices.Dumping
                             Array.Copy(cmdBuf, sectorSize, sub, 0, subSize);
 
                             if(supportsLongSectors)
-                                _outputPlugin.WriteSectorLong(data, badSector);
+                                outputOptical.WriteSectorLong(data, badSector);
                             else
-                                _outputPlugin.WriteSector(Sector.GetUserData(data), badSector);
+                                outputOptical.WriteSector(Sector.GetUserData(data), badSector);
 
                             bool indexesChanged = Media.CompactDisc.WriteSubchannelToImage(supportedSubchannel,
                                 desiredSubchannel, sub, badSector, 1, subLog, isrcs, (byte)track.Sequence,
-                                ref mcn, tracks, subchannelExtents, _fixSubchannelPosition, _outputPlugin,
+                                ref mcn, tracks, subchannelExtents, _fixSubchannelPosition, outputOptical,
                                 _fixSubchannel, _fixSubchannelCrc, _dumpLog, UpdateStatus,
                                 smallestPregapLbaPerTrack, true);
 
                             // Set tracks and go back
                             if(indexesChanged)
                             {
-                                (_outputPlugin as IWritableOpticalImage).SetTracks(tracks.ToList());
+                                (outputOptical as IWritableOpticalImage).SetTracks(tracks.ToList());
                                 i--;
                             }
                         }
                         else
                         {
                             if(supportsLongSectors)
-                                _outputPlugin.WriteSectorLong(cmdBuf, badSector);
+                                outputOptical.WriteSectorLong(cmdBuf, badSector);
                             else
-                                _outputPlugin.WriteSector(Sector.GetUserData(cmdBuf), badSector);
+                                outputOptical.WriteSector(Sector.GetUserData(cmdBuf), badSector);
                         }
                     }
 
@@ -567,6 +568,7 @@ namespace Aaru.Core.Devices.Dumping
             double            cmdDuration;     // Command execution time
             byte[]            senseBuf = null; // Sense buffer
             PlextorSubchannel supportedPlextorSubchannel;
+            var               outputOptical = _outputPlugin as IWritableOpticalImage;
 
             if(supportedSubchannel == MmcSubchannel.None ||
                desiredSubchannel   == MmcSubchannel.None)
@@ -660,7 +662,7 @@ namespace Aaru.Core.Devices.Dumping
 
                 Media.CompactDisc.WriteSubchannelToImage(supportedSubchannel, desiredSubchannel, cmdBuf, badSector, 5,
                                                          subLog, isrcs, (byte)track.Sequence, ref mcn, tracks,
-                                                         subchannelExtents, _fixSubchannelPosition, _outputPlugin,
+                                                         subchannelExtents, _fixSubchannelPosition, outputOptical,
                                                          _fixSubchannel, _fixSubchannelCrc, _dumpLog, UpdateStatus,
                                                          smallestPregapLbaPerTrack, true);
 

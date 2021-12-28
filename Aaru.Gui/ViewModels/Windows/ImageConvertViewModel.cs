@@ -1173,7 +1173,7 @@ namespace Aaru.Gui.ViewModels.Windows
                                     bool indexesChanged = CompactDisc.WriteSubchannelToImage(MmcSubchannel.Raw,
                                         MmcSubchannel.Raw, sector, doneSectors, 1, null, isrcs,
                                         (byte)track.Sequence, ref mcn, tracks.ToArray(), subchannelExtents, false,
-                                        outputFormat, false, false, null, null, smallestPregapLbaPerTrack, false);
+                                        outputFormat as IWritableOpticalImage, false, false, null, null, smallestPregapLbaPerTrack, false);
 
                                     if(indexesChanged)
                                         outputOptical.SetTracks(tracks.ToList());
@@ -1224,7 +1224,7 @@ namespace Aaru.Gui.ViewModels.Windows
                                     bool indexesChanged = CompactDisc.WriteSubchannelToImage(MmcSubchannel.Raw,
                                         MmcSubchannel.Raw, sector, doneSectors, sectorsToDo, null, isrcs,
                                         (byte)track.Sequence, ref mcn, tracks.ToArray(), subchannelExtents, false,
-                                        outputFormat, false, false, null, null, smallestPregapLbaPerTrack, false);
+                                        outputFormat as IWritableOpticalImage, false, false, null, null, smallestPregapLbaPerTrack, false);
 
                                     if(indexesChanged)
                                         outputOptical.SetTracks(tracks.ToList());

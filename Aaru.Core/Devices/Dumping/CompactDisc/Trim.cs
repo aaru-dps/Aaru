@@ -89,7 +89,8 @@ namespace Aaru.Core.Devices.Dumping
             double            cmdDuration = 0;    // Command execution time
             const uint        sectorSize  = 2352; // Full sector size
             PlextorSubchannel supportedPlextorSubchannel;
-            byte[]            senseBuf = null;
+            byte[]            senseBuf      = null;
+            var               outputOptical = _outputPlugin as IWritableOpticalImage;
 
             switch(supportedSubchannel)
             {
@@ -262,22 +263,22 @@ namespace Aaru.Core.Devices.Dumping
                     Array.Copy(cmdBuf, sectorSize, sub, 0, subSize);
 
                     if(supportsLongSectors)
-                        _outputPlugin.WriteSectorLong(data, badSector);
+                        outputOptical.WriteSectorLong(data, badSector);
                     else
-                        _outputPlugin.WriteSector(Sector.GetUserData(data), badSector);
+                        outputOptical.WriteSector(Sector.GetUserData(data), badSector);
 
                     ulong trkStartBefore = track.StartSector;
 
                     bool indexesChanged = Media.CompactDisc.WriteSubchannelToImage(supportedSubchannel,
                         desiredSubchannel, sub, badSector, 1, subLog, isrcs, (byte)track.Sequence, ref mcn,
-                        tracks, subchannelExtents, _fixSubchannelPosition, _outputPlugin, _fixSubchannel,
+                        tracks, subchannelExtents, _fixSubchannelPosition, outputOptical, _fixSubchannel,
                         _fixSubchannelCrc, _dumpLog, UpdateStatus, smallestPregapLbaPerTrack, true);
 
                     // Set tracks and go back
                     if(!indexesChanged)
                         continue;
 
-                    (_outputPlugin as IWritableOpticalImage).SetTracks(tracks.ToList());
+                    (outputOptical as IWritableOpticalImage).SetTracks(tracks.ToList());
 
                     if(track.StartSector != trkStartBefore &&
                        !_resume.BadBlocks.Contains(track.StartSector))
@@ -293,9 +294,9 @@ namespace Aaru.Core.Devices.Dumping
                 }
 
                 if(supportsLongSectors)
-                    _outputPlugin.WriteSectorLong(cmdBuf, badSector);
+                    outputOptical.WriteSectorLong(cmdBuf, badSector);
                 else
-                    _outputPlugin.WriteSector(Sector.GetUserData(cmdBuf), badSector);
+                    outputOptical.WriteSector(Sector.GetUserData(cmdBuf), badSector);
             }
 
             EndProgress?.Invoke();

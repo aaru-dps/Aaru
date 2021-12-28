@@ -28,6 +28,7 @@
 using System.Linq;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Extents;
+using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs.Devices.SCSI;
 using Aaru.Console;
 using Aaru.Decoders.DVD;
@@ -65,7 +66,8 @@ namespace Aaru.Core.Devices.Dumping
             byte[]          md6;
             byte[]          md10;
             bool            blankCheck;
-            bool            newBlank = false;
+            bool            newBlank     = false;
+            var             outputFormat = _outputPlugin as IWritableImage;
 
             if(_persistent)
             {
@@ -265,13 +267,13 @@ namespace Aaru.Core.Devices.Dumping
                 {
                     _resume.BadBlocks.Remove(badSector);
                     extents.Add(badSector);
-                    _outputPlugin.WriteSector(buffer, badSector);
+                    outputFormat.WriteSector(buffer, badSector);
                     UpdateStatus?.Invoke($"Correctly retried block {badSector} in pass {pass}.");
                     _dumpLog.WriteLine("Correctly retried block {0} in pass {1}.", badSector, pass);
                 }
                 else if(runningPersistent)
                 {
-                    _outputPlugin.WriteSector(buffer, badSector);
+                    outputFormat.WriteSector(buffer, badSector);
                 }
             }
 
@@ -323,6 +325,7 @@ namespace Aaru.Core.Devices.Dumping
             bool   forward = true;
             bool   sense;
             byte[] buffer;
+            var    outputFormat = _outputPlugin as IWritableImage;
 
             InitProgress?.Invoke();
 
@@ -354,7 +357,7 @@ namespace Aaru.Core.Devices.Dumping
 
                     if(titleKey.HasValue)
                     {
-                        _outputPlugin.WriteSectorTag(new[]
+                        outputFormat.WriteSectorTag(new[]
                         {
                             titleKey.Value.CMI
                         }, missingKey, SectorTagType.DvdCmi);
@@ -364,12 +367,12 @@ namespace Aaru.Core.Devices.Dumping
                         if((titleKey.Value.CMI & 0x80) >> 7 == 0 ||
                            titleKey.Value.Key.All(k => k == 0))
                         {
-                            _outputPlugin.WriteSectorTag(new byte[]
+                            outputFormat.WriteSectorTag(new byte[]
                             {
                                 0, 0, 0, 0, 0
                             }, missingKey, SectorTagType.DvdTitleKey);
 
-                            _outputPlugin.WriteSectorTag(new byte[]
+                            outputFormat.WriteSectorTag(new byte[]
                             {
                                 0, 0, 0, 0, 0
                             }, missingKey, SectorTagType.DvdTitleKeyDecrypted);
@@ -380,13 +383,13 @@ namespace Aaru.Core.Devices.Dumping
                         }
                         else
                         {
-                            _outputPlugin.WriteSectorTag(titleKey.Value.Key, missingKey, SectorTagType.DvdTitleKey);
+                            outputFormat.WriteSectorTag(titleKey.Value.Key, missingKey, SectorTagType.DvdTitleKey);
                             _resume.MissingTitleKeys.Remove(missingKey);
 
                             if(discKey != null)
                             {
                                 CSS.DecryptTitleKey(0, discKey, titleKey.Value.Key, out buffer);
-                                _outputPlugin.WriteSectorTag(buffer, missingKey, SectorTagType.DvdTitleKeyDecrypted);
+                                outputFormat.WriteSectorTag(buffer, missingKey, SectorTagType.DvdTitleKeyDecrypted);
                             }
 
                             UpdateStatus?.Invoke($"Correctly retried title key {missingKey} in pass {pass}.");

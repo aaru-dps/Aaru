@@ -57,6 +57,7 @@ namespace Aaru.Core.Devices.Dumping
         void Ata()
         {
             bool recoveredError;
+            var  outputFormat = _outputPlugin as IWritableImage;
 
             if(_dumpRaw)
             {
@@ -183,7 +184,7 @@ namespace Aaru.Core.Devices.Dumping
 
                     if(_dev.IsUsb                  &&
                        _dev.UsbDescriptors != null &&
-                       !_outputPlugin.SupportedMediaTags.Contains(MediaTagType.USB_Descriptors))
+                       !outputFormat.SupportedMediaTags.Contains(MediaTagType.USB_Descriptors))
                     {
                         ret = false;
                         _dumpLog.WriteLine("Output format does not support USB descriptors.");
@@ -192,14 +193,14 @@ namespace Aaru.Core.Devices.Dumping
 
                     if(_dev.IsPcmcia    &&
                        _dev.Cis != null &&
-                       !_outputPlugin.SupportedMediaTags.Contains(MediaTagType.PCMCIA_CIS))
+                       !outputFormat.SupportedMediaTags.Contains(MediaTagType.PCMCIA_CIS))
                     {
                         ret = false;
                         _dumpLog.WriteLine("Output format does not support PCMCIA CIS descriptors.");
                         ErrorMessage("Output format does not support PCMCIA CIS descriptors.");
                     }
 
-                    if(!_outputPlugin.SupportedMediaTags.Contains(MediaTagType.ATA_IDENTIFY))
+                    if(!outputFormat.SupportedMediaTags.Contains(MediaTagType.ATA_IDENTIFY))
                     {
                         ret = false;
                         _dumpLog.WriteLine("Output format does not support ATA IDENTIFY.");
@@ -223,22 +224,22 @@ namespace Aaru.Core.Devices.Dumping
                     mediaType = MediaTypeFromDevice.GetFromAta(_dev.Manufacturer, _dev.Model, _dev.IsRemovable,
                                                                _dev.IsCompactFlash, _dev.IsPcmcia, blocks);
 
-                    ret = _outputPlugin.Create(_outputPath, mediaType, _formatOptions, blocks, blockSize);
+                    ret = outputFormat.Create(_outputPath, mediaType, _formatOptions, blocks, blockSize);
 
                     // Cannot create image
                     if(!ret)
                     {
                         _dumpLog.WriteLine("Error creating output image, not continuing.");
-                        _dumpLog.WriteLine(_outputPlugin.ErrorMessage);
+                        _dumpLog.WriteLine(outputFormat.ErrorMessage);
 
                         StoppingErrorMessage?.Invoke("Error creating output image, not continuing." +
-                                                     Environment.NewLine + _outputPlugin.ErrorMessage);
+                                                     Environment.NewLine + outputFormat.ErrorMessage);
 
                         return;
                     }
 
                     // Setting geometry
-                    _outputPlugin.SetGeometry(cylinders, heads, sectors);
+                    outputFormat.SetGeometry(cylinders, heads, sectors);
 
                     if(ataReader.IsLba)
                     {
@@ -297,7 +298,7 @@ namespace Aaru.Core.Devices.Dumping
                                 mhddLog.Write(i, duration);
                                 ibgLog.Write(i, currentSpeed * 1024);
                                 DateTime writeStart = DateTime.Now;
-                                _outputPlugin.WriteSectors(cmdBuf, i, blocksToRead);
+                                outputFormat.WriteSectors(cmdBuf, i, blocksToRead);
                                 imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
                                 extents.Add(i, blocksToRead, true);
                             }
@@ -313,7 +314,7 @@ namespace Aaru.Core.Devices.Dumping
 
                                 ibgLog.Write(i, 0);
                                 DateTime writeStart = DateTime.Now;
-                                _outputPlugin.WriteSectors(new byte[blockSize * _skip], i, _skip);
+                                outputFormat.WriteSectors(new byte[blockSize * _skip], i, _skip);
                                 imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
                                 _dumpLog.WriteLine("Skipping {0} blocks from errored block {1}.", _skip, i);
                                 i       += _skip - blocksToRead;
@@ -394,7 +395,7 @@ namespace Aaru.Core.Devices.Dumping
 
                                 _resume.BadBlocks.Remove(badSector);
                                 extents.Add(badSector);
-                                _outputPlugin.WriteSector(cmdBuf, badSector);
+                                outputFormat.WriteSector(cmdBuf, badSector);
                             }
 
                             EndProgress?.Invoke();
@@ -440,12 +441,12 @@ namespace Aaru.Core.Devices.Dumping
                                 {
                                     _resume.BadBlocks.Remove(badSector);
                                     extents.Add(badSector);
-                                    _outputPlugin.WriteSector(cmdBuf, badSector);
+                                    outputFormat.WriteSector(cmdBuf, badSector);
                                     UpdateStatus?.Invoke($"Correctly retried block {badSector} in pass {pass}.");
                                     _dumpLog.WriteLine("Correctly retried block {0} in pass {1}.", badSector, pass);
                                 }
                                 else if(_persistent)
-                                    _outputPlugin.WriteSector(cmdBuf, badSector);
+                                    outputFormat.WriteSector(cmdBuf, badSector);
                             }
 
                             if(pass < _retryPasses &&
@@ -519,7 +520,7 @@ namespace Aaru.Core.Devices.Dumping
                                         ibgLog.Write(currentBlock, currentSpeed * 1024);
                                         DateTime writeStart = DateTime.Now;
 
-                                        _outputPlugin.WriteSector(cmdBuf,
+                                        outputFormat.WriteSector(cmdBuf,
                                                                   (ulong)((((cy * heads) + hd) * sectors) + (sc - 1)));
 
                                         imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
@@ -536,7 +537,7 @@ namespace Aaru.Core.Devices.Dumping
                                         ibgLog.Write(currentBlock, 0);
                                         DateTime writeStart = DateTime.Now;
 
-                                        _outputPlugin.WriteSector(new byte[blockSize],
+                                        outputFormat.WriteSector(new byte[blockSize],
                                                                   (ulong)((((cy * heads) + hd) * sectors) + (sc - 1)));
 
                                         imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
@@ -586,7 +587,7 @@ namespace Aaru.Core.Devices.Dumping
                     foreach(ulong bad in _resume.BadBlocks)
                         _dumpLog.WriteLine("Sector {0} could not be read.", bad);
 
-                    _outputPlugin.SetDumpHardware(_resume.Tries);
+                    outputFormat.SetDumpHardware(_resume.Tries);
 
                     // TODO: Non-removable
                     var metadata = new CommonTypes.Structs.ImageInfo
@@ -595,17 +596,17 @@ namespace Aaru.Core.Devices.Dumping
                         ApplicationVersion = Version.GetVersion()
                     };
 
-                    if(!_outputPlugin.SetMetadata(metadata))
+                    if(!outputFormat.SetMetadata(metadata))
                         ErrorMessage?.Invoke("Error {0} setting metadata, continuing..." + Environment.NewLine +
-                                             _outputPlugin.ErrorMessage);
+                                             outputFormat.ErrorMessage);
 
                     if(_preSidecar != null)
-                        _outputPlugin.SetCicmMetadata(_preSidecar);
+                        outputFormat.SetCicmMetadata(_preSidecar);
 
                     _dumpLog.WriteLine("Closing output file.");
                     UpdateStatus?.Invoke("Closing output file.");
                     DateTime closeStart = DateTime.Now;
-                    _outputPlugin.Close();
+                    outputFormat.Close();
                     DateTime closeEnd = DateTime.Now;
                     UpdateStatus?.Invoke($"Closed in {(closeEnd - closeStart).TotalSeconds} seconds.");
                     _dumpLog.WriteLine("Closed in {0} seconds.", (closeEnd - closeStart).TotalSeconds);
@@ -620,15 +621,15 @@ namespace Aaru.Core.Devices.Dumping
 
                     double totalChkDuration = 0;
 
-                    _outputPlugin.WriteMediaTag(ataIdentify, MediaTagType.ATA_IDENTIFY);
+                    outputFormat.WriteMediaTag(ataIdentify, MediaTagType.ATA_IDENTIFY);
 
                     if(_dev.IsUsb &&
                        _dev.UsbDescriptors != null)
-                        _outputPlugin.WriteMediaTag(_dev.UsbDescriptors, MediaTagType.USB_Descriptors);
+                        outputFormat.WriteMediaTag(_dev.UsbDescriptors, MediaTagType.USB_Descriptors);
 
                     if(_dev.IsPcmcia &&
                        _dev.Cis != null)
-                        _outputPlugin.WriteMediaTag(_dev.Cis, MediaTagType.PCMCIA_CIS);
+                        outputFormat.WriteMediaTag(_dev.Cis, MediaTagType.PCMCIA_CIS);
 
                     if(_metadata)
                     {

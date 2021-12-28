@@ -65,6 +65,7 @@ namespace Aaru.Core.Devices.Dumping
             DateTime        start;
             DateTime        end;
             byte[]          senseBuf;
+            var             outputOptical = _outputPlugin as IWritableOpticalImage;
 
             bool sense = _dev.Read12(out byte[] readBuffer, out _, 0, false, true, false, false, 0, 512, 0, 1, false,
                                      _dev.Timeout, out _);
@@ -138,16 +139,16 @@ namespace Aaru.Core.Devices.Dumping
 
             var mhddLog = new MhddLog(_outputPrefix + ".mhddlog.bin", _dev, blocks, blockSize, blocksToRead, _private);
             var ibgLog  = new IbgLog(_outputPrefix  + ".ibg", 0x0010);
-            ret = _outputPlugin.Create(_outputPath, dskType, _formatOptions, blocks, blockSize);
+            ret = outputOptical.Create(_outputPath, dskType, _formatOptions, blocks, blockSize);
 
             // Cannot create image
             if(!ret)
             {
                 _dumpLog.WriteLine("Error creating output image, not continuing.");
-                _dumpLog.WriteLine(_outputPlugin.ErrorMessage);
+                _dumpLog.WriteLine(outputOptical.ErrorMessage);
 
                 StoppingErrorMessage?.Invoke("Error creating output image, not continuing." + Environment.NewLine +
-                                             _outputPlugin.ErrorMessage);
+                                             outputOptical.ErrorMessage);
 
                 return;
             }
@@ -155,7 +156,7 @@ namespace Aaru.Core.Devices.Dumping
             start = DateTime.UtcNow;
             double imageWriteDuration = 0;
 
-            (_outputPlugin as IWritableOpticalImage)?.SetTracks(new List<Track>
+            (outputOptical as IWritableOpticalImage)?.SetTracks(new List<Track>
             {
                 new Track
                 {
@@ -230,7 +231,7 @@ namespace Aaru.Core.Devices.Dumping
                     mhddLog.Write(i, cmdDuration);
                     ibgLog.Write(i, currentSpeed * 1024);
                     DateTime writeStart = DateTime.Now;
-                    _outputPlugin.WriteSectors(readBuffer, i, blocksToRead);
+                    outputOptical.WriteSectors(readBuffer, i, blocksToRead);
                     imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
                     extents.Add(i, blocksToRead, true);
                 }
@@ -247,7 +248,7 @@ namespace Aaru.Core.Devices.Dumping
 
                     // Write empty data
                     DateTime writeStart = DateTime.Now;
-                    _outputPlugin.WriteSectors(new byte[blockSize * _skip], i, _skip);
+                    outputOptical.WriteSectors(new byte[blockSize * _skip], i, _skip);
                     imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
 
                     for(ulong b = i; b < i + _skip; b++)
@@ -336,7 +337,7 @@ namespace Aaru.Core.Devices.Dumping
 
                     _resume.BadBlocks.Remove(badSector);
                     extents.Add(badSector);
-                    _outputPlugin.WriteSector(readBuffer, badSector);
+                    outputOptical.WriteSector(readBuffer, badSector);
                 }
 
                 EndProgress?.Invoke();
@@ -476,14 +477,14 @@ namespace Aaru.Core.Devices.Dumping
                     {
                         _resume.BadBlocks.Remove(badSector);
                         extents.Add(badSector);
-                        _outputPlugin.WriteSector(readBuffer, badSector);
+                        outputOptical.WriteSector(readBuffer, badSector);
 
                         UpdateStatus?.Invoke($"Correctly retried block {badSector} in pass {pass}.");
 
                         _dumpLog.WriteLine("Correctly retried block {0} in pass {1}.", badSector, pass);
                     }
                     else if(runningPersistent)
-                        _outputPlugin.WriteSector(readBuffer, badSector);
+                        outputOptical.WriteSector(readBuffer, badSector);
                 }
 
                 if(pass < _retryPasses &&
@@ -536,19 +537,19 @@ namespace Aaru.Core.Devices.Dumping
                 MediaPartNumber    = mediaPartNumber
             };
 
-            if(!_outputPlugin.SetMetadata(metadata))
+            if(!outputOptical.SetMetadata(metadata))
                 ErrorMessage?.Invoke("Error {0} setting metadata, continuing..." + Environment.NewLine +
-                                     _outputPlugin.ErrorMessage);
+                                     outputOptical.ErrorMessage);
 
-            _outputPlugin.SetDumpHardware(_resume.Tries);
+            outputOptical.SetDumpHardware(_resume.Tries);
 
             if(_preSidecar != null)
-                _outputPlugin.SetCicmMetadata(_preSidecar);
+                outputOptical.SetCicmMetadata(_preSidecar);
 
             _dumpLog.WriteLine("Closing output file.");
             UpdateStatus?.Invoke("Closing output file.");
             DateTime closeStart = DateTime.Now;
-            _outputPlugin.Close();
+            outputOptical.Close();
             DateTime closeEnd = DateTime.Now;
             _dumpLog.WriteLine("Closed in {0} seconds.", (closeEnd - closeStart).TotalSeconds);
 

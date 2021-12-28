@@ -87,6 +87,7 @@ namespace Aaru.Core.Devices.Dumping
             Modes.DecodedMode? decMode = null;
             bool               ret;
             ExtentsULong       blankExtents = null;
+            var                outputFormat = _outputPlugin as IWritableImage;
 
             if(opticalDisc)
                 switch(dskType)
@@ -317,7 +318,7 @@ namespace Aaru.Core.Devices.Dumping
 
             ret = true;
 
-            foreach(MediaTagType tag in mediaTags.Keys.Where(tag => !_outputPlugin.SupportedMediaTags.Contains(tag)))
+            foreach(MediaTagType tag in mediaTags.Keys.Where(tag => !outputFormat.SupportedMediaTags.Contains(tag)))
             {
                 ret = false;
                 _dumpLog.WriteLine($"Output format does not support {tag}.");
@@ -349,16 +350,16 @@ namespace Aaru.Core.Devices.Dumping
 
             if(!opticalDisc)
             {
-                ret = _outputPlugin.Create(_outputPath, dskType, _formatOptions, blocks, blockSize);
+                ret = outputFormat.Create(_outputPath, dskType, _formatOptions, blocks, blockSize);
 
                 // Cannot create image
                 if(!ret)
                 {
                     _dumpLog.WriteLine("Error creating output image, not continuing.");
-                    _dumpLog.WriteLine(_outputPlugin.ErrorMessage);
+                    _dumpLog.WriteLine(outputFormat.ErrorMessage);
 
                     StoppingErrorMessage?.Invoke("Error creating output image, not continuing." + Environment.NewLine +
-                                                 _outputPlugin.ErrorMessage);
+                                                 outputFormat.ErrorMessage);
 
                     return;
                 }
@@ -372,7 +373,7 @@ namespace Aaru.Core.Devices.Dumping
 
             if(opticalDisc)
             {
-                if(_outputPlugin is IWritableOpticalImage opticalPlugin)
+                if(outputFormat is IWritableOpticalImage opticalPlugin)
                 {
                     sense = _dev.ReadDiscInformation(out readBuffer, out _, MmcDiscInformationDataTypes.DiscInformation,
                                                      _dev.Timeout, out _);
@@ -505,16 +506,16 @@ namespace Aaru.Core.Devices.Dumping
                             else
                                 tracks = tracks.OrderBy(t => t.Sequence).ToList();
 
-                            ret = _outputPlugin.Create(_outputPath, dskType, _formatOptions, blocks, blockSize);
+                            ret = outputFormat.Create(_outputPath, dskType, _formatOptions, blocks, blockSize);
 
                             // Cannot create image
                             if(!ret)
                             {
                                 _dumpLog.WriteLine("Error creating output image, not continuing.");
-                                _dumpLog.WriteLine(_outputPlugin.ErrorMessage);
+                                _dumpLog.WriteLine(outputFormat.ErrorMessage);
 
                                 StoppingErrorMessage?.Invoke("Error creating output image, not continuing." +
-                                                             Environment.NewLine + _outputPlugin.ErrorMessage);
+                                                             Environment.NewLine + outputFormat.ErrorMessage);
 
                                 return;
                             }
@@ -588,7 +589,7 @@ namespace Aaru.Core.Devices.Dumping
                         UpdateStatus?.
                             Invoke($"Setting geometry to {rigidPage.Value.Cylinders} cylinders, {rigidPage.Value.Heads} heads, {(uint)(blocks / (rigidPage.Value.Cylinders * rigidPage.Value.Heads))} sectors per track");
 
-                        _outputPlugin.SetGeometry(rigidPage.Value.Cylinders, rigidPage.Value.Heads,
+                        outputFormat.SetGeometry(rigidPage.Value.Cylinders, rigidPage.Value.Heads,
                                                   (uint)(blocks / (rigidPage.Value.Cylinders * rigidPage.Value.Heads)));
 
                         setGeometry = true;
@@ -608,7 +609,7 @@ namespace Aaru.Core.Devices.Dumping
                         UpdateStatus?.
                             Invoke($"Setting geometry to {flexiblePage.Value.Cylinders} cylinders, {flexiblePage.Value.Heads} heads, {flexiblePage.Value.SectorsPerTrack} sectors per track");
 
-                        _outputPlugin.SetGeometry(flexiblePage.Value.Cylinders, flexiblePage.Value.Heads,
+                        outputFormat.SetGeometry(flexiblePage.Value.Cylinders, flexiblePage.Value.Heads,
                                                   flexiblePage.Value.SectorsPerTrack);
 
                         setGeometry = true;
@@ -617,16 +618,16 @@ namespace Aaru.Core.Devices.Dumping
 
             if(!imageCreated)
             {
-                ret = _outputPlugin.Create(_outputPath, dskType, _formatOptions, blocks, blockSize);
+                ret = outputFormat.Create(_outputPath, dskType, _formatOptions, blocks, blockSize);
 
                 // Cannot create image
                 if(!ret)
                 {
                     _dumpLog.WriteLine("Error creating output image, not continuing.");
-                    _dumpLog.WriteLine(_outputPlugin.ErrorMessage);
+                    _dumpLog.WriteLine(outputFormat.ErrorMessage);
 
                     StoppingErrorMessage?.Invoke("Error creating output image, not continuing." + Environment.NewLine +
-                                                 _outputPlugin.ErrorMessage);
+                                                 outputFormat.ErrorMessage);
 
                     return;
                 }
@@ -637,7 +638,7 @@ namespace Aaru.Core.Devices.Dumping
 
                     UpdateStatus?.Invoke("Creating single track as could not retrieve track list from drive.");
 
-                    (_outputPlugin as IWritableOpticalImage)?.SetTracks(new List<Track>
+                    (outputFormat as IWritableOpticalImage)?.SetTracks(new List<Track>
                     {
                         new()
                         {
@@ -784,7 +785,7 @@ namespace Aaru.Core.Devices.Dumping
                         continue;
                     }
 
-                    ret = _outputPlugin.WriteMediaTag(tag.Value, tag.Key);
+                    ret = outputFormat.WriteMediaTag(tag.Value, tag.Key);
 
                     if(ret || _force)
                         continue;
@@ -793,7 +794,7 @@ namespace Aaru.Core.Devices.Dumping
                     StoppingErrorMessage?.Invoke($"Cannot write tag {tag.Key}.");
 
                     _dumpLog.WriteLine($"Cannot write tag {tag.Key}." + Environment.NewLine +
-                                       _outputPlugin.ErrorMessage);
+                                       outputFormat.ErrorMessage);
 
                     return;
                 }
@@ -808,7 +809,7 @@ namespace Aaru.Core.Devices.Dumping
                     {
                         UpdateStatus?.Invoke("Reading USB descriptors.");
                         _dumpLog.WriteLine("Reading USB descriptors.");
-                        ret = _outputPlugin.WriteMediaTag(_dev.UsbDescriptors, MediaTagType.USB_Descriptors);
+                        ret = outputFormat.WriteMediaTag(_dev.UsbDescriptors, MediaTagType.USB_Descriptors);
 
                         if(!ret &&
                            !_force)
@@ -816,7 +817,7 @@ namespace Aaru.Core.Devices.Dumping
                             _dumpLog.WriteLine("Cannot write USB descriptors.");
 
                             StoppingErrorMessage?.Invoke("Cannot write USB descriptors." + Environment.NewLine +
-                                                         _outputPlugin.ErrorMessage);
+                                                         outputFormat.ErrorMessage);
 
                             return;
                         }
@@ -835,7 +836,7 @@ namespace Aaru.Core.Devices.Dumping
                             if(_private)
                                 cmdBuf = DeviceReport.ClearIdentify(cmdBuf);
 
-                            ret = _outputPlugin.WriteMediaTag(cmdBuf, MediaTagType.ATAPI_IDENTIFY);
+                            ret = outputFormat.WriteMediaTag(cmdBuf, MediaTagType.ATAPI_IDENTIFY);
 
                             if(!ret &&
                                !_force)
@@ -843,7 +844,7 @@ namespace Aaru.Core.Devices.Dumping
                                 _dumpLog.WriteLine("Cannot write ATAPI IDENTIFY PACKET DEVICE.");
 
                                 StoppingErrorMessage?.Invoke("Cannot write ATAPI IDENTIFY PACKET DEVICE." +
-                                                             Environment.NewLine + _outputPlugin.ErrorMessage);
+                                                             Environment.NewLine + outputFormat.ErrorMessage);
 
                                 return;
                             }
@@ -856,7 +857,7 @@ namespace Aaru.Core.Devices.Dumping
                     {
                         UpdateStatus?.Invoke("Requesting SCSI INQUIRY.");
                         _dumpLog.WriteLine("Requesting SCSI INQUIRY.");
-                        ret = _outputPlugin.WriteMediaTag(cmdBuf, MediaTagType.SCSI_INQUIRY);
+                        ret = outputFormat.WriteMediaTag(cmdBuf, MediaTagType.SCSI_INQUIRY);
 
                         if(!ret &&
                            !_force)
@@ -864,7 +865,7 @@ namespace Aaru.Core.Devices.Dumping
                             StoppingErrorMessage?.Invoke("Cannot write SCSI INQUIRY.");
 
                             _dumpLog.WriteLine("Cannot write SCSI INQUIRY." + Environment.NewLine +
-                                               _outputPlugin.ErrorMessage);
+                                               outputFormat.ErrorMessage);
 
                             return;
                         }
@@ -884,7 +885,7 @@ namespace Aaru.Core.Devices.Dumping
                            !_dev.Error)
                             if(Modes.DecodeMode10(cmdBuf, _dev.ScsiType).HasValue)
                             {
-                                ret = _outputPlugin.WriteMediaTag(cmdBuf, MediaTagType.SCSI_MODESENSE_10);
+                                ret = outputFormat.WriteMediaTag(cmdBuf, MediaTagType.SCSI_MODESENSE_10);
 
                                 if(!ret &&
                                    !_force)
@@ -892,7 +893,7 @@ namespace Aaru.Core.Devices.Dumping
                                     _dumpLog.WriteLine("Cannot write SCSI MODE SENSE (10).");
 
                                     StoppingErrorMessage?.Invoke("Cannot write SCSI MODE SENSE (10)." +
-                                                                 Environment.NewLine + _outputPlugin.ErrorMessage);
+                                                                 Environment.NewLine + outputFormat.ErrorMessage);
 
                                     return;
                                 }
@@ -915,7 +916,7 @@ namespace Aaru.Core.Devices.Dumping
                            !_dev.Error)
                             if(Modes.DecodeMode6(cmdBuf, _dev.ScsiType).HasValue)
                             {
-                                ret = _outputPlugin.WriteMediaTag(cmdBuf, MediaTagType.SCSI_MODESENSE_6);
+                                ret = outputFormat.WriteMediaTag(cmdBuf, MediaTagType.SCSI_MODESENSE_6);
 
                                 if(!ret &&
                                    !_force)
@@ -923,7 +924,7 @@ namespace Aaru.Core.Devices.Dumping
                                     _dumpLog.WriteLine("Cannot write SCSI MODE SENSE (6).");
 
                                     StoppingErrorMessage?.Invoke("Cannot write SCSI MODE SENSE (6)." +
-                                                                 Environment.NewLine + _outputPlugin.ErrorMessage);
+                                                                 Environment.NewLine + outputFormat.ErrorMessage);
 
                                     return;
                                 }
@@ -939,7 +940,7 @@ namespace Aaru.Core.Devices.Dumping
 
             currentTry.Extents = ExtentsConverter.ToMetadata(extents);
 
-            _outputPlugin.SetDumpHardware(_resume.Tries);
+            outputFormat.SetDumpHardware(_resume.Tries);
 
             // TODO: Media Serial Number
             // TODO: Non-removable drive information
@@ -949,17 +950,17 @@ namespace Aaru.Core.Devices.Dumping
                 ApplicationVersion = Version.GetVersion()
             };
 
-            if(!_outputPlugin.SetMetadata(metadata))
+            if(!outputFormat.SetMetadata(metadata))
                 ErrorMessage?.Invoke("Error {0} setting metadata, continuing..." + Environment.NewLine +
-                                     _outputPlugin.ErrorMessage);
+                                     outputFormat.ErrorMessage);
 
             if(_preSidecar != null)
-                _outputPlugin.SetCicmMetadata(_preSidecar);
+                outputFormat.SetCicmMetadata(_preSidecar);
 
             _dumpLog.WriteLine("Closing output file.");
             UpdateStatus?.Invoke("Closing output file.");
             DateTime closeStart = DateTime.Now;
-            _outputPlugin.Close();
+            outputFormat.Close();
             DateTime closeEnd = DateTime.Now;
             UpdateStatus?.Invoke($"Closed in {(closeEnd - closeStart).TotalSeconds} seconds.");
             _dumpLog.WriteLine("Closed in {0} seconds.", (closeEnd - closeStart).TotalSeconds);
@@ -1032,7 +1033,7 @@ namespace Aaru.Core.Devices.Dumping
                         {
                             if(_dev.IsUsb &&
                                _dev.UsbDescriptors != null)
-                                if(_outputPlugin.SupportedMediaTags.Contains(MediaTagType.USB_Descriptors))
+                                if(outputFormat.SupportedMediaTags.Contains(MediaTagType.USB_Descriptors))
                                     sidecar.BlockMedia[0].USB = new USBType
                                     {
                                         ProductID = _dev.UsbProductId,
@@ -1052,7 +1053,7 @@ namespace Aaru.Core.Devices.Dumping
                                 sense = _dev.AtapiIdentify(out cmdBuf, out _);
 
                                 if(!sense)
-                                    if(_outputPlugin.SupportedMediaTags.Contains(MediaTagType.ATAPI_IDENTIFY))
+                                    if(outputFormat.SupportedMediaTags.Contains(MediaTagType.ATAPI_IDENTIFY))
                                         sidecar.BlockMedia[0].ATA = new ATAType
                                         {
                                             Identify = new DumpType
@@ -1068,7 +1069,7 @@ namespace Aaru.Core.Devices.Dumping
 
                             if(!sense)
                             {
-                                if(_outputPlugin.SupportedMediaTags.Contains(MediaTagType.SCSI_INQUIRY))
+                                if(outputFormat.SupportedMediaTags.Contains(MediaTagType.SCSI_INQUIRY))
                                     sidecar.BlockMedia[0].SCSI = new SCSIType
                                     {
                                         Inquiry = new DumpType
@@ -1127,7 +1128,7 @@ namespace Aaru.Core.Devices.Dumping
                                 if(!sense &&
                                    !_dev.Error)
                                     if(Modes.DecodeMode10(cmdBuf, _dev.ScsiType).HasValue)
-                                        if(_outputPlugin.SupportedMediaTags.Contains(MediaTagType.SCSI_MODESENSE_10))
+                                        if(outputFormat.SupportedMediaTags.Contains(MediaTagType.SCSI_MODESENSE_10))
                                             sidecar.BlockMedia[0].SCSI.ModeSense10 = new DumpType
                                             {
                                                 Image     = _outputPath,
@@ -1151,7 +1152,7 @@ namespace Aaru.Core.Devices.Dumping
                                 if(!sense &&
                                    !_dev.Error)
                                     if(Modes.DecodeMode6(cmdBuf, _dev.ScsiType).HasValue)
-                                        if(_outputPlugin.SupportedMediaTags.Contains(MediaTagType.SCSI_MODESENSE_6))
+                                        if(outputFormat.SupportedMediaTags.Contains(MediaTagType.SCSI_MODESENSE_6))
                                             sidecar.BlockMedia[0].SCSI.ModeSense = new DumpType
                                             {
                                                 Image     = _outputPath,

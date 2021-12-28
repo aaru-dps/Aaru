@@ -107,6 +107,7 @@ namespace Aaru.Core.Devices.Dumping
             const uint sectorSize  = 2352;                 // Full sector size
             newTrim = false;
             PlextorSubchannel supportedPlextorSubchannel;
+            var               outputFormat = _outputPlugin as IWritableImage;
 
             switch(supportedSubchannel)
             {
@@ -487,7 +488,7 @@ namespace Aaru.Core.Devices.Dumping
                                 Array.Copy(cmdBuf, sectorSize, sub, 0, subSize);
 
                                 if(supportsLongSectors)
-                                    _outputPlugin.WriteSectorsLong(data, i + r, 1);
+                                    outputFormat.WriteSectorsLong(data, i + r, 1);
                                 else
                                 {
                                     var    cooked = new MemoryStream();
@@ -500,19 +501,19 @@ namespace Aaru.Core.Devices.Dumping
                                         cooked.Write(cookedSector, 0, cookedSector.Length);
                                     }
 
-                                    _outputPlugin.WriteSectors(cooked.ToArray(), i, blocksToRead);
+                                    outputFormat.WriteSectors(cooked.ToArray(), i, blocksToRead);
                                 }
 
                                 bool indexesChanged = Media.CompactDisc.WriteSubchannelToImage(supportedSubchannel,
                                     desiredSubchannel, sub, i + r, 1, subLog, isrcs, (byte)track.Sequence,
-                                    ref mcn, tracks, subchannelExtents, _fixSubchannelPosition, _outputPlugin,
+                                    ref mcn, tracks, subchannelExtents, _fixSubchannelPosition, outputFormat as IWritableOpticalImage,
                                     _fixSubchannel, _fixSubchannelCrc, _dumpLog, UpdateStatus,
                                     smallestPregapLbaPerTrack, true);
 
                                 // Set tracks and go back
                                 if(indexesChanged)
                                 {
-                                    (_outputPlugin as IWritableOpticalImage).SetTracks(tracks.ToList());
+                                    (outputFormat as IWritableOpticalImage).SetTracks(tracks.ToList());
                                     i -= blocksToRead;
 
                                     continue;
@@ -521,7 +522,7 @@ namespace Aaru.Core.Devices.Dumping
                             else
                             {
                                 if(supportsLongSectors)
-                                    _outputPlugin.WriteSectorsLong(cmdBuf, i + r, 1);
+                                    outputFormat.WriteSectorsLong(cmdBuf, i + r, 1);
                                 else
                                 {
                                     var    cooked = new MemoryStream();
@@ -534,7 +535,7 @@ namespace Aaru.Core.Devices.Dumping
                                         cooked.Write(cookedSector, 0, cookedSector.Length);
                                     }
 
-                                    _outputPlugin.WriteSectors(cooked.ToArray(), i, blocksToRead);
+                                    outputFormat.WriteSectors(cooked.ToArray(), i, blocksToRead);
                                 }
                             }
 
@@ -549,22 +550,22 @@ namespace Aaru.Core.Devices.Dumping
 
                             if(supportedSubchannel != MmcSubchannel.None)
                             {
-                                _outputPlugin.WriteSectorsLong(new byte[sectorSize], i + r, 1);
+                                outputFormat.WriteSectorsLong(new byte[sectorSize], i + r, 1);
 
                                 if(desiredSubchannel != MmcSubchannel.None)
-                                    _outputPlugin.WriteSectorsTag(new byte[subSize], i + r, 1,
+                                    outputFormat.WriteSectorsTag(new byte[subSize], i + r, 1,
                                                                   SectorTagType.CdSectorSubchannel);
                             }
                             else
                             {
                                 if(supportsLongSectors)
-                                    _outputPlugin.WriteSectorsLong(new byte[blockSize], i + r, 1);
+                                    outputFormat.WriteSectorsLong(new byte[blockSize], i + r, 1);
                                 else
                                 {
                                     if(cmdBuf.Length % sectorSize == 0)
-                                        _outputPlugin.WriteSectors(new byte[2048], i + r, 1);
+                                        outputFormat.WriteSectors(new byte[2048], i + r, 1);
                                     else
-                                        _outputPlugin.WriteSectorsLong(new byte[blockSize], i + r, 1);
+                                        outputFormat.WriteSectorsLong(new byte[blockSize], i + r, 1);
                                 }
                             }
 
@@ -631,7 +632,7 @@ namespace Aaru.Core.Devices.Dumping
                         }
 
                         if(supportsLongSectors)
-                            _outputPlugin.WriteSectorsLong(data, i, blocksToRead);
+                            outputFormat.WriteSectorsLong(data, i, blocksToRead);
                         else
                         {
                             var    cooked = new MemoryStream();
@@ -644,19 +645,19 @@ namespace Aaru.Core.Devices.Dumping
                                 cooked.Write(cookedSector, 0, cookedSector.Length);
                             }
 
-                            _outputPlugin.WriteSectors(cooked.ToArray(), i, blocksToRead);
+                            outputFormat.WriteSectors(cooked.ToArray(), i, blocksToRead);
                         }
 
                         bool indexesChanged = Media.CompactDisc.WriteSubchannelToImage(supportedSubchannel,
                             desiredSubchannel, sub, i, blocksToRead, subLog, isrcs, (byte)track.Sequence,
-                            ref mcn, tracks, subchannelExtents, _fixSubchannelPosition, _outputPlugin,
+                            ref mcn, tracks, subchannelExtents, _fixSubchannelPosition, outputFormat as IWritableOpticalImage,
                             _fixSubchannel, _fixSubchannelCrc, _dumpLog, UpdateStatus, smallestPregapLbaPerTrack,
                             true);
 
                         // Set tracks and go back
                         if(indexesChanged)
                         {
-                            (_outputPlugin as IWritableOpticalImage).SetTracks(tracks.ToList());
+                            (outputFormat as IWritableOpticalImage).SetTracks(tracks.ToList());
                             i -= blocksToRead;
 
                             continue;
@@ -665,7 +666,7 @@ namespace Aaru.Core.Devices.Dumping
                     else
                     {
                         if(supportsLongSectors)
-                            _outputPlugin.WriteSectorsLong(cmdBuf, i, blocksToRead);
+                            outputFormat.WriteSectorsLong(cmdBuf, i, blocksToRead);
                         else
                         {
                             var    cooked = new MemoryStream();
@@ -678,7 +679,7 @@ namespace Aaru.Core.Devices.Dumping
                                 cooked.Write(cookedSector, 0, cookedSector.Length);
                             }
 
-                            _outputPlugin.WriteSectors(cooked.ToArray(), i, blocksToRead);
+                            outputFormat.WriteSectors(cooked.ToArray(), i, blocksToRead);
                         }
                     }
 
@@ -711,24 +712,24 @@ namespace Aaru.Core.Devices.Dumping
 
                     if(supportedSubchannel != MmcSubchannel.None)
                     {
-                        _outputPlugin.WriteSectorsLong(new byte[sectorSize * _skip], i, _skip);
+                        outputFormat.WriteSectorsLong(new byte[sectorSize * _skip], i, _skip);
 
                         if(desiredSubchannel != MmcSubchannel.None)
-                            _outputPlugin.WriteSectorsTag(new byte[subSize * _skip], i, _skip,
+                            outputFormat.WriteSectorsTag(new byte[subSize * _skip], i, _skip,
                                                           SectorTagType.CdSectorSubchannel);
                     }
                     else
                     {
                         if(supportsLongSectors)
                         {
-                            _outputPlugin.WriteSectorsLong(new byte[blockSize * _skip], i, _skip);
+                            outputFormat.WriteSectorsLong(new byte[blockSize * _skip], i, _skip);
                         }
                         else
                         {
                             if(cmdBuf.Length % sectorSize == 0)
-                                _outputPlugin.WriteSectors(new byte[2048 * _skip], i, _skip);
+                                outputFormat.WriteSectors(new byte[2048 * _skip], i, _skip);
                             else
-                                _outputPlugin.WriteSectorsLong(new byte[blockSize * _skip], i, _skip);
+                                outputFormat.WriteSectorsLong(new byte[blockSize * _skip], i, _skip);
                         }
                     }
 

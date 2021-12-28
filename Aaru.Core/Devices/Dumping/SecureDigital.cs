@@ -88,6 +88,7 @@ namespace Aaru.Core.Devices.Dumping
             bool         byteAddressed     = true;
             uint[]       response;
             bool         supportsCmd23 = false;
+            var          outputFormat  = _outputPlugin as IWritableImage;
 
             Dictionary<MediaTagType, byte[]> mediaTags = new();
 
@@ -422,7 +423,7 @@ namespace Aaru.Core.Devices.Dumping
 
             bool ret = true;
 
-            foreach(MediaTagType tag in mediaTags.Keys.Where(tag => !_outputPlugin.SupportedMediaTags.Contains(tag)))
+            foreach(MediaTagType tag in mediaTags.Keys.Where(tag => !outputFormat.SupportedMediaTags.Contains(tag)))
             {
                 ret = false;
                 _dumpLog.WriteLine($"Output format does not support {tag}.");
@@ -448,7 +449,7 @@ namespace Aaru.Core.Devices.Dumping
             var mhddLog = new MhddLog(_outputPrefix + ".mhddlog.bin", _dev, blocks, blockSize, blocksToRead, _private);
             var ibgLog  = new IbgLog(_outputPrefix  + ".ibg", sdProfile);
 
-            ret = _outputPlugin.Create(_outputPath,
+            ret = outputFormat.Create(_outputPath,
                                        _dev.Type == DeviceType.SecureDigital ? MediaType.SecureDigital : MediaType.MMC,
                                        _formatOptions, blocks, blockSize);
 
@@ -456,10 +457,10 @@ namespace Aaru.Core.Devices.Dumping
             if(!ret)
             {
                 _dumpLog.WriteLine("Error creating output image, not continuing.");
-                _dumpLog.WriteLine(_outputPlugin.ErrorMessage);
+                _dumpLog.WriteLine(outputFormat.ErrorMessage);
 
                 StoppingErrorMessage?.Invoke("Error creating output image, not continuing." + Environment.NewLine +
-                                             _outputPlugin.ErrorMessage);
+                                             outputFormat.ErrorMessage);
 
                 return;
             }
@@ -487,7 +488,7 @@ namespace Aaru.Core.Devices.Dumping
                 }
 
                 ret =
-                    _outputPlugin.WriteMediaTag(cid,
+                    outputFormat.WriteMediaTag(cid,
                                                 _dev.Type == DeviceType.SecureDigital ? MediaTagType.SD_CID
                                                     : MediaTagType.MMC_CID);
 
@@ -498,7 +499,7 @@ namespace Aaru.Core.Devices.Dumping
                     _dumpLog.WriteLine("Cannot write CID to output image.");
 
                     StoppingErrorMessage?.Invoke("Cannot write CID to output image." + Environment.NewLine +
-                                                 _outputPlugin.ErrorMessage);
+                                                 outputFormat.ErrorMessage);
 
                     return;
                 }
@@ -507,7 +508,7 @@ namespace Aaru.Core.Devices.Dumping
             if(csd != null)
             {
                 ret =
-                    _outputPlugin.WriteMediaTag(csd,
+                    outputFormat.WriteMediaTag(csd,
                                                 _dev.Type == DeviceType.SecureDigital ? MediaTagType.SD_CSD
                                                     : MediaTagType.MMC_CSD);
 
@@ -518,7 +519,7 @@ namespace Aaru.Core.Devices.Dumping
                     _dumpLog.WriteLine("Cannot write CSD to output image.");
 
                     StoppingErrorMessage?.Invoke("Cannot write CSD to output image." + Environment.NewLine +
-                                                 _outputPlugin.ErrorMessage);
+                                                 outputFormat.ErrorMessage);
 
                     return;
                 }
@@ -526,7 +527,7 @@ namespace Aaru.Core.Devices.Dumping
 
             if(ecsd != null)
             {
-                ret = _outputPlugin.WriteMediaTag(ecsd, MediaTagType.MMC_ExtendedCSD);
+                ret = outputFormat.WriteMediaTag(ecsd, MediaTagType.MMC_ExtendedCSD);
 
                 // Cannot write Extended CSD to image
                 if(!ret &&
@@ -535,7 +536,7 @@ namespace Aaru.Core.Devices.Dumping
                     _dumpLog.WriteLine("Cannot write Extended CSD to output image.");
 
                     StoppingErrorMessage?.Invoke("Cannot write Extended CSD to output image." + Environment.NewLine +
-                                                 _outputPlugin.ErrorMessage);
+                                                 outputFormat.ErrorMessage);
 
                     return;
                 }
@@ -544,7 +545,7 @@ namespace Aaru.Core.Devices.Dumping
             if(ocr != null)
             {
                 ret =
-                    _outputPlugin.WriteMediaTag(ocr,
+                    outputFormat.WriteMediaTag(ocr,
                                                 _dev.Type == DeviceType.SecureDigital ? MediaTagType.SD_OCR
                                                     : MediaTagType.MMC_OCR);
 
@@ -555,7 +556,7 @@ namespace Aaru.Core.Devices.Dumping
                     _dumpLog.WriteLine("Cannot write OCR to output image.");
 
                     StoppingErrorMessage?.Invoke("Cannot write OCR to output image." + Environment.NewLine +
-                                                 _outputPlugin.ErrorMessage);
+                                                 outputFormat.ErrorMessage);
 
                     return;
                 }
@@ -563,7 +564,7 @@ namespace Aaru.Core.Devices.Dumping
 
             if(scr != null)
             {
-                ret = _outputPlugin.WriteMediaTag(scr, MediaTagType.SD_SCR);
+                ret = outputFormat.WriteMediaTag(scr, MediaTagType.SD_SCR);
 
                 // Cannot write SCR to image
                 if(!ret &&
@@ -572,7 +573,7 @@ namespace Aaru.Core.Devices.Dumping
                     _dumpLog.WriteLine("Cannot write SCR to output image.");
 
                     StoppingErrorMessage?.Invoke("Cannot write SCR to output image." + Environment.NewLine +
-                                                 _outputPlugin.ErrorMessage);
+                                                 outputFormat.ErrorMessage);
 
                     return;
                 }
@@ -635,7 +636,7 @@ namespace Aaru.Core.Devices.Dumping
                     mhddLog.Write(i, duration);
                     ibgLog.Write(i, currentSpeed * 1024);
                     DateTime writeStart = DateTime.Now;
-                    _outputPlugin.WriteSectors(cmdBuf, i, blocksToRead);
+                    outputFormat.WriteSectors(cmdBuf, i, blocksToRead);
                     imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
                     extents.Add(i, blocksToRead, true);
                 }
@@ -653,7 +654,7 @@ namespace Aaru.Core.Devices.Dumping
 
                     ibgLog.Write(i, 0);
                     DateTime writeStart = DateTime.Now;
-                    _outputPlugin.WriteSectors(new byte[blockSize * _skip], i, _skip);
+                    outputFormat.WriteSectors(new byte[blockSize * _skip], i, _skip);
                     imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
                     _dumpLog.WriteLine("Skipping {0} blocks from errored block {1}.", _skip, i);
                     i       += _skip - blocksToRead;
@@ -738,7 +739,7 @@ namespace Aaru.Core.Devices.Dumping
 
                     _resume.BadBlocks.Remove(badSector);
                     extents.Add(badSector);
-                    _outputPlugin.WriteSector(cmdBuf, badSector);
+                    outputFormat.WriteSector(cmdBuf, badSector);
                 }
 
                 EndProgress?.Invoke();
@@ -788,12 +789,12 @@ namespace Aaru.Core.Devices.Dumping
                     {
                         _resume.BadBlocks.Remove(badSector);
                         extents.Add(badSector);
-                        _outputPlugin.WriteSector(cmdBuf, badSector);
+                        outputFormat.WriteSector(cmdBuf, badSector);
                         UpdateStatus?.Invoke($"Correctly retried block {badSector} in pass {pass}.");
                         _dumpLog.WriteLine("Correctly retried block {0} in pass {1}.", badSector, pass);
                     }
                     else if(runningPersistent)
-                        _outputPlugin.WriteSector(cmdBuf, badSector);
+                        outputFormat.WriteSector(cmdBuf, badSector);
                 }
 
                 if(pass < _retryPasses &&
@@ -816,7 +817,7 @@ namespace Aaru.Core.Devices.Dumping
 
             currentTry.Extents = ExtentsConverter.ToMetadata(extents);
 
-            _outputPlugin.SetDumpHardware(_resume.Tries);
+            outputFormat.SetDumpHardware(_resume.Tries);
 
             // TODO: Drive info
             var metadata = new CommonTypes.Structs.ImageInfo
@@ -825,17 +826,17 @@ namespace Aaru.Core.Devices.Dumping
                 ApplicationVersion = Version.GetVersion()
             };
 
-            if(!_outputPlugin.SetMetadata(metadata))
+            if(!outputFormat.SetMetadata(metadata))
                 ErrorMessage?.Invoke("Error {0} setting metadata, continuing..." + Environment.NewLine +
-                                     _outputPlugin.ErrorMessage);
+                                     outputFormat.ErrorMessage);
 
             if(_preSidecar != null)
-                _outputPlugin.SetCicmMetadata(_preSidecar);
+                outputFormat.SetCicmMetadata(_preSidecar);
 
             _dumpLog.WriteLine("Closing output file.");
             UpdateStatus?.Invoke("Closing output file.");
             DateTime closeStart = DateTime.Now;
-            _outputPlugin.Close();
+            outputFormat.Close();
             DateTime closeEnd = DateTime.Now;
             UpdateStatus?.Invoke($"Closed in {(closeEnd - closeStart).TotalSeconds} seconds.");
             _dumpLog.WriteLine("Closed in {0} seconds.", (closeEnd - closeStart).TotalSeconds);

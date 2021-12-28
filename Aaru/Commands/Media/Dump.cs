@@ -467,9 +467,9 @@ namespace Aaru.Commands.Media
             if(isResponse)
                 eject = true;
 
-            PluginBase           plugins    = GetPluginBase.Instance;
-            List<IWritableImage> candidates = new();
-            string               extension  = Path.GetExtension(outputPath);
+            PluginBase               plugins    = GetPluginBase.Instance;
+            List<IBaseWritableImage> candidates = new();
+            string                   extension  = Path.GetExtension(outputPath);
 
             // Try extension
             if(string.IsNullOrEmpty(format))
@@ -642,7 +642,7 @@ namespace Aaru.Commands.Media
                     }
 
                 plugins    = GetPluginBase.Instance;
-                candidates = new List<IWritableImage>();
+                candidates = new List<IBaseWritableImage>();
 
                 // Try extension
                 if(string.IsNullOrEmpty(format))
@@ -661,7 +661,7 @@ namespace Aaru.Commands.Media
                                                                                 StringComparison.
                                                                                     InvariantCultureIgnoreCase)));
 
-                IWritableImage outputFormat = candidates[0];
+                IBaseWritableImage outputFormat = candidates[0];
 
                 var dumpLog = new DumpLog(outputPrefix + ".log", dev, @private);
 

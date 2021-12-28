@@ -82,7 +82,7 @@ public sealed class Register : IPluginRegister
     /// <inheritdoc />
     public List<Type> GetAllWritableImagePlugins() => Assembly.GetExecutingAssembly().GetTypes().
                                                                Where(t => t.GetInterfaces().
-                                                                            Contains(typeof(IWritableImage))).
+                                                                            Contains(typeof(IBaseWritableImage))).
                                                                Where(t => t.IsClass).ToList();
 
     /// <inheritdoc />

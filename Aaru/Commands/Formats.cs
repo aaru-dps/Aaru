@@ -141,7 +141,7 @@ namespace Aaru.Commands
 
             table.AddColumn("Media image format");
 
-            foreach(KeyValuePair<string, IWritableImage> kvp in plugins.WritableImages)
+            foreach(KeyValuePair<string, IBaseWritableImage> kvp in plugins.WritableImages)
                 if(verbose)
                     table.AddRow(kvp.Value.Id.ToString(), Markup.Escape(kvp.Value.Name));
                 else
