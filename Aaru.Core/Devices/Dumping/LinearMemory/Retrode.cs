@@ -51,6 +51,11 @@ public partial class Dump
         0x42, 0x49, 0x4E
     };
 
+    static readonly byte[] _smsExtension =
+    {
+        0x53, 0x4D, 0x53
+    };
+
     /// <summary>Dumps a game cartridge using a Retrode adapter</summary>
     void Retrode()
     {
@@ -100,6 +105,7 @@ public partial class Dump
         int  romPos;
         bool sfcFound     = false;
         bool genesisFound = false;
+        bool smsFound     = false;
         tmp = new byte[3];
 
         for(romPos = 0; romPos < buffer.Length; romPos += 0x20)
@@ -119,10 +125,18 @@ public partial class Dump
 
                 break;
             }
+
+            if(tmp.SequenceEqual(_smsExtension))
+            {
+                smsFound = true;
+
+                break;
+            }
         }
 
-        if(!sfcFound &&
-           !genesisFound)
+        if(!sfcFound     &&
+           !genesisFound &&
+           !smsFound)
         {
             StoppingErrorMessage?.Invoke("No cartridge found, not dumping...");
             _dumpLog.WriteLine("No cartridge found, not dumping...");
@@ -133,13 +147,18 @@ public partial class Dump
         ushort cluster = BitConverter.ToUInt16(buffer, romPos + 0x1A);
         uint   romSize = BitConverter.ToUInt32(buffer, romPos + 0x1C);
 
-        MediaType mediaType     = genesisFound ? MediaType.MegaDriveCartridge : MediaType.SNESGamePak;
-        uint      blocksToRead  = 64;
-        double    totalDuration = 0;
-        double    currentSpeed  = 0;
-        double    maxSpeed      = double.MinValue;
-        double    minSpeed      = double.MaxValue;
-        byte[]    senseBuf;
+        MediaType mediaType = smsFound
+                                  ? MediaType.MasterSystemCartridge
+                                  : genesisFound
+                                      ? MediaType.MegaDriveCartridge
+                                      : MediaType.SNESGamePak;
+
+        uint   blocksToRead  = 64;
+        double totalDuration = 0;
+        double currentSpeed  = 0;
+        double maxSpeed      = double.MinValue;
+        double minSpeed      = double.MaxValue;
+        byte[] senseBuf;
 
         if(_outputPlugin is not IByteAddressableImage outputBai ||
            !outputBai.SupportedMediaTypes.Contains(mediaType))
