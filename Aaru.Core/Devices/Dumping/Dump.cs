@@ -223,38 +223,45 @@ namespace Aaru.Core.Devices.Dumping
                     _maximumReadable = (uint)_dbDev.OptimalMultipleSectorsRead;
             }
 
-            if(_dev.IsUsb                 &&
-               _dev.UsbVendorId == 0x054C &&
-               (_dev.UsbProductId == 0x01C8 || _dev.UsbProductId == 0x01C9 || _dev.UsbProductId == 0x02D2))
-                PlayStationPortable();
-            else
-                switch(_dev.Type)
-                {
-                    case DeviceType.ATA:
-                        Ata();
+            switch(_dev.IsUsb)
+            {
+                case true when _dev.UsbVendorId == 0x054C && _dev.UsbProductId is 0x01C8 or 0x01C9 or 0x02D2: PlayStationPortable();
 
-                        break;
-                    case DeviceType.MMC:
-                    case DeviceType.SecureDigital:
-                        SecureDigital();
+                    break;
+                case true when _dev.UsbVendorId ==0x0403  && _dev.UsbProductId ==0x97C1:                      Retrode();
 
-                        break;
-                    case DeviceType.NVMe:
-                        NVMe();
+                    break;
+                default:
+                    switch(_dev.Type)
+                    {
+                        case DeviceType.ATA:
+                            Ata();
 
-                        break;
-                    case DeviceType.ATAPI:
-                    case DeviceType.SCSI:
-                        Scsi();
+                            break;
+                        case DeviceType.MMC:
+                        case DeviceType.SecureDigital:
+                            SecureDigital();
 
-                        break;
-                    default:
-                        _dumpLog.WriteLine("Unknown device type.");
-                        _dumpLog.Close();
-                        StoppingErrorMessage?.Invoke("Unknown device type.");
+                            break;
+                        case DeviceType.NVMe:
+                            NVMe();
 
-                        return;
-                }
+                            break;
+                        case DeviceType.ATAPI:
+                        case DeviceType.SCSI:
+                            Scsi();
+
+                            break;
+                        default:
+                            _dumpLog.WriteLine("Unknown device type.");
+                            _dumpLog.Close();
+                            StoppingErrorMessage?.Invoke("Unknown device type.");
+
+                            return;
+                    }
+
+                    break;
+            }
 
             _errorLog.Close();
             _dumpLog.Close();
