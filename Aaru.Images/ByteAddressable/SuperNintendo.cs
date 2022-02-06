@@ -38,6 +38,10 @@ public class SuperNintendo : IByteAddressableImage
         if(stream.Length % 32768 != 0)
             return false;
 
+        // Too many false positives at bigger sizes
+        if(stream.Length > 16 * 1048576)
+            return false;
+
         Header header;
         byte[] headerBytes = new byte[48];
 
