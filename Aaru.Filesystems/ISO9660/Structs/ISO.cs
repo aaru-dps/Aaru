@@ -33,6 +33,7 @@
 
 using System;
 using System.Runtime.InteropServices;
+using System.Text;
 using Aaru.Helpers;
 
 // ReSharper disable UnusedType.Local
@@ -41,16 +42,18 @@ namespace Aaru.Filesystems
 {
     public sealed partial class ISO9660
     {
-        static DecodedVolumeDescriptor DecodeVolumeDescriptor(PrimaryVolumeDescriptor pvd)
+        static DecodedVolumeDescriptor DecodeVolumeDescriptor(PrimaryVolumeDescriptor pvd, Encoding encoding = null)
         {
+            encoding ??= Encoding.ASCII;
+
             var decodedVd = new DecodedVolumeDescriptor
             {
-                SystemIdentifier       = StringHandlers.CToString(pvd.system_id).TrimEnd(),
-                VolumeIdentifier       = StringHandlers.CToString(pvd.volume_id).TrimEnd(),
-                VolumeSetIdentifier    = StringHandlers.CToString(pvd.volume_set_id).TrimEnd(),
-                PublisherIdentifier    = StringHandlers.CToString(pvd.publisher_id).TrimEnd(),
-                DataPreparerIdentifier = StringHandlers.CToString(pvd.preparer_id).TrimEnd(),
-                ApplicationIdentifier  = StringHandlers.CToString(pvd.application_id).TrimEnd()
+                SystemIdentifier       = StringHandlers.CToString(pvd.system_id, encoding).TrimEnd(),
+                VolumeIdentifier       = StringHandlers.CToString(pvd.volume_id, encoding).TrimEnd(),
+                VolumeSetIdentifier    = StringHandlers.CToString(pvd.volume_set_id, encoding).TrimEnd(),
+                PublisherIdentifier    = StringHandlers.CToString(pvd.publisher_id, encoding).TrimEnd(),
+                DataPreparerIdentifier = StringHandlers.CToString(pvd.preparer_id, encoding).TrimEnd(),
+                ApplicationIdentifier  = StringHandlers.CToString(pvd.application_id, encoding).TrimEnd()
             };
 
             if(pvd.creation_date[0] == '0' ||

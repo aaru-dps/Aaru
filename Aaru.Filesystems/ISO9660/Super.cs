@@ -270,7 +270,7 @@ namespace Aaru.Filesystems
             else if(_cdi)
                 decodedVd = DecodeVolumeDescriptor(fsvd.Value);
             else
-                decodedVd = DecodeVolumeDescriptor(pvd.Value);
+                decodedVd = DecodeVolumeDescriptor(pvd.Value, _namespace == Namespace.Romeo ? Encoding : Encoding.ASCII);
 
             if(jolietvd != null)
                 decodedJolietVd = DecodeJolietDescriptor(jolietvd.Value);
