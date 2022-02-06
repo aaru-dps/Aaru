@@ -84,7 +84,7 @@ namespace Aaru.Filesystems.UCSDPascal
             AaruConsole.DebugWriteLine("UCSD Pascal Plugin", "volEntry.firstBlock = {0}", volEntry.FirstBlock);
             AaruConsole.DebugWriteLine("UCSD Pascal Plugin", "volEntry.lastBlock = {0}", volEntry.LastBlock);
             AaruConsole.DebugWriteLine("UCSD Pascal Plugin", "volEntry.entryType = {0}", volEntry.EntryType);
-            AaruConsole.DebugWriteLine("UCSD Pascal Plugin", "volEntry.volumeName = {0}", volEntry.VolumeName);
+//            AaruConsole.DebugWriteLine("UCSD Pascal Plugin", "volEntry.volumeName = {0}", volEntry.VolumeName);
             AaruConsole.DebugWriteLine("UCSD Pascal Plugin", "volEntry.blocks = {0}", volEntry.Blocks);
             AaruConsole.DebugWriteLine("UCSD Pascal Plugin", "volEntry.files = {0}", volEntry.Files);
             AaruConsole.DebugWriteLine("UCSD Pascal Plugin", "volEntry.dummy = {0}", volEntry.Dummy);

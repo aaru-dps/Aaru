@@ -39,6 +39,7 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
+using Spectre.Console;
 
 namespace Aaru.Partitions
 {
@@ -115,16 +116,16 @@ namespace Aaru.Partitions
 
             for(int i = 0; i < 8; i++)
             {
-                AaruConsole.DebugWriteLine("Atari partition plugin", "table.icdEntries[{0}].flag = 0x{1:X2}", i,
+                AaruConsole.DebugWriteLine("Atari partition plugin", Markup.Escape("table.icdEntries[{0}].flag = 0x{1:X2}"), i,
                                            (table.IcdEntries[i].Type & 0xFF000000) >> 24);
 
-                AaruConsole.DebugWriteLine("Atari partition plugin", "table.icdEntries[{0}].type = 0x{1:X6}", i,
+                AaruConsole.DebugWriteLine("Atari partition plugin", Markup.Escape("table.icdEntries[{0}].type = 0x{1:X6}"), i,
                                            table.IcdEntries[i].Type & 0x00FFFFFF);
 
-                AaruConsole.DebugWriteLine("Atari partition plugin", "table.icdEntries[{0}].start = {1}", i,
+                AaruConsole.DebugWriteLine("Atari partition plugin", Markup.Escape("table.icdEntries[{0}].start = {1}"), i,
                                            table.IcdEntries[i].Start);
 
-                AaruConsole.DebugWriteLine("Atari partition plugin", "table.icdEntries[{0}].length = {1}", i,
+                AaruConsole.DebugWriteLine("Atari partition plugin", Markup.Escape("table.icdEntries[{0}].length = {1}"), i,
                                            table.IcdEntries[i].Length);
             }
 
@@ -132,16 +133,16 @@ namespace Aaru.Partitions
 
             for(int i = 0; i < 4; i++)
             {
-                AaruConsole.DebugWriteLine("Atari partition plugin", "table.entries[{0}].flag = 0x{1:X2}", i,
+                AaruConsole.DebugWriteLine("Atari partition plugin", Markup.Escape("table.entries[{0}].flag = 0x{1:X2}"), i,
                                            (table.Entries[i].Type & 0xFF000000) >> 24);
 
-                AaruConsole.DebugWriteLine("Atari partition plugin", "table.entries[{0}].type = 0x{1:X6}", i,
+                AaruConsole.DebugWriteLine("Atari partition plugin", Markup.Escape("table.entries[{0}].type = 0x{1:X6}"), i,
                                            table.Entries[i].Type & 0x00FFFFFF);
 
-                AaruConsole.DebugWriteLine("Atari partition plugin", "table.entries[{0}].start = {1}", i,
+                AaruConsole.DebugWriteLine("Atari partition plugin", Markup.Escape("table.entries[{0}].start = {1}"), i,
                                            table.Entries[i].Start);
 
-                AaruConsole.DebugWriteLine("Atari partition plugin", "table.entries[{0}].length = {1}", i,
+                AaruConsole.DebugWriteLine("Atari partition plugin", Markup.Escape("table.entries[{0}].length = {1}"), i,
                                            table.Entries[i].Length);
             }
 
