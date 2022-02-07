@@ -374,7 +374,7 @@ internal sealed class ConvertImageCommand : Command
                 return (int)ErrorNumber.InvalidArgument;
             }
 
-            if(!uint.TryParse(geometryPieces[0], out uint heads) ||
+            if(!uint.TryParse(geometryPieces[1], out uint heads) ||
                heads == 0)
             {
                 AaruConsole.ErrorWriteLine("Invalid number of heads specified");
@@ -382,13 +382,15 @@ internal sealed class ConvertImageCommand : Command
                 return (int)ErrorNumber.InvalidArgument;
             }
 
-            if(!uint.TryParse(geometryPieces[0], out uint spt) ||
+            if(!uint.TryParse(geometryPieces[2], out uint spt) ||
                spt == 0)
             {
                 AaruConsole.ErrorWriteLine("Invalid sectors per track specified");
 
                 return (int)ErrorNumber.InvalidArgument;
             }
+
+            geometryValues = (cylinders, heads, spt);
         }
 
         Resume           resume  = null;
