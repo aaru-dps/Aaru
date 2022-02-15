@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>Aaru.CommonTypes</RootNamespace>
     <AssemblyName>Aaru.CommonTypes</AssemblyName>
-    <ReleaseVersion>4.0.99.0</ReleaseVersion>
+    <ReleaseVersion>$(Version)</ReleaseVersion>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
     <Version>6.0.0-alpha8</Version>
