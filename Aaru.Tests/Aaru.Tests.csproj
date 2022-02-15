@@ -8,7 +8,7 @@
     <LangVersion>10</LangVersion>
     <Authors>Natalia Portillo &lt;claunia@claunia.com&gt;</Authors>
     <DisableImplicitNamespaceImports>true</DisableImplicitNamespaceImports>
-    <ReleaseVersion>4.0.99.0</ReleaseVersion>
+    <ReleaseVersion>$(Version)</ReleaseVersion>
   </PropertyGroup>
 
   <ItemGroup>

@@ -7,7 +7,7 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>Aaru.Tests.Devices</RootNamespace>
     <AssemblyName>Aaru.Tests.Devices</AssemblyName>
-    <ReleaseVersion>4.0.99.0</ReleaseVersion>
+    <ReleaseVersion>$(Version)</ReleaseVersion>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <TargetFramework>net6</TargetFramework>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>

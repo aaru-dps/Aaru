@@ -8,7 +8,7 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>Aaru</RootNamespace>
     <AssemblyName>aaru</AssemblyName>
-    <ReleaseVersion>4.0.99.0</ReleaseVersion>
+    <ReleaseVersion>$(Version)</ReleaseVersion>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <TargetFramework>net6</TargetFramework>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>

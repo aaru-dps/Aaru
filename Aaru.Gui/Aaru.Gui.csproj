@@ -2,7 +2,7 @@
   <PropertyGroup>
     <RootNamespace>Aaru.Gui</RootNamespace>
     <AssemblyName>Aaru.Gui</AssemblyName>
-    <ReleaseVersion>4.0.99.0</ReleaseVersion>
+    <ReleaseVersion>$(Version)</ReleaseVersion>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
     <Version>6.0.0-alpha8</Version>
     <Company>Claunia.com</Company>
