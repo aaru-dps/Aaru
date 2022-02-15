@@ -8,14 +8,15 @@
     <LangVersion>10</LangVersion>
     <Authors>Natalia Portillo &lt;claunia@claunia.com&gt;</Authors>
     <DisableImplicitNamespaceImports>true</DisableImplicitNamespaceImports>
+    <ReleaseVersion>4.0.99.0</ReleaseVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Claunia.Encoding" Version="1.9.1" />
-    <PackageReference Include="FluentAssertions" Version="6.1.0" />
+    <PackageReference Include="Claunia.Encoding" Version="1.9.2" />
+    <PackageReference Include="FluentAssertions" Version="6.4.0" />
     <PackageReference Include="nunit" Version="3.13.2" />
-    <PackageReference Include="NUnit3TestAdapter" Version="4.0.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="4.2.1" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.0.0" />
     <PackageReference Include="System.Text.Encoding.CodePages" Version="6.0.0" />
   </ItemGroup>
 
