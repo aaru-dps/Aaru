@@ -13,7 +13,7 @@
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
     <Version>6.0.0-alpha8</Version>
     <Company>Claunia.com</Company>
-    <Copyright>Copyright © 2011-2021 Natalia Portillo</Copyright>
+    <Copyright>Copyright © 2011-2022 Natalia Portillo</Copyright>
     <Product>Aaru Data Preservation Suite</Product>
     <Title>Aaru.Decoders</Title>
     <ApplicationVersion>$(Version)</ApplicationVersion>
