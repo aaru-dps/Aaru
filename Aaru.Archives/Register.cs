@@ -34,8 +34,8 @@
 //     SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2021 Michael Drüing
-// Copyright © 2011-2021 Natalia Portillo
+// Copyright © 2021-2022 Michael Drüing
+// Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
 using System;

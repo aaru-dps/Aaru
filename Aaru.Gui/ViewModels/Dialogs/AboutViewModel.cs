@@ -27,7 +27,7 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2021 Natalia Portillo
+// Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
 using System;
@@ -100,7 +100,7 @@ namespace Aaru.Gui.ViewModels.Dialogs
         [NotNull]
         public string SuiteName => "Aaru Data Preservation Suite";
         [NotNull]
-        public string Copyright => "© 2011-2021 Natalia Portillo";
+        public string Copyright => "© 2011-2022 Natalia Portillo";
         [NotNull]
         public string Website => "https://aaru.app";
         [NotNull]

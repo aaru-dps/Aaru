@@ -35,7 +35,7 @@
 //     POSSIBILITY OF SUCH DAMAGE.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2021 Natalia Portillo
+// Copyright © 2011-2022 Natalia Portillo
 // Copyright © 2017 Miodrag Milanovic
 // Copyright © 1988 Haruhiko OKUMURA
 // Copyright © 1988 Haruyasu YOSHIZAKI
