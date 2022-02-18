@@ -27,7 +27,7 @@
 //     along with this program.If not, see<http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2021 Natalia Portillo
+// Copyright © 2011-2022 Natalia Portillo
 // ECC algorithm from ECM(c) 2002-2011 Neill Corlett
 // ****************************************************************************/
 

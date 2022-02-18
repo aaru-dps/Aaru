@@ -41,7 +41,7 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2021 Natalia Portillo
+// Copyright © 2011-2022 Natalia Portillo
 // Copyright 2017 The Chromium Authors. All rights reserved.
 // ****************************************************************************/
 
