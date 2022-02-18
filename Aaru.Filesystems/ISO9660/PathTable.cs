@@ -40,7 +40,7 @@ namespace Aaru.Filesystems
     {
         PathTableEntryInternal[] DecodePathTable(byte[] data)
         {
-            if(data is null)
+            if(data is null || data.Length == 0)
                 return null;
 
             List<PathTableEntryInternal> table = new List<PathTableEntryInternal>();
