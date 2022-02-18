@@ -31,7 +31,7 @@
 //     SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2020-2021 Rebecca Wallander
+// Copyright © 2020-2022 Rebecca Wallander
 // ****************************************************************************/
 
 using System;
