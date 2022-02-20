@@ -38,7 +38,6 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using Aaru.Commands;
-using Aaru.Commands.Archive;
 using Aaru.Commands.Database;
 using Aaru.Commands.Device;
 using Aaru.Commands.Filesystem;
@@ -191,7 +190,6 @@ namespace Aaru
             rootCommand.AddCommand(new FilesystemFamily());
             rootCommand.AddCommand(new ImageFamily());
             rootCommand.AddCommand(new MediaFamily());
-            rootCommand.AddCommand(new ArchiveFamily());
 
             rootCommand.AddCommand(new ConfigureCommand());
             rootCommand.AddCommand(new FormatsCommand());

@@ -84,8 +84,6 @@
     <Compile Include="Commands\Media\MediaFamily.cs" />
     <Compile Include="Commands\Media\Info.cs" />
     <Compile Include="Commands\Media\Scan.cs" />
-    <Compile Include="Commands\Archive\ArchiveFamily.cs" />
-    <Compile Include="Commands\Archive\Info.cs" />
     <Compile Include="Commands\Remote.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="Commands\Configure.cs" />
