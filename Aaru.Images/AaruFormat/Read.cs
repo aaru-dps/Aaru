@@ -284,7 +284,7 @@ namespace Aaru.DiscImages
                             case DataType.CdSectorPrefixCorrected:
                                 if(entry.dataType == DataType.CdSectorPrefixCorrected)
                                 {
-                                    _sectorPrefixMs = new NonClosableStream();
+                                    _sectorPrefixMs ??= new NonClosableStream();
                                     _sectorPrefixMs.Write(data, 0, data.Length);
                                 }
                                 else
@@ -304,7 +304,7 @@ namespace Aaru.DiscImages
                             case DataType.CdSectorSuffixCorrected:
                                 if(entry.dataType == DataType.CdSectorSuffixCorrected)
                                 {
-                                    _sectorSuffixMs = new NonClosableStream();
+                                    _sectorSuffixMs ??= new NonClosableStream();
                                     _sectorSuffixMs.Write(data, 0, data.Length);
                                 }
                                 else
@@ -515,10 +515,12 @@ namespace Aaru.DiscImages
                                 {
                                     case DataType.CdSectorPrefixCorrected:
                                         _sectorPrefixDdt = cdDdt;
+                                        _sectorPrefixMs  = new NonClosableStream();
 
                                         break;
                                     case DataType.CdSectorSuffixCorrected:
                                         _sectorSuffixDdt = cdDdt;
+                                        _sectorSuffixMs  = new NonClosableStream();
 
                                         break;
                                 }
@@ -1972,8 +1974,8 @@ namespace Aaru.DiscImages
                         throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                               "Can't found track containing requested sector");
 
-                    if((_sectorSuffix   == null || _sectorPrefix   == null) &&
-                       (_sectorSuffixMs == null || _sectorPrefixMs == null))
+                    if((_sectorSuffix    == null || _sectorPrefix    == null) &&
+                       (_sectorSuffixDdt == null || _sectorPrefixDdt == null))
                         return ReadSector(sectorAddress);
 
                     byte[] sector = new byte[2352];
