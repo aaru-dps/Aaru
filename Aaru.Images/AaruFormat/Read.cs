@@ -293,7 +293,7 @@ namespace Aaru.DiscImages
                             case DataType.CdSectorPrefixCorrected:
                                 if(entry.dataType == DataType.CdSectorPrefixCorrected)
                                 {
-                                    _sectorPrefixMs = new MemoryStream();
+                                    _sectorPrefixMs ??= new MemoryStream();
                                     _sectorPrefixMs.Write(data, 0, data.Length);
                                 }
                                 else
@@ -313,7 +313,7 @@ namespace Aaru.DiscImages
                             case DataType.CdSectorSuffixCorrected:
                                 if(entry.dataType == DataType.CdSectorSuffixCorrected)
                                 {
-                                    _sectorSuffixMs = new MemoryStream();
+                                    _sectorSuffixMs ??= new MemoryStream();
                                     _sectorSuffixMs.Write(data, 0, data.Length);
                                 }
                                 else
@@ -544,10 +544,12 @@ namespace Aaru.DiscImages
                                 {
                                     case DataType.CdSectorPrefixCorrected:
                                         _sectorPrefixDdt = cdDdt;
+                                        _sectorPrefixMs  = new MemoryStream();
 
                                         break;
                                     case DataType.CdSectorSuffixCorrected:
                                         _sectorSuffixDdt = cdDdt;
+                                        _sectorSuffixMs  = new MemoryStream();
 
                                         break;
                                 }
@@ -2028,8 +2030,8 @@ namespace Aaru.DiscImages
                        trk.EndSector   == 0)
                         return ErrorNumber.SectorNotFound;
 
-                    if((_sectorSuffix   == null || _sectorPrefix   == null) &&
-                       (_sectorSuffixMs == null || _sectorPrefixMs == null))
+                    if((_sectorSuffix    == null || _sectorPrefix    == null) &&
+                       (_sectorSuffixDdt == null || _sectorPrefixDdt == null))
                         return ReadSector(sectorAddress, out buffer);
 
                     buffer = new byte[2352];
