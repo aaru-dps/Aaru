@@ -538,7 +538,7 @@ namespace Aaru.Commands.Media
                                      "SCSI READ DISC INFORMATION", scsiInfo.DiscInformation);
 
                     if(scsiInfo.DecodedDiscInformation.HasValue)
-                        AaruConsole.WriteLine("Standard Disc Information:[/]\n{0}",
+                        AaruConsole.WriteLine("[bold]Standard Disc Information:[/]\n{0}",
                                               Markup.Escape(DiscInformation.
                                                                 Prettify000b(scsiInfo.DecodedDiscInformation)));
                 }
