@@ -1,3 +1,47 @@
+# [5.3.1] - 2022-03-06
+
+## Added
+
+### - Device information
+
+- Add another Kingston vendor ID for SecureDigital.
+- Add MMC vendor ID for Nokia.
+
+### - Media types
+
+- Add MetaFloppy Mod I.
+- Add MetaFloppy.
+- Add CRVdisc.
+
+## Fixed
+
+### - Aaru Image Format
+
+- Do not skip blocks that have CRC as 0, as we do not set them for DDTs and CD Prefix/Suffix.
+- Fix reading long sectors when all suffixes and prefixes are standard.
+
+### - Device information
+
+- Fix endianness when decoding SD/MMC OCR register.
+
+### - Dumping
+
+- Fix detecting errors from OS buffered reads in Linux.
+- When dumping an SD/MMC card try to detect if OS buffered reads are failing, and max readable blocks using sequential commands, and downgrade accordingly. Now also detects cards that are totally unreadable.
+
+### - ISO9660 filesystem
+
+- Do not break when an ISO9660/HighSierra/CD-i directory spans several sectors if we only have a partial last sector read.
+- Do not try to decode empty path table in ISO9660/CD-i/HighSierra.
+
+### - Media detection
+
+- Do not try to read past directory sector in detection of media type.
+
+## Changes
+
+- Fix CRC64 calculations.
+
 # [5.3.0] - 2021-10-01
 
 ## Added
@@ -2208,6 +2252,8 @@
 - Apple Partition Map (aka APM).
 - Master Boot Record (aka MBR).
 - NeXT disklabels.
+
+[5.3.1]: https://github.com/aaru-dps/Aaru/releases/tag/v5.3.1
 
 [5.3.0]: https://github.com/aaru-dps/Aaru/releases/tag/v5.3.0
 
