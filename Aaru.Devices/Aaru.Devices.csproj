@@ -56,10 +56,6 @@
     <ConsolePause>false</ConsolePause>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Management" />
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Device\DeviceException.cs" />
     <Compile Include="Device\ScsiCommands\MediaTek.cs" />
     <Compile Include="Device\ScsiCommands\MiniDisc.cs" />

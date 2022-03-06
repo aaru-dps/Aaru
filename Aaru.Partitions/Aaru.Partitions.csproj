@@ -56,9 +56,6 @@
     <ConsolePause>false</ConsolePause>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System" />
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="AppleMap.cs" />
     <Compile Include="Atari.cs" />
     <Compile Include="MBR.cs" />

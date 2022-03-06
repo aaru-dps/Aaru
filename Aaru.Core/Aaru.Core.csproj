@@ -54,10 +54,6 @@
     <ConsolePause>false</ConsolePause>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Xml" />
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Devices\Dumping\CompactDisc\CdiReady.cs" />
     <Compile Include="Devices\Dumping\CompactDisc\Data.cs" />
     <Compile Include="Devices\Dumping\CompactDisc\Dump.cs" />

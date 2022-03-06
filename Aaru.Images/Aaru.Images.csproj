@@ -56,11 +56,6 @@
     <ConsolePause>false</ConsolePause>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml" />
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="Claunia.Encoding" Version="1.9.2" />
     <PackageReference Include="Claunia.RsrcFork" Version="1.2.0" />
     <PackageReference Include="DotNetZip" Version="1.16.0" />

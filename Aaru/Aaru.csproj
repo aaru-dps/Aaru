@@ -52,11 +52,6 @@
     <ConsolePause>false</ConsolePause>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml" />
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Commands\Database\DatabaseFamily.cs" />
     <Compile Include="Commands\Database\Statistics.cs" />
     <Compile Include="Commands\Database\Update.cs" />
