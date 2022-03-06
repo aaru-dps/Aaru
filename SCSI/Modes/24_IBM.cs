@@ -33,77 +33,76 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
-namespace Aaru.Decoders.SCSI
+namespace Aaru.Decoders.SCSI;
+
+[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
+ SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+public static partial class Modes
 {
-    [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
-     SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
-    public static partial class Modes
+    #region IBM Mode Page 0x24: Drive Capabilities Control Mode page
+    public struct IBM_ModePage_24
     {
-        #region IBM Mode Page 0x24: Drive Capabilities Control Mode page
-        public struct IBM_ModePage_24
-        {
-            /// <summary>Parameters can be saved</summary>
-            public bool PS;
-            public byte ModeControl;
-            public byte VelocitySetting;
-            public bool EncryptionEnabled;
-            public bool EncryptionCapable;
-        }
-
-        public static IBM_ModePage_24? DecodeIBMModePage_24(byte[] pageResponse)
-        {
-            if((pageResponse?[0] & 0x40) == 0x40)
-                return null;
-
-            if((pageResponse?[0] & 0x3F) != 0x24)
-                return null;
-
-            if(pageResponse[1] + 2 != pageResponse.Length)
-                return null;
-
-            if(pageResponse.Length != 8)
-                return null;
-
-            var decoded = new IBM_ModePage_24();
-
-            decoded.PS                |= (pageResponse[0] & 0x80) == 0x80;
-            decoded.ModeControl       =  pageResponse[2];
-            decoded.VelocitySetting   =  pageResponse[3];
-            decoded.EncryptionEnabled |= (pageResponse[7] & 0x08) == 0x08;
-            decoded.EncryptionCapable |= (pageResponse[7] & 0x01) == 0x01;
-
-            return decoded;
-        }
-
-        public static string PrettifyIBMModePage_24(byte[] pageResponse) =>
-            PrettifyIBMModePage_24(DecodeIBMModePage_24(pageResponse));
-
-        public static string PrettifyIBMModePage_24(IBM_ModePage_24? modePage)
-        {
-            if(!modePage.HasValue)
-                return null;
-
-            IBM_ModePage_24 page = modePage.Value;
-            var             sb   = new StringBuilder();
-
-            sb.AppendLine("IBM Vendor-Specific Control Mode Page:");
-
-            if(page.PS)
-                sb.AppendLine("\tParameters can be saved");
-
-            sb.AppendFormat("\tVendor-specific mode control: {0}", page.ModeControl);
-            sb.AppendFormat("\tVendor-specific velocity setting: {0}", page.VelocitySetting);
-
-            if(!page.EncryptionCapable)
-                return sb.ToString();
-
-            sb.AppendLine("\tDrive supports encryption");
-
-            if(page.EncryptionEnabled)
-                sb.AppendLine("\tDrive has encryption enabled");
-
-            return sb.ToString();
-        }
-        #endregion IBM Mode Page 0x24: Drive Capabilities Control Mode page
+        /// <summary>Parameters can be saved</summary>
+        public bool PS;
+        public byte ModeControl;
+        public byte VelocitySetting;
+        public bool EncryptionEnabled;
+        public bool EncryptionCapable;
     }
+
+    public static IBM_ModePage_24? DecodeIBMModePage_24(byte[] pageResponse)
+    {
+        if((pageResponse?[0] & 0x40) == 0x40)
+            return null;
+
+        if((pageResponse?[0] & 0x3F) != 0x24)
+            return null;
+
+        if(pageResponse[1] + 2 != pageResponse.Length)
+            return null;
+
+        if(pageResponse.Length != 8)
+            return null;
+
+        var decoded = new IBM_ModePage_24();
+
+        decoded.PS                |= (pageResponse[0] & 0x80) == 0x80;
+        decoded.ModeControl       =  pageResponse[2];
+        decoded.VelocitySetting   =  pageResponse[3];
+        decoded.EncryptionEnabled |= (pageResponse[7] & 0x08) == 0x08;
+        decoded.EncryptionCapable |= (pageResponse[7] & 0x01) == 0x01;
+
+        return decoded;
+    }
+
+    public static string PrettifyIBMModePage_24(byte[] pageResponse) =>
+        PrettifyIBMModePage_24(DecodeIBMModePage_24(pageResponse));
+
+    public static string PrettifyIBMModePage_24(IBM_ModePage_24? modePage)
+    {
+        if(!modePage.HasValue)
+            return null;
+
+        IBM_ModePage_24 page = modePage.Value;
+        var             sb   = new StringBuilder();
+
+        sb.AppendLine("IBM Vendor-Specific Control Mode Page:");
+
+        if(page.PS)
+            sb.AppendLine("\tParameters can be saved");
+
+        sb.AppendFormat("\tVendor-specific mode control: {0}", page.ModeControl);
+        sb.AppendFormat("\tVendor-specific velocity setting: {0}", page.VelocitySetting);
+
+        if(!page.EncryptionCapable)
+            return sb.ToString();
+
+        sb.AppendLine("\tDrive supports encryption");
+
+        if(page.EncryptionEnabled)
+            sb.AppendLine("\tDrive has encryption enabled");
+
+        return sb.ToString();
+    }
+    #endregion IBM Mode Page 0x24: Drive Capabilities Control Mode page
 }

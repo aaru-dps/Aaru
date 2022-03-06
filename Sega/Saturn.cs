@@ -38,208 +38,207 @@ using System.Text;
 using Aaru.Console;
 using Marshal = Aaru.Helpers.Marshal;
 
-namespace Aaru.Decoders.Sega
+namespace Aaru.Decoders.Sega;
+
+/// <summary>Represents the IP.BIN from a SEGA Saturn</summary>
+[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
+ SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+public static class Saturn
 {
-    /// <summary>Represents the IP.BIN from a SEGA Saturn</summary>
-    [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
-     SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
-    public static class Saturn
+    /// <summary>Decodes an IP.BIN sector in Saturn format</summary>
+    /// <param name="ipbin_sector">IP.BIN sector</param>
+    /// <returns>Decoded IP.BIN</returns>
+    public static IPBin? DecodeIPBin(byte[] ipbin_sector)
     {
-        /// <summary>Decodes an IP.BIN sector in Saturn format</summary>
-        /// <param name="ipbin_sector">IP.BIN sector</param>
-        /// <returns>Decoded IP.BIN</returns>
-        public static IPBin? DecodeIPBin(byte[] ipbin_sector)
-        {
-            if(ipbin_sector == null)
-                return null;
+        if(ipbin_sector == null)
+            return null;
 
-            if(ipbin_sector.Length < 512)
-                return null;
+        if(ipbin_sector.Length < 512)
+            return null;
 
-            IPBin ipbin = Marshal.ByteArrayToStructureLittleEndian<IPBin>(ipbin_sector);
+        IPBin ipbin = Marshal.ByteArrayToStructureLittleEndian<IPBin>(ipbin_sector);
 
-            AaruConsole.DebugWriteLine("Saturn IP.BIN Decoder", "saturn_ipbin.maker_id = \"{0}\"",
-                                       Encoding.ASCII.GetString(ipbin.maker_id));
+        AaruConsole.DebugWriteLine("Saturn IP.BIN Decoder", "saturn_ipbin.maker_id = \"{0}\"",
+                                   Encoding.ASCII.GetString(ipbin.maker_id));
 
-            AaruConsole.DebugWriteLine("Saturn IP.BIN Decoder", "saturn_ipbin.product_no = \"{0}\"",
-                                       Encoding.ASCII.GetString(ipbin.product_no));
+        AaruConsole.DebugWriteLine("Saturn IP.BIN Decoder", "saturn_ipbin.product_no = \"{0}\"",
+                                   Encoding.ASCII.GetString(ipbin.product_no));
 
-            AaruConsole.DebugWriteLine("Saturn IP.BIN Decoder", "saturn_ipbin.product_version = \"{0}\"",
-                                       Encoding.ASCII.GetString(ipbin.product_version));
+        AaruConsole.DebugWriteLine("Saturn IP.BIN Decoder", "saturn_ipbin.product_version = \"{0}\"",
+                                   Encoding.ASCII.GetString(ipbin.product_version));
 
-            AaruConsole.DebugWriteLine("Saturn IP.BIN Decoder", "saturn_ipbin.release_datedate = \"{0}\"",
-                                       Encoding.ASCII.GetString(ipbin.release_date));
+        AaruConsole.DebugWriteLine("Saturn IP.BIN Decoder", "saturn_ipbin.release_datedate = \"{0}\"",
+                                   Encoding.ASCII.GetString(ipbin.release_date));
 
-            AaruConsole.DebugWriteLine("Saturn IP.BIN Decoder", "saturn_ipbin.saturn_media = \"{0}\"",
-                                       Encoding.ASCII.GetString(ipbin.saturn_media));
+        AaruConsole.DebugWriteLine("Saturn IP.BIN Decoder", "saturn_ipbin.saturn_media = \"{0}\"",
+                                   Encoding.ASCII.GetString(ipbin.saturn_media));
 
-            AaruConsole.DebugWriteLine("Saturn IP.BIN Decoder", "saturn_ipbin.disc_no = {0}", (char)ipbin.disc_no);
+        AaruConsole.DebugWriteLine("Saturn IP.BIN Decoder", "saturn_ipbin.disc_no = {0}", (char)ipbin.disc_no);
 
-            AaruConsole.DebugWriteLine("Saturn IP.BIN Decoder", "saturn_ipbin.disc_no_separator = \"{0}\"",
-                                       (char)ipbin.disc_no_separator);
+        AaruConsole.DebugWriteLine("Saturn IP.BIN Decoder", "saturn_ipbin.disc_no_separator = \"{0}\"",
+                                   (char)ipbin.disc_no_separator);
 
-            AaruConsole.DebugWriteLine("Saturn IP.BIN Decoder", "saturn_ipbin.disc_total_nos = {0}",
-                                       (char)ipbin.disc_total_nos);
+        AaruConsole.DebugWriteLine("Saturn IP.BIN Decoder", "saturn_ipbin.disc_total_nos = {0}",
+                                   (char)ipbin.disc_total_nos);
 
-            AaruConsole.DebugWriteLine("Saturn IP.BIN Decoder", "saturn_ipbin.release_date = \"{0}\"",
-                                       Encoding.ASCII.GetString(ipbin.release_date));
+        AaruConsole.DebugWriteLine("Saturn IP.BIN Decoder", "saturn_ipbin.release_date = \"{0}\"",
+                                   Encoding.ASCII.GetString(ipbin.release_date));
 
-            AaruConsole.DebugWriteLine("Saturn IP.BIN Decoder", "saturn_ipbin.spare_space1 = \"{0}\"",
-                                       Encoding.ASCII.GetString(ipbin.spare_space1));
+        AaruConsole.DebugWriteLine("Saturn IP.BIN Decoder", "saturn_ipbin.spare_space1 = \"{0}\"",
+                                   Encoding.ASCII.GetString(ipbin.spare_space1));
 
-            AaruConsole.DebugWriteLine("Saturn IP.BIN Decoder", "saturn_ipbin.region_codes = \"{0}\"",
-                                       Encoding.ASCII.GetString(ipbin.region_codes));
+        AaruConsole.DebugWriteLine("Saturn IP.BIN Decoder", "saturn_ipbin.region_codes = \"{0}\"",
+                                   Encoding.ASCII.GetString(ipbin.region_codes));
 
-            AaruConsole.DebugWriteLine("Saturn IP.BIN Decoder", "saturn_ipbin.peripherals = \"{0}\"",
-                                       Encoding.ASCII.GetString(ipbin.peripherals));
+        AaruConsole.DebugWriteLine("Saturn IP.BIN Decoder", "saturn_ipbin.peripherals = \"{0}\"",
+                                   Encoding.ASCII.GetString(ipbin.peripherals));
 
-            AaruConsole.DebugWriteLine("Saturn IP.BIN Decoder", "saturn_ipbin.product_name = \"{0}\"",
-                                       Encoding.ASCII.GetString(ipbin.product_name));
+        AaruConsole.DebugWriteLine("Saturn IP.BIN Decoder", "saturn_ipbin.product_name = \"{0}\"",
+                                   Encoding.ASCII.GetString(ipbin.product_name));
 
-            return Encoding.ASCII.GetString(ipbin.SegaHardwareID) == "SEGA SEGASATURN " ? ipbin : (IPBin?)null;
-        }
+        return Encoding.ASCII.GetString(ipbin.SegaHardwareID) == "SEGA SEGASATURN " ? ipbin : (IPBin?)null;
+    }
 
-        /// <summary>Pretty prints a decoded IP.BIN in Saturn format</summary>
-        /// <param name="decoded">Decoded IP.BIN</param>
-        /// <returns>Description of the IP.BIN contents</returns>
-        public static string Prettify(IPBin? decoded)
-        {
-            if(decoded == null)
-                return null;
+    /// <summary>Pretty prints a decoded IP.BIN in Saturn format</summary>
+    /// <param name="decoded">Decoded IP.BIN</param>
+    /// <returns>Description of the IP.BIN contents</returns>
+    public static string Prettify(IPBin? decoded)
+    {
+        if(decoded == null)
+            return null;
 
-            IPBin ipbin = decoded.Value;
+        IPBin ipbin = decoded.Value;
 
-            var IPBinInformation = new StringBuilder();
+        var IPBinInformation = new StringBuilder();
 
-            IPBinInformation.AppendLine("--------------------------------");
-            IPBinInformation.AppendLine("SEGA IP.BIN INFORMATION:");
-            IPBinInformation.AppendLine("--------------------------------");
+        IPBinInformation.AppendLine("--------------------------------");
+        IPBinInformation.AppendLine("SEGA IP.BIN INFORMATION:");
+        IPBinInformation.AppendLine("--------------------------------");
 
-            // Decoding all data
-            DateTime    ipbindate;
-            CultureInfo provider = CultureInfo.InvariantCulture;
-            ipbindate = DateTime.ParseExact(Encoding.ASCII.GetString(ipbin.release_date), "yyyyMMdd", provider);
+        // Decoding all data
+        DateTime    ipbindate;
+        CultureInfo provider = CultureInfo.InvariantCulture;
+        ipbindate = DateTime.ParseExact(Encoding.ASCII.GetString(ipbin.release_date), "yyyyMMdd", provider);
 
-            IPBinInformation.AppendFormat("Product name: {0}", Encoding.ASCII.GetString(ipbin.product_name)).
-                             AppendLine();
+        IPBinInformation.AppendFormat("Product name: {0}", Encoding.ASCII.GetString(ipbin.product_name)).
+                         AppendLine();
 
-            IPBinInformation.AppendFormat("Product number: {0}", Encoding.ASCII.GetString(ipbin.product_no)).
-                             AppendLine();
+        IPBinInformation.AppendFormat("Product number: {0}", Encoding.ASCII.GetString(ipbin.product_no)).
+                         AppendLine();
 
-            IPBinInformation.AppendFormat("Product version: {0}", Encoding.ASCII.GetString(ipbin.product_version)).
-                             AppendLine();
+        IPBinInformation.AppendFormat("Product version: {0}", Encoding.ASCII.GetString(ipbin.product_version)).
+                         AppendLine();
 
-            IPBinInformation.AppendFormat("Release date: {0}", ipbindate).AppendLine();
+        IPBinInformation.AppendFormat("Release date: {0}", ipbindate).AppendLine();
 
-            IPBinInformation.AppendFormat("Disc number {0} of {1}", (char)ipbin.disc_no, (char)ipbin.disc_total_nos).
-                             AppendLine();
+        IPBinInformation.AppendFormat("Disc number {0} of {1}", (char)ipbin.disc_no, (char)ipbin.disc_total_nos).
+                         AppendLine();
 
-            IPBinInformation.AppendFormat("Peripherals:").AppendLine();
+        IPBinInformation.AppendFormat("Peripherals:").AppendLine();
 
-            foreach(byte peripheral in ipbin.peripherals)
-                switch((char)peripheral)
-                {
-                    case 'A':
-                        IPBinInformation.AppendLine("Game supports analog controller.");
+        foreach(byte peripheral in ipbin.peripherals)
+            switch((char)peripheral)
+            {
+                case 'A':
+                    IPBinInformation.AppendLine("Game supports analog controller.");
 
-                        break;
-                    case 'J':
-                        IPBinInformation.AppendLine("Game supports JoyPad.");
+                    break;
+                case 'J':
+                    IPBinInformation.AppendLine("Game supports JoyPad.");
 
-                        break;
-                    case 'K':
-                        IPBinInformation.AppendLine("Game supports keyboard.");
+                    break;
+                case 'K':
+                    IPBinInformation.AppendLine("Game supports keyboard.");
 
-                        break;
-                    case 'M':
-                        IPBinInformation.AppendLine("Game supports mouse.");
+                    break;
+                case 'M':
+                    IPBinInformation.AppendLine("Game supports mouse.");
 
-                        break;
-                    case 'S':
-                        IPBinInformation.AppendLine("Game supports analog steering controller.");
+                    break;
+                case 'S':
+                    IPBinInformation.AppendLine("Game supports analog steering controller.");
 
-                        break;
-                    case 'T':
-                        IPBinInformation.AppendLine("Game supports multitap.");
+                    break;
+                case 'T':
+                    IPBinInformation.AppendLine("Game supports multitap.");
 
-                        break;
-                    case ' ': break;
-                    default:
-                        IPBinInformation.AppendFormat("Game supports unknown peripheral {0}.", peripheral).AppendLine();
+                    break;
+                case ' ': break;
+                default:
+                    IPBinInformation.AppendFormat("Game supports unknown peripheral {0}.", peripheral).AppendLine();
 
-                        break;
-                }
+                    break;
+            }
 
-            IPBinInformation.AppendLine("Regions supported:");
+        IPBinInformation.AppendLine("Regions supported:");
 
-            foreach(byte region in ipbin.region_codes)
-                switch((char)region)
-                {
-                    case 'J':
-                        IPBinInformation.AppendLine("Japanese NTSC.");
+        foreach(byte region in ipbin.region_codes)
+            switch((char)region)
+            {
+                case 'J':
+                    IPBinInformation.AppendLine("Japanese NTSC.");
 
-                        break;
-                    case 'U':
-                        IPBinInformation.AppendLine("North America NTSC.");
+                    break;
+                case 'U':
+                    IPBinInformation.AppendLine("North America NTSC.");
 
-                        break;
-                    case 'E':
-                        IPBinInformation.AppendLine("Europe PAL.");
+                    break;
+                case 'E':
+                    IPBinInformation.AppendLine("Europe PAL.");
 
-                        break;
-                    case 'T':
-                        IPBinInformation.AppendLine("Asia NTSC.");
+                    break;
+                case 'T':
+                    IPBinInformation.AppendLine("Asia NTSC.");
 
-                        break;
-                    case ' ': break;
-                    default:
-                        IPBinInformation.AppendFormat("Game supports unknown region {0}.", region).AppendLine();
+                    break;
+                case ' ': break;
+                default:
+                    IPBinInformation.AppendFormat("Game supports unknown region {0}.", region).AppendLine();
 
-                        break;
-                }
+                    break;
+            }
 
-            return IPBinInformation.ToString();
-        }
+        return IPBinInformation.ToString();
+    }
 
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        public struct IPBin
-        {
-            /// <summary>Must be "SEGA SEGASATURN "</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public byte[] SegaHardwareID;
-            /// <summary>0x010, "SEGA ENTERPRISES"</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public byte[] maker_id;
-            /// <summary>0x020, Product number</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
-            public byte[] product_no;
-            /// <summary>0x02A, Product version</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)]
-            public byte[] product_version;
-            /// <summary>0x030, YYYYMMDD</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-            public byte[] release_date;
-            /// <summary>0x038, "CD-"</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-            public byte[] saturn_media;
-            /// <summary>0x03B, Disc number</summary>
-            public byte disc_no;
-            /// <summary>// 0x03C, '/'</summary>
-            public byte disc_no_separator;
-            /// <summary>// 0x03D, Total number of discs</summary>
-            public byte disc_total_nos;
-            /// <summary>0x03E, "  "</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
-            public byte[] spare_space1;
-            /// <summary>0x040, Region codes, space-filled</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public byte[] region_codes;
-            /// <summary>0x050, Supported peripherals, see above</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public byte[] peripherals;
-            /// <summary>0x060, Game name, space-filled</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 112)]
-            public byte[] product_name;
-        }
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    public struct IPBin
+    {
+        /// <summary>Must be "SEGA SEGASATURN "</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+        public byte[] SegaHardwareID;
+        /// <summary>0x010, "SEGA ENTERPRISES"</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+        public byte[] maker_id;
+        /// <summary>0x020, Product number</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
+        public byte[] product_no;
+        /// <summary>0x02A, Product version</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)]
+        public byte[] product_version;
+        /// <summary>0x030, YYYYMMDD</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+        public byte[] release_date;
+        /// <summary>0x038, "CD-"</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+        public byte[] saturn_media;
+        /// <summary>0x03B, Disc number</summary>
+        public byte disc_no;
+        /// <summary>// 0x03C, '/'</summary>
+        public byte disc_no_separator;
+        /// <summary>// 0x03D, Total number of discs</summary>
+        public byte disc_total_nos;
+        /// <summary>0x03E, "  "</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
+        public byte[] spare_space1;
+        /// <summary>0x040, Region codes, space-filled</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+        public byte[] region_codes;
+        /// <summary>0x050, Supported peripherals, see above</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+        public byte[] peripherals;
+        /// <summary>0x060, Game name, space-filled</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 112)]
+        public byte[] product_name;
     }
 }

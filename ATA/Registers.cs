@@ -32,83 +32,82 @@
 
 using System.Runtime.InteropServices;
 
-namespace Aaru.Decoders.ATA
+namespace Aaru.Decoders.ATA;
+
+[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
+public struct AtaRegistersChs
 {
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
-    public struct AtaRegistersChs
-    {
-        public byte Feature;
-        public byte SectorCount;
-        public byte Sector;
-        public byte CylinderLow;
-        public byte CylinderHigh;
-        public byte DeviceHead;
-        public byte Command;
-    }
+    public byte Feature;
+    public byte SectorCount;
+    public byte Sector;
+    public byte CylinderLow;
+    public byte CylinderHigh;
+    public byte DeviceHead;
+    public byte Command;
+}
 
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
-    public struct AtaRegistersLba28
-    {
-        public byte Feature;
-        public byte SectorCount;
-        public byte LbaLow;
-        public byte LbaMid;
-        public byte LbaHigh;
-        public byte DeviceHead;
-        public byte Command;
-    }
+[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
+public struct AtaRegistersLba28
+{
+    public byte Feature;
+    public byte SectorCount;
+    public byte LbaLow;
+    public byte LbaMid;
+    public byte LbaHigh;
+    public byte DeviceHead;
+    public byte Command;
+}
 
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
-    public struct AtaRegistersLba48
-    {
-        public ushort Feature;
-        public ushort SectorCount;
-        public byte   LbaLowPrevious;
-        public byte   LbaLowCurrent;
-        public byte   LbaMidPrevious;
-        public byte   LbaMidCurrent;
-        public byte   LbaHighPrevious;
-        public byte   LbaHighCurrent;
-        public byte   DeviceHead;
-        public byte   Command;
-    }
+[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
+public struct AtaRegistersLba48
+{
+    public ushort Feature;
+    public ushort SectorCount;
+    public byte   LbaLowPrevious;
+    public byte   LbaLowCurrent;
+    public byte   LbaMidPrevious;
+    public byte   LbaMidCurrent;
+    public byte   LbaHighPrevious;
+    public byte   LbaHighCurrent;
+    public byte   DeviceHead;
+    public byte   Command;
+}
 
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
-    public struct AtaErrorRegistersChs
-    {
-        public byte Status;
-        public byte Error;
-        public byte SectorCount;
-        public byte Sector;
-        public byte CylinderLow;
-        public byte CylinderHigh;
-        public byte DeviceHead;
-    }
+[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
+public struct AtaErrorRegistersChs
+{
+    public byte Status;
+    public byte Error;
+    public byte SectorCount;
+    public byte Sector;
+    public byte CylinderLow;
+    public byte CylinderHigh;
+    public byte DeviceHead;
+}
 
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
-    public struct AtaErrorRegistersLba28
-    {
-        public byte Status;
-        public byte Error;
-        public byte SectorCount;
-        public byte LbaLow;
-        public byte LbaMid;
-        public byte LbaHigh;
-        public byte DeviceHead;
-    }
+[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
+public struct AtaErrorRegistersLba28
+{
+    public byte Status;
+    public byte Error;
+    public byte SectorCount;
+    public byte LbaLow;
+    public byte LbaMid;
+    public byte LbaHigh;
+    public byte DeviceHead;
+}
 
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
-    public struct AtaErrorRegistersLba48
-    {
-        public byte   Status;
-        public byte   Error;
-        public ushort SectorCount;
-        public byte   LbaLowPrevious;
-        public byte   LbaLowCurrent;
-        public byte   LbaMidPrevious;
-        public byte   LbaMidCurrent;
-        public byte   LbaHighPrevious;
-        public byte   LbaHighCurrent;
-        public byte   DeviceHead;
-    }
+[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
+public struct AtaErrorRegistersLba48
+{
+    public byte   Status;
+    public byte   Error;
+    public ushort SectorCount;
+    public byte   LbaLowPrevious;
+    public byte   LbaLowCurrent;
+    public byte   LbaMidPrevious;
+    public byte   LbaMidCurrent;
+    public byte   LbaHighPrevious;
+    public byte   LbaHighCurrent;
+    public byte   DeviceHead;
 }

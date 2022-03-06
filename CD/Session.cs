@@ -35,189 +35,188 @@ using System.Text;
 using Aaru.Console;
 using Aaru.Helpers;
 
-namespace Aaru.Decoders.CD
+namespace Aaru.Decoders.CD;
+
+// Information from the following standards:
+// ANSI X3.304-1997
+// T10/1048-D revision 9.0
+// T10/1048-D revision 10a
+// T10/1228-D revision 7.0c
+// T10/1228-D revision 11a
+// T10/1363-D revision 10g
+// T10/1545-D revision 1d
+// T10/1545-D revision 5
+// T10/1545-D revision 5a
+// T10/1675-D revision 2c
+// T10/1675-D revision 4 T10/1836-D revision 2g
+[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
+ SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+public static class Session
 {
-    // Information from the following standards:
-    // ANSI X3.304-1997
-    // T10/1048-D revision 9.0
-    // T10/1048-D revision 10a
-    // T10/1228-D revision 7.0c
-    // T10/1228-D revision 11a
-    // T10/1363-D revision 10g
-    // T10/1545-D revision 1d
-    // T10/1545-D revision 5
-    // T10/1545-D revision 5a
-    // T10/1675-D revision 2c
-    // T10/1675-D revision 4 T10/1836-D revision 2g
-    [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
-     SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
-    public static class Session
+    public static CDSessionInfo? Decode(byte[] CDSessionInfoResponse)
     {
-        public static CDSessionInfo? Decode(byte[] CDSessionInfoResponse)
+        if(CDSessionInfoResponse        == null ||
+           CDSessionInfoResponse.Length <= 4)
+            return null;
+
+        var decoded = new CDSessionInfo
         {
-            if(CDSessionInfoResponse        == null ||
-               CDSessionInfoResponse.Length <= 4)
-                return null;
+            DataLength           = BigEndianBitConverter.ToUInt16(CDSessionInfoResponse, 0),
+            FirstCompleteSession = CDSessionInfoResponse[2],
+            LastCompleteSession  = CDSessionInfoResponse[3]
+        };
 
-            var decoded = new CDSessionInfo
-            {
-                DataLength           = BigEndianBitConverter.ToUInt16(CDSessionInfoResponse, 0),
-                FirstCompleteSession = CDSessionInfoResponse[2],
-                LastCompleteSession  = CDSessionInfoResponse[3]
-            };
+        decoded.TrackDescriptors = new TrackDataDescriptor[(decoded.DataLength - 2) / 8];
 
-            decoded.TrackDescriptors = new TrackDataDescriptor[(decoded.DataLength - 2) / 8];
+        if(decoded.DataLength + 2 != CDSessionInfoResponse.Length)
+        {
+            AaruConsole.DebugWriteLine("CD Session Info decoder",
+                                       "Expected CDSessionInfo size ({0} bytes) is not received size ({1} bytes), not decoding",
+                                       decoded.DataLength + 2, CDSessionInfoResponse.Length);
 
-            if(decoded.DataLength + 2 != CDSessionInfoResponse.Length)
-            {
-                AaruConsole.DebugWriteLine("CD Session Info decoder",
-                                           "Expected CDSessionInfo size ({0} bytes) is not received size ({1} bytes), not decoding",
-                                           decoded.DataLength + 2, CDSessionInfoResponse.Length);
-
-                return null;
-            }
-
-            for(int i = 0; i < (decoded.DataLength - 2) / 8; i++)
-            {
-                decoded.TrackDescriptors[i].Reserved1   = CDSessionInfoResponse[0 + (i * 8) + 4];
-                decoded.TrackDescriptors[i].ADR         = (byte)((CDSessionInfoResponse[1 + (i * 8) + 4] & 0xF0) >> 4);
-                decoded.TrackDescriptors[i].CONTROL     = (byte)(CDSessionInfoResponse[1 + (i * 8) + 4] & 0x0F);
-                decoded.TrackDescriptors[i].TrackNumber = CDSessionInfoResponse[2 + (i * 8) + 4];
-                decoded.TrackDescriptors[i].Reserved2   = CDSessionInfoResponse[3 + (i * 8) + 4];
-
-                decoded.TrackDescriptors[i].TrackStartAddress =
-                    BigEndianBitConverter.ToUInt32(CDSessionInfoResponse, 4 + (i * 8) + 4);
-            }
-
-            return decoded;
+            return null;
         }
 
-        public static string Prettify(CDSessionInfo? CDSessionInfoResponse)
+        for(int i = 0; i < (decoded.DataLength - 2) / 8; i++)
         {
-            if(CDSessionInfoResponse == null)
-                return null;
+            decoded.TrackDescriptors[i].Reserved1   = CDSessionInfoResponse[0 + (i * 8) + 4];
+            decoded.TrackDescriptors[i].ADR         = (byte)((CDSessionInfoResponse[1 + (i * 8) + 4] & 0xF0) >> 4);
+            decoded.TrackDescriptors[i].CONTROL     = (byte)(CDSessionInfoResponse[1 + (i * 8) + 4] & 0x0F);
+            decoded.TrackDescriptors[i].TrackNumber = CDSessionInfoResponse[2 + (i * 8) + 4];
+            decoded.TrackDescriptors[i].Reserved2   = CDSessionInfoResponse[3 + (i * 8) + 4];
 
-            CDSessionInfo response = CDSessionInfoResponse.Value;
+            decoded.TrackDescriptors[i].TrackStartAddress =
+                BigEndianBitConverter.ToUInt32(CDSessionInfoResponse, 4 + (i * 8) + 4);
+        }
 
-            var sb = new StringBuilder();
+        return decoded;
+    }
 
-            sb.AppendFormat("First complete session number: {0}", response.FirstCompleteSession).AppendLine();
-            sb.AppendFormat("Last complete session number: {0}", response.LastCompleteSession).AppendLine();
+    public static string Prettify(CDSessionInfo? CDSessionInfoResponse)
+    {
+        if(CDSessionInfoResponse == null)
+            return null;
 
-            foreach(TrackDataDescriptor descriptor in response.TrackDescriptors)
+        CDSessionInfo response = CDSessionInfoResponse.Value;
+
+        var sb = new StringBuilder();
+
+        sb.AppendFormat("First complete session number: {0}", response.FirstCompleteSession).AppendLine();
+        sb.AppendFormat("Last complete session number: {0}", response.LastCompleteSession).AppendLine();
+
+        foreach(TrackDataDescriptor descriptor in response.TrackDescriptors)
+        {
+            sb.AppendFormat("First track number in last complete session: {0}", descriptor.TrackNumber).
+               AppendLine();
+
+            sb.AppendFormat("Track starts at LBA {0}, or MSF {1:X2}:{2:X2}:{3:X2}", descriptor.TrackStartAddress,
+                            (descriptor.TrackStartAddress & 0x0000FF00) >> 8,
+                            (descriptor.TrackStartAddress & 0x00FF0000) >> 16,
+                            (descriptor.TrackStartAddress & 0xFF000000) >> 24).AppendLine();
+
+            switch((TocAdr)descriptor.ADR)
             {
-                sb.AppendFormat("First track number in last complete session: {0}", descriptor.TrackNumber).
-                   AppendLine();
+                case TocAdr.NoInformation:
+                    sb.AppendLine("Q subchannel mode not given");
 
-                sb.AppendFormat("Track starts at LBA {0}, or MSF {1:X2}:{2:X2}:{3:X2}", descriptor.TrackStartAddress,
-                                (descriptor.TrackStartAddress & 0x0000FF00) >> 8,
-                                (descriptor.TrackStartAddress & 0x00FF0000) >> 16,
-                                (descriptor.TrackStartAddress & 0xFF000000) >> 24).AppendLine();
+                    break;
+                case TocAdr.CurrentPosition:
+                    sb.AppendLine("Q subchannel stores current position");
 
-                switch((TocAdr)descriptor.ADR)
+                    break;
+                case TocAdr.ISRC:
+                    sb.AppendLine("Q subchannel stores ISRC");
+
+                    break;
+                case TocAdr.MediaCatalogNumber:
+                    sb.AppendLine("Q subchannel stores media catalog number");
+
+                    break;
+            }
+
+            if((descriptor.CONTROL & (byte)TocControl.ReservedMask) == (byte)TocControl.ReservedMask)
+                sb.AppendFormat("Reserved flags 0x{0:X2} set", descriptor.CONTROL).AppendLine();
+            else
+            {
+                switch((TocControl)(descriptor.CONTROL & 0x0D))
                 {
-                    case TocAdr.NoInformation:
-                        sb.AppendLine("Q subchannel mode not given");
+                    case TocControl.TwoChanNoPreEmph:
+                        sb.AppendLine("Stereo audio track with no pre-emphasis");
 
                         break;
-                    case TocAdr.CurrentPosition:
-                        sb.AppendLine("Q subchannel stores current position");
+                    case TocControl.TwoChanPreEmph:
+                        sb.AppendLine("Stereo audio track with 50/15 μs pre-emphasis");
 
                         break;
-                    case TocAdr.ISRC:
-                        sb.AppendLine("Q subchannel stores ISRC");
+                    case TocControl.FourChanNoPreEmph:
+                        sb.AppendLine("Quadraphonic audio track with no pre-emphasis");
 
                         break;
-                    case TocAdr.MediaCatalogNumber:
-                        sb.AppendLine("Q subchannel stores media catalog number");
+                    case TocControl.FourChanPreEmph:
+                        sb.AppendLine("Stereo audio track with 50/15 μs pre-emphasis");
+
+                        break;
+                    case TocControl.DataTrack:
+                        sb.AppendLine("Data track, recorded uninterrupted");
+
+                        break;
+                    case TocControl.DataTrackIncremental:
+                        sb.AppendLine("Data track, recorded incrementally");
 
                         break;
                 }
 
-                if((descriptor.CONTROL & (byte)TocControl.ReservedMask) == (byte)TocControl.ReservedMask)
-                    sb.AppendFormat("Reserved flags 0x{0:X2} set", descriptor.CONTROL).AppendLine();
-                else
-                {
-                    switch((TocControl)(descriptor.CONTROL & 0x0D))
-                    {
-                        case TocControl.TwoChanNoPreEmph:
-                            sb.AppendLine("Stereo audio track with no pre-emphasis");
+                sb.AppendLine((descriptor.CONTROL & (byte)TocControl.CopyPermissionMask) ==
+                              (byte)TocControl.CopyPermissionMask ? "Digital copy of track is permitted"
+                                  : "Digital copy of track is prohibited");
 
-                            break;
-                        case TocControl.TwoChanPreEmph:
-                            sb.AppendLine("Stereo audio track with 50/15 μs pre-emphasis");
+            #if DEBUG
+                if(descriptor.Reserved1 != 0)
+                    sb.AppendFormat("Reserved1 = 0x{0:X2}", descriptor.Reserved1).AppendLine();
 
-                            break;
-                        case TocControl.FourChanNoPreEmph:
-                            sb.AppendLine("Quadraphonic audio track with no pre-emphasis");
+                if(descriptor.Reserved2 != 0)
+                    sb.AppendFormat("Reserved2 = 0x{0:X2}", descriptor.Reserved2).AppendLine();
+            #endif
 
-                            break;
-                        case TocControl.FourChanPreEmph:
-                            sb.AppendLine("Stereo audio track with 50/15 μs pre-emphasis");
-
-                            break;
-                        case TocControl.DataTrack:
-                            sb.AppendLine("Data track, recorded uninterrupted");
-
-                            break;
-                        case TocControl.DataTrackIncremental:
-                            sb.AppendLine("Data track, recorded incrementally");
-
-                            break;
-                    }
-
-                    sb.AppendLine((descriptor.CONTROL & (byte)TocControl.CopyPermissionMask) ==
-                                  (byte)TocControl.CopyPermissionMask ? "Digital copy of track is permitted"
-                                      : "Digital copy of track is prohibited");
-
-                #if DEBUG
-                    if(descriptor.Reserved1 != 0)
-                        sb.AppendFormat("Reserved1 = 0x{0:X2}", descriptor.Reserved1).AppendLine();
-
-                    if(descriptor.Reserved2 != 0)
-                        sb.AppendFormat("Reserved2 = 0x{0:X2}", descriptor.Reserved2).AppendLine();
-                #endif
-
-                    sb.AppendLine();
-                }
+                sb.AppendLine();
             }
-
-            return sb.ToString();
         }
 
-        public static string Prettify(byte[] CDSessionInfoResponse)
-        {
-            CDSessionInfo? decoded = Decode(CDSessionInfoResponse);
+        return sb.ToString();
+    }
 
-            return Prettify(decoded);
-        }
+    public static string Prettify(byte[] CDSessionInfoResponse)
+    {
+        CDSessionInfo? decoded = Decode(CDSessionInfoResponse);
 
-        public struct CDSessionInfo
-        {
-            /// <summary>Total size of returned session information minus this field</summary>
-            public ushort DataLength;
-            /// <summary>First track number in hex</summary>
-            public byte FirstCompleteSession;
-            /// <summary>Last track number in hex</summary>
-            public byte LastCompleteSession;
-            /// <summary>Track descriptors</summary>
-            public TrackDataDescriptor[] TrackDescriptors;
-        }
+        return Prettify(decoded);
+    }
 
-        public struct TrackDataDescriptor
-        {
-            /// <summary>Byte 0 Reserved</summary>
-            public byte Reserved1;
-            /// <summary>Byte 1, bits 7 to 4 Type of information in Q subchannel of block where this TOC entry was found</summary>
-            public byte ADR;
-            /// <summary>Byte 1, bits 3 to 0 Track attributes</summary>
-            public byte CONTROL;
-            /// <summary>Byte 2 First track number in last complete session</summary>
-            public byte TrackNumber;
-            /// <summary>Byte 3 Reserved</summary>
-            public byte Reserved2;
-            /// <summary>Bytes 4 to 7 First track number in last complete session start address in LBA or in MSF</summary>
-            public uint TrackStartAddress;
-        }
+    public struct CDSessionInfo
+    {
+        /// <summary>Total size of returned session information minus this field</summary>
+        public ushort DataLength;
+        /// <summary>First track number in hex</summary>
+        public byte FirstCompleteSession;
+        /// <summary>Last track number in hex</summary>
+        public byte LastCompleteSession;
+        /// <summary>Track descriptors</summary>
+        public TrackDataDescriptor[] TrackDescriptors;
+    }
+
+    public struct TrackDataDescriptor
+    {
+        /// <summary>Byte 0 Reserved</summary>
+        public byte Reserved1;
+        /// <summary>Byte 1, bits 7 to 4 Type of information in Q subchannel of block where this TOC entry was found</summary>
+        public byte ADR;
+        /// <summary>Byte 1, bits 3 to 0 Track attributes</summary>
+        public byte CONTROL;
+        /// <summary>Byte 2 First track number in last complete session</summary>
+        public byte TrackNumber;
+        /// <summary>Byte 3 Reserved</summary>
+        public byte Reserved2;
+        /// <summary>Bytes 4 to 7 First track number in last complete session start address in LBA or in MSF</summary>
+        public uint TrackStartAddress;
     }
 }

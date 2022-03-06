@@ -30,20 +30,19 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Decoders.MMC
+namespace Aaru.Decoders.MMC;
+
+/// <summary>Decodes MultiMediaCard vendors</summary>
+public static class VendorString
 {
-    /// <summary>Decodes MultiMediaCard vendors</summary>
-    public static class VendorString
+    /// <summary>Converts the byte value of a MultiMediaCard vendor ID to the manufacturer's name string</summary>
+    /// <param name="mmcVendorId">MMC vendor ID</param>
+    /// <returns>Manufacturer</returns>
+    public static string Prettify(byte mmcVendorId) => mmcVendorId switch
     {
-        /// <summary>Converts the byte value of a MultiMediaCard vendor ID to the manufacturer's name string</summary>
-        /// <param name="mmcVendorId">MMC vendor ID</param>
-        /// <returns>Manufacturer</returns>
-        public static string Prettify(byte mmcVendorId) => mmcVendorId switch
-        {
-            0x07 => "Nokia",
-            0x15 => "Samsung",
-            0x2C => "extreMEmory",
-            _    => $"Unknown manufacturer ID 0x{mmcVendorId:X2}"
-        };
-    }
+        0x07 => "Nokia",
+        0x15 => "Samsung",
+        0x2C => "extreMEmory",
+        _    => $"Unknown manufacturer ID 0x{mmcVendorId:X2}"
+    };
 }

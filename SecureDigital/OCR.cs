@@ -35,110 +35,109 @@ using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Aaru.Helpers;
 
-namespace Aaru.Decoders.SecureDigital
+namespace Aaru.Decoders.SecureDigital;
+
+[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
+ SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), SuppressMessage("ReSharper", "UnassignedField.Global"),
+ SuppressMessage("ReSharper", "NotAccessedField.Global")]
+public class OCR
 {
-    [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
-     SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), SuppressMessage("ReSharper", "UnassignedField.Global"),
-     SuppressMessage("ReSharper", "NotAccessedField.Global")]
-    public class OCR
+    public bool CCS;
+    public bool LowPower;
+    public bool OneEight;
+    public bool PowerUp;
+    public bool ThreeFive;
+    public bool ThreeFour;
+    public bool ThreeOne;
+    public bool ThreeThree;
+    public bool ThreeTwo;
+    public bool ThreeZero;
+    public bool TwoEight;
+    public bool TwoNine;
+    public bool TwoSeven;
+    public bool UHS;
+}
+
+[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+public static partial class Decoders
+{
+    public static OCR DecodeOCR(uint response)
     {
-        public bool CCS;
-        public bool LowPower;
-        public bool OneEight;
-        public bool PowerUp;
-        public bool ThreeFive;
-        public bool ThreeFour;
-        public bool ThreeOne;
-        public bool ThreeThree;
-        public bool ThreeTwo;
-        public bool ThreeZero;
-        public bool TwoEight;
-        public bool TwoNine;
-        public bool TwoSeven;
-        public bool UHS;
+        response = Swapping.Swap(response);
+
+        return new OCR
+        {
+            PowerUp    = (response & 0x80000000) == 0x80000000,
+            CCS        = (response & 0x40000000) == 0x40000000,
+            UHS        = (response & 0x20000000) == 0x20000000,
+            OneEight   = (response & 0x01000000) == 0x01000000,
+            ThreeFive  = (response & 0x00800000) == 0x00800000,
+            ThreeFour  = (response & 0x00400000) == 0x00400000,
+            ThreeThree = (response & 0x00200000) == 0x00200000,
+            ThreeTwo   = (response & 0x00100000) == 0x00100000,
+            ThreeOne   = (response & 0x00080000) == 0x00080000,
+            ThreeZero  = (response & 0x00040000) == 0x00040000,
+            TwoNine    = (response & 0x00020000) == 0x00020000,
+            TwoEight   = (response & 0x00010000) == 0x00010000,
+            TwoSeven   = (response & 0x00008000) == 0x00008000,
+            LowPower   = (response & 0x00000080) == 0x00000080
+        };
     }
 
-    [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
-    public static partial class Decoders
+    public static OCR DecodeOCR(byte[] response) =>
+        response?.Length != 4 ? null : DecodeOCR(BitConverter.ToUInt32(response, 0));
+
+    public static string PrettifyOCR(OCR ocr)
     {
-        public static OCR DecodeOCR(uint response)
-        {
-            response = Swapping.Swap(response);
+        if(ocr == null)
+            return null;
 
-            return new OCR
-            {
-                PowerUp    = (response & 0x80000000) == 0x80000000,
-                CCS        = (response & 0x40000000) == 0x40000000,
-                UHS        = (response & 0x20000000) == 0x20000000,
-                OneEight   = (response & 0x01000000) == 0x01000000,
-                ThreeFive  = (response & 0x00800000) == 0x00800000,
-                ThreeFour  = (response & 0x00400000) == 0x00400000,
-                ThreeThree = (response & 0x00200000) == 0x00200000,
-                ThreeTwo   = (response & 0x00100000) == 0x00100000,
-                ThreeOne   = (response & 0x00080000) == 0x00080000,
-                ThreeZero  = (response & 0x00040000) == 0x00040000,
-                TwoNine    = (response & 0x00020000) == 0x00020000,
-                TwoEight   = (response & 0x00010000) == 0x00010000,
-                TwoSeven   = (response & 0x00008000) == 0x00008000,
-                LowPower   = (response & 0x00000080) == 0x00000080
-            };
-        }
+        var sb = new StringBuilder();
+        sb.AppendLine("SecureDigital Operation Conditions Register:");
 
-        public static OCR DecodeOCR(byte[] response) =>
-            response?.Length != 4 ? null : DecodeOCR(BitConverter.ToUInt32(response, 0));
+        if(!ocr.PowerUp)
+            sb.AppendLine("\tDevice is powering up");
 
-        public static string PrettifyOCR(OCR ocr)
-        {
-            if(ocr == null)
-                return null;
+        if(ocr.CCS)
+            sb.AppendLine("\tDevice is SDHC, SDXC or higher");
 
-            var sb = new StringBuilder();
-            sb.AppendLine("SecureDigital Operation Conditions Register:");
+        if(ocr.UHS)
+            sb.AppendLine("\tDevice is UHS-II or higher");
 
-            if(!ocr.PowerUp)
-                sb.AppendLine("\tDevice is powering up");
+        if(ocr.ThreeFive)
+            sb.AppendLine("\tDevice can work with supply 3.5~3.6V");
 
-            if(ocr.CCS)
-                sb.AppendLine("\tDevice is SDHC, SDXC or higher");
+        if(ocr.ThreeFour)
+            sb.AppendLine("\tDevice can work with supply 3.4~3.5V");
 
-            if(ocr.UHS)
-                sb.AppendLine("\tDevice is UHS-II or higher");
+        if(ocr.ThreeThree)
+            sb.AppendLine("\tDevice can work with supply 3.3~3.4V");
 
-            if(ocr.ThreeFive)
-                sb.AppendLine("\tDevice can work with supply 3.5~3.6V");
+        if(ocr.ThreeTwo)
+            sb.AppendLine("\tDevice can work with supply 3.2~3.3V");
 
-            if(ocr.ThreeFour)
-                sb.AppendLine("\tDevice can work with supply 3.4~3.5V");
+        if(ocr.ThreeOne)
+            sb.AppendLine("\tDevice can work with supply 3.1~3.2V");
 
-            if(ocr.ThreeThree)
-                sb.AppendLine("\tDevice can work with supply 3.3~3.4V");
+        if(ocr.TwoNine)
+            sb.AppendLine("\tDevice can work with supply 2.9~3.0V");
 
-            if(ocr.ThreeTwo)
-                sb.AppendLine("\tDevice can work with supply 3.2~3.3V");
+        if(ocr.TwoEight)
+            sb.AppendLine("\tDevice can work with supply 2.8~2.9V");
 
-            if(ocr.ThreeOne)
-                sb.AppendLine("\tDevice can work with supply 3.1~3.2V");
+        if(ocr.TwoSeven)
+            sb.AppendLine("\tDevice can work with supply 2.7~2.8V");
 
-            if(ocr.TwoNine)
-                sb.AppendLine("\tDevice can work with supply 2.9~3.0V");
+        if(ocr.OneEight)
+            sb.AppendLine("\tDevice can switch to work with 1.8V supply");
 
-            if(ocr.TwoEight)
-                sb.AppendLine("\tDevice can work with supply 2.8~2.9V");
+        if(ocr.LowPower)
+            sb.AppendLine("\tDevice is in low power mode");
 
-            if(ocr.TwoSeven)
-                sb.AppendLine("\tDevice can work with supply 2.7~2.8V");
-
-            if(ocr.OneEight)
-                sb.AppendLine("\tDevice can switch to work with 1.8V supply");
-
-            if(ocr.LowPower)
-                sb.AppendLine("\tDevice is in low power mode");
-
-            return sb.ToString();
-        }
-
-        public static string PrettifyOCR(byte[] response) => PrettifyOCR(DecodeOCR(response));
-
-        public static string PrettifyOCR(uint response) => PrettifyOCR(DecodeOCR(response));
+        return sb.ToString();
     }
+
+    public static string PrettifyOCR(byte[] response) => PrettifyOCR(DecodeOCR(response));
+
+    public static string PrettifyOCR(uint response) => PrettifyOCR(DecodeOCR(response));
 }

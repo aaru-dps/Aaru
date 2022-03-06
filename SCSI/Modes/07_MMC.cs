@@ -33,160 +33,159 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
-namespace Aaru.Decoders.SCSI
+namespace Aaru.Decoders.SCSI;
+
+[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
+ SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+public static partial class Modes
 {
-    [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
-     SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
-    public static partial class Modes
+    #region Mode Page 0x07: Verify error recovery page for MultiMedia Devices
+    /// <summary>Verify error recovery page for MultiMedia Devices Page code 0x07 8 bytes in SCSI-2, MMC-1</summary>
+    public struct ModePage_07_MMC
     {
-        #region Mode Page 0x07: Verify error recovery page for MultiMedia Devices
-        /// <summary>Verify error recovery page for MultiMedia Devices Page code 0x07 8 bytes in SCSI-2, MMC-1</summary>
-        public struct ModePage_07_MMC
-        {
-            /// <summary>Parameters can be saved</summary>
-            public bool PS;
-            /// <summary>Error recovery parameter</summary>
-            public byte Parameter;
-            /// <summary>How many times to retry a verify operation</summary>
-            public byte VerifyRetryCount;
-        }
-
-        public static ModePage_07_MMC? DecodeModePage_07_MMC(byte[] pageResponse)
-        {
-            if((pageResponse?[0] & 0x40) == 0x40)
-                return null;
-
-            if((pageResponse?[0] & 0x3F) != 0x07)
-                return null;
-
-            if(pageResponse[1] + 2 != pageResponse.Length)
-                return null;
-
-            if(pageResponse.Length < 8)
-                return null;
-
-            var decoded = new ModePage_07_MMC();
-
-            decoded.PS               |= (pageResponse[0] & 0x80) == 0x80;
-            decoded.Parameter        =  pageResponse[2];
-            decoded.VerifyRetryCount =  pageResponse[3];
-
-            return decoded;
-        }
-
-        public static string PrettifyModePage_07_MMC(byte[] pageResponse) =>
-            PrettifyModePage_07_MMC(DecodeModePage_07_MMC(pageResponse));
-
-        public static string PrettifyModePage_07_MMC(ModePage_07_MMC? modePage)
-        {
-            if(!modePage.HasValue)
-                return null;
-
-            ModePage_07_MMC page = modePage.Value;
-            var             sb   = new StringBuilder();
-
-            sb.AppendLine("SCSI Verify error recovery page for MultiMedia Devices:");
-
-            if(page.PS)
-                sb.AppendLine("\tParameters can be saved");
-
-            if(page.VerifyRetryCount > 0)
-                sb.AppendFormat("\tDrive will repeat verify operations {0} times", page.VerifyRetryCount).AppendLine();
-
-            string AllUsed              = "\tAll available recovery procedures will be used.\n";
-            string CIRCRetriesUsed      = "\tOnly retries and CIRC are used.\n";
-            string RetriesUsed          = "\tOnly retries are used.\n";
-            string RecoveredNotReported = "\tRecovered errors will not be reported.\n";
-            string RecoveredReported    = "\tRecovered errors will be reported.\n";
-            string RecoveredAbort       = "\tRecovered errors will be reported and aborted with CHECK CONDITION.\n";
-            string UnrecECCAbort        = "\tUnrecovered ECC errors will return CHECK CONDITION.";
-            string UnrecCIRCAbort       = "\tUnrecovered CIRC errors will return CHECK CONDITION.";
-            string UnrecECCNotAbort     = "\tUnrecovered ECC errors will not abort the transfer.";
-            string UnrecCIRCNotAbort    = "\tUnrecovered CIRC errors will not abort the transfer.";
-
-            string UnrecECCAbortData = "\tUnrecovered ECC errors will return CHECK CONDITION and the uncorrected data.";
-
-            string UnrecCIRCAbortData =
-                "\tUnrecovered CIRC errors will return CHECK CONDITION and the uncorrected data.";
-
-            switch(page.Parameter)
-            {
-                case 0x00:
-                    sb.AppendLine(AllUsed + RecoveredNotReported + UnrecECCAbort);
-
-                    break;
-                case 0x01:
-                    sb.AppendLine(CIRCRetriesUsed + RecoveredNotReported + UnrecCIRCAbort);
-
-                    break;
-                case 0x04:
-                    sb.AppendLine(AllUsed + RecoveredReported + UnrecECCAbort);
-
-                    break;
-                case 0x05:
-                    sb.AppendLine(CIRCRetriesUsed + RecoveredReported + UnrecCIRCAbort);
-
-                    break;
-                case 0x06:
-                    sb.AppendLine(AllUsed + RecoveredAbort + UnrecECCAbort);
-
-                    break;
-                case 0x07:
-                    sb.AppendLine(RetriesUsed + RecoveredAbort + UnrecCIRCAbort);
-
-                    break;
-                case 0x10:
-                    sb.AppendLine(AllUsed + RecoveredNotReported + UnrecECCNotAbort);
-
-                    break;
-                case 0x11:
-                    sb.AppendLine(CIRCRetriesUsed + RecoveredNotReported + UnrecCIRCNotAbort);
-
-                    break;
-                case 0x14:
-                    sb.AppendLine(AllUsed + RecoveredReported + UnrecECCNotAbort);
-
-                    break;
-                case 0x15:
-                    sb.AppendLine(CIRCRetriesUsed + RecoveredReported + UnrecCIRCNotAbort);
-
-                    break;
-                case 0x20:
-                    sb.AppendLine(AllUsed + RecoveredNotReported + UnrecECCAbortData);
-
-                    break;
-                case 0x21:
-                    sb.AppendLine(CIRCRetriesUsed + RecoveredNotReported + UnrecCIRCAbortData);
-
-                    break;
-                case 0x24:
-                    sb.AppendLine(AllUsed + RecoveredReported + UnrecECCAbortData);
-
-                    break;
-                case 0x25:
-                    sb.AppendLine(CIRCRetriesUsed + RecoveredReported + UnrecCIRCAbortData);
-
-                    break;
-                case 0x26:
-                    sb.AppendLine(AllUsed + RecoveredAbort + UnrecECCAbortData);
-
-                    break;
-                case 0x27:
-                    sb.AppendLine(RetriesUsed + RecoveredAbort + UnrecCIRCAbortData);
-
-                    break;
-                case 0x30: goto case 0x10;
-                case 0x31: goto case 0x11;
-                case 0x34: goto case 0x14;
-                case 0x35: goto case 0x15;
-                default:
-                    sb.AppendFormat("Unknown recovery parameter 0x{0:X2}", page.Parameter).AppendLine();
-
-                    break;
-            }
-
-            return sb.ToString();
-        }
-        #endregion Mode Page 0x07: Verify error recovery page for MultiMedia Devices
+        /// <summary>Parameters can be saved</summary>
+        public bool PS;
+        /// <summary>Error recovery parameter</summary>
+        public byte Parameter;
+        /// <summary>How many times to retry a verify operation</summary>
+        public byte VerifyRetryCount;
     }
+
+    public static ModePage_07_MMC? DecodeModePage_07_MMC(byte[] pageResponse)
+    {
+        if((pageResponse?[0] & 0x40) == 0x40)
+            return null;
+
+        if((pageResponse?[0] & 0x3F) != 0x07)
+            return null;
+
+        if(pageResponse[1] + 2 != pageResponse.Length)
+            return null;
+
+        if(pageResponse.Length < 8)
+            return null;
+
+        var decoded = new ModePage_07_MMC();
+
+        decoded.PS               |= (pageResponse[0] & 0x80) == 0x80;
+        decoded.Parameter        =  pageResponse[2];
+        decoded.VerifyRetryCount =  pageResponse[3];
+
+        return decoded;
+    }
+
+    public static string PrettifyModePage_07_MMC(byte[] pageResponse) =>
+        PrettifyModePage_07_MMC(DecodeModePage_07_MMC(pageResponse));
+
+    public static string PrettifyModePage_07_MMC(ModePage_07_MMC? modePage)
+    {
+        if(!modePage.HasValue)
+            return null;
+
+        ModePage_07_MMC page = modePage.Value;
+        var             sb   = new StringBuilder();
+
+        sb.AppendLine("SCSI Verify error recovery page for MultiMedia Devices:");
+
+        if(page.PS)
+            sb.AppendLine("\tParameters can be saved");
+
+        if(page.VerifyRetryCount > 0)
+            sb.AppendFormat("\tDrive will repeat verify operations {0} times", page.VerifyRetryCount).AppendLine();
+
+        string AllUsed              = "\tAll available recovery procedures will be used.\n";
+        string CIRCRetriesUsed      = "\tOnly retries and CIRC are used.\n";
+        string RetriesUsed          = "\tOnly retries are used.\n";
+        string RecoveredNotReported = "\tRecovered errors will not be reported.\n";
+        string RecoveredReported    = "\tRecovered errors will be reported.\n";
+        string RecoveredAbort       = "\tRecovered errors will be reported and aborted with CHECK CONDITION.\n";
+        string UnrecECCAbort        = "\tUnrecovered ECC errors will return CHECK CONDITION.";
+        string UnrecCIRCAbort       = "\tUnrecovered CIRC errors will return CHECK CONDITION.";
+        string UnrecECCNotAbort     = "\tUnrecovered ECC errors will not abort the transfer.";
+        string UnrecCIRCNotAbort    = "\tUnrecovered CIRC errors will not abort the transfer.";
+
+        string UnrecECCAbortData = "\tUnrecovered ECC errors will return CHECK CONDITION and the uncorrected data.";
+
+        string UnrecCIRCAbortData =
+            "\tUnrecovered CIRC errors will return CHECK CONDITION and the uncorrected data.";
+
+        switch(page.Parameter)
+        {
+            case 0x00:
+                sb.AppendLine(AllUsed + RecoveredNotReported + UnrecECCAbort);
+
+                break;
+            case 0x01:
+                sb.AppendLine(CIRCRetriesUsed + RecoveredNotReported + UnrecCIRCAbort);
+
+                break;
+            case 0x04:
+                sb.AppendLine(AllUsed + RecoveredReported + UnrecECCAbort);
+
+                break;
+            case 0x05:
+                sb.AppendLine(CIRCRetriesUsed + RecoveredReported + UnrecCIRCAbort);
+
+                break;
+            case 0x06:
+                sb.AppendLine(AllUsed + RecoveredAbort + UnrecECCAbort);
+
+                break;
+            case 0x07:
+                sb.AppendLine(RetriesUsed + RecoveredAbort + UnrecCIRCAbort);
+
+                break;
+            case 0x10:
+                sb.AppendLine(AllUsed + RecoveredNotReported + UnrecECCNotAbort);
+
+                break;
+            case 0x11:
+                sb.AppendLine(CIRCRetriesUsed + RecoveredNotReported + UnrecCIRCNotAbort);
+
+                break;
+            case 0x14:
+                sb.AppendLine(AllUsed + RecoveredReported + UnrecECCNotAbort);
+
+                break;
+            case 0x15:
+                sb.AppendLine(CIRCRetriesUsed + RecoveredReported + UnrecCIRCNotAbort);
+
+                break;
+            case 0x20:
+                sb.AppendLine(AllUsed + RecoveredNotReported + UnrecECCAbortData);
+
+                break;
+            case 0x21:
+                sb.AppendLine(CIRCRetriesUsed + RecoveredNotReported + UnrecCIRCAbortData);
+
+                break;
+            case 0x24:
+                sb.AppendLine(AllUsed + RecoveredReported + UnrecECCAbortData);
+
+                break;
+            case 0x25:
+                sb.AppendLine(CIRCRetriesUsed + RecoveredReported + UnrecCIRCAbortData);
+
+                break;
+            case 0x26:
+                sb.AppendLine(AllUsed + RecoveredAbort + UnrecECCAbortData);
+
+                break;
+            case 0x27:
+                sb.AppendLine(RetriesUsed + RecoveredAbort + UnrecCIRCAbortData);
+
+                break;
+            case 0x30: goto case 0x10;
+            case 0x31: goto case 0x11;
+            case 0x34: goto case 0x14;
+            case 0x35: goto case 0x15;
+            default:
+                sb.AppendFormat("Unknown recovery parameter 0x{0:X2}", page.Parameter).AppendLine();
+
+                break;
+        }
+
+        return sb.ToString();
+    }
+    #endregion Mode Page 0x07: Verify error recovery page for MultiMedia Devices
 }

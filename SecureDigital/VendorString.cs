@@ -30,22 +30,21 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Decoders.SecureDigital
+namespace Aaru.Decoders.SecureDigital;
+
+/// <summary>Decodes SecureDigital vendors</summary>
+public static class VendorString
 {
-    /// <summary>Decodes SecureDigital vendors</summary>
-    public static class VendorString
+    /// <summary>Converts the byte value of a SecureDigital vendor ID to the manufacturer's name string</summary>
+    /// <param name="sdVendorId">SD vendor ID</param>
+    /// <returns>Manufacturer</returns>
+    public static string Prettify(byte sdVendorId) => sdVendorId switch
     {
-        /// <summary>Converts the byte value of a SecureDigital vendor ID to the manufacturer's name string</summary>
-        /// <param name="sdVendorId">SD vendor ID</param>
-        /// <returns>Manufacturer</returns>
-        public static string Prettify(byte sdVendorId) => sdVendorId switch
-        {
-            0x41 => "Kingston",
-            0x02 => "Kingston",
-            0x03 => "Sandisk",
-            0x27 => "CnMemory",
-            0xAA => "QEMU",
-            _    => $"Unknown manufacturer ID 0x{sdVendorId:X2}"
-        };
-    }
+        0x41 => "Kingston",
+        0x02 => "Kingston",
+        0x03 => "Sandisk",
+        0x27 => "CnMemory",
+        0xAA => "QEMU",
+        _    => $"Unknown manufacturer ID 0x{sdVendorId:X2}"
+    };
 }

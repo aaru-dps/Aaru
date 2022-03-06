@@ -32,41 +32,40 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-namespace Aaru.Decoders.SCSI
+namespace Aaru.Decoders.SCSI;
+
+[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
+ SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+public static partial class Modes
 {
-    [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
-     SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
-    public static partial class Modes
+    public struct BlockDescriptor
     {
-        public struct BlockDescriptor
-        {
-            public DensityType Density;
-            public ulong       Blocks;
-            public uint        BlockLength;
-        }
+        public DensityType Density;
+        public ulong       Blocks;
+        public uint        BlockLength;
+    }
 
-        public struct ModeHeader
-        {
-            public MediumTypes       MediumType;
-            public bool              WriteProtected;
-            public BlockDescriptor[] BlockDescriptors;
-            public byte              Speed;
-            public byte              BufferedMode;
-            public bool              EBC;
-            public bool              DPOFUA;
-        }
+    public struct ModeHeader
+    {
+        public MediumTypes       MediumType;
+        public bool              WriteProtected;
+        public BlockDescriptor[] BlockDescriptors;
+        public byte              Speed;
+        public byte              BufferedMode;
+        public bool              EBC;
+        public bool              DPOFUA;
+    }
 
-        public struct ModePage
-        {
-            public byte   Page;
-            public byte   Subpage;
-            public byte[] PageResponse;
-        }
+    public struct ModePage
+    {
+        public byte   Page;
+        public byte   Subpage;
+        public byte[] PageResponse;
+    }
 
-        public struct DecodedMode
-        {
-            public ModeHeader Header;
-            public ModePage[] Pages;
-        }
+    public struct DecodedMode
+    {
+        public ModeHeader Header;
+        public ModePage[] Pages;
     }
 }

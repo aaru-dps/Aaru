@@ -32,36 +32,35 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-namespace Aaru.Decoders.DVD
+namespace Aaru.Decoders.DVD;
+
+// Information from the following standards:
+// ANSI X3.304-1997
+// T10/1048-D revision 9.0
+// T10/1048-D revision 10a
+// T10/1228-D revision 7.0c
+// T10/1228-D revision 11a
+// T10/1363-D revision 10g
+// T10/1545-D revision 1d
+// T10/1545-D revision 5
+// T10/1545-D revision 5a
+// T10/1675-D revision 2c
+// T10/1675-D revision 4
+// T10/1836-D revision 2g
+// ECMA 365
+[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
+ SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+public static class AACS
 {
-    // Information from the following standards:
-    // ANSI X3.304-1997
-    // T10/1048-D revision 9.0
-    // T10/1048-D revision 10a
-    // T10/1228-D revision 7.0c
-    // T10/1228-D revision 11a
-    // T10/1363-D revision 10g
-    // T10/1545-D revision 1d
-    // T10/1545-D revision 5
-    // T10/1545-D revision 5a
-    // T10/1675-D revision 2c
-    // T10/1675-D revision 4
-    // T10/1836-D revision 2g
-    // ECMA 365
-    [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
-     SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
-    public static class AACS
+    public struct HDLeadInCopyright
     {
-        public struct HDLeadInCopyright
-        {
-            /// <summary>Bytes 0 to 1 Data length</summary>
-            public ushort DataLength;
-            /// <summary>Byte 2 Reserved</summary>
-            public byte Reserved1;
-            /// <summary>Byte 3 Reserved</summary>
-            public byte Reserved2;
-            /// <summary>Bytes 4 to 2052 HD DVD Lead-In Copyright Information</summary>
-            public byte[] CopyrightInformation;
-        }
+        /// <summary>Bytes 0 to 1 Data length</summary>
+        public ushort DataLength;
+        /// <summary>Byte 2 Reserved</summary>
+        public byte Reserved1;
+        /// <summary>Byte 3 Reserved</summary>
+        public byte Reserved2;
+        /// <summary>Bytes 4 to 2052 HD DVD Lead-In Copyright Information</summary>
+        public byte[] CopyrightInformation;
     }
 }

@@ -34,38 +34,37 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
-namespace Aaru.Decoders.SCSI
+namespace Aaru.Decoders.SCSI;
+
+[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
+ SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+public static partial class Modes
 {
-    [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
-     SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
-    public static partial class Modes
+    #region Apple Mode Page 0x30: Apple OEM String
+    static readonly byte[] AppleOEMString =
     {
-        #region Apple Mode Page 0x30: Apple OEM String
-        static readonly byte[] AppleOEMString =
-        {
-            0x41, 0x50, 0x50, 0x4C, 0x45, 0x20, 0x43, 0x4F, 0x4D, 0x50, 0x55, 0x54, 0x45, 0x52, 0x2C, 0x20, 0x49, 0x4E,
-            0x43, 0x2E
-        };
+        0x41, 0x50, 0x50, 0x4C, 0x45, 0x20, 0x43, 0x4F, 0x4D, 0x50, 0x55, 0x54, 0x45, 0x52, 0x2C, 0x20, 0x49, 0x4E,
+        0x43, 0x2E
+    };
 
-        public static bool IsAppleModePage_30(byte[] pageResponse)
-        {
-            if((pageResponse?[0] & 0x40) == 0x40)
-                return false;
+    public static bool IsAppleModePage_30(byte[] pageResponse)
+    {
+        if((pageResponse?[0] & 0x40) == 0x40)
+            return false;
 
-            if((pageResponse?[0] & 0x3F) != 0x30)
-                return false;
+        if((pageResponse?[0] & 0x3F) != 0x30)
+            return false;
 
-            if(pageResponse[1] + 2 != pageResponse.Length)
-                return false;
+        if(pageResponse[1] + 2 != pageResponse.Length)
+            return false;
 
-            if(pageResponse.Length != 30)
-                return false;
+        if(pageResponse.Length != 30)
+            return false;
 
-            byte[] str = new byte[20];
-            Array.Copy(pageResponse, 10, str, 0, 20);
+        byte[] str = new byte[20];
+        Array.Copy(pageResponse, 10, str, 0, 20);
 
-            return AppleOEMString.SequenceEqual(str);
-        }
-        #endregion Apple Mode Page 0x30: Apple OEM String
+        return AppleOEMString.SequenceEqual(str);
     }
+    #endregion Apple Mode Page 0x30: Apple OEM String
 }

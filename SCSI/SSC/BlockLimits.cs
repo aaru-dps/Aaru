@@ -34,61 +34,60 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
-namespace Aaru.Decoders.SCSI.SSC
+namespace Aaru.Decoders.SCSI.SSC;
+
+[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
+ SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+public static class BlockLimits
 {
-    [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
-     SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
-    public static class BlockLimits
+    public static BlockLimitsData? Decode(byte[] response)
     {
-        public static BlockLimitsData? Decode(byte[] response)
+        if(response?.Length != 6)
+            return null;
+
+        return new BlockLimitsData
         {
-            if(response?.Length != 6)
-                return null;
+            granularity = (byte)(response[0] & 0x1F),
+            maxBlockLen = (uint)((response[1]   << 16) + (response[2] << 8) + response[3]),
+            minBlockLen = (ushort)((response[4] << 8)  + response[5])
+        };
+    }
 
-            return new BlockLimitsData
-            {
-                granularity = (byte)(response[0] & 0x1F),
-                maxBlockLen = (uint)((response[1]   << 16) + (response[2] << 8) + response[3]),
-                minBlockLen = (ushort)((response[4] << 8)  + response[5])
-            };
-        }
+    public static string Prettify(BlockLimitsData? decoded)
+    {
+        if(decoded == null)
+            return null;
 
-        public static string Prettify(BlockLimitsData? decoded)
+        var sb = new StringBuilder();
+
+        if(decoded.Value.maxBlockLen == decoded.Value.minBlockLen)
+            sb.AppendFormat("Device's block size is fixed at {0} bytes", decoded.Value.minBlockLen).AppendLine();
+        else
         {
-            if(decoded == null)
-                return null;
-
-            var sb = new StringBuilder();
-
-            if(decoded.Value.maxBlockLen == decoded.Value.minBlockLen)
-                sb.AppendFormat("Device's block size is fixed at {0} bytes", decoded.Value.minBlockLen).AppendLine();
+            if(decoded.Value.maxBlockLen > 0)
+                sb.AppendFormat("Device's maximum block size is {0} bytes", decoded.Value.maxBlockLen).AppendLine();
             else
-            {
-                if(decoded.Value.maxBlockLen > 0)
-                    sb.AppendFormat("Device's maximum block size is {0} bytes", decoded.Value.maxBlockLen).AppendLine();
-                else
-                    sb.AppendLine("Device does not specify a maximum block size");
+                sb.AppendLine("Device does not specify a maximum block size");
 
-                sb.AppendFormat("Device's minimum block size is {0} bytes", decoded.Value.minBlockLen).AppendLine();
+            sb.AppendFormat("Device's minimum block size is {0} bytes", decoded.Value.minBlockLen).AppendLine();
 
-                if(decoded.Value.granularity > 0)
-                    sb.AppendFormat("Device's needs a block size granularity of 2^{0} ({1}) bytes",
-                                    decoded.Value.granularity, Math.Pow(2, decoded.Value.granularity)).AppendLine();
-            }
-
-            return sb.ToString();
+            if(decoded.Value.granularity > 0)
+                sb.AppendFormat("Device's needs a block size granularity of 2^{0} ({1}) bytes",
+                                decoded.Value.granularity, Math.Pow(2, decoded.Value.granularity)).AppendLine();
         }
 
-        public static string Prettify(byte[] response) => Prettify(Decode(response));
+        return sb.ToString();
+    }
 
-        public struct BlockLimitsData
-        {
-            /// <summary>All blocks size must be multiple of 2^<cref name="granularity" /></summary>
-            public byte granularity;
-            /// <summary>Maximum block length in bytes</summary>
-            public uint maxBlockLen;
-            /// <summary>Minimum block length in bytes</summary>
-            public ushort minBlockLen;
-        }
+    public static string Prettify(byte[] response) => Prettify(Decode(response));
+
+    public struct BlockLimitsData
+    {
+        /// <summary>All blocks size must be multiple of 2^<cref name="granularity" /></summary>
+        public byte granularity;
+        /// <summary>Maximum block length in bytes</summary>
+        public uint maxBlockLen;
+        /// <summary>Minimum block length in bytes</summary>
+        public ushort minBlockLen;
     }
 }

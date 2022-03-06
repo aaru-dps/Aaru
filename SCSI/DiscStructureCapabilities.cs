@@ -33,47 +33,46 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Aaru.Decoders.SCSI
+namespace Aaru.Decoders.SCSI;
+
+[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
+ SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), SuppressMessage("ReSharper", "NotAccessedField.Global")]
+public static class DiscStructureCapabilities
 {
-    [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
-     SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), SuppressMessage("ReSharper", "NotAccessedField.Global")]
-    public static class DiscStructureCapabilities
+    public static Capability[] Decode(byte[] response)
     {
-        public static Capability[] Decode(byte[] response)
+        ushort len = (ushort)((response[0] << 8) + response[1]);
+
+        if(len + 2 != response.Length)
+            return null;
+
+        List<Capability> caps = new List<Capability>();
+
+        uint offset = 4;
+
+        while(offset < response.Length)
         {
-            ushort len = (ushort)((response[0] << 8) + response[1]);
-
-            if(len + 2 != response.Length)
-                return null;
-
-            List<Capability> caps = new List<Capability>();
-
-            uint offset = 4;
-
-            while(offset < response.Length)
+            var cap = new Capability
             {
-                var cap = new Capability
-                {
-                    FormatCode = response[offset],
-                    SDS        = (response[offset + 1] & 0x80) == 0x80,
-                    RDS        = (response[offset + 1] & 0x40) == 0x40
-                };
+                FormatCode = response[offset],
+                SDS        = (response[offset + 1] & 0x80) == 0x80,
+                RDS        = (response[offset + 1] & 0x40) == 0x40
+            };
 
-                caps.Add(cap);
-                offset += 4;
-            }
-
-            return caps.ToArray();
+            caps.Add(cap);
+            offset += 4;
         }
 
-        public struct Capability
-        {
-            /// <summary>READ/SEND DISC STRUCTURE format code</summary>
-            public byte FormatCode;
-            /// <summary>Supported in SEND DISC STRUCTURE</summary>
-            public bool SDS;
-            /// <summary>Supported in READ DISC STRUCTURE</summary>
-            public bool RDS;
-        }
+        return caps.ToArray();
+    }
+
+    public struct Capability
+    {
+        /// <summary>READ/SEND DISC STRUCTURE format code</summary>
+        public byte FormatCode;
+        /// <summary>Supported in SEND DISC STRUCTURE</summary>
+        public bool SDS;
+        /// <summary>Supported in READ DISC STRUCTURE</summary>
+        public bool RDS;
     }
 }

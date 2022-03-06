@@ -30,12 +30,11 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Decoders.SCSI
+namespace Aaru.Decoders.SCSI;
+
+public static partial class Modes
 {
-    public static partial class Modes
-    {
-        #region Mode Page 0x0C: Notch page
-        // TODO: Implement this page
-        #endregion Mode Page 0x0C: Notch page
-    }
+    #region Mode Page 0x0C: Notch page
+    // TODO: Implement this page
+    #endregion Mode Page 0x0C: Notch page
 }

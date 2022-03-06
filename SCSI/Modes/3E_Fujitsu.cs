@@ -35,115 +35,114 @@ using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Aaru.CommonTypes.Structs.Devices.SCSI;
 
-namespace Aaru.Decoders.SCSI
+namespace Aaru.Decoders.SCSI;
+
+[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
+ SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), SuppressMessage("ReSharper", "NotAccessedField.Global")]
+public static partial class Modes
 {
-    [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
-     SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), SuppressMessage("ReSharper", "NotAccessedField.Global")]
-    public static partial class Modes
+    #region Fujitsu Mode Page 0x3E: Verify Control page
+    public enum Fujitsu_VerifyModes : byte
     {
-        #region Fujitsu Mode Page 0x3E: Verify Control page
-        public enum Fujitsu_VerifyModes : byte
-        {
-            /// <summary>Always verify after writing</summary>
-            Always = 0,
-            /// <summary>Never verify after writing</summary>
-            Never = 1,
-            /// <summary>Verify after writing depending on condition</summary>
-            Depends = 2, Reserved = 4
-        }
-
-        public struct Fujitsu_ModePage_3E
-        {
-            /// <summary>Parameters can be saved</summary>
-            public bool PS;
-            /// <summary>If set, AV data support mode is applied</summary>
-            public bool audioVisualMode;
-            /// <summary>If set the test write operation is restricted</summary>
-            public bool streamingMode;
-            public byte Reserved1;
-            /// <summary>Verify mode for WRITE commands</summary>
-            public Fujitsu_VerifyModes verifyMode;
-            public byte Reserved2;
-            /// <summary>Device type provided in response to INQUIRY</summary>
-            public PeripheralDeviceTypes devType;
-            public byte[] Reserved3;
-        }
-
-        public static Fujitsu_ModePage_3E? DecodeFujitsuModePage_3E(byte[] pageResponse)
-        {
-            if((pageResponse?[0] & 0x40) == 0x40)
-                return null;
-
-            if((pageResponse?[0] & 0x3F) != 0x3E)
-                return null;
-
-            if(pageResponse[1] + 2 != pageResponse.Length)
-                return null;
-
-            if(pageResponse.Length != 8)
-                return null;
-
-            var decoded = new Fujitsu_ModePage_3E();
-
-            decoded.PS |= (pageResponse[0] & 0x80) == 0x80;
-
-            decoded.audioVisualMode |= (pageResponse[2] & 0x80) == 0x80;
-            decoded.streamingMode   |= (pageResponse[2] & 0x40) == 0x40;
-            decoded.Reserved1       =  (byte)((pageResponse[2] & 0x3C) >> 2);
-            decoded.verifyMode      =  (Fujitsu_VerifyModes)(pageResponse[2] & 0x03);
-
-            decoded.Reserved2 = (byte)((pageResponse[3] & 0xE0) >> 5);
-            decoded.devType   = (PeripheralDeviceTypes)(pageResponse[3] & 0x1F);
-
-            decoded.Reserved3 = new byte[4];
-            Array.Copy(pageResponse, 4, decoded.Reserved3, 0, 4);
-
-            return decoded;
-        }
-
-        public static string PrettifyFujitsuModePage_3E(byte[] pageResponse) =>
-            PrettifyFujitsuModePage_3E(DecodeFujitsuModePage_3E(pageResponse));
-
-        public static string PrettifyFujitsuModePage_3E(Fujitsu_ModePage_3E? modePage)
-        {
-            if(!modePage.HasValue)
-                return null;
-
-            Fujitsu_ModePage_3E page = modePage.Value;
-            var                 sb   = new StringBuilder();
-
-            sb.AppendLine("Fujitsu Verify Control Page:");
-
-            if(page.PS)
-                sb.AppendLine("\tParameters can be saved");
-
-            if(page.audioVisualMode)
-                sb.AppendLine("\tAudio/Visual data support mode is applied");
-
-            if(page.streamingMode)
-                sb.AppendLine("\tTest write operation is restricted during read or write operations.");
-
-            switch(page.verifyMode)
-            {
-                case Fujitsu_VerifyModes.Always:
-                    sb.AppendLine("\tAlways apply the verify operation");
-
-                    break;
-                case Fujitsu_VerifyModes.Never:
-                    sb.AppendLine("\tNever apply the verify operation");
-
-                    break;
-                case Fujitsu_VerifyModes.Depends:
-                    sb.AppendLine("\tApply the verify operation depending on the condition");
-
-                    break;
-            }
-
-            sb.AppendFormat("\tThe device type that would be provided in the INQUIRY response is {0}", page.devType).
-               AppendLine();
-
-            return sb.ToString();
-        }
-        #endregion Fujitsu Mode Page 0x3E: Verify Control page
+        /// <summary>Always verify after writing</summary>
+        Always = 0,
+        /// <summary>Never verify after writing</summary>
+        Never = 1,
+        /// <summary>Verify after writing depending on condition</summary>
+        Depends = 2, Reserved = 4
     }
+
+    public struct Fujitsu_ModePage_3E
+    {
+        /// <summary>Parameters can be saved</summary>
+        public bool PS;
+        /// <summary>If set, AV data support mode is applied</summary>
+        public bool audioVisualMode;
+        /// <summary>If set the test write operation is restricted</summary>
+        public bool streamingMode;
+        public byte Reserved1;
+        /// <summary>Verify mode for WRITE commands</summary>
+        public Fujitsu_VerifyModes verifyMode;
+        public byte Reserved2;
+        /// <summary>Device type provided in response to INQUIRY</summary>
+        public PeripheralDeviceTypes devType;
+        public byte[] Reserved3;
+    }
+
+    public static Fujitsu_ModePage_3E? DecodeFujitsuModePage_3E(byte[] pageResponse)
+    {
+        if((pageResponse?[0] & 0x40) == 0x40)
+            return null;
+
+        if((pageResponse?[0] & 0x3F) != 0x3E)
+            return null;
+
+        if(pageResponse[1] + 2 != pageResponse.Length)
+            return null;
+
+        if(pageResponse.Length != 8)
+            return null;
+
+        var decoded = new Fujitsu_ModePage_3E();
+
+        decoded.PS |= (pageResponse[0] & 0x80) == 0x80;
+
+        decoded.audioVisualMode |= (pageResponse[2] & 0x80) == 0x80;
+        decoded.streamingMode   |= (pageResponse[2] & 0x40) == 0x40;
+        decoded.Reserved1       =  (byte)((pageResponse[2] & 0x3C) >> 2);
+        decoded.verifyMode      =  (Fujitsu_VerifyModes)(pageResponse[2] & 0x03);
+
+        decoded.Reserved2 = (byte)((pageResponse[3] & 0xE0) >> 5);
+        decoded.devType   = (PeripheralDeviceTypes)(pageResponse[3] & 0x1F);
+
+        decoded.Reserved3 = new byte[4];
+        Array.Copy(pageResponse, 4, decoded.Reserved3, 0, 4);
+
+        return decoded;
+    }
+
+    public static string PrettifyFujitsuModePage_3E(byte[] pageResponse) =>
+        PrettifyFujitsuModePage_3E(DecodeFujitsuModePage_3E(pageResponse));
+
+    public static string PrettifyFujitsuModePage_3E(Fujitsu_ModePage_3E? modePage)
+    {
+        if(!modePage.HasValue)
+            return null;
+
+        Fujitsu_ModePage_3E page = modePage.Value;
+        var                 sb   = new StringBuilder();
+
+        sb.AppendLine("Fujitsu Verify Control Page:");
+
+        if(page.PS)
+            sb.AppendLine("\tParameters can be saved");
+
+        if(page.audioVisualMode)
+            sb.AppendLine("\tAudio/Visual data support mode is applied");
+
+        if(page.streamingMode)
+            sb.AppendLine("\tTest write operation is restricted during read or write operations.");
+
+        switch(page.verifyMode)
+        {
+            case Fujitsu_VerifyModes.Always:
+                sb.AppendLine("\tAlways apply the verify operation");
+
+                break;
+            case Fujitsu_VerifyModes.Never:
+                sb.AppendLine("\tNever apply the verify operation");
+
+                break;
+            case Fujitsu_VerifyModes.Depends:
+                sb.AppendLine("\tApply the verify operation depending on the condition");
+
+                break;
+        }
+
+        sb.AppendFormat("\tThe device type that would be provided in the INQUIRY response is {0}", page.devType).
+           AppendLine();
+
+        return sb.ToString();
+    }
+    #endregion Fujitsu Mode Page 0x3E: Verify Control page
 }
