@@ -32,37 +32,36 @@
 
 using Aaru.CommonTypes.Metadata;
 
-namespace Aaru.Dto
+namespace Aaru.Dto;
+
+/// <inheritdoc />
+/// <summary>
+/// DTO from a CD drive read offset
+/// </summary>
+public class CdOffsetDto : CdOffset
 {
-    /// <inheritdoc />
     /// <summary>
-    /// DTO from a CD drive read offset
+    /// Build an empty DTO
     /// </summary>
-    public class CdOffsetDto : CdOffset
+    public CdOffsetDto() {}
+
+    /// <summary>
+    /// Build a DTO using the specified offset and database ID
+    /// </summary>
+    /// <param name="offset">CD reading offset</param>
+    /// <param name="id">Database ID</param>
+    public CdOffsetDto(CdOffset offset, int id)
     {
-        /// <summary>
-        /// Build an empty DTO
-        /// </summary>
-        public CdOffsetDto() {}
-
-        /// <summary>
-        /// Build a DTO using the specified offset and database ID
-        /// </summary>
-        /// <param name="offset">CD reading offset</param>
-        /// <param name="id">Database ID</param>
-        public CdOffsetDto(CdOffset offset, int id)
-        {
-            Manufacturer = offset.Manufacturer;
-            Model        = offset.Model;
-            Offset       = offset.Offset;
-            Submissions  = offset.Submissions;
-            Agreement    = offset.Agreement;
-            Id           = id;
-        }
-
-        /// <summary>
-        /// Database ID
-        /// </summary>
-        public int Id { get; set; }
+        Manufacturer = offset.Manufacturer;
+        Model        = offset.Model;
+        Offset       = offset.Offset;
+        Submissions  = offset.Submissions;
+        Agreement    = offset.Agreement;
+        Id           = id;
     }
+
+    /// <summary>
+    /// Database ID
+    /// </summary>
+    public int Id { get; set; }
 }

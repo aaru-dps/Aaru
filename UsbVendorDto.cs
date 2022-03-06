@@ -30,20 +30,19 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Dto
+namespace Aaru.Dto;
+
+/// <summary>
+/// DTO for USB vendor field
+/// </summary>
+public class UsbVendorDto
 {
     /// <summary>
-    /// DTO for USB vendor field
+    /// Vendor ID
     /// </summary>
-    public class UsbVendorDto
-    {
-        /// <summary>
-        /// Vendor ID
-        /// </summary>
-        public ushort VendorId { get; set; }
-        /// <summary>
-        /// Vendor
-        /// </summary>
-        public string Vendor   { get; set; }
-    }
+    public ushort VendorId { get; set; }
+    /// <summary>
+    /// Vendor
+    /// </summary>
+    public string Vendor { get; set; }
 }

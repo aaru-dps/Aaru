@@ -30,28 +30,27 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Dto
+namespace Aaru.Dto;
+
+/// <summary>
+/// DTO for USB product field
+/// </summary>
+public class UsbProductDto
 {
     /// <summary>
-    /// DTO for USB product field
+    /// Database ID
     /// </summary>
-    public class UsbProductDto
-    {
-        /// <summary>
-        /// Database ID
-        /// </summary>
-        public int    Id        { get; set; }
-        /// <summary>
-        /// Product ID
-        /// </summary>
-        public ushort ProductId { get; set; }
-        /// <summary>
-        /// Product name
-        /// </summary>
-        public string Product   { get; set; }
-        /// <summary>
-        /// Vendor ID
-        /// </summary>
-        public ushort VendorId  { get; set; }
-    }
+    public int Id { get; set; }
+    /// <summary>
+    /// Product ID
+    /// </summary>
+    public ushort ProductId { get; set; }
+    /// <summary>
+    /// Product name
+    /// </summary>
+    public string Product { get; set; }
+    /// <summary>
+    /// Vendor ID
+    /// </summary>
+    public ushort VendorId { get; set; }
 }
