@@ -30,13 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class Blu
 {
-    public sealed partial class Blu
-    {
-        const string PROFILE_NAME   = "PROFILE      ";
-        const string PROFILE10_NAME = "PROFILE 10   ";
-        const string WIDGET_NAME    = "WIDGET-10    ";
-        const string PRIAM_NAME     = "PRIAMDTATOWER";
-    }
+    const string PROFILE_NAME   = "PROFILE      ";
+    const string PROFILE10_NAME = "PROFILE 10   ";
+    const string WIDGET_NAME    = "WIDGET-10    ";
+    const string PRIAM_NAME     = "PRIAMDTATOWER";
 }

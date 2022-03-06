@@ -36,52 +36,51 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 
-namespace Aaru.DiscImages
-{
-    /// <inheritdoc />
-    /// <summary>Implements reading and writing QEMU Enhanced Disk images</summary>
-    public sealed partial class Qed : IWritableImage
-    {
-        int                        _clusterBits;
-        Dictionary<ulong, byte[]>  _clusterCache;
-        uint                       _clusterSectors;
-        ImageInfo                  _imageInfo;
-        Stream                     _imageStream;
-        ulong                      _l1Mask;
-        int                        _l1Shift;
-        ulong[]                    _l1Table;
-        ulong                      _l2Mask;
-        Dictionary<ulong, ulong[]> _l2TableCache;
-        uint                       _maxClusterCache;
-        uint                       _maxL2TableCache;
-        QedHeader                  _qHdr;
-        Dictionary<ulong, byte[]>  _sectorCache;
-        ulong                      _sectorMask;
-        uint                       _tableSize;
-        FileStream                 _writingStream;
+namespace Aaru.DiscImages;
 
-        public Qed() => _imageInfo = new ImageInfo
-        {
-            ReadableSectorTags    = new List<SectorTagType>(),
-            ReadableMediaTags     = new List<MediaTagType>(),
-            HasPartitions         = false,
-            HasSessions           = false,
-            Version               = "1",
-            Application           = "QEMU",
-            ApplicationVersion    = null,
-            Creator               = null,
-            Comments              = null,
-            MediaManufacturer     = null,
-            MediaModel            = null,
-            MediaSerialNumber     = null,
-            MediaBarcode          = null,
-            MediaPartNumber       = null,
-            MediaSequence         = 0,
-            LastMediaSequence     = 0,
-            DriveManufacturer     = null,
-            DriveModel            = null,
-            DriveSerialNumber     = null,
-            DriveFirmwareRevision = null
-        };
-    }
+/// <inheritdoc />
+/// <summary>Implements reading and writing QEMU Enhanced Disk images</summary>
+public sealed partial class Qed : IWritableImage
+{
+    int                        _clusterBits;
+    Dictionary<ulong, byte[]>  _clusterCache;
+    uint                       _clusterSectors;
+    ImageInfo                  _imageInfo;
+    Stream                     _imageStream;
+    ulong                      _l1Mask;
+    int                        _l1Shift;
+    ulong[]                    _l1Table;
+    ulong                      _l2Mask;
+    Dictionary<ulong, ulong[]> _l2TableCache;
+    uint                       _maxClusterCache;
+    uint                       _maxL2TableCache;
+    QedHeader                  _qHdr;
+    Dictionary<ulong, byte[]>  _sectorCache;
+    ulong                      _sectorMask;
+    uint                       _tableSize;
+    FileStream                 _writingStream;
+
+    public Qed() => _imageInfo = new ImageInfo
+    {
+        ReadableSectorTags    = new List<SectorTagType>(),
+        ReadableMediaTags     = new List<MediaTagType>(),
+        HasPartitions         = false,
+        HasSessions           = false,
+        Version               = "1",
+        Application           = "QEMU",
+        ApplicationVersion    = null,
+        Creator               = null,
+        Comments              = null,
+        MediaManufacturer     = null,
+        MediaModel            = null,
+        MediaSerialNumber     = null,
+        MediaBarcode          = null,
+        MediaPartNumber       = null,
+        MediaSequence         = 0,
+        LastMediaSequence     = 0,
+        DriveManufacturer     = null,
+        DriveModel            = null,
+        DriveSerialNumber     = null,
+        DriveFirmwareRevision = null
+    };
 }

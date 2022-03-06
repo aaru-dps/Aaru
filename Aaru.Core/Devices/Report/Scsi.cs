@@ -42,231 +42,224 @@ using Aaru.Helpers;
 using Spectre.Console;
 using Inquiry = Aaru.CommonTypes.Structs.Devices.SCSI.Inquiry;
 
-namespace Aaru.Core.Devices.Report
+namespace Aaru.Core.Devices.Report;
+
+public sealed partial class DeviceReport
 {
-    public sealed partial class DeviceReport
+    /// <summary>Creates a report for the SCSI INQUIRY response</summary>
+    /// <returns>SCSI report</returns>
+    public Scsi ReportScsiInquiry()
     {
-        /// <summary>Creates a report for the SCSI INQUIRY response</summary>
-        /// <returns>SCSI report</returns>
-        public Scsi ReportScsiInquiry()
+        bool   sense  = true;
+        byte[] buffer = Array.Empty<byte>();
+
+        Spectre.ProgressSingleSpinner(ctx =>
         {
-            bool   sense  = true;
-            byte[] buffer = Array.Empty<byte>();
+            ctx.AddTask("Querying SCSI INQUIRY...").IsIndeterminate();
+            sense = _dev.ScsiInquiry(out buffer, out _);
+        });
 
-            Spectre.ProgressSingleSpinner(ctx =>
-            {
-                ctx.AddTask("Querying SCSI INQUIRY...").IsIndeterminate();
-                sense = _dev.ScsiInquiry(out buffer, out _);
-            });
+        var report = new Scsi();
 
-            var report = new Scsi();
+        if(sense)
+            return null;
 
-            if(sense)
-                return null;
+        Inquiry? decodedNullable = Inquiry.Decode(buffer);
 
-            Inquiry? decodedNullable = Inquiry.Decode(buffer);
+        if(!decodedNullable.HasValue)
+            return null;
 
-            if(!decodedNullable.HasValue)
-                return null;
+        report.InquiryData = ClearInquiry(buffer);
 
-            report.InquiryData = ClearInquiry(buffer);
+        return report;
+    }
 
-            return report;
-        }
+    internal static byte[] ClearInquiry(byte[] inquiry)
+    {
+        Inquiry? decodedNullable = Inquiry.Decode(inquiry);
 
-        internal static byte[] ClearInquiry(byte[] inquiry)
-        {
-            Inquiry? decodedNullable = Inquiry.Decode(inquiry);
-
-            if(!decodedNullable.HasValue)
-                return inquiry;
-
-            Inquiry decoded = decodedNullable.Value;
-
-            if(!decoded.SeagatePresent ||
-               StringHandlers.CToString(decoded.VendorIdentification)?.Trim().ToLowerInvariant() != "seagate")
-                return inquiry;
-
-            // Clear Seagate serial number
-            for(int i = 36; i <= 43; i++)
-                inquiry[i] = 0;
-
+        if(!decodedNullable.HasValue)
             return inquiry;
-        }
 
-        /// <summary>Returns a list of decoded SCSI EVPD pages</summary>
-        /// <param name="vendor">Decoded SCSI vendor identification</param>
-        /// <returns>List of decoded SCSI EVPD pages</returns>
-        public List<ScsiPage> ReportEvpdPages(string vendor)
+        Inquiry decoded = decodedNullable.Value;
+
+        if(!decoded.SeagatePresent ||
+           StringHandlers.CToString(decoded.VendorIdentification)?.Trim().ToLowerInvariant() != "seagate")
+            return inquiry;
+
+        // Clear Seagate serial number
+        for(int i = 36; i <= 43; i++)
+            inquiry[i] = 0;
+
+        return inquiry;
+    }
+
+    /// <summary>Returns a list of decoded SCSI EVPD pages</summary>
+    /// <param name="vendor">Decoded SCSI vendor identification</param>
+    /// <returns>List of decoded SCSI EVPD pages</returns>
+    public List<ScsiPage> ReportEvpdPages(string vendor)
+    {
+        bool   sense  = false;
+        byte[] buffer = Array.Empty<byte>();
+
+        Spectre.ProgressSingleSpinner(ctx =>
         {
-            bool   sense  = false;
-            byte[] buffer = Array.Empty<byte>();
+            ctx.AddTask("Querying list of SCSI EVPDs...").IsIndeterminate();
+            sense = _dev.ScsiInquiry(out buffer, out _, 0x00);
+        });
 
-            Spectre.ProgressSingleSpinner(ctx =>
+        if(sense)
+            return null;
+
+        byte[] evpdPages = EVPD.DecodePage00(buffer);
+
+        if(evpdPages        == null ||
+           evpdPages.Length <= 0)
+            return null;
+
+        List<ScsiPage> evpds = new();
+
+        Spectre.ProgressSingleSpinner(ctx =>
+        {
+            ProgressTask task = ctx.
+                                AddTask("Querying SCSI EVPD pages...",
+                                        maxValue: evpdPages.Count(page => page != 0x80)).IsIndeterminate();
+
+            foreach(byte page in evpdPages.Where(page => page != 0x80))
             {
-                ctx.AddTask("Querying list of SCSI EVPDs...").IsIndeterminate();
-                sense = _dev.ScsiInquiry(out buffer, out _, 0x00);
-            });
+                task.Description = $"Querying SCSI EVPD {page:X2}h...";
+                task.Increment(1);
+                sense = _dev.ScsiInquiry(out buffer, out _, page);
 
-            if(sense)
-                return null;
+                if(sense)
+                    continue;
 
-            byte[] evpdPages = EVPD.DecodePage00(buffer);
+                byte[] empty;
 
-            if(evpdPages        == null ||
-               evpdPages.Length <= 0)
-                return null;
-
-            List<ScsiPage> evpds = new();
-
-            Spectre.ProgressSingleSpinner(ctx =>
-            {
-                ProgressTask task = ctx.
-                                    AddTask("Querying SCSI EVPD pages...",
-                                            maxValue: evpdPages.Count(page => page != 0x80)).IsIndeterminate();
-
-                foreach(byte page in evpdPages.Where(page => page != 0x80))
+                switch(page)
                 {
-                    task.Description = $"Querying SCSI EVPD {page:X2}h...";
-                    task.Increment(1);
-                    sense = _dev.ScsiInquiry(out buffer, out _, page);
+                    case 0x83:
+                        buffer = ClearPage83(buffer);
 
-                    if(sense)
-                        continue;
+                        break;
+                    case 0x80:
+                        byte[] identify = new byte[512];
+                        Array.Copy(buffer, 60, identify, 0, 512);
+                        identify = ClearIdentify(identify);
+                        Array.Copy(identify, 0, buffer, 60, 512);
 
-                    byte[] empty;
+                        break;
+                    case 0xB1:
+                    case 0xB3:
+                        empty = new byte[buffer.Length - 4];
+                        Array.Copy(empty, 0, buffer, 4, buffer.Length - 4);
 
-                    switch(page)
-                    {
-                        case 0x83:
-                            buffer = ClearPage83(buffer);
+                        break;
+                    case 0xC1 when vendor == "ibm":
+                        empty = new byte[12];
+                        Array.Copy(empty, 0, buffer, 4, 12);
+                        Array.Copy(empty, 0, buffer, 16, 12);
 
-                            break;
-                        case 0x80:
-                            byte[] identify = new byte[512];
-                            Array.Copy(buffer, 60, identify, 0, 512);
-                            identify = ClearIdentify(identify);
-                            Array.Copy(identify, 0, buffer, 60, 512);
+                        break;
+                    case 0xC2 when vendor == "certance":
+                    case 0xC3 when vendor == "certance":
+                    case 0xC4 when vendor == "certance":
+                    case 0xC5 when vendor == "certance":
+                    case 0xC6 when vendor == "certance":
+                        Array.Copy(new byte[12], 0, buffer, 4, 12);
 
-                            break;
-                        case 0xB1:
-                        case 0xB3:
-                            empty = new byte[buffer.Length - 4];
-                            Array.Copy(empty, 0, buffer, 4, buffer.Length - 4);
-
-                            break;
-                        case 0xC1 when vendor == "ibm":
-                            empty = new byte[12];
-                            Array.Copy(empty, 0, buffer, 4, 12);
-                            Array.Copy(empty, 0, buffer, 16, 12);
-
-                            break;
-                        case 0xC2 when vendor == "certance":
-                        case 0xC3 when vendor == "certance":
-                        case 0xC4 when vendor == "certance":
-                        case 0xC5 when vendor == "certance":
-                        case 0xC6 when vendor == "certance":
-                            Array.Copy(new byte[12], 0, buffer, 4, 12);
-
-                            break;
-                    }
-
-                    var evpd = new ScsiPage
-                    {
-                        page  = page,
-                        value = buffer
-                    };
-
-                    evpds.Add(evpd);
+                        break;
                 }
-            });
 
-            return evpds.Count > 0 ? evpds : null;
-        }
+                var evpd = new ScsiPage
+                {
+                    page  = page,
+                    value = buffer
+                };
 
-        byte[] ClearPage83(byte[] pageResponse)
-        {
-            if(pageResponse?[1] != 0x83)
-                return null;
-
-            if(pageResponse[3] + 4 != pageResponse.Length)
-                return null;
-
-            if(pageResponse.Length < 6)
-                return null;
-
-            int position = 4;
-
-            while(position < pageResponse.Length)
-            {
-                byte length = pageResponse[position + 3];
-
-                if(length + position + 4 >= pageResponse.Length)
-                    length = (byte)(pageResponse.Length - position - 4);
-
-                byte[] empty = new byte[length];
-                Array.Copy(empty, 0, pageResponse, position + 4, length);
-
-                position += 4 + length;
+                evpds.Add(evpd);
             }
+        });
 
-            return pageResponse;
+        return evpds.Count > 0 ? evpds : null;
+    }
+
+    byte[] ClearPage83(byte[] pageResponse)
+    {
+        if(pageResponse?[1] != 0x83)
+            return null;
+
+        if(pageResponse[3] + 4 != pageResponse.Length)
+            return null;
+
+        if(pageResponse.Length < 6)
+            return null;
+
+        int position = 4;
+
+        while(position < pageResponse.Length)
+        {
+            byte length = pageResponse[position + 3];
+
+            if(length + position + 4 >= pageResponse.Length)
+                length = (byte)(pageResponse.Length - position - 4);
+
+            byte[] empty = new byte[length];
+            Array.Copy(empty, 0, pageResponse, position + 4, length);
+
+            position += 4 + length;
         }
 
-        /// <summary>Adds reports for the decoded SCSI MODE SENSE pages to a device report</summary>
-        /// <param name="report">Device report</param>
-        /// <param name="cdromMode">Returns raw MODE SENSE page 2Ah, aka CD-ROM page</param>
-        /// <param name="mediumType">Returns decoded list of supported media types response</param>
-        public void ReportScsiModes(ref DeviceReportV2 report, out byte[] cdromMode, out MediumTypes mediumType)
+        return pageResponse;
+    }
+
+    /// <summary>Adds reports for the decoded SCSI MODE SENSE pages to a device report</summary>
+    /// <param name="report">Device report</param>
+    /// <param name="cdromMode">Returns raw MODE SENSE page 2Ah, aka CD-ROM page</param>
+    /// <param name="mediumType">Returns decoded list of supported media types response</param>
+    public void ReportScsiModes(ref DeviceReportV2 report, out byte[] cdromMode, out MediumTypes mediumType)
+    {
+        Modes.DecodedMode?    decMode = null;
+        PeripheralDeviceTypes devType = _dev.ScsiType;
+        byte[]                mode10Buffer;
+        byte[]                mode6Buffer;
+        bool                  sense;
+        mediumType = 0;
+
+        DeviceReportV2 v2 = report;
+
+        Spectre.ProgressSingleSpinner(ctx =>
         {
-            Modes.DecodedMode?    decMode = null;
-            PeripheralDeviceTypes devType = _dev.ScsiType;
-            byte[]                mode10Buffer;
-            byte[]                mode6Buffer;
-            bool                  sense;
-            mediumType = 0;
+            ctx.AddTask("Querying all mode pages and subpages using SCSI MODE SENSE (10)...").IsIndeterminate();
 
-            DeviceReportV2 v2 = report;
-
-            Spectre.ProgressSingleSpinner(ctx =>
+            foreach(ScsiModeSensePageControl pageControl in new[]
+                    {
+                        ScsiModeSensePageControl.Default, ScsiModeSensePageControl.Current,
+                        ScsiModeSensePageControl.Changeable
+                    })
             {
-                ctx.AddTask("Querying all mode pages and subpages using SCSI MODE SENSE (10)...").IsIndeterminate();
+                bool saveBuffer = false;
 
-                foreach(ScsiModeSensePageControl pageControl in new[]
-                {
-                    ScsiModeSensePageControl.Default, ScsiModeSensePageControl.Current,
-                    ScsiModeSensePageControl.Changeable
-                })
-                {
-                    bool saveBuffer = false;
+                sense = _dev.ModeSense10(out mode10Buffer, out _, false, true, pageControl, 0x3F, 0xFF,
+                                         _dev.Timeout, out _);
 
-                    sense = _dev.ModeSense10(out mode10Buffer, out _, false, true, pageControl, 0x3F, 0xFF,
+                if(sense || _dev.Error)
+                {
+                    sense = _dev.ModeSense10(out mode10Buffer, out _, false, false, pageControl, 0x3F, 0xFF,
                                              _dev.Timeout, out _);
 
                     if(sense || _dev.Error)
                     {
-                        sense = _dev.ModeSense10(out mode10Buffer, out _, false, false, pageControl, 0x3F, 0xFF,
+                        sense = _dev.ModeSense10(out mode10Buffer, out _, false, true, pageControl, 0x3F, 0x00,
                                                  _dev.Timeout, out _);
 
                         if(sense || _dev.Error)
                         {
-                            sense = _dev.ModeSense10(out mode10Buffer, out _, false, true, pageControl, 0x3F, 0x00,
+                            sense = _dev.ModeSense10(out mode10Buffer, out _, false, false, pageControl, 0x3F, 0x00,
                                                      _dev.Timeout, out _);
 
-                            if(sense || _dev.Error)
-                            {
-                                sense = _dev.ModeSense10(out mode10Buffer, out _, false, false, pageControl, 0x3F, 0x00,
-                                                         _dev.Timeout, out _);
-
-                                if(!sense &&
-                                   !_dev.Error)
-                                {
-                                    v2.SCSI.SupportsModeSense10 =   true;
-                                    decMode                     ??= Modes.DecodeMode10(mode10Buffer, devType);
-                                    saveBuffer                  =   true;
-                                }
-                            }
-                            else
+                            if(!sense &&
+                               !_dev.Error)
                             {
                                 v2.SCSI.SupportsModeSense10 =   true;
                                 decMode                     ??= Modes.DecodeMode10(mode10Buffer, devType);
@@ -275,10 +268,9 @@ namespace Aaru.Core.Devices.Report
                         }
                         else
                         {
-                            v2.SCSI.SupportsModeSense10  =   true;
-                            v2.SCSI.SupportsModeSubpages =   true;
-                            decMode                      ??= Modes.DecodeMode10(mode10Buffer, devType);
-                            saveBuffer                   =   true;
+                            v2.SCSI.SupportsModeSense10 =   true;
+                            decMode                     ??= Modes.DecodeMode10(mode10Buffer, devType);
+                            saveBuffer                  =   true;
                         }
                     }
                     else
@@ -288,75 +280,76 @@ namespace Aaru.Core.Devices.Report
                         decMode                      ??= Modes.DecodeMode10(mode10Buffer, devType);
                         saveBuffer                   =   true;
                     }
-
-                    if(!saveBuffer)
-                        continue;
-
-                    switch(pageControl)
-                    {
-                        case ScsiModeSensePageControl.Default:
-                            v2.SCSI.ModeSense10Data = mode10Buffer;
-
-                            break;
-                        case ScsiModeSensePageControl.Changeable:
-                            v2.SCSI.ModeSense10ChangeableData = mode10Buffer;
-
-                            break;
-                        case ScsiModeSensePageControl.Current:
-                            v2.SCSI.ModeSense10CurrentData = mode10Buffer;
-
-                            break;
-                    }
                 }
-            });
+                else
+                {
+                    v2.SCSI.SupportsModeSense10  =   true;
+                    v2.SCSI.SupportsModeSubpages =   true;
+                    decMode                      ??= Modes.DecodeMode10(mode10Buffer, devType);
+                    saveBuffer                   =   true;
+                }
 
-            Spectre.ProgressSingleSpinner(ctx =>
+                if(!saveBuffer)
+                    continue;
+
+                switch(pageControl)
+                {
+                    case ScsiModeSensePageControl.Default:
+                        v2.SCSI.ModeSense10Data = mode10Buffer;
+
+                        break;
+                    case ScsiModeSensePageControl.Changeable:
+                        v2.SCSI.ModeSense10ChangeableData = mode10Buffer;
+
+                        break;
+                    case ScsiModeSensePageControl.Current:
+                        v2.SCSI.ModeSense10CurrentData = mode10Buffer;
+
+                        break;
+                }
+            }
+        });
+
+        Spectre.ProgressSingleSpinner(ctx =>
+        {
+            ctx.AddTask("Querying all mode pages and subpages using SCSI MODE SENSE (6)...").IsIndeterminate();
+
+            foreach(ScsiModeSensePageControl pageControl in new[]
+                    {
+                        ScsiModeSensePageControl.Default, ScsiModeSensePageControl.Current,
+                        ScsiModeSensePageControl.Changeable
+                    })
             {
-                ctx.AddTask("Querying all mode pages and subpages using SCSI MODE SENSE (6)...").IsIndeterminate();
+                bool saveBuffer = false;
+                sense = _dev.ModeSense6(out mode6Buffer, out _, true, pageControl, 0x3F, 0xFF, _dev.Timeout, out _);
 
-                foreach(ScsiModeSensePageControl pageControl in new[]
+                if(sense || _dev.Error)
                 {
-                    ScsiModeSensePageControl.Default, ScsiModeSensePageControl.Current,
-                    ScsiModeSensePageControl.Changeable
-                })
-                {
-                    bool saveBuffer = false;
-                    sense = _dev.ModeSense6(out mode6Buffer, out _, true, pageControl, 0x3F, 0xFF, _dev.Timeout, out _);
+                    sense = _dev.ModeSense6(out mode6Buffer, out _, false, pageControl, 0x3F, 0xFF, _dev.Timeout,
+                                            out _);
 
                     if(sense || _dev.Error)
                     {
-                        sense = _dev.ModeSense6(out mode6Buffer, out _, false, pageControl, 0x3F, 0xFF, _dev.Timeout,
+                        sense = _dev.ModeSense6(out mode6Buffer, out _, true, pageControl, 0x3F, 0x00, _dev.Timeout,
                                                 out _);
 
                         if(sense || _dev.Error)
                         {
-                            sense = _dev.ModeSense6(out mode6Buffer, out _, true, pageControl, 0x3F, 0x00, _dev.Timeout,
-                                                    out _);
+                            sense = _dev.ModeSense6(out mode6Buffer, out _, false, pageControl, 0x3F, 0x00,
+                                                    _dev.Timeout, out _);
 
                             if(sense || _dev.Error)
                             {
-                                sense = _dev.ModeSense6(out mode6Buffer, out _, false, pageControl, 0x3F, 0x00,
+                                sense = _dev.ModeSense6(out mode6Buffer, out _, true, pageControl, 0x00, 0x00,
                                                         _dev.Timeout, out _);
 
                                 if(sense || _dev.Error)
                                 {
-                                    sense = _dev.ModeSense6(out mode6Buffer, out _, true, pageControl, 0x00, 0x00,
+                                    sense = _dev.ModeSense6(out mode6Buffer, out _, false, pageControl, 0x00, 0x00,
                                                             _dev.Timeout, out _);
 
-                                    if(sense || _dev.Error)
-                                    {
-                                        sense = _dev.ModeSense6(out mode6Buffer, out _, false, pageControl, 0x00, 0x00,
-                                                                _dev.Timeout, out _);
-
-                                        if(!sense &&
-                                           !_dev.Error)
-                                        {
-                                            v2.SCSI.SupportsModeSense6 =   true;
-                                            decMode                    ??= Modes.DecodeMode6(mode6Buffer, devType);
-                                            saveBuffer                 =   true;
-                                        }
-                                    }
-                                    else
+                                    if(!sense &&
+                                       !_dev.Error)
                                     {
                                         v2.SCSI.SupportsModeSense6 =   true;
                                         decMode                    ??= Modes.DecodeMode6(mode6Buffer, devType);
@@ -379,221 +372,260 @@ namespace Aaru.Core.Devices.Report
                         }
                         else
                         {
-                            v2.SCSI.SupportsModeSense10  =   true;
-                            v2.SCSI.SupportsModeSubpages =   true;
-                            decMode                      ??= Modes.DecodeMode6(mode6Buffer, devType);
-                            saveBuffer                   =   true;
+                            v2.SCSI.SupportsModeSense6 =   true;
+                            decMode                    ??= Modes.DecodeMode6(mode6Buffer, devType);
+                            saveBuffer                 =   true;
                         }
                     }
                     else
                     {
-                        v2.SCSI.SupportsModeSense6   =   true;
+                        v2.SCSI.SupportsModeSense10  =   true;
                         v2.SCSI.SupportsModeSubpages =   true;
                         decMode                      ??= Modes.DecodeMode6(mode6Buffer, devType);
                         saveBuffer                   =   true;
                     }
-
-                    if(!saveBuffer)
-                        continue;
-
-                    switch(pageControl)
-                    {
-                        case ScsiModeSensePageControl.Default:
-                            v2.SCSI.ModeSense6Data = mode6Buffer;
-
-                            break;
-                        case ScsiModeSensePageControl.Changeable:
-                            v2.SCSI.ModeSense6ChangeableData = mode6Buffer;
-
-                            break;
-                        case ScsiModeSensePageControl.Current:
-                            v2.SCSI.ModeSense6CurrentData = mode6Buffer;
-
-                            break;
-                    }
                 }
-            });
+                else
+                {
+                    v2.SCSI.SupportsModeSense6   =   true;
+                    v2.SCSI.SupportsModeSubpages =   true;
+                    decMode                      ??= Modes.DecodeMode6(mode6Buffer, devType);
+                    saveBuffer                   =   true;
+                }
 
-            report = v2;
+                if(!saveBuffer)
+                    continue;
 
-            cdromMode = null;
+                switch(pageControl)
+                {
+                    case ScsiModeSensePageControl.Default:
+                        v2.SCSI.ModeSense6Data = mode6Buffer;
 
-            if(!decMode.HasValue)
-                return;
+                        break;
+                    case ScsiModeSensePageControl.Changeable:
+                        v2.SCSI.ModeSense6ChangeableData = mode6Buffer;
 
-            mediumType = decMode.Value.Header.MediumType;
+                        break;
+                    case ScsiModeSensePageControl.Current:
+                        v2.SCSI.ModeSense6CurrentData = mode6Buffer;
 
-            report.SCSI.ModeSense = new ScsiMode
+                        break;
+                }
+            }
+        });
+
+        report = v2;
+
+        cdromMode = null;
+
+        if(!decMode.HasValue)
+            return;
+
+        mediumType = decMode.Value.Header.MediumType;
+
+        report.SCSI.ModeSense = new ScsiMode
+        {
+            BlankCheckEnabled = decMode.Value.Header.EBC,
+            DPOandFUA         = decMode.Value.Header.DPOFUA,
+            WriteProtected    = decMode.Value.Header.WriteProtected
+        };
+
+        if(decMode.Value.Header.BufferedMode > 0)
+            report.SCSI.ModeSense.BufferedMode = decMode.Value.Header.BufferedMode;
+
+        if(decMode.Value.Header.Speed > 0)
+            report.SCSI.ModeSense.Speed = decMode.Value.Header.Speed;
+
+        if(decMode.Value.Pages == null)
+            return;
+
+        List<ScsiPage> modePages = new();
+
+        foreach(Modes.ModePage page in decMode.Value.Pages)
+        {
+            var modePage = new ScsiPage
             {
-                BlankCheckEnabled = decMode.Value.Header.EBC,
-                DPOandFUA         = decMode.Value.Header.DPOFUA,
-                WriteProtected    = decMode.Value.Header.WriteProtected
+                page    = page.Page,
+                subpage = page.Subpage,
+                value   = page.PageResponse
             };
 
-            if(decMode.Value.Header.BufferedMode > 0)
-                report.SCSI.ModeSense.BufferedMode = decMode.Value.Header.BufferedMode;
+            modePages.Add(modePage);
 
-            if(decMode.Value.Header.Speed > 0)
-                report.SCSI.ModeSense.Speed = decMode.Value.Header.Speed;
-
-            if(decMode.Value.Pages == null)
-                return;
-
-            List<ScsiPage> modePages = new();
-
-            foreach(Modes.ModePage page in decMode.Value.Pages)
-            {
-                var modePage = new ScsiPage
-                {
-                    page    = page.Page,
-                    subpage = page.Subpage,
-                    value   = page.PageResponse
-                };
-
-                modePages.Add(modePage);
-
-                if(modePage.page    == 0x2A &&
-                   modePage.subpage == 0x00)
-                    cdromMode = page.PageResponse;
-            }
-
-            if(modePages.Count > 0)
-                report.SCSI.ModeSense.ModePages = modePages;
+            if(modePage.page    == 0x2A &&
+               modePage.subpage == 0x00)
+                cdromMode = page.PageResponse;
         }
 
-        /// <summary>Creates a report for media inserted into a SCSI device</summary>
-        /// <returns>Media report</returns>
-        public TestedMedia ReportScsiMedia()
+        if(modePages.Count > 0)
+            report.SCSI.ModeSense.ModePages = modePages;
+    }
+
+    /// <summary>Creates a report for media inserted into a SCSI device</summary>
+    /// <returns>Media report</returns>
+    public TestedMedia ReportScsiMedia()
+    {
+        var    mediaTest   = new TestedMedia();
+        bool   sense       = true;
+        byte[] buffer      = Array.Empty<byte>();
+        byte[] senseBuffer = Array.Empty<byte>();
+
+        Spectre.ProgressSingleSpinner(ctx =>
         {
-            var    mediaTest   = new TestedMedia();
-            bool   sense       = true;
-            byte[] buffer      = Array.Empty<byte>();
-            byte[] senseBuffer = Array.Empty<byte>();
+            ctx.AddTask("Querying SCSI READ CAPACITY...").IsIndeterminate();
+            sense = _dev.ReadCapacity(out buffer, out senseBuffer, _dev.Timeout, out _);
+        });
 
-            Spectre.ProgressSingleSpinner(ctx =>
+        if(!sense &&
+           !_dev.Error)
+        {
+            mediaTest.SupportsReadCapacity = true;
+
+            mediaTest.Blocks = ((ulong)((buffer[0] << 24) + (buffer[1] << 16) + (buffer[2] << 8) + buffer[3]) &
+                                0xFFFFFFFF) + 1;
+
+            mediaTest.BlockSize = (uint)((buffer[4] << 24) + (buffer[5] << 16) + (buffer[6] << 8) + buffer[7]);
+        }
+
+        Spectre.ProgressSingleSpinner(ctx =>
+        {
+            ctx.AddTask("Querying SCSI READ CAPACITY (16)...").IsIndeterminate();
+            sense = _dev.ReadCapacity16(out buffer, out buffer, _dev.Timeout, out _);
+        });
+
+        if(!sense &&
+           !_dev.Error)
+        {
+            mediaTest.SupportsReadCapacity16 = true;
+            byte[] temp = new byte[8];
+            Array.Copy(buffer, 0, temp, 0, 8);
+            Array.Reverse(temp);
+            mediaTest.Blocks    = BitConverter.ToUInt64(temp, 0) + 1;
+            mediaTest.BlockSize = (uint)((buffer[8] << 24) + (buffer[9] << 16) + (buffer[10] << 8) + buffer[11]);
+        }
+
+        Modes.DecodedMode? decMode = null;
+
+        Spectre.ProgressSingleSpinner(ctx =>
+        {
+            ctx.AddTask("Querying SCSI MODE SENSE (10)...").IsIndeterminate();
+
+            sense = _dev.ModeSense10(out buffer, out senseBuffer, false, true, ScsiModeSensePageControl.Current,
+                                     0x3F, 0x00, _dev.Timeout, out _);
+        });
+
+        if(!sense &&
+           !_dev.Error)
+        {
+            decMode                   = Modes.DecodeMode10(buffer, _dev.ScsiType);
+            mediaTest.ModeSense10Data = buffer;
+        }
+
+        Spectre.ProgressSingleSpinner(ctx =>
+        {
+            ctx.AddTask("Querying SCSI MODE SENSE...").IsIndeterminate();
+            sense = _dev.ModeSense(out buffer, out senseBuffer, _dev.Timeout, out _);
+        });
+
+        if(!sense &&
+           !_dev.Error)
+        {
+            decMode ??= Modes.DecodeMode6(buffer, _dev.ScsiType);
+
+            mediaTest.ModeSense6Data = buffer;
+        }
+
+        if(decMode.HasValue)
+        {
+            mediaTest.MediumType = (byte)decMode.Value.Header.MediumType;
+
+            if(decMode.Value.Header.BlockDescriptors?.Length > 0)
+                mediaTest.Density = (byte)decMode.Value.Header.BlockDescriptors[0].Density;
+        }
+
+        Spectre.ProgressSingleSpinner(ctx =>
+        {
+            ctx.AddTask("Trying SCSI READ (6)...").IsIndeterminate();
+
+            mediaTest.SupportsRead6 = !_dev.Read6(out buffer, out senseBuffer, 0, mediaTest.BlockSize ?? 512,
+                                                  _dev.Timeout, out _);
+        });
+
+        AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead6);
+        mediaTest.Read6Data = buffer;
+
+        Spectre.ProgressSingleSpinner(ctx =>
+        {
+            ctx.AddTask("Trying SCSI READ (10)...").IsIndeterminate();
+
+            mediaTest.SupportsRead10 = !_dev.Read10(out buffer, out senseBuffer, 0, false, false, false, false, 0,
+                                                    mediaTest.BlockSize ?? 512, 0, 1, _dev.Timeout, out _);
+        });
+
+        AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead10);
+        mediaTest.Read10Data = buffer;
+
+        Spectre.ProgressSingleSpinner(ctx =>
+        {
+            ctx.AddTask("Trying SCSI READ (12)...").IsIndeterminate();
+
+            mediaTest.SupportsRead12 = !_dev.Read12(out buffer, out senseBuffer, 0, false, false, false, false, 0,
+                                                    mediaTest.BlockSize ?? 512, 0, 1, false, _dev.Timeout, out _);
+        });
+
+        AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead12);
+        mediaTest.Read12Data = buffer;
+
+        Spectre.ProgressSingleSpinner(ctx =>
+        {
+            ctx.AddTask("Trying SCSI READ (16)...").IsIndeterminate();
+
+            mediaTest.SupportsRead16 = !_dev.Read16(out buffer, out senseBuffer, 0, false, false, false, 0,
+                                                    mediaTest.BlockSize ?? 512, 0, 1, false, _dev.Timeout, out _);
+        });
+
+        AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead16);
+        mediaTest.Read16Data = buffer;
+
+        mediaTest.LongBlockSize = mediaTest.BlockSize;
+
+        Spectre.ProgressSingleSpinner(ctx =>
+        {
+            ctx.AddTask("Trying SCSI READ LONG (10)...").IsIndeterminate();
+            sense = _dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 0xFFFF, _dev.Timeout, out _);
+        });
+
+        if(sense && !_dev.Error)
+        {
+            DecodedSense? decSense = Sense.Decode(senseBuffer);
+
+            if(decSense?.SenseKey  == SenseKeys.IllegalRequest &&
+               decSense.Value.ASC  == 0x24                     &&
+               decSense.Value.ASCQ == 0x00)
             {
-                ctx.AddTask("Querying SCSI READ CAPACITY...").IsIndeterminate();
-                sense = _dev.ReadCapacity(out buffer, out senseBuffer, _dev.Timeout, out _);
-            });
+                mediaTest.SupportsReadLong = true;
 
-            if(!sense &&
-               !_dev.Error)
-            {
-                mediaTest.SupportsReadCapacity = true;
+                bool valid       = decSense.Value.Fixed?.InformationValid == true;
+                bool ili         = decSense.Value.Fixed?.ILI              == true;
+                uint information = decSense.Value.Fixed?.Information ?? 0;
 
-                mediaTest.Blocks = ((ulong)((buffer[0] << 24) + (buffer[1] << 16) + (buffer[2] << 8) + buffer[3]) &
-                                    0xFFFFFFFF) + 1;
+                if(decSense.Value.Descriptor.HasValue &&
+                   decSense.Value.Descriptor.Value.Descriptors.TryGetValue(0, out byte[] desc00))
+                {
+                    valid       = true;
+                    ili         = true;
+                    information = (uint)Sense.DecodeDescriptor00(desc00);
+                }
 
-                mediaTest.BlockSize = (uint)((buffer[4] << 24) + (buffer[5] << 16) + (buffer[6] << 8) + buffer[7]);
+                if(valid && ili)
+                    mediaTest.LongBlockSize = 0xFFFF - (information & 0xFFFF);
             }
+        }
 
-            Spectre.ProgressSingleSpinner(ctx =>
-            {
-                ctx.AddTask("Querying SCSI READ CAPACITY (16)...").IsIndeterminate();
-                sense = _dev.ReadCapacity16(out buffer, out buffer, _dev.Timeout, out _);
-            });
-
-            if(!sense &&
-               !_dev.Error)
-            {
-                mediaTest.SupportsReadCapacity16 = true;
-                byte[] temp = new byte[8];
-                Array.Copy(buffer, 0, temp, 0, 8);
-                Array.Reverse(temp);
-                mediaTest.Blocks    = BitConverter.ToUInt64(temp, 0) + 1;
-                mediaTest.BlockSize = (uint)((buffer[8] << 24) + (buffer[9] << 16) + (buffer[10] << 8) + buffer[11]);
-            }
-
-            Modes.DecodedMode? decMode = null;
-
-            Spectre.ProgressSingleSpinner(ctx =>
-            {
-                ctx.AddTask("Querying SCSI MODE SENSE (10)...").IsIndeterminate();
-
-                sense = _dev.ModeSense10(out buffer, out senseBuffer, false, true, ScsiModeSensePageControl.Current,
-                                         0x3F, 0x00, _dev.Timeout, out _);
-            });
-
-            if(!sense &&
-               !_dev.Error)
-            {
-                decMode                   = Modes.DecodeMode10(buffer, _dev.ScsiType);
-                mediaTest.ModeSense10Data = buffer;
-            }
-
-            Spectre.ProgressSingleSpinner(ctx =>
-            {
-                ctx.AddTask("Querying SCSI MODE SENSE...").IsIndeterminate();
-                sense = _dev.ModeSense(out buffer, out senseBuffer, _dev.Timeout, out _);
-            });
-
-            if(!sense &&
-               !_dev.Error)
-            {
-                decMode ??= Modes.DecodeMode6(buffer, _dev.ScsiType);
-
-                mediaTest.ModeSense6Data = buffer;
-            }
-
-            if(decMode.HasValue)
-            {
-                mediaTest.MediumType = (byte)decMode.Value.Header.MediumType;
-
-                if(decMode.Value.Header.BlockDescriptors?.Length > 0)
-                    mediaTest.Density = (byte)decMode.Value.Header.BlockDescriptors[0].Density;
-            }
-
-            Spectre.ProgressSingleSpinner(ctx =>
-            {
-                ctx.AddTask("Trying SCSI READ (6)...").IsIndeterminate();
-
-                mediaTest.SupportsRead6 = !_dev.Read6(out buffer, out senseBuffer, 0, mediaTest.BlockSize ?? 512,
-                                                      _dev.Timeout, out _);
-            });
-
-            AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead6);
-            mediaTest.Read6Data = buffer;
-
-            Spectre.ProgressSingleSpinner(ctx =>
-            {
-                ctx.AddTask("Trying SCSI READ (10)...").IsIndeterminate();
-
-                mediaTest.SupportsRead10 = !_dev.Read10(out buffer, out senseBuffer, 0, false, false, false, false, 0,
-                                                        mediaTest.BlockSize ?? 512, 0, 1, _dev.Timeout, out _);
-            });
-
-            AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead10);
-            mediaTest.Read10Data = buffer;
-
-            Spectre.ProgressSingleSpinner(ctx =>
-            {
-                ctx.AddTask("Trying SCSI READ (12)...").IsIndeterminate();
-
-                mediaTest.SupportsRead12 = !_dev.Read12(out buffer, out senseBuffer, 0, false, false, false, false, 0,
-                                                        mediaTest.BlockSize ?? 512, 0, 1, false, _dev.Timeout, out _);
-            });
-
-            AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead12);
-            mediaTest.Read12Data = buffer;
-
-            Spectre.ProgressSingleSpinner(ctx =>
-            {
-                ctx.AddTask("Trying SCSI READ (16)...").IsIndeterminate();
-
-                mediaTest.SupportsRead16 = !_dev.Read16(out buffer, out senseBuffer, 0, false, false, false, 0,
-                                                        mediaTest.BlockSize ?? 512, 0, 1, false, _dev.Timeout, out _);
-            });
-
-            AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead16);
-            mediaTest.Read16Data = buffer;
-
-            mediaTest.LongBlockSize = mediaTest.BlockSize;
-
-            Spectre.ProgressSingleSpinner(ctx =>
-            {
-                ctx.AddTask("Trying SCSI READ LONG (10)...").IsIndeterminate();
-                sense = _dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 0xFFFF, _dev.Timeout, out _);
-            });
+        Spectre.ProgressSingleSpinner(ctx =>
+        {
+            ctx.AddTask("Trying SCSI READ LONG (16)...").IsIndeterminate();
+            sense = _dev.ReadLong16(out buffer, out senseBuffer, false, 0, 0xFFFF, _dev.Timeout, out _);
 
             if(sense && !_dev.Error)
             {
@@ -603,7 +635,7 @@ namespace Aaru.Core.Devices.Report
                    decSense.Value.ASC  == 0x24                     &&
                    decSense.Value.ASCQ == 0x00)
                 {
-                    mediaTest.SupportsReadLong = true;
+                    mediaTest.SupportsReadLong16 = true;
 
                     bool valid       = decSense.Value.Fixed?.InformationValid == true;
                     bool ili         = decSense.Value.Fixed?.ILI              == true;
@@ -622,45 +654,335 @@ namespace Aaru.Core.Devices.Report
                 }
             }
 
-            Spectre.ProgressSingleSpinner(ctx =>
-            {
-                ctx.AddTask("Trying SCSI READ LONG (16)...").IsIndeterminate();
-                sense = _dev.ReadLong16(out buffer, out senseBuffer, false, 0, 0xFFFF, _dev.Timeout, out _);
-
-                if(sense && !_dev.Error)
+            if((mediaTest.SupportsReadLong == true || mediaTest.SupportsReadLong16 == true) &&
+               mediaTest.LongBlockSize == mediaTest.BlockSize)
+                switch(mediaTest.BlockSize)
                 {
-                    DecodedSense? decSense = Sense.Decode(senseBuffer);
-
-                    if(decSense?.SenseKey  == SenseKeys.IllegalRequest &&
-                       decSense.Value.ASC  == 0x24                     &&
-                       decSense.Value.ASCQ == 0x00)
+                    case 512:
                     {
-                        mediaTest.SupportsReadLong16 = true;
+                        foreach(ushort testSize in new ushort[]
+                                {
+                                    // Long sector sizes for floppies
+                                    514,
 
-                        bool valid       = decSense.Value.Fixed?.InformationValid == true;
-                        bool ili         = decSense.Value.Fixed?.ILI              == true;
-                        uint information = decSense.Value.Fixed?.Information ?? 0;
+                                    // Long sector sizes for SuperDisk
+                                    536, 558,
 
-                        if(decSense.Value.Descriptor.HasValue &&
-                           decSense.Value.Descriptor.Value.Descriptors.TryGetValue(0, out byte[] desc00))
+                                    // Long sector sizes for 512-byte magneto-opticals
+                                    600, 610, 630
+                                })
                         {
-                            valid       = true;
-                            ili         = true;
-                            information = (uint)Sense.DecodeDescriptor00(desc00);
+                            sense = mediaTest.SupportsReadLong16 == true
+                                        ? _dev.ReadLong16(out buffer, out senseBuffer, false, 0, testSize,
+                                                          _dev.Timeout, out _)
+                                        : _dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, testSize,
+                                                          _dev.Timeout, out _);
+
+                            if(sense || _dev.Error)
+                                continue;
+
+                            mediaTest.LongBlockSize = testSize;
+
+                            break;
                         }
 
-                        if(valid && ili)
-                            mediaTest.LongBlockSize = 0xFFFF - (information & 0xFFFF);
+                        break;
+                    }
+                    case 1024:
+                    {
+                        foreach(ushort testSize in new ushort[]
+                                {
+                                    // Long sector sizes for floppies
+                                    1026,
+
+                                    // Long sector sizes for 1024-byte magneto-opticals
+                                    1200
+                                })
+                        {
+                            sense = mediaTest.SupportsReadLong16 == true
+                                        ? _dev.ReadLong16(out buffer, out senseBuffer, false, 0, testSize,
+                                                          _dev.Timeout, out _)
+                                        : _dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, testSize,
+                                                          _dev.Timeout, out _);
+
+                            if(sense || _dev.Error)
+                                continue;
+
+                            mediaTest.LongBlockSize = testSize;
+
+                            break;
+                        }
+
+                        break;
+                    }
+                    case 2048:
+                    {
+                        sense = mediaTest.SupportsReadLong16 == true
+                                    ? _dev.ReadLong16(out buffer, out senseBuffer, false, 0, 2380, _dev.Timeout,
+                                                      out _) : _dev.ReadLong10(out buffer, out senseBuffer, false,
+                                                                               false, 0, 2380, _dev.Timeout, out _);
+
+                        if(!sense &&
+                           !_dev.Error)
+                            mediaTest.LongBlockSize = 2380;
+
+                        break;
+                    }
+                    case 4096:
+                    {
+                        sense = mediaTest.SupportsReadLong16 == true
+                                    ? _dev.ReadLong16(out buffer, out senseBuffer, false, 0, 4760, _dev.Timeout,
+                                                      out _) : _dev.ReadLong10(out buffer, out senseBuffer, false,
+                                                                               false, 0, 4760, _dev.Timeout, out _);
+
+                        if(!sense &&
+                           !_dev.Error)
+                            mediaTest.LongBlockSize = 4760;
+
+                        break;
+                    }
+                    case 8192:
+                    {
+                        sense = mediaTest.SupportsReadLong16 == true
+                                    ? _dev.ReadLong16(out buffer, out senseBuffer, false, 0, 9424, _dev.Timeout,
+                                                      out _) : _dev.ReadLong10(out buffer, out senseBuffer, false,
+                                                                               false, 0, 9424, _dev.Timeout, out _);
+
+                        if(!sense &&
+                           !_dev.Error)
+                            mediaTest.LongBlockSize = 9424;
+
+                        break;
                     }
                 }
+        });
 
-                if((mediaTest.SupportsReadLong == true || mediaTest.SupportsReadLong16 == true) &&
-                   mediaTest.LongBlockSize == mediaTest.BlockSize)
-                    switch(mediaTest.BlockSize)
-                    {
-                        case 512:
-                        {
-                            foreach(ushort testSize in new ushort[]
+        Spectre.ProgressSingleSpinner(ctx =>
+        {
+            ctx.AddTask("Trying SCSI READ MEDIA SERIAL NUMBER...").IsIndeterminate();
+
+            mediaTest.CanReadMediaSerial =
+                !_dev.ReadMediaSerialNumber(out buffer, out senseBuffer, _dev.Timeout, out _);
+        });
+
+        return mediaTest;
+    }
+
+    /// <summary>Creates a media report for a non-removable SCSI device</summary>
+    /// <returns>Media report</returns>
+    public TestedMedia ReportScsi()
+    {
+        bool   sense       = true;
+        byte[] buffer      = Array.Empty<byte>();
+        byte[] senseBuffer = Array.Empty<byte>();
+
+        var capabilities = new TestedMedia
+        {
+            MediaIsRecognized = true
+        };
+
+        Spectre.ProgressSingleSpinner(ctx =>
+        {
+            ctx.AddTask("Querying SCSI READ CAPACITY...").IsIndeterminate();
+            sense = _dev.ReadCapacity(out buffer, out senseBuffer, _dev.Timeout, out _);
+        });
+
+        if(!sense &&
+           !_dev.Error)
+        {
+            capabilities.SupportsReadCapacity = true;
+
+            capabilities.Blocks = ((ulong)((buffer[0] << 24) + (buffer[1] << 16) + (buffer[2] << 8) + buffer[3]) &
+                                   0xFFFFFFFF) + 1;
+
+            capabilities.BlockSize = (uint)((buffer[4] << 24) + (buffer[5] << 16) + (buffer[6] << 8) + buffer[7]);
+        }
+
+        Spectre.ProgressSingleSpinner(ctx =>
+        {
+            ctx.AddTask("Querying SCSI READ CAPACITY (16)...").IsIndeterminate();
+            sense = _dev.ReadCapacity16(out buffer, out buffer, _dev.Timeout, out _);
+        });
+
+        if(!sense &&
+           !_dev.Error)
+        {
+            capabilities.SupportsReadCapacity16 = true;
+            byte[] temp = new byte[8];
+            Array.Copy(buffer, 0, temp, 0, 8);
+            Array.Reverse(temp);
+            capabilities.Blocks    = BitConverter.ToUInt64(temp, 0) + 1;
+            capabilities.BlockSize = (uint)((buffer[8] << 24) + (buffer[9] << 16) + (buffer[10] << 8) + buffer[11]);
+        }
+
+        Modes.DecodedMode? decMode = null;
+
+        Spectre.ProgressSingleSpinner(ctx =>
+        {
+            ctx.AddTask("Querying SCSI MODE SENSE (10)...").IsIndeterminate();
+
+            sense = _dev.ModeSense10(out buffer, out senseBuffer, false, true, ScsiModeSensePageControl.Current,
+                                     0x3F, 0x00, _dev.Timeout, out _);
+        });
+
+        if(!sense &&
+           !_dev.Error)
+        {
+            decMode                      = Modes.DecodeMode10(buffer, _dev.ScsiType);
+            capabilities.ModeSense10Data = buffer;
+        }
+
+        Spectre.ProgressSingleSpinner(ctx =>
+        {
+            ctx.AddTask("Querying SCSI MODE SENSE...").IsIndeterminate();
+            sense = _dev.ModeSense(out buffer, out senseBuffer, _dev.Timeout, out _);
+        });
+
+        if(!sense &&
+           !_dev.Error)
+        {
+            decMode ??= Modes.DecodeMode6(buffer, _dev.ScsiType);
+
+            capabilities.ModeSense6Data = buffer;
+        }
+
+        if(decMode.HasValue)
+        {
+            capabilities.MediumType = (byte)decMode.Value.Header.MediumType;
+
+            if(decMode.Value.Header.BlockDescriptors?.Length > 0)
+                capabilities.Density = (byte)decMode.Value.Header.BlockDescriptors[0].Density;
+        }
+
+        Spectre.ProgressSingleSpinner(ctx =>
+        {
+            ctx.AddTask("Trying SCSI READ (6)...").IsIndeterminate();
+
+            capabilities.SupportsRead6 = !_dev.Read6(out buffer, out senseBuffer, 0, capabilities.BlockSize ?? 512,
+                                                     _dev.Timeout, out _);
+        });
+
+        AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !capabilities.SupportsRead6);
+        capabilities.Read6Data = buffer;
+
+        Spectre.ProgressSingleSpinner(ctx =>
+        {
+            ctx.AddTask("Trying SCSI READ (10)...").IsIndeterminate();
+
+            capabilities.SupportsRead10 = !_dev.Read10(out buffer, out senseBuffer, 0, false, false, false, false,
+                                                       0, capabilities.BlockSize ?? 512, 0, 1, _dev.Timeout, out _);
+        });
+
+        AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !capabilities.SupportsRead10);
+        capabilities.Read10Data = buffer;
+
+        Spectre.ProgressSingleSpinner(ctx =>
+        {
+            ctx.AddTask("Trying SCSI READ (12)...").IsIndeterminate();
+
+            capabilities.SupportsRead12 = !_dev.Read12(out buffer, out senseBuffer, 0, false, false, false, false,
+                                                       0, capabilities.BlockSize ?? 512, 0, 1, false, _dev.Timeout,
+                                                       out _);
+        });
+
+        AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !capabilities.SupportsRead12);
+        capabilities.Read12Data = buffer;
+
+        Spectre.ProgressSingleSpinner(ctx =>
+        {
+            ctx.AddTask("Trying SCSI READ (16)...").IsIndeterminate();
+
+            capabilities.SupportsRead16 = !_dev.Read16(out buffer, out senseBuffer, 0, false, false, false, 0,
+                                                       capabilities.BlockSize ?? 512, 0, 1, false, _dev.Timeout,
+                                                       out _);
+        });
+
+        AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !capabilities.SupportsRead16);
+        capabilities.Read16Data = buffer;
+
+        capabilities.LongBlockSize = capabilities.BlockSize;
+
+        Spectre.ProgressSingleSpinner(ctx =>
+        {
+            ctx.AddTask("Trying SCSI READ LONG (10)...").IsIndeterminate();
+            sense = _dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 0xFFFF, _dev.Timeout, out _);
+        });
+
+        if(sense && !_dev.Error)
+        {
+            DecodedSense? decSense = Sense.Decode(senseBuffer);
+
+            if(decSense?.SenseKey  == SenseKeys.IllegalRequest &&
+               decSense.Value.ASC  == 0x24                     &&
+               decSense.Value.ASCQ == 0x00)
+            {
+                capabilities.SupportsReadLong = true;
+
+                bool valid       = decSense.Value.Fixed?.InformationValid == true;
+                bool ili         = decSense.Value.Fixed?.ILI              == true;
+                uint information = decSense.Value.Fixed?.Information ?? 0;
+
+                if(decSense.Value.Descriptor.HasValue &&
+                   decSense.Value.Descriptor.Value.Descriptors.TryGetValue(0, out byte[] desc00))
+                {
+                    valid       = true;
+                    ili         = true;
+                    information = (uint)Sense.DecodeDescriptor00(desc00);
+                }
+
+                if(valid && ili)
+                    capabilities.LongBlockSize = 0xFFFF - (information & 0xFFFF);
+            }
+        }
+
+        Spectre.ProgressSingleSpinner(ctx =>
+        {
+            ctx.AddTask("Trying SCSI READ LONG (16)...").IsIndeterminate();
+            sense = _dev.ReadLong16(out buffer, out senseBuffer, false, 0, 0xFFFF, _dev.Timeout, out _);
+        });
+
+        if(sense && !_dev.Error)
+        {
+            capabilities.SupportsReadLong16 = true;
+            DecodedSense? decSense = Sense.Decode(senseBuffer);
+
+            if(decSense?.SenseKey  == SenseKeys.IllegalRequest &&
+               decSense.Value.ASC  == 0x24                     &&
+               decSense.Value.ASCQ == 0x00)
+            {
+                capabilities.SupportsReadLong16 = true;
+
+                bool valid       = decSense.Value.Fixed?.InformationValid == true;
+                bool ili         = decSense.Value.Fixed?.ILI              == true;
+                uint information = decSense.Value.Fixed?.Information ?? 0;
+
+                if(decSense.Value.Descriptor.HasValue &&
+                   decSense.Value.Descriptor.Value.Descriptors.TryGetValue(0, out byte[] desc00))
+                {
+                    valid       = true;
+                    ili         = true;
+                    information = (uint)Sense.DecodeDescriptor00(desc00);
+                }
+
+                if(valid && ili)
+                    capabilities.LongBlockSize = 0xFFFF - (information & 0xFFFF);
+            }
+        }
+
+        if((capabilities.SupportsReadLong != true && capabilities.SupportsReadLong16 != true) ||
+           capabilities.LongBlockSize != capabilities.BlockSize)
+            return capabilities;
+
+        Spectre.ProgressSingleSpinner(ctx =>
+        {
+            ctx.AddTask(capabilities.SupportsReadLong16 == true ? "Trying SCSI READ LONG (16)..."
+                            : "Trying SCSI READ LONG (10)...").IsIndeterminate();
+
+            switch(capabilities.BlockSize)
+            {
+                case 512:
+                {
+                    foreach(ushort testSize in new ushort[]
                             {
                                 // Long sector sizes for floppies
                                 514,
@@ -671,26 +993,26 @@ namespace Aaru.Core.Devices.Report
                                 // Long sector sizes for 512-byte magneto-opticals
                                 600, 610, 630
                             })
-                            {
-                                sense = mediaTest.SupportsReadLong16 == true
-                                            ? _dev.ReadLong16(out buffer, out senseBuffer, false, 0, testSize,
-                                                              _dev.Timeout, out _)
-                                            : _dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, testSize,
-                                                              _dev.Timeout, out _);
+                    {
+                        sense = capabilities.SupportsReadLong16 == true
+                                    ? _dev.ReadLong16(out buffer, out senseBuffer, false, 0, testSize, _dev.Timeout,
+                                                      out _) : _dev.ReadLong10(out buffer, out senseBuffer, false,
+                                                                               false, 0, testSize, _dev.Timeout, out _);
 
-                                if(sense || _dev.Error)
-                                    continue;
+                        if(sense || _dev.Error)
+                            continue;
 
-                                mediaTest.LongBlockSize = testSize;
+                        capabilities.SupportsReadLong = true;
+                        capabilities.LongBlockSize    = testSize;
 
-                                break;
-                            }
+                        break;
+                    }
 
-                            break;
-                        }
-                        case 1024:
-                        {
-                            foreach(ushort testSize in new ushort[]
+                    break;
+                }
+                case 1024:
+                {
+                    foreach(ushort testSize in new ushort[]
                             {
                                 // Long sector sizes for floppies
                                 1026,
@@ -698,394 +1020,71 @@ namespace Aaru.Core.Devices.Report
                                 // Long sector sizes for 1024-byte magneto-opticals
                                 1200
                             })
-                            {
-                                sense = mediaTest.SupportsReadLong16 == true
-                                            ? _dev.ReadLong16(out buffer, out senseBuffer, false, 0, testSize,
-                                                              _dev.Timeout, out _)
-                                            : _dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, testSize,
-                                                              _dev.Timeout, out _);
+                    {
+                        sense = capabilities.SupportsReadLong16 == true
+                                    ? _dev.ReadLong16(out buffer, out senseBuffer, false, 0, testSize, _dev.Timeout,
+                                                      out _) : _dev.ReadLong10(out buffer, out senseBuffer, false,
+                                                                               false, 0, testSize, _dev.Timeout, out _);
 
-                                if(sense || _dev.Error)
-                                    continue;
+                        if(sense || _dev.Error)
+                            continue;
 
-                                mediaTest.LongBlockSize = testSize;
+                        capabilities.SupportsReadLong = true;
+                        capabilities.LongBlockSize    = testSize;
 
-                                break;
-                            }
-
-                            break;
-                        }
-                        case 2048:
-                        {
-                            sense = mediaTest.SupportsReadLong16 == true
-                                        ? _dev.ReadLong16(out buffer, out senseBuffer, false, 0, 2380, _dev.Timeout,
-                                                          out _) : _dev.ReadLong10(out buffer, out senseBuffer, false,
-                                            false, 0, 2380, _dev.Timeout, out _);
-
-                            if(!sense &&
-                               !_dev.Error)
-                                mediaTest.LongBlockSize = 2380;
-
-                            break;
-                        }
-                        case 4096:
-                        {
-                            sense = mediaTest.SupportsReadLong16 == true
-                                        ? _dev.ReadLong16(out buffer, out senseBuffer, false, 0, 4760, _dev.Timeout,
-                                                          out _) : _dev.ReadLong10(out buffer, out senseBuffer, false,
-                                            false, 0, 4760, _dev.Timeout, out _);
-
-                            if(!sense &&
-                               !_dev.Error)
-                                mediaTest.LongBlockSize = 4760;
-
-                            break;
-                        }
-                        case 8192:
-                        {
-                            sense = mediaTest.SupportsReadLong16 == true
-                                        ? _dev.ReadLong16(out buffer, out senseBuffer, false, 0, 9424, _dev.Timeout,
-                                                          out _) : _dev.ReadLong10(out buffer, out senseBuffer, false,
-                                            false, 0, 9424, _dev.Timeout, out _);
-
-                            if(!sense &&
-                               !_dev.Error)
-                                mediaTest.LongBlockSize = 9424;
-
-                            break;
-                        }
+                        break;
                     }
-            });
 
-            Spectre.ProgressSingleSpinner(ctx =>
-            {
-                ctx.AddTask("Trying SCSI READ MEDIA SERIAL NUMBER...").IsIndeterminate();
-
-                mediaTest.CanReadMediaSerial =
-                    !_dev.ReadMediaSerialNumber(out buffer, out senseBuffer, _dev.Timeout, out _);
-            });
-
-            return mediaTest;
-        }
-
-        /// <summary>Creates a media report for a non-removable SCSI device</summary>
-        /// <returns>Media report</returns>
-        public TestedMedia ReportScsi()
-        {
-            bool   sense       = true;
-            byte[] buffer      = Array.Empty<byte>();
-            byte[] senseBuffer = Array.Empty<byte>();
-
-            var capabilities = new TestedMedia
-            {
-                MediaIsRecognized = true
-            };
-
-            Spectre.ProgressSingleSpinner(ctx =>
-            {
-                ctx.AddTask("Querying SCSI READ CAPACITY...").IsIndeterminate();
-                sense = _dev.ReadCapacity(out buffer, out senseBuffer, _dev.Timeout, out _);
-            });
-
-            if(!sense &&
-               !_dev.Error)
-            {
-                capabilities.SupportsReadCapacity = true;
-
-                capabilities.Blocks = ((ulong)((buffer[0] << 24) + (buffer[1] << 16) + (buffer[2] << 8) + buffer[3]) &
-                                       0xFFFFFFFF) + 1;
-
-                capabilities.BlockSize = (uint)((buffer[4] << 24) + (buffer[5] << 16) + (buffer[6] << 8) + buffer[7]);
-            }
-
-            Spectre.ProgressSingleSpinner(ctx =>
-            {
-                ctx.AddTask("Querying SCSI READ CAPACITY (16)...").IsIndeterminate();
-                sense = _dev.ReadCapacity16(out buffer, out buffer, _dev.Timeout, out _);
-            });
-
-            if(!sense &&
-               !_dev.Error)
-            {
-                capabilities.SupportsReadCapacity16 = true;
-                byte[] temp = new byte[8];
-                Array.Copy(buffer, 0, temp, 0, 8);
-                Array.Reverse(temp);
-                capabilities.Blocks    = BitConverter.ToUInt64(temp, 0) + 1;
-                capabilities.BlockSize = (uint)((buffer[8] << 24) + (buffer[9] << 16) + (buffer[10] << 8) + buffer[11]);
-            }
-
-            Modes.DecodedMode? decMode = null;
-
-            Spectre.ProgressSingleSpinner(ctx =>
-            {
-                ctx.AddTask("Querying SCSI MODE SENSE (10)...").IsIndeterminate();
-
-                sense = _dev.ModeSense10(out buffer, out senseBuffer, false, true, ScsiModeSensePageControl.Current,
-                                         0x3F, 0x00, _dev.Timeout, out _);
-            });
-
-            if(!sense &&
-               !_dev.Error)
-            {
-                decMode                      = Modes.DecodeMode10(buffer, _dev.ScsiType);
-                capabilities.ModeSense10Data = buffer;
-            }
-
-            Spectre.ProgressSingleSpinner(ctx =>
-            {
-                ctx.AddTask("Querying SCSI MODE SENSE...").IsIndeterminate();
-                sense = _dev.ModeSense(out buffer, out senseBuffer, _dev.Timeout, out _);
-            });
-
-            if(!sense &&
-               !_dev.Error)
-            {
-                decMode ??= Modes.DecodeMode6(buffer, _dev.ScsiType);
-
-                capabilities.ModeSense6Data = buffer;
-            }
-
-            if(decMode.HasValue)
-            {
-                capabilities.MediumType = (byte)decMode.Value.Header.MediumType;
-
-                if(decMode.Value.Header.BlockDescriptors?.Length > 0)
-                    capabilities.Density = (byte)decMode.Value.Header.BlockDescriptors[0].Density;
-            }
-
-            Spectre.ProgressSingleSpinner(ctx =>
-            {
-                ctx.AddTask("Trying SCSI READ (6)...").IsIndeterminate();
-
-                capabilities.SupportsRead6 = !_dev.Read6(out buffer, out senseBuffer, 0, capabilities.BlockSize ?? 512,
-                                                         _dev.Timeout, out _);
-            });
-
-            AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !capabilities.SupportsRead6);
-            capabilities.Read6Data = buffer;
-
-            Spectre.ProgressSingleSpinner(ctx =>
-            {
-                ctx.AddTask("Trying SCSI READ (10)...").IsIndeterminate();
-
-                capabilities.SupportsRead10 = !_dev.Read10(out buffer, out senseBuffer, 0, false, false, false, false,
-                                                           0, capabilities.BlockSize ?? 512, 0, 1, _dev.Timeout, out _);
-            });
-
-            AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !capabilities.SupportsRead10);
-            capabilities.Read10Data = buffer;
-
-            Spectre.ProgressSingleSpinner(ctx =>
-            {
-                ctx.AddTask("Trying SCSI READ (12)...").IsIndeterminate();
-
-                capabilities.SupportsRead12 = !_dev.Read12(out buffer, out senseBuffer, 0, false, false, false, false,
-                                                           0, capabilities.BlockSize ?? 512, 0, 1, false, _dev.Timeout,
-                                                           out _);
-            });
-
-            AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !capabilities.SupportsRead12);
-            capabilities.Read12Data = buffer;
-
-            Spectre.ProgressSingleSpinner(ctx =>
-            {
-                ctx.AddTask("Trying SCSI READ (16)...").IsIndeterminate();
-
-                capabilities.SupportsRead16 = !_dev.Read16(out buffer, out senseBuffer, 0, false, false, false, 0,
-                                                           capabilities.BlockSize ?? 512, 0, 1, false, _dev.Timeout,
-                                                           out _);
-            });
-
-            AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !capabilities.SupportsRead16);
-            capabilities.Read16Data = buffer;
-
-            capabilities.LongBlockSize = capabilities.BlockSize;
-
-            Spectre.ProgressSingleSpinner(ctx =>
-            {
-                ctx.AddTask("Trying SCSI READ LONG (10)...").IsIndeterminate();
-                sense = _dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 0xFFFF, _dev.Timeout, out _);
-            });
-
-            if(sense && !_dev.Error)
-            {
-                DecodedSense? decSense = Sense.Decode(senseBuffer);
-
-                if(decSense?.SenseKey  == SenseKeys.IllegalRequest &&
-                   decSense.Value.ASC  == 0x24                     &&
-                   decSense.Value.ASCQ == 0x00)
+                    break;
+                }
+                case 2048:
                 {
+                    sense = capabilities.SupportsReadLong16 == true
+                                ? _dev.ReadLong16(out buffer, out senseBuffer, false, 0, 2380, _dev.Timeout, out _)
+                                : _dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 2380, _dev.Timeout,
+                                                  out _);
+
+                    if(sense || _dev.Error)
+                        return;
+
                     capabilities.SupportsReadLong = true;
+                    capabilities.LongBlockSize    = 2380;
 
-                    bool valid       = decSense.Value.Fixed?.InformationValid == true;
-                    bool ili         = decSense.Value.Fixed?.ILI              == true;
-                    uint information = decSense.Value.Fixed?.Information ?? 0;
+                    break;
+                }
+                case 4096:
+                {
+                    sense = capabilities.SupportsReadLong16 == true
+                                ? _dev.ReadLong16(out buffer, out senseBuffer, false, 0, 4760, _dev.Timeout, out _)
+                                : _dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 4760, _dev.Timeout,
+                                                  out _);
 
-                    if(decSense.Value.Descriptor.HasValue &&
-                       decSense.Value.Descriptor.Value.Descriptors.TryGetValue(0, out byte[] desc00))
-                    {
-                        valid       = true;
-                        ili         = true;
-                        information = (uint)Sense.DecodeDescriptor00(desc00);
-                    }
+                    if(sense || _dev.Error)
+                        return;
 
-                    if(valid && ili)
-                        capabilities.LongBlockSize = 0xFFFF - (information & 0xFFFF);
+                    capabilities.SupportsReadLong = true;
+                    capabilities.LongBlockSize    = 4760;
+
+                    break;
+                }
+                case 8192:
+                {
+                    sense = capabilities.SupportsReadLong16 == true
+                                ? _dev.ReadLong16(out buffer, out senseBuffer, false, 0, 9424, _dev.Timeout, out _)
+                                : _dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 9424, _dev.Timeout,
+                                                  out _);
+
+                    if(sense || _dev.Error)
+                        return;
+
+                    capabilities.SupportsReadLong = true;
+                    capabilities.LongBlockSize    = 9424;
+
+                    break;
                 }
             }
+        });
 
-            Spectre.ProgressSingleSpinner(ctx =>
-            {
-                ctx.AddTask("Trying SCSI READ LONG (16)...").IsIndeterminate();
-                sense = _dev.ReadLong16(out buffer, out senseBuffer, false, 0, 0xFFFF, _dev.Timeout, out _);
-            });
-
-            if(sense && !_dev.Error)
-            {
-                capabilities.SupportsReadLong16 = true;
-                DecodedSense? decSense = Sense.Decode(senseBuffer);
-
-                if(decSense?.SenseKey  == SenseKeys.IllegalRequest &&
-                   decSense.Value.ASC  == 0x24                     &&
-                   decSense.Value.ASCQ == 0x00)
-                {
-                    capabilities.SupportsReadLong16 = true;
-
-                    bool valid       = decSense.Value.Fixed?.InformationValid == true;
-                    bool ili         = decSense.Value.Fixed?.ILI              == true;
-                    uint information = decSense.Value.Fixed?.Information ?? 0;
-
-                    if(decSense.Value.Descriptor.HasValue &&
-                       decSense.Value.Descriptor.Value.Descriptors.TryGetValue(0, out byte[] desc00))
-                    {
-                        valid       = true;
-                        ili         = true;
-                        information = (uint)Sense.DecodeDescriptor00(desc00);
-                    }
-
-                    if(valid && ili)
-                        capabilities.LongBlockSize = 0xFFFF - (information & 0xFFFF);
-                }
-            }
-
-            if((capabilities.SupportsReadLong != true && capabilities.SupportsReadLong16 != true) ||
-               capabilities.LongBlockSize != capabilities.BlockSize)
-                return capabilities;
-
-            Spectre.ProgressSingleSpinner(ctx =>
-            {
-                ctx.AddTask(capabilities.SupportsReadLong16 == true ? "Trying SCSI READ LONG (16)..."
-                                : "Trying SCSI READ LONG (10)...").IsIndeterminate();
-
-                switch(capabilities.BlockSize)
-                {
-                    case 512:
-                    {
-                        foreach(ushort testSize in new ushort[]
-                        {
-                            // Long sector sizes for floppies
-                            514,
-
-                            // Long sector sizes for SuperDisk
-                            536, 558,
-
-                            // Long sector sizes for 512-byte magneto-opticals
-                            600, 610, 630
-                        })
-                        {
-                            sense = capabilities.SupportsReadLong16 == true
-                                        ? _dev.ReadLong16(out buffer, out senseBuffer, false, 0, testSize, _dev.Timeout,
-                                                          out _) : _dev.ReadLong10(out buffer, out senseBuffer, false,
-                                            false, 0, testSize, _dev.Timeout, out _);
-
-                            if(sense || _dev.Error)
-                                continue;
-
-                            capabilities.SupportsReadLong = true;
-                            capabilities.LongBlockSize    = testSize;
-
-                            break;
-                        }
-
-                        break;
-                    }
-                    case 1024:
-                    {
-                        foreach(ushort testSize in new ushort[]
-                        {
-                            // Long sector sizes for floppies
-                            1026,
-
-                            // Long sector sizes for 1024-byte magneto-opticals
-                            1200
-                        })
-                        {
-                            sense = capabilities.SupportsReadLong16 == true
-                                        ? _dev.ReadLong16(out buffer, out senseBuffer, false, 0, testSize, _dev.Timeout,
-                                                          out _) : _dev.ReadLong10(out buffer, out senseBuffer, false,
-                                            false, 0, testSize, _dev.Timeout, out _);
-
-                            if(sense || _dev.Error)
-                                continue;
-
-                            capabilities.SupportsReadLong = true;
-                            capabilities.LongBlockSize    = testSize;
-
-                            break;
-                        }
-
-                        break;
-                    }
-                    case 2048:
-                    {
-                        sense = capabilities.SupportsReadLong16 == true
-                                    ? _dev.ReadLong16(out buffer, out senseBuffer, false, 0, 2380, _dev.Timeout, out _)
-                                    : _dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 2380, _dev.Timeout,
-                                                      out _);
-
-                        if(sense || _dev.Error)
-                            return;
-
-                        capabilities.SupportsReadLong = true;
-                        capabilities.LongBlockSize    = 2380;
-
-                        break;
-                    }
-                    case 4096:
-                    {
-                        sense = capabilities.SupportsReadLong16 == true
-                                    ? _dev.ReadLong16(out buffer, out senseBuffer, false, 0, 4760, _dev.Timeout, out _)
-                                    : _dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 4760, _dev.Timeout,
-                                                      out _);
-
-                        if(sense || _dev.Error)
-                            return;
-
-                        capabilities.SupportsReadLong = true;
-                        capabilities.LongBlockSize    = 4760;
-
-                        break;
-                    }
-                    case 8192:
-                    {
-                        sense = capabilities.SupportsReadLong16 == true
-                                    ? _dev.ReadLong16(out buffer, out senseBuffer, false, 0, 9424, _dev.Timeout, out _)
-                                    : _dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 9424, _dev.Timeout,
-                                                      out _);
-
-                        if(sense || _dev.Error)
-                            return;
-
-                        capabilities.SupportsReadLong = true;
-                        capabilities.LongBlockSize    = 9424;
-
-                        break;
-                    }
-                }
-            });
-
-            return capabilities;
-        }
+        return capabilities;
     }
 }

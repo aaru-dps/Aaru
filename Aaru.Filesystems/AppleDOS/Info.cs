@@ -39,76 +39,75 @@ using Claunia.Encoding;
 using Schemas;
 using Encoding = System.Text.Encoding;
 
-namespace Aaru.Filesystems
+namespace Aaru.Filesystems;
+
+public sealed partial class AppleDOS
 {
-    public sealed partial class AppleDOS
+    /// <inheritdoc />
+    public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
-        /// <inheritdoc />
-        public bool Identify(IMediaImage imagePlugin, Partition partition)
+        if(imagePlugin.Info.Sectors != 455 &&
+           imagePlugin.Info.Sectors != 560)
+            return false;
+
+        if(partition.Start             > 0 ||
+           imagePlugin.Info.SectorSize != 256)
+            return false;
+
+        int spt = imagePlugin.Info.Sectors == 455 ? 13 : 16;
+
+        var errno = imagePlugin.ReadSector((ulong)(17 * spt), out byte[] vtocB);
+
+        if(errno != ErrorNumber.NoError)
+            return false;
+
+        _vtoc = Marshal.ByteArrayToStructureLittleEndian<Vtoc>(vtocB);
+
+        return _vtoc.catalogSector   < spt  && _vtoc.maxTrackSectorPairsPerSector <= 122 &&
+               _vtoc.sectorsPerTrack == spt && _vtoc.bytesPerSector               == 256;
+    }
+
+    /// <inheritdoc />
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
+                               Encoding encoding)
+    {
+        Encoding    = encoding ?? new Apple2();
+        information = "";
+        var sb = new StringBuilder();
+
+        int spt = imagePlugin.Info.Sectors == 455 ? 13 : 16;
+
+        var errno = imagePlugin.ReadSector((ulong)(17 * spt), out byte[] vtocB);
+
+        if(errno != ErrorNumber.NoError)
+            return;
+
+        _vtoc = Marshal.ByteArrayToStructureLittleEndian<Vtoc>(vtocB);
+
+        sb.AppendLine("Apple DOS File System");
+        sb.AppendLine();
+
+        sb.AppendFormat("Catalog starts at sector {0} of track {1}", _vtoc.catalogSector, _vtoc.catalogTrack).
+           AppendLine();
+
+        sb.AppendFormat("File system initialized by DOS release {0}", _vtoc.dosRelease).AppendLine();
+        sb.AppendFormat("Disk volume number {0}", _vtoc.volumeNumber).AppendLine();
+        sb.AppendFormat("Sectors allocated at most in track {0}", _vtoc.lastAllocatedSector).AppendLine();
+        sb.AppendFormat("{0} tracks in volume", _vtoc.tracks).AppendLine();
+        sb.AppendFormat("{0} sectors per track", _vtoc.sectorsPerTrack).AppendLine();
+        sb.AppendFormat("{0} bytes per sector", _vtoc.bytesPerSector).AppendLine();
+
+        sb.AppendFormat("Track allocation is {0}", _vtoc.allocationDirection > 0 ? "forward" : "reverse").
+           AppendLine();
+
+        information = sb.ToString();
+
+        XmlFsType = new FileSystemType
         {
-            if(imagePlugin.Info.Sectors != 455 &&
-               imagePlugin.Info.Sectors != 560)
-                return false;
-
-            if(partition.Start             > 0 ||
-               imagePlugin.Info.SectorSize != 256)
-                return false;
-
-            int spt = imagePlugin.Info.Sectors == 455 ? 13 : 16;
-
-            var errno = imagePlugin.ReadSector((ulong)(17 * spt), out byte[] vtocB);
-
-            if(errno != ErrorNumber.NoError)
-                return false;
-
-            _vtoc = Marshal.ByteArrayToStructureLittleEndian<Vtoc>(vtocB);
-
-            return _vtoc.catalogSector   < spt  && _vtoc.maxTrackSectorPairsPerSector <= 122 &&
-                   _vtoc.sectorsPerTrack == spt && _vtoc.bytesPerSector               == 256;
-        }
-
-        /// <inheritdoc />
-        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                   Encoding encoding)
-        {
-            Encoding    = encoding ?? new Apple2();
-            information = "";
-            var sb = new StringBuilder();
-
-            int spt = imagePlugin.Info.Sectors == 455 ? 13 : 16;
-
-            var errno = imagePlugin.ReadSector((ulong)(17 * spt), out byte[] vtocB);
-
-            if(errno != ErrorNumber.NoError)
-                return;
-
-            _vtoc = Marshal.ByteArrayToStructureLittleEndian<Vtoc>(vtocB);
-
-            sb.AppendLine("Apple DOS File System");
-            sb.AppendLine();
-
-            sb.AppendFormat("Catalog starts at sector {0} of track {1}", _vtoc.catalogSector, _vtoc.catalogTrack).
-               AppendLine();
-
-            sb.AppendFormat("File system initialized by DOS release {0}", _vtoc.dosRelease).AppendLine();
-            sb.AppendFormat("Disk volume number {0}", _vtoc.volumeNumber).AppendLine();
-            sb.AppendFormat("Sectors allocated at most in track {0}", _vtoc.lastAllocatedSector).AppendLine();
-            sb.AppendFormat("{0} tracks in volume", _vtoc.tracks).AppendLine();
-            sb.AppendFormat("{0} sectors per track", _vtoc.sectorsPerTrack).AppendLine();
-            sb.AppendFormat("{0} bytes per sector", _vtoc.bytesPerSector).AppendLine();
-
-            sb.AppendFormat("Track allocation is {0}", _vtoc.allocationDirection > 0 ? "forward" : "reverse").
-               AppendLine();
-
-            information = sb.ToString();
-
-            XmlFsType = new FileSystemType
-            {
-                Bootable    = true,
-                Clusters    = imagePlugin.Info.Sectors,
-                ClusterSize = imagePlugin.Info.SectorSize,
-                Type        = "Apple DOS"
-            };
-        }
+            Bootable    = true,
+            Clusters    = imagePlugin.Info.Sectors,
+            ClusterSize = imagePlugin.Info.SectorSize,
+            Type        = "Apple DOS"
+        };
     }
 }

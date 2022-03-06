@@ -34,32 +34,31 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
-namespace Aaru.Filesystems
-{
-    [SuppressMessage("ReSharper", "UnusedType.Local")]
-    public sealed partial class ISO9660
-    {
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        readonly struct ZisofsHeader
-        {
-            public readonly ulong magic;
-            public readonly uint  uncomp_len;
-            public readonly uint  uncomp_len_be;
-            public readonly byte  header_size;    // Shifted >> 2
-            public readonly byte  block_size_log; // log2(block_size)
-        }
+namespace Aaru.Filesystems;
 
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        readonly struct ZisofsEntry
-        {
-            public readonly ushort signature;
-            public readonly byte   length;
-            public readonly byte   version;
-            public readonly ushort alogirhtm;
-            public readonly byte   header_size;    // Shifted >> 2
-            public readonly byte   block_size_log; // log2(block_size)
-            public readonly uint   uncomp_len;
-            public readonly uint   uncomp_len_be;
-        }
+[SuppressMessage("ReSharper", "UnusedType.Local")]
+public sealed partial class ISO9660
+{
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct ZisofsHeader
+    {
+        public readonly ulong magic;
+        public readonly uint  uncomp_len;
+        public readonly uint  uncomp_len_be;
+        public readonly byte  header_size;    // Shifted >> 2
+        public readonly byte  block_size_log; // log2(block_size)
+    }
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct ZisofsEntry
+    {
+        public readonly ushort signature;
+        public readonly byte   length;
+        public readonly byte   version;
+        public readonly ushort alogirhtm;
+        public readonly byte   header_size;    // Shifted >> 2
+        public readonly byte   block_size_log; // log2(block_size)
+        public readonly uint   uncomp_len;
+        public readonly uint   uncomp_len_be;
     }
 }

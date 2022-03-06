@@ -30,21 +30,20 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Database.Models
+namespace Aaru.Database.Models;
+
+/// <inheritdoc />
+/// <summary>Device found in usage</summary>
+public class DeviceStat : BaseModel
 {
-    /// <inheritdoc />
-    /// <summary>Device found in usage</summary>
-    public class DeviceStat : BaseModel
-    {
-        /// <summary>Manufacturer</summary>
-        public string Manufacturer { get; set; }
-        /// <summary>Model</summary>
-        public string Model { get; set; }
-        /// <summary>Revision or firmware version</summary>
-        public string Revision { get; set; }
-        /// <summary>Bus</summary>
-        public string Bus { get; set; }
-        /// <summary>Has already been synchronized with Aaru's server</summary>
-        public bool Synchronized { get; set; }
-    }
+    /// <summary>Manufacturer</summary>
+    public string Manufacturer { get; set; }
+    /// <summary>Model</summary>
+    public string Model { get; set; }
+    /// <summary>Revision or firmware version</summary>
+    public string Revision { get; set; }
+    /// <summary>Bus</summary>
+    public string Bus { get; set; }
+    /// <summary>Has already been synchronized with Aaru's server</summary>
+    public bool Synchronized { get; set; }
 }

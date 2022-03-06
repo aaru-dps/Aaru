@@ -32,32 +32,31 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Filesystems.FAT32
+namespace Aaru.Tests.Filesystems.FAT32;
+
+[TestFixture]
+public class GPT : ReadOnlyFilesystemTest
 {
-    [TestFixture]
-    public class GPT : ReadOnlyFilesystemTest
+    public GPT() : base("FAT32") {}
+
+    public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "FAT32 (GPT)");
+    public override IFilesystem Plugin     => new FAT();
+    public override bool        Partitions => true;
+
+    public override FileSystemTest[] Tests => new[]
     {
-        public GPT() : base("FAT32") {}
-
-        public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "FAT32 (GPT)");
-        public override IFilesystem Plugin     => new FAT();
-        public override bool        Partitions => true;
-
-        public override FileSystemTest[] Tests => new[]
+        new FileSystemTest
         {
-            new FileSystemTest
-            {
-                TestFile     = "macosx_10.11.aif",
-                MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 4194304,
-                SectorSize   = 512,
-                Bootable     = true,
-                Clusters     = 523775,
-                ClusterSize  = 4096,
-                SystemId     = "BSD  4.4",
-                VolumeName   = "VOLUMELABEL",
-                VolumeSerial = "7ABE1F1B"
-            }
-        };
-    }
+            TestFile     = "macosx_10.11.aif",
+            MediaType    = MediaType.GENERIC_HDD,
+            Sectors      = 4194304,
+            SectorSize   = 512,
+            Bootable     = true,
+            Clusters     = 523775,
+            ClusterSize  = 4096,
+            SystemId     = "BSD  4.4",
+            VolumeName   = "VOLUMELABEL",
+            VolumeSerial = "7ABE1F1B"
+        }
+    };
 }

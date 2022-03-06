@@ -37,41 +37,40 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Decoders.CD;
 
-namespace Aaru.DiscImages
-{
-    // Support separate data files? Never seen a DiscJuggler image using them anyways...
-    // TODO: Too many unknowns to make this writable
-    /// <inheritdoc />
-    /// <summary>Implements reading DiscJuggler disc images</summary>
-    public sealed partial class DiscJuggler : IOpticalMediaImage
-    {
-        byte[]                  _cdtext;
-        ImageInfo               _imageInfo;
-        Stream                  _imageStream;
-        bool                    _isCd;
-        Dictionary<uint, ulong> _offsetMap;
-        SectorBuilder           _sectorBuilder;
-        Dictionary<uint, byte>  _trackFlags;
+namespace Aaru.DiscImages;
 
-        public DiscJuggler() => _imageInfo = new ImageInfo
-        {
-            ReadableSectorTags    = new List<SectorTagType>(),
-            ReadableMediaTags     = new List<MediaTagType>(),
-            HasPartitions         = true,
-            HasSessions           = true,
-            Version               = null,
-            ApplicationVersion    = null,
-            MediaTitle            = null,
-            Creator               = null,
-            MediaManufacturer     = null,
-            MediaModel            = null,
-            MediaPartNumber       = null,
-            MediaSequence         = 0,
-            LastMediaSequence     = 0,
-            DriveManufacturer     = null,
-            DriveModel            = null,
-            DriveSerialNumber     = null,
-            DriveFirmwareRevision = null
-        };
-    }
+// Support separate data files? Never seen a DiscJuggler image using them anyways...
+// TODO: Too many unknowns to make this writable
+/// <inheritdoc />
+/// <summary>Implements reading DiscJuggler disc images</summary>
+public sealed partial class DiscJuggler : IOpticalMediaImage
+{
+    byte[]                  _cdtext;
+    ImageInfo               _imageInfo;
+    Stream                  _imageStream;
+    bool                    _isCd;
+    Dictionary<uint, ulong> _offsetMap;
+    SectorBuilder           _sectorBuilder;
+    Dictionary<uint, byte>  _trackFlags;
+
+    public DiscJuggler() => _imageInfo = new ImageInfo
+    {
+        ReadableSectorTags    = new List<SectorTagType>(),
+        ReadableMediaTags     = new List<MediaTagType>(),
+        HasPartitions         = true,
+        HasSessions           = true,
+        Version               = null,
+        ApplicationVersion    = null,
+        MediaTitle            = null,
+        Creator               = null,
+        MediaManufacturer     = null,
+        MediaModel            = null,
+        MediaPartNumber       = null,
+        MediaSequence         = 0,
+        LastMediaSequence     = 0,
+        DriveManufacturer     = null,
+        DriveModel            = null,
+        DriveSerialNumber     = null,
+        DriveFirmwareRevision = null
+    };
 }

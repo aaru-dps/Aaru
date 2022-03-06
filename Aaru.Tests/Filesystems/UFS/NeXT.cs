@@ -32,108 +32,107 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Filesystems.UFS
-{
-    [TestFixture]
-    public class NeXT : FilesystemTest
-    {
-        public override string DataFolder =>
-            Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "UNIX filesystem (NeXT)");
-        public override IFilesystem Plugin     => new FFSPlugin();
-        public override bool        Partitions => true;
+namespace Aaru.Tests.Filesystems.UFS;
 
-        public override FileSystemTest[] Tests => new[]
+[TestFixture]
+public class NeXT : FilesystemTest
+{
+    public override string DataFolder =>
+        Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "UNIX filesystem (NeXT)");
+    public override IFilesystem Plugin     => new FFSPlugin();
+    public override bool        Partitions => true;
+
+    public override FileSystemTest[] Tests => new[]
+    {
+        new FileSystemTest
         {
-            new FileSystemTest
-            {
-                TestFile    = "nextstep_3.3.aif",
-                MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 262144,
-                SectorSize  = 512,
-                Clusters    = 130912,
-                ClusterSize = 1024,
-                Type        = "UFS"
-            },
-            new FileSystemTest
-            {
-                TestFile    = "openstep_4.0.aif",
-                MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 262144,
-                SectorSize  = 512,
-                Clusters    = 130912,
-                ClusterSize = 1024,
-                Type        = "UFS"
-            },
-            new FileSystemTest
-            {
-                TestFile    = "openstep_4.2.aif",
-                MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 262144,
-                SectorSize  = 512,
-                Clusters    = 130912,
-                ClusterSize = 1024,
-                Type        = "UFS"
-            },
-            new FileSystemTest
-            {
-                TestFile    = "rhapsody_dr1.aif",
-                MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 262144,
-                SectorSize  = 512,
-                Clusters    = 130912,
-                ClusterSize = 1024,
-                Type        = "UFS"
-            },
-            new FileSystemTest
-            {
-                TestFile    = "rhapsody_dr2.aif",
-                MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 262144,
-                SectorSize  = 512,
-                Clusters    = 130880,
-                ClusterSize = 1024,
-                Type        = "UFS"
-            },
-            new FileSystemTest
-            {
-                TestFile    = "macosx_1.0.aif",
-                MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 262144,
-                SectorSize  = 512,
-                Clusters    = 130912,
-                ClusterSize = 1024,
-                Type        = "UFS"
-            },
-            new FileSystemTest
-            {
-                TestFile    = "macosx_1.1.aif",
-                MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 262144,
-                SectorSize  = 512,
-                Clusters    = 130912,
-                ClusterSize = 1024,
-                Type        = "UFS"
-            },
-            new FileSystemTest
-            {
-                TestFile    = "macosx_1.2.aif",
-                MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 262144,
-                SectorSize  = 512,
-                Clusters    = 130912,
-                ClusterSize = 1024,
-                Type        = "UFS"
-            },
-            new FileSystemTest
-            {
-                TestFile    = "macosx_1.2v3.aif",
-                MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 262144,
-                SectorSize  = 512,
-                Clusters    = 130912,
-                ClusterSize = 1024,
-                Type        = "UFS"
-            }
-        };
-    }
+            TestFile    = "nextstep_3.3.aif",
+            MediaType   = MediaType.GENERIC_HDD,
+            Sectors     = 262144,
+            SectorSize  = 512,
+            Clusters    = 130912,
+            ClusterSize = 1024,
+            Type        = "UFS"
+        },
+        new FileSystemTest
+        {
+            TestFile    = "openstep_4.0.aif",
+            MediaType   = MediaType.GENERIC_HDD,
+            Sectors     = 262144,
+            SectorSize  = 512,
+            Clusters    = 130912,
+            ClusterSize = 1024,
+            Type        = "UFS"
+        },
+        new FileSystemTest
+        {
+            TestFile    = "openstep_4.2.aif",
+            MediaType   = MediaType.GENERIC_HDD,
+            Sectors     = 262144,
+            SectorSize  = 512,
+            Clusters    = 130912,
+            ClusterSize = 1024,
+            Type        = "UFS"
+        },
+        new FileSystemTest
+        {
+            TestFile    = "rhapsody_dr1.aif",
+            MediaType   = MediaType.GENERIC_HDD,
+            Sectors     = 262144,
+            SectorSize  = 512,
+            Clusters    = 130912,
+            ClusterSize = 1024,
+            Type        = "UFS"
+        },
+        new FileSystemTest
+        {
+            TestFile    = "rhapsody_dr2.aif",
+            MediaType   = MediaType.GENERIC_HDD,
+            Sectors     = 262144,
+            SectorSize  = 512,
+            Clusters    = 130880,
+            ClusterSize = 1024,
+            Type        = "UFS"
+        },
+        new FileSystemTest
+        {
+            TestFile    = "macosx_1.0.aif",
+            MediaType   = MediaType.GENERIC_HDD,
+            Sectors     = 262144,
+            SectorSize  = 512,
+            Clusters    = 130912,
+            ClusterSize = 1024,
+            Type        = "UFS"
+        },
+        new FileSystemTest
+        {
+            TestFile    = "macosx_1.1.aif",
+            MediaType   = MediaType.GENERIC_HDD,
+            Sectors     = 262144,
+            SectorSize  = 512,
+            Clusters    = 130912,
+            ClusterSize = 1024,
+            Type        = "UFS"
+        },
+        new FileSystemTest
+        {
+            TestFile    = "macosx_1.2.aif",
+            MediaType   = MediaType.GENERIC_HDD,
+            Sectors     = 262144,
+            SectorSize  = 512,
+            Clusters    = 130912,
+            ClusterSize = 1024,
+            Type        = "UFS"
+        },
+        new FileSystemTest
+        {
+            TestFile    = "macosx_1.2v3.aif",
+            MediaType   = MediaType.GENERIC_HDD,
+            Sectors     = 262144,
+            SectorSize  = 512,
+            Clusters    = 130912,
+            ClusterSize = 1024,
+            Type        = "UFS"
+        }
+    };
 }

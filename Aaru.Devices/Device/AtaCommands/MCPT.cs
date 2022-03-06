@@ -34,54 +34,53 @@ using System;
 using Aaru.Console;
 using Aaru.Decoders.ATA;
 
-namespace Aaru.Devices
+namespace Aaru.Devices;
+
+public sealed partial class Device
 {
-    public sealed partial class Device
+    /// <summary>Enables media card pass through</summary>
+    /// <param name="statusRegisters">Status registers.</param>
+    /// <param name="timeout">Timeout in seconds</param>
+    /// <param name="duration">Time it took to execute the command in milliseconds</param>
+    /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
+    public bool EnableMediaCardPassThrough(out AtaErrorRegistersChs statusRegisters, uint timeout,
+                                           out double duration) =>
+        CheckMediaCardType(1, out statusRegisters, timeout, out duration);
+
+    /// <summary>Disables media card pass through</summary>
+    /// <param name="statusRegisters">Status registers.</param>
+    /// <param name="timeout">Timeout in seconds</param>
+    /// <param name="duration">Time it took to execute the command in milliseconds</param>
+    /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
+    public bool DisableMediaCardPassThrough(out AtaErrorRegistersChs statusRegisters, uint timeout,
+                                            out double duration) =>
+        CheckMediaCardType(0, out statusRegisters, timeout, out duration);
+
+    /// <summary>Checks media card pass through</summary>
+    /// <param name="feature">Feature</param>
+    /// <param name="statusRegisters">Status registers.</param>
+    /// <param name="timeout">Timeout in seconds</param>
+    /// <param name="duration">Time it took to execute the command in milliseconds</param>
+    /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
+    public bool CheckMediaCardType(byte feature, out AtaErrorRegistersChs statusRegisters, uint timeout,
+                                   out double duration)
     {
-        /// <summary>Enables media card pass through</summary>
-        /// <param name="statusRegisters">Status registers.</param>
-        /// <param name="timeout">Timeout in seconds</param>
-        /// <param name="duration">Time it took to execute the command in milliseconds</param>
-        /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
-        public bool EnableMediaCardPassThrough(out AtaErrorRegistersChs statusRegisters, uint timeout,
-                                               out double duration) =>
-            CheckMediaCardType(1, out statusRegisters, timeout, out duration);
+        byte[] buffer = Array.Empty<byte>();
 
-        /// <summary>Disables media card pass through</summary>
-        /// <param name="statusRegisters">Status registers.</param>
-        /// <param name="timeout">Timeout in seconds</param>
-        /// <param name="duration">Time it took to execute the command in milliseconds</param>
-        /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
-        public bool DisableMediaCardPassThrough(out AtaErrorRegistersChs statusRegisters, uint timeout,
-                                                out double duration) =>
-            CheckMediaCardType(0, out statusRegisters, timeout, out duration);
-
-        /// <summary>Checks media card pass through</summary>
-        /// <param name="feature">Feature</param>
-        /// <param name="statusRegisters">Status registers.</param>
-        /// <param name="timeout">Timeout in seconds</param>
-        /// <param name="duration">Time it took to execute the command in milliseconds</param>
-        /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
-        public bool CheckMediaCardType(byte feature, out AtaErrorRegistersChs statusRegisters, uint timeout,
-                                       out double duration)
+        var registers = new AtaRegistersChs
         {
-            byte[] buffer = Array.Empty<byte>();
+            Command = (byte)AtaCommands.CheckMediaCardType,
+            Feature = feature
+        };
 
-            var registers = new AtaRegistersChs
-            {
-                Command = (byte)AtaCommands.CheckMediaCardType,
-                Feature = feature
-            };
+        LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData,
+                                   AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
+                                   out bool sense);
 
-            LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData,
-                                       AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
-                                       out bool sense);
+        Error = LastError != 0;
 
-            Error = LastError != 0;
+        AaruConsole.DebugWriteLine("ATA Device", "CHECK MEDIA CARD TYPE took {0} ms.", duration);
 
-            AaruConsole.DebugWriteLine("ATA Device", "CHECK MEDIA CARD TYPE took {0} ms.", duration);
-
-            return sense;
-        }
+        return sense;
     }
 }

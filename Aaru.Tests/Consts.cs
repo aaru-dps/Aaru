@@ -26,10 +26,9 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Tests
+namespace Aaru.Tests;
+
+internal static class Consts
 {
-    internal static class Consts
-    {
-        public const string TEST_FILES_ROOT = "/mnt/DiscImageChef";
-    }
+    public const string TEST_FILES_ROOT = "/mnt/DiscImageChef";
 }

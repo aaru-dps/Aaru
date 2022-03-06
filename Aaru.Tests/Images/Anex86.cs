@@ -31,138 +31,137 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Images
-{
-    [TestFixture]
-    public class Anex86 : BlockMediaImageTest
-    {
-        public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "Anex86");
-        public override IMediaImage _plugin    => new DiscImages.Anex86();
+namespace Aaru.Tests.Images;
 
-        public override BlockImageTestExpected[] Tests => new[]
+[TestFixture]
+public class Anex86 : BlockMediaImageTest
+{
+    public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "Anex86");
+    public override IMediaImage _plugin    => new DiscImages.Anex86();
+
+    public override BlockImageTestExpected[] Tests => new[]
+    {
+        new BlockImageTestExpected
         {
-            new BlockImageTestExpected
+            TestFile   = "anex86_10mb.hdi.lz",
+            MediaType  = MediaType.GENERIC_HDD,
+            Sectors    = 40920,
+            SectorSize = 256,
+            MD5        = "1c5387e38e58165c517c059e5d48905d"
+        },
+        new BlockImageTestExpected
+        {
+            TestFile   = "anex86_15mb.hdi.lz",
+            MediaType  = MediaType.GENERIC_HDD,
+            Sectors    = 61380,
+            SectorSize = 256,
+            MD5        = "a84366658c1c3bd09af4d0d42fbf716e"
+        },
+        new BlockImageTestExpected
+        {
+            TestFile   = "anex86_20mb.hdi.lz",
+            MediaType  = MediaType.GENERIC_HDD,
+            Sectors    = 81840,
+            SectorSize = 256,
+            MD5        = "919c9eecf1b65b10870f617cb976668a"
+        },
+        new BlockImageTestExpected
+        {
+            TestFile   = "anex86_30mb.hdi.lz",
+            MediaType  = MediaType.GENERIC_HDD,
+            Sectors    = 121770,
+            SectorSize = 256,
+            MD5        = "02d35af02581afb2e56792dcaba2c1af"
+        },
+        new BlockImageTestExpected
+        {
+            TestFile   = "anex86_40mb.hdi.lz",
+            MediaType  = MediaType.GENERIC_HDD,
+            Sectors    = 162360,
+            SectorSize = 256,
+            MD5        = "b8c3f858f1a9d300d3e74f36eea04354"
+        },
+        new BlockImageTestExpected
+        {
+            TestFile   = "anex86_5mb.hdi.lz",
+            MediaType  = MediaType.GENERIC_HDD,
+            Sectors    = 20196,
+            SectorSize = 256,
+            MD5        = "c348bbbaf99fcb8c8e66de157aef62f4"
+        },
+        new BlockImageTestExpected
+        {
+            TestFile   = "blank_md2hd.fdi.lz",
+            MediaType  = MediaType.SHARP_525,
+            Sectors    = 1232,
+            SectorSize = 1024,
+            MD5        = "c3587f7020743067cf948c9d5c5edb27"
+        },
+        new BlockImageTestExpected
+        {
+            TestFile   = "msdos33d_md2hd.fdi.lz",
+            MediaType  = MediaType.SHARP_525,
+            Sectors    = 1232,
+            SectorSize = 1024,
+            MD5        = "a23874a4474334b035a24c6924140744"
+            /* TODO: NullReferenceException
+            Partitions = new[]
             {
-                TestFile   = "anex86_10mb.hdi.lz",
-                MediaType  = MediaType.GENERIC_HDD,
-                Sectors    = 40920,
-                SectorSize = 256,
-                MD5        = "1c5387e38e58165c517c059e5d48905d"
-            },
-            new BlockImageTestExpected
-            {
-                TestFile   = "anex86_15mb.hdi.lz",
-                MediaType  = MediaType.GENERIC_HDD,
-                Sectors    = 61380,
-                SectorSize = 256,
-                MD5        = "a84366658c1c3bd09af4d0d42fbf716e"
-            },
-            new BlockImageTestExpected
-            {
-                TestFile   = "anex86_20mb.hdi.lz",
-                MediaType  = MediaType.GENERIC_HDD,
-                Sectors    = 81840,
-                SectorSize = 256,
-                MD5        = "919c9eecf1b65b10870f617cb976668a"
-            },
-            new BlockImageTestExpected
-            {
-                TestFile   = "anex86_30mb.hdi.lz",
-                MediaType  = MediaType.GENERIC_HDD,
-                Sectors    = 121770,
-                SectorSize = 256,
-                MD5        = "02d35af02581afb2e56792dcaba2c1af"
-            },
-            new BlockImageTestExpected
-            {
-                TestFile   = "anex86_40mb.hdi.lz",
-                MediaType  = MediaType.GENERIC_HDD,
-                Sectors    = 162360,
-                SectorSize = 256,
-                MD5        = "b8c3f858f1a9d300d3e74f36eea04354"
-            },
-            new BlockImageTestExpected
-            {
-                TestFile   = "anex86_5mb.hdi.lz",
-                MediaType  = MediaType.GENERIC_HDD,
-                Sectors    = 20196,
-                SectorSize = 256,
-                MD5        = "c348bbbaf99fcb8c8e66de157aef62f4"
-            },
-            new BlockImageTestExpected
-            {
-                TestFile   = "blank_md2hd.fdi.lz",
-                MediaType  = MediaType.SHARP_525,
-                Sectors    = 1232,
-                SectorSize = 1024,
-                MD5        = "c3587f7020743067cf948c9d5c5edb27"
-            },
-            new BlockImageTestExpected
-            {
-                TestFile   = "msdos33d_md2hd.fdi.lz",
-                MediaType  = MediaType.SHARP_525,
-                Sectors    = 1232,
-                SectorSize = 1024,
-                MD5        = "a23874a4474334b035a24c6924140744"
-                /* TODO: NullReferenceException
-                Partitions = new[]
+                new BlockPartitionVolumes
                 {
-                    new BlockPartitionVolumes
-                    {
-                        Start  = 0,
-                        Length = 1232
-                    }
-                }
-                */
-            },
-            new BlockImageTestExpected
-            {
-                TestFile   = "msdos50_epson_md2hd.fdi.lz",
-                MediaType  = MediaType.SHARP_525,
-                Sectors    = 1232,
-                SectorSize = 1024,
-                MD5        = "bc1ef3236e75cb09575037b884ee9dce",
-                Partitions = new[]
-                {
-                    new BlockPartitionVolumes
-                    {
-                        Start  = 0,
-                        Length = 1232
-                    }
-                }
-            },
-            new BlockImageTestExpected
-            {
-                TestFile   = "msdos50_md2hd.fdi.lz",
-                MediaType  = MediaType.SHARP_525,
-                Sectors    = 1232,
-                SectorSize = 1024,
-                MD5        = "243036c4617b666a6c886cc23d7274e0",
-                Partitions = new[]
-                {
-                    new BlockPartitionVolumes
-                    {
-                        Start  = 0,
-                        Length = 1232
-                    }
-                }
-            },
-            new BlockImageTestExpected
-            {
-                TestFile   = "msdos62_md2hd.fdi.lz",
-                MediaType  = MediaType.SHARP_525,
-                Sectors    = 1232,
-                SectorSize = 1024,
-                MD5        = "09bb2ff964a0c5c223a1900f085e3955",
-                Partitions = new[]
-                {
-                    new BlockPartitionVolumes
-                    {
-                        Start  = 0,
-                        Length = 1232
-                    }
+                    Start  = 0,
+                    Length = 1232
                 }
             }
-        };
-    }
+            */
+        },
+        new BlockImageTestExpected
+        {
+            TestFile   = "msdos50_epson_md2hd.fdi.lz",
+            MediaType  = MediaType.SHARP_525,
+            Sectors    = 1232,
+            SectorSize = 1024,
+            MD5        = "bc1ef3236e75cb09575037b884ee9dce",
+            Partitions = new[]
+            {
+                new BlockPartitionVolumes
+                {
+                    Start  = 0,
+                    Length = 1232
+                }
+            }
+        },
+        new BlockImageTestExpected
+        {
+            TestFile   = "msdos50_md2hd.fdi.lz",
+            MediaType  = MediaType.SHARP_525,
+            Sectors    = 1232,
+            SectorSize = 1024,
+            MD5        = "243036c4617b666a6c886cc23d7274e0",
+            Partitions = new[]
+            {
+                new BlockPartitionVolumes
+                {
+                    Start  = 0,
+                    Length = 1232
+                }
+            }
+        },
+        new BlockImageTestExpected
+        {
+            TestFile   = "msdos62_md2hd.fdi.lz",
+            MediaType  = MediaType.SHARP_525,
+            Sectors    = 1232,
+            SectorSize = 1024,
+            MD5        = "09bb2ff964a0c5c223a1900f085e3955",
+            Partitions = new[]
+            {
+                new BlockPartitionVolumes
+                {
+                    Start  = 0,
+                    Length = 1232
+                }
+            }
+        }
+    };
 }

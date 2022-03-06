@@ -32,27 +32,26 @@
 
 using System.Runtime.InteropServices;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class Nhdr0
 {
-    public sealed partial class Nhdr0
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    struct Header
     {
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct Header
-        {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 15)]
-            public byte[] szFileID;
-            public readonly byte reserved1;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x100)]
-            public byte[] szComment;
-            public int   dwHeadSize;
-            public int   dwCylinder;
-            public short wHead;
-            public short wSect;
-            public short wSectLen;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
-            public byte[] reserved2;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0xE0)]
-            public byte[] reserved3;
-        }
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 15)]
+        public byte[] szFileID;
+        public readonly byte reserved1;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x100)]
+        public byte[] szComment;
+        public int   dwHeadSize;
+        public int   dwCylinder;
+        public short wHead;
+        public short wSect;
+        public short wSectLen;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
+        public byte[] reserved2;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0xE0)]
+        public byte[] reserved3;
     }
 }

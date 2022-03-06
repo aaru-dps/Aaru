@@ -32,30 +32,29 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Filesystems.HTFS
+namespace Aaru.Tests.Filesystems.HTFS;
+
+[TestFixture]
+public class MBR : FilesystemTest
 {
-    [TestFixture]
-    public class MBR : FilesystemTest
+    public MBR() : base("HTFS") {}
+
+    public override string DataFolder =>
+        Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "High Throughtput File System (MBR)");
+    public override IFilesystem Plugin     => new SysVfs();
+    public override bool        Partitions => true;
+
+    public override FileSystemTest[] Tests => new[]
     {
-        public MBR() : base("HTFS") {}
-
-        public override string DataFolder =>
-            Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "High Throughtput File System (MBR)");
-        public override IFilesystem Plugin     => new SysVfs();
-        public override bool        Partitions => true;
-
-        public override FileSystemTest[] Tests => new[]
+        new FileSystemTest
         {
-            new FileSystemTest
-            {
-                TestFile    = "scoopenserver_5.0.7hw.aif",
-                MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 2097152,
-                SectorSize  = 512,
-                Clusters    = 1020096,
-                ClusterSize = 1024,
-                VolumeName  = "Volume label"
-            }
-        };
-    }
+            TestFile    = "scoopenserver_5.0.7hw.aif",
+            MediaType   = MediaType.GENERIC_HDD,
+            Sectors     = 2097152,
+            SectorSize  = 512,
+            Clusters    = 1020096,
+            ClusterSize = 1024,
+            VolumeName  = "Volume label"
+        }
+    };
 }

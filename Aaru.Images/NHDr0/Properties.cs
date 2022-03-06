@@ -37,49 +37,48 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 using Schemas;
 
-namespace Aaru.DiscImages
-{
-    public sealed partial class Nhdr0
-    {
-        /// <inheritdoc />
-        public string Name => "T98-Next NHD r0 Disk Image";
-        /// <inheritdoc />
-        public Guid Id => new Guid("6ECACD0A-8F4D-4465-8815-AEA000D370E3");
-        /// <inheritdoc />
-        public ImageInfo Info => _imageInfo;
-        /// <inheritdoc />
-        public string Author => "Natalia Portillo";
-        /// <inheritdoc />
-        public string Format => "NHDr0 disk image";
-        /// <inheritdoc />
-        public List<DumpHardwareType> DumpHardware => null;
-        /// <inheritdoc />
-        public CICMMetadataType CicmMetadata => null;
-        /// <inheritdoc />
-        public IEnumerable<MediaTagType> SupportedMediaTags => new MediaTagType[]
-            {};
-        /// <inheritdoc />
-        public IEnumerable<SectorTagType> SupportedSectorTags => new SectorTagType[]
-            {};
-        /// <inheritdoc />
-        public IEnumerable<MediaType> SupportedMediaTypes => new[]
-        {
-            MediaType.GENERIC_HDD, MediaType.Unknown
-        };
+namespace Aaru.DiscImages;
 
-        // TODO: Support dynamic images
-        /// <inheritdoc />
-        public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>
-            new (string name, Type type, string description, object @default)[]
-                {};
-        /// <inheritdoc />
-        public IEnumerable<string> KnownExtensions => new[]
-        {
-            ".nhd"
-        };
-        /// <inheritdoc />
-        public bool IsWriting { get; private set; }
-        /// <inheritdoc />
-        public string ErrorMessage { get; private set; }
-    }
+public sealed partial class Nhdr0
+{
+    /// <inheritdoc />
+    public string Name => "T98-Next NHD r0 Disk Image";
+    /// <inheritdoc />
+    public Guid Id => new Guid("6ECACD0A-8F4D-4465-8815-AEA000D370E3");
+    /// <inheritdoc />
+    public ImageInfo Info => _imageInfo;
+    /// <inheritdoc />
+    public string Author => "Natalia Portillo";
+    /// <inheritdoc />
+    public string Format => "NHDr0 disk image";
+    /// <inheritdoc />
+    public List<DumpHardwareType> DumpHardware => null;
+    /// <inheritdoc />
+    public CICMMetadataType CicmMetadata => null;
+    /// <inheritdoc />
+    public IEnumerable<MediaTagType> SupportedMediaTags => new MediaTagType[]
+        {};
+    /// <inheritdoc />
+    public IEnumerable<SectorTagType> SupportedSectorTags => new SectorTagType[]
+        {};
+    /// <inheritdoc />
+    public IEnumerable<MediaType> SupportedMediaTypes => new[]
+    {
+        MediaType.GENERIC_HDD, MediaType.Unknown
+    };
+
+    // TODO: Support dynamic images
+    /// <inheritdoc />
+    public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>
+        new (string name, Type type, string description, object @default)[]
+            {};
+    /// <inheritdoc />
+    public IEnumerable<string> KnownExtensions => new[]
+    {
+        ".nhd"
+    };
+    /// <inheritdoc />
+    public bool IsWriting { get; private set; }
+    /// <inheritdoc />
+    public string ErrorMessage { get; private set; }
 }

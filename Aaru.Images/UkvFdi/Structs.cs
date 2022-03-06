@@ -32,21 +32,20 @@
 
 using System.Runtime.InteropServices;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class UkvFdi
 {
-    public sealed partial class UkvFdi
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct Header
     {
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        readonly struct Header
-        {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-            public readonly byte[] magic;
-            public readonly DiskFlags flags;
-            public readonly ushort    cylinders;
-            public readonly ushort    heads;
-            public readonly ushort    descOff;
-            public readonly ushort    dataOff;
-            public readonly ushort    addInfoLen;
-        }
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+        public readonly byte[] magic;
+        public readonly DiskFlags flags;
+        public readonly ushort    cylinders;
+        public readonly ushort    heads;
+        public readonly ushort    descOff;
+        public readonly ushort    dataOff;
+        public readonly ushort    addInfoLen;
     }
 }

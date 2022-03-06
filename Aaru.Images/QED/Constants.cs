@@ -32,27 +32,26 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+[SuppressMessage("ReSharper", "UnusedMember.Local")]
+public sealed partial class Qed
 {
-    [SuppressMessage("ReSharper", "UnusedMember.Local")]
-    public sealed partial class Qed
-    {
-        /// <summary>Magic number: 'Q', 'E', 'D', 0x00</summary>
-        const uint QED_MAGIC = 0x00444551;
+    /// <summary>Magic number: 'Q', 'E', 'D', 0x00</summary>
+    const uint QED_MAGIC = 0x00444551;
 
-        /// <summary>Mask of unsupported incompatible features</summary>
-        const ulong QED_FEATURE_MASK = 0xFFFFFFFFFFFFFFF8;
+    /// <summary>Mask of unsupported incompatible features</summary>
+    const ulong QED_FEATURE_MASK = 0xFFFFFFFFFFFFFFF8;
 
-        /// <summary>File is differential (has a backing file)</summary>
-        const ulong QED_FEATURE_BACKING_FILE = 0x01;
-        /// <summary>Image needs a consistency check before writing</summary>
-        const ulong QED_FEATURE_NEEDS_CHECK = 0x02;
-        /// <summary>Backing file is a raw disk image</summary>
-        const ulong QED_FEATURE_RAW_BACKING = 0x04;
+    /// <summary>File is differential (has a backing file)</summary>
+    const ulong QED_FEATURE_BACKING_FILE = 0x01;
+    /// <summary>Image needs a consistency check before writing</summary>
+    const ulong QED_FEATURE_NEEDS_CHECK = 0x02;
+    /// <summary>Backing file is a raw disk image</summary>
+    const ulong QED_FEATURE_RAW_BACKING = 0x04;
 
-        const int  MAX_CACHE_SIZE       = 16777216;
-        const uint MAX_CACHED_SECTORS   = MAX_CACHE_SIZE / 512;
-        const uint DEFAULT_CLUSTER_SIZE = 65536;
-        const uint DEFAULT_TABLE_SIZE   = 4;
-    }
+    const int  MAX_CACHE_SIZE       = 16777216;
+    const uint MAX_CACHED_SECTORS   = MAX_CACHE_SIZE / 512;
+    const uint DEFAULT_CLUSTER_SIZE = 65536;
+    const uint DEFAULT_TABLE_SIZE   = 4;
 }

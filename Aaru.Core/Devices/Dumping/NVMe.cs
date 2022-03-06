@@ -32,11 +32,10 @@
 
 // ReSharper disable InconsistentNaming
 
-namespace Aaru.Core.Devices.Dumping
+namespace Aaru.Core.Devices.Dumping;
+
+public partial class Dump
 {
-    public partial class Dump
-    {
-        /// <summary>Dumps an NVMe device</summary>
-        public void NVMe() => StoppingErrorMessage?.Invoke("NVMe devices not yet supported.");
-    }
+    /// <summary>Dumps an NVMe device</summary>
+    public void NVMe() => StoppingErrorMessage?.Invoke("NVMe devices not yet supported.");
 }

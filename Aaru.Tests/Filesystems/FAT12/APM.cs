@@ -32,97 +32,96 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Filesystems.FAT12
+namespace Aaru.Tests.Filesystems.FAT12;
+
+[TestFixture]
+public class APM : ReadOnlyFilesystemTest
 {
-    [TestFixture]
-    public class APM : ReadOnlyFilesystemTest
+    public APM() : base("FAT12") {}
+
+    public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "FAT12 (APM)");
+    public override IFilesystem Plugin     => new FAT();
+    public override bool        Partitions => true;
+
+    public override FileSystemTest[] Tests => new[]
     {
-        public APM() : base("FAT12") {}
-
-        public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "FAT12 (APM)");
-        public override IFilesystem Plugin     => new FAT();
-        public override bool        Partitions => true;
-
-        public override FileSystemTest[] Tests => new[]
+        new FileSystemTest
         {
-            new FileSystemTest
-            {
-                TestFile     = "darwin_6.0.2.aif",
-                MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 24576,
-                SectorSize   = 512,
-                Bootable     = true,
-                Clusters     = 3057,
-                ClusterSize  = 4096,
-                SystemId     = "BSD  4.4",
-                VolumeName   = "VOLUMELABEL",
-                VolumeSerial = "60270BF5"
-            },
-            new FileSystemTest
-            {
-                TestFile     = "darwin_7.0.1.aif",
-                MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 24576,
-                SectorSize   = 512,
-                Bootable     = true,
-                Clusters     = 3057,
-                ClusterSize  = 4096,
-                SystemId     = "BSD  4.4",
-                VolumeName   = "VOLUMELABEL",
-                VolumeSerial = "7DDF1B02"
-            },
-            new FileSystemTest
-            {
-                TestFile     = "darwin_8.0.1.aif",
-                MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 24576,
-                SectorSize   = 512,
-                Bootable     = true,
-                Clusters     = 3057,
-                ClusterSize  = 4096,
-                SystemId     = "BSD  4.4",
-                VolumeName   = "VOLUMELABEL",
-                VolumeSerial = "FFCC1915"
-            },
-            new FileSystemTest
-            {
-                TestFile     = "macosx_10.3.aif",
-                MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 24576,
-                SectorSize   = 512,
-                Bootable     = true,
-                Clusters     = 2835,
-                ClusterSize  = 4096,
-                SystemId     = "BSD  4.4",
-                VolumeName   = "VOLUMELABEL",
-                VolumeSerial = "746E08F4"
-            },
-            new FileSystemTest
-            {
-                TestFile     = "macosx_10.4.aif",
-                MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 24576,
-                SectorSize   = 512,
-                Bootable     = true,
-                Clusters     = 3055,
-                ClusterSize  = 4096,
-                SystemId     = "BSD  4.4",
-                VolumeName   = "VOLUMELABEL",
-                VolumeSerial = "84A90C04"
-            },
-            new FileSystemTest
-            {
-                TestFile     = "macosx_10.11.aif",
-                MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 16384,
-                SectorSize   = 512,
-                Bootable     = true,
-                Clusters     = 4061,
-                ClusterSize  = 2048,
-                SystemId     = "BSD  4.4",
-                VolumeName   = "VOLUMELABEL",
-                VolumeSerial = "32181F09"
-            }
-        };
-    }
+            TestFile     = "darwin_6.0.2.aif",
+            MediaType    = MediaType.GENERIC_HDD,
+            Sectors      = 24576,
+            SectorSize   = 512,
+            Bootable     = true,
+            Clusters     = 3057,
+            ClusterSize  = 4096,
+            SystemId     = "BSD  4.4",
+            VolumeName   = "VOLUMELABEL",
+            VolumeSerial = "60270BF5"
+        },
+        new FileSystemTest
+        {
+            TestFile     = "darwin_7.0.1.aif",
+            MediaType    = MediaType.GENERIC_HDD,
+            Sectors      = 24576,
+            SectorSize   = 512,
+            Bootable     = true,
+            Clusters     = 3057,
+            ClusterSize  = 4096,
+            SystemId     = "BSD  4.4",
+            VolumeName   = "VOLUMELABEL",
+            VolumeSerial = "7DDF1B02"
+        },
+        new FileSystemTest
+        {
+            TestFile     = "darwin_8.0.1.aif",
+            MediaType    = MediaType.GENERIC_HDD,
+            Sectors      = 24576,
+            SectorSize   = 512,
+            Bootable     = true,
+            Clusters     = 3057,
+            ClusterSize  = 4096,
+            SystemId     = "BSD  4.4",
+            VolumeName   = "VOLUMELABEL",
+            VolumeSerial = "FFCC1915"
+        },
+        new FileSystemTest
+        {
+            TestFile     = "macosx_10.3.aif",
+            MediaType    = MediaType.GENERIC_HDD,
+            Sectors      = 24576,
+            SectorSize   = 512,
+            Bootable     = true,
+            Clusters     = 2835,
+            ClusterSize  = 4096,
+            SystemId     = "BSD  4.4",
+            VolumeName   = "VOLUMELABEL",
+            VolumeSerial = "746E08F4"
+        },
+        new FileSystemTest
+        {
+            TestFile     = "macosx_10.4.aif",
+            MediaType    = MediaType.GENERIC_HDD,
+            Sectors      = 24576,
+            SectorSize   = 512,
+            Bootable     = true,
+            Clusters     = 3055,
+            ClusterSize  = 4096,
+            SystemId     = "BSD  4.4",
+            VolumeName   = "VOLUMELABEL",
+            VolumeSerial = "84A90C04"
+        },
+        new FileSystemTest
+        {
+            TestFile     = "macosx_10.11.aif",
+            MediaType    = MediaType.GENERIC_HDD,
+            Sectors      = 16384,
+            SectorSize   = 512,
+            Bootable     = true,
+            Clusters     = 4061,
+            ClusterSize  = 2048,
+            SystemId     = "BSD  4.4",
+            VolumeName   = "VOLUMELABEL",
+            VolumeSerial = "32181F09"
+        }
+    };
 }

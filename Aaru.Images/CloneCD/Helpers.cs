@@ -30,14 +30,13 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages
-{
-    public sealed partial class CloneCd
-    {
-        static ulong GetLba(int minute, int second, int frame) =>
-            (ulong)((minute * 60 * 75) + (second * 75) + frame - 150);
+namespace Aaru.DiscImages;
 
-        static long MsfToLba((byte minute, byte second, byte frame) msf) =>
-            (msf.minute * 60 * 75) + (msf.second * 75) + msf.frame - 150;
-    }
+public sealed partial class CloneCd
+{
+    static ulong GetLba(int minute, int second, int frame) =>
+        (ulong)((minute * 60 * 75) + (second * 75) + frame - 150);
+
+    static long MsfToLba((byte minute, byte second, byte frame) msf) =>
+        (msf.minute * 60 * 75) + (msf.second * 75) + msf.frame - 150;
 }

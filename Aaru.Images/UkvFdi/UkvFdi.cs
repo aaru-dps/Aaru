@@ -35,39 +35,38 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+/// <inheritdoc />
+/// <summary>Implements reading UKV FDI disk images</summary>
+public sealed partial class UkvFdi : IMediaImage
 {
-    /// <inheritdoc />
-    /// <summary>Implements reading UKV FDI disk images</summary>
-    public sealed partial class UkvFdi : IMediaImage
+    ImageInfo _imageInfo;
+
+    // Cylinder by head, sector data matrix
+    byte[][][][] _sectorsData;
+
+    public UkvFdi() => _imageInfo = new ImageInfo
     {
-        ImageInfo _imageInfo;
-
-        // Cylinder by head, sector data matrix
-        byte[][][][] _sectorsData;
-
-        public UkvFdi() => _imageInfo = new ImageInfo
-        {
-            ReadableSectorTags    = new List<SectorTagType>(),
-            ReadableMediaTags     = new List<MediaTagType>(),
-            HasPartitions         = false,
-            HasSessions           = false,
-            Version               = null,
-            Application           = null,
-            ApplicationVersion    = null,
-            Creator               = null,
-            Comments              = null,
-            MediaManufacturer     = null,
-            MediaModel            = null,
-            MediaSerialNumber     = null,
-            MediaBarcode          = null,
-            MediaPartNumber       = null,
-            MediaSequence         = 0,
-            LastMediaSequence     = 0,
-            DriveManufacturer     = null,
-            DriveModel            = null,
-            DriveSerialNumber     = null,
-            DriveFirmwareRevision = null
-        };
-    }
+        ReadableSectorTags    = new List<SectorTagType>(),
+        ReadableMediaTags     = new List<MediaTagType>(),
+        HasPartitions         = false,
+        HasSessions           = false,
+        Version               = null,
+        Application           = null,
+        ApplicationVersion    = null,
+        Creator               = null,
+        Comments              = null,
+        MediaManufacturer     = null,
+        MediaModel            = null,
+        MediaSerialNumber     = null,
+        MediaBarcode          = null,
+        MediaPartNumber       = null,
+        MediaSequence         = 0,
+        LastMediaSequence     = 0,
+        DriveManufacturer     = null,
+        DriveModel            = null,
+        DriveSerialNumber     = null,
+        DriveFirmwareRevision = null
+    };
 }

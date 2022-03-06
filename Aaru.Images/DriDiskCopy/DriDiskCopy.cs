@@ -36,40 +36,39 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+/// <inheritdoc />
+/// <summary>Implements reading and writing DR-DOS' DISKCOPY disk images</summary>
+public sealed partial class DriDiskCopy : IWritableImage
 {
-    /// <inheritdoc />
-    /// <summary>Implements reading and writing DR-DOS' DISKCOPY disk images</summary>
-    public sealed partial class DriDiskCopy : IWritableImage
+    /// <summary>Disk image file</summary>
+    IFilter _driImageFilter;
+
+    /// <summary>Footer of opened image</summary>
+    Footer _footer;
+    ImageInfo  _imageInfo;
+    FileStream _writingStream;
+
+    public DriDiskCopy() => _imageInfo = new ImageInfo
     {
-        /// <summary>Disk image file</summary>
-        IFilter _driImageFilter;
-
-        /// <summary>Footer of opened image</summary>
-        Footer _footer;
-        ImageInfo  _imageInfo;
-        FileStream _writingStream;
-
-        public DriDiskCopy() => _imageInfo = new ImageInfo
-        {
-            ReadableSectorTags    = new List<SectorTagType>(),
-            ReadableMediaTags     = new List<MediaTagType>(),
-            HasPartitions         = false,
-            HasSessions           = false,
-            Application           = "DiskCopy",
-            Creator               = null,
-            Comments              = null,
-            MediaManufacturer     = null,
-            MediaModel            = null,
-            MediaSerialNumber     = null,
-            MediaBarcode          = null,
-            MediaPartNumber       = null,
-            MediaSequence         = 0,
-            LastMediaSequence     = 0,
-            DriveManufacturer     = null,
-            DriveModel            = null,
-            DriveSerialNumber     = null,
-            DriveFirmwareRevision = null
-        };
-    }
+        ReadableSectorTags    = new List<SectorTagType>(),
+        ReadableMediaTags     = new List<MediaTagType>(),
+        HasPartitions         = false,
+        HasSessions           = false,
+        Application           = "DiskCopy",
+        Creator               = null,
+        Comments              = null,
+        MediaManufacturer     = null,
+        MediaModel            = null,
+        MediaSerialNumber     = null,
+        MediaBarcode          = null,
+        MediaPartNumber       = null,
+        MediaSequence         = 0,
+        LastMediaSequence     = 0,
+        DriveManufacturer     = null,
+        DriveModel            = null,
+        DriveSerialNumber     = null,
+        DriveFirmwareRevision = null
+    };
 }

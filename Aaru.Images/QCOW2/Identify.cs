@@ -35,27 +35,26 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class Qcow2
 {
-    public sealed partial class Qcow2
+    /// <inheritdoc />
+    public bool Identify(IFilter imageFilter)
     {
-        /// <inheritdoc />
-        public bool Identify(IFilter imageFilter)
-        {
-            Stream stream = imageFilter.GetDataForkStream();
-            stream.Seek(0, SeekOrigin.Begin);
+        Stream stream = imageFilter.GetDataForkStream();
+        stream.Seek(0, SeekOrigin.Begin);
 
-            if(stream.Length < 512)
-                return false;
+        if(stream.Length < 512)
+            return false;
 
-            byte[] qHdrB = new byte[Marshal.SizeOf<Header>()];
-            stream.Read(qHdrB, 0, Marshal.SizeOf<Header>());
-            _qHdr = Marshal.SpanToStructureBigEndian<Header>(qHdrB);
+        byte[] qHdrB = new byte[Marshal.SizeOf<Header>()];
+        stream.Read(qHdrB, 0, Marshal.SizeOf<Header>());
+        _qHdr = Marshal.SpanToStructureBigEndian<Header>(qHdrB);
 
-            AaruConsole.DebugWriteLine("QCOW plugin", "qHdr.magic = 0x{0:X8}", _qHdr.magic);
-            AaruConsole.DebugWriteLine("QCOW plugin", "qHdr.version = {0}", _qHdr.version);
+        AaruConsole.DebugWriteLine("QCOW plugin", "qHdr.magic = 0x{0:X8}", _qHdr.magic);
+        AaruConsole.DebugWriteLine("QCOW plugin", "qHdr.version = {0}", _qHdr.version);
 
-            return _qHdr.magic == QCOW_MAGIC && (_qHdr.version == QCOW_VERSION2 || _qHdr.version == QCOW_VERSION3);
-        }
+        return _qHdr.magic == QCOW_MAGIC && (_qHdr.version == QCOW_VERSION2 || _qHdr.version == QCOW_VERSION3);
     }
 }

@@ -33,12 +33,11 @@
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 
-namespace Aaru.Gui.Views.Tabs
-{
-    public sealed class AtaInfo : UserControl
-    {
-        public AtaInfo() => InitializeComponent();
+namespace Aaru.Gui.Views.Tabs;
 
-        void InitializeComponent() => AvaloniaXamlLoader.Load(this);
-    }
+public sealed class AtaInfo : UserControl
+{
+    public AtaInfo() => InitializeComponent();
+
+    void InitializeComponent() => AvaloniaXamlLoader.Load(this);
 }

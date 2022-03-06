@@ -32,20 +32,19 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-namespace Aaru.DiscImages
-{
-    [SuppressMessage("ReSharper", "UnusedMember.Local")]
-    public sealed partial class Partimage
-    {
-        enum PCompression : uint
-        {
-            None = 0, Gzip = 1, Bzip2 = 2,
-            Lzo  = 3
-        }
+namespace Aaru.DiscImages;
 
-        enum PEncryption : uint
-        {
-            None = 0
-        }
+[SuppressMessage("ReSharper", "UnusedMember.Local")]
+public sealed partial class Partimage
+{
+    enum PCompression : uint
+    {
+        None = 0, Gzip = 1, Bzip2 = 2,
+        Lzo  = 3
+    }
+
+    enum PEncryption : uint
+    {
+        None = 0
     }
 }

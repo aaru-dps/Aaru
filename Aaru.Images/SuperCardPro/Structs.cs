@@ -32,61 +32,60 @@
 
 using System.Runtime.InteropServices;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class SuperCardPro
 {
-    public sealed partial class SuperCardPro
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    public struct ScpHeader
     {
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        public struct ScpHeader
-        {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-            public byte[] signature;
-            public byte        version;
-            public ScpDiskType type;
-            public byte        revolutions;
-            public byte        start;
-            public byte        end;
-            public ScpFlags    flags;
-            public byte        bitCellEncoding;
-            public byte        heads;
-            public byte        reserved;
-            public uint        checksum;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 168)]
-            public uint[] offsets;
-        }
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+        public byte[] signature;
+        public byte        version;
+        public ScpDiskType type;
+        public byte        revolutions;
+        public byte        start;
+        public byte        end;
+        public ScpFlags    flags;
+        public byte        bitCellEncoding;
+        public byte        heads;
+        public byte        reserved;
+        public uint        checksum;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 168)]
+        public uint[] offsets;
+    }
 
-        public struct TrackHeader
-        {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-            public byte[] Signature;
-            public byte         TrackNumber;
-            public TrackEntry[] Entries;
-        }
+    public struct TrackHeader
+    {
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+        public byte[] Signature;
+        public byte         TrackNumber;
+        public TrackEntry[] Entries;
+    }
 
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        public struct TrackEntry
-        {
-            public uint indexTime;
-            public uint trackLength;
-            public uint dataOffset;
-        }
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    public struct TrackEntry
+    {
+        public uint indexTime;
+        public uint trackLength;
+        public uint dataOffset;
+    }
 
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        readonly struct Footer
-        {
-            public readonly uint manufacturerOffset;
-            public readonly uint modelOffset;
-            public readonly uint serialOffset;
-            public readonly uint creatorOffset;
-            public readonly uint applicationOffset;
-            public readonly uint commentsOffset;
-            public readonly long creationTime;
-            public readonly long modificationTime;
-            public readonly byte applicationVersion;
-            public readonly byte hardwareVersion;
-            public readonly byte firmwareVersion;
-            public readonly byte imageVersion;
-            public readonly uint signature;
-        }
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct Footer
+    {
+        public readonly uint manufacturerOffset;
+        public readonly uint modelOffset;
+        public readonly uint serialOffset;
+        public readonly uint creatorOffset;
+        public readonly uint applicationOffset;
+        public readonly uint commentsOffset;
+        public readonly long creationTime;
+        public readonly long modificationTime;
+        public readonly byte applicationVersion;
+        public readonly byte hardwareVersion;
+        public readonly byte firmwareVersion;
+        public readonly byte imageVersion;
+        public readonly uint signature;
     }
 }

@@ -33,34 +33,33 @@
 using System;
 using System.IO;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class Apridisk
 {
-    public sealed partial class Apridisk
+    static uint Decompress(byte[] compressed, out byte[] decompressed)
     {
-        static uint Decompress(byte[] compressed, out byte[] decompressed)
+        int readp  = 0;
+        int cLen   = compressed.Length;
+        var buffer = new MemoryStream();
+
+        uint uLen = 0;
+
+        while(cLen >= 3)
         {
-            int readp  = 0;
-            int cLen   = compressed.Length;
-            var buffer = new MemoryStream();
+            ushort blklen = BitConverter.ToUInt16(compressed, readp);
+            readp += 2;
 
-            uint uLen = 0;
+            for(int i = 0; i < blklen; i++)
+                buffer.WriteByte(compressed[readp]);
 
-            while(cLen >= 3)
-            {
-                ushort blklen = BitConverter.ToUInt16(compressed, readp);
-                readp += 2;
-
-                for(int i = 0; i < blklen; i++)
-                    buffer.WriteByte(compressed[readp]);
-
-                uLen += blklen;
-                readp++;
-                cLen -= 3;
-            }
-
-            decompressed = buffer.ToArray();
-
-            return uLen;
+            uLen += blklen;
+            readp++;
+            cLen -= 3;
         }
+
+        decompressed = buffer.ToArray();
+
+        return uLen;
     }
 }

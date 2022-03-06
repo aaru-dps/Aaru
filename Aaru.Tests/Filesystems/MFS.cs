@@ -32,70 +32,69 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Filesystems
+namespace Aaru.Tests.Filesystems;
+
+[TestFixture]
+public class Mfs : ReadOnlyFilesystemTest
 {
-    [TestFixture]
-    public class Mfs : ReadOnlyFilesystemTest
+    public Mfs() : base("MFS") {}
+
+    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems",
+                                                      "Macintosh File System");
+    public override IFilesystem Plugin     => new AppleMFS();
+    public override bool        Partitions => false;
+
+    public override FileSystemTest[] Tests => new[]
     {
-        public Mfs() : base("MFS") {}
-
-        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems",
-                                                          "Macintosh File System");
-        public override IFilesystem Plugin     => new AppleMFS();
-        public override bool        Partitions => false;
-
-        public override FileSystemTest[] Tests => new[]
+        new FileSystemTest
         {
-            new FileSystemTest
-            {
-                TestFile    = "macos_0.1_mf1dd.img.lz",
-                MediaType   = MediaType.AppleSonySS,
-                Sectors     = 800,
-                SectorSize  = 512,
-                Clusters    = 391,
-                ClusterSize = 1024,
-                VolumeName  = "Volume label"
-            },
-            new FileSystemTest
-            {
-                TestFile    = "macos_0.5_mf1dd.img.lz",
-                MediaType   = MediaType.AppleSonySS,
-                Sectors     = 800,
-                SectorSize  = 512,
-                Clusters    = 391,
-                ClusterSize = 1024,
-                VolumeName  = "Volume label"
-            },
-            new FileSystemTest
-            {
-                TestFile    = "macos_1.1_mf1dd.img.lz",
-                MediaType   = MediaType.AppleSonySS,
-                Sectors     = 800,
-                SectorSize  = 512,
-                Clusters    = 391,
-                ClusterSize = 1024,
-                VolumeName  = "Volume label"
-            },
-            new FileSystemTest
-            {
-                TestFile    = "macos_2.0_mf1dd.img.lz",
-                MediaType   = MediaType.AppleSonySS,
-                Sectors     = 800,
-                SectorSize  = 512,
-                Clusters    = 391,
-                ClusterSize = 1024,
-                VolumeName  = "Volume label"
-            },
-            new FileSystemTest
-            {
-                TestFile    = "macos_6.0.7_mf1dd.img.lz",
-                MediaType   = MediaType.AppleSonySS,
-                Sectors     = 800,
-                SectorSize  = 512,
-                Clusters    = 391,
-                ClusterSize = 1024,
-                VolumeName  = "Volume label"
-            }
-        };
-    }
+            TestFile    = "macos_0.1_mf1dd.img.lz",
+            MediaType   = MediaType.AppleSonySS,
+            Sectors     = 800,
+            SectorSize  = 512,
+            Clusters    = 391,
+            ClusterSize = 1024,
+            VolumeName  = "Volume label"
+        },
+        new FileSystemTest
+        {
+            TestFile    = "macos_0.5_mf1dd.img.lz",
+            MediaType   = MediaType.AppleSonySS,
+            Sectors     = 800,
+            SectorSize  = 512,
+            Clusters    = 391,
+            ClusterSize = 1024,
+            VolumeName  = "Volume label"
+        },
+        new FileSystemTest
+        {
+            TestFile    = "macos_1.1_mf1dd.img.lz",
+            MediaType   = MediaType.AppleSonySS,
+            Sectors     = 800,
+            SectorSize  = 512,
+            Clusters    = 391,
+            ClusterSize = 1024,
+            VolumeName  = "Volume label"
+        },
+        new FileSystemTest
+        {
+            TestFile    = "macos_2.0_mf1dd.img.lz",
+            MediaType   = MediaType.AppleSonySS,
+            Sectors     = 800,
+            SectorSize  = 512,
+            Clusters    = 391,
+            ClusterSize = 1024,
+            VolumeName  = "Volume label"
+        },
+        new FileSystemTest
+        {
+            TestFile    = "macos_6.0.7_mf1dd.img.lz",
+            MediaType   = MediaType.AppleSonySS,
+            Sectors     = 800,
+            SectorSize  = 512,
+            Clusters    = 391,
+            ClusterSize = 1024,
+            VolumeName  = "Volume label"
+        }
+    };
 }

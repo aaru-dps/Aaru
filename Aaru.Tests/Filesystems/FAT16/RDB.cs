@@ -32,44 +32,43 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Filesystems.FAT16
+namespace Aaru.Tests.Filesystems.FAT16;
+
+[TestFixture]
+public class RDB : ReadOnlyFilesystemTest
 {
-    [TestFixture]
-    public class RDB : ReadOnlyFilesystemTest
+    public RDB() : base("FAT16") {}
+
+    public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "FAT16 (RDB)");
+    public override IFilesystem Plugin     => new FAT();
+    public override bool        Partitions => true;
+
+    public override FileSystemTest[] Tests => new[]
     {
-        public RDB() : base("FAT16") {}
-
-        public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "FAT16 (RDB)");
-        public override IFilesystem Plugin     => new FAT();
-        public override bool        Partitions => true;
-
-        public override FileSystemTest[] Tests => new[]
+        new FileSystemTest
         {
-            new FileSystemTest
-            {
-                TestFile     = "amigaos_3.9.aif",
-                MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 1024128,
-                SectorSize   = 512,
-                Bootable     = true,
-                Clusters     = 63655,
-                ClusterSize  = 8192,
-                SystemId     = "CDP  5.0",
-                VolumeName   = "VOLUMELABEL",
-                VolumeSerial = "374D40D1"
-            },
-            new FileSystemTest
-            {
-                TestFile     = "morphos_3.13.aif",
-                MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 262144,
-                SectorSize   = 512,
-                Clusters     = 65347,
-                ClusterSize  = 2048,
-                SystemId     = "MSWIN4.1",
-                VolumeName   = "VOLUMELABEL",
-                VolumeSerial = "519F5D8B"
-            }
-        };
-    }
+            TestFile     = "amigaos_3.9.aif",
+            MediaType    = MediaType.GENERIC_HDD,
+            Sectors      = 1024128,
+            SectorSize   = 512,
+            Bootable     = true,
+            Clusters     = 63655,
+            ClusterSize  = 8192,
+            SystemId     = "CDP  5.0",
+            VolumeName   = "VOLUMELABEL",
+            VolumeSerial = "374D40D1"
+        },
+        new FileSystemTest
+        {
+            TestFile     = "morphos_3.13.aif",
+            MediaType    = MediaType.GENERIC_HDD,
+            Sectors      = 262144,
+            SectorSize   = 512,
+            Clusters     = 65347,
+            ClusterSize  = 2048,
+            SystemId     = "MSWIN4.1",
+            VolumeName   = "VOLUMELABEL",
+            VolumeSerial = "519F5D8B"
+        }
+    };
 }

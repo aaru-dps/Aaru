@@ -32,38 +32,37 @@
 
 using System.Runtime.InteropServices;
 
-namespace Aaru.Filesystems
+namespace Aaru.Filesystems;
+
+public sealed partial class XboxFatPlugin
 {
-    public sealed partial class XboxFatPlugin
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct Superblock
     {
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        readonly struct Superblock
-        {
-            public readonly uint magic;
-            public readonly uint id;
-            public readonly uint sectorsPerCluster;
-            public readonly uint rootDirectoryCluster;
+        public readonly uint magic;
+        public readonly uint id;
+        public readonly uint sectorsPerCluster;
+        public readonly uint rootDirectoryCluster;
 
-            // TODO: Undetermined size
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-            public readonly byte[] volumeLabel;
-        }
+        // TODO: Undetermined size
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
+        public readonly byte[] volumeLabel;
+    }
 
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        readonly struct DirectoryEntry
-        {
-            public readonly byte       filenameSize;
-            public readonly Attributes attributes;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_FILENAME)]
-            public readonly byte[] filename;
-            public readonly uint   firstCluster;
-            public readonly uint   length;
-            public readonly ushort lastWrittenTime;
-            public readonly ushort lastWrittenDate;
-            public readonly ushort lastAccessTime;
-            public readonly ushort lastAccessDate;
-            public readonly ushort creationTime;
-            public readonly ushort creationDate;
-        }
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct DirectoryEntry
+    {
+        public readonly byte       filenameSize;
+        public readonly Attributes attributes;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_FILENAME)]
+        public readonly byte[] filename;
+        public readonly uint   firstCluster;
+        public readonly uint   length;
+        public readonly ushort lastWrittenTime;
+        public readonly ushort lastWrittenDate;
+        public readonly ushort lastAccessTime;
+        public readonly ushort lastAccessDate;
+        public readonly ushort creationTime;
+        public readonly ushort creationDate;
     }
 }

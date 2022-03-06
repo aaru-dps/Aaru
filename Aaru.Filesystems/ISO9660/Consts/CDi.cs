@@ -36,33 +36,32 @@ using Aaru.Helpers;
 
 // ReSharper disable UnusedMember.Local
 
-namespace Aaru.Filesystems
+namespace Aaru.Filesystems;
+
+public sealed partial class ISO9660
 {
-    public sealed partial class ISO9660
+    const           string CDI_MAGIC               = "CD-I ";
+    static readonly int    _cdiDirectoryRecordSize = Marshal.SizeOf<CdiDirectoryRecord>();
+    static readonly int    _cdiSystemAreaSize      = Marshal.SizeOf<CdiSystemArea>();
+
+    [Flags]
+    enum CdiVolumeFlags : byte
     {
-        const           string CDI_MAGIC               = "CD-I ";
-        static readonly int    _cdiDirectoryRecordSize = Marshal.SizeOf<CdiDirectoryRecord>();
-        static readonly int    _cdiSystemAreaSize      = Marshal.SizeOf<CdiSystemArea>();
+        // Escapes are not ISO 2375 but ISO 2022
+        NotISO2375 = 1
+    }
 
-        [Flags]
-        enum CdiVolumeFlags : byte
-        {
-            // Escapes are not ISO 2375 but ISO 2022
-            NotISO2375 = 1
-        }
+    [Flags]
+    enum CdiFileFlags : byte
+    {
+        Hidden = 0x01
+    }
 
-        [Flags]
-        enum CdiFileFlags : byte
-        {
-            Hidden = 0x01
-        }
-
-        [Flags]
-        enum CdiAttributes : ushort
-        {
-            OwnerRead    = 1 << 0, OwnerExecute = 1 << 2, GroupRead    = 1 << 4,
-            GroupExecute = 1 << 6, OtherRead    = 1 << 8, OtherExecute = 1 << 10,
-            DigitalAudio = 1 << 14, Directory   = 1 << 15
-        }
+    [Flags]
+    enum CdiAttributes : ushort
+    {
+        OwnerRead    = 1 << 0, OwnerExecute = 1 << 2, GroupRead    = 1 << 4,
+        GroupExecute = 1 << 6, OtherRead    = 1 << 8, OtherExecute = 1 << 10,
+        DigitalAudio = 1 << 14, Directory   = 1 << 15
     }
 }

@@ -41,124 +41,123 @@ using Claunia.Encoding;
 using Schemas;
 using Encoding = System.Text.Encoding;
 
-namespace Aaru.Filesystems
+namespace Aaru.Filesystems;
+
+public sealed partial class AppleDOS
 {
-    public sealed partial class AppleDOS
+    /// <inheritdoc />
+    public ErrorNumber Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding,
+                             Dictionary<string, string> options, string @namespace)
     {
-        /// <inheritdoc />
-        public ErrorNumber Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding,
-                                 Dictionary<string, string> options, string @namespace)
+        _device  = imagePlugin;
+        _start   = partition.Start;
+        Encoding = encoding ?? new Apple2();
+
+        if(_device.Info.Sectors != 455 &&
+           _device.Info.Sectors != 560)
         {
-            _device  = imagePlugin;
-            _start   = partition.Start;
-            Encoding = encoding ?? new Apple2();
+            AaruConsole.DebugWriteLine("Apple DOS plugin", "Incorrect device size.");
 
-            if(_device.Info.Sectors != 455 &&
-               _device.Info.Sectors != 560)
-            {
-                AaruConsole.DebugWriteLine("Apple DOS plugin", "Incorrect device size.");
-
-                return ErrorNumber.InOutError;
-            }
-
-            if(_start > 0)
-            {
-                AaruConsole.DebugWriteLine("Apple DOS plugin", "Partitions are not supported.");
-
-                return ErrorNumber.InOutError;
-            }
-
-            if(_device.Info.SectorSize != 256)
-            {
-                AaruConsole.DebugWriteLine("Apple DOS plugin", "Incorrect sector size.");
-
-                return ErrorNumber.InOutError;
-            }
-
-            _sectorsPerTrack = _device.Info.Sectors == 455 ? 13 : 16;
-
-            // Read the VTOC
-            ErrorNumber error = _device.ReadSector((ulong)(17 * _sectorsPerTrack), out _vtocBlocks);
-
-            if(error != ErrorNumber.NoError)
-                return error;
-
-            _vtoc = Marshal.ByteArrayToStructureLittleEndian<Vtoc>(_vtocBlocks);
-
-            _track1UsedByFiles = false;
-            _track2UsedByFiles = false;
-            _usedSectors       = 1;
-
-            error = ReadCatalog();
-
-            if(error != ErrorNumber.NoError)
-            {
-                AaruConsole.DebugWriteLine("Apple DOS plugin", "Unable to read catalog.");
-
-                return error;
-            }
-
-            error = CacheAllFiles();
-
-            if(error != ErrorNumber.NoError)
-            {
-                AaruConsole.DebugWriteLine("Apple DOS plugin", "Unable cache all files.");
-
-                return error;
-            }
-
-            // Create XML metadata for mounted filesystem
-            XmlFsType = new FileSystemType
-            {
-                Bootable              = true,
-                Clusters              = _device.Info.Sectors,
-                ClusterSize           = _vtoc.bytesPerSector,
-                Files                 = (ulong)_catalogCache.Count,
-                FilesSpecified        = true,
-                FreeClustersSpecified = true,
-                Type                  = "Apple DOS"
-            };
-
-            XmlFsType.FreeClusters = XmlFsType.Clusters - _usedSectors;
-
-            options ??= GetDefaultOptions();
-
-            if(options.TryGetValue("debug", out string debugString))
-                bool.TryParse(debugString, out _debug);
-
-            _mounted = true;
-
-            return ErrorNumber.NoError;
+            return ErrorNumber.InOutError;
         }
 
-        /// <inheritdoc />
-        public ErrorNumber Unmount()
+        if(_start > 0)
         {
-            _mounted       = false;
-            _extentCache   = null;
-            _fileCache     = null;
-            _catalogCache  = null;
-            _fileSizeCache = null;
+            AaruConsole.DebugWriteLine("Apple DOS plugin", "Partitions are not supported.");
 
-            return ErrorNumber.NoError;
+            return ErrorNumber.InOutError;
         }
 
-        /// <inheritdoc />
-        public ErrorNumber StatFs(out FileSystemInfo stat)
+        if(_device.Info.SectorSize != 256)
         {
-            stat = new FileSystemInfo
-            {
-                Blocks         = _device.Info.Sectors,
-                FilenameLength = 30,
-                Files          = (ulong)_catalogCache.Count,
-                PluginId       = Id,
-                Type           = "Apple DOS"
-            };
+            AaruConsole.DebugWriteLine("Apple DOS plugin", "Incorrect sector size.");
 
-            stat.FreeFiles  = _totalFileEntries - stat.Files;
-            stat.FreeBlocks = stat.Blocks       - _usedSectors;
-
-            return ErrorNumber.NoError;
+            return ErrorNumber.InOutError;
         }
+
+        _sectorsPerTrack = _device.Info.Sectors == 455 ? 13 : 16;
+
+        // Read the VTOC
+        ErrorNumber error = _device.ReadSector((ulong)(17 * _sectorsPerTrack), out _vtocBlocks);
+
+        if(error != ErrorNumber.NoError)
+            return error;
+
+        _vtoc = Marshal.ByteArrayToStructureLittleEndian<Vtoc>(_vtocBlocks);
+
+        _track1UsedByFiles = false;
+        _track2UsedByFiles = false;
+        _usedSectors       = 1;
+
+        error = ReadCatalog();
+
+        if(error != ErrorNumber.NoError)
+        {
+            AaruConsole.DebugWriteLine("Apple DOS plugin", "Unable to read catalog.");
+
+            return error;
+        }
+
+        error = CacheAllFiles();
+
+        if(error != ErrorNumber.NoError)
+        {
+            AaruConsole.DebugWriteLine("Apple DOS plugin", "Unable cache all files.");
+
+            return error;
+        }
+
+        // Create XML metadata for mounted filesystem
+        XmlFsType = new FileSystemType
+        {
+            Bootable              = true,
+            Clusters              = _device.Info.Sectors,
+            ClusterSize           = _vtoc.bytesPerSector,
+            Files                 = (ulong)_catalogCache.Count,
+            FilesSpecified        = true,
+            FreeClustersSpecified = true,
+            Type                  = "Apple DOS"
+        };
+
+        XmlFsType.FreeClusters = XmlFsType.Clusters - _usedSectors;
+
+        options ??= GetDefaultOptions();
+
+        if(options.TryGetValue("debug", out string debugString))
+            bool.TryParse(debugString, out _debug);
+
+        _mounted = true;
+
+        return ErrorNumber.NoError;
+    }
+
+    /// <inheritdoc />
+    public ErrorNumber Unmount()
+    {
+        _mounted       = false;
+        _extentCache   = null;
+        _fileCache     = null;
+        _catalogCache  = null;
+        _fileSizeCache = null;
+
+        return ErrorNumber.NoError;
+    }
+
+    /// <inheritdoc />
+    public ErrorNumber StatFs(out FileSystemInfo stat)
+    {
+        stat = new FileSystemInfo
+        {
+            Blocks         = _device.Info.Sectors,
+            FilenameLength = 30,
+            Files          = (ulong)_catalogCache.Count,
+            PluginId       = Id,
+            Type           = "Apple DOS"
+        };
+
+        stat.FreeFiles  = _totalFileEntries - stat.Files;
+        stat.FreeBlocks = stat.Blocks       - _usedSectors;
+
+        return ErrorNumber.NoError;
     }
 }

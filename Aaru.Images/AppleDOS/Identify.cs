@@ -33,16 +33,15 @@
 using System.IO;
 using Aaru.CommonTypes.Interfaces;
 
-namespace Aaru.DiscImages
-{
-    public sealed partial class AppleDos
-    {
-        /// <inheritdoc />
-        public bool Identify(IFilter imageFilter)
-        {
-            _extension = Path.GetExtension(imageFilter.Filename)?.ToLower();
+namespace Aaru.DiscImages;
 
-            return imageFilter.DataForkLength == 143360 && (_extension == ".po" || _extension == ".do");
-        }
+public sealed partial class AppleDos
+{
+    /// <inheritdoc />
+    public bool Identify(IFilter imageFilter)
+    {
+        _extension = Path.GetExtension(imageFilter.Filename)?.ToLower();
+
+        return imageFilter.DataForkLength == 143360 && (_extension == ".po" || _extension == ".do");
     }
 }

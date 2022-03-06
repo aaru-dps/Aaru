@@ -31,19 +31,18 @@ using Avalonia;
 using Avalonia.Dialogs;
 using Avalonia.ReactiveUI;
 
-namespace Aaru.Gui
+namespace Aaru.Gui;
+
+public static class Main
 {
-    public static class Main
+    public static int Start(string[] args)
     {
-        public static int Start(string[] args)
-        {
-            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+        Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
-            return BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
-        }
-
-        // Avalonia configuration, don't remove; also used by visual designer.
-        public static AppBuilder BuildAvaloniaApp() => AppBuilder.Configure<App>().UsePlatformDetect().LogToDebug().
-                                                                  UseReactiveUI().UseManagedSystemDialogs();
+        return BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
     }
+
+    // Avalonia configuration, don't remove; also used by visual designer.
+    public static AppBuilder BuildAvaloniaApp() => AppBuilder.Configure<App>().UsePlatformDetect().LogToDebug().
+                                                              UseReactiveUI().UseManagedSystemDialogs();
 }

@@ -32,36 +32,35 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+[SuppressMessage("ReSharper", "UnusedMember.Local"), SuppressMessage("ReSharper", "UnusedType.Local")]
+public sealed partial class D88
 {
-    [SuppressMessage("ReSharper", "UnusedMember.Local"), SuppressMessage("ReSharper", "UnusedType.Local")]
-    public sealed partial class D88
+    enum DiskType : byte
     {
-        enum DiskType : byte
-        {
-            D2 = 0x00, Dd2 = 0x10, Hd2 = 0x20
-        }
+        D2 = 0x00, Dd2 = 0x10, Hd2 = 0x20
+    }
 
-        enum DensityType : byte
-        {
-            Mfm = 0x00, Fm = 0x40
-        }
+    enum DensityType : byte
+    {
+        Mfm = 0x00, Fm = 0x40
+    }
 
-        /// <summary>Status as returned by PC-98 BIOS ステータスは、PC-98x1 のBIOS が返してくるステータスで、</summary>
-        enum StatusType : byte
-        {
-            /// <summary>Normal 正常</summary>
-            Normal = 0x00,
-            /// <summary>Deleted 正常(DELETED DATA)</summary>
-            Deleted = 0x10,
-            /// <summary>CRC error in address fields ID CRC エラー</summary>
-            IdError = 0xA0,
-            /// <summary>CRC error in data block データ CRC エラー</summary>
-            DataError = 0xB0,
-            /// <summary>Address mark not found アドレスマークなし</summary>
-            AddressMarkNotFound = 0xE0,
-            /// <summary>Data mark not found データマークなし</summary>
-            DataMarkNotFound = 0xF0
-        }
+    /// <summary>Status as returned by PC-98 BIOS ステータスは、PC-98x1 のBIOS が返してくるステータスで、</summary>
+    enum StatusType : byte
+    {
+        /// <summary>Normal 正常</summary>
+        Normal = 0x00,
+        /// <summary>Deleted 正常(DELETED DATA)</summary>
+        Deleted = 0x10,
+        /// <summary>CRC error in address fields ID CRC エラー</summary>
+        IdError = 0xA0,
+        /// <summary>CRC error in data block データ CRC エラー</summary>
+        DataError = 0xB0,
+        /// <summary>Address mark not found アドレスマークなし</summary>
+        AddressMarkNotFound = 0xE0,
+        /// <summary>Data mark not found データマークなし</summary>
+        DataMarkNotFound = 0xF0
     }
 }

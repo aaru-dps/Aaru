@@ -33,15 +33,14 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Aaru.DiscImages
-{
-    public sealed partial class Vhd
-    {
-        static uint VhdChecksum(IEnumerable<byte> data)
-        {
-            uint checksum = data.Aggregate<byte, uint>(0, (current, b) => current + b);
+namespace Aaru.DiscImages;
 
-            return ~checksum;
-        }
+public sealed partial class Vhd
+{
+    static uint VhdChecksum(IEnumerable<byte> data)
+    {
+        uint checksum = data.Aggregate<byte, uint>(0, (current, b) => current + b);
+
+        return ~checksum;
     }
 }

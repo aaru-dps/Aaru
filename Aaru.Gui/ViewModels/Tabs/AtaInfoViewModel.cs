@@ -38,143 +38,142 @@ using Avalonia.Controls;
 using JetBrains.Annotations;
 using ReactiveUI;
 
-namespace Aaru.Gui.ViewModels.Tabs
+namespace Aaru.Gui.ViewModels.Tabs;
+
+public sealed class AtaInfoViewModel : ViewModelBase
 {
-    public sealed class AtaInfoViewModel : ViewModelBase
+    readonly byte[] _ata;
+    readonly byte[] _atapi;
+    readonly Window _view;
+
+    public AtaInfoViewModel([CanBeNull] byte[] ataIdentify, byte[] atapiIdentify,
+                            AtaErrorRegistersChs? ataMcptError, Window view)
     {
-        readonly byte[] _ata;
-        readonly byte[] _atapi;
-        readonly Window _view;
+        SaveAtaBinaryCommand = ReactiveCommand.Create(ExecuteSaveAtaBinaryCommand);
+        SaveAtaTextCommand   = ReactiveCommand.Create(ExecuteSaveAtaTextCommand);
 
-        public AtaInfoViewModel([CanBeNull] byte[] ataIdentify, byte[] atapiIdentify,
-                                AtaErrorRegistersChs? ataMcptError, Window view)
+        _ata   = ataIdentify;
+        _atapi = atapiIdentify;
+        _view  = view;
+
+        if(ataIdentify   == null &&
+           atapiIdentify == null)
+            return;
+
+        if(ataIdentify != null)
         {
-            SaveAtaBinaryCommand = ReactiveCommand.Create(ExecuteSaveAtaBinaryCommand);
-            SaveAtaTextCommand   = ReactiveCommand.Create(ExecuteSaveAtaTextCommand);
+            AtaMcptVisible = true;
+            AtaMcptChecked = ataMcptError.HasValue;
+            AtaOrAtapiText = "ATA IDENTIFY DEVICE";
 
-            _ata   = ataIdentify;
-            _atapi = atapiIdentify;
-            _view  = view;
-
-            if(ataIdentify   == null &&
-               atapiIdentify == null)
-                return;
-
-            if(ataIdentify != null)
+            if(ataMcptError.HasValue)
             {
-                AtaMcptVisible = true;
-                AtaMcptChecked = ataMcptError.HasValue;
-                AtaOrAtapiText = "ATA IDENTIFY DEVICE";
-
-                if(ataMcptError.HasValue)
+                switch(ataMcptError.Value.DeviceHead & 0x7)
                 {
-                    switch(ataMcptError.Value.DeviceHead & 0x7)
-                    {
-                        case 0:
-                            AtaMcptText = "Device reports incorrect media card type";
+                    case 0:
+                        AtaMcptText = "Device reports incorrect media card type";
 
-                            break;
-                        case 1:
-                            AtaMcptText = "Device contains a Secure Digital card";
+                        break;
+                    case 1:
+                        AtaMcptText = "Device contains a Secure Digital card";
 
-                            break;
-                        case 2:
-                            AtaMcptText = "Device contains a MultiMediaCard ";
+                        break;
+                    case 2:
+                        AtaMcptText = "Device contains a MultiMediaCard ";
 
-                            break;
-                        case 3:
-                            AtaMcptText = "Device contains a Secure Digital I/O card";
+                        break;
+                    case 3:
+                        AtaMcptText = "Device contains a Secure Digital I/O card";
 
-                            break;
-                        case 4:
-                            AtaMcptText = "Device contains a Smart Media card";
+                        break;
+                    case 4:
+                        AtaMcptText = "Device contains a Smart Media card";
 
-                            break;
-                        default:
-                            AtaMcptText =
-                                $"Device contains unknown media card type {ataMcptError.Value.DeviceHead & 0x07}";
+                        break;
+                    default:
+                        AtaMcptText =
+                            $"Device contains unknown media card type {ataMcptError.Value.DeviceHead & 0x07}";
 
-                            break;
-                    }
-
-                    AtaMcptWriteProtectionChecked = (ataMcptError.Value.DeviceHead & 0x08) == 0x08;
-
-                    ushort specificData = (ushort)((ataMcptError.Value.CylinderHigh * 0x100) +
-                                                   ataMcptError.Value.CylinderLow);
-
-                    AtaMcptSpecificDataText = $"Card specific data: 0x{specificData:X4}";
+                        break;
                 }
 
-                AtaIdentifyText = Identify.Prettify(_ata);
+                AtaMcptWriteProtectionChecked = (ataMcptError.Value.DeviceHead & 0x08) == 0x08;
+
+                ushort specificData = (ushort)((ataMcptError.Value.CylinderHigh * 0x100) +
+                                               ataMcptError.Value.CylinderLow);
+
+                AtaMcptSpecificDataText = $"Card specific data: 0x{specificData:X4}";
             }
-            else
-            {
-                AtaOrAtapiText  = "ATA PACKET IDENTIFY DEVICE";
-                AtaIdentifyText = Identify.Prettify(_atapi);
-            }
+
+            AtaIdentifyText = Identify.Prettify(_ata);
         }
-
-        public string                      AtaIdentifyText               { get; }
-        public string                      AtaMcptText                   { get; }
-        public string                      AtaMcptSpecificDataText       { get; }
-        public bool                        AtaMcptChecked                { get; }
-        public bool                        AtaMcptWriteProtectionChecked { get; }
-        public bool                        AtaMcptVisible                { get; }
-        public ReactiveCommand<Unit, Unit> SaveAtaBinaryCommand          { get; }
-        public ReactiveCommand<Unit, Unit> SaveAtaTextCommand            { get; }
-
-        public string AtaOrAtapiText { get; }
-
-        async void ExecuteSaveAtaBinaryCommand()
+        else
         {
-            var dlgSaveBinary = new SaveFileDialog();
-
-            dlgSaveBinary.Filters.Add(new FileDialogFilter
-            {
-                Extensions = new List<string>(new[]
-                {
-                    "*.bin"
-                }),
-                Name = "Binary"
-            });
-
-            string result = await dlgSaveBinary.ShowAsync(_view);
-
-            if(result is null)
-                return;
-
-            var saveFs = new FileStream(result, FileMode.Create);
-
-            if(_ata != null)
-                saveFs.Write(_ata, 0, _ata.Length);
-            else if(_atapi != null)
-                saveFs.Write(_atapi, 0, _atapi.Length);
-
-            saveFs.Close();
+            AtaOrAtapiText  = "ATA PACKET IDENTIFY DEVICE";
+            AtaIdentifyText = Identify.Prettify(_atapi);
         }
+    }
 
-        async void ExecuteSaveAtaTextCommand()
+    public string                      AtaIdentifyText               { get; }
+    public string                      AtaMcptText                   { get; }
+    public string                      AtaMcptSpecificDataText       { get; }
+    public bool                        AtaMcptChecked                { get; }
+    public bool                        AtaMcptWriteProtectionChecked { get; }
+    public bool                        AtaMcptVisible                { get; }
+    public ReactiveCommand<Unit, Unit> SaveAtaBinaryCommand          { get; }
+    public ReactiveCommand<Unit, Unit> SaveAtaTextCommand            { get; }
+
+    public string AtaOrAtapiText { get; }
+
+    async void ExecuteSaveAtaBinaryCommand()
+    {
+        var dlgSaveBinary = new SaveFileDialog();
+
+        dlgSaveBinary.Filters.Add(new FileDialogFilter
         {
-            var dlgSaveText = new SaveFileDialog();
-
-            dlgSaveText.Filters.Add(new FileDialogFilter
+            Extensions = new List<string>(new[]
             {
-                Extensions = new List<string>(new[]
-                {
-                    "*.txt"
-                }),
-                Name = "Text"
-            });
+                "*.bin"
+            }),
+            Name = "Binary"
+        });
 
-            string result = await dlgSaveText.ShowAsync(_view);
+        string result = await dlgSaveBinary.ShowAsync(_view);
 
-            if(result is null)
-                return;
+        if(result is null)
+            return;
 
-            var saveFs = new FileStream(result, FileMode.Create);
-            var saveSw = new StreamWriter(saveFs);
-            saveSw.Write(AtaIdentifyText);
-            saveFs.Close();
-        }
+        var saveFs = new FileStream(result, FileMode.Create);
+
+        if(_ata != null)
+            saveFs.Write(_ata, 0, _ata.Length);
+        else if(_atapi != null)
+            saveFs.Write(_atapi, 0, _atapi.Length);
+
+        saveFs.Close();
+    }
+
+    async void ExecuteSaveAtaTextCommand()
+    {
+        var dlgSaveText = new SaveFileDialog();
+
+        dlgSaveText.Filters.Add(new FileDialogFilter
+        {
+            Extensions = new List<string>(new[]
+            {
+                "*.txt"
+            }),
+            Name = "Text"
+        });
+
+        string result = await dlgSaveText.ShowAsync(_view);
+
+        if(result is null)
+            return;
+
+        var saveFs = new FileStream(result, FileMode.Create);
+        var saveSw = new StreamWriter(saveFs);
+        saveSw.Write(AtaIdentifyText);
+        saveFs.Close();
     }
 }

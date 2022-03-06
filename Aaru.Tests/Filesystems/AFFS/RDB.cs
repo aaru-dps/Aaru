@@ -32,130 +32,129 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Filesystems.AFFS
+namespace Aaru.Tests.Filesystems.AFFS;
+
+[TestFixture]
+public class RDB : FilesystemTest
 {
-    [TestFixture]
-    public class RDB : FilesystemTest
+    public RDB() : base("Amiga FFS") {}
+
+    public override string DataFolder =>
+        Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Amiga Fast File System (RDB)");
+    public override IFilesystem Plugin     => new AmigaDOSPlugin();
+    public override bool        Partitions => true;
+
+    public override FileSystemTest[] Tests => new[]
     {
-        public RDB() : base("Amiga FFS") {}
-
-        public override string DataFolder =>
-            Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Amiga Fast File System (RDB)");
-        public override IFilesystem Plugin     => new AmigaDOSPlugin();
-        public override bool        Partitions => true;
-
-        public override FileSystemTest[] Tests => new[]
+        new FileSystemTest
         {
-            new FileSystemTest
-            {
-                TestFile     = "amigaos_3.9.aif",
-                MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 1024128,
-                SectorSize   = 512,
-                Clusters     = 510032,
-                ClusterSize  = 1024,
-                VolumeName   = "Volume label",
-                VolumeSerial = "A56D0F5C"
-            },
-            new FileSystemTest
-            {
-                TestFile     = "amigaos_3.9_intl.aif",
-                MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 1024128,
-                SectorSize   = 512,
-                Clusters     = 510032,
-                ClusterSize  = 1024,
-                VolumeName   = "Volume label",
-                VolumeSerial = "A56D049C"
-            },
-            new FileSystemTest
-            {
-                TestFile     = "aros.aif",
-                MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 409600,
-                SectorSize   = 512,
-                Clusters     = 407232,
-                ClusterSize  = 512,
-                VolumeName   = "Volume label",
-                VolumeSerial = "A58307A9"
-            },
-            new FileSystemTest
-            {
-                TestFile     = "aros_intl.aif",
-                MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 409600,
-                SectorSize   = 512,
-                Clusters     = 407232,
-                ClusterSize  = 512,
-                VolumeName   = "Volume label",
-                VolumeSerial = "A58304BE"
-            },
-            new FileSystemTest
-            {
-                TestFile     = "amigaos_4.0.aif",
-                MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 1024128,
-                SectorSize   = 512,
-                Clusters     = 511040,
-                ClusterSize  = 1024,
-                VolumeName   = "Volume label",
-                VolumeSerial = "A56CC7EE"
-            },
-            new FileSystemTest
-            {
-                TestFile     = "amigaos_4.0_intl.aif",
-                MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 1024128,
-                SectorSize   = 512,
-                Clusters     = 511040,
-                ClusterSize  = 1024,
-                VolumeName   = "Volume label",
-                VolumeSerial = "A56CDDC4"
-            },
-            new FileSystemTest
-            {
-                TestFile     = "amigaos_4.0_cache.aif",
-                MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 1024128,
-                SectorSize   = 512,
-                Clusters     = 511040,
-                ClusterSize  = 1024,
-                VolumeName   = "Volume label",
-                VolumeSerial = "A56CC133"
-            },
-            new FileSystemTest
-            {
-                TestFile     = "morphos_3.13.aif",
-                MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 262144,
-                SectorSize   = 512,
-                Clusters     = 261936,
-                ClusterSize  = 512,
-                VolumeName   = "VolumeLabel",
-                VolumeSerial = "1D93009A"
-            },
-            new FileSystemTest
-            {
-                TestFile     = "morphos_3.13_cache.aif",
-                MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 262144,
-                SectorSize   = 512,
-                Clusters     = 261936,
-                ClusterSize  = 512,
-                VolumeName   = "VolumeLabel",
-                VolumeSerial = "1D9107DA"
-            },
-            new FileSystemTest
-            {
-                TestFile     = "morphos_3.13_intl.aif",
-                MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 262144,
-                SectorSize   = 512,
-                Clusters     = 261936,
-                ClusterSize  = 512,
-                VolumeName   = "VolumeLabel",
-                VolumeSerial = "1D92FD23"
-            }
-        };
-    }
+            TestFile     = "amigaos_3.9.aif",
+            MediaType    = MediaType.GENERIC_HDD,
+            Sectors      = 1024128,
+            SectorSize   = 512,
+            Clusters     = 510032,
+            ClusterSize  = 1024,
+            VolumeName   = "Volume label",
+            VolumeSerial = "A56D0F5C"
+        },
+        new FileSystemTest
+        {
+            TestFile     = "amigaos_3.9_intl.aif",
+            MediaType    = MediaType.GENERIC_HDD,
+            Sectors      = 1024128,
+            SectorSize   = 512,
+            Clusters     = 510032,
+            ClusterSize  = 1024,
+            VolumeName   = "Volume label",
+            VolumeSerial = "A56D049C"
+        },
+        new FileSystemTest
+        {
+            TestFile     = "aros.aif",
+            MediaType    = MediaType.GENERIC_HDD,
+            Sectors      = 409600,
+            SectorSize   = 512,
+            Clusters     = 407232,
+            ClusterSize  = 512,
+            VolumeName   = "Volume label",
+            VolumeSerial = "A58307A9"
+        },
+        new FileSystemTest
+        {
+            TestFile     = "aros_intl.aif",
+            MediaType    = MediaType.GENERIC_HDD,
+            Sectors      = 409600,
+            SectorSize   = 512,
+            Clusters     = 407232,
+            ClusterSize  = 512,
+            VolumeName   = "Volume label",
+            VolumeSerial = "A58304BE"
+        },
+        new FileSystemTest
+        {
+            TestFile     = "amigaos_4.0.aif",
+            MediaType    = MediaType.GENERIC_HDD,
+            Sectors      = 1024128,
+            SectorSize   = 512,
+            Clusters     = 511040,
+            ClusterSize  = 1024,
+            VolumeName   = "Volume label",
+            VolumeSerial = "A56CC7EE"
+        },
+        new FileSystemTest
+        {
+            TestFile     = "amigaos_4.0_intl.aif",
+            MediaType    = MediaType.GENERIC_HDD,
+            Sectors      = 1024128,
+            SectorSize   = 512,
+            Clusters     = 511040,
+            ClusterSize  = 1024,
+            VolumeName   = "Volume label",
+            VolumeSerial = "A56CDDC4"
+        },
+        new FileSystemTest
+        {
+            TestFile     = "amigaos_4.0_cache.aif",
+            MediaType    = MediaType.GENERIC_HDD,
+            Sectors      = 1024128,
+            SectorSize   = 512,
+            Clusters     = 511040,
+            ClusterSize  = 1024,
+            VolumeName   = "Volume label",
+            VolumeSerial = "A56CC133"
+        },
+        new FileSystemTest
+        {
+            TestFile     = "morphos_3.13.aif",
+            MediaType    = MediaType.GENERIC_HDD,
+            Sectors      = 262144,
+            SectorSize   = 512,
+            Clusters     = 261936,
+            ClusterSize  = 512,
+            VolumeName   = "VolumeLabel",
+            VolumeSerial = "1D93009A"
+        },
+        new FileSystemTest
+        {
+            TestFile     = "morphos_3.13_cache.aif",
+            MediaType    = MediaType.GENERIC_HDD,
+            Sectors      = 262144,
+            SectorSize   = 512,
+            Clusters     = 261936,
+            ClusterSize  = 512,
+            VolumeName   = "VolumeLabel",
+            VolumeSerial = "1D9107DA"
+        },
+        new FileSystemTest
+        {
+            TestFile     = "morphos_3.13_intl.aif",
+            MediaType    = MediaType.GENERIC_HDD,
+            Sectors      = 262144,
+            SectorSize   = 512,
+            Clusters     = 261936,
+            ClusterSize  = 512,
+            VolumeName   = "VolumeLabel",
+            VolumeSerial = "1D92FD23"
+        }
+    };
 }

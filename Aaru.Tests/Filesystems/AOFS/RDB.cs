@@ -32,64 +32,63 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Filesystems.AOFS
+namespace Aaru.Tests.Filesystems.AOFS;
+
+[TestFixture]
+public class RDB : FilesystemTest
 {
-    [TestFixture]
-    public class RDB : FilesystemTest
+    public RDB() : base("Amiga OFS") {}
+
+    public override string DataFolder =>
+        Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Amiga Old File System (RDB)");
+    public override IFilesystem Plugin     => new AmigaDOSPlugin();
+    public override bool        Partitions => true;
+
+    public override FileSystemTest[] Tests => new[]
     {
-        public RDB() : base("Amiga OFS") {}
-
-        public override string DataFolder =>
-            Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Amiga Old File System (RDB)");
-        public override IFilesystem Plugin     => new AmigaDOSPlugin();
-        public override bool        Partitions => true;
-
-        public override FileSystemTest[] Tests => new[]
+        new FileSystemTest
         {
-            new FileSystemTest
-            {
-                TestFile     = "amigaos_3.9.aif",
-                MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 1024128,
-                SectorSize   = 512,
-                Clusters     = 510032,
-                ClusterSize  = 1024,
-                VolumeName   = "Volume label",
-                VolumeSerial = "A56D13BB"
-            },
-            new FileSystemTest
-            {
-                TestFile     = "amigaos_3.9_intl.aif",
-                MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 1024128,
-                SectorSize   = 512,
-                Clusters     = 510032,
-                ClusterSize  = 1024,
-                VolumeName   = "Volume label",
-                VolumeSerial = "A56D0415"
-            },
-            new FileSystemTest
-            {
-                TestFile     = "aros.aif",
-                MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 409600,
-                SectorSize   = 512,
-                Clusters     = 407232,
-                ClusterSize  = 512,
-                VolumeName   = "Volume label",
-                VolumeSerial = "A582F3A0"
-            },
-            new FileSystemTest
-            {
-                TestFile     = "aros_intl.aif",
-                MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 409600,
-                SectorSize   = 512,
-                Clusters     = 407232,
-                ClusterSize  = 512,
-                VolumeName   = "Volume label",
-                VolumeSerial = "A5830B06"
-            }
-        };
-    }
+            TestFile     = "amigaos_3.9.aif",
+            MediaType    = MediaType.GENERIC_HDD,
+            Sectors      = 1024128,
+            SectorSize   = 512,
+            Clusters     = 510032,
+            ClusterSize  = 1024,
+            VolumeName   = "Volume label",
+            VolumeSerial = "A56D13BB"
+        },
+        new FileSystemTest
+        {
+            TestFile     = "amigaos_3.9_intl.aif",
+            MediaType    = MediaType.GENERIC_HDD,
+            Sectors      = 1024128,
+            SectorSize   = 512,
+            Clusters     = 510032,
+            ClusterSize  = 1024,
+            VolumeName   = "Volume label",
+            VolumeSerial = "A56D0415"
+        },
+        new FileSystemTest
+        {
+            TestFile     = "aros.aif",
+            MediaType    = MediaType.GENERIC_HDD,
+            Sectors      = 409600,
+            SectorSize   = 512,
+            Clusters     = 407232,
+            ClusterSize  = 512,
+            VolumeName   = "Volume label",
+            VolumeSerial = "A582F3A0"
+        },
+        new FileSystemTest
+        {
+            TestFile     = "aros_intl.aif",
+            MediaType    = MediaType.GENERIC_HDD,
+            Sectors      = 409600,
+            SectorSize   = 512,
+            Clusters     = 407232,
+            ClusterSize  = 512,
+            VolumeName   = "Volume label",
+            VolumeSerial = "A5830B06"
+        }
+    };
 }

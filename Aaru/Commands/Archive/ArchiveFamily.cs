@@ -33,15 +33,14 @@
 
 using System.CommandLine;
 
-namespace Aaru.Commands.Archive
-{
-    internal sealed class ArchiveFamily : Command
-    {
-        internal ArchiveFamily() : base("archive", "Commands to manage archive files")
-        {
-            AddAlias("arc");
+namespace Aaru.Commands.Archive;
 
-            AddCommand(new ArchiveInfoCommand());
-        }
+internal sealed class ArchiveFamily : Command
+{
+    internal ArchiveFamily() : base("archive", "Commands to manage archive files")
+    {
+        AddAlias("arc");
+
+        AddCommand(new ArchiveInfoCommand());
     }
 }

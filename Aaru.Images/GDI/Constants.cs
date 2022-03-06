@@ -30,11 +30,10 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class Gdi
 {
-    public sealed partial class Gdi
-    {
-        const string REGEX_TRACK =
-            @"\s?(?<track>\d+)\s+(?<start>\d+)\s(?<flags>\d)\s(?<type>2352|2048)\s(?<filename>.+)\s(?<offset>\d+)$";
-    }
+    const string REGEX_TRACK =
+        @"\s?(?<track>\d+)\s+(?<start>\d+)\s(?<flags>\d)\s(?<type>2352|2048)\s(?<filename>.+)\s(?<offset>\d+)$";
 }

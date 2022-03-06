@@ -32,17 +32,16 @@
 
 using System.CommandLine;
 
-namespace Aaru.Commands.Media
-{
-    internal sealed class MediaFamily : Command
-    {
-        public MediaFamily() : base("media", "Commands to manage media inserted in devices")
-        {
-            AddAlias("m");
+namespace Aaru.Commands.Media;
 
-            AddCommand(new DumpMediaCommand());
-            AddCommand(new MediaInfoCommand());
-            AddCommand(new MediaScanCommand());
-        }
+internal sealed class MediaFamily : Command
+{
+    public MediaFamily() : base("media", "Commands to manage media inserted in devices")
+    {
+        AddAlias("m");
+
+        AddCommand(new DumpMediaCommand());
+        AddCommand(new MediaInfoCommand());
+        AddCommand(new MediaScanCommand());
     }
 }

@@ -35,33 +35,32 @@ using System.IO;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 
-namespace Aaru.DiscImages
-{
-    public sealed partial class T98
-    {
-        /// <inheritdoc />
-        public bool Identify(IFilter imageFilter)
-        {
-            Stream stream = imageFilter.GetDataForkStream();
-            stream.Seek(0, SeekOrigin.Begin);
+namespace Aaru.DiscImages;
 
-            if(stream.Length % 256 != 0)
+public sealed partial class T98
+{
+    /// <inheritdoc />
+    public bool Identify(IFilter imageFilter)
+    {
+        Stream stream = imageFilter.GetDataForkStream();
+        stream.Seek(0, SeekOrigin.Begin);
+
+        if(stream.Length % 256 != 0)
+            return false;
+
+        byte[] hdrB = new byte[256];
+        stream.Read(hdrB, 0, hdrB.Length);
+
+        for(int i = 4; i < 256; i++)
+            if(hdrB[i] != 0)
                 return false;
 
-            byte[] hdrB = new byte[256];
-            stream.Read(hdrB, 0, hdrB.Length);
+        int cylinders = BitConverter.ToInt32(hdrB, 0);
 
-            for(int i = 4; i < 256; i++)
-                if(hdrB[i] != 0)
-                    return false;
+        AaruConsole.DebugWriteLine("T98 plugin", "cylinders = {0}", cylinders);
 
-            int cylinders = BitConverter.ToInt32(hdrB, 0);
-
-            AaruConsole.DebugWriteLine("T98 plugin", "cylinders = {0}", cylinders);
-
-            // This format is expanding, so length can be smaller
-            // Just grow it, I won't risk false positives...
-            return stream.Length == (cylinders * 8 * 33 * 256) + 256;
-        }
+        // This format is expanding, so length can be smaller
+        // Just grow it, I won't risk false positives...
+        return stream.Length == (cylinders * 8 * 33 * 256) + 256;
     }
 }

@@ -36,40 +36,39 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 
-namespace Aaru.DiscImages
-{
-    // Info from http://www.geocities.jp/t98next/nhdr0.txt
-    /// <inheritdoc />
-    /// <summary>Implements reading and writing T98-Next disk images</summary>
-    public sealed partial class Nhdr0 : IWritableImage
-    {
-        ImageInfo  _imageInfo;
-        Header     _nhdhdr;
-        IFilter    _nhdImageFilter;
-        FileStream _writingStream;
+namespace Aaru.DiscImages;
 
-        public Nhdr0() => _imageInfo = new ImageInfo
-        {
-            ReadableSectorTags    = new List<SectorTagType>(),
-            ReadableMediaTags     = new List<MediaTagType>(),
-            HasPartitions         = false,
-            HasSessions           = false,
-            Version               = null,
-            Application           = null,
-            ApplicationVersion    = null,
-            Creator               = null,
-            Comments              = null,
-            MediaManufacturer     = null,
-            MediaModel            = null,
-            MediaSerialNumber     = null,
-            MediaBarcode          = null,
-            MediaPartNumber       = null,
-            MediaSequence         = 0,
-            LastMediaSequence     = 0,
-            DriveManufacturer     = null,
-            DriveModel            = null,
-            DriveSerialNumber     = null,
-            DriveFirmwareRevision = null
-        };
-    }
+// Info from http://www.geocities.jp/t98next/nhdr0.txt
+/// <inheritdoc />
+/// <summary>Implements reading and writing T98-Next disk images</summary>
+public sealed partial class Nhdr0 : IWritableImage
+{
+    ImageInfo  _imageInfo;
+    Header     _nhdhdr;
+    IFilter    _nhdImageFilter;
+    FileStream _writingStream;
+
+    public Nhdr0() => _imageInfo = new ImageInfo
+    {
+        ReadableSectorTags    = new List<SectorTagType>(),
+        ReadableMediaTags     = new List<MediaTagType>(),
+        HasPartitions         = false,
+        HasSessions           = false,
+        Version               = null,
+        Application           = null,
+        ApplicationVersion    = null,
+        Creator               = null,
+        Comments              = null,
+        MediaManufacturer     = null,
+        MediaModel            = null,
+        MediaSerialNumber     = null,
+        MediaBarcode          = null,
+        MediaPartNumber       = null,
+        MediaSequence         = 0,
+        LastMediaSequence     = 0,
+        DriveManufacturer     = null,
+        DriveModel            = null,
+        DriveSerialNumber     = null,
+        DriveFirmwareRevision = null
+    };
 }

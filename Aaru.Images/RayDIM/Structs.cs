@@ -32,19 +32,18 @@
 
 using System.Runtime.InteropServices;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class RayDim
 {
-    public sealed partial class RayDim
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    struct Header
     {
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct Header
-        {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 80)]
-            public byte[] signature;
-            public RayDiskTypes diskType;
-            public byte         cylinders;
-            public byte         sectorsPerTrack;
-            public byte         heads;
-        }
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 80)]
+        public byte[] signature;
+        public RayDiskTypes diskType;
+        public byte         cylinders;
+        public byte         sectorsPerTrack;
+        public byte         heads;
     }
 }

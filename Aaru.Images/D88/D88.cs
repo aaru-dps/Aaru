@@ -35,40 +35,39 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 
-namespace Aaru.DiscImages
-{
-    // Information from Quasi88's FORMAT.TXT file
-    // Japanese comments copied from there
-    // TODO: Solve media types
-    /// <inheritdoc />
-    /// <summary>Implements reading Quasi88 disk images</summary>
-    public sealed partial class D88 : IMediaImage
-    {
-        ImageInfo    _imageInfo;
-        List<byte[]> _sectorsData;
+namespace Aaru.DiscImages;
 
-        public D88() => _imageInfo = new ImageInfo
-        {
-            ReadableSectorTags    = new List<SectorTagType>(),
-            ReadableMediaTags     = new List<MediaTagType>(),
-            HasPartitions         = false,
-            HasSessions           = false,
-            Version               = null,
-            Application           = null,
-            ApplicationVersion    = null,
-            Creator               = null,
-            Comments              = null,
-            MediaManufacturer     = null,
-            MediaModel            = null,
-            MediaSerialNumber     = null,
-            MediaBarcode          = null,
-            MediaPartNumber       = null,
-            MediaSequence         = 0,
-            LastMediaSequence     = 0,
-            DriveManufacturer     = null,
-            DriveModel            = null,
-            DriveSerialNumber     = null,
-            DriveFirmwareRevision = null
-        };
-    }
+// Information from Quasi88's FORMAT.TXT file
+// Japanese comments copied from there
+// TODO: Solve media types
+/// <inheritdoc />
+/// <summary>Implements reading Quasi88 disk images</summary>
+public sealed partial class D88 : IMediaImage
+{
+    ImageInfo    _imageInfo;
+    List<byte[]> _sectorsData;
+
+    public D88() => _imageInfo = new ImageInfo
+    {
+        ReadableSectorTags    = new List<SectorTagType>(),
+        ReadableMediaTags     = new List<MediaTagType>(),
+        HasPartitions         = false,
+        HasSessions           = false,
+        Version               = null,
+        Application           = null,
+        ApplicationVersion    = null,
+        Creator               = null,
+        Comments              = null,
+        MediaManufacturer     = null,
+        MediaModel            = null,
+        MediaSerialNumber     = null,
+        MediaBarcode          = null,
+        MediaPartNumber       = null,
+        MediaSequence         = 0,
+        LastMediaSequence     = 0,
+        DriveManufacturer     = null,
+        DriveModel            = null,
+        DriveSerialNumber     = null,
+        DriveFirmwareRevision = null
+    };
 }

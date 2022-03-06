@@ -30,118 +30,117 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Filesystems.CPM
+namespace Aaru.Tests.Filesystems.CPM;
+
+[TestFixture]
+public class AmstradCPMPlus : FilesystemTest
 {
-    [TestFixture]
-    public class AmstradCPMPlus : FilesystemTest
+    public AmstradCPMPlus() : base("CP/M") {}
+
+    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "CPM", "Amstrad CPM+");
+
+    public override IFilesystem Plugin     => new Aaru.Filesystems.CPM();
+    public override bool        Partitions => false;
+
+    public override FileSystemTest[] Tests => new[]
     {
-        public AmstradCPMPlus() : base("CP/M") {}
-
-        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "CPM", "Amstrad CPM+");
-
-        public override IFilesystem Plugin     => new Aaru.Filesystems.CPM();
-        public override bool        Partitions => false;
-
-        public override FileSystemTest[] Tests => new[]
+        new FileSystemTest
         {
-            new FileSystemTest
-            {
-                TestFile    = "data_filename.dsk.lz",
-                MediaType   = MediaType.CompactFloppy,
-                Sectors     = 360,
-                SectorSize  = 512,
-                Clusters    = 180,
-                ClusterSize = 1024
-            },
-            new FileSystemTest
-            {
-                TestFile    = "data_files.dsk.lz",
-                MediaType   = MediaType.CompactFloppy,
-                Sectors     = 360,
-                SectorSize  = 512,
-                Clusters    = 180,
-                ClusterSize = 1024
-            },
-            new FileSystemTest
-            {
-                TestFile    = "system_filename.dsk.lz",
-                MediaType   = MediaType.CompactFloppy,
-                Sectors     = 360,
-                SectorSize  = 512,
-                Bootable    = true,
-                Clusters    = 171,
-                ClusterSize = 1024
-            },
-            new FileSystemTest
-            {
-                TestFile    = "system_files.dsk.lz",
-                MediaType   = MediaType.CompactFloppy,
-                Sectors     = 360,
-                SectorSize  = 512,
-                Bootable    = true,
-                Clusters    = 171,
-                ClusterSize = 1024
-            },
-            new FileSystemTest
-            {
-                TestFile    = "pcw_1.4_filename.aif",
-                MediaType   = MediaType.CompactFloppy,
-                Sectors     = 360,
-                SectorSize  = 512,
-                Bootable    = true,
-                Clusters    = 359,
-                ClusterSize = 1024
-            },
-            new FileSystemTest
-            {
-                TestFile    = "pcw_1.4_files.aif",
-                MediaType   = MediaType.CompactFloppy,
-                Sectors     = 360,
-                SectorSize  = 512,
-                Bootable    = true,
-                Clusters    = 359,
-                ClusterSize = 1024
-            },
-            new FileSystemTest
-            {
-                TestFile    = "pcw_2.5_filename.aif",
-                MediaType   = MediaType.DOS_35_DS_DD_9,
-                Sectors     = 1440,
-                SectorSize  = 512,
-                Bootable    = true,
-                Clusters    = 356,
-                ClusterSize = 2048
-            },
-            new FileSystemTest
-            {
-                TestFile    = "pcw_2.5_files.aif",
-                MediaType   = MediaType.DOS_35_DS_DD_9,
-                Sectors     = 1440,
-                SectorSize  = 512,
-                Bootable    = true,
-                Clusters    = 356,
-                ClusterSize = 2048
-            },
-            new FileSystemTest
-            {
-                TestFile    = "spectrum_filename.dsk.lz",
-                MediaType   = MediaType.CompactFloppy,
-                Sectors     = 360,
-                SectorSize  = 512,
-                Bootable    = true,
-                Clusters    = 359,
-                ClusterSize = 1024
-            },
-            new FileSystemTest
-            {
-                TestFile    = "spectrum_files.dsk.lz",
-                MediaType   = MediaType.CompactFloppy,
-                Sectors     = 360,
-                SectorSize  = 512,
-                Bootable    = true,
-                Clusters    = 359,
-                ClusterSize = 1024
-            }
-        };
-    }
+            TestFile    = "data_filename.dsk.lz",
+            MediaType   = MediaType.CompactFloppy,
+            Sectors     = 360,
+            SectorSize  = 512,
+            Clusters    = 180,
+            ClusterSize = 1024
+        },
+        new FileSystemTest
+        {
+            TestFile    = "data_files.dsk.lz",
+            MediaType   = MediaType.CompactFloppy,
+            Sectors     = 360,
+            SectorSize  = 512,
+            Clusters    = 180,
+            ClusterSize = 1024
+        },
+        new FileSystemTest
+        {
+            TestFile    = "system_filename.dsk.lz",
+            MediaType   = MediaType.CompactFloppy,
+            Sectors     = 360,
+            SectorSize  = 512,
+            Bootable    = true,
+            Clusters    = 171,
+            ClusterSize = 1024
+        },
+        new FileSystemTest
+        {
+            TestFile    = "system_files.dsk.lz",
+            MediaType   = MediaType.CompactFloppy,
+            Sectors     = 360,
+            SectorSize  = 512,
+            Bootable    = true,
+            Clusters    = 171,
+            ClusterSize = 1024
+        },
+        new FileSystemTest
+        {
+            TestFile    = "pcw_1.4_filename.aif",
+            MediaType   = MediaType.CompactFloppy,
+            Sectors     = 360,
+            SectorSize  = 512,
+            Bootable    = true,
+            Clusters    = 359,
+            ClusterSize = 1024
+        },
+        new FileSystemTest
+        {
+            TestFile    = "pcw_1.4_files.aif",
+            MediaType   = MediaType.CompactFloppy,
+            Sectors     = 360,
+            SectorSize  = 512,
+            Bootable    = true,
+            Clusters    = 359,
+            ClusterSize = 1024
+        },
+        new FileSystemTest
+        {
+            TestFile    = "pcw_2.5_filename.aif",
+            MediaType   = MediaType.DOS_35_DS_DD_9,
+            Sectors     = 1440,
+            SectorSize  = 512,
+            Bootable    = true,
+            Clusters    = 356,
+            ClusterSize = 2048
+        },
+        new FileSystemTest
+        {
+            TestFile    = "pcw_2.5_files.aif",
+            MediaType   = MediaType.DOS_35_DS_DD_9,
+            Sectors     = 1440,
+            SectorSize  = 512,
+            Bootable    = true,
+            Clusters    = 356,
+            ClusterSize = 2048
+        },
+        new FileSystemTest
+        {
+            TestFile    = "spectrum_filename.dsk.lz",
+            MediaType   = MediaType.CompactFloppy,
+            Sectors     = 360,
+            SectorSize  = 512,
+            Bootable    = true,
+            Clusters    = 359,
+            ClusterSize = 1024
+        },
+        new FileSystemTest
+        {
+            TestFile    = "spectrum_files.dsk.lz",
+            MediaType   = MediaType.CompactFloppy,
+            Sectors     = 360,
+            SectorSize  = 512,
+            Bootable    = true,
+            Clusters    = 359,
+            ClusterSize = 1024
+        }
+    };
 }

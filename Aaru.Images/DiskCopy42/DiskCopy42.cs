@@ -37,53 +37,52 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+// Checked using several images and strings inside Apple's DiskImages.framework
+/// <summary>Implements reading and writing Apple DiskCopy 4.2 disk images</summary>
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+public sealed partial class DiskCopy42 : IWritableImage, IVerifiableImage
 {
-    // Checked using several images and strings inside Apple's DiskImages.framework
-    /// <summary>Implements reading and writing Apple DiskCopy 4.2 disk images</summary>
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
-    public sealed partial class DiskCopy42 : IWritableImage, IVerifiableImage
+    /// <summary>Bytes per tag, should be 12</summary>
+    uint bptag;
+    /// <summary>Start of data sectors in disk image, should be 0x58</summary>
+    uint dataOffset;
+    /// <summary>Disk image file</summary>
+    IFilter dc42ImageFilter;
+    /// <summary>Header of opened image</summary>
+    Header header;
+    ImageInfo imageInfo;
+    /// <summary>Start of tags in disk image, after data sectors</summary>
+    uint tagOffset;
+    bool       twiggy;
+    byte[]     twiggyCache;
+    byte[]     twiggyCacheTags;
+    FileStream writingStream;
+
+    public DiskCopy42() => imageInfo = new ImageInfo
     {
-        /// <summary>Bytes per tag, should be 12</summary>
-        uint bptag;
-        /// <summary>Start of data sectors in disk image, should be 0x58</summary>
-        uint dataOffset;
-        /// <summary>Disk image file</summary>
-        IFilter dc42ImageFilter;
-        /// <summary>Header of opened image</summary>
-        Header header;
-        ImageInfo imageInfo;
-        /// <summary>Start of tags in disk image, after data sectors</summary>
-        uint tagOffset;
-        bool       twiggy;
-        byte[]     twiggyCache;
-        byte[]     twiggyCacheTags;
-        FileStream writingStream;
+        ReadableSectorTags    = new List<SectorTagType>(),
+        ReadableMediaTags     = new List<MediaTagType>(),
+        HasPartitions         = false,
+        HasSessions           = false,
+        Version               = "4.2",
+        Application           = "Apple DiskCopy",
+        ApplicationVersion    = "4.2",
+        Creator               = null,
+        Comments              = null,
+        MediaManufacturer     = null,
+        MediaModel            = null,
+        MediaSerialNumber     = null,
+        MediaBarcode          = null,
+        MediaPartNumber       = null,
+        MediaSequence         = 0,
+        LastMediaSequence     = 0,
+        DriveManufacturer     = null,
+        DriveModel            = null,
+        DriveSerialNumber     = null,
+        DriveFirmwareRevision = null
+    };
 
-        public DiskCopy42() => imageInfo = new ImageInfo
-        {
-            ReadableSectorTags    = new List<SectorTagType>(),
-            ReadableMediaTags     = new List<MediaTagType>(),
-            HasPartitions         = false,
-            HasSessions           = false,
-            Version               = "4.2",
-            Application           = "Apple DiskCopy",
-            ApplicationVersion    = "4.2",
-            Creator               = null,
-            Comments              = null,
-            MediaManufacturer     = null,
-            MediaModel            = null,
-            MediaSerialNumber     = null,
-            MediaBarcode          = null,
-            MediaPartNumber       = null,
-            MediaSequence         = 0,
-            LastMediaSequence     = 0,
-            DriveManufacturer     = null,
-            DriveModel            = null,
-            DriveSerialNumber     = null,
-            DriveFirmwareRevision = null
-        };
-
-        ~DiskCopy42() => Close();
-    }
+    ~DiskCopy42() => Close();
 }

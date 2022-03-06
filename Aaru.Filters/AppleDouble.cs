@@ -40,644 +40,643 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 using Marshal = Aaru.Helpers.Marshal;
 
-namespace Aaru.Filters
+namespace Aaru.Filters;
+
+/// <inheritdoc />
+/// <summary>Decodes AppleDouble files</summary>
+[SuppressMessage("ReSharper", "UnusedMember.Local")]
+public sealed class AppleDouble : IFilter
 {
-    /// <inheritdoc />
-    /// <summary>Decodes AppleDouble files</summary>
-    [SuppressMessage("ReSharper", "UnusedMember.Local")]
-    public sealed class AppleDouble : IFilter
+    const uint MAGIC    = 0x00051607;
+    const uint VERSION  = 0x00010000;
+    const uint VERSION2 = 0x00020000;
+    readonly byte[] _dosHome =
     {
-        const uint MAGIC    = 0x00051607;
-        const uint VERSION  = 0x00010000;
-        const uint VERSION2 = 0x00020000;
-        readonly byte[] _dosHome =
+        0x4D, 0x53, 0x2D, 0x44, 0x4F, 0x53, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20
+    };
+
+    readonly byte[] _macintoshHome =
+    {
+        0x4D, 0x61, 0x63, 0x69, 0x6E, 0x74, 0x6F, 0x73, 0x68, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20
+    };
+    readonly byte[] _osxHome =
+    {
+        0x4D, 0x61, 0x63, 0x20, 0x4F, 0x53, 0x20, 0x58, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20
+    };
+    readonly byte[] _proDosHome =
+    {
+        0x50, 0x72, 0x6F, 0x44, 0x4F, 0x53, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20
+    };
+    readonly byte[] _unixHome =
+    {
+        0x55, 0x6E, 0x69, 0x78, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20
+    };
+    readonly byte[] _vmsHome =
+    {
+        0x56, 0x41, 0x58, 0x20, 0x56, 0x4D, 0x53, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20
+    };
+    Entry  _dataFork;
+    Header _header;
+    string _headerPath;
+    Entry  _rsrcFork;
+
+    /// <inheritdoc />
+    public string Name => "AppleDouble";
+    /// <inheritdoc />
+    public Guid Id => new("1B2165EE-C9DF-4B21-BBBB-9E5892B2DF4D");
+    /// <inheritdoc />
+    public string Author => "Natalia Portillo";
+
+    /// <inheritdoc />
+    public void Close() {}
+
+    /// <inheritdoc />
+    public string BasePath { get; private set; }
+
+    /// <inheritdoc />
+    public DateTime CreationTime { get; private set; }
+
+    /// <inheritdoc />
+    public long DataForkLength => _dataFork.length;
+
+    /// <inheritdoc />
+    public Stream GetDataForkStream() => new FileStream(BasePath, FileMode.Open, FileAccess.Read);
+
+    /// <inheritdoc />
+    public string Filename => System.IO.Path.GetFileName(BasePath);
+
+    /// <inheritdoc />
+    public DateTime LastWriteTime { get; private set; }
+
+    /// <inheritdoc />
+    public long Length => _dataFork.length + _rsrcFork.length;
+
+    /// <inheritdoc />
+    public string ParentFolder => System.IO.Path.GetDirectoryName(BasePath);
+
+    /// <inheritdoc />
+    public string Path => BasePath;
+
+    /// <inheritdoc />
+    public long ResourceForkLength => _rsrcFork.length;
+
+    /// <inheritdoc />
+    public Stream GetResourceForkStream()
+    {
+        if(_rsrcFork.length == 0)
+            return null;
+
+        return new OffsetStream(_headerPath, FileMode.Open, FileAccess.Read, _rsrcFork.offset,
+                                _rsrcFork.offset + _rsrcFork.length - 1);
+    }
+
+    /// <inheritdoc />
+    public bool HasResourceFork => _rsrcFork.length > 0;
+
+    /// <inheritdoc />
+    public bool Identify(byte[] buffer) => false;
+
+    /// <inheritdoc />
+    public bool Identify(Stream stream) => false;
+
+    /// <inheritdoc />
+    public bool Identify(string path)
+    {
+        string filename      = System.IO.Path.GetFileName(path);
+        string filenameNoExt = System.IO.Path.GetFileNameWithoutExtension(path);
+        string parentFolder  = System.IO.Path.GetDirectoryName(path);
+
+        parentFolder ??= "";
+
+        if(filename is null ||
+           filenameNoExt is null)
+            return false;
+
+        // Prepend data fork name with "R."
+        string proDosAppleDouble = System.IO.Path.Combine(parentFolder, "R." + filename);
+
+        // Prepend data fork name with '%'
+        string unixAppleDouble = System.IO.Path.Combine(parentFolder, "%" + filename);
+
+        // Change file extension to ADF
+        string dosAppleDouble = System.IO.Path.Combine(parentFolder, filenameNoExt + ".ADF");
+
+        // Change file extension to adf
+        string dosAppleDoubleLower = System.IO.Path.Combine(parentFolder, filenameNoExt + ".adf");
+
+        // Store AppleDouble header file in ".AppleDouble" folder with same name
+        string netatalkAppleDouble = System.IO.Path.Combine(parentFolder, ".AppleDouble", filename);
+
+        // Store AppleDouble header file in "resource.frk" folder with same name
+        string daveAppleDouble = System.IO.Path.Combine(parentFolder, "resource.frk", filename);
+
+        // Prepend data fork name with "._"
+        string osxAppleDouble = System.IO.Path.Combine(parentFolder, "._" + filename);
+
+        // Adds ".rsrc" extension
+        string unArAppleDouble = System.IO.Path.Combine(parentFolder, filename + ".rsrc");
+
+        // Check AppleDouble created by A/UX in ProDOS filesystem
+        if(File.Exists(proDosAppleDouble))
         {
-            0x4D, 0x53, 0x2D, 0x44, 0x4F, 0x53, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20
-        };
+            var prodosStream = new FileStream(proDosAppleDouble, FileMode.Open, FileAccess.Read);
 
-        readonly byte[] _macintoshHome =
-        {
-            0x4D, 0x61, 0x63, 0x69, 0x6E, 0x74, 0x6F, 0x73, 0x68, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20
-        };
-        readonly byte[] _osxHome =
-        {
-            0x4D, 0x61, 0x63, 0x20, 0x4F, 0x53, 0x20, 0x58, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20
-        };
-        readonly byte[] _proDosHome =
-        {
-            0x50, 0x72, 0x6F, 0x44, 0x4F, 0x53, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20
-        };
-        readonly byte[] _unixHome =
-        {
-            0x55, 0x6E, 0x69, 0x78, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20
-        };
-        readonly byte[] _vmsHome =
-        {
-            0x56, 0x41, 0x58, 0x20, 0x56, 0x4D, 0x53, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20
-        };
-        Entry  _dataFork;
-        Header _header;
-        string _headerPath;
-        Entry  _rsrcFork;
+            if(prodosStream.Length > 26)
+            {
+                byte[] prodosB = new byte[26];
+                prodosStream.Read(prodosB, 0, 26);
+                _header = Marshal.ByteArrayToStructureBigEndian<Header>(prodosB);
+                prodosStream.Close();
 
-        /// <inheritdoc />
-        public string Name => "AppleDouble";
-        /// <inheritdoc />
-        public Guid Id => new("1B2165EE-C9DF-4B21-BBBB-9E5892B2DF4D");
-        /// <inheritdoc />
-        public string Author => "Natalia Portillo";
-
-        /// <inheritdoc />
-        public void Close() {}
-
-        /// <inheritdoc />
-        public string BasePath { get; private set; }
-
-        /// <inheritdoc />
-        public DateTime CreationTime { get; private set; }
-
-        /// <inheritdoc />
-        public long DataForkLength => _dataFork.length;
-
-        /// <inheritdoc />
-        public Stream GetDataForkStream() => new FileStream(BasePath, FileMode.Open, FileAccess.Read);
-
-        /// <inheritdoc />
-        public string Filename => System.IO.Path.GetFileName(BasePath);
-
-        /// <inheritdoc />
-        public DateTime LastWriteTime { get; private set; }
-
-        /// <inheritdoc />
-        public long Length => _dataFork.length + _rsrcFork.length;
-
-        /// <inheritdoc />
-        public string ParentFolder => System.IO.Path.GetDirectoryName(BasePath);
-
-        /// <inheritdoc />
-        public string Path => BasePath;
-
-        /// <inheritdoc />
-        public long ResourceForkLength => _rsrcFork.length;
-
-        /// <inheritdoc />
-        public Stream GetResourceForkStream()
-        {
-            if(_rsrcFork.length == 0)
-                return null;
-
-            return new OffsetStream(_headerPath, FileMode.Open, FileAccess.Read, _rsrcFork.offset,
-                                    _rsrcFork.offset + _rsrcFork.length - 1);
+                if(_header.magic == MAGIC &&
+                   (_header.version == VERSION || _header.version == VERSION2))
+                    return true;
+            }
         }
 
-        /// <inheritdoc />
-        public bool HasResourceFork => _rsrcFork.length > 0;
-
-        /// <inheritdoc />
-        public bool Identify(byte[] buffer) => false;
-
-        /// <inheritdoc />
-        public bool Identify(Stream stream) => false;
-
-        /// <inheritdoc />
-        public bool Identify(string path)
+        // Check AppleDouble created by A/UX in UFS filesystem
+        if(File.Exists(unixAppleDouble))
         {
-            string filename      = System.IO.Path.GetFileName(path);
-            string filenameNoExt = System.IO.Path.GetFileNameWithoutExtension(path);
-            string parentFolder  = System.IO.Path.GetDirectoryName(path);
+            var unixStream = new FileStream(unixAppleDouble, FileMode.Open, FileAccess.Read);
 
-            parentFolder ??= "";
-
-            if(filename is null ||
-               filenameNoExt is null)
-                return false;
-
-            // Prepend data fork name with "R."
-            string proDosAppleDouble = System.IO.Path.Combine(parentFolder, "R." + filename);
-
-            // Prepend data fork name with '%'
-            string unixAppleDouble = System.IO.Path.Combine(parentFolder, "%" + filename);
-
-            // Change file extension to ADF
-            string dosAppleDouble = System.IO.Path.Combine(parentFolder, filenameNoExt + ".ADF");
-
-            // Change file extension to adf
-            string dosAppleDoubleLower = System.IO.Path.Combine(parentFolder, filenameNoExt + ".adf");
-
-            // Store AppleDouble header file in ".AppleDouble" folder with same name
-            string netatalkAppleDouble = System.IO.Path.Combine(parentFolder, ".AppleDouble", filename);
-
-            // Store AppleDouble header file in "resource.frk" folder with same name
-            string daveAppleDouble = System.IO.Path.Combine(parentFolder, "resource.frk", filename);
-
-            // Prepend data fork name with "._"
-            string osxAppleDouble = System.IO.Path.Combine(parentFolder, "._" + filename);
-
-            // Adds ".rsrc" extension
-            string unArAppleDouble = System.IO.Path.Combine(parentFolder, filename + ".rsrc");
-
-            // Check AppleDouble created by A/UX in ProDOS filesystem
-            if(File.Exists(proDosAppleDouble))
+            if(unixStream.Length > 26)
             {
-                var prodosStream = new FileStream(proDosAppleDouble, FileMode.Open, FileAccess.Read);
+                byte[] unixB = new byte[26];
+                unixStream.Read(unixB, 0, 26);
+                _header = Marshal.ByteArrayToStructureBigEndian<Header>(unixB);
+                unixStream.Close();
 
-                if(prodosStream.Length > 26)
-                {
-                    byte[] prodosB = new byte[26];
-                    prodosStream.Read(prodosB, 0, 26);
-                    _header = Marshal.ByteArrayToStructureBigEndian<Header>(prodosB);
-                    prodosStream.Close();
-
-                    if(_header.magic == MAGIC &&
-                       (_header.version == VERSION || _header.version == VERSION2))
-                        return true;
-                }
+                if(_header.magic == MAGIC &&
+                   (_header.version == VERSION || _header.version == VERSION2))
+                    return true;
             }
+        }
 
-            // Check AppleDouble created by A/UX in UFS filesystem
-            if(File.Exists(unixAppleDouble))
+        // Check AppleDouble created by A/UX in FAT filesystem
+        if(File.Exists(dosAppleDouble))
+        {
+            var dosStream = new FileStream(dosAppleDouble, FileMode.Open, FileAccess.Read);
+
+            if(dosStream.Length > 26)
             {
-                var unixStream = new FileStream(unixAppleDouble, FileMode.Open, FileAccess.Read);
+                byte[] dosB = new byte[26];
+                dosStream.Read(dosB, 0, 26);
+                _header = Marshal.ByteArrayToStructureBigEndian<Header>(dosB);
+                dosStream.Close();
 
-                if(unixStream.Length > 26)
-                {
-                    byte[] unixB = new byte[26];
-                    unixStream.Read(unixB, 0, 26);
-                    _header = Marshal.ByteArrayToStructureBigEndian<Header>(unixB);
-                    unixStream.Close();
-
-                    if(_header.magic == MAGIC &&
-                       (_header.version == VERSION || _header.version == VERSION2))
-                        return true;
-                }
+                if(_header.magic == MAGIC &&
+                   (_header.version == VERSION || _header.version == VERSION2))
+                    return true;
             }
+        }
 
-            // Check AppleDouble created by A/UX in FAT filesystem
-            if(File.Exists(dosAppleDouble))
+        // Check AppleDouble created by A/UX in case preserving FAT filesystem
+        if(File.Exists(dosAppleDoubleLower))
+        {
+            var doslStream = new FileStream(dosAppleDoubleLower, FileMode.Open, FileAccess.Read);
+
+            if(doslStream.Length > 26)
             {
-                var dosStream = new FileStream(dosAppleDouble, FileMode.Open, FileAccess.Read);
+                byte[] doslB = new byte[26];
+                doslStream.Read(doslB, 0, 26);
+                _header = Marshal.ByteArrayToStructureBigEndian<Header>(doslB);
+                doslStream.Close();
 
-                if(dosStream.Length > 26)
-                {
-                    byte[] dosB = new byte[26];
-                    dosStream.Read(dosB, 0, 26);
-                    _header = Marshal.ByteArrayToStructureBigEndian<Header>(dosB);
-                    dosStream.Close();
-
-                    if(_header.magic == MAGIC &&
-                       (_header.version == VERSION || _header.version == VERSION2))
-                        return true;
-                }
+                if(_header.magic == MAGIC &&
+                   (_header.version == VERSION || _header.version == VERSION2))
+                    return true;
             }
+        }
 
-            // Check AppleDouble created by A/UX in case preserving FAT filesystem
-            if(File.Exists(dosAppleDoubleLower))
+        // Check AppleDouble created by Netatalk
+        if(File.Exists(netatalkAppleDouble))
+        {
+            var netatalkStream = new FileStream(netatalkAppleDouble, FileMode.Open, FileAccess.Read);
+
+            if(netatalkStream.Length > 26)
             {
-                var doslStream = new FileStream(dosAppleDoubleLower, FileMode.Open, FileAccess.Read);
+                byte[] netatalkB = new byte[26];
+                netatalkStream.Read(netatalkB, 0, 26);
+                _header = Marshal.ByteArrayToStructureBigEndian<Header>(netatalkB);
+                netatalkStream.Close();
 
-                if(doslStream.Length > 26)
-                {
-                    byte[] doslB = new byte[26];
-                    doslStream.Read(doslB, 0, 26);
-                    _header = Marshal.ByteArrayToStructureBigEndian<Header>(doslB);
-                    doslStream.Close();
-
-                    if(_header.magic == MAGIC &&
-                       (_header.version == VERSION || _header.version == VERSION2))
-                        return true;
-                }
+                if(_header.magic == MAGIC &&
+                   (_header.version == VERSION || _header.version == VERSION2))
+                    return true;
             }
+        }
 
-            // Check AppleDouble created by Netatalk
-            if(File.Exists(netatalkAppleDouble))
+        // Check AppleDouble created by DAVE
+        if(File.Exists(daveAppleDouble))
+        {
+            var daveStream = new FileStream(daveAppleDouble, FileMode.Open, FileAccess.Read);
+
+            if(daveStream.Length > 26)
             {
-                var netatalkStream = new FileStream(netatalkAppleDouble, FileMode.Open, FileAccess.Read);
+                byte[] daveB = new byte[26];
+                daveStream.Read(daveB, 0, 26);
+                _header = Marshal.ByteArrayToStructureBigEndian<Header>(daveB);
+                daveStream.Close();
 
-                if(netatalkStream.Length > 26)
-                {
-                    byte[] netatalkB = new byte[26];
-                    netatalkStream.Read(netatalkB, 0, 26);
-                    _header = Marshal.ByteArrayToStructureBigEndian<Header>(netatalkB);
-                    netatalkStream.Close();
-
-                    if(_header.magic == MAGIC &&
-                       (_header.version == VERSION || _header.version == VERSION2))
-                        return true;
-                }
+                if(_header.magic == MAGIC &&
+                   (_header.version == VERSION || _header.version == VERSION2))
+                    return true;
             }
+        }
 
-            // Check AppleDouble created by DAVE
-            if(File.Exists(daveAppleDouble))
+        // Check AppleDouble created by Mac OS X
+        if(File.Exists(osxAppleDouble))
+        {
+            var osxStream = new FileStream(osxAppleDouble, FileMode.Open, FileAccess.Read);
+
+            if(osxStream.Length > 26)
             {
-                var daveStream = new FileStream(daveAppleDouble, FileMode.Open, FileAccess.Read);
+                byte[] osxB = new byte[26];
+                osxStream.Read(osxB, 0, 26);
+                _header = Marshal.ByteArrayToStructureBigEndian<Header>(osxB);
+                osxStream.Close();
 
-                if(daveStream.Length > 26)
-                {
-                    byte[] daveB = new byte[26];
-                    daveStream.Read(daveB, 0, 26);
-                    _header = Marshal.ByteArrayToStructureBigEndian<Header>(daveB);
-                    daveStream.Close();
-
-                    if(_header.magic == MAGIC &&
-                       (_header.version == VERSION || _header.version == VERSION2))
-                        return true;
-                }
+                if(_header.magic == MAGIC &&
+                   (_header.version == VERSION || _header.version == VERSION2))
+                    return true;
             }
+        }
 
-            // Check AppleDouble created by Mac OS X
-            if(File.Exists(osxAppleDouble))
+        // Check AppleDouble created by UnAr (from The Unarchiver)
+        if(!File.Exists(unArAppleDouble))
+            return false;
+
+        var unarStream = new FileStream(unArAppleDouble, FileMode.Open, FileAccess.Read);
+
+        if(unarStream.Length <= 26)
+            return false;
+
+        byte[] unarB = new byte[26];
+        unarStream.Read(unarB, 0, 26);
+        _header = Marshal.ByteArrayToStructureBigEndian<Header>(unarB);
+        unarStream.Close();
+
+        return _header.magic == MAGIC && (_header.version == VERSION || _header.version == VERSION2);
+    }
+
+    // Now way to have two files in a single byte array
+    /// <inheritdoc />
+    public ErrorNumber Open(byte[] buffer) => ErrorNumber.NotSupported;
+
+    // Now way to have two files in a single stream
+    /// <inheritdoc />
+    public ErrorNumber Open(Stream stream) => ErrorNumber.NotSupported;
+
+    /// <inheritdoc />
+    public ErrorNumber Open(string path)
+    {
+        string filename      = System.IO.Path.GetFileName(path);
+        string filenameNoExt = System.IO.Path.GetFileNameWithoutExtension(path);
+        string parentFolder  = System.IO.Path.GetDirectoryName(path);
+
+        parentFolder ??= "";
+
+        if(filename is null ||
+           filenameNoExt is null)
+            return ErrorNumber.InvalidArgument;
+
+        // Prepend data fork name with "R."
+        string proDosAppleDouble = System.IO.Path.Combine(parentFolder, "R." + filename);
+
+        // Prepend data fork name with '%'
+        string unixAppleDouble = System.IO.Path.Combine(parentFolder, "%" + filename);
+
+        // Change file extension to ADF
+        string dosAppleDouble = System.IO.Path.Combine(parentFolder, filenameNoExt + ".ADF");
+
+        // Change file extension to adf
+        string dosAppleDoubleLower = System.IO.Path.Combine(parentFolder, filenameNoExt + ".adf");
+
+        // Store AppleDouble header file in ".AppleDouble" folder with same name
+        string netatalkAppleDouble = System.IO.Path.Combine(parentFolder, ".AppleDouble", filename);
+
+        // Store AppleDouble header file in "resource.frk" folder with same name
+        string daveAppleDouble = System.IO.Path.Combine(parentFolder, "resource.frk", filename);
+
+        // Prepend data fork name with "._"
+        string osxAppleDouble = System.IO.Path.Combine(parentFolder, "._" + filename);
+
+        // Adds ".rsrc" extension
+        string unArAppleDouble = System.IO.Path.Combine(parentFolder, filename + ".rsrc");
+
+        // Check AppleDouble created by A/UX in ProDOS filesystem
+        if(File.Exists(proDosAppleDouble))
+        {
+            var prodosStream = new FileStream(proDosAppleDouble, FileMode.Open, FileAccess.Read);
+
+            if(prodosStream.Length > 26)
             {
-                var osxStream = new FileStream(osxAppleDouble, FileMode.Open, FileAccess.Read);
+                byte[] prodosB = new byte[26];
+                prodosStream.Read(prodosB, 0, 26);
+                _header = Marshal.ByteArrayToStructureBigEndian<Header>(prodosB);
+                prodosStream.Close();
 
-                if(osxStream.Length > 26)
-                {
-                    byte[] osxB = new byte[26];
-                    osxStream.Read(osxB, 0, 26);
-                    _header = Marshal.ByteArrayToStructureBigEndian<Header>(osxB);
-                    osxStream.Close();
-
-                    if(_header.magic == MAGIC &&
-                       (_header.version == VERSION || _header.version == VERSION2))
-                        return true;
-                }
+                if(_header.magic == MAGIC &&
+                   (_header.version == VERSION || _header.version == VERSION2))
+                    _headerPath = proDosAppleDouble;
             }
+        }
 
-            // Check AppleDouble created by UnAr (from The Unarchiver)
-            if(!File.Exists(unArAppleDouble))
-                return false;
+        // Check AppleDouble created by A/UX in UFS filesystem
+        if(File.Exists(unixAppleDouble))
+        {
+            var unixStream = new FileStream(unixAppleDouble, FileMode.Open, FileAccess.Read);
 
+            if(unixStream.Length > 26)
+            {
+                byte[] unixB = new byte[26];
+                unixStream.Read(unixB, 0, 26);
+                _header = Marshal.ByteArrayToStructureBigEndian<Header>(unixB);
+                unixStream.Close();
+
+                if(_header.magic == MAGIC &&
+                   (_header.version == VERSION || _header.version == VERSION2))
+                    _headerPath = unixAppleDouble;
+            }
+        }
+
+        // Check AppleDouble created by A/UX in FAT filesystem
+        if(File.Exists(dosAppleDouble))
+        {
+            var dosStream = new FileStream(dosAppleDouble, FileMode.Open, FileAccess.Read);
+
+            if(dosStream.Length > 26)
+            {
+                byte[] dosB = new byte[26];
+                dosStream.Read(dosB, 0, 26);
+                _header = Marshal.ByteArrayToStructureBigEndian<Header>(dosB);
+                dosStream.Close();
+
+                if(_header.magic == MAGIC &&
+                   (_header.version == VERSION || _header.version == VERSION2))
+                    _headerPath = dosAppleDouble;
+            }
+        }
+
+        // Check AppleDouble created by A/UX in case preserving FAT filesystem
+        if(File.Exists(dosAppleDoubleLower))
+        {
+            var doslStream = new FileStream(dosAppleDoubleLower, FileMode.Open, FileAccess.Read);
+
+            if(doslStream.Length > 26)
+            {
+                byte[] doslB = new byte[26];
+                doslStream.Read(doslB, 0, 26);
+                _header = Marshal.ByteArrayToStructureBigEndian<Header>(doslB);
+                doslStream.Close();
+
+                if(_header.magic == MAGIC &&
+                   (_header.version == VERSION || _header.version == VERSION2))
+                    _headerPath = dosAppleDoubleLower;
+            }
+        }
+
+        // Check AppleDouble created by Netatalk
+        if(File.Exists(netatalkAppleDouble))
+        {
+            var netatalkStream = new FileStream(netatalkAppleDouble, FileMode.Open, FileAccess.Read);
+
+            if(netatalkStream.Length > 26)
+            {
+                byte[] netatalkB = new byte[26];
+                netatalkStream.Read(netatalkB, 0, 26);
+                _header = Marshal.ByteArrayToStructureBigEndian<Header>(netatalkB);
+                netatalkStream.Close();
+
+                if(_header.magic == MAGIC &&
+                   (_header.version == VERSION || _header.version == VERSION2))
+                    _headerPath = netatalkAppleDouble;
+            }
+        }
+
+        // Check AppleDouble created by DAVE
+        if(File.Exists(daveAppleDouble))
+        {
+            var daveStream = new FileStream(daveAppleDouble, FileMode.Open, FileAccess.Read);
+
+            if(daveStream.Length > 26)
+            {
+                byte[] daveB = new byte[26];
+                daveStream.Read(daveB, 0, 26);
+                _header = Marshal.ByteArrayToStructureBigEndian<Header>(daveB);
+                daveStream.Close();
+
+                if(_header.magic == MAGIC &&
+                   (_header.version == VERSION || _header.version == VERSION2))
+                    _headerPath = daveAppleDouble;
+            }
+        }
+
+        // Check AppleDouble created by Mac OS X
+        if(File.Exists(osxAppleDouble))
+        {
+            var osxStream = new FileStream(osxAppleDouble, FileMode.Open, FileAccess.Read);
+
+            if(osxStream.Length > 26)
+            {
+                byte[] osxB = new byte[26];
+                osxStream.Read(osxB, 0, 26);
+                _header = Marshal.ByteArrayToStructureBigEndian<Header>(osxB);
+                osxStream.Close();
+
+                if(_header.magic == MAGIC &&
+                   (_header.version == VERSION || _header.version == VERSION2))
+                    _headerPath = osxAppleDouble;
+            }
+        }
+
+        // Check AppleDouble created by UnAr (from The Unarchiver)
+        if(File.Exists(unArAppleDouble))
+        {
             var unarStream = new FileStream(unArAppleDouble, FileMode.Open, FileAccess.Read);
 
-            if(unarStream.Length <= 26)
-                return false;
+            if(unarStream.Length > 26)
+            {
+                byte[] unarB = new byte[26];
+                unarStream.Read(unarB, 0, 26);
+                _header = Marshal.ByteArrayToStructureBigEndian<Header>(unarB);
+                unarStream.Close();
 
-            byte[] unarB = new byte[26];
-            unarStream.Read(unarB, 0, 26);
-            _header = Marshal.ByteArrayToStructureBigEndian<Header>(unarB);
-            unarStream.Close();
-
-            return _header.magic == MAGIC && (_header.version == VERSION || _header.version == VERSION2);
+                if(_header.magic == MAGIC &&
+                   (_header.version == VERSION || _header.version == VERSION2))
+                    _headerPath = unArAppleDouble;
+            }
         }
 
-        // Now way to have two files in a single byte array
-        /// <inheritdoc />
-        public ErrorNumber Open(byte[] buffer) => ErrorNumber.NotSupported;
+        // TODO: More appropriate error
+        if(_headerPath is null)
+            return ErrorNumber.NotSupported;
 
-        // Now way to have two files in a single stream
-        /// <inheritdoc />
-        public ErrorNumber Open(Stream stream) => ErrorNumber.NotSupported;
+        var fs = new FileStream(_headerPath, FileMode.Open, FileAccess.Read);
+        fs.Seek(0, SeekOrigin.Begin);
 
-        /// <inheritdoc />
-        public ErrorNumber Open(string path)
+        byte[] hdrB = new byte[26];
+        fs.Read(hdrB, 0, 26);
+        _header = Marshal.ByteArrayToStructureBigEndian<Header>(hdrB);
+
+        Entry[] entries = new Entry[_header.entries];
+
+        for(int i = 0; i < _header.entries; i++)
         {
-            string filename      = System.IO.Path.GetFileName(path);
-            string filenameNoExt = System.IO.Path.GetFileNameWithoutExtension(path);
-            string parentFolder  = System.IO.Path.GetDirectoryName(path);
-
-            parentFolder ??= "";
-
-            if(filename is null ||
-               filenameNoExt is null)
-                return ErrorNumber.InvalidArgument;
-
-            // Prepend data fork name with "R."
-            string proDosAppleDouble = System.IO.Path.Combine(parentFolder, "R." + filename);
-
-            // Prepend data fork name with '%'
-            string unixAppleDouble = System.IO.Path.Combine(parentFolder, "%" + filename);
-
-            // Change file extension to ADF
-            string dosAppleDouble = System.IO.Path.Combine(parentFolder, filenameNoExt + ".ADF");
-
-            // Change file extension to adf
-            string dosAppleDoubleLower = System.IO.Path.Combine(parentFolder, filenameNoExt + ".adf");
-
-            // Store AppleDouble header file in ".AppleDouble" folder with same name
-            string netatalkAppleDouble = System.IO.Path.Combine(parentFolder, ".AppleDouble", filename);
-
-            // Store AppleDouble header file in "resource.frk" folder with same name
-            string daveAppleDouble = System.IO.Path.Combine(parentFolder, "resource.frk", filename);
-
-            // Prepend data fork name with "._"
-            string osxAppleDouble = System.IO.Path.Combine(parentFolder, "._" + filename);
-
-            // Adds ".rsrc" extension
-            string unArAppleDouble = System.IO.Path.Combine(parentFolder, filename + ".rsrc");
-
-            // Check AppleDouble created by A/UX in ProDOS filesystem
-            if(File.Exists(proDosAppleDouble))
-            {
-                var prodosStream = new FileStream(proDosAppleDouble, FileMode.Open, FileAccess.Read);
-
-                if(prodosStream.Length > 26)
-                {
-                    byte[] prodosB = new byte[26];
-                    prodosStream.Read(prodosB, 0, 26);
-                    _header = Marshal.ByteArrayToStructureBigEndian<Header>(prodosB);
-                    prodosStream.Close();
-
-                    if(_header.magic == MAGIC &&
-                       (_header.version == VERSION || _header.version == VERSION2))
-                        _headerPath = proDosAppleDouble;
-                }
-            }
-
-            // Check AppleDouble created by A/UX in UFS filesystem
-            if(File.Exists(unixAppleDouble))
-            {
-                var unixStream = new FileStream(unixAppleDouble, FileMode.Open, FileAccess.Read);
-
-                if(unixStream.Length > 26)
-                {
-                    byte[] unixB = new byte[26];
-                    unixStream.Read(unixB, 0, 26);
-                    _header = Marshal.ByteArrayToStructureBigEndian<Header>(unixB);
-                    unixStream.Close();
-
-                    if(_header.magic == MAGIC &&
-                       (_header.version == VERSION || _header.version == VERSION2))
-                        _headerPath = unixAppleDouble;
-                }
-            }
-
-            // Check AppleDouble created by A/UX in FAT filesystem
-            if(File.Exists(dosAppleDouble))
-            {
-                var dosStream = new FileStream(dosAppleDouble, FileMode.Open, FileAccess.Read);
-
-                if(dosStream.Length > 26)
-                {
-                    byte[] dosB = new byte[26];
-                    dosStream.Read(dosB, 0, 26);
-                    _header = Marshal.ByteArrayToStructureBigEndian<Header>(dosB);
-                    dosStream.Close();
-
-                    if(_header.magic == MAGIC &&
-                       (_header.version == VERSION || _header.version == VERSION2))
-                        _headerPath = dosAppleDouble;
-                }
-            }
-
-            // Check AppleDouble created by A/UX in case preserving FAT filesystem
-            if(File.Exists(dosAppleDoubleLower))
-            {
-                var doslStream = new FileStream(dosAppleDoubleLower, FileMode.Open, FileAccess.Read);
-
-                if(doslStream.Length > 26)
-                {
-                    byte[] doslB = new byte[26];
-                    doslStream.Read(doslB, 0, 26);
-                    _header = Marshal.ByteArrayToStructureBigEndian<Header>(doslB);
-                    doslStream.Close();
-
-                    if(_header.magic == MAGIC &&
-                       (_header.version == VERSION || _header.version == VERSION2))
-                        _headerPath = dosAppleDoubleLower;
-                }
-            }
-
-            // Check AppleDouble created by Netatalk
-            if(File.Exists(netatalkAppleDouble))
-            {
-                var netatalkStream = new FileStream(netatalkAppleDouble, FileMode.Open, FileAccess.Read);
-
-                if(netatalkStream.Length > 26)
-                {
-                    byte[] netatalkB = new byte[26];
-                    netatalkStream.Read(netatalkB, 0, 26);
-                    _header = Marshal.ByteArrayToStructureBigEndian<Header>(netatalkB);
-                    netatalkStream.Close();
-
-                    if(_header.magic == MAGIC &&
-                       (_header.version == VERSION || _header.version == VERSION2))
-                        _headerPath = netatalkAppleDouble;
-                }
-            }
-
-            // Check AppleDouble created by DAVE
-            if(File.Exists(daveAppleDouble))
-            {
-                var daveStream = new FileStream(daveAppleDouble, FileMode.Open, FileAccess.Read);
-
-                if(daveStream.Length > 26)
-                {
-                    byte[] daveB = new byte[26];
-                    daveStream.Read(daveB, 0, 26);
-                    _header = Marshal.ByteArrayToStructureBigEndian<Header>(daveB);
-                    daveStream.Close();
-
-                    if(_header.magic == MAGIC &&
-                       (_header.version == VERSION || _header.version == VERSION2))
-                        _headerPath = daveAppleDouble;
-                }
-            }
-
-            // Check AppleDouble created by Mac OS X
-            if(File.Exists(osxAppleDouble))
-            {
-                var osxStream = new FileStream(osxAppleDouble, FileMode.Open, FileAccess.Read);
-
-                if(osxStream.Length > 26)
-                {
-                    byte[] osxB = new byte[26];
-                    osxStream.Read(osxB, 0, 26);
-                    _header = Marshal.ByteArrayToStructureBigEndian<Header>(osxB);
-                    osxStream.Close();
-
-                    if(_header.magic == MAGIC &&
-                       (_header.version == VERSION || _header.version == VERSION2))
-                        _headerPath = osxAppleDouble;
-                }
-            }
-
-            // Check AppleDouble created by UnAr (from The Unarchiver)
-            if(File.Exists(unArAppleDouble))
-            {
-                var unarStream = new FileStream(unArAppleDouble, FileMode.Open, FileAccess.Read);
-
-                if(unarStream.Length > 26)
-                {
-                    byte[] unarB = new byte[26];
-                    unarStream.Read(unarB, 0, 26);
-                    _header = Marshal.ByteArrayToStructureBigEndian<Header>(unarB);
-                    unarStream.Close();
-
-                    if(_header.magic == MAGIC &&
-                       (_header.version == VERSION || _header.version == VERSION2))
-                        _headerPath = unArAppleDouble;
-                }
-            }
-
-            // TODO: More appropriate error
-            if(_headerPath is null)
-                return ErrorNumber.NotSupported;
-
-            var fs = new FileStream(_headerPath, FileMode.Open, FileAccess.Read);
-            fs.Seek(0, SeekOrigin.Begin);
-
-            byte[] hdrB = new byte[26];
-            fs.Read(hdrB, 0, 26);
-            _header = Marshal.ByteArrayToStructureBigEndian<Header>(hdrB);
-
-            Entry[] entries = new Entry[_header.entries];
-
-            for(int i = 0; i < _header.entries; i++)
-            {
-                byte[] entry = new byte[12];
-                fs.Read(entry, 0, 12);
-                entries[i] = Marshal.ByteArrayToStructureBigEndian<Entry>(entry);
-            }
-
-            CreationTime  = DateTime.UtcNow;
-            LastWriteTime = CreationTime;
-
-            foreach(Entry entry in entries)
-                switch((EntryId)entry.id)
-                {
-                    case EntryId.DataFork:
-                        // AppleDouble have datafork in separated file
-                        break;
-                    case EntryId.FileDates:
-                        fs.Seek(entry.offset, SeekOrigin.Begin);
-                        byte[] datesB = new byte[16];
-                        fs.Read(datesB, 0, 16);
-
-                        FileDates dates = Marshal.ByteArrayToStructureBigEndian<FileDates>(datesB);
-
-                        CreationTime  = DateHandlers.UnixUnsignedToDateTime(dates.creationDate);
-                        LastWriteTime = DateHandlers.UnixUnsignedToDateTime(dates.modificationDate);
-
-                        break;
-                    case EntryId.FileInfo:
-                        fs.Seek(entry.offset, SeekOrigin.Begin);
-                        byte[] finfo = new byte[entry.length];
-                        fs.Read(finfo, 0, finfo.Length);
-
-                        if(_macintoshHome.SequenceEqual(_header.homeFilesystem))
-                        {
-                            MacFileInfo macinfo = Marshal.ByteArrayToStructureBigEndian<MacFileInfo>(finfo);
-
-                            CreationTime  = DateHandlers.MacToDateTime(macinfo.creationDate);
-                            LastWriteTime = DateHandlers.MacToDateTime(macinfo.modificationDate);
-                        }
-                        else if(_proDosHome.SequenceEqual(_header.homeFilesystem))
-                        {
-                            ProDOSFileInfo prodosinfo = Marshal.ByteArrayToStructureBigEndian<ProDOSFileInfo>(finfo);
-
-                            CreationTime  = DateHandlers.MacToDateTime(prodosinfo.creationDate);
-                            LastWriteTime = DateHandlers.MacToDateTime(prodosinfo.modificationDate);
-                        }
-                        else if(_unixHome.SequenceEqual(_header.homeFilesystem))
-                        {
-                            UnixFileInfo unixinfo = Marshal.ByteArrayToStructureBigEndian<UnixFileInfo>(finfo);
-
-                            CreationTime  = DateHandlers.UnixUnsignedToDateTime(unixinfo.creationDate);
-                            LastWriteTime = DateHandlers.UnixUnsignedToDateTime(unixinfo.modificationDate);
-                        }
-                        else if(_dosHome.SequenceEqual(_header.homeFilesystem))
-                        {
-                            DOSFileInfo dosinfo = Marshal.ByteArrayToStructureBigEndian<DOSFileInfo>(finfo);
-
-                            LastWriteTime =
-                                DateHandlers.DosToDateTime(dosinfo.modificationDate, dosinfo.modificationTime);
-                        }
-
-                        break;
-                    case EntryId.ResourceFork:
-                        _rsrcFork = entry;
-
-                        break;
-                }
-
-            _dataFork = new Entry
-            {
-                id = (uint)EntryId.DataFork
-            };
-
-            if(File.Exists(path))
-            {
-                var dataFs = new FileStream(path, FileMode.Open, FileAccess.Read);
-                _dataFork.length = (uint)dataFs.Length;
-                dataFs.Close();
-            }
-
-            fs.Close();
-            BasePath = path;
-
-            return ErrorNumber.NoError;
+            byte[] entry = new byte[12];
+            fs.Read(entry, 0, 12);
+            entries[i] = Marshal.ByteArrayToStructureBigEndian<Entry>(entry);
         }
 
-        enum EntryId : uint
+        CreationTime  = DateTime.UtcNow;
+        LastWriteTime = CreationTime;
+
+        foreach(Entry entry in entries)
+            switch((EntryId)entry.id)
+            {
+                case EntryId.DataFork:
+                    // AppleDouble have datafork in separated file
+                    break;
+                case EntryId.FileDates:
+                    fs.Seek(entry.offset, SeekOrigin.Begin);
+                    byte[] datesB = new byte[16];
+                    fs.Read(datesB, 0, 16);
+
+                    FileDates dates = Marshal.ByteArrayToStructureBigEndian<FileDates>(datesB);
+
+                    CreationTime  = DateHandlers.UnixUnsignedToDateTime(dates.creationDate);
+                    LastWriteTime = DateHandlers.UnixUnsignedToDateTime(dates.modificationDate);
+
+                    break;
+                case EntryId.FileInfo:
+                    fs.Seek(entry.offset, SeekOrigin.Begin);
+                    byte[] finfo = new byte[entry.length];
+                    fs.Read(finfo, 0, finfo.Length);
+
+                    if(_macintoshHome.SequenceEqual(_header.homeFilesystem))
+                    {
+                        MacFileInfo macinfo = Marshal.ByteArrayToStructureBigEndian<MacFileInfo>(finfo);
+
+                        CreationTime  = DateHandlers.MacToDateTime(macinfo.creationDate);
+                        LastWriteTime = DateHandlers.MacToDateTime(macinfo.modificationDate);
+                    }
+                    else if(_proDosHome.SequenceEqual(_header.homeFilesystem))
+                    {
+                        ProDOSFileInfo prodosinfo = Marshal.ByteArrayToStructureBigEndian<ProDOSFileInfo>(finfo);
+
+                        CreationTime  = DateHandlers.MacToDateTime(prodosinfo.creationDate);
+                        LastWriteTime = DateHandlers.MacToDateTime(prodosinfo.modificationDate);
+                    }
+                    else if(_unixHome.SequenceEqual(_header.homeFilesystem))
+                    {
+                        UnixFileInfo unixinfo = Marshal.ByteArrayToStructureBigEndian<UnixFileInfo>(finfo);
+
+                        CreationTime  = DateHandlers.UnixUnsignedToDateTime(unixinfo.creationDate);
+                        LastWriteTime = DateHandlers.UnixUnsignedToDateTime(unixinfo.modificationDate);
+                    }
+                    else if(_dosHome.SequenceEqual(_header.homeFilesystem))
+                    {
+                        DOSFileInfo dosinfo = Marshal.ByteArrayToStructureBigEndian<DOSFileInfo>(finfo);
+
+                        LastWriteTime =
+                            DateHandlers.DosToDateTime(dosinfo.modificationDate, dosinfo.modificationTime);
+                    }
+
+                    break;
+                case EntryId.ResourceFork:
+                    _rsrcFork = entry;
+
+                    break;
+            }
+
+        _dataFork = new Entry
         {
-            Invalid     = 0, DataFork    = 1, ResourceFork    = 2,
-            RealName    = 3, Comment     = 4, Icon            = 5,
-            ColorIcon   = 6, FileInfo    = 7, FileDates       = 8,
-            FinderInfo  = 9, MacFileInfo = 10, ProDOSFileInfo = 11,
-            DOSFileInfo = 12, ShortName  = 13, AfpFileInfo    = 14,
-            DirectoryID = 15
+            id = (uint)EntryId.DataFork
+        };
+
+        if(File.Exists(path))
+        {
+            var dataFs = new FileStream(path, FileMode.Open, FileAccess.Read);
+            _dataFork.length = (uint)dataFs.Length;
+            dataFs.Close();
         }
 
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        readonly struct Header
-        {
-            public readonly uint magic;
-            public readonly uint version;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public readonly byte[] homeFilesystem;
-            public readonly ushort entries;
-        }
+        fs.Close();
+        BasePath = path;
 
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct Entry
-        {
-            public          uint id;
-            public readonly uint offset;
-            public          uint length;
-        }
+        return ErrorNumber.NoError;
+    }
 
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        readonly struct FileDates
-        {
-            public readonly uint creationDate;
-            public readonly uint modificationDate;
-            public readonly uint backupDate;
-            public readonly uint accessDate;
-        }
+    enum EntryId : uint
+    {
+        Invalid     = 0, DataFork    = 1, ResourceFork    = 2,
+        RealName    = 3, Comment     = 4, Icon            = 5,
+        ColorIcon   = 6, FileInfo    = 7, FileDates       = 8,
+        FinderInfo  = 9, MacFileInfo = 10, ProDOSFileInfo = 11,
+        DOSFileInfo = 12, ShortName  = 13, AfpFileInfo    = 14,
+        DirectoryID = 15
+    }
 
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        readonly struct MacFileInfo
-        {
-            public readonly uint creationDate;
-            public readonly uint modificationDate;
-            public readonly uint backupDate;
-            public readonly uint accessDate;
-        }
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct Header
+    {
+        public readonly uint magic;
+        public readonly uint version;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+        public readonly byte[] homeFilesystem;
+        public readonly ushort entries;
+    }
 
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        readonly struct UnixFileInfo
-        {
-            public readonly uint creationDate;
-            public readonly uint accessDate;
-            public readonly uint modificationDate;
-        }
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    struct Entry
+    {
+        public          uint id;
+        public readonly uint offset;
+        public          uint length;
+    }
 
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        readonly struct DOSFileInfo
-        {
-            public readonly ushort modificationDate;
-            public readonly ushort modificationTime;
-            public readonly ushort attributes;
-        }
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct FileDates
+    {
+        public readonly uint creationDate;
+        public readonly uint modificationDate;
+        public readonly uint backupDate;
+        public readonly uint accessDate;
+    }
 
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        readonly struct ProDOSFileInfo
-        {
-            public readonly uint   creationDate;
-            public readonly uint   modificationDate;
-            public readonly uint   backupDate;
-            public readonly ushort access;
-            public readonly ushort fileType;
-            public readonly uint   auxType;
-        }
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct MacFileInfo
+    {
+        public readonly uint creationDate;
+        public readonly uint modificationDate;
+        public readonly uint backupDate;
+        public readonly uint accessDate;
+    }
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct UnixFileInfo
+    {
+        public readonly uint creationDate;
+        public readonly uint accessDate;
+        public readonly uint modificationDate;
+    }
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct DOSFileInfo
+    {
+        public readonly ushort modificationDate;
+        public readonly ushort modificationTime;
+        public readonly ushort attributes;
+    }
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct ProDOSFileInfo
+    {
+        public readonly uint   creationDate;
+        public readonly uint   modificationDate;
+        public readonly uint   backupDate;
+        public readonly ushort access;
+        public readonly ushort fileType;
+        public readonly uint   auxType;
     }
 }

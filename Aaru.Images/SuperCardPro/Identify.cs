@@ -35,26 +35,25 @@ using System.Linq;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class SuperCardPro
 {
-    public sealed partial class SuperCardPro
+    /// <inheritdoc />
+    public bool Identify(IFilter imageFilter)
     {
-        /// <inheritdoc />
-        public bool Identify(IFilter imageFilter)
-        {
-            Header = new ScpHeader();
-            Stream stream = imageFilter.GetDataForkStream();
-            stream.Seek(0, SeekOrigin.Begin);
+        Header = new ScpHeader();
+        Stream stream = imageFilter.GetDataForkStream();
+        stream.Seek(0, SeekOrigin.Begin);
 
-            if(stream.Length < Marshal.SizeOf<ScpHeader>())
-                return false;
+        if(stream.Length < Marshal.SizeOf<ScpHeader>())
+            return false;
 
-            byte[] hdr = new byte[Marshal.SizeOf<ScpHeader>()];
-            stream.Read(hdr, 0, Marshal.SizeOf<ScpHeader>());
+        byte[] hdr = new byte[Marshal.SizeOf<ScpHeader>()];
+        stream.Read(hdr, 0, Marshal.SizeOf<ScpHeader>());
 
-            Header = Marshal.ByteArrayToStructureLittleEndian<ScpHeader>(hdr);
+        Header = Marshal.ByteArrayToStructureLittleEndian<ScpHeader>(hdr);
 
-            return _scpSignature.SequenceEqual(Header.signature);
-        }
+        return _scpSignature.SequenceEqual(Header.signature);
     }
 }

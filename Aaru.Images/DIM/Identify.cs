@@ -34,29 +34,28 @@ using System.IO;
 using System.Linq;
 using Aaru.CommonTypes.Interfaces;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class Dim
 {
-    public sealed partial class Dim
+    /// <inheritdoc />
+    public bool Identify(IFilter imageFilter)
     {
-        /// <inheritdoc />
-        public bool Identify(IFilter imageFilter)
-        {
-            Stream stream = imageFilter.GetDataForkStream();
-            stream.Seek(0, SeekOrigin.Begin);
+        Stream stream = imageFilter.GetDataForkStream();
+        stream.Seek(0, SeekOrigin.Begin);
 
-            if(stream.Length < DATA_OFFSET)
-                return false;
+        if(stream.Length < DATA_OFFSET)
+            return false;
 
-            _comment = new byte[60];
-            _hdrId   = new byte[13];
-            stream.Seek(0, SeekOrigin.Begin);
-            _dskType = (DiskType)stream.ReadByte();
-            stream.Seek(0xAB, SeekOrigin.Begin);
-            stream.Read(_hdrId, 0, 13);
-            stream.Seek(0xC2, SeekOrigin.Begin);
-            stream.Read(_comment, 0, 60);
+        _comment = new byte[60];
+        _hdrId   = new byte[13];
+        stream.Seek(0, SeekOrigin.Begin);
+        _dskType = (DiskType)stream.ReadByte();
+        stream.Seek(0xAB, SeekOrigin.Begin);
+        stream.Read(_hdrId, 0, 13);
+        stream.Seek(0xC2, SeekOrigin.Begin);
+        stream.Read(_comment, 0, 60);
 
-            return _headerId.SequenceEqual(_hdrId);
-        }
+        return _headerId.SequenceEqual(_hdrId);
     }
 }

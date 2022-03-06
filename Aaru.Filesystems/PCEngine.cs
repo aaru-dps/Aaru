@@ -37,53 +37,52 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Schemas;
 
-namespace Aaru.Filesystems
+namespace Aaru.Filesystems;
+
+/// <inheritdoc />
+/// <summary>Implements detection of the PC-Engine CD file headers</summary>
+public sealed class PCEnginePlugin : IFilesystem
 {
     /// <inheritdoc />
-    /// <summary>Implements detection of the PC-Engine CD file headers</summary>
-    public sealed class PCEnginePlugin : IFilesystem
+    public FileSystemType XmlFsType { get; private set; }
+    /// <inheritdoc />
+    public Encoding Encoding { get; private set; }
+    /// <inheritdoc />
+    public string Name => "PC Engine CD Plugin";
+    /// <inheritdoc />
+    public Guid Id => new("e5ee6d7c-90fa-49bd-ac89-14ef750b8af3");
+    /// <inheritdoc />
+    public string Author => "Natalia Portillo";
+
+    /// <inheritdoc />
+    public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
-        /// <inheritdoc />
-        public FileSystemType XmlFsType { get; private set; }
-        /// <inheritdoc />
-        public Encoding Encoding { get; private set; }
-        /// <inheritdoc />
-        public string Name => "PC Engine CD Plugin";
-        /// <inheritdoc />
-        public Guid Id => new("e5ee6d7c-90fa-49bd-ac89-14ef750b8af3");
-        /// <inheritdoc />
-        public string Author => "Natalia Portillo";
+        if(2 + partition.Start >= partition.End)
+            return false;
 
-        /// <inheritdoc />
-        public bool Identify(IMediaImage imagePlugin, Partition partition)
+        byte[]      systemDescriptor = new byte[23];
+        ErrorNumber errno            = imagePlugin.ReadSector(1 + partition.Start, out byte[] sector);
+
+        if(errno != ErrorNumber.NoError)
+            return false;
+
+        Array.Copy(sector, 0x20, systemDescriptor, 0, 23);
+
+        return Encoding.ASCII.GetString(systemDescriptor) == "PC Engine CD-ROM SYSTEM";
+    }
+
+    /// <inheritdoc />
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
+                               Encoding encoding)
+    {
+        Encoding    = encoding ?? Encoding.GetEncoding("shift_jis");
+        information = "";
+
+        XmlFsType = new FileSystemType
         {
-            if(2 + partition.Start >= partition.End)
-                return false;
-
-            byte[]      systemDescriptor = new byte[23];
-            ErrorNumber errno            = imagePlugin.ReadSector(1 + partition.Start, out byte[] sector);
-
-            if(errno != ErrorNumber.NoError)
-                return false;
-
-            Array.Copy(sector, 0x20, systemDescriptor, 0, 23);
-
-            return Encoding.ASCII.GetString(systemDescriptor) == "PC Engine CD-ROM SYSTEM";
-        }
-
-        /// <inheritdoc />
-        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                   Encoding encoding)
-        {
-            Encoding    = encoding ?? Encoding.GetEncoding("shift_jis");
-            information = "";
-
-            XmlFsType = new FileSystemType
-            {
-                Type        = "PC Engine filesystem",
-                Clusters    = (partition.End - partition.Start + 1) / imagePlugin.Info.SectorSize * 2048,
-                ClusterSize = 2048
-            };
-        }
+            Type        = "PC Engine filesystem",
+            Clusters    = (partition.End - partition.Start + 1) / imagePlugin.Info.SectorSize * 2048,
+            ClusterSize = 2048
+        };
     }
 }

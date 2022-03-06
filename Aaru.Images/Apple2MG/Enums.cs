@@ -30,13 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class Apple2Mg
 {
-    public sealed partial class Apple2Mg
+    enum SectorOrder : uint
     {
-        enum SectorOrder : uint
-        {
-            Dos = 0, ProDos = 1, Nibbles = 2
-        }
+        Dos = 0, ProDos = 1, Nibbles = 2
     }
 }

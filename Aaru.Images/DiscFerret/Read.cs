@@ -38,140 +38,139 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class DiscFerret
 {
-    public sealed partial class DiscFerret
+    /// <inheritdoc />
+    public ErrorNumber Open(IFilter imageFilter)
     {
-        /// <inheritdoc />
-        public ErrorNumber Open(IFilter imageFilter)
+        byte[] magicB = new byte[4];
+        Stream stream = imageFilter.GetDataForkStream();
+        stream.Read(magicB, 0, 4);
+        uint magic = BitConverter.ToUInt32(magicB, 0);
+
+        if(magic != DFI_MAGIC &&
+           magic != DFI_MAGIC2)
+            return ErrorNumber.InvalidArgument;
+
+        TrackOffsets = new SortedDictionary<int, long>();
+        TrackLengths = new SortedDictionary<int, long>();
+        int    t            = -1;
+        ushort lastCylinder = 0, lastHead = 0;
+        long   offset       = 0;
+
+        while(stream.Position < stream.Length)
         {
-            byte[] magicB = new byte[4];
-            Stream stream = imageFilter.GetDataForkStream();
-            stream.Read(magicB, 0, 4);
-            uint magic = BitConverter.ToUInt32(magicB, 0);
+            long thisOffset = stream.Position;
 
-            if(magic != DFI_MAGIC &&
-               magic != DFI_MAGIC2)
-                return ErrorNumber.InvalidArgument;
+            byte[] blk = new byte[Marshal.SizeOf<BlockHeader>()];
+            stream.Read(blk, 0, Marshal.SizeOf<BlockHeader>());
+            BlockHeader blockHeader = Marshal.ByteArrayToStructureBigEndian<BlockHeader>(blk);
 
-            TrackOffsets = new SortedDictionary<int, long>();
-            TrackLengths = new SortedDictionary<int, long>();
-            int    t            = -1;
-            ushort lastCylinder = 0, lastHead = 0;
-            long   offset       = 0;
+            AaruConsole.DebugWriteLine("DiscFerret plugin", "block@{0}.cylinder = {1}", thisOffset,
+                                       blockHeader.cylinder);
 
-            while(stream.Position < stream.Length)
+            AaruConsole.DebugWriteLine("DiscFerret plugin", "block@{0}.head = {1}", thisOffset, blockHeader.head);
+
+            AaruConsole.DebugWriteLine("DiscFerret plugin", "block@{0}.sector = {1}", thisOffset,
+                                       blockHeader.sector);
+
+            AaruConsole.DebugWriteLine("DiscFerret plugin", "block@{0}.length = {1}", thisOffset,
+                                       blockHeader.length);
+
+            if(stream.Position + blockHeader.length > stream.Length)
             {
-                long thisOffset = stream.Position;
+                AaruConsole.DebugWriteLine("DiscFerret plugin", "Invalid track block found at {0}", thisOffset);
 
-                byte[] blk = new byte[Marshal.SizeOf<BlockHeader>()];
-                stream.Read(blk, 0, Marshal.SizeOf<BlockHeader>());
-                BlockHeader blockHeader = Marshal.ByteArrayToStructureBigEndian<BlockHeader>(blk);
-
-                AaruConsole.DebugWriteLine("DiscFerret plugin", "block@{0}.cylinder = {1}", thisOffset,
-                                           blockHeader.cylinder);
-
-                AaruConsole.DebugWriteLine("DiscFerret plugin", "block@{0}.head = {1}", thisOffset, blockHeader.head);
-
-                AaruConsole.DebugWriteLine("DiscFerret plugin", "block@{0}.sector = {1}", thisOffset,
-                                           blockHeader.sector);
-
-                AaruConsole.DebugWriteLine("DiscFerret plugin", "block@{0}.length = {1}", thisOffset,
-                                           blockHeader.length);
-
-                if(stream.Position + blockHeader.length > stream.Length)
-                {
-                    AaruConsole.DebugWriteLine("DiscFerret plugin", "Invalid track block found at {0}", thisOffset);
-
-                    break;
-                }
-
-                stream.Position += blockHeader.length;
-
-                if(blockHeader.cylinder > 0 &&
-                   blockHeader.cylinder > lastCylinder)
-                {
-                    lastCylinder = blockHeader.cylinder;
-                    lastHead     = 0;
-                    TrackOffsets.Add(t, offset);
-                    TrackLengths.Add(t, thisOffset - offset + 1);
-                    offset = thisOffset;
-                    t++;
-                }
-                else if(blockHeader.head > 0 &&
-                        blockHeader.head > lastHead)
-                {
-                    lastHead = blockHeader.head;
-                    TrackOffsets.Add(t, offset);
-                    TrackLengths.Add(t, thisOffset - offset + 1);
-                    offset = thisOffset;
-                    t++;
-                }
-
-                if(blockHeader.cylinder > _imageInfo.Cylinders)
-                    _imageInfo.Cylinders = blockHeader.cylinder;
-
-                if(blockHeader.head > _imageInfo.Heads)
-                    _imageInfo.Heads = blockHeader.head;
+                break;
             }
 
-            _imageInfo.Heads++;
-            _imageInfo.Cylinders++;
+            stream.Position += blockHeader.length;
 
-            _imageInfo.Application        = "DiscFerret";
-            _imageInfo.ApplicationVersion = magic == DFI_MAGIC2 ? "2.0" : "1.0";
+            if(blockHeader.cylinder > 0 &&
+               blockHeader.cylinder > lastCylinder)
+            {
+                lastCylinder = blockHeader.cylinder;
+                lastHead     = 0;
+                TrackOffsets.Add(t, offset);
+                TrackLengths.Add(t, thisOffset - offset + 1);
+                offset = thisOffset;
+                t++;
+            }
+            else if(blockHeader.head > 0 &&
+                    blockHeader.head > lastHead)
+            {
+                lastHead = blockHeader.head;
+                TrackOffsets.Add(t, offset);
+                TrackLengths.Add(t, thisOffset - offset + 1);
+                offset = thisOffset;
+                t++;
+            }
 
-            AaruConsole.ErrorWriteLine("Flux decoding is not yet implemented.");
+            if(blockHeader.cylinder > _imageInfo.Cylinders)
+                _imageInfo.Cylinders = blockHeader.cylinder;
 
-            return ErrorNumber.NotImplemented;
+            if(blockHeader.head > _imageInfo.Heads)
+                _imageInfo.Heads = blockHeader.head;
         }
 
-        /// <inheritdoc />
-        public ErrorNumber ReadMediaTag(MediaTagType tag, out byte[] buffer)
-        {
-            buffer = null;
+        _imageInfo.Heads++;
+        _imageInfo.Cylinders++;
 
-            return ErrorNumber.NotImplemented;
-        }
+        _imageInfo.Application        = "DiscFerret";
+        _imageInfo.ApplicationVersion = magic == DFI_MAGIC2 ? "2.0" : "1.0";
 
-        /// <inheritdoc />
-        public ErrorNumber ReadSector(ulong sectorAddress, out byte[] buffer) =>
-            ReadSectors(sectorAddress, 1, out buffer);
+        AaruConsole.ErrorWriteLine("Flux decoding is not yet implemented.");
 
-        /// <inheritdoc />
-        public ErrorNumber ReadSectorTag(ulong sectorAddress, SectorTagType tag, out byte[] buffer)
-        {
-            buffer = null;
+        return ErrorNumber.NotImplemented;
+    }
 
-            return ErrorNumber.NotImplemented;
-        }
+    /// <inheritdoc />
+    public ErrorNumber ReadMediaTag(MediaTagType tag, out byte[] buffer)
+    {
+        buffer = null;
 
-        /// <inheritdoc />
-        public ErrorNumber ReadSectors(ulong sectorAddress, uint length, out byte[] buffer)
-        {
-            buffer = null;
+        return ErrorNumber.NotImplemented;
+    }
 
-            return ErrorNumber.NotImplemented;
-        }
+    /// <inheritdoc />
+    public ErrorNumber ReadSector(ulong sectorAddress, out byte[] buffer) =>
+        ReadSectors(sectorAddress, 1, out buffer);
 
-        /// <inheritdoc />
-        public ErrorNumber ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag, out byte[] buffer)
-        {
-            buffer = null;
+    /// <inheritdoc />
+    public ErrorNumber ReadSectorTag(ulong sectorAddress, SectorTagType tag, out byte[] buffer)
+    {
+        buffer = null;
 
-            return ErrorNumber.NotImplemented;
-        }
+        return ErrorNumber.NotImplemented;
+    }
 
-        /// <inheritdoc />
-        public ErrorNumber ReadSectorLong(ulong sectorAddress, out byte[] buffer) =>
-            ReadSectorsLong(sectorAddress, 1, out buffer);
+    /// <inheritdoc />
+    public ErrorNumber ReadSectors(ulong sectorAddress, uint length, out byte[] buffer)
+    {
+        buffer = null;
 
-        /// <inheritdoc />
-        public ErrorNumber ReadSectorsLong(ulong sectorAddress, uint length, out byte[] buffer)
-        {
-            buffer = null;
+        return ErrorNumber.NotImplemented;
+    }
 
-            return ErrorNumber.NotImplemented;
-        }
+    /// <inheritdoc />
+    public ErrorNumber ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag, out byte[] buffer)
+    {
+        buffer = null;
+
+        return ErrorNumber.NotImplemented;
+    }
+
+    /// <inheritdoc />
+    public ErrorNumber ReadSectorLong(ulong sectorAddress, out byte[] buffer) =>
+        ReadSectorsLong(sectorAddress, 1, out buffer);
+
+    /// <inheritdoc />
+    public ErrorNumber ReadSectorsLong(ulong sectorAddress, uint length, out byte[] buffer)
+    {
+        buffer = null;
+
+        return ErrorNumber.NotImplemented;
     }
 }

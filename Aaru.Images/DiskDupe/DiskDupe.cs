@@ -62,47 +62,46 @@ using Aaru.CommonTypes.Structs;
 
 // ReSharper disable NotAccessedField.Local
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+/// <inheritdoc />
+/// <summary>Implements reading DiskDupe disk images</summary>
+public sealed partial class DiskDupe : IMediaImage
 {
-    /// <inheritdoc />
-    /// <summary>Implements reading DiskDupe disk images</summary>
-    public sealed partial class DiskDupe : IMediaImage
+    /// <summary>The DDI file header after the image has been opened</summary>
+    FileHeader _fileHeader;
+
+    /// <summary>The track map for the image after it has been opened</summary>
+    TrackInfo[] _trackMap;
+
+    /// <summary>The track offsets in the image after the file has been opened</summary>
+    long[] _trackOffsets;
+
+    /// <summary>The ImageFilter we're reading from, after the file has been opened</summary>
+    IFilter _ddiImageFilter;
+    ImageInfo _imageInfo;
+
+    public DiskDupe() => _imageInfo = new ImageInfo
     {
-        /// <summary>The DDI file header after the image has been opened</summary>
-        FileHeader _fileHeader;
-
-        /// <summary>The track map for the image after it has been opened</summary>
-        TrackInfo[] _trackMap;
-
-        /// <summary>The track offsets in the image after the file has been opened</summary>
-        long[] _trackOffsets;
-
-        /// <summary>The ImageFilter we're reading from, after the file has been opened</summary>
-        IFilter _ddiImageFilter;
-        ImageInfo _imageInfo;
-
-        public DiskDupe() => _imageInfo = new ImageInfo
-        {
-            ReadableSectorTags    = new List<SectorTagType>(),
-            ReadableMediaTags     = new List<MediaTagType>(),
-            HasPartitions         = false,
-            HasSessions           = false,
-            Version               = null,
-            Application           = null,
-            ApplicationVersion    = null,
-            Creator               = null,
-            Comments              = null,
-            MediaManufacturer     = null,
-            MediaModel            = null,
-            MediaSerialNumber     = null,
-            MediaBarcode          = null,
-            MediaPartNumber       = null,
-            MediaSequence         = 0,
-            LastMediaSequence     = 0,
-            DriveManufacturer     = null,
-            DriveModel            = null,
-            DriveSerialNumber     = null,
-            DriveFirmwareRevision = null
-        };
-    }
+        ReadableSectorTags    = new List<SectorTagType>(),
+        ReadableMediaTags     = new List<MediaTagType>(),
+        HasPartitions         = false,
+        HasSessions           = false,
+        Version               = null,
+        Application           = null,
+        ApplicationVersion    = null,
+        Creator               = null,
+        Comments              = null,
+        MediaManufacturer     = null,
+        MediaModel            = null,
+        MediaSerialNumber     = null,
+        MediaBarcode          = null,
+        MediaPartNumber       = null,
+        MediaSequence         = 0,
+        LastMediaSequence     = 0,
+        DriveManufacturer     = null,
+        DriveModel            = null,
+        DriveSerialNumber     = null,
+        DriveFirmwareRevision = null
+    };
 }

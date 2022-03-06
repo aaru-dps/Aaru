@@ -35,46 +35,45 @@ using System.Linq;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class VMware
 {
-    public sealed partial class VMware
+    /// <inheritdoc />
+    public bool Identify(IFilter imageFilter)
     {
-        /// <inheritdoc />
-        public bool Identify(IFilter imageFilter)
+        Stream stream = imageFilter.GetDataForkStream();
+
+        byte[] ddfMagic = new byte[0x15];
+
+        if(stream.Length > Marshal.SizeOf<ExtentHeader>())
         {
-            Stream stream = imageFilter.GetDataForkStream();
-
-            byte[] ddfMagic = new byte[0x15];
-
-            if(stream.Length > Marshal.SizeOf<ExtentHeader>())
-            {
-                stream.Seek(0, SeekOrigin.Begin);
-                byte[] vmEHdrB = new byte[Marshal.SizeOf<ExtentHeader>()];
-                stream.Read(vmEHdrB, 0, Marshal.SizeOf<ExtentHeader>());
-                _vmEHdr = Marshal.ByteArrayToStructureLittleEndian<ExtentHeader>(vmEHdrB);
-
-                stream.Seek(0, SeekOrigin.Begin);
-                stream.Read(ddfMagic, 0, 0x15);
-
-                _vmCHdr = new CowHeader();
-
-                if(stream.Length <= Marshal.SizeOf<CowHeader>())
-                    return _ddfMagicBytes.SequenceEqual(ddfMagic) || _vmEHdr.magic == VMWARE_EXTENT_MAGIC ||
-                           _vmCHdr.magic                                           == VMWARE_COW_MAGIC;
-
-                stream.Seek(0, SeekOrigin.Begin);
-                byte[] vmCHdrB = new byte[Marshal.SizeOf<CowHeader>()];
-                stream.Read(vmCHdrB, 0, Marshal.SizeOf<CowHeader>());
-                _vmCHdr = Marshal.ByteArrayToStructureLittleEndian<CowHeader>(vmCHdrB);
-
-                return _ddfMagicBytes.SequenceEqual(ddfMagic) || _vmEHdr.magic == VMWARE_EXTENT_MAGIC ||
-                       _vmCHdr.magic                                           == VMWARE_COW_MAGIC;
-            }
+            stream.Seek(0, SeekOrigin.Begin);
+            byte[] vmEHdrB = new byte[Marshal.SizeOf<ExtentHeader>()];
+            stream.Read(vmEHdrB, 0, Marshal.SizeOf<ExtentHeader>());
+            _vmEHdr = Marshal.ByteArrayToStructureLittleEndian<ExtentHeader>(vmEHdrB);
 
             stream.Seek(0, SeekOrigin.Begin);
             stream.Read(ddfMagic, 0, 0x15);
 
-            return _ddfMagicBytes.SequenceEqual(ddfMagic);
+            _vmCHdr = new CowHeader();
+
+            if(stream.Length <= Marshal.SizeOf<CowHeader>())
+                return _ddfMagicBytes.SequenceEqual(ddfMagic) || _vmEHdr.magic == VMWARE_EXTENT_MAGIC ||
+                       _vmCHdr.magic                                           == VMWARE_COW_MAGIC;
+
+            stream.Seek(0, SeekOrigin.Begin);
+            byte[] vmCHdrB = new byte[Marshal.SizeOf<CowHeader>()];
+            stream.Read(vmCHdrB, 0, Marshal.SizeOf<CowHeader>());
+            _vmCHdr = Marshal.ByteArrayToStructureLittleEndian<CowHeader>(vmCHdrB);
+
+            return _ddfMagicBytes.SequenceEqual(ddfMagic) || _vmEHdr.magic == VMWARE_EXTENT_MAGIC ||
+                   _vmCHdr.magic                                           == VMWARE_COW_MAGIC;
         }
+
+        stream.Seek(0, SeekOrigin.Begin);
+        stream.Read(ddfMagic, 0, 0x15);
+
+        return _ddfMagicBytes.SequenceEqual(ddfMagic);
     }
 }

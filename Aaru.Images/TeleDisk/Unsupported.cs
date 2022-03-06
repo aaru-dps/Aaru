@@ -32,24 +32,23 @@
 
 using Aaru.CommonTypes.Enums;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class TeleDisk
 {
-    public sealed partial class TeleDisk
+    /// <inheritdoc />
+    public ErrorNumber ReadSectorTag(ulong sectorAddress, SectorTagType tag, out byte[] buffer)
     {
-        /// <inheritdoc />
-        public ErrorNumber ReadSectorTag(ulong sectorAddress, SectorTagType tag, out byte[] buffer)
-        {
-            buffer = null;
+        buffer = null;
 
-            return ErrorNumber.NotSupported;
-        }
+        return ErrorNumber.NotSupported;
+    }
 
-        /// <inheritdoc />
-        public ErrorNumber ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag, out byte[] buffer)
-        {
-            buffer = null;
+    /// <inheritdoc />
+    public ErrorNumber ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag, out byte[] buffer)
+    {
+        buffer = null;
 
-            return ErrorNumber.NotSupported;
-        }
+        return ErrorNumber.NotSupported;
     }
 }

@@ -32,18 +32,17 @@
 
 using Aaru.CommonTypes.Metadata;
 
-namespace Aaru.Core.Devices.Report
+namespace Aaru.Core.Devices.Report;
+
+/// <summary>Implements creating a report for a FireWire device</summary>
+public sealed partial class DeviceReport
 {
-    /// <summary>Implements creating a report for a FireWire device</summary>
-    public sealed partial class DeviceReport
+    /// <summary>Fills a device report with parameters specific to a FireWire device</summary>
+    public FireWire FireWireReport() => new FireWire
     {
-        /// <summary>Fills a device report with parameters specific to a FireWire device</summary>
-        public FireWire FireWireReport() => new FireWire
-        {
-            Manufacturer = _dev.FireWireVendorName,
-            Product      = _dev.FireWireModelName,
-            ProductID    = _dev.FireWireModel,
-            VendorID     = _dev.FireWireVendor
-        };
-    }
+        Manufacturer = _dev.FireWireVendorName,
+        Product      = _dev.FireWireModelName,
+        ProductID    = _dev.FireWireModel,
+        VendorID     = _dev.FireWireVendor
+    };
 }

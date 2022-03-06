@@ -34,75 +34,74 @@
 using System;
 using System.Collections.Generic;
 
-namespace Aaru.Filesystems
+namespace Aaru.Filesystems;
+
+public sealed partial class ISO9660
 {
-    public sealed partial class ISO9660
+    struct DecodedVolumeDescriptor
     {
-        struct DecodedVolumeDescriptor
-        {
-            public string   SystemIdentifier;
-            public string   VolumeIdentifier;
-            public string   VolumeSetIdentifier;
-            public string   PublisherIdentifier;
-            public string   DataPreparerIdentifier;
-            public string   ApplicationIdentifier;
-            public DateTime CreationTime;
-            public bool     HasModificationTime;
-            public DateTime ModificationTime;
-            public bool     HasExpirationTime;
-            public DateTime ExpirationTime;
-            public bool     HasEffectiveTime;
-            public DateTime EffectiveTime;
-            public ushort   BlockSize;
-            public uint     Blocks;
-        }
+        public string   SystemIdentifier;
+        public string   VolumeIdentifier;
+        public string   VolumeSetIdentifier;
+        public string   PublisherIdentifier;
+        public string   DataPreparerIdentifier;
+        public string   ApplicationIdentifier;
+        public DateTime CreationTime;
+        public bool     HasModificationTime;
+        public DateTime ModificationTime;
+        public bool     HasExpirationTime;
+        public DateTime ExpirationTime;
+        public bool     HasEffectiveTime;
+        public DateTime EffectiveTime;
+        public ushort   BlockSize;
+        public uint     Blocks;
+    }
 
-        class DecodedDirectoryEntry
-        {
-            public byte[]                         AmigaComment;
-            public AmigaProtection?               AmigaProtection;
-            public byte?                          AppleDosType;
-            public byte[]                         AppleIcon;
-            public ushort?                        AppleProDosType;
-            public DecodedDirectoryEntry          AssociatedFile;
-            public CdiSystemArea?                 CdiSystemArea;
-            public List<(uint extent, uint size)> Extents;
-            public string                         Filename;
-            public byte                           FileUnitSize;
-            public AppleCommon.FInfo?             FinderInfo;
-            public FileFlags                      Flags;
-            public byte                           Interleave;
-            public PosixAttributes?               PosixAttributes;
-            public PosixAttributesOld?            PosixAttributesOld;
-            public PosixDeviceNumber?             PosixDeviceNumber;
-            public DecodedDirectoryEntry          ResourceFork;
-            public byte[]                         RockRidgeAlternateName;
-            public bool                           RockRidgeRelocated;
-            public byte[]                         RripAccess;
-            public byte[]                         RripAttributeChange;
-            public byte[]                         RripBackup;
-            public byte[]                         RripCreation;
-            public byte[]                         RripEffective;
-            public byte[]                         RripExpiration;
-            public byte[]                         RripModify;
-            public ulong                          Size;
-            public string                         SymbolicLink;
-            public DateTime?                      Timestamp;
-            public ushort                         VolumeSequenceNumber;
-            public CdromXa?                       XA;
-            public byte                           XattrLength;
+    class DecodedDirectoryEntry
+    {
+        public byte[]                         AmigaComment;
+        public AmigaProtection?               AmigaProtection;
+        public byte?                          AppleDosType;
+        public byte[]                         AppleIcon;
+        public ushort?                        AppleProDosType;
+        public DecodedDirectoryEntry          AssociatedFile;
+        public CdiSystemArea?                 CdiSystemArea;
+        public List<(uint extent, uint size)> Extents;
+        public string                         Filename;
+        public byte                           FileUnitSize;
+        public AppleCommon.FInfo?             FinderInfo;
+        public FileFlags                      Flags;
+        public byte                           Interleave;
+        public PosixAttributes?               PosixAttributes;
+        public PosixAttributesOld?            PosixAttributesOld;
+        public PosixDeviceNumber?             PosixDeviceNumber;
+        public DecodedDirectoryEntry          ResourceFork;
+        public byte[]                         RockRidgeAlternateName;
+        public bool                           RockRidgeRelocated;
+        public byte[]                         RripAccess;
+        public byte[]                         RripAttributeChange;
+        public byte[]                         RripBackup;
+        public byte[]                         RripCreation;
+        public byte[]                         RripEffective;
+        public byte[]                         RripExpiration;
+        public byte[]                         RripModify;
+        public ulong                          Size;
+        public string                         SymbolicLink;
+        public DateTime?                      Timestamp;
+        public ushort                         VolumeSequenceNumber;
+        public CdromXa?                       XA;
+        public byte                           XattrLength;
 
-            public override string ToString() => Filename;
-        }
+        public override string ToString() => Filename;
+    }
 
-        class PathTableEntryInternal
-        {
-            public uint   Extent;
-            public string Name;
-            public ushort Parent;
-            public byte   XattrLength;
+    class PathTableEntryInternal
+    {
+        public uint   Extent;
+        public string Name;
+        public ushort Parent;
+        public byte   XattrLength;
 
-            public override string ToString() => Name;
-        }
+        public override string ToString() => Name;
     }
 }

@@ -37,79 +37,78 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 using Schemas;
 
-namespace Aaru.DiscImages
-{
-    public sealed partial class CloneCd
-    {
-        /// <inheritdoc />
-        public OpticalImageCapabilities OpticalCapabilities => OpticalImageCapabilities.CanStoreAudioTracks  |
-                                                               OpticalImageCapabilities.CanStoreDataTracks   |
-                                                               OpticalImageCapabilities.CanStorePregaps      |
-                                                               OpticalImageCapabilities.CanStoreSubchannelRw |
+namespace Aaru.DiscImages;
 
-                                                               // TODO: Disabled until 6.0
-                                                               //OpticalImageCapabilities.CanStoreSessions     |
-                                                               OpticalImageCapabilities.CanStoreIsrc       |
-                                                               OpticalImageCapabilities.CanStoreCdText     |
-                                                               OpticalImageCapabilities.CanStoreMcn        |
-                                                               OpticalImageCapabilities.CanStoreRawData    |
-                                                               OpticalImageCapabilities.CanStoreCookedData |
-                                                               OpticalImageCapabilities.CanStoreMultipleTracks;
-        /// <inheritdoc />
-        public ImageInfo Info => _imageInfo;
-        /// <inheritdoc />
-        public string Name => "CloneCD";
-        /// <inheritdoc />
-        public Guid Id => new Guid("EE9C2975-2E79-427A-8EE9-F86F19165784");
-        /// <inheritdoc />
-        public string Format => "CloneCD";
-        /// <inheritdoc />
-        public string Author => "Natalia Portillo";
-        /// <inheritdoc />
-        public List<Partition> Partitions { get; private set; }
-        /// <inheritdoc />
-        public List<Track> Tracks { get; private set; }
-        /// <inheritdoc />
-        public List<Session> Sessions { get; private set; }
-        /// <inheritdoc />
-        public List<DumpHardwareType> DumpHardware => null;
-        /// <inheritdoc />
-        public CICMMetadataType CicmMetadata => null;
-        /// <inheritdoc />
-        public IEnumerable<MediaTagType> SupportedMediaTags => new[]
-        {
-            MediaTagType.CD_MCN, MediaTagType.CD_FullTOC
-        };
-        /// <inheritdoc />
-        public IEnumerable<SectorTagType> SupportedSectorTags => new[]
-        {
-            SectorTagType.CdSectorEcc, SectorTagType.CdSectorEccP, SectorTagType.CdSectorEccQ,
-            SectorTagType.CdSectorEdc, SectorTagType.CdSectorHeader, SectorTagType.CdSectorSubHeader,
-            SectorTagType.CdSectorSync, SectorTagType.CdTrackFlags, SectorTagType.CdSectorSubchannel
-        };
-        /// <inheritdoc />
-        public IEnumerable<MediaType> SupportedMediaTypes => new[]
-        {
-            MediaType.CD, MediaType.CDDA, MediaType.CDEG, MediaType.CDG, MediaType.CDI, MediaType.CDMIDI,
-            MediaType.CDMRW, MediaType.CDPLUS, MediaType.CDR, MediaType.CDROM, MediaType.CDROMXA, MediaType.CDRW,
-            MediaType.CDV, MediaType.DTSCD, MediaType.JaguarCD, MediaType.MEGACD, MediaType.PS1CD, MediaType.PS2CD,
-            MediaType.SuperCDROM2, MediaType.SVCD, MediaType.SATURNCD, MediaType.ThreeDO, MediaType.VCD,
-            MediaType.VCDHD, MediaType.NeoGeoCD, MediaType.PCFX, MediaType.CDTV, MediaType.CD32, MediaType.Nuon,
-            MediaType.Playdia, MediaType.Pippin, MediaType.FMTOWNS, MediaType.MilCD, MediaType.VideoNow,
-            MediaType.VideoNowColor, MediaType.VideoNowXp, MediaType.CVD, MediaType.PCD
-        };
-        /// <inheritdoc />
-        public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>
-            new (string name, Type type, string description, object @default)[]
-                {};
-        /// <inheritdoc />
-        public IEnumerable<string> KnownExtensions => new[]
-        {
-            ".ccd"
-        };
-        /// <inheritdoc />
-        public bool IsWriting { get; private set; }
-        /// <inheritdoc />
-        public string ErrorMessage { get; private set; }
-    }
+public sealed partial class CloneCd
+{
+    /// <inheritdoc />
+    public OpticalImageCapabilities OpticalCapabilities => OpticalImageCapabilities.CanStoreAudioTracks  |
+                                                           OpticalImageCapabilities.CanStoreDataTracks   |
+                                                           OpticalImageCapabilities.CanStorePregaps      |
+                                                           OpticalImageCapabilities.CanStoreSubchannelRw |
+
+                                                           // TODO: Disabled until 6.0
+                                                           //OpticalImageCapabilities.CanStoreSessions     |
+                                                           OpticalImageCapabilities.CanStoreIsrc       |
+                                                           OpticalImageCapabilities.CanStoreCdText     |
+                                                           OpticalImageCapabilities.CanStoreMcn        |
+                                                           OpticalImageCapabilities.CanStoreRawData    |
+                                                           OpticalImageCapabilities.CanStoreCookedData |
+                                                           OpticalImageCapabilities.CanStoreMultipleTracks;
+    /// <inheritdoc />
+    public ImageInfo Info => _imageInfo;
+    /// <inheritdoc />
+    public string Name => "CloneCD";
+    /// <inheritdoc />
+    public Guid Id => new Guid("EE9C2975-2E79-427A-8EE9-F86F19165784");
+    /// <inheritdoc />
+    public string Format => "CloneCD";
+    /// <inheritdoc />
+    public string Author => "Natalia Portillo";
+    /// <inheritdoc />
+    public List<Partition> Partitions { get; private set; }
+    /// <inheritdoc />
+    public List<Track> Tracks { get; private set; }
+    /// <inheritdoc />
+    public List<Session> Sessions { get; private set; }
+    /// <inheritdoc />
+    public List<DumpHardwareType> DumpHardware => null;
+    /// <inheritdoc />
+    public CICMMetadataType CicmMetadata => null;
+    /// <inheritdoc />
+    public IEnumerable<MediaTagType> SupportedMediaTags => new[]
+    {
+        MediaTagType.CD_MCN, MediaTagType.CD_FullTOC
+    };
+    /// <inheritdoc />
+    public IEnumerable<SectorTagType> SupportedSectorTags => new[]
+    {
+        SectorTagType.CdSectorEcc, SectorTagType.CdSectorEccP, SectorTagType.CdSectorEccQ,
+        SectorTagType.CdSectorEdc, SectorTagType.CdSectorHeader, SectorTagType.CdSectorSubHeader,
+        SectorTagType.CdSectorSync, SectorTagType.CdTrackFlags, SectorTagType.CdSectorSubchannel
+    };
+    /// <inheritdoc />
+    public IEnumerable<MediaType> SupportedMediaTypes => new[]
+    {
+        MediaType.CD, MediaType.CDDA, MediaType.CDEG, MediaType.CDG, MediaType.CDI, MediaType.CDMIDI,
+        MediaType.CDMRW, MediaType.CDPLUS, MediaType.CDR, MediaType.CDROM, MediaType.CDROMXA, MediaType.CDRW,
+        MediaType.CDV, MediaType.DTSCD, MediaType.JaguarCD, MediaType.MEGACD, MediaType.PS1CD, MediaType.PS2CD,
+        MediaType.SuperCDROM2, MediaType.SVCD, MediaType.SATURNCD, MediaType.ThreeDO, MediaType.VCD,
+        MediaType.VCDHD, MediaType.NeoGeoCD, MediaType.PCFX, MediaType.CDTV, MediaType.CD32, MediaType.Nuon,
+        MediaType.Playdia, MediaType.Pippin, MediaType.FMTOWNS, MediaType.MilCD, MediaType.VideoNow,
+        MediaType.VideoNowColor, MediaType.VideoNowXp, MediaType.CVD, MediaType.PCD
+    };
+    /// <inheritdoc />
+    public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>
+        new (string name, Type type, string description, object @default)[]
+            {};
+    /// <inheritdoc />
+    public IEnumerable<string> KnownExtensions => new[]
+    {
+        ".ccd"
+    };
+    /// <inheritdoc />
+    public bool IsWriting { get; private set; }
+    /// <inheritdoc />
+    public string ErrorMessage { get; private set; }
 }

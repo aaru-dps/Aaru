@@ -33,76 +33,75 @@
 using System;
 using Aaru.Console;
 
-namespace Aaru.Devices
+namespace Aaru.Devices;
+
+public sealed partial class Device
 {
-    public sealed partial class Device
+    /// <summary>Gets the underlying drive cylinder, head and index bytes for the specified SCSI LBA.</summary>
+    /// <param name="buffer">Buffer.</param>
+    /// <param name="senseBuffer">Sense buffer.</param>
+    /// <param name="lba">Address.</param>
+    /// <param name="timeout">Timeout.</param>
+    /// <param name="duration">Duration.</param>
+    public bool ArchiveCorpRequestBlockAddress(out byte[] buffer, out byte[] senseBuffer, uint lba, uint timeout,
+                                               out double duration)
     {
-        /// <summary>Gets the underlying drive cylinder, head and index bytes for the specified SCSI LBA.</summary>
-        /// <param name="buffer">Buffer.</param>
-        /// <param name="senseBuffer">Sense buffer.</param>
-        /// <param name="lba">Address.</param>
-        /// <param name="timeout">Timeout.</param>
-        /// <param name="duration">Duration.</param>
-        public bool ArchiveCorpRequestBlockAddress(out byte[] buffer, out byte[] senseBuffer, uint lba, uint timeout,
-                                                   out double duration)
-        {
-            buffer = new byte[3];
-            byte[] cdb = new byte[6];
-            senseBuffer = new byte[64];
+        buffer = new byte[3];
+        byte[] cdb = new byte[6];
+        senseBuffer = new byte[64];
 
-            cdb[0] = (byte)ScsiCommands.ArchiveRequestBlockAddress;
-            cdb[1] = (byte)((lba & 0x1F0000) >> 16);
-            cdb[2] = (byte)((lba & 0xFF00)   >> 8);
-            cdb[3] = (byte)(lba & 0xFF);
-            cdb[4] = 3;
+        cdb[0] = (byte)ScsiCommands.ArchiveRequestBlockAddress;
+        cdb[1] = (byte)((lba & 0x1F0000) >> 16);
+        cdb[2] = (byte)((lba & 0xFF00)   >> 8);
+        cdb[3] = (byte)(lba & 0xFF);
+        cdb[4] = 3;
 
-            LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
-                                        out bool sense);
+        LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+                                    out bool sense);
 
-            Error = LastError != 0;
+        Error = LastError != 0;
 
-            AaruConsole.DebugWriteLine("SCSI Device", "ARCHIVE CORP. REQUEST BLOCK ADDRESS took {0} ms.", duration);
+        AaruConsole.DebugWriteLine("SCSI Device", "ARCHIVE CORP. REQUEST BLOCK ADDRESS took {0} ms.", duration);
 
-            return sense;
-        }
+        return sense;
+    }
 
-        /// <summary>Gets the underlying drive cylinder, head and index bytes for the specified SCSI LBA.</summary>
-        /// <param name="senseBuffer">Sense buffer.</param>
-        /// <param name="lba">Logical Block Address, starting from 1.</param>
-        /// <param name="timeout">Timeout.</param>
-        /// <param name="duration">Duration.</param>
-        public bool ArchiveCorpSeekBlock(out byte[] senseBuffer, uint lba, uint timeout, out double duration) =>
-            ArchiveCorpSeekBlock(out senseBuffer, false, lba, timeout, out duration);
+    /// <summary>Gets the underlying drive cylinder, head and index bytes for the specified SCSI LBA.</summary>
+    /// <param name="senseBuffer">Sense buffer.</param>
+    /// <param name="lba">Logical Block Address, starting from 1.</param>
+    /// <param name="timeout">Timeout.</param>
+    /// <param name="duration">Duration.</param>
+    public bool ArchiveCorpSeekBlock(out byte[] senseBuffer, uint lba, uint timeout, out double duration) =>
+        ArchiveCorpSeekBlock(out senseBuffer, false, lba, timeout, out duration);
 
-        /// <summary>Positions the tape at the specified block address</summary>
-        /// <param name="senseBuffer">Sense buffer.</param>
-        /// <param name="immediate">If set to <c>true</c>, return from the command immediately.</param>
-        /// <param name="lba">Logical Block Address, starting from 1.</param>
-        /// <param name="timeout">Timeout.</param>
-        /// <param name="duration">Duration.</param>
-        public bool ArchiveCorpSeekBlock(out byte[] senseBuffer, bool immediate, uint lba, uint timeout,
-                                         out double duration)
-        {
-            byte[] buffer = Array.Empty<byte>();
-            byte[] cdb    = new byte[6];
-            senseBuffer = new byte[64];
+    /// <summary>Positions the tape at the specified block address</summary>
+    /// <param name="senseBuffer">Sense buffer.</param>
+    /// <param name="immediate">If set to <c>true</c>, return from the command immediately.</param>
+    /// <param name="lba">Logical Block Address, starting from 1.</param>
+    /// <param name="timeout">Timeout.</param>
+    /// <param name="duration">Duration.</param>
+    public bool ArchiveCorpSeekBlock(out byte[] senseBuffer, bool immediate, uint lba, uint timeout,
+                                     out double duration)
+    {
+        byte[] buffer = Array.Empty<byte>();
+        byte[] cdb    = new byte[6];
+        senseBuffer = new byte[64];
 
-            cdb[0] = (byte)ScsiCommands.ArchiveSeekBlock;
-            cdb[1] = (byte)((lba & 0x1F0000) >> 16);
-            cdb[2] = (byte)((lba & 0xFF00)   >> 8);
-            cdb[3] = (byte)(lba & 0xFF);
+        cdb[0] = (byte)ScsiCommands.ArchiveSeekBlock;
+        cdb[1] = (byte)((lba & 0x1F0000) >> 16);
+        cdb[2] = (byte)((lba & 0xFF00)   >> 8);
+        cdb[3] = (byte)(lba & 0xFF);
 
-            if(immediate)
-                cdb[1] += 0x01;
+        if(immediate)
+            cdb[1] += 0x01;
 
-            LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.None, out duration,
-                                        out bool sense);
+        LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.None, out duration,
+                                    out bool sense);
 
-            Error = LastError != 0;
+        Error = LastError != 0;
 
-            AaruConsole.DebugWriteLine("SCSI Device", "ARCHIVE CORP. SEEK BLOCK took {0} ms.", duration);
+        AaruConsole.DebugWriteLine("SCSI Device", "ARCHIVE CORP. SEEK BLOCK took {0} ms.", duration);
 
-            return sense;
-        }
+        return sense;
     }
 }

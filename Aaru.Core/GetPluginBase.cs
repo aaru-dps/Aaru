@@ -34,34 +34,33 @@ using Aaru.Checksums;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 
-namespace Aaru.Core
+namespace Aaru.Core;
+
+/// <summary>Plugin base operations</summary>
+public static class GetPluginBase
 {
-    /// <summary>Plugin base operations</summary>
-    public static class GetPluginBase
+    /// <summary>Gets an instance with all the known plugins</summary>
+    public static PluginBase Instance
     {
-        /// <summary>Gets an instance with all the known plugins</summary>
-        public static PluginBase Instance
+        get
         {
-            get
-            {
-                var instance = new PluginBase();
+            var instance = new PluginBase();
 
-                IPluginRegister checksumRegister    = new Register();
-                IPluginRegister imagesRegister      = new DiscImages.Register();
-                IPluginRegister filesystemsRegister = new Aaru.Filesystems.Register();
-                IPluginRegister filtersRegister     = new Filters.Register();
-                IPluginRegister partitionsRegister  = new Aaru.Partitions.Register();
-                IPluginRegister archiveRegister     = new Archives.Register();
+            IPluginRegister checksumRegister    = new Register();
+            IPluginRegister imagesRegister      = new DiscImages.Register();
+            IPluginRegister filesystemsRegister = new Aaru.Filesystems.Register();
+            IPluginRegister filtersRegister     = new Filters.Register();
+            IPluginRegister partitionsRegister  = new Aaru.Partitions.Register();
+            IPluginRegister archiveRegister     = new Archives.Register();
 
-                instance.AddPlugins(checksumRegister);
-                instance.AddPlugins(imagesRegister);
-                instance.AddPlugins(filesystemsRegister);
-                instance.AddPlugins(filtersRegister);
-                instance.AddPlugins(partitionsRegister);
-                instance.AddPlugins(archiveRegister);
+            instance.AddPlugins(checksumRegister);
+            instance.AddPlugins(imagesRegister);
+            instance.AddPlugins(filesystemsRegister);
+            instance.AddPlugins(filtersRegister);
+            instance.AddPlugins(partitionsRegister);
+            instance.AddPlugins(archiveRegister);
 
-                return instance;
-            }
+            return instance;
         }
     }
 }

@@ -34,33 +34,32 @@ using System.IO;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class KryoFlux
 {
-    public sealed partial class KryoFlux
+    /// <inheritdoc />
+    public bool Identify(IFilter imageFilter)
     {
-        /// <inheritdoc />
-        public bool Identify(IFilter imageFilter)
-        {
-            Stream stream = imageFilter.GetDataForkStream();
-            stream.Seek(0, SeekOrigin.Begin);
+        Stream stream = imageFilter.GetDataForkStream();
+        stream.Seek(0, SeekOrigin.Begin);
 
-            if(stream.Length < Marshal.SizeOf<OobBlock>())
-                return false;
+        if(stream.Length < Marshal.SizeOf<OobBlock>())
+            return false;
 
-            byte[] hdr = new byte[Marshal.SizeOf<OobBlock>()];
-            stream.Read(hdr, 0, Marshal.SizeOf<OobBlock>());
+        byte[] hdr = new byte[Marshal.SizeOf<OobBlock>()];
+        stream.Read(hdr, 0, Marshal.SizeOf<OobBlock>());
 
-            OobBlock header = Marshal.ByteArrayToStructureLittleEndian<OobBlock>(hdr);
+        OobBlock header = Marshal.ByteArrayToStructureLittleEndian<OobBlock>(hdr);
 
-            stream.Seek(-Marshal.SizeOf<OobBlock>(), SeekOrigin.End);
+        stream.Seek(-Marshal.SizeOf<OobBlock>(), SeekOrigin.End);
 
-            hdr = new byte[Marshal.SizeOf<OobBlock>()];
-            stream.Read(hdr, 0, Marshal.SizeOf<OobBlock>());
+        hdr = new byte[Marshal.SizeOf<OobBlock>()];
+        stream.Read(hdr, 0, Marshal.SizeOf<OobBlock>());
 
-            OobBlock footer = Marshal.ByteArrayToStructureLittleEndian<OobBlock>(hdr);
+        OobBlock footer = Marshal.ByteArrayToStructureLittleEndian<OobBlock>(hdr);
 
-            return header.blockId == BlockIds.Oob && header.blockType == OobTypes.KFInfo &&
-                   footer.blockId == BlockIds.Oob && footer.blockType == OobTypes.EOF    && footer.length == 0x0D0D;
-        }
+        return header.blockId == BlockIds.Oob && header.blockType == OobTypes.KFInfo &&
+               footer.blockId == BlockIds.Oob && footer.blockType == OobTypes.EOF    && footer.length == 0x0D0D;
     }
 }

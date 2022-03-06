@@ -30,13 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class Virtual98
 {
-    public sealed partial class Virtual98
+    readonly byte[] _signature =
     {
-        readonly byte[] _signature =
-        {
-            0x56, 0x48, 0x44, 0x31, 0x2E, 0x30, 0x30, 0x00
-        };
-    }
+        0x56, 0x48, 0x44, 0x31, 0x2E, 0x30, 0x30, 0x00
+    };
 }

@@ -37,50 +37,49 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 using Schemas;
 
-namespace Aaru.DiscImages
-{
-    public sealed partial class Qcow2
-    {
-        /// <inheritdoc />
-        public ImageInfo Info => _imageInfo;
+namespace Aaru.DiscImages;
 
-        /// <inheritdoc />
-        public string Name => "QEMU Copy-On-Write disk image v2";
-        /// <inheritdoc />
-        public Guid Id => new Guid("F20107CB-95B3-4398-894B-975261F1E8C5");
-        /// <inheritdoc />
-        public string Author => "Natalia Portillo";
-        /// <inheritdoc />
-        public string Format => "QEMU Copy-On-Write";
-        /// <inheritdoc />
-        public List<DumpHardwareType> DumpHardware => null;
-        /// <inheritdoc />
-        public CICMMetadataType CicmMetadata => null;
-        /// <inheritdoc />
-        public IEnumerable<MediaTagType> SupportedMediaTags => new MediaTagType[]
+public sealed partial class Qcow2
+{
+    /// <inheritdoc />
+    public ImageInfo Info => _imageInfo;
+
+    /// <inheritdoc />
+    public string Name => "QEMU Copy-On-Write disk image v2";
+    /// <inheritdoc />
+    public Guid Id => new Guid("F20107CB-95B3-4398-894B-975261F1E8C5");
+    /// <inheritdoc />
+    public string Author => "Natalia Portillo";
+    /// <inheritdoc />
+    public string Format => "QEMU Copy-On-Write";
+    /// <inheritdoc />
+    public List<DumpHardwareType> DumpHardware => null;
+    /// <inheritdoc />
+    public CICMMetadataType CicmMetadata => null;
+    /// <inheritdoc />
+    public IEnumerable<MediaTagType> SupportedMediaTags => new MediaTagType[]
+        {};
+    /// <inheritdoc />
+    public IEnumerable<SectorTagType> SupportedSectorTags => new SectorTagType[]
+        {};
+    /// <inheritdoc />
+    public IEnumerable<MediaType> SupportedMediaTypes => new[]
+    {
+        MediaType.Unknown, MediaType.GENERIC_HDD, MediaType.FlashDrive, MediaType.CompactFlash,
+        MediaType.CompactFlashType2, MediaType.PCCardTypeI, MediaType.PCCardTypeII, MediaType.PCCardTypeIII,
+        MediaType.PCCardTypeIV
+    };
+    /// <inheritdoc />
+    public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>
+        new (string name, Type type, string description, object @default)[]
             {};
-        /// <inheritdoc />
-        public IEnumerable<SectorTagType> SupportedSectorTags => new SectorTagType[]
-            {};
-        /// <inheritdoc />
-        public IEnumerable<MediaType> SupportedMediaTypes => new[]
-        {
-            MediaType.Unknown, MediaType.GENERIC_HDD, MediaType.FlashDrive, MediaType.CompactFlash,
-            MediaType.CompactFlashType2, MediaType.PCCardTypeI, MediaType.PCCardTypeII, MediaType.PCCardTypeIII,
-            MediaType.PCCardTypeIV
-        };
-        /// <inheritdoc />
-        public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>
-            new (string name, Type type, string description, object @default)[]
-                {};
-        /// <inheritdoc />
-        public IEnumerable<string> KnownExtensions => new[]
-        {
-            ".qcow2", ".qc2", ".qcow3", ".qc3"
-        };
-        /// <inheritdoc />
-        public bool IsWriting { get; private set; }
-        /// <inheritdoc />
-        public string ErrorMessage { get; private set; }
-    }
+    /// <inheritdoc />
+    public IEnumerable<string> KnownExtensions => new[]
+    {
+        ".qcow2", ".qc2", ".qcow3", ".qc3"
+    };
+    /// <inheritdoc />
+    public bool IsWriting { get; private set; }
+    /// <inheritdoc />
+    public string ErrorMessage { get; private set; }
 }

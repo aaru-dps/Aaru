@@ -30,11 +30,10 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Gui.Models
+namespace Aaru.Gui.Models;
+
+public sealed class EncodingModel
 {
-    public sealed class EncodingModel
-    {
-        public string Name        { get; set; }
-        public string DisplayName { get; set; }
-    }
+    public string Name        { get; set; }
+    public string DisplayName { get; set; }
 }

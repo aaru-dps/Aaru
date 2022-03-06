@@ -37,50 +37,49 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 using Schemas;
 
-namespace Aaru.DiscImages
-{
-    public sealed partial class CisCopy
-    {
-        /// <inheritdoc />
-        public string Name => "CisCopy Disk Image (DC-File)";
-        /// <inheritdoc />
-        public Guid Id => new Guid("EDF20CC7-6012-49E2-9E92-663A53E42130");
-        /// <inheritdoc />
-        public string Format => "CisCopy";
-        /// <inheritdoc />
-        public string Author => "Natalia Portillo";
-        /// <inheritdoc />
-        public ImageInfo Info => _imageInfo;
-        /// <inheritdoc />
-        public List<DumpHardwareType> DumpHardware => null;
-        /// <inheritdoc />
-        public CICMMetadataType CicmMetadata => null;
-        /// <inheritdoc />
-        public IEnumerable<MediaTagType> SupportedMediaTags => new MediaTagType[]
-            {};
-        /// <inheritdoc />
-        public IEnumerable<SectorTagType> SupportedSectorTags => new SectorTagType[]
-            {};
+namespace Aaru.DiscImages;
 
-        // TODO: Test with real hardware to see real supported media
-        /// <inheritdoc />
-        public IEnumerable<MediaType> SupportedMediaTypes => new[]
-        {
-            MediaType.DOS_35_DS_DD_9, MediaType.DOS_35_HD, MediaType.DOS_525_DS_DD_8, MediaType.DOS_525_DS_DD_9,
-            MediaType.DOS_525_HD, MediaType.DOS_525_SS_DD_8, MediaType.DOS_525_SS_DD_9
-        };
-        /// <inheritdoc />
-        public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>
-            new (string name, Type type, string description, object @default)[]
-                {};
-        /// <inheritdoc />
-        public IEnumerable<string> KnownExtensions => new[]
-        {
-            ".dcf"
-        };
-        /// <inheritdoc />
-        public bool IsWriting { get; private set; }
-        /// <inheritdoc />
-        public string ErrorMessage { get; private set; }
-    }
+public sealed partial class CisCopy
+{
+    /// <inheritdoc />
+    public string Name => "CisCopy Disk Image (DC-File)";
+    /// <inheritdoc />
+    public Guid Id => new Guid("EDF20CC7-6012-49E2-9E92-663A53E42130");
+    /// <inheritdoc />
+    public string Format => "CisCopy";
+    /// <inheritdoc />
+    public string Author => "Natalia Portillo";
+    /// <inheritdoc />
+    public ImageInfo Info => _imageInfo;
+    /// <inheritdoc />
+    public List<DumpHardwareType> DumpHardware => null;
+    /// <inheritdoc />
+    public CICMMetadataType CicmMetadata => null;
+    /// <inheritdoc />
+    public IEnumerable<MediaTagType> SupportedMediaTags => new MediaTagType[]
+        {};
+    /// <inheritdoc />
+    public IEnumerable<SectorTagType> SupportedSectorTags => new SectorTagType[]
+        {};
+
+    // TODO: Test with real hardware to see real supported media
+    /// <inheritdoc />
+    public IEnumerable<MediaType> SupportedMediaTypes => new[]
+    {
+        MediaType.DOS_35_DS_DD_9, MediaType.DOS_35_HD, MediaType.DOS_525_DS_DD_8, MediaType.DOS_525_DS_DD_9,
+        MediaType.DOS_525_HD, MediaType.DOS_525_SS_DD_8, MediaType.DOS_525_SS_DD_9
+    };
+    /// <inheritdoc />
+    public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>
+        new (string name, Type type, string description, object @default)[]
+            {};
+    /// <inheritdoc />
+    public IEnumerable<string> KnownExtensions => new[]
+    {
+        ".dcf"
+    };
+    /// <inheritdoc />
+    public bool IsWriting { get; private set; }
+    /// <inheritdoc />
+    public string ErrorMessage { get; private set; }
 }

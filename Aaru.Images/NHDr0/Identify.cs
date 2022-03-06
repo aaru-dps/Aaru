@@ -37,45 +37,44 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class Nhdr0
 {
-    public sealed partial class Nhdr0
+    /// <inheritdoc />
+    public bool Identify(IFilter imageFilter)
     {
-        /// <inheritdoc />
-        public bool Identify(IFilter imageFilter)
-        {
-            Stream stream = imageFilter.GetDataForkStream();
-            stream.Seek(0, SeekOrigin.Begin);
+        Stream stream = imageFilter.GetDataForkStream();
+        stream.Seek(0, SeekOrigin.Begin);
 
-            // Even if comment is supposedly ASCII, I'm pretty sure most emulators allow Shift-JIS to be used :p
-            var shiftjis = Encoding.GetEncoding("shift_jis");
+        // Even if comment is supposedly ASCII, I'm pretty sure most emulators allow Shift-JIS to be used :p
+        var shiftjis = Encoding.GetEncoding("shift_jis");
 
-            if(stream.Length < Marshal.SizeOf<Header>())
-                return false;
+        if(stream.Length < Marshal.SizeOf<Header>())
+            return false;
 
-            byte[] hdrB = new byte[Marshal.SizeOf<Header>()];
-            stream.Read(hdrB, 0, hdrB.Length);
+        byte[] hdrB = new byte[Marshal.SizeOf<Header>()];
+        stream.Read(hdrB, 0, hdrB.Length);
 
-            _nhdhdr = Marshal.ByteArrayToStructureLittleEndian<Header>(hdrB);
+        _nhdhdr = Marshal.ByteArrayToStructureLittleEndian<Header>(hdrB);
 
-            if(!_nhdhdr.szFileID.SequenceEqual(_signature))
-                return false;
+        if(!_nhdhdr.szFileID.SequenceEqual(_signature))
+            return false;
 
-            AaruConsole.DebugWriteLine("NHDr0 plugin", "nhdhdr.szFileID = \"{0}\"",
-                                       StringHandlers.CToString(_nhdhdr.szFileID, shiftjis));
+        AaruConsole.DebugWriteLine("NHDr0 plugin", "nhdhdr.szFileID = \"{0}\"",
+                                   StringHandlers.CToString(_nhdhdr.szFileID, shiftjis));
 
-            AaruConsole.DebugWriteLine("NHDr0 plugin", "nhdhdr.reserved1 = {0}", _nhdhdr.reserved1);
+        AaruConsole.DebugWriteLine("NHDr0 plugin", "nhdhdr.reserved1 = {0}", _nhdhdr.reserved1);
 
-            AaruConsole.DebugWriteLine("NHDr0 plugin", "nhdhdr.szComment = \"{0}\"",
-                                       StringHandlers.CToString(_nhdhdr.szComment, shiftjis));
+        AaruConsole.DebugWriteLine("NHDr0 plugin", "nhdhdr.szComment = \"{0}\"",
+                                   StringHandlers.CToString(_nhdhdr.szComment, shiftjis));
 
-            AaruConsole.DebugWriteLine("NHDr0 plugin", "nhdhdr.dwHeadSize = {0}", _nhdhdr.dwHeadSize);
-            AaruConsole.DebugWriteLine("NHDr0 plugin", "nhdhdr.dwCylinder = {0}", _nhdhdr.dwCylinder);
-            AaruConsole.DebugWriteLine("NHDr0 plugin", "nhdhdr.wHead = {0}", _nhdhdr.wHead);
-            AaruConsole.DebugWriteLine("NHDr0 plugin", "nhdhdr.wSect = {0}", _nhdhdr.wSect);
-            AaruConsole.DebugWriteLine("NHDr0 plugin", "nhdhdr.wSectLen = {0}", _nhdhdr.wSectLen);
+        AaruConsole.DebugWriteLine("NHDr0 plugin", "nhdhdr.dwHeadSize = {0}", _nhdhdr.dwHeadSize);
+        AaruConsole.DebugWriteLine("NHDr0 plugin", "nhdhdr.dwCylinder = {0}", _nhdhdr.dwCylinder);
+        AaruConsole.DebugWriteLine("NHDr0 plugin", "nhdhdr.wHead = {0}", _nhdhdr.wHead);
+        AaruConsole.DebugWriteLine("NHDr0 plugin", "nhdhdr.wSect = {0}", _nhdhdr.wSect);
+        AaruConsole.DebugWriteLine("NHDr0 plugin", "nhdhdr.wSectLen = {0}", _nhdhdr.wSectLen);
 
-            return true;
-        }
+        return true;
     }
 }

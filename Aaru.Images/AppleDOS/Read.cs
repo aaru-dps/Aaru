@@ -36,85 +36,84 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class AppleDos
 {
-    public sealed partial class AppleDos
+    /// <inheritdoc />
+    public ErrorNumber Open(IFilter imageFilter)
     {
-        /// <inheritdoc />
-        public ErrorNumber Open(IFilter imageFilter)
+        Stream stream = imageFilter.GetDataForkStream();
+        stream.Seek(0, SeekOrigin.Begin);
+
+        byte[] tmp = new byte[imageFilter.DataForkLength];
+        stream.Read(tmp, 0, tmp.Length);
+
+        _extension = Path.GetExtension(imageFilter.Filename)?.ToLower();
+
+        if((_extension == ".d13" || _extension == ".do") &&
+           tmp.Length == 116480)
         {
-            Stream stream = imageFilter.GetDataForkStream();
-            stream.Seek(0, SeekOrigin.Begin);
+            _dos32         = true;
+            _deinterleaved = tmp;
+        }
+        else
+        {
+            bool isDos = tmp[0x11001] == 17 && tmp[0x11002] < 16 && tmp[0x11027] <= 122 && tmp[0x11034] == 35 &&
+                         tmp[0x11035] == 16 && tmp[0x11036] == 0 && tmp[0x11037] == 1;
 
-            byte[] tmp = new byte[imageFilter.DataForkLength];
-            stream.Read(tmp, 0, tmp.Length);
+            _deinterleaved = new byte[tmp.Length];
 
-            _extension = Path.GetExtension(imageFilter.Filename)?.ToLower();
+            int[] offsets = _extension == ".do"
+                                ? isDos
+                                      ? _deinterleave
+                                      : _interleave
+                                : isDos
+                                    ? _interleave
+                                    : _deinterleave;
 
-            if((_extension == ".d13" || _extension == ".do") &&
-               tmp.Length == 116480)
+            for(int t = 0; t < 35; t++)
             {
-                _dos32         = true;
-                _deinterleaved = tmp;
+                for(int s = 0; s < 16; s++)
+                    Array.Copy(tmp, (t * 16 * 256) + (s * 256), _deinterleaved, (t * 16 * 256) + (offsets[s] * 256),
+                               256);
             }
-            else
-            {
-                bool isDos = tmp[0x11001] == 17 && tmp[0x11002] < 16 && tmp[0x11027] <= 122 && tmp[0x11034] == 35 &&
-                             tmp[0x11035] == 16 && tmp[0x11036] == 0 && tmp[0x11037] == 1;
-
-                _deinterleaved = new byte[tmp.Length];
-
-                int[] offsets = _extension == ".do"
-                                    ? isDos
-                                          ? _deinterleave
-                                          : _interleave
-                                    : isDos
-                                        ? _interleave
-                                        : _deinterleave;
-
-                for(int t = 0; t < 35; t++)
-                {
-                    for(int s = 0; s < 16; s++)
-                        Array.Copy(tmp, (t * 16 * 256) + (s * 256), _deinterleaved, (t * 16 * 256) + (offsets[s] * 256),
-                                   256);
-                }
-            }
-
-            _imageInfo.SectorSize           = 256;
-            _imageInfo.ImageSize            = (ulong)imageFilter.DataForkLength;
-            _imageInfo.CreationTime         = imageFilter.CreationTime;
-            _imageInfo.LastModificationTime = imageFilter.LastWriteTime;
-            _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.Filename);
-            _imageInfo.Sectors              = _dos32 ? 455u : 560u;
-            _imageInfo.MediaType            = _dos32 ? MediaType.Apple32SS : MediaType.Apple33SS;
-            _imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
-            _imageInfo.Cylinders            = 35;
-            _imageInfo.Heads                = 1;
-            _imageInfo.SectorsPerTrack      = _dos32 ? 13u : 16u;
-
-            return ErrorNumber.NoError;
         }
 
-        /// <inheritdoc />
-        public ErrorNumber ReadSector(ulong sectorAddress, out byte[] buffer) =>
-            ReadSectors(sectorAddress, 1, out buffer);
+        _imageInfo.SectorSize           = 256;
+        _imageInfo.ImageSize            = (ulong)imageFilter.DataForkLength;
+        _imageInfo.CreationTime         = imageFilter.CreationTime;
+        _imageInfo.LastModificationTime = imageFilter.LastWriteTime;
+        _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.Filename);
+        _imageInfo.Sectors              = _dos32 ? 455u : 560u;
+        _imageInfo.MediaType            = _dos32 ? MediaType.Apple32SS : MediaType.Apple33SS;
+        _imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
+        _imageInfo.Cylinders            = 35;
+        _imageInfo.Heads                = 1;
+        _imageInfo.SectorsPerTrack      = _dos32 ? 13u : 16u;
 
-        /// <inheritdoc />
-        public ErrorNumber ReadSectors(ulong sectorAddress, uint length, out byte[] buffer)
-        {
-            buffer = null;
+        return ErrorNumber.NoError;
+    }
 
-            if(sectorAddress > _imageInfo.Sectors - 1)
-                return ErrorNumber.OutOfRange;
+    /// <inheritdoc />
+    public ErrorNumber ReadSector(ulong sectorAddress, out byte[] buffer) =>
+        ReadSectors(sectorAddress, 1, out buffer);
 
-            if(sectorAddress + length > _imageInfo.Sectors)
-                return ErrorNumber.OutOfRange;
+    /// <inheritdoc />
+    public ErrorNumber ReadSectors(ulong sectorAddress, uint length, out byte[] buffer)
+    {
+        buffer = null;
 
-            buffer = new byte[length * _imageInfo.SectorSize];
+        if(sectorAddress > _imageInfo.Sectors - 1)
+            return ErrorNumber.OutOfRange;
 
-            Array.Copy(_deinterleaved, (int)(sectorAddress * _imageInfo.SectorSize), buffer, 0, buffer.Length);
+        if(sectorAddress + length > _imageInfo.Sectors)
+            return ErrorNumber.OutOfRange;
 
-            return ErrorNumber.NoError;
-        }
+        buffer = new byte[length * _imageInfo.SectorSize];
+
+        Array.Copy(_deinterleaved, (int)(sectorAddress * _imageInfo.SectorSize), buffer, 0, buffer.Length);
+
+        return ErrorNumber.NoError;
     }
 }

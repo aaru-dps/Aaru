@@ -32,79 +32,78 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Filesystems
+namespace Aaru.Tests.Filesystems;
+
+[TestFixture]
+public class Jfs2 : FilesystemTest
 {
-    [TestFixture]
-    public class Jfs2 : FilesystemTest
+    public Jfs2() : base("JFS filesystem") {}
+
+    public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "JFS2");
+    public override IFilesystem Plugin     => new JFS();
+    public override bool        Partitions => true;
+
+    public override FileSystemTest[] Tests => new[]
     {
-        public Jfs2() : base("JFS filesystem") {}
-
-        public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "JFS2");
-        public override IFilesystem Plugin     => new JFS();
-        public override bool        Partitions => true;
-
-        public override FileSystemTest[] Tests => new[]
+        new FileSystemTest
         {
-            new FileSystemTest
-            {
-                TestFile     = "linux.aif",
-                MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 262144,
-                SectorSize   = 512,
-                Bootable     = true,
-                Clusters     = 257632,
-                ClusterSize  = 4096,
-                VolumeName   = "Volume labe",
-                VolumeSerial = "8033b783-0cd1-1645-8ecc-f8f113ad6a47"
-            },
-            new FileSystemTest
-            {
-                TestFile     = "linux_caseinsensitive.aif",
-                MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 262144,
-                SectorSize   = 512,
-                Bootable     = true,
-                Clusters     = 257632,
-                ClusterSize  = 4096,
-                VolumeName   = "Volume labe",
-                VolumeSerial = "d6cd91e9-3899-7e40-8468-baab688ee2e2"
-            },
-            new FileSystemTest
-            {
-                TestFile     = "ecs20_fstester.aif",
-                MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 1024000,
-                SectorSize   = 512,
-                Bootable     = true,
-                Clusters     = 1017512,
-                ClusterSize  = 4096,
-                VolumeName   = "Volume labe",
-                VolumeSerial = "f4077ce9-0000-0000-0000-000000007c10"
-            },
-            new FileSystemTest
-            {
-                TestFile     = "linux_4.19_jfs_flashdrive.aif",
-                MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 1024000,
-                SectorSize   = 512,
-                Bootable     = true,
-                Clusters     = 1017416,
-                ClusterSize  = 4096,
-                VolumeName   = "DicSetter",
-                VolumeSerial = "91746c77-eb51-7441-85e2-902c925969f8"
-            },
-            new FileSystemTest
-            {
-                TestFile     = "linux_4.19_jfs_os2_flashdrive.aif",
-                MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 1024000,
-                SectorSize   = 512,
-                Bootable     = true,
-                Clusters     = 1017416,
-                ClusterSize  = 4096,
-                VolumeName   = "DicSetter",
-                VolumeSerial = "08fc8e22-0201-894e-89c9-31ec3f546203"
-            }
-        };
-    }
+            TestFile     = "linux.aif",
+            MediaType    = MediaType.GENERIC_HDD,
+            Sectors      = 262144,
+            SectorSize   = 512,
+            Bootable     = true,
+            Clusters     = 257632,
+            ClusterSize  = 4096,
+            VolumeName   = "Volume labe",
+            VolumeSerial = "8033b783-0cd1-1645-8ecc-f8f113ad6a47"
+        },
+        new FileSystemTest
+        {
+            TestFile     = "linux_caseinsensitive.aif",
+            MediaType    = MediaType.GENERIC_HDD,
+            Sectors      = 262144,
+            SectorSize   = 512,
+            Bootable     = true,
+            Clusters     = 257632,
+            ClusterSize  = 4096,
+            VolumeName   = "Volume labe",
+            VolumeSerial = "d6cd91e9-3899-7e40-8468-baab688ee2e2"
+        },
+        new FileSystemTest
+        {
+            TestFile     = "ecs20_fstester.aif",
+            MediaType    = MediaType.GENERIC_HDD,
+            Sectors      = 1024000,
+            SectorSize   = 512,
+            Bootable     = true,
+            Clusters     = 1017512,
+            ClusterSize  = 4096,
+            VolumeName   = "Volume labe",
+            VolumeSerial = "f4077ce9-0000-0000-0000-000000007c10"
+        },
+        new FileSystemTest
+        {
+            TestFile     = "linux_4.19_jfs_flashdrive.aif",
+            MediaType    = MediaType.GENERIC_HDD,
+            Sectors      = 1024000,
+            SectorSize   = 512,
+            Bootable     = true,
+            Clusters     = 1017416,
+            ClusterSize  = 4096,
+            VolumeName   = "DicSetter",
+            VolumeSerial = "91746c77-eb51-7441-85e2-902c925969f8"
+        },
+        new FileSystemTest
+        {
+            TestFile     = "linux_4.19_jfs_os2_flashdrive.aif",
+            MediaType    = MediaType.GENERIC_HDD,
+            Sectors      = 1024000,
+            SectorSize   = 512,
+            Bootable     = true,
+            Clusters     = 1017416,
+            ClusterSize  = 4096,
+            VolumeName   = "DicSetter",
+            VolumeSerial = "08fc8e22-0201-894e-89c9-31ec3f546203"
+        }
+    };
 }

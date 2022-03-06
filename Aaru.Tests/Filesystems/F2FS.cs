@@ -32,41 +32,40 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Filesystems
+namespace Aaru.Tests.Filesystems;
+
+[TestFixture]
+public class F2Fs : FilesystemTest
 {
-    [TestFixture]
-    public class F2Fs : FilesystemTest
+    public F2Fs() : base("F2FS filesystem") {}
+
+    public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "F2FS");
+    public override IFilesystem Plugin     => new F2FS();
+    public override bool        Partitions => true;
+
+    public override FileSystemTest[] Tests => new[]
     {
-        public F2Fs() : base("F2FS filesystem") {}
-
-        public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "F2FS");
-        public override IFilesystem Plugin     => new F2FS();
-        public override bool        Partitions => true;
-
-        public override FileSystemTest[] Tests => new[]
+        new FileSystemTest
         {
-            new FileSystemTest
-            {
-                TestFile     = "linux.aif",
-                MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 262144,
-                SectorSize   = 512,
-                Clusters     = 32512,
-                ClusterSize  = 4096,
-                VolumeName   = "VolumeLabel",
-                VolumeSerial = "81bd3a4e-de0c-484c-becc-aaa479b2070a"
-            },
-            new FileSystemTest
-            {
-                TestFile     = "linux_4.19_f2fs_flashdrive.aif",
-                MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 2097152,
-                SectorSize   = 512,
-                Clusters     = 261888,
-                ClusterSize  = 4096,
-                VolumeName   = "DicSetter",
-                VolumeSerial = "422bd2a8-68ab-6f45-9a04-9c264d07dd6e"
-            }
-        };
-    }
+            TestFile     = "linux.aif",
+            MediaType    = MediaType.GENERIC_HDD,
+            Sectors      = 262144,
+            SectorSize   = 512,
+            Clusters     = 32512,
+            ClusterSize  = 4096,
+            VolumeName   = "VolumeLabel",
+            VolumeSerial = "81bd3a4e-de0c-484c-becc-aaa479b2070a"
+        },
+        new FileSystemTest
+        {
+            TestFile     = "linux_4.19_f2fs_flashdrive.aif",
+            MediaType    = MediaType.GENERIC_HDD,
+            Sectors      = 2097152,
+            SectorSize   = 512,
+            Clusters     = 261888,
+            ClusterSize  = 4096,
+            VolumeName   = "DicSetter",
+            VolumeSerial = "422bd2a8-68ab-6f45-9a04-9c264d07dd6e"
+        }
+    };
 }

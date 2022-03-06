@@ -32,26 +32,25 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class CisCopy
 {
-    public sealed partial class CisCopy
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    enum DiskType : byte
     {
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        enum DiskType : byte
-        {
-            MD1DD8 = 1, MD1DD = 2, MD2DD8 = 3,
-            MD2DD  = 4, MF2DD = 5, MD2HD  = 6,
-            MF2HD  = 7
-        }
+        MD1DD8 = 1, MD1DD = 2, MD2DD8 = 3,
+        MD2DD  = 4, MF2DD = 5, MD2HD  = 6,
+        MF2HD  = 7
+    }
 
-        enum Compression : byte
-        {
-            None = 0, Normal = 1, High = 2
-        }
+    enum Compression : byte
+    {
+        None = 0, Normal = 1, High = 2
+    }
 
-        enum TrackType : byte
-        {
-            Copied = 0x4C, Omitted = 0xFA, OmittedAlternate = 0xFE
-        }
+    enum TrackType : byte
+    {
+        Copied = 0x4C, Omitted = 0xFA, OmittedAlternate = 0xFE
     }
 }

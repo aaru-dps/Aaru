@@ -31,184 +31,183 @@ using Aaru.Checksums;
 using FluentAssertions;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Checksums
+namespace Aaru.Tests.Checksums;
+
+[TestFixture]
+public class Crc16Ccitt
 {
-    [TestFixture]
-    public class Crc16Ccitt
+    static readonly byte[] _expectedEmpty =
     {
-        static readonly byte[] _expectedEmpty =
-        {
-            0xFF, 0xFF
-        };
-        static readonly byte[] _expectedRandom =
-        {
-            0x36, 0x40
-        };
-        static readonly byte[] _expectedRandom15 =
-        {
-            0x16, 0x6e
-        };
-        static readonly byte[] _expectedRandom31 =
-        {
-            0xd0, 0x16
-        };
-        static readonly byte[] _expectedRandom63 =
-        {
-            0x73, 0xc4
-        };
-        static readonly byte[] _expectedRandom2352 =
-        {
-            0x19, 0x46
-        };
+        0xFF, 0xFF
+    };
+    static readonly byte[] _expectedRandom =
+    {
+        0x36, 0x40
+    };
+    static readonly byte[] _expectedRandom15 =
+    {
+        0x16, 0x6e
+    };
+    static readonly byte[] _expectedRandom31 =
+    {
+        0xd0, 0x16
+    };
+    static readonly byte[] _expectedRandom63 =
+    {
+        0x73, 0xc4
+    };
+    static readonly byte[] _expectedRandom2352 =
+    {
+        0x19, 0x46
+    };
 
-        [Test]
-        public void EmptyData()
-        {
-            byte[] data = new byte[1048576];
+    [Test]
+    public void EmptyData()
+    {
+        byte[] data = new byte[1048576];
 
-            var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "empty"), FileMode.Open,
-                                    FileAccess.Read);
+        var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "empty"), FileMode.Open,
+                                FileAccess.Read);
 
-            fs.Read(data, 0, 1048576);
-            fs.Close();
-            fs.Dispose();
-            CRC16CCITTContext.Data(data, out byte[] result);
-            result.Should().BeEquivalentTo(_expectedEmpty);
-        }
+        fs.Read(data, 0, 1048576);
+        fs.Close();
+        fs.Dispose();
+        CRC16CCITTContext.Data(data, out byte[] result);
+        result.Should().BeEquivalentTo(_expectedEmpty);
+    }
 
-        [Test]
-        public void EmptyFile()
-        {
-            byte[] result =
-                CRC16CCITTContext.File(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "empty"));
+    [Test]
+    public void EmptyFile()
+    {
+        byte[] result =
+            CRC16CCITTContext.File(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "empty"));
 
-            result.Should().BeEquivalentTo(_expectedEmpty);
-        }
+        result.Should().BeEquivalentTo(_expectedEmpty);
+    }
 
-        [Test]
-        public void EmptyInstance()
-        {
-            byte[] data = new byte[1048576];
+    [Test]
+    public void EmptyInstance()
+    {
+        byte[] data = new byte[1048576];
 
-            var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "empty"), FileMode.Open,
-                                    FileAccess.Read);
+        var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "empty"), FileMode.Open,
+                                FileAccess.Read);
 
-            fs.Read(data, 0, 1048576);
-            fs.Close();
-            fs.Dispose();
-            var ctx = new CRC16CCITTContext();
-            ctx.Update(data);
-            byte[] result = ctx.Final();
-            result.Should().BeEquivalentTo(_expectedEmpty);
-        }
+        fs.Read(data, 0, 1048576);
+        fs.Close();
+        fs.Dispose();
+        var ctx = new CRC16CCITTContext();
+        ctx.Update(data);
+        byte[] result = ctx.Final();
+        result.Should().BeEquivalentTo(_expectedEmpty);
+    }
 
-        [Test]
-        public void RandomData()
-        {
-            byte[] data = new byte[1048576];
+    [Test]
+    public void RandomData()
+    {
+        byte[] data = new byte[1048576];
 
-            var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"),
-                                    FileMode.Open, FileAccess.Read);
+        var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"),
+                                FileMode.Open, FileAccess.Read);
 
-            fs.Read(data, 0, 1048576);
-            fs.Close();
-            fs.Dispose();
-            CRC16CCITTContext.Data(data, out byte[] result);
-            result.Should().BeEquivalentTo(_expectedRandom);
-        }
+        fs.Read(data, 0, 1048576);
+        fs.Close();
+        fs.Dispose();
+        CRC16CCITTContext.Data(data, out byte[] result);
+        result.Should().BeEquivalentTo(_expectedRandom);
+    }
 
-        [Test]
-        public void RandomFile()
-        {
-            byte[] result =
-                CRC16CCITTContext.File(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"));
+    [Test]
+    public void RandomFile()
+    {
+        byte[] result =
+            CRC16CCITTContext.File(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"));
 
-            result.Should().BeEquivalentTo(_expectedRandom);
-        }
+        result.Should().BeEquivalentTo(_expectedRandom);
+    }
 
-        [Test]
-        public void RandomInstance()
-        {
-            byte[] data = new byte[1048576];
+    [Test]
+    public void RandomInstance()
+    {
+        byte[] data = new byte[1048576];
 
-            var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"),
-                                    FileMode.Open, FileAccess.Read);
+        var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"),
+                                FileMode.Open, FileAccess.Read);
 
-            fs.Read(data, 0, 1048576);
-            fs.Close();
-            fs.Dispose();
-            var ctx = new CRC16CCITTContext();
-            ctx.Update(data);
-            byte[] result = ctx.Final();
-            result.Should().BeEquivalentTo(_expectedRandom);
-        }
+        fs.Read(data, 0, 1048576);
+        fs.Close();
+        fs.Dispose();
+        var ctx = new CRC16CCITTContext();
+        ctx.Update(data);
+        byte[] result = ctx.Final();
+        result.Should().BeEquivalentTo(_expectedRandom);
+    }
 
-        [Test]
-        public void PartialInstance15()
-        {
-            byte[] data = new byte[15];
+    [Test]
+    public void PartialInstance15()
+    {
+        byte[] data = new byte[15];
 
-            var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"),
-                                    FileMode.Open, FileAccess.Read);
+        var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"),
+                                FileMode.Open, FileAccess.Read);
 
-            fs.Read(data, 0, 15);
-            fs.Close();
-            fs.Dispose();
-            var ctx = new CRC16CCITTContext();
-            ctx.Update(data);
-            byte[] result = ctx.Final();
-            result.Should().BeEquivalentTo(_expectedRandom15);
-        }
+        fs.Read(data, 0, 15);
+        fs.Close();
+        fs.Dispose();
+        var ctx = new CRC16CCITTContext();
+        ctx.Update(data);
+        byte[] result = ctx.Final();
+        result.Should().BeEquivalentTo(_expectedRandom15);
+    }
 
-        [Test]
-        public void PartialInstance31()
-        {
-            byte[] data = new byte[31];
+    [Test]
+    public void PartialInstance31()
+    {
+        byte[] data = new byte[31];
 
-            var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"),
-                                    FileMode.Open, FileAccess.Read);
+        var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"),
+                                FileMode.Open, FileAccess.Read);
 
-            fs.Read(data, 0, 31);
-            fs.Close();
-            fs.Dispose();
-            var ctx = new CRC16CCITTContext();
-            ctx.Update(data);
-            byte[] result = ctx.Final();
-            result.Should().BeEquivalentTo(_expectedRandom31);
-        }
+        fs.Read(data, 0, 31);
+        fs.Close();
+        fs.Dispose();
+        var ctx = new CRC16CCITTContext();
+        ctx.Update(data);
+        byte[] result = ctx.Final();
+        result.Should().BeEquivalentTo(_expectedRandom31);
+    }
 
-        [Test]
-        public void PartialInstance63()
-        {
-            byte[] data = new byte[63];
+    [Test]
+    public void PartialInstance63()
+    {
+        byte[] data = new byte[63];
 
-            var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"),
-                                    FileMode.Open, FileAccess.Read);
+        var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"),
+                                FileMode.Open, FileAccess.Read);
 
-            fs.Read(data, 0, 63);
-            fs.Close();
-            fs.Dispose();
-            var ctx = new CRC16CCITTContext();
-            ctx.Update(data);
-            byte[] result = ctx.Final();
-            result.Should().BeEquivalentTo(_expectedRandom63);
-        }
+        fs.Read(data, 0, 63);
+        fs.Close();
+        fs.Dispose();
+        var ctx = new CRC16CCITTContext();
+        ctx.Update(data);
+        byte[] result = ctx.Final();
+        result.Should().BeEquivalentTo(_expectedRandom63);
+    }
 
-        [Test]
-        public void PartialInstance2352()
-        {
-            byte[] data = new byte[2352];
+    [Test]
+    public void PartialInstance2352()
+    {
+        byte[] data = new byte[2352];
 
-            var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"),
-                                    FileMode.Open, FileAccess.Read);
+        var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"),
+                                FileMode.Open, FileAccess.Read);
 
-            fs.Read(data, 0, 2352);
-            fs.Close();
-            fs.Dispose();
-            var ctx = new CRC16CCITTContext();
-            ctx.Update(data);
-            byte[] result = ctx.Final();
-            result.Should().BeEquivalentTo(_expectedRandom2352);
-        }
+        fs.Read(data, 0, 2352);
+        fs.Close();
+        fs.Dispose();
+        var ctx = new CRC16CCITTContext();
+        ctx.Update(data);
+        byte[] result = ctx.Final();
+        result.Should().BeEquivalentTo(_expectedRandom2352);
     }
 }

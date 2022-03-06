@@ -37,50 +37,49 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 
-namespace Aaru.DiscImages
-{
-    /// <inheritdoc />
-    /// <summary>
-    ///     Supports Connectix/Microsoft Virtual PC hard disk image format. Until Virtual PC 5 there existed no format,
-    ///     and the hard disk image was merely a sector by sector (RAW) image with a resource fork giving information to
-    ///     Virtual PC itself.
-    /// </summary>
-    public sealed partial class Vhd : IWritableImage
-    {
-        uint              _bitmapSize;
-        uint[]            _blockAllocationTable;
-        ImageInfo         _imageInfo;
-        byte[][]          _locatorEntriesData;
-        DateTime          _parentDateTime;
-        IMediaImage       _parentImage;
-        DateTime          _thisDateTime;
-        DynamicDiskHeader _thisDynamic;
-        IFilter           _thisFilter;
-        HardDiskFooter    _thisFooter;
-        FileStream        _writingStream;
+namespace Aaru.DiscImages;
 
-        public Vhd() => _imageInfo = new ImageInfo
-        {
-            ReadableSectorTags    = new List<SectorTagType>(),
-            ReadableMediaTags     = new List<MediaTagType>(),
-            HasPartitions         = false,
-            HasSessions           = false,
-            Version               = null,
-            Application           = null,
-            ApplicationVersion    = null,
-            Creator               = null,
-            Comments              = null,
-            MediaManufacturer     = null,
-            MediaModel            = null,
-            MediaSerialNumber     = null,
-            MediaBarcode          = null,
-            MediaPartNumber       = null,
-            MediaSequence         = 0,
-            LastMediaSequence     = 0,
-            DriveManufacturer     = null,
-            DriveModel            = null,
-            DriveSerialNumber     = null,
-            DriveFirmwareRevision = null
-        };
-    }
+/// <inheritdoc />
+/// <summary>
+///     Supports Connectix/Microsoft Virtual PC hard disk image format. Until Virtual PC 5 there existed no format,
+///     and the hard disk image was merely a sector by sector (RAW) image with a resource fork giving information to
+///     Virtual PC itself.
+/// </summary>
+public sealed partial class Vhd : IWritableImage
+{
+    uint              _bitmapSize;
+    uint[]            _blockAllocationTable;
+    ImageInfo         _imageInfo;
+    byte[][]          _locatorEntriesData;
+    DateTime          _parentDateTime;
+    IMediaImage       _parentImage;
+    DateTime          _thisDateTime;
+    DynamicDiskHeader _thisDynamic;
+    IFilter           _thisFilter;
+    HardDiskFooter    _thisFooter;
+    FileStream        _writingStream;
+
+    public Vhd() => _imageInfo = new ImageInfo
+    {
+        ReadableSectorTags    = new List<SectorTagType>(),
+        ReadableMediaTags     = new List<MediaTagType>(),
+        HasPartitions         = false,
+        HasSessions           = false,
+        Version               = null,
+        Application           = null,
+        ApplicationVersion    = null,
+        Creator               = null,
+        Comments              = null,
+        MediaManufacturer     = null,
+        MediaModel            = null,
+        MediaSerialNumber     = null,
+        MediaBarcode          = null,
+        MediaPartNumber       = null,
+        MediaSequence         = 0,
+        LastMediaSequence     = 0,
+        DriveManufacturer     = null,
+        DriveModel            = null,
+        DriveSerialNumber     = null,
+        DriveFirmwareRevision = null
+    };
 }

@@ -37,43 +37,42 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.Structs;
 using Schemas;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class Chd
 {
-    public sealed partial class Chd
+    /// <inheritdoc />
+    public ImageInfo Info => _imageInfo;
+    /// <inheritdoc />
+    public string Name => "MAME Compressed Hunks of Data";
+    /// <inheritdoc />
+    public Guid Id => new("0D50233A-08BD-47D4-988B-27EAA0358597");
+    /// <inheritdoc />
+    public string Format => "Compressed Hunks of Data";
+    /// <inheritdoc />
+    public string Author => "Natalia Portillo";
+
+    /// <inheritdoc />
+    public List<Partition> Partitions => _isHdd ? null : _partitions;
+
+    /// <inheritdoc />
+    public List<Track> Tracks => _isHdd ? null : _tracks.Values.ToList();
+
+    /// <inheritdoc />
+    public List<Session> Sessions
     {
-        /// <inheritdoc />
-        public ImageInfo Info => _imageInfo;
-        /// <inheritdoc />
-        public string Name => "MAME Compressed Hunks of Data";
-        /// <inheritdoc />
-        public Guid Id => new("0D50233A-08BD-47D4-988B-27EAA0358597");
-        /// <inheritdoc />
-        public string Format => "Compressed Hunks of Data";
-        /// <inheritdoc />
-        public string Author => "Natalia Portillo";
-
-        /// <inheritdoc />
-        public List<Partition> Partitions => _isHdd ? null : _partitions;
-
-        /// <inheritdoc />
-        public List<Track> Tracks => _isHdd ? null : _tracks.Values.ToList();
-
-        /// <inheritdoc />
-        public List<Session> Sessions
+        get
         {
-            get
-            {
-                if(_isHdd)
-                    return null;
-
-                // TODO: Implement
+            if(_isHdd)
                 return null;
-            }
-        }
 
-        /// <inheritdoc />
-        public List<DumpHardwareType> DumpHardware => null;
-        /// <inheritdoc />
-        public CICMMetadataType CicmMetadata => null;
+            // TODO: Implement
+            return null;
+        }
     }
+
+    /// <inheritdoc />
+    public List<DumpHardwareType> DumpHardware => null;
+    /// <inheritdoc />
+    public CICMMetadataType CicmMetadata => null;
 }

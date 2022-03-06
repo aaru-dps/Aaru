@@ -36,39 +36,38 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 
-namespace Aaru.DiscImages
-{
-    /// <summary>Implements reading and writing IBM's SaveDskF disk images</summary>
-    public sealed partial class SaveDskF : IWritableImage, IVerifiableImage
-    {
-        uint       _calculatedChk;
-        byte[]     _decodedDisk;
-        Header     _header;
-        ImageInfo  _imageInfo;
-        FileStream _writingStream;
+namespace Aaru.DiscImages;
 
-        public SaveDskF() => _imageInfo = new ImageInfo
-        {
-            ReadableSectorTags    = new List<SectorTagType>(),
-            ReadableMediaTags     = new List<MediaTagType>(),
-            HasPartitions         = false,
-            HasSessions           = false,
-            Version               = null,
-            Application           = null,
-            ApplicationVersion    = null,
-            Creator               = null,
-            Comments              = null,
-            MediaManufacturer     = null,
-            MediaModel            = null,
-            MediaSerialNumber     = null,
-            MediaBarcode          = null,
-            MediaPartNumber       = null,
-            MediaSequence         = 0,
-            LastMediaSequence     = 0,
-            DriveManufacturer     = null,
-            DriveModel            = null,
-            DriveSerialNumber     = null,
-            DriveFirmwareRevision = null
-        };
-    }
+/// <summary>Implements reading and writing IBM's SaveDskF disk images</summary>
+public sealed partial class SaveDskF : IWritableImage, IVerifiableImage
+{
+    uint       _calculatedChk;
+    byte[]     _decodedDisk;
+    Header     _header;
+    ImageInfo  _imageInfo;
+    FileStream _writingStream;
+
+    public SaveDskF() => _imageInfo = new ImageInfo
+    {
+        ReadableSectorTags    = new List<SectorTagType>(),
+        ReadableMediaTags     = new List<MediaTagType>(),
+        HasPartitions         = false,
+        HasSessions           = false,
+        Version               = null,
+        Application           = null,
+        ApplicationVersion    = null,
+        Creator               = null,
+        Comments              = null,
+        MediaManufacturer     = null,
+        MediaModel            = null,
+        MediaSerialNumber     = null,
+        MediaBarcode          = null,
+        MediaPartNumber       = null,
+        MediaSequence         = 0,
+        LastMediaSequence     = 0,
+        DriveManufacturer     = null,
+        DriveModel            = null,
+        DriveSerialNumber     = null,
+        DriveFirmwareRevision = null
+    };
 }

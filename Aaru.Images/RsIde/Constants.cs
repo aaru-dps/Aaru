@@ -30,13 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class RsIde
 {
-    public sealed partial class RsIde
+    readonly byte[] _signature =
     {
-        readonly byte[] _signature =
-        {
-            0x52, 0x53, 0x2D, 0x49, 0x44, 0x45, 0x1A
-        };
-    }
+        0x52, 0x53, 0x2D, 0x49, 0x44, 0x45, 0x1A
+    };
 }

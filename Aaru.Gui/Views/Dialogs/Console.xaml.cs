@@ -36,26 +36,25 @@ using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using JetBrains.Annotations;
 
-namespace Aaru.Gui.Views.Dialogs
+namespace Aaru.Gui.Views.Dialogs;
+
+public sealed class Console : Window
 {
-    public sealed class Console : Window
+    public Console()
     {
-        public Console()
-        {
-            InitializeComponent();
-        #if DEBUG
-            this.AttachDevTools();
-        #endif
-        }
+        InitializeComponent();
+    #if DEBUG
+        this.AttachDevTools();
+    #endif
+    }
 
-        void InitializeComponent() => AvaloniaXamlLoader.Load(this);
+    void InitializeComponent() => AvaloniaXamlLoader.Load(this);
 
-        protected override void OnClosing([NotNull] CancelEventArgs e)
-        {
-            e.Cancel = true;
-            Hide();
+    protected override void OnClosing([NotNull] CancelEventArgs e)
+    {
+        e.Cancel = true;
+        Hide();
 
-            base.OnClosing(e);
-        }
+        base.OnClosing(e);
     }
 }

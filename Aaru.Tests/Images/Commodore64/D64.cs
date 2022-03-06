@@ -32,25 +32,24 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.DiscImages;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Images.Commodore64
-{
-    [TestFixture]
-    public class D64 : BlockMediaImageTest
-    {
-        public override string DataFolder =>
-            Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "Commodore D64");
-        public override IMediaImage _plugin => new ZZZRawImage();
+namespace Aaru.Tests.Images.Commodore64;
 
-        public override BlockImageTestExpected[] Tests => new[]
+[TestFixture]
+public class D64 : BlockMediaImageTest
+{
+    public override string DataFolder =>
+        Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "Commodore D64");
+    public override IMediaImage _plugin => new ZZZRawImage();
+
+    public override BlockImageTestExpected[] Tests => new[]
+    {
+        new BlockImageTestExpected
         {
-            new BlockImageTestExpected
-            {
-                TestFile   = "0 Grad Nord (1985)(Ariolasoft)(de)(Side A).d64.lz",
-                MediaType  = MediaType.CBM_1540,
-                Sectors    = 683,
-                SectorSize = 256,
-                MD5        = "9205f7ccdb19cfbdb0b46d10e40b2a90"
-            }
-        };
-    }
+            TestFile   = "0 Grad Nord (1985)(Ariolasoft)(de)(Side A).d64.lz",
+            MediaType  = MediaType.CBM_1540,
+            Sectors    = 683,
+            SectorSize = 256,
+            MD5        = "9205f7ccdb19cfbdb0b46d10e40b2a90"
+        }
+    };
 }

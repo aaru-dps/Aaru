@@ -36,53 +36,52 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 
-namespace Aaru.DiscImages
-{
-    // TODO: Too many unknowns to make this writable
-    /// <inheritdoc />
-    /// <summary>Implements reading BlindWrite 5/6/7 disc images</summary>
-    public sealed partial class BlindWrite5 : IOpticalMediaImage
-    {
-        byte[]                        _atip;
-        byte[]                        _bca;
-        List<SessionDescriptor>       _bwSessions;
-        byte[]                        _cdtext;
-        List<DataFile>                _dataFiles;
-        string                        _dataPath;
-        byte[]                        _discInformation;
-        byte[]                        _dmi;
-        byte[]                        _dpm;
-        List<DataFileCharacteristics> _filePaths;
-        byte[]                        _fullToc;
-        Header                        _header;
-        ImageInfo                     _imageInfo;
-        Stream                        _imageStream;
-        byte[]                        _mode2A;
-        Dictionary<uint, ulong>       _offsetMap;
-        byte[]                        _pfi;
-        byte[]                        _pma;
-        Dictionary<uint, byte>        _trackFlags;
-        byte[]                        _unkBlock;
+namespace Aaru.DiscImages;
 
-        public BlindWrite5() => _imageInfo = new ImageInfo
-        {
-            ReadableSectorTags    = new List<SectorTagType>(),
-            ReadableMediaTags     = new List<MediaTagType>(),
-            HasPartitions         = true,
-            HasSessions           = true,
-            Version               = null,
-            ApplicationVersion    = null,
-            MediaTitle            = null,
-            Creator               = null,
-            MediaManufacturer     = null,
-            MediaModel            = null,
-            MediaPartNumber       = null,
-            MediaSequence         = 0,
-            LastMediaSequence     = 0,
-            DriveManufacturer     = null,
-            DriveModel            = null,
-            DriveSerialNumber     = null,
-            DriveFirmwareRevision = null
-        };
-    }
+// TODO: Too many unknowns to make this writable
+/// <inheritdoc />
+/// <summary>Implements reading BlindWrite 5/6/7 disc images</summary>
+public sealed partial class BlindWrite5 : IOpticalMediaImage
+{
+    byte[]                        _atip;
+    byte[]                        _bca;
+    List<SessionDescriptor>       _bwSessions;
+    byte[]                        _cdtext;
+    List<DataFile>                _dataFiles;
+    string                        _dataPath;
+    byte[]                        _discInformation;
+    byte[]                        _dmi;
+    byte[]                        _dpm;
+    List<DataFileCharacteristics> _filePaths;
+    byte[]                        _fullToc;
+    Header                        _header;
+    ImageInfo                     _imageInfo;
+    Stream                        _imageStream;
+    byte[]                        _mode2A;
+    Dictionary<uint, ulong>       _offsetMap;
+    byte[]                        _pfi;
+    byte[]                        _pma;
+    Dictionary<uint, byte>        _trackFlags;
+    byte[]                        _unkBlock;
+
+    public BlindWrite5() => _imageInfo = new ImageInfo
+    {
+        ReadableSectorTags    = new List<SectorTagType>(),
+        ReadableMediaTags     = new List<MediaTagType>(),
+        HasPartitions         = true,
+        HasSessions           = true,
+        Version               = null,
+        ApplicationVersion    = null,
+        MediaTitle            = null,
+        Creator               = null,
+        MediaManufacturer     = null,
+        MediaModel            = null,
+        MediaPartNumber       = null,
+        MediaSequence         = 0,
+        LastMediaSequence     = 0,
+        DriveManufacturer     = null,
+        DriveModel            = null,
+        DriveSerialNumber     = null,
+        DriveFirmwareRevision = null
+    };
 }

@@ -35,24 +35,23 @@ using System.Linq;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class Alcohol120
 {
-    public sealed partial class Alcohol120
+    /// <inheritdoc />
+    public bool Identify(IFilter imageFilter)
     {
-        /// <inheritdoc />
-        public bool Identify(IFilter imageFilter)
-        {
-            Stream stream = imageFilter.GetDataForkStream();
-            stream.Seek(0, SeekOrigin.Begin);
+        Stream stream = imageFilter.GetDataForkStream();
+        stream.Seek(0, SeekOrigin.Begin);
 
-            if(stream.Length < 88)
-                return false;
+        if(stream.Length < 88)
+            return false;
 
-            byte[] hdr = new byte[88];
-            stream.Read(hdr, 0, 88);
-            Header header = Marshal.ByteArrayToStructureLittleEndian<Header>(hdr);
+        byte[] hdr = new byte[88];
+        stream.Read(hdr, 0, 88);
+        Header header = Marshal.ByteArrayToStructureLittleEndian<Header>(hdr);
 
-            return header.signature.SequenceEqual(_alcoholSignature) && header.version[0] <= MAXIMUM_SUPPORTED_VERSION;
-        }
+        return header.signature.SequenceEqual(_alcoholSignature) && header.version[0] <= MAXIMUM_SUPPORTED_VERSION;
     }
 }

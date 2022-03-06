@@ -42,54 +42,53 @@ using Aaru.Decoders.CD;
 #pragma warning disable 414
 #pragma warning disable 169
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+/// <inheritdoc />
+/// <summary>Implements reading Nero Burning ROM disc images</summary>
+[SuppressMessage("ReSharper", "NotAccessedField.Local"),
+ SuppressMessage("ReSharper", "CollectionNeverQueried.Local")]
+public sealed partial class Nero : IOpticalMediaImage
 {
-    /// <inheritdoc />
-    /// <summary>Implements reading Nero Burning ROM disc images</summary>
-    [SuppressMessage("ReSharper", "NotAccessedField.Local"),
-     SuppressMessage("ReSharper", "CollectionNeverQueried.Local")]
-    public sealed partial class Nero : IOpticalMediaImage
+    bool                                 _imageNewFormat;
+    Stream                               _imageStream;
+    ImageInfo                            _imageInfo;
+    CdText                               _cdtxt;
+    CuesheetV1                           _cuesheetV1;
+    CuesheetV2                           _cuesheetV2;
+    DaoV1                                _neroDaov1;
+    DaoV2                                _neroDaov2;
+    DiscInformation                      _discInfo;
+    IFilter                              _neroFilter;
+    MediaType                            _mediaType;
+    ReloChunk                            _relo;
+    readonly Dictionary<ushort, uint>    _neroSessions;
+    TaoV0                                _taoV0;
+    TaoV1                                _taoV1;
+    TaoV2                                _taoV2;
+    TocChunk                             _toc;
+    readonly Dictionary<uint, NeroTrack> _neroTracks;
+    readonly Dictionary<uint, ulong>     _offsetmap;
+    Dictionary<uint, byte[]>             _trackIsrCs;
+    byte[]                               _upc;
+    SectorBuilder                        _sectorBuilder;
+    Dictionary<uint, byte>               _trackFlags;
+    bool                                 _isCd;
+
+    public Nero()
     {
-        bool                                 _imageNewFormat;
-        Stream                               _imageStream;
-        ImageInfo                            _imageInfo;
-        CdText                               _cdtxt;
-        CuesheetV1                           _cuesheetV1;
-        CuesheetV2                           _cuesheetV2;
-        DaoV1                                _neroDaov1;
-        DaoV2                                _neroDaov2;
-        DiscInformation                      _discInfo;
-        IFilter                              _neroFilter;
-        MediaType                            _mediaType;
-        ReloChunk                            _relo;
-        readonly Dictionary<ushort, uint>    _neroSessions;
-        TaoV0                                _taoV0;
-        TaoV1                                _taoV1;
-        TaoV2                                _taoV2;
-        TocChunk                             _toc;
-        readonly Dictionary<uint, NeroTrack> _neroTracks;
-        readonly Dictionary<uint, ulong>     _offsetmap;
-        Dictionary<uint, byte[]>             _trackIsrCs;
-        byte[]                               _upc;
-        SectorBuilder                        _sectorBuilder;
-        Dictionary<uint, byte>               _trackFlags;
-        bool                                 _isCd;
+        _imageNewFormat = false;
 
-        public Nero()
+        _imageInfo = new ImageInfo
         {
-            _imageNewFormat = false;
+            ReadableSectorTags = new List<SectorTagType>(),
+            ReadableMediaTags  = new List<MediaTagType>()
+        };
 
-            _imageInfo = new ImageInfo
-            {
-                ReadableSectorTags = new List<SectorTagType>(),
-                ReadableMediaTags  = new List<MediaTagType>()
-            };
-
-            _neroSessions = new Dictionary<ushort, uint>();
-            _neroTracks   = new Dictionary<uint, NeroTrack>();
-            _offsetmap    = new Dictionary<uint, ulong>();
-            Sessions      = new List<CommonTypes.Structs.Session>();
-            Partitions    = new List<Partition>();
-        }
+        _neroSessions = new Dictionary<ushort, uint>();
+        _neroTracks   = new Dictionary<uint, NeroTrack>();
+        _offsetmap    = new Dictionary<uint, ulong>();
+        Sessions      = new List<CommonTypes.Structs.Session>();
+        Partitions    = new List<Partition>();
     }
 }

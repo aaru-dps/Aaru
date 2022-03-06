@@ -34,27 +34,26 @@ using System.IO;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class SaveDskF
 {
-    public sealed partial class SaveDskF
+    /// <inheritdoc />
+    public bool Identify(IFilter imageFilter)
     {
-        /// <inheritdoc />
-        public bool Identify(IFilter imageFilter)
-        {
-            Stream stream = imageFilter.GetDataForkStream();
-            stream.Seek(0, SeekOrigin.Begin);
+        Stream stream = imageFilter.GetDataForkStream();
+        stream.Seek(0, SeekOrigin.Begin);
 
-            if(stream.Length < 41)
-                return false;
+        if(stream.Length < 41)
+            return false;
 
-            byte[] hdr = new byte[40];
-            stream.Read(hdr, 0, 40);
+        byte[] hdr = new byte[40];
+        stream.Read(hdr, 0, 40);
 
-            _header = Marshal.ByteArrayToStructureLittleEndian<Header>(hdr);
+        _header = Marshal.ByteArrayToStructureLittleEndian<Header>(hdr);
 
-            return (_header.magic == SDF_MAGIC || _header.magic == SDF_MAGIC_COMPRESSED ||
-                    _header.magic == SDF_MAGIC_OLD) && _header.fatCopies <= 2 && _header.padding == 0 &&
-                   _header.commentOffset < stream.Length && _header.dataOffset < stream.Length;
-        }
+        return (_header.magic == SDF_MAGIC || _header.magic == SDF_MAGIC_COMPRESSED ||
+                _header.magic == SDF_MAGIC_OLD) && _header.fatCopies <= 2 && _header.padding == 0 &&
+               _header.commentOffset < stream.Length && _header.dataOffset < stream.Length;
     }
 }

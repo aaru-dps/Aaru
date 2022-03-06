@@ -31,31 +31,30 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Filesystems.NTFS
+namespace Aaru.Tests.Filesystems.NTFS;
+
+[TestFixture]
+public class GPT : FilesystemTest
 {
-    [TestFixture]
-    public class GPT : FilesystemTest
+    public GPT() : base("NTFS") {}
+
+    public override string DataFolder =>
+        Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "New Technology File System (GPT)");
+    public override IFilesystem Plugin     => new Aaru.Filesystems.NTFS();
+    public override bool        Partitions => true;
+
+    public override FileSystemTest[] Tests => new[]
     {
-        public GPT() : base("NTFS") {}
-
-        public override string DataFolder =>
-            Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "New Technology File System (GPT)");
-        public override IFilesystem Plugin     => new Aaru.Filesystems.NTFS();
-        public override bool        Partitions => true;
-
-        public override FileSystemTest[] Tests => new[]
+        new FileSystemTest
         {
-            new FileSystemTest
-            {
-                TestFile     = "haiku_hrev51259.aif",
-                MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 262144,
-                SectorSize   = 512,
-                Bootable     = true,
-                Clusters     = 32511,
-                ClusterSize  = 4096,
-                VolumeSerial = "2A1DF87732D3285C"
-            }
-        };
-    }
+            TestFile     = "haiku_hrev51259.aif",
+            MediaType    = MediaType.GENERIC_HDD,
+            Sectors      = 262144,
+            SectorSize   = 512,
+            Bootable     = true,
+            Clusters     = 32511,
+            ClusterSize  = 4096,
+            VolumeSerial = "2A1DF87732D3285C"
+        }
+    };
 }

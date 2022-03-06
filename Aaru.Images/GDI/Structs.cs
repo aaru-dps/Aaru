@@ -36,44 +36,43 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 
-namespace Aaru.DiscImages
-{
-    public sealed partial class Gdi
-    {
-        struct GdiTrack
-        {
-            /// <summary>Track #</summary>
-            public uint Sequence;
-            /// <summary>Track filter</summary>
-            public IFilter TrackFilter;
-            /// <summary>Track file</summary>
-            public string TrackFile;
-            /// <summary>Track byte offset in file</summary>
-            public long Offset;
-            /// <summary>Track flags</summary>
-            public byte Flags;
-            /// <summary>Track starting sector</summary>
-            public ulong StartSector;
-            /// <summary>Bytes per sector</summary>
-            public ushort Bps;
-            /// <summary>Sectors in track</summary>
-            public ulong Sectors;
-            /// <summary>Track type</summary>
-            public TrackType TrackType;
-            /// <summary>Track session</summary>
-            public bool HighDensity;
-            /// <summary>Pregap sectors not stored in track file</summary>
-            public ulong Pregap;
-        }
+namespace Aaru.DiscImages;
 
-        struct GdiDisc
-        {
-            /// <summary>Sessions</summary>
-            public List<Session> Sessions;
-            /// <summary>Tracks</summary>
-            public List<GdiTrack> Tracks;
-            /// <summary>Disk type</summary>
-            public MediaType Disktype;
-        }
+public sealed partial class Gdi
+{
+    struct GdiTrack
+    {
+        /// <summary>Track #</summary>
+        public uint Sequence;
+        /// <summary>Track filter</summary>
+        public IFilter TrackFilter;
+        /// <summary>Track file</summary>
+        public string TrackFile;
+        /// <summary>Track byte offset in file</summary>
+        public long Offset;
+        /// <summary>Track flags</summary>
+        public byte Flags;
+        /// <summary>Track starting sector</summary>
+        public ulong StartSector;
+        /// <summary>Bytes per sector</summary>
+        public ushort Bps;
+        /// <summary>Sectors in track</summary>
+        public ulong Sectors;
+        /// <summary>Track type</summary>
+        public TrackType TrackType;
+        /// <summary>Track session</summary>
+        public bool HighDensity;
+        /// <summary>Pregap sectors not stored in track file</summary>
+        public ulong Pregap;
+    }
+
+    struct GdiDisc
+    {
+        /// <summary>Sessions</summary>
+        public List<Session> Sessions;
+        /// <summary>Tracks</summary>
+        public List<GdiTrack> Tracks;
+        /// <summary>Disk type</summary>
+        public MediaType Disktype;
     }
 }

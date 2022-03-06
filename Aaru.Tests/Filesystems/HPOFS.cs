@@ -32,68 +32,67 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Filesystems
+namespace Aaru.Tests.Filesystems;
+
+[TestFixture]
+public class Hpofs : FilesystemTest
 {
-    [TestFixture]
-    public class Hpofs : FilesystemTest
+    public Hpofs() : base("HPOFS") {}
+
+    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems",
+                                                      "High Performance Optical File System");
+    public override IFilesystem Plugin     => new HPOFS();
+    public override bool        Partitions => false;
+
+    public override FileSystemTest[] Tests => new[]
     {
-        public Hpofs() : base("HPOFS") {}
-
-        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems",
-                                                          "High Performance Optical File System");
-        public override IFilesystem Plugin     => new HPOFS();
-        public override bool        Partitions => false;
-
-        public override FileSystemTest[] Tests => new[]
+        new FileSystemTest
         {
-            new FileSystemTest
-            {
-                TestFile     = "rid1.img.lz",
-                MediaType    = MediaType.DOS_35_HD,
-                Sectors      = 2880,
-                SectorSize   = 512,
-                Clusters     = 2880,
-                ClusterSize  = 512,
-                SystemId     = "IBM 10.2",
-                VolumeName   = "VOLUME LABEL",
-                VolumeSerial = "AC226814"
-            },
-            new FileSystemTest
-            {
-                TestFile     = "rid10.img.lz",
-                MediaType    = MediaType.DOS_35_HD,
-                Sectors      = 2880,
-                SectorSize   = 512,
-                Clusters     = 2880,
-                ClusterSize  = 512,
-                SystemId     = "IBM 10.2",
-                VolumeName   = "VOLUME LABEL",
-                VolumeSerial = "AC160814"
-            },
-            new FileSystemTest
-            {
-                TestFile     = "rid66percent.img.lz",
-                MediaType    = MediaType.DOS_35_HD,
-                Sectors      = 2880,
-                SectorSize   = 512,
-                Clusters     = 2880,
-                ClusterSize  = 512,
-                SystemId     = "IBM 10.2",
-                VolumeName   = "VOLUME LABEL",
-                VolumeSerial = "AC306C14"
-            },
-            new FileSystemTest
-            {
-                TestFile     = "rid266.img.lz",
-                MediaType    = MediaType.DOS_35_HD,
-                Sectors      = 2880,
-                SectorSize   = 512,
-                Clusters     = 2880,
-                ClusterSize  = 512,
-                SystemId     = "IBM 10.2",
-                VolumeName   = "VOLUME LABEL",
-                VolumeSerial = "ABEF2C14"
-            }
-        };
-    }
+            TestFile     = "rid1.img.lz",
+            MediaType    = MediaType.DOS_35_HD,
+            Sectors      = 2880,
+            SectorSize   = 512,
+            Clusters     = 2880,
+            ClusterSize  = 512,
+            SystemId     = "IBM 10.2",
+            VolumeName   = "VOLUME LABEL",
+            VolumeSerial = "AC226814"
+        },
+        new FileSystemTest
+        {
+            TestFile     = "rid10.img.lz",
+            MediaType    = MediaType.DOS_35_HD,
+            Sectors      = 2880,
+            SectorSize   = 512,
+            Clusters     = 2880,
+            ClusterSize  = 512,
+            SystemId     = "IBM 10.2",
+            VolumeName   = "VOLUME LABEL",
+            VolumeSerial = "AC160814"
+        },
+        new FileSystemTest
+        {
+            TestFile     = "rid66percent.img.lz",
+            MediaType    = MediaType.DOS_35_HD,
+            Sectors      = 2880,
+            SectorSize   = 512,
+            Clusters     = 2880,
+            ClusterSize  = 512,
+            SystemId     = "IBM 10.2",
+            VolumeName   = "VOLUME LABEL",
+            VolumeSerial = "AC306C14"
+        },
+        new FileSystemTest
+        {
+            TestFile     = "rid266.img.lz",
+            MediaType    = MediaType.DOS_35_HD,
+            Sectors      = 2880,
+            SectorSize   = 512,
+            Clusters     = 2880,
+            ClusterSize  = 512,
+            SystemId     = "IBM 10.2",
+            VolumeName   = "VOLUME LABEL",
+            VolumeSerial = "ABEF2C14"
+        }
+    };
 }

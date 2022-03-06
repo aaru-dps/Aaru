@@ -30,12 +30,11 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class SaveDskF
 {
-    public sealed partial class SaveDskF
-    {
-        const ushort SDF_MAGIC_OLD        = 0x58AA;
-        const ushort SDF_MAGIC            = 0x59AA;
-        const ushort SDF_MAGIC_COMPRESSED = 0x5AAA;
-    }
+    const ushort SDF_MAGIC_OLD        = 0x58AA;
+    const ushort SDF_MAGIC            = 0x59AA;
+    const ushort SDF_MAGIC_COMPRESSED = 0x5AAA;
 }

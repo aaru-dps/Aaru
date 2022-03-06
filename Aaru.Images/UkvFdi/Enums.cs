@@ -33,23 +33,22 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Aaru.DiscImages
-{
-    [SuppressMessage("ReSharper", "UnusedMember.Local")]
-    public sealed partial class UkvFdi
-    {
-        [Flags]
-        enum DiskFlags : byte
-        {
-            WriteProtected = 1
-        }
+namespace Aaru.DiscImages;
 
-        [Flags]
-        enum SectorFlags : byte
-        {
-            CrcOk128  = 0x01, CrcOk256  = 0x02, CrcOk512  = 0x04,
-            CrcOk1024 = 0x08, CrcOk2048 = 0x10, CrcOk4096 = 0x20,
-            Deleted   = 0x80
-        }
+[SuppressMessage("ReSharper", "UnusedMember.Local")]
+public sealed partial class UkvFdi
+{
+    [Flags]
+    enum DiskFlags : byte
+    {
+        WriteProtected = 1
+    }
+
+    [Flags]
+    enum SectorFlags : byte
+    {
+        CrcOk128  = 0x01, CrcOk256  = 0x02, CrcOk512  = 0x04,
+        CrcOk1024 = 0x08, CrcOk2048 = 0x10, CrcOk4096 = 0x20,
+        Deleted   = 0x80
     }
 }

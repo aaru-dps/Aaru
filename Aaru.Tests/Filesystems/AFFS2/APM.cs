@@ -32,32 +32,31 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Filesystems.AFFS2
+namespace Aaru.Tests.Filesystems.AFFS2;
+
+[TestFixture]
+public class APM : FilesystemTest
 {
-    [TestFixture]
-    public class APM : FilesystemTest
+    public APM() : base("Amiga FFS2") {}
+
+    public override string DataFolder =>
+        Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Amiga Fast File System 2 (APM)");
+
+    public override IFilesystem Plugin     => new AmigaDOSPlugin();
+    public override bool        Partitions => true;
+
+    public override FileSystemTest[] Tests => new[]
     {
-        public APM() : base("Amiga FFS2") {}
-
-        public override string DataFolder =>
-            Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Amiga Fast File System 2 (APM)");
-
-        public override IFilesystem Plugin     => new AmigaDOSPlugin();
-        public override bool        Partitions => true;
-
-        public override FileSystemTest[] Tests => new[]
+        new FileSystemTest
         {
-            new FileSystemTest
-            {
-                TestFile     = "morphos_3.13.aif",
-                MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 262144,
-                SectorSize   = 512,
-                Clusters     = 262018,
-                ClusterSize  = 512,
-                VolumeName   = "Volume label",
-                VolumeSerial = "6144B870"
-            }
-        };
-    }
+            TestFile     = "morphos_3.13.aif",
+            MediaType    = MediaType.GENERIC_HDD,
+            Sectors      = 262144,
+            SectorSize   = 512,
+            Clusters     = 262018,
+            ClusterSize  = 512,
+            VolumeName   = "Volume label",
+            VolumeSerial = "6144B870"
+        }
+    };
 }

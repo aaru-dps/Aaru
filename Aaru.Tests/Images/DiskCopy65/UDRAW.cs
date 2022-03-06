@@ -32,117 +32,116 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.DiscImages;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Images.DiskCopy65
-{
-    [TestFixture]
-    public class UDRAW : BlockMediaImageTest
-    {
-        public override string DataFolder =>
-            Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "DiskCopy 6.5", "UDIF", "UDRAW");
-        public override IMediaImage _plugin => new Udif();
+namespace Aaru.Tests.Images.DiskCopy65;
 
-        public override BlockImageTestExpected[] Tests => new[]
+[TestFixture]
+public class UDRAW : BlockMediaImageTest
+{
+    public override string DataFolder =>
+        Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "DiskCopy 6.5", "UDIF", "UDRAW");
+    public override IMediaImage _plugin => new Udif();
+
+    public override BlockImageTestExpected[] Tests => new[]
+    {
+        new BlockImageTestExpected
         {
-            new BlockImageTestExpected
+            TestFile   = "DC6_UDRAW_DOS_1440.dmg",
+            MediaType  = MediaType.GENERIC_HDD,
+            Sectors    = 2884,
+            SectorSize = 512,
+            MD5        = "4306922864c6cf40a419fd5876b5879d",
+            Partitions = new[]
             {
-                TestFile   = "DC6_UDRAW_DOS_1440.dmg",
-                MediaType  = MediaType.GENERIC_HDD,
-                Sectors    = 2884,
-                SectorSize = 512,
-                MD5        = "4306922864c6cf40a419fd5876b5879d",
-                Partitions = new[]
-                {
-                    new BlockPartitionVolumes
-                    {
-                        Start  = 4,
-                        Length = 2880
-                    }
-                }
-            },
-            new BlockImageTestExpected
-            {
-                TestFile   = "DC6_UDRAW_DOS_720.dmg",
-                MediaType  = MediaType.GENERIC_HDD,
-                Sectors    = 1444,
-                SectorSize = 512,
-                MD5        = "a885825f28929a5626e71201b37ed96e"
-                /* TODO: NullReferenceException when getting cluster of last depth folder
-                Partitions = new[]
-                {
-                    new BlockPartitionVolumes
-                    {
-                        Start  = 4,
-                        Length = 1440
-                    }
-                }
-                */
-            },
-            new BlockImageTestExpected
-            {
-                TestFile   = "DC6_UDRAW_DOS_DMF.dmg",
-                MediaType  = MediaType.GENERIC_HDD,
-                Sectors    = 3364,
-                SectorSize = 512,
-                MD5        = "180a0db19ecfe9d55d068c6460f028be"
-                /* TODO: NullReferenceException when getting cluster of last depth folder
-                Partitions = new[]
-                {
                 new BlockPartitionVolumes
                 {
-                Start  = 4,
-                Length = 3360
+                    Start  = 4,
+                    Length = 2880
                 }
-                }
-                */
-            },
-            new BlockImageTestExpected
-            {
-                TestFile   = "DC6_UDRAW_HFS_1440.dmg",
-                MediaType  = MediaType.GENERIC_HDD,
-                Sectors    = 2884,
-                SectorSize = 512,
-                MD5        = "e307949819edeecd5e855b661a3bfba3"
-            },
-            new BlockImageTestExpected
-            {
-                TestFile   = "DC6_UDRAW_HFS_800.dmg",
-                MediaType  = MediaType.GENERIC_HDD,
-                Sectors    = 1604,
-                SectorSize = 512,
-                MD5        = "c5a5ad78997ddc30f1dc768112f52609"
-            },
-            new BlockImageTestExpected
-            {
-                TestFile   = "DC6_UDRAW_HFS_DMF.dmg",
-                MediaType  = MediaType.GENERIC_HDD,
-                Sectors    = 3364,
-                SectorSize = 512,
-                MD5        = "5fd35f80791be6eaa44195875aa0465a"
-            },
-            new BlockImageTestExpected
-            {
-                TestFile   = "DC6_UDRAW_PD_1440.dmg",
-                MediaType  = MediaType.GENERIC_HDD,
-                Sectors    = 2884,
-                SectorSize = 512,
-                MD5        = "1c336199896d1f9bff9b2d5c49b48b63"
-            },
-            new BlockImageTestExpected
-            {
-                TestFile   = "DC6_UDRAW_PD_800.dmg",
-                MediaType  = MediaType.GENERIC_HDD,
-                Sectors    = 1604,
-                SectorSize = 512,
-                MD5        = "d654f84668c671e801f4aa107e0aee92"
-            },
-            new BlockImageTestExpected
-            {
-                TestFile   = "DC6_UDRAW_PD_DMF.dmg",
-                MediaType  = MediaType.GENERIC_HDD,
-                Sectors    = 3364,
-                SectorSize = 512,
-                MD5        = "e7b1de07a1f402e4663c3dee4fd3d6fe"
             }
-        };
-    }
+        },
+        new BlockImageTestExpected
+        {
+            TestFile   = "DC6_UDRAW_DOS_720.dmg",
+            MediaType  = MediaType.GENERIC_HDD,
+            Sectors    = 1444,
+            SectorSize = 512,
+            MD5        = "a885825f28929a5626e71201b37ed96e"
+            /* TODO: NullReferenceException when getting cluster of last depth folder
+            Partitions = new[]
+            {
+                new BlockPartitionVolumes
+                {
+                    Start  = 4,
+                    Length = 1440
+                }
+            }
+            */
+        },
+        new BlockImageTestExpected
+        {
+            TestFile   = "DC6_UDRAW_DOS_DMF.dmg",
+            MediaType  = MediaType.GENERIC_HDD,
+            Sectors    = 3364,
+            SectorSize = 512,
+            MD5        = "180a0db19ecfe9d55d068c6460f028be"
+            /* TODO: NullReferenceException when getting cluster of last depth folder
+            Partitions = new[]
+            {
+            new BlockPartitionVolumes
+            {
+            Start  = 4,
+            Length = 3360
+            }
+            }
+            */
+        },
+        new BlockImageTestExpected
+        {
+            TestFile   = "DC6_UDRAW_HFS_1440.dmg",
+            MediaType  = MediaType.GENERIC_HDD,
+            Sectors    = 2884,
+            SectorSize = 512,
+            MD5        = "e307949819edeecd5e855b661a3bfba3"
+        },
+        new BlockImageTestExpected
+        {
+            TestFile   = "DC6_UDRAW_HFS_800.dmg",
+            MediaType  = MediaType.GENERIC_HDD,
+            Sectors    = 1604,
+            SectorSize = 512,
+            MD5        = "c5a5ad78997ddc30f1dc768112f52609"
+        },
+        new BlockImageTestExpected
+        {
+            TestFile   = "DC6_UDRAW_HFS_DMF.dmg",
+            MediaType  = MediaType.GENERIC_HDD,
+            Sectors    = 3364,
+            SectorSize = 512,
+            MD5        = "5fd35f80791be6eaa44195875aa0465a"
+        },
+        new BlockImageTestExpected
+        {
+            TestFile   = "DC6_UDRAW_PD_1440.dmg",
+            MediaType  = MediaType.GENERIC_HDD,
+            Sectors    = 2884,
+            SectorSize = 512,
+            MD5        = "1c336199896d1f9bff9b2d5c49b48b63"
+        },
+        new BlockImageTestExpected
+        {
+            TestFile   = "DC6_UDRAW_PD_800.dmg",
+            MediaType  = MediaType.GENERIC_HDD,
+            Sectors    = 1604,
+            SectorSize = 512,
+            MD5        = "d654f84668c671e801f4aa107e0aee92"
+        },
+        new BlockImageTestExpected
+        {
+            TestFile   = "DC6_UDRAW_PD_DMF.dmg",
+            MediaType  = MediaType.GENERIC_HDD,
+            Sectors    = 3364,
+            SectorSize = 512,
+            MD5        = "e7b1de07a1f402e4663c3dee4fd3d6fe"
+        }
+    };
 }

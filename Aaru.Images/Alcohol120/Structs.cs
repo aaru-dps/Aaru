@@ -32,89 +32,88 @@
 
 using System.Runtime.InteropServices;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class Alcohol120
 {
-    public sealed partial class Alcohol120
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    struct Header
     {
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct Header
-        {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public byte[] signature;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
-            public byte[] version;
-            public MediumType type;
-            public ushort     sessions;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
-            public ushort[] unknown1;
-            public readonly ushort bcaLength;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
-            public uint[] unknown2;
-            public uint bcaOffset;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)]
-            public uint[] unknown3;
-            public uint structuresOffset;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-            public uint[] unknown4;
-            public          uint sessionOffset;
-            public readonly uint dpmOffset;
-        }
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+        public byte[] signature;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
+        public byte[] version;
+        public MediumType type;
+        public ushort     sessions;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
+        public ushort[] unknown1;
+        public readonly ushort bcaLength;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
+        public uint[] unknown2;
+        public uint bcaOffset;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)]
+        public uint[] unknown3;
+        public uint structuresOffset;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+        public uint[] unknown4;
+        public          uint sessionOffset;
+        public readonly uint dpmOffset;
+    }
 
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct Session
-        {
-            public          int    sessionStart;
-            public          int    sessionEnd;
-            public          ushort sessionSequence;
-            public          byte   allBlocks;
-            public          byte   nonTrackBlocks;
-            public          ushort firstTrack;
-            public          ushort lastTrack;
-            public readonly uint   unknown;
-            public          uint   trackOffset;
-        }
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    struct Session
+    {
+        public          int    sessionStart;
+        public          int    sessionEnd;
+        public          ushort sessionSequence;
+        public          byte   allBlocks;
+        public          byte   nonTrackBlocks;
+        public          ushort firstTrack;
+        public          ushort lastTrack;
+        public readonly uint   unknown;
+        public          uint   trackOffset;
+    }
 
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct Track
-        {
-            public TrackMode      mode;
-            public SubchannelMode subMode;
-            public byte           adrCtl;
-            public byte           tno;
-            public byte           point;
-            public byte           min;
-            public byte           sec;
-            public byte           frame;
-            public byte           zero;
-            public byte           pmin;
-            public byte           psec;
-            public byte           pframe;
-            public uint           extraOffset;
-            public ushort         sectorSize;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 18)]
-            public byte[] unknown;
-            public uint  startLba;
-            public ulong startOffset;
-            public uint  files;
-            public uint  footerOffset;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 24)]
-            public byte[] unknown2;
-        }
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    struct Track
+    {
+        public TrackMode      mode;
+        public SubchannelMode subMode;
+        public byte           adrCtl;
+        public byte           tno;
+        public byte           point;
+        public byte           min;
+        public byte           sec;
+        public byte           frame;
+        public byte           zero;
+        public byte           pmin;
+        public byte           psec;
+        public byte           pframe;
+        public uint           extraOffset;
+        public ushort         sectorSize;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 18)]
+        public byte[] unknown;
+        public uint  startLba;
+        public ulong startOffset;
+        public uint  files;
+        public uint  footerOffset;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 24)]
+        public byte[] unknown2;
+    }
 
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct TrackExtra
-        {
-            public uint pregap;
-            public uint sectors;
-        }
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    struct TrackExtra
+    {
+        public uint pregap;
+        public uint sectors;
+    }
 
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct Footer
-        {
-            public          uint filenameOffset;
-            public          uint widechar;
-            public readonly uint unknown1;
-            public readonly uint unknown2;
-        }
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    struct Footer
+    {
+        public          uint filenameOffset;
+        public          uint widechar;
+        public readonly uint unknown1;
+        public readonly uint unknown2;
     }
 }

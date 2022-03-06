@@ -30,15 +30,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Core.Devices.Scanning
-{
-    public sealed partial class MediaScan
-    {
-        ScanResults Nvme()
-        {
-            StoppingErrorMessage?.Invoke("NVMe devices not yet supported.");
+namespace Aaru.Core.Devices.Scanning;
 
-            return default;
-        }
+public sealed partial class MediaScan
+{
+    ScanResults Nvme()
+    {
+        StoppingErrorMessage?.Invoke("NVMe devices not yet supported.");
+
+        return default;
     }
 }

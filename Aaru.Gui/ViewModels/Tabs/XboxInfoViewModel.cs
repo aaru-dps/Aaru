@@ -39,81 +39,80 @@ using Avalonia.Controls;
 using JetBrains.Annotations;
 using ReactiveUI;
 
-namespace Aaru.Gui.ViewModels.Tabs
+namespace Aaru.Gui.ViewModels.Tabs;
+
+public sealed class XboxInfoViewModel
 {
-    public sealed class XboxInfoViewModel
+    readonly Window _view;
+    readonly byte[] _xboxSecuritySector;
+
+    public XboxInfoViewModel([CanBeNull] XgdInfo xgdInfo, [CanBeNull] byte[] dmi, [CanBeNull] byte[] securitySector,
+                             SS.SecuritySector? decodedSecuritySector, Window view)
     {
-        readonly Window _view;
-        readonly byte[] _xboxSecuritySector;
+        _xboxSecuritySector = securitySector;
+        _view               = view;
+        SaveXboxSsCommand   = ReactiveCommand.Create(ExecuteSaveXboxSsCommand);
 
-        public XboxInfoViewModel([CanBeNull] XgdInfo xgdInfo, [CanBeNull] byte[] dmi, [CanBeNull] byte[] securitySector,
-                                 SS.SecuritySector? decodedSecuritySector, Window view)
+        if(xgdInfo != null)
         {
-            _xboxSecuritySector = securitySector;
-            _view               = view;
-            SaveXboxSsCommand   = ReactiveCommand.Create(ExecuteSaveXboxSsCommand);
-
-            if(xgdInfo != null)
-            {
-                XboxInformationVisible = true;
-                XboxL0VideoText        = $"{xgdInfo.L0Video} sectors";
-                XboxL1VideoText        = $"{xgdInfo.L1Video} sectors";
-                XboxMiddleZoneText     = $"{xgdInfo.MiddleZone} sectors";
-                XboxGameSizeText       = $"{xgdInfo.GameSize} sectors";
-                XboxTotalSizeText      = $"{xgdInfo.TotalSize} sectors";
-                XboxRealBreakText      = xgdInfo.LayerBreak.ToString();
-            }
-
-            if(dmi != null)
-            {
-                if(DMI.IsXbox(dmi))
-                    XboxDmiText = DMI.PrettifyXbox(dmi);
-                else if(DMI.IsXbox360(dmi))
-                    XboxDmiText = DMI.PrettifyXbox360(dmi);
-            }
-
-            if(decodedSecuritySector.HasValue)
-                XboxSsText = SS.Prettify(decodedSecuritySector);
-
-            SaveXboxSsVisible = securitySector != null;
+            XboxInformationVisible = true;
+            XboxL0VideoText        = $"{xgdInfo.L0Video} sectors";
+            XboxL1VideoText        = $"{xgdInfo.L1Video} sectors";
+            XboxMiddleZoneText     = $"{xgdInfo.MiddleZone} sectors";
+            XboxGameSizeText       = $"{xgdInfo.GameSize} sectors";
+            XboxTotalSizeText      = $"{xgdInfo.TotalSize} sectors";
+            XboxRealBreakText      = xgdInfo.LayerBreak.ToString();
         }
 
-        public ReactiveCommand<Unit, Unit> SaveXboxSsCommand      { get; }
-        public bool                        XboxInformationVisible { get; }
-        public bool                        SaveXboxSsVisible      { get; }
-        public string                      XboxL0VideoText        { get; }
-        public string                      XboxL1VideoText        { get; }
-        public string                      XboxMiddleZoneText     { get; }
-        public string                      XboxGameSizeText       { get; }
-        public string                      XboxTotalSizeText      { get; }
-        public string                      XboxRealBreakText      { get; }
-        public string                      XboxDmiText            { get; }
-        public string                      XboxSsText             { get; }
-
-        async void SaveElement(byte[] data)
+        if(dmi != null)
         {
-            var dlgSaveBinary = new SaveFileDialog();
-
-            dlgSaveBinary.Filters.Add(new FileDialogFilter
-            {
-                Extensions = new List<string>(new[]
-                {
-                    "*.bin"
-                }),
-                Name = "Binary"
-            });
-
-            string result = await dlgSaveBinary.ShowAsync(_view);
-
-            if(result is null)
-                return;
-
-            var saveFs = new FileStream(result, FileMode.Create);
-            saveFs.Write(data, 0, data.Length);
-
-            saveFs.Close();
+            if(DMI.IsXbox(dmi))
+                XboxDmiText = DMI.PrettifyXbox(dmi);
+            else if(DMI.IsXbox360(dmi))
+                XboxDmiText = DMI.PrettifyXbox360(dmi);
         }
 
-        public void ExecuteSaveXboxSsCommand() => SaveElement(_xboxSecuritySector);
+        if(decodedSecuritySector.HasValue)
+            XboxSsText = SS.Prettify(decodedSecuritySector);
+
+        SaveXboxSsVisible = securitySector != null;
     }
+
+    public ReactiveCommand<Unit, Unit> SaveXboxSsCommand      { get; }
+    public bool                        XboxInformationVisible { get; }
+    public bool                        SaveXboxSsVisible      { get; }
+    public string                      XboxL0VideoText        { get; }
+    public string                      XboxL1VideoText        { get; }
+    public string                      XboxMiddleZoneText     { get; }
+    public string                      XboxGameSizeText       { get; }
+    public string                      XboxTotalSizeText      { get; }
+    public string                      XboxRealBreakText      { get; }
+    public string                      XboxDmiText            { get; }
+    public string                      XboxSsText             { get; }
+
+    async void SaveElement(byte[] data)
+    {
+        var dlgSaveBinary = new SaveFileDialog();
+
+        dlgSaveBinary.Filters.Add(new FileDialogFilter
+        {
+            Extensions = new List<string>(new[]
+            {
+                "*.bin"
+            }),
+            Name = "Binary"
+        });
+
+        string result = await dlgSaveBinary.ShowAsync(_view);
+
+        if(result is null)
+            return;
+
+        var saveFs = new FileStream(result, FileMode.Create);
+        saveFs.Write(data, 0, data.Length);
+
+        saveFs.Close();
+    }
+
+    public void ExecuteSaveXboxSsCommand() => SaveElement(_xboxSecuritySector);
 }

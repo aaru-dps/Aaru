@@ -32,118 +32,117 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Filesystems.UFS
-{
-    [TestFixture]
-    public class NeXT_Floppy : FilesystemTest
-    {
-        public override string DataFolder =>
-            Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "UNIX filesystem (NeXT)");
-        public override IFilesystem Plugin     => new FFSPlugin();
-        public override bool        Partitions => true;
+namespace Aaru.Tests.Filesystems.UFS;
 
-        public override FileSystemTest[] Tests => new[]
+[TestFixture]
+public class NeXT_Floppy : FilesystemTest
+{
+    public override string DataFolder =>
+        Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "UNIX filesystem (NeXT)");
+    public override IFilesystem Plugin     => new FFSPlugin();
+    public override bool        Partitions => true;
+
+    public override FileSystemTest[] Tests => new[]
+    {
+        new FileSystemTest
         {
-            new FileSystemTest
-            {
-                TestFile    = "nextstep_3.3_mf2dd.img.lz",
-                MediaType   = MediaType.DOS_35_DS_DD_9,
-                Sectors     = 1440,
-                SectorSize  = 512,
-                Clusters    = 624,
-                ClusterSize = 1024,
-                Type        = "UFS"
-            },
-            new FileSystemTest
-            {
-                TestFile    = "nextstep_3.3_mf2hd.img.lz",
-                MediaType   = MediaType.DOS_35_HD,
-                Sectors     = 2880,
-                SectorSize  = 512,
-                Clusters    = 1344,
-                ClusterSize = 1024,
-                Type        = "UFS"
-            },
-            new FileSystemTest
-            {
-                TestFile    = "openstep_4.0_mf2dd.img.lz",
-                MediaType   = MediaType.DOS_35_DS_DD_9,
-                Sectors     = 1440,
-                SectorSize  = 512,
-                Clusters    = 624,
-                ClusterSize = 1024,
-                Type        = "UFS"
-            },
-            new FileSystemTest
-            {
-                TestFile    = "openstep_4.0_mf2hd.img.lz",
-                MediaType   = MediaType.DOS_35_HD,
-                Sectors     = 2880,
-                SectorSize  = 512,
-                Clusters    = 1344,
-                ClusterSize = 1024,
-                Type        = "UFS"
-            },
-            new FileSystemTest
-            {
-                TestFile    = "openstep_4.2_mf2dd.img.lz",
-                MediaType   = MediaType.DOS_35_DS_DD_9,
-                Sectors     = 1440,
-                SectorSize  = 512,
-                Clusters    = 624,
-                ClusterSize = 1024,
-                Type        = "UFS"
-            },
-            new FileSystemTest
-            {
-                TestFile    = "openstep_4.2_mf2hd.img.lz",
-                MediaType   = MediaType.DOS_35_HD,
-                Sectors     = 2880,
-                SectorSize  = 512,
-                Clusters    = 1344,
-                ClusterSize = 1024,
-                Type        = "UFS"
-            },
-            new FileSystemTest
-            {
-                TestFile    = "rhapsody_dr1_mf2dd.img.lz",
-                MediaType   = MediaType.DOS_35_DS_DD_9,
-                Sectors     = 1440,
-                SectorSize  = 512,
-                Clusters    = 624,
-                ClusterSize = 1024,
-                Type        = "UFS"
-            },
-            new FileSystemTest
-            {
-                TestFile    = "rhapsody_dr1_mf2hd.img.lz",
-                MediaType   = MediaType.DOS_35_HD,
-                Sectors     = 2880,
-                SectorSize  = 512,
-                Clusters    = 1344,
-                ClusterSize = 1024,
-                Type        = "UFS"
-            },
-            new FileSystemTest
-            {
-                TestFile    = "rhapsody_dr2_mf2dd.img.lz",
-                MediaType   = MediaType.DOS_35_DS_DD_9,
-                Sectors     = 1440,
-                SectorSize  = 512,
-                Clusters    = 624,
-                ClusterSize = 1024,
-                Type        = "UFS"
-            },
-            new FileSystemTest
-            {
-                TestFile    = "rhapsody_dr2_mf2hd.img.lz",
-                MediaType   = MediaType.DOS_35_HD,
-                Sectors     = 2880,
-                SectorSize  = 512,
-                Clusters    = 1344,
-                ClusterSize = 1024,
-                Type        = "UFS"
-            }
-        };
-    }
+            TestFile    = "nextstep_3.3_mf2dd.img.lz",
+            MediaType   = MediaType.DOS_35_DS_DD_9,
+            Sectors     = 1440,
+            SectorSize  = 512,
+            Clusters    = 624,
+            ClusterSize = 1024,
+            Type        = "UFS"
+        },
+        new FileSystemTest
+        {
+            TestFile    = "nextstep_3.3_mf2hd.img.lz",
+            MediaType   = MediaType.DOS_35_HD,
+            Sectors     = 2880,
+            SectorSize  = 512,
+            Clusters    = 1344,
+            ClusterSize = 1024,
+            Type        = "UFS"
+        },
+        new FileSystemTest
+        {
+            TestFile    = "openstep_4.0_mf2dd.img.lz",
+            MediaType   = MediaType.DOS_35_DS_DD_9,
+            Sectors     = 1440,
+            SectorSize  = 512,
+            Clusters    = 624,
+            ClusterSize = 1024,
+            Type        = "UFS"
+        },
+        new FileSystemTest
+        {
+            TestFile    = "openstep_4.0_mf2hd.img.lz",
+            MediaType   = MediaType.DOS_35_HD,
+            Sectors     = 2880,
+            SectorSize  = 512,
+            Clusters    = 1344,
+            ClusterSize = 1024,
+            Type        = "UFS"
+        },
+        new FileSystemTest
+        {
+            TestFile    = "openstep_4.2_mf2dd.img.lz",
+            MediaType   = MediaType.DOS_35_DS_DD_9,
+            Sectors     = 1440,
+            SectorSize  = 512,
+            Clusters    = 624,
+            ClusterSize = 1024,
+            Type        = "UFS"
+        },
+        new FileSystemTest
+        {
+            TestFile    = "openstep_4.2_mf2hd.img.lz",
+            MediaType   = MediaType.DOS_35_HD,
+            Sectors     = 2880,
+            SectorSize  = 512,
+            Clusters    = 1344,
+            ClusterSize = 1024,
+            Type        = "UFS"
+        },
+        new FileSystemTest
+        {
+            TestFile    = "rhapsody_dr1_mf2dd.img.lz",
+            MediaType   = MediaType.DOS_35_DS_DD_9,
+            Sectors     = 1440,
+            SectorSize  = 512,
+            Clusters    = 624,
+            ClusterSize = 1024,
+            Type        = "UFS"
+        },
+        new FileSystemTest
+        {
+            TestFile    = "rhapsody_dr1_mf2hd.img.lz",
+            MediaType   = MediaType.DOS_35_HD,
+            Sectors     = 2880,
+            SectorSize  = 512,
+            Clusters    = 1344,
+            ClusterSize = 1024,
+            Type        = "UFS"
+        },
+        new FileSystemTest
+        {
+            TestFile    = "rhapsody_dr2_mf2dd.img.lz",
+            MediaType   = MediaType.DOS_35_DS_DD_9,
+            Sectors     = 1440,
+            SectorSize  = 512,
+            Clusters    = 624,
+            ClusterSize = 1024,
+            Type        = "UFS"
+        },
+        new FileSystemTest
+        {
+            TestFile    = "rhapsody_dr2_mf2hd.img.lz",
+            MediaType   = MediaType.DOS_35_HD,
+            Sectors     = 2880,
+            SectorSize  = 512,
+            Clusters    = 1344,
+            ClusterSize = 1024,
+            Type        = "UFS"
+        }
+    };
 }

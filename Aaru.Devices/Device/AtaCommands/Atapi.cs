@@ -33,58 +33,57 @@
 using Aaru.Console;
 using Aaru.Decoders.ATA;
 
-namespace Aaru.Devices
+namespace Aaru.Devices;
+
+public sealed partial class Device
 {
-    public sealed partial class Device
+    /// <summary>Sends the ATA IDENTIFY PACKET DEVICE command to the device, using default device timeout</summary>
+    /// <returns><c>true</c> if the command failed and <paramref name="statusRegisters" /> contains the error registers.</returns>
+    /// <param name="buffer">Buffer.</param>
+    /// <param name="statusRegisters">Status registers.</param>
+    public bool AtapiIdentify(out byte[] buffer, out AtaErrorRegistersChs statusRegisters) =>
+        AtapiIdentify(out buffer, out statusRegisters, Timeout);
+
+    /// <summary>Sends the ATA IDENTIFY PACKET DEVICE command to the device, using default device timeout</summary>
+    /// <returns><c>true</c> if the command failed and <paramref name="statusRegisters" /> contains the error registers.</returns>
+    /// <param name="buffer">Buffer.</param>
+    /// <param name="statusRegisters">Status registers.</param>
+    /// <param name="duration">Duration.</param>
+    public bool AtapiIdentify(out byte[] buffer, out AtaErrorRegistersChs statusRegisters, out double duration) =>
+        AtapiIdentify(out buffer, out statusRegisters, Timeout, out duration);
+
+    /// <summary>Sends the ATA IDENTIFY PACKET DEVICE command to the device</summary>
+    /// <returns><c>true</c> if the command failed and <paramref name="statusRegisters" /> contains the error registers.</returns>
+    /// <param name="buffer">Buffer.</param>
+    /// <param name="statusRegisters">Status registers.</param>
+    /// <param name="timeout">Timeout.</param>
+    public bool AtapiIdentify(out byte[] buffer, out AtaErrorRegistersChs statusRegisters, uint timeout) =>
+        AtapiIdentify(out buffer, out statusRegisters, timeout, out _);
+
+    /// <summary>Sends the ATA IDENTIFY PACKET DEVICE command to the device</summary>
+    /// <returns><c>true</c> if the command failed and <paramref name="statusRegisters" /> contains the error registers.</returns>
+    /// <param name="buffer">Buffer.</param>
+    /// <param name="statusRegisters">Status registers.</param>
+    /// <param name="timeout">Timeout.</param>
+    /// <param name="duration">Duration.</param>
+    public bool AtapiIdentify(out byte[] buffer, out AtaErrorRegistersChs statusRegisters, uint timeout,
+                              out double duration)
     {
-        /// <summary>Sends the ATA IDENTIFY PACKET DEVICE command to the device, using default device timeout</summary>
-        /// <returns><c>true</c> if the command failed and <paramref name="statusRegisters" /> contains the error registers.</returns>
-        /// <param name="buffer">Buffer.</param>
-        /// <param name="statusRegisters">Status registers.</param>
-        public bool AtapiIdentify(out byte[] buffer, out AtaErrorRegistersChs statusRegisters) =>
-            AtapiIdentify(out buffer, out statusRegisters, Timeout);
+        buffer = new byte[512];
 
-        /// <summary>Sends the ATA IDENTIFY PACKET DEVICE command to the device, using default device timeout</summary>
-        /// <returns><c>true</c> if the command failed and <paramref name="statusRegisters" /> contains the error registers.</returns>
-        /// <param name="buffer">Buffer.</param>
-        /// <param name="statusRegisters">Status registers.</param>
-        /// <param name="duration">Duration.</param>
-        public bool AtapiIdentify(out byte[] buffer, out AtaErrorRegistersChs statusRegisters, out double duration) =>
-            AtapiIdentify(out buffer, out statusRegisters, Timeout, out duration);
-
-        /// <summary>Sends the ATA IDENTIFY PACKET DEVICE command to the device</summary>
-        /// <returns><c>true</c> if the command failed and <paramref name="statusRegisters" /> contains the error registers.</returns>
-        /// <param name="buffer">Buffer.</param>
-        /// <param name="statusRegisters">Status registers.</param>
-        /// <param name="timeout">Timeout.</param>
-        public bool AtapiIdentify(out byte[] buffer, out AtaErrorRegistersChs statusRegisters, uint timeout) =>
-            AtapiIdentify(out buffer, out statusRegisters, timeout, out _);
-
-        /// <summary>Sends the ATA IDENTIFY PACKET DEVICE command to the device</summary>
-        /// <returns><c>true</c> if the command failed and <paramref name="statusRegisters" /> contains the error registers.</returns>
-        /// <param name="buffer">Buffer.</param>
-        /// <param name="statusRegisters">Status registers.</param>
-        /// <param name="timeout">Timeout.</param>
-        /// <param name="duration">Duration.</param>
-        public bool AtapiIdentify(out byte[] buffer, out AtaErrorRegistersChs statusRegisters, uint timeout,
-                                  out double duration)
+        var registers = new AtaRegistersChs
         {
-            buffer = new byte[512];
+            Command = (byte)AtaCommands.IdentifyPacketDevice
+        };
 
-            var registers = new AtaRegistersChs
-            {
-                Command = (byte)AtaCommands.IdentifyPacketDevice
-            };
+        LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn,
+                                   AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
+                                   out bool sense);
 
-            LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn,
-                                       AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
-                                       out bool sense);
+        Error = LastError != 0;
 
-            Error = LastError != 0;
+        AaruConsole.DebugWriteLine("ATA Device", "IDENTIFY PACKET DEVICE took {0} ms.", duration);
 
-            AaruConsole.DebugWriteLine("ATA Device", "IDENTIFY PACKET DEVICE took {0} ms.", duration);
-
-            return sense;
-        }
+        return sense;
     }
 }

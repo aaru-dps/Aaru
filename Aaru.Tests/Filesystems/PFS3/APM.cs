@@ -32,30 +32,29 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Filesystems.PFS3
+namespace Aaru.Tests.Filesystems.PFS3;
+
+[TestFixture]
+public class APM : FilesystemTest
 {
-    [TestFixture]
-    public class APM : FilesystemTest
+    public APM() : base("PFS v3") {}
+
+    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems",
+                                                      "Professional File System 3 (APM)");
+    public override IFilesystem Plugin     => new PFS();
+    public override bool        Partitions => true;
+
+    public override FileSystemTest[] Tests => new[]
     {
-        public APM() : base("PFS v3") {}
-
-        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems",
-                                                          "Professional File System 3 (APM)");
-        public override IFilesystem Plugin     => new PFS();
-        public override bool        Partitions => true;
-
-        public override FileSystemTest[] Tests => new[]
+        new FileSystemTest
         {
-            new FileSystemTest
-            {
-                TestFile    = "morphos_3.13.aif",
-                MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 262144,
-                SectorSize  = 512,
-                Clusters    = 262018,
-                ClusterSize = 512,
-                VolumeName  = "VolumeLabel"
-            }
-        };
-    }
+            TestFile    = "morphos_3.13.aif",
+            MediaType   = MediaType.GENERIC_HDD,
+            Sectors     = 262144,
+            SectorSize  = 512,
+            Clusters    = 262018,
+            ClusterSize = 512,
+            VolumeName  = "VolumeLabel"
+        }
+    };
 }

@@ -32,41 +32,40 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Filesystems
+namespace Aaru.Tests.Filesystems;
+
+[TestFixture]
+public class Btrfs : FilesystemTest
 {
-    [TestFixture]
-    public class Btrfs : FilesystemTest
+    public Btrfs() : base("B-tree file system") {}
+
+    public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "btrfs");
+    public override IFilesystem Plugin     => new BTRFS();
+    public override bool        Partitions => true;
+
+    public override FileSystemTest[] Tests => new[]
     {
-        public Btrfs() : base("B-tree file system") {}
-
-        public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "btrfs");
-        public override IFilesystem Plugin     => new BTRFS();
-        public override bool        Partitions => true;
-
-        public override FileSystemTest[] Tests => new[]
+        new FileSystemTest
         {
-            new FileSystemTest
-            {
-                TestFile     = "linux.aif",
-                MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 262144,
-                SectorSize   = 512,
-                Clusters     = 32512,
-                ClusterSize  = 4096,
-                VolumeName   = "VolumeLabel",
-                VolumeSerial = "a4fc5201-85cc-6840-8a68-998cab9ae897"
-            },
-            new FileSystemTest
-            {
-                TestFile     = "linux_4.19_btrfs_flashdrive.aif",
-                MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 1024000,
-                SectorSize   = 512,
-                Clusters     = 127744,
-                ClusterSize  = 4096,
-                VolumeName   = "btrfs",
-                VolumeSerial = "5af44541-0605-f541-af6d-c229576707ab"
-            }
-        };
-    }
+            TestFile     = "linux.aif",
+            MediaType    = MediaType.GENERIC_HDD,
+            Sectors      = 262144,
+            SectorSize   = 512,
+            Clusters     = 32512,
+            ClusterSize  = 4096,
+            VolumeName   = "VolumeLabel",
+            VolumeSerial = "a4fc5201-85cc-6840-8a68-998cab9ae897"
+        },
+        new FileSystemTest
+        {
+            TestFile     = "linux_4.19_btrfs_flashdrive.aif",
+            MediaType    = MediaType.GENERIC_HDD,
+            Sectors      = 1024000,
+            SectorSize   = 512,
+            Clusters     = 127744,
+            ClusterSize  = 4096,
+            VolumeName   = "btrfs",
+            VolumeSerial = "5af44541-0605-f541-af6d-c229576707ab"
+        }
+    };
 }

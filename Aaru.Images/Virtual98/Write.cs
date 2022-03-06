@@ -41,280 +41,279 @@ using Aaru.CommonTypes.Structs;
 using Aaru.Helpers;
 using Schemas;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class Virtual98
 {
-    public sealed partial class Virtual98
+    /// <inheritdoc />
+    public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
+                       uint sectorSize)
     {
-        /// <inheritdoc />
-        public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
-                           uint sectorSize)
+        if(sectorSize != 512)
         {
-            if(sectorSize != 512)
-            {
-                ErrorMessage = "Unsupported sector size";
-
-                return false;
-            }
-
-            if(sectors > uint.MaxValue)
-            {
-                ErrorMessage = "Too many sectors";
-
-                return false;
-            }
-
-            if(!SupportedMediaTypes.Contains(mediaType))
-            {
-                ErrorMessage = $"Unsupported media format {mediaType}";
-
-                return false;
-            }
-
-            _imageInfo = new ImageInfo
-            {
-                MediaType  = mediaType,
-                SectorSize = sectorSize,
-                Sectors    = sectors
-            };
-
-            try
-            {
-                _writingStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
-            }
-            catch(IOException e)
-            {
-                ErrorMessage = $"Could not create new image file, exception {e.Message}";
-
-                return false;
-            }
-
-            IsWriting    = true;
-            ErrorMessage = null;
-
-            return true;
-        }
-
-        /// <inheritdoc />
-        public bool WriteMediaTag(byte[] data, MediaTagType tag)
-        {
-            ErrorMessage = "Writing media tags is not supported.";
+            ErrorMessage = "Unsupported sector size";
 
             return false;
         }
 
-        /// <inheritdoc />
-        public bool WriteSector(byte[] data, ulong sectorAddress)
+        if(sectors > uint.MaxValue)
         {
-            if(!IsWriting)
-            {
-                ErrorMessage = "Tried to write on a non-writable image";
-
-                return false;
-            }
-
-            if(data.Length != 512)
-            {
-                ErrorMessage = "Incorrect data size";
-
-                return false;
-            }
-
-            if(sectorAddress >= _imageInfo.Sectors)
-            {
-                ErrorMessage = "Tried to write past image size";
-
-                return false;
-            }
-
-            _writingStream.Seek((long)(0xDC + (sectorAddress * 512)), SeekOrigin.Begin);
-            _writingStream.Write(data, 0, data.Length);
-
-            ErrorMessage = "";
-
-            return true;
-        }
-
-        /// <inheritdoc />
-        public bool WriteSectors(byte[] data, ulong sectorAddress, uint length)
-        {
-            if(!IsWriting)
-            {
-                ErrorMessage = "Tried to write on a non-writable image";
-
-                return false;
-            }
-
-            if(data.Length % 512 != 0)
-            {
-                ErrorMessage = "Incorrect data size";
-
-                return false;
-            }
-
-            if(sectorAddress + length > _imageInfo.Sectors)
-            {
-                ErrorMessage = "Tried to write past image size";
-
-                return false;
-            }
-
-            _writingStream.Seek((long)(0xDC + (sectorAddress * 512)), SeekOrigin.Begin);
-            _writingStream.Write(data, 0, data.Length);
-
-            ErrorMessage = "";
-
-            return true;
-        }
-
-        /// <inheritdoc />
-        public bool WriteSectorLong(byte[] data, ulong sectorAddress)
-        {
-            ErrorMessage = "Writing sectors with tags is not supported.";
+            ErrorMessage = "Too many sectors";
 
             return false;
         }
 
-        /// <inheritdoc />
-        public bool WriteSectorsLong(byte[] data, ulong sectorAddress, uint length)
+        if(!SupportedMediaTypes.Contains(mediaType))
         {
-            ErrorMessage = "Writing sectors with tags is not supported.";
+            ErrorMessage = $"Unsupported media format {mediaType}";
 
             return false;
         }
 
-        /// <inheritdoc />
-        public bool Close()
+        _imageInfo = new ImageInfo
         {
-            if(!IsWriting)
-            {
-                ErrorMessage = "Image is not opened for writing";
+            MediaType  = mediaType,
+            SectorSize = sectorSize,
+            Sectors    = sectors
+        };
 
-                return false;
-            }
-
-            if(_imageInfo.Cylinders == 0)
-            {
-                _imageInfo.Cylinders       = (uint)(_imageInfo.Sectors / 16 / 63);
-                _imageInfo.Heads           = 16;
-                _imageInfo.SectorsPerTrack = 63;
-
-                while(_imageInfo.Cylinders == 0)
-                {
-                    _imageInfo.Heads--;
-
-                    if(_imageInfo.Heads == 0)
-                    {
-                        _imageInfo.SectorsPerTrack--;
-                        _imageInfo.Heads = 16;
-                    }
-
-                    _imageInfo.Cylinders = (uint)(_imageInfo.Sectors / _imageInfo.Heads / _imageInfo.SectorsPerTrack);
-
-                    if(_imageInfo.Cylinders       == 0 &&
-                       _imageInfo.Heads           == 0 &&
-                       _imageInfo.SectorsPerTrack == 0)
-                        break;
-                }
-            }
-
-            byte[] commentsBytes = null;
-
-            if(!string.IsNullOrEmpty(_imageInfo.Comments))
-                commentsBytes = Encoding.GetEncoding("shift_jis").GetBytes(_imageInfo.Comments);
-
-            _v98Hdr = new Virtual98Header
-            {
-                comment    = new byte[128],
-                cylinders  = (ushort)_imageInfo.Cylinders,
-                padding2   = new byte[0x44],
-                sectors    = (byte)_imageInfo.SectorsPerTrack,
-                sectorsize = (ushort)_imageInfo.SectorSize,
-                signature  = _signature,
-                surfaces   = (byte)_imageInfo.Heads,
-                totals     = (uint)_imageInfo.Sectors
-            };
-
-            if(commentsBytes != null)
-                Array.Copy(commentsBytes, 0, _v98Hdr.comment, 0,
-                           commentsBytes.Length >= 128 ? 128 : commentsBytes.Length);
-
-            byte[] hdr    = new byte[Marshal.SizeOf<Virtual98Header>()];
-            IntPtr hdrPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<Virtual98Header>());
-            System.Runtime.InteropServices.Marshal.StructureToPtr(_v98Hdr, hdrPtr, true);
-            System.Runtime.InteropServices.Marshal.Copy(hdrPtr, hdr, 0, hdr.Length);
-            System.Runtime.InteropServices.Marshal.FreeHGlobal(hdrPtr);
-
-            _writingStream.Seek(0, SeekOrigin.Begin);
-            _writingStream.Write(hdr, 0, hdr.Length);
-
-            _writingStream.Flush();
-            _writingStream.Close();
-
-            IsWriting    = false;
-            ErrorMessage = "";
-
-            return true;
+        try
+        {
+            _writingStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
         }
-
-        /// <inheritdoc />
-        public bool SetMetadata(ImageInfo metadata)
+        catch(IOException e)
         {
-            _imageInfo.Comments = metadata.Comments;
-
-            return true;
-        }
-
-        /// <inheritdoc />
-        public bool SetGeometry(uint cylinders, uint heads, uint sectorsPerTrack)
-        {
-            if(cylinders > ushort.MaxValue)
-            {
-                ErrorMessage = "Too many cylinders.";
-
-                return false;
-            }
-
-            if(heads > byte.MaxValue)
-            {
-                ErrorMessage = "Too many heads.";
-
-                return false;
-            }
-
-            if(sectorsPerTrack > byte.MaxValue)
-            {
-                ErrorMessage = "Too many sectors per track.";
-
-                return false;
-            }
-
-            _imageInfo.SectorsPerTrack = sectorsPerTrack;
-            _imageInfo.Heads           = heads;
-            _imageInfo.Cylinders       = cylinders;
-
-            return true;
-        }
-
-        /// <inheritdoc />
-        public bool WriteSectorTag(byte[] data, ulong sectorAddress, SectorTagType tag)
-        {
-            ErrorMessage = "Unsupported feature";
+            ErrorMessage = $"Could not create new image file, exception {e.Message}";
 
             return false;
         }
 
-        /// <inheritdoc />
-        public bool WriteSectorsTag(byte[] data, ulong sectorAddress, uint length, SectorTagType tag)
-        {
-            ErrorMessage = "Unsupported feature";
+        IsWriting    = true;
+        ErrorMessage = null;
 
-            return false;
-        }
-
-        /// <inheritdoc />
-        public bool SetDumpHardware(List<DumpHardwareType> dumpHardware) => false;
-
-        /// <inheritdoc />
-        public bool SetCicmMetadata(CICMMetadataType metadata) => false;
+        return true;
     }
+
+    /// <inheritdoc />
+    public bool WriteMediaTag(byte[] data, MediaTagType tag)
+    {
+        ErrorMessage = "Writing media tags is not supported.";
+
+        return false;
+    }
+
+    /// <inheritdoc />
+    public bool WriteSector(byte[] data, ulong sectorAddress)
+    {
+        if(!IsWriting)
+        {
+            ErrorMessage = "Tried to write on a non-writable image";
+
+            return false;
+        }
+
+        if(data.Length != 512)
+        {
+            ErrorMessage = "Incorrect data size";
+
+            return false;
+        }
+
+        if(sectorAddress >= _imageInfo.Sectors)
+        {
+            ErrorMessage = "Tried to write past image size";
+
+            return false;
+        }
+
+        _writingStream.Seek((long)(0xDC + (sectorAddress * 512)), SeekOrigin.Begin);
+        _writingStream.Write(data, 0, data.Length);
+
+        ErrorMessage = "";
+
+        return true;
+    }
+
+    /// <inheritdoc />
+    public bool WriteSectors(byte[] data, ulong sectorAddress, uint length)
+    {
+        if(!IsWriting)
+        {
+            ErrorMessage = "Tried to write on a non-writable image";
+
+            return false;
+        }
+
+        if(data.Length % 512 != 0)
+        {
+            ErrorMessage = "Incorrect data size";
+
+            return false;
+        }
+
+        if(sectorAddress + length > _imageInfo.Sectors)
+        {
+            ErrorMessage = "Tried to write past image size";
+
+            return false;
+        }
+
+        _writingStream.Seek((long)(0xDC + (sectorAddress * 512)), SeekOrigin.Begin);
+        _writingStream.Write(data, 0, data.Length);
+
+        ErrorMessage = "";
+
+        return true;
+    }
+
+    /// <inheritdoc />
+    public bool WriteSectorLong(byte[] data, ulong sectorAddress)
+    {
+        ErrorMessage = "Writing sectors with tags is not supported.";
+
+        return false;
+    }
+
+    /// <inheritdoc />
+    public bool WriteSectorsLong(byte[] data, ulong sectorAddress, uint length)
+    {
+        ErrorMessage = "Writing sectors with tags is not supported.";
+
+        return false;
+    }
+
+    /// <inheritdoc />
+    public bool Close()
+    {
+        if(!IsWriting)
+        {
+            ErrorMessage = "Image is not opened for writing";
+
+            return false;
+        }
+
+        if(_imageInfo.Cylinders == 0)
+        {
+            _imageInfo.Cylinders       = (uint)(_imageInfo.Sectors / 16 / 63);
+            _imageInfo.Heads           = 16;
+            _imageInfo.SectorsPerTrack = 63;
+
+            while(_imageInfo.Cylinders == 0)
+            {
+                _imageInfo.Heads--;
+
+                if(_imageInfo.Heads == 0)
+                {
+                    _imageInfo.SectorsPerTrack--;
+                    _imageInfo.Heads = 16;
+                }
+
+                _imageInfo.Cylinders = (uint)(_imageInfo.Sectors / _imageInfo.Heads / _imageInfo.SectorsPerTrack);
+
+                if(_imageInfo.Cylinders       == 0 &&
+                   _imageInfo.Heads           == 0 &&
+                   _imageInfo.SectorsPerTrack == 0)
+                    break;
+            }
+        }
+
+        byte[] commentsBytes = null;
+
+        if(!string.IsNullOrEmpty(_imageInfo.Comments))
+            commentsBytes = Encoding.GetEncoding("shift_jis").GetBytes(_imageInfo.Comments);
+
+        _v98Hdr = new Virtual98Header
+        {
+            comment    = new byte[128],
+            cylinders  = (ushort)_imageInfo.Cylinders,
+            padding2   = new byte[0x44],
+            sectors    = (byte)_imageInfo.SectorsPerTrack,
+            sectorsize = (ushort)_imageInfo.SectorSize,
+            signature  = _signature,
+            surfaces   = (byte)_imageInfo.Heads,
+            totals     = (uint)_imageInfo.Sectors
+        };
+
+        if(commentsBytes != null)
+            Array.Copy(commentsBytes, 0, _v98Hdr.comment, 0,
+                       commentsBytes.Length >= 128 ? 128 : commentsBytes.Length);
+
+        byte[] hdr    = new byte[Marshal.SizeOf<Virtual98Header>()];
+        IntPtr hdrPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<Virtual98Header>());
+        System.Runtime.InteropServices.Marshal.StructureToPtr(_v98Hdr, hdrPtr, true);
+        System.Runtime.InteropServices.Marshal.Copy(hdrPtr, hdr, 0, hdr.Length);
+        System.Runtime.InteropServices.Marshal.FreeHGlobal(hdrPtr);
+
+        _writingStream.Seek(0, SeekOrigin.Begin);
+        _writingStream.Write(hdr, 0, hdr.Length);
+
+        _writingStream.Flush();
+        _writingStream.Close();
+
+        IsWriting    = false;
+        ErrorMessage = "";
+
+        return true;
+    }
+
+    /// <inheritdoc />
+    public bool SetMetadata(ImageInfo metadata)
+    {
+        _imageInfo.Comments = metadata.Comments;
+
+        return true;
+    }
+
+    /// <inheritdoc />
+    public bool SetGeometry(uint cylinders, uint heads, uint sectorsPerTrack)
+    {
+        if(cylinders > ushort.MaxValue)
+        {
+            ErrorMessage = "Too many cylinders.";
+
+            return false;
+        }
+
+        if(heads > byte.MaxValue)
+        {
+            ErrorMessage = "Too many heads.";
+
+            return false;
+        }
+
+        if(sectorsPerTrack > byte.MaxValue)
+        {
+            ErrorMessage = "Too many sectors per track.";
+
+            return false;
+        }
+
+        _imageInfo.SectorsPerTrack = sectorsPerTrack;
+        _imageInfo.Heads           = heads;
+        _imageInfo.Cylinders       = cylinders;
+
+        return true;
+    }
+
+    /// <inheritdoc />
+    public bool WriteSectorTag(byte[] data, ulong sectorAddress, SectorTagType tag)
+    {
+        ErrorMessage = "Unsupported feature";
+
+        return false;
+    }
+
+    /// <inheritdoc />
+    public bool WriteSectorsTag(byte[] data, ulong sectorAddress, uint length, SectorTagType tag)
+    {
+        ErrorMessage = "Unsupported feature";
+
+        return false;
+    }
+
+    /// <inheritdoc />
+    public bool SetDumpHardware(List<DumpHardwareType> dumpHardware) => false;
+
+    /// <inheritdoc />
+    public bool SetCicmMetadata(CICMMetadataType metadata) => false;
 }

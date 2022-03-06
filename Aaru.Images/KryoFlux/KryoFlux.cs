@@ -36,37 +36,36 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 
-namespace Aaru.DiscImages
-{
-    /// <summary>Implements reading KryoFlux flux images</summary>
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
-    public sealed partial class KryoFlux : IMediaImage, IVerifiableSectorsImage
-    {
-        // TODO: These variables have been made public so create-sidecar can access to this information until I define an API >4.0
-        public SortedDictionary<byte, IFilter> tracks;
+namespace Aaru.DiscImages;
 
-        public KryoFlux() => _imageInfo = new ImageInfo
-        {
-            ReadableSectorTags    = new List<SectorTagType>(),
-            ReadableMediaTags     = new List<MediaTagType>(),
-            HasPartitions         = false,
-            HasSessions           = false,
-            Version               = null,
-            Application           = null,
-            ApplicationVersion    = null,
-            Creator               = null,
-            Comments              = null,
-            MediaManufacturer     = null,
-            MediaModel            = null,
-            MediaSerialNumber     = null,
-            MediaBarcode          = null,
-            MediaPartNumber       = null,
-            MediaSequence         = 0,
-            LastMediaSequence     = 0,
-            DriveManufacturer     = null,
-            DriveModel            = null,
-            DriveSerialNumber     = null,
-            DriveFirmwareRevision = null
-        };
-    }
+/// <summary>Implements reading KryoFlux flux images</summary>
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+public sealed partial class KryoFlux : IMediaImage, IVerifiableSectorsImage
+{
+    // TODO: These variables have been made public so create-sidecar can access to this information until I define an API >4.0
+    public SortedDictionary<byte, IFilter> tracks;
+
+    public KryoFlux() => _imageInfo = new ImageInfo
+    {
+        ReadableSectorTags    = new List<SectorTagType>(),
+        ReadableMediaTags     = new List<MediaTagType>(),
+        HasPartitions         = false,
+        HasSessions           = false,
+        Version               = null,
+        Application           = null,
+        ApplicationVersion    = null,
+        Creator               = null,
+        Comments              = null,
+        MediaManufacturer     = null,
+        MediaModel            = null,
+        MediaSerialNumber     = null,
+        MediaBarcode          = null,
+        MediaPartNumber       = null,
+        MediaSequence         = 0,
+        LastMediaSequence     = 0,
+        DriveManufacturer     = null,
+        DriveModel            = null,
+        DriveSerialNumber     = null,
+        DriveFirmwareRevision = null
+    };
 }

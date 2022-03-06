@@ -37,43 +37,42 @@ using Aaru.CommonTypes.Extents;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 
-namespace Aaru.DiscImages
-{
-    /// <summary>Implements reading partclone disk images</summary>
-    public sealed partial class PartClone : IMediaImage, IVerifiableImage
-    {
-        // The used block "bitmap" uses one byte per block
-        // TODO: Convert on-image bytemap to on-memory bitmap
-        byte[]                    _byteMap;
-        long                      _dataOff;
-        ExtentsULong              _extents;
-        Dictionary<ulong, ulong>  _extentsOff;
-        ImageInfo                 _imageInfo;
-        Stream                    _imageStream;
-        Header                    _pHdr;
-        Dictionary<ulong, byte[]> _sectorCache;
+namespace Aaru.DiscImages;
 
-        public PartClone() => _imageInfo = new ImageInfo
-        {
-            ReadableSectorTags    = new List<SectorTagType>(),
-            ReadableMediaTags     = new List<MediaTagType>(),
-            HasPartitions         = false,
-            HasSessions           = false,
-            Application           = "PartClone",
-            ApplicationVersion    = null,
-            Creator               = null,
-            Comments              = null,
-            MediaManufacturer     = null,
-            MediaModel            = null,
-            MediaSerialNumber     = null,
-            MediaBarcode          = null,
-            MediaPartNumber       = null,
-            MediaSequence         = 0,
-            LastMediaSequence     = 0,
-            DriveManufacturer     = null,
-            DriveModel            = null,
-            DriveSerialNumber     = null,
-            DriveFirmwareRevision = null
-        };
-    }
+/// <summary>Implements reading partclone disk images</summary>
+public sealed partial class PartClone : IMediaImage, IVerifiableImage
+{
+    // The used block "bitmap" uses one byte per block
+    // TODO: Convert on-image bytemap to on-memory bitmap
+    byte[]                    _byteMap;
+    long                      _dataOff;
+    ExtentsULong              _extents;
+    Dictionary<ulong, ulong>  _extentsOff;
+    ImageInfo                 _imageInfo;
+    Stream                    _imageStream;
+    Header                    _pHdr;
+    Dictionary<ulong, byte[]> _sectorCache;
+
+    public PartClone() => _imageInfo = new ImageInfo
+    {
+        ReadableSectorTags    = new List<SectorTagType>(),
+        ReadableMediaTags     = new List<MediaTagType>(),
+        HasPartitions         = false,
+        HasSessions           = false,
+        Application           = "PartClone",
+        ApplicationVersion    = null,
+        Creator               = null,
+        Comments              = null,
+        MediaManufacturer     = null,
+        MediaModel            = null,
+        MediaSerialNumber     = null,
+        MediaBarcode          = null,
+        MediaPartNumber       = null,
+        MediaSequence         = 0,
+        LastMediaSequence     = 0,
+        DriveManufacturer     = null,
+        DriveModel            = null,
+        DriveSerialNumber     = null,
+        DriveFirmwareRevision = null
+    };
 }

@@ -36,48 +36,47 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 
-namespace Aaru.DiscImages
-{
-    // TODO: CloneCD stores subchannel deinterleaved
-    /// <inheritdoc />
-    /// <summary>Implements reading and writing CloneCD disc images</summary>
-    public sealed partial class CloneCd : IWritableOpticalImage
-    {
-        string                  _catalog; // TODO: Use it
-        IFilter                 _ccdFilter;
-        byte[]                  _cdtext;
-        StreamReader            _cueStream;
-        IFilter                 _dataFilter;
-        Stream                  _dataStream;
-        StreamWriter            _descriptorStream;
-        byte[]                  _fullToc;
-        ImageInfo               _imageInfo;
-        Dictionary<uint, ulong> _offsetMap;
-        bool                    _scrambled;
-        IFilter                 _subFilter;
-        Stream                  _subStream;
-        Dictionary<byte, byte>  _trackFlags;
-        string                  _writingBaseName;
+namespace Aaru.DiscImages;
 
-        public CloneCd() => _imageInfo = new ImageInfo
-        {
-            ReadableSectorTags    = new List<SectorTagType>(),
-            ReadableMediaTags     = new List<MediaTagType>(),
-            HasPartitions         = true,
-            HasSessions           = true,
-            Version               = null,
-            ApplicationVersion    = null,
-            MediaTitle            = null,
-            Creator               = null,
-            MediaManufacturer     = null,
-            MediaModel            = null,
-            MediaPartNumber       = null,
-            MediaSequence         = 0,
-            LastMediaSequence     = 0,
-            DriveManufacturer     = null,
-            DriveModel            = null,
-            DriveSerialNumber     = null,
-            DriveFirmwareRevision = null
-        };
-    }
+// TODO: CloneCD stores subchannel deinterleaved
+/// <inheritdoc />
+/// <summary>Implements reading and writing CloneCD disc images</summary>
+public sealed partial class CloneCd : IWritableOpticalImage
+{
+    string                  _catalog; // TODO: Use it
+    IFilter                 _ccdFilter;
+    byte[]                  _cdtext;
+    StreamReader            _cueStream;
+    IFilter                 _dataFilter;
+    Stream                  _dataStream;
+    StreamWriter            _descriptorStream;
+    byte[]                  _fullToc;
+    ImageInfo               _imageInfo;
+    Dictionary<uint, ulong> _offsetMap;
+    bool                    _scrambled;
+    IFilter                 _subFilter;
+    Stream                  _subStream;
+    Dictionary<byte, byte>  _trackFlags;
+    string                  _writingBaseName;
+
+    public CloneCd() => _imageInfo = new ImageInfo
+    {
+        ReadableSectorTags    = new List<SectorTagType>(),
+        ReadableMediaTags     = new List<MediaTagType>(),
+        HasPartitions         = true,
+        HasSessions           = true,
+        Version               = null,
+        ApplicationVersion    = null,
+        MediaTitle            = null,
+        Creator               = null,
+        MediaManufacturer     = null,
+        MediaModel            = null,
+        MediaPartNumber       = null,
+        MediaSequence         = 0,
+        LastMediaSequence     = 0,
+        DriveManufacturer     = null,
+        DriveModel            = null,
+        DriveSerialNumber     = null,
+        DriveFirmwareRevision = null
+    };
 }

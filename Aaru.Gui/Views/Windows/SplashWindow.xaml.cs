@@ -36,24 +36,23 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 
-namespace Aaru.Gui.Views.Windows
+namespace Aaru.Gui.Views.Windows;
+
+public sealed class SplashWindow : Window
 {
-    public sealed class SplashWindow : Window
+    public SplashWindow()
     {
-        public SplashWindow()
-        {
-            InitializeComponent();
-        #if DEBUG
-            this.AttachDevTools();
-        #endif
-        }
+        InitializeComponent();
+    #if DEBUG
+        this.AttachDevTools();
+    #endif
+    }
 
-        void InitializeComponent() => AvaloniaXamlLoader.Load(this);
+    void InitializeComponent() => AvaloniaXamlLoader.Load(this);
 
-        protected override void OnOpened(EventArgs e)
-        {
-            base.OnOpened(e);
-            (DataContext as SplashWindowViewModel)?.OnOpened();
-        }
+    protected override void OnOpened(EventArgs e)
+    {
+        base.OnOpened(e);
+        (DataContext as SplashWindowViewModel)?.OnOpened();
     }
 }

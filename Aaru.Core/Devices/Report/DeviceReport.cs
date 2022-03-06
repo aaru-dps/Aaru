@@ -32,14 +32,13 @@
 
 using Aaru.Devices;
 
-namespace Aaru.Core.Devices.Report
-{
-    public sealed partial class DeviceReport
-    {
-        readonly Device _dev;
+namespace Aaru.Core.Devices.Report;
 
-        /// <summary>Initializes a device report for the specified device (must be opened)</summary>
-        /// <param name="device">Device</param>
-        public DeviceReport(Device device) => _dev = device;
-    }
+public sealed partial class DeviceReport
+{
+    readonly Device _dev;
+
+    /// <summary>Initializes a device report for the specified device (must be opened)</summary>
+    /// <param name="device">Device</param>
+    public DeviceReport(Device device) => _dev = device;
 }

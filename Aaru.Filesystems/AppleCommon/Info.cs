@@ -33,75 +33,74 @@
 using System.Text;
 using Aaru.Helpers;
 
-namespace Aaru.Filesystems
+namespace Aaru.Filesystems;
+
+// Information from Inside Macintosh
+// https://developer.apple.com/legacy/library/documentation/mac/pdf/Files/File_Manager.pdf
+internal static partial class AppleCommon
 {
-    // Information from Inside Macintosh
-    // https://developer.apple.com/legacy/library/documentation/mac/pdf/Files/File_Manager.pdf
-    internal static partial class AppleCommon
+    internal static string GetBootBlockInformation(byte[] bbSector, Encoding encoding)
     {
-        internal static string GetBootBlockInformation(byte[] bbSector, Encoding encoding)
+        if(bbSector is null ||
+           bbSector.Length < 0x100)
+            return null;
+
+        BootBlock bb = Marshal.ByteArrayToStructureBigEndian<BootBlock>(bbSector);
+
+        if(bb.bbID != BB_MAGIC)
+            return null;
+
+        var sb = new StringBuilder();
+        sb.AppendLine("Boot Block:");
+
+        if((bb.bbVersion & 0x8000) > 0)
         {
-            if(bbSector is null ||
-               bbSector.Length < 0x100)
-                return null;
+            sb.AppendLine("Boot block is in new format.");
 
-            BootBlock bb = Marshal.ByteArrayToStructureBigEndian<BootBlock>(bbSector);
-
-            if(bb.bbID != BB_MAGIC)
-                return null;
-
-            var sb = new StringBuilder();
-            sb.AppendLine("Boot Block:");
-
-            if((bb.bbVersion & 0x8000) > 0)
+            if((bb.bbVersion & 0x4000) > 0)
             {
-                sb.AppendLine("Boot block is in new format.");
-
-                if((bb.bbVersion & 0x4000) > 0)
-                {
-                    sb.AppendLine("Boot block should be executed.");
-
-                    if((bb.bbVersion & 0x2000) > 0)
-                        sb.
-                            AppendFormat("System heap will be extended by {0} bytes and a {1} fraction of the available RAM",
-                                         bb.bbSysHeapExtra, bb.bbSysHeapFract).AppendLine();
-                }
-            }
-            else if((bb.bbVersion & 0xFF) == 0x0D)
                 sb.AppendLine("Boot block should be executed.");
 
-            if(bb.bbPageFlags > 0)
-                sb.AppendLine("Allocate secondary sound buffer at boot.");
-            else if(bb.bbPageFlags < 0)
-                sb.AppendLine("Allocate secondary sound and video buffers at boot.");
-
-            sb.AppendFormat("System filename: {0}", StringHandlers.PascalToString(bb.bbSysName, encoding)).AppendLine();
-
-            sb.AppendFormat("Finder filename: {0}", StringHandlers.PascalToString(bb.bbShellName, encoding)).
-               AppendLine();
-
-            sb.AppendFormat("Debugger filename: {0}", StringHandlers.PascalToString(bb.bbDbg1Name, encoding)).
-               AppendLine();
-
-            sb.AppendFormat("Disassembler filename: {0}", StringHandlers.PascalToString(bb.bbDbg2Name, encoding)).
-               AppendLine();
-
-            sb.AppendFormat("Startup screen filename: {0}", StringHandlers.PascalToString(bb.bbScreenName, encoding)).
-               AppendLine();
-
-            sb.AppendFormat("First program to execute at boot: {0}",
-                            StringHandlers.PascalToString(bb.bbHelloName, encoding)).AppendLine();
-
-            sb.AppendFormat("Clipboard filename: {0}", StringHandlers.PascalToString(bb.bbScrapName, encoding)).
-               AppendLine();
-
-            sb.AppendFormat("Maximum opened files: {0}", bb.bbCntFCBs * 4).AppendLine();
-            sb.AppendFormat("Event queue size: {0}", bb.bbCntEvts).AppendLine();
-            sb.AppendFormat("Heap size with 128KiB of RAM: {0} bytes", bb.bb128KSHeap).AppendLine();
-            sb.AppendFormat("Heap size with 256KiB of RAM: {0} bytes", bb.bb256KSHeap).AppendLine();
-            sb.AppendFormat("Heap size with 512KiB of RAM or more: {0} bytes", bb.bbSysHeapSize).AppendLine();
-
-            return sb.ToString();
+                if((bb.bbVersion & 0x2000) > 0)
+                    sb.
+                        AppendFormat("System heap will be extended by {0} bytes and a {1} fraction of the available RAM",
+                                     bb.bbSysHeapExtra, bb.bbSysHeapFract).AppendLine();
+            }
         }
+        else if((bb.bbVersion & 0xFF) == 0x0D)
+            sb.AppendLine("Boot block should be executed.");
+
+        if(bb.bbPageFlags > 0)
+            sb.AppendLine("Allocate secondary sound buffer at boot.");
+        else if(bb.bbPageFlags < 0)
+            sb.AppendLine("Allocate secondary sound and video buffers at boot.");
+
+        sb.AppendFormat("System filename: {0}", StringHandlers.PascalToString(bb.bbSysName, encoding)).AppendLine();
+
+        sb.AppendFormat("Finder filename: {0}", StringHandlers.PascalToString(bb.bbShellName, encoding)).
+           AppendLine();
+
+        sb.AppendFormat("Debugger filename: {0}", StringHandlers.PascalToString(bb.bbDbg1Name, encoding)).
+           AppendLine();
+
+        sb.AppendFormat("Disassembler filename: {0}", StringHandlers.PascalToString(bb.bbDbg2Name, encoding)).
+           AppendLine();
+
+        sb.AppendFormat("Startup screen filename: {0}", StringHandlers.PascalToString(bb.bbScreenName, encoding)).
+           AppendLine();
+
+        sb.AppendFormat("First program to execute at boot: {0}",
+                        StringHandlers.PascalToString(bb.bbHelloName, encoding)).AppendLine();
+
+        sb.AppendFormat("Clipboard filename: {0}", StringHandlers.PascalToString(bb.bbScrapName, encoding)).
+           AppendLine();
+
+        sb.AppendFormat("Maximum opened files: {0}", bb.bbCntFCBs * 4).AppendLine();
+        sb.AppendFormat("Event queue size: {0}", bb.bbCntEvts).AppendLine();
+        sb.AppendFormat("Heap size with 128KiB of RAM: {0} bytes", bb.bb128KSHeap).AppendLine();
+        sb.AppendFormat("Heap size with 256KiB of RAM: {0} bytes", bb.bb256KSHeap).AppendLine();
+        sb.AppendFormat("Heap size with 512KiB of RAM or more: {0} bytes", bb.bbSysHeapSize).AppendLine();
+
+        return sb.ToString();
     }
 }

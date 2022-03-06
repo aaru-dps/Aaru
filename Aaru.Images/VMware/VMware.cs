@@ -36,57 +36,56 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 
-namespace Aaru.DiscImages
-{
-    /// <inheritdoc />
-    /// <summary>Implements reading VMware disk images</summary>
-    public sealed partial class VMware : IWritableImage
-    {
-        string                    _adapterType;
-        uint                      _cid;
-        StreamWriter              _descriptorStream;
-        Dictionary<ulong, Extent> _extents;
-        IFilter                   _gdFilter;
-        Dictionary<ulong, byte[]> _grainCache;
-        ulong                     _grainSize;
-        uint[]                    _gTable;
-        bool                      _hasParent;
-        uint                      _hwversion;
-        ImageInfo                 _imageInfo;
-        string                    _imageType;
-        uint                      _maxCachedGrains;
-        uint                      _parentCid;
-        IMediaImage               _parentImage;
-        string                    _parentName;
-        Dictionary<ulong, byte[]> _sectorCache;
-        uint                      _version;
-        CowHeader                 _vmCHdr;
-        ExtentHeader              _vmEHdr;
-        string                    _writingBaseName;
-        FileStream                _writingStream;
+namespace Aaru.DiscImages;
 
-        public VMware() => _imageInfo = new ImageInfo
-        {
-            ReadableSectorTags    = new List<SectorTagType>(),
-            ReadableMediaTags     = new List<MediaTagType>(),
-            HasPartitions         = false,
-            HasSessions           = false,
-            Version               = null,
-            Application           = "VMware",
-            ApplicationVersion    = null,
-            Creator               = null,
-            Comments              = null,
-            MediaManufacturer     = null,
-            MediaModel            = null,
-            MediaSerialNumber     = null,
-            MediaBarcode          = null,
-            MediaPartNumber       = null,
-            MediaSequence         = 0,
-            LastMediaSequence     = 0,
-            DriveManufacturer     = null,
-            DriveModel            = null,
-            DriveSerialNumber     = null,
-            DriveFirmwareRevision = null
-        };
-    }
+/// <inheritdoc />
+/// <summary>Implements reading VMware disk images</summary>
+public sealed partial class VMware : IWritableImage
+{
+    string                    _adapterType;
+    uint                      _cid;
+    StreamWriter              _descriptorStream;
+    Dictionary<ulong, Extent> _extents;
+    IFilter                   _gdFilter;
+    Dictionary<ulong, byte[]> _grainCache;
+    ulong                     _grainSize;
+    uint[]                    _gTable;
+    bool                      _hasParent;
+    uint                      _hwversion;
+    ImageInfo                 _imageInfo;
+    string                    _imageType;
+    uint                      _maxCachedGrains;
+    uint                      _parentCid;
+    IMediaImage               _parentImage;
+    string                    _parentName;
+    Dictionary<ulong, byte[]> _sectorCache;
+    uint                      _version;
+    CowHeader                 _vmCHdr;
+    ExtentHeader              _vmEHdr;
+    string                    _writingBaseName;
+    FileStream                _writingStream;
+
+    public VMware() => _imageInfo = new ImageInfo
+    {
+        ReadableSectorTags    = new List<SectorTagType>(),
+        ReadableMediaTags     = new List<MediaTagType>(),
+        HasPartitions         = false,
+        HasSessions           = false,
+        Version               = null,
+        Application           = "VMware",
+        ApplicationVersion    = null,
+        Creator               = null,
+        Comments              = null,
+        MediaManufacturer     = null,
+        MediaModel            = null,
+        MediaSerialNumber     = null,
+        MediaBarcode          = null,
+        MediaPartNumber       = null,
+        MediaSequence         = 0,
+        LastMediaSequence     = 0,
+        DriveManufacturer     = null,
+        DriveModel            = null,
+        DriveSerialNumber     = null,
+        DriveFirmwareRevision = null
+    };
 }

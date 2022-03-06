@@ -30,11 +30,10 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Gui.Models
+namespace Aaru.Gui.Models;
+
+public sealed class PcmciaCisModel
 {
-    public sealed class PcmciaCisModel
-    {
-        public string Code        { get; set; }
-        public string Description { get; set; }
-    }
+    public string Code        { get; set; }
+    public string Description { get; set; }
 }

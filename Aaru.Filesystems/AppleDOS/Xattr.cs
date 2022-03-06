@@ -35,99 +35,98 @@ using System.Collections.Generic;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 
-namespace Aaru.Filesystems
+namespace Aaru.Filesystems;
+
+public sealed partial class AppleDOS
 {
-    public sealed partial class AppleDOS
+    /// <inheritdoc />
+    public ErrorNumber ListXAttr(string path, out List<string> xattrs)
     {
-        /// <inheritdoc />
-        public ErrorNumber ListXAttr(string path, out List<string> xattrs)
+        xattrs = null;
+
+        if(!_mounted)
+            return ErrorNumber.AccessDenied;
+
+        string[] pathElements = path.Split(new[]
         {
-            xattrs = null;
+            '/'
+        }, StringSplitOptions.RemoveEmptyEntries);
 
-            if(!_mounted)
-                return ErrorNumber.AccessDenied;
+        if(pathElements.Length != 1)
+            return ErrorNumber.NotSupported;
 
-            string[] pathElements = path.Split(new[]
-            {
-                '/'
-            }, StringSplitOptions.RemoveEmptyEntries);
+        string filename = pathElements[0].ToUpperInvariant();
 
-            if(pathElements.Length != 1)
-                return ErrorNumber.NotSupported;
+        if(filename.Length > 30)
+            return ErrorNumber.NameTooLong;
 
-            string filename = pathElements[0].ToUpperInvariant();
+        xattrs = new List<string>();
 
-            if(filename.Length > 30)
-                return ErrorNumber.NameTooLong;
-
-            xattrs = new List<string>();
-
-            if(_debug && (string.Compare(path, "$", StringComparison.InvariantCulture)     == 0 ||
-                          string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0 ||
-                          string.Compare(path, "$Vtoc", StringComparison.InvariantCulture) == 0)) {}
-            else
-            {
-                if(!_catalogCache.ContainsKey(filename))
-                    return ErrorNumber.NoSuchFile;
-
-                xattrs.Add("com.apple.dos.type");
-
-                if(_debug)
-                    xattrs.Add("com.apple.dos.tracksectorlist");
-            }
-
-            return ErrorNumber.NoError;
-        }
-
-        /// <inheritdoc />
-        public ErrorNumber GetXattr(string path, string xattr, ref byte[] buf)
+        if(_debug && (string.Compare(path, "$", StringComparison.InvariantCulture)     == 0 ||
+                      string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0 ||
+                      string.Compare(path, "$Vtoc", StringComparison.InvariantCulture) == 0)) {}
+        else
         {
-            if(!_mounted)
-                return ErrorNumber.AccessDenied;
-
-            string[] pathElements = path.Split(new[]
-            {
-                '/'
-            }, StringSplitOptions.RemoveEmptyEntries);
-
-            if(pathElements.Length != 1)
-                return ErrorNumber.NotSupported;
-
-            string filename = pathElements[0].ToUpperInvariant();
-
-            if(filename.Length > 30)
-                return ErrorNumber.NameTooLong;
-
-            if(_debug && (string.Compare(path, "$", StringComparison.InvariantCulture)     == 0 ||
-                          string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0 ||
-                          string.Compare(path, "$Vtoc", StringComparison.InvariantCulture) == 0))
-                return ErrorNumber.NoSuchExtendedAttribute;
-
             if(!_catalogCache.ContainsKey(filename))
                 return ErrorNumber.NoSuchFile;
 
-            if(string.Compare(xattr, "com.apple.dos.type", StringComparison.InvariantCulture) == 0)
-            {
-                if(!_fileTypeCache.TryGetValue(filename, out byte type))
-                    return ErrorNumber.InvalidArgument;
+            xattrs.Add("com.apple.dos.type");
 
-                buf    = new byte[1];
-                buf[0] = type;
+            if(_debug)
+                xattrs.Add("com.apple.dos.tracksectorlist");
+        }
 
-                return ErrorNumber.NoError;
-            }
+        return ErrorNumber.NoError;
+    }
 
-            if(string.Compare(xattr, "com.apple.dos.tracksectorlist", StringComparison.InvariantCulture) != 0 ||
-               !_debug)
-                return ErrorNumber.NoSuchExtendedAttribute;
+    /// <inheritdoc />
+    public ErrorNumber GetXattr(string path, string xattr, ref byte[] buf)
+    {
+        if(!_mounted)
+            return ErrorNumber.AccessDenied;
 
-            if(!_extentCache.TryGetValue(filename, out byte[] ts))
+        string[] pathElements = path.Split(new[]
+        {
+            '/'
+        }, StringSplitOptions.RemoveEmptyEntries);
+
+        if(pathElements.Length != 1)
+            return ErrorNumber.NotSupported;
+
+        string filename = pathElements[0].ToUpperInvariant();
+
+        if(filename.Length > 30)
+            return ErrorNumber.NameTooLong;
+
+        if(_debug && (string.Compare(path, "$", StringComparison.InvariantCulture)     == 0 ||
+                      string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0 ||
+                      string.Compare(path, "$Vtoc", StringComparison.InvariantCulture) == 0))
+            return ErrorNumber.NoSuchExtendedAttribute;
+
+        if(!_catalogCache.ContainsKey(filename))
+            return ErrorNumber.NoSuchFile;
+
+        if(string.Compare(xattr, "com.apple.dos.type", StringComparison.InvariantCulture) == 0)
+        {
+            if(!_fileTypeCache.TryGetValue(filename, out byte type))
                 return ErrorNumber.InvalidArgument;
 
-            buf = new byte[ts.Length];
-            Array.Copy(ts, 0, buf, 0, buf.Length);
+            buf    = new byte[1];
+            buf[0] = type;
 
             return ErrorNumber.NoError;
         }
+
+        if(string.Compare(xattr, "com.apple.dos.tracksectorlist", StringComparison.InvariantCulture) != 0 ||
+           !_debug)
+            return ErrorNumber.NoSuchExtendedAttribute;
+
+        if(!_extentCache.TryGetValue(filename, out byte[] ts))
+            return ErrorNumber.InvalidArgument;
+
+        buf = new byte[ts.Length];
+        Array.Copy(ts, 0, buf, 0, buf.Length);
+
+        return ErrorNumber.NoError;
     }
 }

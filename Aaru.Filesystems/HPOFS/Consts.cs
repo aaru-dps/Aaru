@@ -30,21 +30,20 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Filesystems
+namespace Aaru.Filesystems;
+
+public sealed partial class HPOFS
 {
-    public sealed partial class HPOFS
+    readonly byte[] _type =
     {
-        readonly byte[] _type =
-        {
-            0x48, 0x50, 0x4F, 0x46, 0x53, 0x00, 0x00, 0x00
-        };
-        readonly byte[] _medinfoSignature =
-        {
-            0x4D, 0x45, 0x44, 0x49, 0x4E, 0x46, 0x4F, 0x20
-        };
-        readonly byte[] _volinfoSignature =
-        {
-            0x56, 0x4F, 0x4C, 0x49, 0x4E, 0x46, 0x4F, 0x20
-        };
-    }
+        0x48, 0x50, 0x4F, 0x46, 0x53, 0x00, 0x00, 0x00
+    };
+    readonly byte[] _medinfoSignature =
+    {
+        0x4D, 0x45, 0x44, 0x49, 0x4E, 0x46, 0x4F, 0x20
+    };
+    readonly byte[] _volinfoSignature =
+    {
+        0x56, 0x4F, 0x4C, 0x49, 0x4E, 0x46, 0x4F, 0x20
+    };
 }

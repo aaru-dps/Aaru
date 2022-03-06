@@ -32,78 +32,77 @@
 
 using Aaru.Console;
 
-namespace Aaru.Devices
+namespace Aaru.Devices;
+
+public sealed partial class Device
 {
-    public sealed partial class Device
+    /// <summary>Sends the Plasmon READ LONG vendor command</summary>
+    /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
+    /// <param name="buffer">Buffer where the Plasmon READ LONG response will be stored</param>
+    /// <param name="senseBuffer">Sense buffer.</param>
+    /// <param name="relAddr">If set to <c>true</c> address contain two's complement offset from last read address.</param>
+    /// <param name="address">PBA/LBA to read.</param>
+    /// <param name="blockBytes">How many bytes per block.</param>
+    /// <param name="pba">If set to <c>true</c> address contain physical block address.</param>
+    /// <param name="timeout">Timeout in seconds.</param>
+    /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
+    public bool PlasmonReadLong(out byte[] buffer, out byte[] senseBuffer, bool relAddr, uint address,
+                                ushort blockBytes, bool pba, uint timeout, out double duration) =>
+        HpReadLong(out buffer, out senseBuffer, relAddr, address, 0, blockBytes, pba, false, timeout, out duration);
+
+    /// <summary>Sends the Plasmon READ LONG vendor command</summary>
+    /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
+    /// <param name="buffer">Buffer where the Plasmon READ LONG response will be stored</param>
+    /// <param name="senseBuffer">Sense buffer.</param>
+    /// <param name="relAddr">If set to <c>true</c> address contain two's complement offset from last read address.</param>
+    /// <param name="address">PBA/LBA to read.</param>
+    /// <param name="transferLen">How many blocks/bytes to read.</param>
+    /// <param name="blockBytes">How many bytes per block.</param>
+    /// <param name="pba">If set to <c>true</c> address contain physical block address.</param>
+    /// <param name="sectorCount">
+    ///     If set to <c>true</c> <paramref name="transferLen" /> is a count of secors to read. Otherwise
+    ///     it will be ignored
+    /// </param>
+    /// <param name="timeout">Timeout in seconds.</param>
+    /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
+    public bool PlasmonReadLong(out byte[] buffer, out byte[] senseBuffer, bool relAddr, uint address,
+                                ushort transferLen, ushort blockBytes, bool pba, bool sectorCount, uint timeout,
+                                out double duration) =>
+        HpReadLong(out buffer, out senseBuffer, relAddr, address, transferLen, blockBytes, pba, sectorCount,
+                   timeout, out duration);
+
+    /// <summary>Retrieves the logical or physical block address for the specified <paramref name="address" /></summary>
+    /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
+    /// <param name="buffer">Buffer where the block address will be stored</param>
+    /// <param name="senseBuffer">Sense buffer.</param>
+    /// <param name="address">PBA/LBA to read.</param>
+    /// <param name="pba">If set to <c>true</c> address contain a physical block address.</param>
+    /// <param name="timeout">Timeout in seconds.</param>
+    /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
+    public bool PlasmonReadSectorLocation(out byte[] buffer, out byte[] senseBuffer, uint address, bool pba,
+                                          uint timeout, out double duration)
     {
-        /// <summary>Sends the Plasmon READ LONG vendor command</summary>
-        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
-        /// <param name="buffer">Buffer where the Plasmon READ LONG response will be stored</param>
-        /// <param name="senseBuffer">Sense buffer.</param>
-        /// <param name="relAddr">If set to <c>true</c> address contain two's complement offset from last read address.</param>
-        /// <param name="address">PBA/LBA to read.</param>
-        /// <param name="blockBytes">How many bytes per block.</param>
-        /// <param name="pba">If set to <c>true</c> address contain physical block address.</param>
-        /// <param name="timeout">Timeout in seconds.</param>
-        /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
-        public bool PlasmonReadLong(out byte[] buffer, out byte[] senseBuffer, bool relAddr, uint address,
-                                    ushort blockBytes, bool pba, uint timeout, out double duration) =>
-            HpReadLong(out buffer, out senseBuffer, relAddr, address, 0, blockBytes, pba, false, timeout, out duration);
+        senseBuffer = new byte[64];
+        byte[] cdb = new byte[10];
 
-        /// <summary>Sends the Plasmon READ LONG vendor command</summary>
-        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
-        /// <param name="buffer">Buffer where the Plasmon READ LONG response will be stored</param>
-        /// <param name="senseBuffer">Sense buffer.</param>
-        /// <param name="relAddr">If set to <c>true</c> address contain two's complement offset from last read address.</param>
-        /// <param name="address">PBA/LBA to read.</param>
-        /// <param name="transferLen">How many blocks/bytes to read.</param>
-        /// <param name="blockBytes">How many bytes per block.</param>
-        /// <param name="pba">If set to <c>true</c> address contain physical block address.</param>
-        /// <param name="sectorCount">
-        ///     If set to <c>true</c> <paramref name="transferLen" /> is a count of secors to read. Otherwise
-        ///     it will be ignored
-        /// </param>
-        /// <param name="timeout">Timeout in seconds.</param>
-        /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
-        public bool PlasmonReadLong(out byte[] buffer, out byte[] senseBuffer, bool relAddr, uint address,
-                                    ushort transferLen, ushort blockBytes, bool pba, bool sectorCount, uint timeout,
-                                    out double duration) =>
-            HpReadLong(out buffer, out senseBuffer, relAddr, address, transferLen, blockBytes, pba, sectorCount,
-                       timeout, out duration);
+        cdb[0] = (byte)ScsiCommands.PlasmonReadSectorLocation;
+        cdb[2] = (byte)((address & 0xFF000000) >> 24);
+        cdb[3] = (byte)((address & 0xFF0000)   >> 16);
+        cdb[4] = (byte)((address & 0xFF00)     >> 8);
+        cdb[5] = (byte)(address & 0xFF);
 
-        /// <summary>Retrieves the logical or physical block address for the specified <paramref name="address" /></summary>
-        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
-        /// <param name="buffer">Buffer where the block address will be stored</param>
-        /// <param name="senseBuffer">Sense buffer.</param>
-        /// <param name="address">PBA/LBA to read.</param>
-        /// <param name="pba">If set to <c>true</c> address contain a physical block address.</param>
-        /// <param name="timeout">Timeout in seconds.</param>
-        /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
-        public bool PlasmonReadSectorLocation(out byte[] buffer, out byte[] senseBuffer, uint address, bool pba,
-                                              uint timeout, out double duration)
-        {
-            senseBuffer = new byte[64];
-            byte[] cdb = new byte[10];
+        if(pba)
+            cdb[9] += 0x80;
 
-            cdb[0] = (byte)ScsiCommands.PlasmonReadSectorLocation;
-            cdb[2] = (byte)((address & 0xFF000000) >> 24);
-            cdb[3] = (byte)((address & 0xFF0000)   >> 16);
-            cdb[4] = (byte)((address & 0xFF00)     >> 8);
-            cdb[5] = (byte)(address & 0xFF);
+        buffer = new byte[8];
 
-            if(pba)
-                cdb[9] += 0x80;
+        LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+                                    out bool sense);
 
-            buffer = new byte[8];
+        Error = LastError != 0;
 
-            LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
-                                        out bool sense);
+        AaruConsole.DebugWriteLine("SCSI Device", "PLASMON READ SECTOR LOCATION took {0} ms.", duration);
 
-            Error = LastError != 0;
-
-            AaruConsole.DebugWriteLine("SCSI Device", "PLASMON READ SECTOR LOCATION took {0} ms.", duration);
-
-            return sense;
-        }
+        return sense;
     }
 }

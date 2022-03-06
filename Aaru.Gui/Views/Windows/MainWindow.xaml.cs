@@ -36,25 +36,24 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 
-namespace Aaru.Gui.Views.Windows
+namespace Aaru.Gui.Views.Windows;
+
+public sealed class MainWindow : Window
 {
-    public sealed class MainWindow : Window
+    public MainWindow()
     {
-        public MainWindow()
-        {
-            InitializeComponent();
-        #if DEBUG
-            this.AttachDevTools();
-        #endif
-        }
+        InitializeComponent();
+    #if DEBUG
+        this.AttachDevTools();
+    #endif
+    }
 
-        void InitializeComponent() => AvaloniaXamlLoader.Load(this);
+    void InitializeComponent() => AvaloniaXamlLoader.Load(this);
 
-        protected override void OnOpened(EventArgs e)
-        {
-            base.OnOpened(e);
+    protected override void OnOpened(EventArgs e)
+    {
+        base.OnOpened(e);
 
-            (DataContext as MainWindowViewModel)?.LoadComplete();
-        }
+        (DataContext as MainWindowViewModel)?.LoadComplete();
     }
 }

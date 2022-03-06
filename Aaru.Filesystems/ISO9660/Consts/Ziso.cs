@@ -33,14 +33,13 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-namespace Aaru.Filesystems
+namespace Aaru.Filesystems;
+
+[SuppressMessage("ReSharper", "UnusedMember.Local")]
+public sealed partial class ISO9660
 {
-    [SuppressMessage("ReSharper", "UnusedMember.Local")]
-    public sealed partial class ISO9660
-    {
-        const ulong  ZISO_HEADER_MAGIC = 0x37E45396C9DBD607;
-        const ulong  ZISO_HEADER_CIGAM = 0x07D6DBC99653E437;
-        const ushort ZISO_MAGIC        = 0x5A46; // "ZF"
-        const ushort ZISO_PAGED_ZLIB   = 0x707A; // "pz"
-    }
+    const ulong  ZISO_HEADER_MAGIC = 0x37E45396C9DBD607;
+    const ulong  ZISO_HEADER_CIGAM = 0x07D6DBC99653E437;
+    const ushort ZISO_MAGIC        = 0x5A46; // "ZF"
+    const ushort ZISO_PAGED_ZLIB   = 0x707A; // "pz"
 }

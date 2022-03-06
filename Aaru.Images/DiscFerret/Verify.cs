@@ -33,17 +33,16 @@
 using System;
 using System.Collections.Generic;
 
-namespace Aaru.DiscImages
-{
-    public sealed partial class DiscFerret
-    {
-        /// <inheritdoc />
-        public bool? VerifySector(ulong sectorAddress) =>
-            throw new NotImplementedException("Flux decoding is not yet implemented.");
+namespace Aaru.DiscImages;
 
-        /// <inheritdoc />
-        public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
-                                   out List<ulong> unknownLbas) =>
-            throw new NotImplementedException("Flux decoding is not yet implemented.");
-    }
+public sealed partial class DiscFerret
+{
+    /// <inheritdoc />
+    public bool? VerifySector(ulong sectorAddress) =>
+        throw new NotImplementedException("Flux decoding is not yet implemented.");
+
+    /// <inheritdoc />
+    public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
+                               out List<ulong> unknownLbas) =>
+        throw new NotImplementedException("Flux decoding is not yet implemented.");
 }

@@ -32,74 +32,73 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.DiscImages;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Images
-{
-    [TestFixture]
-    public class Partclone : BlockMediaImageTest
-    {
-        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "partclone");
-        public override IMediaImage _plugin => new PartClone();
+namespace Aaru.Tests.Images;
 
-        public override BlockImageTestExpected[] Tests => new[]
+[TestFixture]
+public class Partclone : BlockMediaImageTest
+{
+    public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "partclone");
+    public override IMediaImage _plugin    => new PartClone();
+
+    public override BlockImageTestExpected[] Tests => new[]
+    {
+        new BlockImageTestExpected
         {
-            new BlockImageTestExpected
+            TestFile   = "ext2.partclone.lz",
+            MediaType  = MediaType.GENERIC_HDD,
+            Sectors    = 127882,
+            SectorSize = 4096,
+            MD5        = "ff239c91166b6b13fa826dd258b40666"
+        },
+        new BlockImageTestExpected
+        {
+            TestFile   = "fat16.partclone.lz",
+            MediaType  = MediaType.GENERIC_HDD,
+            Sectors    = 1012032,
+            SectorSize = 512,
+            MD5        = "f98b1a51ca2e7bf047d84969a2392a3d",
+            Partitions = new[]
             {
-                TestFile   = "ext2.partclone.lz",
-                MediaType  = MediaType.GENERIC_HDD,
-                Sectors    = 127882,
-                SectorSize = 4096,
-                MD5        = "ff239c91166b6b13fa826dd258b40666"
-            },
-            new BlockImageTestExpected
-            {
-                TestFile   = "fat16.partclone.lz",
-                MediaType  = MediaType.GENERIC_HDD,
-                Sectors    = 1012032,
-                SectorSize = 512,
-                MD5        = "f98b1a51ca2e7bf047d84969a2392a3d",
-                Partitions = new[]
+                new BlockPartitionVolumes
                 {
-                    new BlockPartitionVolumes
-                    {
-                        Start  = 0,
-                        Length = 1012032
-                    }
+                    Start  = 0,
+                    Length = 1012032
                 }
-            },
-            new BlockImageTestExpected
-            {
-                TestFile   = "fat32.partclone.lz",
-                MediaType  = MediaType.GENERIC_HDD,
-                Sectors    = 1023057,
-                SectorSize = 512,
-                MD5        = "1b0b5eb965a401f16fa8a07e303cd1c0"
-                /* TODO: NullReferenceException
-                Partitions = new[]
-                {
-                    new BlockPartitionVolumes
-                    {
-                        Start  = 0,
-                        Length = 1023057
-                    }
-                }
-                */
-            },
-            new BlockImageTestExpected
-            {
-                TestFile   = "hfsplus.partclone.lz",
-                MediaType  = MediaType.GENERIC_HDD,
-                Sectors    = 127882,
-                SectorSize = 4096,
-                MD5        = "880a6777d05c496901e930684abbecff"
-            },
-            new BlockImageTestExpected
-            {
-                TestFile   = "ntfs.partclone.lz",
-                MediaType  = MediaType.GENERIC_HDD,
-                Sectors    = 1023056,
-                SectorSize = 512,
-                MD5        = "61cc3faa286364e7ad5bab18120c1151"
             }
-        };
-    }
+        },
+        new BlockImageTestExpected
+        {
+            TestFile   = "fat32.partclone.lz",
+            MediaType  = MediaType.GENERIC_HDD,
+            Sectors    = 1023057,
+            SectorSize = 512,
+            MD5        = "1b0b5eb965a401f16fa8a07e303cd1c0"
+            /* TODO: NullReferenceException
+            Partitions = new[]
+            {
+                new BlockPartitionVolumes
+                {
+                    Start  = 0,
+                    Length = 1023057
+                }
+            }
+            */
+        },
+        new BlockImageTestExpected
+        {
+            TestFile   = "hfsplus.partclone.lz",
+            MediaType  = MediaType.GENERIC_HDD,
+            Sectors    = 127882,
+            SectorSize = 4096,
+            MD5        = "880a6777d05c496901e930684abbecff"
+        },
+        new BlockImageTestExpected
+        {
+            TestFile   = "ntfs.partclone.lz",
+            MediaType  = MediaType.GENERIC_HDD,
+            Sectors    = 1023056,
+            SectorSize = 512,
+            MD5        = "61cc3faa286364e7ad5bab18120c1151"
+        }
+    };
 }

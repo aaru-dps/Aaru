@@ -32,29 +32,28 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Filesystems.HFS
+namespace Aaru.Tests.Filesystems.HFS;
+
+[TestFixture]
+public class RDB : FilesystemTest
 {
-    [TestFixture]
-    public class RDB : FilesystemTest
+    public RDB() : base("HFS") {}
+
+    public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Apple HFS (RDB)");
+    public override IFilesystem Plugin     => new AppleHFS();
+    public override bool        Partitions => true;
+
+    public override FileSystemTest[] Tests => new[]
     {
-        public RDB() : base("HFS") {}
-
-        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Apple HFS (RDB)");
-        public override IFilesystem Plugin => new AppleHFS();
-        public override bool Partitions => true;
-
-        public override FileSystemTest[] Tests => new[]
+        new FileSystemTest
         {
-            new FileSystemTest
-            {
-                TestFile    = "amigaos_3.9.aif",
-                MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 1024128,
-                SectorSize  = 512,
-                Clusters    = 63752,
-                ClusterSize = 8192,
-                VolumeName  = "Volume label"
-            }
-        };
-    }
+            TestFile    = "amigaos_3.9.aif",
+            MediaType   = MediaType.GENERIC_HDD,
+            Sectors     = 1024128,
+            SectorSize  = 512,
+            Clusters    = 63752,
+            ClusterSize = 8192,
+            VolumeName  = "Volume label"
+        }
+    };
 }

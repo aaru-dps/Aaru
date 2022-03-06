@@ -35,27 +35,26 @@ using System;
 
 // ReSharper disable UnusedMember.Local
 
-namespace Aaru.Filesystems
+namespace Aaru.Filesystems;
+
+public sealed partial class ISO9660
 {
-    public sealed partial class ISO9660
+    const ushort XA_MAGIC = 0x5841; // "XA"
+
+    [Flags]
+    enum XaAttributes : ushort
     {
-        const ushort XA_MAGIC = 0x5841; // "XA"
+        SystemRead   = 0x01, SystemExecute = 0x04, OwnerRead     = 0x10,
+        OwnerExecute = 0x40, GroupRead     = 0x100, GroupExecute = 0x400,
+        Mode2Form1   = 0x800, Mode2Form2   = 0x1000, Interleaved = 0x2000,
+        Cdda         = 0x4000, Directory   = 0x8000
+    }
 
-        [Flags]
-        enum XaAttributes : ushort
-        {
-            SystemRead   = 0x01, SystemExecute = 0x04, OwnerRead     = 0x10,
-            OwnerExecute = 0x40, GroupRead     = 0x100, GroupExecute = 0x400,
-            Mode2Form1   = 0x800, Mode2Form2   = 0x1000, Interleaved = 0x2000,
-            Cdda         = 0x4000, Directory   = 0x8000
-        }
-
-        [Flags]
-        enum Mode2Submode : byte
-        {
-            EndOfFile = 0x80, RealTime    = 0x40, Form2 = 0x20,
-            Trigger   = 0x10, Data        = 0x08, Audio = 0x04,
-            Video     = 0x02, EndOfRecord = 0x01
-        }
+    [Flags]
+    enum Mode2Submode : byte
+    {
+        EndOfFile = 0x80, RealTime    = 0x40, Form2 = 0x20,
+        Trigger   = 0x10, Data        = 0x08, Audio = 0x04,
+        Video     = 0x02, EndOfRecord = 0x01
     }
 }

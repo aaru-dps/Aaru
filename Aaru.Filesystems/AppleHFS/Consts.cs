@@ -34,22 +34,21 @@ using System.Diagnostics.CodeAnalysis;
 
 // ReSharper disable InconsistentNaming
 
-namespace Aaru.Filesystems
+namespace Aaru.Filesystems;
+
+// Information from Inside Macintosh
+// https://developer.apple.com/legacy/library/documentation/mac/pdf/Files/File_Manager.pdf
+[SuppressMessage("ReSharper", "UnusedMember.Local")]
+public sealed partial class AppleHFS
 {
-    // Information from Inside Macintosh
-    // https://developer.apple.com/legacy/library/documentation/mac/pdf/Files/File_Manager.pdf
-    [SuppressMessage("ReSharper", "UnusedMember.Local")]
-    public sealed partial class AppleHFS
-    {
-        /// <summary>Parent ID of the root directory.</summary>
-        const uint kRootParentCnid = 1;
-        /// <summary>Directory ID of the root directory.</summary>
-        const uint kRootCnid = 2;
-        /// <summary>File number of the extents file.</summary>
-        const uint kExtentsFileCnid = 3;
-        /// <summary>File number of the catalog file.</summary>
-        const uint kCatalogFileCnid = 4;
-        /// <summary>File number of the bad allocation block file.</summary>
-        const uint kBadBlocksFileCnid = 5;
-    }
+    /// <summary>Parent ID of the root directory.</summary>
+    const uint kRootParentCnid = 1;
+    /// <summary>Directory ID of the root directory.</summary>
+    const uint kRootCnid = 2;
+    /// <summary>File number of the extents file.</summary>
+    const uint kExtentsFileCnid = 3;
+    /// <summary>File number of the catalog file.</summary>
+    const uint kCatalogFileCnid = 4;
+    /// <summary>File number of the bad allocation block file.</summary>
+    const uint kBadBlocksFileCnid = 5;
 }

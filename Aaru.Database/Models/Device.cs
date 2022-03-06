@@ -35,45 +35,44 @@ using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using Aaru.CommonTypes.Metadata;
 
-namespace Aaru.Database.Models
+namespace Aaru.Database.Models;
+
+/// <summary>Known device</summary>
+public class Device : DeviceReportV2
 {
-    /// <summary>Known device</summary>
-    public class Device : DeviceReportV2
+    /// <summary>Builds an empty device</summary>
+    public Device() => LastSynchronized = DateTime.UtcNow;
+
+    /// <summary>Builds a device from a device report</summary>
+    /// <param name="report">Device report</param>
+    [SuppressMessage("ReSharper", "VirtualMemberCallInConstructor")]
+    public Device(DeviceReportV2 report)
     {
-        /// <summary>Builds an empty device</summary>
-        public Device() => LastSynchronized = DateTime.UtcNow;
-
-        /// <summary>Builds a device from a device report</summary>
-        /// <param name="report">Device report</param>
-        [SuppressMessage("ReSharper", "VirtualMemberCallInConstructor")]
-        public Device(DeviceReportV2 report)
-        {
-            ATA                       = report.ATA;
-            ATAPI                     = report.ATAPI;
-            CompactFlash              = report.CompactFlash;
-            FireWire                  = report.FireWire;
-            LastSynchronized          = DateTime.UtcNow;
-            MultiMediaCard            = report.MultiMediaCard;
-            PCMCIA                    = report.PCMCIA;
-            SCSI                      = report.SCSI;
-            SecureDigital             = report.SecureDigital;
-            USB                       = report.USB;
-            Manufacturer              = report.Manufacturer;
-            Model                     = report.Model;
-            Revision                  = report.Revision;
-            Type                      = report.Type;
-            GdRomSwapDiscCapabilities = report.GdRomSwapDiscCapabilities;
-        }
-
-        /// <summary>When this known device was last synchronized with the server</summary>
-        public DateTime LastSynchronized { get; set; }
-
-        /// <summary>Optimal number of blocks to read at once</summary>
-        [DefaultValue(0)]
-        public int OptimalMultipleSectorsRead { get; set; }
-
-        /// <summary>Can read GD-ROM using swap trick?</summary>
-        [DefaultValue(null)]
-        public bool? CanReadGdRomUsingSwapDisc { get; set; }
+        ATA                       = report.ATA;
+        ATAPI                     = report.ATAPI;
+        CompactFlash              = report.CompactFlash;
+        FireWire                  = report.FireWire;
+        LastSynchronized          = DateTime.UtcNow;
+        MultiMediaCard            = report.MultiMediaCard;
+        PCMCIA                    = report.PCMCIA;
+        SCSI                      = report.SCSI;
+        SecureDigital             = report.SecureDigital;
+        USB                       = report.USB;
+        Manufacturer              = report.Manufacturer;
+        Model                     = report.Model;
+        Revision                  = report.Revision;
+        Type                      = report.Type;
+        GdRomSwapDiscCapabilities = report.GdRomSwapDiscCapabilities;
     }
+
+    /// <summary>When this known device was last synchronized with the server</summary>
+    public DateTime LastSynchronized { get; set; }
+
+    /// <summary>Optimal number of blocks to read at once</summary>
+    [DefaultValue(0)]
+    public int OptimalMultipleSectorsRead { get; set; }
+
+    /// <summary>Can read GD-ROM using swap trick?</summary>
+    [DefaultValue(null)]
+    public bool? CanReadGdRomUsingSwapDisc { get; set; }
 }

@@ -38,54 +38,53 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using Schemas;
 
-namespace Aaru.Core
-{
-    public sealed partial class Sidecar
-    {
-        // TODO: Complete it
-        /// <summary>Creates a metadata sidecar for an audio media (e.g. cassette)</summary>
-        /// <param name="image">Image</param>
-        /// <param name="filterId">Filter uuid</param>
-        /// <param name="imagePath">Image path</param>
-        /// <param name="fi">Image file information</param>
-        /// <param name="plugins">Image plugins</param>
-        /// <param name="imgChecksums">List of image checksums</param>
-        /// <param name="sidecar">Metadata sidecar</param>
-        /// <param name="encoding">Encoding to be used for filesystem plugins</param>
-        static void AudioMedia(IBaseImage image, Guid filterId, string imagePath, FileInfo fi, PluginBase plugins,
-                               List<ChecksumType> imgChecksums, ref CICMMetadataType sidecar, Encoding encoding)
-        {
-            sidecar.AudioMedia = new[]
-            {
-                new AudioMediaType
-                {
-                    Checksums = imgChecksums.ToArray(),
-                    Image = new ImageType
-                    {
-                        format          = image.Format,
-                        offset          = 0,
-                        offsetSpecified = true,
-                        Value           = Path.GetFileName(imagePath)
-                    },
-                    Size = (ulong)fi.Length,
-                    Sequence = new SequenceType
-                    {
-                        MediaTitle = image.Info.MediaTitle
-                    }
-                }
-            };
+namespace Aaru.Core;
 
-            if(image.Info.MediaSequence     != 0 &&
-               image.Info.LastMediaSequence != 0)
+public sealed partial class Sidecar
+{
+    // TODO: Complete it
+    /// <summary>Creates a metadata sidecar for an audio media (e.g. cassette)</summary>
+    /// <param name="image">Image</param>
+    /// <param name="filterId">Filter uuid</param>
+    /// <param name="imagePath">Image path</param>
+    /// <param name="fi">Image file information</param>
+    /// <param name="plugins">Image plugins</param>
+    /// <param name="imgChecksums">List of image checksums</param>
+    /// <param name="sidecar">Metadata sidecar</param>
+    /// <param name="encoding">Encoding to be used for filesystem plugins</param>
+    static void AudioMedia(IBaseImage image, Guid filterId, string imagePath, FileInfo fi, PluginBase plugins,
+                           List<ChecksumType> imgChecksums, ref CICMMetadataType sidecar, Encoding encoding)
+    {
+        sidecar.AudioMedia = new[]
+        {
+            new AudioMediaType
             {
-                sidecar.AudioMedia[0].Sequence.MediaSequence = (uint)image.Info.MediaSequence;
-                sidecar.AudioMedia[0].Sequence.TotalMedia    = (uint)image.Info.LastMediaSequence;
+                Checksums = imgChecksums.ToArray(),
+                Image = new ImageType
+                {
+                    format          = image.Format,
+                    offset          = 0,
+                    offsetSpecified = true,
+                    Value           = Path.GetFileName(imagePath)
+                },
+                Size = (ulong)fi.Length,
+                Sequence = new SequenceType
+                {
+                    MediaTitle = image.Info.MediaTitle
+                }
             }
-            else
-            {
-                sidecar.AudioMedia[0].Sequence.MediaSequence = 1;
-                sidecar.AudioMedia[0].Sequence.TotalMedia    = 1;
-            }
+        };
+
+        if(image.Info.MediaSequence     != 0 &&
+           image.Info.LastMediaSequence != 0)
+        {
+            sidecar.AudioMedia[0].Sequence.MediaSequence = (uint)image.Info.MediaSequence;
+            sidecar.AudioMedia[0].Sequence.TotalMedia    = (uint)image.Info.LastMediaSequence;
+        }
+        else
+        {
+            sidecar.AudioMedia[0].Sequence.MediaSequence = 1;
+            sidecar.AudioMedia[0].Sequence.TotalMedia    = 1;
         }
     }
 }

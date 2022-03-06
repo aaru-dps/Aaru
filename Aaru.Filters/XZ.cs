@@ -36,214 +36,213 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using SharpCompress.Compressors.Xz;
 
-namespace Aaru.Filters
+namespace Aaru.Filters;
+
+/// <inheritdoc />
+/// <summary>Decompress xz files while reading</summary>
+public sealed class XZ : IFilter
 {
+    Stream _dataStream;
+    Stream _innerStream;
+
     /// <inheritdoc />
-    /// <summary>Decompress xz files while reading</summary>
-    public sealed class XZ : IFilter
+    public string Name => "XZ";
+    /// <inheritdoc />
+    public Guid Id => new("666A8617-0444-4C05-9F4F-DF0FD758D0D2");
+    /// <inheritdoc />
+    public string Author => "Natalia Portillo";
+
+    /// <inheritdoc />
+    public void Close()
     {
-        Stream _dataStream;
-        Stream _innerStream;
+        _dataStream?.Close();
+        _dataStream = null;
+        BasePath    = null;
+    }
 
-        /// <inheritdoc />
-        public string Name => "XZ";
-        /// <inheritdoc />
-        public Guid Id => new("666A8617-0444-4C05-9F4F-DF0FD758D0D2");
-        /// <inheritdoc />
-        public string Author => "Natalia Portillo";
+    /// <inheritdoc />
+    public string BasePath { get; private set; }
 
-        /// <inheritdoc />
-        public void Close()
+    /// <inheritdoc />
+    public Stream GetDataForkStream() => _innerStream;
+
+    /// <inheritdoc />
+    public string Path => BasePath;
+
+    /// <inheritdoc />
+    public Stream GetResourceForkStream() => null;
+
+    /// <inheritdoc />
+    public bool HasResourceFork => false;
+
+    /// <inheritdoc />
+    public bool Identify(byte[] buffer) => buffer[0]  == 0xFD && buffer[1]  == 0x37 && buffer[2] == 0x7A &&
+                                           buffer[3]  == 0x58 && buffer[4]  == 0x5A && buffer[5] == 0x00 &&
+                                           buffer[^2] == 0x59 && buffer[^1] == 0x5A;
+
+    /// <inheritdoc />
+    public bool Identify(Stream stream)
+    {
+        byte[] buffer = new byte[6];
+        byte[] footer = new byte[2];
+
+        if(stream.Length < 8)
+            return false;
+
+        stream.Seek(0, SeekOrigin.Begin);
+        stream.Read(buffer, 0, 6);
+        stream.Seek(-2, SeekOrigin.End);
+        stream.Read(footer, 0, 2);
+        stream.Seek(0, SeekOrigin.Begin);
+
+        return buffer[0] == 0xFD && buffer[1] == 0x37 && buffer[2] == 0x7A && buffer[3] == 0x58 &&
+               buffer[4] == 0x5A && buffer[5] == 0x00 && footer[0] == 0x59 && footer[1] == 0x5A;
+    }
+
+    /// <inheritdoc />
+    public bool Identify(string path)
+    {
+        if(!File.Exists(path))
+            return false;
+
+        var    stream = new FileStream(path, FileMode.Open, FileAccess.Read);
+        byte[] buffer = new byte[6];
+        byte[] footer = new byte[2];
+
+        if(stream.Length < 8)
+            return false;
+
+        stream.Seek(0, SeekOrigin.Begin);
+        stream.Read(buffer, 0, 6);
+        stream.Seek(-2, SeekOrigin.End);
+        stream.Read(footer, 0, 2);
+        stream.Seek(0, SeekOrigin.Begin);
+
+        return buffer[0] == 0xFD && buffer[1] == 0x37 && buffer[2] == 0x7A && buffer[3] == 0x58 &&
+               buffer[4] == 0x5A && buffer[5] == 0x00 && footer[0] == 0x59 && footer[1] == 0x5A;
+    }
+
+    /// <inheritdoc />
+    public ErrorNumber Open(byte[] buffer)
+    {
+        _dataStream   = new MemoryStream(buffer);
+        BasePath      = null;
+        CreationTime  = DateTime.UtcNow;
+        LastWriteTime = CreationTime;
+        GuessSize();
+        _innerStream = new ForcedSeekStream<XZStream>(DataForkLength, _dataStream);
+
+        return ErrorNumber.NoError;
+    }
+
+    /// <inheritdoc />
+    public ErrorNumber Open(Stream stream)
+    {
+        _dataStream   = stream;
+        BasePath      = null;
+        CreationTime  = DateTime.UtcNow;
+        LastWriteTime = CreationTime;
+        GuessSize();
+        _innerStream = new ForcedSeekStream<XZStream>(DataForkLength, _dataStream);
+
+        return ErrorNumber.NoError;
+    }
+
+    /// <inheritdoc />
+    public ErrorNumber Open(string path)
+    {
+        _dataStream = new FileStream(path, FileMode.Open, FileAccess.Read);
+        BasePath    = System.IO.Path.GetFullPath(path);
+
+        var fi = new FileInfo(path);
+        CreationTime  = fi.CreationTimeUtc;
+        LastWriteTime = fi.LastWriteTimeUtc;
+        GuessSize();
+        _innerStream = new ForcedSeekStream<XZStream>(DataForkLength, _dataStream);
+
+        return ErrorNumber.NoError;
+    }
+
+    /// <inheritdoc />
+    public DateTime CreationTime { get; private set; }
+
+    /// <inheritdoc />
+    public long DataForkLength { get; private set; }
+
+    /// <inheritdoc />
+    public DateTime LastWriteTime { get; private set; }
+
+    /// <inheritdoc />
+    public long Length => DataForkLength;
+
+    /// <inheritdoc />
+    public long ResourceForkLength => 0;
+
+    /// <inheritdoc />
+    public string Filename
+    {
+        get
         {
-            _dataStream?.Close();
-            _dataStream = null;
-            BasePath    = null;
+            if(BasePath?.EndsWith(".xz", StringComparison.InvariantCultureIgnoreCase) == true)
+                return BasePath.Substring(0, BasePath.Length - 3);
+
+            return BasePath?.EndsWith(".xzip", StringComparison.InvariantCultureIgnoreCase) == true
+                       ? BasePath.Substring(0, BasePath.Length - 5) : BasePath;
         }
+    }
 
-        /// <inheritdoc />
-        public string BasePath { get; private set; }
+    /// <inheritdoc />
+    public string ParentFolder => System.IO.Path.GetDirectoryName(BasePath);
 
-        /// <inheritdoc />
-        public Stream GetDataForkStream() => _innerStream;
+    void GuessSize()
+    {
+        DataForkLength = 0;
 
-        /// <inheritdoc />
-        public string Path => BasePath;
+        // Seek to footer backwards size field
+        _dataStream.Seek(-8, SeekOrigin.End);
+        byte[] tmp = new byte[4];
+        _dataStream.Read(tmp, 0, 4);
+        uint backwardSize = (BitConverter.ToUInt32(tmp, 0) + 1) * 4;
 
-        /// <inheritdoc />
-        public Stream GetResourceForkStream() => null;
+        // Seek to first indexed record
+        _dataStream.Seek(-12 - (backwardSize - 2), SeekOrigin.End);
 
-        /// <inheritdoc />
-        public bool HasResourceFork => false;
+        // Skip compressed size
+        tmp = new byte[backwardSize - 2];
+        _dataStream.Read(tmp, 0, tmp.Length);
+        ulong number = 0;
+        int   ignore = Decode(tmp, tmp.Length, ref number);
 
-        /// <inheritdoc />
-        public bool Identify(byte[] buffer) => buffer[0]  == 0xFD && buffer[1]  == 0x37 && buffer[2] == 0x7A &&
-                                               buffer[3]  == 0x58 && buffer[4]  == 0x5A && buffer[5] == 0x00 &&
-                                               buffer[^2] == 0x59 && buffer[^1] == 0x5A;
+        // Get compressed size
+        _dataStream.Seek(-12 - (backwardSize - 2 - ignore), SeekOrigin.End);
+        tmp = new byte[backwardSize - 2 - ignore];
+        _dataStream.Read(tmp, 0, tmp.Length);
+        Decode(tmp, tmp.Length, ref number);
+        DataForkLength = (long)number;
 
-        /// <inheritdoc />
-        public bool Identify(Stream stream)
+        _dataStream.Seek(0, SeekOrigin.Begin);
+    }
+
+    int Decode(byte[] buf, int sizeMax, ref ulong num)
+    {
+        if(sizeMax == 0)
+            return 0;
+
+        if(sizeMax > 9)
+            sizeMax = 9;
+
+        num = (ulong)(buf[0] & 0x7F);
+        int i = 0;
+
+        while((buf[i++] & 0x80) == 0x80)
         {
-            byte[] buffer = new byte[6];
-            byte[] footer = new byte[2];
-
-            if(stream.Length < 8)
-                return false;
-
-            stream.Seek(0, SeekOrigin.Begin);
-            stream.Read(buffer, 0, 6);
-            stream.Seek(-2, SeekOrigin.End);
-            stream.Read(footer, 0, 2);
-            stream.Seek(0, SeekOrigin.Begin);
-
-            return buffer[0] == 0xFD && buffer[1] == 0x37 && buffer[2] == 0x7A && buffer[3] == 0x58 &&
-                   buffer[4] == 0x5A && buffer[5] == 0x00 && footer[0] == 0x59 && footer[1] == 0x5A;
-        }
-
-        /// <inheritdoc />
-        public bool Identify(string path)
-        {
-            if(!File.Exists(path))
-                return false;
-
-            var    stream = new FileStream(path, FileMode.Open, FileAccess.Read);
-            byte[] buffer = new byte[6];
-            byte[] footer = new byte[2];
-
-            if(stream.Length < 8)
-                return false;
-
-            stream.Seek(0, SeekOrigin.Begin);
-            stream.Read(buffer, 0, 6);
-            stream.Seek(-2, SeekOrigin.End);
-            stream.Read(footer, 0, 2);
-            stream.Seek(0, SeekOrigin.Begin);
-
-            return buffer[0] == 0xFD && buffer[1] == 0x37 && buffer[2] == 0x7A && buffer[3] == 0x58 &&
-                   buffer[4] == 0x5A && buffer[5] == 0x00 && footer[0] == 0x59 && footer[1] == 0x5A;
-        }
-
-        /// <inheritdoc />
-        public ErrorNumber Open(byte[] buffer)
-        {
-            _dataStream   = new MemoryStream(buffer);
-            BasePath      = null;
-            CreationTime  = DateTime.UtcNow;
-            LastWriteTime = CreationTime;
-            GuessSize();
-            _innerStream = new ForcedSeekStream<XZStream>(DataForkLength, _dataStream);
-
-            return ErrorNumber.NoError;
-        }
-
-        /// <inheritdoc />
-        public ErrorNumber Open(Stream stream)
-        {
-            _dataStream   = stream;
-            BasePath      = null;
-            CreationTime  = DateTime.UtcNow;
-            LastWriteTime = CreationTime;
-            GuessSize();
-            _innerStream = new ForcedSeekStream<XZStream>(DataForkLength, _dataStream);
-
-            return ErrorNumber.NoError;
-        }
-
-        /// <inheritdoc />
-        public ErrorNumber Open(string path)
-        {
-            _dataStream = new FileStream(path, FileMode.Open, FileAccess.Read);
-            BasePath    = System.IO.Path.GetFullPath(path);
-
-            var fi = new FileInfo(path);
-            CreationTime  = fi.CreationTimeUtc;
-            LastWriteTime = fi.LastWriteTimeUtc;
-            GuessSize();
-            _innerStream = new ForcedSeekStream<XZStream>(DataForkLength, _dataStream);
-
-            return ErrorNumber.NoError;
-        }
-
-        /// <inheritdoc />
-        public DateTime CreationTime { get; private set; }
-
-        /// <inheritdoc />
-        public long DataForkLength { get; private set; }
-
-        /// <inheritdoc />
-        public DateTime LastWriteTime { get; private set; }
-
-        /// <inheritdoc />
-        public long Length => DataForkLength;
-
-        /// <inheritdoc />
-        public long ResourceForkLength => 0;
-
-        /// <inheritdoc />
-        public string Filename
-        {
-            get
-            {
-                if(BasePath?.EndsWith(".xz", StringComparison.InvariantCultureIgnoreCase) == true)
-                    return BasePath.Substring(0, BasePath.Length - 3);
-
-                return BasePath?.EndsWith(".xzip", StringComparison.InvariantCultureIgnoreCase) == true
-                           ? BasePath.Substring(0, BasePath.Length - 5) : BasePath;
-            }
-        }
-
-        /// <inheritdoc />
-        public string ParentFolder => System.IO.Path.GetDirectoryName(BasePath);
-
-        void GuessSize()
-        {
-            DataForkLength = 0;
-
-            // Seek to footer backwards size field
-            _dataStream.Seek(-8, SeekOrigin.End);
-            byte[] tmp = new byte[4];
-            _dataStream.Read(tmp, 0, 4);
-            uint backwardSize = (BitConverter.ToUInt32(tmp, 0) + 1) * 4;
-
-            // Seek to first indexed record
-            _dataStream.Seek(-12 - (backwardSize - 2), SeekOrigin.End);
-
-            // Skip compressed size
-            tmp = new byte[backwardSize - 2];
-            _dataStream.Read(tmp, 0, tmp.Length);
-            ulong number = 0;
-            int   ignore = Decode(tmp, tmp.Length, ref number);
-
-            // Get compressed size
-            _dataStream.Seek(-12 - (backwardSize - 2 - ignore), SeekOrigin.End);
-            tmp = new byte[backwardSize - 2 - ignore];
-            _dataStream.Read(tmp, 0, tmp.Length);
-            Decode(tmp, tmp.Length, ref number);
-            DataForkLength = (long)number;
-
-            _dataStream.Seek(0, SeekOrigin.Begin);
-        }
-
-        int Decode(byte[] buf, int sizeMax, ref ulong num)
-        {
-            if(sizeMax == 0)
+            if(i      >= sizeMax ||
+               buf[i] == 0x00)
                 return 0;
 
-            if(sizeMax > 9)
-                sizeMax = 9;
-
-            num = (ulong)(buf[0] & 0x7F);
-            int i = 0;
-
-            while((buf[i++] & 0x80) == 0x80)
-            {
-                if(i      >= sizeMax ||
-                   buf[i] == 0x00)
-                    return 0;
-
-                num |= (ulong)(buf[i] & 0x7F) << (i * 7);
-            }
-
-            return i;
+            num |= (ulong)(buf[i] & 0x7F) << (i * 7);
         }
+
+        return i;
     }
 }

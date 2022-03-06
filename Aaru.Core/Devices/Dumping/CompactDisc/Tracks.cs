@@ -44,243 +44,242 @@ using Aaru.Devices;
 // ReSharper disable InlineOutVariableDeclaration
 // ReSharper disable TooWideLocalVariableScope
 
-namespace Aaru.Core.Devices.Dumping
+namespace Aaru.Core.Devices.Dumping;
+
+partial class Dump
 {
-    partial class Dump
+    /// <summary>Reads the TOC, processes it, returns the track list and last sector</summary>
+    /// <param name="dev">Device</param>
+    /// <param name="dumpLog">Dump log</param>
+    /// <param name="force">Force dump enabled</param>
+    /// <param name="lastSector">Last sector number</param>
+    /// <param name="leadOutStarts">Lead-out starts</param>
+    /// <param name="mediaTags">Media tags</param>
+    /// <param name="stoppingErrorMessage">Stopping error message handler</param>
+    /// <param name="toc">Full CD TOC</param>
+    /// <param name="trackFlags">Track flags</param>
+    /// <param name="updateStatus">Update status handler</param>
+    /// <returns>List of tracks</returns>
+    public static Track[] GetCdTracks(Device dev, DumpLog dumpLog, bool force, out long lastSector,
+                                      Dictionary<int, long> leadOutStarts,
+                                      Dictionary<MediaTagType, byte[]> mediaTags,
+                                      ErrorMessageHandler stoppingErrorMessage, out FullTOC.CDFullTOC? toc,
+                                      Dictionary<byte, byte> trackFlags, UpdateStatusHandler updateStatus)
     {
-        /// <summary>Reads the TOC, processes it, returns the track list and last sector</summary>
-        /// <param name="dev">Device</param>
-        /// <param name="dumpLog">Dump log</param>
-        /// <param name="force">Force dump enabled</param>
-        /// <param name="lastSector">Last sector number</param>
-        /// <param name="leadOutStarts">Lead-out starts</param>
-        /// <param name="mediaTags">Media tags</param>
-        /// <param name="stoppingErrorMessage">Stopping error message handler</param>
-        /// <param name="toc">Full CD TOC</param>
-        /// <param name="trackFlags">Track flags</param>
-        /// <param name="updateStatus">Update status handler</param>
-        /// <returns>List of tracks</returns>
-        public static Track[] GetCdTracks(Device dev, DumpLog dumpLog, bool force, out long lastSector,
-                                          Dictionary<int, long> leadOutStarts,
-                                          Dictionary<MediaTagType, byte[]> mediaTags,
-                                          ErrorMessageHandler stoppingErrorMessage, out FullTOC.CDFullTOC? toc,
-                                          Dictionary<byte, byte> trackFlags, UpdateStatusHandler updateStatus)
+        byte[]      cmdBuf;                        // Data buffer
+        const uint  sectorSize = 2352;             // Full sector size
+        bool        sense;                         // Sense indicator
+        List<Track> trackList = new List<Track>(); // Tracks in disc
+        byte[]      tmpBuf;                        // Temporary buffer
+        toc        = null;
+        lastSector = 0;
+        TrackType leadoutTrackType = TrackType.Audio;
+
+        // We discarded all discs that falsify a TOC before requesting a real TOC
+        // No TOC, no CD (or an empty one)
+        dumpLog?.WriteLine("Reading full TOC");
+        updateStatus?.Invoke("Reading full TOC");
+        sense = dev.ReadRawToc(out cmdBuf, out _, 0, dev.Timeout, out _);
+
+        if(!sense)
         {
-            byte[]      cmdBuf;                        // Data buffer
-            const uint  sectorSize = 2352;             // Full sector size
-            bool        sense;                         // Sense indicator
-            List<Track> trackList = new List<Track>(); // Tracks in disc
-            byte[]      tmpBuf;                        // Temporary buffer
-            toc        = null;
-            lastSector = 0;
-            TrackType leadoutTrackType = TrackType.Audio;
-
-            // We discarded all discs that falsify a TOC before requesting a real TOC
-            // No TOC, no CD (or an empty one)
-            dumpLog?.WriteLine("Reading full TOC");
-            updateStatus?.Invoke("Reading full TOC");
-            sense = dev.ReadRawToc(out cmdBuf, out _, 0, dev.Timeout, out _);
-
-            if(!sense)
-            {
-                toc = FullTOC.Decode(cmdBuf);
-
-                if(toc.HasValue)
-                {
-                    tmpBuf = new byte[cmdBuf.Length - 2];
-                    Array.Copy(cmdBuf, 2, tmpBuf, 0, cmdBuf.Length - 2);
-                    mediaTags?.Add(MediaTagType.CD_FullTOC, tmpBuf);
-                }
-            }
-
-            updateStatus?.Invoke("Building track map...");
-            dumpLog?.WriteLine("Building track map...");
+            toc = FullTOC.Decode(cmdBuf);
 
             if(toc.HasValue)
             {
-                FullTOC.TrackDataDescriptor[] sortedTracks =
-                    toc.Value.TrackDescriptors.OrderBy(track => track.POINT).ToArray();
+                tmpBuf = new byte[cmdBuf.Length - 2];
+                Array.Copy(cmdBuf, 2, tmpBuf, 0, cmdBuf.Length - 2);
+                mediaTags?.Add(MediaTagType.CD_FullTOC, tmpBuf);
+            }
+        }
 
-                foreach(FullTOC.TrackDataDescriptor trk in sortedTracks.Where(trk => trk.ADR == 1 || trk.ADR == 4))
-                    if(trk.POINT >= 0x01 &&
-                       trk.POINT <= 0x63)
+        updateStatus?.Invoke("Building track map...");
+        dumpLog?.WriteLine("Building track map...");
+
+        if(toc.HasValue)
+        {
+            FullTOC.TrackDataDescriptor[] sortedTracks =
+                toc.Value.TrackDescriptors.OrderBy(track => track.POINT).ToArray();
+
+            foreach(FullTOC.TrackDataDescriptor trk in sortedTracks.Where(trk => trk.ADR == 1 || trk.ADR == 4))
+                if(trk.POINT >= 0x01 &&
+                   trk.POINT <= 0x63)
+                {
+                    trackList.Add(new Track
                     {
-                        trackList.Add(new Track
-                        {
-                            Sequence = trk.POINT,
-                            Session  = trk.SessionNumber,
-                            Type = (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrack ||
-                                        (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrackIncremental
-                                            ? TrackType.Data : TrackType.Audio,
-                            StartSector =
-                                (ulong)((trk.PHOUR * 3600 * 75) + (trk.PMIN * 60 * 75) + (trk.PSEC * 75) + trk.PFRAME -
-                                        150),
-                            BytesPerSector    = (int)sectorSize,
-                            RawBytesPerSector = (int)sectorSize
-                        });
+                        Sequence = trk.POINT,
+                        Session  = trk.SessionNumber,
+                        Type = (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrack ||
+                               (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrackIncremental
+                                   ? TrackType.Data : TrackType.Audio,
+                        StartSector =
+                            (ulong)((trk.PHOUR * 3600 * 75) + (trk.PMIN * 60 * 75) + (trk.PSEC * 75) + trk.PFRAME -
+                                    150),
+                        BytesPerSector    = (int)sectorSize,
+                        RawBytesPerSector = (int)sectorSize
+                    });
 
-                        trackFlags?.Add(trk.POINT, trk.CONTROL);
-                    }
-                    else if(trk.POINT == 0xA2)
+                    trackFlags?.Add(trk.POINT, trk.CONTROL);
+                }
+                else if(trk.POINT == 0xA2)
+                {
+                    int phour, pmin, psec, pframe;
+
+                    if(trk.PFRAME == 0)
                     {
-                        int phour, pmin, psec, pframe;
+                        pframe = 74;
 
-                        if(trk.PFRAME == 0)
+                        if(trk.PSEC == 0)
                         {
-                            pframe = 74;
+                            psec = 59;
 
-                            if(trk.PSEC == 0)
+                            if(trk.PMIN == 0)
                             {
-                                psec = 59;
-
-                                if(trk.PMIN == 0)
-                                {
-                                    pmin  = 59;
-                                    phour = trk.PHOUR - 1;
-                                }
-                                else
-                                {
-                                    pmin  = trk.PMIN - 1;
-                                    phour = trk.PHOUR;
-                                }
+                                pmin  = 59;
+                                phour = trk.PHOUR - 1;
                             }
                             else
                             {
-                                psec  = trk.PSEC - 1;
-                                pmin  = trk.PMIN;
+                                pmin  = trk.PMIN - 1;
                                 phour = trk.PHOUR;
                             }
                         }
                         else
                         {
-                            pframe = trk.PFRAME - 1;
-                            psec   = trk.PSEC;
-                            pmin   = trk.PMIN;
-                            phour  = trk.PHOUR;
+                            psec  = trk.PSEC - 1;
+                            pmin  = trk.PMIN;
+                            phour = trk.PHOUR;
                         }
-
-                        lastSector = (phour * 3600 * 75) + (pmin * 60 * 75) + (psec * 75) + pframe - 150;
-                        leadOutStarts?.Add(trk.SessionNumber, lastSector + 1);
                     }
-                    else if(trk.POINT == 0xA0 &&
-                            trk.ADR   == 1)
+                    else
+                    {
+                        pframe = trk.PFRAME - 1;
+                        psec   = trk.PSEC;
+                        pmin   = trk.PMIN;
+                        phour  = trk.PHOUR;
+                    }
+
+                    lastSector = (phour * 3600 * 75) + (pmin * 60 * 75) + (psec * 75) + pframe - 150;
+                    leadOutStarts?.Add(trk.SessionNumber, lastSector + 1);
+                }
+                else if(trk.POINT == 0xA0 &&
+                        trk.ADR   == 1)
+                {
+                    leadoutTrackType =
+                        (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrack ||
+                        (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrackIncremental ? TrackType.Data
+                            : TrackType.Audio;
+                }
+        }
+        else
+        {
+            updateStatus?.Invoke("Cannot read RAW TOC, requesting processed one...");
+            dumpLog?.WriteLine("Cannot read RAW TOC, requesting processed one...");
+            sense = dev.ReadToc(out cmdBuf, out _, false, 0, dev.Timeout, out _);
+
+            TOC.CDTOC? oldToc = TOC.Decode(cmdBuf);
+
+            if((sense || !oldToc.HasValue) &&
+               !force)
+            {
+                dumpLog?.WriteLine("Could not read TOC, if you want to continue, use force, and will try from LBA 0 to 360000...");
+
+                stoppingErrorMessage?.
+                    Invoke("Could not read TOC, if you want to continue, use force, and will try from LBA 0 to 360000...");
+
+                return null;
+            }
+
+            if(oldToc.HasValue)
+                foreach(TOC.CDTOCTrackDataDescriptor trk in oldToc.Value.TrackDescriptors.
+                                                                   OrderBy(t => t.TrackNumber).
+                                                                   Where(trk => trk.ADR == 1 || trk.ADR == 4))
+                    if(trk.TrackNumber >= 0x01 &&
+                       trk.TrackNumber <= 0x63)
+                    {
+                        trackList.Add(new Track
+                        {
+                            Sequence = trk.TrackNumber,
+                            Session  = 1,
+                            Type = (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrack ||
+                                   (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrackIncremental
+                                       ? TrackType.Data : TrackType.Audio,
+                            StartSector       = trk.TrackStartAddress,
+                            BytesPerSector    = (int)sectorSize,
+                            RawBytesPerSector = (int)sectorSize
+                        });
+
+                        trackFlags?.Add(trk.TrackNumber, trk.CONTROL);
+                    }
+                    else if(trk.TrackNumber == 0xAA)
                     {
                         leadoutTrackType =
                             (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrack ||
                             (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrackIncremental ? TrackType.Data
                                 : TrackType.Audio;
+
+                        lastSector = trk.TrackStartAddress - 1;
                     }
-            }
-            else
+        }
+
+        if(trackList.Count == 0)
+        {
+            updateStatus?.Invoke("No tracks found, adding a single track from 0 to Lead-Out");
+            dumpLog?.WriteLine("No tracks found, adding a single track from 0 to Lead-Out");
+
+            trackList.Add(new Track
             {
-                updateStatus?.Invoke("Cannot read RAW TOC, requesting processed one...");
-                dumpLog?.WriteLine("Cannot read RAW TOC, requesting processed one...");
-                sense = dev.ReadToc(out cmdBuf, out _, false, 0, dev.Timeout, out _);
+                Sequence          = 1,
+                Session           = 1,
+                Type              = leadoutTrackType,
+                StartSector       = 0,
+                BytesPerSector    = (int)sectorSize,
+                RawBytesPerSector = (int)sectorSize
+            });
 
-                TOC.CDTOC? oldToc = TOC.Decode(cmdBuf);
+            trackFlags?.Add(1, (byte)(leadoutTrackType == TrackType.Audio ? 0 : 4));
+        }
 
-                if((sense || !oldToc.HasValue) &&
-                   !force)
-                {
-                    dumpLog?.WriteLine("Could not read TOC, if you want to continue, use force, and will try from LBA 0 to 360000...");
+        if(lastSector != 0)
+            return trackList.ToArray();
 
-                    stoppingErrorMessage?.
-                        Invoke("Could not read TOC, if you want to continue, use force, and will try from LBA 0 to 360000...");
+        sense = dev.ReadCapacity16(out cmdBuf, out _, dev.Timeout, out _);
 
-                    return null;
-                }
+        if(!sense)
+        {
+            byte[] temp = new byte[8];
 
-                if(oldToc.HasValue)
-                    foreach(TOC.CDTOCTrackDataDescriptor trk in oldToc.Value.TrackDescriptors.
-                                                                       OrderBy(t => t.TrackNumber).
-                                                                       Where(trk => trk.ADR == 1 || trk.ADR == 4))
-                        if(trk.TrackNumber >= 0x01 &&
-                           trk.TrackNumber <= 0x63)
-                        {
-                            trackList.Add(new Track
-                            {
-                                Sequence = trk.TrackNumber,
-                                Session  = 1,
-                                Type = (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrack ||
-                                            (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrackIncremental
-                                                ? TrackType.Data : TrackType.Audio,
-                                StartSector       = trk.TrackStartAddress,
-                                BytesPerSector    = (int)sectorSize,
-                                RawBytesPerSector = (int)sectorSize
-                            });
-
-                            trackFlags?.Add(trk.TrackNumber, trk.CONTROL);
-                        }
-                        else if(trk.TrackNumber == 0xAA)
-                        {
-                            leadoutTrackType =
-                                (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrack ||
-                                (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrackIncremental ? TrackType.Data
-                                    : TrackType.Audio;
-
-                            lastSector = trk.TrackStartAddress - 1;
-                        }
-            }
-
-            if(trackList.Count == 0)
-            {
-                updateStatus?.Invoke("No tracks found, adding a single track from 0 to Lead-Out");
-                dumpLog?.WriteLine("No tracks found, adding a single track from 0 to Lead-Out");
-
-                trackList.Add(new Track
-                {
-                    Sequence          = 1,
-                    Session           = 1,
-                    Type              = leadoutTrackType,
-                    StartSector       = 0,
-                    BytesPerSector    = (int)sectorSize,
-                    RawBytesPerSector = (int)sectorSize
-                });
-
-                trackFlags?.Add(1, (byte)(leadoutTrackType == TrackType.Audio ? 0 : 4));
-            }
-
-            if(lastSector != 0)
-                return trackList.ToArray();
-
-            sense = dev.ReadCapacity16(out cmdBuf, out _, dev.Timeout, out _);
+            Array.Copy(cmdBuf, 0, temp, 0, 8);
+            Array.Reverse(temp);
+            lastSector = (long)BitConverter.ToUInt64(temp, 0);
+        }
+        else
+        {
+            sense = dev.ReadCapacity(out cmdBuf, out _, dev.Timeout, out _);
 
             if(!sense)
-            {
-                byte[] temp = new byte[8];
-
-                Array.Copy(cmdBuf, 0, temp, 0, 8);
-                Array.Reverse(temp);
-                lastSector = (long)BitConverter.ToUInt64(temp, 0);
-            }
-            else
-            {
-                sense = dev.ReadCapacity(out cmdBuf, out _, dev.Timeout, out _);
-
-                if(!sense)
-                    lastSector = ((cmdBuf[0] << 24) + (cmdBuf[1] << 16) + (cmdBuf[2] << 8) + cmdBuf[3]) & 0xFFFFFFFF;
-            }
-
-            if(lastSector > 0)
-                return trackList.ToArray();
-
-            if(!force)
-            {
-                stoppingErrorMessage?.
-                    Invoke("Could not find Lead-Out, if you want to continue use force option and will continue until 360000 sectors...");
-
-                dumpLog?.WriteLine("Could not find Lead-Out, if you want to continue use force option and will continue until 360000 sectors...");
-
-                return null;
-            }
-
-            updateStatus?.
-                Invoke("WARNING: Could not find Lead-Out start, will try to read up to 360000 sectors, probably will fail before...");
-
-            dumpLog?.WriteLine("WARNING: Could not find Lead-Out start, will try to read up to 360000 sectors, probably will fail before...");
-            lastSector = 360000;
-
-            return trackList.ToArray();
+                lastSector = ((cmdBuf[0] << 24) + (cmdBuf[1] << 16) + (cmdBuf[2] << 8) + cmdBuf[3]) & 0xFFFFFFFF;
         }
+
+        if(lastSector > 0)
+            return trackList.ToArray();
+
+        if(!force)
+        {
+            stoppingErrorMessage?.
+                Invoke("Could not find Lead-Out, if you want to continue use force option and will continue until 360000 sectors...");
+
+            dumpLog?.WriteLine("Could not find Lead-Out, if you want to continue use force option and will continue until 360000 sectors...");
+
+            return null;
+        }
+
+        updateStatus?.
+            Invoke("WARNING: Could not find Lead-Out start, will try to read up to 360000 sectors, probably will fail before...");
+
+        dumpLog?.WriteLine("WARNING: Could not find Lead-Out start, will try to read up to 360000 sectors, probably will fail before...");
+        lastSector = 360000;
+
+        return trackList.ToArray();
     }
 }

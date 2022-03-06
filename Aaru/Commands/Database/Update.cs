@@ -42,113 +42,112 @@ using Aaru.Database;
 using Microsoft.EntityFrameworkCore;
 using Spectre.Console;
 
-namespace Aaru.Commands.Database
+namespace Aaru.Commands.Database;
+
+internal sealed class UpdateCommand : Command
 {
-    internal sealed class UpdateCommand : Command
+    readonly bool _mainDbUpdate;
+
+    public UpdateCommand(bool mainDbUpdate) : base("update", "Updates the database.")
     {
-        readonly bool _mainDbUpdate;
+        _mainDbUpdate = mainDbUpdate;
 
-        public UpdateCommand(bool mainDbUpdate) : base("update", "Updates the database.")
+        Add(new Option("--clear", "Clear existing main database.")
         {
-            _mainDbUpdate = mainDbUpdate;
+            Argument = new Argument<bool>(() => false),
+            Required = false
+        });
 
-            Add(new Option("--clear", "Clear existing main database.")
-            {
-                Argument = new Argument<bool>(() => false),
-                Required = false
-            });
-
-            Add(new Option("--clear-all", "Clear existing main and local database.")
-            {
-                Argument = new Argument<bool>(() => false),
-                Required = false
-            });
-
-            Handler = CommandHandler.Create((Func<bool, bool, bool, bool, int>)Invoke);
-        }
-
-        int Invoke(bool debug, bool verbose, bool clear, bool clearAll)
+        Add(new Option("--clear-all", "Clear existing main and local database.")
         {
-            if(_mainDbUpdate)
-                return (int)ErrorNumber.NoError;
+            Argument = new Argument<bool>(() => false),
+            Required = false
+        });
 
-            MainClass.PrintCopyright();
+        Handler = CommandHandler.Create((Func<bool, bool, bool, bool, int>)Invoke);
+    }
 
-            if(debug)
-            {
-                IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
-                {
-                    Out = new AnsiConsoleOutput(System.Console.Error)
-                });
-
-                AaruConsole.DebugWriteLineEvent += (format, objects) =>
-                {
-                    if(objects is null)
-                        stderrConsole.MarkupLine(format);
-                    else
-                        stderrConsole.MarkupLine(format, objects);
-                };
-            }
-
-            if(verbose)
-                AaruConsole.WriteEvent += (format, objects) =>
-                {
-                    if(objects is null)
-                        AnsiConsole.Markup(format);
-                    else
-                        AnsiConsole.Markup(format, objects);
-                };
-
-            AaruConsole.DebugWriteLine("Update command", "--debug={0}", debug);
-            AaruConsole.DebugWriteLine("Update command", "--verbose={0}", verbose);
-
-            if(clearAll)
-            {
-                try
-                {
-                    File.Delete(Settings.Settings.LocalDbPath);
-
-                    var ctx = AaruContext.Create(Settings.Settings.LocalDbPath);
-                    ctx.Database.Migrate();
-                    ctx.SaveChanges();
-                }
-                catch(Exception)
-                {
-                    if(Debugger.IsAttached)
-                        throw;
-
-                    AaruConsole.ErrorWriteLine("Could not remove local database.");
-
-                    return (int)ErrorNumber.CannotRemoveDatabase;
-                }
-            }
-
-            if(clear || clearAll)
-            {
-                try
-                {
-                    File.Delete(Settings.Settings.MainDbPath);
-                }
-                catch(Exception)
-                {
-                    if(Debugger.IsAttached)
-                        throw;
-
-                    AaruConsole.ErrorWriteLine("Could not remove main database.");
-
-                    return (int)ErrorNumber.CannotRemoveDatabase;
-                }
-            }
-
-            DoUpdate(clear || clearAll);
-
+    int Invoke(bool debug, bool verbose, bool clear, bool clearAll)
+    {
+        if(_mainDbUpdate)
             return (int)ErrorNumber.NoError;
+
+        MainClass.PrintCopyright();
+
+        if(debug)
+        {
+            IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
+            {
+                Out = new AnsiConsoleOutput(System.Console.Error)
+            });
+
+            AaruConsole.DebugWriteLineEvent += (format, objects) =>
+            {
+                if(objects is null)
+                    stderrConsole.MarkupLine(format);
+                else
+                    stderrConsole.MarkupLine(format, objects);
+            };
         }
 
-        internal static void DoUpdate(bool create)
+        if(verbose)
+            AaruConsole.WriteEvent += (format, objects) =>
+            {
+                if(objects is null)
+                    AnsiConsole.Markup(format);
+                else
+                    AnsiConsole.Markup(format, objects);
+            };
+
+        AaruConsole.DebugWriteLine("Update command", "--debug={0}", debug);
+        AaruConsole.DebugWriteLine("Update command", "--verbose={0}", verbose);
+
+        if(clearAll)
         {
-            Remote.UpdateMainDatabase(create);
-            Statistics.AddCommand("update");
+            try
+            {
+                File.Delete(Settings.Settings.LocalDbPath);
+
+                var ctx = AaruContext.Create(Settings.Settings.LocalDbPath);
+                ctx.Database.Migrate();
+                ctx.SaveChanges();
+            }
+            catch(Exception)
+            {
+                if(Debugger.IsAttached)
+                    throw;
+
+                AaruConsole.ErrorWriteLine("Could not remove local database.");
+
+                return (int)ErrorNumber.CannotRemoveDatabase;
+            }
         }
+
+        if(clear || clearAll)
+        {
+            try
+            {
+                File.Delete(Settings.Settings.MainDbPath);
+            }
+            catch(Exception)
+            {
+                if(Debugger.IsAttached)
+                    throw;
+
+                AaruConsole.ErrorWriteLine("Could not remove main database.");
+
+                return (int)ErrorNumber.CannotRemoveDatabase;
+            }
+        }
+
+        DoUpdate(clear || clearAll);
+
+        return (int)ErrorNumber.NoError;
+    }
+
+    internal static void DoUpdate(bool create)
+    {
+        Remote.UpdateMainDatabase(create);
+        Statistics.AddCommand("update");
     }
 }

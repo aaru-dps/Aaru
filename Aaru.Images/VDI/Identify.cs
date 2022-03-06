@@ -34,24 +34,23 @@ using System.IO;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class Vdi
 {
-    public sealed partial class Vdi
+    /// <inheritdoc />
+    public bool Identify(IFilter imageFilter)
     {
-        /// <inheritdoc />
-        public bool Identify(IFilter imageFilter)
-        {
-            Stream stream = imageFilter.GetDataForkStream();
-            stream.Seek(0, SeekOrigin.Begin);
+        Stream stream = imageFilter.GetDataForkStream();
+        stream.Seek(0, SeekOrigin.Begin);
 
-            if(stream.Length < 512)
-                return false;
+        if(stream.Length < 512)
+            return false;
 
-            byte[] vHdrB = new byte[Marshal.SizeOf<Header>()];
-            stream.Read(vHdrB, 0, Marshal.SizeOf<Header>());
-            _vHdr = Marshal.ByteArrayToStructureLittleEndian<Header>(vHdrB);
+        byte[] vHdrB = new byte[Marshal.SizeOf<Header>()];
+        stream.Read(vHdrB, 0, Marshal.SizeOf<Header>());
+        _vHdr = Marshal.ByteArrayToStructureLittleEndian<Header>(vHdrB);
 
-            return _vHdr.magic == VDI_MAGIC;
-        }
+        return _vHdr.magic == VDI_MAGIC;
     }
 }

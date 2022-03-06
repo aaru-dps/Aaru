@@ -38,90 +38,89 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Marshal = Aaru.Helpers.Marshal;
 
-namespace Aaru.Partitions
+namespace Aaru.Partitions;
+
+// TODO: Find better documentation, this is working for XENIX 2 but not for SCO OpenServer...
+/// <inheritdoc />
+/// <summary>Implements decoding of XENIX partitions</summary>
+public sealed class XENIX : IPartition
 {
-    // TODO: Find better documentation, this is working for XENIX 2 but not for SCO OpenServer...
+    const ushort PAMAGIC     = 0x1234;
+    const int    MAXPARTS    = 16;
+    const uint   XENIX_BSIZE = 1024;
+
+    // Can't find this in any documentation but everything is aligned to this offset (in sectors)
+    const uint XENIX_OFFSET = 977;
+
     /// <inheritdoc />
-    /// <summary>Implements decoding of XENIX partitions</summary>
-    public sealed class XENIX : IPartition
+    public string Name => "XENIX";
+    /// <inheritdoc />
+    public Guid Id => new("53BE01DE-E68B-469F-A17F-EC2E4BD61CD9");
+    /// <inheritdoc />
+    public string Author => "Natalia Portillo";
+
+    /// <inheritdoc />
+    public bool GetInformation(IMediaImage imagePlugin, out List<CommonTypes.Partition> partitions,
+                               ulong sectorOffset)
     {
-        const ushort PAMAGIC     = 0x1234;
-        const int    MAXPARTS    = 16;
-        const uint   XENIX_BSIZE = 1024;
+        partitions = new List<CommonTypes.Partition>();
 
-        // Can't find this in any documentation but everything is aligned to this offset (in sectors)
-        const uint XENIX_OFFSET = 977;
+        if(42 + sectorOffset >= imagePlugin.Info.Sectors)
+            return false;
 
-        /// <inheritdoc />
-        public string Name => "XENIX";
-        /// <inheritdoc />
-        public Guid Id => new("53BE01DE-E68B-469F-A17F-EC2E4BD61CD9");
-        /// <inheritdoc />
-        public string Author => "Natalia Portillo";
+        ErrorNumber errno = imagePlugin.ReadSector(42 + sectorOffset, out byte[] tblsector);
 
-        /// <inheritdoc />
-        public bool GetInformation(IMediaImage imagePlugin, out List<CommonTypes.Partition> partitions,
-                                   ulong sectorOffset)
+        if(errno != ErrorNumber.NoError)
+            return false;
+
+        Partable xnxtbl = Marshal.ByteArrayToStructureLittleEndian<Partable>(tblsector);
+
+        AaruConsole.DebugWriteLine("XENIX plugin", "xnxtbl.p_magic = 0x{0:X4} (should be 0x{1:X4})", xnxtbl.p_magic,
+                                   PAMAGIC);
+
+        if(xnxtbl.p_magic != PAMAGIC)
+            return false;
+
+        for(int i = 0; i < MAXPARTS; i++)
         {
-            partitions = new List<CommonTypes.Partition>();
+            AaruConsole.DebugWriteLine("XENIX plugin", "xnxtbl.p[{0}].p_off = {1}", i, xnxtbl.p[i].p_off);
+            AaruConsole.DebugWriteLine("XENIX plugin", "xnxtbl.p[{0}].p_size = {1}", i, xnxtbl.p[i].p_size);
 
-            if(42 + sectorOffset >= imagePlugin.Info.Sectors)
-                return false;
+            if(xnxtbl.p[i].p_size <= 0)
+                continue;
 
-            ErrorNumber errno = imagePlugin.ReadSector(42 + sectorOffset, out byte[] tblsector);
-
-            if(errno != ErrorNumber.NoError)
-                return false;
-
-            Partable xnxtbl = Marshal.ByteArrayToStructureLittleEndian<Partable>(tblsector);
-
-            AaruConsole.DebugWriteLine("XENIX plugin", "xnxtbl.p_magic = 0x{0:X4} (should be 0x{1:X4})", xnxtbl.p_magic,
-                                       PAMAGIC);
-
-            if(xnxtbl.p_magic != PAMAGIC)
-                return false;
-
-            for(int i = 0; i < MAXPARTS; i++)
+            var part = new CommonTypes.Partition
             {
-                AaruConsole.DebugWriteLine("XENIX plugin", "xnxtbl.p[{0}].p_off = {1}", i, xnxtbl.p[i].p_off);
-                AaruConsole.DebugWriteLine("XENIX plugin", "xnxtbl.p[{0}].p_size = {1}", i, xnxtbl.p[i].p_size);
+                Start = ((ulong)((xnxtbl.p[i].p_off + XENIX_OFFSET) * XENIX_BSIZE) / imagePlugin.Info.SectorSize) +
+                        sectorOffset,
+                Length = (ulong)(xnxtbl.p[i].p_size * XENIX_BSIZE) / imagePlugin.Info.SectorSize,
+                Offset = (ulong)((xnxtbl.p[i].p_off + XENIX_OFFSET) * XENIX_BSIZE) +
+                         (imagePlugin.Info.SectorSize * sectorOffset),
+                Size     = (ulong)(xnxtbl.p[i].p_size * XENIX_BSIZE),
+                Sequence = (ulong)i,
+                Type     = "XENIX",
+                Scheme   = Name
+            };
 
-                if(xnxtbl.p[i].p_size <= 0)
-                    continue;
-
-                var part = new CommonTypes.Partition
-                {
-                    Start = ((ulong)((xnxtbl.p[i].p_off + XENIX_OFFSET) * XENIX_BSIZE) / imagePlugin.Info.SectorSize) +
-                            sectorOffset,
-                    Length = (ulong)(xnxtbl.p[i].p_size * XENIX_BSIZE) / imagePlugin.Info.SectorSize,
-                    Offset = (ulong)((xnxtbl.p[i].p_off + XENIX_OFFSET) * XENIX_BSIZE) +
-                             (imagePlugin.Info.SectorSize * sectorOffset),
-                    Size     = (ulong)(xnxtbl.p[i].p_size * XENIX_BSIZE),
-                    Sequence = (ulong)i,
-                    Type     = "XENIX",
-                    Scheme   = Name
-                };
-
-                if(part.End < imagePlugin.Info.Sectors)
-                    partitions.Add(part);
-            }
-
-            return partitions.Count > 0;
+            if(part.End < imagePlugin.Info.Sectors)
+                partitions.Add(part);
         }
 
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        readonly struct Partable
-        {
-            public readonly ushort p_magic; /* magic number validity indicator */
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAXPARTS)]
-            public readonly Partition[] p; /*partition headers*/
-        }
+        return partitions.Count > 0;
+    }
 
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        readonly struct Partition
-        {
-            public readonly int p_off;  /*start 1K block no of partition*/
-            public readonly int p_size; /*# of 1K blocks in partition*/
-        }
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct Partable
+    {
+        public readonly ushort p_magic; /* magic number validity indicator */
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAXPARTS)]
+        public readonly Partition[] p; /*partition headers*/
+    }
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct Partition
+    {
+        public readonly int p_off;  /*start 1K block no of partition*/
+        public readonly int p_size; /*# of 1K blocks in partition*/
     }
 }

@@ -32,79 +32,78 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Filesystems.HFS
+namespace Aaru.Tests.Filesystems.HFS;
+
+[TestFixture]
+public class Optical : FilesystemTest
 {
-    [TestFixture]
-    public class Optical : FilesystemTest
+    public Optical() : base("HFS") {}
+
+    public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Apple HFS (CD-ROM)");
+    public override IFilesystem Plugin     => new AppleHFS();
+    public override bool        Partitions => true;
+
+    public override FileSystemTest[] Tests => new[]
     {
-        public Optical() : base("HFS") {}
-
-        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Apple HFS (CD-ROM)");
-        public override IFilesystem Plugin => new AppleHFS();
-        public override bool Partitions => true;
-
-        public override FileSystemTest[] Tests => new[]
+        new FileSystemTest
         {
-            new FileSystemTest
-            {
-                TestFile    = "toast_3.5.7_hfs_from_volume.aif",
-                MediaType   = MediaType.CD,
-                Sectors     = 942,
-                SectorSize  = 2048,
-                Clusters    = 3724,
-                ClusterSize = 512,
-                VolumeName  = "Disk utils"
-            },
-            new FileSystemTest
-            {
-                TestFile    = "toast_3.5.7_iso9660_hfs.aif",
-                MediaType   = MediaType.CD,
-                Sectors     = 1880,
-                SectorSize  = 2048,
-                Clusters    = 931,
-                ClusterSize = 2048,
-                VolumeName  = "Disk utils"
-            },
-            new FileSystemTest
-            {
-                TestFile    = "toast_4.1.3_hfs_from_volume.aif",
-                MediaType   = MediaType.CD,
-                Sectors     = 943,
-                SectorSize  = 2048,
-                Clusters    = 931,
-                ClusterSize = 2048,
-                VolumeName  = "Disk utils"
-            },
-            new FileSystemTest
-            {
-                TestFile    = "toast_4.1.3_iso9660_hfs.aif",
-                MediaType   = MediaType.CD,
-                Sectors     = 1882,
-                SectorSize  = 2048,
-                Clusters    = 931,
-                ClusterSize = 2048,
-                VolumeName  = "Disk utils"
-            },
-            new FileSystemTest
-            {
-                TestFile    = "toast_3.5.7_hfs_from_files.aif",
-                MediaType   = MediaType.CD,
-                Sectors     = 1509,
-                SectorSize  = 2048,
-                Clusters    = 249,
-                ClusterSize = 12288,
-                VolumeName  = "Disk utils"
-            },
-            new FileSystemTest
-            {
-                TestFile    = "toast_4.1.3_hfs_from_files.aif",
-                MediaType   = MediaType.CD,
-                Sectors     = 1529,
-                SectorSize  = 2048,
-                Clusters    = 249,
-                ClusterSize = 12288,
-                VolumeName  = "Disk utils"
-            }
-        };
-    }
+            TestFile    = "toast_3.5.7_hfs_from_volume.aif",
+            MediaType   = MediaType.CD,
+            Sectors     = 942,
+            SectorSize  = 2048,
+            Clusters    = 3724,
+            ClusterSize = 512,
+            VolumeName  = "Disk utils"
+        },
+        new FileSystemTest
+        {
+            TestFile    = "toast_3.5.7_iso9660_hfs.aif",
+            MediaType   = MediaType.CD,
+            Sectors     = 1880,
+            SectorSize  = 2048,
+            Clusters    = 931,
+            ClusterSize = 2048,
+            VolumeName  = "Disk utils"
+        },
+        new FileSystemTest
+        {
+            TestFile    = "toast_4.1.3_hfs_from_volume.aif",
+            MediaType   = MediaType.CD,
+            Sectors     = 943,
+            SectorSize  = 2048,
+            Clusters    = 931,
+            ClusterSize = 2048,
+            VolumeName  = "Disk utils"
+        },
+        new FileSystemTest
+        {
+            TestFile    = "toast_4.1.3_iso9660_hfs.aif",
+            MediaType   = MediaType.CD,
+            Sectors     = 1882,
+            SectorSize  = 2048,
+            Clusters    = 931,
+            ClusterSize = 2048,
+            VolumeName  = "Disk utils"
+        },
+        new FileSystemTest
+        {
+            TestFile    = "toast_3.5.7_hfs_from_files.aif",
+            MediaType   = MediaType.CD,
+            Sectors     = 1509,
+            SectorSize  = 2048,
+            Clusters    = 249,
+            ClusterSize = 12288,
+            VolumeName  = "Disk utils"
+        },
+        new FileSystemTest
+        {
+            TestFile    = "toast_4.1.3_hfs_from_files.aif",
+            MediaType   = MediaType.CD,
+            Sectors     = 1529,
+            SectorSize  = 2048,
+            Clusters    = 249,
+            ClusterSize = 12288,
+            VolumeName  = "Disk utils"
+        }
+    };
 }

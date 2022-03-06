@@ -36,24 +36,23 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 
-namespace Aaru.Gui.Views.Windows
+namespace Aaru.Gui.Views.Windows;
+
+public sealed class ImageVerify : Window
 {
-    public sealed class ImageVerify : Window
+    public ImageVerify()
     {
-        public ImageVerify()
-        {
-            InitializeComponent();
-        #if DEBUG
-            this.AttachDevTools();
-        #endif
-        }
+        InitializeComponent();
+    #if DEBUG
+        this.AttachDevTools();
+    #endif
+    }
 
-        void InitializeComponent() => AvaloniaXamlLoader.Load(this);
+    void InitializeComponent() => AvaloniaXamlLoader.Load(this);
 
-        protected override void OnClosing(CancelEventArgs e)
-        {
-            (DataContext as ImageVerifyViewModel)?.ExecuteStopCommand();
-            base.OnClosing(e);
-        }
+    protected override void OnClosing(CancelEventArgs e)
+    {
+        (DataContext as ImageVerifyViewModel)?.ExecuteStopCommand();
+        base.OnClosing(e);
     }
 }

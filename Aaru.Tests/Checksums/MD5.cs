@@ -32,96 +32,95 @@ using Aaru.CommonTypes.Interfaces;
 using FluentAssertions;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Checksums
+namespace Aaru.Tests.Checksums;
+
+[TestFixture]
+public class Md5
 {
-    [TestFixture]
-    public class Md5
+    static readonly byte[] _expectedEmpty =
     {
-        static readonly byte[] _expectedEmpty =
-        {
-            0xb6, 0xd8, 0x1b, 0x36, 0x0a, 0x56, 0x72, 0xd8, 0x0c, 0x27, 0x43, 0x0f, 0x39, 0x15, 0x3e, 0x2c
-        };
-        static readonly byte[] _expectedRandom =
-        {
-            0xd7, 0x8f, 0x0e, 0xec, 0x41, 0x7b, 0xe3, 0x86, 0x21, 0x9b, 0x21, 0xb7, 0x00, 0x04, 0x4b, 0x95
-        };
+        0xb6, 0xd8, 0x1b, 0x36, 0x0a, 0x56, 0x72, 0xd8, 0x0c, 0x27, 0x43, 0x0f, 0x39, 0x15, 0x3e, 0x2c
+    };
+    static readonly byte[] _expectedRandom =
+    {
+        0xd7, 0x8f, 0x0e, 0xec, 0x41, 0x7b, 0xe3, 0x86, 0x21, 0x9b, 0x21, 0xb7, 0x00, 0x04, 0x4b, 0x95
+    };
 
-        [Test]
-        public void EmptyData()
-        {
-            byte[] data = new byte[1048576];
+    [Test]
+    public void EmptyData()
+    {
+        byte[] data = new byte[1048576];
 
-            var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "empty"), FileMode.Open,
-                                    FileAccess.Read);
+        var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "empty"), FileMode.Open,
+                                FileAccess.Read);
 
-            fs.Read(data, 0, 1048576);
-            fs.Close();
-            fs.Dispose();
-            Md5Context.Data(data, out byte[] result);
-            result.Should().BeEquivalentTo(_expectedEmpty);
-        }
+        fs.Read(data, 0, 1048576);
+        fs.Close();
+        fs.Dispose();
+        Md5Context.Data(data, out byte[] result);
+        result.Should().BeEquivalentTo(_expectedEmpty);
+    }
 
-        [Test]
-        public void EmptyFile()
-        {
-            byte[] result = Md5Context.File(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "empty"));
-            result.Should().BeEquivalentTo(_expectedEmpty);
-        }
+    [Test]
+    public void EmptyFile()
+    {
+        byte[] result = Md5Context.File(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "empty"));
+        result.Should().BeEquivalentTo(_expectedEmpty);
+    }
 
-        [Test]
-        public void EmptyInstance()
-        {
-            byte[] data = new byte[1048576];
+    [Test]
+    public void EmptyInstance()
+    {
+        byte[] data = new byte[1048576];
 
-            var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "empty"), FileMode.Open,
-                                    FileAccess.Read);
+        var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "empty"), FileMode.Open,
+                                FileAccess.Read);
 
-            fs.Read(data, 0, 1048576);
-            fs.Close();
-            fs.Dispose();
-            IChecksum ctx = new Md5Context();
-            ctx.Update(data);
-            byte[] result = ctx.Final();
-            result.Should().BeEquivalentTo(_expectedEmpty);
-        }
+        fs.Read(data, 0, 1048576);
+        fs.Close();
+        fs.Dispose();
+        IChecksum ctx = new Md5Context();
+        ctx.Update(data);
+        byte[] result = ctx.Final();
+        result.Should().BeEquivalentTo(_expectedEmpty);
+    }
 
-        [Test]
-        public void RandomData()
-        {
-            byte[] data = new byte[1048576];
+    [Test]
+    public void RandomData()
+    {
+        byte[] data = new byte[1048576];
 
-            var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"),
-                                    FileMode.Open, FileAccess.Read);
+        var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"),
+                                FileMode.Open, FileAccess.Read);
 
-            fs.Read(data, 0, 1048576);
-            fs.Close();
-            fs.Dispose();
-            Md5Context.Data(data, out byte[] result);
-            result.Should().BeEquivalentTo(_expectedRandom);
-        }
+        fs.Read(data, 0, 1048576);
+        fs.Close();
+        fs.Dispose();
+        Md5Context.Data(data, out byte[] result);
+        result.Should().BeEquivalentTo(_expectedRandom);
+    }
 
-        [Test]
-        public void RandomFile()
-        {
-            byte[] result = Md5Context.File(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"));
-            result.Should().BeEquivalentTo(_expectedRandom);
-        }
+    [Test]
+    public void RandomFile()
+    {
+        byte[] result = Md5Context.File(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"));
+        result.Should().BeEquivalentTo(_expectedRandom);
+    }
 
-        [Test]
-        public void RandomInstance()
-        {
-            byte[] data = new byte[1048576];
+    [Test]
+    public void RandomInstance()
+    {
+        byte[] data = new byte[1048576];
 
-            var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"),
-                                    FileMode.Open, FileAccess.Read);
+        var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"),
+                                FileMode.Open, FileAccess.Read);
 
-            fs.Read(data, 0, 1048576);
-            fs.Close();
-            fs.Dispose();
-            IChecksum ctx = new Md5Context();
-            ctx.Update(data);
-            byte[] result = ctx.Final();
-            result.Should().BeEquivalentTo(_expectedRandom);
-        }
+        fs.Read(data, 0, 1048576);
+        fs.Close();
+        fs.Dispose();
+        IChecksum ctx = new Md5Context();
+        ctx.Update(data);
+        byte[] result = ctx.Final();
+        result.Should().BeEquivalentTo(_expectedRandom);
     }
 }

@@ -30,76 +30,75 @@ using System.Linq;
 using Aaru.Console;
 using Aaru.Devices;
 
-namespace Aaru.Tests.Devices
+namespace Aaru.Tests.Devices;
+
+internal static partial class MainClass
 {
-    internal static partial class MainClass
+    public static void Main()
     {
-        public static void Main()
+        AaruConsole.WriteLineEvent        += System.Console.WriteLine;
+        AaruConsole.WriteEvent            += System.Console.Write;
+        AaruConsole.ErrorWriteLineEvent   += System.Console.Error.WriteLine;
+        AaruConsole.DebugWriteLineEvent   += System.Console.Error.WriteLine;
+        AaruConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+
+        DeviceInfo[] devices = Aaru.Devices.Device.ListDevices();
+
+        if(devices        == null ||
+           devices.Length == 0)
         {
-            AaruConsole.WriteLineEvent        += System.Console.WriteLine;
-            AaruConsole.WriteEvent            += System.Console.Write;
-            AaruConsole.ErrorWriteLineEvent   += System.Console.Error.WriteLine;
-            AaruConsole.DebugWriteLineEvent   += System.Console.Error.WriteLine;
-            AaruConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+            AaruConsole.WriteLine("No known devices attached.");
 
-            DeviceInfo[] devices = Aaru.Devices.Device.ListDevices();
+            return;
+        }
 
-            if(devices        == null ||
-               devices.Length == 0)
+        devices = devices.OrderBy(d => d.Path).ToArray();
+
+        while(true)
+        {
+            System.Console.Clear();
+
+            AaruConsole.WriteLine("DiscImageChef device handling tests");
+
+            AaruConsole.WriteLine("{6,-8}|{0,-22}|{1,-16}|{2,-24}|{3,-24}|{4,-10}|{5,-10}", "Path", "Vendor",
+                                  "Model", "Serial", "Bus", "Supported?", "Number");
+
+            AaruConsole.WriteLine("{6,-8}|{0,-22}+{1,-16}+{2,-24}+{3,-24}+{4,-10}+{5,-10}",
+                                  "----------------------", "----------------", "------------------------",
+                                  "------------------------", "----------", "----------", "--------");
+
+            for(int i = 0; i < devices.Length; i++)
+                AaruConsole.WriteLine("{6,-8}|{0,-22}|{1,-16}|{2,-24}|{3,-24}|{4,-10}|{5,-10}", devices[i].Path,
+                                      devices[i].Vendor, devices[i].Model, devices[i].Serial, devices[i].Bus,
+                                      devices[i].Supported, i + 1);
+
+            AaruConsole.Write("Please choose which drive to test (0 to exit): ");
+            string strDev = System.Console.ReadLine();
+
+            if(!int.TryParse(strDev, out int item))
             {
-                AaruConsole.WriteLine("No known devices attached.");
+                AaruConsole.WriteLine("Not a number. Press any key to continue...");
+                System.Console.ReadKey();
+
+                continue;
+            }
+
+            if(item == 0)
+            {
+                AaruConsole.WriteLine("Exiting...");
 
                 return;
             }
 
-            devices = devices.OrderBy(d => d.Path).ToArray();
-
-            while(true)
+            if(item > devices.Length)
             {
-                System.Console.Clear();
+                AaruConsole.WriteLine("No such device. Press any key to continue...");
+                System.Console.ReadKey();
 
-                AaruConsole.WriteLine("DiscImageChef device handling tests");
-
-                AaruConsole.WriteLine("{6,-8}|{0,-22}|{1,-16}|{2,-24}|{3,-24}|{4,-10}|{5,-10}", "Path", "Vendor",
-                                      "Model", "Serial", "Bus", "Supported?", "Number");
-
-                AaruConsole.WriteLine("{6,-8}|{0,-22}+{1,-16}+{2,-24}+{3,-24}+{4,-10}+{5,-10}",
-                                      "----------------------", "----------------", "------------------------",
-                                      "------------------------", "----------", "----------", "--------");
-
-                for(int i = 0; i < devices.Length; i++)
-                    AaruConsole.WriteLine("{6,-8}|{0,-22}|{1,-16}|{2,-24}|{3,-24}|{4,-10}|{5,-10}", devices[i].Path,
-                                          devices[i].Vendor, devices[i].Model, devices[i].Serial, devices[i].Bus,
-                                          devices[i].Supported, i + 1);
-
-                AaruConsole.Write("Please choose which drive to test (0 to exit): ");
-                string strDev = System.Console.ReadLine();
-
-                if(!int.TryParse(strDev, out int item))
-                {
-                    AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                    System.Console.ReadKey();
-
-                    continue;
-                }
-
-                if(item == 0)
-                {
-                    AaruConsole.WriteLine("Exiting...");
-
-                    return;
-                }
-
-                if(item > devices.Length)
-                {
-                    AaruConsole.WriteLine("No such device. Press any key to continue...");
-                    System.Console.ReadKey();
-
-                    continue;
-                }
-
-                Device(devices[item - 1].Path);
+                continue;
             }
+
+            Device(devices[item - 1].Path);
         }
     }
 }

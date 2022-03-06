@@ -30,25 +30,24 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class Nero
 {
-    public sealed partial class Nero
-    {
-        const uint NERO_FOOTER_V1  = 0x4E45524F; // "NERO"
-        const uint NERO_FOOTER_V2  = 0x4E455235; // "NER5"
-        const uint NERO_CUE_V1     = 0x43554553; // "CUES"
-        const uint NERO_CUE_V2     = 0x43554558; // "CUEX"
-        const uint NERO_TAO_V0     = 0x54494E46; // "TINF"
-        const uint NERO_TAO_V1     = 0x45544E46; // "ETNF"
-        const uint NERO_TAO_V2     = 0x45544E32; // "ETN2"
-        const uint NERO_DAO_V1     = 0x44414F49; // "DAOI"
-        const uint NERO_DAO_V2     = 0x44414F58; // "DAOX"
-        const uint NERO_CDTEXT     = 0x43445458; // "CDTX"
-        const uint NERO_SESSION    = 0x53494E46; // "SINF"
-        const uint NERO_DISC_TYPE  = 0x4D545950; // "MTYP"
-        const uint NERO_DISC_INFO  = 0x44494E46; // "DINF"
-        const uint NERO_TOC        = 0x544F4354; // "TOCT"
-        const uint NERO_RELOCATION = 0x52454C4F; // "RELO"
-        const uint NERO_END        = 0x454E4421; // "END!"
-    }
+    const uint NERO_FOOTER_V1  = 0x4E45524F; // "NERO"
+    const uint NERO_FOOTER_V2  = 0x4E455235; // "NER5"
+    const uint NERO_CUE_V1     = 0x43554553; // "CUES"
+    const uint NERO_CUE_V2     = 0x43554558; // "CUEX"
+    const uint NERO_TAO_V0     = 0x54494E46; // "TINF"
+    const uint NERO_TAO_V1     = 0x45544E46; // "ETNF"
+    const uint NERO_TAO_V2     = 0x45544E32; // "ETN2"
+    const uint NERO_DAO_V1     = 0x44414F49; // "DAOI"
+    const uint NERO_DAO_V2     = 0x44414F58; // "DAOX"
+    const uint NERO_CDTEXT     = 0x43445458; // "CDTX"
+    const uint NERO_SESSION    = 0x53494E46; // "SINF"
+    const uint NERO_DISC_TYPE  = 0x4D545950; // "MTYP"
+    const uint NERO_DISC_INFO  = 0x44494E46; // "DINF"
+    const uint NERO_TOC        = 0x544F4354; // "TOCT"
+    const uint NERO_RELOCATION = 0x52454C4F; // "RELO"
+    const uint NERO_END        = 0x454E4421; // "END!"
 }

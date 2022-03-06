@@ -30,13 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class BlindWrite4
 {
-    public sealed partial class BlindWrite4
+    enum TrackType : byte
     {
-        enum TrackType : byte
-        {
-            Audio = 0, Mode1 = 1, Mode2 = 2
-        }
+        Audio = 0, Mode1 = 1, Mode2 = 2
     }
 }

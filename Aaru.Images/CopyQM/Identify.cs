@@ -34,25 +34,24 @@ using System;
 using System.IO;
 using Aaru.CommonTypes.Interfaces;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class CopyQm
 {
-    public sealed partial class CopyQm
+    /// <inheritdoc />
+    public bool Identify(IFilter imageFilter)
     {
-        /// <inheritdoc />
-        public bool Identify(IFilter imageFilter)
-        {
-            Stream stream = imageFilter.GetDataForkStream();
-            stream.Seek(0, SeekOrigin.Begin);
+        Stream stream = imageFilter.GetDataForkStream();
+        stream.Seek(0, SeekOrigin.Begin);
 
-            if(stream.Length < 133)
-                return false;
+        if(stream.Length < 133)
+            return false;
 
-            byte[] hdr = new byte[133];
-            stream.Read(hdr, 0, 133);
+        byte[] hdr = new byte[133];
+        stream.Read(hdr, 0, 133);
 
-            ushort magic = BitConverter.ToUInt16(hdr, 0);
+        ushort magic = BitConverter.ToUInt16(hdr, 0);
 
-            return magic == COPYQM_MAGIC && hdr[0x02] == COPYQM_MARK && 133 + hdr[0x6F] < stream.Length;
-        }
+        return magic == COPYQM_MAGIC && hdr[0x02] == COPYQM_MARK && 133 + hdr[0x6F] < stream.Length;
     }
 }

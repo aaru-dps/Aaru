@@ -33,57 +33,56 @@ using NUnit.Framework;
 
 // ReSharper disable CheckNamespace
 
-namespace Aaru.Tests.Filesystems.UDF._260
-{
-    [TestFixture]
-    public class Whole : FilesystemTest
-    {
-        public override string DataFolder =>
-            Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Universal Disc Format", "2.60");
-        public override IFilesystem Plugin     => new Aaru.Filesystems.UDF();
-        public override bool        Partitions => false;
+namespace Aaru.Tests.Filesystems.UDF._260;
 
-        public override FileSystemTest[] Tests => new[]
+[TestFixture]
+public class Whole : FilesystemTest
+{
+    public override string DataFolder =>
+        Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Universal Disc Format", "2.60");
+    public override IFilesystem Plugin     => new Aaru.Filesystems.UDF();
+    public override bool        Partitions => false;
+
+    public override FileSystemTest[] Tests => new[]
+    {
+        new FileSystemTest
         {
-            new FileSystemTest
-            {
-                TestFile     = "macosx_10.11.aif",
-                MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 1228800,
-                SectorSize   = 512,
-                Clusters     = 1228800,
-                ClusterSize  = 512,
-                SystemId     = "*Apple Mac OS X UDF FS",
-                Type         = "UDF v2.60",
-                VolumeName   = "Volume label",
-                VolumeSerial = "78CE3237 (Mac OS X newfs_udf) UDF Volume Set"
-            },
-            new FileSystemTest
-            {
-                TestFile     = "netbsd_6.1.5.aif",
-                MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 262144,
-                SectorSize   = 512,
-                Clusters     = 262144,
-                ClusterSize  = 512,
-                SystemId     = "*NetBSD userland UDF",
-                Type         = "UDF v2.60",
-                VolumeName   = "anonymous",
-                VolumeSerial = "10f24d1248067621"
-            },
-            new FileSystemTest
-            {
-                TestFile     = "netbsd_7.1.aif",
-                MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 262144,
-                SectorSize   = 512,
-                Clusters     = 262144,
-                ClusterSize  = 512,
-                SystemId     = "*NetBSD userland UDF",
-                Type         = "UDF v2.60",
-                VolumeName   = "anonymous",
-                VolumeSerial = "05f537510deab1e7"
-            }
-        };
-    }
+            TestFile     = "macosx_10.11.aif",
+            MediaType    = MediaType.GENERIC_HDD,
+            Sectors      = 1228800,
+            SectorSize   = 512,
+            Clusters     = 1228800,
+            ClusterSize  = 512,
+            SystemId     = "*Apple Mac OS X UDF FS",
+            Type         = "UDF v2.60",
+            VolumeName   = "Volume label",
+            VolumeSerial = "78CE3237 (Mac OS X newfs_udf) UDF Volume Set"
+        },
+        new FileSystemTest
+        {
+            TestFile     = "netbsd_6.1.5.aif",
+            MediaType    = MediaType.GENERIC_HDD,
+            Sectors      = 262144,
+            SectorSize   = 512,
+            Clusters     = 262144,
+            ClusterSize  = 512,
+            SystemId     = "*NetBSD userland UDF",
+            Type         = "UDF v2.60",
+            VolumeName   = "anonymous",
+            VolumeSerial = "10f24d1248067621"
+        },
+        new FileSystemTest
+        {
+            TestFile     = "netbsd_7.1.aif",
+            MediaType    = MediaType.GENERIC_HDD,
+            Sectors      = 262144,
+            SectorSize   = 512,
+            Clusters     = 262144,
+            ClusterSize  = 512,
+            SystemId     = "*NetBSD userland UDF",
+            Type         = "UDF v2.60",
+            VolumeName   = "anonymous",
+            VolumeSerial = "05f537510deab1e7"
+        }
+    };
 }

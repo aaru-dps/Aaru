@@ -35,23 +35,22 @@ using System.Collections.Generic;
 using Aaru.CommonTypes.Structs;
 using Schemas;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class Ndif
 {
-    public sealed partial class Ndif
-    {
-        /// <inheritdoc />
-        public ImageInfo Info => _imageInfo;
-        /// <inheritdoc />
-        public string Name => "Apple New Disk Image Format";
-        /// <inheritdoc />
-        public Guid Id => new Guid("5A7FF7D8-491E-458D-8674-5B5EADBECC24");
-        /// <inheritdoc />
-        public string Format => "Apple New Disk Image Format";
-        /// <inheritdoc />
-        public string Author => "Natalia Portillo";
-        /// <inheritdoc />
-        public List<DumpHardwareType> DumpHardware => null;
-        /// <inheritdoc />
-        public CICMMetadataType CicmMetadata => null;
-    }
+    /// <inheritdoc />
+    public ImageInfo Info => _imageInfo;
+    /// <inheritdoc />
+    public string Name => "Apple New Disk Image Format";
+    /// <inheritdoc />
+    public Guid Id => new Guid("5A7FF7D8-491E-458D-8674-5B5EADBECC24");
+    /// <inheritdoc />
+    public string Format => "Apple New Disk Image Format";
+    /// <inheritdoc />
+    public string Author => "Natalia Portillo";
+    /// <inheritdoc />
+    public List<DumpHardwareType> DumpHardware => null;
+    /// <inheritdoc />
+    public CICMMetadataType CicmMetadata => null;
 }

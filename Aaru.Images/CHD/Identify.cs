@@ -34,19 +34,18 @@ using System.IO;
 using System.Linq;
 using Aaru.CommonTypes.Interfaces;
 
-namespace Aaru.DiscImages
-{
-    public sealed partial class Chd
-    {
-        /// <inheritdoc />
-        public bool Identify(IFilter imageFilter)
-        {
-            Stream stream = imageFilter.GetDataForkStream();
-            stream.Seek(0, SeekOrigin.Begin);
-            byte[] magic = new byte[8];
-            stream.Read(magic, 0, 8);
+namespace Aaru.DiscImages;
 
-            return _chdTag.SequenceEqual(magic);
-        }
+public sealed partial class Chd
+{
+    /// <inheritdoc />
+    public bool Identify(IFilter imageFilter)
+    {
+        Stream stream = imageFilter.GetDataForkStream();
+        stream.Seek(0, SeekOrigin.Begin);
+        byte[] magic = new byte[8];
+        stream.Read(magic, 0, 8);
+
+        return _chdTag.SequenceEqual(magic);
     }
 }

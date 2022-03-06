@@ -31,76 +31,75 @@ using Aaru.Checksums;
 using Aaru.CommonTypes.Interfaces;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Checksums
+namespace Aaru.Tests.Checksums;
+
+[TestFixture]
+public class SpamSum
 {
-    [TestFixture]
-    public class SpamSum
+    const string EXPECTED_EMPTY  = "3::";
+    const string EXPECTED_RANDOM = "24576:3dvzuAsHTQ16pc7O1Q/gS9qze+Swwn9s6IX:8/TQQpaVqze+JN6IX";
+
+    [Test]
+    public void EmptyData()
     {
-        const string EXPECTED_EMPTY  = "3::";
-        const string EXPECTED_RANDOM = "24576:3dvzuAsHTQ16pc7O1Q/gS9qze+Swwn9s6IX:8/TQQpaVqze+JN6IX";
+        byte[] data = new byte[1048576];
 
-        [Test]
-        public void EmptyData()
-        {
-            byte[] data = new byte[1048576];
+        var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "empty"), FileMode.Open,
+                                FileAccess.Read);
 
-            var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "empty"), FileMode.Open,
-                                    FileAccess.Read);
+        fs.Read(data, 0, 1048576);
+        fs.Close();
+        fs.Dispose();
+        string result = SpamSumContext.Data(data, out _);
+        Assert.AreEqual(EXPECTED_EMPTY, result);
+    }
 
-            fs.Read(data, 0, 1048576);
-            fs.Close();
-            fs.Dispose();
-            string result = SpamSumContext.Data(data, out _);
-            Assert.AreEqual(EXPECTED_EMPTY, result);
-        }
+    [Test]
+    public void EmptyInstance()
+    {
+        byte[] data = new byte[1048576];
 
-        [Test]
-        public void EmptyInstance()
-        {
-            byte[] data = new byte[1048576];
+        var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "empty"), FileMode.Open,
+                                FileAccess.Read);
 
-            var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "empty"), FileMode.Open,
-                                    FileAccess.Read);
+        fs.Read(data, 0, 1048576);
+        fs.Close();
+        fs.Dispose();
+        IChecksum ctx = new SpamSumContext();
+        ctx.Update(data);
+        string result = ctx.End();
+        Assert.AreEqual(EXPECTED_EMPTY, result);
+    }
 
-            fs.Read(data, 0, 1048576);
-            fs.Close();
-            fs.Dispose();
-            IChecksum ctx = new SpamSumContext();
-            ctx.Update(data);
-            string result = ctx.End();
-            Assert.AreEqual(EXPECTED_EMPTY, result);
-        }
+    [Test]
+    public void RandomData()
+    {
+        byte[] data = new byte[1048576];
 
-        [Test]
-        public void RandomData()
-        {
-            byte[] data = new byte[1048576];
+        var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"),
+                                FileMode.Open, FileAccess.Read);
 
-            var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"),
-                                    FileMode.Open, FileAccess.Read);
+        fs.Read(data, 0, 1048576);
+        fs.Close();
+        fs.Dispose();
+        string result = SpamSumContext.Data(data, out _);
+        Assert.AreEqual(EXPECTED_RANDOM, result);
+    }
 
-            fs.Read(data, 0, 1048576);
-            fs.Close();
-            fs.Dispose();
-            string result = SpamSumContext.Data(data, out _);
-            Assert.AreEqual(EXPECTED_RANDOM, result);
-        }
+    [Test]
+    public void RandomInstance()
+    {
+        byte[] data = new byte[1048576];
 
-        [Test]
-        public void RandomInstance()
-        {
-            byte[] data = new byte[1048576];
+        var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"),
+                                FileMode.Open, FileAccess.Read);
 
-            var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"),
-                                    FileMode.Open, FileAccess.Read);
-
-            fs.Read(data, 0, 1048576);
-            fs.Close();
-            fs.Dispose();
-            IChecksum ctx = new SpamSumContext();
-            ctx.Update(data);
-            string result = ctx.End();
-            Assert.AreEqual(EXPECTED_RANDOM, result);
-        }
+        fs.Read(data, 0, 1048576);
+        fs.Close();
+        fs.Dispose();
+        IChecksum ctx = new SpamSumContext();
+        ctx.Update(data);
+        string result = ctx.End();
+        Assert.AreEqual(EXPECTED_RANDOM, result);
     }
 }

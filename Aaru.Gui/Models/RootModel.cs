@@ -30,10 +30,9 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Gui.Models
+namespace Aaru.Gui.Models;
+
+public class RootModel
 {
-    public class RootModel
-    {
-        public string Name { get; set; }
-    }
+    public string Name { get; set; }
 }

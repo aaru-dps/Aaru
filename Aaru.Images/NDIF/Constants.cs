@@ -32,33 +32,32 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+[SuppressMessage("ReSharper", "UnusedMember.Local")]
+public sealed partial class Ndif
 {
-    [SuppressMessage("ReSharper", "UnusedMember.Local")]
-    public sealed partial class Ndif
-    {
-        /// <summary>Resource OSType for NDIF is "bcem"</summary>
-        const uint NDIF_RESOURCE = 0x6263656D;
-        /// <summary>Resource ID is always 128? Never found another</summary>
-        const short NDIF_RESOURCEID = 128;
+    /// <summary>Resource OSType for NDIF is "bcem"</summary>
+    const uint NDIF_RESOURCE = 0x6263656D;
+    /// <summary>Resource ID is always 128? Never found another</summary>
+    const short NDIF_RESOURCEID = 128;
 
-        const byte CHUNK_TYPE_NOCOPY  = 0;
-        const byte CHUNK_TYPE_COPY    = 2;
-        const byte CHUNK_TYPE_KENCODE = 0x80;
-        const byte CHUNK_TYPE_RLE     = 0x81;
-        const byte CHUNK_TYPE_LZH     = 0x82;
-        const byte CHUNK_TYPE_ADC     = 0x83;
-        /// <summary>Created by ShrinkWrap 3.5, dunno which version of the StuffIt algorithm it is using</summary>
-        const byte CHUNK_TYPE_STUFFIT = 0xF0;
-        const byte CHUNK_TYPE_END             = 0xFF;
-        const byte CHUNK_TYPE_COMPRESSED_MASK = 0x80;
+    const byte CHUNK_TYPE_NOCOPY  = 0;
+    const byte CHUNK_TYPE_COPY    = 2;
+    const byte CHUNK_TYPE_KENCODE = 0x80;
+    const byte CHUNK_TYPE_RLE     = 0x81;
+    const byte CHUNK_TYPE_LZH     = 0x82;
+    const byte CHUNK_TYPE_ADC     = 0x83;
+    /// <summary>Created by ShrinkWrap 3.5, dunno which version of the StuffIt algorithm it is using</summary>
+    const byte CHUNK_TYPE_STUFFIT = 0xF0;
+    const byte CHUNK_TYPE_END             = 0xFF;
+    const byte CHUNK_TYPE_COMPRESSED_MASK = 0x80;
 
-        const short DRIVER_OSX         = -1;
-        const short DRIVER_HFS         = 0;
-        const short DRIVER_PRODOS      = 256;
-        const short DRIVER_DOS         = 18771;
-        const uint  MAX_CACHE_SIZE     = 16777216;
-        const uint  SECTOR_SIZE        = 512;
-        const uint  MAX_CACHED_SECTORS = MAX_CACHE_SIZE / SECTOR_SIZE;
-    }
+    const short DRIVER_OSX         = -1;
+    const short DRIVER_HFS         = 0;
+    const short DRIVER_PRODOS      = 256;
+    const short DRIVER_DOS         = 18771;
+    const uint  MAX_CACHE_SIZE     = 16777216;
+    const uint  SECTOR_SIZE        = 512;
+    const uint  MAX_CACHED_SECTORS = MAX_CACHE_SIZE / SECTOR_SIZE;
 }

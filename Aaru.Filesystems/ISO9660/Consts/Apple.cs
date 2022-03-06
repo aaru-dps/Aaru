@@ -31,22 +31,21 @@
 // In the loving memory of Facunda "Tata" Suárez Domínguez, R.I.P. 2019/07/24
 // ****************************************************************************/
 
-namespace Aaru.Filesystems
+namespace Aaru.Filesystems;
+
+public sealed partial class ISO9660
 {
-    public sealed partial class ISO9660
+    const ushort APPLE_MAGIC     = 0x4141; // "AA"
+    const ushort APPLE_MAGIC_OLD = 0x4241; // "BA"
+
+    enum AppleId : byte
     {
-        const ushort APPLE_MAGIC     = 0x4141; // "AA"
-        const ushort APPLE_MAGIC_OLD = 0x4241; // "BA"
+        ProDOS = 1, HFS = 2
+    }
 
-        enum AppleId : byte
-        {
-            ProDOS = 1, HFS = 2
-        }
-
-        enum AppleOldId : byte
-        {
-            ProDOS          = 1, TypeCreator           = 2, TypeCreatorBundle = 3,
-            TypeCreatorIcon = 4, TypeCreatorIconBundle = 5, HFS               = 6
-        }
+    enum AppleOldId : byte
+    {
+        ProDOS          = 1, TypeCreator           = 2, TypeCreatorBundle = 3,
+        TypeCreatorIcon = 4, TypeCreatorIconBundle = 5, HFS               = 6
     }
 }

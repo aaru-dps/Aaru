@@ -36,72 +36,71 @@ using Aaru.Helpers;
 using JetBrains.Annotations;
 using ReactiveUI;
 
-namespace Aaru.Gui.ViewModels.Windows
+namespace Aaru.Gui.ViewModels.Windows;
+
+public sealed class ViewSectorViewModel : ViewModelBase
 {
-    public sealed class ViewSectorViewModel : ViewModelBase
+    const    int         HEX_COLUMNS = 32;
+    readonly IMediaImage _inputFormat;
+    bool                 _longSectorChecked;
+    bool                 _longSectorVisible;
+    string               _printHexText;
+    double               _sectorNumber;
+    string               _title;
+    string               _totalSectorsText;
+
+    public ViewSectorViewModel([NotNull] IMediaImage inputFormat)
     {
-        const    int         HEX_COLUMNS = 32;
-        readonly IMediaImage _inputFormat;
-        bool                 _longSectorChecked;
-        bool                 _longSectorVisible;
-        string               _printHexText;
-        double               _sectorNumber;
-        string               _title;
-        string               _totalSectorsText;
+        _inputFormat = inputFormat;
 
-        public ViewSectorViewModel([NotNull] IMediaImage inputFormat)
+        ErrorNumber errno = inputFormat.ReadSectorLong(0, out _);
+
+        if(errno == ErrorNumber.NoError)
+            LongSectorChecked = true;
+        else
+            LongSectorVisible = false;
+
+        TotalSectorsText = $"of {inputFormat.Info.Sectors}";
+        SectorNumber     = 0;
+    }
+
+    public string Title
+    {
+        get => _title;
+        set => this.RaiseAndSetIfChanged(ref _title, value);
+    }
+
+    public double SectorNumber
+    {
+        get => _sectorNumber;
+        set
         {
-            _inputFormat = inputFormat;
+            this.RaiseAndSetIfChanged(ref _sectorNumber, value);
 
-            ErrorNumber errno = inputFormat.ReadSectorLong(0, out _);
+            byte[]      sector;
+            ErrorNumber errno;
+
+            errno = LongSectorChecked ? _inputFormat.ReadSectorLong((ulong)SectorNumber, out sector)
+                        : _inputFormat.ReadSector((ulong)SectorNumber, out sector);
 
             if(errno == ErrorNumber.NoError)
-                LongSectorChecked = true;
-            else
-                LongSectorVisible = false;
-
-            TotalSectorsText = $"of {inputFormat.Info.Sectors}";
-            SectorNumber     = 0;
+                PrintHexText = PrintHex.ByteArrayToHexArrayString(sector, HEX_COLUMNS);
         }
+    }
 
-        public string Title
-        {
-            get => _title;
-            set => this.RaiseAndSetIfChanged(ref _title, value);
-        }
+    public string TotalSectorsText { get; }
 
-        public double SectorNumber
-        {
-            get => _sectorNumber;
-            set
-            {
-                this.RaiseAndSetIfChanged(ref _sectorNumber, value);
+    public bool LongSectorChecked
+    {
+        get => _longSectorChecked;
+        set => this.RaiseAndSetIfChanged(ref _longSectorChecked, value);
+    }
 
-                byte[]      sector;
-                ErrorNumber errno;
+    public bool LongSectorVisible { get; }
 
-                errno = LongSectorChecked ? _inputFormat.ReadSectorLong((ulong)SectorNumber, out sector)
-                            : _inputFormat.ReadSector((ulong)SectorNumber, out sector);
-
-                if(errno == ErrorNumber.NoError)
-                    PrintHexText = PrintHex.ByteArrayToHexArrayString(sector, HEX_COLUMNS);
-            }
-        }
-
-        public string TotalSectorsText { get; }
-
-        public bool LongSectorChecked
-        {
-            get => _longSectorChecked;
-            set => this.RaiseAndSetIfChanged(ref _longSectorChecked, value);
-        }
-
-        public bool LongSectorVisible { get; }
-
-        public string PrintHexText
-        {
-            get => _printHexText;
-            set => this.RaiseAndSetIfChanged(ref _printHexText, value);
-        }
+    public string PrintHexText
+    {
+        get => _printHexText;
+        set => this.RaiseAndSetIfChanged(ref _printHexText, value);
     }
 }

@@ -36,172 +36,171 @@ using Aaru.CommonTypes.Structs.Devices.ATA;
 using Aaru.Core.Logging;
 using Aaru.Devices;
 
-namespace Aaru.Core.Devices
+namespace Aaru.Core.Devices;
+
+/// <summary>Reduces common code used for scanning and dumping</summary>
+internal sealed partial class Reader
 {
-    /// <summary>Reduces common code used for scanning and dumping</summary>
-    internal sealed partial class Reader
+    readonly Device   _dev;
+    readonly ErrorLog _errorLog;
+    readonly uint     _timeout;
+
+    internal Reader(Device dev, uint timeout, byte[] identification, ErrorLog errorLog, bool raw = false)
     {
-        readonly Device   _dev;
-        readonly ErrorLog _errorLog;
-        readonly uint     _timeout;
+        _dev         = dev;
+        _timeout     = timeout;
+        BlocksToRead = 64;
+        CanReadRaw   = raw;
+        _errorLog    = errorLog;
 
-        internal Reader(Device dev, uint timeout, byte[] identification, ErrorLog errorLog, bool raw = false)
+        switch(dev.Type)
         {
-            _dev         = dev;
-            _timeout     = timeout;
-            BlocksToRead = 64;
-            CanReadRaw   = raw;
-            _errorLog    = errorLog;
+            case DeviceType.ATA:
+                Identify.IdentifyDevice? ataIdNullable = Identify.Decode(identification);
 
-            switch(dev.Type)
-            {
-                case DeviceType.ATA:
-                    Identify.IdentifyDevice? ataIdNullable = Identify.Decode(identification);
+                if(ataIdNullable.HasValue)
+                    _ataId = ataIdNullable.Value;
 
-                    if(ataIdNullable.HasValue)
-                        _ataId = ataIdNullable.Value;
-
-                    break;
-                case DeviceType.NVMe: throw new NotImplementedException("NVMe devices not yet supported.");
-            }
+                break;
+            case DeviceType.NVMe: throw new NotImplementedException("NVMe devices not yet supported.");
         }
+    }
 
-        internal string ErrorMessage      { get; private set; }
-        internal ulong  Blocks            { get; private set; }
-        internal uint   BlocksToRead      { get; private set; }
-        internal uint   LogicalBlockSize  { get; private set; }
-        internal uint   PhysicalBlockSize { get; private set; }
-        internal uint   LongBlockSize     { get; private set; }
-        internal bool   CanReadRaw        { get; private set; }
-        internal bool   CanSeek           => _ataSeek    || _seek6 || _seek10;
-        internal bool   CanSeekLba        => _ataSeekLba || _seek6 || _seek10;
+    internal string ErrorMessage      { get; private set; }
+    internal ulong  Blocks            { get; private set; }
+    internal uint   BlocksToRead      { get; private set; }
+    internal uint   LogicalBlockSize  { get; private set; }
+    internal uint   PhysicalBlockSize { get; private set; }
+    internal uint   LongBlockSize     { get; private set; }
+    internal bool   CanReadRaw        { get; private set; }
+    internal bool   CanSeek           => _ataSeek    || _seek6 || _seek10;
+    internal bool   CanSeekLba        => _ataSeekLba || _seek6 || _seek10;
 
-        internal ulong GetDeviceBlocks()
+    internal ulong GetDeviceBlocks()
+    {
+        switch(_dev.Type)
         {
-            switch(_dev.Type)
-            {
-                case DeviceType.ATA: return AtaGetBlocks();
-                case DeviceType.ATAPI:
-                case DeviceType.SCSI: return ScsiGetBlocks();
-                default:
-                    ErrorMessage = $"Unknown device type {_dev.Type}.";
+            case DeviceType.ATA: return AtaGetBlocks();
+            case DeviceType.ATAPI:
+            case DeviceType.SCSI: return ScsiGetBlocks();
+            default:
+                ErrorMessage = $"Unknown device type {_dev.Type}.";
 
-                    return 0;
-            }
+                return 0;
         }
+    }
 
-        internal bool FindReadCommand()
+    internal bool FindReadCommand()
+    {
+        switch(_dev.Type)
         {
-            switch(_dev.Type)
-            {
-                case DeviceType.ATA: return AtaFindReadCommand();
-                case DeviceType.ATAPI:
-                case DeviceType.SCSI: return ScsiFindReadCommand();
-                default:
-                    ErrorMessage = $"Unknown device type {_dev.Type}.";
+            case DeviceType.ATA: return AtaFindReadCommand();
+            case DeviceType.ATAPI:
+            case DeviceType.SCSI: return ScsiFindReadCommand();
+            default:
+                ErrorMessage = $"Unknown device type {_dev.Type}.";
 
-                    return true;
-            }
+                return true;
         }
+    }
 
-        internal bool GetBlockSize()
+    internal bool GetBlockSize()
+    {
+        switch(_dev.Type)
         {
-            switch(_dev.Type)
-            {
-                case DeviceType.ATA: return AtaGetBlockSize();
-                case DeviceType.ATAPI:
-                case DeviceType.SCSI: return ScsiGetBlockSize();
-                default:
-                    ErrorMessage = $"Unknown device type {_dev.Type}.";
+            case DeviceType.ATA: return AtaGetBlockSize();
+            case DeviceType.ATAPI:
+            case DeviceType.SCSI: return ScsiGetBlockSize();
+            default:
+                ErrorMessage = $"Unknown device type {_dev.Type}.";
 
-                    return true;
-            }
+                return true;
         }
+    }
 
-        internal bool GetBlocksToRead(uint startWithBlocks = 64)
+    internal bool GetBlocksToRead(uint startWithBlocks = 64)
+    {
+        switch(_dev.Type)
         {
-            switch(_dev.Type)
-            {
-                case DeviceType.ATA: return AtaGetBlocksToRead(startWithBlocks);
-                case DeviceType.ATAPI:
-                case DeviceType.SCSI: return ScsiGetBlocksToRead(startWithBlocks);
-                default:
-                    ErrorMessage = $"Unknown device type {_dev.Type}.";
+            case DeviceType.ATA: return AtaGetBlocksToRead(startWithBlocks);
+            case DeviceType.ATAPI:
+            case DeviceType.SCSI: return ScsiGetBlocksToRead(startWithBlocks);
+            default:
+                ErrorMessage = $"Unknown device type {_dev.Type}.";
 
-                    return true;
-            }
+                return true;
         }
+    }
 
-        internal bool ReadBlock(out byte[] buffer, ulong block, out double duration, out bool recoveredError,
-                                out bool blankCheck) =>
-            ReadBlocks(out buffer, block, 1, out duration, out recoveredError, out blankCheck);
+    internal bool ReadBlock(out byte[] buffer, ulong block, out double duration, out bool recoveredError,
+                            out bool blankCheck) =>
+        ReadBlocks(out buffer, block, 1, out duration, out recoveredError, out blankCheck);
 
-        internal bool ReadBlocks(out byte[] buffer, ulong block, out double duration, out bool recoveredError,
-                                 out bool blankCheck) => ReadBlocks(out buffer, block, BlocksToRead, out duration,
-                                                                    out recoveredError, out blankCheck);
+    internal bool ReadBlocks(out byte[] buffer, ulong block, out double duration, out bool recoveredError,
+                             out bool blankCheck) => ReadBlocks(out buffer, block, BlocksToRead, out duration,
+                                                                out recoveredError, out blankCheck);
 
-        internal bool ReadBlocks(out byte[] buffer, ulong block, uint count, out double duration,
-                                 out bool recoveredError, out bool blankCheck)
+    internal bool ReadBlocks(out byte[] buffer, ulong block, uint count, out double duration,
+                             out bool recoveredError, out bool blankCheck)
+    {
+        switch(_dev.Type)
         {
-            switch(_dev.Type)
-            {
-                case DeviceType.ATA:
-                    blankCheck = false;
+            case DeviceType.ATA:
+                blankCheck = false;
 
-                    return AtaReadBlocks(out buffer, block, count, out duration, out recoveredError);
-                case DeviceType.ATAPI:
-                case DeviceType.SCSI:
-                    return ScsiReadBlocks(out buffer, block, count, out duration, out recoveredError, out blankCheck);
-                default:
-                    buffer         = null;
-                    duration       = 0d;
-                    recoveredError = false;
-                    blankCheck     = false;
+                return AtaReadBlocks(out buffer, block, count, out duration, out recoveredError);
+            case DeviceType.ATAPI:
+            case DeviceType.SCSI:
+                return ScsiReadBlocks(out buffer, block, count, out duration, out recoveredError, out blankCheck);
+            default:
+                buffer         = null;
+                duration       = 0d;
+                recoveredError = false;
+                blankCheck     = false;
 
-                    return true;
-            }
+                return true;
         }
+    }
 
-        internal bool ReadChs(out byte[] buffer, ushort cylinder, byte head, byte sector, out double duration,
-                              out bool recoveredError)
+    internal bool ReadChs(out byte[] buffer, ushort cylinder, byte head, byte sector, out double duration,
+                          out bool recoveredError)
+    {
+        switch(_dev.Type)
         {
-            switch(_dev.Type)
-            {
-                case DeviceType.ATA:
-                    return AtaReadChs(out buffer, cylinder, head, sector, out duration, out recoveredError);
-                default:
-                    buffer         = null;
-                    duration       = 0d;
-                    recoveredError = false;
+            case DeviceType.ATA:
+                return AtaReadChs(out buffer, cylinder, head, sector, out duration, out recoveredError);
+            default:
+                buffer         = null;
+                duration       = 0d;
+                recoveredError = false;
 
-                    return true;
-            }
+                return true;
         }
+    }
 
-        internal bool Seek(ulong block, out double duration)
+    internal bool Seek(ulong block, out double duration)
+    {
+        switch(_dev.Type)
         {
-            switch(_dev.Type)
-            {
-                case DeviceType.ATA: return AtaSeek(block, out duration);
-                case DeviceType.ATAPI:
-                case DeviceType.SCSI: return ScsiSeek(block, out duration);
-                default:
-                    duration = 0d;
+            case DeviceType.ATA: return AtaSeek(block, out duration);
+            case DeviceType.ATAPI:
+            case DeviceType.SCSI: return ScsiSeek(block, out duration);
+            default:
+                duration = 0d;
 
-                    return true;
-            }
+                return true;
         }
+    }
 
-        internal bool SeekChs(ushort cylinder, byte head, byte sector, out double duration)
+    internal bool SeekChs(ushort cylinder, byte head, byte sector, out double duration)
+    {
+        switch(_dev.Type)
         {
-            switch(_dev.Type)
-            {
-                case DeviceType.ATA: return AtaSeekChs(cylinder, head, sector, out duration);
-                default:
-                    duration = 0;
+            case DeviceType.ATA: return AtaSeekChs(cylinder, head, sector, out duration);
+            default:
+                duration = 0;
 
-                    return true;
-            }
+                return true;
         }
     }
 }

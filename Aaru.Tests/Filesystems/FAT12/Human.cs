@@ -32,41 +32,40 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Filesystems.FAT12
+namespace Aaru.Tests.Filesystems.FAT12;
+
+[TestFixture]
+public class Human : ReadOnlyFilesystemTest
 {
-    [TestFixture]
-    public class Human : ReadOnlyFilesystemTest
+    public Human() : base("FAT12") {}
+
+    public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "FAT12 (Human68K)");
+    public override IFilesystem Plugin     => new FAT();
+    public override bool        Partitions => false;
+
+    public override FileSystemTest[] Tests => new[]
     {
-        public Human() : base("FAT12") {}
-
-        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "FAT12 (Human68K)");
-        public override IFilesystem Plugin => new FAT();
-        public override bool Partitions => false;
-
-        public override FileSystemTest[] Tests => new[]
+        new FileSystemTest
         {
-            new FileSystemTest
-            {
-                TestFile    = "diska.aif",
-                MediaType   = MediaType.SHARP_525,
-                Sectors     = 1232,
-                SectorSize  = 1024,
-                Bootable    = true,
-                Clusters    = 1232,
-                ClusterSize = 1024,
-                SystemId    = "Hudson soft 2.00"
-            },
-            new FileSystemTest
-            {
-                TestFile    = "diskb.aif",
-                MediaType   = MediaType.SHARP_525,
-                Sectors     = 1232,
-                SectorSize  = 1024,
-                Bootable    = true,
-                Clusters    = 1232,
-                ClusterSize = 1024,
-                SystemId    = "Hudson soft 2.00"
-            }
-        };
-    }
+            TestFile    = "diska.aif",
+            MediaType   = MediaType.SHARP_525,
+            Sectors     = 1232,
+            SectorSize  = 1024,
+            Bootable    = true,
+            Clusters    = 1232,
+            ClusterSize = 1024,
+            SystemId    = "Hudson soft 2.00"
+        },
+        new FileSystemTest
+        {
+            TestFile    = "diskb.aif",
+            MediaType   = MediaType.SHARP_525,
+            Sectors     = 1232,
+            SectorSize  = 1024,
+            Bootable    = true,
+            Clusters    = 1232,
+            ClusterSize = 1024,
+            SystemId    = "Hudson soft 2.00"
+        }
+    };
 }

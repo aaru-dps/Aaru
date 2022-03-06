@@ -36,111 +36,110 @@ using Aaru.CommonTypes.Interop;
 using Aaru.Console;
 using PlatformID = Aaru.CommonTypes.Interop.PlatformID;
 
-namespace Aaru.Devices
+namespace Aaru.Devices;
+
+/// <summary>Contains device information</summary>
+[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
+public struct DeviceInfo
 {
-    /// <summary>Contains device information</summary>
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
-    public struct DeviceInfo
+    /// <summary>Device path</summary>
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 1024)]
+    public string Path;
+
+    /// <summary>Device vendor or manufacturer</summary>
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
+    public string Vendor;
+
+    /// <summary>Device model or product name</summary>
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
+    public string Model;
+
+    /// <summary>Device serial number</summary>
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
+    public string Serial;
+
+    /// <summary>Bus the device is attached to</summary>
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
+    public string Bus;
+
+    /// <summary>
+    ///     Set to <c>true</c> if Aaru can send commands to the device in the current machine or remote, <c>false</c>
+    ///     otherwise
+    /// </summary>
+    [MarshalAs(UnmanagedType.U1)]
+    public bool Supported;
+
+    /// <summary>Padding</summary>
+    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+    public readonly byte[] Padding;
+}
+
+public sealed partial class Device
+{
+    /// <summary>Lists devices attached to current machine</summary>
+    /// <returns>List of devices</returns>
+    public static DeviceInfo[] ListDevices() => ListDevices(out _, out _, out _, out _, out _, out _);
+
+    /// <summary>Lists devices attached to current machine or specified remote</summary>
+    /// <param name="isRemote">Is remote</param>
+    /// <param name="serverApplication">Remote application</param>
+    /// <param name="serverVersion">Remote application version</param>
+    /// <param name="serverOperatingSystem">Remote operating system name</param>
+    /// <param name="serverOperatingSystemVersion">Remote operating system version</param>
+    /// <param name="serverArchitecture">Remote architecture</param>
+    /// <param name="aaruRemote">Remote URI</param>
+    /// <returns>List of devices</returns>
+    /// <exception cref="InvalidOperationException"></exception>
+    public static DeviceInfo[] ListDevices(out bool isRemote, out string serverApplication,
+                                           out string serverVersion, out string serverOperatingSystem,
+                                           out string serverOperatingSystemVersion, out string serverArchitecture,
+                                           string aaruRemote = null)
     {
-        /// <summary>Device path</summary>
-        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 1024)]
-        public string Path;
+        isRemote                     = false;
+        serverApplication            = null;
+        serverVersion                = null;
+        serverOperatingSystem        = null;
+        serverOperatingSystemVersion = null;
+        serverArchitecture           = null;
 
-        /// <summary>Device vendor or manufacturer</summary>
-        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-        public string Vendor;
-
-        /// <summary>Device model or product name</summary>
-        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-        public string Model;
-
-        /// <summary>Device serial number</summary>
-        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-        public string Serial;
-
-        /// <summary>Bus the device is attached to</summary>
-        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-        public string Bus;
-
-        /// <summary>
-        ///     Set to <c>true</c> if Aaru can send commands to the device in the current machine or remote, <c>false</c>
-        ///     otherwise
-        /// </summary>
-        [MarshalAs(UnmanagedType.U1)]
-        public bool Supported;
-
-        /// <summary>Padding</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-        public readonly byte[] Padding;
-    }
-
-    public sealed partial class Device
-    {
-        /// <summary>Lists devices attached to current machine</summary>
-        /// <returns>List of devices</returns>
-        public static DeviceInfo[] ListDevices() => ListDevices(out _, out _, out _, out _, out _, out _);
-
-        /// <summary>Lists devices attached to current machine or specified remote</summary>
-        /// <param name="isRemote">Is remote</param>
-        /// <param name="serverApplication">Remote application</param>
-        /// <param name="serverVersion">Remote application version</param>
-        /// <param name="serverOperatingSystem">Remote operating system name</param>
-        /// <param name="serverOperatingSystemVersion">Remote operating system version</param>
-        /// <param name="serverArchitecture">Remote architecture</param>
-        /// <param name="aaruRemote">Remote URI</param>
-        /// <returns>List of devices</returns>
-        /// <exception cref="InvalidOperationException"></exception>
-        public static DeviceInfo[] ListDevices(out bool isRemote, out string serverApplication,
-                                               out string serverVersion, out string serverOperatingSystem,
-                                               out string serverOperatingSystemVersion, out string serverArchitecture,
-                                               string aaruRemote = null)
-        {
-            isRemote                     = false;
-            serverApplication            = null;
-            serverVersion                = null;
-            serverOperatingSystem        = null;
-            serverOperatingSystemVersion = null;
-            serverArchitecture           = null;
-
-            if(aaruRemote is null)
-                switch(DetectOS.GetRealPlatformID())
-                {
-                    case PlatformID.Win32NT: return Windows.ListDevices.GetList();
-                    case PlatformID.Linux:   return Linux.ListDevices.GetList();
-                    default:
-                        throw new
-                            InvalidOperationException($"Platform {DetectOS.GetRealPlatformID()} not yet supported.");
-                }
-
-            try
+        if(aaruRemote is null)
+            switch(DetectOS.GetRealPlatformID())
             {
-                var aaruUri = new Uri(aaruRemote);
-
-                if(aaruUri.Scheme != "aaru" &&
-                   aaruUri.Scheme != "dic")
-                {
-                    AaruConsole.ErrorWriteLine("Invalid remote URI.");
-
-                    return Array.Empty<DeviceInfo>();
-                }
-
-                using var remote = new Remote.Remote(aaruUri);
-
-                isRemote                     = true;
-                serverApplication            = remote.ServerApplication;
-                serverVersion                = remote.ServerVersion;
-                serverOperatingSystem        = remote.ServerOperatingSystem;
-                serverOperatingSystemVersion = remote.ServerOperatingSystemVersion;
-                serverArchitecture           = remote.ServerArchitecture;
-
-                return remote.ListDevices();
+                case PlatformID.Win32NT: return Windows.ListDevices.GetList();
+                case PlatformID.Linux:   return Linux.ListDevices.GetList();
+                default:
+                    throw new
+                        InvalidOperationException($"Platform {DetectOS.GetRealPlatformID()} not yet supported.");
             }
-            catch(Exception)
+
+        try
+        {
+            var aaruUri = new Uri(aaruRemote);
+
+            if(aaruUri.Scheme != "aaru" &&
+               aaruUri.Scheme != "dic")
             {
-                AaruConsole.ErrorWriteLine("Error connecting to host.");
+                AaruConsole.ErrorWriteLine("Invalid remote URI.");
 
                 return Array.Empty<DeviceInfo>();
             }
+
+            using var remote = new Remote.Remote(aaruUri);
+
+            isRemote                     = true;
+            serverApplication            = remote.ServerApplication;
+            serverVersion                = remote.ServerVersion;
+            serverOperatingSystem        = remote.ServerOperatingSystem;
+            serverOperatingSystemVersion = remote.ServerOperatingSystemVersion;
+            serverArchitecture           = remote.ServerArchitecture;
+
+            return remote.ListDevices();
+        }
+        catch(Exception)
+        {
+            AaruConsole.ErrorWriteLine("Error connecting to host.");
+
+            return Array.Empty<DeviceInfo>();
         }
     }
 }

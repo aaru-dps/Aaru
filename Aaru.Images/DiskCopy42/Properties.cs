@@ -37,51 +37,50 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 using Schemas;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class DiskCopy42
 {
-    public sealed partial class DiskCopy42
+    /// <inheritdoc />
+    public ImageInfo Info => imageInfo;
+    /// <inheritdoc />
+    public string Name => "Apple DiskCopy 4.2";
+    /// <inheritdoc />
+    public Guid Id => new Guid("0240B7B1-E959-4CDC-B0BD-386D6E467B88");
+    /// <inheritdoc />
+    public string Author => "Natalia Portillo";
+    /// <inheritdoc />
+    public List<DumpHardwareType> DumpHardware => null;
+    /// <inheritdoc />
+    public CICMMetadataType CicmMetadata => null;
+    /// <inheritdoc />
+    public string Format => "Apple DiskCopy 4.2";
+    /// <inheritdoc />
+    public IEnumerable<MediaTagType> SupportedMediaTags => new MediaTagType[]
+        {};
+    /// <inheritdoc />
+    public IEnumerable<SectorTagType> SupportedSectorTags => new[]
     {
-        /// <inheritdoc />
-        public ImageInfo Info => imageInfo;
-        /// <inheritdoc />
-        public string Name => "Apple DiskCopy 4.2";
-        /// <inheritdoc />
-        public Guid Id => new Guid("0240B7B1-E959-4CDC-B0BD-386D6E467B88");
-        /// <inheritdoc />
-        public string Author => "Natalia Portillo";
-        /// <inheritdoc />
-        public List<DumpHardwareType> DumpHardware => null;
-        /// <inheritdoc />
-        public CICMMetadataType CicmMetadata => null;
-        /// <inheritdoc />
-        public string Format => "Apple DiskCopy 4.2";
-        /// <inheritdoc />
-        public IEnumerable<MediaTagType> SupportedMediaTags => new MediaTagType[]
-            {};
-        /// <inheritdoc />
-        public IEnumerable<SectorTagType> SupportedSectorTags => new[]
-        {
-            SectorTagType.AppleSectorTag
-        };
-        /// <inheritdoc />
-        public IEnumerable<MediaType> SupportedMediaTypes => new[]
-        {
-            MediaType.AppleFileWare, MediaType.AppleHD20, MediaType.AppleProfile, MediaType.AppleSonyDS,
-            MediaType.AppleSonySS, MediaType.AppleWidget, MediaType.DOS_35_DS_DD_9, MediaType.DOS_35_HD, MediaType.DMF
-        };
-        /// <inheritdoc />
-        public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions => new[]
-        {
-            ("macosx", typeof(bool), "Use Mac OS X format byte", (object)false)
-        };
-        /// <inheritdoc />
-        public IEnumerable<string> KnownExtensions => new[]
-        {
-            ".dc42", ".diskcopy42", ".image"
-        };
-        /// <inheritdoc />
-        public bool IsWriting { get; private set; }
-        /// <inheritdoc />
-        public string ErrorMessage { get; private set; }
-    }
+        SectorTagType.AppleSectorTag
+    };
+    /// <inheritdoc />
+    public IEnumerable<MediaType> SupportedMediaTypes => new[]
+    {
+        MediaType.AppleFileWare, MediaType.AppleHD20, MediaType.AppleProfile, MediaType.AppleSonyDS,
+        MediaType.AppleSonySS, MediaType.AppleWidget, MediaType.DOS_35_DS_DD_9, MediaType.DOS_35_HD, MediaType.DMF
+    };
+    /// <inheritdoc />
+    public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions => new[]
+    {
+        ("macosx", typeof(bool), "Use Mac OS X format byte", (object)false)
+    };
+    /// <inheritdoc />
+    public IEnumerable<string> KnownExtensions => new[]
+    {
+        ".dc42", ".diskcopy42", ".image"
+    };
+    /// <inheritdoc />
+    public bool IsWriting { get; private set; }
+    /// <inheritdoc />
+    public string ErrorMessage { get; private set; }
 }

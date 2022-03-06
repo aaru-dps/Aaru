@@ -38,46 +38,45 @@ using Aaru.CommonTypes.Structs;
 
 // ReSharper disable NotAccessedField.Local
 
-namespace Aaru.DiscImages
-{
-    /// <inheritdoc />
-    /// <summary>Implements reading and writing Parallels' disk images</summary>
-    public sealed partial class Parallels : IWritableImage
-    {
-        uint[]                    _bat;
-        uint                      _clusterBytes;
-        long                      _currentWritingPosition;
-        long                      _dataOffset;
-        bool                      _empty;
-        bool                      _extended;
-        ImageInfo                 _imageInfo;
-        Stream                    _imageStream;
-        Header                    _pHdr;
-        Dictionary<ulong, byte[]> _sectorCache;
-        FileStream                _writingStream;
+namespace Aaru.DiscImages;
 
-        public Parallels() => _imageInfo = new ImageInfo
-        {
-            ReadableSectorTags    = new List<SectorTagType>(),
-            ReadableMediaTags     = new List<MediaTagType>(),
-            HasPartitions         = false,
-            HasSessions           = false,
-            Version               = "2",
-            Application           = "Parallels",
-            ApplicationVersion    = null,
-            Creator               = null,
-            Comments              = null,
-            MediaManufacturer     = null,
-            MediaModel            = null,
-            MediaSerialNumber     = null,
-            MediaBarcode          = null,
-            MediaPartNumber       = null,
-            MediaSequence         = 0,
-            LastMediaSequence     = 0,
-            DriveManufacturer     = null,
-            DriveModel            = null,
-            DriveSerialNumber     = null,
-            DriveFirmwareRevision = null
-        };
-    }
+/// <inheritdoc />
+/// <summary>Implements reading and writing Parallels' disk images</summary>
+public sealed partial class Parallels : IWritableImage
+{
+    uint[]                    _bat;
+    uint                      _clusterBytes;
+    long                      _currentWritingPosition;
+    long                      _dataOffset;
+    bool                      _empty;
+    bool                      _extended;
+    ImageInfo                 _imageInfo;
+    Stream                    _imageStream;
+    Header                    _pHdr;
+    Dictionary<ulong, byte[]> _sectorCache;
+    FileStream                _writingStream;
+
+    public Parallels() => _imageInfo = new ImageInfo
+    {
+        ReadableSectorTags    = new List<SectorTagType>(),
+        ReadableMediaTags     = new List<MediaTagType>(),
+        HasPartitions         = false,
+        HasSessions           = false,
+        Version               = "2",
+        Application           = "Parallels",
+        ApplicationVersion    = null,
+        Creator               = null,
+        Comments              = null,
+        MediaManufacturer     = null,
+        MediaModel            = null,
+        MediaSerialNumber     = null,
+        MediaBarcode          = null,
+        MediaPartNumber       = null,
+        MediaSequence         = 0,
+        LastMediaSequence     = 0,
+        DriveManufacturer     = null,
+        DriveModel            = null,
+        DriveSerialNumber     = null,
+        DriveFirmwareRevision = null
+    };
 }

@@ -32,65 +32,64 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Filesystems.XENIX
+namespace Aaru.Tests.Filesystems.XENIX;
+
+[TestFixture]
+public class Whole : FilesystemTest
 {
-    [TestFixture]
-    public class Whole : FilesystemTest
+    public Whole() : base("XENIX fs") {}
+
+    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "XENIX filesystem");
+
+    public override IFilesystem Plugin     => new SysVfs();
+    public override bool        Partitions => false;
+
+    public override FileSystemTest[] Tests => new[]
     {
-        public Whole() : base("XENIX fs") {}
-
-        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "XENIX filesystem");
-
-        public override IFilesystem Plugin     => new SysVfs();
-        public override bool        Partitions => false;
-
-        public override FileSystemTest[] Tests => new[]
+        new FileSystemTest
         {
-            new FileSystemTest
-            {
-                TestFile    = "scoopenserver_5.0.7hw_dmf.img.lz",
-                MediaType   = MediaType.DMF,
-                Sectors     = 3360,
-                SectorSize  = 512,
-                ClusterSize = 1024,
-                VolumeName  = ""
-            },
-            new FileSystemTest
-            {
-                TestFile    = "scoopenserver_5.0.7hw_dshd.img.lz",
-                MediaType   = MediaType.DOS_525_HD,
-                Sectors     = 2400,
-                SectorSize  = 512,
-                ClusterSize = 1024,
-                VolumeName  = ""
-            },
-            new FileSystemTest
-            {
-                TestFile    = "scoopenserver_5.0.7hw_mf2dd.img.lz",
-                MediaType   = MediaType.DOS_35_DS_DD_9,
-                Sectors     = 1440,
-                SectorSize  = 512,
-                ClusterSize = 1024,
-                VolumeName  = ""
-            },
-            new FileSystemTest
-            {
-                TestFile    = "scoopenserver_5.0.7hw_mf2ed.img.lz",
-                MediaType   = MediaType.ECMA_147,
-                Sectors     = 5760,
-                SectorSize  = 512,
-                ClusterSize = 1024,
-                VolumeName  = ""
-            },
-            new FileSystemTest
-            {
-                TestFile    = "scoopenserver_5.0.7hw_mf2hd.img.lz",
-                MediaType   = MediaType.DOS_35_HD,
-                Sectors     = 2880,
-                SectorSize  = 512,
-                ClusterSize = 1024,
-                VolumeName  = ""
-            }
-        };
-    }
+            TestFile    = "scoopenserver_5.0.7hw_dmf.img.lz",
+            MediaType   = MediaType.DMF,
+            Sectors     = 3360,
+            SectorSize  = 512,
+            ClusterSize = 1024,
+            VolumeName  = ""
+        },
+        new FileSystemTest
+        {
+            TestFile    = "scoopenserver_5.0.7hw_dshd.img.lz",
+            MediaType   = MediaType.DOS_525_HD,
+            Sectors     = 2400,
+            SectorSize  = 512,
+            ClusterSize = 1024,
+            VolumeName  = ""
+        },
+        new FileSystemTest
+        {
+            TestFile    = "scoopenserver_5.0.7hw_mf2dd.img.lz",
+            MediaType   = MediaType.DOS_35_DS_DD_9,
+            Sectors     = 1440,
+            SectorSize  = 512,
+            ClusterSize = 1024,
+            VolumeName  = ""
+        },
+        new FileSystemTest
+        {
+            TestFile    = "scoopenserver_5.0.7hw_mf2ed.img.lz",
+            MediaType   = MediaType.ECMA_147,
+            Sectors     = 5760,
+            SectorSize  = 512,
+            ClusterSize = 1024,
+            VolumeName  = ""
+        },
+        new FileSystemTest
+        {
+            TestFile    = "scoopenserver_5.0.7hw_mf2hd.img.lz",
+            MediaType   = MediaType.DOS_35_HD,
+            Sectors     = 2880,
+            SectorSize  = 512,
+            ClusterSize = 1024,
+            VolumeName  = ""
+        }
+    };
 }

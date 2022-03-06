@@ -39,48 +39,47 @@ using Aaru.CommonTypes.Structs;
 
 #pragma warning disable 612
 
-namespace Aaru.DiscImages
-{
-    /// <inheritdoc />
-    /// <summary>Implements reading and writing Apple's Universal Disk Image Format disk images</summary>
-    public sealed partial class Udif : IWritableImage
-    {
-        uint                          _buffersize;
-        Dictionary<ulong, byte[]>     _chunkCache;
-        Dictionary<ulong, BlockChunk> _chunks;
-        BlockChunk                    _currentChunk;
-        uint                          _currentChunkCacheSize;
-        ulong                         _currentSector;
-        Crc32Context                  _dataForkChecksum;
-        Footer                        _footer;
-        ImageInfo                     _imageInfo;
-        Stream                        _imageStream;
-        Crc32Context                  _masterChecksum;
-        Dictionary<ulong, byte[]>     _sectorCache;
-        FileStream                    _writingStream;
+namespace Aaru.DiscImages;
 
-        public Udif() => _imageInfo = new ImageInfo
-        {
-            ReadableSectorTags    = new List<SectorTagType>(),
-            ReadableMediaTags     = new List<MediaTagType>(),
-            HasPartitions         = false,
-            HasSessions           = false,
-            Version               = null,
-            Application           = null,
-            ApplicationVersion    = null,
-            Creator               = null,
-            Comments              = null,
-            MediaManufacturer     = null,
-            MediaModel            = null,
-            MediaSerialNumber     = null,
-            MediaBarcode          = null,
-            MediaPartNumber       = null,
-            MediaSequence         = 0,
-            LastMediaSequence     = 0,
-            DriveManufacturer     = null,
-            DriveModel            = null,
-            DriveSerialNumber     = null,
-            DriveFirmwareRevision = null
-        };
-    }
+/// <inheritdoc />
+/// <summary>Implements reading and writing Apple's Universal Disk Image Format disk images</summary>
+public sealed partial class Udif : IWritableImage
+{
+    uint                          _buffersize;
+    Dictionary<ulong, byte[]>     _chunkCache;
+    Dictionary<ulong, BlockChunk> _chunks;
+    BlockChunk                    _currentChunk;
+    uint                          _currentChunkCacheSize;
+    ulong                         _currentSector;
+    Crc32Context                  _dataForkChecksum;
+    Footer                        _footer;
+    ImageInfo                     _imageInfo;
+    Stream                        _imageStream;
+    Crc32Context                  _masterChecksum;
+    Dictionary<ulong, byte[]>     _sectorCache;
+    FileStream                    _writingStream;
+
+    public Udif() => _imageInfo = new ImageInfo
+    {
+        ReadableSectorTags    = new List<SectorTagType>(),
+        ReadableMediaTags     = new List<MediaTagType>(),
+        HasPartitions         = false,
+        HasSessions           = false,
+        Version               = null,
+        Application           = null,
+        ApplicationVersion    = null,
+        Creator               = null,
+        Comments              = null,
+        MediaManufacturer     = null,
+        MediaModel            = null,
+        MediaSerialNumber     = null,
+        MediaBarcode          = null,
+        MediaPartNumber       = null,
+        MediaSequence         = 0,
+        LastMediaSequence     = 0,
+        DriveManufacturer     = null,
+        DriveModel            = null,
+        DriveSerialNumber     = null,
+        DriveFirmwareRevision = null
+    };
 }

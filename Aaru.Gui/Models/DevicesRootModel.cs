@@ -32,12 +32,11 @@
 
 using System.Collections.ObjectModel;
 
-namespace Aaru.Gui.Models
-{
-    public sealed class DevicesRootModel : RootModel
-    {
-        public DevicesRootModel() => Devices = new ObservableCollection<DeviceModel>();
+namespace Aaru.Gui.Models;
 
-        public ObservableCollection<DeviceModel> Devices { get; }
-    }
+public sealed class DevicesRootModel : RootModel
+{
+    public DevicesRootModel() => Devices = new ObservableCollection<DeviceModel>();
+
+    public ObservableCollection<DeviceModel> Devices { get; }
 }

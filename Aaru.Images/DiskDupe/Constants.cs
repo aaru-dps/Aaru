@@ -31,17 +31,16 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages
-{
-    public sealed partial class DiskDupe
-    {
-        /// <summary>Start of data sectors in disk image, should be 0x100</summary>
-        const uint TRACKMAP_OFFSET = 100;
+namespace Aaru.DiscImages;
 
-        /// <summary>The header identification string</summary>
-        readonly byte[] _headerMagic =
-        {
-            0x49, 0x4d, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-        };
-    }
+public sealed partial class DiskDupe
+{
+    /// <summary>Start of data sectors in disk image, should be 0x100</summary>
+    const uint TRACKMAP_OFFSET = 100;
+
+    /// <summary>The header identification string</summary>
+    readonly byte[] _headerMagic =
+    {
+        0x49, 0x4d, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+    };
 }

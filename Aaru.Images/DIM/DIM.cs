@@ -35,41 +35,40 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 
-namespace Aaru.DiscImages
-{
-    // TODO: What are the real supported floppies for this image format?
-    /// <inheritdoc />
-    /// <summary>Implements reading DIM disk images</summary>
-    public sealed partial class Dim : IMediaImage
-    {
-        byte[]    _comment;
-        IFilter   _dimImageFilter;
-        DiskType  _dskType;
-        byte[]    _hdrId;
-        ImageInfo _imageInfo;
+namespace Aaru.DiscImages;
 
-        public Dim() => _imageInfo = new ImageInfo
-        {
-            ReadableSectorTags    = new List<SectorTagType>(),
-            ReadableMediaTags     = new List<MediaTagType>(),
-            HasPartitions         = false,
-            HasSessions           = false,
-            Version               = null,
-            Application           = null,
-            ApplicationVersion    = null,
-            Creator               = null,
-            Comments              = null,
-            MediaManufacturer     = null,
-            MediaModel            = null,
-            MediaSerialNumber     = null,
-            MediaBarcode          = null,
-            MediaPartNumber       = null,
-            MediaSequence         = 0,
-            LastMediaSequence     = 0,
-            DriveManufacturer     = null,
-            DriveModel            = null,
-            DriveSerialNumber     = null,
-            DriveFirmwareRevision = null
-        };
-    }
+// TODO: What are the real supported floppies for this image format?
+/// <inheritdoc />
+/// <summary>Implements reading DIM disk images</summary>
+public sealed partial class Dim : IMediaImage
+{
+    byte[]    _comment;
+    IFilter   _dimImageFilter;
+    DiskType  _dskType;
+    byte[]    _hdrId;
+    ImageInfo _imageInfo;
+
+    public Dim() => _imageInfo = new ImageInfo
+    {
+        ReadableSectorTags    = new List<SectorTagType>(),
+        ReadableMediaTags     = new List<MediaTagType>(),
+        HasPartitions         = false,
+        HasSessions           = false,
+        Version               = null,
+        Application           = null,
+        ApplicationVersion    = null,
+        Creator               = null,
+        Comments              = null,
+        MediaManufacturer     = null,
+        MediaModel            = null,
+        MediaSerialNumber     = null,
+        MediaBarcode          = null,
+        MediaPartNumber       = null,
+        MediaSequence         = 0,
+        LastMediaSequence     = 0,
+        DriveManufacturer     = null,
+        DriveModel            = null,
+        DriveSerialNumber     = null,
+        DriveFirmwareRevision = null
+    };
 }

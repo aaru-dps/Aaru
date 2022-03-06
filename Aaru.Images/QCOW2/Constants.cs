@@ -32,34 +32,33 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+[SuppressMessage("ReSharper", "UnusedMember.Local")]
+public sealed partial class Qcow2
 {
-    [SuppressMessage("ReSharper", "UnusedMember.Local")]
-    public sealed partial class Qcow2
-    {
-        /// <summary>Magic number: 'Q', 'F', 'I', 0xFB</summary>
-        const uint QCOW_MAGIC = 0x514649FB;
-        const uint QCOW_VERSION2        = 2;
-        const uint QCOW_VERSION3        = 3;
-        const uint QCOW_ENCRYPTION_NONE = 0;
-        const uint QCOW_ENCRYPTION_AES  = 1;
+    /// <summary>Magic number: 'Q', 'F', 'I', 0xFB</summary>
+    const uint QCOW_MAGIC = 0x514649FB;
+    const uint QCOW_VERSION2        = 2;
+    const uint QCOW_VERSION3        = 3;
+    const uint QCOW_ENCRYPTION_NONE = 0;
+    const uint QCOW_ENCRYPTION_AES  = 1;
 
-        const ulong QCOW_FEATURE_DIRTY   = 0x01;
-        const ulong QCOW_FEATURE_CORRUPT = 0x02;
-        const ulong QCOW_FEATURE_MASK    = 0xFFFFFFFFFFFFFFFC;
+    const ulong QCOW_FEATURE_DIRTY   = 0x01;
+    const ulong QCOW_FEATURE_CORRUPT = 0x02;
+    const ulong QCOW_FEATURE_MASK    = 0xFFFFFFFFFFFFFFFC;
 
-        const ulong QCOW_COMPAT_FEATURE_LAZY_REFCOUNTS = 0x01;
-        const ulong QCOW_AUTO_CLEAR_FEATURE_BITMAP     = 0x01;
+    const ulong QCOW_COMPAT_FEATURE_LAZY_REFCOUNTS = 0x01;
+    const ulong QCOW_AUTO_CLEAR_FEATURE_BITMAP     = 0x01;
 
-        const ulong QCOW_FLAGS_MASK = 0x3FFFFFFFFFFFFFFF;
-        const ulong QCOW_COPIED     = 0x8000000000000000;
-        const ulong QCOW_COMPRESSED = 0x4000000000000000;
+    const ulong QCOW_FLAGS_MASK = 0x3FFFFFFFFFFFFFFF;
+    const ulong QCOW_COPIED     = 0x8000000000000000;
+    const ulong QCOW_COMPRESSED = 0x4000000000000000;
 
-        const ulong QCOW_HEADER_EXTENSION_BACKING_FILE  = 0xE2792ACA;
-        const ulong QCOW_HEADER_EXTENSION_FEATURE_TABLE = 0x6803F857;
-        const ulong QCOW_HEADER_EXTENSION_BITMAPS       = 0x23852875;
+    const ulong QCOW_HEADER_EXTENSION_BACKING_FILE  = 0xE2792ACA;
+    const ulong QCOW_HEADER_EXTENSION_FEATURE_TABLE = 0x6803F857;
+    const ulong QCOW_HEADER_EXTENSION_BITMAPS       = 0x23852875;
 
-        const int MAX_CACHE_SIZE     = 16777216;
-        const int MAX_CACHED_SECTORS = MAX_CACHE_SIZE / 512;
-    }
+    const int MAX_CACHE_SIZE     = 16777216;
+    const int MAX_CACHED_SECTORS = MAX_CACHE_SIZE / 512;
 }

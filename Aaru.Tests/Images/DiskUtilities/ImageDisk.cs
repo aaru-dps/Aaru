@@ -32,49 +32,48 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.DiscImages;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Images.DiskUtilities
-{
-    [TestFixture]
-    public class ImageDisk : BlockMediaImageTest
-    {
-        public override string DataFolder =>
-            Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "disk-analyse", "ImageDisk");
-        public override IMediaImage _plugin => new Imd();
+namespace Aaru.Tests.Images.DiskUtilities;
 
-        public override BlockImageTestExpected[] Tests => new[]
+[TestFixture]
+public class ImageDisk : BlockMediaImageTest
+{
+    public override string DataFolder =>
+        Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "disk-analyse", "ImageDisk");
+    public override IMediaImage _plugin => new Imd();
+
+    public override BlockImageTestExpected[] Tests => new[]
+    {
+        new BlockImageTestExpected
         {
-            new BlockImageTestExpected
-            {
-                TestFile   = "mf2dd_acorn.imd.lz",
-                MediaType  = MediaType.ACORN_35_DS_DD,
-                Sectors    = 800,
-                SectorSize = 1024,
-                MD5        = "2626f65b49ec085253c41fa2e2a9e788"
-            },
-            new BlockImageTestExpected
-            {
-                TestFile   = "mf2dd_fdformat_820.imd.lz",
-                MediaType  = MediaType.FDFORMAT_35_DD,
-                Sectors    = 1640,
-                SectorSize = 512,
-                MD5        = "9d978dff1196b456b8372d78e6b17970"
-            },
-            new BlockImageTestExpected
-            {
-                TestFile   = "mf2hd_2m.imd.lz",
-                MediaType  = MediaType.Unknown,
-                Sectors    = 1812,
-                SectorSize = 1024,
-                MD5        = "7ee82cecd23b30cc9aa6f0ec59877851"
-            },
-            new BlockImageTestExpected
-            {
-                TestFile   = "mf2hd_fdformat_172.imd.lz",
-                MediaType  = MediaType.FDFORMAT_35_HD,
-                Sectors    = 3444,
-                SectorSize = 512,
-                MD5        = "9dea1e119a73a21a38d134f36b2e5564"
-            }
-        };
-    }
+            TestFile   = "mf2dd_acorn.imd.lz",
+            MediaType  = MediaType.ACORN_35_DS_DD,
+            Sectors    = 800,
+            SectorSize = 1024,
+            MD5        = "2626f65b49ec085253c41fa2e2a9e788"
+        },
+        new BlockImageTestExpected
+        {
+            TestFile   = "mf2dd_fdformat_820.imd.lz",
+            MediaType  = MediaType.FDFORMAT_35_DD,
+            Sectors    = 1640,
+            SectorSize = 512,
+            MD5        = "9d978dff1196b456b8372d78e6b17970"
+        },
+        new BlockImageTestExpected
+        {
+            TestFile   = "mf2hd_2m.imd.lz",
+            MediaType  = MediaType.Unknown,
+            Sectors    = 1812,
+            SectorSize = 1024,
+            MD5        = "7ee82cecd23b30cc9aa6f0ec59877851"
+        },
+        new BlockImageTestExpected
+        {
+            TestFile   = "mf2hd_fdformat_172.imd.lz",
+            MediaType  = MediaType.FDFORMAT_35_HD,
+            Sectors    = 3444,
+            SectorSize = 512,
+            MD5        = "9dea1e119a73a21a38d134f36b2e5564"
+        }
+    };
 }

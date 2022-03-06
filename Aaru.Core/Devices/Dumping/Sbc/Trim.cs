@@ -32,64 +32,63 @@ using Schemas;
 // ReSharper disable InlineOutVariableDeclaration
 // ReSharper disable TooWideLocalVariableScope
 
-namespace Aaru.Core.Devices.Dumping
+namespace Aaru.Core.Devices.Dumping;
+
+partial class Dump
 {
-    partial class Dump
+    /// <summary>Trims data when dumping from a SCSI Block Commands compliant device</summary>
+    /// <param name="scsiReader">SCSI reader</param>
+    /// <param name="extents">Correctly dump extents</param>
+    /// <param name="currentTry">Resume information</param>
+    /// <param name="blankExtents">Blank extents</param>
+    void TrimSbcData(Reader scsiReader, ExtentsULong extents, DumpHardwareType currentTry,
+                     ExtentsULong blankExtents)
     {
-        /// <summary>Trims data when dumping from a SCSI Block Commands compliant device</summary>
-        /// <param name="scsiReader">SCSI reader</param>
-        /// <param name="extents">Correctly dump extents</param>
-        /// <param name="currentTry">Resume information</param>
-        /// <param name="blankExtents">Blank extents</param>
-        void TrimSbcData(Reader scsiReader, ExtentsULong extents, DumpHardwareType currentTry,
-                         ExtentsULong blankExtents)
+        ulong[] tmpArray = _resume.BadBlocks.ToArray();
+        bool    sense;
+        bool    recoveredError;
+        bool    blankCheck;
+        byte[]  buffer;
+        bool    newBlank     = false;
+        var     outputFormat = _outputPlugin as IWritableImage;
+
+        foreach(ulong badSector in tmpArray)
         {
-            ulong[] tmpArray = _resume.BadBlocks.ToArray();
-            bool    sense;
-            bool    recoveredError;
-            bool    blankCheck;
-            byte[]  buffer;
-            bool    newBlank     = false;
-            var     outputFormat = _outputPlugin as IWritableImage;
-
-            foreach(ulong badSector in tmpArray)
+            if(_aborted)
             {
-                if(_aborted)
-                {
-                    currentTry.Extents = ExtentsConverter.ToMetadata(extents);
-                    UpdateStatus?.Invoke("Aborted!");
-                    _dumpLog.WriteLine("Aborted!");
+                currentTry.Extents = ExtentsConverter.ToMetadata(extents);
+                UpdateStatus?.Invoke("Aborted!");
+                _dumpLog.WriteLine("Aborted!");
 
-                    break;
-                }
-
-                PulseProgress?.Invoke($"Trimming sector {badSector}");
-
-                sense = scsiReader.ReadBlock(out buffer, badSector, out double _, out recoveredError, out blankCheck);
-
-                if(blankCheck)
-                {
-                    blankExtents.Add(badSector, badSector);
-                    newBlank = true;
-                    _resume.BadBlocks.Remove(badSector);
-
-                    UpdateStatus?.Invoke($"Found blank block {badSector}.");
-                    _dumpLog.WriteLine("Found blank block {0}.", badSector);
-
-                    continue;
-                }
-
-                if((sense || _dev.Error) &&
-                   !recoveredError)
-                    continue;
-
-                _resume.BadBlocks.Remove(badSector);
-                extents.Add(badSector);
-                outputFormat.WriteSector(buffer, badSector);
+                break;
             }
 
-            if(newBlank)
-                _resume.BlankExtents = ExtentsConverter.ToMetadata(blankExtents);
+            PulseProgress?.Invoke($"Trimming sector {badSector}");
+
+            sense = scsiReader.ReadBlock(out buffer, badSector, out double _, out recoveredError, out blankCheck);
+
+            if(blankCheck)
+            {
+                blankExtents.Add(badSector, badSector);
+                newBlank = true;
+                _resume.BadBlocks.Remove(badSector);
+
+                UpdateStatus?.Invoke($"Found blank block {badSector}.");
+                _dumpLog.WriteLine("Found blank block {0}.", badSector);
+
+                continue;
+            }
+
+            if((sense || _dev.Error) &&
+               !recoveredError)
+                continue;
+
+            _resume.BadBlocks.Remove(badSector);
+            extents.Add(badSector);
+            outputFormat.WriteSector(buffer, badSector);
         }
+
+        if(newBlank)
+            _resume.BlankExtents = ExtentsConverter.ToMetadata(blankExtents);
     }
 }

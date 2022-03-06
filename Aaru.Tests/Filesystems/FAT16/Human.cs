@@ -32,41 +32,40 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Filesystems.FAT16
+namespace Aaru.Tests.Filesystems.FAT16;
+
+[TestFixture]
+public class Human : ReadOnlyFilesystemTest
 {
-    [TestFixture]
-    public class Human : ReadOnlyFilesystemTest
+    public Human() : base("FAT16") {}
+
+    public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "FAT16 (Human68K)");
+    public override IFilesystem Plugin     => new FAT();
+    public override bool        Partitions => true;
+
+    public override FileSystemTest[] Tests => new[]
     {
-        public Human() : base("FAT16") {}
-
-        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "FAT16 (Human68K)");
-        public override IFilesystem Plugin => new FAT();
-        public override bool Partitions => true;
-
-        public override FileSystemTest[] Tests => new[]
+        new FileSystemTest
         {
-            new FileSystemTest
-            {
-                TestFile    = "sasidisk.aif",
-                MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 162096,
-                SectorSize  = 256,
-                Bootable    = true,
-                Clusters    = 40510,
-                ClusterSize = 1024,
-                SystemId    = "Hudson soft 2.00"
-            },
-            new FileSystemTest
-            {
-                TestFile    = "scsidisk.aif",
-                MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 204800,
-                SectorSize  = 512,
-                Bootable    = true,
-                Clusters    = 102367,
-                ClusterSize = 1024,
-                SystemId    = " Hero Soft V1.10"
-            }
-        };
-    }
+            TestFile    = "sasidisk.aif",
+            MediaType   = MediaType.GENERIC_HDD,
+            Sectors     = 162096,
+            SectorSize  = 256,
+            Bootable    = true,
+            Clusters    = 40510,
+            ClusterSize = 1024,
+            SystemId    = "Hudson soft 2.00"
+        },
+        new FileSystemTest
+        {
+            TestFile    = "scsidisk.aif",
+            MediaType   = MediaType.GENERIC_HDD,
+            Sectors     = 204800,
+            SectorSize  = 512,
+            Bootable    = true,
+            Clusters    = 102367,
+            ClusterSize = 1024,
+            SystemId    = " Hero Soft V1.10"
+        }
+    };
 }

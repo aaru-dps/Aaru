@@ -36,57 +36,56 @@ using System.Text;
 using Aaru.CommonTypes.Interfaces;
 using Schemas;
 
-namespace Aaru.Filesystems
+namespace Aaru.Filesystems;
+
+// Information from Inside Macintosh Volume II
+/// <inheritdoc />
+/// <summary>Implements the Apple Macintosh File System</summary>
+public sealed partial class AppleMFS : IReadOnlyFilesystem
 {
-    // Information from Inside Macintosh Volume II
+    bool                        _mounted;
+    bool                        _debug;
+    IMediaImage                 _device;
+    ulong                       _partitionStart;
+    Dictionary<uint, string>    _idToFilename;
+    Dictionary<uint, FileEntry> _idToEntry;
+    Dictionary<string, uint>    _filenameToId;
+    MasterDirectoryBlock        _volMdb;
+    byte[]                      _bootBlocks;
+    byte[]                      _mdbBlocks;
+    byte[]                      _directoryBlocks;
+    byte[]                      _blockMapBytes;
+    uint[]                      _blockMap;
+    int                         _sectorsPerBlock;
+    byte[]                      _bootTags;
+    byte[]                      _mdbTags;
+    byte[]                      _directoryTags;
+    byte[]                      _bitmapTags;
+
     /// <inheritdoc />
-    /// <summary>Implements the Apple Macintosh File System</summary>
-    public sealed partial class AppleMFS : IReadOnlyFilesystem
+    public FileSystemType XmlFsType { get; private set; }
+    /// <inheritdoc />
+    public string Name => "Apple Macintosh File System";
+    /// <inheritdoc />
+    public Guid Id => new("36405F8D-0D26-4066-6538-5DBF5D065C3A");
+    /// <inheritdoc />
+    public Encoding Encoding { get; private set; }
+    /// <inheritdoc />
+    public string Author => "Natalia Portillo";
+
+    // TODO: Implement Finder namespace (requires decoding Desktop database)
+    /// <inheritdoc />
+    public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
+        new (string name, Type type, string description)[]
+            {};
+
+    /// <inheritdoc />
+    public Dictionary<string, string> Namespaces => null;
+
+    static Dictionary<string, string> GetDefaultOptions() => new()
     {
-        bool                        _mounted;
-        bool                        _debug;
-        IMediaImage                 _device;
-        ulong                       _partitionStart;
-        Dictionary<uint, string>    _idToFilename;
-        Dictionary<uint, FileEntry> _idToEntry;
-        Dictionary<string, uint>    _filenameToId;
-        MasterDirectoryBlock        _volMdb;
-        byte[]                      _bootBlocks;
-        byte[]                      _mdbBlocks;
-        byte[]                      _directoryBlocks;
-        byte[]                      _blockMapBytes;
-        uint[]                      _blockMap;
-        int                         _sectorsPerBlock;
-        byte[]                      _bootTags;
-        byte[]                      _mdbTags;
-        byte[]                      _directoryTags;
-        byte[]                      _bitmapTags;
-
-        /// <inheritdoc />
-        public FileSystemType XmlFsType { get; private set; }
-        /// <inheritdoc />
-        public string Name => "Apple Macintosh File System";
-        /// <inheritdoc />
-        public Guid Id => new("36405F8D-0D26-4066-6538-5DBF5D065C3A");
-        /// <inheritdoc />
-        public Encoding Encoding { get; private set; }
-        /// <inheritdoc />
-        public string Author => "Natalia Portillo";
-
-        // TODO: Implement Finder namespace (requires decoding Desktop database)
-        /// <inheritdoc />
-        public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
-            new (string name, Type type, string description)[]
-                {};
-
-        /// <inheritdoc />
-        public Dictionary<string, string> Namespaces => null;
-
-        static Dictionary<string, string> GetDefaultOptions() => new()
         {
-            {
-                "debug", false.ToString()
-            }
-        };
-    }
+            "debug", false.ToString()
+        }
+    };
 }

@@ -32,16 +32,15 @@
 
 using Microsoft.EntityFrameworkCore.Design;
 
-namespace Aaru.Database
+namespace Aaru.Database;
+
+/// <inheritdoc />
+/// <summary>Database context factory, for design time</summary>
+public class AaruContextFactory : IDesignTimeDbContextFactory<AaruContext>
 {
     /// <inheritdoc />
-    /// <summary>Database context factory, for design time</summary>
-    public class AaruContextFactory : IDesignTimeDbContextFactory<AaruContext>
-    {
-        /// <inheritdoc />
-        /// <summary>Creates a database context</summary>
-        /// <param name="args">Ignored parameters</param>
-        /// <returns>A database context</returns>
-        public AaruContext CreateDbContext(string[] args) => AaruContext.Create("aaru.db");
-    }
+    /// <summary>Creates a database context</summary>
+    /// <param name="args">Ignored parameters</param>
+    /// <returns>A database context</returns>
+    public AaruContext CreateDbContext(string[] args) => AaruContext.Create("aaru.db");
 }

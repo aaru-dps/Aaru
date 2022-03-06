@@ -30,19 +30,18 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Filesystems
+namespace Aaru.Filesystems;
+
+// Information from Inside Macintosh
+// https://developer.apple.com/legacy/library/documentation/mac/pdf/Files/File_Manager.pdf
+internal static partial class AppleCommon
 {
-    // Information from Inside Macintosh
-    // https://developer.apple.com/legacy/library/documentation/mac/pdf/Files/File_Manager.pdf
-    internal static partial class AppleCommon
-    {
-        /// <summary>"LK", HFS bootblock magic</summary>
-        internal const ushort BB_MAGIC = 0x4C4B;
-        /// <summary>"BD", HFS magic</summary>
-        internal const ushort HFS_MAGIC = 0x4244;
-        /// <summary>"H+", HFS+ magic</summary>
-        internal const ushort HFSP_MAGIC = 0x482B;
-        /// <summary>"HX", HFSX magic</summary>
-        internal const ushort HFSX_MAGIC = 0x4858;
-    }
+    /// <summary>"LK", HFS bootblock magic</summary>
+    internal const ushort BB_MAGIC = 0x4C4B;
+    /// <summary>"BD", HFS magic</summary>
+    internal const ushort HFS_MAGIC = 0x4244;
+    /// <summary>"H+", HFS+ magic</summary>
+    internal const ushort HFSP_MAGIC = 0x482B;
+    /// <summary>"HX", HFSX magic</summary>
+    internal const ushort HFSX_MAGIC = 0x4858;
 }

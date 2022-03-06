@@ -33,12 +33,11 @@
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 
-namespace Aaru.Gui.Views.Panels
-{
-    public sealed class DeviceInfo : UserControl
-    {
-        public DeviceInfo() => InitializeComponent();
+namespace Aaru.Gui.Views.Panels;
 
-        void InitializeComponent() => AvaloniaXamlLoader.Load(this);
-    }
+public sealed class DeviceInfo : UserControl
+{
+    public DeviceInfo() => InitializeComponent();
+
+    void InitializeComponent() => AvaloniaXamlLoader.Load(this);
 }

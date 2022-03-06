@@ -35,17 +35,16 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-namespace Aaru.Filesystems
+namespace Aaru.Filesystems;
+
+[SuppressMessage("ReSharper", "UnusedMember.Local")]
+public sealed partial class ISO9660
 {
-    [SuppressMessage("ReSharper", "UnusedMember.Local")]
-    public sealed partial class ISO9660
-    {
-        const ushort SUSP_CONTINUATION = 0x4345; // "CE"
-        const ushort SUSP_PADDING      = 0x5044; // "PD"
-        const ushort SUSP_INDICATOR    = 0x5350; // "SP"
-        const ushort SUSP_TERMINATOR   = 0x5354; // "ST"
-        const ushort SUSP_REFERENCE    = 0x4552; // "ER"
-        const ushort SUSP_SELECTOR     = 0x4553; // "ES"
-        const ushort SUSP_MAGIC        = 0xBEEF;
-    }
+    const ushort SUSP_CONTINUATION = 0x4345; // "CE"
+    const ushort SUSP_PADDING      = 0x5044; // "PD"
+    const ushort SUSP_INDICATOR    = 0x5350; // "SP"
+    const ushort SUSP_TERMINATOR   = 0x5354; // "ST"
+    const ushort SUSP_REFERENCE    = 0x4552; // "ER"
+    const ushort SUSP_SELECTOR     = 0x4553; // "ES"
+    const ushort SUSP_MAGIC        = 0xBEEF;
 }

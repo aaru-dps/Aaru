@@ -37,50 +37,49 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Decoders.CD;
 
-namespace Aaru.DiscImages
-{
-    // TODO: Implement track flags
-    /// <summary>Implements reading and writing CDRWin cuesheet disc images</summary>
-    public sealed partial class CdrWin : IWritableOpticalImage, IVerifiableImage
-    {
-        IFilter      _cdrwinFilter;
-        StreamReader _cueStream;
-        StreamWriter _descriptorStream;
-        CdrWinDisc   _discImage;
-        ImageInfo    _imageInfo;
-        Stream       _imageStream;
-        bool         _isCd;
-        uint         _lostPregap;
-        bool         _negativeEnd;
-        /// <summary>Dictionary, index is track #, value is File</summary>
-        Dictionary<uint, ulong> _offsetMap;
-        SectorBuilder                _sectorBuilder;
-        bool                         _separateTracksWriting;
-        Dictionary<byte, byte>       _trackFlags;
-        Dictionary<byte, string>     _trackIsrcs;
-        string                       _writingBaseName;
-        Dictionary<uint, FileStream> _writingStreams;
-        List<Track>                  _writingTracks;
+namespace Aaru.DiscImages;
 
-        public CdrWin() => _imageInfo = new ImageInfo
-        {
-            ReadableSectorTags    = new List<SectorTagType>(),
-            ReadableMediaTags     = new List<MediaTagType>(),
-            HasPartitions         = true,
-            HasSessions           = true,
-            Version               = null,
-            ApplicationVersion    = null,
-            MediaTitle            = null,
-            Creator               = null,
-            MediaManufacturer     = null,
-            MediaModel            = null,
-            MediaPartNumber       = null,
-            MediaSequence         = 0,
-            LastMediaSequence     = 0,
-            DriveManufacturer     = null,
-            DriveModel            = null,
-            DriveSerialNumber     = null,
-            DriveFirmwareRevision = null
-        };
-    }
+// TODO: Implement track flags
+/// <summary>Implements reading and writing CDRWin cuesheet disc images</summary>
+public sealed partial class CdrWin : IWritableOpticalImage, IVerifiableImage
+{
+    IFilter      _cdrwinFilter;
+    StreamReader _cueStream;
+    StreamWriter _descriptorStream;
+    CdrWinDisc   _discImage;
+    ImageInfo    _imageInfo;
+    Stream       _imageStream;
+    bool         _isCd;
+    uint         _lostPregap;
+    bool         _negativeEnd;
+    /// <summary>Dictionary, index is track #, value is File</summary>
+    Dictionary<uint, ulong> _offsetMap;
+    SectorBuilder                _sectorBuilder;
+    bool                         _separateTracksWriting;
+    Dictionary<byte, byte>       _trackFlags;
+    Dictionary<byte, string>     _trackIsrcs;
+    string                       _writingBaseName;
+    Dictionary<uint, FileStream> _writingStreams;
+    List<Track>                  _writingTracks;
+
+    public CdrWin() => _imageInfo = new ImageInfo
+    {
+        ReadableSectorTags    = new List<SectorTagType>(),
+        ReadableMediaTags     = new List<MediaTagType>(),
+        HasPartitions         = true,
+        HasSessions           = true,
+        Version               = null,
+        ApplicationVersion    = null,
+        MediaTitle            = null,
+        Creator               = null,
+        MediaManufacturer     = null,
+        MediaModel            = null,
+        MediaPartNumber       = null,
+        MediaSequence         = 0,
+        LastMediaSequence     = 0,
+        DriveManufacturer     = null,
+        DriveModel            = null,
+        DriveSerialNumber     = null,
+        DriveFirmwareRevision = null
+    };
 }

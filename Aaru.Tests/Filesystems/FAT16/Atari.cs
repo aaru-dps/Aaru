@@ -32,151 +32,150 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Filesystems.FAT16
+namespace Aaru.Tests.Filesystems.FAT16;
+
+[TestFixture]
+public class Atari : ReadOnlyFilesystemTest
 {
-    [TestFixture]
-    public class Atari : ReadOnlyFilesystemTest
+    public Atari() : base("FAT16") {}
+
+    public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "FAT16 (Atari)");
+    public override IFilesystem Plugin     => new FAT();
+    public override bool        Partitions => true;
+
+    public override FileSystemTest[] Tests => new[]
     {
-        public Atari() : base("FAT16") {}
-
-        public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "FAT16 (Atari)");
-        public override IFilesystem Plugin     => new FAT();
-        public override bool        Partitions => true;
-
-        public override FileSystemTest[] Tests => new[]
+        new FileSystemTest
         {
-            new FileSystemTest
-            {
-                TestFile     = "tos_1.00_gem.aif",
-                MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 24576,
-                SectorSize   = 512,
-                Clusters     = 12230,
-                ClusterSize  = 1024,
-                VolumeName   = "VolumeLabel",
-                VolumeSerial = "DA6664"
-            },
-            new FileSystemTest
-            {
-                TestFile     = "tos_1.00_bgm.aif",
-                MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 262144,
-                SectorSize   = 512,
-                Clusters     = 8188,
-                ClusterSize  = 16384,
-                VolumeName   = "VolumeLabel",
-                VolumeSerial = "D0EFA1"
-            },
-            new FileSystemTest
-            {
-                TestFile     = "tos_1.02_gem.aif",
-                MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 24576,
-                SectorSize   = 512,
-                Clusters     = 12230,
-                ClusterSize  = 1024,
-                VolumeName   = "VolumeLabel",
-                VolumeSerial = "1079CC"
-            },
-            new FileSystemTest
-            {
-                TestFile     = "tos_1.02_bgm.aif",
-                MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 262144,
-                SectorSize   = 512,
-                Clusters     = 8188,
-                ClusterSize  = 16384,
-                VolumeName   = "VolumeLabel",
-                VolumeSerial = "9C65B3"
-            },
-            new FileSystemTest
-            {
-                TestFile     = "tos_1.04_gem.aif",
-                MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 24576,
-                SectorSize   = 512,
-                Clusters     = 12230,
-                ClusterSize  = 1024,
-                VolumeName   = "VolumeLabel",
-                VolumeSerial = "DD5AA6"
-            },
-            new FileSystemTest
-            {
-                TestFile     = "tos_1.04_bgm.aif",
-                MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 262144,
-                SectorSize   = 512,
-                Clusters     = 16374,
-                ClusterSize  = 8192,
-                VolumeName   = "VolumeLabel",
-                VolumeSerial = "D430E2"
-            },
-            new FileSystemTest
-            {
-                TestFile     = "tos_1.06_gem.aif",
-                MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 24576,
-                SectorSize   = 512,
-                Clusters     = 12230,
-                ClusterSize  = 1024,
-                VolumeName   = "VolumeLabel",
-                VolumeSerial = "D0599C"
-            },
-            new FileSystemTest
-            {
-                TestFile     = "tos_1.06_bgm.aif",
-                MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 262144,
-                SectorSize   = 512,
-                Clusters     = 16374,
-                ClusterSize  = 8192,
-                VolumeName   = "VolumeLabel",
-                VolumeSerial = "895043"
-            },
-            new FileSystemTest
-            {
-                TestFile     = "tos_1.62_gem.aif",
-                MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 24576,
-                SectorSize   = 512,
-                Clusters     = 12230,
-                ClusterSize  = 1024,
-                VolumeName   = "VolumeLabel",
-                VolumeSerial = "D22E19"
-            },
-            new FileSystemTest
-            {
-                TestFile     = "tos_1.62_bgm.aif",
-                MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 262144,
-                SectorSize   = 512,
-                Clusters     = 16374,
-                ClusterSize  = 8192,
-                VolumeName   = "VolumeLabel",
-                VolumeSerial = "6566D8"
-            },
-            new FileSystemTest
-            {
-                TestFile     = "tos_2.06_gem.aif",
-                MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 24576,
-                SectorSize   = 512,
-                Clusters     = 12230,
-                ClusterSize  = 1024,
-                VolumeName   = "VolumeLabel",
-                VolumeSerial = "700332"
-            },
-            new FileSystemTest
-            {
-                TestFile     = "tos_2.06_bgm.aif",
-                MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 262144,
-                SectorSize   = 512,
-                Clusters     = 16374,
-                ClusterSize  = 8192,
-                VolumeName   = "VolumeLabel",
-                VolumeSerial = "086A33"
-            }
-        };
-    }
+            TestFile     = "tos_1.00_gem.aif",
+            MediaType    = MediaType.GENERIC_HDD,
+            Sectors      = 24576,
+            SectorSize   = 512,
+            Clusters     = 12230,
+            ClusterSize  = 1024,
+            VolumeName   = "VolumeLabel",
+            VolumeSerial = "DA6664"
+        },
+        new FileSystemTest
+        {
+            TestFile     = "tos_1.00_bgm.aif",
+            MediaType    = MediaType.GENERIC_HDD,
+            Sectors      = 262144,
+            SectorSize   = 512,
+            Clusters     = 8188,
+            ClusterSize  = 16384,
+            VolumeName   = "VolumeLabel",
+            VolumeSerial = "D0EFA1"
+        },
+        new FileSystemTest
+        {
+            TestFile     = "tos_1.02_gem.aif",
+            MediaType    = MediaType.GENERIC_HDD,
+            Sectors      = 24576,
+            SectorSize   = 512,
+            Clusters     = 12230,
+            ClusterSize  = 1024,
+            VolumeName   = "VolumeLabel",
+            VolumeSerial = "1079CC"
+        },
+        new FileSystemTest
+        {
+            TestFile     = "tos_1.02_bgm.aif",
+            MediaType    = MediaType.GENERIC_HDD,
+            Sectors      = 262144,
+            SectorSize   = 512,
+            Clusters     = 8188,
+            ClusterSize  = 16384,
+            VolumeName   = "VolumeLabel",
+            VolumeSerial = "9C65B3"
+        },
+        new FileSystemTest
+        {
+            TestFile     = "tos_1.04_gem.aif",
+            MediaType    = MediaType.GENERIC_HDD,
+            Sectors      = 24576,
+            SectorSize   = 512,
+            Clusters     = 12230,
+            ClusterSize  = 1024,
+            VolumeName   = "VolumeLabel",
+            VolumeSerial = "DD5AA6"
+        },
+        new FileSystemTest
+        {
+            TestFile     = "tos_1.04_bgm.aif",
+            MediaType    = MediaType.GENERIC_HDD,
+            Sectors      = 262144,
+            SectorSize   = 512,
+            Clusters     = 16374,
+            ClusterSize  = 8192,
+            VolumeName   = "VolumeLabel",
+            VolumeSerial = "D430E2"
+        },
+        new FileSystemTest
+        {
+            TestFile     = "tos_1.06_gem.aif",
+            MediaType    = MediaType.GENERIC_HDD,
+            Sectors      = 24576,
+            SectorSize   = 512,
+            Clusters     = 12230,
+            ClusterSize  = 1024,
+            VolumeName   = "VolumeLabel",
+            VolumeSerial = "D0599C"
+        },
+        new FileSystemTest
+        {
+            TestFile     = "tos_1.06_bgm.aif",
+            MediaType    = MediaType.GENERIC_HDD,
+            Sectors      = 262144,
+            SectorSize   = 512,
+            Clusters     = 16374,
+            ClusterSize  = 8192,
+            VolumeName   = "VolumeLabel",
+            VolumeSerial = "895043"
+        },
+        new FileSystemTest
+        {
+            TestFile     = "tos_1.62_gem.aif",
+            MediaType    = MediaType.GENERIC_HDD,
+            Sectors      = 24576,
+            SectorSize   = 512,
+            Clusters     = 12230,
+            ClusterSize  = 1024,
+            VolumeName   = "VolumeLabel",
+            VolumeSerial = "D22E19"
+        },
+        new FileSystemTest
+        {
+            TestFile     = "tos_1.62_bgm.aif",
+            MediaType    = MediaType.GENERIC_HDD,
+            Sectors      = 262144,
+            SectorSize   = 512,
+            Clusters     = 16374,
+            ClusterSize  = 8192,
+            VolumeName   = "VolumeLabel",
+            VolumeSerial = "6566D8"
+        },
+        new FileSystemTest
+        {
+            TestFile     = "tos_2.06_gem.aif",
+            MediaType    = MediaType.GENERIC_HDD,
+            Sectors      = 24576,
+            SectorSize   = 512,
+            Clusters     = 12230,
+            ClusterSize  = 1024,
+            VolumeName   = "VolumeLabel",
+            VolumeSerial = "700332"
+        },
+        new FileSystemTest
+        {
+            TestFile     = "tos_2.06_bgm.aif",
+            MediaType    = MediaType.GENERIC_HDD,
+            Sectors      = 262144,
+            SectorSize   = 512,
+            Clusters     = 16374,
+            ClusterSize  = 8192,
+            VolumeName   = "VolumeLabel",
+            VolumeSerial = "086A33"
+        }
+    };
 }

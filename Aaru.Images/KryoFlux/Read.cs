@@ -41,263 +41,262 @@ using Aaru.Console;
 using Aaru.Filters;
 using Aaru.Helpers;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class KryoFlux
 {
-    public sealed partial class KryoFlux
+    /// <inheritdoc />
+    public ErrorNumber Open(IFilter imageFilter)
     {
-        /// <inheritdoc />
-        public ErrorNumber Open(IFilter imageFilter)
+        Stream stream = imageFilter.GetDataForkStream();
+        stream.Seek(0, SeekOrigin.Begin);
+
+        if(stream.Length < Marshal.SizeOf<OobBlock>())
+            return ErrorNumber.InvalidArgument;
+
+        byte[] hdr = new byte[Marshal.SizeOf<OobBlock>()];
+        stream.Read(hdr, 0, Marshal.SizeOf<OobBlock>());
+
+        OobBlock header = Marshal.ByteArrayToStructureLittleEndian<OobBlock>(hdr);
+
+        stream.Seek(-Marshal.SizeOf<OobBlock>(), SeekOrigin.End);
+
+        hdr = new byte[Marshal.SizeOf<OobBlock>()];
+        stream.Read(hdr, 0, Marshal.SizeOf<OobBlock>());
+
+        OobBlock footer = Marshal.ByteArrayToStructureLittleEndian<OobBlock>(hdr);
+
+        if(header.blockId   != BlockIds.Oob    ||
+           header.blockType != OobTypes.KFInfo ||
+           footer.blockId   != BlockIds.Oob    ||
+           footer.blockType != OobTypes.EOF    ||
+           footer.length    != 0x0D0D)
+            return ErrorNumber.InvalidArgument;
+
+        // TODO: This is supposing NoFilter, shouldn't
+        tracks = new SortedDictionary<byte, IFilter>();
+        byte step    = 1;
+        byte heads   = 2;
+        bool topHead = false;
+
+        string basename = Path.Combine(imageFilter.ParentFolder,
+                                       imageFilter.Filename.Substring(0, imageFilter.Filename.Length - 8));
+
+        for(byte t = 0; t < 166; t += step)
         {
-            Stream stream = imageFilter.GetDataForkStream();
-            stream.Seek(0, SeekOrigin.Begin);
+            int cylinder = t / heads;
+            int head     = topHead ? 1 : t % heads;
 
-            if(stream.Length < Marshal.SizeOf<OobBlock>())
-                return ErrorNumber.InvalidArgument;
+            string trackfile = Directory.Exists(basename) ? Path.Combine(basename, $"{cylinder:D2}.{head:D1}.raw")
+                                   : $"{basename}{cylinder:D2}.{head:D1}.raw";
 
-            byte[] hdr = new byte[Marshal.SizeOf<OobBlock>()];
-            stream.Read(hdr, 0, Marshal.SizeOf<OobBlock>());
-
-            OobBlock header = Marshal.ByteArrayToStructureLittleEndian<OobBlock>(hdr);
-
-            stream.Seek(-Marshal.SizeOf<OobBlock>(), SeekOrigin.End);
-
-            hdr = new byte[Marshal.SizeOf<OobBlock>()];
-            stream.Read(hdr, 0, Marshal.SizeOf<OobBlock>());
-
-            OobBlock footer = Marshal.ByteArrayToStructureLittleEndian<OobBlock>(hdr);
-
-            if(header.blockId   != BlockIds.Oob    ||
-               header.blockType != OobTypes.KFInfo ||
-               footer.blockId   != BlockIds.Oob    ||
-               footer.blockType != OobTypes.EOF    ||
-               footer.length    != 0x0D0D)
-                return ErrorNumber.InvalidArgument;
-
-            // TODO: This is supposing NoFilter, shouldn't
-            tracks = new SortedDictionary<byte, IFilter>();
-            byte step    = 1;
-            byte heads   = 2;
-            bool topHead = false;
-
-            string basename = Path.Combine(imageFilter.ParentFolder,
-                                           imageFilter.Filename.Substring(0, imageFilter.Filename.Length - 8));
-
-            for(byte t = 0; t < 166; t += step)
-            {
-                int cylinder = t / heads;
-                int head     = topHead ? 1 : t % heads;
-
-                string trackfile = Directory.Exists(basename) ? Path.Combine(basename, $"{cylinder:D2}.{head:D1}.raw")
-                                       : $"{basename}{cylinder:D2}.{head:D1}.raw";
-
-                if(!File.Exists(trackfile))
-                    if(cylinder == 0)
-                    {
-                        if(head == 0)
-                        {
-                            AaruConsole.DebugWriteLine("KryoFlux plugin",
-                                                       "Cannot find cyl 0 hd 0, supposing only top head was dumped");
-
-                            topHead = true;
-                            heads   = 1;
-
-                            continue;
-                        }
-
-                        AaruConsole.DebugWriteLine("KryoFlux plugin",
-                                                   "Cannot find cyl 0 hd 1, supposing only bottom head was dumped");
-
-                        heads = 1;
-
-                        continue;
-                    }
-                    else if(cylinder == 1)
-                    {
-                        AaruConsole.DebugWriteLine("KryoFlux plugin", "Cannot find cyl 1, supposing double stepping");
-                        step = 2;
-
-                        continue;
-                    }
-                    else
-                    {
-                        AaruConsole.DebugWriteLine("KryoFlux plugin", "Arrived end of disk at cylinder {0}", cylinder);
-
-                        break;
-                    }
-
-                var         trackFilter = new ZZZNoFilter();
-                ErrorNumber errno       = trackFilter.Open(trackfile);
-
-                if(errno != ErrorNumber.NoError)
-                    return errno;
-
-                _imageInfo.CreationTime         = DateTime.MaxValue;
-                _imageInfo.LastModificationTime = DateTime.MinValue;
-
-                Stream trackStream = trackFilter.GetDataForkStream();
-
-                while(trackStream.Position < trackStream.Length)
+            if(!File.Exists(trackfile))
+                if(cylinder == 0)
                 {
-                    byte blockId = (byte)trackStream.ReadByte();
-
-                    switch(blockId)
+                    if(head == 0)
                     {
-                        case (byte)BlockIds.Oob:
+                        AaruConsole.DebugWriteLine("KryoFlux plugin",
+                                                   "Cannot find cyl 0 hd 0, supposing only top head was dumped");
+
+                        topHead = true;
+                        heads   = 1;
+
+                        continue;
+                    }
+
+                    AaruConsole.DebugWriteLine("KryoFlux plugin",
+                                               "Cannot find cyl 0 hd 1, supposing only bottom head was dumped");
+
+                    heads = 1;
+
+                    continue;
+                }
+                else if(cylinder == 1)
+                {
+                    AaruConsole.DebugWriteLine("KryoFlux plugin", "Cannot find cyl 1, supposing double stepping");
+                    step = 2;
+
+                    continue;
+                }
+                else
+                {
+                    AaruConsole.DebugWriteLine("KryoFlux plugin", "Arrived end of disk at cylinder {0}", cylinder);
+
+                    break;
+                }
+
+            var         trackFilter = new ZZZNoFilter();
+            ErrorNumber errno       = trackFilter.Open(trackfile);
+
+            if(errno != ErrorNumber.NoError)
+                return errno;
+
+            _imageInfo.CreationTime         = DateTime.MaxValue;
+            _imageInfo.LastModificationTime = DateTime.MinValue;
+
+            Stream trackStream = trackFilter.GetDataForkStream();
+
+            while(trackStream.Position < trackStream.Length)
+            {
+                byte blockId = (byte)trackStream.ReadByte();
+
+                switch(blockId)
+                {
+                    case (byte)BlockIds.Oob:
+                    {
+                        trackStream.Position--;
+
+                        byte[] oob = new byte[Marshal.SizeOf<OobBlock>()];
+                        trackStream.Read(oob, 0, Marshal.SizeOf<OobBlock>());
+
+                        OobBlock oobBlk = Marshal.ByteArrayToStructureLittleEndian<OobBlock>(oob);
+
+                        if(oobBlk.blockType == OobTypes.EOF)
                         {
-                            trackStream.Position--;
-
-                            byte[] oob = new byte[Marshal.SizeOf<OobBlock>()];
-                            trackStream.Read(oob, 0, Marshal.SizeOf<OobBlock>());
-
-                            OobBlock oobBlk = Marshal.ByteArrayToStructureLittleEndian<OobBlock>(oob);
-
-                            if(oobBlk.blockType == OobTypes.EOF)
-                            {
-                                trackStream.Position = trackStream.Length;
-
-                                break;
-                            }
-
-                            if(oobBlk.blockType != OobTypes.KFInfo)
-                            {
-                                trackStream.Position += oobBlk.length;
-
-                                break;
-                            }
-
-                            byte[] kfinfo = new byte[oobBlk.length];
-                            trackStream.Read(kfinfo, 0, oobBlk.length);
-                            string kfinfoStr = StringHandlers.CToString(kfinfo);
-
-                            string[] lines = kfinfoStr.Split(new[]
-                            {
-                                ','
-                            }, StringSplitOptions.RemoveEmptyEntries);
-
-                            DateTime blockDate = DateTime.Now;
-                            DateTime blockTime = DateTime.Now;
-                            bool     foundDate = false;
-
-                            foreach(string[] kvp in lines.Select(line => line.Split('=')).Where(kvp => kvp.Length == 2))
-                            {
-                                kvp[0] = kvp[0].Trim();
-                                kvp[1] = kvp[1].Trim();
-                                AaruConsole.DebugWriteLine("KryoFlux plugin", "\"{0}\" = \"{1}\"", kvp[0], kvp[1]);
-
-                                switch(kvp[0])
-                                {
-                                    case HOST_DATE:
-                                        if(DateTime.TryParseExact(kvp[1], "yyyy.MM.dd", CultureInfo.InvariantCulture,
-                                                                  DateTimeStyles.AssumeLocal, out blockDate))
-                                            foundDate = true;
-
-                                        break;
-                                    case HOST_TIME:
-                                        DateTime.TryParseExact(kvp[1], "HH:mm:ss", CultureInfo.InvariantCulture,
-                                                               DateTimeStyles.AssumeLocal, out blockTime);
-
-                                        break;
-                                    case KF_NAME:
-                                        _imageInfo.Application = kvp[1];
-
-                                        break;
-                                    case KF_VERSION:
-                                        _imageInfo.ApplicationVersion = kvp[1];
-
-                                        break;
-                                }
-                            }
-
-                            if(foundDate)
-                            {
-                                var blockTimestamp = new DateTime(blockDate.Year, blockDate.Month, blockDate.Day,
-                                                                  blockTime.Hour, blockTime.Minute, blockTime.Second);
-
-                                AaruConsole.DebugWriteLine("KryoFlux plugin", "Found timestamp: {0}", blockTimestamp);
-
-                                if(blockTimestamp < Info.CreationTime)
-                                    _imageInfo.CreationTime = blockTimestamp;
-
-                                if(blockTimestamp > Info.LastModificationTime)
-                                    _imageInfo.LastModificationTime = blockTimestamp;
-                            }
+                            trackStream.Position = trackStream.Length;
 
                             break;
                         }
-                        case (byte)BlockIds.Flux2:
-                        case (byte)BlockIds.Flux2_1:
-                        case (byte)BlockIds.Flux2_2:
-                        case (byte)BlockIds.Flux2_3:
-                        case (byte)BlockIds.Flux2_4:
-                        case (byte)BlockIds.Flux2_5:
-                        case (byte)BlockIds.Flux2_6:
-                        case (byte)BlockIds.Flux2_7:
-                        case (byte)BlockIds.Nop2:
-                            trackStream.Position++;
 
-                            continue;
-                        case (byte)BlockIds.Nop3:
-                        case (byte)BlockIds.Flux3:
-                            trackStream.Position += 2;
+                        if(oobBlk.blockType != OobTypes.KFInfo)
+                        {
+                            trackStream.Position += oobBlk.length;
 
-                            continue;
-                        default: continue;
+                            break;
+                        }
+
+                        byte[] kfinfo = new byte[oobBlk.length];
+                        trackStream.Read(kfinfo, 0, oobBlk.length);
+                        string kfinfoStr = StringHandlers.CToString(kfinfo);
+
+                        string[] lines = kfinfoStr.Split(new[]
+                        {
+                            ','
+                        }, StringSplitOptions.RemoveEmptyEntries);
+
+                        DateTime blockDate = DateTime.Now;
+                        DateTime blockTime = DateTime.Now;
+                        bool     foundDate = false;
+
+                        foreach(string[] kvp in lines.Select(line => line.Split('=')).Where(kvp => kvp.Length == 2))
+                        {
+                            kvp[0] = kvp[0].Trim();
+                            kvp[1] = kvp[1].Trim();
+                            AaruConsole.DebugWriteLine("KryoFlux plugin", "\"{0}\" = \"{1}\"", kvp[0], kvp[1]);
+
+                            switch(kvp[0])
+                            {
+                                case HOST_DATE:
+                                    if(DateTime.TryParseExact(kvp[1], "yyyy.MM.dd", CultureInfo.InvariantCulture,
+                                                              DateTimeStyles.AssumeLocal, out blockDate))
+                                        foundDate = true;
+
+                                    break;
+                                case HOST_TIME:
+                                    DateTime.TryParseExact(kvp[1], "HH:mm:ss", CultureInfo.InvariantCulture,
+                                                           DateTimeStyles.AssumeLocal, out blockTime);
+
+                                    break;
+                                case KF_NAME:
+                                    _imageInfo.Application = kvp[1];
+
+                                    break;
+                                case KF_VERSION:
+                                    _imageInfo.ApplicationVersion = kvp[1];
+
+                                    break;
+                            }
+                        }
+
+                        if(foundDate)
+                        {
+                            var blockTimestamp = new DateTime(blockDate.Year, blockDate.Month, blockDate.Day,
+                                                              blockTime.Hour, blockTime.Minute, blockTime.Second);
+
+                            AaruConsole.DebugWriteLine("KryoFlux plugin", "Found timestamp: {0}", blockTimestamp);
+
+                            if(blockTimestamp < Info.CreationTime)
+                                _imageInfo.CreationTime = blockTimestamp;
+
+                            if(blockTimestamp > Info.LastModificationTime)
+                                _imageInfo.LastModificationTime = blockTimestamp;
+                        }
+
+                        break;
                     }
-                }
+                    case (byte)BlockIds.Flux2:
+                    case (byte)BlockIds.Flux2_1:
+                    case (byte)BlockIds.Flux2_2:
+                    case (byte)BlockIds.Flux2_3:
+                    case (byte)BlockIds.Flux2_4:
+                    case (byte)BlockIds.Flux2_5:
+                    case (byte)BlockIds.Flux2_6:
+                    case (byte)BlockIds.Flux2_7:
+                    case (byte)BlockIds.Nop2:
+                        trackStream.Position++;
 
-                tracks.Add(t, trackFilter);
+                        continue;
+                    case (byte)BlockIds.Nop3:
+                    case (byte)BlockIds.Flux3:
+                        trackStream.Position += 2;
+
+                        continue;
+                    default: continue;
+                }
             }
 
-            _imageInfo.Heads     = heads;
-            _imageInfo.Cylinders = (uint)(tracks.Count / heads);
-
-            AaruConsole.ErrorWriteLine("Flux decoding is not yet implemented.");
-
-            return ErrorNumber.NotImplemented;
+            tracks.Add(t, trackFilter);
         }
 
-        /// <inheritdoc />
-        public ErrorNumber ReadMediaTag(MediaTagType tag, out byte[] buffer)
-        {
-            buffer = null;
+        _imageInfo.Heads     = heads;
+        _imageInfo.Cylinders = (uint)(tracks.Count / heads);
 
-            return ErrorNumber.NotImplemented;
-        }
+        AaruConsole.ErrorWriteLine("Flux decoding is not yet implemented.");
 
-        /// <inheritdoc />
-        public ErrorNumber ReadSector(ulong sectorAddress, out byte[] buffer) =>
-            ReadSectors(sectorAddress, 1, out buffer);
+        return ErrorNumber.NotImplemented;
+    }
 
-        /// <inheritdoc />
-        public ErrorNumber ReadSectorTag(ulong sectorAddress, SectorTagType tag, out byte[] buffer) =>
-            ReadSectorsTag(sectorAddress, 1, tag, out buffer);
+    /// <inheritdoc />
+    public ErrorNumber ReadMediaTag(MediaTagType tag, out byte[] buffer)
+    {
+        buffer = null;
 
-        /// <inheritdoc />
-        public ErrorNumber ReadSectors(ulong sectorAddress, uint length, out byte[] buffer)
-        {
-            buffer = null;
+        return ErrorNumber.NotImplemented;
+    }
 
-            return ErrorNumber.NotImplemented;
-        }
+    /// <inheritdoc />
+    public ErrorNumber ReadSector(ulong sectorAddress, out byte[] buffer) =>
+        ReadSectors(sectorAddress, 1, out buffer);
 
-        /// <inheritdoc />
-        public ErrorNumber ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag, out byte[] buffer)
-        {
-            buffer = null;
+    /// <inheritdoc />
+    public ErrorNumber ReadSectorTag(ulong sectorAddress, SectorTagType tag, out byte[] buffer) =>
+        ReadSectorsTag(sectorAddress, 1, tag, out buffer);
 
-            return ErrorNumber.NotImplemented;
-        }
+    /// <inheritdoc />
+    public ErrorNumber ReadSectors(ulong sectorAddress, uint length, out byte[] buffer)
+    {
+        buffer = null;
 
-        /// <inheritdoc />
-        public ErrorNumber ReadSectorLong(ulong sectorAddress, out byte[] buffer) =>
-            ReadSectorsLong(sectorAddress, 1, out buffer);
+        return ErrorNumber.NotImplemented;
+    }
 
-        /// <inheritdoc />
-        public ErrorNumber ReadSectorsLong(ulong sectorAddress, uint length, out byte[] buffer)
-        {
-            buffer = null;
+    /// <inheritdoc />
+    public ErrorNumber ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag, out byte[] buffer)
+    {
+        buffer = null;
 
-            return ErrorNumber.NotImplemented;
-        }
+        return ErrorNumber.NotImplemented;
+    }
+
+    /// <inheritdoc />
+    public ErrorNumber ReadSectorLong(ulong sectorAddress, out byte[] buffer) =>
+        ReadSectorsLong(sectorAddress, 1, out buffer);
+
+    /// <inheritdoc />
+    public ErrorNumber ReadSectorsLong(ulong sectorAddress, uint length, out byte[] buffer)
+    {
+        buffer = null;
+
+        return ErrorNumber.NotImplemented;
     }
 }

@@ -33,78 +33,77 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class Udif
 {
-    public sealed partial class Udif
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    struct Footer
     {
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct Footer
-        {
-            public          uint  signature;
-            public          uint  version;
-            public          uint  headerSize;
-            public          uint  flags;
-            public readonly ulong runningDataForkOff;
-            public readonly ulong dataForkOff;
-            public          ulong dataForkLen;
-            public readonly ulong rsrcForkOff;
-            public readonly ulong rsrcForkLen;
-            public          uint  segmentNumber;
-            public          uint  segmentCount;
-            public          Guid  segmentId;
-            public          uint  dataForkChkType;
-            public          uint  dataForkChkLen;
-            public          uint  dataForkChk;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 124)]
-            public readonly byte[] reserved1;
-            public ulong plistOff;
-            public ulong plistLen;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 120)]
-            public readonly byte[] reserved2;
-            public readonly uint masterChkType;
-            public readonly uint masterChkLen;
-            public readonly uint masterChk;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 124)]
-            public readonly byte[] reserved3;
-            public uint  imageVariant;
-            public ulong sectorCount;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)]
-            public readonly byte[] reserved4;
-        }
+        public          uint  signature;
+        public          uint  version;
+        public          uint  headerSize;
+        public          uint  flags;
+        public readonly ulong runningDataForkOff;
+        public readonly ulong dataForkOff;
+        public          ulong dataForkLen;
+        public readonly ulong rsrcForkOff;
+        public readonly ulong rsrcForkLen;
+        public          uint  segmentNumber;
+        public          uint  segmentCount;
+        public          Guid  segmentId;
+        public          uint  dataForkChkType;
+        public          uint  dataForkChkLen;
+        public          uint  dataForkChk;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 124)]
+        public readonly byte[] reserved1;
+        public ulong plistOff;
+        public ulong plistLen;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 120)]
+        public readonly byte[] reserved2;
+        public readonly uint masterChkType;
+        public readonly uint masterChkLen;
+        public readonly uint masterChk;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 124)]
+        public readonly byte[] reserved3;
+        public uint  imageVariant;
+        public ulong sectorCount;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)]
+        public readonly byte[] reserved4;
+    }
 
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct BlockHeader
-        {
-            public          uint  signature;
-            public          uint  version;
-            public readonly ulong sectorStart;
-            public          ulong sectorCount;
-            public readonly ulong dataOffset;
-            public readonly uint  buffers;
-            public readonly uint  descriptor;
-            public readonly uint  reserved1;
-            public readonly uint  reserved2;
-            public readonly uint  reserved3;
-            public readonly uint  reserved4;
-            public readonly uint  reserved5;
-            public readonly uint  reserved6;
-            public          uint  checksumType;
-            public          uint  checksumLen;
-            public          uint  checksum;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 124)]
-            public readonly byte[] reservedChk;
-            public uint chunks;
-        }
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    struct BlockHeader
+    {
+        public          uint  signature;
+        public          uint  version;
+        public readonly ulong sectorStart;
+        public          ulong sectorCount;
+        public readonly ulong dataOffset;
+        public readonly uint  buffers;
+        public readonly uint  descriptor;
+        public readonly uint  reserved1;
+        public readonly uint  reserved2;
+        public readonly uint  reserved3;
+        public readonly uint  reserved4;
+        public readonly uint  reserved5;
+        public readonly uint  reserved6;
+        public          uint  checksumType;
+        public          uint  checksumLen;
+        public          uint  checksum;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 124)]
+        public readonly byte[] reservedChk;
+        public uint chunks;
+    }
 
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct BlockChunk
-        {
-            public          uint  type;
-            public readonly uint  comment;
-            public          ulong sector;
-            public          ulong sectors;
-            public          ulong offset;
-            public          ulong length;
-        }
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    struct BlockChunk
+    {
+        public          uint  type;
+        public readonly uint  comment;
+        public          ulong sector;
+        public          ulong sectors;
+        public          ulong offset;
+        public          ulong length;
     }
 }

@@ -30,52 +30,51 @@ using Aaru.Console;
 using Aaru.Devices;
 using Aaru.Tests.Devices.SecureDigital;
 
-namespace Aaru.Tests.Devices
+namespace Aaru.Tests.Devices;
+
+internal static partial class MainClass
 {
-    internal static partial class MainClass
+    public static void SecureDigital(string devPath, Device dev)
     {
-        public static void SecureDigital(string devPath, Device dev)
+        while(true)
         {
-            while(true)
+            System.Console.Clear();
+            AaruConsole.WriteLine("Device: {0}", devPath);
+            AaruConsole.WriteLine("Send an SecureDigital/MultiMediaCard command to the device:");
+            AaruConsole.WriteLine("1.- Send a SecureDigital command to the device.");
+            AaruConsole.WriteLine("2.- Send a MultiMediaCard command to the device.");
+            AaruConsole.WriteLine("0.- Return to command class menu.");
+            AaruConsole.Write("Choose: ");
+
+            string strDev = System.Console.ReadLine();
+
+            if(!int.TryParse(strDev, out int item))
             {
-                System.Console.Clear();
-                AaruConsole.WriteLine("Device: {0}", devPath);
-                AaruConsole.WriteLine("Send an SecureDigital/MultiMediaCard command to the device:");
-                AaruConsole.WriteLine("1.- Send a SecureDigital command to the device.");
-                AaruConsole.WriteLine("2.- Send a MultiMediaCard command to the device.");
-                AaruConsole.WriteLine("0.- Return to command class menu.");
-                AaruConsole.Write("Choose: ");
+                AaruConsole.WriteLine("Not a number. Press any key to continue...");
+                System.Console.ReadKey();
 
-                string strDev = System.Console.ReadLine();
+                continue;
+            }
 
-                if(!int.TryParse(strDev, out int item))
-                {
-                    AaruConsole.WriteLine("Not a number. Press any key to continue...");
+            switch(item)
+            {
+                case 0:
+                    AaruConsole.WriteLine("Returning to command class menu...");
+
+                    return;
+                case 1:
+                    Devices.SecureDigital.SecureDigital.Menu(devPath, dev);
+
+                    continue;
+                case 2:
+                    MultiMediaCard.Menu(devPath, dev);
+
+                    continue;
+                default:
+                    AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
                     System.Console.ReadKey();
 
                     continue;
-                }
-
-                switch(item)
-                {
-                    case 0:
-                        AaruConsole.WriteLine("Returning to command class menu...");
-
-                        return;
-                    case 1:
-                        Devices.SecureDigital.SecureDigital.Menu(devPath, dev);
-
-                        continue;
-                    case 2:
-                        MultiMediaCard.Menu(devPath, dev);
-
-                        continue;
-                    default:
-                        AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                        System.Console.ReadKey();
-
-                        continue;
-                }
             }
         }
     }

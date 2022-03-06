@@ -29,14 +29,13 @@
 using Aaru.Console;
 using Aaru.Devices;
 
-namespace Aaru.Tests.Devices
+namespace Aaru.Tests.Devices;
+
+internal static partial class MainClass
 {
-    internal static partial class MainClass
+    public static void NVMe(string devPath, Device dev)
     {
-        public static void NVMe(string devPath, Device dev)
-        {
-            AaruConsole.WriteLine("NVMe commands not yet implemented. Press any key to continue...");
-            System.Console.ReadKey();
-        }
+        AaruConsole.WriteLine("NVMe commands not yet implemented. Press any key to continue...");
+        System.Console.ReadKey();
     }
 }

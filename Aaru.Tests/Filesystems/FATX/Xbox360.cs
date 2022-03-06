@@ -32,31 +32,30 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Filesystems.FATX
+namespace Aaru.Tests.Filesystems.FATX;
+
+[TestFixture]
+public class Xbox360 : ReadOnlyFilesystemTest
 {
-    [TestFixture]
-    public class Xbox360 : ReadOnlyFilesystemTest
+    public Xbox360() : base("FATX filesystem") {}
+
+    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Xbox FAT16", "be");
+
+    public override IFilesystem Plugin     => new XboxFatPlugin();
+    public override bool        Partitions => true;
+
+    public override FileSystemTest[] Tests => new[]
     {
-        public Xbox360() : base("FATX filesystem") {}
-
-        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Xbox FAT16", "be");
-
-        public override IFilesystem Plugin     => new XboxFatPlugin();
-        public override bool        Partitions => true;
-
-        public override FileSystemTest[] Tests => new[]
+        new FileSystemTest
         {
-            new FileSystemTest
-            {
-                TestFile     = "microsoft256mb.img.lz",
-                MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 491520,
-                SectorSize   = 512,
-                Clusters     = 14848,
-                ClusterSize  = 16384,
-                VolumeName   = "",
-                VolumeSerial = "66C2E9D0"
-            }
-        };
-    }
+            TestFile     = "microsoft256mb.img.lz",
+            MediaType    = MediaType.GENERIC_HDD,
+            Sectors      = 491520,
+            SectorSize   = 512,
+            Clusters     = 14848,
+            ClusterSize  = 16384,
+            VolumeName   = "",
+            VolumeSerial = "66C2E9D0"
+        }
+    };
 }

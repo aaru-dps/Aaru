@@ -32,21 +32,20 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-namespace Aaru.Filesystems
+namespace Aaru.Filesystems;
+
+// Information from Inside Macintosh Volume II
+[SuppressMessage("ReSharper", "UnusedMember.Local")]
+public sealed partial class AppleMFS
 {
-    // Information from Inside Macintosh Volume II
-    [SuppressMessage("ReSharper", "UnusedMember.Local")]
-    public sealed partial class AppleMFS
-    {
-        const ushort MFS_MAGIC = 0xD2D7;
+    const ushort MFS_MAGIC = 0xD2D7;
 
-        const short DIRID_TRASH    = -3;
-        const short DIRID_DESKTOP  = -2;
-        const short DIRID_TEMPLATE = -1;
-        const short DIRID_ROOT     = 0;
+    const short DIRID_TRASH    = -3;
+    const short DIRID_DESKTOP  = -2;
+    const short DIRID_TEMPLATE = -1;
+    const short DIRID_ROOT     = 0;
 
-        const int BMAP_FREE = 0;
-        const int BMAP_LAST = 1;
-        const int BMAP_DIR  = 0xFFF;
-    }
+    const int BMAP_FREE = 0;
+    const int BMAP_LAST = 1;
+    const int BMAP_DIR  = 0xFFF;
 }

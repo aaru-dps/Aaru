@@ -31,33 +31,32 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Images.QEMU
-{
-    [TestFixture]
-    public class Parallels : BlockMediaImageTest
-    {
-        public override string DataFolder =>
-            Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "QEMU", "Parallels");
-        public override IMediaImage _plugin => new DiscImages.Parallels();
+namespace Aaru.Tests.Images.QEMU;
 
-        public override BlockImageTestExpected[] Tests => new[]
+[TestFixture]
+public class Parallels : BlockMediaImageTest
+{
+    public override string DataFolder =>
+        Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "QEMU", "Parallels");
+    public override IMediaImage _plugin => new DiscImages.Parallels();
+
+    public override BlockImageTestExpected[] Tests => new[]
+    {
+        new BlockImageTestExpected
         {
-            new BlockImageTestExpected
+            TestFile   = "parallels.hdd.lz",
+            MediaType  = MediaType.GENERIC_HDD,
+            Sectors    = 251904,
+            SectorSize = 512,
+            MD5        = "4bfc9e9e2dd86aa52ef709e77d2617ed",
+            Partitions = new[]
             {
-                TestFile   = "parallels.hdd.lz",
-                MediaType  = MediaType.GENERIC_HDD,
-                Sectors    = 251904,
-                SectorSize = 512,
-                MD5        = "4bfc9e9e2dd86aa52ef709e77d2617ed",
-                Partitions = new[]
+                new BlockPartitionVolumes
                 {
-                    new BlockPartitionVolumes
-                    {
-                        Start  = 63,
-                        Length = 251841
-                    }
+                    Start  = 63,
+                    Length = 251841
                 }
             }
-        };
-    }
+        }
+    };
 }

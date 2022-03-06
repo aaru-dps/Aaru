@@ -35,64 +35,63 @@ using Aaru.Filters;
 using FluentAssertions.Execution;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Devices
+namespace Aaru.Tests.Devices;
+
+[TestFixture]
+public class PocketZip
 {
-    [TestFixture]
-    public class PocketZip
+    readonly string[] _testFiles =
     {
-        readonly string[] _testFiles =
+        "clik!.bin.lz", "pocketzip.bin.lz"
+    };
+
+    readonly MediaType[] _mediaTypes =
+    {
+        MediaType.PocketZip, MediaType.PocketZip
+    };
+
+    readonly ulong[] _sectors =
+    {
+        78882, 78882
+    };
+
+    readonly uint[] _sectorSize =
+    {
+        512, 512
+    };
+
+    readonly string _dataFolder = Path.Combine(Consts.TEST_FILES_ROOT, "Device test dumps", "PocketZIP");
+
+    [Test]
+    public void Info()
+    {
+        Environment.CurrentDirectory = _dataFolder;
+
+        Assert.Multiple(() =>
         {
-            "clik!.bin.lz", "pocketzip.bin.lz"
-        };
-
-        readonly MediaType[] _mediaTypes =
-        {
-            MediaType.PocketZip, MediaType.PocketZip
-        };
-
-        readonly ulong[] _sectors =
-        {
-            78882, 78882
-        };
-
-        readonly uint[] _sectorSize =
-        {
-            512, 512
-        };
-
-        readonly string _dataFolder = Path.Combine(Consts.TEST_FILES_ROOT, "Device test dumps", "PocketZIP");
-
-        [Test]
-        public void Info()
-        {
-            Environment.CurrentDirectory = _dataFolder;
-
-            Assert.Multiple(() =>
+            for(int i = 0; i < _testFiles.Length; i++)
             {
-                for(int i = 0; i < _testFiles.Length; i++)
+                var filter = new LZip();
+                filter.Open(_testFiles[i]);
+
+                var         image  = new ZZZRawImage();
+                ErrorNumber opened = image.Open(filter);
+
+                Assert.AreEqual(ErrorNumber.NoError, opened, $"Open: {_testFiles[i]}");
+
+                if(opened != ErrorNumber.NoError)
+                    continue;
+
+                using(new AssertionScope())
                 {
-                    var filter = new LZip();
-                    filter.Open(_testFiles[i]);
-
-                    var         image  = new ZZZRawImage();
-                    ErrorNumber opened = image.Open(filter);
-
-                    Assert.AreEqual(ErrorNumber.NoError, opened, $"Open: {_testFiles[i]}");
-
-                    if(opened != ErrorNumber.NoError)
-                        continue;
-
-                    using(new AssertionScope())
+                    Assert.Multiple(() =>
                     {
-                        Assert.Multiple(() =>
-                        {
-                            Assert.AreEqual(_sectors[i], image.Info.Sectors, $"Sectors: {_testFiles[i]}");
-                            Assert.AreEqual(_sectorSize[i], image.Info.SectorSize, $"Sector size: {_testFiles[i]}");
-                            Assert.AreEqual(_mediaTypes[i], image.Info.MediaType, $"Media type: {_testFiles[i]}");
-                        });
-                    }
+                        Assert.AreEqual(_sectors[i], image.Info.Sectors, $"Sectors: {_testFiles[i]}");
+                        Assert.AreEqual(_sectorSize[i], image.Info.SectorSize, $"Sector size: {_testFiles[i]}");
+                        Assert.AreEqual(_mediaTypes[i], image.Info.MediaType, $"Media type: {_testFiles[i]}");
+                    });
                 }
-            });
-        }
+            }
+        });
     }
 }

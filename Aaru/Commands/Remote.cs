@@ -41,91 +41,90 @@ using Aaru.Core;
 using Spectre.Console;
 using Remote = Aaru.Devices.Remote.Remote;
 
-namespace Aaru.Commands
+namespace Aaru.Commands;
+
+internal sealed class RemoteCommand : Command
 {
-    internal sealed class RemoteCommand : Command
+    public RemoteCommand() : base("remote", "Tests connection to a Aaru Remote Server.")
     {
-        public RemoteCommand() : base("remote", "Tests connection to a Aaru Remote Server.")
+        AddArgument(new Argument<string>
         {
-            AddArgument(new Argument<string>
+            Arity       = ArgumentArity.ExactlyOne,
+            Description = "aaru host",
+            Name        = "host"
+        });
+
+        Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
+    }
+
+    public static int Invoke(bool debug, bool verbose, string host)
+    {
+        MainClass.PrintCopyright();
+
+        if(debug)
+        {
+            IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
             {
-                Arity       = ArgumentArity.ExactlyOne,
-                Description = "aaru host",
-                Name        = "host"
+                Out = new AnsiConsoleOutput(System.Console.Error)
             });
 
-            Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
+            AaruConsole.DebugWriteLineEvent += (format, objects) =>
+            {
+                if(objects is null)
+                    stderrConsole.MarkupLine(format);
+                else
+                    stderrConsole.MarkupLine(format, objects);
+            };
         }
 
-        public static int Invoke(bool debug, bool verbose, string host)
+        if(verbose)
+            AaruConsole.WriteEvent += (format, objects) =>
+            {
+                if(objects is null)
+                    AnsiConsole.Markup(format);
+                else
+                    AnsiConsole.Markup(format, objects);
+            };
+
+        Statistics.AddCommand("remote");
+
+        AaruConsole.DebugWriteLine("Remote command", "--debug={0}", debug);
+        AaruConsole.DebugWriteLine("Remote command", "--host={0}", host);
+        AaruConsole.DebugWriteLine("Remote command", "--verbose={0}", verbose);
+
+        try
         {
-            MainClass.PrintCopyright();
+            var remote = new Remote(new Uri(host));
 
-            if(debug)
+            Statistics.AddRemote(remote.ServerApplication, remote.ServerVersion, remote.ServerOperatingSystem,
+                                 remote.ServerOperatingSystemVersion, remote.ServerArchitecture);
+
+            Table table = new()
             {
-                IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
-                {
-                    Out = new AnsiConsoleOutput(System.Console.Error)
-                });
+                Title = new TableTitle("Server information")
+            };
 
-                AaruConsole.DebugWriteLineEvent += (format, objects) =>
-                {
-                    if(objects is null)
-                        stderrConsole.MarkupLine(format);
-                    else
-                        stderrConsole.MarkupLine(format, objects);
-                };
-            }
+            table.AddColumn("");
+            table.AddColumn("");
+            table.Columns[0].RightAligned();
 
-            if(verbose)
-                AaruConsole.WriteEvent += (format, objects) =>
-                {
-                    if(objects is null)
-                        AnsiConsole.Markup(format);
-                    else
-                        AnsiConsole.Markup(format, objects);
-                };
+            table.AddRow("Server application", $"{remote.ServerApplication} {remote.ServerVersion}");
 
-            Statistics.AddCommand("remote");
+            table.AddRow("Server operating system",
+                         $"{remote.ServerOperatingSystem} {remote.ServerOperatingSystemVersion} ({remote.ServerArchitecture})");
 
-            AaruConsole.DebugWriteLine("Remote command", "--debug={0}", debug);
-            AaruConsole.DebugWriteLine("Remote command", "--host={0}", host);
-            AaruConsole.DebugWriteLine("Remote command", "--verbose={0}", verbose);
+            table.AddRow("Server maximum protocol", $"{remote.ServerProtocolVersion}");
 
-            try
-            {
-                var remote = new Remote(new Uri(host));
-
-                Statistics.AddRemote(remote.ServerApplication, remote.ServerVersion, remote.ServerOperatingSystem,
-                                     remote.ServerOperatingSystemVersion, remote.ServerArchitecture);
-
-                Table table = new()
-                {
-                    Title = new TableTitle("Server information")
-                };
-
-                table.AddColumn("");
-                table.AddColumn("");
-                table.Columns[0].RightAligned();
-
-                table.AddRow("Server application", $"{remote.ServerApplication} {remote.ServerVersion}");
-
-                table.AddRow("Server operating system",
-                             $"{remote.ServerOperatingSystem} {remote.ServerOperatingSystemVersion} ({remote.ServerArchitecture})");
-
-                table.AddRow("Server maximum protocol", $"{remote.ServerProtocolVersion}");
-
-                AnsiConsole.Render(table);
-                remote.Disconnect();
-            }
-            catch(Exception)
-            {
-                AaruConsole.ErrorWriteLine("Error connecting to host.");
-
-                return (int)ErrorNumber.CannotOpenDevice;
-            }
-
-            return (int)ErrorNumber.NoError;
+            AnsiConsole.Render(table);
+            remote.Disconnect();
         }
+        catch(Exception)
+        {
+            AaruConsole.ErrorWriteLine("Error connecting to host.");
+
+            return (int)ErrorNumber.CannotOpenDevice;
+        }
+
+        return (int)ErrorNumber.NoError;
     }
 }

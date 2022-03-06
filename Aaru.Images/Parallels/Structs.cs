@@ -32,40 +32,39 @@
 
 using System.Runtime.InteropServices;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class Parallels
 {
-    public sealed partial class Parallels
+    /// <summary>Parallels disk image header, little-endian</summary>
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    struct Header
     {
-        /// <summary>Parallels disk image header, little-endian</summary>
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct Header
-        {
-            /// <summary>Magic, <see cref="Parallels._magic" /> or <see cref="Parallels._extMagic" /></summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public byte[] magic;
-            /// <summary>Version</summary>
-            public uint version;
-            /// <summary>Disk geometry parameter</summary>
-            public uint heads;
-            /// <summary>Disk geometry parameter</summary>
-            public uint cylinders;
-            /// <summary>Cluster size in sectors</summary>
-            public uint cluster_size;
-            /// <summary>Entries in BAT (clusters in image)</summary>
-            public uint bat_entries;
-            /// <summary>Disk size in sectors</summary>
-            public ulong sectors;
-            /// <summary>
-            ///     Set to <see cref="Parallels.PARALLELS_INUSE" /> if image is opened by any software,
-            ///     <see cref="Parallels.PARALLELS_CLOSED" /> if not, and 0 if old version
-            /// </summary>
-            public uint in_use;
-            /// <summary>Offset in sectors to start of data</summary>
-            public uint data_off;
-            /// <summary>Flags</summary>
-            public readonly uint flags;
-            /// <summary>Offset in sectors to format extension</summary>
-            public readonly ulong ext_off;
-        }
+        /// <summary>Magic, <see cref="Parallels._magic" /> or <see cref="Parallels._extMagic" /></summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+        public byte[] magic;
+        /// <summary>Version</summary>
+        public uint version;
+        /// <summary>Disk geometry parameter</summary>
+        public uint heads;
+        /// <summary>Disk geometry parameter</summary>
+        public uint cylinders;
+        /// <summary>Cluster size in sectors</summary>
+        public uint cluster_size;
+        /// <summary>Entries in BAT (clusters in image)</summary>
+        public uint bat_entries;
+        /// <summary>Disk size in sectors</summary>
+        public ulong sectors;
+        /// <summary>
+        ///     Set to <see cref="Parallels.PARALLELS_INUSE" /> if image is opened by any software,
+        ///     <see cref="Parallels.PARALLELS_CLOSED" /> if not, and 0 if old version
+        /// </summary>
+        public uint in_use;
+        /// <summary>Offset in sectors to start of data</summary>
+        public uint data_off;
+        /// <summary>Flags</summary>
+        public readonly uint flags;
+        /// <summary>Offset in sectors to format extension</summary>
+        public readonly ulong ext_off;
     }
 }

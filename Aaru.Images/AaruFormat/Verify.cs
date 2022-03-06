@@ -37,285 +37,284 @@ using Aaru.CommonTypes.Enums;
 using Aaru.Console;
 using Aaru.Helpers;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class AaruFormat
 {
-    public sealed partial class AaruFormat
+    /// <inheritdoc />
+    public bool? VerifyMediaImage()
     {
-        /// <inheritdoc />
-        public bool? VerifyMediaImage()
+        // This will traverse all blocks and check their CRC64 without uncompressing them
+        AaruConsole.DebugWriteLine("Aaru Format plugin", "Checking index integrity at {0}", _header.indexOffset);
+        _imageStream.Position = (long)_header.indexOffset;
+
+        _structureBytes = new byte[Marshal.SizeOf<IndexHeader>()];
+        _imageStream.Read(_structureBytes, 0, _structureBytes.Length);
+        IndexHeader idxHeader = Marshal.SpanToStructureLittleEndian<IndexHeader>(_structureBytes);
+
+        if(idxHeader.identifier != BlockType.Index)
         {
-            // This will traverse all blocks and check their CRC64 without uncompressing them
-            AaruConsole.DebugWriteLine("Aaru Format plugin", "Checking index integrity at {0}", _header.indexOffset);
-            _imageStream.Position = (long)_header.indexOffset;
+            AaruConsole.DebugWriteLine("Aaru Format plugin", "Incorrect index identifier");
 
-            _structureBytes = new byte[Marshal.SizeOf<IndexHeader>()];
+            return false;
+        }
+
+        AaruConsole.DebugWriteLine("Aaru Format plugin", "Index at {0} contains {1} entries", _header.indexOffset,
+                                   idxHeader.entries);
+
+        _structureBytes = new byte[Marshal.SizeOf<IndexEntry>() * idxHeader.entries];
+        _imageStream.Read(_structureBytes, 0, _structureBytes.Length);
+        Crc64Context.Data(_structureBytes, out byte[] verifyCrc);
+
+        if(BitConverter.ToUInt64(verifyCrc, 0) != idxHeader.crc64)
+        {
+            AaruConsole.DebugWriteLine("Aaru Format plugin", "Expected index CRC {0:X16} but got {1:X16}",
+                                       idxHeader.crc64, BitConverter.ToUInt64(verifyCrc, 0));
+
+            return false;
+        }
+
+        _imageStream.Position -= _structureBytes.Length;
+
+        List<IndexEntry> vrIndex = new();
+
+        for(ushort i = 0; i < idxHeader.entries; i++)
+        {
+            _structureBytes = new byte[Marshal.SizeOf<IndexEntry>()];
             _imageStream.Read(_structureBytes, 0, _structureBytes.Length);
-            IndexHeader idxHeader = Marshal.SpanToStructureLittleEndian<IndexHeader>(_structureBytes);
+            IndexEntry entry = Marshal.SpanToStructureLittleEndian<IndexEntry>(_structureBytes);
 
-            if(idxHeader.identifier != BlockType.Index)
+            AaruConsole.DebugWriteLine("Aaru Format plugin",
+                                       "Block type {0} with data type {1} is indexed to be at {2}", entry.blockType,
+                                       entry.dataType, entry.offset);
+
+            vrIndex.Add(entry);
+        }
+
+        // Read up to 1MiB at a time for verification
+        const int verifySize = 1024 * 1024;
+
+        foreach(IndexEntry entry in vrIndex)
+        {
+            _imageStream.Position = (long)entry.offset;
+            Crc64Context crcVerify;
+            ulong        readBytes;
+            byte[]       verifyBytes;
+
+            switch(entry.blockType)
             {
-                AaruConsole.DebugWriteLine("Aaru Format plugin", "Incorrect index identifier");
+                case BlockType.DataBlock:
+                    _structureBytes = new byte[Marshal.SizeOf<BlockHeader>()];
+                    _imageStream.Read(_structureBytes, 0, _structureBytes.Length);
+                    BlockHeader blockHeader = Marshal.SpanToStructureLittleEndian<BlockHeader>(_structureBytes);
 
-                return false;
-            }
+                    crcVerify = new Crc64Context();
+                    readBytes = 0;
 
-            AaruConsole.DebugWriteLine("Aaru Format plugin", "Index at {0} contains {1} entries", _header.indexOffset,
-                                       idxHeader.entries);
+                    AaruConsole.DebugWriteLine("Aaru Format plugin",
+                                               "Verifying data block type {0} at position {1}", entry.dataType,
+                                               entry.offset);
 
-            _structureBytes = new byte[Marshal.SizeOf<IndexEntry>() * idxHeader.entries];
-            _imageStream.Read(_structureBytes, 0, _structureBytes.Length);
-            Crc64Context.Data(_structureBytes, out byte[] verifyCrc);
-
-            if(BitConverter.ToUInt64(verifyCrc, 0) != idxHeader.crc64)
-            {
-                AaruConsole.DebugWriteLine("Aaru Format plugin", "Expected index CRC {0:X16} but got {1:X16}",
-                                           idxHeader.crc64, BitConverter.ToUInt64(verifyCrc, 0));
-
-                return false;
-            }
-
-            _imageStream.Position -= _structureBytes.Length;
-
-            List<IndexEntry> vrIndex = new();
-
-            for(ushort i = 0; i < idxHeader.entries; i++)
-            {
-                _structureBytes = new byte[Marshal.SizeOf<IndexEntry>()];
-                _imageStream.Read(_structureBytes, 0, _structureBytes.Length);
-                IndexEntry entry = Marshal.SpanToStructureLittleEndian<IndexEntry>(_structureBytes);
-
-                AaruConsole.DebugWriteLine("Aaru Format plugin",
-                                           "Block type {0} with data type {1} is indexed to be at {2}", entry.blockType,
-                                           entry.dataType, entry.offset);
-
-                vrIndex.Add(entry);
-            }
-
-            // Read up to 1MiB at a time for verification
-            const int verifySize = 1024 * 1024;
-
-            foreach(IndexEntry entry in vrIndex)
-            {
-                _imageStream.Position = (long)entry.offset;
-                Crc64Context crcVerify;
-                ulong        readBytes;
-                byte[]       verifyBytes;
-
-                switch(entry.blockType)
-                {
-                    case BlockType.DataBlock:
-                        _structureBytes = new byte[Marshal.SizeOf<BlockHeader>()];
-                        _imageStream.Read(_structureBytes, 0, _structureBytes.Length);
-                        BlockHeader blockHeader = Marshal.SpanToStructureLittleEndian<BlockHeader>(_structureBytes);
-
-                        crcVerify = new Crc64Context();
-                        readBytes = 0;
-
-                        AaruConsole.DebugWriteLine("Aaru Format plugin",
-                                                   "Verifying data block type {0} at position {1}", entry.dataType,
-                                                   entry.offset);
-
-                        while(readBytes + verifySize < blockHeader.cmpLength)
-                        {
-                            verifyBytes = new byte[verifySize];
-                            _imageStream.Read(verifyBytes, 0, verifyBytes.Length);
-                            crcVerify.Update(verifyBytes);
-                            readBytes += (ulong)verifyBytes.LongLength;
-                        }
-
-                        verifyBytes = new byte[blockHeader.cmpLength - readBytes];
+                    while(readBytes + verifySize < blockHeader.cmpLength)
+                    {
+                        verifyBytes = new byte[verifySize];
                         _imageStream.Read(verifyBytes, 0, verifyBytes.Length);
                         crcVerify.Update(verifyBytes);
+                        readBytes += (ulong)verifyBytes.LongLength;
+                    }
 
-                        verifyCrc = crcVerify.Final();
+                    verifyBytes = new byte[blockHeader.cmpLength - readBytes];
+                    _imageStream.Read(verifyBytes, 0, verifyBytes.Length);
+                    crcVerify.Update(verifyBytes);
 
-                        if(BitConverter.ToUInt64(verifyCrc, 0) != blockHeader.cmpCrc64)
-                        {
-                            AaruConsole.DebugWriteLine("Aaru Format plugin",
-                                                       "Expected block CRC {0:X16} but got {1:X16}",
-                                                       blockHeader.cmpCrc64, BitConverter.ToUInt64(verifyCrc, 0));
+                    verifyCrc = crcVerify.Final();
 
-                            return false;
-                        }
-
-                        break;
-                    case BlockType.DeDuplicationTable:
-                        _structureBytes = new byte[Marshal.SizeOf<DdtHeader>()];
-                        _imageStream.Read(_structureBytes, 0, _structureBytes.Length);
-                        DdtHeader ddtHeader = Marshal.SpanToStructureLittleEndian<DdtHeader>(_structureBytes);
-
-                        crcVerify = new Crc64Context();
-                        readBytes = 0;
-
+                    if(BitConverter.ToUInt64(verifyCrc, 0) != blockHeader.cmpCrc64)
+                    {
                         AaruConsole.DebugWriteLine("Aaru Format plugin",
-                                                   "Verifying deduplication table type {0} at position {1}",
-                                                   entry.dataType, entry.offset);
+                                                   "Expected block CRC {0:X16} but got {1:X16}",
+                                                   blockHeader.cmpCrc64, BitConverter.ToUInt64(verifyCrc, 0));
 
-                        while(readBytes + verifySize < ddtHeader.cmpLength)
-                        {
-                            verifyBytes = new byte[readBytes];
-                            _imageStream.Read(verifyBytes, 0, verifyBytes.Length);
-                            crcVerify.Update(verifyBytes);
-                            readBytes += (ulong)verifyBytes.LongLength;
-                        }
+                        return false;
+                    }
 
-                        verifyBytes = new byte[ddtHeader.cmpLength - readBytes];
+                    break;
+                case BlockType.DeDuplicationTable:
+                    _structureBytes = new byte[Marshal.SizeOf<DdtHeader>()];
+                    _imageStream.Read(_structureBytes, 0, _structureBytes.Length);
+                    DdtHeader ddtHeader = Marshal.SpanToStructureLittleEndian<DdtHeader>(_structureBytes);
+
+                    crcVerify = new Crc64Context();
+                    readBytes = 0;
+
+                    AaruConsole.DebugWriteLine("Aaru Format plugin",
+                                               "Verifying deduplication table type {0} at position {1}",
+                                               entry.dataType, entry.offset);
+
+                    while(readBytes + verifySize < ddtHeader.cmpLength)
+                    {
+                        verifyBytes = new byte[readBytes];
                         _imageStream.Read(verifyBytes, 0, verifyBytes.Length);
                         crcVerify.Update(verifyBytes);
+                        readBytes += (ulong)verifyBytes.LongLength;
+                    }
 
-                        verifyCrc = crcVerify.Final();
+                    verifyBytes = new byte[ddtHeader.cmpLength - readBytes];
+                    _imageStream.Read(verifyBytes, 0, verifyBytes.Length);
+                    crcVerify.Update(verifyBytes);
 
-                        if(BitConverter.ToUInt64(verifyCrc, 0) != ddtHeader.cmpCrc64)
-                        {
-                            AaruConsole.DebugWriteLine("Aaru Format plugin", "Expected DDT CRC {0:X16} but got {1:X16}",
-                                                       ddtHeader.cmpCrc64, BitConverter.ToUInt64(verifyCrc, 0));
+                    verifyCrc = crcVerify.Final();
 
-                            return false;
-                        }
+                    if(BitConverter.ToUInt64(verifyCrc, 0) != ddtHeader.cmpCrc64)
+                    {
+                        AaruConsole.DebugWriteLine("Aaru Format plugin", "Expected DDT CRC {0:X16} but got {1:X16}",
+                                                   ddtHeader.cmpCrc64, BitConverter.ToUInt64(verifyCrc, 0));
 
-                        break;
-                    case BlockType.TracksBlock:
-                        _structureBytes = new byte[Marshal.SizeOf<TracksHeader>()];
-                        _imageStream.Read(_structureBytes, 0, _structureBytes.Length);
-                        TracksHeader trkHeader = Marshal.SpanToStructureLittleEndian<TracksHeader>(_structureBytes);
+                        return false;
+                    }
 
-                        AaruConsole.DebugWriteLine("Aaru Format plugin", "Track block at {0} contains {1} entries",
-                                                   _header.indexOffset, trkHeader.entries);
+                    break;
+                case BlockType.TracksBlock:
+                    _structureBytes = new byte[Marshal.SizeOf<TracksHeader>()];
+                    _imageStream.Read(_structureBytes, 0, _structureBytes.Length);
+                    TracksHeader trkHeader = Marshal.SpanToStructureLittleEndian<TracksHeader>(_structureBytes);
 
-                        _structureBytes = new byte[Marshal.SizeOf<TrackEntry>() * trkHeader.entries];
-                        _imageStream.Read(_structureBytes, 0, _structureBytes.Length);
-                        Crc64Context.Data(_structureBytes, out verifyCrc);
+                    AaruConsole.DebugWriteLine("Aaru Format plugin", "Track block at {0} contains {1} entries",
+                                               _header.indexOffset, trkHeader.entries);
 
-                        if(BitConverter.ToUInt64(verifyCrc, 0) != trkHeader.crc64)
-                        {
-                            AaruConsole.DebugWriteLine("Aaru Format plugin",
-                                                       "Expected index CRC {0:X16} but got {1:X16}", trkHeader.crc64,
-                                                       BitConverter.ToUInt64(verifyCrc, 0));
+                    _structureBytes = new byte[Marshal.SizeOf<TrackEntry>() * trkHeader.entries];
+                    _imageStream.Read(_structureBytes, 0, _structureBytes.Length);
+                    Crc64Context.Data(_structureBytes, out verifyCrc);
 
-                            return false;
-                        }
+                    if(BitConverter.ToUInt64(verifyCrc, 0) != trkHeader.crc64)
+                    {
+                        AaruConsole.DebugWriteLine("Aaru Format plugin",
+                                                   "Expected index CRC {0:X16} but got {1:X16}", trkHeader.crc64,
+                                                   BitConverter.ToUInt64(verifyCrc, 0));
 
-                        break;
-                    default:
-                        AaruConsole.DebugWriteLine("Aaru Format plugin", "Ignored field type {0}", entry.blockType);
+                        return false;
+                    }
 
-                        break;
-                }
+                    break;
+                default:
+                    AaruConsole.DebugWriteLine("Aaru Format plugin", "Ignored field type {0}", entry.blockType);
+
+                    break;
             }
-
-            return true;
         }
 
-        /// <inheritdoc />
-        public bool? VerifySector(ulong sectorAddress)
+        return true;
+    }
+
+    /// <inheritdoc />
+    public bool? VerifySector(ulong sectorAddress)
+    {
+        if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
+            return null;
+
+        ErrorNumber errno = ReadSectorLong(sectorAddress, out byte[] buffer);
+
+        return errno != ErrorNumber.NoError ? null : CdChecksums.CheckCdSector(buffer);
+    }
+
+    /// <inheritdoc />
+    public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
+                               out List<ulong> unknownLbas)
+    {
+        failingLbas = new List<ulong>();
+        unknownLbas = new List<ulong>();
+
+        // Right now only CompactDisc sectors are verifiable
+        if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
         {
-            if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
-                return null;
+            for(ulong i = sectorAddress; i < sectorAddress + length; i++)
+                unknownLbas.Add(i);
 
-            ErrorNumber errno = ReadSectorLong(sectorAddress, out byte[] buffer);
-
-            return errno != ErrorNumber.NoError ? null : CdChecksums.CheckCdSector(buffer);
+            return null;
         }
 
-        /// <inheritdoc />
-        public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
-                                   out List<ulong> unknownLbas)
+        ErrorNumber errno = ReadSectorsLong(sectorAddress, length, out byte[] buffer);
+
+        if(errno != ErrorNumber.NoError)
+            return null;
+
+        int    bps    = (int)(buffer.Length / length);
+        byte[] sector = new byte[bps];
+        failingLbas = new List<ulong>();
+        unknownLbas = new List<ulong>();
+
+        for(int i = 0; i < length; i++)
+        {
+            Array.Copy(buffer, i * bps, sector, 0, bps);
+            bool? sectorStatus = CdChecksums.CheckCdSector(sector);
+
+            switch(sectorStatus)
+            {
+                case null:
+                    unknownLbas.Add((ulong)i + sectorAddress);
+
+                    break;
+                case false:
+                    failingLbas.Add((ulong)i + sectorAddress);
+
+                    break;
+            }
+        }
+
+        if(unknownLbas.Count > 0)
+            return null;
+
+        return failingLbas.Count <= 0;
+    }
+
+    /// <inheritdoc />
+    public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+                               out List<ulong> unknownLbas)
+    {
+        // Right now only CompactDisc sectors are verifiable
+        if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
         {
             failingLbas = new List<ulong>();
             unknownLbas = new List<ulong>();
 
-            // Right now only CompactDisc sectors are verifiable
-            if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
-            {
-                for(ulong i = sectorAddress; i < sectorAddress + length; i++)
-                    unknownLbas.Add(i);
+            for(ulong i = sectorAddress; i < sectorAddress + length; i++)
+                unknownLbas.Add(i);
 
-                return null;
-            }
-
-            ErrorNumber errno = ReadSectorsLong(sectorAddress, length, out byte[] buffer);
-
-            if(errno != ErrorNumber.NoError)
-                return null;
-
-            int    bps    = (int)(buffer.Length / length);
-            byte[] sector = new byte[bps];
-            failingLbas = new List<ulong>();
-            unknownLbas = new List<ulong>();
-
-            for(int i = 0; i < length; i++)
-            {
-                Array.Copy(buffer, i * bps, sector, 0, bps);
-                bool? sectorStatus = CdChecksums.CheckCdSector(sector);
-
-                switch(sectorStatus)
-                {
-                    case null:
-                        unknownLbas.Add((ulong)i + sectorAddress);
-
-                        break;
-                    case false:
-                        failingLbas.Add((ulong)i + sectorAddress);
-
-                        break;
-                }
-            }
-
-            if(unknownLbas.Count > 0)
-                return null;
-
-            return failingLbas.Count <= 0;
+            return null;
         }
 
-        /// <inheritdoc />
-        public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
-                                   out List<ulong> unknownLbas)
+        failingLbas = new List<ulong>();
+        unknownLbas = new List<ulong>();
+
+        ErrorNumber errno = ReadSectorsLong(sectorAddress, length, track, out byte[] buffer);
+
+        if(errno != ErrorNumber.NoError)
+            return null;
+
+        int    bps    = (int)(buffer.Length / length);
+        byte[] sector = new byte[bps];
+
+        for(int i = 0; i < length; i++)
         {
-            // Right now only CompactDisc sectors are verifiable
-            if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
+            Array.Copy(buffer, i * bps, sector, 0, bps);
+            bool? sectorStatus = CdChecksums.CheckCdSector(sector);
+
+            switch(sectorStatus)
             {
-                failingLbas = new List<ulong>();
-                unknownLbas = new List<ulong>();
+                case null:
+                    unknownLbas.Add((ulong)i + sectorAddress);
 
-                for(ulong i = sectorAddress; i < sectorAddress + length; i++)
-                    unknownLbas.Add(i);
+                    break;
+                case false:
+                    failingLbas.Add((ulong)i + sectorAddress);
 
-                return null;
+                    break;
             }
-
-            failingLbas = new List<ulong>();
-            unknownLbas = new List<ulong>();
-
-            ErrorNumber errno = ReadSectorsLong(sectorAddress, length, track, out byte[] buffer);
-
-            if(errno != ErrorNumber.NoError)
-                return null;
-
-            int    bps    = (int)(buffer.Length / length);
-            byte[] sector = new byte[bps];
-
-            for(int i = 0; i < length; i++)
-            {
-                Array.Copy(buffer, i * bps, sector, 0, bps);
-                bool? sectorStatus = CdChecksums.CheckCdSector(sector);
-
-                switch(sectorStatus)
-                {
-                    case null:
-                        unknownLbas.Add((ulong)i + sectorAddress);
-
-                        break;
-                    case false:
-                        failingLbas.Add((ulong)i + sectorAddress);
-
-                        break;
-                }
-            }
-
-            if(unknownLbas.Count > 0)
-                return null;
-
-            return failingLbas.Count <= 0;
         }
+
+        if(unknownLbas.Count > 0)
+            return null;
+
+        return failingLbas.Count <= 0;
     }
 }

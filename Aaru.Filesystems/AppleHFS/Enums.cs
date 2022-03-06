@@ -34,37 +34,36 @@
 
 // ReSharper disable UnusedMember.Local
 
-namespace Aaru.Filesystems
+namespace Aaru.Filesystems;
+
+public sealed partial class AppleHFS
 {
-    public sealed partial class AppleHFS
+    enum NodeType : sbyte
     {
-        enum NodeType : sbyte
-        {
-            /// <summary>Index node</summary>
-            ndIndxNode = 0,
-            /// <summary>Header node</summary>
-            ndHdrNode = 1,
-            /// <summary>Map node</summary>
-            ndMapNode = 2,
-            /// <summary>Leaf node</summary>
-            ndLeafNode = -1
-        }
+        /// <summary>Index node</summary>
+        ndIndxNode = 0,
+        /// <summary>Header node</summary>
+        ndHdrNode = 1,
+        /// <summary>Map node</summary>
+        ndMapNode = 2,
+        /// <summary>Leaf node</summary>
+        ndLeafNode = -1
+    }
 
-        enum CatDataType : sbyte
-        {
-            /// <summary>Directory record</summary>
-            cdrDirRec = 1,
-            /// <summary>File record</summary>
-            cdrFilRec = 2,
-            /// <summary>Directory thread record</summary>
-            cdrThdRec = 3,
-            /// <summary>File thread record</summary>
-            cdrFThdRec = 4
-        }
+    enum CatDataType : sbyte
+    {
+        /// <summary>Directory record</summary>
+        cdrDirRec = 1,
+        /// <summary>File record</summary>
+        cdrFilRec = 2,
+        /// <summary>Directory thread record</summary>
+        cdrThdRec = 3,
+        /// <summary>File thread record</summary>
+        cdrFThdRec = 4
+    }
 
-        enum ForkType : sbyte
-        {
-            Data = 0, Resource = -1
-        }
+    enum ForkType : sbyte
+    {
+        Data = 0, Resource = -1
     }
 }

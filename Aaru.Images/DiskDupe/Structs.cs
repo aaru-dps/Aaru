@@ -34,74 +34,73 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+[SuppressMessage("ReSharper", "UnusedType.Local")]
+public sealed partial class DiskDupe
 {
-    [SuppressMessage("ReSharper", "UnusedType.Local")]
-    public sealed partial class DiskDupe
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    struct DiskType
     {
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        struct DiskType
-        {
-            public byte cyl;
-            public byte hd;
-            public byte spt;
-        }
+        public byte cyl;
+        public byte hd;
+        public byte spt;
+    }
 
-        readonly DiskType[] _diskTypes =
+    readonly DiskType[] _diskTypes =
+    {
+        new DiskType
         {
-            new DiskType
-            {
-                cyl = 0,
-                hd  = 0,
-                spt = 0
-            }, // Type 0 - invalid
-            new DiskType
-            {
-                cyl = 40,
-                hd  = 2,
-                spt = 9
-            }, // Type 1 - 360k
-            new DiskType
-            {
-                cyl = 80,
-                hd  = 2,
-                spt = 15
-            }, // Type 2 - 1.2m
-            new DiskType
-            {
-                cyl = 80,
-                hd  = 2,
-                spt = 9
-            }, // Type 3 - 720k
-            new DiskType
-            {
-                cyl = 80,
-                hd  = 2,
-                spt = 18
-            } // Type 4 - 1.44m
-        };
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct TrackInfo
+            cyl = 0,
+            hd  = 0,
+            spt = 0
+        }, // Type 0 - invalid
+        new DiskType
         {
-            public readonly byte present; // 1 = present, 0 = absent
-            public readonly byte trackNumber;
-            public readonly byte zero1;
-            public readonly byte zero2;
-            public readonly byte zero3;
-            public readonly byte unknown; // always 1?
-        }
-
-        /// <summary>The global header of a DDI image file</summary>
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct FileHeader
+            cyl = 40,
+            hd  = 2,
+            spt = 9
+        }, // Type 1 - 360k
+        new DiskType
         {
-            /// <summary>The file signature</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
-            public byte[] signature;
+            cyl = 80,
+            hd  = 2,
+            spt = 15
+        }, // Type 2 - 1.2m
+        new DiskType
+        {
+            cyl = 80,
+            hd  = 2,
+            spt = 9
+        }, // Type 3 - 720k
+        new DiskType
+        {
+            cyl = 80,
+            hd  = 2,
+            spt = 18
+        } // Type 4 - 1.44m
+    };
 
-            /// <summary>Disk type</summary>
-            public byte diskType;
-        }
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    struct TrackInfo
+    {
+        public readonly byte present; // 1 = present, 0 = absent
+        public readonly byte trackNumber;
+        public readonly byte zero1;
+        public readonly byte zero2;
+        public readonly byte zero3;
+        public readonly byte unknown; // always 1?
+    }
+
+    /// <summary>The global header of a DDI image file</summary>
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    struct FileHeader
+    {
+        /// <summary>The file signature</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
+        public byte[] signature;
+
+        /// <summary>Disk type</summary>
+        public byte diskType;
     }
 }

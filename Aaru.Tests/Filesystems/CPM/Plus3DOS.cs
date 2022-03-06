@@ -30,40 +30,39 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Filesystems.CPM
+namespace Aaru.Tests.Filesystems.CPM;
+
+[TestFixture]
+public class Plus3DOS : FilesystemTest
 {
-    [TestFixture]
-    public class Plus3DOS : FilesystemTest
+    public Plus3DOS() : base("CP/M") {}
+
+    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "CPM", "+3DOS");
+
+    public override IFilesystem Plugin     => new Aaru.Filesystems.CPM();
+    public override bool        Partitions => false;
+
+    public override FileSystemTest[] Tests => new[]
     {
-        public Plus3DOS() : base("CP/M") {}
-
-        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "CPM", "+3DOS");
-
-        public override IFilesystem Plugin     => new Aaru.Filesystems.CPM();
-        public override bool        Partitions => false;
-
-        public override FileSystemTest[] Tests => new[]
+        new FileSystemTest
         {
-            new FileSystemTest
-            {
-                TestFile    = "filename.dsk.lz",
-                MediaType   = MediaType.CompactFloppy,
-                Sectors     = 360,
-                SectorSize  = 512,
-                Bootable    = true,
-                Clusters    = 359,
-                ClusterSize = 1024
-            },
-            new FileSystemTest
-            {
-                TestFile    = "files.dsk.lz",
-                MediaType   = MediaType.CompactFloppy,
-                Sectors     = 360,
-                SectorSize  = 512,
-                Bootable    = true,
-                Clusters    = 359,
-                ClusterSize = 1024
-            }
-        };
-    }
+            TestFile    = "filename.dsk.lz",
+            MediaType   = MediaType.CompactFloppy,
+            Sectors     = 360,
+            SectorSize  = 512,
+            Bootable    = true,
+            Clusters    = 359,
+            ClusterSize = 1024
+        },
+        new FileSystemTest
+        {
+            TestFile    = "files.dsk.lz",
+            MediaType   = MediaType.CompactFloppy,
+            Sectors     = 360,
+            SectorSize  = 512,
+            Bootable    = true,
+            Clusters    = 359,
+            ClusterSize = 1024
+        }
+    };
 }

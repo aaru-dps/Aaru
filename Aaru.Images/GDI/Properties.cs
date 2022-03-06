@@ -38,64 +38,63 @@ using Aaru.CommonTypes.Structs;
 using Schemas;
 using TrackType = Aaru.CommonTypes.Enums.TrackType;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class Gdi
 {
-    public sealed partial class Gdi
+    /// <inheritdoc />
+    public string Name => "Dreamcast GDI image";
+    /// <inheritdoc />
+    public Guid Id => new("281ECBF2-D2A7-414C-8497-1A33F6DCB2DD");
+    /// <inheritdoc />
+    public ImageInfo Info => _imageInfo;
+    /// <inheritdoc />
+    public string Author => "Natalia Portillo";
+    /// <inheritdoc />
+    public string Format => "Dreamcast GDI image";
+
+    /// <inheritdoc />
+    public List<Partition> Partitions { get; private set; }
+
+    /// <inheritdoc />
+    public List<Track> Tracks
     {
-        /// <inheritdoc />
-        public string Name => "Dreamcast GDI image";
-        /// <inheritdoc />
-        public Guid Id => new("281ECBF2-D2A7-414C-8497-1A33F6DCB2DD");
-        /// <inheritdoc />
-        public ImageInfo Info => _imageInfo;
-        /// <inheritdoc />
-        public string Author => "Natalia Portillo";
-        /// <inheritdoc />
-        public string Format => "Dreamcast GDI image";
-
-        /// <inheritdoc />
-        public List<Partition> Partitions { get; private set; }
-
-        /// <inheritdoc />
-        public List<Track> Tracks
+        get
         {
-            get
+            List<Track> tracks = new();
+
+            foreach(GdiTrack gdiTrack in _discImage.Tracks)
             {
-                List<Track> tracks = new();
-
-                foreach(GdiTrack gdiTrack in _discImage.Tracks)
+                var track = new Track
                 {
-                    var track = new Track
-                    {
-                        Description       = null,
-                        StartSector       = gdiTrack.StartSector,
-                        Pregap            = gdiTrack.Pregap,
-                        Session           = (ushort)(gdiTrack.HighDensity ? 2 : 1),
-                        Sequence          = gdiTrack.Sequence,
-                        Type              = gdiTrack.TrackType,
-                        Filter            = gdiTrack.TrackFilter,
-                        File              = gdiTrack.TrackFile,
-                        FileOffset        = (ulong)gdiTrack.Offset,
-                        FileType          = "BINARY",
-                        RawBytesPerSector = gdiTrack.Bps,
-                        BytesPerSector    = gdiTrack.TrackType == TrackType.Data ? 2048 : 2352,
-                        SubchannelType    = TrackSubchannelType.None
-                    };
+                    Description       = null,
+                    StartSector       = gdiTrack.StartSector,
+                    Pregap            = gdiTrack.Pregap,
+                    Session           = (ushort)(gdiTrack.HighDensity ? 2 : 1),
+                    Sequence          = gdiTrack.Sequence,
+                    Type              = gdiTrack.TrackType,
+                    Filter            = gdiTrack.TrackFilter,
+                    File              = gdiTrack.TrackFile,
+                    FileOffset        = (ulong)gdiTrack.Offset,
+                    FileType          = "BINARY",
+                    RawBytesPerSector = gdiTrack.Bps,
+                    BytesPerSector    = gdiTrack.TrackType == TrackType.Data ? 2048 : 2352,
+                    SubchannelType    = TrackSubchannelType.None
+                };
 
-                    track.EndSector = track.StartSector + gdiTrack.Sectors - 1;
+                track.EndSector = track.StartSector + gdiTrack.Sectors - 1;
 
-                    tracks.Add(track);
-                }
-
-                return tracks;
+                tracks.Add(track);
             }
-        }
 
-        /// <inheritdoc />
-        public List<Session> Sessions => _discImage.Sessions;
-        /// <inheritdoc />
-        public List<DumpHardwareType> DumpHardware => null;
-        /// <inheritdoc />
-        public CICMMetadataType CicmMetadata => null;
+            return tracks;
+        }
     }
+
+    /// <inheritdoc />
+    public List<Session> Sessions => _discImage.Sessions;
+    /// <inheritdoc />
+    public List<DumpHardwareType> DumpHardware => null;
+    /// <inheritdoc />
+    public CICMMetadataType CicmMetadata => null;
 }

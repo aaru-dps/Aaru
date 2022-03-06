@@ -38,156 +38,155 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Schemas;
 
-namespace Aaru.Filesystems
+namespace Aaru.Filesystems;
+
+// Information from the Linux kernel
+/// <inheritdoc />
+/// <summary>Implements detection of the Linux extended filesystem</summary>
+public sealed class extFS : IFilesystem
 {
-    // Information from the Linux kernel
+    const int SB_POS = 0x400;
+
+    /// <summary>ext superblock magic</summary>
+    const ushort EXT_MAGIC = 0x137D;
+
     /// <inheritdoc />
-    /// <summary>Implements detection of the Linux extended filesystem</summary>
-    public sealed class extFS : IFilesystem
+    public FileSystemType XmlFsType { get; private set; }
+    /// <inheritdoc />
+    public string Name => "Linux extended Filesystem";
+    /// <inheritdoc />
+    public Guid Id => new("076CB3A2-08C2-4D69-BC8A-FCAA2E502BE2");
+    /// <inheritdoc />
+    public Encoding Encoding { get; private set; }
+    /// <inheritdoc />
+    public string Author => "Natalia Portillo";
+
+    /// <inheritdoc />
+    public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
-        const int SB_POS = 0x400;
+        if(imagePlugin.Info.SectorSize < 512)
+            return false;
 
-        /// <summary>ext superblock magic</summary>
-        const ushort EXT_MAGIC = 0x137D;
+        ulong sbSectorOff = SB_POS / imagePlugin.Info.SectorSize;
+        uint  sbOff       = SB_POS % imagePlugin.Info.SectorSize;
 
-        /// <inheritdoc />
-        public FileSystemType XmlFsType { get; private set; }
-        /// <inheritdoc />
-        public string Name => "Linux extended Filesystem";
-        /// <inheritdoc />
-        public Guid Id => new("076CB3A2-08C2-4D69-BC8A-FCAA2E502BE2");
-        /// <inheritdoc />
-        public Encoding Encoding { get; private set; }
-        /// <inheritdoc />
-        public string Author => "Natalia Portillo";
+        if(sbSectorOff + partition.Start >= partition.End)
+            return false;
 
-        /// <inheritdoc />
-        public bool Identify(IMediaImage imagePlugin, Partition partition)
+        ErrorNumber errno = imagePlugin.ReadSector(sbSectorOff + partition.Start, out byte[] sbSector);
+
+        if(errno != ErrorNumber.NoError)
+            return false;
+
+        byte[] sb = new byte[512];
+
+        if(sbOff + 512 > sbSector.Length)
+            return false;
+
+        Array.Copy(sbSector, sbOff, sb, 0, 512);
+
+        ushort magic = BitConverter.ToUInt16(sb, 0x038);
+
+        return magic == EXT_MAGIC;
+    }
+
+    /// <inheritdoc />
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
+                               Encoding encoding)
+    {
+        Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
+        information = "";
+
+        var sb = new StringBuilder();
+
+        if(imagePlugin.Info.SectorSize < 512)
+            return;
+
+        ulong sbSectorOff = SB_POS / imagePlugin.Info.SectorSize;
+        uint  sbOff       = SB_POS % imagePlugin.Info.SectorSize;
+
+        if(sbSectorOff + partition.Start >= partition.End)
+            return;
+
+        ErrorNumber errno = imagePlugin.ReadSector(sbSectorOff + partition.Start, out byte[] sblock);
+
+        if(errno != ErrorNumber.NoError)
+            return;
+
+        byte[] sbSector = new byte[512];
+        Array.Copy(sblock, sbOff, sbSector, 0, 512);
+
+        var extSb = new SuperBlock
         {
-            if(imagePlugin.Info.SectorSize < 512)
-                return false;
+            inodes        = BitConverter.ToUInt32(sbSector, 0x000),
+            zones         = BitConverter.ToUInt32(sbSector, 0x004),
+            firstfreeblk  = BitConverter.ToUInt32(sbSector, 0x008),
+            freecountblk  = BitConverter.ToUInt32(sbSector, 0x00C),
+            firstfreeind  = BitConverter.ToUInt32(sbSector, 0x010),
+            freecountind  = BitConverter.ToUInt32(sbSector, 0x014),
+            firstdatazone = BitConverter.ToUInt32(sbSector, 0x018),
+            logzonesize   = BitConverter.ToUInt32(sbSector, 0x01C),
+            maxsize       = BitConverter.ToUInt32(sbSector, 0x020)
+        };
 
-            ulong sbSectorOff = SB_POS / imagePlugin.Info.SectorSize;
-            uint  sbOff       = SB_POS % imagePlugin.Info.SectorSize;
+        sb.AppendLine("ext filesystem");
+        sb.AppendFormat("{0} zones on volume", extSb.zones);
+        sb.AppendFormat("{0} free blocks ({1} bytes)", extSb.freecountblk, extSb.freecountblk * 1024);
 
-            if(sbSectorOff + partition.Start >= partition.End)
-                return false;
+        sb.AppendFormat("{0} inodes on volume, {1} free ({2}%)", extSb.inodes, extSb.freecountind,
+                        extSb.freecountind * 100 / extSb.inodes);
 
-            ErrorNumber errno = imagePlugin.ReadSector(sbSectorOff + partition.Start, out byte[] sbSector);
+        sb.AppendFormat("First free inode is {0}", extSb.firstfreeind);
+        sb.AppendFormat("First free block is {0}", extSb.firstfreeblk);
+        sb.AppendFormat("First data zone is {0}", extSb.firstdatazone);
+        sb.AppendFormat("Log zone size: {0}", extSb.logzonesize);
+        sb.AppendFormat("Max zone size: {0}", extSb.maxsize);
 
-            if(errno != ErrorNumber.NoError)
-                return false;
-
-            byte[] sb = new byte[512];
-
-            if(sbOff + 512 > sbSector.Length)
-                return false;
-
-            Array.Copy(sbSector, sbOff, sb, 0, 512);
-
-            ushort magic = BitConverter.ToUInt16(sb, 0x038);
-
-            return magic == EXT_MAGIC;
-        }
-
-        /// <inheritdoc />
-        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                   Encoding encoding)
+        XmlFsType = new FileSystemType
         {
-            Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
-            information = "";
+            Type                  = "ext",
+            FreeClusters          = extSb.freecountblk,
+            FreeClustersSpecified = true,
+            ClusterSize           = 1024,
+            Clusters              = (partition.End - partition.Start + 1) * imagePlugin.Info.SectorSize / 1024
+        };
 
-            var sb = new StringBuilder();
+        information = sb.ToString();
+    }
 
-            if(imagePlugin.Info.SectorSize < 512)
-                return;
-
-            ulong sbSectorOff = SB_POS / imagePlugin.Info.SectorSize;
-            uint  sbOff       = SB_POS % imagePlugin.Info.SectorSize;
-
-            if(sbSectorOff + partition.Start >= partition.End)
-                return;
-
-            ErrorNumber errno = imagePlugin.ReadSector(sbSectorOff + partition.Start, out byte[] sblock);
-
-            if(errno != ErrorNumber.NoError)
-                return;
-
-            byte[] sbSector = new byte[512];
-            Array.Copy(sblock, sbOff, sbSector, 0, 512);
-
-            var extSb = new SuperBlock
-            {
-                inodes        = BitConverter.ToUInt32(sbSector, 0x000),
-                zones         = BitConverter.ToUInt32(sbSector, 0x004),
-                firstfreeblk  = BitConverter.ToUInt32(sbSector, 0x008),
-                freecountblk  = BitConverter.ToUInt32(sbSector, 0x00C),
-                firstfreeind  = BitConverter.ToUInt32(sbSector, 0x010),
-                freecountind  = BitConverter.ToUInt32(sbSector, 0x014),
-                firstdatazone = BitConverter.ToUInt32(sbSector, 0x018),
-                logzonesize   = BitConverter.ToUInt32(sbSector, 0x01C),
-                maxsize       = BitConverter.ToUInt32(sbSector, 0x020)
-            };
-
-            sb.AppendLine("ext filesystem");
-            sb.AppendFormat("{0} zones on volume", extSb.zones);
-            sb.AppendFormat("{0} free blocks ({1} bytes)", extSb.freecountblk, extSb.freecountblk * 1024);
-
-            sb.AppendFormat("{0} inodes on volume, {1} free ({2}%)", extSb.inodes, extSb.freecountind,
-                            extSb.freecountind * 100 / extSb.inodes);
-
-            sb.AppendFormat("First free inode is {0}", extSb.firstfreeind);
-            sb.AppendFormat("First free block is {0}", extSb.firstfreeblk);
-            sb.AppendFormat("First data zone is {0}", extSb.firstdatazone);
-            sb.AppendFormat("Log zone size: {0}", extSb.logzonesize);
-            sb.AppendFormat("Max zone size: {0}", extSb.maxsize);
-
-            XmlFsType = new FileSystemType
-            {
-                Type                  = "ext",
-                FreeClusters          = extSb.freecountblk,
-                FreeClustersSpecified = true,
-                ClusterSize           = 1024,
-                Clusters              = (partition.End - partition.Start + 1) * imagePlugin.Info.SectorSize / 1024
-            };
-
-            information = sb.ToString();
-        }
-
-        /// <summary>ext superblock</summary>
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        struct SuperBlock
-        {
-            /// <summary>0x000, inodes on volume</summary>
-            public uint inodes;
-            /// <summary>0x004, zones on volume</summary>
-            public uint zones;
-            /// <summary>0x008, first free block</summary>
-            public uint firstfreeblk;
-            /// <summary>0x00C, free blocks count</summary>
-            public uint freecountblk;
-            /// <summary>0x010, first free inode</summary>
-            public uint firstfreeind;
-            /// <summary>0x014, free inodes count</summary>
-            public uint freecountind;
-            /// <summary>0x018, first data zone</summary>
-            public uint firstdatazone;
-            /// <summary>0x01C, log zone size</summary>
-            public uint logzonesize;
-            /// <summary>0x020, max zone size</summary>
-            public uint maxsize;
-            /// <summary>0x024, reserved</summary>
-            public uint reserved1;
-            /// <summary>0x028, reserved</summary>
-            public uint reserved2;
-            /// <summary>0x02C, reserved</summary>
-            public uint reserved3;
-            /// <summary>0x030, reserved</summary>
-            public uint reserved4;
-            /// <summary>0x034, reserved</summary>
-            public uint reserved5;
-            /// <summary>0x038, 0x137D (little endian)</summary>
-            public ushort magic;
-        }
+    /// <summary>ext superblock</summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    struct SuperBlock
+    {
+        /// <summary>0x000, inodes on volume</summary>
+        public uint inodes;
+        /// <summary>0x004, zones on volume</summary>
+        public uint zones;
+        /// <summary>0x008, first free block</summary>
+        public uint firstfreeblk;
+        /// <summary>0x00C, free blocks count</summary>
+        public uint freecountblk;
+        /// <summary>0x010, first free inode</summary>
+        public uint firstfreeind;
+        /// <summary>0x014, free inodes count</summary>
+        public uint freecountind;
+        /// <summary>0x018, first data zone</summary>
+        public uint firstdatazone;
+        /// <summary>0x01C, log zone size</summary>
+        public uint logzonesize;
+        /// <summary>0x020, max zone size</summary>
+        public uint maxsize;
+        /// <summary>0x024, reserved</summary>
+        public uint reserved1;
+        /// <summary>0x028, reserved</summary>
+        public uint reserved2;
+        /// <summary>0x02C, reserved</summary>
+        public uint reserved3;
+        /// <summary>0x030, reserved</summary>
+        public uint reserved4;
+        /// <summary>0x034, reserved</summary>
+        public uint reserved5;
+        /// <summary>0x038, 0x137D (little endian)</summary>
+        public ushort magic;
     }
 }

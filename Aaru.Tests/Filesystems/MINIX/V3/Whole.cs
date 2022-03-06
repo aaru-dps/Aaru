@@ -32,58 +32,57 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Filesystems.MINIX.V3
+namespace Aaru.Tests.Filesystems.MINIX.V3;
+
+[TestFixture]
+public class Whole : FilesystemTest
 {
-    [TestFixture]
-    public class Whole : FilesystemTest
+    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "MINIX v3 filesystem");
+
+    public override IFilesystem Plugin     => new MinixFS();
+    public override bool        Partitions => false;
+
+    public override FileSystemTest[] Tests => new[]
     {
-        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "MINIX v3 filesystem");
-
-        public override IFilesystem Plugin     => new MinixFS();
-        public override bool        Partitions => false;
-
-        public override FileSystemTest[] Tests => new[]
+        new FileSystemTest
         {
-            new FileSystemTest
-            {
-                TestFile    = "minix_3.1.2a_dsdd.img.lz",
-                MediaType   = MediaType.DOS_525_DS_DD_9,
-                Sectors     = 720,
-                SectorSize  = 512,
-                Clusters    = 90,
-                ClusterSize = 4096,
-                Type        = "Minix v3"
-            },
-            new FileSystemTest
-            {
-                TestFile    = "minix_3.1.2a_dshd.img.lz",
-                MediaType   = MediaType.DOS_525_HD,
-                Sectors     = 2400,
-                SectorSize  = 512,
-                Clusters    = 300,
-                ClusterSize = 4096,
-                Type        = "Minix v3"
-            },
-            new FileSystemTest
-            {
-                TestFile    = "minix_3.1.2a_mf2dd.img.lz",
-                MediaType   = MediaType.DOS_35_DS_DD_9,
-                Sectors     = 1440,
-                SectorSize  = 512,
-                Clusters    = 180,
-                ClusterSize = 4096,
-                Type        = "Minix v3"
-            },
-            new FileSystemTest
-            {
-                TestFile    = "minix_3.1.2a_mf2hd.img.lz",
-                MediaType   = MediaType.DOS_35_HD,
-                Sectors     = 2880,
-                SectorSize  = 512,
-                Clusters    = 360,
-                ClusterSize = 4096,
-                Type        = "Minix v3"
-            }
-        };
-    }
+            TestFile    = "minix_3.1.2a_dsdd.img.lz",
+            MediaType   = MediaType.DOS_525_DS_DD_9,
+            Sectors     = 720,
+            SectorSize  = 512,
+            Clusters    = 90,
+            ClusterSize = 4096,
+            Type        = "Minix v3"
+        },
+        new FileSystemTest
+        {
+            TestFile    = "minix_3.1.2a_dshd.img.lz",
+            MediaType   = MediaType.DOS_525_HD,
+            Sectors     = 2400,
+            SectorSize  = 512,
+            Clusters    = 300,
+            ClusterSize = 4096,
+            Type        = "Minix v3"
+        },
+        new FileSystemTest
+        {
+            TestFile    = "minix_3.1.2a_mf2dd.img.lz",
+            MediaType   = MediaType.DOS_35_DS_DD_9,
+            Sectors     = 1440,
+            SectorSize  = 512,
+            Clusters    = 180,
+            ClusterSize = 4096,
+            Type        = "Minix v3"
+        },
+        new FileSystemTest
+        {
+            TestFile    = "minix_3.1.2a_mf2hd.img.lz",
+            MediaType   = MediaType.DOS_35_HD,
+            Sectors     = 2880,
+            SectorSize  = 512,
+            Clusters    = 360,
+            ClusterSize = 4096,
+            Type        = "Minix v3"
+        }
+    };
 }

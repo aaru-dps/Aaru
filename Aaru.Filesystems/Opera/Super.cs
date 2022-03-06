@@ -39,98 +39,97 @@ using Aaru.CommonTypes.Structs;
 using Aaru.Helpers;
 using Schemas;
 
-namespace Aaru.Filesystems
+namespace Aaru.Filesystems;
+
+public sealed partial class OperaFS
 {
-    public sealed partial class OperaFS
+    /// <inheritdoc />
+    public ErrorNumber Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding,
+                             Dictionary<string, string> options, string @namespace)
     {
-        /// <inheritdoc />
-        public ErrorNumber Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding,
-                                 Dictionary<string, string> options, string @namespace)
+        // TODO: Find correct default encoding
+        Encoding = Encoding.ASCII;
+
+        options ??= GetDefaultOptions();
+
+        if(options.TryGetValue("debug", out string debugString))
+            bool.TryParse(debugString, out _debug);
+
+        ErrorNumber errno = imagePlugin.ReadSector(0 + partition.Start, out byte[] sbSector);
+
+        if(errno != ErrorNumber.NoError)
+            return errno;
+
+        SuperBlock sb = Marshal.ByteArrayToStructureBigEndian<SuperBlock>(sbSector);
+
+        if(sb.record_type    != 1 ||
+           sb.record_version != 1)
+            return ErrorNumber.InvalidArgument;
+
+        if(Encoding.ASCII.GetString(sb.sync_bytes) != SYNC)
+            return ErrorNumber.InvalidArgument;
+
+        if(imagePlugin.Info.SectorSize == 2336 ||
+           imagePlugin.Info.SectorSize == 2352 ||
+           imagePlugin.Info.SectorSize == 2448)
+            _volumeBlockSizeRatio = sb.block_size / 2048;
+        else
+            _volumeBlockSizeRatio = sb.block_size / imagePlugin.Info.SectorSize;
+
+        XmlFsType = new FileSystemType
         {
-            // TODO: Find correct default encoding
-            Encoding = Encoding.ASCII;
+            Type         = "Opera",
+            VolumeName   = StringHandlers.CToString(sb.volume_label, Encoding),
+            ClusterSize  = sb.block_size,
+            Clusters     = sb.block_count,
+            Bootable     = true,
+            VolumeSerial = $"{sb.volume_id:X8}"
+        };
 
-            options ??= GetDefaultOptions();
-
-            if(options.TryGetValue("debug", out string debugString))
-                bool.TryParse(debugString, out _debug);
-
-            ErrorNumber errno = imagePlugin.ReadSector(0 + partition.Start, out byte[] sbSector);
-
-            if(errno != ErrorNumber.NoError)
-                return errno;
-
-            SuperBlock sb = Marshal.ByteArrayToStructureBigEndian<SuperBlock>(sbSector);
-
-            if(sb.record_type    != 1 ||
-               sb.record_version != 1)
-                return ErrorNumber.InvalidArgument;
-
-            if(Encoding.ASCII.GetString(sb.sync_bytes) != SYNC)
-                return ErrorNumber.InvalidArgument;
-
-            if(imagePlugin.Info.SectorSize == 2336 ||
-               imagePlugin.Info.SectorSize == 2352 ||
-               imagePlugin.Info.SectorSize == 2448)
-                _volumeBlockSizeRatio = sb.block_size / 2048;
-            else
-                _volumeBlockSizeRatio = sb.block_size / imagePlugin.Info.SectorSize;
-
-            XmlFsType = new FileSystemType
+        _statfs = new FileSystemInfo
+        {
+            Blocks         = sb.block_count,
+            FilenameLength = MAX_NAME,
+            FreeBlocks     = 0,
+            Id = new FileSystemId
             {
-                Type         = "Opera",
-                VolumeName   = StringHandlers.CToString(sb.volume_label, Encoding),
-                ClusterSize  = sb.block_size,
-                Clusters     = sb.block_count,
-                Bootable     = true,
-                VolumeSerial = $"{sb.volume_id:X8}"
-            };
+                IsInt    = true,
+                Serial32 = sb.volume_id
+            },
+            PluginId = Id,
+            Type     = "Opera"
+        };
 
-            _statfs = new FileSystemInfo
-            {
-                Blocks         = sb.block_count,
-                FilenameLength = MAX_NAME,
-                FreeBlocks     = 0,
-                Id = new FileSystemId
-                {
-                    IsInt    = true,
-                    Serial32 = sb.volume_id
-                },
-                PluginId = Id,
-                Type     = "Opera"
-            };
+        _image = imagePlugin;
+        int firstRootBlock = BigEndianBitConverter.ToInt32(sbSector, Marshal.SizeOf<SuperBlock>());
+        _rootDirectoryCache = DecodeDirectory(firstRootBlock);
+        _directoryCache     = new Dictionary<string, Dictionary<string, DirectoryEntryWithPointers>>();
+        _mounted            = true;
 
-            _image = imagePlugin;
-            int firstRootBlock = BigEndianBitConverter.ToInt32(sbSector, Marshal.SizeOf<SuperBlock>());
-            _rootDirectoryCache = DecodeDirectory(firstRootBlock);
-            _directoryCache     = new Dictionary<string, Dictionary<string, DirectoryEntryWithPointers>>();
-            _mounted            = true;
+        return ErrorNumber.NoError;
+    }
 
-            return ErrorNumber.NoError;
-        }
+    /// <inheritdoc />
+    public ErrorNumber Unmount()
+    {
+        if(!_mounted)
+            return ErrorNumber.AccessDenied;
 
-        /// <inheritdoc />
-        public ErrorNumber Unmount()
-        {
-            if(!_mounted)
-                return ErrorNumber.AccessDenied;
+        _mounted = false;
 
-            _mounted = false;
+        return ErrorNumber.NoError;
+    }
 
-            return ErrorNumber.NoError;
-        }
+    /// <inheritdoc />
+    public ErrorNumber StatFs(out FileSystemInfo stat)
+    {
+        stat = null;
 
-        /// <inheritdoc />
-        public ErrorNumber StatFs(out FileSystemInfo stat)
-        {
-            stat = null;
+        if(!_mounted)
+            return ErrorNumber.AccessDenied;
 
-            if(!_mounted)
-                return ErrorNumber.AccessDenied;
+        stat = _statfs.ShallowCopy();
 
-            stat = _statfs.ShallowCopy();
-
-            return ErrorNumber.NoError;
-        }
+        return ErrorNumber.NoError;
     }
 }

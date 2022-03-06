@@ -36,23 +36,22 @@ using System.Collections.Generic;
 using Aaru.CommonTypes.Structs;
 using Schemas;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class DiskDupe
 {
-    public sealed partial class DiskDupe
-    {
-        /// <inheritdoc />
-        public string Name => "DiskDupe DDI Disk Image";
-        /// <inheritdoc />
-        public Guid Id => new Guid("5439B4A2-5F38-33A7-B8DC-3910D296B3DD");
-        /// <inheritdoc />
-        public string Author => "Michael Drüing";
-        /// <inheritdoc />
-        public string Format => "DDI disk image";
-        /// <inheritdoc />
-        public ImageInfo Info => _imageInfo;
-        /// <inheritdoc />
-        public List<DumpHardwareType> DumpHardware => null;
-        /// <inheritdoc />
-        public CICMMetadataType CicmMetadata => null;
-    }
+    /// <inheritdoc />
+    public string Name => "DiskDupe DDI Disk Image";
+    /// <inheritdoc />
+    public Guid Id => new Guid("5439B4A2-5F38-33A7-B8DC-3910D296B3DD");
+    /// <inheritdoc />
+    public string Author => "Michael Drüing";
+    /// <inheritdoc />
+    public string Format => "DDI disk image";
+    /// <inheritdoc />
+    public ImageInfo Info => _imageInfo;
+    /// <inheritdoc />
+    public List<DumpHardwareType> DumpHardware => null;
+    /// <inheritdoc />
+    public CICMMetadataType CicmMetadata => null;
 }

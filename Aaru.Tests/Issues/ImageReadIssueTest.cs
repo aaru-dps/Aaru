@@ -7,57 +7,56 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Core;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Issues
+namespace Aaru.Tests.Issues;
+
+/// <summary>This class will test an issue that happens when reading an image completely, from start to end, crashes.</summary>
+public abstract class ImageReadIssueTest
 {
-    /// <summary>This class will test an issue that happens when reading an image completely, from start to end, crashes.</summary>
-    public abstract class ImageReadIssueTest
+    const           uint   SECTORS_TO_READ = 256;
+    public abstract string DataFolder { get; }
+    public abstract string TestFile   { get; }
+
+    [Test]
+    public void Test()
     {
-        const           uint   SECTORS_TO_READ = 256;
-        public abstract string DataFolder { get; }
-        public abstract string TestFile   { get; }
+        Environment.CurrentDirectory = DataFolder;
 
-        [Test]
-        public void Test()
+        bool exists = File.Exists(TestFile);
+        Assert.True(exists, "Test file not found");
+
+        var     filtersList = new FiltersList();
+        IFilter inputFilter = filtersList.GetFilter(TestFile);
+
+        Assert.IsNotNull(inputFilter, "Filter for test file is not detected");
+
+        IMediaImage image = ImageFormat.Detect(inputFilter) as IMediaImage;
+
+        Assert.IsNotNull(image, "Image format for test file is not detected");
+
+        Assert.AreEqual(ErrorNumber.NoError, image.Open(inputFilter), "Cannot open image for test file");
+
+        ulong       doneSectors = 0;
+        var         ctx         = new Crc32Context();
+        ErrorNumber errno;
+
+        while(doneSectors < image.Info.Sectors)
         {
-            Environment.CurrentDirectory = DataFolder;
+            byte[] sector;
 
-            bool exists = File.Exists(TestFile);
-            Assert.True(exists, "Test file not found");
-
-            var     filtersList = new FiltersList();
-            IFilter inputFilter = filtersList.GetFilter(TestFile);
-
-            Assert.IsNotNull(inputFilter, "Filter for test file is not detected");
-
-            IMediaImage image = ImageFormat.Detect(inputFilter) as IMediaImage;
-
-            Assert.IsNotNull(image, "Image format for test file is not detected");
-
-            Assert.AreEqual(ErrorNumber.NoError, image.Open(inputFilter), "Cannot open image for test file");
-
-            ulong       doneSectors = 0;
-            var         ctx         = new Crc32Context();
-            ErrorNumber errno;
-
-            while(doneSectors < image.Info.Sectors)
+            if(image.Info.Sectors - doneSectors >= SECTORS_TO_READ)
             {
-                byte[] sector;
-
-                if(image.Info.Sectors - doneSectors >= SECTORS_TO_READ)
-                {
-                    errno       =  image.ReadSectors(doneSectors, SECTORS_TO_READ, out sector);
-                    doneSectors += SECTORS_TO_READ;
-                }
-                else
-                {
-                    errno       =  image.ReadSectors(doneSectors, (uint)(image.Info.Sectors - doneSectors), out sector);
-                    doneSectors += image.Info.Sectors - doneSectors;
-                }
-
-                Assert.AreEqual(ErrorNumber.NoError, errno);
-
-                ctx.Update(sector);
+                errno       =  image.ReadSectors(doneSectors, SECTORS_TO_READ, out sector);
+                doneSectors += SECTORS_TO_READ;
             }
+            else
+            {
+                errno       =  image.ReadSectors(doneSectors, (uint)(image.Info.Sectors - doneSectors), out sector);
+                doneSectors += image.Info.Sectors - doneSectors;
+            }
+
+            Assert.AreEqual(ErrorNumber.NoError, errno);
+
+            ctx.Update(sector);
         }
     }
 }

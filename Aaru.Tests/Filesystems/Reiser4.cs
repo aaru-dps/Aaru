@@ -31,31 +31,30 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Filesystems
+namespace Aaru.Tests.Filesystems;
+
+[TestFixture]
+public class Reiser4 : FilesystemTest
 {
-    [TestFixture]
-    public class Reiser4 : FilesystemTest
+    public Reiser4() : base("Reiser 4 filesystem") {}
+
+    public override string DataFolder =>
+        Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Reiser filesystem v4");
+    public override IFilesystem Plugin     => new Aaru.Filesystems.Reiser4();
+    public override bool        Partitions => true;
+
+    public override FileSystemTest[] Tests => new[]
     {
-        public Reiser4() : base("Reiser 4 filesystem") {}
-
-        public override string DataFolder =>
-            Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Reiser filesystem v4");
-        public override IFilesystem Plugin     => new Aaru.Filesystems.Reiser4();
-        public override bool        Partitions => true;
-
-        public override FileSystemTest[] Tests => new[]
+        new FileSystemTest
         {
-            new FileSystemTest
-            {
-                TestFile     = "linux.aif",
-                MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 262144,
-                SectorSize   = 512,
-                Clusters     = 32511,
-                ClusterSize  = 4096,
-                VolumeName   = "Volume label",
-                VolumeSerial = "b0c1924e-6f10-8c42-b6c5-66a457896460"
-            }
-        };
-    }
+            TestFile     = "linux.aif",
+            MediaType    = MediaType.GENERIC_HDD,
+            Sectors      = 262144,
+            SectorSize   = 512,
+            Clusters     = 32511,
+            ClusterSize  = 4096,
+            VolumeName   = "Volume label",
+            VolumeSerial = "b0c1924e-6f10-8c42-b6c5-66a457896460"
+        }
+    };
 }

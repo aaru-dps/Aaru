@@ -30,13 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class DiscFerret
 {
-    public sealed partial class DiscFerret
-    {
-        /// <summary>"DFER"</summary>
-        const uint DFI_MAGIC = 0x52454644;
-        /// <summary>"DFE2"</summary>
-        const uint DFI_MAGIC2 = 0x32454644;
-    }
+    /// <summary>"DFER"</summary>
+    const uint DFI_MAGIC = 0x52454644;
+    /// <summary>"DFE2"</summary>
+    const uint DFI_MAGIC2 = 0x32454644;
 }

@@ -78,111 +78,110 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 
-namespace Aaru.DiscImages
-{
-    /// <summary>Implements reading and writing AaruFormat media images</summary>
-    public sealed partial class AaruFormat : IWritableOpticalImage, IVerifiableImage, IWritableTapeImage
-    {
-        bool _alreadyWrittenZero;
-        /// <summary>Cache of uncompressed blocks.</summary>
-        Dictionary<ulong, byte[]> _blockCache;
-        /// <summary>Cache of block headers.</summary>
-        Dictionary<ulong, BlockHeader> _blockHeaderCache;
-        /// <summary>Provides checksum for deduplication of sectors.</summary>
-        SHA256 _checksumProvider;
-        bool            _compress;
-        byte[]          _compressedBuffer;
-        CompressionType _compressionAlgorithm;
-        /// <summary>Provides CRC64.</summary>
-        Crc64Context _crc64;
-        /// <summary>Header of the currently writing block.</summary>
-        BlockHeader _currentBlockHeader;
-        /// <summary>Sector offset of writing position in currently writing block.</summary>
-        uint _currentBlockOffset;
-        /// <summary>Current size in bytes of the block cache</summary>
-        uint _currentCacheSize;
-        /// <summary>Cache of DDT entries.</summary>
-        Dictionary<ulong, ulong> _ddtEntryCache;
-        bool _deduplicate;
-        /// <summary>On-memory deduplication table indexed by checksum.</summary>
-        Dictionary<string, ulong> _deduplicationTable;
-        /// <summary>Dictionary size for compression algorithms</summary>
-        uint _dictionarySize;
-        /// <summary>Block with logical geometry.</summary>
-        GeometryBlock _geometryBlock;
-        /// <summary>Image header.</summary>
-        AaruHeader _header;
-        /// <summary>Image information.</summary>
-        ImageInfo _imageInfo;
-        /// <summary>Image data stream.</summary>
-        Stream _imageStream;
-        /// <summary>Index.</summary>
-        List<IndexEntry> _index;
-        /// <summary>If set to <c>true</c>, the DDT entries are in-memory.</summary>
-        bool _inMemoryDdt;
-        ulong      _lastWrittenBlock;
-        Md5Context _md5Provider;
-        /// <summary>Cache of media tags.</summary>
-        Dictionary<MediaTagType, byte[]> _mediaTags;
-        byte[] _mode2Subheaders;
-        /// <summary>If DDT is on-disk, this is the image stream offset at which it starts.</summary>
-        long _outMemoryDdtPosition;
-        bool   _rewinded;
-        byte[] _sectorCpiMai;
-        byte[] _sectorDecryptedTitleKey;
-        /// <summary>Cache for data that prefixes the user data on a sector (e.g. sync).</summary>
-        byte[] _sectorPrefix;
-        uint[]       _sectorPrefixDdt;
-        MemoryStream _sectorPrefixMs;
-        /// <summary>Cache for data that goes side by side with user data (e.g. CompactDisc subchannel).</summary>
-        byte[] _sectorSubchannel;
-        /// <summary>Cache for data that suffixes the user data on a sector (e.g. edc, ecc).</summary>
-        byte[] _sectorSuffix;
-        uint[]        _sectorSuffixDdt;
-        MemoryStream  _sectorSuffixMs;
-        Sha1Context   _sha1Provider;
-        Sha256Context _sha256Provider;
-        /// <summary>Shift for calculating number of sectors in a block.</summary>
-        byte _shift;
-        SpamSumContext _spamsumProvider;
-        /// <summary>Cache for bytes to write/rad on-disk.</summary>
-        byte[] _structureBytes;
-        /// <summary>Cache for pointer for marshaling structures.</summary>
-        IntPtr _structurePointer;
-        Dictionary<ulong, ulong> _tapeDdt;
-        /// <summary>Cache of CompactDisc track's flags</summary>
-        Dictionary<byte, byte> _trackFlags;
-        /// <summary>Cache of CompactDisc track's ISRC</summary>
-        Dictionary<byte, string> _trackIsrcs;
-        /// <summary>In-memory deduplication table</summary>
-        ulong[] _userDataDdt;
-        byte[] _writingBuffer;
-        int    _writingBufferPosition;
-        bool   _writingLong;
-        ulong  _writtenSectors;
+namespace Aaru.DiscImages;
 
-        public AaruFormat() => _imageInfo = new ImageInfo
-        {
-            ReadableSectorTags    = new List<SectorTagType>(),
-            ReadableMediaTags     = new List<MediaTagType>(),
-            HasPartitions         = false,
-            HasSessions           = false,
-            Version               = null,
-            Application           = "Aaru",
-            ApplicationVersion    = null,
-            Creator               = null,
-            Comments              = null,
-            MediaManufacturer     = null,
-            MediaModel            = null,
-            MediaSerialNumber     = null,
-            MediaBarcode          = null,
-            MediaPartNumber       = null,
-            MediaSequence         = 0,
-            LastMediaSequence     = 0,
-            DriveManufacturer     = null,
-            DriveModel            = null,
-            DriveSerialNumber     = null,
-            DriveFirmwareRevision = null
-        };
-    }
+/// <summary>Implements reading and writing AaruFormat media images</summary>
+public sealed partial class AaruFormat : IWritableOpticalImage, IVerifiableImage, IWritableTapeImage
+{
+    bool _alreadyWrittenZero;
+    /// <summary>Cache of uncompressed blocks.</summary>
+    Dictionary<ulong, byte[]> _blockCache;
+    /// <summary>Cache of block headers.</summary>
+    Dictionary<ulong, BlockHeader> _blockHeaderCache;
+    /// <summary>Provides checksum for deduplication of sectors.</summary>
+    SHA256 _checksumProvider;
+    bool            _compress;
+    byte[]          _compressedBuffer;
+    CompressionType _compressionAlgorithm;
+    /// <summary>Provides CRC64.</summary>
+    Crc64Context _crc64;
+    /// <summary>Header of the currently writing block.</summary>
+    BlockHeader _currentBlockHeader;
+    /// <summary>Sector offset of writing position in currently writing block.</summary>
+    uint _currentBlockOffset;
+    /// <summary>Current size in bytes of the block cache</summary>
+    uint _currentCacheSize;
+    /// <summary>Cache of DDT entries.</summary>
+    Dictionary<ulong, ulong> _ddtEntryCache;
+    bool _deduplicate;
+    /// <summary>On-memory deduplication table indexed by checksum.</summary>
+    Dictionary<string, ulong> _deduplicationTable;
+    /// <summary>Dictionary size for compression algorithms</summary>
+    uint _dictionarySize;
+    /// <summary>Block with logical geometry.</summary>
+    GeometryBlock _geometryBlock;
+    /// <summary>Image header.</summary>
+    AaruHeader _header;
+    /// <summary>Image information.</summary>
+    ImageInfo _imageInfo;
+    /// <summary>Image data stream.</summary>
+    Stream _imageStream;
+    /// <summary>Index.</summary>
+    List<IndexEntry> _index;
+    /// <summary>If set to <c>true</c>, the DDT entries are in-memory.</summary>
+    bool _inMemoryDdt;
+    ulong      _lastWrittenBlock;
+    Md5Context _md5Provider;
+    /// <summary>Cache of media tags.</summary>
+    Dictionary<MediaTagType, byte[]> _mediaTags;
+    byte[] _mode2Subheaders;
+    /// <summary>If DDT is on-disk, this is the image stream offset at which it starts.</summary>
+    long _outMemoryDdtPosition;
+    bool   _rewinded;
+    byte[] _sectorCpiMai;
+    byte[] _sectorDecryptedTitleKey;
+    /// <summary>Cache for data that prefixes the user data on a sector (e.g. sync).</summary>
+    byte[] _sectorPrefix;
+    uint[]       _sectorPrefixDdt;
+    MemoryStream _sectorPrefixMs;
+    /// <summary>Cache for data that goes side by side with user data (e.g. CompactDisc subchannel).</summary>
+    byte[] _sectorSubchannel;
+    /// <summary>Cache for data that suffixes the user data on a sector (e.g. edc, ecc).</summary>
+    byte[] _sectorSuffix;
+    uint[]        _sectorSuffixDdt;
+    MemoryStream  _sectorSuffixMs;
+    Sha1Context   _sha1Provider;
+    Sha256Context _sha256Provider;
+    /// <summary>Shift for calculating number of sectors in a block.</summary>
+    byte _shift;
+    SpamSumContext _spamsumProvider;
+    /// <summary>Cache for bytes to write/rad on-disk.</summary>
+    byte[] _structureBytes;
+    /// <summary>Cache for pointer for marshaling structures.</summary>
+    IntPtr _structurePointer;
+    Dictionary<ulong, ulong> _tapeDdt;
+    /// <summary>Cache of CompactDisc track's flags</summary>
+    Dictionary<byte, byte> _trackFlags;
+    /// <summary>Cache of CompactDisc track's ISRC</summary>
+    Dictionary<byte, string> _trackIsrcs;
+    /// <summary>In-memory deduplication table</summary>
+    ulong[] _userDataDdt;
+    byte[] _writingBuffer;
+    int    _writingBufferPosition;
+    bool   _writingLong;
+    ulong  _writtenSectors;
+
+    public AaruFormat() => _imageInfo = new ImageInfo
+    {
+        ReadableSectorTags    = new List<SectorTagType>(),
+        ReadableMediaTags     = new List<MediaTagType>(),
+        HasPartitions         = false,
+        HasSessions           = false,
+        Version               = null,
+        Application           = "Aaru",
+        ApplicationVersion    = null,
+        Creator               = null,
+        Comments              = null,
+        MediaManufacturer     = null,
+        MediaModel            = null,
+        MediaSerialNumber     = null,
+        MediaBarcode          = null,
+        MediaPartNumber       = null,
+        MediaSequence         = 0,
+        LastMediaSequence     = 0,
+        DriveManufacturer     = null,
+        DriveModel            = null,
+        DriveSerialNumber     = null,
+        DriveFirmwareRevision = null
+    };
 }

@@ -33,63 +33,62 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Filters
+namespace Aaru.Tests.Filters;
+
+[TestFixture]
+public class BZip2
 {
-    [TestFixture]
-    public class BZip2
+    static readonly byte[] _expectedFile =
     {
-        static readonly byte[] _expectedFile =
-        {
-            0xf8, 0xb6, 0xbc, 0x62, 0x33, 0xcf, 0x1d, 0x28, 0x02, 0xef, 0x80, 0xf1, 0xe4, 0xfc, 0x1b, 0xdf
-        };
-        static readonly byte[] _expectedContents =
-        {
-            0x18, 0x90, 0x5a, 0xf9, 0x83, 0xd8, 0x2b, 0xdd, 0x1a, 0xcc, 0x69, 0x75, 0x4f, 0x0f, 0x81, 0x5e
-        };
-        readonly string _location;
+        0xf8, 0xb6, 0xbc, 0x62, 0x33, 0xcf, 0x1d, 0x28, 0x02, 0xef, 0x80, 0xf1, 0xe4, 0xfc, 0x1b, 0xdf
+    };
+    static readonly byte[] _expectedContents =
+    {
+        0x18, 0x90, 0x5a, 0xf9, 0x83, 0xd8, 0x2b, 0xdd, 0x1a, 0xcc, 0x69, 0x75, 0x4f, 0x0f, 0x81, 0x5e
+    };
+    readonly string _location;
 
-        public BZip2() => _location = Path.Combine(Consts.TEST_FILES_ROOT, "Filters", "bzip2.bz2");
+    public BZip2() => _location = Path.Combine(Consts.TEST_FILES_ROOT, "Filters", "bzip2.bz2");
 
-        [Test]
-        public void CheckContents()
-        {
-            IFilter filter = new Aaru.Filters.BZip2();
-            filter.Open(_location);
-            Stream str  = filter.GetDataForkStream();
-            byte[] data = new byte[1048576];
-            str.Read(data, 0, 1048576);
-            str.Close();
-            str.Dispose();
-            filter.Close();
-            Md5Context.Data(data, out byte[] result);
-            Assert.AreEqual(_expectedContents, result);
-        }
+    [Test]
+    public void CheckContents()
+    {
+        IFilter filter = new Aaru.Filters.BZip2();
+        filter.Open(_location);
+        Stream str  = filter.GetDataForkStream();
+        byte[] data = new byte[1048576];
+        str.Read(data, 0, 1048576);
+        str.Close();
+        str.Dispose();
+        filter.Close();
+        Md5Context.Data(data, out byte[] result);
+        Assert.AreEqual(_expectedContents, result);
+    }
 
-        [Test]
-        public void CheckCorrectFile()
-        {
-            byte[] result = Md5Context.File(_location);
-            Assert.AreEqual(_expectedFile, result);
-        }
+    [Test]
+    public void CheckCorrectFile()
+    {
+        byte[] result = Md5Context.File(_location);
+        Assert.AreEqual(_expectedFile, result);
+    }
 
-        [Test]
-        public void CheckFilterId()
-        {
-            IFilter filter = new Aaru.Filters.BZip2();
-            Assert.AreEqual(true, filter.Identify(_location));
-        }
+    [Test]
+    public void CheckFilterId()
+    {
+        IFilter filter = new Aaru.Filters.BZip2();
+        Assert.AreEqual(true, filter.Identify(_location));
+    }
 
-        [Test]
-        public void Test()
-        {
-            IFilter filter = new Aaru.Filters.BZip2();
-            Assert.AreEqual(ErrorNumber.NoError, filter.Open(_location));
-            Assert.AreEqual(1048576, filter.DataForkLength);
-            Assert.AreNotEqual(null, filter.GetDataForkStream());
-            Assert.AreEqual(0, filter.ResourceForkLength);
-            Assert.AreEqual(null, filter.GetResourceForkStream());
-            Assert.AreEqual(false, filter.HasResourceFork);
-            filter.Close();
-        }
+    [Test]
+    public void Test()
+    {
+        IFilter filter = new Aaru.Filters.BZip2();
+        Assert.AreEqual(ErrorNumber.NoError, filter.Open(_location));
+        Assert.AreEqual(1048576, filter.DataForkLength);
+        Assert.AreNotEqual(null, filter.GetDataForkStream());
+        Assert.AreEqual(0, filter.ResourceForkLength);
+        Assert.AreEqual(null, filter.GetResourceForkStream());
+        Assert.AreEqual(false, filter.HasResourceFork);
+        filter.Close();
     }
 }

@@ -33,129 +33,115 @@
 using System;
 using System.IO;
 
-namespace Aaru.Filters
+namespace Aaru.Filters;
+
+/// <summary>
+///     ForcedSeekStream allows to seek a forward-readable stream (like System.IO.Compression streams) by doing the
+///     slow and known trick of rewinding and forward reading until arriving the desired position.
+/// </summary>
+/// <inheritdoc />
+public sealed class ForcedSeekStream<T> : Stream where T : Stream
 {
-    /// <summary>
-    ///     ForcedSeekStream allows to seek a forward-readable stream (like System.IO.Compression streams) by doing the
-    ///     slow and known trick of rewinding and forward reading until arriving the desired position.
-    /// </summary>
+    const    int        BUFFER_LEN = 1048576;
+    readonly string     _backFile;
+    readonly FileStream _backStream;
+    readonly T          _baseStream;
+    long                _streamLength;
+
+    /// <summary>Initializes a new instance of the <see cref="T:Aaru.Filters.ForcedSeekStream`1" /> class.</summary>
+    /// <param name="length">The real (uncompressed) length of the stream.</param>
+    /// <param name="args">Parameters that are used to create the base stream.</param>
     /// <inheritdoc />
-    public sealed class ForcedSeekStream<T> : Stream where T : Stream
+    public ForcedSeekStream(long length, params object[] args)
     {
-        const    int        BUFFER_LEN = 1048576;
-        readonly string     _backFile;
-        readonly FileStream _backStream;
-        readonly T          _baseStream;
-        long                _streamLength;
+        _streamLength = length;
+        _baseStream   = (T)Activator.CreateInstance(typeof(T), args);
+        _backFile     = Path.GetTempFileName();
+        _backStream   = new FileStream(_backFile, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
 
-        /// <summary>Initializes a new instance of the <see cref="T:Aaru.Filters.ForcedSeekStream`1" /> class.</summary>
-        /// <param name="length">The real (uncompressed) length of the stream.</param>
-        /// <param name="args">Parameters that are used to create the base stream.</param>
-        /// <inheritdoc />
-        public ForcedSeekStream(long length, params object[] args)
-        {
-            _streamLength = length;
-            _baseStream   = (T)Activator.CreateInstance(typeof(T), args);
-            _backFile     = Path.GetTempFileName();
-            _backStream   = new FileStream(_backFile, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
-
-            if(length == 0)
-                CalculateLength();
-        }
-
-        /// <summary>Initializes a new instance of the <see cref="T:Aaru.Filters.ForcedSeekStream`1" /> class.</summary>
-        /// <param name="args">Parameters that are used to create the base stream.</param>
-        /// <inheritdoc />
-        public ForcedSeekStream(params object[] args)
-        {
-            _baseStream = (T)Activator.CreateInstance(typeof(T), args);
-            _backFile   = Path.GetTempFileName();
-            _backStream = new FileStream(_backFile, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
+        if(length == 0)
             CalculateLength();
+    }
+
+    /// <summary>Initializes a new instance of the <see cref="T:Aaru.Filters.ForcedSeekStream`1" /> class.</summary>
+    /// <param name="args">Parameters that are used to create the base stream.</param>
+    /// <inheritdoc />
+    public ForcedSeekStream(params object[] args)
+    {
+        _baseStream = (T)Activator.CreateInstance(typeof(T), args);
+        _backFile   = Path.GetTempFileName();
+        _backStream = new FileStream(_backFile, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
+        CalculateLength();
+    }
+
+    /// <inheritdoc />
+    public override bool CanRead => _baseStream.CanRead;
+
+    /// <inheritdoc />
+    public override bool CanSeek => true;
+
+    /// <inheritdoc />
+    public override bool CanWrite => false;
+
+    /// <inheritdoc />
+    public override long Length => _streamLength;
+
+    /// <inheritdoc />
+    public override long Position
+    {
+        get => _backStream.Position;
+
+        set => SetPosition(value);
+    }
+
+    /// <summary>
+    ///     Calculates the real (uncompressed) length of the stream. It basically reads (uncompresses) the whole stream to
+    ///     memory discarding its contents, so it should be used as a last resort.
+    /// </summary>
+    /// <returns>The length.</returns>
+    public void CalculateLength()
+    {
+        int read;
+
+        do
+        {
+            byte[] buffer = new byte[BUFFER_LEN];
+            read = _baseStream.Read(buffer, 0, BUFFER_LEN);
+            _backStream.Write(buffer, 0, read);
+        } while(read == BUFFER_LEN);
+
+        _streamLength        = _backStream.Length;
+        _backStream.Position = 0;
+    }
+
+    void SetPosition(long position)
+    {
+        if(position == _backStream.Position)
+            return;
+
+        if(position < _backStream.Length)
+        {
+            _backStream.Position = position;
+
+            return;
         }
 
-        /// <inheritdoc />
-        public override bool CanRead => _baseStream.CanRead;
+        if(position > _streamLength)
+            position = _streamLength;
 
-        /// <inheritdoc />
-        public override bool CanSeek => true;
+        _backStream.Position = _backStream.Length;
+        long   toPosition      = position - _backStream.Position;
+        int    fullBufferReads = (int)(toPosition / BUFFER_LEN);
+        int    restToRead      = (int)(toPosition % BUFFER_LEN);
+        byte[] buffer;
+        var    bufPos = 0;
+        var    left   = BUFFER_LEN;
 
-        /// <inheritdoc />
-        public override bool CanWrite => false;
-
-        /// <inheritdoc />
-        public override long Length => _streamLength;
-
-        /// <inheritdoc />
-        public override long Position
+        for(int i = 0; i < fullBufferReads; i++)
         {
-            get => _backStream.Position;
-
-            set => SetPosition(value);
-        }
-
-        /// <summary>
-        ///     Calculates the real (uncompressed) length of the stream. It basically reads (uncompresses) the whole stream to
-        ///     memory discarding its contents, so it should be used as a last resort.
-        /// </summary>
-        /// <returns>The length.</returns>
-        public void CalculateLength()
-        {
-            int read;
-
-            do
-            {
-                byte[] buffer = new byte[BUFFER_LEN];
-                read = _baseStream.Read(buffer, 0, BUFFER_LEN);
-                _backStream.Write(buffer, 0, read);
-            } while(read == BUFFER_LEN);
-
-            _streamLength        = _backStream.Length;
-            _backStream.Position = 0;
-        }
-
-        void SetPosition(long position)
-        {
-            if(position == _backStream.Position)
-                return;
-
-            if(position < _backStream.Length)
-            {
-                _backStream.Position = position;
-
-                return;
-            }
-
-            if(position > _streamLength)
-                position = _streamLength;
-
-            _backStream.Position = _backStream.Length;
-            long   toPosition      = position - _backStream.Position;
-            int    fullBufferReads = (int)(toPosition / BUFFER_LEN);
-            int    restToRead      = (int)(toPosition % BUFFER_LEN);
-            byte[] buffer;
-            var    bufPos = 0;
-            var    left   = BUFFER_LEN;
-
-            for(int i = 0; i < fullBufferReads; i++)
-            {
-                buffer = new byte[BUFFER_LEN];
-                bufPos = 0;
-                left   = BUFFER_LEN;
-
-                while(left > 0)
-                {
-                    var done = _baseStream.Read(buffer, bufPos, left);
-                    left   -= done;
-                    bufPos += done;
-                }
-
-                _backStream.Write(buffer, 0, BUFFER_LEN);
-            }
-
-            buffer = new byte[restToRead];
+            buffer = new byte[BUFFER_LEN];
             bufPos = 0;
-            left   = restToRead;
+            left   = BUFFER_LEN;
 
             while(left > 0)
             {
@@ -164,95 +150,108 @@ namespace Aaru.Filters
                 bufPos += done;
             }
 
-            _backStream.Write(buffer, 0, restToRead);
+            _backStream.Write(buffer, 0, BUFFER_LEN);
         }
 
-        /// <inheritdoc />
-        public override void Flush()
+        buffer = new byte[restToRead];
+        bufPos = 0;
+        left   = restToRead;
+
+        while(left > 0)
         {
-            _baseStream.Flush();
-            _backStream.Flush();
+            var done = _baseStream.Read(buffer, bufPos, left);
+            left   -= done;
+            bufPos += done;
         }
 
-        /// <inheritdoc />
-        public override int Read(byte[] buffer, int offset, int count)
-        {
-            if(_backStream.Position + count > _streamLength)
-                count = (int)(_streamLength - _backStream.Position);
+        _backStream.Write(buffer, 0, restToRead);
+    }
 
-            if(_backStream.Position + count <= _backStream.Length)
-                return _backStream.Read(buffer, offset, count);
+    /// <inheritdoc />
+    public override void Flush()
+    {
+        _baseStream.Flush();
+        _backStream.Flush();
+    }
 
-            var oldPosition = _backStream.Position;
-            SetPosition(_backStream.Position + count);
-            SetPosition(oldPosition);
+    /// <inheritdoc />
+    public override int Read(byte[] buffer, int offset, int count)
+    {
+        if(_backStream.Position + count > _streamLength)
+            count = (int)(_streamLength - _backStream.Position);
 
+        if(_backStream.Position + count <= _backStream.Length)
             return _backStream.Read(buffer, offset, count);
-        }
 
-        /// <inheritdoc />
-        public override int ReadByte()
-        {
-            if(_backStream.Position + 1 > _streamLength)
-                return -1;
+        var oldPosition = _backStream.Position;
+        SetPosition(_backStream.Position + count);
+        SetPosition(oldPosition);
 
-            if(_backStream.Position + 1 <= _backStream.Length)
-                return _backStream.ReadByte();
+        return _backStream.Read(buffer, offset, count);
+    }
 
-            SetPosition(_backStream.Position + 1);
-            SetPosition(_backStream.Position - 1);
+    /// <inheritdoc />
+    public override int ReadByte()
+    {
+        if(_backStream.Position + 1 > _streamLength)
+            return -1;
 
+        if(_backStream.Position + 1 <= _backStream.Length)
             return _backStream.ReadByte();
-        }
 
-        /// <inheritdoc />
-        public override long Seek(long offset, SeekOrigin origin)
+        SetPosition(_backStream.Position + 1);
+        SetPosition(_backStream.Position - 1);
+
+        return _backStream.ReadByte();
+    }
+
+    /// <inheritdoc />
+    public override long Seek(long offset, SeekOrigin origin)
+    {
+        switch(origin)
         {
-            switch(origin)
-            {
-                case SeekOrigin.Begin:
-                    if(offset < 0)
-                        throw new IOException("Cannot seek before stream start.");
+            case SeekOrigin.Begin:
+                if(offset < 0)
+                    throw new IOException("Cannot seek before stream start.");
 
-                    SetPosition(offset);
+                SetPosition(offset);
 
-                    break;
-                case SeekOrigin.End:
-                    if(offset > 0)
-                        throw new IOException("Cannot seek after stream end.");
+                break;
+            case SeekOrigin.End:
+                if(offset > 0)
+                    throw new IOException("Cannot seek after stream end.");
 
-                    if(_streamLength == 0)
-                        CalculateLength();
+                if(_streamLength == 0)
+                    CalculateLength();
 
-                    SetPosition(_streamLength + offset);
+                SetPosition(_streamLength + offset);
 
-                    break;
-                default:
-                    SetPosition(_backStream.Position + offset);
+                break;
+            default:
+                SetPosition(_backStream.Position + offset);
 
-                    break;
-            }
-
-            return _backStream.Position;
+                break;
         }
 
-        /// <inheritdoc />
-        public override void SetLength(long value) => throw new NotSupportedException();
+        return _backStream.Position;
+    }
 
-        /// <inheritdoc />
-        public override void Write(byte[] buffer, int offset, int count) => throw new NotSupportedException();
+    /// <inheritdoc />
+    public override void SetLength(long value) => throw new NotSupportedException();
 
-        /// <inheritdoc />
-        public override void Close()
-        {
-            _backStream?.Close();
-            File.Delete(_backFile);
-        }
+    /// <inheritdoc />
+    public override void Write(byte[] buffer, int offset, int count) => throw new NotSupportedException();
 
-        ~ForcedSeekStream()
-        {
-            _backStream?.Close();
-            File.Delete(_backFile);
-        }
+    /// <inheritdoc />
+    public override void Close()
+    {
+        _backStream?.Close();
+        File.Delete(_backFile);
+    }
+
+    ~ForcedSeekStream()
+    {
+        _backStream?.Close();
+        File.Delete(_backFile);
     }
 }

@@ -32,37 +32,36 @@
 
 using System;
 
-namespace Aaru.DiscImages
-{
-    public sealed partial class SuperCardPro
-    {
-        public enum ScpDiskType : byte
-        {
-            Commodore64 = 0x00, CommodoreAmiga = 0x04, AtariFMSS  = 0x10,
-            AtariFMDS   = 0x11, AtariFSEx      = 0x12, AtariSTSS  = 0x14,
-            AtariSTDS   = 0x15, AppleII        = 0x20, AppleIIPro = 0x21,
-            Apple400K   = 0x24, Apple800K      = 0x25, Apple144   = 0x26,
-            PC360K      = 0x30, PC720K         = 0x31, PC12M      = 0x32,
-            PC144M      = 0x33, TandySSSD      = 0x40, TandySSDD  = 0x41,
-            TandyDSSD   = 0x42, TandyDSDD      = 0x43, Ti994A     = 0x50,
-            RolandD20   = 0x60
-        }
+namespace Aaru.DiscImages;
 
-        [Flags]
-        public enum ScpFlags : byte
-        {
-            /// <summary>If set flux starts at index pulse</summary>
-            Index = 0x00,
-            /// <summary>If set drive is 96tpi</summary>
-            Tpi = 0x02,
-            /// <summary>If set drive is 360rpm</summary>
-            Rpm = 0x04,
-            /// <summary>If set image contains normalized data</summary>
-            Normalized = 0x08,
-            /// <summary>If set image is read/write capable</summary>
-            Writable = 0x10,
-            /// <summary>If set, image has footer</summary>
-            HasFooter = 0x20
-        }
+public sealed partial class SuperCardPro
+{
+    public enum ScpDiskType : byte
+    {
+        Commodore64 = 0x00, CommodoreAmiga = 0x04, AtariFMSS  = 0x10,
+        AtariFMDS   = 0x11, AtariFSEx      = 0x12, AtariSTSS  = 0x14,
+        AtariSTDS   = 0x15, AppleII        = 0x20, AppleIIPro = 0x21,
+        Apple400K   = 0x24, Apple800K      = 0x25, Apple144   = 0x26,
+        PC360K      = 0x30, PC720K         = 0x31, PC12M      = 0x32,
+        PC144M      = 0x33, TandySSSD      = 0x40, TandySSDD  = 0x41,
+        TandyDSSD   = 0x42, TandyDSDD      = 0x43, Ti994A     = 0x50,
+        RolandD20   = 0x60
+    }
+
+    [Flags]
+    public enum ScpFlags : byte
+    {
+        /// <summary>If set flux starts at index pulse</summary>
+        Index = 0x00,
+        /// <summary>If set drive is 96tpi</summary>
+        Tpi = 0x02,
+        /// <summary>If set drive is 360rpm</summary>
+        Rpm = 0x04,
+        /// <summary>If set image contains normalized data</summary>
+        Normalized = 0x08,
+        /// <summary>If set image is read/write capable</summary>
+        Writable = 0x10,
+        /// <summary>If set, image has footer</summary>
+        HasFooter = 0x20
     }
 }

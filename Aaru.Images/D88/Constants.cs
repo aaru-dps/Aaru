@@ -32,15 +32,14 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+[SuppressMessage("ReSharper", "UnusedMember.Local")]
+public sealed partial class D88
 {
-    [SuppressMessage("ReSharper", "UnusedMember.Local")]
-    public sealed partial class D88
+    const byte READ_ONLY = 0x10;
+    readonly byte[] _reservedEmpty =
     {
-        const byte READ_ONLY = 0x10;
-        readonly byte[] _reservedEmpty =
-        {
-            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-        };
-    }
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+    };
 }

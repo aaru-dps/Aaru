@@ -41,68 +41,67 @@ using Aaru.Console;
 using Aaru.Core;
 using Spectre.Console;
 
-namespace Aaru.Commands
+namespace Aaru.Commands;
+
+internal sealed class ListNamespacesCommand : Command
 {
-    internal sealed class ListNamespacesCommand : Command
+    public ListNamespacesCommand() : base("list-namespaces",
+                                          "Lists all namespaces supported by read-only filesystems.") =>
+        Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
+
+    public static int Invoke(bool debug, bool verbose)
     {
-        public ListNamespacesCommand() : base("list-namespaces",
-                                              "Lists all namespaces supported by read-only filesystems.") =>
-            Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
+        MainClass.PrintCopyright();
 
-        public static int Invoke(bool debug, bool verbose)
+        if(debug)
         {
-            MainClass.PrintCopyright();
-
-            if(debug)
+            IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
             {
-                IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
-                {
-                    Out = new AnsiConsoleOutput(System.Console.Error)
-                });
+                Out = new AnsiConsoleOutput(System.Console.Error)
+            });
 
-                AaruConsole.DebugWriteLineEvent += (format, objects) =>
-                {
-                    if(objects is null)
-                        stderrConsole.MarkupLine(format);
-                    else
-                        stderrConsole.MarkupLine(format, objects);
-                };
-            }
-
-            if(verbose)
-                AaruConsole.WriteEvent += (format, objects) =>
-                {
-                    if(objects is null)
-                        AnsiConsole.Markup(format);
-                    else
-                        AnsiConsole.Markup(format, objects);
-                };
-
-            AaruConsole.DebugWriteLine("List-Namespaces command", "--debug={0}", debug);
-            AaruConsole.DebugWriteLine("List-Namespaces command", "--verbose={0}", verbose);
-            Statistics.AddCommand("list-namespaces");
-
-            PluginBase plugins = GetPluginBase.Instance;
-
-            foreach(KeyValuePair<string, IReadOnlyFilesystem> kvp in
-                plugins.ReadOnlyFilesystems.Where(kvp => !(kvp.Value.Namespaces is null)))
+            AaruConsole.DebugWriteLineEvent += (format, objects) =>
             {
-                Table table = new()
-                {
-                    Title = new TableTitle($"Namespaces for {kvp.Value.Name}:")
-                };
-
-                table.AddColumn("Namespace");
-                table.AddColumn("Description");
-
-                foreach(KeyValuePair<string, string> @namespace in kvp.Value.Namespaces.OrderBy(t => t.Key))
-                    table.AddRow(@namespace.Key, @namespace.Value);
-
-                AnsiConsole.Render(table);
-                AaruConsole.WriteLine();
-            }
-
-            return (int)ErrorNumber.NoError;
+                if(objects is null)
+                    stderrConsole.MarkupLine(format);
+                else
+                    stderrConsole.MarkupLine(format, objects);
+            };
         }
+
+        if(verbose)
+            AaruConsole.WriteEvent += (format, objects) =>
+            {
+                if(objects is null)
+                    AnsiConsole.Markup(format);
+                else
+                    AnsiConsole.Markup(format, objects);
+            };
+
+        AaruConsole.DebugWriteLine("List-Namespaces command", "--debug={0}", debug);
+        AaruConsole.DebugWriteLine("List-Namespaces command", "--verbose={0}", verbose);
+        Statistics.AddCommand("list-namespaces");
+
+        PluginBase plugins = GetPluginBase.Instance;
+
+        foreach(KeyValuePair<string, IReadOnlyFilesystem> kvp in
+                plugins.ReadOnlyFilesystems.Where(kvp => !(kvp.Value.Namespaces is null)))
+        {
+            Table table = new()
+            {
+                Title = new TableTitle($"Namespaces for {kvp.Value.Name}:")
+            };
+
+            table.AddColumn("Namespace");
+            table.AddColumn("Description");
+
+            foreach(KeyValuePair<string, string> @namespace in kvp.Value.Namespaces.OrderBy(t => t.Key))
+                table.AddRow(@namespace.Key, @namespace.Value);
+
+            AnsiConsole.Render(table);
+            AaruConsole.WriteLine();
+        }
+
+        return (int)ErrorNumber.NoError;
     }
 }

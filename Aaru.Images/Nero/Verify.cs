@@ -35,92 +35,91 @@ using System.Collections.Generic;
 using Aaru.Checksums;
 using Aaru.CommonTypes.Enums;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class Nero
 {
-    public sealed partial class Nero
+    /// <inheritdoc />
+    public bool? VerifySector(ulong sectorAddress)
     {
-        /// <inheritdoc />
-        public bool? VerifySector(ulong sectorAddress)
+        ErrorNumber errno = ReadSectorLong(sectorAddress, out byte[] buffer);
+
+        return errno != ErrorNumber.NoError ? null : CdChecksums.CheckCdSector(buffer);
+    }
+
+    /// <inheritdoc />
+    public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
+                               out List<ulong> unknownLbas)
+    {
+        failingLbas = new List<ulong>();
+        unknownLbas = new List<ulong>();
+        ErrorNumber errno = ReadSectorsLong(sectorAddress, length, out byte[] buffer);
+
+        if(errno != ErrorNumber.NoError)
+            return null;
+
+        int    bps    = (int)(buffer.Length / length);
+        byte[] sector = new byte[bps];
+
+        for(int i = 0; i < length; i++)
         {
-            ErrorNumber errno = ReadSectorLong(sectorAddress, out byte[] buffer);
+            Array.Copy(buffer, i * bps, sector, 0, bps);
+            bool? sectorStatus = CdChecksums.CheckCdSector(sector);
 
-            return errno != ErrorNumber.NoError ? null : CdChecksums.CheckCdSector(buffer);
-        }
-
-        /// <inheritdoc />
-        public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
-                                   out List<ulong> unknownLbas)
-        {
-            failingLbas = new List<ulong>();
-            unknownLbas = new List<ulong>();
-            ErrorNumber errno = ReadSectorsLong(sectorAddress, length, out byte[] buffer);
-
-            if(errno != ErrorNumber.NoError)
-                return null;
-
-            int    bps    = (int)(buffer.Length / length);
-            byte[] sector = new byte[bps];
-
-            for(int i = 0; i < length; i++)
+            switch(sectorStatus)
             {
-                Array.Copy(buffer, i * bps, sector, 0, bps);
-                bool? sectorStatus = CdChecksums.CheckCdSector(sector);
+                case null:
+                    unknownLbas.Add((ulong)i + sectorAddress);
 
-                switch(sectorStatus)
-                {
-                    case null:
-                        unknownLbas.Add((ulong)i + sectorAddress);
+                    break;
+                case false:
+                    failingLbas.Add((ulong)i + sectorAddress);
 
-                        break;
-                    case false:
-                        failingLbas.Add((ulong)i + sectorAddress);
-
-                        break;
-                }
+                    break;
             }
-
-            if(unknownLbas.Count > 0)
-                return null;
-
-            return failingLbas.Count <= 0;
         }
 
-        /// <inheritdoc />
-        public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
-                                   out List<ulong> unknownLbas)
+        if(unknownLbas.Count > 0)
+            return null;
+
+        return failingLbas.Count <= 0;
+    }
+
+    /// <inheritdoc />
+    public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+                               out List<ulong> unknownLbas)
+    {
+        failingLbas = new List<ulong>();
+        unknownLbas = new List<ulong>();
+        ErrorNumber errno = ReadSectorsLong(sectorAddress, length, track, out byte[] buffer);
+
+        if(errno != ErrorNumber.NoError)
+            return null;
+
+        int    bps    = (int)(buffer.Length / length);
+        byte[] sector = new byte[bps];
+
+        for(int i = 0; i < length; i++)
         {
-            failingLbas = new List<ulong>();
-            unknownLbas = new List<ulong>();
-            ErrorNumber errno = ReadSectorsLong(sectorAddress, length, track, out byte[] buffer);
+            Array.Copy(buffer, i * bps, sector, 0, bps);
+            bool? sectorStatus = CdChecksums.CheckCdSector(sector);
 
-            if(errno != ErrorNumber.NoError)
-                return null;
-
-            int    bps    = (int)(buffer.Length / length);
-            byte[] sector = new byte[bps];
-
-            for(int i = 0; i < length; i++)
+            switch(sectorStatus)
             {
-                Array.Copy(buffer, i * bps, sector, 0, bps);
-                bool? sectorStatus = CdChecksums.CheckCdSector(sector);
+                case null:
+                    unknownLbas.Add((ulong)i + sectorAddress);
 
-                switch(sectorStatus)
-                {
-                    case null:
-                        unknownLbas.Add((ulong)i + sectorAddress);
+                    break;
+                case false:
+                    failingLbas.Add((ulong)i + sectorAddress);
 
-                        break;
-                    case false:
-                        failingLbas.Add((ulong)i + sectorAddress);
-
-                        break;
-                }
+                    break;
             }
-
-            if(unknownLbas.Count > 0)
-                return null;
-
-            return failingLbas.Count <= 0;
         }
+
+        if(unknownLbas.Count > 0)
+            return null;
+
+        return failingLbas.Count <= 0;
     }
 }

@@ -35,23 +35,22 @@ using System.Collections.Generic;
 using Aaru.CommonTypes.Structs;
 using Schemas;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class PartClone
 {
-    public sealed partial class PartClone
-    {
-        /// <inheritdoc />
-        public string Name => "PartClone disk image";
-        /// <inheritdoc />
-        public Guid Id => new Guid("AB1D7518-B548-4099-A4E2-C29C53DDE0C3");
-        /// <inheritdoc />
-        public ImageInfo Info => _imageInfo;
-        /// <inheritdoc />
-        public string Author => "Natalia Portillo";
-        /// <inheritdoc />
-        public string Format => "PartClone";
-        /// <inheritdoc />
-        public List<DumpHardwareType> DumpHardware => null;
-        /// <inheritdoc />
-        public CICMMetadataType CicmMetadata => null;
-    }
+    /// <inheritdoc />
+    public string Name => "PartClone disk image";
+    /// <inheritdoc />
+    public Guid Id => new Guid("AB1D7518-B548-4099-A4E2-C29C53DDE0C3");
+    /// <inheritdoc />
+    public ImageInfo Info => _imageInfo;
+    /// <inheritdoc />
+    public string Author => "Natalia Portillo";
+    /// <inheritdoc />
+    public string Format => "PartClone";
+    /// <inheritdoc />
+    public List<DumpHardwareType> DumpHardware => null;
+    /// <inheritdoc />
+    public CICMMetadataType CicmMetadata => null;
 }

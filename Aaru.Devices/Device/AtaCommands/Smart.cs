@@ -34,244 +34,243 @@ using System;
 using Aaru.Console;
 using Aaru.Decoders.ATA;
 
-namespace Aaru.Devices
+namespace Aaru.Devices;
+
+public sealed partial class Device
 {
-    public sealed partial class Device
+    /// <summary>Disables S.M.A.R.T.</summary>
+    /// <param name="statusRegisters">Returned status registers</param>
+    /// <param name="timeout">Timeout to wait for command execution</param>
+    /// <param name="duration">Time the device took to execute the command in milliseconds</param>
+    /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
+    public bool SmartDisable(out AtaErrorRegistersLba28 statusRegisters, uint timeout, out double duration)
     {
-        /// <summary>Disables S.M.A.R.T.</summary>
-        /// <param name="statusRegisters">Returned status registers</param>
-        /// <param name="timeout">Timeout to wait for command execution</param>
-        /// <param name="duration">Time the device took to execute the command in milliseconds</param>
-        /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
-        public bool SmartDisable(out AtaErrorRegistersLba28 statusRegisters, uint timeout, out double duration)
+        byte[] buffer = Array.Empty<byte>();
+
+        var registers = new AtaRegistersLba28
         {
-            byte[] buffer = Array.Empty<byte>();
+            Command = (byte)AtaCommands.Smart,
+            Feature = (byte)AtaSmartSubCommands.Disable,
+            LbaHigh = 0xC2,
+            LbaMid  = 0x4F
+        };
 
-            var registers = new AtaRegistersLba28
-            {
-                Command = (byte)AtaCommands.Smart,
-                Feature = (byte)AtaSmartSubCommands.Disable,
-                LbaHigh = 0xC2,
-                LbaMid  = 0x4F
-            };
+        LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData,
+                                   AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
+                                   out bool sense);
 
-            LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData,
-                                       AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
-                                       out bool sense);
+        Error = LastError != 0;
 
-            Error = LastError != 0;
+        AaruConsole.DebugWriteLine("ATA Device", "SMART DISABLE OPERATIONS took {0} ms.", duration);
 
-            AaruConsole.DebugWriteLine("ATA Device", "SMART DISABLE OPERATIONS took {0} ms.", duration);
+        return sense;
+    }
 
-            return sense;
-        }
+    /// <summary>Enables auto-saving of S.M.A.R.T. attributes</summary>
+    /// <param name="statusRegisters">Returned status registers</param>
+    /// <param name="timeout">Timeout to wait for command execution</param>
+    /// <param name="duration">Time the device took to execute the command in milliseconds</param>
+    /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
+    public bool SmartEnableAttributeAutosave(out AtaErrorRegistersLba28 statusRegisters, uint timeout,
+                                             out double duration)
+    {
+        byte[] buffer = Array.Empty<byte>();
 
-        /// <summary>Enables auto-saving of S.M.A.R.T. attributes</summary>
-        /// <param name="statusRegisters">Returned status registers</param>
-        /// <param name="timeout">Timeout to wait for command execution</param>
-        /// <param name="duration">Time the device took to execute the command in milliseconds</param>
-        /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
-        public bool SmartEnableAttributeAutosave(out AtaErrorRegistersLba28 statusRegisters, uint timeout,
-                                                 out double duration)
+        var registers = new AtaRegistersLba28
         {
-            byte[] buffer = Array.Empty<byte>();
+            Command     = (byte)AtaCommands.Smart,
+            Feature     = (byte)AtaSmartSubCommands.EnableDisableAttributeAutosave,
+            LbaHigh     = 0xC2,
+            LbaMid      = 0x4F,
+            SectorCount = 0xF1
+        };
 
-            var registers = new AtaRegistersLba28
-            {
-                Command     = (byte)AtaCommands.Smart,
-                Feature     = (byte)AtaSmartSubCommands.EnableDisableAttributeAutosave,
-                LbaHigh     = 0xC2,
-                LbaMid      = 0x4F,
-                SectorCount = 0xF1
-            };
+        LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData,
+                                   AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
+                                   out bool sense);
 
-            LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData,
-                                       AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
-                                       out bool sense);
+        Error = LastError != 0;
 
-            Error = LastError != 0;
+        AaruConsole.DebugWriteLine("ATA Device", "SMART ENABLE ATTRIBUTE AUTOSAVE took {0} ms.", duration);
 
-            AaruConsole.DebugWriteLine("ATA Device", "SMART ENABLE ATTRIBUTE AUTOSAVE took {0} ms.", duration);
+        return sense;
+    }
 
-            return sense;
-        }
+    /// <summary>Disables auto-saving of S.M.A.R.T. attributes</summary>
+    /// <param name="statusRegisters">Returned status registers</param>
+    /// <param name="timeout">Timeout to wait for command execution</param>
+    /// <param name="duration">Time the device took to execute the command in milliseconds</param>
+    /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
+    public bool SmartDisableAttributeAutosave(out AtaErrorRegistersLba28 statusRegisters, uint timeout,
+                                              out double duration)
+    {
+        byte[] buffer = Array.Empty<byte>();
 
-        /// <summary>Disables auto-saving of S.M.A.R.T. attributes</summary>
-        /// <param name="statusRegisters">Returned status registers</param>
-        /// <param name="timeout">Timeout to wait for command execution</param>
-        /// <param name="duration">Time the device took to execute the command in milliseconds</param>
-        /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
-        public bool SmartDisableAttributeAutosave(out AtaErrorRegistersLba28 statusRegisters, uint timeout,
-                                                  out double duration)
+        var registers = new AtaRegistersLba28
         {
-            byte[] buffer = Array.Empty<byte>();
+            Command = (byte)AtaCommands.Smart,
+            Feature = (byte)AtaSmartSubCommands.EnableDisableAttributeAutosave,
+            LbaHigh = 0xC2,
+            LbaMid  = 0x4F
+        };
 
-            var registers = new AtaRegistersLba28
-            {
-                Command = (byte)AtaCommands.Smart,
-                Feature = (byte)AtaSmartSubCommands.EnableDisableAttributeAutosave,
-                LbaHigh = 0xC2,
-                LbaMid  = 0x4F
-            };
+        LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData,
+                                   AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
+                                   out bool sense);
 
-            LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData,
-                                       AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
-                                       out bool sense);
+        Error = LastError != 0;
 
-            Error = LastError != 0;
+        AaruConsole.DebugWriteLine("ATA Device", "SMART DISABLE ATTRIBUTE AUTOSAVE took {0} ms.", duration);
 
-            AaruConsole.DebugWriteLine("ATA Device", "SMART DISABLE ATTRIBUTE AUTOSAVE took {0} ms.", duration);
+        return sense;
+    }
 
-            return sense;
-        }
+    /// <summary>Enables S.M.A.R.T.</summary>
+    /// <param name="statusRegisters">Returned status registers</param>
+    /// <param name="timeout">Timeout to wait for command execution</param>
+    /// <param name="duration">Time the device took to execute the command in milliseconds</param>
+    /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
+    public bool SmartEnable(out AtaErrorRegistersLba28 statusRegisters, uint timeout, out double duration)
+    {
+        byte[] buffer = Array.Empty<byte>();
 
-        /// <summary>Enables S.M.A.R.T.</summary>
-        /// <param name="statusRegisters">Returned status registers</param>
-        /// <param name="timeout">Timeout to wait for command execution</param>
-        /// <param name="duration">Time the device took to execute the command in milliseconds</param>
-        /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
-        public bool SmartEnable(out AtaErrorRegistersLba28 statusRegisters, uint timeout, out double duration)
+        var registers = new AtaRegistersLba28
         {
-            byte[] buffer = Array.Empty<byte>();
+            Command = (byte)AtaCommands.Smart,
+            Feature = (byte)AtaSmartSubCommands.Enable,
+            LbaHigh = 0xC2,
+            LbaMid  = 0x4F
+        };
 
-            var registers = new AtaRegistersLba28
-            {
-                Command = (byte)AtaCommands.Smart,
-                Feature = (byte)AtaSmartSubCommands.Enable,
-                LbaHigh = 0xC2,
-                LbaMid  = 0x4F
-            };
+        LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData,
+                                   AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
+                                   out bool sense);
 
-            LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData,
-                                       AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
-                                       out bool sense);
+        Error = LastError != 0;
 
-            Error = LastError != 0;
+        AaruConsole.DebugWriteLine("ATA Device", "SMART ENABLE OPERATIONS took {0} ms.", duration);
 
-            AaruConsole.DebugWriteLine("ATA Device", "SMART ENABLE OPERATIONS took {0} ms.", duration);
+        return sense;
+    }
 
-            return sense;
-        }
+    /// <summary>Requests drive to execute offline immediate S.M.A.R.T. test</summary>
+    /// <param name="subcommand">Subcommand</param>
+    /// <param name="statusRegisters">Returned status registers</param>
+    /// <param name="timeout">Timeout to wait for command execution</param>
+    /// <param name="duration">Time the device took to execute the command in milliseconds</param>
+    /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
+    public bool SmartExecuteOffLineImmediate(out AtaErrorRegistersLba28 statusRegisters, byte subcommand,
+                                             uint timeout, out double duration)
+    {
+        byte[] buffer = Array.Empty<byte>();
 
-        /// <summary>Requests drive to execute offline immediate S.M.A.R.T. test</summary>
-        /// <param name="subcommand">Subcommand</param>
-        /// <param name="statusRegisters">Returned status registers</param>
-        /// <param name="timeout">Timeout to wait for command execution</param>
-        /// <param name="duration">Time the device took to execute the command in milliseconds</param>
-        /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
-        public bool SmartExecuteOffLineImmediate(out AtaErrorRegistersLba28 statusRegisters, byte subcommand,
-                                                 uint timeout, out double duration)
+        var registers = new AtaRegistersLba28
         {
-            byte[] buffer = Array.Empty<byte>();
+            Command = (byte)AtaCommands.Smart,
+            Feature = (byte)AtaSmartSubCommands.ExecuteOfflineImmediate,
+            LbaHigh = 0xC2,
+            LbaMid  = 0x4F,
+            LbaLow  = subcommand
+        };
 
-            var registers = new AtaRegistersLba28
-            {
-                Command = (byte)AtaCommands.Smart,
-                Feature = (byte)AtaSmartSubCommands.ExecuteOfflineImmediate,
-                LbaHigh = 0xC2,
-                LbaMid  = 0x4F,
-                LbaLow  = subcommand
-            };
+        LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData,
+                                   AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
+                                   out bool sense);
 
-            LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData,
-                                       AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
-                                       out bool sense);
+        Error = LastError != 0;
 
-            Error = LastError != 0;
+        AaruConsole.DebugWriteLine("ATA Device", "SMART EXECUTE OFF-LINE IMMEDIATE took {0} ms.", duration);
 
-            AaruConsole.DebugWriteLine("ATA Device", "SMART EXECUTE OFF-LINE IMMEDIATE took {0} ms.", duration);
+        return sense;
+    }
 
-            return sense;
-        }
+    /// <summary>Reads S.M.A.R.T. data</summary>
+    /// <param name="buffer">Buffer containing data</param>
+    /// <param name="statusRegisters">Returned status registers</param>
+    /// <param name="timeout">Timeout to wait for command execution</param>
+    /// <param name="duration">Time the device took to execute the command in milliseconds</param>
+    /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
+    public bool SmartReadData(out byte[] buffer, out AtaErrorRegistersLba28 statusRegisters, uint timeout,
+                              out double duration)
+    {
+        buffer = new byte[512];
 
-        /// <summary>Reads S.M.A.R.T. data</summary>
-        /// <param name="buffer">Buffer containing data</param>
-        /// <param name="statusRegisters">Returned status registers</param>
-        /// <param name="timeout">Timeout to wait for command execution</param>
-        /// <param name="duration">Time the device took to execute the command in milliseconds</param>
-        /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
-        public bool SmartReadData(out byte[] buffer, out AtaErrorRegistersLba28 statusRegisters, uint timeout,
-                                  out double duration)
+        var registers = new AtaRegistersLba28
         {
-            buffer = new byte[512];
+            Command = (byte)AtaCommands.Smart,
+            Feature = (byte)AtaSmartSubCommands.ReadData,
+            LbaHigh = 0xC2,
+            LbaMid  = 0x4F
+        };
 
-            var registers = new AtaRegistersLba28
-            {
-                Command = (byte)AtaCommands.Smart,
-                Feature = (byte)AtaSmartSubCommands.ReadData,
-                LbaHigh = 0xC2,
-                LbaMid  = 0x4F
-            };
+        LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn,
+                                   AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
+                                   out bool sense);
 
-            LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn,
-                                       AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
-                                       out bool sense);
+        Error = LastError != 0;
 
-            Error = LastError != 0;
+        AaruConsole.DebugWriteLine("ATA Device", "SMART READ DATA took {0} ms.", duration);
 
-            AaruConsole.DebugWriteLine("ATA Device", "SMART READ DATA took {0} ms.", duration);
+        return sense;
+    }
 
-            return sense;
-        }
+    /// <summary>Reads S.M.A.R.T. log</summary>
+    /// <param name="buffer">Buffer containing log</param>
+    /// <param name="statusRegisters">Returned status registers</param>
+    /// <param name="logAddress">Log address</param>
+    /// <param name="timeout">Timeout to wait for command execution</param>
+    /// <param name="duration">Time the device took to execute the command in milliseconds</param>
+    /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
+    public bool SmartReadLog(out byte[] buffer, out AtaErrorRegistersLba28 statusRegisters, byte logAddress,
+                             uint timeout, out double duration)
+    {
+        buffer = new byte[512];
 
-        /// <summary>Reads S.M.A.R.T. log</summary>
-        /// <param name="buffer">Buffer containing log</param>
-        /// <param name="statusRegisters">Returned status registers</param>
-        /// <param name="logAddress">Log address</param>
-        /// <param name="timeout">Timeout to wait for command execution</param>
-        /// <param name="duration">Time the device took to execute the command in milliseconds</param>
-        /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
-        public bool SmartReadLog(out byte[] buffer, out AtaErrorRegistersLba28 statusRegisters, byte logAddress,
-                                 uint timeout, out double duration)
+        var registers = new AtaRegistersLba28
         {
-            buffer = new byte[512];
+            Command = (byte)AtaCommands.Smart,
+            Feature = (byte)AtaSmartSubCommands.ReadLog,
+            LbaHigh = 0xC2,
+            LbaMid  = 0x4F,
+            LbaLow  = logAddress
+        };
 
-            var registers = new AtaRegistersLba28
-            {
-                Command = (byte)AtaCommands.Smart,
-                Feature = (byte)AtaSmartSubCommands.ReadLog,
-                LbaHigh = 0xC2,
-                LbaMid  = 0x4F,
-                LbaLow  = logAddress
-            };
+        LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn,
+                                   AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
+                                   out bool sense);
 
-            LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn,
-                                       AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
-                                       out bool sense);
+        Error = LastError != 0;
 
-            Error = LastError != 0;
+        AaruConsole.DebugWriteLine("ATA Device", "SMART READ LOG took {0} ms.", duration);
 
-            AaruConsole.DebugWriteLine("ATA Device", "SMART READ LOG took {0} ms.", duration);
+        return sense;
+    }
 
-            return sense;
-        }
+    /// <summary>Retrieves S.M.A.R.T. status</summary>
+    /// <param name="statusRegisters">Returned status registers</param>
+    /// <param name="timeout">Timeout to wait for command execution</param>
+    /// <param name="duration">Time the device took to execute the command in milliseconds</param>
+    /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
+    public bool SmartReturnStatus(out AtaErrorRegistersLba28 statusRegisters, uint timeout, out double duration)
+    {
+        byte[] buffer = Array.Empty<byte>();
 
-        /// <summary>Retrieves S.M.A.R.T. status</summary>
-        /// <param name="statusRegisters">Returned status registers</param>
-        /// <param name="timeout">Timeout to wait for command execution</param>
-        /// <param name="duration">Time the device took to execute the command in milliseconds</param>
-        /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
-        public bool SmartReturnStatus(out AtaErrorRegistersLba28 statusRegisters, uint timeout, out double duration)
+        var registers = new AtaRegistersLba28
         {
-            byte[] buffer = Array.Empty<byte>();
+            Command = (byte)AtaCommands.Smart,
+            Feature = (byte)AtaSmartSubCommands.ReturnStatus,
+            LbaHigh = 0xC2,
+            LbaMid  = 0x4F
+        };
 
-            var registers = new AtaRegistersLba28
-            {
-                Command = (byte)AtaCommands.Smart,
-                Feature = (byte)AtaSmartSubCommands.ReturnStatus,
-                LbaHigh = 0xC2,
-                LbaMid  = 0x4F
-            };
+        LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData,
+                                   AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
+                                   out bool sense);
 
-            LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData,
-                                       AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
-                                       out bool sense);
+        Error = LastError != 0;
 
-            Error = LastError != 0;
+        AaruConsole.DebugWriteLine("ATA Device", "SMART RETURN STATUS took {0} ms.", duration);
 
-            AaruConsole.DebugWriteLine("ATA Device", "SMART RETURN STATUS took {0} ms.", duration);
-
-            return sense;
-        }
+        return sense;
     }
 }

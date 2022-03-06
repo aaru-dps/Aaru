@@ -36,34 +36,33 @@ using System.Linq;
 using Aaru.CommonTypes.Enums;
 using Aaru.Helpers;
 
-namespace Aaru.Filesystems.UCSDPascal
+namespace Aaru.Filesystems.UCSDPascal;
+
+// Information from Call-A.P.P.L.E. Pascal Disk Directory Structure
+public sealed partial class PascalPlugin
 {
-    // Information from Call-A.P.P.L.E. Pascal Disk Directory Structure
-    public sealed partial class PascalPlugin
+    /// <inheritdoc />
+    public ErrorNumber ReadDir(string path, out List<string> contents)
     {
-        /// <inheritdoc />
-        public ErrorNumber ReadDir(string path, out List<string> contents)
+        contents = null;
+
+        if(!_mounted)
+            return ErrorNumber.AccessDenied;
+
+        if(!string.IsNullOrEmpty(path) &&
+           string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) != 0)
+            return ErrorNumber.NotSupported;
+
+        contents = _fileEntries.Select(ent => StringHandlers.PascalToString(ent.Filename, Encoding)).ToList();
+
+        if(_debug)
         {
-            contents = null;
-
-            if(!_mounted)
-                return ErrorNumber.AccessDenied;
-
-            if(!string.IsNullOrEmpty(path) &&
-               string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) != 0)
-                return ErrorNumber.NotSupported;
-
-            contents = _fileEntries.Select(ent => StringHandlers.PascalToString(ent.Filename, Encoding)).ToList();
-
-            if(_debug)
-            {
-                contents.Add("$");
-                contents.Add("$Boot");
-            }
-
-            contents.Sort();
-
-            return ErrorNumber.NoError;
+            contents.Add("$");
+            contents.Add("$Boot");
         }
+
+        contents.Sort();
+
+        return ErrorNumber.NoError;
     }
 }

@@ -31,39 +31,38 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Filesystems
+namespace Aaru.Tests.Filesystems;
+
+[TestFixture]
+public class Locus : FilesystemTest
 {
-    [TestFixture]
-    public class Locus : FilesystemTest
+    public Locus() : base("Locus filesystem") {}
+
+    public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Locus filesystem");
+    public override IFilesystem Plugin     => new Aaru.Filesystems.Locus();
+    public override bool        Partitions => false;
+
+    public override FileSystemTest[] Tests => new[]
     {
-        public Locus() : base("Locus filesystem") {}
-
-        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Locus filesystem");
-        public override IFilesystem Plugin => new Aaru.Filesystems.Locus();
-        public override bool Partitions => false;
-
-        public override FileSystemTest[] Tests => new[]
+        new FileSystemTest
         {
-            new FileSystemTest
-            {
-                TestFile    = "mf2dd.img.lz",
-                MediaType   = MediaType.DOS_35_DS_DD_9,
-                Sectors     = 1440,
-                SectorSize  = 512,
-                Clusters    = 180,
-                ClusterSize = 4096,
-                VolumeName  = "Label"
-            },
-            new FileSystemTest
-            {
-                TestFile    = "mf2hd.img.lz",
-                MediaType   = MediaType.DOS_35_HD,
-                Sectors     = 2880,
-                SectorSize  = 512,
-                Clusters    = 360,
-                ClusterSize = 4096,
-                VolumeName  = "Label"
-            }
-        };
-    }
+            TestFile    = "mf2dd.img.lz",
+            MediaType   = MediaType.DOS_35_DS_DD_9,
+            Sectors     = 1440,
+            SectorSize  = 512,
+            Clusters    = 180,
+            ClusterSize = 4096,
+            VolumeName  = "Label"
+        },
+        new FileSystemTest
+        {
+            TestFile    = "mf2hd.img.lz",
+            MediaType   = MediaType.DOS_35_HD,
+            Sectors     = 2880,
+            SectorSize  = 512,
+            Clusters    = 360,
+            ClusterSize = 4096,
+            VolumeName  = "Label"
+        }
+    };
 }

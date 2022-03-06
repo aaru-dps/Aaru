@@ -43,76 +43,76 @@ using Aaru.Gui.Views.Dialogs;
 using JetBrains.Annotations;
 using ReactiveUI;
 
-namespace Aaru.Gui.ViewModels.Dialogs
+namespace Aaru.Gui.ViewModels.Dialogs;
+
+public sealed class AboutViewModel : ViewModelBase
 {
-    public sealed class AboutViewModel : ViewModelBase
+    readonly About _view;
+    string         _versionText;
+
+    public AboutViewModel(About view)
     {
-        readonly About _view;
-        string         _versionText;
+        _view = view;
 
-        public AboutViewModel(About view)
+        VersionText =
+            (Attribute.GetCustomAttribute(typeof(App).Assembly, typeof(AssemblyInformationalVersionAttribute)) as
+                 AssemblyInformationalVersionAttribute)?.InformationalVersion;
+
+        WebsiteCommand = ReactiveCommand.Create(ExecuteWebsiteCommand);
+        LicenseCommand = ReactiveCommand.Create(ExecuteLicenseCommand);
+        CloseCommand   = ReactiveCommand.Create(ExecuteCloseCommand);
+
+        Assemblies = new ObservableCollection<AssemblyModel>();
+
+        Task.Run(() =>
         {
-            _view = view;
-
-            VersionText =
-                (Attribute.GetCustomAttribute(typeof(App).Assembly, typeof(AssemblyInformationalVersionAttribute)) as
-                     AssemblyInformationalVersionAttribute)?.InformationalVersion;
-
-            WebsiteCommand = ReactiveCommand.Create(ExecuteWebsiteCommand);
-            LicenseCommand = ReactiveCommand.Create(ExecuteLicenseCommand);
-            CloseCommand   = ReactiveCommand.Create(ExecuteCloseCommand);
-
-            Assemblies = new ObservableCollection<AssemblyModel>();
-
-            Task.Run(() =>
+            foreach(Assembly assembly in AppDomain.CurrentDomain.GetAssemblies().OrderBy(a => a.FullName))
             {
-                foreach(Assembly assembly in AppDomain.CurrentDomain.GetAssemblies().OrderBy(a => a.FullName))
+                string name = assembly.GetName().Name;
+
+                string version =
+                    (Attribute.GetCustomAttribute(assembly, typeof(AssemblyInformationalVersionAttribute)) as
+                         AssemblyInformationalVersionAttribute)?.InformationalVersion;
+
+                if(name is null ||
+                   version is null)
+                    continue;
+
+                Assemblies.Add(new AssemblyModel
                 {
-                    string name = assembly.GetName().Name;
+                    Name    = name,
+                    Version = version
+                });
+            }
+        });
+    }
 
-                    string version =
-                        (Attribute.GetCustomAttribute(assembly, typeof(AssemblyInformationalVersionAttribute)) as
-                             AssemblyInformationalVersionAttribute)?.InformationalVersion;
-
-                    if(name is null ||
-                       version is null)
-                        continue;
-
-                    Assemblies.Add(new AssemblyModel
-                    {
-                        Name    = name,
-                        Version = version
-                    });
-                }
-            });
-        }
-
-        [NotNull]
-        public string AboutLabel => "About";
-        [NotNull]
-        public string LibrariesLabel => "Libraries";
-        [NotNull]
-        public string AuthorsLabel => "Authors";
-        [NotNull]
-        public string Title => "About Aaru";
-        [NotNull]
-        public string SoftwareName => "Aaru";
-        [NotNull]
-        public string SuiteName => "Aaru Data Preservation Suite";
-        [NotNull]
-        public string Copyright => "© 2011-2022 Natalia Portillo";
-        [NotNull]
-        public string Website => "https://aaru.app";
-        [NotNull]
-        public string License => "License: GNU General Public License Version 3";
-        [NotNull]
-        public string CloseLabel => "Close";
-        [NotNull]
-        public string AssembliesLibraryText => "Library";
-        [NotNull]
-        public string AssembliesVersionText => "Version";
-        [NotNull]
-        public string Authors => @"Developers:
+    [NotNull]
+    public string AboutLabel => "About";
+    [NotNull]
+    public string LibrariesLabel => "Libraries";
+    [NotNull]
+    public string AuthorsLabel => "Authors";
+    [NotNull]
+    public string Title => "About Aaru";
+    [NotNull]
+    public string SoftwareName => "Aaru";
+    [NotNull]
+    public string SuiteName => "Aaru Data Preservation Suite";
+    [NotNull]
+    public string Copyright => "© 2011-2022 Natalia Portillo";
+    [NotNull]
+    public string Website => "https://aaru.app";
+    [NotNull]
+    public string License => "License: GNU General Public License Version 3";
+    [NotNull]
+    public string CloseLabel => "Close";
+    [NotNull]
+    public string AssembliesLibraryText => "Library";
+    [NotNull]
+    public string AssembliesVersionText => "Version";
+    [NotNull]
+    public string Authors => @"Developers:
     Natalia Portillo
     Michael Drüing
     Rebecca Wallander
@@ -125,51 +125,50 @@ Public relations:
 
 Logo and art:
     Juan Carlos Pastor Segura (Denymetanol)";
-        public ReactiveCommand<Unit, Unit>         WebsiteCommand { get; }
-        public ReactiveCommand<Unit, Unit>         LicenseCommand { get; }
-        public ReactiveCommand<Unit, Unit>         CloseCommand   { get; }
-        public ObservableCollection<AssemblyModel> Assemblies     { get; }
+    public ReactiveCommand<Unit, Unit>         WebsiteCommand { get; }
+    public ReactiveCommand<Unit, Unit>         LicenseCommand { get; }
+    public ReactiveCommand<Unit, Unit>         CloseCommand   { get; }
+    public ObservableCollection<AssemblyModel> Assemblies     { get; }
 
-        public string VersionText
-        {
-            get => _versionText;
-            set => this.RaiseAndSetIfChanged(ref _versionText, value);
-        }
-
-        void ExecuteWebsiteCommand()
-        {
-            var process = new Process
-            {
-                StartInfo =
-                {
-                    UseShellExecute = false,
-                    CreateNoWindow  = true,
-                    Arguments       = "https://aaru.app"
-                }
-            };
-
-            if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                process.StartInfo.FileName  = "cmd";
-                process.StartInfo.Arguments = $"/c start {process.StartInfo.Arguments.Replace("&", "^&")}";
-            }
-            else if(RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-                process.StartInfo.FileName = "xdg-open";
-            else if(RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-                process.StartInfo.FileName = "open";
-            else
-                return;
-
-            process.Start();
-        }
-
-        void ExecuteLicenseCommand()
-        {
-            var dialog = new LicenseDialog();
-            dialog.DataContext = new LicenseViewModel(dialog);
-            dialog.ShowDialog(_view);
-        }
-
-        void ExecuteCloseCommand() => _view.Close();
+    public string VersionText
+    {
+        get => _versionText;
+        set => this.RaiseAndSetIfChanged(ref _versionText, value);
     }
+
+    void ExecuteWebsiteCommand()
+    {
+        var process = new Process
+        {
+            StartInfo =
+            {
+                UseShellExecute = false,
+                CreateNoWindow  = true,
+                Arguments       = "https://aaru.app"
+            }
+        };
+
+        if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        {
+            process.StartInfo.FileName  = "cmd";
+            process.StartInfo.Arguments = $"/c start {process.StartInfo.Arguments.Replace("&", "^&")}";
+        }
+        else if(RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            process.StartInfo.FileName = "xdg-open";
+        else if(RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            process.StartInfo.FileName = "open";
+        else
+            return;
+
+        process.Start();
+    }
+
+    void ExecuteLicenseCommand()
+    {
+        var dialog = new LicenseDialog();
+        dialog.DataContext = new LicenseViewModel(dialog);
+        dialog.ShowDialog(_view);
+    }
+
+    void ExecuteCloseCommand() => _view.Close();
 }

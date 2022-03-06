@@ -35,37 +35,36 @@ using System.IO;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 
-namespace Aaru.DiscImages
-{
-    public sealed partial class Blu
-    {
-        /// <inheritdoc />
-        public bool Identify(IFilter imageFilter)
-        {
-            Stream stream = imageFilter.GetDataForkStream();
-            stream.Seek(0, SeekOrigin.Begin);
+namespace Aaru.DiscImages;
 
-            if(stream.Length < 0x200)
+public sealed partial class Blu
+{
+    /// <inheritdoc />
+    public bool Identify(IFilter imageFilter)
+    {
+        Stream stream = imageFilter.GetDataForkStream();
+        stream.Seek(0, SeekOrigin.Begin);
+
+        if(stream.Length < 0x200)
+            return false;
+
+        byte[] header = new byte[0x17];
+        stream.Read(header, 0, 0x17);
+
+        var tmpHdr = new BluHeader
+        {
+            DeviceName = new byte[0x0D]
+        };
+
+        Array.Copy(header, 0, tmpHdr.DeviceName, 0, 0x0D);
+        tmpHdr.DeviceType    = BigEndianBitConverter.ToUInt32(header, 0x0C) & 0x00FFFFFF;
+        tmpHdr.DeviceBlocks  = BigEndianBitConverter.ToUInt32(header, 0x11) & 0x00FFFFFF;
+        tmpHdr.BytesPerBlock = BigEndianBitConverter.ToUInt16(header, 0x15);
+
+        for(int i = 0; i < 0xD; i++)
+            if(tmpHdr.DeviceName[i] < 0x20)
                 return false;
 
-            byte[] header = new byte[0x17];
-            stream.Read(header, 0, 0x17);
-
-            var tmpHdr = new BluHeader
-            {
-                DeviceName = new byte[0x0D]
-            };
-
-            Array.Copy(header, 0, tmpHdr.DeviceName, 0, 0x0D);
-            tmpHdr.DeviceType    = BigEndianBitConverter.ToUInt32(header, 0x0C) & 0x00FFFFFF;
-            tmpHdr.DeviceBlocks  = BigEndianBitConverter.ToUInt32(header, 0x11) & 0x00FFFFFF;
-            tmpHdr.BytesPerBlock = BigEndianBitConverter.ToUInt16(header, 0x15);
-
-            for(int i = 0; i < 0xD; i++)
-                if(tmpHdr.DeviceName[i] < 0x20)
-                    return false;
-
-            return (tmpHdr.BytesPerBlock & 0xFE00) == 0x200;
-        }
+        return (tmpHdr.BytesPerBlock & 0xFE00) == 0x200;
     }
 }

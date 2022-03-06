@@ -30,12 +30,11 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Gui.Models
+namespace Aaru.Gui.Models;
+
+public sealed class ChecksumModel
 {
-    public sealed class ChecksumModel
-    {
-        public string Track     { get; set; }
-        public string Algorithm { get; set; }
-        public string Hash      { get; set; }
-    }
+    public string Track     { get; set; }
+    public string Algorithm { get; set; }
+    public string Hash      { get; set; }
 }

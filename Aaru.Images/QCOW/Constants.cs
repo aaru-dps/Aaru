@@ -30,18 +30,17 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages
-{
-    public sealed partial class Qcow
-    {
-        /// <summary>Magic number: 'Q', 'F', 'I', 0xFB</summary>
-        const uint QCOW_MAGIC = 0x514649FB;
-        const uint  QCOW_VERSION         = 1;
-        const uint  QCOW_ENCRYPTION_NONE = 0;
-        const uint  QCOW_ENCRYPTION_AES  = 1;
-        const ulong QCOW_COMPRESSED      = 0x8000000000000000;
+namespace Aaru.DiscImages;
 
-        const int MAX_CACHE_SIZE     = 16777216;
-        const int MAX_CACHED_SECTORS = MAX_CACHE_SIZE / 512;
-    }
+public sealed partial class Qcow
+{
+    /// <summary>Magic number: 'Q', 'F', 'I', 0xFB</summary>
+    const uint QCOW_MAGIC = 0x514649FB;
+    const uint  QCOW_VERSION         = 1;
+    const uint  QCOW_ENCRYPTION_NONE = 0;
+    const uint  QCOW_ENCRYPTION_AES  = 1;
+    const ulong QCOW_COMPRESSED      = 0x8000000000000000;
+
+    const int MAX_CACHE_SIZE     = 16777216;
+    const int MAX_CACHED_SECTORS = MAX_CACHE_SIZE / 512;
 }

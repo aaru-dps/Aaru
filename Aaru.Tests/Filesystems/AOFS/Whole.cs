@@ -32,43 +32,42 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Filesystems.AOFS
+namespace Aaru.Tests.Filesystems.AOFS;
+
+[TestFixture]
+public class Whole : FilesystemTest
 {
-    [TestFixture]
-    public class Whole : FilesystemTest
+    public Whole() : base("Amiga OFS") {}
+
+    public override string DataFolder =>
+        Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Amiga Old File System");
+
+    public override IFilesystem Plugin     => new AmigaDOSPlugin();
+    public override bool        Partitions => false;
+
+    public override FileSystemTest[] Tests => new[]
     {
-        public Whole() : base("Amiga OFS") {}
-
-        public override string DataFolder =>
-            Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Amiga Old File System");
-
-        public override IFilesystem Plugin     => new AmigaDOSPlugin();
-        public override bool        Partitions => false;
-
-        public override FileSystemTest[] Tests => new[]
+        new FileSystemTest
         {
-            new FileSystemTest
-            {
-                TestFile     = "amigaos_3.9.adf.lz",
-                MediaType    = MediaType.CBM_AMIGA_35_DD,
-                Sectors      = 1760,
-                SectorSize   = 512,
-                Clusters     = 1760,
-                ClusterSize  = 512,
-                VolumeName   = "Volume label",
-                VolumeSerial = "A5D9FE71"
-            },
-            new FileSystemTest
-            {
-                TestFile     = "amigaos_3.9_intl.adf.lz",
-                MediaType    = MediaType.CBM_AMIGA_35_DD,
-                Sectors      = 1760,
-                SectorSize   = 512,
-                Clusters     = 1760,
-                ClusterSize  = 512,
-                VolumeName   = "Volume label",
-                VolumeSerial = "A5D9F14F"
-            }
-        };
-    }
+            TestFile     = "amigaos_3.9.adf.lz",
+            MediaType    = MediaType.CBM_AMIGA_35_DD,
+            Sectors      = 1760,
+            SectorSize   = 512,
+            Clusters     = 1760,
+            ClusterSize  = 512,
+            VolumeName   = "Volume label",
+            VolumeSerial = "A5D9FE71"
+        },
+        new FileSystemTest
+        {
+            TestFile     = "amigaos_3.9_intl.adf.lz",
+            MediaType    = MediaType.CBM_AMIGA_35_DD,
+            Sectors      = 1760,
+            SectorSize   = 512,
+            Clusters     = 1760,
+            ClusterSize  = 512,
+            VolumeName   = "Volume label",
+            VolumeSerial = "A5D9F14F"
+        }
+    };
 }

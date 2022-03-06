@@ -34,94 +34,93 @@
 using System.Collections.Generic;
 using Aaru.Helpers;
 
-namespace Aaru.Filesystems
+namespace Aaru.Filesystems;
+
+public sealed partial class ISO9660
 {
-    public sealed partial class ISO9660
+    PathTableEntryInternal[] DecodePathTable(byte[] data)
     {
-        PathTableEntryInternal[] DecodePathTable(byte[] data)
+        if(data is null || data.Length == 0)
+            return null;
+
+        List<PathTableEntryInternal> table = new List<PathTableEntryInternal>();
+
+        int off = 0;
+
+        PathTableEntry entry =
+            Marshal.ByteArrayToStructureBigEndian<PathTableEntry>(data, off, Marshal.SizeOf<PathTableEntry>());
+
+        if(entry.name_len                         != 1                                ||
+           entry.parent_dirno                     != 1                                ||
+           data.Length                            <= Marshal.SizeOf<PathTableEntry>() ||
+           data[Marshal.SizeOf<PathTableEntry>()] != 0x00)
+            return null;
+
+        while(off < data.Length)
         {
-            if(data is null || data.Length == 0)
-                return null;
-
-            List<PathTableEntryInternal> table = new List<PathTableEntryInternal>();
-
-            int off = 0;
-
-            PathTableEntry entry =
+            entry =
                 Marshal.ByteArrayToStructureBigEndian<PathTableEntry>(data, off, Marshal.SizeOf<PathTableEntry>());
 
-            if(entry.name_len                         != 1                                ||
-               entry.parent_dirno                     != 1                                ||
-               data.Length                            <= Marshal.SizeOf<PathTableEntry>() ||
-               data[Marshal.SizeOf<PathTableEntry>()] != 0x00)
-                return null;
+            if(entry.name_len == 0)
+                break;
 
-            while(off < data.Length)
+            off += Marshal.SizeOf<PathTableEntry>();
+
+            string name = Encoding.GetString(data, off, entry.name_len);
+
+            table.Add(new PathTableEntryInternal
             {
-                entry =
-                    Marshal.ByteArrayToStructureBigEndian<PathTableEntry>(data, off, Marshal.SizeOf<PathTableEntry>());
+                Extent      = entry.start_lbn,
+                Name        = name,
+                Parent      = entry.parent_dirno,
+                XattrLength = entry.xattr_len
+            });
 
-                if(entry.name_len == 0)
-                    break;
+            off += entry.name_len;
 
-                off += Marshal.SizeOf<PathTableEntry>();
-
-                string name = Encoding.GetString(data, off, entry.name_len);
-
-                table.Add(new PathTableEntryInternal
-                {
-                    Extent      = entry.start_lbn,
-                    Name        = name,
-                    Parent      = entry.parent_dirno,
-                    XattrLength = entry.xattr_len
-                });
-
-                off += entry.name_len;
-
-                if(entry.name_len % 2 != 0)
-                    off++;
-            }
-
-            return table.ToArray();
+            if(entry.name_len % 2 != 0)
+                off++;
         }
 
-        PathTableEntryInternal[] DecodeHighSierraPathTable(byte[] data)
+        return table.ToArray();
+    }
+
+    PathTableEntryInternal[] DecodeHighSierraPathTable(byte[] data)
+    {
+        if(data is null)
+            return null;
+
+        List<PathTableEntryInternal> table = new List<PathTableEntryInternal>();
+
+        int off = 0;
+
+        while(off < data.Length)
         {
-            if(data is null)
-                return null;
+            HighSierraPathTableEntry entry =
+                Marshal.ByteArrayToStructureBigEndian<HighSierraPathTableEntry>(data, off,
+                                                                                    Marshal.SizeOf<HighSierraPathTableEntry>());
 
-            List<PathTableEntryInternal> table = new List<PathTableEntryInternal>();
+            if(entry.name_len == 0)
+                break;
 
-            int off = 0;
+            off += Marshal.SizeOf<HighSierraPathTableEntry>();
 
-            while(off < data.Length)
+            string name = Encoding.GetString(data, off, entry.name_len);
+
+            table.Add(new PathTableEntryInternal
             {
-                HighSierraPathTableEntry entry =
-                    Marshal.ByteArrayToStructureBigEndian<HighSierraPathTableEntry>(data, off,
-                        Marshal.SizeOf<HighSierraPathTableEntry>());
+                Extent      = entry.start_lbn,
+                Name        = name,
+                Parent      = entry.parent_dirno,
+                XattrLength = entry.xattr_len
+            });
 
-                if(entry.name_len == 0)
-                    break;
+            off += entry.name_len;
 
-                off += Marshal.SizeOf<HighSierraPathTableEntry>();
-
-                string name = Encoding.GetString(data, off, entry.name_len);
-
-                table.Add(new PathTableEntryInternal
-                {
-                    Extent      = entry.start_lbn,
-                    Name        = name,
-                    Parent      = entry.parent_dirno,
-                    XattrLength = entry.xattr_len
-                });
-
-                off += entry.name_len;
-
-                if(entry.name_len % 2 != 0)
-                    off++;
-            }
-
-            return table.ToArray();
+            if(entry.name_len % 2 != 0)
+                off++;
         }
+
+        return table.ToArray();
     }
 }

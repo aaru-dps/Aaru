@@ -38,104 +38,103 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class DiskDupe
 {
-    public sealed partial class DiskDupe
+    public ErrorNumber Open(IFilter imageFilter)
     {
-        public ErrorNumber Open(IFilter imageFilter)
+        Stream stream = imageFilter.GetDataForkStream();
+
+        var         fHeader      = new FileHeader();
+        TrackInfo[] trackMap     = null;
+        long[]      trackOffsets = null;
+
+        if(!TryReadHeader(stream, ref fHeader, ref trackMap, ref trackOffsets))
+            return ErrorNumber.InvalidArgument;
+
+        AaruConsole.DebugWriteLine("DiskDupe Plugin",
+                                   "Detected DiskDupe DDI image with {0} tracks and {1} sectors per track.",
+                                   _diskTypes[fHeader.diskType].cyl, _diskTypes[fHeader.diskType].spt);
+
+        _imageInfo.Cylinders       = _diskTypes[fHeader.diskType].cyl;
+        _imageInfo.Heads           = _diskTypes[fHeader.diskType].hd;
+        _imageInfo.SectorsPerTrack = _diskTypes[fHeader.diskType].spt;
+        _imageInfo.SectorSize      = 512; // only 512 bytes per sector supported
+        _imageInfo.Sectors         = _imageInfo.Heads   * _imageInfo.Cylinders * _imageInfo.SectorsPerTrack;
+        _imageInfo.ImageSize       = _imageInfo.Sectors * _imageInfo.SectorSize;
+
+        _imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
+
+        _imageInfo.CreationTime         = imageFilter.CreationTime;
+        _imageInfo.LastModificationTime = imageFilter.LastWriteTime;
+        _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.Filename);
+
+        _imageInfo.MediaType = Geometry.GetMediaType(((ushort)_imageInfo.Cylinders, (byte)_imageInfo.Heads,
+                                                      (ushort)_imageInfo.SectorsPerTrack, 512, MediaEncoding.MFM,
+                                                      false));
+
+        // save some variables for later use
+        _fileHeader     = fHeader;
+        _ddiImageFilter = imageFilter;
+        _trackMap       = trackMap;
+        _trackOffsets   = trackOffsets;
+
+        return ErrorNumber.NoError;
+    }
+
+    public ErrorNumber ReadSector(ulong sectorAddress, out byte[] buffer)
+    {
+        buffer = null;
+        int trackNum     = (int)(sectorAddress / _imageInfo.SectorsPerTrack);
+        int sectorOffset = (int)(sectorAddress % _imageInfo.SectorsPerTrack);
+
+        if(sectorAddress > _imageInfo.Sectors - 1)
+            return ErrorNumber.OutOfRange;
+
+        if(trackNum > 2 * _imageInfo.Cylinders)
+            return ErrorNumber.SectorNotFound;
+
+        buffer = new byte[_imageInfo.SectorSize];
+
+        if(_trackMap[trackNum].present != 1)
+            Array.Clear(buffer, 0, (int)_imageInfo.SectorSize);
+        else
         {
-            Stream stream = imageFilter.GetDataForkStream();
+            Stream strm = _ddiImageFilter.GetDataForkStream();
 
-            var         fHeader      = new FileHeader();
-            TrackInfo[] trackMap     = null;
-            long[]      trackOffsets = null;
+            strm.Seek(_trackOffsets[trackNum] + (sectorOffset * _imageInfo.SectorSize), SeekOrigin.Begin);
 
-            if(!TryReadHeader(stream, ref fHeader, ref trackMap, ref trackOffsets))
-                return ErrorNumber.InvalidArgument;
-
-            AaruConsole.DebugWriteLine("DiskDupe Plugin",
-                                       "Detected DiskDupe DDI image with {0} tracks and {1} sectors per track.",
-                                       _diskTypes[fHeader.diskType].cyl, _diskTypes[fHeader.diskType].spt);
-
-            _imageInfo.Cylinders       = _diskTypes[fHeader.diskType].cyl;
-            _imageInfo.Heads           = _diskTypes[fHeader.diskType].hd;
-            _imageInfo.SectorsPerTrack = _diskTypes[fHeader.diskType].spt;
-            _imageInfo.SectorSize      = 512; // only 512 bytes per sector supported
-            _imageInfo.Sectors         = _imageInfo.Heads   * _imageInfo.Cylinders * _imageInfo.SectorsPerTrack;
-            _imageInfo.ImageSize       = _imageInfo.Sectors * _imageInfo.SectorSize;
-
-            _imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
-
-            _imageInfo.CreationTime         = imageFilter.CreationTime;
-            _imageInfo.LastModificationTime = imageFilter.LastWriteTime;
-            _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.Filename);
-
-            _imageInfo.MediaType = Geometry.GetMediaType(((ushort)_imageInfo.Cylinders, (byte)_imageInfo.Heads,
-                                                          (ushort)_imageInfo.SectorsPerTrack, 512, MediaEncoding.MFM,
-                                                          false));
-
-            // save some variables for later use
-            _fileHeader     = fHeader;
-            _ddiImageFilter = imageFilter;
-            _trackMap       = trackMap;
-            _trackOffsets   = trackOffsets;
-
-            return ErrorNumber.NoError;
+            strm.Read(buffer, 0, (int)_imageInfo.SectorSize);
         }
 
-        public ErrorNumber ReadSector(ulong sectorAddress, out byte[] buffer)
+        return ErrorNumber.NoError;
+    }
+
+    public ErrorNumber ReadSectors(ulong sectorAddress, uint length, out byte[] buffer)
+    {
+        buffer = null;
+
+        if(sectorAddress > _imageInfo.Sectors - 1)
+            return ErrorNumber.OutOfRange;
+
+        if(sectorAddress + length > _imageInfo.Sectors)
+            return ErrorNumber.OutOfRange;
+
+        var ms = new MemoryStream();
+
+        for(uint i = 0; i < length; i++)
         {
-            buffer = null;
-            int trackNum     = (int)(sectorAddress / _imageInfo.SectorsPerTrack);
-            int sectorOffset = (int)(sectorAddress % _imageInfo.SectorsPerTrack);
+            ErrorNumber errno = ReadSector(sectorAddress + i, out byte[] sector);
 
-            if(sectorAddress > _imageInfo.Sectors - 1)
-                return ErrorNumber.OutOfRange;
+            if(errno != ErrorNumber.NoError)
+                return errno;
 
-            if(trackNum > 2 * _imageInfo.Cylinders)
-                return ErrorNumber.SectorNotFound;
-
-            buffer = new byte[_imageInfo.SectorSize];
-
-            if(_trackMap[trackNum].present != 1)
-                Array.Clear(buffer, 0, (int)_imageInfo.SectorSize);
-            else
-            {
-                Stream strm = _ddiImageFilter.GetDataForkStream();
-
-                strm.Seek(_trackOffsets[trackNum] + (sectorOffset * _imageInfo.SectorSize), SeekOrigin.Begin);
-
-                strm.Read(buffer, 0, (int)_imageInfo.SectorSize);
-            }
-
-            return ErrorNumber.NoError;
+            ms.Write(sector, 0, sector.Length);
         }
 
-        public ErrorNumber ReadSectors(ulong sectorAddress, uint length, out byte[] buffer)
-        {
-            buffer = null;
+        buffer = ms.ToArray();
 
-            if(sectorAddress > _imageInfo.Sectors - 1)
-                return ErrorNumber.OutOfRange;
-
-            if(sectorAddress + length > _imageInfo.Sectors)
-                return ErrorNumber.OutOfRange;
-
-            var ms = new MemoryStream();
-
-            for(uint i = 0; i < length; i++)
-            {
-                ErrorNumber errno = ReadSector(sectorAddress + i, out byte[] sector);
-
-                if(errno != ErrorNumber.NoError)
-                    return errno;
-
-                ms.Write(sector, 0, sector.Length);
-            }
-
-            buffer = ms.ToArray();
-
-            return ErrorNumber.NoError;
-        }
+        return ErrorNumber.NoError;
     }
 }

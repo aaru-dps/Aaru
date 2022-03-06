@@ -45,575 +45,574 @@ using Aaru.Helpers;
 using DVDDecryption = Aaru.Decryption.DVD.Dump;
 using Inquiry = Aaru.CommonTypes.Structs.Devices.SCSI.Inquiry;
 
-namespace Aaru.Core.Devices.Info
+namespace Aaru.Core.Devices.Info;
+
+/// <summary>Obtains and contains information about a device</summary>
+public partial class DeviceInfo
 {
-    /// <summary>Obtains and contains information about a device</summary>
-    public partial class DeviceInfo
+    /// <summary>Initializes an instance of this class for the specified device</summary>
+    /// <param name="dev">Device</param>
+    public DeviceInfo(Device dev)
     {
-        /// <summary>Initializes an instance of this class for the specified device</summary>
-        /// <param name="dev">Device</param>
-        public DeviceInfo(Device dev)
+        Type                  = dev.Type;
+        Manufacturer          = dev.Manufacturer;
+        Model                 = dev.Model;
+        FirmwareRevision      = dev.FirmwareRevision;
+        Serial                = dev.Serial;
+        ScsiType              = dev.ScsiType;
+        IsRemovable           = dev.IsRemovable;
+        IsUsb                 = dev.IsUsb;
+        UsbVendorId           = dev.UsbVendorId;
+        UsbProductId          = dev.UsbProductId;
+        UsbDescriptors        = dev.UsbDescriptors;
+        UsbManufacturerString = dev.UsbManufacturerString;
+        UsbProductString      = dev.UsbProductString;
+        UsbSerialString       = dev.UsbSerialString;
+        IsFireWire            = dev.IsFireWire;
+        FireWireGuid          = dev.FireWireGuid;
+        FireWireModel         = dev.FireWireModel;
+        FireWireModelName     = dev.FireWireModelName;
+        FireWireVendor        = dev.FireWireVendor;
+        FireWireVendorName    = dev.FireWireVendorName;
+        IsCompactFlash        = dev.IsCompactFlash;
+        IsPcmcia              = dev.IsPcmcia;
+        Cis                   = dev.Cis;
+
+        switch(dev.Type)
         {
-            Type                  = dev.Type;
-            Manufacturer          = dev.Manufacturer;
-            Model                 = dev.Model;
-            FirmwareRevision      = dev.FirmwareRevision;
-            Serial                = dev.Serial;
-            ScsiType              = dev.ScsiType;
-            IsRemovable           = dev.IsRemovable;
-            IsUsb                 = dev.IsUsb;
-            UsbVendorId           = dev.UsbVendorId;
-            UsbProductId          = dev.UsbProductId;
-            UsbDescriptors        = dev.UsbDescriptors;
-            UsbManufacturerString = dev.UsbManufacturerString;
-            UsbProductString      = dev.UsbProductString;
-            UsbSerialString       = dev.UsbSerialString;
-            IsFireWire            = dev.IsFireWire;
-            FireWireGuid          = dev.FireWireGuid;
-            FireWireModel         = dev.FireWireModel;
-            FireWireModelName     = dev.FireWireModelName;
-            FireWireVendor        = dev.FireWireVendor;
-            FireWireVendorName    = dev.FireWireVendorName;
-            IsCompactFlash        = dev.IsCompactFlash;
-            IsPcmcia              = dev.IsPcmcia;
-            Cis                   = dev.Cis;
-
-            switch(dev.Type)
+            case DeviceType.ATA:
             {
-                case DeviceType.ATA:
+                bool sense = dev.AtaIdentify(out byte[] ataBuf, out AtaErrorRegistersChs errorRegisters);
+
+                if(sense)
                 {
-                    bool sense = dev.AtaIdentify(out byte[] ataBuf, out AtaErrorRegistersChs errorRegisters);
+                    AaruConsole.DebugWriteLine("Device-Info command", "STATUS = 0x{0:X2}", errorRegisters.Status);
+                    AaruConsole.DebugWriteLine("Device-Info command", "ERROR = 0x{0:X2}", errorRegisters.Error);
 
-                    if(sense)
-                    {
-                        AaruConsole.DebugWriteLine("Device-Info command", "STATUS = 0x{0:X2}", errorRegisters.Status);
-                        AaruConsole.DebugWriteLine("Device-Info command", "ERROR = 0x{0:X2}", errorRegisters.Error);
+                    AaruConsole.DebugWriteLine("Device-Info command", "NSECTOR = 0x{0:X2}",
+                                               errorRegisters.SectorCount);
 
-                        AaruConsole.DebugWriteLine("Device-Info command", "NSECTOR = 0x{0:X2}",
-                                                   errorRegisters.SectorCount);
+                    AaruConsole.DebugWriteLine("Device-Info command", "SECTOR = 0x{0:X2}", errorRegisters.Sector);
 
-                        AaruConsole.DebugWriteLine("Device-Info command", "SECTOR = 0x{0:X2}", errorRegisters.Sector);
+                    AaruConsole.DebugWriteLine("Device-Info command", "CYLHIGH = 0x{0:X2}",
+                                               errorRegisters.CylinderHigh);
 
-                        AaruConsole.DebugWriteLine("Device-Info command", "CYLHIGH = 0x{0:X2}",
-                                                   errorRegisters.CylinderHigh);
+                    AaruConsole.DebugWriteLine("Device-Info command", "CYLLOW = 0x{0:X2}",
+                                               errorRegisters.CylinderLow);
 
-                        AaruConsole.DebugWriteLine("Device-Info command", "CYLLOW = 0x{0:X2}",
-                                                   errorRegisters.CylinderLow);
+                    AaruConsole.DebugWriteLine("Device-Info command", "DEVICE = 0x{0:X2}",
+                                               errorRegisters.DeviceHead);
 
-                        AaruConsole.DebugWriteLine("Device-Info command", "DEVICE = 0x{0:X2}",
-                                                   errorRegisters.DeviceHead);
-
-                        AaruConsole.DebugWriteLine("Device-Info command", "Error code = {0}", dev.LastError);
-
-                        break;
-                    }
-
-                    if(dev.Error)
-                    {
-                        AaruConsole.ErrorWriteLine("Error {0} querying ATA IDENTIFY", dev.LastError);
-
-                        break;
-                    }
-
-                    AtaIdentify = ataBuf;
-
-                    dev.EnableMediaCardPassThrough(out errorRegisters, dev.Timeout, out _);
-
-                    if(errorRegisters.Sector      == 0xAA &&
-                       errorRegisters.SectorCount == 0x55)
-                        AtaMcptError = errorRegisters;
+                    AaruConsole.DebugWriteLine("Device-Info command", "Error code = {0}", dev.LastError);
 
                     break;
                 }
 
-                case DeviceType.ATAPI:
+                if(dev.Error)
                 {
-                    bool sense = dev.AtapiIdentify(out byte[] ataBuf, out AtaErrorRegistersChs errorRegisters);
+                    AaruConsole.ErrorWriteLine("Error {0} querying ATA IDENTIFY", dev.LastError);
 
-                    if(sense)
-                    {
-                        AaruConsole.DebugWriteLine("Device-Info command", "STATUS = 0x{0:X2}", errorRegisters.Status);
-                        AaruConsole.DebugWriteLine("Device-Info command", "ERROR = 0x{0:X2}", errorRegisters.Error);
-
-                        AaruConsole.DebugWriteLine("Device-Info command", "NSECTOR = 0x{0:X2}",
-                                                   errorRegisters.SectorCount);
-
-                        AaruConsole.DebugWriteLine("Device-Info command", "SECTOR = 0x{0:X2}", errorRegisters.Sector);
-
-                        AaruConsole.DebugWriteLine("Device-Info command", "CYLHIGH = 0x{0:X2}",
-                                                   errorRegisters.CylinderHigh);
-
-                        AaruConsole.DebugWriteLine("Device-Info command", "CYLLOW = 0x{0:X2}",
-                                                   errorRegisters.CylinderLow);
-
-                        AaruConsole.DebugWriteLine("Device-Info command", "DEVICE = 0x{0:X2}",
-                                                   errorRegisters.DeviceHead);
-
-                        AaruConsole.DebugWriteLine("Device-Info command", "Error code = {0}", dev.LastError);
-
-                        break;
-                    }
-
-                    if(!dev.Error)
-                        AtapiIdentify = ataBuf;
-                    else
-                        AaruConsole.ErrorWriteLine("Error {0} querying ATA PACKET IDENTIFY", dev.LastError);
-
-                    // ATAPI devices are also SCSI devices
-                    goto case DeviceType.SCSI;
+                    break;
                 }
 
-                case DeviceType.SCSI:
+                AtaIdentify = ataBuf;
+
+                dev.EnableMediaCardPassThrough(out errorRegisters, dev.Timeout, out _);
+
+                if(errorRegisters.Sector      == 0xAA &&
+                   errorRegisters.SectorCount == 0x55)
+                    AtaMcptError = errorRegisters;
+
+                break;
+            }
+
+            case DeviceType.ATAPI:
+            {
+                bool sense = dev.AtapiIdentify(out byte[] ataBuf, out AtaErrorRegistersChs errorRegisters);
+
+                if(sense)
                 {
-                    bool sense = dev.ScsiInquiry(out byte[] inqBuf, out byte[] senseBuf);
+                    AaruConsole.DebugWriteLine("Device-Info command", "STATUS = 0x{0:X2}", errorRegisters.Status);
+                    AaruConsole.DebugWriteLine("Device-Info command", "ERROR = 0x{0:X2}", errorRegisters.Error);
 
-                    if(sense)
-                    {
-                        AaruConsole.ErrorWriteLine("SCSI error:\n{0}", Sense.PrettifySense(senseBuf));
+                    AaruConsole.DebugWriteLine("Device-Info command", "NSECTOR = 0x{0:X2}",
+                                               errorRegisters.SectorCount);
 
-                        break;
-                    }
+                    AaruConsole.DebugWriteLine("Device-Info command", "SECTOR = 0x{0:X2}", errorRegisters.Sector);
 
-                    ScsiInquiryData = inqBuf;
-                    ScsiInquiry     = Inquiry.Decode(inqBuf);
+                    AaruConsole.DebugWriteLine("Device-Info command", "CYLHIGH = 0x{0:X2}",
+                                               errorRegisters.CylinderHigh);
 
-                    sense = dev.ScsiInquiry(out inqBuf, out senseBuf, 0x00);
+                    AaruConsole.DebugWriteLine("Device-Info command", "CYLLOW = 0x{0:X2}",
+                                               errorRegisters.CylinderLow);
 
-                    if(!sense)
-                    {
-                        ScsiEvpdPages = new Dictionary<byte, byte[]>();
+                    AaruConsole.DebugWriteLine("Device-Info command", "DEVICE = 0x{0:X2}",
+                                               errorRegisters.DeviceHead);
 
-                        byte[] pages = EVPD.DecodePage00(inqBuf);
+                    AaruConsole.DebugWriteLine("Device-Info command", "Error code = {0}", dev.LastError);
 
-                        if(pages != null)
-                            foreach(byte page in pages)
-                            {
-                                sense = dev.ScsiInquiry(out inqBuf, out senseBuf, page);
+                    break;
+                }
 
-                                if(sense)
-                                    continue;
+                if(!dev.Error)
+                    AtapiIdentify = ataBuf;
+                else
+                    AaruConsole.ErrorWriteLine("Error {0} querying ATA PACKET IDENTIFY", dev.LastError);
 
-                                ScsiEvpdPages.Add(page, inqBuf);
-                            }
-                    }
+                // ATAPI devices are also SCSI devices
+                goto case DeviceType.SCSI;
+            }
 
-                    var devType = (PeripheralDeviceTypes)ScsiInquiry.Value.PeripheralDeviceType;
+            case DeviceType.SCSI:
+            {
+                bool sense = dev.ScsiInquiry(out byte[] inqBuf, out byte[] senseBuf);
 
-                    sense = dev.ModeSense10(out byte[] modeBuf, out senseBuf, false, true,
-                                            ScsiModeSensePageControl.Current, 0x3F, 0xFF, 5, out _);
+                if(sense)
+                {
+                    AaruConsole.ErrorWriteLine("SCSI error:\n{0}", Sense.PrettifySense(senseBuf));
+
+                    break;
+                }
+
+                ScsiInquiryData = inqBuf;
+                ScsiInquiry     = Inquiry.Decode(inqBuf);
+
+                sense = dev.ScsiInquiry(out inqBuf, out senseBuf, 0x00);
+
+                if(!sense)
+                {
+                    ScsiEvpdPages = new Dictionary<byte, byte[]>();
+
+                    byte[] pages = EVPD.DecodePage00(inqBuf);
+
+                    if(pages != null)
+                        foreach(byte page in pages)
+                        {
+                            sense = dev.ScsiInquiry(out inqBuf, out senseBuf, page);
+
+                            if(sense)
+                                continue;
+
+                            ScsiEvpdPages.Add(page, inqBuf);
+                        }
+                }
+
+                var devType = (PeripheralDeviceTypes)ScsiInquiry.Value.PeripheralDeviceType;
+
+                sense = dev.ModeSense10(out byte[] modeBuf, out senseBuf, false, true,
+                                        ScsiModeSensePageControl.Current, 0x3F, 0xFF, 5, out _);
+
+                if(!sense &&
+                   !dev.Error)
+                    ScsiModeSense10 = modeBuf;
+
+                if(sense || dev.Error)
+                {
+                    sense = dev.ModeSense10(out modeBuf, out senseBuf, false, true,
+                                            ScsiModeSensePageControl.Current, 0x3F, 0x00, 5, out _);
 
                     if(!sense &&
                        !dev.Error)
                         ScsiModeSense10 = modeBuf;
+                }
 
-                    if(sense || dev.Error)
-                    {
-                        sense = dev.ModeSense10(out modeBuf, out senseBuf, false, true,
-                                                ScsiModeSensePageControl.Current, 0x3F, 0x00, 5, out _);
+                if(!sense &&
+                   !dev.Error)
+                    ScsiMode = Modes.DecodeMode10(modeBuf, devType);
 
-                        if(!sense &&
-                           !dev.Error)
-                            ScsiModeSense10 = modeBuf;
-                    }
+                bool useMode10 = !(sense || dev.Error || !ScsiMode.HasValue);
 
-                    if(!sense &&
-                       !dev.Error)
-                        ScsiMode = Modes.DecodeMode10(modeBuf, devType);
+                sense = dev.ModeSense6(out modeBuf, out senseBuf, false, ScsiModeSensePageControl.Current, 0x3F,
+                                       0xFF, 5, out _);
 
-                    bool useMode10 = !(sense || dev.Error || !ScsiMode.HasValue);
+                if(!sense &&
+                   !dev.Error)
+                    ScsiModeSense6 = modeBuf;
 
+                if(sense || dev.Error)
+                {
                     sense = dev.ModeSense6(out modeBuf, out senseBuf, false, ScsiModeSensePageControl.Current, 0x3F,
-                                           0xFF, 5, out _);
+                                           0x00, 5, out _);
 
                     if(!sense &&
                        !dev.Error)
                         ScsiModeSense6 = modeBuf;
+                }
 
-                    if(sense || dev.Error)
+                if(sense || dev.Error)
+                {
+                    sense = dev.ModeSense(out modeBuf, out senseBuf, 5, out _);
+
+                    if(!sense &&
+                       !dev.Error)
+                        ScsiModeSense6 = modeBuf;
+                }
+
+                if(!sense     &&
+                   !dev.Error &&
+                   !useMode10)
+                    ScsiMode = Modes.DecodeMode6(modeBuf, devType);
+
+                switch(devType)
+                {
+                    case PeripheralDeviceTypes.MultiMediaDevice:
                     {
-                        sense = dev.ModeSense6(out modeBuf, out senseBuf, false, ScsiModeSensePageControl.Current, 0x3F,
-                                               0x00, 5, out _);
+                        sense = dev.GetConfiguration(out byte[] confBuf, out senseBuf, dev.Timeout, out _);
 
-                        if(!sense &&
-                           !dev.Error)
-                            ScsiModeSense6 = modeBuf;
-                    }
+                        if(!sense)
+                            MmcConfiguration = confBuf;
 
-                    if(sense || dev.Error)
-                    {
-                        sense = dev.ModeSense(out modeBuf, out senseBuf, 5, out _);
+                        var dvdDecrypt = new DVDDecryption(dev);
 
-                        if(!sense &&
-                           !dev.Error)
-                            ScsiModeSense6 = modeBuf;
-                    }
+                        sense = dvdDecrypt.ReadRpc(out byte[] cmdBuf, out _, DvdCssKeyClass.DvdCssCppmOrCprm,
+                                                   dev.Timeout, out _);
 
-                    if(!sense     &&
-                       !dev.Error &&
-                       !useMode10)
-                        ScsiMode = Modes.DecodeMode6(modeBuf, devType);
-
-                    switch(devType)
-                    {
-                        case PeripheralDeviceTypes.MultiMediaDevice:
+                        if(!sense)
                         {
-                            sense = dev.GetConfiguration(out byte[] confBuf, out senseBuf, dev.Timeout, out _);
+                            CSS_CPRM.RegionalPlaybackControlState? rpc =
+                                CSS_CPRM.DecodeRegionalPlaybackControlState(cmdBuf);
 
-                            if(!sense)
-                                MmcConfiguration = confBuf;
+                            if(rpc.HasValue)
+                                RPC = rpc;
+                        }
 
-                            var dvdDecrypt = new DVDDecryption(dev);
+                        // TODO: DVD drives respond correctly to BD status.
+                        // While specification says if no medium is present
+                        // it should inform all possible capabilities,
+                        // testing drives show only supported media capabilities.
+                        /*
+                        byte[] strBuf;
+                        sense = dev.ReadDiscStructure(out strBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.CapabilityList, 0, dev.Timeout, out _);
 
-                            sense = dvdDecrypt.ReadRpc(out byte[] cmdBuf, out _, DvdCssKeyClass.DvdCssCppmOrCprm,
-                                                       dev.Timeout, out _);
-
-                            if(!sense)
+                        if (!sense)
+                        {
+                            Decoders.SCSI.DiscStructureCapabilities.Capability[] caps = Decoders.SCSI.DiscStructureCapabilities.Decode(strBuf);
+                            if (caps != null)
                             {
-                                CSS_CPRM.RegionalPlaybackControlState? rpc =
-                                    CSS_CPRM.DecodeRegionalPlaybackControlState(cmdBuf);
-
-                                if(rpc.HasValue)
-                                    RPC = rpc;
-                            }
-
-                            // TODO: DVD drives respond correctly to BD status.
-                            // While specification says if no medium is present
-                            // it should inform all possible capabilities,
-                            // testing drives show only supported media capabilities.
-                            /*
-                            byte[] strBuf;
-                            sense = dev.ReadDiscStructure(out strBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.CapabilityList, 0, dev.Timeout, out _);
-
-                            if (!sense)
-                            {
-                                Decoders.SCSI.DiscStructureCapabilities.Capability[] caps = Decoders.SCSI.DiscStructureCapabilities.Decode(strBuf);
-                                if (caps != null)
+                                foreach (Decoders.SCSI.DiscStructureCapabilities.Capability cap in caps)
                                 {
-                                    foreach (Decoders.SCSI.DiscStructureCapabilities.Capability cap in caps)
-                                    {
-                                        if (cap.SDS && cap.RDS)
-                                            AaruConsole.WriteLine("Drive can READ/SEND DISC STRUCTURE format {0:X2}h", cap.FormatCode);
-                                        else if (cap.SDS)
-                                            AaruConsole.WriteLine("Drive can SEND DISC STRUCTURE format {0:X2}h", cap.FormatCode);
-                                        else if (cap.RDS)
-                                            AaruConsole.WriteLine("Drive can READ DISC STRUCTURE format {0:X2}h", cap.FormatCode);
-                                    }
+                                    if (cap.SDS && cap.RDS)
+                                        AaruConsole.WriteLine("Drive can READ/SEND DISC STRUCTURE format {0:X2}h", cap.FormatCode);
+                                    else if (cap.SDS)
+                                        AaruConsole.WriteLine("Drive can SEND DISC STRUCTURE format {0:X2}h", cap.FormatCode);
+                                    else if (cap.RDS)
+                                        AaruConsole.WriteLine("Drive can READ DISC STRUCTURE format {0:X2}h", cap.FormatCode);
                                 }
                             }
+                        }
 
-                            sense = dev.ReadDiscStructure(out strBuf, out senseBuf, MmcDiscStructureMediaType.BD, 0, 0, MmcDiscStructureFormat.CapabilityList, 0, dev.Timeout, out _);
+                        sense = dev.ReadDiscStructure(out strBuf, out senseBuf, MmcDiscStructureMediaType.BD, 0, 0, MmcDiscStructureFormat.CapabilityList, 0, dev.Timeout, out _);
 
-                            if (!sense)
+                        if (!sense)
+                        {
+                            Decoders.SCSI.DiscStructureCapabilities.Capability[] caps = Decoders.SCSI.DiscStructureCapabilities.Decode(strBuf);
+                            if (caps != null)
                             {
-                                Decoders.SCSI.DiscStructureCapabilities.Capability[] caps = Decoders.SCSI.DiscStructureCapabilities.Decode(strBuf);
-                                if (caps != null)
+                                foreach (Decoders.SCSI.DiscStructureCapabilities.Capability cap in caps)
                                 {
-                                    foreach (Decoders.SCSI.DiscStructureCapabilities.Capability cap in caps)
-                                    {
-                                        if (cap.SDS && cap.RDS)
-                                            AaruConsole.WriteLine("Drive can READ/SEND DISC STRUCTURE format {0:X2}h", cap.FormatCode);
-                                        else if (cap.SDS)
-                                            AaruConsole.WriteLine("Drive can SEND DISC STRUCTURE format {0:X2}h", cap.FormatCode);
-                                        else if (cap.RDS)
-                                            AaruConsole.WriteLine("Drive can READ DISC STRUCTURE format {0:X2}h", cap.FormatCode);
-                                    }
+                                    if (cap.SDS && cap.RDS)
+                                        AaruConsole.WriteLine("Drive can READ/SEND DISC STRUCTURE format {0:X2}h", cap.FormatCode);
+                                    else if (cap.SDS)
+                                        AaruConsole.WriteLine("Drive can SEND DISC STRUCTURE format {0:X2}h", cap.FormatCode);
+                                    else if (cap.RDS)
+                                        AaruConsole.WriteLine("Drive can READ DISC STRUCTURE format {0:X2}h", cap.FormatCode);
                                 }
                             }
-                            */
+                        }
+                        */
 
-                            #region Plextor
-                            if(dev.Manufacturer == "PLEXTOR")
+                        #region Plextor
+                        if(dev.Manufacturer == "PLEXTOR")
+                        {
+                            bool   plxtSense = true;
+                            bool   plxtDvd   = false;
+                            byte[] plxtBuf   = null;
+
+                            switch(dev.Model)
                             {
-                                bool   plxtSense = true;
-                                bool   plxtDvd   = false;
-                                byte[] plxtBuf   = null;
+                                case "DVDR   PX-708A":
+                                case "DVDR   PX-708A2":
+                                case "DVDR   PX-712A":
+                                    plxtDvd = true;
 
-                                switch(dev.Model)
+                                    plxtSense = dev.PlextorReadEeprom(out plxtBuf, out senseBuf, dev.Timeout,
+                                                                      out _);
+
+                                    break;
+                                case "DVDR   PX-714A":
+                                case "DVDR   PX-716A":
+                                case "DVDR   PX-716AL":
+                                case "DVDR   PX-755A":
+                                case "DVDR   PX-760A":
                                 {
-                                    case "DVDR   PX-708A":
-                                    case "DVDR   PX-708A2":
-                                    case "DVDR   PX-712A":
-                                        plxtDvd = true;
+                                    plxtBuf = new byte[256 * 4];
 
-                                        plxtSense = dev.PlextorReadEeprom(out plxtBuf, out senseBuf, dev.Timeout,
-                                                                          out _);
-
-                                        break;
-                                    case "DVDR   PX-714A":
-                                    case "DVDR   PX-716A":
-                                    case "DVDR   PX-716AL":
-                                    case "DVDR   PX-755A":
-                                    case "DVDR   PX-760A":
+                                    for(byte i = 0; i < 4; i++)
                                     {
-                                        plxtBuf = new byte[256 * 4];
+                                        plxtSense = dev.PlextorReadEepromBlock(out byte[] plxtBufSmall,
+                                                                               out senseBuf, i, 256, dev.Timeout, out _);
 
-                                        for(byte i = 0; i < 4; i++)
-                                        {
-                                            plxtSense = dev.PlextorReadEepromBlock(out byte[] plxtBufSmall,
-                                                out senseBuf, i, 256, dev.Timeout, out _);
+                                        if(plxtSense)
+                                            break;
 
-                                            if(plxtSense)
-                                                break;
-
-                                            Array.Copy(plxtBufSmall, 0, plxtBuf, i * 256, 256);
-                                        }
-
-                                        plxtDvd = true;
-
-                                        break;
+                                        Array.Copy(plxtBufSmall, 0, plxtBuf, i * 256, 256);
                                     }
 
-                                    default:
-                                    {
-                                        if(dev.Model.StartsWith("CD-R   ", StringComparison.Ordinal))
-                                            plxtSense = dev.PlextorReadEepromCdr(out plxtBuf, out senseBuf, dev.Timeout,
-                                                out _);
+                                    plxtDvd = true;
 
-                                        break;
-                                    }
+                                    break;
                                 }
 
-                                PlextorFeatures = new Plextor
+                                default:
                                 {
-                                    IsDvd = plxtDvd
-                                };
+                                    if(dev.Model.StartsWith("CD-R   ", StringComparison.Ordinal))
+                                        plxtSense = dev.PlextorReadEepromCdr(out plxtBuf, out senseBuf, dev.Timeout,
+                                                                             out _);
 
-                                if(!plxtSense)
-                                {
-                                    PlextorFeatures.Eeprom = plxtBuf;
-
-                                    if(plxtDvd)
-                                    {
-                                        PlextorFeatures.Discs        = BigEndianBitConverter.ToUInt16(plxtBuf, 0x0120);
-                                        PlextorFeatures.CdReadTime   = BigEndianBitConverter.ToUInt32(plxtBuf, 0x0122);
-                                        PlextorFeatures.CdWriteTime  = BigEndianBitConverter.ToUInt32(plxtBuf, 0x0126);
-                                        PlextorFeatures.DvdReadTime  = BigEndianBitConverter.ToUInt32(plxtBuf, 0x012A);
-                                        PlextorFeatures.DvdWriteTime = BigEndianBitConverter.ToUInt32(plxtBuf, 0x012E);
-                                    }
-                                    else
-                                    {
-                                        PlextorFeatures.Discs       = BigEndianBitConverter.ToUInt16(plxtBuf, 0x0078);
-                                        PlextorFeatures.CdReadTime  = BigEndianBitConverter.ToUInt32(plxtBuf, 0x006C);
-                                        PlextorFeatures.CdWriteTime = BigEndianBitConverter.ToUInt32(plxtBuf, 0x007A);
-                                    }
+                                    break;
                                 }
+                            }
 
-                                plxtSense = dev.PlextorGetPoweRec(out senseBuf, out bool plxtPwrRecEnabled,
-                                                                  out ushort plxtPwrRecSpeed, dev.Timeout, out _);
+                            PlextorFeatures = new Plextor
+                            {
+                                IsDvd = plxtDvd
+                            };
 
-                                if(!plxtSense)
-                                {
-                                    PlextorFeatures.PoweRec = true;
-
-                                    if(plxtPwrRecEnabled)
-                                    {
-                                        PlextorFeatures.PoweRecEnabled          = true;
-                                        PlextorFeatures.PoweRecRecommendedSpeed = plxtPwrRecSpeed;
-
-                                        plxtSense = dev.PlextorGetSpeeds(out senseBuf, out ushort plxtPwrRecSelected,
-                                                                         out ushort plxtPwrRecMax,
-                                                                         out ushort plxtPwrRecLast, dev.Timeout, out _);
-
-                                        if(!plxtSense)
-                                        {
-                                            PlextorFeatures.PoweRecSelected = plxtPwrRecSelected;
-                                            PlextorFeatures.PoweRecMax      = plxtPwrRecMax;
-                                            PlextorFeatures.PoweRecLast     = plxtPwrRecLast;
-                                        }
-                                    }
-                                }
-
-                                // TODO: Check it with a drive
-                                plxtSense = dev.PlextorGetSilentMode(out plxtBuf, out senseBuf, dev.Timeout, out _);
-
-                                if(!plxtSense)
-                                    if(plxtBuf[0] == 1)
-                                    {
-                                        PlextorFeatures.SilentModeEnabled = true;
-                                        PlextorFeatures.AccessTimeLimit   = plxtBuf[1];
-
-                                        PlextorFeatures.CdReadSpeedLimit  = plxtBuf[2];
-                                        PlextorFeatures.DvdReadSpeedLimit = plxtBuf[3];
-                                        PlextorFeatures.CdWriteSpeedLimit = plxtBuf[4];
-
-                                        // TODO: Check which one is each one
-                                        /*
-                                            if(plxtBuf[6] > 0)
-                                                AaruConsole.WriteLine("\tTray eject speed limited to {0}",
-                                                                     -(plxtBuf[6] + 48));
-                                            if(plxtBuf[7] > 0)
-                                                AaruConsole.WriteLine("\tTray eject speed limited to {0}",
-                                                                     plxtBuf[7] - 47);
-                                        */
-                                    }
-
-                                plxtSense = dev.PlextorGetGigaRec(out plxtBuf, out senseBuf, dev.Timeout, out _);
-
-                                if(!plxtSense)
-                                    PlextorFeatures.GigaRec = true;
-
-                                plxtSense = dev.PlextorGetSecuRec(out plxtBuf, out senseBuf, dev.Timeout, out _);
-
-                                if(!plxtSense)
-                                    PlextorFeatures.SecuRec = true;
-
-                                plxtSense = dev.PlextorGetSpeedRead(out plxtBuf, out senseBuf, dev.Timeout, out _);
-
-                                if(!plxtSense)
-                                {
-                                    PlextorFeatures.SpeedRead = true;
-
-                                    if((plxtBuf[2] & 0x01) == 0x01)
-                                        PlextorFeatures.SpeedReadEnabled = true;
-                                }
-
-                                plxtSense = dev.PlextorGetHiding(out plxtBuf, out senseBuf, dev.Timeout, out _);
-
-                                if(!plxtSense)
-                                {
-                                    PlextorFeatures.Hiding = true;
-
-                                    if((plxtBuf[2] & 0x02) == 0x02)
-                                        PlextorFeatures.HidesRecordables = true;
-
-                                    if((plxtBuf[2] & 0x01) == 0x01)
-                                        PlextorFeatures.HidesSessions = true;
-                                }
-
-                                plxtSense = dev.PlextorGetVariRec(out plxtBuf, out senseBuf, false, dev.Timeout, out _);
-
-                                if(!plxtSense)
-                                    PlextorFeatures.VariRec = true;
+                            if(!plxtSense)
+                            {
+                                PlextorFeatures.Eeprom = plxtBuf;
 
                                 if(plxtDvd)
                                 {
-                                    plxtSense = dev.PlextorGetVariRec(out plxtBuf, out senseBuf, true, dev.Timeout,
-                                                                      out _);
-
-                                    if(!plxtSense)
-                                        PlextorFeatures.VariRecDvd = true;
-
-                                    plxtSense = dev.PlextorGetBitsetting(out plxtBuf, out senseBuf, false, dev.Timeout,
-                                                                         out _);
-
-                                    if(!plxtSense)
-                                        PlextorFeatures.BitSetting = true;
-
-                                    plxtSense = dev.PlextorGetBitsetting(out plxtBuf, out senseBuf, true, dev.Timeout,
-                                                                         out _);
-
-                                    if(!plxtSense)
-                                        PlextorFeatures.BitSettingDl = true;
-
-                                    plxtSense = dev.PlextorGetTestWriteDvdPlus(out plxtBuf, out senseBuf, dev.Timeout,
-                                                                               out _);
-
-                                    if(!plxtSense)
-                                        PlextorFeatures.DvdPlusWriteTest = true;
+                                    PlextorFeatures.Discs        = BigEndianBitConverter.ToUInt16(plxtBuf, 0x0120);
+                                    PlextorFeatures.CdReadTime   = BigEndianBitConverter.ToUInt32(plxtBuf, 0x0122);
+                                    PlextorFeatures.CdWriteTime  = BigEndianBitConverter.ToUInt32(plxtBuf, 0x0126);
+                                    PlextorFeatures.DvdReadTime  = BigEndianBitConverter.ToUInt32(plxtBuf, 0x012A);
+                                    PlextorFeatures.DvdWriteTime = BigEndianBitConverter.ToUInt32(plxtBuf, 0x012E);
+                                }
+                                else
+                                {
+                                    PlextorFeatures.Discs       = BigEndianBitConverter.ToUInt16(plxtBuf, 0x0078);
+                                    PlextorFeatures.CdReadTime  = BigEndianBitConverter.ToUInt32(plxtBuf, 0x006C);
+                                    PlextorFeatures.CdWriteTime = BigEndianBitConverter.ToUInt32(plxtBuf, 0x007A);
                                 }
                             }
-                            #endregion Plextor
 
-                            if(ScsiInquiry.Value.KreonPresent)
-                                if(!dev.KreonGetFeatureList(out senseBuf, out KreonFeatures krFeatures, dev.Timeout,
-                                                            out _))
-                                    KreonFeatures = krFeatures;
+                            plxtSense = dev.PlextorGetPoweRec(out senseBuf, out bool plxtPwrRecEnabled,
+                                                              out ushort plxtPwrRecSpeed, dev.Timeout, out _);
 
-                            break;
-                        }
-
-                        case PeripheralDeviceTypes.SequentialAccess:
-                        {
-                            sense = dev.ReadBlockLimits(out byte[] seqBuf, out senseBuf, dev.Timeout, out _);
-
-                            if(sense)
-                                AaruConsole.ErrorWriteLine("READ BLOCK LIMITS:\n{0}", Sense.PrettifySense(senseBuf));
-                            else
-                                BlockLimits = seqBuf;
-
-                            sense = dev.ReportDensitySupport(out seqBuf, out senseBuf, dev.Timeout, out _);
-
-                            if(sense)
-                                AaruConsole.ErrorWriteLine("REPORT DENSITY SUPPORT:\n{0}",
-                                                           Sense.PrettifySense(senseBuf));
-                            else
+                            if(!plxtSense)
                             {
-                                DensitySupport       = seqBuf;
-                                DensitySupportHeader = Decoders.SCSI.SSC.DensitySupport.DecodeDensity(seqBuf);
+                                PlextorFeatures.PoweRec = true;
+
+                                if(plxtPwrRecEnabled)
+                                {
+                                    PlextorFeatures.PoweRecEnabled          = true;
+                                    PlextorFeatures.PoweRecRecommendedSpeed = plxtPwrRecSpeed;
+
+                                    plxtSense = dev.PlextorGetSpeeds(out senseBuf, out ushort plxtPwrRecSelected,
+                                                                     out ushort plxtPwrRecMax,
+                                                                     out ushort plxtPwrRecLast, dev.Timeout, out _);
+
+                                    if(!plxtSense)
+                                    {
+                                        PlextorFeatures.PoweRecSelected = plxtPwrRecSelected;
+                                        PlextorFeatures.PoweRecMax      = plxtPwrRecMax;
+                                        PlextorFeatures.PoweRecLast     = plxtPwrRecLast;
+                                    }
+                                }
                             }
 
-                            sense = dev.ReportDensitySupport(out seqBuf, out senseBuf, true, false, dev.Timeout, out _);
+                            // TODO: Check it with a drive
+                            plxtSense = dev.PlextorGetSilentMode(out plxtBuf, out senseBuf, dev.Timeout, out _);
 
-                            if(sense)
-                                AaruConsole.ErrorWriteLine("REPORT DENSITY SUPPORT (MEDIUM):\n{0}",
-                                                           Sense.PrettifySense(senseBuf));
-                            else
+                            if(!plxtSense)
+                                if(plxtBuf[0] == 1)
+                                {
+                                    PlextorFeatures.SilentModeEnabled = true;
+                                    PlextorFeatures.AccessTimeLimit   = plxtBuf[1];
+
+                                    PlextorFeatures.CdReadSpeedLimit  = plxtBuf[2];
+                                    PlextorFeatures.DvdReadSpeedLimit = plxtBuf[3];
+                                    PlextorFeatures.CdWriteSpeedLimit = plxtBuf[4];
+
+                                    // TODO: Check which one is each one
+                                    /*
+                                        if(plxtBuf[6] > 0)
+                                            AaruConsole.WriteLine("\tTray eject speed limited to {0}",
+                                                                 -(plxtBuf[6] + 48));
+                                        if(plxtBuf[7] > 0)
+                                            AaruConsole.WriteLine("\tTray eject speed limited to {0}",
+                                                                 plxtBuf[7] - 47);
+                                    */
+                                }
+
+                            plxtSense = dev.PlextorGetGigaRec(out plxtBuf, out senseBuf, dev.Timeout, out _);
+
+                            if(!plxtSense)
+                                PlextorFeatures.GigaRec = true;
+
+                            plxtSense = dev.PlextorGetSecuRec(out plxtBuf, out senseBuf, dev.Timeout, out _);
+
+                            if(!plxtSense)
+                                PlextorFeatures.SecuRec = true;
+
+                            plxtSense = dev.PlextorGetSpeedRead(out plxtBuf, out senseBuf, dev.Timeout, out _);
+
+                            if(!plxtSense)
                             {
-                                MediumDensitySupport   = seqBuf;
-                                MediaTypeSupportHeader = Decoders.SCSI.SSC.DensitySupport.DecodeMediumType(seqBuf);
+                                PlextorFeatures.SpeedRead = true;
+
+                                if((plxtBuf[2] & 0x01) == 0x01)
+                                    PlextorFeatures.SpeedReadEnabled = true;
                             }
 
-                            break;
+                            plxtSense = dev.PlextorGetHiding(out plxtBuf, out senseBuf, dev.Timeout, out _);
+
+                            if(!plxtSense)
+                            {
+                                PlextorFeatures.Hiding = true;
+
+                                if((plxtBuf[2] & 0x02) == 0x02)
+                                    PlextorFeatures.HidesRecordables = true;
+
+                                if((plxtBuf[2] & 0x01) == 0x01)
+                                    PlextorFeatures.HidesSessions = true;
+                            }
+
+                            plxtSense = dev.PlextorGetVariRec(out plxtBuf, out senseBuf, false, dev.Timeout, out _);
+
+                            if(!plxtSense)
+                                PlextorFeatures.VariRec = true;
+
+                            if(plxtDvd)
+                            {
+                                plxtSense = dev.PlextorGetVariRec(out plxtBuf, out senseBuf, true, dev.Timeout,
+                                                                  out _);
+
+                                if(!plxtSense)
+                                    PlextorFeatures.VariRecDvd = true;
+
+                                plxtSense = dev.PlextorGetBitsetting(out plxtBuf, out senseBuf, false, dev.Timeout,
+                                                                     out _);
+
+                                if(!plxtSense)
+                                    PlextorFeatures.BitSetting = true;
+
+                                plxtSense = dev.PlextorGetBitsetting(out plxtBuf, out senseBuf, true, dev.Timeout,
+                                                                     out _);
+
+                                if(!plxtSense)
+                                    PlextorFeatures.BitSettingDl = true;
+
+                                plxtSense = dev.PlextorGetTestWriteDvdPlus(out plxtBuf, out senseBuf, dev.Timeout,
+                                                                           out _);
+
+                                if(!plxtSense)
+                                    PlextorFeatures.DvdPlusWriteTest = true;
+                            }
                         }
+                        #endregion Plextor
+
+                        if(ScsiInquiry.Value.KreonPresent)
+                            if(!dev.KreonGetFeatureList(out senseBuf, out KreonFeatures krFeatures, dev.Timeout,
+                                                        out _))
+                                KreonFeatures = krFeatures;
+
+                        break;
                     }
 
-                    break;
+                    case PeripheralDeviceTypes.SequentialAccess:
+                    {
+                        sense = dev.ReadBlockLimits(out byte[] seqBuf, out senseBuf, dev.Timeout, out _);
+
+                        if(sense)
+                            AaruConsole.ErrorWriteLine("READ BLOCK LIMITS:\n{0}", Sense.PrettifySense(senseBuf));
+                        else
+                            BlockLimits = seqBuf;
+
+                        sense = dev.ReportDensitySupport(out seqBuf, out senseBuf, dev.Timeout, out _);
+
+                        if(sense)
+                            AaruConsole.ErrorWriteLine("REPORT DENSITY SUPPORT:\n{0}",
+                                                       Sense.PrettifySense(senseBuf));
+                        else
+                        {
+                            DensitySupport       = seqBuf;
+                            DensitySupportHeader = Decoders.SCSI.SSC.DensitySupport.DecodeDensity(seqBuf);
+                        }
+
+                        sense = dev.ReportDensitySupport(out seqBuf, out senseBuf, true, false, dev.Timeout, out _);
+
+                        if(sense)
+                            AaruConsole.ErrorWriteLine("REPORT DENSITY SUPPORT (MEDIUM):\n{0}",
+                                                       Sense.PrettifySense(senseBuf));
+                        else
+                        {
+                            MediumDensitySupport   = seqBuf;
+                            MediaTypeSupportHeader = Decoders.SCSI.SSC.DensitySupport.DecodeMediumType(seqBuf);
+                        }
+
+                        break;
+                    }
                 }
 
-                case DeviceType.MMC:
-                {
-                    bool sense = dev.ReadCid(out byte[] mmcBuf, out _, dev.Timeout, out _);
-
-                    if(!sense)
-                        CID = mmcBuf;
-
-                    sense = dev.ReadCsd(out mmcBuf, out _, dev.Timeout, out _);
-
-                    if(!sense)
-                        CSD = mmcBuf;
-
-                    sense = dev.ReadOcr(out mmcBuf, out _, dev.Timeout, out _);
-
-                    if(!sense)
-                        OCR = mmcBuf;
-
-                    sense = dev.ReadExtendedCsd(out mmcBuf, out _, dev.Timeout, out _);
-
-                    if(!sense &&
-                       !ArrayHelpers.ArrayIsNullOrEmpty(mmcBuf))
-                        ExtendedCSD = mmcBuf;
-                }
-
-                    break;
-                case DeviceType.SecureDigital:
-                {
-                    bool sense = dev.ReadCid(out byte[] sdBuf, out _, dev.Timeout, out _);
-
-                    if(!sense)
-                        CID = sdBuf;
-
-                    sense = dev.ReadCsd(out sdBuf, out _, dev.Timeout, out _);
-
-                    if(!sense)
-                        CSD = sdBuf;
-
-                    sense = dev.ReadSdocr(out sdBuf, out _, dev.Timeout, out _);
-
-                    if(!sense)
-                        OCR = sdBuf;
-
-                    sense = dev.ReadScr(out sdBuf, out _, dev.Timeout, out _);
-
-                    if(!sense)
-                        SCR = sdBuf;
-                }
-
-                    break;
-                default:
-                    AaruConsole.ErrorWriteLine("Unknown device type {0}, cannot get information.", dev.Type);
-
-                    break;
+                break;
             }
+
+            case DeviceType.MMC:
+            {
+                bool sense = dev.ReadCid(out byte[] mmcBuf, out _, dev.Timeout, out _);
+
+                if(!sense)
+                    CID = mmcBuf;
+
+                sense = dev.ReadCsd(out mmcBuf, out _, dev.Timeout, out _);
+
+                if(!sense)
+                    CSD = mmcBuf;
+
+                sense = dev.ReadOcr(out mmcBuf, out _, dev.Timeout, out _);
+
+                if(!sense)
+                    OCR = mmcBuf;
+
+                sense = dev.ReadExtendedCsd(out mmcBuf, out _, dev.Timeout, out _);
+
+                if(!sense &&
+                   !ArrayHelpers.ArrayIsNullOrEmpty(mmcBuf))
+                    ExtendedCSD = mmcBuf;
+            }
+
+                break;
+            case DeviceType.SecureDigital:
+            {
+                bool sense = dev.ReadCid(out byte[] sdBuf, out _, dev.Timeout, out _);
+
+                if(!sense)
+                    CID = sdBuf;
+
+                sense = dev.ReadCsd(out sdBuf, out _, dev.Timeout, out _);
+
+                if(!sense)
+                    CSD = sdBuf;
+
+                sense = dev.ReadSdocr(out sdBuf, out _, dev.Timeout, out _);
+
+                if(!sense)
+                    OCR = sdBuf;
+
+                sense = dev.ReadScr(out sdBuf, out _, dev.Timeout, out _);
+
+                if(!sense)
+                    SCR = sdBuf;
+            }
+
+                break;
+            default:
+                AaruConsole.ErrorWriteLine("Unknown device type {0}, cannot get information.", dev.Type);
+
+                break;
         }
     }
 }

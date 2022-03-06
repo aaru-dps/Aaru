@@ -32,24 +32,23 @@
 
 using Aaru.CommonTypes.Metadata;
 
-namespace Aaru.Core.Devices.Report
-{
-    /// <summary>Implements creating a report for a USB device</summary>
-    public sealed partial class DeviceReport
-    {
-        /// <summary>Fills a device report with parameters specific to a USB device</summary>
-        public Usb UsbReport()
-        {
-            var usbReport = new Usb
-            {
-                Manufacturer = _dev.UsbManufacturerString,
-                Product      = _dev.UsbProductString,
-                ProductID    = _dev.UsbProductId,
-                VendorID     = _dev.UsbVendorId,
-                Descriptors  = _dev.UsbDescriptors
-            };
+namespace Aaru.Core.Devices.Report;
 
-            return usbReport;
-        }
+/// <summary>Implements creating a report for a USB device</summary>
+public sealed partial class DeviceReport
+{
+    /// <summary>Fills a device report with parameters specific to a USB device</summary>
+    public Usb UsbReport()
+    {
+        var usbReport = new Usb
+        {
+            Manufacturer = _dev.UsbManufacturerString,
+            Product      = _dev.UsbProductString,
+            ProductID    = _dev.UsbProductId,
+            VendorID     = _dev.UsbVendorId,
+            Descriptors  = _dev.UsbDescriptors
+        };
+
+        return usbReport;
     }
 }

@@ -38,60 +38,59 @@ using Aaru.Console;
 using Aaru.Core;
 using Spectre.Console;
 
-namespace Aaru.Commands.Archive
+namespace Aaru.Commands.Archive;
+
+internal sealed class ArchiveInfoCommand : Command
 {
-    internal sealed class ArchiveInfoCommand : Command
+    public ArchiveInfoCommand() : base("info", "Identifies an archive file and shows information about it.")
     {
-        public ArchiveInfoCommand() : base("info", "Identifies an archive file and shows information about it.")
+        AddArgument(new Argument<string>
         {
-            AddArgument(new Argument<string>
+            Arity       = ArgumentArity.ExactlyOne,
+            Description = "Archive file path",
+            Name        = "archive-path"
+        });
+
+        Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
+    }
+
+    public static int Invoke(bool debug, bool verbose, string imagePath)
+    {
+        MainClass.PrintCopyright();
+
+        if(debug)
+        {
+            IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
             {
-                Arity       = ArgumentArity.ExactlyOne,
-                Description = "Archive file path",
-                Name        = "archive-path"
+                Out = new AnsiConsoleOutput(System.Console.Error)
             });
 
-            Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
-        }
-
-        public static int Invoke(bool debug, bool verbose, string imagePath)
-        {
-            MainClass.PrintCopyright();
-
-            if(debug)
+            AaruConsole.DebugWriteLineEvent += (format, objects) =>
             {
-                IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
-                {
-                    Out = new AnsiConsoleOutput(System.Console.Error)
-                });
-
-                AaruConsole.DebugWriteLineEvent += (format, objects) =>
-                {
-                    if(objects is null)
-                        stderrConsole.MarkupLine(format);
-                    else
-                        stderrConsole.MarkupLine(format, objects);
-                };
-            }
-
-            if(verbose)
-                AaruConsole.WriteEvent += (format, objects) =>
-                {
-                    if(objects is null)
-                        AnsiConsole.Markup(format);
-                    else
-                        AnsiConsole.Markup(format, objects);
-                };
-
-            Statistics.AddCommand("archive-info");
-
-            AaruConsole.DebugWriteLine("Analyze command", "--debug={0}", debug);
-            AaruConsole.DebugWriteLine("Analyze command", "--input={0}", imagePath);
-            AaruConsole.DebugWriteLine("Analyze command", "--verbose={0}", verbose);
-
-            /* TODO: This is just a stub for now */
-
-            return (int)ErrorNumber.NoError;
+                if(objects is null)
+                    stderrConsole.MarkupLine(format);
+                else
+                    stderrConsole.MarkupLine(format, objects);
+            };
         }
+
+        if(verbose)
+            AaruConsole.WriteEvent += (format, objects) =>
+            {
+                if(objects is null)
+                    AnsiConsole.Markup(format);
+                else
+                    AnsiConsole.Markup(format, objects);
+            };
+
+        Statistics.AddCommand("archive-info");
+
+        AaruConsole.DebugWriteLine("Analyze command", "--debug={0}", debug);
+        AaruConsole.DebugWriteLine("Analyze command", "--input={0}", imagePath);
+        AaruConsole.DebugWriteLine("Analyze command", "--verbose={0}", verbose);
+
+        /* TODO: This is just a stub for now */
+
+        return (int)ErrorNumber.NoError;
     }
 }

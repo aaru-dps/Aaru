@@ -38,199 +38,198 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class UkvFdi
 {
-    public sealed partial class UkvFdi
+    /// <inheritdoc />
+    public ErrorNumber Open(IFilter imageFilter)
     {
-        /// <inheritdoc />
-        public ErrorNumber Open(IFilter imageFilter)
+        Stream stream = imageFilter.GetDataForkStream();
+        stream.Seek(0, SeekOrigin.Begin);
+
+        if(stream.Length < Marshal.SizeOf<Header>())
+            return ErrorNumber.InvalidArgument;
+
+        byte[] hdrB = new byte[Marshal.SizeOf<Header>()];
+        stream.Read(hdrB, 0, hdrB.Length);
+
+        Header hdr = Marshal.ByteArrayToStructureLittleEndian<Header>(hdrB);
+
+        AaruConsole.DebugWriteLine("UkvFdi plugin", "hdr.addInfoLen = {0}", hdr.addInfoLen);
+        AaruConsole.DebugWriteLine("UkvFdi plugin", "hdr.cylinders = {0}", hdr.cylinders);
+        AaruConsole.DebugWriteLine("UkvFdi plugin", "hdr.dataOff = {0}", hdr.dataOff);
+        AaruConsole.DebugWriteLine("UkvFdi plugin", "hdr.descOff = {0}", hdr.descOff);
+        AaruConsole.DebugWriteLine("UkvFdi plugin", "hdr.flags = {0}", hdr.flags);
+        AaruConsole.DebugWriteLine("UkvFdi plugin", "hdr.heads = {0}", hdr.heads);
+
+        stream.Seek(hdr.descOff, SeekOrigin.Begin);
+        byte[] description = new byte[hdr.dataOff - hdr.descOff];
+        stream.Read(description, 0, description.Length);
+        _imageInfo.Comments = StringHandlers.CToString(description);
+
+        AaruConsole.DebugWriteLine("UkvFdi plugin", "hdr.description = \"{0}\"", _imageInfo.Comments);
+
+        stream.Seek(0xE + hdr.addInfoLen, SeekOrigin.Begin);
+
+        long       spt        = long.MaxValue;
+        uint[][][] sectorsOff = new uint[hdr.cylinders][][];
+        _sectorsData = new byte[hdr.cylinders][][][];
+
+        _imageInfo.Cylinders = hdr.cylinders;
+        _imageInfo.Heads     = hdr.heads;
+
+        // Read track descriptors
+        for(ushort cyl = 0; cyl < hdr.cylinders; cyl++)
         {
-            Stream stream = imageFilter.GetDataForkStream();
-            stream.Seek(0, SeekOrigin.Begin);
+            sectorsOff[cyl]   = new uint[hdr.heads][];
+            _sectorsData[cyl] = new byte[hdr.heads][][];
 
-            if(stream.Length < Marshal.SizeOf<Header>())
-                return ErrorNumber.InvalidArgument;
-
-            byte[] hdrB = new byte[Marshal.SizeOf<Header>()];
-            stream.Read(hdrB, 0, hdrB.Length);
-
-            Header hdr = Marshal.ByteArrayToStructureLittleEndian<Header>(hdrB);
-
-            AaruConsole.DebugWriteLine("UkvFdi plugin", "hdr.addInfoLen = {0}", hdr.addInfoLen);
-            AaruConsole.DebugWriteLine("UkvFdi plugin", "hdr.cylinders = {0}", hdr.cylinders);
-            AaruConsole.DebugWriteLine("UkvFdi plugin", "hdr.dataOff = {0}", hdr.dataOff);
-            AaruConsole.DebugWriteLine("UkvFdi plugin", "hdr.descOff = {0}", hdr.descOff);
-            AaruConsole.DebugWriteLine("UkvFdi plugin", "hdr.flags = {0}", hdr.flags);
-            AaruConsole.DebugWriteLine("UkvFdi plugin", "hdr.heads = {0}", hdr.heads);
-
-            stream.Seek(hdr.descOff, SeekOrigin.Begin);
-            byte[] description = new byte[hdr.dataOff - hdr.descOff];
-            stream.Read(description, 0, description.Length);
-            _imageInfo.Comments = StringHandlers.CToString(description);
-
-            AaruConsole.DebugWriteLine("UkvFdi plugin", "hdr.description = \"{0}\"", _imageInfo.Comments);
-
-            stream.Seek(0xE + hdr.addInfoLen, SeekOrigin.Begin);
-
-            long       spt        = long.MaxValue;
-            uint[][][] sectorsOff = new uint[hdr.cylinders][][];
-            _sectorsData = new byte[hdr.cylinders][][][];
-
-            _imageInfo.Cylinders = hdr.cylinders;
-            _imageInfo.Heads     = hdr.heads;
-
-            // Read track descriptors
-            for(ushort cyl = 0; cyl < hdr.cylinders; cyl++)
+            for(ushort head = 0; head < hdr.heads; head++)
             {
-                sectorsOff[cyl]   = new uint[hdr.heads][];
-                _sectorsData[cyl] = new byte[hdr.heads][][];
+                byte[] sctB = new byte[4];
+                stream.Read(sctB, 0, 4);
+                stream.Seek(2, SeekOrigin.Current);
+                byte sectors = (byte)stream.ReadByte();
+                uint trkOff  = BitConverter.ToUInt32(sctB, 0);
 
-                for(ushort head = 0; head < hdr.heads; head++)
+                AaruConsole.DebugWriteLine("UkvFdi plugin", "trkhdr.c = {0}", cyl);
+                AaruConsole.DebugWriteLine("UkvFdi plugin", "trkhdr.h = {0}", head);
+                AaruConsole.DebugWriteLine("UkvFdi plugin", "trkhdr.sectors = {0}", sectors);
+                AaruConsole.DebugWriteLine("UkvFdi plugin", "trkhdr.off = {0}", trkOff);
+
+                sectorsOff[cyl][head]   = new uint[sectors];
+                _sectorsData[cyl][head] = new byte[sectors][];
+
+                if(sectors < spt &&
+                   sectors > 0)
+                    spt = sectors;
+
+                for(ushort sec = 0; sec < sectors; sec++)
                 {
-                    byte[] sctB = new byte[4];
-                    stream.Read(sctB, 0, 4);
-                    stream.Seek(2, SeekOrigin.Current);
-                    byte sectors = (byte)stream.ReadByte();
-                    uint trkOff  = BitConverter.ToUInt32(sctB, 0);
+                    byte   c    = (byte)stream.ReadByte();
+                    byte   h    = (byte)stream.ReadByte();
+                    byte   r    = (byte)stream.ReadByte();
+                    byte   n    = (byte)stream.ReadByte();
+                    var    f    = (SectorFlags)stream.ReadByte();
+                    byte[] offB = new byte[2];
+                    stream.Read(offB, 0, 2);
+                    ushort secOff = BitConverter.ToUInt16(offB, 0);
 
-                    AaruConsole.DebugWriteLine("UkvFdi plugin", "trkhdr.c = {0}", cyl);
-                    AaruConsole.DebugWriteLine("UkvFdi plugin", "trkhdr.h = {0}", head);
-                    AaruConsole.DebugWriteLine("UkvFdi plugin", "trkhdr.sectors = {0}", sectors);
-                    AaruConsole.DebugWriteLine("UkvFdi plugin", "trkhdr.off = {0}", trkOff);
+                    AaruConsole.DebugWriteLine("UkvFdi plugin", "sechdr.c = {0}", c);
+                    AaruConsole.DebugWriteLine("UkvFdi plugin", "sechdr.h = {0}", h);
+                    AaruConsole.DebugWriteLine("UkvFdi plugin", "sechdr.r = {0}", r);
+                    AaruConsole.DebugWriteLine("UkvFdi plugin", "sechdr.n = {0} ({1})", n, 128 << n);
+                    AaruConsole.DebugWriteLine("UkvFdi plugin", "sechdr.f = {0}", f);
 
-                    sectorsOff[cyl][head]   = new uint[sectors];
-                    _sectorsData[cyl][head] = new byte[sectors][];
+                    AaruConsole.DebugWriteLine("UkvFdi plugin", "sechdr.off = {0} ({1})", secOff,
+                                               secOff + trkOff + hdr.dataOff);
 
-                    if(sectors < spt &&
-                       sectors > 0)
-                        spt = sectors;
+                    // TODO: This assumes sequential sectors.
+                    sectorsOff[cyl][head][sec]   = secOff + trkOff + hdr.dataOff;
+                    _sectorsData[cyl][head][sec] = new byte[128 << n];
 
-                    for(ushort sec = 0; sec < sectors; sec++)
-                    {
-                        byte   c    = (byte)stream.ReadByte();
-                        byte   h    = (byte)stream.ReadByte();
-                        byte   r    = (byte)stream.ReadByte();
-                        byte   n    = (byte)stream.ReadByte();
-                        var    f    = (SectorFlags)stream.ReadByte();
-                        byte[] offB = new byte[2];
-                        stream.Read(offB, 0, 2);
-                        ushort secOff = BitConverter.ToUInt16(offB, 0);
+                    if(128 << n > _imageInfo.SectorSize)
+                        _imageInfo.SectorSize = (uint)(128 << n);
+                }
+            }
+        }
 
-                        AaruConsole.DebugWriteLine("UkvFdi plugin", "sechdr.c = {0}", c);
-                        AaruConsole.DebugWriteLine("UkvFdi plugin", "sechdr.h = {0}", h);
-                        AaruConsole.DebugWriteLine("UkvFdi plugin", "sechdr.r = {0}", r);
-                        AaruConsole.DebugWriteLine("UkvFdi plugin", "sechdr.n = {0} ({1})", n, 128 << n);
-                        AaruConsole.DebugWriteLine("UkvFdi plugin", "sechdr.f = {0}", f);
+        // Read sectors
+        for(ushort cyl = 0; cyl < hdr.cylinders; cyl++)
+        {
+            bool emptyCyl = false;
 
-                        AaruConsole.DebugWriteLine("UkvFdi plugin", "sechdr.off = {0} ({1})", secOff,
-                                                   secOff + trkOff + hdr.dataOff);
+            for(ushort head = 0; head < hdr.heads; head++)
+            {
+                for(ushort sec = 0; sec < sectorsOff[cyl][head].Length; sec++)
+                {
+                    stream.Seek(sectorsOff[cyl][head][sec], SeekOrigin.Begin);
+                    stream.Read(_sectorsData[cyl][head][sec], 0, _sectorsData[cyl][head][sec].Length);
+                }
 
-                        // TODO: This assumes sequential sectors.
-                        sectorsOff[cyl][head][sec]   = secOff + trkOff + hdr.dataOff;
-                        _sectorsData[cyl][head][sec] = new byte[128 << n];
+                // For empty cylinders
+                if(sectorsOff[cyl][head].Length != 0)
+                    continue;
 
-                        if(128 << n > _imageInfo.SectorSize)
-                            _imageInfo.SectorSize = (uint)(128 << n);
-                    }
+                if(cyl + 1 == hdr.cylinders ||
+
+                   // Next cylinder is also empty
+                   sectorsOff[cyl + 1][head].Length == 0)
+                    emptyCyl = true;
+
+                // Create empty sectors
+                else
+                {
+                    _sectorsData[cyl][head] = new byte[spt][];
+
+                    for(int i = 0; i < spt; i++)
+                        _sectorsData[cyl][head][i] = new byte[_imageInfo.SectorSize];
                 }
             }
 
-            // Read sectors
-            for(ushort cyl = 0; cyl < hdr.cylinders; cyl++)
-            {
-                bool emptyCyl = false;
-
-                for(ushort head = 0; head < hdr.heads; head++)
-                {
-                    for(ushort sec = 0; sec < sectorsOff[cyl][head].Length; sec++)
-                    {
-                        stream.Seek(sectorsOff[cyl][head][sec], SeekOrigin.Begin);
-                        stream.Read(_sectorsData[cyl][head][sec], 0, _sectorsData[cyl][head][sec].Length);
-                    }
-
-                    // For empty cylinders
-                    if(sectorsOff[cyl][head].Length != 0)
-                        continue;
-
-                    if(cyl + 1 == hdr.cylinders ||
-
-                       // Next cylinder is also empty
-                       sectorsOff[cyl + 1][head].Length == 0)
-                        emptyCyl = true;
-
-                    // Create empty sectors
-                    else
-                    {
-                        _sectorsData[cyl][head] = new byte[spt][];
-
-                        for(int i = 0; i < spt; i++)
-                            _sectorsData[cyl][head][i] = new byte[_imageInfo.SectorSize];
-                    }
-                }
-
-                if(emptyCyl)
-                    _imageInfo.Cylinders--;
-            }
-
-            // TODO: What about double sided, half track pitch compact floppies?
-            _imageInfo.MediaType            = MediaType.CompactFloppy;
-            _imageInfo.ImageSize            = (ulong)stream.Length - hdr.dataOff;
-            _imageInfo.CreationTime         = imageFilter.CreationTime;
-            _imageInfo.LastModificationTime = imageFilter.LastWriteTime;
-            _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.Filename);
-            _imageInfo.SectorsPerTrack      = (uint)spt;
-            _imageInfo.Sectors              = _imageInfo.Cylinders * _imageInfo.Heads * _imageInfo.SectorsPerTrack;
-            _imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
-
-            return ErrorNumber.NoError;
+            if(emptyCyl)
+                _imageInfo.Cylinders--;
         }
 
-        /// <inheritdoc />
-        public ErrorNumber ReadSector(ulong sectorAddress, out byte[] buffer)
+        // TODO: What about double sided, half track pitch compact floppies?
+        _imageInfo.MediaType            = MediaType.CompactFloppy;
+        _imageInfo.ImageSize            = (ulong)stream.Length - hdr.dataOff;
+        _imageInfo.CreationTime         = imageFilter.CreationTime;
+        _imageInfo.LastModificationTime = imageFilter.LastWriteTime;
+        _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.Filename);
+        _imageInfo.SectorsPerTrack      = (uint)spt;
+        _imageInfo.Sectors              = _imageInfo.Cylinders * _imageInfo.Heads * _imageInfo.SectorsPerTrack;
+        _imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
+
+        return ErrorNumber.NoError;
+    }
+
+    /// <inheritdoc />
+    public ErrorNumber ReadSector(ulong sectorAddress, out byte[] buffer)
+    {
+        buffer                                    = null;
+        (ushort cylinder, byte head, byte sector) = LbaToChs(sectorAddress);
+
+        if(cylinder >= _sectorsData.Length)
+            return ErrorNumber.SectorNotFound;
+
+        if(head >= _sectorsData[cylinder].Length)
+            return ErrorNumber.SectorNotFound;
+
+        if(sector > _sectorsData[cylinder][head].Length)
+            return ErrorNumber.SectorNotFound;
+
+        buffer = _sectorsData[cylinder][head][sector - 1];
+
+        return ErrorNumber.NoError;
+    }
+
+    /// <inheritdoc />
+    public ErrorNumber ReadSectors(ulong sectorAddress, uint length, out byte[] buffer)
+    {
+        buffer = null;
+
+        if(sectorAddress > _imageInfo.Sectors - 1)
+            return ErrorNumber.OutOfRange;
+
+        if(sectorAddress + length > _imageInfo.Sectors)
+            return ErrorNumber.OutOfRange;
+
+        var ms = new MemoryStream();
+
+        for(uint i = 0; i < length; i++)
         {
-            buffer                                    = null;
-            (ushort cylinder, byte head, byte sector) = LbaToChs(sectorAddress);
+            ErrorNumber errno = ReadSector(sectorAddress + i, out byte[] sector);
 
-            if(cylinder >= _sectorsData.Length)
-                return ErrorNumber.SectorNotFound;
+            if(errno != ErrorNumber.NoError)
+                return errno;
 
-            if(head >= _sectorsData[cylinder].Length)
-                return ErrorNumber.SectorNotFound;
-
-            if(sector > _sectorsData[cylinder][head].Length)
-                return ErrorNumber.SectorNotFound;
-
-            buffer = _sectorsData[cylinder][head][sector - 1];
-
-            return ErrorNumber.NoError;
+            ms.Write(sector, 0, sector.Length);
         }
 
-        /// <inheritdoc />
-        public ErrorNumber ReadSectors(ulong sectorAddress, uint length, out byte[] buffer)
-        {
-            buffer = null;
+        buffer = ms.ToArray();
 
-            if(sectorAddress > _imageInfo.Sectors - 1)
-                return ErrorNumber.OutOfRange;
-
-            if(sectorAddress + length > _imageInfo.Sectors)
-                return ErrorNumber.OutOfRange;
-
-            var ms = new MemoryStream();
-
-            for(uint i = 0; i < length; i++)
-            {
-                ErrorNumber errno = ReadSector(sectorAddress + i, out byte[] sector);
-
-                if(errno != ErrorNumber.NoError)
-                    return errno;
-
-                ms.Write(sector, 0, sector.Length);
-            }
-
-            buffer = ms.ToArray();
-
-            return ErrorNumber.NoError;
-        }
+        return ErrorNumber.NoError;
     }
 }

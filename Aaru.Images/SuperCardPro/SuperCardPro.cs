@@ -36,40 +36,39 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+/// <summary>Implements reading SuperCardPro flux images</summary>
+public sealed partial class SuperCardPro : IMediaImage, IVerifiableImage, IVerifiableSectorsImage
 {
-    /// <summary>Implements reading SuperCardPro flux images</summary>
-    public sealed partial class SuperCardPro : IMediaImage, IVerifiableImage, IVerifiableSectorsImage
+    ImageInfo _imageInfo;
+    Stream    _scpStream;
+
+    // TODO: These variables have been made public so create-sidecar can access to this information until I define an API >4.0
+    public ScpHeader                     Header;
+    public Dictionary<byte, TrackHeader> ScpTracks;
+
+    public SuperCardPro() => _imageInfo = new ImageInfo
     {
-        ImageInfo _imageInfo;
-        Stream    _scpStream;
-
-        // TODO: These variables have been made public so create-sidecar can access to this information until I define an API >4.0
-        public ScpHeader                     Header;
-        public Dictionary<byte, TrackHeader> ScpTracks;
-
-        public SuperCardPro() => _imageInfo = new ImageInfo
-        {
-            ReadableSectorTags    = new List<SectorTagType>(),
-            ReadableMediaTags     = new List<MediaTagType>(),
-            HasPartitions         = false,
-            HasSessions           = false,
-            Version               = null,
-            Application           = null,
-            ApplicationVersion    = null,
-            Creator               = null,
-            Comments              = null,
-            MediaManufacturer     = null,
-            MediaModel            = null,
-            MediaSerialNumber     = null,
-            MediaBarcode          = null,
-            MediaPartNumber       = null,
-            MediaSequence         = 0,
-            LastMediaSequence     = 0,
-            DriveManufacturer     = null,
-            DriveModel            = null,
-            DriveSerialNumber     = null,
-            DriveFirmwareRevision = null
-        };
-    }
+        ReadableSectorTags    = new List<SectorTagType>(),
+        ReadableMediaTags     = new List<MediaTagType>(),
+        HasPartitions         = false,
+        HasSessions           = false,
+        Version               = null,
+        Application           = null,
+        ApplicationVersion    = null,
+        Creator               = null,
+        Comments              = null,
+        MediaManufacturer     = null,
+        MediaModel            = null,
+        MediaSerialNumber     = null,
+        MediaBarcode          = null,
+        MediaPartNumber       = null,
+        MediaSequence         = 0,
+        LastMediaSequence     = 0,
+        DriveManufacturer     = null,
+        DriveModel            = null,
+        DriveSerialNumber     = null,
+        DriveFirmwareRevision = null
+    };
 }

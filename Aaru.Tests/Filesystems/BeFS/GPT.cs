@@ -31,30 +31,29 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Filesystems.BeFS
+namespace Aaru.Tests.Filesystems.BeFS;
+
+[TestFixture]
+public class GPT : FilesystemTest
 {
-    [TestFixture]
-    public class GPT : FilesystemTest
+    public GPT() : base("BeFS") {}
+
+    public override string DataFolder =>
+        Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Be File System (GPT)");
+    public override IFilesystem Plugin     => new Aaru.Filesystems.BeFS();
+    public override bool        Partitions => true;
+
+    public override FileSystemTest[] Tests => new[]
     {
-        public GPT() : base("BeFS") {}
-
-        public override string DataFolder =>
-            Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Be File System (GPT)");
-        public override IFilesystem Plugin     => new Aaru.Filesystems.BeFS();
-        public override bool        Partitions => true;
-
-        public override FileSystemTest[] Tests => new[]
+        new FileSystemTest
         {
-            new FileSystemTest
-            {
-                TestFile    = "haiku_hrev51259.aif",
-                MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 262144,
-                SectorSize  = 512,
-                Clusters    = 65024,
-                ClusterSize = 2048,
-                VolumeName  = "Volume label"
-            }
-        };
-    }
+            TestFile    = "haiku_hrev51259.aif",
+            MediaType   = MediaType.GENERIC_HDD,
+            Sectors     = 262144,
+            SectorSize  = 512,
+            Clusters    = 65024,
+            ClusterSize = 2048,
+            VolumeName  = "Volume label"
+        }
+    };
 }

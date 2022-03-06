@@ -30,82 +30,81 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class TeleDisk
 {
-    public sealed partial class TeleDisk
+    struct Header
     {
-        struct Header
-        {
-            /// <summary>"TD" or "td" depending on compression</summary>
-            public ushort Signature;
-            /// <summary>Sequence, but TeleDisk seems to complaing if != 0</summary>
-            public byte Sequence;
-            /// <summary>Random, same byte for all disks in the same set</summary>
-            public byte DiskSet;
-            /// <summary>TeleDisk version, major in high nibble, minor in low nibble</summary>
-            public byte Version;
-            /// <summary>Data rate</summary>
-            public byte DataRate;
-            /// <summary>BIOS drive type</summary>
-            public byte DriveType;
-            /// <summary>Stepping used</summary>
-            public byte Stepping;
-            /// <summary>If set means image only allocates sectors marked in-use by FAT12</summary>
-            public byte DosAllocation;
-            /// <summary>Sides of disk</summary>
-            public byte Sides;
-            /// <summary>CRC of all the previous</summary>
-            public ushort Crc;
-        }
+        /// <summary>"TD" or "td" depending on compression</summary>
+        public ushort Signature;
+        /// <summary>Sequence, but TeleDisk seems to complaing if != 0</summary>
+        public byte Sequence;
+        /// <summary>Random, same byte for all disks in the same set</summary>
+        public byte DiskSet;
+        /// <summary>TeleDisk version, major in high nibble, minor in low nibble</summary>
+        public byte Version;
+        /// <summary>Data rate</summary>
+        public byte DataRate;
+        /// <summary>BIOS drive type</summary>
+        public byte DriveType;
+        /// <summary>Stepping used</summary>
+        public byte Stepping;
+        /// <summary>If set means image only allocates sectors marked in-use by FAT12</summary>
+        public byte DosAllocation;
+        /// <summary>Sides of disk</summary>
+        public byte Sides;
+        /// <summary>CRC of all the previous</summary>
+        public ushort Crc;
+    }
 
-        struct CommentBlockHeader
-        {
-            /// <summary>CRC of comment block after crc field</summary>
-            public ushort Crc;
-            /// <summary>Length of comment</summary>
-            public ushort Length;
-            public byte Year;
-            public byte Month;
-            public byte Day;
-            public byte Hour;
-            public byte Minute;
-            public byte Second;
-        }
+    struct CommentBlockHeader
+    {
+        /// <summary>CRC of comment block after crc field</summary>
+        public ushort Crc;
+        /// <summary>Length of comment</summary>
+        public ushort Length;
+        public byte Year;
+        public byte Month;
+        public byte Day;
+        public byte Hour;
+        public byte Minute;
+        public byte Second;
+    }
 
-        struct TrackHeader
-        {
-            /// <summary>Sectors in the track, 0xFF if end of disk image (there is no spoon)</summary>
-            public byte Sectors;
-            /// <summary>Cylinder the head was on</summary>
-            public byte Cylinder;
-            /// <summary>Head/side used</summary>
-            public byte Head;
-            /// <summary>Lower byte of CRC of previous fields</summary>
-            public byte Crc;
-        }
+    struct TrackHeader
+    {
+        /// <summary>Sectors in the track, 0xFF if end of disk image (there is no spoon)</summary>
+        public byte Sectors;
+        /// <summary>Cylinder the head was on</summary>
+        public byte Cylinder;
+        /// <summary>Head/side used</summary>
+        public byte Head;
+        /// <summary>Lower byte of CRC of previous fields</summary>
+        public byte Crc;
+    }
 
-        struct SectorHeader
-        {
-            /// <summary>Cylinder as stored on sector address mark</summary>
-            public byte Cylinder;
-            /// <summary>Head as stored on sector address mark</summary>
-            public byte Head;
-            /// <summary>Sector number as stored on sector address mark</summary>
-            public byte SectorNumber;
-            /// <summary>Sector size</summary>
-            public byte SectorSize;
-            /// <summary>Sector flags</summary>
-            public byte Flags;
-            /// <summary>Lower byte of TeleDisk CRC of sector header, data header and data block</summary>
-            public byte Crc;
-        }
+    struct SectorHeader
+    {
+        /// <summary>Cylinder as stored on sector address mark</summary>
+        public byte Cylinder;
+        /// <summary>Head as stored on sector address mark</summary>
+        public byte Head;
+        /// <summary>Sector number as stored on sector address mark</summary>
+        public byte SectorNumber;
+        /// <summary>Sector size</summary>
+        public byte SectorSize;
+        /// <summary>Sector flags</summary>
+        public byte Flags;
+        /// <summary>Lower byte of TeleDisk CRC of sector header, data header and data block</summary>
+        public byte Crc;
+    }
 
-        struct DataHeader
-        {
-            /// <summary>Size of all data (encoded) + next field (1)</summary>
-            public ushort DataSize;
-            /// <summary>Encoding used for data block</summary>
-            public byte DataEncoding;
-        }
+    struct DataHeader
+    {
+        /// <summary>Size of all data (encoded) + next field (1)</summary>
+        public ushort DataSize;
+        /// <summary>Encoding used for data block</summary>
+        public byte DataEncoding;
     }
 }

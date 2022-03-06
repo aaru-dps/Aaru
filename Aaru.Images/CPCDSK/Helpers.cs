@@ -32,24 +32,23 @@
 
 using Aaru.Decoders.Floppy;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class Cpcdsk
 {
-    public sealed partial class Cpcdsk
+    static int SizeCodeToBytes(IBMSectorSizeCode code)
     {
-        static int SizeCodeToBytes(IBMSectorSizeCode code)
+        switch(code)
         {
-            switch(code)
-            {
-                case IBMSectorSizeCode.EighthKilo:       return 128;
-                case IBMSectorSizeCode.QuarterKilo:      return 256;
-                case IBMSectorSizeCode.HalfKilo:         return 512;
-                case IBMSectorSizeCode.Kilo:             return 1024;
-                case IBMSectorSizeCode.TwiceKilo:        return 2048;
-                case IBMSectorSizeCode.FriceKilo:        return 4096;
-                case IBMSectorSizeCode.TwiceFriceKilo:   return 8192;
-                case IBMSectorSizeCode.FricelyFriceKilo: return 16384;
-                default:                                 return 0;
-            }
+            case IBMSectorSizeCode.EighthKilo:       return 128;
+            case IBMSectorSizeCode.QuarterKilo:      return 256;
+            case IBMSectorSizeCode.HalfKilo:         return 512;
+            case IBMSectorSizeCode.Kilo:             return 1024;
+            case IBMSectorSizeCode.TwiceKilo:        return 2048;
+            case IBMSectorSizeCode.FriceKilo:        return 4096;
+            case IBMSectorSizeCode.TwiceFriceKilo:   return 8192;
+            case IBMSectorSizeCode.FricelyFriceKilo: return 16384;
+            default:                                 return 0;
         }
     }
 }

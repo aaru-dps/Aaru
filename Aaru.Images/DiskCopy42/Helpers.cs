@@ -30,25 +30,24 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class DiskCopy42
 {
-    public sealed partial class DiskCopy42
+    static uint CheckSum(byte[] buffer)
     {
-        static uint CheckSum(byte[] buffer)
+        uint dc42Chk = 0;
+
+        if((buffer.Length & 0x01) == 0x01)
+            return 0xFFFFFFFF;
+
+        for(uint i = 0; i < buffer.Length; i += 2)
         {
-            uint dc42Chk = 0;
-
-            if((buffer.Length & 0x01) == 0x01)
-                return 0xFFFFFFFF;
-
-            for(uint i = 0; i < buffer.Length; i += 2)
-            {
-                dc42Chk += (uint)(buffer[i] << 8);
-                dc42Chk += buffer[i + 1];
-                dc42Chk =  (dc42Chk >> 1) | (dc42Chk << 31);
-            }
-
-            return dc42Chk;
+            dc42Chk += (uint)(buffer[i] << 8);
+            dc42Chk += buffer[i + 1];
+            dc42Chk =  (dc42Chk >> 1) | (dc42Chk << 31);
         }
+
+        return dc42Chk;
     }
 }

@@ -30,31 +30,30 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class DiskCopy42
 {
-    public sealed partial class DiskCopy42
+    // DiskCopy 4.2 header, big-endian, data-fork, start of file, 84 bytes
+    struct Header
     {
-        // DiskCopy 4.2 header, big-endian, data-fork, start of file, 84 bytes
-        struct Header
-        {
-            /// <summary>0x00, 64 bytes, pascal string, disk name or "-not a Macintosh disk-", filled with garbage</summary>
-            public string DiskName;
-            /// <summary>0x40, size of data in bytes (usually sectors*512)</summary>
-            public uint DataSize;
-            /// <summary>0x44, size of tags in bytes (usually sectors*12)</summary>
-            public uint TagSize;
-            /// <summary>0x48, checksum of data bytes</summary>
-            public uint DataChecksum;
-            /// <summary>0x4C, checksum of tag bytes</summary>
-            public uint TagChecksum;
-            /// <summary>0x50, format of disk, see constants</summary>
-            public byte Format;
-            /// <summary>0x51, format of sectors, see constants</summary>
-            public byte FmtByte;
-            /// <summary>0x52, is disk image valid? always 0x01</summary>
-            public byte Valid;
-            /// <summary>0x53, reserved, always 0x00</summary>
-            public byte Reserved;
-        }
+        /// <summary>0x00, 64 bytes, pascal string, disk name or "-not a Macintosh disk-", filled with garbage</summary>
+        public string DiskName;
+        /// <summary>0x40, size of data in bytes (usually sectors*512)</summary>
+        public uint DataSize;
+        /// <summary>0x44, size of tags in bytes (usually sectors*12)</summary>
+        public uint TagSize;
+        /// <summary>0x48, checksum of data bytes</summary>
+        public uint DataChecksum;
+        /// <summary>0x4C, checksum of tag bytes</summary>
+        public uint TagChecksum;
+        /// <summary>0x50, format of disk, see constants</summary>
+        public byte Format;
+        /// <summary>0x51, format of sectors, see constants</summary>
+        public byte FmtByte;
+        /// <summary>0x52, is disk image valid? always 0x01</summary>
+        public byte Valid;
+        /// <summary>0x53, reserved, always 0x00</summary>
+        public byte Reserved;
     }
 }

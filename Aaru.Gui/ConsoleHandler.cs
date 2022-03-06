@@ -36,121 +36,120 @@ using System.Collections.ObjectModel;
 using Aaru.Console;
 using JetBrains.Annotations;
 
-namespace Aaru.Gui
+namespace Aaru.Gui;
+
+internal static class ConsoleHandler
 {
-    internal static class ConsoleHandler
+    static bool _debug;
+    static bool _verbose;
+
+    public static bool Debug
     {
-        static bool _debug;
-        static bool _verbose;
-
-        public static bool Debug
+        get => _debug;
+        set
         {
-            get => _debug;
-            set
-            {
-                if(_debug == value)
-                    return;
-
-                _debug = value;
-
-                if(_debug)
-                    AaruConsole.DebugWithModuleWriteLineEvent += OnDebugWriteHandler;
-                else
-                    AaruConsole.DebugWithModuleWriteLineEvent -= OnDebugWriteHandler;
-            }
-        }
-
-        public static bool Verbose
-        {
-            get => _verbose;
-            set
-            {
-                if(_verbose == value)
-                    return;
-
-                _verbose = value;
-
-                if(_verbose)
-                    AaruConsole.VerboseWriteLineEvent += OnVerboseWriteHandler;
-                else
-                    AaruConsole.VerboseWriteLineEvent -= OnVerboseWriteHandler;
-            }
-        }
-
-        public static ObservableCollection<LogEntry> Entries { get; } = new ObservableCollection<LogEntry>();
-
-        internal static void Init()
-        {
-            AaruConsole.WriteLineEvent      += OnWriteHandler;
-            AaruConsole.ErrorWriteLineEvent += OnErrorWriteHandler;
-        }
-
-        static void OnWriteHandler([CanBeNull] string format, [CanBeNull] params object[] arg)
-        {
-            if(format == null ||
-               arg    == null)
+            if(_debug == value)
                 return;
 
-            Entries.Add(new LogEntry
-            {
-                Message   = string.Format(format, arg),
-                Module    = null,
-                Timestamp = DateTime.Now,
-                Type      = "Info"
-            });
-        }
+            _debug = value;
 
-        static void OnErrorWriteHandler([CanBeNull] string format, [CanBeNull] params object[] arg)
-        {
-            if(format == null ||
-               arg    == null)
-                return;
-
-            Entries.Add(new LogEntry
-            {
-                Message   = string.Format(format, arg),
-                Module    = null,
-                Timestamp = DateTime.Now,
-                Type      = "Error"
-            });
-        }
-
-        static void OnVerboseWriteHandler([CanBeNull] string format, [CanBeNull] params object[] arg)
-        {
-            if(format == null ||
-               arg    == null)
-                return;
-
-            Entries.Add(new LogEntry
-            {
-                Message   = string.Format(format, arg),
-                Module    = null,
-                Timestamp = DateTime.Now,
-                Type      = "Verbose"
-            });
-        }
-
-        static void OnDebugWriteHandler(string module, [CanBeNull] string format, [CanBeNull] params object[] arg)
-        {
-            if(format == null ||
-               arg    == null)
-                return;
-
-            Entries.Add(new LogEntry
-            {
-                Message   = string.Format(format, arg),
-                Module    = module,
-                Timestamp = DateTime.Now,
-                Type      = "Debug"
-            });
+            if(_debug)
+                AaruConsole.DebugWithModuleWriteLineEvent += OnDebugWriteHandler;
+            else
+                AaruConsole.DebugWithModuleWriteLineEvent -= OnDebugWriteHandler;
         }
     }
 
-    public sealed class LogEntry
+    public static bool Verbose
     {
-        public string   Message   { get; set; }
-        public string   Module    { get; set; }
-        public DateTime Timestamp { get; set; }
-        public string   Type      { get; set; }
+        get => _verbose;
+        set
+        {
+            if(_verbose == value)
+                return;
+
+            _verbose = value;
+
+            if(_verbose)
+                AaruConsole.VerboseWriteLineEvent += OnVerboseWriteHandler;
+            else
+                AaruConsole.VerboseWriteLineEvent -= OnVerboseWriteHandler;
+        }
     }
+
+    public static ObservableCollection<LogEntry> Entries { get; } = new ObservableCollection<LogEntry>();
+
+    internal static void Init()
+    {
+        AaruConsole.WriteLineEvent      += OnWriteHandler;
+        AaruConsole.ErrorWriteLineEvent += OnErrorWriteHandler;
+    }
+
+    static void OnWriteHandler([CanBeNull] string format, [CanBeNull] params object[] arg)
+    {
+        if(format == null ||
+           arg    == null)
+            return;
+
+        Entries.Add(new LogEntry
+        {
+            Message   = string.Format(format, arg),
+            Module    = null,
+            Timestamp = DateTime.Now,
+            Type      = "Info"
+        });
+    }
+
+    static void OnErrorWriteHandler([CanBeNull] string format, [CanBeNull] params object[] arg)
+    {
+        if(format == null ||
+           arg    == null)
+            return;
+
+        Entries.Add(new LogEntry
+        {
+            Message   = string.Format(format, arg),
+            Module    = null,
+            Timestamp = DateTime.Now,
+            Type      = "Error"
+        });
+    }
+
+    static void OnVerboseWriteHandler([CanBeNull] string format, [CanBeNull] params object[] arg)
+    {
+        if(format == null ||
+           arg    == null)
+            return;
+
+        Entries.Add(new LogEntry
+        {
+            Message   = string.Format(format, arg),
+            Module    = null,
+            Timestamp = DateTime.Now,
+            Type      = "Verbose"
+        });
+    }
+
+    static void OnDebugWriteHandler(string module, [CanBeNull] string format, [CanBeNull] params object[] arg)
+    {
+        if(format == null ||
+           arg    == null)
+            return;
+
+        Entries.Add(new LogEntry
+        {
+            Message   = string.Format(format, arg),
+            Module    = module,
+            Timestamp = DateTime.Now,
+            Type      = "Debug"
+        });
+    }
+}
+
+public sealed class LogEntry
+{
+    public string   Message   { get; set; }
+    public string   Module    { get; set; }
+    public DateTime Timestamp { get; set; }
+    public string   Type      { get; set; }
 }

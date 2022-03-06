@@ -34,19 +34,18 @@ using System;
 using System.IO;
 using Aaru.CommonTypes.Interfaces;
 
-namespace Aaru.DiscImages
-{
-    public sealed partial class DiscFerret
-    {
-        /// <inheritdoc />
-        public bool Identify(IFilter imageFilter)
-        {
-            byte[] magicB = new byte[4];
-            Stream stream = imageFilter.GetDataForkStream();
-            stream.Read(magicB, 0, 4);
-            uint magic = BitConverter.ToUInt32(magicB, 0);
+namespace Aaru.DiscImages;
 
-            return magic == DFI_MAGIC || magic == DFI_MAGIC2;
-        }
+public sealed partial class DiscFerret
+{
+    /// <inheritdoc />
+    public bool Identify(IFilter imageFilter)
+    {
+        byte[] magicB = new byte[4];
+        Stream stream = imageFilter.GetDataForkStream();
+        stream.Read(magicB, 0, 4);
+        uint magic = BitConverter.ToUInt32(magicB, 0);
+
+        return magic == DFI_MAGIC || magic == DFI_MAGIC2;
     }
 }

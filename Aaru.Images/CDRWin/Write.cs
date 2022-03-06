@@ -40,652 +40,651 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 using Schemas;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class CdrWin
 {
-    public sealed partial class CdrWin
+    /// <inheritdoc />
+    public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
+                       uint sectorSize)
     {
-        /// <inheritdoc />
-        public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
-                           uint sectorSize)
+        if(options != null)
         {
-            if(options != null)
+            if(options.TryGetValue("separate", out string tmpValue))
             {
-                if(options.TryGetValue("separate", out string tmpValue))
+                if(!bool.TryParse(tmpValue, out _separateTracksWriting))
                 {
-                    if(!bool.TryParse(tmpValue, out _separateTracksWriting))
-                    {
-                        ErrorMessage = "Invalid value for split option";
-
-                        return false;
-                    }
-
-                    if(_separateTracksWriting)
-                    {
-                        ErrorMessage = "Separate tracks not yet implemented";
-
-                        return false;
-                    }
-                }
-            }
-            else
-                _separateTracksWriting = false;
-
-            if(!SupportedMediaTypes.Contains(mediaType))
-            {
-                ErrorMessage = $"Unsupported media format {mediaType}";
-
-                return false;
-            }
-
-            _imageInfo = new ImageInfo
-            {
-                MediaType  = mediaType,
-                SectorSize = sectorSize,
-                Sectors    = sectors
-            };
-
-            // TODO: Separate tracks
-            try
-            {
-                _writingBaseName =
-                    Path.Combine(Path.GetDirectoryName(path) ?? "", Path.GetFileNameWithoutExtension(path));
-
-                _descriptorStream = new StreamWriter(path, false, Encoding.ASCII);
-            }
-            catch(IOException e)
-            {
-                ErrorMessage = $"Could not create new image file, exception {e.Message}";
-
-                return false;
-            }
-
-            _discImage = new CdrWinDisc
-            {
-                MediaType = mediaType,
-                Sessions  = new List<Session>(),
-                Tracks    = new List<CdrWinTrack>()
-            };
-
-            int mediaTypeAsInt = (int)_discImage.MediaType;
-
-            _isCd = (mediaTypeAsInt >= 10  && mediaTypeAsInt <= 39) || mediaTypeAsInt == 112 || mediaTypeAsInt == 113 ||
-                    (mediaTypeAsInt >= 150 && mediaTypeAsInt <= 152) || mediaTypeAsInt == 154 ||
-                    mediaTypeAsInt == 155 || (mediaTypeAsInt >= 171 && mediaTypeAsInt <= 179) ||
-                    (mediaTypeAsInt >= 740 && mediaTypeAsInt <= 749);
-
-            if(_isCd)
-            {
-                _trackFlags = new Dictionary<byte, byte>();
-                _trackIsrcs = new Dictionary<byte, string>();
-            }
-
-            IsWriting    = true;
-            ErrorMessage = null;
-
-            return true;
-        }
-
-        /// <inheritdoc />
-        public bool WriteMediaTag(byte[] data, MediaTagType tag)
-        {
-            if(!IsWriting)
-            {
-                ErrorMessage = "Tried to write on a non-writable image";
-
-                return false;
-            }
-
-            switch(tag)
-            {
-                case MediaTagType.CD_MCN when _isCd:
-                    _discImage.Mcn = Encoding.ASCII.GetString(data);
-
-                    return true;
-                case MediaTagType.CD_TEXT when _isCd:
-                    var cdTextStream = new FileStream(_writingBaseName + "_cdtext.bin", FileMode.Create,
-                                                      FileAccess.ReadWrite, FileShare.None);
-
-                    cdTextStream.Write(data, 0, data.Length);
-                    _discImage.CdTextFile = Path.GetFileName(cdTextStream.Name);
-                    cdTextStream.Close();
-
-                    return true;
-                default:
-                    ErrorMessage = $"Unsupported media tag {tag}";
+                    ErrorMessage = "Invalid value for split option";
 
                     return false;
-            }
-        }
-
-        /// <inheritdoc />
-        public bool WriteSector(byte[] data, ulong sectorAddress)
-        {
-            if(!IsWriting)
-            {
-                ErrorMessage = "Tried to write on a non-writable image";
-
-                return false;
-            }
-
-            Track track =
-                _writingTracks.FirstOrDefault(trk => sectorAddress >= trk.StartSector &&
-                                                     sectorAddress <= trk.EndSector);
-
-            if(track is null)
-            {
-                ErrorMessage = $"Can't found track containing {sectorAddress}";
-
-                return false;
-            }
-
-            FileStream trackStream = _writingStreams.FirstOrDefault(kvp => kvp.Key == track.Sequence).Value;
-
-            if(trackStream == null)
-            {
-                ErrorMessage = $"Can't found file containing {sectorAddress}";
-
-                return false;
-            }
-
-            if(track.BytesPerSector != track.RawBytesPerSector)
-            {
-                ErrorMessage = "Invalid write mode for this sector";
-
-                return false;
-            }
-
-            if(data.Length != track.RawBytesPerSector)
-            {
-                ErrorMessage = "Incorrect data size";
-
-                return false;
-            }
-
-            trackStream.
-                Seek((long)(track.FileOffset + ((sectorAddress - track.StartSector) * (ulong)track.RawBytesPerSector)),
-                     SeekOrigin.Begin);
-
-            trackStream.Write(data, 0, data.Length);
-
-            return true;
-        }
-
-        /// <inheritdoc />
-        public bool WriteSectors(byte[] data, ulong sectorAddress, uint length)
-        {
-            if(!IsWriting)
-            {
-                ErrorMessage = "Tried to write on a non-writable image";
-
-                return false;
-            }
-
-            Track track =
-                _writingTracks.FirstOrDefault(trk => sectorAddress >= trk.StartSector &&
-                                                     sectorAddress <= trk.EndSector);
-
-            if(track is null)
-            {
-                ErrorMessage = $"Can't found track containing {sectorAddress}";
-
-                return false;
-            }
-
-            FileStream trackStream = _writingStreams.FirstOrDefault(kvp => kvp.Key == track.Sequence).Value;
-
-            if(trackStream == null)
-            {
-                ErrorMessage = $"Can't found file containing {sectorAddress}";
-
-                return false;
-            }
-
-            if(track.BytesPerSector != track.RawBytesPerSector)
-            {
-                ErrorMessage = "Invalid write mode for this sector";
-
-                return false;
-            }
-
-            if(sectorAddress + length > track.EndSector + 1)
-            {
-                ErrorMessage = "Can't cross tracks";
-
-                return false;
-            }
-
-            if(data.Length % track.RawBytesPerSector != 0)
-            {
-                ErrorMessage = "Incorrect data size";
-
-                return false;
-            }
-
-            trackStream.
-                Seek((long)(track.FileOffset + ((sectorAddress - track.StartSector) * (ulong)track.RawBytesPerSector)),
-                     SeekOrigin.Begin);
-
-            trackStream.Write(data, 0, data.Length);
-
-            return true;
-        }
-
-        /// <inheritdoc />
-        public bool WriteSectorLong(byte[] data, ulong sectorAddress)
-        {
-            if(!IsWriting)
-            {
-                ErrorMessage = "Tried to write on a non-writable image";
-
-                return false;
-            }
-
-            Track track =
-                _writingTracks.FirstOrDefault(trk => sectorAddress >= trk.StartSector &&
-                                                     sectorAddress <= trk.EndSector);
-
-            if(track is null)
-            {
-                ErrorMessage = $"Can't found track containing {sectorAddress}";
-
-                return false;
-            }
-
-            FileStream trackStream = _writingStreams.FirstOrDefault(kvp => kvp.Key == track.Sequence).Value;
-
-            if(trackStream == null)
-            {
-                ErrorMessage = $"Can't found file containing {sectorAddress}";
-
-                return false;
-            }
-
-            if(data.Length != track.RawBytesPerSector)
-            {
-                ErrorMessage = "Incorrect data size";
-
-                return false;
-            }
-
-            trackStream.
-                Seek((long)(track.FileOffset + ((sectorAddress - track.StartSector) * (ulong)track.RawBytesPerSector)),
-                     SeekOrigin.Begin);
-
-            trackStream.Write(data, 0, data.Length);
-
-            return true;
-        }
-
-        /// <inheritdoc />
-        public bool WriteSectorsLong(byte[] data, ulong sectorAddress, uint length)
-        {
-            if(!IsWriting)
-            {
-                ErrorMessage = "Tried to write on a non-writable image";
-
-                return false;
-            }
-
-            Track track =
-                _writingTracks.FirstOrDefault(trk => sectorAddress >= trk.StartSector &&
-                                                     sectorAddress <= trk.EndSector);
-
-            if(track is null)
-            {
-                ErrorMessage = $"Can't found track containing {sectorAddress}";
-
-                return false;
-            }
-
-            FileStream trackStream = _writingStreams.FirstOrDefault(kvp => kvp.Key == track.Sequence).Value;
-
-            if(trackStream == null)
-            {
-                ErrorMessage = $"Can't found file containing {sectorAddress}";
-
-                return false;
-            }
-
-            if(sectorAddress + length > track.EndSector + 1)
-            {
-                ErrorMessage = "Can't cross tracks";
-
-                return false;
-            }
-
-            if(data.Length % track.RawBytesPerSector != 0)
-            {
-                ErrorMessage = "Incorrect data size";
-
-                return false;
-            }
-
-            trackStream.
-                Seek((long)(track.FileOffset + ((sectorAddress - track.StartSector) * (ulong)track.RawBytesPerSector)),
-                     SeekOrigin.Begin);
-
-            trackStream.Write(data, 0, data.Length);
-
-            return true;
-        }
-
-        /// <inheritdoc />
-        public bool SetTracks(List<Track> tracks)
-        {
-            if(!IsWriting)
-            {
-                ErrorMessage = "Tried to write on a non-writable image";
-
-                return false;
-            }
-
-            if(tracks       == null ||
-               tracks.Count == 0)
-            {
-                ErrorMessage = "Invalid tracks sent";
-
-                return false;
-            }
-
-            if(_writingTracks  != null &&
-               _writingStreams != null)
-                foreach(FileStream oldTrack in _writingStreams.Select(t => t.Value).Distinct())
-                    oldTrack.Close();
-
-            _writingTracks = new List<Track>();
-
-            foreach(Track track in tracks.OrderBy(t => t.Sequence))
-            {
-                Track newTrack = track;
-
-                newTrack.File = _separateTracksWriting ? _writingBaseName + $"_track{track.Sequence:D2}.bin"
-                                    : _writingBaseName                    + ".bin";
-
-                newTrack.FileOffset = _separateTracksWriting ? 0 : track.StartSector * 2352;
-                _writingTracks.Add(newTrack);
-            }
-
-            _writingStreams = new Dictionary<uint, FileStream>();
-
-            if(_separateTracksWriting)
-                foreach(Track track in _writingTracks)
-                    _writingStreams.Add(track.Sequence,
-                                        new FileStream(track.File, FileMode.OpenOrCreate, FileAccess.ReadWrite,
-                                                       FileShare.None));
-            else
-            {
-                var jointStream = new FileStream(_writingBaseName + ".bin", FileMode.OpenOrCreate, FileAccess.ReadWrite,
-                                                 FileShare.None);
-
-                foreach(Track track in _writingTracks)
-                    _writingStreams.Add(track.Sequence, jointStream);
-            }
-
-            return true;
-        }
-
-        /// <inheritdoc />
-        public bool Close()
-        {
-            if(!IsWriting)
-            {
-                ErrorMessage = "Image is not opened for writing";
-
-                return false;
-            }
-
-            if(_separateTracksWriting)
-                foreach(FileStream writingStream in _writingStreams.Values)
-                {
-                    writingStream.Flush();
-                    writingStream.Close();
                 }
-            else
-            {
-                _writingStreams.First().Value.Flush();
-                _writingStreams.First().Value.Close();
-            }
-
-            int currentSession = 0;
-
-            if(!string.IsNullOrWhiteSpace(_discImage.Comment))
-            {
-                string[] commentLines = _discImage.Comment.Split(new[]
-                {
-                    '\n'
-                }, StringSplitOptions.RemoveEmptyEntries);
-
-                foreach(string line in commentLines)
-                    _descriptorStream.WriteLine("REM {0}", line);
-            }
-
-            _descriptorStream.WriteLine("REM ORIGINAL MEDIA-TYPE: {0}", MediaTypeToCdrwinType(_imageInfo.MediaType));
-
-            _descriptorStream.WriteLine("REM METADATA AARU MEDIA-TYPE: {0}", _imageInfo.MediaType);
-
-            if(!string.IsNullOrEmpty(_imageInfo.Application))
-            {
-                _descriptorStream.WriteLine("REM Ripping Tool: {0}", _imageInfo.Application);
-
-                if(!string.IsNullOrEmpty(_imageInfo.ApplicationVersion))
-                    _descriptorStream.WriteLine("REM Ripping Tool Version: {0}", _imageInfo.ApplicationVersion);
-            }
-
-            if(DumpHardware != null)
-            {
-                foreach(var dumpData in from dump in DumpHardware from extent in dump.Extents.OrderBy(e => e.Start)
-                                        select new
-                                        {
-                                            dump.Manufacturer,
-                                            dump.Model,
-                                            dump.Firmware,
-                                            dump.Serial,
-                                            Application        = dump.Software.Name,
-                                            ApplicationVersion = dump.Software.Version,
-                                            dump.Software.OperatingSystem,
-                                            extent.Start,
-                                            extent.End
-                                        })
-                {
-                    _descriptorStream.
-                        WriteLine($"REM METADATA DUMP EXTENT: {dumpData.Application} | {dumpData.ApplicationVersion} | {dumpData.OperatingSystem} | {dumpData.Manufacturer} | {dumpData.Model} | {dumpData.Firmware} | {dumpData.Serial} | {dumpData.Start}:{dumpData.End}");
-                }
-            }
-
-            if(!string.IsNullOrEmpty(_discImage.CdTextFile))
-                _descriptorStream.WriteLine("CDTEXTFILE \"{0}\"", Path.GetFileName(_discImage.CdTextFile));
-
-            if(!string.IsNullOrEmpty(_discImage.Title))
-                _descriptorStream.WriteLine("TITLE {0}", _discImage.Title);
-
-            if(!string.IsNullOrEmpty(_discImage.Mcn))
-                _descriptorStream.WriteLine("CATALOG {0}", _discImage.Mcn);
-
-            if(!string.IsNullOrEmpty(_discImage.Barcode))
-                _descriptorStream.WriteLine("UPC_EAN {0}", _discImage.Barcode);
-
-            if(!_separateTracksWriting)
-                _descriptorStream.WriteLine("FILE \"{0}\" BINARY",
-                                            Path.GetFileName(_writingStreams.First().Value.Name));
-
-            Track trackZero = null;
-
-            foreach(Track track in _writingTracks)
-            {
-                switch(track.Sequence)
-                {
-                    // You should not be able to write CD-i Ready as this format, but just in case
-                    case 0 when _imageInfo.MediaType != MediaType.CDIREADY:
-                        trackZero = track;
-
-                        continue;
-                    case 1 when trackZero != null && !track.Indexes.ContainsKey(0):
-                        track.StartSector = trackZero.StartSector;
-                        track.Pregap      = (ulong)track.Indexes[1] - track.StartSector;
-
-                        break;
-                }
-
-                if(track.Session > currentSession)
-                    _descriptorStream.WriteLine("REM SESSION {0}", ++currentSession);
 
                 if(_separateTracksWriting)
-                    _descriptorStream.WriteLine("FILE \"{0}\" BINARY", Path.GetFileName(track.File));
-
-                (byte minute, byte second, byte frame) msf = LbaToMsf(track.StartSector);
-                _descriptorStream.WriteLine("  TRACK {0:D2} {1}", track.Sequence, GetTrackMode(track));
-
-                if(_isCd)
                 {
-                    if(_trackFlags.TryGetValue((byte)track.Sequence, out byte flagsByte))
-                        if(flagsByte != 0 &&
-                           flagsByte != (byte)CdFlags.DataTrack)
-                        {
-                            var flags = (CdFlags)flagsByte;
+                    ErrorMessage = "Separate tracks not yet implemented";
 
-                            _descriptorStream.WriteLine("    FLAGS{0}{1}{2}",
-                                                        flags.HasFlag(CdFlags.CopyPermitted) ? " DCP" : "",
-                                                        flags.HasFlag(CdFlags.FourChannel) ? " 4CH" : "",
-                                                        flags.HasFlag(CdFlags.PreEmphasis) ? " PRE" : "");
-                        }
-
-                    if(_trackIsrcs.TryGetValue((byte)track.Sequence, out string isrc) &&
-                       !string.IsNullOrWhiteSpace(isrc))
-                        _descriptorStream.WriteLine("    ISRC {0}", isrc);
+                    return false;
                 }
-
-                if(track.Pregap > 0 && _isCd)
-                {
-                    if(track.Sequence > _writingTracks.Where(t => t.Session == track.Session).Min(t => t.Sequence))
-                        _descriptorStream.WriteLine("    INDEX {0:D2} {1:D2}:{2:D2}:{3:D2}", 0, msf.minute, msf.second,
-                                                    msf.frame);
-
-                    if(track.Sequence > 1)
-                        msf = LbaToMsf(track.StartSector + track.Pregap);
-
-                    _descriptorStream.WriteLine("    INDEX {0:D2} {1:D2}:{2:D2}:{3:D2}", 1, msf.minute, msf.second,
-                                                msf.frame);
-                }
-                else
-                    _descriptorStream.WriteLine("    INDEX {0:D2} {1:D2}:{2:D2}:{3:D2}", 1, msf.minute, msf.second,
-                                                msf.frame);
-
-                if(_isCd)
-                    foreach(KeyValuePair<ushort, int> index in track.Indexes.Where(i => i.Key > 1))
-                    {
-                        msf = LbaToMsf((ulong)index.Value);
-
-                        _descriptorStream.WriteLine("    INDEX {0:D2} {1:D2}:{2:D2}:{3:D2}", index.Key, msf.minute,
-                                                    msf.second, msf.frame);
-                    }
-
-                ushort lastSession = _writingTracks.Max(t => t.Session);
-
-                if(currentSession >= lastSession)
-                    continue;
-
-                Track lastTrackInSession = _writingTracks.Where(t => t.Session == currentSession).
-                                                          OrderBy(t => t.Sequence).LastOrDefault();
-
-                if(track.Sequence != lastTrackInSession.Sequence)
-                    continue;
-
-                msf = LbaToMsf(track.EndSector + 1);
-                _descriptorStream.WriteLine("REM LEAD-OUT {0:D2}:{1:D2}:{2:D2}", msf.minute, msf.second, msf.frame);
             }
-
-            _descriptorStream.Flush();
-            _descriptorStream.Close();
-
-            IsWriting    = false;
-            ErrorMessage = "";
-
-            return true;
         }
+        else
+            _separateTracksWriting = false;
 
-        /// <inheritdoc />
-        public bool SetGeometry(uint cylinders, uint heads, uint sectorsPerTrack)
+        if(!SupportedMediaTypes.Contains(mediaType))
         {
-            ErrorMessage = "Unsupported feature";
+            ErrorMessage = $"Unsupported media format {mediaType}";
 
             return false;
         }
 
-        /// <inheritdoc />
-        public bool WriteSectorTag(byte[] data, ulong sectorAddress, SectorTagType tag)
+        _imageInfo = new ImageInfo
         {
-            if(!IsWriting)
-            {
-                ErrorMessage = "Tried to write on a non-writable image";
+            MediaType  = mediaType,
+            SectorSize = sectorSize,
+            Sectors    = sectors
+        };
+
+        // TODO: Separate tracks
+        try
+        {
+            _writingBaseName =
+                Path.Combine(Path.GetDirectoryName(path) ?? "", Path.GetFileNameWithoutExtension(path));
+
+            _descriptorStream = new StreamWriter(path, false, Encoding.ASCII);
+        }
+        catch(IOException e)
+        {
+            ErrorMessage = $"Could not create new image file, exception {e.Message}";
+
+            return false;
+        }
+
+        _discImage = new CdrWinDisc
+        {
+            MediaType = mediaType,
+            Sessions  = new List<Session>(),
+            Tracks    = new List<CdrWinTrack>()
+        };
+
+        int mediaTypeAsInt = (int)_discImage.MediaType;
+
+        _isCd = (mediaTypeAsInt >= 10  && mediaTypeAsInt <= 39)  || mediaTypeAsInt == 112 || mediaTypeAsInt == 113 ||
+                (mediaTypeAsInt >= 150 && mediaTypeAsInt <= 152) || mediaTypeAsInt == 154 ||
+                mediaTypeAsInt == 155 || (mediaTypeAsInt >= 171 && mediaTypeAsInt <= 179) ||
+                (mediaTypeAsInt >= 740 && mediaTypeAsInt <= 749);
+
+        if(_isCd)
+        {
+            _trackFlags = new Dictionary<byte, byte>();
+            _trackIsrcs = new Dictionary<byte, string>();
+        }
+
+        IsWriting    = true;
+        ErrorMessage = null;
+
+        return true;
+    }
+
+    /// <inheritdoc />
+    public bool WriteMediaTag(byte[] data, MediaTagType tag)
+    {
+        if(!IsWriting)
+        {
+            ErrorMessage = "Tried to write on a non-writable image";
+
+            return false;
+        }
+
+        switch(tag)
+        {
+            case MediaTagType.CD_MCN when _isCd:
+                _discImage.Mcn = Encoding.ASCII.GetString(data);
+
+                return true;
+            case MediaTagType.CD_TEXT when _isCd:
+                var cdTextStream = new FileStream(_writingBaseName + "_cdtext.bin", FileMode.Create,
+                                                  FileAccess.ReadWrite, FileShare.None);
+
+                cdTextStream.Write(data, 0, data.Length);
+                _discImage.CdTextFile = Path.GetFileName(cdTextStream.Name);
+                cdTextStream.Close();
+
+                return true;
+            default:
+                ErrorMessage = $"Unsupported media tag {tag}";
 
                 return false;
+        }
+    }
+
+    /// <inheritdoc />
+    public bool WriteSector(byte[] data, ulong sectorAddress)
+    {
+        if(!IsWriting)
+        {
+            ErrorMessage = "Tried to write on a non-writable image";
+
+            return false;
+        }
+
+        Track track =
+            _writingTracks.FirstOrDefault(trk => sectorAddress >= trk.StartSector &&
+                                                 sectorAddress <= trk.EndSector);
+
+        if(track is null)
+        {
+            ErrorMessage = $"Can't found track containing {sectorAddress}";
+
+            return false;
+        }
+
+        FileStream trackStream = _writingStreams.FirstOrDefault(kvp => kvp.Key == track.Sequence).Value;
+
+        if(trackStream == null)
+        {
+            ErrorMessage = $"Can't found file containing {sectorAddress}";
+
+            return false;
+        }
+
+        if(track.BytesPerSector != track.RawBytesPerSector)
+        {
+            ErrorMessage = "Invalid write mode for this sector";
+
+            return false;
+        }
+
+        if(data.Length != track.RawBytesPerSector)
+        {
+            ErrorMessage = "Incorrect data size";
+
+            return false;
+        }
+
+        trackStream.
+            Seek((long)(track.FileOffset + ((sectorAddress - track.StartSector) * (ulong)track.RawBytesPerSector)),
+                 SeekOrigin.Begin);
+
+        trackStream.Write(data, 0, data.Length);
+
+        return true;
+    }
+
+    /// <inheritdoc />
+    public bool WriteSectors(byte[] data, ulong sectorAddress, uint length)
+    {
+        if(!IsWriting)
+        {
+            ErrorMessage = "Tried to write on a non-writable image";
+
+            return false;
+        }
+
+        Track track =
+            _writingTracks.FirstOrDefault(trk => sectorAddress >= trk.StartSector &&
+                                                 sectorAddress <= trk.EndSector);
+
+        if(track is null)
+        {
+            ErrorMessage = $"Can't found track containing {sectorAddress}";
+
+            return false;
+        }
+
+        FileStream trackStream = _writingStreams.FirstOrDefault(kvp => kvp.Key == track.Sequence).Value;
+
+        if(trackStream == null)
+        {
+            ErrorMessage = $"Can't found file containing {sectorAddress}";
+
+            return false;
+        }
+
+        if(track.BytesPerSector != track.RawBytesPerSector)
+        {
+            ErrorMessage = "Invalid write mode for this sector";
+
+            return false;
+        }
+
+        if(sectorAddress + length > track.EndSector + 1)
+        {
+            ErrorMessage = "Can't cross tracks";
+
+            return false;
+        }
+
+        if(data.Length % track.RawBytesPerSector != 0)
+        {
+            ErrorMessage = "Incorrect data size";
+
+            return false;
+        }
+
+        trackStream.
+            Seek((long)(track.FileOffset + ((sectorAddress - track.StartSector) * (ulong)track.RawBytesPerSector)),
+                 SeekOrigin.Begin);
+
+        trackStream.Write(data, 0, data.Length);
+
+        return true;
+    }
+
+    /// <inheritdoc />
+    public bool WriteSectorLong(byte[] data, ulong sectorAddress)
+    {
+        if(!IsWriting)
+        {
+            ErrorMessage = "Tried to write on a non-writable image";
+
+            return false;
+        }
+
+        Track track =
+            _writingTracks.FirstOrDefault(trk => sectorAddress >= trk.StartSector &&
+                                                 sectorAddress <= trk.EndSector);
+
+        if(track is null)
+        {
+            ErrorMessage = $"Can't found track containing {sectorAddress}";
+
+            return false;
+        }
+
+        FileStream trackStream = _writingStreams.FirstOrDefault(kvp => kvp.Key == track.Sequence).Value;
+
+        if(trackStream == null)
+        {
+            ErrorMessage = $"Can't found file containing {sectorAddress}";
+
+            return false;
+        }
+
+        if(data.Length != track.RawBytesPerSector)
+        {
+            ErrorMessage = "Incorrect data size";
+
+            return false;
+        }
+
+        trackStream.
+            Seek((long)(track.FileOffset + ((sectorAddress - track.StartSector) * (ulong)track.RawBytesPerSector)),
+                 SeekOrigin.Begin);
+
+        trackStream.Write(data, 0, data.Length);
+
+        return true;
+    }
+
+    /// <inheritdoc />
+    public bool WriteSectorsLong(byte[] data, ulong sectorAddress, uint length)
+    {
+        if(!IsWriting)
+        {
+            ErrorMessage = "Tried to write on a non-writable image";
+
+            return false;
+        }
+
+        Track track =
+            _writingTracks.FirstOrDefault(trk => sectorAddress >= trk.StartSector &&
+                                                 sectorAddress <= trk.EndSector);
+
+        if(track is null)
+        {
+            ErrorMessage = $"Can't found track containing {sectorAddress}";
+
+            return false;
+        }
+
+        FileStream trackStream = _writingStreams.FirstOrDefault(kvp => kvp.Key == track.Sequence).Value;
+
+        if(trackStream == null)
+        {
+            ErrorMessage = $"Can't found file containing {sectorAddress}";
+
+            return false;
+        }
+
+        if(sectorAddress + length > track.EndSector + 1)
+        {
+            ErrorMessage = "Can't cross tracks";
+
+            return false;
+        }
+
+        if(data.Length % track.RawBytesPerSector != 0)
+        {
+            ErrorMessage = "Incorrect data size";
+
+            return false;
+        }
+
+        trackStream.
+            Seek((long)(track.FileOffset + ((sectorAddress - track.StartSector) * (ulong)track.RawBytesPerSector)),
+                 SeekOrigin.Begin);
+
+        trackStream.Write(data, 0, data.Length);
+
+        return true;
+    }
+
+    /// <inheritdoc />
+    public bool SetTracks(List<Track> tracks)
+    {
+        if(!IsWriting)
+        {
+            ErrorMessage = "Tried to write on a non-writable image";
+
+            return false;
+        }
+
+        if(tracks       == null ||
+           tracks.Count == 0)
+        {
+            ErrorMessage = "Invalid tracks sent";
+
+            return false;
+        }
+
+        if(_writingTracks  != null &&
+           _writingStreams != null)
+            foreach(FileStream oldTrack in _writingStreams.Select(t => t.Value).Distinct())
+                oldTrack.Close();
+
+        _writingTracks = new List<Track>();
+
+        foreach(Track track in tracks.OrderBy(t => t.Sequence))
+        {
+            Track newTrack = track;
+
+            newTrack.File = _separateTracksWriting ? _writingBaseName + $"_track{track.Sequence:D2}.bin"
+                                : _writingBaseName                    + ".bin";
+
+            newTrack.FileOffset = _separateTracksWriting ? 0 : track.StartSector * 2352;
+            _writingTracks.Add(newTrack);
+        }
+
+        _writingStreams = new Dictionary<uint, FileStream>();
+
+        if(_separateTracksWriting)
+            foreach(Track track in _writingTracks)
+                _writingStreams.Add(track.Sequence,
+                                    new FileStream(track.File, FileMode.OpenOrCreate, FileAccess.ReadWrite,
+                                                   FileShare.None));
+        else
+        {
+            var jointStream = new FileStream(_writingBaseName + ".bin", FileMode.OpenOrCreate, FileAccess.ReadWrite,
+                                             FileShare.None);
+
+            foreach(Track track in _writingTracks)
+                _writingStreams.Add(track.Sequence, jointStream);
+        }
+
+        return true;
+    }
+
+    /// <inheritdoc />
+    public bool Close()
+    {
+        if(!IsWriting)
+        {
+            ErrorMessage = "Image is not opened for writing";
+
+            return false;
+        }
+
+        if(_separateTracksWriting)
+            foreach(FileStream writingStream in _writingStreams.Values)
+            {
+                writingStream.Flush();
+                writingStream.Close();
+            }
+        else
+        {
+            _writingStreams.First().Value.Flush();
+            _writingStreams.First().Value.Close();
+        }
+
+        int currentSession = 0;
+
+        if(!string.IsNullOrWhiteSpace(_discImage.Comment))
+        {
+            string[] commentLines = _discImage.Comment.Split(new[]
+            {
+                '\n'
+            }, StringSplitOptions.RemoveEmptyEntries);
+
+            foreach(string line in commentLines)
+                _descriptorStream.WriteLine("REM {0}", line);
+        }
+
+        _descriptorStream.WriteLine("REM ORIGINAL MEDIA-TYPE: {0}", MediaTypeToCdrwinType(_imageInfo.MediaType));
+
+        _descriptorStream.WriteLine("REM METADATA AARU MEDIA-TYPE: {0}", _imageInfo.MediaType);
+
+        if(!string.IsNullOrEmpty(_imageInfo.Application))
+        {
+            _descriptorStream.WriteLine("REM Ripping Tool: {0}", _imageInfo.Application);
+
+            if(!string.IsNullOrEmpty(_imageInfo.ApplicationVersion))
+                _descriptorStream.WriteLine("REM Ripping Tool Version: {0}", _imageInfo.ApplicationVersion);
+        }
+
+        if(DumpHardware != null)
+        {
+            foreach(var dumpData in from dump in DumpHardware from extent in dump.Extents.OrderBy(e => e.Start)
+                                    select new
+                                    {
+                                        dump.Manufacturer,
+                                        dump.Model,
+                                        dump.Firmware,
+                                        dump.Serial,
+                                        Application        = dump.Software.Name,
+                                        ApplicationVersion = dump.Software.Version,
+                                        dump.Software.OperatingSystem,
+                                        extent.Start,
+                                        extent.End
+                                    })
+            {
+                _descriptorStream.
+                    WriteLine($"REM METADATA DUMP EXTENT: {dumpData.Application} | {dumpData.ApplicationVersion} | {dumpData.OperatingSystem} | {dumpData.Manufacturer} | {dumpData.Model} | {dumpData.Firmware} | {dumpData.Serial} | {dumpData.Start}:{dumpData.End}");
+            }
+        }
+
+        if(!string.IsNullOrEmpty(_discImage.CdTextFile))
+            _descriptorStream.WriteLine("CDTEXTFILE \"{0}\"", Path.GetFileName(_discImage.CdTextFile));
+
+        if(!string.IsNullOrEmpty(_discImage.Title))
+            _descriptorStream.WriteLine("TITLE {0}", _discImage.Title);
+
+        if(!string.IsNullOrEmpty(_discImage.Mcn))
+            _descriptorStream.WriteLine("CATALOG {0}", _discImage.Mcn);
+
+        if(!string.IsNullOrEmpty(_discImage.Barcode))
+            _descriptorStream.WriteLine("UPC_EAN {0}", _discImage.Barcode);
+
+        if(!_separateTracksWriting)
+            _descriptorStream.WriteLine("FILE \"{0}\" BINARY",
+                                        Path.GetFileName(_writingStreams.First().Value.Name));
+
+        Track trackZero = null;
+
+        foreach(Track track in _writingTracks)
+        {
+            switch(track.Sequence)
+            {
+                // You should not be able to write CD-i Ready as this format, but just in case
+                case 0 when _imageInfo.MediaType != MediaType.CDIREADY:
+                    trackZero = track;
+
+                    continue;
+                case 1 when trackZero != null && !track.Indexes.ContainsKey(0):
+                    track.StartSector = trackZero.StartSector;
+                    track.Pregap      = (ulong)track.Indexes[1] - track.StartSector;
+
+                    break;
             }
 
-            Track track =
-                _writingTracks.FirstOrDefault(trk => sectorAddress >= trk.StartSector &&
-                                                     sectorAddress <= trk.EndSector);
+            if(track.Session > currentSession)
+                _descriptorStream.WriteLine("REM SESSION {0}", ++currentSession);
 
-            if(track is null)
+            if(_separateTracksWriting)
+                _descriptorStream.WriteLine("FILE \"{0}\" BINARY", Path.GetFileName(track.File));
+
+            (byte minute, byte second, byte frame) msf = LbaToMsf(track.StartSector);
+            _descriptorStream.WriteLine("  TRACK {0:D2} {1}", track.Sequence, GetTrackMode(track));
+
+            if(_isCd)
             {
-                ErrorMessage = $"Can't found track containing {sectorAddress}";
-
-                return false;
-            }
-
-            switch(tag)
-            {
-                case SectorTagType.CdTrackFlags when _isCd:
-                {
-                    if(data.Length != 1)
+                if(_trackFlags.TryGetValue((byte)track.Sequence, out byte flagsByte))
+                    if(flagsByte != 0 &&
+                       flagsByte != (byte)CdFlags.DataTrack)
                     {
-                        ErrorMessage = "Incorrect data size for track flags";
+                        var flags = (CdFlags)flagsByte;
 
-                        return false;
+                        _descriptorStream.WriteLine("    FLAGS{0}{1}{2}",
+                                                    flags.HasFlag(CdFlags.CopyPermitted) ? " DCP" : "",
+                                                    flags.HasFlag(CdFlags.FourChannel) ? " 4CH" : "",
+                                                    flags.HasFlag(CdFlags.PreEmphasis) ? " PRE" : "");
                     }
 
-                    _trackFlags[(byte)sectorAddress] = data[0];
+                if(_trackIsrcs.TryGetValue((byte)track.Sequence, out string isrc) &&
+                   !string.IsNullOrWhiteSpace(isrc))
+                    _descriptorStream.WriteLine("    ISRC {0}", isrc);
+            }
 
-                    return true;
-                }
-                case SectorTagType.CdTrackIsrc when _isCd:
+            if(track.Pregap > 0 && _isCd)
+            {
+                if(track.Sequence > _writingTracks.Where(t => t.Session == track.Session).Min(t => t.Sequence))
+                    _descriptorStream.WriteLine("    INDEX {0:D2} {1:D2}:{2:D2}:{3:D2}", 0, msf.minute, msf.second,
+                                                msf.frame);
+
+                if(track.Sequence > 1)
+                    msf = LbaToMsf(track.StartSector + track.Pregap);
+
+                _descriptorStream.WriteLine("    INDEX {0:D2} {1:D2}:{2:D2}:{3:D2}", 1, msf.minute, msf.second,
+                                            msf.frame);
+            }
+            else
+                _descriptorStream.WriteLine("    INDEX {0:D2} {1:D2}:{2:D2}:{3:D2}", 1, msf.minute, msf.second,
+                                            msf.frame);
+
+            if(_isCd)
+                foreach(KeyValuePair<ushort, int> index in track.Indexes.Where(i => i.Key > 1))
                 {
-                    if(data != null)
-                        _trackIsrcs[(byte)sectorAddress] = Encoding.UTF8.GetString(data);
+                    msf = LbaToMsf((ulong)index.Value);
 
-                    return true;
+                    _descriptorStream.WriteLine("    INDEX {0:D2} {1:D2}:{2:D2}:{3:D2}", index.Key, msf.minute,
+                                                msf.second, msf.frame);
                 }
-                default:
-                    ErrorMessage = $"Unsupported tag type {tag}";
+
+            ushort lastSession = _writingTracks.Max(t => t.Session);
+
+            if(currentSession >= lastSession)
+                continue;
+
+            Track lastTrackInSession = _writingTracks.Where(t => t.Session == currentSession).
+                                                      OrderBy(t => t.Sequence).LastOrDefault();
+
+            if(track.Sequence != lastTrackInSession.Sequence)
+                continue;
+
+            msf = LbaToMsf(track.EndSector + 1);
+            _descriptorStream.WriteLine("REM LEAD-OUT {0:D2}:{1:D2}:{2:D2}", msf.minute, msf.second, msf.frame);
+        }
+
+        _descriptorStream.Flush();
+        _descriptorStream.Close();
+
+        IsWriting    = false;
+        ErrorMessage = "";
+
+        return true;
+    }
+
+    /// <inheritdoc />
+    public bool SetGeometry(uint cylinders, uint heads, uint sectorsPerTrack)
+    {
+        ErrorMessage = "Unsupported feature";
+
+        return false;
+    }
+
+    /// <inheritdoc />
+    public bool WriteSectorTag(byte[] data, ulong sectorAddress, SectorTagType tag)
+    {
+        if(!IsWriting)
+        {
+            ErrorMessage = "Tried to write on a non-writable image";
+
+            return false;
+        }
+
+        Track track =
+            _writingTracks.FirstOrDefault(trk => sectorAddress >= trk.StartSector &&
+                                                 sectorAddress <= trk.EndSector);
+
+        if(track is null)
+        {
+            ErrorMessage = $"Can't found track containing {sectorAddress}";
+
+            return false;
+        }
+
+        switch(tag)
+        {
+            case SectorTagType.CdTrackFlags when _isCd:
+            {
+                if(data.Length != 1)
+                {
+                    ErrorMessage = "Incorrect data size for track flags";
 
                     return false;
+                }
+
+                _trackFlags[(byte)sectorAddress] = data[0];
+
+                return true;
             }
+            case SectorTagType.CdTrackIsrc when _isCd:
+            {
+                if(data != null)
+                    _trackIsrcs[(byte)sectorAddress] = Encoding.UTF8.GetString(data);
+
+                return true;
+            }
+            default:
+                ErrorMessage = $"Unsupported tag type {tag}";
+
+                return false;
         }
+    }
 
-        /// <inheritdoc />
-        public bool WriteSectorsTag(byte[] data, ulong sectorAddress, uint length, SectorTagType tag) =>
-            WriteSectorTag(data, sectorAddress, tag);
+    /// <inheritdoc />
+    public bool WriteSectorsTag(byte[] data, ulong sectorAddress, uint length, SectorTagType tag) =>
+        WriteSectorTag(data, sectorAddress, tag);
 
-        /// <inheritdoc />
-        public bool SetDumpHardware(List<DumpHardwareType> dumpHardware)
-        {
-            DumpHardware = dumpHardware;
+    /// <inheritdoc />
+    public bool SetDumpHardware(List<DumpHardwareType> dumpHardware)
+    {
+        DumpHardware = dumpHardware;
 
-            return true;
-        }
+        return true;
+    }
 
-        /// <inheritdoc />
-        public bool SetCicmMetadata(CICMMetadataType metadata) => false;
+    /// <inheritdoc />
+    public bool SetCicmMetadata(CICMMetadataType metadata) => false;
 
-        /// <inheritdoc />
-        public bool SetMetadata(ImageInfo metadata)
-        {
-            _discImage.Barcode            = metadata.MediaBarcode;
-            _discImage.Comment            = metadata.Comments;
-            _discImage.Title              = metadata.MediaTitle;
-            _imageInfo.Application        = metadata.Application;
-            _imageInfo.ApplicationVersion = metadata.ApplicationVersion;
+    /// <inheritdoc />
+    public bool SetMetadata(ImageInfo metadata)
+    {
+        _discImage.Barcode            = metadata.MediaBarcode;
+        _discImage.Comment            = metadata.Comments;
+        _discImage.Title              = metadata.MediaTitle;
+        _imageInfo.Application        = metadata.Application;
+        _imageInfo.ApplicationVersion = metadata.ApplicationVersion;
 
-            return true;
-        }
+        return true;
     }
 }

@@ -43,377 +43,376 @@ using DVDDecryption = Aaru.Decryption.DVD.Dump;
 // ReSharper disable InlineOutVariableDeclaration
 // ReSharper disable TooWideLocalVariableScope
 
-namespace Aaru.Core.Devices.Dumping
+namespace Aaru.Core.Devices.Dumping;
+
+partial class Dump
 {
-    partial class Dump
+    /// <summary>Retries errored data when dumping from a SCSI Block Commands compliant device</summary>
+    /// <param name="currentTry">Resume information</param>
+    /// <param name="extents">Correctly dump extents</param>
+    /// <param name="totalDuration">Total time spent in commands</param>
+    /// <param name="scsiReader">SCSI reader</param>
+    /// <param name="blankExtents">Blank extents</param>
+    void RetrySbcData(Reader scsiReader, DumpHardwareType currentTry, ExtentsULong extents,
+                      ref double totalDuration, ExtentsULong blankExtents)
     {
-        /// <summary>Retries errored data when dumping from a SCSI Block Commands compliant device</summary>
-        /// <param name="currentTry">Resume information</param>
-        /// <param name="extents">Correctly dump extents</param>
-        /// <param name="totalDuration">Total time spent in commands</param>
-        /// <param name="scsiReader">SCSI reader</param>
-        /// <param name="blankExtents">Blank extents</param>
-        void RetrySbcData(Reader scsiReader, DumpHardwareType currentTry, ExtentsULong extents,
-                          ref double totalDuration, ExtentsULong blankExtents)
+        int             pass              = 1;
+        bool            forward           = true;
+        bool            runningPersistent = false;
+        bool            sense;
+        byte[]          buffer;
+        bool            recoveredError;
+        Modes.ModePage? currentModePage = null;
+        byte[]          md6;
+        byte[]          md10;
+        bool            blankCheck;
+        bool            newBlank     = false;
+        var             outputFormat = _outputPlugin as IWritableImage;
+
+        if(_persistent)
         {
-            int             pass              = 1;
-            bool            forward           = true;
-            bool            runningPersistent = false;
-            bool            sense;
-            byte[]          buffer;
-            bool            recoveredError;
-            Modes.ModePage? currentModePage = null;
-            byte[]          md6;
-            byte[]          md10;
-            bool            blankCheck;
-            bool            newBlank     = false;
-            var             outputFormat = _outputPlugin as IWritableImage;
+            Modes.ModePage_01_MMC pgMmc;
+            Modes.ModePage_01     pg;
 
-            if(_persistent)
+            sense = _dev.ModeSense6(out buffer, out _, false, ScsiModeSensePageControl.Current, 0x01, _dev.Timeout,
+                                    out _);
+
+            if(sense)
             {
-                Modes.ModePage_01_MMC pgMmc;
-                Modes.ModePage_01     pg;
+                sense = _dev.ModeSense10(out buffer, out _, false, ScsiModeSensePageControl.Current, 0x01,
+                                         _dev.Timeout, out _);
 
-                sense = _dev.ModeSense6(out buffer, out _, false, ScsiModeSensePageControl.Current, 0x01, _dev.Timeout,
-                                        out _);
-
-                if(sense)
+                if(!sense)
                 {
-                    sense = _dev.ModeSense10(out buffer, out _, false, ScsiModeSensePageControl.Current, 0x01,
-                                             _dev.Timeout, out _);
+                    Modes.DecodedMode? dcMode10 = Modes.DecodeMode10(buffer, _dev.ScsiType);
 
-                    if(!sense)
-                    {
-                        Modes.DecodedMode? dcMode10 = Modes.DecodeMode10(buffer, _dev.ScsiType);
-
-                        if(dcMode10?.Pages != null)
-                            foreach(Modes.ModePage modePage in dcMode10.Value.Pages.Where(modePage =>
-                                modePage.Page == 0x01 && modePage.Subpage == 0x00))
-                                currentModePage = modePage;
-                    }
-                }
-                else
-                {
-                    Modes.DecodedMode? dcMode6 = Modes.DecodeMode6(buffer, _dev.ScsiType);
-
-                    if(dcMode6?.Pages != null)
-                        foreach(Modes.ModePage modePage in dcMode6.Value.Pages.Where(modePage =>
-                            modePage.Page == 0x01 && modePage.Subpage == 0x00))
+                    if(dcMode10?.Pages != null)
+                        foreach(Modes.ModePage modePage in dcMode10.Value.Pages.Where(modePage =>
+                                    modePage.Page == 0x01 && modePage.Subpage == 0x00))
                             currentModePage = modePage;
                 }
+            }
+            else
+            {
+                Modes.DecodedMode? dcMode6 = Modes.DecodeMode6(buffer, _dev.ScsiType);
 
-                if(currentModePage == null)
-                {
-                    if(_dev.ScsiType == PeripheralDeviceTypes.MultiMediaDevice)
-                    {
-                        pgMmc = new Modes.ModePage_01_MMC
-                        {
-                            PS             = false,
-                            ReadRetryCount = 32,
-                            Parameter      = 0x00
-                        };
+                if(dcMode6?.Pages != null)
+                    foreach(Modes.ModePage modePage in dcMode6.Value.Pages.Where(modePage =>
+                                modePage.Page == 0x01 && modePage.Subpage == 0x00))
+                        currentModePage = modePage;
+            }
 
-                        currentModePage = new Modes.ModePage
-                        {
-                            Page         = 0x01,
-                            Subpage      = 0x00,
-                            PageResponse = Modes.EncodeModePage_01_MMC(pgMmc)
-                        };
-                    }
-                    else
-                    {
-                        pg = new Modes.ModePage_01
-                        {
-                            PS             = false,
-                            AWRE           = true,
-                            ARRE           = true,
-                            TB             = false,
-                            RC             = false,
-                            EER            = true,
-                            PER            = false,
-                            DTE            = true,
-                            DCR            = false,
-                            ReadRetryCount = 32
-                        };
-
-                        currentModePage = new Modes.ModePage
-                        {
-                            Page         = 0x01,
-                            Subpage      = 0x00,
-                            PageResponse = Modes.EncodeModePage_01(pg)
-                        };
-                    }
-                }
-
+            if(currentModePage == null)
+            {
                 if(_dev.ScsiType == PeripheralDeviceTypes.MultiMediaDevice)
                 {
                     pgMmc = new Modes.ModePage_01_MMC
                     {
                         PS             = false,
-                        ReadRetryCount = 255,
-                        Parameter      = 0x20
+                        ReadRetryCount = 32,
+                        Parameter      = 0x00
                     };
 
-                    var md = new Modes.DecodedMode
+                    currentModePage = new Modes.ModePage
                     {
-                        Header = new Modes.ModeHeader(),
-                        Pages = new[]
-                        {
-                            new Modes.ModePage
-                            {
-                                Page         = 0x01,
-                                Subpage      = 0x00,
-                                PageResponse = Modes.EncodeModePage_01_MMC(pgMmc)
-                            }
-                        }
+                        Page         = 0x01,
+                        Subpage      = 0x00,
+                        PageResponse = Modes.EncodeModePage_01_MMC(pgMmc)
                     };
-
-                    md6  = Modes.EncodeMode6(md, _dev.ScsiType);
-                    md10 = Modes.EncodeMode10(md, _dev.ScsiType);
                 }
                 else
                 {
                     pg = new Modes.ModePage_01
                     {
                         PS             = false,
-                        AWRE           = false,
-                        ARRE           = false,
-                        TB             = true,
+                        AWRE           = true,
+                        ARRE           = true,
+                        TB             = false,
                         RC             = false,
                         EER            = true,
                         PER            = false,
-                        DTE            = false,
+                        DTE            = true,
                         DCR            = false,
-                        ReadRetryCount = 255
+                        ReadRetryCount = 32
                     };
 
-                    var md = new Modes.DecodedMode
+                    currentModePage = new Modes.ModePage
                     {
-                        Header = new Modes.ModeHeader(),
-                        Pages = new[]
-                        {
-                            new Modes.ModePage
-                            {
-                                Page         = 0x01,
-                                Subpage      = 0x00,
-                                PageResponse = Modes.EncodeModePage_01(pg)
-                            }
-                        }
+                        Page         = 0x01,
+                        Subpage      = 0x00,
+                        PageResponse = Modes.EncodeModePage_01(pg)
                     };
-
-                    md6  = Modes.EncodeMode6(md, _dev.ScsiType);
-                    md10 = Modes.EncodeMode10(md, _dev.ScsiType);
-                }
-
-                UpdateStatus?.Invoke("Sending MODE SELECT to drive (return damaged blocks).");
-                _dumpLog.WriteLine("Sending MODE SELECT to drive (return damaged blocks).");
-                sense = _dev.ModeSelect(md6, out byte[] senseBuf, true, false, _dev.Timeout, out _);
-
-                if(sense)
-                    sense = _dev.ModeSelect10(md10, out senseBuf, true, false, _dev.Timeout, out _);
-
-                if(sense)
-                {
-                    UpdateStatus?.
-                        Invoke("Drive did not accept MODE SELECT command for persistent error reading, try another drive.");
-
-                    AaruConsole.DebugWriteLine("Error: {0}", Sense.PrettifySense(senseBuf));
-
-                    _dumpLog.WriteLine("Drive did not accept MODE SELECT command for persistent error reading, try another drive.");
-                }
-                else
-                {
-                    runningPersistent = true;
                 }
             }
 
-            InitProgress?.Invoke();
-            repeatRetry:
-            ulong[] tmpArray = _resume.BadBlocks.ToArray();
-
-            foreach(ulong badSector in tmpArray)
+            if(_dev.ScsiType == PeripheralDeviceTypes.MultiMediaDevice)
             {
-                if(_aborted)
+                pgMmc = new Modes.ModePage_01_MMC
                 {
-                    currentTry.Extents = ExtentsConverter.ToMetadata(extents);
-                    UpdateStatus?.Invoke("Aborted!");
-                    _dumpLog.WriteLine("Aborted!");
+                    PS             = false,
+                    ReadRetryCount = 255,
+                    Parameter      = 0x20
+                };
 
-                    break;
-                }
-
-                PulseProgress?.Invoke(string.Format("Retrying sector {0}, pass {1}, {3}{2}", badSector, pass,
-                                                    forward ? "forward" : "reverse",
-                                                    runningPersistent ? "recovering partial data, " : ""));
-
-                sense = scsiReader.ReadBlock(out buffer, badSector, out double cmdDuration, out recoveredError,
-                                             out blankCheck);
-
-                totalDuration += cmdDuration;
-
-                if(blankCheck)
-                {
-                    _resume.BadBlocks.Remove(badSector);
-                    blankExtents.Add(badSector, badSector);
-                    newBlank = true;
-
-                    UpdateStatus?.Invoke($"Found blank block {badSector} in pass {pass}.");
-                    _dumpLog.WriteLine("Found blank block {0} in pass {1}.", badSector, pass);
-
-                    continue;
-                }
-
-                if((!sense && !_dev.Error) || recoveredError)
-                {
-                    _resume.BadBlocks.Remove(badSector);
-                    extents.Add(badSector);
-                    outputFormat.WriteSector(buffer, badSector);
-                    UpdateStatus?.Invoke($"Correctly retried block {badSector} in pass {pass}.");
-                    _dumpLog.WriteLine("Correctly retried block {0} in pass {1}.", badSector, pass);
-                }
-                else if(runningPersistent)
-                {
-                    outputFormat.WriteSector(buffer, badSector);
-                }
-            }
-
-            if(pass < _retryPasses &&
-               !_aborted           &&
-               _resume.BadBlocks.Count > 0)
-            {
-                pass++;
-                forward = !forward;
-                _resume.BadBlocks.Sort();
-
-                if(!forward)
-                    _resume.BadBlocks.Reverse();
-
-                goto repeatRetry;
-            }
-
-            if(runningPersistent && currentModePage.HasValue)
-            {
                 var md = new Modes.DecodedMode
                 {
                     Header = new Modes.ModeHeader(),
                     Pages = new[]
                     {
-                        currentModePage.Value
+                        new Modes.ModePage
+                        {
+                            Page         = 0x01,
+                            Subpage      = 0x00,
+                            PageResponse = Modes.EncodeModePage_01_MMC(pgMmc)
+                        }
                     }
                 };
 
                 md6  = Modes.EncodeMode6(md, _dev.ScsiType);
                 md10 = Modes.EncodeMode10(md, _dev.ScsiType);
+            }
+            else
+            {
+                pg = new Modes.ModePage_01
+                {
+                    PS             = false,
+                    AWRE           = false,
+                    ARRE           = false,
+                    TB             = true,
+                    RC             = false,
+                    EER            = true,
+                    PER            = false,
+                    DTE            = false,
+                    DCR            = false,
+                    ReadRetryCount = 255
+                };
 
-                UpdateStatus?.Invoke("Sending MODE SELECT to drive (return device to previous status).");
-                _dumpLog.WriteLine("Sending MODE SELECT to drive (return device to previous status).");
-                sense = _dev.ModeSelect(md6, out _, true, false, _dev.Timeout, out _);
+                var md = new Modes.DecodedMode
+                {
+                    Header = new Modes.ModeHeader(),
+                    Pages = new[]
+                    {
+                        new Modes.ModePage
+                        {
+                            Page         = 0x01,
+                            Subpage      = 0x00,
+                            PageResponse = Modes.EncodeModePage_01(pg)
+                        }
+                    }
+                };
 
-                if(sense)
-                    _dev.ModeSelect10(md10, out _, true, false, _dev.Timeout, out _);
+                md6  = Modes.EncodeMode6(md, _dev.ScsiType);
+                md10 = Modes.EncodeMode10(md, _dev.ScsiType);
             }
 
-            if(newBlank)
-                _resume.BlankExtents = ExtentsConverter.ToMetadata(blankExtents);
+            UpdateStatus?.Invoke("Sending MODE SELECT to drive (return damaged blocks).");
+            _dumpLog.WriteLine("Sending MODE SELECT to drive (return damaged blocks).");
+            sense = _dev.ModeSelect(md6, out byte[] senseBuf, true, false, _dev.Timeout, out _);
 
-            EndProgress?.Invoke();
+            if(sense)
+                sense = _dev.ModeSelect10(md10, out senseBuf, true, false, _dev.Timeout, out _);
+
+            if(sense)
+            {
+                UpdateStatus?.
+                    Invoke("Drive did not accept MODE SELECT command for persistent error reading, try another drive.");
+
+                AaruConsole.DebugWriteLine("Error: {0}", Sense.PrettifySense(senseBuf));
+
+                _dumpLog.WriteLine("Drive did not accept MODE SELECT command for persistent error reading, try another drive.");
+            }
+            else
+            {
+                runningPersistent = true;
+            }
         }
 
-        void RetryTitleKeys(DVDDecryption dvdDecrypt, byte[] discKey, ref double totalDuration)
+        InitProgress?.Invoke();
+        repeatRetry:
+        ulong[] tmpArray = _resume.BadBlocks.ToArray();
+
+        foreach(ulong badSector in tmpArray)
         {
-            int    pass    = 1;
-            bool   forward = true;
-            bool   sense;
-            byte[] buffer;
-            var    outputFormat = _outputPlugin as IWritableImage;
-
-            InitProgress?.Invoke();
-
-            repeatRetry:
-            ulong[] tmpArray = _resume.MissingTitleKeys.ToArray();
-
-            foreach(ulong missingKey in tmpArray)
+            if(_aborted)
             {
-                if(_aborted)
-                {
-                    UpdateStatus?.Invoke("Aborted!");
-                    _dumpLog.WriteLine("Aborted!");
+                currentTry.Extents = ExtentsConverter.ToMetadata(extents);
+                UpdateStatus?.Invoke("Aborted!");
+                _dumpLog.WriteLine("Aborted!");
 
-                    break;
+                break;
+            }
+
+            PulseProgress?.Invoke(string.Format("Retrying sector {0}, pass {1}, {3}{2}", badSector, pass,
+                                                forward ? "forward" : "reverse",
+                                                runningPersistent ? "recovering partial data, " : ""));
+
+            sense = scsiReader.ReadBlock(out buffer, badSector, out double cmdDuration, out recoveredError,
+                                         out blankCheck);
+
+            totalDuration += cmdDuration;
+
+            if(blankCheck)
+            {
+                _resume.BadBlocks.Remove(badSector);
+                blankExtents.Add(badSector, badSector);
+                newBlank = true;
+
+                UpdateStatus?.Invoke($"Found blank block {badSector} in pass {pass}.");
+                _dumpLog.WriteLine("Found blank block {0} in pass {1}.", badSector, pass);
+
+                continue;
+            }
+
+            if((!sense && !_dev.Error) || recoveredError)
+            {
+                _resume.BadBlocks.Remove(badSector);
+                extents.Add(badSector);
+                outputFormat.WriteSector(buffer, badSector);
+                UpdateStatus?.Invoke($"Correctly retried block {badSector} in pass {pass}.");
+                _dumpLog.WriteLine("Correctly retried block {0} in pass {1}.", badSector, pass);
+            }
+            else if(runningPersistent)
+            {
+                outputFormat.WriteSector(buffer, badSector);
+            }
+        }
+
+        if(pass < _retryPasses &&
+           !_aborted           &&
+           _resume.BadBlocks.Count > 0)
+        {
+            pass++;
+            forward = !forward;
+            _resume.BadBlocks.Sort();
+
+            if(!forward)
+                _resume.BadBlocks.Reverse();
+
+            goto repeatRetry;
+        }
+
+        if(runningPersistent && currentModePage.HasValue)
+        {
+            var md = new Modes.DecodedMode
+            {
+                Header = new Modes.ModeHeader(),
+                Pages = new[]
+                {
+                    currentModePage.Value
                 }
+            };
 
-                PulseProgress?.Invoke(string.Format("Retrying title key {0}, pass {1}, {2}", missingKey, pass,
-                                                    forward ? "forward" : "reverse"));
+            md6  = Modes.EncodeMode6(md, _dev.ScsiType);
+            md10 = Modes.EncodeMode10(md, _dev.ScsiType);
 
-                sense = dvdDecrypt.ReadTitleKey(out buffer, out _, DvdCssKeyClass.DvdCssCppmOrCprm, missingKey,
-                                                _dev.Timeout, out double cmdDuration);
+            UpdateStatus?.Invoke("Sending MODE SELECT to drive (return device to previous status).");
+            _dumpLog.WriteLine("Sending MODE SELECT to drive (return device to previous status).");
+            sense = _dev.ModeSelect(md6, out _, true, false, _dev.Timeout, out _);
 
-                totalDuration += cmdDuration;
+            if(sense)
+                _dev.ModeSelect10(md10, out _, true, false, _dev.Timeout, out _);
+        }
 
-                if(!sense &&
-                   !_dev.Error)
+        if(newBlank)
+            _resume.BlankExtents = ExtentsConverter.ToMetadata(blankExtents);
+
+        EndProgress?.Invoke();
+    }
+
+    void RetryTitleKeys(DVDDecryption dvdDecrypt, byte[] discKey, ref double totalDuration)
+    {
+        int    pass    = 1;
+        bool   forward = true;
+        bool   sense;
+        byte[] buffer;
+        var    outputFormat = _outputPlugin as IWritableImage;
+
+        InitProgress?.Invoke();
+
+        repeatRetry:
+        ulong[] tmpArray = _resume.MissingTitleKeys.ToArray();
+
+        foreach(ulong missingKey in tmpArray)
+        {
+            if(_aborted)
+            {
+                UpdateStatus?.Invoke("Aborted!");
+                _dumpLog.WriteLine("Aborted!");
+
+                break;
+            }
+
+            PulseProgress?.Invoke(string.Format("Retrying title key {0}, pass {1}, {2}", missingKey, pass,
+                                                forward ? "forward" : "reverse"));
+
+            sense = dvdDecrypt.ReadTitleKey(out buffer, out _, DvdCssKeyClass.DvdCssCppmOrCprm, missingKey,
+                                            _dev.Timeout, out double cmdDuration);
+
+            totalDuration += cmdDuration;
+
+            if(!sense &&
+               !_dev.Error)
+            {
+                CSS_CPRM.TitleKey? titleKey = CSS.DecodeTitleKey(buffer, dvdDecrypt.BusKey);
+
+                if(titleKey.HasValue)
                 {
-                    CSS_CPRM.TitleKey? titleKey = CSS.DecodeTitleKey(buffer, dvdDecrypt.BusKey);
-
-                    if(titleKey.HasValue)
+                    outputFormat.WriteSectorTag(new[]
                     {
-                        outputFormat.WriteSectorTag(new[]
+                        titleKey.Value.CMI
+                    }, missingKey, SectorTagType.DvdCmi);
+
+                    // If the CMI bit is 1, the sector is using copy protection, else it is not
+                    // If the decoded title key is zeroed, there should be no copy protection
+                    if((titleKey.Value.CMI & 0x80) >> 7 == 0 ||
+                       titleKey.Value.Key.All(k => k == 0))
+                    {
+                        outputFormat.WriteSectorTag(new byte[]
                         {
-                            titleKey.Value.CMI
-                        }, missingKey, SectorTagType.DvdCmi);
+                            0, 0, 0, 0, 0
+                        }, missingKey, SectorTagType.DvdTitleKey);
 
-                        // If the CMI bit is 1, the sector is using copy protection, else it is not
-                        // If the decoded title key is zeroed, there should be no copy protection
-                        if((titleKey.Value.CMI & 0x80) >> 7 == 0 ||
-                           titleKey.Value.Key.All(k => k == 0))
+                        outputFormat.WriteSectorTag(new byte[]
                         {
-                            outputFormat.WriteSectorTag(new byte[]
-                            {
-                                0, 0, 0, 0, 0
-                            }, missingKey, SectorTagType.DvdTitleKey);
+                            0, 0, 0, 0, 0
+                        }, missingKey, SectorTagType.DvdTitleKeyDecrypted);
 
-                            outputFormat.WriteSectorTag(new byte[]
-                            {
-                                0, 0, 0, 0, 0
-                            }, missingKey, SectorTagType.DvdTitleKeyDecrypted);
+                        _resume.MissingTitleKeys.Remove(missingKey);
+                        UpdateStatus?.Invoke($"Correctly retried title key {missingKey} in pass {pass}.");
+                        _dumpLog.WriteLine("Correctly retried title key {0} in pass {1}.", missingKey, pass);
+                    }
+                    else
+                    {
+                        outputFormat.WriteSectorTag(titleKey.Value.Key, missingKey, SectorTagType.DvdTitleKey);
+                        _resume.MissingTitleKeys.Remove(missingKey);
 
-                            _resume.MissingTitleKeys.Remove(missingKey);
-                            UpdateStatus?.Invoke($"Correctly retried title key {missingKey} in pass {pass}.");
-                            _dumpLog.WriteLine("Correctly retried title key {0} in pass {1}.", missingKey, pass);
+                        if(discKey != null)
+                        {
+                            CSS.DecryptTitleKey(0, discKey, titleKey.Value.Key, out buffer);
+                            outputFormat.WriteSectorTag(buffer, missingKey, SectorTagType.DvdTitleKeyDecrypted);
                         }
-                        else
-                        {
-                            outputFormat.WriteSectorTag(titleKey.Value.Key, missingKey, SectorTagType.DvdTitleKey);
-                            _resume.MissingTitleKeys.Remove(missingKey);
 
-                            if(discKey != null)
-                            {
-                                CSS.DecryptTitleKey(0, discKey, titleKey.Value.Key, out buffer);
-                                outputFormat.WriteSectorTag(buffer, missingKey, SectorTagType.DvdTitleKeyDecrypted);
-                            }
-
-                            UpdateStatus?.Invoke($"Correctly retried title key {missingKey} in pass {pass}.");
-                            _dumpLog.WriteLine("Correctly retried title key {0} in pass {1}.", missingKey, pass);
-                        }
+                        UpdateStatus?.Invoke($"Correctly retried title key {missingKey} in pass {pass}.");
+                        _dumpLog.WriteLine("Correctly retried title key {0} in pass {1}.", missingKey, pass);
                     }
                 }
             }
-
-            if(pass < _retryPasses &&
-               !_aborted           &&
-               _resume.MissingTitleKeys.Count > 0)
-            {
-                pass++;
-                forward = !forward;
-                _resume.MissingTitleKeys.Sort();
-
-                if(!forward)
-                    _resume.MissingTitleKeys.Reverse();
-
-                goto repeatRetry;
-            }
-
-            EndProgress?.Invoke();
         }
+
+        if(pass < _retryPasses &&
+           !_aborted           &&
+           _resume.MissingTitleKeys.Count > 0)
+        {
+            pass++;
+            forward = !forward;
+            _resume.MissingTitleKeys.Sort();
+
+            if(!forward)
+                _resume.MissingTitleKeys.Reverse();
+
+            goto repeatRetry;
+        }
+
+        EndProgress?.Invoke();
     }
 }

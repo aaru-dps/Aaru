@@ -32,30 +32,29 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Filesystems.SysV
+namespace Aaru.Tests.Filesystems.SysV;
+
+[TestFixture]
+public class RDB : FilesystemTest
 {
-    [TestFixture]
-    public class RDB : FilesystemTest
+    public RDB() : base("SVR4 fs") {}
+
+    public override string DataFolder =>
+        Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "System V filesystem (RDB)");
+    public override IFilesystem Plugin     => new SysVfs();
+    public override bool        Partitions => true;
+
+    public override FileSystemTest[] Tests => new[]
     {
-        public RDB() : base("SVR4 fs") {}
-
-        public override string DataFolder =>
-            Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "System V filesystem (RDB)");
-        public override IFilesystem Plugin     => new SysVfs();
-        public override bool        Partitions => true;
-
-        public override FileSystemTest[] Tests => new[]
+        new FileSystemTest
         {
-            new FileSystemTest
-            {
-                TestFile    = "amix.aif",
-                MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 1024128,
-                SectorSize  = 512,
-                Clusters    = 511424,
-                ClusterSize = 1024,
-                VolumeName  = ""
-            }
-        };
-    }
+            TestFile    = "amix.aif",
+            MediaType   = MediaType.GENERIC_HDD,
+            Sectors     = 1024128,
+            SectorSize  = 512,
+            Clusters    = 511424,
+            ClusterSize = 1024,
+            VolumeName  = ""
+        }
+    };
 }

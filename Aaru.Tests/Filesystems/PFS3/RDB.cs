@@ -32,40 +32,39 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Filesystems.PFS3
+namespace Aaru.Tests.Filesystems.PFS3;
+
+[TestFixture]
+public class RDB : FilesystemTest
 {
-    [TestFixture]
-    public class RDB : FilesystemTest
+    public RDB() : base("PFS v3") {}
+
+    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems",
+                                                      "Professional File System 3 (RDB)");
+    public override IFilesystem Plugin     => new PFS();
+    public override bool        Partitions => true;
+
+    public override FileSystemTest[] Tests => new[]
     {
-        public RDB() : base("PFS v3") {}
-
-        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems",
-                                                          "Professional File System 3 (RDB)");
-        public override IFilesystem Plugin     => new PFS();
-        public override bool        Partitions => true;
-
-        public override FileSystemTest[] Tests => new[]
+        new FileSystemTest
         {
-            new FileSystemTest
-            {
-                TestFile    = "uae.aif",
-                MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 1024128,
-                SectorSize  = 512,
-                Clusters    = 1023552,
-                ClusterSize = 512,
-                VolumeName  = "PFS"
-            },
-            new FileSystemTest
-            {
-                TestFile    = "morphos_3.13.aif",
-                MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 262144,
-                SectorSize  = 512,
-                Clusters    = 261936,
-                ClusterSize = 512,
-                VolumeName  = "VolumeLabel"
-            }
-        };
-    }
+            TestFile    = "uae.aif",
+            MediaType   = MediaType.GENERIC_HDD,
+            Sectors     = 1024128,
+            SectorSize  = 512,
+            Clusters    = 1023552,
+            ClusterSize = 512,
+            VolumeName  = "PFS"
+        },
+        new FileSystemTest
+        {
+            TestFile    = "morphos_3.13.aif",
+            MediaType   = MediaType.GENERIC_HDD,
+            Sectors     = 262144,
+            SectorSize  = 512,
+            Clusters    = 261936,
+            ClusterSize = 512,
+            VolumeName  = "VolumeLabel"
+        }
+    };
 }

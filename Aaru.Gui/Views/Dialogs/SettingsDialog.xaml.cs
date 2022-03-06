@@ -34,18 +34,17 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 
-namespace Aaru.Gui.Views.Dialogs
-{
-    public sealed class SettingsDialog : Window
-    {
-        public SettingsDialog()
-        {
-            InitializeComponent();
-        #if DEBUG
-            this.AttachDevTools();
-        #endif
-        }
+namespace Aaru.Gui.Views.Dialogs;
 
-        void InitializeComponent() => AvaloniaXamlLoader.Load(this);
+public sealed class SettingsDialog : Window
+{
+    public SettingsDialog()
+    {
+        InitializeComponent();
+    #if DEBUG
+        this.AttachDevTools();
+    #endif
     }
+
+    void InitializeComponent() => AvaloniaXamlLoader.Load(this);
 }

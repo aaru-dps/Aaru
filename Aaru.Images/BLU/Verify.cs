@@ -32,25 +32,24 @@
 
 using System.Collections.Generic;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class Blu
 {
-    public sealed partial class Blu
+    // TODO: Check tag checksums
+    /// <inheritdoc />
+    public bool? VerifySector(ulong sectorAddress) => null;
+
+    /// <inheritdoc />
+    public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
+                               out List<ulong> unknownLbas)
     {
-        // TODO: Check tag checksums
-        /// <inheritdoc />
-        public bool? VerifySector(ulong sectorAddress) => null;
+        failingLbas = new List<ulong>();
+        unknownLbas = new List<ulong>();
 
-        /// <inheritdoc />
-        public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
-                                   out List<ulong> unknownLbas)
-        {
-            failingLbas = new List<ulong>();
-            unknownLbas = new List<ulong>();
+        for(ulong i = sectorAddress; i < sectorAddress + length; i++)
+            unknownLbas.Add(i);
 
-            for(ulong i = sectorAddress; i < sectorAddress + length; i++)
-                unknownLbas.Add(i);
-
-            return null;
-        }
+        return null;
     }
 }

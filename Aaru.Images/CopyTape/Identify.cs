@@ -35,47 +35,46 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Aaru.CommonTypes.Interfaces;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class CopyTape
 {
-    public sealed partial class CopyTape
+    /// <inheritdoc />
+    public bool Identify(IFilter imageFilter)
     {
-        /// <inheritdoc />
-        public bool Identify(IFilter imageFilter)
-        {
-            if(imageFilter.DataForkLength <= 16)
-                return false;
+        if(imageFilter.DataForkLength <= 16)
+            return false;
 
-            byte[] header = new byte[16];
+        byte[] header = new byte[16];
 
-            Stream strm = imageFilter.GetDataForkStream();
-            strm.Position = 0;
-            strm.Read(header, 0, 16);
+        Stream strm = imageFilter.GetDataForkStream();
+        strm.Position = 0;
+        strm.Read(header, 0, 16);
 
-            string mark = Encoding.ASCII.GetString(header);
+        string mark = Encoding.ASCII.GetString(header);
 
-            var   blockRx = new Regex(BLOCK_REGEX);
-            Match blockMt = blockRx.Match(mark);
+        var   blockRx = new Regex(BLOCK_REGEX);
+        Match blockMt = blockRx.Match(mark);
 
-            if(!blockMt.Success)
-                return false;
+        if(!blockMt.Success)
+            return false;
 
-            string blkSize = blockMt.Groups["blockSize"].Value;
+        string blkSize = blockMt.Groups["blockSize"].Value;
 
-            if(string.IsNullOrWhiteSpace(blkSize))
-                return false;
+        if(string.IsNullOrWhiteSpace(blkSize))
+            return false;
 
-            if(!uint.TryParse(blkSize, out uint blockSize))
-                return false;
+        if(!uint.TryParse(blkSize, out uint blockSize))
+            return false;
 
-            if(blockSize      == 0 ||
-               blockSize + 17 >= imageFilter.DataForkLength)
-                return false;
+        if(blockSize      == 0 ||
+           blockSize + 17 >= imageFilter.DataForkLength)
+            return false;
 
-            strm.Position += blockSize;
+        strm.Position += blockSize;
 
-            int newLine = strm.ReadByte();
+        int newLine = strm.ReadByte();
 
-            return newLine == 0x0A;
-        }
+        return newLine == 0x0A;
     }
 }

@@ -32,17 +32,16 @@
 
 using System.CommandLine;
 
-namespace Aaru.Commands.Device
-{
-    internal sealed class DeviceFamily : Command
-    {
-        public DeviceFamily() : base("device", "Commands that talks to devices")
-        {
-            AddAlias("dev");
+namespace Aaru.Commands.Device;
 
-            AddCommand(new DeviceInfoCommand());
-            AddCommand(new DeviceReportCommand());
-            AddCommand(new ListDevicesCommand());
-        }
+internal sealed class DeviceFamily : Command
+{
+    public DeviceFamily() : base("device", "Commands that talks to devices")
+    {
+        AddAlias("dev");
+
+        AddCommand(new DeviceInfoCommand());
+        AddCommand(new DeviceReportCommand());
+        AddCommand(new ListDevicesCommand());
     }
 }

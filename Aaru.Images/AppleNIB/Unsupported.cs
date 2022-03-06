@@ -32,16 +32,15 @@
 
 using Aaru.CommonTypes.Enums;
 
-namespace Aaru.DiscImages
-{
-    public sealed partial class AppleNib
-    {
-        /// <inheritdoc />
-        public ErrorNumber ReadMediaTag(MediaTagType tag, out byte[] buffer)
-        {
-            buffer = null;
+namespace Aaru.DiscImages;
 
-            return ErrorNumber.NotSupported;
-        }
+public sealed partial class AppleNib
+{
+    /// <inheritdoc />
+    public ErrorNumber ReadMediaTag(MediaTagType tag, out byte[] buffer)
+    {
+        buffer = null;
+
+        return ErrorNumber.NotSupported;
     }
 }

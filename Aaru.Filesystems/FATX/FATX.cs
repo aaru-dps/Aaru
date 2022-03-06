@@ -39,71 +39,70 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Schemas;
 
-namespace Aaru.Filesystems
+namespace Aaru.Filesystems;
+
+/// <inheritdoc />
+/// <summary>Implements the Xbox File Allocation Table (FATX or XTAF) filesystem.</summary>
+public sealed partial class XboxFatPlugin : IReadOnlyFilesystem
 {
+    uint                                                   _bytesPerCluster;
+    CultureInfo                                            _cultureInfo;
+    bool                                                   _debug;
+    Dictionary<string, Dictionary<string, DirectoryEntry>> _directoryCache;
+    ushort[]                                               _fat16;
+    uint[]                                                 _fat32;
+    ulong                                                  _fatStartSector;
+    ulong                                                  _firstClusterSector;
+    IMediaImage                                            _imagePlugin;
+    bool                                                   _littleEndian;
+    bool                                                   _mounted;
+    Dictionary<string, DirectoryEntry>                     _rootDirectory;
+    uint                                                   _sectorsPerCluster;
+    FileSystemInfo                                         _statfs;
+    Superblock                                             _superblock;
+
     /// <inheritdoc />
-    /// <summary>Implements the Xbox File Allocation Table (FATX or XTAF) filesystem.</summary>
-    public sealed partial class XboxFatPlugin : IReadOnlyFilesystem
+    public FileSystemType XmlFsType { get; private set; }
+    /// <inheritdoc />
+    public Encoding Encoding { get; private set; }
+    /// <inheritdoc />
+    public string Name => "FATX Filesystem Plugin";
+    /// <inheritdoc />
+    public Guid Id => new("ED27A721-4A17-4649-89FD-33633B46E228");
+    /// <inheritdoc />
+    public string Author => "Natalia Portillo";
+
+    /// <inheritdoc />
+    public ErrorNumber ListXAttr(string path, out List<string> xattrs)
     {
-        uint                                                   _bytesPerCluster;
-        CultureInfo                                            _cultureInfo;
-        bool                                                   _debug;
-        Dictionary<string, Dictionary<string, DirectoryEntry>> _directoryCache;
-        ushort[]                                               _fat16;
-        uint[]                                                 _fat32;
-        ulong                                                  _fatStartSector;
-        ulong                                                  _firstClusterSector;
-        IMediaImage                                            _imagePlugin;
-        bool                                                   _littleEndian;
-        bool                                                   _mounted;
-        Dictionary<string, DirectoryEntry>                     _rootDirectory;
-        uint                                                   _sectorsPerCluster;
-        FileSystemInfo                                         _statfs;
-        Superblock                                             _superblock;
+        xattrs = null;
 
-        /// <inheritdoc />
-        public FileSystemType XmlFsType { get; private set; }
-        /// <inheritdoc />
-        public Encoding Encoding { get; private set; }
-        /// <inheritdoc />
-        public string Name => "FATX Filesystem Plugin";
-        /// <inheritdoc />
-        public Guid Id => new("ED27A721-4A17-4649-89FD-33633B46E228");
-        /// <inheritdoc />
-        public string Author => "Natalia Portillo";
-
-        /// <inheritdoc />
-        public ErrorNumber ListXAttr(string path, out List<string> xattrs)
-        {
-            xattrs = null;
-
-            return ErrorNumber.NotSupported;
-        }
-
-        /// <inheritdoc />
-        public ErrorNumber GetXattr(string path, string xattr, ref byte[] buf) => ErrorNumber.NotSupported;
-
-        /// <inheritdoc />
-        public ErrorNumber ReadLink(string path, out string dest)
-        {
-            dest = null;
-
-            return ErrorNumber.NotSupported;
-        }
-
-        /// <inheritdoc />
-        public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
-            new (string name, Type type, string description)[]
-                {};
-
-        /// <inheritdoc />
-        public Dictionary<string, string> Namespaces => null;
-
-        static Dictionary<string, string> GetDefaultOptions() => new()
-        {
-            {
-                "debug", false.ToString()
-            }
-        };
+        return ErrorNumber.NotSupported;
     }
+
+    /// <inheritdoc />
+    public ErrorNumber GetXattr(string path, string xattr, ref byte[] buf) => ErrorNumber.NotSupported;
+
+    /// <inheritdoc />
+    public ErrorNumber ReadLink(string path, out string dest)
+    {
+        dest = null;
+
+        return ErrorNumber.NotSupported;
+    }
+
+    /// <inheritdoc />
+    public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
+        new (string name, Type type, string description)[]
+            {};
+
+    /// <inheritdoc />
+    public Dictionary<string, string> Namespaces => null;
+
+    static Dictionary<string, string> GetDefaultOptions() => new()
+    {
+        {
+            "debug", false.ToString()
+        }
+    };
 }

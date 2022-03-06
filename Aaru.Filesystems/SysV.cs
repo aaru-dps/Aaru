@@ -42,1107 +42,1106 @@ using Schemas;
 
 // ReSharper disable NotAccessedField.Local
 
-namespace Aaru.Filesystems
+namespace Aaru.Filesystems;
+
+// Information from the Linux kernel
+/// <inheritdoc />
+/// <summary>Implements detection of the UNIX System V filesystem</summary>
+[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "UnusedMember.Local"),
+ SuppressMessage("ReSharper", "UnusedType.Local")]
+public sealed class SysVfs : IFilesystem
 {
-    // Information from the Linux kernel
+    const uint XENIX_MAGIC = 0x002B5544;
+    const uint XENIX_CIGAM = 0x44552B00;
+    const uint SYSV_MAGIC  = 0xFD187E20;
+    const uint SYSV_CIGAM  = 0x207E18FD;
+
+    // Rest have no magic.
+    // Per a Linux kernel, Coherent fs has following:
+    const string COH_FNAME = "noname";
+    const string COH_FPACK = "nopack";
+    const string COH_XXXXX = "xxxxx";
+    const string COH_XXXXS = "xxxxx ";
+    const string COH_XXXXN = "xxxxx\n";
+
+    // SCO AFS
+    const ushort SCO_NFREE = 0xFFFF;
+
+    // UNIX 7th Edition has nothing to detect it, so check for a valid filesystem is a must :(
+    const ushort V7_NICINOD = 100;
+    const ushort V7_NICFREE = 100;
+    const uint   V7_MAXSIZE = 0x00FFFFFF;
+
     /// <inheritdoc />
-    /// <summary>Implements detection of the UNIX System V filesystem</summary>
-    [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "UnusedMember.Local"),
-     SuppressMessage("ReSharper", "UnusedType.Local")]
-    public sealed class SysVfs : IFilesystem
+    public FileSystemType XmlFsType { get; private set; }
+    /// <inheritdoc />
+    public Encoding Encoding { get; private set; }
+    /// <inheritdoc />
+    public string Name => "UNIX System V filesystem";
+    /// <inheritdoc />
+    public Guid Id => new("9B8D016A-8561-400E-A12A-A198283C211D");
+    /// <inheritdoc />
+    public string Author => "Natalia Portillo";
+
+    /// <inheritdoc />
+    public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
-        const uint XENIX_MAGIC = 0x002B5544;
-        const uint XENIX_CIGAM = 0x44552B00;
-        const uint SYSV_MAGIC  = 0xFD187E20;
-        const uint SYSV_CIGAM  = 0x207E18FD;
+        if(2 + partition.Start >= partition.End)
+            return false;
 
-        // Rest have no magic.
-        // Per a Linux kernel, Coherent fs has following:
-        const string COH_FNAME = "noname";
-        const string COH_FPACK = "nopack";
-        const string COH_XXXXX = "xxxxx";
-        const string COH_XXXXS = "xxxxx ";
-        const string COH_XXXXN = "xxxxx\n";
+        byte sb_size_in_sectors;
 
-        // SCO AFS
-        const ushort SCO_NFREE = 0xFFFF;
+        if(imagePlugin.Info.SectorSize <=
+           0x400) // Check if underlying device sector size is smaller than SuperBlock size
+            sb_size_in_sectors = (byte)(0x400 / imagePlugin.Info.SectorSize);
+        else
+            sb_size_in_sectors = 1; // If not a single sector can store it
 
-        // UNIX 7th Edition has nothing to detect it, so check for a valid filesystem is a must :(
-        const ushort V7_NICINOD = 100;
-        const ushort V7_NICFREE = 100;
-        const uint   V7_MAXSIZE = 0x00FFFFFF;
+        if(partition.End <=
+           partition.Start + (4 * (ulong)sb_size_in_sectors) +
+           sb_size_in_sectors) // Device must be bigger than SB location + SB size + offset
+            return false;
 
-        /// <inheritdoc />
-        public FileSystemType XmlFsType { get; private set; }
-        /// <inheritdoc />
-        public Encoding Encoding { get; private set; }
-        /// <inheritdoc />
-        public string Name => "UNIX System V filesystem";
-        /// <inheritdoc />
-        public Guid Id => new("9B8D016A-8561-400E-A12A-A198283C211D");
-        /// <inheritdoc />
-        public string Author => "Natalia Portillo";
+        // Sectors in a cylinder
+        int spc = (int)(imagePlugin.Info.Heads * imagePlugin.Info.SectorsPerTrack);
 
-        /// <inheritdoc />
-        public bool Identify(IMediaImage imagePlugin, Partition partition)
+        // Superblock can start on 0x000, 0x200, 0x600 and 0x800, not aligned, so we assume 16 (128 bytes/sector) sectors as a safe value
+        int[] locations =
         {
-            if(2 + partition.Start >= partition.End)
-                return false;
+            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
 
-            byte sb_size_in_sectors;
+            // Superblock can also skip one cylinder (for boot)
+            spc
+        };
 
-            if(imagePlugin.Info.SectorSize <=
-               0x400) // Check if underlying device sector size is smaller than SuperBlock size
-                sb_size_in_sectors = (byte)(0x400 / imagePlugin.Info.SectorSize);
-            else
-                sb_size_in_sectors = 1; // If not a single sector can store it
+        foreach(int i in locations.TakeWhile(i => (ulong)i + partition.Start + sb_size_in_sectors <
+                                                  imagePlugin.Info.Sectors))
+        {
+            ErrorNumber errno =
+                imagePlugin.ReadSectors((ulong)i + partition.Start, sb_size_in_sectors, out byte[] sb_sector);
 
-            if(partition.End <=
-               partition.Start + (4 * (ulong)sb_size_in_sectors) +
-               sb_size_in_sectors) // Device must be bigger than SB location + SB size + offset
-                return false;
+            if(errno            != ErrorNumber.NoError ||
+               sb_sector.Length < 0x400)
+                continue;
 
-            // Sectors in a cylinder
-            int spc = (int)(imagePlugin.Info.Heads * imagePlugin.Info.SectorsPerTrack);
+            uint magic = BitConverter.ToUInt32(sb_sector, 0x3F8);
 
-            // Superblock can start on 0x000, 0x200, 0x600 and 0x800, not aligned, so we assume 16 (128 bytes/sector) sectors as a safe value
-            int[] locations =
+            if(magic == XENIX_MAGIC ||
+               magic == XENIX_CIGAM ||
+               magic == SYSV_MAGIC  ||
+               magic == SYSV_CIGAM)
+                return true;
+
+            magic = BitConverter.ToUInt32(sb_sector, 0x1F8); // System V magic location
+
+            if(magic == SYSV_MAGIC ||
+               magic == SYSV_CIGAM)
+                return true;
+
+            magic = BitConverter.ToUInt32(sb_sector, 0x1F0); // XENIX 3 magic location
+
+            if(magic == XENIX_MAGIC ||
+               magic == XENIX_CIGAM)
+                return true;
+
+            byte[] coherent_string = new byte[6];
+            Array.Copy(sb_sector, 0x1E4, coherent_string, 0, 6); // Coherent UNIX s_fname location
+            string s_fname = StringHandlers.CToString(coherent_string);
+            Array.Copy(sb_sector, 0x1EA, coherent_string, 0, 6); // Coherent UNIX s_fpack location
+            string s_fpack = StringHandlers.CToString(coherent_string);
+
+            if((s_fname == COH_FNAME && s_fpack == COH_FPACK) ||
+               (s_fname == COH_XXXXX && s_fpack == COH_XXXXX) ||
+               (s_fname == COH_XXXXS && s_fpack == COH_XXXXN))
+                return true;
+
+            // Now try to identify 7th edition
+            uint   s_fsize  = BitConverter.ToUInt32(sb_sector, 0x002);
+            ushort s_nfree  = BitConverter.ToUInt16(sb_sector, 0x006);
+            ushort s_ninode = BitConverter.ToUInt16(sb_sector, 0x0D0);
+
+            if(s_fsize  <= 0          ||
+               s_fsize  >= 0xFFFFFFFF ||
+               s_nfree  <= 0          ||
+               s_nfree  >= 0xFFFF     ||
+               s_ninode <= 0          ||
+               s_ninode >= 0xFFFF)
+                continue;
+
+            if((s_fsize  & 0xFF) == 0x00 &&
+               (s_nfree  & 0xFF) == 0x00 &&
+               (s_ninode & 0xFF) == 0x00)
             {
-                0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
+                // Byteswap
+                s_fsize = ((s_fsize & 0xFF)       << 24) + ((s_fsize & 0xFF00) << 8) + ((s_fsize & 0xFF0000) >> 8) +
+                          ((s_fsize & 0xFF000000) >> 24);
 
-                // Superblock can also skip one cylinder (for boot)
-                spc
-            };
-
-            foreach(int i in locations.TakeWhile(i => (ulong)i + partition.Start + sb_size_in_sectors <
-                                                      imagePlugin.Info.Sectors))
-            {
-                ErrorNumber errno =
-                    imagePlugin.ReadSectors((ulong)i + partition.Start, sb_size_in_sectors, out byte[] sb_sector);
-
-                if(errno            != ErrorNumber.NoError ||
-                   sb_sector.Length < 0x400)
-                    continue;
-
-                uint magic = BitConverter.ToUInt32(sb_sector, 0x3F8);
-
-                if(magic == XENIX_MAGIC ||
-                   magic == XENIX_CIGAM ||
-                   magic == SYSV_MAGIC  ||
-                   magic == SYSV_CIGAM)
-                    return true;
-
-                magic = BitConverter.ToUInt32(sb_sector, 0x1F8); // System V magic location
-
-                if(magic == SYSV_MAGIC ||
-                   magic == SYSV_CIGAM)
-                    return true;
-
-                magic = BitConverter.ToUInt32(sb_sector, 0x1F0); // XENIX 3 magic location
-
-                if(magic == XENIX_MAGIC ||
-                   magic == XENIX_CIGAM)
-                    return true;
-
-                byte[] coherent_string = new byte[6];
-                Array.Copy(sb_sector, 0x1E4, coherent_string, 0, 6); // Coherent UNIX s_fname location
-                string s_fname = StringHandlers.CToString(coherent_string);
-                Array.Copy(sb_sector, 0x1EA, coherent_string, 0, 6); // Coherent UNIX s_fpack location
-                string s_fpack = StringHandlers.CToString(coherent_string);
-
-                if((s_fname == COH_FNAME && s_fpack == COH_FPACK) ||
-                   (s_fname == COH_XXXXX && s_fpack == COH_XXXXX) ||
-                   (s_fname == COH_XXXXS && s_fpack == COH_XXXXN))
-                    return true;
-
-                // Now try to identify 7th edition
-                uint   s_fsize  = BitConverter.ToUInt32(sb_sector, 0x002);
-                ushort s_nfree  = BitConverter.ToUInt16(sb_sector, 0x006);
-                ushort s_ninode = BitConverter.ToUInt16(sb_sector, 0x0D0);
-
-                if(s_fsize  <= 0          ||
-                   s_fsize  >= 0xFFFFFFFF ||
-                   s_nfree  <= 0          ||
-                   s_nfree  >= 0xFFFF     ||
-                   s_ninode <= 0          ||
-                   s_ninode >= 0xFFFF)
-                    continue;
-
-                if((s_fsize  & 0xFF) == 0x00 &&
-                   (s_nfree  & 0xFF) == 0x00 &&
-                   (s_ninode & 0xFF) == 0x00)
-                {
-                    // Byteswap
-                    s_fsize = ((s_fsize & 0xFF)       << 24) + ((s_fsize & 0xFF00) << 8) + ((s_fsize & 0xFF0000) >> 8) +
-                              ((s_fsize & 0xFF000000) >> 24);
-
-                    s_nfree  = (ushort)(s_nfree  >> 8);
-                    s_ninode = (ushort)(s_ninode >> 8);
-                }
-
-                if((s_fsize  & 0xFF000000) != 0x00 ||
-                   (s_nfree  & 0xFF00)     != 0x00 ||
-                   (s_ninode & 0xFF00)     != 0x00)
-                    continue;
-
-                if(s_fsize  >= V7_MAXSIZE ||
-                   s_nfree  >= V7_NICFREE ||
-                   s_ninode >= V7_NICINOD)
-                    continue;
-
-                if(s_fsize * 1024 == (partition.End - partition.Start) * imagePlugin.Info.SectorSize ||
-                   s_fsize * 512  == (partition.End - partition.Start) * imagePlugin.Info.SectorSize)
-                    return true;
+                s_nfree  = (ushort)(s_nfree  >> 8);
+                s_ninode = (ushort)(s_ninode >> 8);
             }
 
-            return false;
+            if((s_fsize  & 0xFF000000) != 0x00 ||
+               (s_nfree  & 0xFF00)     != 0x00 ||
+               (s_ninode & 0xFF00)     != 0x00)
+                continue;
+
+            if(s_fsize  >= V7_MAXSIZE ||
+               s_nfree  >= V7_NICFREE ||
+               s_ninode >= V7_NICINOD)
+                continue;
+
+            if(s_fsize * 1024 == (partition.End - partition.Start) * imagePlugin.Info.SectorSize ||
+               s_fsize * 512  == (partition.End - partition.Start) * imagePlugin.Info.SectorSize)
+                return true;
         }
 
-        /// <inheritdoc />
-        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                   Encoding encoding)
+        return false;
+    }
+
+    /// <inheritdoc />
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
+                               Encoding encoding)
+    {
+        Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
+        information = "";
+
+        var    sb        = new StringBuilder();
+        bool   bigEndian = false; // Start in little endian until we know what are we handling here
+        int    start     = 0;
+        bool   xenix     = false;
+        bool   sysv      = false;
+        bool   sys7th    = false;
+        bool   coherent  = false;
+        bool   xenix3    = false;
+        byte[] sb_sector;
+        byte   sb_size_in_sectors;
+        int    offset = 0;
+
+        if(imagePlugin.Info.SectorSize <=
+           0x400) // Check if underlying device sector size is smaller than SuperBlock size
+            sb_size_in_sectors = (byte)(0x400 / imagePlugin.Info.SectorSize);
+        else
+            sb_size_in_sectors = 1; // If not a single sector can store it
+
+        // Sectors in a cylinder
+        int spc = (int)(imagePlugin.Info.Heads * imagePlugin.Info.SectorsPerTrack);
+
+        // Superblock can start on 0x000, 0x200, 0x600 and 0x800, not aligned, so we assume 16 (128 bytes/sector) sectors as a safe value
+        int[] locations =
         {
-            Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
-            information = "";
+            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
 
-            var    sb        = new StringBuilder();
-            bool   bigEndian = false; // Start in little endian until we know what are we handling here
-            int    start     = 0;
-            bool   xenix     = false;
-            bool   sysv      = false;
-            bool   sys7th    = false;
-            bool   coherent  = false;
-            bool   xenix3    = false;
-            byte[] sb_sector;
-            byte   sb_size_in_sectors;
-            int    offset = 0;
+            // Superblock can also skip one cylinder (for boot)
+            spc
+        };
 
-            if(imagePlugin.Info.SectorSize <=
-               0x400) // Check if underlying device sector size is smaller than SuperBlock size
-                sb_size_in_sectors = (byte)(0x400 / imagePlugin.Info.SectorSize);
-            else
-                sb_size_in_sectors = 1; // If not a single sector can store it
+        ErrorNumber errno;
 
-            // Sectors in a cylinder
-            int spc = (int)(imagePlugin.Info.Heads * imagePlugin.Info.SectorsPerTrack);
+        foreach(int i in locations)
+        {
+            errno = imagePlugin.ReadSectors((ulong)i + partition.Start, sb_size_in_sectors, out sb_sector);
 
-            // Superblock can start on 0x000, 0x200, 0x600 and 0x800, not aligned, so we assume 16 (128 bytes/sector) sectors as a safe value
-            int[] locations =
+            if(errno != ErrorNumber.NoError)
+                continue;
+
+            uint magic = BitConverter.ToUInt32(sb_sector, 0x3F8);
+
+            if(magic == XENIX_MAGIC ||
+               magic == SYSV_MAGIC)
             {
-                0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
-
-                // Superblock can also skip one cylinder (for boot)
-                spc
-            };
-
-            ErrorNumber errno;
-
-            foreach(int i in locations)
-            {
-                errno = imagePlugin.ReadSectors((ulong)i + partition.Start, sb_size_in_sectors, out sb_sector);
-
-                if(errno != ErrorNumber.NoError)
-                    continue;
-
-                uint magic = BitConverter.ToUInt32(sb_sector, 0x3F8);
-
-                if(magic == XENIX_MAGIC ||
-                   magic == SYSV_MAGIC)
-                {
-                    if(magic == SYSV_MAGIC)
-                    {
-                        sysv   = true;
-                        offset = 0x200;
-                    }
-                    else
-                        xenix = true;
-
-                    start = i;
-
-                    break;
-                }
-
-                if(magic == XENIX_CIGAM ||
-                   magic == SYSV_CIGAM)
-                {
-                    bigEndian = true; // Big endian
-
-                    if(magic == SYSV_CIGAM)
-                    {
-                        sysv   = true;
-                        offset = 0x200;
-                    }
-                    else
-                        xenix = true;
-
-                    start = i;
-
-                    break;
-                }
-
-                magic = BitConverter.ToUInt32(sb_sector, 0x1F0); // XENIX 3 magic location
-
-                if(magic == XENIX_MAGIC)
-                {
-                    xenix3 = true;
-                    start  = i;
-
-                    break;
-                }
-
-                if(magic == XENIX_CIGAM)
-                {
-                    bigEndian = true; // Big endian
-                    xenix3    = true;
-                    start     = i;
-
-                    break;
-                }
-
-                magic = BitConverter.ToUInt32(sb_sector, 0x1F8); // XENIX magic location
-
                 if(magic == SYSV_MAGIC)
                 {
-                    sysv  = true;
-                    start = i;
-
-                    break;
+                    sysv   = true;
+                    offset = 0x200;
                 }
+                else
+                    xenix = true;
+
+                start = i;
+
+                break;
+            }
+
+            if(magic == XENIX_CIGAM ||
+               magic == SYSV_CIGAM)
+            {
+                bigEndian = true; // Big endian
 
                 if(magic == SYSV_CIGAM)
                 {
-                    bigEndian = true; // Big endian
-                    sysv      = true;
-                    start     = i;
-
-                    break;
+                    sysv   = true;
+                    offset = 0x200;
                 }
+                else
+                    xenix = true;
 
-                byte[] coherent_string = new byte[6];
-                Array.Copy(sb_sector, 0x1E4, coherent_string, 0, 6); // Coherent UNIX s_fname location
-                string s_fname = StringHandlers.CToString(coherent_string, Encoding);
-                Array.Copy(sb_sector, 0x1EA, coherent_string, 0, 6); // Coherent UNIX s_fpack location
-                string s_fpack = StringHandlers.CToString(coherent_string, Encoding);
+                start = i;
 
-                if((s_fname == COH_FNAME && s_fpack == COH_FPACK) ||
-                   (s_fname == COH_XXXXX && s_fpack == COH_XXXXX) ||
-                   (s_fname == COH_XXXXS && s_fpack == COH_XXXXN))
-                {
-                    coherent = true;
-                    start    = i;
+                break;
+            }
 
-                    break;
-                }
+            magic = BitConverter.ToUInt32(sb_sector, 0x1F0); // XENIX 3 magic location
 
-                // Now try to identify 7th edition
-                uint   s_fsize  = BitConverter.ToUInt32(sb_sector, 0x002);
-                ushort s_nfree  = BitConverter.ToUInt16(sb_sector, 0x006);
-                ushort s_ninode = BitConverter.ToUInt16(sb_sector, 0x0D0);
-
-                if(s_fsize  <= 0          ||
-                   s_fsize  >= 0xFFFFFFFF ||
-                   s_nfree  <= 0          ||
-                   s_nfree  >= 0xFFFF     ||
-                   s_ninode <= 0          ||
-                   s_ninode >= 0xFFFF)
-                    continue;
-
-                if((s_fsize  & 0xFF) == 0x00 &&
-                   (s_nfree  & 0xFF) == 0x00 &&
-                   (s_ninode & 0xFF) == 0x00)
-                {
-                    // Byteswap
-                    s_fsize = ((s_fsize & 0xFF)       << 24) + ((s_fsize & 0xFF00) << 8) + ((s_fsize & 0xFF0000) >> 8) +
-                              ((s_fsize & 0xFF000000) >> 24);
-
-                    s_nfree  = (ushort)(s_nfree  >> 8);
-                    s_ninode = (ushort)(s_ninode >> 8);
-                }
-
-                if((s_fsize  & 0xFF000000) != 0x00 ||
-                   (s_nfree  & 0xFF00)     != 0x00 ||
-                   (s_ninode & 0xFF00)     != 0x00)
-                    continue;
-
-                if(s_fsize  >= V7_MAXSIZE ||
-                   s_nfree  >= V7_NICFREE ||
-                   s_ninode >= V7_NICINOD)
-                    continue;
-
-                if(s_fsize * 1024 != (partition.End - partition.Start) * imagePlugin.Info.SectorSize &&
-                   s_fsize * 512  != (partition.End - partition.Start) * imagePlugin.Info.SectorSize)
-                    continue;
-
-                sys7th = true;
+            if(magic == XENIX_MAGIC)
+            {
+                xenix3 = true;
                 start  = i;
 
                 break;
             }
 
-            if(!sys7th   &&
-               !sysv     &&
-               !coherent &&
-               !xenix    &&
-               !xenix3)
+            if(magic == XENIX_CIGAM)
+            {
+                bigEndian = true; // Big endian
+                xenix3    = true;
+                start     = i;
+
+                break;
+            }
+
+            magic = BitConverter.ToUInt32(sb_sector, 0x1F8); // XENIX magic location
+
+            if(magic == SYSV_MAGIC)
+            {
+                sysv  = true;
+                start = i;
+
+                break;
+            }
+
+            if(magic == SYSV_CIGAM)
+            {
+                bigEndian = true; // Big endian
+                sysv      = true;
+                start     = i;
+
+                break;
+            }
+
+            byte[] coherent_string = new byte[6];
+            Array.Copy(sb_sector, 0x1E4, coherent_string, 0, 6); // Coherent UNIX s_fname location
+            string s_fname = StringHandlers.CToString(coherent_string, Encoding);
+            Array.Copy(sb_sector, 0x1EA, coherent_string, 0, 6); // Coherent UNIX s_fpack location
+            string s_fpack = StringHandlers.CToString(coherent_string, Encoding);
+
+            if((s_fname == COH_FNAME && s_fpack == COH_FPACK) ||
+               (s_fname == COH_XXXXX && s_fpack == COH_XXXXX) ||
+               (s_fname == COH_XXXXS && s_fpack == COH_XXXXN))
+            {
+                coherent = true;
+                start    = i;
+
+                break;
+            }
+
+            // Now try to identify 7th edition
+            uint   s_fsize  = BitConverter.ToUInt32(sb_sector, 0x002);
+            ushort s_nfree  = BitConverter.ToUInt16(sb_sector, 0x006);
+            ushort s_ninode = BitConverter.ToUInt16(sb_sector, 0x0D0);
+
+            if(s_fsize  <= 0          ||
+               s_fsize  >= 0xFFFFFFFF ||
+               s_nfree  <= 0          ||
+               s_nfree  >= 0xFFFF     ||
+               s_ninode <= 0          ||
+               s_ninode >= 0xFFFF)
+                continue;
+
+            if((s_fsize  & 0xFF) == 0x00 &&
+               (s_nfree  & 0xFF) == 0x00 &&
+               (s_ninode & 0xFF) == 0x00)
+            {
+                // Byteswap
+                s_fsize = ((s_fsize & 0xFF)       << 24) + ((s_fsize & 0xFF00) << 8) + ((s_fsize & 0xFF0000) >> 8) +
+                          ((s_fsize & 0xFF000000) >> 24);
+
+                s_nfree  = (ushort)(s_nfree  >> 8);
+                s_ninode = (ushort)(s_ninode >> 8);
+            }
+
+            if((s_fsize  & 0xFF000000) != 0x00 ||
+               (s_nfree  & 0xFF00)     != 0x00 ||
+               (s_ninode & 0xFF00)     != 0x00)
+                continue;
+
+            if(s_fsize  >= V7_MAXSIZE ||
+               s_nfree  >= V7_NICFREE ||
+               s_ninode >= V7_NICINOD)
+                continue;
+
+            if(s_fsize * 1024 != (partition.End - partition.Start) * imagePlugin.Info.SectorSize &&
+               s_fsize * 512  != (partition.End - partition.Start) * imagePlugin.Info.SectorSize)
+                continue;
+
+            sys7th = true;
+            start  = i;
+
+            break;
+        }
+
+        if(!sys7th   &&
+           !sysv     &&
+           !coherent &&
+           !xenix    &&
+           !xenix3)
+            return;
+
+        XmlFsType = new FileSystemType();
+
+        if(xenix || xenix3)
+        {
+            byte[] xenix_strings = new byte[6];
+            var    xnx_sb        = new XenixSuperBlock();
+            errno = imagePlugin.ReadSectors((ulong)start + partition.Start, sb_size_in_sectors, out sb_sector);
+
+            if(errno != ErrorNumber.NoError)
                 return;
 
-            XmlFsType = new FileSystemType();
-
-            if(xenix || xenix3)
+            if(xenix3)
             {
-                byte[] xenix_strings = new byte[6];
-                var    xnx_sb        = new XenixSuperBlock();
-                errno = imagePlugin.ReadSectors((ulong)start + partition.Start, sb_size_in_sectors, out sb_sector);
-
-                if(errno != ErrorNumber.NoError)
-                    return;
-
-                if(xenix3)
-                {
-                    xnx_sb.s_isize   = BitConverter.ToUInt16(sb_sector, 0x000);
-                    xnx_sb.s_fsize   = BitConverter.ToUInt32(sb_sector, 0x002);
-                    xnx_sb.s_nfree   = BitConverter.ToUInt16(sb_sector, 0x006);
-                    xnx_sb.s_ninode  = BitConverter.ToUInt16(sb_sector, 0x0D0);
-                    xnx_sb.s_flock   = sb_sector[0x19A];
-                    xnx_sb.s_ilock   = sb_sector[0x19B];
-                    xnx_sb.s_fmod    = sb_sector[0x19C];
-                    xnx_sb.s_ronly   = sb_sector[0x19D];
-                    xnx_sb.s_time    = BitConverter.ToInt32(sb_sector, 0x19E);
-                    xnx_sb.s_tfree   = BitConverter.ToUInt32(sb_sector, 0x1A2);
-                    xnx_sb.s_tinode  = BitConverter.ToUInt16(sb_sector, 0x1A6);
-                    xnx_sb.s_cylblks = BitConverter.ToUInt16(sb_sector, 0x1A8);
-                    xnx_sb.s_gapblks = BitConverter.ToUInt16(sb_sector, 0x1AA);
-                    xnx_sb.s_dinfo0  = BitConverter.ToUInt16(sb_sector, 0x1AC);
-                    xnx_sb.s_dinfo1  = BitConverter.ToUInt16(sb_sector, 0x1AE);
-                    Array.Copy(sb_sector, 0x1B0, xenix_strings, 0, 6);
-                    xnx_sb.s_fname = StringHandlers.CToString(xenix_strings, Encoding);
-                    Array.Copy(sb_sector, 0x1B6, xenix_strings, 0, 6);
-                    xnx_sb.s_fpack = StringHandlers.CToString(xenix_strings, Encoding);
-                    xnx_sb.s_clean = sb_sector[0x1BC];
-                    xnx_sb.s_magic = BitConverter.ToUInt32(sb_sector, 0x1F0);
-                    xnx_sb.s_type  = BitConverter.ToUInt32(sb_sector, 0x1F4);
-                }
-                else
-                {
-                    xnx_sb.s_isize   = BitConverter.ToUInt16(sb_sector, 0x000);
-                    xnx_sb.s_fsize   = BitConverter.ToUInt32(sb_sector, 0x002);
-                    xnx_sb.s_nfree   = BitConverter.ToUInt16(sb_sector, 0x006);
-                    xnx_sb.s_ninode  = BitConverter.ToUInt16(sb_sector, 0x198);
-                    xnx_sb.s_flock   = sb_sector[0x262];
-                    xnx_sb.s_ilock   = sb_sector[0x263];
-                    xnx_sb.s_fmod    = sb_sector[0x264];
-                    xnx_sb.s_ronly   = sb_sector[0x265];
-                    xnx_sb.s_time    = BitConverter.ToInt32(sb_sector, 0x266);
-                    xnx_sb.s_tfree   = BitConverter.ToUInt32(sb_sector, 0x26A);
-                    xnx_sb.s_tinode  = BitConverter.ToUInt16(sb_sector, 0x26E);
-                    xnx_sb.s_cylblks = BitConverter.ToUInt16(sb_sector, 0x270);
-                    xnx_sb.s_gapblks = BitConverter.ToUInt16(sb_sector, 0x272);
-                    xnx_sb.s_dinfo0  = BitConverter.ToUInt16(sb_sector, 0x274);
-                    xnx_sb.s_dinfo1  = BitConverter.ToUInt16(sb_sector, 0x276);
-                    Array.Copy(sb_sector, 0x278, xenix_strings, 0, 6);
-                    xnx_sb.s_fname = StringHandlers.CToString(xenix_strings, Encoding);
-                    Array.Copy(sb_sector, 0x27E, xenix_strings, 0, 6);
-                    xnx_sb.s_fpack = StringHandlers.CToString(xenix_strings, Encoding);
-                    xnx_sb.s_clean = sb_sector[0x284];
-                    xnx_sb.s_magic = BitConverter.ToUInt32(sb_sector, 0x3F8);
-                    xnx_sb.s_type  = BitConverter.ToUInt32(sb_sector, 0x3FC);
-                }
-
-                if(bigEndian)
-                {
-                    xnx_sb.s_isize   = Swapping.Swap(xnx_sb.s_isize);
-                    xnx_sb.s_fsize   = Swapping.Swap(xnx_sb.s_fsize);
-                    xnx_sb.s_nfree   = Swapping.Swap(xnx_sb.s_nfree);
-                    xnx_sb.s_ninode  = Swapping.Swap(xnx_sb.s_ninode);
-                    xnx_sb.s_time    = Swapping.Swap(xnx_sb.s_time);
-                    xnx_sb.s_tfree   = Swapping.Swap(xnx_sb.s_tfree);
-                    xnx_sb.s_tinode  = Swapping.Swap(xnx_sb.s_tinode);
-                    xnx_sb.s_cylblks = Swapping.Swap(xnx_sb.s_cylblks);
-                    xnx_sb.s_gapblks = Swapping.Swap(xnx_sb.s_gapblks);
-                    xnx_sb.s_dinfo0  = Swapping.Swap(xnx_sb.s_dinfo0);
-                    xnx_sb.s_dinfo1  = Swapping.Swap(xnx_sb.s_dinfo1);
-                    xnx_sb.s_magic   = Swapping.Swap(xnx_sb.s_magic);
-                    xnx_sb.s_type    = Swapping.Swap(xnx_sb.s_type);
-                }
-
-                uint bs = 512;
-                sb.AppendLine("XENIX filesystem");
-                XmlFsType.Type = "XENIX fs";
-
-                switch(xnx_sb.s_type)
-                {
-                    case 1:
-                        sb.AppendLine("512 bytes per block");
-                        XmlFsType.ClusterSize = 512;
-
-                        break;
-                    case 2:
-                        sb.AppendLine("1024 bytes per block");
-                        bs                    = 1024;
-                        XmlFsType.ClusterSize = 1024;
-
-                        break;
-                    case 3:
-                        sb.AppendLine("2048 bytes per block");
-                        bs                    = 2048;
-                        XmlFsType.ClusterSize = 2048;
-
-                        break;
-                    default:
-                        sb.AppendFormat("Unknown s_type value: 0x{0:X8}", xnx_sb.s_type).AppendLine();
-
-                        break;
-                }
-
-                if(imagePlugin.Info.SectorSize == 2336 ||
-                   imagePlugin.Info.SectorSize == 2352 ||
-                   imagePlugin.Info.SectorSize == 2448)
-                {
-                    if(bs != 2048)
-                        sb.
-                            AppendFormat("WARNING: Filesystem indicates {0} bytes/block while device indicates {1} bytes/sector",
-                                         bs, 2048).AppendLine();
-                }
-                else
-                {
-                    if(bs != imagePlugin.Info.SectorSize)
-                        sb.
-                            AppendFormat("WARNING: Filesystem indicates {0} bytes/block while device indicates {1} bytes/sector",
-                                         bs, imagePlugin.Info.SectorSize).AppendLine();
-                }
-
-                sb.AppendFormat("{0} zones on volume ({1} bytes)", xnx_sb.s_fsize, xnx_sb.s_fsize * bs).AppendLine();
-
-                sb.AppendFormat("{0} free zones on volume ({1} bytes)", xnx_sb.s_tfree, xnx_sb.s_tfree * bs).
-                   AppendLine();
-
-                sb.AppendFormat("{0} free blocks on list ({1} bytes)", xnx_sb.s_nfree, xnx_sb.s_nfree * bs).
-                   AppendLine();
-
-                sb.AppendFormat("{0} blocks per cylinder ({1} bytes)", xnx_sb.s_cylblks, xnx_sb.s_cylblks * bs).
-                   AppendLine();
-
-                sb.AppendFormat("{0} blocks per gap ({1} bytes)", xnx_sb.s_gapblks, xnx_sb.s_gapblks * bs).AppendLine();
-                sb.AppendFormat("First data zone: {0}", xnx_sb.s_isize).AppendLine();
-                sb.AppendFormat("{0} free inodes on volume", xnx_sb.s_tinode).AppendLine();
-                sb.AppendFormat("{0} free inodes on list", xnx_sb.s_ninode).AppendLine();
-
-                if(xnx_sb.s_flock > 0)
-                    sb.AppendLine("Free block list is locked");
-
-                if(xnx_sb.s_ilock > 0)
-                    sb.AppendLine("inode cache is locked");
-
-                if(xnx_sb.s_fmod > 0)
-                    sb.AppendLine("Superblock is being modified");
-
-                if(xnx_sb.s_ronly > 0)
-                    sb.AppendLine("Volume is mounted read-only");
-
-                sb.AppendFormat("Superblock last updated on {0}", DateHandlers.UnixToDateTime(xnx_sb.s_time)).
-                   AppendLine();
-
-                if(xnx_sb.s_time != 0)
-                {
-                    XmlFsType.ModificationDate          = DateHandlers.UnixToDateTime(xnx_sb.s_time);
-                    XmlFsType.ModificationDateSpecified = true;
-                }
-
-                sb.AppendFormat("Volume name: {0}", xnx_sb.s_fname).AppendLine();
-                XmlFsType.VolumeName = xnx_sb.s_fname;
-                sb.AppendFormat("Pack name: {0}", xnx_sb.s_fpack).AppendLine();
-
-                if(xnx_sb.s_clean == 0x46)
-                    sb.AppendLine("Volume is clean");
-                else
-                {
-                    sb.AppendLine("Volume is dirty");
-                    XmlFsType.Dirty = true;
-                }
+                xnx_sb.s_isize   = BitConverter.ToUInt16(sb_sector, 0x000);
+                xnx_sb.s_fsize   = BitConverter.ToUInt32(sb_sector, 0x002);
+                xnx_sb.s_nfree   = BitConverter.ToUInt16(sb_sector, 0x006);
+                xnx_sb.s_ninode  = BitConverter.ToUInt16(sb_sector, 0x0D0);
+                xnx_sb.s_flock   = sb_sector[0x19A];
+                xnx_sb.s_ilock   = sb_sector[0x19B];
+                xnx_sb.s_fmod    = sb_sector[0x19C];
+                xnx_sb.s_ronly   = sb_sector[0x19D];
+                xnx_sb.s_time    = BitConverter.ToInt32(sb_sector, 0x19E);
+                xnx_sb.s_tfree   = BitConverter.ToUInt32(sb_sector, 0x1A2);
+                xnx_sb.s_tinode  = BitConverter.ToUInt16(sb_sector, 0x1A6);
+                xnx_sb.s_cylblks = BitConverter.ToUInt16(sb_sector, 0x1A8);
+                xnx_sb.s_gapblks = BitConverter.ToUInt16(sb_sector, 0x1AA);
+                xnx_sb.s_dinfo0  = BitConverter.ToUInt16(sb_sector, 0x1AC);
+                xnx_sb.s_dinfo1  = BitConverter.ToUInt16(sb_sector, 0x1AE);
+                Array.Copy(sb_sector, 0x1B0, xenix_strings, 0, 6);
+                xnx_sb.s_fname = StringHandlers.CToString(xenix_strings, Encoding);
+                Array.Copy(sb_sector, 0x1B6, xenix_strings, 0, 6);
+                xnx_sb.s_fpack = StringHandlers.CToString(xenix_strings, Encoding);
+                xnx_sb.s_clean = sb_sector[0x1BC];
+                xnx_sb.s_magic = BitConverter.ToUInt32(sb_sector, 0x1F0);
+                xnx_sb.s_type  = BitConverter.ToUInt32(sb_sector, 0x1F4);
+            }
+            else
+            {
+                xnx_sb.s_isize   = BitConverter.ToUInt16(sb_sector, 0x000);
+                xnx_sb.s_fsize   = BitConverter.ToUInt32(sb_sector, 0x002);
+                xnx_sb.s_nfree   = BitConverter.ToUInt16(sb_sector, 0x006);
+                xnx_sb.s_ninode  = BitConverter.ToUInt16(sb_sector, 0x198);
+                xnx_sb.s_flock   = sb_sector[0x262];
+                xnx_sb.s_ilock   = sb_sector[0x263];
+                xnx_sb.s_fmod    = sb_sector[0x264];
+                xnx_sb.s_ronly   = sb_sector[0x265];
+                xnx_sb.s_time    = BitConverter.ToInt32(sb_sector, 0x266);
+                xnx_sb.s_tfree   = BitConverter.ToUInt32(sb_sector, 0x26A);
+                xnx_sb.s_tinode  = BitConverter.ToUInt16(sb_sector, 0x26E);
+                xnx_sb.s_cylblks = BitConverter.ToUInt16(sb_sector, 0x270);
+                xnx_sb.s_gapblks = BitConverter.ToUInt16(sb_sector, 0x272);
+                xnx_sb.s_dinfo0  = BitConverter.ToUInt16(sb_sector, 0x274);
+                xnx_sb.s_dinfo1  = BitConverter.ToUInt16(sb_sector, 0x276);
+                Array.Copy(sb_sector, 0x278, xenix_strings, 0, 6);
+                xnx_sb.s_fname = StringHandlers.CToString(xenix_strings, Encoding);
+                Array.Copy(sb_sector, 0x27E, xenix_strings, 0, 6);
+                xnx_sb.s_fpack = StringHandlers.CToString(xenix_strings, Encoding);
+                xnx_sb.s_clean = sb_sector[0x284];
+                xnx_sb.s_magic = BitConverter.ToUInt32(sb_sector, 0x3F8);
+                xnx_sb.s_type  = BitConverter.ToUInt32(sb_sector, 0x3FC);
             }
 
-            if(sysv)
+            if(bigEndian)
             {
-                errno = imagePlugin.ReadSectors((ulong)start + partition.Start, sb_size_in_sectors, out sb_sector);
-
-                if(errno != ErrorNumber.NoError)
-                    return;
-
-                byte[] sysv_strings = new byte[6];
-
-                var sysv_sb = new SystemVRelease4SuperBlock
-                {
-                    s_type = BitConverter.ToUInt32(sb_sector, 0x1FC + offset)
-                };
-
-                if(bigEndian)
-                    sysv_sb.s_type = Swapping.Swap(sysv_sb.s_type);
-
-                uint bs = 512;
-
-                switch(sysv_sb.s_type)
-                {
-                    case 1:
-                        XmlFsType.ClusterSize = 512;
-
-                        break;
-                    case 2:
-                        bs                    = 1024;
-                        XmlFsType.ClusterSize = 1024;
-
-                        break;
-                    case 3:
-                        bs                    = 2048;
-                        XmlFsType.ClusterSize = 2048;
-
-                        break;
-                    default:
-                        sb.AppendFormat("Unknown s_type value: 0x{0:X8}", sysv_sb.s_type).AppendLine();
-
-                        break;
-                }
-
-                sysv_sb.s_fsize = BitConverter.ToUInt32(sb_sector, 0x002 + offset);
-
-                if(bigEndian)
-                    sysv_sb.s_fsize = Swapping.Swap(sysv_sb.s_fsize);
-
-                bool sysvr4 = sysv_sb.s_fsize * bs <= 0 || sysv_sb.s_fsize * bs != partition.Size;
-
-                if(sysvr4)
-                {
-                    sysv_sb.s_isize   = BitConverter.ToUInt16(sb_sector, 0x000 + offset);
-                    sysv_sb.s_state   = BitConverter.ToUInt32(sb_sector, 0x1F4 + offset);
-                    sysv_sb.s_magic   = BitConverter.ToUInt32(sb_sector, 0x1F8 + offset);
-                    sysv_sb.s_fsize   = BitConverter.ToUInt32(sb_sector, 0x004 + offset);
-                    sysv_sb.s_nfree   = BitConverter.ToUInt16(sb_sector, 0x008 + offset);
-                    sysv_sb.s_ninode  = BitConverter.ToUInt16(sb_sector, 0x0D4 + offset);
-                    sysv_sb.s_flock   = sb_sector[0x1A0                        + offset];
-                    sysv_sb.s_ilock   = sb_sector[0x1A1                        + offset];
-                    sysv_sb.s_fmod    = sb_sector[0x1A2                        + offset];
-                    sysv_sb.s_ronly   = sb_sector[0x1A3                        + offset];
-                    sysv_sb.s_time    = BitConverter.ToUInt32(sb_sector, 0x1A4 + offset);
-                    sysv_sb.s_cylblks = BitConverter.ToUInt16(sb_sector, 0x1A8 + offset);
-                    sysv_sb.s_gapblks = BitConverter.ToUInt16(sb_sector, 0x1AA + offset);
-                    sysv_sb.s_dinfo0  = BitConverter.ToUInt16(sb_sector, 0x1AC + offset);
-                    sysv_sb.s_dinfo1  = BitConverter.ToUInt16(sb_sector, 0x1AE + offset);
-                    sysv_sb.s_tfree   = BitConverter.ToUInt32(sb_sector, 0x1B0 + offset);
-                    sysv_sb.s_tinode  = BitConverter.ToUInt16(sb_sector, 0x1B4 + offset);
-                    Array.Copy(sb_sector, 0x1B6 + offset, sysv_strings, 0, 6);
-                    sysv_sb.s_fname = StringHandlers.CToString(sysv_strings, Encoding);
-                    Array.Copy(sb_sector, 0x1BC + offset, sysv_strings, 0, 6);
-                    sysv_sb.s_fpack = StringHandlers.CToString(sysv_strings, Encoding);
-                    sb.AppendLine("System V Release 4 filesystem");
-                    XmlFsType.Type = "SVR4 fs";
-                }
-                else
-                {
-                    sysv_sb.s_isize   = BitConverter.ToUInt16(sb_sector, 0x000 + offset);
-                    sysv_sb.s_state   = BitConverter.ToUInt32(sb_sector, 0x1F4 + offset);
-                    sysv_sb.s_magic   = BitConverter.ToUInt32(sb_sector, 0x1F8 + offset);
-                    sysv_sb.s_fsize   = BitConverter.ToUInt32(sb_sector, 0x002 + offset);
-                    sysv_sb.s_nfree   = BitConverter.ToUInt16(sb_sector, 0x006 + offset);
-                    sysv_sb.s_ninode  = BitConverter.ToUInt16(sb_sector, 0x0D0 + offset);
-                    sysv_sb.s_flock   = sb_sector[0x19A                        + offset];
-                    sysv_sb.s_ilock   = sb_sector[0x19B                        + offset];
-                    sysv_sb.s_fmod    = sb_sector[0x19C                        + offset];
-                    sysv_sb.s_ronly   = sb_sector[0x19D                        + offset];
-                    sysv_sb.s_time    = BitConverter.ToUInt32(sb_sector, 0x19E + offset);
-                    sysv_sb.s_cylblks = BitConverter.ToUInt16(sb_sector, 0x1A2 + offset);
-                    sysv_sb.s_gapblks = BitConverter.ToUInt16(sb_sector, 0x1A4 + offset);
-                    sysv_sb.s_dinfo0  = BitConverter.ToUInt16(sb_sector, 0x1A6 + offset);
-                    sysv_sb.s_dinfo1  = BitConverter.ToUInt16(sb_sector, 0x1A8 + offset);
-                    sysv_sb.s_tfree   = BitConverter.ToUInt32(sb_sector, 0x1AA + offset);
-                    sysv_sb.s_tinode  = BitConverter.ToUInt16(sb_sector, 0x1AE + offset);
-                    Array.Copy(sb_sector, 0x1B0 + offset, sysv_strings, 0, 6);
-                    sysv_sb.s_fname = StringHandlers.CToString(sysv_strings, Encoding);
-                    Array.Copy(sb_sector, 0x1B6 + offset, sysv_strings, 0, 6);
-                    sysv_sb.s_fpack = StringHandlers.CToString(sysv_strings, Encoding);
-                    sb.AppendLine("System V Release 2 filesystem");
-                    XmlFsType.Type = "SVR2 fs";
-                }
-
-                if(bigEndian)
-                {
-                    sysv_sb.s_isize   = Swapping.Swap(sysv_sb.s_isize);
-                    sysv_sb.s_state   = Swapping.Swap(sysv_sb.s_state);
-                    sysv_sb.s_magic   = Swapping.Swap(sysv_sb.s_magic);
-                    sysv_sb.s_fsize   = Swapping.Swap(sysv_sb.s_fsize);
-                    sysv_sb.s_nfree   = Swapping.Swap(sysv_sb.s_nfree);
-                    sysv_sb.s_ninode  = Swapping.Swap(sysv_sb.s_ninode);
-                    sysv_sb.s_time    = Swapping.Swap(sysv_sb.s_time);
-                    sysv_sb.s_cylblks = Swapping.Swap(sysv_sb.s_cylblks);
-                    sysv_sb.s_gapblks = Swapping.Swap(sysv_sb.s_gapblks);
-                    sysv_sb.s_dinfo0  = Swapping.Swap(sysv_sb.s_dinfo0);
-                    sysv_sb.s_dinfo1  = Swapping.Swap(sysv_sb.s_dinfo1);
-                    sysv_sb.s_tfree   = Swapping.Swap(sysv_sb.s_tfree);
-                    sysv_sb.s_tinode  = Swapping.Swap(sysv_sb.s_tinode);
-                }
-
-                sb.AppendFormat("{0} bytes per block", bs).AppendLine();
-
-                XmlFsType.Clusters = sysv_sb.s_fsize;
-                sb.AppendFormat("{0} zones on volume ({1} bytes)", sysv_sb.s_fsize, sysv_sb.s_fsize * bs).AppendLine();
-
-                sb.AppendFormat("{0} free zones on volume ({1} bytes)", sysv_sb.s_tfree, sysv_sb.s_tfree * bs).
-                   AppendLine();
-
-                sb.AppendFormat("{0} free blocks on list ({1} bytes)", sysv_sb.s_nfree, sysv_sb.s_nfree * bs).
-                   AppendLine();
-
-                sb.AppendFormat("{0} blocks per cylinder ({1} bytes)", sysv_sb.s_cylblks, sysv_sb.s_cylblks * bs).
-                   AppendLine();
-
-                sb.AppendFormat("{0} blocks per gap ({1} bytes)", sysv_sb.s_gapblks, sysv_sb.s_gapblks * bs).
-                   AppendLine();
-
-                sb.AppendFormat("First data zone: {0}", sysv_sb.s_isize).AppendLine();
-                sb.AppendFormat("{0} free inodes on volume", sysv_sb.s_tinode).AppendLine();
-                sb.AppendFormat("{0} free inodes on list", sysv_sb.s_ninode).AppendLine();
-
-                if(sysv_sb.s_flock > 0)
-                    sb.AppendLine("Free block list is locked");
-
-                if(sysv_sb.s_ilock > 0)
-                    sb.AppendLine("inode cache is locked");
-
-                if(sysv_sb.s_fmod > 0)
-                    sb.AppendLine("Superblock is being modified");
-
-                if(sysv_sb.s_ronly > 0)
-                    sb.AppendLine("Volume is mounted read-only");
-
-                sb.AppendFormat("Superblock last updated on {0}", DateHandlers.UnixUnsignedToDateTime(sysv_sb.s_time)).
-                   AppendLine();
-
-                if(sysv_sb.s_time != 0)
-                {
-                    XmlFsType.ModificationDate          = DateHandlers.UnixUnsignedToDateTime(sysv_sb.s_time);
-                    XmlFsType.ModificationDateSpecified = true;
-                }
-
-                sb.AppendFormat("Volume name: {0}", sysv_sb.s_fname).AppendLine();
-                XmlFsType.VolumeName = sysv_sb.s_fname;
-                sb.AppendFormat("Pack name: {0}", sysv_sb.s_fpack).AppendLine();
-
-                if(sysv_sb.s_state == 0x7C269D38 - sysv_sb.s_time)
-                    sb.AppendLine("Volume is clean");
-                else
-                {
-                    sb.AppendLine("Volume is dirty");
-                    XmlFsType.Dirty = true;
-                }
+                xnx_sb.s_isize   = Swapping.Swap(xnx_sb.s_isize);
+                xnx_sb.s_fsize   = Swapping.Swap(xnx_sb.s_fsize);
+                xnx_sb.s_nfree   = Swapping.Swap(xnx_sb.s_nfree);
+                xnx_sb.s_ninode  = Swapping.Swap(xnx_sb.s_ninode);
+                xnx_sb.s_time    = Swapping.Swap(xnx_sb.s_time);
+                xnx_sb.s_tfree   = Swapping.Swap(xnx_sb.s_tfree);
+                xnx_sb.s_tinode  = Swapping.Swap(xnx_sb.s_tinode);
+                xnx_sb.s_cylblks = Swapping.Swap(xnx_sb.s_cylblks);
+                xnx_sb.s_gapblks = Swapping.Swap(xnx_sb.s_gapblks);
+                xnx_sb.s_dinfo0  = Swapping.Swap(xnx_sb.s_dinfo0);
+                xnx_sb.s_dinfo1  = Swapping.Swap(xnx_sb.s_dinfo1);
+                xnx_sb.s_magic   = Swapping.Swap(xnx_sb.s_magic);
+                xnx_sb.s_type    = Swapping.Swap(xnx_sb.s_type);
             }
 
-            if(coherent)
+            uint bs = 512;
+            sb.AppendLine("XENIX filesystem");
+            XmlFsType.Type = "XENIX fs";
+
+            switch(xnx_sb.s_type)
             {
-                errno = imagePlugin.ReadSectors((ulong)start + partition.Start, sb_size_in_sectors, out sb_sector);
+                case 1:
+                    sb.AppendLine("512 bytes per block");
+                    XmlFsType.ClusterSize = 512;
 
-                if(errno != ErrorNumber.NoError)
-                    return;
+                    break;
+                case 2:
+                    sb.AppendLine("1024 bytes per block");
+                    bs                    = 1024;
+                    XmlFsType.ClusterSize = 1024;
 
-                var    coh_sb      = new CoherentSuperBlock();
-                byte[] coh_strings = new byte[6];
+                    break;
+                case 3:
+                    sb.AppendLine("2048 bytes per block");
+                    bs                    = 2048;
+                    XmlFsType.ClusterSize = 2048;
 
-                coh_sb.s_isize  = BitConverter.ToUInt16(sb_sector, 0x000);
-                coh_sb.s_fsize  = Swapping.PDPFromLittleEndian(BitConverter.ToUInt32(sb_sector, 0x002));
-                coh_sb.s_nfree  = BitConverter.ToUInt16(sb_sector, 0x006);
-                coh_sb.s_ninode = BitConverter.ToUInt16(sb_sector, 0x108);
-                coh_sb.s_flock  = sb_sector[0x1D2];
-                coh_sb.s_ilock  = sb_sector[0x1D3];
-                coh_sb.s_fmod   = sb_sector[0x1D4];
-                coh_sb.s_ronly  = sb_sector[0x1D5];
-                coh_sb.s_time   = Swapping.PDPFromLittleEndian(BitConverter.ToUInt32(sb_sector, 0x1D6));
-                coh_sb.s_tfree  = Swapping.PDPFromLittleEndian(BitConverter.ToUInt32(sb_sector, 0x1DA));
-                coh_sb.s_tinode = BitConverter.ToUInt16(sb_sector, 0x1DE);
-                coh_sb.s_int_m  = BitConverter.ToUInt16(sb_sector, 0x1E0);
-                coh_sb.s_int_n  = BitConverter.ToUInt16(sb_sector, 0x1E2);
-                Array.Copy(sb_sector, 0x1E4, coh_strings, 0, 6);
-                coh_sb.s_fname = StringHandlers.CToString(coh_strings, Encoding);
-                Array.Copy(sb_sector, 0x1EA, coh_strings, 0, 6);
-                coh_sb.s_fpack = StringHandlers.CToString(coh_strings, Encoding);
+                    break;
+                default:
+                    sb.AppendFormat("Unknown s_type value: 0x{0:X8}", xnx_sb.s_type).AppendLine();
 
-                XmlFsType.Type        = "Coherent fs";
-                XmlFsType.ClusterSize = 512;
-                XmlFsType.Clusters    = coh_sb.s_fsize;
+                    break;
+            }
 
-                sb.AppendLine("Coherent UNIX filesystem");
-
-                if(imagePlugin.Info.SectorSize != 512)
+            if(imagePlugin.Info.SectorSize == 2336 ||
+               imagePlugin.Info.SectorSize == 2352 ||
+               imagePlugin.Info.SectorSize == 2448)
+            {
+                if(bs != 2048)
                     sb.
                         AppendFormat("WARNING: Filesystem indicates {0} bytes/block while device indicates {1} bytes/sector",
-                                     512, 2048).AppendLine();
-
-                sb.AppendFormat("{0} zones on volume ({1} bytes)", coh_sb.s_fsize, coh_sb.s_fsize * 512).AppendLine();
-
-                sb.AppendFormat("{0} free zones on volume ({1} bytes)", coh_sb.s_tfree, coh_sb.s_tfree * 512).
-                   AppendLine();
-
-                sb.AppendFormat("{0} free blocks on list ({1} bytes)", coh_sb.s_nfree, coh_sb.s_nfree * 512).
-                   AppendLine();
-
-                sb.AppendFormat("First data zone: {0}", coh_sb.s_isize).AppendLine();
-                sb.AppendFormat("{0} free inodes on volume", coh_sb.s_tinode).AppendLine();
-                sb.AppendFormat("{0} free inodes on list", coh_sb.s_ninode).AppendLine();
-
-                if(coh_sb.s_flock > 0)
-                    sb.AppendLine("Free block list is locked");
-
-                if(coh_sb.s_ilock > 0)
-                    sb.AppendLine("inode cache is locked");
-
-                if(coh_sb.s_fmod > 0)
-                    sb.AppendLine("Superblock is being modified");
-
-                if(coh_sb.s_ronly > 0)
-                    sb.AppendLine("Volume is mounted read-only");
-
-                sb.AppendFormat("Superblock last updated on {0}", DateHandlers.UnixUnsignedToDateTime(coh_sb.s_time)).
-                   AppendLine();
-
-                if(coh_sb.s_time != 0)
-                {
-                    XmlFsType.ModificationDate          = DateHandlers.UnixUnsignedToDateTime(coh_sb.s_time);
-                    XmlFsType.ModificationDateSpecified = true;
-                }
-
-                sb.AppendFormat("Volume name: {0}", coh_sb.s_fname).AppendLine();
-                XmlFsType.VolumeName = coh_sb.s_fname;
-                sb.AppendFormat("Pack name: {0}", coh_sb.s_fpack).AppendLine();
+                                     bs, 2048).AppendLine();
             }
-
-            if(sys7th)
+            else
             {
-                errno = imagePlugin.ReadSectors((ulong)start + partition.Start, sb_size_in_sectors, out sb_sector);
-
-                if(errno != ErrorNumber.NoError)
-                    return;
-
-                var    v7_sb        = new UNIX7thEditionSuperBlock();
-                byte[] sys7_strings = new byte[6];
-
-                v7_sb.s_isize  = BitConverter.ToUInt16(sb_sector, 0x000);
-                v7_sb.s_fsize  = BitConverter.ToUInt32(sb_sector, 0x002);
-                v7_sb.s_nfree  = BitConverter.ToUInt16(sb_sector, 0x006);
-                v7_sb.s_ninode = BitConverter.ToUInt16(sb_sector, 0x0D0);
-                v7_sb.s_flock  = sb_sector[0x19A];
-                v7_sb.s_ilock  = sb_sector[0x19B];
-                v7_sb.s_fmod   = sb_sector[0x19C];
-                v7_sb.s_ronly  = sb_sector[0x19D];
-                v7_sb.s_time   = BitConverter.ToUInt32(sb_sector, 0x19E);
-                v7_sb.s_tfree  = BitConverter.ToUInt32(sb_sector, 0x1A2);
-                v7_sb.s_tinode = BitConverter.ToUInt16(sb_sector, 0x1A6);
-                v7_sb.s_int_m  = BitConverter.ToUInt16(sb_sector, 0x1A8);
-                v7_sb.s_int_n  = BitConverter.ToUInt16(sb_sector, 0x1AA);
-                Array.Copy(sb_sector, 0x1AC, sys7_strings, 0, 6);
-                v7_sb.s_fname = StringHandlers.CToString(sys7_strings, Encoding);
-                Array.Copy(sb_sector, 0x1B2, sys7_strings, 0, 6);
-                v7_sb.s_fpack = StringHandlers.CToString(sys7_strings, Encoding);
-
-                XmlFsType.Type        = "UNIX 7th Edition fs";
-                XmlFsType.ClusterSize = 512;
-                XmlFsType.Clusters    = v7_sb.s_fsize;
-                sb.AppendLine("UNIX 7th Edition filesystem");
-
-                if(imagePlugin.Info.SectorSize != 512)
+                if(bs != imagePlugin.Info.SectorSize)
                     sb.
                         AppendFormat("WARNING: Filesystem indicates {0} bytes/block while device indicates {1} bytes/sector",
-                                     512, 2048).AppendLine();
-
-                sb.AppendFormat("{0} zones on volume ({1} bytes)", v7_sb.s_fsize, v7_sb.s_fsize * 512).AppendLine();
-
-                sb.AppendFormat("{0} free zones on volume ({1} bytes)", v7_sb.s_tfree, v7_sb.s_tfree * 512).
-                   AppendLine();
-
-                sb.AppendFormat("{0} free blocks on list ({1} bytes)", v7_sb.s_nfree, v7_sb.s_nfree * 512).AppendLine();
-                sb.AppendFormat("First data zone: {0}", v7_sb.s_isize).AppendLine();
-                sb.AppendFormat("{0} free inodes on volume", v7_sb.s_tinode).AppendLine();
-                sb.AppendFormat("{0} free inodes on list", v7_sb.s_ninode).AppendLine();
-
-                if(v7_sb.s_flock > 0)
-                    sb.AppendLine("Free block list is locked");
-
-                if(v7_sb.s_ilock > 0)
-                    sb.AppendLine("inode cache is locked");
-
-                if(v7_sb.s_fmod > 0)
-                    sb.AppendLine("Superblock is being modified");
-
-                if(v7_sb.s_ronly > 0)
-                    sb.AppendLine("Volume is mounted read-only");
-
-                sb.AppendFormat("Superblock last updated on {0}", DateHandlers.UnixUnsignedToDateTime(v7_sb.s_time)).
-                   AppendLine();
-
-                if(v7_sb.s_time != 0)
-                {
-                    XmlFsType.ModificationDate          = DateHandlers.UnixUnsignedToDateTime(v7_sb.s_time);
-                    XmlFsType.ModificationDateSpecified = true;
-                }
-
-                sb.AppendFormat("Volume name: {0}", v7_sb.s_fname).AppendLine();
-                XmlFsType.VolumeName = v7_sb.s_fname;
-                sb.AppendFormat("Pack name: {0}", v7_sb.s_fpack).AppendLine();
+                                     bs, imagePlugin.Info.SectorSize).AppendLine();
             }
 
-            information = sb.ToString();
+            sb.AppendFormat("{0} zones on volume ({1} bytes)", xnx_sb.s_fsize, xnx_sb.s_fsize * bs).AppendLine();
+
+            sb.AppendFormat("{0} free zones on volume ({1} bytes)", xnx_sb.s_tfree, xnx_sb.s_tfree * bs).
+               AppendLine();
+
+            sb.AppendFormat("{0} free blocks on list ({1} bytes)", xnx_sb.s_nfree, xnx_sb.s_nfree * bs).
+               AppendLine();
+
+            sb.AppendFormat("{0} blocks per cylinder ({1} bytes)", xnx_sb.s_cylblks, xnx_sb.s_cylblks * bs).
+               AppendLine();
+
+            sb.AppendFormat("{0} blocks per gap ({1} bytes)", xnx_sb.s_gapblks, xnx_sb.s_gapblks * bs).AppendLine();
+            sb.AppendFormat("First data zone: {0}", xnx_sb.s_isize).AppendLine();
+            sb.AppendFormat("{0} free inodes on volume", xnx_sb.s_tinode).AppendLine();
+            sb.AppendFormat("{0} free inodes on list", xnx_sb.s_ninode).AppendLine();
+
+            if(xnx_sb.s_flock > 0)
+                sb.AppendLine("Free block list is locked");
+
+            if(xnx_sb.s_ilock > 0)
+                sb.AppendLine("inode cache is locked");
+
+            if(xnx_sb.s_fmod > 0)
+                sb.AppendLine("Superblock is being modified");
+
+            if(xnx_sb.s_ronly > 0)
+                sb.AppendLine("Volume is mounted read-only");
+
+            sb.AppendFormat("Superblock last updated on {0}", DateHandlers.UnixToDateTime(xnx_sb.s_time)).
+               AppendLine();
+
+            if(xnx_sb.s_time != 0)
+            {
+                XmlFsType.ModificationDate          = DateHandlers.UnixToDateTime(xnx_sb.s_time);
+                XmlFsType.ModificationDateSpecified = true;
+            }
+
+            sb.AppendFormat("Volume name: {0}", xnx_sb.s_fname).AppendLine();
+            XmlFsType.VolumeName = xnx_sb.s_fname;
+            sb.AppendFormat("Pack name: {0}", xnx_sb.s_fpack).AppendLine();
+
+            if(xnx_sb.s_clean == 0x46)
+                sb.AppendLine("Volume is clean");
+            else
+            {
+                sb.AppendLine("Volume is dirty");
+                XmlFsType.Dirty = true;
+            }
         }
 
-        // Old XENIX use different offsets
-        struct XenixSuperBlock
+        if(sysv)
         {
-            /// <summary>0x000, index of first data zone</summary>
-            public ushort s_isize;
-            /// <summary>0x002, total number of zones of this volume</summary>
-            public uint s_fsize;
+            errno = imagePlugin.ReadSectors((ulong)start + partition.Start, sb_size_in_sectors, out sb_sector);
 
-            // the start of the free block list:
-            /// <summary>0x006, blocks in s_free, &lt;=100</summary>
-            public ushort s_nfree;
-            /// <summary>0x008, 100 entries, 50 entries for Xenix 3, first free block list chunk</summary>
-            public uint[] s_free;
+            if(errno != ErrorNumber.NoError)
+                return;
 
-            // the cache of free inodes:
-            /// <summary>0x198 (0xD0), number of inodes in s_inode, &lt;= 100</summary>
-            public ushort s_ninode;
-            /// <summary>0x19A (0xD2), 100 entries, some free inodes</summary>
-            public ushort[] s_inode;
-            /// <summary>0x262 (0x19A), free block list manipulation lock</summary>
-            public byte s_flock;
-            /// <summary>0x263 (0x19B), inode cache manipulation lock</summary>
-            public byte s_ilock;
-            /// <summary>0x264 (0x19C), superblock modification flag</summary>
-            public byte s_fmod;
-            /// <summary>0x265 (0x19D), read-only mounted flag</summary>
-            public byte s_ronly;
-            /// <summary>0x266 (0x19E), time of last superblock update</summary>
-            public int s_time;
-            /// <summary>0x26A (0x1A2), total number of free zones</summary>
-            public uint s_tfree;
-            /// <summary>0x26E (0x1A6), total number of free inodes</summary>
-            public ushort s_tinode;
-            /// <summary>0x270 (0x1A8), blocks per cylinder</summary>
-            public ushort s_cylblks;
-            /// <summary>0x272 (0x1AA), blocks per gap</summary>
-            public ushort s_gapblks;
-            /// <summary>0x274 (0x1AC), device information ??</summary>
-            public ushort s_dinfo0;
-            /// <summary>0x276 (0x1AE), device information ??</summary>
-            public ushort s_dinfo1;
-            /// <summary>0x278 (0x1B0), 6 bytes, volume name</summary>
-            public string s_fname;
-            /// <summary>0x27E (0x1B6), 6 bytes, pack name</summary>
-            public string s_fpack;
-            /// <summary>0x284 (0x1BC), 0x46 if volume is clean</summary>
-            public byte s_clean;
-            /// <summary>0x285 (0x1BD), 371 bytes, 51 bytes for Xenix 3</summary>
-            public byte[] s_fill;
-            /// <summary>0x3F8 (0x1F0), magic</summary>
-            public uint s_magic;
-            /// <summary>0x3FC (0x1F4), filesystem type (1 = 512 bytes/blk, 2 = 1024 bytes/blk, 3 = 2048 bytes/blk)</summary>
-            public uint s_type;
+            byte[] sysv_strings = new byte[6];
+
+            var sysv_sb = new SystemVRelease4SuperBlock
+            {
+                s_type = BitConverter.ToUInt32(sb_sector, 0x1FC + offset)
+            };
+
+            if(bigEndian)
+                sysv_sb.s_type = Swapping.Swap(sysv_sb.s_type);
+
+            uint bs = 512;
+
+            switch(sysv_sb.s_type)
+            {
+                case 1:
+                    XmlFsType.ClusterSize = 512;
+
+                    break;
+                case 2:
+                    bs                    = 1024;
+                    XmlFsType.ClusterSize = 1024;
+
+                    break;
+                case 3:
+                    bs                    = 2048;
+                    XmlFsType.ClusterSize = 2048;
+
+                    break;
+                default:
+                    sb.AppendFormat("Unknown s_type value: 0x{0:X8}", sysv_sb.s_type).AppendLine();
+
+                    break;
+            }
+
+            sysv_sb.s_fsize = BitConverter.ToUInt32(sb_sector, 0x002 + offset);
+
+            if(bigEndian)
+                sysv_sb.s_fsize = Swapping.Swap(sysv_sb.s_fsize);
+
+            bool sysvr4 = sysv_sb.s_fsize * bs <= 0 || sysv_sb.s_fsize * bs != partition.Size;
+
+            if(sysvr4)
+            {
+                sysv_sb.s_isize   = BitConverter.ToUInt16(sb_sector, 0x000 + offset);
+                sysv_sb.s_state   = BitConverter.ToUInt32(sb_sector, 0x1F4 + offset);
+                sysv_sb.s_magic   = BitConverter.ToUInt32(sb_sector, 0x1F8 + offset);
+                sysv_sb.s_fsize   = BitConverter.ToUInt32(sb_sector, 0x004 + offset);
+                sysv_sb.s_nfree   = BitConverter.ToUInt16(sb_sector, 0x008 + offset);
+                sysv_sb.s_ninode  = BitConverter.ToUInt16(sb_sector, 0x0D4 + offset);
+                sysv_sb.s_flock   = sb_sector[0x1A0                        + offset];
+                sysv_sb.s_ilock   = sb_sector[0x1A1                        + offset];
+                sysv_sb.s_fmod    = sb_sector[0x1A2                        + offset];
+                sysv_sb.s_ronly   = sb_sector[0x1A3                        + offset];
+                sysv_sb.s_time    = BitConverter.ToUInt32(sb_sector, 0x1A4 + offset);
+                sysv_sb.s_cylblks = BitConverter.ToUInt16(sb_sector, 0x1A8 + offset);
+                sysv_sb.s_gapblks = BitConverter.ToUInt16(sb_sector, 0x1AA + offset);
+                sysv_sb.s_dinfo0  = BitConverter.ToUInt16(sb_sector, 0x1AC + offset);
+                sysv_sb.s_dinfo1  = BitConverter.ToUInt16(sb_sector, 0x1AE + offset);
+                sysv_sb.s_tfree   = BitConverter.ToUInt32(sb_sector, 0x1B0 + offset);
+                sysv_sb.s_tinode  = BitConverter.ToUInt16(sb_sector, 0x1B4 + offset);
+                Array.Copy(sb_sector, 0x1B6 + offset, sysv_strings, 0, 6);
+                sysv_sb.s_fname = StringHandlers.CToString(sysv_strings, Encoding);
+                Array.Copy(sb_sector, 0x1BC + offset, sysv_strings, 0, 6);
+                sysv_sb.s_fpack = StringHandlers.CToString(sysv_strings, Encoding);
+                sb.AppendLine("System V Release 4 filesystem");
+                XmlFsType.Type = "SVR4 fs";
+            }
+            else
+            {
+                sysv_sb.s_isize   = BitConverter.ToUInt16(sb_sector, 0x000 + offset);
+                sysv_sb.s_state   = BitConverter.ToUInt32(sb_sector, 0x1F4 + offset);
+                sysv_sb.s_magic   = BitConverter.ToUInt32(sb_sector, 0x1F8 + offset);
+                sysv_sb.s_fsize   = BitConverter.ToUInt32(sb_sector, 0x002 + offset);
+                sysv_sb.s_nfree   = BitConverter.ToUInt16(sb_sector, 0x006 + offset);
+                sysv_sb.s_ninode  = BitConverter.ToUInt16(sb_sector, 0x0D0 + offset);
+                sysv_sb.s_flock   = sb_sector[0x19A                        + offset];
+                sysv_sb.s_ilock   = sb_sector[0x19B                        + offset];
+                sysv_sb.s_fmod    = sb_sector[0x19C                        + offset];
+                sysv_sb.s_ronly   = sb_sector[0x19D                        + offset];
+                sysv_sb.s_time    = BitConverter.ToUInt32(sb_sector, 0x19E + offset);
+                sysv_sb.s_cylblks = BitConverter.ToUInt16(sb_sector, 0x1A2 + offset);
+                sysv_sb.s_gapblks = BitConverter.ToUInt16(sb_sector, 0x1A4 + offset);
+                sysv_sb.s_dinfo0  = BitConverter.ToUInt16(sb_sector, 0x1A6 + offset);
+                sysv_sb.s_dinfo1  = BitConverter.ToUInt16(sb_sector, 0x1A8 + offset);
+                sysv_sb.s_tfree   = BitConverter.ToUInt32(sb_sector, 0x1AA + offset);
+                sysv_sb.s_tinode  = BitConverter.ToUInt16(sb_sector, 0x1AE + offset);
+                Array.Copy(sb_sector, 0x1B0 + offset, sysv_strings, 0, 6);
+                sysv_sb.s_fname = StringHandlers.CToString(sysv_strings, Encoding);
+                Array.Copy(sb_sector, 0x1B6 + offset, sysv_strings, 0, 6);
+                sysv_sb.s_fpack = StringHandlers.CToString(sysv_strings, Encoding);
+                sb.AppendLine("System V Release 2 filesystem");
+                XmlFsType.Type = "SVR2 fs";
+            }
+
+            if(bigEndian)
+            {
+                sysv_sb.s_isize   = Swapping.Swap(sysv_sb.s_isize);
+                sysv_sb.s_state   = Swapping.Swap(sysv_sb.s_state);
+                sysv_sb.s_magic   = Swapping.Swap(sysv_sb.s_magic);
+                sysv_sb.s_fsize   = Swapping.Swap(sysv_sb.s_fsize);
+                sysv_sb.s_nfree   = Swapping.Swap(sysv_sb.s_nfree);
+                sysv_sb.s_ninode  = Swapping.Swap(sysv_sb.s_ninode);
+                sysv_sb.s_time    = Swapping.Swap(sysv_sb.s_time);
+                sysv_sb.s_cylblks = Swapping.Swap(sysv_sb.s_cylblks);
+                sysv_sb.s_gapblks = Swapping.Swap(sysv_sb.s_gapblks);
+                sysv_sb.s_dinfo0  = Swapping.Swap(sysv_sb.s_dinfo0);
+                sysv_sb.s_dinfo1  = Swapping.Swap(sysv_sb.s_dinfo1);
+                sysv_sb.s_tfree   = Swapping.Swap(sysv_sb.s_tfree);
+                sysv_sb.s_tinode  = Swapping.Swap(sysv_sb.s_tinode);
+            }
+
+            sb.AppendFormat("{0} bytes per block", bs).AppendLine();
+
+            XmlFsType.Clusters = sysv_sb.s_fsize;
+            sb.AppendFormat("{0} zones on volume ({1} bytes)", sysv_sb.s_fsize, sysv_sb.s_fsize * bs).AppendLine();
+
+            sb.AppendFormat("{0} free zones on volume ({1} bytes)", sysv_sb.s_tfree, sysv_sb.s_tfree * bs).
+               AppendLine();
+
+            sb.AppendFormat("{0} free blocks on list ({1} bytes)", sysv_sb.s_nfree, sysv_sb.s_nfree * bs).
+               AppendLine();
+
+            sb.AppendFormat("{0} blocks per cylinder ({1} bytes)", sysv_sb.s_cylblks, sysv_sb.s_cylblks * bs).
+               AppendLine();
+
+            sb.AppendFormat("{0} blocks per gap ({1} bytes)", sysv_sb.s_gapblks, sysv_sb.s_gapblks * bs).
+               AppendLine();
+
+            sb.AppendFormat("First data zone: {0}", sysv_sb.s_isize).AppendLine();
+            sb.AppendFormat("{0} free inodes on volume", sysv_sb.s_tinode).AppendLine();
+            sb.AppendFormat("{0} free inodes on list", sysv_sb.s_ninode).AppendLine();
+
+            if(sysv_sb.s_flock > 0)
+                sb.AppendLine("Free block list is locked");
+
+            if(sysv_sb.s_ilock > 0)
+                sb.AppendLine("inode cache is locked");
+
+            if(sysv_sb.s_fmod > 0)
+                sb.AppendLine("Superblock is being modified");
+
+            if(sysv_sb.s_ronly > 0)
+                sb.AppendLine("Volume is mounted read-only");
+
+            sb.AppendFormat("Superblock last updated on {0}", DateHandlers.UnixUnsignedToDateTime(sysv_sb.s_time)).
+               AppendLine();
+
+            if(sysv_sb.s_time != 0)
+            {
+                XmlFsType.ModificationDate          = DateHandlers.UnixUnsignedToDateTime(sysv_sb.s_time);
+                XmlFsType.ModificationDateSpecified = true;
+            }
+
+            sb.AppendFormat("Volume name: {0}", sysv_sb.s_fname).AppendLine();
+            XmlFsType.VolumeName = sysv_sb.s_fname;
+            sb.AppendFormat("Pack name: {0}", sysv_sb.s_fpack).AppendLine();
+
+            if(sysv_sb.s_state == 0x7C269D38 - sysv_sb.s_time)
+                sb.AppendLine("Volume is clean");
+            else
+            {
+                sb.AppendLine("Volume is dirty");
+                XmlFsType.Dirty = true;
+            }
         }
 
-        struct SystemVRelease4SuperBlock
+        if(coherent)
         {
-            /// <summary>0x000, index of first data zone</summary>
-            public ushort s_isize;
-            /// <summary>0x002, padding</summary>
-            public ushort s_pad0;
-            /// <summary>0x004, total number of zones of this volume</summary>
-            public uint s_fsize;
+            errno = imagePlugin.ReadSectors((ulong)start + partition.Start, sb_size_in_sectors, out sb_sector);
 
-            // the start of the free block list:
-            /// <summary>0x008, blocks in s_free, &lt;=100</summary>
-            public ushort s_nfree;
-            /// <summary>0x00A, padding</summary>
-            public ushort s_pad1;
-            /// <summary>0x00C, 50 entries, first free block list chunk</summary>
-            public uint[] s_free;
+            if(errno != ErrorNumber.NoError)
+                return;
 
-            // the cache of free inodes:
-            /// <summary>0x0D4, number of inodes in s_inode, &lt;= 100</summary>
-            public ushort s_ninode;
-            /// <summary>0x0D6, padding</summary>
-            public ushort s_pad2;
-            /// <summary>0x0D8, 100 entries, some free inodes</summary>
-            public ushort[] s_inode;
-            /// <summary>0x1A0, free block list manipulation lock</summary>
-            public byte s_flock;
-            /// <summary>0x1A1, inode cache manipulation lock</summary>
-            public byte s_ilock;
-            /// <summary>0x1A2, superblock modification flag</summary>
-            public byte s_fmod;
-            /// <summary>0x1A3, read-only mounted flag</summary>
-            public byte s_ronly;
-            /// <summary>0x1A4, time of last superblock update</summary>
-            public uint s_time;
-            /// <summary>0x1A8, blocks per cylinder</summary>
-            public ushort s_cylblks;
-            /// <summary>0x1AA, blocks per gap</summary>
-            public ushort s_gapblks;
-            /// <summary>0x1AC, device information ??</summary>
-            public ushort s_dinfo0;
-            /// <summary>0x1AE, device information ??</summary>
-            public ushort s_dinfo1;
-            /// <summary>0x1B0, total number of free zones</summary>
-            public uint s_tfree;
-            /// <summary>0x1B4, total number of free inodes</summary>
-            public ushort s_tinode;
-            /// <summary>0x1B6, padding</summary>
-            public ushort s_pad3;
-            /// <summary>0x1B8, 6 bytes, volume name</summary>
-            public string s_fname;
-            /// <summary>0x1BE, 6 bytes, pack name</summary>
-            public string s_fpack;
-            /// <summary>0x1C4, 48 bytes</summary>
-            public byte[] s_fill;
-            /// <summary>0x1F4, if s_state == (0x7C269D38 - s_time) then filesystem is clean</summary>
-            public uint s_state;
-            /// <summary>0x1F8, magic</summary>
-            public uint s_magic;
-            /// <summary>0x1FC, filesystem type (1 = 512 bytes/blk, 2 = 1024 bytes/blk)</summary>
-            public uint s_type;
+            var    coh_sb      = new CoherentSuperBlock();
+            byte[] coh_strings = new byte[6];
+
+            coh_sb.s_isize  = BitConverter.ToUInt16(sb_sector, 0x000);
+            coh_sb.s_fsize  = Swapping.PDPFromLittleEndian(BitConverter.ToUInt32(sb_sector, 0x002));
+            coh_sb.s_nfree  = BitConverter.ToUInt16(sb_sector, 0x006);
+            coh_sb.s_ninode = BitConverter.ToUInt16(sb_sector, 0x108);
+            coh_sb.s_flock  = sb_sector[0x1D2];
+            coh_sb.s_ilock  = sb_sector[0x1D3];
+            coh_sb.s_fmod   = sb_sector[0x1D4];
+            coh_sb.s_ronly  = sb_sector[0x1D5];
+            coh_sb.s_time   = Swapping.PDPFromLittleEndian(BitConverter.ToUInt32(sb_sector, 0x1D6));
+            coh_sb.s_tfree  = Swapping.PDPFromLittleEndian(BitConverter.ToUInt32(sb_sector, 0x1DA));
+            coh_sb.s_tinode = BitConverter.ToUInt16(sb_sector, 0x1DE);
+            coh_sb.s_int_m  = BitConverter.ToUInt16(sb_sector, 0x1E0);
+            coh_sb.s_int_n  = BitConverter.ToUInt16(sb_sector, 0x1E2);
+            Array.Copy(sb_sector, 0x1E4, coh_strings, 0, 6);
+            coh_sb.s_fname = StringHandlers.CToString(coh_strings, Encoding);
+            Array.Copy(sb_sector, 0x1EA, coh_strings, 0, 6);
+            coh_sb.s_fpack = StringHandlers.CToString(coh_strings, Encoding);
+
+            XmlFsType.Type        = "Coherent fs";
+            XmlFsType.ClusterSize = 512;
+            XmlFsType.Clusters    = coh_sb.s_fsize;
+
+            sb.AppendLine("Coherent UNIX filesystem");
+
+            if(imagePlugin.Info.SectorSize != 512)
+                sb.
+                    AppendFormat("WARNING: Filesystem indicates {0} bytes/block while device indicates {1} bytes/sector",
+                                 512, 2048).AppendLine();
+
+            sb.AppendFormat("{0} zones on volume ({1} bytes)", coh_sb.s_fsize, coh_sb.s_fsize * 512).AppendLine();
+
+            sb.AppendFormat("{0} free zones on volume ({1} bytes)", coh_sb.s_tfree, coh_sb.s_tfree * 512).
+               AppendLine();
+
+            sb.AppendFormat("{0} free blocks on list ({1} bytes)", coh_sb.s_nfree, coh_sb.s_nfree * 512).
+               AppendLine();
+
+            sb.AppendFormat("First data zone: {0}", coh_sb.s_isize).AppendLine();
+            sb.AppendFormat("{0} free inodes on volume", coh_sb.s_tinode).AppendLine();
+            sb.AppendFormat("{0} free inodes on list", coh_sb.s_ninode).AppendLine();
+
+            if(coh_sb.s_flock > 0)
+                sb.AppendLine("Free block list is locked");
+
+            if(coh_sb.s_ilock > 0)
+                sb.AppendLine("inode cache is locked");
+
+            if(coh_sb.s_fmod > 0)
+                sb.AppendLine("Superblock is being modified");
+
+            if(coh_sb.s_ronly > 0)
+                sb.AppendLine("Volume is mounted read-only");
+
+            sb.AppendFormat("Superblock last updated on {0}", DateHandlers.UnixUnsignedToDateTime(coh_sb.s_time)).
+               AppendLine();
+
+            if(coh_sb.s_time != 0)
+            {
+                XmlFsType.ModificationDate          = DateHandlers.UnixUnsignedToDateTime(coh_sb.s_time);
+                XmlFsType.ModificationDateSpecified = true;
+            }
+
+            sb.AppendFormat("Volume name: {0}", coh_sb.s_fname).AppendLine();
+            XmlFsType.VolumeName = coh_sb.s_fname;
+            sb.AppendFormat("Pack name: {0}", coh_sb.s_fpack).AppendLine();
         }
 
-        struct SystemVRelease2SuperBlock
+        if(sys7th)
         {
-            /// <summary>0x000, index of first data zone</summary>
-            public ushort s_isize;
-            /// <summary>0x002, total number of zones of this volume</summary>
-            public uint s_fsize;
+            errno = imagePlugin.ReadSectors((ulong)start + partition.Start, sb_size_in_sectors, out sb_sector);
 
-            // the start of the free block list:
-            /// <summary>0x006, blocks in s_free, &lt;=100</summary>
-            public ushort s_nfree;
-            /// <summary>0x008, 50 entries, first free block list chunk</summary>
-            public uint[] s_free;
+            if(errno != ErrorNumber.NoError)
+                return;
 
-            // the cache of free inodes:
-            /// <summary>0x0D0, number of inodes in s_inode, &lt;= 100</summary>
-            public ushort s_ninode;
-            /// <summary>0x0D2, 100 entries, some free inodes</summary>
-            public ushort[] s_inode;
-            /// <summary>0x19A, free block list manipulation lock</summary>
-            public byte s_flock;
-            /// <summary>0x19B, inode cache manipulation lock</summary>
-            public byte s_ilock;
-            /// <summary>0x19C, superblock modification flag</summary>
-            public byte s_fmod;
-            /// <summary>0x19D, read-only mounted flag</summary>
-            public byte s_ronly;
-            /// <summary>0x19E, time of last superblock update</summary>
-            public uint s_time;
-            /// <summary>0x1A2, blocks per cylinder</summary>
-            public ushort s_cylblks;
-            /// <summary>0x1A4, blocks per gap</summary>
-            public ushort s_gapblks;
-            /// <summary>0x1A6, device information ??</summary>
-            public ushort s_dinfo0;
-            /// <summary>0x1A8, device information ??</summary>
-            public ushort s_dinfo1;
-            /// <summary>0x1AA, total number of free zones</summary>
-            public uint s_tfree;
-            /// <summary>0x1AE, total number of free inodes</summary>
-            public ushort s_tinode;
-            /// <summary>0x1B0, 6 bytes, volume name</summary>
-            public string s_fname;
-            /// <summary>0x1B6, 6 bytes, pack name</summary>
-            public string s_fpack;
-            /// <summary>0x1BC, 56 bytes</summary>
-            public byte[] s_fill;
-            /// <summary>0x1F4, if s_state == (0x7C269D38 - s_time) then filesystem is clean</summary>
-            public uint s_state;
-            /// <summary>0x1F8, magic</summary>
-            public uint s_magic;
-            /// <summary>0x1FC, filesystem type (1 = 512 bytes/blk, 2 = 1024 bytes/blk)</summary>
-            public uint s_type;
+            var    v7_sb        = new UNIX7thEditionSuperBlock();
+            byte[] sys7_strings = new byte[6];
+
+            v7_sb.s_isize  = BitConverter.ToUInt16(sb_sector, 0x000);
+            v7_sb.s_fsize  = BitConverter.ToUInt32(sb_sector, 0x002);
+            v7_sb.s_nfree  = BitConverter.ToUInt16(sb_sector, 0x006);
+            v7_sb.s_ninode = BitConverter.ToUInt16(sb_sector, 0x0D0);
+            v7_sb.s_flock  = sb_sector[0x19A];
+            v7_sb.s_ilock  = sb_sector[0x19B];
+            v7_sb.s_fmod   = sb_sector[0x19C];
+            v7_sb.s_ronly  = sb_sector[0x19D];
+            v7_sb.s_time   = BitConverter.ToUInt32(sb_sector, 0x19E);
+            v7_sb.s_tfree  = BitConverter.ToUInt32(sb_sector, 0x1A2);
+            v7_sb.s_tinode = BitConverter.ToUInt16(sb_sector, 0x1A6);
+            v7_sb.s_int_m  = BitConverter.ToUInt16(sb_sector, 0x1A8);
+            v7_sb.s_int_n  = BitConverter.ToUInt16(sb_sector, 0x1AA);
+            Array.Copy(sb_sector, 0x1AC, sys7_strings, 0, 6);
+            v7_sb.s_fname = StringHandlers.CToString(sys7_strings, Encoding);
+            Array.Copy(sb_sector, 0x1B2, sys7_strings, 0, 6);
+            v7_sb.s_fpack = StringHandlers.CToString(sys7_strings, Encoding);
+
+            XmlFsType.Type        = "UNIX 7th Edition fs";
+            XmlFsType.ClusterSize = 512;
+            XmlFsType.Clusters    = v7_sb.s_fsize;
+            sb.AppendLine("UNIX 7th Edition filesystem");
+
+            if(imagePlugin.Info.SectorSize != 512)
+                sb.
+                    AppendFormat("WARNING: Filesystem indicates {0} bytes/block while device indicates {1} bytes/sector",
+                                 512, 2048).AppendLine();
+
+            sb.AppendFormat("{0} zones on volume ({1} bytes)", v7_sb.s_fsize, v7_sb.s_fsize * 512).AppendLine();
+
+            sb.AppendFormat("{0} free zones on volume ({1} bytes)", v7_sb.s_tfree, v7_sb.s_tfree * 512).
+               AppendLine();
+
+            sb.AppendFormat("{0} free blocks on list ({1} bytes)", v7_sb.s_nfree, v7_sb.s_nfree * 512).AppendLine();
+            sb.AppendFormat("First data zone: {0}", v7_sb.s_isize).AppendLine();
+            sb.AppendFormat("{0} free inodes on volume", v7_sb.s_tinode).AppendLine();
+            sb.AppendFormat("{0} free inodes on list", v7_sb.s_ninode).AppendLine();
+
+            if(v7_sb.s_flock > 0)
+                sb.AppendLine("Free block list is locked");
+
+            if(v7_sb.s_ilock > 0)
+                sb.AppendLine("inode cache is locked");
+
+            if(v7_sb.s_fmod > 0)
+                sb.AppendLine("Superblock is being modified");
+
+            if(v7_sb.s_ronly > 0)
+                sb.AppendLine("Volume is mounted read-only");
+
+            sb.AppendFormat("Superblock last updated on {0}", DateHandlers.UnixUnsignedToDateTime(v7_sb.s_time)).
+               AppendLine();
+
+            if(v7_sb.s_time != 0)
+            {
+                XmlFsType.ModificationDate          = DateHandlers.UnixUnsignedToDateTime(v7_sb.s_time);
+                XmlFsType.ModificationDateSpecified = true;
+            }
+
+            sb.AppendFormat("Volume name: {0}", v7_sb.s_fname).AppendLine();
+            XmlFsType.VolumeName = v7_sb.s_fname;
+            sb.AppendFormat("Pack name: {0}", v7_sb.s_fpack).AppendLine();
         }
 
-        struct UNIX7thEditionSuperBlock
-        {
-            /// <summary>0x000, index of first data zone</summary>
-            public ushort s_isize;
-            /// <summary>0x002, total number of zones of this volume</summary>
-            public uint s_fsize;
+        information = sb.ToString();
+    }
 
-            // the start of the free block list:
-            /// <summary>0x006, blocks in s_free, &lt;=100</summary>
-            public ushort s_nfree;
-            /// <summary>0x008, 50 entries, first free block list chunk</summary>
-            public uint[] s_free;
+    // Old XENIX use different offsets
+    struct XenixSuperBlock
+    {
+        /// <summary>0x000, index of first data zone</summary>
+        public ushort s_isize;
+        /// <summary>0x002, total number of zones of this volume</summary>
+        public uint s_fsize;
 
-            // the cache of free inodes:
-            /// <summary>0x0D0, number of inodes in s_inode, &lt;= 100</summary>
-            public ushort s_ninode;
-            /// <summary>0x0D2, 100 entries, some free inodes</summary>
-            public ushort[] s_inode;
-            /// <summary>0x19A, free block list manipulation lock</summary>
-            public byte s_flock;
-            /// <summary>0x19B, inode cache manipulation lock</summary>
-            public byte s_ilock;
-            /// <summary>0x19C, superblock modification flag</summary>
-            public byte s_fmod;
-            /// <summary>0x19D, read-only mounted flag</summary>
-            public byte s_ronly;
-            /// <summary>0x19E, time of last superblock update</summary>
-            public uint s_time;
-            /// <summary>0x1A2, total number of free zones</summary>
-            public uint s_tfree;
-            /// <summary>0x1A6, total number of free inodes</summary>
-            public ushort s_tinode;
-            /// <summary>0x1A8, interleave factor</summary>
-            public ushort s_int_m;
-            /// <summary>0x1AA, interleave factor</summary>
-            public ushort s_int_n;
-            /// <summary>0x1AC, 6 bytes, volume name</summary>
-            public string s_fname;
-            /// <summary>0x1B2, 6 bytes, pack name</summary>
-            public string s_fpack;
-        }
+        // the start of the free block list:
+        /// <summary>0x006, blocks in s_free, &lt;=100</summary>
+        public ushort s_nfree;
+        /// <summary>0x008, 100 entries, 50 entries for Xenix 3, first free block list chunk</summary>
+        public uint[] s_free;
 
-        struct CoherentSuperBlock
-        {
-            /// <summary>0x000, index of first data zone</summary>
-            public ushort s_isize;
-            /// <summary>0x002, total number of zones of this volume</summary>
-            public uint s_fsize;
+        // the cache of free inodes:
+        /// <summary>0x198 (0xD0), number of inodes in s_inode, &lt;= 100</summary>
+        public ushort s_ninode;
+        /// <summary>0x19A (0xD2), 100 entries, some free inodes</summary>
+        public ushort[] s_inode;
+        /// <summary>0x262 (0x19A), free block list manipulation lock</summary>
+        public byte s_flock;
+        /// <summary>0x263 (0x19B), inode cache manipulation lock</summary>
+        public byte s_ilock;
+        /// <summary>0x264 (0x19C), superblock modification flag</summary>
+        public byte s_fmod;
+        /// <summary>0x265 (0x19D), read-only mounted flag</summary>
+        public byte s_ronly;
+        /// <summary>0x266 (0x19E), time of last superblock update</summary>
+        public int s_time;
+        /// <summary>0x26A (0x1A2), total number of free zones</summary>
+        public uint s_tfree;
+        /// <summary>0x26E (0x1A6), total number of free inodes</summary>
+        public ushort s_tinode;
+        /// <summary>0x270 (0x1A8), blocks per cylinder</summary>
+        public ushort s_cylblks;
+        /// <summary>0x272 (0x1AA), blocks per gap</summary>
+        public ushort s_gapblks;
+        /// <summary>0x274 (0x1AC), device information ??</summary>
+        public ushort s_dinfo0;
+        /// <summary>0x276 (0x1AE), device information ??</summary>
+        public ushort s_dinfo1;
+        /// <summary>0x278 (0x1B0), 6 bytes, volume name</summary>
+        public string s_fname;
+        /// <summary>0x27E (0x1B6), 6 bytes, pack name</summary>
+        public string s_fpack;
+        /// <summary>0x284 (0x1BC), 0x46 if volume is clean</summary>
+        public byte s_clean;
+        /// <summary>0x285 (0x1BD), 371 bytes, 51 bytes for Xenix 3</summary>
+        public byte[] s_fill;
+        /// <summary>0x3F8 (0x1F0), magic</summary>
+        public uint s_magic;
+        /// <summary>0x3FC (0x1F4), filesystem type (1 = 512 bytes/blk, 2 = 1024 bytes/blk, 3 = 2048 bytes/blk)</summary>
+        public uint s_type;
+    }
 
-            // the start of the free block list:
-            /// <summary>0x006, blocks in s_free, &lt;=100</summary>
-            public ushort s_nfree;
-            /// <summary>0x008, 64 entries, first free block list chunk</summary>
-            public uint[] s_free;
+    struct SystemVRelease4SuperBlock
+    {
+        /// <summary>0x000, index of first data zone</summary>
+        public ushort s_isize;
+        /// <summary>0x002, padding</summary>
+        public ushort s_pad0;
+        /// <summary>0x004, total number of zones of this volume</summary>
+        public uint s_fsize;
 
-            // the cache of free inodes:
-            /// <summary>0x108, number of inodes in s_inode, &lt;= 100</summary>
-            public ushort s_ninode;
-            /// <summary>0x10A, 100 entries, some free inodes</summary>
-            public ushort[] s_inode;
-            /// <summary>0x1D2, free block list manipulation lock</summary>
-            public byte s_flock;
-            /// <summary>0x1D3, inode cache manipulation lock</summary>
-            public byte s_ilock;
-            /// <summary>0x1D4, superblock modification flag</summary>
-            public byte s_fmod;
-            /// <summary>0x1D5, read-only mounted flag</summary>
-            public byte s_ronly;
-            /// <summary>0x1D6, time of last superblock update</summary>
-            public uint s_time;
-            /// <summary>0x1DE, total number of free zones</summary>
-            public uint s_tfree;
-            /// <summary>0x1E2, total number of free inodes</summary>
-            public ushort s_tinode;
-            /// <summary>0x1E4, interleave factor</summary>
-            public ushort s_int_m;
-            /// <summary>0x1E6, interleave factor</summary>
-            public ushort s_int_n;
-            /// <summary>0x1E8, 6 bytes, volume name</summary>
-            public string s_fname;
-            /// <summary>0x1EE, 6 bytes, pack name</summary>
-            public string s_fpack;
-            /// <summary>0x1F4, zero-filled</summary>
-            public uint s_unique;
-        }
+        // the start of the free block list:
+        /// <summary>0x008, blocks in s_free, &lt;=100</summary>
+        public ushort s_nfree;
+        /// <summary>0x00A, padding</summary>
+        public ushort s_pad1;
+        /// <summary>0x00C, 50 entries, first free block list chunk</summary>
+        public uint[] s_free;
+
+        // the cache of free inodes:
+        /// <summary>0x0D4, number of inodes in s_inode, &lt;= 100</summary>
+        public ushort s_ninode;
+        /// <summary>0x0D6, padding</summary>
+        public ushort s_pad2;
+        /// <summary>0x0D8, 100 entries, some free inodes</summary>
+        public ushort[] s_inode;
+        /// <summary>0x1A0, free block list manipulation lock</summary>
+        public byte s_flock;
+        /// <summary>0x1A1, inode cache manipulation lock</summary>
+        public byte s_ilock;
+        /// <summary>0x1A2, superblock modification flag</summary>
+        public byte s_fmod;
+        /// <summary>0x1A3, read-only mounted flag</summary>
+        public byte s_ronly;
+        /// <summary>0x1A4, time of last superblock update</summary>
+        public uint s_time;
+        /// <summary>0x1A8, blocks per cylinder</summary>
+        public ushort s_cylblks;
+        /// <summary>0x1AA, blocks per gap</summary>
+        public ushort s_gapblks;
+        /// <summary>0x1AC, device information ??</summary>
+        public ushort s_dinfo0;
+        /// <summary>0x1AE, device information ??</summary>
+        public ushort s_dinfo1;
+        /// <summary>0x1B0, total number of free zones</summary>
+        public uint s_tfree;
+        /// <summary>0x1B4, total number of free inodes</summary>
+        public ushort s_tinode;
+        /// <summary>0x1B6, padding</summary>
+        public ushort s_pad3;
+        /// <summary>0x1B8, 6 bytes, volume name</summary>
+        public string s_fname;
+        /// <summary>0x1BE, 6 bytes, pack name</summary>
+        public string s_fpack;
+        /// <summary>0x1C4, 48 bytes</summary>
+        public byte[] s_fill;
+        /// <summary>0x1F4, if s_state == (0x7C269D38 - s_time) then filesystem is clean</summary>
+        public uint s_state;
+        /// <summary>0x1F8, magic</summary>
+        public uint s_magic;
+        /// <summary>0x1FC, filesystem type (1 = 512 bytes/blk, 2 = 1024 bytes/blk)</summary>
+        public uint s_type;
+    }
+
+    struct SystemVRelease2SuperBlock
+    {
+        /// <summary>0x000, index of first data zone</summary>
+        public ushort s_isize;
+        /// <summary>0x002, total number of zones of this volume</summary>
+        public uint s_fsize;
+
+        // the start of the free block list:
+        /// <summary>0x006, blocks in s_free, &lt;=100</summary>
+        public ushort s_nfree;
+        /// <summary>0x008, 50 entries, first free block list chunk</summary>
+        public uint[] s_free;
+
+        // the cache of free inodes:
+        /// <summary>0x0D0, number of inodes in s_inode, &lt;= 100</summary>
+        public ushort s_ninode;
+        /// <summary>0x0D2, 100 entries, some free inodes</summary>
+        public ushort[] s_inode;
+        /// <summary>0x19A, free block list manipulation lock</summary>
+        public byte s_flock;
+        /// <summary>0x19B, inode cache manipulation lock</summary>
+        public byte s_ilock;
+        /// <summary>0x19C, superblock modification flag</summary>
+        public byte s_fmod;
+        /// <summary>0x19D, read-only mounted flag</summary>
+        public byte s_ronly;
+        /// <summary>0x19E, time of last superblock update</summary>
+        public uint s_time;
+        /// <summary>0x1A2, blocks per cylinder</summary>
+        public ushort s_cylblks;
+        /// <summary>0x1A4, blocks per gap</summary>
+        public ushort s_gapblks;
+        /// <summary>0x1A6, device information ??</summary>
+        public ushort s_dinfo0;
+        /// <summary>0x1A8, device information ??</summary>
+        public ushort s_dinfo1;
+        /// <summary>0x1AA, total number of free zones</summary>
+        public uint s_tfree;
+        /// <summary>0x1AE, total number of free inodes</summary>
+        public ushort s_tinode;
+        /// <summary>0x1B0, 6 bytes, volume name</summary>
+        public string s_fname;
+        /// <summary>0x1B6, 6 bytes, pack name</summary>
+        public string s_fpack;
+        /// <summary>0x1BC, 56 bytes</summary>
+        public byte[] s_fill;
+        /// <summary>0x1F4, if s_state == (0x7C269D38 - s_time) then filesystem is clean</summary>
+        public uint s_state;
+        /// <summary>0x1F8, magic</summary>
+        public uint s_magic;
+        /// <summary>0x1FC, filesystem type (1 = 512 bytes/blk, 2 = 1024 bytes/blk)</summary>
+        public uint s_type;
+    }
+
+    struct UNIX7thEditionSuperBlock
+    {
+        /// <summary>0x000, index of first data zone</summary>
+        public ushort s_isize;
+        /// <summary>0x002, total number of zones of this volume</summary>
+        public uint s_fsize;
+
+        // the start of the free block list:
+        /// <summary>0x006, blocks in s_free, &lt;=100</summary>
+        public ushort s_nfree;
+        /// <summary>0x008, 50 entries, first free block list chunk</summary>
+        public uint[] s_free;
+
+        // the cache of free inodes:
+        /// <summary>0x0D0, number of inodes in s_inode, &lt;= 100</summary>
+        public ushort s_ninode;
+        /// <summary>0x0D2, 100 entries, some free inodes</summary>
+        public ushort[] s_inode;
+        /// <summary>0x19A, free block list manipulation lock</summary>
+        public byte s_flock;
+        /// <summary>0x19B, inode cache manipulation lock</summary>
+        public byte s_ilock;
+        /// <summary>0x19C, superblock modification flag</summary>
+        public byte s_fmod;
+        /// <summary>0x19D, read-only mounted flag</summary>
+        public byte s_ronly;
+        /// <summary>0x19E, time of last superblock update</summary>
+        public uint s_time;
+        /// <summary>0x1A2, total number of free zones</summary>
+        public uint s_tfree;
+        /// <summary>0x1A6, total number of free inodes</summary>
+        public ushort s_tinode;
+        /// <summary>0x1A8, interleave factor</summary>
+        public ushort s_int_m;
+        /// <summary>0x1AA, interleave factor</summary>
+        public ushort s_int_n;
+        /// <summary>0x1AC, 6 bytes, volume name</summary>
+        public string s_fname;
+        /// <summary>0x1B2, 6 bytes, pack name</summary>
+        public string s_fpack;
+    }
+
+    struct CoherentSuperBlock
+    {
+        /// <summary>0x000, index of first data zone</summary>
+        public ushort s_isize;
+        /// <summary>0x002, total number of zones of this volume</summary>
+        public uint s_fsize;
+
+        // the start of the free block list:
+        /// <summary>0x006, blocks in s_free, &lt;=100</summary>
+        public ushort s_nfree;
+        /// <summary>0x008, 64 entries, first free block list chunk</summary>
+        public uint[] s_free;
+
+        // the cache of free inodes:
+        /// <summary>0x108, number of inodes in s_inode, &lt;= 100</summary>
+        public ushort s_ninode;
+        /// <summary>0x10A, 100 entries, some free inodes</summary>
+        public ushort[] s_inode;
+        /// <summary>0x1D2, free block list manipulation lock</summary>
+        public byte s_flock;
+        /// <summary>0x1D3, inode cache manipulation lock</summary>
+        public byte s_ilock;
+        /// <summary>0x1D4, superblock modification flag</summary>
+        public byte s_fmod;
+        /// <summary>0x1D5, read-only mounted flag</summary>
+        public byte s_ronly;
+        /// <summary>0x1D6, time of last superblock update</summary>
+        public uint s_time;
+        /// <summary>0x1DE, total number of free zones</summary>
+        public uint s_tfree;
+        /// <summary>0x1E2, total number of free inodes</summary>
+        public ushort s_tinode;
+        /// <summary>0x1E4, interleave factor</summary>
+        public ushort s_int_m;
+        /// <summary>0x1E6, interleave factor</summary>
+        public ushort s_int_n;
+        /// <summary>0x1E8, 6 bytes, volume name</summary>
+        public string s_fname;
+        /// <summary>0x1EE, 6 bytes, pack name</summary>
+        public string s_fpack;
+        /// <summary>0x1F4, zero-filled</summary>
+        public uint s_unique;
     }
 }

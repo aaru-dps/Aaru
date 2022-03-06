@@ -41,770 +41,769 @@ using Aaru.CommonTypes.Structs;
 using Schemas;
 using TrackType = Aaru.CommonTypes.Enums.TrackType;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class Cdrdao
 {
-    public sealed partial class Cdrdao
+    /// <inheritdoc />
+    public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
+                       uint sectorSize)
     {
-        /// <inheritdoc />
-        public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
-                           uint sectorSize)
+        if(options != null)
         {
-            if(options != null)
+            if(options.TryGetValue("separate", out string tmpValue))
             {
-                if(options.TryGetValue("separate", out string tmpValue))
+                if(!bool.TryParse(tmpValue, out _separateTracksWriting))
                 {
-                    if(!bool.TryParse(tmpValue, out _separateTracksWriting))
-                    {
-                        ErrorMessage = "Invalid value for split option";
-
-                        return false;
-                    }
-
-                    if(_separateTracksWriting)
-                    {
-                        ErrorMessage = "Separate tracks not yet implemented";
-
-                        return false;
-                    }
-                }
-            }
-            else
-                _separateTracksWriting = false;
-
-            if(!SupportedMediaTypes.Contains(mediaType))
-            {
-                ErrorMessage = $"Unsupported media format {mediaType}";
-
-                return false;
-            }
-
-            _imageInfo = new ImageInfo
-            {
-                MediaType  = mediaType,
-                SectorSize = sectorSize,
-                Sectors    = sectors
-            };
-
-            // TODO: Separate tracks
-            try
-            {
-                _writingBaseName =
-                    Path.Combine(Path.GetDirectoryName(path) ?? "", Path.GetFileNameWithoutExtension(path));
-
-                _descriptorStream = new StreamWriter(path, false, Encoding.ASCII);
-            }
-            catch(IOException e)
-            {
-                ErrorMessage = $"Could not create new image file, exception {e.Message}";
-
-                return false;
-            }
-
-            _discimage = new CdrdaoDisc
-            {
-                Disktype = mediaType,
-                Tracks   = new List<CdrdaoTrack>()
-            };
-
-            _trackFlags = new Dictionary<byte, byte>();
-            _trackIsrcs = new Dictionary<byte, string>();
-
-            IsWriting    = true;
-            ErrorMessage = null;
-
-            return true;
-        }
-
-        /// <inheritdoc />
-        public bool WriteMediaTag(byte[] data, MediaTagType tag)
-        {
-            if(!IsWriting)
-            {
-                ErrorMessage = "Tried to write on a non-writable image";
-
-                return false;
-            }
-
-            switch(tag)
-            {
-                case MediaTagType.CD_MCN:
-                    _discimage.Mcn = Encoding.ASCII.GetString(data);
-
-                    return true;
-                default:
-                    ErrorMessage = $"Unsupported media tag {tag}";
-
-                    return false;
-            }
-        }
-
-        /// <inheritdoc />
-        public bool WriteSector(byte[] data, ulong sectorAddress)
-        {
-            if(!IsWriting)
-            {
-                ErrorMessage = "Tried to write on a non-writable image";
-
-                return false;
-            }
-
-            Track track =
-                _writingTracks.FirstOrDefault(trk => sectorAddress >= trk.StartSector &&
-                                                     sectorAddress <= trk.EndSector);
-
-            if(track is null)
-            {
-                ErrorMessage = $"Can't found track containing {sectorAddress}";
-
-                return false;
-            }
-
-            FileStream trackStream = _writingStreams.FirstOrDefault(kvp => kvp.Key == track.Sequence).Value;
-
-            if(trackStream == null)
-            {
-                ErrorMessage = $"Can't found file containing {sectorAddress}";
-
-                return false;
-            }
-
-            if(track.BytesPerSector != track.RawBytesPerSector)
-            {
-                ErrorMessage = "Invalid write mode for this sector";
-
-                return false;
-            }
-
-            if(data.Length != track.RawBytesPerSector)
-            {
-                ErrorMessage = "Incorrect data size";
-
-                return false;
-            }
-
-            // cdrdao audio tracks are endian swapped corresponding to Aaru
-            if(track.Type == TrackType.Audio)
-            {
-                byte[] swapped = new byte[data.Length];
-
-                for(long i = 0; i < swapped.Length; i += 2)
-                {
-                    swapped[i] = data[i + 1];
-                    swapped[i           + 1] = data[i];
-                }
-
-                data = swapped;
-            }
-
-            trackStream.
-                Seek((long)(track.FileOffset + ((sectorAddress - track.StartSector) * (ulong)track.RawBytesPerSector)),
-                     SeekOrigin.Begin);
-
-            trackStream.Write(data, 0, data.Length);
-
-            return true;
-        }
-
-        /// <inheritdoc />
-        public bool WriteSectors(byte[] data, ulong sectorAddress, uint length)
-        {
-            if(!IsWriting)
-            {
-                ErrorMessage = "Tried to write on a non-writable image";
-
-                return false;
-            }
-
-            Track track =
-                _writingTracks.FirstOrDefault(trk => sectorAddress >= trk.StartSector &&
-                                                     sectorAddress <= trk.EndSector);
-
-            if(track is null)
-            {
-                ErrorMessage = $"Can't found track containing {sectorAddress}";
-
-                return false;
-            }
-
-            FileStream trackStream = _writingStreams.FirstOrDefault(kvp => kvp.Key == track.Sequence).Value;
-
-            if(trackStream == null)
-            {
-                ErrorMessage = $"Can't found file containing {sectorAddress}";
-
-                return false;
-            }
-
-            if(track.BytesPerSector != track.RawBytesPerSector)
-            {
-                ErrorMessage = "Invalid write mode for this sector";
-
-                return false;
-            }
-
-            if(sectorAddress + length > track.EndSector + 1)
-            {
-                ErrorMessage = "Can't cross tracks";
-
-                return false;
-            }
-
-            if(data.Length % track.RawBytesPerSector != 0)
-            {
-                ErrorMessage = "Incorrect data size";
-
-                return false;
-            }
-
-            // cdrdao audio tracks are endian swapped corresponding to Aaru
-            if(track.Type == TrackType.Audio)
-            {
-                byte[] swapped = new byte[data.Length];
-
-                for(long i = 0; i < swapped.Length; i += 2)
-                {
-                    swapped[i] = data[i + 1];
-                    swapped[i           + 1] = data[i];
-                }
-
-                data = swapped;
-            }
-
-            switch(track.SubchannelType)
-            {
-                case TrackSubchannelType.None:
-                    trackStream.
-                        Seek((long)(track.FileOffset + ((sectorAddress - track.StartSector) * (ulong)track.RawBytesPerSector)),
-                             SeekOrigin.Begin);
-
-                    trackStream.Write(data, 0, data.Length);
-
-                    ErrorMessage = "";
-
-                    return true;
-                case TrackSubchannelType.Raw:
-                case TrackSubchannelType.RawInterleaved:
-                    trackStream.
-                        Seek((long)(track.FileOffset + ((sectorAddress - track.StartSector) * (ulong)(track.RawBytesPerSector + 96))),
-                             SeekOrigin.Begin);
-
-                    for(uint i = 0; i < length; i++)
-                    {
-                        trackStream.Write(data, (int)(i * track.RawBytesPerSector), track.RawBytesPerSector);
-                        trackStream.Position += 96;
-                    }
-
-                    ErrorMessage = "";
-
-                    return true;
-                default:
-                    ErrorMessage = "Invalid subchannel mode for this sector";
-
-                    return false;
-            }
-        }
-
-        /// <inheritdoc />
-        public bool WriteSectorLong(byte[] data, ulong sectorAddress)
-        {
-            if(!IsWriting)
-            {
-                ErrorMessage = "Tried to write on a non-writable image";
-
-                return false;
-            }
-
-            Track track =
-                _writingTracks.FirstOrDefault(trk => sectorAddress >= trk.StartSector &&
-                                                     sectorAddress <= trk.EndSector);
-
-            if(track is null)
-            {
-                ErrorMessage = $"Can't found track containing {sectorAddress}";
-
-                return false;
-            }
-
-            FileStream trackStream = _writingStreams.FirstOrDefault(kvp => kvp.Key == track.Sequence).Value;
-
-            if(trackStream == null)
-            {
-                ErrorMessage = $"Can't found file containing {sectorAddress}";
-
-                return false;
-            }
-
-            if(data.Length != track.RawBytesPerSector)
-            {
-                ErrorMessage = "Incorrect data size";
-
-                return false;
-            }
-
-            // cdrdao audio tracks are endian swapped corresponding to Aaru
-            if(track.Type == TrackType.Audio)
-            {
-                byte[] swapped = new byte[data.Length];
-
-                for(long i = 0; i < swapped.Length; i += 2)
-                {
-                    swapped[i] = data[i + 1];
-                    swapped[i           + 1] = data[i];
-                }
-
-                data = swapped;
-            }
-
-            uint subchannelSize = (uint)(track.SubchannelType != TrackSubchannelType.None ? 96 : 0);
-
-            trackStream.
-                Seek((long)(track.FileOffset + ((sectorAddress - track.StartSector) * (ulong)(track.RawBytesPerSector + subchannelSize))),
-                     SeekOrigin.Begin);
-
-            trackStream.Write(data, 0, data.Length);
-
-            return true;
-        }
-
-        /// <inheritdoc />
-        public bool WriteSectorsLong(byte[] data, ulong sectorAddress, uint length)
-        {
-            if(!IsWriting)
-            {
-                ErrorMessage = "Tried to write on a non-writable image";
-
-                return false;
-            }
-
-            Track track =
-                _writingTracks.FirstOrDefault(trk => sectorAddress >= trk.StartSector &&
-                                                     sectorAddress <= trk.EndSector);
-
-            if(track is null)
-            {
-                ErrorMessage = $"Can't found track containing {sectorAddress}";
-
-                return false;
-            }
-
-            FileStream trackStream = _writingStreams.FirstOrDefault(kvp => kvp.Key == track.Sequence).Value;
-
-            if(trackStream == null)
-            {
-                ErrorMessage = $"Can't found file containing {sectorAddress}";
-
-                return false;
-            }
-
-            if(sectorAddress + length > track.EndSector + 1)
-            {
-                ErrorMessage = "Can't cross tracks";
-
-                return false;
-            }
-
-            if(data.Length % track.RawBytesPerSector != 0)
-            {
-                ErrorMessage = "Incorrect data size";
-
-                return false;
-            }
-
-            // cdrdao audio tracks are endian swapped corresponding to Aaru
-            if(track.Type == TrackType.Audio)
-            {
-                byte[] swapped = new byte[data.Length];
-
-                for(long i = 0; i < swapped.Length; i += 2)
-                {
-                    swapped[i] = data[i + 1];
-                    swapped[i           + 1] = data[i];
-                }
-
-                data = swapped;
-            }
-
-            uint subchannelSize = (uint)(track.SubchannelType != TrackSubchannelType.None ? 96 : 0);
-
-            for(uint i = 0; i < length; i++)
-            {
-                trackStream.
-                    Seek((long)(track.FileOffset + ((i + sectorAddress - track.StartSector) * (ulong)(track.RawBytesPerSector + subchannelSize))),
-                         SeekOrigin.Begin);
-
-                trackStream.Write(data, (int)(i * track.RawBytesPerSector), track.RawBytesPerSector);
-            }
-
-            return true;
-        }
-
-        /// <inheritdoc />
-        public bool SetTracks(List<Track> tracks)
-        {
-            if(!IsWriting)
-            {
-                ErrorMessage = "Tried to write on a non-writable image";
-
-                return false;
-            }
-
-            if(tracks       == null ||
-               tracks.Count == 0)
-            {
-                ErrorMessage = "Invalid tracks sent";
-
-                return false;
-            }
-
-            if(_writingTracks  != null &&
-               _writingStreams != null)
-                foreach(FileStream oldTrack in _writingStreams.Select(t => t.Value).Distinct())
-                    oldTrack.Close();
-
-            ulong currentOffset = 0;
-            _writingTracks = new List<Track>();
-
-            foreach(Track track in tracks.OrderBy(t => t.Sequence))
-            {
-                if(track.SubchannelType == TrackSubchannelType.Q16 ||
-                   track.SubchannelType == TrackSubchannelType.Q16Interleaved)
-                {
-                    ErrorMessage = $"Unsupported subchannel type {track.SubchannelType} for track {track.Sequence}";
+                    ErrorMessage = "Invalid value for split option";
 
                     return false;
                 }
 
-                Track newTrack = track;
+                if(_separateTracksWriting)
+                {
+                    ErrorMessage = "Separate tracks not yet implemented";
 
-                newTrack.File = _separateTracksWriting ? _writingBaseName + $"_track{track.Sequence:D2}.bin"
-                                    : _writingBaseName                    + ".bin";
-
-                newTrack.FileOffset = _separateTracksWriting ? 0 : currentOffset;
-                _writingTracks.Add(newTrack);
-
-                currentOffset += (ulong)newTrack.RawBytesPerSector * (newTrack.EndSector - newTrack.StartSector + 1);
-
-                if(track.SubchannelType != TrackSubchannelType.None)
-                    currentOffset += 96 * (newTrack.EndSector - newTrack.StartSector + 1);
+                    return false;
+                }
             }
-
-            _writingStreams = new Dictionary<uint, FileStream>();
-
-            if(_separateTracksWriting)
-                foreach(Track track in _writingTracks)
-                    _writingStreams.Add(track.Sequence,
-                                        new FileStream(track.File, FileMode.OpenOrCreate, FileAccess.ReadWrite,
-                                                       FileShare.None));
-            else
-            {
-                var jointStream = new FileStream(_writingBaseName + ".bin", FileMode.OpenOrCreate, FileAccess.ReadWrite,
-                                                 FileShare.None);
-
-                foreach(Track track in _writingTracks)
-                    _writingStreams.Add(track.Sequence, jointStream);
-            }
-
-            return true;
         }
+        else
+            _separateTracksWriting = false;
 
-        /// <inheritdoc />
-        public bool Close()
+        if(!SupportedMediaTypes.Contains(mediaType))
         {
-            if(!IsWriting)
-            {
-                ErrorMessage = "Image is not opened for writing";
-
-                return false;
-            }
-
-            if(_separateTracksWriting)
-                foreach(FileStream writingStream in _writingStreams.Values)
-                {
-                    writingStream.Flush();
-                    writingStream.Close();
-                }
-            else
-            {
-                _writingStreams.First().Value.Flush();
-                _writingStreams.First().Value.Close();
-            }
-
-            bool data = _writingTracks.Count(t => t.Type != TrackType.Audio) > 0;
-
-            bool mode2 = _writingTracks.Count(t => t.Type == TrackType.CdMode2Form1 ||
-                                                   t.Type == TrackType.CdMode2Form2 ||
-                                                   t.Type == TrackType.CdMode2Formless) > 0;
-
-            if(mode2)
-                _descriptorStream.WriteLine("CD_ROM_XA");
-            else if(data)
-                _descriptorStream.WriteLine("CD_ROM");
-            else
-                _descriptorStream.WriteLine("CD_DA");
-
-            if(!string.IsNullOrWhiteSpace(_discimage.Comment))
-            {
-                string[] commentLines = _discimage.Comment.Split(new[]
-                {
-                    '\n'
-                }, StringSplitOptions.RemoveEmptyEntries);
-
-                foreach(string line in commentLines)
-                    _descriptorStream.WriteLine("// {0}", line);
-            }
-
-            _descriptorStream.WriteLine();
-
-            if(!string.IsNullOrEmpty(_discimage.Mcn))
-                _descriptorStream.WriteLine("CATALOG {0}", _discimage.Mcn);
-
-            foreach(Track track in _writingTracks)
-            {
-                _descriptorStream.WriteLine();
-                _descriptorStream.WriteLine("// Track {0}", track.Sequence);
-
-                string subchannelType;
-
-                switch(track.SubchannelType)
-                {
-                    case TrackSubchannelType.Packed:
-                    case TrackSubchannelType.PackedInterleaved:
-                        subchannelType = " RW";
-
-                        break;
-                    case TrackSubchannelType.Raw:
-                    case TrackSubchannelType.RawInterleaved:
-                        subchannelType = " RW_RAW";
-
-                        break;
-                    default:
-                        subchannelType = "";
-
-                        break;
-                }
-
-                _descriptorStream.WriteLine("TRACK {0}{1}", GetTrackMode(track), subchannelType);
-
-                _trackFlags.TryGetValue((byte)track.Sequence, out byte flagsByte);
-
-                var flags = (CdFlags)flagsByte;
-
-                _descriptorStream.WriteLine("{0}COPY", flags.HasFlag(CdFlags.CopyPermitted) ? "" : "NO ");
-
-                if(track.Type == TrackType.Audio)
-                {
-                    _descriptorStream.WriteLine("{0}PRE_EMPHASIS", flags.HasFlag(CdFlags.PreEmphasis) ? "" : "NO ");
-
-                    _descriptorStream.WriteLine("{0}_CHANNEL_AUDIO",
-                                                flags.HasFlag(CdFlags.FourChannel) ? "FOUR" : "TWO");
-                }
-
-                if(_trackIsrcs.TryGetValue((byte)track.Sequence, out string isrc) &&
-                   !string.IsNullOrWhiteSpace(isrc))
-                    _descriptorStream.WriteLine("ISRC {0}", isrc);
-
-                (byte minute, byte second, byte frame) msf = LbaToMsf(track.EndSector - track.StartSector + 1);
-
-                _descriptorStream.WriteLine("DATAFILE \"{0}\" #{1} {2:D2}:{3:D2}:{4:D2} // length in bytes: {5}",
-                                            Path.GetFileName(track.File), track.FileOffset, msf.minute, msf.second,
-                                            msf.frame,
-                                            (track.EndSector - track.StartSector + 1) *
-                                            (ulong)(track.RawBytesPerSector +
-                                                    (track.SubchannelType != TrackSubchannelType.None ? 96 : 0)));
-
-                foreach(KeyValuePair<ushort, int> index in track.Indexes.OrderBy(i => i.Key).Where(i => i.Key > 1))
-                {
-                    msf = LbaToMsf((ulong)index.Value - (track.Pregap + track.StartSector));
-
-                    _descriptorStream.WriteLine("INDEX {0:D2}:{1:D2}:{2:D2}", msf.minute, msf.second, msf.frame);
-                }
-
-                _descriptorStream.WriteLine();
-            }
-
-            _descriptorStream.Flush();
-            _descriptorStream.Close();
-
-            IsWriting    = false;
-            ErrorMessage = "";
-
-            return true;
-        }
-
-        /// <inheritdoc />
-        public bool SetMetadata(ImageInfo metadata)
-        {
-            _discimage.Barcode = metadata.MediaBarcode;
-            _discimage.Comment = metadata.Comments;
-
-            return true;
-        }
-
-        /// <inheritdoc />
-        public bool SetGeometry(uint cylinders, uint heads, uint sectorsPerTrack)
-        {
-            ErrorMessage = "Unsupported feature";
+            ErrorMessage = $"Unsupported media format {mediaType}";
 
             return false;
         }
 
-        /// <inheritdoc />
-        public bool WriteSectorTag(byte[] data, ulong sectorAddress, SectorTagType tag)
+        _imageInfo = new ImageInfo
         {
-            if(!IsWriting)
+            MediaType  = mediaType,
+            SectorSize = sectorSize,
+            Sectors    = sectors
+        };
+
+        // TODO: Separate tracks
+        try
+        {
+            _writingBaseName =
+                Path.Combine(Path.GetDirectoryName(path) ?? "", Path.GetFileNameWithoutExtension(path));
+
+            _descriptorStream = new StreamWriter(path, false, Encoding.ASCII);
+        }
+        catch(IOException e)
+        {
+            ErrorMessage = $"Could not create new image file, exception {e.Message}";
+
+            return false;
+        }
+
+        _discimage = new CdrdaoDisc
+        {
+            Disktype = mediaType,
+            Tracks   = new List<CdrdaoTrack>()
+        };
+
+        _trackFlags = new Dictionary<byte, byte>();
+        _trackIsrcs = new Dictionary<byte, string>();
+
+        IsWriting    = true;
+        ErrorMessage = null;
+
+        return true;
+    }
+
+    /// <inheritdoc />
+    public bool WriteMediaTag(byte[] data, MediaTagType tag)
+    {
+        if(!IsWriting)
+        {
+            ErrorMessage = "Tried to write on a non-writable image";
+
+            return false;
+        }
+
+        switch(tag)
+        {
+            case MediaTagType.CD_MCN:
+                _discimage.Mcn = Encoding.ASCII.GetString(data);
+
+                return true;
+            default:
+                ErrorMessage = $"Unsupported media tag {tag}";
+
+                return false;
+        }
+    }
+
+    /// <inheritdoc />
+    public bool WriteSector(byte[] data, ulong sectorAddress)
+    {
+        if(!IsWriting)
+        {
+            ErrorMessage = "Tried to write on a non-writable image";
+
+            return false;
+        }
+
+        Track track =
+            _writingTracks.FirstOrDefault(trk => sectorAddress >= trk.StartSector &&
+                                                 sectorAddress <= trk.EndSector);
+
+        if(track is null)
+        {
+            ErrorMessage = $"Can't found track containing {sectorAddress}";
+
+            return false;
+        }
+
+        FileStream trackStream = _writingStreams.FirstOrDefault(kvp => kvp.Key == track.Sequence).Value;
+
+        if(trackStream == null)
+        {
+            ErrorMessage = $"Can't found file containing {sectorAddress}";
+
+            return false;
+        }
+
+        if(track.BytesPerSector != track.RawBytesPerSector)
+        {
+            ErrorMessage = "Invalid write mode for this sector";
+
+            return false;
+        }
+
+        if(data.Length != track.RawBytesPerSector)
+        {
+            ErrorMessage = "Incorrect data size";
+
+            return false;
+        }
+
+        // cdrdao audio tracks are endian swapped corresponding to Aaru
+        if(track.Type == TrackType.Audio)
+        {
+            byte[] swapped = new byte[data.Length];
+
+            for(long i = 0; i < swapped.Length; i += 2)
             {
-                ErrorMessage = "Tried to write on a non-writable image";
+                swapped[i] = data[i + 1];
+                swapped[i           + 1] = data[i];
+            }
+
+            data = swapped;
+        }
+
+        trackStream.
+            Seek((long)(track.FileOffset + ((sectorAddress - track.StartSector) * (ulong)track.RawBytesPerSector)),
+                 SeekOrigin.Begin);
+
+        trackStream.Write(data, 0, data.Length);
+
+        return true;
+    }
+
+    /// <inheritdoc />
+    public bool WriteSectors(byte[] data, ulong sectorAddress, uint length)
+    {
+        if(!IsWriting)
+        {
+            ErrorMessage = "Tried to write on a non-writable image";
+
+            return false;
+        }
+
+        Track track =
+            _writingTracks.FirstOrDefault(trk => sectorAddress >= trk.StartSector &&
+                                                 sectorAddress <= trk.EndSector);
+
+        if(track is null)
+        {
+            ErrorMessage = $"Can't found track containing {sectorAddress}";
+
+            return false;
+        }
+
+        FileStream trackStream = _writingStreams.FirstOrDefault(kvp => kvp.Key == track.Sequence).Value;
+
+        if(trackStream == null)
+        {
+            ErrorMessage = $"Can't found file containing {sectorAddress}";
+
+            return false;
+        }
+
+        if(track.BytesPerSector != track.RawBytesPerSector)
+        {
+            ErrorMessage = "Invalid write mode for this sector";
+
+            return false;
+        }
+
+        if(sectorAddress + length > track.EndSector + 1)
+        {
+            ErrorMessage = "Can't cross tracks";
+
+            return false;
+        }
+
+        if(data.Length % track.RawBytesPerSector != 0)
+        {
+            ErrorMessage = "Incorrect data size";
+
+            return false;
+        }
+
+        // cdrdao audio tracks are endian swapped corresponding to Aaru
+        if(track.Type == TrackType.Audio)
+        {
+            byte[] swapped = new byte[data.Length];
+
+            for(long i = 0; i < swapped.Length; i += 2)
+            {
+                swapped[i] = data[i + 1];
+                swapped[i           + 1] = data[i];
+            }
+
+            data = swapped;
+        }
+
+        switch(track.SubchannelType)
+        {
+            case TrackSubchannelType.None:
+                trackStream.
+                    Seek((long)(track.FileOffset + ((sectorAddress - track.StartSector) * (ulong)track.RawBytesPerSector)),
+                         SeekOrigin.Begin);
+
+                trackStream.Write(data, 0, data.Length);
+
+                ErrorMessage = "";
+
+                return true;
+            case TrackSubchannelType.Raw:
+            case TrackSubchannelType.RawInterleaved:
+                trackStream.
+                    Seek((long)(track.FileOffset + ((sectorAddress - track.StartSector) * (ulong)(track.RawBytesPerSector + 96))),
+                         SeekOrigin.Begin);
+
+                for(uint i = 0; i < length; i++)
+                {
+                    trackStream.Write(data, (int)(i * track.RawBytesPerSector), track.RawBytesPerSector);
+                    trackStream.Position += 96;
+                }
+
+                ErrorMessage = "";
+
+                return true;
+            default:
+                ErrorMessage = "Invalid subchannel mode for this sector";
+
+                return false;
+        }
+    }
+
+    /// <inheritdoc />
+    public bool WriteSectorLong(byte[] data, ulong sectorAddress)
+    {
+        if(!IsWriting)
+        {
+            ErrorMessage = "Tried to write on a non-writable image";
+
+            return false;
+        }
+
+        Track track =
+            _writingTracks.FirstOrDefault(trk => sectorAddress >= trk.StartSector &&
+                                                 sectorAddress <= trk.EndSector);
+
+        if(track is null)
+        {
+            ErrorMessage = $"Can't found track containing {sectorAddress}";
+
+            return false;
+        }
+
+        FileStream trackStream = _writingStreams.FirstOrDefault(kvp => kvp.Key == track.Sequence).Value;
+
+        if(trackStream == null)
+        {
+            ErrorMessage = $"Can't found file containing {sectorAddress}";
+
+            return false;
+        }
+
+        if(data.Length != track.RawBytesPerSector)
+        {
+            ErrorMessage = "Incorrect data size";
+
+            return false;
+        }
+
+        // cdrdao audio tracks are endian swapped corresponding to Aaru
+        if(track.Type == TrackType.Audio)
+        {
+            byte[] swapped = new byte[data.Length];
+
+            for(long i = 0; i < swapped.Length; i += 2)
+            {
+                swapped[i] = data[i + 1];
+                swapped[i           + 1] = data[i];
+            }
+
+            data = swapped;
+        }
+
+        uint subchannelSize = (uint)(track.SubchannelType != TrackSubchannelType.None ? 96 : 0);
+
+        trackStream.
+            Seek((long)(track.FileOffset + ((sectorAddress - track.StartSector) * (ulong)(track.RawBytesPerSector + subchannelSize))),
+                 SeekOrigin.Begin);
+
+        trackStream.Write(data, 0, data.Length);
+
+        return true;
+    }
+
+    /// <inheritdoc />
+    public bool WriteSectorsLong(byte[] data, ulong sectorAddress, uint length)
+    {
+        if(!IsWriting)
+        {
+            ErrorMessage = "Tried to write on a non-writable image";
+
+            return false;
+        }
+
+        Track track =
+            _writingTracks.FirstOrDefault(trk => sectorAddress >= trk.StartSector &&
+                                                 sectorAddress <= trk.EndSector);
+
+        if(track is null)
+        {
+            ErrorMessage = $"Can't found track containing {sectorAddress}";
+
+            return false;
+        }
+
+        FileStream trackStream = _writingStreams.FirstOrDefault(kvp => kvp.Key == track.Sequence).Value;
+
+        if(trackStream == null)
+        {
+            ErrorMessage = $"Can't found file containing {sectorAddress}";
+
+            return false;
+        }
+
+        if(sectorAddress + length > track.EndSector + 1)
+        {
+            ErrorMessage = "Can't cross tracks";
+
+            return false;
+        }
+
+        if(data.Length % track.RawBytesPerSector != 0)
+        {
+            ErrorMessage = "Incorrect data size";
+
+            return false;
+        }
+
+        // cdrdao audio tracks are endian swapped corresponding to Aaru
+        if(track.Type == TrackType.Audio)
+        {
+            byte[] swapped = new byte[data.Length];
+
+            for(long i = 0; i < swapped.Length; i += 2)
+            {
+                swapped[i] = data[i + 1];
+                swapped[i           + 1] = data[i];
+            }
+
+            data = swapped;
+        }
+
+        uint subchannelSize = (uint)(track.SubchannelType != TrackSubchannelType.None ? 96 : 0);
+
+        for(uint i = 0; i < length; i++)
+        {
+            trackStream.
+                Seek((long)(track.FileOffset + ((i + sectorAddress - track.StartSector) * (ulong)(track.RawBytesPerSector + subchannelSize))),
+                     SeekOrigin.Begin);
+
+            trackStream.Write(data, (int)(i * track.RawBytesPerSector), track.RawBytesPerSector);
+        }
+
+        return true;
+    }
+
+    /// <inheritdoc />
+    public bool SetTracks(List<Track> tracks)
+    {
+        if(!IsWriting)
+        {
+            ErrorMessage = "Tried to write on a non-writable image";
+
+            return false;
+        }
+
+        if(tracks       == null ||
+           tracks.Count == 0)
+        {
+            ErrorMessage = "Invalid tracks sent";
+
+            return false;
+        }
+
+        if(_writingTracks  != null &&
+           _writingStreams != null)
+            foreach(FileStream oldTrack in _writingStreams.Select(t => t.Value).Distinct())
+                oldTrack.Close();
+
+        ulong currentOffset = 0;
+        _writingTracks = new List<Track>();
+
+        foreach(Track track in tracks.OrderBy(t => t.Sequence))
+        {
+            if(track.SubchannelType == TrackSubchannelType.Q16 ||
+               track.SubchannelType == TrackSubchannelType.Q16Interleaved)
+            {
+                ErrorMessage = $"Unsupported subchannel type {track.SubchannelType} for track {track.Sequence}";
 
                 return false;
             }
 
-            Track track =
-                _writingTracks.FirstOrDefault(trk => sectorAddress >= trk.StartSector &&
-                                                     sectorAddress <= trk.EndSector);
+            Track newTrack = track;
 
-            if(track is null)
+            newTrack.File = _separateTracksWriting ? _writingBaseName + $"_track{track.Sequence:D2}.bin"
+                                : _writingBaseName                    + ".bin";
+
+            newTrack.FileOffset = _separateTracksWriting ? 0 : currentOffset;
+            _writingTracks.Add(newTrack);
+
+            currentOffset += (ulong)newTrack.RawBytesPerSector * (newTrack.EndSector - newTrack.StartSector + 1);
+
+            if(track.SubchannelType != TrackSubchannelType.None)
+                currentOffset += 96 * (newTrack.EndSector - newTrack.StartSector + 1);
+        }
+
+        _writingStreams = new Dictionary<uint, FileStream>();
+
+        if(_separateTracksWriting)
+            foreach(Track track in _writingTracks)
+                _writingStreams.Add(track.Sequence,
+                                    new FileStream(track.File, FileMode.OpenOrCreate, FileAccess.ReadWrite,
+                                                   FileShare.None));
+        else
+        {
+            var jointStream = new FileStream(_writingBaseName + ".bin", FileMode.OpenOrCreate, FileAccess.ReadWrite,
+                                             FileShare.None);
+
+            foreach(Track track in _writingTracks)
+                _writingStreams.Add(track.Sequence, jointStream);
+        }
+
+        return true;
+    }
+
+    /// <inheritdoc />
+    public bool Close()
+    {
+        if(!IsWriting)
+        {
+            ErrorMessage = "Image is not opened for writing";
+
+            return false;
+        }
+
+        if(_separateTracksWriting)
+            foreach(FileStream writingStream in _writingStreams.Values)
             {
-                ErrorMessage = $"Can't found track containing {sectorAddress}";
+                writingStream.Flush();
+                writingStream.Close();
+            }
+        else
+        {
+            _writingStreams.First().Value.Flush();
+            _writingStreams.First().Value.Close();
+        }
 
-                return false;
+        bool data = _writingTracks.Count(t => t.Type != TrackType.Audio) > 0;
+
+        bool mode2 = _writingTracks.Count(t => t.Type == TrackType.CdMode2Form1 ||
+                                               t.Type == TrackType.CdMode2Form2 ||
+                                               t.Type == TrackType.CdMode2Formless) > 0;
+
+        if(mode2)
+            _descriptorStream.WriteLine("CD_ROM_XA");
+        else if(data)
+            _descriptorStream.WriteLine("CD_ROM");
+        else
+            _descriptorStream.WriteLine("CD_DA");
+
+        if(!string.IsNullOrWhiteSpace(_discimage.Comment))
+        {
+            string[] commentLines = _discimage.Comment.Split(new[]
+            {
+                '\n'
+            }, StringSplitOptions.RemoveEmptyEntries);
+
+            foreach(string line in commentLines)
+                _descriptorStream.WriteLine("// {0}", line);
+        }
+
+        _descriptorStream.WriteLine();
+
+        if(!string.IsNullOrEmpty(_discimage.Mcn))
+            _descriptorStream.WriteLine("CATALOG {0}", _discimage.Mcn);
+
+        foreach(Track track in _writingTracks)
+        {
+            _descriptorStream.WriteLine();
+            _descriptorStream.WriteLine("// Track {0}", track.Sequence);
+
+            string subchannelType;
+
+            switch(track.SubchannelType)
+            {
+                case TrackSubchannelType.Packed:
+                case TrackSubchannelType.PackedInterleaved:
+                    subchannelType = " RW";
+
+                    break;
+                case TrackSubchannelType.Raw:
+                case TrackSubchannelType.RawInterleaved:
+                    subchannelType = " RW_RAW";
+
+                    break;
+                default:
+                    subchannelType = "";
+
+                    break;
             }
 
-            switch(tag)
+            _descriptorStream.WriteLine("TRACK {0}{1}", GetTrackMode(track), subchannelType);
+
+            _trackFlags.TryGetValue((byte)track.Sequence, out byte flagsByte);
+
+            var flags = (CdFlags)flagsByte;
+
+            _descriptorStream.WriteLine("{0}COPY", flags.HasFlag(CdFlags.CopyPermitted) ? "" : "NO ");
+
+            if(track.Type == TrackType.Audio)
             {
-                case SectorTagType.CdTrackFlags:
+                _descriptorStream.WriteLine("{0}PRE_EMPHASIS", flags.HasFlag(CdFlags.PreEmphasis) ? "" : "NO ");
+
+                _descriptorStream.WriteLine("{0}_CHANNEL_AUDIO",
+                                            flags.HasFlag(CdFlags.FourChannel) ? "FOUR" : "TWO");
+            }
+
+            if(_trackIsrcs.TryGetValue((byte)track.Sequence, out string isrc) &&
+               !string.IsNullOrWhiteSpace(isrc))
+                _descriptorStream.WriteLine("ISRC {0}", isrc);
+
+            (byte minute, byte second, byte frame) msf = LbaToMsf(track.EndSector - track.StartSector + 1);
+
+            _descriptorStream.WriteLine("DATAFILE \"{0}\" #{1} {2:D2}:{3:D2}:{4:D2} // length in bytes: {5}",
+                                        Path.GetFileName(track.File), track.FileOffset, msf.minute, msf.second,
+                                        msf.frame,
+                                        (track.EndSector - track.StartSector + 1) *
+                                        (ulong)(track.RawBytesPerSector +
+                                                (track.SubchannelType != TrackSubchannelType.None ? 96 : 0)));
+
+            foreach(KeyValuePair<ushort, int> index in track.Indexes.OrderBy(i => i.Key).Where(i => i.Key > 1))
+            {
+                msf = LbaToMsf((ulong)index.Value - (track.Pregap + track.StartSector));
+
+                _descriptorStream.WriteLine("INDEX {0:D2}:{1:D2}:{2:D2}", msf.minute, msf.second, msf.frame);
+            }
+
+            _descriptorStream.WriteLine();
+        }
+
+        _descriptorStream.Flush();
+        _descriptorStream.Close();
+
+        IsWriting    = false;
+        ErrorMessage = "";
+
+        return true;
+    }
+
+    /// <inheritdoc />
+    public bool SetMetadata(ImageInfo metadata)
+    {
+        _discimage.Barcode = metadata.MediaBarcode;
+        _discimage.Comment = metadata.Comments;
+
+        return true;
+    }
+
+    /// <inheritdoc />
+    public bool SetGeometry(uint cylinders, uint heads, uint sectorsPerTrack)
+    {
+        ErrorMessage = "Unsupported feature";
+
+        return false;
+    }
+
+    /// <inheritdoc />
+    public bool WriteSectorTag(byte[] data, ulong sectorAddress, SectorTagType tag)
+    {
+        if(!IsWriting)
+        {
+            ErrorMessage = "Tried to write on a non-writable image";
+
+            return false;
+        }
+
+        Track track =
+            _writingTracks.FirstOrDefault(trk => sectorAddress >= trk.StartSector &&
+                                                 sectorAddress <= trk.EndSector);
+
+        if(track is null)
+        {
+            ErrorMessage = $"Can't found track containing {sectorAddress}";
+
+            return false;
+        }
+
+        switch(tag)
+        {
+            case SectorTagType.CdTrackFlags:
+            {
+                if(data.Length != 1)
                 {
-                    if(data.Length != 1)
-                    {
-                        ErrorMessage = "Incorrect data size for track flags";
+                    ErrorMessage = "Incorrect data size for track flags";
 
-                        return false;
-                    }
-
-                    _trackFlags[(byte)sectorAddress] = data[0];
-
-                    return true;
+                    return false;
                 }
-                case SectorTagType.CdTrackIsrc:
-                {
-                    if(data != null)
-                        _trackIsrcs[(byte)sectorAddress] = Encoding.UTF8.GetString(data);
 
-                    return true;
+                _trackFlags[(byte)sectorAddress] = data[0];
+
+                return true;
+            }
+            case SectorTagType.CdTrackIsrc:
+            {
+                if(data != null)
+                    _trackIsrcs[(byte)sectorAddress] = Encoding.UTF8.GetString(data);
+
+                return true;
+            }
+            case SectorTagType.CdSectorSubchannel:
+            {
+                if(track.SubchannelType == 0)
+                {
+                    ErrorMessage =
+                        $"Trying to write subchannel to track {track.Sequence}, that does not have subchannel";
+
+                    return false;
                 }
-                case SectorTagType.CdSectorSubchannel:
+
+                if(data.Length != 96)
                 {
-                    if(track.SubchannelType == 0)
-                    {
-                        ErrorMessage =
-                            $"Trying to write subchannel to track {track.Sequence}, that does not have subchannel";
+                    ErrorMessage = "Incorrect data size for subchannel";
 
-                        return false;
-                    }
+                    return false;
+                }
 
-                    if(data.Length != 96)
-                    {
-                        ErrorMessage = "Incorrect data size for subchannel";
+                FileStream trackStream = _writingStreams.FirstOrDefault(kvp => kvp.Key == track.Sequence).Value;
 
-                        return false;
-                    }
+                if(trackStream == null)
+                {
+                    ErrorMessage = $"Can't found file containing {sectorAddress}";
 
-                    FileStream trackStream = _writingStreams.FirstOrDefault(kvp => kvp.Key == track.Sequence).Value;
+                    return false;
+                }
 
-                    if(trackStream == null)
-                    {
-                        ErrorMessage = $"Can't found file containing {sectorAddress}";
+                trackStream.
+                    Seek((long)(track.FileOffset + ((sectorAddress - track.StartSector) * (ulong)(track.RawBytesPerSector + 96))) + track.RawBytesPerSector,
+                         SeekOrigin.Begin);
 
-                        return false;
-                    }
+                trackStream.Write(data, 0, data.Length);
 
+                return true;
+            }
+            default:
+                ErrorMessage = $"Unsupported tag type {tag}";
+
+                return false;
+        }
+    }
+
+    /// <inheritdoc />
+    public bool WriteSectorsTag(byte[] data, ulong sectorAddress, uint length, SectorTagType tag)
+    {
+        if(!IsWriting)
+        {
+            ErrorMessage = "Tried to write on a non-writable image";
+
+            return false;
+        }
+
+        Track track =
+            _writingTracks.FirstOrDefault(trk => sectorAddress >= trk.StartSector &&
+                                                 sectorAddress <= trk.EndSector);
+
+        if(track is null)
+        {
+            ErrorMessage = $"Can't found track containing {sectorAddress}";
+
+            return false;
+        }
+
+        switch(tag)
+        {
+            case SectorTagType.CdTrackFlags:
+            case SectorTagType.CdTrackIsrc: return WriteSectorTag(data, sectorAddress, tag);
+            case SectorTagType.CdSectorSubchannel:
+            {
+                if(track.SubchannelType == 0)
+                {
+                    ErrorMessage =
+                        $"Trying to write subchannel to track {track.Sequence}, that does not have subchannel";
+
+                    return false;
+                }
+
+                if(data.Length % 96 != 0)
+                {
+                    ErrorMessage = "Incorrect data size for subchannel";
+
+                    return false;
+                }
+
+                FileStream trackStream = _writingStreams.FirstOrDefault(kvp => kvp.Key == track.Sequence).Value;
+
+                if(trackStream == null)
+                {
+                    ErrorMessage = $"Can't found file containing {sectorAddress}";
+
+                    return false;
+                }
+
+                for(uint i = 0; i < length; i++)
+                {
                     trackStream.
-                        Seek((long)(track.FileOffset + ((sectorAddress - track.StartSector) * (ulong)(track.RawBytesPerSector + 96))) + track.RawBytesPerSector,
+                        Seek((long)(track.FileOffset + ((i + sectorAddress - track.StartSector) * (ulong)(track.RawBytesPerSector + 96))) + track.RawBytesPerSector,
                              SeekOrigin.Begin);
 
-                    trackStream.Write(data, 0, data.Length);
-
-                    return true;
+                    trackStream.Write(data, (int)(i * 96), 96);
                 }
-                default:
-                    ErrorMessage = $"Unsupported tag type {tag}";
 
-                    return false;
+                return true;
             }
-        }
-
-        /// <inheritdoc />
-        public bool WriteSectorsTag(byte[] data, ulong sectorAddress, uint length, SectorTagType tag)
-        {
-            if(!IsWriting)
-            {
-                ErrorMessage = "Tried to write on a non-writable image";
+            default:
+                ErrorMessage = $"Unsupported tag type {tag}";
 
                 return false;
-            }
-
-            Track track =
-                _writingTracks.FirstOrDefault(trk => sectorAddress >= trk.StartSector &&
-                                                     sectorAddress <= trk.EndSector);
-
-            if(track is null)
-            {
-                ErrorMessage = $"Can't found track containing {sectorAddress}";
-
-                return false;
-            }
-
-            switch(tag)
-            {
-                case SectorTagType.CdTrackFlags:
-                case SectorTagType.CdTrackIsrc: return WriteSectorTag(data, sectorAddress, tag);
-                case SectorTagType.CdSectorSubchannel:
-                {
-                    if(track.SubchannelType == 0)
-                    {
-                        ErrorMessage =
-                            $"Trying to write subchannel to track {track.Sequence}, that does not have subchannel";
-
-                        return false;
-                    }
-
-                    if(data.Length % 96 != 0)
-                    {
-                        ErrorMessage = "Incorrect data size for subchannel";
-
-                        return false;
-                    }
-
-                    FileStream trackStream = _writingStreams.FirstOrDefault(kvp => kvp.Key == track.Sequence).Value;
-
-                    if(trackStream == null)
-                    {
-                        ErrorMessage = $"Can't found file containing {sectorAddress}";
-
-                        return false;
-                    }
-
-                    for(uint i = 0; i < length; i++)
-                    {
-                        trackStream.
-                            Seek((long)(track.FileOffset + ((i + sectorAddress - track.StartSector) * (ulong)(track.RawBytesPerSector + 96))) + track.RawBytesPerSector,
-                                 SeekOrigin.Begin);
-
-                        trackStream.Write(data, (int)(i * 96), 96);
-                    }
-
-                    return true;
-                }
-                default:
-                    ErrorMessage = $"Unsupported tag type {tag}";
-
-                    return false;
-            }
         }
-
-        /// <inheritdoc />
-        public bool SetDumpHardware(List<DumpHardwareType> dumpHardware) => false;
-
-        /// <inheritdoc />
-        public bool SetCicmMetadata(CICMMetadataType metadata) => false;
     }
+
+    /// <inheritdoc />
+    public bool SetDumpHardware(List<DumpHardwareType> dumpHardware) => false;
+
+    /// <inheritdoc />
+    public bool SetCicmMetadata(CICMMetadataType metadata) => false;
 }

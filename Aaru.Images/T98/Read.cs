@@ -36,70 +36,69 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 
-namespace Aaru.DiscImages
-{
-    public sealed partial class T98
-    {
-        /// <inheritdoc />
-        public ErrorNumber Open(IFilter imageFilter)
-        {
-            Stream stream = imageFilter.GetDataForkStream();
-            stream.Seek(0, SeekOrigin.Begin);
+namespace Aaru.DiscImages;
 
-            if(stream.Length % 256 != 0)
+public sealed partial class T98
+{
+    /// <inheritdoc />
+    public ErrorNumber Open(IFilter imageFilter)
+    {
+        Stream stream = imageFilter.GetDataForkStream();
+        stream.Seek(0, SeekOrigin.Begin);
+
+        if(stream.Length % 256 != 0)
+            return ErrorNumber.InvalidArgument;
+
+        byte[] hdrB = new byte[256];
+        stream.Read(hdrB, 0, hdrB.Length);
+
+        for(int i = 4; i < 256; i++)
+            if(hdrB[i] != 0)
                 return ErrorNumber.InvalidArgument;
 
-            byte[] hdrB = new byte[256];
-            stream.Read(hdrB, 0, hdrB.Length);
+        int cylinders = BitConverter.ToInt32(hdrB, 0);
 
-            for(int i = 4; i < 256; i++)
-                if(hdrB[i] != 0)
-                    return ErrorNumber.InvalidArgument;
+        _imageInfo.MediaType = MediaType.GENERIC_HDD;
 
-            int cylinders = BitConverter.ToInt32(hdrB, 0);
+        _imageInfo.ImageSize            = (ulong)(stream.Length - 256);
+        _imageInfo.CreationTime         = imageFilter.CreationTime;
+        _imageInfo.LastModificationTime = imageFilter.LastWriteTime;
+        _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.Filename);
+        _imageInfo.Sectors              = (ulong)((stream.Length / 256) - 1);
+        _imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
+        _imageInfo.SectorSize           = 256;
+        _imageInfo.Cylinders            = (uint)cylinders;
+        _imageInfo.Heads                = 8;
+        _imageInfo.SectorsPerTrack      = 33;
 
-            _imageInfo.MediaType = MediaType.GENERIC_HDD;
+        _t98ImageFilter = imageFilter;
 
-            _imageInfo.ImageSize            = (ulong)(stream.Length - 256);
-            _imageInfo.CreationTime         = imageFilter.CreationTime;
-            _imageInfo.LastModificationTime = imageFilter.LastWriteTime;
-            _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.Filename);
-            _imageInfo.Sectors              = (ulong)((stream.Length / 256) - 1);
-            _imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
-            _imageInfo.SectorSize           = 256;
-            _imageInfo.Cylinders            = (uint)cylinders;
-            _imageInfo.Heads                = 8;
-            _imageInfo.SectorsPerTrack      = 33;
+        return ErrorNumber.NoError;
+    }
 
-            _t98ImageFilter = imageFilter;
+    /// <inheritdoc />
+    public ErrorNumber ReadSector(ulong sectorAddress, out byte[] buffer) =>
+        ReadSectors(sectorAddress, 1, out buffer);
 
-            return ErrorNumber.NoError;
-        }
+    /// <inheritdoc />
+    public ErrorNumber ReadSectors(ulong sectorAddress, uint length, out byte[] buffer)
+    {
+        buffer = null;
 
-        /// <inheritdoc />
-        public ErrorNumber ReadSector(ulong sectorAddress, out byte[] buffer) =>
-            ReadSectors(sectorAddress, 1, out buffer);
+        if(sectorAddress > _imageInfo.Sectors - 1)
+            return ErrorNumber.OutOfRange;
 
-        /// <inheritdoc />
-        public ErrorNumber ReadSectors(ulong sectorAddress, uint length, out byte[] buffer)
-        {
-            buffer = null;
+        if(sectorAddress + length > _imageInfo.Sectors)
+            return ErrorNumber.OutOfRange;
 
-            if(sectorAddress > _imageInfo.Sectors - 1)
-                return ErrorNumber.OutOfRange;
+        buffer = new byte[length * _imageInfo.SectorSize];
 
-            if(sectorAddress + length > _imageInfo.Sectors)
-                return ErrorNumber.OutOfRange;
+        Stream stream = _t98ImageFilter.GetDataForkStream();
 
-            buffer = new byte[length * _imageInfo.SectorSize];
+        stream.Seek((long)(256 + (sectorAddress * _imageInfo.SectorSize)), SeekOrigin.Begin);
 
-            Stream stream = _t98ImageFilter.GetDataForkStream();
+        stream.Read(buffer, 0, (int)(length * _imageInfo.SectorSize));
 
-            stream.Seek((long)(256 + (sectorAddress * _imageInfo.SectorSize)), SeekOrigin.Begin);
-
-            stream.Read(buffer, 0, (int)(length * _imageInfo.SectorSize));
-
-            return ErrorNumber.NoError;
-        }
+        return ErrorNumber.NoError;
     }
 }

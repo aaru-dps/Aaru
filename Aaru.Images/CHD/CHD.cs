@@ -39,67 +39,66 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Decoders.CD;
 
-namespace Aaru.DiscImages
-{
-    // TODO: Implement PCMCIA support
-    /// <summary>Implements reading MAME CHD disk images</summary>
-    [SuppressMessage("ReSharper", "NotAccessedField.Local")]
-    public sealed partial class Chd : IOpticalMediaImage, IVerifiableImage
-    {
-        /// <summary>"MComprHD"</summary>
-        readonly byte[] _chdTag =
-        {
-            0x4D, 0x43, 0x6F, 0x6D, 0x70, 0x72, 0x48, 0x44
-        };
-        SectorBuilder             _sectorBuilder;
-        uint                      _bytesPerHunk;
-        byte[]                    _cis;
-        byte[]                    _expectedChecksum;
-        uint                      _hdrCompression;
-        uint                      _hdrCompression1;
-        uint                      _hdrCompression2;
-        uint                      _hdrCompression3;
-        Dictionary<ulong, byte[]> _hunkCache;
-        byte[]                    _hunkMap;
-        ulong[]                   _hunkTable;
-        uint[]                    _hunkTableSmall;
-        byte[]                    _identify;
-        ImageInfo                 _imageInfo;
-        Stream                    _imageStream;
-        bool                      _isCdrom;
-        bool                      _isGdrom;
-        bool                      _isHdd;
-        uint                      _mapVersion;
-        int                       _maxBlockCache;
-        int                       _maxSectorCache;
-        Dictionary<ulong, uint>   _offsetmap;
-        List<Partition>           _partitions;
-        Dictionary<ulong, byte[]> _sectorCache;
-        uint                      _sectorsPerHunk;
-        bool                      _swapAudio;
-        uint                      _totalHunks;
-        Dictionary<uint, Track>   _tracks;
+namespace Aaru.DiscImages;
 
-        public Chd() => _imageInfo = new ImageInfo
-        {
-            ReadableSectorTags    = new List<SectorTagType>(),
-            ReadableMediaTags     = new List<MediaTagType>(),
-            HasPartitions         = false,
-            HasSessions           = false,
-            Application           = "MAME",
-            Creator               = null,
-            Comments              = null,
-            MediaManufacturer     = null,
-            MediaModel            = null,
-            MediaSerialNumber     = null,
-            MediaBarcode          = null,
-            MediaPartNumber       = null,
-            MediaSequence         = 0,
-            LastMediaSequence     = 0,
-            DriveManufacturer     = null,
-            DriveModel            = null,
-            DriveSerialNumber     = null,
-            DriveFirmwareRevision = null
-        };
-    }
+// TODO: Implement PCMCIA support
+/// <summary>Implements reading MAME CHD disk images</summary>
+[SuppressMessage("ReSharper", "NotAccessedField.Local")]
+public sealed partial class Chd : IOpticalMediaImage, IVerifiableImage
+{
+    /// <summary>"MComprHD"</summary>
+    readonly byte[] _chdTag =
+    {
+        0x4D, 0x43, 0x6F, 0x6D, 0x70, 0x72, 0x48, 0x44
+    };
+    SectorBuilder             _sectorBuilder;
+    uint                      _bytesPerHunk;
+    byte[]                    _cis;
+    byte[]                    _expectedChecksum;
+    uint                      _hdrCompression;
+    uint                      _hdrCompression1;
+    uint                      _hdrCompression2;
+    uint                      _hdrCompression3;
+    Dictionary<ulong, byte[]> _hunkCache;
+    byte[]                    _hunkMap;
+    ulong[]                   _hunkTable;
+    uint[]                    _hunkTableSmall;
+    byte[]                    _identify;
+    ImageInfo                 _imageInfo;
+    Stream                    _imageStream;
+    bool                      _isCdrom;
+    bool                      _isGdrom;
+    bool                      _isHdd;
+    uint                      _mapVersion;
+    int                       _maxBlockCache;
+    int                       _maxSectorCache;
+    Dictionary<ulong, uint>   _offsetmap;
+    List<Partition>           _partitions;
+    Dictionary<ulong, byte[]> _sectorCache;
+    uint                      _sectorsPerHunk;
+    bool                      _swapAudio;
+    uint                      _totalHunks;
+    Dictionary<uint, Track>   _tracks;
+
+    public Chd() => _imageInfo = new ImageInfo
+    {
+        ReadableSectorTags    = new List<SectorTagType>(),
+        ReadableMediaTags     = new List<MediaTagType>(),
+        HasPartitions         = false,
+        HasSessions           = false,
+        Application           = "MAME",
+        Creator               = null,
+        Comments              = null,
+        MediaManufacturer     = null,
+        MediaModel            = null,
+        MediaSerialNumber     = null,
+        MediaBarcode          = null,
+        MediaPartNumber       = null,
+        MediaSequence         = 0,
+        LastMediaSequence     = 0,
+        DriveManufacturer     = null,
+        DriveModel            = null,
+        DriveSerialNumber     = null,
+        DriveFirmwareRevision = null
+    };
 }

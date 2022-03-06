@@ -40,75 +40,74 @@ using Aaru.Console;
 using Aaru.Core;
 using Spectre.Console;
 
-namespace Aaru.Commands
+namespace Aaru.Commands;
+
+internal sealed class ListEncodingsCommand : Command
 {
-    internal sealed class ListEncodingsCommand : Command
+    public ListEncodingsCommand() : base("list-encodings", "Lists all supported text encodings and code pages.") =>
+        Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
+
+    public static int Invoke(bool debug, bool verbose)
     {
-        public ListEncodingsCommand() : base("list-encodings", "Lists all supported text encodings and code pages.") =>
-            Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
+        MainClass.PrintCopyright();
 
-        public static int Invoke(bool debug, bool verbose)
+        if(debug)
         {
-            MainClass.PrintCopyright();
-
-            if(debug)
+            IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
             {
-                IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
-                {
-                    Out = new AnsiConsoleOutput(System.Console.Error)
-                });
+                Out = new AnsiConsoleOutput(System.Console.Error)
+            });
 
-                AaruConsole.DebugWriteLineEvent += (format, objects) =>
-                {
-                    if(objects is null)
-                        stderrConsole.MarkupLine(format);
-                    else
-                        stderrConsole.MarkupLine(format, objects);
-                };
-            }
-
-            if(verbose)
-                AaruConsole.WriteEvent += (format, objects) =>
-                {
-                    if(objects is null)
-                        AnsiConsole.Markup(format);
-                    else
-                        AnsiConsole.Markup(format, objects);
-                };
-
-            Statistics.AddCommand("list-encodings");
-
-            AaruConsole.DebugWriteLine("List-Encodings command", "--debug={0}", debug);
-            AaruConsole.DebugWriteLine("List-Encodings command", "--verbose={0}", verbose);
-
-            List<CommonEncodingInfo> encodings = Encoding.GetEncodings().Select(info => new CommonEncodingInfo
+            AaruConsole.DebugWriteLineEvent += (format, objects) =>
             {
-                Name        = info.Name,
-                DisplayName = info.GetEncoding().EncodingName
-            }).ToList();
-
-            encodings.AddRange(Claunia.Encoding.Encoding.GetEncodings().Select(info => new CommonEncodingInfo
-            {
-                Name        = info.Name,
-                DisplayName = info.DisplayName
-            }));
-
-            Table table = new();
-            table.AddColumn("Name");
-            table.AddColumn("Description");
-
-            foreach(CommonEncodingInfo info in encodings.OrderBy(t => t.DisplayName))
-                table.AddRow(info.Name, info.DisplayName);
-
-            AnsiConsole.Render(table);
-
-            return (int)ErrorNumber.NoError;
+                if(objects is null)
+                    stderrConsole.MarkupLine(format);
+                else
+                    stderrConsole.MarkupLine(format, objects);
+            };
         }
 
-        struct CommonEncodingInfo
+        if(verbose)
+            AaruConsole.WriteEvent += (format, objects) =>
+            {
+                if(objects is null)
+                    AnsiConsole.Markup(format);
+                else
+                    AnsiConsole.Markup(format, objects);
+            };
+
+        Statistics.AddCommand("list-encodings");
+
+        AaruConsole.DebugWriteLine("List-Encodings command", "--debug={0}", debug);
+        AaruConsole.DebugWriteLine("List-Encodings command", "--verbose={0}", verbose);
+
+        List<CommonEncodingInfo> encodings = Encoding.GetEncodings().Select(info => new CommonEncodingInfo
         {
-            public string Name;
-            public string DisplayName;
-        }
+            Name        = info.Name,
+            DisplayName = info.GetEncoding().EncodingName
+        }).ToList();
+
+        encodings.AddRange(Claunia.Encoding.Encoding.GetEncodings().Select(info => new CommonEncodingInfo
+        {
+            Name        = info.Name,
+            DisplayName = info.DisplayName
+        }));
+
+        Table table = new();
+        table.AddColumn("Name");
+        table.AddColumn("Description");
+
+        foreach(CommonEncodingInfo info in encodings.OrderBy(t => t.DisplayName))
+            table.AddRow(info.Name, info.DisplayName);
+
+        AnsiConsole.Render(table);
+
+        return (int)ErrorNumber.NoError;
+    }
+
+    struct CommonEncodingInfo
+    {
+        public string Name;
+        public string DisplayName;
     }
 }

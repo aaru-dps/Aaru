@@ -38,195 +38,194 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class CisCopy
 {
-    public sealed partial class CisCopy
+    /// <inheritdoc />
+    public ErrorNumber Open(IFilter imageFilter)
     {
-        /// <inheritdoc />
-        public ErrorNumber Open(IFilter imageFilter)
+        Stream stream = imageFilter.GetDataForkStream();
+        stream.Seek(0, SeekOrigin.Begin);
+
+        var  type = (DiskType)stream.ReadByte();
+        byte tracks;
+
+        switch(type)
         {
-            Stream stream = imageFilter.GetDataForkStream();
-            stream.Seek(0, SeekOrigin.Begin);
+            case DiskType.MD1DD8:
+            case DiskType.MD1DD:
+            case DiskType.MD2DD8:
+            case DiskType.MD2DD:
+                tracks = 80;
 
-            var  type = (DiskType)stream.ReadByte();
-            byte tracks;
+                break;
+            case DiskType.MF2DD:
+            case DiskType.MD2HD:
+            case DiskType.MF2HD:
+                tracks = 160;
 
-            switch(type)
-            {
-                case DiskType.MD1DD8:
-                case DiskType.MD1DD:
-                case DiskType.MD2DD8:
-                case DiskType.MD2DD:
-                    tracks = 80;
+                break;
+            default:
+                AaruConsole.ErrorWriteLine($"Incorrect disk type {(byte)type}");
 
-                    break;
-                case DiskType.MF2DD:
-                case DiskType.MD2HD:
-                case DiskType.MF2HD:
-                    tracks = 160;
-
-                    break;
-                default:
-                    AaruConsole.ErrorWriteLine($"Incorrect disk type {(byte)type}");
-
-                    return ErrorNumber.InvalidArgument;
-            }
-
-            byte[] trackBytes = new byte[tracks];
-            stream.Read(trackBytes, 0, tracks);
-
-            var cmpr = (Compression)stream.ReadByte();
-
-            if(cmpr != Compression.None)
-            {
-                AaruConsole.ErrorWriteLine("Compressed images are not supported.");
-
-                return ErrorNumber.NotImplemented;
-            }
-
-            int trackSize = 0;
-
-            switch(type)
-            {
-                case DiskType.MD1DD8:
-                case DiskType.MD2DD8:
-                    trackSize = 8 * 512;
-
-                    break;
-                case DiskType.MD1DD:
-                case DiskType.MD2DD:
-                case DiskType.MF2DD:
-                    trackSize = 9 * 512;
-
-                    break;
-                case DiskType.MD2HD:
-                    trackSize = 15 * 512;
-
-                    break;
-                case DiskType.MF2HD:
-                    trackSize = 18 * 512;
-
-                    break;
-            }
-
-            int headStep = 1;
-
-            if(type == DiskType.MD1DD ||
-               type == DiskType.MD1DD8)
-                headStep = 2;
-
-            var decodedImage = new MemoryStream();
-
-            for(int i = 0; i < tracks; i += headStep)
-            {
-                byte[] track = new byte[trackSize];
-
-                if((TrackType)trackBytes[i] == TrackType.Copied)
-                    stream.Read(track, 0, trackSize);
-                else
-                    ArrayHelpers.ArrayFill(track, (byte)0xF6);
-
-                decodedImage.Write(track, 0, trackSize);
-            }
-
-            _imageInfo.Application          = "CisCopy";
-            _imageInfo.CreationTime         = imageFilter.CreationTime;
-            _imageInfo.LastModificationTime = imageFilter.LastWriteTime;
-            _imageInfo.MediaTitle           = imageFilter.Filename;
-            _imageInfo.ImageSize            = (ulong)(stream.Length - 2 - trackBytes.Length);
-            _imageInfo.SectorSize           = 512;
-
-            switch(type)
-            {
-                case DiskType.MD1DD8:
-                    _imageInfo.MediaType       = MediaType.DOS_525_SS_DD_8;
-                    _imageInfo.Sectors         = 40 * 1 * 8;
-                    _imageInfo.Heads           = 1;
-                    _imageInfo.Cylinders       = 40;
-                    _imageInfo.SectorsPerTrack = 8;
-
-                    break;
-                case DiskType.MD2DD8:
-                    _imageInfo.MediaType       = MediaType.DOS_525_DS_DD_8;
-                    _imageInfo.Sectors         = 40 * 2 * 8;
-                    _imageInfo.Heads           = 2;
-                    _imageInfo.Cylinders       = 40;
-                    _imageInfo.SectorsPerTrack = 8;
-
-                    break;
-                case DiskType.MD1DD:
-                    _imageInfo.MediaType       = MediaType.DOS_525_SS_DD_9;
-                    _imageInfo.Sectors         = 40 * 1 * 9;
-                    _imageInfo.Heads           = 1;
-                    _imageInfo.Cylinders       = 40;
-                    _imageInfo.SectorsPerTrack = 9;
-
-                    break;
-                case DiskType.MD2DD:
-                    _imageInfo.MediaType       = MediaType.DOS_525_DS_DD_9;
-                    _imageInfo.Sectors         = 40 * 2 * 9;
-                    _imageInfo.Heads           = 2;
-                    _imageInfo.Cylinders       = 40;
-                    _imageInfo.SectorsPerTrack = 9;
-
-                    break;
-                case DiskType.MF2DD:
-                    _imageInfo.MediaType       = MediaType.DOS_35_DS_DD_9;
-                    _imageInfo.Sectors         = 80 * 2 * 9;
-                    _imageInfo.Heads           = 2;
-                    _imageInfo.Cylinders       = 80;
-                    _imageInfo.SectorsPerTrack = 9;
-
-                    break;
-                case DiskType.MD2HD:
-                    _imageInfo.MediaType       = MediaType.DOS_525_HD;
-                    _imageInfo.Sectors         = 80 * 2 * 15;
-                    _imageInfo.Heads           = 2;
-                    _imageInfo.Cylinders       = 80;
-                    _imageInfo.SectorsPerTrack = 15;
-
-                    break;
-                case DiskType.MF2HD:
-                    _imageInfo.MediaType       = MediaType.DOS_35_HD;
-                    _imageInfo.Sectors         = 80 * 2 * 18;
-                    _imageInfo.Heads           = 2;
-                    _imageInfo.Cylinders       = 80;
-                    _imageInfo.SectorsPerTrack = 18;
-
-                    break;
-            }
-
-            _imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
-            _decodedDisk            = decodedImage.ToArray();
-
-            decodedImage.Close();
-
-            AaruConsole.VerboseWriteLine("CisCopy image contains a disk of type {0}", _imageInfo.MediaType);
-
-            return ErrorNumber.NoError;
+                return ErrorNumber.InvalidArgument;
         }
 
-        /// <inheritdoc />
-        public ErrorNumber ReadSector(ulong sectorAddress, out byte[] buffer) =>
-            ReadSectors(sectorAddress, 1, out buffer);
+        byte[] trackBytes = new byte[tracks];
+        stream.Read(trackBytes, 0, tracks);
 
-        /// <inheritdoc />
-        public ErrorNumber ReadSectors(ulong sectorAddress, uint length, out byte[] buffer)
+        var cmpr = (Compression)stream.ReadByte();
+
+        if(cmpr != Compression.None)
         {
-            buffer = null;
+            AaruConsole.ErrorWriteLine("Compressed images are not supported.");
 
-            if(sectorAddress > _imageInfo.Sectors - 1)
-                return ErrorNumber.OutOfRange;
-
-            if(sectorAddress + length > _imageInfo.Sectors)
-                return ErrorNumber.OutOfRange;
-
-            buffer = new byte[length * _imageInfo.SectorSize];
-
-            Array.Copy(_decodedDisk, (int)sectorAddress * _imageInfo.SectorSize, buffer, 0,
-                       length                           * _imageInfo.SectorSize);
-
-            return ErrorNumber.NoError;
+            return ErrorNumber.NotImplemented;
         }
+
+        int trackSize = 0;
+
+        switch(type)
+        {
+            case DiskType.MD1DD8:
+            case DiskType.MD2DD8:
+                trackSize = 8 * 512;
+
+                break;
+            case DiskType.MD1DD:
+            case DiskType.MD2DD:
+            case DiskType.MF2DD:
+                trackSize = 9 * 512;
+
+                break;
+            case DiskType.MD2HD:
+                trackSize = 15 * 512;
+
+                break;
+            case DiskType.MF2HD:
+                trackSize = 18 * 512;
+
+                break;
+        }
+
+        int headStep = 1;
+
+        if(type == DiskType.MD1DD ||
+           type == DiskType.MD1DD8)
+            headStep = 2;
+
+        var decodedImage = new MemoryStream();
+
+        for(int i = 0; i < tracks; i += headStep)
+        {
+            byte[] track = new byte[trackSize];
+
+            if((TrackType)trackBytes[i] == TrackType.Copied)
+                stream.Read(track, 0, trackSize);
+            else
+                ArrayHelpers.ArrayFill(track, (byte)0xF6);
+
+            decodedImage.Write(track, 0, trackSize);
+        }
+
+        _imageInfo.Application          = "CisCopy";
+        _imageInfo.CreationTime         = imageFilter.CreationTime;
+        _imageInfo.LastModificationTime = imageFilter.LastWriteTime;
+        _imageInfo.MediaTitle           = imageFilter.Filename;
+        _imageInfo.ImageSize            = (ulong)(stream.Length - 2 - trackBytes.Length);
+        _imageInfo.SectorSize           = 512;
+
+        switch(type)
+        {
+            case DiskType.MD1DD8:
+                _imageInfo.MediaType       = MediaType.DOS_525_SS_DD_8;
+                _imageInfo.Sectors         = 40 * 1 * 8;
+                _imageInfo.Heads           = 1;
+                _imageInfo.Cylinders       = 40;
+                _imageInfo.SectorsPerTrack = 8;
+
+                break;
+            case DiskType.MD2DD8:
+                _imageInfo.MediaType       = MediaType.DOS_525_DS_DD_8;
+                _imageInfo.Sectors         = 40 * 2 * 8;
+                _imageInfo.Heads           = 2;
+                _imageInfo.Cylinders       = 40;
+                _imageInfo.SectorsPerTrack = 8;
+
+                break;
+            case DiskType.MD1DD:
+                _imageInfo.MediaType       = MediaType.DOS_525_SS_DD_9;
+                _imageInfo.Sectors         = 40 * 1 * 9;
+                _imageInfo.Heads           = 1;
+                _imageInfo.Cylinders       = 40;
+                _imageInfo.SectorsPerTrack = 9;
+
+                break;
+            case DiskType.MD2DD:
+                _imageInfo.MediaType       = MediaType.DOS_525_DS_DD_9;
+                _imageInfo.Sectors         = 40 * 2 * 9;
+                _imageInfo.Heads           = 2;
+                _imageInfo.Cylinders       = 40;
+                _imageInfo.SectorsPerTrack = 9;
+
+                break;
+            case DiskType.MF2DD:
+                _imageInfo.MediaType       = MediaType.DOS_35_DS_DD_9;
+                _imageInfo.Sectors         = 80 * 2 * 9;
+                _imageInfo.Heads           = 2;
+                _imageInfo.Cylinders       = 80;
+                _imageInfo.SectorsPerTrack = 9;
+
+                break;
+            case DiskType.MD2HD:
+                _imageInfo.MediaType       = MediaType.DOS_525_HD;
+                _imageInfo.Sectors         = 80 * 2 * 15;
+                _imageInfo.Heads           = 2;
+                _imageInfo.Cylinders       = 80;
+                _imageInfo.SectorsPerTrack = 15;
+
+                break;
+            case DiskType.MF2HD:
+                _imageInfo.MediaType       = MediaType.DOS_35_HD;
+                _imageInfo.Sectors         = 80 * 2 * 18;
+                _imageInfo.Heads           = 2;
+                _imageInfo.Cylinders       = 80;
+                _imageInfo.SectorsPerTrack = 18;
+
+                break;
+        }
+
+        _imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
+        _decodedDisk            = decodedImage.ToArray();
+
+        decodedImage.Close();
+
+        AaruConsole.VerboseWriteLine("CisCopy image contains a disk of type {0}", _imageInfo.MediaType);
+
+        return ErrorNumber.NoError;
+    }
+
+    /// <inheritdoc />
+    public ErrorNumber ReadSector(ulong sectorAddress, out byte[] buffer) =>
+        ReadSectors(sectorAddress, 1, out buffer);
+
+    /// <inheritdoc />
+    public ErrorNumber ReadSectors(ulong sectorAddress, uint length, out byte[] buffer)
+    {
+        buffer = null;
+
+        if(sectorAddress > _imageInfo.Sectors - 1)
+            return ErrorNumber.OutOfRange;
+
+        if(sectorAddress + length > _imageInfo.Sectors)
+            return ErrorNumber.OutOfRange;
+
+        buffer = new byte[length * _imageInfo.SectorSize];
+
+        Array.Copy(_decodedDisk, (int)sectorAddress * _imageInfo.SectorSize, buffer, 0,
+                   length                           * _imageInfo.SectorSize);
+
+        return ErrorNumber.NoError;
     }
 }

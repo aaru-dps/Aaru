@@ -30,19 +30,18 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Database.Models
+namespace Aaru.Database.Models;
+
+/// <inheritdoc />
+/// <summary>Operating system statistics</summary>
+public abstract class BaseOperatingSystem : BaseModel
 {
-    /// <inheritdoc />
-    /// <summary>Operating system statistics</summary>
-    public abstract class BaseOperatingSystem : BaseModel
-    {
-        /// <summary>Operating system name</summary>
-        public string Name { get; set; }
-        /// <summary>Operating system version</summary>
-        public string Version { get; set; }
-        /// <summary>Has already been synchronized with Aaru's server</summary>
-        public bool Synchronized { get; set; }
-        /// <summary>Statistical count</summary>
-        public ulong Count { get; set; }
-    }
+    /// <summary>Operating system name</summary>
+    public string Name { get; set; }
+    /// <summary>Operating system version</summary>
+    public string Version { get; set; }
+    /// <summary>Has already been synchronized with Aaru's server</summary>
+    public bool Synchronized { get; set; }
+    /// <summary>Statistical count</summary>
+    public ulong Count { get; set; }
 }

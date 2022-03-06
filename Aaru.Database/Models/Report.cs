@@ -34,43 +34,42 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using Aaru.CommonTypes.Metadata;
 
-namespace Aaru.Database.Models
+namespace Aaru.Database.Models;
+
+/// <summary>Device report</summary>
+public class Report : DeviceReportV2
 {
-    /// <summary>Device report</summary>
-    public class Report : DeviceReportV2
+    /// <summary>Builds an empty device report</summary>
+    public Report()
     {
-        /// <summary>Builds an empty device report</summary>
-        public Report()
-        {
-            Created  = DateTime.UtcNow;
-            Uploaded = false;
-        }
-
-        /// <summary>Builds a device report model from a device report</summary>
-        /// <param name="report">Device report</param>
-        [SuppressMessage("ReSharper", "VirtualMemberCallInConstructor")]
-        public Report(DeviceReportV2 report)
-        {
-            ATA            = report.ATA;
-            ATAPI          = report.ATAPI;
-            CompactFlash   = report.CompactFlash;
-            FireWire       = report.FireWire;
-            Created        = DateTime.UtcNow;
-            MultiMediaCard = report.MultiMediaCard;
-            PCMCIA         = report.PCMCIA;
-            SCSI           = report.SCSI;
-            SecureDigital  = report.SecureDigital;
-            USB            = report.USB;
-            Uploaded       = false;
-            Manufacturer   = report.Manufacturer;
-            Model          = report.Model;
-            Revision       = report.Revision;
-            Type           = report.Type;
-        }
-
-        /// <summary>Date when the device report was created</summary>
-        public DateTime Created { get; set; }
-        /// <summary>If this model has already been upload</summary>
-        public bool Uploaded { get; set; }
+        Created  = DateTime.UtcNow;
+        Uploaded = false;
     }
+
+    /// <summary>Builds a device report model from a device report</summary>
+    /// <param name="report">Device report</param>
+    [SuppressMessage("ReSharper", "VirtualMemberCallInConstructor")]
+    public Report(DeviceReportV2 report)
+    {
+        ATA            = report.ATA;
+        ATAPI          = report.ATAPI;
+        CompactFlash   = report.CompactFlash;
+        FireWire       = report.FireWire;
+        Created        = DateTime.UtcNow;
+        MultiMediaCard = report.MultiMediaCard;
+        PCMCIA         = report.PCMCIA;
+        SCSI           = report.SCSI;
+        SecureDigital  = report.SecureDigital;
+        USB            = report.USB;
+        Uploaded       = false;
+        Manufacturer   = report.Manufacturer;
+        Model          = report.Model;
+        Revision       = report.Revision;
+        Type           = report.Type;
+    }
+
+    /// <summary>Date when the device report was created</summary>
+    public DateTime Created { get; set; }
+    /// <summary>If this model has already been upload</summary>
+    public bool Uploaded { get; set; }
 }

@@ -32,12 +32,11 @@
 
 using System.Collections.ObjectModel;
 
-namespace Aaru.Gui.Models
-{
-    public sealed class ImagesRootModel : RootModel
-    {
-        public ImagesRootModel() => Images = new ObservableCollection<ImageModel>();
+namespace Aaru.Gui.Models;
 
-        public ObservableCollection<ImageModel> Images { get; }
-    }
+public sealed class ImagesRootModel : RootModel
+{
+    public ImagesRootModel() => Images = new ObservableCollection<ImageModel>();
+
+    public ObservableCollection<ImageModel> Images { get; }
 }

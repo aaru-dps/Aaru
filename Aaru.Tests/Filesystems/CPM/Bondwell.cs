@@ -30,40 +30,39 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Filesystems.CPM
+namespace Aaru.Tests.Filesystems.CPM;
+
+[TestFixture]
+public class Bondwell : FilesystemTest
 {
-    [TestFixture]
-    public class Bondwell : FilesystemTest
+    public Bondwell() : base("CP/M") {}
+
+    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "CPM", "Bondwell");
+
+    public override IFilesystem Plugin     => new Aaru.Filesystems.CPM();
+    public override bool        Partitions => false;
+
+    public override FileSystemTest[] Tests => new[]
     {
-        public Bondwell() : base("CP/M") {}
-
-        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "CPM", "Bondwell");
-
-        public override IFilesystem Plugin     => new Aaru.Filesystems.CPM();
-        public override bool        Partitions => false;
-
-        public override FileSystemTest[] Tests => new[]
+        new FileSystemTest
         {
-            new FileSystemTest
-            {
-                TestFile    = "filename.imd",
-                MediaType   = MediaType.Unknown,
-                Sectors     = 1440,
-                SectorSize  = 256,
-                Bootable    = true,
-                Clusters    = 174,
-                ClusterSize = 2048
-            },
-            new FileSystemTest
-            {
-                TestFile    = "files.imd",
-                MediaType   = MediaType.Unknown,
-                Sectors     = 1440,
-                SectorSize  = 256,
-                Bootable    = true,
-                Clusters    = 174,
-                ClusterSize = 2048
-            }
-        };
-    }
+            TestFile    = "filename.imd",
+            MediaType   = MediaType.Unknown,
+            Sectors     = 1440,
+            SectorSize  = 256,
+            Bootable    = true,
+            Clusters    = 174,
+            ClusterSize = 2048
+        },
+        new FileSystemTest
+        {
+            TestFile    = "files.imd",
+            MediaType   = MediaType.Unknown,
+            Sectors     = 1440,
+            SectorSize  = 256,
+            Bootable    = true,
+            Clusters    = 174,
+            ClusterSize = 2048
+        }
+    };
 }

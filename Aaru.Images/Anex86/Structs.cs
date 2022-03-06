@@ -32,21 +32,20 @@
 
 using System.Runtime.InteropServices;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class Anex86
 {
-    public sealed partial class Anex86
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    struct Header
     {
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct Header
-        {
-            public readonly int unknown;
-            public readonly int hddtype;
-            public          int hdrSize;
-            public          int dskSize;
-            public          int bps;
-            public          int spt;
-            public          int heads;
-            public          int cylinders;
-        }
+        public readonly int unknown;
+        public readonly int hddtype;
+        public          int hdrSize;
+        public          int dskSize;
+        public          int bps;
+        public          int spt;
+        public          int heads;
+        public          int cylinders;
     }
 }

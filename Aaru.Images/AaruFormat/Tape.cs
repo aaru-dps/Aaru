@@ -34,52 +34,51 @@ using System.Collections.Generic;
 using System.Linq;
 using Aaru.CommonTypes.Structs;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class AaruFormat
 {
-    public sealed partial class AaruFormat
+    /// <inheritdoc />
+    public List<TapeFile> Files { get; private set; }
+    /// <inheritdoc />
+    public List<TapePartition> TapePartitions { get; private set; }
+    /// <inheritdoc />
+    public bool IsTape { get; private set; }
+
+    /// <inheritdoc />
+    public bool AddFile(TapeFile file)
     {
-        /// <inheritdoc />
-        public List<TapeFile> Files { get; private set; }
-        /// <inheritdoc />
-        public List<TapePartition> TapePartitions { get; private set; }
-        /// <inheritdoc />
-        public bool IsTape { get; private set; }
-
-        /// <inheritdoc />
-        public bool AddFile(TapeFile file)
+        if(Files.Any(f => f.File == file.File))
         {
-            if(Files.Any(f => f.File == file.File))
-            {
-                TapeFile removeMe = Files.FirstOrDefault(f => f.File == file.File);
-                Files.Remove(removeMe);
-            }
-
-            Files.Add(file);
-
-            return true;
+            TapeFile removeMe = Files.FirstOrDefault(f => f.File == file.File);
+            Files.Remove(removeMe);
         }
 
-        /// <inheritdoc />
-        public bool AddPartition(TapePartition partition)
+        Files.Add(file);
+
+        return true;
+    }
+
+    /// <inheritdoc />
+    public bool AddPartition(TapePartition partition)
+    {
+        if(TapePartitions.Any(f => f.Number == partition.Number))
         {
-            if(TapePartitions.Any(f => f.Number == partition.Number))
-            {
-                TapePartition removeMe = TapePartitions.FirstOrDefault(f => f.Number == partition.Number);
-                TapePartitions.Remove(removeMe);
-            }
-
-            TapePartitions.Add(partition);
-
-            return true;
+            TapePartition removeMe = TapePartitions.FirstOrDefault(f => f.Number == partition.Number);
+            TapePartitions.Remove(removeMe);
         }
 
-        /// <inheritdoc />
-        public bool SetTape()
-        {
-            Files          = new List<TapeFile>();
-            TapePartitions = new List<TapePartition>();
+        TapePartitions.Add(partition);
 
-            return IsTape = true;
-        }
+        return true;
+    }
+
+    /// <inheritdoc />
+    public bool SetTape()
+    {
+        Files          = new List<TapeFile>();
+        TapePartitions = new List<TapePartition>();
+
+        return IsTape = true;
     }
 }

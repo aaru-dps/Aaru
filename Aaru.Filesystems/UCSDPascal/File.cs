@@ -36,172 +36,171 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 using Aaru.Helpers;
 
-namespace Aaru.Filesystems.UCSDPascal
+namespace Aaru.Filesystems.UCSDPascal;
+
+// Information from Call-A.P.P.L.E. Pascal Disk Directory Structure
+public sealed partial class PascalPlugin
 {
-    // Information from Call-A.P.P.L.E. Pascal Disk Directory Structure
-    public sealed partial class PascalPlugin
+    /// <inheritdoc />
+    public ErrorNumber MapBlock(string path, long fileBlock, out long deviceBlock)
     {
-        /// <inheritdoc />
-        public ErrorNumber MapBlock(string path, long fileBlock, out long deviceBlock)
+        deviceBlock = 0;
+
+        return !_mounted ? ErrorNumber.AccessDenied : ErrorNumber.NotImplemented;
+    }
+
+    /// <inheritdoc />
+    public ErrorNumber GetAttributes(string path, out FileAttributes attributes)
+    {
+        attributes = new FileAttributes();
+
+        if(!_mounted)
+            return ErrorNumber.AccessDenied;
+
+        string[] pathElements = path.Split(new[]
         {
-            deviceBlock = 0;
+            '/'
+        }, StringSplitOptions.RemoveEmptyEntries);
 
-            return !_mounted ? ErrorNumber.AccessDenied : ErrorNumber.NotImplemented;
-        }
+        if(pathElements.Length != 1)
+            return ErrorNumber.NotSupported;
 
-        /// <inheritdoc />
-        public ErrorNumber GetAttributes(string path, out FileAttributes attributes)
-        {
-            attributes = new FileAttributes();
+        ErrorNumber error = GetFileEntry(path, out _);
 
-            if(!_mounted)
-                return ErrorNumber.AccessDenied;
-
-            string[] pathElements = path.Split(new[]
-            {
-                '/'
-            }, StringSplitOptions.RemoveEmptyEntries);
-
-            if(pathElements.Length != 1)
-                return ErrorNumber.NotSupported;
-
-            ErrorNumber error = GetFileEntry(path, out _);
-
-            if(error != ErrorNumber.NoError)
-                return error;
-
-            attributes = FileAttributes.File;
-
+        if(error != ErrorNumber.NoError)
             return error;
-        }
 
-        /// <inheritdoc />
-        public ErrorNumber Read(string path, long offset, long size, ref byte[] buf)
+        attributes = FileAttributes.File;
+
+        return error;
+    }
+
+    /// <inheritdoc />
+    public ErrorNumber Read(string path, long offset, long size, ref byte[] buf)
+    {
+        if(!_mounted)
+            return ErrorNumber.AccessDenied;
+
+        string[] pathElements = path.Split(new[]
         {
-            if(!_mounted)
-                return ErrorNumber.AccessDenied;
+            '/'
+        }, StringSplitOptions.RemoveEmptyEntries);
 
-            string[] pathElements = path.Split(new[]
-            {
-                '/'
-            }, StringSplitOptions.RemoveEmptyEntries);
+        if(pathElements.Length != 1)
+            return ErrorNumber.NotSupported;
 
-            if(pathElements.Length != 1)
-                return ErrorNumber.NotSupported;
+        byte[] file;
 
-            byte[] file;
-
-            if(_debug && (string.Compare(path, "$", StringComparison.InvariantCulture)     == 0 ||
-                          string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0))
-                file = string.Compare(path, "$", StringComparison.InvariantCulture) == 0 ? _catalogBlocks : _bootBlocks;
-            else
-            {
-                ErrorNumber error = GetFileEntry(path, out PascalFileEntry entry);
-
-                if(error != ErrorNumber.NoError)
-                    return error;
-
-                error = _device.ReadSectors((ulong)entry.FirstBlock                    * _multiplier,
-                                            (uint)(entry.LastBlock - entry.FirstBlock) * _multiplier, out byte[] tmp);
-
-                if(error != ErrorNumber.NoError)
-                    return error;
-
-                file = new byte[((entry.LastBlock - entry.FirstBlock - 1) * _device.Info.SectorSize * _multiplier) +
-                                entry.LastBytes];
-
-                Array.Copy(tmp, 0, file, 0, file.Length);
-            }
-
-            if(offset >= file.Length)
-                return ErrorNumber.EINVAL;
-
-            if(size + offset >= file.Length)
-                size = file.Length - offset;
-
-            buf = new byte[size];
-
-            Array.Copy(file, offset, buf, 0, size);
-
-            return ErrorNumber.NoError;
-        }
-
-        /// <inheritdoc />
-        public ErrorNumber Stat(string path, out FileEntryInfo stat)
+        if(_debug && (string.Compare(path, "$", StringComparison.InvariantCulture)     == 0 ||
+                      string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0))
+            file = string.Compare(path, "$", StringComparison.InvariantCulture) == 0 ? _catalogBlocks : _bootBlocks;
+        else
         {
-            stat = null;
-
-            string[] pathElements = path.Split(new[]
-            {
-                '/'
-            }, StringSplitOptions.RemoveEmptyEntries);
-
-            if(pathElements.Length != 1)
-                return ErrorNumber.NotSupported;
-
-            if(_debug)
-                if(string.Compare(path, "$", StringComparison.InvariantCulture)     == 0 ||
-                   string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0)
-                {
-                    stat = new FileEntryInfo
-                    {
-                        Attributes = FileAttributes.System,
-                        BlockSize  = _device.Info.SectorSize * _multiplier,
-                        Links      = 1
-                    };
-
-                    if(string.Compare(path, "$", StringComparison.InvariantCulture) == 0)
-                    {
-                        stat.Blocks = (_catalogBlocks.Length / stat.BlockSize) +
-                                      (_catalogBlocks.Length % stat.BlockSize);
-
-                        stat.Length = _catalogBlocks.Length;
-                    }
-                    else
-                    {
-                        stat.Blocks = (_bootBlocks.Length / stat.BlockSize) + (_catalogBlocks.Length % stat.BlockSize);
-                        stat.Length = _bootBlocks.Length;
-                    }
-
-                    return ErrorNumber.NoError;
-                }
-
             ErrorNumber error = GetFileEntry(path, out PascalFileEntry entry);
 
             if(error != ErrorNumber.NoError)
                 return error;
 
-            stat = new FileEntryInfo
-            {
-                Attributes       = FileAttributes.File,
-                Blocks           = entry.LastBlock - entry.FirstBlock,
-                BlockSize        = _device.Info.SectorSize * _multiplier,
-                LastWriteTimeUtc = DateHandlers.UcsdPascalToDateTime(entry.ModificationTime),
-                Length = ((entry.LastBlock - entry.FirstBlock) * _device.Info.SectorSize * _multiplier) +
-                         entry.LastBytes,
-                Links = 1
-            };
+            error = _device.ReadSectors((ulong)entry.FirstBlock                    * _multiplier,
+                                        (uint)(entry.LastBlock - entry.FirstBlock) * _multiplier, out byte[] tmp);
 
-            return ErrorNumber.NoError;
+            if(error != ErrorNumber.NoError)
+                return error;
+
+            file = new byte[((entry.LastBlock - entry.FirstBlock - 1) * _device.Info.SectorSize * _multiplier) +
+                            entry.LastBytes];
+
+            Array.Copy(tmp, 0, file, 0, file.Length);
         }
 
-        ErrorNumber GetFileEntry(string path, out PascalFileEntry entry)
-        {
-            entry = new PascalFileEntry();
+        if(offset >= file.Length)
+            return ErrorNumber.EINVAL;
 
-            foreach(PascalFileEntry ent in _fileEntries.Where(ent =>
-                                                                  string.Compare(path,
-                                                                      StringHandlers.PascalToString(ent.Filename,
-                                                                          Encoding),
-                                                                      StringComparison.
-                                                                          InvariantCultureIgnoreCase) == 0))
+        if(size + offset >= file.Length)
+            size = file.Length - offset;
+
+        buf = new byte[size];
+
+        Array.Copy(file, offset, buf, 0, size);
+
+        return ErrorNumber.NoError;
+    }
+
+    /// <inheritdoc />
+    public ErrorNumber Stat(string path, out FileEntryInfo stat)
+    {
+        stat = null;
+
+        string[] pathElements = path.Split(new[]
+        {
+            '/'
+        }, StringSplitOptions.RemoveEmptyEntries);
+
+        if(pathElements.Length != 1)
+            return ErrorNumber.NotSupported;
+
+        if(_debug)
+            if(string.Compare(path, "$", StringComparison.InvariantCulture)     == 0 ||
+               string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0)
             {
-                entry = ent;
+                stat = new FileEntryInfo
+                {
+                    Attributes = FileAttributes.System,
+                    BlockSize  = _device.Info.SectorSize * _multiplier,
+                    Links      = 1
+                };
+
+                if(string.Compare(path, "$", StringComparison.InvariantCulture) == 0)
+                {
+                    stat.Blocks = (_catalogBlocks.Length / stat.BlockSize) +
+                                  (_catalogBlocks.Length % stat.BlockSize);
+
+                    stat.Length = _catalogBlocks.Length;
+                }
+                else
+                {
+                    stat.Blocks = (_bootBlocks.Length / stat.BlockSize) + (_catalogBlocks.Length % stat.BlockSize);
+                    stat.Length = _bootBlocks.Length;
+                }
 
                 return ErrorNumber.NoError;
             }
 
-            return ErrorNumber.NoSuchFile;
+        ErrorNumber error = GetFileEntry(path, out PascalFileEntry entry);
+
+        if(error != ErrorNumber.NoError)
+            return error;
+
+        stat = new FileEntryInfo
+        {
+            Attributes       = FileAttributes.File,
+            Blocks           = entry.LastBlock - entry.FirstBlock,
+            BlockSize        = _device.Info.SectorSize * _multiplier,
+            LastWriteTimeUtc = DateHandlers.UcsdPascalToDateTime(entry.ModificationTime),
+            Length = ((entry.LastBlock - entry.FirstBlock) * _device.Info.SectorSize * _multiplier) +
+                     entry.LastBytes,
+            Links = 1
+        };
+
+        return ErrorNumber.NoError;
+    }
+
+    ErrorNumber GetFileEntry(string path, out PascalFileEntry entry)
+    {
+        entry = new PascalFileEntry();
+
+        foreach(PascalFileEntry ent in _fileEntries.Where(ent =>
+                                                              string.Compare(path,
+                                                                             StringHandlers.PascalToString(ent.Filename,
+                                                                                 Encoding),
+                                                                             StringComparison.
+                                                                                 InvariantCultureIgnoreCase) == 0))
+        {
+            entry = ent;
+
+            return ErrorNumber.NoError;
         }
+
+        return ErrorNumber.NoSuchFile;
     }
 }

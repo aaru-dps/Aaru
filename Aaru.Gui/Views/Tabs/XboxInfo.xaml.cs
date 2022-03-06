@@ -33,12 +33,11 @@
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 
-namespace Aaru.Gui.Views.Tabs
-{
-    public sealed class XboxInfo : UserControl
-    {
-        public XboxInfo() => InitializeComponent();
+namespace Aaru.Gui.Views.Tabs;
 
-        void InitializeComponent() => AvaloniaXamlLoader.Load(this);
-    }
+public sealed class XboxInfo : UserControl
+{
+    public XboxInfo() => InitializeComponent();
+
+    void InitializeComponent() => AvaloniaXamlLoader.Load(this);
 }

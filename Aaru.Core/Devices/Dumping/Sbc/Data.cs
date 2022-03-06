@@ -41,236 +41,235 @@ using DVDDecryption = Aaru.Decryption.DVD.Dump;
 // ReSharper disable InlineOutVariableDeclaration
 // ReSharper disable TooWideLocalVariableScope
 
-namespace Aaru.Core.Devices.Dumping
+namespace Aaru.Core.Devices.Dumping;
+
+partial class Dump
 {
-    partial class Dump
+    /// <summary>Dumps data when dumping from a SCSI Block Commands compliant device</summary>
+    /// <param name="blocks">Media blocks</param>
+    /// <param name="maxBlocksToRead">Maximum number of blocks to read in a single command</param>
+    /// <param name="blockSize">Block size in bytes</param>
+    /// <param name="currentTry">Resume information</param>
+    /// <param name="extents">Correctly dump extents</param>
+    /// <param name="currentSpeed">Current speed</param>
+    /// <param name="minSpeed">Minimum speed</param>
+    /// <param name="maxSpeed">Maximum speed</param>
+    /// <param name="totalDuration">Total time spent in commands</param>
+    /// <param name="scsiReader">SCSI reader</param>
+    /// <param name="mhddLog">MHDD log</param>
+    /// <param name="ibgLog">ImgBurn log</param>
+    /// <param name="imageWriteDuration">Total time spent writing to image</param>
+    /// <param name="newTrim">Set if we need to start a trim</param>
+    /// <param name="dvdDecrypt">DVD CSS decryption module</param>
+    /// <param name="discKey">The DVD disc key</param>
+    void ReadSbcData(in ulong blocks, in uint maxBlocksToRead, in uint blockSize, DumpHardwareType currentTry,
+                     ExtentsULong extents, ref double currentSpeed, ref double minSpeed, ref double maxSpeed,
+                     ref double totalDuration, Reader scsiReader, MhddLog mhddLog, IbgLog ibgLog,
+                     ref double imageWriteDuration, ref bool newTrim, ref DVDDecryption dvdDecrypt, byte[] discKey)
     {
-        /// <summary>Dumps data when dumping from a SCSI Block Commands compliant device</summary>
-        /// <param name="blocks">Media blocks</param>
-        /// <param name="maxBlocksToRead">Maximum number of blocks to read in a single command</param>
-        /// <param name="blockSize">Block size in bytes</param>
-        /// <param name="currentTry">Resume information</param>
-        /// <param name="extents">Correctly dump extents</param>
-        /// <param name="currentSpeed">Current speed</param>
-        /// <param name="minSpeed">Minimum speed</param>
-        /// <param name="maxSpeed">Maximum speed</param>
-        /// <param name="totalDuration">Total time spent in commands</param>
-        /// <param name="scsiReader">SCSI reader</param>
-        /// <param name="mhddLog">MHDD log</param>
-        /// <param name="ibgLog">ImgBurn log</param>
-        /// <param name="imageWriteDuration">Total time spent writing to image</param>
-        /// <param name="newTrim">Set if we need to start a trim</param>
-        /// <param name="dvdDecrypt">DVD CSS decryption module</param>
-        /// <param name="discKey">The DVD disc key</param>
-        void ReadSbcData(in ulong blocks, in uint maxBlocksToRead, in uint blockSize, DumpHardwareType currentTry,
-                         ExtentsULong extents, ref double currentSpeed, ref double minSpeed, ref double maxSpeed,
-                         ref double totalDuration, Reader scsiReader, MhddLog mhddLog, IbgLog ibgLog,
-                         ref double imageWriteDuration, ref bool newTrim, ref DVDDecryption dvdDecrypt, byte[] discKey)
+        ulong    sectorSpeedStart = 0;
+        bool     sense;
+        DateTime timeSpeedStart = DateTime.UtcNow;
+        byte[]   buffer;
+        uint     blocksToRead = maxBlocksToRead;
+        var      outputFormat = _outputPlugin as IWritableImage;
+
+        InitProgress?.Invoke();
+
+        for(ulong i = _resume.NextBlock; i < blocks; i += blocksToRead)
         {
-            ulong    sectorSpeedStart = 0;
-            bool     sense;
-            DateTime timeSpeedStart = DateTime.UtcNow;
-            byte[]   buffer;
-            uint     blocksToRead = maxBlocksToRead;
-            var      outputFormat = _outputPlugin as IWritableImage;
-
-            InitProgress?.Invoke();
-
-            for(ulong i = _resume.NextBlock; i < blocks; i += blocksToRead)
+            if(_aborted)
             {
-                if(_aborted)
-                {
-                    currentTry.Extents = ExtentsConverter.ToMetadata(extents);
-                    UpdateStatus?.Invoke("Aborted!");
-                    _dumpLog.WriteLine("Aborted!");
+                currentTry.Extents = ExtentsConverter.ToMetadata(extents);
+                UpdateStatus?.Invoke("Aborted!");
+                _dumpLog.WriteLine("Aborted!");
 
-                    break;
-                }
-
-                if(blocks - i < blocksToRead)
-                    blocksToRead = (uint)(blocks - i);
-
-                if(currentSpeed > maxSpeed &&
-                   currentSpeed > 0)
-                    maxSpeed = currentSpeed;
-
-                if(currentSpeed < minSpeed &&
-                   currentSpeed > 0)
-                    minSpeed = currentSpeed;
-
-                UpdateProgress?.Invoke($"Reading sector {i} of {blocks} ({currentSpeed:F3} MiB/sec.)", (long)i,
-                                       (long)blocks);
-
-                sense = scsiReader.ReadBlocks(out buffer, i, blocksToRead, out double cmdDuration, out _, out _);
-                totalDuration += cmdDuration;
-
-                if(!sense &&
-                   !_dev.Error)
-                {
-                    if(Settings.Settings.Current.EnableDecryption &&
-                       discKey != null                            &&
-                       _titleKeys)
-                    {
-                        for(ulong j = 0; j < blocksToRead; j++)
-                        {
-                            if(_aborted)
-                                break;
-
-                            if(!_resume.MissingTitleKeys.Contains(i + j))
-
-                                // Key is already dumped.
-                                continue;
-
-                            byte[] tmpBuf;
-
-                            bool tmpSense = dvdDecrypt.ReadTitleKey(out tmpBuf, out _, DvdCssKeyClass.DvdCssCppmOrCprm,
-                                                                    i + j, _dev.Timeout, out _);
-
-                            if(!tmpSense)
-                            {
-                                CSS_CPRM.TitleKey? titleKey = CSS.DecodeTitleKey(tmpBuf, dvdDecrypt.BusKey);
-
-                                if(titleKey.HasValue)
-                                    outputFormat.WriteSectorTag(new[]
-                                    {
-                                        titleKey.Value.CMI
-                                    }, i + j, SectorTagType.DvdCmi);
-                                else
-                                    continue;
-
-                                // If the CMI bit is 1, the sector is using copy protection, else it is not
-                                if((titleKey.Value.CMI & 0x80) >> 7 == 0)
-                                {
-                                    // The CMI indicates this sector is not encrypted.
-                                    outputFormat.WriteSectorTag(new byte[]
-                                    {
-                                        0, 0, 0, 0, 0
-                                    }, i + j, SectorTagType.DvdTitleKey);
-
-                                    outputFormat.WriteSectorTag(new byte[]
-                                    {
-                                        0, 0, 0, 0, 0
-                                    }, i + j, SectorTagType.DvdTitleKeyDecrypted);
-
-                                    _resume.MissingTitleKeys.Remove(i + j);
-
-                                    continue;
-                                }
-
-                                // According to libdvdcss, if the key is all zeroes, the sector is actually
-                                // not encrypted even if the CMI says it is.
-                                if(titleKey.Value.Key.All(k => k == 0))
-                                {
-                                    outputFormat.WriteSectorTag(new byte[]
-                                    {
-                                        0, 0, 0, 0, 0
-                                    }, i + j, SectorTagType.DvdTitleKey);
-
-                                    outputFormat.WriteSectorTag(new byte[]
-                                    {
-                                        0, 0, 0, 0, 0
-                                    }, i + j, SectorTagType.DvdTitleKeyDecrypted);
-
-                                    _resume.MissingTitleKeys.Remove(i + j);
-
-                                    continue;
-                                }
-
-                                outputFormat.WriteSectorTag(titleKey.Value.Key, i + j, SectorTagType.DvdTitleKey);
-                                _resume.MissingTitleKeys.Remove(i                  + j);
-
-                                CSS.DecryptTitleKey(0, discKey, titleKey.Value.Key, out tmpBuf);
-                                outputFormat.WriteSectorTag(tmpBuf, i + j, SectorTagType.DvdTitleKeyDecrypted);
-                            }
-                        }
-
-                        if(!_storeEncrypted)
-
-                            // Todo: Flag in the outputFormat that a sector has been decrypted
-                        {
-                            ErrorNumber errno =
-                                outputFormat.ReadSectorsTag(i, blocksToRead, SectorTagType.DvdCmi, out byte[] cmi);
-
-                            if(errno != ErrorNumber.NoError)
-                                ErrorMessage?.Invoke($"Error retrieving CMI for sector {i}");
-                            else
-                            {
-                                errno = outputFormat.ReadSectorsTag(i, blocksToRead,
-                                                                     SectorTagType.DvdTitleKeyDecrypted,
-                                                                     out byte[] titleKey);
-
-                                if(errno != ErrorNumber.NoError)
-                                    ErrorMessage?.Invoke($"Error retrieving title key for sector {i}");
-                                else
-                                    buffer = CSS.DecryptSector(buffer, cmi, titleKey, blocksToRead, blockSize);
-                            }
-                        }
-                    }
-
-                    mhddLog.Write(i, cmdDuration);
-                    ibgLog.Write(i, currentSpeed * 1024);
-                    DateTime writeStart = DateTime.Now;
-                    outputFormat.WriteSectors(buffer, i, blocksToRead);
-                    imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
-                    extents.Add(i, blocksToRead, true);
-                }
-                else
-                {
-                    if(_dev.Manufacturer.ToLowerInvariant() == "insite")
-                    {
-                        _resume.BadBlocks.Add(i);
-                        _resume.BadBlocks = _resume.BadBlocks.Distinct().ToList();
-                        _resume.NextBlock++;
-                        _aborted = true;
-
-                        _dumpLog?.
-                            WriteLine("INSITE floptical drives get crazy on the SCSI bus when an error is found, stopping so you can reboot the computer or reset the scsi bus appropriately.");
-
-                        UpdateStatus?.
-                            Invoke("INSITE floptical drives get crazy on the SCSI bus when an error is found, stopping so you can reboot the computer or reset the scsi bus appropriately");
-
-                        continue;
-                    }
-
-                    // TODO: Reset device after X errors
-                    if(_stopOnError)
-                        return; // TODO: Return more cleanly
-
-                    if(i + _skip > blocks)
-                        _skip = (uint)(blocks - i);
-
-                    // Write empty data
-                    DateTime writeStart = DateTime.Now;
-                    outputFormat.WriteSectors(new byte[blockSize * _skip], i, _skip);
-                    imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
-
-                    for(ulong b = i; b < i + _skip; b++)
-                        _resume.BadBlocks.Add(b);
-
-                    mhddLog.Write(i, cmdDuration < 500 ? 65535 : cmdDuration);
-
-                    ibgLog.Write(i, 0);
-                    _dumpLog.WriteLine("Skipping {0} blocks from errored block {1}.", _skip, i);
-                    i       += _skip - blocksToRead;
-                    newTrim =  true;
-                }
-
-                sectorSpeedStart  += blocksToRead;
-                _resume.NextBlock =  i + blocksToRead;
-
-                double elapsed = (DateTime.UtcNow - timeSpeedStart).TotalSeconds;
-
-                if(elapsed <= 0)
-                    continue;
-
-                currentSpeed     = sectorSpeedStart * blockSize / (1048576 * elapsed);
-                sectorSpeedStart = 0;
-                timeSpeedStart   = DateTime.UtcNow;
+                break;
             }
 
-            _resume.BadBlocks = _resume.BadBlocks.Distinct().ToList();
+            if(blocks - i < blocksToRead)
+                blocksToRead = (uint)(blocks - i);
 
-            EndProgress?.Invoke();
+            if(currentSpeed > maxSpeed &&
+               currentSpeed > 0)
+                maxSpeed = currentSpeed;
+
+            if(currentSpeed < minSpeed &&
+               currentSpeed > 0)
+                minSpeed = currentSpeed;
+
+            UpdateProgress?.Invoke($"Reading sector {i} of {blocks} ({currentSpeed:F3} MiB/sec.)", (long)i,
+                                   (long)blocks);
+
+            sense         =  scsiReader.ReadBlocks(out buffer, i, blocksToRead, out double cmdDuration, out _, out _);
+            totalDuration += cmdDuration;
+
+            if(!sense &&
+               !_dev.Error)
+            {
+                if(Settings.Settings.Current.EnableDecryption &&
+                   discKey != null                            &&
+                   _titleKeys)
+                {
+                    for(ulong j = 0; j < blocksToRead; j++)
+                    {
+                        if(_aborted)
+                            break;
+
+                        if(!_resume.MissingTitleKeys.Contains(i + j))
+
+                            // Key is already dumped.
+                            continue;
+
+                        byte[] tmpBuf;
+
+                        bool tmpSense = dvdDecrypt.ReadTitleKey(out tmpBuf, out _, DvdCssKeyClass.DvdCssCppmOrCprm,
+                                                                i + j, _dev.Timeout, out _);
+
+                        if(!tmpSense)
+                        {
+                            CSS_CPRM.TitleKey? titleKey = CSS.DecodeTitleKey(tmpBuf, dvdDecrypt.BusKey);
+
+                            if(titleKey.HasValue)
+                                outputFormat.WriteSectorTag(new[]
+                                {
+                                    titleKey.Value.CMI
+                                }, i + j, SectorTagType.DvdCmi);
+                            else
+                                continue;
+
+                            // If the CMI bit is 1, the sector is using copy protection, else it is not
+                            if((titleKey.Value.CMI & 0x80) >> 7 == 0)
+                            {
+                                // The CMI indicates this sector is not encrypted.
+                                outputFormat.WriteSectorTag(new byte[]
+                                {
+                                    0, 0, 0, 0, 0
+                                }, i + j, SectorTagType.DvdTitleKey);
+
+                                outputFormat.WriteSectorTag(new byte[]
+                                {
+                                    0, 0, 0, 0, 0
+                                }, i + j, SectorTagType.DvdTitleKeyDecrypted);
+
+                                _resume.MissingTitleKeys.Remove(i + j);
+
+                                continue;
+                            }
+
+                            // According to libdvdcss, if the key is all zeroes, the sector is actually
+                            // not encrypted even if the CMI says it is.
+                            if(titleKey.Value.Key.All(k => k == 0))
+                            {
+                                outputFormat.WriteSectorTag(new byte[]
+                                {
+                                    0, 0, 0, 0, 0
+                                }, i + j, SectorTagType.DvdTitleKey);
+
+                                outputFormat.WriteSectorTag(new byte[]
+                                {
+                                    0, 0, 0, 0, 0
+                                }, i + j, SectorTagType.DvdTitleKeyDecrypted);
+
+                                _resume.MissingTitleKeys.Remove(i + j);
+
+                                continue;
+                            }
+
+                            outputFormat.WriteSectorTag(titleKey.Value.Key, i + j, SectorTagType.DvdTitleKey);
+                            _resume.MissingTitleKeys.Remove(i                 + j);
+
+                            CSS.DecryptTitleKey(0, discKey, titleKey.Value.Key, out tmpBuf);
+                            outputFormat.WriteSectorTag(tmpBuf, i + j, SectorTagType.DvdTitleKeyDecrypted);
+                        }
+                    }
+
+                    if(!_storeEncrypted)
+
+                        // Todo: Flag in the outputFormat that a sector has been decrypted
+                    {
+                        ErrorNumber errno =
+                            outputFormat.ReadSectorsTag(i, blocksToRead, SectorTagType.DvdCmi, out byte[] cmi);
+
+                        if(errno != ErrorNumber.NoError)
+                            ErrorMessage?.Invoke($"Error retrieving CMI for sector {i}");
+                        else
+                        {
+                            errno = outputFormat.ReadSectorsTag(i, blocksToRead,
+                                                                SectorTagType.DvdTitleKeyDecrypted,
+                                                                out byte[] titleKey);
+
+                            if(errno != ErrorNumber.NoError)
+                                ErrorMessage?.Invoke($"Error retrieving title key for sector {i}");
+                            else
+                                buffer = CSS.DecryptSector(buffer, cmi, titleKey, blocksToRead, blockSize);
+                        }
+                    }
+                }
+
+                mhddLog.Write(i, cmdDuration);
+                ibgLog.Write(i, currentSpeed * 1024);
+                DateTime writeStart = DateTime.Now;
+                outputFormat.WriteSectors(buffer, i, blocksToRead);
+                imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
+                extents.Add(i, blocksToRead, true);
+            }
+            else
+            {
+                if(_dev.Manufacturer.ToLowerInvariant() == "insite")
+                {
+                    _resume.BadBlocks.Add(i);
+                    _resume.BadBlocks = _resume.BadBlocks.Distinct().ToList();
+                    _resume.NextBlock++;
+                    _aborted = true;
+
+                    _dumpLog?.
+                        WriteLine("INSITE floptical drives get crazy on the SCSI bus when an error is found, stopping so you can reboot the computer or reset the scsi bus appropriately.");
+
+                    UpdateStatus?.
+                        Invoke("INSITE floptical drives get crazy on the SCSI bus when an error is found, stopping so you can reboot the computer or reset the scsi bus appropriately");
+
+                    continue;
+                }
+
+                // TODO: Reset device after X errors
+                if(_stopOnError)
+                    return; // TODO: Return more cleanly
+
+                if(i + _skip > blocks)
+                    _skip = (uint)(blocks - i);
+
+                // Write empty data
+                DateTime writeStart = DateTime.Now;
+                outputFormat.WriteSectors(new byte[blockSize * _skip], i, _skip);
+                imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
+
+                for(ulong b = i; b < i + _skip; b++)
+                    _resume.BadBlocks.Add(b);
+
+                mhddLog.Write(i, cmdDuration < 500 ? 65535 : cmdDuration);
+
+                ibgLog.Write(i, 0);
+                _dumpLog.WriteLine("Skipping {0} blocks from errored block {1}.", _skip, i);
+                i       += _skip - blocksToRead;
+                newTrim =  true;
+            }
+
+            sectorSpeedStart  += blocksToRead;
+            _resume.NextBlock =  i + blocksToRead;
+
+            double elapsed = (DateTime.UtcNow - timeSpeedStart).TotalSeconds;
+
+            if(elapsed <= 0)
+                continue;
+
+            currentSpeed     = sectorSpeedStart * blockSize / (1048576 * elapsed);
+            sectorSpeedStart = 0;
+            timeSpeedStart   = DateTime.UtcNow;
         }
+
+        _resume.BadBlocks = _resume.BadBlocks.Distinct().ToList();
+
+        EndProgress?.Invoke();
     }
 }

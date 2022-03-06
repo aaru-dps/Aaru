@@ -40,106 +40,105 @@ using Aaru.CommonTypes.Interfaces;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
 
-namespace Aaru.Filesystems
+namespace Aaru.Filesystems;
+
+/// <inheritdoc />
+/// <summary>Implements detection of the filesystem described in ECMA-67</summary>
+public sealed class ECMA67 : IFilesystem
 {
-    /// <inheritdoc />
-    /// <summary>Implements detection of the filesystem described in ECMA-67</summary>
-    public sealed class ECMA67 : IFilesystem
+    readonly byte[] _magic =
     {
-        readonly byte[] _magic =
+        0x56, 0x4F, 0x4C
+    };
+
+    /// <inheritdoc />
+    public Encoding Encoding { get; private set; }
+    /// <inheritdoc />
+    public string Name => "ECMA-67";
+    /// <inheritdoc />
+    public Guid Id => new("62A2D44A-CBC1-4377-B4B6-28C5C92034A1");
+    /// <inheritdoc />
+    public FileSystemType XmlFsType { get; private set; }
+    /// <inheritdoc />
+    public string Author => "Natalia Portillo";
+
+    /// <inheritdoc />
+    public bool Identify(IMediaImage imagePlugin, Partition partition)
+    {
+        if(partition.Start > 0)
+            return false;
+
+        if(partition.End < 8)
+            return false;
+
+        ErrorNumber errno = imagePlugin.ReadSector(6, out byte[] sector);
+
+        if(errno != ErrorNumber.NoError)
+            return false;
+
+        if(sector.Length != 128)
+            return false;
+
+        VolumeLabel vol = Marshal.ByteArrayToStructureLittleEndian<VolumeLabel>(sector);
+
+        return _magic.SequenceEqual(vol.labelIdentifier) && vol.labelNumber == 1 && vol.recordLength == 0x31;
+    }
+
+    /// <inheritdoc />
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
+                               Encoding encoding)
+    {
+        Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-1");
+        information = "";
+        ErrorNumber errno = imagePlugin.ReadSector(6, out byte[] sector);
+
+        if(errno != ErrorNumber.NoError)
+            return;
+
+        var sbInformation = new StringBuilder();
+
+        VolumeLabel vol = Marshal.ByteArrayToStructureLittleEndian<VolumeLabel>(sector);
+
+        sbInformation.AppendLine("ECMA-67");
+
+        sbInformation.AppendFormat("Volume name: {0}", Encoding.ASCII.GetString(vol.volumeIdentifier)).AppendLine();
+        sbInformation.AppendFormat("Volume owner: {0}", Encoding.ASCII.GetString(vol.owner)).AppendLine();
+
+        XmlFsType = new FileSystemType
         {
-            0x56, 0x4F, 0x4C
+            Type        = "ECMA-67",
+            ClusterSize = 256,
+            Clusters    = partition.End - partition.Start + 1,
+            VolumeName  = Encoding.ASCII.GetString(vol.volumeIdentifier)
         };
 
-        /// <inheritdoc />
-        public Encoding Encoding { get; private set; }
-        /// <inheritdoc />
-        public string Name => "ECMA-67";
-        /// <inheritdoc />
-        public Guid Id => new("62A2D44A-CBC1-4377-B4B6-28C5C92034A1");
-        /// <inheritdoc />
-        public FileSystemType XmlFsType { get; private set; }
-        /// <inheritdoc />
-        public string Author => "Natalia Portillo";
+        information = sbInformation.ToString();
+    }
 
-        /// <inheritdoc />
-        public bool Identify(IMediaImage imagePlugin, Partition partition)
-        {
-            if(partition.Start > 0)
-                return false;
-
-            if(partition.End < 8)
-                return false;
-
-            ErrorNumber errno = imagePlugin.ReadSector(6, out byte[] sector);
-
-            if(errno != ErrorNumber.NoError)
-                return false;
-
-            if(sector.Length != 128)
-                return false;
-
-            VolumeLabel vol = Marshal.ByteArrayToStructureLittleEndian<VolumeLabel>(sector);
-
-            return _magic.SequenceEqual(vol.labelIdentifier) && vol.labelNumber == 1 && vol.recordLength == 0x31;
-        }
-
-        /// <inheritdoc />
-        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                   Encoding encoding)
-        {
-            Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-1");
-            information = "";
-            ErrorNumber errno = imagePlugin.ReadSector(6, out byte[] sector);
-
-            if(errno != ErrorNumber.NoError)
-                return;
-
-            var sbInformation = new StringBuilder();
-
-            VolumeLabel vol = Marshal.ByteArrayToStructureLittleEndian<VolumeLabel>(sector);
-
-            sbInformation.AppendLine("ECMA-67");
-
-            sbInformation.AppendFormat("Volume name: {0}", Encoding.ASCII.GetString(vol.volumeIdentifier)).AppendLine();
-            sbInformation.AppendFormat("Volume owner: {0}", Encoding.ASCII.GetString(vol.owner)).AppendLine();
-
-            XmlFsType = new FileSystemType
-            {
-                Type        = "ECMA-67",
-                ClusterSize = 256,
-                Clusters    = partition.End - partition.Start + 1,
-                VolumeName  = Encoding.ASCII.GetString(vol.volumeIdentifier)
-            };
-
-            information = sbInformation.ToString();
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        readonly struct VolumeLabel
-        {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-            public readonly byte[] labelIdentifier;
-            public readonly byte labelNumber;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)]
-            public readonly byte[] volumeIdentifier;
-            public readonly byte volumeAccessibility;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 26)]
-            public readonly byte[] reserved1;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 14)]
-            public readonly byte[] owner;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 20)]
-            public readonly byte[] reserved2;
-            public readonly byte surface;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-            public readonly byte[] reserved3;
-            public readonly byte recordLength;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
-            public readonly byte[] reserved4;
-            public readonly byte fileLabelAllocation;
-            public readonly byte labelStandardVersion;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 48)]
-            public readonly byte[] reserved5;
-        }
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct VolumeLabel
+    {
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+        public readonly byte[] labelIdentifier;
+        public readonly byte labelNumber;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)]
+        public readonly byte[] volumeIdentifier;
+        public readonly byte volumeAccessibility;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 26)]
+        public readonly byte[] reserved1;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 14)]
+        public readonly byte[] owner;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 20)]
+        public readonly byte[] reserved2;
+        public readonly byte surface;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+        public readonly byte[] reserved3;
+        public readonly byte recordLength;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
+        public readonly byte[] reserved4;
+        public readonly byte fileLabelAllocation;
+        public readonly byte labelStandardVersion;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 48)]
+        public readonly byte[] reserved5;
     }
 }

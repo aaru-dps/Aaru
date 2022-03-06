@@ -32,65 +32,64 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.DiscImages;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Images.VirtualBox
-{
-    [TestFixture]
-    public class VirtualPc : BlockMediaImageTest
-    {
-        public override string DataFolder =>
-            Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "VirtualBox", "VirtualPC");
-        public override IMediaImage _plugin => new Vhd();
+namespace Aaru.Tests.Images.VirtualBox;
 
-        public override BlockImageTestExpected[] Tests => new[]
+[TestFixture]
+public class VirtualPc : BlockMediaImageTest
+{
+    public override string DataFolder =>
+        Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "VirtualBox", "VirtualPC");
+    public override IMediaImage _plugin => new Vhd();
+
+    public override BlockImageTestExpected[] Tests => new[]
+    {
+        new BlockImageTestExpected
         {
-            new BlockImageTestExpected
-            {
-                TestFile   = "virtualbox_linux_dynamic_250mb.vhd.lz",
-                MediaType  = MediaType.Unknown,
-                Sectors    = 512000,
-                SectorSize = 512,
-                MD5        = "ab3248888d6f10ef30a084fac6a1e2fd"
-            },
-            new BlockImageTestExpected
-            {
-                TestFile   = "virtualbox_linux_fixed_10mb.vhd.lz",
-                MediaType  = MediaType.Unknown,
-                Sectors    = 20480,
-                SectorSize = 512,
-                MD5        = "f1c9645dbc14efddc7d8a322685f26eb"
-            },
-            new BlockImageTestExpected
-            {
-                TestFile   = "virtualbox_macos_dynamic_250mb.vhd.lz",
-                MediaType  = MediaType.Unknown,
-                Sectors    = 512000,
-                SectorSize = 512,
-                MD5        = "ab3248888d6f10ef30a084fac6a1e2fd"
-            },
-            new BlockImageTestExpected
-            {
-                TestFile   = "virtualbox_macos_fixed_10mb.vhd.lz",
-                MediaType  = MediaType.Unknown,
-                Sectors    = 20480,
-                SectorSize = 512,
-                MD5        = "f1c9645dbc14efddc7d8a322685f26eb"
-            },
-            new BlockImageTestExpected
-            {
-                TestFile   = "virtualbox_windows_dynamic_250mb.vhd.lz",
-                MediaType  = MediaType.Unknown,
-                Sectors    = 512000,
-                SectorSize = 512,
-                MD5        = "ab3248888d6f10ef30a084fac6a1e2fd"
-            },
-            new BlockImageTestExpected
-            {
-                TestFile   = "virtualbox_windows_fixed_10mb.vhd.lz",
-                MediaType  = MediaType.Unknown,
-                Sectors    = 20480,
-                SectorSize = 512,
-                MD5        = "f1c9645dbc14efddc7d8a322685f26eb"
-            }
-        };
-    }
+            TestFile   = "virtualbox_linux_dynamic_250mb.vhd.lz",
+            MediaType  = MediaType.Unknown,
+            Sectors    = 512000,
+            SectorSize = 512,
+            MD5        = "ab3248888d6f10ef30a084fac6a1e2fd"
+        },
+        new BlockImageTestExpected
+        {
+            TestFile   = "virtualbox_linux_fixed_10mb.vhd.lz",
+            MediaType  = MediaType.Unknown,
+            Sectors    = 20480,
+            SectorSize = 512,
+            MD5        = "f1c9645dbc14efddc7d8a322685f26eb"
+        },
+        new BlockImageTestExpected
+        {
+            TestFile   = "virtualbox_macos_dynamic_250mb.vhd.lz",
+            MediaType  = MediaType.Unknown,
+            Sectors    = 512000,
+            SectorSize = 512,
+            MD5        = "ab3248888d6f10ef30a084fac6a1e2fd"
+        },
+        new BlockImageTestExpected
+        {
+            TestFile   = "virtualbox_macos_fixed_10mb.vhd.lz",
+            MediaType  = MediaType.Unknown,
+            Sectors    = 20480,
+            SectorSize = 512,
+            MD5        = "f1c9645dbc14efddc7d8a322685f26eb"
+        },
+        new BlockImageTestExpected
+        {
+            TestFile   = "virtualbox_windows_dynamic_250mb.vhd.lz",
+            MediaType  = MediaType.Unknown,
+            Sectors    = 512000,
+            SectorSize = 512,
+            MD5        = "ab3248888d6f10ef30a084fac6a1e2fd"
+        },
+        new BlockImageTestExpected
+        {
+            TestFile   = "virtualbox_windows_fixed_10mb.vhd.lz",
+            MediaType  = MediaType.Unknown,
+            Sectors    = 20480,
+            SectorSize = 512,
+            MD5        = "f1c9645dbc14efddc7d8a322685f26eb"
+        }
+    };
 }

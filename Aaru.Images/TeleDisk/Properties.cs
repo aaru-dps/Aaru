@@ -35,24 +35,23 @@ using System.Collections.Generic;
 using Aaru.CommonTypes.Structs;
 using Schemas;
 
-namespace Aaru.DiscImages
-{
-    public sealed partial class TeleDisk
-    {
-        /// <inheritdoc />
-        public ImageInfo Info => _imageInfo;
+namespace Aaru.DiscImages;
 
-        /// <inheritdoc />
-        public string Name => "Sydex TeleDisk";
-        /// <inheritdoc />
-        public Guid Id => new Guid("0240B7B1-E959-4CDC-B0BD-386D6E467B88");
-        /// <inheritdoc />
-        public string Author => "Natalia Portillo";
-        /// <inheritdoc />
-        public string Format => "Sydex TeleDisk";
-        /// <inheritdoc />
-        public List<DumpHardwareType> DumpHardware => null;
-        /// <inheritdoc />
-        public CICMMetadataType CicmMetadata => null;
-    }
+public sealed partial class TeleDisk
+{
+    /// <inheritdoc />
+    public ImageInfo Info => _imageInfo;
+
+    /// <inheritdoc />
+    public string Name => "Sydex TeleDisk";
+    /// <inheritdoc />
+    public Guid Id => new Guid("0240B7B1-E959-4CDC-B0BD-386D6E467B88");
+    /// <inheritdoc />
+    public string Author => "Natalia Portillo";
+    /// <inheritdoc />
+    public string Format => "Sydex TeleDisk";
+    /// <inheritdoc />
+    public List<DumpHardwareType> DumpHardware => null;
+    /// <inheritdoc />
+    public CICMMetadataType CicmMetadata => null;
 }

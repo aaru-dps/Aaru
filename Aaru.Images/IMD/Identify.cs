@@ -36,34 +36,33 @@ using System.Text.RegularExpressions;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class Imd
 {
-    public sealed partial class Imd
+    /// <inheritdoc />
+    public bool Identify(IFilter imageFilter)
     {
-        /// <inheritdoc />
-        public bool Identify(IFilter imageFilter)
-        {
-            Stream stream = imageFilter.GetDataForkStream();
-            stream.Seek(0, SeekOrigin.Begin);
+        Stream stream = imageFilter.GetDataForkStream();
+        stream.Seek(0, SeekOrigin.Begin);
 
-            if(stream.Length < 4)
-                return false;
+        if(stream.Length < 4)
+            return false;
 
-            byte[] hdr = new byte[stream.Length < 256 ? stream.Length : 256];
-            stream.Read(hdr, 0, hdr.Length);
+        byte[] hdr = new byte[stream.Length < 256 ? stream.Length : 256];
+        stream.Read(hdr, 0, hdr.Length);
 
-            string hdrStr = StringHandlers.CToString(hdr, Encoding.ASCII);
+        string hdrStr = StringHandlers.CToString(hdr, Encoding.ASCII);
 
-            // IMD for DOS
-            Match imd = new Regex(REGEX_HEADER).Match(hdrStr);
+        // IMD for DOS
+        Match imd = new Regex(REGEX_HEADER).Match(hdrStr);
 
-            // SAMdisk
-            Match sam = new Regex(REGEX_SAMDISK).Match(hdrStr);
+        // SAMdisk
+        Match sam = new Regex(REGEX_SAMDISK).Match(hdrStr);
 
-            // z88dk
-            Match z88dk = new Regex(REGEX_Z88DK).Match(hdrStr);
+        // z88dk
+        Match z88dk = new Regex(REGEX_Z88DK).Match(hdrStr);
 
-            return imd.Success || sam.Success || z88dk.Success;
-        }
+        return imd.Success || sam.Success || z88dk.Success;
     }
 }

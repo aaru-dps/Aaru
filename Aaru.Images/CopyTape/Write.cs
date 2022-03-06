@@ -39,220 +39,219 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 using Schemas;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class CopyTape
 {
-    public sealed partial class CopyTape
+    FileStream               _dataStream;
+    ulong                    _lastWrittenBlock;
+    Dictionary<ulong, ulong> _writtenBlockPositions;
+
+    /// <inheritdoc />
+    public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
+                       uint sectorSize)
     {
-        FileStream               _dataStream;
-        ulong                    _lastWrittenBlock;
-        Dictionary<ulong, ulong> _writtenBlockPositions;
-
-        /// <inheritdoc />
-        public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
-                           uint sectorSize)
+        if(!SupportedMediaTypes.Contains(mediaType))
         {
-            if(!SupportedMediaTypes.Contains(mediaType))
+            ErrorMessage = $"Unsupported media format {mediaType}";
+
+            return false;
+        }
+
+        _imageInfo = new ImageInfo
+        {
+            MediaType  = mediaType,
+            SectorSize = sectorSize,
+            Sectors    = sectors
+        };
+
+        try
+        {
+            _dataStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
+        }
+        catch(IOException e)
+        {
+            ErrorMessage = $"Could not create new image file, exception {e.Message}";
+
+            return false;
+        }
+
+        _imageInfo.MediaType = mediaType;
+
+        IsWriting              = true;
+        IsTape                 = false;
+        ErrorMessage           = null;
+        _lastWrittenBlock      = 0;
+        _writtenBlockPositions = new Dictionary<ulong, ulong>();
+
+        return true;
+    }
+
+    /// <inheritdoc />
+    public bool WriteMediaTag(byte[] data, MediaTagType tag)
+    {
+        ErrorMessage = "Unsupported feature";
+
+        return false;
+    }
+
+    /// <inheritdoc />
+    public bool WriteSector(byte[] data, ulong sectorAddress)
+    {
+        if(!_writtenBlockPositions.TryGetValue(sectorAddress, out ulong position))
+        {
+            if(_dataStream.Length != 0 &&
+               _lastWrittenBlock  >= sectorAddress)
             {
-                ErrorMessage = $"Unsupported media format {mediaType}";
+                ErrorMessage = "Cannot write unwritten blocks";
 
                 return false;
             }
 
-            _imageInfo = new ImageInfo
+            if(_lastWrittenBlock + 1 != sectorAddress &&
+               sectorAddress         != 0             &&
+               _lastWrittenBlock     != 0)
             {
-                MediaType  = mediaType,
-                SectorSize = sectorSize,
-                Sectors    = sectors
-            };
-
-            try
-            {
-                _dataStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
-            }
-            catch(IOException e)
-            {
-                ErrorMessage = $"Could not create new image file, exception {e.Message}";
+                ErrorMessage = "Cannot skip blocks";
 
                 return false;
             }
-
-            _imageInfo.MediaType = mediaType;
-
-            IsWriting              = true;
-            IsTape                 = false;
-            ErrorMessage           = null;
-            _lastWrittenBlock      = 0;
-            _writtenBlockPositions = new Dictionary<ulong, ulong>();
-
-            return true;
         }
+        else
+            _dataStream.Position = (long)position;
 
-        /// <inheritdoc />
-        public bool WriteMediaTag(byte[] data, MediaTagType tag)
+        byte[] header = Encoding.ASCII.GetBytes($"CPTP:BLK {data.Length:D6}\n");
+
+        _writtenBlockPositions[sectorAddress] = (ulong)_dataStream.Position;
+        _dataStream.Write(header, 0, header.Length);
+        _dataStream.Write(data, 0, data.Length);
+        _dataStream.WriteByte(0x0A);
+
+        if(sectorAddress > _lastWrittenBlock)
+            _lastWrittenBlock = sectorAddress;
+
+        _dataStream.Seek(0, SeekOrigin.End);
+
+        return true;
+    }
+
+    /// <inheritdoc />
+    public bool WriteSectors(byte[] data, ulong sectorAddress, uint length)
+    {
+        for(uint i = 0; i < length; i++)
         {
-            ErrorMessage = "Unsupported feature";
+            bool ret = WriteSector(data, sectorAddress + i);
 
-            return false;
-        }
-
-        /// <inheritdoc />
-        public bool WriteSector(byte[] data, ulong sectorAddress)
-        {
-            if(!_writtenBlockPositions.TryGetValue(sectorAddress, out ulong position))
-            {
-                if(_dataStream.Length != 0 &&
-                   _lastWrittenBlock  >= sectorAddress)
-                {
-                    ErrorMessage = "Cannot write unwritten blocks";
-
-                    return false;
-                }
-
-                if(_lastWrittenBlock + 1 != sectorAddress &&
-                   sectorAddress         != 0             &&
-                   _lastWrittenBlock     != 0)
-                {
-                    ErrorMessage = "Cannot skip blocks";
-
-                    return false;
-                }
-            }
-            else
-                _dataStream.Position = (long)position;
-
-            byte[] header = Encoding.ASCII.GetBytes($"CPTP:BLK {data.Length:D6}\n");
-
-            _writtenBlockPositions[sectorAddress] = (ulong)_dataStream.Position;
-            _dataStream.Write(header, 0, header.Length);
-            _dataStream.Write(data, 0, data.Length);
-            _dataStream.WriteByte(0x0A);
-
-            if(sectorAddress > _lastWrittenBlock)
-                _lastWrittenBlock = sectorAddress;
-
-            _dataStream.Seek(0, SeekOrigin.End);
-
-            return true;
-        }
-
-        /// <inheritdoc />
-        public bool WriteSectors(byte[] data, ulong sectorAddress, uint length)
-        {
-            for(uint i = 0; i < length; i++)
-            {
-                bool ret = WriteSector(data, sectorAddress + i);
-
-                if(!ret)
-                    return false;
-            }
-
-            return true;
-        }
-
-        /// <inheritdoc />
-        public bool WriteSectorLong(byte[] data, ulong sectorAddress)
-        {
-            ErrorMessage = "Unsupported feature";
-
-            return false;
-        }
-
-        /// <inheritdoc />
-        public bool WriteSectorsLong(byte[] data, ulong sectorAddress, uint length)
-        {
-            ErrorMessage = "Unsupported feature";
-
-            return false;
-        }
-
-        /// <inheritdoc />
-        public bool Close()
-        {
-            if(!IsWriting)
-            {
-                ErrorMessage = "Image is not opened for writing";
-
+            if(!ret)
                 return false;
-            }
+        }
 
-            byte[] footer = Encoding.ASCII.GetBytes("CPTP:EOT\n");
+        return true;
+    }
 
-            _dataStream.Write(footer, 0, footer.Length);
-            _dataStream.Flush();
-            _dataStream.Close();
+    /// <inheritdoc />
+    public bool WriteSectorLong(byte[] data, ulong sectorAddress)
+    {
+        ErrorMessage = "Unsupported feature";
 
-            IsWriting = false;
+        return false;
+    }
 
+    /// <inheritdoc />
+    public bool WriteSectorsLong(byte[] data, ulong sectorAddress, uint length)
+    {
+        ErrorMessage = "Unsupported feature";
+
+        return false;
+    }
+
+    /// <inheritdoc />
+    public bool Close()
+    {
+        if(!IsWriting)
+        {
+            ErrorMessage = "Image is not opened for writing";
+
+            return false;
+        }
+
+        byte[] footer = Encoding.ASCII.GetBytes("CPTP:EOT\n");
+
+        _dataStream.Write(footer, 0, footer.Length);
+        _dataStream.Flush();
+        _dataStream.Close();
+
+        IsWriting = false;
+
+        return true;
+    }
+
+    /// <inheritdoc />
+    public bool SetMetadata(ImageInfo metadata) => true;
+
+    /// <inheritdoc />
+    public bool SetGeometry(uint cylinders, uint heads, uint sectorsPerTrack)
+    {
+        ErrorMessage = "Unsupported feature";
+
+        return false;
+    }
+
+    /// <inheritdoc />
+    public bool WriteSectorTag(byte[] data, ulong sectorAddress, SectorTagType tag)
+    {
+        ErrorMessage = "Unsupported feature";
+
+        return false;
+    }
+
+    /// <inheritdoc />
+    public bool WriteSectorsTag(byte[] data, ulong sectorAddress, uint length, SectorTagType tag)
+    {
+        ErrorMessage = "Unsupported feature";
+
+        return false;
+    }
+
+    /// <inheritdoc />
+    public bool SetDumpHardware(List<DumpHardwareType> dumpHardware) => false;
+
+    /// <inheritdoc />
+    public bool SetCicmMetadata(CICMMetadataType metadata) => false;
+
+    /// <inheritdoc />
+    public bool AddFile(TapeFile file)
+    {
+        if(file.Partition != 0)
+        {
+            ErrorMessage = "Unsupported feature";
+
+            return false;
+        }
+
+        byte[] marker = Encoding.ASCII.GetBytes("CPTP:MRK\n");
+
+        _dataStream.Write(marker, 0, marker.Length);
+
+        return true;
+    }
+
+    /// <inheritdoc />
+    public bool AddPartition(TapePartition partition)
+    {
+        if(partition.Number == 0)
             return true;
-        }
 
-        /// <inheritdoc />
-        public bool SetMetadata(ImageInfo metadata) => true;
+        ErrorMessage = "Unsupported feature";
 
-        /// <inheritdoc />
-        public bool SetGeometry(uint cylinders, uint heads, uint sectorsPerTrack)
-        {
-            ErrorMessage = "Unsupported feature";
+        return false;
+    }
 
-            return false;
-        }
+    /// <inheritdoc />
+    public bool SetTape()
+    {
+        IsTape = true;
 
-        /// <inheritdoc />
-        public bool WriteSectorTag(byte[] data, ulong sectorAddress, SectorTagType tag)
-        {
-            ErrorMessage = "Unsupported feature";
-
-            return false;
-        }
-
-        /// <inheritdoc />
-        public bool WriteSectorsTag(byte[] data, ulong sectorAddress, uint length, SectorTagType tag)
-        {
-            ErrorMessage = "Unsupported feature";
-
-            return false;
-        }
-
-        /// <inheritdoc />
-        public bool SetDumpHardware(List<DumpHardwareType> dumpHardware) => false;
-
-        /// <inheritdoc />
-        public bool SetCicmMetadata(CICMMetadataType metadata) => false;
-
-        /// <inheritdoc />
-        public bool AddFile(TapeFile file)
-        {
-            if(file.Partition != 0)
-            {
-                ErrorMessage = "Unsupported feature";
-
-                return false;
-            }
-
-            byte[] marker = Encoding.ASCII.GetBytes("CPTP:MRK\n");
-
-            _dataStream.Write(marker, 0, marker.Length);
-
-            return true;
-        }
-
-        /// <inheritdoc />
-        public bool AddPartition(TapePartition partition)
-        {
-            if(partition.Number == 0)
-                return true;
-
-            ErrorMessage = "Unsupported feature";
-
-            return false;
-        }
-
-        /// <inheritdoc />
-        public bool SetTape()
-        {
-            IsTape = true;
-
-            return true;
-        }
+        return true;
     }
 }

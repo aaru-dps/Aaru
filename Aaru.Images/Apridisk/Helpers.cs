@@ -30,17 +30,16 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages
-{
-    public sealed partial class Apridisk
-    {
-        (ushort cylinder, byte head, byte sector) LbaToChs(ulong lba)
-        {
-            ushort cylinder = (ushort)(lba / (_imageInfo.Heads * _imageInfo.SectorsPerTrack));
-            byte   head     = (byte)(lba / _imageInfo.SectorsPerTrack % _imageInfo.Heads);
-            byte   sector   = (byte)((lba % _imageInfo.SectorsPerTrack) + 1);
+namespace Aaru.DiscImages;
 
-            return (cylinder, head, sector);
-        }
+public sealed partial class Apridisk
+{
+    (ushort cylinder, byte head, byte sector) LbaToChs(ulong lba)
+    {
+        ushort cylinder = (ushort)(lba                            / (_imageInfo.Heads * _imageInfo.SectorsPerTrack));
+        byte   head     = (byte)(lba / _imageInfo.SectorsPerTrack % _imageInfo.Heads);
+        byte   sector   = (byte)((lba % _imageInfo.SectorsPerTrack) + 1);
+
+        return (cylinder, head, sector);
     }
 }

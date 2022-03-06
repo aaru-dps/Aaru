@@ -30,24 +30,23 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class Vdi
 {
-    public sealed partial class Vdi
-    {
-        const uint VDI_MAGIC = 0xBEDA107F;
-        const uint VDI_EMPTY = 0xFFFFFFFF;
+    const uint VDI_MAGIC = 0xBEDA107F;
+    const uint VDI_EMPTY = 0xFFFFFFFF;
 
-        const string ORACLE_VDI      = "<<< Oracle VM VirtualBox Disk Image >>>\n";
-        const string QEMUVDI         = "<<< QEMU VM Virtual Disk Image >>>\n";
-        const string SUN_OLD_VDI     = "<<< Sun xVM VirtualBox Disk Image >>>\n";
-        const string SUN_VDI         = "<<< Sun VirtualBox Disk Image >>>\n";
-        const string INNOTEK_VDI     = "<<< innotek VirtualBox Disk Image >>>\n";
-        const string INNOTEK_OLD_VDI = "<<< InnoTek VirtualBox Disk Image >>>\n";
-        const string DIC_VDI         = "<<< DiscImageChef VirtualBox Disk Image >>>\n";
-        const string DIC_AARU        = "<<< Aaru VirtualBox Disk Image >>>\n";
+    const string ORACLE_VDI      = "<<< Oracle VM VirtualBox Disk Image >>>\n";
+    const string QEMUVDI         = "<<< QEMU VM Virtual Disk Image >>>\n";
+    const string SUN_OLD_VDI     = "<<< Sun xVM VirtualBox Disk Image >>>\n";
+    const string SUN_VDI         = "<<< Sun VirtualBox Disk Image >>>\n";
+    const string INNOTEK_VDI     = "<<< innotek VirtualBox Disk Image >>>\n";
+    const string INNOTEK_OLD_VDI = "<<< InnoTek VirtualBox Disk Image >>>\n";
+    const string DIC_VDI         = "<<< DiscImageChef VirtualBox Disk Image >>>\n";
+    const string DIC_AARU        = "<<< Aaru VirtualBox Disk Image >>>\n";
 
-        const uint MAX_CACHE_SIZE     = 16777216;
-        const uint MAX_CACHED_SECTORS = MAX_CACHE_SIZE / 512;
-        const uint DEFAULT_BLOCK_SIZE = 1048576;
-    }
+    const uint MAX_CACHE_SIZE     = 16777216;
+    const uint MAX_CACHED_SECTORS = MAX_CACHE_SIZE / 512;
+    const uint DEFAULT_BLOCK_SIZE = 1048576;
 }

@@ -31,29 +31,28 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Filesystems.QNX4
+namespace Aaru.Tests.Filesystems.QNX4;
+
+[TestFixture]
+public class MBR : FilesystemTest
 {
-    [TestFixture]
-    public class MBR : FilesystemTest
+    public MBR() : base("QNX4 filesystem") {}
+
+    public override string DataFolder =>
+        Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "QNX 4 filesystem (MBR)");
+    public override IFilesystem Plugin     => new Aaru.Filesystems.QNX4();
+    public override bool        Partitions => true;
+
+    public override FileSystemTest[] Tests => new[]
     {
-        public MBR() : base("QNX4 filesystem") {}
-
-        public override string DataFolder =>
-            Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "QNX 4 filesystem (MBR)");
-        public override IFilesystem Plugin     => new Aaru.Filesystems.QNX4();
-        public override bool        Partitions => true;
-
-        public override FileSystemTest[] Tests => new[]
+        new FileSystemTest
         {
-            new FileSystemTest
-            {
-                TestFile    = "qnx_4.24.aif",
-                MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 1024000,
-                SectorSize  = 512,
-                Clusters    = 1023104,
-                ClusterSize = 512
-            }
-        };
-    }
+            TestFile    = "qnx_4.24.aif",
+            MediaType   = MediaType.GENERIC_HDD,
+            Sectors     = 1024000,
+            SectorSize  = 512,
+            Clusters    = 1023104,
+            ClusterSize = 512
+        }
+    };
 }

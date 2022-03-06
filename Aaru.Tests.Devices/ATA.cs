@@ -30,77 +30,76 @@ using Aaru.Console;
 using Aaru.Devices;
 using Aaru.Tests.Devices.ATA;
 
-namespace Aaru.Tests.Devices
+namespace Aaru.Tests.Devices;
+
+internal static partial class MainClass
 {
-    internal static partial class MainClass
+    public static void Ata(string devPath, Device dev)
     {
-        public static void Ata(string devPath, Device dev)
+        while(true)
         {
-            while(true)
+            System.Console.Clear();
+            AaruConsole.WriteLine("Device: {0}", devPath);
+            AaruConsole.WriteLine("Send an ATA command to the device:");
+            AaruConsole.WriteLine("1.- Send a CHS ATA command to the device.");
+            AaruConsole.WriteLine("2.- Send a 28-bit ATA command to the device.");
+            AaruConsole.WriteLine("3.- Send a 48-bit ATA command to the device.");
+            AaruConsole.WriteLine("4.- Send an ATAPI command to the device.");
+            AaruConsole.WriteLine("5.- Send a CompactFlash command to the device.");
+            AaruConsole.WriteLine("6.- Send a Media Card Pass Through command to the device.");
+            AaruConsole.WriteLine("7.- Send a S.M.A.R.T. command to the device.");
+            AaruConsole.WriteLine("0.- Return to command class menu.");
+            AaruConsole.Write("Choose: ");
+
+            string strDev = System.Console.ReadLine();
+
+            if(!int.TryParse(strDev, out int item))
             {
-                System.Console.Clear();
-                AaruConsole.WriteLine("Device: {0}", devPath);
-                AaruConsole.WriteLine("Send an ATA command to the device:");
-                AaruConsole.WriteLine("1.- Send a CHS ATA command to the device.");
-                AaruConsole.WriteLine("2.- Send a 28-bit ATA command to the device.");
-                AaruConsole.WriteLine("3.- Send a 48-bit ATA command to the device.");
-                AaruConsole.WriteLine("4.- Send an ATAPI command to the device.");
-                AaruConsole.WriteLine("5.- Send a CompactFlash command to the device.");
-                AaruConsole.WriteLine("6.- Send a Media Card Pass Through command to the device.");
-                AaruConsole.WriteLine("7.- Send a S.M.A.R.T. command to the device.");
-                AaruConsole.WriteLine("0.- Return to command class menu.");
-                AaruConsole.Write("Choose: ");
+                AaruConsole.WriteLine("Not a number. Press any key to continue...");
+                System.Console.ReadKey();
 
-                string strDev = System.Console.ReadLine();
+                continue;
+            }
 
-                if(!int.TryParse(strDev, out int item))
-                {
-                    AaruConsole.WriteLine("Not a number. Press any key to continue...");
+            switch(item)
+            {
+                case 0:
+                    AaruConsole.WriteLine("Returning to command class menu...");
+
+                    return;
+                case 1:
+                    AtaChs.Menu(devPath, dev);
+
+                    continue;
+                case 2:
+                    Ata28.Menu(devPath, dev);
+
+                    continue;
+                case 3:
+                    Ata48.Menu(devPath, dev);
+
+                    continue;
+                case 4:
+                    Atapi.Menu(devPath, dev);
+
+                    continue;
+                case 5:
+                    Cfa.Menu(devPath, dev);
+
+                    continue;
+                case 6:
+                    Mcpt.Menu(devPath, dev);
+
+                    continue;
+                case 7:
+                    Smart.Menu(devPath, dev);
+
+                    continue;
+                default:
+                    AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
                     System.Console.ReadKey();
 
                     continue;
-                }
-
-                switch(item)
-                {
-                    case 0:
-                        AaruConsole.WriteLine("Returning to command class menu...");
-
-                        return;
-                    case 1:
-                        AtaChs.Menu(devPath, dev);
-
-                        continue;
-                    case 2:
-                        Ata28.Menu(devPath, dev);
-
-                        continue;
-                    case 3:
-                        Ata48.Menu(devPath, dev);
-
-                        continue;
-                    case 4:
-                        Atapi.Menu(devPath, dev);
-
-                        continue;
-                    case 5:
-                        Cfa.Menu(devPath, dev);
-
-                        continue;
-                    case 6:
-                        Mcpt.Menu(devPath, dev);
-
-                        continue;
-                    case 7:
-                        Smart.Menu(devPath, dev);
-
-                        continue;
-                    default:
-                        AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                        System.Console.ReadKey();
-
-                        continue;
-                }
             }
         }
     }

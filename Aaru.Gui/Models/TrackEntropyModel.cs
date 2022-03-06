@@ -30,12 +30,11 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Gui.Models
+namespace Aaru.Gui.Models;
+
+public sealed class TrackEntropyModel
 {
-    public sealed class TrackEntropyModel
-    {
-        public string Track         { get; set; }
-        public string Entropy       { get; set; }
-        public string UniqueSectors { get; set; }
-    }
+    public string Track         { get; set; }
+    public string Entropy       { get; set; }
+    public string UniqueSectors { get; set; }
 }

@@ -30,12 +30,11 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Gui.Models
+namespace Aaru.Gui.Models;
+
+public sealed class MediaStatsModel
 {
-    public sealed class MediaStatsModel
-    {
-        public string Name  { get; set; }
-        public ulong  Count { get; set; }
-        public string Type  { get; set; }
-    }
+    public string Name  { get; set; }
+    public ulong  Count { get; set; }
+    public string Type  { get; set; }
 }

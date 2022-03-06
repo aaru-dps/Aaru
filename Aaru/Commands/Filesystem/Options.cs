@@ -43,103 +43,102 @@ using Aaru.Core;
 using JetBrains.Annotations;
 using Spectre.Console;
 
-namespace Aaru.Commands.Filesystem
+namespace Aaru.Commands.Filesystem;
+
+internal sealed class ListOptionsCommand : Command
 {
-    internal sealed class ListOptionsCommand : Command
+    public ListOptionsCommand() : base("options", "Lists all options supported by read-only filesystems.") =>
+        Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
+
+    public static int Invoke(bool debug, bool verbose)
     {
-        public ListOptionsCommand() : base("options", "Lists all options supported by read-only filesystems.") =>
-            Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
+        MainClass.PrintCopyright();
 
-        public static int Invoke(bool debug, bool verbose)
+        if(debug)
         {
-            MainClass.PrintCopyright();
-
-            if(debug)
+            IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
             {
-                IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
-                {
-                    Out = new AnsiConsoleOutput(System.Console.Error)
-                });
+                Out = new AnsiConsoleOutput(System.Console.Error)
+            });
 
-                AaruConsole.DebugWriteLineEvent += (format, objects) =>
-                {
-                    if(objects is null)
-                        stderrConsole.MarkupLine(format);
-                    else
-                        stderrConsole.MarkupLine(format, objects);
-                };
-            }
-
-            if(verbose)
-                AaruConsole.WriteEvent += (format, objects) =>
-                {
-                    if(objects is null)
-                        AnsiConsole.Markup(format);
-                    else
-                        AnsiConsole.Markup(format, objects);
-                };
-
-            AaruConsole.DebugWriteLine("List-Options command", "--debug={0}", debug);
-            AaruConsole.DebugWriteLine("List-Options command", "--verbose={0}", verbose);
-            Statistics.AddCommand("list-options");
-
-            PluginBase plugins = GetPluginBase.Instance;
-
-            AaruConsole.WriteLine("Read-only filesystems options:");
-
-            foreach(KeyValuePair<string, IReadOnlyFilesystem> kvp in plugins.ReadOnlyFilesystems)
+            AaruConsole.DebugWriteLineEvent += (format, objects) =>
             {
-                List<(string name, Type type, string description)> options = kvp.Value.SupportedOptions.ToList();
-
-                if(options.Count == 0)
-                    continue;
-
-                var table = new Table
-                {
-                    Title = new TableTitle($"Options for {kvp.Value.Name}:")
-                };
-
-                table.AddColumn("Name");
-                table.AddColumn("Type");
-                table.AddColumn("Description");
-
-                foreach((string name, Type type, string description) option in options.OrderBy(t => t.name))
-                    table.AddRow(Markup.Escape(option.name), $"[italic]{TypeToString(option.type)}[/]",
-                                 Markup.Escape(option.description));
-
-                AnsiConsole.Render(table);
-                AaruConsole.WriteLine();
-            }
-
-            return (int)ErrorNumber.NoError;
+                if(objects is null)
+                    stderrConsole.MarkupLine(format);
+                else
+                    stderrConsole.MarkupLine(format, objects);
+            };
         }
 
-        [NotNull]
-        static string TypeToString([NotNull] Type type)
+        if(verbose)
+            AaruConsole.WriteEvent += (format, objects) =>
+            {
+                if(objects is null)
+                    AnsiConsole.Markup(format);
+                else
+                    AnsiConsole.Markup(format, objects);
+            };
+
+        AaruConsole.DebugWriteLine("List-Options command", "--debug={0}", debug);
+        AaruConsole.DebugWriteLine("List-Options command", "--verbose={0}", verbose);
+        Statistics.AddCommand("list-options");
+
+        PluginBase plugins = GetPluginBase.Instance;
+
+        AaruConsole.WriteLine("Read-only filesystems options:");
+
+        foreach(KeyValuePair<string, IReadOnlyFilesystem> kvp in plugins.ReadOnlyFilesystems)
         {
-            if(type == typeof(bool))
-                return "boolean";
+            List<(string name, Type type, string description)> options = kvp.Value.SupportedOptions.ToList();
 
-            if(type == typeof(sbyte) ||
-               type == typeof(short) ||
-               type == typeof(int)   ||
-               type == typeof(long))
-                return "signed number";
+            if(options.Count == 0)
+                continue;
 
-            if(type == typeof(byte)   ||
-               type == typeof(ushort) ||
-               type == typeof(uint)   ||
-               type == typeof(ulong))
-                return "number";
+            var table = new Table
+            {
+                Title = new TableTitle($"Options for {kvp.Value.Name}:")
+            };
 
-            if(type == typeof(float) ||
-               type == typeof(double))
-                return "float number";
+            table.AddColumn("Name");
+            table.AddColumn("Type");
+            table.AddColumn("Description");
 
-            if(type == typeof(Guid))
-                return "uuid";
+            foreach((string name, Type type, string description) option in options.OrderBy(t => t.name))
+                table.AddRow(Markup.Escape(option.name), $"[italic]{TypeToString(option.type)}[/]",
+                             Markup.Escape(option.description));
 
-            return type == typeof(string) ? "string" : type.ToString();
+            AnsiConsole.Render(table);
+            AaruConsole.WriteLine();
         }
+
+        return (int)ErrorNumber.NoError;
+    }
+
+    [NotNull]
+    static string TypeToString([NotNull] Type type)
+    {
+        if(type == typeof(bool))
+            return "boolean";
+
+        if(type == typeof(sbyte) ||
+           type == typeof(short) ||
+           type == typeof(int)   ||
+           type == typeof(long))
+            return "signed number";
+
+        if(type == typeof(byte)   ||
+           type == typeof(ushort) ||
+           type == typeof(uint)   ||
+           type == typeof(ulong))
+            return "number";
+
+        if(type == typeof(float) ||
+           type == typeof(double))
+            return "float number";
+
+        if(type == typeof(Guid))
+            return "uuid";
+
+        return type == typeof(string) ? "string" : type.ToString();
     }
 }

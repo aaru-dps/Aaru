@@ -41,202 +41,201 @@ using Aaru.Console;
 using Aaru.Core;
 using Spectre.Console;
 
-namespace Aaru.Commands
+namespace Aaru.Commands;
+
+internal sealed class FormatsCommand : Command
 {
-    internal sealed class FormatsCommand : Command
+    public FormatsCommand() : base("formats",
+                                   "Lists all supported disc images, partition schemes and file systems.") =>
+        Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
+
+    public static int Invoke(bool verbose, bool debug)
     {
-        public FormatsCommand() : base("formats",
-                                       "Lists all supported disc images, partition schemes and file systems.") =>
-            Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
+        MainClass.PrintCopyright();
 
-        public static int Invoke(bool verbose, bool debug)
+        if(debug)
         {
-            MainClass.PrintCopyright();
-
-            if(debug)
+            IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
             {
-                IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
-                {
-                    Out = new AnsiConsoleOutput(System.Console.Error)
-                });
+                Out = new AnsiConsoleOutput(System.Console.Error)
+            });
 
-                AaruConsole.DebugWriteLineEvent += (format, objects) =>
-                {
-                    if(objects is null)
-                        stderrConsole.MarkupLine(format);
-                    else
-                        stderrConsole.MarkupLine(format, objects);
-                };
-            }
-
-            if(verbose)
-                AaruConsole.WriteEvent += (format, objects) =>
-                {
-                    if(objects is null)
-                        AnsiConsole.Markup(format);
-                    else
-                        AnsiConsole.Markup(format, objects);
-                };
-
-            Statistics.AddCommand("formats");
-
-            AaruConsole.DebugWriteLine("Formats command", "--debug={0}", debug);
-            AaruConsole.DebugWriteLine("Formats command", "--verbose={0}", verbose);
-
-            PluginBase plugins     = GetPluginBase.Instance;
-            var        filtersList = new FiltersList();
-
-            Table table = new()
+            AaruConsole.DebugWriteLineEvent += (format, objects) =>
             {
-                Title = new TableTitle($"Supported filters ({filtersList.Filters.Count}):")
+                if(objects is null)
+                    stderrConsole.MarkupLine(format);
+                else
+                    stderrConsole.MarkupLine(format, objects);
+            };
+        }
+
+        if(verbose)
+            AaruConsole.WriteEvent += (format, objects) =>
+            {
+                if(objects is null)
+                    AnsiConsole.Markup(format);
+                else
+                    AnsiConsole.Markup(format, objects);
             };
 
+        Statistics.AddCommand("formats");
+
+        AaruConsole.DebugWriteLine("Formats command", "--debug={0}", debug);
+        AaruConsole.DebugWriteLine("Formats command", "--verbose={0}", verbose);
+
+        PluginBase plugins     = GetPluginBase.Instance;
+        var        filtersList = new FiltersList();
+
+        Table table = new()
+        {
+            Title = new TableTitle($"Supported filters ({filtersList.Filters.Count}):")
+        };
+
+        if(verbose)
+            table.AddColumn("GUID");
+
+        table.AddColumn("Filter");
+
+        foreach(KeyValuePair<string, IFilter> kvp in filtersList.Filters)
             if(verbose)
-                table.AddColumn("GUID");
+                table.AddRow(kvp.Value.Id.ToString(), Markup.Escape(kvp.Value.Name));
+            else
+                table.AddRow(Markup.Escape(kvp.Value.Name));
 
-            table.AddColumn("Filter");
+        AnsiConsole.Render(table);
 
-            foreach(KeyValuePair<string, IFilter> kvp in filtersList.Filters)
-                if(verbose)
-                    table.AddRow(kvp.Value.Id.ToString(), Markup.Escape(kvp.Value.Name));
-                else
-                    table.AddRow(Markup.Escape(kvp.Value.Name));
+        AaruConsole.WriteLine();
 
-            AnsiConsole.Render(table);
+        table = new Table
+        {
+            Title = new TableTitle(string.Format("Read-only media image formats ({0}):",
+                                                 plugins.ImagePluginsList.Count(t => !t.Value.GetType().
+                                                                                    GetInterfaces().
+                                                                                    Contains(typeof(IWritableImage)))))
+        };
 
-            AaruConsole.WriteLine();
+        if(verbose)
+            table.AddColumn("GUID");
 
-            table = new Table
-            {
-                Title = new TableTitle(string.Format("Read-only media image formats ({0}):",
-                                                     plugins.ImagePluginsList.Count(t => !t.Value.GetType().
-                                                         GetInterfaces().
-                                                         Contains(typeof(IWritableImage)))))
-            };
+        table.AddColumn("Media image format");
 
+        foreach(KeyValuePair<string, IMediaImage> kvp in plugins.ImagePluginsList.Where(t => !t.Value.GetType().
+                    GetInterfaces().Contains(typeof(IWritableImage))))
             if(verbose)
-                table.AddColumn("GUID");
+                table.AddRow(kvp.Value.Id.ToString(), Markup.Escape(kvp.Value.Name));
+            else
+                table.AddRow(Markup.Escape(kvp.Value.Name));
 
-            table.AddColumn("Media image format");
+        AnsiConsole.Render(table);
 
-            foreach(KeyValuePair<string, IMediaImage> kvp in plugins.ImagePluginsList.Where(t => !t.Value.GetType().
-                GetInterfaces().Contains(typeof(IWritableImage))))
-                if(verbose)
-                    table.AddRow(kvp.Value.Id.ToString(), Markup.Escape(kvp.Value.Name));
-                else
-                    table.AddRow(Markup.Escape(kvp.Value.Name));
+        AaruConsole.WriteLine();
 
-            AnsiConsole.Render(table);
+        table = new Table
+        {
+            Title = new TableTitle(string.Format("Read/write media image formats ({0}):",
+                                                 plugins.WritableImages.Count))
+        };
 
-            AaruConsole.WriteLine();
+        if(verbose)
+            table.AddColumn("GUID");
 
-            table = new Table
-            {
-                Title = new TableTitle(string.Format("Read/write media image formats ({0}):",
-                                                     plugins.WritableImages.Count))
-            };
+        table.AddColumn("Media image format");
 
+        foreach(KeyValuePair<string, IBaseWritableImage> kvp in plugins.WritableImages)
             if(verbose)
-                table.AddColumn("GUID");
+                table.AddRow(kvp.Value.Id.ToString(), Markup.Escape(kvp.Value.Name));
+            else
+                table.AddRow(Markup.Escape(kvp.Value.Name));
 
-            table.AddColumn("Media image format");
+        AnsiConsole.Render(table);
 
-            foreach(KeyValuePair<string, IBaseWritableImage> kvp in plugins.WritableImages)
-                if(verbose)
-                    table.AddRow(kvp.Value.Id.ToString(), Markup.Escape(kvp.Value.Name));
-                else
-                    table.AddRow(Markup.Escape(kvp.Value.Name));
+        AaruConsole.WriteLine();
 
-            AnsiConsole.Render(table);
-
-            AaruConsole.WriteLine();
-
-            table = new Table
-            {
-                Title =
-                    new TableTitle(string.Format("Supported filesystems for identification and information only ({0}):",
-                                                 plugins.PluginsList.Count(t => !t.Value.GetType().GetInterfaces().
+        table = new Table
+        {
+            Title =
+                new TableTitle(string.Format("Supported filesystems for identification and information only ({0}):",
+                                             plugins.PluginsList.Count(t => !t.Value.GetType().GetInterfaces().
                                                                                Contains(typeof(
                                                                                    IReadOnlyFilesystem)))))
-            };
+        };
 
+        if(verbose)
+            table.AddColumn("GUID");
+
+        table.AddColumn("Filesystem");
+
+        foreach(KeyValuePair<string, IFilesystem> kvp in plugins.PluginsList.Where(t => !t.Value.GetType().
+                    GetInterfaces().Contains(typeof(IReadOnlyFilesystem))))
             if(verbose)
-                table.AddColumn("GUID");
+                table.AddRow(kvp.Value.Id.ToString(), Markup.Escape(kvp.Value.Name));
+            else
+                table.AddRow(Markup.Escape(kvp.Value.Name));
 
-            table.AddColumn("Filesystem");
+        AnsiConsole.Render(table);
 
-            foreach(KeyValuePair<string, IFilesystem> kvp in plugins.PluginsList.Where(t => !t.Value.GetType().
-                GetInterfaces().Contains(typeof(IReadOnlyFilesystem))))
-                if(verbose)
-                    table.AddRow(kvp.Value.Id.ToString(), Markup.Escape(kvp.Value.Name));
-                else
-                    table.AddRow(Markup.Escape(kvp.Value.Name));
+        AaruConsole.WriteLine();
 
-            AnsiConsole.Render(table);
+        table = new Table
+        {
+            Title = new TableTitle(string.Format("Supported filesystems that can read their contents ({0}):",
+                                                 plugins.ReadOnlyFilesystems.Count))
+        };
 
-            AaruConsole.WriteLine();
+        if(verbose)
+            table.AddColumn("GUID");
 
-            table = new Table
-            {
-                Title = new TableTitle(string.Format("Supported filesystems that can read their contents ({0}):",
-                                                     plugins.ReadOnlyFilesystems.Count))
-            };
+        table.AddColumn("Filesystem");
 
+        foreach(KeyValuePair<string, IReadOnlyFilesystem> kvp in plugins.ReadOnlyFilesystems)
             if(verbose)
-                table.AddColumn("GUID");
+                table.AddRow(kvp.Value.Id.ToString(), Markup.Escape(kvp.Value.Name));
+            else
+                table.AddRow(Markup.Escape(kvp.Value.Name));
 
-            table.AddColumn("Filesystem");
+        AnsiConsole.Render(table);
 
-            foreach(KeyValuePair<string, IReadOnlyFilesystem> kvp in plugins.ReadOnlyFilesystems)
-                if(verbose)
-                    table.AddRow(kvp.Value.Id.ToString(), Markup.Escape(kvp.Value.Name));
-                else
-                    table.AddRow(Markup.Escape(kvp.Value.Name));
+        AaruConsole.WriteLine();
 
-            AnsiConsole.Render(table);
+        table = new Table
+        {
+            Title = new TableTitle(string.Format("Supported partitioning schemes ({0}):",
+                                                 plugins.PartPluginsList.Count))
+        };
 
-            AaruConsole.WriteLine();
+        if(verbose)
+            table.AddColumn("GUID");
 
-            table = new Table
-            {
-                Title = new TableTitle(string.Format("Supported partitioning schemes ({0}):",
-                                                     plugins.PartPluginsList.Count))
-            };
+        table.AddColumn("Scheme");
 
+        foreach(KeyValuePair<string, IPartition> kvp in plugins.PartPluginsList)
             if(verbose)
-                table.AddColumn("GUID");
+                table.AddRow(kvp.Value.Id.ToString(), Markup.Escape(kvp.Value.Name));
+            else
+                table.AddRow(Markup.Escape(kvp.Value.Name));
 
-            table.AddColumn("Scheme");
+        AnsiConsole.Render(table);
 
-            foreach(KeyValuePair<string, IPartition> kvp in plugins.PartPluginsList)
-                if(verbose)
-                    table.AddRow(kvp.Value.Id.ToString(), Markup.Escape(kvp.Value.Name));
-                else
-                    table.AddRow(Markup.Escape(kvp.Value.Name));
+        AaruConsole.WriteLine();
 
-            AnsiConsole.Render(table);
+        table = new Table
+        {
+            Title = new TableTitle(string.Format("Supported archive formats ({0}):", plugins.Archives.Count))
+        };
 
-            AaruConsole.WriteLine();
+        if(verbose)
+            table.AddColumn("GUID");
 
-            table = new Table
-            {
-                Title = new TableTitle(string.Format("Supported archive formats ({0}):", plugins.Archives.Count))
-            };
+        table.AddColumn("Archive format");
 
+        foreach(KeyValuePair<string, IArchive> kvp in plugins.Archives)
             if(verbose)
-                table.AddColumn("GUID");
+                table.AddRow(kvp.Value.Id.ToString(), Markup.Escape(kvp.Value.Name));
+            else
+                table.AddRow(Markup.Escape(kvp.Value.Name));
 
-            table.AddColumn("Archive format");
+        AnsiConsole.Render(table);
 
-            foreach(KeyValuePair<string, IArchive> kvp in plugins.Archives)
-                if(verbose)
-                    table.AddRow(kvp.Value.Id.ToString(), Markup.Escape(kvp.Value.Name));
-                else
-                    table.AddRow(Markup.Escape(kvp.Value.Name));
-
-            AnsiConsole.Render(table);
-
-            return (int)ErrorNumber.NoError;
-        }
+        return (int)ErrorNumber.NoError;
     }
 }

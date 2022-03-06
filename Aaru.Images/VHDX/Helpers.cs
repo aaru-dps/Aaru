@@ -30,20 +30,19 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class Vhdx
 {
-    public sealed partial class Vhdx
+    bool CheckBitmap(ulong sectorAddress)
     {
-        bool CheckBitmap(ulong sectorAddress)
-        {
-            long index = (long)(sectorAddress / 8);
-            int  shift = (int)(sectorAddress  % 8);
-            byte val   = (byte)(1 << shift);
+        long index = (long)(sectorAddress / 8);
+        int  shift = (int)(sectorAddress  % 8);
+        byte val   = (byte)(1 << shift);
 
-            if(index > _sectorBitmap.LongLength)
-                return false;
+        if(index > _sectorBitmap.LongLength)
+            return false;
 
-            return (_sectorBitmap[index] & val) == val;
-        }
+        return (_sectorBitmap[index] & val) == val;
     }
 }

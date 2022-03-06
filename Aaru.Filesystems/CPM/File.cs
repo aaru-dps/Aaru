@@ -35,133 +35,132 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 using Aaru.Helpers;
 
-namespace Aaru.Filesystems
+namespace Aaru.Filesystems;
+
+public sealed partial class CPM
 {
-    public sealed partial class CPM
+    /// <inheritdoc />
+    public ErrorNumber GetAttributes(string path, out FileAttributes attributes)
     {
-        /// <inheritdoc />
-        public ErrorNumber GetAttributes(string path, out FileAttributes attributes)
+        attributes = new FileAttributes();
+
+        if(!_mounted)
+            return ErrorNumber.AccessDenied;
+
+        string[] pathElements = path.Split(new[]
+        {
+            '/'
+        }, StringSplitOptions.RemoveEmptyEntries);
+
+        if(pathElements.Length != 1)
+            return ErrorNumber.NotSupported;
+
+        if(string.IsNullOrEmpty(pathElements[0]) ||
+           string.Compare(pathElements[0], "/", StringComparison.OrdinalIgnoreCase) == 0)
         {
             attributes = new FileAttributes();
-
-            if(!_mounted)
-                return ErrorNumber.AccessDenied;
-
-            string[] pathElements = path.Split(new[]
-            {
-                '/'
-            }, StringSplitOptions.RemoveEmptyEntries);
-
-            if(pathElements.Length != 1)
-                return ErrorNumber.NotSupported;
-
-            if(string.IsNullOrEmpty(pathElements[0]) ||
-               string.Compare(pathElements[0], "/", StringComparison.OrdinalIgnoreCase) == 0)
-            {
-                attributes = new FileAttributes();
-                attributes = FileAttributes.Directory;
-
-                return ErrorNumber.NoError;
-            }
-
-            if(!_statCache.TryGetValue(pathElements[0].ToUpperInvariant(), out FileEntryInfo fInfo))
-                return ErrorNumber.NoSuchFile;
-
-            attributes = fInfo.Attributes;
+            attributes = FileAttributes.Directory;
 
             return ErrorNumber.NoError;
         }
 
-        // TODO: Implementing this would require storing the interleaving
-        /// <inheritdoc />
-        public ErrorNumber MapBlock(string path, long fileBlock, out long deviceBlock)
+        if(!_statCache.TryGetValue(pathElements[0].ToUpperInvariant(), out FileEntryInfo fInfo))
+            return ErrorNumber.NoSuchFile;
+
+        attributes = fInfo.Attributes;
+
+        return ErrorNumber.NoError;
+    }
+
+    // TODO: Implementing this would require storing the interleaving
+    /// <inheritdoc />
+    public ErrorNumber MapBlock(string path, long fileBlock, out long deviceBlock)
+    {
+        deviceBlock = 0;
+
+        return !_mounted ? ErrorNumber.AccessDenied : ErrorNumber.NotImplemented;
+    }
+
+    /// <inheritdoc />
+    public ErrorNumber Read(string path, long offset, long size, ref byte[] buf)
+    {
+        if(!_mounted)
+            return ErrorNumber.AccessDenied;
+
+        if(size == 0)
         {
-            deviceBlock = 0;
-
-            return !_mounted ? ErrorNumber.AccessDenied : ErrorNumber.NotImplemented;
-        }
-
-        /// <inheritdoc />
-        public ErrorNumber Read(string path, long offset, long size, ref byte[] buf)
-        {
-            if(!_mounted)
-                return ErrorNumber.AccessDenied;
-
-            if(size == 0)
-            {
-                buf = Array.Empty<byte>();
-
-                return ErrorNumber.NoError;
-            }
-
-            if(offset < 0)
-                return ErrorNumber.InvalidArgument;
-
-            string[] pathElements = path.Split(new[]
-            {
-                '/'
-            }, StringSplitOptions.RemoveEmptyEntries);
-
-            if(pathElements.Length != 1)
-                return ErrorNumber.NotSupported;
-
-            if(!_fileCache.TryGetValue(pathElements[0].ToUpperInvariant(), out byte[] file))
-                return ErrorNumber.NoSuchFile;
-
-            if(offset >= file.Length)
-                return ErrorNumber.EINVAL;
-
-            if(size + offset >= file.Length)
-                size = file.Length - offset;
-
-            buf = new byte[size];
-            Array.Copy(file, offset, buf, 0, size);
+            buf = Array.Empty<byte>();
 
             return ErrorNumber.NoError;
         }
 
-        /// <inheritdoc />
-        public ErrorNumber ReadLink(string path, out string dest)
+        if(offset < 0)
+            return ErrorNumber.InvalidArgument;
+
+        string[] pathElements = path.Split(new[]
         {
-            dest = null;
+            '/'
+        }, StringSplitOptions.RemoveEmptyEntries);
 
-            return !_mounted ? ErrorNumber.AccessDenied : ErrorNumber.NotSupported;
-        }
+        if(pathElements.Length != 1)
+            return ErrorNumber.NotSupported;
 
-        /// <inheritdoc />
-        public ErrorNumber Stat(string path, out FileEntryInfo stat)
+        if(!_fileCache.TryGetValue(pathElements[0].ToUpperInvariant(), out byte[] file))
+            return ErrorNumber.NoSuchFile;
+
+        if(offset >= file.Length)
+            return ErrorNumber.EINVAL;
+
+        if(size + offset >= file.Length)
+            size = file.Length - offset;
+
+        buf = new byte[size];
+        Array.Copy(file, offset, buf, 0, size);
+
+        return ErrorNumber.NoError;
+    }
+
+    /// <inheritdoc />
+    public ErrorNumber ReadLink(string path, out string dest)
+    {
+        dest = null;
+
+        return !_mounted ? ErrorNumber.AccessDenied : ErrorNumber.NotSupported;
+    }
+
+    /// <inheritdoc />
+    public ErrorNumber Stat(string path, out FileEntryInfo stat)
+    {
+        stat = null;
+
+        if(!_mounted)
+            return ErrorNumber.AccessDenied;
+
+        string[] pathElements = path.Split(new[]
         {
-            stat = null;
+            '/'
+        }, StringSplitOptions.RemoveEmptyEntries);
 
-            if(!_mounted)
-                return ErrorNumber.AccessDenied;
+        if(pathElements.Length != 1)
+            return ErrorNumber.NotSupported;
 
-            string[] pathElements = path.Split(new[]
-            {
-                '/'
-            }, StringSplitOptions.RemoveEmptyEntries);
+        if(!string.IsNullOrEmpty(path) &&
+           string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) != 0)
+            return _statCache.TryGetValue(pathElements[0].ToUpperInvariant(), out stat) ? ErrorNumber.NoError
+                       : ErrorNumber.NoSuchFile;
 
-            if(pathElements.Length != 1)
-                return ErrorNumber.NotSupported;
+        stat = new FileEntryInfo
+        {
+            Attributes = FileAttributes.Directory,
+            BlockSize  = XmlFsType.ClusterSize
+        };
 
-            if(!string.IsNullOrEmpty(path) &&
-               string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) != 0)
-                return _statCache.TryGetValue(pathElements[0].ToUpperInvariant(), out stat) ? ErrorNumber.NoError
-                           : ErrorNumber.NoSuchFile;
+        if(_labelCreationDate != null)
+            stat.CreationTime = DateHandlers.CpmToDateTime(_labelCreationDate);
 
-            stat = new FileEntryInfo
-            {
-                Attributes = FileAttributes.Directory,
-                BlockSize  = XmlFsType.ClusterSize
-            };
+        if(_labelUpdateDate != null)
+            stat.StatusChangeTime = DateHandlers.CpmToDateTime(_labelUpdateDate);
 
-            if(_labelCreationDate != null)
-                stat.CreationTime = DateHandlers.CpmToDateTime(_labelCreationDate);
-
-            if(_labelUpdateDate != null)
-                stat.StatusChangeTime = DateHandlers.CpmToDateTime(_labelUpdateDate);
-
-            return ErrorNumber.NoError;
-        }
+        return ErrorNumber.NoError;
     }
 }

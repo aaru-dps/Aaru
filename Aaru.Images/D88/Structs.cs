@@ -33,54 +33,53 @@
 using System.Runtime.InteropServices;
 using Aaru.Decoders.Floppy;
 
-namespace Aaru.DiscImages
-{
-    public sealed partial class D88
-    {
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        readonly struct Header
-        {
-            /// <summary>Disk name, nul-terminated ASCII ディスクの名前(ASCII + '\0')</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 17)]
-            public readonly byte[] name;
-            /// <summary>Reserved ディスクの名前(ASCII + '\0')</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 9)]
-            public readonly byte[] reserved;
-            /// <summary>Write protect status ライトプロテクト： 0x00 なし、0x10 あり</summary>
-            public readonly byte write_protect;
-            /// <summary>Disk type ディスクの種類： 0x00 2D、 0x10 2DD、 0x20 2HD</summary>
-            public readonly DiskType disk_type;
-            /// <summary>Disk image size ディスクのサイズ</summary>
-            public readonly int disk_size;
-            /// <summary>Track pointers トラック部のオフセットテーブル 0 Track ～ 163 Track</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 164)]
-            public readonly int[] track_table;
-        }
+namespace Aaru.DiscImages;
 
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        readonly struct SectorHeader
-        {
-            /// <summary>Cylinder ID の C</summary>
-            public readonly byte c;
-            /// <summary>Head ID の H</summary>
-            public readonly byte h;
-            /// <summary>Sector number ID の R</summary>
-            public readonly byte r;
-            /// <summary>Sector size ID の N</summary>
-            public readonly IBMSectorSizeCode n;
-            /// <summary>Number of sectors in this track このトラック内に存在するセクタの数</summary>
-            public readonly short spt;
-            /// <summary>Density: 0x00 MFM, 0x40 FM 記録密度： 0x00 倍密度、0x40 単密度</summary>
-            public readonly DensityType density;
-            /// <summary>Deleted sector, 0x00 not deleted, 0x10 deleted DELETED MARK： 0x00 ノーマル、 0x10 DELETED</summary>
-            public readonly byte deleted_mark;
-            /// <summary>Sector status ステータス</summary>
-            public readonly byte status;
-            /// <summary>Reserved リザーブ</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
-            public readonly byte[] reserved;
-            /// <summary>Size of data following this field このセクタ部のデータサイズ</summary>
-            public readonly short size_of_data;
-        }
+public sealed partial class D88
+{
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct Header
+    {
+        /// <summary>Disk name, nul-terminated ASCII ディスクの名前(ASCII + '\0')</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 17)]
+        public readonly byte[] name;
+        /// <summary>Reserved ディスクの名前(ASCII + '\0')</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 9)]
+        public readonly byte[] reserved;
+        /// <summary>Write protect status ライトプロテクト： 0x00 なし、0x10 あり</summary>
+        public readonly byte write_protect;
+        /// <summary>Disk type ディスクの種類： 0x00 2D、 0x10 2DD、 0x20 2HD</summary>
+        public readonly DiskType disk_type;
+        /// <summary>Disk image size ディスクのサイズ</summary>
+        public readonly int disk_size;
+        /// <summary>Track pointers トラック部のオフセットテーブル 0 Track ～ 163 Track</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 164)]
+        public readonly int[] track_table;
+    }
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct SectorHeader
+    {
+        /// <summary>Cylinder ID の C</summary>
+        public readonly byte c;
+        /// <summary>Head ID の H</summary>
+        public readonly byte h;
+        /// <summary>Sector number ID の R</summary>
+        public readonly byte r;
+        /// <summary>Sector size ID の N</summary>
+        public readonly IBMSectorSizeCode n;
+        /// <summary>Number of sectors in this track このトラック内に存在するセクタの数</summary>
+        public readonly short spt;
+        /// <summary>Density: 0x00 MFM, 0x40 FM 記録密度： 0x00 倍密度、0x40 単密度</summary>
+        public readonly DensityType density;
+        /// <summary>Deleted sector, 0x00 not deleted, 0x10 deleted DELETED MARK： 0x00 ノーマル、 0x10 DELETED</summary>
+        public readonly byte deleted_mark;
+        /// <summary>Sector status ステータス</summary>
+        public readonly byte status;
+        /// <summary>Reserved リザーブ</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
+        public readonly byte[] reserved;
+        /// <summary>Size of data following this field このセクタ部のデータサイズ</summary>
+        public readonly short size_of_data;
     }
 }

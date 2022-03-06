@@ -36,144 +36,143 @@ using System.Linq;
 using Aaru.Checksums;
 using Aaru.CommonTypes.Enums;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class Chd
 {
-    public sealed partial class Chd
+    /// <inheritdoc />
+    public bool? VerifySector(ulong sectorAddress)
     {
-        /// <inheritdoc />
-        public bool? VerifySector(ulong sectorAddress)
+        if(_isHdd)
+            return null;
+
+        ErrorNumber errno = ReadSectorLong(sectorAddress, out byte[] buffer);
+
+        return errno != ErrorNumber.NoError ? null : CdChecksums.CheckCdSector(buffer);
+    }
+
+    /// <inheritdoc />
+    public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
+                               out List<ulong> unknownLbas)
+    {
+        unknownLbas = new List<ulong>();
+        failingLbas = new List<ulong>();
+
+        if(_isHdd)
+            return null;
+
+        ErrorNumber errno = ReadSectorsLong(sectorAddress, length, out byte[] buffer);
+
+        if(errno != ErrorNumber.NoError)
+            return null;
+
+        int    bps    = (int)(buffer.Length / length);
+        byte[] sector = new byte[bps];
+
+        for(int i = 0; i < length; i++)
         {
-            if(_isHdd)
-                return null;
+            Array.Copy(buffer, i * bps, sector, 0, bps);
+            bool? sectorStatus = CdChecksums.CheckCdSector(sector);
 
-            ErrorNumber errno = ReadSectorLong(sectorAddress, out byte[] buffer);
+            switch(sectorStatus)
+            {
+                case null:
+                    unknownLbas.Add((ulong)i + sectorAddress);
 
-            return errno != ErrorNumber.NoError ? null : CdChecksums.CheckCdSector(buffer);
+                    break;
+                case false:
+                    failingLbas.Add((ulong)i + sectorAddress);
+
+                    break;
+            }
         }
 
-        /// <inheritdoc />
-        public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
-                                   out List<ulong> unknownLbas)
+        if(unknownLbas.Count > 0)
+            return null;
+
+        return failingLbas.Count <= 0;
+    }
+
+    /// <inheritdoc />
+    public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+                               out List<ulong> unknownLbas)
+    {
+        unknownLbas = new List<ulong>();
+        failingLbas = new List<ulong>();
+
+        if(_isHdd)
+            return null;
+
+        ErrorNumber errno = ReadSectorsLong(sectorAddress, length, track, out byte[] buffer);
+
+        if(errno != ErrorNumber.NoError)
+            return null;
+
+        int    bps    = (int)(buffer.Length / length);
+        byte[] sector = new byte[bps];
+
+        for(int i = 0; i < length; i++)
         {
-            unknownLbas = new List<ulong>();
-            failingLbas = new List<ulong>();
+            Array.Copy(buffer, i * bps, sector, 0, bps);
+            bool? sectorStatus = CdChecksums.CheckCdSector(sector);
 
-            if(_isHdd)
-                return null;
-
-            ErrorNumber errno = ReadSectorsLong(sectorAddress, length, out byte[] buffer);
-
-            if(errno != ErrorNumber.NoError)
-                return null;
-
-            int    bps    = (int)(buffer.Length / length);
-            byte[] sector = new byte[bps];
-
-            for(int i = 0; i < length; i++)
+            switch(sectorStatus)
             {
-                Array.Copy(buffer, i * bps, sector, 0, bps);
-                bool? sectorStatus = CdChecksums.CheckCdSector(sector);
+                case null:
+                    unknownLbas.Add((ulong)i + sectorAddress);
 
-                switch(sectorStatus)
-                {
-                    case null:
-                        unknownLbas.Add((ulong)i + sectorAddress);
+                    break;
+                case false:
+                    failingLbas.Add((ulong)i + sectorAddress);
 
-                        break;
-                    case false:
-                        failingLbas.Add((ulong)i + sectorAddress);
-
-                        break;
-                }
+                    break;
             }
-
-            if(unknownLbas.Count > 0)
-                return null;
-
-            return failingLbas.Count <= 0;
         }
 
-        /// <inheritdoc />
-        public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
-                                   out List<ulong> unknownLbas)
+        if(unknownLbas.Count > 0)
+            return null;
+
+        return failingLbas.Count <= 0;
+    }
+
+    /// <inheritdoc />
+    public bool? VerifyMediaImage()
+    {
+        byte[] calculated;
+
+        if(_mapVersion >= 3)
         {
-            unknownLbas = new List<ulong>();
-            failingLbas = new List<ulong>();
+            var sha1Ctx = new Sha1Context();
 
-            if(_isHdd)
-                return null;
-
-            ErrorNumber errno = ReadSectorsLong(sectorAddress, length, track, out byte[] buffer);
-
-            if(errno != ErrorNumber.NoError)
-                return null;
-
-            int    bps    = (int)(buffer.Length / length);
-            byte[] sector = new byte[bps];
-
-            for(int i = 0; i < length; i++)
+            for(uint i = 0; i < _totalHunks; i++)
             {
-                Array.Copy(buffer, i * bps, sector, 0, bps);
-                bool? sectorStatus = CdChecksums.CheckCdSector(sector);
+                ErrorNumber errno = GetHunk(i, out byte[] buffer);
 
-                switch(sectorStatus)
-                {
-                    case null:
-                        unknownLbas.Add((ulong)i + sectorAddress);
+                if(errno != ErrorNumber.NoError)
+                    return null;
 
-                        break;
-                    case false:
-                        failingLbas.Add((ulong)i + sectorAddress);
-
-                        break;
-                }
+                sha1Ctx.Update(buffer);
             }
 
-            if(unknownLbas.Count > 0)
-                return null;
+            calculated = sha1Ctx.Final();
+        }
+        else
+        {
+            var md5Ctx = new Md5Context();
 
-            return failingLbas.Count <= 0;
+            for(uint i = 0; i < _totalHunks; i++)
+            {
+                ErrorNumber errno = GetHunk(i, out byte[] buffer);
+
+                if(errno != ErrorNumber.NoError)
+                    return null;
+
+                md5Ctx.Update(buffer);
+            }
+
+            calculated = md5Ctx.Final();
         }
 
-        /// <inheritdoc />
-        public bool? VerifyMediaImage()
-        {
-            byte[] calculated;
-
-            if(_mapVersion >= 3)
-            {
-                var sha1Ctx = new Sha1Context();
-
-                for(uint i = 0; i < _totalHunks; i++)
-                {
-                    ErrorNumber errno = GetHunk(i, out byte[] buffer);
-
-                    if(errno != ErrorNumber.NoError)
-                        return null;
-
-                    sha1Ctx.Update(buffer);
-                }
-
-                calculated = sha1Ctx.Final();
-            }
-            else
-            {
-                var md5Ctx = new Md5Context();
-
-                for(uint i = 0; i < _totalHunks; i++)
-                {
-                    ErrorNumber errno = GetHunk(i, out byte[] buffer);
-
-                    if(errno != ErrorNumber.NoError)
-                        return null;
-
-                    md5Ctx.Update(buffer);
-                }
-
-                calculated = md5Ctx.Final();
-            }
-
-            return _expectedChecksum.SequenceEqual(calculated);
-        }
+        return _expectedChecksum.SequenceEqual(calculated);
     }
 }

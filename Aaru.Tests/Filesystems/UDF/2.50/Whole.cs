@@ -32,70 +32,69 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Filesystems.UDF._250
-{
-    [TestFixture]
-    public class Whole : FilesystemTest
-    {
-        public override string DataFolder =>
-            Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Universal Disc Format", "2.50");
-        public override IFilesystem Plugin     => new Aaru.Filesystems.UDF();
-        public override bool        Partitions => false;
+namespace Aaru.Tests.Filesystems.UDF._250;
 
-        public override FileSystemTest[] Tests => new[]
+[TestFixture]
+public class Whole : FilesystemTest
+{
+    public override string DataFolder =>
+        Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Universal Disc Format", "2.50");
+    public override IFilesystem Plugin     => new Aaru.Filesystems.UDF();
+    public override bool        Partitions => false;
+
+    public override FileSystemTest[] Tests => new[]
+    {
+        new FileSystemTest
         {
-            new FileSystemTest
-            {
-                TestFile     = "linux.aif",
-                MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 1024000,
-                SectorSize   = 512,
-                Clusters     = 1024000,
-                ClusterSize  = 512,
-                SystemId     = "*Linux UDFFS",
-                Type         = "UDF v2.50",
-                VolumeName   = "Volume label",
-                VolumeSerial = "595c5d0e4f338552LinuxUDF"
-            },
-            new FileSystemTest
-            {
-                TestFile     = "macosx_10.11.aif",
-                MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 1024000,
-                SectorSize   = 512,
-                Clusters     = 1024000,
-                ClusterSize  = 512,
-                SystemId     = "*Apple Mac OS X UDF FS",
-                Type         = "UDF v2.50",
-                VolumeName   = "Volume label",
-                VolumeSerial = "709E84A1 (Mac OS X newfs_udf) UDF Volume Set"
-            },
-            new FileSystemTest
-            {
-                TestFile     = "netbsd_6.1.5.aif",
-                MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 262144,
-                SectorSize   = 512,
-                Clusters     = 262144,
-                ClusterSize  = 512,
-                SystemId     = "*NetBSD userland UDF",
-                Type         = "UDF v2.50",
-                VolumeName   = "anonymous",
-                VolumeSerial = "672fe9a0114cdddb"
-            },
-            new FileSystemTest
-            {
-                TestFile     = "netbsd_7.1.aif",
-                MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 262144,
-                SectorSize   = 512,
-                Clusters     = 262144,
-                ClusterSize  = 512,
-                SystemId     = "*NetBSD userland UDF",
-                Type         = "UDF v2.50",
-                VolumeName   = "anonymous",
-                VolumeSerial = "723d15a55a5d8156"
-            }
-        };
-    }
+            TestFile     = "linux.aif",
+            MediaType    = MediaType.GENERIC_HDD,
+            Sectors      = 1024000,
+            SectorSize   = 512,
+            Clusters     = 1024000,
+            ClusterSize  = 512,
+            SystemId     = "*Linux UDFFS",
+            Type         = "UDF v2.50",
+            VolumeName   = "Volume label",
+            VolumeSerial = "595c5d0e4f338552LinuxUDF"
+        },
+        new FileSystemTest
+        {
+            TestFile     = "macosx_10.11.aif",
+            MediaType    = MediaType.GENERIC_HDD,
+            Sectors      = 1024000,
+            SectorSize   = 512,
+            Clusters     = 1024000,
+            ClusterSize  = 512,
+            SystemId     = "*Apple Mac OS X UDF FS",
+            Type         = "UDF v2.50",
+            VolumeName   = "Volume label",
+            VolumeSerial = "709E84A1 (Mac OS X newfs_udf) UDF Volume Set"
+        },
+        new FileSystemTest
+        {
+            TestFile     = "netbsd_6.1.5.aif",
+            MediaType    = MediaType.GENERIC_HDD,
+            Sectors      = 262144,
+            SectorSize   = 512,
+            Clusters     = 262144,
+            ClusterSize  = 512,
+            SystemId     = "*NetBSD userland UDF",
+            Type         = "UDF v2.50",
+            VolumeName   = "anonymous",
+            VolumeSerial = "672fe9a0114cdddb"
+        },
+        new FileSystemTest
+        {
+            TestFile     = "netbsd_7.1.aif",
+            MediaType    = MediaType.GENERIC_HDD,
+            Sectors      = 262144,
+            SectorSize   = 512,
+            Clusters     = 262144,
+            ClusterSize  = 512,
+            SystemId     = "*NetBSD userland UDF",
+            Type         = "UDF v2.50",
+            VolumeName   = "anonymous",
+            VolumeSerial = "723d15a55a5d8156"
+        }
+    };
 }

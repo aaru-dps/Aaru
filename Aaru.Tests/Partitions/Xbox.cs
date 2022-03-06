@@ -30,40 +30,39 @@ using System.IO;
 using Aaru.CommonTypes;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Partitions
-{
-    [TestFixture]
-    public class Xbox : PartitionSchemeTest
-    {
-        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Partitioning schemes", "Xbox");
+namespace Aaru.Tests.Partitions;
 
-        public override PartitionTest[] Tests => new[]
+[TestFixture]
+public class Xbox : PartitionSchemeTest
+{
+    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Partitioning schemes", "Xbox");
+
+    public override PartitionTest[] Tests => new[]
+    {
+        new PartitionTest
         {
-            new PartitionTest
+            TestFile = "microsoft256mb.aif",
+            Partitions = new[]
             {
-                TestFile = "microsoft256mb.aif",
-                Partitions = new[]
+                new Partition
                 {
-                    new Partition
-                    {
-                        Description = "System cache",
-                        Length      = 16376,
-                        Offset      = 0,
-                        Sequence    = 0,
-                        Size        = 0,
-                        Start       = 0
-                    },
-                    new Partition
-                    {
-                        Description = "Data volume",
-                        Length      = 475144,
-                        Offset      = 0,
-                        Sequence    = 1,
-                        Size        = 0,
-                        Start       = 16376
-                    }
+                    Description = "System cache",
+                    Length      = 16376,
+                    Offset      = 0,
+                    Sequence    = 0,
+                    Size        = 0,
+                    Start       = 0
+                },
+                new Partition
+                {
+                    Description = "Data volume",
+                    Length      = 475144,
+                    Offset      = 0,
+                    Sequence    = 1,
+                    Size        = 0,
+                    Start       = 16376
                 }
             }
-        };
-    }
+        }
+    };
 }

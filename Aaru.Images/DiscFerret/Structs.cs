@@ -32,17 +32,16 @@
 
 using System.Runtime.InteropServices;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class DiscFerret
 {
-    public sealed partial class DiscFerret
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct BlockHeader
     {
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        readonly struct BlockHeader
-        {
-            public readonly ushort cylinder;
-            public readonly ushort head;
-            public readonly ushort sector;
-            public readonly uint   length;
-        }
+        public readonly ushort cylinder;
+        public readonly ushort head;
+        public readonly ushort sector;
+        public readonly uint   length;
     }
 }

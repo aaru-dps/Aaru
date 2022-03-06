@@ -37,35 +37,34 @@ using Aaru.Gui.Views.Dialogs;
 using JetBrains.Annotations;
 using ReactiveUI;
 
-namespace Aaru.Gui.ViewModels.Dialogs
+namespace Aaru.Gui.ViewModels.Dialogs;
+
+public sealed class LicenseViewModel : ViewModelBase
 {
-    public sealed class LicenseViewModel : ViewModelBase
+    readonly LicenseDialog _view;
+    string                 _versionText;
+
+    public LicenseViewModel(LicenseDialog view)
     {
-        readonly LicenseDialog _view;
-        string                 _versionText;
+        _view        = view;
+        CloseCommand = ReactiveCommand.Create(ExecuteCloseCommand);
 
-        public LicenseViewModel(LicenseDialog view)
-        {
-            _view        = view;
-            CloseCommand = ReactiveCommand.Create(ExecuteCloseCommand);
+        using Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("Aaru.Gui.LICENSE");
 
-            using Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("Aaru.Gui.LICENSE");
+        if(stream == null)
+            return;
 
-            if(stream == null)
-                return;
+        using var reader = new StreamReader(stream);
 
-            using var reader = new StreamReader(stream);
-
-            LicenseText = reader.ReadToEnd();
-        }
-
-        [NotNull]
-        public string Title => "Aaru's license";
-        [NotNull]
-        public string CloseLabel => "Close";
-        public string                      LicenseText  { get; }
-        public ReactiveCommand<Unit, Unit> CloseCommand { get; }
-
-        void ExecuteCloseCommand() => _view.Close();
+        LicenseText = reader.ReadToEnd();
     }
+
+    [NotNull]
+    public string Title => "Aaru's license";
+    [NotNull]
+    public string CloseLabel => "Close";
+    public string                      LicenseText  { get; }
+    public ReactiveCommand<Unit, Unit> CloseCommand { get; }
+
+    void ExecuteCloseCommand() => _view.Close();
 }

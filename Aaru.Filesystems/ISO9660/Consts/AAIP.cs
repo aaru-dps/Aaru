@@ -35,17 +35,16 @@ using System;
 
 // ReSharper disable UnusedMember.Local
 
-namespace Aaru.Filesystems
-{
-    public sealed partial class ISO9660
-    {
-        const ushort AAIP_MAGIC     = 0x414C; // "AL"
-        const ushort AAIP_MAGIC_OLD = 0x4141; // "AA"
+namespace Aaru.Filesystems;
 
-        [Flags]
-        enum AAIPFlags : byte
-        {
-            Continue = 1
-        }
+public sealed partial class ISO9660
+{
+    const ushort AAIP_MAGIC     = 0x414C; // "AL"
+    const ushort AAIP_MAGIC_OLD = 0x4141; // "AA"
+
+    [Flags]
+    enum AAIPFlags : byte
+    {
+        Continue = 1
     }
 }

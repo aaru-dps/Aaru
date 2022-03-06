@@ -34,24 +34,23 @@ using System.IO;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class Qcow
 {
-    public sealed partial class Qcow
+    /// <inheritdoc />
+    public bool Identify(IFilter imageFilter)
     {
-        /// <inheritdoc />
-        public bool Identify(IFilter imageFilter)
-        {
-            Stream stream = imageFilter.GetDataForkStream();
-            stream.Seek(0, SeekOrigin.Begin);
+        Stream stream = imageFilter.GetDataForkStream();
+        stream.Seek(0, SeekOrigin.Begin);
 
-            if(stream.Length < 512)
-                return false;
+        if(stream.Length < 512)
+            return false;
 
-            byte[] qHdrB = new byte[48];
-            stream.Read(qHdrB, 0, 48);
-            _qHdr = Marshal.SpanToStructureBigEndian<Header>(qHdrB);
+        byte[] qHdrB = new byte[48];
+        stream.Read(qHdrB, 0, 48);
+        _qHdr = Marshal.SpanToStructureBigEndian<Header>(qHdrB);
 
-            return _qHdr.magic == QCOW_MAGIC && _qHdr.version == QCOW_VERSION;
-        }
+        return _qHdr.magic == QCOW_MAGIC && _qHdr.version == QCOW_VERSION;
     }
 }

@@ -32,29 +32,28 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Filesystems
+namespace Aaru.Tests.Filesystems;
+
+[TestFixture]
+public class Ext : FilesystemTest
 {
-    [TestFixture]
-    public class Ext : FilesystemTest
+    public override string DataFolder =>
+        Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Linux extended File System");
+    public override IFilesystem Plugin     => new extFS();
+    public override bool        Partitions => true;
+
+    public Ext() : base("ext") {}
+
+    public override FileSystemTest[] Tests => new[]
     {
-        public override string DataFolder =>
-            Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Linux extended File System");
-        public override IFilesystem Plugin     => new extFS();
-        public override bool        Partitions => true;
-
-        public Ext() : base("ext") {}
-
-        public override FileSystemTest[] Tests => new[]
+        new FileSystemTest
         {
-            new FileSystemTest
-            {
-                TestFile    = "linux_2.0.37.aif",
-                MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 262144,
-                SectorSize  = 512,
-                Clusters    = 131008,
-                ClusterSize = 1024
-            }
-        };
-    }
+            TestFile    = "linux_2.0.37.aif",
+            MediaType   = MediaType.GENERIC_HDD,
+            Sectors     = 262144,
+            SectorSize  = 512,
+            Clusters    = 131008,
+            ClusterSize = 1024
+        }
+    };
 }

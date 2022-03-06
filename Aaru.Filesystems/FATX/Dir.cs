@@ -36,43 +36,57 @@ using System.Linq;
 using Aaru.CommonTypes.Enums;
 using Aaru.Helpers;
 
-namespace Aaru.Filesystems
+namespace Aaru.Filesystems;
+
+public sealed partial class XboxFatPlugin
 {
-    public sealed partial class XboxFatPlugin
+    /// <inheritdoc />
+    public ErrorNumber ReadDir(string path, out List<string> contents)
     {
-        /// <inheritdoc />
-        public ErrorNumber ReadDir(string path, out List<string> contents)
+        contents = null;
+
+        if(!_mounted)
+            return ErrorNumber.AccessDenied;
+
+        if(string.IsNullOrWhiteSpace(path) ||
+           path == "/")
         {
-            contents = null;
+            contents = _rootDirectory.Keys.ToList();
 
-            if(!_mounted)
-                return ErrorNumber.AccessDenied;
+            return ErrorNumber.NoError;
+        }
 
-            if(string.IsNullOrWhiteSpace(path) ||
-               path == "/")
-            {
-                contents = _rootDirectory.Keys.ToList();
+        string cutPath = path.StartsWith('/') ? path.Substring(1).ToLower(_cultureInfo)
+                             : path.ToLower(_cultureInfo);
 
-                return ErrorNumber.NoError;
-            }
+        if(_directoryCache.TryGetValue(cutPath, out Dictionary<string, DirectoryEntry> currentDirectory))
+        {
+            contents = currentDirectory.Keys.ToList();
 
-            string cutPath = path.StartsWith('/') ? path.Substring(1).ToLower(_cultureInfo)
-                                 : path.ToLower(_cultureInfo);
+            return ErrorNumber.NoError;
+        }
 
-            if(_directoryCache.TryGetValue(cutPath, out Dictionary<string, DirectoryEntry> currentDirectory))
-            {
-                contents = currentDirectory.Keys.ToList();
+        string[] pieces = cutPath.Split(new[]
+        {
+            '/'
+        }, StringSplitOptions.RemoveEmptyEntries);
 
-                return ErrorNumber.NoError;
-            }
+        KeyValuePair<string, DirectoryEntry> entry =
+            _rootDirectory.FirstOrDefault(t => t.Key.ToLower(_cultureInfo) == pieces[0]);
 
-            string[] pieces = cutPath.Split(new[]
-            {
-                '/'
-            }, StringSplitOptions.RemoveEmptyEntries);
+        if(string.IsNullOrEmpty(entry.Key))
+            return ErrorNumber.NoSuchFile;
 
-            KeyValuePair<string, DirectoryEntry> entry =
-                _rootDirectory.FirstOrDefault(t => t.Key.ToLower(_cultureInfo) == pieces[0]);
+        if(!entry.Value.attributes.HasFlag(Attributes.Directory))
+            return ErrorNumber.NotDirectory;
+
+        string currentPath = pieces[0];
+
+        currentDirectory = _rootDirectory;
+
+        for(int p = 0; p < pieces.Length; p++)
+        {
+            entry = currentDirectory.FirstOrDefault(t => t.Key.ToLower(_cultureInfo) == pieces[p]);
 
             if(string.IsNullOrEmpty(entry.Key))
                 return ErrorNumber.NoSuchFile;
@@ -80,80 +94,65 @@ namespace Aaru.Filesystems
             if(!entry.Value.attributes.HasFlag(Attributes.Directory))
                 return ErrorNumber.NotDirectory;
 
-            string currentPath = pieces[0];
+            currentPath = p == 0 ? pieces[0] : $"{currentPath}/{pieces[p]}";
+            uint currentCluster = entry.Value.firstCluster;
 
-            currentDirectory = _rootDirectory;
+            if(_directoryCache.TryGetValue(currentPath, out currentDirectory))
+                continue;
 
-            for(int p = 0; p < pieces.Length; p++)
+            uint[] clusters = GetClusters(currentCluster);
+
+            if(clusters is null)
+                return ErrorNumber.InvalidArgument;
+
+            byte[] directoryBuffer = new byte[_bytesPerCluster * clusters.Length];
+
+            for(int i = 0; i < clusters.Length; i++)
             {
-                entry = currentDirectory.FirstOrDefault(t => t.Key.ToLower(_cultureInfo) == pieces[p]);
+                ErrorNumber errno =
+                    _imagePlugin.ReadSectors(_firstClusterSector + ((clusters[i] - 1) * _sectorsPerCluster),
+                                             _sectorsPerCluster, out byte[] buffer);
 
-                if(string.IsNullOrEmpty(entry.Key))
-                    return ErrorNumber.NoSuchFile;
+                if(errno != ErrorNumber.NoError)
+                    return errno;
 
-                if(!entry.Value.attributes.HasFlag(Attributes.Directory))
-                    return ErrorNumber.NotDirectory;
-
-                currentPath = p == 0 ? pieces[0] : $"{currentPath}/{pieces[p]}";
-                uint currentCluster = entry.Value.firstCluster;
-
-                if(_directoryCache.TryGetValue(currentPath, out currentDirectory))
-                    continue;
-
-                uint[] clusters = GetClusters(currentCluster);
-
-                if(clusters is null)
-                    return ErrorNumber.InvalidArgument;
-
-                byte[] directoryBuffer = new byte[_bytesPerCluster * clusters.Length];
-
-                for(int i = 0; i < clusters.Length; i++)
-                {
-                    ErrorNumber errno =
-                        _imagePlugin.ReadSectors(_firstClusterSector + ((clusters[i] - 1) * _sectorsPerCluster),
-                                                 _sectorsPerCluster, out byte[] buffer);
-
-                    if(errno != ErrorNumber.NoError)
-                        return errno;
-
-                    Array.Copy(buffer, 0, directoryBuffer, i * _bytesPerCluster, _bytesPerCluster);
-                }
-
-                currentDirectory = new Dictionary<string, DirectoryEntry>();
-
-                int pos = 0;
-
-                while(pos < directoryBuffer.Length)
-                {
-                    DirectoryEntry dirent = _littleEndian
-                                                ? Marshal.
-                                                    ByteArrayToStructureLittleEndian<
-                                                        DirectoryEntry>(directoryBuffer, pos,
-                                                                        Marshal.SizeOf<DirectoryEntry>())
-                                                : Marshal.ByteArrayToStructureBigEndian<DirectoryEntry>(directoryBuffer,
-                                                    pos, Marshal.SizeOf<DirectoryEntry>());
-
-                    pos += Marshal.SizeOf<DirectoryEntry>();
-
-                    if(dirent.filenameSize == UNUSED_DIRENTRY ||
-                       dirent.filenameSize == FINISHED_DIRENTRY)
-                        break;
-
-                    if(dirent.filenameSize == DELETED_DIRENTRY ||
-                       dirent.filenameSize > MAX_FILENAME)
-                        continue;
-
-                    string filename = Encoding.GetString(dirent.filename, 0, dirent.filenameSize);
-
-                    currentDirectory.Add(filename, dirent);
-                }
-
-                _directoryCache.Add(currentPath, currentDirectory);
+                Array.Copy(buffer, 0, directoryBuffer, i * _bytesPerCluster, _bytesPerCluster);
             }
 
-            contents = currentDirectory?.Keys.ToList();
+            currentDirectory = new Dictionary<string, DirectoryEntry>();
 
-            return ErrorNumber.NoError;
+            int pos = 0;
+
+            while(pos < directoryBuffer.Length)
+            {
+                DirectoryEntry dirent = _littleEndian
+                                            ? Marshal.
+                                                ByteArrayToStructureLittleEndian<
+                                                    DirectoryEntry>(directoryBuffer, pos,
+                                                                    Marshal.SizeOf<DirectoryEntry>())
+                                            : Marshal.ByteArrayToStructureBigEndian<DirectoryEntry>(directoryBuffer,
+                                                pos, Marshal.SizeOf<DirectoryEntry>());
+
+                pos += Marshal.SizeOf<DirectoryEntry>();
+
+                if(dirent.filenameSize == UNUSED_DIRENTRY ||
+                   dirent.filenameSize == FINISHED_DIRENTRY)
+                    break;
+
+                if(dirent.filenameSize == DELETED_DIRENTRY ||
+                   dirent.filenameSize > MAX_FILENAME)
+                    continue;
+
+                string filename = Encoding.GetString(dirent.filename, 0, dirent.filenameSize);
+
+                currentDirectory.Add(filename, dirent);
+            }
+
+            _directoryCache.Add(currentPath, currentDirectory);
         }
+
+        contents = currentDirectory?.Keys.ToList();
+
+        return ErrorNumber.NoError;
     }
 }

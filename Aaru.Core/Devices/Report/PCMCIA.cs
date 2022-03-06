@@ -33,52 +33,51 @@
 using Aaru.CommonTypes.Metadata;
 using Aaru.Decoders.PCMCIA;
 
-namespace Aaru.Core.Devices.Report
+namespace Aaru.Core.Devices.Report;
+
+/// <summary>Implements creating a report for a PCMCIA device</summary>
+public sealed partial class DeviceReport
 {
-    /// <summary>Implements creating a report for a PCMCIA device</summary>
-    public sealed partial class DeviceReport
+    /// <summary>Fills a device report with parameters specific to a PCMCIA device</summary>
+    public Pcmcia PcmciaReport()
     {
-        /// <summary>Fills a device report with parameters specific to a PCMCIA device</summary>
-        public Pcmcia PcmciaReport()
+        var pcmciaReport = new Pcmcia
         {
-            var pcmciaReport = new Pcmcia
-            {
-                CIS = _dev.Cis
-            };
+            CIS = _dev.Cis
+        };
 
-            Tuple[] tuples = CIS.GetTuples(_dev.Cis);
+        Tuple[] tuples = CIS.GetTuples(_dev.Cis);
 
-            if(tuples == null)
-                return pcmciaReport;
-
-            foreach(Tuple tuple in tuples)
-                switch(tuple.Code)
-                {
-                    case TupleCodes.CISTPL_MANFID:
-                        ManufacturerIdentificationTuple manfid = CIS.DecodeManufacturerIdentificationTuple(tuple);
-
-                        if(manfid != null)
-                        {
-                            pcmciaReport.ManufacturerCode = manfid.ManufacturerID;
-                            pcmciaReport.CardCode         = manfid.CardID;
-                        }
-
-                        break;
-                    case TupleCodes.CISTPL_VERS_1:
-                        Level1VersionTuple vers = CIS.DecodeLevel1VersionTuple(tuple);
-
-                        if(vers != null)
-                        {
-                            pcmciaReport.Manufacturer          = vers.Manufacturer;
-                            pcmciaReport.ProductName           = vers.Product;
-                            pcmciaReport.Compliance            = $"{vers.MajorVersion}.{vers.MinorVersion}";
-                            pcmciaReport.AdditionalInformation = vers.AdditionalInformation;
-                        }
-
-                        break;
-                }
-
+        if(tuples == null)
             return pcmciaReport;
-        }
+
+        foreach(Tuple tuple in tuples)
+            switch(tuple.Code)
+            {
+                case TupleCodes.CISTPL_MANFID:
+                    ManufacturerIdentificationTuple manfid = CIS.DecodeManufacturerIdentificationTuple(tuple);
+
+                    if(manfid != null)
+                    {
+                        pcmciaReport.ManufacturerCode = manfid.ManufacturerID;
+                        pcmciaReport.CardCode         = manfid.CardID;
+                    }
+
+                    break;
+                case TupleCodes.CISTPL_VERS_1:
+                    Level1VersionTuple vers = CIS.DecodeLevel1VersionTuple(tuple);
+
+                    if(vers != null)
+                    {
+                        pcmciaReport.Manufacturer          = vers.Manufacturer;
+                        pcmciaReport.ProductName           = vers.Product;
+                        pcmciaReport.Compliance            = $"{vers.MajorVersion}.{vers.MinorVersion}";
+                        pcmciaReport.AdditionalInformation = vers.AdditionalInformation;
+                    }
+
+                    break;
+            }
+
+        return pcmciaReport;
     }
 }

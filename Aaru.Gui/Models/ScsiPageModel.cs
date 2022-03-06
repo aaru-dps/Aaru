@@ -30,12 +30,11 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Gui.Models
+namespace Aaru.Gui.Models;
+
+public sealed class ScsiPageModel
 {
-    public sealed class ScsiPageModel
-    {
-        public byte[] Data;
-        public string Page        { get; set; }
-        public string Description { get; set; }
-    }
+    public byte[] Data;
+    public string Page        { get; set; }
+    public string Description { get; set; }
 }

@@ -37,42 +37,41 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Decoders.CD;
 
-namespace Aaru.DiscImages
-{
-    // TODO: There seems no be no clear definition on how to treat pregaps that are not included in the file, so this is just appending it to start of track
-    // TODO: This format doesn't support to specify pregaps that are included in the file (like Redump ones)
-    /// <inheritdoc />
-    /// <summary>Implements reading Dreamcast GDI disc images</summary>
-    public sealed partial class Gdi : IOpticalMediaImage
-    {
-        ulong        _densitySeparationSectors;
-        GdiDisc      _discImage;
-        StreamReader _gdiStream;
-        ImageInfo    _imageInfo;
-        Stream       _imageStream;
-        /// <summary>Dictionary, index is track #, value is track number, or 0 if a TOC</summary>
-        Dictionary<uint, ulong> _offsetMap;
-        SectorBuilder _sectorBuilder;
+namespace Aaru.DiscImages;
 
-        public Gdi() => _imageInfo = new ImageInfo
-        {
-            ReadableSectorTags    = new List<SectorTagType>(),
-            ReadableMediaTags     = new List<MediaTagType>(),
-            HasPartitions         = true,
-            HasSessions           = true,
-            Version               = null,
-            ApplicationVersion    = null,
-            MediaTitle            = null,
-            Creator               = null,
-            MediaManufacturer     = null,
-            MediaModel            = null,
-            MediaPartNumber       = null,
-            MediaSequence         = 0,
-            LastMediaSequence     = 0,
-            DriveManufacturer     = null,
-            DriveModel            = null,
-            DriveSerialNumber     = null,
-            DriveFirmwareRevision = null
-        };
-    }
+// TODO: There seems no be no clear definition on how to treat pregaps that are not included in the file, so this is just appending it to start of track
+// TODO: This format doesn't support to specify pregaps that are included in the file (like Redump ones)
+/// <inheritdoc />
+/// <summary>Implements reading Dreamcast GDI disc images</summary>
+public sealed partial class Gdi : IOpticalMediaImage
+{
+    ulong        _densitySeparationSectors;
+    GdiDisc      _discImage;
+    StreamReader _gdiStream;
+    ImageInfo    _imageInfo;
+    Stream       _imageStream;
+    /// <summary>Dictionary, index is track #, value is track number, or 0 if a TOC</summary>
+    Dictionary<uint, ulong> _offsetMap;
+    SectorBuilder _sectorBuilder;
+
+    public Gdi() => _imageInfo = new ImageInfo
+    {
+        ReadableSectorTags    = new List<SectorTagType>(),
+        ReadableMediaTags     = new List<MediaTagType>(),
+        HasPartitions         = true,
+        HasSessions           = true,
+        Version               = null,
+        ApplicationVersion    = null,
+        MediaTitle            = null,
+        Creator               = null,
+        MediaManufacturer     = null,
+        MediaModel            = null,
+        MediaPartNumber       = null,
+        MediaSequence         = 0,
+        LastMediaSequence     = 0,
+        DriveManufacturer     = null,
+        DriveModel            = null,
+        DriveSerialNumber     = null,
+        DriveFirmwareRevision = null
+    };
 }

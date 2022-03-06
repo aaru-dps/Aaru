@@ -32,32 +32,31 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-namespace Aaru.Filesystems.UCSDPascal
+namespace Aaru.Filesystems.UCSDPascal;
+
+// Information from Call-A.P.P.L.E. Pascal Disk Directory Structure
+[SuppressMessage("ReSharper", "UnusedMember.Local")]
+public sealed partial class PascalPlugin
 {
-    // Information from Call-A.P.P.L.E. Pascal Disk Directory Structure
-    [SuppressMessage("ReSharper", "UnusedMember.Local")]
-    public sealed partial class PascalPlugin
+    enum PascalFileKind : short
     {
-        enum PascalFileKind : short
-        {
-            /// <summary>Disk volume entry</summary>
-            Volume = 0,
-            /// <summary>File containing bad blocks</summary>
-            Bad,
-            /// <summary>Code file, machine executable</summary>
-            Code,
-            /// <summary>Text file, human readable</summary>
-            Text,
-            /// <summary>Information file for debugger</summary>
-            Info,
-            /// <summary>Data file</summary>
-            Data,
-            /// <summary>Graphics vectors</summary>
-            Graf,
-            /// <summary>Graphics screen image</summary>
-            Foto,
-            /// <summary>Security, not used</summary>
-            Secure
-        }
+        /// <summary>Disk volume entry</summary>
+        Volume = 0,
+        /// <summary>File containing bad blocks</summary>
+        Bad,
+        /// <summary>Code file, machine executable</summary>
+        Code,
+        /// <summary>Text file, human readable</summary>
+        Text,
+        /// <summary>Information file for debugger</summary>
+        Info,
+        /// <summary>Data file</summary>
+        Data,
+        /// <summary>Graphics vectors</summary>
+        Graf,
+        /// <summary>Graphics screen image</summary>
+        Foto,
+        /// <summary>Security, not used</summary>
+        Secure
     }
 }

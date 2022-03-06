@@ -34,18 +34,17 @@
 using System.Diagnostics.CodeAnalysis;
 using Aaru.Helpers;
 
-namespace Aaru.Filesystems
-{
-    [SuppressMessage("ReSharper", "UnusedMember.Local")]
-    public sealed partial class ISO9660
-    {
-        const           byte MODE2_FORM2          = 0x20;
-        static readonly int  _directoryRecordSize = Marshal.SizeOf<DirectoryRecord>();
+namespace Aaru.Filesystems;
 
-        enum Namespace
-        {
-            Normal, Vms, Joliet,
-            Rrip, Romeo
-        }
+[SuppressMessage("ReSharper", "UnusedMember.Local")]
+public sealed partial class ISO9660
+{
+    const           byte MODE2_FORM2          = 0x20;
+    static readonly int  _directoryRecordSize = Marshal.SizeOf<DirectoryRecord>();
+
+    enum Namespace
+    {
+        Normal, Vms, Joliet,
+        Rrip, Romeo
     }
 }

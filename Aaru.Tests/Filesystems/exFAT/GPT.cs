@@ -31,29 +31,28 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Filesystems.exFAT
+namespace Aaru.Tests.Filesystems.exFAT;
+
+[TestFixture]
+public class GPT : FilesystemTest
 {
-    [TestFixture]
-    public class GPT : FilesystemTest
+    public GPT() : base("exFAT") {}
+
+    public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "exFAT (GPT)");
+    public override IFilesystem Plugin     => new Aaru.Filesystems.exFAT();
+    public override bool        Partitions => true;
+
+    public override FileSystemTest[] Tests => new[]
     {
-        public GPT() : base("exFAT") {}
-
-        public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "exFAT (GPT)");
-        public override IFilesystem Plugin     => new Aaru.Filesystems.exFAT();
-        public override bool        Partitions => true;
-
-        public override FileSystemTest[] Tests => new[]
+        new FileSystemTest
         {
-            new FileSystemTest
-            {
-                TestFile     = "macosx_10.11.aif",
-                MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 262144,
-                SectorSize   = 512,
-                Clusters     = 32208,
-                ClusterSize  = 4096,
-                VolumeSerial = "595ACC39"
-            }
-        };
-    }
+            TestFile     = "macosx_10.11.aif",
+            MediaType    = MediaType.GENERIC_HDD,
+            Sectors      = 262144,
+            SectorSize   = 512,
+            Clusters     = 32208,
+            ClusterSize  = 4096,
+            VolumeSerial = "595ACC39"
+        }
+    };
 }

@@ -32,50 +32,49 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+[SuppressMessage("ReSharper", "UnusedMember.Local")]
+public sealed partial class Chd
 {
-    [SuppressMessage("ReSharper", "UnusedMember.Local")]
-    public sealed partial class Chd
+    enum Compression : uint
     {
-        enum Compression : uint
-        {
-            None = 0, Zlib = 1, ZlibPlus = 2,
-            Av   = 3
-        }
+        None = 0, Zlib = 1, ZlibPlus = 2,
+        Av   = 3
+    }
 
-        enum Flags : uint
-        {
-            HasParent = 1, Writable = 2
-        }
+    enum Flags : uint
+    {
+        HasParent = 1, Writable = 2
+    }
 
-        enum EntryFlagsV3 : byte
-        {
-            /// <summary>Invalid</summary>
-            Invalid = 0,
-            /// <summary>Compressed with primary codec</summary>
-            Compressed = 1,
-            /// <summary>Uncompressed</summary>
-            Uncompressed = 2,
-            /// <summary>Use offset as data</summary>
-            Mini = 3,
-            /// <summary>Same as another hunk in file</summary>
-            SelfHunk = 4,
-            /// <summary>Same as another hunk in parent</summary>
-            ParentHunk = 5,
-            /// <summary>Compressed with secondary codec (FLAC)</summary>
-            SecondCompressed = 6
-        }
+    enum EntryFlagsV3 : byte
+    {
+        /// <summary>Invalid</summary>
+        Invalid = 0,
+        /// <summary>Compressed with primary codec</summary>
+        Compressed = 1,
+        /// <summary>Uncompressed</summary>
+        Uncompressed = 2,
+        /// <summary>Use offset as data</summary>
+        Mini = 3,
+        /// <summary>Same as another hunk in file</summary>
+        SelfHunk = 4,
+        /// <summary>Same as another hunk in parent</summary>
+        ParentHunk = 5,
+        /// <summary>Compressed with secondary codec (FLAC)</summary>
+        SecondCompressed = 6
+    }
 
-        enum TrackTypeOld : uint
-        {
-            Mode1 = 0, Mode1Raw, Mode2,
-            Mode2Form1, Mode2Form2, Mode2FormMix,
-            Mode2Raw, Audio
-        }
+    enum TrackTypeOld : uint
+    {
+        Mode1 = 0, Mode1Raw, Mode2,
+        Mode2Form1, Mode2Form2, Mode2FormMix,
+        Mode2Raw, Audio
+    }
 
-        enum SubTypeOld : uint
-        {
-            Cooked = 0, Raw, None
-        }
+    enum SubTypeOld : uint
+    {
+        Cooked = 0, Raw, None
     }
 }

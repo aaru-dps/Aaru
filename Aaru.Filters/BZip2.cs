@@ -37,189 +37,188 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Ionic.BZip2;
 
-namespace Aaru.Filters
+namespace Aaru.Filters;
+
+/// <inheritdoc />
+/// <summary>Decompress bz2 files while reading</summary>
+public class BZip2 : IFilter
 {
+    Stream _dataStream;
+    Stream _innerStream;
+
     /// <inheritdoc />
-    /// <summary>Decompress bz2 files while reading</summary>
-    public class BZip2 : IFilter
+    public string Name => "BZip2";
+    /// <inheritdoc />
+    public Guid Id => new("FCCFB0C3-32EF-40D8-9714-2333F6AC72A9");
+    /// <inheritdoc />
+    public string Author => "Natalia Portillo";
+
+    /// <inheritdoc />
+    public void Close()
     {
-        Stream _dataStream;
-        Stream _innerStream;
-
-        /// <inheritdoc />
-        public string Name => "BZip2";
-        /// <inheritdoc />
-        public Guid Id => new("FCCFB0C3-32EF-40D8-9714-2333F6AC72A9");
-        /// <inheritdoc />
-        public string Author => "Natalia Portillo";
-
-        /// <inheritdoc />
-        public void Close()
-        {
-            _dataStream?.Close();
-            _dataStream = null;
-            BasePath    = null;
-        }
-
-        /// <inheritdoc />
-        public string BasePath { get; private set; }
-
-        /// <inheritdoc />
-        public Stream GetDataForkStream() => _innerStream;
-
-        /// <inheritdoc />
-        public string Path => BasePath;
-
-        /// <inheritdoc />
-        public Stream GetResourceForkStream() => null;
-
-        /// <inheritdoc />
-        public bool HasResourceFork => false;
-
-        /// <inheritdoc />
-        public bool Identify(byte[] buffer)
-        {
-            if(buffer[0] != 0x42 ||
-               buffer[1] != 0x5A ||
-               buffer[2] != 0x68 ||
-               buffer[3] < 0x31  ||
-               buffer[3] > 0x39)
-                return false;
-
-            if(buffer.Length <= 512)
-                return true;
-
-            return buffer[^512] != 0x6B || buffer[^511] != 0x6F || buffer[^510] != 0x6C || buffer[^509] != 0x79;
-        }
-
-        /// <inheritdoc />
-        public bool Identify(Stream stream)
-        {
-            byte[] buffer = new byte[4];
-
-            stream.Seek(0, SeekOrigin.Begin);
-            stream.Read(buffer, 0, 4);
-            stream.Seek(0, SeekOrigin.Begin);
-
-            if(buffer[0] != 0x42 ||
-               buffer[1] != 0x5A ||
-               buffer[2] != 0x68 ||
-               buffer[3] < 0x31  ||
-               buffer[3] > 0x39)
-                return false;
-
-            if(stream.Length <= 512)
-                return true;
-
-            stream.Seek(-512, SeekOrigin.End);
-            stream.Read(buffer, 0, 4);
-            stream.Seek(0, SeekOrigin.Begin);
-
-            // Check it is not an UDIF
-            return buffer[0] != 0x6B || buffer[1] != 0x6F || buffer[2] != 0x6C || buffer[3] != 0x79;
-        }
-
-        /// <inheritdoc />
-        public bool Identify(string path)
-        {
-            if(!File.Exists(path))
-                return false;
-
-            var    stream = new FileStream(path, FileMode.Open, FileAccess.Read);
-            byte[] buffer = new byte[4];
-
-            stream.Seek(0, SeekOrigin.Begin);
-            stream.Read(buffer, 0, 4);
-            stream.Seek(0, SeekOrigin.Begin);
-
-            if(buffer[0] != 0x42 ||
-               buffer[1] != 0x5A ||
-               buffer[2] != 0x68 ||
-               buffer[3] < 0x31  ||
-               buffer[3] > 0x39)
-                return false;
-
-            if(stream.Length <= 512)
-                return true;
-
-            stream.Seek(-512, SeekOrigin.End);
-            stream.Read(buffer, 0, 4);
-            stream.Seek(0, SeekOrigin.Begin);
-
-            // Check it is not an UDIF
-            return buffer[0] != 0x6B || buffer[1] != 0x6F || buffer[2] != 0x6C || buffer[3] != 0x79;
-        }
-
-        /// <inheritdoc />
-        public ErrorNumber Open(byte[] buffer)
-        {
-            _dataStream    = new MemoryStream(buffer);
-            BasePath       = null;
-            CreationTime   = DateTime.UtcNow;
-            LastWriteTime  = CreationTime;
-            _innerStream   = new ForcedSeekStream<BZip2InputStream>(_dataStream, false);
-            DataForkLength = _innerStream.Length;
-
-            return ErrorNumber.NoError;
-        }
-
-        /// <inheritdoc />
-        public ErrorNumber Open(Stream stream)
-        {
-            _dataStream    = stream;
-            BasePath       = null;
-            CreationTime   = DateTime.UtcNow;
-            LastWriteTime  = CreationTime;
-            _innerStream   = new ForcedSeekStream<BZip2InputStream>(_dataStream, false);
-            DataForkLength = _innerStream.Length;
-
-            return ErrorNumber.NoError;
-        }
-
-        /// <inheritdoc />
-        public ErrorNumber Open(string path)
-        {
-            _dataStream = new FileStream(path, FileMode.Open, FileAccess.Read);
-            BasePath    = System.IO.Path.GetFullPath(path);
-
-            var fi = new FileInfo(path);
-            CreationTime   = fi.CreationTimeUtc;
-            LastWriteTime  = fi.LastWriteTimeUtc;
-            _innerStream   = new ForcedSeekStream<BZip2InputStream>(_dataStream, false);
-            DataForkLength = _innerStream.Length;
-
-            return ErrorNumber.NoError;
-        }
-
-        /// <inheritdoc />
-        public DateTime CreationTime { get; private set; }
-
-        /// <inheritdoc />
-        public long DataForkLength { get; private set; }
-
-        /// <inheritdoc />
-        public DateTime LastWriteTime { get; private set; }
-
-        /// <inheritdoc />
-        public long Length => DataForkLength;
-
-        /// <inheritdoc />
-        public long ResourceForkLength => 0;
-
-        /// <inheritdoc />
-        public string Filename
-        {
-            get
-            {
-                if(BasePath?.EndsWith(".bz2", StringComparison.InvariantCultureIgnoreCase) == true)
-                    return BasePath.Substring(0, BasePath.Length - 4);
-
-                return BasePath?.EndsWith(".bzip2", StringComparison.InvariantCultureIgnoreCase) == true
-                           ? BasePath.Substring(0, BasePath.Length - 6) : BasePath;
-            }
-        }
-
-        /// <inheritdoc />
-        public string ParentFolder => System.IO.Path.GetDirectoryName(BasePath);
+        _dataStream?.Close();
+        _dataStream = null;
+        BasePath    = null;
     }
+
+    /// <inheritdoc />
+    public string BasePath { get; private set; }
+
+    /// <inheritdoc />
+    public Stream GetDataForkStream() => _innerStream;
+
+    /// <inheritdoc />
+    public string Path => BasePath;
+
+    /// <inheritdoc />
+    public Stream GetResourceForkStream() => null;
+
+    /// <inheritdoc />
+    public bool HasResourceFork => false;
+
+    /// <inheritdoc />
+    public bool Identify(byte[] buffer)
+    {
+        if(buffer[0] != 0x42 ||
+           buffer[1] != 0x5A ||
+           buffer[2] != 0x68 ||
+           buffer[3] < 0x31  ||
+           buffer[3] > 0x39)
+            return false;
+
+        if(buffer.Length <= 512)
+            return true;
+
+        return buffer[^512] != 0x6B || buffer[^511] != 0x6F || buffer[^510] != 0x6C || buffer[^509] != 0x79;
+    }
+
+    /// <inheritdoc />
+    public bool Identify(Stream stream)
+    {
+        byte[] buffer = new byte[4];
+
+        stream.Seek(0, SeekOrigin.Begin);
+        stream.Read(buffer, 0, 4);
+        stream.Seek(0, SeekOrigin.Begin);
+
+        if(buffer[0] != 0x42 ||
+           buffer[1] != 0x5A ||
+           buffer[2] != 0x68 ||
+           buffer[3] < 0x31  ||
+           buffer[3] > 0x39)
+            return false;
+
+        if(stream.Length <= 512)
+            return true;
+
+        stream.Seek(-512, SeekOrigin.End);
+        stream.Read(buffer, 0, 4);
+        stream.Seek(0, SeekOrigin.Begin);
+
+        // Check it is not an UDIF
+        return buffer[0] != 0x6B || buffer[1] != 0x6F || buffer[2] != 0x6C || buffer[3] != 0x79;
+    }
+
+    /// <inheritdoc />
+    public bool Identify(string path)
+    {
+        if(!File.Exists(path))
+            return false;
+
+        var    stream = new FileStream(path, FileMode.Open, FileAccess.Read);
+        byte[] buffer = new byte[4];
+
+        stream.Seek(0, SeekOrigin.Begin);
+        stream.Read(buffer, 0, 4);
+        stream.Seek(0, SeekOrigin.Begin);
+
+        if(buffer[0] != 0x42 ||
+           buffer[1] != 0x5A ||
+           buffer[2] != 0x68 ||
+           buffer[3] < 0x31  ||
+           buffer[3] > 0x39)
+            return false;
+
+        if(stream.Length <= 512)
+            return true;
+
+        stream.Seek(-512, SeekOrigin.End);
+        stream.Read(buffer, 0, 4);
+        stream.Seek(0, SeekOrigin.Begin);
+
+        // Check it is not an UDIF
+        return buffer[0] != 0x6B || buffer[1] != 0x6F || buffer[2] != 0x6C || buffer[3] != 0x79;
+    }
+
+    /// <inheritdoc />
+    public ErrorNumber Open(byte[] buffer)
+    {
+        _dataStream    = new MemoryStream(buffer);
+        BasePath       = null;
+        CreationTime   = DateTime.UtcNow;
+        LastWriteTime  = CreationTime;
+        _innerStream   = new ForcedSeekStream<BZip2InputStream>(_dataStream, false);
+        DataForkLength = _innerStream.Length;
+
+        return ErrorNumber.NoError;
+    }
+
+    /// <inheritdoc />
+    public ErrorNumber Open(Stream stream)
+    {
+        _dataStream    = stream;
+        BasePath       = null;
+        CreationTime   = DateTime.UtcNow;
+        LastWriteTime  = CreationTime;
+        _innerStream   = new ForcedSeekStream<BZip2InputStream>(_dataStream, false);
+        DataForkLength = _innerStream.Length;
+
+        return ErrorNumber.NoError;
+    }
+
+    /// <inheritdoc />
+    public ErrorNumber Open(string path)
+    {
+        _dataStream = new FileStream(path, FileMode.Open, FileAccess.Read);
+        BasePath    = System.IO.Path.GetFullPath(path);
+
+        var fi = new FileInfo(path);
+        CreationTime   = fi.CreationTimeUtc;
+        LastWriteTime  = fi.LastWriteTimeUtc;
+        _innerStream   = new ForcedSeekStream<BZip2InputStream>(_dataStream, false);
+        DataForkLength = _innerStream.Length;
+
+        return ErrorNumber.NoError;
+    }
+
+    /// <inheritdoc />
+    public DateTime CreationTime { get; private set; }
+
+    /// <inheritdoc />
+    public long DataForkLength { get; private set; }
+
+    /// <inheritdoc />
+    public DateTime LastWriteTime { get; private set; }
+
+    /// <inheritdoc />
+    public long Length => DataForkLength;
+
+    /// <inheritdoc />
+    public long ResourceForkLength => 0;
+
+    /// <inheritdoc />
+    public string Filename
+    {
+        get
+        {
+            if(BasePath?.EndsWith(".bz2", StringComparison.InvariantCultureIgnoreCase) == true)
+                return BasePath.Substring(0, BasePath.Length - 4);
+
+            return BasePath?.EndsWith(".bzip2", StringComparison.InvariantCultureIgnoreCase) == true
+                       ? BasePath.Substring(0, BasePath.Length - 6) : BasePath;
+        }
+    }
+
+    /// <inheritdoc />
+    public string ParentFolder => System.IO.Path.GetDirectoryName(BasePath);
 }

@@ -32,17 +32,16 @@
 
 using System.CommandLine;
 
-namespace Aaru.Commands.Database
-{
-    internal sealed class DatabaseFamily : Command
-    {
-        internal DatabaseFamily(bool mainDbUpdate) : base("database",
-                                                          "Commands to manage the device and statistics database")
-        {
-            AddAlias("db");
+namespace Aaru.Commands.Database;
 
-            AddCommand(new StatisticsCommand());
-            AddCommand(new UpdateCommand(mainDbUpdate));
-        }
+internal sealed class DatabaseFamily : Command
+{
+    internal DatabaseFamily(bool mainDbUpdate) : base("database",
+                                                      "Commands to manage the device and statistics database")
+    {
+        AddAlias("db");
+
+        AddCommand(new StatisticsCommand());
+        AddCommand(new UpdateCommand(mainDbUpdate));
     }
 }

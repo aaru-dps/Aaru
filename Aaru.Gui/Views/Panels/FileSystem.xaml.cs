@@ -33,12 +33,11 @@
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 
-namespace Aaru.Gui.Views.Panels
-{
-    public sealed class FileSystem : UserControl
-    {
-        public FileSystem() => InitializeComponent();
+namespace Aaru.Gui.Views.Panels;
 
-        void InitializeComponent() => AvaloniaXamlLoader.Load(this);
-    }
+public sealed class FileSystem : UserControl
+{
+    public FileSystem() => InitializeComponent();
+
+    void InitializeComponent() => AvaloniaXamlLoader.Load(this);
 }

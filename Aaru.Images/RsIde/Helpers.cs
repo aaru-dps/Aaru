@@ -33,38 +33,37 @@
 using System;
 using System.Text;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class RsIde
 {
-    public sealed partial class RsIde
+    static byte[] ScrambleAtaString(string text, int length)
     {
-        static byte[] ScrambleAtaString(string text, int length)
+        byte[] inbuf = Encoding.ASCII.GetBytes(text);
+
+        if(inbuf.Length % 2 != 0)
         {
-            byte[] inbuf = Encoding.ASCII.GetBytes(text);
-
-            if(inbuf.Length % 2 != 0)
-            {
-                byte[] tmpbuf = new byte[inbuf.Length + 1];
-                Array.Copy(inbuf, 0, tmpbuf, 0, inbuf.Length);
-                tmpbuf[^1] = 0x20;
-                inbuf      = tmpbuf;
-            }
-
-            byte[] outbuf = new byte[inbuf.Length];
-
-            for(int i = 0; i < length; i += 2)
-            {
-                outbuf[i] = inbuf[i + 1];
-                outbuf[i            + 1] = inbuf[i];
-            }
-
-            byte[] retBuf = new byte[length];
-
-            for(int i = 0; i < length; i++)
-                retBuf[i] = 0x20;
-
-            Array.Copy(outbuf, 0, retBuf, 0, outbuf.Length >= length ? length : outbuf.Length);
-
-            return retBuf;
+            byte[] tmpbuf = new byte[inbuf.Length + 1];
+            Array.Copy(inbuf, 0, tmpbuf, 0, inbuf.Length);
+            tmpbuf[^1] = 0x20;
+            inbuf      = tmpbuf;
         }
+
+        byte[] outbuf = new byte[inbuf.Length];
+
+        for(int i = 0; i < length; i += 2)
+        {
+            outbuf[i] = inbuf[i + 1];
+            outbuf[i            + 1] = inbuf[i];
+        }
+
+        byte[] retBuf = new byte[length];
+
+        for(int i = 0; i < length; i++)
+            retBuf[i] = 0x20;
+
+        Array.Copy(outbuf, 0, retBuf, 0, outbuf.Length >= length ? length : outbuf.Length);
+
+        return retBuf;
     }
 }

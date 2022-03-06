@@ -36,40 +36,39 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 
-namespace Aaru.DiscImages
-{
-    // TODO: Too many unknowns, plus a completely unknown footer, to make this writable
-    /// <inheritdoc />
-    /// <summary>Implements reading BlindWrite 4 disc images</summary>
-    public sealed partial class BlindWrite4 : IOpticalMediaImage
-    {
-        List<TrackDescriptor>   _bwTracks;
-        IFilter                 _dataFilter, _subFilter;
-        Header                  _header;
-        ImageInfo               _imageInfo;
-        Stream                  _imageStream;
-        Dictionary<uint, ulong> _offsetMap;
-        Dictionary<uint, byte>  _trackFlags;
+namespace Aaru.DiscImages;
 
-        public BlindWrite4() => _imageInfo = new ImageInfo
-        {
-            ReadableSectorTags    = new List<SectorTagType>(),
-            ReadableMediaTags     = new List<MediaTagType>(),
-            HasPartitions         = true,
-            HasSessions           = true,
-            Version               = null,
-            ApplicationVersion    = null,
-            MediaTitle            = null,
-            Creator               = null,
-            MediaManufacturer     = null,
-            MediaModel            = null,
-            MediaPartNumber       = null,
-            MediaSequence         = 0,
-            LastMediaSequence     = 0,
-            DriveManufacturer     = null,
-            DriveModel            = null,
-            DriveSerialNumber     = null,
-            DriveFirmwareRevision = null
-        };
-    }
+// TODO: Too many unknowns, plus a completely unknown footer, to make this writable
+/// <inheritdoc />
+/// <summary>Implements reading BlindWrite 4 disc images</summary>
+public sealed partial class BlindWrite4 : IOpticalMediaImage
+{
+    List<TrackDescriptor>   _bwTracks;
+    IFilter                 _dataFilter, _subFilter;
+    Header                  _header;
+    ImageInfo               _imageInfo;
+    Stream                  _imageStream;
+    Dictionary<uint, ulong> _offsetMap;
+    Dictionary<uint, byte>  _trackFlags;
+
+    public BlindWrite4() => _imageInfo = new ImageInfo
+    {
+        ReadableSectorTags    = new List<SectorTagType>(),
+        ReadableMediaTags     = new List<MediaTagType>(),
+        HasPartitions         = true,
+        HasSessions           = true,
+        Version               = null,
+        ApplicationVersion    = null,
+        MediaTitle            = null,
+        Creator               = null,
+        MediaManufacturer     = null,
+        MediaModel            = null,
+        MediaPartNumber       = null,
+        MediaSequence         = 0,
+        LastMediaSequence     = 0,
+        DriveManufacturer     = null,
+        DriveModel            = null,
+        DriveSerialNumber     = null,
+        DriveFirmwareRevision = null
+    };
 }

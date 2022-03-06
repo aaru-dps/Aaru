@@ -37,70 +37,69 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class Nhdr0
 {
-    public sealed partial class Nhdr0
+    /// <inheritdoc />
+    public ErrorNumber Open(IFilter imageFilter)
     {
-        /// <inheritdoc />
-        public ErrorNumber Open(IFilter imageFilter)
-        {
-            Stream stream = imageFilter.GetDataForkStream();
-            stream.Seek(0, SeekOrigin.Begin);
+        Stream stream = imageFilter.GetDataForkStream();
+        stream.Seek(0, SeekOrigin.Begin);
 
-            // Even if comment is supposedly ASCII, I'm pretty sure most emulators allow Shift-JIS to be used :p
-            var shiftjis = Encoding.GetEncoding("shift_jis");
+        // Even if comment is supposedly ASCII, I'm pretty sure most emulators allow Shift-JIS to be used :p
+        var shiftjis = Encoding.GetEncoding("shift_jis");
 
-            if(stream.Length < Marshal.SizeOf<Header>())
-                return ErrorNumber.InvalidArgument;
+        if(stream.Length < Marshal.SizeOf<Header>())
+            return ErrorNumber.InvalidArgument;
 
-            byte[] hdrB = new byte[Marshal.SizeOf<Header>()];
-            stream.Read(hdrB, 0, hdrB.Length);
+        byte[] hdrB = new byte[Marshal.SizeOf<Header>()];
+        stream.Read(hdrB, 0, hdrB.Length);
 
-            _nhdhdr = Marshal.ByteArrayToStructureLittleEndian<Header>(hdrB);
+        _nhdhdr = Marshal.ByteArrayToStructureLittleEndian<Header>(hdrB);
 
-            _imageInfo.MediaType = MediaType.GENERIC_HDD;
+        _imageInfo.MediaType = MediaType.GENERIC_HDD;
 
-            _imageInfo.ImageSize            = (ulong)(stream.Length - _nhdhdr.dwHeadSize);
-            _imageInfo.CreationTime         = imageFilter.CreationTime;
-            _imageInfo.LastModificationTime = imageFilter.LastWriteTime;
-            _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.Filename);
-            _imageInfo.Sectors              = (ulong)(_nhdhdr.dwCylinder * _nhdhdr.wHead * _nhdhdr.wSect);
-            _imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
-            _imageInfo.SectorSize           = (uint)_nhdhdr.wSectLen;
-            _imageInfo.Cylinders            = (uint)_nhdhdr.dwCylinder;
-            _imageInfo.Heads                = (uint)_nhdhdr.wHead;
-            _imageInfo.SectorsPerTrack      = (uint)_nhdhdr.wSect;
-            _imageInfo.Comments             = StringHandlers.CToString(_nhdhdr.szComment, shiftjis);
+        _imageInfo.ImageSize            = (ulong)(stream.Length - _nhdhdr.dwHeadSize);
+        _imageInfo.CreationTime         = imageFilter.CreationTime;
+        _imageInfo.LastModificationTime = imageFilter.LastWriteTime;
+        _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.Filename);
+        _imageInfo.Sectors              = (ulong)(_nhdhdr.dwCylinder * _nhdhdr.wHead * _nhdhdr.wSect);
+        _imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
+        _imageInfo.SectorSize           = (uint)_nhdhdr.wSectLen;
+        _imageInfo.Cylinders            = (uint)_nhdhdr.dwCylinder;
+        _imageInfo.Heads                = (uint)_nhdhdr.wHead;
+        _imageInfo.SectorsPerTrack      = (uint)_nhdhdr.wSect;
+        _imageInfo.Comments             = StringHandlers.CToString(_nhdhdr.szComment, shiftjis);
 
-            _nhdImageFilter = imageFilter;
+        _nhdImageFilter = imageFilter;
 
-            return ErrorNumber.NoError;
-        }
+        return ErrorNumber.NoError;
+    }
 
-        /// <inheritdoc />
-        public ErrorNumber ReadSector(ulong sectorAddress, out byte[] buffer) =>
-            ReadSectors(sectorAddress, 1, out buffer);
+    /// <inheritdoc />
+    public ErrorNumber ReadSector(ulong sectorAddress, out byte[] buffer) =>
+        ReadSectors(sectorAddress, 1, out buffer);
 
-        /// <inheritdoc />
-        public ErrorNumber ReadSectors(ulong sectorAddress, uint length, out byte[] buffer)
-        {
-            buffer = null;
+    /// <inheritdoc />
+    public ErrorNumber ReadSectors(ulong sectorAddress, uint length, out byte[] buffer)
+    {
+        buffer = null;
 
-            if(sectorAddress > _imageInfo.Sectors - 1)
-                return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1)
+            return ErrorNumber.OutOfRange;
 
-            if(sectorAddress + length > _imageInfo.Sectors)
-                return ErrorNumber.OutOfRange;
+        if(sectorAddress + length > _imageInfo.Sectors)
+            return ErrorNumber.OutOfRange;
 
-            buffer = new byte[length * _imageInfo.SectorSize];
+        buffer = new byte[length * _imageInfo.SectorSize];
 
-            Stream stream = _nhdImageFilter.GetDataForkStream();
+        Stream stream = _nhdImageFilter.GetDataForkStream();
 
-            stream.Seek((long)((ulong)_nhdhdr.dwHeadSize + (sectorAddress * _imageInfo.SectorSize)), SeekOrigin.Begin);
+        stream.Seek((long)((ulong)_nhdhdr.dwHeadSize + (sectorAddress * _imageInfo.SectorSize)), SeekOrigin.Begin);
 
-            stream.Read(buffer, 0, (int)(length * _imageInfo.SectorSize));
+        stream.Read(buffer, 0, (int)(length * _imageInfo.SectorSize));
 
-            return ErrorNumber.NoError;
-        }
+        return ErrorNumber.NoError;
     }
 }

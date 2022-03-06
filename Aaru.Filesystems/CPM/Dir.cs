@@ -37,93 +37,92 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 using Aaru.Helpers;
 
-namespace Aaru.Filesystems
+namespace Aaru.Filesystems;
+
+public sealed partial class CPM
 {
-    public sealed partial class CPM
+    /// <inheritdoc />
+    public ErrorNumber ReadDir(string path, out List<string> contents)
     {
-        /// <inheritdoc />
-        public ErrorNumber ReadDir(string path, out List<string> contents)
+        contents = null;
+
+        if(!_mounted)
+            return ErrorNumber.AccessDenied;
+
+        if(!string.IsNullOrEmpty(path) &&
+           string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) != 0)
+            return ErrorNumber.NotSupported;
+
+        contents = new List<string>(_dirList);
+
+        return ErrorNumber.NoError;
+    }
+
+    /// <summary>
+    ///     Checks that the given directory blocks follow the CP/M filesystem directory specification Corrupted
+    ///     directories will fail. FAT directories will false positive if all files start with 0x05, and do not use full
+    ///     extensions, for example: "σAFILE.GZ" (using code page 437)
+    /// </summary>
+    /// <returns>False if the directory does not follow the directory specification</returns>
+    /// <param name="directory">Directory blocks.</param>
+    bool CheckDir(byte[] directory)
+    {
+        try
         {
-            contents = null;
-
-            if(!_mounted)
-                return ErrorNumber.AccessDenied;
-
-            if(!string.IsNullOrEmpty(path) &&
-               string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) != 0)
-                return ErrorNumber.NotSupported;
-
-            contents = new List<string>(_dirList);
-
-            return ErrorNumber.NoError;
-        }
-
-        /// <summary>
-        ///     Checks that the given directory blocks follow the CP/M filesystem directory specification Corrupted
-        ///     directories will fail. FAT directories will false positive if all files start with 0x05, and do not use full
-        ///     extensions, for example: "σAFILE.GZ" (using code page 437)
-        /// </summary>
-        /// <returns>False if the directory does not follow the directory specification</returns>
-        /// <param name="directory">Directory blocks.</param>
-        bool CheckDir(byte[] directory)
-        {
-            try
-            {
-                if(directory == null)
-                    return false;
-
-                int fileCount = 0;
-
-                for(int off = 0; off < directory.Length; off += 32)
-                {
-                    DirectoryEntry entry = Marshal.ByteArrayToStructureLittleEndian<DirectoryEntry>(directory, off, 32);
-
-                    if((entry.statusUser & 0x7F) < 0x20)
-                    {
-                        for(int f = 0; f < 8; f++)
-                            if(entry.filename[f] < 0x20 &&
-                               entry.filename[f] != 0x00)
-                                return false;
-
-                        for(int e = 0; e < 3; e++)
-                            if(entry.extension[e] < 0x20 &&
-                               entry.extension[e] != 0x00)
-                                return false;
-
-                        if(!ArrayHelpers.ArrayIsNullOrWhiteSpace(entry.filename))
-                            fileCount++;
-                    }
-                    else if(entry.statusUser == 0x20)
-                    {
-                        for(int f = 0; f < 8; f++)
-                            if(entry.filename[f] < 0x20 &&
-                               entry.filename[f] != 0x00)
-                                return false;
-
-                        for(int e = 0; e < 3; e++)
-                            if(entry.extension[e] < 0x20 &&
-                               entry.extension[e] != 0x00)
-                                return false;
-
-                        _label             = Encoding.ASCII.GetString(directory, off + 1, 11).Trim();
-                        _labelCreationDate = new byte[4];
-                        _labelUpdateDate   = new byte[4];
-                        Array.Copy(directory, off + 24, _labelCreationDate, 0, 4);
-                        Array.Copy(directory, off + 28, _labelUpdateDate, 0, 4);
-                    }
-                    else if(entry.statusUser == 0x21)
-                        if(directory[off + 1] == 0x00)
-                            _thirdPartyTimestamps = true;
-                        else
-                            _standardTimestamps |= directory[off + 21] == 0x00 && directory[off + 31] == 0x00;
-                }
-
-                return fileCount > 0;
-            }
-            catch
-            {
+            if(directory == null)
                 return false;
+
+            int fileCount = 0;
+
+            for(int off = 0; off < directory.Length; off += 32)
+            {
+                DirectoryEntry entry = Marshal.ByteArrayToStructureLittleEndian<DirectoryEntry>(directory, off, 32);
+
+                if((entry.statusUser & 0x7F) < 0x20)
+                {
+                    for(int f = 0; f < 8; f++)
+                        if(entry.filename[f] < 0x20 &&
+                           entry.filename[f] != 0x00)
+                            return false;
+
+                    for(int e = 0; e < 3; e++)
+                        if(entry.extension[e] < 0x20 &&
+                           entry.extension[e] != 0x00)
+                            return false;
+
+                    if(!ArrayHelpers.ArrayIsNullOrWhiteSpace(entry.filename))
+                        fileCount++;
+                }
+                else if(entry.statusUser == 0x20)
+                {
+                    for(int f = 0; f < 8; f++)
+                        if(entry.filename[f] < 0x20 &&
+                           entry.filename[f] != 0x00)
+                            return false;
+
+                    for(int e = 0; e < 3; e++)
+                        if(entry.extension[e] < 0x20 &&
+                           entry.extension[e] != 0x00)
+                            return false;
+
+                    _label             = Encoding.ASCII.GetString(directory, off + 1, 11).Trim();
+                    _labelCreationDate = new byte[4];
+                    _labelUpdateDate   = new byte[4];
+                    Array.Copy(directory, off + 24, _labelCreationDate, 0, 4);
+                    Array.Copy(directory, off + 28, _labelUpdateDate, 0, 4);
+                }
+                else if(entry.statusUser == 0x21)
+                    if(directory[off + 1] == 0x00)
+                        _thirdPartyTimestamps = true;
+                    else
+                        _standardTimestamps |= directory[off + 21] == 0x00 && directory[off + 31] == 0x00;
             }
+
+            return fileCount > 0;
+        }
+        catch
+        {
+            return false;
         }
     }
 }

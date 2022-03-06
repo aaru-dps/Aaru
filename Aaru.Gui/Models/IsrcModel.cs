@@ -30,11 +30,10 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Gui.Models
+namespace Aaru.Gui.Models;
+
+public sealed class IsrcModel
 {
-    public sealed class IsrcModel
-    {
-        public string Track { get; set; }
-        public string Isrc  { get; set; }
-    }
+    public string Track { get; set; }
+    public string Isrc  { get; set; }
 }

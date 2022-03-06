@@ -32,31 +32,30 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Filesystems
+namespace Aaru.Tests.Filesystems;
+
+[TestFixture]
+public class Nilfs2 : FilesystemTest
 {
-    [TestFixture]
-    public class Nilfs2 : FilesystemTest
+    public Nilfs2() : base("NILFS2 filesystem") {}
+
+    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems",
+                                                      "New Implementation of a Log-structured File System 2");
+    public override IFilesystem Plugin     => new NILFS2();
+    public override bool        Partitions => true;
+
+    public override FileSystemTest[] Tests => new[]
     {
-        public Nilfs2() : base("NILFS2 filesystem") {}
-
-        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems",
-                                                          "New Implementation of a Log-structured File System 2");
-        public override IFilesystem Plugin     => new NILFS2();
-        public override bool        Partitions => true;
-
-        public override FileSystemTest[] Tests => new[]
+        new FileSystemTest
         {
-            new FileSystemTest
-            {
-                TestFile     = "linux.aif",
-                MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 262144,
-                SectorSize   = 512,
-                Clusters     = 32512,
-                ClusterSize  = 4096,
-                VolumeName   = "Volume label",
-                VolumeSerial = "6b1ca79e-7048-a748-93a0-89c74b02cb5a"
-            }
-        };
-    }
+            TestFile     = "linux.aif",
+            MediaType    = MediaType.GENERIC_HDD,
+            Sectors      = 262144,
+            SectorSize   = 512,
+            Clusters     = 32512,
+            ClusterSize  = 4096,
+            VolumeName   = "Volume label",
+            VolumeSerial = "6b1ca79e-7048-a748-93a0-89c74b02cb5a"
+        }
+    };
 }

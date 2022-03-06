@@ -32,72 +32,71 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Filesystems
-{
-    [TestFixture]
-    public class Reiser3 : FilesystemTest
-    {
-        public override string DataFolder =>
-            Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Reiser filesystem v3");
-        public override IFilesystem Plugin     => new Reiser();
-        public override bool        Partitions => true;
+namespace Aaru.Tests.Filesystems;
 
-        public override FileSystemTest[] Tests => new[]
+[TestFixture]
+public class Reiser3 : FilesystemTest
+{
+    public override string DataFolder =>
+        Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Reiser filesystem v3");
+    public override IFilesystem Plugin     => new Reiser();
+    public override bool        Partitions => true;
+
+    public override FileSystemTest[] Tests => new[]
+    {
+        new FileSystemTest
         {
-            new FileSystemTest
-            {
-                TestFile    = "linux_2.2.20_r3.5.aif",
-                MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 262144,
-                SectorSize  = 512,
-                Clusters    = 32752,
-                ClusterSize = 4096,
-                Type        = "Reiser 3.5 filesystem"
-            },
-            new FileSystemTest
-            {
-                TestFile    = "linux_2.4.18_r3.5.aif",
-                MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 262144,
-                SectorSize  = 512,
-                Clusters    = 32752,
-                ClusterSize = 4096,
-                Type        = "Reiser 3.5 filesystem"
-            },
-            new FileSystemTest
-            {
-                TestFile     = "linux_2.4.18_r3.6.aif",
-                MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 262144,
-                SectorSize   = 512,
-                Clusters     = 32752,
-                ClusterSize  = 4096,
-                Type         = "Reiser 3.6 filesystem",
-                VolumeName   = "VolumeLabel",
-                VolumeSerial = "43c72111-6512-e747-b626-63704e65352a"
-            },
-            new FileSystemTest
-            {
-                TestFile    = "linux_4.19_reiser_3.5_flashdrive.aif",
-                MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 1024000,
-                SectorSize  = 512,
-                Clusters    = 127744,
-                ClusterSize = 4096,
-                Type        = "Reiser 3.5 filesystem"
-            },
-            new FileSystemTest
-            {
-                TestFile     = "linux_4.19_reiser_3.6_flashdrive.aif",
-                MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 1024000,
-                SectorSize   = 512,
-                Clusters     = 127744,
-                ClusterSize  = 4096,
-                Type         = "Reiser 3.6 filesystem",
-                VolumeName   = "DicSetter",
-                VolumeSerial = "8902ac3c-3e0c-4c4c-84ec-03405c1710f1"
-            }
-        };
-    }
+            TestFile    = "linux_2.2.20_r3.5.aif",
+            MediaType   = MediaType.GENERIC_HDD,
+            Sectors     = 262144,
+            SectorSize  = 512,
+            Clusters    = 32752,
+            ClusterSize = 4096,
+            Type        = "Reiser 3.5 filesystem"
+        },
+        new FileSystemTest
+        {
+            TestFile    = "linux_2.4.18_r3.5.aif",
+            MediaType   = MediaType.GENERIC_HDD,
+            Sectors     = 262144,
+            SectorSize  = 512,
+            Clusters    = 32752,
+            ClusterSize = 4096,
+            Type        = "Reiser 3.5 filesystem"
+        },
+        new FileSystemTest
+        {
+            TestFile     = "linux_2.4.18_r3.6.aif",
+            MediaType    = MediaType.GENERIC_HDD,
+            Sectors      = 262144,
+            SectorSize   = 512,
+            Clusters     = 32752,
+            ClusterSize  = 4096,
+            Type         = "Reiser 3.6 filesystem",
+            VolumeName   = "VolumeLabel",
+            VolumeSerial = "43c72111-6512-e747-b626-63704e65352a"
+        },
+        new FileSystemTest
+        {
+            TestFile    = "linux_4.19_reiser_3.5_flashdrive.aif",
+            MediaType   = MediaType.GENERIC_HDD,
+            Sectors     = 1024000,
+            SectorSize  = 512,
+            Clusters    = 127744,
+            ClusterSize = 4096,
+            Type        = "Reiser 3.5 filesystem"
+        },
+        new FileSystemTest
+        {
+            TestFile     = "linux_4.19_reiser_3.6_flashdrive.aif",
+            MediaType    = MediaType.GENERIC_HDD,
+            Sectors      = 1024000,
+            SectorSize   = 512,
+            Clusters     = 127744,
+            ClusterSize  = 4096,
+            Type         = "Reiser 3.6 filesystem",
+            VolumeName   = "DicSetter",
+            VolumeSerial = "8902ac3c-3e0c-4c4c-84ec-03405c1710f1"
+        }
+    };
 }

@@ -39,42 +39,41 @@ using Aaru.CommonTypes.Structs;
 
 #pragma warning disable 649
 
-namespace Aaru.DiscImages
-{
-    /// <summary>Implements reading partimage disk images</summary>
-    public sealed partial class Partimage : IMediaImage, IVerifiableImage
-    {
-        byte[]                    _bitmap;
-        MainHeader                _cMainHeader;
-        Header                    _cVolumeHeader;
-        long                      _dataOff;
-        ExtentsULong              _extents;
-        Dictionary<ulong, ulong>  _extentsOff;
-        ImageInfo                 _imageInfo;
-        Stream                    _imageStream;
-        Dictionary<ulong, byte[]> _sectorCache;
+namespace Aaru.DiscImages;
 
-        public Partimage() => _imageInfo = new ImageInfo
-        {
-            ReadableSectorTags    = new List<SectorTagType>(),
-            ReadableMediaTags     = new List<MediaTagType>(),
-            HasPartitions         = false,
-            HasSessions           = false,
-            Application           = "Partimage",
-            ApplicationVersion    = null,
-            Creator               = null,
-            Comments              = null,
-            MediaManufacturer     = null,
-            MediaModel            = null,
-            MediaSerialNumber     = null,
-            MediaBarcode          = null,
-            MediaPartNumber       = null,
-            MediaSequence         = 0,
-            LastMediaSequence     = 0,
-            DriveManufacturer     = null,
-            DriveModel            = null,
-            DriveSerialNumber     = null,
-            DriveFirmwareRevision = null
-        };
-    }
+/// <summary>Implements reading partimage disk images</summary>
+public sealed partial class Partimage : IMediaImage, IVerifiableImage
+{
+    byte[]                    _bitmap;
+    MainHeader                _cMainHeader;
+    Header                    _cVolumeHeader;
+    long                      _dataOff;
+    ExtentsULong              _extents;
+    Dictionary<ulong, ulong>  _extentsOff;
+    ImageInfo                 _imageInfo;
+    Stream                    _imageStream;
+    Dictionary<ulong, byte[]> _sectorCache;
+
+    public Partimage() => _imageInfo = new ImageInfo
+    {
+        ReadableSectorTags    = new List<SectorTagType>(),
+        ReadableMediaTags     = new List<MediaTagType>(),
+        HasPartitions         = false,
+        HasSessions           = false,
+        Application           = "Partimage",
+        ApplicationVersion    = null,
+        Creator               = null,
+        Comments              = null,
+        MediaManufacturer     = null,
+        MediaModel            = null,
+        MediaSerialNumber     = null,
+        MediaBarcode          = null,
+        MediaPartNumber       = null,
+        MediaSequence         = 0,
+        LastMediaSequence     = 0,
+        DriveManufacturer     = null,
+        DriveModel            = null,
+        DriveSerialNumber     = null,
+        DriveFirmwareRevision = null
+    };
 }

@@ -30,11 +30,10 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class SaveDskF
 {
-    public sealed partial class SaveDskF
-    {
-        /// <inheritdoc />
-        public bool? VerifyMediaImage() => _calculatedChk == _header.checksum;
-    }
+    /// <inheritdoc />
+    public bool? VerifyMediaImage() => _calculatedChk == _header.checksum;
 }

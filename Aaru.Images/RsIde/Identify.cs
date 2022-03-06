@@ -34,20 +34,19 @@ using System.IO;
 using System.Linq;
 using Aaru.CommonTypes.Interfaces;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class RsIde
 {
-    public sealed partial class RsIde
+    /// <inheritdoc />
+    public bool Identify(IFilter imageFilter)
     {
-        /// <inheritdoc />
-        public bool Identify(IFilter imageFilter)
-        {
-            Stream stream = imageFilter.GetDataForkStream();
-            stream.Seek(0, SeekOrigin.Begin);
+        Stream stream = imageFilter.GetDataForkStream();
+        stream.Seek(0, SeekOrigin.Begin);
 
-            byte[] magic = new byte[7];
-            stream.Read(magic, 0, magic.Length);
+        byte[] magic = new byte[7];
+        stream.Read(magic, 0, magic.Length);
 
-            return magic.SequenceEqual(_signature);
-        }
+        return magic.SequenceEqual(_signature);
     }
 }

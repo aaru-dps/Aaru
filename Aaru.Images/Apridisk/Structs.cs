@@ -32,20 +32,19 @@
 
 using System.Runtime.InteropServices;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class Apridisk
 {
-    public sealed partial class Apridisk
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    struct Record
     {
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct Record
-        {
-            public RecordType   type;
-            public CompressType compression;
-            public ushort       headerSize;
-            public uint         dataSize;
-            public byte         head;
-            public byte         sector;
-            public ushort       cylinder;
-        }
+        public RecordType   type;
+        public CompressType compression;
+        public ushort       headerSize;
+        public uint         dataSize;
+        public byte         head;
+        public byte         sector;
+        public ushort       cylinder;
     }
 }

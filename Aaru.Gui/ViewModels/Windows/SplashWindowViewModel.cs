@@ -46,250 +46,249 @@ using Avalonia.Threading;
 using Microsoft.EntityFrameworkCore;
 using ReactiveUI;
 
-namespace Aaru.Gui.ViewModels.Windows
+namespace Aaru.Gui.ViewModels.Windows;
+
+public sealed class SplashWindowViewModel : ViewModelBase
 {
-    public sealed class SplashWindowViewModel : ViewModelBase
+    readonly SplashWindow _view;
+    double                _currentProgress;
+    double                _maxProgress;
+    string                _message;
+
+    public SplashWindowViewModel(SplashWindow view) => _view = view;
+
+    public string Message
     {
-        readonly SplashWindow _view;
-        double                _currentProgress;
-        double                _maxProgress;
-        string                _message;
+        get => _message;
+        set => this.RaiseAndSetIfChanged(ref _message, value);
+    }
 
-        public SplashWindowViewModel(SplashWindow view) => _view = view;
+    public double MaxProgress
+    {
+        get => _maxProgress;
+        set => this.RaiseAndSetIfChanged(ref _maxProgress, value);
+    }
 
-        public string Message
+    public double CurrentProgress
+    {
+        get => _currentProgress;
+        set => this.RaiseAndSetIfChanged(ref _currentProgress, value);
+    }
+
+    internal void OnOpened()
+    {
+        Message         = "Welcome to Aaru!";
+        MaxProgress     = 9;
+        CurrentProgress = 0;
+
+        Dispatcher.UIThread.Post(InitializeConsole);
+    }
+
+    void InitializeConsole()
+    {
+        CurrentProgress++;
+        Message = "Initializing console...";
+
+        Task.Run(() =>
         {
-            get => _message;
-            set => this.RaiseAndSetIfChanged(ref _message, value);
-        }
+            ConsoleHandler.Init();
+            AaruConsole.WriteLine("Aaru started!");
 
-        public double MaxProgress
+            Dispatcher.UIThread.Post(LoadSettings);
+        });
+    }
+
+    void LoadSettings()
+    {
+        CurrentProgress++;
+        Message = "Loading settings...";
+        AaruConsole.WriteLine("Loading settings...");
+
+        Task.Run(() =>
         {
-            get => _maxProgress;
-            set => this.RaiseAndSetIfChanged(ref _maxProgress, value);
-        }
+            // TODO: Detect there are no settings yet
+            Settings.Settings.LoadSettings();
 
-        public double CurrentProgress
+            Dispatcher.UIThread.Post(MigrateLocalDatabase);
+        });
+    }
+
+    void MigrateLocalDatabase()
+    {
+        CurrentProgress++;
+        Message = "Migrating local database...";
+        AaruConsole.WriteLine("Migrating local database...");
+
+        Task.Run(() =>
         {
-            get => _currentProgress;
-            set => this.RaiseAndSetIfChanged(ref _currentProgress, value);
-        }
+            AaruContext ctx = null;
 
-        internal void OnOpened()
-        {
-            Message         = "Welcome to Aaru!";
-            MaxProgress     = 9;
-            CurrentProgress = 0;
-
-            Dispatcher.UIThread.Post(InitializeConsole);
-        }
-
-        void InitializeConsole()
-        {
-            CurrentProgress++;
-            Message = "Initializing console...";
-
-            Task.Run(() =>
+            try
             {
-                ConsoleHandler.Init();
-                AaruConsole.WriteLine("Aaru started!");
-
-                Dispatcher.UIThread.Post(LoadSettings);
-            });
-        }
-
-        void LoadSettings()
-        {
-            CurrentProgress++;
-            Message = "Loading settings...";
-            AaruConsole.WriteLine("Loading settings...");
-
-            Task.Run(() =>
+                ctx = AaruContext.Create(Settings.Settings.LocalDbPath, false);
+                ctx.Database.Migrate();
+            }
+            catch(NotSupportedException)
             {
-                // TODO: Detect there are no settings yet
-                Settings.Settings.LoadSettings();
+                try
+                {
+                    ctx?.Database.CloseConnection();
+                    ctx?.Dispose();
+                }
+                catch(Exception)
+                {
+                    // Should not ever arrive here, but if it does, keep trying to replace it anyway
+                }
 
-                Dispatcher.UIThread.Post(MigrateLocalDatabase);
-            });
-        }
+                File.Delete(Settings.Settings.LocalDbPath);
+                ctx = AaruContext.Create(Settings.Settings.LocalDbPath);
+                ctx.Database.EnsureCreated();
 
-        void MigrateLocalDatabase()
+                ctx.Database.
+                    ExecuteSqlRaw("CREATE TABLE IF NOT EXISTS \"__EFMigrationsHistory\" (\"MigrationId\" TEXT PRIMARY KEY, \"ProductVersion\" TEXT)");
+
+                foreach(string migration in ctx.Database.GetPendingMigrations())
+                {
+                    ctx.Database.
+                        ExecuteSqlRaw($"INSERT INTO \"__EFMigrationsHistory\" (MigrationId, ProductVersion) VALUES ('{migration}', '0.0.0')");
+                }
+
+                ctx.SaveChanges();
+            }
+
+            // Remove duplicates
+            foreach(var duplicate in ctx.SeenDevices.AsEnumerable()!.GroupBy(a => new
+                    {
+                        a.Manufacturer,
+                        a.Model,
+                        a.Revision,
+                        a.Bus
+                    }).Where(a => a.Count() > 1).Distinct().Select(a => a.Key))
+                ctx.RemoveRange(ctx.SeenDevices!.
+                                    Where(d => d.Manufacturer == duplicate.Manufacturer &&
+                                               d.Model        == duplicate.Model && d.Revision == duplicate.Revision &&
+                                               d.Bus          == duplicate.Bus).Skip(1));
+
+            // Remove nulls
+            ctx.RemoveRange(ctx.SeenDevices!.Where(d => d.Manufacturer == null && d.Model == null &&
+                                                        d.Revision     == null));
+
+            ctx.SaveChanges();
+
+            Dispatcher.UIThread.Post(UpdateMainDatabase);
+        });
+    }
+
+    void UpdateMainDatabase()
+    {
+        CurrentProgress++;
+        Message = "Updating main database...";
+        AaruConsole.WriteLine("Updating main database...");
+
+        Task.Run(() =>
         {
-            CurrentProgress++;
-            Message = "Migrating local database...";
-            AaruConsole.WriteLine("Migrating local database...");
+            bool mainDbUpdate = false;
 
-            Task.Run(() =>
+            if(!File.Exists(Settings.Settings.MainDbPath))
             {
-                AaruContext ctx = null;
+                mainDbUpdate = true;
+
+                // TODO: Update database
+            }
+
+            var mainContext = AaruContext.Create(Settings.Settings.MainDbPath, false);
+
+            if(mainContext.Database.GetPendingMigrations().Any())
+            {
+                AaruConsole.WriteLine("New database version, updating...");
 
                 try
                 {
-                    ctx = AaruContext.Create(Settings.Settings.LocalDbPath, false);
-                    ctx.Database.Migrate();
+                    File.Delete(Settings.Settings.MainDbPath);
                 }
-                catch(NotSupportedException)
+                catch(Exception)
                 {
-                    try
-                    {
-                        ctx?.Database.CloseConnection();
-                        ctx?.Dispose();
-                    }
-                    catch(Exception)
-                    {
-                        // Should not ever arrive here, but if it does, keep trying to replace it anyway
-                    }
+                    AaruConsole.
+                        ErrorWriteLine("Exception trying to remove old database version, cannot continue...");
 
-                    File.Delete(Settings.Settings.LocalDbPath);
-                    ctx = AaruContext.Create(Settings.Settings.LocalDbPath);
-                    ctx.Database.EnsureCreated();
+                    AaruConsole.ErrorWriteLine("Please manually remove file at {0}", Settings.Settings.MainDbPath);
 
-                    ctx.Database.
-                        ExecuteSqlRaw("CREATE TABLE IF NOT EXISTS \"__EFMigrationsHistory\" (\"MigrationId\" TEXT PRIMARY KEY, \"ProductVersion\" TEXT)");
-
-                    foreach(string migration in ctx.Database.GetPendingMigrations())
-                    {
-                        ctx.Database.
-                            ExecuteSqlRaw($"INSERT INTO \"__EFMigrationsHistory\" (MigrationId, ProductVersion) VALUES ('{migration}', '0.0.0')");
-                    }
-
-                    ctx.SaveChanges();
+                    return;
                 }
 
-                // Remove duplicates
-                foreach(var duplicate in ctx.SeenDevices.AsEnumerable()!.GroupBy(a => new
-                {
-                    a.Manufacturer,
-                    a.Model,
-                    a.Revision,
-                    a.Bus
-                }).Where(a => a.Count() > 1).Distinct().Select(a => a.Key))
-                    ctx.RemoveRange(ctx.SeenDevices!.
-                                        Where(d => d.Manufacturer == duplicate.Manufacturer &&
-                                                   d.Model == duplicate.Model && d.Revision == duplicate.Revision &&
-                                                   d.Bus == duplicate.Bus).Skip(1));
-
-                // Remove nulls
-                ctx.RemoveRange(ctx.SeenDevices!.Where(d => d.Manufacturer == null && d.Model == null &&
-                                                            d.Revision     == null));
-
-                ctx.SaveChanges();
-
-                Dispatcher.UIThread.Post(UpdateMainDatabase);
-            });
-        }
-
-        void UpdateMainDatabase()
-        {
-            CurrentProgress++;
-            Message = "Updating main database...";
-            AaruConsole.WriteLine("Updating main database...");
-
-            Task.Run(() =>
-            {
-                bool mainDbUpdate = false;
-
-                if(!File.Exists(Settings.Settings.MainDbPath))
-                {
-                    mainDbUpdate = true;
-
-                    // TODO: Update database
-                }
-
-                var mainContext = AaruContext.Create(Settings.Settings.MainDbPath, false);
-
-                if(mainContext.Database.GetPendingMigrations().Any())
-                {
-                    AaruConsole.WriteLine("New database version, updating...");
-
-                    try
-                    {
-                        File.Delete(Settings.Settings.MainDbPath);
-                    }
-                    catch(Exception)
-                    {
-                        AaruConsole.
-                            ErrorWriteLine("Exception trying to remove old database version, cannot continue...");
-
-                        AaruConsole.ErrorWriteLine("Please manually remove file at {0}", Settings.Settings.MainDbPath);
-
-                        return;
-                    }
-
-                    // TODO: Update database
-                }
-
-                Dispatcher.UIThread.Post(CheckGdprCompliance);
-            });
-        }
-
-        async void CheckGdprCompliance()
-        {
-            CurrentProgress++;
-            Message = "Checking GDPR compliance...";
-            AaruConsole.WriteLine("Checking GDPR compliance...");
-
-            if(Settings.Settings.Current.GdprCompliance < DicSettings.GDPR_LEVEL)
-            {
-                var settingsDialog          = new SettingsDialog();
-                var settingsDialogViewModel = new SettingsViewModel(settingsDialog, true);
-                settingsDialog.DataContext = settingsDialogViewModel;
-                await settingsDialog.ShowDialog(_view);
+                // TODO: Update database
             }
 
-            LoadStatistics();
-        }
-
-        void LoadStatistics()
-        {
-            CurrentProgress++;
-            Message = "Loading statistics...";
-            AaruConsole.WriteLine("Loading statistics...");
-
-            Task.Run(() =>
-            {
-                Statistics.LoadStats();
-
-                Dispatcher.UIThread.Post(RegisterEncodings);
-            });
-        }
-
-        void RegisterEncodings()
-        {
-            CurrentProgress++;
-            Message = "Registering encodings...";
-            AaruConsole.WriteLine("Registering encodings...");
-
-            Task.Run(() =>
-            {
-                Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
-
-                Dispatcher.UIThread.Post(SaveStatistics);
-            });
-        }
-
-        void SaveStatistics()
-        {
-            CurrentProgress++;
-            Message = "Saving statistics...";
-            AaruConsole.WriteLine("Saving statistics...");
-
-            Task.Run(() =>
-            {
-                Statistics.SaveStats();
-
-                Dispatcher.UIThread.Post(LoadMainWindow);
-            });
-        }
-
-        void LoadMainWindow()
-        {
-            CurrentProgress++;
-            Message = "Loading main window...";
-            AaruConsole.WriteLine("Loading main window...");
-            WorkFinished?.Invoke(this, EventArgs.Empty);
-        }
-
-        internal event EventHandler WorkFinished;
+            Dispatcher.UIThread.Post(CheckGdprCompliance);
+        });
     }
+
+    async void CheckGdprCompliance()
+    {
+        CurrentProgress++;
+        Message = "Checking GDPR compliance...";
+        AaruConsole.WriteLine("Checking GDPR compliance...");
+
+        if(Settings.Settings.Current.GdprCompliance < DicSettings.GDPR_LEVEL)
+        {
+            var settingsDialog          = new SettingsDialog();
+            var settingsDialogViewModel = new SettingsViewModel(settingsDialog, true);
+            settingsDialog.DataContext = settingsDialogViewModel;
+            await settingsDialog.ShowDialog(_view);
+        }
+
+        LoadStatistics();
+    }
+
+    void LoadStatistics()
+    {
+        CurrentProgress++;
+        Message = "Loading statistics...";
+        AaruConsole.WriteLine("Loading statistics...");
+
+        Task.Run(() =>
+        {
+            Statistics.LoadStats();
+
+            Dispatcher.UIThread.Post(RegisterEncodings);
+        });
+    }
+
+    void RegisterEncodings()
+    {
+        CurrentProgress++;
+        Message = "Registering encodings...";
+        AaruConsole.WriteLine("Registering encodings...");
+
+        Task.Run(() =>
+        {
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+
+            Dispatcher.UIThread.Post(SaveStatistics);
+        });
+    }
+
+    void SaveStatistics()
+    {
+        CurrentProgress++;
+        Message = "Saving statistics...";
+        AaruConsole.WriteLine("Saving statistics...");
+
+        Task.Run(() =>
+        {
+            Statistics.SaveStats();
+
+            Dispatcher.UIThread.Post(LoadMainWindow);
+        });
+    }
+
+    void LoadMainWindow()
+    {
+        CurrentProgress++;
+        Message = "Loading main window...";
+        AaruConsole.WriteLine("Loading main window...");
+        WorkFinished?.Invoke(this, EventArgs.Empty);
+    }
+
+    internal event EventHandler WorkFinished;
 }

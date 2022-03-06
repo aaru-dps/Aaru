@@ -37,51 +37,50 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 using Schemas;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class RsIde
 {
-    public sealed partial class RsIde
+    /// <inheritdoc />
+    public string Name => "RS-IDE Hard Disk Image";
+    /// <inheritdoc />
+    public Guid Id => new Guid("47C3E78D-2BE2-4BA5-AA6B-FEE27C86FC65");
+    /// <inheritdoc />
+    public ImageInfo Info => _imageInfo;
+    /// <inheritdoc />
+    public string Author => "Natalia Portillo";
+    /// <inheritdoc />
+    public string Format => "RS-IDE disk image";
+    /// <inheritdoc />
+    public List<DumpHardwareType> DumpHardware => null;
+    /// <inheritdoc />
+    public CICMMetadataType CicmMetadata => null;
+    /// <inheritdoc />
+    public IEnumerable<MediaTagType> SupportedMediaTags => new[]
     {
-        /// <inheritdoc />
-        public string Name => "RS-IDE Hard Disk Image";
-        /// <inheritdoc />
-        public Guid Id => new Guid("47C3E78D-2BE2-4BA5-AA6B-FEE27C86FC65");
-        /// <inheritdoc />
-        public ImageInfo Info => _imageInfo;
-        /// <inheritdoc />
-        public string Author => "Natalia Portillo";
-        /// <inheritdoc />
-        public string Format => "RS-IDE disk image";
-        /// <inheritdoc />
-        public List<DumpHardwareType> DumpHardware => null;
-        /// <inheritdoc />
-        public CICMMetadataType CicmMetadata => null;
-        /// <inheritdoc />
-        public IEnumerable<MediaTagType> SupportedMediaTags => new[]
-        {
-            MediaTagType.ATA_IDENTIFY
-        };
-        /// <inheritdoc />
-        public IEnumerable<SectorTagType> SupportedSectorTags => new SectorTagType[]
+        MediaTagType.ATA_IDENTIFY
+    };
+    /// <inheritdoc />
+    public IEnumerable<SectorTagType> SupportedSectorTags => new SectorTagType[]
+        {};
+    /// <inheritdoc />
+    public IEnumerable<MediaType> SupportedMediaTypes => new[]
+    {
+        MediaType.GENERIC_HDD, MediaType.Unknown, MediaType.FlashDrive, MediaType.CompactFlash,
+        MediaType.CompactFlashType2, MediaType.PCCardTypeI, MediaType.PCCardTypeII, MediaType.PCCardTypeIII,
+        MediaType.PCCardTypeIV
+    };
+    /// <inheritdoc />
+    public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>
+        new (string name, Type type, string description, object @default)[]
             {};
-        /// <inheritdoc />
-        public IEnumerable<MediaType> SupportedMediaTypes => new[]
-        {
-            MediaType.GENERIC_HDD, MediaType.Unknown, MediaType.FlashDrive, MediaType.CompactFlash,
-            MediaType.CompactFlashType2, MediaType.PCCardTypeI, MediaType.PCCardTypeII, MediaType.PCCardTypeIII,
-            MediaType.PCCardTypeIV
-        };
-        /// <inheritdoc />
-        public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>
-            new (string name, Type type, string description, object @default)[]
-                {};
-        /// <inheritdoc />
-        public IEnumerable<string> KnownExtensions => new[]
-        {
-            ".ide"
-        };
-        /// <inheritdoc />
-        public bool IsWriting { get; private set; }
-        /// <inheritdoc />
-        public string ErrorMessage { get; private set; }
-    }
+    /// <inheritdoc />
+    public IEnumerable<string> KnownExtensions => new[]
+    {
+        ".ide"
+    };
+    /// <inheritdoc />
+    public bool IsWriting { get; private set; }
+    /// <inheritdoc />
+    public string ErrorMessage { get; private set; }
 }

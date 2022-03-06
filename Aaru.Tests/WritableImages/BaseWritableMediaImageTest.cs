@@ -1,12 +1,11 @@
 using Aaru.CommonTypes.Interfaces;
 
-namespace Aaru.Tests.WritableImages
+namespace Aaru.Tests.WritableImages;
+
+public abstract class BaseWritableMediaImageTest
 {
-    public abstract class BaseWritableMediaImageTest
-    {
-        public abstract string         DataFolder      { get; }
-        public abstract IMediaImage    InputPlugin     { get; }
-        public abstract IWritableImage OutputPlugin    { get; }
-        public abstract string         OutputExtension { get; }
-    }
+    public abstract string         DataFolder      { get; }
+    public abstract IMediaImage    InputPlugin     { get; }
+    public abstract IWritableImage OutputPlugin    { get; }
+    public abstract string         OutputExtension { get; }
 }

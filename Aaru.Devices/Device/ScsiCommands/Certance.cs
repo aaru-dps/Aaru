@@ -34,49 +34,48 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using Aaru.Console;
 
-namespace Aaru.Devices
+namespace Aaru.Devices;
+
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+public sealed partial class Device
 {
-    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
-    public sealed partial class Device
+    /// <summary>Parks the load arm in preparation for transport</summary>
+    /// <param name="senseBuffer">Sense buffer.</param>
+    /// <param name="timeout">Timeout.</param>
+    /// <param name="duration">Duration.</param>
+    public bool CertancePark(out byte[] senseBuffer, uint timeout, out double duration) =>
+        CertanceParkUnpark(out senseBuffer, true, timeout, out duration);
+
+    /// <summary>Unparks the load arm prior to operation</summary>
+    /// <param name="senseBuffer">Sense buffer.</param>
+    /// <param name="timeout">Timeout.</param>
+    /// <param name="duration">Duration.</param>
+    public bool CertanceUnpark(out byte[] senseBuffer, uint timeout, out double duration) =>
+        CertanceParkUnpark(out senseBuffer, false, timeout, out duration);
+
+    /// <summary>Parks the load arm in preparation for transport or unparks it prior to operation</summary>
+    /// <param name="senseBuffer">Sense buffer.</param>
+    /// <param name="park">If set to <c>true</c>, parks the load arm</param>
+    /// <param name="timeout">Timeout.</param>
+    /// <param name="duration">Duration.</param>
+    public bool CertanceParkUnpark(out byte[] senseBuffer, bool park, uint timeout, out double duration)
     {
-        /// <summary>Parks the load arm in preparation for transport</summary>
-        /// <param name="senseBuffer">Sense buffer.</param>
-        /// <param name="timeout">Timeout.</param>
-        /// <param name="duration">Duration.</param>
-        public bool CertancePark(out byte[] senseBuffer, uint timeout, out double duration) =>
-            CertanceParkUnpark(out senseBuffer, true, timeout, out duration);
+        byte[] buffer = Array.Empty<byte>();
+        byte[] cdb    = new byte[6];
+        senseBuffer = new byte[64];
 
-        /// <summary>Unparks the load arm prior to operation</summary>
-        /// <param name="senseBuffer">Sense buffer.</param>
-        /// <param name="timeout">Timeout.</param>
-        /// <param name="duration">Duration.</param>
-        public bool CertanceUnpark(out byte[] senseBuffer, uint timeout, out double duration) =>
-            CertanceParkUnpark(out senseBuffer, false, timeout, out duration);
+        cdb[0] = (byte)ScsiCommands.CertanceParkUnpark;
 
-        /// <summary>Parks the load arm in preparation for transport or unparks it prior to operation</summary>
-        /// <param name="senseBuffer">Sense buffer.</param>
-        /// <param name="park">If set to <c>true</c>, parks the load arm</param>
-        /// <param name="timeout">Timeout.</param>
-        /// <param name="duration">Duration.</param>
-        public bool CertanceParkUnpark(out byte[] senseBuffer, bool park, uint timeout, out double duration)
-        {
-            byte[] buffer = Array.Empty<byte>();
-            byte[] cdb    = new byte[6];
-            senseBuffer = new byte[64];
+        if(park)
+            cdb[4] = 1;
 
-            cdb[0] = (byte)ScsiCommands.CertanceParkUnpark;
+        LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.None, out duration,
+                                    out bool sense);
 
-            if(park)
-                cdb[4] = 1;
+        Error = LastError != 0;
 
-            LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.None, out duration,
-                                        out bool sense);
+        AaruConsole.DebugWriteLine("SCSI Device", "CERTANCE PARK UNPARK took {0} ms.", duration);
 
-            Error = LastError != 0;
-
-            AaruConsole.DebugWriteLine("SCSI Device", "CERTANCE PARK UNPARK took {0} ms.", duration);
-
-            return sense;
-        }
+        return sense;
     }
 }

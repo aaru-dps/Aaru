@@ -35,24 +35,23 @@ using System.Linq;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class UkvFdi
 {
-    public sealed partial class UkvFdi
+    /// <inheritdoc />
+    public bool Identify(IFilter imageFilter)
     {
-        /// <inheritdoc />
-        public bool Identify(IFilter imageFilter)
-        {
-            Stream stream = imageFilter.GetDataForkStream();
-            stream.Seek(0, SeekOrigin.Begin);
+        Stream stream = imageFilter.GetDataForkStream();
+        stream.Seek(0, SeekOrigin.Begin);
 
-            if(stream.Length < Marshal.SizeOf<Header>())
-                return false;
+        if(stream.Length < Marshal.SizeOf<Header>())
+            return false;
 
-            byte[] hdrB = new byte[Marshal.SizeOf<Header>()];
-            stream.Read(hdrB, 0, hdrB.Length);
-            Header hdr = Marshal.ByteArrayToStructureLittleEndian<Header>(hdrB);
+        byte[] hdrB = new byte[Marshal.SizeOf<Header>()];
+        stream.Read(hdrB, 0, hdrB.Length);
+        Header hdr = Marshal.ByteArrayToStructureLittleEndian<Header>(hdrB);
 
-            return hdr.magic.SequenceEqual(_signature);
-        }
+        return hdr.magic.SequenceEqual(_signature);
     }
 }

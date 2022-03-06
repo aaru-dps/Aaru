@@ -33,12 +33,11 @@
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 
-namespace Aaru.Gui.Views.Panels
-{
-    public sealed class Subdirectory : UserControl
-    {
-        public Subdirectory() => InitializeComponent();
+namespace Aaru.Gui.Views.Panels;
 
-        void InitializeComponent() => AvaloniaXamlLoader.Load(this);
-    }
+public sealed class Subdirectory : UserControl
+{
+    public Subdirectory() => InitializeComponent();
+
+    void InitializeComponent() => AvaloniaXamlLoader.Load(this);
 }

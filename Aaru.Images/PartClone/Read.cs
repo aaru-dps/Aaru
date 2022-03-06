@@ -41,181 +41,180 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class PartClone
 {
-    public sealed partial class PartClone
+    /// <inheritdoc />
+    public ErrorNumber Open(IFilter imageFilter)
     {
-        /// <inheritdoc />
-        public ErrorNumber Open(IFilter imageFilter)
+        Stream stream = imageFilter.GetDataForkStream();
+        stream.Seek(0, SeekOrigin.Begin);
+
+        if(stream.Length < 512)
+            return ErrorNumber.InvalidArgument;
+
+        byte[] pHdrB = new byte[Marshal.SizeOf<Header>()];
+        stream.Read(pHdrB, 0, Marshal.SizeOf<Header>());
+        _pHdr = Marshal.ByteArrayToStructureLittleEndian<Header>(pHdrB);
+
+        AaruConsole.DebugWriteLine("PartClone plugin", "pHdr.magic = {0}", StringHandlers.CToString(_pHdr.magic));
+
+        AaruConsole.DebugWriteLine("PartClone plugin", "pHdr.filesystem = {0}",
+                                   StringHandlers.CToString(_pHdr.filesystem));
+
+        AaruConsole.DebugWriteLine("PartClone plugin", "pHdr.version = {0}",
+                                   StringHandlers.CToString(_pHdr.version));
+
+        AaruConsole.DebugWriteLine("PartClone plugin", "pHdr.blockSize = {0}", _pHdr.blockSize);
+        AaruConsole.DebugWriteLine("PartClone plugin", "pHdr.deviceSize = {0}", _pHdr.deviceSize);
+        AaruConsole.DebugWriteLine("PartClone plugin", "pHdr.totalBlocks = {0}", _pHdr.totalBlocks);
+        AaruConsole.DebugWriteLine("PartClone plugin", "pHdr.usedBlocks = {0}", _pHdr.usedBlocks);
+
+        _byteMap = new byte[_pHdr.totalBlocks];
+        AaruConsole.DebugWriteLine("PartClone plugin", "Reading bytemap {0} bytes", _byteMap.Length);
+        stream.Read(_byteMap, 0, _byteMap.Length);
+
+        byte[] bitmagic = new byte[8];
+        stream.Read(bitmagic, 0, 8);
+
+        AaruConsole.DebugWriteLine("PartClone plugin", "pHdr.bitmagic = {0}", StringHandlers.CToString(bitmagic));
+
+        if(!_biTmAgIc.SequenceEqual(bitmagic))
         {
-            Stream stream = imageFilter.GetDataForkStream();
-            stream.Seek(0, SeekOrigin.Begin);
+            AaruConsole.ErrorWriteLine("Could not find partclone BiTmAgIc, not continuing...");
 
-            if(stream.Length < 512)
-                return ErrorNumber.InvalidArgument;
-
-            byte[] pHdrB = new byte[Marshal.SizeOf<Header>()];
-            stream.Read(pHdrB, 0, Marshal.SizeOf<Header>());
-            _pHdr = Marshal.ByteArrayToStructureLittleEndian<Header>(pHdrB);
-
-            AaruConsole.DebugWriteLine("PartClone plugin", "pHdr.magic = {0}", StringHandlers.CToString(_pHdr.magic));
-
-            AaruConsole.DebugWriteLine("PartClone plugin", "pHdr.filesystem = {0}",
-                                       StringHandlers.CToString(_pHdr.filesystem));
-
-            AaruConsole.DebugWriteLine("PartClone plugin", "pHdr.version = {0}",
-                                       StringHandlers.CToString(_pHdr.version));
-
-            AaruConsole.DebugWriteLine("PartClone plugin", "pHdr.blockSize = {0}", _pHdr.blockSize);
-            AaruConsole.DebugWriteLine("PartClone plugin", "pHdr.deviceSize = {0}", _pHdr.deviceSize);
-            AaruConsole.DebugWriteLine("PartClone plugin", "pHdr.totalBlocks = {0}", _pHdr.totalBlocks);
-            AaruConsole.DebugWriteLine("PartClone plugin", "pHdr.usedBlocks = {0}", _pHdr.usedBlocks);
-
-            _byteMap = new byte[_pHdr.totalBlocks];
-            AaruConsole.DebugWriteLine("PartClone plugin", "Reading bytemap {0} bytes", _byteMap.Length);
-            stream.Read(_byteMap, 0, _byteMap.Length);
-
-            byte[] bitmagic = new byte[8];
-            stream.Read(bitmagic, 0, 8);
-
-            AaruConsole.DebugWriteLine("PartClone plugin", "pHdr.bitmagic = {0}", StringHandlers.CToString(bitmagic));
-
-            if(!_biTmAgIc.SequenceEqual(bitmagic))
-            {
-                AaruConsole.ErrorWriteLine("Could not find partclone BiTmAgIc, not continuing...");
-
-                return ErrorNumber.InvalidArgument;
-            }
-
-            _dataOff = stream.Position;
-            AaruConsole.DebugWriteLine("PartClone plugin", "pHdr.dataOff = {0}", _dataOff);
-
-            AaruConsole.DebugWriteLine("PartClone plugin", "Filling extents");
-            DateTime start = DateTime.Now;
-            _extents    = new ExtentsULong();
-            _extentsOff = new Dictionary<ulong, ulong>();
-            bool  current     = _byteMap[0] > 0;
-            ulong blockOff    = 0;
-            ulong extentStart = 0;
-
-            for(ulong i = 1; i < _pHdr.totalBlocks; i++)
-            {
-                bool next = _byteMap[i] > 0;
-
-                // Flux
-                if(next != current)
-                    if(next)
-                    {
-                        extentStart = i;
-                        _extentsOff.Add(i, ++blockOff);
-                    }
-                    else
-                    {
-                        _extents.Add(extentStart, i);
-                        _extentsOff.TryGetValue(extentStart, out _);
-                    }
-
-                if(next && current)
-                    blockOff++;
-
-                current = next;
-            }
-
-            DateTime end = DateTime.Now;
-
-            AaruConsole.DebugWriteLine("PartClone plugin", "Took {0} seconds to fill extents",
-                                       (end - start).TotalSeconds);
-
-            _sectorCache = new Dictionary<ulong, byte[]>();
-
-            _imageInfo.CreationTime         = imageFilter.CreationTime;
-            _imageInfo.LastModificationTime = imageFilter.LastWriteTime;
-            _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.Filename);
-            _imageInfo.Sectors              = _pHdr.totalBlocks;
-            _imageInfo.SectorSize           = _pHdr.blockSize;
-            _imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
-            _imageInfo.MediaType            = MediaType.GENERIC_HDD;
-            _imageInfo.ImageSize            = (ulong)(stream.Length - (4096 + 0x40 + (long)_pHdr.totalBlocks));
-            _imageStream                    = stream;
-
-            return ErrorNumber.NoError;
+            return ErrorNumber.InvalidArgument;
         }
 
-        /// <inheritdoc />
-        public ErrorNumber ReadSector(ulong sectorAddress, out byte[] buffer)
+        _dataOff = stream.Position;
+        AaruConsole.DebugWriteLine("PartClone plugin", "pHdr.dataOff = {0}", _dataOff);
+
+        AaruConsole.DebugWriteLine("PartClone plugin", "Filling extents");
+        DateTime start = DateTime.Now;
+        _extents    = new ExtentsULong();
+        _extentsOff = new Dictionary<ulong, ulong>();
+        bool  current     = _byteMap[0] > 0;
+        ulong blockOff    = 0;
+        ulong extentStart = 0;
+
+        for(ulong i = 1; i < _pHdr.totalBlocks; i++)
         {
-            buffer = null;
+            bool next = _byteMap[i] > 0;
 
-            if(sectorAddress > _imageInfo.Sectors - 1)
-                return ErrorNumber.OutOfRange;
-
-            if(_byteMap[sectorAddress] == 0)
-            {
-                buffer = new byte[_pHdr.blockSize];
-
-                return ErrorNumber.NoError;
-            }
-
-            if(_sectorCache.TryGetValue(sectorAddress, out buffer))
-                return ErrorNumber.NoError;
-
-            long imageOff = _dataOff + (long)(BlockOffset(sectorAddress) * (_pHdr.blockSize + CRC_SIZE));
-
-            buffer = new byte[_pHdr.blockSize];
-            _imageStream.Seek(imageOff, SeekOrigin.Begin);
-            _imageStream.Read(buffer, 0, (int)_pHdr.blockSize);
-
-            if(_sectorCache.Count > MAX_CACHED_SECTORS)
-                _sectorCache.Clear();
-
-            _sectorCache.Add(sectorAddress, buffer);
-
-            return ErrorNumber.NoError;
-        }
-
-        /// <inheritdoc />
-        public ErrorNumber ReadSectors(ulong sectorAddress, uint length, out byte[] buffer)
-        {
-            buffer = null;
-
-            if(sectorAddress > _imageInfo.Sectors - 1)
-                return ErrorNumber.OutOfRange;
-
-            if(sectorAddress + length > _imageInfo.Sectors)
-                return ErrorNumber.OutOfRange;
-
-            var ms = new MemoryStream();
-
-            bool allEmpty = true;
-
-            for(uint i = 0; i < length; i++)
-                if(_byteMap[sectorAddress + i] != 0)
+            // Flux
+            if(next != current)
+                if(next)
                 {
-                    allEmpty = false;
-
-                    break;
+                    extentStart = i;
+                    _extentsOff.Add(i, ++blockOff);
+                }
+                else
+                {
+                    _extents.Add(extentStart, i);
+                    _extentsOff.TryGetValue(extentStart, out _);
                 }
 
-            if(allEmpty)
-            {
-                buffer = new byte[_pHdr.blockSize * length];
+            if(next && current)
+                blockOff++;
 
-                return ErrorNumber.NoError;
-            }
+            current = next;
+        }
 
-            for(uint i = 0; i < length; i++)
-            {
-                ErrorNumber errno = ReadSector(sectorAddress + i, out byte[] sector);
+        DateTime end = DateTime.Now;
 
-                if(errno != ErrorNumber.NoError)
-                    return errno;
+        AaruConsole.DebugWriteLine("PartClone plugin", "Took {0} seconds to fill extents",
+                                   (end - start).TotalSeconds);
 
-                ms.Write(sector, 0, sector.Length);
-            }
+        _sectorCache = new Dictionary<ulong, byte[]>();
 
-            buffer = ms.ToArray();
+        _imageInfo.CreationTime         = imageFilter.CreationTime;
+        _imageInfo.LastModificationTime = imageFilter.LastWriteTime;
+        _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.Filename);
+        _imageInfo.Sectors              = _pHdr.totalBlocks;
+        _imageInfo.SectorSize           = _pHdr.blockSize;
+        _imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
+        _imageInfo.MediaType            = MediaType.GENERIC_HDD;
+        _imageInfo.ImageSize            = (ulong)(stream.Length - (4096 + 0x40 + (long)_pHdr.totalBlocks));
+        _imageStream                    = stream;
+
+        return ErrorNumber.NoError;
+    }
+
+    /// <inheritdoc />
+    public ErrorNumber ReadSector(ulong sectorAddress, out byte[] buffer)
+    {
+        buffer = null;
+
+        if(sectorAddress > _imageInfo.Sectors - 1)
+            return ErrorNumber.OutOfRange;
+
+        if(_byteMap[sectorAddress] == 0)
+        {
+            buffer = new byte[_pHdr.blockSize];
 
             return ErrorNumber.NoError;
         }
+
+        if(_sectorCache.TryGetValue(sectorAddress, out buffer))
+            return ErrorNumber.NoError;
+
+        long imageOff = _dataOff + (long)(BlockOffset(sectorAddress) * (_pHdr.blockSize + CRC_SIZE));
+
+        buffer = new byte[_pHdr.blockSize];
+        _imageStream.Seek(imageOff, SeekOrigin.Begin);
+        _imageStream.Read(buffer, 0, (int)_pHdr.blockSize);
+
+        if(_sectorCache.Count > MAX_CACHED_SECTORS)
+            _sectorCache.Clear();
+
+        _sectorCache.Add(sectorAddress, buffer);
+
+        return ErrorNumber.NoError;
+    }
+
+    /// <inheritdoc />
+    public ErrorNumber ReadSectors(ulong sectorAddress, uint length, out byte[] buffer)
+    {
+        buffer = null;
+
+        if(sectorAddress > _imageInfo.Sectors - 1)
+            return ErrorNumber.OutOfRange;
+
+        if(sectorAddress + length > _imageInfo.Sectors)
+            return ErrorNumber.OutOfRange;
+
+        var ms = new MemoryStream();
+
+        bool allEmpty = true;
+
+        for(uint i = 0; i < length; i++)
+            if(_byteMap[sectorAddress + i] != 0)
+            {
+                allEmpty = false;
+
+                break;
+            }
+
+        if(allEmpty)
+        {
+            buffer = new byte[_pHdr.blockSize * length];
+
+            return ErrorNumber.NoError;
+        }
+
+        for(uint i = 0; i < length; i++)
+        {
+            ErrorNumber errno = ReadSector(sectorAddress + i, out byte[] sector);
+
+            if(errno != ErrorNumber.NoError)
+                return errno;
+
+            ms.Write(sector, 0, sector.Length);
+        }
+
+        buffer = ms.ToArray();
+
+        return ErrorNumber.NoError;
     }
 }

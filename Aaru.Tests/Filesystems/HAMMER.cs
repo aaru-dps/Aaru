@@ -32,41 +32,40 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Filesystems
+namespace Aaru.Tests.Filesystems;
+
+[TestFixture]
+public class Hammer : FilesystemTest
 {
-    [TestFixture]
-    public class Hammer : FilesystemTest
+    public Hammer() : base("HAMMER") {}
+
+    public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "HAMMER (MBR)");
+    public override IFilesystem Plugin     => new HAMMER();
+    public override bool        Partitions => true;
+
+    public override FileSystemTest[] Tests => new[]
     {
-        public Hammer() : base("HAMMER") {}
-
-        public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "HAMMER (MBR)");
-        public override IFilesystem Plugin     => new HAMMER();
-        public override bool        Partitions => true;
-
-        public override FileSystemTest[] Tests => new[]
+        new FileSystemTest
         {
-            new FileSystemTest
-            {
-                TestFile     = "dflybsd_3.6.1.vdi.lz",
-                MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 104857600,
-                SectorSize   = 512,
-                Clusters     = 6310,
-                ClusterSize  = 8388608,
-                VolumeName   = "Volume label",
-                VolumeSerial = "f8e1a8bb-626d-11e7-94b5-0900274691e4"
-            },
-            new FileSystemTest
-            {
-                TestFile     = "dflybsd_4.0.5.vdi.lz",
-                MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 104857600,
-                SectorSize   = 512,
-                Clusters     = 6310,
-                ClusterSize  = 8388608,
-                VolumeName   = "Volume label",
-                VolumeSerial = "ff4dc664-6276-11e7-983f-090027c41b46"
-            }
-        };
-    }
+            TestFile     = "dflybsd_3.6.1.vdi.lz",
+            MediaType    = MediaType.GENERIC_HDD,
+            Sectors      = 104857600,
+            SectorSize   = 512,
+            Clusters     = 6310,
+            ClusterSize  = 8388608,
+            VolumeName   = "Volume label",
+            VolumeSerial = "f8e1a8bb-626d-11e7-94b5-0900274691e4"
+        },
+        new FileSystemTest
+        {
+            TestFile     = "dflybsd_4.0.5.vdi.lz",
+            MediaType    = MediaType.GENERIC_HDD,
+            Sectors      = 104857600,
+            SectorSize   = 512,
+            Clusters     = 6310,
+            ClusterSize  = 8388608,
+            VolumeName   = "Volume label",
+            VolumeSerial = "ff4dc664-6276-11e7-983f-090027c41b46"
+        }
+    };
 }

@@ -36,24 +36,23 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 
-namespace Aaru.Gui.Views.Windows
+namespace Aaru.Gui.Views.Windows;
+
+public sealed class ImageConvert : Window
 {
-    public sealed class ImageConvert : Window
+    public ImageConvert()
     {
-        public ImageConvert()
-        {
-            InitializeComponent();
-        #if DEBUG
-            this.AttachDevTools();
-        #endif
-        }
+        InitializeComponent();
+    #if DEBUG
+        this.AttachDevTools();
+    #endif
+    }
 
-        void InitializeComponent() => AvaloniaXamlLoader.Load(this);
+    void InitializeComponent() => AvaloniaXamlLoader.Load(this);
 
-        protected override void OnClosing(CancelEventArgs e)
-        {
-            (DataContext as ImageConvertViewModel)?.ExecuteStopCommand();
-            base.OnClosing(e);
-        }
+    protected override void OnClosing(CancelEventArgs e)
+    {
+        (DataContext as ImageConvertViewModel)?.ExecuteStopCommand();
+        base.OnClosing(e);
     }
 }

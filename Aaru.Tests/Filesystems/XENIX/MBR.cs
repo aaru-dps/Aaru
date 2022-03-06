@@ -32,47 +32,46 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Filesystems.XENIX
+namespace Aaru.Tests.Filesystems.XENIX;
+
+[TestFixture]
+public class MBR : FilesystemTest
 {
-    [TestFixture]
-    public class MBR : FilesystemTest
+    public MBR() : base("XENIX fs") {}
+
+    public override string DataFolder =>
+        Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "XENIX filesystem (MBR)");
+    public override IFilesystem Plugin     => new SysVfs();
+    public override bool        Partitions => true;
+
+    public override FileSystemTest[] Tests => new[]
     {
-        public MBR() : base("XENIX fs") {}
-
-        public override string DataFolder =>
-            Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "XENIX filesystem (MBR)");
-        public override IFilesystem Plugin     => new SysVfs();
-        public override bool        Partitions => true;
-
-        public override FileSystemTest[] Tests => new[]
+        new FileSystemTest
         {
-            new FileSystemTest
-            {
-                TestFile    = "xenix_2.3.2d.aif",
-                MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 40960,
-                SectorSize  = 512,
-                ClusterSize = 1024,
-                VolumeName  = ""
-            },
-            new FileSystemTest
-            {
-                TestFile    = "xenix_2.3.4h.aif",
-                MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 40960,
-                SectorSize  = 512,
-                ClusterSize = 1024,
-                VolumeName  = ""
-            },
-            new FileSystemTest
-            {
-                TestFile    = "scoopenserver_5.0.7hw.aif",
-                MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 2097152,
-                SectorSize  = 512,
-                ClusterSize = 1024,
-                VolumeName  = ""
-            }
-        };
-    }
+            TestFile    = "xenix_2.3.2d.aif",
+            MediaType   = MediaType.GENERIC_HDD,
+            Sectors     = 40960,
+            SectorSize  = 512,
+            ClusterSize = 1024,
+            VolumeName  = ""
+        },
+        new FileSystemTest
+        {
+            TestFile    = "xenix_2.3.4h.aif",
+            MediaType   = MediaType.GENERIC_HDD,
+            Sectors     = 40960,
+            SectorSize  = 512,
+            ClusterSize = 1024,
+            VolumeName  = ""
+        },
+        new FileSystemTest
+        {
+            TestFile    = "scoopenserver_5.0.7hw.aif",
+            MediaType   = MediaType.GENERIC_HDD,
+            Sectors     = 2097152,
+            SectorSize  = 512,
+            ClusterSize = 1024,
+            VolumeName  = ""
+        }
+    };
 }

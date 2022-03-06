@@ -32,16 +32,15 @@
 
 using System.Runtime.InteropServices;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class Dart
 {
-    public sealed partial class Dart
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    struct Header
     {
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct Header
-        {
-            public readonly byte  srcCmp;
-            public readonly byte  srcType;
-            public readonly short srcSize;
-        }
+        public readonly byte  srcCmp;
+        public readonly byte  srcType;
+        public readonly short srcSize;
     }
 }

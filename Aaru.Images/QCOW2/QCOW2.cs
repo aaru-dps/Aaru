@@ -36,54 +36,53 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 
-namespace Aaru.DiscImages
-{
-    /// <inheritdoc />
-    /// <summary>Implements reading and writing QEMU's Copy On Write v2 and v3 disk images</summary>
-    public sealed partial class Qcow2 : IWritableImage
-    {
-        Dictionary<ulong, byte[]>  _clusterCache;
-        int                        _clusterSectors;
-        int                        _clusterSize;
-        ImageInfo                  _imageInfo;
-        Stream                     _imageStream;
-        ulong                      _l1Mask;
-        int                        _l1Shift;
-        ulong[]                    _l1Table;
-        int                        _l2Bits;
-        ulong                      _l2Mask;
-        int                        _l2Size;
-        Dictionary<ulong, ulong[]> _l2TableCache;
-        int                        _maxClusterCache;
-        int                        _maxL2TableCache;
-        Header                     _qHdr;
-        ulong[]                    _refCountTable;
-        Dictionary<ulong, byte[]>  _sectorCache;
-        ulong                      _sectorMask;
-        FileStream                 _writingStream;
+namespace Aaru.DiscImages;
 
-        public Qcow2() => _imageInfo = new ImageInfo
-        {
-            ReadableSectorTags    = new List<SectorTagType>(),
-            ReadableMediaTags     = new List<MediaTagType>(),
-            HasPartitions         = false,
-            HasSessions           = false,
-            Version               = null,
-            Application           = "QEMU",
-            ApplicationVersion    = null,
-            Creator               = null,
-            Comments              = null,
-            MediaManufacturer     = null,
-            MediaModel            = null,
-            MediaSerialNumber     = null,
-            MediaBarcode          = null,
-            MediaPartNumber       = null,
-            MediaSequence         = 0,
-            LastMediaSequence     = 0,
-            DriveManufacturer     = null,
-            DriveModel            = null,
-            DriveSerialNumber     = null,
-            DriveFirmwareRevision = null
-        };
-    }
+/// <inheritdoc />
+/// <summary>Implements reading and writing QEMU's Copy On Write v2 and v3 disk images</summary>
+public sealed partial class Qcow2 : IWritableImage
+{
+    Dictionary<ulong, byte[]>  _clusterCache;
+    int                        _clusterSectors;
+    int                        _clusterSize;
+    ImageInfo                  _imageInfo;
+    Stream                     _imageStream;
+    ulong                      _l1Mask;
+    int                        _l1Shift;
+    ulong[]                    _l1Table;
+    int                        _l2Bits;
+    ulong                      _l2Mask;
+    int                        _l2Size;
+    Dictionary<ulong, ulong[]> _l2TableCache;
+    int                        _maxClusterCache;
+    int                        _maxL2TableCache;
+    Header                     _qHdr;
+    ulong[]                    _refCountTable;
+    Dictionary<ulong, byte[]>  _sectorCache;
+    ulong                      _sectorMask;
+    FileStream                 _writingStream;
+
+    public Qcow2() => _imageInfo = new ImageInfo
+    {
+        ReadableSectorTags    = new List<SectorTagType>(),
+        ReadableMediaTags     = new List<MediaTagType>(),
+        HasPartitions         = false,
+        HasSessions           = false,
+        Version               = null,
+        Application           = "QEMU",
+        ApplicationVersion    = null,
+        Creator               = null,
+        Comments              = null,
+        MediaManufacturer     = null,
+        MediaModel            = null,
+        MediaSerialNumber     = null,
+        MediaBarcode          = null,
+        MediaPartNumber       = null,
+        MediaSequence         = 0,
+        LastMediaSequence     = 0,
+        DriveManufacturer     = null,
+        DriveModel            = null,
+        DriveSerialNumber     = null,
+        DriveFirmwareRevision = null
+    };
 }

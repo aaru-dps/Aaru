@@ -35,73 +35,72 @@ using System.Runtime.InteropServices;
 
 // ReSharper disable UnusedType.Local
 
-namespace Aaru.Filesystems
+namespace Aaru.Filesystems;
+
+public sealed partial class ISO9660
 {
-    public sealed partial class ISO9660
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct ContinuationArea
     {
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        readonly struct ContinuationArea
-        {
-            public readonly ushort signature;
-            public readonly byte   length;
-            public readonly byte   version;
-            public readonly uint   block;
-            public readonly uint   block_be;
-            public readonly uint   offset;
-            public readonly uint   offset_be;
-            public readonly uint   ca_length;
-            public readonly uint   ca_length_be;
-        }
+        public readonly ushort signature;
+        public readonly byte   length;
+        public readonly byte   version;
+        public readonly uint   block;
+        public readonly uint   block_be;
+        public readonly uint   offset;
+        public readonly uint   offset_be;
+        public readonly uint   ca_length;
+        public readonly uint   ca_length_be;
+    }
 
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        readonly struct PaddingArea
-        {
-            public readonly ushort signature;
-            public readonly byte   length;
-            public readonly byte   version;
-        }
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct PaddingArea
+    {
+        public readonly ushort signature;
+        public readonly byte   length;
+        public readonly byte   version;
+    }
 
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        readonly struct IndicatorArea
-        {
-            public readonly ushort signature;
-            public readonly byte   length;
-            public readonly byte   version;
-            public readonly ushort magic;
-            public readonly byte   skipped;
-        }
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct IndicatorArea
+    {
+        public readonly ushort signature;
+        public readonly byte   length;
+        public readonly byte   version;
+        public readonly ushort magic;
+        public readonly byte   skipped;
+    }
 
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        readonly struct TerminatorArea
-        {
-            public readonly ushort signature;
-            public readonly byte   length;
-            public readonly byte   version;
-        }
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct TerminatorArea
+    {
+        public readonly ushort signature;
+        public readonly byte   length;
+        public readonly byte   version;
+    }
 
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        readonly struct ReferenceArea
-        {
-            public readonly ushort signature;
-            public readonly byte   length;
-            public readonly byte   version;
-            public readonly byte   id_len;
-            public readonly byte   des_len;
-            public readonly byte   src_len;
-            public readonly byte   ext_ver;
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct ReferenceArea
+    {
+        public readonly ushort signature;
+        public readonly byte   length;
+        public readonly byte   version;
+        public readonly byte   id_len;
+        public readonly byte   des_len;
+        public readonly byte   src_len;
+        public readonly byte   ext_ver;
 
-            // Follows extension identifier for id_len bytes
-            // Follows extension descriptor for des_len bytes
-            // Follows extension source for src_len bytes
-        }
+        // Follows extension identifier for id_len bytes
+        // Follows extension descriptor for des_len bytes
+        // Follows extension source for src_len bytes
+    }
 
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        readonly struct SelectorArea
-        {
-            public readonly ushort signature;
-            public readonly byte   length;
-            public readonly byte   version;
-            public readonly byte   sequence;
-        }
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct SelectorArea
+    {
+        public readonly ushort signature;
+        public readonly byte   length;
+        public readonly byte   version;
+        public readonly byte   sequence;
     }
 }

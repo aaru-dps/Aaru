@@ -34,23 +34,22 @@ using System.IO;
 using System.Linq;
 using Aaru.CommonTypes.Interfaces;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class BlindWrite4
 {
-    public sealed partial class BlindWrite4
+    /// <inheritdoc />
+    public bool Identify(IFilter imageFilter)
     {
-        /// <inheritdoc />
-        public bool Identify(IFilter imageFilter)
-        {
-            Stream stream = imageFilter.GetDataForkStream();
-            stream.Seek(0, SeekOrigin.Begin);
+        Stream stream = imageFilter.GetDataForkStream();
+        stream.Seek(0, SeekOrigin.Begin);
 
-            if(stream.Length < 19)
-                return false;
+        if(stream.Length < 19)
+            return false;
 
-            byte[] signature = new byte[19];
-            stream.Read(signature, 0, 19);
+        byte[] signature = new byte[19];
+        stream.Read(signature, 0, 19);
 
-            return _bw4Signature.SequenceEqual(signature);
-        }
+        return _bw4Signature.SequenceEqual(signature);
     }
 }

@@ -33,47 +33,46 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class Apple2Mg
 {
-    public sealed partial class Apple2Mg
+    [SuppressMessage("ReSharper", "NotAccessedField.Local"), StructLayout(LayoutKind.Sequential, Pack = 1)]
+    struct Header
     {
-        [SuppressMessage("ReSharper", "NotAccessedField.Local"), StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct Header
-        {
-            /// <summary>Offset 0x00, magic</summary>
-            public uint Magic;
-            /// <summary>Offset 0x04, disk image creator ID</summary>
-            public uint Creator;
-            /// <summary>Offset 0x08, header size, constant 0x0040</summary>
-            public ushort HeaderSize;
-            /// <summary>Offset 0x0A, disk image version</summary>
-            public ushort Version;
-            /// <summary>Offset 0x0C, disk image format</summary>
-            public SectorOrder ImageFormat;
-            /// <summary>Offset 0x10, flags and volume number</summary>
-            public uint Flags;
-            /// <summary>Offset 0x14, blocks for ProDOS, 0 otherwise</summary>
-            public uint Blocks;
-            /// <summary>Offset 0x18, offset to data</summary>
-            public uint DataOffset;
-            /// <summary>Offset 0x1C, data size in bytes</summary>
-            public uint DataSize;
-            /// <summary>Offset 0x20, offset to optional comment</summary>
-            public uint CommentOffset;
-            /// <summary>Offset 0x24, length of optional comment</summary>
-            public uint CommentSize;
-            /// <summary>Offset 0x28, offset to creator specific chunk</summary>
-            public readonly uint CreatorSpecificOffset;
-            /// <summary>Offset 0x2C, creator specific chunk size</summary>
-            public readonly uint CreatorSpecificSize;
-            /// <summary>Offset 0x30, reserved, should be zero</summary>
-            public readonly uint Reserved1;
-            /// <summary>Offset 0x34, reserved, should be zero</summary>
-            public readonly uint Reserved2;
-            /// <summary>Offset 0x38, reserved, should be zero</summary>
-            public readonly uint Reserved3;
-            /// <summary>Offset 0x3C, reserved, should be zero</summary>
-            public readonly uint Reserved4;
-        }
+        /// <summary>Offset 0x00, magic</summary>
+        public uint Magic;
+        /// <summary>Offset 0x04, disk image creator ID</summary>
+        public uint Creator;
+        /// <summary>Offset 0x08, header size, constant 0x0040</summary>
+        public ushort HeaderSize;
+        /// <summary>Offset 0x0A, disk image version</summary>
+        public ushort Version;
+        /// <summary>Offset 0x0C, disk image format</summary>
+        public SectorOrder ImageFormat;
+        /// <summary>Offset 0x10, flags and volume number</summary>
+        public uint Flags;
+        /// <summary>Offset 0x14, blocks for ProDOS, 0 otherwise</summary>
+        public uint Blocks;
+        /// <summary>Offset 0x18, offset to data</summary>
+        public uint DataOffset;
+        /// <summary>Offset 0x1C, data size in bytes</summary>
+        public uint DataSize;
+        /// <summary>Offset 0x20, offset to optional comment</summary>
+        public uint CommentOffset;
+        /// <summary>Offset 0x24, length of optional comment</summary>
+        public uint CommentSize;
+        /// <summary>Offset 0x28, offset to creator specific chunk</summary>
+        public readonly uint CreatorSpecificOffset;
+        /// <summary>Offset 0x2C, creator specific chunk size</summary>
+        public readonly uint CreatorSpecificSize;
+        /// <summary>Offset 0x30, reserved, should be zero</summary>
+        public readonly uint Reserved1;
+        /// <summary>Offset 0x34, reserved, should be zero</summary>
+        public readonly uint Reserved2;
+        /// <summary>Offset 0x38, reserved, should be zero</summary>
+        public readonly uint Reserved3;
+        /// <summary>Offset 0x3C, reserved, should be zero</summary>
+        public readonly uint Reserved4;
     }
 }

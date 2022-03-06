@@ -34,23 +34,22 @@ using System.IO;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Decoders.Floppy;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class AppleNib
 {
-    public sealed partial class AppleNib
+    /// <inheritdoc />
+    public bool Identify(IFilter imageFilter)
     {
-        /// <inheritdoc />
-        public bool Identify(IFilter imageFilter)
-        {
-            Stream stream = imageFilter.GetDataForkStream();
-            stream.Seek(0, SeekOrigin.Begin);
+        Stream stream = imageFilter.GetDataForkStream();
+        stream.Seek(0, SeekOrigin.Begin);
 
-            if(stream.Length < 512)
-                return false;
+        if(stream.Length < 512)
+            return false;
 
-            byte[] test = new byte[512];
-            stream.Read(test, 0, 512);
+        byte[] test = new byte[512];
+        stream.Read(test, 0, 512);
 
-            return Apple2.IsApple2GCR(test);
-        }
+        return Apple2.IsApple2GCR(test);
     }
 }

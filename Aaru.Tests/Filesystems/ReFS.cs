@@ -32,29 +32,28 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Filesystems
+namespace Aaru.Tests.Filesystems;
+
+[TestFixture]
+public class ReFsMbr : FilesystemTest
 {
-    [TestFixture]
-    public class ReFsMbr : FilesystemTest
+    public ReFsMbr() : base("Resilient File System") {}
+
+    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems",
+                                                      "Resilient File System (MBR)");
+    public override IFilesystem Plugin     => new ReFS();
+    public override bool        Partitions => true;
+
+    public override FileSystemTest[] Tests => new[]
     {
-        public ReFsMbr() : base("Resilient File System") {}
-
-        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems",
-                                                          "Resilient File System (MBR)");
-        public override IFilesystem Plugin     => new ReFS();
-        public override bool        Partitions => true;
-
-        public override FileSystemTest[] Tests => new[]
+        new FileSystemTest
         {
-            new FileSystemTest
-            {
-                TestFile    = "win10.vdi.lz",
-                MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 67108864,
-                SectorSize  = 512,
-                Clusters    = 8372224,
-                ClusterSize = 4096
-            }
-        };
-    }
+            TestFile    = "win10.vdi.lz",
+            MediaType   = MediaType.GENERIC_HDD,
+            Sectors     = 67108864,
+            SectorSize  = 512,
+            Clusters    = 8372224,
+            ClusterSize = 4096
+        }
+    };
 }

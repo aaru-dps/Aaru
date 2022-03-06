@@ -35,32 +35,31 @@ using System.Linq;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class PartClone
 {
-    public sealed partial class PartClone
+    /// <inheritdoc />
+    public bool Identify(IFilter imageFilter)
     {
-        /// <inheritdoc />
-        public bool Identify(IFilter imageFilter)
-        {
-            Stream stream = imageFilter.GetDataForkStream();
-            stream.Seek(0, SeekOrigin.Begin);
+        Stream stream = imageFilter.GetDataForkStream();
+        stream.Seek(0, SeekOrigin.Begin);
 
-            if(stream.Length < 512)
-                return false;
+        if(stream.Length < 512)
+            return false;
 
-            byte[] pHdrB = new byte[Marshal.SizeOf<Header>()];
-            stream.Read(pHdrB, 0, Marshal.SizeOf<Header>());
-            _pHdr = Marshal.ByteArrayToStructureLittleEndian<Header>(pHdrB);
+        byte[] pHdrB = new byte[Marshal.SizeOf<Header>()];
+        stream.Read(pHdrB, 0, Marshal.SizeOf<Header>());
+        _pHdr = Marshal.ByteArrayToStructureLittleEndian<Header>(pHdrB);
 
-            if(stream.Position + (long)_pHdr.totalBlocks > stream.Length)
-                return false;
+        if(stream.Position + (long)_pHdr.totalBlocks > stream.Length)
+            return false;
 
-            stream.Seek((long)_pHdr.totalBlocks, SeekOrigin.Current);
+        stream.Seek((long)_pHdr.totalBlocks, SeekOrigin.Current);
 
-            byte[] bitmagic = new byte[8];
-            stream.Read(bitmagic, 0, 8);
+        byte[] bitmagic = new byte[8];
+        stream.Read(bitmagic, 0, 8);
 
-            return _partCloneMagic.SequenceEqual(_pHdr.magic) && _biTmAgIc.SequenceEqual(bitmagic);
-        }
+        return _partCloneMagic.SequenceEqual(_pHdr.magic) && _biTmAgIc.SequenceEqual(bitmagic);
     }
 }

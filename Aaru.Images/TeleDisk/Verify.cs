@@ -32,28 +32,27 @@
 
 using System.Collections.Generic;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class TeleDisk
 {
-    public sealed partial class TeleDisk
+    /// <inheritdoc />
+    public bool? VerifyMediaImage() => _aDiskCrcHasFailed;
+
+    /// <inheritdoc />
+    public bool? VerifySector(ulong sectorAddress) => !_sectorsWhereCrcHasFailed.Contains(sectorAddress);
+
+    /// <inheritdoc />
+    public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
+                               out List<ulong> unknownLbas)
     {
-        /// <inheritdoc />
-        public bool? VerifyMediaImage() => _aDiskCrcHasFailed;
+        failingLbas = new List<ulong>();
+        unknownLbas = new List<ulong>();
 
-        /// <inheritdoc />
-        public bool? VerifySector(ulong sectorAddress) => !_sectorsWhereCrcHasFailed.Contains(sectorAddress);
+        for(ulong i = sectorAddress; i < sectorAddress + length; i++)
+            if(_sectorsWhereCrcHasFailed.Contains(sectorAddress))
+                failingLbas.Add(sectorAddress);
 
-        /// <inheritdoc />
-        public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
-                                   out List<ulong> unknownLbas)
-        {
-            failingLbas = new List<ulong>();
-            unknownLbas = new List<ulong>();
-
-            for(ulong i = sectorAddress; i < sectorAddress + length; i++)
-                if(_sectorsWhereCrcHasFailed.Contains(sectorAddress))
-                    failingLbas.Add(sectorAddress);
-
-            return failingLbas.Count <= 0;
-        }
+        return failingLbas.Count <= 0;
     }
 }

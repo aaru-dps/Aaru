@@ -30,11 +30,10 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Gui.Models
+namespace Aaru.Gui.Models;
+
+public sealed class AssemblyModel
 {
-    public sealed class AssemblyModel
-    {
-        public string Name    { get; set; }
-        public string Version { get; set; }
-    }
+    public string Name    { get; set; }
+    public string Version { get; set; }
 }

@@ -38,255 +38,254 @@ using Aaru.Decoders.SCSI.SSC;
 using Aaru.Devices;
 using Spectre.Console;
 
-namespace Aaru.Core.Devices.Report
+namespace Aaru.Core.Devices.Report;
+
+public sealed partial class DeviceReport
 {
-    public sealed partial class DeviceReport
+    /// <summary>Creates a report from a SCSI Sequential Commands device</summary>
+    /// <returns>SSC report</returns>
+    public Ssc ReportScsiSsc()
     {
-        /// <summary>Creates a report from a SCSI Sequential Commands device</summary>
-        /// <returns>SSC report</returns>
-        public Ssc ReportScsiSsc()
+        var    report = new Ssc();
+        bool   sense  = true;
+        byte[] buffer = Array.Empty<byte>();
+
+        Spectre.ProgressSingleSpinner(ctx =>
         {
-            var    report = new Ssc();
-            bool   sense  = true;
-            byte[] buffer = Array.Empty<byte>();
+            ctx.AddTask("Querying SCSI READ BLOCK LIMITS...").IsIndeterminate();
+            sense = _dev.ReadBlockLimits(out buffer, out _, _dev.Timeout, out _);
+        });
 
-            Spectre.ProgressSingleSpinner(ctx =>
+        if(!sense)
+        {
+            BlockLimits.BlockLimitsData? decBl = BlockLimits.Decode(buffer);
+
+            if(decBl?.granularity > 0)
+                report.BlockSizeGranularity = decBl.Value.granularity;
+
+            if(decBl?.maxBlockLen > 0)
+                report.MaxBlockLength = decBl.Value.maxBlockLen;
+
+            if(decBl?.minBlockLen > 0)
+                report.MinBlockLength = decBl.Value.minBlockLen;
+        }
+
+        Spectre.ProgressSingleSpinner(ctx =>
+        {
+            ctx.AddTask("Querying SCSI REPORT DENSITY SUPPORT...").IsIndeterminate();
+            sense = _dev.ReportDensitySupport(out buffer, out _, false, false, _dev.Timeout, out _);
+        });
+
+        if(!sense)
+        {
+            DensitySupport.DensitySupportHeader? dsh = DensitySupport.DecodeDensity(buffer);
+
+            if(dsh.HasValue)
             {
-                ctx.AddTask("Querying SCSI READ BLOCK LIMITS...").IsIndeterminate();
-                sense = _dev.ReadBlockLimits(out buffer, out _, _dev.Timeout, out _);
-            });
+                SupportedDensity[] array = new SupportedDensity[dsh.Value.descriptors.Length];
 
-            if(!sense)
-            {
-                BlockLimits.BlockLimitsData? decBl = BlockLimits.Decode(buffer);
-
-                if(decBl?.granularity > 0)
-                    report.BlockSizeGranularity = decBl.Value.granularity;
-
-                if(decBl?.maxBlockLen > 0)
-                    report.MaxBlockLength = decBl.Value.maxBlockLen;
-
-                if(decBl?.minBlockLen > 0)
-                    report.MinBlockLength = decBl.Value.minBlockLen;
-            }
-
-            Spectre.ProgressSingleSpinner(ctx =>
-            {
-                ctx.AddTask("Querying SCSI REPORT DENSITY SUPPORT...").IsIndeterminate();
-                sense = _dev.ReportDensitySupport(out buffer, out _, false, false, _dev.Timeout, out _);
-            });
-
-            if(!sense)
-            {
-                DensitySupport.DensitySupportHeader? dsh = DensitySupport.DecodeDensity(buffer);
-
-                if(dsh.HasValue)
-                {
-                    SupportedDensity[] array = new SupportedDensity[dsh.Value.descriptors.Length];
-
-                    for(int i = 0; i < dsh.Value.descriptors.Length; i++)
-                        array[i] = new SupportedDensity
-                        {
-                            BitsPerMm      = dsh.Value.descriptors[i].bpmm,
-                            Capacity       = dsh.Value.descriptors[i].capacity,
-                            DefaultDensity = dsh.Value.descriptors[i].defaultDensity,
-                            Description    = dsh.Value.descriptors[i].description,
-                            Duplicate      = dsh.Value.descriptors[i].duplicate,
-                            Name           = dsh.Value.descriptors[i].name,
-                            Organization   = dsh.Value.descriptors[i].organization,
-                            PrimaryCode    = dsh.Value.descriptors[i].primaryCode,
-                            SecondaryCode  = dsh.Value.descriptors[i].secondaryCode,
-                            Tracks         = dsh.Value.descriptors[i].tracks,
-                            Width          = dsh.Value.descriptors[i].width,
-                            Writable       = dsh.Value.descriptors[i].writable
-                        };
-
-                    report.SupportedDensities = array.ToList();
-                }
-            }
-
-            Spectre.ProgressSingleSpinner(ctx =>
-            {
-                ctx.AddTask("Querying SCSI REPORT DENSITY SUPPORT for medium types...").IsIndeterminate();
-                sense = _dev.ReportDensitySupport(out buffer, out _, true, false, _dev.Timeout, out _);
-            });
-
-            if(sense)
-                return report;
-
-            DensitySupport.MediaTypeSupportHeader? mtsh = DensitySupport.DecodeMediumType(buffer);
-
-            if(!mtsh.HasValue)
-                return report;
-
-            SscSupportedMedia[] array2 = new SscSupportedMedia[mtsh.Value.descriptors.Length];
-
-            for(int i = 0; i < mtsh.Value.descriptors.Length; i++)
-            {
-                array2[i] = new SscSupportedMedia
-                {
-                    Description  = mtsh.Value.descriptors[i].description,
-                    Length       = mtsh.Value.descriptors[i].length,
-                    MediumType   = mtsh.Value.descriptors[i].mediumType,
-                    Name         = mtsh.Value.descriptors[i].name,
-                    Organization = mtsh.Value.descriptors[i].organization,
-                    Width        = mtsh.Value.descriptors[i].width
-                };
-
-                if(mtsh.Value.descriptors[i].densityCodes == null)
-                    continue;
-
-                DensityCode[] array3 = new DensityCode[mtsh.Value.descriptors[i].densityCodes.Length];
-
-                for(int j = 0; j < mtsh.Value.descriptors[i].densityCodes.Length; j++)
-                    array3[j] = new DensityCode
+                for(int i = 0; i < dsh.Value.descriptors.Length; i++)
+                    array[i] = new SupportedDensity
                     {
-                        Code = mtsh.Value.descriptors[i].densityCodes[j]
+                        BitsPerMm      = dsh.Value.descriptors[i].bpmm,
+                        Capacity       = dsh.Value.descriptors[i].capacity,
+                        DefaultDensity = dsh.Value.descriptors[i].defaultDensity,
+                        Description    = dsh.Value.descriptors[i].description,
+                        Duplicate      = dsh.Value.descriptors[i].duplicate,
+                        Name           = dsh.Value.descriptors[i].name,
+                        Organization   = dsh.Value.descriptors[i].organization,
+                        PrimaryCode    = dsh.Value.descriptors[i].primaryCode,
+                        SecondaryCode  = dsh.Value.descriptors[i].secondaryCode,
+                        Tracks         = dsh.Value.descriptors[i].tracks,
+                        Width          = dsh.Value.descriptors[i].width,
+                        Writable       = dsh.Value.descriptors[i].writable
                     };
 
-                array2[i].DensityCodes = array3.Distinct().ToList();
+                report.SupportedDensities = array.ToList();
             }
-
-            report.SupportedMediaTypes = array2.ToList();
-
-            return report;
         }
 
-        /// <summary>Creates a report for media inserted into an SSC device</summary>
-        /// <returns>Media report</returns>
-        public TestedSequentialMedia ReportSscMedia()
+        Spectre.ProgressSingleSpinner(ctx =>
         {
-            var    seqTest = new TestedSequentialMedia();
-            bool   sense   = true;
-            byte[] buffer  = Array.Empty<byte>();
+            ctx.AddTask("Querying SCSI REPORT DENSITY SUPPORT for medium types...").IsIndeterminate();
+            sense = _dev.ReportDensitySupport(out buffer, out _, true, false, _dev.Timeout, out _);
+        });
 
-            Modes.DecodedMode? decMode = null;
+        if(sense)
+            return report;
 
-            Spectre.ProgressSingleSpinner(ctx =>
+        DensitySupport.MediaTypeSupportHeader? mtsh = DensitySupport.DecodeMediumType(buffer);
+
+        if(!mtsh.HasValue)
+            return report;
+
+        SscSupportedMedia[] array2 = new SscSupportedMedia[mtsh.Value.descriptors.Length];
+
+        for(int i = 0; i < mtsh.Value.descriptors.Length; i++)
+        {
+            array2[i] = new SscSupportedMedia
             {
-                ctx.AddTask("Querying SCSI MODE SENSE (10)...").IsIndeterminate();
+                Description  = mtsh.Value.descriptors[i].description,
+                Length       = mtsh.Value.descriptors[i].length,
+                MediumType   = mtsh.Value.descriptors[i].mediumType,
+                Name         = mtsh.Value.descriptors[i].name,
+                Organization = mtsh.Value.descriptors[i].organization,
+                Width        = mtsh.Value.descriptors[i].width
+            };
 
-                sense = _dev.ModeSense10(out buffer, out _, false, true, ScsiModeSensePageControl.Current, 0x3F, 0x00,
-                                         _dev.Timeout, out _);
-            });
+            if(mtsh.Value.descriptors[i].densityCodes == null)
+                continue;
 
-            if(!sense &&
-               !_dev.Error)
-            {
-                decMode                 = Modes.DecodeMode10(buffer, _dev.ScsiType);
-                seqTest.ModeSense10Data = buffer;
-            }
+            DensityCode[] array3 = new DensityCode[mtsh.Value.descriptors[i].densityCodes.Length];
 
-            Spectre.ProgressSingleSpinner(ctx =>
-            {
-                ctx.AddTask("Querying SCSI MODE SENSE...").IsIndeterminate();
-                sense = _dev.ModeSense(out buffer, out _, _dev.Timeout, out _);
-            });
-
-            if(!sense &&
-               !_dev.Error)
-            {
-                decMode ??= Modes.DecodeMode6(buffer, _dev.ScsiType);
-
-                seqTest.ModeSense6Data = buffer;
-            }
-
-            if(decMode.HasValue)
-            {
-                seqTest.MediumType = (byte)decMode.Value.Header.MediumType;
-
-                if(decMode.Value.Header.BlockDescriptors?.Length > 0)
-                    seqTest.Density = (byte)decMode.Value.Header.BlockDescriptors?[0].Density;
-            }
-
-            Spectre.ProgressSingleSpinner(ctx =>
-            {
-                ctx.AddTask("Querying SCSI REPORT DENSITY SUPPORT for current media...").IsIndeterminate();
-                sense = _dev.ReportDensitySupport(out buffer, out _, false, true, _dev.Timeout, out _);
-            });
-
-            if(!sense)
-            {
-                DensitySupport.DensitySupportHeader? dsh = DensitySupport.DecodeDensity(buffer);
-
-                if(dsh.HasValue)
+            for(int j = 0; j < mtsh.Value.descriptors[i].densityCodes.Length; j++)
+                array3[j] = new DensityCode
                 {
-                    SupportedDensity[] array = new SupportedDensity[dsh.Value.descriptors.Length];
+                    Code = mtsh.Value.descriptors[i].densityCodes[j]
+                };
 
-                    for(int i = 0; i < dsh.Value.descriptors.Length; i++)
-                        array[i] = new SupportedDensity
-                        {
-                            BitsPerMm      = dsh.Value.descriptors[i].bpmm,
-                            Capacity       = dsh.Value.descriptors[i].capacity,
-                            DefaultDensity = dsh.Value.descriptors[i].defaultDensity,
-                            Description    = dsh.Value.descriptors[i].description,
-                            Duplicate      = dsh.Value.descriptors[i].duplicate,
-                            Name           = dsh.Value.descriptors[i].name,
-                            Organization   = dsh.Value.descriptors[i].organization,
-                            PrimaryCode    = dsh.Value.descriptors[i].primaryCode,
-                            SecondaryCode  = dsh.Value.descriptors[i].secondaryCode,
-                            Tracks         = dsh.Value.descriptors[i].tracks,
-                            Width          = dsh.Value.descriptors[i].width,
-                            Writable       = dsh.Value.descriptors[i].writable
-                        };
-
-                    seqTest.SupportedDensities = array.ToList();
-                }
-            }
-
-            Spectre.ProgressSingleSpinner(ctx =>
-            {
-                ctx.AddTask("Querying SCSI REPORT DENSITY SUPPORT for medium types for current media...").
-                    IsIndeterminate();
-
-                sense = _dev.ReportDensitySupport(out buffer, out _, true, true, _dev.Timeout, out _);
-            });
-
-            if(!sense)
-            {
-                DensitySupport.MediaTypeSupportHeader? mtsh = DensitySupport.DecodeMediumType(buffer);
-
-                if(mtsh.HasValue)
-                {
-                    SscSupportedMedia[] array = new SscSupportedMedia[mtsh.Value.descriptors.Length];
-
-                    for(int i = 0; i < mtsh.Value.descriptors.Length; i++)
-                    {
-                        array[i] = new SscSupportedMedia
-                        {
-                            Description  = mtsh.Value.descriptors[i].description,
-                            Length       = mtsh.Value.descriptors[i].length,
-                            MediumType   = mtsh.Value.descriptors[i].mediumType,
-                            Name         = mtsh.Value.descriptors[i].name,
-                            Organization = mtsh.Value.descriptors[i].organization,
-                            Width        = mtsh.Value.descriptors[i].width
-                        };
-
-                        if(mtsh.Value.descriptors[i].densityCodes == null)
-                            continue;
-
-                        DensityCode[] array2 = new DensityCode[mtsh.Value.descriptors[i].densityCodes.Length];
-
-                        for(int j = 0; j < mtsh.Value.descriptors[i].densityCodes.Length; j++)
-                            array2[j] = new DensityCode
-                            {
-                                Code = mtsh.Value.descriptors[i].densityCodes[j]
-                            };
-
-                        array[i].DensityCodes = array2.Distinct().ToList();
-                    }
-
-                    seqTest.SupportedMediaTypes = array.ToList();
-                }
-            }
-
-            Spectre.ProgressSingleSpinner(ctx =>
-            {
-                ctx.AddTask("Trying SCSI READ MEDIA SERIAL NUMBER...").IsIndeterminate();
-                seqTest.CanReadMediaSerial = !_dev.ReadMediaSerialNumber(out buffer, out _, _dev.Timeout, out _);
-            });
-
-            return seqTest;
+            array2[i].DensityCodes = array3.Distinct().ToList();
         }
+
+        report.SupportedMediaTypes = array2.ToList();
+
+        return report;
+    }
+
+    /// <summary>Creates a report for media inserted into an SSC device</summary>
+    /// <returns>Media report</returns>
+    public TestedSequentialMedia ReportSscMedia()
+    {
+        var    seqTest = new TestedSequentialMedia();
+        bool   sense   = true;
+        byte[] buffer  = Array.Empty<byte>();
+
+        Modes.DecodedMode? decMode = null;
+
+        Spectre.ProgressSingleSpinner(ctx =>
+        {
+            ctx.AddTask("Querying SCSI MODE SENSE (10)...").IsIndeterminate();
+
+            sense = _dev.ModeSense10(out buffer, out _, false, true, ScsiModeSensePageControl.Current, 0x3F, 0x00,
+                                     _dev.Timeout, out _);
+        });
+
+        if(!sense &&
+           !_dev.Error)
+        {
+            decMode                 = Modes.DecodeMode10(buffer, _dev.ScsiType);
+            seqTest.ModeSense10Data = buffer;
+        }
+
+        Spectre.ProgressSingleSpinner(ctx =>
+        {
+            ctx.AddTask("Querying SCSI MODE SENSE...").IsIndeterminate();
+            sense = _dev.ModeSense(out buffer, out _, _dev.Timeout, out _);
+        });
+
+        if(!sense &&
+           !_dev.Error)
+        {
+            decMode ??= Modes.DecodeMode6(buffer, _dev.ScsiType);
+
+            seqTest.ModeSense6Data = buffer;
+        }
+
+        if(decMode.HasValue)
+        {
+            seqTest.MediumType = (byte)decMode.Value.Header.MediumType;
+
+            if(decMode.Value.Header.BlockDescriptors?.Length > 0)
+                seqTest.Density = (byte)decMode.Value.Header.BlockDescriptors?[0].Density;
+        }
+
+        Spectre.ProgressSingleSpinner(ctx =>
+        {
+            ctx.AddTask("Querying SCSI REPORT DENSITY SUPPORT for current media...").IsIndeterminate();
+            sense = _dev.ReportDensitySupport(out buffer, out _, false, true, _dev.Timeout, out _);
+        });
+
+        if(!sense)
+        {
+            DensitySupport.DensitySupportHeader? dsh = DensitySupport.DecodeDensity(buffer);
+
+            if(dsh.HasValue)
+            {
+                SupportedDensity[] array = new SupportedDensity[dsh.Value.descriptors.Length];
+
+                for(int i = 0; i < dsh.Value.descriptors.Length; i++)
+                    array[i] = new SupportedDensity
+                    {
+                        BitsPerMm      = dsh.Value.descriptors[i].bpmm,
+                        Capacity       = dsh.Value.descriptors[i].capacity,
+                        DefaultDensity = dsh.Value.descriptors[i].defaultDensity,
+                        Description    = dsh.Value.descriptors[i].description,
+                        Duplicate      = dsh.Value.descriptors[i].duplicate,
+                        Name           = dsh.Value.descriptors[i].name,
+                        Organization   = dsh.Value.descriptors[i].organization,
+                        PrimaryCode    = dsh.Value.descriptors[i].primaryCode,
+                        SecondaryCode  = dsh.Value.descriptors[i].secondaryCode,
+                        Tracks         = dsh.Value.descriptors[i].tracks,
+                        Width          = dsh.Value.descriptors[i].width,
+                        Writable       = dsh.Value.descriptors[i].writable
+                    };
+
+                seqTest.SupportedDensities = array.ToList();
+            }
+        }
+
+        Spectre.ProgressSingleSpinner(ctx =>
+        {
+            ctx.AddTask("Querying SCSI REPORT DENSITY SUPPORT for medium types for current media...").
+                IsIndeterminate();
+
+            sense = _dev.ReportDensitySupport(out buffer, out _, true, true, _dev.Timeout, out _);
+        });
+
+        if(!sense)
+        {
+            DensitySupport.MediaTypeSupportHeader? mtsh = DensitySupport.DecodeMediumType(buffer);
+
+            if(mtsh.HasValue)
+            {
+                SscSupportedMedia[] array = new SscSupportedMedia[mtsh.Value.descriptors.Length];
+
+                for(int i = 0; i < mtsh.Value.descriptors.Length; i++)
+                {
+                    array[i] = new SscSupportedMedia
+                    {
+                        Description  = mtsh.Value.descriptors[i].description,
+                        Length       = mtsh.Value.descriptors[i].length,
+                        MediumType   = mtsh.Value.descriptors[i].mediumType,
+                        Name         = mtsh.Value.descriptors[i].name,
+                        Organization = mtsh.Value.descriptors[i].organization,
+                        Width        = mtsh.Value.descriptors[i].width
+                    };
+
+                    if(mtsh.Value.descriptors[i].densityCodes == null)
+                        continue;
+
+                    DensityCode[] array2 = new DensityCode[mtsh.Value.descriptors[i].densityCodes.Length];
+
+                    for(int j = 0; j < mtsh.Value.descriptors[i].densityCodes.Length; j++)
+                        array2[j] = new DensityCode
+                        {
+                            Code = mtsh.Value.descriptors[i].densityCodes[j]
+                        };
+
+                    array[i].DensityCodes = array2.Distinct().ToList();
+                }
+
+                seqTest.SupportedMediaTypes = array.ToList();
+            }
+        }
+
+        Spectre.ProgressSingleSpinner(ctx =>
+        {
+            ctx.AddTask("Trying SCSI READ MEDIA SERIAL NUMBER...").IsIndeterminate();
+            seqTest.CanReadMediaSerial = !_dev.ReadMediaSerialNumber(out buffer, out _, _dev.Timeout, out _);
+        });
+
+        return seqTest;
     }
 }

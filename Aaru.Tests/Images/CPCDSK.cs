@@ -32,249 +32,248 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.DiscImages;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Images
-{
-    [TestFixture]
-    public class CPCDSK : BlockMediaImageTest
-    {
-        public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "CPCDSK");
-        public override IMediaImage _plugin    => new Cpcdsk();
+namespace Aaru.Tests.Images;
 
-        public override BlockImageTestExpected[] Tests => new[]
+[TestFixture]
+public class CPCDSK : BlockMediaImageTest
+{
+    public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "CPCDSK");
+    public override IMediaImage _plugin    => new Cpcdsk();
+
+    public override BlockImageTestExpected[] Tests => new[]
+    {
+        new BlockImageTestExpected
         {
-            new BlockImageTestExpected
+            TestFile   = "3D Construction Kit (1991)(Domark)(Disk 1 of 2)[a].dsk.lz",
+            MediaType  = MediaType.CompactFloppy,
+            Sectors    = 360,
+            SectorSize = 512,
+            MD5        = "ee601c0d2beade20bb5c04b3f5800ff6",
+            Partitions = new[]
             {
-                TestFile   = "3D Construction Kit (1991)(Domark)(Disk 1 of 2)[a].dsk.lz",
-                MediaType  = MediaType.CompactFloppy,
-                Sectors    = 360,
-                SectorSize = 512,
-                MD5        = "ee601c0d2beade20bb5c04b3f5800ff6",
-                Partitions = new[]
+                new BlockPartitionVolumes
                 {
-                    new BlockPartitionVolumes
-                    {
-                        Start  = 0,
-                        Length = 360
-                    }
-                }
-            },
-            new BlockImageTestExpected
-            {
-                TestFile   = "3D Construction Kit (1991)(Domark)(Disk 1 of 2).dsk.lz",
-                MediaType  = MediaType.CompactFloppy,
-                Sectors    = 360,
-                SectorSize = 512,
-                MD5        = "ee601c0d2beade20bb5c04b3f5800ff6",
-                Partitions = new[]
-                {
-                    new BlockPartitionVolumes
-                    {
-                        Start  = 0,
-                        Length = 360
-                    }
-                }
-            },
-            new BlockImageTestExpected
-            {
-                TestFile   = "3D Construction Kit (1991)(Domark)(Disk 2 of 2)[a].dsk.lz",
-                MediaType  = MediaType.CompactFloppy,
-                Sectors    = 360,
-                SectorSize = 512,
-                MD5        = "dcb039b3b2ff2d6bdef8bf6c13ef3f83",
-                Partitions = new[]
-                {
-                    new BlockPartitionVolumes
-                    {
-                        Start  = 0,
-                        Length = 360
-                    }
-                }
-            },
-            new BlockImageTestExpected
-            {
-                TestFile   = "3D Construction Kit (1991)(Domark)(Disk 2 of 2).dsk.lz",
-                MediaType  = MediaType.CompactFloppy,
-                Sectors    = 360,
-                SectorSize = 512,
-                MD5        = "dcb039b3b2ff2d6bdef8bf6c13ef3f83",
-                Partitions = new[]
-                {
-                    new BlockPartitionVolumes
-                    {
-                        Start  = 0,
-                        Length = 360
-                    }
-                }
-            },
-            /* TODO: Does not open
-            new BlockImageTestExpected
-            {
-                TestFile   = "3D Construction Kit (1991)(Domark).dsk.lz",
-                MediaType  = MediaType.CompactFloppy,
-                Sectors    = 360,
-                SectorSize = 512,
-                MD5        = "e1b14e9b744b08a1b2b56fa25f034682"
-            },
-            */ new BlockImageTestExpected
-            {
-                TestFile   = "3D Construction Kit (1991)(Domark)[Objects Disk].dsk.lz",
-                MediaType  = MediaType.CompactFloppy,
-                Sectors    = 387,
-                SectorSize = 512,
-                MD5        = "82007217a3aa6bb91468b71a6dc4bfe5",
-                Partitions = new[]
-                {
-                    new BlockPartitionVolumes
-                    {
-                        Start  = 0,
-                        Length = 387
-                    }
-                }
-            },
-            new BlockImageTestExpected
-            {
-                TestFile   = "BCPL Compiler v1.0 (1986)(Arnor)[CPM Version].dsk.lz",
-                MediaType  = MediaType.CompactFloppy,
-                Sectors    = 360,
-                SectorSize = 512,
-                MD5        = "acd60bb0119e0b5aa1790bef344211ac",
-                Partitions = new[]
-                {
-                    new BlockPartitionVolumes
-                    {
-                        Start  = 0,
-                        Length = 360
-                    }
-                }
-            },
-            new BlockImageTestExpected
-            {
-                TestFile   = "BCPL Compiler v1.0 (1986)(Arnor).dsk.lz",
-                MediaType  = MediaType.CompactFloppy,
-                Sectors    = 360,
-                SectorSize = 512,
-                MD5        = "0330956c2fe38f278d7cba6f7bd8aa2d",
-                Partitions = new[]
-                {
-                    new BlockPartitionVolumes
-                    {
-                        Start  = 0,
-                        Length = 360
-                    }
-                }
-            },
-            new BlockImageTestExpected
-            {
-                TestFile   = "CPM Plus v1.0 (1985)(Amstrad)(Disk 1 of 4)[a][CPM Version].dsk.lz",
-                MediaType  = MediaType.CompactFloppy,
-                Sectors    = 359,
-                SectorSize = 512,
-                MD5        = "a568e44f556661f9e4b7db01c126c676"
-            },
-            new BlockImageTestExpected
-            {
-                TestFile   = "CPM Plus v1.0 (1985)(Amstrad)(Disk 1 of 4)[CPM Version].dsk.lz",
-                MediaType  = MediaType.CompactFloppy,
-                Sectors    = 360,
-                SectorSize = 512,
-                MD5        = "5dc0d482a773043d8683a84c8220df95",
-                Partitions = new[]
-                {
-                    new BlockPartitionVolumes
-                    {
-                        Start  = 0,
-                        Length = 360
-                    }
-                }
-            },
-            new BlockImageTestExpected
-            {
-                TestFile   = "CPM Plus v1.0 (1985)(Amstrad)(Disk 2 of 4)[CPM Version].dsk.lz",
-                MediaType  = MediaType.CompactFloppy,
-                Sectors    = 360,
-                SectorSize = 512,
-                MD5        = "64edd62fabb381ef49bf3a8f43435824",
-                Partitions = new[]
-                {
-                    new BlockPartitionVolumes
-                    {
-                        Start  = 0,
-                        Length = 360
-                    }
-                }
-            },
-            new BlockImageTestExpected
-            {
-                TestFile   = "CPM Plus v1.0 (1985)(Amstrad)(Disk 3 of 4)[CPM Version].dsk.lz",
-                MediaType  = MediaType.CompactFloppy,
-                Sectors    = 360,
-                SectorSize = 512,
-                MD5        = "b381bbc72ab664d658ddd5898c7ff266",
-                Partitions = new[]
-                {
-                    new BlockPartitionVolumes
-                    {
-                        Start  = 0,
-                        Length = 360
-                    }
-                }
-            },
-            new BlockImageTestExpected
-            {
-                TestFile   = "CPM Plus v1.0 (1985)(Amstrad)(Disk 4 of 4)[CPM Version].dsk.lz",
-                MediaType  = MediaType.CompactFloppy,
-                Sectors    = 360,
-                SectorSize = 512,
-                MD5        = "ad43345ac469844465da6d73369cc6b1",
-                Partitions = new[]
-                {
-                    new BlockPartitionVolumes
-                    {
-                        Start  = 0,
-                        Length = 360
-                    }
-                }
-            },
-            new BlockImageTestExpected
-            {
-                TestFile   = "z88dk_cpc.dsk.lz",
-                MediaType  = MediaType.CompactFloppy,
-                Sectors    = 360,
-                SectorSize = 512,
-                MD5        = "6e4ab38fcc5dc2d8173173dcbf8ca2e1",
-                Partitions = new[]
-                {
-                    new BlockPartitionVolumes
-                    {
-                        Start  = 0,
-                        Length = 360
-                    }
-                }
-            },
-            new BlockImageTestExpected
-            {
-                TestFile   = "z88dk_pcw40.dsk.lz",
-                MediaType  = MediaType.CompactFloppy,
-                Sectors    = 360,
-                SectorSize = 512,
-                MD5        = "37cfac07eb636ca8181878a06101a955"
-            },
-            new BlockImageTestExpected
-            {
-                TestFile   = "z88dk_pcw80.dsk.lz",
-                MediaType  = MediaType.CompactFloppy,
-                Sectors    = 1440,
-                SectorSize = 512,
-                MD5        = "17b79ecfd045d1d5d3526b182b32064a",
-                Partitions = new[]
-                {
-                    new BlockPartitionVolumes
-                    {
-                        Start  = 0,
-                        Length = 1440
-                    }
+                    Start  = 0,
+                    Length = 360
                 }
             }
-        };
-    }
+        },
+        new BlockImageTestExpected
+        {
+            TestFile   = "3D Construction Kit (1991)(Domark)(Disk 1 of 2).dsk.lz",
+            MediaType  = MediaType.CompactFloppy,
+            Sectors    = 360,
+            SectorSize = 512,
+            MD5        = "ee601c0d2beade20bb5c04b3f5800ff6",
+            Partitions = new[]
+            {
+                new BlockPartitionVolumes
+                {
+                    Start  = 0,
+                    Length = 360
+                }
+            }
+        },
+        new BlockImageTestExpected
+        {
+            TestFile   = "3D Construction Kit (1991)(Domark)(Disk 2 of 2)[a].dsk.lz",
+            MediaType  = MediaType.CompactFloppy,
+            Sectors    = 360,
+            SectorSize = 512,
+            MD5        = "dcb039b3b2ff2d6bdef8bf6c13ef3f83",
+            Partitions = new[]
+            {
+                new BlockPartitionVolumes
+                {
+                    Start  = 0,
+                    Length = 360
+                }
+            }
+        },
+        new BlockImageTestExpected
+        {
+            TestFile   = "3D Construction Kit (1991)(Domark)(Disk 2 of 2).dsk.lz",
+            MediaType  = MediaType.CompactFloppy,
+            Sectors    = 360,
+            SectorSize = 512,
+            MD5        = "dcb039b3b2ff2d6bdef8bf6c13ef3f83",
+            Partitions = new[]
+            {
+                new BlockPartitionVolumes
+                {
+                    Start  = 0,
+                    Length = 360
+                }
+            }
+        },
+        /* TODO: Does not open
+        new BlockImageTestExpected
+        {
+            TestFile   = "3D Construction Kit (1991)(Domark).dsk.lz",
+            MediaType  = MediaType.CompactFloppy,
+            Sectors    = 360,
+            SectorSize = 512,
+            MD5        = "e1b14e9b744b08a1b2b56fa25f034682"
+        },
+        */ new BlockImageTestExpected
+        {
+            TestFile   = "3D Construction Kit (1991)(Domark)[Objects Disk].dsk.lz",
+            MediaType  = MediaType.CompactFloppy,
+            Sectors    = 387,
+            SectorSize = 512,
+            MD5        = "82007217a3aa6bb91468b71a6dc4bfe5",
+            Partitions = new[]
+            {
+                new BlockPartitionVolumes
+                {
+                    Start  = 0,
+                    Length = 387
+                }
+            }
+        },
+        new BlockImageTestExpected
+        {
+            TestFile   = "BCPL Compiler v1.0 (1986)(Arnor)[CPM Version].dsk.lz",
+            MediaType  = MediaType.CompactFloppy,
+            Sectors    = 360,
+            SectorSize = 512,
+            MD5        = "acd60bb0119e0b5aa1790bef344211ac",
+            Partitions = new[]
+            {
+                new BlockPartitionVolumes
+                {
+                    Start  = 0,
+                    Length = 360
+                }
+            }
+        },
+        new BlockImageTestExpected
+        {
+            TestFile   = "BCPL Compiler v1.0 (1986)(Arnor).dsk.lz",
+            MediaType  = MediaType.CompactFloppy,
+            Sectors    = 360,
+            SectorSize = 512,
+            MD5        = "0330956c2fe38f278d7cba6f7bd8aa2d",
+            Partitions = new[]
+            {
+                new BlockPartitionVolumes
+                {
+                    Start  = 0,
+                    Length = 360
+                }
+            }
+        },
+        new BlockImageTestExpected
+        {
+            TestFile   = "CPM Plus v1.0 (1985)(Amstrad)(Disk 1 of 4)[a][CPM Version].dsk.lz",
+            MediaType  = MediaType.CompactFloppy,
+            Sectors    = 359,
+            SectorSize = 512,
+            MD5        = "a568e44f556661f9e4b7db01c126c676"
+        },
+        new BlockImageTestExpected
+        {
+            TestFile   = "CPM Plus v1.0 (1985)(Amstrad)(Disk 1 of 4)[CPM Version].dsk.lz",
+            MediaType  = MediaType.CompactFloppy,
+            Sectors    = 360,
+            SectorSize = 512,
+            MD5        = "5dc0d482a773043d8683a84c8220df95",
+            Partitions = new[]
+            {
+                new BlockPartitionVolumes
+                {
+                    Start  = 0,
+                    Length = 360
+                }
+            }
+        },
+        new BlockImageTestExpected
+        {
+            TestFile   = "CPM Plus v1.0 (1985)(Amstrad)(Disk 2 of 4)[CPM Version].dsk.lz",
+            MediaType  = MediaType.CompactFloppy,
+            Sectors    = 360,
+            SectorSize = 512,
+            MD5        = "64edd62fabb381ef49bf3a8f43435824",
+            Partitions = new[]
+            {
+                new BlockPartitionVolumes
+                {
+                    Start  = 0,
+                    Length = 360
+                }
+            }
+        },
+        new BlockImageTestExpected
+        {
+            TestFile   = "CPM Plus v1.0 (1985)(Amstrad)(Disk 3 of 4)[CPM Version].dsk.lz",
+            MediaType  = MediaType.CompactFloppy,
+            Sectors    = 360,
+            SectorSize = 512,
+            MD5        = "b381bbc72ab664d658ddd5898c7ff266",
+            Partitions = new[]
+            {
+                new BlockPartitionVolumes
+                {
+                    Start  = 0,
+                    Length = 360
+                }
+            }
+        },
+        new BlockImageTestExpected
+        {
+            TestFile   = "CPM Plus v1.0 (1985)(Amstrad)(Disk 4 of 4)[CPM Version].dsk.lz",
+            MediaType  = MediaType.CompactFloppy,
+            Sectors    = 360,
+            SectorSize = 512,
+            MD5        = "ad43345ac469844465da6d73369cc6b1",
+            Partitions = new[]
+            {
+                new BlockPartitionVolumes
+                {
+                    Start  = 0,
+                    Length = 360
+                }
+            }
+        },
+        new BlockImageTestExpected
+        {
+            TestFile   = "z88dk_cpc.dsk.lz",
+            MediaType  = MediaType.CompactFloppy,
+            Sectors    = 360,
+            SectorSize = 512,
+            MD5        = "6e4ab38fcc5dc2d8173173dcbf8ca2e1",
+            Partitions = new[]
+            {
+                new BlockPartitionVolumes
+                {
+                    Start  = 0,
+                    Length = 360
+                }
+            }
+        },
+        new BlockImageTestExpected
+        {
+            TestFile   = "z88dk_pcw40.dsk.lz",
+            MediaType  = MediaType.CompactFloppy,
+            Sectors    = 360,
+            SectorSize = 512,
+            MD5        = "37cfac07eb636ca8181878a06101a955"
+        },
+        new BlockImageTestExpected
+        {
+            TestFile   = "z88dk_pcw80.dsk.lz",
+            MediaType  = MediaType.CompactFloppy,
+            Sectors    = 1440,
+            SectorSize = 512,
+            MD5        = "17b79ecfd045d1d5d3526b182b32064a",
+            Partitions = new[]
+            {
+                new BlockPartitionVolumes
+                {
+                    Start  = 0,
+                    Length = 1440
+                }
+            }
+        }
+    };
 }

@@ -39,73 +39,72 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Marshal = Aaru.Helpers.Marshal;
 
-namespace Aaru.Partitions
+namespace Aaru.Partitions;
+
+/// <inheritdoc />
+/// <summary>Implements decoding of Rio Karma partitions</summary>
+public sealed class RioKarma : IPartition
 {
+    const ushort KARMA_MAGIC = 0xAB56;
+    const byte   ENTRY_MAGIC = 0x4D;
+
     /// <inheritdoc />
-    /// <summary>Implements decoding of Rio Karma partitions</summary>
-    public sealed class RioKarma : IPartition
+    public string Name => "Rio Karma partitioning";
+    /// <inheritdoc />
+    public Guid Id => new Guid("246A6D93-4F1A-1F8A-344D-50187A5513A9");
+    /// <inheritdoc />
+    public string Author => "Natalia Portillo";
+
+    /// <inheritdoc />
+    public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
     {
-        const ushort KARMA_MAGIC = 0xAB56;
-        const byte   ENTRY_MAGIC = 0x4D;
+        partitions = null;
+        var errno = imagePlugin.ReadSector(sectorOffset, out byte[] sector);
 
-        /// <inheritdoc />
-        public string Name => "Rio Karma partitioning";
-        /// <inheritdoc />
-        public Guid Id => new Guid("246A6D93-4F1A-1F8A-344D-50187A5513A9");
-        /// <inheritdoc />
-        public string Author => "Natalia Portillo";
+        if(errno != ErrorNumber.NoError ||sector.Length < 512)
+            return false;
 
-        /// <inheritdoc />
-        public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
-        {
-            partitions = null;
-            var errno = imagePlugin.ReadSector(sectorOffset, out byte[] sector);
+        Table table = Marshal.ByteArrayToStructureLittleEndian<Table>(sector);
 
-            if(errno != ErrorNumber.NoError ||sector.Length < 512)
-                return false;
+        if(table.magic != KARMA_MAGIC)
+            return false;
 
-            Table table = Marshal.ByteArrayToStructureLittleEndian<Table>(sector);
+        ulong counter = 0;
 
-            if(table.magic != KARMA_MAGIC)
-                return false;
+        partitions = (from entry in table.entries let part = new Partition
+                         {
+                             Start    = entry.offset,
+                             Offset   = (ulong)(entry.offset * sector.Length),
+                             Size     = entry.size,
+                             Length   = (ulong)(entry.size * sector.Length),
+                             Type     = "Rio Karma",
+                             Sequence = counter++,
+                             Scheme   = Name
+                         } where entry.type == ENTRY_MAGIC select part).ToList();
 
-            ulong counter = 0;
+        return true;
+    }
 
-            partitions = (from entry in table.entries let part = new Partition
-                             {
-                                 Start    = entry.offset,
-                                 Offset   = (ulong)(entry.offset * sector.Length),
-                                 Size     = entry.size,
-                                 Length   = (ulong)(entry.size * sector.Length),
-                                 Type     = "Rio Karma",
-                                 Sequence = counter++,
-                                 Scheme   = Name
-                             } where entry.type == ENTRY_MAGIC select part).ToList();
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct Table
+    {
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 270)]
+        public readonly byte[] reserved;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
+        public readonly Entry[] entries;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 208)]
+        public readonly byte[] padding;
+        public readonly ushort magic;
+    }
 
-            return true;
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        readonly struct Table
-        {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 270)]
-            public readonly byte[] reserved;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
-            public readonly Entry[] entries;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 208)]
-            public readonly byte[] padding;
-            public readonly ushort magic;
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        readonly struct Entry
-        {
-            public readonly uint reserved;
-            public readonly byte type;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-            public readonly byte[] reserved2;
-            public readonly uint offset;
-            public readonly uint size;
-        }
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct Entry
+    {
+        public readonly uint reserved;
+        public readonly byte type;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+        public readonly byte[] reserved2;
+        public readonly uint offset;
+        public readonly uint size;
     }
 }

@@ -41,214 +41,443 @@ using Aaru.Console;
 using Aaru.Helpers;
 using Schemas;
 
-namespace Aaru.Filesystems
+namespace Aaru.Filesystems;
+
+public sealed partial class CPM
 {
-    public sealed partial class CPM
+    /// <inheritdoc />
+    public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
-        /// <inheritdoc />
-        public bool Identify(IMediaImage imagePlugin, Partition partition)
+        ErrorNumber errno = ErrorNumber.NoError;
+
+        // This will only continue on devices with a chance to have ever been used by CP/M while failing on all others
+        // It's ugly, but will stop a lot of false positives
+        switch(imagePlugin.Info.MediaType)
         {
-            ErrorNumber errno = ErrorNumber.NoError;
+            case MediaType.Unknown:
+            case MediaType.Apple32SS:
+            case MediaType.Apple32DS:
+            case MediaType.Apple33SS:
+            case MediaType.Apple33DS:
+            case MediaType.DOS_525_SS_DD_8:
+            case MediaType.DOS_525_SS_DD_9:
+            case MediaType.DOS_525_DS_DD_8:
+            case MediaType.DOS_525_DS_DD_9:
+            case MediaType.DOS_525_HD:
+            case MediaType.DOS_35_SS_DD_8:
+            case MediaType.DOS_35_SS_DD_9:
+            case MediaType.DOS_35_DS_DD_8:
+            case MediaType.DOS_35_DS_DD_9:
+            case MediaType.DOS_35_HD:
+            case MediaType.DOS_35_ED:
+            case MediaType.IBM23FD:
+            case MediaType.IBM33FD_128:
+            case MediaType.IBM33FD_256:
+            case MediaType.IBM33FD_512:
+            case MediaType.IBM43FD_128:
+            case MediaType.IBM43FD_256:
+            case MediaType.IBM53FD_256:
+            case MediaType.IBM53FD_512:
+            case MediaType.IBM53FD_1024:
+            case MediaType.RX01:
+            case MediaType.RX02:
+            case MediaType.RX03:
+            case MediaType.RX50:
+            case MediaType.ACORN_525_SS_SD_40:
+            case MediaType.ACORN_525_SS_SD_80:
+            case MediaType.ACORN_525_SS_DD_40:
+            case MediaType.ACORN_525_SS_DD_80:
+            case MediaType.ACORN_525_DS_DD:
+            case MediaType.ATARI_525_SD:
+            case MediaType.ATARI_525_ED:
+            case MediaType.ATARI_525_DD:
+            case MediaType.CBM_35_DD:
+            case MediaType.CBM_1540:
+            case MediaType.CBM_1540_Ext:
+            case MediaType.CBM_1571:
+            case MediaType.NEC_8_SD:
+            case MediaType.NEC_8_DD:
+            case MediaType.NEC_525_SS:
+            case MediaType.NEC_525_DS:
+            case MediaType.NEC_525_HD:
+            case MediaType.NEC_35_HD_8:
+            case MediaType.NEC_35_HD_15:
+            case MediaType.SHARP_525_9:
+            case MediaType.SHARP_35_9:
+            case MediaType.ECMA_99_8:
+            case MediaType.ECMA_99_15:
+            case MediaType.ECMA_99_26:
+            case MediaType.ECMA_54:
+            case MediaType.ECMA_59:
+            case MediaType.ECMA_66:
+            case MediaType.ECMA_69_8:
+            case MediaType.ECMA_69_15:
+            case MediaType.ECMA_69_26:
+            case MediaType.ECMA_70:
+            case MediaType.ECMA_78:
+            case MediaType.ECMA_78_2:
+            case MediaType.Apricot_35:
+            case MediaType.CompactFloppy:
+            case MediaType.DemiDiskette:
+            case MediaType.QuickDisk:
+            case MediaType.Wafer:
+            case MediaType.ZXMicrodrive:
+            case MediaType.AppleProfile:
+            case MediaType.AppleWidget:
+            case MediaType.AppleHD20:
+            case MediaType.RA60:
+            case MediaType.RA80:
+            case MediaType.RA81:
+            case MediaType.RC25:
+            case MediaType.RD31:
+            case MediaType.RD32:
+            case MediaType.RD51:
+            case MediaType.RD52:
+            case MediaType.RD53:
+            case MediaType.RD54:
+            case MediaType.RK06:
+            case MediaType.RK06_18:
+            case MediaType.RK07:
+            case MediaType.RK07_18:
+            case MediaType.RM02:
+            case MediaType.RM03:
+            case MediaType.RM05:
+            case MediaType.RP02:
+            case MediaType.RP02_18:
+            case MediaType.RP03:
+            case MediaType.RP03_18:
+            case MediaType.RP04:
+            case MediaType.RP04_18:
+            case MediaType.RP05:
+            case MediaType.RP05_18:
+            case MediaType.RP06:
+            case MediaType.RP06_18:
+            case MediaType.GENERIC_HDD:
+            case MediaType.FlashDrive:
+            case MediaType.MetaFloppy_Mod_I:
+            case MediaType.MetaFloppy_Mod_II: break;
+            default: return false;
+        }
 
-            // This will only continue on devices with a chance to have ever been used by CP/M while failing on all others
-            // It's ugly, but will stop a lot of false positives
-            switch(imagePlugin.Info.MediaType)
+        // This will try to identify a CP/M filesystem
+        // However as it contains no identification marks whatsoever it's more something of trial-and-error
+        // As anything can happen, better try{}catch{} than sorry ;)
+        try
+        {
+            byte[] sector;
+            ulong  sectorSize;
+            ulong  firstDirectorySector;
+            byte[] directory = null;
+            _workingDefinition = null;
+            _label             = null;
+
+            // Try Amstrad superblock
+            if(!_cpmFound)
             {
-                case MediaType.Unknown:
-                case MediaType.Apple32SS:
-                case MediaType.Apple32DS:
-                case MediaType.Apple33SS:
-                case MediaType.Apple33DS:
-                case MediaType.DOS_525_SS_DD_8:
-                case MediaType.DOS_525_SS_DD_9:
-                case MediaType.DOS_525_DS_DD_8:
-                case MediaType.DOS_525_DS_DD_9:
-                case MediaType.DOS_525_HD:
-                case MediaType.DOS_35_SS_DD_8:
-                case MediaType.DOS_35_SS_DD_9:
-                case MediaType.DOS_35_DS_DD_8:
-                case MediaType.DOS_35_DS_DD_9:
-                case MediaType.DOS_35_HD:
-                case MediaType.DOS_35_ED:
-                case MediaType.IBM23FD:
-                case MediaType.IBM33FD_128:
-                case MediaType.IBM33FD_256:
-                case MediaType.IBM33FD_512:
-                case MediaType.IBM43FD_128:
-                case MediaType.IBM43FD_256:
-                case MediaType.IBM53FD_256:
-                case MediaType.IBM53FD_512:
-                case MediaType.IBM53FD_1024:
-                case MediaType.RX01:
-                case MediaType.RX02:
-                case MediaType.RX03:
-                case MediaType.RX50:
-                case MediaType.ACORN_525_SS_SD_40:
-                case MediaType.ACORN_525_SS_SD_80:
-                case MediaType.ACORN_525_SS_DD_40:
-                case MediaType.ACORN_525_SS_DD_80:
-                case MediaType.ACORN_525_DS_DD:
-                case MediaType.ATARI_525_SD:
-                case MediaType.ATARI_525_ED:
-                case MediaType.ATARI_525_DD:
-                case MediaType.CBM_35_DD:
-                case MediaType.CBM_1540:
-                case MediaType.CBM_1540_Ext:
-                case MediaType.CBM_1571:
-                case MediaType.NEC_8_SD:
-                case MediaType.NEC_8_DD:
-                case MediaType.NEC_525_SS:
-                case MediaType.NEC_525_DS:
-                case MediaType.NEC_525_HD:
-                case MediaType.NEC_35_HD_8:
-                case MediaType.NEC_35_HD_15:
-                case MediaType.SHARP_525_9:
-                case MediaType.SHARP_35_9:
-                case MediaType.ECMA_99_8:
-                case MediaType.ECMA_99_15:
-                case MediaType.ECMA_99_26:
-                case MediaType.ECMA_54:
-                case MediaType.ECMA_59:
-                case MediaType.ECMA_66:
-                case MediaType.ECMA_69_8:
-                case MediaType.ECMA_69_15:
-                case MediaType.ECMA_69_26:
-                case MediaType.ECMA_70:
-                case MediaType.ECMA_78:
-                case MediaType.ECMA_78_2:
-                case MediaType.Apricot_35:
-                case MediaType.CompactFloppy:
-                case MediaType.DemiDiskette:
-                case MediaType.QuickDisk:
-                case MediaType.Wafer:
-                case MediaType.ZXMicrodrive:
-                case MediaType.AppleProfile:
-                case MediaType.AppleWidget:
-                case MediaType.AppleHD20:
-                case MediaType.RA60:
-                case MediaType.RA80:
-                case MediaType.RA81:
-                case MediaType.RC25:
-                case MediaType.RD31:
-                case MediaType.RD32:
-                case MediaType.RD51:
-                case MediaType.RD52:
-                case MediaType.RD53:
-                case MediaType.RD54:
-                case MediaType.RK06:
-                case MediaType.RK06_18:
-                case MediaType.RK07:
-                case MediaType.RK07_18:
-                case MediaType.RM02:
-                case MediaType.RM03:
-                case MediaType.RM05:
-                case MediaType.RP02:
-                case MediaType.RP02_18:
-                case MediaType.RP03:
-                case MediaType.RP03_18:
-                case MediaType.RP04:
-                case MediaType.RP04_18:
-                case MediaType.RP05:
-                case MediaType.RP05_18:
-                case MediaType.RP06:
-                case MediaType.RP06_18:
-                case MediaType.GENERIC_HDD:
-                case MediaType.FlashDrive:
-                case MediaType.MetaFloppy_Mod_I:
-                case MediaType.MetaFloppy_Mod_II: break;
-                default: return false;
-            }
+                // Read CHS = {0,0,1}
+                errno = imagePlugin.ReadSector(0 + partition.Start, out sector);
 
-            // This will try to identify a CP/M filesystem
-            // However as it contains no identification marks whatsoever it's more something of trial-and-error
-            // As anything can happen, better try{}catch{} than sorry ;)
-            try
-            {
-                byte[] sector;
-                ulong  sectorSize;
-                ulong  firstDirectorySector;
-                byte[] directory = null;
-                _workingDefinition = null;
-                _label             = null;
-
-                // Try Amstrad superblock
-                if(!_cpmFound)
+                if(errno == ErrorNumber.NoError)
                 {
-                    // Read CHS = {0,0,1}
-                    errno = imagePlugin.ReadSector(0 + partition.Start, out sector);
+                    int amsSbOffset = 0;
 
-                    if(errno == ErrorNumber.NoError)
+                    uint sig1 = BitConverter.ToUInt32(sector, 0x2B);
+                    uint sig2 = BitConverter.ToUInt32(sector, 0x33) & 0x00FFFFFF;
+                    uint sig3 = BitConverter.ToUInt32(sector, 0x7C);
+
+                    // PCW16 extended boot record
+                    if(sig1 == 0x4D2F5043 &&
+                       sig2 == 0x004B5344 &&
+                       sig3 == sig1)
+                        amsSbOffset = 0x80;
+
+                    // Read the superblock
+                    AmstradSuperBlock amsSb =
+                        Marshal.ByteArrayToStructureLittleEndian<AmstradSuperBlock>(sector, amsSbOffset, 16);
+
+                    // Check that format byte and sidedness indicate the same number of sizes
+                    if((amsSb.format == 0 && (amsSb.sidedness & 0x02) == 0) ||
+                       (amsSb.format == 2 && (amsSb.sidedness & 0x02) == 1) ||
+                       (amsSb.format == 2 && (amsSb.sidedness & 0x02) == 2))
                     {
-                        int amsSbOffset = 0;
+                        // Calculate device limits
+                        ulong sides       = (ulong)(amsSb.format == 0 ? 1 : 2);
+                        ulong sectorCount = (ulong)(amsSb.tps * amsSb.spt * (byte)sides);
+                        sectorSize = (ulong)(128 << amsSb.psh);
 
-                        uint sig1 = BitConverter.ToUInt32(sector, 0x2B);
-                        uint sig2 = BitConverter.ToUInt32(sector, 0x33) & 0x00FFFFFF;
-                        uint sig3 = BitConverter.ToUInt32(sector, 0x7C);
-
-                        // PCW16 extended boot record
-                        if(sig1 == 0x4D2F5043 &&
-                           sig2 == 0x004B5344 &&
-                           sig3 == sig1)
-                            amsSbOffset = 0x80;
-
-                        // Read the superblock
-                        AmstradSuperBlock amsSb =
-                            Marshal.ByteArrayToStructureLittleEndian<AmstradSuperBlock>(sector, amsSbOffset, 16);
-
-                        // Check that format byte and sidedness indicate the same number of sizes
-                        if((amsSb.format == 0 && (amsSb.sidedness & 0x02) == 0) ||
-                           (amsSb.format == 2 && (amsSb.sidedness & 0x02) == 1) ||
-                           (amsSb.format == 2 && (amsSb.sidedness & 0x02) == 2))
+                        // Compare device limits from superblock to real limits
+                        if(sectorSize  == imagePlugin.Info.SectorSize &&
+                           sectorCount == imagePlugin.Info.Sectors)
                         {
-                            // Calculate device limits
-                            ulong sides       = (ulong)(amsSb.format == 0 ? 1 : 2);
-                            ulong sectorCount = (ulong)(amsSb.tps * amsSb.spt * (byte)sides);
-                            sectorSize = (ulong)(128 << amsSb.psh);
+                            _cpmFound            = true;
+                            firstDirectorySector = (ulong)(amsSb.off * amsSb.spt);
 
-                            // Compare device limits from superblock to real limits
-                            if(sectorSize  == imagePlugin.Info.SectorSize &&
-                               sectorCount == imagePlugin.Info.Sectors)
+                            // Build a DiscParameterBlock
+                            _dpb = new DiscParameterBlock
                             {
-                                _cpmFound            = true;
-                                firstDirectorySector = (ulong)(amsSb.off * amsSb.spt);
+                                al0 = sectorCount == 1440 ? (byte)0xF0 : (byte)0xC0,
+                                spt = amsSb.spt,
+                                bsh = amsSb.bsh
+                            };
 
-                                // Build a DiscParameterBlock
-                                _dpb = new DiscParameterBlock
+                            for(int i = 0; i < _dpb.bsh; i++)
+                                _dpb.blm += (byte)Math.Pow(2, i);
+
+                            if(sectorCount >= 1440)
+                            {
+                                _dpb.cks = 0x40;
+                                _dpb.drm = 0xFF;
+                            }
+                            else
+                            {
+                                _dpb.cks = 0x10;
+                                _dpb.drm = 0x3F;
+                            }
+
+                            _dpb.dsm = 0; // I don't care
+                            _dpb.exm = sectorCount == 2880 ? (byte)1 : (byte)0;
+                            _dpb.off = amsSb.off;
+                            _dpb.psh = amsSb.psh;
+
+                            for(int i = 0; i < _dpb.psh; i++)
+                                _dpb.phm += (byte)Math.Pow(2, i);
+
+                            _dpb.spt = (ushort)(amsSb.spt * (sectorSize              / 128));
+                            uint directoryLength = (uint)(((ulong)_dpb.drm + 1) * 32 / sectorSize);
+
+                            errno = imagePlugin.ReadSectors(firstDirectorySector + partition.Start, directoryLength,
+                                                            out directory);
+
+                            // Build a CP/M disk definition
+                            _workingDefinition = new CpmDefinition
+                            {
+                                al0             = _dpb.al0,
+                                al1             = _dpb.al1,
+                                bitrate         = "LOW",
+                                blm             = _dpb.blm,
+                                bsh             = _dpb.bsh,
+                                bytesPerSector  = 512,
+                                cylinders       = amsSb.tps,
+                                drm             = _dpb.drm,
+                                dsm             = _dpb.dsm,
+                                encoding        = "MFM",
+                                evenOdd         = false,
+                                exm             = _dpb.exm,
+                                label           = null,
+                                comment         = "Amstrad PCW superblock",
+                                ofs             = _dpb.off,
+                                sectorsPerTrack = amsSb.spt,
+                                side1 = new Side
                                 {
-                                    al0 = sectorCount == 1440 ? (byte)0xF0 : (byte)0xC0,
-                                    spt = amsSb.spt,
-                                    bsh = amsSb.bsh
+                                    sideId    = 0,
+                                    sectorIds = new int[amsSb.spt]
+                                }
+                            };
+
+                            for(int si = 0; si < amsSb.spt; si++)
+                                _workingDefinition.side1.sectorIds[si] = si + 1;
+
+                            if(amsSb.format == 2)
+                            {
+                                switch(amsSb.sidedness & 0x02)
+                                {
+                                    case 1:
+                                        _workingDefinition.order = "SIDES";
+
+                                        break;
+                                    case 2:
+                                        _workingDefinition.order = "CYLINDERS";
+
+                                        break;
+                                    default:
+                                        _workingDefinition.order = null;
+
+                                        break;
+                                }
+
+                                _workingDefinition.side2 = new Side
+                                {
+                                    sideId    = 1,
+                                    sectorIds = new int[amsSb.spt]
                                 };
 
-                                for(int i = 0; i < _dpb.bsh; i++)
-                                    _dpb.blm += (byte)Math.Pow(2, i);
+                                for(int si = 0; si < amsSb.spt; si++)
+                                    _workingDefinition.side2.sectorIds[si] = si + 1;
+                            }
+                            else
+                                _workingDefinition.order = null;
 
-                                if(sectorCount >= 1440)
+                            _workingDefinition.skew = 2;
+                            _workingDefinition.sofs = 0;
+
+                            AaruConsole.DebugWriteLine("CP/M Plugin", "Found Amstrad superblock.");
+                        }
+                    }
+                }
+            }
+
+            // Try CP/M-86 superblock for hard disks
+            if(!_cpmFound)
+            {
+                // Read CHS = {0,0,4}
+                errno = imagePlugin.ReadSector(3 + partition.Start, out sector);
+
+                if(errno == ErrorNumber.NoError)
+                {
+                    ushort sum = 0;
+
+                    // Sum of all 16-bit words that make this sector must be 0
+                    for(int i = 0; i < sector.Length; i += 2)
+                        sum += BitConverter.ToUInt16(sector, i);
+
+                    // It may happen that there is a corrupted superblock
+                    // Better to ignore corrupted than to false positive the rest
+                    if(sum == 0)
+                    {
+                        // Read the superblock
+                        HardDiskSuperBlock hddSb =
+                            Marshal.ByteArrayToStructureLittleEndian<HardDiskSuperBlock>(sector);
+
+                        // Calculate volume size
+                        sectorSize = (ulong)(hddSb.recordsPerSector * 128);
+                        ulong sectorsInPartition = (ulong)(hddSb.cylinders * hddSb.heads * hddSb.sectorsPerTrack);
+
+                        ulong startingSector =
+                            (ulong)(((hddSb.firstCylinder * hddSb.heads) + hddSb.heads) * hddSb.sectorsPerTrack);
+
+                        // If volume size corresponds with working partition (this variant will be inside MBR partitioning)
+                        if(sectorSize                           == imagePlugin.Info.SectorSize &&
+                           startingSector                       == partition.Start             &&
+                           sectorsInPartition + partition.Start <= partition.End)
+                        {
+                            _cpmFound            = true;
+                            firstDirectorySector = (ulong)(hddSb.off * hddSb.sectorsPerTrack);
+
+                            // Build a DiscParameterBlock
+                            _dpb = new DiscParameterBlock
+                            {
+                                al0 = (byte)hddSb.al0,
+                                al1 = (byte)hddSb.al1,
+                                blm = hddSb.blm,
+                                bsh = hddSb.bsh,
+                                cks = hddSb.cks,
+                                drm = hddSb.drm,
+                                dsm = hddSb.dsm,
+                                exm = hddSb.exm,
+                                off = hddSb.off,
+
+                                // Needed?
+                                phm = 0,
+
+                                // Needed?
+                                psh = 0,
+                                spt = hddSb.spt
+                            };
+
+                            uint directoryLength = (uint)(((ulong)_dpb.drm + 1) * 32 / sectorSize);
+
+                            errno = imagePlugin.ReadSectors(firstDirectorySector + partition.Start, directoryLength,
+                                                            out directory);
+
+                            AaruConsole.DebugWriteLine("CP/M Plugin", "Found CP/M-86 hard disk superblock.");
+
+                            // Build a CP/M disk definition
+                            _workingDefinition = new CpmDefinition
+                            {
+                                al0             = _dpb.al0,
+                                al1             = _dpb.al1,
+                                bitrate         = "HIGH",
+                                blm             = _dpb.blm,
+                                bsh             = _dpb.bsh,
+                                bytesPerSector  = 512,
+                                cylinders       = hddSb.cylinders,
+                                drm             = _dpb.drm,
+                                dsm             = _dpb.dsm,
+                                encoding        = "MFM",
+                                evenOdd         = false,
+                                exm             = _dpb.exm,
+                                label           = null,
+                                comment         = "CP/M-86 hard disk superblock",
+                                ofs             = _dpb.off,
+                                sectorsPerTrack = hddSb.sectorsPerTrack,
+                                side1 = new Side
                                 {
-                                    _dpb.cks = 0x40;
-                                    _dpb.drm = 0xFF;
-                                }
-                                else
+                                    sideId    = 0,
+                                    sectorIds = new int[hddSb.sectorsPerTrack]
+                                },
+                                order = "SIDES",
+                                side2 = new Side
                                 {
-                                    _dpb.cks = 0x10;
-                                    _dpb.drm = 0x3F;
-                                }
+                                    sideId    = 1,
+                                    sectorIds = new int[hddSb.sectorsPerTrack]
+                                },
+                                skew = 0,
+                                sofs = 0
+                            };
 
-                                _dpb.dsm = 0; // I don't care
-                                _dpb.exm = sectorCount == 2880 ? (byte)1 : (byte)0;
-                                _dpb.off = amsSb.off;
-                                _dpb.psh = amsSb.psh;
+                            for(int si = 0; si < hddSb.sectorsPerTrack; si++)
+                                _workingDefinition.side1.sectorIds[si] = si + 1;
 
-                                for(int i = 0; i < _dpb.psh; i++)
-                                    _dpb.phm += (byte)Math.Pow(2, i);
+                            for(int si = 0; si < hddSb.spt; si++)
+                                _workingDefinition.side2.sectorIds[si] = si + 1;
+                        }
+                    }
+                }
+            }
 
-                                _dpb.spt = (ushort)(amsSb.spt * (sectorSize              / 128));
-                                uint directoryLength = (uint)(((ulong)_dpb.drm + 1) * 32 / sectorSize);
+            // Try CP/M-86 format ID for floppies
+            if(!_cpmFound)
+            {
+                // Read CHS = {0,0,1}
+                errno = imagePlugin.ReadSector(0 + partition.Start, out sector);
 
-                                errno = imagePlugin.ReadSectors(firstDirectorySector + partition.Start, directoryLength,
-                                                                out directory);
+                if(errno == ErrorNumber.NoError)
+                {
+                    byte formatByte;
 
-                                // Build a CP/M disk definition
+                    // Check for alternate location of format ID
+                    if(sector.Last() == 0x00 ||
+                       sector.Last() == 0xFF)
+                        if(sector[0x40] == 0x94 ||
+                           sector[0x40] == 0x26)
+                            formatByte = sector[0x40];
+                        else
+                            formatByte = sector.Last();
+                    else
+                        formatByte = sector.Last();
+
+                    uint firstDirectorySector86 = 0;
+
+                    // Check format ID
+                    // If it is one of the known IDs, check disk size corresponds to the one we expect
+                    // If so, build a DiscParameterBlock and a CP/M disk definition
+                    // Will not work on over-formatted disks (40 cylinder volume on an 80 cylinder disk,
+                    // something that happens a lot in IBM PC 5.25" disks)
+                    switch((FormatByte)formatByte)
+                    {
+                        case FormatByte.k160:
+                            if(imagePlugin.Info.SectorSize == 512 &&
+                               imagePlugin.Info.Sectors    == 320)
+                            {
+                                _cpmFound              = true;
+                                firstDirectorySector86 = 8;
+
+                                _dpb = new DiscParameterBlock
+                                {
+                                    al0 = 0xC0,
+                                    al1 = 0,
+                                    blm = 7,
+                                    bsh = 3,
+                                    cks = 0x10,
+                                    drm = 0x3F,
+                                    dsm = 0x9B,
+                                    exm = 0,
+                                    off = 1,
+                                    phm = 3,
+                                    psh = 2,
+                                    spt = 8 * 4
+                                };
+
                                 _workingDefinition = new CpmDefinition
                                 {
                                     al0             = _dpb.al0,
@@ -257,131 +486,312 @@ namespace Aaru.Filesystems
                                     blm             = _dpb.blm,
                                     bsh             = _dpb.bsh,
                                     bytesPerSector  = 512,
-                                    cylinders       = amsSb.tps,
+                                    cylinders       = 40,
                                     drm             = _dpb.drm,
                                     dsm             = _dpb.dsm,
                                     encoding        = "MFM",
                                     evenOdd         = false,
                                     exm             = _dpb.exm,
                                     label           = null,
-                                    comment         = "Amstrad PCW superblock",
+                                    comment         = "CP/M-86 floppy identifier",
                                     ofs             = _dpb.off,
-                                    sectorsPerTrack = amsSb.spt,
+                                    sectorsPerTrack = 8,
                                     side1 = new Side
                                     {
                                         sideId    = 0,
-                                        sectorIds = new int[amsSb.spt]
-                                    }
+                                        sectorIds = new int[8]
+                                    },
+                                    skew = 0,
+                                    sofs = 0
                                 };
 
-                                for(int si = 0; si < amsSb.spt; si++)
+                                for(int si = 0; si < 8; si++)
                                     _workingDefinition.side1.sectorIds[si] = si + 1;
-
-                                if(amsSb.format == 2)
-                                {
-                                    switch(amsSb.sidedness & 0x02)
-                                    {
-                                        case 1:
-                                            _workingDefinition.order = "SIDES";
-
-                                            break;
-                                        case 2:
-                                            _workingDefinition.order = "CYLINDERS";
-
-                                            break;
-                                        default:
-                                            _workingDefinition.order = null;
-
-                                            break;
-                                    }
-
-                                    _workingDefinition.side2 = new Side
-                                    {
-                                        sideId    = 1,
-                                        sectorIds = new int[amsSb.spt]
-                                    };
-
-                                    for(int si = 0; si < amsSb.spt; si++)
-                                        _workingDefinition.side2.sectorIds[si] = si + 1;
-                                }
-                                else
-                                    _workingDefinition.order = null;
-
-                                _workingDefinition.skew = 2;
-                                _workingDefinition.sofs = 0;
-
-                                AaruConsole.DebugWriteLine("CP/M Plugin", "Found Amstrad superblock.");
                             }
-                        }
-                    }
-                }
 
-                // Try CP/M-86 superblock for hard disks
-                if(!_cpmFound)
-                {
-                    // Read CHS = {0,0,4}
-                    errno = imagePlugin.ReadSector(3 + partition.Start, out sector);
-
-                    if(errno == ErrorNumber.NoError)
-                    {
-                        ushort sum = 0;
-
-                        // Sum of all 16-bit words that make this sector must be 0
-                        for(int i = 0; i < sector.Length; i += 2)
-                            sum += BitConverter.ToUInt16(sector, i);
-
-                        // It may happen that there is a corrupted superblock
-                        // Better to ignore corrupted than to false positive the rest
-                        if(sum == 0)
-                        {
-                            // Read the superblock
-                            HardDiskSuperBlock hddSb =
-                                Marshal.ByteArrayToStructureLittleEndian<HardDiskSuperBlock>(sector);
-
-                            // Calculate volume size
-                            sectorSize = (ulong)(hddSb.recordsPerSector * 128);
-                            ulong sectorsInPartition = (ulong)(hddSb.cylinders * hddSb.heads * hddSb.sectorsPerTrack);
-
-                            ulong startingSector =
-                                (ulong)(((hddSb.firstCylinder * hddSb.heads) + hddSb.heads) * hddSb.sectorsPerTrack);
-
-                            // If volume size corresponds with working partition (this variant will be inside MBR partitioning)
-                            if(sectorSize                           == imagePlugin.Info.SectorSize &&
-                               startingSector                       == partition.Start             &&
-                               sectorsInPartition + partition.Start <= partition.End)
+                            break;
+                        case FormatByte.k320:
+                            if(imagePlugin.Info.SectorSize == 512 &&
+                               imagePlugin.Info.Sectors    == 640)
                             {
-                                _cpmFound            = true;
-                                firstDirectorySector = (ulong)(hddSb.off * hddSb.sectorsPerTrack);
+                                _cpmFound              = true;
+                                firstDirectorySector86 = 16;
 
-                                // Build a DiscParameterBlock
                                 _dpb = new DiscParameterBlock
                                 {
-                                    al0 = (byte)hddSb.al0,
-                                    al1 = (byte)hddSb.al1,
-                                    blm = hddSb.blm,
-                                    bsh = hddSb.bsh,
-                                    cks = hddSb.cks,
-                                    drm = hddSb.drm,
-                                    dsm = hddSb.dsm,
-                                    exm = hddSb.exm,
-                                    off = hddSb.off,
-
-                                    // Needed?
-                                    phm = 0,
-
-                                    // Needed?
-                                    psh = 0,
-                                    spt = hddSb.spt
+                                    al0 = 0x80,
+                                    al1 = 0,
+                                    blm = 0x0F,
+                                    bsh = 4,
+                                    cks = 0x10,
+                                    drm = 0x3F,
+                                    dsm = 0x9D,
+                                    exm = 1,
+                                    off = 2,
+                                    phm = 3,
+                                    psh = 2,
+                                    spt = 8 * 4
                                 };
 
-                                uint directoryLength = (uint)(((ulong)_dpb.drm + 1) * 32 / sectorSize);
+                                _workingDefinition = new CpmDefinition
+                                {
+                                    al0             = _dpb.al0,
+                                    al1             = _dpb.al1,
+                                    bitrate         = "LOW",
+                                    blm             = _dpb.blm,
+                                    bsh             = _dpb.bsh,
+                                    bytesPerSector  = 512,
+                                    cylinders       = 40,
+                                    drm             = _dpb.drm,
+                                    dsm             = _dpb.dsm,
+                                    encoding        = "MFM",
+                                    evenOdd         = false,
+                                    exm             = _dpb.exm,
+                                    label           = null,
+                                    comment         = "CP/M-86 floppy identifier",
+                                    ofs             = _dpb.off,
+                                    sectorsPerTrack = 8,
+                                    side1 = new Side
+                                    {
+                                        sideId    = 0,
+                                        sectorIds = new int[8]
+                                    },
+                                    order = "SIDES",
+                                    side2 = new Side
+                                    {
+                                        sideId    = 1,
+                                        sectorIds = new int[8]
+                                    },
+                                    skew = 0,
+                                    sofs = 0
+                                };
 
-                                errno = imagePlugin.ReadSectors(firstDirectorySector + partition.Start, directoryLength,
-                                                                out directory);
+                                for(int si = 0; si < 8; si++)
+                                    _workingDefinition.side1.sectorIds[si] = si + 1;
 
-                                AaruConsole.DebugWriteLine("CP/M Plugin", "Found CP/M-86 hard disk superblock.");
+                                for(int si = 0; si < 8; si++)
+                                    _workingDefinition.side2.sectorIds[si] = si + 1;
+                            }
 
-                                // Build a CP/M disk definition
+                            break;
+                        case FormatByte.k360:
+                        case FormatByte.k360Alt:
+                        case FormatByte.k360Alt2:
+                            if(imagePlugin.Info.SectorSize == 512 &&
+                               imagePlugin.Info.Sectors    == 720)
+                            {
+                                _cpmFound              = true;
+                                firstDirectorySector86 = 36;
+
+                                _dpb = new DiscParameterBlock
+                                {
+                                    al0 = 0x80,
+                                    al1 = 0,
+                                    blm = 0x0F,
+                                    bsh = 4,
+                                    cks = 0x10,
+                                    drm = 0x3F,
+                                    dsm = 0, // Unknown. Needed?
+                                    exm = 1,
+                                    off = 4,
+                                    phm = 3,
+                                    psh = 2,
+                                    spt = 9 * 4
+                                };
+
+                                _workingDefinition = new CpmDefinition
+                                {
+                                    al0             = _dpb.al0,
+                                    al1             = _dpb.al1,
+                                    bitrate         = "LOW",
+                                    blm             = _dpb.blm,
+                                    bsh             = _dpb.bsh,
+                                    bytesPerSector  = 512,
+                                    cylinders       = 40,
+                                    drm             = _dpb.drm,
+                                    dsm             = _dpb.dsm,
+                                    encoding        = "MFM",
+                                    evenOdd         = false,
+                                    exm             = _dpb.exm,
+                                    label           = null,
+                                    comment         = "CP/M-86 floppy identifier",
+                                    ofs             = _dpb.off,
+                                    sectorsPerTrack = 9,
+                                    side1 = new Side
+                                    {
+                                        sideId    = 0,
+                                        sectorIds = new int[9]
+                                    },
+                                    order = "SIDES",
+                                    side2 = new Side
+                                    {
+                                        sideId    = 1,
+                                        sectorIds = new int[9]
+                                    },
+                                    skew = 0,
+                                    sofs = 0
+                                };
+
+                                for(int si = 0; si < 9; si++)
+                                    _workingDefinition.side1.sectorIds[si] = si + 1;
+
+                                for(int si = 0; si < 9; si++)
+                                    _workingDefinition.side2.sectorIds[si] = si + 1;
+                            }
+
+                            break;
+                        case FormatByte.k720:
+                        case FormatByte.k720Alt:
+                            if(imagePlugin.Info.SectorSize == 512 &&
+                               imagePlugin.Info.Sectors    == 1440)
+                            {
+                                _cpmFound              = true;
+                                firstDirectorySector86 = 36;
+
+                                _dpb = new DiscParameterBlock
+                                {
+                                    al0 = 0xF0,
+                                    al1 = 0,
+                                    blm = 0x0F,
+                                    bsh = 4,
+                                    cks = 0x40,
+                                    drm = 0xFF,
+                                    dsm = 0x15E,
+                                    exm = 0,
+                                    off = 4,
+                                    phm = 3,
+                                    psh = 2,
+                                    spt = 9 * 4
+                                };
+
+                                _workingDefinition = new CpmDefinition
+                                {
+                                    al0             = _dpb.al0,
+                                    al1             = _dpb.al1,
+                                    bitrate         = "LOW",
+                                    blm             = _dpb.blm,
+                                    bsh             = _dpb.bsh,
+                                    bytesPerSector  = 512,
+                                    cylinders       = 80,
+                                    drm             = _dpb.drm,
+                                    dsm             = _dpb.dsm,
+                                    encoding        = "MFM",
+                                    evenOdd         = false,
+                                    exm             = _dpb.exm,
+                                    label           = null,
+                                    comment         = "CP/M-86 floppy identifier",
+                                    ofs             = _dpb.off,
+                                    sectorsPerTrack = 9,
+                                    side1 = new Side
+                                    {
+                                        sideId    = 0,
+                                        sectorIds = new int[9]
+                                    },
+                                    order = "SIDES",
+                                    side2 = new Side
+                                    {
+                                        sideId    = 1,
+                                        sectorIds = new int[9]
+                                    },
+                                    skew = 0,
+                                    sofs = 0
+                                };
+
+                                for(int si = 0; si < 9; si++)
+                                    _workingDefinition.side1.sectorIds[si] = si + 1;
+
+                                for(int si = 0; si < 9; si++)
+                                    _workingDefinition.side2.sectorIds[si] = si + 1;
+                            }
+
+                            break;
+                        case FormatByte.f720:
+                            if(imagePlugin.Info.SectorSize == 512 &&
+                               imagePlugin.Info.Sectors    == 1440)
+                            {
+                                _cpmFound              = true;
+                                firstDirectorySector86 = 18;
+
+                                _dpb = new DiscParameterBlock
+                                {
+                                    al0 = 0xF0,
+                                    al1 = 0,
+                                    blm = 0x0F,
+                                    bsh = 4,
+                                    cks = 0x40,
+                                    drm = 0xFF,
+                                    dsm = 0x162,
+                                    exm = 0,
+                                    off = 2,
+                                    phm = 3,
+                                    psh = 2,
+                                    spt = 9 * 4
+                                };
+
+                                _workingDefinition = new CpmDefinition
+                                {
+                                    al0             = _dpb.al0,
+                                    al1             = _dpb.al1,
+                                    bitrate         = "LOW",
+                                    blm             = _dpb.blm,
+                                    bsh             = _dpb.bsh,
+                                    bytesPerSector  = 512,
+                                    cylinders       = 80,
+                                    drm             = _dpb.drm,
+                                    dsm             = _dpb.dsm,
+                                    encoding        = "MFM",
+                                    evenOdd         = false,
+                                    exm             = _dpb.exm,
+                                    label           = null,
+                                    comment         = "CP/M-86 floppy identifier",
+                                    ofs             = _dpb.off,
+                                    sectorsPerTrack = 9,
+                                    side1 = new Side
+                                    {
+                                        sideId    = 0,
+                                        sectorIds = new int[9]
+                                    },
+                                    order = "CYLINDERS",
+                                    side2 = new Side
+                                    {
+                                        sideId    = 1,
+                                        sectorIds = new int[9]
+                                    },
+                                    skew = 0,
+                                    sofs = 0
+                                };
+
+                                for(int si = 0; si < 9; si++)
+                                    _workingDefinition.side1.sectorIds[si] = si + 1;
+
+                                for(int si = 0; si < 9; si++)
+                                    _workingDefinition.side2.sectorIds[si] = si + 1;
+                            }
+
+                            break;
+                        case FormatByte.f1200:
+                            if(imagePlugin.Info.SectorSize == 512 &&
+                               imagePlugin.Info.Sectors    == 2400)
+                            {
+                                _cpmFound              = true;
+                                firstDirectorySector86 = 30;
+
+                                _dpb = new DiscParameterBlock
+                                {
+                                    al0 = 0xC0,
+                                    al1 = 0,
+                                    blm = 0x1F,
+                                    bsh = 5,
+                                    cks = 0x40,
+                                    drm = 0xFF,
+                                    dsm = 0x127,
+                                    exm = 1,
+                                    off = 2,
+                                    phm = 3,
+                                    psh = 2,
+                                    spt = 15 * 4
+                                };
+
                                 _workingDefinition = new CpmDefinition
                                 {
                                     al0             = _dpb.al0,
@@ -390,888 +800,477 @@ namespace Aaru.Filesystems
                                     blm             = _dpb.blm,
                                     bsh             = _dpb.bsh,
                                     bytesPerSector  = 512,
-                                    cylinders       = hddSb.cylinders,
+                                    cylinders       = 80,
                                     drm             = _dpb.drm,
                                     dsm             = _dpb.dsm,
                                     encoding        = "MFM",
                                     evenOdd         = false,
                                     exm             = _dpb.exm,
                                     label           = null,
-                                    comment         = "CP/M-86 hard disk superblock",
+                                    comment         = "CP/M-86 floppy identifier",
                                     ofs             = _dpb.off,
-                                    sectorsPerTrack = hddSb.sectorsPerTrack,
+                                    sectorsPerTrack = 15,
                                     side1 = new Side
                                     {
                                         sideId    = 0,
-                                        sectorIds = new int[hddSb.sectorsPerTrack]
+                                        sectorIds = new int[15]
                                     },
-                                    order = "SIDES",
+                                    order = "CYLINDERS",
                                     side2 = new Side
                                     {
                                         sideId    = 1,
-                                        sectorIds = new int[hddSb.sectorsPerTrack]
+                                        sectorIds = new int[15]
                                     },
                                     skew = 0,
                                     sofs = 0
                                 };
 
-                                for(int si = 0; si < hddSb.sectorsPerTrack; si++)
+                                for(int si = 0; si < 15; si++)
                                     _workingDefinition.side1.sectorIds[si] = si + 1;
 
-                                for(int si = 0; si < hddSb.spt; si++)
+                                for(int si = 0; si < 15; si++)
                                     _workingDefinition.side2.sectorIds[si] = si + 1;
                             }
-                        }
-                    }
-                }
 
-                // Try CP/M-86 format ID for floppies
-                if(!_cpmFound)
-                {
-                    // Read CHS = {0,0,1}
-                    errno = imagePlugin.ReadSector(0 + partition.Start, out sector);
-
-                    if(errno == ErrorNumber.NoError)
-                    {
-                        byte formatByte;
-
-                        // Check for alternate location of format ID
-                        if(sector.Last() == 0x00 ||
-                           sector.Last() == 0xFF)
-                            if(sector[0x40] == 0x94 ||
-                               sector[0x40] == 0x26)
-                                formatByte = sector[0x40];
-                            else
-                                formatByte = sector.Last();
-                        else
-                            formatByte = sector.Last();
-
-                        uint firstDirectorySector86 = 0;
-
-                        // Check format ID
-                        // If it is one of the known IDs, check disk size corresponds to the one we expect
-                        // If so, build a DiscParameterBlock and a CP/M disk definition
-                        // Will not work on over-formatted disks (40 cylinder volume on an 80 cylinder disk,
-                        // something that happens a lot in IBM PC 5.25" disks)
-                        switch((FormatByte)formatByte)
-                        {
-                            case FormatByte.k160:
-                                if(imagePlugin.Info.SectorSize == 512 &&
-                                   imagePlugin.Info.Sectors    == 320)
-                                {
-                                    _cpmFound              = true;
-                                    firstDirectorySector86 = 8;
-
-                                    _dpb = new DiscParameterBlock
-                                    {
-                                        al0 = 0xC0,
-                                        al1 = 0,
-                                        blm = 7,
-                                        bsh = 3,
-                                        cks = 0x10,
-                                        drm = 0x3F,
-                                        dsm = 0x9B,
-                                        exm = 0,
-                                        off = 1,
-                                        phm = 3,
-                                        psh = 2,
-                                        spt = 8 * 4
-                                    };
-
-                                    _workingDefinition = new CpmDefinition
-                                    {
-                                        al0             = _dpb.al0,
-                                        al1             = _dpb.al1,
-                                        bitrate         = "LOW",
-                                        blm             = _dpb.blm,
-                                        bsh             = _dpb.bsh,
-                                        bytesPerSector  = 512,
-                                        cylinders       = 40,
-                                        drm             = _dpb.drm,
-                                        dsm             = _dpb.dsm,
-                                        encoding        = "MFM",
-                                        evenOdd         = false,
-                                        exm             = _dpb.exm,
-                                        label           = null,
-                                        comment         = "CP/M-86 floppy identifier",
-                                        ofs             = _dpb.off,
-                                        sectorsPerTrack = 8,
-                                        side1 = new Side
-                                        {
-                                            sideId    = 0,
-                                            sectorIds = new int[8]
-                                        },
-                                        skew = 0,
-                                        sofs = 0
-                                    };
-
-                                    for(int si = 0; si < 8; si++)
-                                        _workingDefinition.side1.sectorIds[si] = si + 1;
-                                }
-
-                                break;
-                            case FormatByte.k320:
-                                if(imagePlugin.Info.SectorSize == 512 &&
-                                   imagePlugin.Info.Sectors    == 640)
-                                {
-                                    _cpmFound              = true;
-                                    firstDirectorySector86 = 16;
-
-                                    _dpb = new DiscParameterBlock
-                                    {
-                                        al0 = 0x80,
-                                        al1 = 0,
-                                        blm = 0x0F,
-                                        bsh = 4,
-                                        cks = 0x10,
-                                        drm = 0x3F,
-                                        dsm = 0x9D,
-                                        exm = 1,
-                                        off = 2,
-                                        phm = 3,
-                                        psh = 2,
-                                        spt = 8 * 4
-                                    };
-
-                                    _workingDefinition = new CpmDefinition
-                                    {
-                                        al0             = _dpb.al0,
-                                        al1             = _dpb.al1,
-                                        bitrate         = "LOW",
-                                        blm             = _dpb.blm,
-                                        bsh             = _dpb.bsh,
-                                        bytesPerSector  = 512,
-                                        cylinders       = 40,
-                                        drm             = _dpb.drm,
-                                        dsm             = _dpb.dsm,
-                                        encoding        = "MFM",
-                                        evenOdd         = false,
-                                        exm             = _dpb.exm,
-                                        label           = null,
-                                        comment         = "CP/M-86 floppy identifier",
-                                        ofs             = _dpb.off,
-                                        sectorsPerTrack = 8,
-                                        side1 = new Side
-                                        {
-                                            sideId    = 0,
-                                            sectorIds = new int[8]
-                                        },
-                                        order = "SIDES",
-                                        side2 = new Side
-                                        {
-                                            sideId    = 1,
-                                            sectorIds = new int[8]
-                                        },
-                                        skew = 0,
-                                        sofs = 0
-                                    };
-
-                                    for(int si = 0; si < 8; si++)
-                                        _workingDefinition.side1.sectorIds[si] = si + 1;
-
-                                    for(int si = 0; si < 8; si++)
-                                        _workingDefinition.side2.sectorIds[si] = si + 1;
-                                }
-
-                                break;
-                            case FormatByte.k360:
-                            case FormatByte.k360Alt:
-                            case FormatByte.k360Alt2:
-                                if(imagePlugin.Info.SectorSize == 512 &&
-                                   imagePlugin.Info.Sectors    == 720)
-                                {
-                                    _cpmFound              = true;
-                                    firstDirectorySector86 = 36;
-
-                                    _dpb = new DiscParameterBlock
-                                    {
-                                        al0 = 0x80,
-                                        al1 = 0,
-                                        blm = 0x0F,
-                                        bsh = 4,
-                                        cks = 0x10,
-                                        drm = 0x3F,
-                                        dsm = 0, // Unknown. Needed?
-                                        exm = 1,
-                                        off = 4,
-                                        phm = 3,
-                                        psh = 2,
-                                        spt = 9 * 4
-                                    };
-
-                                    _workingDefinition = new CpmDefinition
-                                    {
-                                        al0             = _dpb.al0,
-                                        al1             = _dpb.al1,
-                                        bitrate         = "LOW",
-                                        blm             = _dpb.blm,
-                                        bsh             = _dpb.bsh,
-                                        bytesPerSector  = 512,
-                                        cylinders       = 40,
-                                        drm             = _dpb.drm,
-                                        dsm             = _dpb.dsm,
-                                        encoding        = "MFM",
-                                        evenOdd         = false,
-                                        exm             = _dpb.exm,
-                                        label           = null,
-                                        comment         = "CP/M-86 floppy identifier",
-                                        ofs             = _dpb.off,
-                                        sectorsPerTrack = 9,
-                                        side1 = new Side
-                                        {
-                                            sideId    = 0,
-                                            sectorIds = new int[9]
-                                        },
-                                        order = "SIDES",
-                                        side2 = new Side
-                                        {
-                                            sideId    = 1,
-                                            sectorIds = new int[9]
-                                        },
-                                        skew = 0,
-                                        sofs = 0
-                                    };
-
-                                    for(int si = 0; si < 9; si++)
-                                        _workingDefinition.side1.sectorIds[si] = si + 1;
-
-                                    for(int si = 0; si < 9; si++)
-                                        _workingDefinition.side2.sectorIds[si] = si + 1;
-                                }
-
-                                break;
-                            case FormatByte.k720:
-                            case FormatByte.k720Alt:
-                                if(imagePlugin.Info.SectorSize == 512 &&
-                                   imagePlugin.Info.Sectors    == 1440)
-                                {
-                                    _cpmFound              = true;
-                                    firstDirectorySector86 = 36;
-
-                                    _dpb = new DiscParameterBlock
-                                    {
-                                        al0 = 0xF0,
-                                        al1 = 0,
-                                        blm = 0x0F,
-                                        bsh = 4,
-                                        cks = 0x40,
-                                        drm = 0xFF,
-                                        dsm = 0x15E,
-                                        exm = 0,
-                                        off = 4,
-                                        phm = 3,
-                                        psh = 2,
-                                        spt = 9 * 4
-                                    };
-
-                                    _workingDefinition = new CpmDefinition
-                                    {
-                                        al0             = _dpb.al0,
-                                        al1             = _dpb.al1,
-                                        bitrate         = "LOW",
-                                        blm             = _dpb.blm,
-                                        bsh             = _dpb.bsh,
-                                        bytesPerSector  = 512,
-                                        cylinders       = 80,
-                                        drm             = _dpb.drm,
-                                        dsm             = _dpb.dsm,
-                                        encoding        = "MFM",
-                                        evenOdd         = false,
-                                        exm             = _dpb.exm,
-                                        label           = null,
-                                        comment         = "CP/M-86 floppy identifier",
-                                        ofs             = _dpb.off,
-                                        sectorsPerTrack = 9,
-                                        side1 = new Side
-                                        {
-                                            sideId    = 0,
-                                            sectorIds = new int[9]
-                                        },
-                                        order = "SIDES",
-                                        side2 = new Side
-                                        {
-                                            sideId    = 1,
-                                            sectorIds = new int[9]
-                                        },
-                                        skew = 0,
-                                        sofs = 0
-                                    };
-
-                                    for(int si = 0; si < 9; si++)
-                                        _workingDefinition.side1.sectorIds[si] = si + 1;
-
-                                    for(int si = 0; si < 9; si++)
-                                        _workingDefinition.side2.sectorIds[si] = si + 1;
-                                }
-
-                                break;
-                            case FormatByte.f720:
-                                if(imagePlugin.Info.SectorSize == 512 &&
-                                   imagePlugin.Info.Sectors    == 1440)
-                                {
-                                    _cpmFound              = true;
-                                    firstDirectorySector86 = 18;
-
-                                    _dpb = new DiscParameterBlock
-                                    {
-                                        al0 = 0xF0,
-                                        al1 = 0,
-                                        blm = 0x0F,
-                                        bsh = 4,
-                                        cks = 0x40,
-                                        drm = 0xFF,
-                                        dsm = 0x162,
-                                        exm = 0,
-                                        off = 2,
-                                        phm = 3,
-                                        psh = 2,
-                                        spt = 9 * 4
-                                    };
-
-                                    _workingDefinition = new CpmDefinition
-                                    {
-                                        al0             = _dpb.al0,
-                                        al1             = _dpb.al1,
-                                        bitrate         = "LOW",
-                                        blm             = _dpb.blm,
-                                        bsh             = _dpb.bsh,
-                                        bytesPerSector  = 512,
-                                        cylinders       = 80,
-                                        drm             = _dpb.drm,
-                                        dsm             = _dpb.dsm,
-                                        encoding        = "MFM",
-                                        evenOdd         = false,
-                                        exm             = _dpb.exm,
-                                        label           = null,
-                                        comment         = "CP/M-86 floppy identifier",
-                                        ofs             = _dpb.off,
-                                        sectorsPerTrack = 9,
-                                        side1 = new Side
-                                        {
-                                            sideId    = 0,
-                                            sectorIds = new int[9]
-                                        },
-                                        order = "CYLINDERS",
-                                        side2 = new Side
-                                        {
-                                            sideId    = 1,
-                                            sectorIds = new int[9]
-                                        },
-                                        skew = 0,
-                                        sofs = 0
-                                    };
-
-                                    for(int si = 0; si < 9; si++)
-                                        _workingDefinition.side1.sectorIds[si] = si + 1;
-
-                                    for(int si = 0; si < 9; si++)
-                                        _workingDefinition.side2.sectorIds[si] = si + 1;
-                                }
-
-                                break;
-                            case FormatByte.f1200:
-                                if(imagePlugin.Info.SectorSize == 512 &&
-                                   imagePlugin.Info.Sectors    == 2400)
-                                {
-                                    _cpmFound              = true;
-                                    firstDirectorySector86 = 30;
-
-                                    _dpb = new DiscParameterBlock
-                                    {
-                                        al0 = 0xC0,
-                                        al1 = 0,
-                                        blm = 0x1F,
-                                        bsh = 5,
-                                        cks = 0x40,
-                                        drm = 0xFF,
-                                        dsm = 0x127,
-                                        exm = 1,
-                                        off = 2,
-                                        phm = 3,
-                                        psh = 2,
-                                        spt = 15 * 4
-                                    };
-
-                                    _workingDefinition = new CpmDefinition
-                                    {
-                                        al0             = _dpb.al0,
-                                        al1             = _dpb.al1,
-                                        bitrate         = "HIGH",
-                                        blm             = _dpb.blm,
-                                        bsh             = _dpb.bsh,
-                                        bytesPerSector  = 512,
-                                        cylinders       = 80,
-                                        drm             = _dpb.drm,
-                                        dsm             = _dpb.dsm,
-                                        encoding        = "MFM",
-                                        evenOdd         = false,
-                                        exm             = _dpb.exm,
-                                        label           = null,
-                                        comment         = "CP/M-86 floppy identifier",
-                                        ofs             = _dpb.off,
-                                        sectorsPerTrack = 15,
-                                        side1 = new Side
-                                        {
-                                            sideId    = 0,
-                                            sectorIds = new int[15]
-                                        },
-                                        order = "CYLINDERS",
-                                        side2 = new Side
-                                        {
-                                            sideId    = 1,
-                                            sectorIds = new int[15]
-                                        },
-                                        skew = 0,
-                                        sofs = 0
-                                    };
-
-                                    for(int si = 0; si < 15; si++)
-                                        _workingDefinition.side1.sectorIds[si] = si + 1;
-
-                                    for(int si = 0; si < 15; si++)
-                                        _workingDefinition.side2.sectorIds[si] = si + 1;
-                                }
-
-                                break;
-                            case FormatByte.f1440:
-                                if(imagePlugin.Info.SectorSize == 512 &&
-                                   imagePlugin.Info.Sectors    == 2880)
-                                {
-                                    _cpmFound              = true;
-                                    firstDirectorySector86 = 36;
-
-                                    _dpb = new DiscParameterBlock
-                                    {
-                                        al0 = 0xC0,
-                                        al1 = 0,
-                                        blm = 0x1F,
-                                        bsh = 5,
-                                        cks = 0x40,
-                                        drm = 0xFF,
-                                        dsm = 0x162,
-                                        exm = 1,
-                                        off = 2,
-                                        phm = 3,
-                                        psh = 2,
-                                        spt = 18 * 4
-                                    };
-
-                                    _workingDefinition = new CpmDefinition
-                                    {
-                                        al0             = _dpb.al0,
-                                        al1             = _dpb.al1,
-                                        bitrate         = "LOW",
-                                        blm             = _dpb.blm,
-                                        bsh             = _dpb.bsh,
-                                        bytesPerSector  = 512,
-                                        cylinders       = 80,
-                                        drm             = _dpb.drm,
-                                        dsm             = _dpb.dsm,
-                                        encoding        = "MFM",
-                                        evenOdd         = false,
-                                        exm             = _dpb.exm,
-                                        label           = null,
-                                        comment         = "CP/M-86 floppy identifier",
-                                        ofs             = _dpb.off,
-                                        sectorsPerTrack = 18,
-                                        side1 = new Side
-                                        {
-                                            sideId    = 0,
-                                            sectorIds = new int[18]
-                                        },
-                                        order = "CYLINDERS",
-                                        side2 = new Side
-                                        {
-                                            sideId    = 1,
-                                            sectorIds = new int[18]
-                                        },
-                                        skew = 0,
-                                        sofs = 0
-                                    };
-
-                                    for(int si = 0; si < 18; si++)
-                                        _workingDefinition.side1.sectorIds[si] = si + 1;
-
-                                    for(int si = 0; si < 18; si++)
-                                        _workingDefinition.side2.sectorIds[si] = si + 1;
-                                }
-
-                                break;
-                        }
-
-                        if(_cpmFound)
-                        {
-                            uint directoryLength = (uint)(((ulong)_dpb.drm + 1) * 32 / imagePlugin.Info.SectorSize);
-
-                            errno = imagePlugin.ReadSectors(firstDirectorySector86 + partition.Start, directoryLength,
-                                                            out directory);
-
-                            AaruConsole.DebugWriteLine("CP/M Plugin", "Found CP/M-86 floppy identifier.");
-                        }
-                    }
-                }
-
-                // One of the few CP/M filesystem marks has been found, try for correcteness checking the whole directory
-                if(_cpmFound)
-                {
-                    if(CheckDir(directory))
-                    {
-                        AaruConsole.DebugWriteLine("CP/M Plugin", "First directory block seems correct.");
-
-                        return true;
-                    }
-
-                    _cpmFound = false;
-                }
-
-                // Try all definitions
-                if(!_cpmFound)
-                {
-                    // Load all definitions
-                    AaruConsole.DebugWriteLine("CP/M Plugin", "Trying to load definitions.");
-
-                    if(LoadDefinitions()                      &&
-                       _definitions?.definitions      != null &&
-                       _definitions.definitions.Count > 0)
-                    {
-                        AaruConsole.DebugWriteLine("CP/M Plugin", "Trying all known definitions.");
-
-                        foreach(CpmDefinition def in from def in _definitions.definitions let sectors =
-                                                         (ulong)(def.cylinders * def.sides * def.sectorsPerTrack)
-                                                     where sectors            == imagePlugin.Info.Sectors &&
-                                                           def.bytesPerSector == imagePlugin.Info.SectorSize select def)
-                        {
-                            // Definition seems to describe current disk, at least, same number of volume sectors and bytes per sector
-                            AaruConsole.DebugWriteLine("CP/M Plugin", "Trying definition \"{0}\"", def.comment);
-                            ulong offset;
-
-                            if(def.sofs != 0)
-                                offset = (ulong)def.sofs;
-                            else
-                                offset = (ulong)(def.ofs * def.sectorsPerTrack);
-
-                            int dirLen = (def.drm + 1) * 32 / def.bytesPerSector;
-
-                            if(def.sides == 1)
+                            break;
+                        case FormatByte.f1440:
+                            if(imagePlugin.Info.SectorSize == 512 &&
+                               imagePlugin.Info.Sectors    == 2880)
                             {
-                                _sectorMask = new int[def.side1.sectorIds.Length];
-
-                                for(int m = 0; m < _sectorMask.Length; m++)
-                                    _sectorMask[m] = def.side1.sectorIds[m] - def.side1.sectorIds[0];
-                            }
-                            else
-                            {
-                                // Head changes after every track
-                                if(string.Compare(def.order, "SIDES", StringComparison.InvariantCultureIgnoreCase) == 0)
-                                {
-                                    _sectorMask = new int[def.side1.sectorIds.Length + def.side2.sectorIds.Length];
-
-                                    for(int m = 0; m < def.side1.sectorIds.Length; m++)
-                                        _sectorMask[m] = def.side1.sectorIds[m] - def.side1.sectorIds[0];
-
-                                    // Skip first track (first side)
-                                    for(int m = 0; m < def.side2.sectorIds.Length; m++)
-                                        _sectorMask[m + def.side1.sectorIds.Length] =
-                                            def.side2.sectorIds[m] - def.side2.sectorIds[0] +
-                                            def.side1.sectorIds.Length;
-                                }
-
-                                // Head changes after whole side
-                                else if(string.Compare(def.order, "CYLINDERS",
-                                                       StringComparison.InvariantCultureIgnoreCase) == 0)
-                                {
-                                    for(int m = 0; m < def.side1.sectorIds.Length; m++)
-                                        _sectorMask[m] = def.side1.sectorIds[m] - def.side1.sectorIds[0];
-
-                                    // Skip first track (first side) and first track (second side)
-                                    for(int m = 0; m < def.side1.sectorIds.Length; m++)
-                                        _sectorMask[m + def.side1.sectorIds.Length] =
-                                            def.side1.sectorIds[m] - def.side1.sectorIds[0] +
-                                            def.side1.sectorIds.Length + def.side2.sectorIds.Length;
-                                }
-
-                                // TODO: Implement COLUMBIA ordering
-                                else if(string.Compare(def.order, "COLUMBIA",
-                                                       StringComparison.InvariantCultureIgnoreCase) == 0)
-                                {
-                                    AaruConsole.DebugWriteLine("CP/M Plugin",
-                                                               "Don't know how to handle COLUMBIA ordering, not proceeding with this definition.");
-
-                                    continue;
-                                }
-
-                                // TODO: Implement EAGLE ordering
-                                else if(string.Compare(def.order, "EAGLE",
-                                                       StringComparison.InvariantCultureIgnoreCase) == 0)
-                                {
-                                    AaruConsole.DebugWriteLine("CP/M Plugin",
-                                                               "Don't know how to handle EAGLE ordering, not proceeding with this definition.");
-
-                                    continue;
-                                }
-                                else
-                                {
-                                    AaruConsole.DebugWriteLine("CP/M Plugin",
-                                                               "Unknown order type \"{0}\", not proceeding with this definition.",
-                                                               def.order);
-
-                                    continue;
-                                }
-                            }
-
-                            // Read the directory marked by this definition
-                            var ms = new MemoryStream();
-
-                            for(int p = 0; p < dirLen; p++)
-                            {
-                                errno =
-                                    imagePlugin.
-                                        ReadSector((ulong)((int)offset + (int)partition.Start + (p / _sectorMask.Length * _sectorMask.Length) + _sectorMask[p % _sectorMask.Length]),
-                                                   out byte[] dirSector);
-
-                                if(errno != ErrorNumber.NoError)
-                                    break;
-
-                                ms.Write(dirSector, 0, dirSector.Length);
-                            }
-
-                            directory = ms.ToArray();
-
-                            if(def.evenOdd)
-                                AaruConsole.DebugWriteLine("CP/M Plugin",
-                                                           "Definition contains EVEN-ODD field, with unknown meaning, detection may be wrong.");
-
-                            // Complement of the directory bytes if needed
-                            if(def.complement)
-                                for(int b = 0; b < directory.Length; b++)
-                                    directory[b] = (byte)(~directory[b] & 0xFF);
-
-                            // Check the directory
-                            if(CheckDir(directory))
-                            {
-                                AaruConsole.DebugWriteLine("CP/M Plugin", "Definition \"{0}\" has a correct directory",
-                                                           def.comment);
-
-                                // Build a Disc Parameter Block
-                                _workingDefinition = def;
+                                _cpmFound              = true;
+                                firstDirectorySector86 = 36;
 
                                 _dpb = new DiscParameterBlock
                                 {
-                                    al0 = (byte)def.al0,
-                                    al1 = (byte)def.al1,
-                                    blm = (byte)def.blm,
-                                    bsh = (byte)def.bsh,
-
-                                    // Needed?
-                                    cks = 0,
-                                    drm = (ushort)def.drm,
-                                    dsm = (ushort)def.dsm,
-                                    exm = (byte)def.exm,
-                                    off = (ushort)def.ofs,
-                                    spt = (ushort)(def.sectorsPerTrack * def.bytesPerSector / 128)
+                                    al0 = 0xC0,
+                                    al1 = 0,
+                                    blm = 0x1F,
+                                    bsh = 5,
+                                    cks = 0x40,
+                                    drm = 0xFF,
+                                    dsm = 0x162,
+                                    exm = 1,
+                                    off = 2,
+                                    phm = 3,
+                                    psh = 2,
+                                    spt = 18 * 4
                                 };
 
-                                switch(def.bytesPerSector)
+                                _workingDefinition = new CpmDefinition
                                 {
-                                    case 128:
-                                        _dpb.psh = 0;
-                                        _dpb.phm = 0;
+                                    al0             = _dpb.al0,
+                                    al1             = _dpb.al1,
+                                    bitrate         = "LOW",
+                                    blm             = _dpb.blm,
+                                    bsh             = _dpb.bsh,
+                                    bytesPerSector  = 512,
+                                    cylinders       = 80,
+                                    drm             = _dpb.drm,
+                                    dsm             = _dpb.dsm,
+                                    encoding        = "MFM",
+                                    evenOdd         = false,
+                                    exm             = _dpb.exm,
+                                    label           = null,
+                                    comment         = "CP/M-86 floppy identifier",
+                                    ofs             = _dpb.off,
+                                    sectorsPerTrack = 18,
+                                    side1 = new Side
+                                    {
+                                        sideId    = 0,
+                                        sectorIds = new int[18]
+                                    },
+                                    order = "CYLINDERS",
+                                    side2 = new Side
+                                    {
+                                        sideId    = 1,
+                                        sectorIds = new int[18]
+                                    },
+                                    skew = 0,
+                                    sofs = 0
+                                };
 
-                                        break;
-                                    case 256:
-                                        _dpb.psh = 1;
-                                        _dpb.phm = 1;
+                                for(int si = 0; si < 18; si++)
+                                    _workingDefinition.side1.sectorIds[si] = si + 1;
 
-                                        break;
-                                    case 512:
-                                        _dpb.psh = 2;
-                                        _dpb.phm = 3;
-
-                                        break;
-                                    case 1024:
-                                        _dpb.psh = 3;
-                                        _dpb.phm = 7;
-
-                                        break;
-                                    case 2048:
-                                        _dpb.psh = 4;
-                                        _dpb.phm = 15;
-
-                                        break;
-                                    case 4096:
-                                        _dpb.psh = 5;
-                                        _dpb.phm = 31;
-
-                                        break;
-                                    case 8192:
-                                        _dpb.psh = 6;
-                                        _dpb.phm = 63;
-
-                                        break;
-                                    case 16384:
-                                        _dpb.psh = 7;
-                                        _dpb.phm = 127;
-
-                                        break;
-                                    case 32768:
-                                        _dpb.psh = 8;
-                                        _dpb.phm = 255;
-
-                                        break;
-                                }
-
-                                _cpmFound          = true;
-                                _workingDefinition = def;
-
-                                return true;
+                                for(int si = 0; si < 18; si++)
+                                    _workingDefinition.side2.sectorIds[si] = si + 1;
                             }
 
-                            _label             = null;
-                            _labelCreationDate = null;
-                            _labelUpdateDate   = null;
-                        }
+                            break;
+                    }
+
+                    if(_cpmFound)
+                    {
+                        uint directoryLength = (uint)(((ulong)_dpb.drm + 1) * 32 / imagePlugin.Info.SectorSize);
+
+                        errno = imagePlugin.ReadSectors(firstDirectorySector86 + partition.Start, directoryLength,
+                                                        out directory);
+
+                        AaruConsole.DebugWriteLine("CP/M Plugin", "Found CP/M-86 floppy identifier.");
                     }
                 }
-
-                // Clear class variables
-                _cpmFound             = false;
-                _workingDefinition    = null;
-                _dpb                  = null;
-                _label                = null;
-                _standardTimestamps   = false;
-                _thirdPartyTimestamps = false;
-
-                return false;
             }
-            catch
+
+            // One of the few CP/M filesystem marks has been found, try for correcteness checking the whole directory
+            if(_cpmFound)
             {
-                //throw ex;
-                return false;
-            }
-        }
+                if(CheckDir(directory))
+                {
+                    AaruConsole.DebugWriteLine("CP/M Plugin", "First directory block seems correct.");
 
-        /// <inheritdoc />
-        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                   Encoding encoding)
+                    return true;
+                }
+
+                _cpmFound = false;
+            }
+
+            // Try all definitions
+            if(!_cpmFound)
+            {
+                // Load all definitions
+                AaruConsole.DebugWriteLine("CP/M Plugin", "Trying to load definitions.");
+
+                if(LoadDefinitions()                      &&
+                   _definitions?.definitions      != null &&
+                   _definitions.definitions.Count > 0)
+                {
+                    AaruConsole.DebugWriteLine("CP/M Plugin", "Trying all known definitions.");
+
+                    foreach(CpmDefinition def in from def in _definitions.definitions let sectors =
+                                                     (ulong)(def.cylinders * def.sides * def.sectorsPerTrack)
+                                                 where sectors            == imagePlugin.Info.Sectors &&
+                                                       def.bytesPerSector == imagePlugin.Info.SectorSize select def)
+                    {
+                        // Definition seems to describe current disk, at least, same number of volume sectors and bytes per sector
+                        AaruConsole.DebugWriteLine("CP/M Plugin", "Trying definition \"{0}\"", def.comment);
+                        ulong offset;
+
+                        if(def.sofs != 0)
+                            offset = (ulong)def.sofs;
+                        else
+                            offset = (ulong)(def.ofs * def.sectorsPerTrack);
+
+                        int dirLen = (def.drm + 1) * 32 / def.bytesPerSector;
+
+                        if(def.sides == 1)
+                        {
+                            _sectorMask = new int[def.side1.sectorIds.Length];
+
+                            for(int m = 0; m < _sectorMask.Length; m++)
+                                _sectorMask[m] = def.side1.sectorIds[m] - def.side1.sectorIds[0];
+                        }
+                        else
+                        {
+                            // Head changes after every track
+                            if(string.Compare(def.order, "SIDES", StringComparison.InvariantCultureIgnoreCase) == 0)
+                            {
+                                _sectorMask = new int[def.side1.sectorIds.Length + def.side2.sectorIds.Length];
+
+                                for(int m = 0; m < def.side1.sectorIds.Length; m++)
+                                    _sectorMask[m] = def.side1.sectorIds[m] - def.side1.sectorIds[0];
+
+                                // Skip first track (first side)
+                                for(int m = 0; m < def.side2.sectorIds.Length; m++)
+                                    _sectorMask[m + def.side1.sectorIds.Length] =
+                                        def.side2.sectorIds[m] - def.side2.sectorIds[0] +
+                                        def.side1.sectorIds.Length;
+                            }
+
+                            // Head changes after whole side
+                            else if(string.Compare(def.order, "CYLINDERS",
+                                                   StringComparison.InvariantCultureIgnoreCase) == 0)
+                            {
+                                for(int m = 0; m < def.side1.sectorIds.Length; m++)
+                                    _sectorMask[m] = def.side1.sectorIds[m] - def.side1.sectorIds[0];
+
+                                // Skip first track (first side) and first track (second side)
+                                for(int m = 0; m < def.side1.sectorIds.Length; m++)
+                                    _sectorMask[m + def.side1.sectorIds.Length] =
+                                        def.side1.sectorIds[m] - def.side1.sectorIds[0] +
+                                        def.side1.sectorIds.Length                      + def.side2.sectorIds.Length;
+                            }
+
+                            // TODO: Implement COLUMBIA ordering
+                            else if(string.Compare(def.order, "COLUMBIA",
+                                                   StringComparison.InvariantCultureIgnoreCase) == 0)
+                            {
+                                AaruConsole.DebugWriteLine("CP/M Plugin",
+                                                           "Don't know how to handle COLUMBIA ordering, not proceeding with this definition.");
+
+                                continue;
+                            }
+
+                            // TODO: Implement EAGLE ordering
+                            else if(string.Compare(def.order, "EAGLE",
+                                                   StringComparison.InvariantCultureIgnoreCase) == 0)
+                            {
+                                AaruConsole.DebugWriteLine("CP/M Plugin",
+                                                           "Don't know how to handle EAGLE ordering, not proceeding with this definition.");
+
+                                continue;
+                            }
+                            else
+                            {
+                                AaruConsole.DebugWriteLine("CP/M Plugin",
+                                                           "Unknown order type \"{0}\", not proceeding with this definition.",
+                                                           def.order);
+
+                                continue;
+                            }
+                        }
+
+                        // Read the directory marked by this definition
+                        var ms = new MemoryStream();
+
+                        for(int p = 0; p < dirLen; p++)
+                        {
+                            errno =
+                                imagePlugin.
+                                    ReadSector((ulong)((int)offset + (int)partition.Start + (p / _sectorMask.Length * _sectorMask.Length) + _sectorMask[p % _sectorMask.Length]),
+                                               out byte[] dirSector);
+
+                            if(errno != ErrorNumber.NoError)
+                                break;
+
+                            ms.Write(dirSector, 0, dirSector.Length);
+                        }
+
+                        directory = ms.ToArray();
+
+                        if(def.evenOdd)
+                            AaruConsole.DebugWriteLine("CP/M Plugin",
+                                                       "Definition contains EVEN-ODD field, with unknown meaning, detection may be wrong.");
+
+                        // Complement of the directory bytes if needed
+                        if(def.complement)
+                            for(int b = 0; b < directory.Length; b++)
+                                directory[b] = (byte)(~directory[b] & 0xFF);
+
+                        // Check the directory
+                        if(CheckDir(directory))
+                        {
+                            AaruConsole.DebugWriteLine("CP/M Plugin", "Definition \"{0}\" has a correct directory",
+                                                       def.comment);
+
+                            // Build a Disc Parameter Block
+                            _workingDefinition = def;
+
+                            _dpb = new DiscParameterBlock
+                            {
+                                al0 = (byte)def.al0,
+                                al1 = (byte)def.al1,
+                                blm = (byte)def.blm,
+                                bsh = (byte)def.bsh,
+
+                                // Needed?
+                                cks = 0,
+                                drm = (ushort)def.drm,
+                                dsm = (ushort)def.dsm,
+                                exm = (byte)def.exm,
+                                off = (ushort)def.ofs,
+                                spt = (ushort)(def.sectorsPerTrack * def.bytesPerSector / 128)
+                            };
+
+                            switch(def.bytesPerSector)
+                            {
+                                case 128:
+                                    _dpb.psh = 0;
+                                    _dpb.phm = 0;
+
+                                    break;
+                                case 256:
+                                    _dpb.psh = 1;
+                                    _dpb.phm = 1;
+
+                                    break;
+                                case 512:
+                                    _dpb.psh = 2;
+                                    _dpb.phm = 3;
+
+                                    break;
+                                case 1024:
+                                    _dpb.psh = 3;
+                                    _dpb.phm = 7;
+
+                                    break;
+                                case 2048:
+                                    _dpb.psh = 4;
+                                    _dpb.phm = 15;
+
+                                    break;
+                                case 4096:
+                                    _dpb.psh = 5;
+                                    _dpb.phm = 31;
+
+                                    break;
+                                case 8192:
+                                    _dpb.psh = 6;
+                                    _dpb.phm = 63;
+
+                                    break;
+                                case 16384:
+                                    _dpb.psh = 7;
+                                    _dpb.phm = 127;
+
+                                    break;
+                                case 32768:
+                                    _dpb.psh = 8;
+                                    _dpb.phm = 255;
+
+                                    break;
+                            }
+
+                            _cpmFound          = true;
+                            _workingDefinition = def;
+
+                            return true;
+                        }
+
+                        _label             = null;
+                        _labelCreationDate = null;
+                        _labelUpdateDate   = null;
+                    }
+                }
+            }
+
+            // Clear class variables
+            _cpmFound             = false;
+            _workingDefinition    = null;
+            _dpb                  = null;
+            _label                = null;
+            _standardTimestamps   = false;
+            _thirdPartyTimestamps = false;
+
+            return false;
+        }
+        catch
         {
-            Encoding    = encoding ?? Encoding.GetEncoding("IBM437");
-            information = "";
-
-            // As the identification is so complex, just call Identify() and relay on its findings
-            if(!Identify(imagePlugin, partition) ||
-               !_cpmFound                        ||
-               _workingDefinition == null        ||
-               _dpb               == null)
-                return;
-
-            var sb = new StringBuilder();
-            sb.AppendLine("CP/M filesystem");
-
-            if(!string.IsNullOrEmpty(_workingDefinition.comment))
-                sb.AppendFormat("Identified as {0}", _workingDefinition.comment).AppendLine();
-
-            sb.AppendFormat("Volume block is {0} bytes", 128 << _dpb.bsh).AppendLine();
-
-            if(_dpb.dsm > 0)
-                sb.AppendFormat("Volume contains {0} blocks ({1} bytes)", _dpb.dsm, _dpb.dsm * (128 << _dpb.bsh)).
-                   AppendLine();
-
-            sb.AppendFormat("Volume contains {0} directory entries", _dpb.drm + 1).AppendLine();
-
-            if(_workingDefinition.sofs > 0)
-                sb.AppendFormat("Volume reserves {0} sectors for system", _workingDefinition.sofs).AppendLine();
-            else
-                sb.AppendFormat("Volume reserves {1} tracks ({0} sectors) for system",
-                                _workingDefinition.ofs * _workingDefinition.sectorsPerTrack, _workingDefinition.ofs).
-                   AppendLine();
-
-            if(_workingDefinition.side1.sectorIds.Length >= 2)
-            {
-                int interleaveSide1 = _workingDefinition.side1.sectorIds[1] - _workingDefinition.side1.sectorIds[0];
-
-                if(interleaveSide1 > 1)
-                    sb.AppendFormat("Side 0 uses {0}:1 software interleaving", interleaveSide1).AppendLine();
-            }
-
-            if(_workingDefinition.sides == 2)
-            {
-                if(_workingDefinition.side2.sectorIds.Length >= 2)
-                {
-                    int interleaveSide2 = _workingDefinition.side2.sectorIds[1] - _workingDefinition.side2.sectorIds[0];
-
-                    if(interleaveSide2 > 1)
-                        sb.AppendFormat("Side 1 uses {0}:1 software interleaving", interleaveSide2).AppendLine();
-                }
-
-                switch(_workingDefinition.order)
-                {
-                    case "SIDES":
-                        sb.AppendLine("Head changes after each whole track");
-
-                        break;
-                    case "CYLINDERS":
-                        sb.AppendLine("Head changes after whole side");
-
-                        break;
-                    default:
-                        sb.AppendFormat("Unknown how {0} side ordering works", _workingDefinition.order).AppendLine();
-
-                        break;
-                }
-            }
-
-            if(_workingDefinition.skew > 0)
-                sb.AppendFormat("Device uses {0}:1 hardware interleaving", _workingDefinition.skew).AppendLine();
-
-            if(_workingDefinition.sofs > 0)
-                sb.AppendFormat("BSH {0} BLM {1} EXM {2} DSM {3} DRM {4} AL0 {5:X2}H AL1 {6:X2}H SOFS {7}", _dpb.bsh,
-                                _dpb.blm, _dpb.exm, _dpb.dsm, _dpb.drm, _dpb.al0, _dpb.al1, _workingDefinition.sofs).
-                   AppendLine();
-            else
-                sb.AppendFormat("BSH {0} BLM {1} EXM {2} DSM {3} DRM {4} AL0 {5:X2}H AL1 {6:X2}H OFS {7}", _dpb.bsh,
-                                _dpb.blm, _dpb.exm, _dpb.dsm, _dpb.drm, _dpb.al0, _dpb.al1, _workingDefinition.ofs).
-                   AppendLine();
-
-            if(_label != null)
-                sb.AppendFormat("Volume label {0}", _label).AppendLine();
-
-            if(_standardTimestamps)
-                sb.AppendLine("Volume uses standard CP/M timestamps");
-
-            if(_thirdPartyTimestamps)
-                sb.AppendLine("Volume uses third party timestamps");
-
-            if(_labelCreationDate != null)
-                sb.AppendFormat("Volume created on {0}", DateHandlers.CpmToDateTime(_labelCreationDate)).AppendLine();
-
-            if(_labelUpdateDate != null)
-                sb.AppendFormat("Volume updated on {0}", DateHandlers.CpmToDateTime(_labelUpdateDate)).AppendLine();
-
-            XmlFsType             =  new FileSystemType();
-            XmlFsType.Bootable    |= _workingDefinition.sofs > 0 || _workingDefinition.ofs > 0;
-            XmlFsType.ClusterSize =  (uint)(128 << _dpb.bsh);
-
-            if(_dpb.dsm > 0)
-                XmlFsType.Clusters = _dpb.dsm;
-            else
-                XmlFsType.Clusters = partition.End - partition.Start;
-
-            if(_labelCreationDate != null)
-            {
-                XmlFsType.CreationDate          = DateHandlers.CpmToDateTime(_labelCreationDate);
-                XmlFsType.CreationDateSpecified = true;
-            }
-
-            if(_labelUpdateDate != null)
-            {
-                XmlFsType.ModificationDate          = DateHandlers.CpmToDateTime(_labelUpdateDate);
-                XmlFsType.ModificationDateSpecified = true;
-            }
-
-            XmlFsType.Type       = "CP/M";
-            XmlFsType.VolumeName = _label;
-
-            information = sb.ToString();
+            //throw ex;
+            return false;
         }
+    }
+
+    /// <inheritdoc />
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
+                               Encoding encoding)
+    {
+        Encoding    = encoding ?? Encoding.GetEncoding("IBM437");
+        information = "";
+
+        // As the identification is so complex, just call Identify() and relay on its findings
+        if(!Identify(imagePlugin, partition) ||
+           !_cpmFound                        ||
+           _workingDefinition == null        ||
+           _dpb               == null)
+            return;
+
+        var sb = new StringBuilder();
+        sb.AppendLine("CP/M filesystem");
+
+        if(!string.IsNullOrEmpty(_workingDefinition.comment))
+            sb.AppendFormat("Identified as {0}", _workingDefinition.comment).AppendLine();
+
+        sb.AppendFormat("Volume block is {0} bytes", 128 << _dpb.bsh).AppendLine();
+
+        if(_dpb.dsm > 0)
+            sb.AppendFormat("Volume contains {0} blocks ({1} bytes)", _dpb.dsm, _dpb.dsm * (128 << _dpb.bsh)).
+               AppendLine();
+
+        sb.AppendFormat("Volume contains {0} directory entries", _dpb.drm + 1).AppendLine();
+
+        if(_workingDefinition.sofs > 0)
+            sb.AppendFormat("Volume reserves {0} sectors for system", _workingDefinition.sofs).AppendLine();
+        else
+            sb.AppendFormat("Volume reserves {1} tracks ({0} sectors) for system",
+                            _workingDefinition.ofs * _workingDefinition.sectorsPerTrack, _workingDefinition.ofs).
+               AppendLine();
+
+        if(_workingDefinition.side1.sectorIds.Length >= 2)
+        {
+            int interleaveSide1 = _workingDefinition.side1.sectorIds[1] - _workingDefinition.side1.sectorIds[0];
+
+            if(interleaveSide1 > 1)
+                sb.AppendFormat("Side 0 uses {0}:1 software interleaving", interleaveSide1).AppendLine();
+        }
+
+        if(_workingDefinition.sides == 2)
+        {
+            if(_workingDefinition.side2.sectorIds.Length >= 2)
+            {
+                int interleaveSide2 = _workingDefinition.side2.sectorIds[1] - _workingDefinition.side2.sectorIds[0];
+
+                if(interleaveSide2 > 1)
+                    sb.AppendFormat("Side 1 uses {0}:1 software interleaving", interleaveSide2).AppendLine();
+            }
+
+            switch(_workingDefinition.order)
+            {
+                case "SIDES":
+                    sb.AppendLine("Head changes after each whole track");
+
+                    break;
+                case "CYLINDERS":
+                    sb.AppendLine("Head changes after whole side");
+
+                    break;
+                default:
+                    sb.AppendFormat("Unknown how {0} side ordering works", _workingDefinition.order).AppendLine();
+
+                    break;
+            }
+        }
+
+        if(_workingDefinition.skew > 0)
+            sb.AppendFormat("Device uses {0}:1 hardware interleaving", _workingDefinition.skew).AppendLine();
+
+        if(_workingDefinition.sofs > 0)
+            sb.AppendFormat("BSH {0} BLM {1} EXM {2} DSM {3} DRM {4} AL0 {5:X2}H AL1 {6:X2}H SOFS {7}", _dpb.bsh,
+                            _dpb.blm, _dpb.exm, _dpb.dsm, _dpb.drm, _dpb.al0, _dpb.al1, _workingDefinition.sofs).
+               AppendLine();
+        else
+            sb.AppendFormat("BSH {0} BLM {1} EXM {2} DSM {3} DRM {4} AL0 {5:X2}H AL1 {6:X2}H OFS {7}", _dpb.bsh,
+                            _dpb.blm, _dpb.exm, _dpb.dsm, _dpb.drm, _dpb.al0, _dpb.al1, _workingDefinition.ofs).
+               AppendLine();
+
+        if(_label != null)
+            sb.AppendFormat("Volume label {0}", _label).AppendLine();
+
+        if(_standardTimestamps)
+            sb.AppendLine("Volume uses standard CP/M timestamps");
+
+        if(_thirdPartyTimestamps)
+            sb.AppendLine("Volume uses third party timestamps");
+
+        if(_labelCreationDate != null)
+            sb.AppendFormat("Volume created on {0}", DateHandlers.CpmToDateTime(_labelCreationDate)).AppendLine();
+
+        if(_labelUpdateDate != null)
+            sb.AppendFormat("Volume updated on {0}", DateHandlers.CpmToDateTime(_labelUpdateDate)).AppendLine();
+
+        XmlFsType             =  new FileSystemType();
+        XmlFsType.Bootable    |= _workingDefinition.sofs > 0 || _workingDefinition.ofs > 0;
+        XmlFsType.ClusterSize =  (uint)(128 << _dpb.bsh);
+
+        if(_dpb.dsm > 0)
+            XmlFsType.Clusters = _dpb.dsm;
+        else
+            XmlFsType.Clusters = partition.End - partition.Start;
+
+        if(_labelCreationDate != null)
+        {
+            XmlFsType.CreationDate          = DateHandlers.CpmToDateTime(_labelCreationDate);
+            XmlFsType.CreationDateSpecified = true;
+        }
+
+        if(_labelUpdateDate != null)
+        {
+            XmlFsType.ModificationDate          = DateHandlers.CpmToDateTime(_labelUpdateDate);
+            XmlFsType.ModificationDateSpecified = true;
+        }
+
+        XmlFsType.Type       = "CP/M";
+        XmlFsType.VolumeName = _label;
+
+        information = sb.ToString();
     }
 }

@@ -30,17 +30,16 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Database.Models
+namespace Aaru.Database.Models;
+
+/// <inheritdoc />
+/// <summary>Model for name-count values.</summary>
+public abstract class NameCountModel : BaseModel
 {
-    /// <inheritdoc />
-    /// <summary>Model for name-count values.</summary>
-    public abstract class NameCountModel : BaseModel
-    {
-        /// <summary>Value name</summary>
-        public string Name { get; set; }
-        /// <summary>Has already been synchronized with Aaru's server</summary>
-        public bool Synchronized { get; set; }
-        /// <summary>Value count</summary>
-        public ulong Count { get; set; }
-    }
+    /// <summary>Value name</summary>
+    public string Name { get; set; }
+    /// <summary>Has already been synchronized with Aaru's server</summary>
+    public bool Synchronized { get; set; }
+    /// <summary>Value count</summary>
+    public ulong Count { get; set; }
 }

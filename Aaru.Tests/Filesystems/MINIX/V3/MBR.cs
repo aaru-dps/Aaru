@@ -32,38 +32,37 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Filesystems.MINIX.V3
-{
-    [TestFixture]
-    public class MBR : FilesystemTest
-    {
-        public override string DataFolder =>
-            Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "MINIX v3 filesystem (MBR)");
-        public override IFilesystem Plugin     => new MinixFS();
-        public override bool        Partitions => true;
+namespace Aaru.Tests.Filesystems.MINIX.V3;
 
-        public override FileSystemTest[] Tests => new[]
+[TestFixture]
+public class MBR : FilesystemTest
+{
+    public override string DataFolder =>
+        Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "MINIX v3 filesystem (MBR)");
+    public override IFilesystem Plugin     => new MinixFS();
+    public override bool        Partitions => true;
+
+    public override FileSystemTest[] Tests => new[]
+    {
+        new FileSystemTest
         {
-            new FileSystemTest
-            {
-                TestFile    = "minix_3.1.2a.aif",
-                MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 4194304,
-                SectorSize  = 512,
-                Clusters    = 523151,
-                ClusterSize = 4096,
-                Type        = "Minix v3"
-            },
-            new FileSystemTest
-            {
-                TestFile    = "linux_4.19_minix3_flashdrive.aif",
-                MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 1024000,
-                SectorSize  = 512,
-                Clusters    = 510976,
-                ClusterSize = 1024,
-                Type        = "Minix v3"
-            }
-        };
-    }
+            TestFile    = "minix_3.1.2a.aif",
+            MediaType   = MediaType.GENERIC_HDD,
+            Sectors     = 4194304,
+            SectorSize  = 512,
+            Clusters    = 523151,
+            ClusterSize = 4096,
+            Type        = "Minix v3"
+        },
+        new FileSystemTest
+        {
+            TestFile    = "linux_4.19_minix3_flashdrive.aif",
+            MediaType   = MediaType.GENERIC_HDD,
+            Sectors     = 1024000,
+            SectorSize  = 512,
+            Clusters    = 510976,
+            ClusterSize = 1024,
+            Type        = "Minix v3"
+        }
+    };
 }

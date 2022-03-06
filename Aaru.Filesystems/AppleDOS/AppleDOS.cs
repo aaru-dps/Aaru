@@ -36,68 +36,67 @@ using System.Text;
 using Aaru.CommonTypes.Interfaces;
 using Schemas;
 
-namespace Aaru.Filesystems
+namespace Aaru.Filesystems;
+
+/// <inheritdoc />
+/// <summary>Implements the Apple DOS 3 filesystem</summary>
+public sealed partial class AppleDOS : IReadOnlyFilesystem
 {
+    bool        _debug;
+    IMediaImage _device;
+    bool        _mounted;
+    int         _sectorsPerTrack;
+    ulong       _start;
+    ulong       _totalFileEntries;
+    bool        _track1UsedByFiles;
+    bool        _track2UsedByFiles;
+    uint        _usedSectors;
+    Vtoc        _vtoc;
+
     /// <inheritdoc />
-    /// <summary>Implements the Apple DOS 3 filesystem</summary>
-    public sealed partial class AppleDOS : IReadOnlyFilesystem
+    public FileSystemType XmlFsType { get; private set; }
+    /// <inheritdoc />
+    public Encoding Encoding { get; private set; }
+    /// <inheritdoc />
+    public string Name => "Apple DOS File System";
+    /// <inheritdoc />
+    public Guid Id => new("8658A1E9-B2E7-4BCC-9638-157A31B0A700\n");
+    /// <inheritdoc />
+    public string Author => "Natalia Portillo";
+
+    /// <inheritdoc />
+    public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
+        new (string name, Type type, string description)[]
+            {};
+
+    /// <inheritdoc />
+    public Dictionary<string, string> Namespaces => null;
+
+    static Dictionary<string, string> GetDefaultOptions() => new()
     {
-        bool        _debug;
-        IMediaImage _device;
-        bool        _mounted;
-        int         _sectorsPerTrack;
-        ulong       _start;
-        ulong       _totalFileEntries;
-        bool        _track1UsedByFiles;
-        bool        _track2UsedByFiles;
-        uint        _usedSectors;
-        Vtoc        _vtoc;
-
-        /// <inheritdoc />
-        public FileSystemType XmlFsType { get; private set; }
-        /// <inheritdoc />
-        public Encoding Encoding { get; private set; }
-        /// <inheritdoc />
-        public string Name => "Apple DOS File System";
-        /// <inheritdoc />
-        public Guid Id => new("8658A1E9-B2E7-4BCC-9638-157A31B0A700\n");
-        /// <inheritdoc />
-        public string Author => "Natalia Portillo";
-
-        /// <inheritdoc />
-        public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
-            new (string name, Type type, string description)[]
-                {};
-
-        /// <inheritdoc />
-        public Dictionary<string, string> Namespaces => null;
-
-        static Dictionary<string, string> GetDefaultOptions() => new()
         {
-            {
-                "debug", false.ToString()
-            }
-        };
+            "debug", false.ToString()
+        }
+    };
 
-        #region Caches
-        /// <summary>Caches track/sector lists</summary>
-        Dictionary<string, byte[]> _extentCache;
-        /// <summary>Caches files</summary>
-        Dictionary<string, byte[]> _fileCache;
-        /// <summary>Caches catalog</summary>
-        Dictionary<string, ushort> _catalogCache;
-        /// <summary>Caches file size</summary>
-        Dictionary<string, int> _fileSizeCache;
-        /// <summary>Caches VTOC</summary>
-        byte[] _vtocBlocks;
-        /// <summary>Caches catalog</summary>
-        byte[] _catalogBlocks;
-        /// <summary>Caches boot code</summary>
-        byte[] _bootBlocks;
-        /// <summary>Caches file type</summary>
-        Dictionary<string, byte> _fileTypeCache;
-        /// <summary>Caches locked files</summary>
-        List<string> _lockedFiles;
-        #endregion Caches
-    }
+    #region Caches
+    /// <summary>Caches track/sector lists</summary>
+    Dictionary<string, byte[]> _extentCache;
+    /// <summary>Caches files</summary>
+    Dictionary<string, byte[]> _fileCache;
+    /// <summary>Caches catalog</summary>
+    Dictionary<string, ushort> _catalogCache;
+    /// <summary>Caches file size</summary>
+    Dictionary<string, int> _fileSizeCache;
+    /// <summary>Caches VTOC</summary>
+    byte[] _vtocBlocks;
+    /// <summary>Caches catalog</summary>
+    byte[] _catalogBlocks;
+    /// <summary>Caches boot code</summary>
+    byte[] _bootBlocks;
+    /// <summary>Caches file type</summary>
+    Dictionary<string, byte> _fileTypeCache;
+    /// <summary>Caches locked files</summary>
+    List<string> _lockedFiles;
+    #endregion Caches
 }

@@ -33,35 +33,34 @@
 using System;
 using System.Collections.Generic;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class SuperCardPro
 {
-    public sealed partial class SuperCardPro
+    /// <inheritdoc />
+    public bool? VerifyMediaImage()
     {
-        /// <inheritdoc />
-        public bool? VerifyMediaImage()
-        {
-            if(Header.flags.HasFlag(ScpFlags.Writable))
-                return null;
+        if(Header.flags.HasFlag(ScpFlags.Writable))
+            return null;
 
-            byte[] wholeFile = new byte[_scpStream.Length];
-            uint   sum       = 0;
+        byte[] wholeFile = new byte[_scpStream.Length];
+        uint   sum       = 0;
 
-            _scpStream.Position = 0;
-            _scpStream.Read(wholeFile, 0, wholeFile.Length);
+        _scpStream.Position = 0;
+        _scpStream.Read(wholeFile, 0, wholeFile.Length);
 
-            for(int i = 0x10; i < wholeFile.Length; i++)
-                sum += wholeFile[i];
+        for(int i = 0x10; i < wholeFile.Length; i++)
+            sum += wholeFile[i];
 
-            return Header.checksum == sum;
-        }
-
-        /// <inheritdoc />
-        public bool? VerifySector(ulong sectorAddress) =>
-            throw new NotImplementedException("Flux decoding is not yet implemented.");
-
-        /// <inheritdoc />
-        public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
-                                   out List<ulong> unknownLbas) =>
-            throw new NotImplementedException("Flux decoding is not yet implemented.");
+        return Header.checksum == sum;
     }
+
+    /// <inheritdoc />
+    public bool? VerifySector(ulong sectorAddress) =>
+        throw new NotImplementedException("Flux decoding is not yet implemented.");
+
+    /// <inheritdoc />
+    public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
+                               out List<ulong> unknownLbas) =>
+        throw new NotImplementedException("Flux decoding is not yet implemented.");
 }

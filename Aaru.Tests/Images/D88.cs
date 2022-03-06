@@ -31,207 +31,206 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Images
+namespace Aaru.Tests.Images;
+
+[TestFixture]
+public class D88 : BlockMediaImageTest
 {
-    [TestFixture]
-    public class D88 : BlockMediaImageTest
+    public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "D88");
+    public override IMediaImage _plugin    => new DiscImages.D88();
+    public override BlockImageTestExpected[] Tests => new[]
     {
-        public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "D88");
-        public override IMediaImage _plugin    => new DiscImages.D88();
-        public override BlockImageTestExpected[] Tests => new[]
+        new BlockImageTestExpected
         {
-            new BlockImageTestExpected
+            TestFile   = "1942 (1987)(ASCII)(JP).d77.lz",
+            MediaType  = MediaType.NEC_525_SS,
+            Sectors    = 1280,
+            SectorSize = 256,
+            MD5        = "a4103c39cd7fd9fc3de8418dfcf22364"
+        },
+        new BlockImageTestExpected
+        {
+            TestFile   = "'Ashe (1988)(Quasar)(Disk 4 of 4)(User Disk).d88.lz",
+            MediaType  = MediaType.NEC_525_SS,
+            Sectors    = 1280,
+            SectorSize = 256,
+            MD5        = "b948048c03e0b3d34d77f5c9dced0b41"
+        },
+        new BlockImageTestExpected
+        {
+            TestFile   = "Crimsin (1988)(Xtalsoft)(Disk 3 of 3).d88.lz",
+            MediaType  = MediaType.NEC_525_SS,
+            Sectors    = 1280,
+            SectorSize = 256,
+            MD5        = "f91152fab791d4dc0677a289d90478a5"
+        },
+        new BlockImageTestExpected
+        {
+            TestFile   = "Dragon Slayer (1986)(Falcom - Login)(JP).d88.lz",
+            MediaType  = MediaType.Unknown,
+            Sectors    = 411,
+            SectorSize = 256,
+            MD5        = "39b01df04a6312b09f1b83c9f3a46b22"
+        },
+        new BlockImageTestExpected
+        {
+            TestFile   = "D-Side - Lagrange L-2 Part II (1986)(Compaq)(JP).d88.lz",
+            MediaType  = MediaType.Unknown,
+            Sectors    = 1440,
+            SectorSize = 256,
+            MD5        = "ef775ec1f41b8b725ea83ec8c5ca04e2"
+        },
+        new BlockImageTestExpected
+        {
+            TestFile   = "File Master FM, The v1.01 (1986)(Kyoto Media)(JP).d77.lz",
+            MediaType  = MediaType.NEC_525_SS,
+            Sectors    = 1280,
+            SectorSize = 256,
+            MD5        = "5c2b22f824524cd6c539aaeb2ecb84cd"
+        },
+        new BlockImageTestExpected
+        {
+            TestFile   = "Gandhara (1987)(Enix)(JP).d88.lz",
+            MediaType  = MediaType.NEC_525_SS,
+            Sectors    = 1280,
+            SectorSize = 256,
+            MD5        = "6bddf3dd32877f7b552cbf9da6b89f76"
+        },
+        new BlockImageTestExpected
+        {
+            TestFile   = "Might & Magic (198x)(Star Craft)(Disk 1 of 3)(Disk A).d88.lz",
+            MediaType  = MediaType.Unknown,
+            Sectors    = 4033,
+            SectorSize = 128,
+            MD5        = "003cd0292879733b6eab7ca79ab9cfeb"
+        },
+        new BlockImageTestExpected
+        {
+            TestFile   = "msdos33d_md2dd.d88.lz",
+            MediaType  = MediaType.Unknown,
+            Sectors    = 1440,
+            SectorSize = 512,
+            MD5        = "acb738a5a945e4e2ba1504a14a529933"
+        },
+        new BlockImageTestExpected
+        {
+            TestFile   = "msdos33d_md2hd.d88.lz",
+            MediaType  = MediaType.SHARP_525,
+            Sectors    = 1232,
+            SectorSize = 1024,
+            MD5        = "106068dbdf13803979c7bbb63612f43d"
+        },
+        new BlockImageTestExpected
+        {
+            TestFile   = "msdos50_epson_md2dd.d88.lz",
+            MediaType  = MediaType.Unknown,
+            Sectors    = 1440,
+            SectorSize = 512,
+            MD5        = "be916f25847b9cfc9776d88cc150ae7e",
+            Partitions = new[]
             {
-                TestFile   = "1942 (1987)(ASCII)(JP).d77.lz",
-                MediaType  = MediaType.NEC_525_SS,
-                Sectors    = 1280,
-                SectorSize = 256,
-                MD5        = "a4103c39cd7fd9fc3de8418dfcf22364"
-            },
-            new BlockImageTestExpected
-            {
-                TestFile   = "'Ashe (1988)(Quasar)(Disk 4 of 4)(User Disk).d88.lz",
-                MediaType  = MediaType.NEC_525_SS,
-                Sectors    = 1280,
-                SectorSize = 256,
-                MD5        = "b948048c03e0b3d34d77f5c9dced0b41"
-            },
-            new BlockImageTestExpected
-            {
-                TestFile   = "Crimsin (1988)(Xtalsoft)(Disk 3 of 3).d88.lz",
-                MediaType  = MediaType.NEC_525_SS,
-                Sectors    = 1280,
-                SectorSize = 256,
-                MD5        = "f91152fab791d4dc0677a289d90478a5"
-            },
-            new BlockImageTestExpected
-            {
-                TestFile   = "Dragon Slayer (1986)(Falcom - Login)(JP).d88.lz",
-                MediaType  = MediaType.Unknown,
-                Sectors    = 411,
-                SectorSize = 256,
-                MD5        = "39b01df04a6312b09f1b83c9f3a46b22"
-            },
-            new BlockImageTestExpected
-            {
-                TestFile   = "D-Side - Lagrange L-2 Part II (1986)(Compaq)(JP).d88.lz",
-                MediaType  = MediaType.Unknown,
-                Sectors    = 1440,
-                SectorSize = 256,
-                MD5        = "ef775ec1f41b8b725ea83ec8c5ca04e2"
-            },
-            new BlockImageTestExpected
-            {
-                TestFile   = "File Master FM, The v1.01 (1986)(Kyoto Media)(JP).d77.lz",
-                MediaType  = MediaType.NEC_525_SS,
-                Sectors    = 1280,
-                SectorSize = 256,
-                MD5        = "5c2b22f824524cd6c539aaeb2ecb84cd"
-            },
-            new BlockImageTestExpected
-            {
-                TestFile   = "Gandhara (1987)(Enix)(JP).d88.lz",
-                MediaType  = MediaType.NEC_525_SS,
-                Sectors    = 1280,
-                SectorSize = 256,
-                MD5        = "6bddf3dd32877f7b552cbf9da6b89f76"
-            },
-            new BlockImageTestExpected
-            {
-                TestFile   = "Might & Magic (198x)(Star Craft)(Disk 1 of 3)(Disk A).d88.lz",
-                MediaType  = MediaType.Unknown,
-                Sectors    = 4033,
-                SectorSize = 128,
-                MD5        = "003cd0292879733b6eab7ca79ab9cfeb"
-            },
-            new BlockImageTestExpected
-            {
-                TestFile   = "msdos33d_md2dd.d88.lz",
-                MediaType  = MediaType.Unknown,
-                Sectors    = 1440,
-                SectorSize = 512,
-                MD5        = "acb738a5a945e4e2ba1504a14a529933"
-            },
-            new BlockImageTestExpected
-            {
-                TestFile   = "msdos33d_md2hd.d88.lz",
-                MediaType  = MediaType.SHARP_525,
-                Sectors    = 1232,
-                SectorSize = 1024,
-                MD5        = "106068dbdf13803979c7bbb63612f43d"
-            },
-            new BlockImageTestExpected
-            {
-                TestFile   = "msdos50_epson_md2dd.d88.lz",
-                MediaType  = MediaType.Unknown,
-                Sectors    = 1440,
-                SectorSize = 512,
-                MD5        = "be916f25847b9cfc9776d88cc150ae7e",
-                Partitions = new[]
+                new BlockPartitionVolumes
                 {
-                    new BlockPartitionVolumes
-                    {
-                        Start  = 0,
-                        Length = 1440
-                    }
+                    Start  = 0,
+                    Length = 1440
                 }
-            },
-            new BlockImageTestExpected
-            {
-                TestFile   = "msdos50_epson_md2hd.d88.lz",
-                MediaType  = MediaType.SHARP_525,
-                Sectors    = 1232,
-                SectorSize = 1024,
-                MD5        = "ccc7f98e216db35c2b7a08634a9f3e20",
-                Partitions = new[]
-                {
-                    new BlockPartitionVolumes
-                    {
-                        Start  = 0,
-                        Length = 1232
-                    }
-                }
-            },
-            new BlockImageTestExpected
-            {
-                TestFile   = "msdos50_md2dd.d88.lz",
-                MediaType  = MediaType.Unknown,
-                Sectors    = 1440,
-                SectorSize = 512,
-                MD5        = "7a3332e82b0fe8c5673a2615f6c0b9a2"
-            },
-            new BlockImageTestExpected
-            {
-                TestFile   = "msdos50_md2hd.d88.lz",
-                MediaType  = MediaType.SHARP_525,
-                Sectors    = 1232,
-                SectorSize = 1024,
-                MD5        = "62f5be96a8b8ccab9ee4aebf557cfcf7",
-                Partitions = new[]
-                {
-                    new BlockPartitionVolumes
-                    {
-                        Start  = 0,
-                        Length = 1232
-                    }
-                }
-            },
-            new BlockImageTestExpected
-            {
-                TestFile   = "msdos62_md2dd.d88.lz",
-                MediaType  = MediaType.Unknown,
-                Sectors    = 1440,
-                SectorSize = 512,
-                MD5        = "07fb4c225d4b5a2e2a1046ae66fc153c"
-            },
-            new BlockImageTestExpected
-            {
-                TestFile   = "msdos62_md2hd.d88.lz",
-                MediaType  = MediaType.SHARP_525,
-                Sectors    = 1232,
-                SectorSize = 1024,
-                MD5        = "1f73980e45a384bed331eaa33c9ef65b",
-                Partitions = new[]
-                {
-                    new BlockPartitionVolumes
-                    {
-                        Start  = 0,
-                        Length = 1232
-                    }
-                }
-            },
-            new BlockImageTestExpected
-            {
-                TestFile   = "R-Type (1988)(Irem)(Disk 1 of 2).d88.lz",
-                MediaType  = MediaType.Unknown,
-                Sectors    = 1284,
-                SectorSize = 1024,
-                MD5        = "9d675e5147b55cee0b2bc05476eef825"
-            },
-            new BlockImageTestExpected
-            {
-                TestFile   = "Towns System Software v1.1L30 (1992)(Fujitsu)(JP).d88.lz",
-                MediaType  = MediaType.SHARP_525,
-                Sectors    = 1232,
-                SectorSize = 1024,
-                MD5        = "bb48546ced9c61462e1c89dca4987143",
-                Partitions = new[]
-                {
-                    new BlockPartitionVolumes
-                    {
-                        Start  = 0,
-                        Length = 1232
-                    }
-                }
-            },
-            new BlockImageTestExpected
-            {
-                TestFile   = "Visual Instrument Player (198x)(Kamiya)(JP)(Disk 1 of 2).d88.lz",
-                MediaType  = MediaType.NEC_525_SS,
-                Sectors    = 1280,
-                SectorSize = 256,
-                MD5        = "c7df67f4e66dad658fe856d3c8b36c7a"
             }
-        };
-    }
+        },
+        new BlockImageTestExpected
+        {
+            TestFile   = "msdos50_epson_md2hd.d88.lz",
+            MediaType  = MediaType.SHARP_525,
+            Sectors    = 1232,
+            SectorSize = 1024,
+            MD5        = "ccc7f98e216db35c2b7a08634a9f3e20",
+            Partitions = new[]
+            {
+                new BlockPartitionVolumes
+                {
+                    Start  = 0,
+                    Length = 1232
+                }
+            }
+        },
+        new BlockImageTestExpected
+        {
+            TestFile   = "msdos50_md2dd.d88.lz",
+            MediaType  = MediaType.Unknown,
+            Sectors    = 1440,
+            SectorSize = 512,
+            MD5        = "7a3332e82b0fe8c5673a2615f6c0b9a2"
+        },
+        new BlockImageTestExpected
+        {
+            TestFile   = "msdos50_md2hd.d88.lz",
+            MediaType  = MediaType.SHARP_525,
+            Sectors    = 1232,
+            SectorSize = 1024,
+            MD5        = "62f5be96a8b8ccab9ee4aebf557cfcf7",
+            Partitions = new[]
+            {
+                new BlockPartitionVolumes
+                {
+                    Start  = 0,
+                    Length = 1232
+                }
+            }
+        },
+        new BlockImageTestExpected
+        {
+            TestFile   = "msdos62_md2dd.d88.lz",
+            MediaType  = MediaType.Unknown,
+            Sectors    = 1440,
+            SectorSize = 512,
+            MD5        = "07fb4c225d4b5a2e2a1046ae66fc153c"
+        },
+        new BlockImageTestExpected
+        {
+            TestFile   = "msdos62_md2hd.d88.lz",
+            MediaType  = MediaType.SHARP_525,
+            Sectors    = 1232,
+            SectorSize = 1024,
+            MD5        = "1f73980e45a384bed331eaa33c9ef65b",
+            Partitions = new[]
+            {
+                new BlockPartitionVolumes
+                {
+                    Start  = 0,
+                    Length = 1232
+                }
+            }
+        },
+        new BlockImageTestExpected
+        {
+            TestFile   = "R-Type (1988)(Irem)(Disk 1 of 2).d88.lz",
+            MediaType  = MediaType.Unknown,
+            Sectors    = 1284,
+            SectorSize = 1024,
+            MD5        = "9d675e5147b55cee0b2bc05476eef825"
+        },
+        new BlockImageTestExpected
+        {
+            TestFile   = "Towns System Software v1.1L30 (1992)(Fujitsu)(JP).d88.lz",
+            MediaType  = MediaType.SHARP_525,
+            Sectors    = 1232,
+            SectorSize = 1024,
+            MD5        = "bb48546ced9c61462e1c89dca4987143",
+            Partitions = new[]
+            {
+                new BlockPartitionVolumes
+                {
+                    Start  = 0,
+                    Length = 1232
+                }
+            }
+        },
+        new BlockImageTestExpected
+        {
+            TestFile   = "Visual Instrument Player (198x)(Kamiya)(JP)(Disk 1 of 2).d88.lz",
+            MediaType  = MediaType.NEC_525_SS,
+            Sectors    = 1280,
+            SectorSize = 256,
+            MD5        = "c7df67f4e66dad658fe856d3c8b36c7a"
+        }
+    };
 }

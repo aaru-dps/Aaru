@@ -30,20 +30,19 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class Cpcdsk
 {
-    public sealed partial class Cpcdsk
-    {
-        /// <summary>Identifier for CPCEMU disk images, "MV - CPC" + usually : "EMU Disk-File\r\nDisk-Info\r\n" but not required</summary>
-        const string CPCDSK_ID = "MV - CPCEMU Disk-File";
+    /// <summary>Identifier for CPCEMU disk images, "MV - CPC" + usually : "EMU Disk-File\r\nDisk-Info\r\n" but not required</summary>
+    const string CPCDSK_ID = "MV - CPCEMU Disk-File";
 
-        /// <summary>Identifier for DU54 disk images, "MV - CPC format Disk Image (DU54)"</summary>
-        const string DU54_ID = "MV - CPC format Disk Image (DU54)";
+    /// <summary>Identifier for DU54 disk images, "MV - CPC format Disk Image (DU54)"</summary>
+    const string DU54_ID = "MV - CPC format Disk Image (DU54)";
 
-        /// <summary>Identifier for Extended CPCEMU disk images</summary>
-        const string EDSK_ID = "EXTENDED CPC DSK File";
+    /// <summary>Identifier for Extended CPCEMU disk images</summary>
+    const string EDSK_ID = "EXTENDED CPC DSK File";
 
-        /// <summary>Identifier for track information, </summary>
-        const string TRACK_ID = "Track-Info";
-    }
+    /// <summary>Identifier for track information, </summary>
+    const string TRACK_ID = "Track-Info";
 }

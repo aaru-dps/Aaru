@@ -30,9 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Database.Models
-{
-    /// <inheritdoc />
-    /// <summary>Filter used</summary>
-    public class Filter : NameCountModel {}
-}
+namespace Aaru.Database.Models;
+
+/// <inheritdoc />
+/// <summary>Filter used</summary>
+public class Filter : NameCountModel {}

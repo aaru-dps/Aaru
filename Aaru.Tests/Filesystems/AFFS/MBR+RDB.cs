@@ -32,42 +32,41 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Filesystems.AFFS
+namespace Aaru.Tests.Filesystems.AFFS;
+
+[TestFixture]
+public class MBR_RDB : FilesystemTest
 {
-    [TestFixture]
-    public class MBR_RDB : FilesystemTest
+    public MBR_RDB() : base("Amiga FFS") {}
+
+    public override string DataFolder =>
+        Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Amiga Fast File System (MBR+RDB)");
+    public override IFilesystem Plugin     => new AmigaDOSPlugin();
+    public override bool        Partitions => true;
+
+    public override FileSystemTest[] Tests => new[]
     {
-        public MBR_RDB() : base("Amiga FFS") {}
-
-        public override string DataFolder =>
-            Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Amiga Fast File System (MBR+RDB)");
-        public override IFilesystem Plugin     => new AmigaDOSPlugin();
-        public override bool        Partitions => true;
-
-        public override FileSystemTest[] Tests => new[]
+        new FileSystemTest
         {
-            new FileSystemTest
-            {
-                TestFile     = "aros.aif",
-                MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 409600,
-                SectorSize   = 512,
-                Clusters     = 406224,
-                ClusterSize  = 512,
-                VolumeName   = "Volume label",
-                VolumeSerial = "A58348CE"
-            },
-            new FileSystemTest
-            {
-                TestFile     = "aros_intl.aif",
-                MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 409600,
-                SectorSize   = 512,
-                Clusters     = 406224,
-                ClusterSize  = 512,
-                VolumeName   = "Volume label",
-                VolumeSerial = "A5833CD0"
-            }
-        };
-    }
+            TestFile     = "aros.aif",
+            MediaType    = MediaType.GENERIC_HDD,
+            Sectors      = 409600,
+            SectorSize   = 512,
+            Clusters     = 406224,
+            ClusterSize  = 512,
+            VolumeName   = "Volume label",
+            VolumeSerial = "A58348CE"
+        },
+        new FileSystemTest
+        {
+            TestFile     = "aros_intl.aif",
+            MediaType    = MediaType.GENERIC_HDD,
+            Sectors      = 409600,
+            SectorSize   = 512,
+            Clusters     = 406224,
+            ClusterSize  = 512,
+            VolumeName   = "Volume label",
+            VolumeSerial = "A5833CD0"
+        }
+    };
 }

@@ -30,16 +30,15 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages
-{
-    public sealed partial class PartClone
-    {
-        ulong BlockOffset(ulong sectorAddress)
-        {
-            _extents.GetStart(sectorAddress, out ulong extentStart);
-            _extentsOff.TryGetValue(extentStart, out ulong extentStartingOffset);
+namespace Aaru.DiscImages;
 
-            return extentStartingOffset + (sectorAddress - extentStart);
-        }
+public sealed partial class PartClone
+{
+    ulong BlockOffset(ulong sectorAddress)
+    {
+        _extents.GetStart(sectorAddress, out ulong extentStart);
+        _extentsOff.TryGetValue(extentStart, out ulong extentStartingOffset);
+
+        return extentStartingOffset + (sectorAddress - extentStart);
     }
 }

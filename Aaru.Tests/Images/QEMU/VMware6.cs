@@ -32,33 +32,32 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.DiscImages;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Images.QEMU
-{
-    [TestFixture]
-    public class VMware6 : BlockMediaImageTest
-    {
-        public override string DataFolder =>
-            Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "QEMU", "VMware 6");
-        public override IMediaImage _plugin => new VMware();
+namespace Aaru.Tests.Images.QEMU;
 
-        public override BlockImageTestExpected[] Tests => new[]
+[TestFixture]
+public class VMware6 : BlockMediaImageTest
+{
+    public override string DataFolder =>
+        Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "QEMU", "VMware 6");
+    public override IMediaImage _plugin => new VMware();
+
+    public override BlockImageTestExpected[] Tests => new[]
+    {
+        new BlockImageTestExpected
         {
-            new BlockImageTestExpected
+            TestFile   = "vmdk6.vmdk.lz",
+            MediaType  = MediaType.GENERIC_HDD,
+            Sectors    = 251904,
+            SectorSize = 512,
+            MD5        = "1ad282643cc7f97c57dc874b3d4ece9b",
+            Partitions = new[]
             {
-                TestFile   = "vmdk6.vmdk.lz",
-                MediaType  = MediaType.GENERIC_HDD,
-                Sectors    = 251904,
-                SectorSize = 512,
-                MD5        = "1ad282643cc7f97c57dc874b3d4ece9b",
-                Partitions = new[]
+                new BlockPartitionVolumes
                 {
-                    new BlockPartitionVolumes
-                    {
-                        Start  = 63,
-                        Length = 251841
-                    }
+                    Start  = 63,
+                    Length = 251841
                 }
             }
-        };
-    }
+        }
+    };
 }

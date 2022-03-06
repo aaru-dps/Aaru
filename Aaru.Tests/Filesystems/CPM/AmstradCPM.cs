@@ -30,60 +30,59 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Filesystems.CPM
+namespace Aaru.Tests.Filesystems.CPM;
+
+[TestFixture]
+public class AmstradCPM : ReadOnlyFilesystemTest
 {
-    [TestFixture]
-    public class AmstradCPM : ReadOnlyFilesystemTest
+    public AmstradCPM() : base("CP/M") {}
+
+    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "CPM", "Amstrad CPM");
+
+    public override IFilesystem Plugin     => new Aaru.Filesystems.CPM();
+    public override bool        Partitions => false;
+
+    public override FileSystemTest[] Tests => new[]
     {
-        public AmstradCPM() : base("CP/M") {}
-
-        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "CPM", "Amstrad CPM");
-
-        public override IFilesystem Plugin     => new Aaru.Filesystems.CPM();
-        public override bool        Partitions => false;
-
-        public override FileSystemTest[] Tests => new[]
+        new FileSystemTest
         {
-            new FileSystemTest
-            {
-                TestFile    = "data_filename.imd",
-                MediaType   = MediaType.DOS_525_SS_DD_9,
-                Bootable    = true,
-                Sectors     = 360,
-                SectorSize  = 512,
-                Clusters    = 171,
-                ClusterSize = 1024
-            },
-            new FileSystemTest
-            {
-                TestFile    = "data_files.imd",
-                MediaType   = MediaType.DOS_525_SS_DD_9,
-                Bootable    = true,
-                Sectors     = 360,
-                SectorSize  = 512,
-                Clusters    = 171,
-                ClusterSize = 1024
-            },
-            new FileSystemTest
-            {
-                TestFile    = "system_filename.imd",
-                MediaType   = MediaType.DOS_525_SS_DD_9,
-                Sectors     = 360,
-                SectorSize  = 512,
-                Bootable    = true,
-                Clusters    = 171,
-                ClusterSize = 1024
-            },
-            new FileSystemTest
-            {
-                TestFile    = "system_files.imd",
-                MediaType   = MediaType.DOS_525_SS_DD_9,
-                Sectors     = 360,
-                SectorSize  = 512,
-                Bootable    = true,
-                Clusters    = 171,
-                ClusterSize = 1024
-            }
-        };
-    }
+            TestFile    = "data_filename.imd",
+            MediaType   = MediaType.DOS_525_SS_DD_9,
+            Bootable    = true,
+            Sectors     = 360,
+            SectorSize  = 512,
+            Clusters    = 171,
+            ClusterSize = 1024
+        },
+        new FileSystemTest
+        {
+            TestFile    = "data_files.imd",
+            MediaType   = MediaType.DOS_525_SS_DD_9,
+            Bootable    = true,
+            Sectors     = 360,
+            SectorSize  = 512,
+            Clusters    = 171,
+            ClusterSize = 1024
+        },
+        new FileSystemTest
+        {
+            TestFile    = "system_filename.imd",
+            MediaType   = MediaType.DOS_525_SS_DD_9,
+            Sectors     = 360,
+            SectorSize  = 512,
+            Bootable    = true,
+            Clusters    = 171,
+            ClusterSize = 1024
+        },
+        new FileSystemTest
+        {
+            TestFile    = "system_files.imd",
+            MediaType   = MediaType.DOS_525_SS_DD_9,
+            Sectors     = 360,
+            SectorSize  = 512,
+            Bootable    = true,
+            Clusters    = 171,
+            ClusterSize = 1024
+        }
+    };
 }

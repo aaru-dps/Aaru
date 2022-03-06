@@ -32,47 +32,46 @@
 
 using Aaru.CommonTypes;
 
-namespace Aaru.Core
+namespace Aaru.Core;
+
+public sealed partial class Sidecar
 {
-    public sealed partial class Sidecar
-    {
-        /// <summary>Initializes a progress indicator (e.g. makes a progress bar visible)</summary>
-        public event InitProgressHandler InitProgressEvent;
-        /// <summary>Updates a progress indicator with text</summary>
-        public event UpdateProgressHandler UpdateProgressEvent;
-        /// <summary>Uninitializes a progress indicator (e.g. adds a newline to the console)</summary>
-        public event EndProgressHandler EndProgressEvent;
-        /// <summary>Initializes a secondary progress indicator (e.g. makes a progress bar visible)</summary>
-        public event InitProgressHandler2 InitProgressEvent2;
-        /// <summary>Event raised to update the values of a determinate progress bar</summary>
-        public event UpdateProgressHandler2 UpdateProgressEvent2;
-        /// <summary>Event raised when the progress bar is not longer needed</summary>
-        public event EndProgressHandler2 EndProgressEvent2;
-        /// <summary>Updates a status indicator</summary>
-        public event UpdateStatusHandler UpdateStatusEvent;
+    /// <summary>Initializes a progress indicator (e.g. makes a progress bar visible)</summary>
+    public event InitProgressHandler InitProgressEvent;
+    /// <summary>Updates a progress indicator with text</summary>
+    public event UpdateProgressHandler UpdateProgressEvent;
+    /// <summary>Uninitializes a progress indicator (e.g. adds a newline to the console)</summary>
+    public event EndProgressHandler EndProgressEvent;
+    /// <summary>Initializes a secondary progress indicator (e.g. makes a progress bar visible)</summary>
+    public event InitProgressHandler2 InitProgressEvent2;
+    /// <summary>Event raised to update the values of a determinate progress bar</summary>
+    public event UpdateProgressHandler2 UpdateProgressEvent2;
+    /// <summary>Event raised when the progress bar is not longer needed</summary>
+    public event EndProgressHandler2 EndProgressEvent2;
+    /// <summary>Updates a status indicator</summary>
+    public event UpdateStatusHandler UpdateStatusEvent;
 
-        /// <summary>Initializes a progress indicator (e.g. makes a progress bar visible)</summary>
-        public void InitProgress() => InitProgressEvent?.Invoke();
+    /// <summary>Initializes a progress indicator (e.g. makes a progress bar visible)</summary>
+    public void InitProgress() => InitProgressEvent?.Invoke();
 
-        /// <summary>Updates a progress indicator with text</summary>
-        public void UpdateProgress(string text, long current, long maximum) =>
-            UpdateProgressEvent?.Invoke(string.Format(text, current, maximum), current, maximum);
+    /// <summary>Updates a progress indicator with text</summary>
+    public void UpdateProgress(string text, long current, long maximum) =>
+        UpdateProgressEvent?.Invoke(string.Format(text, current, maximum), current, maximum);
 
-        /// <summary>Uninitializes a progress indicator (e.g. adds a newline to the console)</summary>
-        public void EndProgress() => EndProgressEvent?.Invoke();
+    /// <summary>Uninitializes a progress indicator (e.g. adds a newline to the console)</summary>
+    public void EndProgress() => EndProgressEvent?.Invoke();
 
-        /// <summary>Initializes a secondary progress indicator (e.g. makes a progress bar visible)</summary>
-        public void InitProgress2() => InitProgressEvent2?.Invoke();
+    /// <summary>Initializes a secondary progress indicator (e.g. makes a progress bar visible)</summary>
+    public void InitProgress2() => InitProgressEvent2?.Invoke();
 
-        /// <summary>Event raised to update the values of a determinate progress bar</summary>
-        public void UpdateProgress2(string text, long current, long maximum) =>
-            UpdateProgressEvent2?.Invoke(string.Format(text, current, maximum), current, maximum);
+    /// <summary>Event raised to update the values of a determinate progress bar</summary>
+    public void UpdateProgress2(string text, long current, long maximum) =>
+        UpdateProgressEvent2?.Invoke(string.Format(text, current, maximum), current, maximum);
 
-        /// <summary>Event raised when the progress bar is not longer needed</summary>
-        public void EndProgress2() => EndProgressEvent2?.Invoke();
+    /// <summary>Event raised when the progress bar is not longer needed</summary>
+    public void EndProgress2() => EndProgressEvent2?.Invoke();
 
-        /// <summary>Updates a status indicator</summary>
-        public void UpdateStatus(string text, params object[] args) =>
-            UpdateStatusEvent?.Invoke(string.Format(text, args));
-    }
+    /// <summary>Updates a status indicator</summary>
+    public void UpdateStatus(string text, params object[] args) =>
+        UpdateStatusEvent?.Invoke(string.Format(text, args));
 }

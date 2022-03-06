@@ -33,74 +33,73 @@
 
 using System.Runtime.InteropServices;
 
-namespace Aaru.Filesystems
+namespace Aaru.Filesystems;
+
+public sealed partial class ISO9660
 {
-    public sealed partial class ISO9660
+    // Little-endian
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct AppleProDOSSystemUse
     {
-        // Little-endian
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        readonly struct AppleProDOSSystemUse
-        {
-            public readonly ushort  signature;
-            public readonly byte    length;
-            public readonly AppleId id;
-            public readonly byte    type;
-            public readonly ushort  aux_type;
-        }
+        public readonly ushort  signature;
+        public readonly byte    length;
+        public readonly AppleId id;
+        public readonly byte    type;
+        public readonly ushort  aux_type;
+    }
 
-        // Big-endian
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        readonly struct AppleHFSSystemUse
-        {
-            public readonly ushort                  signature;
-            public readonly byte                    length;
-            public readonly AppleId                 id;
-            public readonly uint                    type;
-            public readonly uint                    creator;
-            public readonly AppleCommon.FinderFlags finder_flags;
-        }
+    // Big-endian
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct AppleHFSSystemUse
+    {
+        public readonly ushort                  signature;
+        public readonly byte                    length;
+        public readonly AppleId                 id;
+        public readonly uint                    type;
+        public readonly uint                    creator;
+        public readonly AppleCommon.FinderFlags finder_flags;
+    }
 
-        // Little-endian
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        readonly struct AppleProDOSOldSystemUse
-        {
-            public readonly ushort     signature;
-            public readonly AppleOldId id;
-            public readonly byte       type;
-            public readonly ushort     aux_type;
-        }
+    // Little-endian
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct AppleProDOSOldSystemUse
+    {
+        public readonly ushort     signature;
+        public readonly AppleOldId id;
+        public readonly byte       type;
+        public readonly ushort     aux_type;
+    }
 
-        // Big-endian
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        readonly struct AppleHFSTypeCreatorSystemUse
-        {
-            public readonly ushort     signature;
-            public readonly AppleOldId id;
-            public readonly uint       type;
-            public readonly uint       creator;
-        }
+    // Big-endian
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct AppleHFSTypeCreatorSystemUse
+    {
+        public readonly ushort     signature;
+        public readonly AppleOldId id;
+        public readonly uint       type;
+        public readonly uint       creator;
+    }
 
-        // Big-endian
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        readonly struct AppleHFSIconSystemUse
-        {
-            public readonly ushort     signature;
-            public readonly AppleOldId id;
-            public readonly uint       type;
-            public readonly uint       creator;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)]
-            public readonly byte[] icon;
-        }
+    // Big-endian
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct AppleHFSIconSystemUse
+    {
+        public readonly ushort     signature;
+        public readonly AppleOldId id;
+        public readonly uint       type;
+        public readonly uint       creator;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)]
+        public readonly byte[] icon;
+    }
 
-        // Big-endian
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        readonly struct AppleHFSOldSystemUse
-        {
-            public readonly ushort     signature;
-            public readonly AppleOldId id;
-            public readonly uint       type;
-            public readonly uint       creator;
-            public readonly ushort     finder_flags;
-        }
+    // Big-endian
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct AppleHFSOldSystemUse
+    {
+        public readonly ushort     signature;
+        public readonly AppleOldId id;
+        public readonly uint       type;
+        public readonly uint       creator;
+        public readonly ushort     finder_flags;
     }
 }

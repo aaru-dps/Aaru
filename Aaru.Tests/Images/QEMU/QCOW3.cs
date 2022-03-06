@@ -32,49 +32,48 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.DiscImages;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Images.QEMU
-{
-    [TestFixture]
-    public class QCOW3 : BlockMediaImageTest
-    {
-        public override string DataFolder =>
-            Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "QEMU", "QEMU Copy On Write 3");
-        public override IMediaImage _plugin => new Qcow2();
+namespace Aaru.Tests.Images.QEMU;
 
-        public override BlockImageTestExpected[] Tests => new[]
+[TestFixture]
+public class QCOW3 : BlockMediaImageTest
+{
+    public override string DataFolder =>
+        Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "QEMU", "QEMU Copy On Write 3");
+    public override IMediaImage _plugin => new Qcow2();
+
+    public override BlockImageTestExpected[] Tests => new[]
+    {
+        new BlockImageTestExpected
         {
-            new BlockImageTestExpected
+            TestFile   = "qcow3.qc2.lz",
+            MediaType  = MediaType.GENERIC_HDD,
+            Sectors    = 251904,
+            SectorSize = 512,
+            MD5        = "4bfc9e9e2dd86aa52ef709e77d2617ed",
+            Partitions = new[]
             {
-                TestFile   = "qcow3.qc2.lz",
-                MediaType  = MediaType.GENERIC_HDD,
-                Sectors    = 251904,
-                SectorSize = 512,
-                MD5        = "4bfc9e9e2dd86aa52ef709e77d2617ed",
-                Partitions = new[]
+                new BlockPartitionVolumes
                 {
-                    new BlockPartitionVolumes
-                    {
-                        Start  = 63,
-                        Length = 251841
-                    }
-                }
-            },
-            new BlockImageTestExpected
-            {
-                TestFile   = "qcow3_compressed.qc2.lz",
-                MediaType  = MediaType.GENERIC_HDD,
-                Sectors    = 251904,
-                SectorSize = 512,
-                MD5        = "4bfc9e9e2dd86aa52ef709e77d2617ed",
-                Partitions = new[]
-                {
-                    new BlockPartitionVolumes
-                    {
-                        Start  = 63,
-                        Length = 251841
-                    }
+                    Start  = 63,
+                    Length = 251841
                 }
             }
-        };
-    }
+        },
+        new BlockImageTestExpected
+        {
+            TestFile   = "qcow3_compressed.qc2.lz",
+            MediaType  = MediaType.GENERIC_HDD,
+            Sectors    = 251904,
+            SectorSize = 512,
+            MD5        = "4bfc9e9e2dd86aa52ef709e77d2617ed",
+            Partitions = new[]
+            {
+                new BlockPartitionVolumes
+                {
+                    Start  = 63,
+                    Length = 251841
+                }
+            }
+        }
+    };
 }

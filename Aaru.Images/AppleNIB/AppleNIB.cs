@@ -35,40 +35,39 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 
-namespace Aaru.DiscImages
-{
-    // TODO: Checksum sectors
-    /// <inheritdoc />
-    /// <summary>Implements reading nibbelized Apple II disk images</summary>
-    public sealed partial class AppleNib : IMediaImage
-    {
-        Dictionary<ulong, byte[]> _addressFields;
-        Dictionary<ulong, byte[]> _cookedSectors;
-        ImageInfo                 _imageInfo;
-        Dictionary<ulong, byte[]> _longSectors;
+namespace Aaru.DiscImages;
 
-        public AppleNib() => _imageInfo = new ImageInfo
-        {
-            ReadableSectorTags    = new List<SectorTagType>(),
-            ReadableMediaTags     = new List<MediaTagType>(),
-            HasPartitions         = false,
-            HasSessions           = false,
-            Version               = null,
-            Application           = null,
-            ApplicationVersion    = null,
-            Creator               = null,
-            Comments              = null,
-            MediaManufacturer     = null,
-            MediaModel            = null,
-            MediaSerialNumber     = null,
-            MediaBarcode          = null,
-            MediaPartNumber       = null,
-            MediaSequence         = 0,
-            LastMediaSequence     = 0,
-            DriveManufacturer     = null,
-            DriveModel            = null,
-            DriveSerialNumber     = null,
-            DriveFirmwareRevision = null
-        };
-    }
+// TODO: Checksum sectors
+/// <inheritdoc />
+/// <summary>Implements reading nibbelized Apple II disk images</summary>
+public sealed partial class AppleNib : IMediaImage
+{
+    Dictionary<ulong, byte[]> _addressFields;
+    Dictionary<ulong, byte[]> _cookedSectors;
+    ImageInfo                 _imageInfo;
+    Dictionary<ulong, byte[]> _longSectors;
+
+    public AppleNib() => _imageInfo = new ImageInfo
+    {
+        ReadableSectorTags    = new List<SectorTagType>(),
+        ReadableMediaTags     = new List<MediaTagType>(),
+        HasPartitions         = false,
+        HasSessions           = false,
+        Version               = null,
+        Application           = null,
+        ApplicationVersion    = null,
+        Creator               = null,
+        Comments              = null,
+        MediaManufacturer     = null,
+        MediaModel            = null,
+        MediaSerialNumber     = null,
+        MediaBarcode          = null,
+        MediaPartNumber       = null,
+        MediaSequence         = 0,
+        LastMediaSequence     = 0,
+        DriveManufacturer     = null,
+        DriveModel            = null,
+        DriveSerialNumber     = null,
+        DriveFirmwareRevision = null
+    };
 }

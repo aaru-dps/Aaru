@@ -34,24 +34,23 @@ using System.IO;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class Vhdx
 {
-    public sealed partial class Vhdx
+    /// <inheritdoc />
+    public bool Identify(IFilter imageFilter)
     {
-        /// <inheritdoc />
-        public bool Identify(IFilter imageFilter)
-        {
-            Stream stream = imageFilter.GetDataForkStream();
-            stream.Seek(0, SeekOrigin.Begin);
+        Stream stream = imageFilter.GetDataForkStream();
+        stream.Seek(0, SeekOrigin.Begin);
 
-            if(stream.Length < 512)
-                return false;
+        if(stream.Length < 512)
+            return false;
 
-            byte[] vhdxIdB = new byte[Marshal.SizeOf<Identifier>()];
-            stream.Read(vhdxIdB, 0, Marshal.SizeOf<Identifier>());
-            _id = Marshal.ByteArrayToStructureLittleEndian<Identifier>(vhdxIdB);
+        byte[] vhdxIdB = new byte[Marshal.SizeOf<Identifier>()];
+        stream.Read(vhdxIdB, 0, Marshal.SizeOf<Identifier>());
+        _id = Marshal.ByteArrayToStructureLittleEndian<Identifier>(vhdxIdB);
 
-            return _id.signature == VHDX_SIGNATURE;
-        }
+        return _id.signature == VHDX_SIGNATURE;
     }
 }

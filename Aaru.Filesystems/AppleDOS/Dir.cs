@@ -37,112 +37,111 @@ using System.Linq;
 using Aaru.CommonTypes.Enums;
 using Aaru.Helpers;
 
-namespace Aaru.Filesystems
+namespace Aaru.Filesystems;
+
+public sealed partial class AppleDOS
 {
-    public sealed partial class AppleDOS
+    /// <inheritdoc />
+    public ErrorNumber ReadLink(string path, out string dest)
     {
-        /// <inheritdoc />
-        public ErrorNumber ReadLink(string path, out string dest)
-        {
-            dest = null;
+        dest = null;
 
-            return !_mounted ? ErrorNumber.AccessDenied : ErrorNumber.NotSupported;
+        return !_mounted ? ErrorNumber.AccessDenied : ErrorNumber.NotSupported;
+    }
+
+    /// <inheritdoc />
+    public ErrorNumber ReadDir(string path, out List<string> contents)
+    {
+        contents = null;
+
+        if(!_mounted)
+            return ErrorNumber.AccessDenied;
+
+        if(!string.IsNullOrEmpty(path) &&
+           string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) != 0)
+            return ErrorNumber.NotSupported;
+
+        contents = _catalogCache.Keys.ToList();
+
+        if(_debug)
+        {
+            contents.Add("$");
+            contents.Add("$Boot");
+            contents.Add("$Vtoc");
         }
 
-        /// <inheritdoc />
-        public ErrorNumber ReadDir(string path, out List<string> contents)
+        contents.Sort();
+
+        return ErrorNumber.NoError;
+    }
+
+    ErrorNumber ReadCatalog()
+    {
+        var   catalogMs = new MemoryStream();
+        ulong lba       = (ulong)((_vtoc.catalogTrack * _sectorsPerTrack) + _vtoc.catalogSector);
+        _totalFileEntries = 0;
+        _catalogCache     = new Dictionary<string, ushort>();
+        _fileTypeCache    = new Dictionary<string, byte>();
+        _fileSizeCache    = new Dictionary<string, int>();
+        _lockedFiles      = new List<string>();
+
+        if(lba == 0 ||
+           lba > _device.Info.Sectors)
+            return ErrorNumber.InvalidArgument;
+
+        while(lba != 0)
         {
-            contents = null;
+            _usedSectors++;
+            ErrorNumber errno = _device.ReadSector(lba, out byte[] catSectorB);
 
-            if(!_mounted)
-                return ErrorNumber.AccessDenied;
+            if(errno != ErrorNumber.NoError)
+                return errno;
 
-            if(!string.IsNullOrEmpty(path) &&
-               string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) != 0)
-                return ErrorNumber.NotSupported;
-
-            contents = _catalogCache.Keys.ToList();
+            _totalFileEntries += 7;
 
             if(_debug)
+                catalogMs.Write(catSectorB, 0, catSectorB.Length);
+
+            // Read the catalog sector
+            CatalogSector catSector = Marshal.ByteArrayToStructureLittleEndian<CatalogSector>(catSectorB);
+
+            foreach(FileEntry entry in catSector.entries.Where(entry => entry.extentTrack > 0))
             {
-                contents.Add("$");
-                contents.Add("$Boot");
-                contents.Add("$Vtoc");
+                _track1UsedByFiles |= entry.extentTrack == 1;
+                _track2UsedByFiles |= entry.extentTrack == 2;
+
+                byte[] filenameB = new byte[30];
+                ushort ts        = (ushort)((entry.extentTrack << 8) | entry.extentSector);
+
+                // Apple DOS has high byte set over ASCII.
+                for(int i = 0; i < 30; i++)
+                    filenameB[i] = (byte)(entry.filename[i] & 0x7F);
+
+                string filename = StringHandlers.SpacePaddedToString(filenameB, Encoding);
+
+                if(!_catalogCache.ContainsKey(filename))
+                    _catalogCache.Add(filename, ts);
+
+                if(!_fileTypeCache.ContainsKey(filename))
+                    _fileTypeCache.Add(filename, (byte)(entry.typeAndFlags & 0x7F));
+
+                if(!_fileSizeCache.ContainsKey(filename))
+                    _fileSizeCache.Add(filename, entry.length * _vtoc.bytesPerSector);
+
+                if((entry.typeAndFlags & 0x80) == 0x80 &&
+                   !_lockedFiles.Contains(filename))
+                    _lockedFiles.Add(filename);
             }
 
-            contents.Sort();
+            lba = (ulong)((catSector.trackOfNext * _sectorsPerTrack) + catSector.sectorOfNext);
 
-            return ErrorNumber.NoError;
+            if(lba > _device.Info.Sectors)
+                break;
         }
 
-        ErrorNumber ReadCatalog()
-        {
-            var   catalogMs = new MemoryStream();
-            ulong lba       = (ulong)((_vtoc.catalogTrack * _sectorsPerTrack) + _vtoc.catalogSector);
-            _totalFileEntries = 0;
-            _catalogCache     = new Dictionary<string, ushort>();
-            _fileTypeCache    = new Dictionary<string, byte>();
-            _fileSizeCache    = new Dictionary<string, int>();
-            _lockedFiles      = new List<string>();
+        if(_debug)
+            _catalogBlocks = catalogMs.ToArray();
 
-            if(lba == 0 ||
-               lba > _device.Info.Sectors)
-                return ErrorNumber.InvalidArgument;
-
-            while(lba != 0)
-            {
-                _usedSectors++;
-                ErrorNumber errno = _device.ReadSector(lba, out byte[] catSectorB);
-
-                if(errno != ErrorNumber.NoError)
-                    return errno;
-
-                _totalFileEntries += 7;
-
-                if(_debug)
-                    catalogMs.Write(catSectorB, 0, catSectorB.Length);
-
-                // Read the catalog sector
-                CatalogSector catSector = Marshal.ByteArrayToStructureLittleEndian<CatalogSector>(catSectorB);
-
-                foreach(FileEntry entry in catSector.entries.Where(entry => entry.extentTrack > 0))
-                {
-                    _track1UsedByFiles |= entry.extentTrack == 1;
-                    _track2UsedByFiles |= entry.extentTrack == 2;
-
-                    byte[] filenameB = new byte[30];
-                    ushort ts        = (ushort)((entry.extentTrack << 8) | entry.extentSector);
-
-                    // Apple DOS has high byte set over ASCII.
-                    for(int i = 0; i < 30; i++)
-                        filenameB[i] = (byte)(entry.filename[i] & 0x7F);
-
-                    string filename = StringHandlers.SpacePaddedToString(filenameB, Encoding);
-
-                    if(!_catalogCache.ContainsKey(filename))
-                        _catalogCache.Add(filename, ts);
-
-                    if(!_fileTypeCache.ContainsKey(filename))
-                        _fileTypeCache.Add(filename, (byte)(entry.typeAndFlags & 0x7F));
-
-                    if(!_fileSizeCache.ContainsKey(filename))
-                        _fileSizeCache.Add(filename, entry.length * _vtoc.bytesPerSector);
-
-                    if((entry.typeAndFlags & 0x80) == 0x80 &&
-                       !_lockedFiles.Contains(filename))
-                        _lockedFiles.Add(filename);
-                }
-
-                lba = (ulong)((catSector.trackOfNext * _sectorsPerTrack) + catSector.sectorOfNext);
-
-                if(lba > _device.Info.Sectors)
-                    break;
-            }
-
-            if(_debug)
-                _catalogBlocks = catalogMs.ToArray();
-
-            return ErrorNumber.NoError;
-        }
+        return ErrorNumber.NoError;
     }
 }

@@ -33,12 +33,11 @@
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 
-namespace Aaru.Gui.Views.Tabs
-{
-    public sealed class DvdInfo : UserControl
-    {
-        public DvdInfo() => InitializeComponent();
+namespace Aaru.Gui.Views.Tabs;
 
-        void InitializeComponent() => AvaloniaXamlLoader.Load(this);
-    }
+public sealed class DvdInfo : UserControl
+{
+    public DvdInfo() => InitializeComponent();
+
+    void InitializeComponent() => AvaloniaXamlLoader.Load(this);
 }

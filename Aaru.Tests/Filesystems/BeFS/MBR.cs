@@ -31,100 +31,99 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Filesystems.BeFS
+namespace Aaru.Tests.Filesystems.BeFS;
+
+[TestFixture]
+public class MBR : FilesystemTest
 {
-    [TestFixture]
-    public class MBR : FilesystemTest
+    public MBR() : base("BeFS") {}
+
+    public override string DataFolder =>
+        Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Be File System (MBR)");
+    public override IFilesystem Plugin     => new Aaru.Filesystems.BeFS();
+    public override bool        Partitions => true;
+
+    public override FileSystemTest[] Tests => new[]
     {
-        public MBR() : base("BeFS") {}
-
-        public override string DataFolder =>
-            Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Be File System (MBR)");
-        public override IFilesystem Plugin     => new Aaru.Filesystems.BeFS();
-        public override bool        Partitions => true;
-
-        public override FileSystemTest[] Tests => new[]
+        new FileSystemTest
         {
-            new FileSystemTest
-            {
-                TestFile    = "beos_r3.1.aif",
-                MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 262144,
-                SectorSize  = 512,
-                Clusters    = 131040,
-                ClusterSize = 1024,
-                VolumeName  = "Big Volume Label Goes Big Brrrr"
-            },
-            new FileSystemTest
-            {
-                TestFile    = "beos_r4.5.aif",
-                MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 262144,
-                SectorSize  = 512,
-                Clusters    = 130536,
-                ClusterSize = 1024,
-                VolumeName  = "Volume label"
-            },
-            new FileSystemTest
-            {
-                TestFile    = "haiku_hrev51259.aif",
-                MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 262144,
-                SectorSize  = 512,
-                Clusters    = 65024,
-                ClusterSize = 2048,
-                VolumeName  = "Volume label"
-            },
-            new FileSystemTest
-            {
-                TestFile    = "haiku_hrev51259_8k.aif",
-                MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 262144,
-                SectorSize  = 512,
-                Clusters    = 16256,
-                ClusterSize = 8192,
-                VolumeName  = "Volume label"
-            },
-            new FileSystemTest
-            {
-                TestFile    = "syllable_0.6.7.aif",
-                MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 2097152,
-                SectorSize  = 512,
-                Clusters    = 524272,
-                ClusterSize = 2048,
-                VolumeName  = "Volume label"
-            },
-            new FileSystemTest
-            {
-                TestFile    = "beos_r5.aif",
-                MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 262144,
-                SectorSize  = 512,
-                Clusters    = 130536,
-                ClusterSize = 1024,
-                VolumeName  = "Volume label"
-            },
-            new FileSystemTest
-            {
-                TestFile    = "beos_r5_2k.aif",
-                MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 262144,
-                SectorSize  = 512,
-                Clusters    = 65268,
-                ClusterSize = 2048,
-                VolumeName  = "Volume label 2K"
-            },
-            new FileSystemTest
-            {
-                TestFile    = "beos_r5_4k.aif",
-                MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 262144,
-                SectorSize  = 512,
-                Clusters    = 32634,
-                ClusterSize = 4096,
-                VolumeName  = "Volume label 4K"
-            }
-        };
-    }
+            TestFile    = "beos_r3.1.aif",
+            MediaType   = MediaType.GENERIC_HDD,
+            Sectors     = 262144,
+            SectorSize  = 512,
+            Clusters    = 131040,
+            ClusterSize = 1024,
+            VolumeName  = "Big Volume Label Goes Big Brrrr"
+        },
+        new FileSystemTest
+        {
+            TestFile    = "beos_r4.5.aif",
+            MediaType   = MediaType.GENERIC_HDD,
+            Sectors     = 262144,
+            SectorSize  = 512,
+            Clusters    = 130536,
+            ClusterSize = 1024,
+            VolumeName  = "Volume label"
+        },
+        new FileSystemTest
+        {
+            TestFile    = "haiku_hrev51259.aif",
+            MediaType   = MediaType.GENERIC_HDD,
+            Sectors     = 262144,
+            SectorSize  = 512,
+            Clusters    = 65024,
+            ClusterSize = 2048,
+            VolumeName  = "Volume label"
+        },
+        new FileSystemTest
+        {
+            TestFile    = "haiku_hrev51259_8k.aif",
+            MediaType   = MediaType.GENERIC_HDD,
+            Sectors     = 262144,
+            SectorSize  = 512,
+            Clusters    = 16256,
+            ClusterSize = 8192,
+            VolumeName  = "Volume label"
+        },
+        new FileSystemTest
+        {
+            TestFile    = "syllable_0.6.7.aif",
+            MediaType   = MediaType.GENERIC_HDD,
+            Sectors     = 2097152,
+            SectorSize  = 512,
+            Clusters    = 524272,
+            ClusterSize = 2048,
+            VolumeName  = "Volume label"
+        },
+        new FileSystemTest
+        {
+            TestFile    = "beos_r5.aif",
+            MediaType   = MediaType.GENERIC_HDD,
+            Sectors     = 262144,
+            SectorSize  = 512,
+            Clusters    = 130536,
+            ClusterSize = 1024,
+            VolumeName  = "Volume label"
+        },
+        new FileSystemTest
+        {
+            TestFile    = "beos_r5_2k.aif",
+            MediaType   = MediaType.GENERIC_HDD,
+            Sectors     = 262144,
+            SectorSize  = 512,
+            Clusters    = 65268,
+            ClusterSize = 2048,
+            VolumeName  = "Volume label 2K"
+        },
+        new FileSystemTest
+        {
+            TestFile    = "beos_r5_4k.aif",
+            MediaType   = MediaType.GENERIC_HDD,
+            Sectors     = 262144,
+            SectorSize  = 512,
+            Clusters    = 32634,
+            ClusterSize = 4096,
+            VolumeName  = "Volume label 4K"
+        }
+    };
 }

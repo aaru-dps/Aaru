@@ -35,24 +35,23 @@ using System.Collections.Generic;
 using Aaru.CommonTypes.Structs;
 using Schemas;
 
-namespace Aaru.DiscImages
-{
-    public sealed partial class AppleNib
-    {
-        /// <inheritdoc />
-        public ImageInfo Info => _imageInfo;
+namespace Aaru.DiscImages;
 
-        /// <inheritdoc />
-        public string Name => "Apple NIB";
-        /// <inheritdoc />
-        public Guid Id => new Guid("AE171AE8-6747-49CC-B861-9D450B7CD42E");
-        /// <inheritdoc />
-        public string Author => "Natalia Portillo";
-        /// <inheritdoc />
-        public string Format => "Apple nibbles";
-        /// <inheritdoc />
-        public List<DumpHardwareType> DumpHardware => null;
-        /// <inheritdoc />
-        public CICMMetadataType CicmMetadata => null;
-    }
+public sealed partial class AppleNib
+{
+    /// <inheritdoc />
+    public ImageInfo Info => _imageInfo;
+
+    /// <inheritdoc />
+    public string Name => "Apple NIB";
+    /// <inheritdoc />
+    public Guid Id => new Guid("AE171AE8-6747-49CC-B861-9D450B7CD42E");
+    /// <inheritdoc />
+    public string Author => "Natalia Portillo";
+    /// <inheritdoc />
+    public string Format => "Apple nibbles";
+    /// <inheritdoc />
+    public List<DumpHardwareType> DumpHardware => null;
+    /// <inheritdoc />
+    public CICMMetadataType CicmMetadata => null;
 }

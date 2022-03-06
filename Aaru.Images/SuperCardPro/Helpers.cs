@@ -34,28 +34,27 @@ using System;
 using System.IO;
 using System.Text;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class SuperCardPro
 {
-    public sealed partial class SuperCardPro
+    static string ReadPStringUtf8(Stream stream, uint position)
     {
-        static string ReadPStringUtf8(Stream stream, uint position)
-        {
-            if(position == 0)
-                return null;
+        if(position == 0)
+            return null;
 
-            stream.Position = position;
-            byte[] lenB = new byte[2];
-            stream.Read(lenB, 0, 2);
-            ushort len = BitConverter.ToUInt16(lenB, 0);
+        stream.Position = position;
+        byte[] lenB = new byte[2];
+        stream.Read(lenB, 0, 2);
+        ushort len = BitConverter.ToUInt16(lenB, 0);
 
-            if(len                   == 0 ||
-               len + stream.Position >= stream.Length)
-                return null;
+        if(len                   == 0 ||
+           len + stream.Position >= stream.Length)
+            return null;
 
-            byte[] str = new byte[len];
-            stream.Read(str, 0, len);
+        byte[] str = new byte[len];
+        stream.Read(str, 0, len);
 
-            return Encoding.UTF8.GetString(str);
-        }
+        return Encoding.UTF8.GetString(str);
     }
 }

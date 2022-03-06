@@ -34,30 +34,29 @@ using NUnit.Framework;
 
 // ReSharper disable StringLiteralTypo
 
-namespace Aaru.Tests.Filesystems.FATX
+namespace Aaru.Tests.Filesystems.FATX;
+
+[TestFixture]
+public class Xbox : ReadOnlyFilesystemTest
 {
-    [TestFixture]
-    public class Xbox : ReadOnlyFilesystemTest
+    public Xbox() : base("FATX filesystem") {}
+
+    public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Xbox FAT16", "le");
+    public override IFilesystem Plugin     => new XboxFatPlugin();
+    public override bool        Partitions => false;
+
+    public override FileSystemTest[] Tests => new[]
     {
-        public Xbox() : base("FATX filesystem") {}
-
-        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Xbox FAT16", "le");
-        public override IFilesystem Plugin => new XboxFatPlugin();
-        public override bool Partitions => false;
-
-        public override FileSystemTest[] Tests => new[]
+        new FileSystemTest
         {
-            new FileSystemTest
-            {
-                TestFile     = "fatx.img.lz",
-                MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 62720,
-                SectorSize   = 512,
-                Clusters     = 1960,
-                ClusterSize  = 16384,
-                VolumeName   = "Volume láb€l",
-                VolumeSerial = "4639B7D0"
-            }
-        };
-    }
+            TestFile     = "fatx.img.lz",
+            MediaType    = MediaType.GENERIC_HDD,
+            Sectors      = 62720,
+            SectorSize   = 512,
+            Clusters     = 1960,
+            ClusterSize  = 16384,
+            VolumeName   = "Volume láb€l",
+            VolumeSerial = "4639B7D0"
+        }
+    };
 }

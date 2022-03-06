@@ -32,30 +32,29 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Filesystems
+namespace Aaru.Tests.Filesystems;
+
+[TestFixture]
+public class Zfs : FilesystemTest
 {
-    [TestFixture]
-    public class Zfs : FilesystemTest
+    public Zfs() : base("ZFS filesystem") {}
+
+    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems",
+                                                      "Zettabyte File System");
+
+    public override IFilesystem Plugin     => new ZFS();
+    public override bool        Partitions => false;
+
+    public override FileSystemTest[] Tests => new[]
     {
-        public Zfs() : base("ZFS filesystem") {}
-
-        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems",
-                                                          "Zettabyte File System");
-
-        public override IFilesystem Plugin     => new ZFS();
-        public override bool        Partitions => false;
-
-        public override FileSystemTest[] Tests => new[]
+        new FileSystemTest
         {
-            new FileSystemTest
-            {
-                TestFile     = "netbsd_7.1.aif",
-                MediaType    = MediaType.GENERIC_HDD,
-                Sectors      = 33554432,
-                SectorSize   = 512,
-                VolumeName   = "NetBSD 7.1",
-                VolumeSerial = "2639895335654686206"
-            }
-        };
-    }
+            TestFile     = "netbsd_7.1.aif",
+            MediaType    = MediaType.GENERIC_HDD,
+            Sectors      = 33554432,
+            SectorSize   = 512,
+            VolumeName   = "NetBSD 7.1",
+            VolumeSerial = "2639895335654686206"
+        }
+    };
 }

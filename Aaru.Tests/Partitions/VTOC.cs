@@ -30,166 +30,165 @@ using System.IO;
 using Aaru.CommonTypes;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Partitions
-{
-    [TestFixture]
-    public class Vtoc : PartitionSchemeTest
-    {
-        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Partitioning schemes", "UNIX VTOC");
+namespace Aaru.Tests.Partitions;
 
-        public override PartitionTest[] Tests => new[]
+[TestFixture]
+public class Vtoc : PartitionSchemeTest
+{
+    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Partitioning schemes", "UNIX VTOC");
+
+    public override PartitionTest[] Tests => new[]
+    {
+        new PartitionTest
         {
-            new PartitionTest
+            TestFile = "att_unix_vtoc.aif",
+            Partitions = new[]
             {
-                TestFile = "att_unix_vtoc.aif",
-                Partitions = new[]
+                new Partition
                 {
-                    new Partition
-                    {
-                        Length   = 34,
-                        Offset   = 0,
-                        Sequence = 0,
-                        Size     = 0,
-                        Start    = 1,
-                        Type     = "UNIX: Boot"
-                    },
-                    new Partition
-                    {
-                        Length   = 1023119,
-                        Offset   = 0,
-                        Sequence = 1,
-                        Size     = 0,
-                        Start    = 1,
-                        Type     = "UNIX: Whole disk"
-                    },
-                    new Partition
-                    {
-                        Length   = 253,
-                        Offset   = 0,
-                        Sequence = 2,
-                        Size     = 0,
-                        Start    = 63,
-                        Type     = "UNIX: Stand"
-                    },
-                    new Partition
-                    {
-                        Length   = 78624,
-                        Offset   = 0,
-                        Sequence = 3,
-                        Size     = 0,
-                        Start    = 378,
-                        Type     = "UNIX: /usr"
-                    },
-                    new Partition
-                    {
-                        Length   = 78624,
-                        Offset   = 0,
-                        Sequence = 4,
-                        Size     = 0,
-                        Start    = 79002,
-                        Type     = "UNIX: /usr"
-                    },
-                    new Partition
-                    {
-                        Length   = 78624,
-                        Offset   = 0,
-                        Sequence = 5,
-                        Size     = 0,
-                        Start    = 157626,
-                        Type     = "UNIX: /usr"
-                    },
-                    new Partition
-                    {
-                        Length   = 78624,
-                        Offset   = 0,
-                        Sequence = 6,
-                        Size     = 0,
-                        Start    = 236250,
-                        Type     = "UNIX: /usr"
-                    },
-                    new Partition
-                    {
-                        Length   = 78624,
-                        Offset   = 0,
-                        Sequence = 7,
-                        Size     = 0,
-                        Start    = 314874,
-                        Type     = "UNIX: /usr"
-                    },
-                    new Partition
-                    {
-                        Length   = 78624,
-                        Offset   = 0,
-                        Sequence = 8,
-                        Size     = 0,
-                        Start    = 393498,
-                        Type     = "UNIX: /usr"
-                    },
-                    new Partition
-                    {
-                        Length   = 78624,
-                        Offset   = 0,
-                        Sequence = 9,
-                        Size     = 0,
-                        Start    = 472122,
-                        Type     = "UNIX: /usr"
-                    },
-                    new Partition
-                    {
-                        Length   = 78624,
-                        Offset   = 0,
-                        Sequence = 10,
-                        Size     = 0,
-                        Start    = 550746,
-                        Type     = "UNIX: /usr"
-                    },
-                    new Partition
-                    {
-                        Length   = 78624,
-                        Offset   = 0,
-                        Sequence = 11,
-                        Size     = 0,
-                        Start    = 629370,
-                        Type     = "UNIX: /usr"
-                    },
-                    new Partition
-                    {
-                        Length   = 76608,
-                        Offset   = 0,
-                        Sequence = 12,
-                        Size     = 0,
-                        Start    = 707994,
-                        Type     = "UNIX: /usr"
-                    },
-                    new Partition
-                    {
-                        Length   = 77616,
-                        Offset   = 0,
-                        Sequence = 13,
-                        Size     = 0,
-                        Start    = 784602,
-                        Type     = "UNIX: /usr"
-                    },
-                    new Partition
-                    {
-                        Length   = 75600,
-                        Offset   = 0,
-                        Sequence = 14,
-                        Size     = 0,
-                        Start    = 862218,
-                        Type     = "UNIX: /usr"
-                    },
-                    new Partition
-                    {
-                        Length   = 84672,
-                        Offset   = 0,
-                        Sequence = 15,
-                        Size     = 0,
-                        Start    = 937818,
-                        Type     = "UNIX: /usr"
-                    }
+                    Length   = 34,
+                    Offset   = 0,
+                    Sequence = 0,
+                    Size     = 0,
+                    Start    = 1,
+                    Type     = "UNIX: Boot"
+                },
+                new Partition
+                {
+                    Length   = 1023119,
+                    Offset   = 0,
+                    Sequence = 1,
+                    Size     = 0,
+                    Start    = 1,
+                    Type     = "UNIX: Whole disk"
+                },
+                new Partition
+                {
+                    Length   = 253,
+                    Offset   = 0,
+                    Sequence = 2,
+                    Size     = 0,
+                    Start    = 63,
+                    Type     = "UNIX: Stand"
+                },
+                new Partition
+                {
+                    Length   = 78624,
+                    Offset   = 0,
+                    Sequence = 3,
+                    Size     = 0,
+                    Start    = 378,
+                    Type     = "UNIX: /usr"
+                },
+                new Partition
+                {
+                    Length   = 78624,
+                    Offset   = 0,
+                    Sequence = 4,
+                    Size     = 0,
+                    Start    = 79002,
+                    Type     = "UNIX: /usr"
+                },
+                new Partition
+                {
+                    Length   = 78624,
+                    Offset   = 0,
+                    Sequence = 5,
+                    Size     = 0,
+                    Start    = 157626,
+                    Type     = "UNIX: /usr"
+                },
+                new Partition
+                {
+                    Length   = 78624,
+                    Offset   = 0,
+                    Sequence = 6,
+                    Size     = 0,
+                    Start    = 236250,
+                    Type     = "UNIX: /usr"
+                },
+                new Partition
+                {
+                    Length   = 78624,
+                    Offset   = 0,
+                    Sequence = 7,
+                    Size     = 0,
+                    Start    = 314874,
+                    Type     = "UNIX: /usr"
+                },
+                new Partition
+                {
+                    Length   = 78624,
+                    Offset   = 0,
+                    Sequence = 8,
+                    Size     = 0,
+                    Start    = 393498,
+                    Type     = "UNIX: /usr"
+                },
+                new Partition
+                {
+                    Length   = 78624,
+                    Offset   = 0,
+                    Sequence = 9,
+                    Size     = 0,
+                    Start    = 472122,
+                    Type     = "UNIX: /usr"
+                },
+                new Partition
+                {
+                    Length   = 78624,
+                    Offset   = 0,
+                    Sequence = 10,
+                    Size     = 0,
+                    Start    = 550746,
+                    Type     = "UNIX: /usr"
+                },
+                new Partition
+                {
+                    Length   = 78624,
+                    Offset   = 0,
+                    Sequence = 11,
+                    Size     = 0,
+                    Start    = 629370,
+                    Type     = "UNIX: /usr"
+                },
+                new Partition
+                {
+                    Length   = 76608,
+                    Offset   = 0,
+                    Sequence = 12,
+                    Size     = 0,
+                    Start    = 707994,
+                    Type     = "UNIX: /usr"
+                },
+                new Partition
+                {
+                    Length   = 77616,
+                    Offset   = 0,
+                    Sequence = 13,
+                    Size     = 0,
+                    Start    = 784602,
+                    Type     = "UNIX: /usr"
+                },
+                new Partition
+                {
+                    Length   = 75600,
+                    Offset   = 0,
+                    Sequence = 14,
+                    Size     = 0,
+                    Start    = 862218,
+                    Type     = "UNIX: /usr"
+                },
+                new Partition
+                {
+                    Length   = 84672,
+                    Offset   = 0,
+                    Sequence = 15,
+                    Size     = 0,
+                    Start    = 937818,
+                    Type     = "UNIX: /usr"
                 }
             }
-        };
-    }
+        }
+    };
 }

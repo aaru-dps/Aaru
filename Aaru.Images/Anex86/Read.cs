@@ -37,73 +37,72 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class Anex86
 {
-    public sealed partial class Anex86
+    /// <inheritdoc />
+    public ErrorNumber Open(IFilter imageFilter)
     {
-        /// <inheritdoc />
-        public ErrorNumber Open(IFilter imageFilter)
-        {
-            Stream stream = imageFilter.GetDataForkStream();
-            stream.Seek(0, SeekOrigin.Begin);
+        Stream stream = imageFilter.GetDataForkStream();
+        stream.Seek(0, SeekOrigin.Begin);
 
-            if(stream.Length < Marshal.SizeOf<Header>())
-                return ErrorNumber.InvalidArgument;
+        if(stream.Length < Marshal.SizeOf<Header>())
+            return ErrorNumber.InvalidArgument;
 
-            byte[] hdrB = new byte[Marshal.SizeOf<Header>()];
-            stream.Read(hdrB, 0, hdrB.Length);
+        byte[] hdrB = new byte[Marshal.SizeOf<Header>()];
+        stream.Read(hdrB, 0, hdrB.Length);
 
-            _header = Marshal.SpanToStructureLittleEndian<Header>(hdrB);
+        _header = Marshal.SpanToStructureLittleEndian<Header>(hdrB);
 
-            _imageInfo.MediaType = Geometry.GetMediaType(((ushort)_header.cylinders, (byte)_header.heads,
-                                                          (ushort)_header.spt, (uint)_header.bps, MediaEncoding.MFM,
-                                                          false));
+        _imageInfo.MediaType = Geometry.GetMediaType(((ushort)_header.cylinders, (byte)_header.heads,
+                                                      (ushort)_header.spt, (uint)_header.bps, MediaEncoding.MFM,
+                                                      false));
 
-            if(_imageInfo.MediaType == MediaType.Unknown)
-                _imageInfo.MediaType = MediaType.GENERIC_HDD;
+        if(_imageInfo.MediaType == MediaType.Unknown)
+            _imageInfo.MediaType = MediaType.GENERIC_HDD;
 
-            AaruConsole.DebugWriteLine("Anex86 plugin", "MediaType: {0}", _imageInfo.MediaType);
+        AaruConsole.DebugWriteLine("Anex86 plugin", "MediaType: {0}", _imageInfo.MediaType);
 
-            _imageInfo.ImageSize            = (ulong)_header.dskSize;
-            _imageInfo.CreationTime         = imageFilter.CreationTime;
-            _imageInfo.LastModificationTime = imageFilter.LastWriteTime;
-            _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.Filename);
-            _imageInfo.Sectors              = (ulong)(_header.cylinders * _header.heads * _header.spt);
-            _imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
-            _imageInfo.SectorSize           = (uint)_header.bps;
-            _imageInfo.Cylinders            = (uint)_header.cylinders;
-            _imageInfo.Heads                = (uint)_header.heads;
-            _imageInfo.SectorsPerTrack      = (uint)_header.spt;
+        _imageInfo.ImageSize            = (ulong)_header.dskSize;
+        _imageInfo.CreationTime         = imageFilter.CreationTime;
+        _imageInfo.LastModificationTime = imageFilter.LastWriteTime;
+        _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.Filename);
+        _imageInfo.Sectors              = (ulong)(_header.cylinders * _header.heads * _header.spt);
+        _imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
+        _imageInfo.SectorSize           = (uint)_header.bps;
+        _imageInfo.Cylinders            = (uint)_header.cylinders;
+        _imageInfo.Heads                = (uint)_header.heads;
+        _imageInfo.SectorsPerTrack      = (uint)_header.spt;
 
-            _anexImageFilter = imageFilter;
+        _anexImageFilter = imageFilter;
 
-            return ErrorNumber.NoError;
-        }
+        return ErrorNumber.NoError;
+    }
 
-        /// <inheritdoc />
-        public ErrorNumber ReadSector(ulong sectorAddress, out byte[] buffer) =>
-            ReadSectors(sectorAddress, 1, out buffer);
+    /// <inheritdoc />
+    public ErrorNumber ReadSector(ulong sectorAddress, out byte[] buffer) =>
+        ReadSectors(sectorAddress, 1, out buffer);
 
-        /// <inheritdoc />
-        public ErrorNumber ReadSectors(ulong sectorAddress, uint length, out byte[] buffer)
-        {
-            buffer = null;
+    /// <inheritdoc />
+    public ErrorNumber ReadSectors(ulong sectorAddress, uint length, out byte[] buffer)
+    {
+        buffer = null;
 
-            if(sectorAddress > _imageInfo.Sectors - 1)
-                return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1)
+            return ErrorNumber.OutOfRange;
 
-            if(sectorAddress + length > _imageInfo.Sectors)
-                return ErrorNumber.OutOfRange;
+        if(sectorAddress + length > _imageInfo.Sectors)
+            return ErrorNumber.OutOfRange;
 
-            buffer = new byte[length * _imageInfo.SectorSize];
+        buffer = new byte[length * _imageInfo.SectorSize];
 
-            Stream stream = _anexImageFilter.GetDataForkStream();
+        Stream stream = _anexImageFilter.GetDataForkStream();
 
-            stream.Seek((long)((ulong)_header.hdrSize + (sectorAddress * _imageInfo.SectorSize)), SeekOrigin.Begin);
+        stream.Seek((long)((ulong)_header.hdrSize + (sectorAddress * _imageInfo.SectorSize)), SeekOrigin.Begin);
 
-            stream.Read(buffer, 0, (int)(length * _imageInfo.SectorSize));
+        stream.Read(buffer, 0, (int)(length * _imageInfo.SectorSize));
 
-            return ErrorNumber.NoError;
-        }
+        return ErrorNumber.NoError;
     }
 }

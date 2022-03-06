@@ -31,32 +31,31 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Images
-{
-    [TestFixture]
-    public class RsIde : BlockMediaImageTest
-    {
-        public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "RS-IDE");
-        public override IMediaImage _plugin    => new DiscImages.RsIde();
+namespace Aaru.Tests.Images;
 
-        public override BlockImageTestExpected[] Tests => new[]
+[TestFixture]
+public class RsIde : BlockMediaImageTest
+{
+    public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "RS-IDE");
+    public override IMediaImage _plugin    => new DiscImages.RsIde();
+
+    public override BlockImageTestExpected[] Tests => new[]
+    {
+        new BlockImageTestExpected
         {
-            new BlockImageTestExpected
+            TestFile   = "divide.hdf.lz",
+            MediaType  = MediaType.GENERIC_HDD,
+            Sectors    = 20480,
+            SectorSize = 512,
+            MD5        = "ee7b8fe07784f2ebacc18da1fc248f5a",
+            Partitions = new[]
             {
-                TestFile   = "divide.hdf.lz",
-                MediaType  = MediaType.GENERIC_HDD,
-                Sectors    = 20480,
-                SectorSize = 512,
-                MD5        = "ee7b8fe07784f2ebacc18da1fc248f5a",
-                Partitions = new[]
+                new BlockPartitionVolumes
                 {
-                    new BlockPartitionVolumes
-                    {
-                        Start  = 63,
-                        Length = 20417
-                    }
+                    Start  = 63,
+                    Length = 20417
                 }
             }
-        };
-    }
+        }
+    };
 }

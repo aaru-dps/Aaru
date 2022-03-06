@@ -32,24 +32,23 @@
 
 using System.CommandLine;
 
-namespace Aaru.Commands.Image
-{
-    internal sealed class ImageFamily : Command
-    {
-        public ImageFamily() : base("image", "Commands to manage images")
-        {
-            AddAlias("i");
+namespace Aaru.Commands.Image;
 
-            AddCommand(new ChecksumCommand());
-            AddCommand(new CompareCommand());
-            AddCommand(new ConvertImageCommand());
-            AddCommand(new CreateSidecarCommand());
-            AddCommand(new DecodeCommand());
-            AddCommand(new EntropyCommand());
-            AddCommand(new ImageInfoCommand());
-            AddCommand(new ListOptionsCommand());
-            AddCommand(new PrintHexCommand());
-            AddCommand(new VerifyCommand());
-        }
+internal sealed class ImageFamily : Command
+{
+    public ImageFamily() : base("image", "Commands to manage images")
+    {
+        AddAlias("i");
+
+        AddCommand(new ChecksumCommand());
+        AddCommand(new CompareCommand());
+        AddCommand(new ConvertImageCommand());
+        AddCommand(new CreateSidecarCommand());
+        AddCommand(new DecodeCommand());
+        AddCommand(new EntropyCommand());
+        AddCommand(new ImageInfoCommand());
+        AddCommand(new ListOptionsCommand());
+        AddCommand(new PrintHexCommand());
+        AddCommand(new VerifyCommand());
     }
 }

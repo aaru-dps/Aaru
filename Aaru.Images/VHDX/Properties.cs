@@ -35,24 +35,23 @@ using System.Collections.Generic;
 using Aaru.CommonTypes.Structs;
 using Schemas;
 
-namespace Aaru.DiscImages
-{
-    public sealed partial class Vhdx
-    {
-        /// <inheritdoc />
-        public ImageInfo Info => _imageInfo;
+namespace Aaru.DiscImages;
 
-        /// <inheritdoc />
-        public string Name => "Microsoft VHDX";
-        /// <inheritdoc />
-        public Guid Id => new Guid("536B141B-D09C-4799-AB70-34631286EB9D");
-        /// <inheritdoc />
-        public string Author => "Natalia Portillo";
-        /// <inheritdoc />
-        public string Format => "VHDX";
-        /// <inheritdoc />
-        public List<DumpHardwareType> DumpHardware => null;
-        /// <inheritdoc />
-        public CICMMetadataType CicmMetadata => null;
-    }
+public sealed partial class Vhdx
+{
+    /// <inheritdoc />
+    public ImageInfo Info => _imageInfo;
+
+    /// <inheritdoc />
+    public string Name => "Microsoft VHDX";
+    /// <inheritdoc />
+    public Guid Id => new Guid("536B141B-D09C-4799-AB70-34631286EB9D");
+    /// <inheritdoc />
+    public string Author => "Natalia Portillo";
+    /// <inheritdoc />
+    public string Format => "VHDX";
+    /// <inheritdoc />
+    public List<DumpHardwareType> DumpHardware => null;
+    /// <inheritdoc />
+    public CICMMetadataType CicmMetadata => null;
 }

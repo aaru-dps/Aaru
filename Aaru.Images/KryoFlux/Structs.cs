@@ -32,16 +32,15 @@
 
 using System.Runtime.InteropServices;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class KryoFlux
 {
-    public sealed partial class KryoFlux
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct OobBlock
     {
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        readonly struct OobBlock
-        {
-            public readonly BlockIds blockId;
-            public readonly OobTypes blockType;
-            public readonly ushort   length;
-        }
+        public readonly BlockIds blockId;
+        public readonly OobTypes blockType;
+        public readonly ushort   length;
     }
 }

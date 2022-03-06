@@ -32,25 +32,24 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+[SuppressMessage("ReSharper", "UnusedMember.Local")]
+public sealed partial class DriDiskCopy
 {
-    [SuppressMessage("ReSharper", "UnusedMember.Local")]
-    public sealed partial class DriDiskCopy
+    /// <summary>Drive codes change according to CMOS stored valued</summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    enum DriveCode : byte
     {
-        /// <summary>Drive codes change according to CMOS stored valued</summary>
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        enum DriveCode : byte
-        {
-            /// <summary>5.25" 360k</summary>
-            md2dd = 0,
-            /// <summary>5.25" 1.2M</summary>
-            md2hd = 1,
-            /// <summary>3.5" 720k</summary>
-            mf2dd = 2,
-            /// <summary>3.5" 1.44M</summary>
-            mf2hd = 7,
-            /// <summary>3.5" 2.88M</summary>
-            mf2ed = 9
-        }
+        /// <summary>5.25" 360k</summary>
+        md2dd = 0,
+        /// <summary>5.25" 1.2M</summary>
+        md2hd = 1,
+        /// <summary>3.5" 720k</summary>
+        mf2dd = 2,
+        /// <summary>3.5" 1.44M</summary>
+        mf2hd = 7,
+        /// <summary>3.5" 2.88M</summary>
+        mf2ed = 9
     }
 }

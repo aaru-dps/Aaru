@@ -32,191 +32,1247 @@ using Aaru.Decoders.SCSI;
 using Aaru.Devices;
 using Aaru.Helpers;
 
-namespace Aaru.Tests.Devices.SCSI
+namespace Aaru.Tests.Devices.SCSI;
+
+internal static class Plextor
 {
-    internal static class Plextor
+    internal static void Menu(string devPath, Device dev)
     {
-        internal static void Menu(string devPath, Device dev)
+        while(true)
         {
-            while(true)
+            System.Console.Clear();
+            AaruConsole.WriteLine("Device: {0}", devPath);
+            AaruConsole.WriteLine("Send a Plextor vendor command to the device:");
+            AaruConsole.WriteLine("1.- Send GET BOOK BITSETTING command.");
+            AaruConsole.WriteLine("2.- Send GET GIGAREC command.");
+            AaruConsole.WriteLine("3.- Send GET SECUREC command.");
+            AaruConsole.WriteLine("4.- Send GET SILENT MODE command.");
+            AaruConsole.WriteLine("5.- Send GET SINGLE-SESSION / HIDE CD-R command.");
+            AaruConsole.WriteLine("6.- Send GET SPEEDREAD command.");
+            AaruConsole.WriteLine("7.- Send GET TEST WRITE DVD+ command.");
+            AaruConsole.WriteLine("8.- Send GET VARIREC command.");
+            AaruConsole.WriteLine("9.- Send POWEREC GET SPEEDS command.");
+            AaruConsole.WriteLine("10.- Send READ CD-DA command.");
+            AaruConsole.WriteLine("11.- Send READ DVD (RAW) command.");
+            AaruConsole.WriteLine("12.- Send READ EEPROM (CD recorders) command.");
+            AaruConsole.WriteLine("13.- Send READ EEPROM (DVD recorders) command.");
+            AaruConsole.WriteLine("14.- Send READ EEPROM (PX-708 and PX-712) command.");
+            AaruConsole.WriteLine("0.- Return to SCSI commands menu.");
+            AaruConsole.Write("Choose: ");
+
+            string strDev = System.Console.ReadLine();
+
+            if(!int.TryParse(strDev, out int item))
             {
-                System.Console.Clear();
-                AaruConsole.WriteLine("Device: {0}", devPath);
-                AaruConsole.WriteLine("Send a Plextor vendor command to the device:");
-                AaruConsole.WriteLine("1.- Send GET BOOK BITSETTING command.");
-                AaruConsole.WriteLine("2.- Send GET GIGAREC command.");
-                AaruConsole.WriteLine("3.- Send GET SECUREC command.");
-                AaruConsole.WriteLine("4.- Send GET SILENT MODE command.");
-                AaruConsole.WriteLine("5.- Send GET SINGLE-SESSION / HIDE CD-R command.");
-                AaruConsole.WriteLine("6.- Send GET SPEEDREAD command.");
-                AaruConsole.WriteLine("7.- Send GET TEST WRITE DVD+ command.");
-                AaruConsole.WriteLine("8.- Send GET VARIREC command.");
-                AaruConsole.WriteLine("9.- Send POWEREC GET SPEEDS command.");
-                AaruConsole.WriteLine("10.- Send READ CD-DA command.");
-                AaruConsole.WriteLine("11.- Send READ DVD (RAW) command.");
-                AaruConsole.WriteLine("12.- Send READ EEPROM (CD recorders) command.");
-                AaruConsole.WriteLine("13.- Send READ EEPROM (DVD recorders) command.");
-                AaruConsole.WriteLine("14.- Send READ EEPROM (PX-708 and PX-712) command.");
-                AaruConsole.WriteLine("0.- Return to SCSI commands menu.");
-                AaruConsole.Write("Choose: ");
+                AaruConsole.WriteLine("Not a number. Press any key to continue...");
+                System.Console.ReadKey();
 
-                string strDev = System.Console.ReadLine();
+                continue;
+            }
 
-                if(!int.TryParse(strDev, out int item))
-                {
-                    AaruConsole.WriteLine("Not a number. Press any key to continue...");
+            switch(item)
+            {
+                case 0:
+                    AaruConsole.WriteLine("Returning to SCSI commands menu...");
+
+                    return;
+                case 1:
+                    GetBookBitsetting(devPath, dev);
+
+                    continue;
+                case 2:
+                    GetGigaRec(devPath, dev);
+
+                    continue;
+                case 3:
+                    GetSecuRec(devPath, dev);
+
+                    continue;
+                case 4:
+                    GetSilentMode(devPath, dev);
+
+                    continue;
+                case 5:
+                    GetSingleSessionHideCdR(devPath, dev);
+
+                    continue;
+                case 6:
+                    GetSpeedRead(devPath, dev);
+
+                    continue;
+                case 7:
+                    GetTestWriteDvdPlus(devPath, dev);
+
+                    continue;
+                case 8:
+                    GetVariRec(devPath, dev);
+
+                    continue;
+                case 9:
+                    PoweRecGetSpeeds(devPath, dev);
+
+                    continue;
+                case 10:
+                    ReadCdDa(devPath, dev);
+
+                    continue;
+                case 11:
+                    ReadDvdRaw(devPath, dev);
+
+                    continue;
+                case 12:
+                    ReadEepromCdR(devPath, dev);
+
+                    continue;
+                case 13:
+                    ReadEeprom(devPath, dev);
+
+                    continue;
+                case 14:
+                    ReadEepromBlock(devPath, dev);
+
+                    continue;
+                default:
+                    AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
                     System.Console.ReadKey();
 
                     continue;
-                }
+            }
+        }
+    }
 
-                switch(item)
-                {
-                    case 0:
-                        AaruConsole.WriteLine("Returning to SCSI commands menu...");
+    static void GetBookBitsetting(string devPath, Device dev)
+    {
+        bool   dl = false;
+        string strDev;
+        int    item;
 
-                        return;
-                    case 1:
-                        GetBookBitsetting(devPath, dev);
+        parameters:
 
-                        continue;
-                    case 2:
-                        GetGigaRec(devPath, dev);
+        while(true)
+        {
+            System.Console.Clear();
+            AaruConsole.WriteLine("Device: {0}", devPath);
+            AaruConsole.WriteLine("Parameters for GET BOOK BITSETTING command:");
+            AaruConsole.WriteLine("Dual layer?: {0}", dl);
+            AaruConsole.WriteLine();
+            AaruConsole.WriteLine("Choose what to do:");
+            AaruConsole.WriteLine("1.- Change parameters.");
+            AaruConsole.WriteLine("2.- Send command with these parameters.");
+            AaruConsole.WriteLine("0.- Return to Plextor vendor commands menu.");
 
-                        continue;
-                    case 3:
-                        GetSecuRec(devPath, dev);
+            strDev = System.Console.ReadLine();
 
-                        continue;
-                    case 4:
-                        GetSilentMode(devPath, dev);
+            if(!int.TryParse(strDev, out item))
+            {
+                AaruConsole.WriteLine("Not a number. Press any key to continue...");
+                System.Console.ReadKey();
 
-                        continue;
-                    case 5:
-                        GetSingleSessionHideCdR(devPath, dev);
+                continue;
+            }
 
-                        continue;
-                    case 6:
-                        GetSpeedRead(devPath, dev);
+            switch(item)
+            {
+                case 0:
+                    AaruConsole.WriteLine("Returning to Plextor vendor commands menu...");
 
-                        continue;
-                    case 7:
-                        GetTestWriteDvdPlus(devPath, dev);
+                    return;
+                case 1:
+                    AaruConsole.Write("Dual layer?: ");
+                    strDev = System.Console.ReadLine();
 
-                        continue;
-                    case 8:
-                        GetVariRec(devPath, dev);
+                    if(!bool.TryParse(strDev, out dl))
+                    {
+                        AaruConsole.WriteLine("Not a boolean. Press any key to continue...");
+                        dl = false;
+                        System.Console.ReadKey();
+                    }
 
-                        continue;
-                    case 9:
-                        PoweRecGetSpeeds(devPath, dev);
+                    break;
+                case 2: goto start;
+            }
+        }
 
-                        continue;
-                    case 10:
-                        ReadCdDa(devPath, dev);
+        start:
+        System.Console.Clear();
 
-                        continue;
-                    case 11:
-                        ReadDvdRaw(devPath, dev);
+        bool sense = dev.PlextorGetBitsetting(out byte[] buffer, out byte[] senseBuffer, dl, dev.Timeout,
+                                              out double duration);
 
-                        continue;
-                    case 12:
-                        ReadEepromCdR(devPath, dev);
+        menu:
+        AaruConsole.WriteLine("Device: {0}", devPath);
+        AaruConsole.WriteLine("Sending GET BOOK BITSETTING to the device:");
+        AaruConsole.WriteLine("Command took {0} ms.", duration);
+        AaruConsole.WriteLine("Sense is {0}.", sense);
+        AaruConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
+        AaruConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
+        AaruConsole.WriteLine("Sense buffer is {0} bytes.", senseBuffer?.Length.ToString() ?? "null");
+        AaruConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
+        AaruConsole.WriteLine();
+        AaruConsole.WriteLine("Choose what to do:");
+        AaruConsole.WriteLine("1.- Print buffer.");
+        AaruConsole.WriteLine("2.- Print sense buffer.");
+        AaruConsole.WriteLine("3.- Decode sense buffer.");
+        AaruConsole.WriteLine("4.- Send command again.");
+        AaruConsole.WriteLine("5.- Change parameters.");
+        AaruConsole.WriteLine("0.- Return to Plextor vendor commands menu.");
+        AaruConsole.Write("Choose: ");
 
-                        continue;
-                    case 13:
-                        ReadEeprom(devPath, dev);
+        strDev = System.Console.ReadLine();
 
-                        continue;
-                    case 14:
-                        ReadEepromBlock(devPath, dev);
+        if(!int.TryParse(strDev, out item))
+        {
+            AaruConsole.WriteLine("Not a number. Press any key to continue...");
+            System.Console.ReadKey();
+            System.Console.Clear();
 
-                        continue;
-                    default:
-                        AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
+            goto menu;
+        }
+
+        switch(item)
+        {
+            case 0:
+                AaruConsole.WriteLine("Returning to Plextor vendor commands menu...");
+
+                return;
+            case 1:
+                System.Console.Clear();
+                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine("GET BOOK BITSETTING response:");
+
+                if(buffer != null)
+                    PrintHex.PrintHexArray(buffer, 64);
+
+                AaruConsole.WriteLine("Press any key to continue...");
+                System.Console.ReadKey();
+                System.Console.Clear();
+                AaruConsole.WriteLine("Device: {0}", devPath);
+
+                goto menu;
+            case 2:
+                System.Console.Clear();
+                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine("GET BOOK BITSETTING sense:");
+
+                if(senseBuffer != null)
+                    PrintHex.PrintHexArray(senseBuffer, 64);
+
+                AaruConsole.WriteLine("Press any key to continue...");
+                System.Console.ReadKey();
+                System.Console.Clear();
+                AaruConsole.WriteLine("Device: {0}", devPath);
+
+                goto menu;
+            case 3:
+                System.Console.Clear();
+                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine("GET BOOK BITSETTING decoded sense:");
+                AaruConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
+                AaruConsole.WriteLine("Press any key to continue...");
+                System.Console.ReadKey();
+                System.Console.Clear();
+                AaruConsole.WriteLine("Device: {0}", devPath);
+
+                goto menu;
+            case 4: goto start;
+            case 5: goto parameters;
+            default:
+                AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
+                System.Console.ReadKey();
+                System.Console.Clear();
+
+                goto menu;
+        }
+    }
+
+    static void GetGigaRec(string devPath, Device dev)
+    {
+        start:
+        System.Console.Clear();
+
+        bool sense = dev.PlextorGetGigaRec(out byte[] buffer, out byte[] senseBuffer, dev.Timeout,
+                                           out double duration);
+
+        menu:
+        AaruConsole.WriteLine("Device: {0}", devPath);
+        AaruConsole.WriteLine("Sending GET GIGAREC to the device:");
+        AaruConsole.WriteLine("Command took {0} ms.", duration);
+        AaruConsole.WriteLine("Sense is {0}.", sense);
+        AaruConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
+        AaruConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
+        AaruConsole.WriteLine("Sense buffer is {0} bytes.", senseBuffer?.Length.ToString() ?? "null");
+        AaruConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
+        AaruConsole.WriteLine();
+        AaruConsole.WriteLine("Choose what to do:");
+        AaruConsole.WriteLine("1.- Print buffer.");
+        AaruConsole.WriteLine("2.- Print sense buffer.");
+        AaruConsole.WriteLine("3.- Decode sense buffer.");
+        AaruConsole.WriteLine("4.- Send command again.");
+        AaruConsole.WriteLine("0.- Return to Plextor vendor commands menu.");
+        AaruConsole.Write("Choose: ");
+
+        string strDev = System.Console.ReadLine();
+
+        if(!int.TryParse(strDev, out int item))
+        {
+            AaruConsole.WriteLine("Not a number. Press any key to continue...");
+            System.Console.ReadKey();
+            System.Console.Clear();
+
+            goto menu;
+        }
+
+        switch(item)
+        {
+            case 0:
+                AaruConsole.WriteLine("Returning to Plextor vendor commands menu...");
+
+                return;
+            case 1:
+                System.Console.Clear();
+                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine("GET GIGAREC response:");
+
+                if(buffer != null)
+                    PrintHex.PrintHexArray(buffer, 64);
+
+                AaruConsole.WriteLine("Press any key to continue...");
+                System.Console.ReadKey();
+                System.Console.Clear();
+                AaruConsole.WriteLine("Device: {0}", devPath);
+
+                goto menu;
+            case 2:
+                System.Console.Clear();
+                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine("GET GIGAREC sense:");
+
+                if(senseBuffer != null)
+                    PrintHex.PrintHexArray(senseBuffer, 64);
+
+                AaruConsole.WriteLine("Press any key to continue...");
+                System.Console.ReadKey();
+                System.Console.Clear();
+                AaruConsole.WriteLine("Device: {0}", devPath);
+
+                goto menu;
+            case 3:
+                System.Console.Clear();
+                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine("GET GIGAREC decoded sense:");
+                AaruConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
+                AaruConsole.WriteLine("Press any key to continue...");
+                System.Console.ReadKey();
+                System.Console.Clear();
+                AaruConsole.WriteLine("Device: {0}", devPath);
+
+                goto menu;
+            case 4: goto start;
+            default:
+                AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
+                System.Console.ReadKey();
+                System.Console.Clear();
+
+                goto menu;
+        }
+    }
+
+    static void GetSecuRec(string devPath, Device dev)
+    {
+        start:
+        System.Console.Clear();
+
+        bool sense = dev.PlextorGetSecuRec(out byte[] buffer, out byte[] senseBuffer, dev.Timeout,
+                                           out double duration);
+
+        menu:
+        AaruConsole.WriteLine("Device: {0}", devPath);
+        AaruConsole.WriteLine("Sending GET SECUREC to the device:");
+        AaruConsole.WriteLine("Command took {0} ms.", duration);
+        AaruConsole.WriteLine("Sense is {0}.", sense);
+        AaruConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
+        AaruConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
+        AaruConsole.WriteLine("Sense buffer is {0} bytes.", senseBuffer?.Length.ToString() ?? "null");
+        AaruConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
+        AaruConsole.WriteLine();
+        AaruConsole.WriteLine("Choose what to do:");
+        AaruConsole.WriteLine("1.- Print buffer.");
+        AaruConsole.WriteLine("2.- Print sense buffer.");
+        AaruConsole.WriteLine("3.- Decode sense buffer.");
+        AaruConsole.WriteLine("4.- Send command again.");
+        AaruConsole.WriteLine("0.- Return to Plextor vendor commands menu.");
+        AaruConsole.Write("Choose: ");
+
+        string strDev = System.Console.ReadLine();
+
+        if(!int.TryParse(strDev, out int item))
+        {
+            AaruConsole.WriteLine("Not a number. Press any key to continue...");
+            System.Console.ReadKey();
+            System.Console.Clear();
+
+            goto menu;
+        }
+
+        switch(item)
+        {
+            case 0:
+                AaruConsole.WriteLine("Returning to Plextor vendor commands menu...");
+
+                return;
+            case 1:
+                System.Console.Clear();
+                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine("GET SECUREC response:");
+
+                if(buffer != null)
+                    PrintHex.PrintHexArray(buffer, 64);
+
+                AaruConsole.WriteLine("Press any key to continue...");
+                System.Console.ReadKey();
+                System.Console.Clear();
+                AaruConsole.WriteLine("Device: {0}", devPath);
+
+                goto menu;
+            case 2:
+                System.Console.Clear();
+                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine("GET SECUREC sense:");
+
+                if(senseBuffer != null)
+                    PrintHex.PrintHexArray(senseBuffer, 64);
+
+                AaruConsole.WriteLine("Press any key to continue...");
+                System.Console.ReadKey();
+                System.Console.Clear();
+                AaruConsole.WriteLine("Device: {0}", devPath);
+
+                goto menu;
+            case 3:
+                System.Console.Clear();
+                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine("GET SECUREC decoded sense:");
+                AaruConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
+                AaruConsole.WriteLine("Press any key to continue...");
+                System.Console.ReadKey();
+                System.Console.Clear();
+                AaruConsole.WriteLine("Device: {0}", devPath);
+
+                goto menu;
+            case 4: goto start;
+            default:
+                AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
+                System.Console.ReadKey();
+                System.Console.Clear();
+
+                goto menu;
+        }
+    }
+
+    static void GetSilentMode(string devPath, Device dev)
+    {
+        start:
+        System.Console.Clear();
+
+        bool sense = dev.PlextorGetSilentMode(out byte[] buffer, out byte[] senseBuffer, dev.Timeout,
+                                              out double duration);
+
+        menu:
+        AaruConsole.WriteLine("Device: {0}", devPath);
+        AaruConsole.WriteLine("Sending GET SILENT MODE to the device:");
+        AaruConsole.WriteLine("Command took {0} ms.", duration);
+        AaruConsole.WriteLine("Sense is {0}.", sense);
+        AaruConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
+        AaruConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
+        AaruConsole.WriteLine("Sense buffer is {0} bytes.", senseBuffer?.Length.ToString() ?? "null");
+        AaruConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
+        AaruConsole.WriteLine();
+        AaruConsole.WriteLine("Choose what to do:");
+        AaruConsole.WriteLine("1.- Print buffer.");
+        AaruConsole.WriteLine("2.- Print sense buffer.");
+        AaruConsole.WriteLine("3.- Decode sense buffer.");
+        AaruConsole.WriteLine("4.- Send command again.");
+        AaruConsole.WriteLine("0.- Return to Plextor vendor commands menu.");
+        AaruConsole.Write("Choose: ");
+
+        string strDev = System.Console.ReadLine();
+
+        if(!int.TryParse(strDev, out int item))
+        {
+            AaruConsole.WriteLine("Not a number. Press any key to continue...");
+            System.Console.ReadKey();
+            System.Console.Clear();
+
+            goto menu;
+        }
+
+        switch(item)
+        {
+            case 0:
+                AaruConsole.WriteLine("Returning to Plextor vendor commands menu...");
+
+                return;
+            case 1:
+                System.Console.Clear();
+                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine("GET SILENT MODE response:");
+
+                if(buffer != null)
+                    PrintHex.PrintHexArray(buffer, 64);
+
+                AaruConsole.WriteLine("Press any key to continue...");
+                System.Console.ReadKey();
+                System.Console.Clear();
+                AaruConsole.WriteLine("Device: {0}", devPath);
+
+                goto menu;
+            case 2:
+                System.Console.Clear();
+                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine("GET SILENT MODE sense:");
+
+                if(senseBuffer != null)
+                    PrintHex.PrintHexArray(senseBuffer, 64);
+
+                AaruConsole.WriteLine("Press any key to continue...");
+                System.Console.ReadKey();
+                System.Console.Clear();
+                AaruConsole.WriteLine("Device: {0}", devPath);
+
+                goto menu;
+            case 3:
+                System.Console.Clear();
+                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine("GET SILENT MODE decoded sense:");
+                AaruConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
+                AaruConsole.WriteLine("Press any key to continue...");
+                System.Console.ReadKey();
+                System.Console.Clear();
+                AaruConsole.WriteLine("Device: {0}", devPath);
+
+                goto menu;
+            case 4: goto start;
+            default:
+                AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
+                System.Console.ReadKey();
+                System.Console.Clear();
+
+                goto menu;
+        }
+    }
+
+    static void GetSingleSessionHideCdR(string devPath, Device dev)
+    {
+        start:
+        System.Console.Clear();
+
+        bool sense = dev.PlextorGetHiding(out byte[] buffer, out byte[] senseBuffer, dev.Timeout,
+                                          out double duration);
+
+        menu:
+        AaruConsole.WriteLine("Device: {0}", devPath);
+        AaruConsole.WriteLine("Sending GET SINGLE-SESSION / HIDE CD-R to the device:");
+        AaruConsole.WriteLine("Command took {0} ms.", duration);
+        AaruConsole.WriteLine("Sense is {0}.", sense);
+        AaruConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
+        AaruConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
+        AaruConsole.WriteLine("Sense buffer is {0} bytes.", senseBuffer?.Length.ToString() ?? "null");
+        AaruConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
+        AaruConsole.WriteLine();
+        AaruConsole.WriteLine("Choose what to do:");
+        AaruConsole.WriteLine("1.- Print buffer.");
+        AaruConsole.WriteLine("2.- Print sense buffer.");
+        AaruConsole.WriteLine("3.- Decode sense buffer.");
+        AaruConsole.WriteLine("4.- Send command again.");
+        AaruConsole.WriteLine("0.- Return to Plextor vendor commands menu.");
+        AaruConsole.Write("Choose: ");
+
+        string strDev = System.Console.ReadLine();
+
+        if(!int.TryParse(strDev, out int item))
+        {
+            AaruConsole.WriteLine("Not a number. Press any key to continue...");
+            System.Console.ReadKey();
+            System.Console.Clear();
+
+            goto menu;
+        }
+
+        switch(item)
+        {
+            case 0:
+                AaruConsole.WriteLine("Returning to Plextor vendor commands menu...");
+
+                return;
+            case 1:
+                System.Console.Clear();
+                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine("GET SINGLE-SESSION / HIDE CD-R response:");
+
+                if(buffer != null)
+                    PrintHex.PrintHexArray(buffer, 64);
+
+                AaruConsole.WriteLine("Press any key to continue...");
+                System.Console.ReadKey();
+                System.Console.Clear();
+                AaruConsole.WriteLine("Device: {0}", devPath);
+
+                goto menu;
+            case 2:
+                System.Console.Clear();
+                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine("GET SINGLE-SESSION / HIDE CD-R sense:");
+
+                if(senseBuffer != null)
+                    PrintHex.PrintHexArray(senseBuffer, 64);
+
+                AaruConsole.WriteLine("Press any key to continue...");
+                System.Console.ReadKey();
+                System.Console.Clear();
+                AaruConsole.WriteLine("Device: {0}", devPath);
+
+                goto menu;
+            case 3:
+                System.Console.Clear();
+                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine("GET SINGLE-SESSION / HIDE CD-R decoded sense:");
+                AaruConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
+                AaruConsole.WriteLine("Press any key to continue...");
+                System.Console.ReadKey();
+                System.Console.Clear();
+                AaruConsole.WriteLine("Device: {0}", devPath);
+
+                goto menu;
+            case 4: goto start;
+            default:
+                AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
+                System.Console.ReadKey();
+                System.Console.Clear();
+
+                goto menu;
+        }
+    }
+
+    static void GetSpeedRead(string devPath, Device dev)
+    {
+        start:
+        System.Console.Clear();
+
+        bool sense = dev.PlextorGetSpeedRead(out byte[] buffer, out byte[] senseBuffer, dev.Timeout,
+                                             out double duration);
+
+        menu:
+        AaruConsole.WriteLine("Device: {0}", devPath);
+        AaruConsole.WriteLine("Sending GET SPEEDREAD to the device:");
+        AaruConsole.WriteLine("Command took {0} ms.", duration);
+        AaruConsole.WriteLine("Sense is {0}.", sense);
+        AaruConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
+        AaruConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
+        AaruConsole.WriteLine("Sense buffer is {0} bytes.", senseBuffer?.Length.ToString() ?? "null");
+        AaruConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
+        AaruConsole.WriteLine();
+        AaruConsole.WriteLine("Choose what to do:");
+        AaruConsole.WriteLine("1.- Print buffer.");
+        AaruConsole.WriteLine("2.- Print sense buffer.");
+        AaruConsole.WriteLine("3.- Decode sense buffer.");
+        AaruConsole.WriteLine("4.- Send command again.");
+        AaruConsole.WriteLine("0.- Return to Plextor vendor commands menu.");
+        AaruConsole.Write("Choose: ");
+
+        string strDev = System.Console.ReadLine();
+
+        if(!int.TryParse(strDev, out int item))
+        {
+            AaruConsole.WriteLine("Not a number. Press any key to continue...");
+            System.Console.ReadKey();
+            System.Console.Clear();
+
+            goto menu;
+        }
+
+        switch(item)
+        {
+            case 0:
+                AaruConsole.WriteLine("Returning to Plextor vendor commands menu...");
+
+                return;
+            case 1:
+                System.Console.Clear();
+                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine("GET SPEEDREAD response:");
+
+                if(buffer != null)
+                    PrintHex.PrintHexArray(buffer, 64);
+
+                AaruConsole.WriteLine("Press any key to continue...");
+                System.Console.ReadKey();
+                System.Console.Clear();
+                AaruConsole.WriteLine("Device: {0}", devPath);
+
+                goto menu;
+            case 2:
+                System.Console.Clear();
+                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine("GET SPEEDREAD sense:");
+
+                if(senseBuffer != null)
+                    PrintHex.PrintHexArray(senseBuffer, 64);
+
+                AaruConsole.WriteLine("Press any key to continue...");
+                System.Console.ReadKey();
+                System.Console.Clear();
+                AaruConsole.WriteLine("Device: {0}", devPath);
+
+                goto menu;
+            case 3:
+                System.Console.Clear();
+                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine("GET SPEEDREAD decoded sense:");
+                AaruConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
+                AaruConsole.WriteLine("Press any key to continue...");
+                System.Console.ReadKey();
+                System.Console.Clear();
+                AaruConsole.WriteLine("Device: {0}", devPath);
+
+                goto menu;
+            case 4: goto start;
+            default:
+                AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
+                System.Console.ReadKey();
+                System.Console.Clear();
+
+                goto menu;
+        }
+    }
+
+    static void GetTestWriteDvdPlus(string devPath, Device dev)
+    {
+        start:
+        System.Console.Clear();
+
+        bool sense =
+            dev.PlextorGetTestWriteDvdPlus(out byte[] buffer, out byte[] senseBuffer, dev.Timeout,
+                                           out double duration);
+
+        menu:
+        AaruConsole.WriteLine("Device: {0}", devPath);
+        AaruConsole.WriteLine("Sending GET TEST WRITE DVD+ to the device:");
+        AaruConsole.WriteLine("Command took {0} ms.", duration);
+        AaruConsole.WriteLine("Sense is {0}.", sense);
+        AaruConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
+        AaruConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
+        AaruConsole.WriteLine("Sense buffer is {0} bytes.", senseBuffer?.Length.ToString() ?? "null");
+        AaruConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
+        AaruConsole.WriteLine();
+        AaruConsole.WriteLine("Choose what to do:");
+        AaruConsole.WriteLine("1.- Print buffer.");
+        AaruConsole.WriteLine("2.- Print sense buffer.");
+        AaruConsole.WriteLine("3.- Decode sense buffer.");
+        AaruConsole.WriteLine("4.- Send command again.");
+        AaruConsole.WriteLine("0.- Return to Plextor vendor commands menu.");
+        AaruConsole.Write("Choose: ");
+
+        string strDev = System.Console.ReadLine();
+
+        if(!int.TryParse(strDev, out int item))
+        {
+            AaruConsole.WriteLine("Not a number. Press any key to continue...");
+            System.Console.ReadKey();
+            System.Console.Clear();
+
+            goto menu;
+        }
+
+        switch(item)
+        {
+            case 0:
+                AaruConsole.WriteLine("Returning to Plextor vendor commands menu...");
+
+                return;
+            case 1:
+                System.Console.Clear();
+                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine("GET TEST WRITE DVD+ response:");
+
+                if(buffer != null)
+                    PrintHex.PrintHexArray(buffer, 64);
+
+                AaruConsole.WriteLine("Press any key to continue...");
+                System.Console.ReadKey();
+                System.Console.Clear();
+                AaruConsole.WriteLine("Device: {0}", devPath);
+
+                goto menu;
+            case 2:
+                System.Console.Clear();
+                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine("GET TEST WRITE DVD+ sense:");
+
+                if(senseBuffer != null)
+                    PrintHex.PrintHexArray(senseBuffer, 64);
+
+                AaruConsole.WriteLine("Press any key to continue...");
+                System.Console.ReadKey();
+                System.Console.Clear();
+                AaruConsole.WriteLine("Device: {0}", devPath);
+
+                goto menu;
+            case 3:
+                System.Console.Clear();
+                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine("GET TEST WRITE DVD+ decoded sense:");
+                AaruConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
+                AaruConsole.WriteLine("Press any key to continue...");
+                System.Console.ReadKey();
+                System.Console.Clear();
+                AaruConsole.WriteLine("Device: {0}", devPath);
+
+                goto menu;
+            case 4: goto start;
+            default:
+                AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
+                System.Console.ReadKey();
+                System.Console.Clear();
+
+                goto menu;
+        }
+    }
+
+    static void GetVariRec(string devPath, Device dev)
+    {
+        bool   dvd = false;
+        string strDev;
+        int    item;
+
+        parameters:
+
+        while(true)
+        {
+            System.Console.Clear();
+            AaruConsole.WriteLine("Device: {0}", devPath);
+            AaruConsole.WriteLine("Parameters for GET VARIREC command:");
+            AaruConsole.WriteLine("DVD?: {0}", dvd);
+            AaruConsole.WriteLine();
+            AaruConsole.WriteLine("Choose what to do:");
+            AaruConsole.WriteLine("1.- Change parameters.");
+            AaruConsole.WriteLine("2.- Send command with these parameters.");
+            AaruConsole.WriteLine("0.- Return to Plextor vendor commands menu.");
+
+            strDev = System.Console.ReadLine();
+
+            if(!int.TryParse(strDev, out item))
+            {
+                AaruConsole.WriteLine("Not a number. Press any key to continue...");
+                System.Console.ReadKey();
+
+                continue;
+            }
+
+            switch(item)
+            {
+                case 0:
+                    AaruConsole.WriteLine("Returning to Plextor vendor commands menu...");
+
+                    return;
+                case 1:
+                    AaruConsole.Write("DVD?: ");
+                    strDev = System.Console.ReadLine();
+
+                    if(!bool.TryParse(strDev, out dvd))
+                    {
+                        AaruConsole.WriteLine("Not a boolean. Press any key to continue...");
+                        dvd = false;
+                        System.Console.ReadKey();
+                    }
+
+                    break;
+                case 2: goto start;
+            }
+        }
+
+        start:
+        System.Console.Clear();
+
+        bool sense = dev.PlextorGetVariRec(out byte[] buffer, out byte[] senseBuffer, dvd, dev.Timeout,
+                                           out double duration);
+
+        menu:
+        AaruConsole.WriteLine("Device: {0}", devPath);
+        AaruConsole.WriteLine("Sending GET VARIREC to the device:");
+        AaruConsole.WriteLine("Command took {0} ms.", duration);
+        AaruConsole.WriteLine("Sense is {0}.", sense);
+        AaruConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
+        AaruConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
+        AaruConsole.WriteLine("Sense buffer is {0} bytes.", senseBuffer?.Length.ToString() ?? "null");
+        AaruConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
+        AaruConsole.WriteLine();
+        AaruConsole.WriteLine("Choose what to do:");
+        AaruConsole.WriteLine("1.- Print buffer.");
+        AaruConsole.WriteLine("2.- Print sense buffer.");
+        AaruConsole.WriteLine("3.- Decode sense buffer.");
+        AaruConsole.WriteLine("4.- Send command again.");
+        AaruConsole.WriteLine("5.- Change parameters.");
+        AaruConsole.WriteLine("0.- Return to Plextor vendor commands menu.");
+        AaruConsole.Write("Choose: ");
+
+        strDev = System.Console.ReadLine();
+
+        if(!int.TryParse(strDev, out item))
+        {
+            AaruConsole.WriteLine("Not a number. Press any key to continue...");
+            System.Console.ReadKey();
+            System.Console.Clear();
+
+            goto menu;
+        }
+
+        switch(item)
+        {
+            case 0:
+                AaruConsole.WriteLine("Returning to Plextor vendor commands menu...");
+
+                return;
+            case 1:
+                System.Console.Clear();
+                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine("GET VARIREC response:");
+
+                if(buffer != null)
+                    PrintHex.PrintHexArray(buffer, 64);
+
+                AaruConsole.WriteLine("Press any key to continue...");
+                System.Console.ReadKey();
+                System.Console.Clear();
+                AaruConsole.WriteLine("Device: {0}", devPath);
+
+                goto menu;
+            case 2:
+                System.Console.Clear();
+                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine("GET VARIREC sense:");
+
+                if(senseBuffer != null)
+                    PrintHex.PrintHexArray(senseBuffer, 64);
+
+                AaruConsole.WriteLine("Press any key to continue...");
+                System.Console.ReadKey();
+                System.Console.Clear();
+                AaruConsole.WriteLine("Device: {0}", devPath);
+
+                goto menu;
+            case 3:
+                System.Console.Clear();
+                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine("GET VARIREC decoded sense:");
+                AaruConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
+                AaruConsole.WriteLine("Press any key to continue...");
+                System.Console.ReadKey();
+                System.Console.Clear();
+                AaruConsole.WriteLine("Device: {0}", devPath);
+
+                goto menu;
+            case 4: goto start;
+            case 5: goto parameters;
+            default:
+                AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
+                System.Console.ReadKey();
+                System.Console.Clear();
+
+                goto menu;
+        }
+    }
+
+    static void PoweRecGetSpeeds(string devPath, Device dev)
+    {
+        start:
+        System.Console.Clear();
+
+        bool sense = dev.PlextorGetPoweRec(out byte[] senseBuffer, out bool enabled, out ushort speed, dev.Timeout,
+                                           out double duration);
+
+        menu:
+        AaruConsole.WriteLine("Device: {0}", devPath);
+        AaruConsole.WriteLine("Sending POWEREC GET SPEEDS to the device:");
+        AaruConsole.WriteLine("Command took {0} ms.", duration);
+        AaruConsole.WriteLine("Sense is {0}.", sense);
+        AaruConsole.WriteLine("PoweRec is {0}.", enabled ? "enabled" : "disabled");
+        AaruConsole.WriteLine("Speed: {0}", speed);
+        AaruConsole.WriteLine("Sense buffer is {0} bytes.", senseBuffer?.Length.ToString() ?? "null");
+        AaruConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
+        AaruConsole.WriteLine("POWEREC GET SPEEDS decoded sense:");
+        AaruConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
+        AaruConsole.WriteLine();
+        AaruConsole.WriteLine("Choose what to do:");
+        AaruConsole.WriteLine("1.- Print sense buffer.");
+        AaruConsole.WriteLine("2.- Send command again.");
+        AaruConsole.WriteLine("0.- Return to Plextor vendor commands menu.");
+        AaruConsole.Write("Choose: ");
+
+        string strDev = System.Console.ReadLine();
+
+        if(!int.TryParse(strDev, out int item))
+        {
+            AaruConsole.WriteLine("Not a number. Press any key to continue...");
+            System.Console.ReadKey();
+            System.Console.Clear();
+
+            goto menu;
+        }
+
+        switch(item)
+        {
+            case 0:
+                AaruConsole.WriteLine("Returning to Plextor vendor commands menu...");
+
+                return;
+            case 1:
+                System.Console.Clear();
+                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine("POWEREC GET SPEEDS sense:");
+
+                if(senseBuffer != null)
+                    PrintHex.PrintHexArray(senseBuffer, 64);
+
+                AaruConsole.WriteLine("Press any key to continue...");
+                System.Console.ReadKey();
+                System.Console.Clear();
+                AaruConsole.WriteLine("Device: {0}", devPath);
+
+                goto menu;
+            case 2: goto start;
+            default:
+                AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
+                System.Console.ReadKey();
+                System.Console.Clear();
+
+                goto menu;
+        }
+    }
+
+    static void ReadCdDa(string devPath, Device dev)
+    {
+        uint              address   = 0;
+        uint              length    = 1;
+        PlextorSubchannel subchan   = PlextorSubchannel.None;
+        uint              blockSize = 2352;
+        string            strDev;
+        int               item;
+
+        parameters:
+
+        while(true)
+        {
+            System.Console.Clear();
+            AaruConsole.WriteLine("Device: {0}", devPath);
+            AaruConsole.WriteLine("Parameters for READ CD-DA command:");
+            AaruConsole.WriteLine("LBA: {0}", address);
+            AaruConsole.WriteLine("Will transfer {0} sectors", length);
+            AaruConsole.WriteLine("Subchannel mode: {0}", subchan);
+            AaruConsole.WriteLine("{0} bytes per sectors", blockSize);
+            AaruConsole.WriteLine();
+            AaruConsole.WriteLine("Choose what to do:");
+            AaruConsole.WriteLine("1.- Change parameters.");
+            AaruConsole.WriteLine("2.- Send command with these parameters.");
+            AaruConsole.WriteLine("0.- Return to Plextor vendor commands menu.");
+
+            strDev = System.Console.ReadLine();
+
+            if(!int.TryParse(strDev, out item))
+            {
+                AaruConsole.WriteLine("Not a number. Press any key to continue...");
+                System.Console.ReadKey();
+
+                continue;
+            }
+
+            switch(item)
+            {
+                case 0:
+                    AaruConsole.WriteLine("Returning to Plextor vendor commands menu...");
+
+                    return;
+                case 1:
+                    AaruConsole.Write("Logical Block Address?: ");
+                    strDev = System.Console.ReadLine();
+
+                    if(!uint.TryParse(strDev, out address))
+                    {
+                        AaruConsole.WriteLine("Not a number. Press any key to continue...");
+                        address = 0;
                         System.Console.ReadKey();
 
                         continue;
-                }
+                    }
+
+                    AaruConsole.Write("How many sectors to transfer?: ");
+                    strDev = System.Console.ReadLine();
+
+                    if(!uint.TryParse(strDev, out length))
+                    {
+                        AaruConsole.WriteLine("Not a number. Press any key to continue...");
+                        length = 1;
+                        System.Console.ReadKey();
+
+                        continue;
+                    }
+
+                    AaruConsole.WriteLine("Subchannel mode");
+
+                    AaruConsole.WriteLine("Available values: {0} {1} {2} {3} {4}", PlextorSubchannel.None,
+                                          PlextorSubchannel.Q16, PlextorSubchannel.All, PlextorSubchannel.Pack,
+                                          PlextorSubchannel.RawC2);
+
+                    AaruConsole.Write("Choose?: ");
+                    strDev = System.Console.ReadLine();
+
+                    if(!Enum.TryParse(strDev, true, out subchan))
+                    {
+                        AaruConsole.WriteLine("Not a correct subchannel mode. Press any key to continue...");
+                        subchan = PlextorSubchannel.None;
+                        System.Console.ReadKey();
+
+                        continue;
+                    }
+
+                    switch(subchan)
+                    {
+                        case PlextorSubchannel.Q16:
+                            blockSize = 2368;
+
+                            break;
+                        case PlextorSubchannel.Pack:
+                        case PlextorSubchannel.All:
+                            blockSize = 2448;
+
+                            break;
+                        case PlextorSubchannel.RawC2:
+                            blockSize = 2742;
+
+                            break;
+                        default:
+                            blockSize = 2352;
+
+                            break;
+                    }
+
+                    break;
+                case 2: goto start;
             }
         }
 
-        static void GetBookBitsetting(string devPath, Device dev)
+        start:
+        System.Console.Clear();
+
+        bool sense = dev.PlextorReadCdDa(out byte[] buffer, out byte[] senseBuffer, address, blockSize, length,
+                                         subchan, dev.Timeout, out double duration);
+
+        menu:
+        AaruConsole.WriteLine("Device: {0}", devPath);
+        AaruConsole.WriteLine("Sending READ CD-DA to the device:");
+        AaruConsole.WriteLine("Command took {0} ms.", duration);
+        AaruConsole.WriteLine("Sense is {0}.", sense);
+        AaruConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
+        AaruConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
+        AaruConsole.WriteLine("Sense buffer is {0} bytes.", senseBuffer?.Length.ToString() ?? "null");
+        AaruConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
+        AaruConsole.WriteLine();
+        AaruConsole.WriteLine("Choose what to do:");
+        AaruConsole.WriteLine("1.- Print buffer.");
+        AaruConsole.WriteLine("2.- Print sense buffer.");
+        AaruConsole.WriteLine("3.- Decode sense buffer.");
+        AaruConsole.WriteLine("4.- Send command again.");
+        AaruConsole.WriteLine("5.- Change parameters.");
+        AaruConsole.WriteLine("0.- Return to Plextor vendor commands menu.");
+        AaruConsole.Write("Choose: ");
+
+        strDev = System.Console.ReadLine();
+
+        if(!int.TryParse(strDev, out item))
         {
-            bool   dl = false;
-            string strDev;
-            int    item;
-
-            parameters:
-
-            while(true)
-            {
-                System.Console.Clear();
-                AaruConsole.WriteLine("Device: {0}", devPath);
-                AaruConsole.WriteLine("Parameters for GET BOOK BITSETTING command:");
-                AaruConsole.WriteLine("Dual layer?: {0}", dl);
-                AaruConsole.WriteLine();
-                AaruConsole.WriteLine("Choose what to do:");
-                AaruConsole.WriteLine("1.- Change parameters.");
-                AaruConsole.WriteLine("2.- Send command with these parameters.");
-                AaruConsole.WriteLine("0.- Return to Plextor vendor commands menu.");
-
-                strDev = System.Console.ReadLine();
-
-                if(!int.TryParse(strDev, out item))
-                {
-                    AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                    System.Console.ReadKey();
-
-                    continue;
-                }
-
-                switch(item)
-                {
-                    case 0:
-                        AaruConsole.WriteLine("Returning to Plextor vendor commands menu...");
-
-                        return;
-                    case 1:
-                        AaruConsole.Write("Dual layer?: ");
-                        strDev = System.Console.ReadLine();
-
-                        if(!bool.TryParse(strDev, out dl))
-                        {
-                            AaruConsole.WriteLine("Not a boolean. Press any key to continue...");
-                            dl = false;
-                            System.Console.ReadKey();
-                        }
-
-                        break;
-                    case 2: goto start;
-                }
-            }
-
-            start:
+            AaruConsole.WriteLine("Not a number. Press any key to continue...");
+            System.Console.ReadKey();
             System.Console.Clear();
 
-            bool sense = dev.PlextorGetBitsetting(out byte[] buffer, out byte[] senseBuffer, dl, dev.Timeout,
-                                                  out double duration);
+            goto menu;
+        }
 
-            menu:
+        switch(item)
+        {
+            case 0:
+                AaruConsole.WriteLine("Returning to Plextor vendor commands menu...");
+
+                return;
+            case 1:
+                System.Console.Clear();
+                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine("READ CD-DA response:");
+
+                if(buffer != null)
+                    PrintHex.PrintHexArray(buffer, 64);
+
+                AaruConsole.WriteLine("Press any key to continue...");
+                System.Console.ReadKey();
+                System.Console.Clear();
+                AaruConsole.WriteLine("Device: {0}", devPath);
+
+                goto menu;
+            case 2:
+                System.Console.Clear();
+                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine("READ CD-DA sense:");
+
+                if(senseBuffer != null)
+                    PrintHex.PrintHexArray(senseBuffer, 64);
+
+                AaruConsole.WriteLine("Press any key to continue...");
+                System.Console.ReadKey();
+                System.Console.Clear();
+                AaruConsole.WriteLine("Device: {0}", devPath);
+
+                goto menu;
+            case 3:
+                System.Console.Clear();
+                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine("READ CD-DA decoded sense:");
+                AaruConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
+                AaruConsole.WriteLine("Press any key to continue...");
+                System.Console.ReadKey();
+                System.Console.Clear();
+                AaruConsole.WriteLine("Device: {0}", devPath);
+
+                goto menu;
+            case 4: goto start;
+            case 5: goto parameters;
+            default:
+                AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
+                System.Console.ReadKey();
+                System.Console.Clear();
+
+                goto menu;
+        }
+    }
+
+    static void ReadDvdRaw(string devPath, Device dev)
+    {
+        uint   count = 1;
+        uint   lba   = 0;
+        string strDev;
+        int    item;
+
+        parameters:
+
+        while(true)
+        {
+            System.Console.Clear();
             AaruConsole.WriteLine("Device: {0}", devPath);
-            AaruConsole.WriteLine("Sending GET BOOK BITSETTING to the device:");
-            AaruConsole.WriteLine("Command took {0} ms.", duration);
-            AaruConsole.WriteLine("Sense is {0}.", sense);
-            AaruConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
-            AaruConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
-            AaruConsole.WriteLine("Sense buffer is {0} bytes.", senseBuffer?.Length.ToString() ?? "null");
-            AaruConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
+            AaruConsole.WriteLine("Parameters for READ DVD (RAW) command:");
+            AaruConsole.WriteLine("LBA: {0}", lba);
+            AaruConsole.WriteLine("Count: {0}", count);
             AaruConsole.WriteLine();
             AaruConsole.WriteLine("Choose what to do:");
-            AaruConsole.WriteLine("1.- Print buffer.");
-            AaruConsole.WriteLine("2.- Print sense buffer.");
-            AaruConsole.WriteLine("3.- Decode sense buffer.");
-            AaruConsole.WriteLine("4.- Send command again.");
-            AaruConsole.WriteLine("5.- Change parameters.");
+            AaruConsole.WriteLine("1.- Change parameters.");
+            AaruConsole.WriteLine("2.- Send command with these parameters.");
             AaruConsole.WriteLine("0.- Return to Plextor vendor commands menu.");
-            AaruConsole.Write("Choose: ");
 
             strDev = System.Console.ReadLine();
 
@@ -224,9 +1280,8 @@ namespace Aaru.Tests.Devices.SCSI
             {
                 AaruConsole.WriteLine("Not a number. Press any key to continue...");
                 System.Console.ReadKey();
-                System.Console.Clear();
 
-                goto menu;
+                continue;
             }
 
             switch(item)
@@ -236,684 +1291,238 @@ namespace Aaru.Tests.Devices.SCSI
 
                     return;
                 case 1:
-                    System.Console.Clear();
-                    AaruConsole.WriteLine("Device: {0}", devPath);
-                    AaruConsole.WriteLine("GET BOOK BITSETTING response:");
+                    AaruConsole.Write("How many sectors?: ");
+                    strDev = System.Console.ReadLine();
 
-                    if(buffer != null)
-                        PrintHex.PrintHexArray(buffer, 64);
+                    if(!uint.TryParse(strDev, out count))
+                    {
+                        AaruConsole.WriteLine("Not a numbr. Press any key to continue...");
+                        count = 1;
+                        System.Console.ReadKey();
 
-                    AaruConsole.WriteLine("Press any key to continue...");
-                    System.Console.ReadKey();
-                    System.Console.Clear();
-                    AaruConsole.WriteLine("Device: {0}", devPath);
+                        continue;
+                    }
 
-                    goto menu;
-                case 2:
-                    System.Console.Clear();
-                    AaruConsole.WriteLine("Device: {0}", devPath);
-                    AaruConsole.WriteLine("GET BOOK BITSETTING sense:");
+                    AaruConsole.Write("LBA?: ");
+                    strDev = System.Console.ReadLine();
 
-                    if(senseBuffer != null)
-                        PrintHex.PrintHexArray(senseBuffer, 64);
+                    if(!uint.TryParse(strDev, out lba))
+                    {
+                        AaruConsole.WriteLine("Not a number. Press any key to continue...");
+                        lba = 0;
+                        System.Console.ReadKey();
+                    }
 
-                    AaruConsole.WriteLine("Press any key to continue...");
-                    System.Console.ReadKey();
-                    System.Console.Clear();
-                    AaruConsole.WriteLine("Device: {0}", devPath);
-
-                    goto menu;
-                case 3:
-                    System.Console.Clear();
-                    AaruConsole.WriteLine("Device: {0}", devPath);
-                    AaruConsole.WriteLine("GET BOOK BITSETTING decoded sense:");
-                    AaruConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
-                    AaruConsole.WriteLine("Press any key to continue...");
-                    System.Console.ReadKey();
-                    System.Console.Clear();
-                    AaruConsole.WriteLine("Device: {0}", devPath);
-
-                    goto menu;
-                case 4: goto start;
-                case 5: goto parameters;
-                default:
-                    AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                    System.Console.ReadKey();
-                    System.Console.Clear();
-
-                    goto menu;
+                    break;
+                case 2: goto start;
             }
         }
 
-        static void GetGigaRec(string devPath, Device dev)
+        start:
+        System.Console.Clear();
+
+        bool sense = dev.PlextorReadRawDvd(out byte[] buffer, out byte[] senseBuffer, lba, count, dev.Timeout,
+                                           out double duration);
+
+        menu:
+        AaruConsole.WriteLine("Device: {0}", devPath);
+        AaruConsole.WriteLine("Sending READ DVD (RAW) to the device:");
+        AaruConsole.WriteLine("Command took {0} ms.", duration);
+        AaruConsole.WriteLine("Sense is {0}.", sense);
+        AaruConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
+        AaruConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
+        AaruConsole.WriteLine("Sense buffer is {0} bytes.", senseBuffer?.Length.ToString() ?? "null");
+        AaruConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
+        AaruConsole.WriteLine();
+        AaruConsole.WriteLine("Choose what to do:");
+        AaruConsole.WriteLine("1.- Print buffer.");
+        AaruConsole.WriteLine("2.- Print sense buffer.");
+        AaruConsole.WriteLine("3.- Decode sense buffer.");
+        AaruConsole.WriteLine("4.- Send command again.");
+        AaruConsole.WriteLine("5.- Change parameters.");
+        AaruConsole.WriteLine("0.- Return to Plextor vendor commands menu.");
+        AaruConsole.Write("Choose: ");
+
+        strDev = System.Console.ReadLine();
+
+        if(!int.TryParse(strDev, out item))
         {
-            start:
+            AaruConsole.WriteLine("Not a number. Press any key to continue...");
+            System.Console.ReadKey();
             System.Console.Clear();
 
-            bool sense = dev.PlextorGetGigaRec(out byte[] buffer, out byte[] senseBuffer, dev.Timeout,
-                                               out double duration);
+            goto menu;
+        }
 
-            menu:
-            AaruConsole.WriteLine("Device: {0}", devPath);
-            AaruConsole.WriteLine("Sending GET GIGAREC to the device:");
-            AaruConsole.WriteLine("Command took {0} ms.", duration);
-            AaruConsole.WriteLine("Sense is {0}.", sense);
-            AaruConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
-            AaruConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
-            AaruConsole.WriteLine("Sense buffer is {0} bytes.", senseBuffer?.Length.ToString() ?? "null");
-            AaruConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
-            AaruConsole.WriteLine();
-            AaruConsole.WriteLine("Choose what to do:");
-            AaruConsole.WriteLine("1.- Print buffer.");
-            AaruConsole.WriteLine("2.- Print sense buffer.");
-            AaruConsole.WriteLine("3.- Decode sense buffer.");
-            AaruConsole.WriteLine("4.- Send command again.");
-            AaruConsole.WriteLine("0.- Return to Plextor vendor commands menu.");
-            AaruConsole.Write("Choose: ");
+        switch(item)
+        {
+            case 0:
+                AaruConsole.WriteLine("Returning to Plextor vendor commands menu...");
 
-            string strDev = System.Console.ReadLine();
+                return;
+            case 1:
+                System.Console.Clear();
+                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine("READ DVD (RAW) response:");
 
-            if(!int.TryParse(strDev, out int item))
-            {
-                AaruConsole.WriteLine("Not a number. Press any key to continue...");
+                if(buffer != null)
+                    PrintHex.PrintHexArray(buffer, 64);
+
+                AaruConsole.WriteLine("Press any key to continue...");
+                System.Console.ReadKey();
+                System.Console.Clear();
+                AaruConsole.WriteLine("Device: {0}", devPath);
+
+                goto menu;
+            case 2:
+                System.Console.Clear();
+                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine("READ DVD (RAW) sense:");
+
+                if(senseBuffer != null)
+                    PrintHex.PrintHexArray(senseBuffer, 64);
+
+                AaruConsole.WriteLine("Press any key to continue...");
+                System.Console.ReadKey();
+                System.Console.Clear();
+                AaruConsole.WriteLine("Device: {0}", devPath);
+
+                goto menu;
+            case 3:
+                System.Console.Clear();
+                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine("READ DVD (RAW) decoded sense:");
+                AaruConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
+                AaruConsole.WriteLine("Press any key to continue...");
+                System.Console.ReadKey();
+                System.Console.Clear();
+                AaruConsole.WriteLine("Device: {0}", devPath);
+
+                goto menu;
+            case 4: goto start;
+            case 5: goto parameters;
+            default:
+                AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
                 System.Console.ReadKey();
                 System.Console.Clear();
 
                 goto menu;
-            }
-
-            switch(item)
-            {
-                case 0:
-                    AaruConsole.WriteLine("Returning to Plextor vendor commands menu...");
-
-                    return;
-                case 1:
-                    System.Console.Clear();
-                    AaruConsole.WriteLine("Device: {0}", devPath);
-                    AaruConsole.WriteLine("GET GIGAREC response:");
-
-                    if(buffer != null)
-                        PrintHex.PrintHexArray(buffer, 64);
-
-                    AaruConsole.WriteLine("Press any key to continue...");
-                    System.Console.ReadKey();
-                    System.Console.Clear();
-                    AaruConsole.WriteLine("Device: {0}", devPath);
-
-                    goto menu;
-                case 2:
-                    System.Console.Clear();
-                    AaruConsole.WriteLine("Device: {0}", devPath);
-                    AaruConsole.WriteLine("GET GIGAREC sense:");
-
-                    if(senseBuffer != null)
-                        PrintHex.PrintHexArray(senseBuffer, 64);
-
-                    AaruConsole.WriteLine("Press any key to continue...");
-                    System.Console.ReadKey();
-                    System.Console.Clear();
-                    AaruConsole.WriteLine("Device: {0}", devPath);
-
-                    goto menu;
-                case 3:
-                    System.Console.Clear();
-                    AaruConsole.WriteLine("Device: {0}", devPath);
-                    AaruConsole.WriteLine("GET GIGAREC decoded sense:");
-                    AaruConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
-                    AaruConsole.WriteLine("Press any key to continue...");
-                    System.Console.ReadKey();
-                    System.Console.Clear();
-                    AaruConsole.WriteLine("Device: {0}", devPath);
-
-                    goto menu;
-                case 4: goto start;
-                default:
-                    AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                    System.Console.ReadKey();
-                    System.Console.Clear();
-
-                    goto menu;
-            }
         }
+    }
 
-        static void GetSecuRec(string devPath, Device dev)
-        {
-            start:
-            System.Console.Clear();
+    static void ReadEepromCdR(string devPath, Device dev)
+    {
+        start:
+        System.Console.Clear();
 
-            bool sense = dev.PlextorGetSecuRec(out byte[] buffer, out byte[] senseBuffer, dev.Timeout,
-                                               out double duration);
-
-            menu:
-            AaruConsole.WriteLine("Device: {0}", devPath);
-            AaruConsole.WriteLine("Sending GET SECUREC to the device:");
-            AaruConsole.WriteLine("Command took {0} ms.", duration);
-            AaruConsole.WriteLine("Sense is {0}.", sense);
-            AaruConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
-            AaruConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
-            AaruConsole.WriteLine("Sense buffer is {0} bytes.", senseBuffer?.Length.ToString() ?? "null");
-            AaruConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
-            AaruConsole.WriteLine();
-            AaruConsole.WriteLine("Choose what to do:");
-            AaruConsole.WriteLine("1.- Print buffer.");
-            AaruConsole.WriteLine("2.- Print sense buffer.");
-            AaruConsole.WriteLine("3.- Decode sense buffer.");
-            AaruConsole.WriteLine("4.- Send command again.");
-            AaruConsole.WriteLine("0.- Return to Plextor vendor commands menu.");
-            AaruConsole.Write("Choose: ");
-
-            string strDev = System.Console.ReadLine();
-
-            if(!int.TryParse(strDev, out int item))
-            {
-                AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
-
-                goto menu;
-            }
-
-            switch(item)
-            {
-                case 0:
-                    AaruConsole.WriteLine("Returning to Plextor vendor commands menu...");
-
-                    return;
-                case 1:
-                    System.Console.Clear();
-                    AaruConsole.WriteLine("Device: {0}", devPath);
-                    AaruConsole.WriteLine("GET SECUREC response:");
-
-                    if(buffer != null)
-                        PrintHex.PrintHexArray(buffer, 64);
-
-                    AaruConsole.WriteLine("Press any key to continue...");
-                    System.Console.ReadKey();
-                    System.Console.Clear();
-                    AaruConsole.WriteLine("Device: {0}", devPath);
-
-                    goto menu;
-                case 2:
-                    System.Console.Clear();
-                    AaruConsole.WriteLine("Device: {0}", devPath);
-                    AaruConsole.WriteLine("GET SECUREC sense:");
-
-                    if(senseBuffer != null)
-                        PrintHex.PrintHexArray(senseBuffer, 64);
-
-                    AaruConsole.WriteLine("Press any key to continue...");
-                    System.Console.ReadKey();
-                    System.Console.Clear();
-                    AaruConsole.WriteLine("Device: {0}", devPath);
-
-                    goto menu;
-                case 3:
-                    System.Console.Clear();
-                    AaruConsole.WriteLine("Device: {0}", devPath);
-                    AaruConsole.WriteLine("GET SECUREC decoded sense:");
-                    AaruConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
-                    AaruConsole.WriteLine("Press any key to continue...");
-                    System.Console.ReadKey();
-                    System.Console.Clear();
-                    AaruConsole.WriteLine("Device: {0}", devPath);
-
-                    goto menu;
-                case 4: goto start;
-                default:
-                    AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                    System.Console.ReadKey();
-                    System.Console.Clear();
-
-                    goto menu;
-            }
-        }
-
-        static void GetSilentMode(string devPath, Device dev)
-        {
-            start:
-            System.Console.Clear();
-
-            bool sense = dev.PlextorGetSilentMode(out byte[] buffer, out byte[] senseBuffer, dev.Timeout,
-                                                  out double duration);
-
-            menu:
-            AaruConsole.WriteLine("Device: {0}", devPath);
-            AaruConsole.WriteLine("Sending GET SILENT MODE to the device:");
-            AaruConsole.WriteLine("Command took {0} ms.", duration);
-            AaruConsole.WriteLine("Sense is {0}.", sense);
-            AaruConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
-            AaruConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
-            AaruConsole.WriteLine("Sense buffer is {0} bytes.", senseBuffer?.Length.ToString() ?? "null");
-            AaruConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
-            AaruConsole.WriteLine();
-            AaruConsole.WriteLine("Choose what to do:");
-            AaruConsole.WriteLine("1.- Print buffer.");
-            AaruConsole.WriteLine("2.- Print sense buffer.");
-            AaruConsole.WriteLine("3.- Decode sense buffer.");
-            AaruConsole.WriteLine("4.- Send command again.");
-            AaruConsole.WriteLine("0.- Return to Plextor vendor commands menu.");
-            AaruConsole.Write("Choose: ");
-
-            string strDev = System.Console.ReadLine();
-
-            if(!int.TryParse(strDev, out int item))
-            {
-                AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
-
-                goto menu;
-            }
-
-            switch(item)
-            {
-                case 0:
-                    AaruConsole.WriteLine("Returning to Plextor vendor commands menu...");
-
-                    return;
-                case 1:
-                    System.Console.Clear();
-                    AaruConsole.WriteLine("Device: {0}", devPath);
-                    AaruConsole.WriteLine("GET SILENT MODE response:");
-
-                    if(buffer != null)
-                        PrintHex.PrintHexArray(buffer, 64);
-
-                    AaruConsole.WriteLine("Press any key to continue...");
-                    System.Console.ReadKey();
-                    System.Console.Clear();
-                    AaruConsole.WriteLine("Device: {0}", devPath);
-
-                    goto menu;
-                case 2:
-                    System.Console.Clear();
-                    AaruConsole.WriteLine("Device: {0}", devPath);
-                    AaruConsole.WriteLine("GET SILENT MODE sense:");
-
-                    if(senseBuffer != null)
-                        PrintHex.PrintHexArray(senseBuffer, 64);
-
-                    AaruConsole.WriteLine("Press any key to continue...");
-                    System.Console.ReadKey();
-                    System.Console.Clear();
-                    AaruConsole.WriteLine("Device: {0}", devPath);
-
-                    goto menu;
-                case 3:
-                    System.Console.Clear();
-                    AaruConsole.WriteLine("Device: {0}", devPath);
-                    AaruConsole.WriteLine("GET SILENT MODE decoded sense:");
-                    AaruConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
-                    AaruConsole.WriteLine("Press any key to continue...");
-                    System.Console.ReadKey();
-                    System.Console.Clear();
-                    AaruConsole.WriteLine("Device: {0}", devPath);
-
-                    goto menu;
-                case 4: goto start;
-                default:
-                    AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                    System.Console.ReadKey();
-                    System.Console.Clear();
-
-                    goto menu;
-            }
-        }
-
-        static void GetSingleSessionHideCdR(string devPath, Device dev)
-        {
-            start:
-            System.Console.Clear();
-
-            bool sense = dev.PlextorGetHiding(out byte[] buffer, out byte[] senseBuffer, dev.Timeout,
+        bool sense = dev.PlextorReadEepromCdr(out byte[] buffer, out byte[] senseBuffer, dev.Timeout,
                                               out double duration);
 
-            menu:
-            AaruConsole.WriteLine("Device: {0}", devPath);
-            AaruConsole.WriteLine("Sending GET SINGLE-SESSION / HIDE CD-R to the device:");
-            AaruConsole.WriteLine("Command took {0} ms.", duration);
-            AaruConsole.WriteLine("Sense is {0}.", sense);
-            AaruConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
-            AaruConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
-            AaruConsole.WriteLine("Sense buffer is {0} bytes.", senseBuffer?.Length.ToString() ?? "null");
-            AaruConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
-            AaruConsole.WriteLine();
-            AaruConsole.WriteLine("Choose what to do:");
-            AaruConsole.WriteLine("1.- Print buffer.");
-            AaruConsole.WriteLine("2.- Print sense buffer.");
-            AaruConsole.WriteLine("3.- Decode sense buffer.");
-            AaruConsole.WriteLine("4.- Send command again.");
-            AaruConsole.WriteLine("0.- Return to Plextor vendor commands menu.");
-            AaruConsole.Write("Choose: ");
+        menu:
+        AaruConsole.WriteLine("Device: {0}", devPath);
+        AaruConsole.WriteLine("Sending READ EEPROM to the device:");
+        AaruConsole.WriteLine("Command took {0} ms.", duration);
+        AaruConsole.WriteLine("Sense is {0}.", sense);
+        AaruConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
+        AaruConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
+        AaruConsole.WriteLine("Sense buffer is {0} bytes.", senseBuffer?.Length.ToString() ?? "null");
+        AaruConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
+        AaruConsole.WriteLine();
+        AaruConsole.WriteLine("Choose what to do:");
+        AaruConsole.WriteLine("1.- Print buffer.");
+        AaruConsole.WriteLine("2.- Print sense buffer.");
+        AaruConsole.WriteLine("3.- Decode sense buffer.");
+        AaruConsole.WriteLine("4.- Send command again.");
+        AaruConsole.WriteLine("0.- Return to Plextor vendor commands menu.");
+        AaruConsole.Write("Choose: ");
 
-            string strDev = System.Console.ReadLine();
+        string strDev = System.Console.ReadLine();
 
-            if(!int.TryParse(strDev, out int item))
-            {
-                AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
-
-                goto menu;
-            }
-
-            switch(item)
-            {
-                case 0:
-                    AaruConsole.WriteLine("Returning to Plextor vendor commands menu...");
-
-                    return;
-                case 1:
-                    System.Console.Clear();
-                    AaruConsole.WriteLine("Device: {0}", devPath);
-                    AaruConsole.WriteLine("GET SINGLE-SESSION / HIDE CD-R response:");
-
-                    if(buffer != null)
-                        PrintHex.PrintHexArray(buffer, 64);
-
-                    AaruConsole.WriteLine("Press any key to continue...");
-                    System.Console.ReadKey();
-                    System.Console.Clear();
-                    AaruConsole.WriteLine("Device: {0}", devPath);
-
-                    goto menu;
-                case 2:
-                    System.Console.Clear();
-                    AaruConsole.WriteLine("Device: {0}", devPath);
-                    AaruConsole.WriteLine("GET SINGLE-SESSION / HIDE CD-R sense:");
-
-                    if(senseBuffer != null)
-                        PrintHex.PrintHexArray(senseBuffer, 64);
-
-                    AaruConsole.WriteLine("Press any key to continue...");
-                    System.Console.ReadKey();
-                    System.Console.Clear();
-                    AaruConsole.WriteLine("Device: {0}", devPath);
-
-                    goto menu;
-                case 3:
-                    System.Console.Clear();
-                    AaruConsole.WriteLine("Device: {0}", devPath);
-                    AaruConsole.WriteLine("GET SINGLE-SESSION / HIDE CD-R decoded sense:");
-                    AaruConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
-                    AaruConsole.WriteLine("Press any key to continue...");
-                    System.Console.ReadKey();
-                    System.Console.Clear();
-                    AaruConsole.WriteLine("Device: {0}", devPath);
-
-                    goto menu;
-                case 4: goto start;
-                default:
-                    AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                    System.Console.ReadKey();
-                    System.Console.Clear();
-
-                    goto menu;
-            }
-        }
-
-        static void GetSpeedRead(string devPath, Device dev)
+        if(!int.TryParse(strDev, out int item))
         {
-            start:
+            AaruConsole.WriteLine("Not a number. Press any key to continue...");
+            System.Console.ReadKey();
             System.Console.Clear();
 
-            bool sense = dev.PlextorGetSpeedRead(out byte[] buffer, out byte[] senseBuffer, dev.Timeout,
-                                                 out double duration);
-
-            menu:
-            AaruConsole.WriteLine("Device: {0}", devPath);
-            AaruConsole.WriteLine("Sending GET SPEEDREAD to the device:");
-            AaruConsole.WriteLine("Command took {0} ms.", duration);
-            AaruConsole.WriteLine("Sense is {0}.", sense);
-            AaruConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
-            AaruConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
-            AaruConsole.WriteLine("Sense buffer is {0} bytes.", senseBuffer?.Length.ToString() ?? "null");
-            AaruConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
-            AaruConsole.WriteLine();
-            AaruConsole.WriteLine("Choose what to do:");
-            AaruConsole.WriteLine("1.- Print buffer.");
-            AaruConsole.WriteLine("2.- Print sense buffer.");
-            AaruConsole.WriteLine("3.- Decode sense buffer.");
-            AaruConsole.WriteLine("4.- Send command again.");
-            AaruConsole.WriteLine("0.- Return to Plextor vendor commands menu.");
-            AaruConsole.Write("Choose: ");
-
-            string strDev = System.Console.ReadLine();
-
-            if(!int.TryParse(strDev, out int item))
-            {
-                AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
-
-                goto menu;
-            }
-
-            switch(item)
-            {
-                case 0:
-                    AaruConsole.WriteLine("Returning to Plextor vendor commands menu...");
-
-                    return;
-                case 1:
-                    System.Console.Clear();
-                    AaruConsole.WriteLine("Device: {0}", devPath);
-                    AaruConsole.WriteLine("GET SPEEDREAD response:");
-
-                    if(buffer != null)
-                        PrintHex.PrintHexArray(buffer, 64);
-
-                    AaruConsole.WriteLine("Press any key to continue...");
-                    System.Console.ReadKey();
-                    System.Console.Clear();
-                    AaruConsole.WriteLine("Device: {0}", devPath);
-
-                    goto menu;
-                case 2:
-                    System.Console.Clear();
-                    AaruConsole.WriteLine("Device: {0}", devPath);
-                    AaruConsole.WriteLine("GET SPEEDREAD sense:");
-
-                    if(senseBuffer != null)
-                        PrintHex.PrintHexArray(senseBuffer, 64);
-
-                    AaruConsole.WriteLine("Press any key to continue...");
-                    System.Console.ReadKey();
-                    System.Console.Clear();
-                    AaruConsole.WriteLine("Device: {0}", devPath);
-
-                    goto menu;
-                case 3:
-                    System.Console.Clear();
-                    AaruConsole.WriteLine("Device: {0}", devPath);
-                    AaruConsole.WriteLine("GET SPEEDREAD decoded sense:");
-                    AaruConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
-                    AaruConsole.WriteLine("Press any key to continue...");
-                    System.Console.ReadKey();
-                    System.Console.Clear();
-                    AaruConsole.WriteLine("Device: {0}", devPath);
-
-                    goto menu;
-                case 4: goto start;
-                default:
-                    AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                    System.Console.ReadKey();
-                    System.Console.Clear();
-
-                    goto menu;
-            }
+            goto menu;
         }
 
-        static void GetTestWriteDvdPlus(string devPath, Device dev)
+        switch(item)
         {
-            start:
-            System.Console.Clear();
+            case 0:
+                AaruConsole.WriteLine("Returning to Plextor vendor commands menu...");
 
-            bool sense =
-                dev.PlextorGetTestWriteDvdPlus(out byte[] buffer, out byte[] senseBuffer, dev.Timeout,
-                                               out double duration);
-
-            menu:
-            AaruConsole.WriteLine("Device: {0}", devPath);
-            AaruConsole.WriteLine("Sending GET TEST WRITE DVD+ to the device:");
-            AaruConsole.WriteLine("Command took {0} ms.", duration);
-            AaruConsole.WriteLine("Sense is {0}.", sense);
-            AaruConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
-            AaruConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
-            AaruConsole.WriteLine("Sense buffer is {0} bytes.", senseBuffer?.Length.ToString() ?? "null");
-            AaruConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
-            AaruConsole.WriteLine();
-            AaruConsole.WriteLine("Choose what to do:");
-            AaruConsole.WriteLine("1.- Print buffer.");
-            AaruConsole.WriteLine("2.- Print sense buffer.");
-            AaruConsole.WriteLine("3.- Decode sense buffer.");
-            AaruConsole.WriteLine("4.- Send command again.");
-            AaruConsole.WriteLine("0.- Return to Plextor vendor commands menu.");
-            AaruConsole.Write("Choose: ");
-
-            string strDev = System.Console.ReadLine();
-
-            if(!int.TryParse(strDev, out int item))
-            {
-                AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
-
-                goto menu;
-            }
-
-            switch(item)
-            {
-                case 0:
-                    AaruConsole.WriteLine("Returning to Plextor vendor commands menu...");
-
-                    return;
-                case 1:
-                    System.Console.Clear();
-                    AaruConsole.WriteLine("Device: {0}", devPath);
-                    AaruConsole.WriteLine("GET TEST WRITE DVD+ response:");
-
-                    if(buffer != null)
-                        PrintHex.PrintHexArray(buffer, 64);
-
-                    AaruConsole.WriteLine("Press any key to continue...");
-                    System.Console.ReadKey();
-                    System.Console.Clear();
-                    AaruConsole.WriteLine("Device: {0}", devPath);
-
-                    goto menu;
-                case 2:
-                    System.Console.Clear();
-                    AaruConsole.WriteLine("Device: {0}", devPath);
-                    AaruConsole.WriteLine("GET TEST WRITE DVD+ sense:");
-
-                    if(senseBuffer != null)
-                        PrintHex.PrintHexArray(senseBuffer, 64);
-
-                    AaruConsole.WriteLine("Press any key to continue...");
-                    System.Console.ReadKey();
-                    System.Console.Clear();
-                    AaruConsole.WriteLine("Device: {0}", devPath);
-
-                    goto menu;
-                case 3:
-                    System.Console.Clear();
-                    AaruConsole.WriteLine("Device: {0}", devPath);
-                    AaruConsole.WriteLine("GET TEST WRITE DVD+ decoded sense:");
-                    AaruConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
-                    AaruConsole.WriteLine("Press any key to continue...");
-                    System.Console.ReadKey();
-                    System.Console.Clear();
-                    AaruConsole.WriteLine("Device: {0}", devPath);
-
-                    goto menu;
-                case 4: goto start;
-                default:
-                    AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                    System.Console.ReadKey();
-                    System.Console.Clear();
-
-                    goto menu;
-            }
-        }
-
-        static void GetVariRec(string devPath, Device dev)
-        {
-            bool   dvd = false;
-            string strDev;
-            int    item;
-
-            parameters:
-
-            while(true)
-            {
+                return;
+            case 1:
                 System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
-                AaruConsole.WriteLine("Parameters for GET VARIREC command:");
-                AaruConsole.WriteLine("DVD?: {0}", dvd);
-                AaruConsole.WriteLine();
-                AaruConsole.WriteLine("Choose what to do:");
-                AaruConsole.WriteLine("1.- Change parameters.");
-                AaruConsole.WriteLine("2.- Send command with these parameters.");
-                AaruConsole.WriteLine("0.- Return to Plextor vendor commands menu.");
+                AaruConsole.WriteLine("READ EEPROM response:");
 
-                strDev = System.Console.ReadLine();
+                if(buffer != null)
+                    PrintHex.PrintHexArray(buffer, 64);
 
-                if(!int.TryParse(strDev, out item))
-                {
-                    AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                    System.Console.ReadKey();
+                AaruConsole.WriteLine("Press any key to continue...");
+                System.Console.ReadKey();
+                System.Console.Clear();
+                AaruConsole.WriteLine("Device: {0}", devPath);
 
-                    continue;
-                }
+                goto menu;
+            case 2:
+                System.Console.Clear();
+                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine("READ EEPROM sense:");
 
-                switch(item)
-                {
-                    case 0:
-                        AaruConsole.WriteLine("Returning to Plextor vendor commands menu...");
+                if(senseBuffer != null)
+                    PrintHex.PrintHexArray(senseBuffer, 64);
 
-                        return;
-                    case 1:
-                        AaruConsole.Write("DVD?: ");
-                        strDev = System.Console.ReadLine();
+                AaruConsole.WriteLine("Press any key to continue...");
+                System.Console.ReadKey();
+                System.Console.Clear();
+                AaruConsole.WriteLine("Device: {0}", devPath);
 
-                        if(!bool.TryParse(strDev, out dvd))
-                        {
-                            AaruConsole.WriteLine("Not a boolean. Press any key to continue...");
-                            dvd = false;
-                            System.Console.ReadKey();
-                        }
+                goto menu;
+            case 3:
+                System.Console.Clear();
+                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine("READ EEPROM decoded sense:");
+                AaruConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
+                AaruConsole.WriteLine("Press any key to continue...");
+                System.Console.ReadKey();
+                System.Console.Clear();
+                AaruConsole.WriteLine("Device: {0}", devPath);
 
-                        break;
-                    case 2: goto start;
-                }
-            }
+                goto menu;
+            case 4: goto start;
+            default:
+                AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
+                System.Console.ReadKey();
+                System.Console.Clear();
 
-            start:
+                goto menu;
+        }
+    }
+
+    static void ReadEepromBlock(string devPath, Device dev)
+    {
+        byte   block     = 0;
+        ushort blockSize = 256;
+        string strDev;
+        int    item;
+
+        parameters:
+
+        while(true)
+        {
             System.Console.Clear();
-
-            bool sense = dev.PlextorGetVariRec(out byte[] buffer, out byte[] senseBuffer, dvd, dev.Timeout,
-                                               out double duration);
-
-            menu:
             AaruConsole.WriteLine("Device: {0}", devPath);
-            AaruConsole.WriteLine("Sending GET VARIREC to the device:");
-            AaruConsole.WriteLine("Command took {0} ms.", duration);
-            AaruConsole.WriteLine("Sense is {0}.", sense);
-            AaruConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
-            AaruConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
-            AaruConsole.WriteLine("Sense buffer is {0} bytes.", senseBuffer?.Length.ToString() ?? "null");
-            AaruConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
+            AaruConsole.WriteLine("Parameters for READ EEPROM command:");
+            AaruConsole.WriteLine("EEPROM block to read: {0}", block);
+            AaruConsole.WriteLine("EEPROM block size: {0}", blockSize);
             AaruConsole.WriteLine();
             AaruConsole.WriteLine("Choose what to do:");
-            AaruConsole.WriteLine("1.- Print buffer.");
-            AaruConsole.WriteLine("2.- Print sense buffer.");
-            AaruConsole.WriteLine("3.- Decode sense buffer.");
-            AaruConsole.WriteLine("4.- Send command again.");
-            AaruConsole.WriteLine("5.- Change parameters.");
+            AaruConsole.WriteLine("1.- Change parameters.");
+            AaruConsole.WriteLine("2.- Send command with these parameters.");
             AaruConsole.WriteLine("0.- Return to Plextor vendor commands menu.");
-            AaruConsole.Write("Choose: ");
 
             strDev = System.Console.ReadLine();
 
@@ -921,9 +1530,8 @@ namespace Aaru.Tests.Devices.SCSI
             {
                 AaruConsole.WriteLine("Not a number. Press any key to continue...");
                 System.Console.ReadKey();
-                System.Console.Clear();
 
-                goto menu;
+                continue;
             }
 
             switch(item)
@@ -933,823 +1541,214 @@ namespace Aaru.Tests.Devices.SCSI
 
                     return;
                 case 1:
-                    System.Console.Clear();
-                    AaruConsole.WriteLine("Device: {0}", devPath);
-                    AaruConsole.WriteLine("GET VARIREC response:");
+                    AaruConsole.Write("EEPROM block to read?: ");
+                    strDev = System.Console.ReadLine();
 
-                    if(buffer != null)
-                        PrintHex.PrintHexArray(buffer, 64);
+                    if(!byte.TryParse(strDev, out block))
+                    {
+                        AaruConsole.WriteLine("Not a number. Press any key to continue...");
+                        block = 0;
+                        System.Console.ReadKey();
 
-                    AaruConsole.WriteLine("Press any key to continue...");
-                    System.Console.ReadKey();
-                    System.Console.Clear();
-                    AaruConsole.WriteLine("Device: {0}", devPath);
+                        continue;
+                    }
 
-                    goto menu;
-                case 2:
-                    System.Console.Clear();
-                    AaruConsole.WriteLine("Device: {0}", devPath);
-                    AaruConsole.WriteLine("GET VARIREC sense:");
+                    AaruConsole.Write("EEPROM block size?: ");
+                    strDev = System.Console.ReadLine();
 
-                    if(senseBuffer != null)
-                        PrintHex.PrintHexArray(senseBuffer, 64);
+                    if(!ushort.TryParse(strDev, out blockSize))
+                    {
+                        AaruConsole.WriteLine("Not a number. Press any key to continue...");
+                        blockSize = 0;
+                        System.Console.ReadKey();
+                    }
 
-                    AaruConsole.WriteLine("Press any key to continue...");
-                    System.Console.ReadKey();
-                    System.Console.Clear();
-                    AaruConsole.WriteLine("Device: {0}", devPath);
-
-                    goto menu;
-                case 3:
-                    System.Console.Clear();
-                    AaruConsole.WriteLine("Device: {0}", devPath);
-                    AaruConsole.WriteLine("GET VARIREC decoded sense:");
-                    AaruConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
-                    AaruConsole.WriteLine("Press any key to continue...");
-                    System.Console.ReadKey();
-                    System.Console.Clear();
-                    AaruConsole.WriteLine("Device: {0}", devPath);
-
-                    goto menu;
-                case 4: goto start;
-                case 5: goto parameters;
-                default:
-                    AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                    System.Console.ReadKey();
-                    System.Console.Clear();
-
-                    goto menu;
-            }
-        }
-
-        static void PoweRecGetSpeeds(string devPath, Device dev)
-        {
-            start:
-            System.Console.Clear();
-
-            bool sense = dev.PlextorGetPoweRec(out byte[] senseBuffer, out bool enabled, out ushort speed, dev.Timeout,
-                                               out double duration);
-
-            menu:
-            AaruConsole.WriteLine("Device: {0}", devPath);
-            AaruConsole.WriteLine("Sending POWEREC GET SPEEDS to the device:");
-            AaruConsole.WriteLine("Command took {0} ms.", duration);
-            AaruConsole.WriteLine("Sense is {0}.", sense);
-            AaruConsole.WriteLine("PoweRec is {0}.", enabled ? "enabled" : "disabled");
-            AaruConsole.WriteLine("Speed: {0}", speed);
-            AaruConsole.WriteLine("Sense buffer is {0} bytes.", senseBuffer?.Length.ToString() ?? "null");
-            AaruConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
-            AaruConsole.WriteLine("POWEREC GET SPEEDS decoded sense:");
-            AaruConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
-            AaruConsole.WriteLine();
-            AaruConsole.WriteLine("Choose what to do:");
-            AaruConsole.WriteLine("1.- Print sense buffer.");
-            AaruConsole.WriteLine("2.- Send command again.");
-            AaruConsole.WriteLine("0.- Return to Plextor vendor commands menu.");
-            AaruConsole.Write("Choose: ");
-
-            string strDev = System.Console.ReadLine();
-
-            if(!int.TryParse(strDev, out int item))
-            {
-                AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
-
-                goto menu;
-            }
-
-            switch(item)
-            {
-                case 0:
-                    AaruConsole.WriteLine("Returning to Plextor vendor commands menu...");
-
-                    return;
-                case 1:
-                    System.Console.Clear();
-                    AaruConsole.WriteLine("Device: {0}", devPath);
-                    AaruConsole.WriteLine("POWEREC GET SPEEDS sense:");
-
-                    if(senseBuffer != null)
-                        PrintHex.PrintHexArray(senseBuffer, 64);
-
-                    AaruConsole.WriteLine("Press any key to continue...");
-                    System.Console.ReadKey();
-                    System.Console.Clear();
-                    AaruConsole.WriteLine("Device: {0}", devPath);
-
-                    goto menu;
+                    break;
                 case 2: goto start;
-                default:
-                    AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                    System.Console.ReadKey();
-                    System.Console.Clear();
-
-                    goto menu;
             }
         }
 
-        static void ReadCdDa(string devPath, Device dev)
+        start:
+        System.Console.Clear();
+
+        bool sense = dev.PlextorReadEepromBlock(out byte[] buffer, out byte[] senseBuffer, block, blockSize,
+                                                dev.Timeout, out double duration);
+
+        menu:
+        AaruConsole.WriteLine("Device: {0}", devPath);
+        AaruConsole.WriteLine("Sending READ EEPROM to the device:");
+        AaruConsole.WriteLine("Command took {0} ms.", duration);
+        AaruConsole.WriteLine("Sense is {0}.", sense);
+        AaruConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
+        AaruConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
+        AaruConsole.WriteLine("Sense buffer is {0} bytes.", senseBuffer?.Length.ToString() ?? "null");
+        AaruConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
+        AaruConsole.WriteLine();
+        AaruConsole.WriteLine("Choose what to do:");
+        AaruConsole.WriteLine("1.- Print buffer.");
+        AaruConsole.WriteLine("2.- Print sense buffer.");
+        AaruConsole.WriteLine("3.- Decode sense buffer.");
+        AaruConsole.WriteLine("4.- Send command again.");
+        AaruConsole.WriteLine("5.- Change parameters.");
+        AaruConsole.WriteLine("0.- Return to Plextor vendor commands menu.");
+        AaruConsole.Write("Choose: ");
+
+        strDev = System.Console.ReadLine();
+
+        if(!int.TryParse(strDev, out item))
         {
-            uint              address   = 0;
-            uint              length    = 1;
-            PlextorSubchannel subchan   = PlextorSubchannel.None;
-            uint              blockSize = 2352;
-            string            strDev;
-            int               item;
+            AaruConsole.WriteLine("Not a number. Press any key to continue...");
+            System.Console.ReadKey();
+            System.Console.Clear();
 
-            parameters:
+            goto menu;
+        }
 
-            while(true)
-            {
+        switch(item)
+        {
+            case 0:
+                AaruConsole.WriteLine("Returning to Plextor vendor commands menu...");
+
+                return;
+            case 1:
                 System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
-                AaruConsole.WriteLine("Parameters for READ CD-DA command:");
-                AaruConsole.WriteLine("LBA: {0}", address);
-                AaruConsole.WriteLine("Will transfer {0} sectors", length);
-                AaruConsole.WriteLine("Subchannel mode: {0}", subchan);
-                AaruConsole.WriteLine("{0} bytes per sectors", blockSize);
-                AaruConsole.WriteLine();
-                AaruConsole.WriteLine("Choose what to do:");
-                AaruConsole.WriteLine("1.- Change parameters.");
-                AaruConsole.WriteLine("2.- Send command with these parameters.");
-                AaruConsole.WriteLine("0.- Return to Plextor vendor commands menu.");
+                AaruConsole.WriteLine("READ EEPROM response:");
 
-                strDev = System.Console.ReadLine();
+                if(buffer != null)
+                    PrintHex.PrintHexArray(buffer, 64);
 
-                if(!int.TryParse(strDev, out item))
-                {
-                    AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                    System.Console.ReadKey();
-
-                    continue;
-                }
-
-                switch(item)
-                {
-                    case 0:
-                        AaruConsole.WriteLine("Returning to Plextor vendor commands menu...");
-
-                        return;
-                    case 1:
-                        AaruConsole.Write("Logical Block Address?: ");
-                        strDev = System.Console.ReadLine();
-
-                        if(!uint.TryParse(strDev, out address))
-                        {
-                            AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                            address = 0;
-                            System.Console.ReadKey();
-
-                            continue;
-                        }
-
-                        AaruConsole.Write("How many sectors to transfer?: ");
-                        strDev = System.Console.ReadLine();
-
-                        if(!uint.TryParse(strDev, out length))
-                        {
-                            AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                            length = 1;
-                            System.Console.ReadKey();
-
-                            continue;
-                        }
-
-                        AaruConsole.WriteLine("Subchannel mode");
-
-                        AaruConsole.WriteLine("Available values: {0} {1} {2} {3} {4}", PlextorSubchannel.None,
-                                              PlextorSubchannel.Q16, PlextorSubchannel.All, PlextorSubchannel.Pack,
-                                              PlextorSubchannel.RawC2);
-
-                        AaruConsole.Write("Choose?: ");
-                        strDev = System.Console.ReadLine();
-
-                        if(!Enum.TryParse(strDev, true, out subchan))
-                        {
-                            AaruConsole.WriteLine("Not a correct subchannel mode. Press any key to continue...");
-                            subchan = PlextorSubchannel.None;
-                            System.Console.ReadKey();
-
-                            continue;
-                        }
-
-                        switch(subchan)
-                        {
-                            case PlextorSubchannel.Q16:
-                                blockSize = 2368;
-
-                                break;
-                            case PlextorSubchannel.Pack:
-                            case PlextorSubchannel.All:
-                                blockSize = 2448;
-
-                                break;
-                            case PlextorSubchannel.RawC2:
-                                blockSize = 2742;
-
-                                break;
-                            default:
-                                blockSize = 2352;
-
-                                break;
-                        }
-
-                        break;
-                    case 2: goto start;
-                }
-            }
-
-            start:
-            System.Console.Clear();
-
-            bool sense = dev.PlextorReadCdDa(out byte[] buffer, out byte[] senseBuffer, address, blockSize, length,
-                                             subchan, dev.Timeout, out double duration);
-
-            menu:
-            AaruConsole.WriteLine("Device: {0}", devPath);
-            AaruConsole.WriteLine("Sending READ CD-DA to the device:");
-            AaruConsole.WriteLine("Command took {0} ms.", duration);
-            AaruConsole.WriteLine("Sense is {0}.", sense);
-            AaruConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
-            AaruConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
-            AaruConsole.WriteLine("Sense buffer is {0} bytes.", senseBuffer?.Length.ToString() ?? "null");
-            AaruConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
-            AaruConsole.WriteLine();
-            AaruConsole.WriteLine("Choose what to do:");
-            AaruConsole.WriteLine("1.- Print buffer.");
-            AaruConsole.WriteLine("2.- Print sense buffer.");
-            AaruConsole.WriteLine("3.- Decode sense buffer.");
-            AaruConsole.WriteLine("4.- Send command again.");
-            AaruConsole.WriteLine("5.- Change parameters.");
-            AaruConsole.WriteLine("0.- Return to Plextor vendor commands menu.");
-            AaruConsole.Write("Choose: ");
-
-            strDev = System.Console.ReadLine();
-
-            if(!int.TryParse(strDev, out item))
-            {
-                AaruConsole.WriteLine("Not a number. Press any key to continue...");
+                AaruConsole.WriteLine("Press any key to continue...");
                 System.Console.ReadKey();
-                System.Console.Clear();
-
-                goto menu;
-            }
-
-            switch(item)
-            {
-                case 0:
-                    AaruConsole.WriteLine("Returning to Plextor vendor commands menu...");
-
-                    return;
-                case 1:
-                    System.Console.Clear();
-                    AaruConsole.WriteLine("Device: {0}", devPath);
-                    AaruConsole.WriteLine("READ CD-DA response:");
-
-                    if(buffer != null)
-                        PrintHex.PrintHexArray(buffer, 64);
-
-                    AaruConsole.WriteLine("Press any key to continue...");
-                    System.Console.ReadKey();
-                    System.Console.Clear();
-                    AaruConsole.WriteLine("Device: {0}", devPath);
-
-                    goto menu;
-                case 2:
-                    System.Console.Clear();
-                    AaruConsole.WriteLine("Device: {0}", devPath);
-                    AaruConsole.WriteLine("READ CD-DA sense:");
-
-                    if(senseBuffer != null)
-                        PrintHex.PrintHexArray(senseBuffer, 64);
-
-                    AaruConsole.WriteLine("Press any key to continue...");
-                    System.Console.ReadKey();
-                    System.Console.Clear();
-                    AaruConsole.WriteLine("Device: {0}", devPath);
-
-                    goto menu;
-                case 3:
-                    System.Console.Clear();
-                    AaruConsole.WriteLine("Device: {0}", devPath);
-                    AaruConsole.WriteLine("READ CD-DA decoded sense:");
-                    AaruConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
-                    AaruConsole.WriteLine("Press any key to continue...");
-                    System.Console.ReadKey();
-                    System.Console.Clear();
-                    AaruConsole.WriteLine("Device: {0}", devPath);
-
-                    goto menu;
-                case 4: goto start;
-                case 5: goto parameters;
-                default:
-                    AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                    System.Console.ReadKey();
-                    System.Console.Clear();
-
-                    goto menu;
-            }
-        }
-
-        static void ReadDvdRaw(string devPath, Device dev)
-        {
-            uint   count = 1;
-            uint   lba   = 0;
-            string strDev;
-            int    item;
-
-            parameters:
-
-            while(true)
-            {
                 System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
-                AaruConsole.WriteLine("Parameters for READ DVD (RAW) command:");
-                AaruConsole.WriteLine("LBA: {0}", lba);
-                AaruConsole.WriteLine("Count: {0}", count);
-                AaruConsole.WriteLine();
-                AaruConsole.WriteLine("Choose what to do:");
-                AaruConsole.WriteLine("1.- Change parameters.");
-                AaruConsole.WriteLine("2.- Send command with these parameters.");
-                AaruConsole.WriteLine("0.- Return to Plextor vendor commands menu.");
-
-                strDev = System.Console.ReadLine();
-
-                if(!int.TryParse(strDev, out item))
-                {
-                    AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                    System.Console.ReadKey();
-
-                    continue;
-                }
-
-                switch(item)
-                {
-                    case 0:
-                        AaruConsole.WriteLine("Returning to Plextor vendor commands menu...");
-
-                        return;
-                    case 1:
-                        AaruConsole.Write("How many sectors?: ");
-                        strDev = System.Console.ReadLine();
-
-                        if(!uint.TryParse(strDev, out count))
-                        {
-                            AaruConsole.WriteLine("Not a numbr. Press any key to continue...");
-                            count = 1;
-                            System.Console.ReadKey();
-
-                            continue;
-                        }
-
-                        AaruConsole.Write("LBA?: ");
-                        strDev = System.Console.ReadLine();
-
-                        if(!uint.TryParse(strDev, out lba))
-                        {
-                            AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                            lba = 0;
-                            System.Console.ReadKey();
-                        }
-
-                        break;
-                    case 2: goto start;
-                }
-            }
-
-            start:
-            System.Console.Clear();
-
-            bool sense = dev.PlextorReadRawDvd(out byte[] buffer, out byte[] senseBuffer, lba, count, dev.Timeout,
-                                               out double duration);
-
-            menu:
-            AaruConsole.WriteLine("Device: {0}", devPath);
-            AaruConsole.WriteLine("Sending READ DVD (RAW) to the device:");
-            AaruConsole.WriteLine("Command took {0} ms.", duration);
-            AaruConsole.WriteLine("Sense is {0}.", sense);
-            AaruConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
-            AaruConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
-            AaruConsole.WriteLine("Sense buffer is {0} bytes.", senseBuffer?.Length.ToString() ?? "null");
-            AaruConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
-            AaruConsole.WriteLine();
-            AaruConsole.WriteLine("Choose what to do:");
-            AaruConsole.WriteLine("1.- Print buffer.");
-            AaruConsole.WriteLine("2.- Print sense buffer.");
-            AaruConsole.WriteLine("3.- Decode sense buffer.");
-            AaruConsole.WriteLine("4.- Send command again.");
-            AaruConsole.WriteLine("5.- Change parameters.");
-            AaruConsole.WriteLine("0.- Return to Plextor vendor commands menu.");
-            AaruConsole.Write("Choose: ");
-
-            strDev = System.Console.ReadLine();
-
-            if(!int.TryParse(strDev, out item))
-            {
-                AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
 
                 goto menu;
-            }
-
-            switch(item)
-            {
-                case 0:
-                    AaruConsole.WriteLine("Returning to Plextor vendor commands menu...");
-
-                    return;
-                case 1:
-                    System.Console.Clear();
-                    AaruConsole.WriteLine("Device: {0}", devPath);
-                    AaruConsole.WriteLine("READ DVD (RAW) response:");
-
-                    if(buffer != null)
-                        PrintHex.PrintHexArray(buffer, 64);
-
-                    AaruConsole.WriteLine("Press any key to continue...");
-                    System.Console.ReadKey();
-                    System.Console.Clear();
-                    AaruConsole.WriteLine("Device: {0}", devPath);
-
-                    goto menu;
-                case 2:
-                    System.Console.Clear();
-                    AaruConsole.WriteLine("Device: {0}", devPath);
-                    AaruConsole.WriteLine("READ DVD (RAW) sense:");
-
-                    if(senseBuffer != null)
-                        PrintHex.PrintHexArray(senseBuffer, 64);
-
-                    AaruConsole.WriteLine("Press any key to continue...");
-                    System.Console.ReadKey();
-                    System.Console.Clear();
-                    AaruConsole.WriteLine("Device: {0}", devPath);
-
-                    goto menu;
-                case 3:
-                    System.Console.Clear();
-                    AaruConsole.WriteLine("Device: {0}", devPath);
-                    AaruConsole.WriteLine("READ DVD (RAW) decoded sense:");
-                    AaruConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
-                    AaruConsole.WriteLine("Press any key to continue...");
-                    System.Console.ReadKey();
-                    System.Console.Clear();
-                    AaruConsole.WriteLine("Device: {0}", devPath);
-
-                    goto menu;
-                case 4: goto start;
-                case 5: goto parameters;
-                default:
-                    AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                    System.Console.ReadKey();
-                    System.Console.Clear();
-
-                    goto menu;
-            }
-        }
-
-        static void ReadEepromCdR(string devPath, Device dev)
-        {
-            start:
-            System.Console.Clear();
-
-            bool sense = dev.PlextorReadEepromCdr(out byte[] buffer, out byte[] senseBuffer, dev.Timeout,
-                                                  out double duration);
-
-            menu:
-            AaruConsole.WriteLine("Device: {0}", devPath);
-            AaruConsole.WriteLine("Sending READ EEPROM to the device:");
-            AaruConsole.WriteLine("Command took {0} ms.", duration);
-            AaruConsole.WriteLine("Sense is {0}.", sense);
-            AaruConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
-            AaruConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
-            AaruConsole.WriteLine("Sense buffer is {0} bytes.", senseBuffer?.Length.ToString() ?? "null");
-            AaruConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
-            AaruConsole.WriteLine();
-            AaruConsole.WriteLine("Choose what to do:");
-            AaruConsole.WriteLine("1.- Print buffer.");
-            AaruConsole.WriteLine("2.- Print sense buffer.");
-            AaruConsole.WriteLine("3.- Decode sense buffer.");
-            AaruConsole.WriteLine("4.- Send command again.");
-            AaruConsole.WriteLine("0.- Return to Plextor vendor commands menu.");
-            AaruConsole.Write("Choose: ");
-
-            string strDev = System.Console.ReadLine();
-
-            if(!int.TryParse(strDev, out int item))
-            {
-                AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
-
-                goto menu;
-            }
-
-            switch(item)
-            {
-                case 0:
-                    AaruConsole.WriteLine("Returning to Plextor vendor commands menu...");
-
-                    return;
-                case 1:
-                    System.Console.Clear();
-                    AaruConsole.WriteLine("Device: {0}", devPath);
-                    AaruConsole.WriteLine("READ EEPROM response:");
-
-                    if(buffer != null)
-                        PrintHex.PrintHexArray(buffer, 64);
-
-                    AaruConsole.WriteLine("Press any key to continue...");
-                    System.Console.ReadKey();
-                    System.Console.Clear();
-                    AaruConsole.WriteLine("Device: {0}", devPath);
-
-                    goto menu;
-                case 2:
-                    System.Console.Clear();
-                    AaruConsole.WriteLine("Device: {0}", devPath);
-                    AaruConsole.WriteLine("READ EEPROM sense:");
-
-                    if(senseBuffer != null)
-                        PrintHex.PrintHexArray(senseBuffer, 64);
-
-                    AaruConsole.WriteLine("Press any key to continue...");
-                    System.Console.ReadKey();
-                    System.Console.Clear();
-                    AaruConsole.WriteLine("Device: {0}", devPath);
-
-                    goto menu;
-                case 3:
-                    System.Console.Clear();
-                    AaruConsole.WriteLine("Device: {0}", devPath);
-                    AaruConsole.WriteLine("READ EEPROM decoded sense:");
-                    AaruConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
-                    AaruConsole.WriteLine("Press any key to continue...");
-                    System.Console.ReadKey();
-                    System.Console.Clear();
-                    AaruConsole.WriteLine("Device: {0}", devPath);
-
-                    goto menu;
-                case 4: goto start;
-                default:
-                    AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                    System.Console.ReadKey();
-                    System.Console.Clear();
-
-                    goto menu;
-            }
-        }
-
-        static void ReadEepromBlock(string devPath, Device dev)
-        {
-            byte   block     = 0;
-            ushort blockSize = 256;
-            string strDev;
-            int    item;
-
-            parameters:
-
-            while(true)
-            {
+            case 2:
                 System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
-                AaruConsole.WriteLine("Parameters for READ EEPROM command:");
-                AaruConsole.WriteLine("EEPROM block to read: {0}", block);
-                AaruConsole.WriteLine("EEPROM block size: {0}", blockSize);
-                AaruConsole.WriteLine();
-                AaruConsole.WriteLine("Choose what to do:");
-                AaruConsole.WriteLine("1.- Change parameters.");
-                AaruConsole.WriteLine("2.- Send command with these parameters.");
-                AaruConsole.WriteLine("0.- Return to Plextor vendor commands menu.");
+                AaruConsole.WriteLine("READ EEPROM sense:");
 
-                strDev = System.Console.ReadLine();
+                if(senseBuffer != null)
+                    PrintHex.PrintHexArray(senseBuffer, 64);
 
-                if(!int.TryParse(strDev, out item))
-                {
-                    AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                    System.Console.ReadKey();
+                AaruConsole.WriteLine("Press any key to continue...");
+                System.Console.ReadKey();
+                System.Console.Clear();
+                AaruConsole.WriteLine("Device: {0}", devPath);
 
-                    continue;
-                }
+                goto menu;
+            case 3:
+                System.Console.Clear();
+                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine("READ EEPROM decoded sense:");
+                AaruConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
+                AaruConsole.WriteLine("Press any key to continue...");
+                System.Console.ReadKey();
+                System.Console.Clear();
+                AaruConsole.WriteLine("Device: {0}", devPath);
 
-                switch(item)
-                {
-                    case 0:
-                        AaruConsole.WriteLine("Returning to Plextor vendor commands menu...");
-
-                        return;
-                    case 1:
-                        AaruConsole.Write("EEPROM block to read?: ");
-                        strDev = System.Console.ReadLine();
-
-                        if(!byte.TryParse(strDev, out block))
-                        {
-                            AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                            block = 0;
-                            System.Console.ReadKey();
-
-                            continue;
-                        }
-
-                        AaruConsole.Write("EEPROM block size?: ");
-                        strDev = System.Console.ReadLine();
-
-                        if(!ushort.TryParse(strDev, out blockSize))
-                        {
-                            AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                            blockSize = 0;
-                            System.Console.ReadKey();
-                        }
-
-                        break;
-                    case 2: goto start;
-                }
-            }
-
-            start:
-            System.Console.Clear();
-
-            bool sense = dev.PlextorReadEepromBlock(out byte[] buffer, out byte[] senseBuffer, block, blockSize,
-                                                    dev.Timeout, out double duration);
-
-            menu:
-            AaruConsole.WriteLine("Device: {0}", devPath);
-            AaruConsole.WriteLine("Sending READ EEPROM to the device:");
-            AaruConsole.WriteLine("Command took {0} ms.", duration);
-            AaruConsole.WriteLine("Sense is {0}.", sense);
-            AaruConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
-            AaruConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
-            AaruConsole.WriteLine("Sense buffer is {0} bytes.", senseBuffer?.Length.ToString() ?? "null");
-            AaruConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
-            AaruConsole.WriteLine();
-            AaruConsole.WriteLine("Choose what to do:");
-            AaruConsole.WriteLine("1.- Print buffer.");
-            AaruConsole.WriteLine("2.- Print sense buffer.");
-            AaruConsole.WriteLine("3.- Decode sense buffer.");
-            AaruConsole.WriteLine("4.- Send command again.");
-            AaruConsole.WriteLine("5.- Change parameters.");
-            AaruConsole.WriteLine("0.- Return to Plextor vendor commands menu.");
-            AaruConsole.Write("Choose: ");
-
-            strDev = System.Console.ReadLine();
-
-            if(!int.TryParse(strDev, out item))
-            {
-                AaruConsole.WriteLine("Not a number. Press any key to continue...");
+                goto menu;
+            case 4: goto start;
+            case 5: goto parameters;
+            default:
+                AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
                 System.Console.ReadKey();
                 System.Console.Clear();
 
                 goto menu;
-            }
+        }
+    }
 
-            switch(item)
-            {
-                case 0:
-                    AaruConsole.WriteLine("Returning to Plextor vendor commands menu...");
+    static void ReadEeprom(string devPath, Device dev)
+    {
+        start:
+        System.Console.Clear();
 
-                    return;
-                case 1:
-                    System.Console.Clear();
-                    AaruConsole.WriteLine("Device: {0}", devPath);
-                    AaruConsole.WriteLine("READ EEPROM response:");
+        bool sense = dev.PlextorReadEeprom(out byte[] buffer, out byte[] senseBuffer, dev.Timeout,
+                                           out double duration);
 
-                    if(buffer != null)
-                        PrintHex.PrintHexArray(buffer, 64);
+        menu:
+        AaruConsole.WriteLine("Device: {0}", devPath);
+        AaruConsole.WriteLine("Sending READ EEPROM to the device:");
+        AaruConsole.WriteLine("Command took {0} ms.", duration);
+        AaruConsole.WriteLine("Sense is {0}.", sense);
+        AaruConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
+        AaruConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
+        AaruConsole.WriteLine("Sense buffer is {0} bytes.", senseBuffer?.Length.ToString() ?? "null");
+        AaruConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
+        AaruConsole.WriteLine();
+        AaruConsole.WriteLine("Choose what to do:");
+        AaruConsole.WriteLine("1.- Print buffer.");
+        AaruConsole.WriteLine("2.- Print sense buffer.");
+        AaruConsole.WriteLine("3.- Decode sense buffer.");
+        AaruConsole.WriteLine("4.- Send command again.");
+        AaruConsole.WriteLine("0.- Return to Plextor vendor commands menu.");
+        AaruConsole.Write("Choose: ");
 
-                    AaruConsole.WriteLine("Press any key to continue...");
-                    System.Console.ReadKey();
-                    System.Console.Clear();
-                    AaruConsole.WriteLine("Device: {0}", devPath);
+        string strDev = System.Console.ReadLine();
 
-                    goto menu;
-                case 2:
-                    System.Console.Clear();
-                    AaruConsole.WriteLine("Device: {0}", devPath);
-                    AaruConsole.WriteLine("READ EEPROM sense:");
+        if(!int.TryParse(strDev, out int item))
+        {
+            AaruConsole.WriteLine("Not a number. Press any key to continue...");
+            System.Console.ReadKey();
+            System.Console.Clear();
 
-                    if(senseBuffer != null)
-                        PrintHex.PrintHexArray(senseBuffer, 64);
-
-                    AaruConsole.WriteLine("Press any key to continue...");
-                    System.Console.ReadKey();
-                    System.Console.Clear();
-                    AaruConsole.WriteLine("Device: {0}", devPath);
-
-                    goto menu;
-                case 3:
-                    System.Console.Clear();
-                    AaruConsole.WriteLine("Device: {0}", devPath);
-                    AaruConsole.WriteLine("READ EEPROM decoded sense:");
-                    AaruConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
-                    AaruConsole.WriteLine("Press any key to continue...");
-                    System.Console.ReadKey();
-                    System.Console.Clear();
-                    AaruConsole.WriteLine("Device: {0}", devPath);
-
-                    goto menu;
-                case 4: goto start;
-                case 5: goto parameters;
-                default:
-                    AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                    System.Console.ReadKey();
-                    System.Console.Clear();
-
-                    goto menu;
-            }
+            goto menu;
         }
 
-        static void ReadEeprom(string devPath, Device dev)
+        switch(item)
         {
-            start:
-            System.Console.Clear();
+            case 0:
+                AaruConsole.WriteLine("Returning to Plextor vendor commands menu...");
 
-            bool sense = dev.PlextorReadEeprom(out byte[] buffer, out byte[] senseBuffer, dev.Timeout,
-                                               out double duration);
+                return;
+            case 1:
+                System.Console.Clear();
+                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine("READ EEPROM response:");
 
-            menu:
-            AaruConsole.WriteLine("Device: {0}", devPath);
-            AaruConsole.WriteLine("Sending READ EEPROM to the device:");
-            AaruConsole.WriteLine("Command took {0} ms.", duration);
-            AaruConsole.WriteLine("Sense is {0}.", sense);
-            AaruConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
-            AaruConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
-            AaruConsole.WriteLine("Sense buffer is {0} bytes.", senseBuffer?.Length.ToString() ?? "null");
-            AaruConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
-            AaruConsole.WriteLine();
-            AaruConsole.WriteLine("Choose what to do:");
-            AaruConsole.WriteLine("1.- Print buffer.");
-            AaruConsole.WriteLine("2.- Print sense buffer.");
-            AaruConsole.WriteLine("3.- Decode sense buffer.");
-            AaruConsole.WriteLine("4.- Send command again.");
-            AaruConsole.WriteLine("0.- Return to Plextor vendor commands menu.");
-            AaruConsole.Write("Choose: ");
+                if(buffer != null)
+                    PrintHex.PrintHexArray(buffer, 64);
 
-            string strDev = System.Console.ReadLine();
+                AaruConsole.WriteLine("Press any key to continue...");
+                System.Console.ReadKey();
+                System.Console.Clear();
+                AaruConsole.WriteLine("Device: {0}", devPath);
 
-            if(!int.TryParse(strDev, out int item))
-            {
-                AaruConsole.WriteLine("Not a number. Press any key to continue...");
+                goto menu;
+            case 2:
+                System.Console.Clear();
+                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine("READ EEPROM sense:");
+
+                if(senseBuffer != null)
+                    PrintHex.PrintHexArray(senseBuffer, 64);
+
+                AaruConsole.WriteLine("Press any key to continue...");
+                System.Console.ReadKey();
+                System.Console.Clear();
+                AaruConsole.WriteLine("Device: {0}", devPath);
+
+                goto menu;
+            case 3:
+                System.Console.Clear();
+                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine("READ EEPROM decoded sense:");
+                AaruConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
+                AaruConsole.WriteLine("Press any key to continue...");
+                System.Console.ReadKey();
+                System.Console.Clear();
+                AaruConsole.WriteLine("Device: {0}", devPath);
+
+                goto menu;
+            case 4: goto start;
+            default:
+                AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
                 System.Console.ReadKey();
                 System.Console.Clear();
 
                 goto menu;
-            }
-
-            switch(item)
-            {
-                case 0:
-                    AaruConsole.WriteLine("Returning to Plextor vendor commands menu...");
-
-                    return;
-                case 1:
-                    System.Console.Clear();
-                    AaruConsole.WriteLine("Device: {0}", devPath);
-                    AaruConsole.WriteLine("READ EEPROM response:");
-
-                    if(buffer != null)
-                        PrintHex.PrintHexArray(buffer, 64);
-
-                    AaruConsole.WriteLine("Press any key to continue...");
-                    System.Console.ReadKey();
-                    System.Console.Clear();
-                    AaruConsole.WriteLine("Device: {0}", devPath);
-
-                    goto menu;
-                case 2:
-                    System.Console.Clear();
-                    AaruConsole.WriteLine("Device: {0}", devPath);
-                    AaruConsole.WriteLine("READ EEPROM sense:");
-
-                    if(senseBuffer != null)
-                        PrintHex.PrintHexArray(senseBuffer, 64);
-
-                    AaruConsole.WriteLine("Press any key to continue...");
-                    System.Console.ReadKey();
-                    System.Console.Clear();
-                    AaruConsole.WriteLine("Device: {0}", devPath);
-
-                    goto menu;
-                case 3:
-                    System.Console.Clear();
-                    AaruConsole.WriteLine("Device: {0}", devPath);
-                    AaruConsole.WriteLine("READ EEPROM decoded sense:");
-                    AaruConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
-                    AaruConsole.WriteLine("Press any key to continue...");
-                    System.Console.ReadKey();
-                    System.Console.Clear();
-                    AaruConsole.WriteLine("Device: {0}", devPath);
-
-                    goto menu;
-                case 4: goto start;
-                default:
-                    AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                    System.Console.ReadKey();
-                    System.Console.Clear();
-
-                    goto menu;
-            }
         }
     }
 }

@@ -31,50 +31,49 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Filesystems.BeFS
+namespace Aaru.Tests.Filesystems.BeFS;
+
+[TestFixture]
+public class APM : FilesystemTest
 {
-    [TestFixture]
-    public class APM : FilesystemTest
+    public APM() : base("BeFS") {}
+
+    public override string DataFolder =>
+        Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Be File System (APM)");
+    public override IFilesystem Plugin     => new Aaru.Filesystems.BeFS();
+    public override bool        Partitions => true;
+
+    public override FileSystemTest[] Tests => new[]
     {
-        public APM() : base("BeFS") {}
-
-        public override string DataFolder =>
-            Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Be File System (APM)");
-        public override IFilesystem Plugin     => new Aaru.Filesystems.BeFS();
-        public override bool        Partitions => true;
-
-        public override FileSystemTest[] Tests => new[]
+        new FileSystemTest
         {
-            new FileSystemTest
-            {
-                TestFile    = "beos_r3.1.aif",
-                MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 1572864,
-                SectorSize  = 512,
-                Clusters    = 786336,
-                ClusterSize = 1024,
-                VolumeName  = "Volume label"
-            },
-            new FileSystemTest
-            {
-                TestFile    = "beos_r4.5.aif",
-                MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 262144,
-                SectorSize  = 512,
-                Clusters    = 130976,
-                ClusterSize = 1024,
-                VolumeName  = "Volume label"
-            },
-            new FileSystemTest
-            {
-                TestFile    = "beos_r5.aif",
-                MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 262144,
-                SectorSize  = 512,
-                Clusters    = 130976,
-                ClusterSize = 1024,
-                VolumeName  = "Volume label"
-            }
-        };
-    }
+            TestFile    = "beos_r3.1.aif",
+            MediaType   = MediaType.GENERIC_HDD,
+            Sectors     = 1572864,
+            SectorSize  = 512,
+            Clusters    = 786336,
+            ClusterSize = 1024,
+            VolumeName  = "Volume label"
+        },
+        new FileSystemTest
+        {
+            TestFile    = "beos_r4.5.aif",
+            MediaType   = MediaType.GENERIC_HDD,
+            Sectors     = 262144,
+            SectorSize  = 512,
+            Clusters    = 130976,
+            ClusterSize = 1024,
+            VolumeName  = "Volume label"
+        },
+        new FileSystemTest
+        {
+            TestFile    = "beos_r5.aif",
+            MediaType   = MediaType.GENERIC_HDD,
+            Sectors     = 262144,
+            SectorSize  = 512,
+            Clusters    = 130976,
+            ClusterSize = 1024,
+            VolumeName  = "Volume label"
+        }
+    };
 }

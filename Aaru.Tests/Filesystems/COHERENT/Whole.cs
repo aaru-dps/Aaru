@@ -32,60 +32,59 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Filesystems.COHERENT
+namespace Aaru.Tests.Filesystems.COHERENT;
+
+[TestFixture]
+public class Whole : FilesystemTest
 {
-    [TestFixture]
-    public class Whole : FilesystemTest
+    public Whole() : base("Coherent fs") {}
+
+    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "COHERENT filesystem");
+
+    public override IFilesystem Plugin     => new SysVfs();
+    public override bool        Partitions => false;
+
+    public override FileSystemTest[] Tests => new[]
     {
-        public Whole() : base("Coherent fs") {}
-
-        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "COHERENT filesystem");
-
-        public override IFilesystem Plugin     => new SysVfs();
-        public override bool        Partitions => false;
-
-        public override FileSystemTest[] Tests => new[]
+        new FileSystemTest
         {
-            new FileSystemTest
-            {
-                TestFile    = "coherentunix_4.2.10_dsdd.img.lz",
-                MediaType   = MediaType.DOS_525_DS_DD_9,
-                Sectors     = 720,
-                SectorSize  = 512,
-                Clusters    = 720,
-                ClusterSize = 512,
-                VolumeName  = "noname"
-            },
-            new FileSystemTest
-            {
-                TestFile    = "coherentunix_4.2.10_dshd.img.lz",
-                MediaType   = MediaType.DOS_525_HD,
-                Sectors     = 2400,
-                SectorSize  = 512,
-                Clusters    = 2400,
-                ClusterSize = 512,
-                VolumeName  = "noname"
-            },
-            new FileSystemTest
-            {
-                TestFile    = "coherentunix_4.2.10_mf2dd.img.lz",
-                MediaType   = MediaType.DOS_35_DS_DD_9,
-                Sectors     = 1440,
-                SectorSize  = 512,
-                Clusters    = 1440,
-                ClusterSize = 512,
-                VolumeName  = "noname"
-            },
-            new FileSystemTest
-            {
-                TestFile    = "coherentunix_4.2.10_mf2hd.img.lz",
-                MediaType   = MediaType.DOS_35_HD,
-                Sectors     = 2880,
-                SectorSize  = 512,
-                Clusters    = 2880,
-                ClusterSize = 512,
-                VolumeName  = "noname"
-            }
-        };
-    }
+            TestFile    = "coherentunix_4.2.10_dsdd.img.lz",
+            MediaType   = MediaType.DOS_525_DS_DD_9,
+            Sectors     = 720,
+            SectorSize  = 512,
+            Clusters    = 720,
+            ClusterSize = 512,
+            VolumeName  = "noname"
+        },
+        new FileSystemTest
+        {
+            TestFile    = "coherentunix_4.2.10_dshd.img.lz",
+            MediaType   = MediaType.DOS_525_HD,
+            Sectors     = 2400,
+            SectorSize  = 512,
+            Clusters    = 2400,
+            ClusterSize = 512,
+            VolumeName  = "noname"
+        },
+        new FileSystemTest
+        {
+            TestFile    = "coherentunix_4.2.10_mf2dd.img.lz",
+            MediaType   = MediaType.DOS_35_DS_DD_9,
+            Sectors     = 1440,
+            SectorSize  = 512,
+            Clusters    = 1440,
+            ClusterSize = 512,
+            VolumeName  = "noname"
+        },
+        new FileSystemTest
+        {
+            TestFile    = "coherentunix_4.2.10_mf2hd.img.lz",
+            MediaType   = MediaType.DOS_35_HD,
+            Sectors     = 2880,
+            SectorSize  = 512,
+            Clusters    = 2880,
+            ClusterSize = 512,
+            VolumeName  = "noname"
+        }
+    };
 }

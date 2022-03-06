@@ -32,19 +32,18 @@
 
 using System.CommandLine;
 
-namespace Aaru.Commands.Filesystem
-{
-    internal sealed class FilesystemFamily : Command
-    {
-        public FilesystemFamily() : base("filesystem", "Commands to manage filesystems")
-        {
-            AddAlias("fi");
-            AddAlias("fs");
+namespace Aaru.Commands.Filesystem;
 
-            AddCommand(new FilesystemInfoCommand());
-            AddCommand(new ListOptionsCommand());
-            AddCommand(new ExtractFilesCommand());
-            AddCommand(new LsCommand());
-        }
+internal sealed class FilesystemFamily : Command
+{
+    public FilesystemFamily() : base("filesystem", "Commands to manage filesystems")
+    {
+        AddAlias("fi");
+        AddAlias("fs");
+
+        AddCommand(new FilesystemInfoCommand());
+        AddCommand(new ListOptionsCommand());
+        AddCommand(new ExtractFilesCommand());
+        AddCommand(new LsCommand());
     }
 }

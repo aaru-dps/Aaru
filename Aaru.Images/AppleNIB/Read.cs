@@ -39,254 +39,253 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Decoders.Floppy;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class AppleNib
 {
-    public sealed partial class AppleNib
+    /// <inheritdoc />
+    public ErrorNumber Open(IFilter imageFilter)
     {
-        /// <inheritdoc />
-        public ErrorNumber Open(IFilter imageFilter)
-        {
-            Stream stream = imageFilter.GetDataForkStream();
-            stream.Seek(0, SeekOrigin.Begin);
+        Stream stream = imageFilter.GetDataForkStream();
+        stream.Seek(0, SeekOrigin.Begin);
 
-            if(stream.Length < 512)
-                return ErrorNumber.InvalidArgument;
+        if(stream.Length < 512)
+            return ErrorNumber.InvalidArgument;
 
-            byte[] buffer = new byte[stream.Length];
-            stream.Read(buffer, 0, buffer.Length);
+        byte[] buffer = new byte[stream.Length];
+        stream.Read(buffer, 0, buffer.Length);
 
-            AaruConsole.DebugWriteLine("Apple NIB Plugin", "Decoding whole image");
-            List<Apple2.RawTrack> tracks = Apple2.MarshalDisk(buffer);
-            AaruConsole.DebugWriteLine("Apple NIB Plugin", "Got {0} tracks", tracks.Count);
+        AaruConsole.DebugWriteLine("Apple NIB Plugin", "Decoding whole image");
+        List<Apple2.RawTrack> tracks = Apple2.MarshalDisk(buffer);
+        AaruConsole.DebugWriteLine("Apple NIB Plugin", "Got {0} tracks", tracks.Count);
 
-            Dictionary<ulong, Apple2.RawSector> rawSectors = new();
+        Dictionary<ulong, Apple2.RawSector> rawSectors = new();
 
-            int  spt            = 0;
-            bool allTracksEqual = true;
+        int  spt            = 0;
+        bool allTracksEqual = true;
 
-            for(int i = 1; i < tracks.Count; i++)
-                allTracksEqual &= tracks[i - 1].sectors.Length == tracks[i].sectors.Length;
+        for(int i = 1; i < tracks.Count; i++)
+            allTracksEqual &= tracks[i - 1].sectors.Length == tracks[i].sectors.Length;
 
-            if(allTracksEqual)
-                spt = tracks[0].sectors.Length;
+        if(allTracksEqual)
+            spt = tracks[0].sectors.Length;
 
-            bool    skewed  = spt == 16;
-            ulong[] skewing = _proDosSkewing;
+        bool    skewed  = spt == 16;
+        ulong[] skewing = _proDosSkewing;
 
-            // Detect ProDOS skewed disks
-            if(skewed)
-                foreach(bool isDos in from sector in tracks[17].sectors
-                                      where sector.addressField.sector.SequenceEqual(new byte[]
-                                      {
-                                          170, 170
-                                      }) select Apple2.DecodeSector(sector) into sector0 where sector0 != null
-                                      select sector0[0x01] == 17 && sector0[0x02] < 16  && sector0[0x27] <= 122 &&
-                                             sector0[0x34] == 35 && sector0[0x35] == 16 && sector0[0x36] == 0   &&
-                                             sector0[0x37] == 1)
+        // Detect ProDOS skewed disks
+        if(skewed)
+            foreach(bool isDos in from sector in tracks[17].sectors
+                                  where sector.addressField.sector.SequenceEqual(new byte[]
+                                  {
+                                      170, 170
+                                  }) select Apple2.DecodeSector(sector) into sector0 where sector0 != null
+                                  select sector0[0x01] == 17 && sector0[0x02] < 16  && sector0[0x27] <= 122 &&
+                                         sector0[0x34] == 35 && sector0[0x35] == 16 && sector0[0x36] == 0   &&
+                                         sector0[0x37] == 1)
+            {
+                if(isDos)
+                    skewing = _dosSkewing;
+
+                AaruConsole.DebugWriteLine("Apple NIB Plugin", "Using {0}DOS skewing",
+                                           skewing.SequenceEqual(_dosSkewing) ? "" : "Pro");
+            }
+
+        for(int i = 0; i < tracks.Count; i++)
+            foreach(Apple2.RawSector sector in tracks[i].sectors)
+                if(skewed && spt != 0)
                 {
-                    if(isDos)
-                        skewing = _dosSkewing;
+                    ulong sectorNo = (ulong)((((sector.addressField.sector[0] & 0x55) << 1) |
+                                              (sector.addressField.sector[1] & 0x55)) & 0xFF);
 
-                    AaruConsole.DebugWriteLine("Apple NIB Plugin", "Using {0}DOS skewing",
-                                               skewing.SequenceEqual(_dosSkewing) ? "" : "Pro");
+                    AaruConsole.DebugWriteLine("Apple NIB Plugin",
+                                               "Hardware sector {0} of track {1} goes to logical sector {2}",
+                                               sectorNo, i, skewing[sectorNo] + (ulong)(i * spt));
+
+                    rawSectors.Add(skewing[sectorNo] + (ulong)(i * spt), sector);
+                    _imageInfo.Sectors++;
+                }
+                else
+                {
+                    rawSectors.Add(_imageInfo.Sectors, sector);
+                    _imageInfo.Sectors++;
                 }
 
-            for(int i = 0; i < tracks.Count; i++)
-                foreach(Apple2.RawSector sector in tracks[i].sectors)
-                    if(skewed && spt != 0)
-                    {
-                        ulong sectorNo = (ulong)((((sector.addressField.sector[0] & 0x55) << 1) |
-                                                  (sector.addressField.sector[1] & 0x55)) & 0xFF);
+        AaruConsole.DebugWriteLine("Apple NIB Plugin", "Got {0} sectors", _imageInfo.Sectors);
 
-                        AaruConsole.DebugWriteLine("Apple NIB Plugin",
-                                                   "Hardware sector {0} of track {1} goes to logical sector {2}",
-                                                   sectorNo, i, skewing[sectorNo] + (ulong)(i * spt));
+        AaruConsole.DebugWriteLine("Apple NIB Plugin", "Cooking sectors");
 
-                        rawSectors.Add(skewing[sectorNo] + (ulong)(i * spt), sector);
-                        _imageInfo.Sectors++;
-                    }
-                    else
-                    {
-                        rawSectors.Add(_imageInfo.Sectors, sector);
-                        _imageInfo.Sectors++;
-                    }
+        _longSectors   = new Dictionary<ulong, byte[]>();
+        _cookedSectors = new Dictionary<ulong, byte[]>();
+        _addressFields = new Dictionary<ulong, byte[]>();
 
-            AaruConsole.DebugWriteLine("Apple NIB Plugin", "Got {0} sectors", _imageInfo.Sectors);
-
-            AaruConsole.DebugWriteLine("Apple NIB Plugin", "Cooking sectors");
-
-            _longSectors   = new Dictionary<ulong, byte[]>();
-            _cookedSectors = new Dictionary<ulong, byte[]>();
-            _addressFields = new Dictionary<ulong, byte[]>();
-
-            foreach(KeyValuePair<ulong, Apple2.RawSector> kvp in rawSectors)
-            {
-                byte[] cooked = Apple2.DecodeSector(kvp.Value);
-                byte[] raw    = Apple2.MarshalSector(kvp.Value);
-                byte[] addr   = Apple2.MarshalAddressField(kvp.Value.addressField);
-                _longSectors.Add(kvp.Key, raw);
-                _cookedSectors.Add(kvp.Key, cooked);
-                _addressFields.Add(kvp.Key, addr);
-            }
-
-            _imageInfo.ImageSize            = (ulong)imageFilter.DataForkLength;
-            _imageInfo.CreationTime         = imageFilter.CreationTime;
-            _imageInfo.LastModificationTime = imageFilter.LastWriteTime;
-            _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.Filename);
-
-            if(_imageInfo.Sectors == 455)
-                _imageInfo.MediaType = MediaType.Apple32SS;
-            else if(_imageInfo.Sectors == 560)
-                _imageInfo.MediaType = MediaType.Apple33SS;
-            else
-                _imageInfo.MediaType = MediaType.Unknown;
-
-            _imageInfo.SectorSize   = 256;
-            _imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
-            _imageInfo.ReadableSectorTags.Add(SectorTagType.FloppyAddressMark);
-
-            switch(_imageInfo.MediaType)
-            {
-                case MediaType.Apple32SS:
-                    _imageInfo.Cylinders       = 35;
-                    _imageInfo.Heads           = 1;
-                    _imageInfo.SectorsPerTrack = 13;
-
-                    break;
-                case MediaType.Apple33SS:
-                    _imageInfo.Cylinders       = 35;
-                    _imageInfo.Heads           = 1;
-                    _imageInfo.SectorsPerTrack = 16;
-
-                    break;
-            }
-
-            return ErrorNumber.NoError;
-        }
-
-        /// <inheritdoc />
-        public ErrorNumber ReadSector(ulong sectorAddress, out byte[] buffer)
+        foreach(KeyValuePair<ulong, Apple2.RawSector> kvp in rawSectors)
         {
-            buffer = null;
-
-            if(sectorAddress > _imageInfo.Sectors - 1)
-                return ErrorNumber.OutOfRange;
-
-            return _cookedSectors.TryGetValue(sectorAddress, out buffer) ? ErrorNumber.NoError
-                       : ErrorNumber.SectorNotFound;
+            byte[] cooked = Apple2.DecodeSector(kvp.Value);
+            byte[] raw    = Apple2.MarshalSector(kvp.Value);
+            byte[] addr   = Apple2.MarshalAddressField(kvp.Value.addressField);
+            _longSectors.Add(kvp.Key, raw);
+            _cookedSectors.Add(kvp.Key, cooked);
+            _addressFields.Add(kvp.Key, addr);
         }
 
-        /// <inheritdoc />
-        public ErrorNumber ReadSectors(ulong sectorAddress, uint length, out byte[] buffer)
+        _imageInfo.ImageSize            = (ulong)imageFilter.DataForkLength;
+        _imageInfo.CreationTime         = imageFilter.CreationTime;
+        _imageInfo.LastModificationTime = imageFilter.LastWriteTime;
+        _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.Filename);
+
+        if(_imageInfo.Sectors == 455)
+            _imageInfo.MediaType = MediaType.Apple32SS;
+        else if(_imageInfo.Sectors == 560)
+            _imageInfo.MediaType = MediaType.Apple33SS;
+        else
+            _imageInfo.MediaType = MediaType.Unknown;
+
+        _imageInfo.SectorSize   = 256;
+        _imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
+        _imageInfo.ReadableSectorTags.Add(SectorTagType.FloppyAddressMark);
+
+        switch(_imageInfo.MediaType)
         {
-            buffer = null;
+            case MediaType.Apple32SS:
+                _imageInfo.Cylinders       = 35;
+                _imageInfo.Heads           = 1;
+                _imageInfo.SectorsPerTrack = 13;
 
-            if(sectorAddress > _imageInfo.Sectors - 1)
-                return ErrorNumber.OutOfRange;
+                break;
+            case MediaType.Apple33SS:
+                _imageInfo.Cylinders       = 35;
+                _imageInfo.Heads           = 1;
+                _imageInfo.SectorsPerTrack = 16;
 
-            if(sectorAddress + length > _imageInfo.Sectors)
-                return ErrorNumber.OutOfRange;
-
-            var ms = new MemoryStream();
-
-            for(uint i = 0; i < length; i++)
-            {
-                ErrorNumber errno = ReadSector(sectorAddress + i, out byte[] sector);
-
-                if(errno != ErrorNumber.NoError)
-                    return errno;
-
-                ms.Write(sector, 0, sector.Length);
-            }
-
-            buffer = ms.ToArray();
-
-            return ErrorNumber.NoError;
+                break;
         }
 
-        /// <inheritdoc />
-        public ErrorNumber ReadSectorTag(ulong sectorAddress, SectorTagType tag, out byte[] buffer)
+        return ErrorNumber.NoError;
+    }
+
+    /// <inheritdoc />
+    public ErrorNumber ReadSector(ulong sectorAddress, out byte[] buffer)
+    {
+        buffer = null;
+
+        if(sectorAddress > _imageInfo.Sectors - 1)
+            return ErrorNumber.OutOfRange;
+
+        return _cookedSectors.TryGetValue(sectorAddress, out buffer) ? ErrorNumber.NoError
+                   : ErrorNumber.SectorNotFound;
+    }
+
+    /// <inheritdoc />
+    public ErrorNumber ReadSectors(ulong sectorAddress, uint length, out byte[] buffer)
+    {
+        buffer = null;
+
+        if(sectorAddress > _imageInfo.Sectors - 1)
+            return ErrorNumber.OutOfRange;
+
+        if(sectorAddress + length > _imageInfo.Sectors)
+            return ErrorNumber.OutOfRange;
+
+        var ms = new MemoryStream();
+
+        for(uint i = 0; i < length; i++)
         {
-            buffer = null;
+            ErrorNumber errno = ReadSector(sectorAddress + i, out byte[] sector);
 
-            if(sectorAddress > _imageInfo.Sectors - 1)
-                return ErrorNumber.OutOfRange;
+            if(errno != ErrorNumber.NoError)
+                return errno;
 
-            if(tag != SectorTagType.FloppyAddressMark)
-                return ErrorNumber.NotSupported;
-
-            return _addressFields.TryGetValue(sectorAddress, out buffer) ? ErrorNumber.NoError : ErrorNumber.NoData;
+            ms.Write(sector, 0, sector.Length);
         }
 
-        /// <inheritdoc />
-        public ErrorNumber ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag, out byte[] buffer)
+        buffer = ms.ToArray();
+
+        return ErrorNumber.NoError;
+    }
+
+    /// <inheritdoc />
+    public ErrorNumber ReadSectorTag(ulong sectorAddress, SectorTagType tag, out byte[] buffer)
+    {
+        buffer = null;
+
+        if(sectorAddress > _imageInfo.Sectors - 1)
+            return ErrorNumber.OutOfRange;
+
+        if(tag != SectorTagType.FloppyAddressMark)
+            return ErrorNumber.NotSupported;
+
+        return _addressFields.TryGetValue(sectorAddress, out buffer) ? ErrorNumber.NoError : ErrorNumber.NoData;
+    }
+
+    /// <inheritdoc />
+    public ErrorNumber ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag, out byte[] buffer)
+    {
+        buffer = null;
+
+        if(sectorAddress > _imageInfo.Sectors - 1)
+            return ErrorNumber.OutOfRange;
+
+        if(sectorAddress + length > _imageInfo.Sectors)
+            return ErrorNumber.OutOfRange;
+
+        if(tag != SectorTagType.FloppyAddressMark)
+            return ErrorNumber.NotSupported;
+
+        var ms = new MemoryStream();
+
+        for(uint i = 0; i < length; i++)
         {
-            buffer = null;
+            ErrorNumber errno = ReadSectorTag(sectorAddress + i, tag, out byte[] sector);
 
-            if(sectorAddress > _imageInfo.Sectors - 1)
-                return ErrorNumber.OutOfRange;
+            if(errno != ErrorNumber.NoError)
+                return errno;
 
-            if(sectorAddress + length > _imageInfo.Sectors)
-                return ErrorNumber.OutOfRange;
-
-            if(tag != SectorTagType.FloppyAddressMark)
-                return ErrorNumber.NotSupported;
-
-            var ms = new MemoryStream();
-
-            for(uint i = 0; i < length; i++)
-            {
-                ErrorNumber errno = ReadSectorTag(sectorAddress + i, tag, out byte[] sector);
-
-                if(errno != ErrorNumber.NoError)
-                    return errno;
-
-                ms.Write(sector, 0, sector.Length);
-            }
-
-            buffer = ms.ToArray();
-
-            return ErrorNumber.NoError;
+            ms.Write(sector, 0, sector.Length);
         }
 
-        /// <inheritdoc />
-        public ErrorNumber ReadSectorLong(ulong sectorAddress, out byte[] buffer)
+        buffer = ms.ToArray();
+
+        return ErrorNumber.NoError;
+    }
+
+    /// <inheritdoc />
+    public ErrorNumber ReadSectorLong(ulong sectorAddress, out byte[] buffer)
+    {
+        buffer = null;
+
+        if(sectorAddress > _imageInfo.Sectors - 1)
+            return ErrorNumber.OutOfRange;
+
+        return _longSectors.TryGetValue(sectorAddress, out buffer) ? ErrorNumber.NoError
+                   : ErrorNumber.SectorNotFound;
+    }
+
+    /// <inheritdoc />
+    public ErrorNumber ReadSectorsLong(ulong sectorAddress, uint length, out byte[] buffer)
+    {
+        buffer = null;
+
+        if(sectorAddress > _imageInfo.Sectors - 1)
+            return ErrorNumber.OutOfRange;
+
+        if(sectorAddress + length > _imageInfo.Sectors)
+            return ErrorNumber.OutOfRange;
+
+        var ms = new MemoryStream();
+
+        for(uint i = 0; i < length; i++)
         {
-            buffer = null;
+            ErrorNumber errno = ReadSectorLong(sectorAddress + i, out byte[] sector);
 
-            if(sectorAddress > _imageInfo.Sectors - 1)
-                return ErrorNumber.OutOfRange;
+            if(errno != ErrorNumber.NoError)
+                return errno;
 
-            return _longSectors.TryGetValue(sectorAddress, out buffer) ? ErrorNumber.NoError
-                       : ErrorNumber.SectorNotFound;
+            ms.Write(sector, 0, sector.Length);
         }
 
-        /// <inheritdoc />
-        public ErrorNumber ReadSectorsLong(ulong sectorAddress, uint length, out byte[] buffer)
-        {
-            buffer = null;
+        buffer = ms.ToArray();
 
-            if(sectorAddress > _imageInfo.Sectors - 1)
-                return ErrorNumber.OutOfRange;
-
-            if(sectorAddress + length > _imageInfo.Sectors)
-                return ErrorNumber.OutOfRange;
-
-            var ms = new MemoryStream();
-
-            for(uint i = 0; i < length; i++)
-            {
-                ErrorNumber errno = ReadSectorLong(sectorAddress + i, out byte[] sector);
-
-                if(errno != ErrorNumber.NoError)
-                    return errno;
-
-                ms.Write(sector, 0, sector.Length);
-            }
-
-            buffer = ms.ToArray();
-
-            return ErrorNumber.NoError;
-        }
+        return ErrorNumber.NoError;
     }
 }

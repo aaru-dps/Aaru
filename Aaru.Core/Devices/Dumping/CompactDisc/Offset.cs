@@ -37,86 +37,85 @@ using Aaru.Devices;
 // ReSharper disable InlineOutVariableDeclaration
 // ReSharper disable TooWideLocalVariableScope
 
-namespace Aaru.Core.Devices.Dumping
+namespace Aaru.Core.Devices.Dumping;
+
+partial class Dump
 {
-    partial class Dump
+    /// <summary>Fix offset in audio/scrambled sectors</summary>
+    /// <param name="offsetBytes">Offset in bytes</param>
+    /// <param name="sectorSize">Sector size in bytes</param>
+    /// <param name="sectorsForOffset">How many extra sectors we got for offset</param>
+    /// <param name="supportedSubchannel">Subchannel type</param>
+    /// <param name="blocksToRead">How many sectors did we got</param>
+    /// <param name="subSize">Subchannel size in bytes</param>
+    /// <param name="cmdBuf">Data buffer</param>
+    /// <param name="blockSize">Block size in bytes</param>
+    /// <param name="failedCrossingLeadOut">Set if we failed to cross into the Lead-Out</param>
+    static void FixOffsetData(int offsetBytes, uint sectorSize, int sectorsForOffset,
+                              MmcSubchannel supportedSubchannel, ref uint blocksToRead, uint subSize,
+                              ref byte[] cmdBuf, uint blockSize, bool failedCrossingLeadOut)
     {
-        /// <summary>Fix offset in audio/scrambled sectors</summary>
-        /// <param name="offsetBytes">Offset in bytes</param>
-        /// <param name="sectorSize">Sector size in bytes</param>
-        /// <param name="sectorsForOffset">How many extra sectors we got for offset</param>
-        /// <param name="supportedSubchannel">Subchannel type</param>
-        /// <param name="blocksToRead">How many sectors did we got</param>
-        /// <param name="subSize">Subchannel size in bytes</param>
-        /// <param name="cmdBuf">Data buffer</param>
-        /// <param name="blockSize">Block size in bytes</param>
-        /// <param name="failedCrossingLeadOut">Set if we failed to cross into the Lead-Out</param>
-        static void FixOffsetData(int offsetBytes, uint sectorSize, int sectorsForOffset,
-                                  MmcSubchannel supportedSubchannel, ref uint blocksToRead, uint subSize,
-                                  ref byte[] cmdBuf, uint blockSize, bool failedCrossingLeadOut)
+        if(cmdBuf.Length == 0)
+            return;
+
+        int offsetFix = offsetBytes < 0 ? (int)((sectorSize * sectorsForOffset) + offsetBytes) : offsetBytes;
+
+        byte[] tmpBuf;
+
+        if(supportedSubchannel != MmcSubchannel.None)
         {
-            if(cmdBuf.Length == 0)
-                return;
+            // De-interleave subchannel
+            byte[] data = new byte[sectorSize * blocksToRead];
+            byte[] sub  = new byte[subSize    * blocksToRead];
 
-            int offsetFix = offsetBytes < 0 ? (int)((sectorSize * sectorsForOffset) + offsetBytes) : offsetBytes;
-
-            byte[] tmpBuf;
-
-            if(supportedSubchannel != MmcSubchannel.None)
+            for(int b = 0; b < blocksToRead; b++)
             {
-                // De-interleave subchannel
-                byte[] data = new byte[sectorSize * blocksToRead];
-                byte[] sub  = new byte[subSize    * blocksToRead];
-
-                for(int b = 0; b < blocksToRead; b++)
-                {
-                    Array.Copy(cmdBuf, (int)(0          + (b * blockSize)), data, sectorSize * b, sectorSize);
-                    Array.Copy(cmdBuf, (int)(sectorSize + (b * blockSize)), sub, subSize     * b, subSize);
-                }
-
-                if(failedCrossingLeadOut)
-                {
-                    blocksToRead += (uint)sectorsForOffset;
-
-                    tmpBuf = new byte[sectorSize * blocksToRead];
-                    Array.Copy(data, 0, tmpBuf, 0, data.Length);
-                    data   = tmpBuf;
-                    tmpBuf = new byte[subSize * blocksToRead];
-                    Array.Copy(sub, 0, tmpBuf, 0, sub.Length);
-                    sub = tmpBuf;
-                }
-
-                tmpBuf = new byte[sectorSize * (blocksToRead - sectorsForOffset)];
-                Array.Copy(data, offsetFix, tmpBuf, 0, tmpBuf.Length);
-                data = tmpBuf;
-
-                blocksToRead -= (uint)sectorsForOffset;
-
-                // Re-interleave subchannel
-                cmdBuf = new byte[blockSize * blocksToRead];
-
-                for(int b = 0; b < blocksToRead; b++)
-                {
-                    Array.Copy(data, sectorSize * b, cmdBuf, (int)(0          + (b * blockSize)), sectorSize);
-                    Array.Copy(sub, subSize     * b, cmdBuf, (int)(sectorSize + (b * blockSize)), subSize);
-                }
+                Array.Copy(cmdBuf, (int)(0          + (b * blockSize)), data, sectorSize * b, sectorSize);
+                Array.Copy(cmdBuf, (int)(sectorSize + (b * blockSize)), sub, subSize     * b, subSize);
             }
-            else
+
+            if(failedCrossingLeadOut)
             {
-                if(failedCrossingLeadOut)
-                {
-                    blocksToRead += (uint)sectorsForOffset;
+                blocksToRead += (uint)sectorsForOffset;
 
-                    tmpBuf = new byte[blockSize * blocksToRead];
-                    Array.Copy(cmdBuf, 0, tmpBuf, 0, cmdBuf.Length);
-                    cmdBuf = tmpBuf;
-                }
-
-                tmpBuf = new byte[blockSize * (blocksToRead - sectorsForOffset)];
-                Array.Copy(cmdBuf, offsetFix, tmpBuf, 0, tmpBuf.Length);
-                cmdBuf       =  tmpBuf;
-                blocksToRead -= (uint)sectorsForOffset;
+                tmpBuf = new byte[sectorSize * blocksToRead];
+                Array.Copy(data, 0, tmpBuf, 0, data.Length);
+                data   = tmpBuf;
+                tmpBuf = new byte[subSize * blocksToRead];
+                Array.Copy(sub, 0, tmpBuf, 0, sub.Length);
+                sub = tmpBuf;
             }
+
+            tmpBuf = new byte[sectorSize * (blocksToRead - sectorsForOffset)];
+            Array.Copy(data, offsetFix, tmpBuf, 0, tmpBuf.Length);
+            data = tmpBuf;
+
+            blocksToRead -= (uint)sectorsForOffset;
+
+            // Re-interleave subchannel
+            cmdBuf = new byte[blockSize * blocksToRead];
+
+            for(int b = 0; b < blocksToRead; b++)
+            {
+                Array.Copy(data, sectorSize * b, cmdBuf, (int)(0          + (b * blockSize)), sectorSize);
+                Array.Copy(sub, subSize     * b, cmdBuf, (int)(sectorSize + (b * blockSize)), subSize);
+            }
+        }
+        else
+        {
+            if(failedCrossingLeadOut)
+            {
+                blocksToRead += (uint)sectorsForOffset;
+
+                tmpBuf = new byte[blockSize * blocksToRead];
+                Array.Copy(cmdBuf, 0, tmpBuf, 0, cmdBuf.Length);
+                cmdBuf = tmpBuf;
+            }
+
+            tmpBuf = new byte[blockSize * (blocksToRead - sectorsForOffset)];
+            Array.Copy(cmdBuf, offsetFix, tmpBuf, 0, tmpBuf.Length);
+            cmdBuf       =  tmpBuf;
+            blocksToRead -= (uint)sectorsForOffset;
         }
     }
 }

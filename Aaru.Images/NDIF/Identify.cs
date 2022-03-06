@@ -35,42 +35,41 @@ using System.IO;
 using Aaru.CommonTypes.Interfaces;
 using Claunia.RsrcFork;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class Ndif
 {
-    public sealed partial class Ndif
+    /// <inheritdoc />
+    public bool Identify(IFilter imageFilter)
     {
-        /// <inheritdoc />
-        public bool Identify(IFilter imageFilter)
+        if(!imageFilter.HasResourceFork ||
+           imageFilter.ResourceForkLength == 0)
+            return false;
+
+        try
         {
-            if(!imageFilter.HasResourceFork ||
-               imageFilter.ResourceForkLength == 0)
+            var rsrcFork = new ResourceFork(imageFilter.GetResourceForkStream());
+
+            if(!rsrcFork.ContainsKey(NDIF_RESOURCE))
                 return false;
 
-            try
-            {
-                var rsrcFork = new ResourceFork(imageFilter.GetResourceForkStream());
+            Resource rsrc = rsrcFork.GetResource(NDIF_RESOURCE);
 
-                if(!rsrcFork.ContainsKey(NDIF_RESOURCE))
-                    return false;
+            Stream dataFork  = imageFilter.GetDataForkStream();
+            byte[] udifMagic = new byte[4];
+            dataFork.Read(udifMagic, 0, 4);
 
-                Resource rsrc = rsrcFork.GetResource(NDIF_RESOURCE);
-
-                Stream dataFork  = imageFilter.GetDataForkStream();
-                byte[] udifMagic = new byte[4];
-                dataFork.Read(udifMagic, 0, 4);
-
-                if(BitConverter.ToUInt32(udifMagic, 0) == 0x796C6F6B)
-                    return false;
-
-                if(rsrc.ContainsId(NDIF_RESOURCEID))
-                    return true;
-            }
-            catch(InvalidCastException)
-            {
+            if(BitConverter.ToUInt32(udifMagic, 0) == 0x796C6F6B)
                 return false;
-            }
 
+            if(rsrc.ContainsId(NDIF_RESOURCEID))
+                return true;
+        }
+        catch(InvalidCastException)
+        {
             return false;
         }
+
+        return false;
     }
 }

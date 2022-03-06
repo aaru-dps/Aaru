@@ -34,105 +34,104 @@ using System;
 using Aaru.Console;
 using Aaru.Decoders.ATA;
 
-namespace Aaru.Devices
+namespace Aaru.Devices;
+
+public sealed partial class Device
 {
-    public sealed partial class Device
+    /// <summary>Requests to translate an LBA to a card physical address</summary>
+    /// <param name="buffer">Data buffer</param>
+    /// <param name="statusRegisters">Returned status registers</param>
+    /// <param name="lba">LBA to start reading from</param>
+    /// <param name="timeout">Timeout to wait for command execution</param>
+    /// <param name="duration">Time the device took to execute the command in milliseconds</param>
+    /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
+    public bool TranslateSector(out byte[] buffer, out AtaErrorRegistersLba28 statusRegisters, uint lba,
+                                uint timeout, out double duration)
     {
-        /// <summary>Requests to translate an LBA to a card physical address</summary>
-        /// <param name="buffer">Data buffer</param>
-        /// <param name="statusRegisters">Returned status registers</param>
-        /// <param name="lba">LBA to start reading from</param>
-        /// <param name="timeout">Timeout to wait for command execution</param>
-        /// <param name="duration">Time the device took to execute the command in milliseconds</param>
-        /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
-        public bool TranslateSector(out byte[] buffer, out AtaErrorRegistersLba28 statusRegisters, uint lba,
-                                    uint timeout, out double duration)
+        buffer = new byte[512];
+
+        var registers = new AtaRegistersLba28
         {
-            buffer = new byte[512];
+            Command    = (byte)AtaCommands.TranslateSector,
+            DeviceHead = (byte)((lba & 0xF000000) / 0x1000000),
+            LbaHigh    = (byte)((lba & 0xFF0000)  / 0x10000),
+            LbaMid     = (byte)((lba & 0xFF00)    / 0x100),
+            LbaLow     = (byte)((lba & 0xFF)      / 0x1)
+        };
 
-            var registers = new AtaRegistersLba28
-            {
-                Command    = (byte)AtaCommands.TranslateSector,
-                DeviceHead = (byte)((lba & 0xF000000) / 0x1000000),
-                LbaHigh    = (byte)((lba & 0xFF0000)  / 0x10000),
-                LbaMid     = (byte)((lba & 0xFF00)    / 0x100),
-                LbaLow     = (byte)((lba & 0xFF)      / 0x1)
-            };
+        registers.DeviceHead += 0x40;
 
-            registers.DeviceHead += 0x40;
+        LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn,
+                                   AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
+                                   out bool sense);
 
-            LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn,
-                                       AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
-                                       out bool sense);
+        Error = LastError != 0;
 
-            Error = LastError != 0;
+        AaruConsole.DebugWriteLine("ATA Device", "CFA TRANSLATE SECTOR took {0} ms.", duration);
 
-            AaruConsole.DebugWriteLine("ATA Device", "CFA TRANSLATE SECTOR took {0} ms.", duration);
+        return sense;
+    }
 
-            return sense;
-        }
+    /// <summary>Requests to translate a CHS to a card physical address</summary>
+    /// <param name="buffer">Data buffer</param>
+    /// <param name="statusRegisters">Returned status registers</param>
+    /// <param name="cylinder">Cylinder</param>
+    /// <param name="head">Head</param>
+    /// <param name="sector">Sector</param>
+    /// <param name="timeout">Timeout to wait for command execution</param>
+    /// <param name="duration">Time the device took to execute the command in milliseconds</param>
+    /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
+    public bool TranslateSector(out byte[] buffer, out AtaErrorRegistersChs statusRegisters, ushort cylinder,
+                                byte head, byte sector, uint timeout, out double duration)
+    {
+        buffer = new byte[512];
 
-        /// <summary>Requests to translate a CHS to a card physical address</summary>
-        /// <param name="buffer">Data buffer</param>
-        /// <param name="statusRegisters">Returned status registers</param>
-        /// <param name="cylinder">Cylinder</param>
-        /// <param name="head">Head</param>
-        /// <param name="sector">Sector</param>
-        /// <param name="timeout">Timeout to wait for command execution</param>
-        /// <param name="duration">Time the device took to execute the command in milliseconds</param>
-        /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
-        public bool TranslateSector(out byte[] buffer, out AtaErrorRegistersChs statusRegisters, ushort cylinder,
-                                    byte head, byte sector, uint timeout, out double duration)
+        var registers = new AtaRegistersChs
         {
-            buffer = new byte[512];
+            Command      = (byte)AtaCommands.TranslateSector,
+            CylinderHigh = (byte)((cylinder & 0xFF00) / 0x100),
+            CylinderLow  = (byte)((cylinder & 0xFF)   / 0x1),
+            Sector       = sector,
+            DeviceHead   = (byte)(head & 0x0F)
+        };
 
-            var registers = new AtaRegistersChs
-            {
-                Command      = (byte)AtaCommands.TranslateSector,
-                CylinderHigh = (byte)((cylinder & 0xFF00) / 0x100),
-                CylinderLow  = (byte)((cylinder & 0xFF)   / 0x1),
-                Sector       = sector,
-                DeviceHead   = (byte)(head & 0x0F)
-            };
+        LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn,
+                                   AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
+                                   out bool sense);
 
-            LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn,
-                                       AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
-                                       out bool sense);
+        Error = LastError != 0;
 
-            Error = LastError != 0;
+        AaruConsole.DebugWriteLine("ATA Device", "CFA TRANSLATE SECTOR took {0} ms.", duration);
 
-            AaruConsole.DebugWriteLine("ATA Device", "CFA TRANSLATE SECTOR took {0} ms.", duration);
+        return sense;
+    }
 
-            return sense;
-        }
+    /// <summary>Requests an extended error code</summary>
+    /// <param name="errorCode">Error code</param>
+    /// <param name="statusRegisters">Returned status registers</param>
+    /// <param name="timeout">Timeout to wait for command execution</param>
+    /// <param name="duration">Time the device took to execute the command in milliseconds</param>
+    /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
+    public bool RequestExtendedErrorCode(out byte errorCode, out AtaErrorRegistersLba28 statusRegisters,
+                                         uint timeout, out double duration)
+    {
+        byte[] buffer = Array.Empty<byte>();
 
-        /// <summary>Requests an extended error code</summary>
-        /// <param name="errorCode">Error code</param>
-        /// <param name="statusRegisters">Returned status registers</param>
-        /// <param name="timeout">Timeout to wait for command execution</param>
-        /// <param name="duration">Time the device took to execute the command in milliseconds</param>
-        /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
-        public bool RequestExtendedErrorCode(out byte errorCode, out AtaErrorRegistersLba28 statusRegisters,
-                                             uint timeout, out double duration)
+        var registers = new AtaRegistersLba28
         {
-            byte[] buffer = Array.Empty<byte>();
+            Command = (byte)AtaCommands.RequestSense
+        };
 
-            var registers = new AtaRegistersLba28
-            {
-                Command = (byte)AtaCommands.RequestSense
-            };
+        LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn,
+                                   AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
+                                   out bool sense);
 
-            LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn,
-                                       AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
-                                       out bool sense);
+        Error = LastError != 0;
 
-            Error = LastError != 0;
+        errorCode = statusRegisters.Error;
 
-            errorCode = statusRegisters.Error;
+        AaruConsole.DebugWriteLine("ATA Device", "CFA REQUEST EXTENDED ERROR CODE took {0} ms.", duration);
 
-            AaruConsole.DebugWriteLine("ATA Device", "CFA REQUEST EXTENDED ERROR CODE took {0} ms.", duration);
-
-            return sense;
-        }
+        return sense;
     }
 }

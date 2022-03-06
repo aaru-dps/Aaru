@@ -32,81 +32,80 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.DiscImages;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Images.AppleDOS
-{
-    [TestFixture]
-    public class DOS : BlockMediaImageTest
-    {
-        public override string DataFolder =>
-            Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "Apple DOS Order");
-        public override IMediaImage _plugin => new AppleDos();
+namespace Aaru.Tests.Images.AppleDOS;
 
-        public override BlockImageTestExpected[] Tests => new[]
+[TestFixture]
+public class DOS : BlockMediaImageTest
+{
+    public override string DataFolder =>
+        Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "Apple DOS Order");
+    public override IMediaImage _plugin => new AppleDos();
+
+    public override BlockImageTestExpected[] Tests => new[]
+    {
+        new BlockImageTestExpected
         {
-            new BlockImageTestExpected
+            TestFile   = "dos33.do.lz",
+            MediaType  = MediaType.Apple33SS,
+            Sectors    = 560,
+            SectorSize = 256,
+            MD5        = "0ffcbd4180306192726926b43755db2f",
+            Partitions = new[]
             {
-                TestFile   = "dos33.do.lz",
-                MediaType  = MediaType.Apple33SS,
-                Sectors    = 560,
-                SectorSize = 256,
-                MD5        = "0ffcbd4180306192726926b43755db2f",
-                Partitions = new[]
+                new BlockPartitionVolumes
                 {
-                    new BlockPartitionVolumes
-                    {
-                        Start  = 0,
-                        Length = 560
-                    }
+                    Start  = 0,
+                    Length = 560
                 }
-            },
-            new BlockImageTestExpected
-            {
-                TestFile   = "hfs.do.lz",
-                MediaType  = MediaType.Apple33SS,
-                Sectors    = 560,
-                SectorSize = 256,
-                MD5        = "ddd04ef378552c789f85382b4f49da06"
-            },
-            new BlockImageTestExpected
-            {
-                TestFile   = "pascal800.do.lz",
-                MediaType  = MediaType.Apple33SS,
-                Sectors    = 560,
-                SectorSize = 256,
-                MD5        = "5158e2fe9d8e7ae1f7db73156478e4f4"
-            },
-            new BlockImageTestExpected
-            {
-                TestFile   = "pascal.do.lz",
-                MediaType  = MediaType.Apple33SS,
-                Sectors    = 560,
-                SectorSize = 256,
-                MD5        = "4c4926103a32ac15f7e430ec3ced4be5"
-            },
-            new BlockImageTestExpected
-            {
-                TestFile   = "prodos800.do.lz",
-                MediaType  = MediaType.Apple33SS,
-                Sectors    = 560,
-                SectorSize = 256,
-                MD5        = "193c5cc22f07e5aeb96eb187cb59c2d9"
-            },
-            new BlockImageTestExpected
-            {
-                TestFile   = "prodos.do.lz",
-                MediaType  = MediaType.Apple33SS,
-                Sectors    = 560,
-                SectorSize = 256,
-                MD5        = "23f42e529c9fde2a8033f1bc6a7bca93"
-            },
-            new BlockImageTestExpected
-            {
-                TestFile   = "prodosmod.do.lz",
-                MediaType  = MediaType.Apple33SS,
-                Sectors    = 560,
-                SectorSize = 256,
-                MD5        = "a7ec980472c320da5ea6f2f0aec0f502"
             }
-        };
-    }
+        },
+        new BlockImageTestExpected
+        {
+            TestFile   = "hfs.do.lz",
+            MediaType  = MediaType.Apple33SS,
+            Sectors    = 560,
+            SectorSize = 256,
+            MD5        = "ddd04ef378552c789f85382b4f49da06"
+        },
+        new BlockImageTestExpected
+        {
+            TestFile   = "pascal800.do.lz",
+            MediaType  = MediaType.Apple33SS,
+            Sectors    = 560,
+            SectorSize = 256,
+            MD5        = "5158e2fe9d8e7ae1f7db73156478e4f4"
+        },
+        new BlockImageTestExpected
+        {
+            TestFile   = "pascal.do.lz",
+            MediaType  = MediaType.Apple33SS,
+            Sectors    = 560,
+            SectorSize = 256,
+            MD5        = "4c4926103a32ac15f7e430ec3ced4be5"
+        },
+        new BlockImageTestExpected
+        {
+            TestFile   = "prodos800.do.lz",
+            MediaType  = MediaType.Apple33SS,
+            Sectors    = 560,
+            SectorSize = 256,
+            MD5        = "193c5cc22f07e5aeb96eb187cb59c2d9"
+        },
+        new BlockImageTestExpected
+        {
+            TestFile   = "prodos.do.lz",
+            MediaType  = MediaType.Apple33SS,
+            Sectors    = 560,
+            SectorSize = 256,
+            MD5        = "23f42e529c9fde2a8033f1bc6a7bca93"
+        },
+        new BlockImageTestExpected
+        {
+            TestFile   = "prodosmod.do.lz",
+            MediaType  = MediaType.Apple33SS,
+            Sectors    = 560,
+            SectorSize = 256,
+            MD5        = "a7ec980472c320da5ea6f2f0aec0f502"
+        }
+    };
 }

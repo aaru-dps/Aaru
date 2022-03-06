@@ -32,29 +32,28 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Filesystems.DTFS
+namespace Aaru.Tests.Filesystems.DTFS;
+
+[TestFixture]
+public class MBR : FilesystemTest
 {
-    [TestFixture]
-    public class MBR : FilesystemTest
+    public MBR() : base("DTFS") {}
+
+    public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "DTFS (MBR)");
+    public override IFilesystem Plugin     => new SysVfs();
+    public override bool        Partitions => true;
+
+    public override FileSystemTest[] Tests => new[]
     {
-        public MBR() : base("DTFS") {}
-
-        public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "DTFS (MBR)");
-        public override IFilesystem Plugin     => new SysVfs();
-        public override bool        Partitions => true;
-
-        public override FileSystemTest[] Tests => new[]
+        new FileSystemTest
         {
-            new FileSystemTest
-            {
-                TestFile    = "scoopenserver_5.0.7hw.aif",
-                MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 1024000,
-                SectorSize  = 512,
-                Clusters    = 510048,
-                ClusterSize = 1024,
-                VolumeName  = "Volume label"
-            }
-        };
-    }
+            TestFile    = "scoopenserver_5.0.7hw.aif",
+            MediaType   = MediaType.GENERIC_HDD,
+            Sectors     = 1024000,
+            SectorSize  = 512,
+            Clusters    = 510048,
+            ClusterSize = 1024,
+            VolumeName  = "Volume label"
+        }
+    };
 }

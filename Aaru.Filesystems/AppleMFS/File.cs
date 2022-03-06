@@ -38,371 +38,370 @@ using Aaru.Console;
 using Aaru.Helpers;
 using FileAttributes = Aaru.CommonTypes.Structs.FileAttributes;
 
-namespace Aaru.Filesystems
+namespace Aaru.Filesystems;
+
+// Information from Inside Macintosh Volume II
+public sealed partial class AppleMFS
 {
-    // Information from Inside Macintosh Volume II
-    public sealed partial class AppleMFS
+    /// <inheritdoc />
+    public ErrorNumber MapBlock(string path, long fileBlock, out long deviceBlock)
     {
-        /// <inheritdoc />
-        public ErrorNumber MapBlock(string path, long fileBlock, out long deviceBlock)
+        deviceBlock = new long();
+
+        if(!_mounted)
+            return ErrorNumber.AccessDenied;
+
+        string[] pathElements = path.Split(new[]
         {
-            deviceBlock = new long();
+            '/'
+        }, StringSplitOptions.RemoveEmptyEntries);
 
-            if(!_mounted)
-                return ErrorNumber.AccessDenied;
+        if(pathElements.Length != 1)
+            return ErrorNumber.NotSupported;
 
-            string[] pathElements = path.Split(new[]
+        path = pathElements[0];
+
+        if(!_filenameToId.TryGetValue(path.ToLowerInvariant(), out uint fileId))
+            return ErrorNumber.NoSuchFile;
+
+        if(!_idToEntry.TryGetValue(fileId, out FileEntry entry))
+            return ErrorNumber.NoSuchFile;
+
+        if(fileBlock > entry.flPyLen / _volMdb.drAlBlkSiz)
+            return ErrorNumber.InvalidArgument;
+
+        uint nextBlock = entry.flStBlk;
+        long relBlock  = 0;
+
+        while(true)
+        {
+            if(relBlock == fileBlock)
             {
-                '/'
-            }, StringSplitOptions.RemoveEmptyEntries);
+                deviceBlock = ((nextBlock - 2) * _sectorsPerBlock) + _volMdb.drAlBlSt + (long)_partitionStart;
 
-            if(pathElements.Length != 1)
-                return ErrorNumber.NotSupported;
-
-            path = pathElements[0];
-
-            if(!_filenameToId.TryGetValue(path.ToLowerInvariant(), out uint fileId))
-                return ErrorNumber.NoSuchFile;
-
-            if(!_idToEntry.TryGetValue(fileId, out FileEntry entry))
-                return ErrorNumber.NoSuchFile;
-
-            if(fileBlock > entry.flPyLen / _volMdb.drAlBlkSiz)
-                return ErrorNumber.InvalidArgument;
-
-            uint nextBlock = entry.flStBlk;
-            long relBlock  = 0;
-
-            while(true)
-            {
-                if(relBlock == fileBlock)
-                {
-                    deviceBlock = ((nextBlock - 2) * _sectorsPerBlock) + _volMdb.drAlBlSt + (long)_partitionStart;
-
-                    return ErrorNumber.NoError;
-                }
-
-                if(_blockMap[nextBlock] == BMAP_FREE ||
-                   _blockMap[nextBlock] == BMAP_LAST)
-                    break;
-
-                nextBlock = _blockMap[nextBlock];
-                relBlock++;
+                return ErrorNumber.NoError;
             }
 
-            return ErrorNumber.InOutError;
+            if(_blockMap[nextBlock] == BMAP_FREE ||
+               _blockMap[nextBlock] == BMAP_LAST)
+                break;
+
+            nextBlock = _blockMap[nextBlock];
+            relBlock++;
         }
 
-        /// <inheritdoc />
-        public ErrorNumber GetAttributes(string path, out FileAttributes attributes)
+        return ErrorNumber.InOutError;
+    }
+
+    /// <inheritdoc />
+    public ErrorNumber GetAttributes(string path, out FileAttributes attributes)
+    {
+        attributes = new FileAttributes();
+
+        if(!_mounted)
+            return ErrorNumber.AccessDenied;
+
+        string[] pathElements = path.Split(new[]
         {
-            attributes = new FileAttributes();
+            '/'
+        }, StringSplitOptions.RemoveEmptyEntries);
 
-            if(!_mounted)
-                return ErrorNumber.AccessDenied;
+        if(pathElements.Length != 1)
+            return ErrorNumber.NotSupported;
 
-            string[] pathElements = path.Split(new[]
-            {
-                '/'
-            }, StringSplitOptions.RemoveEmptyEntries);
+        path = pathElements[0];
 
-            if(pathElements.Length != 1)
-                return ErrorNumber.NotSupported;
+        if(!_filenameToId.TryGetValue(path.ToLowerInvariant(), out uint fileId))
+            return ErrorNumber.NoSuchFile;
 
-            path = pathElements[0];
+        if(!_idToEntry.TryGetValue(fileId, out FileEntry entry))
+            return ErrorNumber.NoSuchFile;
 
-            if(!_filenameToId.TryGetValue(path.ToLowerInvariant(), out uint fileId))
-                return ErrorNumber.NoSuchFile;
+        if(entry.flUsrWds.fdFlags.HasFlag(AppleCommon.FinderFlags.kIsAlias))
+            attributes |= FileAttributes.Alias;
 
-            if(!_idToEntry.TryGetValue(fileId, out FileEntry entry))
-                return ErrorNumber.NoSuchFile;
+        if(entry.flUsrWds.fdFlags.HasFlag(AppleCommon.FinderFlags.kHasBundle))
+            attributes |= FileAttributes.Bundle;
 
-            if(entry.flUsrWds.fdFlags.HasFlag(AppleCommon.FinderFlags.kIsAlias))
-                attributes |= FileAttributes.Alias;
+        if(entry.flUsrWds.fdFlags.HasFlag(AppleCommon.FinderFlags.kHasBeenInited))
+            attributes |= FileAttributes.HasBeenInited;
 
-            if(entry.flUsrWds.fdFlags.HasFlag(AppleCommon.FinderFlags.kHasBundle))
-                attributes |= FileAttributes.Bundle;
+        if(entry.flUsrWds.fdFlags.HasFlag(AppleCommon.FinderFlags.kHasCustomIcon))
+            attributes |= FileAttributes.HasCustomIcon;
 
-            if(entry.flUsrWds.fdFlags.HasFlag(AppleCommon.FinderFlags.kHasBeenInited))
-                attributes |= FileAttributes.HasBeenInited;
+        if(entry.flUsrWds.fdFlags.HasFlag(AppleCommon.FinderFlags.kHasNoINITs))
+            attributes |= FileAttributes.HasNoINITs;
 
-            if(entry.flUsrWds.fdFlags.HasFlag(AppleCommon.FinderFlags.kHasCustomIcon))
-                attributes |= FileAttributes.HasCustomIcon;
+        if(entry.flUsrWds.fdFlags.HasFlag(AppleCommon.FinderFlags.kIsInvisible))
+            attributes |= FileAttributes.Hidden;
 
-            if(entry.flUsrWds.fdFlags.HasFlag(AppleCommon.FinderFlags.kHasNoINITs))
-                attributes |= FileAttributes.HasNoINITs;
+        if(entry.flFlags.HasFlag(FileFlags.Locked))
+            attributes |= FileAttributes.Immutable;
 
-            if(entry.flUsrWds.fdFlags.HasFlag(AppleCommon.FinderFlags.kIsInvisible))
-                attributes |= FileAttributes.Hidden;
+        if(entry.flUsrWds.fdFlags.HasFlag(AppleCommon.FinderFlags.kIsOnDesk))
+            attributes |= FileAttributes.IsOnDesk;
 
-            if(entry.flFlags.HasFlag(FileFlags.Locked))
-                attributes |= FileAttributes.Immutable;
+        if(entry.flUsrWds.fdFlags.HasFlag(AppleCommon.FinderFlags.kIsShared))
+            attributes |= FileAttributes.Shared;
 
-            if(entry.flUsrWds.fdFlags.HasFlag(AppleCommon.FinderFlags.kIsOnDesk))
-                attributes |= FileAttributes.IsOnDesk;
+        if(entry.flUsrWds.fdFlags.HasFlag(AppleCommon.FinderFlags.kIsStationery))
+            attributes |= FileAttributes.Stationery;
 
-            if(entry.flUsrWds.fdFlags.HasFlag(AppleCommon.FinderFlags.kIsShared))
-                attributes |= FileAttributes.Shared;
+        if(!attributes.HasFlag(FileAttributes.Alias)  &&
+           !attributes.HasFlag(FileAttributes.Bundle) &&
+           !attributes.HasFlag(FileAttributes.Stationery))
+            attributes |= FileAttributes.File;
 
-            if(entry.flUsrWds.fdFlags.HasFlag(AppleCommon.FinderFlags.kIsStationery))
-                attributes |= FileAttributes.Stationery;
+        attributes |= FileAttributes.BlockUnits;
 
-            if(!attributes.HasFlag(FileAttributes.Alias)  &&
-               !attributes.HasFlag(FileAttributes.Bundle) &&
-               !attributes.HasFlag(FileAttributes.Stationery))
-                attributes |= FileAttributes.File;
+        return ErrorNumber.NoError;
+    }
 
-            attributes |= FileAttributes.BlockUnits;
+    /// <inheritdoc />
+    public ErrorNumber Read(string path, long offset, long size, ref byte[] buf)
+    {
+        if(!_mounted)
+            return ErrorNumber.AccessDenied;
+
+        byte[]      file;
+        ErrorNumber error = ErrorNumber.NoError;
+
+        if(_debug && string.Compare(path, "$", StringComparison.InvariantCulture) == 0)
+            file = _directoryBlocks;
+        else if(_debug                                                                &&
+                string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0 &&
+                _bootBlocks                                                      != null)
+            file = _bootBlocks;
+        else if(_debug && string.Compare(path, "$Bitmap", StringComparison.InvariantCulture) == 0)
+            file = _blockMapBytes;
+        else if(_debug && string.Compare(path, "$MDB", StringComparison.InvariantCulture) == 0)
+            file = _mdbBlocks;
+        else
+            error = ReadFile(path, out file, false, false);
+
+        if(error != ErrorNumber.NoError)
+            return error;
+
+        if(size == 0)
+        {
+            buf = Array.Empty<byte>();
 
             return ErrorNumber.NoError;
         }
 
-        /// <inheritdoc />
-        public ErrorNumber Read(string path, long offset, long size, ref byte[] buf)
+        if(offset >= file.Length)
+            return ErrorNumber.InvalidArgument;
+
+        if(size + offset >= file.Length)
+            size = file.Length - offset;
+
+        buf = new byte[size];
+
+        Array.Copy(file, offset, buf, 0, size);
+
+        return ErrorNumber.NoError;
+    }
+
+    /// <inheritdoc />
+    public ErrorNumber Stat(string path, out FileEntryInfo stat)
+    {
+        stat = null;
+
+        if(!_mounted)
+            return ErrorNumber.AccessDenied;
+
+        string[] pathElements = path.Split(new[]
         {
-            if(!_mounted)
-                return ErrorNumber.AccessDenied;
+            '/'
+        }, StringSplitOptions.RemoveEmptyEntries);
 
-            byte[]      file;
-            ErrorNumber error = ErrorNumber.NoError;
+        if(pathElements.Length != 1)
+            return ErrorNumber.NotSupported;
 
-            if(_debug && string.Compare(path, "$", StringComparison.InvariantCulture) == 0)
-                file = _directoryBlocks;
-            else if(_debug                                                                &&
-                    string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0 &&
-                    _bootBlocks                                                      != null)
-                file = _bootBlocks;
-            else if(_debug && string.Compare(path, "$Bitmap", StringComparison.InvariantCulture) == 0)
-                file = _blockMapBytes;
-            else if(_debug && string.Compare(path, "$MDB", StringComparison.InvariantCulture) == 0)
-                file = _mdbBlocks;
-            else
-                error = ReadFile(path, out file, false, false);
+        path = pathElements[0];
 
-            if(error != ErrorNumber.NoError)
-                return error;
+        if(_debug)
+            if(string.Compare(path, "$", StringComparison.InvariantCulture)       == 0 ||
+               string.Compare(path, "$Boot", StringComparison.InvariantCulture)   == 0 ||
+               string.Compare(path, "$Bitmap", StringComparison.InvariantCulture) == 0 ||
+               string.Compare(path, "$MDB", StringComparison.InvariantCulture)    == 0)
+            {
+                stat = new FileEntryInfo
+                {
+                    BlockSize  = _device.Info.SectorSize,
+                    Inode      = 0,
+                    Links      = 1,
+                    Attributes = FileAttributes.System
+                };
 
-            if(size == 0)
+                if(string.Compare(path, "$", StringComparison.InvariantCulture) == 0)
+                {
+                    stat.Blocks = (_directoryBlocks.Length / stat.BlockSize) +
+                                  (_directoryBlocks.Length % stat.BlockSize);
+
+                    stat.Length = _directoryBlocks.Length;
+                }
+                else if(string.Compare(path, "$Bitmap", StringComparison.InvariantCulture) == 0)
+                {
+                    stat.Blocks = (_blockMapBytes.Length / stat.BlockSize) +
+                                  (_blockMapBytes.Length % stat.BlockSize);
+
+                    stat.Length = _blockMapBytes.Length;
+                }
+                else if(string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0 &&
+                        _bootBlocks                                                      != null)
+                {
+                    stat.Blocks = (_bootBlocks.Length / stat.BlockSize) + (_bootBlocks.Length % stat.BlockSize);
+                    stat.Length = _bootBlocks.Length;
+                }
+                else if(string.Compare(path, "$MDB", StringComparison.InvariantCulture) == 0)
+                {
+                    stat.Blocks = (_mdbBlocks.Length / stat.BlockSize) + (_mdbBlocks.Length % stat.BlockSize);
+                    stat.Length = _mdbBlocks.Length;
+                }
+                else
+                    return ErrorNumber.InvalidArgument;
+
+                return ErrorNumber.NoError;
+            }
+
+        if(!_filenameToId.TryGetValue(path.ToLowerInvariant(), out uint fileId))
+            return ErrorNumber.NoSuchFile;
+
+        if(!_idToEntry.TryGetValue(fileId, out FileEntry entry))
+            return ErrorNumber.NoSuchFile;
+
+        ErrorNumber error = GetAttributes(path, out FileAttributes attr);
+
+        if(error != ErrorNumber.NoError)
+            return error;
+
+        stat = new FileEntryInfo
+        {
+            Attributes    = attr,
+            Blocks        = entry.flLgLen / _volMdb.drAlBlkSiz,
+            BlockSize     = _volMdb.drAlBlkSiz,
+            CreationTime  = DateHandlers.MacToDateTime(entry.flCrDat),
+            Inode         = entry.flFlNum,
+            LastWriteTime = DateHandlers.MacToDateTime(entry.flMdDat),
+            Length        = entry.flPyLen,
+            Links         = 1
+        };
+
+        return ErrorNumber.NoError;
+    }
+
+    /// <inheritdoc />
+    public ErrorNumber ReadLink(string path, out string dest)
+    {
+        dest = null;
+
+        return ErrorNumber.NotImplemented;
+    }
+
+    ErrorNumber ReadFile(string path, out byte[] buf, bool resourceFork, bool tags)
+    {
+        buf = null;
+
+        if(!_mounted)
+            return ErrorNumber.AccessDenied;
+
+        string[] pathElements = path.Split(new[]
+        {
+            '/'
+        }, StringSplitOptions.RemoveEmptyEntries);
+
+        if(pathElements.Length != 1)
+            return ErrorNumber.NotSupported;
+
+        path = pathElements[0];
+
+        if(!_filenameToId.TryGetValue(path.ToLowerInvariant(), out uint fileId))
+            return ErrorNumber.NoSuchFile;
+
+        if(!_idToEntry.TryGetValue(fileId, out FileEntry entry))
+            return ErrorNumber.NoSuchFile;
+
+        uint nextBlock;
+
+        if(resourceFork)
+        {
+            if(entry.flRPyLen == 0)
             {
                 buf = Array.Empty<byte>();
 
                 return ErrorNumber.NoError;
             }
 
-            if(offset >= file.Length)
-                return ErrorNumber.InvalidArgument;
+            nextBlock = entry.flRStBlk;
+        }
+        else
+        {
+            if(entry.flPyLen == 0)
+            {
+                buf = Array.Empty<byte>();
 
-            if(size + offset >= file.Length)
-                size = file.Length - offset;
+                return ErrorNumber.NoError;
+            }
 
-            buf = new byte[size];
-
-            Array.Copy(file, offset, buf, 0, size);
-
-            return ErrorNumber.NoError;
+            nextBlock = entry.flStBlk;
         }
 
-        /// <inheritdoc />
-        public ErrorNumber Stat(string path, out FileEntryInfo stat)
+        var ms = new MemoryStream();
+
+        do
         {
-            stat = null;
+            byte[]      sectors;
+            ErrorNumber errno;
 
-            if(!_mounted)
-                return ErrorNumber.AccessDenied;
+            errno =
+                tags
+                    ? _device.
+                        ReadSectorsTag((ulong)((nextBlock - 2) * _sectorsPerBlock) + _volMdb.drAlBlSt + _partitionStart,
+                                       (uint)_sectorsPerBlock, SectorTagType.AppleSectorTag, out sectors)
+                    : _device.
+                        ReadSectors((ulong)((nextBlock - 2) * _sectorsPerBlock) + _volMdb.drAlBlSt + _partitionStart,
+                                    (uint)_sectorsPerBlock, out sectors);
 
-            string[] pathElements = path.Split(new[]
+            if(errno != ErrorNumber.NoError)
+                return errno;
+
+            ms.Write(sectors, 0, sectors.Length);
+
+            if(_blockMap[nextBlock] == BMAP_FREE)
             {
-                '/'
-            }, StringSplitOptions.RemoveEmptyEntries);
+                AaruConsole.ErrorWriteLine("File truncated at block {0}", nextBlock);
 
-            if(pathElements.Length != 1)
-                return ErrorNumber.NotSupported;
+                break;
+            }
 
-            path = pathElements[0];
+            nextBlock = _blockMap[nextBlock];
+        } while(nextBlock > BMAP_LAST);
 
-            if(_debug)
-                if(string.Compare(path, "$", StringComparison.InvariantCulture)       == 0 ||
-                   string.Compare(path, "$Boot", StringComparison.InvariantCulture)   == 0 ||
-                   string.Compare(path, "$Bitmap", StringComparison.InvariantCulture) == 0 ||
-                   string.Compare(path, "$MDB", StringComparison.InvariantCulture)    == 0)
-                {
-                    stat = new FileEntryInfo
-                    {
-                        BlockSize  = _device.Info.SectorSize,
-                        Inode      = 0,
-                        Links      = 1,
-                        Attributes = FileAttributes.System
-                    };
-
-                    if(string.Compare(path, "$", StringComparison.InvariantCulture) == 0)
-                    {
-                        stat.Blocks = (_directoryBlocks.Length / stat.BlockSize) +
-                                      (_directoryBlocks.Length % stat.BlockSize);
-
-                        stat.Length = _directoryBlocks.Length;
-                    }
-                    else if(string.Compare(path, "$Bitmap", StringComparison.InvariantCulture) == 0)
-                    {
-                        stat.Blocks = (_blockMapBytes.Length / stat.BlockSize) +
-                                      (_blockMapBytes.Length % stat.BlockSize);
-
-                        stat.Length = _blockMapBytes.Length;
-                    }
-                    else if(string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0 &&
-                            _bootBlocks                                                      != null)
-                    {
-                        stat.Blocks = (_bootBlocks.Length / stat.BlockSize) + (_bootBlocks.Length % stat.BlockSize);
-                        stat.Length = _bootBlocks.Length;
-                    }
-                    else if(string.Compare(path, "$MDB", StringComparison.InvariantCulture) == 0)
-                    {
-                        stat.Blocks = (_mdbBlocks.Length / stat.BlockSize) + (_mdbBlocks.Length % stat.BlockSize);
-                        stat.Length = _mdbBlocks.Length;
-                    }
-                    else
-                        return ErrorNumber.InvalidArgument;
-
-                    return ErrorNumber.NoError;
-                }
-
-            if(!_filenameToId.TryGetValue(path.ToLowerInvariant(), out uint fileId))
-                return ErrorNumber.NoSuchFile;
-
-            if(!_idToEntry.TryGetValue(fileId, out FileEntry entry))
-                return ErrorNumber.NoSuchFile;
-
-            ErrorNumber error = GetAttributes(path, out FileAttributes attr);
-
-            if(error != ErrorNumber.NoError)
-                return error;
-
-            stat = new FileEntryInfo
-            {
-                Attributes    = attr,
-                Blocks        = entry.flLgLen / _volMdb.drAlBlkSiz,
-                BlockSize     = _volMdb.drAlBlkSiz,
-                CreationTime  = DateHandlers.MacToDateTime(entry.flCrDat),
-                Inode         = entry.flFlNum,
-                LastWriteTime = DateHandlers.MacToDateTime(entry.flMdDat),
-                Length        = entry.flPyLen,
-                Links         = 1
-            };
-
-            return ErrorNumber.NoError;
-        }
-
-        /// <inheritdoc />
-        public ErrorNumber ReadLink(string path, out string dest)
+        if(tags)
+            buf = ms.ToArray();
+        else
         {
-            dest = null;
-
-            return ErrorNumber.NotImplemented;
-        }
-
-        ErrorNumber ReadFile(string path, out byte[] buf, bool resourceFork, bool tags)
-        {
-            buf = null;
-
-            if(!_mounted)
-                return ErrorNumber.AccessDenied;
-
-            string[] pathElements = path.Split(new[]
-            {
-                '/'
-            }, StringSplitOptions.RemoveEmptyEntries);
-
-            if(pathElements.Length != 1)
-                return ErrorNumber.NotSupported;
-
-            path = pathElements[0];
-
-            if(!_filenameToId.TryGetValue(path.ToLowerInvariant(), out uint fileId))
-                return ErrorNumber.NoSuchFile;
-
-            if(!_idToEntry.TryGetValue(fileId, out FileEntry entry))
-                return ErrorNumber.NoSuchFile;
-
-            uint nextBlock;
-
             if(resourceFork)
-            {
-                if(entry.flRPyLen == 0)
-                {
-                    buf = Array.Empty<byte>();
-
-                    return ErrorNumber.NoError;
-                }
-
-                nextBlock = entry.flRStBlk;
-            }
-            else
-            {
-                if(entry.flPyLen == 0)
-                {
-                    buf = Array.Empty<byte>();
-
-                    return ErrorNumber.NoError;
-                }
-
-                nextBlock = entry.flStBlk;
-            }
-
-            var ms = new MemoryStream();
-
-            do
-            {
-                byte[]      sectors;
-                ErrorNumber errno;
-
-                errno =
-                    tags
-                        ? _device.
-                            ReadSectorsTag((ulong)((nextBlock - 2) * _sectorsPerBlock) + _volMdb.drAlBlSt + _partitionStart,
-                                           (uint)_sectorsPerBlock, SectorTagType.AppleSectorTag, out sectors)
-                        : _device.
-                            ReadSectors((ulong)((nextBlock - 2) * _sectorsPerBlock) + _volMdb.drAlBlSt + _partitionStart,
-                                        (uint)_sectorsPerBlock, out sectors);
-
-                if(errno != ErrorNumber.NoError)
-                    return errno;
-
-                ms.Write(sectors, 0, sectors.Length);
-
-                if(_blockMap[nextBlock] == BMAP_FREE)
-                {
-                    AaruConsole.ErrorWriteLine("File truncated at block {0}", nextBlock);
-
-                    break;
-                }
-
-                nextBlock = _blockMap[nextBlock];
-            } while(nextBlock > BMAP_LAST);
-
-            if(tags)
-                buf = ms.ToArray();
-            else
-            {
-                if(resourceFork)
-                    if(ms.Length < entry.flRLgLen)
-                        buf = ms.ToArray();
-                    else
-                    {
-                        buf = new byte[entry.flRLgLen];
-                        Array.Copy(ms.ToArray(), 0, buf, 0, buf.Length);
-                    }
+                if(ms.Length < entry.flRLgLen)
+                    buf = ms.ToArray();
                 else
                 {
-                    if(ms.Length < entry.flLgLen)
-                        buf = ms.ToArray();
-                    else
-                    {
-                        buf = new byte[entry.flLgLen];
-                        Array.Copy(ms.ToArray(), 0, buf, 0, buf.Length);
-                    }
+                    buf = new byte[entry.flRLgLen];
+                    Array.Copy(ms.ToArray(), 0, buf, 0, buf.Length);
+                }
+            else
+            {
+                if(ms.Length < entry.flLgLen)
+                    buf = ms.ToArray();
+                else
+                {
+                    buf = new byte[entry.flLgLen];
+                    Array.Copy(ms.ToArray(), 0, buf, 0, buf.Length);
                 }
             }
-
-            return ErrorNumber.NoError;
         }
+
+        return ErrorNumber.NoError;
     }
 }

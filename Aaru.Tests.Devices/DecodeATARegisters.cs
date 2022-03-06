@@ -30,130 +30,129 @@ using System;
 using System.Text;
 using Aaru.Decoders.ATA;
 
-namespace Aaru.Tests.Devices
+namespace Aaru.Tests.Devices;
+
+internal static partial class MainClass
 {
-    internal static partial class MainClass
+    static string DecodeAtaStatus(byte status)
     {
-        static string DecodeAtaStatus(byte status)
-        {
-            string ret = "";
+        string ret = "";
 
-            if((status & 0x80) == 0x80)
-                ret += "BSY ";
+        if((status & 0x80) == 0x80)
+            ret += "BSY ";
 
-            if((status & 0x40) == 0x40)
-                ret += "DRDY ";
+        if((status & 0x40) == 0x40)
+            ret += "DRDY ";
 
-            if((status & 0x20) == 0x20)
-                ret += "DWF ";
+        if((status & 0x20) == 0x20)
+            ret += "DWF ";
 
-            if((status & 0x10) == 0x10)
-                ret += "DSC ";
+        if((status & 0x10) == 0x10)
+            ret += "DSC ";
 
-            if((status & 0x8) == 0x8)
-                ret += "DRQ ";
+        if((status & 0x8) == 0x8)
+            ret += "DRQ ";
 
-            if((status & 0x4) == 0x4)
-                ret += "CORR ";
+        if((status & 0x4) == 0x4)
+            ret += "CORR ";
 
-            if((status & 0x2) == 0x2)
-                ret += "IDX ";
+        if((status & 0x2) == 0x2)
+            ret += "IDX ";
 
-            if((status & 0x1) == 0x1)
-                ret += "ERR ";
+        if((status & 0x1) == 0x1)
+            ret += "ERR ";
 
-            return ret;
-        }
+        return ret;
+    }
 
-        static string DecodeAtaError(byte status)
-        {
-            string ret = "";
+    static string DecodeAtaError(byte status)
+    {
+        string ret = "";
 
-            if((status & 0x80) == 0x80)
-                ret += "BBK ";
+        if((status & 0x80) == 0x80)
+            ret += "BBK ";
 
-            if((status & 0x40) == 0x40)
-                ret += "UNC ";
+        if((status & 0x40) == 0x40)
+            ret += "UNC ";
 
-            if((status & 0x20) == 0x20)
-                ret += "MC ";
+        if((status & 0x20) == 0x20)
+            ret += "MC ";
 
-            if((status & 0x10) == 0x10)
-                ret += "IDNF ";
+        if((status & 0x10) == 0x10)
+            ret += "IDNF ";
 
-            if((status & 0x8) == 0x8)
-                ret += "MCR ";
+        if((status & 0x8) == 0x8)
+            ret += "MCR ";
 
-            if((status & 0x4) == 0x4)
-                ret += "ABRT ";
+        if((status & 0x4) == 0x4)
+            ret += "ABRT ";
 
-            if((status & 0x2) == 0x2)
-                ret += "TK0NF ";
+        if((status & 0x2) == 0x2)
+            ret += "TK0NF ";
 
-            if((status & 0x1) == 0x1)
-                ret += "AMNF ";
+        if((status & 0x1) == 0x1)
+            ret += "AMNF ";
 
-            return ret;
-        }
+        return ret;
+    }
 
-        public static string DecodeAtaRegisters(AtaErrorRegistersChs registers)
-        {
-            var sb = new StringBuilder();
-            sb.AppendFormat("Status: {0}", DecodeAtaStatus(registers.Status)).AppendLine();
-            sb.AppendFormat("Error: {0}", DecodeAtaStatus(registers.Error)).AppendLine();
-            sb.AppendFormat("Device: {0}", (registers.DeviceHead >> 4) & 0x01).AppendLine();
-            sb.AppendFormat("Cylinder: {0}", registers.CylinderHigh << (8 + registers.CylinderLow)).AppendLine();
-            sb.AppendFormat("Head: {0}", registers.DeviceHead & 0xF).AppendLine();
-            sb.AppendFormat("Sector: {0}", registers.Sector).AppendLine();
-            sb.AppendFormat("Count: {0}", registers.SectorCount).AppendLine();
-            sb.AppendFormat("LBA?: {0}", Convert.ToBoolean(registers.DeviceHead       & 0x40)).AppendLine();
-            sb.AppendFormat("Bit 7 set?: {0}", Convert.ToBoolean(registers.DeviceHead & 0x80)).AppendLine();
-            sb.AppendFormat("Bit 5 set?: {0}", Convert.ToBoolean(registers.DeviceHead & 0x20)).AppendLine();
+    public static string DecodeAtaRegisters(AtaErrorRegistersChs registers)
+    {
+        var sb = new StringBuilder();
+        sb.AppendFormat("Status: {0}", DecodeAtaStatus(registers.Status)).AppendLine();
+        sb.AppendFormat("Error: {0}", DecodeAtaStatus(registers.Error)).AppendLine();
+        sb.AppendFormat("Device: {0}", (registers.DeviceHead >> 4) & 0x01).AppendLine();
+        sb.AppendFormat("Cylinder: {0}", registers.CylinderHigh << (8 + registers.CylinderLow)).AppendLine();
+        sb.AppendFormat("Head: {0}", registers.DeviceHead & 0xF).AppendLine();
+        sb.AppendFormat("Sector: {0}", registers.Sector).AppendLine();
+        sb.AppendFormat("Count: {0}", registers.SectorCount).AppendLine();
+        sb.AppendFormat("LBA?: {0}", Convert.ToBoolean(registers.DeviceHead       & 0x40)).AppendLine();
+        sb.AppendFormat("Bit 7 set?: {0}", Convert.ToBoolean(registers.DeviceHead & 0x80)).AppendLine();
+        sb.AppendFormat("Bit 5 set?: {0}", Convert.ToBoolean(registers.DeviceHead & 0x20)).AppendLine();
 
-            return sb.ToString();
-        }
+        return sb.ToString();
+    }
 
-        public static string DecodeAtaRegisters(AtaErrorRegistersLba28 registers)
-        {
-            var sb = new StringBuilder();
-            sb.AppendFormat("Status: {0}", DecodeAtaStatus(registers.Status)).AppendLine();
-            sb.AppendFormat("Error: {0}", DecodeAtaStatus(registers.Error)).AppendLine();
-            sb.AppendFormat("Device: {0}", (registers.DeviceHead >> 4) & 0x01).AppendLine();
+    public static string DecodeAtaRegisters(AtaErrorRegistersLba28 registers)
+    {
+        var sb = new StringBuilder();
+        sb.AppendFormat("Status: {0}", DecodeAtaStatus(registers.Status)).AppendLine();
+        sb.AppendFormat("Error: {0}", DecodeAtaStatus(registers.Error)).AppendLine();
+        sb.AppendFormat("Device: {0}", (registers.DeviceHead >> 4) & 0x01).AppendLine();
 
-            sb.AppendFormat("LBA: {0}",
-                            ((registers.DeviceHead & 0xF) << 24) + (registers.LbaHigh << 16) + (registers.LbaMid << 8) +
-                            registers.LbaLow);
+        sb.AppendFormat("LBA: {0}",
+                        ((registers.DeviceHead & 0xF) << 24) + (registers.LbaHigh << 16) + (registers.LbaMid << 8) +
+                        registers.LbaLow);
 
-            sb.AppendFormat("Count: {0}", registers.SectorCount).AppendLine();
-            sb.AppendFormat("LBA?: {0}", Convert.ToBoolean(registers.DeviceHead       & 0x40)).AppendLine();
-            sb.AppendFormat("Bit 7 set?: {0}", Convert.ToBoolean(registers.DeviceHead & 0x80)).AppendLine();
-            sb.AppendFormat("Bit 5 set?: {0}", Convert.ToBoolean(registers.DeviceHead & 0x20)).AppendLine();
+        sb.AppendFormat("Count: {0}", registers.SectorCount).AppendLine();
+        sb.AppendFormat("LBA?: {0}", Convert.ToBoolean(registers.DeviceHead       & 0x40)).AppendLine();
+        sb.AppendFormat("Bit 7 set?: {0}", Convert.ToBoolean(registers.DeviceHead & 0x80)).AppendLine();
+        sb.AppendFormat("Bit 5 set?: {0}", Convert.ToBoolean(registers.DeviceHead & 0x20)).AppendLine();
 
-            return sb.ToString();
-        }
+        return sb.ToString();
+    }
 
-        public static string DecodeAtaRegisters(AtaErrorRegistersLba48 registers)
-        {
-            var sb = new StringBuilder();
-            sb.AppendFormat("Status: {0}", DecodeAtaStatus(registers.Status)).AppendLine();
-            sb.AppendFormat("Error: {0}", DecodeAtaStatus(registers.Error)).AppendLine();
-            sb.AppendFormat("Device: {0}", (registers.DeviceHead >> 4) & 0x01).AppendLine();
+    public static string DecodeAtaRegisters(AtaErrorRegistersLba48 registers)
+    {
+        var sb = new StringBuilder();
+        sb.AppendFormat("Status: {0}", DecodeAtaStatus(registers.Status)).AppendLine();
+        sb.AppendFormat("Error: {0}", DecodeAtaStatus(registers.Error)).AppendLine();
+        sb.AppendFormat("Device: {0}", (registers.DeviceHead >> 4) & 0x01).AppendLine();
 
-            ulong lba = registers.LbaHighPrevious * 0x10000000000UL;
-            lba += registers.LbaMidPrevious * 0x100000000UL;
-            lba += registers.LbaLowPrevious * 0x1000000UL;
-            lba += registers.LbaHighCurrent * 0x10000UL;
-            lba += registers.LbaMidCurrent  * 0x100UL;
-            lba += registers.LbaLowCurrent;
+        ulong lba = registers.LbaHighPrevious * 0x10000000000UL;
+        lba += registers.LbaMidPrevious * 0x100000000UL;
+        lba += registers.LbaLowPrevious * 0x1000000UL;
+        lba += registers.LbaHighCurrent * 0x10000UL;
+        lba += registers.LbaMidCurrent  * 0x100UL;
+        lba += registers.LbaLowCurrent;
 
-            sb.AppendFormat("LBA: {0}", lba);
+        sb.AppendFormat("LBA: {0}", lba);
 
-            sb.AppendFormat("Count: {0}", registers.SectorCount).AppendLine();
-            sb.AppendFormat("LBA?: {0}", Convert.ToBoolean(registers.DeviceHead       & 0x40)).AppendLine();
-            sb.AppendFormat("Bit 7 set?: {0}", Convert.ToBoolean(registers.DeviceHead & 0x80)).AppendLine();
-            sb.AppendFormat("Bit 5 set?: {0}", Convert.ToBoolean(registers.DeviceHead & 0x20)).AppendLine();
+        sb.AppendFormat("Count: {0}", registers.SectorCount).AppendLine();
+        sb.AppendFormat("LBA?: {0}", Convert.ToBoolean(registers.DeviceHead       & 0x40)).AppendLine();
+        sb.AppendFormat("Bit 7 set?: {0}", Convert.ToBoolean(registers.DeviceHead & 0x80)).AppendLine();
+        sb.AppendFormat("Bit 5 set?: {0}", Convert.ToBoolean(registers.DeviceHead & 0x20)).AppendLine();
 
-            return sb.ToString();
-        }
+        return sb.ToString();
     }
 }

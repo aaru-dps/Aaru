@@ -34,25 +34,24 @@ using System.IO;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class AaruFormat
 {
-    public sealed partial class AaruFormat
+    /// <inheritdoc />
+    public bool Identify(IFilter imageFilter)
     {
-        /// <inheritdoc />
-        public bool Identify(IFilter imageFilter)
-        {
-            _imageStream = imageFilter.GetDataForkStream();
-            _imageStream.Seek(0, SeekOrigin.Begin);
+        _imageStream = imageFilter.GetDataForkStream();
+        _imageStream.Seek(0, SeekOrigin.Begin);
 
-            if(_imageStream.Length < Marshal.SizeOf<AaruHeader>())
-                return false;
+        if(_imageStream.Length < Marshal.SizeOf<AaruHeader>())
+            return false;
 
-            _structureBytes = new byte[Marshal.SizeOf<AaruHeader>()];
-            _imageStream.Read(_structureBytes, 0, _structureBytes.Length);
-            _header = Marshal.ByteArrayToStructureLittleEndian<AaruHeader>(_structureBytes);
+        _structureBytes = new byte[Marshal.SizeOf<AaruHeader>()];
+        _imageStream.Read(_structureBytes, 0, _structureBytes.Length);
+        _header = Marshal.ByteArrayToStructureLittleEndian<AaruHeader>(_structureBytes);
 
-            return (_header.identifier == DIC_MAGIC || _header.identifier == AARU_MAGIC) &&
-                   _header.imageMajorVersion <= AARUFMT_VERSION;
-        }
+        return (_header.identifier == DIC_MAGIC || _header.identifier == AARU_MAGIC) &&
+               _header.imageMajorVersion <= AARUFMT_VERSION;
     }
 }

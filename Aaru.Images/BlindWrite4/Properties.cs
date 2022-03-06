@@ -36,33 +36,32 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.Structs;
 using Schemas;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class BlindWrite4
 {
-    public sealed partial class BlindWrite4
-    {
-        /// <inheritdoc />
-        public ImageInfo Info => _imageInfo;
+    /// <inheritdoc />
+    public ImageInfo Info => _imageInfo;
 
-        /// <inheritdoc />
-        public string Name => "BlindWrite 4";
-        /// <inheritdoc />
-        public Guid Id => new Guid("664568B2-15D4-4E64-8A7A-20BDA8B8386F");
-        /// <inheritdoc />
-        public string Author => "Natalia Portillo";
-        /// <inheritdoc />
-        public string Format => "BlindWrite 4 TOC file";
+    /// <inheritdoc />
+    public string Name => "BlindWrite 4";
+    /// <inheritdoc />
+    public Guid Id => new Guid("664568B2-15D4-4E64-8A7A-20BDA8B8386F");
+    /// <inheritdoc />
+    public string Author => "Natalia Portillo";
+    /// <inheritdoc />
+    public string Format => "BlindWrite 4 TOC file";
 
-        /// <inheritdoc />
-        public List<Partition> Partitions { get; set; }
+    /// <inheritdoc />
+    public List<Partition> Partitions { get; set; }
 
-        /// <inheritdoc />
-        public List<Track> Tracks { get; set; }
+    /// <inheritdoc />
+    public List<Track> Tracks { get; set; }
 
-        /// <inheritdoc />
-        public List<Session> Sessions { get; set; }
-        /// <inheritdoc />
-        public List<DumpHardwareType> DumpHardware => null;
-        /// <inheritdoc />
-        public CICMMetadataType CicmMetadata => null;
-    }
+    /// <inheritdoc />
+    public List<Session> Sessions { get; set; }
+    /// <inheritdoc />
+    public List<DumpHardwareType> DumpHardware => null;
+    /// <inheritdoc />
+    public CICMMetadataType CicmMetadata => null;
 }

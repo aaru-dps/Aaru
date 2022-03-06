@@ -30,62 +30,61 @@ using System.IO;
 using Aaru.CommonTypes;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Partitions
-{
-    [TestFixture]
-    public class Minix : PartitionSchemeTest
-    {
-        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Partitioning schemes", "MINIX");
+namespace Aaru.Tests.Partitions;
 
-        public override PartitionTest[] Tests => new[]
+[TestFixture]
+public class Minix : PartitionSchemeTest
+{
+    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Partitioning schemes", "MINIX");
+
+    public override PartitionTest[] Tests => new[]
+    {
+        new PartitionTest
         {
-            new PartitionTest
+            TestFile = "minix_3.1.2a.aif",
+            Partitions = new[]
             {
-                TestFile = "minix_3.1.2a.aif",
-                Partitions = new[]
+                new Partition
                 {
-                    new Partition
-                    {
-                        Length   = 524159,
-                        Name     = "MINIX",
-                        Offset   = 2064896,
-                        Sequence = 0,
-                        Size     = 268369408,
-                        Start    = 4033,
-                        Type     = "MINIX"
-                    },
-                    new Partition
-                    {
-                        Length   = 528192,
-                        Name     = "MINIX",
-                        Offset   = 270434304,
-                        Sequence = 1,
-                        Size     = 270434304,
-                        Start    = 528192,
-                        Type     = "MINIX"
-                    },
-                    new Partition
-                    {
-                        Length   = 528192,
-                        Name     = "MINIX",
-                        Offset   = 540868608,
-                        Sequence = 2,
-                        Size     = 270434304,
-                        Start    = 1056384,
-                        Type     = "MINIX"
-                    },
-                    new Partition
-                    {
-                        Length   = 512064,
-                        Name     = "MINIX",
-                        Offset   = 811302912,
-                        Sequence = 3,
-                        Size     = 262176768,
-                        Start    = 1584576,
-                        Type     = "MINIX"
-                    }
+                    Length   = 524159,
+                    Name     = "MINIX",
+                    Offset   = 2064896,
+                    Sequence = 0,
+                    Size     = 268369408,
+                    Start    = 4033,
+                    Type     = "MINIX"
+                },
+                new Partition
+                {
+                    Length   = 528192,
+                    Name     = "MINIX",
+                    Offset   = 270434304,
+                    Sequence = 1,
+                    Size     = 270434304,
+                    Start    = 528192,
+                    Type     = "MINIX"
+                },
+                new Partition
+                {
+                    Length   = 528192,
+                    Name     = "MINIX",
+                    Offset   = 540868608,
+                    Sequence = 2,
+                    Size     = 270434304,
+                    Start    = 1056384,
+                    Type     = "MINIX"
+                },
+                new Partition
+                {
+                    Length   = 512064,
+                    Name     = "MINIX",
+                    Offset   = 811302912,
+                    Sequence = 3,
+                    Size     = 262176768,
+                    Start    = 1584576,
+                    Type     = "MINIX"
                 }
             }
-        };
-    }
+        }
+    };
 }

@@ -36,91 +36,90 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class MaxiDisk
 {
-    public sealed partial class MaxiDisk
+    /// <inheritdoc />
+    public ErrorNumber Open(IFilter imageFilter)
     {
-        /// <inheritdoc />
-        public ErrorNumber Open(IFilter imageFilter)
-        {
-            Stream stream = imageFilter.GetDataForkStream();
+        Stream stream = imageFilter.GetDataForkStream();
 
-            if(stream.Length < 8)
-                return ErrorNumber.InvalidArgument;
+        if(stream.Length < 8)
+            return ErrorNumber.InvalidArgument;
 
-            byte[] buffer = new byte[8];
-            stream.Seek(0, SeekOrigin.Begin);
-            stream.Read(buffer, 0, buffer.Length);
+        byte[] buffer = new byte[8];
+        stream.Seek(0, SeekOrigin.Begin);
+        stream.Read(buffer, 0, buffer.Length);
 
-            Header tmpHeader = Marshal.ByteArrayToStructureLittleEndian<Header>(buffer);
+        Header tmpHeader = Marshal.ByteArrayToStructureLittleEndian<Header>(buffer);
 
-            // This is hardcoded
-            // But its possible values are unknown...
-            //if(tmp_header.diskType > 11)
-            //    return false;
+        // This is hardcoded
+        // But its possible values are unknown...
+        //if(tmp_header.diskType > 11)
+        //    return false;
 
-            // Only floppies supported
-            if(tmpHeader.heads == 0 ||
-               tmpHeader.heads > 2)
-                return ErrorNumber.InvalidArgument;
+        // Only floppies supported
+        if(tmpHeader.heads == 0 ||
+           tmpHeader.heads > 2)
+            return ErrorNumber.InvalidArgument;
 
-            // No floppies with more than this?
-            if(tmpHeader.cylinders > 90)
-                return ErrorNumber.InvalidArgument;
+        // No floppies with more than this?
+        if(tmpHeader.cylinders > 90)
+            return ErrorNumber.InvalidArgument;
 
-            // Maximum supported bps is 16384
-            if(tmpHeader.bytesPerSector > 7)
-                return ErrorNumber.InvalidArgument;
+        // Maximum supported bps is 16384
+        if(tmpHeader.bytesPerSector > 7)
+            return ErrorNumber.InvalidArgument;
 
-            int expectedFileSize = (tmpHeader.heads * tmpHeader.cylinders * tmpHeader.sectorsPerTrack *
-                                    (128 << tmpHeader.bytesPerSector)) + 8;
+        int expectedFileSize = (tmpHeader.heads * tmpHeader.cylinders * tmpHeader.sectorsPerTrack *
+                                (128 << tmpHeader.bytesPerSector)) + 8;
 
-            if(expectedFileSize != stream.Length)
-                return ErrorNumber.InvalidArgument;
+        if(expectedFileSize != stream.Length)
+            return ErrorNumber.InvalidArgument;
 
-            _imageInfo.Cylinders       = tmpHeader.cylinders;
-            _imageInfo.Heads           = tmpHeader.heads;
-            _imageInfo.SectorsPerTrack = tmpHeader.sectorsPerTrack;
-            _imageInfo.Sectors         = (ulong)(tmpHeader.heads * tmpHeader.cylinders * tmpHeader.sectorsPerTrack);
-            _imageInfo.SectorSize      = (uint)(128 << tmpHeader.bytesPerSector);
+        _imageInfo.Cylinders       = tmpHeader.cylinders;
+        _imageInfo.Heads           = tmpHeader.heads;
+        _imageInfo.SectorsPerTrack = tmpHeader.sectorsPerTrack;
+        _imageInfo.Sectors         = (ulong)(tmpHeader.heads * tmpHeader.cylinders * tmpHeader.sectorsPerTrack);
+        _imageInfo.SectorSize      = (uint)(128 << tmpHeader.bytesPerSector);
 
-            _hdkImageFilter = imageFilter;
+        _hdkImageFilter = imageFilter;
 
-            _imageInfo.ImageSize            = (ulong)(stream.Length - 8);
-            _imageInfo.CreationTime         = imageFilter.CreationTime;
-            _imageInfo.LastModificationTime = imageFilter.LastWriteTime;
+        _imageInfo.ImageSize            = (ulong)(stream.Length - 8);
+        _imageInfo.CreationTime         = imageFilter.CreationTime;
+        _imageInfo.LastModificationTime = imageFilter.LastWriteTime;
 
-            _imageInfo.MediaType = Geometry.GetMediaType(((ushort)_imageInfo.Cylinders, (byte)_imageInfo.Heads,
-                                                          (ushort)_imageInfo.SectorsPerTrack, _imageInfo.SectorSize,
-                                                          MediaEncoding.MFM, false));
+        _imageInfo.MediaType = Geometry.GetMediaType(((ushort)_imageInfo.Cylinders, (byte)_imageInfo.Heads,
+                                                      (ushort)_imageInfo.SectorsPerTrack, _imageInfo.SectorSize,
+                                                      MediaEncoding.MFM, false));
 
-            _imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
+        _imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
 
-            return ErrorNumber.NoError;
-        }
+        return ErrorNumber.NoError;
+    }
 
-        /// <inheritdoc />
-        public ErrorNumber ReadSector(ulong sectorAddress, out byte[] buffer) =>
-            ReadSectors(sectorAddress, 1, out buffer);
+    /// <inheritdoc />
+    public ErrorNumber ReadSector(ulong sectorAddress, out byte[] buffer) =>
+        ReadSectors(sectorAddress, 1, out buffer);
 
-        /// <inheritdoc />
-        public ErrorNumber ReadSectors(ulong sectorAddress, uint length, out byte[] buffer)
-        {
-            buffer = null;
+    /// <inheritdoc />
+    public ErrorNumber ReadSectors(ulong sectorAddress, uint length, out byte[] buffer)
+    {
+        buffer = null;
 
-            if(sectorAddress > _imageInfo.Sectors - 1)
-                return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1)
+            return ErrorNumber.OutOfRange;
 
-            if(sectorAddress + length > _imageInfo.Sectors)
-                return ErrorNumber.OutOfRange;
+        if(sectorAddress + length > _imageInfo.Sectors)
+            return ErrorNumber.OutOfRange;
 
-            buffer = new byte[length * _imageInfo.SectorSize];
+        buffer = new byte[length * _imageInfo.SectorSize];
 
-            Stream stream = _hdkImageFilter.GetDataForkStream();
-            stream.Seek((long)(8 + (sectorAddress * _imageInfo.SectorSize)), SeekOrigin.Begin);
-            stream.Read(buffer, 0, (int)(length * _imageInfo.SectorSize));
+        Stream stream = _hdkImageFilter.GetDataForkStream();
+        stream.Seek((long)(8 + (sectorAddress * _imageInfo.SectorSize)), SeekOrigin.Begin);
+        stream.Read(buffer, 0, (int)(length * _imageInfo.SectorSize));
 
-            return ErrorNumber.NoError;
-        }
+        return ErrorNumber.NoError;
     }
 }

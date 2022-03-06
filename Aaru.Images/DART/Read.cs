@@ -43,374 +43,373 @@ using Claunia.Encoding;
 using Claunia.RsrcFork;
 using Version = Resources.Version;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class Dart
 {
-    public sealed partial class Dart
+    /// <inheritdoc />
+    public ErrorNumber Open(IFilter imageFilter)
     {
-        /// <inheritdoc />
-        public ErrorNumber Open(IFilter imageFilter)
+        Stream stream = imageFilter.GetDataForkStream();
+
+        if(stream.Length < 84)
+            return ErrorNumber.InvalidArgument;
+
+        stream.Seek(0, SeekOrigin.Begin);
+        byte[] headerB = new byte[Marshal.SizeOf<Header>()];
+
+        stream.Read(headerB, 0, Marshal.SizeOf<Header>());
+        Header header = Marshal.ByteArrayToStructureBigEndian<Header>(headerB);
+
+        if(header.srcCmp > COMPRESS_NONE)
+            return ErrorNumber.NotSupported;
+
+        int expectedMaxSize = 84 + (header.srcSize * 2 * 524);
+
+        switch(header.srcType)
         {
-            Stream stream = imageFilter.GetDataForkStream();
+            case DISK_MAC:
+                if(header.srcSize != SIZE_MAC_SS &&
+                   header.srcSize != SIZE_MAC)
+                    return ErrorNumber.InvalidArgument;
 
-            if(stream.Length < 84)
-                return ErrorNumber.InvalidArgument;
+                break;
+            case DISK_LISA:
+                if(header.srcSize != SIZE_LISA)
+                    return ErrorNumber.InvalidArgument;
 
-            stream.Seek(0, SeekOrigin.Begin);
-            byte[] headerB = new byte[Marshal.SizeOf<Header>()];
+                break;
+            case DISK_APPLE2:
+                if(header.srcSize != DISK_APPLE2)
+                    return ErrorNumber.InvalidArgument;
 
-            stream.Read(headerB, 0, Marshal.SizeOf<Header>());
-            Header header = Marshal.ByteArrayToStructureBigEndian<Header>(headerB);
+                break;
+            case DISK_MAC_HD:
+                if(header.srcSize != SIZE_MAC_HD)
+                    return ErrorNumber.InvalidArgument;
 
-            if(header.srcCmp > COMPRESS_NONE)
-                return ErrorNumber.NotSupported;
+                expectedMaxSize += 64;
 
-            int expectedMaxSize = 84 + (header.srcSize * 2 * 524);
+                break;
+            case DISK_DOS:
+                if(header.srcSize != SIZE_DOS)
+                    return ErrorNumber.InvalidArgument;
 
-            switch(header.srcType)
+                break;
+            case DISK_DOS_HD:
+                if(header.srcSize != SIZE_DOS_HD)
+                    return ErrorNumber.InvalidArgument;
+
+                expectedMaxSize += 64;
+
+                break;
+            default: return ErrorNumber.InvalidArgument;
+        }
+
+        if(stream.Length > expectedMaxSize)
+            return ErrorNumber.InvalidArgument;
+
+        short[] bLength;
+
+        if(header.srcType == DISK_MAC_HD ||
+           header.srcType == DISK_DOS_HD)
+            bLength = new short[BLOCK_ARRAY_LEN_HIGH];
+        else
+            bLength = new short[BLOCK_ARRAY_LEN_LOW];
+
+        for(int i = 0; i < bLength.Length; i++)
+        {
+            byte[] tmpShort = new byte[2];
+            stream.Read(tmpShort, 0, 2);
+            bLength[i] = BigEndianBitConverter.ToInt16(tmpShort, 0);
+        }
+
+        var dataMs = new MemoryStream();
+        var tagMs  = new MemoryStream();
+
+        foreach(short l in bLength)
+            if(l != 0)
             {
-                case DISK_MAC:
-                    if(header.srcSize != SIZE_MAC_SS &&
-                       header.srcSize != SIZE_MAC)
-                        return ErrorNumber.InvalidArgument;
+                byte[] buffer = new byte[BUFFER_SIZE];
 
-                    break;
-                case DISK_LISA:
-                    if(header.srcSize != SIZE_LISA)
-                        return ErrorNumber.InvalidArgument;
-
-                    break;
-                case DISK_APPLE2:
-                    if(header.srcSize != DISK_APPLE2)
-                        return ErrorNumber.InvalidArgument;
-
-                    break;
-                case DISK_MAC_HD:
-                    if(header.srcSize != SIZE_MAC_HD)
-                        return ErrorNumber.InvalidArgument;
-
-                    expectedMaxSize += 64;
-
-                    break;
-                case DISK_DOS:
-                    if(header.srcSize != SIZE_DOS)
-                        return ErrorNumber.InvalidArgument;
-
-                    break;
-                case DISK_DOS_HD:
-                    if(header.srcSize != SIZE_DOS_HD)
-                        return ErrorNumber.InvalidArgument;
-
-                    expectedMaxSize += 64;
-
-                    break;
-                default: return ErrorNumber.InvalidArgument;
-            }
-
-            if(stream.Length > expectedMaxSize)
-                return ErrorNumber.InvalidArgument;
-
-            short[] bLength;
-
-            if(header.srcType == DISK_MAC_HD ||
-               header.srcType == DISK_DOS_HD)
-                bLength = new short[BLOCK_ARRAY_LEN_HIGH];
-            else
-                bLength = new short[BLOCK_ARRAY_LEN_LOW];
-
-            for(int i = 0; i < bLength.Length; i++)
-            {
-                byte[] tmpShort = new byte[2];
-                stream.Read(tmpShort, 0, 2);
-                bLength[i] = BigEndianBitConverter.ToInt16(tmpShort, 0);
-            }
-
-            var dataMs = new MemoryStream();
-            var tagMs  = new MemoryStream();
-
-            foreach(short l in bLength)
-                if(l != 0)
+                if(l == -1)
                 {
-                    byte[] buffer = new byte[BUFFER_SIZE];
+                    stream.Read(buffer, 0, BUFFER_SIZE);
+                    dataMs.Write(buffer, 0, DATA_SIZE);
+                    tagMs.Write(buffer, DATA_SIZE, TAG_SIZE);
+                }
+                else
+                {
+                    byte[] temp;
 
-                    if(l == -1)
+                    if(header.srcCmp == COMPRESS_RLE)
                     {
-                        stream.Read(buffer, 0, BUFFER_SIZE);
+                        temp = new byte[l * 2];
+                        stream.Read(temp, 0, temp.Length);
+                        buffer = new byte[BUFFER_SIZE];
+
+                        AppleRle.DecodeBuffer(temp, buffer);
+
                         dataMs.Write(buffer, 0, DATA_SIZE);
                         tagMs.Write(buffer, DATA_SIZE, TAG_SIZE);
                     }
                     else
                     {
-                        byte[] temp;
+                        temp = new byte[l];
+                        stream.Read(temp, 0, temp.Length);
 
-                        if(header.srcCmp == COMPRESS_RLE)
-                        {
-                            temp = new byte[l * 2];
-                            stream.Read(temp, 0, temp.Length);
-                            buffer = new byte[BUFFER_SIZE];
+                        AaruConsole.ErrorWriteLine("LZH Compressed images not yet supported");
 
-                            AppleRle.DecodeBuffer(temp, buffer);
-
-                            dataMs.Write(buffer, 0, DATA_SIZE);
-                            tagMs.Write(buffer, DATA_SIZE, TAG_SIZE);
-                        }
-                        else
-                        {
-                            temp = new byte[l];
-                            stream.Read(temp, 0, temp.Length);
-
-                            AaruConsole.ErrorWriteLine("LZH Compressed images not yet supported");
-
-                            return ErrorNumber.NotImplemented;
-                        }
+                        return ErrorNumber.NotImplemented;
                     }
                 }
-
-            _dataCache = dataMs.ToArray();
-
-            if(header.srcType == DISK_LISA ||
-               header.srcType == DISK_MAC  ||
-               header.srcType == DISK_APPLE2)
-            {
-                _imageInfo.ReadableSectorTags.Add(SectorTagType.AppleSectorTag);
-                _tagCache = tagMs.ToArray();
             }
 
-            try
+        _dataCache = dataMs.ToArray();
+
+        if(header.srcType == DISK_LISA ||
+           header.srcType == DISK_MAC  ||
+           header.srcType == DISK_APPLE2)
+        {
+            _imageInfo.ReadableSectorTags.Add(SectorTagType.AppleSectorTag);
+            _tagCache = tagMs.ToArray();
+        }
+
+        try
+        {
+            if(imageFilter.HasResourceFork)
             {
-                if(imageFilter.HasResourceFork)
+                var rsrcFork = new ResourceFork(imageFilter.GetResourceForkStream());
+
+                // "vers"
+                if(rsrcFork.ContainsKey(0x76657273))
                 {
-                    var rsrcFork = new ResourceFork(imageFilter.GetResourceForkStream());
+                    Resource versRsrc = rsrcFork.GetResource(0x76657273);
 
-                    // "vers"
-                    if(rsrcFork.ContainsKey(0x76657273))
+                    byte[] vers = versRsrc?.GetResource(versRsrc.GetIds()[0]);
+
+                    if(vers != null)
                     {
-                        Resource versRsrc = rsrcFork.GetResource(0x76657273);
+                        var version = new Version(vers);
 
-                        byte[] vers = versRsrc?.GetResource(versRsrc.GetIds()[0]);
+                        string release = null;
+                        string dev     = null;
+                        string pre     = null;
 
-                        if(vers != null)
+                        string major = $"{version.MajorVersion}";
+                        string minor = $".{version.MinorVersion / 10}";
+
+                        if(version.MinorVersion % 10 > 0)
+                            release = $".{version.MinorVersion % 10}";
+
+                        switch(version.DevStage)
                         {
-                            var version = new Version(vers);
+                            case Version.DevelopmentStage.Alpha:
+                                dev = "a";
 
-                            string release = null;
-                            string dev     = null;
-                            string pre     = null;
+                                break;
+                            case Version.DevelopmentStage.Beta:
+                                dev = "b";
 
-                            string major = $"{version.MajorVersion}";
-                            string minor = $".{version.MinorVersion / 10}";
+                                break;
+                            case Version.DevelopmentStage.PreAlpha:
+                                dev = "d";
 
-                            if(version.MinorVersion % 10 > 0)
-                                release = $".{version.MinorVersion % 10}";
-
-                            switch(version.DevStage)
-                            {
-                                case Version.DevelopmentStage.Alpha:
-                                    dev = "a";
-
-                                    break;
-                                case Version.DevelopmentStage.Beta:
-                                    dev = "b";
-
-                                    break;
-                                case Version.DevelopmentStage.PreAlpha:
-                                    dev = "d";
-
-                                    break;
-                            }
-
-                            if(dev                       == null &&
-                               version.PreReleaseVersion > 0)
-                                dev = "f";
-
-                            if(dev != null)
-                                pre = $"{version.PreReleaseVersion}";
-
-                            _imageInfo.ApplicationVersion = $"{major}{minor}{release}{dev}{pre}";
-                            _imageInfo.Application        = version.VersionString;
-                            _imageInfo.Comments           = version.VersionMessage;
+                                break;
                         }
+
+                        if(dev                       == null &&
+                           version.PreReleaseVersion > 0)
+                            dev = "f";
+
+                        if(dev != null)
+                            pre = $"{version.PreReleaseVersion}";
+
+                        _imageInfo.ApplicationVersion = $"{major}{minor}{release}{dev}{pre}";
+                        _imageInfo.Application        = version.VersionString;
+                        _imageInfo.Comments           = version.VersionMessage;
                     }
+                }
 
-                    // "dart"
-                    if(rsrcFork.ContainsKey(0x44415254))
+                // "dart"
+                if(rsrcFork.ContainsKey(0x44415254))
+                {
+                    Resource dartRsrc = rsrcFork.GetResource(0x44415254);
+
+                    if(dartRsrc != null)
                     {
-                        Resource dartRsrc = rsrcFork.GetResource(0x44415254);
+                        string dArt = StringHandlers.PascalToString(dartRsrc.GetResource(dartRsrc.GetIds()[0]),
+                                                                    Encoding.GetEncoding("macintosh"));
 
-                        if(dartRsrc != null)
+                        var   dArtEx    = new Regex(DART_REGEX);
+                        Match dArtMatch = dArtEx.Match(dArt);
+
+                        if(dArtMatch.Success)
                         {
-                            string dArt = StringHandlers.PascalToString(dartRsrc.GetResource(dartRsrc.GetIds()[0]),
-                                                                        Encoding.GetEncoding("macintosh"));
-
-                            var   dArtEx    = new Regex(DART_REGEX);
-                            Match dArtMatch = dArtEx.Match(dArt);
-
-                            if(dArtMatch.Success)
-                            {
-                                _imageInfo.Application        = "DART";
-                                _imageInfo.ApplicationVersion = dArtMatch.Groups["version"].Value;
-                                _dataChecksum                 = Convert.ToUInt32(dArtMatch.Groups["datachk"].Value, 16);
-                                _tagChecksum                  = Convert.ToUInt32(dArtMatch.Groups["tagchk"].Value, 16);
-                            }
-                        }
-                    }
-
-                    // "cksm"
-                    if(rsrcFork.ContainsKey(0x434B534D))
-                    {
-                        Resource cksmRsrc = rsrcFork.GetResource(0x434B534D);
-
-                        if(cksmRsrc?.ContainsId(1) == true)
-                        {
-                            byte[] tagChk = cksmRsrc.GetResource(1);
-                            _tagChecksum = BigEndianBitConverter.ToUInt32(tagChk, 0);
-                        }
-
-                        if(cksmRsrc?.ContainsId(2) == true)
-                        {
-                            byte[] dataChk = cksmRsrc.GetResource(1);
-                            _dataChecksum = BigEndianBitConverter.ToUInt32(dataChk, 0);
+                            _imageInfo.Application        = "DART";
+                            _imageInfo.ApplicationVersion = dArtMatch.Groups["version"].Value;
+                            _dataChecksum                 = Convert.ToUInt32(dArtMatch.Groups["datachk"].Value, 16);
+                            _tagChecksum                  = Convert.ToUInt32(dArtMatch.Groups["tagchk"].Value, 16);
                         }
                     }
                 }
+
+                // "cksm"
+                if(rsrcFork.ContainsKey(0x434B534D))
+                {
+                    Resource cksmRsrc = rsrcFork.GetResource(0x434B534D);
+
+                    if(cksmRsrc?.ContainsId(1) == true)
+                    {
+                        byte[] tagChk = cksmRsrc.GetResource(1);
+                        _tagChecksum = BigEndianBitConverter.ToUInt32(tagChk, 0);
+                    }
+
+                    if(cksmRsrc?.ContainsId(2) == true)
+                    {
+                        byte[] dataChk = cksmRsrc.GetResource(1);
+                        _dataChecksum = BigEndianBitConverter.ToUInt32(dataChk, 0);
+                    }
+                }
             }
-            catch(InvalidCastException) {}
-
-            AaruConsole.DebugWriteLine("DART plugin", "Image application = {0} version {1}", _imageInfo.Application,
-                                       _imageInfo.ApplicationVersion);
-
-            _imageInfo.Sectors              = (ulong)(header.srcSize * 2);
-            _imageInfo.CreationTime         = imageFilter.CreationTime;
-            _imageInfo.LastModificationTime = imageFilter.LastWriteTime;
-            _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.Filename);
-            _imageInfo.SectorSize           = SECTOR_SIZE;
-            _imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
-            _imageInfo.ImageSize            = _imageInfo.Sectors * SECTOR_SIZE;
-            _imageInfo.Version              = header.srcCmp == COMPRESS_NONE ? "1.4" : "1.5";
-
-            switch(header.srcSize)
-            {
-                case SIZE_MAC_SS:
-                    _imageInfo.Cylinders       = 80;
-                    _imageInfo.Heads           = 1;
-                    _imageInfo.SectorsPerTrack = 10;
-                    _imageInfo.MediaType       = MediaType.AppleSonySS;
-
-                    break;
-                case SIZE_MAC:
-                    _imageInfo.Cylinders       = 80;
-                    _imageInfo.Heads           = 2;
-                    _imageInfo.SectorsPerTrack = 10;
-                    _imageInfo.MediaType       = MediaType.AppleSonyDS;
-
-                    break;
-                case SIZE_DOS:
-                    _imageInfo.Cylinders       = 80;
-                    _imageInfo.Heads           = 2;
-                    _imageInfo.SectorsPerTrack = 9;
-                    _imageInfo.MediaType       = MediaType.DOS_35_DS_DD_9;
-
-                    break;
-                case SIZE_MAC_HD:
-                    _imageInfo.Cylinders       = 80;
-                    _imageInfo.Heads           = 2;
-                    _imageInfo.SectorsPerTrack = 18;
-                    _imageInfo.MediaType       = MediaType.DOS_35_HD;
-
-                    break;
-            }
-
-            return ErrorNumber.NoError;
         }
+        catch(InvalidCastException) {}
 
-        /// <inheritdoc />
-        public ErrorNumber ReadSector(ulong sectorAddress, out byte[] buffer) =>
-            ReadSectors(sectorAddress, 1, out buffer);
+        AaruConsole.DebugWriteLine("DART plugin", "Image application = {0} version {1}", _imageInfo.Application,
+                                   _imageInfo.ApplicationVersion);
 
-        /// <inheritdoc />
-        public ErrorNumber ReadSectorTag(ulong sectorAddress, SectorTagType tag, out byte[] buffer) =>
-            ReadSectorsTag(sectorAddress, 1, tag, out buffer);
+        _imageInfo.Sectors              = (ulong)(header.srcSize * 2);
+        _imageInfo.CreationTime         = imageFilter.CreationTime;
+        _imageInfo.LastModificationTime = imageFilter.LastWriteTime;
+        _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.Filename);
+        _imageInfo.SectorSize           = SECTOR_SIZE;
+        _imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
+        _imageInfo.ImageSize            = _imageInfo.Sectors * SECTOR_SIZE;
+        _imageInfo.Version              = header.srcCmp == COMPRESS_NONE ? "1.4" : "1.5";
 
-        /// <inheritdoc />
-        public ErrorNumber ReadSectors(ulong sectorAddress, uint length, out byte[] buffer)
+        switch(header.srcSize)
         {
-            buffer = null;
+            case SIZE_MAC_SS:
+                _imageInfo.Cylinders       = 80;
+                _imageInfo.Heads           = 1;
+                _imageInfo.SectorsPerTrack = 10;
+                _imageInfo.MediaType       = MediaType.AppleSonySS;
 
-            if(sectorAddress > _imageInfo.Sectors - 1)
-                return ErrorNumber.OutOfRange;
+                break;
+            case SIZE_MAC:
+                _imageInfo.Cylinders       = 80;
+                _imageInfo.Heads           = 2;
+                _imageInfo.SectorsPerTrack = 10;
+                _imageInfo.MediaType       = MediaType.AppleSonyDS;
 
-            if(sectorAddress + length > _imageInfo.Sectors)
-                return ErrorNumber.OutOfRange;
+                break;
+            case SIZE_DOS:
+                _imageInfo.Cylinders       = 80;
+                _imageInfo.Heads           = 2;
+                _imageInfo.SectorsPerTrack = 9;
+                _imageInfo.MediaType       = MediaType.DOS_35_DS_DD_9;
 
-            buffer = new byte[length * _imageInfo.SectorSize];
+                break;
+            case SIZE_MAC_HD:
+                _imageInfo.Cylinders       = 80;
+                _imageInfo.Heads           = 2;
+                _imageInfo.SectorsPerTrack = 18;
+                _imageInfo.MediaType       = MediaType.DOS_35_HD;
 
-            Array.Copy(_dataCache, (int)sectorAddress * _imageInfo.SectorSize, buffer, 0,
-                       length                         * _imageInfo.SectorSize);
-
-            return ErrorNumber.NoError;
+                break;
         }
 
-        /// <inheritdoc />
-        public ErrorNumber ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag, out byte[] buffer)
+        return ErrorNumber.NoError;
+    }
+
+    /// <inheritdoc />
+    public ErrorNumber ReadSector(ulong sectorAddress, out byte[] buffer) =>
+        ReadSectors(sectorAddress, 1, out buffer);
+
+    /// <inheritdoc />
+    public ErrorNumber ReadSectorTag(ulong sectorAddress, SectorTagType tag, out byte[] buffer) =>
+        ReadSectorsTag(sectorAddress, 1, tag, out buffer);
+
+    /// <inheritdoc />
+    public ErrorNumber ReadSectors(ulong sectorAddress, uint length, out byte[] buffer)
+    {
+        buffer = null;
+
+        if(sectorAddress > _imageInfo.Sectors - 1)
+            return ErrorNumber.OutOfRange;
+
+        if(sectorAddress + length > _imageInfo.Sectors)
+            return ErrorNumber.OutOfRange;
+
+        buffer = new byte[length * _imageInfo.SectorSize];
+
+        Array.Copy(_dataCache, (int)sectorAddress * _imageInfo.SectorSize, buffer, 0,
+                   length                         * _imageInfo.SectorSize);
+
+        return ErrorNumber.NoError;
+    }
+
+    /// <inheritdoc />
+    public ErrorNumber ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag, out byte[] buffer)
+    {
+        buffer = null;
+
+        if(tag != SectorTagType.AppleSectorTag)
+            return ErrorNumber.NotSupported;
+
+        if(_tagCache        == null ||
+           _tagCache.Length == 0)
+            return ErrorNumber.NoData;
+
+        if(sectorAddress > _imageInfo.Sectors - 1)
+            return ErrorNumber.OutOfRange;
+
+        if(sectorAddress + length > _imageInfo.Sectors)
+            return ErrorNumber.OutOfRange;
+
+        buffer = new byte[length * TAG_SECTOR_SIZE];
+
+        Array.Copy(_tagCache, (int)sectorAddress * TAG_SECTOR_SIZE, buffer, 0, length * TAG_SECTOR_SIZE);
+
+        return ErrorNumber.NoError;
+    }
+
+    /// <inheritdoc />
+    public ErrorNumber ReadSectorLong(ulong sectorAddress, out byte[] buffer) =>
+        ReadSectorsLong(sectorAddress, 1, out buffer);
+
+    /// <inheritdoc />
+    public ErrorNumber ReadSectorsLong(ulong sectorAddress, uint length, out byte[] buffer)
+    {
+        buffer = null;
+
+        if(sectorAddress > _imageInfo.Sectors - 1)
+            return ErrorNumber.OutOfRange;
+
+        if(sectorAddress + length > _imageInfo.Sectors)
+            return ErrorNumber.OutOfRange;
+
+        ErrorNumber errno = ReadSectors(sectorAddress, length, out byte[] data);
+
+        if(errno != ErrorNumber.NoError)
+            return errno;
+
+        errno = ReadSectorsTag(sectorAddress, length, SectorTagType.AppleSectorTag, out byte[] tags);
+
+        if(errno != ErrorNumber.NoError)
+            return errno;
+
+        buffer = new byte[data.Length + tags.Length];
+
+        for(uint i = 0; i < length; i++)
         {
-            buffer = null;
+            Array.Copy(data, i * _imageInfo.SectorSize, buffer, i * (_imageInfo.SectorSize + TAG_SECTOR_SIZE),
+                       _imageInfo.SectorSize);
 
-            if(tag != SectorTagType.AppleSectorTag)
-                return ErrorNumber.NotSupported;
-
-            if(_tagCache        == null ||
-               _tagCache.Length == 0)
-                return ErrorNumber.NoData;
-
-            if(sectorAddress > _imageInfo.Sectors - 1)
-                return ErrorNumber.OutOfRange;
-
-            if(sectorAddress + length > _imageInfo.Sectors)
-                return ErrorNumber.OutOfRange;
-
-            buffer = new byte[length * TAG_SECTOR_SIZE];
-
-            Array.Copy(_tagCache, (int)sectorAddress * TAG_SECTOR_SIZE, buffer, 0, length * TAG_SECTOR_SIZE);
-
-            return ErrorNumber.NoError;
+            Array.Copy(tags, i * TAG_SECTOR_SIZE, buffer,
+                       (i * (_imageInfo.SectorSize + TAG_SECTOR_SIZE)) + _imageInfo.SectorSize, TAG_SECTOR_SIZE);
         }
 
-        /// <inheritdoc />
-        public ErrorNumber ReadSectorLong(ulong sectorAddress, out byte[] buffer) =>
-            ReadSectorsLong(sectorAddress, 1, out buffer);
-
-        /// <inheritdoc />
-        public ErrorNumber ReadSectorsLong(ulong sectorAddress, uint length, out byte[] buffer)
-        {
-            buffer = null;
-
-            if(sectorAddress > _imageInfo.Sectors - 1)
-                return ErrorNumber.OutOfRange;
-
-            if(sectorAddress + length > _imageInfo.Sectors)
-                return ErrorNumber.OutOfRange;
-
-            ErrorNumber errno = ReadSectors(sectorAddress, length, out byte[] data);
-
-            if(errno != ErrorNumber.NoError)
-                return errno;
-
-            errno = ReadSectorsTag(sectorAddress, length, SectorTagType.AppleSectorTag, out byte[] tags);
-
-            if(errno != ErrorNumber.NoError)
-                return errno;
-
-            buffer = new byte[data.Length + tags.Length];
-
-            for(uint i = 0; i < length; i++)
-            {
-                Array.Copy(data, i * _imageInfo.SectorSize, buffer, i * (_imageInfo.SectorSize + TAG_SECTOR_SIZE),
-                           _imageInfo.SectorSize);
-
-                Array.Copy(tags, i * TAG_SECTOR_SIZE, buffer,
-                           (i * (_imageInfo.SectorSize + TAG_SECTOR_SIZE)) + _imageInfo.SectorSize, TAG_SECTOR_SIZE);
-            }
-
-            return ErrorNumber.NoError;
-        }
+        return ErrorNumber.NoError;
     }
 }

@@ -30,9 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Database.Models
-{
-    /// <inheritdoc />
-    /// <summary>Media image format</summary>
-    public class MediaFormat : NameCountModel {}
-}
+namespace Aaru.Database.Models;
+
+/// <inheritdoc />
+/// <summary>Media image format</summary>
+public class MediaFormat : NameCountModel {}

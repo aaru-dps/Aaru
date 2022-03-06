@@ -36,74 +36,73 @@ using System.Text.RegularExpressions;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class Cdrdao
 {
-    public sealed partial class Cdrdao
+    /// <inheritdoc />
+    public bool Identify(IFilter imageFilter)
     {
-        /// <inheritdoc />
-        public bool Identify(IFilter imageFilter)
+        try
         {
-            try
+            imageFilter.GetDataForkStream().Seek(0, SeekOrigin.Begin);
+            byte[] testArray = new byte[512];
+            imageFilter.GetDataForkStream().Read(testArray, 0, 512);
+            imageFilter.GetDataForkStream().Seek(0, SeekOrigin.Begin);
+
+            // Check for unexpected control characters that shouldn't be present in a text file and can crash this plugin
+            bool twoConsecutiveNulls = false;
+
+            for(int i = 0; i < 512; i++)
             {
-                imageFilter.GetDataForkStream().Seek(0, SeekOrigin.Begin);
-                byte[] testArray = new byte[512];
-                imageFilter.GetDataForkStream().Read(testArray, 0, 512);
-                imageFilter.GetDataForkStream().Seek(0, SeekOrigin.Begin);
+                if(i >= imageFilter.GetDataForkStream().Length)
+                    break;
 
-                // Check for unexpected control characters that shouldn't be present in a text file and can crash this plugin
-                bool twoConsecutiveNulls = false;
-
-                for(int i = 0; i < 512; i++)
+                if(testArray[i] == 0)
                 {
-                    if(i >= imageFilter.GetDataForkStream().Length)
-                        break;
-
-                    if(testArray[i] == 0)
-                    {
-                        if(twoConsecutiveNulls)
-                            return false;
-
-                        twoConsecutiveNulls = true;
-                    }
-                    else
-                        twoConsecutiveNulls = false;
-
-                    if(testArray[i] < 0x20  &&
-                       testArray[i] != 0x0A &&
-                       testArray[i] != 0x0D &&
-                       testArray[i] != 0x00)
+                    if(twoConsecutiveNulls)
                         return false;
+
+                    twoConsecutiveNulls = true;
                 }
+                else
+                    twoConsecutiveNulls = false;
 
-                _tocStream = new StreamReader(imageFilter.GetDataForkStream());
-
-                var cr = new Regex(REGEX_COMMENT);
-                var dr = new Regex(REGEX_DISCTYPE);
-
-                while(_tocStream.Peek() >= 0)
-                {
-                    string line = _tocStream.ReadLine();
-
-                    Match dm = dr.Match(line ?? "");
-                    Match cm = cr.Match(line);
-
-                    // Skip comments at start of file
-                    if(cm.Success)
-                        continue;
-
-                    return dm.Success;
-                }
-
-                return false;
+                if(testArray[i] < 0x20  &&
+                   testArray[i] != 0x0A &&
+                   testArray[i] != 0x0D &&
+                   testArray[i] != 0x00)
+                    return false;
             }
-            catch(Exception ex)
+
+            _tocStream = new StreamReader(imageFilter.GetDataForkStream());
+
+            var cr = new Regex(REGEX_COMMENT);
+            var dr = new Regex(REGEX_DISCTYPE);
+
+            while(_tocStream.Peek() >= 0)
             {
-                AaruConsole.ErrorWriteLine("Exception trying to identify image file {0}", _cdrdaoFilter.Filename);
-                AaruConsole.ErrorWriteLine("Exception: {0}", ex.Message);
-                AaruConsole.ErrorWriteLine("Stack trace: {0}", ex.StackTrace);
+                string line = _tocStream.ReadLine();
 
-                return false;
+                Match dm = dr.Match(line ?? "");
+                Match cm = cr.Match(line);
+
+                // Skip comments at start of file
+                if(cm.Success)
+                    continue;
+
+                return dm.Success;
             }
+
+            return false;
+        }
+        catch(Exception ex)
+        {
+            AaruConsole.ErrorWriteLine("Exception trying to identify image file {0}", _cdrdaoFilter.Filename);
+            AaruConsole.ErrorWriteLine("Exception: {0}", ex.Message);
+            AaruConsole.ErrorWriteLine("Stack trace: {0}", ex.StackTrace);
+
+            return false;
         }
     }
 }

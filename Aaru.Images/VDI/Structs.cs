@@ -33,46 +33,45 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class Vdi
 {
-    public sealed partial class Vdi
+    /// <summary>VDI disk image header, little-endian</summary>
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    struct Header
     {
-        /// <summary>VDI disk image header, little-endian</summary>
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct Header
-        {
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 64)]
-            public string creator;
-            /// <summary>Magic, <see cref="Vdi.VDI_MAGIC" /></summary>
-            public uint magic;
-            /// <summary>Version</summary>
-            public ushort majorVersion;
-            public          ushort        minorVersion;
-            public          int           headerSize;
-            public          VdiImageType  imageType;
-            public readonly VdiImageFlags imageFlags;
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-            public string comments;
-            public          uint  offsetBlocks;
-            public          uint  offsetData;
-            public          uint  cylinders;
-            public          uint  heads;
-            public          uint  spt;
-            public          uint  sectorSize;
-            public readonly uint  unused;
-            public          ulong size;
-            public          uint  blockSize;
-            public readonly uint  blockExtraData;
-            public          uint  blocks;
-            public          uint  allocatedBlocks;
-            public          Guid  uuid;
-            public          Guid  snapshotUuid;
-            public readonly Guid  linkUuid;
-            public readonly Guid  parentUuid;
-            public          uint  logicalCylinders;
-            public          uint  logicalHeads;
-            public          uint  logicalSpt;
-            public readonly uint  logicalSectorSize;
-        }
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 64)]
+        public string creator;
+        /// <summary>Magic, <see cref="Vdi.VDI_MAGIC" /></summary>
+        public uint magic;
+        /// <summary>Version</summary>
+        public ushort majorVersion;
+        public          ushort        minorVersion;
+        public          int           headerSize;
+        public          VdiImageType  imageType;
+        public readonly VdiImageFlags imageFlags;
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
+        public string comments;
+        public          uint  offsetBlocks;
+        public          uint  offsetData;
+        public          uint  cylinders;
+        public          uint  heads;
+        public          uint  spt;
+        public          uint  sectorSize;
+        public readonly uint  unused;
+        public          ulong size;
+        public          uint  blockSize;
+        public readonly uint  blockExtraData;
+        public          uint  blocks;
+        public          uint  allocatedBlocks;
+        public          Guid  uuid;
+        public          Guid  snapshotUuid;
+        public readonly Guid  linkUuid;
+        public readonly Guid  parentUuid;
+        public          uint  logicalCylinders;
+        public          uint  logicalHeads;
+        public          uint  logicalSpt;
+        public readonly uint  logicalSectorSize;
     }
 }

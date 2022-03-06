@@ -34,21 +34,20 @@
 using System.IO;
 using Aaru.CommonTypes.Interfaces;
 
-namespace Aaru.DiscImages
-{
-    public sealed partial class DiskDupe
-    {
-        /// <inheritdoc />
-        public bool Identify(IFilter imageFilter)
-        {
-            Stream      stream       = imageFilter.GetDataForkStream();
-            var         fHeader      = new FileHeader();
-            TrackInfo[] trackMap     = null;
-            long[]      trackOffsets = null;
+namespace Aaru.DiscImages;
 
-            // TODO: validate the tracks
-            // For now, having a valid header should be sufficient.
-            return TryReadHeader(stream, ref fHeader, ref trackMap, ref trackOffsets);
-        }
+public sealed partial class DiskDupe
+{
+    /// <inheritdoc />
+    public bool Identify(IFilter imageFilter)
+    {
+        Stream      stream       = imageFilter.GetDataForkStream();
+        var         fHeader      = new FileHeader();
+        TrackInfo[] trackMap     = null;
+        long[]      trackOffsets = null;
+
+        // TODO: validate the tracks
+        // For now, having a valid header should be sufficient.
+        return TryReadHeader(stream, ref fHeader, ref trackMap, ref trackOffsets);
     }
 }

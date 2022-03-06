@@ -32,130 +32,129 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Filesystems.HFS
+namespace Aaru.Tests.Filesystems.HFS;
+
+[TestFixture]
+public class Whole : FilesystemTest
 {
-    [TestFixture]
-    public class Whole : FilesystemTest
+    public Whole() : base("HFS") {}
+
+    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Apple HFS");
+
+    public override IFilesystem Plugin     => new AppleHFS();
+    public override bool        Partitions => false;
+
+    public override FileSystemTest[] Tests => new[]
     {
-        public Whole() : base("HFS") {}
-
-        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Apple HFS");
-
-        public override IFilesystem Plugin     => new AppleHFS();
-        public override bool        Partitions => false;
-
-        public override FileSystemTest[] Tests => new[]
+        new FileSystemTest
         {
-            new FileSystemTest
-            {
-                TestFile    = "macos_1.1_mf2dd.img.lz",
-                MediaType   = MediaType.AppleSonyDS,
-                Sectors     = 1600,
-                SectorSize  = 512,
-                Clusters    = 1594,
-                ClusterSize = 512,
-                VolumeName  = "Volume label"
-            },
-            new FileSystemTest
-            {
-                TestFile    = "macos_2.0_mf2dd.img.lz",
-                MediaType   = MediaType.AppleSonyDS,
-                Sectors     = 1600,
-                SectorSize  = 512,
-                Clusters    = 1594,
-                ClusterSize = 512,
-                VolumeName  = "Volume label"
-            },
-            new FileSystemTest
-            {
-                TestFile    = "macos_6.0.7_mf2dd.img.lz",
-                MediaType   = MediaType.AppleSonyDS,
-                Sectors     = 1600,
-                SectorSize  = 512,
-                Clusters    = 1594,
-                ClusterSize = 512,
-                VolumeName  = "Volume label"
-            },
-            new FileSystemTest
-            {
-                TestFile    = "nextstep_3.3_mf2hd.img.lz",
-                MediaType   = MediaType.DOS_35_HD,
-                Sectors     = 2880,
-                SectorSize  = 512,
-                Clusters    = 2874,
-                ClusterSize = 512,
-                VolumeName  = "Volume label"
-            },
-            new FileSystemTest
-            {
-                TestFile    = "openstep_4.0_mf2hd.img.lz",
-                MediaType   = MediaType.DOS_35_HD,
-                Sectors     = 2880,
-                SectorSize  = 512,
-                Clusters    = 2874,
-                ClusterSize = 512,
-                VolumeName  = "Volume label"
-            },
-            new FileSystemTest
-            {
-                TestFile    = "openstep_4.2_mf2hd.img.lz",
-                MediaType   = MediaType.DOS_35_HD,
-                Sectors     = 2880,
-                SectorSize  = 512,
-                Clusters    = 2874,
-                ClusterSize = 512,
-                VolumeName  = "Volume label"
-            },
-            new FileSystemTest
-            {
-                TestFile    = "rhapsody_dr1_mf2hd.img.lz",
-                MediaType   = MediaType.DOS_35_HD,
-                Sectors     = 2880,
-                SectorSize  = 512,
-                Clusters    = 2874,
-                ClusterSize = 512,
-                VolumeName  = "Volume label"
-            },
-            new FileSystemTest
-            {
-                TestFile    = "ecs20_mf2hd_fstester.img.lz",
-                MediaType   = MediaType.DOS_35_HD,
-                Sectors     = 2880,
-                SectorSize  = 512,
-                Clusters    = 2874,
-                ClusterSize = 512,
-                VolumeName  = "VOLUME LABEL"
-            },
-            new FileSystemTest
-            {
-                TestFile    = "linux_2.2.17_mf2hd.img.lz",
-                MediaType   = MediaType.DOS_35_HD,
-                Sectors     = 2880,
-                SectorSize  = 512,
-                Clusters    = 2874,
-                ClusterSize = 512,
-                VolumeName  = "VolumeLabel"
-            },
-            new FileSystemTest
-            {
-                TestFile    = "linux_2.2.20_mf2hd.img.lz",
-                MediaType   = MediaType.DOS_35_HD,
-                Sectors     = 2880,
-                SectorSize  = 512,
-                Clusters    = 2874,
-                ClusterSize = 512,
-                VolumeName  = "VolumeLabel"
-            },
-            new FileSystemTest
-            {
-                TestFile    = "linux_2.4.18_mf2hd.img.lz",
-                MediaType   = MediaType.DOS_35_HD,
-                Sectors     = 2880,
-                SectorSize  = 512,
-                Clusters    = 2874,
-                ClusterSize = 512,
-                VolumeName  = "VolumeLabel"
-            }
-        };
-    }
+            TestFile    = "macos_1.1_mf2dd.img.lz",
+            MediaType   = MediaType.AppleSonyDS,
+            Sectors     = 1600,
+            SectorSize  = 512,
+            Clusters    = 1594,
+            ClusterSize = 512,
+            VolumeName  = "Volume label"
+        },
+        new FileSystemTest
+        {
+            TestFile    = "macos_2.0_mf2dd.img.lz",
+            MediaType   = MediaType.AppleSonyDS,
+            Sectors     = 1600,
+            SectorSize  = 512,
+            Clusters    = 1594,
+            ClusterSize = 512,
+            VolumeName  = "Volume label"
+        },
+        new FileSystemTest
+        {
+            TestFile    = "macos_6.0.7_mf2dd.img.lz",
+            MediaType   = MediaType.AppleSonyDS,
+            Sectors     = 1600,
+            SectorSize  = 512,
+            Clusters    = 1594,
+            ClusterSize = 512,
+            VolumeName  = "Volume label"
+        },
+        new FileSystemTest
+        {
+            TestFile    = "nextstep_3.3_mf2hd.img.lz",
+            MediaType   = MediaType.DOS_35_HD,
+            Sectors     = 2880,
+            SectorSize  = 512,
+            Clusters    = 2874,
+            ClusterSize = 512,
+            VolumeName  = "Volume label"
+        },
+        new FileSystemTest
+        {
+            TestFile    = "openstep_4.0_mf2hd.img.lz",
+            MediaType   = MediaType.DOS_35_HD,
+            Sectors     = 2880,
+            SectorSize  = 512,
+            Clusters    = 2874,
+            ClusterSize = 512,
+            VolumeName  = "Volume label"
+        },
+        new FileSystemTest
+        {
+            TestFile    = "openstep_4.2_mf2hd.img.lz",
+            MediaType   = MediaType.DOS_35_HD,
+            Sectors     = 2880,
+            SectorSize  = 512,
+            Clusters    = 2874,
+            ClusterSize = 512,
+            VolumeName  = "Volume label"
+        },
+        new FileSystemTest
+        {
+            TestFile    = "rhapsody_dr1_mf2hd.img.lz",
+            MediaType   = MediaType.DOS_35_HD,
+            Sectors     = 2880,
+            SectorSize  = 512,
+            Clusters    = 2874,
+            ClusterSize = 512,
+            VolumeName  = "Volume label"
+        },
+        new FileSystemTest
+        {
+            TestFile    = "ecs20_mf2hd_fstester.img.lz",
+            MediaType   = MediaType.DOS_35_HD,
+            Sectors     = 2880,
+            SectorSize  = 512,
+            Clusters    = 2874,
+            ClusterSize = 512,
+            VolumeName  = "VOLUME LABEL"
+        },
+        new FileSystemTest
+        {
+            TestFile    = "linux_2.2.17_mf2hd.img.lz",
+            MediaType   = MediaType.DOS_35_HD,
+            Sectors     = 2880,
+            SectorSize  = 512,
+            Clusters    = 2874,
+            ClusterSize = 512,
+            VolumeName  = "VolumeLabel"
+        },
+        new FileSystemTest
+        {
+            TestFile    = "linux_2.2.20_mf2hd.img.lz",
+            MediaType   = MediaType.DOS_35_HD,
+            Sectors     = 2880,
+            SectorSize  = 512,
+            Clusters    = 2874,
+            ClusterSize = 512,
+            VolumeName  = "VolumeLabel"
+        },
+        new FileSystemTest
+        {
+            TestFile    = "linux_2.4.18_mf2hd.img.lz",
+            MediaType   = MediaType.DOS_35_HD,
+            Sectors     = 2880,
+            SectorSize  = 512,
+            Clusters    = 2874,
+            ClusterSize = 512,
+            VolumeName  = "VolumeLabel"
+        }
+    };
 }

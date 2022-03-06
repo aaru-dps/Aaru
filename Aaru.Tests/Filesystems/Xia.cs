@@ -31,37 +31,36 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Filesystems
+namespace Aaru.Tests.Filesystems;
+
+[TestFixture]
+public class Xia : FilesystemTest
 {
-    [TestFixture]
-    public class Xia : FilesystemTest
+    public Xia() : base("Xia filesystem") {}
+
+    public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Xia filesystem");
+    public override IFilesystem Plugin     => new Aaru.Filesystems.Xia();
+    public override bool        Partitions => true;
+
+    public override FileSystemTest[] Tests => new[]
     {
-        public Xia() : base("Xia filesystem") {}
-
-        public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Xia filesystem");
-        public override IFilesystem Plugin     => new Aaru.Filesystems.Xia();
-        public override bool        Partitions => true;
-
-        public override FileSystemTest[] Tests => new[]
+        new FileSystemTest
         {
-            new FileSystemTest
-            {
-                TestFile    = "linux_2.0.0.aif",
-                MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 262144,
-                SectorSize  = 512,
-                Clusters    = 131008,
-                ClusterSize = 1024
-            },
-            new FileSystemTest
-            {
-                TestFile    = "linux_2.0.37.aif",
-                MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 262144,
-                SectorSize  = 512,
-                Clusters    = 131008,
-                ClusterSize = 1024
-            }
-        };
-    }
+            TestFile    = "linux_2.0.0.aif",
+            MediaType   = MediaType.GENERIC_HDD,
+            Sectors     = 262144,
+            SectorSize  = 512,
+            Clusters    = 131008,
+            ClusterSize = 1024
+        },
+        new FileSystemTest
+        {
+            TestFile    = "linux_2.0.37.aif",
+            MediaType   = MediaType.GENERIC_HDD,
+            Sectors     = 262144,
+            SectorSize  = 512,
+            Clusters    = 131008,
+            ClusterSize = 1024
+        }
+    };
 }

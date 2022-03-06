@@ -32,65 +32,64 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.DiscImages;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Images.Lisa
-{
-    [TestFixture]
-    public class Raw : BlockMediaImageTest
-    {
-        public override string DataFolder =>
-            Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "Lisa emulators", "raw");
-        public override IMediaImage _plugin => new ZZZRawImage();
+namespace Aaru.Tests.Images.Lisa;
 
-        public override BlockImageTestExpected[] Tests => new[]
+[TestFixture]
+public class Raw : BlockMediaImageTest
+{
+    public override string DataFolder =>
+        Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "Lisa emulators", "raw");
+    public override IMediaImage _plugin => new ZZZRawImage();
+
+    public override BlockImageTestExpected[] Tests => new[]
+    {
+        new BlockImageTestExpected
         {
-            new BlockImageTestExpected
-            {
-                TestFile   = "profile_los202.raw.lz",
-                MediaType  = MediaType.GENERIC_HDD,
-                Sectors    = 10108,
-                SectorSize = 512,
-                MD5        = "24001116ee48e6545e4514b3ea18b4e2"
-            },
-            new BlockImageTestExpected
-            {
-                TestFile   = "profile_los31.raw.lz",
-                MediaType  = MediaType.GENERIC_HDD,
-                Sectors    = 10108,
-                SectorSize = 512,
-                MD5        = "2e328345fda18a97721c4a35cb2bb5bb"
-            },
-            new BlockImageTestExpected
-            {
-                TestFile   = "profile_macworksxl3.raw.lz",
-                MediaType  = MediaType.GENERIC_HDD,
-                Sectors    = 10108,
-                SectorSize = 512,
-                MD5        = "78cdf7207060bf05c272cb8b22fc6449"
-            },
-            new BlockImageTestExpected
-            {
-                TestFile   = "profile_uniplus.raw.lz",
-                MediaType  = MediaType.GENERIC_HDD,
-                Sectors    = 20216,
-                SectorSize = 512,
-                MD5        = "fc729677df4ba92da98137058aa1c298"
-            },
-            new BlockImageTestExpected
-            {
-                TestFile   = "profile_xenix_10Mb.raw.lz",
-                MediaType  = MediaType.GENERIC_HDD,
-                Sectors    = 20216,
-                SectorSize = 512,
-                MD5        = "e98bf459bd20cfb466d92a91086cdaa7"
-            },
-            new BlockImageTestExpected
-            {
-                TestFile   = "profile_xenix.raw.lz",
-                MediaType  = MediaType.GENERIC_HDD,
-                Sectors    = 10108,
-                SectorSize = 512,
-                MD5        = "dd146bc14be87d5ad98b961dd462f469"
-            }
-        };
-    }
+            TestFile   = "profile_los202.raw.lz",
+            MediaType  = MediaType.GENERIC_HDD,
+            Sectors    = 10108,
+            SectorSize = 512,
+            MD5        = "24001116ee48e6545e4514b3ea18b4e2"
+        },
+        new BlockImageTestExpected
+        {
+            TestFile   = "profile_los31.raw.lz",
+            MediaType  = MediaType.GENERIC_HDD,
+            Sectors    = 10108,
+            SectorSize = 512,
+            MD5        = "2e328345fda18a97721c4a35cb2bb5bb"
+        },
+        new BlockImageTestExpected
+        {
+            TestFile   = "profile_macworksxl3.raw.lz",
+            MediaType  = MediaType.GENERIC_HDD,
+            Sectors    = 10108,
+            SectorSize = 512,
+            MD5        = "78cdf7207060bf05c272cb8b22fc6449"
+        },
+        new BlockImageTestExpected
+        {
+            TestFile   = "profile_uniplus.raw.lz",
+            MediaType  = MediaType.GENERIC_HDD,
+            Sectors    = 20216,
+            SectorSize = 512,
+            MD5        = "fc729677df4ba92da98137058aa1c298"
+        },
+        new BlockImageTestExpected
+        {
+            TestFile   = "profile_xenix_10Mb.raw.lz",
+            MediaType  = MediaType.GENERIC_HDD,
+            Sectors    = 20216,
+            SectorSize = 512,
+            MD5        = "e98bf459bd20cfb466d92a91086cdaa7"
+        },
+        new BlockImageTestExpected
+        {
+            TestFile   = "profile_xenix.raw.lz",
+            MediaType  = MediaType.GENERIC_HDD,
+            Sectors    = 10108,
+            SectorSize = 512,
+            MD5        = "dd146bc14be87d5ad98b961dd462f469"
+        }
+    };
 }

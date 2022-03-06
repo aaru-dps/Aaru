@@ -37,66 +37,65 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class D88
 {
-    public sealed partial class D88
+    /// <inheritdoc />
+    public bool Identify(IFilter imageFilter)
     {
-        /// <inheritdoc />
-        public bool Identify(IFilter imageFilter)
+        Stream stream = imageFilter.GetDataForkStream();
+        stream.Seek(0, SeekOrigin.Begin);
+
+        // Even if disk name is supposedly ASCII, I'm pretty sure most emulators allow Shift-JIS to be used :p
+        var shiftjis = Encoding.GetEncoding("shift_jis");
+
+        if(stream.Length < Marshal.SizeOf<Header>())
+            return false;
+
+        byte[] hdrB = new byte[Marshal.SizeOf<Header>()];
+        stream.Read(hdrB, 0, hdrB.Length);
+
+        Header hdr = Marshal.ByteArrayToStructureLittleEndian<Header>(hdrB);
+
+        AaruConsole.DebugWriteLine("D88 plugin", "d88hdr.name = \"{0}\"",
+                                   StringHandlers.CToString(hdr.name, shiftjis));
+
+        AaruConsole.DebugWriteLine("D88 plugin", "d88hdr.reserved is empty? = {0}",
+                                   hdr.reserved.SequenceEqual(_reservedEmpty));
+
+        AaruConsole.DebugWriteLine("D88 plugin", "d88hdr.write_protect = 0x{0:X2}", hdr.write_protect);
+
+        AaruConsole.DebugWriteLine("D88 plugin", "d88hdr.disk_type = {0} ({1})", hdr.disk_type,
+                                   (byte)hdr.disk_type);
+
+        AaruConsole.DebugWriteLine("D88 plugin", "d88hdr.disk_size = {0}", hdr.disk_size);
+
+        if(hdr.disk_size != stream.Length)
+            return false;
+
+        if(hdr.disk_type != DiskType.D2  &&
+           hdr.disk_type != DiskType.Dd2 &&
+           hdr.disk_type != DiskType.Hd2)
+            return false;
+
+        if(!hdr.reserved.SequenceEqual(_reservedEmpty))
+            return false;
+
+        int counter = 0;
+
+        foreach(int t in hdr.track_table)
         {
-            Stream stream = imageFilter.GetDataForkStream();
-            stream.Seek(0, SeekOrigin.Begin);
+            if(t > 0)
+                counter++;
 
-            // Even if disk name is supposedly ASCII, I'm pretty sure most emulators allow Shift-JIS to be used :p
-            var shiftjis = Encoding.GetEncoding("shift_jis");
-
-            if(stream.Length < Marshal.SizeOf<Header>())
+            if(t < 0 ||
+               t > stream.Length)
                 return false;
-
-            byte[] hdrB = new byte[Marshal.SizeOf<Header>()];
-            stream.Read(hdrB, 0, hdrB.Length);
-
-            Header hdr = Marshal.ByteArrayToStructureLittleEndian<Header>(hdrB);
-
-            AaruConsole.DebugWriteLine("D88 plugin", "d88hdr.name = \"{0}\"",
-                                       StringHandlers.CToString(hdr.name, shiftjis));
-
-            AaruConsole.DebugWriteLine("D88 plugin", "d88hdr.reserved is empty? = {0}",
-                                       hdr.reserved.SequenceEqual(_reservedEmpty));
-
-            AaruConsole.DebugWriteLine("D88 plugin", "d88hdr.write_protect = 0x{0:X2}", hdr.write_protect);
-
-            AaruConsole.DebugWriteLine("D88 plugin", "d88hdr.disk_type = {0} ({1})", hdr.disk_type,
-                                       (byte)hdr.disk_type);
-
-            AaruConsole.DebugWriteLine("D88 plugin", "d88hdr.disk_size = {0}", hdr.disk_size);
-
-            if(hdr.disk_size != stream.Length)
-                return false;
-
-            if(hdr.disk_type != DiskType.D2  &&
-               hdr.disk_type != DiskType.Dd2 &&
-               hdr.disk_type != DiskType.Hd2)
-                return false;
-
-            if(!hdr.reserved.SequenceEqual(_reservedEmpty))
-                return false;
-
-            int counter = 0;
-
-            foreach(int t in hdr.track_table)
-            {
-                if(t > 0)
-                    counter++;
-
-                if(t < 0 ||
-                   t > stream.Length)
-                    return false;
-            }
-
-            AaruConsole.DebugWriteLine("D88 plugin", "{0} tracks", counter);
-
-            return counter > 0;
         }
+
+        AaruConsole.DebugWriteLine("D88 plugin", "{0} tracks", counter);
+
+        return counter > 0;
     }
 }

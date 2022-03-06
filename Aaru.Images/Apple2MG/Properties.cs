@@ -37,53 +37,52 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 using Schemas;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class Apple2Mg
 {
-    public sealed partial class Apple2Mg
+    /// <inheritdoc />
+    public ImageInfo Info => _imageInfo;
+
+    /// <inheritdoc />
+    public string Name => "Apple 2IMG";
+    /// <inheritdoc />
+    public Guid Id => new Guid("CBAF8824-BA5F-415F-953A-19A03519B2D1");
+    /// <inheritdoc />
+    public string Author => "Natalia Portillo";
+    /// <inheritdoc />
+    public string Format => "Apple 2IMG";
+
+    /// <inheritdoc />
+    public List<DumpHardwareType> DumpHardware => null;
+    /// <inheritdoc />
+    public CICMMetadataType CicmMetadata => null;
+
+    /// <inheritdoc />
+    public IEnumerable<MediaTagType> SupportedMediaTags => new MediaTagType[]
+        {};
+    /// <inheritdoc />
+    public IEnumerable<SectorTagType> SupportedSectorTags => new SectorTagType[]
+        {};
+    /// <inheritdoc />
+    public IEnumerable<MediaType> SupportedMediaTypes => new[]
     {
-        /// <inheritdoc />
-        public ImageInfo Info => _imageInfo;
-
-        /// <inheritdoc />
-        public string Name => "Apple 2IMG";
-        /// <inheritdoc />
-        public Guid Id => new Guid("CBAF8824-BA5F-415F-953A-19A03519B2D1");
-        /// <inheritdoc />
-        public string Author => "Natalia Portillo";
-        /// <inheritdoc />
-        public string Format => "Apple 2IMG";
-
-        /// <inheritdoc />
-        public List<DumpHardwareType> DumpHardware => null;
-        /// <inheritdoc />
-        public CICMMetadataType CicmMetadata => null;
-
-        /// <inheritdoc />
-        public IEnumerable<MediaTagType> SupportedMediaTags => new MediaTagType[]
+        MediaType.Apple32SS, MediaType.Apple33SS, MediaType.AppleSonySS, MediaType.AppleSonyDS, MediaType.DOS_35_HD,
+        MediaType.Unknown, MediaType.GENERIC_HDD, MediaType.FlashDrive, MediaType.CompactFlash,
+        MediaType.CompactFlashType2, MediaType.PCCardTypeI, MediaType.PCCardTypeII, MediaType.PCCardTypeIII,
+        MediaType.PCCardTypeIV
+    };
+    /// <inheritdoc />
+    public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>
+        new (string name, Type type, string description, object @default)[]
             {};
-        /// <inheritdoc />
-        public IEnumerable<SectorTagType> SupportedSectorTags => new SectorTagType[]
-            {};
-        /// <inheritdoc />
-        public IEnumerable<MediaType> SupportedMediaTypes => new[]
-        {
-            MediaType.Apple32SS, MediaType.Apple33SS, MediaType.AppleSonySS, MediaType.AppleSonyDS, MediaType.DOS_35_HD,
-            MediaType.Unknown, MediaType.GENERIC_HDD, MediaType.FlashDrive, MediaType.CompactFlash,
-            MediaType.CompactFlashType2, MediaType.PCCardTypeI, MediaType.PCCardTypeII, MediaType.PCCardTypeIII,
-            MediaType.PCCardTypeIV
-        };
-        /// <inheritdoc />
-        public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>
-            new (string name, Type type, string description, object @default)[]
-                {};
-        /// <inheritdoc />
-        public IEnumerable<string> KnownExtensions => new[]
-        {
-            ".2mg"
-        };
-        /// <inheritdoc />
-        public bool IsWriting { get; private set; }
-        /// <inheritdoc />
-        public string ErrorMessage { get; private set; }
-    }
+    /// <inheritdoc />
+    public IEnumerable<string> KnownExtensions => new[]
+    {
+        ".2mg"
+    };
+    /// <inheritdoc />
+    public bool IsWriting { get; private set; }
+    /// <inheritdoc />
+    public string ErrorMessage { get; private set; }
 }

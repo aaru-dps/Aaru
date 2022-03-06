@@ -33,76 +33,75 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Filters
+namespace Aaru.Tests.Filters;
+
+[TestFixture]
+public class PcExchange
 {
-    [TestFixture]
-    public class PcExchange
+    const    string EXPECTED_FILE     = "348825a08fa84766d20b91ed917012b9";
+    const    string EXPECTED_CONTENTS = "c2be571406cf6353269faa59a4a8c0a4";
+    const    string EXPECTED_RESOURCE = "5cb168d60ce8b2b1b3133c2faaf47165";
+    readonly string _location;
+
+    public PcExchange() =>
+        _location = Path.Combine(Consts.TEST_FILES_ROOT, "Filters", "PC Exchange", "DC6_RW_DOS_720.img");
+
+    [Test]
+    public void CheckContents()
     {
-        const    string EXPECTED_FILE     = "348825a08fa84766d20b91ed917012b9";
-        const    string EXPECTED_CONTENTS = "c2be571406cf6353269faa59a4a8c0a4";
-        const    string EXPECTED_RESOURCE = "5cb168d60ce8b2b1b3133c2faaf47165";
-        readonly string _location;
+        IFilter filter = new Aaru.Filters.PcExchange();
+        filter.Open(_location);
+        Stream str  = filter.GetDataForkStream();
+        byte[] data = new byte[737280];
+        str.Read(data, 0, 737280);
+        str.Close();
+        str.Dispose();
+        filter.Close();
+        string result = Md5Context.Data(data, out _);
+        Assert.AreEqual(EXPECTED_CONTENTS, result);
+    }
 
-        public PcExchange() =>
-            _location = Path.Combine(Consts.TEST_FILES_ROOT, "Filters", "PC Exchange", "DC6_RW_DOS_720.img");
+    [Test]
+    public void CheckCorrectFile()
+    {
+        string result =
+            Md5Context.File(Path.Combine(Consts.TEST_FILES_ROOT, "Filters", "PC Exchange", "FINDER.DAT"), out _);
 
-        [Test]
-        public void CheckContents()
-        {
-            IFilter filter = new Aaru.Filters.PcExchange();
-            filter.Open(_location);
-            Stream str  = filter.GetDataForkStream();
-            byte[] data = new byte[737280];
-            str.Read(data, 0, 737280);
-            str.Close();
-            str.Dispose();
-            filter.Close();
-            string result = Md5Context.Data(data, out _);
-            Assert.AreEqual(EXPECTED_CONTENTS, result);
-        }
+        Assert.AreEqual(EXPECTED_FILE, result);
+    }
 
-        [Test]
-        public void CheckCorrectFile()
-        {
-            string result =
-                Md5Context.File(Path.Combine(Consts.TEST_FILES_ROOT, "Filters", "PC Exchange", "FINDER.DAT"), out _);
+    [Test]
+    public void CheckFilterId()
+    {
+        IFilter filter = new Aaru.Filters.PcExchange();
+        Assert.AreEqual(true, filter.Identify(_location));
+    }
 
-            Assert.AreEqual(EXPECTED_FILE, result);
-        }
+    [Test]
+    public void CheckResource()
+    {
+        IFilter filter = new Aaru.Filters.PcExchange();
+        filter.Open(_location);
+        Stream str  = filter.GetResourceForkStream();
+        byte[] data = new byte[546];
+        str.Read(data, 0, 546);
+        str.Close();
+        str.Dispose();
+        filter.Close();
+        string result = Md5Context.Data(data, out _);
+        Assert.AreEqual(EXPECTED_RESOURCE, result);
+    }
 
-        [Test]
-        public void CheckFilterId()
-        {
-            IFilter filter = new Aaru.Filters.PcExchange();
-            Assert.AreEqual(true, filter.Identify(_location));
-        }
-
-        [Test]
-        public void CheckResource()
-        {
-            IFilter filter = new Aaru.Filters.PcExchange();
-            filter.Open(_location);
-            Stream str  = filter.GetResourceForkStream();
-            byte[] data = new byte[546];
-            str.Read(data, 0, 546);
-            str.Close();
-            str.Dispose();
-            filter.Close();
-            string result = Md5Context.Data(data, out _);
-            Assert.AreEqual(EXPECTED_RESOURCE, result);
-        }
-
-        [Test]
-        public void Test()
-        {
-            IFilter filter = new Aaru.Filters.PcExchange();
-            Assert.AreEqual(ErrorNumber.NoError, filter.Open(_location));
-            Assert.AreEqual(737280, filter.DataForkLength);
-            Assert.AreNotEqual(null, filter.GetDataForkStream());
-            Assert.AreEqual(546, filter.ResourceForkLength);
-            Assert.AreNotEqual(null, filter.GetResourceForkStream());
-            Assert.AreEqual(true, filter.HasResourceFork);
-            filter.Close();
-        }
+    [Test]
+    public void Test()
+    {
+        IFilter filter = new Aaru.Filters.PcExchange();
+        Assert.AreEqual(ErrorNumber.NoError, filter.Open(_location));
+        Assert.AreEqual(737280, filter.DataForkLength);
+        Assert.AreNotEqual(null, filter.GetDataForkStream());
+        Assert.AreEqual(546, filter.ResourceForkLength);
+        Assert.AreNotEqual(null, filter.GetResourceForkStream());
+        Assert.AreEqual(true, filter.HasResourceFork);
+        filter.Close();
     }
 }

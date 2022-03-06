@@ -1,10 +1,9 @@
 using Aaru.CommonTypes.Interfaces;
 
-namespace Aaru.Tests.Images
+namespace Aaru.Tests.Images;
+
+public abstract class BaseMediaImageTest
 {
-    public abstract class BaseMediaImageTest
-    {
-        public abstract string      DataFolder { get; }
-        public abstract IMediaImage _plugin    { get; }
-    }
+    public abstract string      DataFolder { get; }
+    public abstract IMediaImage _plugin    { get; }
 }

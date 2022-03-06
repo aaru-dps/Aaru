@@ -32,33 +32,32 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.DiscImages;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Images.AppleDOS
-{
-    [TestFixture]
-    public class DOS32 : BlockMediaImageTest
-    {
-        public override string DataFolder =>
-            Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "Apple DOS 13 sectors");
-        public override IMediaImage _plugin => new AppleDos();
+namespace Aaru.Tests.Images.AppleDOS;
 
-        public override BlockImageTestExpected[] Tests => new[]
+[TestFixture]
+public class DOS32 : BlockMediaImageTest
+{
+    public override string DataFolder =>
+        Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "Apple DOS 13 sectors");
+    public override IMediaImage _plugin => new AppleDos();
+
+    public override BlockImageTestExpected[] Tests => new[]
+    {
+        new BlockImageTestExpected
         {
-            new BlockImageTestExpected
+            TestFile   = "alice.d13.lz",
+            MediaType  = MediaType.Apple32SS,
+            Sectors    = 455,
+            SectorSize = 256,
+            MD5        = "76f8fe4c5bc1976f99641ad7cdf53109",
+            Partitions = new[]
             {
-                TestFile   = "alice.d13.lz",
-                MediaType  = MediaType.Apple32SS,
-                Sectors    = 455,
-                SectorSize = 256,
-                MD5        = "76f8fe4c5bc1976f99641ad7cdf53109",
-                Partitions = new[]
+                new BlockPartitionVolumes
                 {
-                    new BlockPartitionVolumes
-                    {
-                        Start  = 0,
-                        Length = 455
-                    }
+                    Start  = 0,
+                    Length = 455
                 }
             }
-        };
-    }
+        }
+    };
 }

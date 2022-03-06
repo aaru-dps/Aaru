@@ -34,17 +34,16 @@ using System.Collections.ObjectModel;
 using Aaru.Gui.ViewModels.Panels;
 using Avalonia.Media.Imaging;
 
-namespace Aaru.Gui.Models
+namespace Aaru.Gui.Models;
+
+public sealed class DeviceModel
 {
-    public sealed class DeviceModel
-    {
-        public DeviceModel() => Media = new ObservableCollection<MediaModel>();
+    public DeviceModel() => Media = new ObservableCollection<MediaModel>();
 
-        public Bitmap              Icon      { get; set; }
-        public string              Name      { get; set; }
-        public string              Path      { get; set; }
-        public DeviceInfoViewModel ViewModel { get; set; }
+    public Bitmap              Icon      { get; set; }
+    public string              Name      { get; set; }
+    public string              Path      { get; set; }
+    public DeviceInfoViewModel ViewModel { get; set; }
 
-        public ObservableCollection<MediaModel> Media { get; }
-    }
+    public ObservableCollection<MediaModel> Media { get; }
 }

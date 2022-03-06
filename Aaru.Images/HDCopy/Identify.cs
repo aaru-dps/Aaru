@@ -34,20 +34,19 @@
 using System.IO;
 using Aaru.CommonTypes.Interfaces;
 
-namespace Aaru.DiscImages
-{
-    public sealed partial class HdCopy
-    {
-        /// <inheritdoc />
-        public bool Identify(IFilter imageFilter)
-        {
-            Stream stream          = imageFilter.GetDataForkStream();
-            var    fHeader         = new FileHeader();
-            long   dataStartOffset = 0;
+namespace Aaru.DiscImages;
 
-            // TODO: validate the tracks
-            // For now, having a valid header should be sufficient.
-            return TryReadHeader(stream, ref fHeader, ref dataStartOffset);
-        }
+public sealed partial class HdCopy
+{
+    /// <inheritdoc />
+    public bool Identify(IFilter imageFilter)
+    {
+        Stream stream          = imageFilter.GetDataForkStream();
+        var    fHeader         = new FileHeader();
+        long   dataStartOffset = 0;
+
+        // TODO: validate the tracks
+        // For now, having a valid header should be sufficient.
+        return TryReadHeader(stream, ref fHeader, ref dataStartOffset);
     }
 }

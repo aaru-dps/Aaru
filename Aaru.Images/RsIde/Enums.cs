@@ -32,14 +32,13 @@
 
 using System;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class RsIde
 {
-    public sealed partial class RsIde
+    [Flags]
+    enum RsIdeFlags : byte
     {
-        [Flags]
-        enum RsIdeFlags : byte
-        {
-            HalfSectors = 1
-        }
+        HalfSectors = 1
     }
 }

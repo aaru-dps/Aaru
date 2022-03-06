@@ -32,31 +32,30 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Filesystems.UDF._200
-{
-    [TestFixture]
-    public class Optical : FilesystemTest
-    {
-        public override string DataFolder =>
-            Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Universal Disc Format", "2.00");
-        public override IFilesystem Plugin     => new Aaru.Filesystems.UDF();
-        public override bool        Partitions => false;
+namespace Aaru.Tests.Filesystems.UDF._200;
 
-        public override FileSystemTest[] Tests => new[]
+[TestFixture]
+public class Optical : FilesystemTest
+{
+    public override string DataFolder =>
+        Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Universal Disc Format", "2.00");
+    public override IFilesystem Plugin     => new Aaru.Filesystems.UDF();
+    public override bool        Partitions => false;
+
+    public override FileSystemTest[] Tests => new[]
+    {
+        new FileSystemTest
         {
-            new FileSystemTest
-            {
-                TestFile     = "ecs20.aif",
-                MediaType    = MediaType.DVDPR,
-                Sectors      = 2295104,
-                SectorSize   = 2048,
-                Clusters     = 2295104,
-                ClusterSize  = 2048,
-                SystemId     = "*ExpressUDF",
-                Type         = "UDF v2.01",
-                VolumeName   = "UDF5A5DEF48",
-                VolumeSerial = "Volume Set ID not specified"
-            }
-        };
-    }
+            TestFile     = "ecs20.aif",
+            MediaType    = MediaType.DVDPR,
+            Sectors      = 2295104,
+            SectorSize   = 2048,
+            Clusters     = 2295104,
+            ClusterSize  = 2048,
+            SystemId     = "*ExpressUDF",
+            Type         = "UDF v2.01",
+            VolumeName   = "UDF5A5DEF48",
+            VolumeSerial = "Volume Set ID not specified"
+        }
+    };
 }

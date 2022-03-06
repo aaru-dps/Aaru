@@ -36,33 +36,32 @@ using Avalonia.Controls;
 using Avalonia.Controls.Templates;
 using JetBrains.Annotations;
 
-namespace Aaru.Gui
+namespace Aaru.Gui;
+
+public sealed class ViewLocator : IDataTemplate
 {
-    public sealed class ViewLocator : IDataTemplate
+    public bool SupportsRecycling => false;
+
+    [CanBeNull]
+    public IControl Build([NotNull] object data)
     {
-        public bool SupportsRecycling => false;
+        string name = data.GetType().FullName?.Replace("ViewModel", "View");
 
-        [CanBeNull]
-        public IControl Build([NotNull] object data)
+        if(name is null)
+            return null;
+
+        var type = Type.GetType(name);
+
+        if(type != null)
         {
-            string name = data.GetType().FullName?.Replace("ViewModel", "View");
-
-            if(name is null)
-                return null;
-
-            var type = Type.GetType(name);
-
-            if(type != null)
-            {
-                return (Control)Activator.CreateInstance(type);
-            }
-
-            return new TextBlock
-            {
-                Text = "Not Found: " + name
-            };
+            return (Control)Activator.CreateInstance(type);
         }
 
-        public bool Match(object data) => data is ViewModelBase;
+        return new TextBlock
+        {
+            Text = "Not Found: " + name
+        };
     }
+
+    public bool Match(object data) => data is ViewModelBase;
 }

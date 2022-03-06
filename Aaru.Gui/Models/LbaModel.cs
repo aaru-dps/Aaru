@@ -30,10 +30,9 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Gui.Models
+namespace Aaru.Gui.Models;
+
+public sealed class LbaModel
 {
-    public sealed class LbaModel
-    {
-        public string Lba { get; set; }
-    }
+    public string Lba { get; set; }
 }

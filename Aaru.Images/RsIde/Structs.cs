@@ -32,22 +32,21 @@
 
 using System.Runtime.InteropServices;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class RsIde
 {
-    public sealed partial class RsIde
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    struct Header
     {
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct Header
-        {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 7)]
-            public byte[] magic;
-            public byte       revision;
-            public RsIdeFlags flags;
-            public ushort     dataOff;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 11)]
-            public byte[] reserved;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 106)]
-            public byte[] identify;
-        }
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 7)]
+        public byte[] magic;
+        public byte       revision;
+        public RsIdeFlags flags;
+        public ushort     dataOff;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 11)]
+        public byte[] reserved;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 106)]
+        public byte[] identify;
     }
 }

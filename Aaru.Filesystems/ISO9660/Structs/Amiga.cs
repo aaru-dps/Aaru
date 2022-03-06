@@ -33,29 +33,28 @@
 
 using System.Runtime.InteropServices;
 
-namespace Aaru.Filesystems
+namespace Aaru.Filesystems;
+
+public sealed partial class ISO9660
 {
-    public sealed partial class ISO9660
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct AmigaEntry
     {
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        readonly struct AmigaEntry
-        {
-            public readonly ushort     signature;
-            public readonly byte       length;
-            public readonly byte       version;
-            public readonly AmigaFlags flags;
+        public readonly ushort     signature;
+        public readonly byte       length;
+        public readonly byte       version;
+        public readonly AmigaFlags flags;
 
-            // Followed by AmigaProtection if present
-            // Followed by length-prefixed string for comment if present
-        }
+        // Followed by AmigaProtection if present
+        // Followed by length-prefixed string for comment if present
+    }
 
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        readonly struct AmigaProtection
-        {
-            public readonly byte            User;
-            public readonly byte            Reserved;
-            public readonly AmigaMultiuser  Multiuser;
-            public readonly AmigaAttributes Protection;
-        }
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct AmigaProtection
+    {
+        public readonly byte            User;
+        public readonly byte            Reserved;
+        public readonly AmigaMultiuser  Multiuser;
+        public readonly AmigaAttributes Protection;
     }
 }

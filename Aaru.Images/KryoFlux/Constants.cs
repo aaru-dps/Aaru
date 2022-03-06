@@ -32,20 +32,19 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+[SuppressMessage("ReSharper", "UnusedMember.Local")]
+public sealed partial class KryoFlux
 {
-    [SuppressMessage("ReSharper", "UnusedMember.Local")]
-    public sealed partial class KryoFlux
-    {
-        const string HOST_DATE  = "host_date";
-        const string HOST_TIME  = "host_time";
-        const string KF_NAME    = "name";
-        const string KF_VERSION = "version";
-        const string KF_DATE    = "date";
-        const string KF_TIME    = "time";
-        const string KF_HW_ID   = "hwid";
-        const string KF_HW_RV   = "hwrv";
-        const string KF_SCK     = "sck";
-        const string KF_ICK     = "ick";
-    }
+    const string HOST_DATE  = "host_date";
+    const string HOST_TIME  = "host_time";
+    const string KF_NAME    = "name";
+    const string KF_VERSION = "version";
+    const string KF_DATE    = "date";
+    const string KF_TIME    = "time";
+    const string KF_HW_ID   = "hwid";
+    const string KF_HW_RV   = "hwrv";
+    const string KF_SCK     = "sck";
+    const string KF_ICK     = "ick";
 }

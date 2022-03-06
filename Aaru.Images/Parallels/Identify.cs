@@ -35,24 +35,23 @@ using System.Linq;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class Parallels
 {
-    public sealed partial class Parallels
+    /// <inheritdoc />
+    public bool Identify(IFilter imageFilter)
     {
-        /// <inheritdoc />
-        public bool Identify(IFilter imageFilter)
-        {
-            Stream stream = imageFilter.GetDataForkStream();
-            stream.Seek(0, SeekOrigin.Begin);
+        Stream stream = imageFilter.GetDataForkStream();
+        stream.Seek(0, SeekOrigin.Begin);
 
-            if(stream.Length < 512)
-                return false;
+        if(stream.Length < 512)
+            return false;
 
-            byte[] pHdrB = new byte[Marshal.SizeOf<Header>()];
-            stream.Read(pHdrB, 0, Marshal.SizeOf<Header>());
-            _pHdr = Marshal.ByteArrayToStructureLittleEndian<Header>(pHdrB);
+        byte[] pHdrB = new byte[Marshal.SizeOf<Header>()];
+        stream.Read(pHdrB, 0, Marshal.SizeOf<Header>());
+        _pHdr = Marshal.ByteArrayToStructureLittleEndian<Header>(pHdrB);
 
-            return _magic.SequenceEqual(_pHdr.magic) || _extMagic.SequenceEqual(_pHdr.magic);
-        }
+        return _magic.SequenceEqual(_pHdr.magic) || _extMagic.SequenceEqual(_pHdr.magic);
     }
 }

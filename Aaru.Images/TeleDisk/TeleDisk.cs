@@ -36,54 +36,53 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+// Created following notes from Dave Dunfield
+// http://www.classiccmp.org/dunfield/img54306/td0notes.txt
+/// <summary>Implements reading of Sydex TeleDisk disk images</summary>
+public sealed partial class TeleDisk : IMediaImage, IVerifiableImage, IVerifiableSectorsImage
 {
-    // Created following notes from Dave Dunfield
-    // http://www.classiccmp.org/dunfield/img54306/td0notes.txt
-    /// <summary>Implements reading of Sydex TeleDisk disk images</summary>
-    public sealed partial class TeleDisk : IMediaImage, IVerifiableImage, IVerifiableSectorsImage
+    readonly List<ulong> _sectorsWhereCrcHasFailed;
+    bool                 _aDiskCrcHasFailed;
+    byte[]               _commentBlock;
+    CommentBlockHeader   _commentHeader;
+    Header               _header;
+    ImageInfo            _imageInfo;
+    Stream               _inStream;
+    byte[]               _leadOut;
+
+    // Cylinder by head, sector data matrix
+    byte[][][][] _sectorsData;
+
+    // LBA, data
+    uint _totalDiskSize;
+
+    public TeleDisk()
     {
-        readonly List<ulong> _sectorsWhereCrcHasFailed;
-        bool                 _aDiskCrcHasFailed;
-        byte[]               _commentBlock;
-        CommentBlockHeader   _commentHeader;
-        Header               _header;
-        ImageInfo            _imageInfo;
-        Stream               _inStream;
-        byte[]               _leadOut;
-
-        // Cylinder by head, sector data matrix
-        byte[][][][] _sectorsData;
-
-        // LBA, data
-        uint _totalDiskSize;
-
-        public TeleDisk()
+        _imageInfo = new ImageInfo
         {
-            _imageInfo = new ImageInfo
-            {
-                ReadableSectorTags    = new List<SectorTagType>(),
-                ReadableMediaTags     = new List<MediaTagType>(),
-                HasPartitions         = false,
-                HasSessions           = false,
-                Application           = "Sydex TeleDisk",
-                Comments              = null,
-                Creator               = null,
-                MediaManufacturer     = null,
-                MediaModel            = null,
-                MediaSerialNumber     = null,
-                MediaBarcode          = null,
-                MediaPartNumber       = null,
-                MediaSequence         = 0,
-                LastMediaSequence     = 0,
-                DriveManufacturer     = null,
-                DriveModel            = null,
-                DriveSerialNumber     = null,
-                DriveFirmwareRevision = null
-            };
+            ReadableSectorTags    = new List<SectorTagType>(),
+            ReadableMediaTags     = new List<MediaTagType>(),
+            HasPartitions         = false,
+            HasSessions           = false,
+            Application           = "Sydex TeleDisk",
+            Comments              = null,
+            Creator               = null,
+            MediaManufacturer     = null,
+            MediaModel            = null,
+            MediaSerialNumber     = null,
+            MediaBarcode          = null,
+            MediaPartNumber       = null,
+            MediaSequence         = 0,
+            LastMediaSequence     = 0,
+            DriveManufacturer     = null,
+            DriveModel            = null,
+            DriveSerialNumber     = null,
+            DriveFirmwareRevision = null
+        };
 
-            _aDiskCrcHasFailed        = false;
-            _sectorsWhereCrcHasFailed = new List<ulong>();
-        }
+        _aDiskCrcHasFailed        = false;
+        _sectorsWhereCrcHasFailed = new List<ulong>();
     }
 }

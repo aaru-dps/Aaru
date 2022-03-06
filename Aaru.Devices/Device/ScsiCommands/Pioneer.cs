@@ -32,139 +32,138 @@
 
 using Aaru.Console;
 
-namespace Aaru.Devices
+namespace Aaru.Devices;
+
+public sealed partial class Device
 {
-    public sealed partial class Device
+    /// <summary>Sends the Pioneer READ CD-DA command</summary>
+    /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
+    /// <param name="buffer">Buffer where the Pioneer READ CD-DA response will be stored</param>
+    /// <param name="senseBuffer">Sense buffer.</param>
+    /// <param name="timeout">Timeout in seconds.</param>
+    /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
+    /// <param name="lba">Start block address.</param>
+    /// <param name="transferLength">How many blocks to read.</param>
+    /// <param name="blockSize">Block size.</param>
+    /// <param name="subchannel">Subchannel selection.</param>
+    public bool PioneerReadCdDa(out byte[] buffer, out byte[] senseBuffer, uint lba, uint blockSize,
+                                uint transferLength, PioneerSubchannel subchannel, uint timeout,
+                                out double duration)
     {
-        /// <summary>Sends the Pioneer READ CD-DA command</summary>
-        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
-        /// <param name="buffer">Buffer where the Pioneer READ CD-DA response will be stored</param>
-        /// <param name="senseBuffer">Sense buffer.</param>
-        /// <param name="timeout">Timeout in seconds.</param>
-        /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
-        /// <param name="lba">Start block address.</param>
-        /// <param name="transferLength">How many blocks to read.</param>
-        /// <param name="blockSize">Block size.</param>
-        /// <param name="subchannel">Subchannel selection.</param>
-        public bool PioneerReadCdDa(out byte[] buffer, out byte[] senseBuffer, uint lba, uint blockSize,
-                                    uint transferLength, PioneerSubchannel subchannel, uint timeout,
-                                    out double duration)
+        senseBuffer = new byte[64];
+        byte[] cdb = new byte[12];
+
+        cdb[0]  = (byte)ScsiCommands.ReadCdDa;
+        cdb[2]  = (byte)((lba & 0xFF000000) >> 24);
+        cdb[3]  = (byte)((lba & 0xFF0000)   >> 16);
+        cdb[4]  = (byte)((lba & 0xFF00)     >> 8);
+        cdb[5]  = (byte)(lba & 0xFF);
+        cdb[7]  = (byte)((transferLength & 0xFF0000) >> 16);
+        cdb[8]  = (byte)((transferLength & 0xFF00)   >> 8);
+        cdb[9]  = (byte)(transferLength & 0xFF);
+        cdb[10] = (byte)subchannel;
+
+        buffer = new byte[blockSize * transferLength];
+
+        LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+                                    out bool sense);
+
+        Error = LastError != 0;
+
+        AaruConsole.DebugWriteLine("SCSI Device", "PIONEER READ CD-DA took {0} ms.", duration);
+
+        return sense;
+    }
+
+    /// <summary>Sends the Pioneer READ CD-DA MSF command</summary>
+    /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
+    /// <param name="buffer">Buffer where the Pioneer READ CD-DA MSF response will be stored</param>
+    /// <param name="senseBuffer">Sense buffer.</param>
+    /// <param name="timeout">Timeout in seconds.</param>
+    /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
+    /// <param name="startMsf">Start MM:SS:FF of read encoded as 0x00MMSSFF.</param>
+    /// <param name="endMsf">End MM:SS:FF of read encoded as 0x00MMSSFF.</param>
+    /// <param name="blockSize">Block size.</param>
+    /// <param name="subchannel">Subchannel selection.</param>
+    public bool PioneerReadCdDaMsf(out byte[] buffer, out byte[] senseBuffer, uint startMsf, uint endMsf,
+                                   uint blockSize, PioneerSubchannel subchannel, uint timeout, out double duration)
+    {
+        senseBuffer = new byte[64];
+        byte[] cdb = new byte[12];
+
+        cdb[0]  = (byte)ScsiCommands.ReadCdDaMsf;
+        cdb[3]  = (byte)((startMsf & 0xFF0000) >> 16);
+        cdb[4]  = (byte)((startMsf & 0xFF00)   >> 8);
+        cdb[5]  = (byte)(startMsf & 0xFF);
+        cdb[7]  = (byte)((endMsf & 0xFF0000) >> 16);
+        cdb[8]  = (byte)((endMsf & 0xFF00)   >> 8);
+        cdb[9]  = (byte)(endMsf & 0xFF);
+        cdb[10] = (byte)subchannel;
+
+        uint transferLength = (uint)(((cdb[7] - cdb[3]) * 60 * 75) + ((cdb[8] - cdb[4]) * 75) + (cdb[9] - cdb[5]));
+        buffer = new byte[blockSize * transferLength];
+
+        LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+                                    out bool sense);
+
+        Error = LastError != 0;
+
+        AaruConsole.DebugWriteLine("SCSI Device", "PIONEER READ CD-DA MSF took {0} ms.", duration);
+
+        return sense;
+    }
+
+    /// <summary>Sends the Pioneer READ CD-XA command</summary>
+    /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
+    /// <param name="buffer">Buffer where the Pioneer READ CD-XA response will be stored</param>
+    /// <param name="senseBuffer">Sense buffer.</param>
+    /// <param name="timeout">Timeout in seconds.</param>
+    /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
+    /// <param name="errorFlags">
+    ///     If set to <c>true</c>, returns all sector data with 294 bytes of error flags. Superseedes
+    ///     <paramref name="wholeSector" />
+    /// </param>
+    /// <param name="wholeSector">If set to <c>true</c>, returns all 2352 bytes of sector data.</param>
+    /// <param name="lba">Start block address.</param>
+    /// <param name="transferLength">How many blocks to read.</param>
+    public bool PioneerReadCdXa(out byte[] buffer, out byte[] senseBuffer, uint lba, uint transferLength,
+                                bool errorFlags, bool wholeSector, uint timeout, out double duration)
+    {
+        senseBuffer = new byte[64];
+        byte[] cdb = new byte[12];
+
+        cdb[0] = (byte)ScsiCommands.ReadCdXa;
+        cdb[2] = (byte)((lba & 0xFF000000) >> 24);
+        cdb[3] = (byte)((lba & 0xFF0000)   >> 16);
+        cdb[4] = (byte)((lba & 0xFF00)     >> 8);
+        cdb[5] = (byte)(lba & 0xFF);
+        cdb[7] = (byte)((transferLength & 0xFF0000) >> 16);
+        cdb[8] = (byte)((transferLength & 0xFF00)   >> 8);
+        cdb[9] = (byte)(transferLength & 0xFF);
+
+        if(errorFlags)
         {
-            senseBuffer = new byte[64];
-            byte[] cdb = new byte[12];
-
-            cdb[0]  = (byte)ScsiCommands.ReadCdDa;
-            cdb[2]  = (byte)((lba & 0xFF000000) >> 24);
-            cdb[3]  = (byte)((lba & 0xFF0000)   >> 16);
-            cdb[4]  = (byte)((lba & 0xFF00)     >> 8);
-            cdb[5]  = (byte)(lba & 0xFF);
-            cdb[7]  = (byte)((transferLength & 0xFF0000) >> 16);
-            cdb[8]  = (byte)((transferLength & 0xFF00)   >> 8);
-            cdb[9]  = (byte)(transferLength & 0xFF);
-            cdb[10] = (byte)subchannel;
-
-            buffer = new byte[blockSize * transferLength];
-
-            LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
-                                        out bool sense);
-
-            Error = LastError != 0;
-
-            AaruConsole.DebugWriteLine("SCSI Device", "PIONEER READ CD-DA took {0} ms.", duration);
-
-            return sense;
+            buffer = new byte[2646 * transferLength];
+            cdb[6] = 0x1F;
+        }
+        else if(wholeSector)
+        {
+            buffer = new byte[2352 * transferLength];
+            cdb[6] = 0x0F;
+        }
+        else
+        {
+            buffer = new byte[2048 * transferLength];
+            cdb[6] = 0x00;
         }
 
-        /// <summary>Sends the Pioneer READ CD-DA MSF command</summary>
-        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
-        /// <param name="buffer">Buffer where the Pioneer READ CD-DA MSF response will be stored</param>
-        /// <param name="senseBuffer">Sense buffer.</param>
-        /// <param name="timeout">Timeout in seconds.</param>
-        /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
-        /// <param name="startMsf">Start MM:SS:FF of read encoded as 0x00MMSSFF.</param>
-        /// <param name="endMsf">End MM:SS:FF of read encoded as 0x00MMSSFF.</param>
-        /// <param name="blockSize">Block size.</param>
-        /// <param name="subchannel">Subchannel selection.</param>
-        public bool PioneerReadCdDaMsf(out byte[] buffer, out byte[] senseBuffer, uint startMsf, uint endMsf,
-                                       uint blockSize, PioneerSubchannel subchannel, uint timeout, out double duration)
-        {
-            senseBuffer = new byte[64];
-            byte[] cdb = new byte[12];
+        LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+                                    out bool sense);
 
-            cdb[0]  = (byte)ScsiCommands.ReadCdDaMsf;
-            cdb[3]  = (byte)((startMsf & 0xFF0000) >> 16);
-            cdb[4]  = (byte)((startMsf & 0xFF00)   >> 8);
-            cdb[5]  = (byte)(startMsf & 0xFF);
-            cdb[7]  = (byte)((endMsf & 0xFF0000) >> 16);
-            cdb[8]  = (byte)((endMsf & 0xFF00)   >> 8);
-            cdb[9]  = (byte)(endMsf & 0xFF);
-            cdb[10] = (byte)subchannel;
+        Error = LastError != 0;
 
-            uint transferLength = (uint)(((cdb[7] - cdb[3]) * 60 * 75) + ((cdb[8] - cdb[4]) * 75) + (cdb[9] - cdb[5]));
-            buffer = new byte[blockSize * transferLength];
+        AaruConsole.DebugWriteLine("SCSI Device", "PIONEER READ CD-XA took {0} ms.", duration);
 
-            LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
-                                        out bool sense);
-
-            Error = LastError != 0;
-
-            AaruConsole.DebugWriteLine("SCSI Device", "PIONEER READ CD-DA MSF took {0} ms.", duration);
-
-            return sense;
-        }
-
-        /// <summary>Sends the Pioneer READ CD-XA command</summary>
-        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
-        /// <param name="buffer">Buffer where the Pioneer READ CD-XA response will be stored</param>
-        /// <param name="senseBuffer">Sense buffer.</param>
-        /// <param name="timeout">Timeout in seconds.</param>
-        /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
-        /// <param name="errorFlags">
-        ///     If set to <c>true</c>, returns all sector data with 294 bytes of error flags. Superseedes
-        ///     <paramref name="wholeSector" />
-        /// </param>
-        /// <param name="wholeSector">If set to <c>true</c>, returns all 2352 bytes of sector data.</param>
-        /// <param name="lba">Start block address.</param>
-        /// <param name="transferLength">How many blocks to read.</param>
-        public bool PioneerReadCdXa(out byte[] buffer, out byte[] senseBuffer, uint lba, uint transferLength,
-                                    bool errorFlags, bool wholeSector, uint timeout, out double duration)
-        {
-            senseBuffer = new byte[64];
-            byte[] cdb = new byte[12];
-
-            cdb[0] = (byte)ScsiCommands.ReadCdXa;
-            cdb[2] = (byte)((lba & 0xFF000000) >> 24);
-            cdb[3] = (byte)((lba & 0xFF0000)   >> 16);
-            cdb[4] = (byte)((lba & 0xFF00)     >> 8);
-            cdb[5] = (byte)(lba & 0xFF);
-            cdb[7] = (byte)((transferLength & 0xFF0000) >> 16);
-            cdb[8] = (byte)((transferLength & 0xFF00)   >> 8);
-            cdb[9] = (byte)(transferLength & 0xFF);
-
-            if(errorFlags)
-            {
-                buffer = new byte[2646 * transferLength];
-                cdb[6] = 0x1F;
-            }
-            else if(wholeSector)
-            {
-                buffer = new byte[2352 * transferLength];
-                cdb[6] = 0x0F;
-            }
-            else
-            {
-                buffer = new byte[2048 * transferLength];
-                cdb[6] = 0x00;
-            }
-
-            LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
-                                        out bool sense);
-
-            Error = LastError != 0;
-
-            AaruConsole.DebugWriteLine("SCSI Device", "PIONEER READ CD-XA took {0} ms.", duration);
-
-            return sense;
-        }
+        return sense;
     }
 }

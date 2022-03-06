@@ -35,23 +35,22 @@ using System.Collections.Generic;
 using Aaru.CommonTypes.Structs;
 using Schemas;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class Dim
 {
-    public sealed partial class Dim
-    {
-        /// <inheritdoc />
-        public string Name => "DIM Disk Image";
-        /// <inheritdoc />
-        public Guid Id => new("0240B7B1-E959-4CDC-B0BD-386D6E467B88");
-        /// <inheritdoc />
-        public ImageInfo Info => _imageInfo;
-        /// <inheritdoc />
-        public string Author => "Natalia Portillo";
-        /// <inheritdoc />
-        public string Format => "DIM disk image";
-        /// <inheritdoc />
-        public List<DumpHardwareType> DumpHardware => null;
-        /// <inheritdoc />
-        public CICMMetadataType CicmMetadata => null;
-    }
+    /// <inheritdoc />
+    public string Name => "DIM Disk Image";
+    /// <inheritdoc />
+    public Guid Id => new("0240B7B1-E959-4CDC-B0BD-386D6E467B88");
+    /// <inheritdoc />
+    public ImageInfo Info => _imageInfo;
+    /// <inheritdoc />
+    public string Author => "Natalia Portillo";
+    /// <inheritdoc />
+    public string Format => "DIM disk image";
+    /// <inheritdoc />
+    public List<DumpHardwareType> DumpHardware => null;
+    /// <inheritdoc />
+    public CICMMetadataType CicmMetadata => null;
 }

@@ -29,61 +29,60 @@
 using Aaru.Console;
 using Aaru.Devices;
 
-namespace Aaru.Tests.Devices
+namespace Aaru.Tests.Devices;
+
+internal static partial class ScsiMmc
 {
-    internal static partial class ScsiMmc
+    public static void Menu(string devPath, Device dev)
     {
-        public static void Menu(string devPath, Device dev)
+        while(true)
         {
-            while(true)
+            System.Console.Clear();
+            AaruConsole.WriteLine("Device: {0}", devPath);
+            AaruConsole.WriteLine("Send a special SCSI MultiMedia command to the device:");
+
+            AaruConsole.
+                WriteLine("1.- Try to read the cache data from a device with a MediaTek chipset (F1h command 06h subcommand).");
+
+            AaruConsole.WriteLine("2.- Try to read a GD-ROM using a trap disc.");
+            AaruConsole.WriteLine("3.- Try to read Lead-Out using a trap disc.");
+
+            AaruConsole.WriteLine("0.- Return to command class menu.");
+            AaruConsole.Write("Choose: ");
+
+            string strDev = System.Console.ReadLine();
+
+            if(!int.TryParse(strDev, out int item))
             {
-                System.Console.Clear();
-                AaruConsole.WriteLine("Device: {0}", devPath);
-                AaruConsole.WriteLine("Send a special SCSI MultiMedia command to the device:");
+                AaruConsole.WriteLine("Not a number. Press any key to continue...");
+                System.Console.ReadKey();
 
-                AaruConsole.
-                    WriteLine("1.- Try to read the cache data from a device with a MediaTek chipset (F1h command 06h subcommand).");
+                continue;
+            }
 
-                AaruConsole.WriteLine("2.- Try to read a GD-ROM using a trap disc.");
-                AaruConsole.WriteLine("3.- Try to read Lead-Out using a trap disc.");
+            switch(item)
+            {
+                case 0:
+                    AaruConsole.WriteLine("Returning to command class menu...");
 
-                AaruConsole.WriteLine("0.- Return to command class menu.");
-                AaruConsole.Write("Choose: ");
+                    return;
+                case 1:
+                    MediaTekReadCache(devPath, dev);
 
-                string strDev = System.Console.ReadLine();
+                    continue;
+                case 2:
+                    CheckGdromReadability(devPath, dev);
 
-                if(!int.TryParse(strDev, out int item))
-                {
-                    AaruConsole.WriteLine("Not a number. Press any key to continue...");
+                    continue;
+                case 3:
+                    ReadLeadOutUsingTrapDisc(devPath, dev);
+
+                    continue;
+                default:
+                    AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
                     System.Console.ReadKey();
 
                     continue;
-                }
-
-                switch(item)
-                {
-                    case 0:
-                        AaruConsole.WriteLine("Returning to command class menu...");
-
-                        return;
-                    case 1:
-                        MediaTekReadCache(devPath, dev);
-
-                        continue;
-                    case 2:
-                        CheckGdromReadability(devPath, dev);
-
-                        continue;
-                    case 3:
-                        ReadLeadOutUsingTrapDisc(devPath, dev);
-
-                        continue;
-                    default:
-                        AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                        System.Console.ReadKey();
-
-                        continue;
-                }
             }
         }
     }

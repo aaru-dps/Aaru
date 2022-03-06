@@ -40,92 +40,91 @@ using Aaru.Devices;
 using JetBrains.Annotations;
 using Spectre.Console;
 
-namespace Aaru.Commands.Device
+namespace Aaru.Commands.Device;
+
+internal sealed class ListDevicesCommand : Command
 {
-    internal sealed class ListDevicesCommand : Command
+    public ListDevicesCommand() : base("list", "Lists all connected devices.")
     {
-        public ListDevicesCommand() : base("list", "Lists all connected devices.")
+        AddArgument(new Argument<string>
         {
-            AddArgument(new Argument<string>
+            Arity       = ArgumentArity.ZeroOrOne,
+            Description = "aaruremote host",
+            Name        = "aaru-remote-host"
+        });
+
+        Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
+    }
+
+    public static int Invoke(bool debug, bool verbose, [CanBeNull] string aaruRemoteHost)
+    {
+        MainClass.PrintCopyright();
+
+        if(debug)
+        {
+            IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
             {
-                Arity       = ArgumentArity.ZeroOrOne,
-                Description = "aaruremote host",
-                Name        = "aaru-remote-host"
+                Out = new AnsiConsoleOutput(System.Console.Error)
             });
 
-            Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
+            AaruConsole.DebugWriteLineEvent += (format, objects) =>
+            {
+                if(objects is null)
+                    stderrConsole.MarkupLine(format);
+                else
+                    stderrConsole.MarkupLine(format, objects);
+            };
         }
 
-        public static int Invoke(bool debug, bool verbose, [CanBeNull] string aaruRemoteHost)
+        if(verbose)
+            AaruConsole.WriteEvent += (format, objects) =>
+            {
+                if(objects is null)
+                    AnsiConsole.Markup(format);
+                else
+                    AnsiConsole.Markup(format, objects);
+            };
+
+        Statistics.AddCommand("list-devices");
+
+        AaruConsole.DebugWriteLine("List-Devices command", "--debug={0}", debug);
+        AaruConsole.DebugWriteLine("List-Devices command", "--verbose={0}", verbose);
+
+        DeviceInfo[] devices = Devices.Device.ListDevices(out bool isRemote, out string serverApplication,
+                                                          out string serverVersion,
+                                                          out string serverOperatingSystem,
+                                                          out string serverOperatingSystemVersion,
+                                                          out string serverArchitecture, aaruRemoteHost);
+
+        if(isRemote)
         {
-            MainClass.PrintCopyright();
-
-            if(debug)
-            {
-                IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
-                {
-                    Out = new AnsiConsoleOutput(System.Console.Error)
-                });
-
-                AaruConsole.DebugWriteLineEvent += (format, objects) =>
-                {
-                    if(objects is null)
-                        stderrConsole.MarkupLine(format);
-                    else
-                        stderrConsole.MarkupLine(format, objects);
-                };
-            }
-
-            if(verbose)
-                AaruConsole.WriteEvent += (format, objects) =>
-                {
-                    if(objects is null)
-                        AnsiConsole.Markup(format);
-                    else
-                        AnsiConsole.Markup(format, objects);
-                };
-
-            Statistics.AddCommand("list-devices");
-
-            AaruConsole.DebugWriteLine("List-Devices command", "--debug={0}", debug);
-            AaruConsole.DebugWriteLine("List-Devices command", "--verbose={0}", verbose);
-
-            DeviceInfo[] devices = Devices.Device.ListDevices(out bool isRemote, out string serverApplication,
-                                                              out string serverVersion,
-                                                              out string serverOperatingSystem,
-                                                              out string serverOperatingSystemVersion,
-                                                              out string serverArchitecture, aaruRemoteHost);
-
-            if(isRemote)
-            {
-                Statistics.AddRemote(serverApplication, serverVersion, serverOperatingSystem,
-                                     serverOperatingSystemVersion, serverArchitecture);
-            }
-
-            if(devices        == null ||
-               devices.Length == 0)
-            {
-                AaruConsole.WriteLine("No known devices attached.");
-            }
-            else
-            {
-                Table table = new();
-                table.AddColumn("Path");
-                table.AddColumn("Vendor");
-                table.AddColumn("Model");
-                table.AddColumn("Serial");
-                table.AddColumn("Bus");
-                table.AddColumn("Supported?");
-
-                foreach(DeviceInfo dev in devices.OrderBy(d => d.Path))
-                    table.AddRow(Markup.Escape(dev.Path  ?? ""), Markup.Escape(dev.Vendor ?? ""),
-                                 Markup.Escape(dev.Model ?? ""), Markup.Escape(dev.Serial ?? ""),
-                                 Markup.Escape(dev.Bus   ?? ""), dev.Supported ? "[green]✓[/]" : "[red]✗[/]");
-
-                AnsiConsole.Render(table);
-            }
-
-            return (int)ErrorNumber.NoError;
+            Statistics.AddRemote(serverApplication, serverVersion, serverOperatingSystem,
+                                 serverOperatingSystemVersion, serverArchitecture);
         }
+
+        if(devices        == null ||
+           devices.Length == 0)
+        {
+            AaruConsole.WriteLine("No known devices attached.");
+        }
+        else
+        {
+            Table table = new();
+            table.AddColumn("Path");
+            table.AddColumn("Vendor");
+            table.AddColumn("Model");
+            table.AddColumn("Serial");
+            table.AddColumn("Bus");
+            table.AddColumn("Supported?");
+
+            foreach(DeviceInfo dev in devices.OrderBy(d => d.Path))
+                table.AddRow(Markup.Escape(dev.Path  ?? ""), Markup.Escape(dev.Vendor ?? ""),
+                             Markup.Escape(dev.Model ?? ""), Markup.Escape(dev.Serial ?? ""),
+                             Markup.Escape(dev.Bus   ?? ""), dev.Supported ? "[green]✓[/]" : "[red]✗[/]");
+
+            AnsiConsole.Render(table);
+        }
+
+        return (int)ErrorNumber.NoError;
     }
 }

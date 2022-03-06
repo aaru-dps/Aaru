@@ -32,28 +32,27 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Filesystems.UFS
-{
-    [TestFixture]
-    public class RDB : FilesystemTest
-    {
-        public override string DataFolder =>
-            Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "UNIX filesystem (RDB)");
-        public override IFilesystem Plugin     => new FFSPlugin();
-        public override bool        Partitions => true;
+namespace Aaru.Tests.Filesystems.UFS;
 
-        public override FileSystemTest[] Tests => new[]
+[TestFixture]
+public class RDB : FilesystemTest
+{
+    public override string DataFolder =>
+        Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "UNIX filesystem (RDB)");
+    public override IFilesystem Plugin     => new FFSPlugin();
+    public override bool        Partitions => true;
+
+    public override FileSystemTest[] Tests => new[]
+    {
+        new FileSystemTest
         {
-            new FileSystemTest
-            {
-                TestFile    = "amix.aif",
-                MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 1024128,
-                SectorSize  = 512,
-                Clusters    = 511424,
-                ClusterSize = 1024,
-                Type        = "UFS"
-            }
-        };
-    }
+            TestFile    = "amix.aif",
+            MediaType   = MediaType.GENERIC_HDD,
+            Sectors     = 1024128,
+            SectorSize  = 512,
+            Clusters    = 511424,
+            ClusterSize = 1024,
+            Type        = "UFS"
+        }
+    };
 }

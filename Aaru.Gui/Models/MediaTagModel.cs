@@ -33,14 +33,13 @@
 using Aaru.CommonTypes.Enums;
 using JetBrains.Annotations;
 
-namespace Aaru.Gui.Models
+namespace Aaru.Gui.Models;
+
+public sealed class MediaTagModel
 {
-    public sealed class MediaTagModel
-    {
-        public MediaTagType Tag     { get; set; }
-        public byte[]       Data    { get; set; }
-        public string       Decoded { get; set; }
-        [NotNull]
-        public string Name => Tag.ToString();
-    }
+    public MediaTagType Tag     { get; set; }
+    public byte[]       Data    { get; set; }
+    public string       Decoded { get; set; }
+    [NotNull]
+    public string Name => Tag.ToString();
 }

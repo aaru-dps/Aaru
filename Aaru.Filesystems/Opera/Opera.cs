@@ -38,63 +38,62 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Schemas;
 
-namespace Aaru.Filesystems
+namespace Aaru.Filesystems;
+
+/// <inheritdoc />
+/// <summary>Implements the 3DO Opera filesystem</summary>
+public sealed partial class OperaFS : IReadOnlyFilesystem
 {
+    bool                                                               _debug;
+    Dictionary<string, Dictionary<string, DirectoryEntryWithPointers>> _directoryCache;
+    IMediaImage                                                        _image;
+    bool                                                               _mounted;
+    Dictionary<string, DirectoryEntryWithPointers>                     _rootDirectoryCache;
+    FileSystemInfo                                                     _statfs;
+    uint                                                               _volumeBlockSizeRatio;
+
     /// <inheritdoc />
-    /// <summary>Implements the 3DO Opera filesystem</summary>
-    public sealed partial class OperaFS : IReadOnlyFilesystem
+    public FileSystemType XmlFsType { get; private set; }
+    /// <inheritdoc />
+    public Encoding Encoding { get; private set; }
+    /// <inheritdoc />
+    public string Name => "Opera Filesystem Plugin";
+    /// <inheritdoc />
+    public Guid Id => new("0ec84ec7-eae6-4196-83fe-943b3fe46dbd");
+    /// <inheritdoc />
+    public string Author => "Natalia Portillo";
+
+    /// <inheritdoc />
+    public ErrorNumber ListXAttr(string path, out List<string> xattrs)
     {
-        bool                                                               _debug;
-        Dictionary<string, Dictionary<string, DirectoryEntryWithPointers>> _directoryCache;
-        IMediaImage                                                        _image;
-        bool                                                               _mounted;
-        Dictionary<string, DirectoryEntryWithPointers>                     _rootDirectoryCache;
-        FileSystemInfo                                                     _statfs;
-        uint                                                               _volumeBlockSizeRatio;
+        xattrs = null;
 
-        /// <inheritdoc />
-        public FileSystemType XmlFsType { get; private set; }
-        /// <inheritdoc />
-        public Encoding Encoding { get; private set; }
-        /// <inheritdoc />
-        public string Name => "Opera Filesystem Plugin";
-        /// <inheritdoc />
-        public Guid Id => new("0ec84ec7-eae6-4196-83fe-943b3fe46dbd");
-        /// <inheritdoc />
-        public string Author => "Natalia Portillo";
-
-        /// <inheritdoc />
-        public ErrorNumber ListXAttr(string path, out List<string> xattrs)
-        {
-            xattrs = null;
-
-            return ErrorNumber.NotSupported;
-        }
-
-        /// <inheritdoc />
-        public ErrorNumber GetXattr(string path, string xattr, ref byte[] buf) => ErrorNumber.NotSupported;
-
-        /// <inheritdoc />
-        public ErrorNumber ReadLink(string path, out string dest)
-        {
-            dest = null;
-
-            return ErrorNumber.NotSupported;
-        }
-
-        /// <inheritdoc />
-        public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
-            new (string name, Type type, string description)[]
-                {};
-
-        /// <inheritdoc />
-        public Dictionary<string, string> Namespaces => null;
-
-        static Dictionary<string, string> GetDefaultOptions() => new()
-        {
-            {
-                "debug", false.ToString()
-            }
-        };
+        return ErrorNumber.NotSupported;
     }
+
+    /// <inheritdoc />
+    public ErrorNumber GetXattr(string path, string xattr, ref byte[] buf) => ErrorNumber.NotSupported;
+
+    /// <inheritdoc />
+    public ErrorNumber ReadLink(string path, out string dest)
+    {
+        dest = null;
+
+        return ErrorNumber.NotSupported;
+    }
+
+    /// <inheritdoc />
+    public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
+        new (string name, Type type, string description)[]
+            {};
+
+    /// <inheritdoc />
+    public Dictionary<string, string> Namespaces => null;
+
+    static Dictionary<string, string> GetDefaultOptions() => new()
+    {
+        {
+            "debug", false.ToString()
+        }
+    };
 }

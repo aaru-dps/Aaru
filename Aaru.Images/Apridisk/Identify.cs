@@ -34,23 +34,22 @@ using System.IO;
 using System.Linq;
 using Aaru.CommonTypes.Interfaces;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class Apridisk
 {
-    public sealed partial class Apridisk
+    /// <inheritdoc />
+    public bool Identify(IFilter imageFilter)
     {
-        /// <inheritdoc />
-        public bool Identify(IFilter imageFilter)
-        {
-            Stream stream = imageFilter.GetDataForkStream();
-            stream.Seek(0, SeekOrigin.Begin);
+        Stream stream = imageFilter.GetDataForkStream();
+        stream.Seek(0, SeekOrigin.Begin);
 
-            if(stream.Length < _signature.Length)
-                return false;
+        if(stream.Length < _signature.Length)
+            return false;
 
-            byte[] sigB = new byte[_signature.Length];
-            stream.Read(sigB, 0, _signature.Length);
+        byte[] sigB = new byte[_signature.Length];
+        stream.Read(sigB, 0, _signature.Length);
 
-            return sigB.SequenceEqual(_signature);
-        }
+        return sigB.SequenceEqual(_signature);
     }
 }

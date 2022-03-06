@@ -39,75 +39,74 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Schemas;
 
-namespace Aaru.Filesystems
+namespace Aaru.Filesystems;
+
+// This is coded following ECMA-119.
+/// <inheritdoc />
+/// <summary>Implements the High Sierra, ISO9660 and CD-i filesystems</summary>
+[SuppressMessage("ReSharper", "UnusedType.Local")]
+public sealed partial class ISO9660 : IReadOnlyFilesystem
 {
-    // This is coded following ECMA-119.
+    bool                                      _cdi;
+    bool                                      _debug;
+    bool                                      _highSierra;
+    IMediaImage                               _image;
+    bool                                      _joliet;
+    bool                                      _mounted;
+    Namespace                                 _namespace;
+    PathTableEntryInternal[]                  _pathTable;
+    Dictionary<string, DecodedDirectoryEntry> _rootDirectoryCache;
+    FileSystemInfo                            _statfs;
+    bool                                      _useEvd;
+    bool                                      _usePathTable;
+    bool                                      _useTransTbl;
+    ushort                                    _blockSize;
+
     /// <inheritdoc />
-    /// <summary>Implements the High Sierra, ISO9660 and CD-i filesystems</summary>
-    [SuppressMessage("ReSharper", "UnusedType.Local")]
-    public sealed partial class ISO9660 : IReadOnlyFilesystem
+    public FileSystemType XmlFsType { get; private set; }
+    /// <inheritdoc />
+    public Encoding Encoding { get; private set; }
+    /// <inheritdoc />
+    public string Name => "ISO9660 Filesystem";
+    /// <inheritdoc />
+    public Guid Id => new("d812f4d3-c357-400d-90fd-3b22ef786aa8");
+    /// <inheritdoc />
+    public string Author => "Natalia Portillo";
+
+    /// <inheritdoc />
+    public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
+        new (string name, Type type, string description)[]
+        {
+            ("use_path_table", typeof(bool), "Use path table for directory traversal"),
+            ("use_trans_tbl", typeof(bool), "Use TRANS.TBL for filenames"),
+            ("use_evd", typeof(bool),
+             "If present, use Enhanced Volume Descriptor with specified encoding (overrides namespace)")
+        };
+
+    /// <inheritdoc />
+    public Dictionary<string, string> Namespaces => new()
     {
-        bool                                      _cdi;
-        bool                                      _debug;
-        bool                                      _highSierra;
-        IMediaImage                               _image;
-        bool                                      _joliet;
-        bool                                      _mounted;
-        Namespace                                 _namespace;
-        PathTableEntryInternal[]                  _pathTable;
-        Dictionary<string, DecodedDirectoryEntry> _rootDirectoryCache;
-        FileSystemInfo                            _statfs;
-        bool                                      _useEvd;
-        bool                                      _usePathTable;
-        bool                                      _useTransTbl;
-        ushort                                    _blockSize;
-
-        /// <inheritdoc />
-        public FileSystemType XmlFsType { get; private set; }
-        /// <inheritdoc />
-        public Encoding Encoding { get; private set; }
-        /// <inheritdoc />
-        public string Name => "ISO9660 Filesystem";
-        /// <inheritdoc />
-        public Guid Id => new("d812f4d3-c357-400d-90fd-3b22ef786aa8");
-        /// <inheritdoc />
-        public string Author => "Natalia Portillo";
-
-        /// <inheritdoc />
-        public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
-            new (string name, Type type, string description)[]
-            {
-                ("use_path_table", typeof(bool), "Use path table for directory traversal"),
-                ("use_trans_tbl", typeof(bool), "Use TRANS.TBL for filenames"),
-                ("use_evd", typeof(bool),
-                 "If present, use Enhanced Volume Descriptor with specified encoding (overrides namespace)")
-            };
-
-        /// <inheritdoc />
-        public Dictionary<string, string> Namespaces => new()
         {
-            {
-                "normal", "Primary Volume Descriptor, ignoring ;1 suffixes"
-            },
-            {
-                "vms", "Primary Volume Descriptor, showing version suffixes"
-            },
-            {
-                "joliet", "Joliet Volume Descriptor (default)"
-            },
-            {
-                "rrip", "Rock Ridge"
-            },
-            {
-                "romeo", "Primary Volume Descriptor using the specified encoding codepage"
-            }
-        };
-
-        static Dictionary<string, string> GetDefaultOptions() => new()
+            "normal", "Primary Volume Descriptor, ignoring ;1 suffixes"
+        },
         {
-            {
-                "debug", false.ToString()
-            }
-        };
-    }
+            "vms", "Primary Volume Descriptor, showing version suffixes"
+        },
+        {
+            "joliet", "Joliet Volume Descriptor (default)"
+        },
+        {
+            "rrip", "Rock Ridge"
+        },
+        {
+            "romeo", "Primary Volume Descriptor using the specified encoding codepage"
+        }
+    };
+
+    static Dictionary<string, string> GetDefaultOptions() => new()
+    {
+        {
+            "debug", false.ToString()
+        }
+    };
 }

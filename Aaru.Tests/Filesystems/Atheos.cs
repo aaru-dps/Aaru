@@ -32,29 +32,28 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Filesystems
+namespace Aaru.Tests.Filesystems;
+
+[TestFixture]
+public class Atheos : FilesystemTest
 {
-    [TestFixture]
-    public class Atheos : FilesystemTest
+    public Atheos() : base("AtheOS filesystem") {}
+
+    public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "AtheOS (MBR)");
+    public override IFilesystem Plugin     => new AtheOS();
+    public override bool        Partitions => true;
+
+    public override FileSystemTest[] Tests => new[]
     {
-        public Atheos() : base("AtheOS filesystem") {}
-
-        public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "AtheOS (MBR)");
-        public override IFilesystem Plugin     => new AtheOS();
-        public override bool        Partitions => true;
-
-        public override FileSystemTest[] Tests => new[]
+        new FileSystemTest
         {
-            new FileSystemTest
-            {
-                TestFile    = "syllable_0.6.7.aif",
-                MediaType   = MediaType.GENERIC_HDD,
-                Sectors     = 4194304,
-                SectorSize  = 512,
-                Clusters    = 2097120,
-                ClusterSize = 1024,
-                VolumeName  = "Volume label"
-            }
-        };
-    }
+            TestFile    = "syllable_0.6.7.aif",
+            MediaType   = MediaType.GENERIC_HDD,
+            Sectors     = 4194304,
+            SectorSize  = 512,
+            Clusters    = 2097120,
+            ClusterSize = 1024,
+            VolumeName  = "Volume label"
+        }
+    };
 }

@@ -32,21 +32,20 @@
 
 using System.Runtime.InteropServices;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class MaxiDisk
 {
-    public sealed partial class MaxiDisk
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    struct Header
     {
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct Header
-        {
-            public readonly byte unknown;
-            public          byte diskType;
-            public          byte heads;
-            public          byte cylinders;
-            public          byte bytesPerSector;
-            public          byte sectorsPerTrack;
-            public readonly byte unknown2;
-            public readonly byte unknown3;
-        }
+        public readonly byte unknown;
+        public          byte diskType;
+        public          byte heads;
+        public          byte cylinders;
+        public          byte bytesPerSector;
+        public          byte sectorsPerTrack;
+        public readonly byte unknown2;
+        public readonly byte unknown3;
     }
 }

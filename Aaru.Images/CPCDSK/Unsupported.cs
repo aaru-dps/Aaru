@@ -32,32 +32,31 @@
 
 using Aaru.CommonTypes.Enums;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class Cpcdsk
 {
-    public sealed partial class Cpcdsk
+    /// <inheritdoc />
+    public ErrorNumber ReadMediaTag(MediaTagType tag, out byte[] buffer)
     {
-        /// <inheritdoc />
-        public ErrorNumber ReadMediaTag(MediaTagType tag, out byte[] buffer)
-        {
-            buffer = null;
+        buffer = null;
 
-            return ErrorNumber.NotSupported;
-        }
+        return ErrorNumber.NotSupported;
+    }
 
-        /// <inheritdoc />
-        public ErrorNumber ReadSectorLong(ulong sectorAddress, out byte[] buffer)
-        {
-            buffer = null;
+    /// <inheritdoc />
+    public ErrorNumber ReadSectorLong(ulong sectorAddress, out byte[] buffer)
+    {
+        buffer = null;
 
-            return ErrorNumber.NotSupported;
-        }
+        return ErrorNumber.NotSupported;
+    }
 
-        /// <inheritdoc />
-        public ErrorNumber ReadSectorsLong(ulong sectorAddress, uint length, out byte[] buffer)
-        {
-            buffer = null;
+    /// <inheritdoc />
+    public ErrorNumber ReadSectorsLong(ulong sectorAddress, uint length, out byte[] buffer)
+    {
+        buffer = null;
 
-            return ErrorNumber.NotSupported;
-        }
+        return ErrorNumber.NotSupported;
     }
 }

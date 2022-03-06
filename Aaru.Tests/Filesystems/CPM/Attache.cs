@@ -30,39 +30,38 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Filesystems.CPM
+namespace Aaru.Tests.Filesystems.CPM;
+
+[TestFixture]
+public class Attache : FilesystemTest
 {
-    [TestFixture]
-    public class Attache : FilesystemTest
+    public Attache() : base("CP/M") {}
+
+    public override string DataFolder =>
+        Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "CPM", "Otrona Attaché");
+
+    public override IFilesystem Plugin     => new Aaru.Filesystems.CPM();
+    public override bool        Partitions => false;
+
+    public override FileSystemTest[] Tests => new[]
     {
-        public Attache() : base("CP/M") {}
-
-        public override string DataFolder =>
-            Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "CPM", "Otrona Attaché");
-
-        public override IFilesystem Plugin     => new Aaru.Filesystems.CPM();
-        public override bool        Partitions => false;
-
-        public override FileSystemTest[] Tests => new[]
+        new FileSystemTest
         {
-            new FileSystemTest
-            {
-                TestFile    = "filename.imd",
-                MediaType   = MediaType.Unknown,
-                Sectors     = 790,
-                SectorSize  = 512,
-                Clusters    = 395,
-                ClusterSize = 1024
-            },
-            new FileSystemTest
-            {
-                TestFile    = "files.imd",
-                MediaType   = MediaType.Unknown,
-                Sectors     = 790,
-                SectorSize  = 512,
-                Clusters    = 395,
-                ClusterSize = 1024
-            }
-        };
-    }
+            TestFile    = "filename.imd",
+            MediaType   = MediaType.Unknown,
+            Sectors     = 790,
+            SectorSize  = 512,
+            Clusters    = 395,
+            ClusterSize = 1024
+        },
+        new FileSystemTest
+        {
+            TestFile    = "files.imd",
+            MediaType   = MediaType.Unknown,
+            Sectors     = 790,
+            SectorSize  = 512,
+            Clusters    = 395,
+            ClusterSize = 1024
+        }
+    };
 }

@@ -31,50 +31,49 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Filesystems.BeFS
+namespace Aaru.Tests.Filesystems.BeFS;
+
+[TestFixture]
+public class Whole : FilesystemTest
 {
-    [TestFixture]
-    public class Whole : FilesystemTest
+    public Whole() : base("BeFS") {}
+
+    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Be File System");
+
+    public override IFilesystem Plugin     => new Aaru.Filesystems.BeFS();
+    public override bool        Partitions => false;
+
+    public override FileSystemTest[] Tests => new[]
     {
-        public Whole() : base("BeFS") {}
-
-        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Be File System");
-
-        public override IFilesystem Plugin     => new Aaru.Filesystems.BeFS();
-        public override bool        Partitions => false;
-
-        public override FileSystemTest[] Tests => new[]
+        new FileSystemTest
         {
-            new FileSystemTest
-            {
-                TestFile    = "beos_r3.1.img.lz",
-                MediaType   = MediaType.DOS_35_HD,
-                Sectors     = 2880,
-                SectorSize  = 512,
-                Clusters    = 1440,
-                ClusterSize = 1024,
-                VolumeName  = "volume label goes brrrr"
-            },
-            new FileSystemTest
-            {
-                TestFile    = "beos_r4.5.img.lz",
-                MediaType   = MediaType.DOS_35_HD,
-                Sectors     = 2880,
-                SectorSize  = 512,
-                Clusters    = 1440,
-                ClusterSize = 1024,
-                VolumeName  = "Volume label"
-            },
-            new FileSystemTest
-            {
-                TestFile    = "beos_r5.img.lz",
-                MediaType   = MediaType.DOS_35_HD,
-                Sectors     = 2880,
-                SectorSize  = 512,
-                Clusters    = 1440,
-                ClusterSize = 1024,
-                VolumeName  = "Volume label"
-            }
-        };
-    }
+            TestFile    = "beos_r3.1.img.lz",
+            MediaType   = MediaType.DOS_35_HD,
+            Sectors     = 2880,
+            SectorSize  = 512,
+            Clusters    = 1440,
+            ClusterSize = 1024,
+            VolumeName  = "volume label goes brrrr"
+        },
+        new FileSystemTest
+        {
+            TestFile    = "beos_r4.5.img.lz",
+            MediaType   = MediaType.DOS_35_HD,
+            Sectors     = 2880,
+            SectorSize  = 512,
+            Clusters    = 1440,
+            ClusterSize = 1024,
+            VolumeName  = "Volume label"
+        },
+        new FileSystemTest
+        {
+            TestFile    = "beos_r5.img.lz",
+            MediaType   = MediaType.DOS_35_HD,
+            Sectors     = 2880,
+            SectorSize  = 512,
+            Clusters    = 1440,
+            ClusterSize = 1024,
+            VolumeName  = "Volume label"
+        }
+    };
 }

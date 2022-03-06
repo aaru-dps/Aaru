@@ -30,12 +30,11 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class Partimage
 {
-    public sealed partial class Partimage
-    {
-        // TODO: All blocks contain a CRC32 that's incompatible with current implementation. Need to check for compatibility.
-        /// <inheritdoc />
-        public bool? VerifyMediaImage() => null;
-    }
+    // TODO: All blocks contain a CRC32 that's incompatible with current implementation. Need to check for compatibility.
+    /// <inheritdoc />
+    public bool? VerifyMediaImage() => null;
 }

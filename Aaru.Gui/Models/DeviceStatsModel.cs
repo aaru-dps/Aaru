@@ -30,13 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Gui.Models
+namespace Aaru.Gui.Models;
+
+public sealed class DeviceStatsModel
 {
-    public sealed class DeviceStatsModel
-    {
-        public string Model        { get; set; }
-        public string Manufacturer { get; set; }
-        public string Revision     { get; set; }
-        public string Bus          { get; set; }
-    }
+    public string Model        { get; set; }
+    public string Manufacturer { get; set; }
+    public string Revision     { get; set; }
+    public string Bus          { get; set; }
 }

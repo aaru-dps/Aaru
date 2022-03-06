@@ -32,23 +32,22 @@
 
 using Aaru.CommonTypes;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+public sealed partial class Apple2Mg
 {
-    public sealed partial class Apple2Mg
+    MediaType GetMediaType()
     {
-        MediaType GetMediaType()
+        switch(_imageInfo.Sectors)
         {
-            switch(_imageInfo.Sectors)
-            {
-                case 455:  return MediaType.Apple32SS;
-                case 910:  return MediaType.Apple32DS;
-                case 560:  return MediaType.Apple33SS;
-                case 1120: return MediaType.Apple33DS;
-                case 800:  return MediaType.AppleSonySS;
-                case 1600: return MediaType.AppleSonyDS;
-                case 2880: return MediaType.DOS_35_HD;
-                default:   return MediaType.Unknown;
-            }
+            case 455:  return MediaType.Apple32SS;
+            case 910:  return MediaType.Apple32DS;
+            case 560:  return MediaType.Apple33SS;
+            case 1120: return MediaType.Apple33DS;
+            case 800:  return MediaType.AppleSonySS;
+            case 1600: return MediaType.AppleSonyDS;
+            case 2880: return MediaType.DOS_35_HD;
+            default:   return MediaType.Unknown;
         }
     }
 }

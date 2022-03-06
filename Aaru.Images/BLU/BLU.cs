@@ -36,47 +36,46 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 
-namespace Aaru.DiscImages
+namespace Aaru.DiscImages;
+
+/// <summary>Implements reading Basic Lisa Utility disk images</summary>
+public sealed partial class Blu : IWritableImage, IVerifiableSectorsImage
 {
-    /// <summary>Implements reading Basic Lisa Utility disk images</summary>
-    public sealed partial class Blu : IWritableImage, IVerifiableSectorsImage
+    IFilter    _bluImageFilter;
+    int        _bptag;
+    BluHeader  _imageHeader;
+    ImageInfo  _imageInfo;
+    FileStream _writingStream;
+
+    public Blu() => _imageInfo = new ImageInfo
     {
-        IFilter    _bluImageFilter;
-        int        _bptag;
-        BluHeader  _imageHeader;
-        ImageInfo  _imageInfo;
-        FileStream _writingStream;
+        ReadableSectorTags    = new List<SectorTagType>(),
+        ReadableMediaTags     = new List<MediaTagType>(),
+        HasPartitions         = false,
+        HasSessions           = false,
+        Version               = null,
+        Application           = null,
+        ApplicationVersion    = null,
+        Creator               = null,
+        Comments              = null,
+        MediaManufacturer     = null,
+        MediaModel            = null,
+        MediaSerialNumber     = null,
+        MediaBarcode          = null,
+        MediaPartNumber       = null,
+        MediaSequence         = 0,
+        LastMediaSequence     = 0,
+        DriveManufacturer     = null,
+        DriveModel            = null,
+        DriveSerialNumber     = null,
+        DriveFirmwareRevision = null
+    };
 
-        public Blu() => _imageInfo = new ImageInfo
-        {
-            ReadableSectorTags    = new List<SectorTagType>(),
-            ReadableMediaTags     = new List<MediaTagType>(),
-            HasPartitions         = false,
-            HasSessions           = false,
-            Version               = null,
-            Application           = null,
-            ApplicationVersion    = null,
-            Creator               = null,
-            Comments              = null,
-            MediaManufacturer     = null,
-            MediaModel            = null,
-            MediaSerialNumber     = null,
-            MediaBarcode          = null,
-            MediaPartNumber       = null,
-            MediaSequence         = 0,
-            LastMediaSequence     = 0,
-            DriveManufacturer     = null,
-            DriveModel            = null,
-            DriveSerialNumber     = null,
-            DriveFirmwareRevision = null
-        };
-
-        struct BluHeader
-        {
-            public byte[] DeviceName;
-            public uint   DeviceType;
-            public uint   DeviceBlocks;
-            public ushort BytesPerBlock;
-        }
+    struct BluHeader
+    {
+        public byte[] DeviceName;
+        public uint   DeviceType;
+        public uint   DeviceBlocks;
+        public ushort BytesPerBlock;
     }
 }

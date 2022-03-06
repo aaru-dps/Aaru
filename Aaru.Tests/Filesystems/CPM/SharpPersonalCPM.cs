@@ -30,41 +30,40 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Filesystems.CPM
+namespace Aaru.Tests.Filesystems.CPM;
+
+[TestFixture]
+public class SharpPersonalCPM : ReadOnlyFilesystemTest
 {
-    [TestFixture]
-    public class SharpPersonalCPM : ReadOnlyFilesystemTest
+    public SharpPersonalCPM() : base("CP/M") {}
+
+    public override string DataFolder =>
+        Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "CPM", "Sharp Personal CPM");
+
+    public override IFilesystem Plugin     => new Aaru.Filesystems.CPM();
+    public override bool        Partitions => false;
+
+    public override FileSystemTest[] Tests => new[]
     {
-        public SharpPersonalCPM() : base("CP/M") {}
-
-        public override string DataFolder =>
-            Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "CPM", "Sharp Personal CPM");
-
-        public override IFilesystem Plugin     => new Aaru.Filesystems.CPM();
-        public override bool        Partitions => false;
-
-        public override FileSystemTest[] Tests => new[]
+        new FileSystemTest
         {
-            new FileSystemTest
-            {
-                TestFile    = "filename.imd",
-                MediaType   = MediaType.ACORN_525_DS_DD,
-                Sectors     = 2560,
-                SectorSize  = 256,
-                Bootable    = true,
-                Clusters    = 316,
-                ClusterSize = 2048
-            },
-            new FileSystemTest
-            {
-                TestFile    = "files.imd",
-                MediaType   = MediaType.ACORN_525_DS_DD,
-                Sectors     = 2560,
-                SectorSize  = 256,
-                Bootable    = true,
-                Clusters    = 316,
-                ClusterSize = 2048
-            }
-        };
-    }
+            TestFile    = "filename.imd",
+            MediaType   = MediaType.ACORN_525_DS_DD,
+            Sectors     = 2560,
+            SectorSize  = 256,
+            Bootable    = true,
+            Clusters    = 316,
+            ClusterSize = 2048
+        },
+        new FileSystemTest
+        {
+            TestFile    = "files.imd",
+            MediaType   = MediaType.ACORN_525_DS_DD,
+            Sectors     = 2560,
+            SectorSize  = 256,
+            Bootable    = true,
+            Clusters    = 316,
+            ClusterSize = 2048
+        }
+    };
 }

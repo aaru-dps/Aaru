@@ -33,58 +33,57 @@
 using Aaru.CommonTypes.Enums;
 using JetBrains.Annotations;
 
-namespace Aaru.Gui.ViewModels.Tabs
+namespace Aaru.Gui.ViewModels.Tabs;
+
+public sealed class SdMmcInfoViewModel
 {
-    public sealed class SdMmcInfoViewModel
+    public SdMmcInfoViewModel(DeviceType deviceType, [CanBeNull] byte[] cid, [CanBeNull] byte[] csd,
+                              [CanBeNull] byte[] ocr, [CanBeNull] byte[] extendedCsd, [CanBeNull] byte[] scr)
     {
-        public SdMmcInfoViewModel(DeviceType deviceType, [CanBeNull] byte[] cid, [CanBeNull] byte[] csd,
-                                  [CanBeNull] byte[] ocr, [CanBeNull] byte[] extendedCsd, [CanBeNull] byte[] scr)
+        switch(deviceType)
         {
-            switch(deviceType)
+            case DeviceType.MMC:
             {
-                case DeviceType.MMC:
-                {
-                    //Text = "MultiMediaCard";
+                //Text = "MultiMediaCard";
 
-                    if(cid != null)
-                        CidText = Decoders.MMC.Decoders.PrettifyCID(cid);
+                if(cid != null)
+                    CidText = Decoders.MMC.Decoders.PrettifyCID(cid);
 
-                    if(csd != null)
-                        CsdText = Decoders.MMC.Decoders.PrettifyCSD(csd);
+                if(csd != null)
+                    CsdText = Decoders.MMC.Decoders.PrettifyCSD(csd);
 
-                    if(ocr != null)
-                        OcrText = Decoders.MMC.Decoders.PrettifyOCR(ocr);
+                if(ocr != null)
+                    OcrText = Decoders.MMC.Decoders.PrettifyOCR(ocr);
 
-                    if(extendedCsd != null)
-                        ExtendedCsdText = Decoders.MMC.Decoders.PrettifyExtendedCSD(extendedCsd);
-                }
-
-                    break;
-                case DeviceType.SecureDigital:
-                {
-                    //Text = "SecureDigital";
-
-                    if(cid != null)
-                        CidText = Decoders.SecureDigital.Decoders.PrettifyCID(cid);
-
-                    if(csd != null)
-                        CsdText = Decoders.SecureDigital.Decoders.PrettifyCSD(csd);
-
-                    if(ocr != null)
-                        OcrText = Decoders.SecureDigital.Decoders.PrettifyOCR(ocr);
-
-                    if(scr != null)
-                        ScrText = Decoders.SecureDigital.Decoders.PrettifySCR(scr);
-                }
-
-                    break;
+                if(extendedCsd != null)
+                    ExtendedCsdText = Decoders.MMC.Decoders.PrettifyExtendedCSD(extendedCsd);
             }
-        }
 
-        public string CidText         { get; }
-        public string CsdText         { get; }
-        public string OcrText         { get; }
-        public string ExtendedCsdText { get; }
-        public string ScrText         { get; }
+                break;
+            case DeviceType.SecureDigital:
+            {
+                //Text = "SecureDigital";
+
+                if(cid != null)
+                    CidText = Decoders.SecureDigital.Decoders.PrettifyCID(cid);
+
+                if(csd != null)
+                    CsdText = Decoders.SecureDigital.Decoders.PrettifyCSD(csd);
+
+                if(ocr != null)
+                    OcrText = Decoders.SecureDigital.Decoders.PrettifyOCR(ocr);
+
+                if(scr != null)
+                    ScrText = Decoders.SecureDigital.Decoders.PrettifySCR(scr);
+            }
+
+                break;
+        }
     }
+
+    public string CidText         { get; }
+    public string CsdText         { get; }
+    public string OcrText         { get; }
+    public string ExtendedCsdText { get; }
+    public string ScrText         { get; }
 }

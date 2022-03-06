@@ -30,9 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Database.Models
-{
-    /// <inheritdoc />
-    /// <summary>Remote application</summary>
-    public class RemoteApplication : BaseOperatingSystem {}
-}
+namespace Aaru.Database.Models;
+
+/// <inheritdoc />
+/// <summary>Remote application</summary>
+public class RemoteApplication : BaseOperatingSystem {}

@@ -36,44 +36,43 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 
-namespace Aaru.DiscImages
-{
-    // TODO: Support version 0
-    // TODO: Support fixed images
-    /// <inheritdoc />
-    /// <summary>Implements reading and writing VirtualBox disk images</summary>
-    public sealed partial class Vdi : IWritableImage
-    {
-        ulong                     _currentWritingPosition;
-        uint[]                    _ibm;
-        ImageInfo                 _imageInfo;
-        Stream                    _imageStream;
-        Dictionary<ulong, byte[]> _sectorCache;
-        Header                    _vHdr;
-        FileStream                _writingStream;
+namespace Aaru.DiscImages;
 
-        public Vdi() => _imageInfo = new ImageInfo
-        {
-            ReadableSectorTags    = new List<SectorTagType>(),
-            ReadableMediaTags     = new List<MediaTagType>(),
-            HasPartitions         = false,
-            HasSessions           = false,
-            Version               = null,
-            Application           = null,
-            ApplicationVersion    = null,
-            Creator               = null,
-            Comments              = null,
-            MediaManufacturer     = null,
-            MediaModel            = null,
-            MediaSerialNumber     = null,
-            MediaBarcode          = null,
-            MediaPartNumber       = null,
-            MediaSequence         = 0,
-            LastMediaSequence     = 0,
-            DriveManufacturer     = null,
-            DriveModel            = null,
-            DriveSerialNumber     = null,
-            DriveFirmwareRevision = null
-        };
-    }
+// TODO: Support version 0
+// TODO: Support fixed images
+/// <inheritdoc />
+/// <summary>Implements reading and writing VirtualBox disk images</summary>
+public sealed partial class Vdi : IWritableImage
+{
+    ulong                     _currentWritingPosition;
+    uint[]                    _ibm;
+    ImageInfo                 _imageInfo;
+    Stream                    _imageStream;
+    Dictionary<ulong, byte[]> _sectorCache;
+    Header                    _vHdr;
+    FileStream                _writingStream;
+
+    public Vdi() => _imageInfo = new ImageInfo
+    {
+        ReadableSectorTags    = new List<SectorTagType>(),
+        ReadableMediaTags     = new List<MediaTagType>(),
+        HasPartitions         = false,
+        HasSessions           = false,
+        Version               = null,
+        Application           = null,
+        ApplicationVersion    = null,
+        Creator               = null,
+        Comments              = null,
+        MediaManufacturer     = null,
+        MediaModel            = null,
+        MediaSerialNumber     = null,
+        MediaBarcode          = null,
+        MediaPartNumber       = null,
+        MediaSequence         = 0,
+        LastMediaSequence     = 0,
+        DriveManufacturer     = null,
+        DriveModel            = null,
+        DriveSerialNumber     = null,
+        DriveFirmwareRevision = null
+    };
 }

@@ -40,111 +40,110 @@ using Aaru.CommonTypes.Interfaces;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
 
-namespace Aaru.Filesystems
+namespace Aaru.Filesystems;
+
+/// <inheritdoc />
+/// <summary>Implements detection of the Apple File System (APFS)</summary>
+[SuppressMessage("ReSharper", "UnusedMember.Local")]
+public sealed class APFS : IFilesystem
 {
+    const uint APFS_CONTAINER_MAGIC = 0x4253584E; // "NXSB"
+    const uint APFS_VOLUME_MAGIC    = 0x42535041; // "APSB"
+
     /// <inheritdoc />
-    /// <summary>Implements detection of the Apple File System (APFS)</summary>
-    [SuppressMessage("ReSharper", "UnusedMember.Local")]
-    public sealed class APFS : IFilesystem
+    public FileSystemType XmlFsType { get; private set; }
+    /// <inheritdoc />
+    public Encoding Encoding { get; private set; }
+    /// <inheritdoc />
+    public string Name => "Apple File System";
+    /// <inheritdoc />
+    public Guid Id => new("A4060F9D-2909-42E2-9D95-DB31FA7EA797");
+    /// <inheritdoc />
+    public string Author => "Natalia Portillo";
+
+    /// <inheritdoc />
+    public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
-        const uint APFS_CONTAINER_MAGIC = 0x4253584E; // "NXSB"
-        const uint APFS_VOLUME_MAGIC    = 0x42535041; // "APSB"
+        if(partition.Start >= partition.End)
+            return false;
 
-        /// <inheritdoc />
-        public FileSystemType XmlFsType { get; private set; }
-        /// <inheritdoc />
-        public Encoding Encoding { get; private set; }
-        /// <inheritdoc />
-        public string Name => "Apple File System";
-        /// <inheritdoc />
-        public Guid Id => new("A4060F9D-2909-42E2-9D95-DB31FA7EA797");
-        /// <inheritdoc />
-        public string Author => "Natalia Portillo";
+        ErrorNumber errno = imagePlugin.ReadSector(partition.Start, out byte[] sector);
 
-        /// <inheritdoc />
-        public bool Identify(IMediaImage imagePlugin, Partition partition)
+        if(errno != ErrorNumber.NoError)
+            return false;
+
+        ContainerSuperBlock nxSb;
+
+        try
         {
-            if(partition.Start >= partition.End)
-                return false;
-
-            ErrorNumber errno = imagePlugin.ReadSector(partition.Start, out byte[] sector);
-
-            if(errno != ErrorNumber.NoError)
-                return false;
-
-            ContainerSuperBlock nxSb;
-
-            try
-            {
-                nxSb = Marshal.ByteArrayToStructureLittleEndian<ContainerSuperBlock>(sector);
-            }
-            catch
-            {
-                return false;
-            }
-
-            return nxSb.magic == APFS_CONTAINER_MAGIC;
+            nxSb = Marshal.ByteArrayToStructureLittleEndian<ContainerSuperBlock>(sector);
+        }
+        catch
+        {
+            return false;
         }
 
-        /// <inheritdoc />
-        public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                   Encoding encoding)
+        return nxSb.magic == APFS_CONTAINER_MAGIC;
+    }
+
+    /// <inheritdoc />
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
+                               Encoding encoding)
+    {
+        Encoding = Encoding.UTF8;
+        var sbInformation = new StringBuilder();
+        XmlFsType   = new FileSystemType();
+        information = "";
+
+        if(partition.Start >= partition.End)
+            return;
+
+        ErrorNumber errno = imagePlugin.ReadSector(partition.Start, out byte[] sector);
+
+        if(errno != ErrorNumber.NoError)
+            return;
+
+        ContainerSuperBlock nxSb;
+
+        try
         {
-            Encoding = Encoding.UTF8;
-            var sbInformation = new StringBuilder();
-            XmlFsType   = new FileSystemType();
-            information = "";
-
-            if(partition.Start >= partition.End)
-                return;
-
-            ErrorNumber errno = imagePlugin.ReadSector(partition.Start, out byte[] sector);
-
-            if(errno != ErrorNumber.NoError)
-                return;
-
-            ContainerSuperBlock nxSb;
-
-            try
-            {
-                nxSb = Marshal.ByteArrayToStructureLittleEndian<ContainerSuperBlock>(sector);
-            }
-            catch
-            {
-                return;
-            }
-
-            if(nxSb.magic != APFS_CONTAINER_MAGIC)
-                return;
-
-            sbInformation.AppendLine("Apple File System");
-            sbInformation.AppendLine();
-            sbInformation.AppendFormat("{0} bytes per block", nxSb.blockSize).AppendLine();
-
-            sbInformation.AppendFormat("Container has {0} bytes in {1} blocks", nxSb.containerBlocks * nxSb.blockSize,
-                                       nxSb.containerBlocks).AppendLine();
-
-            information = sbInformation.ToString();
-
-            XmlFsType = new FileSystemType
-            {
-                Bootable    = false,
-                Clusters    = nxSb.containerBlocks,
-                ClusterSize = nxSb.blockSize,
-                Type        = "Apple File System"
-            };
+            nxSb = Marshal.ByteArrayToStructureLittleEndian<ContainerSuperBlock>(sector);
+        }
+        catch
+        {
+            return;
         }
 
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        readonly struct ContainerSuperBlock
+        if(nxSb.magic != APFS_CONTAINER_MAGIC)
+            return;
+
+        sbInformation.AppendLine("Apple File System");
+        sbInformation.AppendLine();
+        sbInformation.AppendFormat("{0} bytes per block", nxSb.blockSize).AppendLine();
+
+        sbInformation.AppendFormat("Container has {0} bytes in {1} blocks", nxSb.containerBlocks * nxSb.blockSize,
+                                   nxSb.containerBlocks).AppendLine();
+
+        information = sbInformation.ToString();
+
+        XmlFsType = new FileSystemType
         {
-            public readonly ulong unknown1; // Varies between copies of the superblock
-            public readonly ulong unknown2;
-            public readonly ulong unknown3; // Varies by 1 between copies of the superblock
-            public readonly ulong unknown4;
-            public readonly uint  magic;
-            public readonly uint  blockSize;
-            public readonly ulong containerBlocks;
-        }
+            Bootable    = false,
+            Clusters    = nxSb.containerBlocks,
+            ClusterSize = nxSb.blockSize,
+            Type        = "Apple File System"
+        };
+    }
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct ContainerSuperBlock
+    {
+        public readonly ulong unknown1; // Varies between copies of the superblock
+        public readonly ulong unknown2;
+        public readonly ulong unknown3; // Varies by 1 between copies of the superblock
+        public readonly ulong unknown4;
+        public readonly uint  magic;
+        public readonly uint  blockSize;
+        public readonly ulong containerBlocks;
     }
 }
