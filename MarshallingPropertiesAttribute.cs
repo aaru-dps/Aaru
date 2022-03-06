@@ -38,25 +38,24 @@
 
 using System;
 
-namespace Aaru.Helpers
+namespace Aaru.Helpers;
+
+/// <inheritdoc />
+/// <summary>Defines properties to help marshalling structs from binary data</summary>
+[AttributeUsage(AttributeTargets.Struct)]
+public sealed class MarshallingPropertiesAttribute : Attribute
 {
     /// <inheritdoc />
     /// <summary>Defines properties to help marshalling structs from binary data</summary>
-    [AttributeUsage(AttributeTargets.Struct)]
-    public sealed class MarshallingPropertiesAttribute : Attribute
+    /// <param name="endian">Defines properties to help marshalling structs from binary data</param>
+    public MarshallingPropertiesAttribute(BitEndian endian)
     {
-        /// <inheritdoc />
-        /// <summary>Defines properties to help marshalling structs from binary data</summary>
-        /// <param name="endian">Defines properties to help marshalling structs from binary data</param>
-        public MarshallingPropertiesAttribute(BitEndian endian)
-        {
-            Endian        = endian;
-            HasReferences = true;
-        }
-
-        /// <summary>c</summary>
-        public BitEndian Endian { get; }
-        /// <summary>Tells if the structure, or any nested structure, has any non-value type (e.g. arrays, strings, etc).</summary>
-        public bool HasReferences { get; set; }
+        Endian        = endian;
+        HasReferences = true;
     }
+
+    /// <summary>c</summary>
+    public BitEndian Endian { get; }
+    /// <summary>Tells if the structure, or any nested structure, has any non-value type (e.g. arrays, strings, etc).</summary>
+    public bool HasReferences { get; set; }
 }

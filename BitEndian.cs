@@ -36,16 +36,15 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Helpers
+namespace Aaru.Helpers;
+
+/// <summary>Describes the endianness of bits on a data structure</summary>
+public enum BitEndian
 {
-    /// <summary>Describes the endianness of bits on a data structure</summary>
-    public enum BitEndian
-    {
-        /// <summary>Little-endian, or least significant bit</summary>
-        Little,
-        /// <summary>Big-endian, or most significant bit</summary>
-        Big,
-        /// <summary>PDP-11 endian, little endian except for 32-bit integers where the 16 halves are swapped between them</summary>
-        Pdp
-    }
+    /// <summary>Little-endian, or least significant bit</summary>
+    Little,
+    /// <summary>Big-endian, or most significant bit</summary>
+    Big,
+    /// <summary>PDP-11 endian, little endian except for 32-bit integers where the 16 halves are swapped between them</summary>
+    Pdp
 }
