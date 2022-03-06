@@ -55,9 +55,6 @@
     <ConsolePause>false</ConsolePause>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System" />
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="ArrayFill.cs" />
     <Compile Include="BigEndianBitConverter.cs" />
     <Compile Include="BitEndian.cs" />
