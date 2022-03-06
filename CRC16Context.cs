@@ -37,585 +37,584 @@ using System.Text;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 
-namespace Aaru.Checksums
+namespace Aaru.Checksums;
+
+/// <inheritdoc />
+/// <summary>Implements a CRC16 algorithm</summary>
+public class Crc16Context : IChecksum
 {
-    /// <inheritdoc />
-    /// <summary>Implements a CRC16 algorithm</summary>
-    public class Crc16Context : IChecksum
+    readonly ushort     _finalSeed;
+    readonly bool       _inverse;
+    readonly IntPtr     _nativeContext;
+    readonly ushort[][] _table;
+    readonly bool       _useCcitt;
+    readonly bool       _useIbm;
+    readonly bool       _useNative;
+    ushort              _hashInt;
+
+    /// <summary>Initializes the CRC16 table with a custom polynomial and seed</summary>
+    public Crc16Context(ushort polynomial, ushort seed, ushort[][] table, bool inverse)
     {
-        readonly ushort     _finalSeed;
-        readonly bool       _inverse;
-        readonly IntPtr     _nativeContext;
-        readonly ushort[][] _table;
-        readonly bool       _useCcitt;
-        readonly bool       _useIbm;
-        readonly bool       _useNative;
-        ushort              _hashInt;
+        _hashInt   = seed;
+        _finalSeed = seed;
+        _inverse   = inverse;
 
-        /// <summary>Initializes the CRC16 table with a custom polynomial and seed</summary>
-        public Crc16Context(ushort polynomial, ushort seed, ushort[][] table, bool inverse)
+        _useNative = Native.IsSupported;
+
+        _useCcitt = polynomial == CRC16CCITTContext.CRC16_CCITT_POLY &&
+                    seed       == CRC16CCITTContext.CRC16_CCITT_SEED && inverse;
+
+        _useIbm = polynomial == CRC16IBMContext.CRC16_IBM_POLY && seed == CRC16IBMContext.CRC16_IBM_SEED &&
+                  !inverse;
+
+        if(_useCcitt && _useNative)
         {
-            _hashInt   = seed;
-            _finalSeed = seed;
-            _inverse   = inverse;
+            _nativeContext = crc16_ccitt_init();
+            _useNative     = _nativeContext != IntPtr.Zero;
+        }
+        else if(_useIbm && _useNative)
+        {
+            _nativeContext = crc16_init();
+            _useNative     = _nativeContext != IntPtr.Zero;
+        }
+        else
+            _useNative = false;
 
-            _useNative = Native.IsSupported;
+        if(!_useNative)
+            _table = table ?? GenerateTable(polynomial, inverse);
+    }
 
-            _useCcitt = polynomial == CRC16CCITTContext.CRC16_CCITT_POLY &&
-                        seed       == CRC16CCITTContext.CRC16_CCITT_SEED && inverse;
+    /// <inheritdoc />
+    /// <summary>Updates the hash with data.</summary>
+    /// <param name="data">Data buffer.</param>
+    /// <param name="len">Length of buffer to hash.</param>
+    public void Update(byte[] data, uint len)
+    {
+        switch(_useNative)
+        {
+            case true when _useCcitt:
+                crc16_ccitt_update(_nativeContext, data, len);
 
-            _useIbm = polynomial == CRC16IBMContext.CRC16_IBM_POLY && seed == CRC16IBMContext.CRC16_IBM_SEED &&
-                      !inverse;
+                break;
+            case true when _useIbm:
+                crc16_update(_nativeContext, data, len);
 
-            if(_useCcitt && _useNative)
+                break;
+            default:
             {
-                _nativeContext = crc16_ccitt_init();
-                _useNative     = _nativeContext != IntPtr.Zero;
-            }
-            else if(_useIbm && _useNative)
-            {
-                _nativeContext = crc16_init();
-                _useNative     = _nativeContext != IntPtr.Zero;
-            }
-            else
-                _useNative = false;
+                if(_inverse)
+                    StepInverse(ref _hashInt, _table, data, len);
+                else
+                    Step(ref _hashInt, _table, data, len);
 
-            if(!_useNative)
-                _table = table ?? GenerateTable(polynomial, inverse);
+                break;
+            }
+        }
+    }
+
+    /// <inheritdoc />
+    /// <summary>Updates the hash with data.</summary>
+    /// <param name="data">Data buffer.</param>
+    public void Update(byte[] data) => Update(data, (uint)data.Length);
+
+    /// <inheritdoc />
+    /// <summary>Returns a byte array of the hash value.</summary>
+    public byte[] Final()
+    {
+        ushort crc = 0;
+
+        switch(_useNative)
+        {
+            case true when _useCcitt:
+                crc16_ccitt_final(_nativeContext, ref crc);
+                crc16_ccitt_free(_nativeContext);
+
+                break;
+            case true when _useIbm:
+                crc16_final(_nativeContext, ref crc);
+                crc16_free(_nativeContext);
+
+                break;
+            default:
+            {
+                if(_inverse)
+                    crc = (ushort)~(_hashInt ^ _finalSeed);
+                else
+                    crc = (ushort)(_hashInt ^ _finalSeed);
+
+                break;
+            }
         }
 
-        /// <inheritdoc />
-        /// <summary>Updates the hash with data.</summary>
-        /// <param name="data">Data buffer.</param>
-        /// <param name="len">Length of buffer to hash.</param>
-        public void Update(byte[] data, uint len)
+        return BigEndianBitConverter.GetBytes(crc);
+    }
+
+    /// <inheritdoc />
+    /// <summary>Returns a hexadecimal representation of the hash value.</summary>
+    public string End()
+    {
+        var    crc16Output = new StringBuilder();
+        ushort final       = 0;
+
+        switch(_useNative)
         {
-            switch(_useNative)
+            case true when _useCcitt:
+                crc16_ccitt_final(_nativeContext, ref final);
+                crc16_ccitt_free(_nativeContext);
+
+                break;
+            case true when _useIbm:
+                crc16_final(_nativeContext, ref final);
+                crc16_free(_nativeContext);
+
+                break;
+            default:
             {
-                case true when _useCcitt:
-                    crc16_ccitt_update(_nativeContext, data, len);
+                if(_inverse)
+                    final = (ushort)~(_hashInt ^ _finalSeed);
+                else
+                    final = (ushort)(_hashInt ^ _finalSeed);
 
-                    break;
-                case true when _useIbm:
-                    crc16_update(_nativeContext, data, len);
+                break;
+            }
+        }
 
-                    break;
-                default:
-                {
-                    if(_inverse)
-                        StepInverse(ref _hashInt, _table, data, len);
+        byte[] finalBytes = BigEndianBitConverter.GetBytes(final);
+
+        for(int i = 0; i < finalBytes.Length; i++)
+            crc16Output.Append(finalBytes[i].ToString("x2"));
+
+        return crc16Output.ToString();
+    }
+
+    [DllImport("libAaru.Checksums.Native", SetLastError = true)]
+    static extern IntPtr crc16_init();
+
+    [DllImport("libAaru.Checksums.Native", SetLastError = true)]
+    static extern int crc16_update(IntPtr ctx, byte[] data, uint len);
+
+    [DllImport("libAaru.Checksums.Native", SetLastError = true)]
+    static extern int crc16_final(IntPtr ctx, ref ushort crc);
+
+    [DllImport("libAaru.Checksums.Native", SetLastError = true)]
+    static extern void crc16_free(IntPtr ctx);
+
+    [DllImport("libAaru.Checksums.Native", SetLastError = true)]
+    static extern IntPtr crc16_ccitt_init();
+
+    [DllImport("libAaru.Checksums.Native", SetLastError = true)]
+    static extern int crc16_ccitt_update(IntPtr ctx, byte[] data, uint len);
+
+    [DllImport("libAaru.Checksums.Native", SetLastError = true)]
+    static extern int crc16_ccitt_final(IntPtr ctx, ref ushort crc);
+
+    [DllImport("libAaru.Checksums.Native", SetLastError = true)]
+    static extern void crc16_ccitt_free(IntPtr ctx);
+
+    static void Step(ref ushort previousCrc, ushort[][] table, byte[] data, uint len)
+    {
+        // Unroll according to Intel slicing by uint8_t
+        // http://www.intel.com/technology/comms/perfnet/download/CRC_generators.pdf
+        // http://sourceforge.net/projects/slicing-by-8/
+
+        ushort    crc;
+        int       current_pos   = 0;
+        const int unroll        = 4;
+        const int bytes_at_once = 8 * unroll;
+
+        crc = previousCrc;
+
+        while(len >= bytes_at_once)
+        {
+            int unrolling;
+
+            for(unrolling = 0; unrolling < unroll; unrolling++)
+            {
+                // TODO: What trick is Microsoft doing here that's faster than arithmetic conversion
+                uint one = BitConverter.ToUInt32(data, current_pos) ^ crc;
+                current_pos += 4;
+                uint two = BitConverter.ToUInt32(data, current_pos);
+                current_pos += 4;
+
+                crc = (ushort)(table[0][(two >> 24) & 0xFF] ^ table[1][(two >> 16) & 0xFF] ^
+                               table[2][(two >> 8)  & 0xFF] ^ table[3][two & 0xFF] ^ table[4][(one >> 24) & 0xFF] ^
+                               table[5][(one >> 16) & 0xFF] ^ table[6][(one >> 8) & 0xFF] ^ table[7][one & 0xFF]);
+            }
+
+            len -= bytes_at_once;
+        }
+
+        while(len-- != 0)
+            crc = (ushort)((crc >> 8) ^ table[0][(crc & 0xFF) ^ data[current_pos++]]);
+
+        previousCrc = crc;
+    }
+
+    static void StepInverse(ref ushort previousCrc, ushort[][] table, byte[] data, uint len)
+    {
+        // Unroll according to Intel slicing by uint8_t
+        // http://www.intel.com/technology/comms/perfnet/download/CRC_generators.pdf
+        // http://sourceforge.net/projects/slicing-by-8/
+
+        ushort    crc;
+        int       current_pos   = 0;
+        const int unroll        = 4;
+        const int bytes_at_once = 8 * unroll;
+
+        crc = previousCrc;
+
+        while(len >= bytes_at_once)
+        {
+            int unrolling;
+
+            for(unrolling = 0; unrolling < unroll; unrolling++)
+            {
+                crc = (ushort)(table[7][data[current_pos + 0] ^ (crc >> 8)]   ^
+                               table[6][data[current_pos + 1] ^ (crc & 0xFF)] ^ table[5][data[current_pos + 2]] ^
+                               table[4][data[current_pos + 3]] ^ table[3][data[current_pos + 4]] ^
+                               table[2][data[current_pos + 5]] ^ table[1][data[current_pos + 6]] ^
+                               table[0][data[current_pos + 7]]);
+
+                current_pos += 8;
+            }
+
+            len -= bytes_at_once;
+        }
+
+        while(len-- != 0)
+            crc = (ushort)((crc << 8) ^ table[0][(crc >> 8) ^ data[current_pos++]]);
+
+        previousCrc = crc;
+    }
+
+    static ushort[][] GenerateTable(ushort polynomial, bool inverseTable)
+    {
+        ushort[][] table = new ushort[8][];
+
+        for(int i = 0; i < 8; i++)
+            table[i] = new ushort[256];
+
+        if(!inverseTable)
+            for(uint i = 0; i < 256; i++)
+            {
+                uint entry = i;
+
+                for(int j = 0; j < 8; j++)
+                    if((entry & 1) == 1)
+                        entry = (entry >> 1) ^ polynomial;
                     else
-                        Step(ref _hashInt, _table, data, len);
+                        entry >>= 1;
 
-                    break;
-                }
+                table[0][i] = (ushort)entry;
             }
-        }
-
-        /// <inheritdoc />
-        /// <summary>Updates the hash with data.</summary>
-        /// <param name="data">Data buffer.</param>
-        public void Update(byte[] data) => Update(data, (uint)data.Length);
-
-        /// <inheritdoc />
-        /// <summary>Returns a byte array of the hash value.</summary>
-        public byte[] Final()
+        else
         {
-            ushort crc = 0;
-
-            switch(_useNative)
+            for(uint i = 0; i < 256; i++)
             {
-                case true when _useCcitt:
-                    crc16_ccitt_final(_nativeContext, ref crc);
-                    crc16_ccitt_free(_nativeContext);
+                uint entry = i << 8;
 
-                    break;
-                case true when _useIbm:
-                    crc16_final(_nativeContext, ref crc);
-                    crc16_free(_nativeContext);
-
-                    break;
-                default:
+                for(uint j = 0; j < 8; j++)
                 {
-                    if(_inverse)
-                        crc = (ushort)~(_hashInt ^ _finalSeed);
+                    if((entry & 0x8000) > 0)
+                        entry = (entry << 1) ^ polynomial;
                     else
-                        crc = (ushort)(_hashInt ^ _finalSeed);
-
-                    break;
-                }
-            }
-
-            return BigEndianBitConverter.GetBytes(crc);
-        }
-
-        /// <inheritdoc />
-        /// <summary>Returns a hexadecimal representation of the hash value.</summary>
-        public string End()
-        {
-            var    crc16Output = new StringBuilder();
-            ushort final       = 0;
-
-            switch(_useNative)
-            {
-                case true when _useCcitt:
-                    crc16_ccitt_final(_nativeContext, ref final);
-                    crc16_ccitt_free(_nativeContext);
-
-                    break;
-                case true when _useIbm:
-                    crc16_final(_nativeContext, ref final);
-                    crc16_free(_nativeContext);
-
-                    break;
-                default:
-                {
-                    if(_inverse)
-                        final = (ushort)~(_hashInt ^ _finalSeed);
-                    else
-                        final = (ushort)(_hashInt ^ _finalSeed);
-
-                    break;
-                }
-            }
-
-            byte[] finalBytes = BigEndianBitConverter.GetBytes(final);
-
-            for(int i = 0; i < finalBytes.Length; i++)
-                crc16Output.Append(finalBytes[i].ToString("x2"));
-
-            return crc16Output.ToString();
-        }
-
-        [DllImport("libAaru.Checksums.Native", SetLastError = true)]
-        static extern IntPtr crc16_init();
-
-        [DllImport("libAaru.Checksums.Native", SetLastError = true)]
-        static extern int crc16_update(IntPtr ctx, byte[] data, uint len);
-
-        [DllImport("libAaru.Checksums.Native", SetLastError = true)]
-        static extern int crc16_final(IntPtr ctx, ref ushort crc);
-
-        [DllImport("libAaru.Checksums.Native", SetLastError = true)]
-        static extern void crc16_free(IntPtr ctx);
-
-        [DllImport("libAaru.Checksums.Native", SetLastError = true)]
-        static extern IntPtr crc16_ccitt_init();
-
-        [DllImport("libAaru.Checksums.Native", SetLastError = true)]
-        static extern int crc16_ccitt_update(IntPtr ctx, byte[] data, uint len);
-
-        [DllImport("libAaru.Checksums.Native", SetLastError = true)]
-        static extern int crc16_ccitt_final(IntPtr ctx, ref ushort crc);
-
-        [DllImport("libAaru.Checksums.Native", SetLastError = true)]
-        static extern void crc16_ccitt_free(IntPtr ctx);
-
-        static void Step(ref ushort previousCrc, ushort[][] table, byte[] data, uint len)
-        {
-            // Unroll according to Intel slicing by uint8_t
-            // http://www.intel.com/technology/comms/perfnet/download/CRC_generators.pdf
-            // http://sourceforge.net/projects/slicing-by-8/
-
-            ushort    crc;
-            int       current_pos   = 0;
-            const int unroll        = 4;
-            const int bytes_at_once = 8 * unroll;
-
-            crc = previousCrc;
-
-            while(len >= bytes_at_once)
-            {
-                int unrolling;
-
-                for(unrolling = 0; unrolling < unroll; unrolling++)
-                {
-                    // TODO: What trick is Microsoft doing here that's faster than arithmetic conversion
-                    uint one = BitConverter.ToUInt32(data, current_pos) ^ crc;
-                    current_pos += 4;
-                    uint two = BitConverter.ToUInt32(data, current_pos);
-                    current_pos += 4;
-
-                    crc = (ushort)(table[0][(two >> 24) & 0xFF] ^ table[1][(two >> 16) & 0xFF] ^
-                                   table[2][(two >> 8)  & 0xFF] ^ table[3][two & 0xFF] ^ table[4][(one >> 24) & 0xFF] ^
-                                   table[5][(one >> 16) & 0xFF] ^ table[6][(one >> 8) & 0xFF] ^ table[7][one & 0xFF]);
-                }
-
-                len -= bytes_at_once;
-            }
-
-            while(len-- != 0)
-                crc = (ushort)((crc >> 8) ^ table[0][(crc & 0xFF) ^ data[current_pos++]]);
-
-            previousCrc = crc;
-        }
-
-        static void StepInverse(ref ushort previousCrc, ushort[][] table, byte[] data, uint len)
-        {
-            // Unroll according to Intel slicing by uint8_t
-            // http://www.intel.com/technology/comms/perfnet/download/CRC_generators.pdf
-            // http://sourceforge.net/projects/slicing-by-8/
-
-            ushort    crc;
-            int       current_pos   = 0;
-            const int unroll        = 4;
-            const int bytes_at_once = 8 * unroll;
-
-            crc = previousCrc;
-
-            while(len >= bytes_at_once)
-            {
-                int unrolling;
-
-                for(unrolling = 0; unrolling < unroll; unrolling++)
-                {
-                    crc = (ushort)(table[7][data[current_pos + 0] ^ (crc >> 8)]   ^
-                                   table[6][data[current_pos + 1] ^ (crc & 0xFF)] ^ table[5][data[current_pos + 2]] ^
-                                   table[4][data[current_pos + 3]] ^ table[3][data[current_pos + 4]] ^
-                                   table[2][data[current_pos + 5]] ^ table[1][data[current_pos + 6]] ^
-                                   table[0][data[current_pos + 7]]);
-
-                    current_pos += 8;
-                }
-
-                len -= bytes_at_once;
-            }
-
-            while(len-- != 0)
-                crc = (ushort)((crc << 8) ^ table[0][(crc >> 8) ^ data[current_pos++]]);
-
-            previousCrc = crc;
-        }
-
-        static ushort[][] GenerateTable(ushort polynomial, bool inverseTable)
-        {
-            ushort[][] table = new ushort[8][];
-
-            for(int i = 0; i < 8; i++)
-                table[i] = new ushort[256];
-
-            if(!inverseTable)
-                for(uint i = 0; i < 256; i++)
-                {
-                    uint entry = i;
-
-                    for(int j = 0; j < 8; j++)
-                        if((entry & 1) == 1)
-                            entry = (entry >> 1) ^ polynomial;
-                        else
-                            entry >>= 1;
+                        entry <<= 1;
 
                     table[0][i] = (ushort)entry;
                 }
-            else
-            {
-                for(uint i = 0; i < 256; i++)
-                {
-                    uint entry = i << 8;
-
-                    for(uint j = 0; j < 8; j++)
-                    {
-                        if((entry & 0x8000) > 0)
-                            entry = (entry << 1) ^ polynomial;
-                        else
-                            entry <<= 1;
-
-                        table[0][i] = (ushort)entry;
-                    }
-                }
             }
-
-            for(int slice = 1; slice < 8; slice++)
-                for(int i = 0; i < 256; i++)
-                {
-                    if(inverseTable)
-                        table[slice][i] = (ushort)((table[slice - 1][i] << 8) ^ table[0][table[slice - 1][i] >> 8]);
-                    else
-                        table[slice][i] = (ushort)((table[slice - 1][i] >> 8) ^ table[0][table[slice - 1][i] & 0xFF]);
-                }
-
-            return table;
         }
 
-        /// <summary>Gets the hash of a file in hexadecimal and as a byte array.</summary>
-        /// <param name="filename">File path.</param>
-        /// <param name="hash">Byte array of the hash value.</param>
-        /// <param name="polynomial">CRC polynomial</param>
-        /// <param name="seed">CRC seed</param>
-        /// <param name="table">CRC lookup table</param>
-        /// <param name="inverse">Is CRC inverted?</param>
-        public static string File(string filename, out byte[] hash, ushort polynomial, ushort seed, ushort[][] table,
-                                  bool inverse)
+        for(int slice = 1; slice < 8; slice++)
+            for(int i = 0; i < 256; i++)
+            {
+                if(inverseTable)
+                    table[slice][i] = (ushort)((table[slice - 1][i] << 8) ^ table[0][table[slice - 1][i] >> 8]);
+                else
+                    table[slice][i] = (ushort)((table[slice - 1][i] >> 8) ^ table[0][table[slice - 1][i] & 0xFF]);
+            }
+
+        return table;
+    }
+
+    /// <summary>Gets the hash of a file in hexadecimal and as a byte array.</summary>
+    /// <param name="filename">File path.</param>
+    /// <param name="hash">Byte array of the hash value.</param>
+    /// <param name="polynomial">CRC polynomial</param>
+    /// <param name="seed">CRC seed</param>
+    /// <param name="table">CRC lookup table</param>
+    /// <param name="inverse">Is CRC inverted?</param>
+    public static string File(string filename, out byte[] hash, ushort polynomial, ushort seed, ushort[][] table,
+                              bool inverse)
+    {
+        bool useNative = Native.IsSupported;
+
+        bool useCcitt = polynomial == CRC16CCITTContext.CRC16_CCITT_POLY &&
+                        seed       == CRC16CCITTContext.CRC16_CCITT_SEED && inverse;
+
+        bool useIbm = polynomial == CRC16IBMContext.CRC16_IBM_POLY && seed == CRC16IBMContext.CRC16_IBM_SEED &&
+                      !inverse;
+
+        IntPtr nativeContext = IntPtr.Zero;
+
+        var fileStream = new FileStream(filename, FileMode.Open);
+
+        ushort localHashInt = seed;
+
+        switch(useNative)
         {
-            bool useNative = Native.IsSupported;
+            case true when useCcitt:
+                nativeContext = crc16_ccitt_init();
+                useNative     = nativeContext != IntPtr.Zero;
 
-            bool useCcitt = polynomial == CRC16CCITTContext.CRC16_CCITT_POLY &&
-                            seed       == CRC16CCITTContext.CRC16_CCITT_SEED && inverse;
+                break;
+            case true when useIbm:
+                nativeContext = crc16_init();
+                useNative     = nativeContext != IntPtr.Zero;
 
-            bool useIbm = polynomial == CRC16IBMContext.CRC16_IBM_POLY && seed == CRC16IBMContext.CRC16_IBM_SEED &&
-                          !inverse;
-
-            IntPtr nativeContext = IntPtr.Zero;
-
-            var fileStream = new FileStream(filename, FileMode.Open);
-
-            ushort localHashInt = seed;
-
-            switch(useNative)
-            {
-                case true when useCcitt:
-                    nativeContext = crc16_ccitt_init();
-                    useNative     = nativeContext != IntPtr.Zero;
-
-                    break;
-                case true when useIbm:
-                    nativeContext = crc16_init();
-                    useNative     = nativeContext != IntPtr.Zero;
-
-                    break;
-            }
-
-            ushort[][] localTable = table ?? GenerateTable(polynomial, inverse);
-
-            byte[] buffer = new byte[65536];
-            int    read   = fileStream.Read(buffer, 0, 65536);
-
-            while(read > 0)
-            {
-                switch(useNative)
-                {
-                    case true when useCcitt:
-                        crc16_ccitt_update(nativeContext, buffer, (uint)read);
-
-                        break;
-                    case true when useIbm:
-                        crc16_update(nativeContext, buffer, (uint)read);
-
-                        break;
-                    default:
-                    {
-                        if(inverse)
-                            StepInverse(ref localHashInt, localTable, buffer, (uint)read);
-                        else
-                            Step(ref localHashInt, localTable, buffer, (uint)read);
-
-                        break;
-                    }
-                }
-
-                read = fileStream.Read(buffer, 0, 65536);
-            }
-
-            localHashInt ^= seed;
-
-            switch(useNative)
-            {
-                case true when useCcitt:
-                    crc16_ccitt_final(nativeContext, ref localHashInt);
-                    crc16_ccitt_free(nativeContext);
-
-                    break;
-                case true when useIbm:
-                    crc16_final(nativeContext, ref localHashInt);
-                    crc16_free(nativeContext);
-
-                    break;
-                default:
-                {
-                    if(inverse)
-                        localHashInt = (ushort)~localHashInt;
-
-                    break;
-                }
-            }
-
-            hash = BigEndianBitConverter.GetBytes(localHashInt);
-
-            var crc16Output = new StringBuilder();
-
-            foreach(byte h in hash)
-                crc16Output.Append(h.ToString("x2"));
-
-            fileStream.Close();
-
-            return crc16Output.ToString();
+                break;
         }
 
-        /// <summary>Gets the hash of the specified data buffer.</summary>
-        /// <param name="data">Data buffer.</param>
-        /// <param name="len">Length of the data buffer to hash.</param>
-        /// <param name="hash">Byte array of the hash value.</param>
-        /// <param name="polynomial">CRC polynomial</param>
-        /// <param name="seed">CRC seed</param>
-        /// <param name="table">CRC lookup table</param>
-        /// <param name="inverse">Is CRC inverted?</param>
-        public static string Data(byte[] data, uint len, out byte[] hash, ushort polynomial, ushort seed,
-                                  ushort[][] table, bool inverse)
+        ushort[][] localTable = table ?? GenerateTable(polynomial, inverse);
+
+        byte[] buffer = new byte[65536];
+        int    read   = fileStream.Read(buffer, 0, 65536);
+
+        while(read > 0)
         {
-            bool useNative = Native.IsSupported;
-
-            bool useCcitt = polynomial == CRC16CCITTContext.CRC16_CCITT_POLY &&
-                            seed       == CRC16CCITTContext.CRC16_CCITT_SEED && inverse;
-
-            bool useIbm = polynomial == CRC16IBMContext.CRC16_IBM_POLY && seed == CRC16IBMContext.CRC16_IBM_SEED &&
-                          !inverse;
-
-            IntPtr nativeContext = IntPtr.Zero;
-
-            ushort localHashInt = seed;
-
             switch(useNative)
             {
                 case true when useCcitt:
-                    nativeContext = crc16_ccitt_init();
-                    useNative     = nativeContext != IntPtr.Zero;
+                    crc16_ccitt_update(nativeContext, buffer, (uint)read);
 
                     break;
                 case true when useIbm:
-                    nativeContext = crc16_init();
-                    useNative     = nativeContext != IntPtr.Zero;
-
-                    break;
-            }
-
-            ushort[][] localTable = table ?? GenerateTable(polynomial, inverse);
-
-            switch(useNative)
-            {
-                case true when useCcitt:
-                    crc16_ccitt_update(nativeContext, data, len);
-
-                    break;
-                case true when useIbm:
-                    crc16_update(nativeContext, data, len);
+                    crc16_update(nativeContext, buffer, (uint)read);
 
                     break;
                 default:
                 {
                     if(inverse)
-                        StepInverse(ref localHashInt, localTable, data, len);
+                        StepInverse(ref localHashInt, localTable, buffer, (uint)read);
                     else
-                        Step(ref localHashInt, localTable, data, len);
+                        Step(ref localHashInt, localTable, buffer, (uint)read);
 
                     break;
                 }
             }
 
-            localHashInt ^= seed;
-
-            switch(useNative)
-            {
-                case true when useCcitt:
-                    crc16_ccitt_final(nativeContext, ref localHashInt);
-                    crc16_ccitt_free(nativeContext);
-
-                    break;
-                case true when useIbm:
-                    crc16_final(nativeContext, ref localHashInt);
-                    crc16_free(nativeContext);
-
-                    break;
-                default:
-                {
-                    if(inverse)
-                        localHashInt = (ushort)~localHashInt;
-
-                    break;
-                }
-            }
-
-            hash = BigEndianBitConverter.GetBytes(localHashInt);
-
-            var crc16Output = new StringBuilder();
-
-            foreach(byte h in hash)
-                crc16Output.Append(h.ToString("x2"));
-
-            return crc16Output.ToString();
+            read = fileStream.Read(buffer, 0, 65536);
         }
 
-        /// <summary>Calculates the CRC16 of the specified buffer with the specified parameters</summary>
-        /// <param name="buffer">Buffer</param>
-        /// <param name="polynomial">Polynomial</param>
-        /// <param name="seed">Seed</param>
-        /// <param name="table">Pre-generated lookup table</param>
-        /// <param name="inverse">Inverse CRC</param>
-        /// <returns>CRC16</returns>
-        public static ushort Calculate(byte[] buffer, ushort polynomial, ushort seed, ushort[][] table, bool inverse)
+        localHashInt ^= seed;
+
+        switch(useNative)
         {
-            bool useNative = Native.IsSupported;
+            case true when useCcitt:
+                crc16_ccitt_final(nativeContext, ref localHashInt);
+                crc16_ccitt_free(nativeContext);
 
-            bool useCcitt = polynomial == CRC16CCITTContext.CRC16_CCITT_POLY &&
-                            seed       == CRC16CCITTContext.CRC16_CCITT_SEED && inverse;
+                break;
+            case true when useIbm:
+                crc16_final(nativeContext, ref localHashInt);
+                crc16_free(nativeContext);
 
-            bool useIbm = polynomial == CRC16IBMContext.CRC16_IBM_POLY && seed == CRC16IBMContext.CRC16_IBM_SEED &&
-                          !inverse;
-
-            IntPtr nativeContext = IntPtr.Zero;
-
-            ushort localHashInt = seed;
-
-            switch(useNative)
+                break;
+            default:
             {
-                case true when useCcitt:
-                    nativeContext = crc16_ccitt_init();
-                    useNative     = nativeContext != IntPtr.Zero;
+                if(inverse)
+                    localHashInt = (ushort)~localHashInt;
 
-                    break;
-                case true when useIbm:
-                    nativeContext = crc16_init();
-                    useNative     = nativeContext != IntPtr.Zero;
-
-                    break;
+                break;
             }
-
-            ushort[][] localTable = table ?? GenerateTable(polynomial, inverse);
-
-            switch(useNative)
-            {
-                case true when useCcitt:
-                    crc16_ccitt_update(nativeContext, buffer, (uint)buffer.Length);
-
-                    break;
-                case true when useIbm:
-                    crc16_update(nativeContext, buffer, (uint)buffer.Length);
-
-                    break;
-                default:
-                {
-                    if(inverse)
-                        StepInverse(ref localHashInt, localTable, buffer, (uint)buffer.Length);
-                    else
-                        Step(ref localHashInt, localTable, buffer, (uint)buffer.Length);
-
-                    break;
-                }
-            }
-
-            localHashInt ^= seed;
-
-            switch(useNative)
-            {
-                case true when useCcitt:
-                    crc16_ccitt_final(nativeContext, ref localHashInt);
-                    crc16_ccitt_free(nativeContext);
-
-                    break;
-                case true when useIbm:
-                    crc16_final(nativeContext, ref localHashInt);
-                    crc16_free(nativeContext);
-
-                    break;
-                default:
-                {
-                    if(inverse)
-                        localHashInt = (ushort)~localHashInt;
-
-                    break;
-                }
-            }
-
-            return localHashInt;
         }
+
+        hash = BigEndianBitConverter.GetBytes(localHashInt);
+
+        var crc16Output = new StringBuilder();
+
+        foreach(byte h in hash)
+            crc16Output.Append(h.ToString("x2"));
+
+        fileStream.Close();
+
+        return crc16Output.ToString();
+    }
+
+    /// <summary>Gets the hash of the specified data buffer.</summary>
+    /// <param name="data">Data buffer.</param>
+    /// <param name="len">Length of the data buffer to hash.</param>
+    /// <param name="hash">Byte array of the hash value.</param>
+    /// <param name="polynomial">CRC polynomial</param>
+    /// <param name="seed">CRC seed</param>
+    /// <param name="table">CRC lookup table</param>
+    /// <param name="inverse">Is CRC inverted?</param>
+    public static string Data(byte[] data, uint len, out byte[] hash, ushort polynomial, ushort seed,
+                              ushort[][] table, bool inverse)
+    {
+        bool useNative = Native.IsSupported;
+
+        bool useCcitt = polynomial == CRC16CCITTContext.CRC16_CCITT_POLY &&
+                        seed       == CRC16CCITTContext.CRC16_CCITT_SEED && inverse;
+
+        bool useIbm = polynomial == CRC16IBMContext.CRC16_IBM_POLY && seed == CRC16IBMContext.CRC16_IBM_SEED &&
+                      !inverse;
+
+        IntPtr nativeContext = IntPtr.Zero;
+
+        ushort localHashInt = seed;
+
+        switch(useNative)
+        {
+            case true when useCcitt:
+                nativeContext = crc16_ccitt_init();
+                useNative     = nativeContext != IntPtr.Zero;
+
+                break;
+            case true when useIbm:
+                nativeContext = crc16_init();
+                useNative     = nativeContext != IntPtr.Zero;
+
+                break;
+        }
+
+        ushort[][] localTable = table ?? GenerateTable(polynomial, inverse);
+
+        switch(useNative)
+        {
+            case true when useCcitt:
+                crc16_ccitt_update(nativeContext, data, len);
+
+                break;
+            case true when useIbm:
+                crc16_update(nativeContext, data, len);
+
+                break;
+            default:
+            {
+                if(inverse)
+                    StepInverse(ref localHashInt, localTable, data, len);
+                else
+                    Step(ref localHashInt, localTable, data, len);
+
+                break;
+            }
+        }
+
+        localHashInt ^= seed;
+
+        switch(useNative)
+        {
+            case true when useCcitt:
+                crc16_ccitt_final(nativeContext, ref localHashInt);
+                crc16_ccitt_free(nativeContext);
+
+                break;
+            case true when useIbm:
+                crc16_final(nativeContext, ref localHashInt);
+                crc16_free(nativeContext);
+
+                break;
+            default:
+            {
+                if(inverse)
+                    localHashInt = (ushort)~localHashInt;
+
+                break;
+            }
+        }
+
+        hash = BigEndianBitConverter.GetBytes(localHashInt);
+
+        var crc16Output = new StringBuilder();
+
+        foreach(byte h in hash)
+            crc16Output.Append(h.ToString("x2"));
+
+        return crc16Output.ToString();
+    }
+
+    /// <summary>Calculates the CRC16 of the specified buffer with the specified parameters</summary>
+    /// <param name="buffer">Buffer</param>
+    /// <param name="polynomial">Polynomial</param>
+    /// <param name="seed">Seed</param>
+    /// <param name="table">Pre-generated lookup table</param>
+    /// <param name="inverse">Inverse CRC</param>
+    /// <returns>CRC16</returns>
+    public static ushort Calculate(byte[] buffer, ushort polynomial, ushort seed, ushort[][] table, bool inverse)
+    {
+        bool useNative = Native.IsSupported;
+
+        bool useCcitt = polynomial == CRC16CCITTContext.CRC16_CCITT_POLY &&
+                        seed       == CRC16CCITTContext.CRC16_CCITT_SEED && inverse;
+
+        bool useIbm = polynomial == CRC16IBMContext.CRC16_IBM_POLY && seed == CRC16IBMContext.CRC16_IBM_SEED &&
+                      !inverse;
+
+        IntPtr nativeContext = IntPtr.Zero;
+
+        ushort localHashInt = seed;
+
+        switch(useNative)
+        {
+            case true when useCcitt:
+                nativeContext = crc16_ccitt_init();
+                useNative     = nativeContext != IntPtr.Zero;
+
+                break;
+            case true when useIbm:
+                nativeContext = crc16_init();
+                useNative     = nativeContext != IntPtr.Zero;
+
+                break;
+        }
+
+        ushort[][] localTable = table ?? GenerateTable(polynomial, inverse);
+
+        switch(useNative)
+        {
+            case true when useCcitt:
+                crc16_ccitt_update(nativeContext, buffer, (uint)buffer.Length);
+
+                break;
+            case true when useIbm:
+                crc16_update(nativeContext, buffer, (uint)buffer.Length);
+
+                break;
+            default:
+            {
+                if(inverse)
+                    StepInverse(ref localHashInt, localTable, buffer, (uint)buffer.Length);
+                else
+                    Step(ref localHashInt, localTable, buffer, (uint)buffer.Length);
+
+                break;
+            }
+        }
+
+        localHashInt ^= seed;
+
+        switch(useNative)
+        {
+            case true when useCcitt:
+                crc16_ccitt_final(nativeContext, ref localHashInt);
+                crc16_ccitt_free(nativeContext);
+
+                break;
+            case true when useIbm:
+                crc16_final(nativeContext, ref localHashInt);
+                crc16_free(nativeContext);
+
+                break;
+            default:
+            {
+                if(inverse)
+                    localHashInt = (ushort)~localHashInt;
+
+                break;
+            }
+        }
+
+        return localHashInt;
     }
 }

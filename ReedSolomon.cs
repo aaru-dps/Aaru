@@ -60,587 +60,466 @@
 using System;
 using Aaru.Console;
 
-namespace Aaru.Checksums
+namespace Aaru.Checksums;
+
+/// <summary>Implements the Reed-Solomon algorithm</summary>
+public class ReedSolomon
 {
-    /// <summary>Implements the Reed-Solomon algorithm</summary>
-    public class ReedSolomon
+    /// <summary>Alpha exponent for the first root of the generator polynomial</summary>
+    const int B0 = 1;
+    /// <summary>No legal value in index form represents zero, so we need a special value for this purpose</summary>
+    int _a0;
+    /// <summary>index->polynomial form conversion table</summary>
+    int[] _alphaTo;
+    /// <summary>Generator polynomial g(x) Degree of g(x) = 2*TT has roots @**B0, @**(B0+1), ... ,@^(B0+2*TT-1)</summary>
+    int[] _gg;
+    /// <summary>Polynomial->index form conversion table</summary>
+    int[] _indexOf;
+    bool _initialized;
+    int  _mm, _kk, _nn;
+    /// <summary>
+    ///     Primitive polynomials - see Lin & Costello, Error Control Coding Appendix A, and  Lee & Messerschmitt, Digital
+    ///     Communication p. 453.
+    /// </summary>
+    int[] _pp;
+
+    /// <summary>Initializes the Reed-Solomon with RS(n,k) with GF(2^m)</summary>
+    public void InitRs(int n, int k, int m)
     {
-        /// <summary>Alpha exponent for the first root of the generator polynomial</summary>
-        const int B0 = 1;
-        /// <summary>No legal value in index form represents zero, so we need a special value for this purpose</summary>
-        int _a0;
-        /// <summary>index->polynomial form conversion table</summary>
-        int[] _alphaTo;
-        /// <summary>Generator polynomial g(x) Degree of g(x) = 2*TT has roots @**B0, @**(B0+1), ... ,@^(B0+2*TT-1)</summary>
-        int[] _gg;
-        /// <summary>Polynomial->index form conversion table</summary>
-        int[] _indexOf;
-        bool _initialized;
-        int  _mm, _kk, _nn;
-        /// <summary>
-        ///     Primitive polynomials - see Lin & Costello, Error Control Coding Appendix A, and  Lee & Messerschmitt, Digital
-        ///     Communication p. 453.
-        /// </summary>
-        int[] _pp;
-
-        /// <summary>Initializes the Reed-Solomon with RS(n,k) with GF(2^m)</summary>
-        public void InitRs(int n, int k, int m)
+        switch(m)
         {
-            switch(m)
-            {
-                case 2:
-                    _pp = new[]
-                    {
-                        1, 1, 1
-                    };
+            case 2:
+                _pp = new[]
+                {
+                    1, 1, 1
+                };
 
-                    break;
-                case 3:
-                    _pp = new[]
-                    {
-                        1, 1, 0, 1
-                    };
+                break;
+            case 3:
+                _pp = new[]
+                {
+                    1, 1, 0, 1
+                };
 
-                    break;
-                case 4:
-                    _pp = new[]
-                    {
-                        1, 1, 0, 0, 1
-                    };
+                break;
+            case 4:
+                _pp = new[]
+                {
+                    1, 1, 0, 0, 1
+                };
 
-                    break;
-                case 5:
-                    _pp = new[]
-                    {
-                        1, 0, 1, 0, 0, 1
-                    };
+                break;
+            case 5:
+                _pp = new[]
+                {
+                    1, 0, 1, 0, 0, 1
+                };
 
-                    break;
-                case 6:
-                    _pp = new[]
-                    {
-                        1, 1, 0, 0, 0, 0, 1
-                    };
+                break;
+            case 6:
+                _pp = new[]
+                {
+                    1, 1, 0, 0, 0, 0, 1
+                };
 
-                    break;
-                case 7:
-                    _pp = new[]
-                    {
-                        1, 0, 0, 1, 0, 0, 0, 1
-                    };
+                break;
+            case 7:
+                _pp = new[]
+                {
+                    1, 0, 0, 1, 0, 0, 0, 1
+                };
 
-                    break;
-                case 8:
-                    _pp = new[]
-                    {
-                        1, 0, 1, 1, 1, 0, 0, 0, 1
-                    };
+                break;
+            case 8:
+                _pp = new[]
+                {
+                    1, 0, 1, 1, 1, 0, 0, 0, 1
+                };
 
-                    break;
-                case 9:
-                    _pp = new[]
-                    {
-                        1, 0, 0, 0, 1, 0, 0, 0, 0, 1
-                    };
+                break;
+            case 9:
+                _pp = new[]
+                {
+                    1, 0, 0, 0, 1, 0, 0, 0, 0, 1
+                };
 
-                    break;
-                case 10:
-                    _pp = new[]
-                    {
-                        1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1
-                    };
+                break;
+            case 10:
+                _pp = new[]
+                {
+                    1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1
+                };
 
-                    break;
-                case 11:
-                    _pp = new[]
-                    {
-                        1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1
-                    };
+                break;
+            case 11:
+                _pp = new[]
+                {
+                    1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1
+                };
 
-                    break;
-                case 12:
-                    _pp = new[]
-                    {
-                        1, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1
-                    };
+                break;
+            case 12:
+                _pp = new[]
+                {
+                    1, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1
+                };
 
-                    break;
-                case 13:
-                    _pp = new[]
-                    {
-                        1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1
-                    };
+                break;
+            case 13:
+                _pp = new[]
+                {
+                    1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1
+                };
 
-                    break;
-                case 14:
-                    _pp = new[]
-                    {
-                        1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1
-                    };
+                break;
+            case 14:
+                _pp = new[]
+                {
+                    1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1
+                };
 
-                    break;
-                case 15:
-                    _pp = new[]
-                    {
-                        1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1
-                    };
+                break;
+            case 15:
+                _pp = new[]
+                {
+                    1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1
+                };
 
-                    break;
-                case 16:
-                    _pp = new[]
-                    {
-                        1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1
-                    };
+                break;
+            case 16:
+                _pp = new[]
+                {
+                    1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1
+                };
 
-                    break;
-                default: throw new ArgumentOutOfRangeException(nameof(m), "m must be between 2 and 16 inclusive");
-            }
-
-            _mm      = m;
-            _kk      = k;
-            _nn      = n;
-            _a0      = n;
-            _alphaTo = new int[n + 1];
-            _indexOf = new int[n + 1];
-
-            _gg = new int[_nn - _kk + 1];
-
-            generate_gf();
-            gen_poly();
-
-            _initialized = true;
+                break;
+            default: throw new ArgumentOutOfRangeException(nameof(m), "m must be between 2 and 16 inclusive");
         }
 
-        int Modnn(int x)
-        {
-            while(x >= _nn)
-            {
-                x -= _nn;
-                x =  (x >> _mm) + (x & _nn);
-            }
+        _mm      = m;
+        _kk      = k;
+        _nn      = n;
+        _a0      = n;
+        _alphaTo = new int[n + 1];
+        _indexOf = new int[n + 1];
 
-            return x;
+        _gg = new int[_nn - _kk + 1];
+
+        generate_gf();
+        gen_poly();
+
+        _initialized = true;
+    }
+
+    int Modnn(int x)
+    {
+        while(x >= _nn)
+        {
+            x -= _nn;
+            x =  (x >> _mm) + (x & _nn);
         }
 
-        static int Min(int a, int b) => a < b ? a : b;
+        return x;
+    }
 
-        static void Clear(ref int[] a, int n)
+    static int Min(int a, int b) => a < b ? a : b;
+
+    static void Clear(ref int[] a, int n)
+    {
+        int ci;
+
+        for(ci = n - 1; ci >= 0; ci--)
+            a[ci] = 0;
+    }
+
+    static void Copy(ref int[] a, ref int[] b, int n)
+    {
+        int ci;
+
+        for(ci = n - 1; ci >= 0; ci--)
+            a[ci] = b[ci];
+    }
+
+    static void Copydown(ref int[] a, ref int[] b, int n)
+    {
+        int ci;
+
+        for(ci = n - 1; ci >= 0; ci--)
+            a[ci] = b[ci];
+    }
+
+    /* generate GF(2**m) from the irreducible polynomial p(X) in p[0]..p[m]
+       lookup tables:  index->polynomial form   alpha_to[] contains j=alpha**i;
+                       polynomial form -> index form  index_of[j=alpha**i] = i
+       alpha=2 is the primitive element of GF(2**m)
+       HARI's COMMENT: (4/13/94) alpha_to[] can be used as follows:
+            Let @ represent the primitive element commonly called "alpha" that
+       is the root of the primitive polynomial p(x). Then in GF(2^m), for any
+       0 <= i <= 2^m-2,
+            @^i = a(0) + a(1) @ + a(2) @^2 + ... + a(m-1) @^(m-1)
+       where the binary vector (a(0),a(1),a(2),...,a(m-1)) is the representation
+       of the integer "alpha_to[i]" with a(0) being the LSB and a(m-1) the MSB. Thus for
+       example the polynomial representation of @^5 would be given by the binary
+       representation of the integer "alpha_to[5]".
+                       Similarily, index_of[] can be used as follows:
+            As above, let @ represent the primitive element of GF(2^m) that is
+       the root of the primitive polynomial p(x). In order to find the power
+       of @ (alpha) that has the polynomial representation
+            a(0) + a(1) @ + a(2) @^2 + ... + a(m-1) @^(m-1)
+       we consider the integer "i" whose binary representation with a(0) being LSB
+       and a(m-1) MSB is (a(0),a(1),...,a(m-1)) and locate the entry
+       "index_of[i]". Now, @^index_of[i] is that element whose polynomial
+        representation is (a(0),a(1),a(2),...,a(m-1)).
+       NOTE:
+            The element alpha_to[2^m-1] = 0 always signifying that the
+       representation of "@^infinity" = 0 is (0,0,0,...,0).
+            Similarily, the element index_of[0] = A0 always signifying
+       that the power of alpha which has the polynomial representation
+       (0,0,...,0) is "infinity".
+
+    */
+    void generate_gf()
+    {
+        int i;
+
+        int mask = 1;
+        _alphaTo[_mm] = 0;
+
+        for(i = 0; i < _mm; i++)
         {
-            int ci;
+            _alphaTo[i]           = mask;
+            _indexOf[_alphaTo[i]] = i;
 
-            for(ci = n - 1; ci >= 0; ci--)
-                a[ci] = 0;
+            /* If Pp[i] == 1 then, term @^i occurs in poly-repr of @^MM */
+            if(_pp[i] != 0)
+                _alphaTo[_mm] ^= mask; /* Bit-wise EXOR operation */
+
+            mask <<= 1; /* single left-shift */
         }
 
-        static void Copy(ref int[] a, ref int[] b, int n)
-        {
-            int ci;
+        _indexOf[_alphaTo[_mm]] = _mm;
+        /*
+         * Have obtained poly-repr of @^MM. Poly-repr of @^(i+1) is given by
+         * poly-repr of @^i shifted left one-bit and accounting for any @^MM
+         * term that may occur when poly-repr of @^i is shifted.
+         */
+        mask >>= 1;
 
-            for(ci = n - 1; ci >= 0; ci--)
-                a[ci] = b[ci];
+        for(i = _mm + 1; i < _nn; i++)
+        {
+            if(_alphaTo[i - 1] >= mask)
+                _alphaTo[i] = _alphaTo[_mm] ^ ((_alphaTo[i - 1] ^ mask) << 1);
+            else
+                _alphaTo[i] = _alphaTo[i - 1] << 1;
+
+            _indexOf[_alphaTo[i]] = i;
         }
 
-        static void Copydown(ref int[] a, ref int[] b, int n)
+        _indexOf[0]   = _a0;
+        _alphaTo[_nn] = 0;
+    }
+
+    /*
+     * Obtain the generator polynomial of the TT-error correcting, length
+     * NN=(2**MM -1) Reed Solomon code from the product of (X+@**(B0+i)), i = 0,
+     * ... ,(2*TT-1)
+     *
+     * Examples:
+     *
+     * If B0 = 1, TT = 1. deg(g(x)) = 2*TT = 2.
+     * g(x) = (x+@) (x+@**2)
+     *
+     * If B0 = 0, TT = 2. deg(g(x)) = 2*TT = 4.
+     * g(x) = (x+1) (x+@) (x+@**2) (x+@**3)
+     */
+    void gen_poly()
+    {
+        int i;
+
+        _gg[0] = _alphaTo[B0];
+        _gg[1] = 1; /* g(x) = (X+@**B0) initially */
+
+        for(i = 2; i <= _nn - _kk; i++)
         {
-            int ci;
+            _gg[i] = 1;
 
-            for(ci = n - 1; ci >= 0; ci--)
-                a[ci] = b[ci];
-        }
-
-        /* generate GF(2**m) from the irreducible polynomial p(X) in p[0]..p[m]
-           lookup tables:  index->polynomial form   alpha_to[] contains j=alpha**i;
-                           polynomial form -> index form  index_of[j=alpha**i] = i
-           alpha=2 is the primitive element of GF(2**m)
-           HARI's COMMENT: (4/13/94) alpha_to[] can be used as follows:
-                Let @ represent the primitive element commonly called "alpha" that
-           is the root of the primitive polynomial p(x). Then in GF(2^m), for any
-           0 <= i <= 2^m-2,
-                @^i = a(0) + a(1) @ + a(2) @^2 + ... + a(m-1) @^(m-1)
-           where the binary vector (a(0),a(1),a(2),...,a(m-1)) is the representation
-           of the integer "alpha_to[i]" with a(0) being the LSB and a(m-1) the MSB. Thus for
-           example the polynomial representation of @^5 would be given by the binary
-           representation of the integer "alpha_to[5]".
-                           Similarily, index_of[] can be used as follows:
-                As above, let @ represent the primitive element of GF(2^m) that is
-           the root of the primitive polynomial p(x). In order to find the power
-           of @ (alpha) that has the polynomial representation
-                a(0) + a(1) @ + a(2) @^2 + ... + a(m-1) @^(m-1)
-           we consider the integer "i" whose binary representation with a(0) being LSB
-           and a(m-1) MSB is (a(0),a(1),...,a(m-1)) and locate the entry
-           "index_of[i]". Now, @^index_of[i] is that element whose polynomial
-            representation is (a(0),a(1),a(2),...,a(m-1)).
-           NOTE:
-                The element alpha_to[2^m-1] = 0 always signifying that the
-           representation of "@^infinity" = 0 is (0,0,0,...,0).
-                Similarily, the element index_of[0] = A0 always signifying
-           that the power of alpha which has the polynomial representation
-           (0,0,...,0) is "infinity".
-
-        */
-        void generate_gf()
-        {
-            int i;
-
-            int mask = 1;
-            _alphaTo[_mm] = 0;
-
-            for(i = 0; i < _mm; i++)
-            {
-                _alphaTo[i]           = mask;
-                _indexOf[_alphaTo[i]] = i;
-
-                /* If Pp[i] == 1 then, term @^i occurs in poly-repr of @^MM */
-                if(_pp[i] != 0)
-                    _alphaTo[_mm] ^= mask; /* Bit-wise EXOR operation */
-
-                mask <<= 1; /* single left-shift */
-            }
-
-            _indexOf[_alphaTo[_mm]] = _mm;
             /*
-             * Have obtained poly-repr of @^MM. Poly-repr of @^(i+1) is given by
-             * poly-repr of @^i shifted left one-bit and accounting for any @^MM
-             * term that may occur when poly-repr of @^i is shifted.
+             * Below multiply (Gg[0]+Gg[1]*x + ... +Gg[i]x^i) by
+             * (@**(B0+i-1) + x)
              */
-            mask >>= 1;
-
-            for(i = _mm + 1; i < _nn; i++)
-            {
-                if(_alphaTo[i - 1] >= mask)
-                    _alphaTo[i] = _alphaTo[_mm] ^ ((_alphaTo[i - 1] ^ mask) << 1);
+            for(int j = i - 1; j > 0; j--)
+                if(_gg[j] != 0)
+                    _gg[j] = _gg[j - 1] ^ _alphaTo[Modnn(_indexOf[_gg[j]] + B0 + i - 1)];
                 else
-                    _alphaTo[i] = _alphaTo[i - 1] << 1;
+                    _gg[j] = _gg[j - 1];
 
-                _indexOf[_alphaTo[i]] = i;
-            }
-
-            _indexOf[0]   = _a0;
-            _alphaTo[_nn] = 0;
+            /* Gg[0] can never be zero */
+            _gg[0] = _alphaTo[Modnn(_indexOf[_gg[0]] + B0 + i - 1)];
         }
 
-        /*
-         * Obtain the generator polynomial of the TT-error correcting, length
-         * NN=(2**MM -1) Reed Solomon code from the product of (X+@**(B0+i)), i = 0,
-         * ... ,(2*TT-1)
-         *
-         * Examples:
-         *
-         * If B0 = 1, TT = 1. deg(g(x)) = 2*TT = 2.
-         * g(x) = (x+@) (x+@**2)
-         *
-         * If B0 = 0, TT = 2. deg(g(x)) = 2*TT = 4.
-         * g(x) = (x+1) (x+@) (x+@**2) (x+@**3)
-         */
-        void gen_poly()
+        /* convert Gg[] to index form for quicker encoding */
+        for(i = 0; i <= _nn - _kk; i++)
+            _gg[i] = _indexOf[_gg[i]];
+    }
+
+    /*
+     * take the string of symbols in data[i], i=0..(k-1) and encode
+     * systematically to produce NN-KK parity symbols in bb[0]..bb[NN-KK-1] data[]
+     * is input and bb[] is output in polynomial form. Encoding is done by using
+     * a feedback shift register with appropriate connections specified by the
+     * elements of Gg[], which was generated above. Codeword is   c(X) =
+     * data(X)*X**(NN-KK)+ b(X)
+     */
+    /// <summary>Takes the symbols in data to output parity in bb.</summary>
+    /// <returns>Returns -1 if an illegal symbol is found.</returns>
+    /// <param name="data">Data symbols.</param>
+    /// <param name="bb">Outs parity symbols.</param>
+    public int encode_rs(int[] data, out int[] bb)
+    {
+        if(!_initialized)
+            throw new UnauthorizedAccessException("Trying to calculate RS without initializing!");
+
+        int i;
+        bb = new int[_nn - _kk];
+
+        Clear(ref bb, _nn - _kk);
+
+        for(i = _kk - 1; i >= 0; i--)
         {
-            int i;
+            if(_mm != 8)
+                if(data[i] > _nn)
+                    return -1; /* Illegal symbol */
 
-            _gg[0] = _alphaTo[B0];
-            _gg[1] = 1; /* g(x) = (X+@**B0) initially */
+            int feedback = _indexOf[data[i] ^ bb[_nn - _kk - 1]];
 
-            for(i = 2; i <= _nn - _kk; i++)
+            if(feedback != _a0)
             {
-                _gg[i] = 1;
-
-                /*
-                 * Below multiply (Gg[0]+Gg[1]*x + ... +Gg[i]x^i) by
-                 * (@**(B0+i-1) + x)
-                 */
-                for(int j = i - 1; j > 0; j--)
-                    if(_gg[j] != 0)
-                        _gg[j] = _gg[j - 1] ^ _alphaTo[Modnn(_indexOf[_gg[j]] + B0 + i - 1)];
+                /* feedback term is non-zero */
+                for(int j = _nn - _kk - 1; j > 0; j--)
+                    if(_gg[j] != _a0)
+                        bb[j] = bb[j - 1] ^ _alphaTo[Modnn(_gg[j] + feedback)];
                     else
-                        _gg[j] = _gg[j - 1];
-
-                /* Gg[0] can never be zero */
-                _gg[0] = _alphaTo[Modnn(_indexOf[_gg[0]] + B0 + i - 1)];
-            }
-
-            /* convert Gg[] to index form for quicker encoding */
-            for(i = 0; i <= _nn - _kk; i++)
-                _gg[i] = _indexOf[_gg[i]];
-        }
-
-        /*
-         * take the string of symbols in data[i], i=0..(k-1) and encode
-         * systematically to produce NN-KK parity symbols in bb[0]..bb[NN-KK-1] data[]
-         * is input and bb[] is output in polynomial form. Encoding is done by using
-         * a feedback shift register with appropriate connections specified by the
-         * elements of Gg[], which was generated above. Codeword is   c(X) =
-         * data(X)*X**(NN-KK)+ b(X)
-         */
-        /// <summary>Takes the symbols in data to output parity in bb.</summary>
-        /// <returns>Returns -1 if an illegal symbol is found.</returns>
-        /// <param name="data">Data symbols.</param>
-        /// <param name="bb">Outs parity symbols.</param>
-        public int encode_rs(int[] data, out int[] bb)
-        {
-            if(!_initialized)
-                throw new UnauthorizedAccessException("Trying to calculate RS without initializing!");
-
-            int i;
-            bb = new int[_nn - _kk];
-
-            Clear(ref bb, _nn - _kk);
-
-            for(i = _kk - 1; i >= 0; i--)
-            {
-                if(_mm != 8)
-                    if(data[i] > _nn)
-                        return -1; /* Illegal symbol */
-
-                int feedback = _indexOf[data[i] ^ bb[_nn - _kk - 1]];
-
-                if(feedback != _a0)
-                {
-                    /* feedback term is non-zero */
-                    for(int j = _nn - _kk - 1; j > 0; j--)
-                        if(_gg[j] != _a0)
-                            bb[j] = bb[j - 1] ^ _alphaTo[Modnn(_gg[j] + feedback)];
-                        else
-                            bb[j] = bb[j - 1];
-
-                    bb[0] = _alphaTo[Modnn(_gg[0] + feedback)];
-                }
-                else
-                {
-                    /* feedback term is zero. encoder becomes a
-                                     * single-byte shifter */
-                    for(int j = _nn - _kk - 1; j > 0; j--)
                         bb[j] = bb[j - 1];
 
-                    bb[0] = 0;
-                }
+                bb[0] = _alphaTo[Modnn(_gg[0] + feedback)];
             }
+            else
+            {
+                /* feedback term is zero. encoder becomes a
+                                 * single-byte shifter */
+                for(int j = _nn - _kk - 1; j > 0; j--)
+                    bb[j] = bb[j - 1];
 
-            return 0;
+                bb[0] = 0;
+            }
         }
 
-        /*
-         * Performs ERRORS+ERASURES decoding of RS codes. If decoding is successful,
-         * writes the codeword into data[] itself. Otherwise data[] is unaltered.
-         *
-         * Return number of symbols corrected, or -1 if codeword is illegal
-         * or uncorrectable.
-         *
-         * First "no_eras" erasures are declared by the calling program. Then, the
-         * maximum # of errors correctable is t_after_eras = floor((NN-KK-no_eras)/2).
-         * If the number of channel errors is not greater than "t_after_eras" the
-         * transmitted codeword will be recovered. Details of algorithm can be found
-         * in R. Blahut's "Theory ... of Error-Correcting Codes".
-         */
-        /// <summary>Decodes the RS. If decoding is successful outputs corrected data symbols.</summary>
-        /// <returns>Returns corrected symbols, -1 if illegal or uncorrectable</returns>
-        /// <param name="data">Data symbols.</param>
-        /// <param name="erasPos">Position of erasures.</param>
-        /// <param name="noEras">Number of erasures.</param>
-        public int eras_dec_rs(ref int[] data, out int[] erasPos, int noEras)
+        return 0;
+    }
+
+    /*
+     * Performs ERRORS+ERASURES decoding of RS codes. If decoding is successful,
+     * writes the codeword into data[] itself. Otherwise data[] is unaltered.
+     *
+     * Return number of symbols corrected, or -1 if codeword is illegal
+     * or uncorrectable.
+     *
+     * First "no_eras" erasures are declared by the calling program. Then, the
+     * maximum # of errors correctable is t_after_eras = floor((NN-KK-no_eras)/2).
+     * If the number of channel errors is not greater than "t_after_eras" the
+     * transmitted codeword will be recovered. Details of algorithm can be found
+     * in R. Blahut's "Theory ... of Error-Correcting Codes".
+     */
+    /// <summary>Decodes the RS. If decoding is successful outputs corrected data symbols.</summary>
+    /// <returns>Returns corrected symbols, -1 if illegal or uncorrectable</returns>
+    /// <param name="data">Data symbols.</param>
+    /// <param name="erasPos">Position of erasures.</param>
+    /// <param name="noEras">Number of erasures.</param>
+    public int eras_dec_rs(ref int[] data, out int[] erasPos, int noEras)
+    {
+        if(!_initialized)
+            throw new UnauthorizedAccessException("Trying to calculate RS without initializing!");
+
+        erasPos = new int[_nn - _kk];
+        int   i, j;
+        int   q, tmp;
+        int[] recd   = new int[_nn];
+        int[] lambda = new int[_nn - _kk + 1]; /* Err+Eras Locator poly */
+        int[] s      = new int[_nn - _kk + 1]; /* syndrome poly */
+        int[] b      = new int[_nn - _kk + 1];
+        int[] t      = new int[_nn - _kk + 1];
+        int[] omega  = new int[_nn - _kk + 1];
+        int[] root   = new int[_nn       - _kk];
+        int[] reg    = new int[_nn - _kk + 1];
+        int[] loc    = new int[_nn       - _kk];
+        int   count;
+
+        /* data[] is in polynomial form, copy and convert to index form */
+        for(i = _nn - 1; i >= 0; i--)
         {
-            if(!_initialized)
-                throw new UnauthorizedAccessException("Trying to calculate RS without initializing!");
+            if(_mm != 8)
+                if(data[i] > _nn)
+                    return -1; /* Illegal symbol */
 
-            erasPos = new int[_nn - _kk];
-            int   i, j;
-            int   q, tmp;
-            int[] recd   = new int[_nn];
-            int[] lambda = new int[_nn - _kk + 1]; /* Err+Eras Locator poly */
-            int[] s      = new int[_nn - _kk + 1]; /* syndrome poly */
-            int[] b      = new int[_nn - _kk + 1];
-            int[] t      = new int[_nn - _kk + 1];
-            int[] omega  = new int[_nn - _kk + 1];
-            int[] root   = new int[_nn       - _kk];
-            int[] reg    = new int[_nn - _kk + 1];
-            int[] loc    = new int[_nn       - _kk];
-            int   count;
+            recd[i] = _indexOf[data[i]];
+        }
 
-            /* data[] is in polynomial form, copy and convert to index form */
-            for(i = _nn - 1; i >= 0; i--)
-            {
-                if(_mm != 8)
-                    if(data[i] > _nn)
-                        return -1; /* Illegal symbol */
+        /* first form the syndromes; i.e., evaluate recd(x) at roots of g(x)
+         * namely @**(B0+i), i = 0, ... ,(NN-KK-1)
+         */
+        int synError = 0;
 
-                recd[i] = _indexOf[data[i]];
-            }
+        for(i = 1; i <= _nn - _kk; i++)
+        {
+            tmp = 0;
 
-            /* first form the syndromes; i.e., evaluate recd(x) at roots of g(x)
-             * namely @**(B0+i), i = 0, ... ,(NN-KK-1)
-             */
-            int synError = 0;
+            for(j = 0; j < _nn; j++)
+                if(recd[j] != _a0) /* recd[j] in index form */
+                    tmp ^= _alphaTo[Modnn(recd[j] + ((B0 + i - 1) * j))];
 
-            for(i = 1; i <= _nn - _kk; i++)
-            {
-                tmp = 0;
-
-                for(j = 0; j < _nn; j++)
-                    if(recd[j] != _a0) /* recd[j] in index form */
-                        tmp ^= _alphaTo[Modnn(recd[j] + ((B0 + i - 1) * j))];
-
-                synError |= tmp; /* set flag if non-zero syndrome =>
+            synError |= tmp; /* set flag if non-zero syndrome =>
                      * error */
 
-                /* store syndrome in index form  */
-                s[i] = _indexOf[tmp];
-            }
+            /* store syndrome in index form  */
+            s[i] = _indexOf[tmp];
+        }
 
-            if(synError == 0)
-                return 0;
+        if(synError == 0)
+            return 0;
 
-            Clear(ref lambda, _nn - _kk);
-            lambda[0] = 1;
+        Clear(ref lambda, _nn - _kk);
+        lambda[0] = 1;
 
-            if(noEras > 0)
+        if(noEras > 0)
+        {
+            /* Init lambda to be the erasure locator polynomial */
+            lambda[1] = _alphaTo[erasPos[0]];
+
+            for(i = 1; i < noEras; i++)
             {
-                /* Init lambda to be the erasure locator polynomial */
-                lambda[1] = _alphaTo[erasPos[0]];
+                int u = erasPos[i];
 
-                for(i = 1; i < noEras; i++)
+                for(j = i + 1; j > 0; j--)
                 {
-                    int u = erasPos[i];
+                    tmp = _indexOf[lambda[j - 1]];
 
-                    for(j = i + 1; j > 0; j--)
-                    {
-                        tmp = _indexOf[lambda[j - 1]];
-
-                        if(tmp != _a0)
-                            lambda[j] ^= _alphaTo[Modnn(u + tmp)];
-                    }
-                }
-
-            #if DEBUG
-                /* find roots of the erasure location polynomial */
-                for(i = 1; i <= noEras; i++)
-                    reg[i] = _indexOf[lambda[i]];
-
-                count = 0;
-
-                for(i = 1; i <= _nn; i++)
-                {
-                    q = 1;
-
-                    for(j = 1; j <= noEras; j++)
-                        if(reg[j] != _a0)
-                        {
-                            reg[j] =  Modnn(reg[j] + j);
-                            q      ^= _alphaTo[reg[j]];
-                        }
-
-                    if(q != 0)
-                        continue;
-
-                    /* store root and error location
-                             * number indices
-                             */
-                    root[count] = i;
-                    loc[count]  = _nn - i;
-                    count++;
-                }
-
-                if(count != noEras)
-                {
-                    AaruConsole.DebugWriteLine("Reed Solomon", "\n lambda(x) is WRONG\n");
-
-                    return -1;
-                }
-
-                AaruConsole.DebugWriteLine("Reed Solomon",
-                                           "\n Erasure positions as determined by roots of Eras Loc Poly:\n");
-
-                for(i = 0; i < count; i++)
-                    AaruConsole.DebugWriteLine("Reed Solomon", "{0} ", loc[i]);
-
-                AaruConsole.DebugWriteLine("Reed Solomon", "\n");
-            #endif
-            }
-
-            for(i = 0; i < _nn - _kk + 1; i++)
-                b[i] = _indexOf[lambda[i]];
-
-            /*
-             * Begin Berlekamp-Massey algorithm to determine error+erasure
-             * locator polynomial
-             */
-            int r  = noEras;
-            int el = noEras;
-
-            while(++r <= _nn - _kk)
-            {
-                /* r is the step number */
-                /* Compute discrepancy at the r-th step in poly-form */
-                int discrR = 0;
-
-                for(i = 0; i < r; i++)
-                    if(lambda[i] != 0 &&
-                       s[r - i]  != _a0)
-                        discrR ^= _alphaTo[Modnn(_indexOf[lambda[i]] + s[r - i])];
-
-                discrR = _indexOf[discrR]; /* Index form */
-
-                if(discrR == _a0)
-                {
-                    /* 2 lines below: B(x) <-- x*B(x) */
-                    Copydown(ref b, ref b, _nn - _kk);
-                    b[0] = _a0;
-                }
-                else
-                {
-                    /* 7 lines below: T(x) <-- lambda(x) - discr_r*x*b(x) */
-                    t[0] = lambda[0];
-
-                    for(i = 0; i < _nn - _kk; i++)
-                        if(b[i] != _a0)
-                            t[i + 1] = lambda[i + 1] ^ _alphaTo[Modnn(discrR + b[i])];
-                        else
-                            t[i + 1] = lambda[i + 1];
-
-                    if(2 * el <= r + noEras - 1)
-                    {
-                        el = r + noEras - el;
-
-                        /*
-                         * 2 lines below: B(x) <-- inv(discr_r) *
-                         * lambda(x)
-                         */
-                        for(i = 0; i <= _nn - _kk; i++)
-                            b[i] = lambda[i] == 0 ? _a0 : Modnn(_indexOf[lambda[i]] - discrR + _nn);
-                    }
-                    else
-                    {
-                        /* 2 lines below: B(x) <-- x*B(x) */
-                        Copydown(ref b, ref b, _nn - _kk);
-                        b[0] = _a0;
-                    }
-
-                    Copy(ref lambda, ref t, _nn - _kk + 1);
+                    if(tmp != _a0)
+                        lambda[j] ^= _alphaTo[Modnn(u + tmp)];
                 }
             }
 
-            /* Convert lambda to index form and compute deg(lambda(x)) */
-            int degLambda = 0;
+        #if DEBUG
+            /* find roots of the erasure location polynomial */
+            for(i = 1; i <= noEras; i++)
+                reg[i] = _indexOf[lambda[i]];
 
-            for(i = 0; i < _nn - _kk + 1; i++)
-            {
-                lambda[i] = _indexOf[lambda[i]];
-
-                if(lambda[i] != _a0)
-                    degLambda = i;
-            }
-
-            /*
-             * Find roots of the error+erasure locator polynomial. By Chien
-             * Search
-             */
-            int temp = reg[0];
-            Copy(ref reg, ref lambda, _nn - _kk);
-            reg[0] = temp;
-            count  = 0; /* Number of roots of lambda(x) */
+            count = 0;
 
             for(i = 1; i <= _nn; i++)
             {
                 q = 1;
 
-                for(j = degLambda; j > 0; j--)
+                for(j = 1; j <= noEras; j++)
                     if(reg[j] != _a0)
                     {
                         reg[j] =  Modnn(reg[j] + j);
@@ -650,81 +529,201 @@ namespace Aaru.Checksums
                 if(q != 0)
                     continue;
 
-                /* store root (index-form) and error location number */
+                /* store root and error location
+                         * number indices
+                         */
                 root[count] = i;
                 loc[count]  = _nn - i;
                 count++;
             }
 
-        #if DEBUG
-            AaruConsole.DebugWriteLine("Reed Solomon", "\n Final error positions:\t");
+            if(count != noEras)
+            {
+                AaruConsole.DebugWriteLine("Reed Solomon", "\n lambda(x) is WRONG\n");
+
+                return -1;
+            }
+
+            AaruConsole.DebugWriteLine("Reed Solomon",
+                                       "\n Erasure positions as determined by roots of Eras Loc Poly:\n");
 
             for(i = 0; i < count; i++)
                 AaruConsole.DebugWriteLine("Reed Solomon", "{0} ", loc[i]);
 
             AaruConsole.DebugWriteLine("Reed Solomon", "\n");
         #endif
+        }
 
-            if(degLambda != count)
-                return -1;
+        for(i = 0; i < _nn - _kk + 1; i++)
+            b[i] = _indexOf[lambda[i]];
 
-            /*
-             * Compute err+eras evaluator poly omega(x) = s(x)*lambda(x) (modulo
-             * x**(NN-KK)). in index form. Also find deg(omega).
-             */
-            int degOmega = 0;
+        /*
+         * Begin Berlekamp-Massey algorithm to determine error+erasure
+         * locator polynomial
+         */
+        int r  = noEras;
+        int el = noEras;
 
-            for(i = 0; i < _nn - _kk; i++)
+        while(++r <= _nn - _kk)
+        {
+            /* r is the step number */
+            /* Compute discrepancy at the r-th step in poly-form */
+            int discrR = 0;
+
+            for(i = 0; i < r; i++)
+                if(lambda[i] != 0 &&
+                   s[r - i]  != _a0)
+                    discrR ^= _alphaTo[Modnn(_indexOf[lambda[i]] + s[r - i])];
+
+            discrR = _indexOf[discrR]; /* Index form */
+
+            if(discrR == _a0)
             {
-                tmp = 0;
-                j   = degLambda < i ? degLambda : i;
-
-                for(; j >= 0; j--)
-                    if(s[i + 1 - j] != _a0 &&
-                       lambda[j]    != _a0)
-                        tmp ^= _alphaTo[Modnn(s[i + 1 - j] + lambda[j])];
-
-                if(tmp != 0)
-                    degOmega = i;
-
-                omega[i] = _indexOf[tmp];
+                /* 2 lines below: B(x) <-- x*B(x) */
+                Copydown(ref b, ref b, _nn - _kk);
+                b[0] = _a0;
             }
-
-            omega[_nn - _kk] = _a0;
-
-            /*
-             * Compute error values in poly-form. num1 = omega(inv(X(l))), num2 =
-             * inv(X(l))**(B0-1) and den = lambda_pr(inv(X(l))) all in poly-form
-             */
-            for(j = count - 1; j >= 0; j--)
+            else
             {
-                int num1 = 0;
+                /* 7 lines below: T(x) <-- lambda(x) - discr_r*x*b(x) */
+                t[0] = lambda[0];
 
-                for(i = degOmega; i >= 0; i--)
-                    if(omega[i] != _a0)
-                        num1 ^= _alphaTo[Modnn(omega[i] + (i * root[j]))];
+                for(i = 0; i < _nn - _kk; i++)
+                    if(b[i] != _a0)
+                        t[i + 1] = lambda[i + 1] ^ _alphaTo[Modnn(discrR + b[i])];
+                    else
+                        t[i + 1] = lambda[i + 1];
 
-                int num2 = _alphaTo[Modnn((root[j] * (B0 - 1)) + _nn)];
-                int den  = 0;
-
-                /* lambda[i+1] for i even is the formal derivative lambda_pr of lambda[i] */
-                for(i = Min(degLambda, _nn - _kk - 1) & ~1; i >= 0; i -= 2)
-                    if(lambda[i + 1] != _a0)
-                        den ^= _alphaTo[Modnn(lambda[i + 1] + (i * root[j]))];
-
-                if(den == 0)
+                if(2 * el <= r + noEras - 1)
                 {
-                    AaruConsole.DebugWriteLine("Reed Solomon", "\n ERROR: denominator = 0\n");
+                    el = r + noEras - el;
 
-                    return -1;
+                    /*
+                     * 2 lines below: B(x) <-- inv(discr_r) *
+                     * lambda(x)
+                     */
+                    for(i = 0; i <= _nn - _kk; i++)
+                        b[i] = lambda[i] == 0 ? _a0 : Modnn(_indexOf[lambda[i]] - discrR + _nn);
+                }
+                else
+                {
+                    /* 2 lines below: B(x) <-- x*B(x) */
+                    Copydown(ref b, ref b, _nn - _kk);
+                    b[0] = _a0;
                 }
 
-                /* Apply error to data */
-                if(num1 != 0)
-                    data[loc[j]] ^= _alphaTo[Modnn(_indexOf[num1] + _indexOf[num2] + _nn - _indexOf[den])];
+                Copy(ref lambda, ref t, _nn - _kk + 1);
+            }
+        }
+
+        /* Convert lambda to index form and compute deg(lambda(x)) */
+        int degLambda = 0;
+
+        for(i = 0; i < _nn - _kk + 1; i++)
+        {
+            lambda[i] = _indexOf[lambda[i]];
+
+            if(lambda[i] != _a0)
+                degLambda = i;
+        }
+
+        /*
+         * Find roots of the error+erasure locator polynomial. By Chien
+         * Search
+         */
+        int temp = reg[0];
+        Copy(ref reg, ref lambda, _nn - _kk);
+        reg[0] = temp;
+        count  = 0; /* Number of roots of lambda(x) */
+
+        for(i = 1; i <= _nn; i++)
+        {
+            q = 1;
+
+            for(j = degLambda; j > 0; j--)
+                if(reg[j] != _a0)
+                {
+                    reg[j] =  Modnn(reg[j] + j);
+                    q      ^= _alphaTo[reg[j]];
+                }
+
+            if(q != 0)
+                continue;
+
+            /* store root (index-form) and error location number */
+            root[count] = i;
+            loc[count]  = _nn - i;
+            count++;
+        }
+
+    #if DEBUG
+        AaruConsole.DebugWriteLine("Reed Solomon", "\n Final error positions:\t");
+
+        for(i = 0; i < count; i++)
+            AaruConsole.DebugWriteLine("Reed Solomon", "{0} ", loc[i]);
+
+        AaruConsole.DebugWriteLine("Reed Solomon", "\n");
+    #endif
+
+        if(degLambda != count)
+            return -1;
+
+        /*
+         * Compute err+eras evaluator poly omega(x) = s(x)*lambda(x) (modulo
+         * x**(NN-KK)). in index form. Also find deg(omega).
+         */
+        int degOmega = 0;
+
+        for(i = 0; i < _nn - _kk; i++)
+        {
+            tmp = 0;
+            j   = degLambda < i ? degLambda : i;
+
+            for(; j >= 0; j--)
+                if(s[i + 1 - j] != _a0 &&
+                   lambda[j]    != _a0)
+                    tmp ^= _alphaTo[Modnn(s[i + 1 - j] + lambda[j])];
+
+            if(tmp != 0)
+                degOmega = i;
+
+            omega[i] = _indexOf[tmp];
+        }
+
+        omega[_nn - _kk] = _a0;
+
+        /*
+         * Compute error values in poly-form. num1 = omega(inv(X(l))), num2 =
+         * inv(X(l))**(B0-1) and den = lambda_pr(inv(X(l))) all in poly-form
+         */
+        for(j = count - 1; j >= 0; j--)
+        {
+            int num1 = 0;
+
+            for(i = degOmega; i >= 0; i--)
+                if(omega[i] != _a0)
+                    num1 ^= _alphaTo[Modnn(omega[i] + (i * root[j]))];
+
+            int num2 = _alphaTo[Modnn((root[j] * (B0 - 1)) + _nn)];
+            int den  = 0;
+
+            /* lambda[i+1] for i even is the formal derivative lambda_pr of lambda[i] */
+            for(i = Min(degLambda, _nn - _kk - 1) & ~1; i >= 0; i -= 2)
+                if(lambda[i + 1] != _a0)
+                    den ^= _alphaTo[Modnn(lambda[i + 1] + (i * root[j]))];
+
+            if(den == 0)
+            {
+                AaruConsole.DebugWriteLine("Reed Solomon", "\n ERROR: denominator = 0\n");
+
+                return -1;
             }
 
-            return count;
+            /* Apply error to data */
+            if(num1 != 0)
+                data[loc[j]] ^= _alphaTo[Modnn(_indexOf[num1] + _indexOf[num2] + _nn - _indexOf[den])];
         }
+
+        return count;
     }
 }

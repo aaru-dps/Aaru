@@ -36,99 +36,98 @@ using System.Security.Cryptography;
 using System.Text;
 using Aaru.CommonTypes.Interfaces;
 
-namespace Aaru.Checksums
+namespace Aaru.Checksums;
+
+/// <inheritdoc />
+/// <summary>Wraps up .NET SHA1 implementation to a Init(), Update(), Final() context.</summary>
+public sealed class Sha1Context : IChecksum
 {
+    readonly SHA1 _provider;
+
+    /// <summary>Initializes the SHA1 hash provider</summary>
+    public Sha1Context() => _provider = SHA1.Create();
+
     /// <inheritdoc />
-    /// <summary>Wraps up .NET SHA1 implementation to a Init(), Update(), Final() context.</summary>
-    public sealed class Sha1Context : IChecksum
+    /// <summary>Updates the hash with data.</summary>
+    /// <param name="data">Data buffer.</param>
+    /// <param name="len">Length of buffer to hash.</param>
+    public void Update(byte[] data, uint len) => _provider.TransformBlock(data, 0, (int)len, data, 0);
+
+    /// <inheritdoc />
+    /// <summary>Updates the hash with data.</summary>
+    /// <param name="data">Data buffer.</param>
+    public void Update(byte[] data) => Update(data, (uint)data.Length);
+
+    /// <inheritdoc />
+    /// <summary>Returns a byte array of the hash value.</summary>
+    public byte[] Final()
     {
-        readonly SHA1 _provider;
+        _provider.TransformFinalBlock(Array.Empty<byte>(), 0, 0);
 
-        /// <summary>Initializes the SHA1 hash provider</summary>
-        public Sha1Context() => _provider = SHA1.Create();
-
-        /// <inheritdoc />
-        /// <summary>Updates the hash with data.</summary>
-        /// <param name="data">Data buffer.</param>
-        /// <param name="len">Length of buffer to hash.</param>
-        public void Update(byte[] data, uint len) => _provider.TransformBlock(data, 0, (int)len, data, 0);
-
-        /// <inheritdoc />
-        /// <summary>Updates the hash with data.</summary>
-        /// <param name="data">Data buffer.</param>
-        public void Update(byte[] data) => Update(data, (uint)data.Length);
-
-        /// <inheritdoc />
-        /// <summary>Returns a byte array of the hash value.</summary>
-        public byte[] Final()
-        {
-            _provider.TransformFinalBlock(Array.Empty<byte>(), 0, 0);
-
-            return _provider.Hash;
-        }
-
-        /// <inheritdoc />
-        /// <summary>Returns a hexadecimal representation of the hash value.</summary>
-        public string End()
-        {
-            _provider.TransformFinalBlock(Array.Empty<byte>(), 0, 0);
-            var sha1Output = new StringBuilder();
-
-            foreach(byte h in _provider.Hash)
-                sha1Output.Append(h.ToString("x2"));
-
-            return sha1Output.ToString();
-        }
-
-        /// <summary>Gets the hash of a file</summary>
-        /// <param name="filename">File path.</param>
-        public static byte[] File(string filename)
-        {
-            var    localSha1Provider = SHA1.Create();
-            var    fileStream        = new FileStream(filename, FileMode.Open);
-            byte[] result            = localSha1Provider.ComputeHash(fileStream);
-            fileStream.Close();
-
-            return result;
-        }
-
-        /// <summary>Gets the hash of a file in hexadecimal and as a byte array.</summary>
-        /// <param name="filename">File path.</param>
-        /// <param name="hash">Byte array of the hash value.</param>
-        public static string File(string filename, out byte[] hash)
-        {
-            var localSha1Provider = SHA1.Create();
-            var fileStream        = new FileStream(filename, FileMode.Open);
-            hash = localSha1Provider.ComputeHash(fileStream);
-            var sha1Output = new StringBuilder();
-
-            foreach(byte h in hash)
-                sha1Output.Append(h.ToString("x2"));
-
-            fileStream.Close();
-
-            return sha1Output.ToString();
-        }
-
-        /// <summary>Gets the hash of the specified data buffer.</summary>
-        /// <param name="data">Data buffer.</param>
-        /// <param name="len">Length of the data buffer to hash.</param>
-        /// <param name="hash">Byte array of the hash value.</param>
-        public static string Data(byte[] data, uint len, out byte[] hash)
-        {
-            var localSha1Provider = SHA1.Create();
-            hash = localSha1Provider.ComputeHash(data, 0, (int)len);
-            var sha1Output = new StringBuilder();
-
-            foreach(byte h in hash)
-                sha1Output.Append(h.ToString("x2"));
-
-            return sha1Output.ToString();
-        }
-
-        /// <summary>Gets the hash of the specified data buffer.</summary>
-        /// <param name="data">Data buffer.</param>
-        /// <param name="hash">Byte array of the hash value.</param>
-        public static string Data(byte[] data, out byte[] hash) => Data(data, (uint)data.Length, out hash);
+        return _provider.Hash;
     }
+
+    /// <inheritdoc />
+    /// <summary>Returns a hexadecimal representation of the hash value.</summary>
+    public string End()
+    {
+        _provider.TransformFinalBlock(Array.Empty<byte>(), 0, 0);
+        var sha1Output = new StringBuilder();
+
+        foreach(byte h in _provider.Hash)
+            sha1Output.Append(h.ToString("x2"));
+
+        return sha1Output.ToString();
+    }
+
+    /// <summary>Gets the hash of a file</summary>
+    /// <param name="filename">File path.</param>
+    public static byte[] File(string filename)
+    {
+        var    localSha1Provider = SHA1.Create();
+        var    fileStream        = new FileStream(filename, FileMode.Open);
+        byte[] result            = localSha1Provider.ComputeHash(fileStream);
+        fileStream.Close();
+
+        return result;
+    }
+
+    /// <summary>Gets the hash of a file in hexadecimal and as a byte array.</summary>
+    /// <param name="filename">File path.</param>
+    /// <param name="hash">Byte array of the hash value.</param>
+    public static string File(string filename, out byte[] hash)
+    {
+        var localSha1Provider = SHA1.Create();
+        var fileStream        = new FileStream(filename, FileMode.Open);
+        hash = localSha1Provider.ComputeHash(fileStream);
+        var sha1Output = new StringBuilder();
+
+        foreach(byte h in hash)
+            sha1Output.Append(h.ToString("x2"));
+
+        fileStream.Close();
+
+        return sha1Output.ToString();
+    }
+
+    /// <summary>Gets the hash of the specified data buffer.</summary>
+    /// <param name="data">Data buffer.</param>
+    /// <param name="len">Length of the data buffer to hash.</param>
+    /// <param name="hash">Byte array of the hash value.</param>
+    public static string Data(byte[] data, uint len, out byte[] hash)
+    {
+        var localSha1Provider = SHA1.Create();
+        hash = localSha1Provider.ComputeHash(data, 0, (int)len);
+        var sha1Output = new StringBuilder();
+
+        foreach(byte h in hash)
+            sha1Output.Append(h.ToString("x2"));
+
+        return sha1Output.ToString();
+    }
+
+    /// <summary>Gets the hash of the specified data buffer.</summary>
+    /// <param name="data">Data buffer.</param>
+    /// <param name="hash">Byte array of the hash value.</param>
+    public static string Data(byte[] data, out byte[] hash) => Data(data, (uint)data.Length, out hash);
 }

@@ -48,92 +48,91 @@
 using System;
 using System.Runtime.Intrinsics.Arm;
 
-namespace Aaru.Checksums.CRC32
+namespace Aaru.Checksums.CRC32;
+
+internal static class ArmSimd
 {
-    internal static class ArmSimd
+    internal static uint Step64(byte[] buf, long len, uint crc)
     {
-        internal static uint Step64(byte[] buf, long len, uint crc)
+        uint c = crc;
+
+        int bufPos = 0;
+
+        while(len >= 64)
         {
-            uint c = crc;
-
-            int bufPos = 0;
-
-            while(len >= 64)
-            {
-                c      =  Crc32.Arm64.ComputeCrc32(c, BitConverter.ToUInt64(buf, bufPos));
-                bufPos += 8;
-                c      =  Crc32.Arm64.ComputeCrc32(c, BitConverter.ToUInt64(buf, bufPos));
-                bufPos += 8;
-                c      =  Crc32.Arm64.ComputeCrc32(c, BitConverter.ToUInt64(buf, bufPos));
-                bufPos += 8;
-                c      =  Crc32.Arm64.ComputeCrc32(c, BitConverter.ToUInt64(buf, bufPos));
-                bufPos += 8;
-                c      =  Crc32.Arm64.ComputeCrc32(c, BitConverter.ToUInt64(buf, bufPos));
-                bufPos += 8;
-                c      =  Crc32.Arm64.ComputeCrc32(c, BitConverter.ToUInt64(buf, bufPos));
-                bufPos += 8;
-                c      =  Crc32.Arm64.ComputeCrc32(c, BitConverter.ToUInt64(buf, bufPos));
-                bufPos += 8;
-                c      =  Crc32.Arm64.ComputeCrc32(c, BitConverter.ToUInt64(buf, bufPos));
-                bufPos += 8;
-                len    -= 64;
-            }
-
-            while(len >= 8)
-            {
-                c      =  Crc32.Arm64.ComputeCrc32(c, BitConverter.ToUInt64(buf, bufPos));
-                bufPos += 8;
-                len    -= 8;
-            }
-
-            while(len-- > 0)
-            {
-                c = Crc32.ComputeCrc32(c, buf[bufPos++]);
-            }
-
-            return c;
+            c      =  Crc32.Arm64.ComputeCrc32(c, BitConverter.ToUInt64(buf, bufPos));
+            bufPos += 8;
+            c      =  Crc32.Arm64.ComputeCrc32(c, BitConverter.ToUInt64(buf, bufPos));
+            bufPos += 8;
+            c      =  Crc32.Arm64.ComputeCrc32(c, BitConverter.ToUInt64(buf, bufPos));
+            bufPos += 8;
+            c      =  Crc32.Arm64.ComputeCrc32(c, BitConverter.ToUInt64(buf, bufPos));
+            bufPos += 8;
+            c      =  Crc32.Arm64.ComputeCrc32(c, BitConverter.ToUInt64(buf, bufPos));
+            bufPos += 8;
+            c      =  Crc32.Arm64.ComputeCrc32(c, BitConverter.ToUInt64(buf, bufPos));
+            bufPos += 8;
+            c      =  Crc32.Arm64.ComputeCrc32(c, BitConverter.ToUInt64(buf, bufPos));
+            bufPos += 8;
+            c      =  Crc32.Arm64.ComputeCrc32(c, BitConverter.ToUInt64(buf, bufPos));
+            bufPos += 8;
+            len    -= 64;
         }
 
-        internal static uint Step32(byte[] buf, long len, uint crc)
+        while(len >= 8)
         {
-            uint c = crc;
-
-            int bufPos = 0;
-
-            while(len >= 32)
-            {
-                c      =  Crc32.ComputeCrc32(c, BitConverter.ToUInt32(buf, bufPos));
-                bufPos += 4;
-                c      =  Crc32.ComputeCrc32(c, BitConverter.ToUInt32(buf, bufPos));
-                bufPos += 4;
-                c      =  Crc32.ComputeCrc32(c, BitConverter.ToUInt32(buf, bufPos));
-                bufPos += 4;
-                c      =  Crc32.ComputeCrc32(c, BitConverter.ToUInt32(buf, bufPos));
-                bufPos += 4;
-                c      =  Crc32.ComputeCrc32(c, BitConverter.ToUInt32(buf, bufPos));
-                bufPos += 4;
-                c      =  Crc32.ComputeCrc32(c, BitConverter.ToUInt32(buf, bufPos));
-                bufPos += 4;
-                c      =  Crc32.ComputeCrc32(c, BitConverter.ToUInt32(buf, bufPos));
-                bufPos += 4;
-                c      =  Crc32.ComputeCrc32(c, BitConverter.ToUInt32(buf, bufPos));
-                bufPos += 4;
-                len    -= 32;
-            }
-
-            while(len >= 4)
-            {
-                c      =  Crc32.ComputeCrc32(c, BitConverter.ToUInt32(buf, bufPos));
-                bufPos += 4;
-                len    -= 4;
-            }
-
-            while(len-- > 0)
-            {
-                c = Crc32.ComputeCrc32(c, buf[bufPos++]);
-            }
-
-            return c;
+            c      =  Crc32.Arm64.ComputeCrc32(c, BitConverter.ToUInt64(buf, bufPos));
+            bufPos += 8;
+            len    -= 8;
         }
+
+        while(len-- > 0)
+        {
+            c = Crc32.ComputeCrc32(c, buf[bufPos++]);
+        }
+
+        return c;
+    }
+
+    internal static uint Step32(byte[] buf, long len, uint crc)
+    {
+        uint c = crc;
+
+        int bufPos = 0;
+
+        while(len >= 32)
+        {
+            c      =  Crc32.ComputeCrc32(c, BitConverter.ToUInt32(buf, bufPos));
+            bufPos += 4;
+            c      =  Crc32.ComputeCrc32(c, BitConverter.ToUInt32(buf, bufPos));
+            bufPos += 4;
+            c      =  Crc32.ComputeCrc32(c, BitConverter.ToUInt32(buf, bufPos));
+            bufPos += 4;
+            c      =  Crc32.ComputeCrc32(c, BitConverter.ToUInt32(buf, bufPos));
+            bufPos += 4;
+            c      =  Crc32.ComputeCrc32(c, BitConverter.ToUInt32(buf, bufPos));
+            bufPos += 4;
+            c      =  Crc32.ComputeCrc32(c, BitConverter.ToUInt32(buf, bufPos));
+            bufPos += 4;
+            c      =  Crc32.ComputeCrc32(c, BitConverter.ToUInt32(buf, bufPos));
+            bufPos += 4;
+            c      =  Crc32.ComputeCrc32(c, BitConverter.ToUInt32(buf, bufPos));
+            bufPos += 4;
+            len    -= 32;
+        }
+
+        while(len >= 4)
+        {
+            c      =  Crc32.ComputeCrc32(c, BitConverter.ToUInt32(buf, bufPos));
+            bufPos += 4;
+            len    -= 4;
+        }
+
+        while(len-- > 0)
+        {
+            c = Crc32.ComputeCrc32(c, buf[bufPos++]);
+        }
+
+        return c;
     }
 }
