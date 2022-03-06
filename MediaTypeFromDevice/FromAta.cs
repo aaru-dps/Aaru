@@ -34,40 +34,39 @@
 
 using Aaru.Console;
 
-namespace Aaru.CommonTypes
+namespace Aaru.CommonTypes;
+
+public static partial class MediaTypeFromDevice
 {
-    public static partial class MediaTypeFromDevice
+    /// <summary>Gets the media type from an ATA (not ATAPI) device</summary>
+    /// <param name="manufacturer">Manufacturer string</param>
+    /// <param name="model">Model string</param>
+    /// <param name="removable">Is the device removable?</param>
+    /// <param name="compactFlash">Does the device self-identify as CompactFlash?</param>
+    /// <param name="pcmcia">Is the device attached thru PCMCIA or CardBus?</param>
+    /// <param name="blocks">Number of blocks in device</param>
+    /// <returns>The media type</returns>
+    public static MediaType GetFromAta(string manufacturer, string model, bool removable, bool compactFlash,
+                                       bool pcmcia, ulong blocks)
     {
-        /// <summary>Gets the media type from an ATA (not ATAPI) device</summary>
-        /// <param name="manufacturer">Manufacturer string</param>
-        /// <param name="model">Model string</param>
-        /// <param name="removable">Is the device removable?</param>
-        /// <param name="compactFlash">Does the device self-identify as CompactFlash?</param>
-        /// <param name="pcmcia">Is the device attached thru PCMCIA or CardBus?</param>
-        /// <param name="blocks">Number of blocks in device</param>
-        /// <returns>The media type</returns>
-        public static MediaType GetFromAta(string manufacturer, string model, bool removable, bool compactFlash,
-                                           bool pcmcia, ulong blocks)
+        if(!removable)
         {
-            if(!removable)
-            {
-                if(compactFlash)
-                    return MediaType.CompactFlash;
+            if(compactFlash)
+                return MediaType.CompactFlash;
 
-                return pcmcia ? MediaType.PCCardTypeI : MediaType.GENERIC_HDD;
-            }
-
-            if(manufacturer.ToLowerInvariant() == "syquest" &&
-               model.ToLowerInvariant()        == "sparq"   &&
-               blocks                          == 1961069)
-            {
-                AaruConsole.DebugWriteLine("Media detection",
-                                           "Drive manufacturer is SyQuest, media has 1961069 blocks of 512 bytes, setting media type to SparQ.");
-
-                return MediaType.SparQ;
-            }
-
-            return MediaType.Unknown;
+            return pcmcia ? MediaType.PCCardTypeI : MediaType.GENERIC_HDD;
         }
+
+        if(manufacturer.ToLowerInvariant() == "syquest" &&
+           model.ToLowerInvariant()        == "sparq"   &&
+           blocks                          == 1961069)
+        {
+            AaruConsole.DebugWriteLine("Media detection",
+                                       "Drive manufacturer is SyQuest, media has 1961069 blocks of 512 bytes, setting media type to SparQ.");
+
+            return MediaType.SparQ;
+        }
+
+        return MediaType.Unknown;
     }
 }

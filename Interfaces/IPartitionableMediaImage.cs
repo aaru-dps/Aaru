@@ -39,16 +39,15 @@
 
 using System.Collections.Generic;
 
-namespace Aaru.CommonTypes.Interfaces
+namespace Aaru.CommonTypes.Interfaces;
+
+/// <summary>Defines an image that can contain partitions</summary>
+public interface IPartitionableMediaImage
 {
-    /// <summary>Defines an image that can contain partitions</summary>
-    public interface IPartitionableMediaImage
-    {
-        /// <summary>
-        ///     Gets an array partitions. Typically only useful for optical disc images where each track and index means a
-        ///     different partition, as reads can be relative to them.
-        /// </summary>
-        /// <value>The partitions.</value>
-        List<Partition> Partitions { get; }
-    }
+    /// <summary>
+    ///     Gets an array partitions. Typically only useful for optical disc images where each track and index means a
+    ///     different partition, as reads can be relative to them.
+    /// </summary>
+    /// <value>The partitions.</value>
+    List<Partition> Partitions { get; }
 }

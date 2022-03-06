@@ -40,17 +40,16 @@
 using System.Collections.Generic;
 using Aaru.CommonTypes.Structs;
 
-namespace Aaru.CommonTypes.Interfaces
+namespace Aaru.CommonTypes.Interfaces;
+
+/// <inheritdoc />
+/// <summary>Defines an image that can store the information from streaming, digital, tapes</summary>
+public interface ITapeImage : IMediaImage
 {
-    /// <inheritdoc />
-    /// <summary>Defines an image that can store the information from streaming, digital, tapes</summary>
-    public interface ITapeImage : IMediaImage
-    {
-        /// <summary>Gets a list of all the files registered in the image</summary>
-        List<TapeFile> Files { get; }
-        /// <summary>Gets a list of all the partitions registered in the image</summary>
-        List<TapePartition> TapePartitions { get; }
-        /// <summary>If the media is a really a tape, as some formats can store non-tapes</summary>
-        bool IsTape { get; }
-    }
+    /// <summary>Gets a list of all the files registered in the image</summary>
+    List<TapeFile> Files { get; }
+    /// <summary>Gets a list of all the partitions registered in the image</summary>
+    List<TapePartition> TapePartitions { get; }
+    /// <summary>If the media is a really a tape, as some formats can store non-tapes</summary>
+    bool IsTape { get; }
 }

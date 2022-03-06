@@ -36,16 +36,15 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.CommonTypes.Structs
+namespace Aaru.CommonTypes.Structs;
+
+/// <summary>Describes a tape partition</summary>
+public struct TapePartition
 {
-    /// <summary>Describes a tape partition</summary>
-    public struct TapePartition
-    {
-        /// <summary>Partition number</summary>
-        public byte Number;
-        /// <summary>First block, inclusive, of the partition</summary>
-        public ulong FirstBlock;
-        /// <summary>Last block, inclusive, of the partition</summary>
-        public ulong LastBlock;
-    }
+    /// <summary>Partition number</summary>
+    public byte Number;
+    /// <summary>First block, inclusive, of the partition</summary>
+    public ulong FirstBlock;
+    /// <summary>Last block, inclusive, of the partition</summary>
+    public ulong LastBlock;
 }

@@ -41,44 +41,43 @@ using System.Collections.Generic;
 using System.Linq;
 using Schemas;
 
-namespace Aaru.CommonTypes.Extents
+namespace Aaru.CommonTypes.Extents;
+
+/// <summary>Converts extents</summary>
+public static class ExtentsConverter
 {
-    /// <summary>Converts extents</summary>
-    public static class ExtentsConverter
+    /// <summary>Converts unsigned long integer extents into XML based extents</summary>
+    /// <param name="extents">Extents</param>
+    /// <returns>XML based extents</returns>
+    public static ExtentType[] ToMetadata(ExtentsULong extents)
     {
-        /// <summary>Converts unsigned long integer extents into XML based extents</summary>
-        /// <param name="extents">Extents</param>
-        /// <returns>XML based extents</returns>
-        public static ExtentType[] ToMetadata(ExtentsULong extents)
-        {
-            if(extents == null)
-                return null;
+        if(extents == null)
+            return null;
 
-            Tuple<ulong, ulong>[] tuples = extents.ToArray();
-            ExtentType[]          array  = new ExtentType[tuples.Length];
+        Tuple<ulong, ulong>[] tuples = extents.ToArray();
+        ExtentType[]          array  = new ExtentType[tuples.Length];
 
-            for(ulong i = 0; i < (ulong)array.LongLength; i++)
-                array[i] = new ExtentType
-                {
-                    Start = tuples[i].Item1,
-                    End   = tuples[i].Item2
-                };
+        for(ulong i = 0; i < (ulong)array.LongLength; i++)
+            array[i] = new ExtentType
+            {
+                Start = tuples[i].Item1,
+                End   = tuples[i].Item2
+            };
 
-            return array;
-        }
+        return array;
+    }
 
-        /// <summary>Converts XML based extents into unsigned long integer extents</summary>
-        /// <param name="extents">XML based extents</param>
-        /// <returns>Extents</returns>
-        public static ExtentsULong FromMetadata(ExtentType[] extents)
-        {
-            if(extents == null)
-                return null;
+    /// <summary>Converts XML based extents into unsigned long integer extents</summary>
+    /// <param name="extents">XML based extents</param>
+    /// <returns>Extents</returns>
+    public static ExtentsULong FromMetadata(ExtentType[] extents)
+    {
+        if(extents == null)
+            return null;
 
-            List<Tuple<ulong, ulong>> tuples =
-                extents.Select(extent => new Tuple<ulong, ulong>(extent.Start, extent.End)).ToList();
+        List<Tuple<ulong, ulong>> tuples =
+            extents.Select(extent => new Tuple<ulong, ulong>(extent.Start, extent.End)).ToList();
 
-            return new ExtentsULong(tuples);
-        }
+        return new ExtentsULong(tuples);
     }
 }

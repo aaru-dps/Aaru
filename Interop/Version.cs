@@ -40,52 +40,51 @@ using System;
 using System.Reflection;
 using System.Runtime;
 
-namespace Aaru.CommonTypes.Interop
+namespace Aaru.CommonTypes.Interop;
+
+/// <summary>Gets our own, or the runtime's version</summary>
+public static class Version
 {
-    /// <summary>Gets our own, or the runtime's version</summary>
-    public static class Version
+    /// <summary>Gets version string</summary>
+    /// <returns>Version</returns>
+    public static string GetVersion() => typeof(Version).Assembly.GetName().Version?.ToString();
+
+    /// <summary>Gets .NET Core version</summary>
+    /// <returns>Version</returns>
+    public static string GetNetCoreVersion()
     {
-        /// <summary>Gets version string</summary>
-        /// <returns>Version</returns>
-        public static string GetVersion() => typeof(Version).Assembly.GetName().Version?.ToString();
+        Assembly assembly = typeof(GCSettings).Assembly;
 
-        /// <summary>Gets .NET Core version</summary>
-        /// <returns>Version</returns>
-        public static string GetNetCoreVersion()
+        string[] assemblyPath = assembly.CodeBase?.Split(new[]
         {
-            Assembly assembly = typeof(GCSettings).Assembly;
+            '/', '\\'
+        }, StringSplitOptions.RemoveEmptyEntries);
 
-            string[] assemblyPath = assembly.CodeBase?.Split(new[]
-            {
-                '/', '\\'
-            }, StringSplitOptions.RemoveEmptyEntries);
-
-            if(assemblyPath is null)
-                return null;
-
-            int netCoreAppIndex = Array.IndexOf(assemblyPath, "Microsoft.NETCore.App");
-
-            if(netCoreAppIndex > 0 &&
-               netCoreAppIndex < assemblyPath.Length - 2)
-                return assemblyPath[netCoreAppIndex + 1];
-
+        if(assemblyPath is null)
             return null;
-        }
 
-        /// <summary>Gets Mono version</summary>
-        /// <returns>Version</returns>
-        public static string GetMonoVersion()
-        {
-            if(!DetectOS.IsMono)
-                return null;
+        int netCoreAppIndex = Array.IndexOf(assemblyPath, "Microsoft.NETCore.App");
 
-            MethodInfo monoDisplayName = Type.GetType("Mono.Runtime")?.
-                                              GetMethod("GetDisplayName", BindingFlags.NonPublic | BindingFlags.Static);
+        if(netCoreAppIndex > 0 &&
+           netCoreAppIndex < assemblyPath.Length - 2)
+            return assemblyPath[netCoreAppIndex + 1];
 
-            if(monoDisplayName != null)
-                return (string)monoDisplayName.Invoke(null, null);
+        return null;
+    }
 
+    /// <summary>Gets Mono version</summary>
+    /// <returns>Version</returns>
+    public static string GetMonoVersion()
+    {
+        if(!DetectOS.IsMono)
             return null;
-        }
+
+        MethodInfo monoDisplayName = Type.GetType("Mono.Runtime")?.
+                                          GetMethod("GetDisplayName", BindingFlags.NonPublic | BindingFlags.Static);
+
+        if(monoDisplayName != null)
+            return (string)monoDisplayName.Invoke(null, null);
+
+        return null;
     }
 }

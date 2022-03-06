@@ -36,24 +36,23 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.CommonTypes.Enums
+namespace Aaru.CommonTypes.Enums;
+
+/// <summary>Device types</summary>
+public enum DeviceType
 {
-    /// <summary>Device types</summary>
-    public enum DeviceType
-    {
-        /// <summary>Unknown device type</summary>
-        Unknown = -1,
-        /// <summary>ATA device</summary>
-        ATA = 1,
-        /// <summary>ATA Packet device (aka SCSI over ATA)</summary>
-        ATAPI = 2,
-        /// <summary>SCSI device (or USB-MSC, SBP2, FC, UAS, etc)</summary>
-        SCSI = 3,
-        /// <summary>SecureDigital memory card</summary>
-        SecureDigital = 4,
-        /// <summary>MultiMediaCard memory card</summary>
-        MMC = 5,
-        /// <summary>NVMe device</summary>
-        NVMe = 6
-    }
+    /// <summary>Unknown device type</summary>
+    Unknown = -1,
+    /// <summary>ATA device</summary>
+    ATA = 1,
+    /// <summary>ATA Packet device (aka SCSI over ATA)</summary>
+    ATAPI = 2,
+    /// <summary>SCSI device (or USB-MSC, SBP2, FC, UAS, etc)</summary>
+    SCSI = 3,
+    /// <summary>SecureDigital memory card</summary>
+    SecureDigital = 4,
+    /// <summary>MultiMediaCard memory card</summary>
+    MMC = 5,
+    /// <summary>NVMe device</summary>
+    NVMe = 6
 }

@@ -37,13 +37,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.CommonTypes.Interfaces
+namespace Aaru.CommonTypes.Interfaces;
+
+/// <summary>Defines an image that can verify the integrity of the image itself, but not its contents</summary>
+public interface IVerifiableImage
 {
-    /// <summary>Defines an image that can verify the integrity of the image itself, but not its contents</summary>
-    public interface IVerifiableImage
-    {
-        /// <summary>Verifies media image internal checksum.</summary>
-        /// <returns>True if correct, false if incorrect, null if there is no internal checksum available</returns>
-        bool? VerifyMediaImage();
-    }
+    /// <summary>Verifies media image internal checksum.</summary>
+    /// <returns>True if correct, false if incorrect, null if there is no internal checksum available</returns>
+    bool? VerifyMediaImage();
 }

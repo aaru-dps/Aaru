@@ -40,215 +40,214 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Aaru.CommonTypes.Extents
+namespace Aaru.CommonTypes.Extents;
+
+/// <summary>Implements extents for <see cref="long" /></summary>
+public class ExtentsLong
 {
-    /// <summary>Implements extents for <see cref="long" /></summary>
-    public class ExtentsLong
+    List<Tuple<long, long>> _backend;
+
+    /// <summary>Initialize an empty list of extents</summary>
+    public ExtentsLong() => _backend = new List<Tuple<long, long>>();
+
+    /// <summary>Initializes extents with an specific list</summary>
+    /// <param name="list">List of extents as tuples "start, end"</param>
+    public ExtentsLong(IEnumerable<Tuple<long, long>> list)
     {
-        List<Tuple<long, long>> _backend;
+        _backend = new List<Tuple<long, long>>();
 
-        /// <summary>Initialize an empty list of extents</summary>
-        public ExtentsLong() => _backend = new List<Tuple<long, long>>();
+        // This ensure no overlapping extents are added on creation
+        foreach(Tuple<long, long> t in list)
+            Add(t.Item1, t.Item2);
+    }
 
-        /// <summary>Initializes extents with an specific list</summary>
-        /// <param name="list">List of extents as tuples "start, end"</param>
-        public ExtentsLong(IEnumerable<Tuple<long, long>> list)
+    /// <summary>Gets a count of how many extents are stored</summary>
+    public int Count => _backend.Count;
+
+    /// <summary>Adds the specified number to the corresponding extent, or creates a new one</summary>
+    /// <param name="item"></param>
+    public void Add(long item)
+    {
+        Tuple<long, long> removeOne = null;
+        Tuple<long, long> removeTwo = null;
+        Tuple<long, long> itemToAdd = null;
+
+        for(int i = 0; i < _backend.Count; i++)
         {
-            _backend = new List<Tuple<long, long>>();
+            // Already contained in an extent
+            if(item >= _backend[i].Item1 &&
+               item <= _backend[i].Item2)
+                return;
 
-            // This ensure no overlapping extents are added on creation
-            foreach(Tuple<long, long> t in list)
-                Add(t.Item1, t.Item2);
-        }
-
-        /// <summary>Gets a count of how many extents are stored</summary>
-        public int Count => _backend.Count;
-
-        /// <summary>Adds the specified number to the corresponding extent, or creates a new one</summary>
-        /// <param name="item"></param>
-        public void Add(long item)
-        {
-            Tuple<long, long> removeOne = null;
-            Tuple<long, long> removeTwo = null;
-            Tuple<long, long> itemToAdd = null;
-
-            for(int i = 0; i < _backend.Count; i++)
+            // Expands existing extent start
+            if(item == _backend[i].Item1 - 1)
             {
-                // Already contained in an extent
-                if(item >= _backend[i].Item1 &&
-                   item <= _backend[i].Item2)
-                    return;
-
-                // Expands existing extent start
-                if(item == _backend[i].Item1 - 1)
-                {
-                    removeOne = _backend[i];
-
-                    if(i    > 0 &&
-                       item == _backend[i - 1].Item2 + 1)
-                    {
-                        removeTwo = _backend[i - 1];
-                        itemToAdd = new Tuple<long, long>(_backend[i - 1].Item1, _backend[i].Item2);
-                    }
-                    else
-                        itemToAdd = new Tuple<long, long>(item, _backend[i].Item2);
-
-                    break;
-                }
-
-                // Expands existing extent end
-                if(item != _backend[i].Item2 + 1)
-                    continue;
-
                 removeOne = _backend[i];
 
-                if(i    < _backend.Count         - 1 &&
-                   item == _backend[i + 1].Item1 - 1)
+                if(i    > 0 &&
+                   item == _backend[i - 1].Item2 + 1)
                 {
-                    removeTwo = _backend[i + 1];
-                    itemToAdd = new Tuple<long, long>(_backend[i].Item1, _backend[i + 1].Item2);
+                    removeTwo = _backend[i - 1];
+                    itemToAdd = new Tuple<long, long>(_backend[i - 1].Item1, _backend[i].Item2);
                 }
                 else
-                    itemToAdd = new Tuple<long, long>(_backend[i].Item1, item);
+                    itemToAdd = new Tuple<long, long>(item, _backend[i].Item2);
 
                 break;
             }
 
-            if(itemToAdd != null)
+            // Expands existing extent end
+            if(item != _backend[i].Item2 + 1)
+                continue;
+
+            removeOne = _backend[i];
+
+            if(i    < _backend.Count         - 1 &&
+               item == _backend[i + 1].Item1 - 1)
             {
-                _backend.Remove(removeOne);
-                _backend.Remove(removeTwo);
-                _backend.Add(itemToAdd);
+                removeTwo = _backend[i + 1];
+                itemToAdd = new Tuple<long, long>(_backend[i].Item1, _backend[i + 1].Item2);
             }
             else
-                _backend.Add(new Tuple<long, long>(item, item));
+                itemToAdd = new Tuple<long, long>(_backend[i].Item1, item);
 
-            // Sort
-            _backend = _backend.OrderBy(t => t.Item1).ToList();
+            break;
         }
 
-        /// <summary>Adds a new extent</summary>
-        /// <param name="start">First element of the extent</param>
-        /// <param name="end">
-        ///     Last element of the extent or if <see cref="run" /> is <c>true</c> how many elements the extent runs
-        ///     for
-        /// </param>
-        /// <param name="run">If set to <c>true</c>, <see cref="end" /> indicates how many elements the extent runs for</param>
-        public void Add(long start, long end, bool run = false)
+        if(itemToAdd != null)
         {
-            long realEnd;
-
-            if(run)
-                realEnd = start + end - 1;
-            else
-                realEnd = end;
-
-            // TODO: Optimize this
-            for(long t = start; t <= realEnd; t++)
-                Add(t);
+            _backend.Remove(removeOne);
+            _backend.Remove(removeTwo);
+            _backend.Add(itemToAdd);
         }
+        else
+            _backend.Add(new Tuple<long, long>(item, item));
 
-        /// <summary>Checks if the specified item is contained by an extent on this instance</summary>
-        /// <param name="item">Item to search for</param>
-        /// <returns><c>true</c> if any of the extents on this instance contains the item</returns>
-        public bool Contains(long item) => _backend.Any(extent => item >= extent.Item1 && item <= extent.Item2);
+        // Sort
+        _backend = _backend.OrderBy(t => t.Item1).ToList();
+    }
 
-        /// <summary>Removes all extents from this instance</summary>
-        public void Clear() => _backend.Clear();
+    /// <summary>Adds a new extent</summary>
+    /// <param name="start">First element of the extent</param>
+    /// <param name="end">
+    ///     Last element of the extent or if <see cref="run" /> is <c>true</c> how many elements the extent runs
+    ///     for
+    /// </param>
+    /// <param name="run">If set to <c>true</c>, <see cref="end" /> indicates how many elements the extent runs for</param>
+    public void Add(long start, long end, bool run = false)
+    {
+        long realEnd;
 
-        /// <summary>Removes an item from the extents in this instance</summary>
-        /// <param name="item">Item to remove</param>
-        /// <returns><c>true</c> if the item was contained in a known extent and removed, false otherwise</returns>
-        public bool Remove(long item)
+        if(run)
+            realEnd = start + end - 1;
+        else
+            realEnd = end;
+
+        // TODO: Optimize this
+        for(long t = start; t <= realEnd; t++)
+            Add(t);
+    }
+
+    /// <summary>Checks if the specified item is contained by an extent on this instance</summary>
+    /// <param name="item">Item to search for</param>
+    /// <returns><c>true</c> if any of the extents on this instance contains the item</returns>
+    public bool Contains(long item) => _backend.Any(extent => item >= extent.Item1 && item <= extent.Item2);
+
+    /// <summary>Removes all extents from this instance</summary>
+    public void Clear() => _backend.Clear();
+
+    /// <summary>Removes an item from the extents in this instance</summary>
+    /// <param name="item">Item to remove</param>
+    /// <returns><c>true</c> if the item was contained in a known extent and removed, false otherwise</returns>
+    public bool Remove(long item)
+    {
+        Tuple<long, long> toRemove = null;
+        Tuple<long, long> toAddOne = null;
+        Tuple<long, long> toAddTwo = null;
+
+        foreach(Tuple<long, long> extent in _backend)
         {
-            Tuple<long, long> toRemove = null;
-            Tuple<long, long> toAddOne = null;
-            Tuple<long, long> toAddTwo = null;
-
-            foreach(Tuple<long, long> extent in _backend)
+            // Extent is contained and not a border
+            if(item > extent.Item1 &&
+               item < extent.Item2)
             {
-                // Extent is contained and not a border
-                if(item > extent.Item1 &&
-                   item < extent.Item2)
-                {
-                    toRemove = extent;
-                    toAddOne = new Tuple<long, long>(extent.Item1, item - 1);
-                    toAddTwo = new Tuple<long, long>(item               + 1, extent.Item2);
-
-                    break;
-                }
-
-                // Extent is left border, but not only element
-                if(item == extent.Item1 &&
-                   item != extent.Item2)
-                {
-                    toRemove = extent;
-                    toAddOne = new Tuple<long, long>(item + 1, extent.Item2);
-
-                    break;
-                }
-
-                // Extent is right border, but not only element
-                if(item != extent.Item1 &&
-                   item == extent.Item2)
-                {
-                    toRemove = extent;
-                    toAddOne = new Tuple<long, long>(extent.Item1, item - 1);
-
-                    break;
-                }
-
-                // Extent is only element
-                if(item != extent.Item1 ||
-                   item != extent.Item2)
-                    continue;
-
                 toRemove = extent;
+                toAddOne = new Tuple<long, long>(extent.Item1, item - 1);
+                toAddTwo = new Tuple<long, long>(item               + 1, extent.Item2);
 
                 break;
             }
 
-            // Item not found
-            if(toRemove == null)
-                return false;
+            // Extent is left border, but not only element
+            if(item == extent.Item1 &&
+               item != extent.Item2)
+            {
+                toRemove = extent;
+                toAddOne = new Tuple<long, long>(item + 1, extent.Item2);
 
-            _backend.Remove(toRemove);
+                break;
+            }
 
-            if(toAddOne != null)
-                _backend.Add(toAddOne);
+            // Extent is right border, but not only element
+            if(item != extent.Item1 &&
+               item == extent.Item2)
+            {
+                toRemove = extent;
+                toAddOne = new Tuple<long, long>(extent.Item1, item - 1);
 
-            if(toAddTwo != null)
-                _backend.Add(toAddTwo);
+                break;
+            }
 
-            // Sort
-            _backend = _backend.OrderBy(t => t.Item1).ToList();
+            // Extent is only element
+            if(item != extent.Item1 ||
+               item != extent.Item2)
+                continue;
+
+            toRemove = extent;
+
+            break;
+        }
+
+        // Item not found
+        if(toRemove == null)
+            return false;
+
+        _backend.Remove(toRemove);
+
+        if(toAddOne != null)
+            _backend.Add(toAddOne);
+
+        if(toAddTwo != null)
+            _backend.Add(toAddTwo);
+
+        // Sort
+        _backend = _backend.OrderBy(t => t.Item1).ToList();
+
+        return true;
+    }
+
+    /// <summary>
+    ///     Converts the list of extents to an array of <see cref="Tuple" /> where T1 is first element of the extent and
+    ///     T2 is last element
+    /// </summary>
+    /// <returns>Array of <see cref="Tuple" /></returns>
+    public Tuple<long, long>[] ToArray() => _backend.ToArray();
+
+    /// <summary>Gets the first element of the extent that contains the specified item</summary>
+    /// <param name="item">Item</param>
+    /// <param name="start">First element of extent</param>
+    /// <returns><c>true</c> if item was found in an extent, false otherwise</returns>
+    public bool GetStart(long item, out long start)
+    {
+        start = 0;
+
+        foreach(Tuple<long, long> extent in _backend.Where(extent => item >= extent.Item1 && item <= extent.Item2))
+        {
+            start = extent.Item1;
 
             return true;
         }
 
-        /// <summary>
-        ///     Converts the list of extents to an array of <see cref="Tuple" /> where T1 is first element of the extent and
-        ///     T2 is last element
-        /// </summary>
-        /// <returns>Array of <see cref="Tuple" /></returns>
-        public Tuple<long, long>[] ToArray() => _backend.ToArray();
-
-        /// <summary>Gets the first element of the extent that contains the specified item</summary>
-        /// <param name="item">Item</param>
-        /// <param name="start">First element of extent</param>
-        /// <returns><c>true</c> if item was found in an extent, false otherwise</returns>
-        public bool GetStart(long item, out long start)
-        {
-            start = 0;
-
-            foreach(Tuple<long, long> extent in _backend.Where(extent => item >= extent.Item1 && item <= extent.Item2))
-            {
-                start = extent.Item1;
-
-                return true;
-            }
-
-            return false;
-        }
+        return false;
     }
 }

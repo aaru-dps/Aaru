@@ -40,23 +40,22 @@
 using System;
 using System.Collections.Generic;
 
-namespace Aaru.CommonTypes.Interfaces
-{
-    /// <summary>Abstract class to implement partitioning schemes interpreting plugins.</summary>
-    public interface IPartition
-    {
-        /// <summary>Plugin name.</summary>
-        string Name { get; }
-        /// <summary>Plugin UUID.</summary>
-        Guid Id { get; }
-        /// <summary>Plugin author</summary>
-        string Author { get; }
+namespace Aaru.CommonTypes.Interfaces;
 
-        /// <summary>Interprets a partitioning scheme.</summary>
-        /// <returns><c>true</c>, if partitioning scheme is recognized, <c>false</c> otherwise.</returns>
-        /// <param name="imagePlugin">Disk image.</param>
-        /// <param name="partitions">Returns list of partitions.</param>
-        /// <param name="sectorOffset">At which sector to start searching for the partition scheme.</param>
-        bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset);
-    }
+/// <summary>Abstract class to implement partitioning schemes interpreting plugins.</summary>
+public interface IPartition
+{
+    /// <summary>Plugin name.</summary>
+    string Name { get; }
+    /// <summary>Plugin UUID.</summary>
+    Guid Id { get; }
+    /// <summary>Plugin author</summary>
+    string Author { get; }
+
+    /// <summary>Interprets a partitioning scheme.</summary>
+    /// <returns><c>true</c>, if partitioning scheme is recognized, <c>false</c> otherwise.</returns>
+    /// <param name="imagePlugin">Disk image.</param>
+    /// <param name="partitions">Returns list of partitions.</param>
+    /// <param name="sectorOffset">At which sector to start searching for the partition scheme.</param>
+    bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset);
 }

@@ -45,73 +45,72 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 
-namespace Aaru.CommonTypes
+namespace Aaru.CommonTypes;
+
+/// <summary>Manages the known filters</summary>
+public sealed class FiltersList
 {
-    /// <summary>Manages the known filters</summary>
-    public sealed class FiltersList
+    /// <summary>List of known filters</summary>
+    public readonly SortedDictionary<string, IFilter> Filters;
+
+    /// <summary>Fills the list of all known filters</summary>
+    public FiltersList()
     {
-        /// <summary>List of known filters</summary>
-        public readonly SortedDictionary<string, IFilter> Filters;
+        var assembly = Assembly.Load("Aaru.Filters");
+        Filters = new SortedDictionary<string, IFilter>();
 
-        /// <summary>Fills the list of all known filters</summary>
-        public FiltersList()
+        foreach(Type type in assembly.GetTypes().Where(t => t.GetInterfaces().Contains(typeof(IFilter))))
+            try
+            {
+                var filter = (IFilter)type.GetConstructor(Type.EmptyTypes)?.Invoke(new object[]
+                    {});
+
+                if(filter != null &&
+                   !Filters.ContainsKey(filter.Name.ToLower()))
+                    Filters.Add(filter.Name.ToLower(), filter);
+            }
+            catch(Exception exception)
+            {
+                AaruConsole.ErrorWriteLine("Exception {0}", exception);
+            }
+    }
+
+    /// <summary>Gets the filter that allows to read the specified path</summary>
+    /// <param name="path">Path</param>
+    /// <returns>The filter that allows reading the specified path</returns>
+    public IFilter GetFilter(string path)
+    {
+        IFilter noFilter = null;
+
+        foreach(IFilter filter in Filters.Values)
         {
-            var assembly = Assembly.Load("Aaru.Filters");
-            Filters = new SortedDictionary<string, IFilter>();
-
-            foreach(Type type in assembly.GetTypes().Where(t => t.GetInterfaces().Contains(typeof(IFilter))))
-                try
+            try
+            {
+                if(filter.Id != new Guid("12345678-AAAA-BBBB-CCCC-123456789000"))
                 {
-                    var filter = (IFilter)type.GetConstructor(Type.EmptyTypes)?.Invoke(new object[]
+                    if(!filter.Identify(path))
+                        continue;
+
+                    var foundFilter = (IFilter)filter.GetType().GetConstructor(Type.EmptyTypes)?.Invoke(new object[]
                         {});
 
-                    if(filter != null &&
-                       !Filters.ContainsKey(filter.Name.ToLower()))
-                        Filters.Add(filter.Name.ToLower(), filter);
+                    if(foundFilter?.Open(path) == ErrorNumber.NoError)
+                        return foundFilter;
                 }
-                catch(Exception exception)
-                {
-                    AaruConsole.ErrorWriteLine("Exception {0}", exception);
-                }
-        }
-
-        /// <summary>Gets the filter that allows to read the specified path</summary>
-        /// <param name="path">Path</param>
-        /// <returns>The filter that allows reading the specified path</returns>
-        public IFilter GetFilter(string path)
-        {
-            IFilter noFilter = null;
-
-            foreach(IFilter filter in Filters.Values)
-            {
-                try
-                {
-                    if(filter.Id != new Guid("12345678-AAAA-BBBB-CCCC-123456789000"))
-                    {
-                        if(!filter.Identify(path))
-                            continue;
-
-                        var foundFilter = (IFilter)filter.GetType().GetConstructor(Type.EmptyTypes)?.Invoke(new object[]
-                            {});
-
-                        if(foundFilter?.Open(path) == ErrorNumber.NoError)
-                            return foundFilter;
-                    }
-                    else
-                        noFilter = filter;
-                }
-                catch(IOException)
-                {
-                    // Ignore and continue
-                }
+                else
+                    noFilter = filter;
             }
-
-            if(!noFilter?.Identify(path) == true)
-                return null;
-
-            noFilter?.Open(path);
-
-            return noFilter;
+            catch(IOException)
+            {
+                // Ignore and continue
+            }
         }
+
+        if(!noFilter?.Identify(path) == true)
+            return null;
+
+        noFilter?.Open(path);
+
+        return noFilter;
     }
 }

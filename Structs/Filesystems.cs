@@ -41,241 +41,240 @@ using System;
 using System.Runtime.InteropServices;
 using Newtonsoft.Json;
 
-namespace Aaru.CommonTypes.Structs
+namespace Aaru.CommonTypes.Structs;
+
+/// <summary>File attributes.</summary>
+[Flags]
+public enum FileAttributes : ulong
 {
-    /// <summary>File attributes.</summary>
-    [Flags]
-    public enum FileAttributes : ulong
+    /// <summary>File has no attributes</summary>
+    None = 0,
+    /// <summary>File is an alias (Mac OS)</summary>
+    Alias = 0x01,
+    /// <summary>Indicates that the file can only be writable appended</summary>
+    AppendOnly = 0x02,
+    /// <summary>File is candidate for archival/backup</summary>
+    Archive = 0x04,
+    /// <summary>File is a block device</summary>
+    BlockDevice = 0x08,
+    /// <summary>File is stored on filesystem block units instead of device sectors</summary>
+    BlockUnits = 0x10,
+    /// <summary>Directory is a bundle or file contains a BNDL resource</summary>
+    Bundle = 0x20,
+    /// <summary>File is a char device</summary>
+    CharDevice = 0x40,
+    /// <summary>File is compressed</summary>
+    Compressed = 0x80,
+    /// <summary>File is compressed and should not be uncompressed on read</summary>
+    CompressedRaw = 0x100,
+    /// <summary>File has compression errors</summary>
+    CompressionError = 0x200,
+    /// <summary>Compressed file is dirty</summary>
+    CompressionDirty = 0x400,
+    /// <summary>File is a device</summary>
+    Device = 0x800,
+    /// <summary>File is a directory</summary>
+    Directory = 0x1000,
+    /// <summary>File is encrypted</summary>
+    Encrypted = 0x2000,
+    /// <summary>File is stored on disk using extents</summary>
+    Extents = 0x4000,
+    /// <summary>File is a FIFO</summary>
+    FIFO = 0x8000,
+    /// <summary>File is a normal file</summary>
+    File = 0x10000,
+    /// <summary>File is a Mac OS file containing desktop databases that has already been added to the desktop database</summary>
+    HasBeenInited = 0x20000,
+    /// <summary>File contains an icon resource / EA</summary>
+    HasCustomIcon = 0x40000,
+    /// <summary>File is a Mac OS extension or control panel lacking INIT resources</summary>
+    HasNoINITs = 0x80000,
+    /// <summary>File is hidden/invisible</summary>
+    Hidden = 0x100000,
+    /// <summary>File cannot be written, deleted, modified or linked to</summary>
+    Immutable = 0x200000,
+    /// <summary>Directory is indexed using hashed trees</summary>
+    IndexedDirectory = 0x400000,
+    /// <summary>File contents are stored alongside its inode (or equivalent)</summary>
+    Inline = 0x800000,
+    /// <summary>File contains integrity checks</summary>
+    IntegrityStream = 0x1000000,
+    /// <summary>File is on desktop</summary>
+    IsOnDesk = 0x2000000,
+    /// <summary>File changes are written to filesystem journal before being written to file itself</summary>
+    Journaled = 0x4000000,
+    /// <summary>Access time will not be modified</summary>
+    NoAccessTime = 0x8000000,
+    /// <summary>File will not be subject to copy-on-write</summary>
+    NoCopyOnWrite = 0x10000000,
+    /// <summary>File will not be backed up</summary>
+    NoDump = 0x20000000,
+    /// <summary>File contents should not be scrubbed</summary>
+    NoScrub = 0x40000000,
+    /// <summary>File contents should not be indexed</summary>
+    NotIndexed = 0x80000000,
+    /// <summary>File is offline</summary>
+    Offline = 0x100000000,
+    /// <summary>File is password protected, but contents are not encrypted on disk</summary>
+    Password = 0x200000000,
+    /// <summary>File is read-only</summary>
+    ReadOnly = 0x400000000,
+    /// <summary>File is a reparse point</summary>
+    ReparsePoint = 0x800000000,
+    /// <summary>When file is removed its content will be overwritten with zeroes</summary>
+    Secured = 0x1000000000,
+    /// <summary>File contents are sparse</summary>
+    Sparse = 0x2000000000,
+    /// <summary>File is a shadow (OS/2)</summary>
+    Shadow = 0x4000000000,
+    /// <summary>File is shared</summary>
+    Shared = 0x8000000000,
+    /// <summary>File is a stationery</summary>
+    Stationery = 0x10000000000,
+    /// <summary>File is a symbolic link</summary>
+    Symlink = 0x20000000000,
+    /// <summary>File writes are synchronously written to disk</summary>
+    Sync = 0x40000000000,
+    /// <summary>File belongs to the operating system</summary>
+    System = 0x80000000000,
+    /// <summary>If file end is a partial block its content will be merged with other files</summary>
+    TailMerged = 0x100000000000,
+    /// <summary>File is temporary</summary>
+    Temporary = 0x200000000000,
+    /// <summary>Subdirectories inside of this directory are not related and should be allocated elsewhere</summary>
+    TopDirectory = 0x400000000000,
+    /// <summary>If file is deleted, contents should be stored, for a possible future undeletion</summary>
+    Undeletable = 0x800000000000,
+    /// <summary>File is a pipe</summary>
+    Pipe = 0x1000000000000,
+    /// <summary>File is a socket</summary>
+    Socket = 0x2000000000000
+}
+
+/// <summary>Information about a file entry</summary>
+public class FileEntryInfo
+{
+    /// <summary>File attributes</summary>
+    public FileAttributes Attributes { get; set; }
+    /// <summary>File length in blocks</summary>
+    public long Blocks { get; set; }
+    /// <summary>File block size in bytes</summary>
+    public long BlockSize { get; set; }
+    /// <summary>If file points to a device, device number. Null if the underlying filesystem does not support them.</summary>
+    public ulong? DeviceNo { get; set; }
+    /// <summary>POSIX group ID. Null if the underlying filesystem does not support them.</summary>
+    public ulong? GID { get; set; }
+    /// <summary>inode number for this file (or other unique identifier for the volume)</summary>
+    public ulong Inode { get; set; }
+    /// <summary>File length in bytes</summary>
+    public long Length { get; set; }
+    /// <summary>Number of hard links pointing to this file (. and .. entries count as hard links)</summary>
+    public ulong Links { get; set; }
+    /// <summary>POSIX permissions/mode for this file. Null if the underlying filesystem does not support them.</summary>
+    public uint? Mode { get; set; }
+    /// <summary>POSIX owner ID. Null if the underlying filesystem does not support them.</summary>
+    public ulong? UID { get; set; }
+    /// <summary>File creation date in UTC. Null if the underlying filesystem does not support them.</summary>
+    public DateTime? CreationTimeUtc { get; set; }
+    /// <summary>File last access date in UTC. Null if the underlying filesystem does not support them.</summary>
+    public DateTime? AccessTimeUtc { get; set; }
+    /// <summary>File attributes change date in UTC. Null if the underlying filesystem does not support them.</summary>
+    public DateTime? StatusChangeTimeUtc { get; set; }
+    /// <summary>File last backup date in UTC. Null if the underlying filesystem does not support them.</summary>
+    public DateTime? BackupTimeUtc { get; set; }
+    /// <summary>File last modification date in UTC. Null if the underlying filesystem does not support them.</summary>
+    public DateTime? LastWriteTimeUtc { get; set; }
+
+    /// <summary>File creation date. Null if the underlying filesystem does not support them.</summary>
+    [JsonIgnore]
+    public DateTime? CreationTime
     {
-        /// <summary>File has no attributes</summary>
-        None = 0,
-        /// <summary>File is an alias (Mac OS)</summary>
-        Alias = 0x01,
-        /// <summary>Indicates that the file can only be writable appended</summary>
-        AppendOnly = 0x02,
-        /// <summary>File is candidate for archival/backup</summary>
-        Archive = 0x04,
-        /// <summary>File is a block device</summary>
-        BlockDevice = 0x08,
-        /// <summary>File is stored on filesystem block units instead of device sectors</summary>
-        BlockUnits = 0x10,
-        /// <summary>Directory is a bundle or file contains a BNDL resource</summary>
-        Bundle = 0x20,
-        /// <summary>File is a char device</summary>
-        CharDevice = 0x40,
-        /// <summary>File is compressed</summary>
-        Compressed = 0x80,
-        /// <summary>File is compressed and should not be uncompressed on read</summary>
-        CompressedRaw = 0x100,
-        /// <summary>File has compression errors</summary>
-        CompressionError = 0x200,
-        /// <summary>Compressed file is dirty</summary>
-        CompressionDirty = 0x400,
-        /// <summary>File is a device</summary>
-        Device = 0x800,
-        /// <summary>File is a directory</summary>
-        Directory = 0x1000,
-        /// <summary>File is encrypted</summary>
-        Encrypted = 0x2000,
-        /// <summary>File is stored on disk using extents</summary>
-        Extents = 0x4000,
-        /// <summary>File is a FIFO</summary>
-        FIFO = 0x8000,
-        /// <summary>File is a normal file</summary>
-        File = 0x10000,
-        /// <summary>File is a Mac OS file containing desktop databases that has already been added to the desktop database</summary>
-        HasBeenInited = 0x20000,
-        /// <summary>File contains an icon resource / EA</summary>
-        HasCustomIcon = 0x40000,
-        /// <summary>File is a Mac OS extension or control panel lacking INIT resources</summary>
-        HasNoINITs = 0x80000,
-        /// <summary>File is hidden/invisible</summary>
-        Hidden = 0x100000,
-        /// <summary>File cannot be written, deleted, modified or linked to</summary>
-        Immutable = 0x200000,
-        /// <summary>Directory is indexed using hashed trees</summary>
-        IndexedDirectory = 0x400000,
-        /// <summary>File contents are stored alongside its inode (or equivalent)</summary>
-        Inline = 0x800000,
-        /// <summary>File contains integrity checks</summary>
-        IntegrityStream = 0x1000000,
-        /// <summary>File is on desktop</summary>
-        IsOnDesk = 0x2000000,
-        /// <summary>File changes are written to filesystem journal before being written to file itself</summary>
-        Journaled = 0x4000000,
-        /// <summary>Access time will not be modified</summary>
-        NoAccessTime = 0x8000000,
-        /// <summary>File will not be subject to copy-on-write</summary>
-        NoCopyOnWrite = 0x10000000,
-        /// <summary>File will not be backed up</summary>
-        NoDump = 0x20000000,
-        /// <summary>File contents should not be scrubbed</summary>
-        NoScrub = 0x40000000,
-        /// <summary>File contents should not be indexed</summary>
-        NotIndexed = 0x80000000,
-        /// <summary>File is offline</summary>
-        Offline = 0x100000000,
-        /// <summary>File is password protected, but contents are not encrypted on disk</summary>
-        Password = 0x200000000,
-        /// <summary>File is read-only</summary>
-        ReadOnly = 0x400000000,
-        /// <summary>File is a reparse point</summary>
-        ReparsePoint = 0x800000000,
-        /// <summary>When file is removed its content will be overwritten with zeroes</summary>
-        Secured = 0x1000000000,
-        /// <summary>File contents are sparse</summary>
-        Sparse = 0x2000000000,
-        /// <summary>File is a shadow (OS/2)</summary>
-        Shadow = 0x4000000000,
-        /// <summary>File is shared</summary>
-        Shared = 0x8000000000,
-        /// <summary>File is a stationery</summary>
-        Stationery = 0x10000000000,
-        /// <summary>File is a symbolic link</summary>
-        Symlink = 0x20000000000,
-        /// <summary>File writes are synchronously written to disk</summary>
-        Sync = 0x40000000000,
-        /// <summary>File belongs to the operating system</summary>
-        System = 0x80000000000,
-        /// <summary>If file end is a partial block its content will be merged with other files</summary>
-        TailMerged = 0x100000000000,
-        /// <summary>File is temporary</summary>
-        Temporary = 0x200000000000,
-        /// <summary>Subdirectories inside of this directory are not related and should be allocated elsewhere</summary>
-        TopDirectory = 0x400000000000,
-        /// <summary>If file is deleted, contents should be stored, for a possible future undeletion</summary>
-        Undeletable = 0x800000000000,
-        /// <summary>File is a pipe</summary>
-        Pipe = 0x1000000000000,
-        /// <summary>File is a socket</summary>
-        Socket = 0x2000000000000
+        get => CreationTimeUtc?.ToLocalTime();
+        set => CreationTimeUtc = value?.ToUniversalTime();
     }
 
-    /// <summary>Information about a file entry</summary>
-    public class FileEntryInfo
+    /// <summary>File last access date. Null if the underlying filesystem does not support them.</summary>
+    [JsonIgnore]
+    public DateTime? AccessTime
     {
-        /// <summary>File attributes</summary>
-        public FileAttributes Attributes { get; set; }
-        /// <summary>File length in blocks</summary>
-        public long Blocks { get; set; }
-        /// <summary>File block size in bytes</summary>
-        public long BlockSize { get; set; }
-        /// <summary>If file points to a device, device number. Null if the underlying filesystem does not support them.</summary>
-        public ulong? DeviceNo { get; set; }
-        /// <summary>POSIX group ID. Null if the underlying filesystem does not support them.</summary>
-        public ulong? GID { get; set; }
-        /// <summary>inode number for this file (or other unique identifier for the volume)</summary>
-        public ulong Inode { get; set; }
-        /// <summary>File length in bytes</summary>
-        public long Length { get; set; }
-        /// <summary>Number of hard links pointing to this file (. and .. entries count as hard links)</summary>
-        public ulong Links { get; set; }
-        /// <summary>POSIX permissions/mode for this file. Null if the underlying filesystem does not support them.</summary>
-        public uint? Mode { get; set; }
-        /// <summary>POSIX owner ID. Null if the underlying filesystem does not support them.</summary>
-        public ulong? UID { get; set; }
-        /// <summary>File creation date in UTC. Null if the underlying filesystem does not support them.</summary>
-        public DateTime? CreationTimeUtc { get; set; }
-        /// <summary>File last access date in UTC. Null if the underlying filesystem does not support them.</summary>
-        public DateTime? AccessTimeUtc { get; set; }
-        /// <summary>File attributes change date in UTC. Null if the underlying filesystem does not support them.</summary>
-        public DateTime? StatusChangeTimeUtc { get; set; }
-        /// <summary>File last backup date in UTC. Null if the underlying filesystem does not support them.</summary>
-        public DateTime? BackupTimeUtc { get; set; }
-        /// <summary>File last modification date in UTC. Null if the underlying filesystem does not support them.</summary>
-        public DateTime? LastWriteTimeUtc { get; set; }
-
-        /// <summary>File creation date. Null if the underlying filesystem does not support them.</summary>
-        [JsonIgnore]
-        public DateTime? CreationTime
-        {
-            get => CreationTimeUtc?.ToLocalTime();
-            set => CreationTimeUtc = value?.ToUniversalTime();
-        }
-
-        /// <summary>File last access date. Null if the underlying filesystem does not support them.</summary>
-        [JsonIgnore]
-        public DateTime? AccessTime
-        {
-            get => AccessTimeUtc?.ToLocalTime();
-            set => AccessTimeUtc = value?.ToUniversalTime();
-        }
-
-        /// <summary>File attributes change date. Null if the underlying filesystem does not support them.</summary>
-        [JsonIgnore]
-        public DateTime? StatusChangeTime
-        {
-            get => StatusChangeTimeUtc?.ToLocalTime();
-            set => StatusChangeTimeUtc = value?.ToUniversalTime();
-        }
-
-        /// <summary>File last backup date. Null if the underlying filesystem does not support them.</summary>
-        [JsonIgnore]
-        public DateTime? BackupTime
-        {
-            get => BackupTimeUtc?.ToLocalTime();
-            set => BackupTimeUtc = value?.ToUniversalTime();
-        }
-
-        /// <summary>File last modification date. Null if the underlying filesystem does not support them.</summary>
-        [JsonIgnore]
-        public DateTime? LastWriteTime
-        {
-            get => LastWriteTimeUtc?.ToLocalTime();
-            set => LastWriteTimeUtc = value?.ToUniversalTime();
-        }
+        get => AccessTimeUtc?.ToLocalTime();
+        set => AccessTimeUtc = value?.ToUniversalTime();
     }
 
-    /// <summary>Information about a volume</summary>
-    public class FileSystemInfo
+    /// <summary>File attributes change date. Null if the underlying filesystem does not support them.</summary>
+    [JsonIgnore]
+    public DateTime? StatusChangeTime
     {
-        /// <summary>Blocks for this filesystem</summary>
-        public ulong Blocks;
-        /// <summary>Maximum length of filenames on this filesystem</summary>
-        public ushort FilenameLength;
-        /// <summary>Files on this filesystem</summary>
-        public ulong Files;
-        /// <summary>Blocks free on this filesystem</summary>
-        public ulong FreeBlocks;
-        /// <summary>Free inodes on this filesystem</summary>
-        public ulong FreeFiles;
-        /// <summary>Filesystem ID</summary>
-        public FileSystemId Id;
-        /// <summary>ID of plugin for this file</summary>
-        public Guid PluginId;
-        /// <summary>Filesystem type</summary>
-        public string Type;
-
-        /// <summary>Initializes an empty instance of this structure</summary>
-        public FileSystemInfo() => Id = new FileSystemId();
-
-        /// <summary>Gets a clone of this structure</summary>
-        /// <returns>Clone of this structure</returns>
-        public FileSystemInfo ShallowCopy() => (FileSystemInfo)MemberwiseClone();
+        get => StatusChangeTimeUtc?.ToLocalTime();
+        set => StatusChangeTimeUtc = value?.ToUniversalTime();
     }
 
-    /// <summary>Stores a filesystem volume unique identifier or serial number</summary>
-    [StructLayout(LayoutKind.Explicit)]
-    public struct FileSystemId
+    /// <summary>File last backup date. Null if the underlying filesystem does not support them.</summary>
+    [JsonIgnore]
+    public DateTime? BackupTime
     {
-        /// <summary>Set to <c>true</c> if the identifier is a 32-bit integer</summary>
-        [FieldOffset(0)]
-        public bool IsInt;
-        /// <summary>Set to <c>true</c> if the identifier is a 64-bit integer</summary>
-        [FieldOffset(1)]
-        public bool IsLong;
-        /// <summary>Set to <c>true</c> if the identifier is a GUID</summary>
-        [FieldOffset(2)]
-        public bool IsGuid;
-
-        /// <summary>Identifier as a 32-bit integer</summary>
-        [FieldOffset(3)]
-        public uint Serial32;
-        /// <summary>Identifier as a 64-bit integer</summary>
-        [FieldOffset(3)]
-        public ulong Serial64;
-        /// <summary>Identifier as a GUID</summary>
-        [FieldOffset(3)]
-        public Guid uuid;
+        get => BackupTimeUtc?.ToLocalTime();
+        set => BackupTimeUtc = value?.ToUniversalTime();
     }
+
+    /// <summary>File last modification date. Null if the underlying filesystem does not support them.</summary>
+    [JsonIgnore]
+    public DateTime? LastWriteTime
+    {
+        get => LastWriteTimeUtc?.ToLocalTime();
+        set => LastWriteTimeUtc = value?.ToUniversalTime();
+    }
+}
+
+/// <summary>Information about a volume</summary>
+public class FileSystemInfo
+{
+    /// <summary>Blocks for this filesystem</summary>
+    public ulong Blocks;
+    /// <summary>Maximum length of filenames on this filesystem</summary>
+    public ushort FilenameLength;
+    /// <summary>Files on this filesystem</summary>
+    public ulong Files;
+    /// <summary>Blocks free on this filesystem</summary>
+    public ulong FreeBlocks;
+    /// <summary>Free inodes on this filesystem</summary>
+    public ulong FreeFiles;
+    /// <summary>Filesystem ID</summary>
+    public FileSystemId Id;
+    /// <summary>ID of plugin for this file</summary>
+    public Guid PluginId;
+    /// <summary>Filesystem type</summary>
+    public string Type;
+
+    /// <summary>Initializes an empty instance of this structure</summary>
+    public FileSystemInfo() => Id = new FileSystemId();
+
+    /// <summary>Gets a clone of this structure</summary>
+    /// <returns>Clone of this structure</returns>
+    public FileSystemInfo ShallowCopy() => (FileSystemInfo)MemberwiseClone();
+}
+
+/// <summary>Stores a filesystem volume unique identifier or serial number</summary>
+[StructLayout(LayoutKind.Explicit)]
+public struct FileSystemId
+{
+    /// <summary>Set to <c>true</c> if the identifier is a 32-bit integer</summary>
+    [FieldOffset(0)]
+    public bool IsInt;
+    /// <summary>Set to <c>true</c> if the identifier is a 64-bit integer</summary>
+    [FieldOffset(1)]
+    public bool IsLong;
+    /// <summary>Set to <c>true</c> if the identifier is a GUID</summary>
+    [FieldOffset(2)]
+    public bool IsGuid;
+
+    /// <summary>Identifier as a 32-bit integer</summary>
+    [FieldOffset(3)]
+    public uint Serial32;
+    /// <summary>Identifier as a 64-bit integer</summary>
+    [FieldOffset(3)]
+    public ulong Serial64;
+    /// <summary>Identifier as a GUID</summary>
+    [FieldOffset(3)]
+    public Guid uuid;
 }

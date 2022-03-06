@@ -40,34 +40,33 @@ using System;
 using System.Text;
 using Schemas;
 
-namespace Aaru.CommonTypes.Interfaces
+namespace Aaru.CommonTypes.Interfaces;
+
+/// <summary>Interface to implement filesystem plugins.</summary>
+public interface IFilesystem
 {
-    /// <summary>Interface to implement filesystem plugins.</summary>
-    public interface IFilesystem
-    {
-        /// <summary>Defines the encoding used to interpret strings in the filesystem</summary>
-        Encoding Encoding { get; }
-        /// <summary>Plugin name.</summary>
-        string Name { get; }
-        /// <summary>Plugin UUID.</summary>
-        Guid Id { get; }
-        /// <summary>Information about the filesystem as expected by CICM Metadata XML</summary>
-        /// <value>Information about the filesystem as expected by CICM Metadata XML</value>
-        FileSystemType XmlFsType { get; }
-        /// <summary>Plugin author</summary>
-        string Author { get; }
+    /// <summary>Defines the encoding used to interpret strings in the filesystem</summary>
+    Encoding Encoding { get; }
+    /// <summary>Plugin name.</summary>
+    string Name { get; }
+    /// <summary>Plugin UUID.</summary>
+    Guid Id { get; }
+    /// <summary>Information about the filesystem as expected by CICM Metadata XML</summary>
+    /// <value>Information about the filesystem as expected by CICM Metadata XML</value>
+    FileSystemType XmlFsType { get; }
+    /// <summary>Plugin author</summary>
+    string Author { get; }
 
-        /// <summary>Identifies the filesystem in the specified LBA</summary>
-        /// <param name="imagePlugin">Disk image.</param>
-        /// <param name="partition">Partition.</param>
-        /// <returns><c>true</c>, if the filesystem is recognized, <c>false</c> otherwise.</returns>
-        bool Identify(IMediaImage imagePlugin, Partition partition);
+    /// <summary>Identifies the filesystem in the specified LBA</summary>
+    /// <param name="imagePlugin">Disk image.</param>
+    /// <param name="partition">Partition.</param>
+    /// <returns><c>true</c>, if the filesystem is recognized, <c>false</c> otherwise.</returns>
+    bool Identify(IMediaImage imagePlugin, Partition partition);
 
-        /// <summary>Gets information about the identified filesystem.</summary>
-        /// <param name="imagePlugin">Disk image.</param>
-        /// <param name="partition">Partition.</param>
-        /// <param name="information">Filesystem information.</param>
-        /// <param name="encoding">Which encoding to use for this filesystem.</param>
-        void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding);
-    }
+    /// <summary>Gets information about the identified filesystem.</summary>
+    /// <param name="imagePlugin">Disk image.</param>
+    /// <param name="partition">Partition.</param>
+    /// <param name="information">Filesystem information.</param>
+    /// <param name="encoding">Which encoding to use for this filesystem.</param>
+    void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding);
 }

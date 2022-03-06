@@ -39,26 +39,25 @@
 
 using Aaru.CommonTypes.Structs;
 
-namespace Aaru.CommonTypes.Interfaces
+namespace Aaru.CommonTypes.Interfaces;
+
+/// <summary>Defines an image that is writable and can store information about a streaming, digital, tape</summary>
+public interface IWritableTapeImage : ITapeImage, IWritableImage
 {
-    /// <summary>Defines an image that is writable and can store information about a streaming, digital, tape</summary>
-    public interface IWritableTapeImage : ITapeImage, IWritableImage
-    {
-        /// <summary>Registers a new file in the image</summary>
-        /// <param name="file">Tape file descriptor</param>
-        /// <returns><c>true</c> if successful, <c>false</c> otherwise</returns>
-        bool AddFile(TapeFile file);
+    /// <summary>Registers a new file in the image</summary>
+    /// <param name="file">Tape file descriptor</param>
+    /// <returns><c>true</c> if successful, <c>false</c> otherwise</returns>
+    bool AddFile(TapeFile file);
 
-        /// <summary>Registers a new partition</summary>
-        /// <param name="partition">Tape partition descriptor</param>
-        /// <returns><c>true</c> if successful, <c>false</c> otherwise</returns>
-        bool AddPartition(TapePartition partition);
+    /// <summary>Registers a new partition</summary>
+    /// <param name="partition">Tape partition descriptor</param>
+    /// <returns><c>true</c> if successful, <c>false</c> otherwise</returns>
+    bool AddPartition(TapePartition partition);
 
-        /// <summary>
-        ///     Tells the image plugin to set the internal structures to expect a tape (e.g. unknown block count and size).
-        ///     Must be called before <see cref="IWritableImage.Create" />
-        /// </summary>
-        /// <returns><c>true</c> if successful, <c>false</c> otherwise</returns>
-        bool SetTape();
-    }
+    /// <summary>
+    ///     Tells the image plugin to set the internal structures to expect a tape (e.g. unknown block count and size).
+    ///     Must be called before <see cref="IWritableImage.Create" />
+    /// </summary>
+    /// <returns><c>true</c> if successful, <c>false</c> otherwise</returns>
+    bool SetTape();
 }

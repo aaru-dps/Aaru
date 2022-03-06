@@ -39,22 +39,21 @@
 
 using System.Collections.Generic;
 
-namespace Aaru.CommonTypes.Interfaces
-{
-    /// <summary>Defines an image that can verify the integrity of the sectors it contains</summary>
-    public interface IVerifiableSectorsImage
-    {
-        /// <summary>Verifies a sector.</summary>
-        /// <returns>True if correct, false if incorrect, null if uncheckable.</returns>
-        /// <param name="sectorAddress">Sector address (LBA).</param>
-        bool? VerifySector(ulong sectorAddress);
+namespace Aaru.CommonTypes.Interfaces;
 
-        /// <summary>Verifies several sectors.</summary>
-        /// <returns>True if all are correct, false if any is incorrect, null if any is uncheckable.</returns>
-        /// <param name="sectorAddress">Starting sector address (LBA).</param>
-        /// <param name="length">How many sectors to read.</param>
-        /// <param name="failingLbas">List of incorrect sectors</param>
-        /// <param name="unknownLbas">List of uncheckable sectors</param>
-        bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas, out List<ulong> unknownLbas);
-    }
+/// <summary>Defines an image that can verify the integrity of the sectors it contains</summary>
+public interface IVerifiableSectorsImage
+{
+    /// <summary>Verifies a sector.</summary>
+    /// <returns>True if correct, false if incorrect, null if uncheckable.</returns>
+    /// <param name="sectorAddress">Sector address (LBA).</param>
+    bool? VerifySector(ulong sectorAddress);
+
+    /// <summary>Verifies several sectors.</summary>
+    /// <returns>True if all are correct, false if any is incorrect, null if any is uncheckable.</returns>
+    /// <param name="sectorAddress">Starting sector address (LBA).</param>
+    /// <param name="length">How many sectors to read.</param>
+    /// <param name="failingLbas">List of incorrect sectors</param>
+    /// <param name="unknownLbas">List of uncheckable sectors</param>
+    bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas, out List<ulong> unknownLbas);
 }

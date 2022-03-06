@@ -39,18 +39,17 @@
 using Aaru.CommonTypes.Interop;
 using Schemas;
 
-namespace Aaru.CommonTypes.Metadata
+namespace Aaru.CommonTypes.Metadata;
+
+/// <summary>Manages Aaru's version for metadata</summary>
+public static class Version
 {
-    /// <summary>Manages Aaru's version for metadata</summary>
-    public static class Version
+    /// <summary>Gets XML software type for the running version</summary>
+    /// <returns>XML software type</returns>
+    public static SoftwareType GetSoftwareType() => new SoftwareType
     {
-        /// <summary>Gets XML software type for the running version</summary>
-        /// <returns>XML software type</returns>
-        public static SoftwareType GetSoftwareType() => new SoftwareType
-        {
-            Name            = "Aaru",
-            OperatingSystem = DetectOS.GetRealPlatformID().ToString(),
-            Version         = typeof(Version).Assembly.GetName().Version?.ToString()
-        };
-    }
+        Name            = "Aaru",
+        OperatingSystem = DetectOS.GetRealPlatformID().ToString(),
+        Version         = typeof(Version).Assembly.GetName().Version?.ToString()
+    };
 }
