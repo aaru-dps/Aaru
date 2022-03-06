@@ -55,9 +55,6 @@
     <ConsolePause>false</ConsolePause>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System" />
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="..\CICMMetadata\dotnet\cicm.cs">
       <Link>Metadata/cicm.cs</Link>
     </Compile>
