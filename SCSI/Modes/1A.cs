@@ -30,10 +30,10 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Decoders.SCSI;
+
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
-
-namespace Aaru.Decoders.SCSI;
 
 [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
  SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
@@ -114,8 +114,8 @@ public static partial class Modes
         decoded.IdleTimer_C = (uint)((pageResponse[16] << 24) + (pageResponse[17] << 16) + (pageResponse[18] << 8) +
                                      pageResponse[19]);
 
-        decoded.StandbyTimer_Y = (uint)((pageResponse[20] << 24) + (pageResponse[21] << 16) +
-                                        (pageResponse[22] << 8)  + pageResponse[23]);
+        decoded.StandbyTimer_Y = (uint)((pageResponse[20] << 24) + (pageResponse[21] << 16) + (pageResponse[22] << 8) +
+                                        pageResponse[23]);
 
         decoded.CCF_Idle    = (byte)((pageResponse[39] & 0xC0) >> 6);
         decoded.CCF_Standby = (byte)((pageResponse[39] & 0x30) >> 4);
@@ -140,8 +140,8 @@ public static partial class Modes
         if(page.PS)
             sb.AppendLine("\tParameters can be saved");
 
-        if((page.Standby   && page.StandbyTimer   > 0) ||
-           (page.Standby_Y && page.StandbyTimer_Y > 0))
+        if(page.Standby   && page.StandbyTimer   > 0 ||
+           page.Standby_Y && page.StandbyTimer_Y > 0)
         {
             if(page.Standby &&
                page.StandbyTimer > 0)
@@ -154,9 +154,9 @@ public static partial class Modes
         else
             sb.AppendLine("\tDrive will not enter standy mode");
 
-        if((page.Idle   && page.IdleTimer   > 0) ||
-           (page.Idle_B && page.IdleTimer_B > 0) ||
-           (page.Idle_C && page.IdleTimer_C > 0))
+        if(page.Idle   && page.IdleTimer   > 0 ||
+           page.Idle_B && page.IdleTimer_B > 0 ||
+           page.Idle_C && page.IdleTimer_C > 0)
         {
             if(page.Idle &&
                page.IdleTimer > 0)

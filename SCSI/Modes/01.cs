@@ -30,10 +30,10 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Decoders.SCSI;
+
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
-
-namespace Aaru.Decoders.SCSI;
 
 [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
  SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
@@ -41,7 +41,7 @@ public static partial class Modes
 {
     public static byte[] EncodeModePage_01(ModePage_01 page)
     {
-        byte[] pg = new byte[8];
+        var pg = new byte[8];
 
         pg[0] = 0x01;
         pg[1] = 6;

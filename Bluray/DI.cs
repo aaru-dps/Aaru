@@ -30,14 +30,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Decoders.Bluray;
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Aaru.Console;
 using Aaru.Helpers;
-
-namespace Aaru.Decoders.Bluray;
 
 // Information from the following standards:
 // ANSI X3.304-1997
@@ -102,8 +102,7 @@ public static class DI
         if(DIResponse.Length != 4100)
         {
             AaruConsole.DebugWriteLine("BD Disc Information decoder",
-                                       "Found incorrect Blu-ray Disc Information size ({0} bytes)",
-                                       DIResponse.Length);
+                                       "Found incorrect Blu-ray Disc Information size ({0} bytes)", DIResponse.Length);
 
             return null;
         }
@@ -115,8 +114,8 @@ public static class DI
             Reserved2  = DIResponse[3]
         };
 
-        int                        offset = 4;
-        List<DiscInformationUnits> units  = new List<DiscInformationUnits>();
+        var offset = 4;
+        var units  = new List<DiscInformationUnits>();
 
         while(true)
         {
@@ -210,7 +209,7 @@ public static class DI
 
         decoded.Units = new DiscInformationUnits[units.Count];
 
-        for(int i = 0; i < units.Count; i++)
+        for(var i = 0; i < units.Count; i++)
             decoded.Units[i] = units[i];
 
         return decoded;
@@ -375,8 +374,7 @@ public static class DI
 
             sb.AppendFormat("Last user data PSN for disc: {0}", unit.LastPsn).AppendLine();
 
-            sb.AppendFormat("First address unit number of data zone in this layer: {0}", unit.FirstAun).
-               AppendLine();
+            sb.AppendFormat("First address unit number of data zone in this layer: {0}", unit.FirstAun).AppendLine();
 
             sb.AppendFormat("Last address unit number of data zone in this layer: {0}", unit.LastAun).AppendLine();
 
@@ -386,8 +384,7 @@ public static class DI
                 sb.AppendFormat("Disc manufacturer ID: \"{0}\"", Encoding.ASCII.GetString(unit.ManufacturerID)).
                    AppendLine();
 
-                sb.AppendFormat("Disc media type ID: \"{0}\"", Encoding.ASCII.GetString(unit.MediaTypeID)).
-                   AppendLine();
+                sb.AppendFormat("Disc media type ID: \"{0}\"", Encoding.ASCII.GetString(unit.MediaTypeID)).AppendLine();
 
                 sb.AppendFormat("Disc timestamp: 0x{0:X2}", unit.TimeStamp).AppendLine();
                 sb.AppendFormat("Disc product revison number: {0}", unit.ProductRevisionNumber).AppendLine();
@@ -404,7 +401,7 @@ public static class DI
 
     public static string ManufacturerFromDI(string manufacturerId)
     {
-        string manufacturer = "";
+        var manufacturer = "";
 
         switch(manufacturerId)
         {

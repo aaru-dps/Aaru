@@ -30,11 +30,11 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Decoders.SCSI.MMC;
+
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
-
-namespace Aaru.Decoders.SCSI.MMC;
 
 // Information from the following standards:
 // ANSI X3.304-1997
@@ -95,7 +95,7 @@ public static class DiscInformation
         decoded.LastPossibleLeadOutStartLBA =
             (uint)((response[20] << 24) + (response[21] << 16) + (response[22] << 8) + response[23]);
 
-        byte[] temp = new byte[8];
+        var temp = new byte[8];
         Array.Copy(response, 24, temp, 0, 8);
         Array.Reverse(temp);
         decoded.DiscBarcode = BitConverter.ToUInt64(temp, 0);
@@ -107,17 +107,17 @@ public static class DiscInformation
         decoded.OPCTablesNumber     = response[33];
 
         if(decoded.OPCTablesNumber <= 0 ||
-           response.Length         != (decoded.OPCTablesNumber * 8) + 34)
+           response.Length         != decoded.OPCTablesNumber * 8 + 34)
             return decoded;
 
         decoded.OPCTables = new OPCTable[decoded.OPCTablesNumber];
 
-        for(int i = 0; i < decoded.OPCTablesNumber; i++)
+        for(var i = 0; i < decoded.OPCTablesNumber; i++)
         {
-            decoded.OPCTables[i].Speed = (ushort)((response[34 + (i * 8) + 0] << 16) + response[34 + (i * 8) + 1]);
+            decoded.OPCTables[i].Speed = (ushort)((response[34 + i * 8 + 0] << 16) + response[34 + i * 8 + 1]);
 
             decoded.OPCTables[i].OPCValues = new byte[6];
-            Array.Copy(response, 34 + (i * 8) + 2, decoded.OPCTables[i].OPCValues, 0, 6);
+            Array.Copy(response, 34 + i * 8 + 2, decoded.OPCTables[i].OPCValues, 0, 6);
         }
 
         return decoded;
@@ -218,8 +218,7 @@ public static class DiscInformation
         sb.AppendFormat("First track in last session is track {0}", information.Value.FirstTrackLastSession).
            AppendLine();
 
-        sb.AppendFormat("Last track in last session is track {0}", information.Value.LastTrackLastSession).
-           AppendLine();
+        sb.AppendFormat("Last track in last session is track {0}", information.Value.LastTrackLastSession).AppendLine();
 
         sb.AppendFormat("Last session Lead-In address is {0} (as LBA) or {1:X2}:{2:X2}:{3:X2}",
                         information.Value.LastSessionLeadInStartLBA,

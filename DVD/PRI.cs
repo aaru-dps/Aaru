@@ -30,12 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Decoders.DVD;
+
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Aaru.Helpers;
-
-namespace Aaru.Decoders.DVD;
 
 // Information from the following standards:
 // ANSI X3.304-1997
@@ -157,8 +157,7 @@ public static class PRI
                 sb.AppendLine("General purpose disc for use in general purpose drives");
         }
 
-        sb.AppendLine((decoded.DiscPhysicalCode & 0x80) > 0 ? "Disc track pitch is 0,74 μm"
-                          : "Unknown track pitch");
+        sb.AppendLine((decoded.DiscPhysicalCode & 0x80) > 0 ? "Disc track pitch is 0,74 μm" : "Unknown track pitch");
 
         sb.AppendLine((decoded.DiscPhysicalCode & 0x40) > 0 ? "Reference velocity is 3,49 m/s"
                           : "Unknown reference velocity");
@@ -255,9 +254,7 @@ public static class PRI
                 sb.AppendFormat("Recommended recording power is {0} mW", recordingPower).AppendLine();
             }
             else
-            {
                 sb.AppendLine("Recording power is not specified");
-            }
 
             if((decoded.WaveLengthCode & 0xF) > 0)
             {
@@ -330,9 +327,7 @@ public static class PRI
                 sb.AppendFormat("Recommended erasing power ratio is {0} ε", erasingPower).AppendLine();
             }
             else
-            {
                 sb.AppendLine("Erasing power ratio is not specified");
-            }
         }
         else
         {
@@ -401,7 +396,7 @@ public static class PRI
 
             if(decoded.WaveLengthCode > 0)
             {
-                int wavelength = 0;
+                var wavelength = 0;
 
                 switch(decoded.WaveLengthCode)
                 {
@@ -484,7 +479,7 @@ public static class PRI
 
     public static string ManufacturerFromPrePit(string manufacturerId)
     {
-        string manufacturer = "";
+        var manufacturer = "";
 
         // Bad thing is that it also includes a media code...
         if(manufacturerId.StartsWith("RITEK", StringComparison.Ordinal))

@@ -30,10 +30,10 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Decoders.DVD;
+
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
-
-namespace Aaru.Decoders.DVD;
 
 // Information from the following standards:
 // ANSI X3.304-1997
@@ -59,11 +59,10 @@ public static class Spare
 
         return new SpareAreaInformation
         {
-            DataLength = (ushort)((response[0] << 8) + response[1]),
-            Reserved1  = response[2],
-            Reserved2  = response[3],
-            UnusedPrimaryBlocks =
-                (uint)((response[4] << 24) + (response[5] << 16) + (response[6] << 8) + response[7]),
+            DataLength          = (ushort)((response[0] << 8) + response[1]),
+            Reserved1           = response[2],
+            Reserved2           = response[3],
+            UnusedPrimaryBlocks = (uint)((response[4] << 24) + (response[5] << 16) + (response[6] << 8) + response[7]),
             UnusedSupplementaryBlocks =
                 (uint)((response[8] << 24) + (response[9] << 16) + (response[10] << 8) + response[11]),
             AllocatedSupplementaryBlocks =
@@ -82,8 +81,7 @@ public static class Spare
         sb.AppendFormat("{0} unused primary spare blocks", decoded.UnusedPrimaryBlocks).AppendLine();
         sb.AppendFormat("{0} unused supplementary spare blocks", decoded.UnusedSupplementaryBlocks).AppendLine();
 
-        sb.AppendFormat("{0} allocated supplementary spare blocks", decoded.AllocatedSupplementaryBlocks).
-           AppendLine();
+        sb.AppendFormat("{0} allocated supplementary spare blocks", decoded.AllocatedSupplementaryBlocks).AppendLine();
 
         return sb.ToString();
     }

@@ -30,13 +30,13 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Decoders.Bluray;
+
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Aaru.Console;
 using Aaru.Helpers;
-
-namespace Aaru.Decoders.Bluray;
 
 // Information from the following standards:
 // ANSI X3.304-1997

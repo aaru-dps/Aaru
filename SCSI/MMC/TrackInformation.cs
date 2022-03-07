@@ -79,11 +79,9 @@ public class TrackInformation
                 (uint)((response[8] << 24) + (response[9] << 16) + (response[10] << 8) + response[11]),
             NextWritableAddress =
                 (uint)((response[12] << 24) + (response[13] << 16) + (response[14] << 8) + response[15]),
-            FreeBlocks = (uint)((response[16] << 24) + (response[17] << 16) + (response[18] << 8) + response[19]),
-            FixedPacketSize =
-                (uint)((response[20] << 24) + (response[21] << 16) + (response[22] << 8) + response[23]),
-            LogicalTrackSize =
-                (uint)((response[24] << 24) + (response[25] << 16) + (response[26] << 8) + response[27]),
+            FreeBlocks       = (uint)((response[16] << 24) + (response[17] << 16) + (response[18] << 8) + response[19]),
+            FixedPacketSize  = (uint)((response[20] << 24) + (response[21] << 16) + (response[22] << 8) + response[23]),
+            LogicalTrackSize = (uint)((response[24] << 24) + (response[25] << 16) + (response[26] << 8) + response[27]),
             LastRecordedAddress =
                 (uint)((response[28] << 24) + (response[29] << 16) + (response[30] << 8) + response[31])
         };

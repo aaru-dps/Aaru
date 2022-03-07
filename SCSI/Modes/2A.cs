@@ -30,12 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Decoders.SCSI;
+
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using Aaru.CommonTypes.Structs.Devices.SCSI.Modes;
-
-namespace Aaru.Decoders.SCSI;
 
 [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
  SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), SuppressMessage("ReSharper", "NotAccessedField.Global")]
@@ -114,8 +114,7 @@ public static partial class Modes
 
                 break;
             default:
-                sb.AppendFormat("\tDrive uses unknown loading mechanism type {0}", page.LoadingMechanism).
-                   AppendLine();
+                sb.AppendFormat("\tDrive uses unknown loading mechanism type {0}", page.LoadingMechanism).AppendLine();
 
                 break;
         }
@@ -131,8 +130,7 @@ public static partial class Modes
                               : "\tDrive is not locked, media can be ejected and inserted");
         }
         else
-            sb.AppendLine(page.LockState
-                              ? "\tDrive is locked, media cannot be ejected, but if empty, can be inserted"
+            sb.AppendLine(page.LockState ? "\tDrive is locked, media cannot be ejected, but if empty, can be inserted"
                               : "\tDrive is not locked, media can be ejected and inserted");
 
         if(page.Eject)
@@ -200,8 +198,7 @@ public static partial class Modes
         else
         {
             if(page.MaxWriteSpeed > 0)
-                sb.AppendFormat("\tDrive's maximum writing speed is {0} Kbyte/sec.", page.MaxWriteSpeed).
-                   AppendLine();
+                sb.AppendFormat("\tDrive's maximum writing speed is {0} Kbyte/sec.", page.MaxWriteSpeed).AppendLine();
 
             if(page.CurrentWriteSpeed > 0)
                 sb.AppendFormat("\tDrive's current writing speed is {0} Kbyte/sec.", page.CurrentWriteSpeed).
@@ -209,11 +206,11 @@ public static partial class Modes
         }
 
         if(page.WriteSpeedPerformanceDescriptors != null)
-            foreach(ModePage_2A_WriteDescriptor descriptor in
-                    page.WriteSpeedPerformanceDescriptors.Where(descriptor => descriptor.WriteSpeed > 0))
+            foreach(ModePage_2A_WriteDescriptor descriptor in page.WriteSpeedPerformanceDescriptors.Where(descriptor =>
+                        descriptor.WriteSpeed > 0))
                 if(descriptor.RotationControl == 0)
-                    sb.AppendFormat("\tDrive supports writing at {0} Kbyte/sec. in CLV mode",
-                                    descriptor.WriteSpeed).AppendLine();
+                    sb.AppendFormat("\tDrive supports writing at {0} Kbyte/sec. in CLV mode", descriptor.WriteSpeed).
+                       AppendLine();
                 else if(descriptor.RotationControl == 1)
                     sb.AppendFormat("\tDrive supports writing at is {0} Kbyte/sec. in pure CAV mode",
                                     descriptor.WriteSpeed).AppendLine();

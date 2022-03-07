@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Decoders.Sega;
+
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
@@ -37,8 +39,6 @@ using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.Console;
 using Marshal = Aaru.Helpers.Marshal;
-
-namespace Aaru.Decoders.Sega;
 
 /// <summary>Represents the IP.BIN from a SEGA Saturn</summary>
 [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
@@ -96,7 +96,7 @@ public static class Saturn
         AaruConsole.DebugWriteLine("Saturn IP.BIN Decoder", "saturn_ipbin.product_name = \"{0}\"",
                                    Encoding.ASCII.GetString(ipbin.product_name));
 
-        return Encoding.ASCII.GetString(ipbin.SegaHardwareID) == "SEGA SEGASATURN " ? ipbin : (IPBin?)null;
+        return Encoding.ASCII.GetString(ipbin.SegaHardwareID) == "SEGA SEGASATURN " ? ipbin : null;
     }
 
     /// <summary>Pretty prints a decoded IP.BIN in Saturn format</summary>
@@ -120,11 +120,9 @@ public static class Saturn
         CultureInfo provider = CultureInfo.InvariantCulture;
         ipbindate = DateTime.ParseExact(Encoding.ASCII.GetString(ipbin.release_date), "yyyyMMdd", provider);
 
-        IPBinInformation.AppendFormat("Product name: {0}", Encoding.ASCII.GetString(ipbin.product_name)).
-                         AppendLine();
+        IPBinInformation.AppendFormat("Product name: {0}", Encoding.ASCII.GetString(ipbin.product_name)).AppendLine();
 
-        IPBinInformation.AppendFormat("Product number: {0}", Encoding.ASCII.GetString(ipbin.product_no)).
-                         AppendLine();
+        IPBinInformation.AppendFormat("Product number: {0}", Encoding.ASCII.GetString(ipbin.product_no)).AppendLine();
 
         IPBinInformation.AppendFormat("Product version: {0}", Encoding.ASCII.GetString(ipbin.product_version)).
                          AppendLine();

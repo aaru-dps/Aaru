@@ -30,10 +30,10 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Decoders.SCSI;
+
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
-
-namespace Aaru.Decoders.SCSI;
 
 [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
  SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
@@ -139,8 +139,7 @@ public static partial class Modes
         decoded.SEW                  |= (pageResponse[10] & 0x08) == 0x08;
         decoded.SOCF                 =  (byte)((pageResponse[8] & 0x0C) >> 2);
 
-        decoded.BufferSizeEarlyWarning =
-            (uint)((pageResponse[11] << 16) + (pageResponse[12] << 8) + pageResponse[13]);
+        decoded.BufferSizeEarlyWarning = (uint)((pageResponse[11] << 16) + (pageResponse[12] << 8) + pageResponse[13]);
 
         decoded.SelectedCompression = pageResponse[14];
 

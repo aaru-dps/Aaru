@@ -30,10 +30,10 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Decoders.SCSI;
+
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
-
-namespace Aaru.Decoders.SCSI;
 
 [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
  SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
@@ -93,20 +93,17 @@ public static partial class Modes
             sb.AppendLine("\tParameters can be saved");
 
         if(page.MediumType1 != MediumTypes.Default)
-            sb.AppendFormat("Supported medium type one: {0}", GetMediumTypeDescription(page.MediumType1)).
-               AppendLine();
+            sb.AppendFormat("Supported medium type one: {0}", GetMediumTypeDescription(page.MediumType1)).AppendLine();
 
         if(page.MediumType2 != MediumTypes.Default)
-            sb.AppendFormat("Supported medium type two: {0}", GetMediumTypeDescription(page.MediumType2)).
-               AppendLine();
+            sb.AppendFormat("Supported medium type two: {0}", GetMediumTypeDescription(page.MediumType2)).AppendLine();
 
         if(page.MediumType3 != MediumTypes.Default)
             sb.AppendFormat("Supported medium type three: {0}", GetMediumTypeDescription(page.MediumType3)).
                AppendLine();
 
         if(page.MediumType4 != MediumTypes.Default)
-            sb.AppendFormat("Supported medium type four: {0}", GetMediumTypeDescription(page.MediumType4)).
-               AppendLine();
+            sb.AppendFormat("Supported medium type four: {0}", GetMediumTypeDescription(page.MediumType4)).AppendLine();
 
         return sb.ToString();
     }

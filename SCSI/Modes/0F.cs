@@ -30,10 +30,10 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Decoders.SCSI;
+
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
-
-namespace Aaru.Decoders.SCSI;
 
 [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
  SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
@@ -82,11 +82,11 @@ public static partial class Modes
         decoded.DDE |= (pageResponse[3] & 0x80) == 0x80;
         decoded.RED =  (byte)((pageResponse[3] & 0x60) >> 5);
 
-        decoded.CompressionAlgo = (uint)((pageResponse[4] << 24) + (pageResponse[5] << 16) +
-                                         (pageResponse[6] << 8)  + pageResponse[7]);
+        decoded.CompressionAlgo = (uint)((pageResponse[4] << 24) + (pageResponse[5] << 16) + (pageResponse[6] << 8) +
+                                         pageResponse[7]);
 
-        decoded.DecompressionAlgo = (uint)((pageResponse[8]  << 24) + (pageResponse[9] << 16) +
-                                           (pageResponse[10] << 8)  + pageResponse[11]);
+        decoded.DecompressionAlgo = (uint)((pageResponse[8] << 24) + (pageResponse[9] << 16) + (pageResponse[10] << 8) +
+                                           pageResponse[11]);
 
         return decoded;
     }

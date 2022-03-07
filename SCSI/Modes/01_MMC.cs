@@ -30,10 +30,10 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Decoders.SCSI;
+
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
-
-namespace Aaru.Decoders.SCSI;
 
 [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
  SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
@@ -41,7 +41,7 @@ public static partial class Modes
 {
     public static byte[] EncodeModePage_01_MMC(ModePage_01_MMC page)
     {
-        byte[] pg = new byte[12];
+        var pg = new byte[12];
 
         pg[0] = 0x01;
         pg[1] = 10;
@@ -128,21 +128,20 @@ public static partial class Modes
         if(page.ReadRetryCount > 0)
             sb.AppendFormat("\tDrive will repeat read operations {0} times", page.ReadRetryCount).AppendLine();
 
-        string AllUsed              = "\tAll available recovery procedures will be used.\n";
-        string CIRCRetriesUsed      = "\tOnly retries and CIRC are used.\n";
-        string RetriesUsed          = "\tOnly retries are used.\n";
-        string RecoveredNotReported = "\tRecovered errors will not be reported.\n";
-        string RecoveredReported    = "\tRecovered errors will be reported.\n";
-        string RecoveredAbort       = "\tRecovered errors will be reported and aborted with CHECK CONDITION.\n";
-        string UnrecECCAbort        = "\tUnrecovered ECC errors will return CHECK CONDITION.";
-        string UnrecCIRCAbort       = "\tUnrecovered CIRC errors will return CHECK CONDITION.";
-        string UnrecECCNotAbort     = "\tUnrecovered ECC errors will not abort the transfer.";
-        string UnrecCIRCNotAbort    = "\tUnrecovered CIRC errors will not abort the transfer.";
+        var AllUsed              = "\tAll available recovery procedures will be used.\n";
+        var CIRCRetriesUsed      = "\tOnly retries and CIRC are used.\n";
+        var RetriesUsed          = "\tOnly retries are used.\n";
+        var RecoveredNotReported = "\tRecovered errors will not be reported.\n";
+        var RecoveredReported    = "\tRecovered errors will be reported.\n";
+        var RecoveredAbort       = "\tRecovered errors will be reported and aborted with CHECK CONDITION.\n";
+        var UnrecECCAbort        = "\tUnrecovered ECC errors will return CHECK CONDITION.";
+        var UnrecCIRCAbort       = "\tUnrecovered CIRC errors will return CHECK CONDITION.";
+        var UnrecECCNotAbort     = "\tUnrecovered ECC errors will not abort the transfer.";
+        var UnrecCIRCNotAbort    = "\tUnrecovered CIRC errors will not abort the transfer.";
 
-        string UnrecECCAbortData = "\tUnrecovered ECC errors will return CHECK CONDITION and the uncorrected data.";
+        var UnrecECCAbortData = "\tUnrecovered ECC errors will return CHECK CONDITION and the uncorrected data.";
 
-        string UnrecCIRCAbortData =
-            "\tUnrecovered CIRC errors will return CHECK CONDITION and the uncorrected data.";
+        var UnrecCIRCAbortData = "\tUnrecovered CIRC errors will return CHECK CONDITION and the uncorrected data.";
 
         switch(page.Parameter)
         {

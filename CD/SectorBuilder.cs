@@ -26,10 +26,10 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Decoders.CD;
+
 using System;
 using Aaru.CommonTypes.Enums;
-
-namespace Aaru.Decoders.CD;
 
 public class SectorBuilder
 {
@@ -46,7 +46,7 @@ public class SectorBuilder
         for(uint i = 0; i < 256; i++)
         {
             uint edc = i;
-            uint j   = (uint)((i << 1) ^ ((i & 0x80) == 0x80 ? 0x11D : 0));
+            var  j   = (uint)((i << 1) ^ ((i & 0x80) == 0x80 ? 0x11D : 0));
             _eccFTable[i]     = (byte)j;
             _eccBTable[i ^ j] = (byte)i;
 
@@ -81,9 +81,9 @@ public class SectorBuilder
 
         (byte minute, byte second, byte frame) msf = LbaToMsf(lba);
 
-        sector[0x00C] = (byte)(((msf.minute / 10) << 4) + (msf.minute % 10));
-        sector[0x00D] = (byte)(((msf.second / 10) << 4) + (msf.second % 10));
-        sector[0x00E] = (byte)(((msf.frame  / 10) << 4) + (msf.frame  % 10));
+        sector[0x00C] = (byte)(((msf.minute / 10) << 4) + msf.minute % 10);
+        sector[0x00D] = (byte)(((msf.second / 10) << 4) + msf.second % 10);
+        sector[0x00E] = (byte)(((msf.frame  / 10) << 4) + msf.frame  % 10);
 
         switch(type)
         {
@@ -162,7 +162,7 @@ public class SectorBuilder
             default: return;
         }
 
-        byte[] zeroaddress = new byte[4];
+        var zeroaddress = new byte[4];
 
         switch(type)
         {
@@ -196,8 +196,7 @@ public class SectorBuilder
         //
     }
 
-    void EccWriteSector(byte[] address, byte[] data, ref byte[] ecc, int addressOffset, int dataOffset,
-                        int eccOffset)
+    void EccWriteSector(byte[] address, byte[] data, ref byte[] ecc, int addressOffset, int dataOffset, int eccOffset)
     {
         WriteEcc(address, data, 86, 24, 2, 86, ref ecc, addressOffset, dataOffset, eccOffset);         // P
         WriteEcc(address, data, 52, 43, 86, 88, ref ecc, addressOffset, dataOffset, eccOffset + 0xAC); // Q
@@ -211,7 +210,7 @@ public class SectorBuilder
 
         for(major = 0; major < majorCount; major++)
         {
-            uint idx  = ((major >> 1) * majorMult) + (major & 1);
+            uint idx  = (major >> 1) * majorMult + (major & 1);
             byte eccA = 0;
             byte eccB = 0;
             uint minor;

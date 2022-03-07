@@ -30,12 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Decoders.SCSI;
+
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Aaru.Helpers;
-
-namespace Aaru.Decoders.SCSI;
 
 [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
  SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
@@ -121,11 +121,11 @@ public static partial class Modes
         {
             sb.AppendFormat("\tDrive has been powered up {0} times", page.CurrentPowerOn);
 
-            sb.AppendFormat("\tDrive has been powered up since {0} this time",
-                            TimeSpan.FromSeconds(page.PowerOnTime)).AppendLine();
+            sb.AppendFormat("\tDrive has been powered up since {0} this time", TimeSpan.FromSeconds(page.PowerOnTime)).
+               AppendLine();
 
-            sb.AppendFormat("\tDrive has been powered up a total of {0}",
-                            TimeSpan.FromSeconds(page.CumulativePowerOn)).AppendLine();
+            sb.AppendFormat("\tDrive has been powered up a total of {0}", TimeSpan.FromSeconds(page.CumulativePowerOn)).
+               AppendLine();
         }
 
         if(page.WT)

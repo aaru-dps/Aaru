@@ -30,13 +30,13 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Decoders.DVD;
+
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Aaru.CommonTypes;
 using Aaru.Helpers;
-
-namespace Aaru.Decoders.DVD;
 
 // Information from the following standards:
 // ANSI X3.304-1997
@@ -78,7 +78,7 @@ public static class PFI
 
         if(response.Length == 2048)
         {
-            byte[] tmp2 = new byte[2052];
+            var tmp2 = new byte[2052];
             Array.Copy(response, 0, tmp2, 4, 2048);
             response = tmp2;
         }
@@ -105,11 +105,9 @@ public static class PFI
         pfi.LinearDensity =  (LinearDensityField)((response[7] & 0xF0) >> 4);
         pfi.TrackDensity  =  (TrackDensityField)(response[7] & 0x0F);
 
-        pfi.DataAreaStartPSN =
-            (uint)((response[8] << 24) + (response[9] << 16) + (response[10] << 8) + response[11]);
+        pfi.DataAreaStartPSN = (uint)((response[8] << 24) + (response[9] << 16) + (response[10] << 8) + response[11]);
 
-        pfi.DataAreaEndPSN =
-            (uint)((response[12] << 24) + (response[13] << 16) + (response[14] << 8) + response[15]);
+        pfi.DataAreaEndPSN = (uint)((response[12] << 24) + (response[13] << 16) + (response[14] << 8) + response[15]);
 
         pfi.Layer0EndPSN = (uint)((response[16] << 24) + (response[17] << 16) + (response[18] << 8) + response[19]);
 
@@ -118,7 +116,6 @@ public static class PFI
         pfi.RecordedBookType = pfi.DiskCategory;
 
         if(mediaType != MediaType.DVDROM)
-        {
             switch(mediaType)
             {
                 case MediaType.DVDPR:
@@ -201,7 +198,6 @@ public static class PFI
 
                     break;
             }
-        }
 
         switch(pfi.DiskCategory)
         {
@@ -360,8 +356,7 @@ public static class PFI
             Array.Copy(response, 31, tmp, 0, 3);
             pfi.MediaTypeID = StringHandlers.CToString(tmp);
 
-            pfi.ProductRevision = pfi.DiskCategory == DiskCategory.DVDPRDL ? (byte)(response[34] & 0x3F)
-                                      : response[34];
+            pfi.ProductRevision = pfi.DiskCategory == DiskCategory.DVDPRDL ? (byte)(response[34] & 0x3F) : response[34];
 
             pfi.PFIUsedInADIP = response[35];
         }
@@ -499,7 +494,7 @@ public static class PFI
                 break;
         }
 
-        string categorySentence = "Disc is a {0} {1} version {2}";
+        var categorySentence = "Disc is a {0} {1} version {2}";
 
         switch(decoded.DiskCategory)
         {
@@ -677,15 +672,14 @@ public static class PFI
 
                 break;
             default:
-                sb.AppendFormat(categorySentence, sizeString, "unknown disc type", decoded.PartVersion).
-                   AppendLine();
+                sb.AppendFormat(categorySentence, sizeString, "unknown disc type", decoded.PartVersion).AppendLine();
 
                 break;
         }
 
         if(decoded.RecordedBookType != decoded.DiskCategory)
         {
-            string bookTypeSentence = "Disc book type is {0}";
+            var bookTypeSentence = "Disc book type is {0}";
 
             switch(decoded.RecordedBookType)
             {
@@ -916,8 +910,7 @@ public static class PFI
                 sb.AppendFormat("Current Border-Out first sector is PSN {0:X}h", decoded.CurrentBorderOutSector).
                    AppendLine();
 
-                sb.AppendFormat("Next Border-In first sector is PSN {0:X}h", decoded.NextBorderInSector).
-                   AppendLine();
+                sb.AppendFormat("Next Border-In first sector is PSN {0:X}h", decoded.NextBorderInSector).AppendLine();
 
                 break;
             case DiskCategory.DVDPR:
@@ -971,7 +964,7 @@ public static class PFI
 
     public static string ManufacturerFromDVDPlusID(string manufacturerId)
     {
-        string manufacturer = "";
+        var manufacturer = "";
 
         switch(manufacturerId)
         {

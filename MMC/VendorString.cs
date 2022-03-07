@@ -39,10 +39,10 @@ public static class VendorString
     /// <param name="mmcVendorId">MMC vendor ID</param>
     /// <returns>Manufacturer</returns>
     public static string Prettify(byte mmcVendorId) => mmcVendorId switch
-    {
-        0x07 => "Nokia",
-        0x15 => "Samsung",
-        0x2C => "extreMEmory",
-        _    => $"Unknown manufacturer ID 0x{mmcVendorId:X2}"
-    };
+                                                       {
+                                                           0x07 => "Nokia",
+                                                           0x15 => "Samsung",
+                                                           0x2C => "extreMEmory",
+                                                           _    => $"Unknown manufacturer ID 0x{mmcVendorId:X2}"
+                                                       };
 }

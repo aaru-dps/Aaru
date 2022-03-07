@@ -30,11 +30,11 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Decoders.SCSI;
+
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Aaru.CommonTypes.Structs.Devices.SCSI;
-
-namespace Aaru.Decoders.SCSI;
 
 [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
  SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
@@ -75,16 +75,15 @@ public static partial class Modes
             case MediumTypes.Unspecified_DS:
                 return "Unspecified double sided flexible disk";
             */
-            case MediumTypes.X3_73:    return "ANSI X3.73-1980: 200 mm, 6631 ftprad, 1,9 Tracks per mm, 1 side";
-            case MediumTypes.X3_73_DS: return "ANSI X3.73-1980: 200 mm, 6631 ftprad, 1,9 Tracks per mm, 2 sides";
-            case MediumTypes.X3_82:    return "ANSI X3.80-1980: 130 mm, 3979 ftprad, 1,9 Tracks per mm, 1 side";
-            case MediumTypes.Type3Floppy:
-                return "3.5-inch, 135 tpi, 12362 bits/radian, double-sided MFM (aka 1.25Mb)";
-            case MediumTypes.HDFloppy: return "3.5-inch, 135 tpi, 15916 bits/radian, double-sided MFM (aka 1.44Mb)";
-            case MediumTypes.ReadOnly: return "a Read-only optical";
-            case MediumTypes.WORM:     return "a Write-once Read-many optical";
-            case MediumTypes.Erasable: return "a Erasable optical";
-            case MediumTypes.RO_WORM:  return "a combination of read-only and write-once optical";
+            case MediumTypes.X3_73:       return "ANSI X3.73-1980: 200 mm, 6631 ftprad, 1,9 Tracks per mm, 1 side";
+            case MediumTypes.X3_73_DS:    return "ANSI X3.73-1980: 200 mm, 6631 ftprad, 1,9 Tracks per mm, 2 sides";
+            case MediumTypes.X3_82:       return "ANSI X3.80-1980: 130 mm, 3979 ftprad, 1,9 Tracks per mm, 1 side";
+            case MediumTypes.Type3Floppy: return "3.5-inch, 135 tpi, 12362 bits/radian, double-sided MFM (aka 1.25Mb)";
+            case MediumTypes.HDFloppy:    return "3.5-inch, 135 tpi, 15916 bits/radian, double-sided MFM (aka 1.44Mb)";
+            case MediumTypes.ReadOnly:    return "a Read-only optical";
+            case MediumTypes.WORM:        return "a Write-once Read-many optical";
+            case MediumTypes.Erasable:    return "a Erasable optical";
+            case MediumTypes.RO_WORM:     return "a combination of read-only and write-once optical";
 
             // These magneto-opticals were never manufactured
             /*
@@ -115,8 +114,7 @@ public static partial class Modes
             case PeripheralDeviceTypes.DirectAccess:
             {
                 if(header.Value.MediumType != MediumTypes.Default)
-                    sb.AppendFormat("\tMedium is {0}", GetMediumTypeDescription(header.Value.MediumType)).
-                       AppendLine();
+                    sb.AppendFormat("\tMedium is {0}", GetMediumTypeDescription(header.Value.MediumType)).AppendLine();
 
                 if(header.Value.WriteProtected)
                     sb.AppendLine("\tMedium is write protected");
@@ -127,7 +125,7 @@ public static partial class Modes
                 if(header.Value.BlockDescriptors != null)
                     foreach(BlockDescriptor descriptor in header.Value.BlockDescriptors)
                     {
-                        string density = "";
+                        var density = "";
 
                         switch(descriptor.Density)
                         {
@@ -448,7 +446,7 @@ public static partial class Modes
                 if(header.Value.BlockDescriptors != null)
                     foreach(BlockDescriptor descriptor in header.Value.BlockDescriptors)
                     {
-                        string density = "";
+                        var density = "";
 
                         switch(header.Value.MediumType)
                         {
@@ -532,13 +530,11 @@ public static partial class Modes
 
                                         break;
                                     case DensityType.QIC1350:
-                                        density =
-                                            "QIC-1350: 6,3 mm 30-Track Magnetic Tape Cartridge, 2034 bpmm, RLL";
+                                        density = "QIC-1350: 6,3 mm 30-Track Magnetic Tape Cartridge, 2034 bpmm, RLL";
 
                                         break;
                                     case DensityType.X3B5_88:
-                                        density =
-                                            "ANXI X3B5/88-185A: 3,81 mm Magnetic Tape Cassette, 2400 bpmm, DDS";
+                                        density = "ANXI X3B5/88-185A: 3,81 mm Magnetic Tape Cassette, 2400 bpmm, DDS";
 
                                         break;
                                     case DensityType.X3_202:
@@ -1701,9 +1697,8 @@ public static partial class Modes
                         if(density != "")
                             if(descriptor.Blocks == 0)
                                 if(descriptor.BlockLength == 0)
-                                    sb.
-                                        AppendFormat("\tAll remaining blocks conform to {0} and have a variable length",
-                                                     density).AppendLine();
+                                    sb.AppendFormat("\tAll remaining blocks conform to {0} and have a variable length",
+                                                    density).AppendLine();
                                 else
                                     sb.AppendFormat("\tAll remaining blocks conform to {0} and are {1} bytes each",
                                                     density, descriptor.BlockLength).AppendLine();
@@ -1711,14 +1706,14 @@ public static partial class Modes
                                 sb.AppendFormat("\t{0} blocks conform to {1} and have a variable length",
                                                 descriptor.Blocks, density).AppendLine();
                             else
-                                sb.AppendFormat("\t{0} blocks conform to {1} and are {2} bytes each",
-                                                descriptor.Blocks, density, descriptor.BlockLength).AppendLine();
+                                sb.AppendFormat("\t{0} blocks conform to {1} and are {2} bytes each", descriptor.Blocks,
+                                                density, descriptor.BlockLength).AppendLine();
                         else if(descriptor.Blocks == 0)
                             if(descriptor.BlockLength == 0)
                                 sb.AppendFormat("\tAll remaining blocks have a variable length").AppendLine();
                             else
-                                sb.AppendFormat("\tAll remaining blocks are {0} bytes each",
-                                                descriptor.BlockLength).AppendLine();
+                                sb.AppendFormat("\tAll remaining blocks are {0} bytes each", descriptor.BlockLength).
+                                   AppendLine();
                         else if(descriptor.BlockLength == 0)
                             sb.AppendFormat("\t{0} blocks have a variable length", descriptor.Blocks).AppendLine();
                         else
@@ -1811,14 +1806,13 @@ public static partial class Modes
                 if(header.Value.BlockDescriptors != null)
                     foreach(BlockDescriptor descriptor in header.Value.BlockDescriptors)
                     {
-                        string density = "";
+                        var density = "";
 
                         switch(descriptor.Density)
                         {
                             case DensityType.Default: break;
                             case DensityType.ISO10090:
-                                density =
-                                    "ISO/IEC 10090: 86 mm Read/Write single-sided optical disc with 12500 tracks";
+                                density = "ISO/IEC 10090: 86 mm Read/Write single-sided optical disc with 12500 tracks";
 
                                 break;
                             case DensityType.D581:
@@ -1826,23 +1820,19 @@ public static partial class Modes
 
                                 break;
                             case DensityType.X3_212:
-                                density =
-                                    "ANSI X3.212: 130 mm Read/Write double-sided optical disc with 18750 tracks";
+                                density = "ANSI X3.212: 130 mm Read/Write double-sided optical disc with 18750 tracks";
 
                                 break;
                             case DensityType.X3_191:
-                                density =
-                                    "ANSI X3.191: 130 mm Write-Once double-sided optical disc with 30000 tracks";
+                                density = "ANSI X3.191: 130 mm Write-Once double-sided optical disc with 30000 tracks";
 
                                 break;
                             case DensityType.X3_214:
-                                density =
-                                    "ANSI X3.214: 130 mm Write-Once double-sided optical disc with 20000 tracks";
+                                density = "ANSI X3.214: 130 mm Write-Once double-sided optical disc with 20000 tracks";
 
                                 break;
                             case DensityType.X3_211:
-                                density =
-                                    "ANSI X3.211: 130 mm Write-Once double-sided optical disc with 18750 tracks";
+                                density = "ANSI X3.211: 130 mm Write-Once double-sided optical disc with 18750 tracks";
 
                                 break;
                             case DensityType.D407:
@@ -1869,11 +1859,11 @@ public static partial class Modes
                                     sb.AppendFormat("\tAll remaining blocks are {0} and have a variable length",
                                                     density).AppendLine();
                                 else
-                                    sb.AppendFormat("\tAll remaining blocks are {0} and are {1} bytes each",
-                                                    density, descriptor.BlockLength).AppendLine();
+                                    sb.AppendFormat("\tAll remaining blocks are {0} and are {1} bytes each", density,
+                                                    descriptor.BlockLength).AppendLine();
                             else if(descriptor.BlockLength == 0)
-                                sb.AppendFormat("\t{0} blocks are {1} and have a variable length",
-                                                descriptor.Blocks, density).AppendLine();
+                                sb.AppendFormat("\t{0} blocks are {1} and have a variable length", descriptor.Blocks,
+                                                density).AppendLine();
                             else
                                 sb.AppendFormat("\t{0} blocks are {1} and are {2} bytes each", descriptor.Blocks,
                                                 density, descriptor.BlockLength).AppendLine();
@@ -1881,8 +1871,8 @@ public static partial class Modes
                             if(descriptor.BlockLength == 0)
                                 sb.AppendFormat("\tAll remaining blocks have a variable length").AppendLine();
                             else
-                                sb.AppendFormat("\tAll remaining blocks are {0} bytes each",
-                                                descriptor.BlockLength).AppendLine();
+                                sb.AppendFormat("\tAll remaining blocks are {0} bytes each", descriptor.BlockLength).
+                                   AppendLine();
                         else if(descriptor.BlockLength == 0)
                             sb.AppendFormat("\t{0} blocks have a variable length", descriptor.Blocks).AppendLine();
                         else
@@ -2060,7 +2050,7 @@ public static partial class Modes
                 if(header.Value.BlockDescriptors != null)
                     foreach(BlockDescriptor descriptor in header.Value.BlockDescriptors)
                     {
-                        string density = "";
+                        var density = "";
 
                         switch(descriptor.Density)
                         {

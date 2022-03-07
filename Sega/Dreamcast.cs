@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Decoders.Sega;
+
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
@@ -37,8 +39,6 @@ using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.Console;
 using Marshal = Aaru.Helpers.Marshal;
-
-namespace Aaru.Decoders.Sega;
 
 /// <summary>Represents the IP.BIN from a SEGA Dreamcast</summary>
 [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
@@ -67,8 +67,7 @@ public static class Dreamcast
         AaruConsole.DebugWriteLine("Dreamcast IP.BIN Decoder", "dreamcast_ipbin.dreamcast_media = \"{0}\"",
                                    Encoding.ASCII.GetString(ipbin.dreamcast_media));
 
-        AaruConsole.DebugWriteLine("Dreamcast IP.BIN Decoder", "dreamcast_ipbin.disc_no = {0}",
-                                   (char)ipbin.disc_no);
+        AaruConsole.DebugWriteLine("Dreamcast IP.BIN Decoder", "dreamcast_ipbin.disc_no = {0}", (char)ipbin.disc_no);
 
         AaruConsole.DebugWriteLine("Dreamcast IP.BIN Decoder", "dreamcast_ipbin.disc_no_separator = \"{0}\"",
                                    (char)ipbin.disc_no_separator);
@@ -106,7 +105,7 @@ public static class Dreamcast
         AaruConsole.DebugWriteLine("Dreamcast IP.BIN Decoder", "dreamcast_ipbin.product_name = \"{0}\"",
                                    Encoding.ASCII.GetString(ipbin.product_name));
 
-        return Encoding.ASCII.GetString(ipbin.SegaHardwareID) == "SEGA SEGAKATANA " ? ipbin : (IPBin?)null;
+        return Encoding.ASCII.GetString(ipbin.SegaHardwareID) == "SEGA SEGAKATANA " ? ipbin : null;
     }
 
     /// <summary>Pretty prints a decoded IP.BIN in Dreamcast format</summary>
@@ -130,8 +129,7 @@ public static class Dreamcast
         CultureInfo provider = CultureInfo.InvariantCulture;
         ipbindate = DateTime.ParseExact(Encoding.ASCII.GetString(ipbin.release_date), "yyyyMMdd", provider);
 
-        IPBinInformation.AppendFormat("Product name: {0}", Encoding.ASCII.GetString(ipbin.product_name)).
-                         AppendLine();
+        IPBinInformation.AppendFormat("Product name: {0}", Encoding.ASCII.GetString(ipbin.product_name)).AppendLine();
 
         IPBinInformation.AppendFormat("Product version: {0}", Encoding.ASCII.GetString(ipbin.product_version)).
                          AppendLine();
@@ -139,8 +137,7 @@ public static class Dreamcast
         IPBinInformation.AppendFormat("Product CRC: 0x{0:X8}", ipbin.dreamcast_crc).AppendLine();
         IPBinInformation.AppendFormat("Producer: {0}", Encoding.ASCII.GetString(ipbin.producer)).AppendLine();
 
-        IPBinInformation.AppendFormat("Disc media: {0}", Encoding.ASCII.GetString(ipbin.dreamcast_media)).
-                         AppendLine();
+        IPBinInformation.AppendFormat("Disc media: {0}", Encoding.ASCII.GetString(ipbin.dreamcast_media)).AppendLine();
 
         IPBinInformation.AppendFormat("Disc number {0} of {1}", (char)ipbin.disc_no, (char)ipbin.disc_total_nos).
                          AppendLine();
@@ -188,7 +185,7 @@ public static class Dreamcast
                     break;
             }
 
-        int iPeripherals = int.Parse(Encoding.ASCII.GetString(ipbin.peripherals), NumberStyles.HexNumber);
+        var iPeripherals = int.Parse(Encoding.ASCII.GetString(ipbin.peripherals), NumberStyles.HexNumber);
 
         if((iPeripherals & 0x00000001) == 0x00000001)
             IPBinInformation.AppendLine("Game uses Windows CE.");

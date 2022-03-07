@@ -30,10 +30,10 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Decoders.SCSI;
+
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
-
-namespace Aaru.Decoders.SCSI;
 
 [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
  SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
@@ -74,7 +74,7 @@ public static partial class Modes
 
         decoded.PartitionSizes = new ushort[(pageResponse.Length - 2) / 2];
 
-        for(int i = 2; i < pageResponse.Length; i += 2)
+        for(var i = 2; i < pageResponse.Length; i += 2)
         {
             decoded.PartitionSizes[(i - 2) / 2] =  (ushort)(pageResponse[i] << 8);
             decoded.PartitionSizes[(i - 2) / 2] += pageResponse[i + 1];
@@ -101,7 +101,7 @@ public static partial class Modes
 
         sb.AppendFormat("\tMedium has defined {0} partitions", page.PartitionSizes.Length).AppendLine();
 
-        for(int i = 0; i < page.PartitionSizes.Length; i++)
+        for(var i = 0; i < page.PartitionSizes.Length; i++)
             sb.AppendFormat("\tPartition {0} is {1} units long", i, page.PartitionSizes[i]).AppendLine();
 
         return sb.ToString();

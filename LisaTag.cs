@@ -30,11 +30,11 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Decoders;
+
 using System;
 using System.Diagnostics.CodeAnalysis;
 using Aaru.Helpers;
-
-namespace Aaru.Decoders;
 
 /// <summary>Represents a Lisa Office 7/7 sector tag</summary>
 [SuppressMessage("ReSharper", "MemberCanBeInternal"), SuppressMessage("ReSharper", "NotAccessedField.Global"),
@@ -80,7 +80,7 @@ public static class LisaTag
 
         var phTag = new ProfileTag();
 
-        byte[] tmp = new byte[4];
+        var tmp = new byte[4];
 
         phTag.Version   =  BigEndianBitConverter.ToUInt16(tag, 0);
         phTag.Kind      =  (byte)((tag[2] & 0xC0) >> 6);
@@ -128,7 +128,7 @@ public static class LisaTag
 
         var pmTag = new PriamTag();
 
-        byte[] tmp = new byte[4];
+        var tmp = new byte[4];
 
         pmTag.Version   =  BigEndianBitConverter.ToUInt16(tag, 0);
         pmTag.Kind      =  (byte)((tag[2] & 0xC0) >> 6);
@@ -266,7 +266,7 @@ public static class LisaTag
         public bool IsLast;
 
         /// <summary>Converts this tag to Priam DataTower format</summary>
-        public PriamTag ToPriam() => new PriamTag
+        public PriamTag ToPriam() => new()
         {
             AbsPage   = AbsPage,
             Checksum  = Checksum,
@@ -284,7 +284,7 @@ public static class LisaTag
         };
 
         /// <summary>Converts this tag to Sony format</summary>
-        public SonyTag ToSony() => new SonyTag
+        public SonyTag ToSony() => new()
         {
             FileId    = FileId,
             IsFirst   = IsFirst,
@@ -300,7 +300,7 @@ public static class LisaTag
         /// <summary>Gets a byte array representation of this tag</summary>
         public byte[] GetBytes()
         {
-            byte[] tagBytes = new byte[20];
+            var tagBytes = new byte[20];
 
             byte[] tmp = BigEndianBitConverter.GetBytes(Version);
             Array.Copy(tmp, 0, tagBytes, 0, 2);
@@ -364,7 +364,7 @@ public static class LisaTag
         public bool IsLast;
 
         /// <summary>Converts this tag to Apple Profile format</summary>
-        public ProfileTag ToProfile() => new ProfileTag
+        public ProfileTag ToProfile() => new()
         {
             AbsPage   = AbsPage,
             Checksum  = Checksum,
@@ -382,7 +382,7 @@ public static class LisaTag
         };
 
         /// <summary>Converts this tag to Sony format</summary>
-        public SonyTag ToSony() => new SonyTag
+        public SonyTag ToSony() => new()
         {
             FileId    = FileId,
             IsFirst   = IsFirst,
@@ -398,7 +398,7 @@ public static class LisaTag
         /// <summary>Gets a byte array representation of this tag</summary>
         public byte[] GetBytes()
         {
-            byte[] tagBytes = new byte[24];
+            var tagBytes = new byte[24];
 
             byte[] tmp = BigEndianBitConverter.GetBytes(Version);
             Array.Copy(tmp, 0, tagBytes, 0, 2);
@@ -454,7 +454,7 @@ public static class LisaTag
         public bool IsLast;
 
         /// <summary>Converts this tag to Apple Profile format</summary>
-        public ProfileTag ToProfile() => new ProfileTag
+        public ProfileTag ToProfile() => new()
         {
             FileId    = FileId,
             IsFirst   = IsFirst,
@@ -468,7 +468,7 @@ public static class LisaTag
         };
 
         /// <summary>Converts this tag to Priam DataTower format</summary>
-        public PriamTag ToPriam() => new PriamTag
+        public PriamTag ToPriam() => new()
         {
             FileId    = FileId,
             IsFirst   = IsFirst,
@@ -484,7 +484,7 @@ public static class LisaTag
         /// <summary>Gets a byte array representation of this tag</summary>
         public byte[] GetBytes()
         {
-            byte[] tagBytes = new byte[12];
+            var tagBytes = new byte[12];
 
             byte[] tmp = BigEndianBitConverter.GetBytes(Version);
             Array.Copy(tmp, 0, tagBytes, 0, 2);

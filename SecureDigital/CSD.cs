@@ -30,11 +30,11 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Decoders.SecureDigital;
+
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
-
-namespace Aaru.Decoders.SecureDigital;
 
 [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
  SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
@@ -79,7 +79,7 @@ public static partial class Decoders
         if(response?.Length != 4)
             return null;
 
-        byte[] data = new byte[16];
+        var data = new byte[16];
 
         byte[] tmp = BitConverter.GetBytes(response[0]);
         Array.Copy(tmp, 0, data, 0, 4);
@@ -148,7 +148,7 @@ public static partial class Decoders
 
         double unitFactor = 0;
         double multiplier = 0;
-        string unit       = "";
+        var    unit       = "";
 
         var sb = new StringBuilder();
         sb.AppendLine("SecureDigital Device Specific Data Register:");
@@ -601,8 +601,7 @@ public static partial class Decoders
                 sb.AppendLine("\tDevice can't write protect regions");
         }
 
-        sb.AppendFormat("\tWriting is {0} times slower than reading", Math.Pow(2, csd.WriteSpeedFactor)).
-           AppendLine();
+        sb.AppendFormat("\tWriting is {0} times slower than reading", Math.Pow(2, csd.WriteSpeedFactor)).AppendLine();
 
         sb.AppendFormat("\tWrite block length is {0} bytes", Math.Pow(2, csd.WriteBlockLength)).AppendLine();
 

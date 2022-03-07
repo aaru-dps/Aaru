@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Decoders.CD;
+
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -38,8 +40,6 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 using Aaru.Console;
 using Aaru.Helpers;
-
-namespace Aaru.Decoders.CD;
 
 // Information from the following standards:
 // ANSI X3.304-1997
@@ -91,22 +91,22 @@ public static class FullTOC
             return null;
         }
 
-        for(int i = 0; i < (decoded.DataLength - 2) / 11; i++)
+        for(var i = 0; i < (decoded.DataLength - 2) / 11; i++)
         {
-            decoded.TrackDescriptors[i].SessionNumber = CDFullTOCResponse[0 + (i * 11) + 4];
-            decoded.TrackDescriptors[i].ADR           = (byte)((CDFullTOCResponse[1 + (i * 11) + 4] & 0xF0) >> 4);
-            decoded.TrackDescriptors[i].CONTROL       = (byte)(CDFullTOCResponse[1 + (i * 11) + 4] & 0x0F);
-            decoded.TrackDescriptors[i].TNO           = CDFullTOCResponse[2 + (i * 11) + 4];
-            decoded.TrackDescriptors[i].POINT         = CDFullTOCResponse[3 + (i * 11) + 4];
-            decoded.TrackDescriptors[i].Min           = CDFullTOCResponse[4 + (i * 11) + 4];
-            decoded.TrackDescriptors[i].Sec           = CDFullTOCResponse[5 + (i * 11) + 4];
-            decoded.TrackDescriptors[i].Frame         = CDFullTOCResponse[6 + (i * 11) + 4];
-            decoded.TrackDescriptors[i].Zero          = CDFullTOCResponse[7 + (i * 11) + 4];
-            decoded.TrackDescriptors[i].HOUR          = (byte)((CDFullTOCResponse[7 + (i * 11) + 4] & 0xF0) >> 4);
-            decoded.TrackDescriptors[i].PHOUR         = (byte)(CDFullTOCResponse[7 + (i * 11) + 4] & 0x0F);
-            decoded.TrackDescriptors[i].PMIN          = CDFullTOCResponse[8  + (i * 11) + 4];
-            decoded.TrackDescriptors[i].PSEC          = CDFullTOCResponse[9  + (i * 11) + 4];
-            decoded.TrackDescriptors[i].PFRAME        = CDFullTOCResponse[10 + (i * 11) + 4];
+            decoded.TrackDescriptors[i].SessionNumber = CDFullTOCResponse[0 + i * 11 + 4];
+            decoded.TrackDescriptors[i].ADR           = (byte)((CDFullTOCResponse[1 + i * 11 + 4] & 0xF0) >> 4);
+            decoded.TrackDescriptors[i].CONTROL       = (byte)(CDFullTOCResponse[1 + i * 11 + 4] & 0x0F);
+            decoded.TrackDescriptors[i].TNO           = CDFullTOCResponse[2 + i * 11 + 4];
+            decoded.TrackDescriptors[i].POINT         = CDFullTOCResponse[3 + i * 11 + 4];
+            decoded.TrackDescriptors[i].Min           = CDFullTOCResponse[4 + i * 11 + 4];
+            decoded.TrackDescriptors[i].Sec           = CDFullTOCResponse[5 + i * 11 + 4];
+            decoded.TrackDescriptors[i].Frame         = CDFullTOCResponse[6 + i * 11 + 4];
+            decoded.TrackDescriptors[i].Zero          = CDFullTOCResponse[7 + i * 11 + 4];
+            decoded.TrackDescriptors[i].HOUR          = (byte)((CDFullTOCResponse[7 + i * 11 + 4] & 0xF0) >> 4);
+            decoded.TrackDescriptors[i].PHOUR         = (byte)(CDFullTOCResponse[7 + i * 11 + 4] & 0x0F);
+            decoded.TrackDescriptors[i].PMIN          = CDFullTOCResponse[8  + i * 11 + 4];
+            decoded.TrackDescriptors[i].PSEC          = CDFullTOCResponse[9  + i * 11 + 4];
+            decoded.TrackDescriptors[i].PFRAME        = CDFullTOCResponse[10 + i * 11 + 4];
         }
 
         return decoded;
@@ -121,14 +121,14 @@ public static class FullTOC
 
         var sb = new StringBuilder();
 
-        int lastSession = 0;
+        var lastSession = 0;
 
         sb.AppendFormat("First complete session number: {0}", response.FirstCompleteSession).AppendLine();
         sb.AppendFormat("Last complete session number: {0}", response.LastCompleteSession).AppendLine();
 
         foreach(TrackDataDescriptor descriptor in response.TrackDescriptors)
-            if((descriptor.CONTROL & 0x08) == 0x08                                                        ||
-               (descriptor.ADR != 1 && descriptor.ADR != 5 && descriptor.ADR != 4 && descriptor.ADR != 6) ||
+            if((descriptor.CONTROL & 0x08) == 0x08                                                      ||
+               descriptor.ADR != 1 && descriptor.ADR != 5 && descriptor.ADR != 4 && descriptor.ADR != 6 ||
                descriptor.TNO != 0)
             {
                 sb.AppendLine("Unknown TOC entry format, printing values as-is");
@@ -292,9 +292,8 @@ public static class FullTOC
                                                     descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME,
                                                     descriptor.PHOUR).AppendLine();
                                 else
-                                    sb.AppendFormat("Lead-out start position: {0:D2}:{1:D2}:{2:D2}",
-                                                    descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME).
-                                       AppendLine();
+                                    sb.AppendFormat("Lead-out start position: {0:D2}:{1:D2}:{2:D2}", descriptor.PMIN,
+                                                    descriptor.PSEC, descriptor.PFRAME).AppendLine();
 
                                 //sb.AppendFormat("Absolute time: {3:D2}:{0:D2}:{1:D2}:{2:D2}", descriptor.Min, descriptor.Sec, descriptor.Frame, descriptor.HOUR).AppendLine();
 
@@ -343,11 +342,10 @@ public static class FullTOC
                                                         descriptor.POINT).AppendLine();
                                     else
                                     {
-                                        string type = "Audio";
+                                        var type = "Audio";
 
                                         if((TocControl)(descriptor.CONTROL & 0x0D) == TocControl.DataTrack ||
-                                           (TocControl)(descriptor.CONTROL & 0x0D) ==
-                                           TocControl.DataTrackIncremental)
+                                           (TocControl)(descriptor.CONTROL & 0x0D) == TocControl.DataTrackIncremental)
                                             type = "Data";
 
                                         if(descriptor.PHOUR > 0)
@@ -422,8 +420,8 @@ public static class FullTOC
                                 {
                                     sb.
                                         AppendFormat("Start of next possible program in the recordable area of the disc: {3:D2}:{0:D2}:{1:D2}:{2:D2}",
-                                                     descriptor.Min, descriptor.Sec, descriptor.Frame,
-                                                     descriptor.HOUR).AppendLine();
+                                                     descriptor.Min, descriptor.Sec, descriptor.Frame, descriptor.HOUR).
+                                        AppendLine();
 
                                     sb.
                                         AppendFormat("Maximum start of outermost Lead-out in the recordable area of the disc: {3:D2}:{0:D2}:{1:D2}:{2:D2}",
@@ -438,8 +436,7 @@ public static class FullTOC
 
                                     sb.
                                         AppendFormat("Maximum start of outermost Lead-out in the recordable area of the disc: {0:D2}:{1:D2}:{2:D2}",
-                                                     descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME).
-                                        AppendLine();
+                                                     descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME).AppendLine();
                                 }
 
                                 break;
@@ -447,8 +444,7 @@ public static class FullTOC
 
                             case 0xB1:
                             {
-                                sb.AppendFormat("Number of skip interval pointers: {0}", descriptor.PMIN).
-                                   AppendLine();
+                                sb.AppendFormat("Number of skip interval pointers: {0}", descriptor.PMIN).AppendLine();
 
                                 sb.AppendFormat("Number of skip track pointers: {0}", descriptor.PSEC).AppendLine();
 
@@ -482,8 +478,7 @@ public static class FullTOC
                                 else
                                     sb.
                                         AppendFormat("Start time of the first Lead-in area in the disc: {0:D2}:{1:D2}:{2:D2}",
-                                                     descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME).
-                                        AppendLine();
+                                                     descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME).AppendLine();
 
                                 break;
                             }
@@ -513,19 +508,16 @@ public static class FullTOC
 
                                     sb.
                                         AppendFormat("Stop position of inner part lead-out area: {3:D2}:{0:D2}:{1:D2}:{2:D2}",
-                                                     descriptor.Min, descriptor.Sec, descriptor.Frame,
-                                                     descriptor.HOUR).AppendLine();
+                                                     descriptor.Min, descriptor.Sec, descriptor.Frame, descriptor.HOUR).
+                                        AppendLine();
                                 }
                                 else
                                 {
-                                    sb.
-                                        AppendFormat("Start position of outer part lead-in area: {0:D2}:{1:D2}:{2:D2}",
-                                                     descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME).
-                                        AppendLine();
+                                    sb.AppendFormat("Start position of outer part lead-in area: {0:D2}:{1:D2}:{2:D2}",
+                                                    descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME).AppendLine();
 
-                                    sb.
-                                        AppendFormat("Stop position of inner part lead-out area: {0:D2}:{1:D2}:{2:D2}",
-                                                     descriptor.Min, descriptor.Sec, descriptor.Frame).AppendLine();
+                                    sb.AppendFormat("Stop position of inner part lead-out area: {0:D2}:{1:D2}:{2:D2}",
+                                                    descriptor.Min, descriptor.Sec, descriptor.Frame).AppendLine();
                                 }
 
                                 break;
@@ -538,8 +530,7 @@ public static class FullTOC
                                 {
                                     sb.
                                         AppendFormat("Start time for interval that should be skipped: {0:D2}:{1:D2}:{2:D2}",
-                                                     descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME).
-                                        AppendLine();
+                                                     descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME).AppendLine();
 
                                     sb.
                                         AppendFormat("Ending time for interval that should be skipped: {0:D2}:{1:D2}:{2:D2}",
@@ -570,7 +561,7 @@ public static class FullTOC
 
                     case 6:
                     {
-                        uint id = (uint)((descriptor.Min << 16) + (descriptor.Sec << 8) + descriptor.Frame);
+                        var id = (uint)((descriptor.Min << 16) + (descriptor.Sec << 8) + descriptor.Frame);
                         sb.AppendFormat("Disc ID: {0:X6}", id & 0x00FFFFFF).AppendLine();
 
                         break;
@@ -632,8 +623,7 @@ public static class FullTOC
         public byte PFRAME;
     }
 
-    public static CDFullTOC Create(List<Track> tracks, Dictionary<byte, byte> trackFlags,
-                                   bool createC0Entry = false)
+    public static CDFullTOC Create(List<Track> tracks, Dictionary<byte, byte> trackFlags, bool createC0Entry = false)
     {
         var                    toc                = new CDFullTOC();
         Dictionary<byte, byte> sessionEndingTrack = new();

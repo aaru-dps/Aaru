@@ -30,11 +30,11 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Decoders.SecureDigital;
+
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
-
-namespace Aaru.Decoders.SecureDigital;
 
 [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
  SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), SuppressMessage("ReSharper", "NotAccessedField.Global")]
@@ -56,14 +56,17 @@ public class SCR
 [Flags]
 public enum BusWidth : byte
 {
-    OneBit = 1 << 0, FourBit = 1 << 2
+    OneBit  = 1 << 0,
+    FourBit = 1 << 2
 }
 
 [Flags]
 public enum CommandSupport : byte
 {
-    SpeedClassControl           = 1 << 0, SetBlockCount = 1 << 1, ExtensionRegisterSingleBlock = 1 << 2,
-    ExtensionRegisterMultiBlock = 1 << 3
+    SpeedClassControl            = 1 << 0,
+    SetBlockCount                = 1 << 1,
+    ExtensionRegisterSingleBlock = 1 << 2,
+    ExtensionRegisterMultiBlock  = 1 << 3
 }
 
 [SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), SuppressMessage("ReSharper", "InconsistentNaming")]
@@ -74,7 +77,7 @@ public static partial class Decoders
         if(response?.Length != 2)
             return null;
 
-        byte[] data = new byte[8];
+        var data = new byte[8];
 
         byte[] tmp = BitConverter.GetBytes(response[0]);
         Array.Copy(tmp, 0, data, 0, 4);
@@ -195,8 +198,7 @@ public static partial class Decoders
 
                 break;
             default:
-                sb.AppendFormat("\tDevice uses unknown CPRM specification with code {0}", scr.Security).
-                   AppendLine();
+                sb.AppendFormat("\tDevice uses unknown CPRM specification with code {0}", scr.Security).AppendLine();
 
                 break;
         }

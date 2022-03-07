@@ -30,12 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Decoders.MMC;
+
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Text;
-
-namespace Aaru.Decoders.MMC;
 
 [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
  SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), SuppressMessage("ReSharper", "UnassignedField.Global"),
@@ -219,7 +219,8 @@ public enum DeviceSupportedCommandSets : byte
 [Flags]
 public enum HPIFeatures : byte
 {
-    Supported = 1 << 0, CMD12 = 1 << 1
+    Supported = 1 << 0,
+    CMD12     = 1 << 1
 }
 
 [Flags]
@@ -237,13 +238,15 @@ public enum DataTagSupport : byte
 [Flags]
 public enum ExtendedPartitionsSupport : byte
 {
-    SystemCode = 1 << 0, NonPersistent = 1 << 1
+    SystemCode    = 1 << 0,
+    NonPersistent = 1 << 1
 }
 
 [Flags]
 public enum SupportedModes : byte
 {
-    FFU = 1 << 0, VendorSpecific = 1 << 1
+    FFU            = 1 << 0,
+    VendorSpecific = 1 << 1
 }
 
 [Flags]
@@ -267,41 +270,55 @@ public enum CacheFlushingPolicy : byte
 [Flags]
 public enum SecureFeatureSupport : byte
 {
-    Purge    = 1 << 0, Defective = 1 << 2, Trim = 1 << 4,
-    Sanitize = 1 << 6
+    Purge     = 1 << 0,
+    Defective = 1 << 2,
+    Trim      = 1 << 4,
+    Sanitize  = 1 << 6
 }
 
 [Flags]
 public enum BootInformation : byte
 {
-    Alternative = 1 << 0, DDR = 1 << 1, HighSpeed = 1 << 2
+    Alternative = 1 << 0,
+    DDR         = 1 << 1,
+    HighSpeed   = 1 << 2
 }
 
 [Flags]
 public enum SecureWriteProtectInformation : byte
 {
-    Supported = 1 << 0, Enabled = 1 << 1
+    Supported = 1 << 0,
+    Enabled   = 1 << 1
 }
 
 [Flags]
 public enum DriverStrength : byte
 {
-    Type0 = 1 << 0, Type1 = 1 << 1, Type2 = 1 << 2,
-    Type3 = 1 << 3, Type4 = 1 << 4
+    Type0 = 1 << 0,
+    Type1 = 1 << 1,
+    Type2 = 1 << 2,
+    Type3 = 1 << 3,
+    Type4 = 1 << 4
 }
 
 [Flags]
 public enum DeviceType : byte
 {
-    HS_26        = 1 << 0, HS_52    = 1 << 1, HS_DDR_52 = 1 << 2,
-    HS_DDR_52_LV = 1 << 3, HS200_18 = 1 << 4, HS200_12  = 1 << 5,
-    HS400_18     = 1 << 6, HS400_12 = 1 << 7
+    HS_26        = 1 << 0,
+    HS_52        = 1 << 1,
+    HS_DDR_52    = 1 << 2,
+    HS_DDR_52_LV = 1 << 3,
+    HS200_18     = 1 << 4,
+    HS200_12     = 1 << 5,
+    HS400_18     = 1 << 6,
+    HS400_12     = 1 << 7
 }
 
 [Flags]
 public enum BootConfigProtection : byte
 {
-    PowerCycle = 1 << 0, Permanent = 1 << 4
+    PowerCycle = 1 << 0,
+    Permanent  = 1 << 4
 }
 
 [Flags]
@@ -313,22 +330,32 @@ public enum HighCapacityEraseGroupDefinition : byte
 [Flags]
 public enum BootAreaWriteProtectionRegister : byte
 {
-    PowerOn        = 1 << 0, PowerOnArea2     = 1 << 1, Permanent      = 1 << 2,
-    PermanentArea2 = 1 << 3, PermanentDisable = 1 << 4, PowerOnDisable = 1 << 6,
-    Selected       = 1 << 7
+    PowerOn          = 1 << 0,
+    PowerOnArea2     = 1 << 1,
+    Permanent        = 1 << 2,
+    PermanentArea2   = 1 << 3,
+    PermanentDisable = 1 << 4,
+    PowerOnDisable   = 1 << 6,
+    Selected         = 1 << 7
 }
 
 [Flags]
 public enum UserAreaWriteProtectionRegister : byte
 {
-    ApplyPowerOn     = 1 << 0, ApplyPermanent      = 1 << 2, DisablePowerOn  = 1 << 3,
-    DisablePermanent = 1 << 4, DisableWriteProtect = 1 << 6, DisablePassword = 1 << 7
+    ApplyPowerOn        = 1 << 0,
+    ApplyPermanent      = 1 << 2,
+    DisablePowerOn      = 1 << 3,
+    DisablePermanent    = 1 << 4,
+    DisableWriteProtect = 1 << 6,
+    DisablePassword     = 1 << 7
 }
 
 [Flags]
 public enum PartitioningSupport : byte
 {
-    Supported = 1 << 0, Enhanced = 1 << 1, Extended = 1 << 2
+    Supported = 1 << 0,
+    Enhanced  = 1 << 1,
+    Extended  = 1 << 2
 }
 
 [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
@@ -358,8 +385,7 @@ public static partial class Decoders
         double unit;
 
         if(csd.ExtendedSecurityCommandsError != 0)
-            sb.AppendFormat("\tLast extended security error was {0}", csd.ExtendedSecurityCommandsError).
-               AppendLine();
+            sb.AppendFormat("\tLast extended security error was {0}", csd.ExtendedSecurityCommandsError).AppendLine();
 
         if(csd.SupportedCommandSets.HasFlag(DeviceSupportedCommandSets.Standard))
             sb.AppendLine("\tDevice supports standard MMC command set");
@@ -388,8 +414,8 @@ public static partial class Decoders
         {
             sb.AppendFormat("\tMax context ID is {0}.", csd.ContextManagementCaps & 0xF).AppendLine();
 
-            sb.AppendFormat("\tLarge unit maximum multiplier is {0}.",
-                            ((csd.ContextManagementCaps & 0x70) >> 4) + 1).AppendLine();
+            sb.AppendFormat("\tLarge unit maximum multiplier is {0}.", ((csd.ContextManagementCaps & 0x70) >> 4) + 1).
+               AppendLine();
         }
 
         sb.AppendFormat("\tLarge unit size is {0} MiB", csd.LargeUnitSize + 1).AppendLine();
@@ -405,7 +431,7 @@ public static partial class Decoders
             sb.AppendLine("\tDevice supports FFU");
 
             if(csd.FFUFeatures.HasFlag(FFUFeatures.SupportedModeOperationCodes))
-            {
+
                 // todo public byte ModeOperationCodes
 
                 if(csd.OperationCodesTimeout > 0)
@@ -425,16 +451,13 @@ public static partial class Decoders
                             AppendFormat("\tMaximum timeout for switch command when setting a value to the mode operation codes field is {0:D2}µs",
                                          unit).AppendLine();
                 }
-            }
         }
 
         if(csd.SupportedModes.HasFlag(SupportedModes.VendorSpecific))
             sb.AppendLine("\tDevice supports Vendor Specific Mode");
 
         if(csd.BarrierSupport == 0x01)
-        {
             sb.AppendLine("\tDevice supports the barrier command");
-        }
 
         if(csd.CMDQueuingSupport.HasFlag(CMDQueuingSupport.Supported))
             sb.AppendFormat("\tDevice supports command queuing with a depth of {0}", csd.CMDQueuingDepth + 1).
@@ -697,8 +720,8 @@ public static partial class Decoders
                 sb.AppendFormat("\tDevice takes a maximum of {0} s to switch production state awareness",
                                 unit / 1000000).AppendLine();
             else if(unit > 1000)
-                sb.AppendFormat("\tDevice takes a maximum of {0} ms to switch production state awareness",
-                                unit / 1000).AppendLine();
+                sb.AppendFormat("\tDevice takes a maximum of {0} ms to switch production state awareness", unit / 1000).
+                   AppendLine();
             else
                 sb.AppendFormat("\tDevice takes a maximum of {0} μs to switch production state awareness", unit).
                    AppendLine();
@@ -727,8 +750,7 @@ public static partial class Decoders
                 sb.AppendFormat("\tDevice takes a maximum of {0} s to move to sleep state", unit / 1000000).
                    AppendLine();
             else if(unit > 1000)
-                sb.AppendFormat("\tDevice takes a maximum of {0} ms to move to sleep state", unit / 1000).
-                   AppendLine();
+                sb.AppendFormat("\tDevice takes a maximum of {0} ms to move to sleep state", unit / 1000).AppendLine();
             else
                 sb.AppendFormat("\tDevice takes a maximum of {0} μs to move to sleep state", unit).AppendLine();
         }
@@ -756,8 +778,8 @@ public static partial class Decoders
         if(csd.MinimumReadPerformance26_4 == 0)
             sb.AppendLine("\tDevice cannot achieve 2.4MB/s reading in SDR 26Mhz 4-bit mode");
         else
-            sb.AppendFormat("\tDevice can achieve a minimum of {0}MB/s reading in SDR 26Mhz 4-bit mode",
-                            unit / 1000).AppendLine();
+            sb.AppendFormat("\tDevice can achieve a minimum of {0}MB/s reading in SDR 26Mhz 4-bit mode", unit / 1000).
+               AppendLine();
 
         unit = csd.MinimumReadPerformance52 * 300;
 
@@ -788,8 +810,8 @@ public static partial class Decoders
         if(csd.MinimumWritePerformance26_4 == 0)
             sb.AppendLine("\tDevice cannot achieve 2.4MB/s writing in SDR 26Mhz 4-bit mode");
         else
-            sb.AppendFormat("\tDevice can achieve a minimum of {0}MB/s writing in SDR 26Mhz 4-bit mode",
-                            unit / 1000).AppendLine();
+            sb.AppendFormat("\tDevice can achieve a minimum of {0}MB/s writing in SDR 26Mhz 4-bit mode", unit / 1000).
+               AppendLine();
 
         unit = csd.MinimumWritePerformance52 * 300;
 
@@ -913,8 +935,7 @@ public static partial class Decoders
         {
             sb.AppendLine("\tDevice supports enhanced strobe mode");
 
-            sb.AppendLine((csd.BusWidth & 0x80) == 0x80
-                              ? "\tDevice uses strobe during Data Out, CRC and CMD responses"
+            sb.AppendLine((csd.BusWidth & 0x80) == 0x80 ? "\tDevice uses strobe during Data Out, CRC and CMD responses"
                               : "\tDevice uses strobe during Data Out and CRC responses");
         }
 
@@ -981,8 +1002,8 @@ public static partial class Decoders
 
                 break;
             default:
-                sb.AppendFormat("\tUnknown enabled boot partition code {0}",
-                                (csd.PartitionConfiguration & 0x38) >> 3).AppendLine();
+                sb.AppendFormat("\tUnknown enabled boot partition code {0}", (csd.PartitionConfiguration & 0x38) >> 3).
+                   AppendLine();
 
                 break;
         }
@@ -1037,8 +1058,7 @@ public static partial class Decoders
                 break;
         }
 
-        sb.AppendLine((csd.BootBusConditions & 4) == 4
-                          ? "\tDevice will retain boot conditions after boot operation."
+        sb.AppendLine((csd.BootBusConditions & 4) == 4 ? "\tDevice will retain boot conditions after boot operation."
                           : "\tDevice will reset boot conditions to compatibility mode after boot operation.");
 
         switch((csd.BootBusConditions & 0x24) >> 3)
@@ -1099,24 +1119,19 @@ public static partial class Decoders
         if(csd.BootAreaWriteProtectionRegister.HasFlag(BootAreaWriteProtectionRegister.Permanent))
         {
             if(csd.BootAreaWriteProtectionRegister.HasFlag(BootAreaWriteProtectionRegister.Selected))
-            {
                 sb.AppendLine(csd.BootAreaWriteProtectionRegister.HasFlag(BootAreaWriteProtectionRegister.
                                                                               PermanentArea2)
                                   ? "\tBoot area 2 is permanently write protected."
                                   : "\tBoot area 1 is permanently write protected.");
-            }
             else
                 sb.AppendLine("\tBoth boot areas are permanently write protected.");
         }
         else if(csd.BootAreaWriteProtectionRegister.HasFlag(BootAreaWriteProtectionRegister.PowerOn))
         {
             if(csd.BootAreaWriteProtectionRegister.HasFlag(BootAreaWriteProtectionRegister.Selected))
-            {
-                sb.AppendLine(csd.BootAreaWriteProtectionRegister.HasFlag(BootAreaWriteProtectionRegister.
-                                                                              PowerOnArea2)
+                sb.AppendLine(csd.BootAreaWriteProtectionRegister.HasFlag(BootAreaWriteProtectionRegister.PowerOnArea2)
                                   ? "\tBoot area 2 is write protected until next power cycle."
                                   : "\tBoot area 1 is write protected until next power cycle.");
-            }
             else
                 sb.AppendLine("\tBoth boot areas are write protected until next power cycle.");
         }
@@ -1149,8 +1164,7 @@ public static partial class Decoders
             sb.AppendLine("\tFirmware updates are permanently disabled");
 
         if(csd.RPMBSize > 0)
-            sb.AppendFormat("\tDevice has a {0} KiB replay protected memory block", csd.RPMBSize * 128).
-               AppendLine();
+            sb.AppendFormat("\tDevice has a {0} KiB replay protected memory block", csd.RPMBSize * 128).AppendLine();
 
         if(csd.PartitioningSupport.HasFlag(PartitioningSupport.Supported))
         {
@@ -1191,8 +1205,8 @@ public static partial class Decoders
 
                 break;
             default:
-                sb.AppendFormat("\tDevice emulates unknown sector size indicated by code {0}",
-                                csd.NativeSectorSize).AppendLine();
+                sb.AppendFormat("\tDevice emulates unknown sector size indicated by code {0}", csd.NativeSectorSize).
+                   AppendLine();
 
                 break;
         }

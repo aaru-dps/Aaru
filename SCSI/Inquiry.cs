@@ -30,14 +30,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Decoders.SCSI;
+
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using Aaru.CommonTypes.Structs.Devices.SCSI;
 using Aaru.Helpers;
-
-namespace Aaru.Decoders.SCSI;
 
 // Information from the following standards:
 // T9/375-D revision 10l
@@ -68,8 +68,8 @@ public static class Inquiry
         sb.AppendFormat("Device name: {0}", StringHandlers.CToString(response.ProductIdentification).Trim()).
            AppendLine();
 
-        sb.AppendFormat("Device release level: {0}",
-                        StringHandlers.CToString(response.ProductRevisionLevel).Trim()).AppendLine();
+        sb.AppendFormat("Device release level: {0}", StringHandlers.CToString(response.ProductRevisionLevel).Trim()).
+           AppendLine();
 
         switch((PeripheralQualifiers)response.PeripheralQualifier)
         {
@@ -90,8 +90,8 @@ public static class Inquiry
 
                 break;
             default:
-                sb.AppendFormat("Vendor value {0} set in Peripheral Qualifier field.",
-                                response.PeripheralQualifier).AppendLine();
+                sb.AppendFormat("Vendor value {0} set in Peripheral Qualifier field.", response.PeripheralQualifier).
+                   AppendLine();
 
                 break;
         }
@@ -191,8 +191,7 @@ public static class Inquiry
 
                 break;
             default:
-                sb.AppendFormat("Unknown device type field value 0x{0:X2}", response.PeripheralDeviceType).
-                   AppendLine();
+                sb.AppendFormat("Unknown device type field value 0x{0:X2}", response.PeripheralDeviceType).AppendLine();
 
                 break;
         }
@@ -2323,18 +2322,15 @@ public static class Inquiry
             sb.AppendFormat("Firmware personality: {0}", response.Qt_FirmwarePersonality).AppendLine();
             sb.AppendFormat("Firmware subpersonality: {0}", response.Qt_FirmwareSubPersonality).AppendLine();
 
-            sb.AppendFormat("Tape directory format version: {0}", response.Qt_TapeDirectoryFormatVersion).
-               AppendLine();
+            sb.AppendFormat("Tape directory format version: {0}", response.Qt_TapeDirectoryFormatVersion).AppendLine();
 
             sb.AppendFormat("Controller hardware version: {0}", response.Qt_ControllerHardwareVersion).AppendLine();
             sb.AppendFormat("Drive EEPROM version: {0}", response.Qt_DriveEEPROMVersion).AppendLine();
             sb.AppendFormat("Drive hardware version: {0}", response.Qt_DriveHardwareVersion).AppendLine();
 
-            sb.AppendFormat("Media loader firmware version: {0}", response.Qt_MediaLoaderFirmwareVersion).
-               AppendLine();
+            sb.AppendFormat("Media loader firmware version: {0}", response.Qt_MediaLoaderFirmwareVersion).AppendLine();
 
-            sb.AppendFormat("Media loader hardware version: {0}", response.Qt_MediaLoaderHardwareVersion).
-               AppendLine();
+            sb.AppendFormat("Media loader hardware version: {0}", response.Qt_MediaLoaderHardwareVersion).AppendLine();
 
             sb.AppendFormat("Media loader mechanical version: {0}", response.Qt_MediaLoaderMechanicalVersion).
                AppendLine();
@@ -2345,8 +2341,7 @@ public static class Inquiry
             if(response.Qt_MediaLoaderPresent)
                 sb.AppendLine("Media loader is present");
 
-            sb.AppendFormat("Module revision: {0}", StringHandlers.CToString(response.Qt_ModuleRevision)).
-               AppendLine();
+            sb.AppendFormat("Module revision: {0}", StringHandlers.CToString(response.Qt_ModuleRevision)).AppendLine();
         }
         #endregion Quantum vendor prettifying
 
@@ -2403,8 +2398,7 @@ public static class Inquiry
 
             if(response.Seagate3Present)
                 sb.AppendFormat("Drive servo part number: {0}",
-                                PrintHex.ByteArrayToHexArrayString(response.Seagate_ServoPROMPartNo, 40)).
-                   AppendLine();
+                                PrintHex.ByteArrayToHexArrayString(response.Seagate_ServoPROMPartNo, 40)).AppendLine();
         }
         #endregion Seagate vendor prettifying
 
@@ -2439,7 +2433,7 @@ public static class Inquiry
            response.IsHiMD)
             if(response.KreonPresent)
             {
-                byte[] vendor = new byte[7];
+                var vendor = new byte[7];
                 Array.Copy(response.VendorSpecific, 11, vendor, 0, 7);
                 sb.AppendLine("Vendor-specific bytes 47 to 55");
                 sb.AppendLine("============================================================");

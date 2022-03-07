@@ -30,9 +30,9 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-using System.Diagnostics.CodeAnalysis;
-
 namespace Aaru.Decoders.PCMCIA;
+
+using System.Diagnostics.CodeAnalysis;
 
 [SuppressMessage("ReSharper", "MemberCanBeInternal")]
 public static class VendorCode

@@ -30,18 +30,22 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Decoders.SCSI;
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Aaru.Decoders.ATA;
 
-namespace Aaru.Decoders.SCSI;
-
 public enum SenseType
 {
-    StandardSense, ExtendedSenseFixedCurrent, ExtendedSenseFixedPast,
-    ExtendedSenseDescriptorCurrent, ExtendedSenseDescriptorPast, Invalid,
+    StandardSense,
+    ExtendedSenseFixedCurrent,
+    ExtendedSenseFixedPast,
+    ExtendedSenseDescriptorCurrent,
+    ExtendedSenseDescriptorPast,
+    Invalid,
     Unknown
 }
 
@@ -226,7 +230,7 @@ public static class Sense
                 break;
         }
 
-        return decoded.Fixed is null && decoded.Descriptor is null ? (DecodedSense?)null : decoded;
+        return decoded.Fixed is null && decoded.Descriptor is null ? null : decoded;
     }
 
     public static FixedSense? DecodeFixed(byte[] sense) => DecodeFixed(sense, out _);
@@ -311,7 +315,7 @@ public static class Sense
 
         senseDescription = GetSenseDescription(decoded.ASC, decoded.ASCQ);
 
-        int offset = 8;
+        var offset = 8;
 
         while(offset < sense.Length)
             if(offset + 2 < sense.Length)
@@ -319,7 +323,7 @@ public static class Sense
                 byte descType = sense[offset];
                 int  descLen  = sense[offset + 1] + 2;
 
-                byte[] desc = new byte[descLen];
+                var desc = new byte[descLen];
 
                 if(offset + descLen >= sense.Length)
                     descLen = sense.Length - offset;
@@ -469,7 +473,7 @@ public static class Sense
            descriptor[0]     != 0x00)
             return 0;
 
-        byte[] temp = new byte[8];
+        var temp = new byte[8];
 
         temp[0] = descriptor[11];
         temp[1] = descriptor[10];
@@ -492,7 +496,7 @@ public static class Sense
            descriptor[0]     != 0x01)
             return 0;
 
-        byte[] temp = new byte[8];
+        var temp = new byte[8];
 
         temp[0] = descriptor[11];
         temp[1] = descriptor[10];
@@ -515,7 +519,7 @@ public static class Sense
            descriptor[0]     != 0x02)
             return null;
 
-        byte[] temp = new byte[3];
+        var temp = new byte[3];
         Array.Copy(descriptor, 4, temp, 0, 3);
 
         return temp;
@@ -566,7 +570,7 @@ public static class Sense
 
     public static void DecodeDescriptor08(byte[] descriptor) => throw new NotImplementedException("Check OSD");
 
-    public static AtaErrorRegistersLba48 DecodeDescriptor09(byte[] descriptor) => new AtaErrorRegistersLba48
+    public static AtaErrorRegistersLba48 DecodeDescriptor09(byte[] descriptor) => new()
     {
         Error           = descriptor[3],
         SectorCount     = (ushort)((descriptor[4] << 8) + descriptor[5]),

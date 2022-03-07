@@ -30,12 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Decoders.MMC;
+
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Aaru.Helpers;
-
-namespace Aaru.Decoders.MMC;
 
 [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
  SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), SuppressMessage("ReSharper", "UnassignedField.Global")]
@@ -60,7 +60,7 @@ public static partial class Decoders
         if(response?.Length != 4)
             return null;
 
-        byte[] data = new byte[16];
+        var data = new byte[16];
 
         byte[] tmp = BitConverter.GetBytes(response[0]);
         Array.Copy(tmp, 0, data, 0, 4);
@@ -89,7 +89,7 @@ public static partial class Decoders
             CRC                 = (byte)((response[15] & 0xFE) >> 1)
         };
 
-        byte[] tmp = new byte[6];
+        var tmp = new byte[6];
         Array.Copy(response, 3, tmp, 0, 6);
         cid.ProductName = StringHandlers.CToString(tmp);
 
@@ -129,7 +129,7 @@ public static partial class Decoders
                         cid.ProductRevision & 0x0F).AppendLine();
 
         sb.AppendFormat("\tProduct serial number: {0}", cid.ProductSerialNumber).AppendLine();
-        string year = "";
+        var year = "";
 
         switch(cid.ManufacturingDate & 0x0F)
         {

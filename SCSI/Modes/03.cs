@@ -30,10 +30,10 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Decoders.SCSI;
+
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
-
-namespace Aaru.Decoders.SCSI;
 
 [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
  SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
@@ -130,8 +130,8 @@ public static partial class Modes
             AppendFormat("\t{0} tracks per zone to use in dividing the capacity for the purpose of allocating alternate sectors",
                          page.TracksPerZone).AppendLine();
 
-        sb.AppendFormat("\t{0} sectors per zone that shall be reserved for defect handling",
-                        page.AltSectorsPerZone).AppendLine();
+        sb.AppendFormat("\t{0} sectors per zone that shall be reserved for defect handling", page.AltSectorsPerZone).
+           AppendLine();
 
         sb.AppendFormat("\t{0} tracks per zone that shall be reserved for defect handling", page.AltTracksPerZone).
            AppendLine();
@@ -143,8 +143,8 @@ public static partial class Modes
         sb.AppendFormat("\t{0} Bytes per physical sector", page.BytesPerSector).AppendLine();
         sb.AppendFormat("\tTarget-dependent interleave value is {0}", page.Interleave).AppendLine();
 
-        sb.AppendFormat("\t{0} sectors between last block of one track and first block of the next",
-                        page.TrackSkew).AppendLine();
+        sb.AppendFormat("\t{0} sectors between last block of one track and first block of the next", page.TrackSkew).
+           AppendLine();
 
         sb.AppendFormat("\t{0} sectors between last block of a cylinder and first block of the next one",
                         page.CylinderSkew).AppendLine();

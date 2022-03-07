@@ -30,13 +30,13 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Decoders.SCSI.SSC;
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Aaru.Helpers;
-
-namespace Aaru.Decoders.SCSI.SSC;
 
 [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
  SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), SuppressMessage("ReSharper", "NotAccessedField.Global")]
@@ -50,13 +50,13 @@ public static class DensitySupport
         if(response.Length <= 56)
             return null;
 
-        ushort responseLen = (ushort)((response[0] << 8) + response[1] + 2);
+        var responseLen = (ushort)((response[0] << 8) + response[1] + 2);
 
         if(response.Length != responseLen)
             return null;
 
-        List<DensitySupportDescriptor> descriptors = new List<DensitySupportDescriptor>();
-        int                            offset      = 4;
+        var descriptors = new List<DensitySupportDescriptor>();
+        var offset      = 4;
 
         while(offset < response.Length)
         {
@@ -77,7 +77,7 @@ public static class DensitySupport
                                   (response[offset + 14] << 8)  + response[offset + 15])
             };
 
-            byte[] tmp = new byte[8];
+            var tmp = new byte[8];
             Array.Copy(response, offset + 16, tmp, 0, 8);
             descriptor.organization = StringHandlers.CToString(tmp).Trim();
             tmp                     = new byte[8];
@@ -132,8 +132,8 @@ public static class DensitySupport
             if(descriptor.defaultDensity)
                 sb.AppendLine("\tThis is the default density on the drive");
 
-            sb.AppendFormat("\tDensity has {0} bits per mm, with {1} tracks in a {2} mm width tape",
-                            descriptor.bpmm, descriptor.tracks, descriptor.width / (double)10).AppendLine();
+            sb.AppendFormat("\tDensity has {0} bits per mm, with {1} tracks in a {2} mm width tape", descriptor.bpmm,
+                            descriptor.tracks, descriptor.width / (double)10).AppendLine();
 
             sb.AppendFormat("\tDensity maximum capacity is {0} megabytes", descriptor.capacity).AppendLine();
             sb.AppendFormat("\tDensity description: {0}", descriptor.description).AppendLine();
@@ -153,13 +153,13 @@ public static class DensitySupport
         if(response.Length <= 60)
             return null;
 
-        ushort responseLen = (ushort)((response[0] << 8) + response[1] + 2);
+        var responseLen = (ushort)((response[0] << 8) + response[1] + 2);
 
         if(response.Length != responseLen)
             return null;
 
-        List<MediaTypeSupportDescriptor> descriptors = new List<MediaTypeSupportDescriptor>();
-        int                              offset      = 4;
+        var descriptors = new List<MediaTypeSupportDescriptor>();
+        var offset      = 4;
 
         while(offset < response.Length)
         {
@@ -180,7 +180,7 @@ public static class DensitySupport
             descriptor.length    = (ushort)((response[offset + 16] << 8) + response[offset + 17]);
             descriptor.reserved1 = response[offset + 18];
             descriptor.reserved1 = response[offset + 19];
-            byte[] tmp = new byte[8];
+            var tmp = new byte[8];
             Array.Copy(response, offset + 20, tmp, 0, 8);
             descriptor.organization = StringHandlers.CToString(tmp).Trim();
             tmp                     = new byte[8];
@@ -224,7 +224,7 @@ public static class DensitySupport
             {
                 sb.AppendFormat("\tMedium supports following density codes:");
 
-                for(int i = 0; i < descriptor.numberOfCodes; i++)
+                for(var i = 0; i < descriptor.numberOfCodes; i++)
                     sb.AppendFormat(" {0:X2}h", descriptor.densityCodes[i]);
 
                 sb.AppendLine();

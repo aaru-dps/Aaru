@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Decoders.Floppy;
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -37,8 +39,6 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using Aaru.Console;
-
-namespace Aaru.Decoders.Floppy;
 
 /// <summary>Methods and structures for Apple ][ floppy decoding</summary>
 [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
@@ -155,29 +155,29 @@ public static class Apple2
            data.Length != 410)
             return null;
 
-        byte[] buffer = new byte[data.Length];
-        byte   carry  = 0;
+        var  buffer = new byte[data.Length];
+        byte carry  = 0;
 
-        for(int i = 0; i < data.Length; i++)
+        for(var i = 0; i < data.Length; i++)
         {
             carry     ^= ReadTable5and3[data[i]];
             buffer[i] =  carry;
         }
 
-        byte[] output = new byte[256];
+        var output = new byte[256];
 
-        for(int i = 0; i < 51; i++)
+        for(var i = 0; i < 51; i++)
         {
-            byte b1 = buffer[(51 * 3) - i];
-            byte b2 = buffer[(51 * 2) - i];
+            byte b1 = buffer[51 * 3 - i];
+            byte b2 = buffer[51 * 2 - i];
             byte b3 = buffer[51 - i];
-            byte b4 = (byte)((((b1 & 2) << 1) | (b2 & 2) | ((b3 & 2) >> 1)) & 0xFF);
-            byte b5 = (byte)((((b1 & 1) << 2) | ((b2 & 1) << 1) | (b3 & 1)) & 0xFF);
-            output[250 - (5 * i)] = (byte)(((buffer[i + (51 * 3) + 1] << 3) | ((b1 >> 2) & 0x7)) & 0xFF);
-            output[251 - (5 * i)] = (byte)(((buffer[i + (51 * 4) + 1] << 3) | ((b2 >> 2) & 0x7)) & 0xFF);
-            output[252 - (5 * i)] = (byte)(((buffer[i + (51 * 5) + 1] << 3) | ((b3 >> 2) & 0x7)) & 0xFF);
-            output[253 - (5 * i)] = (byte)(((buffer[i + (51 * 6) + 1] << 3) | b4) & 0xFF);
-            output[254 - (5 * i)] = (byte)(((buffer[i + (51 * 7) + 1] << 3) | b5) & 0xFF);
+            var  b4 = (byte)((((b1 & 2) << 1) | (b2 & 2) | ((b3 & 2) >> 1)) & 0xFF);
+            var  b5 = (byte)((((b1 & 1) << 2) | ((b2 & 1) << 1) | (b3 & 1)) & 0xFF);
+            output[250 - 5 * i] = (byte)(((buffer[i + 51 * 3 + 1] << 3) | ((b1 >> 2) & 0x7)) & 0xFF);
+            output[251 - 5 * i] = (byte)(((buffer[i + 51 * 4 + 1] << 3) | ((b2 >> 2) & 0x7)) & 0xFF);
+            output[252 - 5 * i] = (byte)(((buffer[i + 51 * 5 + 1] << 3) | ((b3 >> 2) & 0x7)) & 0xFF);
+            output[253 - 5 * i] = (byte)(((buffer[i + 51 * 6 + 1] << 3) | b4) & 0xFF);
+            output[254 - 5 * i] = (byte)(((buffer[i + 51 * 7 + 1] << 3) | b5) & 0xFF);
         }
 
         output[255] = (byte)(((buffer[409] << 3) | (buffer[0] & 0x7)) & 0xFF);
@@ -193,16 +193,16 @@ public static class Apple2
            data.Length != 342)
             return null;
 
-        byte[] buffer = new byte[data.Length];
-        byte   carry  = 0;
+        var  buffer = new byte[data.Length];
+        byte carry  = 0;
 
-        for(int i = 0; i < data.Length; i++)
+        for(var i = 0; i < data.Length; i++)
         {
             carry     ^= ReadTable6and2[data[i]];
             buffer[i] =  carry;
         }
 
-        byte[] output = new byte[256];
+        var output = new byte[256];
 
         for(uint i = 0; i < 256; i++)
         {
@@ -220,8 +220,8 @@ public static class Apple2
             }
             else
             {
-                output[i] |= (byte)(((buffer[i - (86 * 2)] & 0x10) >> 3) & 0xFF);
-                output[i] |= (byte)(((buffer[i - (86 * 2)] & 0x20) >> 5) & 0xFF);
+                output[i] |= (byte)(((buffer[i - 86 * 2] & 0x10) >> 3) & 0xFF);
+                output[i] |= (byte)(((buffer[i - 86 * 2] & 0x20) >> 5) & 0xFF);
             }
         }
 
@@ -326,9 +326,9 @@ public static class Apple2
                                                sector.addressField.epilogue[2]);
 
                     position += 14;
-                    int  syncCount = 0;
-                    bool onSync    = false;
-                    var  gaps      = new MemoryStream();
+                    var syncCount = 0;
+                    var onSync    = false;
+                    var gaps      = new MemoryStream();
 
                     while(data[position] == 0xFF)
                     {
@@ -471,13 +471,13 @@ public static class Apple2
 
     public static RawTrack MarshalTrack(byte[] data, out int endOffset, int offset = 0)
     {
-        int             position    = offset;
-        bool            firstSector = true;
-        bool            onSync      = false;
-        var             gaps        = new MemoryStream();
-        int             count       = 0;
-        List<RawSector> sectors     = new List<RawSector>();
-        byte[]          trackNumber = new byte[2];
+        int position    = offset;
+        var firstSector = true;
+        var onSync      = false;
+        var gaps        = new MemoryStream();
+        var count       = 0;
+        var sectors     = new List<RawSector>();
+        var trackNumber = new byte[2];
         endOffset = offset;
 
         while(position       < data.Length &&
@@ -560,8 +560,8 @@ public static class Apple2
     public static List<RawTrack> MarshalDisk(byte[] data, out int endOffset, int offset = 0)
     {
         endOffset = offset;
-        List<RawTrack> tracks   = new List<RawTrack>();
-        int            position = offset;
+        var tracks   = new List<RawTrack>();
+        int position = offset;
 
         RawTrack track = MarshalTrack(data, out position, position);
 

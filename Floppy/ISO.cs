@@ -30,10 +30,11 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Decoders.Floppy;
+
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
-namespace Aaru.Decoders.Floppy;
 // Information from:
 // National Semiconductor PC87332VLJ datasheet
 // SMsC FDC37C78 datasheet

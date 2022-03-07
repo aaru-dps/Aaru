@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Decoders.Sega;
+
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
@@ -37,8 +39,6 @@ using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.Console;
 using Marshal = Aaru.Helpers.Marshal;
-
-namespace Aaru.Decoders.Sega;
 
 /// <summary>Represents the IP.BIN from a SEGA CD / MEGA CD</summary>
 [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
@@ -67,8 +67,7 @@ public static class CD
         AaruConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.volume_version = \"{0:X}\"",
                                    ipbin.volume_version);
 
-        AaruConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.volume_type = 0x{0:X8}",
-                                   ipbin.volume_type);
+        AaruConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.volume_type = 0x{0:X8}", ipbin.volume_type);
 
         AaruConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.system_version = 0x{0:X8}",
                                    ipbin.system_version);
@@ -117,8 +116,7 @@ public static class CD
 
         string id = Encoding.ASCII.GetString(ipbin.SegaHardwareID);
 
-        return id == "SEGADISCSYSTEM  " || id == "SEGADATADISC    " || id == "SEGAOS          " ? ipbin
-                   : (IPBin?)null;
+        return id == "SEGADISCSYSTEM  " || id == "SEGADATADISC    " || id == "SEGAOS          " ? ipbin : null;
     }
 
     /// <summary>Pretty prints a decoded IP.BIN in SEGA CD / MEGA CD format</summary>
@@ -149,8 +147,7 @@ public static class CD
         {
             try
             {
-                ipbindate = DateTime.ParseExact(Encoding.ASCII.GetString(ipbin.release_date2), "yyyy.MMM",
-                                                provider);
+                ipbindate = DateTime.ParseExact(Encoding.ASCII.GetString(ipbin.release_date2), "yyyy.MMM", provider);
             }
             #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
             catch
@@ -185,15 +182,13 @@ public static class CD
         IPBinInformation.AppendFormat("Initial program address: 0x{0:X8}", ipbin.ip_address).AppendLine();
         IPBinInformation.AppendFormat("Initial program load size: {0} bytes", ipbin.ip_loadsize).AppendLine();
 
-        IPBinInformation.AppendFormat("Initial program entry address: 0x{0:X8}", ipbin.ip_entry_address).
-                         AppendLine();
+        IPBinInformation.AppendFormat("Initial program entry address: 0x{0:X8}", ipbin.ip_entry_address).AppendLine();
 
         IPBinInformation.AppendFormat("Initial program work RAM: {0} bytes", ipbin.ip_work_ram_size).AppendLine();
         IPBinInformation.AppendFormat("System program address: 0x{0:X8}", ipbin.sp_address).AppendLine();
         IPBinInformation.AppendFormat("System program load size: {0} bytes", ipbin.sp_loadsize).AppendLine();
 
-        IPBinInformation.AppendFormat("System program entry address: 0x{0:X8}", ipbin.sp_entry_address).
-                         AppendLine();
+        IPBinInformation.AppendFormat("System program entry address: 0x{0:X8}", ipbin.sp_entry_address).AppendLine();
 
         IPBinInformation.AppendFormat("System program work RAM: {0} bytes", ipbin.sp_work_ram_size).AppendLine();
 
@@ -212,8 +207,7 @@ public static class CD
         IPBinInformation.AppendFormat("Overseas title: {0}", Encoding.ASCII.GetString(ipbin.overseas_title)).
                          AppendLine();
 
-        IPBinInformation.AppendFormat("Product code: {0}", Encoding.ASCII.GetString(ipbin.product_code)).
-                         AppendLine();
+        IPBinInformation.AppendFormat("Product code: {0}", Encoding.ASCII.GetString(ipbin.product_code)).AppendLine();
 
         IPBinInformation.AppendFormat("Peripherals:").AppendLine();
 

@@ -30,10 +30,10 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Decoders.SCSI;
+
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-
-namespace Aaru.Decoders.SCSI;
 
 [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
  SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), SuppressMessage("ReSharper", "NotAccessedField.Global")]
@@ -41,12 +41,12 @@ public static class DiscStructureCapabilities
 {
     public static Capability[] Decode(byte[] response)
     {
-        ushort len = (ushort)((response[0] << 8) + response[1]);
+        var len = (ushort)((response[0] << 8) + response[1]);
 
         if(len + 2 != response.Length)
             return null;
 
-        List<Capability> caps = new List<Capability>();
+        var caps = new List<Capability>();
 
         uint offset = 4;
 

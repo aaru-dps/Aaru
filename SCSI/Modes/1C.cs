@@ -30,10 +30,10 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Decoders.SCSI;
+
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
-
-namespace Aaru.Decoders.SCSI;
 
 [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
  SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
@@ -103,8 +103,8 @@ public static partial class Modes
         decoded.EBACKERR |= (pageResponse[2] & 0x02) == 0x02;
 
         if(pageResponse.Length >= 12)
-            decoded.ReportCount = (uint)((pageResponse[8]  << 24) + (pageResponse[9] << 16) +
-                                         (pageResponse[10] << 8)  + pageResponse[11]);
+            decoded.ReportCount = (uint)((pageResponse[8] << 24) + (pageResponse[9] << 16) + (pageResponse[10] << 8) +
+                                         pageResponse[11]);
 
         return decoded;
     }

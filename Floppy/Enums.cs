@@ -30,9 +30,9 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-using System.Diagnostics.CodeAnalysis;
-
 namespace Aaru.Decoders.Floppy;
+
+using System.Diagnostics.CodeAnalysis;
 
 /// <summary>In-sector code for sector size</summary>
 [SuppressMessage("ReSharper", "InconsistentNaming")]
@@ -59,7 +59,9 @@ public enum IBMSectorSizeCode : byte
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 public enum IBMIdType : byte
 {
-    IndexMark       = 0xFC, AddressMark = 0xFE, DataMark = 0xFB,
+    IndexMark       = 0xFC,
+    AddressMark     = 0xFE,
+    DataMark        = 0xFB,
     DeletedDataMark = 0xF8
 }
 

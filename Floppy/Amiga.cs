@@ -30,10 +30,10 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Decoders.Floppy;
+
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
-
-namespace Aaru.Decoders.Floppy;
 
 /// <summary>Methods and structures for Commodore Amiga decoding</summary>
 [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),

@@ -30,10 +30,10 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Decoders.SCSI;
+
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
-
-namespace Aaru.Decoders.SCSI;
 
 [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
  SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
@@ -198,8 +198,8 @@ public static partial class Modes
 
                 break;
             default:
-                sb.AppendFormat("\tUnknown demand write retention priority value {0}",
-                                page.DemandReadRetentionPrio).AppendLine();
+                sb.AppendFormat("\tUnknown demand write retention priority value {0}", page.DemandReadRetentionPrio).
+                   AppendLine();
 
                 break;
         }
@@ -223,8 +223,7 @@ public static partial class Modes
                        AppendLine();
 
                 if(page.MaximumPreFetch > 0)
-                    sb.AppendFormat("\tA maximum of {0} blocks will be pre-fetched", page.MaximumPreFetch).
-                       AppendLine();
+                    sb.AppendFormat("\tA maximum of {0} blocks will be pre-fetched", page.MaximumPreFetch).AppendLine();
 
                 if(page.MaximumPreFetchCeiling > 0)
                     sb.
@@ -265,9 +264,8 @@ public static partial class Modes
         }
 
         if(page.NonCacheSegmentSize > 0)
-            sb.
-                AppendFormat("\tDrive shall allocate {0} bytes to buffer even when all cached data cannot be evicted",
-                             page.NonCacheSegmentSize).AppendLine();
+            sb.AppendFormat("\tDrive shall allocate {0} bytes to buffer even when all cached data cannot be evicted",
+                            page.NonCacheSegmentSize).AppendLine();
 
         if(page.NV_DIS)
             sb.AppendLine("\tNon-Volatile cache is disabled");

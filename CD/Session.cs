@@ -30,12 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Decoders.CD;
+
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Aaru.Console;
 using Aaru.Helpers;
-
-namespace Aaru.Decoders.CD;
 
 // Information from the following standards:
 // ANSI X3.304-1997
@@ -77,16 +77,16 @@ public static class Session
             return null;
         }
 
-        for(int i = 0; i < (decoded.DataLength - 2) / 8; i++)
+        for(var i = 0; i < (decoded.DataLength - 2) / 8; i++)
         {
-            decoded.TrackDescriptors[i].Reserved1   = CDSessionInfoResponse[0 + (i * 8) + 4];
-            decoded.TrackDescriptors[i].ADR         = (byte)((CDSessionInfoResponse[1 + (i * 8) + 4] & 0xF0) >> 4);
-            decoded.TrackDescriptors[i].CONTROL     = (byte)(CDSessionInfoResponse[1 + (i * 8) + 4] & 0x0F);
-            decoded.TrackDescriptors[i].TrackNumber = CDSessionInfoResponse[2 + (i * 8) + 4];
-            decoded.TrackDescriptors[i].Reserved2   = CDSessionInfoResponse[3 + (i * 8) + 4];
+            decoded.TrackDescriptors[i].Reserved1   = CDSessionInfoResponse[0 + i * 8 + 4];
+            decoded.TrackDescriptors[i].ADR         = (byte)((CDSessionInfoResponse[1 + i * 8 + 4] & 0xF0) >> 4);
+            decoded.TrackDescriptors[i].CONTROL     = (byte)(CDSessionInfoResponse[1 + i * 8 + 4] & 0x0F);
+            decoded.TrackDescriptors[i].TrackNumber = CDSessionInfoResponse[2 + i * 8 + 4];
+            decoded.TrackDescriptors[i].Reserved2   = CDSessionInfoResponse[3 + i * 8 + 4];
 
             decoded.TrackDescriptors[i].TrackStartAddress =
-                BigEndianBitConverter.ToUInt32(CDSessionInfoResponse, 4 + (i * 8) + 4);
+                BigEndianBitConverter.ToUInt32(CDSessionInfoResponse, 4 + i * 8 + 4);
         }
 
         return decoded;
@@ -106,8 +106,7 @@ public static class Session
 
         foreach(TrackDataDescriptor descriptor in response.TrackDescriptors)
         {
-            sb.AppendFormat("First track number in last complete session: {0}", descriptor.TrackNumber).
-               AppendLine();
+            sb.AppendFormat("First track number in last complete session: {0}", descriptor.TrackNumber).AppendLine();
 
             sb.AppendFormat("Track starts at LBA {0}, or MSF {1:X2}:{2:X2}:{3:X2}", descriptor.TrackStartAddress,
                             (descriptor.TrackStartAddress & 0x0000FF00) >> 8,

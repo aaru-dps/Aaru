@@ -30,10 +30,10 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Decoders.SCSI;
+
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
-
-namespace Aaru.Decoders.SCSI;
 
 [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
  SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
@@ -87,8 +87,7 @@ public static partial class Modes
         if(page.PS)
             sb.AppendLine("\tParameters can be saved");
 
-        sb.AppendLine(page.CDmode ? "\tDrive is emulating a CD-ROM drive"
-                          : "\tDrive is not emulating a CD-ROM drive");
+        sb.AppendLine(page.CDmode ? "\tDrive is emulating a CD-ROM drive" : "\tDrive is not emulating a CD-ROM drive");
 
         if(page.NonAuto)
             sb.AppendLine("\tDrive will not exit emulation automatically");

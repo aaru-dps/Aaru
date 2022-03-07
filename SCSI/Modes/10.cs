@@ -30,10 +30,10 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Decoders.SCSI;
+
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
-
-namespace Aaru.Decoders.SCSI;
 
 [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
  SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
@@ -80,11 +80,11 @@ public static partial class Modes
         decoded.MaxXorWrite = (uint)((pageResponse[4] << 24) + (pageResponse[5] << 16) + (pageResponse[6] << 8) +
                                      pageResponse[7]);
 
-        decoded.MaxRegenSize = (uint)((pageResponse[12] << 24) + (pageResponse[13] << 16) +
-                                      (pageResponse[14] << 8)  + pageResponse[15]);
+        decoded.MaxRegenSize = (uint)((pageResponse[12] << 24) + (pageResponse[13] << 16) + (pageResponse[14] << 8) +
+                                      pageResponse[15]);
 
-        decoded.MaxRebuildRead = (uint)((pageResponse[16] << 24) + (pageResponse[17] << 16) +
-                                        (pageResponse[18] << 8)  + pageResponse[19]);
+        decoded.MaxRebuildRead = (uint)((pageResponse[16] << 24) + (pageResponse[17] << 16) + (pageResponse[18] << 8) +
+                                        pageResponse[19]);
 
         decoded.RebuildDelay = (ushort)((pageResponse[22] << 8) + pageResponse[23]);
 
@@ -116,8 +116,8 @@ public static partial class Modes
                                 page.MaxXorWrite).AppendLine();
 
             if(page.MaxRegenSize > 0)
-                sb.AppendFormat("\tDrive accepts a maximum of {0} blocks in a REGENERATE command",
-                                page.MaxRegenSize).AppendLine();
+                sb.AppendFormat("\tDrive accepts a maximum of {0} blocks in a REGENERATE command", page.MaxRegenSize).
+                   AppendLine();
 
             if(page.MaxRebuildRead > 0)
                 sb.AppendFormat("\tDrive accepts a maximum of {0} blocks in a READ command during rebuild",

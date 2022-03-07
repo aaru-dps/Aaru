@@ -30,10 +30,10 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Decoders.SCSI;
+
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
-
-namespace Aaru.Decoders.SCSI;
 
 [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
  SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
@@ -153,9 +153,8 @@ public static partial class Modes
                AppendLine();
 
         if(page.FirstBurstSize > 0)
-            sb.
-                AppendFormat("\t{0} bytes maximum can be transferred for a command along with the disconnect command",
-                             page.FirstBurstSize * 512).AppendLine();
+            sb.AppendFormat("\t{0} bytes maximum can be transferred for a command along with the disconnect command",
+                            page.FirstBurstSize * 512).AppendLine();
 
         if(page.DIMM)
             sb.AppendLine("\tTarget shall not transfer data for a command during the same interconnect tenancy");

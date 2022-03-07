@@ -30,11 +30,11 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Decoders.DVD;
+
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
-
-namespace Aaru.Decoders.DVD;
 
 // Information from the following standards:
 // ANSI X3.304-1997
@@ -91,7 +91,7 @@ public static class DDS
             Array.Copy(response, 14, dds.Reserved, 0, 6);
             dds.GroupCertificationFlags = new GroupCertificationFlag[24];
 
-            for(int i = 0; i < 24; i++)
+            for(var i = 0; i < 24; i++)
             {
                 dds.GroupCertificationFlags[i].InProcess            |= (response[20 + i] & 0x80) == 0x80;
                 dds.GroupCertificationFlags[i].PartialCertification |= (response[20 + i] & 0x40) == 0x40;
@@ -115,9 +115,9 @@ public static class DDS
             dds.LSN0Location      = (uint)((response[93]   << 16) + (response[94] << 8) + response[95]);
             dds.StartLSNForZone   = new uint[dds.Zones];
 
-            for(int i = 0; i < dds.Zones; i++)
-                dds.StartLSNForZone[i] = (uint)((response[260 + (i * 4) + 1] << 16) +
-                                                (response[260 + (i * 4) + 2] << 8)  + response[260 + (i * 4) + 3]);
+            for(var i = 0; i < dds.Zones; i++)
+                dds.StartLSNForZone[i] = (uint)((response[260 + i * 4 + 1] << 16) + (response[260 + i * 4 + 2] << 8) +
+                                                response[260 + i * 4 + 3]);
         }
 
         return dds;
@@ -154,7 +154,7 @@ public static class DDS
         sb.AppendFormat("DDS has been updated {0} times", decoded.UpdateCount).AppendLine();
 
         if(decoded.Groups == 24)
-            for(int i = 0; i < decoded.GroupCertificationFlags.Length; i++)
+            for(var i = 0; i < decoded.GroupCertificationFlags.Length; i++)
             {
                 if(decoded.GroupCertificationFlags[i].InProcess)
                 {
@@ -179,7 +179,7 @@ public static class DDS
 
             sb.AppendFormat("LSN 0 is at PSN {0:X}h", decoded.LSN0Location).AppendLine();
 
-            for(int i = 0; i < decoded.StartLSNForZone.Length; i++)
+            for(var i = 0; i < decoded.StartLSNForZone.Length; i++)
                 sb.AppendFormat("Zone {0} starts at LSN {1}", i, decoded.StartLSNForZone[i]).AppendLine();
         }
 

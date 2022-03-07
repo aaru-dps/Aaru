@@ -30,16 +30,18 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+
+
+// ReSharper disable MemberCanBePrivate.Global
+
+namespace Aaru.Decoders.SCSI.MMC;
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Aaru.CommonTypes.Structs.Devices.SCSI;
 using Aaru.Helpers;
-
-// ReSharper disable MemberCanBePrivate.Global
-
-namespace Aaru.Decoders.SCSI.MMC;
 
 /// <summary>MMC Feature enumeration</summary>
 [SuppressMessage("ReSharper", "InconsistentNaming")]
@@ -1307,7 +1309,7 @@ public static class Features
         if(feature.Length < 4)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0000)
             return null;
@@ -1321,8 +1323,8 @@ public static class Features
         decoded.Persistent |= (feature[2] & 0x02) == 0x02;
         decoded.Version    =  (byte)((feature[2] & 0x3C) >> 2);
 
-        int           offset       = 4;
-        List<Profile> listProfiles = new List<Profile>();
+        var offset       = 4;
+        var listProfiles = new List<Profile>();
 
         while(offset < feature.Length)
         {
@@ -1349,7 +1351,7 @@ public static class Features
         if(feature.Length < 8)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0001)
             return null;
@@ -1385,7 +1387,7 @@ public static class Features
         if(feature.Length < 8)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0002)
             return null;
@@ -1415,7 +1417,7 @@ public static class Features
         if(feature.Length < 8)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0003)
             return null;
@@ -1451,7 +1453,7 @@ public static class Features
         if(feature.Length < 8)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0004)
             return null;
@@ -1485,7 +1487,7 @@ public static class Features
         if(feature.Length < 12)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0010)
             return null;
@@ -1516,7 +1518,7 @@ public static class Features
         if(feature.Length < 4)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x001D)
             return null;
@@ -1541,7 +1543,7 @@ public static class Features
         if(feature.Length < 8)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x001E)
             return null;
@@ -1575,7 +1577,7 @@ public static class Features
         if(feature.Length < 4)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x001F)
             return null;
@@ -1612,7 +1614,7 @@ public static class Features
         if(feature.Length < 16)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0020)
             return null;
@@ -1631,8 +1633,7 @@ public static class Features
 
         decoded.LastLBA = (uint)((feature[4] << 24) + (feature[5] << 16) + (feature[6] << 8) + feature[7]);
 
-        decoded.LogicalBlockSize =
-            (uint)((feature[8] << 24) + (feature[9] << 16) + (feature[10] << 8) + feature[11]);
+        decoded.LogicalBlockSize = (uint)((feature[8] << 24) + (feature[9] << 16) + (feature[10] << 8) + feature[11]);
 
         decoded.Blocking =  (ushort)((feature[12] << 8) + feature[13]);
         decoded.PP       |= (feature[14] & 0x01) == 0x01;
@@ -1648,7 +1649,7 @@ public static class Features
         if(feature.Length < 8)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0021)
             return null;
@@ -1689,7 +1690,7 @@ public static class Features
         if(feature.Length < 4)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0022)
             return null;
@@ -1714,7 +1715,7 @@ public static class Features
         if(feature.Length < 4)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0023)
             return null;
@@ -1753,7 +1754,7 @@ public static class Features
         if(feature.Length < 4)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0024)
             return null;
@@ -1782,7 +1783,7 @@ public static class Features
         if(feature.Length < 12)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0025)
             return null;
@@ -1813,7 +1814,7 @@ public static class Features
         if(feature.Length < 4)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0026)
             return null;
@@ -1838,7 +1839,7 @@ public static class Features
         if(feature.Length < 8)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0027)
             return null;
@@ -1863,7 +1864,7 @@ public static class Features
         if(feature.Length < 8)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0028)
             return null;
@@ -1896,7 +1897,7 @@ public static class Features
         if(feature.Length < 8)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0029)
             return null;
@@ -1925,7 +1926,7 @@ public static class Features
         if(feature.Length < 8)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x002A)
             return null;
@@ -1956,7 +1957,7 @@ public static class Features
         if(feature.Length < 8)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x002B)
             return null;
@@ -1983,7 +1984,7 @@ public static class Features
         if(feature.Length < 8)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x002C)
             return null;
@@ -2013,7 +2014,7 @@ public static class Features
         if(feature.Length < 8)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x002D)
             return null;
@@ -2050,7 +2051,7 @@ public static class Features
         if(feature.Length < 8)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x002E)
             return null;
@@ -2086,7 +2087,7 @@ public static class Features
         if(feature.Length < 8)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x002F)
             return null;
@@ -2120,7 +2121,7 @@ public static class Features
         if(feature.Length < 4)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0030)
             return null;
@@ -2145,7 +2146,7 @@ public static class Features
         if(feature.Length < 8)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0031)
             return null;
@@ -2172,7 +2173,7 @@ public static class Features
         if(feature.Length < 8)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0032)
             return null;
@@ -2200,7 +2201,7 @@ public static class Features
         if(feature.Length < 8)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0033)
             return null;
@@ -2232,7 +2233,7 @@ public static class Features
         if(feature.Length < 4)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0035)
             return null;
@@ -2257,7 +2258,7 @@ public static class Features
         if(feature.Length < 8)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0037)
             return null;
@@ -2284,7 +2285,7 @@ public static class Features
         if(feature.Length < 8)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0038)
             return null;
@@ -2309,7 +2310,7 @@ public static class Features
         if(feature.Length < 8)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x003A)
             return null;
@@ -2338,7 +2339,7 @@ public static class Features
         if(feature.Length < 8)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x003B)
             return null;
@@ -2365,7 +2366,7 @@ public static class Features
         if(feature.Length < 32)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0040)
             return null;
@@ -2403,7 +2404,7 @@ public static class Features
         if(feature.Length < 24)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0041)
             return null;
@@ -2439,7 +2440,7 @@ public static class Features
         if(feature.Length < 4)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0042)
             return null;
@@ -2464,7 +2465,7 @@ public static class Features
         if(feature.Length < 8)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0050)
             return null;
@@ -2492,7 +2493,7 @@ public static class Features
         if(feature.Length < 8)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0051)
             return null;
@@ -2520,7 +2521,7 @@ public static class Features
         if(feature.Length < 8)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0080)
             return null;
@@ -2547,7 +2548,7 @@ public static class Features
         if(feature.Length < 4)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0100)
             return null;
@@ -2572,7 +2573,7 @@ public static class Features
         if(feature.Length < 8)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0101)
             return null;
@@ -2599,7 +2600,7 @@ public static class Features
         if(feature.Length < 4)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0102)
             return null;
@@ -2628,7 +2629,7 @@ public static class Features
         if(feature.Length < 8)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0103)
             return null;
@@ -2658,7 +2659,7 @@ public static class Features
         if(feature.Length < 4)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0104)
             return null;
@@ -2687,7 +2688,7 @@ public static class Features
         if(feature.Length < 4)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0105)
             return null;
@@ -2719,7 +2720,7 @@ public static class Features
         if(feature.Length < 8)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0106)
             return null;
@@ -2746,7 +2747,7 @@ public static class Features
         if(feature.Length < 4)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0107)
             return null;
@@ -2788,7 +2789,7 @@ public static class Features
         if(feature.Length < 4)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0108)
             return null;
@@ -2802,7 +2803,7 @@ public static class Features
         decoded.Persistent |= (feature[2] & 0x02) == 0x02;
         decoded.Version    =  (byte)((feature[2] & 0x3C) >> 2);
 
-        byte[] serial = new byte[feature.Length];
+        var serial = new byte[feature.Length];
         Array.Copy(feature, 4, serial, 0, feature.Length - 4);
         decoded.Serial = StringHandlers.CToString(serial).Trim();
 
@@ -2817,7 +2818,7 @@ public static class Features
         if(feature.Length < 4)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0109)
             return null;
@@ -2842,7 +2843,7 @@ public static class Features
         if(feature.Length < 8)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x010A)
             return null;
@@ -2858,9 +2859,9 @@ public static class Features
 
         decoded.DCBs = new uint[feature[3] / 4];
 
-        for(int i = 0; i < decoded.DCBs.Length; i++)
-            decoded.DCBs[i] = (uint)((feature[0 + 4 + (i * 4)] << 24) + (feature[1 + 4 + (i * 4)] << 16) +
-                                     (feature[2 + 4 + (i * 4)] << 8)  + feature[3 + 4 + (i * 4)]);
+        for(var i = 0; i < decoded.DCBs.Length; i++)
+            decoded.DCBs[i] = (uint)((feature[0 + 4 + i * 4] << 24) + (feature[1 + 4 + i * 4] << 16) +
+                                     (feature[2 + 4 + i * 4] << 8)  + feature[3 + 4 + i * 4]);
 
         return decoded;
     }
@@ -2873,7 +2874,7 @@ public static class Features
         if(feature.Length < 4)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x010B)
             return null;
@@ -2900,7 +2901,7 @@ public static class Features
         if(feature.Length < 20)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x010C)
             return null;
@@ -2933,7 +2934,7 @@ public static class Features
         if(feature.Length < 8)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x010D)
             return null;
@@ -2971,7 +2972,7 @@ public static class Features
         if(feature.Length < 8)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x010E)
             return null;
@@ -2998,7 +2999,7 @@ public static class Features
         if(feature.Length < 8)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0110)
             return null;
@@ -3023,7 +3024,7 @@ public static class Features
         if(feature.Length < 4)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0113)
             return null;
@@ -3048,7 +3049,7 @@ public static class Features
         if(feature.Length < 6)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0142)
             return null;
@@ -3067,11 +3068,11 @@ public static class Features
         decoded.ME       |= (feature[4] & 0x01) == 0x01;
         decoded.Profiles =  new ushort[feature[5]];
 
-        if((feature[5] * 2) + 6 != feature.Length)
+        if(feature[5] * 2 + 6 != feature.Length)
             return decoded;
 
-        for(int i = 0; i < feature[5]; i++)
-            decoded.Profiles[i] = (ushort)((feature[0 + 6 + (2 * i)] << 8) + feature[1 + 6 + (2 * i)]);
+        for(var i = 0; i < feature[5]; i++)
+            decoded.Profiles[i] = (ushort)((feature[0 + 6 + 2 * i] << 8) + feature[1 + 6 + 2 * i]);
 
         return decoded;
     }
@@ -3318,8 +3319,7 @@ public static class Features
 
                 break;
             default:
-                sb.AppendFormat("an unknown interface with code {0}", (uint)ftr.PhysicalInterfaceStandard).
-                   AppendLine();
+                sb.AppendFormat("an unknown interface with code {0}", (uint)ftr.PhysicalInterfaceStandard).AppendLine();
 
                 break;
         }
@@ -4029,8 +4029,7 @@ public static class Features
         return sb.ToString();
     }
 
-    public static string Prettify_0030(Feature_0030? feature) =>
-        !feature.HasValue ? null : "Drive can read DDCDs\n";
+    public static string Prettify_0030(Feature_0030? feature) => !feature.HasValue ? null : "Drive can read DDCDs\n";
 
     public static string Prettify_0031(Feature_0031? feature)
     {
@@ -4273,8 +4272,7 @@ public static class Features
     }
 
     public static string Prettify_0042(Feature_0042? feature) =>
-        !feature.HasValue ? null
-            : "Drive is able to detect and report defective writable unit and behave accordinly\n";
+        !feature.HasValue ? null : "Drive is able to detect and report defective writable unit and behave accordinly\n";
 
     public static string Prettify_0050(Feature_0050? feature)
     {
@@ -4558,7 +4556,7 @@ public static class Features
         Feature_010C ftr = feature.Value;
         var          sb  = new StringBuilder();
 
-        byte[] temp = new byte[4];
+        var temp = new byte[4];
         temp[0] = (byte)((ftr.Century & 0xFF00) >> 8);
         temp[1] = (byte)(ftr.Century & 0xFF);
         temp[2] = (byte)((ftr.Year & 0xFF00) >> 8);
@@ -4660,8 +4658,7 @@ public static class Features
             sb.AppendLine();
 
         if(ftr.MaxScrambleExtent > 0)
-            sb.AppendFormat("\tMaximum {0} scranble extent information entries", ftr.MaxScrambleExtent).
-               AppendLine();
+            sb.AppendFormat("\tMaximum {0} scranble extent information entries", ftr.MaxScrambleExtent).AppendLine();
 
         return sb.ToString();
     }
@@ -4718,7 +4715,7 @@ public static class Features
         if(ftr.Profiles == null)
             return sb.ToString();
 
-        for(int i = 0; i < ftr.Profiles.Length; i++)
+        for(var i = 0; i < ftr.Profiles.Length; i++)
             sb.AppendFormat("\tProfile {0}: {1}", i, ftr.Profiles[i]).AppendLine();
 
         return sb.ToString();
@@ -4848,8 +4845,8 @@ public static class Features
             CurrentProfile = (ushort)((response[6] << 8)  + response[7])
         };
 
-        uint                    offset  = 8;
-        List<FeatureDescriptor> descLst = new List<FeatureDescriptor>();
+        uint offset  = 8;
+        var  descLst = new List<FeatureDescriptor>();
 
         while(offset + 4 < response.Length)
         {

@@ -30,10 +30,10 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Decoders.SCSI;
+
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
-
-namespace Aaru.Decoders.SCSI;
 
 [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
  SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
@@ -120,12 +120,10 @@ public static partial class Modes
         sb.AppendFormat("\t{0} cylinders", page.Cylinders).AppendLine();
 
         if(page.WritePrecompCylinder < page.Cylinders)
-            sb.AppendFormat("\tWrite pre-compensation starts at cylinder {0}", page.WritePrecompCylinder).
-               AppendLine();
+            sb.AppendFormat("\tWrite pre-compensation starts at cylinder {0}", page.WritePrecompCylinder).AppendLine();
 
         if(page.WriteReduceCylinder < page.Cylinders)
-            sb.AppendFormat("\tWrite current reduction starts at cylinder {0}", page.WriteReduceCylinder).
-               AppendLine();
+            sb.AppendFormat("\tWrite current reduction starts at cylinder {0}", page.WriteReduceCylinder).AppendLine();
 
         if(page.DriveStepRate > 0)
             sb.AppendFormat("\tDrive steps in {0} ns", (uint)page.DriveStepRate * 100).AppendLine();

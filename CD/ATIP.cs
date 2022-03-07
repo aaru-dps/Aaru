@@ -30,13 +30,13 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Decoders.CD;
+
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Aaru.Console;
 using Aaru.Helpers;
-
-namespace Aaru.Decoders.CD;
 
 // Information from the following standards:
 // ANSI X3.304-1997
@@ -215,8 +215,7 @@ public static class ATIP
 
                         break;
                     default:
-                        sb.AppendFormat("Reference speed set is unknown: {0}", response.ReferenceSpeed).
-                           AppendLine();
+                        sb.AppendFormat("Reference speed set is unknown: {0}", response.ReferenceSpeed).AppendLine();
 
                         break;
                 }
@@ -271,9 +270,8 @@ public static class ATIP
             sb.AppendFormat("ATIP Start time of Lead-in: {0}:{1:D2}:{2:D2}", response.LeadInStartMin,
                             response.LeadInStartSec, response.LeadInStartFrame).AppendLine();
 
-            sb.AppendFormat("ATIP Last possible start time of Lead-out: {0}:{1:D2}:{2:D2}",
-                            response.LeadOutStartMin, response.LeadOutStartSec, response.LeadOutStartFrame).
-               AppendLine();
+            sb.AppendFormat("ATIP Last possible start time of Lead-out: {0}:{1:D2}:{2:D2}", response.LeadOutStartMin,
+                            response.LeadOutStartSec, response.LeadOutStartFrame).AppendLine();
 
             if(response.A1Valid)
                 sb.AppendFormat("A1 value: 0x{0:X6}",
