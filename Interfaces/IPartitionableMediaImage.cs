@@ -37,9 +37,9 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-using System.Collections.Generic;
-
 namespace Aaru.CommonTypes.Interfaces;
+
+using System.Collections.Generic;
 
 /// <summary>Defines an image that can contain partitions</summary>
 public interface IPartitionableMediaImage

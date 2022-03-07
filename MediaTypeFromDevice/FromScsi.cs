@@ -32,10 +32,10 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.CommonTypes;
+
 using System;
 using Aaru.Console;
-
-namespace Aaru.CommonTypes;
 
 public static partial class MediaTypeFromDevice
 {
@@ -51,8 +51,7 @@ public static partial class MediaTypeFromDevice
     /// <param name="opticalDisc">Is media an optical disc?</param>
     /// <returns>The media type</returns>
     public static MediaType GetFromScsi(byte scsiPeripheralType, string vendor, string model, byte mediumType,
-                                        byte densityCode, ulong blocks, uint blockSize, bool isUsb,
-                                        bool opticalDisc)
+                                        byte densityCode, ulong blocks, uint blockSize, bool isUsb, bool opticalDisc)
     {
         switch(scsiPeripheralType)
         {
@@ -68,8 +67,7 @@ public static partial class MediaTypeFromDevice
                 return GetFromSbc(vendor, model, mediumType, blocks, blockSize);
 
             // Sequential access device
-            case 0x01:
-                return GetFromSsc(scsiPeripheralType, vendor, model, mediumType, densityCode, blocks, blockSize);
+            case 0x01: return GetFromSsc(scsiPeripheralType, vendor, model, mediumType, densityCode, blocks, blockSize);
 
             // Write-once device
             case 0x04:

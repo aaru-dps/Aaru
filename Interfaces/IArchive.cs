@@ -31,14 +31,16 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using Aaru.CommonTypes.Enums;
+
 
 // ReSharper disable UnusedMember.Global
 
 namespace Aaru.CommonTypes.Interfaces;
+
+using System;
+using System.Collections.Generic;
+using System.IO;
+using Aaru.CommonTypes.Enums;
 
 /// <summary>Supported archive features</summary>
 [Flags]

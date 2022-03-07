@@ -32,10 +32,10 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.CommonTypes;
+
 using System;
 using Aaru.Console;
-
-namespace Aaru.CommonTypes;
 
 /// <summary>Gets the media type from a real device</summary>
 public static partial class MediaTypeFromDevice
@@ -83,8 +83,7 @@ public static partial class MediaTypeFromDevice
             case 0x01:
             case 0x05:
                 AaruConsole.DebugWriteLine("Media detection",
-                                           "SCSI medium type is {0:X2}h, setting media type to CD-ROM.",
-                                           mediumType);
+                                           "SCSI medium type is {0:X2}h, setting media type to CD-ROM.", mediumType);
 
                 return MediaType.CDROM;
             case 0x02:
@@ -96,14 +95,13 @@ public static partial class MediaTypeFromDevice
                 return MediaType.CDDA;
             case 0x03:
             case 0x07:
-                AaruConsole.DebugWriteLine("Media detection",
-                                           "SCSI medium type is {0:X2}h, setting media type to CD+.", mediumType);
+                AaruConsole.DebugWriteLine("Media detection", "SCSI medium type is {0:X2}h, setting media type to CD+.",
+                                           mediumType);
 
                 return MediaType.CDPLUS;
             case 0x04:
                 AaruConsole.DebugWriteLine("Media detection",
-                                           "SCSI medium type is {0:X2}h, setting media type to Photo CD.",
-                                           mediumType);
+                                           "SCSI medium type is {0:X2}h, setting media type to Photo CD.", mediumType);
 
                 return MediaType.PCD;
             case 0x10:

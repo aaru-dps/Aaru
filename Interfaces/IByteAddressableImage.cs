@@ -36,11 +36,11 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.CommonTypes.Interfaces;
+
 using System.Collections.Generic;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
-
-namespace Aaru.CommonTypes.Interfaces;
 
 /// <summary>Interface defining linear media (chips, game carts, etc) images</summary>
 public interface IByteAddressableImage : IBaseWritableImage

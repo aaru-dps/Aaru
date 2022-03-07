@@ -36,13 +36,7 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-using System;
-using System.ComponentModel;
-using System.Xml.Serialization;
-using Aaru.CommonTypes.Structs.Devices.ATA;
-using Aaru.CommonTypes.Structs.Devices.SCSI;
-using Aaru.CommonTypes.Structs.Devices.SCSI.Modes;
-using Newtonsoft.Json;
+
 
 // This is obsolete
 #pragma warning disable 1591
@@ -51,6 +45,14 @@ using Newtonsoft.Json;
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 
 namespace Aaru.CommonTypes.Metadata;
+
+using System;
+using System.ComponentModel;
+using System.Xml.Serialization;
+using Aaru.CommonTypes.Structs.Devices.ATA;
+using Aaru.CommonTypes.Structs.Devices.SCSI;
+using Aaru.CommonTypes.Structs.Devices.SCSI.Modes;
+using Newtonsoft.Json;
 
 [Serializable, XmlRoot("DicDeviceReport", Namespace = "", IsNullable = false)]
 public class DeviceReport

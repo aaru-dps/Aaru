@@ -36,14 +36,16 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Xml.Serialization;
+
 
 // ReSharper disable ClassNeverInstantiated.Global
 // ReSharper disable UnusedMember.Global
 
 namespace Aaru.CommonTypes.Metadata;
+
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Xml.Serialization;
 
 /// <summary>Statistics</summary>
 [XmlRoot("DicStats", Namespace = "", IsNullable = false)]

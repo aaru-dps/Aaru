@@ -36,9 +36,9 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-using System.Linq;
-
 namespace Aaru.CommonTypes;
+
+using System.Linq;
 
 /// <summary>Handles CHS geometries</summary>
 public static class Geometry
@@ -138,7 +138,7 @@ public static class Geometry
     /// <summary>Gets the geometry for a given media type</summary>
     /// <param name="mediaType">Media type</param>
     /// <returns>Geometry</returns>
-    public static (ushort cylinders, byte heads, ushort sectorsPerTrack, uint bytesPerSector, MediaEncoding encoding
-        , bool variableSectorsPerTrack, MediaType type) GetGeometry(MediaType mediaType) =>
+    public static (ushort cylinders, byte heads, ushort sectorsPerTrack, uint bytesPerSector, MediaEncoding encoding,
+        bool variableSectorsPerTrack, MediaType type) GetGeometry(MediaType mediaType) =>
         (from geom in KnownGeometries where geom.type == mediaType select geom).FirstOrDefault();
 }

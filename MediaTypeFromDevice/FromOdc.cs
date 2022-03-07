@@ -32,9 +32,9 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-using Aaru.Console;
-
 namespace Aaru.CommonTypes;
+
+using Aaru.Console;
 
 public static partial class MediaTypeFromDevice
 {

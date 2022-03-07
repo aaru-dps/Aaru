@@ -37,9 +37,9 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-using Aaru.CommonTypes.Enums;
-
 namespace Aaru.CommonTypes.Interfaces;
+
+using Aaru.CommonTypes.Enums;
 
 /// <summary>Abstract class to implement disk image reading plugins.</summary>
 public interface IMediaImage : IBaseImage

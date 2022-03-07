@@ -43,15 +43,22 @@ public enum ErrorNumber
 {
     NotPermitted = -1,
     /// <summary>No such file or directory</summary>
-    NoSuchFile = -2, NoSuchProcess = -3, InterruptedSyscall = -4,
+    NoSuchFile = -2, NoSuchProcess = -3,
+    InterruptedSyscall             = -4,
     /// <summary>I/O error</summary>
-    InOutError = -5, NoSuchDeviceOrAddress = -6, ArgumentListTooLong = -7, ExecutableFormatError = -8,
-    BadFileNumber                          = -9, NoChildProcess      = -10, TryAgain             = -11,
+    InOutError = -5, NoSuchDeviceOrAddress = -6,
+    ArgumentListTooLong                    = -7,
+    ExecutableFormatError                  = -8,
+    BadFileNumber                          = -9,
+    NoChildProcess                         = -10,
+    TryAgain                               = -11,
     OutOfMemory                            = -12,
     /// <summary>Access denied</summary>
-    AccessDenied = -13, BadAddress = -14, NotABlockDevice = -15,
+    AccessDenied = -13, BadAddress = -14,
+    NotABlockDevice                = -15,
     /// <summary>Busy, cannot complete</summary>
-    Busy = -16, FileExists = -17, CrossDeviceLink = -18,
+    Busy = -16, FileExists = -17,
+    CrossDeviceLink        = -18,
     /// <summary>No such device</summary>
     NoSuchDevice = -19,
     /// <summary>Is not a directory (e.g.: trying to ReadDir() a file)</summary>
@@ -59,12 +66,19 @@ public enum ErrorNumber
     /// <summary>Is a directory (e.g.: trying to Read() a dir)</summary>
     IsDirectory = -21,
     /// <summary>Invalid argument</summary>
-    InvalidArgument = -22, FileTableOverflow = -23, TooManyOpenFiles = -24, NotTypewriter = -25,
+    InvalidArgument = -22, FileTableOverflow = -23,
+    TooManyOpenFiles                         = -24,
+    NotTypewriter                            = -25,
     TextFileBusy                             = -26,
     /// <summary>File is too large</summary>
-    FileTooLarge = -27, NoSpaceLeft = -28, IllegalSeek        = -29, ReadOnly    = -30,
-    TooManyLinks                    = -31, BrokenPipe         = -32, OutOfDomain = -33,
-    OutOfRange                      = -34, DeadlockWouldOccur = -35,
+    FileTooLarge = -27, NoSpaceLeft = -28,
+    IllegalSeek                     = -29,
+    ReadOnly                        = -30,
+    TooManyLinks                    = -31,
+    BrokenPipe                      = -32,
+    OutOfDomain                     = -33,
+    OutOfRange                      = -34,
+    DeadlockWouldOccur              = -35,
     /// <summary>Name is too long</summary>
     NameTooLong = -36, NoLocksAvailable = -37,
     /// <summary>Not implemented</summary>
@@ -78,15 +92,22 @@ public enum ErrorNumber
     /// <summary>Not supported</summary>
     NotSupported = -252, EPERM = NotPermitted,
     /// <summary>No such file or directory</summary>
-    ENOENT = NoSuchFile, ESRCH = NoSuchProcess, EINTR = InterruptedSyscall,
+    ENOENT = NoSuchFile, ESRCH = NoSuchProcess,
+    EINTR                      = InterruptedSyscall,
     /// <summary>I/O error</summary>
-    EIO = InOutError, ENXIO = NoSuchDeviceOrAddress, E2BIG = ArgumentListTooLong, ENOEXEC = ExecutableFormatError,
-    EBADF                   = BadFileNumber, ECHILD        = NoChildProcess, EAGAIN       = TryAgain,
+    EIO = InOutError, ENXIO = NoSuchDeviceOrAddress,
+    E2BIG                   = ArgumentListTooLong,
+    ENOEXEC                 = ExecutableFormatError,
+    EBADF                   = BadFileNumber,
+    ECHILD                  = NoChildProcess,
+    EAGAIN                  = TryAgain,
     ENOMEM                  = OutOfMemory,
     /// <summary>Access denied</summary>
-    EACCES = AccessDenied, EFAULT = BadAddress, ENOTBLK = NotABlockDevice,
+    EACCES = AccessDenied, EFAULT = BadAddress,
+    ENOTBLK                       = NotABlockDevice,
     /// <summary>Busy, cannot complete</summary>
-    EBUSY = Busy, EEXIST = FileExists, EXDEV = CrossDeviceLink,
+    EBUSY = Busy, EEXIST = FileExists,
+    EXDEV                = CrossDeviceLink,
     /// <summary>No such device</summary>
     ENODEV = NoSuchDevice,
     /// <summary>Is not a directory (e.g.: trying to ReadDir() a file)</summary>
@@ -94,12 +115,19 @@ public enum ErrorNumber
     /// <summary>Is a directory (e.g.: trying to Read() a dir)</summary>
     EISDIR = IsDirectory,
     /// <summary>Invalid argument</summary>
-    EINVAL = InvalidArgument, ENFILE = FileTableOverflow, EMFILE = TooManyOpenFiles, ENOTTY = NotTypewriter,
+    EINVAL = InvalidArgument, ENFILE = FileTableOverflow,
+    EMFILE                           = TooManyOpenFiles,
+    ENOTTY                           = NotTypewriter,
     ETXTBSY                          = TextFileBusy,
     /// <summary>File is too large</summary>
-    EFBIG = FileTooLarge, ENOSPC = NoSpaceLeft, ESPIPE = IllegalSeek, EROFS = ReadOnly,
-    EMLINK                       = TooManyLinks, EPIPE = BrokenPipe, EDOM   = OutOfDomain,
-    ERANGE                       = OutOfRange, EDEADLK = DeadlockWouldOccur,
+    EFBIG = FileTooLarge, ENOSPC = NoSpaceLeft,
+    ESPIPE                       = IllegalSeek,
+    EROFS                        = ReadOnly,
+    EMLINK                       = TooManyLinks,
+    EPIPE                        = BrokenPipe,
+    EDOM                         = OutOfDomain,
+    ERANGE                       = OutOfRange,
+    EDEADLK                      = DeadlockWouldOccur,
     /// <summary>Name is too long</summary>
     ENAMETOOLONG = NameTooLong, ENOLCK = NoLocksAvailable,
     /// <summary>Not implemented</summary>
@@ -107,7 +135,9 @@ public enum ErrorNumber
     /// <summary>Link is severed</summary>
     ENOLINK = SeveredLink,
     /// <summary>Not supported</summary>
-    ENOTSUP = NotSupported, DirectoryNotEmpty = -39, TooManySymbolicLinks = -40, ENOTEMPTY = DirectoryNotEmpty,
+    ENOTSUP = NotSupported, DirectoryNotEmpty = -39,
+    TooManySymbolicLinks                      = -40,
+    ENOTEMPTY                                 = DirectoryNotEmpty,
     ELOOP                                     = TooManySymbolicLinks,
     /// <summary>There is no such attribute</summary>
     ENOATTR = NoSuchExtendedAttribute,
@@ -170,5 +200,6 @@ public enum ErrorNumber
     /// <summary>Cannot open device</summary>
     CannotOpenDevice = 27,
     /// <summary>Cannot remove the existing database</summary>
-    CannotRemoveDatabase = 28, SectorNotFound = 29, NotOpened = 30
+    CannotRemoveDatabase = 28, SectorNotFound = 29,
+    NotOpened                                 = 30
 }

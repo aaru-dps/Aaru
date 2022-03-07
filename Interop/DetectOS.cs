@@ -36,13 +36,13 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.CommonTypes.Interop;
+
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
-
-namespace Aaru.CommonTypes.Interop;
 
 /// <summary>Detects the underlying execution framework and operating system</summary>
 public static class DetectOS
@@ -218,7 +218,7 @@ public static class DetectOS
     /// <returns>Current operating system version</returns>
     public static string GetVersion()
     {
-        string environ = Environment.OSVersion.Version.ToString();
+        var environ = Environment.OSVersion.Version.ToString();
 
         switch(GetRealPlatformID())
         {
@@ -235,7 +235,7 @@ public static class DetectOS
                 goto default;
             case PlatformID.Win32NT:
                 // From Windows 8.1 the reported version is simply falsified...
-                if((Environment.OSVersion.Version.Major == 6 && Environment.OSVersion.Version.Major >= 2) ||
+                if(Environment.OSVersion.Version.Major == 6 && Environment.OSVersion.Version.Major >= 2 ||
                    Environment.OSVersion.Version.Major > 6)
                     return FileVersionInfo.
                            GetVersionInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System),

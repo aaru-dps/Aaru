@@ -36,11 +36,11 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.CommonTypes.Interfaces;
+
 using System;
 using System.IO;
 using Aaru.CommonTypes.Enums;
-
-namespace Aaru.CommonTypes.Interfaces;
 
 /// <summary>
 ///     Defines a filter, that is, a transformation of the data from a file, like, for example, a compressor (e.g.

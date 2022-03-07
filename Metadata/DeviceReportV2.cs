@@ -36,17 +36,7 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using Aaru.CommonTypes.Enums;
-using Aaru.CommonTypes.Structs.Devices.ATA;
-using Aaru.CommonTypes.Structs.Devices.SCSI;
-using Aaru.CommonTypes.Structs.Devices.SCSI.Modes;
-using Newtonsoft.Json;
+
 
 // TODO: Re-enable CS1591 in this file
 #pragma warning disable 1591
@@ -58,6 +48,18 @@ using Newtonsoft.Json;
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 
 namespace Aaru.CommonTypes.Metadata;
+
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Text;
+using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Structs.Devices.ATA;
+using Aaru.CommonTypes.Structs.Devices.SCSI;
+using Aaru.CommonTypes.Structs.Devices.SCSI.Modes;
+using Newtonsoft.Json;
 
 public class DeviceReportV2
 {

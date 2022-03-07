@@ -36,9 +36,9 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-using System.Diagnostics.CodeAnalysis;
-
 namespace Aaru.CommonTypes.Interop;
+
+using System.Diagnostics.CodeAnalysis;
 
 /// <summary>Contains an arbitrary list of OSes, even if .NET does not run on them</summary>
 [SuppressMessage("ReSharper", "InconsistentNaming")]

@@ -36,9 +36,9 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-using System;
-
 namespace Aaru.CommonTypes;
+
+using System;
 
 /// <summary>Partition structure.</summary>
 public struct Partition : IEquatable<Partition>, IComparable<Partition>

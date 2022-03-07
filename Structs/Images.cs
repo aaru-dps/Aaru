@@ -36,13 +36,13 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.CommonTypes.Structs;
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
-
-namespace Aaru.CommonTypes.Structs;
 
 /// <summary>Contains information about a dump image and its contents</summary>
 public struct ImageInfo

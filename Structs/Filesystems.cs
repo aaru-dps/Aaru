@@ -37,11 +37,11 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.CommonTypes.Structs;
+
 using System;
 using System.Runtime.InteropServices;
 using Newtonsoft.Json;
-
-namespace Aaru.CommonTypes.Structs;
 
 /// <summary>File attributes.</summary>
 [Flags]

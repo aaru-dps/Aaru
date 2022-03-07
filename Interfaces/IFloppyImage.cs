@@ -36,10 +36,10 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.CommonTypes.Interfaces;
+
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
-
-namespace Aaru.CommonTypes.Interfaces;
 
 /// <inheritdoc />
 /// <summary>
@@ -68,8 +68,7 @@ public interface IFloppyImage : IMediaImage
     /// <param name="head">Physical head (0-based).</param>
     /// <param name="sector">Logical sector ID.</param>
     /// <param name="status">Status of request.</param>
-    ErrorNumber ReadSector(ushort track, byte head, ushort sector, out FloppySectorStatus status,
-                           out byte[] buffer);
+    ErrorNumber ReadSector(ushort track, byte head, ushort sector, out FloppySectorStatus status, out byte[] buffer);
 
     /// <summary>Reads a sector's tag.</summary>
     /// <returns>
@@ -84,8 +83,8 @@ public interface IFloppyImage : IMediaImage
     /// <param name="sector">Logical sector ID.</param>
     /// <param name="status">Status of request.</param>
     /// <param name="tag">Sector tag</param>
-    ErrorNumber ReadSectorTag(ushort track, byte head, ushort sector, out FloppySectorStatus status,
-                              SectorTagType tag, out byte[] buffer);
+    ErrorNumber ReadSectorTag(ushort track, byte head, ushort sector, out FloppySectorStatus status, SectorTagType tag,
+                              out byte[] buffer);
 
     /// <summary>Reads a whole track. It includes all gaps, address marks, sectors data, etc.</summary>
     /// <returns>The track data.</returns>

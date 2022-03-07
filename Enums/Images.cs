@@ -37,12 +37,14 @@
 // Copyright © 2020-2022 Rebecca Wallander
 // ****************************************************************************/
 
-using System;
-using System.Diagnostics.CodeAnalysis;
+
 
 // ReSharper disable UnusedMember.Global
 
 namespace Aaru.CommonTypes.Enums;
+
+using System;
+using System.Diagnostics.CodeAnalysis;
 
 /// <summary>Track (as partitioning element) types.</summary>
 public enum TrackType : byte
@@ -421,5 +423,5 @@ public enum LinearMemoryType
     /// <summary>Read-write volatile memory for character</summary>
     CharacterRAM = 12,
     /// <summary>Trainer, or hack</summary>
-    Trainer      = 13
+    Trainer = 13
 }

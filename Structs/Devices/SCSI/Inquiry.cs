@@ -36,12 +36,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.CommonTypes.Structs.Devices.SCSI;
+
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Aaru.Console;
-
-namespace Aaru.CommonTypes.Structs.Devices.SCSI;
 
 /// <summary>
 ///     Information from the following standards: T9/375-D revision 10l T10/995-D revision 10 T10/1236-D revision 20
@@ -469,8 +469,8 @@ public struct Inquiry
 
             decoded.VersionDescriptors = new ushort[descriptorsNo];
 
-            for(int i = 0; i < descriptorsNo; i++)
-                decoded.VersionDescriptors[i] = BitConverter.ToUInt16(SCSIInquiryResponse, 58 + (i * 2));
+            for(var i = 0; i < descriptorsNo; i++)
+                decoded.VersionDescriptors[i] = BitConverter.ToUInt16(SCSIInquiryResponse, 58 + i * 2);
         }
 
         if(SCSIInquiryResponse.Length >= 75 &&
@@ -521,8 +521,8 @@ public struct Inquiry
 
         Inquiry decoded = inq.Value;
 
-        byte[] buffer = new byte[512];
-        byte   length = 0;
+        var  buffer = new byte[512];
+        byte length = 0;
 
         buffer[0] =  (byte)(decoded.PeripheralQualifier << 5);
         buffer[0] += decoded.PeripheralDeviceType;
@@ -747,10 +747,10 @@ public struct Inquiry
 
         if(decoded.VersionDescriptors != null)
         {
-            length = (byte)(58 + (decoded.VersionDescriptors.Length * 2));
+            length = (byte)(58 + decoded.VersionDescriptors.Length * 2);
 
-            for(int i = 0; i < decoded.VersionDescriptors.Length; i++)
-                Array.Copy(BitConverter.GetBytes(decoded.VersionDescriptors[i]), 0, buffer, 56 + (i * 2), 2);
+            for(var i = 0; i < decoded.VersionDescriptors.Length; i++)
+                Array.Copy(BitConverter.GetBytes(decoded.VersionDescriptors[i]), 0, buffer, 56 + i * 2, 2);
         }
 
         if(decoded.Reserved5 != null)
@@ -778,7 +778,7 @@ public struct Inquiry
         }
 
         buffer[4] = length;
-        byte[] dest = new byte[length];
+        var dest = new byte[length];
         Array.Copy(buffer, 0, dest, 0, length);
 
         return dest;

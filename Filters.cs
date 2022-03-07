@@ -36,6 +36,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.CommonTypes;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -44,8 +46,6 @@ using System.Reflection;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
-
-namespace Aaru.CommonTypes;
 
 /// <summary>Manages the known filters</summary>
 public sealed class FiltersList
@@ -83,7 +83,6 @@ public sealed class FiltersList
         IFilter noFilter = null;
 
         foreach(IFilter filter in Filters.Values)
-        {
             try
             {
                 if(filter.Id != new Guid("12345678-AAAA-BBBB-CCCC-123456789000"))
@@ -104,7 +103,6 @@ public sealed class FiltersList
             {
                 // Ignore and continue
             }
-        }
 
         if(!noFilter?.Identify(path) == true)
             return null;

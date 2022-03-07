@@ -36,12 +36,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.CommonTypes;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using Aaru.CommonTypes.Interfaces;
-
-namespace Aaru.CommonTypes;
 
 /// <summary>Contain all plugins (filesystem, partition and image)</summary>
 public class PluginBase

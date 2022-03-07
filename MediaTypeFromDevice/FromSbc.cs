@@ -32,10 +32,10 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.CommonTypes;
+
 using System;
 using Aaru.Console;
-
-namespace Aaru.CommonTypes;
 
 public static partial class MediaTypeFromDevice
 {
@@ -650,8 +650,7 @@ public static partial class MediaTypeFromDevice
                                                    mediumType, blocks, blockSize);
 
                         return MediaType.PD650;
-                    case 1470500
-                        when model.ToLowerInvariant().StartsWith("zip", StringComparison.OrdinalIgnoreCase):
+                    case 1470500 when model.ToLowerInvariant().StartsWith("zip", StringComparison.OrdinalIgnoreCase):
                         AaruConsole.DebugWriteLine("Media detection",
                                                    "Drive manufacturer is IOMEGA, drive model is ZIP, media has 489532 blocks of 512 bytes, setting media type to 250Mb ZIP.");
 
