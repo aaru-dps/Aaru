@@ -34,9 +34,7 @@
 // Copyright © 2020-2022 Rebecca Wallander
 // ****************************************************************************/
 
-using System;
-using System.Linq;
-using Aaru.Decoders.DVD;
+
 
 // Based on information gathered from:
 //  ISO/IEC13818-1 Second Edition
@@ -48,6 +46,10 @@ using Aaru.Decoders.DVD;
 //  libdvdcss (https://www.videolan.org/developers/libdvdcss.html)
 
 namespace Aaru.Decryption.DVD;
+
+using System;
+using System.Linq;
+using Aaru.Decoders.DVD;
 
 public class CSS
 {
@@ -350,12 +352,12 @@ public class CSS
     static readonly byte[,] _permutationVariant =
     {
         {
-            0x0a, 0x08, 0x0e, 0x0c, 0x0b, 0x09, 0x0f, 0x0d, 0x1a, 0x18, 0x1e, 0x1c, 0x1b, 0x19, 0x1f, 0x1d, 0x02,
-            0x00, 0x06, 0x04, 0x03, 0x01, 0x07, 0x05, 0x12, 0x10, 0x16, 0x14, 0x13, 0x11, 0x17, 0x15
+            0x0a, 0x08, 0x0e, 0x0c, 0x0b, 0x09, 0x0f, 0x0d, 0x1a, 0x18, 0x1e, 0x1c, 0x1b, 0x19, 0x1f, 0x1d, 0x02, 0x00,
+            0x06, 0x04, 0x03, 0x01, 0x07, 0x05, 0x12, 0x10, 0x16, 0x14, 0x13, 0x11, 0x17, 0x15
         },
         {
-            0x12, 0x1a, 0x16, 0x1e, 0x02, 0x0a, 0x06, 0x0e, 0x10, 0x18, 0x14, 0x1c, 0x00, 0x08, 0x04, 0x0c, 0x13,
-            0x1b, 0x17, 0x1f, 0x03, 0x0b, 0x07, 0x0f, 0x11, 0x19, 0x15, 0x1d, 0x01, 0x09, 0x05, 0x0d
+            0x12, 0x1a, 0x16, 0x1e, 0x02, 0x0a, 0x06, 0x0e, 0x10, 0x18, 0x14, 0x1c, 0x00, 0x08, 0x04, 0x0c, 0x13, 0x1b,
+            0x17, 0x1f, 0x03, 0x0b, 0x07, 0x0f, 0x11, 0x19, 0x15, 0x1d, 0x01, 0x09, 0x05, 0x0d
         }
     };
 
@@ -386,7 +388,7 @@ public class CSS
         byte[] key = response.Skip(4).Take(2048).ToArray();
 
         for(uint i = 0; i < key.Length; i++)
-            key[i] ^= busKey[4 - (i % busKey.Length)];
+            key[i] ^= busKey[4 - i % busKey.Length];
 
         return new CSS_CPRM.DiscKey
         {
@@ -413,7 +415,7 @@ public class CSS
         byte[] key = response.Skip(5).Take(5).ToArray();
 
         for(uint i = 0; i < key.Length; i++)
-            key[i] ^= busKey[4 - (i % busKey.Length)];
+            key[i] ^= busKey[4 - i % busKey.Length];
 
         return new CSS_CPRM.TitleKey
         {
@@ -435,38 +437,38 @@ public class CSS
     /// <returns>The encrypted key.</returns>
     public static void EncryptKey(DvdCssKeyType keyType, uint variant, byte[] challenge, out byte[] key)
     {
-        byte[] bits    = new byte[30];
-        byte[] scratch = new byte[10];
-        byte   index   = sizeof(byte) * 30;
-        byte[] temp1   = new byte[5];
-        byte[] temp2   = new byte[5];
-        byte   carry   = 0;
+        var  bits    = new byte[30];
+        var  scratch = new byte[10];
+        byte index   = sizeof(byte) * 30;
+        var  temp1   = new byte[5];
+        var  temp2   = new byte[5];
+        byte carry   = 0;
         key = new byte[5];
 
-        for(int i = 9; i >= 0; --i)
+        for(var i = 9; i >= 0; --i)
             scratch[i] = challenge[_permutationChallenge[(uint)keyType, i]];
 
-        byte cssVariant = (byte)(keyType == 0 ? variant : _permutationVariant[(uint)keyType - 1, variant]);
+        var cssVariant = (byte)(keyType == 0 ? variant : _permutationVariant[(uint)keyType - 1, variant]);
 
-        for(int i = 5; --i >= 0;)
+        for(var i = 5; --i >= 0;)
             temp1[i] = (byte)(scratch[5 + i] ^ _secret[i] ^ _encryptTable2[i]);
 
-        uint lfsr0 = (uint)((temp1[0] << 17) | (temp1[1] << 9) | ((temp1[2] & ~7) << 1) | 8 | (temp1[2] & 7));
-        uint lfsr1 = (uint)((temp1[3] << 9)  | 0x100           | temp1[4]);
+        var lfsr0 = (uint)((temp1[0] << 17) | (temp1[1] << 9) | ((temp1[2] & ~7) << 1) | 8 | (temp1[2] & 7));
+        var lfsr1 = (uint)((temp1[3] << 9)  | 0x100           | temp1[4]);
 
         do
         {
             byte val = 0;
 
-            for(int bit = 0; bit < 8; ++bit)
+            for(var bit = 0; bit < 8; ++bit)
             {
-                byte oLfsr0 = (byte)(((lfsr0 >> 24) ^ (lfsr0 >> 21) ^ (lfsr0 >> 20) ^ (lfsr0 >> 12)) & 1);
+                var oLfsr0 = (byte)(((lfsr0 >> 24) ^ (lfsr0 >> 21) ^ (lfsr0 >> 20) ^ (lfsr0 >> 12)) & 1);
                 lfsr0 = (lfsr0 << 1) | oLfsr0;
 
-                byte oLfsr1 = (byte)(((lfsr1 >> 16) ^ (lfsr1 >> 2)) & 1);
+                var oLfsr1 = (byte)(((lfsr1 >> 16) ^ (lfsr1 >> 2)) & 1);
                 lfsr1 = (lfsr1 << 1) | oLfsr1;
 
-                byte combined = (byte)(Convert.ToByte(oLfsr1 == 0) + carry + Convert.ToByte(oLfsr0 == 0));
+                var combined = (byte)(Convert.ToByte(oLfsr1 == 0) + carry + Convert.ToByte(oLfsr0 == 0));
                 carry =  (byte)((combined >> 1) & 1);
                 val   |= (byte)((combined & 1) << bit);
             }
@@ -474,10 +476,10 @@ public class CSS
             bits[--index] = val;
         } while(index > 0);
 
-        byte cse  = (byte)(_variants[cssVariant] ^ _encryptTable2[cssVariant]);
-        int  term = 0;
+        var cse  = (byte)(_variants[cssVariant] ^ _encryptTable2[cssVariant]);
+        var term = 0;
 
-        for(int i = 5; --i >= 0; term = scratch[i])
+        for(var i = 5; --i >= 0; term = scratch[i])
         {
             index = (byte)(bits[25 + i]          ^ scratch[i]);
             index = (byte)(_encryptTable1[index] ^ ~_encryptTable2[index] ^ cse);
@@ -488,7 +490,7 @@ public class CSS
         temp1[4] ^= temp1[0];
         term     =  0;
 
-        for(int i = 5; --i >= 0; term = temp1[i])
+        for(var i = 5; --i >= 0; term = temp1[i])
         {
             index = (byte)(bits[20 + i]          ^ temp1[i]);
             index = (byte)(_encryptTable1[index] ^ ~_encryptTable2[index] ^ cse);
@@ -499,7 +501,7 @@ public class CSS
         temp2[4] ^= temp2[0];
         term     =  0;
 
-        for(int i = 5; --i >= 0; term = temp2[i])
+        for(var i = 5; --i >= 0; term = temp2[i])
         {
             index = (byte)(bits[15 + i]          ^ temp2[i]);
             index = (byte)(_encryptTable1[index] ^ ~_encryptTable2[index] ^ cse);
@@ -511,7 +513,7 @@ public class CSS
         temp1[4] ^= temp1[0];
         term     =  0;
 
-        for(int i = 5; --i >= 0; term = temp1[i])
+        for(var i = 5; --i >= 0; term = temp1[i])
         {
             index = (byte)(bits[10 + i]          ^ temp1[i]);
             index = (byte)(_encryptTable1[index] ^ ~_encryptTable2[index] ^ cse);
@@ -523,7 +525,7 @@ public class CSS
         temp2[4] ^= temp2[0];
         term     =  0;
 
-        for(int i = 5; --i >= 0; term = temp2[i])
+        for(var i = 5; --i >= 0; term = temp2[i])
         {
             index = (byte)(bits[5 + i]           ^ temp2[i]);
             index = (byte)(_encryptTable1[index] ^ ~_encryptTable2[index] ^ cse);
@@ -534,7 +536,7 @@ public class CSS
         temp1[4] ^= temp1[0];
         term     =  0;
 
-        for(int i = 5; --i >= 0; term = temp1[i])
+        for(var i = 5; --i >= 0; term = temp1[i])
         {
             index = (byte)(bits[i]               ^ temp1[i]);
             index = (byte)(_encryptTable1[index] ^ ~_encryptTable2[index] ^ cse);
@@ -551,13 +553,12 @@ public class CSS
     public static void DecryptKey(byte invert, byte[] cryptoKey, byte[] encryptedKey, out byte[] decryptedKey)
     {
         decryptedKey = new byte[5];
-        byte[] k = new byte[5];
+        var k = new byte[5];
 
-        uint lfsr1Lo = (uint)(cryptoKey[0] | 0x100);
+        var  lfsr1Lo = (uint)(cryptoKey[0] | 0x100);
         uint lfsr1Hi = cryptoKey[1];
 
-        uint lfsr0 = (uint)(((cryptoKey[4] << 17) | (cryptoKey[3] << 9) | (cryptoKey[2] << 1)) + 8 -
-                            (cryptoKey[2] & 7));
+        var lfsr0 = (uint)(((cryptoKey[4] << 17) | (cryptoKey[3] << 9) | (cryptoKey[2] << 1)) + 8 - (cryptoKey[2] & 7));
 
         lfsr0 = (uint)((_cssTable4[lfsr0 & 0xff] << 24) | (_cssTable4[(lfsr0 >> 8) & 0xff] << 16) |
                        (_cssTable4[(lfsr0 >> 16) & 0xff] << 8) | _cssTable4[(lfsr0 >> 24) & 0xff]);
@@ -566,11 +567,11 @@ public class CSS
 
         for(uint i = 0; i < 5; i++)
         {
-            byte oLfsr1 = (byte)(_cssTable2[lfsr1Hi] ^ _cssTable3[lfsr1Lo]);
+            var oLfsr1 = (byte)(_cssTable2[lfsr1Hi] ^ _cssTable3[lfsr1Lo]);
             lfsr1Hi = lfsr1Lo >> 1;
             lfsr1Lo = ((lfsr1Lo & 1) << 8) ^ oLfsr1;
             oLfsr1  = _cssTable4[oLfsr1];
-            byte oLfsr0 = (byte)(((((((lfsr0 >> 8) ^ lfsr0) >> 1) ^ lfsr0) >> 3) ^ lfsr0) >> 7);
+            var oLfsr0 = (byte)(((((((lfsr0 >> 8) ^ lfsr0) >> 1) ^ lfsr0) >> 3) ^ lfsr0) >> 7);
             lfsr0    =   (lfsr0 >> 8) | ((uint)oLfsr0 << 24);
             combined +=  (uint)((oLfsr0 ^ invert) + oLfsr1);
             k[i]     =   (byte)(combined & 0xff);
@@ -590,8 +591,7 @@ public class CSS
         decryptedKey[0] = (byte)(k[0] ^ _cssTable1[decryptedKey[0]]);
     }
 
-    public static void
-        DecryptTitleKey(byte invert, byte[] cryptoKey, byte[] encryptedKey, out byte[] decryptedKey) =>
+    public static void DecryptTitleKey(byte invert, byte[] cryptoKey, byte[] encryptedKey, out byte[] decryptedKey) =>
         DecryptKey(invert, cryptoKey, encryptedKey, out decryptedKey);
 
     /// <summary>Takes an bytearray of encrypted keys, decrypts them and returns the correctly decrypted key.</summary>
@@ -616,9 +616,7 @@ public class CSS
                 DecryptKey(0, decryptedKey, verificationKey, out byte[] verify);
 
                 if(decryptedKey.SequenceEqual(verify))
-                {
                     return;
-                }
             }
         }
 
@@ -640,7 +638,7 @@ public class CSS
            keyData.All(k => k                   == 0))
             return sectorData;
 
-        byte[] decryptedBuffer = new byte[sectorData.Length];
+        var decryptedBuffer = new byte[sectorData.Length];
 
         for(uint j = 0; j < blocks; j++)
         {
@@ -663,11 +661,11 @@ public class CSS
             uint lfsr1Lo = (uint)(currentKey[0] ^ currentSector[0x54]) | 0x100;
             uint lfsr1Hi = (uint)currentKey[1] ^ currentSector[0x55];
 
-            uint lfsr0 = (uint)((currentKey[2]    | (currentKey[3]    << 8) | (currentKey[4]    << 16)) ^
-                                (sectorData[0x56] | (sectorData[0x57] << 8) | (sectorData[0x58] << 16)));
+            var lfsr0 = (uint)((currentKey[2]    | (currentKey[3]    << 8) | (currentKey[4]    << 16)) ^
+                               (sectorData[0x56] | (sectorData[0x57] << 8) | (sectorData[0x58] << 16)));
 
             uint oLfsr1 = lfsr0 & 7;
-            lfsr0 = (lfsr0 * 2) + 8 - oLfsr1;
+            lfsr0 = lfsr0 * 2 + 8 - oLfsr1;
 
             uint combined = 0;
 
@@ -703,13 +701,13 @@ public class CSS
            cmi.RegionInformation == 0x00)
             return true;
 
-        return ((rpc.RegionMask & 0x01) == (cmi.RegionInformation & 0x01) && (rpc.RegionMask & 0x01) != 0x01) ||
-               ((rpc.RegionMask & 0x02) == (cmi.RegionInformation & 0x02) && (rpc.RegionMask & 0x02) != 0x02) ||
-               ((rpc.RegionMask & 0x04) == (cmi.RegionInformation & 0x04) && (rpc.RegionMask & 0x04) != 0x04) ||
-               ((rpc.RegionMask & 0x08) == (cmi.RegionInformation & 0x08) && (rpc.RegionMask & 0x08) != 0x08) ||
-               ((rpc.RegionMask & 0x10) == (cmi.RegionInformation & 0x10) && (rpc.RegionMask & 0x10) != 0x10) ||
-               ((rpc.RegionMask & 0x20) == (cmi.RegionInformation & 0x20) && (rpc.RegionMask & 0x20) != 0x20) ||
-               ((rpc.RegionMask & 0x40) == (cmi.RegionInformation & 0x40) && (rpc.RegionMask & 0x40) != 0x40) ||
-               ((rpc.RegionMask & 0x80) == (cmi.RegionInformation & 0x80) && (rpc.RegionMask & 0x80) != 0x80);
+        return (rpc.RegionMask & 0x01) == (cmi.RegionInformation & 0x01) && (rpc.RegionMask & 0x01) != 0x01 ||
+               (rpc.RegionMask & 0x02) == (cmi.RegionInformation & 0x02) && (rpc.RegionMask & 0x02) != 0x02 ||
+               (rpc.RegionMask & 0x04) == (cmi.RegionInformation & 0x04) && (rpc.RegionMask & 0x04) != 0x04 ||
+               (rpc.RegionMask & 0x08) == (cmi.RegionInformation & 0x08) && (rpc.RegionMask & 0x08) != 0x08 ||
+               (rpc.RegionMask & 0x10) == (cmi.RegionInformation & 0x10) && (rpc.RegionMask & 0x10) != 0x10 ||
+               (rpc.RegionMask & 0x20) == (cmi.RegionInformation & 0x20) && (rpc.RegionMask & 0x20) != 0x20 ||
+               (rpc.RegionMask & 0x40) == (cmi.RegionInformation & 0x40) && (rpc.RegionMask & 0x40) != 0x40 ||
+               (rpc.RegionMask & 0x80) == (cmi.RegionInformation & 0x80) && (rpc.RegionMask & 0x80) != 0x80;
     }
 }

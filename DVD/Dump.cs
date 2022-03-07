@@ -34,13 +34,13 @@
 // Copyright © 2020-2022 Rebecca Wallander
 // ****************************************************************************/
 
+namespace Aaru.Decryption.DVD;
+
 using System;
 using System.Linq;
 using Aaru.Console;
 using Aaru.Decoders.DVD;
 using Aaru.Devices;
-
-namespace Aaru.Decryption.DVD;
 
 public sealed class Dump
 {
@@ -69,7 +69,7 @@ public sealed class Dump
                         out double duration)
     {
         senseBuffer = new byte[64];
-        byte[] cdb = new byte[12];
+        var cdb = new byte[12];
         buffer = new byte[8];
 
         cdb[0]  = (byte)ScsiCommands.ReportKey;
@@ -78,12 +78,10 @@ public sealed class Dump
         cdb[9]  = (byte)(buffer.Length & 0xFF);
         cdb[10] = (byte)((byte)CssReportKeyFormat.Asf ^ ((Agid & 0x03) << 6));
 
-        _dev.SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
-                             out bool sense);
+        _dev.SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out bool sense);
 
-        AaruConsole.DebugWriteLine("SCSI Device",
-                                   "REPORT ASF (AGID: {1}, Sense: {2}, Last Error: {3}) took {0} ms.", duration,
-                                   Agid, sense, _dev.LastError);
+        AaruConsole.DebugWriteLine("SCSI Device", "REPORT ASF (AGID: {1}, Sense: {2}, Last Error: {3}) took {0} ms.",
+                                   duration, Agid, sense, _dev.LastError);
 
         return sense;
     }
@@ -99,7 +97,7 @@ public sealed class Dump
                         out double duration)
     {
         senseBuffer = new byte[64];
-        byte[] cdb = new byte[12];
+        var cdb = new byte[12];
         buffer = new byte[8];
 
         cdb[0]  = (byte)ScsiCommands.ReportKey;
@@ -108,12 +106,10 @@ public sealed class Dump
         cdb[9]  = (byte)(buffer.Length & 0xFF);
         cdb[10] = (byte)((byte)CssReportKeyFormat.RpcState ^ ((Agid & 0x03) << 6));
 
-        _dev.SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
-                             out bool sense);
+        _dev.SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out bool sense);
 
-        AaruConsole.DebugWriteLine("SCSI Device",
-                                   "REPORT ASF (AGID: {1}, Sense: {2}, Last Error: {3}) took {0} ms.", duration,
-                                   Agid, sense, _dev.LastError);
+        AaruConsole.DebugWriteLine("SCSI Device", "REPORT ASF (AGID: {1}, Sense: {2}, Last Error: {3}) took {0} ms.",
+                                   duration, Agid, sense, _dev.LastError);
 
         return sense;
     }
@@ -129,7 +125,7 @@ public sealed class Dump
                                out double duration)
     {
         senseBuffer = new byte[64];
-        byte[] cdb = new byte[12];
+        var cdb = new byte[12];
         buffer = Array.Empty<byte>();
 
         cdb[0]  = (byte)ScsiCommands.ReportKey;
@@ -138,12 +134,11 @@ public sealed class Dump
         cdb[9]  = (byte)(buffer.Length & 0xFF);
         cdb[10] = (byte)((byte)CssReportKeyFormat.InvalidateAgid ^ ((Agid & 0x03) << 6));
 
-        _dev.SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
-                             out bool sense);
+        _dev.SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out bool sense);
 
         AaruConsole.DebugWriteLine("SCSI Device",
-                                   "INVALIDATE AGID (AGID: {1}, Sense: {2}, Last Error: {3}) took {0} ms.",
-                                   duration, Agid, sense, _dev.LastError);
+                                   "INVALIDATE AGID (AGID: {1}, Sense: {2}, Last Error: {3}) took {0} ms.", duration,
+                                   Agid, sense, _dev.LastError);
 
         return sense;
     }
@@ -159,7 +154,7 @@ public sealed class Dump
                                   out double duration)
     {
         senseBuffer = new byte[64];
-        byte[] cdb = new byte[12];
+        var cdb = new byte[12];
         buffer = new byte[8];
 
         cdb[0]  = (byte)ScsiCommands.ReportKey;
@@ -168,8 +163,7 @@ public sealed class Dump
         cdb[9]  = (byte)(buffer.Length & 0xFF);
         cdb[10] = (byte)((byte)CssReportKeyFormat.AgidForCssCppm ^ ((Agid & 0x03) << 6));
 
-        _dev.SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
-                             out bool sense);
+        _dev.SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out bool sense);
 
         AaruConsole.DebugWriteLine("SCSI Device",
                                    "REPORT AGID CSS/CPPM (AGID: {1}, Sense: {2}, Last Error: {3}) took {0} ms.",
@@ -189,7 +183,7 @@ public sealed class Dump
                            out double duration)
     {
         senseBuffer = new byte[64];
-        byte[] cdb = new byte[12];
+        var cdb = new byte[12];
         buffer = new byte[12];
 
         cdb[0]  = (byte)ScsiCommands.ReportKey;
@@ -198,12 +192,10 @@ public sealed class Dump
         cdb[9]  = (byte)(buffer.Length & 0xFF);
         cdb[10] = (byte)((byte)CssReportKeyFormat.Key1 ^ ((Agid & 0x03) << 6));
 
-        _dev.SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
-                             out bool sense);
+        _dev.SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out bool sense);
 
-        AaruConsole.DebugWriteLine("SCSI Device",
-                                   "REPORT KEY1 (AGID: {1}, Sense: {2}, Last Error: {3}) took {0} ms.", duration,
-                                   Agid, sense, _dev.LastError);
+        AaruConsole.DebugWriteLine("SCSI Device", "REPORT KEY1 (AGID: {1}, Sense: {2}, Last Error: {3}) took {0} ms.",
+                                   duration, Agid, sense, _dev.LastError);
 
         return sense;
     }
@@ -219,7 +211,7 @@ public sealed class Dump
                                 out double duration)
     {
         senseBuffer = new byte[64];
-        byte[] cdb = new byte[12];
+        var cdb = new byte[12];
         buffer = new byte[16];
 
         cdb[0]  = (byte)ScsiCommands.ReportKey;
@@ -228,12 +220,11 @@ public sealed class Dump
         cdb[9]  = (byte)(buffer.Length & 0xFF);
         cdb[10] = (byte)((byte)CssReportKeyFormat.ChallengeKey ^ ((Agid & 0x03) << 6));
 
-        _dev.SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
-                             out bool sense);
+        _dev.SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out bool sense);
 
         AaruConsole.DebugWriteLine("SCSI Device",
-                                   "REPORT CHALLENGE (AGID: {1}, Sense: {2}, Last Error: {3}) took {0} ms.",
-                                   duration, Agid, sense, _dev.LastError);
+                                   "REPORT CHALLENGE (AGID: {1}, Sense: {2}, Last Error: {3}) took {0} ms.", duration,
+                                   Agid, sense, _dev.LastError);
 
         return sense;
     }
@@ -246,11 +237,11 @@ public sealed class Dump
     /// <param name="timeout">Timeout in seconds.</param>
     /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
     /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
-    public bool SendChallenge(out byte[] buffer, out byte[] senseBuffer, DvdCssKeyClass keyClass,
-                              byte[] challengeKey, uint timeout, out double duration)
+    public bool SendChallenge(out byte[] buffer, out byte[] senseBuffer, DvdCssKeyClass keyClass, byte[] challengeKey,
+                              uint timeout, out double duration)
     {
         senseBuffer = new byte[64];
-        byte[] cdb = new byte[12];
+        var cdb = new byte[12];
         buffer = new byte[16];
 
         cdb[0]     = (byte)ScsiCommands.SendKey;
@@ -289,11 +280,11 @@ public sealed class Dump
     /// <param name="timeout">Timeout in seconds.</param>
     /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
     /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
-    public bool SendKey2(out byte[] buffer, out byte[] senseBuffer, DvdCssKeyClass keyClass, byte[] key2,
-                         uint timeout, out double duration)
+    public bool SendKey2(out byte[] buffer, out byte[] senseBuffer, DvdCssKeyClass keyClass, byte[] key2, uint timeout,
+                         out double duration)
     {
         senseBuffer = new byte[64];
-        byte[] cdb = new byte[12];
+        var cdb = new byte[12];
         buffer = new byte[12];
 
         cdb[0]    = (byte)ScsiCommands.SendKey;
@@ -328,7 +319,7 @@ public sealed class Dump
     public bool ReadDiscKey(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
     {
         senseBuffer = new byte[64];
-        byte[] cdb = new byte[12];
+        var cdb = new byte[12];
         buffer = new byte[2052];
 
         cdb[0]  = (byte)ScsiCommands.ReadDiscStructure;
@@ -339,8 +330,7 @@ public sealed class Dump
         cdb[9]  = (byte)(buffer.Length & 0xFF);
         cdb[10] = (byte)((Agid & 0x03) << 6);
 
-        _dev.SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
-                             out bool sense);
+        _dev.SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out bool sense);
 
         return sense;
     }
@@ -359,30 +349,25 @@ public sealed class Dump
         buffer      = Array.Empty<byte>();
         senseBuffer = new byte[64];
 
-        bool   sense     = false;
-        byte[] challenge = new byte[CHALLENGE_SIZE];
-        byte[] key1      = new byte[KEY_SIZE];
-        byte   variant   = 0;
+        var  sense     = false;
+        var  challenge = new byte[CHALLENGE_SIZE];
+        var  key1      = new byte[KEY_SIZE];
+        byte variant   = 0;
 
         for(byte i = 0; i < 4; i++)
         {
             // Invalidate AGID to reset any previous drive communications
             Agid = i;
 
-            sense = InvalidateAgid(out buffer, out senseBuffer, DvdCssKeyClass.DvdCssCppmOrCprm, timeout,
-                                   out duration);
+            sense = InvalidateAgid(out buffer, out senseBuffer, DvdCssKeyClass.DvdCssCppmOrCprm, timeout, out duration);
 
             // Get AGID
             if(protectionType == CopyrightType.CSS)
-            {
                 sense = ReportAgidCssCppm(out buffer, out senseBuffer, DvdCssKeyClass.DvdCssCppmOrCprm, timeout,
                                           out duration);
-            }
 
             if(protectionType == CopyrightType.CPRM)
-            {
                 throw new NotImplementedException();
-            }
 
             if(!sense)
             {
@@ -393,9 +378,7 @@ public sealed class Dump
         }
 
         if(sense)
-        {
             return true;
-        }
 
         for(byte i = 0; i < CHALLENGE_SIZE; i++)
             challenge[i] = i;
@@ -404,16 +387,12 @@ public sealed class Dump
                               out duration);
 
         if(sense)
-        {
             return true;
-        }
 
         sense = ReportKey1(out buffer, out senseBuffer, DvdCssKeyClass.DvdCssCppmOrCprm, timeout, out duration);
 
         if(sense)
-        {
             return true;
-        }
 
         for(byte i = 0; i < KEY_SIZE; i++)
             key1[i] = buffer[8 - i];
@@ -437,13 +416,10 @@ public sealed class Dump
             }
         }
 
-        sense = ReportChallenge(out buffer, out senseBuffer, DvdCssKeyClass.DvdCssCppmOrCprm, timeout,
-                                out duration);
+        sense = ReportChallenge(out buffer, out senseBuffer, DvdCssKeyClass.DvdCssCppmOrCprm, timeout, out duration);
 
         if(sense)
-        {
             return true;
-        }
 
         for(byte i = 0; i < CHALLENGE_SIZE; i++)
             challenge[i] = buffer[13 - i];
@@ -453,9 +429,7 @@ public sealed class Dump
         sense = SendKey2(out buffer, out senseBuffer, DvdCssKeyClass.DvdCssCppmOrCprm, key2, timeout, out duration);
 
         if(sense)
-        {
             return true;
-        }
 
         key1.CopyTo(challenge, 0);
         key2.CopyTo(challenge, key1.Length);
@@ -483,7 +457,7 @@ public sealed class Dump
         BusKey = buffer;
 
         senseBuffer = new byte[64];
-        byte[] cdb = new byte[12];
+        var cdb = new byte[12];
         buffer = new byte[12];
 
         cdb[0]  = (byte)ScsiCommands.ReportKey;
@@ -496,8 +470,7 @@ public sealed class Dump
         cdb[9]  = (byte)(buffer.Length & 0xFF);
         cdb[10] = (byte)((byte)CssReportKeyFormat.TitleKey ^ ((Agid & 0x03) << 6));
 
-        _dev.SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
-                             out bool sense);
+        _dev.SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out bool sense);
 
         AaruConsole.DebugWriteLine("SCSI Device", "GET TITLE KEY (AGID: {1}, LBA: {2}, Sense: {3}) took {0} ms.",
                                    duration, Agid, address, sense);

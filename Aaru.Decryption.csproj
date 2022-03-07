@@ -1,63 +1,63 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <SchemaVersion>2.0</SchemaVersion>
-    <OutputType>Library</OutputType>
-    <RootNamespace>Aaru.Decryption</RootNamespace>
-    <AssemblyName>Aaru.Decryption</AssemblyName>
-    <ReleaseVersion>$(Version)</ReleaseVersion>
-    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-    <Version>6.0.0-alpha8</Version>
-    <Company>Claunia.com</Company>
-    <Copyright>Copyright © 2011-2022 Natalia Portillo</Copyright>
-    <Product>Aaru Data Preservation Suite</Product>
-    <Title>Aaru.Decryption</Title>
-    <ApplicationVersion>$(Version)</ApplicationVersion>
-    <TargetFramework>net6</TargetFramework>
-    <LangVersion>10</LangVersion>
-    <Description>Decryption algorithms used by the Aaru Data Preservation Suite.</Description>
-    <PackageProjectUrl>https://github.com/aaru-dps/</PackageProjectUrl>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <RepositoryUrl>https://github.com/aaru-dps/Aaru.Decryption</RepositoryUrl>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <NeutralLanguage>en-US</NeutralLanguage>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <IncludeSymbols>true</IncludeSymbols>
-    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-    <Authors>Rebecca Wallander &lt;sakcheen@gmail.com&gt;</Authors>
-    <Nullable>enable</Nullable>
-    <DisableImplicitNamespaceImports>true</DisableImplicitNamespaceImports>
-  </PropertyGroup>
-  <PropertyGroup>
-    <NrtRevisionFormat>$(Version)+{chash:8}</NrtRevisionFormat>
-    <NrtResolveSimpleAttributes>true</NrtResolveSimpleAttributes>
-    <NrtShowRevision>true</NrtShowRevision>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug</OutputPath>
-    <DefineConstants>DEBUG;</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <ConsolePause>false</ConsolePause>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>full</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release</OutputPath>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <ConsolePause>false</ConsolePause>
-  </PropertyGroup>
+    <PropertyGroup>
+        <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+        <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+        <SchemaVersion>2.0</SchemaVersion>
+        <OutputType>Library</OutputType>
+        <RootNamespace>Aaru.Decryption</RootNamespace>
+        <AssemblyName>Aaru.Decryption</AssemblyName>
+        <ReleaseVersion>$(Version)</ReleaseVersion>
+        <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+        <Version>6.0.0-alpha8</Version>
+        <Company>Claunia.com</Company>
+        <Copyright>Copyright © 2011-2022 Natalia Portillo</Copyright>
+        <Product>Aaru Data Preservation Suite</Product>
+        <Title>Aaru.Decryption</Title>
+        <ApplicationVersion>$(Version)</ApplicationVersion>
+        <TargetFramework>net6</TargetFramework>
+        <LangVersion>10</LangVersion>
+        <Description>Decryption algorithms used by the Aaru Data Preservation Suite.</Description>
+        <PackageProjectUrl>https://github.com/aaru-dps/</PackageProjectUrl>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <RepositoryUrl>https://github.com/aaru-dps/Aaru.Decryption</RepositoryUrl>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <NeutralLanguage>en-US</NeutralLanguage>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+        <Authors>Rebecca Wallander &lt;sakcheen@gmail.com&gt;</Authors>
+        <Nullable>enable</Nullable>
+        <DisableImplicitNamespaceImports>true</DisableImplicitNamespaceImports>
+    </PropertyGroup>
+    <PropertyGroup>
+        <NrtRevisionFormat>$(Version)+{chash:8}</NrtRevisionFormat>
+        <NrtResolveSimpleAttributes>true</NrtResolveSimpleAttributes>
+        <NrtShowRevision>true</NrtShowRevision>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+        <DebugSymbols>true</DebugSymbols>
+        <DebugType>full</DebugType>
+        <Optimize>false</Optimize>
+        <OutputPath>bin\Debug</OutputPath>
+        <DefineConstants>DEBUG;</DefineConstants>
+        <ErrorReport>prompt</ErrorReport>
+        <WarningLevel>4</WarningLevel>
+        <ConsolePause>false</ConsolePause>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+        <DebugType>full</DebugType>
+        <Optimize>true</Optimize>
+        <OutputPath>bin\Release</OutputPath>
+        <ErrorReport>prompt</ErrorReport>
+        <WarningLevel>4</WarningLevel>
+        <ConsolePause>false</ConsolePause>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Aaru.Decoders\Aaru.Decoders.csproj" />
-    <ProjectReference Include="..\Aaru.Devices\Aaru.Devices.csproj" />
-    <ProjectReference Include="..\Aaru.Images\Aaru.Images.csproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\Aaru.Decoders\Aaru.Decoders.csproj"/>
+        <ProjectReference Include="..\Aaru.Devices\Aaru.Devices.csproj"/>
+        <ProjectReference Include="..\Aaru.Images\Aaru.Images.csproj"/>
+    </ItemGroup>
 
 </Project>
